@@ -48,6 +48,9 @@ export async function ensureThreeParticipants(ctx: IContext, options: IJoinOptio
     const { skipInMeetingChecks } = options;
 
     await Promise.all([
+        skipInMeetingChecks ? Promise.resolve() : ctx.p1.waitForIceConnected(),
+        skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForIceConnected(),
+        skipInMeetingChecks ? Promise.resolve() : ctx.p3.waitForIceConnected(),
         skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForRemoteStreams(2),
         skipInMeetingChecks ? Promise.resolve() : ctx.p3.waitForRemoteStreams(2)
     ]);
@@ -131,6 +134,10 @@ export async function ensureFourParticipants(ctx: IContext, options: IJoinOption
     const { skipInMeetingChecks } = options;
 
     await Promise.all([
+        skipInMeetingChecks ? Promise.resolve() : ctx.p1.waitForIceConnected(),
+        skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForIceConnected(),
+        skipInMeetingChecks ? Promise.resolve() : ctx.p3.waitForIceConnected(),
+        skipInMeetingChecks ? Promise.resolve() : ctx.p4.waitForIceConnected(),
         skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForRemoteStreams(3),
         skipInMeetingChecks ? Promise.resolve() : ctx.p3.waitForRemoteStreams(3),
         skipInMeetingChecks ? Promise.resolve() : ctx.p3.waitForRemoteStreams(3)
@@ -182,6 +189,8 @@ export async function ensureTwoParticipants(ctx: IContext, options: IJoinOptions
     });
 
     await Promise.all([
+        skipInMeetingChecks ? Promise.resolve() : ctx.p1.waitForIceConnected(),
+        skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForIceConnected(),
         skipInMeetingChecks ? Promise.resolve() : ctx.p1.waitForRemoteStreams(1),
         skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForRemoteStreams(1)
     ]);
