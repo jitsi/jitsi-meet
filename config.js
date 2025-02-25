@@ -600,6 +600,7 @@ var config = {
     //     short: 2500,
     //     medium: 5000,
     //     long: 10000,
+    //     extraLong: 60000,
     // },
 
     // // Options for the recording limit notification.
@@ -1857,6 +1858,9 @@ var config = {
 
     // Hide login button on auth dialog, you may want to enable this if you are using JWT tokens to authenticate users
     // hideLoginButton: true,
+
+    // If true remove the tint foreground on focused user camera in filmstrip
+    // disableCameraTintForeground: false,
 };
 
 // Set the default values for JaaS customers

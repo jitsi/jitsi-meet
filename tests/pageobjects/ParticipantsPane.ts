@@ -107,13 +107,12 @@ export default class ParticipantsPane extends BasePageObject {
         }
 
         const participantId = await participantToUnmute.getEndpointId();
-        const participantItem = this.participant.driver.$(`#participant-item-${participantId}`);
 
-        await participantItem.waitForExist();
-        await participantItem.moveTo();
+        await this.selectParticipant(participantToUnmute);
+        await this.openParticipantContextMenu(participantToUnmute);
 
         const unmuteButton = this.participant.driver
-            .$(`button[data-testid="unmute-video-${participantId}"]`);
+            .$(`[data-testid="unmute-video-${participantId}"]`);
 
         await unmuteButton.waitForExist();
         await unmuteButton.click();
@@ -238,5 +237,17 @@ export default class ParticipantsPane extends BasePageObject {
 
         await rejectButton.waitForExist();
         await rejectButton.click();
+    }
+
+    /**
+     * Mutes the audio of a participant.
+     * @param participant
+     */
+    async muteAudio(participant: Participant) {
+        const participantId = await participant.getEndpointId();
+
+        await this.participant.driver.$(`#participant-item-${participantId}`).moveTo();
+
+        await this.participant.driver.$(`button[data-testid="mute-audio-${participantId}"]`).click();
     }
 }

@@ -15,6 +15,7 @@ import LargeVideo from '../pageobjects/LargeVideo';
 import LobbyScreen from '../pageobjects/LobbyScreen';
 import Notifications from '../pageobjects/Notifications';
 import ParticipantsPane from '../pageobjects/ParticipantsPane';
+import PasswordDialog from '../pageobjects/PasswordDialog';
 import PreJoinScreen from '../pageobjects/PreJoinScreen';
 import SecurityDialog from '../pageobjects/SecurityDialog';
 import SettingsDialog from '../pageobjects/SettingsDialog';
@@ -93,13 +94,31 @@ export class Participant {
     }
 
     /**
+     * A wrapper for <tt>this.driver.execute</tt> that would catch errors, print them and throw them again.
+     *
+     * @param {string | ((...innerArgs: InnerArguments) => ReturnValue)} script - The script that will be executed.
+     * @param {any[]} args - The rest of the arguments.
+     * @returns {ReturnValue} - The result of the script.
+     */
+    async execute<ReturnValue, InnerArguments extends any[]>(
+            script: string | ((...innerArgs: InnerArguments) => ReturnValue),
+            ...args: InnerArguments): Promise<ReturnValue> {
+        try {
+            return await this.driver.execute(script, ...args);
+        } catch (error) {
+            console.error('An error occured while trying to execute a script: ', error);
+            throw error;
+        }
+    }
+
+    /**
      * Returns participant endpoint ID.
      *
      * @returns {Promise<string>} The endpoint ID.
      */
     async getEndpointId(): Promise<string> {
         if (!this._endpointId) {
-            this._endpointId = await this.driver.execute(() => { // eslint-disable-line arrow-body-style
+            this._endpointId = await this.execute(() => { // eslint-disable-line arrow-body-style
                 return APP?.conference?.getMyUserId();
             });
         }
@@ -202,22 +221,21 @@ export class Participant {
             await this.waitToJoinMUC();
         }
 
-        await this.postLoadProcess(options.skipInMeetingChecks);
+        await this.postLoadProcess();
     }
 
     /**
      * Loads stuff after the page loads.
      *
-     * @param {boolean} skipInMeetingChecks - Whether to skip in meeting checks.
      * @returns {Promise<void>}
      * @private
      */
-    private async postLoadProcess(skipInMeetingChecks = false): Promise<void> {
+    private async postLoadProcess(): Promise<void> {
         const driver = this.driver;
 
         const parallel = [];
 
-        parallel.push(driver.execute((name, sessionId, prefix) => {
+        parallel.push(this.execute((name, sessionId, prefix) => {
             APP?.UI?.dockToolbar(true);
 
             // disable keyframe animations (.fadeIn and .fadeOut classes)
@@ -242,15 +260,6 @@ export class Participant {
             }
         }, this._name, driver.sessionId, LOG_PREFIX));
 
-        if (skipInMeetingChecks) {
-            await Promise.allSettled(parallel);
-
-            return;
-        }
-
-        parallel.push(this.waitForIceConnected());
-        parallel.push(this.waitForSendReceiveData());
-
         await Promise.all(parallel);
     }
 
@@ -261,7 +270,7 @@ export class Participant {
      */
     async waitForPageToLoad(): Promise<void> {
         return this.driver.waitUntil(
-            () => this.driver.execute(() => document.readyState === 'complete'),
+            () => this.execute(() => document.readyState === 'complete'),
             {
                 timeout: 30_000, // 30 seconds
                 timeoutMsg: `Timeout waiting for Page Load Request to complete for ${this.name}.`
@@ -284,14 +293,14 @@ export class Participant {
      * Checks if the participant is in the meeting.
      */
     isInMuc() {
-        return this.driver.execute(() => typeof APP !== 'undefined' && APP.conference?.isJoined());
+        return this.execute(() => typeof APP !== 'undefined' && APP.conference?.isJoined());
     }
 
     /**
      * Checks if the participant is a moderator in the meeting.
      */
     async isModerator() {
-        return await this.driver.execute(() => typeof APP !== 'undefined'
+        return await this.execute(() => typeof APP !== 'undefined'
             && APP.store?.getState()['features/base/participants']?.local?.role === 'moderator');
     }
 
@@ -299,7 +308,7 @@ export class Participant {
      * Checks if the meeting supports breakout rooms.
      */
     async isBreakoutRoomsSupported() {
-        return await this.driver.execute(() => typeof APP !== 'undefined'
+        return await this.execute(() => typeof APP !== 'undefined'
             && APP.store?.getState()['features/base/conference'].conference?.getBreakoutRooms()?.isSupported());
     }
 
@@ -307,7 +316,7 @@ export class Participant {
      * Checks if the participant is in breakout room.
      */
     async isInBreakoutRoom() {
-        return await this.driver.execute(() => typeof APP !== 'undefined'
+        return await this.execute(() => typeof APP !== 'undefined'
             && APP.store?.getState()['features/base/conference'].conference?.getBreakoutRooms()?.isBreakoutRoom());
     }
 
@@ -331,13 +340,24 @@ export class Participant {
      *
      * @returns {Promise<void>}
      */
-    async waitForIceConnected(): Promise<void> {
-        const driver = this.driver;
-
-        return driver.waitUntil(() =>
-            driver.execute(() => APP?.conference?.getConnectionState() === 'connected'), {
+    waitForIceConnected(): Promise<void> {
+        return this.driver.waitUntil(() =>
+            this.execute(() => APP?.conference?.getConnectionState() === 'connected'), {
             timeout: 15_000,
             timeoutMsg: `expected ICE to be connected for 15s for ${this.name}`
+        });
+    }
+
+    /**
+     * Waits for ICE to get connected on the p2p connection.
+     *
+     * @returns {Promise<void>}
+     */
+    waitForP2PIceConnected(): Promise<void> {
+        return this.driver.waitUntil(() =>
+            this.execute(() => APP?.conference?.getP2PConnectionState() === 'connected'), {
+            timeout: 15_000,
+            timeoutMsg: `expected P2P ICE to be connected for 15s for ${this.name}`
         });
     }
 
@@ -361,7 +381,7 @@ export class Participant {
         const lMsg = msg ?? `expected to ${
             checkSend && checkReceive ? 'receive/send' : checkSend ? 'send' : 'receive'} data in 15s for ${this.name}`;
 
-        return this.driver.waitUntil(() => this.driver.execute((pCheckSend: boolean, pCheckReceive: boolean) => {
+        return this.driver.waitUntil(() => this.execute((pCheckSend: boolean, pCheckReceive: boolean) => {
             const stats = APP?.conference?.getStats();
             const bitrateMap = stats?.bitrate || {};
             const rtpStats = {
@@ -382,11 +402,11 @@ export class Participant {
      * @param {number} number - The number of remote streams to wait for.
      * @returns {Promise<void>}
      */
-    waitForRemoteStreams(number: number): Promise<void> {
-        const driver = this.driver;
-
-        return driver.waitUntil(() =>
-            driver.execute(count => (APP?.conference?.getNumberOfParticipantsWithTracks() ?? -1) >= count, number), {
+    async waitForRemoteStreams(number: number): Promise<void> {
+        return await this.driver.waitUntil(async () => await this.execute(
+            count => (APP?.conference?.getNumberOfParticipantsWithTracks() ?? -1) >= count,
+            number
+        ), {
             timeout: 15_000,
             timeoutMsg: `expected number of remote streams:${number} in 15s for ${this.name}`
         });
@@ -400,10 +420,8 @@ export class Participant {
      * @returns {Promise<void>}
      */
     waitForParticipants(number: number, msg?: string): Promise<void> {
-        const driver = this.driver;
-
-        return driver.waitUntil(
-            () => driver.execute(count => (APP?.conference?.listMembers()?.length ?? -1) === count, number),
+        return this.driver.waitUntil(
+            () => this.execute(count => (APP?.conference?.listMembers()?.length ?? -1) === count, number),
             {
                 timeout: 15_000,
                 timeoutMsg: msg || `not the expected participants ${number} in 15s for ${this.name}`
@@ -506,6 +524,13 @@ export class Participant {
     }
 
     /**
+     * Returns the password dialog.
+     */
+    getPasswordDialog(): PasswordDialog {
+        return new PasswordDialog(this);
+    }
+
+    /**
      * Returns the prejoin screen.
      */
     getPreJoinScreen(): PreJoinScreen {
@@ -554,7 +579,7 @@ export class Participant {
         }
 
         // do a hangup, to make sure unavailable presence is sent
-        await this.driver.execute(() => typeof APP !== 'undefined' && APP.conference?.hangup());
+        await this.execute(() => typeof APP !== 'undefined' && APP.conference?.hangup());
 
         // let's give it some time to leave the muc, we redirect after hangup so we should wait for the
         // change of url
@@ -695,7 +720,7 @@ export class Participant {
     async getRemoteAudioLevel(p: Participant) {
         const jid = await p.getEndpointId();
 
-        return await this.driver.execute(id => {
+        return await this.execute(id => {
             const level = APP?.conference?.getPeerSSRCAudioLevel(id);
 
             return level ? level.toFixed(2) : null;
@@ -767,26 +792,54 @@ export class Participant {
     /**
      * Waits for remote video state - receiving and displayed.
      * @param endpointId
+     * @param reverse
      */
-    async waitForRemoteVideo(endpointId: string) {
-        await this.driver.waitUntil(async () =>
-            await this.driver.execute(epId => JitsiMeetJS.app.testing.isRemoteVideoReceived(`${epId}`),
-                endpointId) && await this.driver.$(
-                `//span[@id="participant_${endpointId}" and contains(@class, "display-video")]`).isExisting(), {
-            timeout: 15_000,
-            timeoutMsg: `expected remote video for ${endpointId} to be received 15s by ${this.name}`
-        });
+    async waitForRemoteVideo(endpointId: string, reverse = false) {
+        if (reverse) {
+            await this.driver.waitUntil(async () =>
+                !await this.execute(epId => JitsiMeetJS.app.testing.isRemoteVideoReceived(`${epId}`),
+                    endpointId) && !await this.driver.$(
+                    `//span[@id="participant_${endpointId}" and contains(@class, "display-video")]`).isExisting(), {
+                timeout: 15_000,
+                timeoutMsg: `expected remote video for ${endpointId} to not be received 15s by ${this.displayName}`
+            });
+        } else {
+            await this.driver.waitUntil(async () =>
+                await this.execute(epId => JitsiMeetJS.app.testing.isRemoteVideoReceived(`${epId}`),
+                    endpointId) && await this.driver.$(
+                    `//span[@id="participant_${endpointId}" and contains(@class, "display-video")]`).isExisting(), {
+                timeout: 15_000,
+                timeoutMsg: `expected remote video for ${endpointId} to be received 15s by ${this.displayName}`
+            });
+        }
     }
 
     /**
      * Waits for ninja icon to be displayed.
-     * @param endpointId
+     * @param endpointId When no endpoint id is passed we check for any ninja icon.
      */
-    async waitForNinjaIcon(endpointId: string) {
-        await this.driver.$(`//span[@id='participant_${endpointId}']//span[@class='connection_ninja']`)
-            .waitForDisplayed({
-                timeout: 15_000,
-                timeoutMsg: `expected ninja icon for ${endpointId} to be displayed in 15s by ${this.name}`
-            });
+    async waitForNinjaIcon(endpointId?: string) {
+        if (endpointId) {
+            await this.driver.$(`//span[@id='participant_${endpointId}']//span[@class='connection_ninja']`)
+                .waitForDisplayed({
+                    timeout: 15_000,
+                    timeoutMsg: `expected ninja icon for ${endpointId} to be displayed in 15s by ${this.name}`
+                });
+        } else {
+            await this.driver.$('//span[contains(@class,"videocontainer")]//span[contains(@class,"connection_ninja")]')
+                .waitForDisplayed({
+                    timeout: 5_000,
+                    timeoutMsg: `expected ninja icon to be displayed in 5s by ${this.displayName}`
+                });
+        }
+    }
+
+    /**
+     * Waits for dominant speaker icon to appear in remote video of a participant.
+     * @param endpointId the endpoint ID of the participant whose dominant speaker icon status will be checked.
+     */
+    waitForDominantSpeaker(endpointId: string) {
+        return this.driver.$(`//span[@id="participant_${endpointId}" and contains(@class, "dominant-speaker")]`)
+            .waitForDisplayed({ timeout: 5_000 });
     }
 }

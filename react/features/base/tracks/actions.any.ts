@@ -838,16 +838,6 @@ export function toggleCamera() {
         const localVideoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
         const currentFacingMode = localVideoTrack.getCameraFacingMode();
         const { localFlipX } = state['features/base/settings'];
-
-        /**
-         * FIXME: Ideally, we should be dispatching {@code replaceLocalTrack} here,
-         * but it seems to not trigger the re-rendering of the local video on Chrome;
-         * could be due to a plan B vs unified plan issue. Therefore, we use the legacy
-         * method defined in conference.js that manually takes care of updating the local
-         * video as well.
-         */
-        await APP.conference.useVideoStream(null);
-
         const targetFacingMode = currentFacingMode === CAMERA_FACING_MODE.USER
             ? CAMERA_FACING_MODE.ENVIRONMENT
             : CAMERA_FACING_MODE.USER;
@@ -857,7 +847,6 @@ export function toggleCamera() {
 
         const newVideoTrack = await createLocalTrack('video', null, null, { facingMode: targetFacingMode });
 
-        // FIXME: See above.
-        await APP.conference.useVideoStream(newVideoTrack);
+        dispatch(replaceLocalTrack(localVideoTrack, newVideoTrack));
     };
 }

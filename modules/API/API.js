@@ -492,7 +492,8 @@ function initCommands() {
             APP.store.dispatch(toggleRequestingSubtitles());
         },
         'set-subtitles': (enabled, displaySubtitles, language) => {
-            APP.store.dispatch(setRequestingSubtitles(enabled, displaySubtitles, language));
+            APP.store.dispatch(setRequestingSubtitles(
+                enabled, displaySubtitles, language ? `translation-languages:${language}` : null));
         },
         'toggle-tile-view': () => {
             sendAnalytics(createApiEvent('tile-view.toggled'));

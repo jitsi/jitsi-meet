@@ -5,6 +5,7 @@ export const NOTIFICATION_TIMEOUT = {
     SHORT: 2500,
     MEDIUM: 5000,
     LONG: 10000,
+    EXTRA_LONG: 60000,
     STICKY: false
 };
 
@@ -12,6 +13,7 @@ export const NOTIFICATION_TIMEOUT = {
  * Notification timeout type.
  */
 export enum NOTIFICATION_TIMEOUT_TYPE {
+    EXTRA_LONG = 'extra_long',
     LONG = 'long',
     MEDIUM = 'medium',
     SHORT = 'short',

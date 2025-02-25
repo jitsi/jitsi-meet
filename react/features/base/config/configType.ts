@@ -292,6 +292,7 @@ export interface IConfig {
     disableAddingBackgroundImages?: boolean;
     disableAudioLevels?: boolean;
     disableBeforeUnloadHandlers?: boolean;
+    disableCameraTintForeground?: boolean;
     disableChatSmileys?: boolean;
     disableDeepLinking?: boolean;
     disableFilmstripAutohiding?: boolean;
@@ -479,6 +480,7 @@ export interface IConfig {
     noiseSuppression?: INoiseSuppressionConfig;
     noticeMessage?: string;
     notificationTimeouts?: {
+        extraLong?: number;
         long?: number;
         medium?: number;
         short?: number;

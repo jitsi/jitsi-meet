@@ -4,7 +4,7 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
 import { APP_WILL_MOUNT } from '../app/actionTypes';
-import { CONFERENCE_JOINED } from '../conference/actionTypes';
+import { CONFERENCE_FAILED, CONFERENCE_JOINED } from '../conference/actionTypes';
 import { getCurrentConference } from '../conference/functions';
 import { SET_CONFIG } from '../config/actionTypes';
 import JitsiMeetJS, {
@@ -34,6 +34,15 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
+
+    case CONFERENCE_FAILED: {
+        const result = next(action);
+        const { logCollector } = store.getState()['features/base/logging'];
+
+        logCollector?.flush();
+
+        return result;
+    }
 
     case LIB_WILL_INIT:
         return _libWillInit(store, next, action);

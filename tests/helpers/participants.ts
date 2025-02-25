@@ -45,12 +45,31 @@ export async function ensureThreeParticipants(ctx: IContext, options: IJoinOptio
         })
     ]);
 
-    const { skipInMeetingChecks } = options;
+    if (options.skipInMeetingChecks) {
+        return Promise.resolve();
+    }
 
     await Promise.all([
-        skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForRemoteStreams(2),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p3.waitForRemoteStreams(2)
+        ctx.p1.waitForIceConnected(),
+        ctx.p2.waitForIceConnected(),
+        ctx.p3.waitForIceConnected()
     ]);
+    await Promise.all([
+        ctx.p1.waitForSendReceiveData().then(() => ctx.p1.waitForRemoteStreams(1)),
+        ctx.p2.waitForSendReceiveData().then(() => ctx.p2.waitForRemoteStreams(1)),
+        ctx.p3.waitForSendReceiveData().then(() => ctx.p3.waitForRemoteStreams(1)),
+    ]);
+}
+
+/**
+ * Creates the first participant instance or prepares one for re-joining.
+ *
+ * @param {Object} ctx - The context.
+ * @param {IJoinOptions} options - The options to use when joining the participant.
+ * @returns {Promise<void>}
+ */
+export function joinFirstParticipant(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
+    return joinTheModeratorAsP1(ctx, options);
 }
 
 /**
@@ -117,12 +136,21 @@ export async function ensureFourParticipants(ctx: IContext, options: IJoinOption
         })
     ]);
 
-    const { skipInMeetingChecks } = options;
+    if (options.skipInMeetingChecks) {
+        return Promise.resolve();
+    }
 
     await Promise.all([
-        skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForRemoteStreams(3),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p3.waitForRemoteStreams(3),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p3.waitForRemoteStreams(3)
+        ctx.p1.waitForIceConnected(),
+        ctx.p2.waitForIceConnected(),
+        ctx.p3.waitForIceConnected(),
+        ctx.p4.waitForIceConnected()
+    ]);
+    await Promise.all([
+        ctx.p1.waitForSendReceiveData().then(() => ctx.p1.waitForRemoteStreams(1)),
+        ctx.p2.waitForSendReceiveData().then(() => ctx.p2.waitForRemoteStreams(1)),
+        ctx.p3.waitForSendReceiveData().then(() => ctx.p3.waitForRemoteStreams(1)),
+        ctx.p4.waitForSendReceiveData().then(() => ctx.p4.waitForRemoteStreams(1)),
     ]);
 }
 
@@ -147,8 +175,7 @@ async function joinTheModeratorAsP1(ctx: IContext, options?: IJoinOptions) {
         ctx.p1 = p;
     }, {
         displayName: p1DisplayName,
-        ...options,
-        skipInMeetingChecks: true
+        ...options
     }, token);
 }
 
@@ -161,17 +188,24 @@ async function joinTheModeratorAsP1(ctx: IContext, options?: IJoinOptions) {
 export async function ensureTwoParticipants(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
     await joinTheModeratorAsP1(ctx, options);
 
-    const { skipInMeetingChecks } = options;
+    await _joinParticipant('participant2', ctx.p2, p => {
+        ctx.p2 = p;
+    }, {
+        displayName: P2_DISPLAY_NAME,
+        ...options
+    });
+
+    if (options.skipInMeetingChecks) {
+        return Promise.resolve();
+    }
 
     await Promise.all([
-        _joinParticipant('participant2', ctx.p2, p => {
-            ctx.p2 = p;
-        }, {
-            displayName: P2_DISPLAY_NAME,
-            ...options
-        }),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p1.waitForRemoteStreams(1),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForRemoteStreams(1)
+        ctx.p1.waitForIceConnected(),
+        ctx.p2.waitForIceConnected()
+    ]);
+    await Promise.all([
+        ctx.p1.waitForSendReceiveData().then(() => ctx.p1.waitForRemoteStreams(1)),
+        ctx.p2.waitForSendReceiveData().then(() => ctx.p2.waitForRemoteStreams(1))
     ]);
 }
 
@@ -241,13 +275,15 @@ export async function muteAudioAndCheck(testee: Participant, observer: Participa
  * @param observer
  */
 export async function unmuteAudioAndCheck(testee: Participant, observer: Participant) {
+    await testee.getNotifications().closeAskToUnmuteNotification(true);
+    await testee.getNotifications().closeAVModerationMutedNotification(true);
     await testee.getToolbar().clickAudioUnmuteButton();
     await testee.getFilmstrip().assertAudioMuteIconIsDisplayed(testee, true);
     await observer.getFilmstrip().assertAudioMuteIconIsDisplayed(testee, true);
 }
 
 /**
- * Starts the video on testee and check on observer.
+ * Stop the video on testee and check on observer.
  * @param testee
  * @param observer
  */
@@ -256,6 +292,18 @@ export async function unmuteVideoAndCheck(testee: Participant, observer: Partici
 
     await testee.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee, true);
     await observer.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee, true);
+}
+
+/**
+ * Starts the video on testee and check on observer.
+ * @param testee
+ * @param observer
+ */
+export async function muteVideoAndCheck(testee: Participant, observer: Participant): Promise<void> {
+    await testee.getToolbar().clickVideoMuteButton();
+
+    await testee.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee);
+    await observer.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee);
 }
 
 /**
@@ -333,4 +381,24 @@ export async function checkSubject(participant: Participant, subject: string) {
     const txt = await localTile.getText();
 
     expect(txt.startsWith(subject)).toBe(true);
+}
+
+/**
+ * Check if a screensharing tile is displayed on the observer.
+ * Expects there was already a video by this participant and screen sharing will be the second video `-v1`.
+ */
+export async function checkForScreensharingTile(sharer: Participant, observer: Participant, reverse = false) {
+    await observer.driver.$(`//span[@id='participant_${await sharer.getEndpointId()}-v1']`).waitForDisplayed({
+        timeout: 3_000,
+        reverse
+    });
+}
+
+/**
+ * Hangs up all participants (p1, p2, p3 and p4)
+ * @returns {Promise<void>}
+ */
+export function hangupAllParticipants() {
+    return Promise.all([ ctx.p1?.hangup(), ctx.p2?.hangup(), ctx.p3?.hangup(), ctx.p4?.hangup() ]
+        .map(p => p ?? Promise.resolve()));
 }

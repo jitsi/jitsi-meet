@@ -1,5 +1,10 @@
 import { P1_DISPLAY_NAME, P3_DISPLAY_NAME, Participant } from '../../helpers/Participant';
-import { ensureOneParticipant, ensureThreeParticipants, ensureTwoParticipants } from '../../helpers/participants';
+import {
+    ensureOneParticipant,
+    ensureThreeParticipants,
+    ensureTwoParticipants,
+    hangupAllParticipants
+} from '../../helpers/participants';
 import type { IJoinOptions } from '../../helpers/types';
 import type PreMeetingScreen from '../../pageobjects/PreMeetingScreen';
 
@@ -7,7 +12,7 @@ describe('Lobby', () => {
     it('joining the meeting', async () => {
         await ensureOneParticipant(ctx);
 
-        if (!await ctx.p1.driver.execute(() => APP.conference._room.isLobbySupported())) {
+        if (!await ctx.p1.execute(() => APP.conference._room.isLobbySupported())) {
             ctx.skipSuiteTests = true;
         }
     });
@@ -174,14 +179,13 @@ describe('Lobby', () => {
         await enableLobby();
         await enterLobby(p1);
 
-        // WebParticipant participant1 = getParticipant1();
         const p1SecurityDialog = p1.getSecurityDialog();
 
         await p1.getToolbar().clickSecurityButton();
         await p1SecurityDialog.waitForDisplay();
 
         await p1SecurityDialog.toggleLobby();
-        await p1SecurityDialog.waitForLobbyEnabled();
+        await p1SecurityDialog.waitForLobbyEnabled(true);
 
         const { p3 } = ctx;
 
@@ -191,7 +195,7 @@ describe('Lobby', () => {
     });
 
     it('change of moderators in lobby', async () => {
-        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
+        await hangupAllParticipants();
 
         await ensureTwoParticipants(ctx);
 
@@ -219,7 +223,7 @@ describe('Lobby', () => {
         // here the important check is whether the moderator sees the knocking participant
         await enterLobby(p2, false);
 
-        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
+        await hangupAllParticipants();
     });
 
     it('shared password', async () => {
@@ -263,8 +267,7 @@ describe('Lobby', () => {
     });
 
     it('enable with more than two participants', async () => {
-        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
-
+        await hangupAllParticipants();
 
         await ensureThreeParticipants(ctx);
 

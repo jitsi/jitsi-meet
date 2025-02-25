@@ -1,7 +1,12 @@
 import type { ChainablePromiseElement } from 'webdriverio';
 
 import type { Participant } from '../../helpers/Participant';
-import { checkSubject, ensureThreeParticipants, ensureTwoParticipants } from '../../helpers/participants';
+import {
+    checkSubject,
+    ensureThreeParticipants,
+    ensureTwoParticipants,
+    hangupAllParticipants
+} from '../../helpers/participants';
 
 const MAIN_ROOM_NAME = 'Main room';
 const BREAKOUT_ROOMS_LIST_ID = 'breakout-rooms-list';
@@ -309,7 +314,7 @@ describe('BreakoutRooms', () => {
     });
 
     it('send participants to breakout room', async () => {
-        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
+        await hangupAllParticipants();
 
         // because the participants rejoin so fast, the meeting is not properly ended,
         // so the previous breakout rooms would still be there.

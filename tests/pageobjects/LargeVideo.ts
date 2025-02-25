@@ -39,16 +39,15 @@ export default class LargeVideo extends BasePageObject {
      * Returns resource part of the JID of the user who is currently displayed in the large video area.
      */
     getResource() {
-        return this.participant.driver.execute(() => APP.UI.getLargeVideoID());
+        return this.participant.execute(() => APP?.UI?.getLargeVideoID());
     }
 
     /**
      * Returns the source of the large video currently shown.
      */
     getId() {
-        return this.participant.driver.execute('return document.getElementById("largeVideo").srcObject.id');
+        return this.participant.execute(() => document.getElementById('largeVideo')?.srcObject?.id);
     }
-
 
     /**
      * Checks if the large video is playing or not.

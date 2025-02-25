@@ -1,6 +1,7 @@
 import {
     ensureOneParticipant,
     ensureTwoParticipants,
+    hangupAllParticipants,
     joinSecondParticipant,
     joinThirdParticipant,
     unmuteVideoAndCheck
@@ -37,7 +38,6 @@ describe('StartMuted', () => {
         await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
         await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2);
         await p1.waitForAudioMuted(p2, true);
-
 
         await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p1, true);
         await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1, true);
@@ -145,7 +145,6 @@ describe('StartMuted', () => {
 
         const { p1, p2 } = ctx;
 
-
         await p1.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2);
         await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1);
 
@@ -155,7 +154,6 @@ describe('StartMuted', () => {
         ]);
 
         await unmuteVideoAndCheck(p2, p1);
-
         await p1.getLargeVideo().assertPlaying();
     });
 
@@ -236,10 +234,8 @@ describe('StartMuted', () => {
         const { p3 } = ctx;
 
         // Unmute p2 and check if its video is being received by p1 and p3.
-        await p2.getToolbar().clickVideoUnmuteButton();
-
+        await unmuteVideoAndCheck(p2, p3);
         await p1.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2, true);
-        await p3.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2, true);
 
         // Mute p2's video just before p3 leaves.
         await p2.getToolbar().clickVideoMuteButton();
@@ -255,11 +251,3 @@ describe('StartMuted', () => {
         await p1.getLargeVideo().assertPlaying();
     });
 });
-
-/**
- * Hangs up all participants (p1, p2 and p3)
- * @returns {Promise<void>}
- */
-function hangupAllParticipants() {
-    return Promise.all([ ctx.p1?.hangup(), ctx.p2?.hangup(), ctx.p3?.hangup() ]);
-}
