@@ -596,9 +596,13 @@ function initCommands() {
          * Defaults to "normal" if not provided.
          * @param { string } arg.timeout - Timeout type, either `short`, `medium`, `long` or `sticky`.
          * Defaults to "short" if not provided.
+         * @param { Array<Object> } arg.customActions - An array of custom actions to be displayed in the notification.
+         * Each object should have a `label` and a `uuid` property. It should be used along a listener
+         * for the `customNotificationActionTriggered` event to handle the custom action.
          * @returns {void}
          */
         'show-notification': ({
+            customActions = [],
             title,
             description,
             uid,
@@ -620,7 +624,15 @@ function initCommands() {
                 return;
             }
 
+            const handlers = customActions.map(({ uuid }) => () => {
+                APP.API.notifyCustomNotificationActionTriggered(uuid);
+            });
+
+            const keys = customActions.map(({ label }) => label);
+
             APP.store.dispatch(showNotification({
+                customActionHandler: handlers,
+                customActionNameKey: keys,
                 uid,
                 title,
                 description,
@@ -1498,6 +1510,21 @@ class API {
             name: 'face-landmark-detected',
             faceBox,
             faceExpression
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that a custom notification action has been triggered.
+     *
+     * @param {string} actionUuid - The UUID of the action that has been triggered.
+     * @returns {void}
+    */
+    notifyCustomNotificationActionTriggered(actionUuid) {
+        this._sendEvent({
+            name: 'custom-notification-action-triggered',
+            data: {
+                id: actionUuid
+            }
         });
     }
 
