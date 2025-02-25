@@ -195,7 +195,9 @@ export class Participant {
             // @ts-ignore
             url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${ctx.roomName}"`;
 
-            if (baseUrl.pathname.length > 1) {
+            if (process.env.IFRAME_TENANT) {
+                url = `${url}&tenant="${process.env.IFRAME_TENANT}"`;
+            } else if (baseUrl.pathname.length > 1) {
                 // remove leading slash
                 url = `${url}&tenant="${baseUrl.pathname.substring(1)}"`;
             }
