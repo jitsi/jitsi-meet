@@ -208,6 +208,10 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }));
 
         globalAny.ctx.roomName = `jitsimeettorture-${crypto.randomUUID()}`;
+        if (process.env.ROOM_NAME_SUFFIX) {
+            globalAny.ctx.roomName += `_${process.env.ROOM_NAME_SUFFIX.trim()}`;
+        }
+
         globalAny.ctx.jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
         globalAny.ctx.jwtKid = process.env.JWT_KID;
     },
