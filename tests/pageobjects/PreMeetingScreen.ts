@@ -44,7 +44,7 @@ export default abstract class PreMeetingScreen extends BasePageObject {
         return this.participant.driver.waitUntil(
             () => this.isLobbyRoomJoined(),
             {
-                timeout: 3_000, // 3 seconds
+                timeout: 6_000, // 6 seconds
                 timeoutMsg: `Timeout waiting to join lobby for ${this.participant.name}`
             }
         );

@@ -60,6 +60,30 @@ export class Participant {
         analytics: {
             disabled: true
         },
+
+        // if there is a video file to play, use deployment config,
+        // otherwise use lower resolution to avoid high CPU usage
+        constraints: process.env.VIDEO_CAPTURE_FILE ? undefined : {
+            video: {
+                height: {
+                    ideal: 360,
+                    max: 360,
+                    min: 180
+                },
+
+                // @ts-ignore
+                width: {
+                    ideal: 640,
+                    max: 640,
+                    min: 320
+                },
+                frameRate: {
+                    max: 30
+                }
+            }
+        },
+        resolution: process.env.VIDEO_CAPTURE_FILE ? undefined : 360,
+
         requireDisplayName: false,
         testing: {
             testMode: true
@@ -195,7 +219,9 @@ export class Participant {
             // @ts-ignore
             url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${ctx.roomName}"`;
 
-            if (baseUrl.pathname.length > 1) {
+            if (process.env.IFRAME_TENANT) {
+                url = `${url}&tenant="${process.env.IFRAME_TENANT}"`;
+            } else if (baseUrl.pathname.length > 1) {
                 // remove leading slash
                 url = `${url}&tenant="${baseUrl.pathname.substring(1)}"`;
             }
@@ -206,8 +232,15 @@ export class Participant {
 
         await this.driver.setTimeout({ 'pageLoad': 30000 });
 
+        let urlToLoad = url.startsWith('/') ? url.substring(1) : url;
+
+        if (options.forceGenerateToken && !ctx.iframeAPI && ctx.isJaasAvailable() && process.env.IFRAME_TENANT) {
+            // This to enables tests like invite, which can force using the jaas auth instead of the provided token
+            urlToLoad = `/${process.env.IFRAME_TENANT}/${urlToLoad}`;
+        }
+
         // drop the leading '/' so we can use the tenant if any
-        await this.driver.url(url.startsWith('/') ? url.substring(1) : url);
+        await this.driver.url(urlToLoad);
 
         await this.waitForPageToLoad();
 
