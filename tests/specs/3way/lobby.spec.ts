@@ -195,6 +195,10 @@ describe('Lobby', () => {
     });
 
     it('change of moderators in lobby', async () => {
+        // no moderator switching if jaas is available
+        if (ctx.isJaasAvailable()) {
+            return;
+        }
         await hangupAllParticipants();
 
         await ensureTwoParticipants(ctx);
@@ -222,11 +226,11 @@ describe('Lobby', () => {
 
         // here the important check is whether the moderator sees the knocking participant
         await enterLobby(p2, false);
-
-        await hangupAllParticipants();
     });
 
     it('shared password', async () => {
+        await hangupAllParticipants();
+
         await ensureTwoParticipants(ctx);
 
         const { p1 } = ctx;
@@ -240,7 +244,7 @@ describe('Lobby', () => {
 
         expect(await p1SecurityDialog.isLocked()).toBe(false);
 
-        const roomPasscode = String(Math.random() * 1_000);
+        const roomPasscode = String(Math.trunc(Math.random() * 1_000_000));
 
         await p1SecurityDialog.addPassword(roomPasscode);
 
@@ -283,6 +287,10 @@ describe('Lobby', () => {
     });
 
     it('moderator leaves while lobby enabled', async () => {
+        // no moderator switching if jaas is available
+        if (ctx.isJaasAvailable()) {
+            return;
+        }
         const { p1, p2, p3 } = ctx;
 
         await p3.hangup();
@@ -302,7 +310,7 @@ describe('Lobby', () => {
     });
 
     it('reject and approve in pre-join', async () => {
-        await ctx.p2.hangup();
+        await hangupAllParticipants();
 
         await ensureTwoParticipants(ctx);
         await enableLobby();

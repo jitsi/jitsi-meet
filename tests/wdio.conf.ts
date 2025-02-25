@@ -194,7 +194,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
             // setup keepalive
             globalAny.ctx.keepAlive.push(setInterval(async () => {
-                await bInstance.execute(() => console.log('keep-alive'));
+                await bInstance.execute(() => console.log(`${new Date().toISOString()} keep-alive`));
             }, 20_000));
 
             if (bInstance.isFirefox) {
@@ -208,8 +208,13 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }));
 
         globalAny.ctx.roomName = `jitsimeettorture-${crypto.randomUUID()}`;
+        if (process.env.ROOM_NAME_SUFFIX) {
+            globalAny.ctx.roomName += `_${process.env.ROOM_NAME_SUFFIX.trim()}`;
+        }
+
         globalAny.ctx.jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
         globalAny.ctx.jwtKid = process.env.JWT_KID;
+        globalAny.ctx.isJaasAvailable = () => globalAny.ctx.jwtKid?.startsWith('vpaas-magic-cookie-');
     },
 
     after() {
