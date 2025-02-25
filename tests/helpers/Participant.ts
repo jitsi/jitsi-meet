@@ -221,17 +221,16 @@ export class Participant {
             await this.waitToJoinMUC();
         }
 
-        await this.postLoadProcess(options.skipInMeetingChecks);
+        await this.postLoadProcess();
     }
 
     /**
      * Loads stuff after the page loads.
      *
-     * @param {boolean} skipInMeetingChecks - Whether to skip in meeting checks.
      * @returns {Promise<void>}
      * @private
      */
-    private async postLoadProcess(skipInMeetingChecks = false): Promise<void> {
+    private async postLoadProcess(): Promise<void> {
         const driver = this.driver;
 
         const parallel = [];
@@ -260,15 +259,6 @@ export class Participant {
                 document.querySelector('.video_blurred_container').style.display = 'none';
             }
         }, this._name, driver.sessionId, LOG_PREFIX));
-
-        if (skipInMeetingChecks) {
-            await Promise.allSettled(parallel);
-
-            return;
-        }
-
-        parallel.push(this.waitForIceConnected());
-        parallel.push(this.waitForSendReceiveData());
 
         await Promise.all(parallel);
     }
