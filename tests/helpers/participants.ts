@@ -45,17 +45,19 @@ export async function ensureThreeParticipants(ctx: IContext, options: IJoinOptio
         })
     ]);
 
-    const { skipInMeetingChecks } = options;
+    if (options.skipInMeetingChecks) {
+        return Promise.resolve();
+    }
 
     await Promise.all([
-        skipInMeetingChecks ? Promise.resolve() : ctx.p1.waitForIceConnected(),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForIceConnected(),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p3.waitForIceConnected(),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p1.waitForSendReceiveData(),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForSendReceiveData(),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p3.waitForSendReceiveData(),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForRemoteStreams(2),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p3.waitForRemoteStreams(2)
+        ctx.p1.waitForIceConnected(),
+        ctx.p2.waitForIceConnected(),
+        ctx.p3.waitForIceConnected()
+    ]);
+    await Promise.all([
+        ctx.p1.waitForSendReceiveData().then(() => ctx.p1.waitForRemoteStreams(1)),
+        ctx.p2.waitForSendReceiveData().then(() => ctx.p2.waitForRemoteStreams(1)),
+        ctx.p3.waitForSendReceiveData().then(() => ctx.p3.waitForRemoteStreams(1)),
     ]);
 }
 
@@ -134,20 +136,21 @@ export async function ensureFourParticipants(ctx: IContext, options: IJoinOption
         })
     ]);
 
-    const { skipInMeetingChecks } = options;
+    if (options.skipInMeetingChecks) {
+        return Promise.resolve();
+    }
 
     await Promise.all([
-        skipInMeetingChecks ? Promise.resolve() : ctx.p1.waitForIceConnected(),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForIceConnected(),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p3.waitForIceConnected(),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p4.waitForIceConnected(),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p1.waitForSendReceiveData(),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForSendReceiveData(),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p3.waitForSendReceiveData(),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p4.waitForSendReceiveData(),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForRemoteStreams(3),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p3.waitForRemoteStreams(3),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p3.waitForRemoteStreams(3)
+        ctx.p1.waitForIceConnected(),
+        ctx.p2.waitForIceConnected(),
+        ctx.p3.waitForIceConnected(),
+        ctx.p4.waitForIceConnected()
+    ]);
+    await Promise.all([
+        ctx.p1.waitForSendReceiveData().then(() => ctx.p1.waitForRemoteStreams(1)),
+        ctx.p2.waitForSendReceiveData().then(() => ctx.p2.waitForRemoteStreams(1)),
+        ctx.p3.waitForSendReceiveData().then(() => ctx.p3.waitForRemoteStreams(1)),
+        ctx.p4.waitForSendReceiveData().then(() => ctx.p4.waitForRemoteStreams(1)),
     ]);
 }
 
@@ -185,8 +188,6 @@ async function joinTheModeratorAsP1(ctx: IContext, options?: IJoinOptions) {
 export async function ensureTwoParticipants(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
     await joinTheModeratorAsP1(ctx, options);
 
-    const { skipInMeetingChecks } = options;
-
     await _joinParticipant('participant2', ctx.p2, p => {
         ctx.p2 = p;
     }, {
@@ -194,13 +195,17 @@ export async function ensureTwoParticipants(ctx: IContext, options: IJoinOptions
         ...options
     });
 
+    if (options.skipInMeetingChecks) {
+        return Promise.resolve();
+    }
+
     await Promise.all([
-        skipInMeetingChecks ? Promise.resolve() : ctx.p1.waitForIceConnected(),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForIceConnected(),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p1.waitForSendReceiveData(),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForSendReceiveData(),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p1.waitForRemoteStreams(1),
-        skipInMeetingChecks ? Promise.resolve() : ctx.p2.waitForRemoteStreams(1)
+        ctx.p1.waitForIceConnected(),
+        ctx.p2.waitForIceConnected()
+    ]);
+    await Promise.all([
+        ctx.p1.waitForSendReceiveData().then(() => ctx.p1.waitForRemoteStreams(1)),
+        ctx.p2.waitForSendReceiveData().then(() => ctx.p2.waitForRemoteStreams(1))
     ]);
 }
 
