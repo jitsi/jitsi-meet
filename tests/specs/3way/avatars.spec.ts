@@ -201,8 +201,7 @@ describe('Avatar', () => {
         await p1.hangup();
 
         await ensureTwoParticipants(ctx, {
-            skipDisplayName: true,
-            skipFirstModerator: true
+            skipDisplayName: true
         });
         p1 = ctx.p1;
 
