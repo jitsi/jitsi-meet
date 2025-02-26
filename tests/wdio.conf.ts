@@ -194,7 +194,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
             // setup keepalive
             globalAny.ctx.keepAlive.push(setInterval(async () => {
-                await bInstance.execute(() => console.log('keep-alive'));
+                await bInstance.execute(() => console.log(`${new Date().toISOString()} keep-alive`));
             }, 20_000));
 
             if (bInstance.isFirefox) {
