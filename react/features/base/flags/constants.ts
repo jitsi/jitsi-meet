@@ -5,6 +5,12 @@
 export const ADD_PEOPLE_ENABLED = 'add-people.enabled';
 
 /**
+ * Flag indicating if the audio device button should be displayed.
+ * Default: enabled (true).
+ */
+export const AUDIO_DEVICE_BUTTON_ENABLED = 'audio-device-button.enabled';
+
+/**
  * Flag indicating if the SDK should not require the audio focus.
  * Used by apps that do not use Jitsi audio.
  * Default: disabled (false).
@@ -239,9 +245,15 @@ export const SETTINGS_ENABLED = 'settings.enabled';
 
 /**
  * Flag indicating if tile view feature should be enabled.
- * Default: enabled.
+ * Default: enabled(true).
  */
 export const TILE_VIEW_ENABLED = 'tile-view.enabled';
+
+/**
+ * Flag indicating if the toggle camera button should be enabled
+ * Default: enabled(true).
+ */
+export const TOGGLE_CAMERA_BUTTON_ENABLED = 'toggle-camera-button.enabled';
 
 /**
  * Flag indicating if the toolbox should be always be visible
