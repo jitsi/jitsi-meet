@@ -24,6 +24,7 @@ import VideoQualityDialog from '../pageobjects/VideoQualityDialog';
 
 import { LOG_PREFIX, logInfo } from './browserLogger';
 import { IContext, IJoinOptions } from './types';
+import process from 'node:process';
 
 export const P1_DISPLAY_NAME = 'p1';
 export const P2_DISPLAY_NAME = 'p2';
@@ -60,6 +61,30 @@ export class Participant {
         analytics: {
             disabled: true
         },
+
+        // if there is a video file to play, use deployment config,
+        // otherwise use lower resolution to avoid high CPU usage
+        constraints: process.env.VIDEO_CAPTURE_FILE ? undefined : {
+            video: {
+                height: {
+                    ideal: 360,
+                    max: 360,
+                    min: 180
+                },
+
+                // @ts-ignore
+                width: {
+                    ideal: 640,
+                    max: 640,
+                    min: 320
+                },
+                frameRate: {
+                    max: 30
+                }
+            }
+        },
+        resolution: process.env.VIDEO_CAPTURE_FILE ? undefined : 360,
+
         requireDisplayName: false,
         testing: {
             testMode: true
