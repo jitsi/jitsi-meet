@@ -393,6 +393,9 @@ var config = {
     //    // showPrejoinWarning: true,
     //    // If true, the notification for recording start will display a link to download the cloud recording.
     //    // showRecordingLink: true,
+    //    // If true, mutes audio and video when a recording begins and displays a dialog
+    //    // explaining the effect of unmuting.
+    //    // requireConsent: true,
     // },
 
     // recordingService: {
