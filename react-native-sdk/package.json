@@ -1,6 +1,6 @@
 {
     "name": "@jitsi/react-native-sdk",
-    "version": "11.0.0",
+    "version": "11.0.4",
     "description": "React Native SDK for Jitsi Meet.",
     "main": "index.tsx",
     "license": "Apache-2.0",
