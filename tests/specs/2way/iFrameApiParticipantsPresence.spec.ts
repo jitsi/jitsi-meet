@@ -37,6 +37,13 @@ describe('Participants presence', () => {
 
         const { p1, p2, webhooksProxy } = ctx;
 
+        if (await p1.execute(() => config.disableIframeAPI)) {
+            // skip the test if iframeAPI is disabled
+            ctx.skipSuiteTests = true;
+
+            return;
+        }
+
         // let's populate endpoint ids
         await Promise.all([
             p1.getEndpointId(),
