@@ -5,7 +5,10 @@
             "signUp": "Sign up"
         },
         "preMeeting": {
-            "newMeeting": "New Meeting"
+            "newMeeting": "New Meeting",
+            "enterYourName": "Enter your name",
+            "joinMeeting": "Join Meeting",
+            "nameRequired": "A name is required"
         }
     },
     "addPeople": {

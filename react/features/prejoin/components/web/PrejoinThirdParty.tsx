@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { isVideoMutedByUser } from '../../../base/media/functions';
-import PreMeetingScreen from '../../../base/premeeting/components/web/PreMeetingScreen';
+import PreMeetingScreen from "../../../base/meet/views/PreMeeting/PreMeetingScreen";
 import { getLocalJitsiVideoTrack } from '../../../base/tracks/functions.web';
 import { isDeviceStatusVisible } from '../../functions';
 

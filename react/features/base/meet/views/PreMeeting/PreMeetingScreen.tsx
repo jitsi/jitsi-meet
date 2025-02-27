@@ -1,7 +1,7 @@
-import React, { ReactNode, useMemo } from "react";
+import React, { ReactNode, useMemo, useState } from "react";
 import { connect } from "react-redux";
 import { makeStyles } from "tss-react/mui";
-import { translate } from "../../../../base/i18n/functions";
+import { translate } from "../../../i18n/functions";
 
 import { IReduxState } from "../../../../app/types";
 import DeviceStatus from "../../../../prejoin/components/web/preview/DeviceStatus";
@@ -12,12 +12,15 @@ import { getConferenceName } from "../../../conference/functions";
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from "../../../config/constants";
 import { withPixelLineHeight } from "../../../styles/functions.web";
 
-import { Avatar, Button, Header } from "@internxt/ui";
+import { Button, Input, TransparentModal } from "@internxt/ui";
 import { WithTranslation } from "react-i18next";
-import ConnectionStatus from "./ConnectionStatus";
-import Preview from "./Preview";
-import RecordingWarning from "./RecordingWarning";
-import UnsafeRoomWarning from "./UnsafeRoomWarning";
+import Video from "../../../media/components/web/Video";
+import ConnectionStatus from "../../../premeeting/components/web/ConnectionStatus";
+import RecordingWarning from "../../../premeeting/components/web/RecordingWarning";
+import UnsafeRoomWarning from "../../../premeeting/components/web/UnsafeRoomWarning";
+import Header from "./components/Header";
+import { useFullName } from "./hooks/useFullName";
+import { useUserData } from "./hooks/useUserData";
 
 interface IProps extends WithTranslation {
     /**
@@ -94,12 +97,19 @@ interface IProps extends WithTranslation {
      * The video track to render as preview (if omitted, the default local track will be rendered).
      */
     videoTrack?: Object;
+
+    /**
+     * The audio track.
+     */
+
+    audioTrack?: any;
 }
 
-interface UserData {
-    name: string;
-    lastname: string;
+interface RightContentProps {
+    isLogged: boolean;
     avatar: string | null;
+    fullName?: string;
+    t: Function;
 }
 
 const useStyles = makeStyles()((theme) => ({
@@ -165,76 +175,34 @@ const useStyles = makeStyles()((theme) => ({
     },
 }));
 
-const useUserData = (): UserData | null => {
-    const xUser = localStorage.getItem("xUser");
-
-    return useMemo(() => {
-        if (!xUser) return null;
-        try {
-            return JSON.parse(xUser);
-        } catch (e) {
-            console.error("Error parsing user data:", e);
-            return null;
-        }
-    }, [xUser]);
-};
-
-const LeftContent = React.memo(
-    (): JSX.Element => (
-        <div className="rounded-2xl border bg-black/50 border-white/10 ">
-            <div
-                className="flex items-center space-x-2 h-12 px-3"
-                style={{ paddingLeft: "12px", paddingRight: "12px" }}
-            >
-                <img src={"images/internxt_logo.png"} alt="logo" className="h-7" />
-                <span className="text-lg font-semibold text-white" style={{ fontWeight: 600 }}>
-                    Meet
-                </span>
-                <img src={"images/beta.png"} alt="logo" className="h-6" style={{ margin: "0px" }} />
-            </div>
-        </div>
-    )
+const AudioMutedIndicator = () => (
+    <div className="absolute bottom-2 left-2 flex items-center justify-center w-9 h-7 bg-black/50 rounded-[20px]">
+        <img src="/images/premeetingscreen/MicrophoneSlash.png" alt="Audio Muted" width={16} />
+    </div>
 );
 
-interface RightContentProps {
-    isLogged: boolean;
-    avatar: string | null;
-    fullName?: string;
-    t: Function;
-}
+const VideoPreview: React.FC<{ videoTrack: any; isAudioMuted?: boolean }> = ({ videoTrack, isAudioMuted }) => (
+    <div className="relative w-[264px] h-[147px] rounded-[20px]">
+        {/*  // to remove when finish this view
+        // <Preview
+        //     videoMuted={videoMuted}
+        //     videoTrack={videoTrack}
+        //     className="w-[264px] h-[147px] rounded-[20px]"
+        // /> */}
+        <Video
+            className="w-[264px] h-[147px] rounded-[20px]"
+            id="prejoinVideo"
+            videoTrack={{ jitsiTrack: videoTrack }}
+        />
+        {isAudioMuted && <AudioMutedIndicator />}
+    </div>
+);
 
-const RightContent = React.memo(({ isLogged, avatar, fullName, t }: RightContentProps): JSX.Element => {
-    const handleNewMeeting = () => {
-        alert("Creating new meeting...");
-    };
-
-    const handleLogin = () => {
-        alert("Redirecting to login...");
-    };
-
-    const handleSignUp = () => {
-        alert("Redirecting to sign up...");
-    };
-
-    return isLogged ? (
-        <div className="flex space-x-2 flex-row">
-            <Button variant="primary" onClick={handleNewMeeting}>
-                {t("meet.preMeeting.newMeeting")}
-            </Button>
-            <Avatar src={avatar} fullName={fullName ?? ""} className="text-white" diameter={40} />
-        </div>
-    ) : (
-        <div className="flex space-x-2 flex-row">
-            {/* TODO: Change to secondary variant when dark mode works properly */}
-            <Button variant="tertiary" onClick={handleLogin}>
-                {t("meet.login.login")}
-            </Button>
-            <Button variant="primary" onClick={handleSignUp}>
-                {t("meet.login.signUp")}
-            </Button>
-        </div>
-    );
-});
+const NoVideoPreview = () => (
+    <div className="w-[264px] h-[147px] rounded-[20px] bg-white/10 flex items-center justify-center">
+        <img src="/images/VideoCameraSlash.png" alt="No Video" width={60} />
+    </div>
+);
 
 const PreMeetingScreen = ({
     _buttons,
@@ -247,10 +215,16 @@ const PreMeetingScreen = ({
     title,
     videoMuted,
     videoTrack,
+    audioTrack,
     t,
 }: IProps) => {
     const { classes } = useStyles();
+    const [isNameInputFocused, setIsNameInputFocused] = useState(false);
     const userData = useUserData();
+    const [userName, setUserName] = useFullName(userData);
+
+    const isAudioMuted = audioTrack?.isMuted();
+    const showNameError = userName.length === 0 && !isNameInputFocused;
 
     const toolbarSection = useMemo(
         () => (
@@ -274,32 +248,59 @@ const PreMeetingScreen = ({
     );
 
     return (
-        <div className={`flex flex-col px-5 ${classes.container}`}>
-            <Header
-                leftContent={<LeftContent />}
-                rightContent={
-                    <RightContent
-                        isLogged={!!userData}
-                        avatar={userData?.avatar ?? null}
-                        fullName={userData ? `${userData.name} ${userData.lastname}` : ""}
-                        t={t}
-                    />
-                }
-                className="z-50 py-3"
-            />
-            <div className="flex flex-row">
-                <div>
-                    <div className={classes.content}>
-                        <ConnectionStatus />
-                        <div className={classes.contentControls}>
-                            {title && <h1 className={classes.title}>{title}</h1>}
-                            {children}
-                            {toolbarSection}
-                            {warningsSection}
+        <div className="flex flex-col h-full">
+            <div className={`flex flex-col px-5 ${classes.container}`}>
+                <Header userData={userData} translate={t} />
+                {/* Extract when finish the modal */}
+                <TransparentModal
+                    className={"flex p-7 bg-black/50 border border-white/15  rounded-[20px]"}
+                    isOpen={true}
+                    onClose={() => {}}
+                    disableBackdrop
+                >
+                    <div className="flex flex-col h-full text-white space-y-4">
+                        {videoTrack ? (
+                            <VideoPreview videoTrack={videoTrack} isAudioMuted={isAudioMuted} />
+                        ) : (
+                            <NoVideoPreview />
+                        )}
+                        <div className="flex mt-7 space-y-2 flex-col">
+                            <Input
+                                variant="default"
+                                accent={showNameError ? "error" : undefined}
+                                onChange={setUserName}
+                                placeholder={t("meet.preMeeting.enterYourName")}
+                                value={userName}
+                                inputClassName="text-white bg-white/10 text-base font-medium text-center rounded-lg"
+                                borderRadius="rounded-lg"
+                                fontClasses="text-base font-medium"
+                                onFocus={() => setIsNameInputFocused(true)}
+                                onBlur={() => setIsNameInputFocused(false)}
+                            />
+                            {showNameError && (
+                                <div className={`flex flex-grow justify-center items-center text-red`}>
+                                    <p className="text-sm">{t("meet.preMeeting.nameRequired")}</p>
+                                </div>
+                            )}
+                        </div>
+                        <Button onClick={() => undefined} disabled={!userName} variant="primary">
+                            {t("meet.preMeeting.joinMeeting")}
+                        </Button>
+                    </div>
+                </TransparentModal>
+                <div className="flex flex-row">
+                    <div>
+                        <div className={classes.content}>
+                            <ConnectionStatus />
+                            <div className={classes.contentControls}>
+                                {title && <h1 className={classes.title}>{title}</h1>}
+                                {children}
+                                {toolbarSection}
+                                {warningsSection}
+                            </div>
                         </div>
                     </div>
                 </div>
-                <Preview videoMuted={videoMuted} videoTrack={videoTrack} />
             </div>
         </div>
     );
