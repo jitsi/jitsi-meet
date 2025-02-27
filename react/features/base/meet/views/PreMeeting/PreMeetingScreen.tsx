@@ -191,7 +191,7 @@ const PreMeetingScreen = ({
                             variant="primary"
                             className="mt-5"
                         >
-                            {t("meet.preMeeting.joinMeeting")}
+                            {t("meet.preMeeting.joinMeeting") as string}
                         </Button>
                     </div>
                 </TransparentModal>

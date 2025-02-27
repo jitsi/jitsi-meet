@@ -16,6 +16,9 @@
             "button": {
                 "gallery": "Galeria",
                 "speaker": "Speaker"
+            },
+            "videoParticipants": {
+                "you": "Tú"
             }
         }
     },
