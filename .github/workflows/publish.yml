@@ -15,13 +15,21 @@ jobs:
     permissions:
       contents: read
       deployments: write
+
     name: Publish to Cloudflare Pages
     steps:
+      - name: Configure NPM
+        run: |
+            echo "registry=https://registry.yarnpkg.com/" > .npmrc
+            echo "@internxt:registry=https://npm.pkg.github.com" >> .npmrc
+            echo //npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_ACCESS_TOKEN }} >> .npmrc
+            echo "always-auth=true" >> .npmrc
+            npm config set legacy-peer-deps true
       - name: Checkout
         uses: actions/checkout@v3
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Configure environment
         run: |
