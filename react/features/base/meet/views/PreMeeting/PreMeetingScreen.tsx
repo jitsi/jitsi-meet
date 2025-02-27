@@ -126,8 +126,8 @@ interface IProps extends WithTranslation {
 
     dispatch: Function;
 
-    joinConference: () => void;
-    disableJoinButton: boolean;
+    joinConference?: () => void;
+    disableJoinButton?: boolean;
 }
 
 const PreMeetingScreen = ({
