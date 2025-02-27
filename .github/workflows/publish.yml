@@ -15,13 +15,33 @@ jobs:
     permissions:
       contents: read
       deployments: write
+
     name: Publish to Cloudflare Pages
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@internxt'
+
+      - name: Configure NPM
+        run: |
+          echo "registry=https://registry.yarnpkg.com/" > .npmrc
+          echo "@internxt:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_ACCESS_TOKEN }}" >> .npmrc
+          echo "always-auth=true" >> .npmrc
+          npm config set legacy-peer-deps true
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       - name: Configure environment
         run: |
@@ -32,7 +52,6 @@ jobs:
           echo MAGIC_IV="d139cb9a2cd17092e79e1861cf9d7023" >> .env
           echo MAGIC_SALT="38dce0391b49efba88dbc8c39ebf868f0267eb110bb0012ab27dc52a528d61b1d1ed9d76f400ff58e3240028442b1eab9bb84e111d9dadd997982dbde9dbd25e" >> .env
           echo JITSI_APP_ID="vpaas-magic-cookie-04a19c25aaab448c9cf74516ffb5ebf2" >> .env
-          cat .env
 
       - name: Build application
         run: make compile deploy
