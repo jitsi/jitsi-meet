@@ -188,17 +188,15 @@ describe('StartMuted', () => {
             }
         };
 
-        await Promise.all([
-            ensureOneParticipant(ctx, options),
-            joinSecondParticipant(ctx, {
-                configOverwrite: {
-                    p2p: {
-                        enabled: true
-                    }
-                },
-                skipInMeetingChecks: true
-            })
-        ]);
+        await ensureOneParticipant(ctx, options);
+        await joinSecondParticipant(ctx, {
+            configOverwrite: {
+                p2p: {
+                    enabled: true
+                }
+            },
+            skipInMeetingChecks: true
+        });
 
         const { p1, p2 } = ctx;
 
