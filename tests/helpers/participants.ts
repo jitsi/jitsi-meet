@@ -168,7 +168,8 @@ async function joinTheModeratorAsP1(ctx: IContext, options?: IJoinOptions) {
     if (!options?.skipFirstModerator) {
         // we prioritize the access token when iframe is not used and private key is set,
         // otherwise if private key is not specified we use the access token if set
-        if (process.env.JWT_ACCESS_TOKEN && (!ctx.jwtPrivateKeyPath || !ctx.iframeAPI)) {
+        if (process.env.JWT_ACCESS_TOKEN && (!ctx.jwtPrivateKeyPath || !ctx.iframeAPI)
+            && !options?.forceGenerateToken) {
             token = process.env.JWT_ACCESS_TOKEN;
         } else if (ctx.jwtPrivateKeyPath) {
             token = getModeratorToken(p1DisplayName);

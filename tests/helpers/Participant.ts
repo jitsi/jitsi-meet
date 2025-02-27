@@ -24,7 +24,6 @@ import VideoQualityDialog from '../pageobjects/VideoQualityDialog';
 
 import { LOG_PREFIX, logInfo } from './browserLogger';
 import { IContext, IJoinOptions } from './types';
-import process from 'node:process';
 
 export const P1_DISPLAY_NAME = 'p1';
 export const P2_DISPLAY_NAME = 'p2';
@@ -233,8 +232,15 @@ export class Participant {
 
         await this.driver.setTimeout({ 'pageLoad': 30000 });
 
+        let urlToLoad = url.startsWith('/') ? url.substring(1) : url;
+
+        if (options.forceGenerateToken && !ctx.iframeAPI && ctx.isJaasAvailable() && process.env.IFRAME_TENANT) {
+            // This to enables tests like invite, which can force using the jaas auth instead of the provided token
+            urlToLoad = `/${process.env.IFRAME_TENANT}/${urlToLoad}`;
+        }
+
         // drop the leading '/' so we can use the tenant if any
-        await this.driver.url(url.startsWith('/') ? url.substring(1) : url);
+        await this.driver.url(urlToLoad);
 
         await this.waitForPageToLoad();
 
