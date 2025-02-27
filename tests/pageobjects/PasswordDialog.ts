@@ -17,6 +17,7 @@ export default class PasswordDialog extends BaseDialog {
             timeoutMsg: 'Password dialog not found'
         });
         await input.waitForDisplayed();
+        await input.waitForStable();
     }
 
     /**
