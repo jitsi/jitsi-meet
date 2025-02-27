@@ -1,0 +1,8 @@
+/* Instrument Sans font family */
+
+@font-face {
+    font-family: "Instrument Sans";
+    font-style: normal;
+    font-display: swap;
+    src: local("Instrument Sans"), url("./InstrumentSans[wdth\,wght].woff2") format("woff2");
+}

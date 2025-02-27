@@ -8,7 +8,7 @@ body.welcome-page {
     background-color: #fff;
     display: flex;
     flex-direction: column;
-    font-family: $welcomePageFontFamily;
+    // font-family: $welcomePageFontFamily;
     justify-content: space-between;
     min-height: 100dvh;
     position: relative;
@@ -57,7 +57,6 @@ body.welcome-page {
             line-height: 26px;
             margin: 16px 0 32px 0;
             text-align: $welcomePageHeaderTextAlign;
-
         }
 
         .not-allow-title-character-div {
@@ -79,16 +78,14 @@ body.welcome-page {
                 margin-right: 9px;
                 float: left;
 
-
                 svg {
                     fill: #f03e3e;
 
-                    &>*:first-child {
+                    & > *:first-child {
                         fill: none !important;
                     }
                 }
             }
-
         }
 
         .insecure-room-name-warning {
@@ -107,7 +104,7 @@ body.welcome-page {
                 svg {
                     fill: rgb(215, 121, 118);
 
-                    &>*:first-child {
+                    & > *:first-child {
                         fill: none !important;
                     }
                 }
@@ -156,7 +153,6 @@ body.welcome-page {
                     }
                 }
             }
-
         }
 
         #moderated-meetings {
@@ -191,7 +187,7 @@ body.welcome-page {
         .tab-buttons {
             background-color: #c7ddff;
             border-radius: 6px;
-            color: #0163FF;
+            color: #0163ff;
             font-size: 14px;
             line-height: 18px;
             margin: 4px;
@@ -210,19 +206,18 @@ body.welcome-page {
                 border: 0;
 
                 &[aria-selected="true"] {
-                    background-color: #FFF;
+                    background-color: #fff;
                 }
             }
-
         }
     }
 
     .welcome-page-button {
         border: 0;
         font-size: 14px;
-        background: #0074E0;
+        background: #0074e0;
         border-radius: 3px;
-        color: #FFFFFF;
+        color: #ffffff;
         cursor: pointer;
         padding: 16px 20px;
 
@@ -287,7 +282,7 @@ body.welcome-page {
         max-width: 688px;
         margin: auto;
 
-        >div {
+        > div {
             margin-bottom: 16px;
         }
     }
@@ -306,11 +301,11 @@ body.welcome-page {
         }
 
         &--blue {
-            background: #D5E5FF;
+            background: #d5e5ff;
         }
 
         &--grey {
-            background: #F2F3F4;
+            background: #f2f3f4;
         }
     }
 
@@ -350,7 +345,6 @@ body.welcome-page {
         margin-right: 16px;
     }
 }
-
 
 .mainContainer {
     height: 100vh;
@@ -411,7 +405,7 @@ body.welcome-page {
     justify-content: center;
 }
 
-.inputContainer>.errorLabel {
+.inputContainer > .errorLabel {
     color: red;
     font-size: 12px;
 }
@@ -431,7 +425,8 @@ body.welcome-page {
 
 .inputBox:focus {
     border-color: rgb(0, 102, 255);
-    box-shadow: rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 102, 255, 0.1) 0px 0px 0px 3px, rgba(0, 0, 0, 0) 0px 0px 0px 0px;
+    box-shadow: rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 102, 255, 0.1) 0px 0px 0px 3px,
+        rgba(0, 0, 0, 0) 0px 0px 0px 0px;
 }
 
 .inputButton {

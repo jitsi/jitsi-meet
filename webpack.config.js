@@ -98,129 +98,136 @@ function getConfig(options = {}) {
     const { detectCircularDeps, isProduction } = options;
 
     return {
-        devtool: isProduction ? 'source-map' : 'eval-source-map',
-        mode: isProduction ? 'production' : 'development',
+        devtool: isProduction ? "source-map" : "eval-source-map",
+        mode: isProduction ? "production" : "development",
         module: {
-            rules: [ {
-                // Transpile ES2015 (aka ES6) to ES5. Accept the JSX syntax by React
-                // as well.
+            rules: [
+                {
+                    // Transpile ES2015 (aka ES6) to ES5. Accept the JSX syntax by React
+                    // as well.
 
-                loader: 'babel-loader',
-                options: {
-                    // Avoid loading babel.config.js, since we only use it for React Native.
-                    configFile: false,
-
-                    // XXX The require.resolve below solves failures to locate the
-                    // presets when lib-jitsi-meet, for example, is npm linked in
-                    // jitsi-meet.
-                    plugins: [
-                        require.resolve('@babel/plugin-proposal-export-default-from')
-                    ],
-                    presets: [
-                        [
-                            require.resolve('@babel/preset-env'),
-
-                            // Tell babel to avoid compiling imports into CommonJS
-                            // so that webpack may do tree shaking.
-                            {
-                                modules: false,
-
-                                // Specify our target browsers so no transpiling is
-                                // done unnecessarily. For browsers not specified
-                                // here, the ES2015+ profile will be used.
-                                targets: {
-                                    chrome: 80,
-                                    electron: 10,
-                                    firefox: 68,
-                                    safari: 14
-                                }
-
-                            }
-                        ],
-                        require.resolve('@babel/preset-react')
-                    ]
-                },
-                test: /\.jsx?$/
-            }, {
-                // Allow CSS to be imported into JavaScript.
-
-                test: /\.css$/,
-                use: [
-                    'style-loader',
-                    'css-loader'
-                ]
-            }, {
-                test: /\.svg$/,
-                use: [ {
-                    loader: '@svgr/webpack',
+                    loader: "babel-loader",
                     options: {
-                        dimensions: false,
-                        expandProps: 'start'
-                    }
-                } ]
-            }, {
-                test: /\.tsx?$/,
-                exclude: /node_modules/,
-                loader: 'ts-loader',
-                options: {
-                    configFile: 'tsconfig.web.json',
-                    transpileOnly: !isProduction // Skip type checking for dev builds.,
-                }
-            } ]
+                        // Avoid loading babel.config.js, since we only use it for React Native.
+                        configFile: false,
+
+                        // XXX The require.resolve below solves failures to locate the
+                        // presets when lib-jitsi-meet, for example, is npm linked in
+                        // jitsi-meet.
+                        plugins: [require.resolve("@babel/plugin-proposal-export-default-from")],
+                        presets: [
+                            [
+                                require.resolve("@babel/preset-env"),
+
+                                // Tell babel to avoid compiling imports into CommonJS
+                                // so that webpack may do tree shaking.
+                                {
+                                    modules: false,
+
+                                    // Specify our target browsers so no transpiling is
+                                    // done unnecessarily. For browsers not specified
+                                    // here, the ES2015+ profile will be used.
+                                    targets: {
+                                        chrome: 80,
+                                        electron: 10,
+                                        firefox: 68,
+                                        safari: 14,
+                                    },
+                                },
+                            ],
+                            require.resolve("@babel/preset-react"),
+                        ],
+                    },
+                    test: /\.jsx?$/,
+                },
+                {
+                    // Allow CSS to be imported into JavaScript.
+                    test: /\.css$/,
+                    use: [
+                        "style-loader",
+                        {
+                            loader: "css-loader",
+                            options: {
+                                importLoaders: 1,
+                            },
+                        },
+                        "postcss-loader",
+                    ],
+                },
+                {
+                    test: /\.svg$/,
+                    use: [
+                        {
+                            loader: "@svgr/webpack",
+                            options: {
+                                dimensions: false,
+                                expandProps: "start",
+                            },
+                        },
+                    ],
+                },
+                {
+                    test: /\.tsx?$/,
+                    exclude: /node_modules/,
+                    loader: "ts-loader",
+                    options: {
+                        configFile: "tsconfig.web.json",
+                        transpileOnly: !isProduction, // Skip type checking for dev builds.,
+                    },
+                },
+            ],
         },
         node: {
             // Allow the use of the real filename of the module being executed. By
             // default Webpack does not leak path-related information and provides a
             // value that is a mock (/index.js).
-            __filename: true
+            __filename: true,
         },
         optimization: {
             concatenateModules: isProduction,
-            minimize: isProduction
+            minimize: isProduction,
         },
         output: {
-            filename: `[name]${isProduction ? '.min' : ''}.js`,
+            filename: `[name]${isProduction ? ".min" : ""}.js`,
             path: `${__dirname}/build`,
-            publicPath: '/libs/',
-            sourceMapFilename: '[file].map'
+            publicPath: "/libs/",
+            sourceMapFilename: "[file].map",
         },
         plugins: [
-            detectCircularDeps
-                && new CircularDependencyPlugin({
+            detectCircularDeps &&
+                new CircularDependencyPlugin({
                     allowAsyncCycles: false,
                     exclude: /node_modules/,
-                    failOnError: false
-                })
+                    failOnError: false,
+                }),
         ].filter(Boolean),
         resolve: {
             alias: {
-                'focus-visible': 'focus-visible/dist/focus-visible.min.js'
+                "focus-visible": "focus-visible/dist/focus-visible.min.js",
             },
-            aliasFields: [
-                'browser'
-            ],
+            aliasFields: ["browser"],
             extensions: [
-                '.web.js',
-                '.web.ts',
-                '.web.tsx',
+                ".web.js",
+                ".web.ts",
+                ".web.tsx",
 
                 // Typescript:
-                '.tsx',
-                '.ts',
+                ".tsx",
+                ".ts",
 
                 // Webpack defaults:
-                '.js',
-                '.json'
+                ".js",
+                ".json",
             ],
             fallback: {
                 // Provide some empty Node modules (required by AtlasKit, olm).
-                crypto: 'crypto-browserify',
-                vm: 'vm-browserify',
+                crypto: "crypto-browserify",
+                vm: "vm-browserify",
                 fs: false,
                 path: false,
-                process: false
-            }
-        }
+                process: false,
+            },
+        },
     };
 }
 
