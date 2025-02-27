@@ -409,6 +409,8 @@ const Prejoin = ({
             videoMuted={!showCameraPreview}
             videoTrack={videoTrack}
             audioTrack={audioTrack}
+            joinConference={onJoinButtonClick}
+            disableJoinButton={joiningInProgress || (showUnsafeRoomWarning && !unsafeRoomConsent) || showErrorOnField}
         >
             <div className={classes.inputContainer} data-testid="prejoin.screen">
                 {showDisplayNameField ? (

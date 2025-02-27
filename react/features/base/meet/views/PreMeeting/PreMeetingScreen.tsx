@@ -12,12 +12,11 @@ import { getConferenceName } from "../../../conference/functions";
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from "../../../config/constants";
 import { withPixelLineHeight } from "../../../styles/functions.web";
 
-import { Button, Input, TransparentModal } from "@internxt/ui";
+import { Button, TransparentModal } from "@internxt/ui";
 import { WithTranslation } from "react-i18next";
 import { toggleAudioSettings, toggleVideoSettings } from "../../../../settings/actions.web";
 import { handleToggleVideoMuted } from "../../../../toolbox/actions.any";
 import { muteLocal } from "../../../../video-menu/actions.any";
-import Video from "../../../media/components/web/Video";
 import { MEDIA_TYPE } from "../../../media/constants";
 import ConnectionStatus from "../../../premeeting/components/web/ConnectionStatus";
 import RecordingWarning from "../../../premeeting/components/web/RecordingWarning";
@@ -28,6 +27,10 @@ import { useFullName } from "./hooks/useFullName";
 import { useUserData } from "./hooks/useUserData";
 
 import MediaControls from "./components/MediaControls";
+import NameInputSection from "./components/NameInputSection";
+import ParticipantsList from "./components/ParticipantsList";
+import VideoPreviewSection from "./components/VideoPreviewSection";
+import { useParticipants } from "./hooks/useParticipants";
 
 interface IProps extends WithTranslation {
     /**
@@ -122,7 +125,166 @@ interface IProps extends WithTranslation {
     onAudioOptionsClick: Function;
 
     dispatch: Function;
+
+    joinConference?: () => void;
+    disableJoinButton?: boolean;
 }
+
+const PreMeetingScreen = ({
+    _buttons,
+    _premeetingBackground,
+    children,
+    showDeviceStatus,
+    showRecordingWarning,
+    showUnsafeRoomWarning,
+    skipPrejoinButton,
+    title,
+    videoMuted,
+    videoTrack,
+    audioTrack,
+    t,
+    onVideoOptionsClick,
+    onAudioOptionsClick,
+    dispatch,
+    joinConference,
+    disableJoinButton,
+}: IProps) => {
+    const { classes } = useStyles();
+    const [isNameInputFocused, setIsNameInputFocused] = useState(false);
+    const userData = useUserData();
+    const [userName, setUserName] = useFullName(userData);
+    const { allParticipants } = useParticipants();
+
+    const showNameError = userName.length === 0 && !isNameInputFocused;
+
+    const toolbarSection = useMemo(
+        () => (
+            <>
+                {_buttons.length > 0 && <Toolbox toolbarButtons={_buttons} />}
+                {skipPrejoinButton}
+            </>
+        ),
+        [_buttons, skipPrejoinButton]
+    );
+
+    const warningsSection = useMemo(
+        () => (
+            <>
+                {showUnsafeRoomWarning && <UnsafeRoomWarning />}
+                {showDeviceStatus && <DeviceStatus />}
+                {showRecordingWarning && <RecordingWarning />}
+            </>
+        ),
+        [showUnsafeRoomWarning, showDeviceStatus, showRecordingWarning]
+    );
+
+    const handleVideoClick = () => {
+        dispatch(handleToggleVideoMuted(!videoMuted, true, true));
+    };
+
+    const handleAudioClick = () => {
+        dispatch(muteLocal(!audioTrack?.isMuted(), MEDIA_TYPE.AUDIO));
+    };
+
+    return (
+        <div className="flex flex-col h-full">
+            <div className={`flex flex-col px-5 ${classes.container}`}>
+                <Header userData={userData} translate={t} />
+                {/* Extract when finish the modal */}
+                <TransparentModal
+                    className={"flex p-7 bg-black/50 border border-white/15  rounded-[20px]"}
+                    isOpen={true}
+                    onClose={() => {}}
+                    disableBackdrop
+                >
+                    <div className="flex flex-col h-full text-white space-y-4">
+                        <VideoPreviewSection
+                            videoMuted={!!videoMuted}
+                            videoTrack={videoTrack}
+                            isAudioMuted={audioTrack?.isMuted()}
+                        />
+                        <NameInputSection
+                            userName={userName}
+                            showNameError={showNameError}
+                            setUserName={setUserName}
+                            setIsNameInputFocused={setIsNameInputFocused}
+                            translate={t}
+                        />
+                        <MediaControls
+                            videoTrack={videoTrack}
+                            isVideoMuted={videoMuted}
+                            audioTrack={audioTrack}
+                            onVideoClick={handleVideoClick}
+                            onAudioClick={handleAudioClick}
+                            onVideoOptionsClick={() => onVideoOptionsClick()}
+                            onAudioOptionsClick={() => onAudioOptionsClick()}
+                        />
+                        <ParticipantsList participants={allParticipants} translate={t} />
+                        <Button
+                            onClick={joinConference}
+                            disabled={!userName || disableJoinButton}
+                            variant="primary"
+                            className="mt-5"
+                        >
+                            {t("meet.preMeeting.joinMeeting")}
+                        </Button>
+                    </div>
+                </TransparentModal>
+                <div className="flex flex-row">
+                    <div>
+                        <div className={classes.content}>
+                            <ConnectionStatus />
+                            <div className={classes.contentControls}>
+                                {title && <h1 className={classes.title}>{title}</h1>}
+                                {children}
+                                {toolbarSection}
+                                {warningsSection}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+/**
+ * Maps (parts of) the redux state to the React {@code Component} props.
+ *
+ * @param {Object} state - The redux state.
+ * @param {Object} ownProps - The props passed to the component.
+ * @returns {Object}
+ */
+function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
+    const { hiddenPremeetingButtons } = state["features/base/config"];
+    const { toolbarButtons } = state["features/toolbox"];
+    const premeetingButtons = (ownProps.thirdParty ? THIRD_PARTY_PREJOIN_BUTTONS : PREMEETING_BUTTONS).filter(
+        (b: any) => !(hiddenPremeetingButtons || []).includes(b)
+    );
+
+    const { premeetingBackground } = state["features/dynamic-branding"];
+
+    return {
+        // For keeping backwards compat.: if we pass an empty hiddenPremeetingButtons
+        // array through external api, we have all prejoin buttons present on premeeting
+        // screen regardless of passed values into toolbarButtons config overwrite.
+        // If hiddenPremeetingButtons is missing, we hide the buttons according to
+        // toolbarButtons config overwrite.
+        _buttons: hiddenPremeetingButtons
+            ? premeetingButtons
+            : premeetingButtons.filter((b) => isButtonEnabled(b, toolbarButtons)),
+        _premeetingBackground: premeetingBackground,
+        _roomName: isRoomNameEnabled(state) ? getConferenceName(state) : "",
+    };
+}
+
+const mapDispatchToProps = (dispatch: any) => ({
+    onAudioOptionsClick: toggleAudioSettings,
+    onVideoOptionsClick: toggleVideoSettings,
+    dispatch,
+});
+
+export default translate(connect(mapStateToProps, mapDispatchToProps)(PreMeetingScreen));
 
 const useStyles = makeStyles()((theme) => ({
     container: {
@@ -186,192 +348,3 @@ const useStyles = makeStyles()((theme) => ({
         width: "100%",
     },
 }));
-
-const AudioMutedIndicator = () => (
-    <div className="absolute bottom-2 left-2 flex items-center justify-center w-9 h-7 bg-black/50 rounded-[20px]">
-        <img src="/images/premeetingscreen/MicrophoneSlash.png" alt="Audio Muted" width={16} />
-    </div>
-);
-
-const VideoPreview: React.FC<{ videoTrack: any; isAudioMuted?: boolean }> = ({ videoTrack, isAudioMuted }) => (
-    <div className="relative w-[264px] h-[147px] rounded-[20px]">
-        {/*  // to remove when finish this view
-        // <Preview
-        //     videoMuted={videoMuted}
-        //     videoTrack={videoTrack}
-        //     className="w-[264px] h-[147px] rounded-[20px]"
-        // /> */}
-        <Video
-            className="w-[264px] h-[147px] rounded-[20px]"
-            id="prejoinVideo"
-            videoTrack={{ jitsiTrack: videoTrack }}
-        />
-        {isAudioMuted && <AudioMutedIndicator />}
-    </div>
-);
-
-const NoVideoPreview = () => (
-    <div className="w-[264px] h-[147px] rounded-[20px] bg-white/10 flex items-center justify-center">
-        <img src="/images/VideoCameraSlash.png" alt="No Video" width={60} />
-    </div>
-);
-
-const PreMeetingScreen = ({
-    _buttons,
-    _premeetingBackground,
-    children,
-    showDeviceStatus,
-    showRecordingWarning,
-    showUnsafeRoomWarning,
-    skipPrejoinButton,
-    title,
-    videoMuted,
-    videoTrack,
-    audioTrack,
-    t,
-    onVideoOptionsClick,
-    onAudioOptionsClick,
-    dispatch,
-}: IProps) => {
-    const { classes } = useStyles();
-    const [isNameInputFocused, setIsNameInputFocused] = useState(false);
-    const userData = useUserData();
-    const [userName, setUserName] = useFullName(userData);
-
-    const isAudioMuted = audioTrack?.isMuted();
-    const showNameError = userName.length === 0 && !isNameInputFocused;
-
-    const toolbarSection = useMemo(
-        () => (
-            <>
-                {_buttons.length > 0 && <Toolbox toolbarButtons={_buttons} />}
-                {skipPrejoinButton}
-            </>
-        ),
-        [_buttons, skipPrejoinButton]
-    );
-
-    const warningsSection = useMemo(
-        () => (
-            <>
-                {showUnsafeRoomWarning && <UnsafeRoomWarning />}
-                {showDeviceStatus && <DeviceStatus />}
-                {showRecordingWarning && <RecordingWarning />}
-            </>
-        ),
-        [showUnsafeRoomWarning, showDeviceStatus, showRecordingWarning]
-    );
-
-    const handleVideoClick = () => {
-        dispatch(handleToggleVideoMuted(!videoMuted, true, true));
-    };
-
-    const handleAudioClick = () => {
-        dispatch(muteLocal(!audioTrack?.isMuted(), MEDIA_TYPE.AUDIO));
-    };
-
-    return (
-        <div className="flex flex-col h-full">
-            <div className={`flex flex-col px-5 ${classes.container}`}>
-                <Header userData={userData} translate={t} />
-                {/* Extract when finish the modal */}
-                <TransparentModal
-                    className={"flex p-7 bg-black/50 border border-white/15  rounded-[20px]"}
-                    isOpen={true}
-                    onClose={() => {}}
-                    disableBackdrop
-                >
-                    <div className="flex flex-col h-full text-white space-y-4">
-                        {videoTrack ? (
-                            <VideoPreview videoTrack={videoTrack} isAudioMuted={isAudioMuted} />
-                        ) : (
-                            <NoVideoPreview />
-                        )}
-                        <div className="flex mt-7 space-y-2 flex-col">
-                            <Input
-                                variant="default"
-                                accent={showNameError ? "error" : undefined}
-                                onChange={setUserName}
-                                placeholder={t("meet.preMeeting.enterYourName")}
-                                value={userName}
-                                inputClassName="text-white bg-white/10 text-base font-medium text-center rounded-lg"
-                                borderRadius="rounded-lg"
-                                fontClasses="text-base font-medium"
-                                onFocus={() => setIsNameInputFocused(true)}
-                                onBlur={() => setIsNameInputFocused(false)}
-                            />
-                            {showNameError && (
-                                <div className={`flex flex-grow justify-center items-center text-red`}>
-                                    <p className="text-sm">{t("meet.preMeeting.nameRequired")}</p>
-                                </div>
-                            )}
-                        </div>
-                        <MediaControls
-                            videoTrack={videoTrack}
-                            isVideoMuted={videoMuted}
-                            audioTrack={audioTrack}
-                            onVideoClick={handleVideoClick}
-                            onAudioClick={handleAudioClick}
-                            onVideoOptionsClick={() => onVideoOptionsClick()}
-                            onAudioOptionsClick={() => onAudioOptionsClick()}
-                        />
-                        <Button onClick={() => undefined} disabled={!userName} variant="primary">
-                            {t("meet.preMeeting.joinMeeting")}
-                        </Button>
-                    </div>
-                </TransparentModal>
-                <div className="flex flex-row">
-                    <div>
-                        <div className={classes.content}>
-                            <ConnectionStatus />
-                            <div className={classes.contentControls}>
-                                {title && <h1 className={classes.title}>{title}</h1>}
-                                {children}
-                                {toolbarSection}
-                                {warningsSection}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-/**
- * Maps (parts of) the redux state to the React {@code Component} props.
- *
- * @param {Object} state - The redux state.
- * @param {Object} ownProps - The props passed to the component.
- * @returns {Object}
- */
-function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
-    const { hiddenPremeetingButtons } = state["features/base/config"];
-    const { toolbarButtons } = state["features/toolbox"];
-    const premeetingButtons = (ownProps.thirdParty ? THIRD_PARTY_PREJOIN_BUTTONS : PREMEETING_BUTTONS).filter(
-        (b: any) => !(hiddenPremeetingButtons || []).includes(b)
-    );
-
-    const { premeetingBackground } = state["features/dynamic-branding"];
-
-    return {
-        // For keeping backwards compat.: if we pass an empty hiddenPremeetingButtons
-        // array through external api, we have all prejoin buttons present on premeeting
-        // screen regardless of passed values into toolbarButtons config overwrite.
-        // If hiddenPremeetingButtons is missing, we hide the buttons according to
-        // toolbarButtons config overwrite.
-        _buttons: hiddenPremeetingButtons
-            ? premeetingButtons
-            : premeetingButtons.filter((b) => isButtonEnabled(b, toolbarButtons)),
-        _premeetingBackground: premeetingBackground,
-        _roomName: isRoomNameEnabled(state) ? getConferenceName(state) : "",
-    };
-}
-
-const mapDispatchToProps = (dispatch: any) => ({
-    onAudioOptionsClick: toggleAudioSettings,
-    onVideoOptionsClick: toggleVideoSettings,
-    dispatch,
-});
-
-export default translate(connect(mapStateToProps, mapDispatchToProps)(PreMeetingScreen));
