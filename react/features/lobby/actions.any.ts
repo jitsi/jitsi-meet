@@ -242,19 +242,31 @@ export function startKnocking() {
  * @returns {Function}
  */
 export function toggleLobbyMode(enabled: boolean) {
-    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const conference = getCurrentConference(getState);
-
-        if (enabled) {
-            if (isEnablingLobbyAllowed(getState())) {
-                conference?.enableLobby();
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const conference = getCurrentConference(getState());
+        dispatch({
+            type: SET_LOBBY_MODE_ENABLED,
+            enabled
+        });
+        try {
+            if (conference) {
+                if (enabled) {
+                    if (isEnablingLobbyAllowed(getState())) {
+                        conference.enableLobby();
+                    } else {
+                        logger.info('Ignoring enable lobby request because there are visitors in the call already.');
+                    }
+                } else {
+                    conference.disableLobby();
+                }
             } else {
-                logger.info('Ignoring enable lobby request because there are visitors in the call already.');
+                logger.warn('No active conference found while toggling lobby.');
             }
-        } else {
-            conference?.disableLobby();
+        } catch (error) {
+            logger.error('Error toggling lobby mode', error);
         }
     };
+     
 }
 
 /**

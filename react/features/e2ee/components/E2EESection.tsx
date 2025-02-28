@@ -1,16 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { createE2EEEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState, IStore } from '../../app/types';
+
 import Switch from '../../base/ui/components/web/Switch';
 import { toggleE2EE } from '../actions';
 import { MAX_MODE } from '../constants';
 import { doesEveryoneSupportE2EE } from '../functions';
-
 interface IProps {
 
     /**
@@ -43,32 +44,28 @@ interface IProps {
      */
     dispatch: IStore['dispatch'];
 }
+const useStyles = makeStyles()(() => ({
+    e2eeSection: {
+        display: 'flex',
+        flexDirection: 'column'
+    },
 
-const useStyles = makeStyles()(() => {
-    return {
-        e2eeSection: {
-            display: 'flex',
-            flexDirection: 'column'
-        },
+    description: {
+        fontSize: '13px',
+        margin: '15px 0'
+    },
 
-        description: {
-            fontSize: '13px',
-            margin: '15px 0'
-        },
+    controlRow: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginTop: '15px',
 
-        controlRow: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginTop: '15px',
-
-            '& label': {
-                fontSize: '14px',
-                fontWeight: 'bold'
-            }
+        '& label': {
+            fontSize: '14px',
+            fontWeight: 'bold'
         }
-    };
-});
-
+    }
+}));
 /**
  * Implements a React {@code Component} for displaying a security dialog section with a field
  * for setting the E2EE key.
@@ -76,62 +73,73 @@ const useStyles = makeStyles()(() => {
  * @param {IProps} props - Component's props.
  * @returns  {JSX}
  */
-const E2EESection = ({
-    _descriptionResource,
-    _enabled,
-    _e2eeLabels,
-    _everyoneSupportE2EE,
-    _toggled,
-    dispatch
-}: IProps) => {
+const E2EESection = () => {
     const { classes } = useStyles();
     const { t } = useTranslation();
-    const [ toggled, setToggled ] = useState(_toggled ?? false);
+    const dispatch = useDispatch();
 
+    const _toggled = useSelector(
+        (state: IReduxState) => state['features/e2ee'].enabled,
+        shallowEqual
+    );
+    const _enabled = useSelector(
+        (state: IReduxState) =>
+            state['features/e2ee'].maxMode === MAX_MODE.DISABLED || state['features/e2ee'].enabled
+    );
+    const _e2eeLabels = useSelector((state: IReduxState) => state['features/base/config'].e2ee?.labels);
+    const _everyoneSupportE2EE = useSelector((state: IReduxState) => doesEveryoneSupportE2EE(state));
+    const _descriptionResource = useSelector((state: IReduxState) => {
+        const { maxMode } = state['features/e2ee'];
+        const { e2ee = {} } = state['features/base/config'];
+        if (e2ee.labels) {
+            return undefined;
+        } else if (maxMode === MAX_MODE.THRESHOLD_EXCEEDED) {
+            return 'dialog.e2eeDisabledDueToMaxModeDescription';
+        } else if (maxMode === MAX_MODE.ENABLED) {
+            return _toggled
+                ? 'dialog.e2eeWillDisableDueToMaxModeDescription'
+                : 'dialog.e2eeDisabledDueToMaxModeDescription';
+        }
+        return 'dialog.e2eeDescription';
+    });
+
+    const toggledRef = useRef(_toggled);
     useEffect(() => {
-        setToggled(_toggled);
-    }, [ _toggled ]);
-
-    /**
+        toggledRef.current = _toggled;
+    }, [_toggled]);
+ /**
      * Callback to be invoked when the user toggles E2EE on or off.
      *
      * @private
      * @returns {void}
      */
     const _onToggle = useCallback(() => {
-        const newValue = !toggled;
-
-        setToggled(newValue);
-
+        const current = toggledRef.current;
+       
+        const newValue = !current;
         sendAnalytics(createE2EEEvent(`enabled.${String(newValue)}`));
         dispatch(toggleE2EE(newValue));
-    }, [ toggled ]);
+    }, [dispatch]);
 
     const description = _e2eeLabels?.description || t(_descriptionResource ?? '');
     const label = _e2eeLabels?.label || t('dialog.e2eeLabel');
     const warning = _e2eeLabels?.warning || t('dialog.e2eeWarning');
 
     return (
-        <div
-            className = { classes.e2eeSection }
-            id = 'e2ee-section'>
-            <p
-                aria-live = 'polite'
-                className = { classes.description }
-                id = 'e2ee-section-description'>
+        <div className={classes.e2eeSection} id="e2ee-section">
+            <p aria-live="polite" className={classes.description} id="e2ee-section-description">
                 {description}
                 {!_everyoneSupportE2EE && <br />}
                 {!_everyoneSupportE2EE && warning}
             </p>
-            <div className = { classes.controlRow }>
-                <label htmlFor = 'e2ee-section-switch'>
-                    {label}
-                </label>
+            <div className={classes.controlRow}>
+                <label htmlFor="e2ee-section-switch">{label}</label>
                 <Switch
-                    checked = { toggled }
-                    disabled = { !_enabled }
-                    id = 'e2ee-section-switch'
-                    onChange = { _onToggle } />
+                    checked={_toggled} 
+                    disabled={!_enabled}
+                    id="e2ee-section-switch"
+                    onChange={_onToggle}
+                />
             </div>
         </div>
     );
@@ -172,3 +180,4 @@ function mapStateToProps(state: IReduxState) {
 }
 
 export default connect(mapStateToProps)(E2EESection);
+
