@@ -58,7 +58,19 @@ const RightContent = React.memo(({ isLogged, avatar, fullName, translate }: Righ
     );
 });
 
-const Header = ({ userData, translate }) => (
+interface UserData {
+    avatar: string | null;
+    name: string;
+    lastname: string;
+    [key: string]: any;
+}
+
+interface HeaderProps {
+    userData?: UserData | null;
+    translate: Function;
+}
+
+const Header = ({ userData, translate }: HeaderProps) => (
     <IntxHeader
         leftContent={<LeftContent />}
         rightContent={
