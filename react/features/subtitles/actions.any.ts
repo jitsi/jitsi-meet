@@ -5,8 +5,12 @@ import {
     REMOVE_TRANSCRIPT_MESSAGE,
     SET_REQUESTING_SUBTITLES,
     TOGGLE_REQUESTING_SUBTITLES,
-    UPDATE_TRANSCRIPT_MESSAGE
+    UPDATE_TRANSCRIPT_MESSAGE,
+    STORE_SUBTITLE,
+    UPDATE_INTERIM_SUBTITLE
 } from './actionTypes';
+
+import { ISubtitle } from './types';
 
 /**
  * Signals that a transcript has to be removed from the state.
@@ -96,5 +100,37 @@ export function setRequestingSubtitles(
         displaySubtitles,
         enabled,
         language
+    };
+}
+
+/**
+ * Stores a received subtitle in the history.
+ *
+ * @param {ISubtitle} subtitle - The subtitle to store.
+ * @returns {{
+ *     type: STORE_SUBTITLE,
+ *     subtitle: ISubtitle
+ * }}
+ */
+export function storeSubtitle(subtitle: ISubtitle) {
+    return {
+        type: STORE_SUBTITLE,
+        subtitle
+    };
+}
+
+/**
+ * Updates an interim subtitle in the history.
+ *
+ * @param {ISubtitle} subtitle - The interim subtitle to update.
+ * @returns {{
+ *     type: UPDATE_INTERIM_SUBTITLE,
+ *     subtitle: ISubtitle
+ * }}
+ */
+export function updateInterimSubtitle(subtitle: ISubtitle) {
+    return {
+        type: UPDATE_INTERIM_SUBTITLE,
+        subtitle
     };
 }

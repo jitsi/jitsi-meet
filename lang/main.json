@@ -122,7 +122,9 @@
         "nickname": {
             "popover": "Choose a nickname",
             "title": "Enter a nickname to use chat",
-            "titleWithPolls": "Enter a nickname to use chat and polls"
+            "titleWithPolls": "Enter a nickname to use chat and polls",
+            "titleWithSubtitles": "Enter a nickname to use chat and subtitles",
+            "titleWithPollsAndSubtitles": "Enter a nickname to use chat, polls and subtitles"
         },
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "privateNotice": "Private message to {{recipient}}",
@@ -131,10 +133,11 @@
         "systemDisplayName": "System",
         "tabs": {
             "chat": "Chat",
-            "polls": "Polls"
+            "polls": "Polls",
+            "subtitles": "Subtitles"
         },
-        "title": "Chat",
-        "titleWithPolls": "Chat and Polls",
+        "title": "Chat and Subtitles",
+        "titleWithPolls": "Chat, Polls and Subtitles",
         "you": "you"
     },
     "chromeExtensionBanner": {

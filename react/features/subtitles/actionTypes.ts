@@ -55,3 +55,13 @@ export const TOGGLE_REQUESTING_SUBTITLES
  */
 export const SET_REQUESTING_SUBTITLES
     = 'SET_REQUESTING_SUBTITLES';
+
+/**
+ * Action to store received subtitles in history.
+ */
+export const STORE_SUBTITLE = 'STORE_SUBTITLE';
+
+/**
+ * Action to update interim subtitle in history.
+ */
+export const UPDATE_INTERIM_SUBTITLE = 'UPDATE_INTERIM_SUBTITLE';

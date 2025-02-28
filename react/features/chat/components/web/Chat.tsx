@@ -9,8 +9,8 @@ import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Tabs from '../../../base/ui/components/web/Tabs';
 import { arePollsDisabled } from '../../../conference/functions.any';
 import PollsPane from '../../../polls/components/web/PollsPane';
-import { sendMessage, setIsPollsTabFocused, toggleChat } from '../../actions.web';
-import { CHAT_SIZE, CHAT_TABS, SMALL_WIDTH_THRESHOLD } from '../../constants';
+import { sendMessage, setFocusedTab, toggleChat } from '../../actions.web';
+import { CHAT_SIZE, ChatTabs, SMALL_WIDTH_THRESHOLD } from '../../constants';
 import { IChatProps as AbstractProps } from '../../types';
 
 import ChatHeader from './ChatHeader';
@@ -19,6 +19,7 @@ import DisplayNameForm from './DisplayNameForm';
 import KeyboardAvoider from './KeyboardAvoider';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
+import SubtitlesTab from './SubtitlesTab';
 
 interface IProps extends AbstractProps {
 
@@ -36,11 +37,6 @@ interface IProps extends AbstractProps {
      * True if the polls feature is enabled.
      */
     _isPollsEnabled: boolean;
-
-    /**
-     * Whether the poll tab is focused or not.
-     */
-    _isPollsTabFocused: boolean;
 
     /**
      * Number of unread poll messages.
@@ -77,6 +73,11 @@ interface IProps extends AbstractProps {
      * Whether or not to block chat access with a nickname input form.
      */
     _showNamePrompt: boolean;
+
+    /**
+     * The currently focused tab.
+     */
+    _focusedTab: ChatTabs;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -147,7 +148,7 @@ const Chat = ({
     _isModal,
     _isOpen,
     _isPollsEnabled,
-    _isPollsTabFocused,
+    _focusedTab,
     _messages,
     _nbUnreadMessages,
     _nbUnreadPolls,
@@ -203,8 +204,8 @@ const Chat = ({
      * @returns {void}
      */
     const onChangeTab = useCallback((id: string) => {
-        dispatch(setIsPollsTabFocused(id !== CHAT_TABS.CHAT));
-    }, []);
+        dispatch(setFocusedTab(id as ChatTabs));
+    }, [ dispatch ]);
 
     /**
      * Returns a React Element for showing chat messages and a form to send new
@@ -216,15 +217,16 @@ const Chat = ({
     function renderChat() {
         return (
             <>
-                {_isPollsEnabled && renderTabs()}
+                {renderTabs()}
                 <div
-                    aria-labelledby = { CHAT_TABS.CHAT }
+                    aria-labelledby = { ChatTabs.CHAT }
                     className = { cx(
                         classes.chatPanel,
-                        !_isPollsEnabled && classes.chatPanelNoTabs,
-                        _isPollsTabFocused && 'hide'
+                        // TODO: Add disable for subtitles and uncomment this code
+                        // !_isPollsEnabled && classes.chatPanelNoTabs,
+                        _focusedTab !== ChatTabs.CHAT && 'hide'
                     ) }
-                    id = { `${CHAT_TABS.CHAT}-panel` }
+                    id = { `${ChatTabs.CHAT}-panel` }
                     role = 'tabpanel'
                     tabIndex = { 0 }>
                     <MessageContainer
@@ -236,9 +238,9 @@ const Chat = ({
                 {_isPollsEnabled && (
                     <>
                         <div
-                            aria-labelledby = { CHAT_TABS.POLLS }
-                            className = { cx(classes.pollsPanel, !_isPollsTabFocused && 'hide') }
-                            id = { `${CHAT_TABS.POLLS}-panel` }
+                            aria-labelledby = { ChatTabs.POLLS }
+                            className = { cx(classes.pollsPanel, _focusedTab !== ChatTabs.POLLS && 'hide') }
+                            id = { `${ChatTabs.POLLS}-panel` }
                             role = 'tabpanel'
                             tabIndex = { 0 }>
                             <PollsPane />
@@ -246,12 +248,21 @@ const Chat = ({
                         <KeyboardAvoider />
                     </>
                 )}
+                <div
+                    aria-labelledby = { ChatTabs.SUBTITLES }
+                    className = { cx(classes.chatPanel, _focusedTab !== ChatTabs.SUBTITLES && 'hide') }
+                    id = { `${ChatTabs.SUBTITLES}-panel` }
+                    role = 'tabpanel'
+                    tabIndex = { 0 }>
+                    <SubtitlesTab />
+                </div>
             </>
         );
     }
 
+
     /**
-     * Returns a React Element showing the Chat and Polls tab.
+     * Returns a React Element showing the Chat, Polls and Subtitles tabs.
      *
      * @private
      * @returns {ReactElement}
@@ -261,20 +272,28 @@ const Chat = ({
             <Tabs
                 accessibilityLabel = { t(_isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
                 onChange = { onChangeTab }
-                selected = { _isPollsTabFocused ? CHAT_TABS.POLLS : CHAT_TABS.CHAT }
-                tabs = { [ {
-                    accessibilityLabel: t('chat.tabs.chat'),
-                    countBadge: _isPollsTabFocused && _nbUnreadMessages > 0 ? _nbUnreadMessages : undefined,
-                    id: CHAT_TABS.CHAT,
-                    controlsId: `${CHAT_TABS.CHAT}-panel`,
-                    label: t('chat.tabs.chat')
-                }, {
-                    accessibilityLabel: t('chat.tabs.polls'),
-                    countBadge: !_isPollsTabFocused && _nbUnreadPolls > 0 ? _nbUnreadPolls : undefined,
-                    id: CHAT_TABS.POLLS,
-                    controlsId: `${CHAT_TABS.POLLS}-panel`,
-                    label: t('chat.tabs.polls')
-                }
+                selected = { _focusedTab }
+                tabs = { [
+                    {
+                        accessibilityLabel: t('chat.tabs.chat'),
+                        countBadge: _focusedTab !== ChatTabs.CHAT && _nbUnreadMessages > 0 ? _nbUnreadMessages : undefined,
+                        id: ChatTabs.CHAT,
+                        controlsId: `${ChatTabs.CHAT}-panel`,
+                        label: t('chat.tabs.chat')
+                    },
+                    {
+                        accessibilityLabel: t('chat.tabs.polls'),
+                        countBadge: _focusedTab !== ChatTabs.POLLS && _nbUnreadPolls > 0 ? _nbUnreadPolls : undefined,
+                        id: ChatTabs.POLLS,
+                        controlsId: `${ChatTabs.POLLS}-panel`,
+                        label: t('chat.tabs.polls')
+                    },
+                    {
+                        accessibilityLabel: t('chat.tabs.subtitles'),
+                        id: ChatTabs.SUBTITLES,
+                        controlsId: `${ChatTabs.SUBTITLES}-panel`,
+                        label: t('chat.tabs.subtitles')
+                    }
                 ] } />
         );
     }
@@ -306,7 +325,7 @@ const Chat = ({
  *     _isModal: boolean,
  *     _isOpen: boolean,
  *     _isPollsEnabled: boolean,
- *     _isPollsTabFocused: boolean,
+ *     _focusedTab: string,
  *     _messages: Array<Object>,
  *     _nbUnreadMessages: number,
  *     _nbUnreadPolls: number,
@@ -314,7 +333,7 @@ const Chat = ({
  * }}
  */
 function _mapStateToProps(state: IReduxState, _ownProps: any) {
-    const { isOpen, isPollsTabFocused, messages, nbUnreadMessages } = state['features/chat'];
+    const { isOpen, focusedTab, messages, nbUnreadMessages } = state['features/chat'];
     const { nbUnreadPolls } = state['features/polls'];
     const _localParticipant = getLocalParticipant(state);
 
@@ -322,7 +341,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _isModal: window.innerWidth <= SMALL_WIDTH_THRESHOLD,
         _isOpen: isOpen,
         _isPollsEnabled: !arePollsDisabled(state),
-        _isPollsTabFocused: isPollsTabFocused,
+        _focusedTab: focusedTab,
         _messages: messages,
         _nbUnreadMessages: nbUnreadMessages,
         _nbUnreadPolls: nbUnreadPolls,

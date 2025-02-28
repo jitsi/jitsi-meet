@@ -16,7 +16,9 @@ import {
     removeCachedTranscriptMessage,
     removeTranscriptMessage,
     setRequestingSubtitles,
-    updateTranscriptMessage
+    updateTranscriptMessage,
+    storeSubtitle,
+    updateInterimSubtitle
 } from './actions.any';
 import { notifyTranscriptionChunkReceived } from './functions';
 import logger from './logger';
@@ -122,10 +124,6 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
 
     const { dispatch, getState } = store;
     const state = getState();
-    const language
-        = state['features/base/conference'].conference
-            ?.getLocalParticipantProperty(P_NAME_TRANSLATION_LANGUAGE);
-    const { dumpTranscript, skipInterimTranscriptions } = state['features/base/config'].testing ?? {};
 
     const transcriptMessageID = json.message_id;
     const { name, id, avatar_url: avatarUrl } = json.participant;
@@ -134,6 +132,48 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
         id,
         name
     };
+    const { timestamp } = json;
+    const participantId = participant.id;
+
+    // Handle transcription/translation storage
+    if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT) {
+        const transcription = json.transcript[0].text;
+        const isInterim = json.is_interim;
+
+        const subtitle = {
+            id: transcriptMessageID,
+            participant: participantId,
+            text: transcription,
+            interim: isInterim,
+            timestamp
+        };
+
+        if (isInterim) {
+            dispatch(updateInterimSubtitle(subtitle));
+        } else {
+            dispatch(storeSubtitle(subtitle));
+        }
+    } else if (json.type === JSON_TYPE_TRANSLATION_RESULT) {
+        const translation = json.text;
+        const language = json.language;
+
+        const subtitle = {
+            participant: participantId,
+            text: translation,
+            language,
+            timestamp,
+            id: transcriptMessageID
+        };
+
+        dispatch(storeSubtitle(subtitle));
+    }
+
+    // Handle transcript messages
+    const language = state['features/base/conference'].conference
+        ?.getLocalParticipantProperty(P_NAME_TRANSLATION_LANGUAGE);
+    const { dumpTranscript, skipInterimTranscriptions } = state['features/base/config'].testing ?? {};
+
+
 
     let newTranscriptMessage: ITranscriptMessage | undefined;
 

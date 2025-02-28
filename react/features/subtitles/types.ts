@@ -9,3 +9,12 @@ export interface ITranscriptMessage {
     stable?: string;
     unstable?: string;
 }
+
+export interface ISubtitle {
+    id: string;
+    participant: string;
+    text: string;
+    timestamp: number;
+    interim?: boolean;
+    language?: string;
+}
