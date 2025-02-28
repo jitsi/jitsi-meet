@@ -65,7 +65,8 @@ input[type="reset"] {
     -webkit-appearance: button;
 }
 // input,
-button,
+button {}
+
 textarea,
 select {
     all: unset;
