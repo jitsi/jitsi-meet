@@ -221,20 +221,21 @@ const useStyles = makeStyles()(theme => {
             display: 'flex'
         },
         connectionStatsTable: {
-            '&, & > table': {
-                fontSize: '12px',
-                fontWeight: 400,
+            fontSize: '12px',
+            fontWeight: 400,
 
-                '& td': {
-                    padding: '2px 0'
-                }
-            },
             '& > table': {
-                whiteSpace: 'nowrap'
-            },
+                whiteSpace: 'nowrap',
+                fontSize: 'inherit',
+                fontWeight: 'inherit',
 
-            '& td:nth-child(n-1)': {
-                paddingLeft: '5px'
+                '& td, & th': {
+                    padding: '2px 0 2px 5px'
+                },
+
+                '& th': {
+                    textAlign: 'left'
+                }
             },
 
             '& $upload, & $download': {
@@ -251,9 +252,7 @@ const useStyles = makeStyles()(theme => {
         mobile: {
             margin: theme.spacing(3)
         },
-        status: {
-            fontWeight: 'bold'
-        },
+        status: {},
         upload: {},
         link: {
             cursor: 'pointer',
@@ -615,6 +614,12 @@ const ConnectionStatsTable = ({
 
     const _renderAdditionalStats = () => (
         <table>
+            <thead>
+                <tr>
+                    <th>{ t<string>('connectionindicator.category') }</th>
+                    <th>{ t<string>('connectionindicator.value') }</th>
+                </tr>
+            </thead>
             <tbody>
                 {isLocalVideo ? _renderBandwidth() : null}
                 {isLocalVideo ? _renderTransport() : null}

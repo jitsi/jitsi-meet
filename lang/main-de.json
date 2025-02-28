@@ -168,6 +168,7 @@
         "bandwidth": "Geschätzte Bandbreite:",
         "bitrate": "Bitrate:",
         "bridgeCount": "Serverzahl: ",
+        "category": "Kategorie",
         "codecs": "Codecs (A/V): ",
         "connectedTo": "Verbunden mit:",
         "e2eeVerified": "E2EE verifiziert:",
@@ -198,6 +199,7 @@
         "status": "Verbindung:",
         "transport": "Protokoll:",
         "transport_plural": "Protokolle:",
+        "value": "Wert",
         "video_ssrc": "Video-SSRC:",
         "yes": "Ja"
     },
