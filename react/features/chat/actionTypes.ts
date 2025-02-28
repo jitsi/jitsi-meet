@@ -98,14 +98,14 @@ export const SEND_REACTION = 'SEND_REACTION';
 export const SET_PRIVATE_MESSAGE_RECIPIENT = 'SET_PRIVATE_MESSAGE_RECIPIENT';
 
 /**
- * The type of action which signals the update a _isPollsTabFocused.
+ * The type of action which signals setting the focused tab.
  *
  * {
- *     isPollsTabFocused: boolean,
- *     type: SET_PRIVATE_MESSAGE_RECIPIENT
+ *     type: SET_FOCUSED_TAB,
+ *     tabId: string
  * }
  */
-export const SET_IS_POLL_TAB_FOCUSED = 'SET_IS_POLL_TAB_FOCUSED';
+export const SET_FOCUSED_TAB = 'SET_FOCUSED_TAB';
 
 /**
  * The type of action which sets the current recipient for lobby messages.
