@@ -122,7 +122,9 @@
         "nickname": {
             "popover": "Choose a nickname",
             "title": "Enter a nickname to use chat",
-            "titleWithPolls": "Enter a nickname to use chat and polls"
+            "titleWithCC": "Enter a nickname to use chat and closed captions",
+            "titleWithPolls": "Enter a nickname to use chat and polls",
+            "titleWithPollsAndCC": "Enter a nickname to use chat, polls and closed captions"
         },
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "privateNotice": "Private message to {{recipient}}",
@@ -131,10 +133,13 @@
         "systemDisplayName": "System",
         "tabs": {
             "chat": "Chat",
+            "closedCaptions": "CC",
             "polls": "Polls"
         },
         "title": "Chat",
+        "titleWithCC": "Chat and CC",
         "titleWithPolls": "Chat and Polls",
+        "titleWithPollsAndCC": "Chat, Polls and CC",
         "you": "you"
     },
     "chromeExtensionBanner": {
@@ -143,6 +148,10 @@
         "close": "Close",
         "dontShowAgain": "Don’t show me this again",
         "installExtensionText": "Install the extension for Google Calendar and Office 365 integration"
+    },
+    "closedCaptionsTab": {
+        "emptyState": "The closed captions content will be available once a moderator starts it",
+        "startClosedCaptionsButton": "Start closed captions"
     },
     "connectingOverlay": {
         "joiningRoom": "Connecting you to your meeting…"
@@ -1139,6 +1148,7 @@
         "selectMic": "Microphone",
         "selfView": "Self view",
         "shortcuts": "Shortcuts",
+        "showSubtitlesOnStage": "Show subtitles on stage",
         "speakers": "Speakers",
         "startAudioMuted": "Everyone starts muted",
         "startReactionsMuted": "Mute reaction sounds for everyone",
@@ -1235,6 +1245,7 @@
             "closeChat": "Close chat",
             "closeMoreActions": "Close more actions menu",
             "closeParticipantsPane": "Close participants pane",
+            "closedCaptions": "Closed captions",
             "collapse": "Collapse",
             "document": "Toggle shared document",
             "documentClose": "Close shared document",
@@ -1325,6 +1336,7 @@
         "closeChat": "Close chat",
         "closeParticipantsPane": "Close participants pane",
         "closeReactionsMenu": "Close reactions menu",
+        "closedCaptions": "Closed captions",
         "disableNoiseSuppression": "Disable extra noise suppression (BETA)",
         "disableReactionSounds": "You can disable reaction sounds for this meeting",
         "documentClose": "Close shared document",
@@ -1417,13 +1429,16 @@
         "failed": "Transcribing failed",
         "labelTooltip": "This meeting is being transcribed.",
         "labelTooltipExtra": "In addition, a transcript will be available later.",
+        "openClosedCaptions": "Open closed captions",
+        "original": "Original",
         "sourceLanguageDesc": "Currently the meeting language is set to <b>{{sourceLanguage}}</b>. <br/> You can change it from ",
         "sourceLanguageHere": "here",
         "start": "Start showing subtitles",
         "stop": "Stop showing subtitles",
         "subtitles": "Subtitles",
         "subtitlesOff": "Off",
-        "tr": "TR"
+        "tr": "TR",
+        "translateTo": "Translate to"
     },
     "unpinParticipant": "{{participantName}} - Unpin",
     "userMedia": {

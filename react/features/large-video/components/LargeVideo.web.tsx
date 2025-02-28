@@ -17,6 +17,7 @@ import { FILMSTRIP_BREAKPOINT } from '../../filmstrip/constants';
 import { getVerticalViewMaxWidth, isFilmstripResizable } from '../../filmstrip/functions.web';
 import SharedVideo from '../../shared-video/components/web/SharedVideo';
 import Captions from '../../subtitles/components/web/Captions';
+import { areClosedCaptionsEnabled } from '../../subtitles/functions.any';
 import { setTileView } from '../../video-layout/actions.web';
 import Whiteboard from '../../whiteboard/components/web/Whiteboard';
 import { isWhiteboardEnabled } from '../../whiteboard/functions';
@@ -98,6 +99,11 @@ interface IProps {
      * Whether or not to show dominant speaker badge.
      */
     _showDominantSpeakerBadge: boolean;
+
+    /**
+     * Whether or not to show subtitles button.
+     */
+    _showSubtitles?: boolean;
 
     /**
      * The width of the vertical filmstrip (user resized).
@@ -199,7 +205,8 @@ class LargeVideo extends Component<IProps> {
             _isDisplayNameVisible,
             _noAutoPlayVideo,
             _showDominantSpeakerBadge,
-            _whiteboardEnabled
+            _whiteboardEnabled,
+            _showSubtitles
         } = this.props;
         const style = this._getCustomStyles();
         const className = `videocontainer${_isChatOpen ? ' shift-right' : ''}`;
@@ -247,8 +254,8 @@ class LargeVideo extends Component<IProps> {
                             playsInline = { true } /* for Safari on iOS to work */ />
                     </div>
                 </div>
-                { interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES
-                    || <Captions /> }
+                { (!interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES && _showSubtitles)
+                    && <Captions /> }
                 {
                     _isDisplayNameVisible
                     && (
@@ -387,6 +394,8 @@ function _mapStateToProps(state: IReduxState) {
         _resizableFilmstrip: isFilmstripResizable(state),
         _seeWhatIsBeingShared: Boolean(seeWhatIsBeingShared),
         _showDominantSpeakerBadge: !hideDominantSpeakerBadge,
+        _showSubtitles: areClosedCaptionsEnabled(state)
+            && Boolean(state['features/base/settings'].showSubtitlesOnStage),
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state),
         _visibleFilmstrip: visible,
