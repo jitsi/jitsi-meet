@@ -3,6 +3,8 @@ import React from "react";
 import { WithTranslation } from "react-i18next";
 import { connect as reactReduxConnect } from "react-redux";
 
+// added because it is js file
+// @ts-ignore
 import VideoLayout from "../../../../../modules/UI/videolayout/VideoLayout";
 import { IReduxState, IStore } from "../../../app/types";
 import { getConferenceNameForTitle } from "../../../base/conference/functions";
