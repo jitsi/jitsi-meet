@@ -57,7 +57,14 @@ const RightContent = React.memo(({ mode, translate, onSetModeClicked }: RightCon
     );
 });
 
-const Header = ({ mode, translate, onSetModeClicked }) => (
+
+interface HeaderProps {
+    translate: Function;
+    mode: Mode;
+    onSetModeClicked: (mode: Mode) => void;
+}
+
+const Header = ({ mode, translate, onSetModeClicked }: HeaderProps) => (
     <IntxHeader
         leftContent={<LeftContent />}
         rightContent={<RightContent mode={mode} translate={translate} onSetModeClicked={onSetModeClicked} />}

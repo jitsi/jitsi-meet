@@ -33,7 +33,7 @@ import { maybeShowSuboptimalExperienceNotification } from "../../functions.web";
 import type { AbstractProps } from "../AbstractConference";
 import { AbstractConference, abstractMapStateToProps } from "../AbstractConference";
 
-import Header from "../../../base/meet/views/Conference/components/Header";
+import Header, { Mode } from "../../../base/meet/views/Conference/components/Header";
 import ConferenceInfo from "./ConferenceInfo";
 import { default as Notice } from "./Notice";
 
@@ -101,10 +101,10 @@ class Conference extends AbstractConference<IProps, any> {
     _originalOnMouseMove: Function;
     _originalOnShowToolbar: Function;
     state = {
-        videoMode: "gallery",
+        videoMode: "gallery" as Mode,
     };
 
-    _onSetVideoModeClicked = (newMode) => {
+    _onSetVideoModeClicked = (newMode: Mode) => {
         this.setState({ videoMode: newMode });
     };
     /**
