@@ -43,29 +43,32 @@ interface IProps {
      * The redux {@code dispatch} function.
      */
     dispatch: IStore['dispatch'];
+    
 }
-const useStyles = makeStyles()(() => ({
-    e2eeSection: {
-        display: 'flex',
-        flexDirection: 'column'
-    },
-
-    description: {
-        fontSize: '13px',
-        margin: '15px 0'
-    },
-
-    controlRow: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        marginTop: '15px',
-
-        '& label': {
-            fontSize: '14px',
-            fontWeight: 'bold'
-        }
-    }
-}));
+    const useStyles = makeStyles()(() => {
+        return {
+            e2eeSection: {
+                display: 'flex',
+                flexDirection: 'column'
+            },
+    
+            description: {
+                fontSize: '13px',
+                margin: '15px 0'
+            },
+    
+            controlRow: {
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginTop: '15px',
+    
+                '& label': {
+                    fontSize: '14px',
+                    fontWeight: 'bold'
+                }
+            }
+        };
+    });
 /**
  * Implements a React {@code Component} for displaying a security dialog section with a field
  * for setting the E2EE key.
