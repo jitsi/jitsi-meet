@@ -159,11 +159,11 @@ export function getQuickActionButtonType(
         if (!isVideoMuted) {
             return QUICK_ACTION_BUTTON.STOP_VIDEO;
         }
-        if (isVideoForceMuted) {
-            return QUICK_ACTION_BUTTON.ALLOW_VIDEO;
-        }
         if (isSupported()(state) && !isParticipantSilent) {
             return QUICK_ACTION_BUTTON.ASK_TO_UNMUTE;
+        }
+        if (isVideoForceMuted) {
+            return QUICK_ACTION_BUTTON.ALLOW_VIDEO;
         }
     }
 

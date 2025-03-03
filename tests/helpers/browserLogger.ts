@@ -9,13 +9,13 @@ export const LOG_PREFIX = '[MeetTest] ';
  * Initialize logger for a driver.
  *
  * @param {WebdriverIO.Browser} driver - The driver.
- * @param {string} name - The name of the participant.
+ * @param {string} fileName - The name of the file.
  * @param {string} folder - The folder to save the file.
  * @returns {void}
  */
-export function initLogger(driver: WebdriverIO.Browser, name: string, folder: string) {
+export function initLogger(driver: WebdriverIO.Browser, fileName: string, folder: string) {
     // @ts-ignore
-    driver.logFile = `${folder}/${name}.log`;
+    driver.logFile = `${folder}/${fileName}.log`;
     driver.sessionSubscribe({ events: [ 'log.entryAdded' ] });
 
     driver.on('log.entryAdded', (entry: any) => {

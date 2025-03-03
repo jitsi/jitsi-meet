@@ -1,13 +1,18 @@
 import type { ChainablePromiseElement } from 'webdriverio';
 
 import type { Participant } from '../../helpers/Participant';
-import { checkSubject, ensureThreeParticipants, ensureTwoParticipants } from '../../helpers/participants';
+import {
+    checkSubject,
+    ensureThreeParticipants,
+    ensureTwoParticipants,
+    hangupAllParticipants
+} from '../../helpers/participants';
 
 const MAIN_ROOM_NAME = 'Main room';
 const BREAKOUT_ROOMS_LIST_ID = 'breakout-rooms-list';
 const LIST_ITEM_CONTAINER = 'list-item-container';
 
-describe('BreakoutRooms ', () => {
+describe('BreakoutRooms', () => {
     it('check support', async () => {
         await ensureTwoParticipants(ctx);
 
@@ -266,8 +271,8 @@ describe('BreakoutRooms ', () => {
             });
 
         // there should be two participants in the main room, either p2 or p3 got moved to the main room
-        const checkParticipants = async (p: Participant) => {
-            await p.driver.waitUntil(
+        const checkParticipants = (p: Participant) =>
+            p.driver.waitUntil(
                 async () => {
                     const isInBreakoutRoom = await p.isInBreakoutRoom();
                     const breakoutRooms = p.getBreakoutRooms();
@@ -303,14 +308,13 @@ describe('BreakoutRooms ', () => {
                     timeout: 2000,
                     timeoutMsg: `${p.name} is not seeing an empty breakout room and one with one participant`
                 });
-        };
 
         await checkParticipants(p2);
         await checkParticipants(p3);
     });
 
     it('send participants to breakout room', async () => {
-        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
+        await hangupAllParticipants();
 
         // because the participants rejoin so fast, the meeting is not properly ended,
         // so the previous breakout rooms would still be there.
@@ -421,8 +425,10 @@ describe('BreakoutRooms ', () => {
 
         await checkSubject(p2, myNewRoomName);
 
+        const p2BreakoutRooms = p2.getBreakoutRooms();
+
         // leave room
-        await p2.getBreakoutRooms().leaveBreakoutRoom();
+        await p2BreakoutRooms.leaveBreakoutRoom();
 
         // there should be one empty room
         await p1.driver.waitUntil(
@@ -436,10 +442,20 @@ describe('BreakoutRooms ', () => {
                 return list[0].participantCount === 0;
             }, {
                 timeout: 2000,
-                timeoutMsg: 'The breakout room was not renamed for p1'
+                timeoutMsg: 'The breakout room not found or not empty for p1'
             });
 
-        expect((await p2.getBreakoutRooms().getRooms())[0].name).toBe(myNewRoomName);
+        await p2.driver.waitUntil(
+            async () => {
+                const list = await p2BreakoutRooms.getRooms();
+
+                return list?.length === 1;
+            }, {
+                timeout: 3000,
+                timeoutMsg: 'The breakout room not seen by p2'
+            });
+
+        expect((await p2BreakoutRooms.getRooms())[0].name).toBe(myNewRoomName);
 
         // send the second participant to the first breakout room
         await p1BreakoutRooms.sendParticipantToBreakoutRoom(p2, myNewRoomName);

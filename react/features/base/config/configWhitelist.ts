@@ -1,4 +1,7 @@
+import { inIframe } from '../util/iframeUtils';
+
 import extraConfigWhitelist from './extraConfigWhitelist';
+import inIframeConfigWhitelist from './inIframeConfigWhitelist';
 
 /**
  * The config keys to whitelist, the keys that can be overridden.
@@ -90,6 +93,7 @@ export default [
     'disableAddingBackgroundImages',
     'disableAudioLevels',
     'disableBeforeUnloadHandlers',
+    'disableCameraTintForeground',
     'disableChatSmileys',
     'disableDeepLinking',
     'disabledNotifications',
@@ -241,4 +245,4 @@ export default [
     'webrtcIceTcpDisable',
     'webrtcIceUdpDisable',
     'whiteboard.enabled'
-].concat(extraConfigWhitelist);
+].concat(extraConfigWhitelist).concat(inIframe() ? inIframeConfigWhitelist : []);

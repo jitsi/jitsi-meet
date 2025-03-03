@@ -1,8 +1,7 @@
-/* global APP */
 import type { Participant } from '../../helpers/Participant';
 import { ensureThreeParticipants, muteAudioAndCheck } from '../../helpers/participants';
 
-describe('ActiveSpeaker ', () => {
+describe('ActiveSpeaker', () => {
     it('testActiveSpeaker', async () => {
         await ensureThreeParticipants(ctx);
 
@@ -61,8 +60,7 @@ async function testActiveSpeaker(
     const otherParticipant1Driver = otherParticipant1.driver;
 
     await otherParticipant1Driver.waitUntil(
-        async () => await otherParticipant1Driver.execute(
-            id => APP.UI.getLargeVideoID() === id, speakerEndpoint),
+        async () => await otherParticipant1.getLargeVideo().getResource() === speakerEndpoint,
         {
             timeout: 30_000, // 30 seconds
             timeoutMsg: 'Active speaker not displayed on large video.'

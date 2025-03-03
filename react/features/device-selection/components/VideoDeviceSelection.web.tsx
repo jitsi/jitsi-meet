@@ -46,6 +46,11 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     desktopShareFramerates: Array<number>;
 
     /**
+     * True if desktop share settings should be hidden (mobile browsers).
+     */
+    disableDesktopShareSettings: boolean;
+
+    /**
      * True if device changing is configured to be disallowed. Selectors
      * will display as disabled.
      */
@@ -208,6 +213,7 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
      */
     render() {
         const {
+            disableDesktopShareSettings,
             disableLocalVideoFlip,
             hideAdditionalSettings,
             hideVideoInputPreview,
@@ -240,7 +246,7 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
                                     onChange = { () => super._onChange({ localFlipX: !localFlipX }) } />
                             </div>
                         )}
-                        {this._renderFramerateSelect()}
+                        {!disableDesktopShareSettings && this._renderFramerateSelect()}
                     </>
                 )}
             </div>

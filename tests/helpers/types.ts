@@ -9,10 +9,12 @@ export type IContext = {
     iframeAPI: boolean;
     jwtKid: string;
     jwtPrivateKeyPath: string;
+    keepAlive: Array<any>;
     p1: Participant;
     p2: Participant;
     p3: Participant;
     p4: Participant;
+    roomKey: string;
     roomName: string;
     skipSuiteTests: boolean;
     times: any;
@@ -45,4 +47,10 @@ export type IJoinOptions = {
      * Whether to skip in meeting checks like ice connected and send receive data. For single in meeting participant.
      */
     skipInMeetingChecks?: boolean;
+
+    /**
+     * Whether to skip waiting for the participant to join the room. Cases like lobby where we do not succeed to join
+     * based on the logic of the test.
+     */
+    skipWaitToJoin?: boolean;
 };

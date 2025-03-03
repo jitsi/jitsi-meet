@@ -109,12 +109,6 @@ function getConfig(options = {}) {
                     // Avoid loading babel.config.js, since we only use it for React Native.
                     configFile: false,
 
-                    // XXX The require.resolve below solves failures to locate the
-                    // presets when lib-jitsi-meet, for example, is npm linked in
-                    // jitsi-meet.
-                    plugins: [
-                        require.resolve('@babel/plugin-proposal-export-default-from')
-                    ],
                     presets: [
                         [
                             require.resolve('@babel/preset-env'),
@@ -132,14 +126,24 @@ function getConfig(options = {}) {
                                     electron: 10,
                                     firefox: 68,
                                     safari: 14
-                                }
+                                },
 
+                                // Consider stage 3 proposals which are implemented by some browsers already.
+                                shippedProposals: true,
+
+                                // Detect usage of modern JavaScript features and automatically polyfill them
+                                // with core-js.
+                                useBuiltIns: 'usage',
+
+                                // core-js version to use, must be in sync with the version in package.json.
+                                corejs: '3.40'
                             }
                         ],
                         require.resolve('@babel/preset-react')
                     ]
                 },
-                test: /\.jsx?$/
+                test: /\.(j|t)sx?$/,
+                exclude: /node_modules/
             }, {
                 // Allow CSS to be imported into JavaScript.
 
@@ -312,16 +316,6 @@ module.exports = (_env, argv) => {
         }),
         Object.assign({}, config, {
             entry: {
-                'analytics-ga': './react/features/analytics/handlers/GoogleAnalyticsHandler.ts'
-            },
-            plugins: [
-                ...config.plugins,
-                ...getBundleAnalyzerPlugin(analyzeBundle, 'analytics-ga')
-            ],
-            performance: getPerformanceHints(perfHintOptions, 5 * 1024)
-        }),
-        Object.assign({}, config, {
-            entry: {
                 'close3': './static/close3.js'
             },
             plugins: [
@@ -343,7 +337,7 @@ module.exports = (_env, argv) => {
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'external_api')
             ],
-            performance: getPerformanceHints(perfHintOptions, 40 * 1024)
+            performance: getPerformanceHints(perfHintOptions, 95 * 1024)
         }),
         Object.assign({}, config, {
             entry: {
@@ -397,7 +391,7 @@ module.exports = (_env, argv) => {
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'screenshot-capture-worker')
             ],
-            performance: getPerformanceHints(perfHintOptions, 4 * 1024)
+            performance: getPerformanceHints(perfHintOptions, 30 * 1024)
         })
     ];
 };

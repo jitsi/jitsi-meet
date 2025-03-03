@@ -1,18 +1,12 @@
 import { ensureTwoParticipants } from '../../helpers/participants';
 
-describe('Audio only - ', () => {
-    it('joining the meeting', async () => {
-        await ensureTwoParticipants(ctx, {
-            skipFirstModerator: true
-        });
-    });
+describe('Audio only', () => {
+    it('joining the meeting', () => ensureTwoParticipants(ctx, { skipFirstModerator: true }));
 
     /**
      * Enables audio only mode for p1 and verifies that the other participant sees participant1 as video muted.
      */
-    it('set and check', async () => {
-        await setAudioOnlyAndCheck(true);
-    });
+    it('set and check', () => setAudioOnlyAndCheck(true));
 
     /**
      * Verifies that participant1 sees avatars for itself and other participants.
@@ -29,9 +23,7 @@ describe('Audio only - ', () => {
     /**
      * Disables audio only mode and verifies that both participants see p1 as not video muted.
      */
-    it('disable and check', async () => {
-        await setAudioOnlyAndCheck(false);
-    });
+    it('disable and check', () => setAudioOnlyAndCheck(false));
 
     /**
      * Mutes video on participant1, toggles audio-only twice and then verifies if both participants see participant1

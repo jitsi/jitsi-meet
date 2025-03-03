@@ -1,9 +1,8 @@
 import { ensureOneParticipant } from '../../helpers/participants';
 
-describe('Chat Panel - ', () => {
-    it('join participant', async () => {
-        await ensureOneParticipant(ctx);
-    });
+describe('Chat Panel', () => {
+    it('join participant', () => ensureOneParticipant(ctx));
+
     it('start closed', async () => {
         expect(await ctx.p1.getChatPanel().isOpen()).toBe(false);
     });

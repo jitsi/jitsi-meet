@@ -10,14 +10,14 @@ export default class BaseDialog extends BasePageObject {
     /**
      *  Clicks on the X (close) button.
      */
-    async clickCloseButton(): Promise<void> {
-        await this.participant.driver.$(`#${CLOSE_BUTTON}`).click();
+    clickCloseButton(): Promise<void> {
+        return this.participant.driver.$(`#${CLOSE_BUTTON}`).click();
     }
 
     /**
      *  Clicks on the ok button.
      */
-    async clickOkButton(): Promise<void> {
-        await this.participant.driver.$(`#${OK_BUTTON}`).click();
+    clickOkButton(): Promise<void> {
+        return this.participant.driver.$(`#${OK_BUTTON}`).click();
     }
 }

@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 // @ts-expect-error
 import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
 import { IReduxState, IStore } from '../../app/types';
+import { isDisplayNameVisible } from '../../base/config/functions.web';
 import { VIDEO_TYPE } from '../../base/media/constants';
 import { getLocalParticipant } from '../../base/participants/functions';
 import Watermarks from '../../base/react/components/web/Watermarks';
@@ -57,6 +58,11 @@ interface IProps {
      * Prop that indicates whether the chat is open.
      */
     _isChatOpen: boolean;
+
+    /**
+     * Whether or not the display name is visible.
+     */
+    _isDisplayNameVisible: boolean;
 
     /**
      * Whether or not the local screen share is on large-video.
@@ -191,6 +197,7 @@ class LargeVideo extends Component<IProps> {
         const {
             _displayScreenSharingPlaceholder,
             _isChatOpen,
+            _isDisplayNameVisible,
             _noAutoPlayVideo,
             _showDominantSpeakerBadge,
             _whiteboardEnabled
@@ -243,7 +250,12 @@ class LargeVideo extends Component<IProps> {
                 </div>
                 { interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES
                     || <Captions /> }
-                {_showDominantSpeakerBadge && <StageParticipantNameLabel />}
+                {
+                    _isDisplayNameVisible
+                    && (
+                        _showDominantSpeakerBadge && <StageParticipantNameLabel />
+                    )
+                }
             </div>
         );
     }
@@ -368,6 +380,7 @@ function _mapStateToProps(state: IReduxState) {
         _displayScreenSharingPlaceholder: Boolean(isLocalScreenshareOnLargeVideo && !seeWhatIsBeingShared && !isOnSpot),
         _hideSelfView: getHideSelfView(state),
         _isChatOpen: isChatOpen,
+        _isDisplayNameVisible: isDisplayNameVisible(state),
         _isScreenSharing: Boolean(isLocalScreenshareOnLargeVideo),
         _largeVideoParticipantId: largeVideoParticipant?.id ?? '',
         _localParticipantId: localParticipantId ?? '',

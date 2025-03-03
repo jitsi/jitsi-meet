@@ -17,11 +17,11 @@ STYLES_BUNDLE = css/all.bundle.css
 STYLES_DESTINATION = css/all.css
 STYLES_MAIN = css/main.scss
 ifeq ($(OS),Windows_NT)
-	WEBPACK = .\node_modules\.bin\webpack
-	WEBPACK_DEV_SERVER = .\node_modules\.bin\webpack serve --mode development
+	WEBPACK = .\node_modules\.bin\webpack --progress
+	WEBPACK_DEV_SERVER = .\node_modules\.bin\webpack serve --mode development --progress
 else
-	WEBPACK = ./node_modules/.bin/webpack
-	WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack serve --mode development
+	WEBPACK = ./node_modules/.bin/webpack --progress
+	WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack serve --mode development --progress
 endif
 
 all: compile deploy
@@ -48,8 +48,6 @@ deploy-appbundle:
 		$(BUILD_DIR)/external_api.min.js.map \
 		$(BUILD_DIR)/alwaysontop.min.js \
 		$(BUILD_DIR)/alwaysontop.min.js.map \
-		$(BUILD_DIR)/analytics-ga.min.js \
-		$(BUILD_DIR)/analytics-ga.min.js.map \
 		$(BUILD_DIR)/face-landmarks-worker.min.js \
 		$(BUILD_DIR)/face-landmarks-worker.min.js.map \
 		$(BUILD_DIR)/noise-suppressor-worklet.min.js \

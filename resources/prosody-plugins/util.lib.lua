@@ -5,6 +5,7 @@ local timer = require "util.timer";
 local http = require "net.http";
 local cache = require "util.cache";
 local array = require "util.array";
+local is_set = require 'util.set'.is_set;
 
 local http_timeout = 30;
 local have_async, async = pcall(require, "util.async");
@@ -32,6 +33,7 @@ local roomless_iqs = {};
 local OUTBOUND_SIP_JIBRI_PREFIXES = { 'outbound-sip-jibri@', 'sipjibriouta@', 'sipjibrioutb@' };
 local INBOUND_SIP_JIBRI_PREFIXES = { 'inbound-sip-jibri@', 'sipjibriina@', 'sipjibriina@' };
 local RECORDER_PREFIXES = module:get_option_inherited_set('recorder_prefixes', { 'recorder@recorder.', 'jibria@recorder.', 'jibrib@recorder.' });
+local TRANSCRIBER_PREFIXES = module:get_option_inherited_set('transcriber_prefixes', { 'transcriber@recorder.', 'transcribera@recorder.', 'transcriberb@recorder.' });
 
 local split_subdomain_cache = cache.new(1000);
 local extract_subdomain_cache = cache.new(1000);
@@ -206,8 +208,7 @@ end
 -- @param creator_group the group of the user who created the user which
 -- presence we are updating (this is the poltergeist case, where a user creates
 -- a poltergeist), optional.
-function update_presence_identity(
-    stanza, user, group, creator_user, creator_group)
+function update_presence_identity(stanza, user, group, creator_user, creator_group)
 
     -- First remove any 'identity' element if it already
     -- exists, so it cannot be spoofed by a client
@@ -220,7 +221,11 @@ function update_presence_identity(
             end
             return tag
         end
-    )
+    );
+
+    if not user then
+        return;
+    end
 
     stanza:tag("identity"):tag("user");
     for k, v in pairs(user) do
@@ -267,17 +272,18 @@ function is_feature_allowed(ft, features, granted_features, is_moderator)
 end
 
 --- Extracts the subdomain and room name from internal jid node [foo]room1
--- @return subdomain(optional, if extracted or nil), the room name
+-- @return subdomain(optional, if extracted or nil), the room name, the customer_id in case of vpaas
 function extract_subdomain(room_node)
     local ret = extract_subdomain_cache:get(room_node);
     if ret then
-        return ret.subdomain, ret.room;
+        return ret.subdomain, ret.room, ret.customer_id;
     end
 
     local subdomain, room_name = room_node:match("^%[([^%]]+)%](.+)$");
-    local cache_value = {subdomain=subdomain, room=room_name};
+    local _, customer_id = subdomain and subdomain:match("^(vpaas%-magic%-cookie%-)(.*)$") or nil, nil;
+    local cache_value = { subdomain=subdomain, room=room_name, customer_id=customer_id };
     extract_subdomain_cache:set(room_node, cache_value);
-    return subdomain, room_name;
+    return subdomain, room_name, customer_id;
 end
 
 function starts_with(str, start)
@@ -288,14 +294,25 @@ function starts_with(str, start)
 end
 
 function starts_with_one_of(str, prefixes)
-    if not str then
+    if not str or not prefixes then
         return false;
     end
-    for i=1,#prefixes do
-        if starts_with(str, prefixes[i]) then
-            return prefixes[i];
+
+    if is_set(prefixes) then
+        -- set is a table with keys and value of true
+        for k, _ in prefixes:items() do
+            if starts_with(str, k) then
+                return k;
+            end
+        end
+    else
+        for _, v in pairs(prefixes) do
+          if starts_with(str, v) then
+              return v;
+          end
         end
     end
+
     return false
 end
 
@@ -474,12 +491,21 @@ end
 
 -- Returns the initiator extension if the stanza is coming from a sip jigasi
 function is_sip_jigasi(stanza)
+    if not stanza then
+        return false;
+    end
+
     return stanza:get_child('initiator', 'http://jitsi.org/protocol/jigasi');
 end
 
+-- This requires presence stanza being passed
 function is_transcriber_jigasi(stanza)
+    if not stanza then
+        return false;
+    end
+
     local features = stanza:get_child('features');
-    if not features  then
+    if not features then
         return false;
     end
 
@@ -493,6 +519,9 @@ function is_transcriber_jigasi(stanza)
     return false;
 end
 
+function is_transcriber(jid)
+    return starts_with_one_of(jid, TRANSCRIBER_PREFIXES);
+end
 
 function get_sip_jibri_email_prefix(email)
     if not email then
@@ -532,7 +561,7 @@ function is_sip_jibri_join(stanza)
 end
 
 function is_jibri(occupant)
-    return starts_with_one_of(occupant.jid, RECORDER_PREFIXES)
+    return starts_with_one_of(type(occupant) == "string" and occupant or occupant.jid, RECORDER_PREFIXES)
 end
 
 -- process a host module directly if loaded or hooks to wait for its load
@@ -608,6 +637,7 @@ return {
     is_moderated = is_moderated;
     is_sip_jibri_join = is_sip_jibri_join;
     is_sip_jigasi = is_sip_jigasi;
+    is_transcriber = is_transcriber;
     is_transcriber_jigasi = is_transcriber_jigasi;
     is_vpaas = is_vpaas;
     get_focus_occupant = get_focus_occupant;
