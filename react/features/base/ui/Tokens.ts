@@ -1,5 +1,8 @@
+import * as neoTokens from './neoDark.json';
+
 // Default color palette
 export const colors = {
+    error01: neoTokens.error01,
     error03: '#7A141F',
     error04: '#A21B29',
     error05: '#CB2233',
@@ -55,44 +58,44 @@ export const colorMap = {
     uiBackground: 'surface01',
 
     // Container backgrounds
-    ui01: 'surface02',
-    ui02: 'surface03',
-    ui03: 'surface04',
-    ui04: 'surface05',
-    ui05: 'surface06',
-    ui06: 'surface07',
-    ui07: 'surface08',
-    ui08: 'surface09',
-    ui09: 'surface10',
-    ui10: 'surface11',
+    ui01: neoTokens.ui01,
+    ui02: neoTokens.ui02,
+    ui03: neoTokens.ui03,
+    ui04: neoTokens.ui04,
+    ui05: neoTokens.ui05,
+    ui06: neoTokens.ui06,
+    ui07: neoTokens.ui07,
+    ui08: neoTokens.ui08,
+    ui09: neoTokens.ui09,
+    ui10: neoTokens.ui10,
 
     // ----- Actions -----
 
     // Primary
-    action01: 'primary06',
-    action01Hover: 'primary07',
-    action01Active: 'primary04',
+    action01: neoTokens.action01,
+    action01Hover: neoTokens.hover01,
+    action01Active: neoTokens.active01,
 
     // Secondary
-    action02: 'surface10',
-    action02Hover: 'surface11',
-    action02Active: 'surface09',
+    action02: neoTokens.action02,
+    action02Hover: neoTokens.hover02,
+    action02Active: neoTokens.active02,
 
     // Destructive
-    actionDanger: 'error05',
+    actionDanger: 'error01',
     actionDangerHover: 'error06',
     actionDangerActive: 'error04',
 
     // Tertiary
     action03: 'transparent',
-    action03Hover: 'surface04',
-    action03Active: 'surface03',
+    action03Hover: neoTokens.hover03,
+    action03Active: neoTokens.active03,
 
     // Disabled
-    disabled01: 'surface09',
+    disabled01: neoTokens.disabled01,
 
     // Focus
-    focus01: 'primary07',
+    focus01: neoTokens.focus01,
 
     // ----- Links -----
 
@@ -103,16 +106,16 @@ export const colorMap = {
     // ----- Text -----
 
     // Primary
-    text01: 'surface11',
+    text01: neoTokens.textColor01,
 
     // Secondary
-    text02: 'surface09',
+    text02: neoTokens.textColor02,
 
     // Tertiary
     text03: 'surface07',
 
     // High-contrast
-    text04: 'surface01',
+    text04: neoTokens.textColor04,
 
     // Error
     textError: 'error08',
@@ -120,16 +123,16 @@ export const colorMap = {
     // ----- Icons -----
 
     // Primary
-    icon01: 'surface11',
+    icon01: neoTokens.icon01,
 
     // Secondary
-    icon02: 'surface09',
+    icon02: neoTokens.icon02,
 
     // Tertiary
-    icon03: 'surface07',
+    icon03: neoTokens.icon03,
 
     // High-contrast
-    icon04: 'surface01',
+    icon04: neoTokens.icon04,
 
     // Error
     iconError: 'error06',
@@ -141,12 +144,12 @@ export const colorMap = {
     // ----- Feedback -----
 
     // Success
-    success01: 'success05',
+    success01: neoTokens.success01,
     success02: 'success04',
 
     // Warning
-    warning01: 'warning05',
-    warning02: 'warning06',
+    warning01: neoTokens.warning01,
+    warning02: neoTokens.warning02,
 
     // ----- Support -----
 
@@ -177,19 +180,9 @@ export const spacing
     = [ 0, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128 ];
 
 export const typography = {
-    labelRegular: {
-        fontSize: 12,
-        lineHeight: 16,
-        fontWeight: font.weightRegular,
-        letterSpacing: 0.16
-    },
+    labelRegular: neoTokens.label01,
 
-    labelBold: {
-        fontSize: 12,
-        lineHeight: 16,
-        fontWeight: font.weightSemiBold,
-        letterSpacing: 0.16
-    },
+    labelBold: neoTokens.labelBold01,
 
     bodyShortRegularSmall: {
         fontSize: 10,
@@ -254,19 +247,9 @@ export const typography = {
         letterSpacing: 0
     },
 
-    heading1: {
-        fontSize: 54,
-        lineHeight: 64,
-        fontWeight: font.weightSemiBold,
-        letterSpacing: 0
-    },
+    heading1: neoTokens.heading01,
 
-    heading2: {
-        fontSize: 42,
-        lineHeight: 50,
-        fontWeight: font.weightSemiBold,
-        letterSpacing: 0
-    },
+    heading2: neoTokens.heading02,
 
     heading3: {
         fontSize: 32,
