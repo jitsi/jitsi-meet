@@ -111,7 +111,7 @@ form {
     height: $watermarkHeight;
     background-size: contain;
     background-repeat: no-repeat;
-    z-index: $zindex2;
+    z-index: $watermarkZ;
 }
 
 .leftwatermark {
@@ -142,7 +142,7 @@ form {
     font-size: 11pt;
     color: rgba(255,255,255,.50);
     text-decoration: none;
-    z-index: 100;
+    z-index: $watermarkZ;
 }
 
 /**
