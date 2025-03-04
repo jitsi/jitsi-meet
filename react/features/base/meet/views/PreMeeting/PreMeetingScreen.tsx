@@ -110,8 +110,18 @@ interface IProps extends WithTranslation {
 
     audioTrack?: any;
 
-    joinConference: () => void;
-    disableJoinButton: boolean;
+    /**
+     * Click handler for the small icon. Opens video options.
+     */
+    onVideoOptionsClick?: Function;
+
+    /**
+     * Click handler for the small icon. Opens audio options.
+     */
+    onAudioOptionsClick?: Function;
+
+    joinConference?: () => void;
+    disableJoinButton?: boolean;
 }
 
 const PreMeetingScreen = ({

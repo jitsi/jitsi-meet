@@ -3,6 +3,8 @@ import React from "react";
 import { WithTranslation } from "react-i18next";
 import { connect as reactReduxConnect } from "react-redux";
 
+// added because it is js file
+// @ts-ignore
 import VideoLayout from "../../../../../modules/UI/videolayout/VideoLayout";
 import { IReduxState } from "../../../app/types";
 import { getConferenceNameForTitle } from "../../../base/conference/functions";
@@ -32,7 +34,8 @@ import { maybeShowSuboptimalExperienceNotification } from "../../functions.web";
 import type { AbstractProps } from "../AbstractConference";
 import { AbstractConference, abstractMapStateToProps } from "../AbstractConference";
 
-import Header from "../../../base/meet/views/Conference/components/Header";
+
+import Header, { Mode } from "../../../base/meet/views/Conference/components/Header";
 import LargeVideoWeb from "../../../large-video/components/LargeVideo.web";
 import ConferenceInfo from "./ConferenceInfo";
 import { default as Notice } from "./Notice";
@@ -107,10 +110,10 @@ class Conference extends AbstractConference<IProps, any> {
     _originalOnMouseMove: Function;
     _originalOnShowToolbar: Function;
     state = {
-        videoMode: "gallery",
+        videoMode: "gallery" as Mode,
     };
 
-    _onSetVideoModeClicked = (newMode) => {
+    _onSetVideoModeClicked = (newMode: Mode) => {
         this.setState({ videoMode: newMode });
     };
     /**
