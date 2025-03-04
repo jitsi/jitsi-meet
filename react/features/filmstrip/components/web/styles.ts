@@ -1,6 +1,7 @@
 import { Theme } from '@mui/material';
 
 const BACKGROUND_COLOR = 'rgba(51, 51, 51, .5)';
+const OPAQUE_BACKGROUND_COLOR = 'rgba(51, 51, 51)';
 
 /**
  * Creates the styles for the component.
@@ -100,7 +101,11 @@ export const styles = (theme: Theme) => {
                 '& .toggleFilmstripContainer': {
                     opacity: 1
                 }
-            }
+            },
+
+            '.opaque-filmstrip': {
+                backgroundColor: OPAQUE_BACKGROUND_COLOR
+            },
         },
 
         filmstripBackground: {

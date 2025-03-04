@@ -394,6 +394,7 @@ export interface IConfig {
         disabled?: boolean;
         minParticipantCountForTopPanel?: number;
     };
+    filmstripBackgroundOpaque?: boolean;
     flags?: {
         ssrcRewritingEnabled: boolean;
     };
