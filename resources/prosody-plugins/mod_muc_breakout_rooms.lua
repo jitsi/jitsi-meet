@@ -350,7 +350,9 @@ function on_message(event)
         local participant_jid = message.attr.participantJid;
         local target_room_jid = message.attr.roomJid;
 
-        if not room._data.breakout_rooms or not room._data.breakout_rooms[target_room_jid] then
+        if not room._data.breakout_rooms or not (
+            room._data.breakout_rooms[target_room_jid] or target_room_jid == internal_room_jid_match_rewrite(room.jid))
+        then
             module:log('warn', 'Invalid breakout room %s for %s', target_room_jid, room.jid);
             return false
         end
