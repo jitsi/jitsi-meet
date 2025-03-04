@@ -3,16 +3,12 @@ local json = require 'cjson.safe';
 local queue = require "util.queue";
 local uuid_gen = require "util.uuid".generate;
 local main_util = module:require "util";
+local is_admin = main_util.is_admin;
 local ends_with = main_util.ends_with;
 local get_room_from_jid = main_util.get_room_from_jid;
 local is_healthcheck_room = main_util.is_healthcheck_room;
 local internal_room_jid_match_rewrite = main_util.internal_room_jid_match_rewrite;
 local presence_check_status = main_util.presence_check_status;
-
-local um_is_admin = require 'core.usermanager'.is_admin;
-local function is_admin(jid)
-    return um_is_admin(jid, module.host);
-end
 
 local QUEUE_MAX_SIZE = 500;
 
