@@ -1051,7 +1051,8 @@ function initCommands() {
             break;
         }
         case 'get-shared-document-url': {
-            const { etherpad } = APP.store.getState()["features/etherpad"];
+            const { etherpad } = APP.store.getState()['features/etherpad'];
+
             callback(etherpad?.documentUrl || '');
             break;
         }
