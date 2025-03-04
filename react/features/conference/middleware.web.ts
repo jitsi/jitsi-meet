@@ -26,7 +26,7 @@ MiddlewareRegistry.register(store => next => action => {
     case KICKED_OUT: {
         const { dispatch, getState } = store;
         const state = getState();
-        const { notifyOnConferenceTermination = true } = state['features/base/config'];
+        const { notifyOnConferenceTermination } = state['features/base/config'];
         const { participant } = action;
 
         // we need to first finish dispatching or the notification can be cleared out
