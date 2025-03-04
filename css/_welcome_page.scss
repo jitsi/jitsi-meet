@@ -219,7 +219,7 @@ body.welcome-page {
     .welcome-page-button {
         border: 0;
         font-size: 14px;
-        background: $welcomePageButtonBackground;
+        background: #0074E0;
         border-radius: 3px;
         color: #FFFFFF;
         cursor: pointer;
@@ -227,11 +227,11 @@ body.welcome-page {
         transition: all 0.2s;
 
         &:focus-within {
-            outline: auto 2px $welcomePageButtonFocusOutline;
+            outline: auto 2px #00225A;
         }
 
         &:hover {
-            background-color: $welcomePageButtonHoverBackground;
+            background-color: #4687ED;
         }
     }
 
