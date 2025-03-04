@@ -157,7 +157,6 @@
 		4EB0603B260E09D000F524C5 /* SampleUploader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleUploader.swift; sourceTree = "<group>"; };
 		4EC49B8625BED71300E76218 /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
 		5C1BE20ECD5DEEB48FED90B5 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		6132EF172BDFF13200BBE14D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = ../PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		756FCE06C08D9B947653C98A /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
 		B3B083EB1D4955FF0069CEE7 /* app.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = app.entitlements; sourceTree = "<group>"; };
 		D6152FF9E9F7B0E86F70A21D /* libPods-JitsiMeet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JitsiMeet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -302,7 +301,6 @@
 				0BEA5C351F7B8F73000D0AB4 /* WatchKit extension */,
 				4EB06025260E026600F524C5 /* JitsiMeetBroadcast Extension */,
 				CDD71F5E1157E9F283DF92A8 /* Pods */,
-				6132EF172BDFF13200BBE14D /* PrivacyInfo.xcprivacy */,
 				5C1BE20ECD5DEEB48FED90B5 /* PrivacyInfo.xcprivacy */,
 			);
 			indentWidth = 2;
