@@ -6,7 +6,7 @@ import { connect as reactReduxConnect } from "react-redux";
 // added because it is js file
 // @ts-ignore
 import VideoLayout from "../../../../../modules/UI/videolayout/VideoLayout";
-import { IReduxState, IStore } from "../../../app/types";
+import { IReduxState } from "../../../app/types";
 import { getConferenceNameForTitle } from "../../../base/conference/functions";
 import { hangup } from "../../../base/connection/actions.web";
 import { isMobileBrowser } from "../../../base/environment/utils";
@@ -27,7 +27,6 @@ import ReactionAnimations from "../../../reactions/components/web/ReactionsAnima
 import { toggleToolboxVisible } from "../../../toolbox/actions.any";
 import { fullScreenChanged, showToolbox } from "../../../toolbox/actions.web";
 import JitsiPortal from "../../../toolbox/components/web/JitsiPortal";
-import Toolbox from "../../../toolbox/components/web/Toolbox";
 import { LAYOUT_CLASSNAMES } from "../../../video-layout/constants";
 import { getCurrentLayout } from "../../../video-layout/functions.any";
 import { init } from "../../actions.web";
@@ -35,9 +34,13 @@ import { maybeShowSuboptimalExperienceNotification } from "../../functions.web";
 import type { AbstractProps } from "../AbstractConference";
 import { AbstractConference, abstractMapStateToProps } from "../AbstractConference";
 
+
 import Header, { Mode } from "../../../base/meet/views/Conference/components/Header";
+import LargeVideoWeb from "../../../large-video/components/LargeVideo.web";
 import ConferenceInfo from "./ConferenceInfo";
 import { default as Notice } from "./Notice";
+
+import ConferenceControlsWrapper from "../../../base/meet/views/Conference/containers/ConferenceControlsWrapper";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -47,6 +50,8 @@ import { default as Notice } from "./Notice";
  * @type {Array<string>}
  */
 const FULL_SCREEN_EVENTS = ["webkitfullscreenchange", "mozfullscreenchange", "fullscreenchange"];
+
+declare const APP: any;
 
 /**
  * The type of the React {@code Component} props of {@link Conference}.
@@ -93,7 +98,9 @@ interface IProps extends AbstractProps, WithTranslation {
      */
     _showPrejoin: boolean;
 
-    dispatch: IStore["dispatch"];
+    dispatch: any;
+
+    isParticipantsPaneOpened: boolean;
 }
 
 /**
@@ -212,16 +219,18 @@ class Conference extends AbstractConference<IProps, any> {
                 <Chat />
                 <div
                     // _layoutClassName has the styles to manage the side bar
-                    // className={_layoutClassName}
-                    className={"bg-gray-100"}
+                    className={_layoutClassName + " bg-gray-100"}
+                    // className={"bg-gray-100 relative flex"}
                     id="videoconference_page"
                     onMouseMove={isMobileBrowser() ? undefined : this._onShowToolbar}
                 >
                     <ConferenceInfo />
                     <Notice />
-                    <div id="videospace" onTouchStart={this._onVidespaceTouchStart}>
+                    <div onTouchStart={this._onVidespaceTouchStart}>
                         <Header mode={videoMode} translate={t} onSetModeClicked={this._onSetVideoModeClicked} />
-                        {/* <LargeVideo /> */}
+                        <div className="flex">
+                            <LargeVideoWeb />
+                        </div>
                         {_showPrejoin || _showLobby || (
                             <>
                                 <StageFilmstrip />
@@ -236,10 +245,12 @@ class Conference extends AbstractConference<IProps, any> {
                             <span aria-level={1} className="sr-only" role="heading">
                                 {t("toolbar.accessibilityLabel.heading")}
                             </span>
-                            <Toolbox />
+
+                            {/* <Toolbox /> */}
                         </>
                     )}
-
+                    {/* CONFERENCE MEDIA CONTROLS */}
+                    <ConferenceControlsWrapper />
                     {_notificationsVisible &&
                         !_isAnyOverlayVisible &&
                         (_overflowDrawer ? (
@@ -386,20 +397,20 @@ class Conference extends AbstractConference<IProps, any> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
-    const { backgroundAlpha, mouseMoveCallbackInterval } = state['features/base/config'];
-    const { overflowDrawer } = state['features/toolbox'];
+    const { backgroundAlpha, mouseMoveCallbackInterval } = state["features/base/config"];
+    const { overflowDrawer } = state["features/toolbox"];
 
     return {
         ...abstractMapStateToProps(state),
         _backgroundAlpha: backgroundAlpha,
         _isAnyOverlayVisible: Boolean(getOverlayToRender(state)),
-        _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state) ?? ''],
+        _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state) ?? ""],
         _mouseMoveCallbackInterval: mouseMoveCallbackInterval,
         _overflowDrawer: overflowDrawer,
         _roomName: getConferenceNameForTitle(state),
         _showLobby: getIsLobbyVisible(state),
-        _showPrejoin: isPrejoinPageVisible(state)
+        _showPrejoin: isPrejoinPageVisible(state),
     };
 }
 
-export default reactReduxConnect(_mapStateToProps)(translate(Conference));
+export default translate(reactReduxConnect(_mapStateToProps)(Conference));

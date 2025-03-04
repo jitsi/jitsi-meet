@@ -5,8 +5,7 @@ import { connect } from 'react-redux';
 import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
 import { IReduxState, IStore } from '../../app/types';
 import { VIDEO_TYPE } from '../../base/media/constants';
-import { getLocalParticipant } from '../../base/participants/functions';
-import Watermarks from '../../base/react/components/web/Watermarks';
+import { getLocalParticipant } from "../../base/participants/functions";
 import { getHideSelfView } from '../../base/settings/functions.any';
 import { getVideoTrackByParticipant } from '../../base/tracks/functions.web';
 import { setColorAlpha } from '../../base/util/helpers';
@@ -196,53 +195,43 @@ class LargeVideo extends Component<IProps> {
             _whiteboardEnabled
         } = this.props;
         const style = this._getCustomStyles();
-        const className = `videocontainer${_isChatOpen ? ' shift-right' : ''}`;
+        const className = `videocontainer${_isChatOpen ? " shift-right mt-16" : ""}`;
 
         return (
-            <div
-                className = { className }
-                id = 'largeVideoContainer'
-                ref = { this._containerRef }
-                style = { style }>
+            <div className={className + " mt-20"} id="largeVideoContainer" ref={this._containerRef} style={style}>
                 <SharedVideo />
                 {_whiteboardEnabled && <Whiteboard />}
-                <div id = 'etherpad' />
+                <div id="etherpad" />
 
-                <Watermarks />
+                {/* <Watermarks /> */}
 
-                <div
-                    id = 'dominantSpeaker'
-                    onTouchEnd = { this._onDoubleTap }>
-                    <div className = 'dynamic-shadow' />
-                    <div id = 'dominantSpeakerAvatarContainer' />
+                <div id="dominantSpeaker" onTouchEnd={this._onDoubleTap}>
+                    <div className="dynamic-shadow" />
+                    <div id="dominantSpeakerAvatarContainer" />
                 </div>
-                <div id = 'remotePresenceMessage' />
-                <span id = 'remoteConnectionMessage' />
-                <div id = 'largeVideoElementsContainer'>
-                    <div id = 'largeVideoBackgroundContainer' />
+                <div id="remotePresenceMessage" />
+                <span id="remoteConnectionMessage" />
+                <div id="largeVideoElementsContainer">
+                    <div id="largeVideoBackgroundContainer" />
                     {/*
-                      * FIXME: the architecture of elements related to the large
-                      * video and the naming. The background is not part of
-                      * largeVideoWrapper because we are controlling the size of
-                      * the video through largeVideoWrapper. That's why we need
-                      * another container for the background and the
-                      * largeVideoWrapper in order to hide/show them.
-                      */}
-                    { _displayScreenSharingPlaceholder ? <ScreenSharePlaceholder /> : <></>}
-                    <div
-                        id = 'largeVideoWrapper'
-                        onTouchEnd = { this._onDoubleTap }
-                        ref = { this._wrapperRef }
-                        role = 'figure' >
+                     * FIXME: the architecture of elements related to the large
+                     * video and the naming. The background is not part of
+                     * largeVideoWrapper because we are controlling the size of
+                     * the video through largeVideoWrapper. That's why we need
+                     * another container for the background and the
+                     * largeVideoWrapper in order to hide/show them.
+                     */}
+                    {_displayScreenSharingPlaceholder ? <ScreenSharePlaceholder /> : <></>}
+                    <div id="largeVideoWrapper" onTouchEnd={this._onDoubleTap} ref={this._wrapperRef} role="figure">
                         <video
-                            autoPlay = { !_noAutoPlayVideo }
-                            id = 'largeVideo'
-                            muted = { true }
-                            playsInline = { true } /* for Safari on iOS to work */ />
+                            autoPlay={!_noAutoPlayVideo}
+                            id="largeVideo"
+                            muted={true}
+                            playsInline={true} /* for Safari on iOS to work */
+                        />
                     </div>
                 </div>
-                { interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES
-                    || <Captions /> }
+                {interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES || <Captions />}
                 {_showDominantSpeakerBadge && <StageParticipantNameLabel />}
             </div>
         );
