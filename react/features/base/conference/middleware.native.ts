@@ -4,7 +4,7 @@ import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import { CONFERENCE_FAILED } from './actionTypes';
-import { conferenceLeft } from './actions';
+import { conferenceLeft } from './actions.native';
 import { TRIGGER_READY_TO_CLOSE_REASONS } from './constants';
 
 import './middleware.any';
@@ -15,7 +15,17 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case CONFERENCE_FAILED: {
+        const { getState } = store;
+        const state = getState();
+        const { notifyOnConferenceDestruction = true } = state['features/base/config'];
+
         if (error?.name !== JitsiConferenceErrors.CONFERENCE_DESTROYED) {
+            break;
+        }
+
+        if (!notifyOnConferenceDestruction) {
+            dispatch(conferenceLeft(action.conference));
+            dispatch(appNavigate(undefined));
             break;
         }
 
