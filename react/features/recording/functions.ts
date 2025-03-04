@@ -453,10 +453,10 @@ export function shouldRequireRecordingConsent(recorderSession: any, state: IRedu
         return false;
     }
 
-    if (!recorderSession._initiator
-        || recorderSession._statusFromJicofo === JitsiRecordingConstants.status.OFF) {
+    if (!recorderSession.getInitiator()
+        || recorderSession.getStatus() === JitsiRecordingConstants.status.OFF) {
         return false;
     }
 
-    return recorderSession._initiator !== getLocalParticipant(state)?.id;
+    return recorderSession.getInitiator() !== getLocalParticipant(state)?.id;
 }
