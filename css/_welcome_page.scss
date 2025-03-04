@@ -18,7 +18,7 @@ body.welcome-page {
         background-position: $welcomePageHeaderBackgroundPosition;
         background-repeat: $welcomePageHeaderBackgroundRepeat;
         background-size: $welcomePageHeaderBackgroundSize;
-        padding-bottom: $welcomePageHeaderPaddingBottom;
+        padding: $welcomePageHeaderPadding;
         background-color: #131519;
         overflow: hidden;
         position: relative;
@@ -219,14 +219,18 @@ body.welcome-page {
     .welcome-page-button {
         border: 0;
         font-size: 14px;
-        background: #0074E0;
+        background: $welcomePageButtonBg;
         border-radius: 3px;
         color: #FFFFFF;
         cursor: pointer;
         padding: 16px 20px;
-
+        transition: all 0.2s;
         &:focus-within {
-            outline: auto 2px #022e61;
+            outline: auto 2px $welcomePageButtonFocusOutline;
+        }
+
+        &:hover {
+            background-color: $welcomePageButtonHoverBg;
         }
     }
 
@@ -264,8 +268,7 @@ body.welcome-page {
 
     &.without-content {
         .welcome-card {
-            min-width: 500px;
-            max-width: 580px;
+            max-width: 100dvw;
         }
     }
 

@@ -7,8 +7,8 @@
     display: flex;
     flex-direction: column;
     position: relative;
-    overflow: auto;
-    width: 100%;
+    overflow-y: auto;
+    flex-grow: 1;
 
     .meetings-list-empty {
         text-align: center;
