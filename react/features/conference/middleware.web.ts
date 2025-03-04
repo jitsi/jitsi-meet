@@ -24,7 +24,9 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case KICKED_OUT: {
-        const { dispatch } = store;
+        const { dispatch, getState } = store;
+        const state = getState();
+        const { notifyOnConferenceTermination = true } = state['features/base/config'];
         const { participant } = action;
 
         // we need to first finish dispatching or the notification can be cleared out
@@ -35,7 +37,8 @@ MiddlewareRegistry.register(store => next => action => {
 
         dispatch(hangup(true,
             participantDisplayName ? i18next.t('dialog.kickTitle', { participantDisplayName })
-                : i18next.t('dialog.kickSystemTitle')));
+                : i18next.t('dialog.kickSystemTitle'),
+            notifyOnConferenceTermination));
 
         return result;
     }
