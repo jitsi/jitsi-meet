@@ -63,7 +63,7 @@ export function connect(id?: string, password?: string) {
  * request for call feedback.
  * @param {string} [feedbackTitle] - The feedback title.
  * @param {boolean} [notifyOnConferenceTermination] - Whether to notify
- * the user on conference termination
+ * the user on conference termination.
  * @returns {Function}
  */
 export function hangup(requestFeedback = false, feedbackTitle?: string, notifyOnConferenceTermination?: boolean) {
