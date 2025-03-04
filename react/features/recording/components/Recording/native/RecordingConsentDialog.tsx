@@ -15,6 +15,8 @@ export default function RecordingConsentDialog() {
     const consent = useCallback(() => {
         dispatch(setAudioUnmutePermissions(false, true));
         dispatch(setVideoUnmutePermissions(false, true));
+
+        return true;
     }, []);
 
     return (
