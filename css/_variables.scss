@@ -71,6 +71,10 @@ $welcomePageFontFamily: inherit;
 $welcomePageBackground: none;
 $welcomePageTitleColor: #fff;
 
+$welcomePageButtonBackground: #0074E0;
+$welcomePageButtonHoverBackground: #4687ED;
+$welcomePageButtonFocusOutline: #00225A;
+
 $welcomePageHeaderBackground: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../images/welcome-background.png');
 $welcomePageHeaderBackgroundPosition: center;
 $welcomePageHeaderBackgroundRepeat: none;

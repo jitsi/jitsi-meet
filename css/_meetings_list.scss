@@ -6,9 +6,9 @@
     text-overflow: ellipsis;
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto;
     position: relative;
-    overflow: auto;
-    width: 100%;
 
     .meetings-list-empty {
         text-align: center;
