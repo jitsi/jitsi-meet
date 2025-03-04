@@ -174,4 +174,12 @@
             }
         }
     }
+
+    @media (max-width: 1024px) {  /* Targets iPads and smaller devices */
+        .item {
+            .delete-meeting {
+                display: block !important;
+            }
+        }
+    }
 }
