@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
+import { getFeatureFlag } from '../../../base/flags/functions';
+
 
 import { IReduxState, IStore } from '../../../app/types';
 import {
@@ -142,6 +144,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const showNotificationsSettings = Object.keys(enabledNotifications).length > 0;
     const virtualBackgroundSupported = checkBlurSupport();
     const enableVirtualBackground = checkVirtualBackgroundEnabled(state);
+    const helpEnabled = getFeatureFlag(state, 'help.enabled', true);
     const tabs: IDialogTab<any>[] = [];
     const _iAmVisitor = iAmVisitor(state);
 
@@ -322,6 +325,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             icon: IconGear
         });
     }
+
 
     return { _tabs: tabs };
 }
