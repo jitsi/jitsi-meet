@@ -486,7 +486,7 @@ export interface IConfig {
         short?: number;
     };
     notifications?: Array<string>;
-    notifyOnConferenceTermination?: boolean;
+    notifyOnConferenceDestruction?: boolean;
     openSharedDocumentOnJoin?: boolean;
     opusMaxAverageBitrate?: number;
     p2p?: {

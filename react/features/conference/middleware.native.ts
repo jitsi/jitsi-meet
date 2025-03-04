@@ -10,16 +10,7 @@ import './middleware.any';
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case KICKED_OUT: {
-        const { dispatch, getState } = store;
-        const state = getState();
-        const { notifyOnConferenceTermination } = state['features/base/config'];
-
-        if (!notifyOnConferenceTermination) {
-            dispatch(conferenceLeft(action.conference));
-            dispatch(appNavigate(undefined));
-
-            break;
-        }
+        const { dispatch } = store;
 
         dispatch(notifyKickedOut(
           action.participant,

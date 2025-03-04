@@ -17,13 +17,13 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_FAILED: {
         const { getState } = store;
         const state = getState();
-        const { notifyOnConferenceTermination = true } = state['features/base/config'];
+        const { notifyOnConferenceDestruction = true } = state['features/base/config'];
 
         if (error?.name !== JitsiConferenceErrors.CONFERENCE_DESTROYED) {
             break;
         }
 
-        if (!notifyOnConferenceTermination) {
+        if (!notifyOnConferenceDestruction) {
             dispatch(conferenceLeft(action.conference));
             dispatch(appNavigate(undefined));
             break;
