@@ -21,7 +21,10 @@
 #import "JitsiMeetConferenceOptions.h"
 #import "JitsiMeetViewDelegate.h"
 
-typedef NS_ENUM(NSInteger, RecordingMode);
+typedef NS_ENUM(NSInteger, RecordingMode) {
+    RecordingModeFile,
+    RecordingModeStream
+};
 
 @interface JitsiMeetView : UIView
 
