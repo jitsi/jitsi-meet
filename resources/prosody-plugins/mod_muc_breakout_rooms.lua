@@ -201,7 +201,7 @@ end
 -- Managing breakout rooms
 
 function create_breakout_room(orig_room, subject)
-    local main_room, main_room_jid = get_main_room(room.jid);
+    local main_room, main_room_jid = get_main_room(orig_room.jid);
 
     if orig_room ~= main_room then
         module:log('warn', 'Invalid create breakout room request for %s', orig_room.jid);
