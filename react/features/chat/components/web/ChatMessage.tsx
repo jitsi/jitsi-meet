@@ -254,7 +254,9 @@ const ChatMessage = ({
     function _renderTimestamp() {
         return (
             <div className = { cx('timestamp', classes.timestamp) }>
-                {getFormattedTimestamp(message)}
+                <p>
+                    {getFormattedTimestamp(message)}
+                </p>
             </div>
         );
     }
@@ -285,15 +287,17 @@ const ChatMessage = ({
                     <div
                         className = { classes.reactionItem }
                         key = { reaction }>
-                        <span>{reaction}</span>
-                        <span>{participants.size}</span>
+                        <p>
+                            <span>{reaction}</span>
+                            <span>{participants.size}</span>
+                        </p>
                         <div className = { classes.participantList }>
                             {Array.from(participants).map(participantId => (
-                                <div
+                                <p
                                     className = { classes.participant }
                                     key = { participantId }>
                                     {state && getParticipantDisplayName(state, participantId)}
-                                </div>
+                                </p>
                             ))}
                         </div>
                     </div>
@@ -311,12 +315,12 @@ const ChatMessage = ({
                 visible = { isReactionsOpen }>
                 <div className = { classes.reactionBox }>
                     {reactionsArray.slice(0, numReactionsDisplayed).map(({ reaction }, index) =>
-                        <span key = { index }>{reaction}</span>
+                        <p key = { index }>{reaction}</p>
                     )}
                     {reactionsArray.length > numReactionsDisplayed && (
-                        <span className = { classes.reactionCount }>
+                        <p className = { classes.reactionCount }>
                             +{totalReactions - numReactionsDisplayed}
-                        </span>
+                        </p>
                     )}
                 </div>
             </Popover>
@@ -352,14 +356,13 @@ const ChatMessage = ({
                         <div className = { cx('messagecontent', classes.messageContent) }>
                             {showDisplayName && _renderDisplayName()}
                             <div className = { cx('usermessage', classes.userMessage) }>
-                                <span className = 'sr-only'>
-                                    {message.displayName === message.recipient
-                                        ? t('chat.messageAccessibleTitleMe')
-                                        : t('chat.messageAccessibleTitle', {
+                                <Message
+                                    screenReaderHelpText = { message.displayName === message.recipient
+                                        ? t<string>('chat.messageAccessibleTitleMe')
+                                        : t<string>('chat.messageAccessibleTitle', {
                                             user: message.displayName
-                                        })}
-                                </span>
-                                <Message text = { getMessageText(message) } />
+                                        }) }
+                                    text = { getMessageText(message) } />
                                 {(message.privateMessage || (message.lobbyChat && !knocking))
                                     && _renderPrivateNotice()}
                                 <div className = { classes.chatMessageFooter }>
