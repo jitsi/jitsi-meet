@@ -30,6 +30,11 @@
  */
 static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
 
+/**
+ * Forward declarations.
+ */
+static NSString *recordingModeToString(RecordingMode mode);
+
 
 @implementation JitsiMeetView {
     /**
@@ -153,15 +158,15 @@ static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
     [externalAPI hideNotification:uid];
 }
 
-- (void)startRecording:(RecordingMode)mode :(NSString *)dropboxToken :(BOOL)shouldShare :(NSString *)rtmpStreamKey :(NSString *)rtmpBroadcastID :(NSString *)youtubeStreamKey :(NSString *)youtubeBroadcastID :(NSString *)extraMetadata :(BOOL)transcription {
+- (void)startRecording:(RecordingMode)mode :(NSString *)dropboxToken :(BOOL)shouldShare :(NSString *)rtmpStreamKey :(NSString *)rtmpBroadcastID :(NSString *)youtubeStreamKey :(NSString *)youtubeBroadcastID :(NSDictionary *)extraMetadata :(BOOL)transcription {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
-    [externalAPI startRecording:mode :dropboxToken :shouldShare :rtmpStreamKey :rtmpBroadcastID :youtubeStreamKey :youtubeBroadcastID :extraMetadata :transcription];
+    [externalAPI startRecording:recordingModeToString(mode) :dropboxToken :shouldShare :rtmpStreamKey :rtmpBroadcastID :youtubeStreamKey :youtubeBroadcastID :extraMetadata :transcription];
 }
 
 - (void)stopRecording:(RecordingMode)mode :(BOOL)transcription {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
-    [externalAPI stopRecording:mode :transcription];
-}       
+    [externalAPI stopRecording:recordingModeToString(mode) :transcription];
+}
 
 #pragma mark Private methods
 
@@ -257,3 +262,14 @@ static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
 }
 
 @end
+
+static NSString *recordingModeToString(RecordingMode mode) {
+    switch (mode) {
+        case RecordingModeFile:
+            return @"file";
+        case RecordingModeStream:
+            return @"stream";
+        default:
+            return nil;
+    }
+}
