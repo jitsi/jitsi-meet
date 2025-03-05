@@ -9,19 +9,10 @@
         "skipLibCheck": true,
         "moduleResolution": "Node",
         "strict": true,
-        "noImplicitAny": false,
+        "noImplicitAny": true,
         "strictPropertyInitialization": false,
         "resolveJsonModule": true,
-        "moduleSuffixes": [".web", ""],
-        "suppressImplicitAnyIndexErrors": true,
-        "noImplicitThis": false,
-        "ignoreDeprecations": "5.0",
-        "strictNullChecks": false,
-        "strictFunctionTypes": false,
-        "noUnusedLocals": false,
-        "noUnusedParameters": false,
-        "useUnknownInCatchVariables": false,
-        "noEmitOnError": false
+        "moduleSuffixes": [".web", ""]
     },
     "exclude": [
         "node_modules",
