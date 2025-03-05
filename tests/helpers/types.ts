@@ -38,7 +38,7 @@ export type IJoinOptions = {
      * When joining the first participant and jwt singing material is available and a provided token
      * is available, prefer generating a new token for the first participant.
      */
-    forceGenerateToken?: boolean;
+    preferGenerateToken?: boolean;
 
     /**
      * Whether to skip setting display name.
