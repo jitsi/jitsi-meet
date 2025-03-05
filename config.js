@@ -755,6 +755,9 @@ var config = {
     // and microsoftApiApplicationClientID
     // enableCalendarIntegration: false,
 
+    // Whether to notify when the conference is terminated because it was destroyed.
+    // notifyOnConferenceDestruction: true,
+
     // The client id for the google APIs used for the calendar integration, youtube livestreaming, etc.
     // googleApiApplicationClientID: '<client_id>',
 

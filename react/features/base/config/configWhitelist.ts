@@ -182,6 +182,7 @@ export default [
     'mouseMoveCallbackInterval',
     'notifications',
     'notificationTimeouts',
+    'notifyOnConferenceDestruction',
     'openSharedDocumentOnJoin',
     'opusMaxAverageBitrate',
     'p2p.backToP2PDelay',
