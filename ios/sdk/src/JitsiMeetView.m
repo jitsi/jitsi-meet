@@ -168,6 +168,11 @@ static NSString *recordingModeToString(RecordingMode mode);
     [externalAPI stopRecording:recordingModeToString(mode) :transcription];
 }
 
+- (void)overwriteConfig:(NSDictionary *)config {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI overwriteConfig:config];
+}
+
 #pragma mark Private methods
 
 - (void)registerObservers {

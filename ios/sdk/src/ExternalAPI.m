@@ -32,7 +32,7 @@ static NSString * const showNotificationAction = @"org.jitsi.meet.SHOW_NOTIFICAT
 static NSString * const hideNotificationAction = @"org.jitsi.meet.HIDE_NOTIFICATION";
 static NSString * const startRecordingAction = @"org.jitsi.meet.START_RECORDING";
 static NSString * const stopRecordingAction = @"org.jitsi.meet.STOP_RECORDING";
-
+static NSString * const overwriteConfigAction = @"org.jitsi.meet.OVERWRITE_CONFIG";
 @implementation ExternalAPI
 
 static NSMapTable<NSString*, void (^)(NSArray* participantsInfo)> *participantInfoCompletionHandlers;
@@ -60,7 +60,8 @@ RCT_EXPORT_MODULE();
         @"SHOW_NOTIFICATION": showNotificationAction,
         @"HIDE_NOTIFICATION": hideNotificationAction,
         @"START_RECORDING": startRecordingAction,
-        @"STOP_RECORDING": stopRecordingAction
+        @"STOP_RECORDING": stopRecordingAction,
+        @"OVERWRITE_CONFIG": overwriteConfigAction
     };
 };
 
@@ -90,7 +91,8 @@ RCT_EXPORT_MODULE();
               showNotificationAction,
               hideNotificationAction,
               startRecordingAction,
-              stopRecordingAction
+              stopRecordingAction,
+              overwriteConfigAction
     ];
 }
 
@@ -233,5 +235,9 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     };
     
     [self sendEventWithName:stopRecordingAction body:data];
+}
+
+- (void)overwriteConfig:(NSDictionary*)config {
+    [self sendEventWithName:overwriteConfigAction body:config];
 }
 @end

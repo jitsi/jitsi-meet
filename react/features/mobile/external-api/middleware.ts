@@ -26,6 +26,8 @@ import {
     isRoomValid
 } from '../../base/conference/functions';
 import { IJitsiConference } from '../../base/conference/reducer';
+import { overwriteConfig } from '../../base/config/actions';
+import { getWhitelistedJSON } from '../../base/config/functions.native';
 import { CONNECTION_DISCONNECTED } from '../../base/connection/actionTypes';
 import {
     JITSI_CONNECTION_CONFERENCE_KEY,
@@ -575,6 +577,14 @@ function _registerForNativeEvents(store: IStore) {
 
         conference.stopRecording(activeSession.id);
     });
+
+    eventEmitter.addListener(ExternalAPI.OVERWRITE_CONFIG, ({ config }: any) => {
+        const whitelistedConfig = getWhitelistedJSON('config', config);
+
+        logger.info(`Overwriting config with: ${JSON.stringify(whitelistedConfig)}`);
+
+        dispatch(overwriteConfig(config));
+    });
 }
 
 /**
@@ -599,6 +609,7 @@ function _unregisterForNativeEvents() {
     eventEmitter.removeAllListeners(ExternalAPI.HIDE_NOTIFICATION);
     eventEmitter.removeAllListeners(ExternalAPI.START_RECORDING);
     eventEmitter.removeAllListeners(ExternalAPI.STOP_RECORDING);
+    eventEmitter.removeAllListeners(ExternalAPI.OVERWRITE_CONFIG);
 }
 
 /**

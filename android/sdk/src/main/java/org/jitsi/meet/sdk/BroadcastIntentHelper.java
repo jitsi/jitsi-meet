@@ -139,4 +139,11 @@ public class BroadcastIntentHelper {
 
         return intent;
     }
+
+    public static Intent buildOverwriteConfigIntent(String config) {
+        Intent intent = new Intent(BroadcastAction.Type.OVERWRITE_CONFIG.getAction());
+        intent.putExtra("config", config);
+
+        return intent;
+    }
 }
