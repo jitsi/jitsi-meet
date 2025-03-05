@@ -82,7 +82,8 @@ public class BroadcastAction {
         SHOW_NOTIFICATION("org.jitsi.meet.SHOW_NOTIFICATION"),
         HIDE_NOTIFICATION("org.jitsi.meet.HIDE_NOTIFICATION"),
         START_RECORDING("org.jitsi.meet.START_RECORDING"),
-        STOP_RECORDING("org.jitsi.meet.STOP_RECORDING");
+        STOP_RECORDING("org.jitsi.meet.STOP_RECORDING"),
+        OVERWRITE_CONFIG("org.jitsi.meet.OVERWRITE_CONFIG");
 
         private final String action;
 
