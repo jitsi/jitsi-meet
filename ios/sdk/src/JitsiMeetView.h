@@ -56,5 +56,5 @@ typedef NS_ENUM(NSInteger, RecordingMode) {
 - (void)hideNotification:(NSString * _Nullable)uid;
 - (void)startRecording:(RecordingMode)mode :(NSString * _Nullable)dropboxToken :(BOOL)shouldShare :(NSString * _Nullable)rtmpStreamKey :(NSString * _Nullable)rtmpBroadcastID :(NSString * _Nullable)youtubeStreamKey :(NSString * _Nullable)youtubeBroadcastID :(NSString * _Nullable)extraMetadata :(BOOL)transcription;
 - (void)stopRecording:(RecordingMode)mode :(BOOL)transcription;
-
+- (void)overwriteConfig:(NSDictionary * _Nonnull)config;
 @end
