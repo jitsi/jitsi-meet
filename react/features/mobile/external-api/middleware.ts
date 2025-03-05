@@ -518,21 +518,20 @@ function _registerForNativeEvents(store: IStore) {
         const state = store.getState();
         const conference = getCurrentConference(state);
 
+        logger.info('START_RECORDING event received with extraMetadata:', extraMetadata);
+
         if (!conference) {
             logger.error('Conference is not defined');
-
             return;
         }
 
         if (dropboxToken && !isDropboxEnabled(state)) {
             logger.error('Failed starting recording: dropbox is not enabled on this deployment');
-
             return;
         }
 
         if (mode === JitsiRecordingConstants.mode.STREAM && !(youtubeStreamKey || rtmpStreamKey)) {
             logger.error('Failed starting recording: missing youtube or RTMP stream key');
-
             return;
         }
 
@@ -540,10 +539,10 @@ function _registerForNativeEvents(store: IStore) {
 
         if (mode === JitsiRecordingConstants.mode.FILE) {
             const { recordingService } = state['features/base/config'];
+            logger.info('Recording mode FILE, recordingService:', recordingService);
 
             if (!recordingService?.enabled && !dropboxToken) {
                 logger.error('Failed starting recording: the recording service is not enabled');
-
                 return;
             }
 
@@ -560,6 +559,7 @@ function _registerForNativeEvents(store: IStore) {
                         }
                     })
                 };
+                logger.info('Created Dropbox recording config with extraMetadata:', extraMetadata);
             } else {
                 recordingConfig = {
                     mode: JitsiRecordingConstants.mode.FILE,
@@ -570,6 +570,7 @@ function _registerForNativeEvents(store: IStore) {
                         }
                     })
                 };
+                logger.info('Created file recording config with extraMetadata:', extraMetadata);
             }
         } else if (mode === JitsiRecordingConstants.mode.STREAM) {
             recordingConfig = {
