@@ -234,7 +234,7 @@ export class Participant {
 
         let urlToLoad = url.startsWith('/') ? url.substring(1) : url;
 
-        if (options.forceGenerateToken && !ctx.iframeAPI && ctx.isJaasAvailable() && process.env.IFRAME_TENANT) {
+        if (options.preferGenerateToken && !ctx.iframeAPI && ctx.isJaasAvailable() && process.env.IFRAME_TENANT) {
             // This to enables tests like invite, which can force using the jaas auth instead of the provided token
             urlToLoad = `/${process.env.IFRAME_TENANT}/${urlToLoad}`;
         }
