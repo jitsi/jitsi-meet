@@ -3,7 +3,6 @@ import React from "react";
 import { WithTranslation } from "react-i18next";
 import { connect as reactReduxConnect } from "react-redux";
 
-// added because it is js file
 // @ts-ignore
 import VideoLayout from "../../../../../modules/UI/videolayout/VideoLayout";
 import { IReduxState } from "../../../app/types";
@@ -13,9 +12,6 @@ import { isMobileBrowser } from "../../../base/environment/utils";
 import { translate } from "../../../base/i18n/functions";
 import { setColorAlpha } from "../../../base/util/helpers";
 import Chat from "../../../chat/components/web/Chat";
-import MainFilmstrip from "../../../filmstrip/components/web/MainFilmstrip";
-import ScreenshareFilmstrip from "../../../filmstrip/components/web/ScreenshareFilmstrip";
-import StageFilmstrip from "../../../filmstrip/components/web/StageFilmstrip";
 import CalleeInfoContainer from "../../../invite/components/callee-info/CalleeInfoContainer";
 import LobbyScreen from "../../../lobby/components/web/LobbyScreen";
 import { getIsLobbyVisible } from "../../../lobby/functions";
@@ -34,13 +30,12 @@ import { maybeShowSuboptimalExperienceNotification } from "../../functions.web";
 import type { AbstractProps } from "../AbstractConference";
 import { AbstractConference, abstractMapStateToProps } from "../AbstractConference";
 
-
 import Header, { Mode } from "../../../base/meet/views/Conference/components/Header";
-import LargeVideoWeb from "../../../large-video/components/LargeVideo.web";
 import ConferenceInfo from "./ConferenceInfo";
 import { default as Notice } from "./Notice";
 
 import ConferenceControlsWrapper from "../../../base/meet/views/Conference/containers/ConferenceControlsWrapper";
+import VideoGalleryWrapper from "../../../base/meet/views/Conference/containers/VideoGalleryWrapper";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -229,13 +224,15 @@ class Conference extends AbstractConference<IProps, any> {
                     <div onTouchStart={this._onVidespaceTouchStart}>
                         <Header mode={videoMode} translate={t} onSetModeClicked={this._onSetVideoModeClicked} />
                         <div className="flex">
-                            <LargeVideoWeb />
+                            {/* <LargeVideoWeb /> */}
+                            <VideoGalleryWrapper videoMode={videoMode} />
                         </div>
                         {_showPrejoin || _showLobby || (
                             <>
-                                <StageFilmstrip />
-                                <ScreenshareFilmstrip />
-                                <MainFilmstrip />
+                                {/* <StageFilmstrip /> */}
+                                {/*  <ScreenshareFilmstrip />*/}
+                                {/* right screen tools component */}
+                                {/* <MainFilmstrip /> */}
                             </>
                         )}
                     </div>
@@ -243,7 +240,7 @@ class Conference extends AbstractConference<IProps, any> {
                     {_showPrejoin || _showLobby || (
                         <>
                             <span aria-level={1} className="sr-only" role="heading">
-                                {t("toolbar.accessibilityLabel.heading")}
+                                {t("toolbar.accessibilityLabel.heading") as string}
                             </span>
 
                             {/* <Toolbox /> */}
