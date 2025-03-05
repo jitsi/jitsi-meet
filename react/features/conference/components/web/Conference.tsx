@@ -3,7 +3,6 @@ import React from "react";
 import { WithTranslation } from "react-i18next";
 import { connect as reactReduxConnect } from "react-redux";
 
-// added because it is js file
 // @ts-ignore
 import VideoLayout from "../../../../../modules/UI/videolayout/VideoLayout";
 import { IReduxState } from "../../../app/types";
@@ -230,9 +229,10 @@ class Conference extends AbstractConference<IProps, any> {
                         </div>
                         {_showPrejoin || _showLobby || (
                             <>
-                                {/* <StageFilmstrip />
-                                <ScreenshareFilmstrip />
-                                <MainFilmstrip /> */}
+                                {/* <StageFilmstrip /> */}
+                                {/*  <ScreenshareFilmstrip />*/}
+                                {/* right screen tools component */}
+                                {/* <MainFilmstrip /> */}
                             </>
                         )}
                     </div>

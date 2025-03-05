@@ -1,6 +1,7 @@
 import { Avatar } from "@internxt/ui";
 import { Hand, MicrophoneSlash } from "@phosphor-icons/react";
 import React from "react";
+import ConnectionIndicator from "../../../../../connection-indicator/components/web/ConnectionIndicator";
 import Video from "../../../../media/components/web/Video";
 import { VideoParticipantType } from "../types";
 
@@ -37,17 +38,24 @@ const VideoParticipant = ({ participant, className = "", translate }: VideoParti
                 <div className="text-white truncate max-w-full">
                     {name} {local ? ` (${translate("meet.meeting.videoParticipants.you")})` : ""}
                 </div>
-                <div className="flex space-x-2">
+                <div className="flex space-x-2 justify-center items-center">
                     {audioMuted && (
                         <div className="text-red-500">
                             <MicrophoneSlash width={18} height={18} color="red" weight="fill" />
                         </div>
                     )}
                     {raisedHand && (
-                        <div className="text-yellow-400">
-                            <Hand width={18} height={18} />
+                        <div className="text-yellow">
+                            <Hand width={18} height={18} weight="fill" />
                         </div>
                     )}
+                    <ConnectionIndicator
+                        participantId={id}
+                        iconSize={18}
+                        enableStatsDisplay={true}
+                        alwaysVisible={true}
+                        statsPopoverPosition="top"
+                    />
                 </div>
             </div>
         </div>
