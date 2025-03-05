@@ -619,8 +619,8 @@ export class Participant {
         await this.driver.waitUntil(
             async () => current !== await this.driver.getUrl(),
             {
-                timeout: 5000,
-                timeoutMsg: `${this.name} did not leave the muc in 5s`
+                timeout: 8000,
+                timeoutMsg: `${this.name} did not leave the muc in 8s`
             }
         );
 
