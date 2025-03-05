@@ -511,7 +511,6 @@ function _registerForNativeEvents(store: IStore) {
                         }
                     })
                 };
-                logger.info('Created Dropbox recording config with extraMetadata:', extraMetadata);
             } else {
                 recordingConfig = {
                     mode: JitsiRecordingConstants.mode.FILE,
