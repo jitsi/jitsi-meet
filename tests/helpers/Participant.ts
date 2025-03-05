@@ -617,7 +617,13 @@ export class Participant {
         // let's give it some time to leave the muc, we redirect after hangup so we should wait for the
         // change of url
         await this.driver.waitUntil(
-            async () => current !== await this.driver.getUrl(),
+            async () => {
+                const u = await this.driver.getUrl();
+
+                console.log('url:', current, u);
+
+                return current !== u;
+            },
             {
                 timeout: 5000,
                 timeoutMsg: `${this.name} did not leave the muc in 5s`
