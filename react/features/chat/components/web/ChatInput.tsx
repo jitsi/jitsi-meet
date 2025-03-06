@@ -226,13 +226,13 @@ class ChatInput extends Component<IProps, IState> {
     }
 
     /**
-     * Renders the message with emojis in the input field.
-     * 
-     * @returns {ReactNode}
+    * Renders the message with emojis in the input field.
+    * 
+    * @returns {ReactNode}
     */
     _renderMessageWithEmojis() {
         const { message } = this.state;
-        
+
         if (!message) {
             return '';
         }
@@ -255,18 +255,20 @@ class ChatInput extends Component<IProps, IState> {
                         } else if (React.isValidElement(item)) {
                             // Check if it's a React element and has children
                             const reactElement = item as ReactElement;
+
                             return reactElement.props?.children || '';
                         }
+
                         return '';
                     })
                     .join('');
-                
+
                 renderedMessage += processed;
             }
-            
+
             renderedMessage += ' ';
         }
-        
+
         return renderedMessage.trim();
     }
 
@@ -286,7 +288,7 @@ class ChatInput extends Component<IProps, IState> {
             }, () => {
                 // After adding the emoji text, convert the entire message for display
                 const displayMessage = this._renderMessageWithEmojis();
-                
+
                 // Optional: update the state with the converted message
                 // This would replace :) with 😊 in the actual message content
                 this.setState({ message: displayMessage });
