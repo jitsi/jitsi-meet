@@ -122,14 +122,20 @@ const useStyles = makeStyles()(theme => {
 
             '&.disabled': {
                 background: theme.palette.disabled01,
-                border: '1px solid #5E6D7A',
-                color: '#AFB6BC',
-                cursor: 'initial',
+                border: `1px solid ${theme.palette.disabled01}`,
+                color: `${theme.palette.text03}`,
+                cursor: 'not-allowed',
 
                 '.icon': {
                     '& > svg': {
-                        fill: '#AFB6BC'
+                        fill: theme.palette.text03
                     }
+                },
+
+                '&:hover': {
+                    backgroundColor: theme.palette.disabled01,
+                    border: `1px solid ${theme.palette.disabled01}`,
+                    color: `${theme.palette.text03}`
                 }
             },
 

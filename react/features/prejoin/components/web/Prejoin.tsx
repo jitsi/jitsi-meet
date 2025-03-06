@@ -400,10 +400,12 @@ const Prejoin = ({
     if (!hasJoinByPhoneButton) {
         extraButtonsToRender = extraButtonsToRender.filter((btn: any) => btn.key !== 'by-phone');
     }
-    const hasExtraJoinButtons = Boolean(extraButtonsToRender.length);
+
     const disableJoiningMeeting = joiningInProgress
     || (showUnsafeRoomWarning && !unsafeRoomConsent)
     || showErrorOnField || name.trim().length === 0;
+
+    const hasExtraJoinButtons = Boolean(extraButtonsToRender.length) && name.trim().length > 0;
 
     return (
         <PreMeetingScreen
