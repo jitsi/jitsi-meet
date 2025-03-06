@@ -130,4 +130,11 @@
  */
 - (void)customButtonPressed:(NSDictionary *)data;
 
+/**
+ * Called when the unique identifier for conference has been set.
+ *
+ * The `data` dictionary contains a `sessionId` key.
+ */
+- (void)conferenceUniqueIdSet:(NSDictionary *)data;
+
 @end
