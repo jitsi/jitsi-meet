@@ -44,6 +44,8 @@ public class BroadcastAction {
                     nativeMap.putDouble(key, (Double) this.data.get(key));
                 } else if (this.data.get(key) instanceof String) {
                     nativeMap.putString(key, (String) this.data.get(key));
+                } else if (this.data.get(key) instanceof Bundle) {
+                    nativeMap.putMap(key, bundleToWritableMap((Bundle) this.data.get(key)));
                 } else {
                     throw new Exception("Unsupported extra data type");
                 }
@@ -53,6 +55,21 @@ public class BroadcastAction {
         }
 
         return nativeMap;
+    }
+
+    // Converts(only String values) an Android Bundle to a WritableNativeMap 
+    // that can be consumed by React Native.
+    private WritableNativeMap bundleToWritableMap(Bundle bundle) {
+        WritableNativeMap map = new WritableNativeMap();
+
+        for (String key : bundle.keySet()) {
+            Object value = bundle.get(key);
+            if (value instanceof String) {
+                map.putString(key, (String) value);
+            }
+        }
+
+        return map;
     }
 
     private static HashMap<String, Object> buildDataFromBundle(Bundle bundle) {
