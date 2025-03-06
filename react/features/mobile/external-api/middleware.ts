@@ -15,6 +15,7 @@ import {
     CONFERENCE_FOCUSED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
+    CONFERENCE_UNIQUE_ID_SET,
     CONFERENCE_WILL_JOIN,
     ENDPOINT_MESSAGE_RECEIVED,
     SET_ROOM
@@ -169,6 +170,18 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_FOCUSED:
         sendEvent(store, CONFERENCE_FOCUSED, {});
         break;
+
+    case CONFERENCE_UNIQUE_ID_SET: {
+        const { conference } = action;
+
+        sendEvent(
+            store,
+            CONFERENCE_UNIQUE_ID_SET,
+            /* data */ {
+                sessionId: conference.getMeetingUniqueId()
+            });
+        break;
+    }
 
     case CONNECTION_DISCONNECTED: {
         // FIXME: This is a hack. See the description in the JITSI_CONNECTION_CONFERENCE_KEY constant definition.

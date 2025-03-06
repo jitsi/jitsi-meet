@@ -84,6 +84,10 @@
     [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_TERMINATED" withData:data];
 }
 
+// - (void)conferenceUniqueIdSet:(NSDictionary *)data {
+//     [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_UNIQUE_ID_SET" withData:data];
+// }
+
 - (void)conferenceWillJoin:(NSDictionary *)data {
     [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_WILL_JOIN" withData:data];
 }
