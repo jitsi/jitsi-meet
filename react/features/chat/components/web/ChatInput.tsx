@@ -1,8 +1,7 @@
 import React, { Component, ReactElement, RefObject } from 'react';
+import { toArray } from 'react-emoji-render';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-
-import { toArray } from 'react-emoji-render';
 
 import { IReduxState, IStore } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
@@ -13,7 +12,6 @@ import Input from '../../../base/ui/components/web/Input';
 import { areSmileysDisabled } from '../../functions';
 
 import SmileysPanel from './SmileysPanel';
-
 
 /**
  * The type of the React {@code Component} props of {@link ChatInput}.
@@ -183,7 +181,6 @@ class ChatInput extends Component<IProps, IState> {
             // Keep the textarea in focus when sending messages via submit button.
             this._focus();
         }
-
     }
 
     /**
@@ -239,6 +236,7 @@ class ChatInput extends Component<IProps, IState> {
         if (!message) {
             return '';
         }
+
         // Split the message by spaces
         const tokens = message.split(' ');
         let renderedMessage = '';
@@ -251,20 +249,19 @@ class ChatInput extends Component<IProps, IState> {
             } else {
                 // Convert emoji text to Unicode
                 const processed = toArray(token)
-                .map(item => {
-                    if (typeof item === 'string') {
-                        return item;
-                    } else if (React.isValidElement(item)) {
-                        // Check if it's a React element and has children
-                        const reactElement = item as ReactElement;
-                        return reactElement.props?.children || '';
-                    }
-                    return '';
-                })
-                .join('');
+                    .map(item => {
+                        if (typeof item === 'string') {
+                            return item;
+                        } else if (React.isValidElement(item)) {
+                            // Check if it's a React element and has children
+                            const reactElement = item as ReactElement;
+                            return reactElement.props?.children || '';
+                        }
+                        return '';
+                    })
+                    .join('');
                 
                 renderedMessage += processed;
-
             }
             
             renderedMessage += ' ';
