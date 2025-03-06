@@ -401,6 +401,9 @@ const Prejoin = ({
         extraButtonsToRender = extraButtonsToRender.filter((btn: any) => btn.key !== 'by-phone');
     }
     const hasExtraJoinButtons = Boolean(extraButtonsToRender.length);
+    const disableJoiningMeeting = joiningInProgress
+    || (showUnsafeRoomWarning && !unsafeRoomConsent)
+    || showErrorOnField || name.trim().length === 0;
 
     return (
         <PreMeetingScreen
@@ -461,9 +464,7 @@ const Prejoin = ({
                             ariaDropDownLabel = { t('prejoin.joinWithoutAudio') }
                             ariaLabel = { t('prejoin.joinMeeting') }
                             ariaPressed = { showJoinByPhoneButtons }
-                            disabled = { joiningInProgress
-                                || (showUnsafeRoomWarning && !unsafeRoomConsent)
-                                || showErrorOnField }
+                            disabled = { disableJoiningMeeting }
                             hasOptions = { hasExtraJoinButtons }
                             onClick = { onJoinButtonClick }
                             onOptionsClick = { onOptionsClick }

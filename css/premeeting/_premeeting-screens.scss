@@ -32,10 +32,10 @@
         }
 
         &.disabled {
-            background: #5E6D7A;
-            border: 1px solid #5E6D7A;
-            color: #AFB6BC;
-            cursor: initial;
+            background: $prejoinDisabledButtonBgColor;
+            border: 1px solid $prejoinDisabledButtonBorderColor;
+            color: $prejoinDisabledButtonTextColor;
+            cursor: not-allowed; // better than default
 
             .icon {
                 & > svg {
