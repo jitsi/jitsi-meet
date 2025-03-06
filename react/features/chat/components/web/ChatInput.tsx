@@ -1,4 +1,4 @@
-import React, { Component, RefObject } from 'react';
+import React, { Component, ReactElement, RefObject } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
@@ -11,6 +11,8 @@ import Input from '../../../base/ui/components/web/Input';
 import { areSmileysDisabled } from '../../functions';
 
 import SmileysPanel from './SmileysPanel';
+
+import { toArray } from 'react-emoji-render';
 
 /**
  * The type of the React {@code Component} props of {@link ChatInput}.
@@ -225,6 +227,53 @@ class ChatInput extends Component<IProps, IState> {
         this.setState({ message: value });
     }
 
+    
+
+    /**
+     * Renders the message with emojis in the input field.
+     * 
+     * @returns {ReactNode}
+    */
+    _renderMessageWithEmojis() {
+        const { message } = this.state;
+        
+        if (!message) {
+            return '';
+        }
+        
+        // Split the message by spaces
+        const tokens = message.split(' ');
+        let renderedMessage = '';
+        
+        // Process each token
+        for (const token of tokens) {
+            if (token.includes('://') || token.startsWith('@')) {
+                // Don't process URLs or mentions
+                renderedMessage += token;
+            } else {
+                // Convert emoji text to Unicode
+            const processed = toArray(token)
+            .map(item => {
+                if (typeof item === 'string') {
+                    return item;
+                } else if (React.isValidElement(item)) {
+                    // Check if it's a React element and has children
+                    const reactElement = item as ReactElement;
+                    return reactElement.props?.children || '';
+                }
+                return '';
+            })
+            .join('');
+        renderedMessage += processed;
+
+            }
+            
+            renderedMessage += ' ';
+        }
+        
+        return renderedMessage.trim();
+    }
+
     /**
      * Appends a selected smileys to the chat message draft.
      *
@@ -238,6 +287,13 @@ class ChatInput extends Component<IProps, IState> {
             this.setState({
                 message: `${this.state.message} ${smileyText}`,
                 showSmileysPanel: false
+            }, () => {
+                // After adding the emoji text, convert the entire message for display
+                const displayMessage = this._renderMessageWithEmojis();
+                
+                // Optional: update the state with the converted message
+                // This would replace :) with 😊 in the actual message content
+                this.setState({ message: displayMessage });
             });
         } else {
             this.setState({
