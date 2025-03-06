@@ -1,52 +1,3 @@
-import * as neoTokens from './neoDark.json';
-
-// Default color palette
-export const colors = {
-    error01: neoTokens.error01,
-    error03: '#7A141F',
-    error04: '#A21B29',
-    error05: '#CB2233',
-    error06: '#D83848',
-    error08: '#F24D5F',
-
-    primary01: '#00112D',
-    primary02: '#00225A',
-    primary03: '#003486',
-    primary04: '#0045B3',
-    primary05: '#0056E0',
-    primary06: '#246FE5',
-    primary07: '#4687ED',
-    primary08: '#99BBF3',
-    primary09: '#CCDDF9',
-
-    surface01: '#040404',
-    surface02: '#141414',
-    surface03: '#292929',
-    surface04: '#3D3D3D',
-    surface05: '#525252',
-    surface06: '#666',
-    surface07: '#858585',
-    surface08: '#A3A3A3',
-    surface09: '#C2C2C2',
-    surface10: '#E0E0E0',
-    surface11: '#FFF',
-
-    success04: '#189B55',
-    success05: '#1EC26A',
-
-    warning05: '#F8AE1A',
-    warning06: '#FFD600',
-
-    support01: '#FF9B42',
-    support02: '#F96E57',
-    support03: '#DF486F',
-    support04: '#B23683',
-    support05: '#73348C',
-    support06: '#6A50D3',
-    support07: '#4380E2',
-    support08: '#00A8B3',
-    support09: '#2AA076'
-};
 
 // Mapping between the token used and the color
 export const colorMap = {
@@ -58,28 +9,28 @@ export const colorMap = {
     uiBackground: 'surface01',
 
     // Container backgrounds
-    ui01: neoTokens.ui01,
-    ui02: neoTokens.ui02,
-    ui03: neoTokens.ui03,
-    ui04: neoTokens.ui04,
-    ui05: neoTokens.ui05,
-    ui06: neoTokens.ui06,
-    ui07: neoTokens.ui07,
-    ui08: neoTokens.ui08,
-    ui09: neoTokens.ui09,
-    ui10: neoTokens.ui10,
+    ui01: 'ui01',
+    ui02: 'ui02',
+    ui03: 'ui03',
+    ui04: 'ui04',
+    ui05: 'ui05',
+    ui06: 'ui06',
+    ui07: 'ui07',
+    ui08: 'ui08',
+    ui09: 'ui09',
+    ui10: 'ui10',
 
     // ----- Actions -----
 
     // Primary
-    action01: neoTokens.action01,
-    action01Hover: neoTokens.hover01,
-    action01Active: neoTokens.active01,
+    action01: 'action01',
+    action01Hover: 'action01Hover',
+    action01Active: 'action01Active',
 
     // Secondary
-    action02: neoTokens.action02,
-    action02Hover: neoTokens.hover02,
-    action02Active: neoTokens.active02,
+    action02: 'action02',
+    action02Hover: 'action02Hover',
+    action02Active: 'action02Active',
 
     // Destructive
     actionDanger: 'error01',
@@ -88,14 +39,14 @@ export const colorMap = {
 
     // Tertiary
     action03: 'transparent',
-    action03Hover: neoTokens.hover03,
-    action03Active: neoTokens.active03,
+    action03Hover: 'transparent',
+    action03Active: 'transparent',
 
     // Disabled
-    disabled01: neoTokens.disabled01,
+    disabled01: 'transparent',
 
     // Focus
-    focus01: neoTokens.focus01,
+    focus01: 'transparent',
 
     // ----- Links -----
 
@@ -106,16 +57,16 @@ export const colorMap = {
     // ----- Text -----
 
     // Primary
-    text01: neoTokens.textColor01,
+    text01: 'textColor01',
 
     // Secondary
-    text02: neoTokens.textColor02,
+    text02: 'textColor02',
 
     // Tertiary
     text03: 'surface07',
 
     // High-contrast
-    text04: neoTokens.textColor04,
+    text04: 'textColor04',
 
     // Error
     textError: 'error08',
@@ -123,16 +74,16 @@ export const colorMap = {
     // ----- Icons -----
 
     // Primary
-    icon01: neoTokens.icon01,
+    icon01: 'icon01',
 
     // Secondary
-    icon02: neoTokens.icon02,
+    icon02: 'icon02',
 
     // Tertiary
-    icon03: neoTokens.icon03,
+    icon03: 'icon03',
 
     // High-contrast
-    icon04: neoTokens.icon04,
+    icon04: 'icon04',
 
     // Error
     iconError: 'error06',
@@ -144,12 +95,12 @@ export const colorMap = {
     // ----- Feedback -----
 
     // Success
-    success01: neoTokens.success01,
+    success01: 'success01',
     success02: 'success04',
 
     // Warning
-    warning01: neoTokens.warning01,
-    warning02: neoTokens.warning02,
+    warning01: 'warning01',
+    warning02: 'warning02',
 
     // ----- Support -----
 
@@ -180,9 +131,9 @@ export const spacing
     = [ 0, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128 ];
 
 export const typography = {
-    labelRegular: neoTokens.label01,
+    labelRegular: 'label01',
 
-    labelBold: neoTokens.labelBold01,
+    labelBold: 'labelBold01',
 
     bodyShortRegularSmall: {
         fontSize: 10,
@@ -247,9 +198,9 @@ export const typography = {
         letterSpacing: 0
     },
 
-    heading1: neoTokens.heading01,
+    heading1: 'heading01',
 
-    heading2: neoTokens.heading02,
+    heading2: 'heading02',
 
     heading3: {
         fontSize: 32,
