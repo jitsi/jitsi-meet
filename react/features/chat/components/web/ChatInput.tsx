@@ -2,6 +2,8 @@ import React, { Component, ReactElement, RefObject } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
+import { toArray } from 'react-emoji-render';
+
 import { IReduxState, IStore } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
@@ -12,7 +14,6 @@ import { areSmileysDisabled } from '../../functions';
 
 import SmileysPanel from './SmileysPanel';
 
-import { toArray } from 'react-emoji-render';
 
 /**
  * The type of the React {@code Component} props of {@link ChatInput}.
@@ -227,8 +228,6 @@ class ChatInput extends Component<IProps, IState> {
         this.setState({ message: value });
     }
 
-    
-
     /**
      * Renders the message with emojis in the input field.
      * 
@@ -240,11 +239,10 @@ class ChatInput extends Component<IProps, IState> {
         if (!message) {
             return '';
         }
-        
         // Split the message by spaces
         const tokens = message.split(' ');
         let renderedMessage = '';
-        
+
         // Process each token
         for (const token of tokens) {
             if (token.includes('://') || token.startsWith('@')) {
@@ -252,19 +250,20 @@ class ChatInput extends Component<IProps, IState> {
                 renderedMessage += token;
             } else {
                 // Convert emoji text to Unicode
-            const processed = toArray(token)
-            .map(item => {
-                if (typeof item === 'string') {
-                    return item;
-                } else if (React.isValidElement(item)) {
-                    // Check if it's a React element and has children
-                    const reactElement = item as ReactElement;
-                    return reactElement.props?.children || '';
-                }
-                return '';
-            })
-            .join('');
-        renderedMessage += processed;
+                const processed = toArray(token)
+                .map(item => {
+                    if (typeof item === 'string') {
+                        return item;
+                    } else if (React.isValidElement(item)) {
+                        // Check if it's a React element and has children
+                        const reactElement = item as ReactElement;
+                        return reactElement.props?.children || '';
+                    }
+                    return '';
+                })
+                .join('');
+                
+                renderedMessage += processed;
 
             }
             
