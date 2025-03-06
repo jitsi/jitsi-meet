@@ -227,7 +227,7 @@ class ChatInput extends Component<IProps, IState> {
 
     /**
     * Renders the message with emojis in the input field.
-    * 
+    *
     * @returns {ReactNode}
     */
     _renderMessageWithEmojis() {
