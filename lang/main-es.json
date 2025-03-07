@@ -709,6 +709,12 @@
             "createRoomErrorDescription": "No pudimos crear una nueva reunión en este momento. Por favor, verifica tu conexión e intenta de nuevo.",
             "retry": "Intentar de nuevo",
             "goHome": "Volver al inicio"
+        },
+        "invite": {
+            "invitePeople": "Invitar personas",
+            "copyLink": "Copiar enlace",
+            "meetingFull": "La reunión está llena",
+            "participants": "participantes"
         }
     },
     "notify": {

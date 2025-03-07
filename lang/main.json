@@ -762,6 +762,12 @@
             "createRoomErrorDescription": "We couldn't create a new meeting right now. Please check your connection and try again.",
             "retry": "Try again",
             "goHome": "Back to Home"
+        },
+        "invite": {
+            "invitePeople": "Invite people",
+            "copyLink": "Copy Link",
+            "meetingFull": "Meeting is full",
+            "participants": "participants"
         }
     },
     "notify": {
