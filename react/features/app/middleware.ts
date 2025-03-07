@@ -7,7 +7,7 @@ import { SET_ROOM } from '../base/conference/actionTypes';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection/actionTypes';
 import { getURLWithoutParams } from '../base/connection/utils';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import { inIframe } from '../base/util/iframeUtils';
+import { isEmbedded } from '../base/util/embedUtils';
 
 import { reloadNow } from './actions';
 import { _getRouteToRender } from './getRouteToRender';
@@ -52,7 +52,7 @@ function _connectionEstablished(store: IStore, next: Function, action: AnyAction
     // @ts-ignore
     const { history, location } = window;
 
-    if (inIframe()) {
+    if (isEmbedded()) {
         return;
     }
 

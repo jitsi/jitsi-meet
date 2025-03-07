@@ -12,8 +12,8 @@ import JitsiMeetJS, {
     browser
 } from '../base/lib-jitsi-meet';
 import { isAnalyticsEnabled } from '../base/lib-jitsi-meet/functions.any';
+import { isEmbedded } from '../base/util/embedUtils';
 import { getJitsiMeetGlobalNS } from '../base/util/helpers';
-import { inIframe } from '../base/util/iframeUtils';
 import { loadScript } from '../base/util/loadScript';
 import { parseURLParams } from '../base/util/parseURLParams';
 import { parseURIString } from '../base/util/uri';
@@ -213,7 +213,7 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
     permanentProperties.externalApi = typeof API_ID === 'number';
 
     // Report if we are loaded in iframe
-    permanentProperties.inIframe = inIframe();
+    permanentProperties.inIframe = isEmbedded();
 
     // Report the tenant from the URL.
     permanentProperties.tenant = tenant || '/';
