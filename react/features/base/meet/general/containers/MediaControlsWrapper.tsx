@@ -9,6 +9,7 @@ import { IGUMPendingState } from "../../../media/types";
 import { getLocalJitsiAudioTrack, getLocalJitsiVideoTrack } from "../../../tracks/functions.any";
 import MediaControls from "../components/MediaControls";
 import PermissionModal from "../components/PermissionModal";
+import { hidePermissionsModal } from "../store/mediaPermissions/actions";
 
 declare const APP: any;
 
@@ -22,6 +23,8 @@ interface IProps {
     onAudioOptionsClick: () => void;
     onVideoOptionsClick: () => void;
     t: (key: string) => string;
+    hidePermissionsModal: () => void;
+    permissionsModalVisible: boolean;
 }
 
 const MediaControlsWrapper: React.FC<IProps> = ({
@@ -34,6 +37,8 @@ const MediaControlsWrapper: React.FC<IProps> = ({
     onAudioOptionsClick,
     onVideoOptionsClick,
     t,
+    permissionsModalVisible,
+    hidePermissionsModal,
 }) => {
     const [showPermissionModal, setShowPermissionModal] = useState(false);
 
@@ -61,10 +66,12 @@ const MediaControlsWrapper: React.FC<IProps> = ({
 
     const handleClosePermissionModal = () => {
         setShowPermissionModal(false);
+        hidePermissionsModal();
     };
 
     const handleContinueWithoutPermissions = () => {
         setShowPermissionModal(false);
+        hidePermissionsModal();
     };
 
     return (
@@ -80,8 +87,7 @@ const MediaControlsWrapper: React.FC<IProps> = ({
                 onAudioOptionsClick={onAudioOptionsClick}
             />
 
-            {/* Modal de permisos */}
-            {showPermissionModal && (
+            {(showPermissionModal || permissionsModalVisible) && (
                 <PermissionModal
                     translate={t}
                     onClose={handleClosePermissionModal}
@@ -100,7 +106,7 @@ const MediaControlsWrapper: React.FC<IProps> = ({
  */
 function mapStateToProps(state: IReduxState) {
     const { permissions = { audio: false, video: false } } = state["features/base/devices"];
-    const { audio: audioGUMPending, video: videoGUMPending } = state["features/base/media"];
+    const { audio: audioGUMPending, video: videoGUMPending, mediaPermissions } = state["features/base/media"];
     const audioTrack = getLocalJitsiAudioTrack(state);
     const videoTrack = getLocalJitsiVideoTrack(state);
     const isVidePreviewMuted = checkIsVideoMuted(state);
@@ -115,12 +121,14 @@ function mapStateToProps(state: IReduxState) {
         isAudioDisabled: isAudioMuted,
         videoTrack,
         audioTrack,
+        permissionsModalVisible: mediaPermissions.isVisible,
     };
 }
 
 const mapDispatchToProps = {
     onAudioOptionsClick: toggleAudioSettings,
     onVideoOptionsClick: toggleVideoSettings,
+    hidePermissionsModal,
 };
 
 export default translate(connect(mapStateToProps, mapDispatchToProps)(MediaControlsWrapper));
