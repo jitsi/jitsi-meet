@@ -3,12 +3,14 @@ import jwtDecode from 'jwt-decode';
 import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
+import { isVpaasMeeting } from '../../jaas/functions';
 import { SET_CONFIG } from '../config/actionTypes';
 import { SET_LOCATION_URL } from '../connection/actionTypes';
 import { participantUpdated } from '../participants/actions';
 import { getLocalParticipant } from '../participants/functions';
 import { IParticipant } from '../participants/types';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import { parseURIString } from '../util/uri';
 
 import { SET_JWT } from './actionTypes';
 import { setJWT } from './actions';
@@ -125,6 +127,8 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
     const { jwt, type, ...actionPayload } = action;
 
     if (!Object.keys(actionPayload).length) {
+        const state = store.getState();
+
         if (jwt) {
             let jwtPayload;
 
@@ -150,9 +154,22 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
 
                     const newUser = user ? { ...user } : {};
 
+                    let features = context.features;
+                    const { tokenRespectTenant } = state['features/base/config'];
+
+                    // eslint-disable-next-line max-depth
+                    if (!isVpaasMeeting(state) && tokenRespectTenant && context.tenant) {
+                        // we skip checking vpaas meetings as there are other backend rules in place
+                        // this way vpaas users can still use this field if needed
+                        const { locationURL = { href: '' } as URL } = state['features/base/connection'];
+                        const { tenant = '' } = parseURIString(locationURL.href) || {};
+
+                        features = context.tenant === tenant ? features : {};
+                    }
+
                     _overwriteLocalParticipant(
                         store, { ...newUser,
-                            features: context.features });
+                            features });
 
                     // eslint-disable-next-line max-depth
                     if (context.user && context.user.role === 'visitor') {
@@ -172,7 +189,7 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
             // On Web it should eventually be restored from storage, but there's
             // no such use case yet.
 
-            const { user } = store.getState()['features/base/jwt'];
+            const { user } = state['features/base/jwt'];
 
             user && _undoOverwriteLocalParticipant(store, user);
         }
