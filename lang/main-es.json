@@ -20,6 +20,12 @@
             "videoParticipants": {
                 "you": "Tú"
             }
+        },
+        "permissionsModal": {
+            "permissionRequired": "Se requiere permiso para video y audio",
+            "joinNotice": "Puedes unirte a una reunión, pero otras personas no te verán ni escucharán.",
+            "allowInstructions": "Haz clic en <span class=\"font-bold\">Permitir</span> en las preferencias de cámara y micrófono de tu navegador",
+            "continueWithoutPermissions": "Continuar sin audio/video"
         }
     },
     "addPeople": {
