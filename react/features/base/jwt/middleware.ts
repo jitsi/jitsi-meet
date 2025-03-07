@@ -157,6 +157,8 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
 
                     // eslint-disable-next-line max-depth
                     if (!isVpaasMeeting(store.getState()) && tokenRespectTenant && context.tenant) {
+                        // we skip checking vpaas meetings as there are other backend rules in place
+                        // this way vpaas users can still use this field if needed
                         const { locationURL = { href: '' } as URL } = store.getState()['features/base/connection'];
                         const { tenant = '' } = parseURIString(locationURL.href) || {};
 
