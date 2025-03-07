@@ -9,6 +9,7 @@ import { handleLobbyMessageReceived } from '../chat/middleware';
 import { hideNotification, showNotification } from '../notifications/actions';
 import { LOBBY_NOTIFICATION_ID } from '../notifications/constants';
 import { joinConference } from '../prejoin/actions';
+import { NOTIFICATION_TYPE } from '../notifications/constants'; // ✅ Add this import
 
 import {
     KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED,
@@ -414,12 +415,23 @@ export function setLobbyMessageListener() {
         }
 
         conference?.addLobbyMessageListener((message: any, participantId: string) => {
+            console.log("📩 Lobby chat message received:", message);
+
             if (message.type === LOBBY_CHAT_MESSAGE) {
-                return dispatch(handleLobbyMessageReceived(message.message, participantId));
+                dispatch(handleLobbyMessageReceived(message.message, participantId));
+
+                dispatch(showNotification({
+                    title: `Lobby Chat: New message`,
+                    description: message.message,
+                    uid: `lobby-chat-${Date.now()}`,
+                    appearance: NOTIFICATION_TYPE.NORMAL
+                }));
             }
+
             if (message.type === LOBBY_CHAT_INITIALIZED) {
                 return dispatch(handleLobbyChatInitialized(message));
             }
+
             if (message.type === MODERATOR_IN_CHAT_WITH_LEFT) {
                 return dispatch(updateLobbyParticipantOnLeave(message.moderatorId));
             }
