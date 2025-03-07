@@ -27,7 +27,7 @@ import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { SET_REDUCED_UI } from '../base/responsive-ui/actionTypes';
 import { LOWER_HAND_MESSAGE } from '../base/tracks/constants';
 import { BUTTON_TYPES } from '../base/ui/constants.any';
-import { inIframe } from '../base/util/iframeUtils';
+import { isEmbedded } from '../base/util/embedUtils';
 import { isCalendarEnabled } from '../calendar-sync/functions';
 import FeedbackDialog from '../feedback/components/FeedbackDialog';
 import { setFilmstripEnabled } from '../filmstrip/actions.any';
@@ -191,8 +191,9 @@ function _checkIframe(state: IReduxState, dispatch: IStore['dispatch']) {
         }
     }
 
-    if (inIframe() && state['features/base/config'].disableIframeAPI && !browser.isElectron()
-        && !isVpaasMeeting(state) && !allowIframe) {
+    // TODO: enable for mobile too?
+    if (isEmbedded() && state['features/base/config'].disableIframeAPI && !browser.isElectron()
+            && !browser.isReactNative() && !isVpaasMeeting(state) && !allowIframe) {
         // show sticky notification and redirect in 5 minutes
         const { locationURL } = state['features/base/connection'];
         let translationKey = 'notify.disabledIframe';
