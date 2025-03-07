@@ -3,12 +3,14 @@ import jwtDecode from 'jwt-decode';
 import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
+import { isVpaasMeeting } from '../../jaas/functions';
 import { SET_CONFIG } from '../config/actionTypes';
 import { SET_LOCATION_URL } from '../connection/actionTypes';
 import { participantUpdated } from '../participants/actions';
 import { getLocalParticipant } from '../participants/functions';
 import { IParticipant } from '../participants/types';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import { parseURIString } from '../util/uri';
 
 import { SET_JWT } from './actionTypes';
 import { setJWT } from './actions';
@@ -150,9 +152,20 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
 
                     const newUser = user ? { ...user } : {};
 
+                    let features = context.features;
+                    const { tokenRespectTenant } = store.getState()['features/base/config'];
+
+                    // eslint-disable-next-line max-depth
+                    if (!isVpaasMeeting(store.getState()) && tokenRespectTenant && context.tenant) {
+                        const { locationURL = { href: '' } as URL } = store.getState()['features/base/connection'];
+                        const { tenant = '' } = parseURIString(locationURL.href) || {};
+
+                        features = context.tenant === tenant ? features : {};
+                    }
+
                     _overwriteLocalParticipant(
                         store, { ...newUser,
-                            features: context.features });
+                            features });
 
                     // eslint-disable-next-line max-depth
                     if (context.user && context.user.role === 'visitor') {

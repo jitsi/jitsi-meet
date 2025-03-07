@@ -604,6 +604,7 @@ export interface IConfig {
     tokenAuthUrl?: string;
     tokenAuthUrlAutoRedirect?: string;
     tokenLogoutUrl?: string;
+    tokenRespectTenant?: string;
     toolbarButtons?: Array<ToolbarButton>;
     toolbarConfig?: {
         alwaysVisible?: boolean;
