@@ -114,6 +114,7 @@ const events = {
     'compute-pressure-changed': 'computePressureChanged',
     'conference-created-timestamp': 'conferenceCreatedTimestamp',
     'content-sharing-participants-changed': 'contentSharingParticipantsChanged',
+    'custom-notification-action-triggered': 'customNotificationActionTriggered',
     'data-channel-closed': 'dataChannelClosed',
     'data-channel-opened': 'dataChannelOpened',
     'device-list-changed': 'deviceListChanged',
@@ -1241,6 +1242,10 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Returns the state of availability electron share screen via external api.
      *
      * @returns {Promise}
+     *
+     * TODO: should be removed after we make sure that all Electron clients use only versions
+     * after with the legacy SS support was removed from the electron SDK. If we remove it now the SS for Electron
+     * clients with older versions wont work.
      */
     _isNewElectronScreensharingSupported() {
         return this._transport.sendRequest({
@@ -1450,5 +1455,16 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     */
     setVirtualBackground(enabled, backgroundImage) {
         this.executeCommand('setVirtualBackground', enabled, backgroundImage);
+    }
+
+    /**
+     * Opens the desktop picker. This is invoked by the Electron SDK when gDM is used.
+     *
+     * @returns {Promise}
+     */
+    _openDesktopPicker() {
+        return this._transport.sendRequest({
+            name: 'open-desktop-picker'
+        });
     }
 }

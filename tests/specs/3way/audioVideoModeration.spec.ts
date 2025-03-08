@@ -2,11 +2,12 @@ import { Participant } from '../../helpers/Participant';
 import {
     ensureOneParticipant,
     ensureThreeParticipants, ensureTwoParticipants,
+    hangupAllParticipants,
     unmuteAudioAndCheck,
     unmuteVideoAndCheck
 } from '../../helpers/participants';
 
-describe('AVModeration -', () => {
+describe('AVModeration', () => {
 
     it('check for moderators', async () => {
         // if all 3 participants are moderators, skip this test
@@ -69,11 +70,18 @@ describe('AVModeration -', () => {
         // participant3 was unmuted by unmuteByModerator
         await unmuteAudioAndCheck(p2, p1);
         await unmuteVideoAndCheck(p2, p1);
-        await unmuteAudioAndCheck(p1, p2);
-        await unmuteVideoAndCheck(p1, p2);
+
+        // make sure p1 is not muted after turning on and then off the AV moderation
+        await p1.getFilmstrip().assertAudioMuteIconIsDisplayed(p1, true);
+        await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p2, true);
     });
 
     it('hangup and change moderator', async () => {
+        // no moderator switching if jaas is available
+        if (ctx.isJaasAvailable()) {
+            return;
+        }
+
         await Promise.all([ ctx.p2.hangup(), ctx.p3.hangup() ]);
 
         await ensureThreeParticipants(ctx);
@@ -120,7 +128,7 @@ describe('AVModeration -', () => {
         await moderatorParticipantsPane.getAVModerationMenu().clickStopVideoModeration();
     });
     it('grant moderator', async () => {
-        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
+        await hangupAllParticipants();
 
         await ensureThreeParticipants(ctx);
 
@@ -135,7 +143,7 @@ describe('AVModeration -', () => {
         await p1.getFilmstrip().grantModerator(p3);
 
         await p3.driver.waitUntil(
-            async () => await p3.isModerator(), {
+            () => p3.isModerator(), {
                 timeout: 5000,
                 timeoutMsg: `${p3.name} is not moderator`
             });
@@ -143,7 +151,7 @@ describe('AVModeration -', () => {
         await unmuteByModerator(p3, p2, false, true);
     });
     it('ask to unmute', async () => {
-        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
+        await hangupAllParticipants();
 
         await ensureTwoParticipants(ctx);
 
@@ -165,9 +173,9 @@ describe('AVModeration -', () => {
         await unmuteByModerator(p1, p2, true, false);
 
         // p1 mute audio on p2 and check
-        await p1.getFilmstrip().muteAudio(p2);
-        await p1.getFilmstrip().assertAudioMuteIconIsDisplayed(p1);
-        await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p1);
+        await p1.getParticipantsPane().muteAudio(p2);
+        await p1.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
+        await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
 
         // we try to unmute and test it that it was still muted
         await tryToAudioUnmuteAndCheck(p2, p1);
@@ -181,7 +189,7 @@ describe('AVModeration -', () => {
         await tryToVideoUnmuteAndCheck(p2, p1);
     });
     it('join moderated', async () => {
-        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
+        await hangupAllParticipants();
 
         await ensureOneParticipant(ctx);
 
@@ -190,6 +198,7 @@ describe('AVModeration -', () => {
         await p1ParticipantsPane.clickContextMenuButton();
         await p1ParticipantsPane.getAVModerationMenu().clickStartAudioModeration();
         await p1ParticipantsPane.getAVModerationMenu().clickStartVideoModeration();
+        await p1ParticipantsPane.close();
 
         // join with second participant and check
         await ensureTwoParticipants(ctx, {
@@ -204,7 +213,9 @@ describe('AVModeration -', () => {
         await unmuteByModerator(p1, p2, false, false);
 
         // mute and check
-        await p1.getFilmstrip().muteAudio(p2);
+        await p1.getParticipantsPane().muteAudio(p2);
+        await p1.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
+        await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
 
         await tryToAudioUnmuteAndCheck(p2, p1);
     });

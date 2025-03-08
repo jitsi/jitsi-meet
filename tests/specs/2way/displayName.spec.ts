@@ -1,17 +1,13 @@
 import { ensureTwoParticipants } from '../../helpers/participants';
 
-describe('DisplayName - ', () => {
-    it('joining the meeting', async () => {
-        await ensureTwoParticipants(ctx, {
-            skipDisplayName: true
-        });
-    });
+describe('DisplayName', () => {
+    it('joining the meeting', () => ensureTwoParticipants(ctx, { skipDisplayName: true }));
 
     it('check change', async () => {
         const { p1, p2 } = ctx;
 
         // default remote display name
-        const defaultDisplayName = await p1.driver.execute(() => config.defaultRemoteDisplayName);
+        const defaultDisplayName = await p1.execute(() => config.defaultRemoteDisplayName);
         const p1EndpointId = await p1.getEndpointId();
         const p2EndpointId = await p2.getEndpointId();
 

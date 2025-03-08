@@ -84,12 +84,16 @@
     [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_TERMINATED" withData:data];
 }
 
+// - (void)conferenceUniqueIdSet:(NSDictionary *)data {
+//     [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_UNIQUE_ID_SET" withData:data];
+// }
+
 - (void)conferenceWillJoin:(NSDictionary *)data {
     [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_WILL_JOIN" withData:data];
 }
 
-// - (void)customOverflowMenuButtonPressed:(NSDictionary *)data {
-//     [self _onJitsiMeetViewDelegateEvent:@"CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED" withData:data];
+// - (void)customButtonPressed:(NSDictionary *)data {
+//     [self _onJitsiMeetViewDelegateEvent:@"CUSTOM_BUTTON_PRESSED" withData:data];
 // }
 
 #if 0

@@ -62,9 +62,11 @@ export function connect(id?: string, password?: string) {
  * @param {boolean} [requestFeedback] - Whether to attempt showing a
  * request for call feedback.
  * @param {string} [feedbackTitle] - The feedback title.
+ * @param {boolean} [notifyOnConferenceTermination] - Whether to notify
+ * the user on conference termination.
  * @returns {Function}
  */
-export function hangup(requestFeedback = false, feedbackTitle?: string) {
+export function hangup(requestFeedback = false, feedbackTitle?: string, notifyOnConferenceTermination?: boolean) {
     // XXX For web based version we use conference hanging up logic from the old app.
     return async (dispatch: IStore['dispatch']) => {
         if (LocalRecordingManager.isRecordingLocally()) {
@@ -80,6 +82,6 @@ export function hangup(requestFeedback = false, feedbackTitle?: string) {
             });
         }
 
-        return APP.conference.hangup(requestFeedback, feedbackTitle);
+        return APP.conference.hangup(requestFeedback, feedbackTitle, notifyOnConferenceTermination);
     };
 }

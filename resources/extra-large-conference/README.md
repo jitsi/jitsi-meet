@@ -84,6 +84,7 @@ s2s_whitelist = {
 ```
 Component "visitors.jitmeet.example.com" "visitors_component"
   auto_allow_visitor_promotion = true
+  admins = { "focus@auth.jitmeet.example.com" }
 ```
 - Make sure you add the correct upstreams to nginx config
 ```

@@ -20,7 +20,6 @@ export function _cleanupConfig(config: IConfig) {
 
     if (NativeModules.AppInfo.LIBRE_BUILD) {
         delete config.analytics?.amplitudeAPPKey;
-        delete config.analytics?.googleAnalyticsTrackingId;
         delete config.analytics?.rtcstatsEnabled;
         delete config.analytics?.rtcstatsEndpoint;
         delete config.analytics?.rtcstatsPollInterval;

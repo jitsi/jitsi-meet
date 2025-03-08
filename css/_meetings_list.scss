@@ -7,8 +7,8 @@
     display: flex;
     flex-direction: column;
     position: relative;
-    overflow: auto;
-    width: 100%;
+    overflow-y: auto;
+    flex-grow: 1;
 
     .meetings-list-empty {
         text-align: center;
@@ -171,6 +171,14 @@
         .delete-meeting:hover {
             &>svg {
                 fill: #4687ED;
+            }
+        }
+    }
+
+    @media (max-width: 1024px) {  /* Targets iPads and smaller devices */
+        .item {
+            .delete-meeting {
+                display: block !important;
             }
         }
     }

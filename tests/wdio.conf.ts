@@ -17,8 +17,6 @@ const allure = require('allure-commandline');
 // we need it to be able to reuse jitsi-meet code in tests
 require.extensions['.web.ts'] = require.extensions['.ts'];
 
-const usingGrid = Boolean(new URL(import.meta.url).searchParams.get('grid'));
-
 const chromeArgs = [
     '--allow-insecure-localhost',
     '--use-fake-ui-for-media-stream',
@@ -35,8 +33,7 @@ const chromeArgs = [
     // Avoids - "You are checking for animations on an inactive tab, animations do not run for inactive tabs"
     // when executing waitForStable()
     '--disable-renderer-backgrounding',
-    `--use-file-for-fake-audio-capture=${
-        usingGrid ? process.env.REMOTE_RESOURCE_PATH : 'tests/resources'}/fakeAudioStream.wav`
+    '--use-file-for-fake-audio-capture=tests/resources/fakeAudioStream.wav'
 ];
 
 if (process.env.RESOLVER_RULES) {
@@ -47,7 +44,7 @@ if (process.env.ALLOW_INSECURE_CERTS === 'true') {
 }
 if (process.env.HEADLESS === 'true') {
     chromeArgs.push('--headless');
-    chromeArgs.push('--window-size=1280,720');
+    chromeArgs.push('--window-size=1280,1024');
 }
 if (process.env.VIDEO_CAPTURE_FILE) {
     chromeArgs.push(`--use-file-for-fake-video-capture=${process.env.VIDEO_CAPTURE_FILE}`);
@@ -66,7 +63,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
     specs: [
         'specs/**'
     ],
-    maxInstances: 1, // if changing check onWorkerStart logic
+    maxInstances: parseInt(process.env.MAX_INSTANCES || '1', 10), // if changing check onWorkerStart logic
 
     baseUrl: process.env.BASE_URL || 'https://alpha.jitsi.net/torture/',
     tsConfigPath: './tsconfig.json',
@@ -84,7 +81,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
     framework: 'mocha',
 
     mochaOpts: {
-        timeout: 60_000
+        timeout: 180_000
     },
 
     capabilities: {
@@ -169,14 +166,36 @@ export const config: WebdriverIO.MultiremoteConfig = {
     /**
      * Gets executed before test execution begins. At this point you can access to all global
      * variables like `browser`. It is the perfect place to define custom commands.
+     * We have overriden this function in beforeSession to be able to pass cid as first param.
      *
      * @returns {Promise<void>}
      */
-    async before() {
+    async before(cid, _, specs) {
+        if (specs.length !== 1) {
+            console.warn('We expect to run a single suite, but got more than one');
+        }
+
+        const testName = path.basename(specs[0]).replace('.spec.ts', '');
+
+        console.log(`Running test: ${testName} via worker: ${cid}`);
+
+        const globalAny: any = global;
+
+        globalAny.ctx = {
+            times: {}
+        } as IContext;
+        globalAny.ctx.keepAlive = [];
+
         await Promise.all(multiremotebrowser.instances.map(async (instance: string) => {
             const bInstance = multiremotebrowser.getInstance(instance);
 
-            initLogger(bInstance, instance, TEST_RESULTS_DIR);
+            // @ts-ignore
+            initLogger(bInstance, `${instance}-${cid}-${testName}`, TEST_RESULTS_DIR);
+
+            // setup keepalive
+            globalAny.ctx.keepAlive.push(setInterval(async () => {
+                await bInstance.execute(() => console.log(`${new Date().toISOString()} keep-alive`));
+            }, 20_000));
 
             if (bInstance.isFirefox) {
                 return;
@@ -188,15 +207,14 @@ export const config: WebdriverIO.MultiremoteConfig = {
             bInstance.iframePageBase = `file://${path.dirname(rpath)}`;
         }));
 
-        const globalAny: any = global;
-        const roomName = `jitsimeettorture-${crypto.randomUUID()}`;
+        globalAny.ctx.roomName = `jitsimeettorture-${crypto.randomUUID()}`;
+        if (process.env.ROOM_NAME_SUFFIX) {
+            globalAny.ctx.roomName += `_${process.env.ROOM_NAME_SUFFIX.trim()}`;
+        }
 
-        globalAny.ctx = {
-            times: {}
-        } as IContext;
-        globalAny.ctx.roomName = roomName;
         globalAny.ctx.jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
         globalAny.ctx.jwtKid = process.env.JWT_KID;
+        globalAny.ctx.isJaasAvailable = () => globalAny.ctx.jwtKid?.startsWith('vpaas-magic-cookie-');
     },
 
     after() {
@@ -204,6 +222,26 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         if (ctx?.webhooksProxy) {
             ctx.webhooksProxy.disconnect();
+        }
+
+        ctx.keepAlive?.forEach(clearInterval);
+    },
+
+    beforeSession(c, capabilities, specs, cid) {
+        const originalBefore = c.before;
+
+        if (!originalBefore || !Array.isArray(originalBefore) || originalBefore.length !== 1) {
+            console.warn('No before hook found or more than one found, skipping');
+
+            return;
+        }
+
+        if (originalBefore) {
+            c.before = [ async function(...args) {
+                // Call original with cid as first param, followed by original args
+                // @ts-ignore
+                return await originalBefore[0].call(c, cid, ...args);
+            } ];
         }
     },
 
@@ -267,7 +305,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         // We skip the suite tests if the suite is marked as such, we used that from firefox overwrite
         // @ts-ignore
-        if (config?.ffExcludes.some((e: string) => minimatch(args[2][0].replace('file://', ''), `${__dirname}/${e}`))) {
+        if (config?.ffExcludes?.some(
+                (e: string) => minimatch(args[2][0].replace('file://', ''), `${__dirname}/${e}`))) {
             args[2].pop();
         }
     },
@@ -297,6 +336,14 @@ export const config: WebdriverIO.MultiremoteConfig = {
                         'image/png');
                 }));
 
+                // @ts-ignore
+                allProcessing.push(bInstance.execute(() => typeof APP !== 'undefined' && APP.connection?.getLogs())
+                    .then(logs =>
+                        logs && AllureReporter.addAttachment(
+                            `debug-logs-${instance}`,
+                            JSON.stringify(logs, null, '    '),
+                            'text/plain'))
+                    .catch(e => console.error('Failed grabbing debug logs', e)));
 
                 AllureReporter.addAttachment(`console-logs-${instance}`, getLogs(bInstance) || '', 'text/plain');
 
@@ -305,7 +352,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 }));
             });
 
-            await Promise.all(allProcessing);
+            await Promise.allSettled(allProcessing);
         }
     },
 

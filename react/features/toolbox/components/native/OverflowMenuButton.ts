@@ -25,6 +25,8 @@ class OverflowMenuButton extends AbstractButton<AbstractButtonProps> {
      * @returns {void}
      */
     _handleClick() {
+
+        // @ts-ignore
         this.props.dispatch(openSheet(OverflowMenu));
     }
 }

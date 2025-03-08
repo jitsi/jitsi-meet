@@ -126,6 +126,7 @@ export function getVideoDeviceSelectionDialogProps(stateful: IStateful, isDispla
     return {
         currentFramerate: framerate,
         desktopShareFramerates: SS_SUPPORTED_FRAMERATES,
+        disableDesktopShareSettings: isMobileBrowser(),
         disableDeviceChange: !JitsiMeetJS.mediaDevices.isDeviceChangeAvailable(),
         disableVideoInputSelect,
         disableLocalVideoFlip,

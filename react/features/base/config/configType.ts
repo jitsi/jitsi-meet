@@ -185,7 +185,6 @@ export interface IConfig {
         amplitudeIncludeUTM?: boolean;
         blackListedEvents?: string[];
         disabled?: boolean;
-        googleAnalyticsTrackingId?: string;
         matomoEndpoint?: string;
         matomoSiteID?: string;
         obfuscateRoomName?: boolean;
@@ -293,6 +292,7 @@ export interface IConfig {
     disableAddingBackgroundImages?: boolean;
     disableAudioLevels?: boolean;
     disableBeforeUnloadHandlers?: boolean;
+    disableCameraTintForeground?: boolean;
     disableChatSmileys?: boolean;
     disableDeepLinking?: boolean;
     disableFilmstripAutohiding?: boolean;
@@ -480,11 +480,13 @@ export interface IConfig {
     noiseSuppression?: INoiseSuppressionConfig;
     noticeMessage?: string;
     notificationTimeouts?: {
+        extraLong?: number;
         long?: number;
         medium?: number;
         short?: number;
     };
     notifications?: Array<string>;
+    notifyOnConferenceDestruction?: boolean;
     openSharedDocumentOnJoin?: boolean;
     opusMaxAverageBitrate?: number;
     p2p?: {
@@ -541,6 +543,7 @@ export interface IConfig {
     recordingSharingUrl?: string;
     recordings?: {
         recordAudioAndVideo?: boolean;
+        requireConsent?: boolean;
         showPrejoinWarning?: boolean;
         showRecordingLink?: boolean;
         suggestRecording?: boolean;
@@ -601,6 +604,7 @@ export interface IConfig {
     tokenAuthUrl?: string;
     tokenAuthUrlAutoRedirect?: string;
     tokenLogoutUrl?: string;
+    tokenRespectTenant?: string;
     toolbarButtons?: Array<ToolbarButton>;
     toolbarConfig?: {
         alwaysVisible?: boolean;

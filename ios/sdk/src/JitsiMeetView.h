@@ -21,6 +21,11 @@
 #import "JitsiMeetConferenceOptions.h"
 #import "JitsiMeetViewDelegate.h"
 
+typedef NS_ENUM(NSInteger, RecordingMode) {
+    RecordingModeFile,
+    RecordingModeStream
+};
+
 @interface JitsiMeetView : UIView
 
 @property (nonatomic, nullable, weak) id<JitsiMeetViewDelegate> delegate;
@@ -47,5 +52,9 @@
 - (void)setVideoMuted:(BOOL)muted;
 - (void)setClosedCaptionsEnabled:(BOOL)enabled;
 - (void)toggleCamera;
-
+- (void)showNotification:(NSString * _Nonnull)appearance :(NSString * _Nullable)description :(NSString * _Nullable)timeout :(NSString * _Nullable)title :(NSString * _Nullable)uid;
+- (void)hideNotification:(NSString * _Nullable)uid;
+- (void)startRecording:(RecordingMode)mode :(NSString * _Nullable)dropboxToken :(BOOL)shouldShare :(NSString * _Nullable)rtmpStreamKey :(NSString * _Nullable)rtmpBroadcastID :(NSString * _Nullable)youtubeStreamKey :(NSString * _Nullable)youtubeBroadcastID :(NSString * _Nullable)extraMetadata :(BOOL)transcription;
+- (void)stopRecording:(RecordingMode)mode :(BOOL)transcription;
+- (void)overwriteConfig:(NSDictionary * _Nonnull)config;
 @end

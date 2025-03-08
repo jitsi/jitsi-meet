@@ -44,6 +44,8 @@ public class BroadcastAction {
                     nativeMap.putDouble(key, (Double) this.data.get(key));
                 } else if (this.data.get(key) instanceof String) {
                     nativeMap.putString(key, (String) this.data.get(key));
+                } else if (this.data.get(key) instanceof Bundle) {
+                    nativeMap.putMap(key, bundleToWritableMap((Bundle) this.data.get(key)));
                 } else {
                     throw new Exception("Unsupported extra data type");
                 }
@@ -53,6 +55,21 @@ public class BroadcastAction {
         }
 
         return nativeMap;
+    }
+
+    // Converts(only String values) an Android Bundle to a WritableNativeMap 
+    // that can be consumed by React Native.
+    private WritableNativeMap bundleToWritableMap(Bundle bundle) {
+        WritableNativeMap map = new WritableNativeMap();
+
+        for (String key : bundle.keySet()) {
+            Object value = bundle.get(key);
+            if (value instanceof String) {
+                map.putString(key, (String) value);
+            }
+        }
+
+        return map;
     }
 
     private static HashMap<String, Object> buildDataFromBundle(Bundle bundle) {
@@ -78,7 +95,12 @@ public class BroadcastAction {
         SEND_CHAT_MESSAGE("org.jitsi.meet.SEND_CHAT_MESSAGE"),
         SET_VIDEO_MUTED("org.jitsi.meet.SET_VIDEO_MUTED"),
         SET_CLOSED_CAPTIONS_ENABLED("org.jitsi.meet.SET_CLOSED_CAPTIONS_ENABLED"),
-        TOGGLE_CAMERA("org.jitsi.meet.TOGGLE_CAMERA");
+        TOGGLE_CAMERA("org.jitsi.meet.TOGGLE_CAMERA"),
+        SHOW_NOTIFICATION("org.jitsi.meet.SHOW_NOTIFICATION"),
+        HIDE_NOTIFICATION("org.jitsi.meet.HIDE_NOTIFICATION"),
+        START_RECORDING("org.jitsi.meet.START_RECORDING"),
+        STOP_RECORDING("org.jitsi.meet.STOP_RECORDING"),
+        OVERWRITE_CONFIG("org.jitsi.meet.OVERWRITE_CONFIG");
 
         private final String action;
 

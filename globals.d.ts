@@ -18,7 +18,6 @@ declare global {
         JITSI_MEET_LITE_SDK?: boolean;
         interfaceConfig?: any;
         JitsiMeetJS?: any;
-        JitsiMeetElectron?: any;
         PressureObserver?: any;
         PressureRecord?: any;
         ReactNativeWebView?: any;

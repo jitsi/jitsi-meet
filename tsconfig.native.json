@@ -17,7 +17,6 @@
     "exclude": [
         "node_modules",
         "react/features/always-on-top",
-        "react/features/analytics/handlers/GoogleAnalyticsHandler.ts",
         "react/features/base/components/participants-pane-list",
         "react/features/base/tooltip",
         "react/features/connection-stats",

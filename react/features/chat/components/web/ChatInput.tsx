@@ -179,6 +179,9 @@ class ChatInput extends Component<IProps, IState> {
 
             // Keep the textarea in focus when sending messages via submit button.
             this._focus();
+
+            // Hide the Emojis box after submitting the message
+            this.setState({ showSmileysPanel: false });
         }
 
     }

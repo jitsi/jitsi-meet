@@ -1,7 +1,6 @@
 import { IStore } from '../app/types';
 import { getLocalJitsiAudioTrack } from '../base/tracks/functions';
 import { showErrorNotification } from '../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { NoiseSuppressionEffect } from '../stream-effects/noise-suppression/NoiseSuppressionEffect';
 
 import { SET_NOISE_SUPPRESSION_ENABLED } from './actionTypes';
@@ -93,7 +92,7 @@ export function setNoiseSuppressionEnabled(enabled: boolean): any {
 
             dispatch(showErrorNotification({
                 titleKey: 'notify.noiseSuppressionFailedTitle'
-            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+            }));
         }
     };
 }

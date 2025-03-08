@@ -7,8 +7,8 @@ export default class ChatPanel extends BasePageObject {
     /**
      * Is chat panel open.
      */
-    async isOpen() {
-        return await this.participant.driver.$('#sideToolbarContainer').isExisting();
+    isOpen() {
+        return this.participant.driver.$('#sideToolbarContainer').isExisting();
     }
 
     /**

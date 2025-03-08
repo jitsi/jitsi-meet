@@ -1,5 +1,5 @@
 import { IReduxState } from '../app/types';
-import { hasAvailableDevices } from '../base/devices/functions';
+import { hasAvailableDevices } from '../base/devices/functions.web';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { IGUMPendingState } from '../base/media/types';
@@ -7,7 +7,8 @@ import { isScreenMediaShared } from '../screen-share/functions';
 import { isWhiteboardVisible } from '../whiteboard/functions';
 
 import { MAIN_TOOLBAR_BUTTONS_PRIORITY, TOOLBAR_TIMEOUT } from './constants';
-import { IMainToolbarButtonThresholds, IToolboxButton, NOTIFY_CLICK_MODE } from './types';
+import { isButtonEnabled } from './functions.any';
+import { IGetVisibleButtonsParams, IToolboxButton, NOTIFY_CLICK_MODE } from './types';
 
 export * from './functions.any';
 
@@ -20,19 +21,6 @@ export function getToolboxHeight() {
     const toolbox = document.getElementById('new-toolbox');
 
     return toolbox?.clientHeight || 0;
-}
-
-/**
- * Checks if the specified button is enabled.
- *
- * @param {string} buttonName - The name of the button. See {@link interfaceConfig}.
- * @param {Object|Array<string>} state - The redux state or the array with the enabled buttons.
- * @returns {boolean} - True if the button is enabled and false otherwise.
- */
-export function isButtonEnabled(buttonName: string, state: IReduxState | Array<string>) {
-    const buttons = Array.isArray(state) ? state : state['features/toolbox'].toolbarButtons || [];
-
-    return buttons.includes(buttonName);
 }
 
 /**
@@ -126,26 +114,6 @@ export function showOverflowDrawer(state: IReduxState) {
 }
 
 /**
- * Returns true if the overflow menu button is displayed and false otherwise.
- *
- * @param {IReduxState} state - The state from the Redux store.
- * @returns {boolean} - True if the overflow menu button is displayed and false otherwise.
- */
-export function showOverflowMenu(state: IReduxState) {
-    return state['features/toolbox'].overflowMenuVisible;
-}
-
-/**
- * Indicates whether the toolbox is enabled or not.
- *
- * @param {IReduxState} state - The state from the Redux store.
- * @returns {boolean}
- */
-export function isToolboxEnabled(state: IReduxState) {
-    return state['features/toolbox'].enabled;
-}
-
-/**
  * Returns the toolbar timeout from config or the default value.
  *
  * @param {IReduxState} state - The state from the Redux store.
@@ -174,15 +142,6 @@ function setButtonsNotifyClickMode(buttons: Object, buttonsWithNotifyClick: Map<
             button.notifyMode = buttonsWithNotifyClick.get(button.key);
         }
     });
-}
-
-interface IGetVisibleButtonsParams {
-    allButtons: { [key: string]: IToolboxButton; };
-    buttonsWithNotifyClick: Map<string, NOTIFY_CLICK_MODE>;
-    clientWidth: number;
-    jwtDisabledButtons: string[];
-    mainToolbarButtonsThresholds: IMainToolbarButtonThresholds;
-    toolbarButtons: string[];
 }
 
 /**
@@ -234,8 +193,10 @@ export function getVisibleButtons({
         button && mainButtonsKeys.push(button);
     }
 
+    const mainMenuButtons = mainButtonsKeys.map(key => allButtons[key]);
+
     return {
-        mainMenuButtons: mainButtonsKeys.map(key => allButtons[key]),
+        mainMenuButtons,
         overflowMenuButtons
     };
 }

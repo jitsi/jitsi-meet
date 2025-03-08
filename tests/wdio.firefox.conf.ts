@@ -20,11 +20,18 @@ if (process.env.HEADLESS === 'true') {
 }
 
 const ffExcludes = [
-    'specs/2way/iFrameParticipantsPresence.spec.ts', // FF does not support uploading files (uploadFile)
+    'specs/2way/iFrameApiParticipantsPresence.spec.ts', // FF does not support uploading files (uploadFile)
 
     // FF does not support setting a file as mic input, no dominant speaker events
     'specs/3way/activeSpeaker.spec.ts',
-    'specs/4way/desktopSharing.spec.ts'
+    'specs/3way/startMuted.spec.ts', // bad audio levels
+    'specs/4way/desktopSharing.spec.ts',
+    'specs/4way/lastN.spec.ts',
+
+    // when unmuting a participant, we see the presence in debug logs imidiately,
+    // but for 15 seconds it is not received/processed by the client
+    // (also menu disappears after clicking one of the moderation option, does not happen manually)
+    'specs/3way/audioVideoModeration.spec.ts'
 ];
 
 const mergedConfig = merge(defaultConfig, {

@@ -271,9 +271,13 @@ public class JitsiMeetActivity extends AppCompatActivity
 //        JitsiMeetLogger.i("Transcription chunk received: " + extraData);
 //    }
 
-//    protected void onCustomOverflowMenuButtonPressed(HashMap<String, Object> extraData) {
-//        JitsiMeetLogger.i("Custom overflow menu button pressed: " + extraData);
-//    }
+//    protected void onCustomButtonPressed(HashMap<String, Object> extraData) {
+//         JitsiMeetLogger.i("Custom button pressed: " + extraData);
+//     }
+
+//     protected void onConferenceUniqueIdSet(HashMap<String, Object> extraData) {
+//         JitsiMeetLogger.i("Conference unique id set: " + extraData);
+//     }
 
     // Activity lifecycle methods
     //
@@ -358,12 +362,15 @@ public class JitsiMeetActivity extends AppCompatActivity
                 case READY_TO_CLOSE:
                     onReadyToClose();
                     break;
-//                case TRANSCRIPTION_CHUNK_RECEIVED:
-//                    onTranscriptionChunkReceived(event.getData());
-//                    break;
-//                case CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED:
-//                    onCustomOverflowMenuButtonPressed(event.getData());
-//                    break;
+                // case TRANSCRIPTION_CHUNK_RECEIVED:
+                //    onTranscriptionChunkReceived(event.getData());
+                //    break;
+                // case CUSTOM_BUTTON_PRESSED:
+                //    onCustomButtonPressed(event.getData());
+                //    break;
+                // case CONFERENCE_UNIQUE_ID_SET:
+                //     onConferenceUniqueIdSet(event.getData());
+                //     break;
             }
         }
     }

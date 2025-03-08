@@ -36,7 +36,7 @@ export default class Filmstrip extends BasePageObject {
 
         await this.participant.driver.$(mutedIconXPath).waitForDisplayed({
             reverse,
-            timeout: 2000,
+            timeout: 5_000,
             timeoutMsg: `Audio mute icon is${reverse ? '' : ' not'} displayed for ${testee.name}`
         });
     }
@@ -62,7 +62,7 @@ export default class Filmstrip extends BasePageObject {
 
         await remoteDisplayName.moveTo();
 
-        return await this.participant.driver.execute(eId =>
+        return await this.participant.execute(eId =>
             document.evaluate(`//span[@id="participant_${eId}"]//video`,
                 document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue?.srcObject?.id, endpointId);
     }
@@ -70,8 +70,8 @@ export default class Filmstrip extends BasePageObject {
     /**
      * Returns the local video id.
      */
-    async getLocalVideoId() {
-        return await this.participant.driver.execute(
+    getLocalVideoId() {
+        return this.participant.execute(
             'return document.getElementById("localVideo_container").srcObject.id');
     }
 
@@ -80,10 +80,49 @@ export default class Filmstrip extends BasePageObject {
      * @param participant The participant.
      */
     async pinParticipant(participant: Participant) {
-        const id = participant === this.participant
-            ? 'localVideoContainer' : `participant_${await participant.getEndpointId()}`;
+        let videoIdToSwitchTo;
 
-        await this.participant.driver.$(`//span[@id="${id}"]`).click();
+        if (participant === this.participant) {
+            videoIdToSwitchTo = await this.getLocalVideoId();
+
+            // when looking up the element and clicking it, it doesn't work if we do it twice in a row (oneOnOne.spec)
+            await this.participant.execute(() => document?.getElementById('localVideoContainer')?.click());
+        } else {
+            const epId = await participant.getEndpointId();
+
+            videoIdToSwitchTo = await this.getRemoteVideoId(epId);
+
+            await this.participant.driver.$(`//span[@id="participant_${epId}"]`).click();
+        }
+
+        await this.participant.driver.waitUntil(
+            async () => await this.participant.getLargeVideo().getId() === videoIdToSwitchTo,
+            {
+                timeout: 3_000,
+                timeoutMsg: `${this.participant.displayName} did not switch the large video to ${
+                    participant.displayName}`
+            }
+        );
+    }
+
+    /**
+     * Unpins a participant by clicking on their thumbnail.
+     * @param participant
+     */
+    async unpinParticipant(participant: Participant) {
+        const epId = await participant.getEndpointId();
+
+        if (participant === this.participant) {
+            await this.participant.execute(() => document?.getElementById('localVideoContainer')?.click());
+        } else {
+            await this.participant.driver.$(`//span[@id="participant_${epId}"]`).click();
+        }
+
+        await this.participant.driver.$(`//div[ @id="pin-indicator-${epId}" ]`).waitForDisplayed({
+            timeout: 2_000,
+            timeoutMsg: `${this.participant.displayName} did not unpin ${participant.displayName}`,
+            reverse: true
+        });
     }
 
     /**
@@ -94,7 +133,7 @@ export default class Filmstrip extends BasePageObject {
         const elem = this.participant.driver.$(
             `//span[@id='participant_${endpointId}']//img[contains(@class,'userAvatar')]`);
 
-        return await elem.isExisting() ? elem.getAttribute('src') : null;
+        return await elem.isExisting() ? await elem.getAttribute('src') : null;
     }
 
     /**
@@ -113,10 +152,11 @@ export default class Filmstrip extends BasePageObject {
      * @private
      */
     private async clickOnRemoteMenuLink(participantId: string, linkClassname: string, dialogConfirm: boolean) {
-        const thumbnail = this.participant.driver.$(
-            `//span[@id='participant_${participantId}']//span[@id='remotevideomenu']`);
+        await this.participant.driver.$(`//span[@id='participant_${participantId}']`).moveTo();
 
-        await thumbnail.moveTo();
+        await this.participant.driver.$(
+            `//span[@id='participant_${participantId
+            }']//span[@id='remotevideomenu']//div[@id='remote-video-menu-trigger']`).moveTo();
 
         const popoverElement = this.participant.driver.$(
             `//div[contains(@class, 'popover')]//div[contains(@class, '${linkClassname}')]`);
@@ -135,11 +175,7 @@ export default class Filmstrip extends BasePageObject {
      * @param participant
      */
     async muteAudio(participant: Participant) {
-        const participantId = await participant.getEndpointId();
-
-        await this.participant.driver.$(`#participant-item-${participantId}`).moveTo();
-
-        await this.participant.driver.$(`button[data-testid="mute-audio-${participantId}"]`).click();
+        await this.clickOnRemoteMenuLink(await participant.getEndpointId(), 'mutelink', false);
     }
 
     /**
@@ -154,8 +190,15 @@ export default class Filmstrip extends BasePageObject {
      * Kicks a participant.
      * @param participantId
      */
-    async kickParticipant(participantId: string) {
-        await this.clickOnRemoteMenuLink(participantId, 'kicklink', true);
+    kickParticipant(participantId: string) {
+        return this.clickOnRemoteMenuLink(participantId, 'kicklink', true);
+    }
+
+    /**
+     * Hover over local video.
+     */
+    hoverOverLocalVideo() {
+        return this.participant.driver.$(LOCAL_VIDEO_MENU_TRIGGER).moveTo();
     }
 
     /**
@@ -163,7 +206,7 @@ export default class Filmstrip extends BasePageObject {
      */
     async hideSelfView() {
         // open local video menu
-        await this.participant.driver.$(LOCAL_VIDEO_MENU_TRIGGER).moveTo();
+        await this.hoverOverLocalVideo();
         await this.participant.driver.$(LOCAL_USER_CONTROLS).moveTo();
 
         // click Hide self view button
@@ -177,8 +220,8 @@ export default class Filmstrip extends BasePageObject {
     /**
      * Checks whether the local self view is displayed or not.
      */
-    async assertSelfViewIsHidden(hidden: boolean) {
-        await this.participant.driver.$(LOCAL_VIDEO_XPATH).waitForDisplayed({
+    assertSelfViewIsHidden(hidden: boolean) {
+        return this.participant.driver.$(LOCAL_VIDEO_XPATH).waitForDisplayed({
             reverse: hidden,
             timeout: 5000,
             timeoutMsg: `Local video thumbnail is${hidden ? '' : ' not'} displayed for ${this.participant.name}`
@@ -200,8 +243,8 @@ export default class Filmstrip extends BasePageObject {
      * Asserts that the remote videos are hidden or not.
      * @param reverse
      */
-    async assertRemoteVideosHidden(reverse = false) {
-        await this.participant.driver.waitUntil(
+    assertRemoteVideosHidden(reverse = false) {
+        return this.participant.driver.waitUntil(
             async () =>
                 await this.participant.driver.$$('//div[@id="remoteVideos" and contains(@class, "hidden")]').length > 0,
             {
@@ -209,5 +252,25 @@ export default class Filmstrip extends BasePageObject {
                 timeoutMsg: `Timeout waiting fore remote videos to be hidden: ${!reverse}.`
             }
         );
+    }
+
+    /**
+     * Counts the displayed remote video thumbnails.
+     */
+    async countVisibleThumbnails() {
+        return (await this.participant.driver.$$('//div[@id="remoteVideos"]//span[contains(@class,"videocontainer")]')
+            .filter(thumbnail => thumbnail.isDisplayed())).length;
+    }
+
+    /**
+     * Check if remote videos in filmstrip are visible.
+     *
+     * @param isDisplayed whether or not filmstrip remote videos should be visible
+     */
+    verifyRemoteVideosDisplay(isDisplayed: boolean) {
+        return this.participant.driver.$('//div[contains(@class, "remote-videos")]/div').waitForDisplayed({
+            timeout: 5_000,
+            reverse: !isDisplayed,
+        });
     }
 }

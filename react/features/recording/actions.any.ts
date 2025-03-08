@@ -189,7 +189,7 @@ export function highlightMeetingMoment() {
  * @returns {showErrorNotification}
  */
 export function showRecordingError(props: Object) {
-    return showErrorNotification(props, NOTIFICATION_TIMEOUT_TYPE.LONG);
+    return showErrorNotification(props);
 }
 
 /**
@@ -301,7 +301,7 @@ export function showStartedRecordingNotification(
                 } catch (err) {
                     dispatch(showErrorNotification({
                         titleKey: 'recording.errorFetchingLink'
-                    }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+                    }));
 
                     return logger.error('Could not fetch recording link', err);
                 }
@@ -468,6 +468,6 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
                 dispatch(hideNotification(START_RECORDING_NOTIFICATION_ID));
             } ],
             appearance: NOTIFICATION_TYPE.NORMAL
-        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+        }, NOTIFICATION_TIMEOUT_TYPE.EXTRA_LONG));
     };
 }

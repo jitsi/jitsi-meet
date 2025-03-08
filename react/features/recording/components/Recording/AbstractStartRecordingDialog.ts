@@ -9,7 +9,6 @@ import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { updateDropboxToken } from '../../../dropbox/actions';
 import { getDropboxData, getNewAccessToken, isEnabled as isDropboxEnabled } from '../../../dropbox/functions.any';
 import { showErrorNotification } from '../../../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../../../notifications/constants';
 import { setRequestingSubtitles } from '../../../subtitles/actions.any';
 import { setSelectedRecordingService, startLocalVideoRecording } from '../../actions';
 import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../constants';
@@ -381,7 +380,7 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
                 } else {
                     dispatch(showErrorNotification({
                         titleKey: 'dialog.noDropboxToken'
-                    }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+                    }));
 
                     return;
                 }

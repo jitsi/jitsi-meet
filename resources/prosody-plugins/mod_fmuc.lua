@@ -211,6 +211,20 @@ local function cancel_destroy_timer(room)
     end
 end
 
+local function destroy_with_conference_ended(room)
+    -- if the room is being destroyed, ignore
+    if room.destroying then
+        return;
+    end
+
+    cancel_destroy_timer(room);
+
+    local main_count, visitors_count = get_occupant_counts(room);
+    module:log('info', 'Will destroy:%s main_occupants:%s visitors:%s', room.jid, main_count, visitors_count);
+    room:destroy(nil, 'Conference ended.');
+    return true;
+end
+
 -- schedules a new destroy timer which will destroy the room if there are no visitors after the timeout
 local function schedule_destroy_timer(room)
     cancel_destroy_timer(room);
@@ -271,6 +285,10 @@ module:hook('muc-occupant-left', function (event)
     if visitors_count == 0 then
         schedule_destroy_timer(room);
     end
+
+    if main_count == 0 then
+        destroy_with_conference_ended(room);
+    end
 end);
 
 -- forward visitor presences to jicofo
@@ -330,8 +348,11 @@ module:hook('muc-broadcast-presence', function (event)
                         is_moderator = true;
                     end
                 elseif session.auth_token and auto_promoted_with_token then
-                    -- non-vpaas and having a token is considered a moderator
-                    is_moderator = true;
+                    if not session.jitsi_meet_tenant_mismatch or session.jitsi_web_query_prefix == '' then
+                        -- non-vpaas and having a token is considered a moderator, and if it is not in '/' tenant
+                        -- the tenant from url and token should match
+                        is_moderator = true;
+                    end
                 end
             end
         end
@@ -407,7 +428,6 @@ local function stanza_handler(event)
     local room = get_room_from_jid(room_jid_match_rewrite(room_jid));
 
     if not room then
-        module:log('warn', 'No room found %s in stanza_handler', room_jid);
         return;
     end
 
@@ -619,12 +639,7 @@ local function iq_from_main_handler(event)
     respond_iq_result(origin, stanza);
 
     if process_disconnect then
-        cancel_destroy_timer(room);
-
-        local main_count, visitors_count = get_occupant_counts(room);
-        module:log('info', 'Will destroy:%s main_occupants:%s visitors:%s', room.jid, main_count, visitors_count);
-        room:destroy(nil, 'Conference ended.');
-        return true;
+        return destroy_with_conference_ended(room);
     end
 
     -- if there is password supplied use it

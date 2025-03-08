@@ -118,8 +118,8 @@ interface IProps extends AbstractProps, WithTranslation {
  * @param {IProps} props - The props object.
  * @returns {boolean} - True if the prejoin screen should be displayed and false otherwise.
  */
-function shouldShowPrejoin({ _showPrejoin, _showVisitorsQueue }: IProps) {
-    return _showPrejoin && !_showVisitorsQueue;
+function shouldShowPrejoin({ _showLobby, _showPrejoin, _showVisitorsQueue }: IProps) {
+    return _showPrejoin && !_showVisitorsQueue && !_showLobby;
 }
 
 /**
@@ -163,7 +163,7 @@ class Conference extends AbstractConference<IProps, any> {
 
         // Bind event handler so it is only bound once for every instance.
         this._onFullScreenChange = this._onFullScreenChange.bind(this);
-        this._onVidespaceTouchStart = this._onVidespaceTouchStart.bind(this);
+        this._onVideospaceTouchStart = this._onVideospaceTouchStart.bind(this);
         this._setBackground = this._setBackground.bind(this);
     }
 
@@ -241,11 +241,11 @@ class Conference extends AbstractConference<IProps, any> {
                     className = { _layoutClassName }
                     id = 'videoconference_page'
                     onMouseMove = { isMobileBrowser() ? undefined : this._onShowToolbar }>
-                    <ConferenceInfo />
+                    { _showPrejoin || _showLobby || <ConferenceInfo /> }
                     <Notice />
                     <div
                         id = 'videospace'
-                        onTouchStart = { this._onVidespaceTouchStart }>
+                        onTouchStart = { this._onVideospaceTouchStart }>
                         <LargeVideo />
                         {
                             _showPrejoin || _showLobby || (<>
@@ -322,7 +322,7 @@ class Conference extends AbstractConference<IProps, any> {
      * @private
      * @returns {void}
      */
-    _onVidespaceTouchStart() {
+    _onVideospaceTouchStart() {
         this.props.dispatch(toggleToolboxVisible());
     }
 

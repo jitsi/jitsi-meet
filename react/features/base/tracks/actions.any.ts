@@ -86,12 +86,16 @@ export function createDesiredLocalTracks(...desiredTypes: any) {
         dispatch(destroyLocalDesktopTrackIfExists());
 
         if (desiredTypes.length === 0) {
+            const { startSilent } = state['features/base/config'];
             const { video } = state['features/base/media'];
 
-            // XXX: Always create the audio track early, even if it will be muted.
-            // This fixes a timing issue when adding the track to the conference which
-            // manifests primarily on iOS 15.
-            desiredTypes.push(MEDIA_TYPE.AUDIO);
+            if (!startSilent) {
+                // Always create the audio track early, even if it will be muted.
+                // This fixes a timing issue when adding the track to the conference which
+                // manifests primarily on iOS 15.
+                // Unless we are silent, of course.
+                desiredTypes.push(MEDIA_TYPE.AUDIO);
+            }
 
             // XXX When the app is coming into the foreground from the
             // background in order to handle a URL, it may realize the new
@@ -287,7 +291,7 @@ export function showNoDataFromSourceVideoError(jitsiTrack: any) {
             const notificationAction = dispatch(showErrorNotification({
                 descriptionKey: 'dialog.cameraNotSendingData',
                 titleKey: 'dialog.cameraNotSendingDataTitle'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+            }));
 
             notificationInfo = {
                 uid: notificationAction?.uid
@@ -834,16 +838,6 @@ export function toggleCamera() {
         const localVideoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
         const currentFacingMode = localVideoTrack.getCameraFacingMode();
         const { localFlipX } = state['features/base/settings'];
-
-        /**
-         * FIXME: Ideally, we should be dispatching {@code replaceLocalTrack} here,
-         * but it seems to not trigger the re-rendering of the local video on Chrome;
-         * could be due to a plan B vs unified plan issue. Therefore, we use the legacy
-         * method defined in conference.js that manually takes care of updating the local
-         * video as well.
-         */
-        await APP.conference.useVideoStream(null);
-
         const targetFacingMode = currentFacingMode === CAMERA_FACING_MODE.USER
             ? CAMERA_FACING_MODE.ENVIRONMENT
             : CAMERA_FACING_MODE.USER;
@@ -853,7 +847,6 @@ export function toggleCamera() {
 
         const newVideoTrack = await createLocalTrack('video', null, null, { facingMode: targetFacingMode });
 
-        // FIXME: See above.
-        await APP.conference.useVideoStream(newVideoTrack);
+        dispatch(replaceLocalTrack(localVideoTrack, newVideoTrack));
     };
 }
