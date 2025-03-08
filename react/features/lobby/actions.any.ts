@@ -10,7 +10,6 @@ import { hideNotification, showNotification } from '../notifications/actions';
 import { LOBBY_NOTIFICATION_ID } from '../notifications/constants';
 import { joinConference } from '../prejoin/actions';
 
-
 import {
     KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED,
     KNOCKING_PARTICIPANT_LEFT,
@@ -415,15 +414,12 @@ export function setLobbyMessageListener() {
         }
 
         conference?.addLobbyMessageListener((message: any, participantId: string) => {
-
             if (message.type === LOBBY_CHAT_MESSAGE) {
                 return dispatch(handleLobbyMessageReceived(message.message, participantId));
             }
-
             if (message.type === LOBBY_CHAT_INITIALIZED) {
                 return dispatch(handleLobbyChatInitialized(message));
             }
-
             if (message.type === MODERATOR_IN_CHAT_WITH_LEFT) {
                 return dispatch(updateLobbyParticipantOnLeave(message.moderatorId));
             }
