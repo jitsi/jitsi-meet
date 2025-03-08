@@ -417,7 +417,7 @@ export function setLobbyMessageListener() {
         conference?.addLobbyMessageListener((message: any, participantId: string) => {
 
             if (message.type === LOBBY_CHAT_MESSAGE) {
-                dispatch(handleLobbyMessageReceived(message.message, participantId));
+                return dispatch(handleLobbyMessageReceived(message.message, participantId));
             }
 
             if (message.type === LOBBY_CHAT_INITIALIZED) {
