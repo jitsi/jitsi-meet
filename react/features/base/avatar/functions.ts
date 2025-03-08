@@ -66,7 +66,7 @@ export function getInitials(s?: string) {
     const initialsBasis = split(s, '@')[0];
     const [ firstWord, ...remainingWords ] = initialsBasis.split(wordSplitRegex).filter(Boolean);
 
-    return getFirstGraphemeUpper(firstWord) + getFirstGraphemeUpper(remainingWords.pop() || "");
+    return getFirstGraphemeUpper(firstWord) + getFirstGraphemeUpper(remainingWords.pop() || '');
 }
 
 /**
