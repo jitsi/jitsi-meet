@@ -507,7 +507,8 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
 
     // skip message notifications on join (the messages having timestamp - coming from the history)
     const shouldShowNotification = userSelectedNotifications?.['notify.chatMessages']
-        && !hasRead && !isReaction && !timestamp;
+        && !hasRead && !isReaction
+        && (!timestamp || lobbyChat);
 
     if (isGuest) {
         displayNameToShow = `${displayNameToShow} ${i18next.t('visitors.chatIndicator')}`;
