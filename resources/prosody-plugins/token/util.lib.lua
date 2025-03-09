@@ -19,6 +19,7 @@ local cjson_safe  = require 'cjson.safe'
 local timer = require "util.timer";
 local async = require "util.async";
 local inspect = require 'inspect';
+local pkey = require "openssl.pkey"
 
 local nr_retries = 3;
 local ssl = require "ssl";
@@ -149,22 +150,36 @@ function Util.new(module)
 
                 -- Process the decoded content
                 for k, v in pairs(decoded_content) do
+                    -- JWKS format
                     if k == "keys" and type(v) == "table" then
-                        -- Process as JWKS format
                         for _, key in ipairs(v) do
-                            if key.kid and key.x5c and key.x5c[1] then
-                                -- Convert the first certificate in x5c array to public key
-                                local cert = "-----BEGIN CERTIFICATE-----\n" ..
-                                           key.x5c[1] ..
-                                           "\n-----END CERTIFICATE-----";
-                                self.cachedKeys[key.kid] = ssl.loadcertificate(cert):pubkey();
-                                -- do not clean this key if it already exists
-                                keys_to_delete[key.kid] = nil;
+                            if key.kid then
+                                local _pubkey
+                                -- Handle x5c (X.509 certificate chain)
+                                if key.x5c and key.x5c[1] then
+                                    local cert = "-----BEGIN CERTIFICATE-----\n" ..
+                                            key.x5c[1] ..
+                                            "\n-----END CERTIFICATE-----";
+                                    _pubkey = ssl.loadcertificate(cert):pubkey();
+                                -- Handle n, e (RSA public key components)
+                                elseif key.n and key.e and key.kty == "RSA" then
+                                    -- Create public key using OpenSSL's pkey
+                                    local rsa_params = {
+                                        n = basexx.from_base64(key.n:gsub("-", "+"):gsub("_", "/")),
+                                        e = basexx.from_base64(key.e:gsub("-", "+"):gsub("_", "/"))
+                                    }
+                                    _pubkey = pkey.new(rsa_params);
+                                end
+                                if _pubkey then
+                                    self.cachedKeys[key.kid] = _pubkey;
+                                    -- do not clean this key if it already exists
+                                    keys_to_delete[key.kid] = nil;
+                                end
                             end
                         end
-                    -- Process as {kid}: "certificate" format
-                    -- Let's convert any certificate to public key
+                    -- direct PEM mapping (Firebase)
                     elseif starts_with(v, '-----BEGIN CERTIFICATE-----') then
+                        -- Let's convert any certificate to public key
                         self.cachedKeys[k] = ssl.loadcertificate(v):pubkey();
                         -- do not clean this key if it already exists
                         keys_to_delete[k] = nil;
