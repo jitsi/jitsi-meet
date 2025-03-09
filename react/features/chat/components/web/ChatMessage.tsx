@@ -1,5 +1,5 @@
 import { Theme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
@@ -9,6 +9,7 @@ import { getParticipantDisplayName } from '../../../base/participants/functions'
 import Popover from '../../../base/popover/components/Popover.web';
 import Message from '../../../base/react/components/web/Message';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import Tooltip from '../../../base/tooltip/components/Tooltip';
 import { getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
 
@@ -128,13 +129,17 @@ const useStyles = makeStyles()((theme: Theme) => {
             minHeight: '32px'
         },
         displayName: {
+            marginBottom: theme.spacing(1),
+            width: '130px'
+        },
+        displayNameText: {
             ...withPixelLineHeight(theme.typography.labelBold),
             color: theme.palette.text02,
             whiteSpace: 'nowrap',
             textOverflow: 'ellipsis',
             overflow: 'hidden',
-            marginBottom: theme.spacing(1),
-            maxWidth: '130px'
+            display: 'inline-block', 
+            maxWidth: '100%'
         },
         userMessage: {
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
@@ -201,6 +206,8 @@ const ChatMessage = ({
     const { classes, cx } = useStyles();
     const [ isHovered, setIsHovered ] = useState(false);
     const [ isReactionsOpen, setIsReactionsOpen ] = useState(false);
+    const [isDisplayNameOverflowing, setIsDisplayNameOverflowing] = useState(false);
+    const displayNameRef = useRef<HTMLDivElement | null>(null);
 
     const handleMouseEnter = useCallback(() => {
         setIsHovered(true);
@@ -218,6 +225,16 @@ const ChatMessage = ({
         setIsReactionsOpen(false);
     }, []);
 
+    useEffect(() => {
+        if(displayNameRef.current){
+            const element = displayNameRef.current;
+            const elementStyles = window.getComputedStyle(element);
+            const elementWidth = Math.floor(parseFloat(elementStyles.width));
+
+            setIsDisplayNameOverflowing(element.scrollWidth > elementWidth + 1);
+        }
+    },[ message.displayName ])
+
     /**
      * Renders the display name of the sender.
      *
@@ -228,7 +245,25 @@ const ChatMessage = ({
             <div
                 aria-hidden = { true }
                 className = { cx('display-name', classes.displayName) }>
-                {message.displayName}
+                {isDisplayNameOverflowing ? (
+                    <>
+                        <Tooltip content = { message.displayName }>
+                            <span
+                                ref = { displayNameRef }
+                                className = { classes.displayNameText }>
+                                {message.displayName}
+                            </span>
+                        </Tooltip>
+                    </>
+                ):(
+                    <>
+                       <span
+                            ref = { displayNameRef }
+                            className = { classes.displayNameText }>
+                            {message.displayName}
+                        </span>
+                    </>
+                )}
             </div>
         );
     }
