@@ -138,7 +138,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             whiteSpace: 'nowrap',
             textOverflow: 'ellipsis',
             overflow: 'hidden',
-            display: 'inline-block', 
+            display: 'inline-block',
             maxWidth: '100%'
         },
         userMessage: {
@@ -206,7 +206,7 @@ const ChatMessage = ({
     const { classes, cx } = useStyles();
     const [ isHovered, setIsHovered ] = useState(false);
     const [ isReactionsOpen, setIsReactionsOpen ] = useState(false);
-    const [isDisplayNameOverflowing, setIsDisplayNameOverflowing] = useState(false);
+    const [ isDisplayNameOverflowing, setIsDisplayNameOverflowing ] = useState(false);
     const displayNameRef = useRef<HTMLDivElement | null>(null);
 
     const handleMouseEnter = useCallback(() => {
@@ -226,14 +226,14 @@ const ChatMessage = ({
     }, []);
 
     useEffect(() => {
-        if(displayNameRef.current){
+        if (displayNameRef.current) {
             const element = displayNameRef.current;
             const elementStyles = window.getComputedStyle(element);
             const elementWidth = Math.floor(parseFloat(elementStyles.width));
 
             setIsDisplayNameOverflowing(element.scrollWidth > elementWidth + 1);
         }
-    },[ message.displayName ])
+    }, [ message.displayName ]);
 
     /**
      * Renders the display name of the sender.
@@ -246,23 +246,19 @@ const ChatMessage = ({
                 aria-hidden = { true }
                 className = { cx('display-name', classes.displayName) }>
                 {isDisplayNameOverflowing ? (
-                    <>
-                        <Tooltip content = { message.displayName }>
-                            <span
-                                ref = { displayNameRef }
-                                className = { classes.displayNameText }>
-                                {message.displayName}
-                            </span>
-                        </Tooltip>
-                    </>
-                ):(
-                    <>
-                       <span
-                            ref = { displayNameRef }
-                            className = { classes.displayNameText }>
+                    <Tooltip content = { message.displayName }>
+                        <span
+                            className = { classes.displayNameText }
+                            ref = { displayNameRef }>
                             {message.displayName}
                         </span>
-                    </>
+                    </Tooltip>
+                ) : (
+                    <span
+                        className = { classes.displayNameText }
+                        ref = { displayNameRef }>
+                        {message.displayName}
+                    </span>
                 )}
             </div>
         );
