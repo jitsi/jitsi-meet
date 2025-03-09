@@ -5,6 +5,7 @@ local jid = require "util.jid";
 
 local token_util = module:require "token/util".new(module);
 local util = module:require 'util';
+local is_admin = util.is_admin;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local is_feature_allowed = util.is_feature_allowed;
 local is_sip_jigasi = util.is_sip_jigasi;
@@ -37,11 +38,6 @@ local is_visitor_prosody = main_domain ~= nil;
 
 -- this is the main virtual host of this vnode
 local local_domain = module:get_option_string('muc_mapper_domain_base');
-
-local um_is_admin = require 'core.usermanager'.is_admin;
-local function is_admin(jid)
-    return um_is_admin(jid, module.host);
-end
 
 -- The maximum number of simultaneous calls,
 -- and also the maximum number of new calls per minute that a session is allowed to create.

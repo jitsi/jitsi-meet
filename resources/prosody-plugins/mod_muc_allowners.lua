@@ -3,8 +3,8 @@ local jid = require "util.jid";
 local jid_bare = require "util.jid".bare;
 local jid_host = require "util.jid".host;
 local st = require "util.stanza";
-local um_is_admin = require "core.usermanager".is_admin;
 local util = module:require "util";
+local is_admin = util.is_admin;
 local is_healthcheck_room = util.is_healthcheck_room;
 local is_moderated = util.is_moderated;
 local get_room_from_jid = util.get_room_from_jid;
@@ -17,10 +17,6 @@ local function load_config()
     disable_revoke_owners = module:get_option_boolean("allowners_disable_revoke_owners", false);
 end
 load_config();
-
-local function is_admin(_jid)
-    return um_is_admin(_jid, module.host);
-end
 
 -- List of the bare_jids of all occupants that are currently joining (went through pre-join) and will be promoted
 -- as moderators. As pre-join (where added) and joined event (where removed) happen one after another this list should

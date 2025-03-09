@@ -6,9 +6,9 @@
 -- the guest domain which is anonymous.
 -- The module has the option to set participants to moderators when connected via token/when they are authenticated
 -- This module depends on mod_persistent_lobby.
-local um_is_admin = require 'core.usermanager'.is_admin;
 local jid = require 'util.jid';
 local util = module:require "util";
+local is_admin = util.is_admin;
 local is_healthcheck_room = util.is_healthcheck_room;
 local is_moderated = util.is_moderated;
 local process_host_module = util.process_host_module;
@@ -41,10 +41,6 @@ if not disable_auto_owners then
             room:set_affiliation(true, occupant.bare_jid, 'owner');
         end
     end, 2);
-end
-
-local function is_admin(jid)
-    return um_is_admin(jid, module.host);
 end
 
 -- if not authenticated user is trying to join the room we enable lobby in it

@@ -4,18 +4,16 @@
 local log = module._log;
 local host = module.host;
 local st = require "util.stanza";
-local um_is_admin = require "core.usermanager".is_admin;
 local jid_split = require 'util.jid'.split;
 local jid_bare = require 'util.jid'.bare;
+
+local util = module:require 'util';
+local is_admin = util.is_admin;
 
 local DEBUG = false;
 
 local measure_success = module:measure('success', 'counter');
 local measure_fail = module:measure('fail', 'counter');
-
-local function is_admin(jid)
-    return um_is_admin(jid, host);
-end
 
 local parentHostName = string.gmatch(tostring(host), "%w+.(%w.+)")();
 if parentHostName == nil then
