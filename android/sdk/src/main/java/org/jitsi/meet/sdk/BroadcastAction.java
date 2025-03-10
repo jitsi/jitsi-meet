@@ -100,7 +100,8 @@ public class BroadcastAction {
         HIDE_NOTIFICATION("org.jitsi.meet.HIDE_NOTIFICATION"),
         START_RECORDING("org.jitsi.meet.START_RECORDING"),
         STOP_RECORDING("org.jitsi.meet.STOP_RECORDING"),
-        OVERWRITE_CONFIG("org.jitsi.meet.OVERWRITE_CONFIG");
+        OVERWRITE_CONFIG("org.jitsi.meet.OVERWRITE_CONFIG"),
+        SEND_CAMERA_FACING_MODE_MESSAGE("org.jitsi.meet.SEND_CAMERA_FACING_MODE_MESSAGE");
 
         private final String action;
 

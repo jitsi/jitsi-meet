@@ -173,6 +173,11 @@ static NSString *recordingModeToString(RecordingMode mode);
     [externalAPI overwriteConfig:config];
 }
 
+- (void)sendCameraFacingModeMessage:(NSString *)to :(NSString *)facingMode {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendCameraFacingModeMessage:to :facingMode];
+}
+
 #pragma mark Private methods
 
 - (void)registerObservers {
