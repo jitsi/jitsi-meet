@@ -18,7 +18,7 @@
 #import "AppDelegate.h"
 #import "FIRUtilities.h"
 #import "Types.h"
-#import "ViewController.h"
+#import "jitsi_meet-Swift.h"
 
 @import Firebase;
 @import JitsiMeetSDK;
@@ -65,7 +65,7 @@
     [jitsiMeet showSplashScreen:vc.view];
 
     [self.window makeKeyAndVisible];
-    
+
     return YES;
 }
 
