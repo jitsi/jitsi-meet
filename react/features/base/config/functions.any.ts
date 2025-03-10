@@ -328,7 +328,7 @@ export function setConfigFromURLParams(
 
     overrideConfigJSON(config, interfaceConfig, json);
 
-    // Print warning about depricated URL params
+    // Print warning about deprecated URL params
     if ('interfaceConfig.SUPPORT_URL' in params) {
         logger.warn('Using SUPPORT_URL interfaceConfig URL overwrite is deprecated.'
             + ' Please use supportUrl from advanced branding!');
