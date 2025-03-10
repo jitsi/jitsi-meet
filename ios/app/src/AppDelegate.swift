@@ -29,7 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         jitsiMeet.application(application, didFinishLaunchingWithOptions: launchOptions ?? [:])
 
-        if FIRUtilities.appContainsRealServiceInfoPlist() {
+        if self.appContainsRealServiceInfoPlist() {
             print("Enabling Firebase")
             FirebaseApp.configure()
             Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(!jitsiMeet.isCrashReportingDisabled())
@@ -54,9 +54,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: Linking delegate methods
 
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        if FIRUtilities.appContainsRealServiceInfoPlist() {
+        if self.appContainsRealServiceInfoPlist() {
             let handled = DynamicLinks.dynamicLinks().handleUniversalLink(userActivity.webpageURL!) { dynamicLink, error in
-                if let firebaseUrl = FIRUtilities.extractURL(dynamicLink) {
+                if let firebaseUrl = self.extractURL(from: dynamicLink) {
                     userActivity.webpageURL = firebaseUrl
                     JitsiMeet.sharedInstance().application(application, continue: userActivity, restorationHandler: restorationHandler)
                 }
@@ -77,9 +77,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         var openUrl = url
 
-        if FIRUtilities.appContainsRealServiceInfoPlist() {
+        if self.appContainsRealServiceInfoPlist() {
             if let dynamicLink = DynamicLinks.dynamicLinks().dynamicLink(fromCustomSchemeURL: url),
-               let firebaseUrl = FIRUtilities.extractURL(dynamicLink) {
+               let firebaseUrl = self.extractURL(from: dynamicLink) {
                 openUrl = firebaseUrl
             }
         }
@@ -89,5 +89,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         return JitsiMeet.sharedInstance().application(application, supportedInterfaceOrientationsFor: window)
+    }
+}
+
+// Firebase utilities
+extension AppDelegate {
+    func appContainsRealServiceInfoPlist() -> Bool {
+        return InfoPlistUtil.containsRealServiceInfoPlist(in: Bundle.main)
+    }
+
+    func extractURL(from dynamicLink: DynamicLink?) -> URL? {
+        guard let dynamicLink = dynamicLink,
+              let dynamicLinkURL = dynamicLink.url,
+              dynamicLink.matchType == .unique || dynamicLink.matchType == .default else {
+            return nil
+        }
+        return dynamicLinkURL
     }
 }
