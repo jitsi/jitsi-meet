@@ -308,4 +308,9 @@ public class MainActivity extends JitsiMeetActivity {
             }
         }
     }
+
+    @Override
+    protected void onRecordingStatusChanged(HashMap<String, Object> extraData) {
+        JitsiMeetLogger.i("Recording status changed: " + extraData);
+    }
 }
