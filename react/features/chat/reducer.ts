@@ -82,35 +82,48 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
     case ADD_MESSAGE_REACTION: {
         const { participantId, reactionList, messageId } = action;
-
-        const messages = state.messages.map(message => {
-            if (messageId === message.messageId) {
-                const newReactions = new Map(message.reactions);
-
-                reactionList.forEach((reaction: string) => {
-                    let participants = newReactions.get(reaction);
-
-                    if (!participants) {
-                        participants = new Set();
-                        newReactions.set(reaction, participants);
-                    }
-
-                    participants.add(participantId);
-                });
-
-                return {
-                    ...message,
-                    reactions: newReactions
-                };
-            }
-
-            return message;
-        });
-
-        return {
+        
+        // Create a new state with deep copy of messages
+        const newState = {
             ...state,
-            messages
+            messages: state.messages.map(message => {
+                // Only modify the message that matches the messageId
+                if (message.messageId === messageId) {
+                    // Create a new reactions map from the existing one
+                    const newReactions = new Map(message.reactions);
+                    
+                    // First, remove the participant from all existing reaction sets
+                    newReactions.forEach((participants, reaction) => {
+                        // Create a new Set without the current participant
+                        const newParticipants = new Set([...participants].filter(id => id !== participantId));
+                        
+                        // If there are still participants with this reaction, update the map
+                        if(newParticipants.size > 0)
+                            newReactions.set(reaction, newParticipants);
+                        // Otherwise, remove the reaction from the map
+                        else newReactions.delete(reaction);
+                    });
+                    
+                    // Add the participant to their chosen reaction(s)
+                    reactionList.forEach(reaction => {
+                        const existingParticipants = newReactions.get(reaction) || new Set();
+                        const updatedParticipants = new Set([...existingParticipants, participantId]);
+                        newReactions.set(reaction, updatedParticipants);
+                    });
+                    
+                    // Return updated message with new reactions Map
+                    return {
+                        ...message,
+                        reactions: newReactions
+                    };
+                }
+                
+                // Return unchanged message for other messages
+                return message;
+            })
         };
+        
+        return newState;
     }
 
     case CLEAR_MESSAGES:
