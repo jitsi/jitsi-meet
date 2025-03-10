@@ -107,7 +107,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
                     });
 
                     // Add the participant to their chosen reaction(s)
-                    reactionList.forEach(reaction => {
+                    reactionList.forEach((reaction: string) => {
                         const existingParticipants = newReactions.get(reaction) || new Set();
                         const updatedParticipants = new Set([ ...existingParticipants, participantId ]);
                         newReactions.set(reaction, updatedParticipants);
