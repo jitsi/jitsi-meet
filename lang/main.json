@@ -768,6 +768,11 @@
             "copyLink": "Copy Link",
             "meetingFull": "Meeting is full",
             "participants": "participants"
+        },
+        "settings": {
+            "video": {
+                "videoInput": "Video input"
+            }
         }
     },
     "notify": {

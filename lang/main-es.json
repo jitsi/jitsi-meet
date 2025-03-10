@@ -715,6 +715,11 @@
             "copyLink": "Copiar enlace",
             "meetingFull": "La reunión está llena",
             "participants": "participantes"
+        },
+        "settings": {
+            "video": {
+                "videoInput": "Entrada de vídeo"
+            }
         }
     },
     "notify": {
