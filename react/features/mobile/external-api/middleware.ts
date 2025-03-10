@@ -62,7 +62,6 @@ import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../recording/constant
 import { getActiveSession } from '../../recording/functions';
 import { setRequestingSubtitles } from '../../subtitles/actions.any';
 import { CUSTOM_BUTTON_PRESSED } from '../../toolbox/actionTypes';
-import { isRecorderTranscriptionsRunning } from '../../transcribing/functions';
 import { muteLocal } from '../../video-menu/actions.native';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture/actionTypes';
 // @ts-ignore
@@ -591,16 +590,6 @@ function _registerForNativeEvents(store: IStore) {
                 isTranscribingEnabled: true
             });
         }
-
-        sendEvent(
-            store,
-            RECORDING_STATUS_CHANGED,
-            /* data */ {
-                on: true,
-                mode,
-                error: undefined,
-                transcription: isRecorderTranscriptionsRunning(state)
-            });
     });
 
     eventEmitter.addListener(ExternalAPI.STOP_RECORDING, ({ mode, transcription }: any) => {
@@ -635,16 +624,6 @@ function _registerForNativeEvents(store: IStore) {
         }
 
         conference.stopRecording(activeSession.id);
-
-        sendEvent(
-            store,
-            RECORDING_STATUS_CHANGED,
-            /* data */ {
-                on: false,
-                mode,
-                error: undefined,
-                transcription: isRecorderTranscriptionsRunning(state)
-            });
     });
 
     eventEmitter.addListener(ExternalAPI.OVERWRITE_CONFIG, ({ config }: any) => {
