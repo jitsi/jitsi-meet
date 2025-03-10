@@ -1,7 +1,7 @@
 import { LoginDetails } from '@internxt/sdk';
-import { SdkManager } from './sdk-manager.service';
+import { CryptoService } from "./crypto.service";
 import { KeysService } from './keys.service';
-import { CryptoService } from './crypto.service';
+import { SdkManager } from './sdk-manager.service';
 import { LoginCredentials } from './types/command.types';
 
 export class AuthService {

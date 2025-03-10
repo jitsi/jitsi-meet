@@ -1,7 +1,7 @@
 import { Auth, Drive } from '@internxt/sdk';
 import { ApiSecurity, AppDetails } from '@internxt/sdk/dist/shared';
+import packageJson from '../../../../../package.json';
 import { ConfigService } from './config.service';
-import packageJson from '../../../../package.json';
 
 export type SdkManagerApiSecurity = ApiSecurity & { newToken: string };
 /**

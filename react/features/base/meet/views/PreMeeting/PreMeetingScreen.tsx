@@ -1,32 +1,30 @@
-import React, { ReactNode, useMemo, useState } from "react";
-import { connect } from "react-redux";
+import React, { ReactNode, useEffect, useMemo, useState } from "react";
+import { WithTranslation } from "react-i18next";
+import { connect, useDispatch } from "react-redux";
 import { makeStyles } from "tss-react/mui";
-import { translate } from "../../../i18n/functions";
-
 import { IReduxState } from "../../../../app/types";
 import DeviceStatus from "../../../../prejoin/components/web/preview/DeviceStatus";
 import { isRoomNameEnabled } from "../../../../prejoin/functions";
 import Toolbox from "../../../../toolbox/components/web/Toolbox";
 import { isButtonEnabled } from "../../../../toolbox/functions.web";
+
+import { redirectToStaticPage } from "../../../../app/actions.any";
+import { appNavigate } from "../../../../app/actions.web";
 import { getConferenceName } from "../../../conference/functions";
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from "../../../config/constants";
-import { withPixelLineHeight } from "../../../styles/functions.web";
-
-import { Button, TransparentModal } from "@internxt/ui";
-import { WithTranslation } from "react-i18next";
+import { get8x8BetaJWT } from "../../../connection/options8x8";
+import { translate } from "../../../i18n/functions";
 import ConnectionStatus from "../../../premeeting/components/web/ConnectionStatus";
 import RecordingWarning from "../../../premeeting/components/web/RecordingWarning";
 import UnsafeRoomWarning from "../../../premeeting/components/web/UnsafeRoomWarning";
+import { updateSettings } from "../../../settings/actions";
+import { getDisplayName } from "../../../settings/functions.web";
+import { withPixelLineHeight } from "../../../styles/functions.web";
+import { useLocalStorage } from "../../LocalStorageManager";
 import Header from "./components/Header";
-
-import { useFullName } from "./hooks/useFullName";
-import { useUserData } from "./hooks/useUserData";
-
-import MediaControlsWrapper from "../../general/containers/MediaControlsWrapper";
-import NameInputSection from "./components/NameInputSection";
-import ParticipantsList from "./components/ParticipantsList";
-import VideoPreviewSection from "./components/VideoPreviewSection";
+import PreMeetingModal from "./components/PreMeetingModal";
 import { useParticipants } from "./hooks/useParticipants";
+import { useUserData } from "./hooks/useUserData";
 
 interface IProps extends WithTranslation {
     /**
@@ -53,11 +51,6 @@ interface IProps extends WithTranslation {
      * Additional CSS class names to set on the icon container.
      */
     className?: string;
-
-    /**
-     * The name of the participant.
-     */
-    name?: string;
 
     /**
      * Indicates whether the copy url button should be shown.
@@ -107,7 +100,6 @@ interface IProps extends WithTranslation {
     /**
      * The audio track.
      */
-
     audioTrack?: any;
 
     /**
@@ -120,8 +112,25 @@ interface IProps extends WithTranslation {
      */
     onAudioOptionsClick?: Function;
 
+    /**
+     * Function to handle the join conference action.
+     */
     joinConference?: () => void;
+
+    /**
+     * Flag to disable the join button.
+     */
     disableJoinButton?: boolean;
+
+    /**
+     * Updates settings.
+     */
+    updateSettings: Function;
+
+    /**
+     * The display name of the user.
+     */
+    userName: string;
 }
 
 const PreMeetingScreen = ({
@@ -139,12 +148,16 @@ const PreMeetingScreen = ({
     t,
     joinConference,
     disableJoinButton,
+    updateSettings: dispatchUpdateSettings,
+    userName,
 }: IProps) => {
     const { classes } = useStyles();
     const [isNameInputFocused, setIsNameInputFocused] = useState(false);
+    const [isCreatingMeeting, setIsCreatingMeeting] = useState(false);
     const userData = useUserData();
-    const [userName, setUserName] = useFullName(userData);
     const { allParticipants } = useParticipants();
+    const storageManager = useLocalStorage();
+    const dispatch = useDispatch();
 
     const showNameError = userName.length === 0 && !isNameInputFocused;
 
@@ -169,42 +182,95 @@ const PreMeetingScreen = ({
         [showUnsafeRoomWarning, showDeviceStatus, showRecordingWarning]
     );
 
+    useEffect(() => {
+        if (userData?.name) {
+            dispatchUpdateSettings({
+                displayName: userData.name,
+            });
+        }
+    }, []);
+
+    const handleRedirectToLogin = () => {
+        dispatch(redirectToStaticPage("/"));
+    };
+
+    const handleNewMeeting = async () => {
+        setIsCreatingMeeting(true);
+
+        try {
+            const newToken = storageManager.getNewToken() || "";
+
+            const meetTokenCreator = await get8x8BetaJWT(newToken);
+
+            if (meetTokenCreator?.room) {
+                const locationURL = window.location;
+                const baseUrl = `${locationURL.protocol}//${locationURL.host}`;
+                const newUrl = `${baseUrl}/${meetTokenCreator.room}`;
+
+                window.history.replaceState({}, document.title, newUrl);
+
+                await dispatch(appNavigate(meetTokenCreator.room));
+            }
+        } catch (error) {
+            console.error("Error creating new meeting:", error);
+        } finally {
+            setIsCreatingMeeting(false);
+        }
+    };
+
+    const handleRedirectToSignUp = () => {
+        // HARDCODED, MODIFY WHEN SIGN UP PAGE IS READY
+        window.location.href = "https://drive.internxt.com/new";
+    };
+
+    const updateNameInStorage = (name: string) => {
+        try {
+            const user = storageManager.getUser();
+
+            if (user) {
+                const updatedUser = {
+                    ...user,
+                    name: name,
+                };
+
+                storageManager.setUser(updatedUser);
+            }
+        } catch (error) {
+            console.error("Error updating user name in localStorage:", error);
+        }
+    };
+    const setName = (displayName: string) => {
+        dispatchUpdateSettings({
+            displayName,
+        });
+
+        updateNameInStorage(displayName);
+    };
+
     return (
         <div className="flex flex-col h-full">
             <div className={`flex flex-col px-5 ${classes.container}`}>
-                <Header userData={userData} translate={t} />
-                {/* Extract when finish the modal */}
-                <TransparentModal
-                    className={"flex p-7 bg-black/50 border border-white/15  rounded-[20px]"}
-                    isOpen={true}
-                    onClose={() => {}}
-                    disableBackdrop
-                >
-                    <div className="flex flex-col h-full text-white space-y-4">
-                        <VideoPreviewSection
-                            videoMuted={!!videoMuted}
-                            videoTrack={videoTrack}
-                            isAudioMuted={audioTrack?.isMuted()}
-                        />
-                        <NameInputSection
-                            userName={userName}
-                            showNameError={showNameError}
-                            setUserName={setUserName}
-                            setIsNameInputFocused={setIsNameInputFocused}
-                            translate={t}
-                        />
-                        <MediaControlsWrapper />
-                        <ParticipantsList participants={allParticipants} translate={t} />
-                        <Button
-                            onClick={joinConference}
-                            disabled={!userName || disableJoinButton}
-                            variant="primary"
-                            className="mt-5"
-                        >
-                            {t("meet.preMeeting.joinMeeting") as string}
-                        </Button>
-                    </div>
-                </TransparentModal>
+                <Header
+                    userData={userData}
+                    translate={t}
+                    onLogin={handleRedirectToLogin}
+                    onSignUp={handleRedirectToSignUp}
+                    onNewMeeting={handleNewMeeting}
+                    isCreatingMeeting={isCreatingMeeting}
+                />
+                <PreMeetingModal
+                    videoTrack={videoTrack}
+                    videoMuted={!!videoMuted}
+                    audioTrack={audioTrack}
+                    userName={userName}
+                    showNameError={showNameError}
+                    setUserName={setName}
+                    setIsNameInputFocused={setIsNameInputFocused}
+                    participants={allParticipants}
+                    translate={t}
+                    joinConference={joinConference}
+                    disableJoinButton={disableJoinButton}
+                />
                 <div className="flex flex-row">
                     <div>
                         <div className={classes.content}>
@@ -236,8 +302,8 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const premeetingButtons = (ownProps.thirdParty ? THIRD_PARTY_PREJOIN_BUTTONS : PREMEETING_BUTTONS).filter(
         (b: any) => !(hiddenPremeetingButtons || []).includes(b)
     );
-
     const { premeetingBackground } = state["features/dynamic-branding"];
+    const userName = getDisplayName(state);
 
     return {
         // For keeping backwards compat.: if we pass an empty hiddenPremeetingButtons
@@ -250,10 +316,13 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
             : premeetingButtons.filter((b) => isButtonEnabled(b, toolbarButtons)),
         _premeetingBackground: premeetingBackground,
         _roomName: isRoomNameEnabled(state) ? getConferenceName(state) : "",
+        userName,
     };
 }
 
-export default translate(connect(mapStateToProps)(PreMeetingScreen));
+const mapDispatchToProps = { updateSettings };
+
+export default translate(connect(mapStateToProps, mapDispatchToProps)(PreMeetingScreen));
 
 const useStyles = makeStyles()((theme) => ({
     container: {
@@ -277,7 +346,6 @@ const useStyles = makeStyles()((theme) => ({
         width: "300px",
         height: "100%",
         zIndex: 252,
-
         "@media (max-width: 720px)": {
             height: "auto",
             margin: "0 auto",
