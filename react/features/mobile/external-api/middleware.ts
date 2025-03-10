@@ -49,6 +49,7 @@ import {
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
 import { toggleScreensharing } from '../../base/tracks/actions.native';
+import { CAMERA_FACING_MODE_MESSAGE } from '../../base/tracks/constants';
 import { getLocalTracks, isLocalTrackMuted } from '../../base/tracks/functions.native';
 import { ITrack } from '../../base/tracks/types';
 import { CLOSE_CHAT, OPEN_CHAT } from '../../chat/actionTypes';
@@ -632,6 +633,21 @@ function _registerForNativeEvents(store: IStore) {
 
         dispatch(overwriteConfig(config));
     });
+
+    eventEmitter.addListener(ExternalAPI.SEND_CAMERA_FACING_MODE_MESSAGE, ({ to, facingMode }: any) => {
+        const conference = getCurrentConference(getState());
+
+        if (!to) {
+            logger.warn('Participant id not set');
+
+            return;
+        }
+
+        conference?.sendEndpointMessage(to, {
+            name: CAMERA_FACING_MODE_MESSAGE,
+            facingMode
+        });
+    });
 }
 
 /**
@@ -657,6 +673,7 @@ function _unregisterForNativeEvents() {
     eventEmitter.removeAllListeners(ExternalAPI.START_RECORDING);
     eventEmitter.removeAllListeners(ExternalAPI.STOP_RECORDING);
     eventEmitter.removeAllListeners(ExternalAPI.OVERWRITE_CONFIG);
+    eventEmitter.removeAllListeners(ExternalAPI.SEND_CAMERA_FACING_MODE_MESSAGE);
 }
 
 /**
