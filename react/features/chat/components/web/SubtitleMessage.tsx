@@ -3,31 +3,17 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { getParticipantDisplayName } from '../../../base/participants/functions';
+import { ISubtitle } from '../../../subtitles/types';
 
 /**
  * Props for the SubtitleMessage component.
  */
-interface IProps {
+interface IProps extends ISubtitle {
 
     /**
-     * Whether this is an interim subtitle (not yet finalized).
+     * Whether to show the display name of the participant.
      */
-    interim?: boolean;
-
-    /**
-     * The ID of the participant who sent the subtitle.
-     */
-    participant: string;
-
-    /**
-     * The text content of the subtitle.
-     */
-    text: string;
-
-    /**
-     * The timestamp when the subtitle was created.
-     */
-    timestamp: number;
+    showDisplayName: boolean;
 }
 
 /**
@@ -54,14 +40,14 @@ const useStyles = makeStyles()(theme => {
  * @param {IProps} props - The component props.
  * @returns {JSX.Element} - The rendered subtitle message.
  */
-export default function SubtitleMessage({ participant, text, timestamp, interim }: IProps) {
+export default function SubtitleMessage({ participantId, text, timestamp, interim, showDisplayName }: IProps) {
     const { classes } = useStyles();
     const participantName = useSelector((state: any) =>
-        getParticipantDisplayName(state, participant));
+        getParticipantDisplayName(state, participantId));
 
     return (
         <div className = { `${classes.subtitleItem} ${interim ? classes.interim : ''}` }>
-            <strong>{participantName}:</strong>
+            {showDisplayName && <strong>{participantName}:</strong>}
             <div>{text}</div>
             <small>
                 {new Date(timestamp).toLocaleTimeString()}

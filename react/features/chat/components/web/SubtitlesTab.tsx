@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import SubtitleMessage from './SubtitleMessage';
+import { groupMessagesBySender } from '../../../base/util/messageGrouping';
+import { ISubtitle } from '../../../subtitles/types';
+
+import { SubtitlesGroup } from './SubtitlesGroup';
 
 /**
  * The styles for the SubtitlesTab component.
@@ -25,14 +28,16 @@ const useStyles = makeStyles()(() => {
  */
 export default function SubtitlesTab() {
     const { classes } = useStyles();
-    const subtitles = useSelector(state => state['features/subtitles'].subtitlesHistory);
+    const subtitles: ISubtitle[] = useSelector(state => state['features/subtitles'].subtitlesHistory);
+    const groupedSubtitles = useMemo(() => groupMessagesBySender(subtitles), [ subtitles ]);
 
     return (
         <div className = { classes.subtitlesList }>
-            {subtitles.map((subtitle, index) => (
-                <SubtitleMessage
-                    key = { index }
-                    { ...subtitle } />
+            {groupedSubtitles.map(group => (
+                <SubtitlesGroup
+                    key = { `${group.senderId}-${group.messages[0].timestamp}` }
+                    messages = { group.messages }
+                    senderId = { group.senderId } />
             ))}
         </div>
     );

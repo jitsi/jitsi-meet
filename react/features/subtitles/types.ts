@@ -1,3 +1,5 @@
+import { IGroupableMessage } from '../base/util/messageGrouping';
+
 export interface ITranscriptMessage {
     clearTimeOut?: number;
     final?: string;
@@ -10,11 +12,11 @@ export interface ITranscriptMessage {
     unstable?: string;
 }
 
-export interface ISubtitle {
+export interface ISubtitle extends IGroupableMessage {
     id: string;
-    participant: string;
-    text: string;
-    timestamp: number;
     interim?: boolean;
     language?: string;
+    participantId: string;
+    text: string;
+    timestamp: number;
 }
