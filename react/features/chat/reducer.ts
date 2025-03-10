@@ -82,32 +82,31 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
     case ADD_MESSAGE_REACTION: {
         const { participantId, reactionList, messageId } = action;
-        
+
         // Create a new state with deep copy of messages
         const newState = {
             ...state,
             messages: state.messages.map(message => {
-                
+
                 // Only modify the message that matches the messageId
                 if (message.messageId === messageId) {
-                    
+ 
                     // Create a new reactions map from the existing one
                     const newReactions = new Map(message.reactions);
-                    
+ 
                     // First, remove the participant from all existing reaction sets
-                    
+
                     newReactions.forEach((participants, reaction) => {
-                        
+
                         // Create a new Set without the current participant
                         const newParticipants = new Set([ ...participants ].filter(id => id !== participantId));
 
                         // If there are still participants with this reaction, update the map
                         if (newParticipants.size > 0) {
-                            newReactions.set(reaction, newParticipants);
-                        }
 
-                        // Otherwise, remove the reaction from the map
-                        else {
+                            newReactions.set(reaction, newParticipants);
+                        } else { // Otherwise, remove the reaction from the map
+
                             newReactions.delete(reaction);
                         }
                     });
@@ -116,7 +115,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
                     reactionList.forEach((reaction: string) => {
                         const existingParticipants = newReactions.get(reaction) || new Set();
                         const updatedParticipants = new Set([ ...existingParticipants, participantId ]);
-                        
+
                         newReactions.set(reaction, updatedParticipants);
                     });
 
