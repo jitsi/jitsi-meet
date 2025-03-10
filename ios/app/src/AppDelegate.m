@@ -40,8 +40,29 @@
     jitsiMeet.defaultConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
 
         // For testing configOverrides a room needs to be set
-        // builder.room = @"https://meet.jit.si/test0988test";
+        builder.room = @"https://meet.jit.si/test0988test";
 
+        // Configure custom toolbar buttons
+        NSDictionary *customToolbarButtons = @[
+            @{
+                @"icon": @"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAFISURBVHgBxVWBcYMwDJQ7QbuBu4FHcDfoBvEGZQOSicgGdIPQCWADRnClQ76qYFE7Vy5/J3yRXpKlCAFwMEwJKcbo8CCxrJpQBmPMAPcCgz6jtChz1DGifBC3NrhnZ0KPElCsrIh1nUjkS4OfapwosbjM6S+yZ+Ktpmxu5419/R5pZKnraYk/Khu+gYU7ITpwTjojjCMeXzh675ozLKNKuCJvUng98dD+IpWOMwfFqY1btAo3sN3tK39sNurwO/xAv59Yb+mhvJnZljE2FxKtszLBYUgJJnooE7S3b65rhWjzJBOkIH7tgCV/4nGBLS7KJDkZU47pDMuGfMs4perS/zFw4hyvg2VMX9eGszYZpRAT1OSMx64KJh237AQ5vXRjLNhL8fe3I0AJVk4dJ3XCblnXi8t4qAGX3YhEOcw8HGo7H/fR/y98AzFrGjU3gjYAAAAAAElFTkSuQmCC",
+                @"id": @"record"
+            }
+        ];
+        
+        // Configure toolbar buttons order
+        NSArray *toolbarButtons = @[@"record", @"microphone", @"camera", @"chat", @"hangup"];
+        
+        // Configure recording service
+        NSDictionary *recordingService = @{
+            @"enabled": @YES,
+            @"sharingEnabled": @YES
+        };
+        
+        [builder setConfigOverride:@"customToolbarButtons" withValue:customToolbarButtons];
+        [builder setConfigOverride:@"toolbarButtons" withValue:toolbarButtons];
+        [builder setConfigOverride:@"recordingService" withValue:recordingService];
+        
         [builder setFeatureFlag:@"welcomepage.enabled" withBoolean:YES];
         [builder setFeatureFlag:@"ios.screensharing.enabled" withBoolean:YES];
         [builder setFeatureFlag:@"ios.recording.enabled" withBoolean:YES];
