@@ -16,15 +16,18 @@ import { getCurrentConference } from '../conference/functions';
 import { notifyCameraError, notifyMicError } from '../devices/actions.web';
 import { openDialog } from '../dialog/actions';
 import { JitsiTrackErrors, JitsiTrackEvents, browser } from '../lib-jitsi-meet';
+import { createLocalTrack } from '../lib-jitsi-meet/functions.any';
 import { gumPending, setScreenshareMuted } from '../media/actions';
-import { MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
-import { IGUMPendingState } from '../media/types';
-
 import {
-    addLocalTrack,
-    replaceLocalTrack,
-    toggleCamera
-} from './actions.any';
+    CAMERA_FACING_MODE,
+    MEDIA_TYPE,
+    MediaType,
+    VIDEO_TYPE,
+} from '../media/constants';
+import { IGUMPendingState } from '../media/types';
+import { updateSettings } from '../settings/actions';
+
+import { addLocalTrack, replaceLocalTrack } from './actions.any';
 import AllowToggleCameraDialog from './components/web/AllowToggleCameraDialog';
 import {
     createLocalTracksF,
@@ -507,5 +510,33 @@ export function handleScreenSharingError(
             descriptionKey,
             titleKey
         }));
+    };
+}
+
+/**
+ * Toggles the facingMode constraint on the video stream.
+ *
+ * @returns {Function}
+ */
+export function toggleCamera() {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const tracks = state['features/base/tracks'];
+        const localVideoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
+        const currentFacingMode = localVideoTrack.getCameraFacingMode();
+        const { localFlipX } = state['features/base/settings'];
+        const targetFacingMode = currentFacingMode === CAMERA_FACING_MODE.USER
+            ? CAMERA_FACING_MODE.ENVIRONMENT
+            : CAMERA_FACING_MODE.USER;
+
+        // Update the flipX value so the environment facing camera is not flipped, before the new track is created.
+        dispatch(updateSettings({ localFlipX: targetFacingMode === CAMERA_FACING_MODE.USER ? localFlipX : false }));
+
+        // On mobile only one camera can be open at a time, so first stop the current camera track.
+        await dispatch(replaceLocalTrack(localVideoTrack, null));
+
+        const newVideoTrack = await createLocalTrack('video', null, null, { facingMode: targetFacingMode });
+
+        await dispatch(replaceLocalTrack(null, newVideoTrack));
     };
 }
