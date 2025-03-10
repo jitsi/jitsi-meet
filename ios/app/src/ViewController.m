@@ -26,6 +26,12 @@
 
 @implementation ViewController
 
+- (void)loadView {
+    JitsiMeetView *jitsiView = [[JitsiMeetView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+
+    self.view = jitsiView;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
 

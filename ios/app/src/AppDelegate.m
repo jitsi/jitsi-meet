@@ -27,6 +27,9 @@
 
 -             (BOOL)application:(UIApplication *)application
   didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+
     JitsiMeet *jitsiMeet = [JitsiMeet sharedInstance];
 
 #if 0
@@ -57,9 +60,12 @@
         [[FIRCrashlytics crashlytics] setCrashlyticsCollectionEnabled:![jitsiMeet isCrashReportingDisabled]];
     }
 
-    ViewController *rootController = (ViewController *)self.window.rootViewController;
-    [jitsiMeet showSplashScreen:rootController.view];
+    ViewController *vc = [[ViewController alloc] init];
+    self.window.rootViewController = vc;
+    [jitsiMeet showSplashScreen:vc.view];
 
+    [self.window makeKeyAndVisible];
+    
     return YES;
 }
 
