@@ -90,10 +90,10 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
                 // Only modify the message that matches the messageId
                 if (message.messageId === messageId) {
- 
+
                     // Create a new reactions map from the existing one
                     const newReactions = new Map(message.reactions);
- 
+
                     // First, remove the participant from all existing reaction sets
 
                     newReactions.forEach((participants, reaction) => {
