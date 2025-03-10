@@ -140,7 +140,7 @@
 /**
  * Called when the recording status has changed.
  *
- * The `data` dictionary contains a `sessionData` key.
+ * The `data` dictionary contains a `on` key with boolean value.
  */
 - (void)recordingStatusChanged:(NSDictionary *)data;
 

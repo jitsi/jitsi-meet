@@ -28,18 +28,24 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
+//import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.oney.WebRTCModule.WebRTCModuleOptions;
+//import com.oney.WebRTCModule.WebRTCModuleOptions;
 
+import org.jitsi.meet.sdk.BroadcastIntentHelper;
 import org.jitsi.meet.sdk.JitsiMeet;
 import org.jitsi.meet.sdk.JitsiMeetActivity;
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
-import org.webrtc.Logging;
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
+//import org.webrtc.Logging;
 
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 /**
  * The one and only Activity that the Jitsi Meet app needs. The
@@ -60,6 +66,10 @@ public class MainActivity extends JitsiMeetActivity {
      * ServerURL configuration key for restriction configuration using {@link android.content.RestrictionsManager}
      */
     public static final String RESTRICTION_SERVER_URL = "SERVER_URL";
+
+    private static final String TAG = JitsiMeetActivity.class.getSimpleName();
+
+    private String interactionId;
 
     /**
      * Broadcast receiver for restrictions handling
@@ -83,10 +93,24 @@ public class MainActivity extends JitsiMeetActivity {
     protected void onCreate(Bundle savedInstanceState) {
         JitsiMeet.showSplashScreen(this);
 
-        WebRTCModuleOptions options = WebRTCModuleOptions.getInstance();
-        options.loggingSeverity = Logging.Severity.LS_ERROR;
+//        WebRTCModuleOptions options = WebRTCModuleOptions.getInstance();
+//        options.loggingSeverity = Logging.Severity.LS_ERROR;
+
+        // Initialize interaction ID
+        interactionId = generateInteractionId();
 
         super.onCreate(null);
+    }
+
+    /**
+     * Generates a unique interaction ID using timestamp and random number.
+     *
+     * @return A unique interaction ID string
+     */
+    private String generateInteractionId() {
+        long timestamp = System.currentTimeMillis();
+        int random = (int) (Math.random() * 10000);
+        return "interaction_" + timestamp + "_" + random;
     }
 
     @Override
@@ -155,7 +179,10 @@ public class MainActivity extends JitsiMeetActivity {
         // Set default options
         JitsiMeetConferenceOptions defaultOptions
             = new JitsiMeetConferenceOptions.Builder()
-            .setServerURL(buildURL(defaultURL))
+            .setRoom("https://meet.jit.si/test0988test")
+            .setConfigOverride("customToolbarButtons", getCustomToolbarButtons())
+            .setConfigOverride("toolbarButtons", getToolbarButtons())
+            .setConfigOverride("recordingService", getRecordingService())
             .setFeatureFlag("welcomepage.enabled", true)
             .setFeatureFlag("server-url-change.enabled", !configurationByRestrictions)
             .build();
@@ -223,11 +250,67 @@ public class MainActivity extends JitsiMeetActivity {
     // Helper methods
     //
 
-    private @Nullable URL buildURL(String urlStr) {
-        try {
-            return new URL(urlStr);
-        } catch (Exception e) {
-            return null;
+//    private @Nullable URL buildURL(String urlStr) {
+//        try {
+//            return new URL(urlStr);
+//        } catch (Exception e) {
+//            return null;
+//        }
+//    }
+
+    private static @NonNull ArrayList<Bundle> getCustomToolbarButtons() {
+        ArrayList<Bundle> customToolbarButtons = new ArrayList<>();
+
+        Bundle firstCustomButton = new Bundle();
+
+        firstCustomButton.putString("icon", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAFISURBVHgBxVWBcYMwDJQ7QbuBu4FHcDfoBvEGZQOSicgGdIPQCWADRnClQ76qYFE7Vy5/J3yRXpKlCAFwMEwJKcbo8CCxrJpQBmPMAPcCgz6jtChz1DGifBC3NrhnZ0KPElCsrIh1nUjkS4OfapwosbjM6S+yZ+Ktpmxu5419/R5pZKnraYk/Khu+gYU7ITpwTjojjCMeXzh675ozLKNKuCJvUng98dD+IpWOMwfFqY1btAo3sN3tK39sNurwO/xAv59Yb+mhvJnZljE2FxKtszLBYUgJJnooE7S3b65rhWjzJBOkIH7tgCV/4nGBLS7KJDkZU47pDMuGfMs4perS/zFw4hyvg2VMX9eGszYZpRAT1OSMx64KJh237AQ5vXRjLNhL8fe3I0AJVk4dJ3XCblnXi8t4qAGX3YhEOcw8HGo7H/fR/y98AzFrGjU3gjYAAAAAAElFTkSuQmCC");
+        firstCustomButton.putString("id", "record");
+
+        customToolbarButtons.add(firstCustomButton);
+
+        return customToolbarButtons;
+    }
+
+    private String[] getToolbarButtons() {
+         return new String[]{"record", "microphone", "camera", "chat", "hangup"};
+    }
+
+    private static Bundle getRecordingService() {
+        Bundle recordingService = new Bundle();
+        recordingService.putBoolean("enabled", true);
+        recordingService.putBoolean("sharingEnabled", true);
+
+        return recordingService;
+    }
+
+    @Override
+    protected void onCustomButtonPressed(HashMap<String, Object> extraData) {
+        JitsiMeetLogger.i("Custom button pressed: " + extraData);
+        if (extraData != null && extraData.containsKey("id")) {
+            String buttonId = (String) extraData.get("id");
+            if ("record".equals(buttonId)) {
+                Bundle extraMetadata = new Bundle();
+                extraMetadata.putString("call_id", interactionId);
+
+                JitsiMeetLogger.i("Extra Metadata: " + extraMetadata);
+
+                Intent startRecordingIntent = BroadcastIntentHelper.buildStartRecordingIntent(
+                    BroadcastIntentHelper.RecordingMode.FILE,
+                    null,
+                    false,
+                    null,
+                    null,
+                    null,
+                    null,
+                    extraMetadata,
+                    false);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(startRecordingIntent);
+            }
         }
+    }
+
+    @Override
+    protected void onRecordingStatusChanged(HashMap<String, Object> extraData) {
+        JitsiMeetLogger.i("Recording status changed: " + extraData);
     }
 }
