@@ -92,9 +92,35 @@
     [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_WILL_JOIN" withData:data];
 }
 
-// - (void)customButtonPressed:(NSDictionary *)data {
-//     [self _onJitsiMeetViewDelegateEvent:@"CUSTOM_BUTTON_PRESSED" withData:data];
-// }
+- (void)customButtonPressed:(NSDictionary *)data {
+    [self _onJitsiMeetViewDelegateEvent:@"CUSTOM_BUTTON_PRESSED" withData:data];
+    
+    NSString *buttonId = data[@"id"];
+    if ([buttonId isEqualToString:@"record"]) {
+        long timestamp = (long)[[NSDate date] timeIntervalSince1970];
+        int random = arc4random_uniform(10000);
+        NSString *interactionId = [NSString stringWithFormat:@"interaction_%ld_%d", timestamp, random];
+        
+        NSDictionary *extraMetadata = @{@"call_id": interactionId};
+        
+        NSLog(@"Starting recording with metadata: %@", extraMetadata);
+        
+        // Start recording using the JitsiMeetView API
+        JitsiMeetView *view = (JitsiMeetView *)self.view;
+        
+        // Use empty strings instead of nil for string parameters
+        NSString *emptyStr = @"";
+        [view startRecording:0 
+                           :emptyStr  // dropboxToken
+                           :NO 
+                           :emptyStr  // rtmpStreamKey
+                           :emptyStr  // rtmpBroadcastID
+                           :emptyStr  // youtubeStreamKey
+                           :emptyStr  // youtubeBroadcastID
+                           :extraMetadata 
+                           :NO];
+    }
+}
 
 #if 0
 - (void)enterPictureInPicture:(NSDictionary *)data {
