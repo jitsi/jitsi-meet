@@ -130,7 +130,7 @@ export class Participant {
         try {
             return await this.driver.execute(script, ...args);
         } catch (error) {
-            console.error('An error occured while trying to execute a script: ', error);
+            console.error('An error occurred while trying to execute a script: ', error);
             throw error;
         }
     }
@@ -398,7 +398,7 @@ export class Participant {
      * Waits for send and receive data.
      *
      * @param {Object} options
-     * @param {boolean} options.checkSend - If true we will chec
+     * @param {boolean} options.checkSend - If true we will check
      * @returns {Promise<void>}
      */
     waitForSendReceiveData({

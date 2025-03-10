@@ -28,7 +28,7 @@ const ffExcludes = [
     'specs/4way/desktopSharing.spec.ts',
     'specs/4way/lastN.spec.ts',
 
-    // when unmuting a participant, we see the presence in debug logs imidiately,
+    // when unmuting a participant, we see the presence in debug logs immediately,
     // but for 15 seconds it is not received/processed by the client
     // (also menu disappears after clicking one of the moderation option, does not happen manually)
     'specs/3way/audioVideoModeration.spec.ts'

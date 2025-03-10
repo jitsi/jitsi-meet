@@ -1593,13 +1593,13 @@ var config = {
     // The default type of desktop sharing sources that will be used in the electron app.
     // desktopSharingSources: ['screen', 'window'],
 
-    // Disables the echo cancelation for local audio tracks.
+    // Disables the echo cancellation for local audio tracks.
     // disableAEC: true,
 
     // Disables the auto gain control for local audio tracks.
     // disableAGC: true,
 
-    // Disables the audio processing (echo cancelation, auto gain control and noise suppression) for local audio tracks.
+    // Disables the audio processing (echo cancellation, auto gain control and noise suppression) for local audio tracks.
     // disableAP: true,
 
     // Disables the anoise suppression for local audio tracks.

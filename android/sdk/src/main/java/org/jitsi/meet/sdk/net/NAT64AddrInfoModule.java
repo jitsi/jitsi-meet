@@ -40,7 +40,7 @@ public class NAT64AddrInfoModule
     public final static String NAME = "NAT64AddrInfo";
 
     /**
-     * The host for which the module wil try to resolve both IPv4 and IPv6
+     * The host for which the module will try to resolve both IPv4 and IPv6
      * addresses in order to figure out the NAT64 prefix.
      */
     private final static String HOST = "ipv4only.arpa";

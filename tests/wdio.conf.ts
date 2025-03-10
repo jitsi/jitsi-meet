@@ -166,7 +166,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
     /**
      * Gets executed before test execution begins. At this point you can access to all global
      * variables like `browser`. It is the perfect place to define custom commands.
-     * We have overriden this function in beforeSession to be able to pass cid as first param.
+     * We have overridden this function in beforeSession to be able to pass cid as first param.
      *
      * @returns {Promise<void>}
      */

@@ -98,7 +98,7 @@ export default class ParticipantsPane extends BasePageObject {
     }
 
     /**
-     * Trys to click allow video button.
+     * Tries to click allow video button.
      * @param participantToUnmute
      */
     async allowVideo(participantToUnmute: Participant) {
@@ -119,7 +119,7 @@ export default class ParticipantsPane extends BasePageObject {
     }
 
     /**
-     * Trys to click ask to unmute button.
+     * Tries to click ask to unmute button.
      * @param participantToUnmute
      * @param fromContextMenu
      */

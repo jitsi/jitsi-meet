@@ -29,7 +29,7 @@ import java.net.UnknownHostException;
  */
 public class NAT64AddrInfo {
     /**
-     * Coverts bytes array to upper case HEX string.
+     * Converts bytes array to upper case HEX string.
      *
      * @param bytes an array of bytes to be converted
      * @return ex. "010AFF" for an array of {1, 10, 255}.
