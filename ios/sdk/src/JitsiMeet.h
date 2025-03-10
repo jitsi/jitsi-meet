@@ -82,7 +82,7 @@ typedef NS_ENUM(NSInteger, WebRTCLoggingSeverity) {
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *_Nonnull)options;
 
 - (UIInterfaceOrientationMask)application:(UIApplication *_Nonnull)application
-  supportedInterfaceOrientationsForWindow:(UIWindow *_Nonnull)window;
+  supportedInterfaceOrientationsForWindow:(UIWindow *_Nullable)window;
 
 #pragma mark - Utility methods
 
