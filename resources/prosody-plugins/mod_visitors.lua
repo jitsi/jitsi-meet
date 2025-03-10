@@ -12,14 +12,10 @@ local st = require 'util.stanza';
 local jid = require 'util.jid';
 local new_id = require 'util.id'.medium;
 local util = module:require 'util';
+local is_admin = util.is_admin;
 local presence_check_status = util.presence_check_status;
 local process_host_module = util.process_host_module;
 local is_transcriber_jigasi = util.is_transcriber_jigasi;
-
-local um_is_admin = require 'core.usermanager'.is_admin;
-local function is_admin(jid)
-    return um_is_admin(jid, module.host);
-end
 
 local MUC_NS = 'http://jabber.org/protocol/muc';
 
