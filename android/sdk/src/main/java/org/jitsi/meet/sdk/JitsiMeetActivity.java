@@ -279,6 +279,10 @@ public class JitsiMeetActivity extends AppCompatActivity
 //         JitsiMeetLogger.i("Conference unique id set: " + extraData);
 //     }
 
+//   protected void onRecordingStatusChanged(HashMap<String, Object> extraData) {
+//       JitsiMeetLogger.i("Recording status changed: " + extraData);
+//   }
+
     // Activity lifecycle methods
     //
 
@@ -370,6 +374,9 @@ public class JitsiMeetActivity extends AppCompatActivity
                 //    break;
                 // case CONFERENCE_UNIQUE_ID_SET:
                 //     onConferenceUniqueIdSet(event.getData());
+                //     break;
+                // case RECORDING_STATUS_CHANGED:
+                //     onRecordingStatusChanged(event.getData());
                 //     break;
             }
         }

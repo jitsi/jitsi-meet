@@ -137,4 +137,11 @@
  */
 - (void)conferenceUniqueIdSet:(NSDictionary *)data;
 
+/**
+ * Called when the recording status has changed.
+ *
+ * The `data` dictionary contains a `sessionData` key.
+ */
+- (void)recordingStatusChanged:(NSDictionary *)data;
+
 @end
