@@ -49,7 +49,9 @@ export const colors = {
 export const colorMap = {
     // ----- Surfaces -----
 
-    // Default page background
+    // Default page background. If this changes, make sure to adapt the native side as well:
+    //  - JitsiMeetView.m
+    //  - JitsiMeetView.java
     uiBackground: 'surface01',
 
     // Container backgrounds
