@@ -33,6 +33,8 @@ static NSString * const hideNotificationAction = @"org.jitsi.meet.HIDE_NOTIFICAT
 static NSString * const startRecordingAction = @"org.jitsi.meet.START_RECORDING";
 static NSString * const stopRecordingAction = @"org.jitsi.meet.STOP_RECORDING";
 static NSString * const overwriteConfigAction = @"org.jitsi.meet.OVERWRITE_CONFIG";
+static NSString * const sendCameraFacingModeMessageAction = @"org.jitsi.meet.SEND_CAMERA_FACING_MODE_MESSAGE";
+
 @implementation ExternalAPI
 
 static NSMapTable<NSString*, void (^)(NSArray* participantsInfo)> *participantInfoCompletionHandlers;
@@ -61,7 +63,8 @@ RCT_EXPORT_MODULE();
         @"HIDE_NOTIFICATION": hideNotificationAction,
         @"START_RECORDING": startRecordingAction,
         @"STOP_RECORDING": stopRecordingAction,
-        @"OVERWRITE_CONFIG": overwriteConfigAction
+        @"OVERWRITE_CONFIG": overwriteConfigAction,
+        @"SEND_CAMERA_FACING_MODE_MESSAGE": sendCameraFacingModeMessageAction
     };
 };
 
@@ -92,7 +95,8 @@ RCT_EXPORT_MODULE();
               hideNotificationAction,
               startRecordingAction,
               stopRecordingAction,
-              overwriteConfigAction
+              overwriteConfigAction,
+              sendCameraFacingModeMessageAction
     ];
 }
 
@@ -239,5 +243,14 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
 
 - (void)overwriteConfig:(NSDictionary*)config {
     [self sendEventWithName:overwriteConfigAction body:config];
+}
+
+- (void)sendCameraFacingModeMessage:(NSString*)to :(NSString*)facingMode {
+    NSDictionary *data = @{
+        @"to": to,
+        @"facingMode": facingMode
+    };
+    
+    [self sendEventWithName:sendCameraFacingModeMessageAction body:data];
 }
 @end
