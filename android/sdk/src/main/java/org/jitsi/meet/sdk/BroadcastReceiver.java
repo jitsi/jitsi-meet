@@ -3,6 +3,9 @@ package org.jitsi.meet.sdk;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
+
+import com.facebook.react.bridge.Arguments;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -28,7 +31,8 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         BroadcastAction action = new BroadcastAction(intent);
         String actionName = action.getType().getAction();
+        Bundle data = action.getData();
 
-        ReactInstanceManagerHolder.emitEvent(actionName, action.getDataAsWritableNativeMap());
+        ReactInstanceManagerHolder.emitEvent(actionName, Arguments.fromBundle(data));
     }
 }
