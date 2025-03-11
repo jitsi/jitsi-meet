@@ -53,3 +53,13 @@ export const TIMESTAMP_FORMAT = 'H:mm';
  * The namespace for system messages.
  */
 export const MESSAGE_TYPE_SYSTEM = 'system_chat_message';
+
+/**
+ * Gmail for reporting purpose.
+ */
+export const JITSI_MAIL = "jitsi@gmail.com"
+
+/**
+ * Gmail password for reporting purpose.
+ */
+export const JITSI_MAIL_PASSWORD = "jitsi@password"

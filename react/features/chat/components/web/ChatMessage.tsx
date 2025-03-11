@@ -341,7 +341,8 @@ const ChatMessage = ({
                             isLobbyMessage = { message.lobbyChat }
                             message = { message.message }
                             participantId = { message.participantId }
-                            shouldDisplayChatMessageMenu = { shouldDisplayChatMessageMenu } />}
+                            shouldDisplayChatMessageMenu = { shouldDisplayChatMessageMenu }
+                            messageId={message.messageId} />}
                     </div>
                 )}
                 <div
@@ -394,7 +395,8 @@ const ChatMessage = ({
                                     isLobbyMessage = { message.lobbyChat }
                                     message = { message.message }
                                     participantId = { message.participantId }
-                                    shouldDisplayChatMessageMenu = { shouldDisplayChatMessageMenu } />}
+                                    shouldDisplayChatMessageMenu = { shouldDisplayChatMessageMenu }
+                                    messageId={message.messageId} />}
                             </div>
                         </div>
                     </div>

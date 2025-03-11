@@ -683,17 +683,6 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
-     * Returns the Shared Document Url of the conference.
-     *
-     * @returns {Object} Rooms info.
-     */
-    async getSharedDocumentUrl() {
-        return this._transport.sendRequest({
-            name: 'get-shared-document-url'
-        });
-    }
-
-    /**
      * Returns whether the conference is P2P.
      *
      * @returns {Promise}

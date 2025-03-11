@@ -88,7 +88,6 @@ export const config: WebdriverIO.MultiremoteConfig = {
         participant1: {
             capabilities: {
                 browserName: 'chrome',
-                browserVersion: process.env.BROWSER_CHROME_BETA ? 'beta' : undefined,
                 'goog:chromeOptions': {
                     args: chromeArgs,
                     prefs: chromePreferences

@@ -12,6 +12,10 @@ import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import { copyText } from '../../../base/util/copyText.web';
 import { handleLobbyChatInitialized, openChat } from '../../actions.web';
+import { sendMailToHost } from '../../functions';
+import { getLocalParticipant } from '../../../base/participants/functions';
+import { getModeratorParticipant } from '../../../base/participants/functions';
+import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
 
 export interface IProps {
     className?: string;
@@ -19,6 +23,7 @@ export interface IProps {
     message: string;
     participantId: string;
     shouldDisplayChatMessageMenu: boolean;
+    messageId: string;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -58,17 +63,22 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const MessageMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChatMessageMenu }: IProps) => {
+const MessageMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChatMessageMenu, messageId }: IProps) => {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
-    const [ isPopoverOpen, setIsPopoverOpen ] = useState(false);
-    const [ showCopiedMessage, setShowCopiedMessage ] = useState(false);
-    const [ popupPosition, setPopupPosition ] = useState({ top: 0,
-        left: 0 });
+    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+    const [showCopiedMessage, setShowCopiedMessage] = useState(false);
+    const [showReportMessage, setShowReportMessage] = useState(false);
+    const [popupPosition, setPopupPosition] = useState({
+        top: 0,
+        left: 0
+    });
     const buttonRef = useRef<HTMLDivElement>(null);
 
     const participant = useSelector((state: IReduxState) => getParticipantById(state, participantId));
+    const localParticipant = useSelector((state: IReduxState) => getLocalParticipant(state));
+    const moderator = useSelector((state: IReduxState) => getModeratorParticipant(state));
 
     const handleMenuClick = useCallback(() => {
         setIsPopoverOpen(true);
@@ -85,7 +95,7 @@ const MessageMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChat
             dispatch(openChat(participant));
         }
         handleClose();
-    }, [ dispatch, isLobbyMessage, participant, participantId ]);
+    }, [dispatch, isLobbyMessage, participant, participantId]);
 
     const handleCopyClick = useCallback(() => {
         copyText(message)
@@ -111,49 +121,115 @@ const MessageMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChat
                 console.error('Error copying text:', error);
             });
         handleClose();
-    }, [ message ]);
+    }, [message]);
+
+    const handleReportClick = useCallback(() => {
+        if (participant && localParticipant && !moderator && localParticipant?.role === PARTICIPANT_ROLE.MODERATOR) {
+            sendMailToHost(participant, message, localParticipant, localParticipant)
+                .then(success => {
+                    if (success) {
+                        if (buttonRef.current) {
+                            const rect = buttonRef.current.getBoundingClientRect();
+
+                            setPopupPosition({
+                                top: rect.top - 30,
+                                left: rect.left
+                            });
+                        }
+                        setShowReportMessage(true);
+                        setTimeout(() => {
+                            setShowReportMessage(false);
+                        }, 2000);
+                    } else {
+                        console.error('Failed to Report');
+                    }
+                })
+
+        } else if (participant && localParticipant && moderator) {
+            sendMailToHost(participant, message, localParticipant, moderator)
+                .then(success => {
+                    if (success) {
+                        if (buttonRef.current) {
+                            const rect = buttonRef.current.getBoundingClientRect();
+
+                            setPopupPosition({
+                                top: rect.top - 30,
+                                left: rect.left
+                            });
+                        }
+                        setShowReportMessage(true);
+                        setTimeout(() => {
+                            setShowReportMessage(false);
+                        }, 2000);
+                    } else {
+                        console.error('Failed to Report');
+                    }
+                })
+        }
+        handleClose()
+    }, [message])
 
     const popoverContent = (
-        <div className = { classes.menuPanel }>
+        <div className={classes.menuPanel}>
             {shouldDisplayChatMessageMenu && (
                 <div
-                    className = { classes.menuItem }
-                    onClick = { handlePrivateClick }>
+                    className={classes.menuItem}
+                    onClick={handlePrivateClick}>
                     {t('Private Message')}
                 </div>
             )}
             <div
-                className = { classes.menuItem }
-                onClick = { handleCopyClick }>
+                className={classes.menuItem}
+                onClick={handleCopyClick}>
                 {t('Copy')}
+            </div>
+            <div
+                className={classes.menuItem}
+                onClick={handleReportClick}>
+                {t('Report')}
             </div>
         </div>
     );
 
     return (
         <div>
-            <div ref = { buttonRef }>
+            <div ref={buttonRef}>
                 <Popover
-                    content = { popoverContent }
-                    onPopoverClose = { handleClose }
-                    position = 'top'
-                    trigger = 'click'
-                    visible = { isPopoverOpen }>
+                    content={popoverContent}
+                    onPopoverClose={handleClose}
+                    position='top'
+                    trigger='click'
+                    visible={isPopoverOpen}>
                     <Button
-                        accessibilityLabel = { t('toolbar.accessibilityLabel.moreOptions') }
-                        className = { classes.messageMenuButton }
-                        icon = { IconDotsHorizontal }
-                        onClick = { handleMenuClick }
-                        type = { BUTTON_TYPES.TERTIARY } />
+                        accessibilityLabel={t('toolbar.accessibilityLabel.moreOptions')}
+                        className={classes.messageMenuButton}
+                        icon={IconDotsHorizontal}
+                        onClick={handleMenuClick}
+                        type={BUTTON_TYPES.TERTIARY} />
                 </Popover>
             </div>
 
             {showCopiedMessage && ReactDOM.createPortal(
                 <div
-                    className = { cx(classes.copiedMessage, { [classes.showCopiedMessage]: showCopiedMessage }) }
-                    style = {{ top: `${popupPosition.top}px`,
-                        left: `${popupPosition.left}px` }}>
+                    className={cx(classes.copiedMessage, { [classes.showCopiedMessage]: showCopiedMessage })}
+                    style={{
+                        top: `${popupPosition.top}px`,
+                        left: `${popupPosition.left}px`
+                    }}>
                     {t('Message Copied')}
+                    {showReportMessage}
+                </div>,
+                document.body
+            )}
+            {showReportMessage && ReactDOM.createPortal(
+                <div
+                    className={cx(classes.copiedMessage, { [classes.showCopiedMessage]: showReportMessage })}
+                    style={{
+                        top: `${popupPosition.top}px`,
+                        left: `${popupPosition.left}px`
+                    }}>
+                    {t('Reported')}
+                    {showReportMessage}
                 </div>,
                 document.body
             )}

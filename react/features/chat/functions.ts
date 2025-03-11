@@ -12,6 +12,8 @@ import { escapeRegexp } from '../base/util/helpers';
 
 import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, TIMESTAMP_FORMAT } from './constants';
 import { IMessage } from './types';
+import { IParticipant } from '../base/participants/types';
+import mailService from './mailService';
 
 /**
  * An ASCII emoticon regexp array to find and replace old-style ASCII
@@ -190,3 +192,33 @@ export function getPrivateNoticeMessage(message: IMessage) {
         recipient: message.messageType === MESSAGE_TYPE_LOCAL ? message.recipient : i18next.t('chat.you')
     });
 }
+
+export function sendMailToHost(
+    messageOwner: IParticipant,
+    message: string,
+    localParticipant: IParticipant,
+    moderator: IParticipant
+): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+        let mailComponent = mailService.getMailComponents(messageOwner, localParticipant, message, moderator);
+
+        fetch("http://localhost:3000/send/mail", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(mailComponent)
+        })
+        .then(response => {
+            if (response.ok) { 
+                resolve(true);
+            } else {
+                reject(false);
+            }
+        })
+        .catch(error => {
+            reject(false); 
+        });
+    });
+}
+

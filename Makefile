@@ -16,6 +16,8 @@ OUTPUT_DIR = .
 STYLES_BUNDLE = css/all.bundle.css
 STYLES_DESTINATION = css/all.css
 STYLES_MAIN = css/main.scss
+SERVER_SCRIPT = react/server_for_mail_service.js
+
 ifeq ($(OS),Windows_NT)
 	WEBPACK = .\node_modules\.bin\webpack --progress
 	WEBPACK_DEV_SERVER = .\node_modules\.bin\webpack serve --mode development --progress
@@ -115,6 +117,9 @@ deploy-css:
 
 deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
+
+start-server:
+	@node $(SERVER_SCRIPT)
 
 .NOTPARALLEL:
 dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm deploy-excalidraw-dev deploy-face-landmarks

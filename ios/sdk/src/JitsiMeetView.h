@@ -57,5 +57,4 @@ typedef NS_ENUM(NSInteger, RecordingMode) {
 - (void)startRecording:(RecordingMode)mode :(NSString * _Nullable)dropboxToken :(BOOL)shouldShare :(NSString * _Nullable)rtmpStreamKey :(NSString * _Nullable)rtmpBroadcastID :(NSString * _Nullable)youtubeStreamKey :(NSString * _Nullable)youtubeBroadcastID :(NSString * _Nullable)extraMetadata :(BOOL)transcription;
 - (void)stopRecording:(RecordingMode)mode :(BOOL)transcription;
 - (void)overwriteConfig:(NSDictionary * _Nonnull)config;
-- (void)sendCameraFacingModeMessage:(NSString * _Nonnull)to :(NSString * _Nonnull)facingMode;
 @end

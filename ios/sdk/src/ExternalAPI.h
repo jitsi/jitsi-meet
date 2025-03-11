@@ -36,6 +36,5 @@ static NSString * const sendEventNotificationName = @"org.jitsi.meet.SendEvent";
 - (void)startRecording:(NSString*)mode :(NSString*)dropboxToken :(BOOL)shouldShare :(NSString*)rtmpStreamKey :(NSString*)rtmpBroadcastID :(NSString*)youtubeStreamKey :(NSString*)youtubeBroadcastID :(NSDictionary*)extraMetadata :(BOOL)transcription;
 - (void)stopRecording:(NSString*)mode :(BOOL)transcription;
 - (void)overwriteConfig:(NSDictionary*)config;
-- (void)sendCameraFacingModeMessage:(NSString*)to :(NSString*)facingMode;
 
 @end

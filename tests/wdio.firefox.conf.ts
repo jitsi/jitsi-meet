@@ -40,7 +40,6 @@ const mergedConfig = merge(defaultConfig, {
         participant1: {
             capabilities: {
                 browserName: 'firefox',
-                browserVersion: process.env.BROWSER_FF_BETA ? 'beta' : undefined,
                 'moz:firefoxOptions': {
                     args: ffArgs,
                     prefs: ffPreferences

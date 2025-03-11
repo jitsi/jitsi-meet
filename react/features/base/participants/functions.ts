@@ -806,3 +806,13 @@ export const setShareDialogVisiblity = (addPeopleFeatureEnabled: boolean, dispat
         dispatch(toggleShareDialog(true));
     }
 };
+
+export function getModeratorParticipant(state:IReduxState): IParticipant | undefined{
+    let participants = state['features/base/participants'].remote
+    for (const participant of participants.values()) {
+        if (participant?.role === PARTICIPANT_ROLE.MODERATOR) {
+            return participant;
+        }
+    }
+    return undefined
+}

@@ -220,7 +220,13 @@ function getConfig(options = {}) {
                 crypto: false,
                 fs: false,
                 path: false,
-                process: false
+                process: false,
+                stream: false,
+                http: false,
+                https: false,
+                zlib: false,
+                os: false,
+                events: false 
             }
         }
     };
@@ -242,7 +248,7 @@ function getDevServerConfig() {
                 warnings: false
             }
         },
-        host: '::',
+        host: '127.0.0.1',
         hot: true,
         proxy: [
             {

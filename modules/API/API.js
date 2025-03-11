@@ -1050,12 +1050,6 @@ function initCommands() {
             callback(getRoomsInfo(APP.store.getState()));
             break;
         }
-        case 'get-shared-document-url': {
-            const { etherpad } = APP.store.getState()['features/etherpad'];
-
-            callback(etherpad?.documentUrl || '');
-            break;
-        }
         case 'get-p2p-status': {
             callback(isP2pActive(APP.store.getState()));
             break;
