@@ -9,44 +9,44 @@ export const colorMap = {
     uiBackground: 'surface01',
 
     // Container backgrounds
-    ui01: 'ui01',
-    ui02: 'ui02',
-    ui03: 'ui03',
-    ui04: 'ui04',
-    ui05: 'ui05',
-    ui06: 'ui06',
-    ui07: 'ui07',
-    ui08: 'ui08',
-    ui09: 'ui09',
-    ui10: 'ui10',
+    ui01: 'surface02',
+    ui02: 'surface03',
+    ui03: 'surface04',
+    ui04: 'surface05',
+    ui05: 'surface06',
+    ui06: 'surface07',
+    ui07: 'surface08',
+    ui08: 'surface09',
+    ui09: 'surface10',
+    ui10: 'surface11',
 
     // ----- Actions -----
 
     // Primary
     action01: 'action01',
-    action01Hover: 'action01Hover',
-    action01Active: 'action01Active',
+    action01Hover: 'hover01',
+    action01Active: 'active01',
 
     // Secondary
     action02: 'action02',
-    action02Hover: 'action02Hover',
-    action02Active: 'action02Active',
+    action02Hover: 'hover02',
+    action02Active: 'active02',
 
     // Destructive
-    actionDanger: 'error01',
-    actionDangerHover: 'error06',
-    actionDangerActive: 'error04',
+    actionDanger: 'action03',
+    actionDangerHover: 'hover03',
+    actionDangerActive: 'active03',
 
     // Tertiary
     action03: 'transparent',
-    action03Hover: 'transparent',
-    action03Active: 'transparent',
+    action03Hover: 'surface04',
+    action03Active: 'surface03',
 
     // Disabled
-    disabled01: 'transparent',
+    disabled01: 'disabled01',
 
     // Focus
-    focus01: 'transparent',
+    focus01: 'focus01',
 
     // ----- Links -----
 
@@ -57,16 +57,16 @@ export const colorMap = {
     // ----- Text -----
 
     // Primary
-    text01: 'textColor01',
+    text01: 'surface11',
 
     // Secondary
-    text02: 'textColor02',
+    text02: 'surface09',
 
     // Tertiary
     text03: 'surface07',
 
     // High-contrast
-    text04: 'textColor04',
+    text04: 'surface01',
 
     // Error
     textError: 'error08',
@@ -74,19 +74,28 @@ export const colorMap = {
     // ----- Icons -----
 
     // Primary
-    icon01: 'icon01',
+    icon01: 'surface11',
 
     // Secondary
-    icon02: 'icon02',
+    icon02: 'surface09',
 
     // Tertiary
-    icon03: 'icon03',
+    icon03: 'surface07',
 
     // High-contrast
-    icon04: 'icon04',
+    icon04: 'surface01',
 
     // Error
     iconError: 'error06',
+
+    // Normal
+    iconNormal: 'primary06',
+
+    // Success
+    iconSuccess: 'success05',
+
+    // Warning
+    iconWarning: 'warning05',
 
     // ----- Forms -----
 
@@ -95,12 +104,12 @@ export const colorMap = {
     // ----- Feedback -----
 
     // Success
-    success01: 'success01',
+    success01: 'success05',
     success02: 'success04',
 
     // Warning
-    warning01: 'warning01',
-    warning02: 'warning02',
+    warning01: 'warning05',
+    warning02: 'warning06',
 
     // ----- Support -----
 
