@@ -21,11 +21,7 @@ import {
     IconVideoOff
 } from '../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../base/media/constants';
-import {
-    getParticipantCount,
-    getRaiseHandsQueue,
-    isEveryoneModerator
-} from '../../../base/participants/functions';
+import { getRaiseHandsQueue } from '../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
@@ -88,9 +84,7 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
     const dispatch = useDispatch();
     const isModerationSupported = useSelector((state: IReduxState) => isAvModerationSupported()(state));
     const raisedHandsQueue = useSelector(getRaiseHandsQueue);
-    const allModerators = useSelector(isEveryoneModerator);
     const isModeratorSettingsTabEnabled = useSelector(shouldShowModeratorSettings);
-    const participantCount = useSelector(getParticipantCount);
     const isAudioModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.AUDIO));
     const isVideoModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.VIDEO));
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
@@ -151,7 +145,7 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
                     text: t('participantsPane.actions.stopEveryonesVideo')
                 } ] } />
             {raisedHandsQueue.length !== 0 && <LowerHandButton />}
-            {!isBreakoutRoom && isModerationSupported && (participantCount === 1 || !allModerators) && (
+            {!isBreakoutRoom && isModerationSupported && (
                 <ContextMenuItemGroup actions = { actions }>
                     <div className = { classes.text }>
                         <span>{t('participantsPane.actions.allow')}</span>

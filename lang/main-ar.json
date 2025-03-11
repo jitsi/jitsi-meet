@@ -944,6 +944,7 @@
         "title": "خيارات الأمان"
     },
     "settings": {
+        "audio": "الصوت",
         "buttonLabel": "إعدادات",
         "calendar": {
             "about": "تُستعمَل الرزنامة {{appName}} المدمجة للوصل بأمان إلى رزنامتك، لذا بالإمكان معرفة الأحداث القادمة.",
@@ -967,6 +968,7 @@
         "more": "المزيد",
         "name": "الاسم",
         "noDevice": "لا يوجد",
+        "notifications": "الإشعارات",
         "participantJoined": "انضم مشارك",
         "participantKnocking": "دخل المشارك في الردهة",
         "participantLeft": "غادر المشارك",
@@ -977,13 +979,15 @@
         "selectCamera": "الكاميرا",
         "selectMic": "المايكروفون",
         "selfView": "عرض ذاتي",
+        "shortcuts": "اختصارات لوحة المفاتيح",
         "sounds": "اصوات",
         "speakers": "المذياع (مكبر الصوت)",
         "startAudioMuted": "بدء الجميع مكتومي الصوت",
         "startReactionsMuted": "كتم رد فعل الصوت للجميع",
         "startVideoMuted": "بدء الجميع دون فيديو",
         "talkWhileMuted": "تحدث أثناء كتم الصوت",
-        "title": "الإعدادات"
+        "title": "الإعدادات",
+        "video": "الفيديو"
     },
     "settingsView": {
         "advanced": "إعدادات متقدمة",

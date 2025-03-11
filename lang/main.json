@@ -848,7 +848,7 @@
         "actions": {
             "admit": "Admit",
             "admitAll": "Admit all",
-            "allow": "Allow attendees to:",
+            "allow": "Allow non-moderators to:",
             "allowVideo": "Allow video",
             "askUnmute": "Ask to unmute",
             "audioModeration": "Unmute themselves",
