@@ -3,12 +3,6 @@ package org.jitsi.meet.sdk;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.facebook.react.bridge.WritableNativeMap;
-
-import org.jitsi.meet.sdk.log.JitsiMeetLogger;
-
-import java.util.HashMap;
-
 /**
  * Wraps the name and extra data for events that were broadcasted locally.
  */
@@ -16,72 +10,19 @@ public class BroadcastAction {
     private static final String TAG = BroadcastAction.class.getSimpleName();
 
     private final Type type;
-    private final HashMap<String, Object> data;
+    private final Bundle data;
 
     public BroadcastAction(Intent intent) {
         this.type = Type.buildTypeFromAction(intent.getAction());
-        this.data = buildDataFromBundle(intent.getExtras());
+        this.data = intent.getExtras();
     }
 
     public Type getType() {
         return this.type;
     }
 
-    public HashMap<String, Object> getData() {
+    public Bundle getData() {
         return this.data;
-    }
-
-    public WritableNativeMap getDataAsWritableNativeMap() {
-        WritableNativeMap nativeMap = new WritableNativeMap();
-
-        for (String key : this.data.keySet()) {
-            try {
-                if (this.data.get(key) instanceof Boolean) {
-                    nativeMap.putBoolean(key, (Boolean) this.data.get(key));
-                } else if (this.data.get(key) instanceof Integer) {
-                    nativeMap.putInt(key, (Integer) this.data.get(key));
-                } else if (this.data.get(key) instanceof Double) {
-                    nativeMap.putDouble(key, (Double) this.data.get(key));
-                } else if (this.data.get(key) instanceof String) {
-                    nativeMap.putString(key, (String) this.data.get(key));
-                } else if (this.data.get(key) instanceof Bundle) {
-                    nativeMap.putMap(key, bundleToWritableMap((Bundle) this.data.get(key)));
-                } else {
-                    throw new Exception("Unsupported extra data type");
-                }
-            } catch (Exception e) {
-                JitsiMeetLogger.w(TAG + " invalid extra data in event", e);
-            }
-        }
-
-        return nativeMap;
-    }
-
-    // Converts(only String values) an Android Bundle to a WritableNativeMap 
-    // that can be consumed by React Native.
-    private WritableNativeMap bundleToWritableMap(Bundle bundle) {
-        WritableNativeMap map = new WritableNativeMap();
-
-        for (String key : bundle.keySet()) {
-            Object value = bundle.get(key);
-            if (value instanceof String) {
-                map.putString(key, (String) value);
-            }
-        }
-
-        return map;
-    }
-
-    private static HashMap<String, Object> buildDataFromBundle(Bundle bundle) {
-        HashMap<String, Object> map = new HashMap<>();
-
-        if (bundle != null) {
-            for (String key : bundle.keySet()) {
-                map.put(key, bundle.get(key));
-            }
-        }
-
-        return map;
     }
 
     enum Type {
