@@ -37,8 +37,8 @@ function getYoutubeId(url: string) {
  *
  * It returns a specified time from youtube url.
  * Pattern:
- * 1. https://www.youtube.com/watch?v=<VideoID>&t=209 or with 's' in last.
- * 2. https://www.youtube.com/watch?v=<VideoID>&start=209 or with 's' in last...
+ * 1. Https://www.youtube.com/watch?v=<VideoID>&t=209 or with 's' in last.
+ * 2. Https://www.youtube.com/watch?v=<VideoID>&start=209 or with 's' in last....
  *
  * @param {string} url - The entered video link.
  * @returns {number} The youtube video id if matched.
@@ -49,7 +49,6 @@ export function getSpecifiedYoutubePlayTime(url: string | undefined) {
     }
     const getId: string | null = getYoutubeId(url);
 
-    // eslint-disable-next-line no-eq-null
     if (!getId) {
         return 0;
     }
