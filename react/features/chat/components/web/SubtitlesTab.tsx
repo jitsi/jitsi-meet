@@ -10,13 +10,17 @@ import { SubtitlesGroup } from './SubtitlesGroup';
 /**
  * The styles for the SubtitlesTab component.
  */
-const useStyles = makeStyles()(() => {
+const useStyles = makeStyles()(theme => {
     return {
         subtitlesList: {
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            overflowY: 'auto',
             padding: '16px',
             flex: 1,
-            overflowY: 'auto',
-            height: '100%'
+            boxSizing: 'border-box',
+            color: theme.palette.text01
         }
     };
 });

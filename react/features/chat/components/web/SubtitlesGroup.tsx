@@ -26,18 +26,20 @@ const useStyles = makeStyles()(theme => {
     return {
         groupContainer: {
             display: 'flex',
-            marginBottom: theme.spacing(2)
+            marginBottom: theme.spacing(3)
         },
 
         avatar: {
             marginRight: theme.spacing(2),
-            flexShrink: 0
+            alignSelf: 'flex-start'
         },
 
         messagesContainer: {
             display: 'flex',
             flexDirection: 'column',
-            maxWidth: 'calc(100% - 40px)' // 100% - avatar and margin
+            flex: 1,
+            maxWidth: 'calc(100% - 56px)', // 40px avatar + 16px margin
+            gap: theme.spacing(1)
         }
     };
 });

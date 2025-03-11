@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { getParticipantDisplayName } from '../../../base/participants/functions';
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { ISubtitle } from '../../../subtitles/types';
 
 /**
@@ -21,12 +22,45 @@ interface IProps extends ISubtitle {
  */
 const useStyles = makeStyles()(theme => {
     return {
-        subtitleItem: {
-            marginBottom: '8px',
-            padding: '8px',
+        messageContainer: {
             backgroundColor: theme.palette.ui02,
-            borderRadius: '4px'
+            borderRadius: '4px 12px 12px 12px',
+            padding: '12px',
+            maxWidth: '100%',
+            marginTop: '4px',
+            boxSizing: 'border-box',
+            display: 'inline-flex'
         },
+
+        messageContent: {
+            maxWidth: '100%',
+            overflow: 'hidden',
+            flex: 1
+        },
+
+        messageHeader: {
+            ...withPixelLineHeight(theme.typography.labelBold),
+            color: theme.palette.text02,
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+            marginBottom: theme.spacing(1),
+            maxWidth: '130px'
+        },
+
+        messageText: {
+            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            color: theme.palette.text01,
+            whiteSpace: 'pre-wrap',
+            wordBreak: 'break-word'
+        },
+
+        timestamp: {
+            ...withPixelLineHeight(theme.typography.labelRegular),
+            color: theme.palette.text03,
+            marginTop: theme.spacing(1)
+        },
+
         interim: {
             opacity: 0.7
         }
@@ -46,12 +80,18 @@ export default function SubtitleMessage({ participantId, text, timestamp, interi
         getParticipantDisplayName(state, participantId));
 
     return (
-        <div className = { `${classes.subtitleItem} ${interim ? classes.interim : ''}` }>
-            {showDisplayName && <strong>{participantName}:</strong>}
-            <div>{text}</div>
-            <small>
-                {new Date(timestamp).toLocaleTimeString()}
-            </small>
+        <div className = { `${classes.messageContainer} ${interim ? classes.interim : ''}` }>
+            <div className = { classes.messageContent }>
+                {showDisplayName && (
+                    <div className = { classes.messageHeader }>
+                        {participantName}
+                    </div>
+                )}
+                <div className = { classes.messageText }>{text}</div>
+                <div className = { classes.timestamp }>
+                    {new Date(timestamp).toLocaleTimeString()}
+                </div>
+            </div>
         </div>
     );
 }
