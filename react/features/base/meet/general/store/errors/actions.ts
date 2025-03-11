@@ -9,7 +9,7 @@ import { SET_CREATE_ROOM_ERROR, SET_JOIN_ROOM_ERROR } from "./actionTypes";
  *     joinRoomError: boolean
  * }}
  */
-export const setJoinRoomError = (joinRoomError) => {
+export const setJoinRoomError = (joinRoomError: boolean) => {
     return {
         type: SET_JOIN_ROOM_ERROR,
         joinRoomError,
@@ -25,7 +25,7 @@ export const setJoinRoomError = (joinRoomError) => {
  *     createRoomError: boolean
  * }}
  */
-export const setCreateRoomError = (createRoomError) => {
+export const setCreateRoomError = (createRoomError: boolean) => {
     return {
         type: SET_CREATE_ROOM_ERROR,
         createRoomError,
