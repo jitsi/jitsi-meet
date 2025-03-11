@@ -140,7 +140,7 @@ public class BroadcastIntentHelper {
         return intent;
     }
 
-    public static Intent buildOverwriteConfigIntent(String config) {
+    public static Intent buildOverwriteConfigIntent(Bundle config) {
         Intent intent = new Intent(BroadcastAction.Type.OVERWRITE_CONFIG.getAction());
         intent.putExtra("config", config);
 
