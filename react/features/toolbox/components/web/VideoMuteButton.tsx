@@ -144,7 +144,6 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
     
         return super._isVideoMuted(); 
     }
-    
     /**
      * Returns a spinner if there is pending GUM.
      *
