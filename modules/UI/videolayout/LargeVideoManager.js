@@ -4,6 +4,7 @@ import Logger from '@jitsi/logger';
 import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client'; // New import for React 18
 import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 
@@ -267,13 +268,13 @@ export default class LargeVideoManager {
             // use a custom hook to update a local track streaming status.
             if (this.videoTrack?.jitsiTrack?.getSourceName() !== videoTrack?.jitsiTrack?.getSourceName()
                 || this.videoTrack?.jitsiTrack?.isP2P !== videoTrack?.jitsiTrack?.isP2P) {
-            // In the case where we switch from jvb to p2p when we need to switch the p2p and jvb track, they will be
-            // with the same source name. In order to add the streaming status listener we need to check if the isP2P
-            // flag is different. Without this check we won't have the correct stream status listener for the track.
-            // Normally the Thumbnail and ConnectionIndicator components will update the streaming status the same way
-            // and this may mask the problem. But if for some reason the update from the Thumbnail and
-            // ConnectionIndicator components don't happen this may lead to showing the avatar instead of
-            // the video because of the old track inactive streaming status.
+                // In the case where we switch from jvb to p2p when we need to switch the p2p and jvb track, they will be
+                // with the same source name. In order to add the streaming status listener we need to check if the isP2P
+                // flag is different. Without this check we won't have the correct stream status listener for the track.
+                // Normally the Thumbnail and ConnectionIndicator components will update the streaming status the same way
+                // and this may mask the problem. But if for some reason the update from the Thumbnail and
+                // ConnectionIndicator components don't happen this may lead to showing the avatar instead of
+                // the video because of the old track inactive streaming status.
                 if (this.videoTrack && !this.videoTrack.local) {
                     this.videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
                         this.handleTrackStreamingStatusChanged);
@@ -307,11 +308,9 @@ export default class LargeVideoManager {
 
             const showAvatar
                 = isVideoContainer
-                    && ((isAudioOnly && videoType !== VIDEO_TYPE.DESKTOP) || !isVideoRenderable || legacyScreenshare);
+                && ((isAudioOnly && videoType !== VIDEO_TYPE.DESKTOP) || !isVideoRenderable || legacyScreenshare);
 
-            logger.debug(`scheduleLargeVideoUpdate: Remote track ${videoTrack?.jitsiTrack}, isVideoMuted=${
-                isVideoMuted}, streamingStatusActive=${streamingStatusActive}, isVideoRenderable=${
-                isVideoRenderable}, showAvatar=${showAvatar}`);
+            logger.debug(`scheduleLargeVideoUpdate: Remote track ${videoTrack?.jitsiTrack}, isVideoMuted=${isVideoMuted}, streamingStatusActive=${streamingStatusActive}, isVideoRenderable=${isVideoRenderable}, showAvatar=${showAvatar}`);
 
             let promise;
 
@@ -325,9 +324,9 @@ export default class LargeVideoManager {
                 promise = container.hide();
 
                 if ((!shouldDisplayTileView(state) || participant?.pinned) // In theory the tile view may not be
-                // enabled yet when we auto pin the participant.
+                    // enabled yet when we auto pin the participant.
 
-                        && participant && !participant.local && !participant.fakeParticipant) {
+                    && participant && !participant.local && !participant.fakeParticipant) {
                     // remote participant only
 
                     const track = getVideoTrackByParticipant(state, participant);
@@ -365,8 +364,8 @@ export default class LargeVideoManager {
             const overrideAndHide = APP.conference.isAudioOnly();
 
             this.updateParticipantConnStatusIndication(
-                    id,
-                    !overrideAndHide && messageKey);
+                id,
+                !overrideAndHide && messageKey);
 
             // Change the participant id the presence label is listening to.
             this.updatePresenceLabel(id);
@@ -516,14 +515,20 @@ export default class LargeVideoManager {
      * Updates the src of the dominant speaker avatar
      */
     updateAvatar() {
-        ReactDOM.render(
-            <Provider store = { APP.store }>
+        let root = this.rootMap.get(this._dominantSpeakerAvatarContainer);
+        if (!root) {
+            // CHANGED: Create a new root for this._dominantSpeakerAvatarContainer
+            root = createRoot(this._dominantSpeakerAvatarContainer);
+            this.rootMap.set(this._dominantSpeakerAvatarContainer, root);
+        }
+        // CHANGED: Replace ReactDOM.render with root.render
+        root.render(
+            <Provider store={APP.store}>
                 <Avatar
-                    id = "dominantSpeakerAvatar"
-                    participantId = { this.id }
-                    size = { 200 } />
-            </Provider>,
-            this._dominantSpeakerAvatarContainer
+                    id="dominantSpeakerAvatar"
+                    participantId={this.id}
+                    size={200} />
+            </Provider>
         );
     }
 
@@ -550,22 +555,28 @@ export default class LargeVideoManager {
 
         if (isConnectionMessageVisible) {
             this.removePresenceLabel();
-
             return;
         }
 
         const presenceLabelContainer = document.getElementById('remotePresenceMessage');
 
         if (presenceLabelContainer) {
-            ReactDOM.render(
-                <Provider store = { APP.store }>
-                    <I18nextProvider i18n = { i18next }>
+            let root = this.rootMap.get(presenceLabelContainer);
+            if (!root) {
+                // CHANGED: Create a new root for presenceLabelContainer
+                root = createRoot(presenceLabelContainer);
+                this.rootMap.set(presenceLabelContainer, root);
+            }
+            // CHANGED: Replace ReactDOM.render with root.render
+            root.render(
+                <Provider store={APP.store}>
+                    <I18nextProvider i18n={i18next}>
                         <PresenceLabel
-                            participantID = { id }
-                            className = 'presence-label' />
+                            participantID={id}
+                            className='presence-label' />
                     </I18nextProvider>
-                </Provider>,
-                presenceLabelContainer);
+                </Provider>
+            );
         }
     }
 

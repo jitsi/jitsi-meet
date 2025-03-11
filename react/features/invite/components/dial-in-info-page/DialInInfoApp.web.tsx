@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client'; // New import for React 18
 import { I18nextProvider } from 'react-i18next';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
@@ -20,20 +21,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const ix = href.indexOf(DIAL_IN_INFO_PAGE_PATH_NAME);
     const url = (ix > 0 ? href.substring(0, ix) : href) + room;
 
-    ReactDOM.render(
-        <I18nextProvider i18n = { i18next }>
-            { room
-                ? <DialInSummary
-                    className = 'dial-in-page'
-                    clickableNumbers = { isMobileBrowser() }
-                    room = { decodeURIComponent(room) }
-                    url = { url } />
-                : <NoRoomError className = 'dial-in-page' /> }
-        </I18nextProvider>,
-        document.getElementById('react')
-    );
-});
+    // CHANGED: Create and store the root instance
+    const rootElement = document.getElementById('react');
+    if (!rootElement) {
+        console.error('Element with id "react" not found');
+        return;
+    }
+    const root = createRoot(rootElement);
 
-window.addEventListener('beforeunload', () => { // @ts-ignore
-    ReactDOM.unmountComponentAtNode(document.getElementById('react'));
+    // CHANGED: Replace ReactDOM.render with root.render
+    root.render(
+        <I18nextProvider i18n={i18next}>
+            {room
+                ? <DialInSummary
+                    className='dial-in-page'
+                    clickableNumbers={isMobileBrowser()}
+                    room={decodeURIComponent(room)}
+                    url={url} />
+                : <NoRoomError className='dial-in-page' />}
+        </I18nextProvider>
+    );
 });
