@@ -17,6 +17,8 @@ import { checkBlurSupport, checkVirtualBackgroundEnabled } from "../../../../vir
 import { openSettingsDialog } from "../../../actions";
 import { SETTINGS_TABS } from "../../../constants";
 import { createLocalVideoTracks } from "../../../functions.web";
+import VideoLabelEntry from "./VideoLabelEntry";
+import { TEXT_OVERFLOW_TYPES } from "../../../../base/ui/constants.any";
 
 /**
  * The type of the React {@code Component} props of {@link VideoSettingsContent}.
@@ -74,29 +76,6 @@ const useStyles = makeStyles()((theme) => {
             right: "auto",
         },
 
-        previewEntry: {
-            cursor: "pointer",
-            width: "272px",
-            height: "36px",
-            position: "relative",
-            paddingLeft: "46px",
-            margin: "0 7px",
-            marginBottom: theme.spacing(1),
-            borderRadius: theme.shape.borderRadius,
-            boxSizing: "border-box",
-            overflow: "hidden",
-            whiteSpace: "nowrap",
-            textOverflow: "ellipsis",
-            maxWidth: "100%",
-
-            "&:last-child": {
-                marginBottom: 0,
-            },
-            "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.15)",
-            },
-        },
-
         previewEntryVideo: {
             cursor: "pointer",
             width: "272px",
@@ -116,31 +95,6 @@ const useStyles = makeStyles()((theme) => {
             },
             "&:hover": {
                 backgroundColor: "rgba(255, 255, 255, 0.15)",
-            },
-        },
-
-        selectedEntry: {
-            width: "272px",
-            height: "36px",
-            position: "relative",
-            paddingLeft: "46px",
-            margin: "0 7px",
-            marginBottom: theme.spacing(1),
-            borderRadius: theme.shape.borderRadius,
-            backgroundColor: "white",
-            color: "black",
-            display: "inline-block",
-            whiteSpace: "nowrap",
-            textOverflow: "ellipsis",
-            maxWidth: "100%",
-            overflow: "hidden",
-
-            "&::before": {
-                content: '"✓"',
-                position: "absolute",
-                left: "12px",
-                top: "8px",
-                fontSize: "16px",
             },
         },
 
@@ -283,7 +237,7 @@ const VideoSettingsContent = ({
 
         if (error) {
             return (
-                <div className={classes.previewEntry} key={key} tabIndex={-1}>
+                <div key={key} tabIndex={-1}>
                     <div className={classes.error}>{t(error)}</div>
                 </div>
             );
@@ -333,22 +287,21 @@ const VideoSettingsContent = ({
 
         if (error) {
             return (
-                <div className={classes.previewEntry} key={key} tabIndex={-1}>
+                <div key={key} tabIndex={-1}>
                     <div className={classes.error}>{t(error)}</div>
                 </div>
             );
         }
 
         const previewProps: any = {
-            className: classes.previewEntry,
+            className: "",
             key,
             tabIndex,
         };
         const label = jitsiTrack?.getTrackLabel();
 
         if (isSelected) {
-            previewProps["aria-checked"] = true;
-            previewProps.className = cx(classes.selectedEntry);
+            //previewProps["aria-checked"] = true;
         } else {
             previewProps.onClick = _onEntryClick(deviceId);
             previewProps.onKeyPress = (e: React.KeyboardEvent) => {
@@ -360,11 +313,17 @@ const VideoSettingsContent = ({
         }
 
         return (
-            <div {...previewProps}>
+            <div>
                 {label && (
-                    <div className="flex items-center justify-center h-full w-full">
-                        <span className="text-center pr-2 truncate">{label}</span>
-                    </div>
+                    <VideoLabelEntry
+                        index={index}
+                        isSelected={isSelected}
+                        key={key}
+                        length={length}
+                        onClick={_onEntryClick(deviceId)}
+                        children={label}
+                        overflowType={TEXT_OVERFLOW_TYPES.ELLIPSIS}
+                    ></VideoLabelEntry>
                 )}
             </div>
         );
@@ -397,7 +356,7 @@ const VideoSettingsContent = ({
         >
             <ContextMenuItemGroup>
                 {selectedTrack && _renderPreviewEntry(selectedTrack)}
-                <div style={{ pointerEvents: "none" }}>
+                <div style={{ pointerEvents: "none", marginLeft: "7px" }}>
                     <ContextMenuItem
                         icon={IconVideo}
                         text={t("meet.settings.video.videoInput")}
