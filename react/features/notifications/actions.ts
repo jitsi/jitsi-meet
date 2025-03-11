@@ -1,6 +1,7 @@
 import { throttle } from 'lodash-es';
 
 import { IStore } from '../app/types';
+import { IConfig } from '../base/config/configType';
 import { NOTIFICATIONS_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import { getParticipantCount } from '../base/participants/functions';
@@ -28,17 +29,15 @@ import { INotificationProps } from './types';
  * @param {Object} notificationTimeouts - Config notification timeouts.
  * @returns {number}
  */
-function getNotificationTimeout(type?: string, notificationTimeouts?: {
-    long?: number;
-    medium?: number;
-    short?: number;
-}) {
+function getNotificationTimeout(type?: string, notificationTimeouts?: IConfig['notificationTimeouts']) {
     if (type === NOTIFICATION_TIMEOUT_TYPE.SHORT) {
         return notificationTimeouts?.short ?? NOTIFICATION_TIMEOUT.SHORT;
     } else if (type === NOTIFICATION_TIMEOUT_TYPE.MEDIUM) {
         return notificationTimeouts?.medium ?? NOTIFICATION_TIMEOUT.MEDIUM;
     } else if (type === NOTIFICATION_TIMEOUT_TYPE.LONG) {
         return notificationTimeouts?.long ?? NOTIFICATION_TIMEOUT.LONG;
+    } else if (type === NOTIFICATION_TIMEOUT_TYPE.EXTRA_LONG) {
+        return notificationTimeouts?.extraLong ?? NOTIFICATION_TIMEOUT.EXTRA_LONG;
     }
 
     return NOTIFICATION_TIMEOUT.STICKY;
@@ -97,7 +96,7 @@ export function setNotificationsEnabled(enabled: boolean) {
  * @param {string} type - Notification type.
  * @returns {Object}
  */
-export function showErrorNotification(props: INotificationProps, type?: string) {
+export function showErrorNotification(props: INotificationProps, type = NOTIFICATION_TIMEOUT_TYPE.STICKY) {
     return showNotification({
         ...props,
         appearance: NOTIFICATION_TYPE.ERROR

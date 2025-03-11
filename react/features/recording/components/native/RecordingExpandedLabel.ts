@@ -68,8 +68,12 @@ class RecordingExpandedLabel extends ExpandedLabel<IProps> {
 
         let content = t(`${prefix}.${postfix}`);
 
-        if (_status === JitsiRecordingConstants.status.ON && this.props._isTranscribing) {
-            content += ` \u00B7 ${t('transcribing.labelToolTip')}`;
+        if (this.props._isTranscribing) {
+            if (_status === JitsiRecordingConstants.status.ON) {
+                content += ` ${t('transcribing.labelTooltipExtra')}`;
+            } else {
+                content = t('transcribing.labelTooltip');
+            }
         }
 
         return content;

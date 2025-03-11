@@ -5,16 +5,13 @@ local update_presence_identity = module:require "util".update_presence_identity;
 -- values are set in the session, then insert them into the presence messages
 -- for that session.
 function on_message(event)
-    if event and event["stanza"] then
-      if event.origin and event.origin.jitsi_meet_context_user then
-
+    local stanza, session = event.stanza, event.origin;
+    if stanza and session then
           update_presence_identity(
-              event.stanza,
-              event.origin.jitsi_meet_context_user,
-              event.origin.jitsi_meet_context_group
+              stanza,
+              session.jitsi_meet_context_user,
+              session.jitsi_meet_context_group
           );
-
-      end
     end
 end
 

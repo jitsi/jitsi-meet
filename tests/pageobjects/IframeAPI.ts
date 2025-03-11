@@ -11,7 +11,7 @@ export default class IframeAPI extends BasePageObject {
      * @param event
      */
     getEventResult(event: string): Promise<any> {
-        return this.participant.driver.execute(
+        return this.participant.execute(
             eventName => {
                 const result = window.jitsiAPI.test[eventName];
 
@@ -28,7 +28,7 @@ export default class IframeAPI extends BasePageObject {
      * @param eventName The event name.
      */
     addEventListener(eventName: string) {
-        return this.participant.driver.execute(
+        return this.participant.execute(
             (event, prefix) => {
                 console.log(`${new Date().toISOString()} ${prefix} Adding listener for event: ${event}`);
                 window.jitsiAPI.addListener(event, evt => {
@@ -43,14 +43,14 @@ export default class IframeAPI extends BasePageObject {
      * Returns an array of available rooms and details of it.
      */
     getRoomsInfo() {
-        return this.participant.driver.execute(() => window.jitsiAPI.getRoomsInfo());
+        return this.participant.execute(() => window.jitsiAPI.getRoomsInfo());
     }
 
     /**
      * Returns the number of participants in the conference.
      */
     getNumberOfParticipants() {
-        return this.participant.driver.execute(() => window.jitsiAPI.getNumberOfParticipants());
+        return this.participant.execute(() => window.jitsiAPI.getNumberOfParticipants());
     }
 
     /**
@@ -59,7 +59,7 @@ export default class IframeAPI extends BasePageObject {
      * @param args The arguments.
      */
     executeCommand(command: string, ...args: any[]) {
-        return this.participant.driver.execute(
+        return this.participant.execute(
             (commandName, commandArgs) =>
                 window.jitsiAPI.executeCommand(commandName, ...commandArgs)
             , command, args);
@@ -69,13 +69,13 @@ export default class IframeAPI extends BasePageObject {
      * Returns the current state of the participant's pane.
      */
     isParticipantsPaneOpen() {
-        return this.participant.driver.execute(() => window.jitsiAPI.isParticipantsPaneOpen());
+        return this.participant.execute(() => window.jitsiAPI.isParticipantsPaneOpen());
     }
 
     /**
      * Removes the embedded Jitsi Meet conference.
      */
     dispose() {
-        return this.participant.driver.execute(() => window.jitsiAPI.dispose());
+        return this.participant.execute(() => window.jitsiAPI.dispose());
     }
 }

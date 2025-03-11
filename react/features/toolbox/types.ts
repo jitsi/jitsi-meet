@@ -1,11 +1,19 @@
 import { ComponentType } from 'react';
 
-import { CustomOptionButton } from './components';
-
 export interface IToolboxButton {
     Content: ComponentType<any>;
     group: number;
     key: string;
+}
+
+export interface IToolboxNativeButton {
+    Content: ComponentType<any>;
+    backgroundColor?: string;
+    group: number;
+    icon?: string;
+    id?: string;
+    key: string;
+    text?: string;
 }
 
 export type ToolbarButton = 'camera' |
@@ -28,6 +36,7 @@ export type ToolbarButton = 'camera' |
     'mute-everyone' |
     'mute-video-everyone' |
     'noisesuppression' |
+    'overflowmenu' |
     'participants-pane' |
     'profile' |
     'raisehand' |
@@ -52,16 +61,41 @@ export enum NOTIFY_CLICK_MODE {
 }
 
 export type IMainToolbarButtonThresholds = Array<{
-    order: Array<ToolbarButton | string>;
+    order: Array<ToolbarButton | NativeToolbarButton | string>;
     width: number;
 }>;
 
 export interface ICustomToolbarButton {
-    Content?: typeof CustomOptionButton;
+    Content?: ComponentType<any>;
     backgroundColor?: string;
     group?: number;
     icon: string;
     id: string;
     key?: string;
     text: string;
+}
+
+export type NativeToolbarButton = 'camera' |
+    'chat' |
+    'microphone' |
+    'raisehand' |
+    'screensharing' |
+    'tileview' |
+    'overflowmenu' |
+    'hangup';
+
+export interface IGetVisibleNativeButtonsParams {
+    allButtons: { [key: string]: IToolboxNativeButton; };
+    clientWidth: number;
+    mainToolbarButtonsThresholds: IMainToolbarButtonThresholds;
+    toolbarButtons: string[];
+}
+
+export interface IGetVisibleButtonsParams {
+    allButtons: { [key: string]: IToolboxButton; };
+    buttonsWithNotifyClick: Map<string, NOTIFY_CLICK_MODE>;
+    clientWidth: number;
+    jwtDisabledButtons: string[];
+    mainToolbarButtonsThresholds: IMainToolbarButtonThresholds;
+    toolbarButtons: string[];
 }

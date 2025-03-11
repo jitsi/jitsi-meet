@@ -437,3 +437,26 @@ export function isLiveStreamingButtonVisible({
 }) {
     return !isInBreakoutRoom && liveStreamingEnabled && liveStreamingAllowed;
 }
+
+/**
+ * Whether the RecordingConsentDialog should be displayed.
+ *
+ * @param {any} recorderSession - The recorder session.
+ * @param {IReduxState} state - The Redux state.
+ * @returns {boolean}
+ */
+export function shouldRequireRecordingConsent(recorderSession: any, state: IReduxState) {
+    const { requireRecordingConsent } = state['features/dynamic-branding'] || {};
+    const { requireConsent } = state['features/base/config'].recordings || {};
+
+    if (!requireConsent && !requireRecordingConsent) {
+        return false;
+    }
+
+    if (!recorderSession.getInitiator()
+        || recorderSession.getStatus() === JitsiRecordingConstants.status.OFF) {
+        return false;
+    }
+
+    return recorderSession.getInitiator() !== getLocalParticipant(state)?.id;
+}

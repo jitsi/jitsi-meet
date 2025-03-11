@@ -393,6 +393,9 @@ var config = {
     //    // showPrejoinWarning: true,
     //    // If true, the notification for recording start will display a link to download the cloud recording.
     //    // showRecordingLink: true,
+    //    // If true, mutes audio and video when a recording begins and displays a dialog
+    //    // explaining the effect of unmuting.
+    //    // requireConsent: true,
     // },
 
     // recordingService: {
@@ -600,6 +603,7 @@ var config = {
     //     short: 2500,
     //     medium: 5000,
     //     long: 10000,
+    //     extraLong: 60000,
     // },
 
     // // Options for the recording limit notification.
@@ -750,6 +754,9 @@ var config = {
     // Enables calendar integration, depends on googleApiApplicationClientID
     // and microsoftApiApplicationClientID
     // enableCalendarIntegration: false,
+
+    // Whether to notify when the conference is terminated because it was destroyed.
+    // notifyOnConferenceDestruction: true,
 
     // The client id for the google APIs used for the calendar integration, youtube livestreaming, etc.
     // googleApiApplicationClientID: '<client_id>',
@@ -1560,6 +1567,8 @@ var config = {
     // You can enable tokenAuthUrlAutoRedirect which will detect that you have logged in successfully before
     // and will automatically redirect to the token service to get the token for the meeting.
     // tokenAuthUrlAutoRedirect: false
+    // An option to respect the context.tenant jwt field compared to the current tenant from the url
+    // tokenRespectTenant: false,
 
     // You can put an array of values to target different entity types in the invite dialog.
     // Valid values are "phone", "room", "sip", "user", "videosipgw" and "email"
@@ -1857,6 +1866,9 @@ var config = {
 
     // Hide login button on auth dialog, you may want to enable this if you are using JWT tokens to authenticate users
     // hideLoginButton: true,
+
+    // If true remove the tint foreground on focused user camera in filmstrip
+    // disableCameraTintForeground: false,
 };
 
 // Set the default values for JaaS customers

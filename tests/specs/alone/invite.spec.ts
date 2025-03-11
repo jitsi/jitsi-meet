@@ -2,7 +2,7 @@ import { ensureOneParticipant } from '../../helpers/participants';
 import { isDialInEnabled } from '../helpers/DialIn';
 
 describe('Invite', () => {
-    it('join participant', () => ensureOneParticipant(ctx));
+    it('join participant', () => ensureOneParticipant(ctx, { preferGenerateToken: true }));
 
     it('url displayed', async () => {
         const { p1 } = ctx;

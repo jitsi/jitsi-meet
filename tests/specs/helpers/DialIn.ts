@@ -21,7 +21,10 @@ export async function waitForAudioFromDialInParticipant(participant: Participant
     await participant.waitForIceConnected();
     await participant.waitForRemoteStreams(1);
 
-    await participant.waitForSendReceiveData(20_000, 'dial-in.test.jigasi.participant.no.audio.after.join');
+    await participant.waitForSendReceiveData({
+        timeout: 20_000,
+        msg: 'dial-in.test.jigasi.participant.no.audio.after.join'
+    });
     console.log(`dial-in.test.jigasi.participant.received.audio.after.join:${performance.now() - joinedTS} ms.`);
 }
 
@@ -32,7 +35,7 @@ export async function waitForAudioFromDialInParticipant(participant: Participant
 export async function cleanup(participant: Participant) {
     // cleanup
     if (await participant.isModerator()) {
-        const jigasiEndpointId = await participant.driver.execute(() => APP.conference.listMembers()[0].getId());
+        const jigasiEndpointId = await participant.execute(() => APP?.conference?.listMembers()[0].getId());
 
         await participant.getFilmstrip().kickParticipant(jigasiEndpointId);
     }
@@ -43,6 +46,6 @@ export async function cleanup(participant: Participant) {
  * @param participant
  */
 export async function isDialInEnabled(participant: Participant) {
-    return await participant.driver.execute(() => Boolean(
+    return await participant.execute(() => Boolean(
         config.dialInConfCodeUrl && config.dialInNumbersUrl && config.hosts?.muc));
 }

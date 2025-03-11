@@ -1,7 +1,7 @@
 import { ensureTwoParticipants } from '../../helpers/participants';
 
 describe('Audio only', () => {
-    it('joining the meeting', () => ensureTwoParticipants(ctx, { skipFirstModerator: true }));
+    it('joining the meeting', () => ensureTwoParticipants(ctx));
 
     /**
      * Enables audio only mode for p1 and verifies that the other participant sees participant1 as video muted.

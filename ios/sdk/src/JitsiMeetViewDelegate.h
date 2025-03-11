@@ -130,4 +130,18 @@
  */
 - (void)customButtonPressed:(NSDictionary *)data;
 
+/**
+ * Called when the unique identifier for conference has been set.
+ *
+ * The `data` dictionary contains a `sessionId` key.
+ */
+- (void)conferenceUniqueIdSet:(NSDictionary *)data;
+
+/**
+ * Called when the recording status has changed.
+ *
+ * The `data` dictionary contains a `sessionData` key.
+ */
+- (void)recordingStatusChanged:(NSDictionary *)data;
+
 @end

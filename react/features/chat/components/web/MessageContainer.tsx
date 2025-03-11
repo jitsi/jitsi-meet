@@ -23,7 +23,7 @@ interface IState {
     /**
      * The id of the last read message.
      */
-    lastReadMessageId: string;
+    lastReadMessageId: string | null;
 }
 
 /**

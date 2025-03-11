@@ -1,5 +1,3 @@
-import { Key } from 'webdriverio';
-
 import BaseDialog from './BaseDialog';
 
 const ADD_PASSWORD_LINK = 'add-password';
@@ -7,6 +5,7 @@ const ADD_PASSWORD_FIELD = 'info-password-input';
 const DIALOG_CONTAINER = 'security-dialog';
 const LOCAL_LOCK = 'info-password-local';
 const REMOTE_LOCK = 'info-password-remote';
+const REMOVE_PASSWORD = 'remove-password';
 
 /**
  * Page object for the security dialog.
@@ -117,20 +116,19 @@ export default class SecurityDialog extends BaseDialog {
 
         await this.participant.driver.keys(password);
         await this.participant.driver.$('button=Add').click();
+    }
 
-        let validationMessage;
-
-        // There are two cases here, validation is enabled and the field passwordEntry maybe there
-        // with validation failed, or maybe successfully hidden after setting the password
-        // So let's give it some time to act on any of the above
-        if (!await passwordEntry.isExisting()) {
-            // validation had failed on password field as it is still on the page
-            validationMessage = passwordEntry.getAttribute('validationMessage');
+    /**
+     * Removes the password from the current conference through the security dialog, if a password is set.
+     */
+    async removePassword() {
+        if (!await this.isLocked()) {
+            return;
         }
 
-        if (validationMessage) {
-            await this.participant.driver.keys([ Key.Escape ]);
-            expect(validationMessage).toBe('');
-        }
+        const removePassword = this.participant.driver.$(`.${REMOVE_PASSWORD}`);
+
+        await removePassword.waitForClickable();
+        await removePassword.click();
     }
 }

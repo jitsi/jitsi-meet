@@ -89,8 +89,10 @@ dependencies {
     implementation project(':react-native-splash-screen')
     implementation project(':react-native-svg')
     implementation project(':react-native-video')
-    implementation project(':react-native-webrtc')
     implementation project(':react-native-webview')
+
+    // Use `api` here so consumers can use WebRTCModuleOptions.
+    api project(':react-native-webrtc')
 
     testImplementation 'junit:junit:4.12'
 }

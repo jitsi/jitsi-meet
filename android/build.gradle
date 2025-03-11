@@ -42,7 +42,7 @@ ext {
     googleServicesEnabled = project.file('app/google-services.json').exists() && !libreBuild
 
     //React Native and Hermes Version
-    rnVersion = "0.75.4"
+    rnVersion = "0.75.5"
 }
 
 allprojects {
@@ -69,10 +69,29 @@ allprojects {
         }
     }
 
+    // Due to a dependency conflict between React Native and the Fresco library used by GiphySDK,
+    // GIFs appear as static images instead of animating
+    // https://github.com/Giphy/giphy-react-native-sdk/commit/7fe466ed6fddfaec95f9cbc959d33bd75ad8f900
+
+    configurations.configureEach {
+        resolutionStrategy {
+            forcedModules = [
+                'com.facebook.fresco:fresco:3.2.0',
+                'com.facebook.fresco:animated-gif:3.2.0',
+                'com.facebook.fresco:animated-base:3.2.0',
+                'com.facebook.fresco:animated-drawable:3.2.0',
+                'com.facebook.fresco:animated-webp:3.2.0',
+                'com.facebook.fresco:webpsupport:3.2.0',
+                'com.facebook.fresco:imagepipeline-okhttp3:3.2.0',
+                'com.facebook.fresco:middleware:3.2.0',
+                'com.facebook.fresco:nativeimagetranscoder:3.2.0'
+            ]
+        }
+    }
+
     // Third-party react-native modules which Jitsi Meet SDK for Android depends
     // on and which are not available in third-party Maven repositories need to
     // be deployed in a Maven repository of ours.
-    //
 
     if (project.name.startsWith('react-native-')) {
         apply plugin: 'maven-publish'

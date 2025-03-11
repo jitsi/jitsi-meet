@@ -88,17 +88,17 @@ jobs:
       run: |
         uname -a
         xcode-select -p
-        sudo xcode-select -s /Applications/Xcode_16.0.app/Contents/Developer
+        sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
         xcodebuild -version
     - name: setup-cocoapods
-      uses: maxim-lobanov/setup-cocoapods@v1
+      uses: ruby/setup-ruby@v1
       with:
-        podfile-path: ios/Podfile.lock
+        ruby-version: '3.4'
+        bundler-cache: true
+    - run: npx react-native info
     - name: Install Pods
-      run: |
-        pod --version
-        cd ios
-        pod install --repo-update --deployment
+      working-directory: ./ios
+      run: bundle exec pod install --repo-update --deployment
     - run: npx react-native bundle --entry-file react/index.native.js --platform ios --bundle-output /tmp/ios.bundle --reset-cache
   android-sdk-build:
     name: Build mobile SDK (Android)
@@ -137,17 +137,17 @@ jobs:
       run: |
         uname -a
         xcode-select -p
-        sudo xcode-select -s /Applications/Xcode_16.0.app/Contents/Developer
+        sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
         xcodebuild -version
     - name: setup-cocoapods
-      uses: maxim-lobanov/setup-cocoapods@v1
+      uses: ruby/setup-ruby@v1
       with:
-        podfile-path: ios/Podfile.lock
+        ruby-version: '3.4'
+        bundler-cache: true
+    - run: npx react-native info
     - name: Install Pods
-      run: |
-        pod --version
-        cd ios
-        pod install --repo-update --deployment
+      working-directory: ./ios
+      run: bundle exec pod install --repo-update --deployment
     - run: |
         xcodebuild clean \
           -workspace ios/jitsi-meet.xcworkspace \

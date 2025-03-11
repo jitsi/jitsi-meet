@@ -23,7 +23,7 @@ describe('lastN', () => {
         const { p3 } = ctx;
         const p3Toolbar = p3.getToolbar();
 
-        await p3.waitForSendData();
+        await p3.waitForSendReceiveData({ checkReceive: false });
 
         await ctx.p1.waitForRemoteVideo(await p3.getEndpointId());
 

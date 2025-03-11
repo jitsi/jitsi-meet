@@ -149,7 +149,7 @@ class PasswordRequiredPrompt extends Component<IProps, IState> {
 
         // We have used the password so let's clean it.
         this.setState({
-            password: undefined
+            password: ''
         });
 
         return true;

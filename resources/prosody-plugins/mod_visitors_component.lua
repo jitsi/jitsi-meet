@@ -535,17 +535,11 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
             end
         end
     end);
-    host_module:hook("message/bare", function(event)
-        local stanza = event.stanza;
 
-        if stanza.attr.type ~= "groupchat" then
-            return;
-        end
-        local json_data = stanza:get_child_text("json-message", "http://jitsi.org/jitmeet");
-        if json_data == nil then
-            return;
-        end
-        local data, error = json.decode(json_data);
+    host_module:hook('jitsi-endpoint-message-received', function(event)
+        local data, error, occupant, room, stanza
+            = event.message, event.error, event.occupant, event.room, event.stanza;
+
         if not data or data.type ~= 'visitors'
             or (data.action ~= "promotion-response" and data.action ~= "demote-request") then
             if error then
@@ -554,17 +548,9 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
             return;
         end
 
-        local room = get_room_from_jid(event.stanza.attr.to);
-
-        local occupant_jid = event.stanza.attr.from;
-        local occupant = room:get_occupant_by_real_jid(occupant_jid);
-        if not occupant then
-            module:log("error", "Occupant %s was not found in room %s", occupant_jid, room.jid)
-            return
-        end
         if occupant.role ~= 'moderator' then
             module:log('error', 'Occupant %s sending response message but not moderator in room %s',
-                occupant_jid, room.jid);
+                occupant.jid, room.jid);
             return false;
         end
 
@@ -590,7 +576,6 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
                     end
                 end
             end
-
         else
             if data.id then
                 process_promotion_response(room, data.id, data.approved and 'true' or 'false');
@@ -604,6 +589,7 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
 
         return true; -- halt processing, but return true that we handled it
     end);
+
     if visitors_queue_service then
         host_module:hook('muc-room-created', function (event)
             local room = event.room;

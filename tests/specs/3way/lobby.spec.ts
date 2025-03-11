@@ -1,5 +1,10 @@
 import { P1_DISPLAY_NAME, P3_DISPLAY_NAME, Participant } from '../../helpers/Participant';
-import { ensureOneParticipant, ensureThreeParticipants, ensureTwoParticipants } from '../../helpers/participants';
+import {
+    ensureOneParticipant,
+    ensureThreeParticipants,
+    ensureTwoParticipants,
+    hangupAllParticipants
+} from '../../helpers/participants';
 import type { IJoinOptions } from '../../helpers/types';
 import type PreMeetingScreen from '../../pageobjects/PreMeetingScreen';
 
@@ -7,7 +12,7 @@ describe('Lobby', () => {
     it('joining the meeting', async () => {
         await ensureOneParticipant(ctx);
 
-        if (!await ctx.p1.driver.execute(() => APP.conference._room.isLobbySupported())) {
+        if (!await ctx.p1.execute(() => APP.conference._room.isLobbySupported())) {
             ctx.skipSuiteTests = true;
         }
     });
@@ -174,14 +179,13 @@ describe('Lobby', () => {
         await enableLobby();
         await enterLobby(p1);
 
-        // WebParticipant participant1 = getParticipant1();
         const p1SecurityDialog = p1.getSecurityDialog();
 
         await p1.getToolbar().clickSecurityButton();
         await p1SecurityDialog.waitForDisplay();
 
         await p1SecurityDialog.toggleLobby();
-        await p1SecurityDialog.waitForLobbyEnabled();
+        await p1SecurityDialog.waitForLobbyEnabled(true);
 
         const { p3 } = ctx;
 
@@ -191,7 +195,11 @@ describe('Lobby', () => {
     });
 
     it('change of moderators in lobby', async () => {
-        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
+        // no moderator switching if jaas is available
+        if (ctx.isJaasAvailable()) {
+            return;
+        }
+        await hangupAllParticipants();
 
         await ensureTwoParticipants(ctx);
 
@@ -218,11 +226,11 @@ describe('Lobby', () => {
 
         // here the important check is whether the moderator sees the knocking participant
         await enterLobby(p2, false);
-
-        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
     });
 
     it('shared password', async () => {
+        await hangupAllParticipants();
+
         await ensureTwoParticipants(ctx);
 
         const { p1 } = ctx;
@@ -236,7 +244,7 @@ describe('Lobby', () => {
 
         expect(await p1SecurityDialog.isLocked()).toBe(false);
 
-        const roomPasscode = String(Math.random() * 1_000);
+        const roomPasscode = String(Math.trunc(Math.random() * 1_000_000));
 
         await p1SecurityDialog.addPassword(roomPasscode);
 
@@ -263,8 +271,7 @@ describe('Lobby', () => {
     });
 
     it('enable with more than two participants', async () => {
-        await Promise.all([ ctx.p1.hangup(), ctx.p2.hangup(), ctx.p3.hangup() ]);
-
+        await hangupAllParticipants();
 
         await ensureThreeParticipants(ctx);
 
@@ -280,6 +287,10 @@ describe('Lobby', () => {
     });
 
     it('moderator leaves while lobby enabled', async () => {
+        // no moderator switching if jaas is available
+        if (ctx.isJaasAvailable()) {
+            return;
+        }
         const { p1, p2, p3 } = ctx;
 
         await p3.hangup();
@@ -299,7 +310,7 @@ describe('Lobby', () => {
     });
 
     it('reject and approve in pre-join', async () => {
-        await ctx.p2.hangup();
+        await hangupAllParticipants();
 
         await ensureTwoParticipants(ctx);
         await enableLobby();

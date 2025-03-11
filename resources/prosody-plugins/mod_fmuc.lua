@@ -348,8 +348,11 @@ module:hook('muc-broadcast-presence', function (event)
                         is_moderator = true;
                     end
                 elseif session.auth_token and auto_promoted_with_token then
-                    -- non-vpaas and having a token is considered a moderator
-                    is_moderator = true;
+                    if not session.jitsi_meet_tenant_mismatch or session.jitsi_web_query_prefix == '' then
+                        -- non-vpaas and having a token is considered a moderator, and if it is not in '/' tenant
+                        -- the tenant from url and token should match
+                        is_moderator = true;
+                    end
                 end
             end
         end

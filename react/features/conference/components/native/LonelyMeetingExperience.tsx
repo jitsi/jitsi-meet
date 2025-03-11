@@ -82,6 +82,7 @@ class LonelyMeetingExperience extends PureComponent<IProps> {
     render() {
         const {
             _inviteOthersControl,
+            _isAddPeopleFeatureEnabled,
             _isInBreakoutRoom,
             _isInviteFunctionsDisabled,
             _isLonelyMeeting,
@@ -89,7 +90,7 @@ class LonelyMeetingExperience extends PureComponent<IProps> {
         } = this.props;
         const { color, shareDialogVisible } = _inviteOthersControl;
 
-        if (!_isLonelyMeeting) {
+        if (!_isLonelyMeeting || !_isAddPeopleFeatureEnabled) {
             return null;
         }
 

@@ -84,6 +84,10 @@
     [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_TERMINATED" withData:data];
 }
 
+// - (void)conferenceUniqueIdSet:(NSDictionary *)data {
+//     [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_UNIQUE_ID_SET" withData:data];
+// }
+
 - (void)conferenceWillJoin:(NSDictionary *)data {
     [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_WILL_JOIN" withData:data];
 }
@@ -101,6 +105,10 @@
 - (void)readyToClose:(NSDictionary *)data {
     [self _onJitsiMeetViewDelegateEvent:@"READY_TO_CLOSE" withData:data];
 }
+
+// - (void)recordingStatusChanged:(NSDictionary *)data {
+//     [self _onJitsiMeetViewDelegateEvent:@"RECORDING_STATUS_CHANGED" withData:data];
+// }
 
 // - (void)transcriptionChunkReceived:(NSDictionary *)data {
 //     [self _onJitsiMeetViewDelegateEvent:@"TRANSCRIPTION_CHUNK_RECEIVED" withData:data];
