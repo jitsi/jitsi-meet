@@ -40,6 +40,8 @@ export interface IProps extends AbstractVideoMuteButtonProps {
      * An object containing the CSS classes.
      */
     classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
+    isVideoModerationEnabled: boolean; 
+    isModerator: boolean;
 }
 
 /**
@@ -132,13 +134,17 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
      * @returns {boolean}
      */
     _isVideoMuted() {
-        if (this.props._gumPending === IGUMPendingState.PENDING_UNMUTE) {
-            return false;
+        const { _gumPending, isModerator, isVideoModerationEnabled } = this.props;
+        if (!isModerator && isVideoModerationEnabled) {
+            return true; 
         }
-
-        return super._isVideoMuted();
+        if (_gumPending === IGUMPendingState.PENDING_UNMUTE) {
+            return false; 
+        }
+    
+        return super._isVideoMuted(); 
     }
-
+    
     /**
      * Returns a spinner if there is pending GUM.
      *
@@ -192,11 +198,15 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
  * }}
  */
 function _mapStateToProps(state: IReduxState) {
-    const { gumPending } = state['features/base/media'].video;
+    const { gumPending } = state['features/base/media'].video || {}; 
+    const avModeration = state['features/av-moderation'] || {}; 
+    const localParticipant = state['features/base/participants'].local; 
 
     return {
         ...abstractMapStateToProps(state),
-        _gumPending: gumPending
+        _gumPending: gumPending,
+        isVideoModerationEnabled: avModeration.videoModerationEnabled || false, 
+        isModerator: localParticipant ? localParticipant.role === 'moderator' : false 
     };
 }
 
