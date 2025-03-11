@@ -698,6 +698,17 @@
             "nameRequired": "Se requiere un nombre",
             "newMeeting": "Nueva reunión",
             "participants": "Participantes"
+        },
+        "joinRoomErrorDialog": {
+            "joinRoomError": "No se pudo unir a la reunión",
+            "joinRoomErrorDescription": "No pudimos conectarte a esta reunión. Puede haber un problema con tu conexión o la reunión ya no está disponible.",
+            "goHome": "Volver al inicio"
+        },
+        "createRoomErrorDialog": {
+            "createRoomError": "No se pudo crear la reunión",
+            "createRoomErrorDescription": "No pudimos crear una nueva reunión en este momento. Por favor, verifica tu conexión e intenta de nuevo.",
+            "retry": "Intentar de nuevo",
+            "goHome": "Volver al inicio"
         }
     },
     "notify": {

@@ -751,6 +751,17 @@
             "nameRequired": "A name is required",
             "newMeeting": "New Meeting",
             "participants": "Participants"
+        },
+        "joinRoomErrorDialog": {
+            "joinRoomError": "Unable to join meeting",
+            "joinRoomErrorDescription": "We couldn't connect you to this meeting. There might be a problem with your connection or the meeting may no longer be available.",
+            "goHome": "Back to Home"
+        },
+        "createRoomErrorDialog": {
+            "createRoomError": "Unable to create meeting",
+            "createRoomErrorDescription": "We couldn't create a new meeting right now. Please check your connection and try again.",
+            "retry": "Try again",
+            "goHome": "Back to Home"
         }
     },
     "notify": {

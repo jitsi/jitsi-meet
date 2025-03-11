@@ -19,7 +19,9 @@ import UnsafeRoomWarning from "../../../premeeting/components/web/UnsafeRoomWarn
 import { updateSettings } from "../../../settings/actions";
 import { getDisplayName } from "../../../settings/functions.web";
 import { withPixelLineHeight } from "../../../styles/functions.web";
+import { setCreateRoomError } from "../../general/store/errors/actions";
 import { useLocalStorage } from "../../LocalStorageManager";
+import { ErrorModals, ErrorType } from "./components/ErrorModals";
 import Header from "./components/Header";
 import PreMeetingModal from "./components/PreMeetingModal";
 import { useParticipants } from "./hooks/useParticipants";
@@ -130,6 +132,16 @@ interface IProps extends WithTranslation {
      * The display name of the user.
      */
     userName: string;
+
+    /**
+     * Flag to indicate if there was an error joining the room.
+     */
+    joinRoomError?: boolean;
+
+    /**
+     * Flag to indicate if there was an error creating the room.
+     */
+    createRoomError?: boolean;
 }
 
 const PreMeetingScreen = ({
@@ -149,6 +161,8 @@ const PreMeetingScreen = ({
     disableJoinButton,
     updateSettings: dispatchUpdateSettings,
     userName,
+    joinRoomError,
+    createRoomError,
 }: IProps) => {
     const { classes } = useStyles();
     const [isNameInputFocused, setIsNameInputFocused] = useState(false);
@@ -195,23 +209,21 @@ const PreMeetingScreen = ({
 
     const handleNewMeeting = async () => {
         setIsCreatingMeeting(true);
-
         try {
             const newToken = storageManager.getNewToken() || "";
-
             const meetTokenCreator = await get8x8BetaJWT(newToken);
 
             if (meetTokenCreator?.room) {
                 const locationURL = window.location;
                 const baseUrl = `${locationURL.protocol}//${locationURL.host}`;
                 const newUrl = `${baseUrl}/${meetTokenCreator.room}`;
-
                 window.history.replaceState({}, document.title, newUrl);
 
                 await dispatch(appNavigate(meetTokenCreator.room));
             }
         } catch (error) {
             console.error("Error creating new meeting:", error);
+            dispatch(setCreateRoomError(true));
         } finally {
             setIsCreatingMeeting(false);
         }
@@ -246,6 +258,16 @@ const PreMeetingScreen = ({
         updateNameInStorage(displayName);
     };
 
+    const handleGoHome = () => {
+        window.location.href = "/";
+    };
+
+    const getErrorType = (): ErrorType | undefined => {
+        if (createRoomError) return "createRoom";
+        if (joinRoomError) return "joinRoom";
+        return undefined;
+    };
+
     return (
         <div className="flex flex-col h-full">
             <div className={`flex flex-col px-5 ${classes.container}`}>
@@ -257,19 +279,31 @@ const PreMeetingScreen = ({
                     onNewMeeting={handleNewMeeting}
                     isCreatingMeeting={isCreatingMeeting}
                 />
-                <PreMeetingModal
-                    videoTrack={videoTrack}
-                    videoMuted={!!videoMuted}
-                    audioTrack={audioTrack}
-                    userName={userName}
-                    showNameError={showNameError}
-                    setUserName={setName}
-                    setIsNameInputFocused={setIsNameInputFocused}
-                    participants={allParticipants}
+                <ErrorModals
+                    errorType={getErrorType()}
                     translate={t}
-                    joinConference={joinConference}
-                    disableJoinButton={disableJoinButton}
+                    onGoHome={handleGoHome}
+                    onRetry={() => {
+                        dispatch(setCreateRoomError(false));
+                        handleNewMeeting();
+                    }}
                 />
+
+                {!getErrorType() && (
+                    <PreMeetingModal
+                        videoTrack={videoTrack}
+                        videoMuted={!!videoMuted}
+                        audioTrack={audioTrack}
+                        userName={userName}
+                        showNameError={showNameError}
+                        setUserName={setName}
+                        setIsNameInputFocused={setIsNameInputFocused}
+                        participants={allParticipants}
+                        translate={t}
+                        joinConference={joinConference}
+                        disableJoinButton={disableJoinButton}
+                    />
+                )}
                 {/* UNCOMMENT IN DEV MODE TO SEE OLD IMPLEMENTATION  */}
                 {/* <div className="flex flex-row">
                     <div>
@@ -305,6 +339,8 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { premeetingBackground } = state["features/dynamic-branding"];
     const userName = getDisplayName(state);
 
+    const joinRoomError = state["features/join-room-error"]?.joinRoomError || false;
+    const createRoomError = state["features/join-room-error"]?.createRoomError || false;
     return {
         // For keeping backwards compat.: if we pass an empty hiddenPremeetingButtons
         // array through external api, we have all prejoin buttons present on premeeting
@@ -317,6 +353,8 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         _premeetingBackground: premeetingBackground,
         _roomName: isRoomNameEnabled(state) ? getConferenceName(state) : "",
         userName,
+        joinRoomError,
+        createRoomError,
     };
 }
 
