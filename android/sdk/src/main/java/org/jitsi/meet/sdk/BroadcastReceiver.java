@@ -7,8 +7,6 @@ import android.os.Bundle;
 
 import com.facebook.react.bridge.Arguments;
 
-import com.facebook.react.bridge.Arguments;
-
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 /**
