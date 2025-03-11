@@ -18,14 +18,14 @@ interface IProps {
 const useStyles = makeStyles()((theme) => {
     return {
         contextMenuItemGroup: {
+            width: "95%",
+            margin: "0 auto",
             "&:not(:empty)": {
                 padding: `${theme.spacing(2)} 0`,
             },
 
             "& + &:not(:empty)": {
                 borderTop: `1px solid ${theme.palette.ui03}`,
-                width: "95%",
-                margin: "0 auto",
             },
 
             "&:first-of-type": {

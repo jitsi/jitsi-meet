@@ -5,7 +5,7 @@ import { makeStyles } from "tss-react/mui";
 
 import { IReduxState, IStore } from "../../../../app/types";
 import { IconImage, IconVideo } from "../../../../base/icons/svg";
-import { Video } from "../../../../base/media/components/index";
+import { Video } from "../../../../base/media/components/index.web";
 import { equals } from "../../../../base/redux/functions";
 import { updateSettings } from "../../../../base/settings/actions";
 import { withPixelLineHeight } from "../../../../base/styles/functions.web";
@@ -14,11 +14,11 @@ import ContextMenu from "../../../../base/ui/components/web/ContextMenu";
 import ContextMenuItem from "../../../../base/ui/components/web/ContextMenuItem";
 import ContextMenuItemGroup from "../../../../base/ui/components/web/ContextMenuItemGroup";
 import { checkBlurSupport, checkVirtualBackgroundEnabled } from "../../../../virtual-background/functions";
-import { openSettingsDialog } from "../../../actions";
 import { SETTINGS_TABS } from "../../../constants";
 import { createLocalVideoTracks } from "../../../functions.web";
 import VideoLabelEntry from "./VideoLabelEntry";
 import { TEXT_OVERFLOW_TYPES } from "../../../../base/ui/constants.any";
+import { openSettingsDialog } from "../../../actions.web";
 
 /**
  * The type of the React {@code Component} props of {@link VideoSettingsContent}.
@@ -77,17 +77,11 @@ const useStyles = makeStyles()((theme) => {
         },
 
         previewEntryVideo: {
-            cursor: "pointer",
-            width: "272px",
-            height: "152px",
+            width: "292px",
+            height: "fit-content",
             position: "relative",
-            margin: "0 7px",
             marginBottom: theme.spacing(1),
-            borderRadius: theme.shape.borderRadius,
             boxSizing: "border-box",
-            overflow: "hidden",
-            whiteSpace: "nowrap",
-            textOverflow: "ellipsis",
             maxWidth: "100%",
 
             "&:last-child": {
@@ -99,8 +93,8 @@ const useStyles = makeStyles()((theme) => {
         },
 
         previewVideo: {
-            height: "152px",
-            width: "100%",
+            borderRadius: "12px",
+            overflow: "hidden",
         },
 
         error: {
@@ -260,11 +254,9 @@ const VideoSettingsContent = ({
                                 </div>
                             )}
                         </div>
-                        <Video
-                            className={cx(classes.previewVideo, "flipVideoX")}
-                            playsinline={true}
-                            videoTrack={{ jitsiTrack }}
-                        />
+                        <div className={classes.previewVideo}>
+                            <Video className={cx("flipVideoX")} playsinline={true} videoTrack={{ jitsiTrack }} />
+                        </div>
                     </div>
                 )}
             </>

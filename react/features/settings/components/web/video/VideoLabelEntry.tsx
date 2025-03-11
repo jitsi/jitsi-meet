@@ -53,10 +53,9 @@ const useStyles = makeStyles()((theme) => {
 
         previewEntry: {
             cursor: "pointer",
-            width: "272px",
+            width: "100%",
             height: "36px",
             position: "relative",
-            margin: "0 7px",
             marginBottom: theme.spacing(1),
             borderRadius: theme.shape.borderRadius,
             boxSizing: "border-box",
@@ -67,10 +66,9 @@ const useStyles = makeStyles()((theme) => {
         },
 
         selectedEntry: {
-            width: "272px",
+            width: "100%",
             height: "36px",
             position: "relative",
-            margin: "0 7px",
             marginBottom: theme.spacing(1),
             borderRadius: theme.shape.borderRadius,
             backgroundColor: "white",

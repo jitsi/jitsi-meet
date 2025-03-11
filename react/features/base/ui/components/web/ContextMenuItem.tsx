@@ -140,6 +140,8 @@ const useStyles = makeStyles()((theme) => {
             //borderLeft: `3px solid ${theme.palette.action01Hover}`,
             //paddingLeft: "13px",
             //backgroundColor: theme.palette.ui02,
+            borderRadius: theme.shape.borderRadius,
+            backgroundColor: "white",
             paddingLeft: "16px",
         },
 
