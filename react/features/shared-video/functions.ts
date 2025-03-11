@@ -33,6 +33,34 @@ function getYoutubeId(url: string) {
 }
 
 /**
+ * Validates the entered video url.
+ *
+ * It returns a specified time from youtube url.
+ * Pattern:
+ * 1. https://www.youtube.com/watch?v=<VideoID>&t=209 or with 's' in last.
+ * 2. https://www.youtube.com/watch?v=<VideoID>&start=209 or with 's' in last...
+ *
+ * @param {string} url - The entered video link.
+ * @returns {number} The youtube video id if matched.
+ */
+export function getSpecifiedYoutubePlayTime(url: string | undefined) {
+    if (!url) {
+        return 0;
+    }
+    const getId: string | null = getYoutubeId(url);
+
+    // eslint-disable-next-line no-eq-null
+    if (!getId) {
+        return 0;
+    }
+    const timePattern = /[?&](?:t|start)=(\d+)s?/;
+    const timeMatch = url.match(timePattern);
+    const startTime = timeMatch ? parseInt(timeMatch[1], 10) : 0;
+
+    return startTime;
+}
+
+/**
  * Checks if the status is one that is actually sharing the video - playing, pause or start.
  *
  * @param {string} status - The shared video status.

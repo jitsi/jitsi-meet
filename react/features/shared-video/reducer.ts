@@ -17,6 +17,7 @@ export interface ISharedVideoState {
     confirmShowVideo?: boolean;
     muted?: boolean;
     ownerId?: string;
+    startTime?: number;
     status?: string;
     time?: number;
     videoUrl?: string;
@@ -28,7 +29,7 @@ export interface ISharedVideoState {
  */
 ReducerRegistry.register<ISharedVideoState>('features/shared-video',
 (state = initialState, action): ISharedVideoState => {
-    const { videoUrl, status, time, ownerId, muted, volume } = action;
+    const { videoUrl, status, time, ownerId, muted, volume, startTime } = action;
 
     switch (action.type) {
     case RESET_SHARED_VIDEO_STATUS:
@@ -50,7 +51,8 @@ ReducerRegistry.register<ISharedVideoState>('features/shared-video',
             status,
             time,
             videoUrl,
-            volume
+            volume,
+            startTime,
         };
 
     case SET_ALLOWED_URL_DOMAINS: {

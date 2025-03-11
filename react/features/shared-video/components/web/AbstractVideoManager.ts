@@ -106,6 +106,11 @@ export interface IProps {
     _videoUrl?: string;
 
     /**
+      * The video start time(in seconds).
+      */
+    startTime?: string;
+
+    /**
       * The video id.
       */
     videoId: string;
