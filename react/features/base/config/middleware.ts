@@ -114,11 +114,15 @@ function _setConfig({ dispatch, getState }: IStore, next: Function, action: AnyA
 function _setDynamicBrandingData({ dispatch }: IStore, next: Function, action: AnyAction) {
     const config: IConfig = {};
     const {
+        customParticipantMenuButtons,
+        customToolbarButtons,
         downloadAppsUrl,
+        etherpadBase,
         liveStreamingDialogUrls = {},
         preCallTest = {},
         salesforceUrl,
-        userDocumentationUrl
+        userDocumentationUrl,
+        peopleSearchUrl,
     } = action.value;
 
     const { helpUrl, termsUrl, dataPrivacyUrl } = liveStreamingDialogUrls;
@@ -154,6 +158,10 @@ function _setDynamicBrandingData({ dispatch }: IStore, next: Function, action: A
         config.salesforceUrl = salesforceUrl;
     }
 
+    if (peopleSearchUrl) {
+        config.peopleSearchUrl = peopleSearchUrl;
+    }
+
     const { enabled, iceUrl } = preCallTest;
 
     if (typeof enabled === 'boolean') {
@@ -162,9 +170,22 @@ function _setDynamicBrandingData({ dispatch }: IStore, next: Function, action: A
         };
     }
 
+    if (etherpadBase) {
+        // eslint-disable-next-line camelcase
+        config.etherpad_base = etherpadBase;
+    }
+
     if (iceUrl) {
         config.prejoinConfig = config.prejoinConfig || {};
         config.prejoinConfig.preCallTestICEUrl = iceUrl;
+    }
+
+    if (customToolbarButtons) {
+        config.customToolbarButtons = customToolbarButtons;
+    }
+
+    if (customParticipantMenuButtons) {
+        config.customParticipantMenuButtons = customParticipantMenuButtons;
     }
 
     dispatch(updateConfig(config));

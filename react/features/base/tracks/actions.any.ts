@@ -6,7 +6,6 @@ import { NOTIFICATION_TIMEOUT, NOTIFICATION_TIMEOUT_TYPE } from '../../notificat
 import { getCurrentConference } from '../conference/functions';
 import { IJitsiConference } from '../conference/reducer';
 import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
-import { createLocalTrack } from '../lib-jitsi-meet/functions.any';
 import { setAudioMuted, setScreenshareMuted, setVideoMuted } from '../media/actions';
 import {
     CAMERA_FACING_MODE,
@@ -17,7 +16,6 @@ import {
     VideoType
 } from '../media/constants';
 import { getLocalParticipant } from '../participants/functions';
-import { updateSettings } from '../settings/actions';
 
 import {
     SET_NO_SRC_DATA_NOTIFICATION_UID,
@@ -291,7 +289,7 @@ export function showNoDataFromSourceVideoError(jitsiTrack: any) {
             const notificationAction = dispatch(showErrorNotification({
                 descriptionKey: 'dialog.cameraNotSendingData',
                 titleKey: 'dialog.cameraNotSendingDataTitle'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+            }));
 
             notificationInfo = {
                 uid: notificationAction?.uid
@@ -823,41 +821,5 @@ export function setNoSrcDataNotificationUid(uid?: string) {
     return {
         type: SET_NO_SRC_DATA_NOTIFICATION_UID,
         uid
-    };
-}
-
-/**
- * Toggles the facingMode constraint on the video stream.
- *
- * @returns {Function}
- */
-export function toggleCamera() {
-    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const state = getState();
-        const tracks = state['features/base/tracks'];
-        const localVideoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
-        const currentFacingMode = localVideoTrack.getCameraFacingMode();
-        const { localFlipX } = state['features/base/settings'];
-
-        /**
-         * FIXME: Ideally, we should be dispatching {@code replaceLocalTrack} here,
-         * but it seems to not trigger the re-rendering of the local video on Chrome;
-         * could be due to a plan B vs unified plan issue. Therefore, we use the legacy
-         * method defined in conference.js that manually takes care of updating the local
-         * video as well.
-         */
-        await APP.conference.useVideoStream(null);
-
-        const targetFacingMode = currentFacingMode === CAMERA_FACING_MODE.USER
-            ? CAMERA_FACING_MODE.ENVIRONMENT
-            : CAMERA_FACING_MODE.USER;
-
-        // Update the flipX value so the environment facing camera is not flipped, before the new track is created.
-        dispatch(updateSettings({ localFlipX: targetFacingMode === CAMERA_FACING_MODE.USER ? localFlipX : false }));
-
-        const newVideoTrack = await createLocalTrack('video', null, null, { facingMode: targetFacingMode });
-
-        // FIXME: See above.
-        await APP.conference.useVideoStream(newVideoTrack);
     };
 }

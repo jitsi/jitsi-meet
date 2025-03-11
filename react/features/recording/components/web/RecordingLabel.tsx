@@ -60,12 +60,12 @@ class RecordingLabel extends AbstractRecordingLabel<IProps> {
             content = t(isRecording ? 'videoStatus.recording' : 'videoStatus.streaming');
 
             if (_isTranscribing) {
-                content += ` \u00B7 ${t('transcribing.labelToolTip')}`;
+                content += ` ${t('transcribing.labelTooltipExtra')}`;
             }
         } else if (mode === JitsiRecordingConstants.mode.STREAM) {
             return null;
         } else if (_isTranscribing) {
-            content = t('transcribing.labelToolTip');
+            content = t('transcribing.labelTooltip');
         } else {
             return null;
         }

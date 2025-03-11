@@ -39,9 +39,10 @@ export default class JitsiMeetLogStorage {
      * <tt>false</tt> otherwise.
      */
     isReady() {
-        const { conference } = this.getState()['features/base/conference'];
+        const { conference, error: conferenceError } = this.getState()['features/base/conference'];
+        const { error: connectionError } = this.getState()['features/base/connection'];
 
-        return Boolean(conference);
+        return Boolean(conference || conferenceError || connectionError);
     }
 
     /**

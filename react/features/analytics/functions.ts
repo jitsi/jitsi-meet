@@ -153,30 +153,6 @@ export async function createHandlers({ getState }: IStore) {
 }
 
 /**
- * Checks whether a url is a data URL or not.
- *
- * @param {string} url - The URL to be checked.
- * @returns {boolean}
- */
-function isDataURL(url?: string): boolean {
-    if (typeof url !== 'string') { // The icon will be ignored
-        return false;
-    }
-
-    try {
-        const urlObject = new URL(url);
-
-        if (urlObject.protocol === 'data:') {
-            return false;
-        }
-    } catch {
-        return false;
-    }
-
-    return true;
-}
-
-/**
  * Inits JitsiMeetJS.analytics by setting permanent properties and setting the handlers from the loaded scripts.
  * NOTE: Has to be used after JitsiMeetJS.init. Otherwise analytics will be null.
  *
@@ -208,20 +184,11 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
         isPromotedFromVisitor?: boolean;
         isVisitor?: boolean;
         overwritesCustomButtonsWithURL?: boolean;
-        overwritesCustomParticipantButtonsWithURL?: boolean;
         overwritesDefaultLogoUrl?: boolean;
         overwritesDeploymentUrls?: boolean;
-        overwritesEtherpadBase?: boolean;
-        overwritesHosts?: boolean;
-        overwritesIceServers?: boolean;
         overwritesLiveStreamingUrls?: boolean;
-        overwritesPeopleSearchUrl?: boolean;
-        overwritesPrejoinConfigICEUrl?: boolean;
         overwritesSalesforceUrl?: boolean;
         overwritesSupportUrl?: boolean;
-        overwritesWatchRTCConfigParams?: boolean;
-        overwritesWatchRTCProxyUrl?: boolean;
-        overwritesWatchRTCWSUrl?: boolean;
         server?: string;
         tenant?: string;
         wasLobbyVisible?: boolean;
@@ -263,27 +230,8 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
     // TODO: Temporary metric. To be removed once we don't need it.
     permanentProperties.overwritesSupportUrl = 'interfaceConfig.SUPPORT_URL' in params;
     permanentProperties.overwritesSalesforceUrl = 'config.salesforceUrl' in params;
-    permanentProperties.overwritesPeopleSearchUrl = 'config.peopleSearchUrl' in params;
     permanentProperties.overwritesDefaultLogoUrl = 'config.defaultLogoUrl' in params;
-    permanentProperties.overwritesEtherpadBase = 'config.etherpad_base' in params;
-    const hosts = params['config.hosts'] ?? {};
-    const hostsProps = [ 'anonymousdomain', 'authdomain', 'domain', 'focus', 'muc', 'visitorFocus' ];
 
-    permanentProperties.overwritesHosts = 'config.hosts' in params
-        || Boolean(hostsProps.find(p => `config.hosts.${p}` in params || (typeof hosts === 'object' && p in hosts)));
-
-    permanentProperties.overwritesWatchRTCConfigParams = 'config.watchRTCConfigParams' in params;
-    const watchRTCConfigParams = params['config.watchRTCConfigParams'] ?? {};
-
-    permanentProperties.overwritesWatchRTCProxyUrl = ('config.watchRTCConfigParams.proxyUrl' in params)
-        || (typeof watchRTCConfigParams === 'object' && 'proxyUrl' in watchRTCConfigParams);
-    permanentProperties.overwritesWatchRTCWSUrl = ('config.watchRTCConfigParams.wsUrl' in params)
-        || (typeof watchRTCConfigParams === 'object' && 'wsUrl' in watchRTCConfigParams);
-
-    const prejoinConfig = params['config.prejoinConfig'] ?? {};
-
-    permanentProperties.overwritesPrejoinConfigICEUrl = ('config.prejoinConfig.preCallTestICEUrl' in params)
-    || (typeof prejoinConfig === 'object' && 'preCallTestICEUrl' in prejoinConfig);
     const deploymentUrlsConfig = params['config.deploymentUrls'] ?? {};
 
     permanentProperties.overwritesDeploymentUrls
@@ -305,17 +253,7 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
                 )
             );
 
-    permanentProperties.overwritesIceServers = Boolean(Object.keys(params).find(k => k.startsWith('iceServers')));
-
-    const customToolbarButtons = params['config.customToolbarButtons'] ?? [];
-
-    permanentProperties.overwritesCustomButtonsWithURL = Boolean(
-        customToolbarButtons.find(({ icon }: { icon: string; }) => isDataURL(icon)));
-
-    const customParticipantMenuButtons = params['config.customParticipantMenuButtons'] ?? [];
-
-    permanentProperties.overwritesCustomParticipantButtonsWithURL = Boolean(
-        customParticipantMenuButtons.find(({ icon }: { icon: string; }) => isDataURL(icon)));
+    permanentProperties.overwritesCustomButtonsWithURL = 'config.customToolbarButtons' in params;
 
     // Optionally, include local deployment information based on the
     // contents of window.config.deploymentInfo.

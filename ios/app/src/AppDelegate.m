@@ -40,7 +40,7 @@
     jitsiMeet.defaultConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
 
         // For testing configOverrides a room needs to be set
-        // builder.room = @"test0988test";
+        // builder.room = @"https://meet.jit.si/test0988test";
 
         [builder setFeatureFlag:@"welcomepage.enabled" withBoolean:YES];
         [builder setFeatureFlag:@"ios.screensharing.enabled" withBoolean:YES];

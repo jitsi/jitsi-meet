@@ -1363,6 +1363,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
 
         // skip showing tint for owner participants that are screensharing.
         && !screenshareParticipantIds.includes(id);
+    const disableTintForeground = state['features/base/config'].disableCameraTintForeground ?? false;
 
     return {
         _audioTrack,
@@ -1384,7 +1385,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         _raisedHand: hasRaisedHand(participant),
         _stageFilmstripLayout: isStageFilmstripAvailable(state),
         _stageParticipantsVisible: _currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW,
-        _shouldDisplayTintBackground: shouldDisplayTintBackground,
+        _shouldDisplayTintBackground: !disableTintForeground && shouldDisplayTintBackground,
         _thumbnailType: tileType,
         _videoObjectPosition: getVideoObjectPosition(state, participant?.id),
         _videoTrack,

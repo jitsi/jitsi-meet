@@ -3,12 +3,12 @@ import { batch } from 'react-redux';
 import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
-import { approveParticipant } from '../../av-moderation/actions';
+import { approveParticipant, approveParticipantAudio, approveParticipantVideo } from '../../av-moderation/actions';
 import { UPDATE_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
 import { getBreakoutRooms } from '../../breakout-rooms/functions';
 import { toggleE2EE } from '../../e2ee/actions';
 import { MAX_MODE } from '../../e2ee/constants';
-import { showNotification } from '../../notifications/actions';
+import { hideNotification, showNotification } from '../../notifications/actions';
 import {
     LOCAL_RECORDING_NOTIFICATION_ID,
     NOTIFICATION_TIMEOUT_TYPE,
@@ -30,6 +30,7 @@ import { MEDIA_TYPE } from '../media/constants';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 import { playSound, registerSound, unregisterSound } from '../sounds/actions';
+import { isImageDataURL } from '../util/uri';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -689,15 +690,20 @@ function _participantJoinedOrUpdated(store: IStore, next: Function, action: AnyA
     // even if disableThirdPartyRequests is set to true in config
     if (getState()['features/base/config']?.hosts) {
         const { disableThirdPartyRequests } = getState()['features/base/config'];
+        const participantId = !id && local ? getLocalParticipant(getState())?.id : id;
 
-        if (!disableThirdPartyRequests && (avatarURL || email || id || name)) {
-            const participantId = !id && local ? getLocalParticipant(getState())?.id : id;
-            const updatedParticipant = getParticipantById(getState(), participantId);
+        if (avatarURL || email || id || name) {
+            if (!disableThirdPartyRequests) {
+                const updatedParticipant = getParticipantById(getState(), participantId);
 
-            getFirstLoadableAvatarUrl(updatedParticipant ?? { id: '' }, store)
-                .then((urlData?: { isUsingCORS: boolean; src: string; }) => {
-                    dispatch(setLoadableAvatarUrl(participantId, urlData?.src ?? '', Boolean(urlData?.isUsingCORS)));
-                });
+                getFirstLoadableAvatarUrl(updatedParticipant ?? { id: '' }, store)
+                    .then((urlData?: { isUsingCORS: boolean; src: string; }) => {
+                        dispatch(setLoadableAvatarUrl(
+                            participantId, urlData?.src ?? '', Boolean(urlData?.isUsingCORS)));
+                    });
+            } else if (isImageDataURL(avatarURL)) {
+                dispatch(setLoadableAvatarUrl(participantId, avatarURL, false));
+            }
         }
     }
 
@@ -782,20 +788,43 @@ function _raiseHandUpdated({ dispatch, getState }: IStore, conference: IJitsiCon
 
     const isModerator = isLocalParticipantModerator(state);
     const participant = getParticipantById(state, participantId);
-    let shouldDisplayAllowAction = false;
+    let shouldDisplayAllowAudio = false;
+    let shouldDisplayAllowVideo = false;
 
     if (isModerator) {
-        shouldDisplayAllowAction = isForceMuted(participant, MEDIA_TYPE.AUDIO, state)
-            || isForceMuted(participant, MEDIA_TYPE.VIDEO, state);
+        shouldDisplayAllowAudio = isForceMuted(participant, MEDIA_TYPE.AUDIO, state);
+        shouldDisplayAllowVideo = isForceMuted(participant, MEDIA_TYPE.VIDEO, state);
     }
 
     let action;
 
-    if (shouldDisplayAllowAction) {
+    if (shouldDisplayAllowAudio || shouldDisplayAllowVideo) {
         action = {
-            customActionNameKey: [ 'notify.allowAction' ],
-            customActionHandler: [ () => dispatch(approveParticipant(participantId)) ]
+            customActionNameKey: [] as string[],
+            customActionHandler: [] as Function[]
         };
+
+        if (shouldDisplayAllowAudio) {
+            action.customActionNameKey.push('notify.allowAudio');
+            action.customActionHandler.push(() => {
+                dispatch(approveParticipantAudio(participantId));
+                dispatch(hideNotification(RAISE_HAND_NOTIFICATION_ID));
+            });
+        }
+        if (shouldDisplayAllowVideo) {
+            action.customActionNameKey.push('notify.allowVideo');
+            action.customActionHandler.push(() => {
+                dispatch(approveParticipantVideo(participantId));
+                dispatch(hideNotification(RAISE_HAND_NOTIFICATION_ID));
+            });
+        }
+        if (shouldDisplayAllowAudio && shouldDisplayAllowVideo) {
+            action.customActionNameKey.push('notify.allowBoth');
+            action.customActionHandler.push(() => {
+                dispatch(approveParticipant(participantId));
+                dispatch(hideNotification(RAISE_HAND_NOTIFICATION_ID));
+            });
+        }
     } else {
         action = {
             customActionNameKey: [ 'notify.viewParticipants' ],

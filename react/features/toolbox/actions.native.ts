@@ -36,7 +36,7 @@ export function setOverflowMenuVisible(_visible: boolean): any {
  *     text: string
  * }}
  */
-export function customButtonPressed(id: string, text: string) {
+export function customButtonPressed(id: string, text: string | undefined) {
     return {
         type: CUSTOM_BUTTON_PRESSED,
         id,

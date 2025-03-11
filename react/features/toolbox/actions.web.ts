@@ -8,16 +8,13 @@ import {
     FULL_SCREEN_CHANGED,
     SET_FULL_SCREEN,
     SET_HANGUP_MENU_VISIBLE,
-    SET_MAIN_TOOLBAR_BUTTONS_THRESHOLDS,
     SET_OVERFLOW_DRAWER,
     SET_OVERFLOW_MENU_VISIBLE,
     SET_TOOLBAR_HOVERED,
     SET_TOOLBOX_TIMEOUT
 } from './actionTypes';
 import { setToolboxVisible } from './actions.web';
-import { THRESHOLDS } from './constants';
 import { getToolbarTimeout } from './functions.web';
-import { IMainToolbarButtonThresholds } from './types';
 
 export * from './actions.any';
 
@@ -121,56 +118,6 @@ export function setFullScreen(fullScreen: boolean) {
     return {
         type: SET_FULL_SCREEN,
         fullScreen
-    };
-}
-
-/**
- * Sets the mainToolbarButtonsThresholds.
- *
- * @returns {Function}
- */
-export function setMainToolbarThresholds() {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const { mainToolbarButtons } = getState()['features/base/config'];
-
-        if (!mainToolbarButtons || !Array.isArray(mainToolbarButtons) || mainToolbarButtons.length === 0) {
-            return;
-        }
-
-        const mainToolbarButtonsThresholds: IMainToolbarButtonThresholds = [];
-
-        const mainToolbarButtonsLenghtMap = new Map();
-        let orderIsChanged = false;
-
-        mainToolbarButtons.forEach(buttons => {
-            if (!Array.isArray(buttons) || buttons.length === 0) {
-                return;
-            }
-
-            mainToolbarButtonsLenghtMap.set(buttons.length, buttons);
-        });
-
-        THRESHOLDS.forEach(({ width, order }) => {
-            let finalOrder = mainToolbarButtonsLenghtMap.get(order.length);
-
-            if (finalOrder) {
-                orderIsChanged = true;
-            } else {
-                finalOrder = order;
-            }
-
-            mainToolbarButtonsThresholds.push({
-                order: finalOrder,
-                width
-            });
-        });
-
-        if (orderIsChanged) {
-            dispatch({
-                type: SET_MAIN_TOOLBAR_BUTTONS_THRESHOLDS,
-                mainToolbarButtonsThresholds
-            });
-        }
     };
 }
 

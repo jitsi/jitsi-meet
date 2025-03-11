@@ -327,6 +327,49 @@ export function setConfigFromURLParams(
     }
 
     overrideConfigJSON(config, interfaceConfig, json);
+
+    // Print warning about depricated URL params
+    if ('interfaceConfig.SUPPORT_URL' in params) {
+        logger.warn('Using SUPPORT_URL interfaceConfig URL overwrite is deprecated.'
+            + ' Please use supportUrl from advanced branding!');
+    }
+
+    if ('config.defaultLogoUrl' in params) {
+        logger.warn('Using defaultLogoUrl config URL overwrite is deprecated.'
+            + ' Please use logoImageUrl from advanced branding!');
+    }
+
+    const deploymentUrlsConfig = params['config.deploymentUrls'] ?? {};
+
+    if ('config.deploymentUrls.downloadAppsUrl' in params || 'config.deploymentUrls.userDocumentationURL' in params
+            || (typeof deploymentUrlsConfig === 'object'
+                && ('downloadAppsUrl' in deploymentUrlsConfig || 'userDocumentationURL' in deploymentUrlsConfig))) {
+        logger.warn('Using deploymentUrls config URL overwrite is deprecated.'
+            + ' Please use downloadAppsUrl and/or userDocumentationURL from advanced branding!');
+    }
+
+    const liveStreamingConfig = params['config.liveStreaming'] ?? {};
+
+    if (('interfaceConfig.LIVE_STREAMING_HELP_LINK' in params)
+            || ('config.liveStreaming.termsLink' in params)
+            || ('config.liveStreaming.dataPrivacyLink' in params)
+            || ('config.liveStreaming.helpLink' in params)
+            || (typeof params['config.liveStreaming'] === 'object' && 'config.liveStreaming' in params
+                && (
+                    'termsLink' in liveStreamingConfig
+                    || 'dataPrivacyLink' in liveStreamingConfig
+                    || 'helpLink' in liveStreamingConfig
+                )
+            )) {
+        logger.warn('Using liveStreaming config URL overwrite and/or LIVE_STREAMING_HELP_LINK interfaceConfig URL'
+            + ' overwrite is deprecated. Please use liveStreaming from advanced branding!');
+    }
+
+    if ('config.customToolbarButtons' in params) {
+        logger.warn('Using customToolbarButtons config URL overwrite is deprecated.'
+            + ' Please use liveStreaming from advanced branding!');
+    }
+
 }
 
 /* eslint-enable max-params */

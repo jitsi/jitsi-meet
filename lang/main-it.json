@@ -371,6 +371,7 @@
         "sendPrivateMessageTitle": "Invio privatamente?",
         "serviceUnavailable": "Servizio non disponibile",
         "sessTerminated": "Chiamata terminata",
+        "sessTerminatedReason": "La chiamata è stata terminata",
         "sessionRestarted": "Chiamata riavviata automaticamente",
         "shareAudio": "Continue",
         "shareAudioTitle": "Come condividere l'audio",

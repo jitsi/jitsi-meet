@@ -14,31 +14,6 @@ local is_healthcheck_room = util.is_healthcheck_room;
 local POLLS_LIMIT = 128;
 local POLL_PAYLOAD_LIMIT = 1024;
 
--- Checks if the given stanza contains a JSON message,
--- and that the message type pertains to the polls feature.
--- If yes, returns the parsed message. Otherwise, returns nil.
-local function get_poll_message(stanza)
-    if stanza.attr.type ~= "groupchat" then
-        return nil;
-    end
-    local json_data = stanza:get_child_text("json-message", "http://jitsi.org/jitmeet");
-    if json_data == nil then
-        return nil;
-    end
-    if string.len(json_data) >= POLL_PAYLOAD_LIMIT then
-        module:log('error', 'Poll payload too large, discarding. Sender: %s to:%s', stanza.attr.from, stanza.attr.to);
-        return nil;
-    end
-    local data, error = json.decode(json_data);
-    if not data or (data.type ~= "new-poll" and data.type ~= "answer-poll") then
-        if error then
-            module:log('error', 'Error decoding data error:%s', error);
-        end
-        return nil;
-    end
-    return data;
-end
-
 -- Logs a warning and returns true if a room does not
 -- have poll data associated with it.
 local function check_polls(room)
@@ -87,21 +62,22 @@ end);
 -- by listening to "new-poll" and "answer-poll" messages,
 -- and updating the room poll data accordingly.
 -- This mirrors the client-side poll update logic.
-module:hook("message/bare", function(event)
-    local data = get_poll_message(event.stanza);
-    if data == nil then return end
+module:hook('jitsi-endpoint-message-received', function(event)
+    local data, error, occupant, room, origin, stanza
+        = event.message, event.error, event.occupant, event.room, event.origin, event.stanza;
 
-    local room = muc.get_room_from_jid(event.stanza.attr.to);
+    if not data or (data.type ~= "new-poll" and data.type ~= "answer-poll") then
+        return;
+    end
+
+    if string.len(event.raw_message) >= POLL_PAYLOAD_LIMIT then
+        module:log('error', 'Poll payload too large, discarding. Sender: %s to:%s', stanza.attr.from, stanza.attr.to);
+        return nil;
+    end
 
     if data.type == "new-poll" then
         if check_polls(room) then return end
 
-        local occupant_jid = event.stanza.attr.from;
-        local occupant = room:get_occupant_by_real_jid(occupant_jid);
-        if not occupant then
-            module:log("error", "Occupant %s was not found in room %s", occupant_jid, room.jid)
-            return
-        end
         local poll_creator = get_occupant_details(occupant)
         if not poll_creator then
             module:log("error", "Cannot retrieve poll creator id and name for %s from %s", occupant.jid, room.jid)
@@ -115,7 +91,7 @@ module:hook("message/bare", function(event)
 
         if room.polls.by_id[data.pollId] ~= nil then
             module:log("error", "Poll already exists: %s", data.pollId);
-            event.origin.send(st.error_reply(event.stanza, 'cancel', 'not-allowed', 'Poll already exists'));
+            origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Poll already exists'));
             return true;
         end
 
@@ -150,16 +126,9 @@ module:hook("message/bare", function(event)
             }
         }
         module:fire_event("poll-created", pollData);
-
     elseif data.type == "answer-poll" then
         if check_polls(room) then return end
 
-        local occupant_jid = event.stanza.attr.from;
-        local occupant = room:get_occupant_by_real_jid(occupant_jid);
-        if not occupant then
-            module:log("error", "Occupant %s does not exists for room %s", occupant_jid, room.jid)
-            return
-        end
         local poll = room.polls.by_id[data.pollId];
         if poll == nil then
             module:log("warn", "answering inexistent poll");

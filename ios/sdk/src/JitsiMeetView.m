@@ -30,6 +30,11 @@
  */
 static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
 
+/**
+ * Forward declarations.
+ */
+static NSString *recordingModeToString(RecordingMode mode);
+
 
 @implementation JitsiMeetView {
     /**
@@ -143,6 +148,36 @@ static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
     [externalAPI toggleCamera];
 }
 
+- (void)showNotification:(NSString *)appearance :(NSString *)description :(NSString *)timeout :(NSString *)title :(NSString *)uid {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI showNotification:appearance :description :timeout :title :uid];
+}
+
+-(void)hideNotification:(NSString *)uid {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI hideNotification:uid];
+}
+
+- (void)startRecording:(RecordingMode)mode :(NSString *)dropboxToken :(BOOL)shouldShare :(NSString *)rtmpStreamKey :(NSString *)rtmpBroadcastID :(NSString *)youtubeStreamKey :(NSString *)youtubeBroadcastID :(NSDictionary *)extraMetadata :(BOOL)transcription {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI startRecording:recordingModeToString(mode) :dropboxToken :shouldShare :rtmpStreamKey :rtmpBroadcastID :youtubeStreamKey :youtubeBroadcastID :extraMetadata :transcription];
+}
+
+- (void)stopRecording:(RecordingMode)mode :(BOOL)transcription {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI stopRecording:recordingModeToString(mode) :transcription];
+}
+
+- (void)overwriteConfig:(NSDictionary *)config {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI overwriteConfig:config];
+}
+
+- (void)sendCameraFacingModeMessage:(NSString *)to :(NSString *)facingMode {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendCameraFacingModeMessage:to :facingMode];
+}
+
 #pragma mark Private methods
 
 - (void)registerObservers {
@@ -237,3 +272,14 @@ static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
 }
 
 @end
+
+static NSString *recordingModeToString(RecordingMode mode) {
+    switch (mode) {
+        case RecordingModeFile:
+            return @"file";
+        case RecordingModeStream:
+            return @"stream";
+        default:
+            return nil;
+    }
+}

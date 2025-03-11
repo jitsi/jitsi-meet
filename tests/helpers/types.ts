@@ -7,12 +7,15 @@ export type IContext = {
     conferenceJid: string;
     dialInPin: string;
     iframeAPI: boolean;
+    isJaasAvailable: () => boolean;
     jwtKid: string;
     jwtPrivateKeyPath: string;
+    keepAlive: Array<any>;
     p1: Participant;
     p2: Participant;
     p3: Participant;
     p4: Participant;
+    roomKey: string;
     roomName: string;
     skipSuiteTests: boolean;
     times: any;
@@ -30,6 +33,12 @@ export type IJoinOptions = {
      * The display name to use.
      */
     displayName?: string;
+
+    /**
+     * When joining the first participant and jwt singing material is available and a provided token
+     * is available, prefer generating a new token for the first participant.
+     */
+    preferGenerateToken?: boolean;
 
     /**
      * Whether to skip setting display name.
