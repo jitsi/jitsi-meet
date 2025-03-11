@@ -47,6 +47,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * The one and only Activity that the Jitsi Meet app needs. The
  * {@code Activity} is launched in {@code singleTask} mode, so it will be
@@ -85,6 +89,33 @@ public class MainActivity extends JitsiMeetActivity {
      * Default URL as could be obtained from RestrictionManager
      */
     private String defaultURL;
+
+    // Static ArrayList to hold all custom toolbar buttons
+    private static final ArrayList<Bundle> ALL_CUSTOM_TOOLBAR_BUTTONS = new ArrayList<>();
+
+    // Static initialization block to create all buttons once
+    static {
+        // Create the record button
+        Bundle recordButton = new Bundle();
+        recordButton.putString("icon", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAFISURBVHgBxVWBcYMwDJQ7QbuBu4FHcDfoBvEGZQOSicgGdIPQCWADRnClQ76qYFE7Vy5/J3yRXpKlCAFwMEwJKcbo8CCxrJpQBmPMAPcCgz6jtChz1DGifBC3NrhnZ0KPElCsrIh1nUjkS4OfapwosbjM6S+yZ+Ktpmxu5419/R5pZKnraYk/Khu+gYU7ITpwTjojjCMeXzh675ozLKNKuCJvUng98dD+IpWOMwfFqY1btAo3sN3tK39sNurwO/xAv59Yb+mhvJnZljE2FxKtszLBYUgJJnooE7S3b65rhWjzJBOkIH7tgCV/4nGBLS7KJDkZU47pDMuGfMs4perS/zFw4hyvg2VMX9eGszYZpRAT1OSMx64KJh237AQ5vXRjLNhL8fe3I0AJVk4dJ3XCblnXi8t4qAGX3YhEOcw8HGo7H/fR/y98AzFrGjU3gjYAAAAAAElFTkSuQmCC");
+        recordButton.putString("id", "record");
+
+        // Create the close button
+        Bundle closeButton = new Bundle();
+        closeButton.putString("id", "close");
+        closeButton.putString("icon", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAABUCAYAAAAcaxDBAAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAO5SURBVHic7ZrvURsxEMWfMvkepwKug7gDnApwB7iDkAogFUAqwB3EVMC5AtwBpgJMBS8fpBubG+lO0snGHt5v5obxv5X2Ie2u9g4QQgghhBBCCCGEEEIIIYQQQgghhBCfE/NRA5McAfjhXo4BjHY+br8OsQKw2Xldu78vxpj14ElmsHdBSY5hhasATGCFGu97XMfaXSt3rY0xy30OWFxQkuewwjXXMbKCXc01gKUxZtPz/WgGC+q27gWAKbYr8NRYuOthqLjZgpKsAFzDCnmKIvrYwAr71xizyjGQLCjJCayQJbfzC2ysa2gnmxC7c9hNciWoAfwxxtS939whWlC3tW8BzBIn1rDE+ySxSZ1sLC4RjvA+CY4BfMswNwfwu2ScBckxyWfGsyY5J3nlnDsKSFYkZ25u6wR/nov54cR8jRTx5pgE7MP5dhUp7utg39x/tE/MOW1cPWlITpwvfaJWQwZ57DC+GGT8SHGrtu7w+zHX8KTDaG5iOhloY205/90K/JRiNpCcpq7SYNlEkp63H4wx0yKz9Y9ZATiDLXcqd/loyq8ae26EkLwD8Mvz0ffoUqpjuxfP4CQvSN4yrSxr8+RsnO9hflVgzPhETFv+tCm2CtwkrweKGOLZ2S6WMOkvq25SDPjKh0WBiY1oV9KhuKc94Q2dty/r3/m++yVgw/ffzWoW7EyqAvAE4GqInURmAEqccnxHZK/NrwMHSuEfwkmmTdMsCZ31m6R1FmFrBOCe5M+i5/EABxGU5BW6u/Rv2PYk61jH3XaewLYQpwg3P8awOyM+7pUkEDOyJ8Nw8qlZsK6lLcZDp5znAXZ9STq+U8aCSYn2KOdjb7GUtuHhIyuW0n/Imfu+G0pKvhIpN1t66zVjjDdLlsDZfoudSwQ+371lZIqguUWzz4mHTFsp+LZk7inP53uSoN4SiYltOtpS6cLz0V469RFjnDOx4O8IE2llJMlNbNzY+c05yUva4v0pEMeY6lQODB8Zye1R9ZI9x1WSd57fB6uQrrJpAeCy9d4lyVdsb6A19266Ghltlod4qsMYsya5hH+7NveYAAC0faCm4bLB+9XX1gCw2qTB7n7oEA7W3T86H9jduc7h4L1UdjeKc8iP/7RxyBdLU1mR3FsfNcKPqZvDUDbsqWV778s7AwvEnZsbltg+oFV/1JNwbWiT4QTbGJpSCr4AmPU9S5DyoMMM26ZEQ/OERxPI18ciXixO5ArhBLuGXRSdFY4QQgghhBBCCCGEEEIIIYQQQgghhPjs/AeC/qR/mZe1AQAAAABJRU5ErkJggg==");
+        closeButton.putString("backgroundColor", "red");
+
+        // Add buttons to the static list
+        ALL_CUSTOM_TOOLBAR_BUTTONS.add(recordButton);
+        ALL_CUSTOM_TOOLBAR_BUTTONS.add(closeButton);
+    }
+
+    // Initial toolbar buttons configuration
+    private static final String[] INITIAL_TOOLBAR_BUTTONS = {"record", "microphone", "camera", "chat", "hangup"};
+
+    // Toolbar buttons configuration when recording
+    private static final String[] RECORDING_TOOLBAR_BUTTONS = {"close", "microphone", "camera", "chat", "hangup"};
 
     // JitsiMeetActivity overrides
     //
@@ -259,20 +290,15 @@ public class MainActivity extends JitsiMeetActivity {
 //    }
 
     private static @NonNull ArrayList<Bundle> getCustomToolbarButtons() {
-        ArrayList<Bundle> customToolbarButtons = new ArrayList<>();
-
-        Bundle firstCustomButton = new Bundle();
-
-        firstCustomButton.putString("icon", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAFISURBVHgBxVWBcYMwDJQ7QbuBu4FHcDfoBvEGZQOSicgGdIPQCWADRnClQ76qYFE7Vy5/J3yRXpKlCAFwMEwJKcbo8CCxrJpQBmPMAPcCgz6jtChz1DGifBC3NrhnZ0KPElCsrIh1nUjkS4OfapwosbjM6S+yZ+Ktpmxu5419/R5pZKnraYk/Khu+gYU7ITpwTjojjCMeXzh675ozLKNKuCJvUng98dD+IpWOMwfFqY1btAo3sN3tK39sNurwO/xAv59Yb+mhvJnZljE2FxKtszLBYUgJJnooE7S3b65rhWjzJBOkIH7tgCV/4nGBLS7KJDkZU47pDMuGfMs4perS/zFw4hyvg2VMX9eGszYZpRAT1OSMx64KJh237AQ5vXRjLNhL8fe3I0AJVk4dJ3XCblnXi8t4qAGX3YhEOcw8HGo7H/fR/y98AzFrGjU3gjYAAAAAAElFTkSuQmCC");
-        firstCustomButton.putString("id", "record");
-
-        customToolbarButtons.add(firstCustomButton);
-
-        return customToolbarButtons;
+        // Return a copy of the first button (record) initially
+        ArrayList<Bundle> visibleButtons = new ArrayList<>();
+        visibleButtons.add(ALL_CUSTOM_TOOLBAR_BUTTONS.get(0)); // Add record button
+        return visibleButtons;
     }
 
     private String[] getToolbarButtons() {
-         return new String[]{"record", "microphone", "camera", "chat", "hangup"};
+        // Return the initial toolbar buttons configuration
+        return INITIAL_TOOLBAR_BUTTONS;
     }
 
     private static Bundle getRecordingService() {
@@ -289,11 +315,15 @@ public class MainActivity extends JitsiMeetActivity {
         if (extraData != null && extraData.containsKey("id")) {
             String buttonId = (String) extraData.get("id");
             if ("record".equals(buttonId)) {
+                // Generate a unique interaction ID for this recording session
+                interactionId = generateInteractionId();
+
                 Bundle extraMetadata = new Bundle();
                 extraMetadata.putString("call_id", interactionId);
 
-                JitsiMeetLogger.i("Extra Metadata: " + extraMetadata);
+                JitsiMeetLogger.i("Starting recording with metadata: " + extraMetadata);
 
+                // Start recording
                 Intent startRecordingIntent = BroadcastIntentHelper.buildStartRecordingIntent(
                     BroadcastIntentHelper.RecordingMode.FILE,
                     null,
@@ -305,8 +335,69 @@ public class MainActivity extends JitsiMeetActivity {
                     extraMetadata,
                     false);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(startRecordingIntent);
+
+                // Create a JSON object for the config
+                Bundle configObj = new Bundle();
+
+                // Update custom toolbar buttons to show close instead of record
+                ArrayList customButtonsArray = new ArrayList();
+                Bundle closeButtonJson = ALL_CUSTOM_TOOLBAR_BUTTONS.get(1); // Get close button
+                customButtonsArray.add(closeButtonJson);
+                configObj.putStringArrayList("customToolbarButtons", customButtonsArray);
+
+                // Update toolbar buttons
+                ArrayList toolbarButtonsArray = new ArrayList();
+                for (String button : RECORDING_TOOLBAR_BUTTONS) {
+                    toolbarButtonsArray.add(button);
+                }
+                configObj.putStringArrayList("toolbarButtons", toolbarButtonsArray);
+
+                // Send the overwrite config intent
+                Intent overwriteConfigIntent = BroadcastIntentHelper.buildOverwriteConfigIntent(configObj);
+                JitsiMeetLogger.i("Updating buttons: " + configObj.toString());
+                LocalBroadcastManager.getInstance(this).sendBroadcast(overwriteConfigIntent);
+            } else if ("close".equals(buttonId)) {
+                // Handle the close button press - stop recording
+                JitsiMeetLogger.i("Stopping recording");
+                Intent stopRecordingIntent = BroadcastIntentHelper.buildStopRecordingIntent(
+                    BroadcastIntentHelper.RecordingMode.FILE,
+                    false);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(stopRecordingIntent);
+
+                // Create a JSON object for the config
+                Bundle configObj = new Bundle();
+
+                // Update custom toolbar buttons to show record instead of close
+                ArrayList customButtonsArray = new ArrayList();
+                Bundle recordButtonJson = ALL_CUSTOM_TOOLBAR_BUTTONS.get(0); // Get record button
+                customButtonsArray.add(recordButtonJson);
+                configObj.putStringArrayList("customToolbarButtons", customButtonsArray);
+
+                // Update toolbar buttons
+                ArrayList toolbarButtonsArray = new ArrayList();
+                for (String button : INITIAL_TOOLBAR_BUTTONS) {
+                    toolbarButtonsArray.add(button);
+                }
+                configObj.putStringArrayList("toolbarButtons", toolbarButtonsArray);
+
+                // Send the overwrite config intent
+                Intent overwriteConfigIntent = BroadcastIntentHelper.buildOverwriteConfigIntent(configObj);
+                JitsiMeetLogger.i("Restoring original buttons: " + configObj.toString());
+                LocalBroadcastManager.getInstance(this).sendBroadcast(overwriteConfigIntent);
             }
         }
+    }
+
+    // Helper method to convert a Bundle to a JSONObject
+    private JSONObject bundleToJson(Bundle bundle) throws JSONException {
+        JSONObject json = new JSONObject();
+        for (String key : bundle.keySet()) {
+            Object value = bundle.get(key);
+            if (value != null) {
+                json.put(key, value.toString());
+            }
+        }
+        return json;
     }
 
     @Override
