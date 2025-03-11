@@ -24,19 +24,19 @@ const VideoGallery = ({ participants, translate }: VideoGalleryProps) => {
         let classes = "";
 
         if (participantsNumber === 1) {
-            classes = "flex-[0_0_80%] max-h-[80vh]";
+            classes = "relative flex-[0_0_80%] max-h-[80vh]";
         } else if (participantsNumber === 2) {
-            classes = "flex-[0_0_calc(50%-10px)] sm:flex-[0_0_calc(45%-10px)]";
+            classes = "relative flex-[0_0_calc(50%-10px)] sm:flex-[0_0_calc(45%-10px)]";
         } else if (participantsNumber === 3) {
             if (index < 2) {
-                classes = "flex-[0_0_calc(40%-10px)] sm:flex-[0_0_calc(45%-10px)]";
+                classes = "relative flex-[0_0_calc(40%-10px)] sm:flex-[0_0_calc(45%-10px)]";
             } else {
-                classes = "flex-[0_0_calc(40%-10px)] sm:flex-[0_0_calc(45%-10px)]";
+                classes = "relative flex-[0_0_calc(40%-10px)] sm:flex-[0_0_calc(45%-10px)]";
             }
         } else if (participantsNumber === 4) {
-            classes = "flex-[0_0_calc(50%-10px)] sm:flex-[0_0_calc(45%-10px)]";
+            classes = "relative flex-[0_0_calc(50%-10px)] sm:flex-[0_0_calc(45%-10px)]";
         } else {
-            classes = "flex-[0_0_calc(50%-10px)] sm:flex-[0_0_calc(33.333%-20px)]";
+            classes = "relative flex-[0_0_calc(50%-10px)] sm:flex-[0_0_calc(33.333%-20px)]";
         }
 
         return classes;
