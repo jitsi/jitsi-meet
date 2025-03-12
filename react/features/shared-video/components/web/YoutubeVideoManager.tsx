@@ -167,7 +167,7 @@ class YoutubeVideoManager extends AbstractVideoManager {
      * @returns {void}
      */
     onPlayerReady = (event: any) => {
-        const { _isOwner } = this.props;
+        const { _isOwner, _time } = this.props;
 
         this.player = event.target;
 
@@ -177,6 +177,10 @@ class YoutubeVideoManager extends AbstractVideoManager {
 
         if (_isOwner) {
             this.player.addEventListener('onVideoProgress', this.throttledFireUpdateSharedVideoEvent);
+        }
+
+        if(_time){
+            this.seek(_time)
         }
 
         this.play();
@@ -191,7 +195,7 @@ class YoutubeVideoManager extends AbstractVideoManager {
     getPlayerOptions = () => {
         const { _isOwner, videoId } = this.props;
         const showControls = _isOwner ? 1 : 0;
-
+        
         const options = {
             id: 'sharedVideoPlayer',
             opts: {

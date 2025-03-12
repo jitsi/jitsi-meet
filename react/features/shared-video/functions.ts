@@ -1,3 +1,4 @@
+import { useSelector } from 'react-redux';
 import { IStateful } from '../base/app/types';
 import { IJitsiConference } from '../base/conference/reducer';
 import { getFakeParticipants } from '../base/participants/functions';
@@ -31,6 +32,8 @@ function getYoutubeId(url: string) {
 
     return result ? result[1] : null;
 }
+
+
 
 /**
  * Checks if the status is one that is actually sharing the video - playing, pause or start.

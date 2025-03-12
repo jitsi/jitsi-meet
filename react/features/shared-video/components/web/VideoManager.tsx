@@ -144,7 +144,7 @@ class VideoManager extends AbstractVideoManager {
      */
     getPlayerOptions() {
         const { _isOwner, videoId } = this.props;
-
+        
         let options: any = {
             autoPlay: true,
             src: videoId,
