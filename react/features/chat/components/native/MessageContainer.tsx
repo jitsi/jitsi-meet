@@ -3,7 +3,7 @@ import { FlatList, Text, TextStyle, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
-import { groupMessagesBySender, IMessageGroup } from '../../../base/util/messageGrouping';
+import { IMessageGroup, groupMessagesBySender } from '../../../base/util/messageGrouping';
 import { IMessage } from '../../types';
 
 import ChatMessageGroup from './ChatMessageGroup';

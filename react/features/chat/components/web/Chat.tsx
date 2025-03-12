@@ -24,6 +24,11 @@ import SubtitlesTab from './SubtitlesTab';
 interface IProps extends AbstractProps {
 
     /**
+     * The currently focused tab.
+     */
+    _focusedTab: ChatTabs;
+
+    /**
      * Whether the chat is opened in a modal or not (computed based on window width).
      */
     _isModal: boolean;
@@ -73,11 +78,6 @@ interface IProps extends AbstractProps {
      * Whether or not to block chat access with a nickname input form.
      */
     _showNamePrompt: boolean;
-
-    /**
-     * The currently focused tab.
-     */
-    _focusedTab: ChatTabs;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -222,6 +222,7 @@ const Chat = ({
                     aria-labelledby = { ChatTabs.CHAT }
                     className = { cx(
                         classes.chatPanel,
+
                         // TODO: Add disable for subtitles and uncomment this code
                         // !_isPollsEnabled && classes.chatPanelNoTabs,
                         _focusedTab !== ChatTabs.CHAT && 'hide'
@@ -276,7 +277,8 @@ const Chat = ({
                 tabs = { [
                     {
                         accessibilityLabel: t('chat.tabs.chat'),
-                        countBadge: _focusedTab !== ChatTabs.CHAT && _nbUnreadMessages > 0 ? _nbUnreadMessages : undefined,
+                        countBadge:
+                            _focusedTab !== ChatTabs.CHAT && _nbUnreadMessages > 0 ? _nbUnreadMessages : undefined,
                         id: ChatTabs.CHAT,
                         controlsId: `${ChatTabs.CHAT}-panel`,
                         label: t('chat.tabs.chat')

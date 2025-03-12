@@ -5,10 +5,10 @@ import {
     REMOVE_CACHED_TRANSCRIPT_MESSAGE,
     REMOVE_TRANSCRIPT_MESSAGE,
     SET_REQUESTING_SUBTITLES,
-    TOGGLE_REQUESTING_SUBTITLES,
-    UPDATE_TRANSCRIPT_MESSAGE,
     STORE_SUBTITLE,
-    UPDATE_INTERIM_SUBTITLE
+    TOGGLE_REQUESTING_SUBTITLES,
+    UPDATE_INTERIM_SUBTITLE,
+    UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
 import { ISubtitle, ITranscriptMessage } from './types';
 
@@ -79,7 +79,8 @@ ReducerRegistry.register<ISubtitlesState>('features/subtitles', (
         );
 
         if (existingIndex >= 0 && state.subtitlesHistory[existingIndex].interim) {
-            const newHistory = [...state.subtitlesHistory];
+            const newHistory = [ ...state.subtitlesHistory ];
+
             newHistory[existingIndex] = action.subtitle;
 
             return {

@@ -16,13 +16,13 @@ import {
     removeCachedTranscriptMessage,
     removeTranscriptMessage,
     setRequestingSubtitles,
-    updateTranscriptMessage,
     storeSubtitle,
-    updateInterimSubtitle
+    updateInterimSubtitle,
+    updateTranscriptMessage
 } from './actions.any';
 import { notifyTranscriptionChunkReceived } from './functions';
 import logger from './logger';
-import { ITranscriptMessage } from './types';
+import { ISubtitle, ITranscriptMessage } from './types';
 
 
 /**
@@ -140,9 +140,9 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
         const transcription = json.transcript[0].text;
         const isInterim = json.is_interim;
 
-        const subtitle = {
+        const subtitle: ISubtitle = {
             id: transcriptMessageID,
-            participant: participantId,
+            participantId,
             text: transcription,
             interim: isInterim,
             timestamp
@@ -157,8 +157,8 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
         const translation = json.text;
         const language = json.language;
 
-        const subtitle = {
-            participant: participantId,
+        const subtitle: ISubtitle = {
+            participantId,
             text: translation,
             language,
             timestamp,
@@ -172,8 +172,6 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
     const language = state['features/base/conference'].conference
         ?.getLocalParticipantProperty(P_NAME_TRANSLATION_LANGUAGE);
     const { dumpTranscript, skipInterimTranscriptions } = state['features/base/config'].testing ?? {};
-
-
 
     let newTranscriptMessage: ITranscriptMessage | undefined;
 
