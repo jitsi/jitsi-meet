@@ -49,6 +49,20 @@ class VideoManager extends AbstractVideoManager<IState> {
     }
 
     /**
+     * Trigger after the component load in DOM.
+     *
+     * @returns {void}
+     */
+    componentDidMount() {
+        console.log('Component has been mounted.');
+        const { _time } = this.props;
+
+        if (_time) {
+            this.seek(_time);
+        }
+    }
+
+    /**
      * Indicates the playback state of the video.
      *
      * @returns {string}
@@ -144,6 +158,19 @@ class VideoManager extends AbstractVideoManager<IState> {
     onProgress(options: { currentTime: number; }) {
         this.setState({ currentTime: options.currentTime });
         this.throttledFireUpdateSharedVideoEvent();
+    }
+
+    /**
+     * Handles onload event.
+     *
+     * @returns {void}
+     */
+    onload() {
+        const { _time } = this.props;
+
+        // if (_time) {
+        //     this.seek(_time);
+        // }
     }
 
     /**

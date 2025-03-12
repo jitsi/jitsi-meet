@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
-import { IReduxState, IStore } from '../../app/types';
+import { IStore } from '../../app/types';
 import { extractYoutubeIdOrURL } from '../functions';
 
 /**
@@ -26,10 +26,17 @@ export interface IProps extends WithTranslation {
     onPostSubmit: Function;
 }
 
+/**
+ * Function to get time from url.
+ *
+ * @param {string} url - Url of video.
+ * @returns {number | null }
+ */
 function getTimeFromURL(url: string) {
     const urlObj = new URL(url);
     const time = urlObj.searchParams.get('t');
-    return time ? parseInt(time) : null;
+
+    return time ? parseInt(time, 10) : null;
 }
 
 /**
@@ -60,13 +67,13 @@ export default class AbstractSharedVideoDialog<S> extends Component < IProps, S 
      */
     _onSetVideoLink(link: string) {
         const { onPostSubmit } = this.props;
-        let time =  getTimeFromURL(link)
+        const time = getTimeFromURL(link);
         const id = extractYoutubeIdOrURL(link);
 
         if (!id) {
             return false;
         }
-        onPostSubmit(id,time);
+        onPostSubmit(id, time);
 
         return true;
     }

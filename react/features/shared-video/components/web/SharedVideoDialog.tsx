@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { hideDialog } from '../../../base/dialog/actions';
@@ -81,7 +81,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<any> {
                     disabled: this.state.okDisabled,
                     translationKey: 'dialog.Share'
                 }}
-                onSubmit = {this._onSubmitValue}
+                onSubmit = { this._onSubmitValue }
                 titleKey = 'dialog.shareVideoTitle'>
                 <Input
                     autoFocus = { true }

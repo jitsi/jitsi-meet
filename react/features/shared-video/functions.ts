@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+
 import { IStateful } from '../base/app/types';
 import { IJitsiConference } from '../base/conference/reducer';
 import { getFakeParticipants } from '../base/participants/functions';
@@ -32,7 +32,6 @@ function getYoutubeId(url: string) {
 
     return result ? result[1] : null;
 }
-
 
 
 /**
