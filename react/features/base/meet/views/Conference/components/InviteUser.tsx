@@ -1,11 +1,19 @@
 import React from "react";
-import { Button, Input, TransparentModal } from "@internxt/ui";
+import { Button, TransparentModal } from "@internxt/ui";
 import { getDecodedURI } from "../../../../util/uri";
 import { Link } from "@phosphor-icons/react";
 
 const MAX_SIZE_PARTICIPANTS = 10;
 
-const InviteUser = ({ isOpen, onClose, translate, participantsCount, inviteUrl }) => {
+interface InviteUserProps {
+    isOpen: boolean;
+    onClose: () => void;
+    translate: Function;
+    participantsCount: Number;
+    inviteUrl: string;
+}
+
+const InviteUser = ({ isOpen, onClose, translate, participantsCount, inviteUrl }: InviteUserProps) => {
     const inviteLink = inviteUrl && getDecodedURI(inviteUrl);
 
     const handleCopy = () => {
