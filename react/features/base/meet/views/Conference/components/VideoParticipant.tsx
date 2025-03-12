@@ -4,14 +4,16 @@ import React from "react";
 import ConnectionIndicator from "../../../../../connection-indicator/components/web/ConnectionIndicator";
 import Video from "../../../../media/components/web/Video";
 import { VideoParticipantType } from "../types";
+import clsx from "clsx";
 
 export type VideoParticipantProps = {
     participant: VideoParticipantType;
+    flipX?: boolean;
     className?: string;
     translate: (key: string) => string;
 };
 
-const VideoParticipant = ({ participant, className = "", translate }: VideoParticipantProps) => {
+const VideoParticipant = ({ participant, className = "", flipX, translate }: VideoParticipantProps) => {
     const { id, name, videoEnabled, audioMuted, videoTrack, local, dominantSpeaker, raisedHand, avatarSource } =
         participant;
 
@@ -24,7 +26,7 @@ const VideoParticipant = ({ participant, className = "", translate }: VideoParti
             {videoEnabled ? (
                 <Video
                     videoTrack={{ jitsiTrack: videoTrack }}
-                    className="w-full h-full object-cover"
+                    className={clsx("w-full h-full object-cover", flipX && local && "scale-x-[-1]")}
                     key={`video-${id}`}
                 />
             ) : (

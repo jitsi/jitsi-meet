@@ -4,10 +4,11 @@ import VideoParticipant from "./VideoParticipant";
 
 export interface VideoGalleryProps {
     participants: VideoParticipantType[];
+    flipX?: boolean;
     translate: (key: string) => string;
 }
 
-const VideoGallery = ({ participants, translate }: VideoGalleryProps) => {
+const VideoGallery = ({ participants, flipX, translate }: VideoGalleryProps) => {
     const participantsNumber = participants.length;
     const sortedParticipants = [...participants].sort((a, b) => {
         // Local user first
@@ -53,6 +54,7 @@ const VideoGallery = ({ participants, translate }: VideoGalleryProps) => {
                         participant={participant}
                         className={getParticipantClasses(index)}
                         translate={translate}
+                        flipX={flipX}
                     />
                 ))}
             </div>
