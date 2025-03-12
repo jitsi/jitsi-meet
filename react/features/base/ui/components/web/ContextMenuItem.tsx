@@ -143,6 +143,11 @@ const useStyles = makeStyles()((theme) => {
             borderRadius: theme.shape.borderRadius,
             backgroundColor: "white",
             paddingLeft: "16px",
+            "&:hover": {
+                color: "white",
+                "& *": { color: "white" },
+                "& svg": { fill: "white" },
+            },
         },
 
         contextMenuItemDisabled: {

@@ -144,24 +144,21 @@ const VideoLabelEntry = ({
             aria-checked={isSelected}
             aria-posinset={index}
             aria-setsize={length}
-            className={isSelected ? classes.selectedEntry : classes.previewEntry}
             onClick={onClick}
             onKeyPress={onKeyPress}
             role="radio"
             tabIndex={0}
         >
-            <div style={{ pointerEvents: "none" }}>
-                <ContextMenuItem
-                    accessibilityLabel={children}
-                    icon={isSelected ? IconCheck : undefined}
-                    overflowType={overflowType}
-                    selected={isSelected}
-                    text={children}
-                    textClassName={cx(classes.entryText, !isSelected && "left-margin")}
-                >
-                    {hasError && <Icon className={classes.icon} size={16} src={IconExclamationSolid} />}
-                </ContextMenuItem>
-            </div>
+            <ContextMenuItem
+                accessibilityLabel={children}
+                icon={isSelected ? IconCheck : undefined}
+                overflowType={overflowType}
+                selected={isSelected}
+                text={children}
+                textClassName={cx(classes.entryText, !isSelected && "left-margin")}
+            >
+                {hasError && <Icon className={classes.icon} size={16} src={IconExclamationSolid} />}
+            </ContextMenuItem>
         </div>
     );
 };

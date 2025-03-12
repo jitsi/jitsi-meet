@@ -348,7 +348,7 @@ const VideoSettingsContent = ({
         >
             <ContextMenuItemGroup>
                 {selectedTrack && _renderPreviewEntry(selectedTrack)}
-                <div style={{ pointerEvents: "none", marginLeft: "7px" }}>
+                <div style={{ pointerEvents: "none" }}>
                     <ContextMenuItem
                         icon={IconVideo}
                         text={t("meet.settings.video.videoInput")}
