@@ -69,6 +69,11 @@ export interface IProps {
     height: number;
 
     /**
+      * The video start time(in seconds).
+      */
+    startTime: number;
+
+    /**
       * The video id.
     */
     videoId: string;
@@ -252,7 +257,7 @@ export default AbstractVideoManager;
  * @returns {IProps}
  */
 export function _mapStateToProps(state: IReduxState) {
-    const { ownerId, status, time, videoUrl } = state['features/shared-video'];
+    const { ownerId, status, time, videoUrl, startTime } = state['features/shared-video'];
     const localParticipant = getLocalParticipant(state);
 
     return {
@@ -260,6 +265,7 @@ export function _mapStateToProps(state: IReduxState) {
         _isOwner: ownerId === localParticipant?.id,
         _ownerId: ownerId,
         _status: status,
+        startTime,
         _time: Number(time),
         _videoUrl: videoUrl
     };

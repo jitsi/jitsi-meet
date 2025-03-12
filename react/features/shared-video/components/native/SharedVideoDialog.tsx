@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import InputDialog from '../../../base/dialog/components/native/InputDialog';
 import { translate } from '../../../base/i18n/functions';
+import { setStartTime } from '../../actions';
+import { getSpecifiedYoutubePlayTime } from '../../functions';
 import AbstractSharedVideoDialog, { IProps } from '../AbstractSharedVideoDialog';
 
 interface IState {
@@ -37,6 +39,9 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<IState> {
      */
     _onSubmitValue(value: string) {
         const result = super._onSetVideoLink(value);
+        const startTime = getSpecifiedYoutubePlayTime(value);
+
+        this.props.dispatch(setStartTime(startTime));
 
         if (!result) {
             this.setState({ error: true });

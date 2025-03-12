@@ -8,7 +8,7 @@ import { FakeParticipant } from '../../../base/participants/types';
 import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
 import { getLargeVideoParticipant } from '../../../large-video/functions';
 import { getToolboxHeight } from '../../../toolbox/functions.web';
-import { getSpecifiedYoutubePlayTime, isSharedVideoEnabled, isVideoPlaying } from '../../functions';
+import { isSharedVideoEnabled, isVideoPlaying } from '../../functions';
 
 import VideoManager from './VideoManager';
 import YoutubeVideoManager from './YoutubeVideoManager';
@@ -58,7 +58,7 @@ interface IProps {
     /**
       * The video start time(in seconds).
       */
-    startTime?: string;
+    startTime?: number;
 
     /**
      * The shared video url.
@@ -167,12 +167,13 @@ class SharedVideo extends Component<IProps> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
-    const { videoUrl } = state['features/shared-video'];
+    const { videoUrl, startTime } = state['features/shared-video'];
     const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
     const { visible, isResizing } = state['features/filmstrip'];
     const onStage = getLargeVideoParticipant(state)?.fakeParticipant === FakeParticipant.SharedVideo;
     const isVideoShared = isVideoPlaying(state);
-    const startTime = getSpecifiedYoutubePlayTime(videoUrl);
+
+    console.log(state['features/shared-video']);
 
     return {
         clientHeight,
@@ -183,8 +184,8 @@ function _mapStateToProps(state: IReduxState) {
         isResizing,
         isVideoShared,
         onStage,
-        startTime,
-        videoUrl
+        videoUrl,
+        startTime
     };
 }
 

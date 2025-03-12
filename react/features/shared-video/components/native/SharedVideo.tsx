@@ -139,7 +139,7 @@ class SharedVideo extends Component<IProps> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
-    const { ownerId, videoUrl } = state['features/shared-video'];
+    const { ownerId, videoUrl, startTime } = state['features/shared-video'];
     const { aspectRatio, clientHeight, clientWidth } = state['features/base/responsive-ui'];
 
     const isWideScreen = aspectRatio === ASPECT_RATIO_WIDE;
@@ -160,7 +160,8 @@ function _mapStateToProps(state: IReduxState) {
         isWideScreen,
         playerHeight,
         playerWidth,
-        videoUrl
+        videoUrl,
+        startTime
     };
 }
 

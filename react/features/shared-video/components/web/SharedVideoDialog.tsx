@@ -6,6 +6,8 @@ import { hideDialog } from '../../../base/dialog/actions';
 import { translate } from '../../../base/i18n/functions';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import Input from '../../../base/ui/components/web/Input';
+import { setStartTime } from '../../actions';
+import { getSpecifiedYoutubePlayTime } from '../../functions';
 import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
 
 /**
@@ -54,6 +56,9 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<any> {
     _onSubmitValue() {
         const result = super._onSetVideoLink(this.state.value);
 
+        const startTime = getSpecifiedYoutubePlayTime(this.state.value);
+
+        this.props.dispatch(setStartTime(startTime));
         if (result) {
             this.props.dispatch(hideDialog());
         } else {

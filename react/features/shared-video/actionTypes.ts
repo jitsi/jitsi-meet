@@ -29,6 +29,15 @@ export const RESET_SHARED_VIDEO_STATUS = 'RESET_SHARED_VIDEO_STATUS';
 export const SET_CONFIRM_SHOW_VIDEO = 'SET_CONFIRM_SHOW_VIDEO';
 
 /**
+ * The type of the action which set the startTime to play video.
+ *
+ * {
+ *     type: SET_YOUTUBE_SPECIFIED_TIME
+ * }
+ */
+export const SET_YOUTUBE_SPECIFIED_TIME = 'SET_YOUTUBE_SPECIFIED_TIME';
+
+/**
  * The type of the action which sets an array of whitelisted urls.
  *
  * {
