@@ -225,8 +225,8 @@ const VideoSettingsContent = ({
      * @returns {React$Node}
      */
     // eslint-disable-next-line react/no-multi-comp
-    const _renderPreviewEntry = (track) => {
-        const { error, jitsiTrack, deviceId } = track;
+    const _renderPreviewEntry = (track: any) => {
+        const { error, jitsiTrack } = track;
         const key = `vp-current`;
 
         if (error) {
