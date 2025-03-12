@@ -42,7 +42,6 @@ class VideoManager extends AbstractVideoManager {
      * @returns {void}
      */
     componentDidMount() {
-        console.log('Component has been mounted.');
         const { _time } = this.props;
 
         if (_time) {
