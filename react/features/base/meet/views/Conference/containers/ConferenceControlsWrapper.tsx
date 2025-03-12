@@ -6,28 +6,11 @@ import { IReduxState } from "../../../../../app/types";
 import { leaveConference } from "../../../../conference/actions";
 import MediaControlsWrapper from "../../../general/containers/MediaControlsWrapper";
 import InviteUser from "../components/InviteUser";
-import {
-    getLocalParticipant,
-    getRemoteParticipants,
-    isScreenShareParticipant,
-    getParticipantDisplayName,
-    hasRaisedHand,
-} from "../../../../participants/functions";
-import {
-    getVideoTrackByParticipant,
-    isParticipantVideoMuted,
-    isParticipantAudioMuted,
-} from "../../../../tracks/functions.any";
 import { VideoParticipantType } from "../types";
 import { getInviteURL } from "../../../../connection/functions";
 import { translate } from "../../../../i18n/functions";
 import { WithTranslation } from "react-i18next";
-
-interface IProps {
-    dispatch: any;
-    participants?: VideoParticipantType[];
-    _inviteUrl: string;
-}
+import { getParticipantsWithTracks } from "../utils";
 
 interface ConferenceControlsProps extends WithTranslation {
     dispatch: any;
@@ -71,32 +54,7 @@ const ConferenceControls = ({ dispatch, participants, _inviteUrl, t }: Conferenc
 };
 
 function mapStateToProps(state: IReduxState) {
-    const localParticipant = getLocalParticipant(state);
-
-    const remoteParticipantsMap = getRemoteParticipants(state); // change for getRemoteParticipantsSorted???
-    const remoteParticipants = Array.from(remoteParticipantsMap.values());
-    const allParticipants = localParticipant ? [localParticipant, ...remoteParticipants] : remoteParticipants;
-
-    const participantsWithTracks = allParticipants
-        .filter((participant) => !isScreenShareParticipant(participant))
-        .map((participant) => {
-            const videoTrack = getVideoTrackByParticipant(state, participant);
-            const isVideoMuted = isParticipantVideoMuted(participant, state);
-            const isAudioMuted = isParticipantAudioMuted(participant, state);
-            const displayName = getParticipantDisplayName(state, participant.id);
-            return {
-                id: participant.id,
-                name: displayName,
-                videoEnabled: !isVideoMuted && videoTrack !== undefined,
-                audioMuted: isAudioMuted,
-                videoTrack: videoTrack?.jitsiTrack,
-                local: participant.local || false,
-                hidden: false,
-                dominantSpeaker: participant.dominantSpeaker || false,
-                raisedHand: hasRaisedHand(participant),
-            };
-        })
-        .filter((participant) => !participant.hidden);
+    const participantsWithTracks = getParticipantsWithTracks(state);
 
     return {
         participants: participantsWithTracks,
