@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Theme, createTheme, responsiveFontSizes } from '@mui/material/styles';
+import { Theme, adaptV4Theme, createTheme } from '@mui/material/styles';
 
 import { ITypography, IPalette as Palette1 } from '../ui/types';
 
@@ -29,7 +29,7 @@ interface ThemeProps {
  * @returns {Object}
  */
 export function createWebTheme({ font, colorMap, shape, spacing, typography, breakpoints }: ThemeProps) {
-    return responsiveFontSizes(createTheme({
+    return createTheme(adaptV4Theme({
         spacing,
         palette: createColorTokens(colorMap),
         shape,
