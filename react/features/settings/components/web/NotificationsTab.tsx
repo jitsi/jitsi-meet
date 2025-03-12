@@ -133,8 +133,6 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
     constructor(props: IProps) {
         super(props);
 
-        // Bind event handlers so they are only bound once for every instance.
-        this._onChange = this._onChange.bind(this);
         this._onEnabledNotificationsChanged = this._onEnabledNotificationsChanged.bind(this);
     }
 
@@ -145,7 +143,7 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
      *
      * @returns {void}
      */
-    _onChange({ target }: React.ChangeEvent<HTMLInputElement>) {
+    override _onChange({ target }: React.ChangeEvent<HTMLInputElement>) {
         super._onChange({ [target.name]: target.checked });
     }
 
