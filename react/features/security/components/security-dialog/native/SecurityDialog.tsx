@@ -163,7 +163,7 @@ class SecurityDialog extends PureComponent<IProps, IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         return (
             <JitsiScreen style = { styles.securityDialogContainer }>
                 { this._renderLobbyMode() }

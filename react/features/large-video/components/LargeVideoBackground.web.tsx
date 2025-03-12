@@ -92,7 +92,7 @@ export class LargeVideoBackground extends Component<IProps> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         const { _shouldDisplayTileView, hidden, videoElement } = this.props;
 
         if (videoElement && !hidden && !_shouldDisplayTileView) {
@@ -106,7 +106,7 @@ export class LargeVideoBackground extends Component<IProps> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         const wasCanvasUpdating = !prevProps.hidden && !prevProps._shouldDisplayTileView && prevProps.videoElement;
         const shouldCanvasUpdating
             = !this.props.hidden && !this.props._shouldDisplayTileView && this.props.videoElement;
@@ -127,7 +127,7 @@ export class LargeVideoBackground extends Component<IProps> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this._clearUpdateCanvasInterval();
     }
 
@@ -137,7 +137,7 @@ export class LargeVideoBackground extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             hidden,
             mirror

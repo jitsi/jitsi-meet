@@ -62,7 +62,7 @@ interface IState {
 class ChatInput extends Component<IProps, IState> {
     _textArea?: RefObject<HTMLTextAreaElement>;
 
-    state = {
+    override state = {
         message: '',
         showSmileysPanel: false
     };
@@ -91,7 +91,7 @@ class ChatInput extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         if (isMobileBrowser()) {
             // Ensure textarea is not focused when opening chat on mobile browser.
             this._textArea?.current && this._textArea.current.blur();
@@ -105,7 +105,7 @@ class ChatInput extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: Readonly<IProps>) {
+    override componentDidUpdate(prevProps: Readonly<IProps>) {
         if (prevProps._privateMessageRecipientId !== this.props._privateMessageRecipientId) {
             this._textArea?.current?.focus();
         }
@@ -117,7 +117,7 @@ class ChatInput extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <div className = { `chat-input-container${this.state.message.trim().length ? ' populated' : ''}` }>
                 <div id = 'chat-input' >

@@ -73,7 +73,7 @@ class ChatInputBar extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         let inputBarStyles;
 
         if (this.props.aspectRatio === ASPECT_RATIO_WIDE) {

@@ -115,7 +115,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _connectionIndicatorInactiveDisabled,
             _connectionIndicatorDisabled,

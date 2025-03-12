@@ -36,7 +36,7 @@ class RaisedHandIndicator extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         if (!this.props._raisedHand) {
             return null;
         }

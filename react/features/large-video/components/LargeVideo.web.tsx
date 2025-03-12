@@ -160,7 +160,7 @@ class LargeVideo extends Component<IProps> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         const {
             _visibleFilmstrip,
             _isScreenSharing,
@@ -193,7 +193,7 @@ class LargeVideo extends Component<IProps> {
      * @inheritdoc
      * @returns {React$Element}
      */
-    render() {
+    override render() {
         const {
             _displayScreenSharingPlaceholder,
             _isChatOpen,

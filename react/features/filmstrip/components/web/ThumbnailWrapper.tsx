@@ -93,7 +93,7 @@ class ThumbnailWrapper extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _disableSelfView,
             _filmstripType = FILMSTRIP_TYPE.MAIN,

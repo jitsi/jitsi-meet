@@ -71,7 +71,7 @@ class ShareAudioDialog extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
 
         const { t } = this.props;
 

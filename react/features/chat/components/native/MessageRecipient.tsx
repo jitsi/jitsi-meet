@@ -92,7 +92,7 @@ class MessageRecipient extends AbstractMessageRecipient<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             isLobbyChatActive,
             lobbyMessageRecipient,

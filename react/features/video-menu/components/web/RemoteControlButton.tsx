@@ -77,7 +77,7 @@ class RemoteControlButton extends Component<IProps> {
      * @inheritdoc
      * @returns {null|ReactElement}
      */
-    render() {
+    override render() {
         const { remoteControlState, t } = this.props;
 
         let disabled = false, icon;

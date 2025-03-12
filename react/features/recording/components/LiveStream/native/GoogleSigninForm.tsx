@@ -74,7 +74,7 @@ class GoogleSigninForm extends Component<IProps> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         googleApi.hasPlayServices()
             .then(() => {
                 googleApi.configure({
@@ -102,7 +102,7 @@ class GoogleSigninForm extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { _dialogStyles, t } = this.props;
         const { googleAPIState, googleResponse } = this.props;
         const signedInUser = googleResponse?.user?.email;

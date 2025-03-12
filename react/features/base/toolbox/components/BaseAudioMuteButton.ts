@@ -8,8 +8,8 @@ import AbstractButton, { IProps } from './AbstractButton';
 export default class BaseAudioMuteButton<P extends IProps, S=any>
     extends AbstractButton<P, S> {
 
-    icon = IconMic;
-    toggledIcon = IconMicSlash;
+    override icon = IconMic;
+    override toggledIcon = IconMicSlash;
 
     /**
      * Handles clicking / pressing the button, and toggles the audio mute state
@@ -19,7 +19,7 @@ export default class BaseAudioMuteButton<P extends IProps, S=any>
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         this._setAudioMuted(!this._isAudioMuted());
     }
 
@@ -42,7 +42,7 @@ export default class BaseAudioMuteButton<P extends IProps, S=any>
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this._isAudioMuted();
     }
 

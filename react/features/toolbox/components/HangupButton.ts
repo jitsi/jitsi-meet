@@ -16,9 +16,9 @@ import AbstractHangupButton from '../../base/toolbox/components/AbstractHangupBu
 class HangupButton extends AbstractHangupButton<AbstractButtonProps> {
     _hangup: Function;
 
-    accessibilityLabel = 'toolbar.accessibilityLabel.hangup';
-    label = 'toolbar.hangup';
-    tooltip = 'toolbar.hangup';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.hangup';
+    override label = 'toolbar.hangup';
+    override tooltip = 'toolbar.hangup';
 
     /**
      * Initializes a new HangupButton instance.
@@ -42,7 +42,7 @@ class HangupButton extends AbstractHangupButton<AbstractButtonProps> {
      * @protected
      * @returns {void}
      */
-    _doHangup() {
+    override _doHangup() {
         this._hangup();
     }
 }

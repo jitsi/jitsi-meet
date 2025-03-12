@@ -97,7 +97,7 @@ class Watermarks extends Component<IProps, State> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <div>
                 {

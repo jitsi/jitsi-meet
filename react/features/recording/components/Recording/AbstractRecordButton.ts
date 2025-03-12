@@ -34,12 +34,12 @@ export interface IProps extends AbstractButtonProps {
  * An abstract implementation of a button for starting and stopping recording.
  */
 export default class AbstractRecordButton<P extends IProps> extends AbstractButton<P> {
-    accessibilityLabel = 'dialog.startRecording';
-    toggledAccessibilityLabel = 'dialog.stopRecording';
-    icon = IconRecord;
-    label = 'dialog.startRecording';
-    toggledLabel = 'dialog.stopRecording';
-    toggledIcon = IconStop;
+    override accessibilityLabel = 'dialog.startRecording';
+    override toggledAccessibilityLabel = 'dialog.stopRecording';
+    override icon = IconRecord;
+    override label = 'dialog.startRecording';
+    override toggledLabel = 'dialog.stopRecording';
+    override toggledIcon = IconStop;
 
     /**
      * Returns the tooltip that should be displayed when the button is disabled.
@@ -47,7 +47,7 @@ export default class AbstractRecordButton<P extends IProps> extends AbstractButt
      * @private
      * @returns {string}
      */
-    _getTooltip() {
+    override _getTooltip() {
         return this.props._tooltip ?? '';
     }
 
@@ -69,7 +69,7 @@ export default class AbstractRecordButton<P extends IProps> extends AbstractButt
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { _isRecordingRunning, dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent(
@@ -93,7 +93,7 @@ export default class AbstractRecordButton<P extends IProps> extends AbstractButt
      * @protected
      * @returns {boolean}
      */
-    _isDisabled() {
+    override _isDisabled() {
         return this.props._disabled;
     }
 
@@ -104,7 +104,7 @@ export default class AbstractRecordButton<P extends IProps> extends AbstractButt
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._isRecordingRunning;
     }
 }

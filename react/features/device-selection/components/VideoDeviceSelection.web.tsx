@@ -170,7 +170,7 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         this._unMounted = false;
         Promise.all([
             this._createVideoInputTrack(this.props.selectedVideoInputId)
@@ -188,7 +188,7 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
      * @param {Object} prevProps - Previous props this component received.
      * @returns {void}
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
 
         if (prevProps.selectedVideoInputId
             !== this.props.selectedVideoInputId) {
@@ -201,7 +201,7 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this._unMounted = true;
         this._disposeVideoInputPreview();
     }
@@ -211,7 +211,7 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const {
             disableDesktopShareSettings,
             disableLocalVideoFlip,

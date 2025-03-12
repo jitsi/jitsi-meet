@@ -14,9 +14,9 @@ import OverflowMenu from './OverflowMenu';
  * An implementation of a button for showing the {@code OverflowMenu}.
  */
 class OverflowMenuButton extends AbstractButton<AbstractButtonProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.moreActions';
-    icon = IconDotsHorizontal;
-    label = 'toolbar.moreActions';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.moreActions';
+    override icon = IconDotsHorizontal;
+    override label = 'toolbar.moreActions';
 
     /**
      * Handles clicking / pressing this {@code OverflowMenuButton}.
@@ -24,7 +24,7 @@ class OverflowMenuButton extends AbstractButton<AbstractButtonProps> {
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
 
         // @ts-ignore
         this.props.dispatch(openSheet(OverflowMenu));

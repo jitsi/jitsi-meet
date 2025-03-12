@@ -21,7 +21,7 @@ class PageReloadOverlay extends AbstractPageReloadOverlay<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { isNetworkFailure, t } = this.props;
         const { message, timeLeft, title } = this.state;
 

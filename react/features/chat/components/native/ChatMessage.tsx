@@ -31,7 +31,7 @@ class ChatMessage extends Component<IChatMessageProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { gifEnabled, message, knocking } = this.props;
         const localMessage = message.messageType === MESSAGE_TYPE_LOCAL;
         const { privateMessage, lobbyChat } = message;

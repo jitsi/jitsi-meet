@@ -35,13 +35,13 @@ interface IProps extends AbstractButtonProps {
  * Implementation of a button for raising hand.
  */
 class RaiseHandButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.raiseHand';
-    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.lowerHand';
-    icon = IconRaiseHand;
-    label = 'toolbar.raiseHand';
-    toggledLabel = 'toolbar.lowerYourHand';
-    tooltip = 'toolbar.raiseHand';
-    toggledTooltip = 'toolbar.lowerYourHand';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.raiseHand';
+    override toggledAccessibilityLabel = 'toolbar.accessibilityLabel.lowerHand';
+    override icon = IconRaiseHand;
+    override label = 'toolbar.raiseHand';
+    override toggledLabel = 'toolbar.lowerYourHand';
+    override tooltip = 'toolbar.raiseHand';
+    override toggledTooltip = 'toolbar.lowerYourHand';
 
     /**
      * Indicates whether this button is in toggled state or not.
@@ -50,7 +50,7 @@ class RaiseHandButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props.raisedHand;
     }
 
@@ -60,7 +60,7 @@ class RaiseHandButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { disableClick, dispatch, raisedHand } = this.props;
 
         if (disableClick) {

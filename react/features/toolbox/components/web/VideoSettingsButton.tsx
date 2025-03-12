@@ -137,7 +137,7 @@ class VideoSettingsButton extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { gumPending, t, visible, isOpen, buttonKey, notifyMode } = this.props;
 
         return visible ? (

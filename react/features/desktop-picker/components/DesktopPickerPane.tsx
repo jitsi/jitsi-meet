@@ -79,7 +79,7 @@ class DesktopPickerPane extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             onClick,
             onDoubleClick,

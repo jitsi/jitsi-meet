@@ -55,7 +55,7 @@ class AudioOutputPreview extends Component<IProps> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate() {
+    override componentDidUpdate() {
         this._setAudioSink();
     }
 
@@ -65,7 +65,7 @@ class AudioOutputPreview extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <>
                 <Button

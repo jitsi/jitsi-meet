@@ -18,7 +18,7 @@ class SecurityDialogButton<P extends AbstractSecurityDialogButtonProps, S> exten
      * @private
      * @returns {void}
      */
-    _handleClickSecurityButton() {
+    override _handleClickSecurityButton() {
         const { dispatch } = this.props;
 
         dispatch(toggleSecurityDialog());

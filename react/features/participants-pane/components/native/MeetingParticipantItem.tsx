@@ -130,7 +130,7 @@ class MeetingParticipantItem extends PureComponent<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _audioMediaState,
             _disableModeratorIndicator,

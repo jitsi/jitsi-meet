@@ -173,7 +173,7 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             disabledSounds,
             enabledNotifications,

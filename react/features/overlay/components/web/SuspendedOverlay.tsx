@@ -17,7 +17,7 @@ class SuspendedOverlay extends AbstractSuspendedOverlay {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { t } = this.props;
 
         return (

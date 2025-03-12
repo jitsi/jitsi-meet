@@ -52,7 +52,7 @@ class Chat extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { _messages, route } = this.props;
         const privateMessageRecipient = route?.params?.privateMessageRecipient;
 

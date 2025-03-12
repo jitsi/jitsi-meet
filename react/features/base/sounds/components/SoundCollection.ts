@@ -47,7 +47,7 @@ class SoundCollection extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         let key = 0;
         const sounds = [];
 

@@ -181,7 +181,7 @@ class VideoQualitySlider extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { t } = this.props;
         const classes = withStyles.getClasses(this.props);
         const activeSliderOption = this._mapCurrentQualityToSliderValue();

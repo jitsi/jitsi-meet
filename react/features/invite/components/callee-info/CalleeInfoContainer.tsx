@@ -32,7 +32,7 @@ class CalleeInfoContainer extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return this.props._calleeInfoVisible ? <CalleeInfo /> : null;
     }
 }

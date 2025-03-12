@@ -14,9 +14,9 @@ import { getFeatureFlag } from '../../../flags/functions';
  * Implements an {@link AbstractButton} to open the carmode.
  */
 class SettingsButton extends AbstractButton<AbstractButtonProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.Settings';
-    icon = IconGear;
-    label = 'settings.buttonLabel';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.Settings';
+    override icon = IconGear;
+    override label = 'settings.buttonLabel';
 
     /**
      * Handles clicking / pressing the button, and opens the carmode mode.
@@ -24,7 +24,7 @@ class SettingsButton extends AbstractButton<AbstractButtonProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         return navigate(screen.settings.main);
     }
 }

@@ -29,7 +29,7 @@ class OverlayContainer extends Component<IProps> {
      * @public
      * @returns {ReactElement|null}
      */
-    render() {
+    override render() {
         const { overlay } = this.props;
 
         return overlay ? React.createElement(overlay, {}) : null;

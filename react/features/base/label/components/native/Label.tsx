@@ -89,7 +89,7 @@ export default class Label extends Component<IProps, State> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         this._maybeToggleAnimation({}, this.props);
     }
 
@@ -98,7 +98,7 @@ export default class Label extends Component<IProps, State> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         this._maybeToggleAnimation(prevProps, this.props);
     }
 
@@ -107,7 +107,7 @@ export default class Label extends Component<IProps, State> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { icon, text, status, style, iconColor, textStyle } = this.props;
 
         let extraStyle = null;

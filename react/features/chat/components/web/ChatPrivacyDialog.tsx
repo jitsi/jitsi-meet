@@ -15,7 +15,7 @@ class ChatPrivacyDialog extends AbstractChatPrivacyDialog {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <Dialog
                 cancel = {{ translationKey: 'dialog.sendPrivateMessageCancel' }}

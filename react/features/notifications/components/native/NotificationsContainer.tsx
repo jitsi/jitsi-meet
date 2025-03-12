@@ -77,7 +77,7 @@ class NotificationsContainer extends Component<IProps> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         // Set the initial dismiss timeout (if any)
         // @ts-ignore
         this._manageDismissTimeout();
@@ -88,7 +88,7 @@ class NotificationsContainer extends Component<IProps> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         this._manageDismissTimeout(prevProps);
     }
 
@@ -136,7 +136,7 @@ class NotificationsContainer extends Component<IProps> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this._clearNotificationDismissTimeout();
     }
 
@@ -177,7 +177,7 @@ class NotificationsContainer extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { _notifications, shouldDisplayTileView, toolboxVisible } = this.props;
         let notificationsContainerStyle;
 

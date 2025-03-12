@@ -32,10 +32,10 @@ interface IProps extends AbstractButtonProps {
  * @augments AbstractButton
  */
 class VideoShareButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.sharedvideo';
-    icon = IconPlay;
-    label = 'toolbar.sharedvideo';
-    toggledLabel = 'toolbar.stopSharedVideo';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.sharedvideo';
+    override icon = IconPlay;
+    override label = 'toolbar.sharedvideo';
+    override toggledLabel = 'toolbar.stopSharedVideo';
 
     /**
      * Handles clicking / pressing the button.
@@ -44,7 +44,7 @@ class VideoShareButton extends AbstractButton<IProps> {
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         this._doToggleSharedVideo();
     }
 
@@ -55,7 +55,7 @@ class VideoShareButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._sharingVideo;
     }
 
@@ -66,7 +66,7 @@ class VideoShareButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isDisabled() {
+    override _isDisabled() {
         return this.props._isDisabled;
     }
 
