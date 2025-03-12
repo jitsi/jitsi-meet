@@ -173,8 +173,6 @@ function _mapStateToProps(state: IReduxState) {
     const onStage = getLargeVideoParticipant(state)?.fakeParticipant === FakeParticipant.SharedVideo;
     const isVideoShared = isVideoPlaying(state);
 
-    console.log(state['features/shared-video']);
-
     return {
         clientHeight,
         clientWidth,

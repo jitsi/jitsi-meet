@@ -451,8 +451,6 @@ export function _mapStateToProps(state: IReduxState) {
     const localParticipant = getLocalParticipant(state);
     const _isLocalAudioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
 
-    console.log(state['features/shared-video']);
-
     return {
         _conference: getCurrentConference(state),
         _isLocalAudioMuted,
