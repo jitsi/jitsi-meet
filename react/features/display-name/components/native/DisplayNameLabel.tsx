@@ -43,7 +43,7 @@ class DisplayNameLabel extends React.Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         if (!this.props._render) {
             return null;
         }

@@ -48,7 +48,7 @@ export default class AbstractRecentList<P extends IProps> extends AbstractPage<P
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         sendAnalytics(createRecentSelectedEvent());
     }
 

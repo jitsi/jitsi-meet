@@ -12,7 +12,7 @@ export default class AudioMutedIndicator extends Component<{}> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         return (
             <BaseIndicator icon = { IconMicSlash } />
         );

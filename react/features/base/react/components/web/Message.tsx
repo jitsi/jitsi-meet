@@ -95,7 +95,7 @@ class Message extends Component<IProps> {
      *
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { screenReaderHelpText } = this.props;
 
         return (

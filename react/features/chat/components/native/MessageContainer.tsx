@@ -39,7 +39,7 @@ class MessageContainer extends AbstractMessageContainer<IProps, any> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const data = this._getMessagesGroupedBySender();
 
         return (

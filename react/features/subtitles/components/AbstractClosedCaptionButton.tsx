@@ -49,7 +49,7 @@ export class AbstractClosedCaptionButton
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { _requestingSubtitles, dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('transcribing.ccButton',
@@ -71,7 +71,7 @@ export class AbstractClosedCaptionButton
      * @protected
      * @returns {boolean}
      */
-    _isDisabled() {
+    override _isDisabled() {
         return false;
     }
 
@@ -82,7 +82,7 @@ export class AbstractClosedCaptionButton
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._requestingSubtitles;
     }
 }

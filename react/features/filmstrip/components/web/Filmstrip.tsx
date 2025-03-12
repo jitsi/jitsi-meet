@@ -300,7 +300,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         this.props.dispatch(registerShortcut({
             character: 'F',
             helpDescription: 'keyboardShortcuts.toggleFilmstrip',
@@ -318,7 +318,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this.props.dispatch(unregisterShortcut('F'));
 
         document.removeEventListener('mouseup', this._onDragMouseUp);
@@ -333,7 +333,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const filmstripStyle: any = { };
         const {
             _currentLayout,

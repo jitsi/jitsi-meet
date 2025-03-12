@@ -10,6 +10,7 @@
         "moduleResolution": "Node",
         "strict": true,
         "noImplicitAny": true,
+        "noImplicitOverride": true,
         "strictPropertyInitialization": false,
         "resolveJsonModule": true,
         "moduleSuffixes": [".web", ""]

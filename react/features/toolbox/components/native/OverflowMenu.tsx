@@ -122,7 +122,7 @@ class OverflowMenu extends PureComponent<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _isBreakoutRoomsSupported,
             _isSpeakerStatsDisabled,

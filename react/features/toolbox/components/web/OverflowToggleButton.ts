@@ -25,12 +25,12 @@ interface IProps extends AbstractButtonProps {
  * Implementation of a button for toggling the overflow menu.
  */
 class OverflowToggleButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.moreActions';
-    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.closeMoreActions';
-    icon = IconDotsHorizontal;
-    label = 'toolbar.moreActions';
-    toggledLabel = 'toolbar.moreActions';
-    tooltip = 'toolbar.moreActions';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.moreActions';
+    override toggledAccessibilityLabel = 'toolbar.accessibilityLabel.closeMoreActions';
+    override icon = IconDotsHorizontal;
+    override label = 'toolbar.moreActions';
+    override toggledLabel = 'toolbar.moreActions';
+    override tooltip = 'toolbar.moreActions';
 
     /**
      * Indicates whether this button is in toggled state or not.
@@ -39,7 +39,7 @@ class OverflowToggleButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props.isOpen;
     }
 
@@ -50,7 +50,7 @@ class OverflowToggleButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _onKeyDown() {
+    override _onKeyDown() {
         this.props.onKeyDown();
     }
 }

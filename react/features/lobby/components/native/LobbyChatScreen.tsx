@@ -25,7 +25,7 @@ class LobbyChatScreen extends
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { _lobbyChatMessages } = this.props;
 
         return (

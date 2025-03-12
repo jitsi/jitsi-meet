@@ -28,7 +28,7 @@ class TestHint extends Component<TestHintProps> {
      *
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         if (!this.props._testModeEnabled) {
             return null;
         }

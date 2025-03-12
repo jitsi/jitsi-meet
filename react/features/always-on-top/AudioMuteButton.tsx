@@ -63,7 +63,7 @@ export default class AudioMuteButton extends Component<Props, IState> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         api.on('audioAvailabilityChanged', this._audioAvailabilityListener);
         api.on('audioMuteStatusChanged', this._audioMutedListener);
 
@@ -86,7 +86,7 @@ export default class AudioMuteButton extends Component<Props, IState> {
      * @inheritdoc
      * @returns {void}
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         api.removeListener(
             'audioAvailabilityChanged',
             this._audioAvailabilityListener);
@@ -165,7 +165,7 @@ export default class AudioMuteButton extends Component<Props, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const toggled = this._isAudioMuted();
 
         return (

@@ -42,7 +42,7 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
        *
        * @inheritdoc
        */
-    componentDidMount() {
+    override componentDidMount() {
         this._scrollMessageContainerToBottom(true);
     }
 
@@ -51,7 +51,7 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
        *
        * @inheritdoc
        */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         if (this.props._lobbyChatMessages !== prevProps._lobbyChatMessages) {
             this._scrollMessageContainerToBottom(true);
         } else if (this.props._isLobbyChatActive && !prevProps._isLobbyChatActive) {
@@ -64,7 +64,7 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { _deviceStatusVisible, showCopyUrlButton, t } = this.props;
 
         return (
@@ -83,7 +83,7 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
      *
      * @inheritdoc
      */
-    _renderJoining() {
+    override _renderJoining() {
         const { _isLobbyChatActive } = this.props;
 
         return (
@@ -142,7 +142,7 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
      *
      * @inheritdoc
      */
-    _renderParticipantForm() {
+    override _renderParticipantForm() {
         return this._renderParticipantInfo();
     }
 
@@ -151,7 +151,7 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
      *
      * @inheritdoc
      */
-    _renderParticipantInfo() {
+    override _renderParticipantInfo() {
         const { displayName } = this.state;
         const { _isDisplayNameRequiredActive, t } = this.props;
         const showError = _isDisplayNameRequiredActive && !displayName;
@@ -180,7 +180,7 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
      *
      * @inheritdoc
      */
-    _renderPasswordForm() {
+    override _renderPasswordForm() {
         const { _passwordJoinFailed, t } = this.props;
 
         return (
@@ -206,7 +206,7 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
      *
      * @inheritdoc
      */
-    _renderPasswordJoinButtons() {
+    override _renderPasswordJoinButtons() {
         return (
             <>
                 <Button
@@ -232,7 +232,7 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
      *
      * @inheritdoc
      */
-    _renderStandardButtons() {
+    override _renderStandardButtons() {
         const { _knocking, _isLobbyChatActive, _renderPassword } = this.props;
 
         return (

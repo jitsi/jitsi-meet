@@ -72,7 +72,7 @@ export default class AbstractVideoTrack<P extends IProps> extends Component<P> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const videoTrack = _falsy2null(this.props.videoTrack);
         let render;
 

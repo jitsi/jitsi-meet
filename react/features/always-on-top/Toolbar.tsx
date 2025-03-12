@@ -73,7 +73,7 @@ export default class Toolbar extends Component<Props, IState> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         api.on('videoConferenceJoined', this._videoConferenceJoinedListener);
 
         this._videoConferenceJoinedListener();
@@ -106,7 +106,7 @@ export default class Toolbar extends Component<Props, IState> {
      * @inheritdoc
      * @returns {void}
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         api.removeListener('videoConferenceJoined', this._videoConferenceJoinedListener);
     }
 
@@ -116,7 +116,7 @@ export default class Toolbar extends Component<Props, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             className = '',
             onMouseOut,

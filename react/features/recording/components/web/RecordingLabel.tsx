@@ -49,7 +49,7 @@ class RecordingLabel extends AbstractRecordingLabel<IProps> {
      *
      * @inheritdoc
      */
-    _renderLabel() {
+    override _renderLabel() {
         const { _isTranscribing, _status, mode, t } = this.props;
         const classes = withStyles.getClasses(this.props);
         const isRecording = mode === JitsiRecordingConstants.mode.FILE;

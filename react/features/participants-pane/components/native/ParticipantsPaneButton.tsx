@@ -30,8 +30,8 @@ interface IProps extends AbstractButtonProps {
  * Implements an {@link AbstractButton} to open the participants panel.
  */
 class ParticipantsPaneButton extends AbstractButton<IProps> {
-    icon = IconUsers;
-    label = 'toolbar.participants';
+    override icon = IconUsers;
+    override label = 'toolbar.participants';
 
     /**
      * Handles clicking / pressing the button, and opens the participants panel.
@@ -39,7 +39,7 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         return navigate(screen.conference.participants);
     }
 
@@ -65,7 +65,7 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
      * @protected
      * @returns {React.ReactElement}
      */
-    render() {
+    override render() {
         return (
             <View style = { styles.participantsButtonBadge as ViewStyle }>
                 { super.render() }

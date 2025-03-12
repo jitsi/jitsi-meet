@@ -13,11 +13,11 @@ import {
  */
 class ClosedCaptionButton
     extends AbstractClosedCaptionButton {
-    accessibilityLabel = 'toolbar.accessibilityLabel.cc';
-    icon = IconSubtitles;
-    tooltip = 'transcribing.ccButtonTooltip';
-    label = 'toolbar.startSubtitles';
-    labelProps = {
+    override accessibilityLabel = 'toolbar.accessibilityLabel.cc';
+    override icon = IconSubtitles;
+    override tooltip = 'transcribing.ccButtonTooltip';
+    override label = 'toolbar.startSubtitles';
+    override labelProps = {
         language: this.props.t(this.props._language ?? 'transcribing.subtitlesOff'),
         languages: this.props.t(this.props.languages ?? ''),
         languagesHead: this.props.t(this.props.languagesHead ?? '')
@@ -28,7 +28,7 @@ class ClosedCaptionButton
      *
      * @returns {void}
      */
-    _handleClickOpenLanguageSelector() {
+    override _handleClickOpenLanguageSelector() {
         const { dispatch } = this.props;
 
         dispatch(toggleLanguageSelectorDialog());

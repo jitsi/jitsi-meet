@@ -26,7 +26,7 @@ export default class Pressable extends Component<IProps> {
      * @inheritdoc
      * @returns {React$Node}
      */
-    render() {
+    override render() {
         // onPress
         const { children, onPress } = this.props;
 

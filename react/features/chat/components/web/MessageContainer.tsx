@@ -36,7 +36,7 @@ export default class MessageContainer extends AbstractMessageContainer<IProps, I
      * Component state used to decide when the hasNewMessages button to appear
      * and where to scroll when click on hasNewMessages button.
      */
-    state: IState = {
+    override state: IState = {
         hasNewMessages: false,
         isScrolledToBottom: true,
         lastReadMessageId: ''
@@ -84,7 +84,7 @@ export default class MessageContainer extends AbstractMessageContainer<IProps, I
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const groupedMessages = this._getMessagesGroupedBySender();
         const messages = groupedMessages.map((group, index) => {
             const messageType = group[0]?.messageType;
@@ -127,7 +127,7 @@ export default class MessageContainer extends AbstractMessageContainer<IProps, I
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         this.scrollToElement(false, null);
         this._createBottomListObserver();
     }
@@ -141,7 +141,7 @@ export default class MessageContainer extends AbstractMessageContainer<IProps, I
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         const newMessages = this.props.messages.filter(message => !prevProps.messages.includes(message));
         const hasLocalMessage = newMessages.map(message => message.messageType).includes(MESSAGE_TYPE_LOCAL);
 
@@ -161,7 +161,7 @@ export default class MessageContainer extends AbstractMessageContainer<IProps, I
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         const target = document.querySelector('#messagesListEnd');
 
         this._bottomListObserver.unobserve(target as Element);

@@ -76,7 +76,7 @@ class LobbySection extends PureComponent<IProps, IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { _visible, t } = this.props;
 
         if (!_visible) {

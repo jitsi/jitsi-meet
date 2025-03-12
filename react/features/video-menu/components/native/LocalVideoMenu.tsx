@@ -74,7 +74,7 @@ class LocalVideoMenu extends PureComponent<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { _participant, _showDemote } = this.props;
         const buttonProps = {
             afterClick: this._onCancel,

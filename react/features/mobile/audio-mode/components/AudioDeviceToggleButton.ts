@@ -11,9 +11,9 @@ import AudioRoutePickerDialog from './AudioRoutePickerDialog';
  * Implements an {@link AbstractButton} to open the audio device list.
  */
 class AudioDeviceToggleButton extends AbstractButton<AbstractButtonProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.audioRoute';
-    icon = IconVolumeUp;
-    label = 'toolbar.accessibilityLabel.audioRoute';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.audioRoute';
+    override icon = IconVolumeUp;
+    override label = 'toolbar.accessibilityLabel.audioRoute';
 
     /**
      * Handles clicking / pressing the button, and opens the appropriate dialog.
@@ -21,7 +21,7 @@ class AudioDeviceToggleButton extends AbstractButton<AbstractButtonProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         this.props.dispatch(openSheet(AudioRoutePickerDialog));
     }
 }

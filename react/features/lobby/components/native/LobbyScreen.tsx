@@ -48,7 +48,7 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { _aspectRatio, _roomName } = this.props;
         let contentWrapperStyles;
         let contentContainerStyles;

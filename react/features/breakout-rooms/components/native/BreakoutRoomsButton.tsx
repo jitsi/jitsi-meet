@@ -21,9 +21,9 @@ import { screen } from '../../../mobile/navigation/routes';
  * Implements an {@link AbstractButton} to open the breakout room screen.
  */
 class BreakoutRoomsButton extends AbstractButton<AbstractButtonProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.breakoutRooms';
-    icon = IconRingGroup;
-    label = 'breakoutRooms.buttonLabel';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.breakoutRooms';
+    override icon = IconRingGroup;
+    override label = 'breakoutRooms.buttonLabel';
 
     /**
      * Handles clicking / pressing the button and opens the breakout rooms screen.
@@ -31,7 +31,7 @@ class BreakoutRoomsButton extends AbstractButton<AbstractButtonProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         return navigate(screen.conference.breakoutRooms);
     }
 }

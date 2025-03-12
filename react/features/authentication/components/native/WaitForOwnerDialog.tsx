@@ -60,7 +60,7 @@ class WaitForOwnerDialog extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { _isConfirmHidden } = this.props;
 
         return (

@@ -28,10 +28,10 @@ interface IProps extends AbstractButtonProps {
  * An abstract implementation of a button for accessing settings.
  */
 class SettingsButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.Settings';
-    icon = IconGear;
-    label = 'toolbar.Settings';
-    tooltip = 'toolbar.Settings';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.Settings';
+    override icon = IconGear;
+    override label = 'toolbar.Settings';
+    override tooltip = 'toolbar.Settings';
 
     /**
      * Handles clicking / pressing the button, and opens the appropriate dialog.
@@ -39,7 +39,7 @@ class SettingsButton extends AbstractButton<IProps> {
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch, isDisplayedOnWelcomePage = false } = this.props;
 
         sendAnalytics(createToolbarEvent('settings'));

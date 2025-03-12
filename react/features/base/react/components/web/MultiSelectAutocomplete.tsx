@@ -164,7 +164,7 @@ class MultiSelectAutocomplete extends Component<IProps, IState> {
      *
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const autoFocus = this.props.shouldFocus || false;
         const disabled = this.props.isDisabled || false;
         const placeholder = this.props.placeholder || '';

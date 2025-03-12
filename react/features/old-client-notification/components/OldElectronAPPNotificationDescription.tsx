@@ -15,7 +15,7 @@ export class OldElectronAPPNotificationDescription extends Component<WithTransla
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { t } = this.props;
 
         return (

@@ -21,7 +21,7 @@ export default class DialInSummaryApp extends BaseApp<any> {
      *
      * @returns {void}
      */
-    async componentDidMount() {
+    override async componentDidMount() {
         await super.componentDidMount();
 
         // @ts-ignore
@@ -51,7 +51,7 @@ export default class DialInSummaryApp extends BaseApp<any> {
      *
      * @override
      */
-    _createMainElement(component: ComponentType<any>, props: Object) {
+    override _createMainElement(component: ComponentType<any>, props: Object) {
         return (
             <JitsiThemeProvider>
                 <GlobalStyles />
@@ -65,7 +65,7 @@ export default class DialInSummaryApp extends BaseApp<any> {
      *
      * @returns {React$Element}
      */
-    _renderDialogContainer() {
+    override _renderDialogContainer() {
         return null;
     }
 }

@@ -90,7 +90,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         super.componentDidMount();
 
         const {
@@ -124,7 +124,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         // We want to have the welcome page support the reduced UI layout,
         // but we ran into serious issues enabling it so we disable it
         // until we have a proper fix in place. We leave the code here though, because

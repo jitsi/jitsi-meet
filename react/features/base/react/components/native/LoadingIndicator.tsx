@@ -31,7 +31,7 @@ export default class LoadingIndicator extends PureComponent<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { color = ColorPalette.white } = this.props;
         let { size = 'large' } = this.props;
 

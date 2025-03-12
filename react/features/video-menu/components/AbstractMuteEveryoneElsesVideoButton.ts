@@ -18,9 +18,9 @@ export interface IProps extends AbstractButtonProps {
  * An abstract remote video menu button which disables the camera of all the other participants.
  */
 export default class AbstractMuteEveryoneElsesVideoButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.muteEveryoneElsesVideoStream';
-    icon = IconVideoOff;
-    label = 'videothumbnail.domuteVideoOfOthers';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.muteEveryoneElsesVideoStream';
+    override icon = IconVideoOff;
+    override label = 'videothumbnail.domuteVideoOfOthers';
 
     /**
      * Handles clicking / pressing the button, and opens a confirmation dialog.
@@ -28,7 +28,7 @@ export default class AbstractMuteEveryoneElsesVideoButton extends AbstractButton
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch, participantID } = this.props;
 
         sendAnalytics(createToolbarEvent('mute.everyoneelsesvideo.pressed'));
