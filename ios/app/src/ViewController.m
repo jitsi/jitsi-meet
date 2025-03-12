@@ -96,6 +96,8 @@
     [self _onJitsiMeetViewDelegateEvent:@"CUSTOM_BUTTON_PRESSED" withData:data];
     
     NSString *buttonId = data[@"id"];
+    JitsiMeetView *view = (JitsiMeetView *)self.view;
+    
     if ([buttonId isEqualToString:@"record"]) {
         long timestamp = (long)[[NSDate date] timeIntervalSince1970];
         int random = arc4random_uniform(10000);
@@ -105,20 +107,64 @@
         
         NSLog(@"Starting recording with metadata: %@", extraMetadata);
         
-        // Start recording using the JitsiMeetView API
-        JitsiMeetView *view = (JitsiMeetView *)self.view;
+        // Start recording
+        [view startRecording:0  // mode: 0 for file recording
+                           :@""  // dropboxToken
+                           :NO  // shouldShare
+                           :@""  // rtmpStreamKey
+                           :@""  // rtmpBroadcastID
+                           :@""  // youtubeStreamKey
+                           :@""  // youtubeBroadcastID
+                           :extraMetadata  // extraMetadata
+                           :NO];  // transcription
         
-        // Use empty strings instead of nil for string parameters
-        NSString *emptyStr = @"";
-        [view startRecording:0 
-                           :emptyStr  // dropboxToken
-                           :NO 
-                           :emptyStr  // rtmpStreamKey
-                           :emptyStr  // rtmpBroadcastID
-                           :emptyStr  // youtubeStreamKey
-                           :emptyStr  // youtubeBroadcastID
-                           :extraMetadata 
-                           :NO];
+        // Create config for switching to close button
+        NSDictionary *closeButton = @{
+            @"icon": @"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAABUCAYAAAAcaxDBAAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAO5SURBVHic7ZrvURsxEMWfMvkepwKug7gDnApwB7iDkAogFUAqwB3EVMC5AtwBpgJMBS8fpBubG+lO0snGHt5v5obxv5X2Ie2u9g4QQgghhBBCCCGEEEIIIYQQQgghhBCfE/NRA5McAfjhXo4BjHY+br8OsQKw2Xldu78vxpj14ElmsHdBSY5hhasATGCFGu97XMfaXSt3rY0xy30OWFxQkuewwjXXMbKCXc01gKUxZtPz/WgGC+q27gWAKbYr8NRYuOthqLjZgpKsAFzDCnmKIvrYwAr71xizyjGQLCjJCayQJbfzC2ysa2gnmxC7c9hNciWoAfwxxtS939whWlC3tW8BzBIn1rDE+ySxSZ1sLC4RjvA+CY4BfMswNwfwu2ScBckxyWfGsyY5J3nlnDsKSFYkZ25u6wR/nov54cR8jRTx5pgE7MP5dhUp7utg39x/tE/MOW1cPWlITpwvfaJWQwZ57DC+GGT8SHGrtu7w+zHX8KTDaG5iOhloY205/90K/JRiNpCcpq7SYNlEkp63H4wx0yKz9Y9ZATiDLXcqd/loyq8ae26EkLwD8Mvz0ffoUqpjuxfP4CQvSN4yrSxr8+RsnO9hflVgzPhETFv+tCm2CtwkrweKGOLZ2S6WMOkvq25SDPjKh0WBiY1oV9KhuKc94Q2dty/r3/m++yVgw/ffzWoW7EyqAvAE4GqInURmAEqccnxHZK/NrwMHSuEfwkmmTdMsCZ31m6R1FmFrBOCe5M+i5/EABxGU5BW6u/Rv2PYk61jH3XaewLYQpwg3P8awOyM+7pUkEDOyJ8Nw8qlZsK6lLcZDp5znAXZ9STq+U8aCSYn2KOdjb7GUtuHhIyuW0n/Imfu+G0pKvhIpN1t66zVjjDdLlsDZfoudSwQ+371lZIqguUWzz4mHTFsp+LZk7inP53uSoN4SiYltOtpS6cLz0V469RFjnDOx4O8IE2llJMlNbNzY+c05yUva4v0pEMeY6lQODB8Zye1R9ZI9x1WSd57fB6uQrrJpAeCy9d4lyVdsb6A19266Ghltlod4qsMYsya5hH+7NveYAAC0faCm4bLB+9XX1gCw2qTB7n7oEA7W3T86H9jduc7h4L1UdjeKc8iP/7RxyBdLU1mR3FsfNcKPqZvDUDbsqWV778s7AwvEnZsbltg+oFV/1JNwbWiT4QTbGJpSCr4AmPU9S5DyoMMM26ZEQ/OERxPI18ciXixO5ArhBLuGXRSdFY4QQgghhBBCCCGEEEIIIYQQQgghhPjs/AeC/qR/mZe1AQAAAABJRU5ErkJggg==",
+            @"backgroundColor": @"red",
+            @"id": @"close"
+        };
+        
+        // Create array with just the close button
+        NSArray *customButtonsArray = @[closeButton];
+        
+        // Create array with recording toolbar buttons
+        NSArray *toolbarButtonsArray = @[@"close", @"microphone", @"camera", @"chat", @"hangup"];
+        
+        // Create config object
+        NSDictionary *configObj = @{
+            @"customToolbarButtons": customButtonsArray,
+            @"toolbarButtons": toolbarButtonsArray
+        };
+        
+        // Update the config
+        [view overwriteConfig:configObj];
+        
+    } else if ([buttonId isEqualToString:@"close"]) {
+        // Stop recording
+        [view stopRecording:0  // mode: 0 for file recording
+                          :NO];  // transcription
+        
+        // Create config for switching back to record button
+        NSDictionary *recordButton = @{
+            @"icon": @"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAFISURBVHgBxVWBcYMwDJQ7QbuBu4FHcDfoBvEGZQOSicgGdIPQCWADRnClQ76qYFE7Vy5/J3yRXpKlCAFwMEwJKcbo8CCxrJpQBmPMAPcCgz6jtChz1DGifBC3NrhnZ0KPElCsrIh1nUjkS4OfapwosbjM6S+yZ+Ktpmxu5419/R5pZKnraYk/Khu+gYU7ITpwTjojjCMeXzh675ozLKNKuCJvUng98dD+IpWOMwfFqY1btAo3sN3tK39sNurwO/xAv59Yb+mhvJnZljE2FxKtszLBYUgJJnooE7S3b65rhWjzJBOkIH7tgCV/4nGBLS7KJDkZU47pDMuGfMs4perS/zFw4hyvg2VMX9eGszYZpRAT1OSMx64KJh237AQ5vXRjLNhL8fe3I0AJVk4dJ3XCblnXi8t4qAGX3YhEOcw8HGo7H/fR/y98AzFrGjU3gjYAAAAAAElFTkSuQmCC",
+            @"id": @"record"
+        };
+        
+        // Create array with just the record button
+        NSArray *customButtonsArray = @[recordButton];
+        
+        // Create array with initial toolbar buttons
+        NSArray *toolbarButtonsArray = @[@"record", @"microphone", @"camera", @"chat", @"hangup"];
+        
+        // Create config object
+        NSDictionary *configObj = @{
+            @"customToolbarButtons": customButtonsArray,
+            @"toolbarButtons": toolbarButtonsArray
+        };
+        
+        // Update the config
+        [view overwriteConfig:configObj];
     }
 }
 
