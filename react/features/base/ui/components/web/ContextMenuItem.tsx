@@ -147,6 +147,7 @@ const useStyles = makeStyles()((theme) => {
                 color: "white",
                 "& *": { color: "white" },
                 "& svg": { fill: "white" },
+                "& button *": { color: "black" },
             },
         },
 
