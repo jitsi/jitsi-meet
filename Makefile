@@ -66,6 +66,7 @@ deploy-appbundle:
 deploy-lib-jitsi-meet:
 	cp \
 		$(LIBJITSIMEET_DIR)/dist/umd/lib-jitsi-meet.* \
+		$(LIBJITSIMEET_DIR)/dist/umd/pqc-kem-kyber512.wasm \
 		$(DEPLOY_DIR)
 
 deploy-pqc-kem-kyber512-browser-wasm:
