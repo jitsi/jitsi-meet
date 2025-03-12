@@ -203,8 +203,6 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
         );
     }
 
-    _isAddDisabled: () => boolean;
-
     /**
      * Callback invoked when a selection has been made but before it has been
      * set as selected.
