@@ -72,27 +72,26 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore) 
             // Filter any undefined values returned by Promise.resolve().
             const effects = effectsArray.filter(effect => Boolean(effect));
 
-            return JitsiMeetJS.createLocalTracks(
-                {
-                    cameraDeviceId,
-                    constraints,
-                    desktopSharingFrameRate,
-                    desktopSharingSourceDevice,
-                    desktopSharingSources,
+            return JitsiMeetJS.createLocalTracks({
+                cameraDeviceId,
+                constraints,
+                desktopSharingFrameRate,
+                desktopSharingSourceDevice,
+                desktopSharingSources,
 
-                    // Copy array to avoid mutations inside library.
-                    devices: options.devices?.slice(0),
-                    effects,
-                    facingMode: options.facingMode || getCameraFacingMode(state),
-                    firefox_fake_device, // eslint-disable-line camelcase
-                    firePermissionPromptIsShownEvent,
-                    micDeviceId,
-                    resolution,
-                    timeout
-                })
-            .catch((err: Error) => {
-                logger.error('Failed to create local tracks', options.devices, err);
-
+                // Copy array to avoid mutations inside library.
+                devices: options.devices?.slice(0),
+                effects,
+                facingMode: options.facingMode || getCameraFacingMode(state),
+                firefox_fake_device, // eslint-disable-line camelcase
+                firePermissionPromptIsShownEvent,
+                micDeviceId,
+                resolution,
+                timeout,
+            }).catch((err: Error) => {
+                store?.dispatch({
+                    type: "SHOW_PERMISSIONS_MODAL",
+                });
                 return Promise.reject(err);
             });
         }));

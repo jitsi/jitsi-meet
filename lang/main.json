@@ -1,27 +1,4 @@
 {
-    "meet": {
-        "internxtMeet": "Internxt Meet",
-        "login": {
-            "login": "Log in",
-            "signUp": "Sign up"
-        },
-        "preMeeting": {
-            "newMeeting": "New Meeting",
-            "enterYourName": "Enter your name",
-            "joinMeeting": "Join Meeting",
-            "nameRequired": "A name is required",
-            "participants": "Participants"
-        },
-        "meeting": {
-            "button": {
-                "gallery": "Gallery",
-                "speaker": "Speaker"
-            },
-            "videoParticipants": {
-                "you": "You"
-            }
-        }
-    },
     "addPeople": {
         "accessibilityLabel": {
             "meetingLink": "Meeting link: {{url}}"
@@ -747,6 +724,35 @@
         "youAreAlone": "You are the only one in the meeting"
     },
     "me": "me",
+    "meet": {
+        "internxtMeet": "Internxt Meet",
+        "login": {
+            "login": "Log in",
+            "signUp": "Sign up"
+        },
+        "meeting": {
+            "button": {
+                "gallery": "Gallery",
+                "speaker": "Speaker"
+            },
+            "videoParticipants": {
+                "you": "You"
+            }
+        },
+        "permissionsModal": {
+            "allowInstructions": "Click <span class=\"font-bold\">Allow</span> in your browser's camera and microphone preferences",
+            "continueWithoutPermissions": "Continue without audio/video",
+            "joinNotice": "You can join a meeting, but other people won't see or hear you.",
+            "permissionRequired": "Permission required for video and audio"
+        },
+        "preMeeting": {
+            "enterYourName": "Enter your name",
+            "joinMeeting": "Join Meeting",
+            "nameRequired": "A name is required",
+            "newMeeting": "New Meeting",
+            "participants": "Participants"
+        }
+    },
     "notify": {
         "OldElectronAPPTitle": "Security vulnerability!",
         "allowAction": "Allow",

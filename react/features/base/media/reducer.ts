@@ -4,6 +4,7 @@ import { CONFERENCE_FAILED, CONFERENCE_LEFT } from '../conference/actionTypes';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { TRACK_REMOVED } from '../tracks/actionTypes';
 
+import mediaPermissions, { IMediaPermissionsState } from "../meet/general/store/mediaPermissions/reducer";
 import {
     GUM_PENDING,
     SET_AUDIO_AVAILABLE,
@@ -15,10 +16,10 @@ import {
     SET_VIDEO_MUTED,
     SET_VIDEO_UNMUTE_PERMISSIONS,
     STORE_VIDEO_TRANSFORM,
-    TOGGLE_CAMERA_FACING_MODE
-} from './actionTypes';
-import { CAMERA_FACING_MODE, MEDIA_TYPE, SCREENSHARE_MUTISM_AUTHORITY } from './constants';
-import { IGUMPendingState } from './types';
+    TOGGLE_CAMERA_FACING_MODE,
+} from "./actionTypes";
+import { CAMERA_FACING_MODE, MEDIA_TYPE, SCREENSHARE_MUTISM_AUTHORITY } from "./constants";
+import { IGUMPendingState } from "./types";
 
 /**
  * Media state object for local audio.
@@ -40,7 +41,7 @@ export const _AUDIO_INITIAL_MEDIA_STATE = {
     available: true,
     gumPending: IGUMPendingState.NONE,
     unmuteBlocked: false,
-    muted: false
+    muted: false,
 };
 
 /**
@@ -54,36 +55,36 @@ export const _AUDIO_INITIAL_MEDIA_STATE = {
  */
 function _audio(state: IAudioState = _AUDIO_INITIAL_MEDIA_STATE, action: AnyAction) {
     switch (action.type) {
-    case SET_AUDIO_AVAILABLE:
-        return {
-            ...state,
-            available: action.available
-        };
-
-    case GUM_PENDING:
-        if (action.mediaTypes.includes(MEDIA_TYPE.AUDIO)) {
+        case SET_AUDIO_AVAILABLE:
             return {
                 ...state,
-                gumPending: action.status
+                available: action.available,
             };
-        }
 
-        return state;
+        case GUM_PENDING:
+            if (action.mediaTypes.includes(MEDIA_TYPE.AUDIO)) {
+                return {
+                    ...state,
+                    gumPending: action.status,
+                };
+            }
 
-    case SET_AUDIO_MUTED:
-        return {
-            ...state,
-            muted: action.muted
-        };
+            return state;
 
-    case SET_AUDIO_UNMUTE_PERMISSIONS:
-        return {
-            ...state,
-            unmuteBlocked: action.blocked
-        };
+        case SET_AUDIO_MUTED:
+            return {
+                ...state,
+                muted: action.muted,
+            };
 
-    default:
-        return state;
+        case SET_AUDIO_UNMUTE_PERMISSIONS:
+            return {
+                ...state,
+                unmuteBlocked: action.blocked,
+            };
+
+        default:
+            return state;
     }
 }
 
@@ -104,7 +105,7 @@ function _audio(state: IAudioState = _AUDIO_INITIAL_MEDIA_STATE, action: AnyActi
 export const _SCREENSHARE_INITIAL_MEDIA_STATE = {
     available: true,
     muted: SCREENSHARE_MUTISM_AUTHORITY.USER,
-    unmuteBlocked: false
+    unmuteBlocked: false,
 };
 
 /**
@@ -118,20 +119,20 @@ export const _SCREENSHARE_INITIAL_MEDIA_STATE = {
  */
 function _screenshare(state: IScreenshareState = _SCREENSHARE_INITIAL_MEDIA_STATE, action: AnyAction) {
     switch (action.type) {
-    case SET_SCREENSHARE_MUTED:
-        return {
-            ...state,
-            muted: action.muted
-        };
+        case SET_SCREENSHARE_MUTED:
+            return {
+                ...state,
+                muted: action.muted,
+            };
 
-    case SET_VIDEO_UNMUTE_PERMISSIONS:
-        return {
-            ...state,
-            unmuteBlocked: action.blocked
-        };
+        case SET_VIDEO_UNMUTE_PERMISSIONS:
+            return {
+                ...state,
+                unmuteBlocked: action.blocked,
+            };
 
-    default:
-        return state;
+        default:
+            return state;
     }
 }
 
@@ -163,7 +164,7 @@ export const _VIDEO_INITIAL_MEDIA_STATE = {
      * The video {@link Transform}s applied to {@code MediaStream}s by
      * {@code id} i.e. "pinch to zoom".
      */
-    transforms: {}
+    transforms: {},
 };
 
 /**
@@ -177,66 +178,64 @@ export const _VIDEO_INITIAL_MEDIA_STATE = {
  */
 function _video(state: IVideoState = _VIDEO_INITIAL_MEDIA_STATE, action: any) {
     switch (action.type) {
-    case CONFERENCE_FAILED:
-    case CONFERENCE_LEFT:
-        return _clearAllVideoTransforms(state);
+        case CONFERENCE_FAILED:
+        case CONFERENCE_LEFT:
+            return _clearAllVideoTransforms(state);
 
-    case GUM_PENDING:
-        if (action.mediaTypes.includes(MEDIA_TYPE.VIDEO)) {
+        case GUM_PENDING:
+            if (action.mediaTypes.includes(MEDIA_TYPE.VIDEO)) {
+                return {
+                    ...state,
+                    gumPending: action.status,
+                };
+            }
+
+            return state;
+
+        case SET_CAMERA_FACING_MODE:
             return {
                 ...state,
-                gumPending: action.status
+                facingMode: action.cameraFacingMode,
+            };
+
+        case SET_VIDEO_AVAILABLE:
+            return {
+                ...state,
+                available: action.available,
+            };
+
+        case SET_VIDEO_MUTED:
+            return {
+                ...state,
+                muted: action.muted,
+            };
+
+        case SET_VIDEO_UNMUTE_PERMISSIONS:
+            return {
+                ...state,
+                unmuteBlocked: action.blocked,
+            };
+
+        case STORE_VIDEO_TRANSFORM:
+            return _storeVideoTransform(state, action);
+
+        case TOGGLE_CAMERA_FACING_MODE: {
+            let cameraFacingMode = state.facingMode;
+
+            cameraFacingMode =
+                cameraFacingMode === CAMERA_FACING_MODE.USER ? CAMERA_FACING_MODE.ENVIRONMENT : CAMERA_FACING_MODE.USER;
+
+            return {
+                ...state,
+                facingMode: cameraFacingMode,
             };
         }
 
-        return state;
+        case TRACK_REMOVED:
+            return _trackRemoved(state, action);
 
-    case SET_CAMERA_FACING_MODE:
-        return {
-            ...state,
-            facingMode: action.cameraFacingMode
-        };
-
-    case SET_VIDEO_AVAILABLE:
-        return {
-            ...state,
-            available: action.available
-        };
-
-    case SET_VIDEO_MUTED:
-        return {
-            ...state,
-            muted: action.muted
-        };
-
-    case SET_VIDEO_UNMUTE_PERMISSIONS:
-        return {
-            ...state,
-            unmuteBlocked: action.blocked
-        };
-
-    case STORE_VIDEO_TRANSFORM:
-        return _storeVideoTransform(state, action);
-
-    case TOGGLE_CAMERA_FACING_MODE: {
-        let cameraFacingMode = state.facingMode;
-
-        cameraFacingMode
-            = cameraFacingMode === CAMERA_FACING_MODE.USER
-                ? CAMERA_FACING_MODE.ENVIRONMENT
-                : CAMERA_FACING_MODE.USER;
-
-        return {
-            ...state,
-            facingMode: cameraFacingMode
-        };
-    }
-
-    case TRACK_REMOVED:
-        return _trackRemoved(state, action);
-
-    default:
-        return state;
+        default:
+            return state;
     }
 }
 
@@ -266,6 +265,7 @@ export interface IMediaState {
     audio: IAudioState;
     screenshare: IScreenshareState;
     video: IVideoState;
+    mediaPermissions: IMediaPermissionsState;
 }
 
 /**
@@ -278,11 +278,15 @@ export interface IMediaState {
  * modified.
  * @returns {Object}
  */
-ReducerRegistry.register<IMediaState>('features/base/media', combineReducers({
-    audio: _audio,
-    screenshare: _screenshare,
-    video: _video
-}));
+ReducerRegistry.register<IMediaState>(
+    "features/base/media",
+    combineReducers({
+        audio: _audio,
+        screenshare: _screenshare,
+        video: _video,
+        mediaPermissions,
+    })
+);
 
 /**
  * Removes all stored video {@link Transform}s.

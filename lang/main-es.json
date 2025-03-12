@@ -1,27 +1,4 @@
 {
-    "meet": {
-        "internxtMeet": "Internxt Meet",
-        "login": {
-            "login": "Iniciar sesión",
-            "signUp": "Registrarse"
-        },
-        "preMeeting": {
-            "newMeeting": "Nueva reunión",
-            "enterYourName": "Introduce tu nombre",
-            "joinMeeting": "Unirse a la reunión",
-            "nameRequired": "Se requiere un nombre",
-            "participants": "Participantes"
-        },
-        "meeting": {
-            "button": {
-                "gallery": "Galería",
-                "speaker": "Speaker"
-            },
-            "videoParticipants": {
-                "you": "Tú"
-            }
-        }
-    },
     "addPeople": {
         "add": "Invitar",
         "addContacts": "Invitar a sus contactos",
@@ -694,6 +671,35 @@
         "youAreAlone": "Estás solo"
     },
     "me": "yo",
+    "meet": {
+        "internxtMeet": "Internxt Meet",
+        "login": {
+            "login": "Iniciar sesión",
+            "signUp": "Registrarse"
+        },
+        "meeting": {
+            "button": {
+                "gallery": "Galería",
+                "speaker": "Speaker"
+            },
+            "videoParticipants": {
+                "you": "Tú"
+            }
+        },
+        "permissionsModal": {
+            "allowInstructions": "Haz clic en <span class=\"font-bold\">Permitir</span> en las preferencias de cámara y micrófono de tu navegador",
+            "continueWithoutPermissions": "Continuar sin audio/video",
+            "joinNotice": "Puedes unirte a una reunión, pero otras personas no te verán ni escucharán.",
+            "permissionRequired": "Se requiere permiso para video y audio"
+        },
+        "preMeeting": {
+            "enterYourName": "Introduce tu nombre",
+            "joinMeeting": "Unirse a la reunión",
+            "nameRequired": "Se requiere un nombre",
+            "newMeeting": "Nueva reunión",
+            "participants": "Participantes"
+        }
+    },
     "notify": {
         "OldElectronAPPTitle": "¡Aplicación obsoleta e insegura!",
         "allowAction": "Permitir",
