@@ -242,7 +242,11 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
 }
 
 - (void)overwriteConfig:(NSDictionary*)config {
-    [self sendEventWithName:overwriteConfigAction body:config];
+    NSDictionary *data = @{
+        @"config": config
+    };
+
+    [self sendEventWithName:overwriteConfigAction body:data];
 }
 
 - (void)sendCameraFacingModeMessage:(NSString*)to :(NSString*)facingMode {
