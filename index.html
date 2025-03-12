@@ -36,7 +36,7 @@
                 Component: JitsiMeetJS.app.entryPoints.APP
             })
 
-            const inIframe = () => {
+            const isEmbedded = () => {
                 try {
                     return window.self !== window.top;
                 } catch (e) {
@@ -45,7 +45,7 @@
             };
 
             const isElectron = navigator.userAgent.includes('Electron');
-            const shouldRegisterWorker = !isElectron && !inIframe() && 'serviceWorker' in navigator;
+            const shouldRegisterWorker = !isElectron && !isEmbedded() && 'serviceWorker' in navigator;
 
             if (shouldRegisterWorker) {
                 navigator.serviceWorker
