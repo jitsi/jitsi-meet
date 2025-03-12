@@ -71,7 +71,7 @@ export interface IProps {
     /**
       * The video start time(in seconds).
       */
-    startTime: number;
+    startTime?: number;
 
     /**
       * The video id.
