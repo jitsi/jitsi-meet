@@ -184,7 +184,7 @@ static NSString *recordingModeToString(RecordingMode mode);
     [externalAPI hideNotification:uid];
 }
 
-- (void)startRecording:(RecordingMode)mode :(NSString *)dropboxToken :(BOOL)shouldShare :(NSString *)rtmpStreamKey :(NSString *)rtmpBroadcastID :(NSString *)youtubeStreamKey :(NSString *)youtubeBroadcastID :(NSDictionary *)extraMetadata :(BOOL)transcription {
+- (void)startRecording:(RecordingMode)mode :(NSString * _Nullable)dropboxToken :(BOOL)shouldShare :(NSString * _Nullable)rtmpStreamKey :(NSString * _Nullable)rtmpBroadcastID :(NSString * _Nullable)youtubeStreamKey :(NSString * _Nullable)youtubeBroadcastID :(NSDictionary * _Nullable)extraMetadata :(BOOL)transcription {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
     [externalAPI startRecording:recordingModeToString(mode) :dropboxToken :shouldShare :rtmpStreamKey :rtmpBroadcastID :youtubeStreamKey :youtubeBroadcastID :extraMetadata :transcription];
 }
@@ -194,12 +194,12 @@ static NSString *recordingModeToString(RecordingMode mode);
     [externalAPI stopRecording:recordingModeToString(mode) :transcription];
 }
 
-- (void)overwriteConfig:(NSDictionary *)config {
+- (void)overwriteConfig:(NSDictionary * _Nonnull)config {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
     [externalAPI overwriteConfig:config];
 }
 
-- (void)sendCameraFacingModeMessage:(NSString *)to :(NSString *)facingMode {
+- (void)sendCameraFacingModeMessage:(NSString * _Nonnull)to :(NSString * _Nullable)facingMode {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
     [externalAPI sendCameraFacingModeMessage:to :facingMode];
 }

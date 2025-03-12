@@ -279,9 +279,9 @@ public class JitsiMeetActivity extends AppCompatActivity
 //         JitsiMeetLogger.i("Conference unique id set: " + extraData);
 //     }
 
-//   protected void onRecordingStatusChanged(HashMap<String, Object> extraData) {
+//     protected void onRecordingStatusChanged(HashMap<String, Object> extraData) {
 //       JitsiMeetLogger.i("Recording status changed: " + extraData);
-//   }
+//     }
 
     // Activity lifecycle methods
     //
