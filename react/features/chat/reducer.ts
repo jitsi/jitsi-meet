@@ -82,43 +82,37 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
 
     case ADD_MESSAGE_REACTION: {
         const { participantId, reactionList, messageId } = action;
-    
-        if (!messageId) {
-            return {
-                ...state,
-                messages: state.messages.map((message, index) => ({
-                    ...message,
-                    messageId: message.messageId || `lobby-${index}`
-                }))
-            };
-        }
+
         const messages = state.messages.map(message => {
-            if (message.messageId === messageId) { 
+            if (messageId === message.messageId) {
                 const newReactions = new Map(message.reactions);
-    
+
                 reactionList.forEach((reaction: string) => {
                     let participants = newReactions.get(reaction);
+
                     if (!participants) {
                         participants = new Set();
                         newReactions.set(reaction, participants);
                     }
+
                     participants.add(participantId);
                 });
-    
+
                 return {
                     ...message,
                     reactions: newReactions
                 };
             }
+
             return message;
         });
-    
+
         return {
             ...state,
             messages
         };
     }
-    
+
     case CLEAR_MESSAGES:
         return {
             ...state,
