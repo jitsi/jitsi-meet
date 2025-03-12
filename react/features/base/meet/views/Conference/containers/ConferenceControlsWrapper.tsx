@@ -35,7 +35,7 @@ const ConferenceControls = ({ dispatch, participants, _inviteUrl, t }: Conferenc
                 isOpen={isOpenInviteUser}
                 onClose={handleInviteUser}
                 translate={t}
-                participantsCount={participants?.length}
+                participantsCount={participants?.length ?? 0}
                 inviteUrl={_inviteUrl}
             />
             <div className="flex absolute bottom-5 left-2/4 -translate-x-2/4">
