@@ -192,14 +192,14 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
         const classes = withStyles.getClasses(this.props);
 
         return (
-            <div
+            <form
                 className = { classes.container }
                 key = 'sounds'>
                 {showSoundsSettings && (
-                    <div className = { classes.column }>
-                        <h2 className = { classes.title }>
+                    <fieldset className = { classes.column }>
+                        <legend className = { classes.title }>
                             {t('settings.playSounds')}
-                        </h2>
+                        </legend>
                         {enableReactions && <Checkbox
                             checked = { soundsReactions && !disabledSounds.includes('REACTION_SOUND') }
                             className = { classes.checkbox }
@@ -246,13 +246,13 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
                             label = { t('settings.participantKnocking') }
                             name = 'soundsParticipantKnocking'
                             onChange = { this._onChange } />
-                    </div>
+                    </fieldset>
                 )}
                 {showNotificationsSettings && (
-                    <div className = { classes.column }>
-                        <h2 className = { classes.title }>
+                    <fieldset className = { classes.column }>
+                        <legend className = { classes.title }>
                             {t('notify.displayNotifications')}
-                        </h2>
+                        </legend>
                         {
                             Object.keys(enabledNotifications).map(key => (
                                 <Checkbox
@@ -266,9 +266,9 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
                                     onChange = { e => this._onEnabledNotificationsChanged(e, key) } />
                             ))
                         }
-                    </div>
+                    </fieldset>
                 )}
-            </div>
+            </form>
         );
     }
 }
