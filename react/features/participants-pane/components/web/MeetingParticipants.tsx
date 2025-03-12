@@ -7,7 +7,11 @@ import { IReduxState } from '../../../app/types';
 import { rejectParticipantAudio, rejectParticipantVideo } from '../../../av-moderation/actions';
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
 import { MEDIA_TYPE } from '../../../base/media/constants';
-import { getParticipantById, isScreenShareParticipant } from '../../../base/participants/functions';
+import {
+    addPeopleFeatureControl,
+    getParticipantById,
+    isScreenShareParticipant
+} from '../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Input from '../../../base/ui/components/web/Input';
 import useContextMenu from '../../../base/ui/hooks/useContextMenu.web';
@@ -16,7 +20,7 @@ import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../b
 import { isButtonEnabled, showOverflowDrawer } from '../../../toolbox/functions.web';
 import { muteRemote } from '../../../video-menu/actions.web';
 import { getSortedParticipantIds, isCurrentRoomRenamable, shouldRenderInviteButton } from '../../functions';
-import { useParticipantDrawer } from '../../hooks';
+import { useParticipantDrawer } from '../../hooks.web';
 import RenameButton from '../breakout-rooms/components/web/RenameButton';
 
 import { InviteButton } from './InviteButton';
@@ -181,9 +185,12 @@ function _mapStateToProps(state: IReduxState) {
 
         return !isScreenShareParticipant(participant);
     });
-
+    const isAddPeopleFeatureEnabled = addPeopleFeatureControl(state);
     const participantsCount = sortedParticipantIds.length;
-    const showInviteButton = shouldRenderInviteButton(state) && isButtonEnabled('invite', state);
+    const showInviteButton
+        = isAddPeopleFeatureEnabled
+        && shouldRenderInviteButton(state)
+        && isButtonEnabled('invite', state);
     const overflowDrawer = showOverflowDrawer(state);
     const currentRoomId = getCurrentRoomId(state);
     const currentRoom = getBreakoutRooms(state)[currentRoomId];
