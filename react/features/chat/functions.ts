@@ -37,8 +37,8 @@ const ASCII_EMOTICON_REGEXP_ARRAY: Array<[RegExp, string]> = [];
  */
 const SLACK_EMOJI_REGEXP_ARRAY: Array<[RegExp, string]> = [];
 
-(function() {
-    for (const [ key, value ] of Object.entries(aliases)) {
+(function () {
+    for (const [key, value] of Object.entries(aliases)) {
 
         // Add ASCII emoticons
         const asciiEmoticons = emojiAsciiAliases[key];
@@ -53,13 +53,13 @@ const SLACK_EMOJI_REGEXP_ARRAY: Array<[RegExp, string]> = [];
                 ? `(?=(${asciiRegexp}))(:(?!//).)`
                 : asciiRegexp;
 
-            ASCII_EMOTICON_REGEXP_ARRAY.push([ new RegExp(formattedAsciiRegexp, 'g'), value as string ]);
+            ASCII_EMOTICON_REGEXP_ARRAY.push([new RegExp(formattedAsciiRegexp, 'g'), value as string]);
         }
 
         // Add slack-type emojis
         const emojiRegexp = `\\B(${escapeRegexp(`:${key}:`)})\\B`;
 
-        SLACK_EMOJI_REGEXP_ARRAY.push([ new RegExp(emojiRegexp, 'g'), value as string ]);
+        SLACK_EMOJI_REGEXP_ARRAY.push([new RegExp(emojiRegexp, 'g'), value as string]);
     }
 })();
 
@@ -70,14 +70,14 @@ const SLACK_EMOJI_REGEXP_ARRAY: Array<[RegExp, string]> = [];
  * @param {string} message - The message to parse and replace.
  * @returns {string}
  */
-export function replaceNonUnicodeEmojis(message: string) {
+export function replaceNonUnicodeEmojis(message: string): string {
     let replacedMessage = message;
 
-    for (const [ regexp, replaceValue ] of SLACK_EMOJI_REGEXP_ARRAY) {
+    for (const [regexp, replaceValue] of SLACK_EMOJI_REGEXP_ARRAY) {
         replacedMessage = replacedMessage.replace(regexp, replaceValue);
     }
 
-    for (const [ regexp, replaceValue ] of ASCII_EMOTICON_REGEXP_ARRAY) {
+    for (const [regexp, replaceValue] of ASCII_EMOTICON_REGEXP_ARRAY) {
         replacedMessage = replacedMessage.replace(regexp, replaceValue);
     }
 
