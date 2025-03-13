@@ -1,54 +1,69 @@
 import { CircleButton } from "@internxt/ui";
 import { Shield, UserPlus, X } from "@phosphor-icons/react";
-import React from "react";
+import React, { useState } from "react";
+import { WithTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { IReduxState } from "../../../../../app/types";
-import {
-    close as closeParticipantsPane,
-    open as openParticipantsPane,
-} from "../../../../../participants-pane/actions.web";
 import { toggleSecurityDialog } from "../../../../../security/actions";
 import { leaveConference } from "../../../../conference/actions";
+import { getInviteURL } from "../../../../connection/functions";
+import { translate } from "../../../../i18n/functions";
 import MediaControlsWrapper from "../../../general/containers/MediaControlsWrapper";
+import InviteUser from "../components/InviteUser";
+import { VideoParticipantType } from "../types";
+import { getParticipantsWithTracks } from "../utils";
 
-interface IProps {
-    isParticipantsPaneOpened: boolean;
+interface ConferenceControlsProps extends WithTranslation {
     dispatch: any;
+    participants?: VideoParticipantType[];
+    _inviteUrl: string;
 }
 
-const ConferenceControls: React.FC<IProps> = ({ isParticipantsPaneOpened, dispatch }) => {
-    const toggleParticipantsPane = () => {
-        if (isParticipantsPaneOpened) {
-            dispatch(closeParticipantsPane());
+const ConferenceControls = ({ dispatch, participants, _inviteUrl, t }: ConferenceControlsProps) => {
+    const [isOpenInviteUser, setIsOpenInviteUser] = useState(false);
+
+    const handleInviteUser = () => {
+        if (isOpenInviteUser) {
+            setIsOpenInviteUser(false);
         } else {
-            dispatch(openParticipantsPane());
+            setIsOpenInviteUser(true);
         }
     };
 
     return (
-        <div className="flex absolute bottom-5 left-2/4 -translate-x-2/4">
-            <div className="flex flex-row space-x-3 p-3 justify-center items-center bg-black/50 border border-white/10 rounded-full">
-                <MediaControlsWrapper />
-                <CircleButton variant="default" onClick={toggleParticipantsPane} active={isParticipantsPaneOpened}>
-                    <UserPlus size={22} color={isParticipantsPaneOpened ? "black" : "white"} />
-                </CircleButton>
-                <CircleButton variant="cancel" onClick={() => dispatch(leaveConference())}>
-                    <X size={22} color="white" />
-                </CircleButton>
-                <CircleButton variant="default" onClick={() => dispatch(toggleSecurityDialog())}>
-                    <Shield size={22} color={"white"} weight="fill" />
-                </CircleButton>
+        <>
+            <InviteUser
+                isOpen={isOpenInviteUser}
+                onClose={handleInviteUser}
+                translate={t}
+                participantsCount={participants?.length ?? 0}
+                inviteUrl={_inviteUrl}
+            />
+            <div className="flex absolute bottom-5 left-2/4 -translate-x-2/4">
+                <div className="flex flex-row space-x-3 p-3 justify-center items-center bg-black/50 border border-white/10 rounded-full">
+                    <MediaControlsWrapper />
+                    <CircleButton variant="default" onClick={handleInviteUser} active={isOpenInviteUser}>
+                        <UserPlus size={22} color={isOpenInviteUser ? "black" : "white"} />
+                    </CircleButton>
+                    <CircleButton variant="cancel" onClick={() => dispatch(leaveConference())}>
+                        <X size={22} color="white" />
+                    </CircleButton>
+                    <CircleButton variant="default" onClick={() => dispatch(toggleSecurityDialog())}>
+                        <Shield size={22} color={"white"} weight="fill" />
+                    </CircleButton>
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 
-const mapStateToProps = (state: IReduxState) => {
-    const { isOpen: isParticipantsPaneOpened } = state["features/participants-pane"];
+function mapStateToProps(state: IReduxState) {
+    const participantsWithTracks = getParticipantsWithTracks(state);
 
     return {
-        isParticipantsPaneOpened,
+        participants: participantsWithTracks,
+        _inviteUrl: getInviteURL(state),
     };
-};
+}
 
-export default connect(mapStateToProps)(ConferenceControls);
+export default translate(connect(mapStateToProps)(ConferenceControls));
