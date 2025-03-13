@@ -196,15 +196,7 @@ class Conference extends AbstractConference<IProps, any> {
      *
      * @param {BeforeUnloadEvent} event - The beforeunload event.
      * @private
-     * @returns {string} - A message to show in the confirmation dialog.
-     */
-    /**
-     * Handler for beforeunload event that shows a confirmation dialog
-     * when user tries to close the tab or browser during a meeting.
-     *
-     * @param {BeforeUnloadEvent} event - The beforeunload event.
-     * @private
-     * @returns {string} - A message to show in the confirmation dialog.
+     * @returns {string}
      */
     _handleBeforeUnload = (event: BeforeUnloadEvent): string => {
         if (APP.conference.isJoined()) {
@@ -222,7 +214,6 @@ class Conference extends AbstractConference<IProps, any> {
      * @returns {void}
      */
     _leaveMeeting(): void {
-        // Dispatch the hangup action to leave the conference
         this.props.dispatch(hangup());
     }
 
