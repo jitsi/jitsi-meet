@@ -125,7 +125,10 @@ class ChatInput extends Component<IProps, IState> {
                         <div
                             className = 'smiley-input'>
                             <div
-                                className = 'smileys-panel' >
+                                aria-label = { this.props.t('chat.smileysPanel') }
+                                className = 'smileys-panel'
+                                ref = { this._smileysContainerRef }
+                                tabIndex = { 0 } >
                                 <SmileysPanel
                                     onSmileySelect = { this._onSmileySelect } />
                             </div>
