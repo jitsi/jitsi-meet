@@ -144,7 +144,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
  * is left or failed.
  */
 StateListenerRegistry.register(
-    state => getCurrentConference(state),
+    (state) => getCurrentConference(state),
     (conference, { dispatch }, previousConference) => {
         if (previousConference) {
             dispatch(toggleE2EE(false));
@@ -152,29 +152,35 @@ StateListenerRegistry.register(
 
         if (conference) {
             conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_AVAILABLE, (pId: string) => {
-                dispatch(participantUpdated({
-                    e2eeVerificationAvailable: true,
-                    id: pId
-                }));
+                dispatch(
+                    participantUpdated({
+                        e2eeVerificationAvailable: true,
+                        id: pId,
+                    })
+                );
             });
 
-            conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_READY, (pId: string, sas: object) => {
-                dispatch(openDialog(ParticipantVerificationDialog, { pId,
-                    sas }));
+            conference.on(JitsiConferenceEvents.E2EE_SAS_AVAILABLE, (pId: string, sas: object) => {
+                dispatch(openDialog(ParticipantVerificationDialog, { pId, sas }));
             });
 
-            conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_COMPLETED,
+            conference.on(
+                JitsiConferenceEvents.E2EE_VERIFICATION_COMPLETED,
                 (pId: string, success: boolean, message: string) => {
                     if (message) {
-                        logger.warn('E2EE_VERIFICATION_COMPLETED warning', message);
+                        logger.warn("E2EE_VERIFICATION_COMPLETED warning", message);
                     }
-                    dispatch(participantUpdated({
-                        e2eeVerified: success,
-                        id: pId
-                    }));
-                });
+                    dispatch(
+                        participantUpdated({
+                            e2eeVerified: success,
+                            id: pId,
+                        })
+                    );
+                }
+            );
         }
-    });
+    }
+);
 
 /**
  * Sets the maxMode based on the number of participants in the conference.
