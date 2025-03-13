@@ -152,7 +152,7 @@ StateListenerRegistry.register(
         }
 
         if (conference) {
-             conference.on(JitsiConferenceEvents.E2EE_SAS_AVAILABLE, (pId: string, sas: object) => {
+             conference.on(JitsiConferenceEvents.E2EE_SAS_AVAILABLE, (sas: object) => {
                  dispatch(openDialog(ParticipantVerificationSASDialog, { sas }));
              });
         }
