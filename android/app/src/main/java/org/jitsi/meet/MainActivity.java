@@ -106,16 +106,21 @@ public class MainActivity extends JitsiMeetActivity {
         closeButton.putString("icon", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAABUCAYAAAAcaxDBAAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAO5SURBVHic7ZrvURsxEMWfMvkepwKug7gDnApwB7iDkAogFUAqwB3EVMC5AtwBpgJMBS8fpBubG+lO0snGHt5v5obxv5X2Ie2u9g4QQgghhBBCCCGEEEIIIYQQQgghhBCfE/NRA5McAfjhXo4BjHY+br8OsQKw2Xldu78vxpj14ElmsHdBSY5hhasATGCFGu97XMfaXSt3rY0xy30OWFxQkuewwjXXMbKCXc01gKUxZtPz/WgGC+q27gWAKbYr8NRYuOthqLjZgpKsAFzDCnmKIvrYwAr71xizyjGQLCjJCayQJbfzC2ysa2gnmxC7c9hNciWoAfwxxtS939whWlC3tW8BzBIn1rDE+ySxSZ1sLC4RjvA+CY4BfMswNwfwu2ScBckxyWfGsyY5J3nlnDsKSFYkZ25u6wR/nov54cR8jRTx5pgE7MP5dhUp7utg39x/tE/MOW1cPWlITpwvfaJWQwZ57DC+GGT8SHGrtu7w+zHX8KTDaG5iOhloY205/90K/JRiNpCcpq7SYNlEkp63H4wx0yKz9Y9ZATiDLXcqd/loyq8ae26EkLwD8Mvz0ffoUqpjuxfP4CQvSN4yrSxr8+RsnO9hflVgzPhETFv+tCm2CtwkrweKGOLZ2S6WMOkvq25SDPjKh0WBiY1oV9KhuKc94Q2dty/r3/m++yVgw/ffzWoW7EyqAvAE4GqInURmAEqccnxHZK/NrwMHSuEfwkmmTdMsCZ31m6R1FmFrBOCe5M+i5/EABxGU5BW6u/Rv2PYk61jH3XaewLYQpwg3P8awOyM+7pUkEDOyJ8Nw8qlZsK6lLcZDp5znAXZ9STq+U8aCSYn2KOdjb7GUtuHhIyuW0n/Imfu+G0pKvhIpN1t66zVjjDdLlsDZfoudSwQ+371lZIqguUWzz4mHTFsp+LZk7inP53uSoN4SiYltOtpS6cLz0V469RFjnDOx4O8IE2llJMlNbNzY+c05yUva4v0pEMeY6lQODB8Zye1R9ZI9x1WSd57fB6uQrrJpAeCy9d4lyVdsb6A19266Ghltlod4qsMYsya5hH+7NveYAAC0faCm4bLB+9XX1gCw2qTB7n7oEA7W3T86H9jduc7h4L1UdjeKc8iP/7RxyBdLU1mR3FsfNcKPqZvDUDbsqWV778s7AwvEnZsbltg+oFV/1JNwbWiT4QTbGJpSCr4AmPU9S5DyoMMM26ZEQ/OERxPI18ciXixO5ArhBLuGXRSdFY4QQgghhBBCCCGEEEIIIYQQQgghhPjs/AeC/qR/mZe1AQAAAABJRU5ErkJggg==");
         closeButton.putString("backgroundColor", "red");
 
+        Bundle locationButton = new Bundle();
+        locationButton.putString("id", "location");
+        locationButton.putString("icon", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAFRSURBVHgB1VTRcYMwDBWdgBG8QTMCGzQbNBuUDWCDsgHZICPQDdINSCcgncCV7p5bVXHADpePvDsdRBbvyX5yiO6MIqXIe+/4UXE4pD4liqI40RowccUx+OsYIH4TeQOSiaPVRPy+4dhxjKhpKAeKfM9RztSVqBHUlALpFB8cKBFSi29cSvEeW3dGdMBxSfRmvUR+uSl00hvyEQSdamDUx4e1ae5Ig3mCF/Ohj+xI0KrcDrmN5nwyGkH9W+WeOT70zONd7oImOxmOqMAZT6dyX4bINmN/n+kalFmdylVh1nE0UvOO3KuqE28mWgJGbjIGtv4SrVoPg9CnCETvAfJviCrS1L9BWBKpw7Ek1DZ2R6kiYTy3MzVb1HSUC5h5hB8usu6wdqRbocwbjek672gN/N/tHlTuELu1a0R+TVempv09Z4h06g7km5ooUmeP48PjBzBGLGGSG2WSAAAAAElFTkSuQmCC");
+
         // Add buttons to the static list
-        ALL_CUSTOM_TOOLBAR_BUTTONS.add(recordButton);
         ALL_CUSTOM_TOOLBAR_BUTTONS.add(closeButton);
+        ALL_CUSTOM_TOOLBAR_BUTTONS.add(locationButton);
+        ALL_CUSTOM_TOOLBAR_BUTTONS.add(recordButton);
     }
 
     // Initial toolbar buttons configuration
-    private static final String[] INITIAL_TOOLBAR_BUTTONS = {"record", "microphone", "camera", "chat", "hangup"};
+    private static final String[] INITIAL_TOOLBAR_BUTTONS = {"record", "microphone", "camera", "chat", "close"};
 
     // Toolbar buttons configuration when recording
-    private static final String[] RECORDING_TOOLBAR_BUTTONS = {"close", "microphone", "camera", "chat", "hangup"};
+    private static final String[] RECORDING_TOOLBAR_BUTTONS = {"location", "microphone", "camera", "chat", "close"};
 
     // JitsiMeetActivity overrides
     //
@@ -356,7 +361,7 @@ public class MainActivity extends JitsiMeetActivity {
                 Intent overwriteConfigIntent = BroadcastIntentHelper.buildOverwriteConfigIntent(configObj);
                 JitsiMeetLogger.i("Updating buttons: " + configObj.toString());
                 LocalBroadcastManager.getInstance(this).sendBroadcast(overwriteConfigIntent);
-            } else if ("close".equals(buttonId)) {
+            } else if ("location".equals(buttonId)) {
                 // Handle the close button press - stop recording
                 JitsiMeetLogger.i("Stopping recording");
                 Intent stopRecordingIntent = BroadcastIntentHelper.buildStopRecordingIntent(
@@ -384,6 +389,11 @@ public class MainActivity extends JitsiMeetActivity {
                 Intent overwriteConfigIntent = BroadcastIntentHelper.buildOverwriteConfigIntent(configObj);
                 JitsiMeetLogger.i("Restoring original buttons: " + configObj.toString());
                 LocalBroadcastManager.getInstance(this).sendBroadcast(overwriteConfigIntent);
+            } else if ("close".equals(buttonId)) {
+                // Handle the close button press
+                JitsiMeetLogger.i("Stopping meeting");
+                Intent hangupIntent = BroadcastIntentHelper.buildHangUpIntent();
+                LocalBroadcastManager.getInstance(this).sendBroadcast(hangupIntent);
             }
         }
     }
