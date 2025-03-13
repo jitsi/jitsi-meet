@@ -624,7 +624,10 @@ export class Participant {
             }
         );
 
-        await this.driver.url('/base.html');
+        await this.driver.url('/base.html')
+
+            // This was fixed in wdio v9.9.1, we can drop once we update to that version
+            .catch(_ => {}); // eslint-disable-line @typescript-eslint/no-empty-function
     }
 
     /**
