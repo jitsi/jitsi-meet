@@ -9,7 +9,6 @@ import {
     IconUsers,
     IconWarning
 } from '../../../base/icons/svg';
-import { colors } from '../../../base/ui/Tokens';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
 import IconButton from '../../../base/ui/components/native/IconButton';
@@ -30,10 +29,10 @@ import styles from './styles';
  */
 
 const ICON_COLOR = {
-    error: colors.error06,
-    normal: colors.primary06,
-    success: colors.success05,
-    warning: colors.warning05
+    error: BaseTheme.palette.iconError,
+    normal: BaseTheme.palette.iconNormal,
+    success: BaseTheme.palette.iconSuccess,
+    warning: BaseTheme.palette.iconWarning
 };
 
 

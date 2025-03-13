@@ -1,7 +1,7 @@
 import { Theme } from '@mui/material';
 import { adaptV4Theme, createTheme } from '@mui/material/styles';
 
-import { breakpoints, colorMap, colors, font, shape, spacing, typography } from '../base/ui/Tokens';
+import { breakpoints, colorMap, font, shape, spacing, typography } from '../base/ui/Tokens';
 import { createColorTokens } from '../base/ui/utils';
 
 /**
@@ -19,7 +19,7 @@ export function createMuiBrandingTheme(customTheme: Theme) {
         spacing: customSpacing
     } = customTheme;
 
-    const newPalette = createColorTokens(colorMap, colors);
+    const newPalette = createColorTokens(colorMap);
 
     if (customPalette) {
         overwriteRecurrsive(newPalette, customPalette);

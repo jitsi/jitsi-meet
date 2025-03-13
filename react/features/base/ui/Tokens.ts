@@ -1,49 +1,3 @@
-// Default color palette
-export const colors = {
-    error03: '#7A141F',
-    error04: '#A21B29',
-    error05: '#CB2233',
-    error06: '#D83848',
-    error08: '#F24D5F',
-
-    primary01: '#00112D',
-    primary02: '#00225A',
-    primary03: '#003486',
-    primary04: '#0045B3',
-    primary05: '#0056E0',
-    primary06: '#246FE5',
-    primary07: '#4687ED',
-    primary08: '#99BBF3',
-    primary09: '#CCDDF9',
-
-    surface01: '#040404',
-    surface02: '#141414',
-    surface03: '#292929',
-    surface04: '#3D3D3D',
-    surface05: '#525252',
-    surface06: '#666',
-    surface07: '#858585',
-    surface08: '#A3A3A3',
-    surface09: '#C2C2C2',
-    surface10: '#E0E0E0',
-    surface11: '#FFF',
-
-    success04: '#189B55',
-    success05: '#1EC26A',
-
-    warning05: '#F8AE1A',
-    warning06: '#FFD600',
-
-    support01: '#FF9B42',
-    support02: '#F96E57',
-    support03: '#DF486F',
-    support04: '#B23683',
-    support05: '#73348C',
-    support06: '#6A50D3',
-    support07: '#4380E2',
-    support08: '#00A8B3',
-    support09: '#2AA076'
-};
 
 // Mapping between the token used and the color
 export const colorMap = {
@@ -69,19 +23,19 @@ export const colorMap = {
     // ----- Actions -----
 
     // Primary
-    action01: 'primary06',
-    action01Hover: 'primary07',
-    action01Active: 'primary04',
+    action01: 'action01',
+    action01Hover: 'hover01',
+    action01Active: 'active01',
 
     // Secondary
-    action02: 'surface10',
-    action02Hover: 'surface11',
-    action02Active: 'surface09',
+    action02: 'action02',
+    action02Hover: 'hover02',
+    action02Active: 'active02',
 
     // Destructive
-    actionDanger: 'error05',
-    actionDangerHover: 'error06',
-    actionDangerActive: 'error04',
+    actionDanger: 'action03',
+    actionDangerHover: 'hover03',
+    actionDangerActive: 'active03',
 
     // Tertiary
     action03: 'transparent',
@@ -89,10 +43,10 @@ export const colorMap = {
     action03Active: 'surface03',
 
     // Disabled
-    disabled01: 'surface09',
+    disabled01: 'disabled01',
 
     // Focus
-    focus01: 'primary07',
+    focus01: 'focus01',
 
     // ----- Links -----
 
@@ -133,6 +87,15 @@ export const colorMap = {
 
     // Error
     iconError: 'error06',
+
+    // Normal
+    iconNormal: 'primary06',
+
+    // Success
+    iconSuccess: 'success05',
+
+    // Warning
+    iconWarning: 'warning05',
 
     // ----- Forms -----
 
@@ -177,19 +140,9 @@ export const spacing
     = [ 0, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128 ];
 
 export const typography = {
-    labelRegular: {
-        fontSize: 12,
-        lineHeight: 16,
-        fontWeight: font.weightRegular,
-        letterSpacing: 0.16
-    },
+    labelRegular: 'label01',
 
-    labelBold: {
-        fontSize: 12,
-        lineHeight: 16,
-        fontWeight: font.weightSemiBold,
-        letterSpacing: 0.16
-    },
+    labelBold: 'labelBold01',
 
     bodyShortRegularSmall: {
         fontSize: 10,
@@ -254,19 +207,9 @@ export const typography = {
         letterSpacing: 0
     },
 
-    heading1: {
-        fontSize: 54,
-        lineHeight: 64,
-        fontWeight: font.weightSemiBold,
-        letterSpacing: 0
-    },
+    heading1: 'heading01',
 
-    heading2: {
-        fontSize: 42,
-        lineHeight: 50,
-        fontWeight: font.weightSemiBold,
-        letterSpacing: 0
-    },
+    heading2: 'heading02',
 
     heading3: {
         fontSize: 32,
