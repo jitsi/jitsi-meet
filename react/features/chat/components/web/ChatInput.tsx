@@ -11,15 +11,14 @@ import Input from '../../../base/ui/components/web/Input';
 import { areSmileysDisabled } from '../../functions';
 
 import SmileysPanel from './SmileysPanel';
-
 /**
  * The type of the React {@code Component} props of {@link ChatInput}.
  */
 interface IProps extends WithTranslation {
-
     /**
      * Whether chat emoticons are disabled.
-     */
+    */
+    // start working on that
     _areSmileysDisabled: boolean;
 
     /**
