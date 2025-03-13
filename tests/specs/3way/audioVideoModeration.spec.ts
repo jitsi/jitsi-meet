@@ -173,7 +173,7 @@ describe('AVModeration', () => {
         await unmuteByModerator(p1, p2, true, false);
 
         // p1 mute audio on p2 and check
-        await p1.getParticipantsPane().muteAudio(p2);
+        await p1.getFilmstrip().muteAudio(p2);
         await p1.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
         await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
 
@@ -213,7 +213,7 @@ describe('AVModeration', () => {
         await unmuteByModerator(p1, p2, false, false);
 
         // mute and check
-        await p1.getParticipantsPane().muteAudio(p2);
+        await p1.getFilmstrip().muteAudio(p2);
         await p1.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
         await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
 
