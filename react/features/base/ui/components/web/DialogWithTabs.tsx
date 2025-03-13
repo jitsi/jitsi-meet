@@ -8,11 +8,12 @@ import { hideDialog } from '../../../dialog/actions';
 import { IconArrowBack, IconCloseLarge } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
+import { redirectToStaticPage } from "../../../../app/actions.any";
+import LocalStorageManager from "../../../meet/LocalStorageManager";
 import BaseDialog, { IProps as IBaseProps } from './BaseDialog';
 import Button from './Button';
 import ClickableIcon from './ClickableIcon';
-import ContextMenuItem from './ContextMenuItem';
-import { redirectToStaticPage } from '../../../../app/actions.any';
+import ContextMenuItem from "./ContextMenuItem";
 
 const MOBILE_BREAKPOINT = 607;
 
@@ -216,7 +217,7 @@ const DialogWithTabs = ({
     }, [ isMobile, userSelected, selectedTab ]);
 
     const onLogout = () => {
-        localStorage.setItem('xNewToken', '');
+        LocalStorageManager.clearCredentials();
         dispatch(redirectToStaticPage('/'));
     };
 

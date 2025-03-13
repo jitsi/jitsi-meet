@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-
 import { Button } from "@internxt/ui";
-import { AuthService } from "../../authentication/internxt/auth.service";
-import { LoginCredentials } from "../../authentication/internxt/types/command.types";
-import { ValidationService } from "../../authentication/internxt/validation.service";
+import React, { useEffect, useState } from "react";
 import { get8x8BetaJWT } from "../../base/connection/options8x8";
+import { useLocalStorage } from "../../base/meet/LocalStorageManager";
+import { AuthService } from "../../base/meet/services/auth.service";
+import { LoginCredentials } from "../../base/meet/services/types/command.types";
+import { ValidationService } from "../../base/meet/services/validation.service";
 
 const InternxtLogo = () => (
     <div
@@ -63,6 +63,8 @@ const Login = (props: { _updateInxtToken: (token: string) => void }) => {
     const [enableTwoFactorCode, setEnableTwoFactorCode] = useState(false);
     const [twoFactorCodeError, setTwoFactorCodeError] = useState("");
     const [checkingCredentials, setCheckingCredentials] = useState(false);
+
+    const storageManager = useLocalStorage();
 
     useEffect(() => {
         setEmailError("");
@@ -146,10 +148,12 @@ const Login = (props: { _updateInxtToken: (token: string) => void }) => {
             }
 
             if (meetTokenCreator?.token && meetTokenCreator?.room) {
-                localStorage.setItem("xToken", loginCredentials.token);
-                localStorage.setItem("xMnemonic", loginCredentials.mnemonic);
-                localStorage.setItem("xNewToken", loginCredentials.newToken);
-                localStorage.setItem("xUser", JSON.stringify(loginCredentials.user));
+                storageManager.saveCredentials(
+                    loginCredentials.token,
+                    loginCredentials.newToken,
+                    loginCredentials.mnemonic,
+                    loginCredentials.user
+                );
 
                 props._updateInxtToken(loginCredentials.newToken);
             } else {

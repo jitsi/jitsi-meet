@@ -1,6 +1,10 @@
 import { Avatar, Button, Header as IntxHeader } from "@internxt/ui";
 import React from "react";
 
+/**
+ * Component for the left content of the header
+ * @returns {JSX.Element} The left content component
+ */
 const LeftContent = React.memo(
     (): JSX.Element => (
         <div className="rounded-2xl border bg-black/50 border-white/10 ">
@@ -18,59 +22,172 @@ const LeftContent = React.memo(
     )
 );
 
+/**
+ * Props for the RightContent component
+ */
 interface RightContentProps {
+    /**
+     * Whether the user is logged in or not
+     */
     isLogged: boolean;
+
+    /**
+     * URL of the user's avatar or null if not available
+     */
     avatar: string | null;
+
+    /**
+     * Full name of the user
+     */
     fullName?: string;
+
+    /**
+     * Translation function
+     */
     translate: Function;
+
+    /**
+     * Handler for the new meeting button
+     */
+    onNewMeeting?: () => void;
+
+    /**
+     * Handler for the login button
+     */
+    onLogin?: () => void;
+
+    /**
+     * Handler for the sign up button
+     */
+    onSignUp?: () => void;
+
+    /**
+     * Whether the new meeting button should be disabled
+     */
+    isCreatingMeeting?: boolean;
 }
 
-const RightContent = React.memo(({ isLogged, avatar, fullName, translate }: RightContentProps): JSX.Element => {
-    const handleNewMeeting = () => {
-        alert("Creating new meeting...");
-    };
+/**
+ * Component for the right content of the header
+ * @param {RightContentProps} props - The component props
+ * @returns {JSX.Element} The right content component
+ */
+const RightContent = React.memo(
+    ({
+        isLogged,
+        avatar,
+        fullName,
+        translate,
+        onNewMeeting,
+        onLogin,
+        onSignUp,
+        isCreatingMeeting = false,
+    }: RightContentProps): JSX.Element => {
+        return isLogged ? (
+            <div className="flex space-x-2 flex-row">
+                <Button
+                    variant="primary"
+                    onClick={onNewMeeting}
+                    disabled={isCreatingMeeting}
+                    loading={isCreatingMeeting}
+                >
+                    {translate("meet.preMeeting.newMeeting")}
+                </Button>
+                <Avatar src={avatar} fullName={fullName ?? ""} className="text-white" diameter={40} />
+            </div>
+        ) : (
+            <div className="flex space-x-2 flex-row">
+                {/* TODO: Change to secondary variant when dark mode works properly */}
+                <Button variant="tertiary" onClick={onLogin}>
+                    {translate("meet.login.login")}
+                </Button>
+                <Button variant="primary" onClick={onSignUp}>
+                    {translate("meet.login.signUp")}
+                </Button>
+            </div>
+        );
+    }
+);
 
-    const handleLogin = () => {
-        alert("Redirecting to login...");
-    };
-
-    const handleSignUp = () => {
-        alert("Redirecting to sign up...");
-    };
-
-    return isLogged ? (
-        <div className="flex space-x-2 flex-row">
-            <Button variant="primary" onClick={handleNewMeeting}>
-                {translate("meet.preMeeting.newMeeting")}
-            </Button>
-            <Avatar src={avatar} fullName={fullName ?? ""} className="text-white" diameter={40} />
-        </div>
-    ) : (
-        <div className="flex space-x-2 flex-row">
-            {/* TODO: Change to secondary variant when dark mode works properly */}
-            <Button variant="tertiary" onClick={handleLogin}>
-                {translate("meet.login.login")}
-            </Button>
-            <Button variant="primary" onClick={handleSignUp}>
-                {translate("meet.login.signUp")}
-            </Button>
-        </div>
-    );
-});
-
+/**
+ * User data interface
+ */
 interface UserData {
+    /**
+     * URL of the user's avatar or null if not available
+     */
     avatar: string | null;
+
+    /**
+     * First name of the user
+     */
     name: string;
+
+    /**
+     * Last name of the user
+     */
     lastname: string;
+
+    /**
+     * Additional user properties
+     */
     [key: string]: any;
 }
 
+/**
+ * Props for the Header component
+ */
 interface HeaderProps {
+    /**
+     * User data object
+     */
     userData?: UserData | null;
+
+    /**
+     * Translation function
+     */
     translate: Function;
+
+    /**
+     * Handler for the new meeting button
+     */
+    onNewMeeting?: () => void;
+
+    /**
+     * Handler for the login button
+     */
+    onLogin?: () => void;
+
+    /**
+     * Handler for the sign up button
+     */
+    onSignUp?: () => void;
+
+    /**
+     * Additional CSS class for the header
+     */
+    className?: string;
+
+    /**
+     * Whether a new meeting is being created
+     */
+    isCreatingMeeting?: boolean;
 }
 
-const Header = ({ userData, translate }: HeaderProps) => (
+/**
+ * Header component for the application
+ * @param {HeaderProps} props - The component props
+ * @returns {JSX.Element} The header component
+ */
+const Header = ({
+    userData,
+    translate,
+    onNewMeeting,
+    onLogin,
+    onSignUp,
+    className = "z-50 py-3",
+    isCreatingMeeting = false,
+}: HeaderProps) => (
     <IntxHeader
         leftContent={<LeftContent />}
         rightContent={
@@ -79,11 +196,14 @@ const Header = ({ userData, translate }: HeaderProps) => (
                 avatar={userData?.avatar ?? null}
                 fullName={userData ? `${userData.name} ${userData.lastname}` : ""}
                 translate={translate}
+                onNewMeeting={onNewMeeting}
+                onLogin={onLogin}
+                onSignUp={onSignUp}
+                isCreatingMeeting={isCreatingMeeting}
             />
         }
-        className="z-50 py-3"
+        className={className}
     />
 );
-
 
 export default Header;
