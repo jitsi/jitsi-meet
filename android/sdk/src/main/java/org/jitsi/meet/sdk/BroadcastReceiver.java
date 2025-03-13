@@ -32,7 +32,13 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
         BroadcastAction action = new BroadcastAction(intent);
         String actionName = action.getType().getAction();
         Bundle data = action.getData();
-
-        ReactInstanceManagerHolder.emitEvent(actionName, Arguments.fromBundle(data));
+            
+        // For actions without data bundle (like hangup), we create an empty map
+        // instead of attempting to convert a null bundle to avoid crashes.
+        if (data != null) {
+            ReactInstanceManagerHolder.emitEvent(actionName, Arguments.fromBundle(data));
+        } else {
+            ReactInstanceManagerHolder.emitEvent(actionName, Arguments.createMap());
+        }
     }
 }
