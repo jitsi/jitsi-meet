@@ -17,7 +17,6 @@ import {
     removeTranscriptMessage,
     setRequestingSubtitles,
     storeSubtitle,
-    updateInterimSubtitle,
     updateTranscriptMessage
 } from './actions.any';
 import { notifyTranscriptionChunkReceived } from './functions';
@@ -135,39 +134,6 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
     const { timestamp } = json;
     const participantId = participant.id;
 
-    // Handle transcription/translation storage
-    if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT) {
-        const transcription = json.transcript[0].text;
-        const isInterim = json.is_interim;
-
-        const subtitle: ISubtitle = {
-            id: transcriptMessageID,
-            participantId,
-            text: transcription,
-            interim: isInterim,
-            timestamp
-        };
-
-        if (isInterim) {
-            dispatch(updateInterimSubtitle(subtitle));
-        } else {
-            dispatch(storeSubtitle(subtitle));
-        }
-    } else if (json.type === JSON_TYPE_TRANSLATION_RESULT) {
-        const translation = json.text;
-        const language = json.language;
-
-        const subtitle: ISubtitle = {
-            participantId,
-            text: translation,
-            language,
-            timestamp,
-            id: transcriptMessageID
-        };
-
-        dispatch(storeSubtitle(subtitle));
-    }
-
     // Handle transcript messages
     const language = state['features/base/conference'].conference
         ?.getLocalParticipantProperty(P_NAME_TRANSLATION_LANGUAGE);
@@ -175,19 +141,47 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
 
     let newTranscriptMessage: ITranscriptMessage | undefined;
 
-    if (json.type === JSON_TYPE_TRANSLATION_RESULT && json.language === language) {
-        // Displays final results in the target language if translation is
-        // enabled.
-        newTranscriptMessage = {
-            clearTimeOut: undefined,
-            final: json.text?.trim(),
-            participant
-        };
+    if (json.type === JSON_TYPE_TRANSLATION_RESULT) {
+        const translation = json.text?.trim();
+
+        if (json.language === language) {
+            // Displays final results in the target language if translation is
+            // enabled.
+            newTranscriptMessage = {
+                clearTimeOut: undefined,
+                final: json.text?.trim(),
+                participant
+            };
+        }
+
+        dispatch(storeSubtitle({
+            participantId,
+            text: translation,
+            language: json.language,
+            interim: false,
+            isTranscription: false,
+            timestamp,
+            id: transcriptMessageID
+        }));
     } else if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT) {
+        const isInterim = json.is_interim;
+
         // Displays interim and final results without any translation if
         // translations are disabled.
 
         const { text } = json.transcript[0];
+
+        const subtitle: ISubtitle = {
+            id: transcriptMessageID,
+            participantId,
+            language: json.language,
+            text,
+            interim: isInterim,
+            timestamp,
+            isTranscription: true
+        };
+
+        dispatch(storeSubtitle(subtitle));
 
         // First, notify the external API.
         if (!(json.is_interim && skipInterimTranscriptions)) {

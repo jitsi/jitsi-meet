@@ -7,7 +7,6 @@ import {
     SET_REQUESTING_SUBTITLES,
     STORE_SUBTITLE,
     TOGGLE_REQUESTING_SUBTITLES,
-    UPDATE_INTERIM_SUBTITLE,
     UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
 import { ISubtitle, ITranscriptMessage } from './types';
@@ -65,15 +64,7 @@ ReducerRegistry.register<ISubtitlesState>('features/subtitles', (
             ...state,
             ...defaultState
         };
-    case STORE_SUBTITLE:
-        return {
-            ...state,
-            subtitlesHistory: [
-                ...state.subtitlesHistory,
-                action.subtitle
-            ]
-        };
-    case UPDATE_INTERIM_SUBTITLE: {
+    case STORE_SUBTITLE: {
         const existingIndex = state.subtitlesHistory.findIndex(
             subtitle => subtitle.id === action.subtitle.id
         );

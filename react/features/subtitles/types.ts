@@ -15,6 +15,7 @@ export interface ITranscriptMessage {
 export interface ISubtitle extends IGroupableMessage {
     id: string;
     interim?: boolean;
+    isTranscription?: boolean;
     language?: string;
     participantId: string;
     text: string;

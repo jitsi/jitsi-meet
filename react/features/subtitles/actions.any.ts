@@ -4,12 +4,10 @@ import {
     REMOVE_CACHED_TRANSCRIPT_MESSAGE,
     REMOVE_TRANSCRIPT_MESSAGE,
     SET_REQUESTING_SUBTITLES,
-    TOGGLE_REQUESTING_SUBTITLES,
-    UPDATE_TRANSCRIPT_MESSAGE,
     STORE_SUBTITLE,
-    UPDATE_INTERIM_SUBTITLE
+    TOGGLE_REQUESTING_SUBTITLES,
+    UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
-
 import { ISubtitle } from './types';
 
 /**
@@ -115,22 +113,6 @@ export function setRequestingSubtitles(
 export function storeSubtitle(subtitle: ISubtitle) {
     return {
         type: STORE_SUBTITLE,
-        subtitle
-    };
-}
-
-/**
- * Updates an interim subtitle in the history.
- *
- * @param {ISubtitle} subtitle - The interim subtitle to update.
- * @returns {{
- *     type: UPDATE_INTERIM_SUBTITLE,
- *     subtitle: ISubtitle
- * }}
- */
-export function updateInterimSubtitle(subtitle: ISubtitle) {
-    return {
-        type: UPDATE_INTERIM_SUBTITLE,
         subtitle
     };
 }
