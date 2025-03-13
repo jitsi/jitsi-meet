@@ -45,7 +45,7 @@ import { setToolboxEnabled } from '../toolbox/actions.any';
 import { DISMISS_CALENDAR_NOTIFICATION } from './actionTypes';
 import { dismissCalendarNotification } from './actions';
 import { IFRAME_DISABLED_TIMEOUT_MINUTES, IFRAME_EMBED_ALLOWED_LOCATIONS } from './constants';
-
+import { showTimeAlterNotification } from '../notifications/actions';
 
 let intervalID: any;
 
@@ -56,7 +56,9 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_JOINED: {
         _conferenceJoined(store);
-
+        setInterval(() => {
+            store.dispatch(showTimeAlterNotification())
+        }, 1800000);
         break;
     }
 

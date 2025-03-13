@@ -53,7 +53,8 @@ export const NOTIFICATION_ICON = {
     ...NOTIFICATION_TYPE,
     MESSAGE: 'message',
     PARTICIPANT: 'participant',
-    PARTICIPANTS: 'participants'
+    PARTICIPANTS: 'participants',
+    CLOCK : 'clock'
 };
 
 /**

@@ -13,7 +13,8 @@ import {
     IconMessage,
     IconUser,
     IconUsers,
-    IconWarningCircle
+    IconWarningCircle,
+    Iclock
 } from '../../../base/icons/svg';
 import Message from '../../../base/react/components/web/Message';
 import { getSupportUrl } from '../../../base/react/functions';
@@ -303,6 +304,9 @@ const Notification = ({
             break;
         case NOTIFICATION_ICON.PARTICIPANTS:
             iconToDisplay = IconUsers;
+            break;
+        case NOTIFICATION_ICON.CLOCK:
+            iconToDisplay = Iclock;
             break;
         default:
             iconToDisplay = IconInfo;

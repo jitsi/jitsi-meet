@@ -21,6 +21,7 @@ import {
     SILENT_LEFT_THRESHOLD
 } from './constants';
 import { INotificationProps } from './types';
+import { Iclock } from '../base/icons/svg';
 
 /**
  * Function that returns notification timeout value based on notification timeout type.
@@ -314,6 +315,24 @@ const _throttledNotifyParticipantLeft = throttle((dispatch: IStore['dispatch'], 
 }, 2000, { leading: false });
 
 /**
+ * A throttled internal function that notify the participant after each 30 minut
+ *
+ * @private
+ * @type {Function}
+ */
+const _throttledNotifyTimeAlert = throttle((dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    let notificationProp: INotificationProps = {
+        title: "Time Alert",
+        description: "Another 30 minutes has passed.",
+        icon: Iclock,
+        appearance: NOTIFICATION_TYPE.NORMAL
+    };
+
+    dispatch(showNotification(notificationProp, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+
+}, 2000, { leading: false });
+
+/**
  * Queues the display of a notification of a participant having connected to
  * the meeting. The notifications are batched so that quick consecutive
  * connection events are shown in one notification.
@@ -341,4 +360,13 @@ export function showParticipantLeftNotification(displayName: string) {
 
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) =>
         _throttledNotifyParticipantLeft(dispatch, getState);
+}
+
+/**
+ *
+ * @returns {function}
+ */
+export function showTimeAlterNotification() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) =>
+        _throttledNotifyTimeAlert(dispatch, getState);
 }

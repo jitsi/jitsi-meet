@@ -4,6 +4,7 @@ import { Animated, Text, TextStyle, View, ViewStyle } from 'react-native';
 
 import Icon from '../../../base/icons/components/Icon';
 import {
+    Iclock,
     IconCloseLarge,
     IconInfoCircle,
     IconUsers,
@@ -125,6 +126,9 @@ const Notification = ({
             break;
         case NOTIFICATION_ICON.WARNING:
             src = IconWarning;
+            break;
+        case NOTIFICATION_ICON.CLOCK:
+            src = Iclock;
             break;
         default:
             src = IconInfoCircle;
