@@ -308,6 +308,7 @@ const PreMeetingScreen = ({
                         translate={t}
                         joinConference={joinConference}
                         disableJoinButton={disableJoinButton}
+                        flipX={flipX}
                     />
                 )}
                 {/* UNCOMMENT IN DEV MODE TO SEE OLD IMPLEMENTATION  */}
