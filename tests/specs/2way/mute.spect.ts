@@ -132,6 +132,9 @@ async function muteP1BeforeP2JoinsAndScreenshare(p2p: boolean) {
     // Stop desktop share and unmute video and check for video again.
     await p1.getToolbar().clickStopDesktopSharingButton();
 
+    // Let's give it some time to stop the screen share before turning on the video
+    await p1.driver.pause(1000);
+
     await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1);
     await unmuteVideoAndCheck(p1, p2);
     await p2.waitForRemoteVideo(await p1.getEndpointId());
