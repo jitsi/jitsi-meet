@@ -246,7 +246,7 @@ class MeetingsList extends Component<IProps> {
                     {
                         typeof duration === 'number' ? (
                             <Text className = 'subtitle'>
-                                { getLocalizedDurationFormatter(duration) }
+                                {`Duration: ${getLocalizedDurationFormatter(duration)}` }
                             </Text>) : null
                     }
                 </Container>
