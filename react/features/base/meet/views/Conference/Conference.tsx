@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _ from "lodash";
 import React from "react";
 import { WithTranslation } from "react-i18next";
 import { connect as reactReduxConnect } from "react-redux";
@@ -29,7 +29,6 @@ import { hangup } from "../../../connection/actions.web";
 import { isMobileBrowser } from "../../../environment/utils";
 import { translate } from "../../../i18n/functions";
 import { setColorAlpha } from "../../../util/helpers";
-
 
 import ConferenceInfo from "../../../../conference/components/web/ConferenceInfo";
 import { default as Notice } from "../../../../conference/components/web/Notice";
@@ -142,6 +141,7 @@ class Conference extends AbstractConference<IProps, any> {
         this._onFullScreenChange = this._onFullScreenChange.bind(this);
         this._onVidespaceTouchStart = this._onVidespaceTouchStart.bind(this);
         this._setBackground = this._setBackground.bind(this);
+        this._leaveMeeting = this._leaveMeeting.bind(this);
     }
 
     /**
@@ -152,6 +152,8 @@ class Conference extends AbstractConference<IProps, any> {
     componentDidMount() {
         document.title = `${interfaceConfig.APP_NAME}`;
         this._start();
+
+        window.addEventListener("beforeunload", this._handleBeforeUnload);
     }
 
     /**
@@ -183,7 +185,45 @@ class Conference extends AbstractConference<IProps, any> {
 
         FULL_SCREEN_EVENTS.forEach((name) => document.removeEventListener(name, this._onFullScreenChange));
 
+        window.removeEventListener("beforeunload", this._handleBeforeUnload);
+
         APP.conference.isJoined() && this.props.dispatch(hangup());
+    }
+
+    /**
+     * Handler for beforeunload event that shows a confirmation dialog
+     * when user tries to close the tab or browser during a meeting.
+     *
+     * @param {BeforeUnloadEvent} event - The beforeunload event.
+     * @private
+     * @returns {string} - A message to show in the confirmation dialog.
+     */
+    /**
+     * Handler for beforeunload event that shows a confirmation dialog
+     * when user tries to close the tab or browser during a meeting.
+     *
+     * @param {BeforeUnloadEvent} event - The beforeunload event.
+     * @private
+     * @returns {string} - A message to show in the confirmation dialog.
+     */
+    _handleBeforeUnload = (event: BeforeUnloadEvent): string => {
+        if (APP.conference.isJoined()) {
+            event.preventDefault();
+            return "";
+        }
+        return "";
+    };
+
+    /**
+     * Handles the action to leave the meeting immediately.
+     * This is triggered when the user clicks the "X" button.
+     *
+     * @private
+     * @returns {void}
+     */
+    _leaveMeeting(): void {
+        // Dispatch the hangup action to leave the conference
+        this.props.dispatch(hangup());
     }
 
     /**
@@ -243,7 +283,6 @@ class Conference extends AbstractConference<IProps, any> {
                             <span aria-level={1} className="sr-only" role="heading">
                                 {t("toolbar.accessibilityLabel.heading") as string}
                             </span>
-
                             {/* <Toolbox /> */}
                         </>
                     )}
