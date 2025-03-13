@@ -35,7 +35,7 @@ clean:
 	rm -fr $(BUILD_DIR)
 
 .NOTPARALLEL:
-deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-excalidraw deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm deploy-pqc-kem-kyber512-browser-wasm deploy-css deploy-local deploy-face-landmarks
+deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-excalidraw deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm deploy-css deploy-local deploy-face-landmarks
 
 deploy-init:
 	rm -fr $(DEPLOY_DIR)
@@ -66,11 +66,7 @@ deploy-appbundle:
 deploy-lib-jitsi-meet:
 	cp \
 		$(LIBJITSIMEET_DIR)/dist/umd/lib-jitsi-meet.* \
-		$(DEPLOY_DIR)
-
-deploy-pqc-kem-kyber512-browser-wasm:
-	cp \
-		$(DASHLANE_PQC_DIR)/*.wasm \
+		$(LIBJITSIMEET_DIR)/dist/umd/pqc-kem-kyber512.wasm \
 		$(DEPLOY_DIR)
 
 deploy-olm:
@@ -125,7 +121,7 @@ deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 .NOTPARALLEL:
-dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm deploy-pqc-kem-kyber512-browser-wasm deploy-excalidraw-dev deploy-face-landmarks
+dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm  deploy-excalidraw-dev deploy-face-landmarks
 	$(WEBPACK_DEV_SERVER)
 
 source-package:
