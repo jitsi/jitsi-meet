@@ -60,6 +60,7 @@ interface IState {
  * @augments Component
  */
 class ChatInput extends Component<IProps, IState> {
+    _smileysContainerRef: RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
     _textArea?: RefObject<HTMLTextAreaElement>;
 
     override state = {
@@ -169,6 +170,18 @@ class ChatInput extends Component<IProps, IState> {
     }
 
     /**
+     * Place cursor focus on the smiley panel.
+     *
+     * @private
+     * @returns {void}
+     */
+    _focusSmileysPanel() {
+        setTimeout(() => {
+            this._smileysContainerRef?.current && this._smileysContainerRef.current.focus();
+        }, 25);
+    }
+
+    /**
      * Submits the message to the chat window.
      *
      * @returns {void}
@@ -264,6 +277,8 @@ class ChatInput extends Component<IProps, IState> {
     _toggleSmileysPanel() {
         if (this.state.showSmileysPanel) {
             this._focus();
+        } else {
+            this._focusSmileysPanel();
         }
         this.setState({ showSmileysPanel: !this.state.showSmileysPanel });
     }
