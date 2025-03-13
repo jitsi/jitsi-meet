@@ -4,6 +4,8 @@ import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import { openDialog } from '../base/dialog/actions';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
+import ParticipantVerificationSASDialog from '../base/meet/views/Conference/components/ParticipantVerificationSASDialog';
+// import ParticipantVerificationDialog from './components/ParticipantVerificationDialog';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../base/participants/actionTypes';
 import { participantUpdated } from '../base/participants/actions';
 import {
@@ -17,7 +19,6 @@ import { playSound } from '../base/sounds/actions';
 
 import { PARTICIPANT_VERIFIED, SET_MEDIA_ENCRYPTION_KEY, START_VERIFICATION, TOGGLE_E2EE } from './actionTypes';
 import { setE2EEMaxMode, toggleE2EE } from './actions';
-import ParticipantVerificationDialog from './components/ParticipantVerificationDialog';
 import { E2EE_OFF_SOUND_ID, E2EE_ON_SOUND_ID, MAX_MODE } from './constants';
 import {
     isMaxModeReached,
@@ -151,33 +152,9 @@ StateListenerRegistry.register(
         }
 
         if (conference) {
-            conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_AVAILABLE, (pId: string) => {
-                dispatch(
-                    participantUpdated({
-                        e2eeVerificationAvailable: true,
-                        id: pId,
-                    })
-                );
+            conference.on(JitsiConferenceEvents.E2EE_SAS_AVAILABLE, (sas: object) => {
+                dispatch(openDialog(ParticipantVerificationSASDialog, { sas }));
             });
-
-            conference.on(JitsiConferenceEvents.E2EE_SAS_AVAILABLE, (pId: string, sas: object) => {
-                dispatch(openDialog(ParticipantVerificationDialog, { pId, sas }));
-            });
-
-            conference.on(
-                JitsiConferenceEvents.E2EE_VERIFICATION_COMPLETED,
-                (pId: string, success: boolean, message: string) => {
-                    if (message) {
-                        logger.warn("E2EE_VERIFICATION_COMPLETED warning", message);
-                    }
-                    dispatch(
-                        participantUpdated({
-                            e2eeVerified: success,
-                            id: pId,
-                        })
-                    );
-                }
-            );
         }
     }
 );

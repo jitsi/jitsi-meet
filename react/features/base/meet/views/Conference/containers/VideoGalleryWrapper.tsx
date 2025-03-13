@@ -2,7 +2,6 @@ import React from "react";
 import { WithTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { IReduxState } from "../../../../../app/types";
-import LargeVideoWeb from "../../../../../large-video/components/LargeVideo.web";
 import { translate } from "../../../../i18n/functions";
 import {
     getLocalParticipant,
@@ -17,6 +16,7 @@ import {
     isParticipantVideoMuted,
 } from "../../../../tracks/functions.any";
 import VideoGallery from "../components/VideoGallery";
+import VideoSpeaker from "../components/VideoSpeaker";
 import { VideoParticipantType } from "../types";
 
 interface GalleryVideoWrapperProps extends WithTranslation {
@@ -25,15 +25,16 @@ interface GalleryVideoWrapperProps extends WithTranslation {
 }
 
 const GalleryVideoWrapper = ({ videoMode, participants, t }: GalleryVideoWrapperProps) => {
-    if (videoMode === "gallery") {
-        return (
-            <div className="h-full w-full overflow-hidden bg-gray-950">
+    return (
+        <div className="h-full w-full overflow-hidden bg-gray-950">
+            <div className={videoMode === "gallery" ? "block" : "hidden"}>
                 <VideoGallery participants={participants ?? []} translate={t} />
             </div>
-        );
-    }
-    // For speaker mode - not implemented yer, for now we just show the large video of jitsi
-    return <LargeVideoWeb />;
+            <div className={videoMode === "speaker" ? "block" : "hidden"}>
+                <VideoSpeaker participants={participants ?? []} translate={t} />
+            </div>
+        </div>
+    );
 };
 
 function mapStateToProps(state: IReduxState, galleryProps: GalleryVideoWrapperProps) {

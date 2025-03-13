@@ -17,7 +17,7 @@ const VideoParticipant = ({ participant, className = "", translate }: VideoParti
 
     return (
         <div
-            className={`relative flex aspect-square min-w-40 items-center justify-center rounded-[20px] overflow-hidden bg-gray-90 sm:aspect-video ${className}
+            className={`flex aspect-square min-w-40 items-center justify-center rounded-[20px] overflow-hidden bg-gray-90 sm:aspect-video ${className}
             ${dominantSpeaker ? "ring-4 ring-white" : ""}`}
             data-testid={`participant-${id}`}
         >
