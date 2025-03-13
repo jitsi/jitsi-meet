@@ -8,14 +8,16 @@ import { isSupportedBrowser } from '../base/environment/environment';
 import { browser } from '../base/lib-jitsi-meet';
 import { toState } from '../base/redux/functions';
 import { parseURIString } from '../base/util/uri';
-import Conference from '../conference/components/web/Conference';
+
 import { getDeepLinkingPage } from '../deep-linking/functions';
 import UnsupportedDesktopBrowser from '../unsupported-browser/components/UnsupportedDesktopBrowser';
 import BlankPage from '../welcome/components/BlankPage.web';
 import WelcomePage from '../welcome/components/WelcomePage.web';
 import { getCustomLandingPageURL, isWelcomePageEnabled } from '../welcome/functions';
 
-import { IReduxState } from './types';
+import Conference from "../base/meet/views/Conference/Conference";
+import { IReduxState } from "./types";
+// import Conference from "../conference/components/web/Conference";
 
 /**
  * Determines which route is to be rendered in order to depict a specific Redux
