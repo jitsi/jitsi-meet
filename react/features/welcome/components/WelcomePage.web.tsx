@@ -330,6 +330,14 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
     _onFormSubmit(event: React.FormEvent) {
         event.preventDefault();
 
+        const roomName = this.state.room.trim();
+        const existingMeeting = this.props._recentList?.some(meeting => meeting.name === roomName);
+        if (existingMeeting) {
+            if (!window.alert(`A meeting with the name "${roomName}" already exists.`)) {
+                return; 
+            }
+        }
+
         if (!this._roomInputRef || this._roomInputRef.reportValidity()) {
             this._onJoin();
         }
@@ -380,27 +388,29 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                 <div className = 'welcome-footer-padded'>
                     <div className = 'welcome-footer-row-block welcome-footer--row-1'>
                         <div className = 'welcome-footer-row-1-text'>{t('welcomepage.jitsiOnMobile')}</div>
+                        <div className='welcome-footer-row-2'>
                         <a
                             className = 'welcome-badge'
                             href = { iosDownloadLink }>
-                            <img
+                            <img 
                                 alt = { t('welcomepage.mobileDownLoadLinkIos') }
                                 src = './images/app-store-badge.png' />
                         </a>
                         <a
                             className = 'welcome-badge'
                             href = { androidDownloadLink }>
-                            <img
+                            <img 
                                 alt = { t('welcomepage.mobileDownLoadLinkAndroid') }
                                 src = './images/google-play-badge.png' />
                         </a>
                         <a
                             className = 'welcome-badge'
                             href = { fDroidUrl }>
-                            <img
+                            <img 
                                 alt = { t('welcomepage.mobileDownLoadLinkFDroid') }
                                 src = './images/f-droid-badge.png' />
                         </a>
+                        </div>
                     </div>
                 </div>
             </div>
