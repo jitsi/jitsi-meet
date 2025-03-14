@@ -60,6 +60,11 @@ interface PreMeetingModalProps {
      * Disable join button
      */
     disableJoinButton?: boolean;
+
+    /**
+     * Mirror video
+     */
+    flipX?: boolean;
 }
 
 /**
@@ -77,6 +82,7 @@ const PreMeetingModal = ({
     translate,
     joinConference,
     disableJoinButton,
+    flipX,
 }: PreMeetingModalProps) => {
     return (
         <TransparentModal
@@ -90,6 +96,7 @@ const PreMeetingModal = ({
                     videoMuted={videoMuted}
                     videoTrack={videoTrack}
                     isAudioMuted={audioTrack?.isMuted()}
+                    flipX={flipX}
                 />
                 <NameInputSection
                     userName={userName}

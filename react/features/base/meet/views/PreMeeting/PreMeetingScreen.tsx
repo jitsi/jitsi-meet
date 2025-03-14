@@ -142,6 +142,11 @@ interface IProps extends WithTranslation {
      * Flag to indicate if there was an error creating the room.
      */
     createRoomError?: boolean;
+
+    /**
+     * Flag to indicate if the video is mirrored.
+     */
+    flipX?: boolean;
 }
 
 const PreMeetingScreen = ({
@@ -163,6 +168,7 @@ const PreMeetingScreen = ({
     userName,
     joinRoomError,
     createRoomError,
+    flipX,
 }: IProps) => {
     const { classes } = useStyles();
     const [isNameInputFocused, setIsNameInputFocused] = useState(false);
@@ -302,6 +308,7 @@ const PreMeetingScreen = ({
                         translate={t}
                         joinConference={joinConference}
                         disableJoinButton={disableJoinButton}
+                        flipX={flipX}
                     />
                 )}
                 {/* UNCOMMENT IN DEV MODE TO SEE OLD IMPLEMENTATION  */}
@@ -338,6 +345,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     );
     const { premeetingBackground } = state["features/dynamic-branding"];
     const userName = getDisplayName(state);
+    const { localFlipX } = state["features/base/settings"];
 
     const joinRoomError = state["features/join-room-error"]?.joinRoomError || false;
     const createRoomError = state["features/join-room-error"]?.createRoomError || false;
@@ -355,6 +363,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         userName,
         joinRoomError,
         createRoomError,
+        flipX: localFlipX,
     };
 }
 
