@@ -58,7 +58,7 @@ ReducerRegistry.register<ISharedVideoState>('features/shared-video',
             status,
             time,
             videoUrl,
-            volume,
+            volume
         };
 
     case SET_ALLOWED_URL_DOMAINS: {
