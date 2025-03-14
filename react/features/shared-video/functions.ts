@@ -1,3 +1,4 @@
+
 import { IStateful } from '../base/app/types';
 import { IJitsiConference } from '../base/conference/reducer';
 import { getFakeParticipants } from '../base/participants/functions';
