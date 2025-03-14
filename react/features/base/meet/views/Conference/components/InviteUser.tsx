@@ -2,8 +2,7 @@ import React from "react";
 import { Button, TransparentModal } from "@internxt/ui";
 import { getDecodedURI } from "../../../../util/uri";
 import { Link } from "@phosphor-icons/react";
-
-const MAX_SIZE_PARTICIPANTS = 10;
+import { MAX_SIZE_PARTICIPANTS } from "../../../constants";
 
 interface InviteUserProps {
     isOpen: boolean;

@@ -147,6 +147,11 @@ interface IProps extends WithTranslation {
      * Flag to indicate if the video is mirrored.
      */
     flipX?: boolean;
+
+    /**
+     * Flag to indicate if conference is creating.
+     */
+    createConference?: Function;
 }
 
 const PreMeetingScreen = ({
@@ -169,6 +174,7 @@ const PreMeetingScreen = ({
     joinRoomError,
     createRoomError,
     flipX,
+    createConference,
 }: IProps) => {
     const { classes } = useStyles();
     const [isNameInputFocused, setIsNameInputFocused] = useState(false);
@@ -305,10 +311,13 @@ const PreMeetingScreen = ({
                         setUserName={setName}
                         setIsNameInputFocused={setIsNameInputFocused}
                         participants={allParticipants}
-                        translate={t}
-                        joinConference={joinConference}
+                        joinConference={() => {
+                            createConference && createConference();
+                            joinConference && joinConference();
+                        }}
                         disableJoinButton={disableJoinButton}
                         flipX={flipX}
+                        isCreatingConference={!!createConference}
                     />
                 )}
                 {/* UNCOMMENT IN DEV MODE TO SEE OLD IMPLEMENTATION  */}
