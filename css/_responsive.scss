@@ -53,7 +53,10 @@
         }
 
         .welcome-footer-row-block {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            gap:12px;
+            align-items: center;
         }
     }
 }
