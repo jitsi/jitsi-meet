@@ -1,22 +1,21 @@
-import React, { Component, RefObject } from 'react';
-import { WithTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import React, { Component, RefObject } from "react";
+import { WithTranslation } from "react-i18next";
+import { connect } from "react-redux";
 
-import { IReduxState, IStore } from '../../../app/types';
-import { isMobileBrowser } from '../../../base/environment/utils';
-import { translate } from '../../../base/i18n/functions';
-import { IconFaceSmile, IconSend } from '../../../base/icons/svg';
-import Button from '../../../base/ui/components/web/Button';
-import Input from '../../../base/ui/components/web/Input';
-import { areSmileysDisabled } from '../../functions';
+import { IReduxState, IStore } from "../../../app/types";
+import { isMobileBrowser } from "../../../base/environment/utils";
+import { translate } from "../../../base/i18n/functions";
+import { IconFaceSmile, IconSend } from "../../../base/icons/svg";
+import Button from "../../../base/ui/components/web/Button";
+import Input from "../../../base/ui/components/web/Input";
+import { areSmileysDisabled } from "../../functions";
 
-import SmileysPanel from './SmileysPanel';
+import SmileysPanel from "./SmileysPanel";
 
 /**
  * The type of the React {@code Component} props of {@link ChatInput}.
  */
 interface IProps extends WithTranslation {
-
     /**
      * Whether chat emoticons are disabled.
      */
@@ -30,7 +29,7 @@ interface IProps extends WithTranslation {
     /**
      * Invoked to send chat messages.
      */
-    dispatch: IStore['dispatch'];
+    dispatch: IStore["dispatch"];
 
     /**
      * Callback to invoke on message send.
@@ -42,7 +41,6 @@ interface IProps extends WithTranslation {
  * The type of the React {@code Component} state of {@link ChatInput}.
  */
 interface IState {
-
     /**
      * User provided nickname when the input text is provided in the view.
      */
@@ -63,8 +61,8 @@ class ChatInput extends Component<IProps, IState> {
     _textArea?: RefObject<HTMLTextAreaElement>;
 
     override state = {
-        message: '',
-        showSmileysPanel: false
+        message: "",
+        showSmileysPanel: false,
     };
 
     /**
@@ -119,36 +117,35 @@ class ChatInput extends Component<IProps, IState> {
      */
     override render() {
         return (
-            <div className = { `chat-input-container${this.state.message.trim().length ? ' populated' : ''}` }>
-                <div id = 'chat-input' >
+            <div className={`chat-input-container${this.state.message.trim().length ? " populated" : ""}`}>
+                <div id="chat-input">
                     {!this.props._areSmileysDisabled && this.state.showSmileysPanel && (
-                        <div
-                            className = 'smiley-input'>
-                            <div
-                                className = 'smileys-panel' >
-                                <SmileysPanel
-                                    onSmileySelect = { this._onSmileySelect } />
+                        <div className="smiley-input">
+                            <div className="smileys-panel">
+                                <SmileysPanel onSmileySelect={this._onSmileySelect} />
                             </div>
                         </div>
                     )}
                     <Input
-                        className = 'chat-input'
-                        icon = { this.props._areSmileysDisabled ? undefined : IconFaceSmile }
-                        iconClick = { this._toggleSmileysPanel }
-                        id = 'chat-input-messagebox'
-                        maxRows = { 5 }
-                        onChange = { this._onMessageChange }
-                        onKeyPress = { this._onDetectSubmit }
-                        placeholder = { this.props.t('chat.messagebox') }
-                        ref = { this._textArea }
-                        textarea = { true }
-                        value = { this.state.message } />
+                        className="chat-input"
+                        icon={this.props._areSmileysDisabled ? undefined : IconFaceSmile}
+                        iconClick={this._toggleSmileysPanel}
+                        id="chat-input-messagebox"
+                        maxRows={5}
+                        onChange={this._onMessageChange}
+                        onKeyPress={this._onDetectSubmit}
+                        placeholder={this.props.t("chat.messagebox")}
+                        ref={this._textArea}
+                        textarea={true}
+                        value={this.state.message}
+                    />
                     <Button
-                        accessibilityLabel = { this.props.t('chat.sendButton') }
-                        disabled = { !this.state.message.trim() }
-                        icon = { IconSend }
-                        onClick = { this._onSubmitMessage }
-                        size = { isMobileBrowser() ? 'large' : 'medium' } />
+                        accessibilityLabel={this.props.t("chat.sendButton")}
+                        disabled={!this.state.message.trim()}
+                        icon={IconSend}
+                        onClick={this._onSubmitMessage}
+                        size={isMobileBrowser() ? "large" : "medium"}
+                    />
                 </div>
             </div>
         );
@@ -175,7 +172,7 @@ class ChatInput extends Component<IProps, IState> {
         if (trimmed) {
             this.props.onSend(trimmed);
 
-            this.setState({ message: '' });
+            this.setState({ message: "" });
 
             // Keep the textarea in focus when sending messages via submit button.
             this._focus();
@@ -183,7 +180,6 @@ class ChatInput extends Component<IProps, IState> {
             // Hide the Emojis box after submitting the message
             this.setState({ showSmileysPanel: false });
         }
-
     }
 
     /**
@@ -207,9 +203,7 @@ class ChatInput extends Component<IProps, IState> {
             return;
         }
 
-        if (event.key === 'Enter'
-            && event.shiftKey === false
-            && event.ctrlKey === false) {
+        if (event.key === "Enter" && event.shiftKey === false && event.ctrlKey === false) {
             event.preventDefault();
             event.stopPropagation();
 
@@ -238,18 +232,20 @@ class ChatInput extends Component<IProps, IState> {
      */
     _onSmileySelect(smileyText: string) {
         if (smileyText) {
+            // Convert text emoji to actual emoji
+            const emoji = emojiMap[smileyText] || smileyText;
+    
             this.setState({
-                message: `${this.state.message} ${smileyText}`,
+                message: `${this.state.message} ${emoji}`,
                 showSmileysPanel: false
             });
         } else {
-            this.setState({
-                showSmileysPanel: false
-            });
+            this.setState({ showSmileysPanel: false });
         }
-
+    
         this._focus();
     }
+    
 
     /**
      * Callback invoked to hide or show the smileys selector.
@@ -275,12 +271,38 @@ class ChatInput extends Component<IProps, IState> {
  * }}
  */
 const mapStateToProps = (state: IReduxState) => {
-    const { privateMessageRecipient } = state['features/chat'];
+    const { privateMessageRecipient } = state["features/chat"];
 
     return {
         _areSmileysDisabled: areSmileysDisabled(state),
-        _privateMessageRecipientId: privateMessageRecipient?.id
+        _privateMessageRecipientId: privateMessageRecipient?.id,
     };
+};
+
+/**
+ * Custom Emoji Mapping for Replacement.
+ */
+const emojiMap: Record<string, string> = {
+    ':)': '😊',
+    ':(': '😦',
+    ':D': '😃',
+    ':+1:': '👍',
+    ':P': '😛',
+    ':wave:': '👋',
+    ':blush:': '😊',
+    ':slightly_smiling_face:': '🙂',
+    ':scream:': '😱',
+    ':*': '😗',
+    ':-1:': '👎',
+    ':mag:': '🔍',
+    ':heart:': '❤️',
+    ':innocent:': '😇',
+    ':angry:': '😠',
+    ':angel:': '👼',
+    ';(': '😭',
+    ':clap:': '👏',
+    ';)': '😉',
+    ':beer:': '🍺'
 };
 
 export default translate(connect(mapStateToProps)(ChatInput));
