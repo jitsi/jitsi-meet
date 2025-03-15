@@ -1,3 +1,6 @@
+import { multiremotebrowser } from '@wdio/globals';
+
+import { IConfig } from '../../../react/features/base/config/configType';
 import type { Participant } from '../../helpers/Participant';
 import {
     checkForScreensharingTile,
@@ -88,13 +91,23 @@ async function toggleMuteAndCheck(
 async function muteP1BeforeP2JoinsAndScreenshare(p2p: boolean) {
     await Promise.all([ ctx.p1?.hangup(), ctx.p2?.hangup() ]);
 
-    await ensureOneParticipant(ctx, {
+    const joinP1Options = {
         configOverwrite: {
             p2p: {
                 enabled: p2p
             }
-        }
-    });
+        } as IConfig
+    };
+
+    if (multiremotebrowser.getInstance('participant1').isFirefox && p2p) {
+        // we are seeing video not being received on FF from the second participant, randomly failing
+        joinP1Options.configOverwrite.p2p = {
+            ...joinP1Options.configOverwrite.p2p,
+            codecPreferenceOrder: [ 'VP8' ]
+        };
+    }
+
+    await ensureOneParticipant(ctx, joinP1Options);
 
     const { p1 } = ctx;
 
@@ -131,9 +144,6 @@ async function muteP1BeforeP2JoinsAndScreenshare(p2p: boolean) {
 
     // Stop desktop share and unmute video and check for video again.
     await p1.getToolbar().clickStopDesktopSharingButton();
-
-    // Let's give it some time to stop the screen share before turning on the video
-    await p1.driver.pause(1000);
 
     await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1);
     await unmuteVideoAndCheck(p1, p2);
