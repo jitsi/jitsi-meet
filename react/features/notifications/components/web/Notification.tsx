@@ -1,5 +1,5 @@
 import { Theme } from '@mui/material';
-import React, { isValidElement, useCallback, useContext } from 'react';
+import React, { isValidElement, useCallback, useContext, useEffect} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { keyframes } from 'tss-react';
@@ -21,6 +21,7 @@ import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { NOTIFICATION_ICON, NOTIFICATION_TYPE } from '../../constants';
 import { INotificationProps } from '../../types';
 import { NotificationsTransitionContext } from '../NotificationsTransition';
+import scs from "../../../../../sounds/incoming_message"
 
 interface IProps extends INotificationProps {
 
@@ -311,6 +312,13 @@ const Notification = ({
 
         return iconToDisplay;
     }, [ icon, appearance ]);
+
+    useEffect(() => {
+      if(NOTIFICATION_ICON.MESSAGE === icon){
+        let sound = new Audio("../../../../../sounds/incoming_message")
+        sound.play()
+      }
+    }, [])
 
     return (
         <div
