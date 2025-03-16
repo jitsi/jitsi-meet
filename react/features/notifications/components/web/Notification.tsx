@@ -21,7 +21,6 @@ import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { NOTIFICATION_ICON, NOTIFICATION_TYPE } from '../../constants';
 import { INotificationProps } from '../../types';
 import { NotificationsTransitionContext } from '../NotificationsTransition';
-import scs from "../../../../../sounds/incoming_message"
 
 interface IProps extends INotificationProps {
 
