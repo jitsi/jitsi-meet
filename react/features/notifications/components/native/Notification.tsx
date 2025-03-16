@@ -62,6 +62,10 @@ const Notification = ({
     const { unmounting } = useContext(NotificationsTransitionContext);
 
     useEffect(() => {
+        if(NOTIFICATION_ICON.MESSAGE === icon){
+            let sound = new Audio("../../../../../sounds/incoming_message")
+            sound.play()
+        }
         Animated.timing(
             notificationOpacityAnimation,
             {
