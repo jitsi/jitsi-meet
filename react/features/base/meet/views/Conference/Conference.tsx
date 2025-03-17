@@ -36,9 +36,12 @@ import Header, { Mode } from "./components/Header";
 
 import ConferenceControlsWrapper from "./containers/ConferenceControlsWrapper";
 import VideoGalleryWrapper from "./containers/VideoGalleryWrapper";
-import { SET_PREJOIN_PAGE_VISIBILITY } from "../../../../prejoin/actionTypes";
+import { SET_NEW_MEETING_PAGE_VISIBILITY, SET_PREJOIN_PAGE_VISIBILITY } from "../../../../prejoin/actionTypes";
 import { DEFAULT_STATE } from "../../../known-domains/reducer";
 import PersistenceRegistry from "../../../redux/PersistenceRegistry";
+import { appNavigate } from "../../../../app/actions.web";
+import { get8x8BetaJWT } from "../../../connection/options8x8";
+import CreateConference from "./CreateConference";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -99,6 +102,7 @@ interface IProps extends AbstractProps, WithTranslation {
     dispatch: any;
 
     isParticipantsPaneOpened: boolean;
+    _showNewMeeting: boolean;
 }
 
 /**
@@ -109,6 +113,23 @@ class Conference extends AbstractConference<IProps, any> {
     _originalOnShowToolbar: Function;
     state = {
         videoMode: "gallery" as Mode,
+    };
+
+    _onCreateConference = async () => {
+        this.setState({ joining: true });
+
+        this.props.dispatch({ type: SET_PREJOIN_PAGE_VISIBILITY, value: false });
+        //this.props.dispatch({ type: SET_NEW_MEETING_PAGE_VISIBILITY, value: false });
+
+        const meetTokenCreator = await get8x8BetaJWT(localStorage.getItem("xNewToken") || "");
+
+        if (meetTokenCreator?.room) {
+            // By the time the Promise of appNavigate settles, this component
+            // may have already been unmounted.
+            const onAppNavigateSettled = () => /*this._mounted &&*/ this.setState({ joining: false });
+
+            this.props.dispatch(appNavigate(meetTokenCreator.room)).then(onAppNavigateSettled, onAppNavigateSettled);
+        }
     };
 
     _onSetVideoModeClicked = (newMode: Mode) => {
@@ -242,9 +263,23 @@ class Conference extends AbstractConference<IProps, any> {
             _overflowDrawer,
             _showLobby,
             _showPrejoin,
+            _showNewMeeting,
             t,
         } = this.props;
         const { videoMode } = this.state;
+
+        if (_showNewMeeting) {
+            return <CreateConference createConference={this._onCreateConference} />;
+        }
+
+        PersistenceRegistry.register(
+            "features/prejoin",
+            {
+                skipPrejoinOnReload: true,
+                showPrejoin: false,
+            },
+            DEFAULT_STATE
+        );
 
         return (
             <div
@@ -438,6 +473,7 @@ class Conference extends AbstractConference<IProps, any> {
 function _mapStateToProps(state: IReduxState) {
     const { backgroundAlpha, mouseMoveCallbackInterval } = state["features/base/config"];
     const { overflowDrawer } = state["features/toolbox"];
+    const { showCreatingMeeting } = state["features/prejoin"];
 
     return {
         ...abstractMapStateToProps(state),
@@ -449,6 +485,7 @@ function _mapStateToProps(state: IReduxState) {
         _roomName: getConferenceNameForTitle(state),
         _showLobby: getIsLobbyVisible(state),
         _showPrejoin: isPrejoinPageVisible(state),
+        _showNewMeeting: showCreatingMeeting,
     };
 }
 

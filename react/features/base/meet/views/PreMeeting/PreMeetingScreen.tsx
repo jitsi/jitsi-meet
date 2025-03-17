@@ -311,8 +311,8 @@ const PreMeetingScreen = ({
                         setUserName={setName}
                         setIsNameInputFocused={setIsNameInputFocused}
                         participants={allParticipants}
-                        joinConference={() => {
-                            createConference && createConference();
+                        joinConference={async () => {
+                            createConference && (await createConference());
                             joinConference && joinConference();
                         }}
                         disableJoinButton={disableJoinButton}

@@ -17,7 +17,8 @@ import { AbstractWelcomePage, IProps, _mapStateToProps } from "./AbstractWelcome
 import Login from "./LoginPage";
 import Tabs from "./Tabs";
 import CreateConference from "../../base/meet/views/Conference/CreateConference";
-import { SET_PREJOIN_PAGE_VISIBILITY } from "../../prejoin/actionTypes";
+import { SET_NEW_MEETING_PAGE_VISIBILITY, SET_PREJOIN_PAGE_VISIBILITY } from "../../prejoin/actionTypes";
+import { appNavigate } from "../../app/actions.web";
 
 /**
  * The pattern used to validate room name.
@@ -201,11 +202,11 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         const showAdditionalToolbarContent = this._shouldShowAdditionalToolbarContent();
         const contentClassName = showAdditionalContent ? "with-content" : "without-content";
         const footerClassName = DISPLAY_WELCOME_FOOTER ? "with-footer" : "without-footer";
-        const { isCreatingConference } = this.state;
+        /*const { isCreatingConference } = this.state;
 
         if (isCreatingConference) {
             return <CreateConference createConference={() => this._onJoinConference()} />;
-        }
+        }*/
 
         return (
             <>
@@ -300,16 +301,22 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      * @private
      * @returns {void}
      */
-
+    /*
     _onJoinConference() {
         if (!this._roomInputRef || this._roomInputRef.reportValidity()) {
             this._onJoin();
             this.props.dispatch({ type: SET_PREJOIN_PAGE_VISIBILITY, value: false });
+            //this.props.dispatch({ type: SET_NEW_MEETING_PAGE_VISIBILITY, value: true });
         }
-    }
+    }*/
 
     _onFormSubmit() {
-        this.setState({ isCreatingConference: true });
+        //this.setState({ isCreatingConference: true });
+        const locationURL = window.location;
+        const baseUrl = `${locationURL.protocol}//${locationURL.host}`;
+        const newUrl = `${baseUrl}/new-meeting`;
+        window.history.replaceState({}, document.title, newUrl);
+        this.props.dispatch(appNavigate(newUrl));
     }
 
     /**

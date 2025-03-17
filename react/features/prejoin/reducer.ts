@@ -10,6 +10,7 @@ import {
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
     SET_PREJOIN_DEVICE_ERRORS,
     SET_PREJOIN_PAGE_VISIBILITY,
+    SET_NEW_MEETING_PAGE_VISIBILITY,
     SET_SKIP_PREJOIN_RELOAD,
 } from "./actionTypes";
 
@@ -27,6 +28,7 @@ const DEFAULT_STATE = {
     name: "",
     rawError: "",
     showPrejoin: true,
+    showCreatingMeeting: false,
     skipPrejoinOnReload: false,
     showJoinByPhoneDialog: false,
 };
@@ -47,6 +49,7 @@ export interface IPrejoinState {
     rawError: string;
     showJoinByPhoneDialog: boolean;
     showPrejoin: boolean;
+    showCreatingMeeting: boolean;
     skipPrejoinOnReload: boolean;
 }
 
@@ -83,6 +86,12 @@ ReducerRegistry.register<IPrejoinState>("features/prejoin", (state = DEFAULT_STA
             return {
                 ...state,
                 showPrejoin: action.value,
+            };
+
+        case SET_NEW_MEETING_PAGE_VISIBILITY:
+            return {
+                ...state,
+                showCreatingMeeting: action.value,
             };
 
         case SET_PREJOIN_DEVICE_ERRORS: {
