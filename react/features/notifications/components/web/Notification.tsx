@@ -312,13 +312,6 @@ const Notification = ({
         return iconToDisplay;
     }, [ icon, appearance ]);
 
-    useEffect(() => {
-      if(NOTIFICATION_ICON.MESSAGE === icon){
-        let sound = new Audio("../../../../../sounds/incoming_message")
-        sound.play()
-      }
-    }, [])
-
     return (
         <div
             aria-atomic = 'false'
