@@ -56,7 +56,6 @@ const checkToolboxOverlap = (clientHeight: number, store: IStore) => {
         const indicatorsRect = tile?.querySelector('.bottom-indicators')?.getBoundingClientRect();
 
         if (!indicatorsRect) {
-            // eslint-disable-next-line no-continue
             continue;
         }
 
