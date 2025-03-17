@@ -1,5 +1,5 @@
 import { Theme } from '@mui/material';
-import React, { isValidElement, useCallback, useContext, useEffect} from 'react';
+import React, { isValidElement, useCallback, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { keyframes } from 'tss-react';
