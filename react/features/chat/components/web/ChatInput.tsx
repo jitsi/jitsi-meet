@@ -1,4 +1,5 @@
-import React, { Component, RefObject } from 'react';
+import React, { Component, ReactElement, RefObject } from 'react';
+import { toArray } from 'react-emoji-render';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
@@ -53,34 +54,6 @@ interface IState {
      */
     showSmileysPanel: boolean;
 }
-
-
-/**
- * Custom Emoji Mapping for Replacement.
- */
-
-const emojiMap: Record<string, string> = {
-    ':)': '😊 ',
-    ':(': '😦 ',
-    ':D': '😃 ',
-    ':+1:': '👍 ',
-    ':P': '😛 ',
-    ':wave:': '👋 ',
-    ':blush:': '😊 ',
-    ':slightly_smiling_face:': '🙂 ',
-    ':scream:': '😱 ',
-    ':*': '😗 ',
-    ':-1:': '👎 ',
-    ':mag:': '🔍 ',
-    ':heart:': '❤️ ',
-    ':innocent:': '😇 ',
-    ':angry:': '😠 ',
-    ':angel:': '👼 ',
-    ';(': '😭 ',
-    ':clap:': '👏 ',
-    ';)': '😉 ',
-    ':beer:': '🍺 ',
-};
 
 /**
  * Implements a React Component for drafting and submitting a chat message.
@@ -207,11 +180,7 @@ class ChatInput extends Component<IProps, IState> {
 
             // Keep the textarea in focus when sending messages via submit button.
             this._focus();
-
-            // Hide the Emojis box after submitting the message
-            this.setState({ showSmileysPanel: false });
         }
-
     }
 
     /**
@@ -253,16 +222,54 @@ class ChatInput extends Component<IProps, IState> {
      * @returns {void}
      */
     _onMessageChange(value: string) {
-        // Convert emoji names to actual emojis
-        let newMessage = value;
+        this.setState({ message: value });
+    }
 
-        Object.keys(emojiMap).forEach(emojiName => {
-            const regex = new RegExp(emojiName, 'g');
+    /**
+    * Renders the message with emojis in the input field.
+    *
+    * @returns {ReactNode}
+    */
+    _renderMessageWithEmojis() {
+        const { message } = this.state;
 
-            newMessage = newMessage.replace(regex, emojiMap[emojiName]);
-        });
+        if (!message) {
+            return '';
+        }
 
-        this.setState({ message: newMessage });
+        // Split the message by spaces
+        const tokens = message.split(' ');
+        let renderedMessage = '';
+
+        // Process each token
+        for (const token of tokens) {
+            if (token.includes('://') || token.startsWith('@')) {
+                // Don't process URLs or mentions
+                renderedMessage += token;
+            } else {
+                // Convert emoji text to Unicode
+                const processed = toArray(token)
+                    .map(item => {
+                        if (typeof item === 'string') {
+                            return item;
+                        } else if (React.isValidElement(item)) {
+                            // Check if it's a React element and has children
+                            const reactElement = item as ReactElement;
+
+                            return reactElement.props?.children || '';
+                        }
+
+                        return '';
+                    })
+                    .join('');
+
+                renderedMessage += processed;
+            }
+
+            renderedMessage += ' ';
+        }
+
+        return renderedMessage.trim();
     }
 
     /**
@@ -275,11 +282,16 @@ class ChatInput extends Component<IProps, IState> {
      */
     _onSmileySelect(smileyText: string) {
         if (smileyText) {
-            const emoji = emojiMap[smileyText.trim()] || smileyText;
-
             this.setState({
-                message: `${this.state.message} ${emoji}`,
+                message: `${this.state.message} ${smileyText}`,
                 showSmileysPanel: false
+            }, () => {
+                // After adding the emoji text, convert the entire message for display
+                const displayMessage = this._renderMessageWithEmojis();
+
+                // Optional: update the state with the converted message
+                // This would replace :) with 😊 in the actual message content
+                this.setState({ message: displayMessage });
             });
         } else {
             this.setState({
