@@ -676,7 +676,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      *
      * @returns {Object} Rooms info.
      */
-    async getRoomsInfo() {
+    getRoomsInfo() {
         return this._transport.sendRequest({
             name: 'rooms-info'
         });
@@ -687,7 +687,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      *
      * @returns {Object} Rooms info.
      */
-    async getSharedDocumentUrl() {
+    getSharedDocumentUrl() {
         return this._transport.sendRequest({
             name: 'get-shared-document-url'
         });

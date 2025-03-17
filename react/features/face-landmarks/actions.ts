@@ -1,5 +1,4 @@
 import 'image-capture';
-import './createImageBitmap';
 import { AnyAction } from 'redux';
 
 import {
