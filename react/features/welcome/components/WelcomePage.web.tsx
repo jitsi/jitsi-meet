@@ -12,9 +12,10 @@ import RecentList from "../../recent-list/components/RecentList.web";
 import SettingsButton from "../../settings/components/web/SettingsButton";
 import { SETTINGS_TABS } from "../../settings/constants";
 
-import { Button } from "@internxt/ui";
+
 import { AbstractWelcomePage, IProps, _mapStateToProps } from "./AbstractWelcomePage";
-import Login from "./LoginPage";
+
+import MeetLandingPage from "./HomePage";
 import Tabs from "./Tabs";
 import { appNavigate } from "../../app/actions.web";
 
@@ -202,7 +203,12 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
         return (
             <>
-                {this.state.inxtToken ? (
+                <MeetLandingPage
+                    updateInxtToken={this._updateInxtToken}
+                    translate={t}
+                    startNewMeeting={this._onFormSubmit}
+                />
+                {/* {this.state.inxtToken ? (
                     <div className={`welcome ${contentClassName} ${footerClassName}`} id="welcome_page">
                         <div className="header" style={{ minHeight: "100vh" }}>
                             <div className="header-image" />
@@ -233,17 +239,6 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                     <Button variant="primary" onClick={this._onFormSubmit} type="submit">
                                         {t("welcomepage.startMeeting")}
                                     </Button>
-                                    {/* <button
-                                        aria-disabled="false"
-                                        aria-label="Start meeting"
-                                        className="welcome-page-button"
-                                        id="enter_room_button"
-                                        onClick={this._onFormSubmit}
-                                        tabIndex={0}
-                                        type="button"
-                                    >
-                                        {t("welcomepage.startMeeting")}
-                                    </button> */}
                                 </div>
                                 {this._titleHasNotAllowCharacter && (
                                     <div className="not-allow-title-character-div" role="alert">
@@ -266,8 +261,13 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                         </div>
                     </div>
                 ) : (
-                    <Login _updateInxtToken={this._updateInxtToken} />
-                )}
+                    <MeetLandingPage
+                        updateInxtToken={this._updateInxtToken}
+                        translate={t}
+                        startNewMeeting={this._onFormSubmit}
+                    />
+                    // <Login _updateInxtToken={this._updateInxtToken} />
+                )} */}
             </>
         );
     }

@@ -677,6 +677,39 @@
             "login": "Iniciar sesión",
             "signUp": "Registrarse"
         },
+        "landing": {
+            "title": {
+                "line1": "Videollamadas privadas",
+                "line2": "y reuniones",
+                "line3": "para todos"
+            },
+            "subtitle": "Videollamadas cifradas directamente desde tu navegador. Sin rastreo. Privacidad total.",
+            "scheduleMeeting": "Programar reunión",
+            "loginRequired": "Primero necesitas iniciar sesión"
+        },
+        "auth": {
+            "modal": {
+                "title": "Nueva reunión",
+                "loginTitle": "Iniciar sesión",
+                "decrypting": "Descifrando...",
+                "emailPlaceholder": "Dirección de correo",
+                "passwordPlaceholder": "Contraseña",
+                "twoFactorCodePlaceholder": "Código de autenticación de dos factores",
+                "loginButton": "Iniciar sesión",
+                "forgotPassword": "Olvidé mi contraseña",
+                "noAccount": "¿No tienes una cuenta?",
+                "createAccount": "Crear cuenta",
+                "error": {
+                    "emailEmpty": "El correo no puede estar vacío",
+                    "emailInvalid": "Por favor, introduce un correo válido",
+                    "passwordEmpty": "La contraseña no puede estar vacía",
+                    "twoFactorCodeLength": "El código debe tener 6 dígitos",
+                    "twoFactorCodeInvalid": "Introduce un código válido de 6 dígitos",
+                    "invalidCredentials": "Credenciales inválidas. Por favor, inténtalo de nuevo.",
+                    "cannotCreateMeetings": "El usuario no puede crear reuniones"
+                }
+            }
+        },
         "meeting": {
             "button": {
                 "gallery": "Galería",

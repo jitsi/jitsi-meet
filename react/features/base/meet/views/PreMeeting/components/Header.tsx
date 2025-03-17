@@ -1,5 +1,5 @@
 import { Avatar, Button, Header as IntxHeader } from "@internxt/ui";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 /**
  * Component for the left content of the header
@@ -62,6 +62,16 @@ interface RightContentProps {
     onSignUp?: () => void;
 
     /**
+     * Handler for the logout button
+     */
+    onLogout?: () => void;
+
+    /**
+     * Handler for the settings button
+     */
+    onOpenSettings?: () => void;
+
+    /**
      * Whether the new meeting button should be disabled
      */
     isCreatingMeeting?: boolean;
@@ -81,10 +91,39 @@ const RightContent = React.memo(
         onNewMeeting,
         onLogin,
         onSignUp,
+        onLogout,
+        onOpenSettings,
         isCreatingMeeting = false,
     }: RightContentProps): JSX.Element => {
+        const [showMenu, setShowMenu] = useState(false);
+
+        const menuRef = useRef<HTMLDivElement>(null);
+        const avatarRef = useRef<HTMLDivElement>(null);
+
+        useEffect(() => {
+            const handleClickOutside = (event: MouseEvent) => {
+                if (
+                    menuRef.current &&
+                    !menuRef.current.contains(event.target as Node) &&
+                    avatarRef.current &&
+                    !avatarRef.current.contains(event.target as Node)
+                ) {
+                    setShowMenu(false);
+                }
+            };
+
+            document.addEventListener("mousedown", handleClickOutside);
+            return () => {
+                document.removeEventListener("mousedown", handleClickOutside);
+            };
+        }, []);
+
+        const toggleMenu = () => {
+            setShowMenu(!showMenu);
+        };
+
         return isLogged ? (
-            <div className="flex space-x-2 flex-row">
+            <div className="flex space-x-2 flex-row items-center">
                 <Button
                     variant="primary"
                     onClick={onNewMeeting}
@@ -93,7 +132,58 @@ const RightContent = React.memo(
                 >
                     {translate("meet.preMeeting.newMeeting")}
                 </Button>
-                <Avatar src={avatar} fullName={fullName ?? ""} className="text-white" diameter={40} />
+
+                <div className="relative">
+                    <div
+                        ref={avatarRef}
+                        onClick={toggleMenu}
+                        className="cursor-pointer transition-transform duration-150 transform hover:scale-105 active:scale-95"
+                    >
+                        <Avatar src={avatar} fullName={fullName ?? ""} className="text-white" diameter={40} />
+                    </div>
+
+                    <div
+                        ref={menuRef}
+                        className={`absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-90 border border-gray-10 z-50 overflow-hidden transition-all duration-200 ease-in-out transform origin-top-right
+                            ${
+                                showMenu
+                                    ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
+                                    : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
+                            }`}
+                    >
+                        <div className="py-1">
+                            {/* Settings Option */}
+                            {onOpenSettings && (
+                                <>
+                                    <button
+                                        onClick={() => {
+                                            setShowMenu(false);
+                                            if (onOpenSettings) onOpenSettings();
+                                        }}
+                                        className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-100 transition-colors duration-150 hover:bg-gray-5 hover:text-primary dark:hover:bg-gray-80 active:bg-primary/20 active:text-primary"
+                                    >
+                                        {translate("settings.title") || "Settings"}
+                                    </button>
+
+                                    {/* Divider */}
+                                    <div className="border-t border-gray-10 my-1"></div>
+                                </>
+                            )}
+                            {/* Logout Option */}
+                            {onLogout && (
+                                <button
+                                    onClick={() => {
+                                        setShowMenu(false);
+                                        onLogout?.();
+                                    }}
+                                    className="block w-full text-left px-4 py-2 text-sm text-gray-100 transition-colors duration-150 hover:bg-gray-5 hover:text-primary dark:hover:bg-gray-80 active:bg-primary/20 active:text-primary"
+                                >
+                                    {translate("dialog.logoutTitle")}
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
             </div>
         ) : (
             <div className="flex space-x-2 flex-row">
@@ -164,6 +254,16 @@ interface HeaderProps {
     onSignUp?: () => void;
 
     /**
+     * Handler for the logout button
+     */
+    onLogout?: () => void;
+
+    /**
+     * Handler for the settings button
+     */
+    onOpenSettings?: () => void;
+
+    /**
      * Additional CSS class for the header
      */
     className?: string;
@@ -185,6 +285,8 @@ const Header = ({
     onNewMeeting,
     onLogin,
     onSignUp,
+    onLogout,
+    onOpenSettings,
     className = "z-50 py-3",
     isCreatingMeeting = false,
 }: HeaderProps) => (
@@ -199,6 +301,8 @@ const Header = ({
                 onNewMeeting={onNewMeeting}
                 onLogin={onLogin}
                 onSignUp={onSignUp}
+                onLogout={onLogout}
+                onOpenSettings={onOpenSettings}
                 isCreatingMeeting={isCreatingMeeting}
             />
         }

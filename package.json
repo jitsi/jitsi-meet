@@ -18,6 +18,7 @@
     "dependencies": {
         "@amplitude/react-native": "2.7.0",
         "@braintree/sanitize-url": "7.0.0",
+        "@dashlane/pqc-kem-kyber512-browser": "^1.0.0",
         "@emotion/react": "11.10.6",
         "@emotion/styled": "11.10.6",
         "@giphy/js-fetch-api": "4.7.1",
@@ -90,6 +91,7 @@
         "react-dom": "18.2.0",
         "react-emoji-render": "1.2.4",
         "react-focus-on": "3.8.1",
+        "react-hook-form": "^7.54.2",
         "react-i18next": "10.11.4",
         "react-linkify": "1.0.0-alpha",
         "react-native": "0.72.9",

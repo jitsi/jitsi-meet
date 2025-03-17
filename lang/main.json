@@ -730,6 +730,39 @@
             "login": "Log in",
             "signUp": "Sign up"
         },
+        "landing": {
+            "title": {
+                "line1": "Private video calls",
+                "line2": "and meetings",
+                "line3": "for everyone"
+            },
+            "subtitle": "Encrypted video calls straight from your browser. Zero tracking. Full privacy.",
+            "scheduleMeeting": "Schedule meeting",
+            "loginRequired": "First you need to log in"
+        },
+        "auth": {
+            "modal": {
+                "title": "New meeting",
+                "loginTitle": "Log in",
+                "decrypting": "Decrypting...",
+                "emailPlaceholder": "Email address",
+                "passwordPlaceholder": "Password",
+                "twoFactorCodePlaceholder": "Two Factor Authentication Code",
+                "loginButton": "Log in",
+                "forgotPassword": "I forgot my password",
+                "noAccount": "Don't have an account?",
+                "createAccount": "Create account",
+                "error": {
+                    "emailEmpty": "Email must not be empty",
+                    "emailInvalid": "Please enter a valid email",
+                    "passwordEmpty": "Password must not be empty",
+                    "twoFactorCodeLength": "Code must be 6 digits",
+                    "twoFactorCodeInvalid": "Enter a valid 6-digit code",
+                    "invalidCredentials": "Invalid credentials. Please try again.",
+                    "cannotCreateMeetings": "User cannot create meetings"
+                }
+            }
+        },
         "meeting": {
             "button": {
                 "gallery": "Gallery",
