@@ -13,7 +13,7 @@ import SettingsButton from "../../settings/components/web/SettingsButton";
 import { SETTINGS_TABS } from "../../settings/constants";
 
 
-import MeetLandingPage from "../../base/meet/views/Home/HomePage";
+import HomePage from "../../base/meet/views/Home/HomePage";
 import { AbstractWelcomePage, IProps, _mapStateToProps } from "./AbstractWelcomePage";
 
 import Tabs from "./Tabs";
@@ -203,11 +203,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
         return (
             <>
-                <MeetLandingPage
-                    updateInxtToken={this._updateInxtToken}
-                    translate={t}
-                    startNewMeeting={this._onFormSubmit}
-                />
+                <HomePage onLogin={this._updateInxtToken} translate={t} startNewMeeting={this._onFormSubmit} />
                 {/* {this.state.inxtToken ? (
                     <div className={`welcome ${contentClassName} ${footerClassName}`} id="welcome_page">
                         <div className="header" style={{ minHeight: "100vh" }}>
@@ -261,7 +257,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                         </div>
                     </div>
                 ) : (
-                    <MeetLandingPage
+                    <HomePage
                         updateInxtToken={this._updateInxtToken}
                         translate={t}
                         startNewMeeting={this._onFormSubmit}

@@ -19,13 +19,13 @@ const SimpleTooltip: React.FC<SimpleTooltipProps> = ({ text }) => {
     );
 };
 
-interface MeetLandingPageProps {
-    updateInxtToken: (token: string) => void;
+interface HomePageProps {
+    onLogin: (token: string) => void;
     translate: (key: string) => string;
     startNewMeeting: () => void;
 }
 
-const MeetLandingPage: React.FC<MeetLandingPageProps> = ({ updateInxtToken, translate, startNewMeeting }) => {
+const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting }) => {
     const [isStartingMeeting, setIsStartingMeeting] = useState<boolean>(false);
     const [windowWidth, setWindowWidth] = useState<number>(0);
     const [windowHeight, setWindowHeight] = useState<number>(0);
@@ -134,12 +134,7 @@ const MeetLandingPage: React.FC<MeetLandingPageProps> = ({ updateInxtToken, tran
                     'linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url("../images/welcome-background.png")',
             }}
         >
-            <AuthModal
-                isOpen={isOpen}
-                onClose={() => setIsOpen(false)}
-                onLogin={updateInxtToken}
-                translate={translate}
-            />
+            <AuthModal isOpen={isOpen} onClose={() => setIsOpen(false)} onLogin={onLogin} translate={translate} />
             <HeaderWrapper onLogin={() => setIsOpen(true)} translate={translate} onNewMeeting={startMeeting} />
             <div className="flex flex-col lg:flex-row mt-10">
                 <div className="flex w-full lg:w-1/2 px-4 md:px-10 lg:px-20 justify-center lg:justify-end">
@@ -194,7 +189,7 @@ const MeetLandingPage: React.FC<MeetLandingPageProps> = ({ updateInxtToken, tran
                         }}
                     >
                         <img
-                            src="./images/Internxt_Meet_Gallery.png"
+                            src="./images/internxt_Meet_Gallery.webp"
                             alt="Video call preview"
                             className="w-full h-auto"
                             style={{
@@ -209,4 +204,4 @@ const MeetLandingPage: React.FC<MeetLandingPageProps> = ({ updateInxtToken, tran
     );
 };
 
-export default MeetLandingPage;
+export default HomePage;
