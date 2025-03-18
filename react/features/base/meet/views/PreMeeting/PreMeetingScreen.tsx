@@ -222,17 +222,11 @@ const PreMeetingScreen = ({
     const handleNewMeeting = async () => {
         setIsCreatingMeeting(true);
         try {
-            const newToken = storageManager.getNewToken() || "";
-            const meetTokenCreator = await get8x8BetaJWT(newToken);
-
-            if (meetTokenCreator?.room) {
-                const locationURL = window.location;
-                const baseUrl = `${locationURL.protocol}//${locationURL.host}`;
-                const newUrl = `${baseUrl}/${meetTokenCreator.room}`;
-                window.history.replaceState({}, document.title, newUrl);
-
-                await dispatch(appNavigate(meetTokenCreator.room));
-            }
+            const locationURL = window.location;
+            const baseUrl = `${locationURL.protocol}//${locationURL.host}`;
+            const newUrl = `${baseUrl}/new-meeting`;
+            window.history.replaceState({}, document.title, newUrl);
+            dispatch(appNavigate(newUrl));
         } catch (error) {
             console.error("Error creating new meeting:", error);
             dispatch(setCreateRoomError(true));

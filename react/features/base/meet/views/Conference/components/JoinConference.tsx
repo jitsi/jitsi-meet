@@ -4,7 +4,6 @@ import { WithTranslation } from "react-i18next";
 import { connect as reactReduxConnect } from "react-redux";
 
 // @ts-ignore
-import VideoLayout from "../../../../../../../modules/UI/videolayout/VideoLayout";
 import { IReduxState } from "../../../../../app/types";
 import Chat from "../../../../../chat/components/web/Chat";
 import { init } from "../../../../../conference/actions.web";
@@ -25,10 +24,8 @@ import JitsiPortal from "../../../../../toolbox/components/web/JitsiPortal";
 import { LAYOUT_CLASSNAMES } from "../../../../../video-layout/constants";
 import { getCurrentLayout } from "../../../../../video-layout/functions.any";
 import { getConferenceNameForTitle } from "../../../../conference/functions";
-import { hangup } from "../../../../connection/actions.web";
 import { isMobileBrowser } from "../../../../environment/utils";
 import { translate } from "../../../../i18n/functions";
-import { setColorAlpha } from "../../../../util/helpers";
 
 import ConferenceInfo from "../../../../../conference/components/web/ConferenceInfo";
 import { default as Notice } from "../../../../../conference/components/web/Notice";
@@ -36,11 +33,8 @@ import Header, { Mode } from "../components/Header";
 
 import ConferenceControlsWrapper from "../containers/ConferenceControlsWrapper";
 import VideoGalleryWrapper from "../containers/VideoGalleryWrapper";
-import { SET_NEW_MEETING_PAGE_VISIBILITY, SET_PREJOIN_PAGE_VISIBILITY } from "../../../../../prejoin/actionTypes";
 import { DEFAULT_STATE } from "../../../../known-domains/reducer";
 import PersistenceRegistry from "../../../../redux/PersistenceRegistry";
-import { appNavigate } from "../../../../../app/actions.web";
-import { get8x8BetaJWT } from "../../../../connection/options8x8";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -170,7 +164,7 @@ class Conference extends AbstractConference<IProps, any> {
         const { videoMode } = this.state;
 
         return (
-            <div>
+            <>
                 <Chat />
                 <div
                     // _layoutClassName has the styles to manage the side bar
@@ -224,7 +218,7 @@ class Conference extends AbstractConference<IProps, any> {
                 </div>
                 <ParticipantsPane />
                 <ReactionAnimations />
-            </div>
+            </>
         );
     }
 
