@@ -8,10 +8,10 @@ import { createColorTokens } from './utils';
  * @param {Object} arg - The ui tokens.
  * @returns {Object}
  */
-export function createNativeTheme({ font, colors, colorMap, shape, spacing, typography }: any): any {
+export function createNativeTheme({ font, colorMap, shape, spacing, typography }: any): any {
     return {
         ...DefaultTheme,
-        palette: createColorTokens(colorMap, colors),
+        palette: createColorTokens(colorMap),
         shape,
         spacing,
         typography: {
