@@ -69,6 +69,7 @@ const TextInput = ({
                 })}
                 className={`w-full ${error ? "input-error" : "input-primary"}`}
             />
+            {error && <p className="mt-1 text-sm text-red">{error.message}</p>}
         </div>
     );
 };

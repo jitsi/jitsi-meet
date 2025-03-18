@@ -6,21 +6,27 @@ import PasswordInput from "../PasswordInput";
 import TextInput from "../TextInput";
 import { ErrorMessage } from "./ErrorMessage";
 
-
 interface LoginFormProps {
     onSubmit: (data: AuthFormValues) => void;
     isLoggingIn: boolean;
     loginError: string;
     translate: (key: string) => string;
+    showTwoFactor: boolean;
 }
 
-export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoggingIn, loginError, translate }) => {
+export const LoginForm: React.FC<LoginFormProps> = ({
+    onSubmit,
+    isLoggingIn,
+    loginError,
+    translate,
+    showTwoFactor,
+}) => {
     const {
         register,
         formState: { errors },
         handleSubmit,
     } = useForm<AuthFormValues>({
-        mode: "onChange",
+        mode: "onSubmit",
     });
 
     return (
@@ -32,7 +38,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoggingIn, log
                     placeholder={translate("meet.auth.modal.emailPlaceholder")}
                     register={register}
                     error={errors.email}
-                    required={true}
+                    required
+                    disabled={showTwoFactor}
                     minLength={{
                         value: 1,
                         message: translate("meet.auth.modal.error.emailEmpty"),
@@ -49,13 +56,24 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoggingIn, log
                     placeholder={translate("meet.auth.modal.passwordPlaceholder")}
                     register={register}
                     error={errors.password}
-                    required={true}
+                    required
                     minLength={{
                         value: 1,
                         message: translate("meet.auth.modal.error.passwordEmpty"),
                     }}
                     autoComplete="current-password"
                 />
+
+                {showTwoFactor && (
+                    <PasswordInput
+                        label="twoFactorCode"
+                        placeholder={translate("meet.auth.modal.twoFactorCodePlaceholder")}
+                        register={register}
+                        error={errors.twoFactorCode}
+                        required
+                        autoComplete="one-time-code"
+                    />
+                )}
 
                 {loginError && <ErrorMessage message={loginError} />}
 

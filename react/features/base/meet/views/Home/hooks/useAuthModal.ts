@@ -37,60 +37,31 @@ export function useAuthModal({ onClose, updateInxtToken, translate }: UseAuthMod
         setLoginError("");
     }, [reset]);
 
-    const handleLogin = useCallback(
-        async (formData: AuthFormValues) => {
-            setIsLoggingIn(true);
-            setLoginError("");
+    const handleLogin = async (formData: AuthFormValues) => {
+        setIsLoggingIn(true);
+        setLoginError("");
 
-            const { email, password } = formData;
+        const { email, password, twoFactorCode: formTwoFactorCode } = formData;
+        const currentTwoFactorCode = formTwoFactorCode || "";
 
-            try {
-                await processLogin(email, password, twoFactorCode ?? "");
-            } catch (err: unknown) {
-                handleLoginError(err);
-            } finally {
-                setIsLoggingIn(false);
-            }
-        },
-        [twoFactorCode]
-    );
-
-    const processLogin = useCallback(
-        async (email: string, password: string, twoFactorCode: string) => {
-            const is2FANeeded = await AuthService.instance.is2FANeeded(email);
-
-            if (!is2FANeeded || showTwoFactor) {
-                const loginCredentials = await authenticateUser(email, password, twoFactorCode);
-
-                if (loginCredentials?.newToken && loginCredentials?.user) {
-                    const meetToken = await createMeetToken(loginCredentials.newToken);
-
-                    if (meetToken?.token && meetToken?.room) {
-                        saveUserSession(loginCredentials);
-                        onClose();
-                    } else {
-                        throw new Error(translate("meet.auth.modal.error.cannotCreateMeetings"));
-                    }
-                } else {
-                    throw new Error(translate("meet.auth.modal.error.invalidCredentials"));
-                }
-            } else {
-                setShowTwoFactor(true);
-                return;
-            }
-        },
-        [showTwoFactor, onClose, translate]
-    );
+        try {
+            await processLogin(email, password, currentTwoFactorCode);
+        } catch (err: unknown) {
+            handleLoginError(err);
+        } finally {
+            setIsLoggingIn(false);
+        }
+    };
 
     const authenticateUser = useCallback(
         async (email: string, password: string, twoFactorCode: string) => {
             try {
-                return await AuthService.instance.doLogin(email, password, showTwoFactor ? twoFactorCode : "");
+                return await AuthService.instance.doLogin(email, password, twoFactorCode);
             } catch (err) {
                 throw new Error(translate("meet.auth.modal.error.invalidCredentials"));
             }
         },
-        [showTwoFactor, translate]
+        [translate]
     );
 
     const createMeetToken = useCallback(
@@ -116,6 +87,37 @@ export function useAuthModal({ onClose, updateInxtToken, translate }: UseAuthMod
         },
         [storageManager, updateInxtToken]
     );
+
+    const processLogin = async (email: string, password: string, twoFactorCode: string) => {
+        try {
+            if (!showTwoFactor) {
+                const is2FANeeded = await AuthService.instance.is2FANeeded(email);
+
+
+                if (is2FANeeded && !showTwoFactor) {
+                    setShowTwoFactor(true);
+                    return;
+                }
+            }
+
+            const loginCredentials = await authenticateUser(email, password, twoFactorCode);
+
+            if (!loginCredentials?.newToken || !loginCredentials?.user) {
+                throw new Error(translate("meet.auth.modal.error.invalidCredentials"));
+            }
+
+            const meetToken = await createMeetToken(loginCredentials.newToken);
+
+            if (!meetToken?.token || !meetToken?.room) {
+                throw new Error(translate("meet.auth.modal.error.cannotCreateMeetings"));
+            }
+
+            saveUserSession(loginCredentials);
+            onClose();
+        } catch (error) {
+            throw error;
+        }
+    };
 
     const handleLoginError = useCallback(
         (err: unknown) => {

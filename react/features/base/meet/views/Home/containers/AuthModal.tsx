@@ -2,7 +2,6 @@ import { Modal } from "@internxt/ui";
 import { X } from "@phosphor-icons/react";
 import React, { useEffect } from "react";
 import { LoginForm } from "../components/authModal/LoginForm";
-import { TwoFactorForm } from "../components/authModal/TwoFactorForm";
 import { Divider } from "../components/Divider";
 import { useAuthModal } from "../hooks/useAuthModal";
 
@@ -32,21 +31,13 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, updateInxtToken,
             <div className="p-6">
                 <h1 className="text-3xl font-medium text-gray-100 mb-6">{translate("meet.auth.modal.loginTitle")}</h1>
 
-                {showTwoFactor ? (
-                    <TwoFactorForm
-                        onSubmit={handleLogin}
-                        isLoggingIn={isLoggingIn}
-                        loginError={loginError}
-                        translate={translate}
-                    />
-                ) : (
-                    <LoginForm
-                        onSubmit={handleLogin}
-                        isLoggingIn={isLoggingIn}
-                        loginError={loginError}
-                        translate={translate}
-                    />
-                )}
+                <LoginForm
+                    onSubmit={handleLogin}
+                    isLoggingIn={isLoggingIn}
+                    loginError={loginError}
+                    translate={translate}
+                    showTwoFactor={showTwoFactor}
+                />
 
                 <ForgotPasswordLink translate={translate} />
                 <Divider />
