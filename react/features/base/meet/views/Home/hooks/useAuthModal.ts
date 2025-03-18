@@ -8,11 +8,11 @@ import { AuthFormValues } from "../types";
 
 interface UseAuthModalProps {
     onClose: () => void;
-    updateInxtToken: (token: string) => void;
+    onLogin?: (token: string) => void;
     translate: (key: string) => string;
 }
 
-export function useAuthModal({ onClose, updateInxtToken, translate }: UseAuthModalProps) {
+export function useAuthModal({ onClose, onLogin, translate }: UseAuthModalProps) {
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [showTwoFactor, setShowTwoFactor] = useState(false);
     const [loginError, setLoginError] = useState("");
@@ -83,16 +83,16 @@ export function useAuthModal({ onClose, updateInxtToken, translate }: UseAuthMod
                 credentials.mnemonic,
                 credentials.user
             );
-            updateInxtToken(credentials.newToken);
+            // TODO: CHECK TO CHANGE THIS WHEN BEGIN TO IMPLEMENT IN OTHER PROJECT PLACES
+            onLogin?.(credentials.newToken);
         },
-        [storageManager, updateInxtToken]
+        [storageManager, onLogin]
     );
 
     const processLogin = async (email: string, password: string, twoFactorCode: string) => {
         try {
             if (!showTwoFactor) {
                 const is2FANeeded = await AuthService.instance.is2FANeeded(email);
-
 
                 if (is2FANeeded && !showTwoFactor) {
                     setShowTwoFactor(true);

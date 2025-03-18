@@ -8,14 +8,14 @@ import { useAuthModal } from "../hooks/useAuthModal";
 interface AuthModalProps {
     isOpen: boolean;
     onClose: () => void;
-    updateInxtToken: (token: string) => void;
+    onLogin?: (token: string) => void;
     translate: (key: string) => string;
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, updateInxtToken, translate }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, translate }) => {
     const { showTwoFactor, loginError, isLoggingIn, handleLogin, resetState } = useAuthModal({
         onClose,
-        updateInxtToken,
+        onLogin,
         translate,
     });
 

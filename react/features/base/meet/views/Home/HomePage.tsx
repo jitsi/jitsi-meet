@@ -137,7 +137,7 @@ const MeetLandingPage: React.FC<MeetLandingPageProps> = ({ updateInxtToken, tran
             <AuthModal
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
-                updateInxtToken={updateInxtToken}
+                onLogin={updateInxtToken}
                 translate={translate}
             />
             <HeaderWrapper onLogin={() => setIsOpen(true)} translate={translate} onNewMeeting={startMeeting} />
