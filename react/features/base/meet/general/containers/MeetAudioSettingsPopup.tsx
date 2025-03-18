@@ -26,8 +26,6 @@ interface MeetAudioSettingsPopUpProps {
     audioTrack?: any;
 }
 
-
-
 const MeetAudioSettingsPopUp = ({
     currentMicDeviceId,
     currentOutputDeviceId,
@@ -37,10 +35,8 @@ const MeetAudioSettingsPopUp = ({
     setAudioOutputDevice,
     measureAudioLevels,
 }: MeetAudioSettingsPopUpProps) => {
-
-
     return (
-        <div className="flex p-1 bg-black/50 rounded-xl border border-white/10">
+        <div className="flex p-1 rounded-xl">
             <AudioSettingsContent
                 currentMicDeviceId={currentMicDeviceId}
                 currentOutputDeviceId={currentOutputDeviceId}
