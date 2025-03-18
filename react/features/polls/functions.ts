@@ -71,8 +71,11 @@ export function hasIdenticalAnswers(currentAnswers: Array<IAnswerData>): boolean
  * @returns {boolean} - Returns true if the participant is not allowed to create polls.
  */
 export function isCreatePollDisabled(state: IReduxState) {
-    const isJwtPollCreateEnabled = isJwtFeatureEnabled(state, 'create-polls', false, false);
     const { pollCreationRequiresPermission } = state['features/dynamic-branding'];
 
-    return pollCreationRequiresPermission && !isJwtPollCreateEnabled;
+    if (!pollCreationRequiresPermission) {
+        return false;
+    }
+
+    return !isJwtFeatureEnabled(state, 'create-polls', false, false);
 }

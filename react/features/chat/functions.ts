@@ -200,8 +200,11 @@ export function getPrivateNoticeMessage(message: IMessage) {
  * @returns {boolean} - Returns true if the participant is not allowed to send group messages.
  */
 export function isSendGroupChatDisabled(state: IReduxState) {
-    const isJwtGroupChatEnabled = isJwtFeatureEnabled(state, 'send-groupchat', false, false);
     const { groupChatRequiresPermission } = state['features/dynamic-branding'];
 
-    return groupChatRequiresPermission && !isJwtGroupChatEnabled;
+    if (!groupChatRequiresPermission) {
+        return false;
+    }
+
+    return !isJwtFeatureEnabled(state, 'send-groupchat', false, false);
 }
