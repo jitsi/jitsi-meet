@@ -64,7 +64,6 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
             ...this.state,
 
             generateRoomNames: interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE,
-            isCreatingConference: false,
         };
 
         /**
@@ -202,11 +201,6 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         const showAdditionalToolbarContent = this._shouldShowAdditionalToolbarContent();
         const contentClassName = showAdditionalContent ? "with-content" : "without-content";
         const footerClassName = DISPLAY_WELCOME_FOOTER ? "with-footer" : "without-footer";
-        /*const { isCreatingConference } = this.state;
-
-        if (isCreatingConference) {
-            return <CreateConference createConference={() => this._onJoinConference()} />;
-        }*/
 
         return (
             <>
@@ -311,7 +305,6 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
     }*/
 
     _onFormSubmit() {
-        //this.setState({ isCreatingConference: true });
         const locationURL = window.location;
         const baseUrl = `${locationURL.protocol}//${locationURL.host}`;
         const newUrl = `${baseUrl}/new-meeting`;

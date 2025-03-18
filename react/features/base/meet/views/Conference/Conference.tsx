@@ -41,7 +41,8 @@ import { DEFAULT_STATE } from "../../../known-domains/reducer";
 import PersistenceRegistry from "../../../redux/PersistenceRegistry";
 import { appNavigate } from "../../../../app/actions.web";
 import { get8x8BetaJWT } from "../../../connection/options8x8";
-import CreateConference from "./CreateConference";
+import CreateConference from "./components/CreateConference";
+import JoinConference from "./components/JoinConference";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -101,7 +102,6 @@ interface IProps extends AbstractProps, WithTranslation {
 
     dispatch: any;
 
-    isParticipantsPaneOpened: boolean;
     _showNewMeeting: boolean;
 }
 
@@ -111,26 +111,6 @@ interface IProps extends AbstractProps, WithTranslation {
 class Conference extends AbstractConference<IProps, any> {
     _originalOnMouseMove: Function;
     _originalOnShowToolbar: Function;
-    state = {
-        videoMode: "gallery" as Mode,
-    };
-
-    _onCreateConference = async () => {
-        this.setState({ joining: true });
-
-        this.props.dispatch({ type: SET_PREJOIN_PAGE_VISIBILITY, value: false });
-        //this.props.dispatch({ type: SET_NEW_MEETING_PAGE_VISIBILITY, value: false });
-
-        const meetTokenCreator = await get8x8BetaJWT(localStorage.getItem("xNewToken") || "");
-
-        if (meetTokenCreator?.room) {
-            // By the time the Promise of appNavigate settles, this component
-            // may have already been unmounted.
-            const onAppNavigateSettled = () => /*this._mounted &&*/ this.setState({ joining: false });
-
-            this.props.dispatch(appNavigate(meetTokenCreator.room)).then(onAppNavigateSettled, onAppNavigateSettled);
-        }
-    };
 
     _onSetVideoModeClicked = (newMode: Mode) => {
         this.setState({ videoMode: newMode });
@@ -178,14 +158,6 @@ class Conference extends AbstractConference<IProps, any> {
         this._start();
 
         window.addEventListener("beforeunload", this._handleBeforeUnload);
-        PersistenceRegistry.register(
-            "features/prejoin",
-            {
-                skipPrejoinOnReload: true,
-                showPrejoin: false,
-            },
-            DEFAULT_STATE
-        );
     }
 
     /**
@@ -256,30 +228,7 @@ class Conference extends AbstractConference<IProps, any> {
      * @returns {ReactElement}
      */
     render() {
-        const {
-            _isAnyOverlayVisible,
-            _layoutClassName,
-            _notificationsVisible,
-            _overflowDrawer,
-            _showLobby,
-            _showPrejoin,
-            _showNewMeeting,
-            t,
-        } = this.props;
-        const { videoMode } = this.state;
-
-        if (_showNewMeeting) {
-            return <CreateConference createConference={this._onCreateConference} />;
-        }
-
-        PersistenceRegistry.register(
-            "features/prejoin",
-            {
-                skipPrejoinOnReload: true,
-                showPrejoin: false,
-            },
-            DEFAULT_STATE
-        );
+        const { _showNewMeeting, t } = this.props;
 
         return (
             <div
@@ -289,59 +238,7 @@ class Conference extends AbstractConference<IProps, any> {
                 onMouseMove={this._onMouseMove}
                 ref={this._setBackground}
             >
-                <Chat />
-                <div
-                    // _layoutClassName has the styles to manage the side bar
-                    className={_layoutClassName + " bg-gray-100"}
-                    // className={"bg-gray-100 relative flex"}
-                    id="videoconference_page"
-                    onMouseMove={isMobileBrowser() ? undefined : this._onShowToolbar}
-                >
-                    <ConferenceInfo />
-                    <Notice />
-                    <div onTouchStart={this._onVidespaceTouchStart}>
-                        <Header mode={videoMode} translate={t} onSetModeClicked={this._onSetVideoModeClicked} />
-                        <div className="flex">
-                            {/* <LargeVideoWeb /> */}
-                            <VideoGalleryWrapper videoMode={videoMode} />
-                        </div>
-                        {_showPrejoin || _showLobby || (
-                            <>
-                                {/* <StageFilmstrip /> */}
-                                {/*  <ScreenshareFilmstrip />*/}
-                                {/* right screen tools component */}
-                                {/* <MainFilmstrip /> */}
-                            </>
-                        )}
-                    </div>
-
-                    {_showPrejoin || _showLobby || (
-                        <>
-                            <span aria-level={1} className="sr-only" role="heading">
-                                {t("toolbar.accessibilityLabel.heading") as string}
-                            </span>
-                            {/* <Toolbox /> */}
-                        </>
-                    )}
-                    {/* CONFERENCE MEDIA CONTROLS */}
-                    <ConferenceControlsWrapper />
-                    {_notificationsVisible &&
-                        !_isAnyOverlayVisible &&
-                        (_overflowDrawer ? (
-                            <JitsiPortal className="notification-portal">
-                                {this.renderNotificationsContainer({ portal: true })}
-                            </JitsiPortal>
-                        ) : (
-                            this.renderNotificationsContainer()
-                        ))}
-
-                    <CalleeInfoContainer />
-
-                    {_showPrejoin && <Prejoin />}
-                    {_showLobby && <LobbyScreen />}
-                </div>
-                <ParticipantsPane />
-                <ReactionAnimations />
+                {_showNewMeeting ? <CreateConference /> : <JoinConference />}
             </div>
         );
     }
@@ -471,20 +368,12 @@ class Conference extends AbstractConference<IProps, any> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
-    const { backgroundAlpha, mouseMoveCallbackInterval } = state["features/base/config"];
-    const { overflowDrawer } = state["features/toolbox"];
+    const { backgroundAlpha } = state["features/base/config"];
     const { showCreatingMeeting } = state["features/prejoin"];
 
     return {
         ...abstractMapStateToProps(state),
         _backgroundAlpha: backgroundAlpha,
-        _isAnyOverlayVisible: Boolean(getOverlayToRender(state)),
-        _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state) ?? ""],
-        _mouseMoveCallbackInterval: mouseMoveCallbackInterval,
-        _overflowDrawer: overflowDrawer,
-        _roomName: getConferenceNameForTitle(state),
-        _showLobby: getIsLobbyVisible(state),
-        _showPrejoin: isPrejoinPageVisible(state),
         _showNewMeeting: showCreatingMeeting,
     };
 }

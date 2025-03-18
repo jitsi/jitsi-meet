@@ -4,26 +4,43 @@ import { WithTranslation } from "react-i18next";
 import { connect as reactReduxConnect } from "react-redux";
 
 // @ts-ignore
-import VideoLayout from "../../../../../../modules/UI/videolayout/VideoLayout";
-import { IReduxState } from "../../../../app/types";
-import Chat from "../../../../chat/components/web/Chat";
-import { init } from "../../../../conference/actions.web";
-import type { AbstractProps } from "../../../../conference/components/AbstractConference";
-import { AbstractConference, abstractMapStateToProps } from "../../../../conference/components/AbstractConference";
-import { maybeShowSuboptimalExperienceNotification } from "../../../../conference/functions.web";
-import { getIsLobbyVisible } from "../../../../lobby/functions";
-import Prejoin from "../../../../prejoin/components/web/Prejoin";
-import { isPrejoinPageVisible } from "../../../../prejoin/functions";
-import { toggleToolboxVisible } from "../../../../toolbox/actions.any";
-import { fullScreenChanged, showToolbox } from "../../../../toolbox/actions.web";
-import { LAYOUT_CLASSNAMES } from "../../../../video-layout/constants";
-import { getCurrentLayout } from "../../../../video-layout/functions.any";
-import { getConferenceNameForTitle } from "../../../conference/functions";
-import { hangup } from "../../../connection/actions.web";
-import { isMobileBrowser } from "../../../environment/utils";
-import { translate } from "../../../i18n/functions";
-import { setColorAlpha } from "../../../util/helpers";
-import Header, { Mode } from "./components/Header";
+import VideoLayout from "../../../../../../../modules/UI/videolayout/VideoLayout";
+import { IReduxState } from "../../../../../app/types";
+import Chat from "../../../../../chat/components/web/Chat";
+import { init } from "../../../../../conference/actions.web";
+import type { AbstractProps } from "../../../../../conference/components/AbstractConference";
+import { AbstractConference, abstractMapStateToProps } from "../../../../../conference/components/AbstractConference";
+import { maybeShowSuboptimalExperienceNotification } from "../../../../../conference/functions.web";
+import CalleeInfoContainer from "../../../../../invite/components/callee-info/CalleeInfoContainer";
+import LobbyScreen from "../../../../../lobby/components/web/LobbyScreen";
+import { getIsLobbyVisible } from "../../../../../lobby/functions";
+import { getOverlayToRender } from "../../../../../overlay/functions.web";
+import ParticipantsPane from "../../../../../participants-pane/components/web/ParticipantsPane";
+import Prejoin from "../../../../../prejoin/components/web/Prejoin";
+import { isPrejoinPageVisible } from "../../../../../prejoin/functions";
+import ReactionAnimations from "../../../../../reactions/components/web/ReactionsAnimations";
+import { toggleToolboxVisible } from "../../../../../toolbox/actions.any";
+import { fullScreenChanged, showToolbox } from "../../../../../toolbox/actions.web";
+import JitsiPortal from "../../../../../toolbox/components/web/JitsiPortal";
+import { LAYOUT_CLASSNAMES } from "../../../../../video-layout/constants";
+import { getCurrentLayout } from "../../../../../video-layout/functions.any";
+import { getConferenceNameForTitle } from "../../../../conference/functions";
+import { hangup } from "../../../../connection/actions.web";
+import { isMobileBrowser } from "../../../../environment/utils";
+import { translate } from "../../../../i18n/functions";
+import { setColorAlpha } from "../../../../util/helpers";
+
+import ConferenceInfo from "../../../../../conference/components/web/ConferenceInfo";
+import { default as Notice } from "../../../../../conference/components/web/Notice";
+import Header, { Mode } from "../components/Header";
+
+import ConferenceControlsWrapper from "../containers/ConferenceControlsWrapper";
+import VideoGalleryWrapper from "../containers/VideoGalleryWrapper";
+import { SET_NEW_MEETING_PAGE_VISIBILITY, SET_PREJOIN_PAGE_VISIBILITY } from "../../../../../prejoin/actionTypes";
+import { DEFAULT_STATE } from "../../../../known-domains/reducer";
+import PersistenceRegistry from "../../../../redux/PersistenceRegistry";
+import { appNavigate } from "../../../../../app/actions.web";
+import { get8x8BetaJWT } from "../../../../connection/options8x8";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -41,9 +58,9 @@ declare const APP: any;
  */
 interface IProps extends AbstractProps, WithTranslation {
     /**
-     * The alpha(opacity) of the background.
+     * Are any overlays visible?
      */
-    _backgroundAlpha?: number;
+    _isAnyOverlayVisible: boolean;
 
     /**
      * The CSS class to apply to the root of {@link Conference} to modify the
@@ -77,8 +94,6 @@ interface IProps extends AbstractProps, WithTranslation {
     _showPrejoin: boolean;
 
     dispatch: any;
-
-    createConference: Function;
 }
 
 /**
@@ -123,49 +138,17 @@ class Conference extends AbstractConference<IProps, any> {
         // Bind event handler so it is only bound once for every instance.
         this._onFullScreenChange = this._onFullScreenChange.bind(this);
         this._onVidespaceTouchStart = this._onVidespaceTouchStart.bind(this);
-        this._setBackground = this._setBackground.bind(this);
     }
 
-    /**
-     * Start the connection and get the UI ready for the conference.
-     *
-     * @inheritdoc
-     */
     componentDidMount() {
-        document.title = `${interfaceConfig.APP_NAME}`;
-        this._start();
-    }
-
-    /**
-     * Calls into legacy UI to update the application layout, if necessary.
-     *
-     * @inheritdoc
-     * returns {void}
-     */
-    componentDidUpdate(prevProps: IProps) {
-        if (this.props._shouldDisplayTileView === prevProps._shouldDisplayTileView) {
-            return;
-        }
-
-        // TODO: For now VideoLayout is being called as LargeVideo and Filmstrip
-        // sizing logic is still handled outside of React. Once all components
-        // are in react they should calculate size on their own as much as
-        // possible and pass down sizings.
-        VideoLayout.refreshLayout();
-    }
-
-    /**
-     * Disconnect from the conference when component will be
-     * unmounted.
-     *
-     * @inheritdoc
-     */
-    componentWillUnmount() {
-        APP.UI.unbindEvents();
-
-        FULL_SCREEN_EVENTS.forEach((name) => document.removeEventListener(name, this._onFullScreenChange));
-
-        APP.conference.isJoined() && this.props.dispatch(hangup());
+        PersistenceRegistry.register(
+            "features/prejoin",
+            {
+                skipPrejoinOnReload: true,
+                showPrejoin: false,
+            },
+            DEFAULT_STATE
+        );
     }
 
     /**
@@ -175,54 +158,74 @@ class Conference extends AbstractConference<IProps, any> {
      * @returns {ReactElement}
      */
     render() {
-        const { _layoutClassName } = this.props;
+        const {
+            _isAnyOverlayVisible,
+            _layoutClassName,
+            _notificationsVisible,
+            _overflowDrawer,
+            _showLobby,
+            _showPrejoin,
+            t,
+        } = this.props;
+        const { videoMode } = this.state;
 
         return (
-            <div
-                id="layout_wrapper"
-                onMouseEnter={this._onMouseEnter}
-                onMouseLeave={this._onMouseLeave}
-                onMouseMove={this._onMouseMove}
-                ref={this._setBackground}
-            >
+            <div>
+                <Chat />
                 <div
+                    // _layoutClassName has the styles to manage the side bar
                     className={_layoutClassName + " bg-gray-100"}
+                    // className={"bg-gray-100 relative flex"}
                     id="videoconference_page"
                     onMouseMove={isMobileBrowser() ? undefined : this._onShowToolbar}
                 >
-                    <Prejoin createConference={this.props.createConference} />
+                    <ConferenceInfo />
+                    <Notice />
+                    <div onTouchStart={this._onVidespaceTouchStart}>
+                        <Header mode={videoMode} translate={t} onSetModeClicked={this._onSetVideoModeClicked} />
+                        <div className="flex">
+                            {/* <LargeVideoWeb /> */}
+                            <VideoGalleryWrapper videoMode={videoMode} />
+                        </div>
+                        {_showPrejoin || _showLobby || (
+                            <>
+                                {/* <StageFilmstrip /> */}
+                                {/*  <ScreenshareFilmstrip />*/}
+                                {/* right screen tools component */}
+                                {/* <MainFilmstrip /> */}
+                            </>
+                        )}
+                    </div>
+
+                    {_showPrejoin || _showLobby || (
+                        <>
+                            <span aria-level={1} className="sr-only" role="heading">
+                                {t("toolbar.accessibilityLabel.heading") as string}
+                            </span>
+                            {/* <Toolbox /> */}
+                        </>
+                    )}
+                    {/* CONFERENCE MEDIA CONTROLS */}
+                    <ConferenceControlsWrapper />
+                    {_notificationsVisible &&
+                        !_isAnyOverlayVisible &&
+                        (_overflowDrawer ? (
+                            <JitsiPortal className="notification-portal">
+                                {this.renderNotificationsContainer({ portal: true })}
+                            </JitsiPortal>
+                        ) : (
+                            this.renderNotificationsContainer()
+                        ))}
+
+                    <CalleeInfoContainer />
+
+                    {_showPrejoin && <Prejoin />}
+                    {_showLobby && <LobbyScreen />}
                 </div>
+                <ParticipantsPane />
+                <ReactionAnimations />
             </div>
         );
-    }
-
-    /**
-     * Sets custom background opacity based on config. It also applies the
-     * opacity on parent element, as the parent element is not accessible directly,
-     * only though it's child.
-     *
-     * @param {Object} element - The DOM element for which to apply opacity.
-     *
-     * @private
-     * @returns {void}
-     */
-    _setBackground(element: HTMLDivElement) {
-        if (!element) {
-            return;
-        }
-
-        if (this.props._backgroundAlpha !== undefined) {
-            const elemColor = element.style.background;
-            const alphaElemColor = setColorAlpha(elemColor, this.props._backgroundAlpha);
-
-            element.style.background = alphaElemColor;
-            if (element.parentElement) {
-                const parentColor = element.parentElement.style.background;
-                const alphaParentColor = setColorAlpha(parentColor, this.props._backgroundAlpha);
-
-                element.parentElement.style.background = alphaParentColor;
-            }
-        }
     }
 
     /**
@@ -321,12 +324,12 @@ class Conference extends AbstractConference<IProps, any> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
-    const { backgroundAlpha, mouseMoveCallbackInterval } = state["features/base/config"];
+    const { mouseMoveCallbackInterval } = state["features/base/config"];
     const { overflowDrawer } = state["features/toolbox"];
 
     return {
         ...abstractMapStateToProps(state),
-        _backgroundAlpha: backgroundAlpha,
+        _isAnyOverlayVisible: Boolean(getOverlayToRender(state)),
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state) ?? ""],
         _mouseMoveCallbackInterval: mouseMoveCallbackInterval,
         _overflowDrawer: overflowDrawer,

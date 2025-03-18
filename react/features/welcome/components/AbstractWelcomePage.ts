@@ -73,7 +73,6 @@ interface IState {
     roomPlaceholder: string;
     updateTimeoutId?: number;
     inxtToken?: string;
-    isCreatingConference?: boolean;
 }
 
 /**
