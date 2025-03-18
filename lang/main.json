@@ -1419,6 +1419,7 @@
         "stop": "Stop showing subtitles",
         "subtitles": "Subtitles",
         "subtitlesOff": "Off",
+        "original": "Original",
         "tr": "TR"
     },
     "unpinParticipant": "{{participantName}} - Unpin",

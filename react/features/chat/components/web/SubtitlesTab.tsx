@@ -1,8 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { groupMessagesBySender } from '../../../base/util/messageGrouping';
+import LanguageSelector from '../../../subtitles/components/web/LanguageSelector';
 import { ISubtitle } from '../../../subtitles/types';
 
 import { SubtitlesGroup } from './SubtitlesGroup';
@@ -21,6 +22,11 @@ const useStyles = makeStyles()(theme => {
             flex: 1,
             boxSizing: 'border-box',
             color: theme.palette.text01
+        },
+        container: {
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%'
         }
     };
 });
@@ -34,15 +40,22 @@ export default function SubtitlesTab() {
     const { classes } = useStyles();
     const subtitles: ISubtitle[] = useSelector(state => state['features/subtitles'].subtitlesHistory);
     const groupedSubtitles = useMemo(() => groupMessagesBySender(subtitles), [ subtitles ]);
+    const onChange = useCallback((value: string | null) => {
+        // eslint-disable-next-line no-console
+        console.log('Selected language:', value);
+    }, []);
 
     return (
-        <div className = { classes.subtitlesList }>
-            {groupedSubtitles.map(group => (
-                <SubtitlesGroup
-                    key = { `${group.senderId}-${group.messages[0].timestamp}` }
-                    messages = { group.messages }
-                    senderId = { group.senderId } />
-            ))}
+        <div className = { classes.container }>
+            <LanguageSelector onChange = { onChange } />
+            <div className = { classes.subtitlesList }>
+                {groupedSubtitles.map(group => (
+                    <SubtitlesGroup
+                        key = { `${group.senderId}-${group.messages[0].timestamp}` }
+                        messages = { group.messages }
+                        senderId = { group.senderId } />
+                ))}
+            </div>
         </div>
     );
 }
