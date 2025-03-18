@@ -489,14 +489,13 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
     const { isOpen: isChatOpen } = state['features/chat'];
     const { soundsIncomingMessage: soundEnabled, userSelectedNotifications } = state['features/base/settings'];
     
-    // Provide a default for the case when a message is being
-    // backfilled for a participant that has left the conference.
-    const participant = getParticipantById(state, participantId) || { local: undefined };
-
-    if (soundEnabled && shouldPlaySound && !participant.local) {
+    if (soundEnabled && shouldPlaySound && !isOpen) {
         dispatch(playSound(INCOMING_MSG_SOUND_ID));
     }
 
+    // Provide a default for the case when a message is being
+    // backfilled for a participant that has left the conference.
+    const participant = getParticipantById(state, participantId) || { local: undefined };
     const localParticipant = getLocalParticipant(getState);
     let displayNameToShow = lobbyChat
         ? getLobbyChatDisplayName(state, participantId)
