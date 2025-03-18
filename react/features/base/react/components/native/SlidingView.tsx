@@ -119,7 +119,7 @@ export default class SlidingView extends PureComponent<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
 
         this._mounted = true;
@@ -131,7 +131,7 @@ export default class SlidingView extends PureComponent<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         const { show } = this.props;
 
         if (prevProps.show !== show) {
@@ -144,7 +144,7 @@ export default class SlidingView extends PureComponent<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
 
         this._mounted = false;
@@ -155,7 +155,7 @@ export default class SlidingView extends PureComponent<IProps, IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { showOverlay } = this.state;
 
         if (!showOverlay) {

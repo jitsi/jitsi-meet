@@ -206,7 +206,7 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         if (!this._shouldRenderNoIntegrationsContent()
             && !this._shouldRenderIntegrationsContent()
             && !this._shouldRenderFileSharingContent()) {
@@ -219,7 +219,7 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         // Auto sign-out when the use chooses another recording service.
         if (prevProps.selectedRecordingService === RECORDING_TYPES.DROPBOX
                 && this.props.selectedRecordingService !== RECORDING_TYPES.DROPBOX && this.props.isTokenValid) {

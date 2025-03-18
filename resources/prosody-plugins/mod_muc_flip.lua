@@ -4,9 +4,9 @@
 -- Copyright (C) 2023-present 8x8, Inc.
 
 local oss_util = module:require "util";
+local is_admin = oss_util.is_admin;
 local is_healthcheck_room = oss_util.is_healthcheck_room;
 local process_host_module = oss_util.process_host_module;
-local um_is_admin = require "core.usermanager".is_admin;
 local inspect = require('inspect');
 local jid_bare = require "util.jid".bare;
 local jid = require "util.jid";
@@ -19,10 +19,6 @@ local lobby_muc_component_config = 'lobby.' .. module:get_option_string("muc_map
 if lobby_muc_component_config == nil then
     module:log('error', 'lobby not enabled missing lobby_muc config');
     return ;
-end
-
-local function is_admin(occupant_jid)
-    return um_is_admin(occupant_jid, module.host);
 end
 
 local function remove_flip_tag(stanza)

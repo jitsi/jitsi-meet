@@ -28,10 +28,10 @@ export interface IProps extends AbstractButtonProps {
  * An abstract remote video menu button which mutes the remote participant.
  */
 export default class AbstractMuteVideoButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.remoteVideoMute';
-    icon = IconVideoOff;
-    label = 'videothumbnail.domuteVideo';
-    toggledLabel = 'videothumbnail.videoMuted';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.remoteVideoMute';
+    override icon = IconVideoOff;
+    override label = 'videothumbnail.domuteVideo';
+    override toggledLabel = 'videothumbnail.videoMuted';
 
     /**
      * Handles clicking / pressing the button, and mutes the participant.
@@ -39,7 +39,7 @@ export default class AbstractMuteVideoButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch, participantID } = this.props;
 
         sendAnalytics(createRemoteVideoMenuButtonEvent(
@@ -56,7 +56,7 @@ export default class AbstractMuteVideoButton extends AbstractButton<IProps> {
      *
      * @inheritdoc
      */
-    _isDisabled() {
+    override _isDisabled() {
         return this.props._videoTrackMuted;
     }
 
@@ -65,7 +65,7 @@ export default class AbstractMuteVideoButton extends AbstractButton<IProps> {
      *
      * @inheritdoc
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._videoTrackMuted;
     }
 }

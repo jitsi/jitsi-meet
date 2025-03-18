@@ -381,7 +381,7 @@ const ChatMessage = ({
                 </div>
                 {shouldDisplayChatMessageMenu && (
                     <div className = { classes.sideBySideContainer }>
-                        {!message.privateMessage && <div>
+                        {!message.privateMessage && !message.lobbyChat && <div>
                             <div className = { classes.optionsButtonContainer }>
                                 {isHovered && <ReactButton
                                     messageId = { message.messageId }

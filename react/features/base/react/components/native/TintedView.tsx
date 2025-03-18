@@ -39,7 +39,7 @@ export default class TintedView extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { children, style } = this.props;
 
         // XXX Don't tint the children, tint the background only.

@@ -41,11 +41,11 @@ interface IProps extends AbstractButtonProps {
  * Implementation of a button for accessing participants pane.
  */
 class ParticipantsPaneButton extends AbstractButton<IProps> {
-    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.closeParticipantsPane';
-    icon = IconUsers;
-    label = 'toolbar.participants';
-    tooltip = 'toolbar.participants';
-    toggledTooltip = 'toolbar.closeParticipantsPane';
+    override toggledAccessibilityLabel = 'toolbar.accessibilityLabel.closeParticipantsPane';
+    override icon = IconUsers;
+    override label = 'toolbar.participants';
+    override tooltip = 'toolbar.participants';
+    override toggledTooltip = 'toolbar.closeParticipantsPane';
 
     /**
      * Indicates whether this button is in toggled state or not.
@@ -54,7 +54,7 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._isOpen;
     }
 
@@ -64,7 +64,7 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
     * @private
     * @returns {void}
     */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch, _isOpen } = this.props;
 
         dispatch(closeOverflowMenuIfOpen());
@@ -82,7 +82,7 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
      * @override
      * @returns {string}
      */
-    _getAccessibilityLabel() {
+    override _getAccessibilityLabel() {
         const { t, _participantsCount, _isOpen } = this.props;
 
         if (_isOpen) {
@@ -102,7 +102,7 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
      * @protected
      * @returns {React$Node}
      */
-    render() {
+    override render() {
         const { _isParticipantsPaneEnabled } = this.props;
 
         if (!_isParticipantsPaneEnabled) {

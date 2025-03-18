@@ -108,7 +108,7 @@ export default class NavigateSectionListItem extends Component<IProps> {
      *
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { item, onLongPress, onPress, secondaryAction } = this.props;
 
         return (

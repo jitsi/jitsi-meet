@@ -91,7 +91,7 @@ class AudioTrack extends Component<IProps> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         this._attachTrack(this.props.audioTrack);
 
         if (this._ref?.current) {
@@ -120,7 +120,7 @@ class AudioTrack extends Component<IProps> {
      * @inheritdoc
      * @returns {void}
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this._detachTrack(this.props.audioTrack);
 
         // @ts-ignore
@@ -135,7 +135,7 @@ class AudioTrack extends Component<IProps> {
      * @returns {boolean} - False is always returned to blackbox this component
      * from React.
      */
-    shouldComponentUpdate(nextProps: IProps) {
+    override shouldComponentUpdate(nextProps: IProps) {
         const currentJitsiTrack = this.props.audioTrack?.jitsiTrack;
         const nextJitsiTrack = nextProps.audioTrack?.jitsiTrack;
 
@@ -175,7 +175,7 @@ class AudioTrack extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { autoPlay, id } = this.props;
 
         return (

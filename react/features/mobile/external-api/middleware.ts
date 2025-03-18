@@ -631,7 +631,7 @@ function _registerForNativeEvents(store: IStore) {
 
         logger.info(`Overwriting config with: ${JSON.stringify(whitelistedConfig)}`);
 
-        dispatch(overwriteConfig(config));
+        dispatch(overwriteConfig(whitelistedConfig));
     });
 
     eventEmitter.addListener(ExternalAPI.SEND_CAMERA_FACING_MODE_MESSAGE, ({ to, facingMode }: any) => {

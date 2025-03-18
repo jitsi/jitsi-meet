@@ -85,7 +85,7 @@ class SmileysPanel extends PureComponent<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const smileyItems = Object.keys(smileys).map(smileyKey => (
             <div
                 className = 'smileyContainer'

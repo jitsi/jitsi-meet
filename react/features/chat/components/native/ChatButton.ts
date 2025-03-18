@@ -29,10 +29,10 @@ interface IProps extends AbstractButtonProps {
  * Implements an {@link AbstractButton} to open the chat screen on mobile.
  */
 class ChatButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.chat';
-    icon = IconMessage;
-    label = 'toolbar.chat';
-    toggledIcon = IconChatUnread;
+    override accessibilityLabel = 'toolbar.accessibilityLabel.chat';
+    override icon = IconMessage;
+    override label = 'toolbar.chat';
+    override toggledIcon = IconChatUnread;
 
     /**
      * Handles clicking / pressing the button, and opens the appropriate dialog.
@@ -40,7 +40,7 @@ class ChatButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         this.props._isPollsDisabled
             ? navigate(screen.conference.chat)
             : navigate(screen.conference.chatandpolls.main);
@@ -52,7 +52,7 @@ class ChatButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return Boolean(this.props._unreadMessageCount);
     }
 }

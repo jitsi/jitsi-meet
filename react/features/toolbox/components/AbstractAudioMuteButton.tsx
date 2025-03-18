@@ -32,12 +32,12 @@ export interface IProps extends AbstractButtonProps {
  * @augments BaseAudioMuteButton
  */
 export default class AbstractAudioMuteButton<P extends IProps> extends BaseAudioMuteButton<P> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.mute';
-    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.unmute';
-    label = 'toolbar.mute';
-    toggledLabel = 'toolbar.unmute';
-    tooltip = 'toolbar.mute';
-    toggledTooltip = 'toolbar.unmute';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.mute';
+    override toggledAccessibilityLabel = 'toolbar.accessibilityLabel.unmute';
+    override label = 'toolbar.mute';
+    override toggledLabel = 'toolbar.unmute';
+    override tooltip = 'toolbar.mute';
+    override toggledTooltip = 'toolbar.unmute';
 
     /**
      * Indicates if audio is currently muted or not.
@@ -46,7 +46,7 @@ export default class AbstractAudioMuteButton<P extends IProps> extends BaseAudio
      * @protected
      * @returns {boolean}
      */
-    _isAudioMuted() {
+    override _isAudioMuted() {
         return this.props._audioMuted;
     }
 
@@ -57,7 +57,7 @@ export default class AbstractAudioMuteButton<P extends IProps> extends BaseAudio
      * @protected
      * @returns {void}
      */
-    _setAudioMuted(audioMuted: boolean) {
+    override _setAudioMuted(audioMuted: boolean) {
         this.props.dispatch(muteLocal(audioMuted, MEDIA_TYPE.AUDIO));
     }
 
@@ -66,7 +66,7 @@ export default class AbstractAudioMuteButton<P extends IProps> extends BaseAudio
      *
      * @returns {boolean}
      */
-    _isDisabled() {
+    override _isDisabled() {
         return this.props._disabled;
     }
 }

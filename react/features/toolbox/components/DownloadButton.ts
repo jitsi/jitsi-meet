@@ -20,10 +20,10 @@ interface IProps extends AbstractButtonProps {
  * Implements an {@link AbstractButton} to open the applications page in a new window.
  */
 class DownloadButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.download';
-    icon = IconDownload;
-    label = 'toolbar.download';
-    tooltip = 'toolbar.download';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.download';
+    override icon = IconDownload;
+    override label = 'toolbar.download';
+    override tooltip = 'toolbar.download';
 
     /**
      * Handles clicking / pressing the button, and opens a new window with the user documentation.
@@ -31,7 +31,7 @@ class DownloadButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { _downloadAppsUrl } = this.props;
 
         sendAnalytics(createToolbarEvent('download.pressed'));

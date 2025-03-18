@@ -70,7 +70,7 @@ const SLACK_EMOJI_REGEXP_ARRAY: Array<[RegExp, string]> = [];
  * @param {string} message - The message to parse and replace.
  * @returns {string}
  */
-export function replaceNonUnicodeEmojis(message: string) {
+export function replaceNonUnicodeEmojis(message: string): string {
     let replacedMessage = message;
 
     for (const [ regexp, replaceValue ] of SLACK_EMOJI_REGEXP_ARRAY) {
@@ -99,7 +99,7 @@ export function getUnreadCount(state: IReduxState) {
     }
 
     let reactionMessages = 0;
-    let lastReadIndex;
+    let lastReadIndex: number;
 
     if (navigator.product === 'ReactNative') {
         // React native stores the messages in a reversed order.

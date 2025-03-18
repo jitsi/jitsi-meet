@@ -115,7 +115,7 @@ export class HighlightButton extends AbstractHighlightButton<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         window.addEventListener('click', this._onWindowClickListener);
     }
 
@@ -124,7 +124,7 @@ export class HighlightButton extends AbstractHighlightButton<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         window.removeEventListener('click', this._onWindowClickListener);
     }
 
@@ -149,7 +149,7 @@ export class HighlightButton extends AbstractHighlightButton<IProps, IState> {
     * @param {Event} e - The click event.
     * @returns {void}
     */
-    _onClick(e?: React.MouseEvent) {
+    override _onClick(e?: React.MouseEvent) {
         e?.stopPropagation();
 
         const { _disabled } = this.props;
@@ -180,7 +180,7 @@ export class HighlightButton extends AbstractHighlightButton<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _disabled,
             _visible,

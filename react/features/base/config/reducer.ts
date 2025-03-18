@@ -572,9 +572,12 @@ function _translateLegacyConfig(oldValue: IConfig) {
         };
     }
 
-    if (oldValue.disableProfile) {
-        newValue.toolbarButtons = (newValue.toolbarButtons || TOOLBAR_BUTTONS)
-            .filter((button: ToolbarButton) => button !== 'profile');
+    // Profile button is not available on mobile
+    if (navigator.product !== 'ReactNative') {
+        if (oldValue.disableProfile) {
+            newValue.toolbarButtons = (newValue.toolbarButtons || TOOLBAR_BUTTONS)
+                .filter((button: ToolbarButton) => button !== 'profile');
+        }
     }
 
     _setDeeplinkingDefaults(newValue.deeplinking as IDeeplinkingConfig);

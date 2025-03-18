@@ -104,7 +104,7 @@ class AbstractConnectionIndicator<P extends IProps, S extends IState> extends Co
      * @inheritdoc
      * returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         statsEmitter.subscribeToClientStats(this._getRealParticipantId(this.props), this._onStatsUpdated);
     }
 
@@ -114,7 +114,7 @@ class AbstractConnectionIndicator<P extends IProps, S extends IState> extends Co
      * @inheritdoc
      * returns {void}
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         const prevParticipantId = this._getRealParticipantId(prevProps);
         const participantId = this._getRealParticipantId(this.props);
 
@@ -131,7 +131,7 @@ class AbstractConnectionIndicator<P extends IProps, S extends IState> extends Co
      * @private
      * @returns {void}
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         statsEmitter.unsubscribeToClientStats(this._getRealParticipantId(this.props), this._onStatsUpdated);
 
         clearTimeout(this.autoHideTimeout ?? 0);

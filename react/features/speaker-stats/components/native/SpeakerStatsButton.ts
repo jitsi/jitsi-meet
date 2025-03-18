@@ -21,7 +21,7 @@ class SpeakerStatsButton extends AbstractSpeakerStatsButton {
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         sendAnalytics(createToolbarEvent('speaker.stats'));
 
         return navigate(screen.conference.speakerStats);

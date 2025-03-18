@@ -5,6 +5,7 @@ local http = require 'net.http';
 local jid = require 'util.jid';
 local st = require 'util.stanza';
 local util = module:require 'util';
+local is_admin = util.is_admin;
 local is_healthcheck_room = util.is_healthcheck_room;
 local is_sip_jigasi = util.is_sip_jigasi;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
@@ -18,7 +19,6 @@ local process_host_module = util.process_host_module;
 local respond_iq_result = util.respond_iq_result;
 local split_string = util.split_string;
 local new_id = require 'util.id'.medium;
-local um_is_admin = require 'core.usermanager'.is_admin;
 local json = require 'cjson.safe';
 local inspect = require 'inspect';
 
@@ -49,10 +49,6 @@ local http_headers = {
     ["Content-Type"] = "application/json",
     ["Accept"] = "application/json"
 };
-
-local function is_admin(jid)
-    return um_is_admin(jid, module.host);
-end
 
 -- This is a map to keep data for room and the jids that were allowed to join after visitor mode is enabled
 -- automatically allowed or allowed by a moderator

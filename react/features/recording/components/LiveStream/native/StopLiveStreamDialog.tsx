@@ -21,7 +21,7 @@ class StopLiveStreamDialog extends AbstractStopLiveStreamDialog {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <ConfirmDialog
                 descriptionKey = 'dialog.stopStreamingWarning'

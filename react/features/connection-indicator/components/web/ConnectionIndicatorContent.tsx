@@ -190,7 +190,7 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<IProps, ISt
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             bandwidth,
             bitrate,

@@ -145,7 +145,7 @@ class ShortcutsTab extends AbstractDialogTab<IProps, any> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             displayShortcuts,
             keyboardShortcutsHelpDescriptions,

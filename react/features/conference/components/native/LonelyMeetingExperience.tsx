@@ -79,7 +79,7 @@ class LonelyMeetingExperience extends PureComponent<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const {
             _inviteOthersControl,
             _isAddPeopleFeatureEnabled,

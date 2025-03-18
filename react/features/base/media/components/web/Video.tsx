@@ -220,7 +220,7 @@ class Video extends Component<IProps> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         this._mounted = true;
 
         if (this._videoElement) {
@@ -254,7 +254,7 @@ class Video extends Component<IProps> {
      * @inheritdoc
      * @returns {void}
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this._mounted = false;
         this._detachTrack(this.props.videoTrack);
     }
@@ -268,7 +268,7 @@ class Video extends Component<IProps> {
      * @returns {boolean} - False is always returned to blackbox this component
      * from React.
      */
-    shouldComponentUpdate(nextProps: IProps) {
+    override shouldComponentUpdate(nextProps: IProps) {
         const currentJitsiTrack = this.props.videoTrack?.jitsiTrack;
         const nextJitsiTrack = nextProps.videoTrack?.jitsiTrack;
 
@@ -295,7 +295,7 @@ class Video extends Component<IProps> {
      * @override
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             autoPlay,
             className,

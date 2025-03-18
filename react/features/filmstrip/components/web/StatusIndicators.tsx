@@ -59,7 +59,7 @@ class StatusIndicators extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _showAudioMutedIndicator,
             _showModeratorIndicator,

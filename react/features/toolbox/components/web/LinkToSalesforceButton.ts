@@ -14,10 +14,10 @@ import { isSalesforceEnabled } from '../../../salesforce/functions';
  * Implementation of a button for opening the Salesforce link dialog.
  */
 class LinkToSalesforce extends AbstractButton<AbstractButtonProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.linkToSalesforce';
-    icon = IconCloudUpload;
-    label = 'toolbar.linkToSalesforce';
-    tooltip = 'toolbar.linkToSalesforce';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.linkToSalesforce';
+    override icon = IconCloudUpload;
+    override label = 'toolbar.linkToSalesforce';
+    override tooltip = 'toolbar.linkToSalesforce';
 
     /**
      * Handles clicking / pressing the button, and opens the Salesforce link dialog.
@@ -25,7 +25,7 @@ class LinkToSalesforce extends AbstractButton<AbstractButtonProps> {
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('link.to.salesforce'));

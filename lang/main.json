@@ -359,7 +359,7 @@
         "micTimeoutError": "Could not start audio source. Timeout occurred!",
         "micUnknownError": "Cannot use microphone for an unknown reason.",
         "moderationAudioLabel": "Allow attendees to unmute themselves",
-        "moderationVideoLabel": "Allow attendees to start their video",
+        "moderationVideoLabel": "Allow non-moderators to start their video",
         "muteEveryoneDialog": "The participants can unmute themselves at any time.",
         "muteEveryoneDialogModerationOn": "The participants can send a request to speak at any time.",
         "muteEveryoneElseDialog": "Once muted, you won't be able to unmute them, but they can unmute themselves at any time.",

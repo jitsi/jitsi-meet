@@ -19,9 +19,9 @@ interface IProps extends AbstractButtonProps {
  * An implementation of a button for entering Picture-in-Picture mode.
  */
 class PictureInPictureButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.pip';
-    icon = IconArrowDown;
-    label = 'toolbar.pip';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.pip';
+    override icon = IconArrowDown;
+    override label = 'toolbar.pip';
 
     /**
      * Handles clicking / pressing the button.
@@ -29,7 +29,7 @@ class PictureInPictureButton extends AbstractButton<IProps> {
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         this.props.dispatch(enterPictureInPicture());
     }
 
@@ -39,7 +39,7 @@ class PictureInPictureButton extends AbstractButton<IProps> {
      * @inheritdoc
      * @returns {React$Node}
      */
-    render() {
+    override render() {
         return this.props._enabled ? super.render() : null;
     }
 }

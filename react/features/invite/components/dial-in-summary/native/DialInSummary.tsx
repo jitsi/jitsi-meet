@@ -55,7 +55,7 @@ class DialInSummary extends PureComponent<IProps> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         const { navigation, t } = this.props;
 
         navigation.setOptions({
@@ -68,7 +68,7 @@ class DialInSummary extends PureComponent<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { route } = this.props;
         const summaryUrl = route.params?.summaryUrl;
 

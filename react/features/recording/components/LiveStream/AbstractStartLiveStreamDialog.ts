@@ -121,7 +121,7 @@ export default class AbstractStartLiveStreamDialog<P extends IProps>
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         this._isMounted = true;
     }
 
@@ -131,7 +131,7 @@ export default class AbstractStartLiveStreamDialog<P extends IProps>
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this._isMounted = false;
     }
 

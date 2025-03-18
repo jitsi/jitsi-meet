@@ -18,7 +18,7 @@ jobs:
         npm -v
     - name: Get changed files
       id: changed-files
-      uses: tj-actions/changed-files@v41
+      uses: jitsi/changed-files@main
     - name: Get changed lang files
       id: lang-files
       run: echo "all=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep -oE 'lang\/\S+' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"

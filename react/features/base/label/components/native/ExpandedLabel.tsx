@@ -48,7 +48,7 @@ export default abstract class ExpandedLabel<P extends IProps> extends Component<
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         Animated.decay(this.state.opacityAnimation, {
             toValue: 1,
             velocity: 1,
@@ -61,7 +61,7 @@ export default abstract class ExpandedLabel<P extends IProps> extends Component<
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         return (
             <Animated.View
                 style = { [ styles.expandedLabelContainer,

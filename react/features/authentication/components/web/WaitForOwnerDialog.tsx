@@ -74,7 +74,7 @@ class WaitForOwnerDialog extends PureComponent<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const {
             t
         } = this.props;

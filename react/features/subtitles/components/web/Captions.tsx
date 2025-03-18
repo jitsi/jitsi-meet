@@ -119,7 +119,7 @@ class Captions extends AbstractCaptions<IProps> {
      * @protected
      * @returns {ReactElement} - The React element which displays the text.
      */
-    _renderParagraph(id: string, text: string): ReactElement {
+    override _renderParagraph(id: string, text: string): ReactElement {
         return (
             <p key = { id }>
                 <span>{ text }</span>
@@ -135,7 +135,7 @@ class Captions extends AbstractCaptions<IProps> {
      * @protected
      * @returns {ReactElement} - The subtitles container.
      */
-    _renderSubtitlesContainer(paragraphs: Array<ReactElement>): ReactElement {
+    override _renderSubtitlesContainer(paragraphs: Array<ReactElement>): ReactElement {
         const classes = withStyles.getClasses(this.props);
 
         return (
