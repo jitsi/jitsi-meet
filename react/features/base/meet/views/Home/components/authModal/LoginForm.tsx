@@ -23,10 +23,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 }) => {
     const {
         register,
-        formState: { errors },
+        formState: { errors, isSubmitted },
         handleSubmit,
     } = useForm<AuthFormValues>({
         mode: "onSubmit",
+        reValidateMode: "onSubmit",
     });
 
     return (
@@ -37,7 +38,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                     type="email"
                     placeholder={translate("meet.auth.modal.emailPlaceholder")}
                     register={register}
-                    error={errors.email}
+                    error={isSubmitted ? errors.email : undefined}
                     required
                     disabled={showTwoFactor}
                     minLength={{
@@ -55,7 +56,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                     label="password"
                     placeholder={translate("meet.auth.modal.passwordPlaceholder")}
                     register={register}
-                    error={errors.password}
+                    error={isSubmitted ? errors.password : undefined}
                     required
                     minLength={{
                         value: 1,
@@ -69,7 +70,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                         label="twoFactorCode"
                         placeholder={translate("meet.auth.modal.twoFactorCodePlaceholder")}
                         register={register}
-                        error={errors.twoFactorCode}
+                        error={isSubmitted ? errors.twoFactorCode : undefined}
                         required
                         autoComplete="one-time-code"
                     />
