@@ -2,11 +2,11 @@ import { Button, Modal } from "@internxt/ui";
 import { WarningCircle, X } from "@phosphor-icons/react";
 import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { get8x8BetaJWT } from "../../base/connection/options8x8";
-import { useLocalStorage } from "../../base/meet/LocalStorageManager";
-import { AuthService } from "../../base/meet/services/auth.service";
-import PasswordInput from "./PasswordInput";
-import TextInput from "./TextInput";
+import { get8x8BetaJWT } from "../../../../connection/options8x8";
+import { useLocalStorage } from "../../../LocalStorageManager";
+import { AuthService } from "../../../services/auth.service";
+import PasswordInput from "../components/PasswordInput";
+import TextInput from "../components/TextInput";
 
 interface IFormValues {
     email: string;

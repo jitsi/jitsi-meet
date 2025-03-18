@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { redirectToStaticPage } from "../../app/actions.any";
-import { useLocalStorage } from "../../base/meet/LocalStorageManager";
-import Header from "../../base/meet/views/PreMeeting/components/Header";
-import { useUserData } from "../../base/meet/views/PreMeeting/hooks/useUserData";
-import { openSettingsDialog } from "../../settings/actions.web";
+import { redirectToStaticPage } from "../../../../../app/actions.any";
+import { openSettingsDialog } from "../../../../../settings/actions.web";
+import { useLocalStorage } from "../../../LocalStorageManager";
+import Header from "../../PreMeeting/components/Header";
+import { useUserData } from "../../PreMeeting/hooks/useUserData";
 
 interface HeaderWrapperProps {
     onNewMeeting?: () => void;

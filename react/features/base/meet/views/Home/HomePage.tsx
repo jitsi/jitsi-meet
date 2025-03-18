@@ -1,8 +1,8 @@
 import { Button } from "@internxt/ui";
 import React, { useCallback, useEffect, useState } from "react";
-import { useUserData } from "../../base/meet/views/PreMeeting/hooks/useUserData";
-import AuthModal from "./AuthModal";
-import HeaderWrapper from "./HeaderWrapper";
+import { useUserData } from "../PreMeeting/hooks/useUserData";
+import AuthModal from "./containers/AuthModal";
+import HeaderWrapper from "./containers/HeaderWrapper";
 
 interface SimpleTooltipProps {
     text: string;

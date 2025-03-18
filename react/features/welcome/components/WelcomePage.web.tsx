@@ -13,9 +13,9 @@ import SettingsButton from "../../settings/components/web/SettingsButton";
 import { SETTINGS_TABS } from "../../settings/constants";
 
 
+import MeetLandingPage from "../../base/meet/views/Home/HomePage";
 import { AbstractWelcomePage, IProps, _mapStateToProps } from "./AbstractWelcomePage";
 
-import MeetLandingPage from "./HomePage";
 import Tabs from "./Tabs";
 import { appNavigate } from "../../app/actions.web";
 
