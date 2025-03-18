@@ -96,8 +96,12 @@ const AuthModal = ({ isOpen, onClose, updateInxtToken, translate }: AuthModalPro
                 setIsLoggingIn(false);
                 return;
             }
-        } catch (err) {
-            setLoginError(err.message);
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setLoginError(err.message);
+            } else {
+                setLoginError(translate("meet.auth.modal.error.genericError"));
+            }
         } finally {
             setIsLoggingIn(false);
         }

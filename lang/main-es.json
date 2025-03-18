@@ -706,7 +706,8 @@
                     "twoFactorCodeLength": "El código debe tener 6 dígitos",
                     "twoFactorCodeInvalid": "Introduce un código válido de 6 dígitos",
                     "invalidCredentials": "Credenciales inválidas. Por favor, inténtalo de nuevo.",
-                    "cannotCreateMeetings": "El usuario no puede crear reuniones"
+                    "cannotCreateMeetings": "El usuario no puede crear reuniones",
+                    "genericError": "No se pudo iniciar sesión. Por favor, inténtelo de nuevo o contacte a soporte si el problema persiste"
                 }
             }
         },

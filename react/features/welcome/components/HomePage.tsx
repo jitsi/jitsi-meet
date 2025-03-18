@@ -22,7 +22,7 @@ const SimpleTooltip: React.FC<SimpleTooltipProps> = ({ text }) => {
 interface MeetLandingPageProps {
     updateInxtToken: (token: string) => void;
     translate: (key: string) => string;
-    startNewMeeting: () => Promise<void>;
+    startNewMeeting: () => void;
 }
 
 const MeetLandingPage: React.FC<MeetLandingPageProps> = ({ updateInxtToken, translate, startNewMeeting }) => {
@@ -86,10 +86,10 @@ const MeetLandingPage: React.FC<MeetLandingPageProps> = ({ updateInxtToken, tran
     const imageWidth = isLargeScreen ? (windowWidth * 0.4) / 0.6 : "100%";
     const imageHeight = windowHeight * 0.7;
 
-    const startMeeting = useCallback(async (): Promise<void> => {
+    const startMeeting = useCallback((): void => {
         try {
             setIsStartingMeeting(true);
-            await startNewMeeting();
+            startNewMeeting();
         } catch (error) {
             console.log("Error starting new meeting", error);
         } finally {

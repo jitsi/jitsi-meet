@@ -759,7 +759,8 @@
                     "twoFactorCodeLength": "Code must be 6 digits",
                     "twoFactorCodeInvalid": "Enter a valid 6-digit code",
                     "invalidCredentials": "Invalid credentials. Please try again.",
-                    "cannotCreateMeetings": "User cannot create meetings"
+                    "cannotCreateMeetings": "User cannot create meetings",
+                    "genericError": "Unable to log in. Please try again or contact support if the problem persists."
                 }
             }
         },

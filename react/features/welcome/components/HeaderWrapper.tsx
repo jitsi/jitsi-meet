@@ -7,7 +7,7 @@ import { useUserData } from "../../base/meet/views/PreMeeting/hooks/useUserData"
 import { openSettingsDialog } from "../../settings/actions.web";
 
 interface HeaderWrapperProps {
-    onNewMeeting?: () => Promise<void>;
+    onNewMeeting?: () => void;
     onLogin: () => void;
     onSignUp?: () => void;
     translate: (key: string) => string;
@@ -22,7 +22,7 @@ const HeaderWrapper = ({ onNewMeeting, onLogin, onSignUp, translate }: HeaderWra
     const handleNewMeeting = async () => {
         setIsCreatingMeeting(true);
         try {
-            await onNewMeeting?.();
+            onNewMeeting?.();
         } catch (error) {
             console.error("Error creating new meeting:", error);
         } finally {
