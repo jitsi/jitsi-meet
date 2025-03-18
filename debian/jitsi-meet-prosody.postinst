@@ -131,16 +131,6 @@ case "$1" in
             fi
         fi
 
-        if [ "$PROSODY_CREATE_JICOFO_USER" = "true" ]; then
-            # create 'focus@auth.domain' prosody user
-            prosodyctl register $JICOFO_AUTH_USER $JICOFO_AUTH_DOMAIN $JICOFO_AUTH_PASSWORD
-            # trigger a restart
-            PROSODY_CONFIG_PRESENT="false"
-        fi
-
-        # creates the user if it does not exist
-        echo -e "$JVB_SECRET\n$JVB_SECRET" | prosodyctl adduser jvb@$JICOFO_AUTH_DOMAIN > /dev/null || true
-
         # Check whether prosody config has the internal muc, if not add it,
         # as we are migrating configs
         if [ -f $PROSODY_HOST_CONFIG ] && ! grep -q "internal.$JICOFO_AUTH_DOMAIN" $PROSODY_HOST_CONFIG; then
@@ -184,6 +174,12 @@ case "$1" in
             PROSODY_CONFIG_PRESENT="false"
         fi
 
+        # Since prosody 13 admins are not automatically room owners and we expect that for jicofo
+        if ! grep -q -- 'component_admins_as_room_owners = ' $PROSODY_HOST_CONFIG ;then
+            sed -i "1s/^/component_admins_as_room_owners = true\n/" $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
         JAAS_HOST_CONFIG="/etc/prosody/conf.avail/jaas.cfg.lua"
         if [ "${JAAS_INPUT}" = "true" ] && [ ! -f $JAAS_HOST_CONFIG ]; then
             sed -i "s/enabled = false -- Jitsi meet components/enabled = true -- Jitsi meet components/g" $PROSODY_HOST_CONFIG
@@ -206,9 +202,6 @@ case "$1" in
                 fi
             fi
         fi
-
-        # Make sure the focus@auth user's roster includes the proxy component (this is idempotent)
-        prosodyctl mod_roster_command subscribe focus.$JVB_HOSTNAME $JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN
 
         if [ ! -f /var/lib/prosody/$JVB_HOSTNAME.crt ]; then
             # prosodyctl takes care for the permissions
@@ -250,6 +243,29 @@ case "$1" in
         fi
 
         if [ "$PROSODY_CONFIG_PRESENT" = "false" ]; then
+            invoke-rc.d prosody restart || true
+
+            # give it some time to warm up
+            sleep 10
+
+            if [ "$PROSODY_CREATE_JICOFO_USER" = "true" ]; then
+                # create 'focus@auth.domain' prosody user
+                echo -e "$JICOFO_AUTH_PASSWORD\n$JICOFO_AUTH_PASSWORD" | prosodyctl adduser $JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN > /dev/null || true
+
+                # trigger a restart
+                PROSODY_CONFIG_PRESENT="false"
+            fi
+
+            # creates the user if it does not exist
+            echo -e "$JVB_SECRET\n$JVB_SECRET" | prosodyctl adduser jvb@$JICOFO_AUTH_DOMAIN > /dev/null || true
+
+            # Make sure the focus@auth user's roster includes the proxy component (this is idempotent)
+            prosodyctl mod_roster_command subscribe focus.$JVB_HOSTNAME $JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN
+
+            # To make sure the roster command is loaded
+            # Once we have https://issues.prosody.im/1908 we can start using prosodyctl shell roster subscribe
+            # and drop the wait and the prosody restart
+            sleep 1
             invoke-rc.d prosody restart || true
 
             # In case we had updated the certificates and restarted prosody, let's restart and the bridge and jicofo if possible
