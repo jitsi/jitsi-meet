@@ -11,14 +11,14 @@ export const colorMap = {
     // Container backgrounds
     ui01: 'surface02',
     ui02: 'surface03',
-    ui03: 'surface04',
+    ui03: 'ui02',
     ui04: 'surface05',
-    ui05: 'surface06',
-    ui06: 'surface07',
+    ui05: 'ui01',
+    ui06: 'ui03',
     ui07: 'surface08',
-    ui08: 'surface09',
-    ui09: 'surface10',
-    ui10: 'surface11',
+    ui08: 'ui21',
+    ui09: 'ui08',
+    ui10: 'ui04',
 
     // ----- Actions -----
 
@@ -39,7 +39,7 @@ export const colorMap = {
 
     // Tertiary
     action03: 'transparent',
-    action03Hover: 'surface04',
+    action03Hover: 'hover05',
     action03Active: 'surface03',
 
     // Disabled
@@ -50,78 +50,71 @@ export const colorMap = {
 
     // ----- Links -----
 
-    link01: 'primary07',
-    link01Hover: 'primary08',
-    link01Active: 'primary06',
+    link01: 'action01',
+    link01Hover: 'hover07',
+    link01Active: 'action04',
 
     // ----- Text -----
 
     // Primary
-    text01: 'surface11',
+    text01: 'textColor01',
 
     // Secondary
-    text02: 'surface09',
+    text02: 'textColor02',
 
     // Tertiary
-    text03: 'surface07',
+    text03: 'ui03',
 
     // High-contrast
     text04: 'surface01',
 
     // Error
-    textError: 'error08',
+    textError: 'alertRed',
 
     // ----- Icons -----
 
     // Primary
-    icon01: 'surface11',
+    icon01: 'icon01',
 
     // Secondary
-    icon02: 'surface09',
+    icon02: 'ui21',
 
     // Tertiary
-    icon03: 'surface07',
+    icon03: 'icon07',
 
     // High-contrast
     icon04: 'surface01',
 
     // Error
-    iconError: 'error06',
+    iconError: 'action03',
 
     // Normal
-    iconNormal: 'primary06',
+    iconNormal: 'action04',
 
     // Success
-    iconSuccess: 'success05',
+    iconSuccess: 'alertGreen',
 
     // Warning
-    iconWarning: 'warning05',
+    iconWarning: 'warning01',
 
     // ----- Forms -----
 
-    field01: 'surface04',
+    field01: 'ui02',
 
     // ----- Feedback -----
 
     // Success
     success01: 'success05',
-    success02: 'success04',
+    success02: 'success01',
 
     // Warning
-    warning01: 'warning05',
+    warning01: 'warning01',
     warning02: 'warning06',
 
     // ----- Support -----
 
-    support01: 'support01',
-    support02: 'support02',
-    support03: 'support03',
-    support04: 'support04',
     support05: 'support05',
-    support06: 'support06',
-    support07: 'support07',
-    support08: 'support08',
-    support09: 'support09'
+    support06: 'support06'
 };
 
 
