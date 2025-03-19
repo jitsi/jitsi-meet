@@ -586,6 +586,9 @@
         "support": "Support",
         "supportMsg": "Wenn der Fehler erneut auftritt, bitte kontaktieren Sie"
     },
+    "inputAction": {
+        "deleteInput": "Eingabe läschen"
+    },
     "inviteDialog": {
         "alertText": "Die Einladung einiger Personen ist fehlgeschlagen.",
         "header": "Einladen",
@@ -1408,7 +1411,6 @@
         "ccButtonTooltip": "Untertitel ein-/ausschalten",
         "expandedLabel": "Transkribieren ist derzeit eingeschaltet",
         "failed": "Transkribieren fehlgeschlagen",
-        "labelToolTip": "Die Konferenz wird transkribiert",
         "sourceLanguageDesc": "Aktuell ist die Sprache der Konferenz auf <b>{{sourceLanguage}}</b> eingestellt. <br/> Sie könne dies hier ",
         "sourceLanguageHere": "ändern",
         "start": "Anzeige der Untertitel starten",
