@@ -9,7 +9,7 @@ import { parseURIString } from "../base/util/uri";
 import { isVpaasMeeting } from "../jaas/functions";
 import { clearNotifications, showNotification } from "../notifications/actions";
 import { NOTIFICATION_TIMEOUT_TYPE } from "../notifications/constants";
-import { SET_NEW_MEETING_PAGE_VISIBILITY, SET_PREJOIN_PAGE_VISIBILITY } from "../prejoin/actionTypes";
+import { SET_NEW_MEETING_PAGE_VISIBILITY } from "../prejoin/actionTypes";
 import { isWelcomePageEnabled } from "../welcome/functions";
 
 import {

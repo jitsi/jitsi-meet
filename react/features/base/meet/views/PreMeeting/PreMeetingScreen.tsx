@@ -12,7 +12,6 @@ import { redirectToStaticPage } from "../../../../app/actions.any";
 import { appNavigate } from "../../../../app/actions.web";
 import { getConferenceName } from "../../../conference/functions";
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from "../../../config/constants";
-import { get8x8BetaJWT } from "../../../connection/options8x8";
 import { translate } from "../../../i18n/functions";
 import RecordingWarning from "../../../premeeting/components/web/RecordingWarning";
 import UnsafeRoomWarning from "../../../premeeting/components/web/UnsafeRoomWarning";

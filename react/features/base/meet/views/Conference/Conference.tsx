@@ -204,7 +204,7 @@ class Conference extends AbstractConference<IProps, any> {
      * @returns {ReactElement}
      */
     render() {
-        const { _showNewMeeting, t } = this.props;
+        const { _showNewMeeting } = this.props;
 
         return (
             <div
