@@ -87,9 +87,6 @@
         "react-native-webrtc": "0.0.0",
         "react-native-webview": "0.0.0"
     },
-    "overrides": {
-        "@xmldom/xmldom": "0.0.0"
-    },
     "scripts": {
         "postinstall": "node sdk_instructions.js",
         "prepare": "node prepare_sdk.js"
