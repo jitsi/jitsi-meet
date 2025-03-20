@@ -199,9 +199,6 @@
     "webpack-cli": "5.1.4",
     "webpack-dev-server": "5.1.0"
   },
-  "overrides": {
-    "@xmldom/xmldom": "0.8.7"
-  },
   "engines": {
     "node": ">=22.0.0",
     "npm": ">=10.0.0"
