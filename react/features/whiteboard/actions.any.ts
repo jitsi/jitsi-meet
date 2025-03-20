@@ -5,7 +5,8 @@ import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import {
     RESET_WHITEBOARD,
     SETUP_WHITEBOARD,
-    SET_WHITEBOARD_OPEN
+    SET_WHITEBOARD_OPEN,
+    COPY_IMAGE_TO_BOARD
 } from './actionTypes';
 import { IWhiteboardAction } from './reducer';
 
@@ -57,6 +58,17 @@ export const setWhiteboardOpen = (isOpen: boolean): IWhiteboardAction => {
         isOpen
     };
 };
+
+export const copyImageToboard = (event: any,excalidrawRef:any) => {
+    console.log(event)
+    return {
+        type: COPY_IMAGE_TO_BOARD,
+        file: event.dataTransfer.files[0],
+        excalidrawRef,
+        clientX: event.clientX,
+        clientY: event.clientY,
+    }
+}
 
 /**
  * Shows a warning notification about the whiteboard user limit.

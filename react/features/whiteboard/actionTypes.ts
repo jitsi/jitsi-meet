@@ -23,3 +23,15 @@ export const RESET_WHITEBOARD: string = 'RESET_WHITEBOARD';
  * }}
  */
 export const SET_WHITEBOARD_OPEN: string = 'SET_WHITEBOARD_OPEN';
+
+/**
+ * Sets the whiteboard visibility state.
+ * {{
+ *      type: COPY_IMAGE_TO_BOARD,
+ *      file
+        excalidrawRef
+        clientX
+        clientY
+ * }}
+ */
+export const COPY_IMAGE_TO_BOARD: string  = 'COPY_IMAGE_TO_BOARD'
