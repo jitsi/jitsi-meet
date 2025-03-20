@@ -383,8 +383,8 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                         <a
                             className = 'welcome-badge'
                             href = { iosDownloadLink }
-                            target="_blank"
-                            rel="noopener noreferrer">
+                            rel = 'noopener noreferrer'
+                            target = '_blank'>
                             <img
                                 alt = { t('welcomepage.mobileDownLoadLinkIos') }
                                 src = './images/app-store-badge.png' />
@@ -392,8 +392,8 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                         <a
                             className = 'welcome-badge'
                             href = { androidDownloadLink }
-                            target="_blank"
-                            rel="noopener noreferrer">
+                            rel = 'noopener noreferrer'
+                            target = '_blank'>
                             <img
                                 alt = { t('welcomepage.mobileDownLoadLinkAndroid') }
                                 src = './images/google-play-badge.png' />
@@ -401,8 +401,8 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                         <a
                             className = 'welcome-badge'
                             href = { fDroidUrl }
-                            target="_blank"
-                            rel="noopener noreferrer">
+                            rel = 'noopener noreferrer'
+                            target = '_blank'>
                             <img
                                 alt = { t('welcomepage.mobileDownLoadLinkFDroid') }
                                 src = './images/f-droid-badge.png' />
