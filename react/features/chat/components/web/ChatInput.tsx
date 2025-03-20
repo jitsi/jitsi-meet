@@ -22,6 +22,9 @@ interface IProps extends WithTranslation {
      */
     _areSmileysDisabled: boolean;
 
+    /**
+     * Whether sending group chat messages is disabled.
+     */
     _isSendGroupChatDisabled: boolean;
 
     /**

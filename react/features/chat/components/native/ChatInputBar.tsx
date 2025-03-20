@@ -12,9 +12,19 @@ import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 
 import styles from './styles';
-
+import { isSendGroupChatDisabled } from '../../functions';
 
 interface IProps extends WithTranslation {
+
+    /**
+     * Whether sending group chat messages is disabled.
+     */
+    _isSendGroupChatDisabled: boolean;
+
+    /**
+     * The id of the message recipient, if any.
+     */
+    _privateMessageRecipientId?: string;
 
     /**
      * Application's aspect ratio.
@@ -102,7 +112,8 @@ class ChatInputBar extends Component<IProps, IState> {
                     returnKeyType = 'send'
                     value = { this.state.message } />
                 <IconButton
-                    disabled = { !this.state.message }
+                    disabled = { !this.state.message
+                        || (this.props._isSendGroupChatDisabled && !this.props._privateMessageRecipientId) }
                     id = { this.props.t('chat.sendButton') }
                     onPress = { this._onSubmit }
                     src = { IconSend }
@@ -144,9 +155,19 @@ class ChatInputBar extends Component<IProps, IState> {
      * @returns {void}
      */
     _onSubmit() {
+        const {
+            _isSendGroupChatDisabled,
+            _privateMessageRecipientId,
+            onSend
+        } = this.props;
+
+        if (_isSendGroupChatDisabled && !_privateMessageRecipientId) {
+            return;
+        }
+
         const message = this.state.message.trim();
 
-        message && this.props.onSend(message);
+        message && onSend(message);
         this.setState({
             message: '',
             showSend: false
@@ -163,8 +184,12 @@ class ChatInputBar extends Component<IProps, IState> {
  */
 function _mapStateToProps(state: IReduxState) {
     const { aspectRatio } = state['features/base/responsive-ui'];
+    const { privateMessageRecipient } = state['features/chat'];
+    const isGroupChatDisabled = isSendGroupChatDisabled(state);
 
     return {
+        _isSendGroupChatDisabled: isGroupChatDisabled,
+        _privateMessageRecipientId: privateMessageRecipient?.id,
         aspectRatio
     };
 }
