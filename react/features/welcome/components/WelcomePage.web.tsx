@@ -16,8 +16,6 @@ import { Button } from "@internxt/ui";
 import { AbstractWelcomePage, IProps, _mapStateToProps } from "./AbstractWelcomePage";
 import Login from "./LoginPage";
 import Tabs from "./Tabs";
-import CreateConference from "../../base/meet/views/Conference/CreateConference";
-import { SET_NEW_MEETING_PAGE_VISIBILITY, SET_PREJOIN_PAGE_VISIBILITY } from "../../prejoin/actionTypes";
 import { appNavigate } from "../../app/actions.web";
 
 /**
