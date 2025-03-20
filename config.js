@@ -1378,8 +1378,12 @@ var config = {
      The config file should be in JSON.
      None of the fields are mandatory and the response must have the shape:
     {
+        // Whether participant can only send group chat message if `send-groupchat` feature is enabled in jwt.
+        groupChatRequiresPermission: false,
+        // Whether participant can only create polls if `create-polls` feature is enabled in jwt.
+        pollCreationRequiresPermission: false,
         // The domain url to apply (will replace the domain in the sharing conference link/embed section)
-        inviteDomain: 'example-company.org,
+        inviteDomain: 'example-company.org',
         // The hex value for the colour used as background
         backgroundColor: '#fff',
         // The url for the image used as background
