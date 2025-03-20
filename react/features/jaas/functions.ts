@@ -1,5 +1,6 @@
 import { IReduxState } from '../app/types';
 import { IJitsiConference } from '../base/conference/reducer';
+import { ParticipantFeaturesKey } from '../base/participants/types';
 
 import { VPAAS_TENANT_PREFIX } from './constants';
 import logger from './logger';
@@ -105,10 +106,10 @@ export async function sendGetDetailsRequest({ appId, baseUrl }: {
  * Returns the billing id for vpaas meetings.
  *
  * @param {IReduxState} state - The state of the app.
- * @param {string} feature - Feature to be looked up for disable state.
+ * @param {ParticipantFeaturesKey} feature - Feature to be looked up for disable state.
  * @returns {boolean}
  */
-export function isFeatureDisabled(state: IReduxState, feature: string) {
+export function isFeatureDisabled(state: IReduxState, feature: ParticipantFeaturesKey) {
     return state['features/jaas'].disabledFeatures.includes(feature);
 }
 
