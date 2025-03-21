@@ -9,6 +9,9 @@
     position: relative;
     overflow-y: auto;
     flex-grow: 1;
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 16px;
 
     .meetings-list-empty {
         text-align: center;
@@ -67,53 +70,89 @@
     .item {
         background: #fff;
         box-sizing: border-box;
-        border-radius: 4px;
-        display: inline-flex;
-        margin: 4px 4px 0 4px;
-        min-height: 60px;
-        width: calc(100% - 8px);
-        word-break: break-word;
+        border-radius: 8px;
         display: flex;
+        margin: 8px 0;
+        min-height: 80px;
+        width: 100%;
+        word-break: break-word;
         flex-direction: row;
         text-align: left;
-
-        &:first-child {
-            margin-top: 0px;
-        }
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        transition: background-color 0.2s ease;
+        position: relative;
 
         .left-column {
-            order: -1;
             display: flex;
             flex-direction: column;
-            flex-grow: 0;
-            padding-left: 16px;
-            padding-top: 13px;
+            align-items: center;
+            justify-content: center;
+            padding: 0 20px;
+            min-width: 100px;
+            background-color: #eef6ff;
+            border-radius: 6px;
+            margin-right: 20px;
+
+            .date {
+                font-weight: 600;
+                color: #005bb5;
+                font-size: 16px;
+                line-height: 24px;
+            }
+
+            .time {
+                color: #5E6D7A;
+                font-size: 14px;
+                line-height: 20px;
+            }
+        }
+
+        .middle-column {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex-grow: 1;
+            overflow: hidden;
+
+            .meeting-title {
+                font-size: 16px;
+                font-weight: 500;
+                color: #333;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
         }
 
         .right-column {
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            flex-grow: 1;
-            padding-left: 16px;
-            padding-top: 13px;
-            position: relative;
+            align-items: center;
+            padding: 0 10px;
+            min-width: 70px;
+            justify-content: flex-end;
+
+            .duration-display {
+                background-color: #e3efff;
+                color: #0074E0;
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 14px;
+                font-weight: 500;
+                margin-right: 8px;
+                flex-shrink: 0;
+                transition: opacity 0.2s ease;
+            }
         }
 
-        .title {
-            font-size: 12px;
-            font-weight: 600;
-            line-height: 16px;
-            margin-bottom: 4px;
+        &.with-click-handler {
+            cursor: pointer;
         }
 
-        .subtitle {
-            color: #5E6D7A;
-            font-weight: normal;
-            font-size: 12px;
-            line-height: 16px;
+        &.with-click-handler:hover,
+        &.with-click-handler:focus {
+            background-color: #f5f7fa;
         }
-
 
         .actions {
             display: flex;
@@ -123,62 +162,72 @@
             margin-right: 16px;
         }
 
-        &.with-click-handler {
-            cursor: pointer;
-        }
-
-        &.with-click-handler:hover,
-        &.with-click-handler:focus {
-            background-color: #c7ddff;
-        }
-
-        .add-button {
-            width: 30px;
-            height: 30px;
-            padding: 0px;
-        }
-
-        i {
-            cursor: inherit;
-        }
-
-        .join-button {
-            display: none;
-        }
-
-        &:hover .join-button {
-            display: block
-        }
-    }
-
-    .delete-meeting {
-        display: none;
-        margin-right: 16px;
-        position: absolute;
-
-        &>svg {
-            fill: #0074e0;
-        }
-    }
-
-    .item:hover,
-    .item:focus,
-    .item:focus-within {
         .delete-meeting {
-            display: block;
+            display: none;
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+
+            &>svg {
+                fill: #0074e0;
+            }
         }
 
-        .delete-meeting:hover {
-            &>svg {
-                fill: #4687ED;
+        &:hover,
+        &:focus,
+        &:focus-within {
+            .delete-meeting {
+                display: block;
+            }
+
+            .delete-meeting:hover {
+                &>svg {
+                    fill: #4687ED;
+                }
+            }
+
+            .duration-display {
+                opacity: 0;
             }
         }
     }
 
-    @media (max-width: 1024px) {  /* Targets iPads and smaller devices */
+    /* Mobile responsive adjustments */
+    @media (max-width: 1024px) {
         .item {
             .delete-meeting {
                 display: block !important;
+            }
+        }
+    }
+
+    @media (max-width: 600px) {
+        padding: 10px;
+
+        .item {
+            min-height: 70px;
+
+            .left-column {
+                min-width: 80px;
+                padding: 0 10px;
+            }
+
+            .date {
+                font-size: 14px;
+            }
+
+            .time {
+                font-size: 12px;
+            }
+
+            .meeting-title {
+                font-size: 14px;
+            }
+
+            .duration-display {
+                font-size: 12px;
+                padding: 3px 8px;
             }
         }
     }
