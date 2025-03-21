@@ -327,7 +327,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      * @private
      * @returns {void}
      */
-    _onFormSubmit(event: React.FormEvent) {
+    _onFormSubmit(event: React.FormEvent): void {
         event.preventDefault();
 
         if (!this._roomInputRef || this._roomInputRef.reportValidity()) {
