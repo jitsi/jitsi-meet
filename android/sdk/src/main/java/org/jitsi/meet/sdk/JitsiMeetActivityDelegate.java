@@ -122,7 +122,7 @@ public class JitsiMeetActivityDelegate {
                 // There seems to be a problem in RN when resuming an Activity when
                 // rotation is involved and the planets align. There doesn't seem to
                 // be a proper solution, but since the activity is going away anyway,
-                // we'll YOLO-ignore the exception and hope fo the best.
+                // we'll YOLO-ignore the exception and hope for the best.
                 // Ref: https://github.com/facebook/react-native/search?q=Pausing+an+activity+that+is+not+the+current+activity%2C+this+is+incorrect%21&type=issues
                 JitsiMeetLogger.e(e, "Error running onHostPause, ignoring");
             }
