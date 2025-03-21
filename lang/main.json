@@ -589,6 +589,9 @@
         "support": "Support",
         "supportMsg": "If this keeps happening, reach out to"
     },
+    "inputAction": {
+        "deleteInput": "Clear input"
+    },
     "inviteDialog": {
         "alertText": "Failed to invite some participants.",
         "header": "Invite",
