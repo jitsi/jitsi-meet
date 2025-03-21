@@ -1,7 +1,7 @@
 import { AnyAction } from 'redux';
 
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
-import { inIframe } from '../util/iframeUtils';
+import { isEmbedded } from '../util/embedUtils';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
 import logger from './logger';
@@ -24,7 +24,7 @@ MiddlewareRegistry.register(() => (next: Function) => (action: AnyAction) => {
     case APP_WILL_MOUNT: {
         // Disable it inside an iframe until Google fixes the origin trial for 3rd party sources:
         // https://bugs.chromium.org/p/chromium/issues/detail?id=1504167
-        if (!inIframe() && 'PressureObserver' in globalThis) {
+        if (!isEmbedded() && 'PressureObserver' in globalThis) {
             pressureObserver = new window.PressureObserver(
                     (records: typeof window.PressureRecord) => {
                         logger.info('Compute pressure state changed:', JSON.stringify(records));

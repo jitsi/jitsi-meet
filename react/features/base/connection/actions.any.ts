@@ -5,7 +5,7 @@ import { conferenceLeft, conferenceWillLeave, redirect } from '../conference/act
 import { getCurrentConference } from '../conference/functions';
 import { IConfigState } from '../config/reducer';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
-import { inIframe } from '../util/iframeUtils';
+import { isEmbedded } from '../util/embedUtils';
 import { parseURLParams } from '../util/parseURLParams';
 import {
     appendURLParam,
@@ -121,7 +121,7 @@ export function constructOptions(state: IReduxState) {
     const iceServersOverride = params['iceServers.replace'];
 
     // Allow iceServersOverride only when jitsi-meet is in an iframe.
-    if (inIframe() && iceServersOverride) {
+    if (isEmbedded() && iceServersOverride) {
         options.iceServersOverride = iceServersOverride;
     }
 

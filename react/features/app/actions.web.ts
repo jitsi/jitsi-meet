@@ -7,7 +7,7 @@ import {
 } from '../base/config/actions';
 import { setLocationURL } from '../base/connection/actions.web';
 import { loadConfig } from '../base/lib-jitsi-meet/functions.web';
-import { inIframe } from '../base/util/iframeUtils';
+import { isEmbedded } from '../base/util/embedUtils';
 import { parseURIString } from '../base/util/uri';
 import { isVpaasMeeting } from '../jaas/functions';
 import { clearNotifications, showNotification } from '../notifications/actions';
@@ -102,7 +102,7 @@ export function maybeRedirectToWelcomePage(options: { feedbackSubmitted?: boolea
         // if close page is enabled redirect to it, without further action
         if (enableClosePage) {
             if (isVpaasMeeting(getState())) {
-                const isOpenedInIframe = inIframe();
+                const isOpenedInIframe = isEmbedded();
 
                 if (isOpenedInIframe) {
                     // @ts-ignore

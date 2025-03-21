@@ -1,7 +1,7 @@
-import { inIframe } from '../util/iframeUtils';
+import { isEmbedded } from '../util/embedUtils';
 
 import extraInterfaceConfigWhitelistCopy from './extraInterfaceConfigWhitelist';
-import inIframeInterfaceConfigWhitelist from './inIframeInterfaceConfigWhitelist';
+import isEmbeddedInterfaceConfigWhitelist from './isEmbeddedInterfaceConfigWhitelist';
 
 /**
  * The interface config keys to whitelist, the keys that can be overridden.
@@ -54,4 +54,4 @@ export default [
     'VERTICAL_FILMSTRIP',
     'VIDEO_LAYOUT_FIT',
     'VIDEO_QUALITY_LABEL_DISABLED'
-].concat(extraInterfaceConfigWhitelistCopy).concat(inIframe() ? inIframeInterfaceConfigWhitelist : []);
+].concat(extraInterfaceConfigWhitelistCopy).concat(isEmbedded() ? isEmbeddedInterfaceConfigWhitelist : []);

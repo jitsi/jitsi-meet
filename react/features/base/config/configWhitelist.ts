@@ -1,7 +1,7 @@
-import { inIframe } from '../util/iframeUtils';
+import { isEmbedded } from '../util/embedUtils';
 
 import extraConfigWhitelist from './extraConfigWhitelist';
-import inIframeConfigWhitelist from './inIframeConfigWhitelist';
+import isEmbeddedConfigWhitelist from './isEmbeddedConfigWhitelist';
 
 /**
  * The config keys to whitelist, the keys that can be overridden.
@@ -249,4 +249,4 @@ export default [
     'webrtcIceTcpDisable',
     'webrtcIceUdpDisable',
     'whiteboard.enabled'
-].concat(extraConfigWhitelist).concat(inIframe() ? inIframeConfigWhitelist : []);
+].concat(extraConfigWhitelist).concat(isEmbedded() ? isEmbeddedConfigWhitelist : []);
