@@ -189,9 +189,10 @@ class YoutubeVideoManager extends AbstractVideoManager {
     };
 
     getPlayerOptions = () => {
-        const { _isOwner, videoId } = this.props;
+        const { _isOwner, videoId, startTime } = this.props;
         const showControls = _isOwner ? 1 : 0;
 
+        console.log({ startTime });
         const options = {
             id: 'sharedVideoPlayer',
             opts: {
@@ -202,7 +203,8 @@ class YoutubeVideoManager extends AbstractVideoManager {
                     'fs': '0',
                     'autoplay': 0,
                     'controls': showControls,
-                    'rel': 0
+                    'rel': 0,
+                    'start': startTime || 0
                 }
             },
             onError: (e: any) => this.onError(e),
