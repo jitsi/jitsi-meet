@@ -1,28 +1,29 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React from "react";
+import { connect } from "react-redux";
 
-import { isMobileBrowser } from '../../base/environment/utils';
-import { translate, translateToHTML } from '../../base/i18n/functions';
-import Icon from '../../base/icons/components/Icon';
-import { IconWarning } from '../../base/icons/svg';
-import Watermarks from '../../base/react/components/web/Watermarks';
-import getUnsafeRoomText from '../../base/util/getUnsafeRoomText.web';
-import CalendarList from '../../calendar-sync/components/CalendarList.web';
-import RecentList from '../../recent-list/components/RecentList.web';
-import SettingsButton from '../../settings/components/web/SettingsButton';
-import { SETTINGS_TABS } from '../../settings/constants';
+import { isMobileBrowser } from "../../base/environment/utils";
+import { translate, translateToHTML } from "../../base/i18n/functions";
+import Icon from "../../base/icons/components/Icon";
+import { IconWarning } from "../../base/icons/svg";
+import Watermarks from "../../base/react/components/web/Watermarks";
+import getUnsafeRoomText from "../../base/util/getUnsafeRoomText.web";
+import CalendarList from "../../calendar-sync/components/CalendarList.web";
+import RecentList from "../../recent-list/components/RecentList.web";
+import SettingsButton from "../../settings/components/web/SettingsButton";
+import { SETTINGS_TABS } from "../../settings/constants";
 
 import { Button } from "@internxt/ui";
 import { AbstractWelcomePage, IProps, _mapStateToProps } from "./AbstractWelcomePage";
-import Login from './LoginPage';
+import Login from "./LoginPage";
 import Tabs from "./Tabs";
+import { appNavigate } from "../../app/actions.web";
 
 /**
  * The pattern used to validate room name.
  *
  * @type {string}
  */
-export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
+export const ROOM_NAME_VALIDATE_PATTERN_STR = "^[^?&:\u0022\u0027%#]+$";
 
 /**
  * The Web container rendering the welcome page.
@@ -229,11 +230,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                 <h1 className="header-text-title">{t("welcomepage.headerTitle")}</h1>
                                 <span className="header-text-subtitle">{t("welcomepage.headerSubtitle")}</span>
                                 <div id="enter_room" style={{ justifyContent: "center" }}>
-                                    <Button
-                                        variant="primary"
-                                        onClick={this._onFormSubmit}
-                                        type="submit"
-                                    >
+                                    <Button variant="primary" onClick={this._onFormSubmit} type="submit">
                                         {t("welcomepage.startMeeting")}
                                     </Button>
                                     {/* <button
@@ -296,10 +293,21 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      * @private
      * @returns {void}
      */
-    _onFormSubmit() {
+    /*
+    _onJoinConference() {
         if (!this._roomInputRef || this._roomInputRef.reportValidity()) {
             this._onJoin();
+            this.props.dispatch({ type: SET_PREJOIN_PAGE_VISIBILITY, value: false });
+            //this.props.dispatch({ type: SET_NEW_MEETING_PAGE_VISIBILITY, value: true });
         }
+    }*/
+
+    _onFormSubmit() {
+        const locationURL = window.location;
+        const baseUrl = `${locationURL.protocol}//${locationURL.host}`;
+        const newUrl = `${baseUrl}/new-meeting`;
+        window.history.replaceState({}, document.title, newUrl);
+        this.props.dispatch(appNavigate(newUrl));
     }
 
     /**

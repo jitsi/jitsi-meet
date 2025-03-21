@@ -12,7 +12,6 @@ import { redirectToStaticPage } from "../../../../app/actions.any";
 import { appNavigate } from "../../../../app/actions.web";
 import { getConferenceName } from "../../../conference/functions";
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from "../../../config/constants";
-import { get8x8BetaJWT } from "../../../connection/options8x8";
 import { translate } from "../../../i18n/functions";
 import RecordingWarning from "../../../premeeting/components/web/RecordingWarning";
 import UnsafeRoomWarning from "../../../premeeting/components/web/UnsafeRoomWarning";
@@ -147,6 +146,11 @@ interface IProps extends WithTranslation {
      * Flag to indicate if the video is mirrored.
      */
     flipX?: boolean;
+
+    /**
+     * Flag to indicate if conference is creating.
+     */
+    createConference?: Function;
 }
 
 const PreMeetingScreen = ({
@@ -169,6 +173,7 @@ const PreMeetingScreen = ({
     joinRoomError,
     createRoomError,
     flipX,
+    createConference,
 }: IProps) => {
     const { classes } = useStyles();
     const [isNameInputFocused, setIsNameInputFocused] = useState(false);
@@ -216,17 +221,11 @@ const PreMeetingScreen = ({
     const handleNewMeeting = async () => {
         setIsCreatingMeeting(true);
         try {
-            const newToken = storageManager.getNewToken() || "";
-            const meetTokenCreator = await get8x8BetaJWT(newToken);
-
-            if (meetTokenCreator?.room) {
-                const locationURL = window.location;
-                const baseUrl = `${locationURL.protocol}//${locationURL.host}`;
-                const newUrl = `${baseUrl}/${meetTokenCreator.room}`;
-                window.history.replaceState({}, document.title, newUrl);
-
-                await dispatch(appNavigate(meetTokenCreator.room));
-            }
+            const locationURL = window.location;
+            const baseUrl = `${locationURL.protocol}//${locationURL.host}`;
+            const newUrl = `${baseUrl}/new-meeting`;
+            window.history.replaceState({}, document.title, newUrl);
+            dispatch(appNavigate(newUrl));
         } catch (error) {
             console.error("Error creating new meeting:", error);
             dispatch(setCreateRoomError(true));
@@ -305,10 +304,13 @@ const PreMeetingScreen = ({
                         setUserName={setName}
                         setIsNameInputFocused={setIsNameInputFocused}
                         participants={allParticipants}
-                        translate={t}
-                        joinConference={joinConference}
+                        joinConference={async () => {
+                            createConference && (await createConference());
+                            joinConference && joinConference();
+                        }}
                         disableJoinButton={disableJoinButton}
                         flipX={flipX}
+                        isCreatingConference={!!createConference}
                     />
                 )}
                 {/* UNCOMMENT IN DEV MODE TO SEE OLD IMPLEMENTATION  */}

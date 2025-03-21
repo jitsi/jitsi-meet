@@ -750,7 +750,8 @@
             "joinMeeting": "Join Meeting",
             "nameRequired": "A name is required",
             "newMeeting": "New Meeting",
-            "participants": "Participants"
+            "participants": "Participants",
+            "upToParticipants": "Up to {{num}} participants"
         },
         "joinRoomErrorDialog": {
             "joinRoomError": "Unable to join meeting",

@@ -6,36 +6,19 @@ import { connect as reactReduxConnect } from "react-redux";
 // @ts-ignore
 import VideoLayout from "../../../../../../modules/UI/videolayout/VideoLayout";
 import { IReduxState } from "../../../../app/types";
-import Chat from "../../../../chat/components/web/Chat";
 import { init } from "../../../../conference/actions.web";
 import type { AbstractProps } from "../../../../conference/components/AbstractConference";
 import { AbstractConference, abstractMapStateToProps } from "../../../../conference/components/AbstractConference";
 import { maybeShowSuboptimalExperienceNotification } from "../../../../conference/functions.web";
-import CalleeInfoContainer from "../../../../invite/components/callee-info/CalleeInfoContainer";
-import LobbyScreen from "../../../../lobby/components/web/LobbyScreen";
-import { getIsLobbyVisible } from "../../../../lobby/functions";
-import { getOverlayToRender } from "../../../../overlay/functions.web";
-import ParticipantsPane from "../../../../participants-pane/components/web/ParticipantsPane";
-import Prejoin from "../../../../prejoin/components/web/Prejoin";
-import { isPrejoinPageVisible } from "../../../../prejoin/functions";
-import ReactionAnimations from "../../../../reactions/components/web/ReactionsAnimations";
 import { toggleToolboxVisible } from "../../../../toolbox/actions.any";
 import { fullScreenChanged, showToolbox } from "../../../../toolbox/actions.web";
-import JitsiPortal from "../../../../toolbox/components/web/JitsiPortal";
-import { LAYOUT_CLASSNAMES } from "../../../../video-layout/constants";
-import { getCurrentLayout } from "../../../../video-layout/functions.any";
-import { getConferenceNameForTitle } from "../../../conference/functions";
 import { hangup } from "../../../connection/actions.web";
-import { isMobileBrowser } from "../../../environment/utils";
 import { translate } from "../../../i18n/functions";
 import { setColorAlpha } from "../../../util/helpers";
+import { Mode } from "./components/Header";
 
-import ConferenceInfo from "../../../../conference/components/web/ConferenceInfo";
-import { default as Notice } from "../../../../conference/components/web/Notice";
-import Header, { Mode } from "./components/Header";
-
-import ConferenceControlsWrapper from "./containers/ConferenceControlsWrapper";
-import VideoGalleryWrapper from "./containers/VideoGalleryWrapper";
+import CreateConference from "./components/CreateConference";
+import JoinConference from "./components/JoinConference";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -95,7 +78,7 @@ interface IProps extends AbstractProps, WithTranslation {
 
     dispatch: any;
 
-    isParticipantsPaneOpened: boolean;
+    _showNewMeeting: boolean;
 }
 
 /**
@@ -104,9 +87,6 @@ interface IProps extends AbstractProps, WithTranslation {
 class Conference extends AbstractConference<IProps, any> {
     _originalOnMouseMove: Function;
     _originalOnShowToolbar: Function;
-    state = {
-        videoMode: "gallery" as Mode,
-    };
 
     _onSetVideoModeClicked = (newMode: Mode) => {
         this.setState({ videoMode: newMode });
@@ -224,16 +204,7 @@ class Conference extends AbstractConference<IProps, any> {
      * @returns {ReactElement}
      */
     render() {
-        const {
-            _isAnyOverlayVisible,
-            _layoutClassName,
-            _notificationsVisible,
-            _overflowDrawer,
-            _showLobby,
-            _showPrejoin,
-            t,
-        } = this.props;
-        const { videoMode } = this.state;
+        const { _showNewMeeting } = this.props;
 
         return (
             <div
@@ -243,59 +214,7 @@ class Conference extends AbstractConference<IProps, any> {
                 onMouseMove={this._onMouseMove}
                 ref={this._setBackground}
             >
-                <Chat />
-                <div
-                    // _layoutClassName has the styles to manage the side bar
-                    className={_layoutClassName + " bg-gray-100"}
-                    // className={"bg-gray-100 relative flex"}
-                    id="videoconference_page"
-                    onMouseMove={isMobileBrowser() ? undefined : this._onShowToolbar}
-                >
-                    <ConferenceInfo />
-                    <Notice />
-                    <div onTouchStart={this._onVidespaceTouchStart}>
-                        <Header mode={videoMode} translate={t} onSetModeClicked={this._onSetVideoModeClicked} />
-                        <div className="flex">
-                            {/* <LargeVideoWeb /> */}
-                            <VideoGalleryWrapper videoMode={videoMode} />
-                        </div>
-                        {_showPrejoin || _showLobby || (
-                            <>
-                                {/* <StageFilmstrip /> */}
-                                {/*  <ScreenshareFilmstrip />*/}
-                                {/* right screen tools component */}
-                                {/* <MainFilmstrip /> */}
-                            </>
-                        )}
-                    </div>
-
-                    {_showPrejoin || _showLobby || (
-                        <>
-                            <span aria-level={1} className="sr-only" role="heading">
-                                {t("toolbar.accessibilityLabel.heading") as string}
-                            </span>
-                            {/* <Toolbox /> */}
-                        </>
-                    )}
-                    {/* CONFERENCE MEDIA CONTROLS */}
-                    <ConferenceControlsWrapper />
-                    {_notificationsVisible &&
-                        !_isAnyOverlayVisible &&
-                        (_overflowDrawer ? (
-                            <JitsiPortal className="notification-portal">
-                                {this.renderNotificationsContainer({ portal: true })}
-                            </JitsiPortal>
-                        ) : (
-                            this.renderNotificationsContainer()
-                        ))}
-
-                    <CalleeInfoContainer />
-
-                    {_showPrejoin && <Prejoin />}
-                    {_showLobby && <LobbyScreen />}
-                </div>
-                <ParticipantsPane />
-                <ReactionAnimations />
+                {_showNewMeeting ? <CreateConference /> : <JoinConference />}
             </div>
         );
     }
@@ -425,19 +344,13 @@ class Conference extends AbstractConference<IProps, any> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
-    const { backgroundAlpha, mouseMoveCallbackInterval } = state["features/base/config"];
-    const { overflowDrawer } = state["features/toolbox"];
+    const { backgroundAlpha } = state["features/base/config"];
+    const { showCreatingMeeting } = state["features/prejoin"];
 
     return {
         ...abstractMapStateToProps(state),
         _backgroundAlpha: backgroundAlpha,
-        _isAnyOverlayVisible: Boolean(getOverlayToRender(state)),
-        _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state) ?? ""],
-        _mouseMoveCallbackInterval: mouseMoveCallbackInterval,
-        _overflowDrawer: overflowDrawer,
-        _roomName: getConferenceNameForTitle(state),
-        _showLobby: getIsLobbyVisible(state),
-        _showPrejoin: isPrejoinPageVisible(state),
+        _showNewMeeting: showCreatingMeeting,
     };
 }
 

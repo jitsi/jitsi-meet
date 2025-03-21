@@ -1,5 +1,5 @@
-import PersistenceRegistry from '../base/redux/PersistenceRegistry';
-import ReducerRegistry from '../base/redux/ReducerRegistry';
+import PersistenceRegistry from "../base/redux/PersistenceRegistry";
+import ReducerRegistry from "../base/redux/ReducerRegistry";
 
 import {
     PREJOIN_JOINING_IN_PROGRESS,
@@ -10,25 +10,27 @@ import {
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
     SET_PREJOIN_DEVICE_ERRORS,
     SET_PREJOIN_PAGE_VISIBILITY,
-    SET_SKIP_PREJOIN_RELOAD
-} from './actionTypes';
+    SET_NEW_MEETING_PAGE_VISIBILITY,
+    SET_SKIP_PREJOIN_RELOAD,
+} from "./actionTypes";
 
 const DEFAULT_STATE = {
-    country: '',
-    deviceStatusText: 'prejoin.configuringDevices',
-    deviceStatusType: 'ok',
+    country: "",
+    deviceStatusText: "prejoin.configuringDevices",
+    deviceStatusType: "ok",
     dialOutCountry: {
-        name: 'United States',
-        dialCode: '1',
-        code: 'us'
+        name: "United States",
+        dialCode: "1",
+        code: "us",
     },
-    dialOutNumber: '',
-    dialOutStatus: 'prejoin.dialing',
-    name: '',
-    rawError: '',
+    dialOutNumber: "",
+    dialOutStatus: "prejoin.dialing",
+    name: "",
+    rawError: "",
     showPrejoin: true,
+    showCreatingMeeting: false,
     skipPrejoinOnReload: false,
-    showJoinByPhoneDialog: false
+    showJoinByPhoneDialog: false,
 };
 
 export interface IPrejoinState {
@@ -47,38 +49,49 @@ export interface IPrejoinState {
     rawError: string;
     showJoinByPhoneDialog: boolean;
     showPrejoin: boolean;
+    showCreatingMeeting: boolean;
     skipPrejoinOnReload: boolean;
 }
 
 /**
  * Sets up the persistence of the feature {@code prejoin}.
  */
-PersistenceRegistry.register('features/prejoin', {
-    skipPrejoinOnReload: true
-}, DEFAULT_STATE);
+PersistenceRegistry.register(
+    "features/prejoin",
+    {
+        skipPrejoinOnReload: true,
+        showPrejoin: true,
+    },
+    DEFAULT_STATE
+);
 
 /**
  * Listen for actions that mutate the prejoin state.
  */
-ReducerRegistry.register<IPrejoinState>(
-    'features/prejoin', (state = DEFAULT_STATE, action): IPrejoinState => {
-        switch (action.type) {
+ReducerRegistry.register<IPrejoinState>("features/prejoin", (state = DEFAULT_STATE, action): IPrejoinState => {
+    switch (action.type) {
         case PREJOIN_JOINING_IN_PROGRESS:
             return {
                 ...state,
-                joiningInProgress: action.value
+                joiningInProgress: action.value,
             };
         case SET_SKIP_PREJOIN_RELOAD: {
             return {
                 ...state,
-                skipPrejoinOnReload: action.value
+                skipPrejoinOnReload: action.value,
             };
         }
 
         case SET_PREJOIN_PAGE_VISIBILITY:
             return {
                 ...state,
-                showPrejoin: action.value
+                showPrejoin: action.value,
+            };
+
+        case SET_NEW_MEETING_PAGE_VISIBILITY:
+            return {
+                ...state,
+                showCreatingMeeting: action.value,
             };
 
         case SET_PREJOIN_DEVICE_ERRORS: {
@@ -86,7 +99,7 @@ ReducerRegistry.register<IPrejoinState>(
 
             return {
                 ...state,
-                ...status
+                ...status,
             };
         }
 
@@ -96,43 +109,42 @@ ReducerRegistry.register<IPrejoinState>(
             return {
                 ...state,
                 deviceStatusText,
-                deviceStatusType
+                deviceStatusType,
             };
         }
 
         case SET_DIALOUT_NUMBER: {
             return {
                 ...state,
-                dialOutNumber: action.value
+                dialOutNumber: action.value,
             };
         }
 
         case SET_DIALOUT_COUNTRY: {
             return {
                 ...state,
-                dialOutCountry: action.value
+                dialOutCountry: action.value,
             };
         }
 
         case SET_DIALOUT_STATUS: {
             return {
                 ...state,
-                dialOutStatus: action.value
+                dialOutStatus: action.value,
             };
         }
 
         case SET_JOIN_BY_PHONE_DIALOG_VISIBLITY: {
             return {
                 ...state,
-                showJoinByPhoneDialog: action.value
+                showJoinByPhoneDialog: action.value,
             };
         }
 
         default:
             return state;
-        }
     }
-);
+});
 
 /**
  * Returns a suitable error object based on the track errors.
@@ -141,39 +153,39 @@ ReducerRegistry.register<IPrejoinState>(
  * @returns {Object}
  */
 function getStatusFromErrors(errors: {
-    audioAndVideoError?: { message: string; };
-    audioOnlyError?: { message: string; };
-    videoOnlyError?: { message: string; }; }
-) {
+    audioAndVideoError?: { message: string };
+    audioOnlyError?: { message: string };
+    videoOnlyError?: { message: string };
+}) {
     const { audioOnlyError, videoOnlyError, audioAndVideoError } = errors;
 
     if (audioAndVideoError) {
         return {
-            deviceStatusType: 'warning',
-            deviceStatusText: 'prejoin.audioAndVideoError',
-            rawError: audioAndVideoError.message
+            deviceStatusType: "warning",
+            deviceStatusText: "prejoin.audioAndVideoError",
+            rawError: audioAndVideoError.message,
         };
     }
 
     if (audioOnlyError) {
         return {
-            deviceStatusType: 'warning',
-            deviceStatusText: 'prejoin.audioOnlyError',
-            rawError: audioOnlyError.message
+            deviceStatusType: "warning",
+            deviceStatusText: "prejoin.audioOnlyError",
+            rawError: audioOnlyError.message,
         };
     }
 
     if (videoOnlyError) {
         return {
-            deviceStatusType: 'warning',
-            deviceStatusText: 'prejoin.videoOnlyError',
-            rawError: videoOnlyError.message
+            deviceStatusType: "warning",
+            deviceStatusText: "prejoin.videoOnlyError",
+            rawError: videoOnlyError.message,
         };
     }
 
     return {
-        deviceStatusType: 'ok',
-        deviceStatusText: 'prejoin.lookGood',
-        rawError: ''
+        deviceStatusType: "ok",
+        deviceStatusText: "prejoin.lookGood",
+        rawError: "",
     };
 }
