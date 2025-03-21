@@ -39,15 +39,42 @@ const useStyles = makeStyles()(theme => {
 export default function SubtitlesTab() {
     const { classes } = useStyles();
     const subtitles: ISubtitle[] = useSelector(state => state['features/subtitles'].subtitlesHistory);
-    const groupedSubtitles = useMemo(() => groupMessagesBySender(subtitles), [ subtitles ]);
-    const onChange = useCallback((value: string | null) => {
-        // eslint-disable-next-line no-console
-        console.log('Selected language:', value);
-    }, []);
+    const selectedLanguage = useSelector(state => state['features/subtitles']._language);
+
+    const filteredSubtitles = useMemo(() => {
+        // First, create a map of transcription messages by message ID
+        const transcriptionMessages = new Map(
+            subtitles
+                .filter(s => s.isTranscription)
+                .map(s => [ s.id, s ])
+        );
+
+        // Then, create a map of translation messages by message ID
+        const translationMessages = new Map(
+            subtitles
+                .filter(s => !s.isTranscription && s.language === selectedLanguage)
+                .map(s => [ s.id, s ])
+        );
+
+        if (!selectedLanguage) {
+            // When no language is selected, show all original transcriptions
+            return Array.from(transcriptionMessages.values());
+        }
+
+        // When a language is selected, for each transcription message:
+        // 1. Use its translation if available
+        // 2. Fall back to the original transcription if no translation exists
+        return Array.from(transcriptionMessages.keys()).map(
+            id => translationMessages.get(id) || transcriptionMessages.get(id))
+            .filter(s => typeof s !== 'undefined');
+    }, [ subtitles, selectedLanguage ]);
+
+    const groupedSubtitles = useMemo(() =>
+        groupMessagesBySender(filteredSubtitles), [ filteredSubtitles ]);
 
     return (
         <div className = { classes.container }>
-            <LanguageSelector onChange = { onChange } />
+            <LanguageSelector />
             <div className = { classes.subtitlesList }>
                 {groupedSubtitles.map(group => (
                     <SubtitlesGroup

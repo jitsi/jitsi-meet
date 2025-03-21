@@ -36,15 +36,6 @@ const useStyles = makeStyles()(theme => {
 });
 
 /**
- * Props for the LanguageSelector component.
- *
- * @typedef {Object} IProps
- */
-interface IProps {
-    onChange: (value: string | null) => void;
-}
-
-/**
  * Component that renders a language selection dropdown.
  * Uses the same language options as LanguageSelectorDialog and
  * updates the subtitles language preference in Redux.
@@ -52,7 +43,7 @@ interface IProps {
  * @param {IProps} props - The component props.
  * @returns {JSX.Element} - The rendered component.
  */
-function LanguageSelector({ onChange }: IProps) {
+function LanguageSelector() {
     const { t } = useTranslation();
     const { classes } = useStyles();
     const dispatch = useDispatch();
@@ -90,9 +81,7 @@ function LanguageSelector({ onChange }: IProps) {
         if (value !== null) {
             value = value.replace('translation-languages:', '');
         }
-
-        onChange(value);
-    }, [ dispatch, onChange ]);
+    }, [ dispatch ]);
 
     return (
         <div className = { classes.container }>
