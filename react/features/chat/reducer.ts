@@ -7,6 +7,7 @@ import {
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     EDIT_MESSAGE,
+    NOTIFY_PRIVATE_RECIPIENTS_CHANGED,
     OPEN_CHAT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     SET_IS_POLL_TAB_FOCUSED,
@@ -21,6 +22,7 @@ const DEFAULT_STATE = {
     isPollsTabFocused: false,
     lastReadMessage: undefined,
     messages: [],
+    notifyPrivateRecipientsChangedTimestamp: undefined,
     reactions: {},
     nbUnreadMessages: 0,
     privateMessageRecipient: undefined,
@@ -39,6 +41,7 @@ export interface IChatState {
     } | ILocalParticipant;
     messages: IMessage[];
     nbUnreadMessages: number;
+    notifyPrivateRecipientsChangedTimestamp?: number;
     privateMessageRecipient?: IParticipant;
 }
 
@@ -202,6 +205,11 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             isOpen: state.isOpen && state.isLobbyChatActive ? false : state.isOpen,
             isLobbyChatActive: false,
             lobbyMessageRecipient: undefined
+        };
+    case NOTIFY_PRIVATE_RECIPIENTS_CHANGED:
+        return {
+            ...state,
+            notifyPrivateRecipientsChangedTimestamp: action.payload
         };
     }
 
