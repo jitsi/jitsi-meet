@@ -14,6 +14,8 @@ import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
 import { getToolboxHeight } from '../../../toolbox/functions.web';
 import { shouldDisplayTileView } from '../../../video-layout/functions.any';
 import { WHITEBOARD_UI_OPTIONS } from '../../constants';
+import { useDispatch } from 'react-redux';
+import { copyImageToboard } from '../../actions.any';
 import {
     getCollabDetails,
     getCollabServerUrl,
@@ -56,6 +58,7 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
     const collabServerUrl = useSelector(getCollabServerUrl);
     const { defaultRemoteDisplayName } = useSelector((state: IReduxState) => state['features/base/config']);
     const localParticipantName = useSelector(getLocalParticipant)?.name || defaultRemoteDisplayName || 'Fellow Jitster';
+    const dispatch = useDispatch()
 
     useEffect(() => {
         if (!collabAPIRef.current) {
@@ -96,6 +99,10 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
         };
     };
 
+    const _handleDrop = (event:any) => {
+        dispatch(copyImageToboard(event,excalidrawAPIRef))
+    }
+
     const getExcalidrawAPI = useCallback(excalidrawAPI => {
         if (excalidrawAPIRef.current) {
             return;
@@ -124,7 +131,7 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
             }}>
             {
                 isOpen && (
-                    <div className = 'excalidraw-wrapper'>
+                    <div className = 'excalidraw-wrapper' onDrop={_handleDrop}>
                         {/*
                           * Excalidraw renders a few lvl 2 headings. This is
                           * quite fortunate, because we actually use lvl 1
