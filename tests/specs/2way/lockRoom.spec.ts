@@ -31,6 +31,9 @@ describe('Lock Room', () => {
         await p2PasswordDialog.waitForDialog();
         await p2PasswordDialog.submitPassword(`${ctx.roomKey}1234`);
 
+        // give sometime to the password prompt to disappear and send the password
+        await p2.driver.pause(500);
+
         // wait for password prompt
         await p2PasswordDialog.waitForDialog();
         await p2PasswordDialog.submitPassword(ctx.roomKey);
@@ -104,6 +107,9 @@ describe('Lock Room', () => {
 
         await p2PasswordDialog.waitForDialog();
         await p2PasswordDialog.submitPassword(`${ctx.roomKey}1234`);
+
+        // give sometime to the password prompt to disappear and send the password
+        await p2.driver.pause(500);
 
         // wait for password prompt
         await p2PasswordDialog.waitForDialog();
