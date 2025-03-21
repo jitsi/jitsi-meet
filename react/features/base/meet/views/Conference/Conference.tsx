@@ -35,6 +35,7 @@ import ConferenceInfo from "../../../../conference/components/web/ConferenceInfo
 import { default as Notice } from "../../../../conference/components/web/Notice";
 import Header, { Mode } from "./components/Header";
 
+import { toggleE2EE } from "../../../../e2ee/actions";
 import ConferenceControlsWrapper from "./containers/ConferenceControlsWrapper";
 import VideoGalleryWrapper from "./containers/VideoGalleryWrapper";
 
@@ -162,6 +163,13 @@ class Conference extends AbstractConference<IProps, any> {
      */
     componentDidUpdate(prevProps: IProps) {
         if (this.props._shouldDisplayTileView === prevProps._shouldDisplayTileView) {
+            const wasPrejoinOrLobbyVisible = prevProps._showPrejoin || prevProps._showLobby;
+            const isConferenceDisplayed = !this.props._showPrejoin && !this.props._showLobby;
+
+            // ACTIVATE E2EE BY DEFAULT WHEN CONFERENCE IS DISPLAYED
+            if (wasPrejoinOrLobbyVisible && isConferenceDisplayed) {
+                this.props.dispatch(toggleE2EE(true));
+            }
             return;
         }
 

@@ -768,6 +768,10 @@
             "copyLink": "Copy Link",
             "meetingFull": "Meeting is full",
             "participants": "participants"
+        },
+        "secureMeetingMessage": {
+            "title": "Your meeting is private",
+            "description": "Only invited or approved participants can join"
         }
     },
     "notify": {
