@@ -4,10 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Select from '../../../base/ui/components/web/Select';
 import { setRequestingSubtitles } from '../../actions.any';
 import { getAvailableSubtitlesLanguages } from '../../functions.any';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 
 /**
  * The styles for the LanguageSelector component.
@@ -48,7 +48,10 @@ function LanguageSelector() {
     const { classes } = useStyles();
     const dispatch = useDispatch();
     const selectedLanguage = useSelector((state: IReduxState) => state['features/subtitles']._language);
-    const languageCodes = useSelector((state: IReduxState) => getAvailableSubtitlesLanguages(state, selectedLanguage));
+    const languageCodes = useSelector((state: IReduxState) => getAvailableSubtitlesLanguages(
+        state,
+        selectedLanguage?.replace('translation-languages:', '')
+    ));
 
     /**
      * Maps available languages to Select component options format.

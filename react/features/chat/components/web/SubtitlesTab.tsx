@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
@@ -39,7 +39,8 @@ const useStyles = makeStyles()(theme => {
 export default function SubtitlesTab() {
     const { classes } = useStyles();
     const subtitles: ISubtitle[] = useSelector(state => state['features/subtitles'].subtitlesHistory);
-    const selectedLanguage = useSelector(state => state['features/subtitles']._language);
+    const language = useSelector(state => state['features/subtitles']._language);
+    const selectedLanguage = language?.replace('translation-languages:', '');
 
     const filteredSubtitles = useMemo(() => {
         // First, create a map of transcription messages by message ID
@@ -49,6 +50,11 @@ export default function SubtitlesTab() {
                 .map(s => [ s.id, s ])
         );
 
+        if (!selectedLanguage) {
+            // When no language is selected, show all original transcriptions
+            return Array.from(transcriptionMessages.values());
+        }
+
         // Then, create a map of translation messages by message ID
         const translationMessages = new Map(
             subtitles
@@ -56,17 +62,12 @@ export default function SubtitlesTab() {
                 .map(s => [ s.id, s ])
         );
 
-        if (!selectedLanguage) {
-            // When no language is selected, show all original transcriptions
-            return Array.from(transcriptionMessages.values());
-        }
-
         // When a language is selected, for each transcription message:
         // 1. Use its translation if available
         // 2. Fall back to the original transcription if no translation exists
-        return Array.from(transcriptionMessages.keys()).map(
-            id => translationMessages.get(id) || transcriptionMessages.get(id))
-            .filter(s => typeof s !== 'undefined');
+        return Array.from(transcriptionMessages.values())
+            .filter((t: ISubtitle) => !t.interim)
+            .map(t => translationMessages.get(t.id) ?? t);
     }, [ subtitles, selectedLanguage ]);
 
     const groupedSubtitles = useMemo(() =>
