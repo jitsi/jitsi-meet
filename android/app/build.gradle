@@ -151,7 +151,11 @@ gradle.projectsEvaluated {
                 workingDir androidRoot
 
                 // Run the packager
-                commandLine("scripts/run-packager.sh")
+                if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+                    commandLine("scripts/run-packager.bat")
+                } else {
+                    commandLine("scripts/run-packager.sh")
+                }
             }
 
             // Set up dev mode
