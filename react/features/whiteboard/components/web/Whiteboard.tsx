@@ -20,6 +20,8 @@ import {
     isWhiteboardOpen,
     isWhiteboardVisible
 } from '../../functions';
+import { resetWhiteboard } from '../../actions.any';
+import { useDispatch } from 'react-redux';
 
 /**
  * Space taken by meeting elements like the subject and the watermark.
@@ -56,6 +58,7 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
     const collabServerUrl = useSelector(getCollabServerUrl);
     const { defaultRemoteDisplayName } = useSelector((state: IReduxState) => state['features/base/config']);
     const localParticipantName = useSelector(getLocalParticipant)?.name || defaultRemoteDisplayName || 'Fellow Jitster';
+    const dispatch = useDispatch()
 
     useEffect(() => {
         if (!collabAPIRef.current) {
@@ -111,6 +114,10 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
         collabAPIRef.current.setUsername(localParticipantName);
     }, [ localParticipantName ]);
 
+    const _handelClose = () => {
+        dispatch(resetWhiteboard())
+    }
+
     return (
         <div
             className = { clsx(
@@ -124,7 +131,7 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
             }}>
             {
                 isOpen && (
-                    <div className = 'excalidraw-wrapper'>
+                    <div className = 'excalidraw-wrapper' >
                         {/*
                           * Excalidraw renders a few lvl 2 headings. This is
                           * quite fortunate, because we actually use lvl 1
@@ -139,6 +146,20 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
                                 { props.t('whiteboard.accessibilityLabel.heading') }
                             </span>
                         }
+                        <button style={{
+                                            position: 'absolute',
+                                            top: '84px',
+                                            right: '145px',
+                                            zIndex: 10000,
+                                            padding: '8px 16px',
+                                            backgroundColor: '#ff5a5f',
+                                            color: '#fff',
+                                            border: 'none',
+                                            borderRadius: '4px',
+                                            cursor: 'pointer',
+                                            fontSize: '14px',
+                                            transition: 'background-color 0.3s ease'}} 
+                                            onClick={_handelClose} > Hide WhiteBoard </button>
                         <ExcalidrawApp
                             collabDetails = { collabDetails }
                             collabServerUrl = { collabServerUrl }
