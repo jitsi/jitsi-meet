@@ -131,7 +131,7 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
             }}>
             {
                 isOpen && (
-                    <div className = 'excalidraw-wrapper' >
+                    <div className = 'excalidraw-wrapper'>
                         {/*
                           * Excalidraw renders a few lvl 2 headings. This is
                           * quite fortunate, because we actually use lvl 1
