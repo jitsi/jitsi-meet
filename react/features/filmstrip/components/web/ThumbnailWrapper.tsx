@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { shouldComponentUpdate } from 'react-window';
 
 import { IReduxState } from '../../../app/types';
 import { getLocalParticipant } from '../../../base/participants/functions';
@@ -74,26 +73,13 @@ interface IProps {
  * to the Thumbnail Component's props.
  */
 class ThumbnailWrapper extends Component<IProps> {
-    shouldComponentUpdate: (p: any, s: any) => boolean;
-
-    /**
-     * Creates new ThumbnailWrapper instance.
-     *
-     * @param {IProps} props - The props of the component.
-     */
-    constructor(props: IProps) {
-        super(props);
-
-        this.shouldComponentUpdate = shouldComponentUpdate.bind(this);
-    }
-
     /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _disableSelfView,
             _filmstripType = FILMSTRIP_TYPE.MAIN,

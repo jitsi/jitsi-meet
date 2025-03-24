@@ -4,7 +4,7 @@ import jwtDecode from 'jwt-decode';
 import { IReduxState } from '../../app/types';
 import { isVpaasMeeting } from '../../jaas/functions';
 import { getLocalParticipant } from '../participants/functions';
-import { IParticipantFeatures } from '../participants/types';
+import { IParticipantFeatures, ParticipantFeaturesKey } from '../participants/types';
 import { parseURLParams } from '../util/parseURLParams';
 
 import { JWT_VALIDATION_ERRORS, MEET_FEATURES } from './constants';
@@ -49,7 +49,12 @@ export function getJwtName(state: IReduxState) {
  * @param {boolean} ifNotInFeatures - Default value if features prop exists but does not have the {@code feature}.
  * @returns {boolean}
  */
-export function isJwtFeatureEnabled(state: IReduxState, feature: string, ifNoToken: boolean, ifNotInFeatures: boolean) {
+export function isJwtFeatureEnabled(
+        state: IReduxState,
+        feature: ParticipantFeaturesKey,
+        ifNoToken: boolean,
+        ifNotInFeatures: boolean
+) {
     const { jwt } = state['features/base/jwt'];
     let { features } = getLocalParticipant(state) || {};
 
@@ -68,7 +73,7 @@ export function isJwtFeatureEnabled(state: IReduxState, feature: string, ifNoTok
 }
 
 interface IIsJwtFeatureEnabledStatelessParams {
-    feature: string;
+    feature: ParticipantFeaturesKey;
     ifNoToken: boolean;
     ifNotInFeatures: boolean;
     jwt?: string;
@@ -101,11 +106,11 @@ export function isJwtFeatureEnabledStateless({
         return ifNoToken;
     }
 
-    if (typeof features[feature as keyof typeof features] === 'undefined') {
+    if (typeof features[feature] === 'undefined') {
         return ifNotInFeatures;
     }
 
-    return String(features[feature as keyof typeof features]) === 'true';
+    return String(features[feature]) === 'true';
 }
 
 /**
@@ -202,7 +207,7 @@ export function validateJwt(jwt: string) {
             const { features } = context;
             const meetFeatures = Object.values(MEET_FEATURES);
 
-            Object.keys(features).forEach(feature => {
+            (Object.keys(features) as ParticipantFeaturesKey[]).forEach(feature => {
                 if (meetFeatures.includes(feature)) {
                     const featureValue = features[feature];
 

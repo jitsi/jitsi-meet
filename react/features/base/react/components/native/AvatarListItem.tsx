@@ -86,7 +86,7 @@ export default class AvatarListItem extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const {
             avatarOnly,
             avatarSize = AVATAR_SIZE,

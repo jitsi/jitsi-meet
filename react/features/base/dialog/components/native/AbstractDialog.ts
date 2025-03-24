@@ -52,7 +52,7 @@ export default class AbstractDialog<P extends IProps, S extends IState = IState>
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         this._mounted = true;
     }
 
@@ -62,7 +62,7 @@ export default class AbstractDialog<P extends IProps, S extends IState = IState>
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this._mounted = false;
     }
 

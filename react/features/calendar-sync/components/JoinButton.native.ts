@@ -11,7 +11,7 @@ class JoinButton extends Component<void> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         // Not yet implemented.
 
         return null;

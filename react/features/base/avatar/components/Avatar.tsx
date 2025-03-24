@@ -148,7 +148,7 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: P) {
+    override componentDidUpdate(prevProps: P) {
         const { _corsAvatarURLs, url } = this.props;
 
         if (prevProps.url !== url) {
@@ -170,7 +170,7 @@ class Avatar<P extends IProps> extends PureComponent<P, IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const {
             _customAvatarBackgrounds,
             _initialsBase,

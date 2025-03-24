@@ -51,7 +51,7 @@ class StreamKeyPicker extends PureComponent<IProps> {
     /**
      * The initial state of a {@code StreamKeyForm} instance.
      */
-    state = {
+    override state = {
         isDropdownOpen: false
     };
 
@@ -74,7 +74,7 @@ class StreamKeyPicker extends PureComponent<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { broadcasts, selectedBoundStreamID, t } = this.props;
 
         if (!broadcasts.length) {

@@ -33,9 +33,9 @@ export interface IProps extends AbstractButtonProps {
  * An abstract remote video menu button which asks the remote participant to unmute.
  */
 class AskUnmuteButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'participantsPane.actions.askUnmute';
-    icon = IconMic;
-    label = 'participantsPane.actions.askUnmute';
+    override accessibilityLabel = 'participantsPane.actions.askUnmute';
+    override icon = IconMic;
+    override label = 'participantsPane.actions.askUnmute';
 
     /**
      * Gets the current label.
@@ -73,7 +73,7 @@ class AskUnmuteButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch, participantID } = this.props;
 
         dispatch(approveParticipant(participantID));

@@ -80,7 +80,7 @@ export class App extends AbstractApp<IProps> {
      *
      * @returns {void}
      */
-    async componentDidMount() {
+    override async componentDidMount() {
         await super.componentDidMount();
 
         SplashScreen.hide();
@@ -96,7 +96,7 @@ export class App extends AbstractApp<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <JitsiThemePaperProvider>
                 { super.render() }

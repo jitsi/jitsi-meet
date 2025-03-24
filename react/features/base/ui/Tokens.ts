@@ -1,162 +1,120 @@
-// Default color palette
-export const colors = {
-    error03: '#7A141F',
-    error04: '#A21B29',
-    error05: '#CB2233',
-    error06: '#D83848',
-    error08: '#F24D5F',
-
-    primary01: '#00112D',
-    primary02: '#00225A',
-    primary03: '#003486',
-    primary04: '#0045B3',
-    primary05: '#0056E0',
-    primary06: '#246FE5',
-    primary07: '#4687ED',
-    primary08: '#99BBF3',
-    primary09: '#CCDDF9',
-
-    surface01: '#040404',
-    surface02: '#141414',
-    surface03: '#292929',
-    surface04: '#3D3D3D',
-    surface05: '#525252',
-    surface06: '#666',
-    surface07: '#858585',
-    surface08: '#A3A3A3',
-    surface09: '#C2C2C2',
-    surface10: '#E0E0E0',
-    surface11: '#FFF',
-
-    success04: '#189B55',
-    success05: '#1EC26A',
-
-    warning05: '#F8AE1A',
-    warning06: '#FFD600',
-
-    support01: '#FF9B42',
-    support02: '#F96E57',
-    support03: '#DF486F',
-    support04: '#B23683',
-    support05: '#73348C',
-    support06: '#6A50D3',
-    support07: '#4380E2',
-    support08: '#00A8B3',
-    support09: '#2AA076'
-};
 
 // Mapping between the token used and the color
 export const colorMap = {
     // ----- Surfaces -----
 
-    // Default page background
+    // Default page background. If this changes, make sure to adapt the native side as well:
+    //  - JitsiMeetView.m
+    //  - JitsiMeetView.java
     uiBackground: 'surface01',
 
     // Container backgrounds
     ui01: 'surface02',
     ui02: 'surface03',
-    ui03: 'surface04',
+    ui03: 'ui02',
     ui04: 'surface05',
-    ui05: 'surface06',
-    ui06: 'surface07',
+    ui05: 'ui01',
+    ui06: 'ui03',
     ui07: 'surface08',
-    ui08: 'surface09',
-    ui09: 'surface10',
-    ui10: 'surface11',
+    ui08: 'ui21',
+    ui09: 'ui08',
+    ui10: 'ui04',
 
     // ----- Actions -----
 
     // Primary
-    action01: 'primary06',
-    action01Hover: 'primary07',
-    action01Active: 'primary04',
+    action01: 'action01',
+    action01Hover: 'hover01',
+    action01Active: 'active01',
 
     // Secondary
-    action02: 'surface10',
-    action02Hover: 'surface11',
-    action02Active: 'surface09',
+    action02: 'action02',
+    action02Hover: 'hover02',
+    action02Active: 'active02',
 
     // Destructive
-    actionDanger: 'error05',
-    actionDangerHover: 'error06',
-    actionDangerActive: 'error04',
+    actionDanger: 'action03',
+    actionDangerHover: 'hover03',
+    actionDangerActive: 'active03',
 
     // Tertiary
     action03: 'transparent',
-    action03Hover: 'surface04',
+    action03Hover: 'hover05',
     action03Active: 'surface03',
 
     // Disabled
-    disabled01: 'surface09',
+    disabled01: 'disabled01',
 
     // Focus
-    focus01: 'primary07',
+    focus01: 'focus01',
 
     // ----- Links -----
 
-    link01: 'primary07',
-    link01Hover: 'primary08',
-    link01Active: 'primary06',
+    link01: 'action01',
+    link01Hover: 'hover07',
+    link01Active: 'action04',
 
     // ----- Text -----
 
     // Primary
-    text01: 'surface11',
+    text01: 'textColor01',
 
     // Secondary
-    text02: 'surface09',
+    text02: 'textColor02',
 
     // Tertiary
-    text03: 'surface07',
+    text03: 'ui03',
 
     // High-contrast
     text04: 'surface01',
 
     // Error
-    textError: 'error08',
+    textError: 'alertRed',
 
     // ----- Icons -----
 
     // Primary
-    icon01: 'surface11',
+    icon01: 'icon01',
 
     // Secondary
-    icon02: 'surface09',
+    icon02: 'ui21',
 
     // Tertiary
-    icon03: 'surface07',
+    icon03: 'icon07',
 
     // High-contrast
     icon04: 'surface01',
 
     // Error
-    iconError: 'error06',
+    iconError: 'action03',
+
+    // Normal
+    iconNormal: 'action04',
+
+    // Success
+    iconSuccess: 'alertGreen',
+
+    // Warning
+    iconWarning: 'warning01',
 
     // ----- Forms -----
 
-    field01: 'surface04',
+    field01: 'ui02',
 
     // ----- Feedback -----
 
     // Success
     success01: 'success05',
-    success02: 'success04',
+    success02: 'success01',
 
     // Warning
-    warning01: 'warning05',
+    warning01: 'warning01',
     warning02: 'warning06',
 
     // ----- Support -----
 
-    support01: 'support01',
-    support02: 'support02',
-    support03: 'support03',
-    support04: 'support04',
     support05: 'support05',
-    support06: 'support06',
-    support07: 'support07',
-    support08: 'support08',
-    support09: 'support09'
+    support06: 'support06'
 };
 
 
@@ -175,19 +133,9 @@ export const spacing
     = [ 0, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128 ];
 
 export const typography = {
-    labelRegular: {
-        fontSize: 12,
-        lineHeight: 16,
-        fontWeight: font.weightRegular,
-        letterSpacing: 0.16
-    },
+    labelRegular: 'label01',
 
-    labelBold: {
-        fontSize: 12,
-        lineHeight: 16,
-        fontWeight: font.weightSemiBold,
-        letterSpacing: 0.16
-    },
+    labelBold: 'labelBold01',
 
     bodyShortRegularSmall: {
         fontSize: 10,
@@ -252,19 +200,9 @@ export const typography = {
         letterSpacing: 0
     },
 
-    heading1: {
-        fontSize: 54,
-        lineHeight: 64,
-        fontWeight: font.weightSemiBold,
-        letterSpacing: 0
-    },
+    heading1: 'heading01',
 
-    heading2: {
-        fontSize: 42,
-        lineHeight: 50,
-        fontWeight: font.weightSemiBold,
-        letterSpacing: 0
-    },
+    heading2: 'heading02',
 
     heading3: {
         fontSize: 32,

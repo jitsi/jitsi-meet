@@ -85,7 +85,7 @@ class Whiteboard extends PureComponent<IProps> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         const { navigation, t } = this.props;
         const headerLeft = () => {
             if (Platform.OS === 'ios') {
@@ -111,7 +111,7 @@ class Whiteboard extends PureComponent<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { locationHref, route } = this.props;
         const collabServerUrl = safeDecodeURIComponent(route.params?.collabServerUrl);
         const localParticipantName = safeDecodeURIComponent(route.params?.localParticipantName);

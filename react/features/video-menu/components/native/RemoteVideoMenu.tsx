@@ -147,7 +147,7 @@ class RemoteVideoMenu extends PureComponent<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const {
             _disableKick,
             _disablePrivateChat,

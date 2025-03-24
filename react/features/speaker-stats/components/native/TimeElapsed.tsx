@@ -35,7 +35,7 @@ class TimeElapsed extends PureComponent<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { style, time, t } = this.props;
         const timeElapsed = createLocalizedTime(time, t);
 

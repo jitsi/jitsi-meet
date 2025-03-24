@@ -72,11 +72,11 @@ interface IProps extends WithTranslation {
  * Implementation of a button for reactions.
  */
 class ReactionsButtonImpl extends AbstractButton<AbstractButtonProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.reactions';
-    icon = IconFaceSmile;
-    label = 'toolbar.reactions';
-    toggledLabel = 'toolbar.reactions';
-    tooltip = 'toolbar.reactions';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.reactions';
+    override icon = IconFaceSmile;
+    override label = 'toolbar.reactions';
+    override toggledLabel = 'toolbar.reactions';
+    override tooltip = 'toolbar.reactions';
 }
 
 const ReactionsButton = translate(connect()(ReactionsButtonImpl));

@@ -6,5 +6,5 @@
  * @returns {Promise<void>}
  */
 export async function processScreenshot(imageBlob, options) { // eslint-disable-line no-unused-vars
-    return;
+    return await Promise.resolve();
 }

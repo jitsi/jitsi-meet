@@ -1,11 +1,9 @@
 @media only screen and (max-width: $mobileScreen){
- 
     .welcome-footer-row-2{
         display: flex;
         flex-direction: column;
         align-items: center;
     }
-
 }
 
 @media only screen and (max-width: $smallScreen) {
@@ -70,7 +68,9 @@
             display: none;
         }
 
-
+        .welcome-footer-row-block {
+            display: block;
+        }
     }
 }
 

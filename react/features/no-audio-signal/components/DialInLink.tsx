@@ -35,7 +35,7 @@ class DialInLink extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { _dialIn, _dialInfoPageUrl, t } = this.props;
 
         if (!shouldDisplayDialIn(_dialIn)) {

@@ -224,7 +224,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { enableStatsDisplay, participantId, statsPopoverPosition, t } = this.props;
         const classes = withStyles.getClasses(this.props);
         const visibilityClass = this._getVisibilityClass();

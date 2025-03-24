@@ -60,7 +60,7 @@ class DisplayNamePrompt extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const disableCloseDialog = Boolean(this.props.validateInput);
 
         return (

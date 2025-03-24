@@ -193,7 +193,7 @@ class ConferenceInfo extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <div
                 className = 'details-container'

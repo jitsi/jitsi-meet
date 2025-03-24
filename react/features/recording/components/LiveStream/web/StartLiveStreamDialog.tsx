@@ -66,7 +66,7 @@ class StartLiveStreamDialog
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         super.componentDidMount();
 
         if (this.props._googleApiApplicationClientID) {
@@ -79,7 +79,7 @@ class StartLiveStreamDialog
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { _googleApiApplicationClientID } = this.props;
 
         return (
@@ -121,7 +121,7 @@ class StartLiveStreamDialog
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate(previousProps: IProps) {
+    override componentDidUpdate(previousProps: IProps) {
         if (previousProps._googleAPIState === GOOGLE_API_STATES.LOADED
             && this.props._googleAPIState === GOOGLE_API_STATES.SIGNED_IN) {
             this._onGetYouTubeBroadcasts();
@@ -135,7 +135,7 @@ class StartLiveStreamDialog
      * @private
      * @returns {void}
      */
-    _onGetYouTubeBroadcasts() {
+    override _onGetYouTubeBroadcasts() {
         this.props.dispatch(updateProfile())
             .catch((response: any) => this._parseErrorFromResponse(response));
 

@@ -21,12 +21,12 @@ interface IProps extends AbstractButtonProps {
  * Component that renders a toolbar button for toggling audio only screen share.
  */
 class ShareAudioButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.shareaudio';
-    icon = IconVolumeUp;
-    label = 'toolbar.shareaudio';
-    tooltip = 'toolbar.shareaudio';
-    toggledIcon = IconVolumeOff;
-    toggledLabel = 'toolbar.stopAudioSharing';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.shareaudio';
+    override icon = IconVolumeUp;
+    override label = 'toolbar.shareaudio';
+    override tooltip = 'toolbar.shareaudio';
+    override toggledIcon = IconVolumeOff;
+    override toggledLabel = 'toolbar.stopAudioSharing';
 
     /**
      * Handles clicking / pressing the button, and opens a new dialog.
@@ -34,7 +34,7 @@ class ShareAudioButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch } = this.props;
 
         dispatch(startAudioScreenShareFlow());
@@ -48,7 +48,7 @@ class ShareAudioButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._isAudioOnlySharing;
     }
 }

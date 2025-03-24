@@ -83,7 +83,7 @@ export default class AbstractMuteEveryonesVideoDialog<P extends IProps>
      *
      * @returns {boolean}
      */
-    _onSubmit() {
+    override _onSubmit() {
         const {
             dispatch,
             exclude

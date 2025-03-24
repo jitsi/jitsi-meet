@@ -9,7 +9,16 @@ import {
 
 describe('StartMuted', () => {
     it('checkboxes test', async () => {
-        const options = { configOverwrite: { p2p: { enabled: true } } };
+        const options = {
+            configOverwrite: {
+                p2p: {
+                    enabled: true
+                },
+                testing: {
+                    testMode: true,
+                    debugAudioLevels: true
+                }
+            } };
 
         await ensureOneParticipant(ctx, options);
 
@@ -162,7 +171,11 @@ describe('StartMuted', () => {
 
         const options = {
             configOverwrite: {
-                startWithAudioMuted: true
+                startWithAudioMuted: true,
+                testing: {
+                    testMode: true,
+                    debugAudioLevels: true
+                }
             }
         };
 
@@ -191,6 +204,10 @@ describe('StartMuted', () => {
         await ensureOneParticipant(ctx, options);
         await joinSecondParticipant(ctx, {
             configOverwrite: {
+                testing: {
+                    testMode: true,
+                    debugAudioLevels: true
+                },
                 p2p: {
                     enabled: true
                 }

@@ -223,7 +223,7 @@ class ReactionButton extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return this._renderButton(this._renderIcon());
     }
 }

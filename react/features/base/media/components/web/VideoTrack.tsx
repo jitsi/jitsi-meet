@@ -150,7 +150,7 @@ class VideoTrack extends AbstractVideoTrack<IProps> {
      * @override
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _noAutoPlayVideo,
             className,

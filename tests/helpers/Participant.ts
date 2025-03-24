@@ -617,14 +617,24 @@ export class Participant {
         // let's give it some time to leave the muc, we redirect after hangup so we should wait for the
         // change of url
         await this.driver.waitUntil(
-            async () => current !== await this.driver.getUrl(),
+            async () => {
+                const u = await this.driver.getUrl();
+
+                // trying to debug some failures of reporting not leaving, where we see the close page in screenshot
+                console.log(`initialUrl: ${current} currentUrl: ${u}`);
+
+                return current !== u;
+            },
             {
                 timeout: 8000,
-                timeoutMsg: `${this.name} did not leave the muc in 8s`
+                timeoutMsg: `${this.name} did not leave the muc in 8s initialUrl: ${current}`
             }
         );
 
-        await this.driver.url('/base.html');
+        await this.driver.url('/base.html')
+
+            // This was fixed in wdio v9.9.1, we can drop once we update to that version
+            .catch(_ => {}); // eslint-disable-line @typescript-eslint/no-empty-function
     }
 
     /**

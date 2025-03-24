@@ -15,7 +15,7 @@ class GrantModeratorDialog extends AbstractGrantModeratorDialog {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <Dialog
                 ok = {{ translationKey: 'dialog.Yes' }}

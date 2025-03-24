@@ -84,7 +84,7 @@ export default class AbstractMuteEveryoneDialog<P extends IProps> extends
      *
      * @returns {boolean}
      */
-    _onSubmit() {
+    override _onSubmit() {
         const {
             dispatch,
             exclude

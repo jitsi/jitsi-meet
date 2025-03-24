@@ -74,7 +74,7 @@ class StreamKeyPicker extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { _dialogStyles, broadcasts } = this.props;
 
         if (!broadcasts) {

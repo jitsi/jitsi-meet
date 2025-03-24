@@ -30,7 +30,7 @@ class NoMobileApp extends Component<IProps> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         sendAnalytics(
             createDeepLinkingPageEvent(
                 'displayed', 'noMobileApp', { isMobileBrowser: true }));
@@ -41,7 +41,7 @@ class NoMobileApp extends Component<IProps> {
      *
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const ns = 'no-mobile-app';
         const { desktop } = this.props._deeplinkingCfg;
         const { appName } = desktop ?? {};

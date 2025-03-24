@@ -102,7 +102,7 @@ abstract class AbstractVideoManager<S=void> extends PureComponent<IProps, S> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         this.processUpdatedProps();
     }
 
@@ -111,7 +111,7 @@ abstract class AbstractVideoManager<S=void> extends PureComponent<IProps, S> {
      *
      * @inheritdoc
      */
-    componentDidUpdate() {
+    override componentDidUpdate() {
         this.processUpdatedProps();
     }
 
@@ -120,7 +120,7 @@ abstract class AbstractVideoManager<S=void> extends PureComponent<IProps, S> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         if (this.dispose) {
             this.dispose();
         }

@@ -209,7 +209,7 @@ class Conference extends AbstractConference<IProps, State> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         const {
             _audioOnlyEnabled,
             _startCarMode,
@@ -228,7 +228,7 @@ class Conference extends AbstractConference<IProps, State> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         const {
             _audioOnlyEnabled,
             _showLobby,
@@ -256,7 +256,7 @@ class Conference extends AbstractConference<IProps, State> {
      * @inheritdoc
      * @returns {void}
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         // Tear handling any hardware button presses for back navigation down.
         BackHandler.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
 
@@ -269,7 +269,7 @@ class Conference extends AbstractConference<IProps, State> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _brandingStyles,
             _fullscreenEnabled

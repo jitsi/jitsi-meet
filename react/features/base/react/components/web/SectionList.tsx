@@ -51,7 +51,7 @@ export default class SectionList extends Component<IProps> {
      *
      * @returns {React.ReactNode}
      */
-    render() {
+    override render() {
         const {
             ListEmptyComponent,
             renderSectionHeader,

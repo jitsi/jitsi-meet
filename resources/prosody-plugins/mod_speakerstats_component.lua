@@ -1,4 +1,5 @@
 local util = module:require "util";
+local is_admin = util.is_admin;
 local get_room_from_jid = util.get_room_from_jid;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local is_jibri = util.is_jibri;
@@ -9,7 +10,6 @@ local jid_resource = require "util.jid".resource;
 local st = require "util.stanza";
 local socket = require "socket";
 local json = require 'cjson.safe';
-local um_is_admin = require "core.usermanager".is_admin;
 local jid_split = require 'util.jid'.split;
 
 -- we use async to detect Prosody 0.10 and earlier
@@ -31,10 +31,6 @@ local breakout_room_component_host = "breakout." .. muc_domain_base;
 module:log("info", "Starting speakerstats for %s", muc_component_host);
 
 local main_muc_service;
-
-local function is_admin(jid)
-    return um_is_admin(jid, module.host);
-end
 
 -- Searches all rooms in the main muc component that holds a breakout room
 -- caches it if found so we don't search it again

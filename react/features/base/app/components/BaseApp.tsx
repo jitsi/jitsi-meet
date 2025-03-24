@@ -67,7 +67,7 @@ export default class BaseApp<P> extends Component<P, IState> {
      *
      * @inheritdoc
     */
-    async componentDidMount() {
+    override async componentDidMount() {
         /**
          * Make the mobile {@code BaseApp} wait until the {@code AsyncStorage}
          * implementation of {@code Storage} initializes fully.
@@ -107,7 +107,7 @@ export default class BaseApp<P> extends Component<P, IState> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this.state.store?.dispatch(appWillUnmount(this));
     }
 
@@ -119,7 +119,7 @@ export default class BaseApp<P> extends Component<P, IState> {
      *
      * @returns {void}
      */
-    componentDidCatch(error: Error, info: Object) {
+    override componentDidCatch(error: Error, info: Object) {
         logger.error(error, info);
     }
 
@@ -153,7 +153,7 @@ export default class BaseApp<P> extends Component<P, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { route: { component, props }, store } = this.state;
 
         if (store) {

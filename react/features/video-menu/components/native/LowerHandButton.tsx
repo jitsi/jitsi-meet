@@ -29,9 +29,9 @@ interface IProps extends AbstractButtonProps {
  * @returns {JSX.Element}
  */
 class LowerHandButton extends AbstractButton<IProps> {
-    icon = IconRaiseHand;
-    accessibilityLabel = 'participantsPane.actions.lowerHand';
-    label = 'participantsPane.actions.lowerHand';
+    override icon = IconRaiseHand;
+    override accessibilityLabel = 'participantsPane.actions.lowerHand';
+    override label = 'participantsPane.actions.lowerHand';
 
     /**
      * Handles clicking / pressing the button, and asks the participant to lower hand.
@@ -39,7 +39,7 @@ class LowerHandButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { participantId, _conference } = this.props;
 
         _conference?.sendEndpointMessage(

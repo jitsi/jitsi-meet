@@ -36,7 +36,7 @@ export default class Audio extends AbstractAudio {
      *
      * @inheritdoc
      */
-    async componentDidUpdate(prevProps: IProps): Promise<void> {
+    override async componentDidUpdate(prevProps: IProps): Promise<void> {
         // source is different !! call didunmount and call didmount
         if (prevProps.src !== this.props.src) {
             await this.componentWillUnmount();
@@ -49,7 +49,7 @@ export default class Audio extends AbstractAudio {
      *
      * @returns {void}
      */
-    async componentDidMount() {
+    override async componentDidMount() {
         this._sound
             = this.props.src
                 ? new Sound(
@@ -63,7 +63,7 @@ export default class Audio extends AbstractAudio {
      *
      * @returns {void}
      */
-    async componentWillUnmount() {
+    override async componentWillUnmount() {
         if (this._sound) {
             this._sound.release();
             this._sound = null;
@@ -94,7 +94,7 @@ export default class Audio extends AbstractAudio {
      * @inheritdoc
      * @returns {null}
      */
-    render() {
+    override render() {
         // TODO react-native-webrtc's RTCView doesn't do anything with the audio
         // MediaStream specified to it so it's easier at the time of this
         // writing to not render anything.

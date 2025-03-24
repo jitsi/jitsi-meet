@@ -192,7 +192,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         this._unMounted = false;
         Promise.all([
             this._createAudioInputTrack(this.props.selectedAudioInputId)
@@ -210,7 +210,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
      * @param {Object} prevProps - Previous props this component received.
      * @returns {void}
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         if (prevProps.selectedAudioInputId
             !== this.props.selectedAudioInputId) {
             this._createAudioInputTrack(this.props.selectedAudioInputId);
@@ -222,7 +222,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this._unMounted = true;
         this._disposeAudioInputPreview();
     }
@@ -232,7 +232,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const {
             hasAudioPermission,
             hideAudioInputPreview,

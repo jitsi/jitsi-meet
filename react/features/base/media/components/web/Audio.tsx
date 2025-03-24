@@ -37,7 +37,7 @@ export default class Audio extends AbstractAudio {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <audio
                 loop = { Boolean(this.props.loop) }
@@ -53,7 +53,7 @@ export default class Audio extends AbstractAudio {
      *
      * @returns {void}
      */
-    stop() {
+    override stop() {
         if (this._ref) {
             this._ref.pause();
             this._ref.currentTime = 0;

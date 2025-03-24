@@ -100,7 +100,7 @@ class ConfirmDialog extends AbstractDialog<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const {
             cancelLabel,
             children,

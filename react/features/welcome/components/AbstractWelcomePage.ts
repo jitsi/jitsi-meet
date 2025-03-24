@@ -95,7 +95,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      * @property {number|null} updateTimeoutId - Identifier of the timeout
      * updating the generated room name.
      */
-    state: IState = {
+    override state: IState = {
         animateTimeoutId: undefined,
         generatedRoomName: '',
         generateRoomNames: undefined,
@@ -134,7 +134,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         this._mounted = true;
         sendAnalytics(createWelcomePageEvent('viewed', undefined, { value: 1 }));
     }
@@ -145,7 +145,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this._clearTimeouts();
         this._mounted = false;
     }

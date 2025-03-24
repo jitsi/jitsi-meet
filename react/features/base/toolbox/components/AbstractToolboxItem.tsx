@@ -223,7 +223,7 @@ export default class AbstractToolboxItem<P extends IProps> extends Component<P> 
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return this.props.visible ? this._renderItem() : null;
     }
 }

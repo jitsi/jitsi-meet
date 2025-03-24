@@ -21,7 +21,7 @@ class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <Dialog
                 ok = {{ translationKey: 'dialog.muteParticipantButton' }}

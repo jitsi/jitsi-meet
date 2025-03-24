@@ -105,7 +105,7 @@ class MeetingsList extends Component<IProps> {
      *
      * @returns {React.ReactNode}
      */
-    render() {
+    override render() {
         const { listEmptyComponent, meetings } = this.props;
 
         /**

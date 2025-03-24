@@ -601,7 +601,7 @@ export default {
 
         const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions, true);
 
-        tryCreateLocalTracks.then(async tr => {
+        tryCreateLocalTracks.then(tr => {
             const createLocalTracksEnd = window.performance.now();
 
             connectionTimes['conference.init.createLocalTracks.end'] = createLocalTracksEnd;

@@ -43,7 +43,7 @@ class PrejoinThirdParty extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             className,
             deviceStatusVisible,

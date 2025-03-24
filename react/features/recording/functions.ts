@@ -448,6 +448,11 @@ export function isLiveStreamingButtonVisible({
 export function shouldRequireRecordingConsent(recorderSession: any, state: IReduxState) {
     const { requireRecordingConsent } = state['features/dynamic-branding'] || {};
     const { requireConsent } = state['features/base/config'].recordings || {};
+    const { iAmRecorder } = state['features/base/config'];
+
+    if (iAmRecorder) {
+        return false;
+    }
 
     if (!requireConsent && !requireRecordingConsent) {
         return false;

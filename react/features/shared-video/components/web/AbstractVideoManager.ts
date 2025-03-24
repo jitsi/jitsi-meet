@@ -137,7 +137,7 @@ class AbstractVideoManager extends PureComponent<IProps> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         this.props._dockToolbox(true);
         this.processUpdatedProps();
     }
@@ -147,7 +147,7 @@ class AbstractVideoManager extends PureComponent<IProps> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         const { _videoUrl } = this.props;
 
         if (prevProps._videoUrl !== _videoUrl) {
@@ -162,7 +162,7 @@ class AbstractVideoManager extends PureComponent<IProps> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         sendAnalytics(createEvent('stopped'));
 
         if (this.dispose) {

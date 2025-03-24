@@ -68,7 +68,7 @@
     "js-md5": "0.6.1",
     "js-sha512": "0.8.0",
     "jwt-decode": "2.2.0",
-    "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1919.0.0+d4a47d0e/lib-jitsi-meet.tgz",
+    "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1928.0.0+763b2c8f/lib-jitsi-meet.tgz",
     "lodash-es": "4.17.21",
     "moment": "2.29.4",
     "moment-duration-format": "2.2.2",
@@ -129,13 +129,11 @@
   },
   "devDependencies": {
     "@babel/core": "7.25.9",
-    "@babel/eslint-parser": "7.25.9",
     "@babel/plugin-transform-private-methods": "7.25.9",
     "@babel/preset-env": "7.25.9",
     "@babel/preset-react": "7.25.9",
-    "@jitsi/eslint-config": "5.0.9",
+    "@jitsi/eslint-config": "6.0.1",
     "@react-native/metro-config": "0.75.5",
-    "@stylistic/eslint-plugin": "2.12.1",
     "@types/amplitude-js": "8.16.5",
     "@types/audioworklet": "0.0.29",
     "@types/dom-screen-wake-lock": "1.0.1",
@@ -161,8 +159,6 @@
     "@types/w3c-image-capture": "1.0.6",
     "@types/w3c-web-hid": "1.0.3",
     "@types/zxcvbn": "4.4.1",
-    "@typescript-eslint/eslint-plugin": "8.19.1",
-    "@typescript-eslint/parser": "8.19.1",
     "@wdio/allure-reporter": "9.4.3",
     "@wdio/cli": "9.4.3",
     "@wdio/globals": "9.4.3",
@@ -198,9 +194,6 @@
     "webpack-bundle-analyzer": "4.4.2",
     "webpack-cli": "5.1.4",
     "webpack-dev-server": "5.1.0"
-  },
-  "overrides": {
-    "@xmldom/xmldom": "0.8.7"
   },
   "engines": {
     "node": ">=22.0.0",

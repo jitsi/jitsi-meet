@@ -12,7 +12,7 @@ class DefaultUnsupportedDesktopBrowser extends Component {
      *
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         window.location.pathname = 'static/recommendedBrowsers.html';
     }
 
@@ -21,7 +21,7 @@ class DefaultUnsupportedDesktopBrowser extends Component {
      *
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <div />
         );

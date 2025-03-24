@@ -44,7 +44,7 @@ interface IState {
  * required to join a conference.
  */
 class PasswordRequiredPrompt extends Component<IProps, IState> {
-    state = {
+    override state = {
         password: ''
     };
 
@@ -69,7 +69,7 @@ class PasswordRequiredPrompt extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <Dialog
                 disableBackdropClose = { true }

@@ -13,10 +13,10 @@ import { screen } from '../../mobile/navigation/routes';
  * Implements an {@link AbstractButton} to open the chat screen on mobile.
  */
 class SharedDocumentButton extends AbstractButton<AbstractButtonProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.document';
-    icon = IconShareDoc;
-    label = 'toolbar.documentOpen';
-    tooltip = 'toolbar.documentOpen';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.document';
+    override icon = IconShareDoc;
+    override label = 'toolbar.documentOpen';
+    override tooltip = 'toolbar.documentOpen';
 
     /**
      * Handles clicking / pressing the button, and opens / closes the appropriate dialog.
@@ -24,7 +24,7 @@ class SharedDocumentButton extends AbstractButton<AbstractButtonProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { handleClick } = this.props;
 
         if (handleClick) {
