@@ -11,6 +11,7 @@ import LanguageSelector from '../../../subtitles/components/web/LanguageSelector
 import { ISubtitle } from '../../../subtitles/types';
 
 import { SubtitlesGroup } from './SubtitlesGroup';
+import { SubtitlesMessagesContainer } from './SubtitlesMessagesContainer';
 
 /**
  * The styles for the SubtitlesTab component.
@@ -30,7 +31,15 @@ const useStyles = makeStyles()(theme => {
         container: {
             display: 'flex',
             flexDirection: 'column',
-            height: '100%'
+            height: '100%',
+            position: 'relative',
+            overflow: 'hidden'
+        },
+        messagesContainer: {
+            display: 'flex',
+            flexDirection: 'column',
+            flex: 1,
+            overflow: 'hidden'
         },
         emptyContent: {
             display: 'flex',
@@ -112,13 +121,10 @@ export default function SubtitlesTab() {
     return (
         <div className = { classes.container }>
             <LanguageSelector />
-            <div className = { classes.subtitlesList }>
-                {groupedSubtitles.map(group => (
-                    <SubtitlesGroup
-                        key = { `${group.senderId}-${group.messages[0].timestamp}` }
-                        messages = { group.messages }
-                        senderId = { group.senderId } />
-                ))}
+            <div className = { classes.messagesContainer }>
+                <SubtitlesMessagesContainer
+                    groups = { groupedSubtitles }
+                    messages = { filteredSubtitles } />
             </div>
         </div>
     );
