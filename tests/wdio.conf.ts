@@ -221,11 +221,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
     after() {
         const { ctx }: any = global;
 
-        if (ctx?.webhooksProxy) {
-            ctx.webhooksProxy.disconnect();
-        }
-
-        ctx.keepAlive?.forEach(clearInterval);
+        ctx?.webhooksProxy?.disconnect();
+        ctx?.keepAlive?.forEach(clearInterval);
     },
 
     beforeSession(c, capabilities, specs, cid) {

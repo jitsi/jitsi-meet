@@ -17,3 +17,8 @@ react/features/face-landmarks/resources/*
 
 # Not worth it.
 actionTypes.ts
+
+# It's not complete until all files are copied at build time.
+react-native-sdk/
+
+*.d.ts

@@ -8,7 +8,7 @@ import { translate } from '../../../base/i18n/functions';
 import { IconFaceSmile, IconSend } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
-import { areSmileysDisabled } from '../../functions';
+import { areSmileysDisabled, isSendGroupChatDisabled } from '../../functions';
 
 import SmileysPanel from './SmileysPanel';
 
@@ -21,6 +21,8 @@ interface IProps extends WithTranslation {
      * Whether chat emoticons are disabled.
      */
     _areSmileysDisabled: boolean;
+
+    _isSendGroupChatDisabled: boolean;
 
     /**
      * The id of the message recipient, if any.
@@ -145,7 +147,8 @@ class ChatInput extends Component<IProps, IState> {
                         value = { this.state.message } />
                     <Button
                         accessibilityLabel = { this.props.t('chat.sendButton') }
-                        disabled = { !this.state.message.trim() }
+                        disabled = { !this.state.message.trim()
+                            || (this.props._isSendGroupChatDisabled && !this.props._privateMessageRecipientId) }
                         icon = { IconSend }
                         onClick = { this._onSubmitMessage }
                         size = { isMobileBrowser() ? 'large' : 'medium' } />
@@ -170,10 +173,20 @@ class ChatInput extends Component<IProps, IState> {
      * @returns {void}
      */
     _onSubmitMessage() {
+        const {
+            _isSendGroupChatDisabled,
+            _privateMessageRecipientId,
+            onSend
+        } = this.props;
+
+        if (_isSendGroupChatDisabled && !_privateMessageRecipientId) {
+            return;
+        }
+
         const trimmed = this.state.message.trim();
 
         if (trimmed) {
-            this.props.onSend(trimmed);
+            onSend(trimmed);
 
             this.setState({ message: '' });
 
@@ -276,10 +289,12 @@ class ChatInput extends Component<IProps, IState> {
  */
 const mapStateToProps = (state: IReduxState) => {
     const { privateMessageRecipient } = state['features/chat'];
+    const isGroupChatDisabled = isSendGroupChatDisabled(state);
 
     return {
         _areSmileysDisabled: areSmileysDisabled(state),
-        _privateMessageRecipientId: privateMessageRecipient?.id
+        _privateMessageRecipientId: privateMessageRecipient?.id,
+        _isSendGroupChatDisabled: isGroupChatDisabled
     };
 };
 

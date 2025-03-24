@@ -1,4 +1,5 @@
 import { IReduxState } from '../app/types';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
 
 import { IAnswerData } from './types';
 
@@ -61,4 +62,20 @@ export function hasIdenticalAnswers(currentAnswers: Array<IAnswerData>): boolean
     const currentAnswersSet = new Set(nonEmptyCurrentAnswers.map(answer => answer.name));
 
     return currentAnswersSet.size !== nonEmptyCurrentAnswers.length;
+}
+
+/**
+ * Check if participant is not allowed to create polls.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean} - Returns true if the participant is not allowed to create polls.
+ */
+export function isCreatePollDisabled(state: IReduxState) {
+    const { pollCreationRequiresPermission } = state['features/dynamic-branding'];
+
+    if (!pollCreationRequiresPermission) {
+        return false;
+    }
+
+    return !isJwtFeatureEnabled(state, 'create-polls', false, false);
 }

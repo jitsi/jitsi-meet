@@ -479,8 +479,12 @@ async function enterLobby(participant: Participant, enterDisplayName = false, us
     await screen.waitToJoinLobby();
 
     // check no join button
-    expect(!await joinButton.isExisting() || !await joinButton.isDisplayed() || !await joinButton.isEnabled())
-        .toBe(true);
+    await p3.driver.waitUntil(
+        async () => !await joinButton.isExisting() || !await joinButton.isDisplayed() || !await joinButton.isEnabled(),
+        {
+            timeout: 2_000,
+            timeoutMsg: 'Join button is still available for p3'
+        });
 
     // new screen, is password button shown
     const passwordButton = screen.getPasswordButton();
