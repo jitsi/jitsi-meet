@@ -1,8 +1,12 @@
-import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
+import { IReduxState } from '../../../app/types';
+import { openDialog } from '../../../base/dialog/actions';
+import Button from '../../../base/ui/components/web/Button';
 import { groupMessagesBySender } from '../../../base/util/messageGrouping';
+import StartRecordingDialog from '../../../recording/components/Recording/web/StartRecordingDialog';
 import LanguageSelector from '../../../subtitles/components/web/LanguageSelector';
 import { ISubtitle } from '../../../subtitles/types';
 
@@ -27,6 +31,18 @@ const useStyles = makeStyles()(theme => {
             display: 'flex',
             flexDirection: 'column',
             height: '100%'
+        },
+        emptyContent: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            padding: '16px',
+            boxSizing: 'border-box',
+            flexDirection: 'column',
+            gap: '16px',
+            color: theme.palette.text01,
+            textAlign: 'center'
         }
     };
 });
@@ -38,9 +54,12 @@ const useStyles = makeStyles()(theme => {
  */
 export default function SubtitlesTab() {
     const { classes } = useStyles();
+    const dispatch = useDispatch();
     const subtitles: ISubtitle[] = useSelector(state => state['features/subtitles'].subtitlesHistory);
     const language = useSelector(state => state['features/subtitles']._language);
     const selectedLanguage = language?.replace('translation-languages:', '');
+    const isTranscribing = useSelector((state: IReduxState) =>
+        state['features/transcribing'].isTranscribing);
 
     const filteredSubtitles = useMemo(() => {
         // First, create a map of transcription messages by message ID
@@ -72,6 +91,23 @@ export default function SubtitlesTab() {
 
     const groupedSubtitles = useMemo(() =>
         groupMessagesBySender(filteredSubtitles), [ filteredSubtitles ]);
+
+    const handleStartRecording = useCallback(() => {
+        dispatch(openDialog(StartRecordingDialog));
+    }, [ dispatch ]);
+
+    if (!isTranscribing) {
+        return (
+            <div className = { classes.emptyContent }>
+                {/* <span>Start recording to enable transcription</span> */}
+                <Button
+                    accessibilityLabel = 'Start Recording'
+                    labelKey = 'dialog.startRecording'
+                    onClick = { handleStartRecording }
+                    type = 'primary' />
+            </div>
+        );
+    }
 
     return (
         <div className = { classes.container }>
