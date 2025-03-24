@@ -206,6 +206,7 @@ describe('AVModeration', () => {
         });
         const { p1, p2 } = ctx;
 
+        await p2.getNotifications().closeYouAreMutedNotification();
         await tryToAudioUnmuteAndCheck(p2, p1);
         await tryToVideoUnmuteAndCheck(p2, p1);
 

@@ -5,6 +5,7 @@ const ASK_TO_UNMUTE_NOTIFICATION_ID = 'notify.hostAskedUnmute';
 const JOIN_ONE_TEST_ID = 'notify.connectedOneMember';
 const JOIN_TWO_TEST_ID = 'notify.connectedTwoMembers';
 const JOIN_MULTIPLE_TEST_ID = 'notify.connectedThreePlusMembers';
+const YOU_ARE_MUTED_TEST_ID = 'notify.mutedTitle';
 const LOBBY_ACCESS_DENIED_TEST_ID = 'lobby.joinRejectedMessage';
 const LOBBY_ENABLED_TEST_ID = 'lobby.notificationLobbyEnabled';
 const LOBBY_KNOCKING_PARTICIPANT_NOTIFICATION_XPATH
@@ -255,5 +256,12 @@ export default class Notifications extends BasePageObject {
 
         await dismissButton.moveTo();
         await dismissButton.click();
+    }
+
+    /**
+     * Closes the `you are muted` notification.
+     */
+    async closeYouAreMutedNotification() {
+        return this.closeNotification(YOU_ARE_MUTED_TEST_ID, true);
     }
 }
