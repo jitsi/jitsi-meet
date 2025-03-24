@@ -9,6 +9,7 @@ import {
 } from '../base/participants/functions';
 import { BUTTON_TYPES } from '../base/ui/constants.any';
 import { copyText } from '../base/util/copyText';
+import { openSubtitlesPanel } from '../chat/actions';
 import { getVpaasTenant, isVpaasMeeting } from '../jaas/functions';
 import {
     hideNotification,
@@ -261,6 +262,7 @@ export function showStartedRecordingNotification(
             const recordingSharingUrl = getRecordingSharingUrl(state);
             const iAmRecordingInitiator = getLocalParticipant(state)?.id === initiatorId;
             const { showRecordingLink } = state['features/base/config'].recordings || {};
+            const transcriptionsAreRunning = isRecorderTranscriptionsRunning(state);
 
             notifyProps.dialogProps = {
                 customActionHandler: undefined,
@@ -269,6 +271,11 @@ export function showStartedRecordingNotification(
                 descriptionArguments: { name: participantName },
                 titleKey: 'dialog.recording'
             };
+
+            if (transcriptionsAreRunning) {
+                notifyProps.dialogProps.customActionNameKey = [ 'recording.openTranscriptions' ];
+                notifyProps.dialogProps.customActionHandler = [ () => dispatch(openSubtitlesPanel()) ];
+            }
 
             // fetch the recording link from the server for recording initiators in jaas meetings
             if (recordingSharingUrl
@@ -288,10 +295,19 @@ export function showStartedRecordingNotification(
 
                     // add the option to copy recording link
                     if (showRecordingLink) {
+                        const actions = [
+                            ...notifyProps.dialogProps.customActionNameKey ?? [],
+                            'recording.copyLink'
+                        ];
+                        const handlers = [
+                            ...notifyProps.dialogProps.customActionHandler ?? [],
+                            () => copyText(link)
+                        ];
+
                         notifyProps.dialogProps = {
                             ...notifyProps.dialogProps,
-                            customActionNameKey: [ 'recording.copyLink' ],
-                            customActionHandler: [ () => copyText(link) ],
+                            customActionNameKey: actions,
+                            customActionHandler: handlers,
                             titleKey: 'recording.on',
                             descriptionKey: 'recording.linkGenerated'
                         };

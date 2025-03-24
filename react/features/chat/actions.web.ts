@@ -1,4 +1,3 @@
-// @ts-expect-error
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import { IStore } from '../app/types';
 

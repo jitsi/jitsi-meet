@@ -3,7 +3,6 @@ import { getCurrentConference } from '../base/conference/functions';
 import { getLocalParticipant } from '../base/participants/functions';
 import { IParticipant } from '../base/participants/types';
 import { LOBBY_CHAT_INITIALIZED } from '../lobby/constants';
-import { ChatTabs } from './constants';
 
 import {
     ADD_MESSAGE,
@@ -11,6 +10,7 @@ import {
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     EDIT_MESSAGE,
+    OPEN_CHAT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     SEND_MESSAGE,
     SEND_REACTION,
@@ -19,6 +19,7 @@ import {
     SET_LOBBY_CHAT_RECIPIENT,
     SET_PRIVATE_MESSAGE_RECIPIENT
 } from './actionTypes';
+import { ChatTabs } from './constants';
 
 /**
  * Adds a chat message to the collection of messages.
@@ -184,6 +185,19 @@ export function setFocusedTab(tabId: ChatTabs) {
         tabId
     };
 }
+
+/**
+ * Opens the chat panel with subtitles tab active.
+ *
+ * @returns {Object} The redux action.
+ */
+export function openSubtitlesPanel() {
+    return {
+        type: OPEN_CHAT,
+        showSubtitles: true
+    };
+}
+
 
 /**
  * Initiates the sending of messages between a moderator and a lobby attendee.
