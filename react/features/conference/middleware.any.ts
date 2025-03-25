@@ -225,7 +225,7 @@ function _checkIframe(state: IReduxState, dispatch: IStore['dispatch']) {
 
         setTimeout(() => {
             // redirect to the promotional page
-            dispatch(redirectToStaticPage('static/close3.html', `#jitsi_meet_external_api_id=${API_ID}`));
+            dispatch(redirectToStaticPage('/close', `#jitsi_meet_external_api_id=${API_ID}`));
         }, IFRAME_DISABLED_TIMEOUT_MINUTES * 60 * 1000);
     }
 }
