@@ -14,6 +14,7 @@ import {
 } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import { getDisableLowerHandByModerator } from '../base/config/functions.any';
+import { hangup } from '../base/connection/actions';
 import { getURLWithoutParamsNormalized } from '../base/connection/utils';
 import { hideDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
@@ -191,9 +192,7 @@ function _checkIframe(state: IReduxState, dispatch: IStore['dispatch']) {
         }
     }
 
-    // TODO: enable for mobile too?
-    if (isEmbedded() && state['features/base/config'].disableIframeAPI && !browser.isElectron()
-            && !browser.isReactNative() && !isVpaasMeeting(state) && !allowIframe) {
+    if (isEmbedded() && state['features/base/config'].disableIframeAPI && !isVpaasMeeting(state) && !allowIframe) {
         // show sticky notification and redirect in 5 minutes
         const { locationURL } = state['features/base/connection'];
         let translationKey = 'notify.disabledIframe';
@@ -208,26 +207,41 @@ function _checkIframe(state: IReduxState, dispatch: IStore['dispatch']) {
         const jaasDomain = mapping[hostname];
 
         if (jaasDomain) {
-            translationKey = 'notify.disabledIframeSecondary';
+            translationKey = `notify.disabledIframeSecondary${browser.isReactNative() ? 'Native' : 'Web'}`;
             domain = hostname;
         }
 
-        dispatch(showWarningNotification({
-            description: translateToHTML(
-                i18next.t.bind(i18next),
-                translationKey,
-                {
-                    domain,
-                    jaasDomain,
-                    timeout: IFRAME_DISABLED_TIMEOUT_MINUTES
-                }
-            )
-        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+        if (browser.isReactNative()) {
+            dispatch(showWarningNotification({
+                description: i18next.t(translationKey,
+                    {
+                        domain,
+                        timeout: IFRAME_DISABLED_TIMEOUT_MINUTES
+                    }
+                )
+            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 
-        setTimeout(() => {
-            // redirect to the promotional page
-            dispatch(redirectToStaticPage('static/close3.html', `#jitsi_meet_external_api_id=${API_ID}`));
-        }, IFRAME_DISABLED_TIMEOUT_MINUTES * 60 * 1000);
+            setTimeout(() => {
+                dispatch(hangup());
+            }, IFRAME_DISABLED_TIMEOUT_MINUTES * 60 * 1000);
+        } else {
+            dispatch(showWarningNotification({
+                description: translateToHTML(
+                    i18next.t.bind(i18next),
+                    translationKey,
+                    {
+                        domain,
+                        jaasDomain,
+                        timeout: IFRAME_DISABLED_TIMEOUT_MINUTES
+                    }
+                )
+            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+
+            setTimeout(() => {
+                // redirect to the promotional page
+                dispatch(redirectToStaticPage('static/close3.html', `#jitsi_meet_external_api_id=${API_ID}`));
+            }, IFRAME_DISABLED_TIMEOUT_MINUTES * 60 * 1000);
+        }
     }
 }
 
