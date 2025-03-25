@@ -9,7 +9,7 @@ jobs:
               with:
                   fetch-depth: 0
 
-            - uses: maidsafe/pr_size_checker@v2
+            - uses: maidsafe/pr_size_checker@v3
               with:
                   max_lines_changed: 500
                   target_branch: main
