@@ -5,10 +5,13 @@ jobs:
         name: Check PR size doesn't break set limit
         runs-on: ubuntu-latest
         steps:
-            # checkout your code with your git history
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
               with:
                   fetch-depth: 0
+
+            - name: Create master ref pointing to main
+              run: git fetch origin main:master
+
             - uses: maidsafe/pr_size_checker@v2
               with:
                   max_lines_changed: 500
