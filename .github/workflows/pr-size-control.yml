@@ -9,9 +9,7 @@ jobs:
               with:
                   fetch-depth: 0
 
-            - name: Create master ref pointing to main
-              run: git fetch origin main:master
-
             - uses: maidsafe/pr_size_checker@v2
               with:
                   max_lines_changed: 500
+                  target_branch: main
