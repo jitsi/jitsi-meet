@@ -161,7 +161,6 @@ const Notification = ({
                         descriptionArray.map((line, index) => (
                             <Text
                                 key = { index }
-                                numberOfLines = { 3 }
                                 style = { styles.contentText }>
                                 { line.length >= CHAR_LIMIT ? line : replaceNonUnicodeEmojis(line) }
                             </Text>
