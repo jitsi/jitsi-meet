@@ -23,7 +23,6 @@ import { notifyTranscriptionChunkReceived } from './functions';
 import logger from './logger';
 import { ISubtitle, ITranscriptMessage } from './types';
 
-
 /**
  * The type of json-message which indicates that json carries a
  * transcription result.
@@ -141,6 +140,8 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
 
     let newTranscriptMessage: ITranscriptMessage | undefined;
 
+    const { showSubtitlesButton } = state['features/base/settings'];
+
     if (json.type === JSON_TYPE_TRANSLATION_RESULT) {
         const translation = json.text?.trim();
 
@@ -163,6 +164,10 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
             timestamp,
             id: transcriptMessageID
         }));
+
+        if (!showSubtitlesButton) {
+            return next(action);
+        }
     } else if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT) {
         const isInterim = json.is_interim;
 
@@ -182,6 +187,10 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
         };
 
         dispatch(storeSubtitle(subtitle));
+
+        if (!showSubtitlesButton) {
+            return next(action);
+        }
 
         // First, notify the external API.
         if (!(json.is_interim && skipInterimTranscriptions)) {

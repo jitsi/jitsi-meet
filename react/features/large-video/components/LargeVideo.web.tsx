@@ -95,6 +95,11 @@ interface IProps {
     _showDominantSpeakerBadge: boolean;
 
     /**
+     * Whether or not to show subtitles button.
+     */
+    _showSubtitles?: boolean;
+
+    /**
      * The width of the vertical filmstrip (user resized).
      */
     _verticalFilmstripWidth?: number | null;
@@ -193,7 +198,8 @@ class LargeVideo extends Component<IProps> {
             _isChatOpen,
             _noAutoPlayVideo,
             _showDominantSpeakerBadge,
-            _whiteboardEnabled
+            _whiteboardEnabled,
+            _showSubtitles
         } = this.props;
         const style = this._getCustomStyles();
         const className = `videocontainer${_isChatOpen ? ' shift-right' : ''}`;
@@ -241,8 +247,8 @@ class LargeVideo extends Component<IProps> {
                             playsInline = { true } /* for Safari on iOS to work */ />
                     </div>
                 </div>
-                { interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES
-                    || <Captions /> }
+                { (!interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES && _showSubtitles)
+                    && <Captions /> }
                 {_showDominantSpeakerBadge && <StageParticipantNameLabel />}
             </div>
         );
@@ -360,6 +366,7 @@ function _mapStateToProps(state: IReduxState) {
     const isLocalScreenshareOnLargeVideo = largeVideoParticipant?.id?.includes(localParticipantId ?? '')
         && videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
     const isOnSpot = defaultLocalDisplayName === SPOT_DISPLAY_NAME;
+    const { showSubtitlesButton } = state['features/base/settings'];
 
     return {
         _backgroundAlpha: state['features/base/config'].backgroundAlpha,
@@ -375,6 +382,7 @@ function _mapStateToProps(state: IReduxState) {
         _resizableFilmstrip: isFilmstripResizable(state),
         _seeWhatIsBeingShared: Boolean(seeWhatIsBeingShared),
         _showDominantSpeakerBadge: !hideDominantSpeakerBadge,
+        _showSubtitles: Boolean(showSubtitlesButton),
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state),
         _visibleFilmstrip: visible,
