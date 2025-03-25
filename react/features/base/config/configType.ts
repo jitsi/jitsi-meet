@@ -190,6 +190,7 @@ export interface IConfig {
         obfuscateRoomName?: boolean;
         rtcstatsEnabled?: boolean;
         rtcstatsEndpoint?: string;
+        rtcstatsLogFlushSizeBytes?: number;
         rtcstatsPollInterval?: number;
         rtcstatsSendSdp?: boolean;
         rtcstatsStoreLogs?: boolean;
