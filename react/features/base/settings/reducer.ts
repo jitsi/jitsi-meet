@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import { escape } from 'lodash-es';
 
@@ -29,6 +28,7 @@ const DEFAULT_STATE: ISettingsState = {
     micDeviceId: undefined,
     serverURL: undefined,
     hideShareAudioHelper: false,
+    showSubtitlesButton: false, // Add the new setting with default false
     soundsIncomingMessage: true,
     soundsParticipantJoined: true,
     soundsParticipantKnocking: true,
@@ -67,6 +67,7 @@ export interface ISettingsState {
     maxStageParticipants?: number;
     micDeviceId?: string | boolean;
     serverURL?: string;
+    showSubtitlesButton?: boolean;
     soundsIncomingMessage?: boolean;
     soundsParticipantJoined?: boolean;
     soundsParticipantKnocking?: boolean;

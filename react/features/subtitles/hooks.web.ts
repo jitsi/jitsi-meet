@@ -12,12 +12,13 @@ const cc = {
 /**
  * A hook that returns the CC button if it is enabled and undefined otherwise.
  *
- *  @returns {Object | undefined}
+ * @returns {Object | undefined}
  */
 export function useClosedCaptionButton() {
     const isStartSubtitlesButtonVisible = useSelector(canStartSubtitles);
+    const showSubtitlesButton = useSelector(state => state['features/base/settings'].showSubtitlesButton);
 
-    if (isStartSubtitlesButtonVisible) {
+    if (isStartSubtitlesButtonVisible && showSubtitlesButton) {
         return cc;
     }
 }

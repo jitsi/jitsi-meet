@@ -79,6 +79,11 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     showPrejoinSettings: boolean;
 
     /**
+     * Whether or not to show subtitles button.
+     */
+    showSubtitlesButton: boolean;
+
+    /**
      * Whether or not the stage filmstrip is enabled.
      */
     stageFilmstripEnabled: boolean;
@@ -126,6 +131,7 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
         this._renderMaxStageParticipantsSelect = this._renderMaxStageParticipantsSelect.bind(this);
         this._onMaxStageParticipantsSelect = this._onMaxStageParticipantsSelect.bind(this);
         this._onHideSelfViewChanged = this._onHideSelfViewChanged.bind(this);
+        this._onShowSubtitlesButtonChanged = this._onShowSubtitlesButtonChanged.bind(this);
         this._onLanguageItemSelect = this._onLanguageItemSelect.bind(this);
     }
 
@@ -142,6 +148,7 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
             iAmVisitor,
             hideSelfView,
             showLanguageSettings,
+            showSubtitlesButton,
             t
         } = this.props;
         const classes = withStyles.getClasses(this.props);
@@ -163,6 +170,12 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
                         name = 'hide-self-view'
                         onChange = { this._onHideSelfViewChanged } />
                 )}
+                <Checkbox
+                    checked = { showSubtitlesButton }
+                    className = { classes.checkbox }
+                    label = { t('settings.showSubtitlesButton') }
+                    name = 'show-subtitles-button'
+                    onChange = { this._onShowSubtitlesButtonChanged } />
                 {showLanguageSettings && this._renderLanguageSelect()}
             </div>
         );
@@ -202,6 +215,17 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
      */
     _onHideSelfViewChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
         super._onChange({ hideSelfView: checked });
+    }
+
+    /**
+     * Callback invoked to select if show subtitles button should be enabled.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onShowSubtitlesButtonChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
+        super._onChange({ showSubtitlesButton: checked });
     }
 
     /**

@@ -1143,7 +1143,8 @@
         "startVideoMuted": "Everyone starts hidden",
         "talkWhileMuted": "Talk while muted",
         "title": "Settings",
-        "video": "Video"
+        "video": "Video",
+        "showSubtitlesButton": "Show subtitles button"
     },
     "settingsView": {
         "advanced": "Advanced",
