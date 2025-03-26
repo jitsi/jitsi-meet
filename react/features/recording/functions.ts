@@ -2,14 +2,11 @@ import i18next from 'i18next';
 
 import { IReduxState, IStore } from '../app/types';
 import { isMobileBrowser } from '../base/environment/utils';
+import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { JitsiRecordingConstants, browser } from '../base/lib-jitsi-meet';
 import { getSoundFileSrc } from '../base/media/functions';
-import {
-    getLocalParticipant,
-    getRemoteParticipants,
-    isLocalParticipantModerator
-} from '../base/participants/functions';
+import { getLocalParticipant, getRemoteParticipants } from '../base/participants/functions';
 import { registerSound, unregisterSound } from '../base/sounds/actions';
 import { isInBreakoutRoom as isInBreakoutRoomF } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox/functions';
@@ -203,9 +200,7 @@ export function canStopRecording(state: IReduxState) {
     }
 
     if (isCloudRecordingRunning(state) || isRecorderTranscriptionsRunning(state)) {
-        const isModerator = isLocalParticipantModerator(state);
-
-        return isJwtFeatureEnabled(state, 'recording', isModerator, false);
+        return isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false);
     }
 
     return false;
@@ -257,7 +252,6 @@ export function getRecordButtonProps(state: IReduxState) {
     // If the containing component provides the visible prop, that is one
     // above all, but if not, the button should be autonomus and decide on
     // its own to be visible or not.
-    const isModerator = isLocalParticipantModerator(state);
     const {
         recordingService,
         localRecording
@@ -269,7 +263,7 @@ export function getRecordButtonProps(state: IReduxState) {
 
     if (localRecordingEnabled) {
         visible = true;
-    } else if (isJwtFeatureEnabled(state, 'recording', isModerator, false)) {
+    } else if (isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false)) {
         visible = recordingEnabled;
     }
 

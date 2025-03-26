@@ -1888,6 +1888,16 @@ export default {
                 }, timeout);
             }
         );
+
+        room.on(JitsiConferenceEvents.PERMISSIONS_RECEIVED, p => {
+            const localParticipant = getLocalParticipant(APP.store.getState());
+
+            APP.store.dispatch(participantUpdated({
+                id: localParticipant.id,
+                local: true,
+                features: p
+            }));
+        });
     },
 
     /**

@@ -45,14 +45,12 @@ export function getJwtName(state: IReduxState) {
  *
  * @param {IReduxState} state - The app state.
  * @param {string} feature - The feature we want to check.
- * @param {boolean} ifNoToken - Default value if there is no token.
  * @param {boolean} ifNotInFeatures - Default value if features prop exists but does not have the {@code feature}.
  * @returns {boolean}
  */
 export function isJwtFeatureEnabled(
         state: IReduxState,
         feature: ParticipantFeaturesKey,
-        ifNoToken: boolean,
         ifNotInFeatures: boolean
 ) {
     const { jwt } = state['features/base/jwt'];
@@ -67,14 +65,12 @@ export function isJwtFeatureEnabled(
         jwt,
         localParticipantFeatures: features,
         feature,
-        ifNoToken,
         ifNotInFeatures
     });
 }
 
 interface IIsJwtFeatureEnabledStatelessParams {
     feature: ParticipantFeaturesKey;
-    ifNoToken: boolean;
     ifNotInFeatures: boolean;
     jwt?: string;
     localParticipantFeatures?: IParticipantFeatures;
@@ -86,7 +82,6 @@ interface IIsJwtFeatureEnabledStatelessParams {
  * @param {string | undefined} jwt - The jwt token.
  * @param {ILocalParticipant} localParticipantFeatures - The features of the local participant.
  * @param {string} feature - The feature we want to check.
- * @param {boolean} ifNoToken - Default value if there is no token.
  * @param {boolean} ifNotInFeatures - Default value if features is missing
  * or prop exists but does not have the {@code feature}.
  * @returns {boolean}
@@ -95,18 +90,9 @@ export function isJwtFeatureEnabledStateless({
     jwt,
     localParticipantFeatures: features,
     feature,
-    ifNoToken,
     ifNotInFeatures
 }: IIsJwtFeatureEnabledStatelessParams) {
-    if (!jwt) {
-        return ifNoToken;
-    }
-
-    if (typeof features === 'undefined') {
-        return ifNoToken;
-    }
-
-    if (typeof features[feature] === 'undefined') {
+    if (!jwt || typeof features?.[feature] === 'undefined') {
         return ifNotInFeatures;
     }
 

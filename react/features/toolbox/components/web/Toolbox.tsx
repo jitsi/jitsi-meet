@@ -94,7 +94,7 @@ export default function Toolbox({
     const transcribing = useSelector(isTranscribing);
 
     // Do not convert to selector, it returns new array and will cause re-rendering of toolbox on every action.
-    const jwtDisabledButtons = getJwtDisabledButtons(transcribing, isModerator, jwt, localParticipant?.features);
+    const jwtDisabledButtons = getJwtDisabledButtons(transcribing, jwt, localParticipant?.features);
 
     const reactionsButtonEnabled = useSelector(isReactionsButtonEnabled);
     const _shouldDisplayReactionsButtons = useSelector(shouldDisplayReactionsButtons);

@@ -2,7 +2,6 @@ import { IReduxState } from '../../../app/types';
 import { IconSites } from '../../../base/icons/svg';
 import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
-import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
@@ -129,11 +128,10 @@ export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
         // If the containing component provides the visible prop, that is one
         // above all, but if not, the button should be autonomous and decide on
         // its own to be visible or not.
-        const isModerator = isLocalParticipantModerator(state);
         const liveStreaming = getLiveStreaming(state);
 
         visible = isLiveStreamingButtonVisible({
-            liveStreamingAllowed: isJwtFeatureEnabled(state, 'livestreaming', isModerator, false),
+            liveStreamingAllowed: isJwtFeatureEnabled(state, MEET_FEATURES.LIVESTREAMING, false),
             liveStreamingEnabled: liveStreaming?.enabled,
             isInBreakoutRoom: isInBreakoutRoom(state)
         });
