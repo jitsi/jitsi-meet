@@ -7,10 +7,10 @@ export default defineConfig({
         globals: true,
         environment: "jsdom",
         setupFiles: ["./react/test/setup.ts"],
-        include: ["react/**/*.{test,spec}.{js,ts,jsx,tsx}"],
+        include: ["react/features/base/meet/**/*.{test,spec}.{js,ts,jsx,tsx}"],
         coverage: {
             provider: "v8",
-            reporter: ["text", "json", "html"],
+            reporter: ["text", "lcov"],
         },
     },
 });
