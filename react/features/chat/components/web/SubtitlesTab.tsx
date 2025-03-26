@@ -2,15 +2,14 @@ import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IReduxState } from '../../../app/types';
 import { openDialog } from '../../../base/dialog/actions';
 import Button from '../../../base/ui/components/web/Button';
 import { groupMessagesBySender } from '../../../base/util/messageGrouping';
 import StartRecordingDialog from '../../../recording/components/Recording/web/StartRecordingDialog';
 import LanguageSelector from '../../../subtitles/components/web/LanguageSelector';
 import { ISubtitle } from '../../../subtitles/types';
+import { isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
 
-import { SubtitlesGroup } from './SubtitlesGroup';
 import { SubtitlesMessagesContainer } from './SubtitlesMessagesContainer';
 
 /**
@@ -67,8 +66,7 @@ export default function SubtitlesTab() {
     const subtitles: ISubtitle[] = useSelector(state => state['features/subtitles'].subtitlesHistory);
     const language = useSelector(state => state['features/subtitles']._language);
     const selectedLanguage = language?.replace('translation-languages:', '');
-    const isTranscribing = useSelector((state: IReduxState) =>
-        state['features/transcribing'].isTranscribing);
+    const isTranscribing = useSelector(isRecorderTranscriptionsRunning);
 
     const filteredSubtitles = useMemo(() => {
         // First, create a map of transcription messages by message ID
