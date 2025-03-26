@@ -1,0 +1,43 @@
+name: SonarCloud code analysis
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        types: [opened, synchronize, reopened]
+jobs:
+    sonarcloud:
+        name: SonarCloud
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [22.12.0]
+        steps:
+            - uses: actions/checkout@v3
+              with:
+                  fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+            - name: Set up Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  registry-url: "https://npm.pkg.github.com"
+
+            - run: echo "registry=https://registry.yarnpkg.com/" > .npmrc
+            - run: echo "@internxt:registry=https://npm.pkg.github.com" >> .npmrc
+            # You cannot read packages from other private repos with GITHUB_TOKEN
+            # You have to use a PAT instead https://github.com/actions/setup-node/issues/49
+            - run: echo //npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_ACCESS_TOKEN }} >> .npmrc
+            - run: echo "always-auth=true" >> .npmrc
+
+            - name: Install dependencies
+              run: npm i --legacy-peer-deps
+
+            # - name: Test and coverage
+            #   run: yarn test:cov
+
+            - name: SonarCloud Scan
+              uses: SonarSource/sonarcloud-github-action@v3
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

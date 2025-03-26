@@ -1,0 +1,15 @@
+name: PR Size Checker
+on: pull_request
+jobs:
+    check_pr_size:
+        name: Check PR size doesn't break set limit
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - uses: maidsafe/pr_size_checker@v3
+              with:
+                  max_lines_changed: 500
+                  target_branch: main
