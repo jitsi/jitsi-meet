@@ -164,7 +164,7 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
                         const { locationURL = { href: '' } as URL } = state['features/base/connection'];
                         const { tenant = '' } = parseURIString(locationURL.href) || {};
 
-                        features = context.tenant === tenant ? features : {};
+                        features = context.tenant === tenant || tenant === '' ? features : {};
                     }
 
                     _overwriteLocalParticipant(
