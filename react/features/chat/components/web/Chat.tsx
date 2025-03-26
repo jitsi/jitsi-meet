@@ -44,6 +44,11 @@ interface IProps extends AbstractProps {
     _isPollsEnabled: boolean;
 
     /**
+     * True if the transcription history tab is enabled and false otherwise.
+     */
+    _isTranscriptionsHistoryEnabled: boolean;
+
+    /**
      * Number of unread poll messages.
      */
     _nbUnreadPolls: number;
@@ -148,6 +153,7 @@ const Chat = ({
     _isModal,
     _isOpen,
     _isPollsEnabled,
+    _isTranscriptionsHistoryEnabled,
     _focusedTab,
     _messages,
     _nbUnreadMessages,
@@ -222,9 +228,7 @@ const Chat = ({
                     aria-labelledby = { ChatTabs.CHAT }
                     className = { cx(
                         classes.chatPanel,
-
-                        // TODO: Add disable for subtitles and uncomment this code
-                        // !_isPollsEnabled && classes.chatPanelNoTabs,
+                        !_isPollsEnabled && !_isTranscriptionsHistoryEnabled && classes.chatPanelNoTabs,
                         _focusedTab !== ChatTabs.CHAT && 'hide'
                     ) }
                     id = { `${ChatTabs.CHAT}-panel` }
@@ -236,7 +240,7 @@ const Chat = ({
                     <ChatInput
                         onSend = { onSendMessage } />
                 </div>
-                {_isPollsEnabled && (
+                { _isPollsEnabled && (
                     <>
                         <div
                             aria-labelledby = { ChatTabs.POLLS }
@@ -249,14 +253,14 @@ const Chat = ({
                         <KeyboardAvoider />
                     </>
                 )}
-                <div
+                { _isTranscriptionsHistoryEnabled && <div
                     aria-labelledby = { ChatTabs.SUBTITLES }
                     className = { cx(classes.chatPanel, _focusedTab !== ChatTabs.SUBTITLES && 'hide') }
                     id = { `${ChatTabs.SUBTITLES}-panel` }
                     role = 'tabpanel'
                     tabIndex = { 0 }>
                     <SubtitlesTab />
-                </div>
+                </div> }
             </>
         );
     }
@@ -269,34 +273,43 @@ const Chat = ({
      * @returns {ReactElement}
      */
     function renderTabs() {
+        const tabs = [
+            {
+                accessibilityLabel: t('chat.tabs.chat'),
+                countBadge:
+                    _focusedTab !== ChatTabs.CHAT && _nbUnreadMessages > 0 ? _nbUnreadMessages : undefined,
+                id: ChatTabs.CHAT,
+                controlsId: `${ChatTabs.CHAT}-panel`,
+                label: t('chat.tabs.chat')
+            }
+        ];
+
+        if (_isPollsEnabled) {
+            tabs.push({
+                accessibilityLabel: t('chat.tabs.polls'),
+                countBadge: _focusedTab !== ChatTabs.POLLS && _nbUnreadPolls > 0 ? _nbUnreadPolls : undefined,
+                id: ChatTabs.POLLS,
+                controlsId: `${ChatTabs.POLLS}-panel`,
+                label: t('chat.tabs.polls')
+            });
+        }
+
+        if (_isTranscriptionsHistoryEnabled) {
+            tabs.push({
+                accessibilityLabel: t('chat.tabs.subtitles'),
+                countBadge: undefined,
+                id: ChatTabs.SUBTITLES,
+                controlsId: `${ChatTabs.SUBTITLES}-panel`,
+                label: t('chat.tabs.subtitles')
+            });
+        }
+
         return (
             <Tabs
                 accessibilityLabel = { t(_isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
                 onChange = { onChangeTab }
                 selected = { _focusedTab }
-                tabs = { [
-                    {
-                        accessibilityLabel: t('chat.tabs.chat'),
-                        countBadge:
-                            _focusedTab !== ChatTabs.CHAT && _nbUnreadMessages > 0 ? _nbUnreadMessages : undefined,
-                        id: ChatTabs.CHAT,
-                        controlsId: `${ChatTabs.CHAT}-panel`,
-                        label: t('chat.tabs.chat')
-                    },
-                    {
-                        accessibilityLabel: t('chat.tabs.polls'),
-                        countBadge: _focusedTab !== ChatTabs.POLLS && _nbUnreadPolls > 0 ? _nbUnreadPolls : undefined,
-                        id: ChatTabs.POLLS,
-                        controlsId: `${ChatTabs.POLLS}-panel`,
-                        label: t('chat.tabs.polls')
-                    },
-                    {
-                        accessibilityLabel: t('chat.tabs.subtitles'),
-                        id: ChatTabs.SUBTITLES,
-                        controlsId: `${ChatTabs.SUBTITLES}-panel`,
-                        label: t('chat.tabs.subtitles')
-                    }
-                ] } />
+                tabs = { tabs } />
         );
     }
 
@@ -343,6 +356,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _isModal: window.innerWidth <= SMALL_WIDTH_THRESHOLD,
         _isOpen: isOpen,
         _isPollsEnabled: !arePollsDisabled(state),
+        _isTranscriptionsHistoryEnabled: !state['features/base/config'].transcription?.disableTranscriptionsPanel,
         _focusedTab: focusedTab,
         _messages: messages,
         _nbUnreadMessages: nbUnreadMessages,

@@ -382,7 +382,7 @@ function _mapStateToProps(state: IReduxState) {
         _resizableFilmstrip: isFilmstripResizable(state),
         _seeWhatIsBeingShared: Boolean(seeWhatIsBeingShared),
         _showDominantSpeakerBadge: !hideDominantSpeakerBadge,
-        _showSubtitles: Boolean(showSubtitlesButton),
+        _showSubtitles: Boolean(showSubtitlesButton) || Boolean(testingConfig?.disableShowSubtitlesButton),
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state),
         _visibleFilmstrip: visible,

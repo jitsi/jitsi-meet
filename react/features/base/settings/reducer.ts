@@ -28,7 +28,7 @@ const DEFAULT_STATE: ISettingsState = {
     micDeviceId: undefined,
     serverURL: undefined,
     hideShareAudioHelper: false,
-    showSubtitlesButton: false, // Add the new setting with default false
+    showSubtitlesButton: false,
     soundsIncomingMessage: true,
     soundsParticipantJoined: true,
     soundsParticipantKnocking: true,

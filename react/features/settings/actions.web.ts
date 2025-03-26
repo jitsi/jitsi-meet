@@ -155,6 +155,10 @@ export function submitMoreTab(newState: any) {
 
             conference?.setTranscriptionLanguage(newState.currentLanguage);
         }
+
+        if (newState.showSubtitlesButton !== currentState.showSubtitlesButton) {
+            dispatch(updateSettings({ showSubtitlesButton: newState.showSubtitlesButton }));
+        }
     };
 }
 

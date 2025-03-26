@@ -141,6 +141,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
     let newTranscriptMessage: ITranscriptMessage | undefined;
 
     const { showSubtitlesButton } = state['features/base/settings'];
+    const { disableShowSubtitlesButton = false } = state['features/base/config'].testing;
 
     if (json.type === JSON_TYPE_TRANSLATION_RESULT) {
         const translation = json.text?.trim();
@@ -165,7 +166,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
             id: transcriptMessageID
         }));
 
-        if (!showSubtitlesButton) {
+        if (!disableShowSubtitlesButton && !showSubtitlesButton) {
             return next(action);
         }
     } else if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT) {
@@ -188,7 +189,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
 
         dispatch(storeSubtitle(subtitle));
 
-        if (!showSubtitlesButton) {
+        if (!disableShowSubtitlesButton && !showSubtitlesButton) {
             return next(action);
         }
 

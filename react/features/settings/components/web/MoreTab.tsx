@@ -34,6 +34,11 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     disableHideSelfView: boolean;
 
     /**
+     * Whether show subtitles button is enabled.
+     */
+    disableShowSubtitlesButton: boolean;
+
+    /**
      * Whether or not follow me is currently active (enabled by some other participant).
      */
     followMeActive: boolean;
@@ -149,6 +154,7 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
             hideSelfView,
             showLanguageSettings,
             showSubtitlesButton,
+            disableShowSubtitlesButton,
             t
         } = this.props;
         const classes = withStyles.getClasses(this.props);
@@ -170,12 +176,12 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
                         name = 'hide-self-view'
                         onChange = { this._onHideSelfViewChanged } />
                 )}
-                <Checkbox
+                { !disableShowSubtitlesButton && <Checkbox
                     checked = { showSubtitlesButton }
                     className = { classes.checkbox }
                     label = { t('settings.showSubtitlesButton') }
                     name = 'show-subtitles-button'
-                    onChange = { this._onShowSubtitlesButtonChanged } />
+                    onChange = { this._onShowSubtitlesButtonChanged } /> }
                 {showLanguageSettings && this._renderLanguageSelect()}
             </div>
         );
