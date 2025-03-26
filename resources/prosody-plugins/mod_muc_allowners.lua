@@ -1,3 +1,4 @@
+--- activate under the main muc component
 local filters = require 'util.filters';
 local jid = require "util.jid";
 local jid_bare = require "util.jid".bare;
@@ -23,6 +24,14 @@ load_config();
 -- as moderators. As pre-join (where added) and joined event (where removed) happen one after another this list should
 -- have length of 1
 local joining_moderator_participants = {};
+
+module:hook("muc-room-created", function(event)
+    local room = event.room;
+
+    if room.jitsiMetadata then
+        room.jitsiMetadata.allownersEnabled = true;
+    end
+end, -2); -- room_metadata should run before this module on -1
 
 module:hook("muc-occupant-pre-join", function (event)
     local room, occupant = event.room, event.occupant;
