@@ -12,6 +12,8 @@ local presence_check_status = main_util.presence_check_status;
 
 local QUEUE_MAX_SIZE = 500;
 
+module:depends("jitsi_permissions");
+
 -- Common module for all logic that can be loaded under the conference muc component.
 --
 -- This module:

@@ -73,7 +73,7 @@ export function isAudioSettingsButtonDisabled(state: IReduxState) {
 export function isDesktopShareButtonDisabled(state: IReduxState) {
     const { muted, unmuteBlocked } = state['features/base/media'].video;
     const videoOrShareInProgress = !muted || isScreenMediaShared(state);
-    const enabledInJwt = isJwtFeatureEnabled(state, MEET_FEATURES.SCREEN_SHARING, true, true);
+    const enabledInJwt = isJwtFeatureEnabled(state, MEET_FEATURES.SCREEN_SHARING, true);
 
     return !enabledInJwt || (unmuteBlocked && !videoOrShareInProgress);
 }
