@@ -15,9 +15,19 @@ import Checkbox from '../../../base/ui/components/web/Checkbox';
 export interface IProps extends AbstractDialogTabProps, WithTranslation {
 
     /**
+     * Whether the user has selected the chat with permissions feature to be enabled.
+     */
+    chatWithPermissionsEnabled: boolean;
+
+    /**
      * CSS classes object.
      */
     classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
+
+    /**
+     * Whether to hide chat with permissions.
+     */
+    disableChatWithPermissions: boolean;
 
     /**
      * If set hides the reactions moderation setting.
@@ -103,6 +113,7 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
         this._onStartReactionsMutedChanged = this._onStartReactionsMutedChanged.bind(this);
         this._onFollowMeEnabledChanged = this._onFollowMeEnabledChanged.bind(this);
         this._onFollowMeRecorderEnabledChanged = this._onFollowMeRecorderEnabledChanged.bind(this);
+        this._onChatWithPermissionsChanged = this._onChatWithPermissionsChanged.bind(this);
     }
 
     /**
@@ -171,6 +182,17 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
     }
 
     /**
+     * Callback invoked to select if chat with permissions should be activated.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onChatWithPermissionsChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
+        super._onChange({ chatWithPermissionsEnabled: checked });
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -178,6 +200,8 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
      */
     override render() {
         const {
+            chatWithPermissionsEnabled,
+            disableChatWithPermissions,
             disableReactionsModeration,
             followMeActive,
             followMeEnabled,
@@ -232,6 +256,13 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
                             label = { t('settings.startReactionsMuted') }
                             name = 'start-reactions-muted'
                             onChange = { this._onStartReactionsMutedChanged } /> }
+                { !disableChatWithPermissions
+                    && <Checkbox
+                        checked = { chatWithPermissionsEnabled }
+                        className = { classes.checkbox }
+                        label = { t('settings.chatWithPermissions') }
+                        name = 'chat-with-permissions'
+                        onChange = { this._onChatWithPermissionsChanged } /> }
             </div>
         );
     }

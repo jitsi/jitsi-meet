@@ -100,10 +100,13 @@ end
 -- In case permissions were granted we want to send the granted permissions in all cases except when the user is
 -- using token that has features pre-defined (authentication is 'token').
 function filter_stanza(stanza, session)
-    local bare_to = jid.bare(stanza.attr.to);
     if not stanza.attr or not stanza.attr.to or stanza.name ~= 'presence'
-        or stanza.attr.type == 'unavailable'
-        or ends_with(stanza.attr.from, '/focus') or is_admin(bare_to) then
+        or stanza.attr.type == 'unavailable' or ends_with(stanza.attr.from, '/focus') then
+        return stanza;
+    end
+
+    local bare_to = jid.bare(stanza.attr.to);
+    if is_admin(bare_to) then
         return stanza;
     end
 

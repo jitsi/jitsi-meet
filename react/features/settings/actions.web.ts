@@ -189,6 +189,17 @@ export function submitModeratorTab(newState: any) {
             dispatch(setStartMutedPolicy(
                 newState.startAudioMuted, newState.startVideoMuted));
         }
+
+        if (newState.chatWithPermissionsEnabled !== currentState.chatWithPermissionsEnabled) {
+            const { conference } = getState()['features/base/conference'];
+
+            const currentPermissions = conference?.getMetadataHandler().getMetadata().permissions || {};
+
+            conference?.getMetadataHandler().setMetadata('permissions', {
+                ...currentPermissions,
+                groupChatRestricted: newState.chatWithPermissionsEnabled
+            });
+        }
     };
 }
 

@@ -95,6 +95,13 @@ module:hook('jitsi-endpoint-message-received', function(event)
             return true;
         end
 
+        if room.jitsiMetadata and room.jitsiMetadata.permissions
+            and room.jitsiMetadata.permissions.pollCreationRestricted
+            and not is_feature_allowed('create-polls', origin.jitsi_meet_context_features) then
+                origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Creation of polls not allowed for user'));
+                return true;
+        end
+
         local answers = {}
         local compact_answers = {}
         for i, name in ipairs(data.answers) do
