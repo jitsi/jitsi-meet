@@ -18,6 +18,7 @@ import FormSection from './FormSection';
 const ModeratorSection = () => {
     const dispatch = useDispatch();
     const {
+        chatWithPermissionsEnabled,
         followMeActive,
         followMeEnabled,
         followMeRecorderActive,
@@ -52,6 +53,16 @@ const ModeratorSection = () => {
         dispatch(updateSettings({ soundsReactions: enabled }));
     }, [ dispatch, updateSettings, setStartReactionsMuted ]);
 
+    const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
+    const onChatWithPermissionsToggled = useCallback((enabled?: boolean) => {
+        const currentPermissions = conference?.getMetadataHandler().getMetadata().permissions || {};
+
+        conference?.getMetadataHandler().setMetadata('permissions', {
+            ...currentPermissions,
+            groupChatRestricted: enabled
+        });
+    }, [ dispatch, conference ]);
+
     const followMeRecorderChecked = followMeRecorderEnabled && !followMeRecorderActive;
 
     const moderationSettings = useMemo(() => {
@@ -85,7 +96,12 @@ const ModeratorSection = () => {
                 label: 'settings.startReactionsMuted',
                 state: startReactionsMuted,
                 onChange: onStartReactionsMutedToggled
-            }
+            },
+            {
+                label: 'settings.chatWithPermissions',
+                state: chatWithPermissionsEnabled,
+                onChange: onChatWithPermissionsToggled
+            },
         ];
 
         if (disableReactionsModeration) {

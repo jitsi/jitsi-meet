@@ -138,14 +138,18 @@ export function getModeratorTabProps(stateful: IStateful) {
         startVideoMutedPolicy,
         startReactionsMuted
     } = state['features/base/conference'];
+    const { groupChatWithPermissions } = state['features/chat'];
     const { disableReactionsModeration } = state['features/base/config'];
     const followMeActive = isFollowMeActive(state);
     const followMeRecorderActive = isFollowMeRecorderActive(state);
     const showModeratorSettings = shouldShowModeratorSettings(state);
+    const disableChatWithPermissions = !conference?.getMetadataHandler().getMetadata().allownersEnabled;
 
     // The settings sections to display.
     return {
+        chatWithPermissionsEnabled: Boolean(groupChatWithPermissions),
         showModeratorSettings: Boolean(conference && showModeratorSettings),
+        disableChatWithPermissions: Boolean(disableChatWithPermissions),
         disableReactionsModeration: Boolean(disableReactionsModeration),
         followMeActive: Boolean(conference && followMeActive),
         followMeEnabled: Boolean(conference && followMeEnabled),
