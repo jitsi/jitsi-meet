@@ -17,6 +17,7 @@ async function checkParticipantLeftHook(p: Participant, reason: string) {
                 conference: string;
                 disconnectReason: string;
                 isBreakout: boolean;
+                name: string;
                 participantId: string;
             };
             eventType: string;
@@ -27,6 +28,7 @@ async function checkParticipantLeftHook(p: Participant, reason: string) {
         expect(event.data.disconnectReason).toBe(reason);
         expect(event.data.isBreakout).toBe(false);
         expect(event.data.participantId).toBe(await p.getEndpointId());
+        expect(event.data.name).toBe(p.displayName);
     }
 }
 
@@ -290,6 +292,7 @@ describe('Participants presence', () => {
             expect(event.data.moderator).toBe(false);
             expect(event.data.name).toBe(await p2.getLocalDisplayName());
             expect(event.data.participantId).toBe(await p2.getEndpointId());
+            expect(event.data.name).toBe(p2.displayName);
         }
 
         await p1.switchToAPI();
