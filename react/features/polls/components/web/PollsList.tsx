@@ -78,7 +78,7 @@ const PollsList = ({ setCreateMode }: IPollListProps) => {
                         className = { classes.emptyIcon }
                         color = { theme.palette.icon03 }
                         src = { IconMessage } />
-                    <span className = { classes.emptyMessage }>{t('polls.results.empty')}</span>
+                    <p className = { classes.emptyMessage }>{t('polls.results.empty')}</p>
                 </div>
                 : listPolls.map((id, index) => (
                     <PollItem
