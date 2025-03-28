@@ -49,7 +49,8 @@ var config = {
     bosh: 'https://jitsi-meet.example.com/' + subdir + 'http-bind',
 
     // Websocket URL (XMPP)
-    // websocket: 'wss://jitsi-meet.example.com/' + subdir + 'xmpp-websocket',
+    websocket: 'wss://jitsi-meet.example.com/' + subdir + 'xmpp-websocket',
+    websocketKeepAliveUrl: 'https://jitsi-meet.example.com/' + subdir + '_unlock',
 
     // Whether BOSH should be preferred over WebSocket if both are configured.
     // preferBosh: false,
