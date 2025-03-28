@@ -72,8 +72,11 @@ class Message extends Component<IProps> {
                     // Bypass the emojification when urls or matrix ids are involved
                     content.push(token);
                 } else {
-                    const emojified = [...toArray(token, { className: "smiley" })];
-                    content.push(...(emojified.some((item) => typeof item === "string") ? [token] : emojified));
+                    const emojified = [ ...toArray(token, { className: 'smiley' }) ];
+
+                    content.push(
+                        ...emojified.some(item => typeof item === 'string') ? [ token ] : emojified
+                    );
                 }
 
                 content.push(' ');
