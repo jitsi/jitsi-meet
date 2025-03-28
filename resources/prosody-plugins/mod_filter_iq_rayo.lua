@@ -10,7 +10,6 @@ local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local is_feature_allowed = util.is_feature_allowed;
 local is_sip_jigasi = util.is_sip_jigasi;
 local get_room_from_jid = util.get_room_from_jid;
-local is_healthcheck_room = util.is_healthcheck_room;
 local process_host_module = util.process_host_module;
 local jid_bare = require "util.jid".bare;
 
@@ -218,49 +217,10 @@ end
 
 module:hook_global('config-reloaded', load_config);
 
-function process_set_affiliation(event)
-    local actor, affiliation, jid, previous_affiliation, room
-        = event.actor, event.affiliation, event.jid, event.previous_affiliation, event.room;
-    local actor_session = sessions[actor];
-
-    if is_admin(jid) or is_healthcheck_room(room.jid) or not actor or not previous_affiliation
-        or not actor_session or not actor_session.jitsi_meet_context_features then
-        return;
-    end
-
-    local occupant;
-    for _, o in room:each_occupant() do
-        if o.bare_jid == jid then
-            occupant = o;
-        end
-    end
-
-    if not occupant then
-        return;
-    end
-
-    local occupant_session = sessions[occupant.jid];
-    if not occupant_session then
-        return;
-    end
-
-    if previous_affiliation == 'none' and affiliation == 'owner' then
-        occupant_session.granted_jitsi_meet_context_features = actor_session.jitsi_meet_context_features;
-        occupant_session.granted_jitsi_meet_context_user_id = actor_session.jitsi_meet_context_user["id"];
-        occupant_session.granted_jitsi_meet_context_group_id = actor_session.jitsi_meet_context_group;
-    elseif previous_affiliation == 'owner' and ( affiliation == 'member' or affiliation == 'none' ) then
-        occupant_session.granted_jitsi_meet_context_features = nil;
-        occupant_session.granted_jitsi_meet_context_user_id = nil;
-        occupant_session.granted_jitsi_meet_context_group_id = nil;
-    end
-end
-
 function process_main_muc_loaded(main_muc, host_module)
     module:log('debug', 'Main muc loaded');
 
     main_muc_service = main_muc;
-    module:log("info", "Hook to muc events on %s", main_muc_component_host);
-    host_module:hook("muc-pre-set-affiliation", process_set_affiliation);
 end
 
 process_host_module(main_muc_component_host, function(host_module, host)

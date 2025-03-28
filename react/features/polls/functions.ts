@@ -1,4 +1,5 @@
 import { IReduxState } from '../app/types';
+import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 
 import { IAnswerData } from './types';
@@ -77,5 +78,5 @@ export function isCreatePollDisabled(state: IReduxState) {
         return false;
     }
 
-    return !isJwtFeatureEnabled(state, 'create-polls', false, false);
+    return !isJwtFeatureEnabled(state, MEET_FEATURES.CREATE_POLLS, false);
 }

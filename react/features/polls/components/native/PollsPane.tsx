@@ -20,7 +20,7 @@ import PollsList from './PollsList';
 import { pollsStyles } from './styles';
 
 const PollsPane = (props: AbstractProps) => {
-    const { createMode, onCreate, setCreateMode, t } = props;
+    const { createMode, isCreatePollsDisabled, onCreate, setCreateMode, t } = props;
     const navigation = useNavigation();
     const { isPollsTabFocused } = useSelector((state: IReduxState) => state['features/chat']);
     const { nbUnreadPolls } = useSelector((state: IReduxState) => state['features/polls']);
@@ -57,6 +57,7 @@ const PollsPane = (props: AbstractProps) => {
                         <PollsList setCreateMode = { setCreateMode } />
                         <Button
                             accessibilityLabel = 'polls.create.create'
+                            disabled = { isCreatePollsDisabled }
                             id = { t('polls.create.create') }
                             labelKey = 'polls.create.create'
                             onClick = { onCreate }

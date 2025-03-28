@@ -7,6 +7,7 @@ import emojiAsciiAliases from 'react-emoji-render/data/asciiAliases';
 import { IReduxState } from '../app/types';
 import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
 import i18next from '../base/i18n/i18next';
+import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { getParticipantById } from '../base/participants/functions';
 import { escapeRegexp } from '../base/util/helpers';
@@ -206,5 +207,5 @@ export function isSendGroupChatDisabled(state: IReduxState) {
         return false;
     }
 
-    return !isJwtFeatureEnabled(state, 'send-groupchat', false, false);
+    return !isJwtFeatureEnabled(state, MEET_FEATURES.SEND_GROUPCHAT, false);
 }

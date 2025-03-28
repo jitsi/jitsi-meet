@@ -256,6 +256,7 @@ MiddlewareRegistry.register(store => next => action => {
                 lobbyChat: false
             }, false, true);
         }
+        break;
     }
     }
 

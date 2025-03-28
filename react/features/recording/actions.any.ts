@@ -1,12 +1,9 @@
 import { IStore } from '../app/types';
 import { getMeetingRegion, getRecordingSharingUrl } from '../base/config/functions';
+import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
-import {
-    getLocalParticipant,
-    getParticipantDisplayName,
-    isLocalParticipantModerator
-} from '../base/participants/functions';
+import { getLocalParticipant, getParticipantDisplayName } from '../base/participants/functions';
 import { BUTTON_TYPES } from '../base/ui/constants.any';
 import { copyText } from '../base/util/copyText';
 import { getVpaasTenant, isVpaasMeeting } from '../jaas/functions';
@@ -435,10 +432,9 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
             customActionNameKey: [ 'notify.suggestRecordingAction' ],
             customActionHandler: [ () => {
                 state = getState();
-                const isModerator = isLocalParticipantModerator(state);
                 const { recordingService } = state['features/base/config'];
                 const canBypassDialog = recordingService?.enabled
-                    && isJwtFeatureEnabled(state, 'recording', isModerator, false);
+                    && isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false);
 
                 if (canBypassDialog) {
                     const options = {

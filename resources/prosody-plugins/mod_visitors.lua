@@ -314,6 +314,11 @@ process_host_module(main_muc_component_config, function(host_module, host)
             return;
         end
 
+        if host_module:fire_event('jitsi-visitor-groupchat-pre-route', event) then
+            -- message filtered
+            return;
+        end
+
         -- a message from visitor occupant of known visitor node
         stanza.attr.from = to;
         for _, o in room:each_occupant() do
