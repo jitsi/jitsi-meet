@@ -107,10 +107,11 @@ export function stopSharedVideo() {
  * Plays a shared video.
  *
  * @param {string} videoUrl - The video url to be played.
+ * @param {string} time - The time from which video play.
  *
  * @returns {Function}
  */
-export function playSharedVideo(videoUrl: string) {
+export function playSharedVideo(videoUrl: string, time: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         if (!isSharedVideoEnabled(getState())) {
             return;
@@ -119,6 +120,9 @@ export function playSharedVideo(videoUrl: string) {
 
         if (conference) {
             const localParticipant = getLocalParticipant(getState());
+            const state = getState();
+
+            state['features/shared-video'].time = Number(time);
 
             // we will send the command and will create local video fake participant
             // and start playing once we receive ourselves the command
@@ -127,7 +131,7 @@ export function playSharedVideo(videoUrl: string) {
                 id: videoUrl,
                 localParticipantId: localParticipant?.id,
                 status: PLAYBACK_START,
-                time: 0
+                time: Number(time)
             });
         }
     };
@@ -147,7 +151,7 @@ export function toggleSharedVideo() {
         if ([ PLAYBACK_STATUSES.PLAYING, PLAYBACK_START, PLAYBACK_STATUSES.PAUSED ].includes(status)) {
             dispatch(stopSharedVideo());
         } else {
-            dispatch(showSharedVideoDialog((id: string) => dispatch(playSharedVideo(id))));
+            dispatch(showSharedVideoDialog((id: string, time: string) => dispatch(playSharedVideo(id, time))));
         }
     };
 }
