@@ -38,6 +38,11 @@ unlimited_jids = {
     "jvb@auth.jitmeet.example.com"
 }
 
+-- https://prosody.im/doc/modules/mod_smacks
+smacks_max_unacked_stanzas = 5;
+smacks_hibernation_time = 60;
+smacks_max_old_sessions = 1;
+
 VirtualHost "jitmeet.example.com"
     authentication = "jitsi-anonymous" -- do not delete me
     -- Properties below are modified by jitsi-meet-tokens package config
@@ -58,6 +63,7 @@ VirtualHost "jitmeet.example.com"
     -- we need bosh
     modules_enabled = {
         "bosh";
+        "smacks";
         "ping"; -- Enable mod_ping
         "speakerstats";
         "external_services";
@@ -126,6 +132,13 @@ VirtualHost "auth.jitmeet.example.com"
     }
     authentication = "internal_hashed"
     smacks_hibernation_time = 15;
+
+VirtualHost "recorder.jitmeet.example.com"
+    modules_enabled = {
+      "smacks";
+    }
+    authentication = "internal_hashed"
+    smacks_max_old_sessions = 2000;
 
 -- Proxy to jicofo's user JID, so that it doesn't have to register as a component.
 Component "focus.jitmeet.example.com" "client_proxy"
