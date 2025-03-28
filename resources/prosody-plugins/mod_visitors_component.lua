@@ -71,13 +71,31 @@ function send_json_message(to_jid, json_message)
     module:send(stanza);
 end
 
-local function request_promotion_received(room, from_jid, from_vnode, nick, time, user_id, group_id, force_promote)
+local function request_promotion_received(room, from_jid, from_vnode, nick, time, user_id, group_id, force_promote_requested)
     -- if visitors is enabled for the room
     if visitors_promotion_map[room.jid] then
+        local force_promote = auto_allow_promotion;
+
+        if not force_promote and force_promote_requested == 'true' then
+            -- Let's do the force_promote checks if requested
+
+            -- _data.moderator_id can be used from external modules to set single moderator for a meeting
+            -- or a whole group of moderators
+            if room._data.moderator_id == user_id or room._data.moderator_id == group_id
+
+                -- all moderators are allowed to auto promote, the fact that user_id and force_promote_requested are set
+                -- means that the user has token and is moderator on visitor node side
+                or room._data.allModerators
+
+                -- can be used by external modules to set a 'util.set' of multiple moderator ids
+                or (room._data.moderators and room._data.moderators:contains(user_id))
+            then
+                force_promote = true;
+            end
+        end
+
         -- only for raise hand, ignore lowering the hand
-        if time and time > 0 and (
-            auto_allow_promotion
-            or force_promote == 'true') then
+        if time and time > 0 and force_promote then
             --  we are in auto-allow mode, let's reply with accept
             -- we store where the request is coming from so we can send back the response
             local username = new_id():lower();
