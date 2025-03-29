@@ -111,6 +111,7 @@
     "chat": {
         "enter": "Enter room",
         "error": "Error: your message was not sent. Reason: {{error}}",
+        "everyone": "Everyone",
         "fieldPlaceHolder": "Aa",
         "lobbyChatMessageTo": "Lobby chat message to {{recipient}}",
         "message": "Message",

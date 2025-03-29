@@ -192,7 +192,6 @@ export function getPrivateNoticeMessage(message: IMessage) {
     });
 }
 
-
 /**
  * Check if participant is not allowed to send group messages.
  *
