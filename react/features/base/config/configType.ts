@@ -190,10 +190,10 @@ export interface IConfig {
         obfuscateRoomName?: boolean;
         rtcstatsEnabled?: boolean;
         rtcstatsEndpoint?: string;
+        rtcstatsLogFlushSizeBytes?: number;
         rtcstatsPollInterval?: number;
         rtcstatsSendSdp?: boolean;
         rtcstatsStoreLogs?: boolean;
-        rtcstatsUseLegacy?: boolean;
         scriptURLs?: Array<string>;
         watchRTCEnabled?: boolean;
         whiteListedEvents?: string[];
