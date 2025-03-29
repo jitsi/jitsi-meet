@@ -201,14 +201,17 @@ const ChatMessage = ({
     const { classes, cx } = useStyles();
     const [ isHovered, setIsHovered ] = useState(false);
     const [ isReactionsOpen, setIsReactionsOpen ] = useState(false);
+    const [ isMenuOpen, setIsMenuOpen ] = useState(false);
 
     const handleMouseEnter = useCallback(() => {
         setIsHovered(true);
     }, []);
 
     const handleMouseLeave = useCallback(() => {
-        setIsHovered(false);
-    }, []);
+        if (!isMenuOpen) {
+            setIsHovered(false);
+        }
+    }, [ isMenuOpen ]);
 
     const handleReactionsOpen = useCallback(() => {
         setIsReactionsOpen(true);
@@ -216,6 +219,13 @@ const ChatMessage = ({
 
     const handleReactionsClose = useCallback(() => {
         setIsReactionsOpen(false);
+    }, []);
+
+    const handleMenuVisibilityChange = useCallback((isVisible: boolean) => {
+        setIsMenuOpen(isVisible);
+        if (!isVisible) {
+            setIsHovered(false);
+        }
     }, []);
 
     /**
@@ -240,9 +250,7 @@ const ChatMessage = ({
      */
     function _renderPrivateNotice() {
         return (
-            <div className = { classes.privateMessageNotice }>
-                {getPrivateNoticeMessage(message)}
-            </div>
+            <div className = { classes.privateMessageNotice }>{getPrivateNoticeMessage(message)}</div>
         );
     }
 
@@ -254,9 +262,7 @@ const ChatMessage = ({
     function _renderTimestamp() {
         return (
             <div className = { cx('timestamp', classes.timestamp) }>
-                <p>
-                    {getFormattedTimestamp(message)}
-                </p>
+                <p>{getFormattedTimestamp(message)}</p>
             </div>
         );
     }
@@ -273,12 +279,14 @@ const ChatMessage = ({
 
         const reactionsArray = Array.from(message.reactions.entries())
             .map(([ reaction, participants ]) => {
-                return { reaction,
-                    participants };
+                return { reaction, participants };
             })
             .sort((a, b) => b.participants.size - a.participants.size);
 
-        const totalReactions = reactionsArray.reduce((sum, { participants }) => sum + participants.size, 0);
+        const totalReactions = reactionsArray.reduce(
+            (sum, { participants }) => sum + participants.size,
+            0
+        );
         const numReactionsDisplayed = 3;
 
         const reactionsContent = (
@@ -314,9 +322,9 @@ const ChatMessage = ({
                 trigger = 'hover'
                 visible = { isReactionsOpen }>
                 <div className = { classes.reactionBox }>
-                    {reactionsArray.slice(0, numReactionsDisplayed).map(({ reaction }, index) =>
+                    {reactionsArray.slice(0, numReactionsDisplayed).map(({ reaction }, index) => (
                         <p key = { index }>{reaction}</p>
-                    )}
+                    ))}
                     {reactionsArray.length > numReactionsDisplayed && (
                         <p className = { classes.reactionCount }>
                             +{totalReactions - numReactionsDisplayed}
@@ -337,11 +345,14 @@ const ChatMessage = ({
             <div className = { classes.sideBySideContainer }>
                 {!shouldDisplayChatMessageMenu && (
                     <div className = { classes.optionsButtonContainer }>
-                        {isHovered && <MessageMenu
-                            isLobbyMessage = { message.lobbyChat }
-                            message = { message.message }
-                            participantId = { message.participantId }
-                            shouldDisplayChatMessageMenu = { shouldDisplayChatMessageMenu } />}
+                        {isHovered && (
+                            <MessageMenu
+                                isLobbyMessage = { message.lobbyChat }
+                                message = { message.message }
+                                onMenuVisibilityChange = { handleMenuVisibilityChange }
+                                participantId = { message.participantId }
+                                shouldDisplayChatMessageMenu = { shouldDisplayChatMessageMenu } />
+                        )}
                     </div>
                 )}
                 <div
@@ -357,20 +368,20 @@ const ChatMessage = ({
                             {showDisplayName && _renderDisplayName()}
                             <div className = { cx('usermessage', classes.userMessage) }>
                                 <Message
-                                    screenReaderHelpText = { message.displayName === message.recipient
-                                        ? t<string>('chat.messageAccessibleTitleMe')
-                                        : t<string>('chat.messageAccessibleTitle', {
-                                            user: message.displayName
-                                        }) }
+                                    screenReaderHelpText = {
+                                        message.displayName === message.recipient
+                                            ? t<string>('chat.messageAccessibleTitleMe')
+                                            : t<string>('chat.messageAccessibleTitle', {
+                                                user: message.displayName
+                                            })
+                                    }
                                     text = { getMessageText(message) } />
                                 {(message.privateMessage || (message.lobbyChat && !knocking))
                                     && _renderPrivateNotice()}
                                 <div className = { classes.chatMessageFooter }>
                                     <div className = { classes.chatMessageFooterLeft }>
                                         {message.reactions && message.reactions.size > 0 && (
-                                            <>
-                                                {renderReactions}
-                                            </>
+                                            <>{renderReactions}</>
                                         )}
                                     </div>
                                     {_renderTimestamp()}
@@ -381,20 +392,27 @@ const ChatMessage = ({
                 </div>
                 {shouldDisplayChatMessageMenu && (
                     <div className = { classes.sideBySideContainer }>
-                        {!message.privateMessage && !message.lobbyChat && <div>
-                            <div className = { classes.optionsButtonContainer }>
-                                {isHovered && <ReactButton
-                                    messageId = { message.messageId }
-                                    receiverId = { '' } />}
+                        {!message.privateMessage && !message.lobbyChat && (
+                            <div>
+                                <div className = { classes.optionsButtonContainer }>
+                                    {isHovered && (
+                                        <ReactButton
+                                            messageId = { message.messageId }
+                                            receiverId = { '' } />
+                                    )}
+                                </div>
                             </div>
-                        </div>}
+                        )}
                         <div>
                             <div className = { classes.optionsButtonContainer }>
-                                {isHovered && <MessageMenu
-                                    isLobbyMessage = { message.lobbyChat }
-                                    message = { message.message }
-                                    participantId = { message.participantId }
-                                    shouldDisplayChatMessageMenu = { shouldDisplayChatMessageMenu } />}
+                                {isHovered && (
+                                    <MessageMenu
+                                        isLobbyMessage = { message.lobbyChat }
+                                        message = { message.message }
+                                        onMenuVisibilityChange = { handleMenuVisibilityChange }
+                                        participantId = { message.participantId }
+                                        shouldDisplayChatMessageMenu = { shouldDisplayChatMessageMenu } />
+                                )}
                             </div>
                         </div>
                     </div>
