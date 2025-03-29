@@ -62,6 +62,7 @@ interface IState {
  * @augments Component
  */
 class ChatInput extends Component<IProps, IState> {
+    _smileysContainerRef: RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
     _textArea?: RefObject<HTMLTextAreaElement>;
 
     override state = {
@@ -127,7 +128,10 @@ class ChatInput extends Component<IProps, IState> {
                         <div
                             className = 'smiley-input'>
                             <div
-                                className = 'smileys-panel' >
+                                aria-label = { this.props.t('chat.smileysPanel') }
+                                className = 'smileys-panel'
+                                ref = { this._smileysContainerRef }
+                                tabIndex = { 0 } >
                                 <SmileysPanel
                                     onSmileySelect = { this._onSmileySelect } />
                             </div>
@@ -136,6 +140,7 @@ class ChatInput extends Component<IProps, IState> {
                     <Input
                         className = 'chat-input'
                         icon = { this.props._areSmileysDisabled ? undefined : IconFaceSmile }
+                        iconAccessibilityLabel = { this.props.t('chat.smileySymbol') }
                         iconClick = { this._toggleSmileysPanel }
                         id = 'chat-input-messagebox'
                         maxRows = { 5 }
@@ -165,6 +170,18 @@ class ChatInput extends Component<IProps, IState> {
      */
     _focus() {
         this._textArea?.current && this._textArea.current.focus();
+    }
+
+    /**
+     * Place cursor focus on the smiley panel.
+     *
+     * @private
+     * @returns {void}
+     */
+    _focusSmileysPanel() {
+        setTimeout(() => {
+            this._smileysContainerRef?.current && this._smileysContainerRef.current.focus();
+        }, 25);
     }
 
     /**
@@ -273,6 +290,8 @@ class ChatInput extends Component<IProps, IState> {
     _toggleSmileysPanel() {
         if (this.state.showSmileysPanel) {
             this._focus();
+        } else {
+            this._focusSmileysPanel();
         }
         this.setState({ showSmileysPanel: !this.state.showSmileysPanel });
     }
