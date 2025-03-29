@@ -1,5 +1,5 @@
 import { Theme } from '@mui/material';
-import React, { isValidElement, useCallback, useContext } from 'react';
+import React, { isValidElement, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { keyframes } from 'tss-react';
@@ -18,6 +18,7 @@ import {
 import Message from '../../../base/react/components/web/Message';
 import { getSupportUrl } from '../../../base/react/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import Tooltip from '../../../base/tooltip/components/Tooltip';
 import { NOTIFICATION_ICON, NOTIFICATION_TYPE } from '../../constants';
 import { INotificationProps } from '../../types';
 import { NotificationsTransitionContext } from '../NotificationsTransition';
@@ -124,7 +125,13 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
 
         title: {
-            ...withPixelLineHeight(theme.typography.bodyShortBold)
+            ...withPixelLineHeight(theme.typography.bodyShortBold),
+            display: 'inline-block',
+            maxWidth: '100%',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'middle',
         },
 
         description: {
@@ -193,6 +200,7 @@ const Notification = ({
     const { t } = useTranslation();
     const { unmounting } = useContext(NotificationsTransitionContext);
     const supportUrl = useSelector(getSupportUrl);
+    const textContainerRef = useRef<HTMLDivElement>(null);
 
     const ICON_COLOR = {
         error: theme.palette.iconError,
@@ -312,6 +320,61 @@ const Notification = ({
         return iconToDisplay;
     }, [ icon, appearance ]);
 
+
+    const renderNotificationTitle = useCallback(() => {
+        const notificationTitle = String(title || t(titleKey ?? '', titleArguments));
+        const titleWords = notificationTitle.split(' ');
+        const [ isTruncatedWordList, setIsTruncatedWordList ] = useState<boolean[]>(
+            Array(titleWords.length).fill(false)
+        );
+        const spanRefs = useRef<HTMLSpanElement[] | null[]>([]);
+
+        const assignRef = (index: number) => (spanElement: HTMLSpanElement | null) => {
+            spanRefs.current[index] = spanElement;
+        };
+
+        useEffect(() => {
+            if (textContainerRef.current) {
+                const container = textContainerRef.current;
+                const containerStyles = window.getComputedStyle(container);
+                const containerWidth = Math.floor(parseFloat(containerStyles.width));
+
+                const updatedIsTruncatedWordList = titleWords.map((_, index) => {
+                    const element = spanRefs.current[index];
+
+                    return element ? Math.floor(element.scrollWidth) > containerWidth : false;
+                });
+
+                setIsTruncatedWordList(updatedIsTruncatedWordList);
+            }
+        }, [ titleWords, textContainerRef ]);
+
+        return (
+            <span>
+                {titleWords.map((word, index) => (
+                    <React.Fragment key = { index }>
+                        {isTruncatedWordList[index] ? (
+                            <Tooltip content = { word }>
+                                <span
+                                    className = { classes.title }
+                                    ref = { assignRef(index) }>
+                                    {t(word)}
+                                </span>
+                            </Tooltip>
+                        ) : (
+                            <span
+                                className = { classes.title }
+                                ref = { assignRef(index) }>
+                                {t(word)}
+                            </span>
+                        )}
+                        {index < titleWords.length - 1 && ' '}
+                    </React.Fragment>
+                ))}
+            </span>
+        );
+    }, [ title, titleKey, titleArguments, textContainerRef ]);
+
     return (
         <div
             aria-atomic = 'false'
@@ -327,8 +390,10 @@ const Notification = ({
                         size = { 20 }
                         src = { getIcon() } />
                 </div>
-                <div className = { classes.textContainer }>
-                    <span className = { classes.title }>{title || t(titleKey ?? '', titleArguments)}</span>
+                <div
+                    className = { classes.textContainer }
+                    ref = { textContainerRef }>
+                    {renderNotificationTitle()}
                     {renderDescription()}
                     <div className = { classes.actionsContainer }>
                         {mapAppearanceToButtons().map(({ content, onClick, type, testId }) => (
