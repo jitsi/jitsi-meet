@@ -106,6 +106,11 @@ export interface IProps {
     _videoUrl?: string;
 
     /**
+      * The video start time(in seconds).
+      */
+    startTime?: number;
+
+    /**
       * The video id.
       */
     videoId: string;
@@ -442,7 +447,7 @@ export default AbstractVideoManager;
  * @returns {IProps}
  */
 export function _mapStateToProps(state: IReduxState) {
-    const { ownerId, status, time, videoUrl, muted } = state['features/shared-video'];
+    const { ownerId, status, time, videoUrl, muted, startTime } = state['features/shared-video'];
     const localParticipant = getLocalParticipant(state);
     const _isLocalAudioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
 
@@ -454,7 +459,8 @@ export function _mapStateToProps(state: IReduxState) {
         _ownerId: ownerId,
         _status: status,
         _time: time,
-        _videoUrl: videoUrl
+        _videoUrl: videoUrl,
+        startTime
     };
 }
 

@@ -56,6 +56,11 @@ interface IProps {
     onStage: boolean;
 
     /**
+      * The video start time(in seconds).
+      */
+    startTime?: number;
+
+    /**
      * The shared video url.
      */
     videoUrl?: string;
@@ -162,7 +167,7 @@ class SharedVideo extends Component<IProps> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
-    const { videoUrl } = state['features/shared-video'];
+    const { videoUrl, startTime } = state['features/shared-video'];
     const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
     const { visible, isResizing } = state['features/filmstrip'];
     const onStage = getLargeVideoParticipant(state)?.fakeParticipant === FakeParticipant.SharedVideo;
@@ -177,7 +182,8 @@ function _mapStateToProps(state: IReduxState) {
         isResizing,
         isVideoShared,
         onStage,
-        videoUrl
+        videoUrl,
+        startTime
     };
 }
 
