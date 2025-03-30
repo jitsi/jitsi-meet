@@ -14,6 +14,7 @@ import {
 } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import { getDisableLowerHandByModerator } from '../base/config/functions.any';
+import { hangup } from '../base/connection/actions';
 import { getURLWithoutParamsNormalized } from '../base/connection/utils';
 import { hideDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
@@ -27,7 +28,7 @@ import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { SET_REDUCED_UI } from '../base/responsive-ui/actionTypes';
 import { LOWER_HAND_MESSAGE } from '../base/tracks/constants';
 import { BUTTON_TYPES } from '../base/ui/constants.any';
-import { inIframe } from '../base/util/iframeUtils';
+import { isEmbedded } from '../base/util/embedUtils';
 import { isCalendarEnabled } from '../calendar-sync/functions';
 import FeedbackDialog from '../feedback/components/FeedbackDialog';
 import { setFilmstripEnabled } from '../filmstrip/actions.any';
@@ -191,8 +192,7 @@ function _checkIframe(state: IReduxState, dispatch: IStore['dispatch']) {
         }
     }
 
-    if (inIframe() && state['features/base/config'].disableIframeAPI && !browser.isElectron()
-        && !isVpaasMeeting(state) && !allowIframe) {
+    if (isEmbedded() && state['features/base/config'].disableIframeAPI && !isVpaasMeeting(state) && !allowIframe) {
         // show sticky notification and redirect in 5 minutes
         const { locationURL } = state['features/base/connection'];
         let translationKey = 'notify.disabledIframe';
@@ -207,26 +207,41 @@ function _checkIframe(state: IReduxState, dispatch: IStore['dispatch']) {
         const jaasDomain = mapping[hostname];
 
         if (jaasDomain) {
-            translationKey = 'notify.disabledIframeSecondary';
+            translationKey = `notify.disabledIframeSecondary${browser.isReactNative() ? 'Native' : 'Web'}`;
             domain = hostname;
         }
 
-        dispatch(showWarningNotification({
-            description: translateToHTML(
-                i18next.t.bind(i18next),
-                translationKey,
-                {
-                    domain,
-                    jaasDomain,
-                    timeout: IFRAME_DISABLED_TIMEOUT_MINUTES
-                }
-            )
-        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+        if (browser.isReactNative()) {
+            dispatch(showWarningNotification({
+                description: i18next.t(translationKey,
+                    {
+                        domain,
+                        timeout: IFRAME_DISABLED_TIMEOUT_MINUTES
+                    }
+                )
+            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 
-        setTimeout(() => {
-            // redirect to the promotional page
-            dispatch(redirectToStaticPage('static/close3.html', `#jitsi_meet_external_api_id=${API_ID}`));
-        }, IFRAME_DISABLED_TIMEOUT_MINUTES * 60 * 1000);
+            setTimeout(() => {
+                dispatch(hangup());
+            }, IFRAME_DISABLED_TIMEOUT_MINUTES * 60 * 1000);
+        } else {
+            dispatch(showWarningNotification({
+                description: translateToHTML(
+                    i18next.t.bind(i18next),
+                    translationKey,
+                    {
+                        domain,
+                        jaasDomain,
+                        timeout: IFRAME_DISABLED_TIMEOUT_MINUTES
+                    }
+                )
+            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+
+            setTimeout(() => {
+                // redirect to the promotional page
+                dispatch(redirectToStaticPage('static/close3.html', `#jitsi_meet_external_api_id=${API_ID}`));
+            }, IFRAME_DISABLED_TIMEOUT_MINUTES * 60 * 1000);
+        }
     }
 }
 
