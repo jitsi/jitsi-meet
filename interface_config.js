@@ -9,7 +9,7 @@
  */
 
 var interfaceConfig = {
-    APP_NAME: 'Jitsi Meet',
+    APP_NAME: 'Sonacove Meets',
     AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
     AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.2)',
 
@@ -55,12 +55,12 @@ var interfaceConfig = {
      */
     DISABLE_VIDEO_BACKGROUND: false,
 
-    DISPLAY_WELCOME_FOOTER: true,
-    DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD: false,
-    DISPLAY_WELCOME_PAGE_CONTENT: false,
-    DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
+    DISPLAY_WELCOME_FOOTER: false,
+    DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD: true,
+    DISPLAY_WELCOME_PAGE_CONTENT: true,
+    DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: true,
 
-    ENABLE_DIAL_OUT: true,
+    ENABLE_DIAL_OUT: false,
 
     FILM_STRIP_MAX_HEIGHT: 120,
 
@@ -71,7 +71,7 @@ var interfaceConfig = {
      */
     HIDE_INVITE_MORE_HEADER: false,
 
-    JITSI_WATERMARK_LINK: 'https://jitsi.org',
+    JITSI_WATERMARK_LINK: 'https://meet.sonacove.com',
 
     LANG_DETECTION: true, // Allow i18n to detect the system language
     LOCAL_THUMBNAIL_RATIO: 16 / 9, // 16:9
@@ -100,7 +100,7 @@ var interfaceConfig = {
     OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'electron', 'safari', 'webkit' ],
 
     POLICY_LOGO: null,
-    PROVIDER_NAME: 'Jitsi',
+    PROVIDER_NAME: 'Sonacove',
 
     /**
      * If true, will display recent list
@@ -118,7 +118,7 @@ var interfaceConfig = {
      */
     // SHARING_FEATURES: ['email', 'url', 'dial-in', 'embed'],
 
-    SHOW_BRAND_WATERMARK: false,
+    SHOW_BRAND_WATERMARK: true,
 
     /**
      * Decides whether the chrome extension banner should be rendered on the landing page and during the meeting.
@@ -129,13 +129,13 @@ var interfaceConfig = {
 
     SHOW_JITSI_WATERMARK: true,
     SHOW_POWERED_BY: false,
-    SHOW_PROMOTIONAL_CLOSE_PAGE: false,
+    SHOW_PROMOTIONAL_CLOSE_PAGE: true,
 
     /*
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'https://community.jitsi.org/',
+    SUPPORT_URL: 'https://sonacove.com/blog',
 
     // Browsers, in addition to those which do not fully support WebRTC, that
     // are not supported and should show the unsupported browser page.
