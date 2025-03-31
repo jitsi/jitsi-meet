@@ -1,1 +1,65 @@
 /** Insert custom CSS for any additional content in the welcome page **/
+
+.auth-card {
+  display: flex;
+  flex-direction: column;
+  
+  .auth-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #131519;
+  }
+  
+  .auth-description {
+    margin-bottom: 24px;
+    color: #5E6D7A;
+  }
+  
+  .auth-user-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .auth-user-detail {
+    display: flex;
+    margin-bottom: 12px;
+    font-size: 16px;
+    
+    .auth-label {
+      font-weight: 600;
+      min-width: 80px;
+      color: #5E6D7A;
+    }
+    
+    .auth-value {
+      color: #131519;
+    }
+  }
+  
+  .auth-buttons {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    gap: 12px;
+    
+    .auth-button {
+      display: inline-block;
+      text-align: center;
+      text-decoration: none;
+      transition: background-color 0.2s;
+      
+      &:hover {
+        background: #0361D4;
+      }
+      
+      &.auth-logout {
+        background: #E04757;
+        
+        &:hover {
+          background: #C03747;
+        }
+      }
+    }
+  }
+}

@@ -1,1 +1,110 @@
-<template id = "welcome-page-additional-card-template"></template>
+<template id="welcome-page-additional-card-template">
+    <div class="welcome-card-text auth-card">
+        <div id="jitsi-auth-container">
+            <!-- Login state will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const authContainer = document.getElementById("jitsi-auth-container");
+
+            // Function to get user data from localStorage
+            function getUserData() {
+                try {
+                    const jwtData = localStorage.getItem("features/base/jwt");
+                    return jwtData ? JSON.parse(jwtData) : null;
+                } catch (e) {
+                    console.error("Error parsing JWT data:", e);
+                    return null;
+                }
+            }
+
+            // Function to render content based on auth status
+            function renderAuthContent() {
+                const userData = getUserData();
+
+                if (userData && userData.user) {
+                    // User is logged in
+                    const { name, email } = userData.user;
+
+                    authContainer.innerHTML = `
+                        <div class="auth-user-info">
+                            <h3 class="auth-title">Account</h3>
+                            <div class="auth-user-detail">
+                                <span class="auth-label">Name:</span>
+                                <span class="auth-value">${name || "Not available"}</span>
+                            </div>
+                            <div class="auth-user-detail">
+                                <span class="auth-label">Email:</span>
+                                <span class="auth-value">${email || "Not available"}</span>
+                            </div>
+                            <div class="auth-buttons">
+                                <a href="https://auth.sonacove.com/realms/jitsi/account" target="_blank" class="welcome-page-button auth-button">
+                                    Manage Account
+                                </a>
+                                <a href="https://customer-portal.paddle.com/cpl_01jmwrfanv7gtn3y160bcw8c7w" target="_blank" class="welcome-page-button auth-button">
+                                    Manage Subscription
+                                </a>
+                                <button id="jitsi-logout-button" class="welcome-page-button auth-button auth-logout">
+                                    Logout
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    // Add logout button event listener
+                    const logoutButton = document.getElementById("jitsi-logout-button");
+                    if (logoutButton) {
+                        logoutButton.addEventListener("click", function () {
+                            const logoutUrl = window.config.tokenLogoutUrl;
+                            if (logoutUrl) {
+                                window.location.href = logoutUrl;
+                            }
+                        });
+                    }
+                } else {
+                    // User is not logged in
+                    authContainer.innerHTML = `
+                        <div class="auth-login-container">
+                            <h3 class="auth-title">Login</h3>
+                            <p class="auth-description">Sign in to access your account and meetings</p>
+                            <button id="jitsi-login-button" class="welcome-page-button auth-button">
+                                Login
+                            </button>
+                        </div>
+                    `;
+
+                    // Add login button event listener
+                    const loginButton = document.getElementById("jitsi-login-button");
+                    if (loginButton) {
+                        loginButton.addEventListener("click", function () {
+                            // Using simplified URL parameters as specified in the requirements
+                            let loginUrl = window.config.tokenAuthUrl;
+                            if (loginUrl) {
+                                loginUrl = loginUrl
+                                    .replace("{room}", "&no_room=true")
+                                    .replace("{code_challenge}", "dummy")
+                                    .replace("{state}", "{}");
+                                window.location.href = loginUrl;
+                            }
+                        });
+                    }
+                }
+            }
+
+            // Initial render
+            renderAuthContent();
+
+            // Set up storage event listener to update UI when localStorage changes
+            window.addEventListener("storage", function (e) {
+                if (e.key === "features/base/jwt") {
+                    renderAuthContent();
+                }
+            });
+
+            // Optional: periodically check for changes (in case storage event doesn't fire)
+            setInterval(renderAuthContent, 5000);
+        })();
+    </script>
+</template>

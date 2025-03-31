@@ -244,6 +244,60 @@ function getDevServerConfig() {
         },
         host: '127.0.0.1',
         hot: true,
+        setupMiddlewares: (middlewares, devServer) => {
+            if (!devServer) {
+                throw new Error('webpack-dev-server is not defined');
+            }
+
+            // Simple SSI processor
+            const processSSI = (content, basePath) => {
+                const includeRegex = /<!--#include\s+virtual="([^"]+)"\s*-->/g;
+
+                return content.replace(includeRegex, (match, path) => {
+                    const includePath = join(basePath, path.startsWith('/') ? path.slice(1) : path);
+
+                    console.log('Processing SSI include:', includePath);
+                    try {
+                        return fs.readFileSync(includePath, 'utf-8');
+                    } catch (err) {
+                        console.error('Failed to read include file:', includePath, err);
+
+                        return `<!-- Failed to include ${path} -->`;
+                    }
+                });
+            };
+
+            // Add SSI processing middleware
+            middlewares.unshift({
+                name: 'ssi-middleware',
+                middleware: (req, res, next) => {
+                    // console.log('Request path:', req.path);
+
+                    // Handle root path and HTML files
+                    if (req.path === '/' || req.path.endsWith('.html')) {
+                        const filePath
+                            = req.path === '/' ? join(process.cwd(), 'index.html') : join(process.cwd(), req.path);
+
+                        // console.log('Processing file:', filePath);
+
+                        try {
+                            let content = fs.readFileSync(filePath, 'utf-8');
+
+                            content = processSSI(content, process.cwd());
+                            res.set('Content-Type', 'text/html');
+                            res.send(content);
+                        } catch (err) {
+                            console.error('Error processing file:', err);
+                            next(err);
+                        }
+                    } else {
+                        next();
+                    }
+                }
+            });
+
+            return middlewares;
+        },
         proxy: [
             {
                 context: [ '/' ],
