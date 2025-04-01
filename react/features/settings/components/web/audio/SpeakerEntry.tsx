@@ -25,7 +25,8 @@ interface IProps {
     deviceId: string;
 
     /**
-     * Flag controlling the selection state of the entry.
+     * Index of the device item used to generate this entry.
+     * Indexes are 0 based.
      */
     index: number;
 
@@ -139,7 +140,7 @@ const SpeakerEntry = (props: IProps) => {
     return (
         <li
             aria-checked = { isSelected }
-            aria-posinset = { index }
+            aria-posinset = { index + 1 } // Add one to offset the 0 based index.
             aria-setsize = { length }
             className = { classes.container }
             onClick = { _onClick }
