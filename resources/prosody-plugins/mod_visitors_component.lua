@@ -13,6 +13,7 @@ local get_room_from_jid = util.get_room_from_jid;
 local get_focus_occupant = util.get_focus_occupant;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
+local table_find = util.table_find;
 local is_vpaas = util.is_vpaas;
 local is_sip_jibri_join = util.is_sip_jibri_join;
 local process_host_module = util.process_host_module;
@@ -87,8 +88,8 @@ local function request_promotion_received(room, from_jid, from_vnode, nick, time
                 -- means that the user has token and is moderator on visitor node side
                 or room._data.allModerators
 
-                -- can be used by external modules to set a 'util.set' of multiple moderator ids
-                or (room._data.moderators and room._data.moderators:contains(user_id))
+                -- can be used by external modules to set multiple moderator ids (table of values)
+                or table_find(room._data.moderators, user_id)
             then
                 force_promote = true;
             end
