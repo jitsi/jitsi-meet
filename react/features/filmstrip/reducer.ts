@@ -1,5 +1,6 @@
 import { PARTICIPANT_LEFT } from '../base/participants/actionTypes';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
+import { setVisibleRemoteParticipants } from './actions.any';
 
 import {
     CLEAR_STAGE_PARTICIPANTS,
@@ -270,11 +271,13 @@ ReducerRegistry.register<IFilmstripState>(
                 ...state,
                 horizontalViewDimensions: action.dimensions
             };
+
         case SET_REMOTE_PARTICIPANTS: {
             state.remoteParticipants = action.participants;
             const { visibleParticipantsStartIndex: startIndex, visibleParticipantsEndIndex: endIndex } = state;
 
-            state.visibleRemoteParticipants = new Set(state.remoteParticipants.slice(startIndex, endIndex + 1));
+            // FORCED TO MAKE VISIBLE ALL REMOTE PARTICIPANTS ALWAYS
+            state.visibleRemoteParticipants = new Set(state.remoteParticipants.slice(startIndex, state.remoteParticipants.length));
 
             return { ...state };
         }
