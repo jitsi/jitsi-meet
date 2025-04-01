@@ -591,6 +591,19 @@ function table_shallow_copy(t)
     return t2
 end
 
+local function table_find(tab, val)
+    if not tab then
+        return nil
+    end
+
+    for i, v in ipairs(tab) do
+        if v == val then
+            return i
+        end
+    end
+    return nil
+end
+
 -- Splits a string using delimiter
 function split_string(str, delimiter)
     str = str .. delimiter;
@@ -672,4 +685,5 @@ return {
     starts_with = starts_with;
     starts_with_one_of = starts_with_one_of;
     table_shallow_copy = table_shallow_copy;
+    table_find = table_find;
 };
