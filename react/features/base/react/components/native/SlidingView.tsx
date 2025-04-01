@@ -120,7 +120,7 @@ export default class SlidingView extends PureComponent<IProps, IState> {
      * @inheritdoc
      */
     override componentDidMount() {
-        BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
+        this.hardwareBackPressSubscription = BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
 
         this._mounted = true;
         this._setShow(this.props.show);
@@ -145,7 +145,7 @@ export default class SlidingView extends PureComponent<IProps, IState> {
      * @inheritdoc
      */
     override componentWillUnmount() {
-        BackHandler.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
+        this.hardwareBackPressSubscription?.remove();
 
         this._mounted = false;
     }

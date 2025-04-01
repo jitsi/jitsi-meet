@@ -216,7 +216,7 @@ class Conference extends AbstractConference<IProps, State> {
             navigation
         } = this.props;
 
-        BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
+        this.hardwareBackPressSubscription = BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
 
         if (_audioOnlyEnabled && _startCarMode) {
             navigation.navigate(screen.conference.carmode);
@@ -258,7 +258,7 @@ class Conference extends AbstractConference<IProps, State> {
      */
     override componentWillUnmount() {
         // Tear handling any hardware button presses for back navigation down.
-        BackHandler.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
+        this.hardwareBackPressSubscription?.remove();
 
         clearTimeout(this._expandedLabelTimeout.current ?? 0);
     }
