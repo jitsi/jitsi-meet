@@ -17,8 +17,8 @@ const DEFAULT_LOGGING_CONFIG: ILoggingConfig = {
     loggers: {
         // The following are too verbose in their logging with the
         // {@link #defaultLogLevel}:
-        'modules/RTC/TraceablePeerConnection.js': 'info',
-        'modules/xmpp/strophe.util.js': 'log'
+        'modules/RTC/TraceablePeerConnection': 'info',
+        'modules/xmpp/strophe.util': 'log'
     }
 };
 
@@ -41,10 +41,10 @@ const DEFAULT_STATE = {
 // Reduce default verbosity on mobile, it kills performance.
 if (navigator.product === 'ReactNative') {
     const RN_LOGGERS: { [key: string]: LogLevel; } = {
-        'modules/sdp/SDPUtil.js': 'info',
-        'modules/xmpp/ChatRoom.js': 'warn',
-        'modules/xmpp/JingleSessionPC.js': 'info',
-        'modules/xmpp/strophe.jingle.js': 'info'
+        'modules/sdp/SDPUtil': 'info',
+        'modules/xmpp/ChatRoom': 'warn',
+        'modules/xmpp/JingleSessionPC': 'info',
+        'modules/xmpp/strophe.jingle': 'info'
     };
 
     DEFAULT_STATE.config.loggers = {
