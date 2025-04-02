@@ -107,9 +107,6 @@ function _conferenceJoined({ getState }: IStore, next: Function, action: AnyActi
     const { logCollector } = getState()['features/base/logging'];
 
     if (logCollector && conference === getCurrentConference(getState())) {
-        // Start the LogCollector's periodic "store logs" task
-        logCollector.start();
-
         // Make an attempt to flush in case a lot of logs have been cached,
         // before the collector was started.
         logCollector.flush();
@@ -150,12 +147,21 @@ function _initLogging({ dispatch, getState }: IStore,
 
     // Create the LogCollector and register it as the global log transport. It
     // is done early to capture as much logs as possible. Captured logs will be
-    // cached, before the JitsiMeetLogStorage gets ready (statistics module is
-    // initialized).
+    // cached, before the JitsiMeetLogStorage gets ready (RTCStats trace is
+    // available).
     if (!logCollector && !loggingConfig.disableLogCollector) {
-        const _logCollector = new Logger.LogCollector(new JitsiMeetLogStorage(getState));
+        const { apiLogLevels, analytics: { rtcstatsLogFlushSizeBytes } = {} } = getState()['features/base/config'];
 
-        const { apiLogLevels } = getState()['features/base/config'];
+        // The smaller the flush size the smaller the chance of losing logs, but
+        // the more often the logs will be sent to the server, by default the LogCollector
+        // will set once the logs reach 10KB or 30 seconds have passed since the last flush,
+        // this means if something happens between that interval and the logs don't get flushed
+        // they will be lost, for instance the meeting tab is closed, the browser crashes,
+        // an uncaught exception happens, etc.
+        // If undefined is passed the default values will be used,
+        const _logCollector = new Logger.LogCollector(new JitsiMeetLogStorage(getState), {
+            maxEntryLength: rtcstatsLogFlushSizeBytes
+        });
 
         if (apiLogLevels && Array.isArray(apiLogLevels) && typeof APP === 'object') {
             const transport = buildExternalApiLogTransport(apiLogLevels);
@@ -165,6 +171,9 @@ function _initLogging({ dispatch, getState }: IStore,
         }
 
         Logger.addGlobalTransport(_logCollector);
+
+        _logCollector.start();
+
         dispatch(setLogCollector(_logCollector));
 
         // The JitsiMeetInMemoryLogStorage can not be accessed on mobile through
