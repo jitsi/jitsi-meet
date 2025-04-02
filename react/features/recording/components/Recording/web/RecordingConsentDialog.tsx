@@ -23,6 +23,8 @@ export default function RecordingConsentDialog() {
         <Dialog
             cancel = {{ hidden: true }}
             disableBackdropClose = { true }
+            disableEscape = { true }
+            hideCloseButton = { true }
             ok = {{ translationKey: 'dialog.Understand' }}
             onSubmit = { consent }
             titleKey = 'dialog.recordingInProgressTitle'>
