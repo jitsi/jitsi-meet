@@ -6,6 +6,10 @@ local http = require "net.http";
 local cache = require "util.cache";
 local array = require "util.array";
 local is_set = require 'util.set'.is_set;
+local usermanager = require 'core.usermanager';
+
+local config_global_admin_jids = module:context('*'):get_option_set('admins', {}) / jid.prep;
+local config_admin_jids = module:get_option_inherited_set('admins', {}) / jid.prep;
 
 local http_timeout = 30;
 local have_async, async = pcall(require, "util.async");
@@ -128,11 +132,7 @@ function get_room_from_jid(room_jid)
     local component = hosts[host];
     if component then
         local muc = component.modules.muc
-        if muc and rawget(muc,"rooms") then
-            -- We're running 0.9.x or 0.10 (old MUC API)
-            return muc.rooms[room_jid];
-        elseif muc and rawget(muc,"get_room_from_jid") then
-            -- We're running >0.10 (new MUC API)
+        if muc then
             return muc.get_room_from_jid(room_jid);
         else
             return
@@ -626,11 +626,24 @@ function get_ip(session)
     return request and request.ip or session.ip;
 end
 
+-- Checks whether the provided jid is in the list of admins
+-- we are not using the new permissions and roles api as we have few global modules which need to be
+-- refactored into host modules, as that api needs to be executed in host context
+local function is_admin(_jid)
+    local bare_jid = jid.bare(_jid);
+
+    if config_global_admin_jids:contains(bare_jid) or config_admin_jids:contains(bare_jid) then
+        return true;
+    end
+    return false;
+end
+
 return {
     OUTBOUND_SIP_JIBRI_PREFIXES = OUTBOUND_SIP_JIBRI_PREFIXES;
     INBOUND_SIP_JIBRI_PREFIXES = INBOUND_SIP_JIBRI_PREFIXES;
     RECORDER_PREFIXES = RECORDER_PREFIXES;
     extract_subdomain = extract_subdomain;
+    is_admin = is_admin;
     is_feature_allowed = is_feature_allowed;
     is_jibri = is_jibri;
     is_healthcheck_room = is_healthcheck_room;

@@ -38,6 +38,8 @@ $zindex1: 1;
 $zindex2: 2;
 $zindex3: 3;
 $toolbarZ: 250;
+$watermarkZ: 253;
+
 // Place filmstrip videos over toolbar in order
 // to make connection info visible.
 $filmstripVideosZ: $toolbarZ + 1;
@@ -75,9 +77,12 @@ $welcomePageHeaderBackground: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 
 $welcomePageHeaderBackgroundPosition: center;
 $welcomePageHeaderBackgroundRepeat: none;
 $welcomePageHeaderBackgroundSize: cover;
-$welcomePageHeaderPaddingBottom: 15px;
+$welcomePageHeaderPadding: 1rem;
 $welcomePageHeaderTitleMaxWidth: initial;
 $welcomePageHeaderTextAlign: center;
+$welcomePageButtonBg: #0074E0;
+$welcomePageButtonHoverBg: #4687ED;
+$welcomePageButtonFocusOutline: #00225A;
 
 $welcomePageHeaderContainerMarginTop: 104px;
 $welcomePageHeaderContainerDisplay: flex;

@@ -15,6 +15,7 @@ import { connect, useDispatch } from 'react-redux';
 import { appNavigate } from '../../../app/actions.native';
 import { IReduxState, IStore } from '../../../app/types';
 import { CONFERENCE_BLURRED, CONFERENCE_FOCUSED } from '../../../base/conference/actionTypes';
+import { isDisplayNameVisible } from '../../../base/config/functions.native';
 import { FULLSCREEN_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
 import Container from '../../../base/react/components/native/Container';
@@ -99,6 +100,11 @@ interface IProps extends AbstractProps {
      * The indicator which determines whether fullscreen (immersive) mode is enabled.
      */
     _fullscreenEnabled: boolean;
+
+    /**
+     * The indicator which determines if the display name is visible.
+     */
+    _isDisplayNameVisible: boolean;
 
     /**
      * The indicator which determines if the participants pane is open.
@@ -203,7 +209,7 @@ class Conference extends AbstractConference<IProps, State> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         const {
             _audioOnlyEnabled,
             _startCarMode,
@@ -222,7 +228,7 @@ class Conference extends AbstractConference<IProps, State> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         const {
             _audioOnlyEnabled,
             _showLobby,
@@ -250,7 +256,7 @@ class Conference extends AbstractConference<IProps, State> {
      * @inheritdoc
      * @returns {void}
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         // Tear handling any hardware button presses for back navigation down.
         BackHandler.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
 
@@ -263,7 +269,7 @@ class Conference extends AbstractConference<IProps, State> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _brandingStyles,
             _fullscreenEnabled
@@ -364,6 +370,7 @@ class Conference extends AbstractConference<IProps, State> {
             _aspectRatio,
             _connecting,
             _filmstripVisible,
+            _isDisplayNameVisible,
             _largeVideoParticipantId,
             _reducedUI,
             _shouldDisplayTileView,
@@ -420,10 +427,12 @@ class Conference extends AbstractConference<IProps, State> {
 
                     {
                         _shouldDisplayTileView
-                        || <Container style = { styles.displayNameContainer }>
-                            <DisplayNameLabel
-                                participantId = { _largeVideoParticipantId } />
-                        </Container>
+                        || (_isDisplayNameVisible && (
+                            <Container style = { styles.displayNameContainer }>
+                                <DisplayNameLabel
+                                    participantId = { _largeVideoParticipantId } />
+                            </Container>
+                        ))
                     }
 
                     { !_shouldDisplayTileView && <LonelyMeetingExperience /> }
@@ -577,6 +586,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _connecting: isConnecting(state),
         _filmstripVisible: isFilmstripVisible(state),
         _fullscreenEnabled: getFeatureFlag(state, FULLSCREEN_ENABLED, true),
+        _isDisplayNameVisible: isDisplayNameVisible(state),
         _isParticipantsPaneOpen: isOpen,
         _largeVideoParticipantId: state['features/large-video'].participantId,
         _pictureInPictureEnabled: isPipEnabled(state),

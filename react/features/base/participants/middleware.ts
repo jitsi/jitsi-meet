@@ -30,6 +30,7 @@ import { MEDIA_TYPE } from '../media/constants';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 import { playSound, registerSound, unregisterSound } from '../sounds/actions';
+import { isImageDataURL } from '../util/uri';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -689,15 +690,20 @@ function _participantJoinedOrUpdated(store: IStore, next: Function, action: AnyA
     // even if disableThirdPartyRequests is set to true in config
     if (getState()['features/base/config']?.hosts) {
         const { disableThirdPartyRequests } = getState()['features/base/config'];
+        const participantId = !id && local ? getLocalParticipant(getState())?.id : id;
 
-        if (!disableThirdPartyRequests && (avatarURL || email || id || name)) {
-            const participantId = !id && local ? getLocalParticipant(getState())?.id : id;
-            const updatedParticipant = getParticipantById(getState(), participantId);
+        if (avatarURL || email || id || name) {
+            if (!disableThirdPartyRequests) {
+                const updatedParticipant = getParticipantById(getState(), participantId);
 
-            getFirstLoadableAvatarUrl(updatedParticipant ?? { id: '' }, store)
-                .then((urlData?: { isUsingCORS: boolean; src: string; }) => {
-                    dispatch(setLoadableAvatarUrl(participantId, urlData?.src ?? '', Boolean(urlData?.isUsingCORS)));
-                });
+                getFirstLoadableAvatarUrl(updatedParticipant ?? { id: '' }, store)
+                    .then((urlData?: { isUsingCORS: boolean; src: string; }) => {
+                        dispatch(setLoadableAvatarUrl(
+                            participantId, urlData?.src ?? '', Boolean(urlData?.isUsingCORS)));
+                    });
+            } else if (isImageDataURL(avatarURL)) {
+                dispatch(setLoadableAvatarUrl(participantId, avatarURL, false));
+            }
         }
     }
 

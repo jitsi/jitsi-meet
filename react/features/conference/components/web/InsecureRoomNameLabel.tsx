@@ -18,7 +18,7 @@ class InsecureRoomNameLabel extends AbstractInsecureRoomNameLabel {
      *
      * @inheritdoc
      */
-    _render() {
+    override _render() {
         return (
             <Tooltip
                 content = { getUnsafeRoomText(this.props.t, 'meeting') }

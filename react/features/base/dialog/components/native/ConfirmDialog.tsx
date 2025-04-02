@@ -37,6 +37,11 @@ interface IProps extends AbstractProps, WithTranslation {
     descriptionKey?: string | { key: string; params: string; };
 
     /**
+     * Whether the cancel button is hidden.
+     */
+    isCancelHidden?: Boolean;
+
+    /**
      * Whether or not the nature of the confirm button is destructive.
      */
     isConfirmDestructive?: Boolean;
@@ -95,11 +100,12 @@ class ConfirmDialog extends AbstractDialog<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const {
             cancelLabel,
             children,
             confirmLabel,
+            isCancelHidden,
             isConfirmDestructive,
             isConfirmHidden,
             t,
@@ -121,10 +127,12 @@ class ConfirmDialog extends AbstractDialog<IProps> {
                 }
                 { this._renderDescription() }
                 { children }
-                <Dialog.Button
-                    label = { t(cancelLabel || 'dialog.confirmNo') }
-                    onPress = { this._onCancel }
-                    style = { styles.dialogButton } />
+                {
+                    !isCancelHidden && <Dialog.Button
+                        label = { t(cancelLabel || 'dialog.confirmNo') }
+                        onPress = { this._onCancel }
+                        style = { styles.dialogButton } />
+                }
                 {
                     !isConfirmHidden && <Dialog.Button
                         label = { t(confirmLabel || 'dialog.confirmYes') }

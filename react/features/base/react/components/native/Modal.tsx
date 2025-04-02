@@ -12,7 +12,7 @@ export default class Modal extends PureComponent {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         // eslint-disable-next-line react/prop-types
         const { children, ...props } = this.props;
 

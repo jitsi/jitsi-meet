@@ -1,4 +1,7 @@
+import { isEmbedded } from '../util/embedUtils';
+
 import extraInterfaceConfigWhitelistCopy from './extraInterfaceConfigWhitelist';
+import isEmbeddedInterfaceConfigWhitelist from './isEmbeddedInterfaceConfigWhitelist';
 
 /**
  * The interface config keys to whitelist, the keys that can be overridden.
@@ -51,4 +54,4 @@ export default [
     'VERTICAL_FILMSTRIP',
     'VIDEO_LAYOUT_FIT',
     'VIDEO_QUALITY_LABEL_DISABLED'
-].concat(extraInterfaceConfigWhitelistCopy);
+].concat(extraInterfaceConfigWhitelistCopy).concat(isEmbedded() ? isEmbeddedInterfaceConfigWhitelist : []);

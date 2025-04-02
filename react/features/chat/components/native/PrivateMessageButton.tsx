@@ -45,10 +45,10 @@ export interface IProps extends AbstractButtonProps {
  * Class to render a button that initiates the sending of a private message through chat.
  */
 class PrivateMessageButton extends AbstractButton<IProps, any> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.privateMessage';
-    icon = IconMessage;
-    label = 'toolbar.privateMessage';
-    toggledIcon = IconReply;
+    override accessibilityLabel = 'toolbar.accessibilityLabel.privateMessage';
+    override icon = IconMessage;
+    override label = 'toolbar.privateMessage';
+    override toggledIcon = IconReply;
 
     /**
      * Handles clicking / pressing the button.
@@ -56,7 +56,7 @@ class PrivateMessageButton extends AbstractButton<IProps, any> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         if (this.props._isLobbyMessage) {
             this.props.dispatch(handleLobbyChatInitialized(this.props.participantID));
         }
@@ -82,7 +82,7 @@ class PrivateMessageButton extends AbstractButton<IProps, any> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props.reply;
     }
 

@@ -51,7 +51,7 @@ export default class StatelessAvatar extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { initials, size, style, url } = this.props;
 
         let avatar;

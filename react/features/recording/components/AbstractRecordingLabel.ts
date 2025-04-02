@@ -49,7 +49,7 @@ export default class AbstractRecordingLabel<P extends IProps = IProps> extends C
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { _iAmRecorder, _isVisible } = this.props;
 
         return _isVisible && !_iAmRecorder ? this._renderLabel() : null;

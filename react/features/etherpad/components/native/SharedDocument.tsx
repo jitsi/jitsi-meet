@@ -48,7 +48,7 @@ class SharedDocument extends PureComponent<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { _documentUrl } = this.props;
 
         return (

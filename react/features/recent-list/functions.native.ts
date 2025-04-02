@@ -68,12 +68,16 @@ function _toDateString(itemDate: number, t: Function) {
     const dateInMs = date.getTime();
     const now = new Date();
     const todayInMs = new Date().setHours(0, 0, 0, 0);
-    const yesterdayInMs = todayInMs - 86400000; // 1 day = 86400000ms
+    const yesterday = new Date();
+
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+    const yesterdayInMs = yesterday.getTime();
 
     if (dateInMs >= todayInMs) {
         return m.fromNow();
     } else if (dateInMs >= yesterdayInMs) {
-        return t('dateUtils.yesterday');
+        return `${t('dateUtils.yesterday')}, ${m.format('h:mm A')}`;
     } else if (date.getFullYear() !== now.getFullYear()) {
         // We only want to include the year in the date if its not the current
         // year.

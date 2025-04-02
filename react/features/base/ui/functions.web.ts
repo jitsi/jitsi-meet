@@ -16,7 +16,6 @@ declare module '@mui/material/styles' {
 interface ThemeProps {
     breakpoints: Object;
     colorMap: Object;
-    colors: Object;
     font: Object;
     shape: Object;
     spacing: Array<number>;
@@ -29,10 +28,10 @@ interface ThemeProps {
  * @param {Object} arg - The ui tokens.
  * @returns {Object}
  */
-export function createWebTheme({ font, colors, colorMap, shape, spacing, typography, breakpoints }: ThemeProps) {
+export function createWebTheme({ font, colorMap, shape, spacing, typography, breakpoints }: ThemeProps) {
     return createTheme(adaptV4Theme({
         spacing,
-        palette: createColorTokens(colorMap, colors),
+        palette: createColorTokens(colorMap),
         shape,
         typography: {
             // @ts-ignore

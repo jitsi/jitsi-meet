@@ -115,7 +115,7 @@ const styles = (theme: Theme) => {
  * @augments Component
  */
 class DialInSummary extends Component<IProps, State> {
-    state = {
+    override state = {
         conferenceID: null,
         error: '',
         loading: true,
@@ -146,7 +146,7 @@ class DialInSummary extends Component<IProps, State> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         const getNumbers = this._getNumbers()
             .then(this._onGetNumbersSuccess)
             .catch(this._setErrorMessage);
@@ -167,7 +167,7 @@ class DialInSummary extends Component<IProps, State> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         let className = '';
         let contents;
 

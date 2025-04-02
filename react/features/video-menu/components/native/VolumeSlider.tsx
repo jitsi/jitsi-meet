@@ -99,7 +99,7 @@ class VolumeSlider extends PureComponent<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { _startSilent } = this.props;
         const { volumeLevel } = this.state;
         const onVolumeChange = _startSilent ? undefined : this._onVolumeChange;

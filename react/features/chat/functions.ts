@@ -7,6 +7,8 @@ import emojiAsciiAliases from 'react-emoji-render/data/asciiAliases';
 import { IReduxState } from '../app/types';
 import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
 import i18next from '../base/i18n/i18next';
+import { MEET_FEATURES } from '../base/jwt/constants';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { getParticipantById } from '../base/participants/functions';
 import { escapeRegexp } from '../base/util/helpers';
 
@@ -70,7 +72,7 @@ const SLACK_EMOJI_REGEXP_ARRAY: Array<[RegExp, string]> = [];
  * @param {string} message - The message to parse and replace.
  * @returns {string}
  */
-export function replaceNonUnicodeEmojis(message: string) {
+export function replaceNonUnicodeEmojis(message: string): string {
     let replacedMessage = message;
 
     for (const [ regexp, replaceValue ] of SLACK_EMOJI_REGEXP_ARRAY) {
@@ -99,7 +101,7 @@ export function getUnreadCount(state: IReduxState) {
     }
 
     let reactionMessages = 0;
-    let lastReadIndex;
+    let lastReadIndex: number;
 
     if (navigator.product === 'ReactNative') {
         // React native stores the messages in a reversed order.
@@ -189,4 +191,21 @@ export function getPrivateNoticeMessage(message: IMessage) {
     return i18next.t('chat.privateNotice', {
         recipient: message.messageType === MESSAGE_TYPE_LOCAL ? message.recipient : i18next.t('chat.you')
     });
+}
+
+
+/**
+ * Check if participant is not allowed to send group messages.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean} - Returns true if the participant is not allowed to send group messages.
+ */
+export function isSendGroupChatDisabled(state: IReduxState) {
+    const { groupChatRequiresPermission } = state['features/dynamic-branding'];
+
+    if (!groupChatRequiresPermission) {
+        return false;
+    }
+
+    return !isJwtFeatureEnabled(state, MEET_FEATURES.SEND_GROUPCHAT, false);
 }

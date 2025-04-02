@@ -22,10 +22,10 @@ interface IProps extends AbstractButtonProps {
  * Implements an {@link AbstractButton} to open the user documentation in a new window.
  */
 class HelpButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.help';
-    icon = IconHelp;
-    label = 'toolbar.help';
-    tooltip = 'toolbar.help';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.help';
+    override icon = IconHelp;
+    override label = 'toolbar.help';
+    override tooltip = 'toolbar.help';
 
     /**
      * Handles clicking / pressing the button, and opens a new window with the user documentation.
@@ -33,7 +33,7 @@ class HelpButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { _userDocumentationURL } = this.props;
 
         sendAnalytics(createToolbarEvent('help.pressed'));

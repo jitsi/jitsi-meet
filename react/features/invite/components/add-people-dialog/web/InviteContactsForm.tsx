@@ -84,7 +84,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
         _sipInviteEnabled: string;
     };
 
-    state = {
+    override state = {
         addToCallError: false,
         addToCallInProgress: false,
         inviteItems: [] as IInviteSelectItem[]
@@ -133,7 +133,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
      * @param {State} prevState - The state object before the update.
      * @returns {void}
      */
-    componentDidUpdate(prevProps: IProps, prevState: IState) {
+    override componentDidUpdate(prevProps: IProps, prevState: IState) {
         /**
          * Clears selected items from the multi select component on successful
          * invite.
@@ -151,7 +151,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
      *
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _addPeopleEnabled,
             _dialOutEnabled,
@@ -202,8 +202,6 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
             </div>
         );
     }
-
-    _isAddDisabled: () => boolean;
 
     /**
      * Callback invoked when a selection has been made but before it has been

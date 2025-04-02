@@ -1,13 +1,15 @@
+--- activate under the main muc component
 local filters = require 'util.filters';
 local jid = require "util.jid";
 local jid_bare = require "util.jid".bare;
 local jid_host = require "util.jid".host;
 local st = require "util.stanza";
-local um_is_admin = require "core.usermanager".is_admin;
 local util = module:require "util";
+local is_admin = util.is_admin;
 local is_healthcheck_room = util.is_healthcheck_room;
 local is_moderated = util.is_moderated;
 local get_room_from_jid = util.get_room_from_jid;
+local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local presence_check_status = util.presence_check_status;
 local MUC_NS = 'http://jabber.org/protocol/muc';
 
@@ -18,14 +20,18 @@ local function load_config()
 end
 load_config();
 
-local function is_admin(_jid)
-    return um_is_admin(_jid, module.host);
-end
-
 -- List of the bare_jids of all occupants that are currently joining (went through pre-join) and will be promoted
 -- as moderators. As pre-join (where added) and joined event (where removed) happen one after another this list should
 -- have length of 1
 local joining_moderator_participants = {};
+
+module:hook("muc-room-created", function(event)
+    local room = event.room;
+
+    if room.jitsiMetadata then
+        room.jitsiMetadata.allownersEnabled = true;
+    end
+end, -2); -- room_metadata should run before this module on -1
 
 module:hook("muc-occupant-pre-join", function (event)
     local room, occupant = event.room, event.occupant;
@@ -87,7 +93,7 @@ function filter_stanza(stanza)
     end
 
     -- we want to filter presences only on this host for allowners and skip anything like lobby etc.
-    local host_from = jid_host(stanza.attr.from);
+    local host_from = jid_host(room_jid_match_rewrite(stanza.attr.from));
     if host_from ~= module.host then
         return stanza;
     end

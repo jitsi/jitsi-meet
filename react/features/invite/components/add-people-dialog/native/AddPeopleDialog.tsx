@@ -138,7 +138,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         const { navigation, t } = this.props;
 
         navigation.setOptions({
@@ -157,7 +157,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         const { navigation, t } = this.props;
 
         navigation.setOptions({
@@ -183,7 +183,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const {
             _addPeopleEnabled,
             _dialOutEnabled

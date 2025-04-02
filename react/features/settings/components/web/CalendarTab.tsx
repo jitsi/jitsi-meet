@@ -118,7 +118,7 @@ class CalendarTab extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         this.props.dispatch(bootstrapCalendarIntegration())
             .catch((err: any) => logger.error('CalendarTab bootstrap failed', err))
             .then(() => this.setState({ loading: false }));
@@ -130,7 +130,7 @@ class CalendarTab extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const classes = withStyles.getClasses(this.props);
         let view;
 

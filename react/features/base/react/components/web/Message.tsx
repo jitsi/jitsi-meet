@@ -16,6 +16,11 @@ interface IProps {
     gifEnabled: boolean;
 
     /**
+     * Message decoration for screen reader.
+     */
+    screenReaderHelpText?: string;
+
+    /**
      * The body of the message.
      */
     text: string;
@@ -90,11 +95,19 @@ class Message extends Component<IProps> {
      *
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
+        const { screenReaderHelpText } = this.props;
+
         return (
-            <>
+            <p>
+                { screenReaderHelpText && (
+                    <span className = 'sr-only'>
+                        {screenReaderHelpText}
+                    </span>
+                ) }
+
                 { this._processMessage() }
-            </>
+            </p>
         );
     }
 }

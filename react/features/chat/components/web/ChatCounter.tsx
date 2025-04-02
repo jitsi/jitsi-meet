@@ -35,7 +35,7 @@ class ChatCounter extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <span className = 'badge-round'>
 

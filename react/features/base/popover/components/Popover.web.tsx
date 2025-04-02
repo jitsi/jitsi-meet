@@ -184,7 +184,7 @@ class Popover extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         window.addEventListener('touchstart', this._onTouchStart);
         if (this.props.trigger === 'click') {
             // @ts-ignore
@@ -198,7 +198,7 @@ class Popover extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {void}
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         window.removeEventListener('touchstart', this._onTouchStart);
         if (this.props.trigger === 'click') {
             // @ts-ignore
@@ -224,7 +224,7 @@ class Popover extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { children,
             className,
             content,

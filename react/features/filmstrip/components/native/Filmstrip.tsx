@@ -234,7 +234,7 @@ class Filmstrip extends PureComponent<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _aspectRatio,
             _disableSelfView,

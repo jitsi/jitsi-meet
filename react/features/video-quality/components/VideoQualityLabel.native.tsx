@@ -38,7 +38,7 @@ class VideoQualityLabel extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { _audioOnly, style, t } = this.props;
 
         if (!_audioOnly) {

@@ -139,4 +139,19 @@ public class BroadcastIntentHelper {
 
         return intent;
     }
+
+    public static Intent buildOverwriteConfigIntent(Bundle config) {
+        Intent intent = new Intent(BroadcastAction.Type.OVERWRITE_CONFIG.getAction());
+        intent.putExtra("config", config);
+
+        return intent;
+    }
+
+    public static Intent buildSendCameraFacingModeMessageIntent(String to, String facingMode) {
+        Intent intent = new Intent(BroadcastAction.Type.SEND_CAMERA_FACING_MODE_MESSAGE.getAction());
+        intent.putExtra("to", to);
+        intent.putExtra("facingMode", facingMode);
+
+        return intent;
+    }
 }

@@ -135,7 +135,7 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             showPrejoinSettings,
             disableHideSelfView,

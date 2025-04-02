@@ -384,7 +384,7 @@ export default class AbstractButton<P extends IProps, S = any> extends Component
      * @inheritdoc
      * @returns {React$Node}
      */
-    render(): ReactNode {
+    override render(): ReactNode {
         const props: any = {
             ...this.props,
             accessibilityLabel: this._getAccessibilityLabel(),

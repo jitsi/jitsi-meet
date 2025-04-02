@@ -21,14 +21,14 @@ interface IProps extends AbstractButtonProps {
  * Implementation of a button for toggling fullscreen state.
  */
 class FullscreenButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.enterFullScreen';
-    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.exitFullScreen';
-    label = 'toolbar.enterFullScreen';
-    toggledLabel = 'toolbar.exitFullScreen';
-    tooltip = 'toolbar.enterFullScreen';
-    toggledTooltip = 'toolbar.exitFullScreen';
-    toggledIcon = IconExitFullscreen;
-    icon = IconEnterFullscreen;
+    override accessibilityLabel = 'toolbar.accessibilityLabel.enterFullScreen';
+    override toggledAccessibilityLabel = 'toolbar.accessibilityLabel.exitFullScreen';
+    override label = 'toolbar.enterFullScreen';
+    override toggledLabel = 'toolbar.exitFullScreen';
+    override tooltip = 'toolbar.enterFullScreen';
+    override toggledTooltip = 'toolbar.exitFullScreen';
+    override toggledIcon = IconExitFullscreen;
+    override icon = IconEnterFullscreen;
 
     /**
      * Indicates whether this button is in toggled state or not.
@@ -37,7 +37,7 @@ class FullscreenButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._fullScreen;
     }
 
@@ -47,7 +47,7 @@ class FullscreenButton extends AbstractButton<IProps> {
     * @private
     * @returns {void}
     */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch, _fullScreen } = this.props;
 
         sendAnalytics(createToolbarEvent(

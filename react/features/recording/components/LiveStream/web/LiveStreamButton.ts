@@ -24,7 +24,7 @@ class LiveStreamButton extends AbstractLiveStreamButton<IProps> {
      * @protected
      * @returns {void}
      */
-    _onHandleClick() {
+    override _onHandleClick() {
         const { _isLiveStreamRunning, dispatch } = this.props;
 
         dispatch(openDialog(

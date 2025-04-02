@@ -141,7 +141,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         super.componentDidMount();
 
         document.body.classList.add('welcome-page');
@@ -175,7 +175,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      * @inheritdoc
      * @returns {void}
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         super.componentWillUnmount();
 
         document.body.classList.remove('welcome-page');
@@ -187,7 +187,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      * @inheritdoc
      * @returns {ReactElement|null}
      */
-    render() {
+    override render() {
         const { _moderatedRoomServiceUrl, t } = this.props;
         const { DEFAULT_WELCOME_PAGE_LOGO_URL, DISPLAY_WELCOME_FOOTER } = interfaceConfig;
         const showAdditionalCard = this._shouldShowAdditionalCard();
@@ -309,7 +309,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      *
      * @inheritdoc
      */
-    _doRenderInsecureRoomNameWarning() {
+    override _doRenderInsecureRoomNameWarning() {
         return (
             <div className = 'insecure-room-name-warning'>
                 <Icon src = { IconWarning } />
@@ -382,21 +382,27 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                         <div className = 'welcome-footer-row-1-text'>{t('welcomepage.jitsiOnMobile')}</div>
                         <a
                             className = 'welcome-badge'
-                            href = { iosDownloadLink }>
+                            href = { iosDownloadLink }
+                            rel = 'noopener noreferrer'
+                            target = '_blank'>
                             <img
                                 alt = { t('welcomepage.mobileDownLoadLinkIos') }
                                 src = './images/app-store-badge.png' />
                         </a>
                         <a
                             className = 'welcome-badge'
-                            href = { androidDownloadLink }>
+                            href = { androidDownloadLink }
+                            rel = 'noopener noreferrer'
+                            target = '_blank'>
                             <img
                                 alt = { t('welcomepage.mobileDownLoadLinkAndroid') }
                                 src = './images/google-play-badge.png' />
                         </a>
                         <a
                             className = 'welcome-badge'
-                            href = { fDroidUrl }>
+                            href = { fDroidUrl }
+                            rel = 'noopener noreferrer'
+                            target = '_blank'>
                             <img
                                 alt = { t('welcomepage.mobileDownLoadLinkFDroid') }
                                 src = './images/f-droid-badge.png' />

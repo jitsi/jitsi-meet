@@ -8,7 +8,7 @@ import { translate } from '../../../base/i18n/functions';
 import { IconFaceSmile, IconSend } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
-import { areSmileysDisabled } from '../../functions';
+import { areSmileysDisabled, isSendGroupChatDisabled } from '../../functions';
 
 import SmileysPanel from './SmileysPanel';
 
@@ -21,6 +21,11 @@ interface IProps extends WithTranslation {
      * Whether chat emoticons are disabled.
      */
     _areSmileysDisabled: boolean;
+
+    /**
+     * Whether sending group chat messages is disabled.
+     */
+    _isSendGroupChatDisabled: boolean;
 
     /**
      * The id of the message recipient, if any.
@@ -62,7 +67,7 @@ interface IState {
 class ChatInput extends Component<IProps, IState> {
     _textArea?: RefObject<HTMLTextAreaElement>;
 
-    state = {
+    override state = {
         message: '',
         showSmileysPanel: false
     };
@@ -91,7 +96,7 @@ class ChatInput extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         if (isMobileBrowser()) {
             // Ensure textarea is not focused when opening chat on mobile browser.
             this._textArea?.current && this._textArea.current.blur();
@@ -105,7 +110,7 @@ class ChatInput extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: Readonly<IProps>) {
+    override componentDidUpdate(prevProps: Readonly<IProps>) {
         if (prevProps._privateMessageRecipientId !== this.props._privateMessageRecipientId) {
             this._textArea?.current?.focus();
         }
@@ -117,7 +122,7 @@ class ChatInput extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <div className = { `chat-input-container${this.state.message.trim().length ? ' populated' : ''}` }>
                 <div id = 'chat-input' >
@@ -145,7 +150,8 @@ class ChatInput extends Component<IProps, IState> {
                         value = { this.state.message } />
                     <Button
                         accessibilityLabel = { this.props.t('chat.sendButton') }
-                        disabled = { !this.state.message.trim() }
+                        disabled = { !this.state.message.trim()
+                            || (this.props._isSendGroupChatDisabled && !this.props._privateMessageRecipientId) }
                         icon = { IconSend }
                         onClick = { this._onSubmitMessage }
                         size = { isMobileBrowser() ? 'large' : 'medium' } />
@@ -170,15 +176,28 @@ class ChatInput extends Component<IProps, IState> {
      * @returns {void}
      */
     _onSubmitMessage() {
+        const {
+            _isSendGroupChatDisabled,
+            _privateMessageRecipientId,
+            onSend
+        } = this.props;
+
+        if (_isSendGroupChatDisabled && !_privateMessageRecipientId) {
+            return;
+        }
+
         const trimmed = this.state.message.trim();
 
         if (trimmed) {
-            this.props.onSend(trimmed);
+            onSend(trimmed);
 
             this.setState({ message: '' });
 
             // Keep the textarea in focus when sending messages via submit button.
             this._focus();
+
+            // Hide the Emojis box after submitting the message
+            this.setState({ showSmileysPanel: false });
         }
 
     }
@@ -273,10 +292,12 @@ class ChatInput extends Component<IProps, IState> {
  */
 const mapStateToProps = (state: IReduxState) => {
     const { privateMessageRecipient } = state['features/chat'];
+    const isGroupChatDisabled = isSendGroupChatDisabled(state);
 
     return {
         _areSmileysDisabled: areSmileysDisabled(state),
-        _privateMessageRecipientId: privateMessageRecipient?.id
+        _privateMessageRecipientId: privateMessageRecipient?.id,
+        _isSendGroupChatDisabled: isGroupChatDisabled
     };
 };
 

@@ -58,7 +58,7 @@ class FormRow extends Component<IProps> {
      * @override
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { t } = this.props;
 
         // Some field types need additional props to look good and standardized

@@ -60,6 +60,30 @@ export class Participant {
         analytics: {
             disabled: true
         },
+
+        // if there is a video file to play, use deployment config,
+        // otherwise use lower resolution to avoid high CPU usage
+        constraints: process.env.VIDEO_CAPTURE_FILE ? undefined : {
+            video: {
+                height: {
+                    ideal: 360,
+                    max: 360,
+                    min: 180
+                },
+
+                // @ts-ignore
+                width: {
+                    ideal: 640,
+                    max: 640,
+                    min: 320
+                },
+                frameRate: {
+                    max: 30
+                }
+            }
+        },
+        resolution: process.env.VIDEO_CAPTURE_FILE ? undefined : 360,
+
         requireDisplayName: false,
         testing: {
             testMode: true
@@ -195,7 +219,9 @@ export class Participant {
             // @ts-ignore
             url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${ctx.roomName}"`;
 
-            if (baseUrl.pathname.length > 1) {
+            if (process.env.IFRAME_TENANT) {
+                url = `${url}&tenant="${process.env.IFRAME_TENANT}"`;
+            } else if (baseUrl.pathname.length > 1) {
                 // remove leading slash
                 url = `${url}&tenant="${baseUrl.pathname.substring(1)}"`;
             }
@@ -206,8 +232,15 @@ export class Participant {
 
         await this.driver.setTimeout({ 'pageLoad': 30000 });
 
+        let urlToLoad = url.startsWith('/') ? url.substring(1) : url;
+
+        if (options.preferGenerateToken && !ctx.iframeAPI && ctx.isJaasAvailable() && process.env.IFRAME_TENANT) {
+            // This to enables tests like invite, which can force using the jaas auth instead of the provided token
+            urlToLoad = `/${process.env.IFRAME_TENANT}/${urlToLoad}`;
+        }
+
         // drop the leading '/' so we can use the tenant if any
-        await this.driver.url(url.startsWith('/') ? url.substring(1) : url);
+        await this.driver.url(urlToLoad);
 
         await this.waitForPageToLoad();
 
@@ -221,17 +254,16 @@ export class Participant {
             await this.waitToJoinMUC();
         }
 
-        await this.postLoadProcess(options.skipInMeetingChecks);
+        await this.postLoadProcess();
     }
 
     /**
      * Loads stuff after the page loads.
      *
-     * @param {boolean} skipInMeetingChecks - Whether to skip in meeting checks.
      * @returns {Promise<void>}
      * @private
      */
-    private async postLoadProcess(skipInMeetingChecks = false): Promise<void> {
+    private async postLoadProcess(): Promise<void> {
         const driver = this.driver;
 
         const parallel = [];
@@ -260,15 +292,6 @@ export class Participant {
                 document.querySelector('.video_blurred_container').style.display = 'none';
             }
         }, this._name, driver.sessionId, LOG_PREFIX));
-
-        if (skipInMeetingChecks) {
-            await Promise.allSettled(parallel);
-
-            return;
-        }
-
-        parallel.push(this.waitForIceConnected());
-        parallel.push(this.waitForSendReceiveData());
 
         await Promise.all(parallel);
     }
@@ -594,14 +617,24 @@ export class Participant {
         // let's give it some time to leave the muc, we redirect after hangup so we should wait for the
         // change of url
         await this.driver.waitUntil(
-            async () => current !== await this.driver.getUrl(),
+            async () => {
+                const u = await this.driver.getUrl();
+
+                // trying to debug some failures of reporting not leaving, where we see the close page in screenshot
+                console.log(`initialUrl: ${current} currentUrl: ${u}`);
+
+                return current !== u;
+            },
             {
-                timeout: 5000,
-                timeoutMsg: `${this.name} did not leave the muc in 5s`
+                timeout: 8000,
+                timeoutMsg: `${this.name} did not leave the muc in 8s initialUrl: ${current}`
             }
         );
 
-        await this.driver.url('/base.html');
+        await this.driver.url('/base.html')
+
+            // This was fixed in wdio v9.9.1, we can drop once we update to that version
+            .catch(_ => {}); // eslint-disable-line @typescript-eslint/no-empty-function
     }
 
     /**

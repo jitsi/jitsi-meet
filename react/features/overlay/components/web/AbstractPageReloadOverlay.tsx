@@ -151,7 +151,7 @@ export default class AbstractPageReloadOverlay<P extends IProps>
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         // FIXME: We should dispatch action for this.
         if (typeof APP !== 'undefined' && APP.conference?._room) {
             APP.conference._room.sendApplicationLog(JSON.stringify({
@@ -196,7 +196,7 @@ export default class AbstractPageReloadOverlay<P extends IProps>
      * @inheritdoc
      * @returns {void}
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         if (this._interval) {
             clearInterval(this._interval);
             this._interval = undefined;

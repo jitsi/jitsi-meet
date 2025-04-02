@@ -35,7 +35,8 @@ MiddlewareRegistry.register(store => next => action => {
 
         dispatch(hangup(true,
             participantDisplayName ? i18next.t('dialog.kickTitle', { participantDisplayName })
-                : i18next.t('dialog.kickSystemTitle')));
+                : i18next.t('dialog.kickSystemTitle'),
+            true));
 
         return result;
     }

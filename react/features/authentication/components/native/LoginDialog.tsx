@@ -132,7 +132,7 @@ class LoginDialog extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _connecting: connecting,
             t

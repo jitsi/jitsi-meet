@@ -15,6 +15,7 @@ import {
     CONFERENCE_FOCUSED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
+    CONFERENCE_UNIQUE_ID_SET,
     CONFERENCE_WILL_JOIN,
     ENDPOINT_MESSAGE_RECEIVED,
     SET_ROOM
@@ -26,6 +27,8 @@ import {
     isRoomValid
 } from '../../base/conference/functions';
 import { IJitsiConference } from '../../base/conference/reducer';
+import { overwriteConfig } from '../../base/config/actions';
+import { getWhitelistedJSON } from '../../base/config/functions.native';
 import { CONNECTION_DISCONNECTED } from '../../base/connection/actionTypes';
 import {
     JITSI_CONNECTION_CONFERENCE_KEY,
@@ -46,6 +49,7 @@ import {
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
 import { toggleScreensharing } from '../../base/tracks/actions.native';
+import { CAMERA_FACING_MODE_MESSAGE } from '../../base/tracks/constants';
 import { getLocalTracks, isLocalTrackMuted } from '../../base/tracks/functions.native';
 import { ITrack } from '../../base/tracks/types';
 import { CLOSE_CHAT, OPEN_CHAT } from '../../chat/actionTypes';
@@ -53,6 +57,7 @@ import { closeChat, openChat, sendMessage, setPrivateMessageRecipient } from '..
 import { isEnabled as isDropboxEnabled } from '../../dropbox/functions.native';
 import { hideNotification, showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../notifications/constants';
+import { RECORDING_SESSION_UPDATED } from '../../recording/actionTypes';
 import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../recording/constants';
 import { getActiveSession } from '../../recording/functions';
 import { setRequestingSubtitles } from '../../subtitles/actions.any';
@@ -100,6 +105,11 @@ const SCREEN_SHARE_TOGGLED = 'SCREEN_SHARE_TOGGLED';
  * Event which will be emitted on the native side with the participant info array.
  */
 const PARTICIPANTS_INFO_RETRIEVED = 'PARTICIPANTS_INFO_RETRIEVED';
+
+/**
+ * Event which will be emitted on the native side to indicate the recording status has changed.
+ */
+const RECORDING_STATUS_CHANGED = 'RECORDING_STATUS_CHANGED';
 
 const externalAPIEnabled = isExternalAPIAvailable();
 
@@ -168,6 +178,18 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
         sendEvent(store, CONFERENCE_FOCUSED, {});
         break;
 
+    case CONFERENCE_UNIQUE_ID_SET: {
+        const { conference } = action;
+
+        sendEvent(
+            store,
+            CONFERENCE_UNIQUE_ID_SET,
+            /* data */ {
+                sessionId: conference.getMeetingUniqueId()
+            });
+        break;
+    }
+
     case CONNECTION_DISCONNECTED: {
         // FIXME: This is a hack. See the description in the JITSI_CONNECTION_CONFERENCE_KEY constant definition.
         // Check if this connection was attached to any conference.
@@ -196,7 +218,7 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
         sendEvent(
             store,
             CUSTOM_BUTTON_PRESSED,
-            {
+            /* data */ {
                 id,
                 text
             });
@@ -263,6 +285,37 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
     case READY_TO_CLOSE:
         sendEvent(store, type, /* data */ {});
         break;
+
+    case RECORDING_SESSION_UPDATED: {
+        const {
+            error,
+            id,
+            initiator,
+            liveStreamViewURL,
+            mode,
+            status,
+            terminator,
+            timestamp
+        } = action.sessionData;
+
+        const getId = (obj: any) => typeof obj === 'object' ? obj.getId() : obj;
+        const getError = (err: any) => typeof err === 'object' ? String(err) : err;
+
+        sendEvent(
+            store,
+            RECORDING_STATUS_CHANGED,
+            /* data */ {
+                error: getError(error),
+                id,
+                initiator: getId(initiator),
+                liveStreamViewURL,
+                mode,
+                status,
+                terminator: getId(terminator),
+                timestamp
+            });
+        break;
+    }
 
     case SET_ROOM:
         _maybeTriggerEarlyConferenceWillJoin(store, action);
@@ -575,6 +628,29 @@ function _registerForNativeEvents(store: IStore) {
 
         conference.stopRecording(activeSession.id);
     });
+
+    eventEmitter.addListener(ExternalAPI.OVERWRITE_CONFIG, ({ config }: any) => {
+        const whitelistedConfig = getWhitelistedJSON('config', config);
+
+        logger.info(`Overwriting config with: ${JSON.stringify(whitelistedConfig)}`);
+
+        dispatch(overwriteConfig(whitelistedConfig));
+    });
+
+    eventEmitter.addListener(ExternalAPI.SEND_CAMERA_FACING_MODE_MESSAGE, ({ to, facingMode }: any) => {
+        const conference = getCurrentConference(getState());
+
+        if (!to) {
+            logger.warn('Participant id not set');
+
+            return;
+        }
+
+        conference?.sendEndpointMessage(to, {
+            name: CAMERA_FACING_MODE_MESSAGE,
+            facingMode
+        });
+    });
 }
 
 /**
@@ -599,6 +675,8 @@ function _unregisterForNativeEvents() {
     eventEmitter.removeAllListeners(ExternalAPI.HIDE_NOTIFICATION);
     eventEmitter.removeAllListeners(ExternalAPI.START_RECORDING);
     eventEmitter.removeAllListeners(ExternalAPI.STOP_RECORDING);
+    eventEmitter.removeAllListeners(ExternalAPI.OVERWRITE_CONFIG);
+    eventEmitter.removeAllListeners(ExternalAPI.SEND_CAMERA_FACING_MODE_MESSAGE);
 }
 
 /**

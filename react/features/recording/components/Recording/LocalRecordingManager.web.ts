@@ -6,7 +6,7 @@ import { IStore } from '../../../app/types';
 import { getRoomName } from '../../../base/conference/functions';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { getLocalTrack, getTrackState } from '../../../base/tracks/functions';
-import { inIframe } from '../../../base/util/iframeUtils';
+import { isEmbedded } from '../../../base/util/embedUtils';
 import { stopLocalVideoRecording } from '../../actions.any';
 
 interface ISelfRecording {
@@ -180,7 +180,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
         const { dispatch, getState } = store;
 
         // @ts-ignore
-        const supportsCaptureHandle = Boolean(navigator.mediaDevices.setCaptureHandleConfig) && !inIframe();
+        const supportsCaptureHandle = Boolean(navigator.mediaDevices.setCaptureHandleConfig) && !isEmbedded();
         const tabId = uuidV4();
 
         this.selfRecording.on = onlySelf;

@@ -11,10 +11,10 @@ import { isWhiteboardButtonVisible } from '../../functions';
  * Component that renders a toolbar button for the whiteboard.
  */
 class WhiteboardButton extends AbstractButton<AbstractButtonProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.showWhiteboard';
-    icon = IconWhiteboard;
-    label = 'toolbar.showWhiteboard';
-    tooltip = 'toolbar.showWhiteboard';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.showWhiteboard';
+    override icon = IconWhiteboard;
+    override label = 'toolbar.showWhiteboard';
+    override tooltip = 'toolbar.showWhiteboard';
 
     /**
      * Handles clicking / pressing the button, and opens the whiteboard view.
@@ -22,7 +22,7 @@ class WhiteboardButton extends AbstractButton<AbstractButtonProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         this.props.dispatch(setWhiteboardOpen(true));
     }
 }

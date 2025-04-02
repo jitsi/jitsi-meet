@@ -118,7 +118,7 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
      *
      * @inheritdoc
      */
-    async componentDidUpdate(prevProps: IProps) {
+    override async componentDidUpdate(prevProps: IProps) {
         if (!this._isSupportedEnvironment()) {
             return;
         }
@@ -245,7 +245,7 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render(): React.ReactNode {
+    override render(): React.ReactNode {
         if (this._shouldNotRender()) {
             if (this.state.dontShowAgainChecked) {
                 jitsiLocalStorage.setItem(DONT_SHOW_AGAIN_CHECKED, 'true');

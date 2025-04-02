@@ -6,8 +6,8 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { _abstractMapStateToProps } from '../../../base/dialog/functions';
+import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
-import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox/actions';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { canAddTranscriber } from '../../../transcribing/functions';
@@ -206,7 +206,7 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         if (!this._shouldRenderNoIntegrationsContent()
             && !this._shouldRenderIntegrationsContent()
             && !this._shouldRenderFileSharingContent()) {
@@ -219,7 +219,7 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         // Auto sign-out when the use chooses another recording service.
         if (prevProps.selectedRecordingService === RECORDING_TYPES.DROPBOX
                 && this.props.selectedRecordingService !== RECORDING_TYPES.DROPBOX && this.props.isTokenValid) {
@@ -414,14 +414,13 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
 export function mapStateToProps(state: IReduxState) {
     const { localRecording, recordingService } = state['features/base/config'];
     const _localRecordingAvailable = !localRecording?.disable && supportsLocalRecording();
-    const isModerator = isLocalParticipantModerator(state);
 
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
         _canStartTranscribing: canAddTranscriber(state),
         _hideStorageWarning: Boolean(recordingService?.hideStorageWarning),
-        _renderRecording: isJwtFeatureEnabled(state, 'recording', isModerator, false),
+        _renderRecording: isJwtFeatureEnabled(state, MEET_FEATURES.RECORDING, false),
         _localRecordingAvailable,
         _localRecordingEnabled: !localRecording?.disable,
         _localRecordingSelfEnabled: !localRecording?.disableSelfRecording,

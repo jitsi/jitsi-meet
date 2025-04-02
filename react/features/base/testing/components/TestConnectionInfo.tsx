@@ -132,7 +132,7 @@ class TestConnectionInfo extends Component<IProps, State> {
      * @inheritdoc
      * returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         statsEmitter.subscribeToClientStats(
             this.props._localUserId, this._onStatsUpdated);
     }
@@ -144,7 +144,7 @@ class TestConnectionInfo extends Component<IProps, State> {
      * @inheritdoc
      * returns {void}
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         if (prevProps._localUserId !== this.props._localUserId) {
             statsEmitter.unsubscribeToClientStats(
                 prevProps._localUserId, this._onStatsUpdated);
@@ -159,7 +159,7 @@ class TestConnectionInfo extends Component<IProps, State> {
      * @private
      * @returns {void}
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         statsEmitter.unsubscribeToClientStats(
             this.props._localUserId, this._onStatsUpdated);
     }
@@ -170,7 +170,7 @@ class TestConnectionInfo extends Component<IProps, State> {
      *
      * @returns {ReactElement|null}
      */
-    render() {
+    override render() {
         if (!this.props._testMode) {
             return null;
         }

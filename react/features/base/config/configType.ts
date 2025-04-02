@@ -486,6 +486,7 @@ export interface IConfig {
         short?: number;
     };
     notifications?: Array<string>;
+    notifyOnConferenceDestruction?: boolean;
     openSharedDocumentOnJoin?: boolean;
     opusMaxAverageBitrate?: number;
     p2p?: {
@@ -542,6 +543,7 @@ export interface IConfig {
     recordingSharingUrl?: string;
     recordings?: {
         recordAudioAndVideo?: boolean;
+        requireConsent?: boolean;
         showPrejoinWarning?: boolean;
         showRecordingLink?: boolean;
         suggestRecording?: boolean;
@@ -602,6 +604,7 @@ export interface IConfig {
     tokenAuthUrl?: string;
     tokenAuthUrlAutoRedirect?: string;
     tokenLogoutUrl?: string;
+    tokenRespectTenant?: string;
     toolbarButtons?: Array<ToolbarButton>;
     toolbarConfig?: {
         alwaysVisible?: boolean;

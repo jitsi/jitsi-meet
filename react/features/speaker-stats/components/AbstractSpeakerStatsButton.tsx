@@ -5,10 +5,10 @@ import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbo
  * Implementation of a button for opening speaker stats dialog.
  */
 class AbstractSpeakerStatsButton extends AbstractButton<AbstractButtonProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.speakerStats';
-    icon = IconConnection;
-    label = 'toolbar.speakerStats';
-    tooltip = 'toolbar.speakerStats';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.speakerStats';
+    override icon = IconConnection;
+    override label = 'toolbar.speakerStats';
+    override tooltip = 'toolbar.speakerStats';
 }
 
 export default AbstractSpeakerStatsButton;

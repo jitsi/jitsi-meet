@@ -17,6 +17,7 @@ async function checkParticipantLeftHook(p: Participant, reason: string) {
                 conference: string;
                 disconnectReason: string;
                 isBreakout: boolean;
+                name: string;
                 participantId: string;
             };
             eventType: string;
@@ -27,6 +28,7 @@ async function checkParticipantLeftHook(p: Participant, reason: string) {
         expect(event.data.disconnectReason).toBe(reason);
         expect(event.data.isBreakout).toBe(false);
         expect(event.data.participantId).toBe(await p.getEndpointId());
+        expect(event.data.name).toBe(p.displayName);
     }
 }
 
@@ -36,6 +38,13 @@ describe('Participants presence', () => {
         await ensureTwoParticipants(ctx);
 
         const { p1, p2, webhooksProxy } = ctx;
+
+        if (await p1.execute(() => config.disableIframeAPI)) {
+            // skip the test if iframeAPI is disabled
+            ctx.skipSuiteTests = true;
+
+            return;
+        }
 
         // let's populate endpoint ids
         await Promise.all([
@@ -283,6 +292,7 @@ describe('Participants presence', () => {
             expect(event.data.moderator).toBe(false);
             expect(event.data.name).toBe(await p2.getLocalDisplayName());
             expect(event.data.participantId).toBe(await p2.getEndpointId());
+            expect(event.data.name).toBe(p2.displayName);
         }
 
         await p1.switchToAPI();

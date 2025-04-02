@@ -18,6 +18,7 @@ local array = require 'util.array';
 local set = require 'util.set';
 
 local util = module:require 'util';
+local is_admin = util.is_admin;
 local ends_with = util.ends_with;
 local is_vpaas = util.is_vpaas;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
@@ -62,11 +63,6 @@ local measure_visitors = module:measure('vnode-visitors', 'amount');
 local sent_iq_cache = require 'util.cache'.new(200);
 
 local sessions = prosody.full_sessions;
-
-local um_is_admin = require 'core.usermanager'.is_admin;
-local function is_admin(jid)
-    return um_is_admin(jid, module.host);
-end
 
 local function send_transcriptions_update(room)
     -- let's notify main prosody
@@ -327,6 +323,7 @@ module:hook('muc-broadcast-presence', function (event)
     -- a promotion detected let's send it to main prosody
     if raiseHand then
         local user_id;
+        local group_id;
         local is_moderator;
         local session = sessions[occupant.jid];
         local identity = session and session.jitsi_meet_context_user;
@@ -342,12 +339,9 @@ module:hook('muc-broadcast-presence', function (event)
             -- so we can be auto promoted
             if identity and identity.id then
                 user_id = session.jitsi_meet_context_user.id;
+                group_id = session.jitsi_meet_context_group;
 
-                if room._data.moderator_id then
-                    if room._data.moderator_id == user_id then
-                        is_moderator = true;
-                    end
-                elseif session.auth_token and auto_promoted_with_token then
+                if session.auth_token and auto_promoted_with_token then
                     if not session.jitsi_meet_tenant_mismatch or session.jitsi_web_query_prefix == '' then
                         -- non-vpaas and having a token is considered a moderator, and if it is not in '/' tenant
                         -- the tenant from url and token should match
@@ -371,6 +365,7 @@ module:hook('muc-broadcast-presence', function (event)
             jid = occupant.jid,
             time = raiseHand,
             userId = user_id,
+            groupId = group_id,
             forcePromote = is_moderator and 'true' or 'false';
           }):up();
 
@@ -646,7 +641,6 @@ local function iq_from_main_handler(event)
     -- if this is update it will either set or remove the password
     room:set_password(node.attr.password);
     room._data.meetingId = node.attr.meetingId;
-    room._data.moderator_id = node.attr.moderatorId;
     local createdTimestamp = node.attr.createdTimestamp;
     room.created_timestamp = createdTimestamp and tonumber(createdTimestamp) or nil;
 

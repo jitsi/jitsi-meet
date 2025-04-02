@@ -5,6 +5,7 @@ local http = require 'net.http';
 local jid = require 'util.jid';
 local st = require 'util.stanza';
 local util = module:require 'util';
+local is_admin = util.is_admin;
 local is_healthcheck_room = util.is_healthcheck_room;
 local is_sip_jigasi = util.is_sip_jigasi;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
@@ -18,7 +19,6 @@ local process_host_module = util.process_host_module;
 local respond_iq_result = util.respond_iq_result;
 local split_string = util.split_string;
 local new_id = require 'util.id'.medium;
-local um_is_admin = require 'core.usermanager'.is_admin;
 local json = require 'cjson.safe';
 local inspect = require 'inspect';
 
@@ -50,10 +50,6 @@ local http_headers = {
     ["Accept"] = "application/json"
 };
 
-local function is_admin(jid)
-    return um_is_admin(jid, module.host);
-end
-
 -- This is a map to keep data for room and the jids that were allowed to join after visitor mode is enabled
 -- automatically allowed or allowed by a moderator
 local visitors_promotion_map = {};
@@ -75,13 +71,31 @@ function send_json_message(to_jid, json_message)
     module:send(stanza);
 end
 
-local function request_promotion_received(room, from_jid, from_vnode, nick, time, user_id, force_promote)
+local function request_promotion_received(room, from_jid, from_vnode, nick, time, user_id, group_id, force_promote_requested)
     -- if visitors is enabled for the room
     if visitors_promotion_map[room.jid] then
+        local force_promote = auto_allow_promotion;
+
+        if not force_promote and force_promote_requested == 'true' then
+            -- Let's do the force_promote checks if requested
+
+            -- _data.moderator_id can be used from external modules to set single moderator for a meeting
+            -- or a whole group of moderators
+            if room._data.moderator_id == user_id or room._data.moderator_id == group_id
+
+                -- all moderators are allowed to auto promote, the fact that user_id and force_promote_requested are set
+                -- means that the user has token and is moderator on visitor node side
+                or room._data.allModerators
+
+                -- can be used by external modules to set a 'util.set' of multiple moderator ids
+                or (room._data.moderators and room._data.moderators:contains(user_id))
+            then
+                force_promote = true;
+            end
+        end
+
         -- only for raise hand, ignore lowering the hand
-        if time and time > 0 and (
-            auto_allow_promotion
-            or force_promote == 'true') then
+        if time and time > 0 and force_promote then
             --  we are in auto-allow mode, let's reply with accept
             -- we store where the request is coming from so we can send back the response
             local username = new_id():lower();
@@ -284,6 +298,7 @@ local function stanza_handler(event)
             display_name,
             tonumber(request_promotion.attr.time),
             request_promotion.attr.userId,
+            request_promotion.attr.groupId,
             request_promotion.attr.forcePromote
         );
     end

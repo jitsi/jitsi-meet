@@ -20,7 +20,7 @@ class MuteRemoteParticipantsVideoDialog extends AbstractMuteRemoteParticipantsVi
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <Dialog
                 ok = {{ translationKey: 'dialog.muteParticipantsVideoButton' }}

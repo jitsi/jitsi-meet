@@ -70,7 +70,7 @@ class SharedVideoMenu extends PureComponent<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const {
             _isParticipantAvailable,
             participantId

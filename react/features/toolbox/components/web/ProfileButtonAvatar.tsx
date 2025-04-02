@@ -32,7 +32,7 @@ class ProfileButtonAvatar extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { _localParticipant } = this.props;
 
         return (

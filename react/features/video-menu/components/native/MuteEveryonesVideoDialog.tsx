@@ -40,7 +40,7 @@ class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<IProps> 
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         return (
             <ConfirmDialog
                 confirmLabel = 'dialog.muteEveryonesVideoDialogOk'

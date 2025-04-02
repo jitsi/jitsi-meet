@@ -42,7 +42,7 @@ import {
     SEND_REACTION,
     SET_IS_POLL_TAB_FOCUSED
 } from './actionTypes';
-import { addMessage, addMessageReaction, clearMessages, closeChat } from './actions.any';
+import { addMessage, addMessageReaction, clearMessages, closeChat, setPrivateMessageRecipient } from './actions.any';
 import { ChatPrivacyDialog } from './components';
 import {
     INCOMING_MSG_SOUND_ID,
@@ -52,7 +52,7 @@ import {
     MESSAGE_TYPE_REMOTE,
     MESSAGE_TYPE_SYSTEM
 } from './constants';
-import { getUnreadCount } from './functions';
+import { getUnreadCount, isSendGroupChatDisabled } from './functions';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
 
 /**
@@ -161,13 +161,29 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case OPEN_CHAT:
+    case OPEN_CHAT: {
         unreadCount = 0;
 
         if (typeof APP !== 'undefined') {
             APP.API.notifyChatUpdated(unreadCount, true);
         }
+
+        const { privateMessageRecipient } = store.getState()['features/chat'];
+
+        if (
+            isSendGroupChatDisabled(store.getState())
+            && privateMessageRecipient
+            && !action.participant
+        ) {
+            const participant = getParticipantById(store.getState(), privateMessageRecipient.id);
+
+            if (participant) {
+                action.participant = participant;
+            }
+        }
+
         break;
+    }
 
     case SET_IS_POLL_TAB_FOCUSED: {
         dispatch(resetNbUnreadPollsMessages());
@@ -240,6 +256,7 @@ MiddlewareRegistry.register(store => next => action => {
                 lobbyChat: false
             }, false, true);
         }
+        break;
     }
     }
 
@@ -307,6 +324,12 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
                 isGuest,
                 messageId,
                 privateMessage: false });
+
+            if (isSendGroupChatDisabled(store.getState()) && participantId) {
+                const participant = getParticipantById(store, participantId);
+
+                store.dispatch(setPrivateMessageRecipient(participant));
+            }
         }
     );
 
@@ -507,7 +530,8 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
 
     // skip message notifications on join (the messages having timestamp - coming from the history)
     const shouldShowNotification = userSelectedNotifications?.['notify.chatMessages']
-        && !hasRead && !isReaction && !timestamp;
+        && !hasRead && !isReaction
+        && (!timestamp || lobbyChat);
 
     if (isGuest) {
         displayNameToShow = `${displayNameToShow} ${i18next.t('visitors.chatIndicator')}`;

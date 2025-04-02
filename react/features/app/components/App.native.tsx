@@ -12,6 +12,7 @@ import { clientResized, setSafeAreaInsets } from '../../base/responsive-ui/actio
 import DimensionsDetector from '../../base/responsive-ui/components/DimensionsDetector.native';
 import { updateSettings } from '../../base/settings/actions';
 import JitsiThemePaperProvider from '../../base/ui/components/JitsiThemeProvider.native';
+import { isEmbedded } from '../../base/util/embedUtils.native';
 import { _getRouteToRender } from '../getRouteToRender.native';
 import logger from '../logger';
 
@@ -80,14 +81,14 @@ export class App extends AbstractApp<IProps> {
      *
      * @returns {void}
      */
-    async componentDidMount() {
+    override async componentDidMount() {
         await super.componentDidMount();
 
         SplashScreen.hide();
 
         const liteTxt = AppInfo.isLiteSDK ? ' (lite)' : '';
 
-        logger.info(`Loaded SDK ${AppInfo.sdkVersion}${liteTxt}`);
+        logger.info(`Loaded SDK ${AppInfo.sdkVersion}${liteTxt} isEmbedded=${isEmbedded()}`);
     }
 
     /**
@@ -96,7 +97,7 @@ export class App extends AbstractApp<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <JitsiThemePaperProvider>
                 { super.render() }

@@ -15,8 +15,10 @@ import {
     SET_PRIVATE_MESSAGE_RECIPIENT
 } from './actionTypes';
 import { IMessage } from './types';
+import { UPDATE_CONFERENCE_METADATA } from '../base/conference/actionTypes';
 
 const DEFAULT_STATE = {
+    groupChatWithPermissions: false,
     isOpen: false,
     isPollsTabFocused: false,
     lastReadMessage: undefined,
@@ -29,6 +31,7 @@ const DEFAULT_STATE = {
 };
 
 export interface IChatState {
+    groupChatWithPermissions: boolean;
     isLobbyChatActive: boolean;
     isOpen: boolean;
     isPollsTabFocused: boolean;
@@ -203,6 +206,16 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             isLobbyChatActive: false,
             lobbyMessageRecipient: undefined
         };
+    case UPDATE_CONFERENCE_METADATA: {
+        const { metadata } = action;
+
+        if (metadata?.permissions) {
+            return {
+                ...state,
+                groupChatWithPermissions: Boolean(metadata.permissions.groupChatRestricted)
+            };
+        }
+    }
     }
 
     return state;

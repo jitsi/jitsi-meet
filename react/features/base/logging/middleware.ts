@@ -165,7 +165,6 @@ function _initLogging({ dispatch, getState }: IStore,
         }
 
         Logger.addGlobalTransport(_logCollector);
-        JitsiMeetJS.addGlobalLogTransport(_logCollector);
         dispatch(setLogCollector(_logCollector));
 
         // The JitsiMeetInMemoryLogStorage can not be accessed on mobile through

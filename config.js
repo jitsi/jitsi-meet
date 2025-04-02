@@ -49,7 +49,8 @@ var config = {
     bosh: 'https://jitsi-meet.example.com/' + subdir + 'http-bind',
 
     // Websocket URL (XMPP)
-    // websocket: 'wss://jitsi-meet.example.com/' + subdir + 'xmpp-websocket',
+    websocket: 'wss://jitsi-meet.example.com/' + subdir + 'xmpp-websocket',
+    websocketKeepAliveUrl: 'https://jitsi-meet.example.com/' + subdir + '_unlock',
 
     // Whether BOSH should be preferred over WebSocket if both are configured.
     // preferBosh: false,
@@ -393,6 +394,9 @@ var config = {
     //    // showPrejoinWarning: true,
     //    // If true, the notification for recording start will display a link to download the cloud recording.
     //    // showRecordingLink: true,
+    //    // If true, mutes audio and video when a recording begins and displays a dialog
+    //    // explaining the effect of unmuting.
+    //    // requireConsent: true,
     // },
 
     // recordingService: {
@@ -751,6 +755,9 @@ var config = {
     // Enables calendar integration, depends on googleApiApplicationClientID
     // and microsoftApiApplicationClientID
     // enableCalendarIntegration: false,
+
+    // Whether to notify when the conference is terminated because it was destroyed.
+    // notifyOnConferenceDestruction: true,
 
     // The client id for the google APIs used for the calendar integration, youtube livestreaming, etc.
     // googleApiApplicationClientID: '<client_id>',
@@ -1372,8 +1379,12 @@ var config = {
      The config file should be in JSON.
      None of the fields are mandatory and the response must have the shape:
     {
+        // Whether participant can only send group chat message if `send-groupchat` feature is enabled in jwt.
+        groupChatRequiresPermission: false,
+        // Whether participant can only create polls if `create-polls` feature is enabled in jwt.
+        pollCreationRequiresPermission: false,
         // The domain url to apply (will replace the domain in the sharing conference link/embed section)
-        inviteDomain: 'example-company.org,
+        inviteDomain: 'example-company.org',
         // The hex value for the colour used as background
         backgroundColor: '#fff',
         // The url for the image used as background
@@ -1561,6 +1572,8 @@ var config = {
     // You can enable tokenAuthUrlAutoRedirect which will detect that you have logged in successfully before
     // and will automatically redirect to the token service to get the token for the meeting.
     // tokenAuthUrlAutoRedirect: false
+    // An option to respect the context.tenant jwt field compared to the current tenant from the url
+    // tokenRespectTenant: false,
 
     // You can put an array of values to target different entity types in the invite dialog.
     // Valid values are "phone", "room", "sip", "user", "videosipgw" and "email"

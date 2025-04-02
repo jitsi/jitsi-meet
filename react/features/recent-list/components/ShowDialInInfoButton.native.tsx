@@ -18,9 +18,9 @@ export interface IProps extends AbstractButtonProps {
  * A recent list menu button which opens the dial-in info dialog.
  */
 class ShowDialInInfoButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'welcomepage.info';
-    icon = IconInfoCircle;
-    label = 'welcomepage.info';
+    override accessibilityLabel = 'welcomepage.info';
+    override icon = IconInfoCircle;
+    override label = 'welcomepage.info';
 
     /**
      * Handles clicking / pressing the button.
@@ -28,7 +28,7 @@ class ShowDialInInfoButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { itemId } = this.props;
 
         navigateRoot(screen.dialInSummary, {

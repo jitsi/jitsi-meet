@@ -70,7 +70,7 @@ class CalendarList extends AbstractPage<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { disabled } = this.props;
 
         return (

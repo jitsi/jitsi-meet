@@ -29,16 +29,16 @@ interface IProps extends AbstractButtonProps {
  * An implementation of a button for toggling the camera facing mode.
  */
 class ToggleCameraButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.toggleCamera';
-    icon = IconCameraRefresh;
-    label = 'toolbar.toggleCamera';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.toggleCamera';
+    override icon = IconCameraRefresh;
+    override label = 'toolbar.toggleCamera';
 
     /**
      * Handles clicking/pressing the button.
      *
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch } = this.props;
 
         dispatch(toggleCamera());
@@ -50,7 +50,7 @@ class ToggleCameraButton extends AbstractButton<IProps> {
      *
      * @returns {boolean}
      */
-    _isDisabled() {
+    override _isDisabled() {
         return this.props._audioOnly || this.props._videoMuted;
     }
 }

@@ -42,6 +42,7 @@ android {
         debug {
             buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${googleServicesEnabled}"
             buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
+            applicationIdSuffix ".debug"
         }
         release {
             // Uncomment the following line for singing a test release build.

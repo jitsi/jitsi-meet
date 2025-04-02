@@ -12,14 +12,10 @@ local st = require 'util.stanza';
 local jid = require 'util.jid';
 local new_id = require 'util.id'.medium;
 local util = module:require 'util';
+local is_admin = util.is_admin;
 local presence_check_status = util.presence_check_status;
 local process_host_module = util.process_host_module;
 local is_transcriber_jigasi = util.is_transcriber_jigasi;
-
-local um_is_admin = require 'core.usermanager'.is_admin;
-local function is_admin(jid)
-    return um_is_admin(jid, module.host);
-end
 
 local MUC_NS = 'http://jabber.org/protocol/muc';
 
@@ -69,7 +65,6 @@ local function send_visitors_iq(conference_service, room, type)
         password = type ~= 'disconnect' and room:get_password() or '',
         lobby = room._data.lobbyroom and 'true' or 'false',
         meetingId = room._data.meetingId,
-        moderatorId = room._data.moderator_id, -- can be used from external modules to set single moderator for meetings
         createdTimestamp = room.created_timestamp and tostring(room.created_timestamp) or nil
       });
 
@@ -315,6 +310,11 @@ process_host_module(main_muc_component_config, function(host_module, host)
         if occupant or not (visitors_nodes[to]
                             and visitors_nodes[to].nodes
                             and visitors_nodes[to].nodes[from_vnode]) then
+            return;
+        end
+
+        if host_module:fire_event('jitsi-visitor-groupchat-pre-route', event) then
+            -- message filtered
             return;
         end
 

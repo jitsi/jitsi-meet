@@ -29,18 +29,18 @@ interface IProps extends AbstractButtonProps {
  * Implementation of a button for sharing desktop / windows.
  */
 class ShareDesktopButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
-    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.stopScreenSharing';
-    label = 'toolbar.startScreenSharing';
-    icon = IconScreenshare;
-    toggledLabel = 'toolbar.stopScreenSharing';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
+    override toggledAccessibilityLabel = 'toolbar.accessibilityLabel.stopScreenSharing';
+    override label = 'toolbar.startScreenSharing';
+    override icon = IconScreenshare;
+    override toggledLabel = 'toolbar.stopScreenSharing';
 
     /**
      * Retrieves tooltip dynamically.
      *
      * @returns {string}
      */
-    _getTooltip() {
+    override _getTooltip() {
         const { _desktopSharingEnabled, _screensharing } = this.props;
 
         if (_desktopSharingEnabled) {
@@ -61,7 +61,7 @@ class ShareDesktopButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._screensharing;
     }
 
@@ -72,7 +72,7 @@ class ShareDesktopButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isDisabled() {
+    override _isDisabled() {
         return !this.props._desktopSharingEnabled;
     }
 
@@ -82,7 +82,7 @@ class ShareDesktopButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch, _screensharing } = this.props;
 
         sendAnalytics(createToolbarEvent(

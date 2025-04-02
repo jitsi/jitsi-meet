@@ -29,7 +29,7 @@ class DisplayNamePrompt extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         return (
             <InputDialog
                 descriptionKey = 'dialog.enterDisplayName'

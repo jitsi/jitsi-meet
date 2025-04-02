@@ -20,7 +20,7 @@ if (process.env.HEADLESS === 'true') {
 }
 
 const ffExcludes = [
-    'specs/2way/iFrameParticipantsPresence.spec.ts', // FF does not support uploading files (uploadFile)
+    'specs/2way/iFrameApiParticipantsPresence.spec.ts', // FF does not support uploading files (uploadFile)
 
     // FF does not support setting a file as mic input, no dominant speaker events
     'specs/3way/activeSpeaker.spec.ts',
@@ -40,6 +40,7 @@ const mergedConfig = merge(defaultConfig, {
         participant1: {
             capabilities: {
                 browserName: 'firefox',
+                browserVersion: process.env.BROWSER_FF_BETA ? 'beta' : undefined,
                 'moz:firefoxOptions': {
                     args: ffArgs,
                     prefs: ffPreferences

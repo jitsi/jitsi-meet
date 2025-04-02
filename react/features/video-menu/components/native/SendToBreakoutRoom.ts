@@ -27,8 +27,8 @@ export interface IProps extends AbstractButtonProps {
  * An abstract remote video menu button which sends the remote participant to a breakout room.
  */
 class SendToBreakoutRoom extends AbstractButton<IProps> {
-    accessibilityLabel = 'breakoutRooms.actions.sendToBreakoutRoom';
-    icon = IconRingGroup;
+    override accessibilityLabel = 'breakoutRooms.actions.sendToBreakoutRoom';
+    override icon = IconRingGroup;
 
     /**
      * Gets the current label.
@@ -47,7 +47,7 @@ class SendToBreakoutRoom extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch, participantID, room } = this.props;
 
         sendAnalytics(createBreakoutRoomsEvent('send.participant.to.room'));

@@ -129,7 +129,7 @@ class SharedVideo extends Component<IProps> {
      * @inheritdoc
      * @returns {React$Element}
      */
-    render() {
+    override render() {
         const { isEnabled, isResizing, isVideoShared, onStage } = this.props;
 
         if (!isEnabled || !isVideoShared) {

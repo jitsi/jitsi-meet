@@ -46,7 +46,7 @@ class RecentListItemMenu extends PureComponent<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { item } = this.props;
         const buttonProps = {
             afterClick: this._onCancel,
