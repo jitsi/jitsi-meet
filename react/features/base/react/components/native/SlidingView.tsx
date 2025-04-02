@@ -71,7 +71,7 @@ interface IState {
  */
 export default class SlidingView extends PureComponent<IProps, IState> {
     /**
-     * Initializes hardwareBackPressSubscription
+     * Initializes hardwareBackPress subscription.
      */
     _hardwareBackPressSubscription: any;
 

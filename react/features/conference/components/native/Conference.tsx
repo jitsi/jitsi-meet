@@ -181,7 +181,7 @@ class Conference extends AbstractConference<IProps, State> {
     _expandedLabelTimeout: any;
 
     /**
-     * Initializes hardwareBackPressSubscription
+     * Initializes hardwareBackPress subscription.
      */
     _hardwareBackPressSubscription: any;
 
