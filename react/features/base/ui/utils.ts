@@ -14,7 +14,7 @@ export function createColorTokens(colorMap: Object): any {
 
     return Object.entries(colorMap)
         .reduce((result, [ token, value ]: [any, string]) => {
-            const color = allTokens[value as keyof typeof allTokens];
+            const color = allTokens[value as keyof typeof allTokens] || value;
 
             return Object.assign(result, { [token]: color });
         }, {});
