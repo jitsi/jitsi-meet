@@ -60,17 +60,10 @@ function maybeEmitRecordingNotification(dispatch: IStore['dispatch'], getState: 
         return;
     }
 
-    const transcriptionsAreRunning = isRecorderTranscriptionsRunning(state);
-
     const notifyProps: INotificationProps = {
         descriptionKey: on ? 'recording.on' : 'recording.off',
         titleKey: 'dialog.recording'
     };
-
-    if (transcriptionsAreRunning) {
-        notifyProps.customActionNameKey = [ 'recording.openTranscriptions' ];
-        notifyProps.customActionHandler = [ () => dispatch(openSubtitlesPanel()) ];
-    }
 
     batch(() => {
         dispatch(showNotification(notifyProps, NOTIFICATION_TIMEOUT_TYPE.SHORT));

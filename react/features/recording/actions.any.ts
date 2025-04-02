@@ -262,7 +262,6 @@ export function showStartedRecordingNotification(
             const recordingSharingUrl = getRecordingSharingUrl(state);
             const iAmRecordingInitiator = getLocalParticipant(state)?.id === initiatorId;
             const { showRecordingLink } = state['features/base/config'].recordings || {};
-            const transcriptionsAreRunning = isRecorderTranscriptionsRunning(state);
 
             notifyProps.dialogProps = {
                 customActionHandler: undefined,
@@ -271,11 +270,6 @@ export function showStartedRecordingNotification(
                 descriptionArguments: { name: participantName },
                 titleKey: 'dialog.recording'
             };
-
-            if (transcriptionsAreRunning) {
-                notifyProps.dialogProps.customActionNameKey = [ 'recording.openTranscriptions' ];
-                notifyProps.dialogProps.customActionHandler = [ () => dispatch(openSubtitlesPanel()) ];
-            }
 
             // fetch the recording link from the server for recording initiators in jaas meetings
             if (recordingSharingUrl

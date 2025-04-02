@@ -1079,8 +1079,7 @@
         "title": "Recording",
         "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
         "unavailableTitle": "Recording unavailable",
-        "uploadToCloud": "Upload to the cloud",
-        "openTranscriptions": "Open Transcriptions"
+        "uploadToCloud": "Upload to the cloud"
     },
     "screenshareDisplayName": "{{name}}'s screen",
     "sectionList": {
