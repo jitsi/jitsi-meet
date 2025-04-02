@@ -36,6 +36,8 @@ import { default as Notice } from "./Notice";
 
 import ConferenceControlsWrapper from "../../../base/meet/views/Conference/containers/ConferenceControlsWrapper";
 import VideoGalleryWrapper from "../../../base/meet/views/Conference/containers/VideoGalleryWrapper";
+import { ViewMode } from '../../../filmstrip/reducer';
+import { setConferenceViewMode } from '../../../filmstrip/actions.web';
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -96,6 +98,8 @@ interface IProps extends AbstractProps, WithTranslation {
     dispatch: any;
 
     isParticipantsPaneOpened: boolean;
+
+    viewMode: ViewMode;
 }
 
 /**
@@ -109,7 +113,7 @@ class Conference extends AbstractConference<IProps, any> {
     };
 
     _onSetVideoModeClicked = (newMode: Mode) => {
-        this.setState({ videoMode: newMode });
+        this.props.dispatch(setConferenceViewMode(newMode))
     };
     /**
      * Initializes a new Conference instance.
@@ -199,9 +203,9 @@ class Conference extends AbstractConference<IProps, any> {
             _overflowDrawer,
             _showLobby,
             _showPrejoin,
+            viewMode,
             t,
         } = this.props;
-        const { videoMode } = this.state;
 
         return (
             <div
@@ -222,10 +226,10 @@ class Conference extends AbstractConference<IProps, any> {
                     <ConferenceInfo />
                     <Notice />
                     <div onTouchStart={this._onVidespaceTouchStart}>
-                        <Header mode={videoMode} translate={t} onSetModeClicked={this._onSetVideoModeClicked} />
+                        <Header mode={viewMode} translate={t} onSetModeClicked={this._onSetVideoModeClicked} />
                         <div className="flex">
                             {/* <LargeVideoWeb /> */}
-                            <VideoGalleryWrapper videoMode={videoMode} />
+                            <VideoGalleryWrapper videoMode={viewMode} />
                         </div>
                         {_showPrejoin || _showLobby || (
                             <>
@@ -395,6 +399,7 @@ class Conference extends AbstractConference<IProps, any> {
  */
 function _mapStateToProps(state: IReduxState) {
     const { backgroundAlpha, mouseMoveCallbackInterval } = state["features/base/config"];
+    const { viewMode } = state["features/filmstrip"];
     const { overflowDrawer } = state["features/toolbox"];
 
     return {
@@ -407,6 +412,7 @@ function _mapStateToProps(state: IReduxState) {
         _roomName: getConferenceNameForTitle(state),
         _showLobby: getIsLobbyVisible(state),
         _showPrejoin: isPrejoinPageVisible(state),
+        viewMode,
     };
 }
 
