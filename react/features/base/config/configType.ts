@@ -588,7 +588,7 @@ export interface IConfig {
     testing?: {
         assumeBandwidth?: boolean;
         debugAudioLevels?: boolean;
-        disableShowSubtitlesButton?: boolean;
+        disableShowSubtitlesOnStageSetting?: boolean;
         dumpTranscript?: boolean;
         failICE?: boolean;
         noAutoPlayVideo?: boolean;
@@ -615,7 +615,6 @@ export interface IConfig {
     transcription?: {
         autoCaptionOnTranscribe?: boolean;
         autoTranscribeOnRecord?: boolean;
-        disableTranscriptionsPanel?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;
         translationLanguages?: Array<string>;

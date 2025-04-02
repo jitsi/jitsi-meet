@@ -16,10 +16,8 @@ const cc = {
  */
 export function useClosedCaptionButton() {
     const isStartSubtitlesButtonVisible = useSelector(canStartSubtitles);
-    const showSubtitlesButton = useSelector(state => state['features/base/settings'].showSubtitlesButton);
-    const { disableShowSubtitlesButton = false } = useSelector(state => state['features/base/config'].testing);
 
-    if (isStartSubtitlesButtonVisible && (showSubtitlesButton || disableShowSubtitlesButton)) {
+    if (isStartSubtitlesButtonVisible) {
         return cc;
     }
 }

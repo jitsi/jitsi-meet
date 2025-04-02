@@ -7,6 +7,7 @@ import {
     AbstractClosedCaptionButton,
     _abstractMapStateToProps
 } from '../AbstractClosedCaptionButton';
+import { openSubtitlesPanel } from '../../../chat/actions.any';
 
 /**
  * A button which starts/stops the transcriptions.
@@ -29,9 +30,13 @@ class ClosedCaptionButton
      * @returns {void}
      */
     _handleClickOpenLanguageSelector() {
-        const { dispatch } = this.props;
+        const { _isSubtitlesTabEnabled, dispatch } = this.props;
 
-        dispatch(toggleLanguageSelectorDialog());
+        if (_isSubtitlesTabEnabled) {
+            dispatch(openSubtitlesPanel());
+        } else {
+            dispatch(toggleLanguageSelectorDialog());
+        }
     }
 }
 

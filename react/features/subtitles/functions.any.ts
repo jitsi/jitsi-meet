@@ -38,3 +38,16 @@ export function getAvailableSubtitlesLanguages(stateful: IStateful, selectedLang
         ...translationLanguages
     ];
 }
+
+/**
+ * Checks whether the subtitles tab should be enabled in the UI.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean} - True if the subtitles tab should be enabled.
+ */
+export function isSubtilesTabEnabled(state: IReduxState) {
+    const { testing } = state['features/base/config'];
+    const { showSubtitlesOnStage = false } = state['features/base/settings'];
+
+    return !showSubtitlesOnStage && !testing?.disableShowSubtitlesOnStageSetting;
+}

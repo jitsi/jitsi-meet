@@ -109,7 +109,7 @@ export function getMoreTabProps(stateful: IStateful) {
     return {
         currentLanguage: language,
         disableHideSelfView: disableSelfViewSettings || disableSelfView,
-        disableShowSubtitlesButton: Boolean(testing?.disableShowSubtitlesButton),
+        disableShowSubtitlesOnStageSetting: Boolean(testing?.disableShowSubtitlesOnStageSetting),
         hideSelfView: getHideSelfView(state),
         iAmVisitor: iAmVisitor(state),
         languages: LANGUAGES,
@@ -117,7 +117,7 @@ export function getMoreTabProps(stateful: IStateful) {
         showLanguageSettings: configuredTabs.includes('language'),
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
         showPrejoinSettings: isPrejoinEnabledInConfig(state),
-        showSubtitlesButton: state['features/base/settings'].showSubtitlesButton,
+        showSubtitlesOnStage: state['features/base/settings'].showSubtitlesOnStage,
         stageFilmstripEnabled
     };
 }

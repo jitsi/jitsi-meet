@@ -14,6 +14,11 @@ interface IProps {
     className: string;
 
     /**
+     * Whether CC tab is enabled or not.
+     */
+    isCCTabEnabled: boolean;
+
+    /**
      * Whether the polls feature is enabled or not.
      */
     isPollsEnabled: boolean;
@@ -29,7 +34,7 @@ interface IProps {
  *
  * @returns {React$Element<any>}
  */
-function ChatHeader({ className, isPollsEnabled }: IProps) {
+function ChatHeader({ className, isPollsEnabled, isCCTabEnabled }: IProps) {
     const dispatch = useDispatch();
     const { t } = useTranslation();
 
@@ -44,13 +49,23 @@ function ChatHeader({ className, isPollsEnabled }: IProps) {
         }
     }, []);
 
+    let title = 'chat.title';
+
+    if (isCCTabEnabled && isPollsEnabled) {
+        title = 'chat.titleWithPollsAndCC';
+    } else if (isCCTabEnabled) {
+        title = 'chat.titleWithCC';
+    } else if (isPollsEnabled) {
+        title = 'chat.titleWithPolls';
+    }
+
     return (
         <div
             className = { className || 'chat-dialog-header' }>
             <span
                 aria-level = { 1 }
                 role = 'heading'>
-                { t(isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
+                { t(title) }
             </span>
             <Icon
                 ariaLabel = { t('toolbar.closeChat') }

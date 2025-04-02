@@ -20,6 +20,7 @@ import KeyboardAvoider from './KeyboardAvoider';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
 import SubtitlesTab from './SubtitlesTab';
+import { isSubtilesTabEnabled } from '../../../subtitles/functions.any';
 
 interface IProps extends AbstractProps {
 
@@ -27,6 +28,11 @@ interface IProps extends AbstractProps {
      * The currently focused tab.
      */
     _focusedTab: ChatTabs;
+
+    /**
+     * True if the CC tab is enabled and false otherwise.
+     */
+    _isCCTabEnabled: boolean;
 
     /**
      * Whether the chat is opened in a modal or not (computed based on window width).
@@ -42,11 +48,6 @@ interface IProps extends AbstractProps {
      * True if the polls feature is enabled.
      */
     _isPollsEnabled: boolean;
-
-    /**
-     * True if the transcription history tab is enabled and false otherwise.
-     */
-    _isTranscriptionsHistoryEnabled: boolean;
 
     /**
      * Number of unread poll messages.
@@ -153,7 +154,7 @@ const Chat = ({
     _isModal,
     _isOpen,
     _isPollsEnabled,
-    _isTranscriptionsHistoryEnabled,
+    _isCCTabEnabled,
     _focusedTab,
     _messages,
     _nbUnreadMessages,
@@ -228,7 +229,7 @@ const Chat = ({
                     aria-labelledby = { ChatTabs.CHAT }
                     className = { cx(
                         classes.chatPanel,
-                        !_isPollsEnabled && !_isTranscriptionsHistoryEnabled && classes.chatPanelNoTabs,
+                        !_isPollsEnabled && !_isCCTabEnabled && classes.chatPanelNoTabs,
                         _focusedTab !== ChatTabs.CHAT && 'hide'
                     ) }
                     id = { `${ChatTabs.CHAT}-panel` }
@@ -253,7 +254,7 @@ const Chat = ({
                         <KeyboardAvoider />
                     </>
                 )}
-                { _isTranscriptionsHistoryEnabled && <div
+                { _isCCTabEnabled && <div
                     aria-labelledby = { ChatTabs.SUBTITLES }
                     className = { cx(classes.chatPanel, _focusedTab !== ChatTabs.SUBTITLES && 'hide') }
                     id = { `${ChatTabs.SUBTITLES}-panel` }
@@ -294,7 +295,7 @@ const Chat = ({
             });
         }
 
-        if (_isTranscriptionsHistoryEnabled) {
+        if (_isCCTabEnabled) {
             tabs.push({
                 accessibilityLabel: t('chat.tabs.subtitles'),
                 countBadge: undefined,
@@ -320,6 +321,7 @@ const Chat = ({
             onKeyDown = { onEscClick } >
             <ChatHeader
                 className = { cx('chat-header', classes.chatHeader) }
+                isCCTabEnabled = { _isCCTabEnabled }
                 isPollsEnabled = { _isPollsEnabled }
                 onCancel = { onToggleChat } />
             {_showNamePrompt
@@ -340,6 +342,7 @@ const Chat = ({
  *     _isModal: boolean,
  *     _isOpen: boolean,
  *     _isPollsEnabled: boolean,
+ *     _isCCTabEnabled: boolean,
  *     _focusedTab: string,
  *     _messages: Array<Object>,
  *     _nbUnreadMessages: number,
@@ -356,7 +359,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _isModal: window.innerWidth <= SMALL_WIDTH_THRESHOLD,
         _isOpen: isOpen,
         _isPollsEnabled: !arePollsDisabled(state),
-        _isTranscriptionsHistoryEnabled: !state['features/base/config'].transcription?.disableTranscriptionsPanel,
+        _isCCTabEnabled: isSubtilesTabEnabled(state),
         _focusedTab: focusedTab,
         _messages: messages,
         _nbUnreadMessages: nbUnreadMessages,

@@ -123,8 +123,8 @@
             "popover": "Choose a nickname",
             "title": "Enter a nickname to use chat",
             "titleWithPolls": "Enter a nickname to use chat and polls",
-            "titleWithSubtitles": "Enter a nickname to use chat and subtitles",
-            "titleWithPollsAndSubtitles": "Enter a nickname to use chat, polls and subtitles"
+            "titleWithCC": "Enter a nickname to use chat and closed captions",
+            "titleWithPollsAndCC": "Enter a nickname to use chat, polls and closed captions"
         },
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "privateNotice": "Private message to {{recipient}}",
@@ -1144,7 +1144,7 @@
         "talkWhileMuted": "Talk while muted",
         "title": "Settings",
         "video": "Video",
-        "showSubtitlesButton": "Show subtitles button"
+        "showSubtitlesOnStage": "Show subtitles on stage"
     },
     "settingsView": {
         "advanced": "Advanced",

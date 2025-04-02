@@ -12,7 +12,7 @@
  *         localFlipX: boolean,
  *         micDeviceId: string,
  *         serverURL: string,
- *         showSubtitlesButton: boolean,
+ *         showSubtitlesOnStage: boolean,
  *         startAudioOnly: boolean,
  *         startWithAudioMuted: boolean,
  *         startWithVideoMuted: boolean,

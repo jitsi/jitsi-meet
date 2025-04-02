@@ -22,6 +22,7 @@ import { setSeeWhatIsBeingShared } from '../actions.web';
 import { getLargeVideoParticipant } from '../functions';
 
 import ScreenSharePlaceholder from './ScreenSharePlaceholder.web';
+import { isSubtilesTabEnabled } from '../../subtitles/functions.any';
 
 // Hack to detect Spot.
 const SPOT_DISPLAY_NAME = 'Meeting Room';
@@ -366,7 +367,6 @@ function _mapStateToProps(state: IReduxState) {
     const isLocalScreenshareOnLargeVideo = largeVideoParticipant?.id?.includes(localParticipantId ?? '')
         && videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
     const isOnSpot = defaultLocalDisplayName === SPOT_DISPLAY_NAME;
-    const { showSubtitlesButton } = state['features/base/settings'];
 
     return {
         _backgroundAlpha: state['features/base/config'].backgroundAlpha,
@@ -382,7 +382,7 @@ function _mapStateToProps(state: IReduxState) {
         _resizableFilmstrip: isFilmstripResizable(state),
         _seeWhatIsBeingShared: Boolean(seeWhatIsBeingShared),
         _showDominantSpeakerBadge: !hideDominantSpeakerBadge,
-        _showSubtitles: Boolean(showSubtitlesButton) || Boolean(testingConfig?.disableShowSubtitlesButton),
+        _showSubtitles: !isSubtilesTabEnabled(state),
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state),
         _visibleFilmstrip: visible,

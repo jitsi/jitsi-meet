@@ -20,6 +20,7 @@ import {
     updateTranscriptMessage
 } from './actions.any';
 import { notifyTranscriptionChunkReceived } from './functions';
+import { isSubtilesTabEnabled } from './functions.any';
 import logger from './logger';
 import { ISubtitle, ITranscriptMessage } from './types';
 
@@ -140,9 +141,6 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
 
     let newTranscriptMessage: ITranscriptMessage | undefined;
 
-    const { showSubtitlesButton } = state['features/base/settings'];
-    const { disableShowSubtitlesButton = false } = state['features/base/config'].testing;
-
     if (json.type === JSON_TYPE_TRANSLATION_RESULT) {
         const translation = json.text?.trim();
 
@@ -156,18 +154,16 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
             };
         }
 
-        dispatch(storeSubtitle({
-            participantId,
-            text: translation,
-            language: json.language,
-            interim: false,
-            isTranscription: false,
-            timestamp,
-            id: transcriptMessageID
-        }));
-
-        if (!disableShowSubtitlesButton && !showSubtitlesButton) {
-            return next(action);
+        if (isSubtilesTabEnabled(state)) {
+            dispatch(storeSubtitle({
+                participantId,
+                text: translation,
+                language: json.language,
+                interim: false,
+                isTranscription: false,
+                timestamp,
+                id: transcriptMessageID
+            }));
         }
     } else if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT) {
         const isInterim = json.is_interim;
@@ -187,10 +183,8 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
             isTranscription: true
         };
 
-        dispatch(storeSubtitle(subtitle));
-
-        if (!disableShowSubtitlesButton && !showSubtitlesButton) {
-            return next(action);
+        if (isSubtilesTabEnabled(state)) {
+            dispatch(storeSubtitle(subtitle));
         }
 
         // First, notify the external API.

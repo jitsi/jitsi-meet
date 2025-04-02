@@ -34,9 +34,9 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     disableHideSelfView: boolean;
 
     /**
-     * Whether show subtitles button is enabled.
+     * Whether "Show subtitles on stage" setting is enabled.
      */
-    disableShowSubtitlesButton: boolean;
+    disableShowSubtitlesOnStageSetting: boolean;
 
     /**
      * Whether or not follow me is currently active (enabled by some other participant).
@@ -84,9 +84,9 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     showPrejoinSettings: boolean;
 
     /**
-     * Whether or not to show subtitles button.
+     * Whether or not to show subtitles on stage.
      */
-    showSubtitlesButton: boolean;
+    showSubtitlesOnStage: boolean;
 
     /**
      * Whether or not the stage filmstrip is enabled.
@@ -136,7 +136,7 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
         this._renderMaxStageParticipantsSelect = this._renderMaxStageParticipantsSelect.bind(this);
         this._onMaxStageParticipantsSelect = this._onMaxStageParticipantsSelect.bind(this);
         this._onHideSelfViewChanged = this._onHideSelfViewChanged.bind(this);
-        this._onShowSubtitlesButtonChanged = this._onShowSubtitlesButtonChanged.bind(this);
+        this._onShowSubtitlesOnStageChanged = this._onShowSubtitlesOnStageChanged.bind(this);
         this._onLanguageItemSelect = this._onLanguageItemSelect.bind(this);
     }
 
@@ -153,8 +153,8 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
             iAmVisitor,
             hideSelfView,
             showLanguageSettings,
-            showSubtitlesButton,
-            disableShowSubtitlesButton,
+            showSubtitlesOnStage,
+            disableShowSubtitlesOnStageSetting,
             t
         } = this.props;
         const classes = withStyles.getClasses(this.props);
@@ -176,12 +176,12 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
                         name = 'hide-self-view'
                         onChange = { this._onHideSelfViewChanged } />
                 )}
-                { !disableShowSubtitlesButton && <Checkbox
-                    checked = { showSubtitlesButton }
+                { !disableShowSubtitlesOnStageSetting && <Checkbox
+                    checked = { showSubtitlesOnStage }
                     className = { classes.checkbox }
-                    label = { t('settings.showSubtitlesButton') }
+                    label = { t('settings.showSubtitlesOnStage') }
                     name = 'show-subtitles-button'
-                    onChange = { this._onShowSubtitlesButtonChanged } /> }
+                    onChange = { this._onShowSubtitlesOnStageChanged } /> }
                 {showLanguageSettings && this._renderLanguageSelect()}
             </div>
         );
@@ -230,8 +230,8 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
      *
      * @returns {void}
      */
-    _onShowSubtitlesButtonChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
-        super._onChange({ showSubtitlesButton: checked });
+    _onShowSubtitlesOnStageChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
+        super._onChange({ showSubtitlesOnStage: checked });
     }
 
     /**
