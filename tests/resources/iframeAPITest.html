@@ -46,6 +46,10 @@
         interfaceConfig: {}
     };
 
+    function log(msg) {
+        console.log(`${new Date().toISOString()} [MeetTestIFrame] ${msg}`);
+    }
+
     for (const param of Object.keys(params)) {
         let base = json;
         const names = param.split('.');
@@ -81,21 +85,27 @@
         interfaceConfigOverwrite: interfaceConfig,
         userInfo,
         onload: function () {
+            log(`iframeAPI.onload`);
+
             // we use this to save data from api to be accessible to tests
             window.jitsiAPI.test = {};
 
             window.jitsiAPI.addEventListener('participantRoleChanged', function(event) {
+                log(`participantRoleChanged: ${JSON.stringify(event)} myEndpointId:${window.jitsiAPI.test.myEndpointId}`);
                 if (event.role === "moderator" && event.id === window.jitsiAPI.test.myEndpointId) {
                     window.jitsiAPI.test.isModerator = true;
                 }
             });
             window.jitsiAPI.addEventListener('audioAvailabilityChanged', function(event) {
+                log(`audioAvailabilityChanged: ${JSON.stringify(event)}`);
                 window.jitsiAPI.test.audioAvailabilityChanged = event;
             });
             window.jitsiAPI.addEventListener('videoAvailabilityChanged', function(event) {
+                log(`videoAvailabilityChanged: ${JSON.stringify(event)}`);
                 window.jitsiAPI.test.videoAvailabilityChanged = event;
             });
             window.jitsiAPI.addEventListener('videoConferenceJoined', function(event) {
+                log(`videoConferenceJoined: ${JSON.stringify(event)}`);
                 window.jitsiAPI.test.videoConferenceJoined = event;
                 window.jitsiAPI.test.myEndpointId = event.id;
             });
@@ -113,6 +123,7 @@
     externalAPIScript.src = `https://${domain}/${tenant}external_api.js`;
     externalAPIScript.type = "text/javascript";
     externalAPIScript.onload = function(){
+        log(`externalAPIScript.onload`);
         window.jitsiAPI = new JitsiMeetExternalAPI(domain, options);
     }
     document.getElementsByTagName('head')[0].appendChild(externalAPIScript);
