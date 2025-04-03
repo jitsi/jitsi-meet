@@ -98,7 +98,7 @@ const RightContent = React.memo(
         const [showMenu, setShowMenu] = useState(false);
 
         const menuRef = useRef<HTMLDivElement>(null);
-        const avatarRef = useRef<HTMLDivElement>(null);
+        const avatarRef = useRef<HTMLButtonElement>(null);
 
         useEffect(() => {
             const handleClickOutside = (event: MouseEvent) => {
@@ -134,7 +134,7 @@ const RightContent = React.memo(
                 </Button>
 
                 <div className="relative">
-                    <div
+                    <button
                         ref={avatarRef}
                         onClick={toggleMenu}
                         onKeyDown={(e) => {
@@ -143,12 +143,11 @@ const RightContent = React.memo(
                                 toggleMenu();
                             }
                         }}
-                        role="button"
                         tabIndex={0}
                         className="cursor-pointer transition-transform duration-150 transform hover:scale-105 active:scale-95"
                     >
                         <Avatar src={avatar} fullName={fullName ?? ""} className="text-white" diameter={40} />
-                    </div>
+                    </button>
 
                     <div
                         ref={menuRef}
@@ -170,7 +169,7 @@ const RightContent = React.memo(
                                         }}
                                         className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-100 transition-colors duration-150 hover:bg-gray-5 hover:text-primary dark:hover:bg-gray-80 active:bg-primary/20 active:text-primary"
                                     >
-                                        {translate("settings.title") || "Settings"}
+                                        {translate("settings.title") ?? "Settings"}
                                     </button>
 
                                     {/* Divider */}
