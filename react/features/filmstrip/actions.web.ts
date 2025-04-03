@@ -26,6 +26,7 @@ import {
     SET_USER_FILMSTRIP_WIDTH,
     SET_USER_IS_RESIZING,
     SET_VERTICAL_VIEW_DIMENSIONS,
+    SET_VIEW_MODE,
     SET_VOLUME,
     TOGGLE_PIN_STAGE_PARTICIPANT
 } from './actionTypes';
@@ -55,6 +56,7 @@ import {
     isStageFilmstripAvailable,
     isStageFilmstripTopPanel
     , showGridInVerticalView } from './functions.web';
+import { ViewMode } from './reducer';
 
 export * from './actions.any';
 
@@ -587,5 +589,18 @@ export function setScreenshareFilmstripParticipant(participantId?: string) {
     return {
         type: SET_SCREENSHARE_FILMSTRIP_PARTICIPANT,
         participantId
+    };
+}
+
+/**
+ * Sets the filmstrip view mode
+ *
+ * @param {ViewMode} viewMode - The view mode to be set.
+ * @returns {Object}
+ */
+export function setConferenceViewMode(viewMode?: ViewMode) {
+    return {
+        type: SET_VIEW_MODE,
+        viewMode
     };
 }
