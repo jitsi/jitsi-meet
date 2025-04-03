@@ -1,5 +1,6 @@
 import { PARTICIPANT_LEFT } from '../base/participants/actionTypes';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
+import { setVisibleRemoteParticipants } from './actions.any';
 
 import {
     CLEAR_STAGE_PARTICIPANTS,
@@ -20,11 +21,12 @@ import {
     SET_USER_FILMSTRIP_WIDTH,
     SET_USER_IS_RESIZING,
     SET_VERTICAL_VIEW_DIMENSIONS,
+    SET_VIEW_MODE,
     SET_VISIBLE_REMOTE_PARTICIPANTS,
     SET_VOLUME
 } from './actionTypes';
 
-const DEFAULT_STATE = {
+const DEFAULT_STATE: IFilmstripState = {
 
     /**
      * The list of participants to be displayed on the stage filmstrip.
@@ -175,13 +177,22 @@ const DEFAULT_STATE = {
          * Width set by user resize. Used as the preferred width.
          */
         userSet: null
-    }
+    },
+    /**
+     * The selected view mode in a conference
+     *
+     * @public
+     * @type { "gallery" | "speaker"}
+     */
+    viewMode: "gallery"
 };
 
 interface IDimensions {
     height: number;
     width: number;
 }
+
+export type ViewMode = "gallery" | "speaker";
 
 interface IFilmstripDimensions {
     columns?: number;
@@ -247,12 +258,18 @@ export interface IFilmstripState {
         current: number | null;
         userSet: number | null;
     };
+    viewMode: ViewMode;
 }
 
 ReducerRegistry.register<IFilmstripState>(
     'features/filmstrip',
     (state = DEFAULT_STATE, action): IFilmstripState => {
         switch (action.type) {
+        case SET_VIEW_MODE:
+            return {
+                ...state,
+                viewMode: action.viewMode
+            }
         case SET_FILMSTRIP_ENABLED:
             return {
                 ...state,
@@ -270,11 +287,13 @@ ReducerRegistry.register<IFilmstripState>(
                 ...state,
                 horizontalViewDimensions: action.dimensions
             };
+
         case SET_REMOTE_PARTICIPANTS: {
             state.remoteParticipants = action.participants;
             const { visibleParticipantsStartIndex: startIndex, visibleParticipantsEndIndex: endIndex } = state;
 
-            state.visibleRemoteParticipants = new Set(state.remoteParticipants.slice(startIndex, endIndex + 1));
+            // FORCED TO MAKE VISIBLE ALL REMOTE PARTICIPANTS ALWAYS
+            state.visibleRemoteParticipants = new Set(state.remoteParticipants.slice(startIndex, state.remoteParticipants.length));
 
             return { ...state };
         }

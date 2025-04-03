@@ -35,6 +35,10 @@ export function getAutoPinSetting() {
  * @returns {string}
  */
 export function getCurrentLayout(state: IReduxState) {
+
+    if (state["features/filmstrip"].viewMode === "speaker")
+        return LAYOUTS.VERTICAL_FILMSTRIP_VIEW;
+
     if (navigator.product === 'ReactNative') {
         // FIXME: what should this return?
         return undefined;

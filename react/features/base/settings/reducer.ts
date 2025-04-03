@@ -25,7 +25,7 @@ const DEFAULT_STATE: ISettingsState = {
     displayName: undefined,
     email: undefined,
     localFlipX: true,
-    maxStageParticipants: 1,
+    maxStageParticipants: 10,
     micDeviceId: undefined,
     serverURL: undefined,
     hideShareAudioHelper: false,
@@ -123,7 +123,9 @@ ReducerRegistry.register<ISettingsState>(STORE_NAME, (state = DEFAULT_STATE, act
     case SETTINGS_UPDATED:
         return {
             ...state,
-            ...action.settings
+            ...action.settings,
+            // HARDCODED TO SOLV MAX STAGE PARTICIPANT TO ONE
+            maxStageParticipants: 10
         };
     }
 
