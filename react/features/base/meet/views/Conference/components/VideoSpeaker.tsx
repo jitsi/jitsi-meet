@@ -19,7 +19,7 @@ const VideoSpeaker = ({ participants, translate }: VideoSpeakerProps) => {
                     key={localParticipant.id}
                     participant={localParticipant}
                     translate={translate}
-                    className="absolute bottom-4 right-4 h-[17%] w-[15%]"
+                     className="absolute sm:bottom-4 bottom-24 right-4 aspect-video w-1/5 max-w-xs"
                 />
             )}
         </div>
