@@ -109,14 +109,13 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const { PRIMARY, TERTIARY } = BUTTON_TYPES;
 
     useEffect(() => {
-        BackHandler.addEventListener('hardwareBackPress', goBack);
+        const hardwareBackPressSubscription = BackHandler.addEventListener('hardwareBackPress', goBack);
 
         dispatch(setPermanentProperty({
             wasPrejoinDisplayed: true
         }));
 
-        return () => BackHandler.removeEventListener('hardwareBackPress', goBack);
-
+        return () => hardwareBackPressSubscription.remove();
     }, []); // dispatch is not in the dependency list because we want the action to be dispatched only once when
     // the component is mounted.
 
