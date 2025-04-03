@@ -714,6 +714,7 @@
         "invite": {
             "invitePeople": "Invitar personas",
             "copyLink": "Copiar enlace",
+            "copied": "Copiado!",
             "meetingFull": "La reunión está llena",
             "participants": "participantes"
         },
