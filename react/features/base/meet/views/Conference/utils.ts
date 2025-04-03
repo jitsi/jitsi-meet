@@ -6,7 +6,6 @@ import {
     hasRaisedHand,
     isScreenShareParticipant,
 } from "../../../participants/functions";
-import { IParticipant } from "../../../participants/types";
 import {
     getVideoTrackByParticipant,
     isParticipantAudioMuted,
@@ -15,7 +14,7 @@ import {
 
 export const getParticipantsWithTracks = (state: IReduxState) => {
     const localParticipant = getLocalParticipant(state);
-    const remoteParticipantsMap = getRemoteParticipants(state); // change for getRemoteParticipantsSorted???
+    const remoteParticipantsMap = getRemoteParticipants(state);
     const remoteParticipants = Array.from(remoteParticipantsMap.values());
     const allParticipants = localParticipant ? [localParticipant, ...remoteParticipants] : remoteParticipants;
 
@@ -26,10 +25,13 @@ export const getParticipantsWithTracks = (state: IReduxState) => {
             const isVideoMuted = isParticipantVideoMuted(participant, state);
             const isAudioMuted = isParticipantAudioMuted(participant, state);
             const displayName = getParticipantDisplayName(state, participant.id);
+
+            const videoEnabled = !isVideoMuted && videoTrack !== undefined;
+
             return {
                 id: participant.id,
                 name: displayName,
-                videoEnabled: !isVideoMuted && videoTrack !== undefined,
+                videoEnabled: videoEnabled,
                 audioMuted: isAudioMuted,
                 videoTrack: videoTrack?.jitsiTrack,
                 local: participant.local || false,

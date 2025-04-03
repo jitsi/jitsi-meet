@@ -7,6 +7,7 @@ import VideoGallery from "../components/VideoGallery";
 import VideoSpeaker from "../components/VideoSpeaker";
 import { VideoParticipantType } from "../types";
 import { getParticipantsWithTracks } from "../utils";
+import AudioTracksContainer from "../../../../../filmstrip/components/web/AudioTracksContainer";
 
 interface GalleryVideoWrapperProps extends WithTranslation {
     videoMode: string;
@@ -17,6 +18,7 @@ interface GalleryVideoWrapperProps extends WithTranslation {
 const GalleryVideoWrapper = ({ videoMode, participants, flipX, t }: GalleryVideoWrapperProps) => {
     return (
         <div className="h-full w-full overflow-hidden bg-gray-950">
+            <AudioTracksContainer />
             <div className={videoMode === "gallery" ? "block" : "hidden"}>
                 <VideoGallery participants={participants ?? []} translate={t} flipX={flipX} />
             </div>
