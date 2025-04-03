@@ -119,8 +119,6 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
             if (!isLogged) {
                 setShowScheduleTooltip(true);
                 setShowNewMeetingTooltip(false);
-
-                return;
             }
         },
         [isLogged, setShowScheduleTooltip, setShowNewMeetingTooltip]

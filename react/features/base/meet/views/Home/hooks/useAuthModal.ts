@@ -90,33 +90,29 @@ export function useAuthModal({ onClose, onLogin, translate }: UseAuthModalProps)
     );
 
     const processLogin = async (email: string, password: string, twoFactorCode: string) => {
-        try {
-            if (!showTwoFactor) {
-                const is2FANeeded = await AuthService.instance.is2FANeeded(email);
+        if (!showTwoFactor) {
+            const is2FANeeded = await AuthService.instance.is2FANeeded(email);
 
-                if (is2FANeeded && !showTwoFactor) {
-                    setShowTwoFactor(true);
-                    return;
-                }
+            if (is2FANeeded && !showTwoFactor) {
+                setShowTwoFactor(true);
+                return;
             }
-
-            const loginCredentials = await authenticateUser(email, password, twoFactorCode);
-
-            if (!loginCredentials?.newToken || !loginCredentials?.user) {
-                throw new Error(translate("meet.auth.modal.error.invalidCredentials"));
-            }
-
-            const meetToken = await createMeetToken(loginCredentials.newToken);
-
-            if (!meetToken?.token || !meetToken?.room) {
-                throw new Error(translate("meet.auth.modal.error.cannotCreateMeetings"));
-            }
-
-            saveUserSession(loginCredentials);
-            onClose();
-        } catch (error) {
-            throw error;
         }
+
+        const loginCredentials = await authenticateUser(email, password, twoFactorCode);
+
+        if (!loginCredentials?.newToken || !loginCredentials?.user) {
+            throw new Error(translate("meet.auth.modal.error.invalidCredentials"));
+        }
+
+        const meetToken = await createMeetToken(loginCredentials.newToken);
+
+        if (!meetToken?.token || !meetToken?.room) {
+            throw new Error(translate("meet.auth.modal.error.cannotCreateMeetings"));
+        }
+
+        saveUserSession(loginCredentials);
+        onClose();
     };
 
     const handleLoginError = useCallback(

@@ -137,6 +137,14 @@ const RightContent = React.memo(
                     <div
                         ref={avatarRef}
                         onClick={toggleMenu}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                toggleMenu();
+                            }
+                        }}
+                        role="button"
+                        tabIndex={0}
                         className="cursor-pointer transition-transform duration-150 transform hover:scale-105 active:scale-95"
                     >
                         <Avatar src={avatar} fullName={fullName ?? ""} className="text-white" diameter={40} />

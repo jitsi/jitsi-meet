@@ -13,12 +13,12 @@ interface InputProps {
     type?: "text" | "email" | "number";
     disabled?: boolean;
     register: UseFormRegister<IFormValues>;
-    minLength?: ValidationRule<number> | undefined;
-    maxLength?: ValidationRule<number> | undefined;
+    minLength?: ValidationRule<number>;
+    maxLength?: ValidationRule<number>;
     placeholder: string;
-    pattern?: ValidationRule<RegExp> | undefined;
-    error: FieldError | undefined;
-    min?: ValidationRule<number | string> | undefined;
+    pattern?: ValidationRule<RegExp>;
+    error: FieldError;
+    min?: ValidationRule<number | string>;
     required?: boolean;
     className?: string;
     autoFocus?: boolean;
