@@ -188,7 +188,7 @@ export default class AlwaysOnTop extends Component<any, IState> {
                         iconUser = { DEFAULT_ICON.IconUser }
                         id = 'avatar'
                         initials = { getInitials(displayName) }
-                        url = { avatarURL } />)
+                        url = { avatarURL } />
                 </div>
                 <div
                     className = 'displayname'
