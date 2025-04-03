@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import { App } from './features/app/components/App.web';
 import { getLogger } from './features/base/logging/functions';
@@ -68,14 +68,22 @@ globalNS.entryPoints = {
     WHITEBOARD: WhiteboardApp
 };
 
+const roots = {};
+
 globalNS.renderEntryPoint = ({
     Component,
     props = {},
     elementId = 'react'
 }) => {
     /* eslint-disable-next-line react/no-deprecated */
-    ReactDOM.render(
-        <Component { ...props } />,
-        document.getElementById(elementId)
+    
+    const container = document.getElementById(elementId);
+    if(container) {
+        if(!roots[elementId]) {
+            roots[elementId] = createRoot(container);
+        }
+        roots[elementId].render(
+        <Component { ...props } />
     );
+    }
 };
