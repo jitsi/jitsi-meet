@@ -16,7 +16,7 @@ window.addEventListener(
     'beforeunload',
     /* eslint-disable-next-line react/no-deprecated */
     () => {
-        if(root) {
+        if (root) {
             root.unmount();
-        }   
+        }
     });

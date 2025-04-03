@@ -76,14 +76,14 @@ globalNS.renderEntryPoint = ({
     elementId = 'react'
 }) => {
     /* eslint-disable-next-line react/no-deprecated */
-    
+
     const container = document.getElementById(elementId);
-    if(container) {
-        if(!roots[elementId]) {
+    if (container) {
+        if (!roots[elementId]) {
             roots[elementId] = createRoot(container);
         }
         roots[elementId].render(
-        <Component { ...props } />
-    );
+            <Component {...props} />
+        );
     }
 };

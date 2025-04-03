@@ -18,36 +18,36 @@ let root;
  */
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('react');
-    if(container) {
-    // @ts-ignore
-    const { room } = parseURLParams(window.location, true, 'search');
-    const { href } = window.location;
-    const ix = href.indexOf(DIAL_IN_INFO_PAGE_PATH_NAME);
-    const url = (ix > 0 ? href.substring(0, ix) : href) + room;
+    if (container) {
+        // @ts-ignore
+        const { room } = parseURLParams(window.location, true, 'search');
+        const { href } = window.location;
+        const ix = href.indexOf(DIAL_IN_INFO_PAGE_PATH_NAME);
+        const url = (ix > 0 ? href.substring(0, ix) : href) + room;
 
-    /* eslint-disable-next-line react/no-deprecated */
-    if(!root) {
-        root = createRoot(container);
+        /* eslint-disable-next-line react/no-deprecated */
+        if (!root) {
+            root = createRoot(container);
+        }
+        root.render(
+            <I18nextProvider i18n={i18next}>
+                {room
+                    ? <DialInSummary
+                        className='dial-in-page'
+                        clickableNumbers={isMobileBrowser()}
+                        room={decodeURIComponent(room)}
+                        url={url} />
+                    : <NoRoomError className='dial-in-page' />}
+            </I18nextProvider>
+        );
+    } else {
+        console.error("Root container with Id react not found.")
     }
-    root.render(
-        <I18nextProvider i18n = { i18next }>
-            { room
-                ? <DialInSummary
-                    className = 'dial-in-page'
-                    clickableNumbers = { isMobileBrowser() }
-                    room = { decodeURIComponent(room) }
-                    url = { url } />
-                : <NoRoomError className = 'dial-in-page' /> }
-        </I18nextProvider>
-    );
-} else {
-    console.error("Root container with Id react not found.")
-}
 });
 
 window.addEventListener('beforeunload', () => {
     /* eslint-disable-next-line react/no-deprecated */
-    if(root) {
+    if (root) {
         root.unmount();
         root = null;
     }
