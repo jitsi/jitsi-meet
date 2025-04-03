@@ -34,7 +34,7 @@ jobs:
               run: npm i --legacy-peer-deps
 
             - name: Test and coverage
-              run: yarn test:cov
+              run: yarn test:coverage
 
             - name: SonarCloud Scan
               uses: SonarSource/sonarcloud-github-action@v3
