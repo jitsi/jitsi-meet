@@ -19,6 +19,7 @@ import { createLocalVideoTracks } from "../../../functions.web";
 import VideoLabelEntry from "./VideoLabelEntry";
 import { TEXT_OVERFLOW_TYPES } from "../../../../base/ui/constants.any";
 import { openSettingsDialog } from "../../../actions.web";
+import { Camera, Check, VideoCamera } from "@phosphor-icons/react";
 
 /**
  * The type of the React {@code Component} props of {@link VideoSettingsContent}.
@@ -350,7 +351,7 @@ const VideoSettingsContent = ({
                 {selectedTrack && _renderPreviewEntry(selectedTrack)}
                 <div style={{ pointerEvents: "none" }}>
                     <ContextMenuItem
-                        icon={IconVideo}
+                        icon={() => <VideoCamera size={20} color="black" weight="fill"  />}
                         text={t("meet.settings.video.videoInput")}
                         accessibilityLabel={t("meet.settings.video.videoInput")}
                     />
