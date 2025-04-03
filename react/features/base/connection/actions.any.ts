@@ -155,7 +155,7 @@ export function constructOptions(state: IReduxState) {
             options.websocketKeepAliveUrl = appendURLParam(options.websocketKeepAliveUrl, 'room', roomName ?? '');
         }
         if (options.conferenceRequestUrl) {
-            options.conferenceRequestUrl = appendURLParam(options.conferenceRequestUrl, 'room', roomName ?? '');
+            options.conferenceRequestUrl = undefined; 
         }
     }
 

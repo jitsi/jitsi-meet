@@ -6,8 +6,6 @@ import $ from 'jquery';
 
 window.$ = window.jQuery = $;
 
-import '@matrix-org/olm';
-
 import 'focus-visible';
 
 // We need to setup the jitsi-local-storage as early as possible so that we can start using it.
@@ -20,13 +18,6 @@ import API from './modules/API';
 import UI from './modules/UI/UI';
 import translation from './modules/translation/translation';
 
-// Initialize Olm as early as possible.
-if (window.Olm) {
-    window.Olm.init().catch(e => {
-        console.error('Failed to initialize Olm, E2EE will be disabled', e);
-        delete window.Olm;
-    });
-}
 
 window.APP = {
     API,

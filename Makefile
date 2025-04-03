@@ -3,7 +3,6 @@ CLEANCSS = ./node_modules/.bin/cleancss
 DEPLOY_DIR = libs
 LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet
 DASHLANE_PQC_DIR = node_modules/@dashlane/pqc-kem-kyber512-browser/dist
-OLM_DIR = node_modules/@matrix-org/olm
 TF_WASM_DIR = node_modules/@tensorflow/tfjs-backend-wasm/dist/
 RNNOISE_WASM_DIR = node_modules/@jitsi/rnnoise-wasm/dist
 EXCALIDRAW_DIR = node_modules/@jitsi/excalidraw/dist/excalidraw-assets
@@ -35,7 +34,7 @@ clean:
 	rm -fr $(BUILD_DIR)
 
 .NOTPARALLEL:
-deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-excalidraw deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm deploy-css deploy-local deploy-face-landmarks
+deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-excalidraw deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-tf-wasm deploy-css deploy-local deploy-face-landmarks
 
 deploy-init:
 	rm -fr $(DEPLOY_DIR)
@@ -67,11 +66,7 @@ deploy-lib-jitsi-meet:
 	cp \
 		$(LIBJITSIMEET_DIR)/dist/umd/lib-jitsi-meet.* \
 		$(LIBJITSIMEET_DIR)/dist/umd/pqc-kem-kyber512.wasm \
-		$(DEPLOY_DIR)
-
-deploy-olm:
-	cp \
-		$(OLM_DIR)/olm.wasm \
+		$(LIBJITSIMEET_DIR)/dist/umd/vodozemac.wasm \
 		$(DEPLOY_DIR)
 
 deploy-tf-wasm:
@@ -121,7 +116,7 @@ deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 .NOTPARALLEL:
-dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm  deploy-excalidraw-dev deploy-face-landmarks
+dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-tf-wasm  deploy-excalidraw-dev deploy-face-landmarks
 	$(WEBPACK_DEV_SERVER)
 
 source-package:
