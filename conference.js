@@ -1548,7 +1548,6 @@ export default {
                 }
 
                 APP.store.dispatch(localParticipantRoleChanged(role));
-                APP.API.notifyUserRoleChanged(id, role);
             } else {
                 APP.store.dispatch(participantRoleChanged(id, role));
             }
