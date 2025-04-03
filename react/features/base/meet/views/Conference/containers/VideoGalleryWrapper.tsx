@@ -21,7 +21,7 @@ const GalleryVideoWrapper = ({ videoMode, participants, flipX, t }: GalleryVideo
                 <VideoGallery participants={participants ?? []} translate={t} flipX={flipX} />
             </div>
             <div className={videoMode === "speaker" ? "block" : "hidden"}>
-                <VideoSpeaker participants={participants ?? []} translate={t} />
+                <VideoSpeaker participants={participants ?? []} translate={t} flipX={flipX} />
             </div>
         </div>
     );

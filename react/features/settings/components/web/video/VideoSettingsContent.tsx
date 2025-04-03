@@ -228,6 +228,7 @@ const VideoSettingsContent = ({
     // eslint-disable-next-line react/no-multi-comp
     const _renderPreviewEntry = (track: any) => {
         const { error, jitsiTrack } = track;
+
         const key = `vp-current`;
 
         if (error) {
@@ -256,7 +257,7 @@ const VideoSettingsContent = ({
                             )}
                         </div>
                         <div className={classes.previewVideo}>
-                            <Video className={cx("flipVideoX")} playsinline={true} videoTrack={{ jitsiTrack }} />
+                            <Video className={`${localFlipX && "scale-x-[-1]"}`} playsinline={true} videoTrack={{ jitsiTrack }} />
                         </div>
                     </div>
                 )}

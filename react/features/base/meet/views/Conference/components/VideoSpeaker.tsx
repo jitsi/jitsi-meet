@@ -6,9 +6,10 @@ import LargeVideo from "../../../../../large-video/components/LargeVideo.web";
 export interface VideoSpeakerProps {
     participants: VideoParticipantType[];
     translate: (key: string) => string;
+    flipX?: boolean;
 }
 
-const VideoSpeaker = ({ participants, translate }: VideoSpeakerProps) => {
+const VideoSpeaker = ({ participants, translate, flipX }: VideoSpeakerProps) => {
     const localParticipant = participants.find((participant) => participant.local);
 
     return (
@@ -20,6 +21,7 @@ const VideoSpeaker = ({ participants, translate }: VideoSpeakerProps) => {
                     participant={localParticipant}
                     translate={translate}
                     className="absolute bottom-4 right-4 h-[17%] w-[15%]"
+                    flipX={flipX}
                 />
             )}
         </div>
