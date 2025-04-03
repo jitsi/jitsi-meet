@@ -183,6 +183,7 @@ const PreMeetingScreen = ({
     const storageManager = useLocalStorage();
     const dispatch = useDispatch();
 
+    const isInNewMeeting = window.location.href.includes('new-meeting');
     const showNameError = userName.length === 0 && !isNameInputFocused;
 
     const toolbarSection = useMemo(
@@ -272,7 +273,7 @@ const PreMeetingScreen = ({
         if (joinRoomError) return "joinRoom";
         return undefined;
     };
-
+    console.log({isInNewMeeting})
     return (
         <div className="flex flex-col h-full">
             <div className={`flex flex-col px-5 ${classes.container}`}>
@@ -281,7 +282,7 @@ const PreMeetingScreen = ({
                     translate={t}
                     onLogin={handleRedirectToLogin}
                     onSignUp={handleRedirectToSignUp}
-                    onNewMeeting={handleNewMeeting}
+                    onNewMeeting={isInNewMeeting ? undefined : handleNewMeeting}
                     isCreatingMeeting={isCreatingMeeting}
                 />
                 <ErrorModals

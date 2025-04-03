@@ -85,14 +85,14 @@ const RightContent = React.memo(
     }: RightContentProps): JSX.Element => {
         return isLogged ? (
             <div className="flex space-x-2 flex-row">
-                <Button
+                {onNewMeeting && <Button
                     variant="primary"
                     onClick={onNewMeeting}
                     disabled={isCreatingMeeting}
                     loading={isCreatingMeeting}
                 >
                     {translate("meet.preMeeting.newMeeting")}
-                </Button>
+                </Button>}
                 <Avatar src={avatar} fullName={fullName ?? ""} className="text-white" diameter={40} />
             </div>
         ) : (
