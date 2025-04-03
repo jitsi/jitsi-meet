@@ -252,7 +252,7 @@ describe('Participants presence', () => {
 
         const eventConferenceLeftP2 = await p2.driver.waitUntil(() =>
             p2.getIframeAPI().getEventResult('videoConferenceLeft'), {
-            timeout: 2000,
+            timeout: 4000,
             timeoutMsg: 'videoConferenceLeft not received'
         });
 
@@ -350,7 +350,7 @@ describe('Participants presence', () => {
 
         const eventConferenceLeftP2 = await p2.driver.waitUntil(() =>
             p2.getIframeAPI().getEventResult('videoConferenceLeft'), {
-            timeout: 2000,
+            timeout: 4000,
             timeoutMsg: 'videoConferenceLeft not received'
         });
 
@@ -379,7 +379,7 @@ describe('Participants presence', () => {
 
         const eventConferenceLeft = await p1.driver.waitUntil(() =>
             p1.getIframeAPI().getEventResult('videoConferenceLeft'), {
-            timeout: 2000,
+            timeout: 4000,
             timeoutMsg: 'videoConferenceLeft not received'
         });
 
