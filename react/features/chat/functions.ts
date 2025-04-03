@@ -1,7 +1,7 @@
-// @ts-expect-error
+
 import aliases from 'react-emoji-render/data/aliases';
 // eslint-disable-next-line lines-around-comment
-// @ts-expect-error
+
 import emojiAsciiAliases from 'react-emoji-render/data/asciiAliases';
 
 import { IReduxState } from '../app/types';
@@ -73,13 +73,25 @@ const SLACK_EMOJI_REGEXP_ARRAY: Array<[RegExp, string]> = [];
  * @returns {string}
  */
 export function replaceNonUnicodeEmojis(message: string): string {
+    // Define patterns that should not be converted to emojis
+    const excludePatterns = [
+        /\b[0-9a-fA-F:]+\/[0-9]{1,3}\b/g,  // IPv6 addresses with CIDR notation
+        /\b[0-9]+:[a-zäöü]+\b/g            // Specific text pattern like "20:ssä paikassa"
+    ];
+
+    for (const pattern of excludePatterns) {
+        if (pattern.test(message)) {
+            return message;
+        }
+    }
+
     let replacedMessage = message;
 
-    for (const [ regexp, replaceValue ] of SLACK_EMOJI_REGEXP_ARRAY) {
+    for (const [regexp, replaceValue] of SLACK_EMOJI_REGEXP_ARRAY) {
         replacedMessage = replacedMessage.replace(regexp, replaceValue);
     }
 
-    for (const [ regexp, replaceValue ] of ASCII_EMOTICON_REGEXP_ARRAY) {
+    for (const [regexp, replaceValue] of ASCII_EMOTICON_REGEXP_ARRAY) {
         replacedMessage = replacedMessage.replace(regexp, replaceValue);
     }
 

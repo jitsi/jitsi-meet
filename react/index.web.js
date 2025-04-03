@@ -1,7 +1,7 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
-import { App } from './features/app/components/App.web';
+import { App as AppComponent } from './features/app/components/App.web';
 import { getLogger } from './features/base/logging/functions';
 import Platform from './features/base/react/Platform.web';
 import { getJitsiMeetGlobalNS, getJitsiMeetGlobalNSConnectionTimes } from './features/base/util/helpers';
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 globalNS.entryPoints = {
-    APP: App,
+    APP: AppComponent,
     PREJOIN: PrejoinApp,
     DIALIN: DialInSummaryApp,
     WHITEBOARD: WhiteboardApp
@@ -73,9 +73,7 @@ globalNS.renderEntryPoint = ({
     props = {},
     elementId = 'react'
 }) => {
-    /* eslint-disable-next-line react/no-deprecated */
-    ReactDOM.render(
-        <Component { ...props } />,
-        document.getElementById(elementId)
-    );
+    const container = document.getElementById(elementId);
+    const root = createRoot(container);
+    root.render(<Component { ...props } />);
 };

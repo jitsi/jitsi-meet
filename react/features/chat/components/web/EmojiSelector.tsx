@@ -12,7 +12,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             display: 'flex',
             flexDirection: 'row',
             borderRadius: '4px',
-            backgroundColor: theme.palette.ui03
+            backgroundColor: theme.palette.background.default
         },
 
         emojiButton: {
@@ -44,12 +44,12 @@ const EmojiSelector: React.FC<IProps> = ({ onSelect }) => {
     );
 
     return (
-        <div className = { classes.emojiGrid }>
+        <div className={classes.emojiGrid}>
             {emojiNames.map(name => (
                 <span
-                    className = { classes.emojiButton }
-                    key = { name }
-                    onClick = { handleSelect(emojiMap[name]) }>
+                    className={classes.emojiButton}
+                    key={name}
+                    onClick={handleSelect(emojiMap[name])}>
                     {emojiMap[name]}
                 </span>
             ))}
