@@ -33,8 +33,8 @@ jobs:
             - name: Install dependencies
               run: npm i --legacy-peer-deps
 
-            # - name: Test and coverage
-            #   run: yarn test:cov
+            - name: Test and coverage
+              run: yarn test:cov
 
             - name: SonarCloud Scan
               uses: SonarSource/sonarcloud-github-action@v3
