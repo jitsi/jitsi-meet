@@ -273,6 +273,10 @@ export async function muteAudioAndCheck(testee: Participant, observer: Participa
 
     await observer.getFilmstrip().assertAudioMuteIconIsDisplayed(testee);
     await testee.getFilmstrip().assertAudioMuteIconIsDisplayed(testee);
+
+    await observer.getParticipantsPane().assertAudioMuteIconIsDisplayed(testee);
+    await testee.getParticipantsPane().assertAudioMuteIconIsDisplayed(testee);
+
 }
 
 /**
@@ -285,8 +289,12 @@ export async function unmuteAudioAndCheck(testee: Participant, observer: Partici
     await testee.getNotifications().closeAskToUnmuteNotification(true);
     await testee.getNotifications().closeAVModerationMutedNotification(true);
     await testee.getToolbar().clickAudioUnmuteButton();
+
     await testee.getFilmstrip().assertAudioMuteIconIsDisplayed(testee, true);
     await observer.getFilmstrip().assertAudioMuteIconIsDisplayed(testee, true);
+
+    await testee.getParticipantsPane().assertAudioMuteIconIsDisplayed(testee, true);
+    await observer.getParticipantsPane().assertAudioMuteIconIsDisplayed(testee, true);
 }
 
 /**

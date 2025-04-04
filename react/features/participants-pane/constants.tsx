@@ -68,11 +68,13 @@ export const AudioStateIcons = {
     [MEDIA_STATE.FORCE_MUTED]: (
         <Icon
             color = '#E04757'
+            id = 'audioMuted'
             size = { 16 }
             src = { IconMicSlash } />
     ),
     [MEDIA_STATE.MUTED]: (
         <Icon
+            id = 'audioMuted'
             size = { 16 }
             src = { IconMicSlash } />
     ),
