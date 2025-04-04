@@ -1,5 +1,5 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, type Root } from 'react-dom/client';
 import { I18nextProvider } from 'react-i18next';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
@@ -11,14 +11,14 @@ import DialInSummary from '../dial-in-summary/web/DialInSummary';
 import NoRoomError from './NoRoomError.web';
 
 
-let _root;
+let _root: Root | null = null;
 
 /**
  * TODO: This seems unused, so we can drop it.
  */
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('react');
-    
+
     if (container) {
         // @ts-ignore
         const { room } = parseURLParams(window.location, true, 'search');

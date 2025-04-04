@@ -223,7 +223,9 @@
     "test-grid": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.grid.conf.ts",
     "test-grid-single": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.grid.conf.ts --spec",
     "test-grid-ff": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.grid.firefox.conf.ts",
-    "test-grid-ff-single": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.grid.firefox.conf.ts --spec"
+    "test-grid-ff-single": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.grid.firefox.conf.ts --spec",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
+
   },
   "resolutions": {
     "@types/react": "17.0.14",
