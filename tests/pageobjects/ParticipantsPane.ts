@@ -75,13 +75,47 @@ export default class ParticipantsPane extends BasePageObject {
         await this.participant.driver.$(mutedIconXPath).waitForDisplayed({
             reverse,
             timeout: 2000,
-            timeoutMsg: `Video mute icon is${reverse ? '' : ' not'} displayed for ${testee.name}`
+            timeoutMsg: `Video mute icon is${reverse ? '' : ' not'} displayed for ${testee.displayName} at ${
+                this.participant.displayName} side.`
         });
 
         if (!isOpen) {
             await this.close();
         }
     }
+
+    /**
+     * Asserts that {@code participant} shows or doesn't show the video mute icon for the conference participant
+     * identified by {@code testee}.
+     *
+     * @param {Participant} testee - The {@code Participant} for whom we're checking the status of audio muted icon.
+     * @param {boolean} reverse - If {@code true}, the method will assert the absence of the "mute" icon;
+     * otherwise, it will assert its presence.
+     * @returns {Promise<void>}
+     */
+    async assertAudioMuteIconIsDisplayed(testee: Participant, reverse = false): Promise<void> {
+        const isOpen = await this.isOpen();
+
+        if (!isOpen) {
+            await this.open();
+        }
+
+        const id = `participant-item-${await testee.getEndpointId()}`;
+        const mutedIconXPath
+            = `//div[@id='${id}']//div[contains(@class, 'indicators')]//*[local-name()='svg' and @id='audioMuted']`;
+
+        await this.participant.driver.$(mutedIconXPath).waitForDisplayed({
+            reverse,
+            timeout: 2000,
+            timeoutMsg: `Audio mute icon is${reverse ? '' : ' not'} displayed for ${testee.displayName} at ${
+                this.participant.displayName} side.`
+        });
+
+        if (!isOpen) {
+            await this.close();
+        }
+    }
+
 
     /**
      * Clicks the context menu button in the participants pane.
