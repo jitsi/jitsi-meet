@@ -24,6 +24,17 @@ export default class IframeAPI extends BasePageObject {
     }
 
     /**
+     * Clears the history of an event.
+     * @param event
+     */
+    clearEventResults(event: string) {
+        return this.participant.execute(
+            eventName => {
+                window.jitsiAPI.test[eventName] = undefined;
+            }, event);
+    }
+
+    /**
      * Adds an event listener to the iframeAPI.
      * @param eventName The event name.
      */
