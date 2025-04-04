@@ -46,8 +46,7 @@ export function getAvailableSubtitlesLanguages(stateful: IStateful, selectedLang
  * @returns {boolean} - True if the subtitles tab should be enabled.
  */
 export function isSubtilesTabEnabled(state: IReduxState) {
-    const { testing } = state['features/base/config'];
     const { showSubtitlesOnStage = false } = state['features/base/settings'];
 
-    return !showSubtitlesOnStage && !testing?.disableShowSubtitlesOnStageSetting;
+    return !showSubtitlesOnStage;
 }

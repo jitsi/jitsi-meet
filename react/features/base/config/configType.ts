@@ -588,7 +588,6 @@ export interface IConfig {
     testing?: {
         assumeBandwidth?: boolean;
         debugAudioLevels?: boolean;
-        disableShowSubtitlesOnStageSetting?: boolean;
         dumpTranscript?: boolean;
         failICE?: boolean;
         noAutoPlayVideo?: boolean;

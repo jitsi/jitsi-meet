@@ -34,11 +34,6 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     disableHideSelfView: boolean;
 
     /**
-     * Whether "Show subtitles on stage" setting is enabled.
-     */
-    disableShowSubtitlesOnStageSetting: boolean;
-
-    /**
      * Whether or not follow me is currently active (enabled by some other participant).
      */
     followMeActive: boolean;
@@ -154,7 +149,6 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
             hideSelfView,
             showLanguageSettings,
             showSubtitlesOnStage,
-            disableShowSubtitlesOnStageSetting,
             t
         } = this.props;
         const classes = withStyles.getClasses(this.props);
@@ -176,7 +170,7 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
                         name = 'hide-self-view'
                         onChange = { this._onHideSelfViewChanged } />
                 )}
-                { !disableShowSubtitlesOnStageSetting && <Checkbox
+                { <Checkbox
                     checked = { showSubtitlesOnStage }
                     className = { classes.checkbox }
                     label = { t('settings.showSubtitlesOnStage') }

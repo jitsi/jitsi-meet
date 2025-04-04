@@ -104,12 +104,11 @@ export function getMoreTabProps(stateful: IStateful) {
     const configuredTabs: string[] = interfaceConfig.SETTINGS_SECTIONS || [];
 
     // when self view is controlled by the config we hide the settings
-    const { disableSelfView, disableSelfViewSettings, testing } = state['features/base/config'];
+    const { disableSelfView, disableSelfViewSettings } = state['features/base/config'];
 
     return {
         currentLanguage: language,
         disableHideSelfView: disableSelfViewSettings || disableSelfView,
-        disableShowSubtitlesOnStageSetting: Boolean(testing?.disableShowSubtitlesOnStageSetting),
         hideSelfView: getHideSelfView(state),
         iAmVisitor: iAmVisitor(state),
         languages: LANGUAGES,
