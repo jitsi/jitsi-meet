@@ -17,7 +17,7 @@ interface InputProps {
     maxLength?: ValidationRule<number>;
     placeholder: string;
     pattern?: ValidationRule<RegExp>;
-    error: FieldError;
+    error?: FieldError;
     min?: ValidationRule<number | string>;
     required?: boolean;
     className?: string;
