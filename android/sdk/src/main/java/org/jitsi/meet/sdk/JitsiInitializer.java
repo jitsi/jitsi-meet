@@ -22,7 +22,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.startup.Initializer;
 
-import com.facebook.soloader.SoLoader;
 import org.wonday.orientation.OrientationActivityLifecycle;
 
 import java.util.Collections;
@@ -35,7 +34,12 @@ public class JitsiInitializer implements Initializer<Boolean> {
     public Boolean create(@NonNull Context context) {
         Log.d(this.getClass().getCanonicalName(), "create");
 
-        SoLoader.init(context, /* native exopackage */ false);
+        // Initialize native libraries using Android's built-in mechanism
+        try {
+            System.loadLibrary("c++_shared");
+        } catch (UnsatisfiedLinkError e) {
+            Log.e(this.getClass().getCanonicalName(), "Failed to load native libraries", e);
+        }
 
         // Register our uncaught exception handler.
         JitsiMeetUncaughtExceptionHandler.register();
