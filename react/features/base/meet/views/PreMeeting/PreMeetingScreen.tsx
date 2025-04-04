@@ -273,6 +273,13 @@ const PreMeetingScreen = ({
         return undefined;
     };
 
+    // TODO: EXTRACT ONLGOUT AND HEADER, CHECK HeaderWrapper.tsx
+    const localStorageManager = useLocalStorage();
+    const onLogout = () => {
+        localStorageManager.clearCredentials();
+        dispatch(redirectToStaticPage("/"));
+    };
+
     return (
         <div className="flex flex-col h-full">
             <div className={`flex flex-col px-5 ${classes.container}`}>
@@ -280,6 +287,7 @@ const PreMeetingScreen = ({
                     userData={userData}
                     translate={t}
                     onLogin={handleRedirectToLogin}
+                    onLogout={onLogout}
                     onSignUp={handleRedirectToSignUp}
                     onNewMeeting={handleNewMeeting}
                     isCreatingMeeting={isCreatingMeeting}
