@@ -1,5 +1,7 @@
 import { useSelector } from 'react-redux';
 
+import { IReduxState } from '../app/types';
+
 import ClosedCaptionButton from './components/web/ClosedCaptionButton';
 import { canStartSubtitles } from './functions.any';
 
@@ -16,8 +18,9 @@ const cc = {
  */
 export function useClosedCaptionButton() {
     const isStartSubtitlesButtonVisible = useSelector(canStartSubtitles);
+    const { showSubtitlesOnStage = false } = useSelector((state: IReduxState) => state['features/base/settings']);
 
-    if (isStartSubtitlesButtonVisible) {
+    if (isStartSubtitlesButtonVisible || !showSubtitlesOnStage) {
         return cc;
     }
 }
