@@ -1874,6 +1874,9 @@ var config = {
 
     // If true remove the tint foreground on focused user camera in filmstrip
     // disableCameraTintForeground: false,
+
+    // If true force the filmstrip background to always have an opacity of 1
+    // filmstripBackgroundOpaque: false,
 };
 
 // Set the default values for JaaS customers
