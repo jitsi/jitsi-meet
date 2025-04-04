@@ -41,8 +41,8 @@ export const LOBBY_CHAT_MESSAGE = 'LOBBY_CHAT_MESSAGE';
 
 export enum ChatTabs {
     CHAT = 'chat-tab',
-    POLLS = 'polls-tab',
-    SUBTITLES = 'subtitles-tab'
+    CLOSED_CAPTIONS = 'cc-tab',
+    POLLS = 'polls-tab'
 }
 
 /**

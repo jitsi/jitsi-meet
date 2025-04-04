@@ -134,7 +134,7 @@
         "tabs": {
             "chat": "Chat",
             "polls": "Polls",
-            "subtitles": "Subtitles"
+            "closedCaptions": "Closed Captions"
         },
         "title": "Chat and Subtitles",
         "titleWithPolls": "Chat, Polls and Subtitles",
@@ -146,6 +146,10 @@
         "close": "Close",
         "dontShowAgain": "Don’t show me this again",
         "installExtensionText": "Install the extension for Google Calendar and Office 365 integration"
+    },
+    "closedCaptionsTab": {
+        "startClosedCaptionsButton": "Start closed captions",
+        "emptyState": "The closed captions content will be available once a moderator starts it"
     },
     "connectingOverlay": {
         "joiningRoom": "Connecting you to your meeting…"
@@ -1421,7 +1425,8 @@
         "subtitles": "Subtitles",
         "subtitlesOff": "Off",
         "original": "Original",
-        "tr": "TR"
+        "tr": "TR",
+        "translateTo": "Translate to"
     },
     "unpinParticipant": "{{participantName}} - Unpin",
     "userMedia": {

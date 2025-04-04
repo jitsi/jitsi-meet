@@ -248,18 +248,18 @@ const Chat = ({
                             className = { cx(classes.pollsPanel, _focusedTab !== ChatTabs.POLLS && 'hide') }
                             id = { `${ChatTabs.POLLS}-panel` }
                             role = 'tabpanel'
-                            tabIndex = { 0 }>
+                            tabIndex = { 1 }>
                             <PollsPane />
                         </div>
                         <KeyboardAvoider />
                     </>
                 )}
                 { _isCCTabEnabled && <div
-                    aria-labelledby = { ChatTabs.SUBTITLES }
-                    className = { cx(classes.chatPanel, _focusedTab !== ChatTabs.SUBTITLES && 'hide') }
-                    id = { `${ChatTabs.SUBTITLES}-panel` }
+                    aria-labelledby = { ChatTabs.CLOSED_CAPTIONS }
+                    className = { cx(classes.chatPanel, _focusedTab !== ChatTabs.CLOSED_CAPTIONS && 'hide') }
+                    id = { `${ChatTabs.CLOSED_CAPTIONS}-panel` }
                     role = 'tabpanel'
-                    tabIndex = { 0 }>
+                    tabIndex = { 2 }>
                     <SubtitlesTab />
                 </div> }
             </>
@@ -297,11 +297,11 @@ const Chat = ({
 
         if (_isCCTabEnabled) {
             tabs.push({
-                accessibilityLabel: t('chat.tabs.subtitles'),
+                accessibilityLabel: t('chat.tabs.closedCaptions'),
                 countBadge: undefined,
-                id: ChatTabs.SUBTITLES,
-                controlsId: `${ChatTabs.SUBTITLES}-panel`,
-                label: t('chat.tabs.subtitles')
+                id: ChatTabs.CLOSED_CAPTIONS,
+                controlsId: `${ChatTabs.CLOSED_CAPTIONS}-panel`,
+                label: t('chat.tabs.closedCaptions')
             });
         }
 

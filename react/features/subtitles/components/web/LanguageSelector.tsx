@@ -89,7 +89,7 @@ function LanguageSelector() {
     return (
         <div className = { classes.container }>
             <span className = { classes.label }>
-                {t('settings.language')}:
+                {t('transcribing.translateTo')}:
             </span>
             <Select
                 className = { classes.select }

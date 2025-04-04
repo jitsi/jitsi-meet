@@ -2,11 +2,11 @@ import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { openDialog } from '../../../base/dialog/actions';
 import Button from '../../../base/ui/components/web/Button';
 import { groupMessagesBySender } from '../../../base/util/messageGrouping';
-import StartRecordingDialog from '../../../recording/components/Recording/web/StartRecordingDialog';
+import { setRequestingSubtitles } from '../../../subtitles/actions.any';
 import LanguageSelector from '../../../subtitles/components/web/LanguageSelector';
+import { canStartSubtitles } from '../../../subtitles/functions.any';
 import { ISubtitle } from '../../../subtitles/types';
 import { isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
 
@@ -67,6 +67,7 @@ export default function SubtitlesTab() {
     const language = useSelector(state => state['features/subtitles']._language);
     const selectedLanguage = language?.replace('translation-languages:', '');
     const isTranscribing = useSelector(isRecorderTranscriptionsRunning);
+    const _canStartSubtitles = useSelector(canStartSubtitles);
 
     const filteredSubtitles = useMemo(() => {
         // First, create a map of transcription messages by message ID
@@ -99,19 +100,28 @@ export default function SubtitlesTab() {
     const groupedSubtitles = useMemo(() =>
         groupMessagesBySender(filteredSubtitles), [ filteredSubtitles ]);
 
-    const handleStartRecording = useCallback(() => {
-        dispatch(openDialog(StartRecordingDialog));
+    const startClosedCaptions = useCallback(() => {
+        dispatch(setRequestingSubtitles(true));
     }, [ dispatch ]);
 
     if (!isTranscribing) {
         return (
             <div className = { classes.emptyContent }>
-                {/* <span>Start recording to enable transcription</span> */}
                 <Button
-                    accessibilityLabel = 'Start Recording'
-                    labelKey = 'dialog.startRecording'
-                    onClick = { handleStartRecording }
+                    accessibilityLabel = 'Start Closed Captions'
+                    appearance = 'primary'
+                    labelKey = 'closedCaptionsTab.startClosedCaptionsButton'
+                    onClick = { startClosedCaptions }
+                    size = 'large'
                     type = 'primary' />
+            </div>
+        );
+    } else if (!_canStartSubtitles) {
+        return (
+            <div className = { classes.emptyContent }>
+                <span>
+                    { 'closedCaptionsTab.emptyState' }
+                </span>
             </div>
         );
     }
