@@ -127,6 +127,7 @@
         "noMessagesMessage": "Es gibt noch keine Nachricht in dieser Konferenz. Starten Sie hier eine Unterhaltung!",
         "privateNotice": "Private Nachricht an {{recipient}}",
         "sendButton": "Senden",
+        "smileySymbol": "Emojis",
         "smileysPanel": "Emoji-Auswahl",
         "systemDisplayName": "System",
         "tabs": {
