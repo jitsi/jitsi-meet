@@ -43,7 +43,7 @@ const useStyles = makeStyles()(theme => {
             fontWeight: 600,
             height: '100%',
 
-            [[ '& > *:first-child', '& > *:last-child' ] as any]: {
+            [[ '& > *:first-of-type', '& > *:last-child' ] as any]: {
                 flexShrink: 0
             },
 

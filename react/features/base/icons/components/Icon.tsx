@@ -3,7 +3,8 @@ import React, { useCallback } from 'react';
 import { Container } from '../../react/components/index';
 import { StyleType, styleTypeToObject } from '../../styles/functions';
 
-import { IIconProps } from './types';
+import { IIconProps } from '../types';
+
 
 interface IProps extends IIconProps {
 

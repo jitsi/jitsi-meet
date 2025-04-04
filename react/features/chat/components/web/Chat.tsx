@@ -101,7 +101,7 @@ const useStyles = makeStyles()(theme => {
 
             '*': {
                 userSelect: 'text',
-                '-webkit-user-select': 'text'
+                'WebkitUserSelect': 'text'
             }
         },
 

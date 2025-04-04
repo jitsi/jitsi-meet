@@ -1,12 +1,10 @@
 # Jitsi Meet Translation
 
-Jitsi Meet uses [i18next](http://i18next.com) library for translation.
-i18next uses separate json files for each language.
-
+Jitsi Meet uses the [i18next](http://i18next.com) library for translations. i18next uses separate JSON files for each language.
 
 ## Translating Jitsi Meet
 
-The translation of Jitsi Meet is handled editing manually the language files.
+The translation of Jitsi Meet is handled by manually editing the language files.
 
 You can use the `update-translation.js` script as follows to help you with that:
 

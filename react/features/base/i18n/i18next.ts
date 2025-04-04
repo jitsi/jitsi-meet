@@ -8,7 +8,7 @@ import MAIN_RESOURCES from '../../../../lang/main.json';
 import TRANSLATION_LANGUAGES_RESOURCES from '../../../../lang/translation-languages.json';
 
 import { I18NEXT_INITIALIZED, LANGUAGE_CHANGED } from './actionTypes';
-import languageDetector from './languageDetector';
+import languageDetector from './languageDetector.web';
 
 /**
  * Override certain country names.
@@ -56,7 +56,7 @@ export const DEFAULT_LANGUAGE = 'en';
  * @public
  * @type {Array<string>}
  */
-export const TRANSLATION_LANGUAGES_HEAD: Array<string> = [ DEFAULT_LANGUAGE ];
+export const TRANSLATION_LANGUAGES_HEAD: Array<string> = [DEFAULT_LANGUAGE];
 
 /**
  * The options to initialize i18next with.
@@ -67,11 +67,11 @@ const options: i18next.InitOptions = {
     backend: <HttpBackendOptions>{
         loadPath: (lng: string[], ns: string[]) => {
             switch (ns[0]) {
-            case 'countries':
-            case 'main':
-                return 'lang/{{ns}}-{{lng}}.json';
-            default:
-                return 'lang/{{ns}}.json';
+                case 'countries':
+                case 'main':
+                    return `lang/${ns[0]}-${lng[0]}.json`;
+                default:
+                    return `lang/${ns[0]}.json`;
             }
         }
     },
@@ -81,18 +81,15 @@ const options: i18next.InitOptions = {
         escapeValue: false // not needed for react as it escapes by default
     },
     load: 'languageOnly',
-    ns: [ 'main', 'languages', 'countries', 'translation-languages' ],
+    ns: ['main', 'languages', 'countries', 'translation-languages'],
     react: {
         // re-render when a new resource bundle is added
-        // @ts-expect-error. Fixed in i18next 19.6.1.
         bindI18nStore: 'added',
         useSuspense: false
     },
     returnEmptyString: false,
     returnNull: false,
-
-    // XXX i18next modifies the array lngWhitelist so make sure to clone
-    // LANGUAGES.
+    // Clone LANGUAGES to prevent i18next from modifying the original array
     whitelist: LANGUAGES.slice()
 };
 
@@ -106,34 +103,36 @@ i18next.addResourceBundle(
     DEFAULT_LANGUAGE,
     'countries',
     COUNTRIES,
-    /* deep */ true,
-    /* overwrite */ true);
+    true, // deep
+    true  // overwrite
+);
 i18next.addResourceBundle(
     DEFAULT_LANGUAGE,
     'languages',
     LANGUAGES_RESOURCES,
-    /* deep */ true,
-    /* overwrite */ true);
+    true, // deep
+    true  // overwrite
+);
 i18next.addResourceBundle(
     DEFAULT_LANGUAGE,
     'translation-languages',
     TRANSLATION_LANGUAGES_RESOURCES,
-    /* deep */ true,
-    /* overwrite */ true);
+    true, // deep
+    true  // overwrite
+);
 i18next.addResourceBundle(
     DEFAULT_LANGUAGE,
     'main',
     MAIN_RESOURCES,
-    /* deep */ true,
-    /* overwrite */ true);
+    true, // deep
+    true  // overwrite
+);
 
 // Add builtin languages.
-// XXX: Note we are using require here, because we want the side-effects of the
-// import, but imports can only be placed at the top, and it would be too early,
-// since i18next is not yet initialized at that point.
+// Using require here to ensure side-effects are applied after i18next initialization.
 require('./BuiltinLanguages');
 
-// Label change through dynamic branding is available only for web
+// Dispatch actions for initialization and language changes in a web environment.
 if (typeof APP !== 'undefined') {
     i18next.on('initialized', () => {
         APP.store.dispatch({ type: I18NEXT_INITIALIZED });

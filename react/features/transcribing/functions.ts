@@ -14,13 +14,13 @@ const DEFAULT_TRANSCRIBER_LANG = 'en-US';
 /**
  * Determine which language to use for transcribing.
  *
- * @param {*} config - Application config.
- * @returns {string}
+ * @param {IConfig} config - Application config.
+ * @returns {string | undefined}
  */
-export function determineTranscriptionLanguage(config: IConfig) {
+export function determineTranscriptionLanguage(config: IConfig): string | undefined {
     const { transcription } = config;
 
-    // if transcriptions are not enabled nothing to determine
+    // If transcriptions are not enabled, nothing to determine
     if (!transcription?.enabled) {
         return undefined;
     }
@@ -34,7 +34,7 @@ export function determineTranscriptionLanguage(config: IConfig) {
         : transcription?.preferredLanguage;
 
     // Check if the obtained language is supported by the transcriber
-    let safeBCP47Locale = TRANSCRIBER_LANGS[bcp47Locale as keyof typeof TRANSCRIBER_LANGS] && bcp47Locale;
+    let safeBCP47Locale = TRANSCRIBER_LANGS[bcp47Locale as keyof typeof TRANSCRIBER_LANGS] ? bcp47Locale : undefined;
 
     if (!safeBCP47Locale) {
         safeBCP47Locale = DEFAULT_TRANSCRIBER_LANG;
@@ -52,7 +52,7 @@ export function determineTranscriptionLanguage(config: IConfig) {
  * @param {IReduxState} state - The redux state to search in.
  * @returns {boolean}
  */
-export function isTranscribing(state: IReduxState) {
+export function isTranscribing(state: IReduxState): boolean {
     return state['features/transcribing'].isTranscribing;
 }
 
@@ -60,10 +60,10 @@ export function isTranscribing(state: IReduxState) {
  * Returns true if there is a recorder transcription session running.
  * NOTE: If only the subtitles are running this function will return false.
  *
- * @param {Object} state - The redux state to search in.
+ * @param {IReduxState} state - The redux state to search in.
  * @returns {boolean}
  */
-export function isRecorderTranscriptionsRunning(state: IReduxState) {
+export function isRecorderTranscriptionsRunning(state: IReduxState): boolean {
     const { metadata } = state['features/base/conference'];
 
     return isTranscribing(state) && Boolean(metadata?.recording?.isTranscribingEnabled);
@@ -75,7 +75,7 @@ export function isRecorderTranscriptionsRunning(state: IReduxState) {
  * @param {IReduxState} state - The redux state.
  * @returns {boolean} - True if the participant can start the transcription.
  */
-export function canAddTranscriber(state: IReduxState) {
+export function canAddTranscriber(state: IReduxState): boolean {
     const { transcription } = state['features/base/config'];
     const isTranscribingAllowed = isJwtFeatureEnabled(state, MEET_FEATURES.TRANSCRIPTION, false);
 

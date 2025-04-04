@@ -1,6 +1,5 @@
 import React from 'react';
 import { WithTranslation, withTranslation } from 'react-i18next';
-
 import i18next from './i18next';
 
 /**
@@ -8,13 +7,20 @@ import i18next from './i18next';
  *
  * @param {string} language - The language e.g. 'en', 'fr'.
  * @param {string} url - The url of the translation bundle.
- * @returns {void}
+ * @returns {Promise<void>}
  */
-export async function changeLanguageBundle(language: string, url: string) {
-    const res = await fetch(url);
-    const bundle = await res.json();
+export async function changeLanguageBundle(language: string, url: string): Promise<void> {
+    try {
+        const res = await fetch(url);
+        if (!res.ok) {
+            throw new Error(`Failed to fetch translation bundle from ${url}`);
+        }
+        const bundle = await res.json();
 
-    i18next.addResourceBundle(language, 'main', bundle, true, true);
+        i18next.addResourceBundle(language, 'main', bundle, true, true);
+    } catch (error) {
+        console.error('Error changing language bundle:', error);
+    }
 }
 
 /**
@@ -35,11 +41,11 @@ export function translate<P extends WithTranslation>(component: React.ComponentT
  *
  * @param {Function} t - The translate function.
  * @param {string} key - The key to translate.
- * @param {Array<*>} options - The options, if any, to pass to {@link t}.
+ * @param {Object} options - The options, if any, to pass to {@link t}.
  * @returns {ReactElement} A ReactElement which depicts the translated HTML
  * text.
  */
-export function translateToHTML(t: Function, key: string, options: Object = {}) {
+export function translateToHTML(t: Function, key: string, options: Object = {}): React.ReactElement {
     // eslint-disable-next-line react/no-danger
     return <span dangerouslySetInnerHTML = {{ __html: t(key, options) }} />;
 }
