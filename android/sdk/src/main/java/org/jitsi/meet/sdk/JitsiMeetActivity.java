@@ -102,6 +102,13 @@ public class JitsiMeetActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Initialize ReactInstanceManager if not already initialized
+        if (ReactInstanceManagerHolder.getReactInstanceManager() == null) {
+            ReactInstanceManagerHolder.initReactInstanceManager(getApplication());
+        } else {
+            JitsiMeetActivityDelegate.onHostResume(this);
+        }
+
         setContentView(R.layout.activity_jitsi_meet);
         this.jitsiView = findViewById(R.id.jitsiView);
 
