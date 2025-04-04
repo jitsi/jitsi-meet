@@ -260,11 +260,13 @@ const Input = React.forwardRef<any, IProps>(({
                 </button>}
             </div>
             {bottomLabel && (
-                <span
+                <div
                     className = { cx(styles.bottomLabel, isMobile && 'is-mobile', error && 'error') }
                     id = { `${id}-description` }>
-                    {bottomLabel}
-                </span>
+                    <p>
+                        {bottomLabel}
+                    </p>
+                </div>
             )}
         </div>
     );
