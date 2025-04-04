@@ -31,7 +31,7 @@ const logger = Logger.getLogger(__filename);
  *
  * NOTE: Currently used only for logging for debug purposes.
  */
-const containerEvents = ['abort', 'canplaythrough', 'ended', 'error', 'stalled', 'suspend', 'waiting'];
+const containerEvents = [ 'abort', 'canplaythrough', 'ended', 'error', 'stalled', 'suspend', 'waiting' ];
 
 /**
  * Returns an array of the video dimensions, so that it keeps it's aspect
@@ -46,14 +46,14 @@ const containerEvents = ['abort', 'canplaythrough', 'ended', 'error', 'stalled',
  * @return an array with 2 elements, the video width and the video height
  */
 function computeDesktopVideoSize( // eslint-disable-line max-params
-    videoWidth,
-    videoHeight,
-    videoSpaceWidth,
-    videoSpaceHeight,
-    subtractFilmstrip) {
+        videoWidth,
+        videoHeight,
+        videoSpaceWidth,
+        videoSpaceHeight,
+        subtractFilmstrip) {
     if (videoWidth === 0 || videoHeight === 0 || videoSpaceWidth === 0 || videoSpaceHeight === 0) {
         // Avoid NaN values caused by division by 0.
-        return [0, 0];
+        return [ 0, 0 ];
     }
 
     const aspectRatio = videoWidth / videoHeight;
@@ -80,7 +80,7 @@ function computeDesktopVideoSize( // eslint-disable-line max-params
         availableHeight = availableWidth / aspectRatio;
     }
 
-    return [availableWidth, availableHeight];
+    return [ availableWidth, availableHeight ];
 }
 
 
@@ -96,60 +96,60 @@ function computeDesktopVideoSize( // eslint-disable-line max-params
  * @return an array with 2 elements, the video width and the video height
  */
 function computeCameraVideoSize( // eslint-disable-line max-params
-    videoWidth,
-    videoHeight,
-    videoSpaceWidth,
-    videoSpaceHeight,
-    videoLayoutFit) {
+        videoWidth,
+        videoHeight,
+        videoSpaceWidth,
+        videoSpaceHeight,
+        videoLayoutFit) {
     if (videoWidth === 0 || videoHeight === 0 || videoSpaceWidth === 0 || videoSpaceHeight === 0) {
         // Avoid NaN values caused by division by 0.
-        return [0, 0];
+        return [ 0, 0 ];
     }
 
     const aspectRatio = videoWidth / videoHeight;
     const videoSpaceRatio = videoSpaceWidth / videoSpaceHeight;
 
     switch (videoLayoutFit) {
-        case 'height':
-            return [videoSpaceHeight * aspectRatio, videoSpaceHeight];
-        case 'width':
-            return [videoSpaceWidth, videoSpaceWidth / aspectRatio];
-        case 'nocrop':
-            return computeCameraVideoSize(
+    case 'height':
+        return [ videoSpaceHeight * aspectRatio, videoSpaceHeight ];
+    case 'width':
+        return [ videoSpaceWidth, videoSpaceWidth / aspectRatio ];
+    case 'nocrop':
+        return computeCameraVideoSize(
                 videoWidth,
                 videoHeight,
                 videoSpaceWidth,
                 videoSpaceHeight,
                 videoSpaceRatio < aspectRatio ? 'width' : 'height');
-        case 'both': {
-            const maxZoomCoefficient = interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT
+    case 'both': {
+        const maxZoomCoefficient = interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT
                 || Infinity;
 
-            if (videoSpaceRatio === aspectRatio) {
-                return [videoSpaceWidth, videoSpaceHeight];
-            }
+        if (videoSpaceRatio === aspectRatio) {
+            return [ videoSpaceWidth, videoSpaceHeight ];
+        }
 
-            let [width, height] = computeCameraVideoSize(
+        let [ width, height ] = computeCameraVideoSize(
                 videoWidth,
                 videoHeight,
                 videoSpaceWidth,
                 videoSpaceHeight,
                 videoSpaceRatio < aspectRatio ? 'height' : 'width');
-            const maxWidth = videoSpaceWidth * maxZoomCoefficient;
-            const maxHeight = videoSpaceHeight * maxZoomCoefficient;
+        const maxWidth = videoSpaceWidth * maxZoomCoefficient;
+        const maxHeight = videoSpaceHeight * maxZoomCoefficient;
 
-            if (width > maxWidth) {
-                width = maxWidth;
-                height = width / aspectRatio;
-            } else if (height > maxHeight) {
-                height = maxHeight;
-                width = height * aspectRatio;
-            }
-
-            return [width, height];
+        if (width > maxWidth) {
+            width = maxWidth;
+            height = width / aspectRatio;
+        } else if (height > maxHeight) {
+            height = maxHeight;
+            width = height * aspectRatio;
         }
-        default:
-            return [videoWidth, videoHeight];
+
+        return [ width, height ];
+    }
+    default:
+        return [ videoWidth, videoHeight ];
     }
 }
 
@@ -161,10 +161,10 @@ function computeCameraVideoSize( // eslint-disable-line max-params
  * indent
  */
 function getCameraVideoPosition( // eslint-disable-line max-params
-    videoWidth,
-    videoHeight,
-    videoSpaceWidth,
-    videoSpaceHeight) {
+        videoWidth,
+        videoHeight,
+        videoSpaceWidth,
+        videoSpaceHeight) {
     // Parent height isn't completely calculated when we position the video in
     // full screen mode and this is why we use the screen height in this case.
     // Need to think it further at some point and implement it properly.
@@ -251,7 +251,7 @@ export class VideoContainer extends LargeContainer {
 
         this.wrapperParent = document.getElementById('largeVideoElementsContainer');
         this.avatarHeight = document.getElementById('dominantSpeakerAvatarContainer').getBoundingClientRect().height;
-        this.video.onplaying = function (event) {
+        this.video.onplaying = function(event) {
             logger.debug('Large video is playing!');
             if (typeof resizeContainer === 'function') {
                 resizeContainer(event);
@@ -421,7 +421,7 @@ export class VideoContainer extends LargeContainer {
 
         this.positionRemoteStatusMessages();
 
-        const [width, height] = this._getVideoSize(containerWidth, containerHeight, verticalFilmstripWidth);
+        const [ width, height ] = this._getVideoSize(containerWidth, containerHeight, verticalFilmstripWidth);
 
         if (width === 0 || height === 0) {
             // We don't need to set 0 for width or height since the visibility is controlled by the visibility css prop
@@ -486,7 +486,8 @@ export class VideoContainer extends LargeContainer {
             })
             .catch(e => {
                 if (retries < 3) {
-                    logger.debug(`Error while trying to playing the large video. Will retry after 1s. Retries: ${retries}. Error: ${e}`);
+                    logger.debug(`Error while trying to playing the large video. 
+                    Will retry after 1s. Retries: ${retries}. Error: ${e}`);
                     window.setTimeout(() => {
                         this._play(retries + 1);
                     }, 1000);
@@ -551,7 +552,8 @@ export class VideoContainer extends LargeContainer {
             this.video.style.transform = flipX ? 'scaleX(-1)' : 'none';
             this._updateBackground();
         } else {
-            logger.debug(`SetStream on the large video won't attach a track for ${userID} because no large video element was found!`);
+            logger.debug(`SetStream on the large video won't attach a track for 
+            ${userID} because no large video element was found!`);
         }
     }
 
@@ -660,12 +662,7 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
-        if (!this.largeVideoBackgroundRoot) {
-            const container = document.getElementById('largeVideoBackgroundContainer');
-            if (container) {
-                this.largeVideoBackgroundRoot = createRoot(container);
-            }
-        } else {
+        if (this.largeVideoBackgroundRoot) {
             this.largeVideoBackgroundRoot.render(
                 <LargeVideoBackground
                     hidden={this._hideBackground || this._isHidden}
@@ -678,6 +675,12 @@ export class VideoContainer extends LargeContainer {
                     videoElement={this.video}
                     videoTrack={this.stream} />
             );
+        } else {
+            const container = document.getElementById('largeVideoBackgroundContainer');
+
+            if (container) {
+                this.largeVideoBackgroundRoot = createRoot(container);
+            }
         }
 
     }
