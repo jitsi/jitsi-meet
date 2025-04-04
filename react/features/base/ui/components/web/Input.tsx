@@ -154,7 +154,7 @@ const useStyles = makeStyles()(theme => {
 
 const Input = React.forwardRef<any, IProps>(({
     accessibilityLabel,
-    autoComplete,
+    autoComplete = 'off',
     autoFocus,
     bottomLabel,
     className,
