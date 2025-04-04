@@ -18,6 +18,11 @@ import { MAX_ACTIVE_PARTICIPANTS } from '../../../filmstrip/constants';
 export interface IProps extends AbstractDialogTabProps, WithTranslation {
 
     /**
+     *  Indicates if closed captions are enabled.
+     */
+    areClosedCaptionsEnabled: boolean;
+
+    /**
      * CSS classes object.
      */
     classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
@@ -143,6 +148,7 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
      */
     render() {
         const {
+            areClosedCaptionsEnabled,
             showPrejoinSettings,
             disableHideSelfView,
             iAmVisitor,
@@ -170,7 +176,7 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
                         name = 'hide-self-view'
                         onChange = { this._onHideSelfViewChanged } />
                 )}
-                { <Checkbox
+                {areClosedCaptionsEnabled && <Checkbox
                     checked = { showSubtitlesOnStage }
                     className = { classes.checkbox }
                     label = { t('settings.showSubtitlesOnStage') }

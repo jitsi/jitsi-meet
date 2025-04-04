@@ -39,6 +39,19 @@ export function getAvailableSubtitlesLanguages(stateful: IStateful, selectedLang
     ];
 }
 
+
+/**
+ * Determines if closed captions are enabled.
+ *
+ * @param {IReduxState} state - The Redux state object.
+ * @returns {boolean} A boolean indicating whether closed captions are enabled.
+ */
+export function areClosedCaptionsEnabled(state: IReduxState) {
+    const { transcription } = state['features/base/config'];
+
+    return !transcription?.disableClosedCaptions;
+}
+
 /**
  * Checks whether the subtitles tab should be enabled in the UI.
  *
@@ -48,5 +61,5 @@ export function getAvailableSubtitlesLanguages(stateful: IStateful, selectedLang
 export function isSubtilesTabEnabled(state: IReduxState) {
     const { showSubtitlesOnStage = false } = state['features/base/settings'];
 
-    return !showSubtitlesOnStage;
+    return areClosedCaptionsEnabled(state) && !showSubtitlesOnStage;
 }

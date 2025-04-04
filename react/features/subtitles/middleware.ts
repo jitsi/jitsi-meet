@@ -20,7 +20,7 @@ import {
     updateTranscriptMessage
 } from './actions.any';
 import { notifyTranscriptionChunkReceived } from './functions';
-import { isSubtilesTabEnabled } from './functions.any';
+import { areClosedCaptionsEnabled, isSubtilesTabEnabled } from './functions.any';
 import logger from './logger';
 import { ISubtitle, ITranscriptMessage } from './types';
 
@@ -117,12 +117,13 @@ MiddlewareRegistry.register(store => next => action => {
 function _endpointMessageReceived(store: IStore, next: Function, action: AnyAction) {
     const { data: json } = action;
 
-    if (![ JSON_TYPE_TRANSCRIPTION_RESULT, JSON_TYPE_TRANSLATION_RESULT ].includes(json?.type)) {
-        return next(action);
-    }
-
     const { dispatch, getState } = store;
     const state = getState();
+
+    if (![ JSON_TYPE_TRANSCRIPTION_RESULT, JSON_TYPE_TRANSLATION_RESULT ].includes(json?.type)
+            || !areClosedCaptionsEnabled(store.getState())) {
+        return next(action);
+    }
 
     const transcriptMessageID = json.message_id;
     const { name, id, avatar_url: avatarUrl } = json.participant;

@@ -15,6 +15,7 @@ import { FILMSTRIP_BREAKPOINT } from '../../filmstrip/constants';
 import { getVerticalViewMaxWidth, isFilmstripResizable } from '../../filmstrip/functions.web';
 import SharedVideo from '../../shared-video/components/web/SharedVideo';
 import Captions from '../../subtitles/components/web/Captions';
+import { areClosedCaptionsEnabled } from '../../subtitles/functions.any';
 import { setTileView } from '../../video-layout/actions.web';
 import Whiteboard from '../../whiteboard/components/web/Whiteboard';
 import { isWhiteboardEnabled } from '../../whiteboard/functions';
@@ -22,7 +23,6 @@ import { setSeeWhatIsBeingShared } from '../actions.web';
 import { getLargeVideoParticipant } from '../functions';
 
 import ScreenSharePlaceholder from './ScreenSharePlaceholder.web';
-import { isSubtilesTabEnabled } from '../../subtitles/functions.any';
 
 // Hack to detect Spot.
 const SPOT_DISPLAY_NAME = 'Meeting Room';
@@ -382,7 +382,7 @@ function _mapStateToProps(state: IReduxState) {
         _resizableFilmstrip: isFilmstripResizable(state),
         _seeWhatIsBeingShared: Boolean(seeWhatIsBeingShared),
         _showDominantSpeakerBadge: !hideDominantSpeakerBadge,
-        _showSubtitles: !isSubtilesTabEnabled(state),
+        _showSubtitles: areClosedCaptionsEnabled(state) && Boolean(state['features/settings'].showSubtitlesOnStage),
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state),
         _visibleFilmstrip: visible,
