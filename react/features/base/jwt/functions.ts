@@ -26,8 +26,15 @@ export function parseJWTFromURLParams(url: URL | typeof window.location = window
 
     // TODO: eventually remove the search param and only pull from the hash
     const jwt1 = jwt ? jwt : parseURLParams(urlObj, true, 'search').jwt;
+    const jwt2 = jwt1 ? jwt1 : parseURLParams(urlObj, true, 'hash').access_token;
 
-    return jwt1 ? jwt1 : parseURLParams(urlObj, true, 'hash').access_token;
+    if (jwt2) {
+        logger.info('found jwt in url params.');
+
+        // TODO: Remove the access_token param from the URL
+    }
+
+    return jwt2;
 }
 
 /**
