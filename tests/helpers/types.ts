@@ -1,7 +1,7 @@
 import { IConfig } from '../../react/features/base/config/configType';
 
 import type { Participant } from './Participant';
-import WebhookProxy from './WebhookProxy';
+import type WebhookProxy from './WebhookProxy';
 
 export type IContext = {
     conferenceJid: string;

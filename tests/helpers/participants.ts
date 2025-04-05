@@ -351,7 +351,12 @@ function getModeratorToken(displayName: string) {
                 'id': uuidv4(),
                 'avatar': 'https://avatars0.githubusercontent.com/u/3671647',
                 'email': 'john.doe@jitsi.org'
-            }
+            },
+            'features': {
+                'outbound-call': 'true',
+                'transcription': 'true',
+                'recording': 'true'
+            },
         },
         'room': '*'
     };
