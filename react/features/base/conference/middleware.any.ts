@@ -77,6 +77,11 @@ import { IConferenceMetadata } from './reducer';
 let pageHideHandler: ((e?: any) => void) | undefined;
 
 /**
+ * Handler for before unload event.
+ */
+let beforeUnloadHandler: ((e?: any) => void) | undefined;
+
+/**
  * Implements the middleware of the feature base/conference.
  *
  * @param {Store} store - The redux store.
@@ -314,6 +319,14 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
         dispatch(overwriteConfig({ disableFocus: false }));
     }
 
+    beforeUnloadHandler = (e?: any) => {
+        e.preventDefault();
+
+        // Included for legacy support, e.g. Chrome/Edge < 119
+        e.returnValue = true;
+    };
+
+    window.addEventListener('beforeunload', beforeUnloadHandler);
     window.addEventListener('pagehide', pageHideHandler);
 
     if (requireDisplayName
@@ -575,6 +588,10 @@ function _pinParticipant({ getState }: IStore, next: Function, action: AnyAction
  * @returns {void}
  */
 function _removeHandlers() {
+    if (typeof beforeUnloadHandler !== 'undefined') {
+        window.removeEventListener('beforeunload', beforeUnloadHandler);
+        beforeUnloadHandler = undefined;
+    }
     if (typeof pageHideHandler !== 'undefined') {
         window.removeEventListener('pagehide', pageHideHandler);
         pageHideHandler = undefined;
