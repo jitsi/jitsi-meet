@@ -120,7 +120,7 @@ test-results
 
 
 # Local Files
-/prosody-plugins/
+/prosody-plugins
 /robots.txt
 /scripts/
 
