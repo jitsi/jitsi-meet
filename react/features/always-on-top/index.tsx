@@ -8,6 +8,6 @@ import AlwaysOnTop from './AlwaysOnTop';
 ReactDOM.render(<AlwaysOnTop />, document.getElementById('react'));
 
 window.addEventListener(
-    'beforeunload',
+    'pagehide',
     /* eslint-disable-next-line react/no-deprecated */
     () => ReactDOM.unmountComponentAtNode(document.getElementById('react') ?? document.body));

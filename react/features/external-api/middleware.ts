@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { getJitsiMeetTransport } from '../../../modules/transport';
 import {
     CONFERENCE_FAILED,
@@ -237,13 +236,10 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case SET_CONFIG: {
-        const state = store.getState();
-        const { disableBeforeUnloadHandlers = false } = state['features/base/config'];
-
         /**
          * Disposing the API when the user closes the page.
          */
-        window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', () => {
+        window.addEventListener('pagehide', () => {
             APP.API.notifyConferenceLeft(APP.conference.roomName);
             APP.API.dispose();
             getJitsiMeetTransport().dispose();
