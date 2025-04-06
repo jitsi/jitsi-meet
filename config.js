@@ -56,7 +56,7 @@ var config = {
     websocketKeepAliveUrl: 'https://meet.sonacove.com/' + subdir + '_unlock',
 
     // Whether BOSH should be preferred over WebSocket if both are configured.
-    preferBosh: false,
+    preferBosh: true,
 
     // The real JID of focus participant - can be overridden here
     // Do not change username - FIXME: Make focus username configurable
@@ -844,7 +844,7 @@ var config = {
         //    'embedmeeting',
         //    'etherpad',
         //    'feedback',
-        //    'filmstrip',
+        'filmstrip',
         'fullscreen',
         'hangup',
 
@@ -865,7 +865,7 @@ var config = {
         'settings',
         'shareaudio',
 
-        //    'sharedvideo',
+        'sharedvideo',
         'shortcuts',
         'stats',
         'tileview',
@@ -900,8 +900,8 @@ var config = {
     // configuration (for example when 3 buttons are displayed) the default jitsi-meet configuration will be used.
     // The order of the buttons in the array is preserved.
     mainToolbarButtons: [
-        [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants-pane', 'fullscreen', 'settings' ],
-        [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants-pane', 'fullscreen' ],
+        [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants-pane', 'settings', 'fullscreen' ],
+        [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants-pane', 'settings' ],
         [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants-pane' ],
         [ 'microphone', 'camera', 'desktop', 'chat', 'participants-pane' ],
         [ 'microphone', 'camera', 'chat', 'participants-pane' ],
@@ -1037,7 +1037,7 @@ var config = {
 
     faceLandmarks: {
         // Enables sharing your face coordinates. Used for centering faces within a video.
-        enableFaceCentering: true,
+        enableFaceCentering: false,
 
         // Enables detecting face expressions and sharing data with other participants
         enableFaceExpressionsDetection: false,
@@ -1567,6 +1567,7 @@ var config = {
     // You can use tokenAuthUrl config to point to a URL of such service.
     // The URL for the service supports few params which will be filled in by the code.
     tokenAuthUrl:
+        // eslint-disable-next-line max-len
         'https://auth.sonacove.com/realms/jitsi/protocol/openid-connect/auth?client_id=jitsi-web&redirect_uri=https://meet.sonacove.com/{room}&response_type=token',
 
     // Supported parameters in tokenAuthUrl:
@@ -1585,6 +1586,7 @@ var config = {
     //          - electron=true (when web is loaded in electron app)
     // If there is a logout service you can specify its URL with:
     tokenLogoutUrl:
+        // eslint-disable-next-line max-len
         'https://auth.sonacove.com/realms/jitsi/protocol/openid-connect/logout?post_logout_redirect_uri=https://meet.sonacove.com&client_id=jitsi-web',
 
     // You can enable tokenAuthUrlAutoRedirect which will detect that you have logged in successfully before
