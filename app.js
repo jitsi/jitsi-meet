@@ -1,4 +1,9 @@
-/* Jitsi Meet app main entrypoint. */
+/**
+ * Jitsi Meet Web Application Entry Point
+ * 
+ * Initializes global dependencies, polyfills, and modules required for the web app.
+ * Sets up global variables and application structure before loading the React app.
+ */
 
 // Re-export jQuery
 // FIXME: Remove this requirement from torture tests.
@@ -53,7 +58,7 @@ if (window.Olm) {
         delete window.Olm;
     });
 }
-
+// Attach core app modules to global APP object for use across the web app.
 window.APP = {
     API,
     conference,
