@@ -4,7 +4,7 @@ import { getDecodedURI } from "../../../../util/uri";
 import { Link, Check } from "@phosphor-icons/react";
 import { MAX_SIZE_PARTICIPANTS } from "../../../constants";
 
-interface InviteUserProps {
+interface InviteUserModalProps {
     isOpen: boolean;
     onClose: () => void;
     translate: Function;
@@ -12,7 +12,7 @@ interface InviteUserProps {
     inviteUrl: string;
 }
 
-const InviteUser = ({ isOpen, onClose, translate, participantsCount, inviteUrl }: InviteUserProps) => {
+const InviteUserModal = ({ isOpen, onClose, translate, participantsCount, inviteUrl }: InviteUserModalProps) => {
     const [copied, setCopied] = useState(false);
     const inviteLink = inviteUrl && getDecodedURI(inviteUrl);
 
@@ -75,4 +75,4 @@ const InviteUser = ({ isOpen, onClose, translate, participantsCount, inviteUrl }
     );
 };
 
-export default InviteUser;
+export default InviteUserModal;
