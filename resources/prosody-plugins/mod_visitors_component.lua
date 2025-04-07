@@ -76,13 +76,15 @@ local function request_promotion_received(room, from_jid, from_vnode, nick, time
     -- if visitors is enabled for the room
     if visitors_promotion_map[room.jid] then
         local force_promote = auto_allow_promotion;
-
         if not force_promote and force_promote_requested == 'true' then
             -- Let's do the force_promote checks if requested
-
-            -- _data.moderator_id can be used from external modules to set single moderator for a meeting
-            -- or a whole group of moderators
-            if room._data.moderator_id == user_id or room._data.moderator_id == group_id
+            -- if it is vpaas meeting we trust the moderator computation from visitor node (value of force_promote_requested)
+            -- if it is not vpaas we need to check further settings only if they exist
+            if is_vpaas(room) or (not room._data.moderator_id and not room._data.moderators)
+                -- _data.moderator_id can be used from external modules to set single moderator for a meeting
+                -- or a whole group of moderators
+                or (room._data.moderator_id
+                    and room._data.moderator_id == user_id or room._data.moderator_id == group_id)
 
                 -- all moderators are allowed to auto promote, the fact that user_id and force_promote_requested are set
                 -- means that the user has token and is moderator on visitor node side
