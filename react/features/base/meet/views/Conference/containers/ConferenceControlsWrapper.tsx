@@ -11,7 +11,7 @@ import { getInviteURL } from "../../../../connection/functions";
 import { translate } from "../../../../i18n/functions";
 import { WithTranslation } from "react-i18next";
 import { getParticipantsWithTracks } from "../utils";
-import InviteUserModal from "../components/InviteUserMOdal";
+import InviteUserModal from "../components/InviteUserModal";
 
 interface ConferenceControlsProps extends WithTranslation {
     dispatch: any;
