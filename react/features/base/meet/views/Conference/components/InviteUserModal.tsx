@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, TransparentModal } from "@internxt/ui";
 import { getDecodedURI } from "../../../../util/uri";
-import { Link } from "@phosphor-icons/react";
+import { Link, Check } from "@phosphor-icons/react";
 import { MAX_SIZE_PARTICIPANTS } from "../../../constants";
 
-interface InviteUserProps {
+interface InviteUserModalProps {
     isOpen: boolean;
     onClose: () => void;
     translate: Function;
@@ -12,11 +12,17 @@ interface InviteUserProps {
     inviteUrl: string;
 }
 
-const InviteUser = ({ isOpen, onClose, translate, participantsCount, inviteUrl }: InviteUserProps) => {
+const InviteUserModal = ({ isOpen, onClose, translate, participantsCount, inviteUrl }: InviteUserModalProps) => {
+    const [copied, setCopied] = useState(false);
     const inviteLink = inviteUrl && getDecodedURI(inviteUrl);
 
     const handleCopy = () => {
         navigator.clipboard.writeText(inviteLink);
+        setCopied(true);
+
+        setTimeout(() => {
+            setCopied(false);
+        }, 2000);
     };
 
     return (
@@ -39,18 +45,29 @@ const InviteUser = ({ isOpen, onClose, translate, participantsCount, inviteUrl }
                     </div>
                 )}
 
-                <div className="space-y-4 pt-6">
+                <div className="space-y-4 pt-3">
                     <div className="relative w-full">
                         <Link className="absolute left-3 top-1/2 transform -translate-y-1/2" size={20} color="gray" />
                         <input
                             type="text"
                             value={inviteLink}
                             readOnly
-                            className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-lg border border-gray-600 focus:outline-none"
+                            onClick={(e) => (e.target as HTMLInputElement).select()}
+                            className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-lg border border-gray-600 focus:outline-none select-all"
                         />
                     </div>
-                    <Button className="w-full" onClick={handleCopy}>
-                        {translate("meet.invite.copyLink")}
+                    <Button
+                        className={`w-full ${copied ? 'bg-green-600' : ''}`}
+                        onClick={handleCopy}
+                    >
+                        {copied ? (
+                            <div className="flex items-center justify-center">
+                                <Check size={18} className="mr-1" />
+                                {translate("meet.invite.copied")}
+                            </div>
+                        ) : (
+                            translate("meet.invite.copyLink")
+                        )}
                     </Button>
                 </div>
             </div>
@@ -58,4 +75,4 @@ const InviteUser = ({ isOpen, onClose, translate, participantsCount, inviteUrl }
     );
 };
 
-export default InviteUser;
+export default InviteUserModal;

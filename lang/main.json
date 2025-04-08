@@ -801,6 +801,7 @@
         "invite": {
             "invitePeople": "Invite people",
             "copyLink": "Copy Link",
+            "copied": "Copied!",
             "meetingFull": "Meeting is full",
             "participants": "participants"
         },

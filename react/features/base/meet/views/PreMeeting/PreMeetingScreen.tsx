@@ -183,6 +183,7 @@ const PreMeetingScreen = ({
     const storageManager = useLocalStorage();
     const dispatch = useDispatch();
 
+    const isInNewMeeting = window.location.href.includes("new-meeting");
     const showNameError = userName.length === 0 && !isNameInputFocused;
 
     const toolbarSection = useMemo(
@@ -289,7 +290,7 @@ const PreMeetingScreen = ({
                     onLogin={handleRedirectToLogin}
                     onLogout={onLogout}
                     onSignUp={handleRedirectToSignUp}
-                    onNewMeeting={handleNewMeeting}
+                    onNewMeeting={isInNewMeeting ? undefined : handleNewMeeting}
                     isCreatingMeeting={isCreatingMeeting}
                 />
                 <ErrorModals

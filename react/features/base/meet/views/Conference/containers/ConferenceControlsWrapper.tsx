@@ -5,12 +5,13 @@ import { connect } from "react-redux";
 import { IReduxState } from "../../../../../app/types";
 import { leaveConference } from "../../../../conference/actions";
 import MediaControlsWrapper from "../../../general/containers/MediaControlsWrapper";
-import InviteUser from "../components/InviteUser";
+
 import { VideoParticipantType } from "../types";
 import { getInviteURL } from "../../../../connection/functions";
 import { translate } from "../../../../i18n/functions";
 import { WithTranslation } from "react-i18next";
 import { getParticipantsWithTracks } from "../utils";
+import InviteUserModal from "../components/InviteUserModal";
 
 interface ConferenceControlsProps extends WithTranslation {
     dispatch: any;
@@ -31,7 +32,7 @@ const ConferenceControls = ({ dispatch, participants, _inviteUrl, t }: Conferenc
 
     return (
         <>
-            <InviteUser
+            <InviteUserModal
                 isOpen={isOpenInviteUser}
                 onClose={handleInviteUser}
                 translate={t}

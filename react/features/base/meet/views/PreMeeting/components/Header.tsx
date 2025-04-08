@@ -123,22 +123,24 @@ const RightContent = React.memo(
         };
 
         return isLogged ? (
-            <div className="flex space-x-2 flex-row items-center">
-                <Button
-                    variant="primary"
-                    onClick={onNewMeeting}
-                    disabled={isCreatingMeeting}
-                    loading={isCreatingMeeting}
-                >
-                    {translate("meet.preMeeting.newMeeting")}
-                </Button>
+            <div className="flex space-x-2 flex-row">
+                {onNewMeeting && (
+                    <Button
+                        variant="primary"
+                        onClick={onNewMeeting}
+                        disabled={isCreatingMeeting}
+                        loading={isCreatingMeeting}
+                    >
+                        {translate("meet.preMeeting.newMeeting")}
+                    </Button>
+                )}
 
                 <div className="relative">
                     <button
                         ref={avatarRef}
                         onClick={toggleMenu}
                         onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
+                            if (e.key === "Enter" || e.key === " ") {
                                 e.preventDefault();
                                 toggleMenu();
                             }
