@@ -53,7 +53,6 @@ export function isJwtFeatureEnabled(
         feature: ParticipantFeaturesKey,
         ifNotInFeatures: boolean
 ) {
-    const { jwt } = state['features/base/jwt'];
     let { features } = getLocalParticipant(state) || {};
 
     if (typeof features === 'undefined' && isVpaasMeeting(state)) {
@@ -62,7 +61,6 @@ export function isJwtFeatureEnabled(
     }
 
     return isJwtFeatureEnabledStateless({
-        jwt,
         localParticipantFeatures: features,
         feature,
         ifNotInFeatures
@@ -79,7 +77,6 @@ interface IIsJwtFeatureEnabledStatelessParams {
 /**
  * Check if the given JWT feature is enabled.
  *
- * @param {string | undefined} jwt - The jwt token.
  * @param {ILocalParticipant} localParticipantFeatures - The features of the local participant.
  * @param {string} feature - The feature we want to check.
  * @param {boolean} ifNotInFeatures - Default value if features is missing
@@ -87,12 +84,11 @@ interface IIsJwtFeatureEnabledStatelessParams {
  * @returns {boolean}
  */
 export function isJwtFeatureEnabledStateless({
-    jwt,
     localParticipantFeatures: features,
     feature,
     ifNotInFeatures
 }: IIsJwtFeatureEnabledStatelessParams) {
-    if (!jwt || typeof features?.[feature] === 'undefined') {
+    if (typeof features?.[feature] === 'undefined') {
         return ifNotInFeatures;
     }
 
