@@ -17,12 +17,12 @@ describe('useAspectRatio', () => {
   const RESIZE_WIDTH = 2560;
   const RESIZE_RATIO = RESIZE_WIDTH / RESIZE_HEIGHT;
 
-  let resizeCallback;
+  let resizeCallback: (() => void) | null = null;
 
   beforeEach(() => {
     vi.spyOn(window, 'addEventListener').mockImplementation((event, callback) => {
       if (event === 'resize') {
-        resizeCallback = callback;
+        resizeCallback = callback as () => void;
       }
     });
 
@@ -105,7 +105,9 @@ describe('useAspectRatio', () => {
     act(() => {
       Object.defineProperty(window, 'innerWidth', { value: RESIZE_WIDTH });
       Object.defineProperty(window, 'innerHeight', { value: RESIZE_HEIGHT });
-      resizeCallback();
+      if (resizeCallback) {
+        resizeCallback();
+      }
     });
 
     expect(result.current.aspectRatio).toBeCloseTo(RESIZE_RATIO, 2);
