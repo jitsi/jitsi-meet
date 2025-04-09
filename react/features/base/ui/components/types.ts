@@ -1,5 +1,3 @@
-import { GestureResponderEvent } from 'react-native';
-
 import { BUTTON_TYPES } from '../constants.any';
 
 export interface IButtonProps {
@@ -32,7 +30,7 @@ export interface IButtonProps {
     /**
      * Click callback.
      */
-    onClick?: (e?: React.MouseEvent<HTMLButtonElement> | GestureResponderEvent) => void;
+    onClick?: (e?: any) => void;
 
     /**
      * Key press callback.

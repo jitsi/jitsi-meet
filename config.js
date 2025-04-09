@@ -1882,6 +1882,14 @@ var config = {
 
     // If true remove the tint foreground on focused user camera in filmstrip
     // disableCameraTintForeground: false,
+
+    // File sharign service.
+    // fileSharing: {
+    //     // The URL of the file sharing service API. See resources/file-sharing.yaml for more details.
+    //     apiUrl: 'https://example.com',
+    //     // Whether the file sharing service is enabled or not.
+    //     enabled: true,
+    // },
 };
 
 // Set the default values for JaaS customers
