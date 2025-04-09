@@ -183,6 +183,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
         const globalAny: any = global;
 
         globalAny.ctx = {
+            data: {},
             times: {}
         } as IContext;
         globalAny.ctx.keepAlive = [];

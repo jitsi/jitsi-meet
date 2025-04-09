@@ -42,7 +42,7 @@ describe('Dial-In', () => {
 
         expect(dialInPin.length >= 8).toBe(true);
 
-        ctx.dialInPin = dialInPin;
+        ctx.data.dialInPin = dialInPin;
     });
 
     it('invite dial-in participant', async () => {
@@ -51,7 +51,7 @@ describe('Dial-In', () => {
             return;
         }
 
-        const restUrl = process.env.DIAL_IN_REST_URL?.replace('{0}', ctx.dialInPin);
+        const restUrl = process.env.DIAL_IN_REST_URL?.replace('{0}', ctx.data.dialInPin);
 
         // we have already checked in the first test that DIAL_IN_REST_URL exist so restUrl cannot be ''
         const responseData: string = await new Promise((resolve, reject) => {

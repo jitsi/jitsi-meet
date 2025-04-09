@@ -24,7 +24,7 @@ async function checkParticipantLeftHook(p: Participant, reason: string) {
         } = await webhooksProxy.waitForEvent('PARTICIPANT_LEFT');
 
         expect('PARTICIPANT_LEFT').toBe(event.eventType);
-        expect(event.data.conference).toBe(ctx.conferenceJid);
+        expect(event.data.conference).toBe(ctx.data.conferenceJid);
         expect(event.data.disconnectReason).toBe(reason);
         expect(event.data.isBreakout).toBe(false);
         expect(event.data.participantId).toBe(await p.getEndpointId());
@@ -101,7 +101,7 @@ describe('Participants presence', () => {
 
             const { node, resource } = parseJid(roomsInfo.jid);
 
-            ctx.conferenceJid = roomsInfo.jid.substring(0, roomsInfo.jid.indexOf('/'));
+            ctx.data.conferenceJid = roomsInfo.jid.substring(0, roomsInfo.jid.indexOf('/'));
 
             const p1EpId = await p1.getEndpointId();
 
@@ -123,7 +123,7 @@ describe('Participants presence', () => {
                 } = await webhooksProxy.waitForEvent('ROOM_CREATED');
 
                 expect('ROOM_CREATED').toBe(event.eventType);
-                expect(event.data.conference).toBe(ctx.conferenceJid);
+                expect(event.data.conference).toBe(ctx.data.conferenceJid);
                 expect(event.data.isBreakout).toBe(false);
             }
         }
@@ -287,7 +287,7 @@ describe('Participants presence', () => {
             } = await webhooksProxy.waitForEvent('PARTICIPANT_JOINED');
 
             expect('PARTICIPANT_JOINED').toBe(event.eventType);
-            expect(event.data.conference).toBe(ctx.conferenceJid);
+            expect(event.data.conference).toBe(ctx.data.conferenceJid);
             expect(event.data.isBreakout).toBe(false);
             expect(event.data.moderator).toBe(false);
             expect(event.data.name).toBe(await p2.getLocalDisplayName());
@@ -368,7 +368,7 @@ describe('Participants presence', () => {
     });
 
     it('dispose conference', async () => {
-        const { conferenceJid, p1, roomName, webhooksProxy } = ctx;
+        const { data: { conferenceJid }, p1, roomName, webhooksProxy } = ctx;
 
         await p1.switchToAPI();
 
