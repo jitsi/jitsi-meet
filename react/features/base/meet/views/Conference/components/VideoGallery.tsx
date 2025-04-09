@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { VideoParticipantType } from "../types";
 import VideoParticipant from "./VideoParticipant";
+import { useAspectRatio } from "../../../general/hooks/useAspectRatio";
+
 
 export interface VideoGalleryProps {
     participants: VideoParticipantType[];
@@ -10,6 +12,8 @@ export interface VideoGalleryProps {
 
 const VideoGallery = ({ participants, flipX, translate }: VideoGalleryProps) => {
     const participantsNumber = participants.length;
+    const { containerStyle } = useAspectRatio();
+
     const sortedParticipants = [...participants].sort((a, b) => {
         // Local user first
         if (a.local) return -1;
@@ -21,42 +25,49 @@ const VideoGallery = ({ participants, flipX, translate }: VideoGalleryProps) => 
         return a.name.localeCompare(b.name);
     });
 
-    const getParticipantClasses = (index: number) => {
-        let classes = "";
+    const getParticipantClasses = () => {
+        let widthClass = "";
+        let heightClass = "";
 
         if (participantsNumber === 1) {
-            classes = "relative flex-[0_0_80%] max-h-[80vh]";
+            return "relative aspect-video max-h-[75%] max-w-full";
         } else if (participantsNumber === 2) {
-            classes = "relative flex-[0_0_calc(50%-10px)] sm:flex-[0_0_calc(45%-10px)]";
+            widthClass = "w-[calc(50%-5px)]";
+            heightClass = "max-h-[75%]";
         } else if (participantsNumber === 3) {
-            if (index < 2) {
-                classes = "relative flex-[0_0_calc(40%-10px)] sm:flex-[0_0_calc(45%-10px)]";
-            } else {
-                classes = "relative flex-[0_0_calc(40%-10px)] sm:flex-[0_0_calc(45%-10px)]";
-            }
+            widthClass = "w-[calc(33%-10px)]";
+            heightClass = "max-h-[36%]";
         } else if (participantsNumber === 4) {
-            classes = "relative flex-[0_0_calc(50%-10px)] sm:flex-[0_0_calc(45%-10px)]";
+            widthClass = "w-[calc(50%-5px)]";
+            heightClass = "max-h-[36%]";
+        } else if (participantsNumber > 4 && participantsNumber < 10) {
+            widthClass = "w-[calc(33.333%-7px)]";
+            heightClass = "max-h-[24%]";
         } else {
-            classes = "relative flex-[0_0_calc(50%-10px)] sm:flex-[0_0_calc(33.333%-20px)]";
+            widthClass = "w-[calc(25%-7px)]";
+            heightClass = "max-h-[18%]";
         }
 
-        return classes;
+        return `relative ${widthClass} ${heightClass} aspect-video`;
     };
 
     return (
-        <div className="flex h-screen w-full items-center justify-center overflow-hidden">
+        <div className="h-full w-full flex items-center justify-center overflow-hidden bg-gray-950">
             <div
-                className={`flex max-h-4/5 w-full flex-row flex-wrap items-center justify-center gap-2.5 p-2.5 sm:gap-5 sm:p-5`}
+                className="h-[90%] w-[90%] flex justify-center items-center overflow-hidden"
+                style={containerStyle}
             >
-                {sortedParticipants.map((participant, index) => (
-                    <VideoParticipant
-                        key={participant.id}
-                        participant={participant}
-                        className={getParticipantClasses(index)}
-                        translate={translate}
-                        flipX={flipX}
-                    />
-                ))}
+                <div className="max-h-full w-full flex flex-wrap justify-center items-center content-center gap-2.5 overflow-hidden">
+                    {sortedParticipants.map((participant) => (
+                        <VideoParticipant
+                            key={participant.id}
+                            participant={participant}
+                            className={getParticipantClasses()}
+                            translate={translate}
+                            flipX={flipX}
+                        />
+                    ))}
+                </div>
             </div>
         </div>
     );
