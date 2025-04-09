@@ -519,7 +519,7 @@ var config = {
     // videoQuality: {
     //
     //    // Provides a way to set the codec preference on desktop based endpoints.
-    //    codecPreferenceOrder: [ 'VP9', 'VP8', 'H264', 'AV1' ],
+    //    codecPreferenceOrder: [ 'AV1', 'VP9', 'VP8', 'H264' ],
     //
     //    // Provides a way to set the codec for screenshare.
     //    screenshareCodec: 'AV1',
@@ -596,7 +596,7 @@ var config = {
     //    },
     //
     //    // Provides a way to set the codec preference on mobile devices, both on RN and mobile browser based endpoint
-    //    mobileCodecPreferenceOrder: [ 'VP8', 'VP9', 'H264' ],
+    //    mobileCodecPreferenceOrder: [ 'VP8', 'VP9', 'H264', 'AV1' ],
     // },
 
     // Notification timeouts
@@ -1074,10 +1074,10 @@ var config = {
 
         // Provides a way to set the codec preference on mobile devices, both on RN and mobile browser based
         // endpoints.
-        // mobileCodecPreferenceOrder: [ 'H264', 'VP8', 'VP9' ],
+        // mobileCodecPreferenceOrder: [ 'H264', 'VP8', 'VP9', 'AV1' ],
         //
         // Provides a way to set the codec preference on desktop based endpoints.
-        // codecPreferenceOrder: [ 'VP9', 'VP8', 'H264 ],
+        // codecPreferenceOrder: [ 'AV1', 'VP9', 'VP8', 'H264 ],
 
         // Provides a way to set the codec for screenshare.
         // screenshareCodec: 'AV1',
