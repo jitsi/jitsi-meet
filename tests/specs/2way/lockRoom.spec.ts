@@ -29,14 +29,14 @@ describe('Lock Room', () => {
         const p2PasswordDialog = p2.getPasswordDialog();
 
         await p2PasswordDialog.waitForDialog();
-        await p2PasswordDialog.submitPassword(`${ctx.roomKey}1234`);
+        await p2PasswordDialog.submitPassword(`${ctx.data.roomKey}1234`);
 
         // give sometime to the password prompt to disappear and send the password
         await p2.driver.pause(500);
 
         // wait for password prompt
         await p2PasswordDialog.waitForDialog();
-        await p2PasswordDialog.submitPassword(ctx.roomKey);
+        await p2PasswordDialog.submitPassword(ctx.data.roomKey);
 
         await p2.waitToJoinMUC();
 
@@ -106,7 +106,7 @@ describe('Lock Room', () => {
         const p2PasswordDialog = p2.getPasswordDialog();
 
         await p2PasswordDialog.waitForDialog();
-        await p2PasswordDialog.submitPassword(`${ctx.roomKey}1234`);
+        await p2PasswordDialog.submitPassword(`${ctx.data.roomKey}1234`);
 
         // give sometime to the password prompt to disappear and send the password
         await p2.driver.pause(500);
@@ -132,7 +132,7 @@ describe('Lock Room', () => {
  * Participant1 locks the room.
  */
 async function participant1LockRoom() {
-    ctx.roomKey = `${Math.trunc(Math.random() * 1_000_000)}`;
+    ctx.data.roomKey = `${Math.trunc(Math.random() * 1_000_000)}`;
 
     const { p1 } = ctx;
     const p1SecurityDialog = p1.getSecurityDialog();
@@ -142,7 +142,7 @@ async function participant1LockRoom() {
 
     await waitForRoomLockState(p1SecurityDialog, false);
 
-    await p1SecurityDialog.addPassword(ctx.roomKey);
+    await p1SecurityDialog.addPassword(ctx.data.roomKey);
 
     await p1SecurityDialog.clickCloseButton();
 
