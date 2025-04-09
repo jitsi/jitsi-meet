@@ -587,10 +587,10 @@ export class Participant {
     /**
      * Switches to the meeting page context.
      */
-    async switchInPage() {
+    switchInPage() {
         const mainFrame = this.driver.$('iframe');
 
-        await this.driver.switchFrame(mainFrame);
+        return this.driver.switchFrame(mainFrame);
     }
 
     /**

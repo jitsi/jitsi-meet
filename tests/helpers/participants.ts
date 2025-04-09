@@ -173,7 +173,7 @@ async function joinTheModeratorAsP1(ctx: IContext, options?: IJoinOptions) {
                 || !ctx.jwtPrivateKeyPath)) {
             token = process.env.JWT_ACCESS_TOKEN;
         } else if (ctx.jwtPrivateKeyPath) {
-            token = getModeratorToken(p1DisplayName);
+            token = getToken(ctx, p1DisplayName);
         }
     }
 
@@ -200,7 +200,7 @@ export async function ensureTwoParticipants(ctx: IContext, options: IJoinOptions
     }, {
         displayName: P2_DISPLAY_NAME,
         ...options
-    });
+    }, options.preferGenerateToken ? getToken(ctx, P2_DISPLAY_NAME) : undefined);
 
     if (options.skipInMeetingChecks) {
         return Promise.resolve();
@@ -324,7 +324,7 @@ export async function muteVideoAndCheck(testee: Participant, observer: Participa
 /**
  * Get a JWT token for a moderator.
  */
-function getModeratorToken(displayName: string) {
+function getToken(ctx: IContext, displayName: string, moderator = true) {
     const keyid = process.env.JWT_KID;
     const headers = {
         algorithm: 'RS256',
@@ -352,6 +352,7 @@ function getModeratorToken(displayName: string) {
                 'avatar': 'https://avatars0.githubusercontent.com/u/3671647',
                 'email': 'john.doe@jitsi.org'
             },
+            'group': uuidv4(),
             'features': {
                 'outbound-call': 'true',
                 'transcription': 'true',
@@ -361,8 +362,12 @@ function getModeratorToken(displayName: string) {
         'room': '*'
     };
 
-    // @ts-ignore
-    payload.context.user.moderator = true;
+    if (moderator) {
+        // @ts-ignore
+        payload.context.user.moderator = true;
+    }
+
+    ctx.data[`${displayName}-jwt-payload`] = payload;
 
     // @ts-ignore
     return jwt.sign(payload, key, headers);
