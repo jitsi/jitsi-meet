@@ -3,5 +3,7 @@ module.exports = {
         '@jitsi/eslint-config'
     ],
     'ignorePatterns': [ '*.d.ts' ],
-    'linebreak-style': 'off'
+    rules: {
+        'linebreak-style': ['error', 'unix'],
+    },
 };
