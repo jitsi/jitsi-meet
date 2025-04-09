@@ -124,3 +124,7 @@ export function getHideSelfView(state: IReduxState) {
     return state['features/base/config'].disableSelfView || state['features/base/settings'].disableSelfView
         || iAmVisitor(state);
 }
+
+export function testAdvancedAudioSetting(): void {
+    console.log("🎧 GSoC Test: Talha Mohsin is working on advanced audio settings.");
+}
