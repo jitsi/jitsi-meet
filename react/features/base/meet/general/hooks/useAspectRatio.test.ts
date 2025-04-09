@@ -5,6 +5,18 @@ import { useAspectRatio } from './useAspectRatio';
 describe('useAspectRatio', () => {
   const originalInnerWidth = window.innerWidth;
   const originalInnerHeight = window.innerHeight;
+
+  const RATIO_16_BY_9 = 16 / 9;
+
+  const DEFAULT_HEIGHT = 900;
+  const EXACT_16_BY_9_WIDTH = Math.round(DEFAULT_HEIGHT * RATIO_16_BY_9);
+  const WIDER_THAN_16_BY_9_WIDTH = 1920;
+  const LESS_WIDE_THAN_16_BY_9_WIDTH = 1200;
+
+  const RESIZE_HEIGHT = 1080;
+  const RESIZE_WIDTH = 2560;
+  const RESIZE_RATIO = RESIZE_WIDTH / RESIZE_HEIGHT;
+
   let resizeCallback;
 
   beforeEach(() => {
@@ -24,17 +36,17 @@ describe('useAspectRatio', () => {
   });
 
   it('should return the correct aspect ratio', () => {
-    Object.defineProperty(window, 'innerWidth', { value: 1600 });
-    Object.defineProperty(window, 'innerHeight', { value: 900 });
+    Object.defineProperty(window, 'innerWidth', { value: EXACT_16_BY_9_WIDTH });
+    Object.defineProperty(window, 'innerHeight', { value: DEFAULT_HEIGHT });
 
     const { result } = renderHook(() => useAspectRatio());
 
-    expect(result.current.aspectRatio).toBeCloseTo(1.778, 3);
+    expect(result.current.aspectRatio).toBeCloseTo(RATIO_16_BY_9, 3);
   });
 
   it('should correctly detect when the ratio is wider than 16:9', () => {
-    Object.defineProperty(window, 'innerWidth', { value: 1920 });
-    Object.defineProperty(window, 'innerHeight', { value: 900 });
+    Object.defineProperty(window, 'innerWidth', { value: WIDER_THAN_16_BY_9_WIDTH });
+    Object.defineProperty(window, 'innerHeight', { value: DEFAULT_HEIGHT });
 
     const { result } = renderHook(() => useAspectRatio());
 
@@ -42,18 +54,18 @@ describe('useAspectRatio', () => {
   });
 
   it('should correctly detect when the ratio is exactly 16:9', () => {
-    Object.defineProperty(window, 'innerWidth', { value: 1600 });
-    Object.defineProperty(window, 'innerHeight', { value: 900 });
+    Object.defineProperty(window, 'innerWidth', { value: EXACT_16_BY_9_WIDTH });
+    Object.defineProperty(window, 'innerHeight', { value: DEFAULT_HEIGHT });
 
     const { result } = renderHook(() => useAspectRatio());
 
-    expect(result.current.aspectRatio).toBeCloseTo(16/9, 3);
+    expect(result.current.aspectRatio).toBeCloseTo(RATIO_16_BY_9, 3);
     expect(result.current.isWiderThan16by9).toBe(false);
   });
 
   it('should correctly detect when the ratio is less wide than 16:9', () => {
-    Object.defineProperty(window, 'innerWidth', { value: 1200 });
-    Object.defineProperty(window, 'innerHeight', { value: 900 });
+    Object.defineProperty(window, 'innerWidth', { value: LESS_WIDE_THAN_16_BY_9_WIDTH });
+    Object.defineProperty(window, 'innerHeight', { value: DEFAULT_HEIGHT });
 
     const { result } = renderHook(() => useAspectRatio());
 
@@ -61,20 +73,20 @@ describe('useAspectRatio', () => {
   });
 
   it('should provide the correct containerStyle for windows wider than 16:9', () => {
-    Object.defineProperty(window, 'innerWidth', { value: 1920 });
-    Object.defineProperty(window, 'innerHeight', { value: 900 });
+    Object.defineProperty(window, 'innerWidth', { value: WIDER_THAN_16_BY_9_WIDTH });
+    Object.defineProperty(window, 'innerHeight', { value: DEFAULT_HEIGHT });
 
     const { result } = renderHook(() => useAspectRatio());
 
     expect(result.current.containerStyle).toEqual({
-      maxWidth: `${900 * (16/9)}px`,
+      maxWidth: `${DEFAULT_HEIGHT * RATIO_16_BY_9}px`,
       margin: '0 auto'
     });
   });
 
   it('should provide an empty containerStyle for windows less wide than 16:9', () => {
-    Object.defineProperty(window, 'innerWidth', { value: 1200 });
-    Object.defineProperty(window, 'innerHeight', { value: 900 });
+    Object.defineProperty(window, 'innerWidth', { value: LESS_WIDE_THAN_16_BY_9_WIDTH });
+    Object.defineProperty(window, 'innerHeight', { value: DEFAULT_HEIGHT });
 
     const { result } = renderHook(() => useAspectRatio());
 
@@ -82,24 +94,24 @@ describe('useAspectRatio', () => {
   });
 
   it('should update values when window size changes', () => {
-    Object.defineProperty(window, 'innerWidth', { value: 1600 });
-    Object.defineProperty(window, 'innerHeight', { value: 900 });
+    Object.defineProperty(window, 'innerWidth', { value: EXACT_16_BY_9_WIDTH });
+    Object.defineProperty(window, 'innerHeight', { value: DEFAULT_HEIGHT });
 
     const { result } = renderHook(() => useAspectRatio());
 
-    expect(result.current.aspectRatio).toBeCloseTo(1.778, 3);
+    expect(result.current.aspectRatio).toBeCloseTo(RATIO_16_BY_9, 3);
     expect(result.current.isWiderThan16by9).toBe(false);
 
     act(() => {
-      Object.defineProperty(window, 'innerWidth', { value: 2560 });
-      Object.defineProperty(window, 'innerHeight', { value: 1080 });
+      Object.defineProperty(window, 'innerWidth', { value: RESIZE_WIDTH });
+      Object.defineProperty(window, 'innerHeight', { value: RESIZE_HEIGHT });
       resizeCallback();
     });
 
-    expect(result.current.aspectRatio).toBeCloseTo(2.37, 2);
+    expect(result.current.aspectRatio).toBeCloseTo(RESIZE_RATIO, 2);
     expect(result.current.isWiderThan16by9).toBe(true);
     expect(result.current.containerStyle).toEqual({
-      maxWidth: `${1080 * (16/9)}px`,
+      maxWidth: `${RESIZE_HEIGHT * RATIO_16_BY_9}px`,
       margin: '0 auto'
     });
   });
