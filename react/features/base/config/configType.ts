@@ -387,6 +387,10 @@ export interface IConfig {
     feedbackPercentage?: number;
     fileRecordingsServiceEnabled?: boolean;
     fileRecordingsServiceSharingEnabled?: boolean;
+    fileSharing?: {
+        apiUrl?: string;
+        enabled?: boolean;
+    };
     filmstrip?: {
         disableResizable?: boolean;
         disableStageFilmstrip?: boolean;
