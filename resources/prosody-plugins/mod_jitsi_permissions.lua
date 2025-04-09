@@ -1,7 +1,6 @@
 -- this is auto loaded by meeting_id
 local filters = require 'util.filters';
 local jid = require 'util.jid';
-local modulemanager = require "prosody.core.modulemanager";
 
 local util = module:require 'util';
 local is_admin = util.is_admin;

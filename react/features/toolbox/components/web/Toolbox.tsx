@@ -89,12 +89,11 @@ export default function Toolbox({
     const toolbarButtonsToUse = toolbarButtons || reduxToolbarButtons;
     const chatOpen = useSelector((state: IReduxState) => state['features/chat'].isOpen);
     const isDialogVisible = useSelector((state: IReduxState) => Boolean(state['features/base/dialog'].component));
-    const jwt = useSelector((state: IReduxState) => state['features/base/jwt'].jwt);
     const localParticipant = useSelector(getLocalParticipant);
     const transcribing = useSelector(isTranscribing);
 
     // Do not convert to selector, it returns new array and will cause re-rendering of toolbox on every action.
-    const jwtDisabledButtons = getJwtDisabledButtons(transcribing, jwt, localParticipant?.features);
+    const jwtDisabledButtons = getJwtDisabledButtons(transcribing, localParticipant?.features);
 
     const reactionsButtonEnabled = useSelector(isReactionsButtonEnabled);
     const _shouldDisplayReactionsButtons = useSelector(shouldDisplayReactionsButtons);
