@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
-import { getLocalizedDateFormatter, getLocalizedDurationFormatter } from '../../../i18n/dateUtil';
+import {
+    getLocalizedDateFormatter,
+    getLocalizedDurationFormatter,
+} from '../../../i18n/dateUtil';
 import { translate } from '../../../i18n/functions';
 import Icon from '../../../icons/components/Icon';
 import { IconTrash } from '../../../icons/svg';
@@ -21,33 +24,33 @@ interface IMeeting {
 interface IProps extends WithTranslation {
 
     /**
-     * Indicates if the list is disabled or not.
-     */
+   * Indicates if the list is disabled or not.
+   */
     disabled: boolean;
 
     /**
-     * Indicates if the URL should be hidden or not.
-     */
+   * Indicates if the URL should be hidden or not.
+   */
     hideURL?: boolean;
 
     /**
-     * Rendered when the list is empty. Should be a rendered element.
-     */
+   * Rendered when the list is empty. Should be a rendered element.
+   */
     listEmptyComponent: React.ReactNode;
 
     /**
-     * An array of meetings.
-     */
+   * An array of meetings.
+   */
     meetings: IMeeting[];
 
     /**
-     * Handler for deleting an item.
-     */
+   * Handler for deleting an item.
+   */
     onItemDelete?: Function;
 
     /**
-     * Function to be invoked when an item is pressed. The item's URL is passed.
-     */
+   * Function to be invoked when an item is pressed. The item's URL is passed.
+   */
     onPress: Function;
 }
 
@@ -62,7 +65,6 @@ function _toDateString(date: Date) {
     return getLocalizedDateFormatter(date).format('ll');
 }
 
-
 /**
  * Generates a time (interval) string for a given times.
  *
@@ -72,10 +74,9 @@ function _toDateString(date: Date) {
  */
 function _toTimeString(times: Date[]) {
     if (times && times.length > 0) {
-        return (
-            times
-                .map(time => getLocalizedDateFormatter(time).format('LT'))
-                .join(' - '));
+        return times
+      .map(time => getLocalizedDateFormatter(time).format('LT'))
+      .join(' - ');
     }
 
     return undefined;
@@ -89,10 +90,10 @@ function _toTimeString(times: Date[]) {
  */
 class MeetingsList extends Component<IProps> {
     /**
-     * Constructor of the MeetingsList component.
-     *
-     * @inheritdoc
-     */
+   * Constructor of the MeetingsList component.
+   *
+   * @inheritdoc
+   */
     constructor(props: IProps) {
         super(props);
 
@@ -101,24 +102,22 @@ class MeetingsList extends Component<IProps> {
     }
 
     /**
-     * Renders the content of this component.
-     *
-     * @returns {React.ReactNode}
-     */
+   * Renders the content of this component.
+   *
+   * @returns {React.ReactNode}
+   */
     override render() {
         const { listEmptyComponent, meetings } = this.props;
 
         /**
-         * If there are no recent meetings we don't want to display anything.
-         */
+     * If there are no recent meetings we don't want to display anything.
+     */
         if (meetings) {
             return (
                 <Container className = 'meetings-list'>
-                    {
-                        meetings.length === 0
-                            ? listEmptyComponent
-                            : meetings.map(this._renderItem)
-                    }
+                    {meetings.length === 0
+                        ? listEmptyComponent
+                        : meetings.map(this._renderItem)}
                 </Container>
             );
         }
@@ -127,12 +126,12 @@ class MeetingsList extends Component<IProps> {
     }
 
     /**
-     * Returns a function that is used in the onPress callback of the items.
-     *
-     * @param {string} url - The URL of the item to navigate to.
-     * @private
-     * @returns {Function}
-     */
+   * Returns a function that is used in the onPress callback of the items.
+   *
+   * @param {string} url - The URL of the item to navigate to.
+   * @private
+   * @returns {Function}
+   */
     _onPress(url: string) {
         const { disabled, onPress } = this.props;
 
@@ -144,12 +143,12 @@ class MeetingsList extends Component<IProps> {
     }
 
     /**
-     * Returns a function that is used in the onPress callback of the items.
-     *
-     * @param {string} url - The URL of the item to navigate to.
-     * @private
-     * @returns {Function}
-     */
+   * Returns a function that is used in the onPress callback of the items.
+   *
+   * @param {string} url - The URL of the item to navigate to.
+   * @private
+   * @returns {Function}
+   */
     _onKeyPress(url: string) {
         const { disabled, onPress } = this.props;
 
@@ -165,12 +164,12 @@ class MeetingsList extends Component<IProps> {
     }
 
     /**
-     * Returns a function that is used on the onDelete callback.
-     *
-     * @param {Object} item - The item to be deleted.
-     * @private
-     * @returns {Function}
-     */
+   * Returns a function that is used on the onDelete callback.
+   *
+   * @param {Object} item - The item to be deleted.
+   * @private
+   * @returns {Function}
+   */
     _onDelete(item: Object) {
         const { onItemDelete } = this.props;
 
@@ -182,12 +181,12 @@ class MeetingsList extends Component<IProps> {
     }
 
     /**
-     * Returns a function that is used on the onDelete keypress callback.
-     *
-     * @param {Object} item - The item to be deleted.
-     * @private
-     * @returns {Function}
-     */
+   * Returns a function that is used on the onDelete keypress callback.
+   *
+   * @param {Object} item - The item to be deleted.
+   * @private
+   * @returns {Function}
+   */
     _onDeleteKeyPress(item: Object) {
         const { onItemDelete } = this.props;
 
@@ -201,27 +200,20 @@ class MeetingsList extends Component<IProps> {
     }
 
     /**
-     * Renders an item for the list.
-     *
-     * @param {Object} meeting - Information about the meeting.
-     * @param {number} index - The index of the item.
-     * @returns {Node}
-     */
+   * Renders an item for the list.
+   *
+   * @param {Object} meeting - Information about the meeting.
+   * @param {number} index - The index of the item.
+   * @returns {Node}
+   */
     _renderItem(meeting: IMeeting, index: number) {
-        const {
-            date,
-            duration,
-            elementAfter,
-            time,
-            title,
-            url
-        } = meeting;
+        const { date, duration, elementAfter, time, title, url } = meeting;
         const { hideURL = false, onItemDelete, t } = this.props;
         const onPress = this._onPress(url);
         const onKeyPress = this._onKeyPress(url);
-        const rootClassName
-            = `item ${
-                onPress ? 'with-click-handler' : 'without-click-handler'}`;
+        const rootClassName = `item ${
+            onPress ? 'with-click-handler' : 'without-click-handler'
+        }`;
 
         return (
             <Container
@@ -229,46 +221,42 @@ class MeetingsList extends Component<IProps> {
                 key = { index }
                 onClick = { onPress }
                 tabIndex = { 0 }>
-                <Container className = 'right-column'>
+                <Container className = 'left-column'>
+                    <Text className = 'date'>{_toDateString(date)}</Text>
+                    <Text className = 'time'>{_toTimeString(time)}</Text>
+                </Container>
+                <Container className = 'middle-column'>
                     <Text
-                        className = 'title'
+                        className = 'meeting-title'
                         onClick = { onPress }
                         onKeyPress = { onKeyPress }
                         role = 'button'>
-                        { title }
+                        {title}
                     </Text>
-                    {
-                        hideURL || !url ? null : (
-                            <Text>
-                                { url }
-                            </Text>)
-                    }
-                    {
-                        typeof duration === 'number' ? (
-                            <Text className = 'subtitle'>
-                                { getLocalizedDurationFormatter(duration) }
-                            </Text>) : null
-                    }
+                    {hideURL || !url ? null : <Text>{url}</Text>}
                 </Container>
-                <Container className = 'left-column'>
-                    <Text className = 'title'>
-                        { _toDateString(date) }
-                    </Text>
-                    <Text className = 'subtitle'>
-                        { _toTimeString(time) }
+                <Container className = 'right-column'>
+                    <Text className = 'duration-display'>
+                        {typeof duration === 'number' ? (
+                            <Text className = 'subtitle'>
+                                {getLocalizedDurationFormatter(duration)}
+                            </Text>
+                        ) : null}
                     </Text>
                 </Container>
                 <Container className = 'actions'>
-                    { elementAfter || null }
+                    {elementAfter || null}
 
-                    { onItemDelete && <Icon
-                        ariaLabel = { t('welcomepage.recentListDelete') }
-                        className = 'delete-meeting'
-                        onClick = { this._onDelete(meeting) }
-                        onKeyPress = { this._onDeleteKeyPress(meeting) }
-                        role = 'button'
-                        src = { IconTrash }
-                        tabIndex = { 0 } />}
+                    {onItemDelete && (
+                        <Icon
+                            ariaLabel = { t('welcomepage.recentListDelete') }
+                            className = 'delete-meeting'
+                            onClick = { this._onDelete(meeting) }
+                            onKeyPress = { this._onDeleteKeyPress(meeting) }
+                            role = 'button'
+                            src = { IconTrash }
+                            tabIndex = { 0 } />
+                    )}
                 </Container>
             </Container>
         );
