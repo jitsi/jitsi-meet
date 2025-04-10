@@ -8,6 +8,8 @@ import VideoSpeaker from "../components/VideoSpeaker";
 import { VideoParticipantType } from "../types";
 import { getParticipantsWithTracks } from "../utils";
 import AudioTracksContainer from "../../../../../filmstrip/components/web/AudioTracksContainer";
+import { useAspectRatio } from "../../../general/hooks/useAspectRatio";
+
 
 interface GalleryVideoWrapperProps extends WithTranslation {
     videoMode: string;
@@ -16,8 +18,11 @@ interface GalleryVideoWrapperProps extends WithTranslation {
 }
 
 const GalleryVideoWrapper = ({ videoMode, participants, flipX, t }: GalleryVideoWrapperProps) => {
+    const { containerStyle } = useAspectRatio();
+    const contStyle = videoMode === "gallery" ? containerStyle : {};
+
     return (
-        <div className="h-full w-full overflow-hidden bg-gray-950">
+        <div className="h-full w-full bg-gray-950" style={contStyle}>
             <AudioTracksContainer />
             <div className={videoMode === "gallery" ? "block" : "hidden"}>
                 <VideoGallery participants={participants ?? []} translate={t} flipX={flipX} />

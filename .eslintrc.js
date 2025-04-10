@@ -1,7 +1,7 @@
 module.exports = {
-    'extends': [
-        '@jitsi/eslint-config'
-    ],
+    "extends": "@internxt/eslint-config-internxt",
     'ignorePatterns': [ '*.d.ts' ],
-    'linebreak-style': 'off'
+    rules: {
+        'linebreak-style': ['error', 'unix'],
+    },
 };
