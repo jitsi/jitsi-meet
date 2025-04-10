@@ -11,7 +11,7 @@
     font-family: $baseFontFamily;
     font-size: 0.5rem;
     font-weight: 700;
-    line-height: 13px;
+    line-height: 0.75rem;
     min-width: 13px;
     overflow: hidden;
     text-align: center;
@@ -70,7 +70,7 @@
     .badge-round {
         bottom: -5px;
         font-size: 0.75rem;
-        line-height: 20px;
+        line-height: 1.25rem;
         min-width: 20px;
         pointer-events: none;
         position: absolute;

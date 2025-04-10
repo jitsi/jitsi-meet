@@ -13,7 +13,7 @@
     flex: 1;
     font-size: 0.75rem;
     height: calc(100% - 10px);
-    line-height: 20px;
+    line-height: 1.25rem;
     overflow: auto;
     padding: 16px;
     text-align: left;
@@ -86,7 +86,7 @@
     }
 
     label {
-        line-height: 24px;
+        line-height: 1.5rem;
     }
 }
 
@@ -220,7 +220,7 @@
         color: #fff;
         font-weight: 600;
         font-size: 1.5rem;
-        line-height: 32px;
+        line-height: 2rem;
 
         .jitsi-icon {
             cursor: pointer;
