@@ -5,7 +5,7 @@
         color: #fff;
         cursor: pointer;
         display: inline-block;
-        font-size: 14px;
+        font-size: 0.875rem;
         font-weight: 600;
         line-height: 24px;
         margin-bottom: 16px;
@@ -26,7 +26,7 @@
 
         &.text {
             width: auto;
-            font-size: 13px;
+            font-size: 0.75rem;
             margin: 0;
             padding: 0;
         }
@@ -98,7 +98,7 @@
         }
 
         .action-btn {
-            font-size: 16px;
+            font-size: 1rem;
             margin-bottom: 8px;
             padding: 11px 16px;
         }

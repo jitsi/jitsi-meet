@@ -1,7 +1,7 @@
 .security {
     &-dialog {
         color: #fff;
-        font-size: 15px;
+        font-size: 0.875rem;
         line-height: 24px;
 
         &.password-section {
@@ -9,7 +9,7 @@
             flex-direction: column;
 
             .description {
-                font-size: 13px;
+                font-size: 0.75rem;
             }
 
             .password {
@@ -24,7 +24,7 @@
                     button {
                         cursor: pointer;
                         text-decoration: none;
-                        font-size: 14px;
+                        font-size: 0.875rem;
                         color: #6FB1EA;
                     }
 

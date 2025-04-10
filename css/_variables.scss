@@ -50,11 +50,11 @@ $filmstripVideosZ: $toolbarZ + 1;
 $primaryUnsupportedBrowserButtonBgColor: #0052CC;
 $unsupportedBrowserButtonBgColor: rgba(9, 30, 66, 0.04);
 $unsupportedBrowserTextColor: #4a4a4a;
-$unsupportedBrowserTextSmallFontSize: 17px;
+$unsupportedBrowserTextSmallFontSize: 1rem;
 $unsupportedBrowserTitleColor: #fff;
-$unsupportedBrowserTitleFontSize: 24px;
+$unsupportedBrowserTitleFontSize: 1.5rem;
 $unsupportedDesktopBrowserTextColor: rgba(255, 255, 255, 0.7);
-$unsupportedDesktopBrowserTextFontSize: 21px;
+$unsupportedDesktopBrowserTextFontSize: 1.25rem;
 
 /**
  * The size of the default watermark.
@@ -89,7 +89,7 @@ $welcomePageHeaderContainerDisplay: flex;
 $welcomePageHeaderContainerMargin: $welcomePageHeaderContainerMarginTop auto 0;
 
 $welcomePageHeaderTextTitleMarginBottom: 0;
-$welcomePageHeaderTextTitleFontSize: 42px;
+$welcomePageHeaderTextTitleFontSize: 2.625rem;
 $welcomePageHeaderTextTitleFontWeight: normal;
 $welcomePageHeaderTextTitleLineHeight: 50px;
 $welcomePageHeaderTextTitleOpacity: 1;
