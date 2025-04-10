@@ -50,7 +50,8 @@ var config = {
 
     // Websocket URL (XMPP)
     websocket: 'wss://jitsi-meet.example.com/' + subdir + 'xmpp-websocket',
-    websocketKeepAliveUrl: 'https://jitsi-meet.example.com/' + subdir + '_unlock',
+
+    // websocketKeepAliveUrl: 'https://jitsi-meet.example.com/' + subdir + '_unlock',
 
     // Whether BOSH should be preferred over WebSocket if both are configured.
     // preferBosh: false,
