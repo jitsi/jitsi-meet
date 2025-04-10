@@ -193,6 +193,10 @@ function filter_stanza(stanza)
                 end
             end
 
+            if not from_real_jid then
+                return nil;
+            end
+
             local is_from_moderator = lobby_room:get_affiliation(from_real_jid) == 'owner';
 
             if is_to_moderator or is_from_moderator then
