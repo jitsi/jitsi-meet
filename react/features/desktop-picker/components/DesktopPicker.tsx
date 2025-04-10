@@ -275,7 +275,7 @@ class DesktopPicker extends PureComponent<IProps, IState> {
         const { sources } = this.state;
 
         // @ts-ignore
-        const source = sources.screen.concat(sources.window).find(s => s.id === id);
+        const source = (sources?.screen ?? []).concat(sources?.window ?? []).find(s => s.id === id);
 
         this.props.onSourceChoose(id, type, screenShareAudio, source);
         this.props.dispatch(hideDialog());
