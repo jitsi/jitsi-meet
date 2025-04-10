@@ -1,7 +1,7 @@
 %navigate-section-list-text {
     width: 100%;
-    font-size: 14px;
-    line-height: 20px;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
     color: $welcomePageTitleColor;
     text-align: left;
     font-family: 'open_sanslight', Helvetica, sans-serif;
@@ -52,7 +52,7 @@
 .navigate-section-tile-body {
     @extend %navigate-section-list-tile-text;
     font-weight: normal;
-    line-height: 24px;
+    line-height: 1.5rem;
 }
 .navigate-section-list-tile-info {
     flex: 1;
@@ -61,7 +61,7 @@
 .navigate-section-tile-title {
     @extend %navigate-section-list-tile-text;
     font-weight: bold;
-    line-height: 24px;
+    line-height: 1.5rem;
 }
 .navigate-section-section-header {
     @extend %navigate-section-list-text;
