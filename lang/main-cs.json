@@ -1111,7 +1111,7 @@
         "incomingMessage": "Příchozí zpráva",
         "language": "Jazyk",
         "loggedIn": "Přihlášen/a jako {{name}}",
-        "maxStageParticipants": "Maximální počet účastníků, které lze připnout na hlavní pódium (EXPERIMENTÁLNÍ)",
+        "maxStageParticipants": "Maximální počet účastníků, které lze připnout na hlavní pódium",
         "microphones": "Mikrofony",
         "moderator": "Moderátor",
         "moderatorOptions": "Možnosti moderátora",
