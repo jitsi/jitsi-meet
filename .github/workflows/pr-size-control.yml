@@ -2,14 +2,58 @@ name: PR Size Checker
 on: pull_request
 jobs:
     check_pr_size:
-        name: Check PR size doesn't break set limit
+        name: Check PR size doesn't break set limit (excluding tests)
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - name: Checkout code
+              uses: actions/checkout@v4
               with:
                   fetch-depth: 0
 
-            - uses: maidsafe/pr_size_checker@v3
-              with:
-                  max_lines_changed: 500
-                  target_branch: main
+            - name: Calculate changed lines excluding tests
+              id: count_lines
+              run: |
+                # --- Configuración ---
+                # Define el número máximo de líneas permitidas (cambios totales: adiciones + eliminaciones)
+                # Este valor viene de tu configuración original 'max_lines_changed: 500'
+                MAX_LINES=500
+                # Define un patrón regex (formato egrep) para los archivos a excluir.
+                # ¡¡AJUSTA ESTE PATRÓN SEGÚN TUS NECESIDADES!!
+                # Ejemplos:
+                #   Archivos que terminan en _test.go, .spec.js, .test.ts
+                #   Archivos dentro de directorios llamados 'test' o 'tests'
+                #   Archivos específicos como 'config_test.yaml', 'AssemblyInfo.cs', snapshots '.snap'
+                EXCLUDE_PATTERN='(_test\.go$|\.spec\.js$|\.test\.ts$|^tests?/|/test/|/fixtures/|AssemblyInfo\.cs$|\.snap$)'
+                # --- Fin Configuración ---
+
+                # Obtener la rama base y el commit actual del PR
+                # Usa github.base_ref que es más dinámico que hardcodear 'main'
+                BASE_REF="origin/${{ github.base_ref }}"
+                CURRENT_REF="${{ github.sha }}"
+
+                echo "Comparing $BASE_REF...$CURRENT_REF"
+                echo "Excluding files matching pattern: $EXCLUDE_PATTERN"
+
+                # Calcular líneas añadidas y eliminadas usando git diff --numstat
+                # Filtrar para excluir los patrones definidos en EXCLUDE_PATTERN usando grep -vE
+                # Sumar las líneas añadidas (columna 1) y eliminadas (columna 2) usando awk
+                TOTAL_LINES=$(git diff --numstat $BASE_REF...$CURRENT_REF | grep -vE "$EXCLUDE_PATTERN" | awk '{ added+=$1; deleted+=$2 } END { print added+deleted }')
+
+                # Asegurarse de que TOTAL_LINES sea un número
+                if [[ -z "$TOTAL_LINES" ]]; then
+                  TOTAL_LINES=0
+                fi
+
+                echo "Total changed lines (excluding tests): $TOTAL_LINES"
+                echo "Maximum allowed lines: $MAX_LINES"
+
+                # Guardar el total de líneas para usarlo en pasos posteriores si es necesario
+                echo "total_lines=$TOTAL_LINES" >> $GITHUB_OUTPUT
+
+                # Comparar y fallar el workflow si se excede el límite
+                if [[ $TOTAL_LINES -gt $MAX_LINES ]]; then
+                  echo "Error: PR exceeds the maximum allowed line changes ($MAX_LINES) after excluding test files."
+                  exit 1 # Falla el paso
+                else
+                  echo "PR size is within the allowed limit."
+                fi
