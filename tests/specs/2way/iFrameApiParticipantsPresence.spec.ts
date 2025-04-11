@@ -1,13 +1,13 @@
 import { isEqual } from 'lodash-es';
 
-import { P1_DISPLAY_NAME, P2_DISPLAY_NAME, Participant } from '../../helpers/Participant';
+import { P1, P2, Participant } from '../../helpers/Participant';
 import { ensureTwoParticipants, parseJid } from '../../helpers/participants';
 import { IContext } from '../../helpers/types';
 
 /**
  * Tests PARTICIPANT_LEFT webhook.
  */
-async function checkParticipantLeftHook(ctx: IContext, p: Participant, reason: string) {
+async function checkParticipantLeftHook(ctx: IContext, p: Participant, reason: string, checkId = false) {
     const { webhooksProxy } = ctx;
 
     if (webhooksProxy) {
@@ -32,13 +32,15 @@ async function checkParticipantLeftHook(ctx: IContext, p: Participant, reason: s
         expect(event.data.disconnectReason).toBe(reason);
         expect(event.data.isBreakout).toBe(false);
         expect(event.data.participantId).toBe(await p.getEndpointId());
-        expect(event.data.name).toBe(p.displayName);
+        expect(event.data.name).toBe(p.name);
 
-        const jwtPayload = ctx.data[`${p.displayName}-jwt-payload`];
+        if (checkId) {
+            const jwtPayload = ctx.data[`${p.name}-jwt-payload`];
 
-        expect(event.data.id).toBe(jwtPayload?.context?.user?.id);
-        expect(event.data.group).toBe(jwtPayload?.context?.group);
-        expect(event.customerId).toBe(process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', ''));
+            expect(event.data.id).toBe(jwtPayload?.context?.user?.id);
+            expect(event.data.group).toBe(jwtPayload?.context?.group);
+            expect(event.customerId).toBe(process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', ''));
+        }
     }
 }
 
@@ -239,14 +241,14 @@ describe('Participants presence', () => {
 
         const eventP1 = await p1.driver.waitUntil(() => p1.getIframeAPI().getEventResult('participantKickedOut'), {
             timeout: 2000,
-            timeoutMsg: 'participantKickedOut event not received on participant1 side'
+            timeoutMsg: 'participantKickedOut event not received on p1 side'
         });
         const eventP2 = await p2.driver.waitUntil(() => p2.getIframeAPI().getEventResult('participantKickedOut'), {
             timeout: 2000,
-            timeoutMsg: 'participantKickedOut event not received on participant2 side'
+            timeoutMsg: 'participantKickedOut event not received on p2 side'
         });
 
-        await checkParticipantLeftHook(ctx, p2, 'kicked');
+        await checkParticipantLeftHook(ctx, p2, 'kicked', true);
 
         expect(eventP1).toBeDefined();
         expect(eventP2).toBeDefined();
@@ -318,7 +320,7 @@ describe('Participants presence', () => {
             expect(event.data.moderator).toBe(false);
             expect(event.data.name).toBe(await p2.getLocalDisplayName());
             expect(event.data.participantId).toBe(await p2.getEndpointId());
-            expect(event.data.name).toBe(p2.displayName);
+            expect(event.data.name).toBe(p2.name);
         }
 
         await p1.switchToAPI();
@@ -343,8 +345,8 @@ describe('Participants presence', () => {
         const p1EpId = await p1.getEndpointId();
         const p2EpId = await p2.getEndpointId();
 
-        const newP1Name = P1_DISPLAY_NAME;
-        const newP2Name = P2_DISPLAY_NAME;
+        const newP1Name = P1;
+        const newP2Name = P2;
         const newNames: ({ id: string; name: string; })[] = [ {
             id: p2EpId,
             name: newP2Name
@@ -412,7 +414,7 @@ describe('Participants presence', () => {
         expect(eventConferenceLeft).toBeDefined();
         expect(eventConferenceLeft.roomName).toBe(roomName);
 
-        await checkParticipantLeftHook(ctx, p1, 'left');
+        await checkParticipantLeftHook(ctx, p1, 'left', true);
         if (webhooksProxy) {
             // ROOM_DESTROYED webhook
             // @ts-ignore

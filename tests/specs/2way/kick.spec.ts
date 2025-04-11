@@ -35,5 +35,10 @@ async function kickParticipant2AndCheck() {
     await p1.waitForParticipants(0);
 
     // check that the kicked participant sees the kick reason dialog
-    expect(await p2.isLeaveReasonDialogOpen()).toBe(true);
+    // let's wait for this to appear at least 2 seconds
+    await p2.driver.waitUntil(
+        async () => p2.isLeaveReasonDialogOpen(), {
+            timeout: 2000,
+            timeoutMsg: 'No leave reason dialog shown for p2'
+        });
 }
