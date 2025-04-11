@@ -1088,7 +1088,7 @@
         "incomingMessage": "Pesan masuk",
         "language": "Bahasa",
         "loggedIn": "Masuk sebagai {{name}}",
-        "maxStageParticipants": "Jumlah maksimum peserta yang dapat ditampilkan di panggung utama (PERCOBAAN)",
+        "maxStageParticipants": "Jumlah maksimum peserta yang dapat ditampilkan di panggung utama",
         "microphones": "Mikrofon",
         "moderator": "Moderator",
         "moderatorOptions": "Opsi moderator",

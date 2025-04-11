@@ -1067,7 +1067,7 @@
         "incomingMessage": "Mensagem recebida",
         "language": "Idioma",
         "loggedIn": "Conectado como {{name}}",
-        "maxStageParticipants": "Número máximo de participantes que podem ser fixados no palco principal (EXPERIMENTAL)",
+        "maxStageParticipants": "Número máximo de participantes que podem ser fixados no palco principal",
         "microphones": "Microfones",
         "moderator": "Moderador",
         "moderatorOptions": "Opções de moderador",

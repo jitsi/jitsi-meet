@@ -997,7 +997,7 @@
         "incomingMessage": "Ирсэн мессэж",
         "language": "Хэл",
         "loggedIn": "{{name}} нэвтэрсэн",
-        "maxStageParticipants": "Үндсэн тайз руу гарах оролцогчийн хамгийн их тоо(Туршилтынх)",
+        "maxStageParticipants": "Үндсэн тайз руу гарах оролцогчийн хамгийн их тоо",
         "microphones": "Микрофон",
         "moderator": "Зохицуулагч",
         "moderatorOptions": "Зохицуулагчийн сонголт",

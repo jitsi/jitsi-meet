@@ -1081,7 +1081,7 @@
         "incomingMessage": "Tin nhắn đang gửi",
         "language": "Ngôn ngữ",
         "loggedIn": "Đã đăng nhập dưới tên {{name}}",
-        "maxStageParticipants": "Số lượng người tham gia tối đa có thể được ghim vào sân khấu chính (THỬ NGHIỆM)",
+        "maxStageParticipants": "Số lượng người tham gia tối đa có thể được ghim vào sân khấu chính",
         "microphones": "Micro",
         "moderator": "Quản trị viên",
         "moderatorOptions": "Tùy chọn quản trị viên",

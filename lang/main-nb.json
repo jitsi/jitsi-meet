@@ -1111,7 +1111,7 @@
         "incomingMessage": "Innkommende melding",
         "language": "Språk",
         "loggedIn": "Logget inn som {{name}}",
-        "maxStageParticipants": "Maksimalt antall deltakere som kan festes til hovedscenen (EKSPERIMENTELL)",
+        "maxStageParticipants": "Maksimalt antall deltakere som kan festes til hovedscenen",
         "microphones": "Mikrofoner",
         "moderator": "Moderator",
         "moderatorOptions": "Moderatoralternativer",

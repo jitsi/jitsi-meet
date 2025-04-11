@@ -1111,7 +1111,7 @@
         "incomingMessage": "Messatge dintrant",
         "language": "Lenga",
         "loggedIn": "Session a {{name}}",
-        "maxStageParticipants": "Nombre maximal de participants que se pòt penjar a la scèna principala (EXPERIMENTAL)",
+        "maxStageParticipants": "Nombre maximal de participants que se pòt penjar a la scèna principala",
         "microphones": "Microfòns",
         "moderator": "Moderator",
         "moderatorOptions": "Opcions de moderacion",

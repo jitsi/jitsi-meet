@@ -1117,7 +1117,7 @@
         "incomingMessage": "Ienākošā ziņa",
         "language": "Valoda",
         "loggedIn": "Ierakstījies kā {{name}}",
-        "maxStageParticipants": "Maksimālais dalībnieku skaits, kurus var piespraust galvenajai skatuvei (EKSPERIMENTĀLS)",
+        "maxStageParticipants": "Maksimālais dalībnieku skaits, kurus var piespraust galvenajai skatuvei",
         "microphones": "Mikrofoni",
         "moderator": "Moderators",
         "moderatorOptions": "Moderatora opcijas",

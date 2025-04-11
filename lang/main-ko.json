@@ -1110,7 +1110,7 @@
         "incomingMessage": "수신 메시지",
         "language": "언어",
         "loggedIn": "{{name}}으로 로그인",
-        "maxStageParticipants": "메인 스테이지에 고정할 수 있는 최대 참가자 수 (실험적 기능)",
+        "maxStageParticipants": "메인 스테이지에 고정할 수 있는 최대 참가자 수",
         "microphones": "마이크",
         "moderator": "진행자",
         "moderatorOptions": "진행자 옵션",
