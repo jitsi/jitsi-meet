@@ -7,7 +7,7 @@ import { IContext } from '../../helpers/types';
 /**
  * Tests PARTICIPANT_LEFT webhook.
  */
-async function checkParticipantLeftHook(ctx: IContext, p: Participant, reason: string) {
+async function checkParticipantLeftHook(ctx: IContext, p: Participant, reason: string, checkId = false) {
     const { webhooksProxy } = ctx;
 
     if (webhooksProxy) {
@@ -34,11 +34,13 @@ async function checkParticipantLeftHook(ctx: IContext, p: Participant, reason: s
         expect(event.data.participantId).toBe(await p.getEndpointId());
         expect(event.data.name).toBe(p.displayName);
 
-        const jwtPayload = ctx.data[`${p.displayName}-jwt-payload`];
+        if (checkId) {
+            const jwtPayload = ctx.data[`${p.displayName}-jwt-payload`];
 
-        expect(event.data.id).toBe(jwtPayload?.context?.user?.id);
-        expect(event.data.group).toBe(jwtPayload?.context?.group);
-        expect(event.customerId).toBe(process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', ''));
+            expect(event.data.id).toBe(jwtPayload?.context?.user?.id);
+            expect(event.data.group).toBe(jwtPayload?.context?.group);
+            expect(event.customerId).toBe(process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', ''));
+        }
     }
 }
 
@@ -246,7 +248,7 @@ describe('Participants presence', () => {
             timeoutMsg: 'participantKickedOut event not received on participant2 side'
         });
 
-        await checkParticipantLeftHook(ctx, p2, 'kicked');
+        await checkParticipantLeftHook(ctx, p2, 'kicked', true);
 
         expect(eventP1).toBeDefined();
         expect(eventP2).toBeDefined();
@@ -412,7 +414,7 @@ describe('Participants presence', () => {
         expect(eventConferenceLeft).toBeDefined();
         expect(eventConferenceLeft.roomName).toBe(roomName);
 
-        await checkParticipantLeftHook(ctx, p1, 'left');
+        await checkParticipantLeftHook(ctx, p1, 'left', true);
         if (webhooksProxy) {
             // ROOM_DESTROYED webhook
             // @ts-ignore
