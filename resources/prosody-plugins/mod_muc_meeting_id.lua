@@ -9,6 +9,7 @@ local get_room_from_jid = main_util.get_room_from_jid;
 local is_healthcheck_room = main_util.is_healthcheck_room;
 local internal_room_jid_match_rewrite = main_util.internal_room_jid_match_rewrite;
 local presence_check_status = main_util.presence_check_status;
+local extract_subdomain = main_util.extract_subdomain;
 
 local QUEUE_MAX_SIZE = 500;
 
@@ -223,7 +224,11 @@ module:hook('message/bare', function(event)
         transcription.session_id = room._data.meetingId;
 
         local tenant, conference_name, id = extract_subdomain(jid.node(room.jid));
-        transcription.fqn = tenant..'/'..conference_name;
+        if tenant then
+            transcription.fqn = tenant..'/'..conference_name;
+        else
+            transcription.fqn = conference_name;
+        end
         transcription.customer_id = id;
 
         return module:fire_event('jitsi-transcript-received', {
