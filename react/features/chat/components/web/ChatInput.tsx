@@ -1,4 +1,5 @@
-import React, { Component, RefObject } from 'react';
+import React, { Component, ReactElement, RefObject } from 'react';
+import { toArray } from 'react-emoji-render';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
@@ -67,7 +68,7 @@ interface IState {
 class ChatInput extends Component<IProps, IState> {
     _textArea?: RefObject<HTMLTextAreaElement>;
 
-    override state = {
+    state = {
         message: '',
         showSmileysPanel: false
     };
@@ -96,7 +97,7 @@ class ChatInput extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    override componentDidMount() {
+    componentDidMount() {
         if (isMobileBrowser()) {
             // Ensure textarea is not focused when opening chat on mobile browser.
             this._textArea?.current && this._textArea.current.blur();
@@ -110,7 +111,7 @@ class ChatInput extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    override componentDidUpdate(prevProps: Readonly<IProps>) {
+    componentDidUpdate(prevProps: Readonly<IProps>) {
         if (prevProps._privateMessageRecipientId !== this.props._privateMessageRecipientId) {
             this._textArea?.current?.focus();
         }
@@ -122,7 +123,7 @@ class ChatInput extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    override render() {
+    render() {
         return (
             <div className = { `chat-input-container${this.state.message.trim().length ? ' populated' : ''}` }>
                 <div id = 'chat-input' >
@@ -195,11 +196,7 @@ class ChatInput extends Component<IProps, IState> {
 
             // Keep the textarea in focus when sending messages via submit button.
             this._focus();
-
-            // Hide the Emojis box after submitting the message
-            this.setState({ showSmileysPanel: false });
         }
-
     }
 
     /**
@@ -245,6 +242,53 @@ class ChatInput extends Component<IProps, IState> {
     }
 
     /**
+    * Renders the message with emojis in the input field.
+    *
+    * @returns {ReactNode}
+    */
+    _renderMessageWithEmojis() {
+        const { message } = this.state;
+
+        if (!message) {
+            return '';
+        }
+
+        // Split the message by spaces
+        const tokens = message.split(' ');
+        let renderedMessage = '';
+
+        // Process each token
+        for (const token of tokens) {
+            if (token.includes('://') || token.startsWith('@')) {
+                // Don't process URLs or mentions
+                renderedMessage += token;
+            } else {
+                // Convert emoji text to Unicode
+                const processed = toArray(token)
+                    .map(item => {
+                        if (typeof item === 'string') {
+                            return item;
+                        } else if (React.isValidElement(item)) {
+                            // Check if it's a React element and has children
+                            const reactElement = item as ReactElement;
+
+                            return reactElement.props?.children || '';
+                        }
+
+                        return '';
+                    })
+                    .join('');
+
+                renderedMessage += processed;
+            }
+
+            renderedMessage += ' ';
+        }
+
+        return renderedMessage.trim();
+    }
+
+    /**
      * Appends a selected smileys to the chat message draft.
      *
      * @param {string} smileyText - The value of the smiley to append to the
@@ -257,6 +301,13 @@ class ChatInput extends Component<IProps, IState> {
             this.setState({
                 message: `${this.state.message} ${smileyText}`,
                 showSmileysPanel: false
+            }, () => {
+                // After adding the emoji text, convert the entire message for display
+                const displayMessage = this._renderMessageWithEmojis();
+
+                // Optional: update the state with the converted message
+                // This would replace :) with 😊 in the actual message content
+                this.setState({ message: displayMessage });
             });
         } else {
             this.setState({
