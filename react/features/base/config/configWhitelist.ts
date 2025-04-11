@@ -214,6 +214,7 @@ export default [
     'resolution',
     'screenshotCapture',
     'securityUi',
+    'filmstripBackgroundOpaque',
     'speakerStats',
     'startAudioMuted',
     'startAudioOnly',
