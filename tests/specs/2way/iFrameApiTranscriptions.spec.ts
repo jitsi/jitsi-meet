@@ -157,13 +157,13 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
     allTranscripts.push(await p1.driver.waitUntil(() => p1.getIframeAPI()
             .getEventResult('transcriptionChunkReceived'), {
         timeout: 60000,
-        timeoutMsg: 'transcriptionChunkReceived event not received on participant1 side'
+        timeoutMsg: 'transcriptionChunkReceived event not received on p1 side'
     }));
 
     allTranscripts.push(await p2.driver.waitUntil(() => p2.getIframeAPI()
             .getEventResult('transcriptionChunkReceived'), {
         timeout: 60000,
-        timeoutMsg: 'transcriptionChunkReceived event not received on participant2 side'
+        timeoutMsg: 'transcriptionChunkReceived event not received on p2 side'
     }));
 
     if (webhooksProxy) {
@@ -220,6 +220,6 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
         expect(tr.language).toBe(language);
         expect(tr.messageID).toBe(messageID);
         expect(tr.participant.id).toBe(p1Id);
-        expect(tr.participant.name).toBe(p1.displayName);
+        expect(tr.participant.name).toBe(p1.name);
     });
 }

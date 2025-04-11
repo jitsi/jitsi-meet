@@ -75,8 +75,8 @@ export default class ParticipantsPane extends BasePageObject {
         await this.participant.driver.$(mutedIconXPath).waitForDisplayed({
             reverse,
             timeout: 2000,
-            timeoutMsg: `Video mute icon is${reverse ? '' : ' not'} displayed for ${testee.displayName} at ${
-                this.participant.displayName} side.`
+            timeoutMsg: `Video mute icon is${reverse ? '' : ' not'} displayed for ${testee.name} at ${
+                this.participant.name} side.`
         });
 
         if (!isOpen) {
@@ -107,8 +107,8 @@ export default class ParticipantsPane extends BasePageObject {
         await this.participant.driver.$(mutedIconXPath).waitForDisplayed({
             reverse,
             timeout: 2000,
-            timeoutMsg: `Audio mute icon is${reverse ? '' : ' not'} displayed for ${testee.displayName} at ${
-                this.participant.displayName} side.`
+            timeoutMsg: `Audio mute icon is${reverse ? '' : ' not'} displayed for ${testee.name} at ${
+                this.participant.name} side.`
         });
 
         if (!isOpen) {

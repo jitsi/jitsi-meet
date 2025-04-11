@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import process from 'node:process';
 import { v4 as uuidv4 } from 'uuid';
 
-import { P1_DISPLAY_NAME, P2_DISPLAY_NAME, P3_DISPLAY_NAME, P4_DISPLAY_NAME, Participant } from './Participant';
+import { P1, P2, P3, P4, Participant } from './Participant';
 import { IContext, IJoinOptions } from './types';
 
 const SUBJECT_XPATH = '//div[starts-with(@class, "subject-text")]';
@@ -31,18 +31,8 @@ export async function ensureThreeParticipants(ctx: IContext, options: IJoinOptio
 
     // these need to be all, so we get the error when one fails
     await Promise.all([
-        _joinParticipant('participant2', ctx.p2, p => {
-            ctx.p2 = p;
-        }, {
-            displayName: P2_DISPLAY_NAME,
-            ...options
-        }),
-        _joinParticipant('participant3', ctx.p3, p => {
-            ctx.p3 = p;
-        }, {
-            displayName: P3_DISPLAY_NAME,
-            ...options
-        })
+        _joinParticipant(P2, ctx, options),
+        _joinParticipant(P3, ctx, options)
     ]);
 
     if (options.skipInMeetingChecks) {
@@ -80,12 +70,7 @@ export function joinFirstParticipant(ctx: IContext, options: IJoinOptions = {}):
  * @returns {Promise<void>}
  */
 export function joinSecondParticipant(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
-    return _joinParticipant('participant2', ctx.p2, p => {
-        ctx.p2 = p;
-    }, {
-        displayName: P2_DISPLAY_NAME,
-        ...options
-    });
+    return _joinParticipant(P2, ctx, options);
 }
 
 /**
@@ -96,12 +81,7 @@ export function joinSecondParticipant(ctx: IContext, options: IJoinOptions = {})
  * @returns {Promise<void>}
  */
 export function joinThirdParticipant(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
-    return _joinParticipant('participant3', ctx.p3, p => {
-        ctx.p3 = p;
-    }, {
-        displayName: P3_DISPLAY_NAME,
-        ...options
-    });
+    return _joinParticipant(P3, ctx, options);
 }
 
 /**
@@ -116,24 +96,9 @@ export async function ensureFourParticipants(ctx: IContext, options: IJoinOption
 
     // these need to be all, so we get the error when one fails
     await Promise.all([
-        _joinParticipant('participant2', ctx.p2, p => {
-            ctx.p2 = p;
-        }, {
-            displayName: P2_DISPLAY_NAME,
-            ...options
-        }),
-        _joinParticipant('participant3', ctx.p3, p => {
-            ctx.p3 = p;
-        }, {
-            displayName: P3_DISPLAY_NAME,
-            ...options
-        }),
-        _joinParticipant('participant4', ctx.p4, p => {
-            ctx.p4 = p;
-        }, {
-            displayName: P4_DISPLAY_NAME,
-            ...options
-        })
+        _joinParticipant(P2, ctx, options),
+        _joinParticipant(P3, ctx, options),
+        _joinParticipant(P4, ctx, options)
     ]);
 
     if (options.skipInMeetingChecks) {
@@ -162,28 +127,8 @@ export async function ensureFourParticipants(ctx: IContext, options: IJoinOption
  * @returns {Promise<void>}
  */
 async function joinTheModeratorAsP1(ctx: IContext, options?: IJoinOptions) {
-    const p1DisplayName = P1_DISPLAY_NAME;
-    let token;
-
-    if (!options?.skipFirstModerator) {
-        // we prioritize the access token when iframe is not used and private key is set,
-        // otherwise if private key is not specified we use the access token if set
-        if (process.env.JWT_ACCESS_TOKEN
-            && ((ctx.jwtPrivateKeyPath && !ctx.iframeAPI && !options?.preferGenerateToken)
-                || !ctx.jwtPrivateKeyPath)) {
-            token = process.env.JWT_ACCESS_TOKEN;
-        } else if (ctx.jwtPrivateKeyPath) {
-            token = getToken(ctx, p1DisplayName);
-        }
-    }
-
     // make sure the first participant is moderator, if supported by deployment
-    await _joinParticipant('participant1', ctx.p1, p => {
-        ctx.p1 = p;
-    }, {
-        displayName: p1DisplayName,
-        ...options
-    }, token);
+    await _joinParticipant(P1, ctx, options);
 }
 
 /**
@@ -195,12 +140,7 @@ async function joinTheModeratorAsP1(ctx: IContext, options?: IJoinOptions) {
 export async function ensureTwoParticipants(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
     await joinTheModeratorAsP1(ctx, options);
 
-    await _joinParticipant('participant2', ctx.p2, p => {
-        ctx.p2 = p;
-    }, {
-        displayName: P2_DISPLAY_NAME,
-        ...options
-    }, options.preferGenerateToken ? getToken(ctx, P2_DISPLAY_NAME) : undefined);
+    await _joinParticipant(P2, ctx, options);
 
     if (options.skipInMeetingChecks) {
         return Promise.resolve();
@@ -219,17 +159,17 @@ export async function ensureTwoParticipants(ctx: IContext, options: IJoinOptions
 /**
  * Creates a participant instance or prepares one for re-joining.
  * @param name - The name of the participant.
- * @param p - The participant instance to prepare or undefined if new one is needed.
- * @param setter - The setter to use for setting the new participant instance into the context if needed.
+ * @param {IContext} ctx - The context.
  * @param {boolean} options - Join options.
- * @param {string?} jwtToken - The token to use if any.
  */
 async function _joinParticipant( // eslint-disable-line max-params
         name: string,
-        p: Participant,
-        setter: (p: Participant) => void,
-        options: IJoinOptions = {},
-        jwtToken?: string) {
+        ctx: IContext,
+        options: IJoinOptions = {}) {
+
+    // @ts-ignore
+    const p = ctx[name] as Participant;
+
     if (p) {
         if (ctx.iframeAPI) {
             await p.switchInPage();
@@ -250,12 +190,34 @@ async function _joinParticipant( // eslint-disable-line max-params
         // we want the participant instance re-recreated so we clear any kept state, like endpoint ID
     }
 
+    let jwtToken;
+
+    if (name === P1) {
+        if (!options?.skipFirstModerator) {
+            // we prioritize the access token when iframe is not used and private key is set,
+            // otherwise if private key is not specified we use the access token if set
+            if (process.env.JWT_ACCESS_TOKEN
+                && ((ctx.jwtPrivateKeyPath && !ctx.iframeAPI && !options?.preferGenerateToken)
+                    || !ctx.jwtPrivateKeyPath)) {
+                jwtToken = process.env.JWT_ACCESS_TOKEN;
+            } else if (ctx.jwtPrivateKeyPath) {
+                jwtToken = getToken(ctx, name);
+            }
+        }
+    } else if (name === P2) {
+        jwtToken = options.preferGenerateToken ? getToken(ctx, P2) : undefined;
+    }
+
     const newParticipant = new Participant(name, jwtToken);
 
-    // set the new participant instance, pass it to setter
-    setter(newParticipant);
+    // set the new participant instance
+    // @ts-ignore
+    ctx[name] = newParticipant;
 
-    await newParticipant.joinConference(ctx, options);
+    await newParticipant.joinConference(ctx, {
+        displayName: name,
+        ...options
+    });
 }
 
 /**
