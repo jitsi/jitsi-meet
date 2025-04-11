@@ -2,7 +2,6 @@ import { Modal } from "@internxt/ui";
 import { X } from "@phosphor-icons/react";
 import React, { useState } from "react";
 import { Button } from "@internxt/ui";
-import { Divider } from "../components/Divider";
 
 interface ScheduleMeetingModalProps {
     isOpen: boolean;
