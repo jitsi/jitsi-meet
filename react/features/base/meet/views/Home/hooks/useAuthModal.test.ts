@@ -8,7 +8,6 @@ import { useLocalStorage } from '../../../LocalStorageManager';
 import { useDispatch } from 'react-redux';
 import { setRoomID } from '../../../general/store/errors/actions';
 
-// Mock all external dependencies
 vi.mock('../../../services/auth.service');
 vi.mock('../../../../connection/options8x8');
 vi.mock('../../../LocalStorageManager');
@@ -116,13 +115,21 @@ describe('useAuthModal', () => {
             expect(mockOnLogin).not.toHaveBeenCalled();
             expect(mockOnClose).not.toHaveBeenCalled();
         });
+    });
 
-        it('When logging in with invalid credentials, then an error message is displayed', async () => {
-            const errorMessage = 'meet.auth.modal.error.invalidCredentials';
-            const error = new Error(errorMessage);
-
-            (AuthService.instance.doLogin as any).mockRejectedValue(error);
+    describe('Error handling', () => {
+        it('When authenticateUser throws invalidCredentials error, then the error message is displayed', async () => {
+            // Mock doLogin to throw an error
+            (AuthService.instance.doLogin as any).mockRejectedValue(new Error('Any error'));
             (AuthService.instance.is2FANeeded as any).mockResolvedValue(false);
+
+            // Make translate return the expected error key
+            mockTranslate.mockImplementation((key) => {
+                if (key === 'meet.auth.modal.error.invalidCredentials') {
+                    return 'meet.auth.modal.error.invalidCredentials';
+                }
+                return key;
+            });
 
             const { result } = renderHook(() =>
                 useAuthModal({ onClose: mockOnClose, onLogin: mockOnLogin, translate: mockTranslate })
@@ -136,23 +143,30 @@ describe('useAuthModal', () => {
                 });
             });
 
-            expect(result.current.loginError).toBe(errorMessage);
+            expect(result.current.loginError).toBe('meet.auth.modal.error.invalidCredentials');
             expect(mockOnLogin).not.toHaveBeenCalled();
             expect(mockOnClose).not.toHaveBeenCalled();
         });
 
-        it('When meeting token creation fails, then an error message is displayed', async () => {
+        it('When createMeetToken throws cannotCreateMeetings error, then the error message is displayed', async () => {
             const mockCredentials = {
                 newToken: 'new-token',
                 user: { id: 1 },
                 token: 'token',
                 mnemonic: 'mnemonic'
             };
-            const errorMessage = 'meet.auth.modal.error.cannotCreateMeetings';
 
             (AuthService.instance.doLogin as any).mockResolvedValue(mockCredentials);
             (AuthService.instance.is2FANeeded as any).mockResolvedValue(false);
-            (get8x8BetaJWT as any).mockRejectedValue(new Error(errorMessage));
+            (get8x8BetaJWT as any).mockRejectedValue(new Error('Failed to create meet token'));
+
+            // Make translate return the expected error key
+            mockTranslate.mockImplementation((key) => {
+                if (key === 'meet.auth.modal.error.cannotCreateMeetings') {
+                    return 'meet.auth.modal.error.cannotCreateMeetings';
+                }
+                return key;
+            });
 
             const { result } = renderHook(() =>
                 useAuthModal({ onClose: mockOnClose, onLogin: mockOnLogin, translate: mockTranslate })
@@ -166,7 +180,107 @@ describe('useAuthModal', () => {
                 });
             });
 
-            expect(result.current.loginError).toBe(errorMessage);
+            expect(result.current.loginError).toBe('meet.auth.modal.error.cannotCreateMeetings');
+            expect(mockOnLogin).not.toHaveBeenCalled();
+            expect(mockOnClose).not.toHaveBeenCalled();
+        });
+
+        it('When login credentials are invalid or incomplete, then an error message is displayed', async () => {
+            const mockCredentials = {
+                token: 'token',
+                mnemonic: 'mnemonic'
+            };
+
+            (AuthService.instance.doLogin as any).mockResolvedValue(mockCredentials);
+            (AuthService.instance.is2FANeeded as any).mockResolvedValue(false);
+
+            mockTranslate.mockImplementation((key) => {
+                if (key === 'meet.auth.modal.error.invalidCredentials') {
+                    return 'meet.auth.modal.error.invalidCredentials';
+                }
+                return key;
+            });
+
+            const { result } = renderHook(() =>
+                useAuthModal({ onClose: mockOnClose, onLogin: mockOnLogin, translate: mockTranslate })
+            );
+
+            await act(async () => {
+                await result.current.handleLogin({
+                    email: 'test@example.com',
+                    password: 'password',
+                    twoFactorCode: ''
+                });
+            });
+
+            expect(result.current.loginError).toBe('meet.auth.modal.error.invalidCredentials');
+            expect(mockOnLogin).not.toHaveBeenCalled();
+            expect(mockOnClose).not.toHaveBeenCalled();
+        });
+
+        it('When meet data is invalid or incomplete, then an error message is displayed', async () => {
+            const mockCredentials = {
+                newToken: 'new-token',
+                user: { id: 1 },
+                token: 'token',
+                mnemonic: 'mnemonic'
+            };
+
+            const invalidMeetData = {
+                token: 'meet-token'
+            };
+
+            (AuthService.instance.doLogin as any).mockResolvedValue(mockCredentials);
+            (AuthService.instance.is2FANeeded as any).mockResolvedValue(false);
+            (get8x8BetaJWT as any).mockResolvedValue(invalidMeetData);
+
+            mockTranslate.mockImplementation((key) => {
+                if (key === 'meet.auth.modal.error.cannotCreateMeetings') {
+                    return 'meet.auth.modal.error.cannotCreateMeetings';
+                }
+                return key;
+            });
+
+            const { result } = renderHook(() =>
+                useAuthModal({ onClose: mockOnClose, onLogin: mockOnLogin, translate: mockTranslate })
+            );
+
+            await act(async () => {
+                await result.current.handleLogin({
+                    email: 'test@example.com',
+                    password: 'password',
+                    twoFactorCode: ''
+                });
+            });
+
+            expect(result.current.loginError).toBe('meet.auth.modal.error.cannotCreateMeetings');
+            expect(mockOnLogin).not.toHaveBeenCalled();
+            expect(mockOnClose).not.toHaveBeenCalled();
+        });
+
+        it('When an unknown error occurs, then a generic error message is displayed', async () => {
+            (AuthService.instance.is2FANeeded as any).mockRejectedValue('Unknown error');
+
+            mockTranslate.mockImplementation((key) => {
+                if (key === 'meet.auth.modal.error.genericError') {
+                    return 'meet.auth.modal.error.genericError';
+                }
+                return key;
+            });
+
+            const { result } = renderHook(() =>
+                useAuthModal({ onClose: mockOnClose, onLogin: mockOnLogin, translate: mockTranslate })
+            );
+
+            await act(async () => {
+                await result.current.handleLogin({
+                    email: 'test@example.com',
+                    password: 'password',
+                    twoFactorCode: ''
+                });
+            });
+
+            expect(result.current.loginError).toBe('meet.auth.modal.error.genericError');
             expect(mockOnLogin).not.toHaveBeenCalled();
             expect(mockOnClose).not.toHaveBeenCalled();
         });
