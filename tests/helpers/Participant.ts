@@ -25,10 +25,10 @@ import VideoQualityDialog from '../pageobjects/VideoQualityDialog';
 import { LOG_PREFIX, logInfo } from './browserLogger';
 import { IContext, IJoinOptions } from './types';
 
-export const P1_DISPLAY_NAME = 'p1';
-export const P2_DISPLAY_NAME = 'p2';
-export const P3_DISPLAY_NAME = 'p3';
-export const P4_DISPLAY_NAME = 'p4';
+export const P1 = 'p1';
+export const P2 = 'p2';
+export const P3 = 'p3';
+export const P4 = 'p4';
 
 interface IWaitForSendReceiveDataOptions {
     checkReceive?: boolean;

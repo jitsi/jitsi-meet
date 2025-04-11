@@ -1,6 +1,6 @@
 import { isEqual } from 'lodash-es';
 
-import { P1_DISPLAY_NAME, P2_DISPLAY_NAME, Participant } from '../../helpers/Participant';
+import { P1, P2, Participant } from '../../helpers/Participant';
 import { ensureTwoParticipants, parseJid } from '../../helpers/participants';
 import { IContext } from '../../helpers/types';
 
@@ -343,8 +343,8 @@ describe('Participants presence', () => {
         const p1EpId = await p1.getEndpointId();
         const p2EpId = await p2.getEndpointId();
 
-        const newP1Name = P1_DISPLAY_NAME;
-        const newP2Name = P2_DISPLAY_NAME;
+        const newP1Name = P1;
+        const newP2Name = P2;
         const newNames: ({ id: string; name: string; })[] = [ {
             id: p2EpId,
             name: newP2Name
