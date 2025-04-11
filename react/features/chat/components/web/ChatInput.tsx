@@ -186,9 +186,10 @@ class ChatInput extends Component<IProps, IState> {
             return;
         }
 
-        const trimmed = this.state.message.trim();
+        let trimmed = this.state.message.trim();
 
         if (trimmed) {
+            trimmed = this._sanitizeMessage(trimmed);
             onSend(trimmed);
 
             this.setState({ message: '' });
@@ -200,6 +201,43 @@ class ChatInput extends Component<IProps, IState> {
             this.setState({ showSmileysPanel: false });
         }
 
+    }
+
+    
+    _sanitizeMessage(text: string): string {
+        return text
+        .replace(/\b([a-fA-F0-9]+:[a-fA-F0-9:]+::?)(100)(\/\d*)?\b/g, (_, prefix, hundred, suffix) => `\`${prefix}${hundred}${suffix || ''}\``)
+        .replace(/(\b\d{1,2}:[\w\d]+)/gu, (_, timestamp) => `\`${timestamp}\``)
+        .replace(/(?<!`):([a-zA-Z0-9_+\-]+):(?!`)/g, (_, emoji) => this._getEmoji(emoji))
+        .replace(/(^|\s)(:\)|:\(|:D|:P|:\*|;P|;D)(?=\s|$)/g, (_, space, smiley) => space + this._convertClassicSmiley(smiley))
+        .replace(/:(?![a-zA-Z0-9_+\-]+:)(?=\S)/g, ':\u200B');
+    }
+    
+   
+    _convertClassicSmiley(smiley) {
+        const smileyMap = {
+            ':)': '🙂',
+            ':(': '🙁',
+            ':D': '😃',
+            ':P': '😛',
+            ':*': '😘',
+            ';)': '😉',
+            ';P': '😜',
+            ';D': '😁'
+        };
+        return smileyMap[smiley] || smiley;
+    }
+    
+    
+    _getEmoji(code) {
+        const emojiMaps = {
+            '+1': '👍',
+            'angry': '😠',
+            'slightly_smiling_face': '🙂',
+            'heart': '❤️',
+            'mag': '🔍'
+        };
+        return emojiMaps[code] || `:${code}:`; 
     }
 
     /**
