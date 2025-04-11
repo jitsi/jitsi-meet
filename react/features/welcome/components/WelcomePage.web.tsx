@@ -193,7 +193,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      * @returns {ReactElement|null}
      */
     render() {
-        const { _moderatedRoomServiceUrl, t } = this.props;
+        const { _moderatedRoomServiceUrl, t, roomID } = this.props;
         const { DEFAULT_WELCOME_PAGE_LOGO_URL, DISPLAY_WELCOME_FOOTER } = interfaceConfig;
         const showAdditionalCard = this._shouldShowAdditionalCard();
         const showAdditionalContent = this._shouldShowAdditionalContent();
@@ -203,7 +203,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
         return (
             <>
-                <HomePage onLogin={this._updateInxtToken} translate={t} startNewMeeting={this._onFormSubmit} />
+                <HomePage onLogin={this._updateInxtToken} translate={t} startNewMeeting={this._onFormSubmit} roomID={roomID} />
                 {/* {this.state.inxtToken ? (
                     <div className={`welcome ${contentClassName} ${footerClassName}`} id="welcome_page">
                         <div className="header" style={{ minHeight: "100vh" }}>

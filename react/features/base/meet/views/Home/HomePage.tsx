@@ -1,41 +1,49 @@
 import { Button } from "@internxt/ui";
 import React, { useCallback, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useUserData } from "../PreMeeting/hooks/useUserData";
 import AuthModal from "./containers/AuthModal";
 import HeaderWrapper from "./containers/HeaderWrapper";
+import ScheduleMeetingModal from "./containers/ScheduleModal";
+import { appNavigate } from "../../../../app/actions.web";
+import MeetingService from "../../services/meeting.service";
+import { useLocalStorage } from "../../LocalStorageManager";
+import { setRoomID } from "../../general/store/errors/actions";
 
-interface SimpleTooltipProps {
-    text: string;
-}
-
-const SimpleTooltip: React.FC<SimpleTooltipProps> = ({ text }) => {
-    return (
-        <div className="absolute -top-14 left-0 right-0 w-full text-center">
-            <div className="inline-block bg-white dark:bg-gray-90 text-gray-90 dark:text-white px-3 py-2 rounded shadow-md text-xs">
-                {text}
-                <div className="absolute bottom-[-6px] left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-white dark:border-t-gray-90"></div>
-            </div>
-        </div>
-    );
-};
-
+const MEETING_BASE_URL = `${window.location.protocol}//${window.location.host}/`;
 interface HomePageProps {
     onLogin: (token: string) => void;
     translate: (key: string) => string;
     startNewMeeting: () => void;
+    roomID?: string | null;
 }
 
-const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting }) => {
+const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting, roomID }) => {
     const [isStartingMeeting, setIsStartingMeeting] = useState<boolean>(false);
     const [windowWidth, setWindowWidth] = useState<number>(0);
     const [windowHeight, setWindowHeight] = useState<number>(0);
 
-    const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [showNewMeetingTooltip, setShowNewMeetingTooltip] = useState<boolean>(false);
-    const [showScheduleTooltip, setShowScheduleTooltip] = useState<boolean>(false);
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+    const [isScheduleModalOpen, setIsScheduleModalOpen] = useState<boolean>(false);
+    const [fromNewMeetingFlow, setFromNewMeetingFlow] = useState<boolean>(false);
+    const [meetingLink, setMeetingLink] = useState<string | null>(null);
 
+    const meetingService = MeetingService.getInstance();
+    const storageManager = useLocalStorage();
+
+    const dispatch = useDispatch();
     const userData = useUserData();
     const isLogged = !!userData;
+
+    const isLargeScreen = windowWidth >= 1024;
+    const imageWidth = isLargeScreen ? (windowWidth * 0.4) / 0.6 : "100%";
+    const imageHeight = windowHeight * 0.7;
+
+    useEffect(() => {
+        if (roomID) {
+            setMeetingLink(`${MEETING_BASE_URL}${roomID}`);
+        }
+    }, [roomID]);
 
     useEffect(() => {
         const handleResize = (): void => {
@@ -46,45 +54,6 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
-
-    useEffect(() => {
-        let newMeetingTimer: NodeJS.Timeout | undefined;
-        let scheduleTimer: NodeJS.Timeout | undefined;
-
-        if (showNewMeetingTooltip) {
-            newMeetingTimer = setTimeout(() => {
-                setShowNewMeetingTooltip(false);
-            }, 2000);
-        }
-
-        if (showScheduleTooltip) {
-            scheduleTimer = setTimeout(() => {
-                setShowScheduleTooltip(false);
-            }, 2000);
-        }
-
-        return () => {
-            if (newMeetingTimer) clearTimeout(newMeetingTimer);
-            if (scheduleTimer) clearTimeout(scheduleTimer);
-        };
-    }, [showNewMeetingTooltip, showScheduleTooltip]);
-
-    useEffect(() => {
-        const handleGlobalClick = (): void => {
-            setShowNewMeetingTooltip(false);
-            setShowScheduleTooltip(false);
-        };
-
-        document.addEventListener("click", handleGlobalClick);
-
-        return () => {
-            document.removeEventListener("click", handleGlobalClick);
-        };
-    }, []);
-
-    const isLargeScreen = windowWidth >= 1024;
-    const imageWidth = isLargeScreen ? (windowWidth * 0.4) / 0.6 : "100%";
-    const imageHeight = windowHeight * 0.7;
 
     const startMeeting = useCallback((): void => {
         try {
@@ -97,31 +66,43 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
         }
     }, [setIsStartingMeeting, startNewMeeting]);
 
+    const handleJoinNow = useCallback((): void => {
+        if (roomID) {
+            dispatch(appNavigate(roomID));
+            setIsScheduleModalOpen(false);
+        }
+    }, [dispatch, roomID]);
+
+    const handleSuccessfulLogin = useCallback(
+        (token: string): void => {
+            onLogin(token);
+
+            if (fromNewMeetingFlow) {
+                setIsScheduleModalOpen(true);
+                setFromNewMeetingFlow(false);
+            }
+        },
+        [onLogin, fromNewMeetingFlow, meetingLink]
+    );
+
     const handleStartMeeting = useCallback(
         async (e: unknown): Promise<void> => {
             (e as React.MouseEvent<HTMLButtonElement>).stopPropagation();
 
             if (!isLogged) {
-                setShowNewMeetingTooltip(true);
-                setShowScheduleTooltip(false);
+                setFromNewMeetingFlow(true);
+                setIsAuthModalOpen(true);
                 return;
             }
+            const token = storageManager.getNewToken();
 
-            startMeeting();
-        },
-        [isLogged, setIsStartingMeeting, startMeeting]
-    );
-
-    const handleScheduleMeeting = useCallback(
-        (e: unknown): void => {
-            (e as React.MouseEvent<HTMLButtonElement>).stopPropagation();
-
-            if (!isLogged) {
-                setShowScheduleTooltip(true);
-                setShowNewMeetingTooltip(false);
+            if (token) {
+                const newRoomID = await meetingService.generateMeetingRoom(token);
+                dispatch(setRoomID(newRoomID));
+                setIsScheduleModalOpen(true);
             }
         },
-        [isLogged, setShowScheduleTooltip, setShowNewMeetingTooltip]
+        [isLogged, meetingLink]
     );
 
     return (
@@ -132,8 +113,27 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
                     'linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url("../images/welcome-background.png")',
             }}
         >
-            <AuthModal isOpen={isOpen} onClose={() => setIsOpen(false)} onLogin={onLogin} translate={translate} />
-            <HeaderWrapper onLogin={() => setIsOpen(true)} translate={translate} onNewMeeting={startMeeting} />
+            <HeaderWrapper
+                onLogin={() => {
+                    setFromNewMeetingFlow(false);
+                    setIsAuthModalOpen(true);
+                }}
+                translate={translate}
+                onNewMeeting={startMeeting}
+            />
+            <AuthModal
+                isOpen={isAuthModalOpen}
+                onClose={() => setIsAuthModalOpen(false)}
+                onLogin={handleSuccessfulLogin}
+                translate={translate}
+            />
+            <ScheduleMeetingModal
+                isOpen={isScheduleModalOpen && !!meetingLink}
+                onClose={() => setIsScheduleModalOpen(false)}
+                meetingLink={meetingLink as string}
+                translate={translate}
+                onJoinNow={handleJoinNow}
+            />
             <div className="flex flex-col lg:flex-row mt-10">
                 <div className="flex w-full lg:w-1/2 px-4 md:px-10 lg:px-20 justify-center lg:justify-end">
                     <div className="w-full lg:w-120 px-2 md:px-4 lg:px-6 flex flex-col justify-start">
@@ -156,20 +156,6 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
                                 >
                                     {translate("meet.preMeeting.newMeeting")}
                                 </Button>
-
-                                {showNewMeetingTooltip && (
-                                    <SimpleTooltip text={translate("meet.landing.loginRequired")} />
-                                )}
-                            </div>
-
-                            <div className="relative inline-block">
-                                <Button onClick={handleScheduleMeeting} variant="tertiary" className="w-full sm:w-auto">
-                                    {translate("meet.landing.scheduleMeeting")}
-                                </Button>
-
-                                {showScheduleTooltip && (
-                                    <SimpleTooltip text={translate("meet.landing.loginRequired")} />
-                                )}
                             </div>
                         </div>
                     </div>

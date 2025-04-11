@@ -5,6 +5,7 @@ import { openSettingsDialog } from "../../../../../settings/actions.web";
 import { useLocalStorage } from "../../../LocalStorageManager";
 import Header from "../../PreMeeting/components/Header";
 import { useUserData } from "../../PreMeeting/hooks/useUserData";
+import { appNavigate } from "../../../../../app/actions.web";
 
 interface HeaderWrapperProps {
     onNewMeeting?: () => void;
@@ -39,8 +40,12 @@ const HeaderWrapper = ({ onNewMeeting, onLogin, onSignUp, translate }: HeaderWra
         dispatch(redirectToStaticPage("/"));
     };
 
+    const navigateToHomePage = () => {
+        dispatch(appNavigate("/"));
+    };
+
     return (
-        <div className="px-5 py-2">
+        <div className="px-5">
             <Header
                 userData={userData}
                 translate={translate}
@@ -51,6 +56,7 @@ const HeaderWrapper = ({ onNewMeeting, onLogin, onSignUp, translate }: HeaderWra
                 isCreatingMeeting={isCreatingMeeting}
                 onOpenSettings={() => dispatch(openSettingsDialog(undefined, true))}
                 className="z-50 py-3 flex-grow"
+                navigateToHomePage={navigateToHomePage}
             />
         </div>
     );
