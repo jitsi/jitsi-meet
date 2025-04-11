@@ -32,10 +32,10 @@ async function checkParticipantLeftHook(ctx: IContext, p: Participant, reason: s
         expect(event.data.disconnectReason).toBe(reason);
         expect(event.data.isBreakout).toBe(false);
         expect(event.data.participantId).toBe(await p.getEndpointId());
-        expect(event.data.name).toBe(p.displayName);
+        expect(event.data.name).toBe(p.name);
 
         if (checkId) {
-            const jwtPayload = ctx.data[`${p.displayName}-jwt-payload`];
+            const jwtPayload = ctx.data[`${p.name}-jwt-payload`];
 
             expect(event.data.id).toBe(jwtPayload?.context?.user?.id);
             expect(event.data.group).toBe(jwtPayload?.context?.group);
@@ -320,7 +320,7 @@ describe('Participants presence', () => {
             expect(event.data.moderator).toBe(false);
             expect(event.data.name).toBe(await p2.getLocalDisplayName());
             expect(event.data.participantId).toBe(await p2.getEndpointId());
-            expect(event.data.name).toBe(p2.displayName);
+            expect(event.data.name).toBe(p2.name);
         }
 
         await p1.switchToAPI();

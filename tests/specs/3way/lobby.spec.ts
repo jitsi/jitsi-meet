@@ -379,7 +379,7 @@ async function enableLobby() {
     await p1SecurityDialog.toggleLobby();
     await p1SecurityDialog.waitForLobbyEnabled();
 
-    expect((await p2.getNotifications().getLobbyEnabledText()).includes(p1.displayName)).toBe(true);
+    expect((await p2.getNotifications().getLobbyEnabledText()).includes(p1.name)).toBe(true);
 
     await p2.getNotifications().closeLobbyEnabled();
 

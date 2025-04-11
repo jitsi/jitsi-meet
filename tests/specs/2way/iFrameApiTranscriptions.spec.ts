@@ -220,6 +220,6 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
         expect(tr.language).toBe(language);
         expect(tr.messageID).toBe(messageID);
         expect(tr.participant.id).toBe(p1Id);
-        expect(tr.participant.name).toBe(p1.displayName);
+        expect(tr.participant.name).toBe(p1.name);
     });
 }
