@@ -1049,7 +1049,7 @@
         "incomingMessage": "新消息",
         "language": "语言",
         "loggedIn": "以{{name}}登录",
-        "maxStageParticipants": "可以固定的最大参会者人数（实验性功能）",
+        "maxStageParticipants": "可以固定的最大参会者人数",
         "microphones": "麦克风",
         "moderator": "主持人",
         "moderatorOptions": "主持人选项",

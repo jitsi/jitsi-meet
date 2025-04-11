@@ -1111,7 +1111,7 @@
         "incomingMessage": "un message arrive",
         "language": "Langue",
         "loggedIn": "Connecté en tant que {{name}}",
-        "maxStageParticipants": "Nombre maximum de participants pouvant être épinglé sur l’affichage principal (EXPÉRIMENTAL)",
+        "maxStageParticipants": "Nombre maximum de participants pouvant être épinglé sur l’affichage principal",
         "microphones": "Microphones",
         "moderator": "Modérateur",
         "moderatorOptions": "Options de modérateur",

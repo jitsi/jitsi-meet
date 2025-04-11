@@ -1097,7 +1097,7 @@
         "incomingMessage": "Receber uma mensagem",
         "language": "Idioma",
         "loggedIn": "Sessão iniciada como {{name}}",
-        "maxStageParticipants": "Número máximo de participantes que podem ser afixados (EXPERIMENTAL)",
+        "maxStageParticipants": "Número máximo de participantes que podem ser afixados",
         "microphones": "Microfones",
         "moderator": "Moderador",
         "moderatorOptions": "Opções de moderador",
