@@ -51,7 +51,7 @@ export interface IProps extends WithTranslation {
       /**
      * Generated meet room id to join to.
      */
-    roomID: string;
+    roomID: string | null;
 
 
     /**
