@@ -60,7 +60,7 @@ class SmileysPanel extends PureComponent<IProps> {
      *
      * @returns {void}
      */
-    _onKeyPress(e: React.KeyboardEvent<HTMLDivElement>) {
+    _onKeyPress(e: React.KeyboardEvent<HTMLLIElement>) {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault(); // @ts-ignore
             this.props.onSmileySelect(e.target.id && smileys[e.target.id]);
@@ -87,7 +87,7 @@ class SmileysPanel extends PureComponent<IProps> {
      */
     override render() {
         const smileyItems = Object.keys(smileys).map(smileyKey => (
-            <div
+            <li
                 className = 'smileyContainer'
                 id = { smileyKey }
                 key = { smileyKey }
@@ -101,18 +101,18 @@ class SmileysPanel extends PureComponent<IProps> {
                         onlyEmojiClassName = 'smiley'
                         text = { smileys[smileyKey as keyof typeof smileys] } />
                 </Tooltip>
-            </div>
+            </li>
         ));
 
         return (
-            <div
+            <ul
                 aria-orientation = 'horizontal'
                 id = 'smileysContainer'
                 onKeyDown = { this._onEscKey }
                 role = 'listbox'
                 tabIndex = { -1 }>
                 { smileyItems }
-            </div>
+            </ul>
         );
     }
 }

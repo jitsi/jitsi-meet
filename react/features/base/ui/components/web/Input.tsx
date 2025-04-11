@@ -14,6 +14,7 @@ interface IProps extends IInputProps {
     autoFocus?: boolean;
     bottomLabel?: string;
     className?: string;
+    iconAccessibilityLabel?: string;
     iconClick?: () => void;
 
     /**
@@ -160,6 +161,7 @@ const Input = React.forwardRef<any, IProps>(({
     disabled,
     error,
     icon,
+    iconAccessibilityLabel,
     iconClick,
     id,
     label,
@@ -201,8 +203,10 @@ const Input = React.forwardRef<any, IProps>(({
             <div className = { styles.fieldContainer }>
                 {icon && <Icon
                     { ...(iconClick ? { tabIndex: 0 } : {}) }
+                    ariaLabel = { iconAccessibilityLabel }
                     className = { cx(styles.icon, iconClick && styles.iconClickable) }
                     onClick = { iconClick }
+                    role = { iconClick ? 'button' : undefined }
                     size = { 20 }
                     src = { icon } />}
                 {textarea ? (
