@@ -85,7 +85,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
     },
 
     capabilities: {
-        participant1: {
+        // participant1
+        p1: {
             capabilities: {
                 browserName: 'chrome',
                 browserVersion: process.env.BROWSER_CHROME_BETA ? 'beta' : undefined,
@@ -95,7 +96,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 }
             }
         },
-        participant2: {
+        // participant2
+        p2: {
             capabilities: {
                 browserName: 'chrome',
                 'goog:chromeOptions': {
@@ -107,7 +109,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 ]
             }
         },
-        participant3: {
+        // participant3
+        p3: {
             capabilities: {
                 browserName: 'chrome',
                 'goog:chromeOptions': {
@@ -120,7 +123,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 ]
             }
         },
-        participant4: {
+        // participant4
+        p4: {
             capabilities: {
                 browserName: 'chrome',
                 'goog:chromeOptions': {

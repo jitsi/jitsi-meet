@@ -241,11 +241,11 @@ describe('Participants presence', () => {
 
         const eventP1 = await p1.driver.waitUntil(() => p1.getIframeAPI().getEventResult('participantKickedOut'), {
             timeout: 2000,
-            timeoutMsg: 'participantKickedOut event not received on participant1 side'
+            timeoutMsg: 'participantKickedOut event not received on p1 side'
         });
         const eventP2 = await p2.driver.waitUntil(() => p2.getIframeAPI().getEventResult('participantKickedOut'), {
             timeout: 2000,
-            timeoutMsg: 'participantKickedOut event not received on participant2 side'
+            timeoutMsg: 'participantKickedOut event not received on p2 side'
         });
 
         await checkParticipantLeftHook(ctx, p2, 'kicked', true);

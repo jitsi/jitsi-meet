@@ -31,8 +31,8 @@ export async function ensureThreeParticipants(ctx: IContext, options: IJoinOptio
 
     // these need to be all, so we get the error when one fails
     await Promise.all([
-        _joinParticipant('participant2', ctx, P2, options),
-        _joinParticipant('participant3', ctx, P3, options)
+        _joinParticipant(P2, ctx, options),
+        _joinParticipant(P3, ctx, options)
     ]);
 
     if (options.skipInMeetingChecks) {
@@ -70,7 +70,7 @@ export function joinFirstParticipant(ctx: IContext, options: IJoinOptions = {}):
  * @returns {Promise<void>}
  */
 export function joinSecondParticipant(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
-    return _joinParticipant('participant2', ctx, P2, options);
+    return _joinParticipant(P2, ctx, options);
 }
 
 /**
@@ -81,7 +81,7 @@ export function joinSecondParticipant(ctx: IContext, options: IJoinOptions = {})
  * @returns {Promise<void>}
  */
 export function joinThirdParticipant(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
-    return _joinParticipant('participant3', ctx, P3, options);
+    return _joinParticipant(P3, ctx, options);
 }
 
 /**
@@ -96,9 +96,9 @@ export async function ensureFourParticipants(ctx: IContext, options: IJoinOption
 
     // these need to be all, so we get the error when one fails
     await Promise.all([
-        _joinParticipant('participant2', ctx, P2, options),
-        _joinParticipant('participant3', ctx, P3, options),
-        _joinParticipant('participant4', ctx, P4, options)
+        _joinParticipant(P2, ctx, options),
+        _joinParticipant(P3, ctx, options),
+        _joinParticipant(P4, ctx, options)
     ]);
 
     if (options.skipInMeetingChecks) {
@@ -128,7 +128,7 @@ export async function ensureFourParticipants(ctx: IContext, options: IJoinOption
  */
 async function joinTheModeratorAsP1(ctx: IContext, options?: IJoinOptions) {
     // make sure the first participant is moderator, if supported by deployment
-    await _joinParticipant('participant1', ctx, P1, options);
+    await _joinParticipant(P1, ctx, options);
 }
 
 /**
@@ -140,7 +140,7 @@ async function joinTheModeratorAsP1(ctx: IContext, options?: IJoinOptions) {
 export async function ensureTwoParticipants(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
     await joinTheModeratorAsP1(ctx, options);
 
-    await _joinParticipant('participant2', ctx, P2, options);
+    await _joinParticipant(P2, ctx, options);
 
     if (options.skipInMeetingChecks) {
         return Promise.resolve();
@@ -160,17 +160,15 @@ export async function ensureTwoParticipants(ctx: IContext, options: IJoinOptions
  * Creates a participant instance or prepares one for re-joining.
  * @param name - The name of the participant.
  * @param {IContext} ctx - The context.
- * @param instanceName - The participant instance name to prepare or undefined if new one is needed. (ex. p1, p2, p3, p4)
  * @param {boolean} options - Join options.
  */
 async function _joinParticipant( // eslint-disable-line max-params
         name: string,
         ctx: IContext,
-        instanceName: string,
         options: IJoinOptions = {}) {
 
     // @ts-ignore
-    const p = ctx[instanceName] as Participant;
+    const p = ctx[name] as Participant;
 
     if (p) {
         if (ctx.iframeAPI) {
@@ -194,7 +192,7 @@ async function _joinParticipant( // eslint-disable-line max-params
 
     let jwtToken;
 
-    if (instanceName === P1) {
+    if (name === P1) {
         if (!options?.skipFirstModerator) {
             // we prioritize the access token when iframe is not used and private key is set,
             // otherwise if private key is not specified we use the access token if set
@@ -203,10 +201,10 @@ async function _joinParticipant( // eslint-disable-line max-params
                     || !ctx.jwtPrivateKeyPath)) {
                 jwtToken = process.env.JWT_ACCESS_TOKEN;
             } else if (ctx.jwtPrivateKeyPath) {
-                jwtToken = getToken(ctx, instanceName);
+                jwtToken = getToken(ctx, name);
             }
         }
-    } else if (instanceName === P2) {
+    } else if (name === P2) {
         jwtToken = options.preferGenerateToken ? getToken(ctx, P2) : undefined;
     }
 
@@ -214,10 +212,10 @@ async function _joinParticipant( // eslint-disable-line max-params
 
     // set the new participant instance
     // @ts-ignore
-    ctx[instanceName] = newParticipant;
+    ctx[name] = newParticipant;
 
     await newParticipant.joinConference(ctx, {
-        displayName: instanceName,
+        displayName: name,
         ...options
     });
 }
