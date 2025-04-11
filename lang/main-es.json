@@ -711,6 +711,18 @@
                 }
             }
         },
+        "modals": {
+            "schedule": {
+                "title": "Programar reunión",
+                "subtitle": "Aquí está el enlace a tu reunión.",
+                "description": "Envía esto a las personas que quieres que se unan a tu llamada. Guarda este enlace para que puedas usarlo más tarde también.",
+                "linkLabel": "Enlace seguro",
+                "cancelButton": "Cancelar",
+                "copyButton": "Copiar",
+                "copiedButton": "¡Copiado!",
+                "joinNow": "Unirse ahora"
+            }
+        },
         "meeting": {
             "button": {
                 "gallery": "Galería",
