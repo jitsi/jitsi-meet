@@ -279,7 +279,12 @@ function extract_subdomain(room_node)
         return ret.subdomain, ret.room, ret.customer_id;
     end
 
-    local subdomain, room_name = room_node:match("^%[([^%]]+)%](.+)$") or nil, room_node;
+    local subdomain, room_name = room_node:match("^%[([^%]]+)%](.+)$");
+
+    if not subdomain then
+        room_name = room_node;
+    end
+
     local _, customer_id = subdomain and subdomain:match("^(vpaas%-magic%-cookie%-)(.*)$") or nil, nil;
     local cache_value = { subdomain=subdomain, room=room_name, customer_id=customer_id };
     extract_subdomain_cache:set(room_node, cache_value);
