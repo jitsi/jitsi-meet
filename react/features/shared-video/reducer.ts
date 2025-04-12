@@ -4,7 +4,8 @@ import {
     RESET_SHARED_VIDEO_STATUS,
     SET_ALLOWED_URL_DOMAINS,
     SET_CONFIRM_SHOW_VIDEO,
-    SET_SHARED_VIDEO_STATUS
+    SET_SHARED_VIDEO_STATUS,
+    SET_YOUTUBE_SPECIFIED_TIME
 } from './actionTypes';
 import { DEFAULT_ALLOWED_URL_DOMAINS } from './constants';
 
@@ -17,6 +18,7 @@ export interface ISharedVideoState {
     confirmShowVideo?: boolean;
     muted?: boolean;
     ownerId?: string;
+    startTime?: number;
     status?: string;
     time?: number;
     videoUrl?: string;
@@ -40,6 +42,12 @@ ReducerRegistry.register<ISharedVideoState>('features/shared-video',
         return {
             ...state,
             confirmShowVideo: action.value
+        };
+    }
+    case SET_YOUTUBE_SPECIFIED_TIME: {
+        return {
+            ...state,
+            startTime: action.value
         };
     }
     case SET_SHARED_VIDEO_STATUS:
