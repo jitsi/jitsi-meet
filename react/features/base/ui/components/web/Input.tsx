@@ -7,6 +7,7 @@ import Icon from '../../../icons/components/Icon';
 import { IconCloseCircle } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 import { IInputProps } from '../types';
+import { HiddenDescription } from './HiddenDescription';
 
 interface IProps extends IInputProps {
     accessibilityLabel?: string;
@@ -14,6 +15,7 @@ interface IProps extends IInputProps {
     autoFocus?: boolean;
     bottomLabel?: string;
     className?: string;
+    hiddenDescription?: string; // Text that will be announced by screen readers but not displayed visually.
     iconClick?: () => void;
 
     /**
@@ -159,6 +161,7 @@ const Input = React.forwardRef<any, IProps>(({
     clearable = false,
     disabled,
     error,
+    hiddenDescription,
     icon,
     iconClick,
     id,
@@ -190,6 +193,16 @@ const Input = React.forwardRef<any, IProps>(({
         onChange?.(e.target.value), []);
 
     const clearInput = useCallback(() => onChange?.(''), []);
+    const hiddenDescriptionId = `${id}-hidden-description`;
+    let ariaDescribedById: string | undefined;
+
+    if (bottomLabel) {
+        ariaDescribedById = `${id}-description`;
+    } else if (hiddenDescription) {
+        ariaDescribedById = hiddenDescriptionId;
+    } else {
+        ariaDescribedById = undefined;
+    }
 
     return (
         <div className = { cx(styles.inputContainer, className) }>
@@ -207,6 +220,7 @@ const Input = React.forwardRef<any, IProps>(({
                     src = { icon } />}
                 {textarea ? (
                     <TextareaAutosize
+                        aria-describedby = { ariaDescribedById }
                         aria-label = { accessibilityLabel }
                         autoComplete = { autoComplete }
                         autoFocus = { autoFocus }
@@ -227,7 +241,7 @@ const Input = React.forwardRef<any, IProps>(({
                         value = { value } />
                 ) : (
                     <input
-                        aria-describedby = { bottomLabel ? `${id}-description` : undefined }
+                        aria-describedby = { ariaDescribedById }
                         aria-label = { accessibilityLabel }
                         autoComplete = { autoComplete }
                         autoFocus = { autoFocus }
@@ -266,6 +280,7 @@ const Input = React.forwardRef<any, IProps>(({
                     {bottomLabel}
                 </span>
             )}
+            {!bottomLabel && hiddenDescription && <HiddenDescription id = { hiddenDescriptionId }>{ hiddenDescription }</HiddenDescription>}
         </div>
     );
 });

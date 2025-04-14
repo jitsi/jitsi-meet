@@ -881,6 +881,7 @@
             "waitingLobby": "Waiting in lobby ({{count}})"
         },
         "search": "Search participants",
+        "searchDescription": "Start typing to filter participants",
         "title": "Participants"
     },
     "passwordDigitsOnly": "Up to {{number}} digits",
@@ -1197,6 +1198,7 @@
         "neutral": "Neutral",
         "sad": "Sad",
         "search": "Search",
+        "searchDescription": "Start typing to filter participants",
         "searchHint": "Search participants",
         "seconds": "{{count}}s",
         "speakerStats": "Participants Stats",
