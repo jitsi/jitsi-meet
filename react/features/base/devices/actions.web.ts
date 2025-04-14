@@ -150,8 +150,7 @@ export function getAvailableDevices() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => new Promise(resolve => {
         const { mediaDevices } = JitsiMeetJS;
 
-        if (mediaDevices.isDeviceListAvailable()
-                && mediaDevices.isDeviceChangeAvailable()) {
+        if (mediaDevices.isDeviceChangeAvailable()) {
             mediaDevices.enumerateDevices((devices: MediaDeviceInfo[]) => {
                 const { filteredDevices, ignoredDevices } = filterIgnoredDevices(devices);
                 const oldDevices = flattenAvailableDevices(getState()['features/base/devices'].availableDevices);
