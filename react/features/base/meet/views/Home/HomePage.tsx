@@ -1,14 +1,14 @@
 import { Button } from "@internxt/ui";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { appNavigate } from "../../../../app/actions.web";
+import { useLocalStorage } from "../../LocalStorageManager";
+import { setRoomID } from "../../general/store/errors/actions";
+import MeetingService from "../../services/meeting.service";
 import { useUserData } from "../PreMeeting/hooks/useUserData";
 import AuthModal from "./containers/AuthModal";
 import HeaderWrapper from "./containers/HeaderWrapper";
 import ScheduleMeetingModal from "./containers/ScheduleModal";
-import { appNavigate } from "../../../../app/actions.web";
-import MeetingService from "../../services/meeting.service";
-import { useLocalStorage } from "../../LocalStorageManager";
-import { setRoomID } from "../../general/store/errors/actions";
 
 const MEETING_BASE_URL = `${window.location.protocol}//${window.location.host}/`;
 interface HomePageProps {
@@ -27,7 +27,7 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
     const [isScheduleModalOpen, setIsScheduleModalOpen] = useState<boolean>(false);
     const [fromNewMeetingFlow, setFromNewMeetingFlow] = useState<boolean>(false);
     const [meetingLink, setMeetingLink] = useState<string | null>(null);
-
+    const [meetingLinkErrorMessage, setMeetingLinkErrorMessage] = useState<string | null>(null);
     const meetingService = MeetingService.getInstance();
     const storageManager = useLocalStorage();
 
@@ -97,9 +97,14 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
             const token = storageManager.getNewToken();
 
             if (token) {
-                const newRoomID = await meetingService.generateMeetingRoom(token);
-                dispatch(setRoomID(newRoomID));
-                setIsScheduleModalOpen(true);
+                try {
+                    const newRoomID = await meetingService.generateMeetingRoom(token);
+                    dispatch(setRoomID(newRoomID));
+                    setIsScheduleModalOpen(true);
+                } catch (error) {
+                    setIsScheduleModalOpen(true);
+                    setMeetingLinkErrorMessage(error.message);
+                }
             }
         },
         [isLogged, meetingLink]
@@ -128,11 +133,12 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
                 translate={translate}
             />
             <ScheduleMeetingModal
-                isOpen={isScheduleModalOpen && !!meetingLink}
+                isOpen={isScheduleModalOpen && (!!meetingLink || !!meetingLinkErrorMessage)}
                 onClose={() => setIsScheduleModalOpen(false)}
                 meetingLink={meetingLink as string}
                 translate={translate}
                 onJoinNow={handleJoinNow}
+                errorMessage={meetingLinkErrorMessage}
             />
             <div className="flex flex-col lg:flex-row mt-10">
                 <div className="flex w-full lg:w-1/2 px-4 md:px-10 lg:px-20 justify-center lg:justify-end">

@@ -1,7 +1,6 @@
-import { Modal } from "@internxt/ui";
+import { Button, Input, Modal } from "@internxt/ui";
 import { X } from "@phosphor-icons/react";
 import React, { useState } from "react";
-import { Button } from "@internxt/ui";
 
 interface ScheduleMeetingModalProps {
     isOpen: boolean;
@@ -9,6 +8,7 @@ interface ScheduleMeetingModalProps {
     onJoinNow: () => void;
     meetingLink: string;
     translate: (key: string) => string;
+    errorMessage?: string | null;
 }
 
 const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
@@ -17,9 +17,11 @@ const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
     onJoinNow,
     meetingLink,
     translate,
+    errorMessage,
 }) => {
     const [copied, setCopied] = useState(false);
-
+    const inputAccent = errorMessage ? "error" : undefined;
+    const inputErrorMessage = errorMessage ?? undefined;
     const handleCopy = () => {
         navigator.clipboard.writeText(meetingLink);
         setCopied(true);
@@ -43,11 +45,11 @@ const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                 </div>
 
                 <div className="flex flex-col space-y-3 mb-4">
-                    <input
-                        type="text"
+                    <Input
                         value={meetingLink}
-                        readOnly
-                        className="w-full p-2 text-lg border border-gray-40 rounded-lg text-gray-100 select-all"
+                        message={inputErrorMessage}
+                        accent={inputAccent}
+                        className="select-all"
                     />
                 </div>
 
