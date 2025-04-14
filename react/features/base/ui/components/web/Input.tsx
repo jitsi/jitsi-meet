@@ -185,6 +185,7 @@ const Input = React.forwardRef<any, IProps>(({
     const { classes: styles, cx } = useStyles();
     const isMobile = isMobileBrowser();
     const showClearIcon = clearable && value !== '' && !disabled;
+    const inputAutoCompleteOff = autoComplete === 'off' ? { 'data-1p-ignore': '' } : {};
 
     const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
         onChange?.(e.target.value), []);
@@ -236,6 +237,7 @@ const Input = React.forwardRef<any, IProps>(({
                         data-testid = { testId }
                         disabled = { disabled }
                         id = { id }
+                        { ...inputAutoCompleteOff }
                         { ...(mode ? { inputmode: mode } : {}) }
                         { ...(type === 'number' ? { max: maxValue } : {}) }
                         maxLength = { maxLength }
