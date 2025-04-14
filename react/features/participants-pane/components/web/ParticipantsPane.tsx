@@ -178,8 +178,8 @@ const ParticipantsPane = () => {
                 <MeetingParticipants
                     searchString = { searchString }
                     setSearchString = { setSearchString } />
-                {isBreakoutRoomsSupported && <RoomList searchString = { searchString } />}
                 {showAddRoomButton && <AddBreakoutRoomButton />}
+                {isBreakoutRoomsSupported && <RoomList searchString = { searchString } />}
             </div>
             {showFooter && (
                 <div className = { classes.footer }>
