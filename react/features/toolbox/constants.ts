@@ -1,9 +1,33 @@
 import { NativeToolbarButton, ToolbarButton } from './types';
 
 /**
+ * Dummy toolbar threschold value for 9 buttons. It is used as a placeholder in THRESHOLDS that would work only when
+ * this value is overiden.
+ */
+export const DUMMY_9_BUTTONS_THRESHOLD_VALUE = Symbol('9_BUTTONS_THRESHOLD_VALUE');
+
+/**
+ * Dummy toolbar threschold value for 10 buttons. It is used as a placeholder in THRESHOLDS that would work only when
+ * this value is overiden.
+ */
+export const DUMMY_10_BUTTONS_THRESHOLD_VALUE = Symbol('10_BUTTONS_THRESHOLD_VALUE');
+
+/**
  * Thresholds for displaying toolbox buttons.
  */
 export const THRESHOLDS = [
+
+    // This entry won't be used unless the order is overridden trough the mainToolbarButtons config prop.
+    {
+        width: 675,
+        order: DUMMY_10_BUTTONS_THRESHOLD_VALUE
+    },
+
+    // This entry won't be used unless the order is overridden trough the mainToolbarButtons config prop.
+    {
+        width: 625,
+        order: DUMMY_9_BUTTONS_THRESHOLD_VALUE
+    },
     {
         width: 565,
         order: [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'reactions', 'participants-pane', 'tileview' ]
