@@ -539,6 +539,11 @@
             "heading": "Video thumbnails"
         }
     },
+    "fileSharing": {
+        "removeFile": "Remove",
+        "uploadFiles": "Upload Files",
+        "dragAndDrop": "Drag and drop files here or click to upload"
+    },
     "giphy": {
         "noResults": "No results found :(",
         "search": "Search GIPHY"
