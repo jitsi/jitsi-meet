@@ -103,7 +103,7 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
                     setIsScheduleModalOpen(true);
                 } catch (error) {
                     setIsScheduleModalOpen(true);
-                    setMeetingLinkErrorMessage(error.message);
+                    setMeetingLinkErrorMessage((error as Error).message);
                 }
             }
         },

@@ -2,8 +2,8 @@ import { Button } from "@internxt/ui";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { AuthFormValues } from "../../types";
-import PasswordInput from "../PasswordInput";
 import { ErrorMessage } from "./ErrorMessage";
+import PasswordInput from "./PasswordInput";
 
 
 interface TwoFactorFormProps {
