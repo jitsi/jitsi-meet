@@ -12,7 +12,8 @@ import {
     SET_TOOLBOX_VISIBLE,
     TOGGLE_TOOLBOX_VISIBLE
 } from './actionTypes';
-import { IMainToolbarButtonThresholds } from './types';
+import { DUMMY_10_BUTTONS_THRESHOLD_VALUE, DUMMY_9_BUTTONS_THRESHOLD_VALUE } from './constants';
+import { IMainToolbarButtonThresholds, IMainToolbarButtonThresholdsUnfiltered } from './types';
 
 /**
  * Enables/disables the toolbox.
@@ -127,7 +128,7 @@ export function setShiftUp(shiftUp: boolean) {
  * @param {IMainToolbarButtonThresholds} thresholds - Thresholds for screen size and visible main toolbar buttons.
  * @returns {Function}
  */
-export function setMainToolbarThresholds(thresholds: IMainToolbarButtonThresholds) {
+export function setMainToolbarThresholds(thresholds: IMainToolbarButtonThresholdsUnfiltered) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const { mainToolbarButtons } = getState()['features/base/config'];
 
@@ -149,12 +150,27 @@ export function setMainToolbarThresholds(thresholds: IMainToolbarButtonThreshold
         });
 
         thresholds.forEach(({ width, order }) => {
-            let finalOrder = mainToolbarButtonsLengthMap.get(order.length);
+            let numberOfButtons = 0;
+
+            if (Array.isArray(order)) {
+                numberOfButtons = order.length;
+            } else if (order === DUMMY_9_BUTTONS_THRESHOLD_VALUE) {
+                numberOfButtons = 9;
+            } else if (order === DUMMY_10_BUTTONS_THRESHOLD_VALUE) {
+                numberOfButtons = 10;
+            } else { // Unexpected value. Ignore it.
+                return;
+            }
+
+            let finalOrder = mainToolbarButtonsLengthMap.get(numberOfButtons);
 
             if (finalOrder) {
                 orderIsChanged = true;
-            } else {
+            } else if (Array.isArray(order)) {
                 finalOrder = order;
+            } else {
+                // Ignore dummy (symbol) values.
+                return;
             }
 
             mainToolbarButtonsThresholds.push({
