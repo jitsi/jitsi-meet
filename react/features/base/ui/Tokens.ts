@@ -1,4 +1,3 @@
-
 // Mapping between the token used and the color
 export const colorMap = {
     // ----- Surfaces -----
@@ -119,8 +118,8 @@ export const colorMap = {
 
 
 export const font = {
-    weightRegular: '400',
-    weightSemiBold: '600'
+    weightRegular: 400,
+    weightSemiBold: 600
 };
 
 export const shape = {
@@ -130,7 +129,7 @@ export const shape = {
 };
 
 export const spacing
-    = [ 0, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128 ];
+    = [ '0rem', '0.25rem', '0.5rem', '1rem', '1.5rem', '2rem', '2.5rem', '3rem', '3.5rem', '4rem', '4.5rem', '5rem', '5.5rem', '6rem', '6.5rem', '7rem', '7.5rem', '8rem' ];
 
 export const typography = {
     labelRegular: 'label01',
