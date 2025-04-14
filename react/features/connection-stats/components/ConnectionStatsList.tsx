@@ -15,7 +15,7 @@ type DownloadUpload = {
 
 /**
  * The type of the React {@code Component} props of
- * {@link ConnectionStatsTable}.
+ * {@link ConnectionStatsList}.
  */
 interface IProps {
 
@@ -220,25 +220,24 @@ const useStyles = makeStyles()(theme => {
             alignItems: 'center',
             display: 'flex'
         },
-        connectionStatsTable: {
-            '&, & > table': {
-                fontSize: '12px',
-                fontWeight: 400,
+        connectionStats: {
+            fontSize: '12px',
+            fontWeight: 400,
+            width: '250px',
 
-                '& td': {
-                    padding: '2px 0'
+            '& > ul': {
+                listStyleType: 'none',
+                margin: '8px',
+                padding: 0,
+
+                '& > li': {
+                    display: 'flex',
+
+                    '& > label': {
+                        paddingRight: '4px',
+                        width: '50%'
+                    }
                 }
-            },
-            '& > table': {
-                whiteSpace: 'nowrap'
-            },
-
-            '& td:nth-child(n-1)': {
-                paddingLeft: '5px'
-            },
-
-            '& $upload, & $download': {
-                marginRight: '2px'
             }
         },
         contextMenu: {
@@ -277,7 +276,7 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const ConnectionStatsTable = ({
+const ConnectionStatsList = ({
     audioSsrc,
     bandwidth,
     bitrate,
@@ -308,8 +307,30 @@ const ConnectionStatsTable = ({
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
 
-    const _renderResolution = () => {
-        let resolutionString = 'N/A';
+    const NA = 'N/A';
+
+    const _renderListItem = (
+            label: string,
+            value: string | number | JSX.Element,
+            id: string,
+            classNames?: string
+    ): JSX.Element => (
+        <li
+            className = { classNames }
+            key = { id } >
+            <label
+                htmlFor = { id } >
+                { label }
+            </label>
+            <output
+                id = { id } >
+                { value }
+            </output>
+        </li>
+    );
+
+    const _renderResolution = (): JSX.Element => {
+        let resolutionString = NA;
 
         if (resolution && videoSsrc) {
             const { width, height } = resolution[videoSsrc] ?? {};
@@ -325,68 +346,56 @@ const ConnectionStatsTable = ({
             }
         }
 
-        return (
-            <tr>
-                <td>
-                    <span>{t('connectionindicator.resolution')}</span>
-                </td>
-                <td>{resolutionString}</td>
-            </tr>
+        return _renderListItem(
+            t('connectionindicator.resolution'),
+            resolutionString,
+            'connection-stat-resolution'
         );
     };
 
-    const _renderFrameRate = () => {
-        let frameRateString = 'N/A';
+    const _renderFrameRate = (): JSX.Element => {
+        let frameRateString = NA;
 
         if (framerate) {
-            frameRateString = String(framerate[videoSsrc] ?? 'N/A');
+            frameRateString = String(framerate[videoSsrc] ?? NA);
         }
 
-        return (
-            <tr>
-                <td>
-                    <span>{t('connectionindicator.framerate')}</span>
-                </td>
-                <td>{frameRateString}</td>
-            </tr>
+        return _renderListItem(
+            t('connectionindicator.framerate'),
+            frameRateString,
+            'connection-stat-frame-rate'
         );
     };
 
-    const _renderScreenShareStatus = () => {
-        const className = cx(classes.connectionStatsTable, { [classes.mobile]: isMobileBrowser() });
+    const _renderScreenShareStatus = (): JSX.Element => (<ContextMenu
+        className = { classes.contextMenu }
+        hidden = { false }
+        inDrawer = { true }>
+        <div
+            className = { cx(classes.connectionStats, { [classes.mobile]: isMobileBrowser() }) }
+            onClick = { onClick }>
+            <ul>
+                {_renderResolution()}
+                {_renderFrameRate()}
+            </ul>
+        </div>
+    </ContextMenu>);
 
-        return (<ContextMenu
-            className = { classes.contextMenu }
-            hidden = { false }
-            inDrawer = { true }>
-            <div
-                className = { className }
-                onClick = { onClick }>
-                <tbody>
-                    {_renderResolution()}
-                    {_renderFrameRate()}
-                </tbody>
-            </div>
-        </ContextMenu>);
-    };
-
-    const _renderBandwidth = () => {
+    const _renderBandwidth = (): JSX.Element => {
         const { download, upload } = bandwidth || {};
 
-        return (
-            <tr>
-                <td>
-                    {t('connectionindicator.bandwidth')}
-                </td>
-                <td className = { classes.bandwidth }>
+        return _renderListItem(
+            t('connectionindicator.bandwidth'),
+            (
+                <>
                     <span className = { classes.download }>
                         &darr;
                     </span>
-                    {download ? `${download} Kbps` : 'N/A'}
+                    {download ? `${download} Kbps` : NA}
                     <span className = { classes.upload }>
                         &uarr;
                     </span>
-                    {upload ? `${upload} Kbps` : 'N/A'}
+                    {upload ? `${upload} Kbps` : NA}
                     {enableAssumedBandwidth && (
                         <div
                             className = { classes.assumedBandwidth }
@@ -396,43 +405,41 @@ const ConnectionStatsTable = ({
                                 src = { IconGear } />
                         </div>
                     )}
-                </td>
-            </tr>
+                </>
+            ),
+            'connection-stat-bandwidth'
         );
     };
 
-    const _renderTransportTableRow = (config: any) => {
+    interface ITransportData {
+        additionalData?: Array<JSX.Element>;
+        data: Array<string>;
+        key: string;
+        label: string;
+    }
+
+    const _renderTransportList = (config: ITransportData): JSX.Element => {
         const { additionalData, data, key, label } = config;
 
-        return (
-            <tr key = { key }>
-                <td>
-                    <span>
-                        {label}
-                    </span>
-                </td>
-                <td>
+        return _renderListItem(
+            label,
+            (
+                <>
                     {getStringFromArray(data)}
-                    {additionalData || null}
-                </td>
-            </tr>
+                    {additionalData}
+                </>
+            ),
+            key
         );
     };
 
-    const _renderTransport = () => {
+    const _renderTransport = (): JSX.Element[] => {
         if (!transport || transport.length === 0) {
-            const NA = (
-                <tr key = 'address'>
-                    <td>
-                        <span>{t('connectionindicator.address')}</span>
-                    </td>
-                    <td>
-                        N/A
-                    </td>
-                </tr>
-            );
-
-            return [ NA ];
+            return [ _renderListItem(
+                t('connectionindicator.address'),
+                NA,
+                'connection-stat-address'
+            ) ];
         }
 
         const data: {
@@ -485,59 +492,59 @@ const ConnectionStatsTable = ({
                 || transport[0].remoteCandidateType === 'relay';
         }
 
-        const additionalData = [];
+        const additionalData: Array<JSX.Element> = [];
 
         if (isP2P) {
             additionalData.push(
-                <span> (p2p)</span>);
+                <span>(p2p)</span>);
         }
         if (isTURN) {
-            additionalData.push(<span> (turn)</span>);
+            additionalData.push(<span>(turn)</span>);
         }
 
         // First show remote statistics, then local, and then transport type.
-        const tableRowConfigurations = [
+        const listConfigurations: ITransportData[] = [
             {
                 additionalData,
                 data: data.remoteIP,
-                key: 'remoteaddress',
+                key: 'connection-stat-remoteaddress',
                 label: t('connectionindicator.remoteaddress',
                     { count: data.remoteIP.length })
             },
             {
                 data: data.remotePort,
-                key: 'remoteport',
+                key: 'connection-stat-remoteport',
                 label: t('connectionindicator.remoteport',
                     { count: transport.length })
             },
             {
                 data: data.localIP,
-                key: 'localaddress',
+                key: 'connection-stat-localaddress',
                 label: t('connectionindicator.localaddress',
                     { count: data.localIP.length })
             },
             {
                 data: data.localPort,
-                key: 'localport',
+                key: 'connection-stat-localport',
                 label: t('connectionindicator.localport',
                     { count: transport.length })
             },
             {
                 data: data.transportType,
-                key: 'transport',
+                key: 'connection-stat-transport',
                 label: t('connectionindicator.transport',
                     { count: data.transportType.length })
             }
         ];
 
-        return tableRowConfigurations.map(_renderTransportTableRow);
+        return listConfigurations.map(_renderTransportList);
     };
 
-    const _renderRegion = () => {
+    const _renderRegion = (): JSX.Element => {
         let str = serverRegion;
 
         if (!serverRegion) {
-            return;
+            return <></>;
         }
 
 
@@ -545,115 +552,92 @@ const ConnectionStatsTable = ({
             str += ` from ${region}`;
         }
 
-        return (
-            <tr>
-                <td>
-                    <span>{t('connectionindicator.connectedTo')}</span>
-                </td>
-                <td>{str}</td>
-            </tr>
+        return _renderListItem(
+            t('connectionindicator.connectedTo'),
+            str,
+            'connection-stat-region'
         );
     };
 
-    const _renderBridgeCount = () => {
+    const _renderBridgeCount = (): JSX.Element => {
         // 0 is valid, but undefined/null/NaN aren't.
         if (!bridgeCount && bridgeCount !== 0) {
-            return;
+            return <></>;
         }
 
-        return (
-            <tr>
-                <td>
-                    <span>{t('connectionindicator.bridgeCount')}</span>
-                </td>
-                <td>{bridgeCount}</td>
-            </tr>
+        return _renderListItem(
+            t('connectionindicator.bridgeCount'),
+            bridgeCount,
+            'connection-stat-bridge-count'
         );
     };
 
-    const _renderAudioSsrc = () => (
-        <tr>
-            <td>
-                <span>{t('connectionindicator.audio_ssrc')}</span>
-            </td>
-            <td>{audioSsrc || 'N/A'}</td>
-        </tr>
+    const _renderAudioSsrc = (): JSX.Element => _renderListItem(
+        t('connectionindicator.audio_ssrc'),
+        audioSsrc || NA,
+        'connection-stat-audio-ssrc'
     );
 
-    const _renderVideoSsrc = () => (
-        <tr>
-            <td>
-                <span>{t('connectionindicator.video_ssrc')}</span>
-            </td>
-            <td>{videoSsrc || 'N/A'}</td>
-        </tr>
+    const _renderVideoSsrc = (): JSX.Element => _renderListItem(
+        t('connectionindicator.video_ssrc'),
+        videoSsrc || NA,
+        'connection-stat-video-ssrc'
     );
 
-    const _renderParticipantId = () => (
-        <tr>
-            <td>
-                <span>{t('connectionindicator.participant_id')}</span>
-            </td>
-            <td>{participantId || 'N/A'}</td>
-        </tr>
+    const _renderParticipantId = (): JSX.Element => _renderListItem(
+        t('connectionindicator.participant_id'),
+        participantId || NA,
+        'connection-stat-participant-id'
     );
 
-    const _renderE2EEVerified = () => {
+    const _renderE2EEVerified = (): JSX.Element => {
         if (e2eeVerified === undefined) {
-            return;
+            return <></>;
         }
 
-        return (
-            <tr>
-                <td>
-                    <span>{t('connectionindicator.e2eeVerified')}</span>
-                </td>
-                <td>{t(`connectionindicator.${e2eeVerified ? 'yes' : 'no'}`)}</td>
-            </tr>
+        return _renderListItem(
+            t('connectionindicator.e2eeVerified'),
+            t<string>(`connectionindicator.${e2eeVerified ? 'yes' : 'no'}`),
+            'connection-stat-e2ee-verified'
         );
     };
 
-    const _renderAdditionalStats = () => (
-        <table>
-            <tbody>
-                {isLocalVideo ? _renderBandwidth() : null}
-                {isLocalVideo ? _renderTransport() : null}
-                {_renderRegion()}
-                {isLocalVideo ? _renderBridgeCount() : null}
-                {_renderAudioSsrc()}
-                {_renderVideoSsrc()}
-                {_renderParticipantId()}
-                {_renderE2EEVerified()}
-            </tbody>
-        </table>
+    const _renderAdditionalStats = (): JSX.Element => (
+        <ul>
+            {isLocalVideo ? _renderBandwidth() : null}
+            {isLocalVideo ? _renderTransport() : null}
+            {_renderRegion()}
+            {isLocalVideo ? _renderBridgeCount() : null}
+            {_renderAudioSsrc()}
+            {_renderVideoSsrc()}
+            {_renderParticipantId()}
+            {_renderE2EEVerified()}
+        </ul>
     );
 
-    const _renderBitrate = () => {
+    const _renderBitrate = (): JSX.Element => {
         const { download, upload } = bitrate || {};
 
-        return (
-            <tr>
-                <td>
-                    <span>
-                        {t('connectionindicator.bitrate')}
-                    </span>
-                </td>
-                <td>
+        return _renderListItem(
+            t('connectionindicator.bitrate'),
+            (
+                <>
                     <span className = { classes.download }>
                         &darr;
                     </span>
-                    {download ? `${download} Kbps` : 'N/A'}
+                    { download ? `${download} Kbps` : NA}
                     <span className = { classes.upload }>
                         &uarr;
                     </span>
-                    {upload ? `${upload} Kbps` : 'N/A'}
-                </td>
-            </tr>
+                    {upload ? `${upload} Kbps` : NA}
+                </>
+            ),
+            'connection-stat-bitrate'
         );
     };
 
-    const _renderCodecs = () => {
-        let codecString = 'N/A';
+    const _renderCodecs = (): JSX.Element => {
+        let codecString = NA;
 
         if (codec) {
             const audioCodec = codec[audioSsrc]?.audio;
@@ -664,72 +648,62 @@ const ConnectionStatsTable = ({
             }
         }
 
-        return (
-            <tr>
-                <td>
-                    <span>{t('connectionindicator.codecs')}</span>
-                </td>
-                <td>{codecString}</td>
-            </tr>
+        return _renderListItem(
+            t('connectionindicator.codecs'),
+            codecString,
+            'connection-stat-codecs'
         );
     };
 
-    const _renderConnectionSummary = () => (
-        <tr className = { classes.status }>
-            <td>
-                <span>{t('connectionindicator.status')}</span>
-            </td>
-            <td>{connectionSummary}</td>
-        </tr>
+    const _renderConnectionSummary = (): JSX.Element => _renderListItem(
+        t('connectionindicator.status'),
+        connectionSummary,
+        'connection-stat-connection-summary',
+        classes.status
     );
 
-    const _renderPacketLoss = () => {
-        let packetLossTableData;
+    const _renderPacketLoss = (): JSX.Element => {
+        let packetLossData: string | JSX.Element;
 
         if (packetLoss) {
             const { download, upload } = packetLoss;
 
-            packetLossTableData = (
-                <td>
+            packetLossData = (
+                <>
                     <span className = { classes.download }>
                         &darr;
                     </span>
-                    {download === null ? 'N/A' : `${download}%`}
+                    {download === null ? NA : `${download}%`}
                     <span className = { classes.upload }>
                         &uarr;
                     </span>
-                    {upload === null ? 'N/A' : `${upload}%`}
-                </td>
+                    {upload === null ? NA : `${upload}%`}
+                </>
             );
         } else {
-            packetLossTableData = <td>N/A</td>;
+            packetLossData = NA;
         }
 
-        return (
-            <tr>
-                <td>
-                    <span>
-                        {t('connectionindicator.packetloss')}
-                    </span>
-                </td>
-                {packetLossTableData}
-            </tr>
+        return _renderListItem(
+            t('connectionindicator.packetloss'),
+            packetLossData,
+            'connection-stat-package-loss'
         );
     };
 
-    const _renderSaveLogs = () => (
+    const _renderSaveLogs = (): JSX.Element => (
         <span>
             <button
                 className = { cx(classes.link, 'savelogs') }
                 onClick = { onSaveLogs }
                 type = 'button'>
-                {t('connectionindicator.savelogs')}
+                { t<string>('connectionindicator.savelogs') }
             </button>
             <span> | </span>
         </span>
     );
 
-    const _renderShowMoreLink = () => {
+    const _renderShowMoreLink = (): JSX.Element => {
         const translationKey
             = shouldShowMore
                 ? 'connectionindicator.less'
@@ -740,22 +714,20 @@ const ConnectionStatsTable = ({
                 className = { cx(classes.link, 'showmore') }
                 onClick = { onShowMore }
                 type = 'button'>
-                {t(translationKey)}
+                { t<string>(translationKey) }
             </button>
         );
     };
 
-    const _renderStatistics = () => (
-        <table>
-            <tbody>
-                {_renderConnectionSummary()}
-                {_renderBitrate()}
-                {_renderPacketLoss()}
-                {_renderResolution()}
-                {_renderFrameRate()}
-                {_renderCodecs()}
-            </tbody>
-        </table>
+    const _renderStatistics = (): JSX.Element => (
+        <ul>
+            {_renderConnectionSummary()}
+            {_renderBitrate()}
+            {_renderPacketLoss()}
+            {_renderResolution()}
+            {_renderFrameRate()}
+            {_renderCodecs()}
+        </ul>
     );
 
     if (isVirtualScreenshareParticipant) {
@@ -768,7 +740,7 @@ const ConnectionStatsTable = ({
             hidden = { false }
             inDrawer = { true }>
             <div
-                className = { cx(classes.connectionStatsTable, {
+                className = { cx(classes.connectionStats, {
                     [classes.mobile]: isMobileBrowser() || isNarrowLayout }) }
                 onClick = { onClick }>
                 {_renderStatistics()}
@@ -831,4 +803,4 @@ function getStringFromArray(array: string[]) {
     return res;
 }
 
-export default ConnectionStatsTable;
+export default ConnectionStatsList;
