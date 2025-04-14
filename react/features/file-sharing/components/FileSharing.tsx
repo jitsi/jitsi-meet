@@ -252,13 +252,12 @@ const FileSharing: React.FC<{}> = (): ReactElement => {
         remoteParticipants.forEach(p => participants.push(p.id));
 
         const headers = {
-            'accept': '*/*',
-            ...jwt && { 'Authorization': `Bearer ${jwt}` },
-            'Content-Type': 'multipart/form-data',
+            ...jwt && { 'Authorization': `Bearer ${jwt}` }
         };
 
         console.log('Headers:', headers);
         console.log('Authorization header:', headers.Authorization);
+        console.log('JWT available:', !!jwt);
 
         try {
             const formData = new FormData();
@@ -272,9 +271,10 @@ const FileSharing: React.FC<{}> = (): ReactElement => {
                 participantsIds: participants.filter(Boolean)
             };
 
-            // Append metadata and file to FormData with exact backend format
+            console.log('Metadata being sent:', metadata);
+
             formData.append('metadata', JSON.stringify(metadata));
-            formData.append(`file=@${file.file.name};type=${file.file.type}`, file.file);
+            formData.append('file', file.file, file.file.name);
 
             const response = await fetch('https://api-vo-pilot.jitsi.net/vo-content-sharing-history/v1/documents', {
                 method: 'POST',
