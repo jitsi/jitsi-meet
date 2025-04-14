@@ -18,13 +18,8 @@ class MeetingService {
      * @throws {MeetingError} If there's an error generating the meeting room
      */
     public async generateMeetingRoom(token: string): Promise<string | null> {
-        try {
-            const meetData = await get8x8BetaJWT(token);
-            return meetData?.room;
-        } catch (error) {
-            console.error("Error creating meeting:", error);
-            throw error as Error;
-        }
+        const meetData = await get8x8BetaJWT(token);
+        return meetData?.room;
     }
 }
 
