@@ -63,6 +63,11 @@ function getBundleAnalyzerPlugin(analyzeBundle, name) {
  * target, undefined; otherwise, the path to the local file to be served.
  */
 function devServerProxyBypass({ path }) {
+    if (path.startsWith('/v1/_cdn/')) {
+        // The CDN is not available in the dev server, so we need to bypass it.
+        path = path.replace(/\/v1\/_cdn\/[^/]+\//, '/');
+    }
+
     if (path.startsWith('/css/')
             || path.startsWith('/doc/')
             || path.startsWith('/fonts/')
