@@ -18,7 +18,7 @@ interface ThemeProps {
     colorMap: Object;
     font: Object;
     shape: Object;
-    spacing: Array<number>;
+    spacing: Array<number | string>;
     typography: Object;
 }
 

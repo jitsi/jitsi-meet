@@ -24,7 +24,7 @@ function remToPixels(remValue: string): number {
  * @returns {Object}
  */
 function convertRemValues(obj: any): any {
-    const converted = {};
+    const converted: { [key: string]: any; } = {};
 
     if (typeof obj !== 'object' || obj === null) {
         return obj;
