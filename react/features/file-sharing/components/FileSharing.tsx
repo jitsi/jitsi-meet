@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useRef, ReactElement } from 'react';
-import md5 from 'js-md5';
+// import md5 from 'js-md5';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
 import { IconCloudUpload, IconShareDoc, IconVideo, IconVolumeUp, IconWarning } from '../../base/icons/svg';
@@ -136,8 +136,8 @@ const FileSharing: React.FC<{}> = (): ReactElement => {
     const [ isDragging, setIsDragging ] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { t } = useTranslation();
-    const conference = useSelector(getCurrentConference);
-    const sessionId = conference?.getMeetingUniqueId();
+    // const conference = useSelector(getCurrentConference);
+    const sessionId = '6efa73e4-30dc-4851-950e-4a1089e15a8d'
     const localParticipant = useSelector(getLocalParticipant);
     const remoteParticipants = useSelector(getRemoteParticipants);
     const { connection, locationURL } = useSelector((state: IReduxState) => state['features/base/connection']);
@@ -225,7 +225,7 @@ const FileSharing: React.FC<{}> = (): ReactElement => {
                 'file-icon': IconShareDoc
             };
 
-            const IconComponent = iconMap[file.preview] || IconWarning;
+            const IconComponent = iconMap[file.preview as keyof typeof iconMap] || IconWarning;
 
             return (
                 <div className = { classes.fileIconContainer }>
@@ -274,7 +274,8 @@ const FileSharing: React.FC<{}> = (): ReactElement => {
             console.log('Metadata being sent:', metadata);
 
             formData.append('metadata', JSON.stringify(metadata));
-            formData.append('file', file.file, file.file.name);
+            // @ts-ignore
+            formData.append('file', file.file as Blob, file.file.name);
 
             const response = await fetch('https://api-vo-pilot.jitsi.net/vo-content-sharing-history/v1/documents', {
                 method: 'POST',
