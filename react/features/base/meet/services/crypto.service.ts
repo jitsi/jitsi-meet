@@ -1,8 +1,14 @@
 import { CryptoProvider } from '@internxt/sdk';
 import { Keys, Password } from '@internxt/sdk/dist/auth';
 import crypto from "crypto";
+import CryptoJS from "crypto-js";
 import { ConfigService } from "./config.service";
 import { KeysService } from "./keys.service";
+
+interface PassObjectInterface {
+    salt?: string | null;
+    password: string;
+}
 
 export class CryptoService {
     public static readonly instance: CryptoService = new CryptoService();
@@ -38,17 +44,16 @@ export class CryptoService {
      * @param passObject The object containing the password and an optional salt hex encoded
      * @returns The hashed password and the salt
      **/
-    public passToHash = (passObject: { password: string; salt?: string | null }): { salt: string; hash: string } => {
-        const salt = passObject.salt ? passObject.salt : crypto.randomBytes(128 / 8).toString("hex");
-        const hash = crypto
-            .pbkdf2Sync(passObject.password, Buffer.from(salt, "hex"), 10000, 256 / 8, "sha1")
-            .toString("hex");
+    public passToHash(passObject: PassObjectInterface): { salt: string; hash: string } {
+        const salt = passObject.salt ? CryptoJS.enc.Hex.parse(passObject.salt) : CryptoJS.lib.WordArray.random(128 / 8);
+        const hash = CryptoJS.PBKDF2(passObject.password, salt, { keySize: 256 / 32, iterations: 10000 });
         const hashedObjetc = {
-            salt,
-            hash,
+            salt: salt.toString(),
+            hash: hash.toString(),
         };
+
         return hashedObjetc;
-    };
+    }
 
     /**
      * Encrypts a plain message into an AES encrypted text using APP_CRYPTO_SECRET value from env
@@ -78,22 +83,12 @@ export class CryptoService {
      * @param secret The secret used to encrypt
      * @returns The encrypted private string in 'hex' encoding
      **/
-    public encryptTextWithKey = (textToEncrypt: string, secret: string) => {
-        const salt = crypto.randomBytes(8);
-        const { key, iv } = this.getKeyAndIvFrom(secret, salt);
+    public encryptTextWithKey(textToEncrypt: string, keyToEncrypt: string): string {
+        const bytes = CryptoJS.AES.encrypt(textToEncrypt, keyToEncrypt).toString();
+        const text64 = CryptoJS.enc.Base64.parse(bytes);
 
-        const cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
-
-        const encrypted = Buffer.concat([cipher.update(textToEncrypt, "utf8"), cipher.final()]);
-
-        /* CryptoJS applies the OpenSSL format for the ciphertext, i.e. the encrypted data starts with the ASCII
-    encoding of 'Salted__' followed by the salt and then the ciphertext.
-    Therefore the beginning of the Base64 encoded ciphertext starts always with U2FsdGVkX1
-    */
-        const openSSLstart = Buffer.from("Salted__");
-
-        return Buffer.concat([openSSLstart, salt, encrypted]).toString("hex");
-    };
+        return text64.toString(CryptoJS.enc.Hex);
+    }
 
     /**
      * Decrypts an AES encrypted text using a secret.
@@ -103,18 +98,16 @@ export class CryptoService {
      * @param secret The secret used to encrypt
      * @returns The decrypted string in 'utf8' encoding
      **/
-    public decryptTextWithKey = (encryptedText: string, secret: string) => {
-        const cypherText = Buffer.from(encryptedText, "hex");
+    public decryptTextWithKey(encryptedText: string, keyToDecrypt: string): string {
+        if (!keyToDecrypt) {
+            throw new Error("No key defined. Check .env file");
+        }
 
-        const salt = cypherText.subarray(8, 16);
-        const { key, iv } = this.getKeyAndIvFrom(secret, salt);
+        const reb = CryptoJS.enc.Hex.parse(encryptedText);
+        const bytes = CryptoJS.AES.decrypt(reb.toString(CryptoJS.enc.Base64), keyToDecrypt);
 
-        const decipher = crypto.createDecipheriv("aes-256-cbc", key, iv);
-
-        const contentsToDecrypt = cypherText.subarray(16);
-
-        return Buffer.concat([decipher.update(contentsToDecrypt), decipher.final()]).toString("utf8");
-    };
+        return bytes.toString(CryptoJS.enc.Utf8);
+    }
 
     /**
      * Generates the key and the iv by transforming a secret and a salt.

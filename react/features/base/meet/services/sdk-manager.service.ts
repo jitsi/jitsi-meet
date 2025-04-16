@@ -62,6 +62,7 @@ export class SdkManager {
 
         return Auth.client(DRIVE_API_URL, appDetails, apiSecurity);
     }
+
     getNewAuth() {
         const DRIVE_NEW_API_URL = ConfigService.instance.get("DRIVE_NEW_API_URL");
 
