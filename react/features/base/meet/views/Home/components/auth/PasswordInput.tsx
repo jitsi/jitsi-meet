@@ -1,7 +1,7 @@
 import { Eye, EyeSlash } from "@phosphor-icons/react";
 import React, { useState } from "react";
 import { FieldError, Path, UseFormRegister, ValidationRule } from "react-hook-form";
-import { IFormValues } from "./TextInput";
+import { IFormValues } from "../../types";
 
 interface InputProps {
     label: Path<IFormValues>;
@@ -43,9 +43,9 @@ const PasswordInput = ({
 }: InputProps): JSX.Element => {
     const [showPassword, setShowPassword] = useState(false);
     const primaryClass =
-        "h-11 w-full rounded-md border bg-transparent text-lg font-normal text-gray-80 outline-none ring-opacity-10 focus:ring-3 disabled:text-gray-40 disabled:placeholder-gray-20 dark:ring-opacity-20 ring-primary disabled:border-gray-10 border-gray-40 placeholder-gray-30 px-4 focus:border-primary";
+        "h-11 w-full rounded-md border bg-transparent text-lg font-normal text-gray-80 outline-none ring-opacity-10 focus:ring-3 disabled:text-gray-40 disabled:placeholder-gray-20 dark:ring-opacity-20 ring-primary disabled:border-gray-10 border-gray-40 placeholder-gray-30 px-3 focus:border-primary";
     const errorClass =
-        "h-11 w-full rounded-md border bg-transparent text-lg font-normal text-gray-80 outline-none ring-opacity-10 focus:ring-3 disabled:text-gray-40 disabled:placeholder-gray-20 dark:ring-opacity-20 ring-red disabled:border-gray-10 border-gray-40 placeholder-gray-30 px-4 focus:border-red";
+        "h-11 w-full rounded-md border bg-transparent text-lg font-normal text-gray-80 outline-none ring-opacity-10 focus:ring-3 disabled:text-gray-40 disabled:placeholder-gray-20 dark:ring-opacity-20 ring-red disabled:border-gray-10 border-gray-40 placeholder-gray-30 px-3 focus:border-red";
     return (
         <>
             <div className={`relative flex-1 ${className || ""}`}>

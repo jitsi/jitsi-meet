@@ -3,11 +3,10 @@ import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
 import { get8x8BetaJWT } from "../../../../connection/options8x8";
+import { setRoomID } from "../../../general/store/errors/actions";
 import { useLocalStorage } from "../../../LocalStorageManager";
 import { AuthService } from "../../../services/auth.service";
 import { AuthFormValues } from "../types";
-import { setRoomID } from "../../../general/store/errors/actions";
-
 
 interface UseAuthModalProps {
     onClose: () => void;
@@ -15,7 +14,7 @@ interface UseAuthModalProps {
     translate: (key: string) => string;
 }
 
-export function useAuthModal({ onClose, onLogin, translate }: UseAuthModalProps) {
+export function useLoginModal({ onClose, onLogin, translate }: UseAuthModalProps) {
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [showTwoFactor, setShowTwoFactor] = useState(false);
     const [loginError, setLoginError] = useState("");
@@ -62,6 +61,7 @@ export function useAuthModal({ onClose, onLogin, translate }: UseAuthModalProps)
             try {
                 return await AuthService.instance.doLogin(email, password, twoFactorCode);
             } catch (err) {
+                console.error("Error in authenticateUser", err);
                 throw new Error(translate("meet.auth.modal.error.invalidCredentials"));
             }
         },
