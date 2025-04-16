@@ -6,7 +6,7 @@ import { LoginForm } from "../components/auth/LoginForm";
 import { SignupForm } from "../components/auth/SignUpForm";
 import { Divider } from "../components/Divider";
 import { useLoginModal } from "../hooks/useLoginModal";
-import { useSignupModal } from "../hooks/useSignUp";
+import { useSignup } from "../hooks/useSignUp";
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -25,7 +25,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, onSignu
         translate,
     });
 
-    const { signupError, isSigningUp, handleSignup, resetSignupState } = useSignupModal({
+    const { signupError, isSigningUp, handleSignup, resetSignupState } = useSignup({
         onClose,
         onSignup,
         translate,

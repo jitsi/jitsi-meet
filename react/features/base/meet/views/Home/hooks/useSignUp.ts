@@ -6,20 +6,14 @@ import { KeysService } from "../../../services/keys.service";
 import { SdkManager } from "../../../services/sdk-manager.service";
 import { IFormValues } from "../types";
 
-interface UseSignupModalProps {
+interface useSignupProps {
     onClose: () => void;
     onSignup?: (token: string, userData?: any) => void;
     translate: (key: string) => string;
     referrer?: string;
 }
 
-export const readReferalCookie = (): string | undefined => {
-    const cookie = document.cookie.match(/(^| )REFERRAL=([^;]+)/);
-
-    return cookie ? cookie[2] : undefined;
-};
-
-export const useSignupModal = ({ onClose, onSignup, translate, referrer }: UseSignupModalProps) => {
+export const useSignup = ({ onClose, onSignup, translate, referrer }: useSignupProps) => {
     const [isSigningUp, setIsSigningUp] = useState(false);
     const [signupError, setSignupError] = useState("");
 
@@ -58,7 +52,6 @@ export const useSignupModal = ({ onClose, onSignup, translate, referrer }: UseSi
                 mnemonic: encMnemonic,
                 keys: keys,
                 captcha: captcha,
-                referral: readReferalCookie(),
                 referrer: referrer,
             };
 
@@ -73,11 +66,11 @@ export const useSignupModal = ({ onClose, onSignup, translate, referrer }: UseSi
                     mnemonic: mnemonic,
                 });
             }
-
+            console.log("aqui");
             onClose();
         } catch (error: any) {
             console.error("Signup error:", error);
-            setSignupError(error.message || translate("meet.auth.modal.signup.error.signupFailed"));
+            setSignupError(error.message ?? translate("meet.auth.modal.signup.error.signupFailed"));
         } finally {
             setIsSigningUp(false);
         }
