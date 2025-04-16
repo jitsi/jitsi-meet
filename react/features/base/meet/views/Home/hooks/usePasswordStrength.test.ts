@@ -4,16 +4,24 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { usePasswordStrength } from "./usePasswordStrength";
 
 describe("usePasswordStrength", () => {
-    const mockTranslate = vi.fn((key) => {
-        const translations = {
-            "meet.auth.modal.signup.password.weak": "Password is weak",
-            "meet.auth.modal.signup.password.strong": "Password is strong",
-            "meet.auth.modal.signup.password.notComplex": "Password is not complex enough",
-            "meet.auth.modal.signup.error.passwordTooShort": "Password has to be at least 8 characters long",
-            "meet.auth.modal.signup.password.tooLong": "Password is too long",
-        };
-        return translations[key] || key;
-    });
+ type TranslationKey =
+     | "meet.auth.modal.signup.password.weak"
+     | "meet.auth.modal.signup.password.strong"
+     | "meet.auth.modal.signup.password.notComplex"
+     | "meet.auth.modal.signup.error.passwordTooShort"
+     | "meet.auth.modal.signup.password.tooLong";
+
+ const translations: Record<TranslationKey, string> = {
+     "meet.auth.modal.signup.password.weak": "Password is weak",
+     "meet.auth.modal.signup.password.strong": "Password is strong",
+     "meet.auth.modal.signup.password.notComplex": "Password is not complex enough",
+     "meet.auth.modal.signup.error.passwordTooShort": "Password has to be at least 8 characters long",
+     "meet.auth.modal.signup.password.tooLong": "Password is too long",
+ };
+
+ const mockTranslate = vi.fn((key: string) => {
+     return translations[key as TranslationKey] || key;
+ });
 
     beforeEach(() => {
         vi.clearAllMocks();

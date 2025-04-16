@@ -23,21 +23,20 @@ export const usePasswordStrength = ({ password, email = "", maxLength = 64, tran
             if (result.strength === "medium") {
                 return {
                     tag: "warning",
-                    label: translate("meet.auth.modal.signup.password.weak") || "Password is weak",
+                    label: translate("meet.auth.modal.signup.password.weak"),
                 };
             }
             return {
                 tag: "success",
-                label: translate("meet.auth.modal.signup.password.strong") || "Password is strong",
+                label: translate("meet.auth.modal.signup.password.strong"),
             };
         } else {
             return {
                 tag: "error",
                 label:
                     result.reason === "NOT_COMPLEX_ENOUGH"
-                        ? translate("meet.auth.modal.signup.password.notComplex") || "Password is not complex enough"
-                        : translate("meet.auth.modal.signup.error.passwordTooShort") ||
-                          "Password has to be at least 8 characters long",
+                        ? translate("meet.auth.modal.signup.password.notComplex")
+                        : translate("meet.auth.modal.signup.error.passwordTooShort"),
             };
         }
     };
