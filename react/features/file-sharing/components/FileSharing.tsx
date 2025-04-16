@@ -16,6 +16,7 @@ import Icon from '../../base/icons/components/Icon';
 import BaseThemeWeb from '../../base/ui/components/BaseTheme.web';
 import logger from '../logger';
 import { parseJWTFromURLParams } from '../../base/jwt/functions';
+import { calculateFileHash } from '../functions';
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -136,8 +137,8 @@ const FileSharing: React.FC<{}> = (): ReactElement => {
     const [ isDragging, setIsDragging ] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { t } = useTranslation();
-    // const conference = useSelector(getCurrentConference);
-    const sessionId = '6efa73e4-30dc-4851-950e-4a1089e15a8d'
+    const conference = useSelector(getCurrentConference);
+    const sessionId = conference?.getMeetingUniqueId();
     const localParticipant = useSelector(getLocalParticipant);
     const remoteParticipants = useSelector(getRemoteParticipants);
     const { connection, locationURL } = useSelector((state: IReduxState) => state['features/base/connection']);
@@ -261,12 +262,22 @@ const FileSharing: React.FC<{}> = (): ReactElement => {
 
         try {
             const formData = new FormData();
+            const fileHash = await calculateFileHash(file.file, progress => {
+                // Update hash calculation progress (0-50%)
+                setFiles(prev => prev.map(f =>
+                    f.id === file.id
+                        ? { ...f, progress: progress / 2 }
+                        : f
+                ));
+            });
 
             const metadata = {
                 sessionId,
                 contentType: file.file.name.split('.').pop()?.toUpperCase(),
                 meetingFqn,
                 timestamp: Date.now(),
+                size: file.file.size,
+                md5: fileHash,
                 authorParticipantJid: jid,
                 participantsIds: participants.filter(Boolean)
             };
