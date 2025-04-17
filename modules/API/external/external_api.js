@@ -71,6 +71,7 @@ const commands = {
     setTileView: 'set-tile-view',
     setVideoQuality: 'set-video-quality',
     setVirtualBackground: 'set-virtual-background',
+    setProperty: 'set-property',
     showNotification: 'show-notification',
     startRecording: 'start-recording',
     startShareVideo: 'start-share-video',
@@ -1476,6 +1477,22 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     _openDesktopPicker() {
         return this._transport.sendRequest({
             name: 'open-desktop-picker'
+        });
+    }
+
+    /**
+     * Returns jitsi participant property.
+     *
+     * @param {string} participantId - The id of the participant.
+     * @param {string} key - The key of participant property to be fetched.
+     *
+     * @returns {Promise}
+     */
+    getProperty(participantId, key) {
+        return this._transport.sendRequest({
+            name: 'get-property',
+            participantId,
+            key
         });
     }
 }
