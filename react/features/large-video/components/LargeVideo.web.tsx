@@ -11,6 +11,7 @@ import Watermarks from '../../base/react/components/web/Watermarks';
 import { getHideSelfView } from '../../base/settings/functions.any';
 import { getVideoTrackByParticipant } from '../../base/tracks/functions.web';
 import { setColorAlpha } from '../../base/util/helpers';
+import { isSpotTV } from '../../base/util/spot';
 import StageParticipantNameLabel from '../../display-name/components/web/StageParticipantNameLabel';
 import { FILMSTRIP_BREAKPOINT } from '../../filmstrip/constants';
 import { getVerticalViewMaxWidth, isFilmstripResizable } from '../../filmstrip/functions.web';
@@ -24,8 +25,6 @@ import { getLargeVideoParticipant } from '../functions';
 
 import ScreenSharePlaceholder from './ScreenSharePlaceholder.web';
 
-// Hack to detect Spot.
-const SPOT_DISPLAY_NAME = 'Meeting Room';
 
 interface IProps {
 
@@ -364,20 +363,20 @@ function _mapStateToProps(state: IReduxState) {
     const { backgroundColor, backgroundImageUrl } = state['features/dynamic-branding'];
     const { isOpen: isChatOpen } = state['features/chat'];
     const { width: verticalFilmstripWidth, visible } = state['features/filmstrip'];
-    const { defaultLocalDisplayName, hideDominantSpeakerBadge } = state['features/base/config'];
+    const { hideDominantSpeakerBadge } = state['features/base/config'];
     const { seeWhatIsBeingShared } = state['features/large-video'];
     const localParticipantId = getLocalParticipant(state)?.id;
     const largeVideoParticipant = getLargeVideoParticipant(state);
     const videoTrack = getVideoTrackByParticipant(state, largeVideoParticipant);
     const isLocalScreenshareOnLargeVideo = largeVideoParticipant?.id?.includes(localParticipantId ?? '')
         && videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
-    const isOnSpot = defaultLocalDisplayName === SPOT_DISPLAY_NAME;
 
     return {
         _backgroundAlpha: state['features/base/config'].backgroundAlpha,
         _customBackgroundColor: backgroundColor,
         _customBackgroundImageUrl: backgroundImageUrl,
-        _displayScreenSharingPlaceholder: Boolean(isLocalScreenshareOnLargeVideo && !seeWhatIsBeingShared && !isOnSpot),
+        _displayScreenSharingPlaceholder:
+            Boolean(isLocalScreenshareOnLargeVideo && !seeWhatIsBeingShared && !isSpotTV()),
         _hideSelfView: getHideSelfView(state),
         _isChatOpen: isChatOpen,
         _isDisplayNameVisible: isDisplayNameVisible(state),
