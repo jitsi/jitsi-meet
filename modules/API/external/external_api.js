@@ -71,7 +71,7 @@ const commands = {
     setTileView: 'set-tile-view',
     setVideoQuality: 'set-video-quality',
     setVirtualBackground: 'set-virtual-background',
-    setProperty: 'set-property',
+    setParticipantProperty: 'set-participant-property',
     showNotification: 'show-notification',
     startRecording: 'start-recording',
     startShareVideo: 'start-share-video',
@@ -1488,9 +1488,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      *
      * @returns {Promise}
      */
-    getProperty(participantId, key) {
+    getParticipantProperty(participantId, key) {
         return this._transport.sendRequest({
-            name: 'get-property',
+            name: 'get-participant-property',
             participantId,
             key
         });

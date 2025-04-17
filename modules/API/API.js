@@ -899,7 +899,7 @@ function initCommands() {
                 virtualSource: backgroundImage
             }, jitsiTrack));
         },
-        'set-property': (key, value) => {
+        'set-participant-property': (key, value) => {
             const conference = getCurrentConference(APP.store.getState());
 
             conference.setLocalParticipantProperty(key, value);
@@ -1092,7 +1092,7 @@ function initCommands() {
 
             break;
         }
-        case 'get-property': {
+        case 'get-participant-property': {
             const { participantId, key } = request;
 
             const conference = getCurrentConference(APP.store.getState());
