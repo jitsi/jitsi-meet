@@ -11,6 +11,7 @@ import {
     isLocalParticipantModerator
 } from '../base/participants/functions';
 import { registerSound, unregisterSound } from '../base/sounds/actions';
+import { isSpotTV } from '../base/util/spot';
 import { isInBreakoutRoom as isInBreakoutRoomF } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
@@ -451,6 +452,10 @@ export function shouldRequireRecordingConsent(recorderSession: any, state: IRedu
     const { iAmRecorder } = state['features/base/config'];
 
     if (iAmRecorder) {
+        return false;
+    }
+
+    if (isSpotTV()) {
         return false;
     }
 
