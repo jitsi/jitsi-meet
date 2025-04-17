@@ -29,6 +29,7 @@ const DEFAULT_STATE: ISettingsState = {
     micDeviceId: undefined,
     serverURL: undefined,
     hideShareAudioHelper: false,
+    showSubtitlesOnStage: false,
     soundsIncomingMessage: true,
     soundsParticipantJoined: true,
     soundsParticipantKnocking: true,
@@ -67,6 +68,7 @@ export interface ISettingsState {
     maxStageParticipants?: number;
     micDeviceId?: string | boolean;
     serverURL?: string;
+    showSubtitlesOnStage?: boolean;
     soundsIncomingMessage?: boolean;
     soundsParticipantJoined?: boolean;
     soundsParticipantKnocking?: boolean;

@@ -5,10 +5,11 @@ import {
     REMOVE_CACHED_TRANSCRIPT_MESSAGE,
     REMOVE_TRANSCRIPT_MESSAGE,
     SET_REQUESTING_SUBTITLES,
+    STORE_SUBTITLE,
     TOGGLE_REQUESTING_SUBTITLES,
     UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
-import { ITranscriptMessage } from './types';
+import { ISubtitle, ITranscriptMessage } from './types';
 
 /**
  * Default State for 'features/transcription' feature.
@@ -18,7 +19,9 @@ const defaultState = {
     _displaySubtitles: false,
     _transcriptMessages: new Map(),
     _requestingSubtitles: false,
-    _language: null
+    _language: null,
+    messages: [],
+    subtitlesHistory: []
 };
 
 export interface ISubtitlesState {
@@ -27,6 +30,8 @@ export interface ISubtitlesState {
     _language: string | null;
     _requestingSubtitles: boolean;
     _transcriptMessages: Map<string, ITranscriptMessage>;
+    messages: ITranscriptMessage[];
+    subtitlesHistory: Array<ISubtitle>;
 }
 
 /**
@@ -59,6 +64,30 @@ ReducerRegistry.register<ISubtitlesState>('features/subtitles', (
             ...state,
             ...defaultState
         };
+    case STORE_SUBTITLE: {
+        const existingIndex = state.subtitlesHistory.findIndex(
+            subtitle => subtitle.id === action.subtitle.id
+        );
+
+        if (existingIndex >= 0 && state.subtitlesHistory[existingIndex].interim) {
+            const newHistory = [ ...state.subtitlesHistory ];
+
+            newHistory[existingIndex] = action.subtitle;
+
+            return {
+                ...state,
+                subtitlesHistory: newHistory
+            };
+        }
+
+        return {
+            ...state,
+            subtitlesHistory: [
+                ...state.subtitlesHistory,
+                action.subtitle
+            ]
+        };
+    }
     }
 
     return state;

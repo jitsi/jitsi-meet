@@ -8,6 +8,7 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { getLocalParticipant, isLocalParticipantModerator } from '../../../base/participants/functions';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import { isReactionsButtonEnabled, shouldDisplayReactionsButtons } from '../../../reactions/functions.web';
+import { isCCTabEnabled } from '../../../subtitles/functions.any';
 import { isTranscribing } from '../../../transcribing/functions';
 import {
     setHangupMenuVisible,
@@ -91,9 +92,10 @@ export default function Toolbox({
     const isDialogVisible = useSelector((state: IReduxState) => Boolean(state['features/base/dialog'].component));
     const localParticipant = useSelector(getLocalParticipant);
     const transcribing = useSelector(isTranscribing);
+    const _isCCTabEnabled = useSelector(isCCTabEnabled);
 
     // Do not convert to selector, it returns new array and will cause re-rendering of toolbox on every action.
-    const jwtDisabledButtons = getJwtDisabledButtons(transcribing, localParticipant?.features);
+    const jwtDisabledButtons = getJwtDisabledButtons(transcribing, _isCCTabEnabled, localParticipant?.features);
 
     const reactionsButtonEnabled = useSelector(isReactionsButtonEnabled);
     const _shouldDisplayReactionsButtons = useSelector(shouldDisplayReactionsButtons);

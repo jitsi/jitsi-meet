@@ -316,6 +316,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                     currentLanguage: tabState?.currentLanguage,
                     hideSelfView: tabState?.hideSelfView,
                     showPrejoinPage: tabState?.showPrejoinPage,
+                    showSubtitlesOnStage: tabState?.showSubtitlesOnStage,
                     maxStageParticipants: tabState?.maxStageParticipants
                 };
             },

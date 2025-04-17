@@ -18,6 +18,11 @@ import { MAX_ACTIVE_PARTICIPANTS } from '../../../filmstrip/constants';
 export interface IProps extends AbstractDialogTabProps, WithTranslation {
 
     /**
+     *  Indicates if closed captions are enabled.
+     */
+    areClosedCaptionsEnabled: boolean;
+
+    /**
      * CSS classes object.
      */
     classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
@@ -79,6 +84,11 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     showPrejoinSettings: boolean;
 
     /**
+     * Whether or not to show subtitles on stage.
+     */
+    showSubtitlesOnStage: boolean;
+
+    /**
      * Whether or not the stage filmstrip is enabled.
      */
     stageFilmstripEnabled: boolean;
@@ -126,6 +136,7 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
         this._renderMaxStageParticipantsSelect = this._renderMaxStageParticipantsSelect.bind(this);
         this._onMaxStageParticipantsSelect = this._onMaxStageParticipantsSelect.bind(this);
         this._onHideSelfViewChanged = this._onHideSelfViewChanged.bind(this);
+        this._onShowSubtitlesOnStageChanged = this._onShowSubtitlesOnStageChanged.bind(this);
         this._onLanguageItemSelect = this._onLanguageItemSelect.bind(this);
     }
 
@@ -137,11 +148,13 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
      */
     override render() {
         const {
+            areClosedCaptionsEnabled,
             showPrejoinSettings,
             disableHideSelfView,
             iAmVisitor,
             hideSelfView,
             showLanguageSettings,
+            showSubtitlesOnStage,
             t
         } = this.props;
         const classes = withStyles.getClasses(this.props);
@@ -163,6 +176,12 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
                         name = 'hide-self-view'
                         onChange = { this._onHideSelfViewChanged } />
                 )}
+                {areClosedCaptionsEnabled && <Checkbox
+                    checked = { showSubtitlesOnStage }
+                    className = { classes.checkbox }
+                    label = { t('settings.showSubtitlesOnStage') }
+                    name = 'show-subtitles-button'
+                    onChange = { this._onShowSubtitlesOnStageChanged } /> }
                 {showLanguageSettings && this._renderLanguageSelect()}
             </div>
         );
@@ -202,6 +221,17 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
      */
     _onHideSelfViewChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
         super._onChange({ hideSelfView: checked });
+    }
+
+    /**
+     * Callback invoked to select if show subtitles button should be enabled.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onShowSubtitlesOnStageChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
+        super._onChange({ showSubtitlesOnStage: checked });
     }
 
     /**

@@ -10,14 +10,16 @@ import {
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     EDIT_MESSAGE,
+    OPEN_CHAT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     SEND_MESSAGE,
     SEND_REACTION,
-    SET_IS_POLL_TAB_FOCUSED,
+    SET_FOCUSED_TAB,
     SET_LOBBY_CHAT_ACTIVE_STATE,
     SET_LOBBY_CHAT_RECIPIENT,
     SET_PRIVATE_MESSAGE_RECIPIENT
 } from './actionTypes';
+import { ChatTabs } from './constants';
 
 /**
  * Adds a chat message to the collection of messages.
@@ -169,17 +171,35 @@ export function setPrivateMessageRecipient(participant?: Object) {
 }
 
 /**
- * Set the value of _isPollsTabFocused.
+ * Set the value of the currently focused tab.
  *
- * @param {boolean} isPollsTabFocused - The new value for _isPollsTabFocused.
- * @returns {Function}
+ * @param {string} tabId - The id of the currently focused tab.
+ * @returns {{
+ *    type: SET_FOCUSED_TAB,
+ *    tabId: string
+ * }}
  */
-export function setIsPollsTabFocused(isPollsTabFocused: boolean) {
+export function setFocusedTab(tabId: ChatTabs) {
     return {
-        isPollsTabFocused,
-        type: SET_IS_POLL_TAB_FOCUSED
+        type: SET_FOCUSED_TAB,
+        tabId
     };
 }
+
+/**
+ * Opens the chat panel with CC tab active.
+ *
+ * @returns {Object} The redux action.
+ */
+export function openCCPanel() {
+    return async (dispatch: IStore['dispatch']) => {
+        dispatch(setFocusedTab(ChatTabs.CLOSED_CAPTIONS));
+        dispatch({
+            type: OPEN_CHAT
+        });
+    };
+}
+
 
 /**
  * Initiates the sending of messages between a moderator and a lobby attendee.

@@ -7,6 +7,7 @@ import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound } from '../base/sounds/actions';
 import { showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
+import { INotificationProps } from '../notifications/types';
 import { RECORDING_OFF_SOUND_ID, RECORDING_ON_SOUND_ID } from '../recording/constants';
 import { isLiveStreamingRunning, isRecordingRunning } from '../recording/functions';
 
@@ -58,11 +59,13 @@ function maybeEmitRecordingNotification(dispatch: IStore['dispatch'], getState: 
         return;
     }
 
+    const notifyProps: INotificationProps = {
+        descriptionKey: on ? 'recording.on' : 'recording.off',
+        titleKey: 'dialog.recording'
+    };
+
     batch(() => {
-        dispatch(showNotification({
-            descriptionKey: on ? 'recording.on' : 'recording.off',
-            titleKey: 'dialog.recording'
-        }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+        dispatch(showNotification(notifyProps, NOTIFICATION_TIMEOUT_TYPE.SHORT));
         dispatch(playSound(on ? RECORDING_ON_SOUND_ID : RECORDING_OFF_SOUND_ID));
     });
 }

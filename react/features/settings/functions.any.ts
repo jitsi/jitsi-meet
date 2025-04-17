@@ -12,6 +12,7 @@ import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive, isFollowMeRecorderActive } from '../follow-me/functions';
 import { isPrejoinEnabledInConfig } from '../prejoin/functions';
 import { isReactionsEnabled } from '../reactions/functions.any';
+import { areClosedCaptionsEnabled } from '../subtitles/functions.any';
 import { iAmVisitor } from '../visitors/functions';
 
 import { shouldShowModeratorSettings } from './functions';
@@ -107,6 +108,7 @@ export function getMoreTabProps(stateful: IStateful) {
     const { disableSelfView, disableSelfViewSettings } = state['features/base/config'];
 
     return {
+        areClosedCaptionsEnabled: areClosedCaptionsEnabled(state),
         currentLanguage: language,
         disableHideSelfView: disableSelfViewSettings || disableSelfView,
         hideSelfView: getHideSelfView(state),
@@ -116,6 +118,7 @@ export function getMoreTabProps(stateful: IStateful) {
         showLanguageSettings: configuredTabs.includes('language'),
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
         showPrejoinSettings: isPrejoinEnabledInConfig(state),
+        showSubtitlesOnStage: state['features/base/settings'].showSubtitlesOnStage,
         stageFilmstripEnabled
     };
 }

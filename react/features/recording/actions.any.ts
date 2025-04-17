@@ -285,10 +285,19 @@ export function showStartedRecordingNotification(
 
                     // add the option to copy recording link
                     if (showRecordingLink) {
+                        const actions = [
+                            ...notifyProps.dialogProps.customActionNameKey ?? [],
+                            'recording.copyLink'
+                        ];
+                        const handlers = [
+                            ...notifyProps.dialogProps.customActionHandler ?? [],
+                            () => copyText(link)
+                        ];
+
                         notifyProps.dialogProps = {
                             ...notifyProps.dialogProps,
-                            customActionNameKey: [ 'recording.copyLink' ],
-                            customActionHandler: [ () => copyText(link) ],
+                            customActionNameKey: actions,
+                            customActionHandler: handlers,
                             titleKey: 'recording.on',
                             descriptionKey: 'recording.linkGenerated'
                         };

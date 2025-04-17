@@ -39,10 +39,11 @@ export const SMALL_WIDTH_THRESHOLD = 580;
  */
 export const LOBBY_CHAT_MESSAGE = 'LOBBY_CHAT_MESSAGE';
 
-export const CHAT_TABS = {
-    POLLS: 'polls-tab',
-    CHAT: 'chat-tab'
-};
+export enum ChatTabs {
+    CHAT = 'chat-tab',
+    CLOSED_CAPTIONS = 'cc-tab',
+    POLLS = 'polls-tab'
+}
 
 /**
  * Formatter string to display the message timestamp.
