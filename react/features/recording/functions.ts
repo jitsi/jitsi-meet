@@ -1,10 +1,9 @@
 import i18next from 'i18next';
 
 import { IReduxState, IStore } from '../app/types';
-import { isMobileBrowser } from '../base/environment/utils';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
-import { JitsiRecordingConstants, browser } from '../base/lib-jitsi-meet';
+import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { getSoundFileSrc } from '../base/media/functions';
 import { getLocalParticipant, getRemoteParticipants } from '../base/participants/functions';
 import { registerSound, unregisterSound } from '../base/sounds/actions';
@@ -152,8 +151,7 @@ export function getSessionStatusToShow(state: IReduxState, mode: string): string
  * @returns {boolean} - Whether local recording is supported or not.
  */
 export function supportsLocalRecording() {
-    return browser.isChromiumBased() && !browser.isElectron() && !isMobileBrowser()
-        && navigator.product !== 'ReactNative';
+    return LocalRecordingManager.isSupported();
 }
 
 /**

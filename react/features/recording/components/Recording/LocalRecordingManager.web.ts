@@ -1,11 +1,12 @@
 import i18next from 'i18next';
 import { v4 as uuidV4 } from 'uuid';
-import fixWebmDuration from 'webm-duration-fix';
 
 import { IStore } from '../../../app/types';
 import { getRoomName } from '../../../base/conference/functions';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { getLocalTrack, getTrackState } from '../../../base/tracks/functions';
+import { isMobileBrowser } from '../../../base/environment/utils';
+import { browser } from '../../../base/lib-jitsi-meet';
 import { isEmbedded } from '../../../base/util/embedUtils';
 import { stopLocalVideoRecording } from '../../actions.any';
 
@@ -18,63 +19,54 @@ interface ILocalRecordingManager {
     addAudioTrackToLocalRecording: (track: MediaStreamTrack) => void;
     audioContext: AudioContext | undefined;
     audioDestination: MediaStreamAudioDestinationNode | undefined;
+    fileHandle: FileSystemFileHandle | undefined;
     getFilename: () => string;
     initializeAudioMixer: () => void;
     isRecordingLocally: () => boolean;
+    isSupported: () => boolean;
     mediaType: string;
     mixAudioStream: (stream: MediaStream) => void;
     recorder: MediaRecorder | undefined;
-    recordingData: Blob[];
     roomName: string;
-    saveRecording: (recordingData: Blob[], filename: string) => void;
     selfRecording: ISelfRecording;
     startLocalRecording: (store: IStore, onlySelf: boolean) => Promise<void>;
     stopLocalRecording: () => void;
     stream: MediaStream | undefined;
-    totalSize: number;
+    writableStream: FileSystemWritableFileStream | undefined;
 }
 
-const getMimeType = (): string => {
-    const possibleTypes = [
-        'video/webm;codecs=vp8'
-    ];
-
-    for (const type of possibleTypes) {
-        if (MediaRecorder.isTypeSupported(type)) {
-            return type;
-        }
-    }
-    throw new Error('No MIME Type supported by MediaRecorder');
-};
+/**
+ * We want to use the MP4 container due to it not suffering from the resulting file
+ * not being seek-able.
+ *
+ * The choice of VP9 as the video codec and Opus as the audio codec is for compatibility.
+ * While Chrome does support avc1 and avc3 (we'd need the latter since the resolution can change)
+ * it's not supported across the board.
+ */
+const PREFERRED_MEDIA_TYPE = 'video/mp4;codecs=vp9,opus';
 
 const VIDEO_BIT_RATE = 2500000; // 2.5Mbps in bits
-const MAX_SIZE = 1073741824; // 1GB in bytes
 
-// Lazily initialize.
-let preferredMediaType: string;
 
 const LocalRecordingManager: ILocalRecordingManager = {
-    recordingData: [],
     recorder: undefined,
     stream: undefined,
     audioContext: undefined,
     audioDestination: undefined,
     roomName: '',
-    totalSize: MAX_SIZE,
     selfRecording: {
         on: false,
         withVideo: false
     },
+    fileHandle: undefined,
+    writableStream: undefined,
 
     get mediaType() {
         if (this.selfRecording.on && !this.selfRecording.withVideo) {
             return 'audio/webm;';
         }
-        if (!preferredMediaType) {
-            preferredMediaType = getMimeType();
-        }
 
-        return preferredMediaType;
+        return PREFERRED_MEDIA_TYPE;
     },
 
     /**
@@ -129,27 +121,6 @@ const LocalRecordingManager: ILocalRecordingManager = {
     },
 
     /**
-     * Saves local recording to file.
-     *
-     * @param {Array} recordingData - The recording data.
-     * @param {string} filename - The name of the file.
-     * @returns {void}
-     * */
-    async saveRecording(recordingData, filename) {
-        // @ts-ignore
-        const blob = await fixWebmDuration(new Blob(recordingData, { type: this.mediaType }));
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-
-        const extension = this.mediaType.slice(this.mediaType.indexOf('/') + 1, this.mediaType.indexOf(';'));
-
-        a.style.display = 'none';
-        a.href = url;
-        a.download = `${filename}.${extension}`;
-        a.click();
-    },
-
-    /**
      * Stops local recording.
      *
      * @returns {void}
@@ -160,12 +131,10 @@ const LocalRecordingManager: ILocalRecordingManager = {
             this.recorder = undefined;
             this.audioContext = undefined;
             this.audioDestination = undefined;
-            this.totalSize = MAX_SIZE;
-            setTimeout(() => {
-                if (this.recordingData.length > 0) {
-                    this.saveRecording(this.recordingData, this.getFilename());
-                }
-            }, 1000);
+            this.writableStream?.close().then(() => {
+                this.fileHandle = undefined;
+                this.writableStream = undefined;
+            });
         }
     },
 
@@ -179,13 +148,23 @@ const LocalRecordingManager: ILocalRecordingManager = {
     async startLocalRecording(store, onlySelf) {
         const { dispatch, getState } = store;
 
+        this.roomName = getRoomName(getState()) ?? '';
+
+        // Get a handle to the file we are going to write.
+        const options = {
+            startIn: 'downloads',
+            suggestedName: `${this.getFilename()}.mp4`,
+        };
+
+        // @ts-expect-error
+        this.fileHandle = await window.showSaveFilePicker(options);
+        this.writableStream = await this.fileHandle?.createWritable();
+
         // @ts-ignore
         const supportsCaptureHandle = Boolean(navigator.mediaDevices.setCaptureHandleConfig) && !isEmbedded();
         const tabId = uuidV4();
 
         this.selfRecording.on = onlySelf;
-        this.recordingData = [];
-        this.roomName = getRoomName(getState()) ?? '';
         let gdmStream: MediaStream = new MediaStream();
         const tracks = getTrackState(getState());
 
@@ -280,13 +259,9 @@ const LocalRecordingManager: ILocalRecordingManager = {
             mimeType: this.mediaType,
             videoBitsPerSecond: VIDEO_BIT_RATE
         });
-        this.recorder.addEventListener('dataavailable', e => {
-            if (e.data && e.data.size > 0) {
-                this.recordingData.push(e.data);
-                this.totalSize -= e.data.size;
-                if (this.totalSize <= 0) {
-                    dispatch(stopLocalVideoRecording());
-                }
+        this.recorder.addEventListener('dataavailable', async e => {
+            if (this.recorder && e.data && e.data.size > 0) {
+                await this.writableStream?.write(e.data);
             }
         });
 
@@ -306,6 +281,22 @@ const LocalRecordingManager: ILocalRecordingManager = {
         }
 
         this.recorder.start(5000);
+    },
+
+    /**
+     * Whether or not local recording is supported.
+     *
+     * @returns {boolean}
+     */
+    isSupported() {
+        return browser.isChromiumBased()
+            && !browser.isElectron()
+            && !browser.isReactNative()
+            && !isMobileBrowser()
+
+            // @ts-expect-error
+            && typeof window.showSaveFilePicker !== 'undefined'
+            && MediaRecorder.isTypeSupported(PREFERRED_MEDIA_TYPE);
     },
 
     /**
