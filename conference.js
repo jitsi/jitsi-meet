@@ -2069,8 +2069,7 @@ export default {
     _initDeviceList(setDeviceListChangeHandler = false) {
         const { mediaDevices } = JitsiMeetJS;
 
-        if (mediaDevices.isDeviceListAvailable()
-                && mediaDevices.isDeviceChangeAvailable()) {
+        if (mediaDevices.isDeviceChangeAvailable()) {
             if (setDeviceListChangeHandler) {
                 this.deviceChangeListener = devices =>
                     window.setTimeout(() => this._onDeviceListChanged(devices), 0);

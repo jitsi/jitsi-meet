@@ -11,7 +11,6 @@ import {
     getAvailableDevices,
     getCurrentDevices,
     isDeviceChangeAvailable,
-    isDeviceListAvailable,
     isMultipleAudioInputSupported,
     setAudioInputDevice,
     setAudioOutputDevice,
@@ -989,10 +988,15 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Returns Promise that resolves with true if the device list is available
      * and with false if not.
      *
+     * @deprecated
+     *
      * @returns {Promise}
      */
     isDeviceListAvailable() {
-        return isDeviceListAvailable(this._transport);
+        console.warn('isDeviceListAvailable is deprecated and will be removed in the future. '
+                     + 'It always returns true');
+
+        return Promise.resolve(true);
     }
 
     /**

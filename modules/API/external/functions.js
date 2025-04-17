@@ -57,21 +57,6 @@ export function isDeviceChangeAvailable(transport, deviceType) {
 }
 
 /**
- * Returns Promise that resolves with true if the device list is available
- * and with false if not.
- *
- * @param {Transport} transport - The @code{Transport} instance responsible for
- * the external communication.
- * @returns {Promise}
- */
-export function isDeviceListAvailable(transport) {
-    return transport.sendRequest({
-        type: 'devices',
-        name: 'isDeviceListAvailable'
-    });
-}
-
-/**
  * Returns Promise that resolves with true if multiple audio input is supported
  * and with false if not.
  *
