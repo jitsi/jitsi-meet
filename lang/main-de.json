@@ -1270,7 +1270,7 @@
             "muteGUMPending": "Verbinde Ihr Mikrofon",
             "noiseSuppression": "Rauschunterdrückung",
             "openChat": "Chat öffnen",
-            "participants": "Anwesende",
+            "participants": "Anwesenheitsliste öffnen. {{participantsCount}} anwesend",
             "pip": "Bild-in-Bild-Modus ein-/ausschalten",
             "privateMessage": "Private Nachricht senden",
             "profile": "Profil bearbeiten",
