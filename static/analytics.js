@@ -54,6 +54,7 @@
 class EventSaver {
     /**
      * @param {Object} handlerConstructorOptions
+     * @returns {void}
      */
     constructor(handlerConstructorOptions) {
         console.log('EventSaver PostHog created');
@@ -61,12 +62,32 @@ class EventSaver {
     }
 
     /**
+     * @param {Object} userProperties
+     * @returns {void}
+     */
+    setUserProperties(userProperties) {
+        // if (window.posthog) {
+        //     window.posthog.identify(userProperties.id, userProperties);
+        // }
+    }
+
+    /**
      * @param {Object} event
+     * @returns {void}
      */
     sendEvent(event) {
         if (window.posthog) {
             window.posthog.capture(event.type, event);
         }
+    }
+
+    /**
+     * @returns {void}
+     */
+    dispose() {
+        // if (window.posthog) {
+        //     window.posthog.reset();
+        // }
     }
 }
 
