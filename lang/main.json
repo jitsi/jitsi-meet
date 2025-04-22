@@ -540,6 +540,9 @@
         }
     },
     "fileSharing": {
+        "uploadFailedTitle": "Upload failed",
+        "uploadFailedDescription": "Please try again.",
+        "fileAlreadyUploaded": "File has already been uploaded to this meeting",
         "removeFile": "Remove",
         "uploadFiles": "Upload Files",
         "dragAndDrop": "Drag and drop files here or click to upload"
