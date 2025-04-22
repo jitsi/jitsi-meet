@@ -1,7 +1,5 @@
 import md5 from 'js-md5';
-import { IFileMetadata } from './types';
 import { API_BASE_URL } from './constants';
-
 
 /**
  * Reads a chunk of file as ArrayBuffer.
@@ -58,61 +56,38 @@ export async function calculateFileHash(file: File, progressCallback?: (progress
 }
 
 /**
- * Checks if a file with the given hash already exists.
+ * Makes an API call to the file sharing server.
  *
- * @param {string} fileHash - The hash of the file.
- * @param {string} meetingFqn - The meeting FQN.
- * @param {Object} headers - Request headers.
- * @returns {Promise<IFileMetadata | null>}
+ * @param {Object} options - The options for the API call.
+ * @param {string} options.method - The HTTP method to use.
+ * @param {string} options.endpoint - The API endpoint.
+ * @param {Object} options.headers - The request headers.
+ * @param {Object} [options.body] - The request body(POST).
+ * @returns {Promise<any>}
+ * @throws {Error}
  */
-export async function isFileAlreadyUploaded(
-        fileHash: string,
-        meetingFqn: string,
-        headers: Record<string, string>
-): Promise<IFileMetadata | null> {
-    const response = await fetch(
-        `${API_BASE_URL}/documents?md5=${fileHash}&meetingFqn=${meetingFqn}`,
-        { headers }
-    );
-
-    if (!response.ok) {
-        return null;
-    }
-
-    const existingFiles = await response.json();
-
-    return existingFiles?.length > 0 ? existingFiles[0] : null;
-}
-
-/**
- * Uploads a file to the server.
- *
- * @param {File} file - The file to upload.
- * @param {IFileMetadata} metadata - The file metadata.
- * @param {Object} headers - Request headers.
- * @returns {Promise<IFileMetadata>}
- */
-export async function uploadFileToServer(
-        file: File,
-        metadata: IFileMetadata,
-        headers: Record<string, string>
-): Promise<IFileMetadata> {
-    const formData = new FormData();
-
-    formData.append('metadata', JSON.stringify(metadata));
-    formData.append('file', file);
-
-    const response = await fetch(`${API_BASE_URL}/documents`, {
-        method: 'POST',
+export async function makeApiCall({
+    body,
+    endpoint,
+    headers,
+    method
+}: {
+    body?: FormData | undefined;
+    endpoint: string;
+    headers: Record<string, string>;
+    method: string;
+}): Promise<any> {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        method,
         headers,
-        body: formData
+        ...(body && { body })
     });
 
     if (!response.ok) {
         const errorText = await response.text();
 
-        throw new Error(`Upload failed with status: ${response.status}. Error: ${errorText}`);
+        throw new Error(`${method} request failed with status: ${response.status}. Error: ${errorText}`);
     }
 
-    return response.json();
+    return method === 'DELETE' ? undefined : response.json();
 }

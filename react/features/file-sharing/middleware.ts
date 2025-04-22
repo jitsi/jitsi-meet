@@ -4,8 +4,8 @@ import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 import { parseJWTFromURLParams } from '../base/jwt/functions';
 import { showErrorNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
-import { ADD_FILES } from './actionTypes';
-import { calculateFileHash, isFileAlreadyUploaded, uploadFileToServer } from './functions';
+import { ADD_FILES, REMOVE_FILE } from './actionTypes';
+import { calculateFileHash, makeApiCall } from './functions';
 import { updateFileProgress } from './actions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import logger from './logger';
@@ -46,9 +46,14 @@ MiddlewareRegistry.register(store => next => async action => {
                     store.dispatch(updateFileProgress(file.id, progress / 2));
                 });
 
-                const fileAlreadyUploaded = await isFileAlreadyUploaded(fileHash, meetingFqn, headers);
+                // Check if file already exists
+                const existingFiles = await makeApiCall({
+                    method: 'GET',
+                    endpoint: `/documents?md5=${fileHash}&meetingFqn=${meetingFqn}`,
+                    headers
+                });
 
-                if (fileAlreadyUploaded) {
+                if (existingFiles?.length > 0) {
                     store.dispatch(showNotification({
                         titleKey: 'fileSharing.uploadFailedTitle',
                         descriptionKey: 'fileSharing.fileAlreadyUploaded',
@@ -71,7 +76,17 @@ MiddlewareRegistry.register(store => next => async action => {
                     name: file.file.name
                 };
 
-                await uploadFileToServer(file.file, fileMetadata, headers);
+                const formData = new FormData();
+
+                formData.append('metadata', JSON.stringify(fileMetadata));
+                formData.append('file', file.file);
+
+                await makeApiCall({
+                    method: 'POST',
+                    endpoint: '/documents',
+                    headers,
+                    body: formData
+                });
 
                 // Update conference metadata with file information
                 const existingMetadata = conference?.getMetadataHandler().getMetadata()?.fileSharing?.files || {};
@@ -93,6 +108,44 @@ MiddlewareRegistry.register(store => next => async action => {
                     appearance: NOTIFICATION_TYPE.ERROR
                 }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
             }
+        }
+
+        return result;
+    }
+
+    case REMOVE_FILE: {
+        const result = next(action);
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+        const { locationURL } = state['features/base/connection'];
+        const jwt = parseJWTFromURLParams(locationURL);
+        const meetingFqn = extractFqnFromPath(state);
+
+        const headers = {
+            ...jwt && { 'Authorization': `Bearer ${jwt}` }
+        };
+
+        try {
+            // Get file metadata from conference metadata
+            const existingMetadata = conference?.getMetadataHandler().getMetadata()?.fileSharing?.files || {};
+            const fileMetadata = existingMetadata[action.fileId];
+
+            if (fileMetadata) {
+                await makeApiCall({
+                    method: 'DELETE',
+                    endpoint: `/documents?md5=${fileMetadata.md5}&meetingFqn=${meetingFqn}`,
+                    headers
+                });
+
+                // Update conference metadata to remove the file
+                const { [action.fileId]: _, ...remainingFiles } = existingMetadata;
+
+                conference?.getMetadataHandler().setMetadata(FILE_SHARING_ID, {
+                    files: remainingFiles
+                });
+            }
+        } catch (error) {
+            logger.warn('Could not delete file:', error);
         }
 
         return result;
