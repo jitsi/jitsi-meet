@@ -75,7 +75,7 @@ export default class ChatMessageGroup extends Component<IProps> {
                     this.props.messages[0].messageType === MESSAGE_TYPE_REMOTE
                         && index === this.props.messages.length - 1
                 }
-                showTimestamp = { index === 0 } />
+                showTimestamp = { true } />
         );
     }
 }
