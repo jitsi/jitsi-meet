@@ -9,7 +9,7 @@ import { BUTTON_TYPES } from '../../base/ui/constants.web';
 import { useDispatch, useSelector } from 'react-redux';
 import { IReduxState } from '../../app/types';
 import Icon from '../../base/icons/components/Icon';
-import BaseThemeWeb from '../../base/ui/components/BaseTheme.web';
+import BaseTheme from '../../base/ui/components/BaseTheme.web';
 import { addFiles, removeFile } from '../actions';
 
 const useStyles = makeStyles()(theme => {
@@ -176,7 +176,7 @@ const FileSharing: React.FC<{}> = (): ReactElement => {
         return (
             <>
                 <Icon
-                    color = { BaseThemeWeb.palette.icon01 }
+                    color = { BaseTheme.palette.icon01 }
                     size = { 24 }
                     src = { IconComponent } />
             </>
