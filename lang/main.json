@@ -124,7 +124,8 @@
             "title": "Enter a nickname to use chat",
             "titleWithCC": "Enter a nickname to use chat and closed captions",
             "titleWithPolls": "Enter a nickname to use chat and polls",
-            "titleWithPollsAndCC": "Enter a nickname to use chat, polls and closed captions"
+            "titleWithPollsAndCC": "Enter a nickname to use chat, polls and closed captions",
+            "titleWithPollsAndCCAndFileSharing": "Enter a nickname to use chat, polls, closed captions and file sharing"
         },
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "privateNotice": "Private message to {{recipient}}",
@@ -134,12 +135,14 @@
         "tabs": {
             "chat": "Chat",
             "closedCaptions": "CC",
+            "fileSharing": "File Sharing",
             "polls": "Polls"
         },
         "title": "Chat",
         "titleWithCC": "Chat and CC",
+        "titleWithFileSharing": "Chat and File Sharing",
         "titleWithPolls": "Chat and Polls",
-        "titleWithPollsAndCC": "Chat, Polls and CC",
+        "titleWithPollsAndCC": "Chat, Polls, CC and File Sharing",
         "you": "you"
     },
     "chromeExtensionBanner": {

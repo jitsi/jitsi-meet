@@ -150,6 +150,7 @@ export default [
     'enableTcc',
     'faceLandmarks',
     'feedbackPercentage',
+    'fileSharingEnabled',
     'filmstrip',
     'flags',
     'forceTurnRelay',

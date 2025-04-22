@@ -8,8 +8,9 @@ import { getLocalParticipant } from '../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Tabs from '../../../base/ui/components/web/Tabs';
 import { arePollsDisabled } from '../../../conference/functions.any';
+import FileSharing from '../../../file-sharing/components/FileSharing';
 import PollsPane from '../../../polls/components/web/PollsPane';
-import { isCCTabEnabled } from '../../../subtitles/functions.any';
+import {isCCTabEnabled, isFileSharingEnabled} from '../../../subtitles/functions.any';
 import { sendMessage, setFocusedTab, toggleChat } from '../../actions.web';
 import { CHAT_SIZE, ChatTabs, SMALL_WIDTH_THRESHOLD } from '../../constants';
 import { IChatProps as AbstractProps } from '../../types';
@@ -33,6 +34,11 @@ interface IProps extends AbstractProps {
      * True if the CC tab is enabled and false otherwise.
      */
     _isCCTabEnabled: boolean;
+
+    /**
+     * True if file sharing tab is enabled.
+     */
+    _isFileSharingTabEnabled: boolean;
 
     /**
      * Whether the chat is opened in a modal or not (computed based on window width).
@@ -155,6 +161,7 @@ const Chat = ({
     _isOpen,
     _isPollsEnabled,
     _isCCTabEnabled,
+    _isFileSharingTabEnabled,
     _focusedTab,
     _messages,
     _nbUnreadMessages,
@@ -229,7 +236,10 @@ const Chat = ({
                     aria-labelledby = { ChatTabs.CHAT }
                     className = { cx(
                         classes.chatPanel,
-                        !_isPollsEnabled && !_isCCTabEnabled && classes.chatPanelNoTabs,
+                        !_isPollsEnabled
+                        && !_isCCTabEnabled
+                        && !_isFileSharingTabEnabled
+                        && classes.chatPanelNoTabs,
                         _focusedTab !== ChatTabs.CHAT && 'hide'
                     ) }
                     id = { `${ChatTabs.CHAT}-panel` }
@@ -261,6 +271,14 @@ const Chat = ({
                     role = 'tabpanel'
                     tabIndex = { 2 }>
                     <ClosedCaptionsTab />
+                </div> }
+                { _isFileSharingTabEnabled && <div
+                    aria-labelledby = { ChatTabs.FILE_SHARING }
+                    className = { cx(classes.chatPanel, _focusedTab !== ChatTabs.FILE_SHARING && 'hide') }
+                    id = { `${ChatTabs.FILE_SHARING}-panel` }
+                    role = 'tabpanel'
+                    tabIndex = { 3 }>
+                    <FileSharing />
                 </div> }
             </>
         );
@@ -302,6 +320,16 @@ const Chat = ({
                 id: ChatTabs.CLOSED_CAPTIONS,
                 controlsId: `${ChatTabs.CLOSED_CAPTIONS}-panel`,
                 label: t('chat.tabs.closedCaptions')
+            });
+        }
+
+        if (_isFileSharingTabEnabled) {
+            tabs.push({
+                accessibilityLabel: t('chat.tabs.fileSharing'),
+                countBadge: undefined,
+                id: ChatTabs.FILE_SHARING,
+                controlsId: `${ChatTabs.FILE_SHARING}-panel`,
+                label: t('chat.tabs.fileSharing')
             });
         }
 
@@ -362,6 +390,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _isOpen: isOpen,
         _isPollsEnabled: !arePollsDisabled(state),
         _isCCTabEnabled: isCCTabEnabled(state),
+        _isFileSharingTabEnabled: isFileSharingEnabled(state),
         _focusedTab: focusedTab,
         _messages: messages,
         _nbUnreadMessages: nbUnreadMessages,

@@ -19,6 +19,11 @@ interface IProps {
     isCCTabEnabled: boolean;
 
     /**
+     * Whether file sharing feature is enabled or not.
+     */
+    isFileSharingEnabled: boolean;
+
+    /**
      * Whether the polls feature is enabled or not.
      */
     isPollsEnabled: boolean;
@@ -34,7 +39,7 @@ interface IProps {
  *
  * @returns {React$Element<any>}
  */
-function ChatHeader({ className, isPollsEnabled, isCCTabEnabled }: IProps) {
+function ChatHeader({ className, isCCTabEnabled, isFileSharingEnabled, isPollsEnabled }: IProps) {
     const dispatch = useDispatch();
     const { t } = useTranslation();
 
@@ -51,12 +56,14 @@ function ChatHeader({ className, isPollsEnabled, isCCTabEnabled }: IProps) {
 
     let title = 'chat.title';
 
-    if (isCCTabEnabled && isPollsEnabled) {
+    if (isCCTabEnabled && isPollsEnabled && isFileSharingEnabled) {
         title = 'chat.titleWithPollsAndCC';
     } else if (isCCTabEnabled) {
         title = 'chat.titleWithCC';
     } else if (isPollsEnabled) {
         title = 'chat.titleWithPolls';
+    } else if (isFileSharingEnabled) {
+        title = 'chat.titleWithFileSharing'
     }
 
     return (
