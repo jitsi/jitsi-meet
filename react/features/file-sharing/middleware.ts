@@ -9,6 +9,7 @@ import { calculateFileHash, isFileAlreadyUploaded, uploadFileToServer } from './
 import { updateFileProgress } from './actions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import logger from './logger';
+import { FILE_SHARING_ID } from './constants';
 
 /**
  * Middleware that handles file sharing actions.
@@ -58,7 +59,7 @@ MiddlewareRegistry.register(store => next => async action => {
                     return result;
                 }
 
-                await uploadFileToServer(file.file, {
+                const fileMetadata = {
                     sessionId,
                     contentType: file.file.name.split('.').pop()?.toUpperCase(),
                     meetingFqn,
@@ -66,8 +67,21 @@ MiddlewareRegistry.register(store => next => async action => {
                     size: file.file.size,
                     md5: fileHash,
                     authorParticipantJid: jid,
-                    participantsIds: participants.filter(Boolean) as string[]
-                }, headers);
+                    participantsIds: participants.filter(Boolean) as string[],
+                    name: file.file.name
+                };
+
+                await uploadFileToServer(file.file, fileMetadata, headers);
+
+                // Update conference metadata with file information
+                const existingMetadata = conference?.getMetadataHandler().getMetadata()?.fileSharing?.files || {};
+
+                conference?.getMetadataHandler().setMetadata(FILE_SHARING_ID, {
+                    files: {
+                        ...existingMetadata,
+                        [file.id]: fileMetadata
+                    }
+                });
 
                 store.dispatch(updateFileProgress(file.id, 100));
             } catch (error) {

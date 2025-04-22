@@ -183,33 +183,30 @@ const FileSharing: React.FC<{}> = (): ReactElement => {
         );
     };
 
-    const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            const newFiles = Array.from(e.target.files).map(file => ({
-                file,
-                id: `${file.name}-${Date.now()}`,
-                preview: '',
-                progress: 0
-            }));
-
-            dispatch(addFiles(newFiles));
-        }
-    }, [ dispatch ]);
-
-    const handleDrop = useCallback((e: React.DragEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsDragging(false);
-
-        const newFiles = Array.from(e.dataTransfer.files).map(file => ({
+    const processFiles = useCallback((fileList: FileList | File[]) => {
+        const newFiles = Array.from(fileList).map(file => ({
             file,
-            id: `${file.name}-${Date.now()}`,
+            id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(36),
             preview: '',
             progress: 0
         }));
 
         dispatch(addFiles(newFiles));
     }, [ dispatch ]);
+
+    const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            processFiles(e.target.files);
+        }
+    }, [ processFiles ]);
+
+    const handleDrop = useCallback((e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+
+        processFiles(e.dataTransfer.files);
+    }, [ processFiles, setIsDragging ]);
 
     const handleClick = useCallback(() => {
         fileInputRef.current?.click();
