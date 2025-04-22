@@ -89,6 +89,9 @@ var config = {
         // Enables use of getDisplayMedia in electron
         // electronUseGetDisplayMedia: false,
 
+        // Enables AV1 codec for FF. Note: By default it is disabled.
+        // enableAV1ForFF: false,
+
         // Enables the use of the codec selection API supported by the browsers .
         // enableCodecSelectionAPI: false,
 
