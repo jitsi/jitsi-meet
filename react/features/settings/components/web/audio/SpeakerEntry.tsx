@@ -138,34 +138,36 @@ const SpeakerEntry = (props: IProps) => {
 
     /* eslint-disable react/jsx-no-bind */
     return (
-        <li
-            aria-checked = { isSelected }
-            aria-posinset = { index + 1 } // Add one to offset the 0 based index.
-            aria-setsize = { length }
+        <span
             className = { classes.container }
-            onClick = { _onClick }
-            onKeyPress = { _onKeyPress }
-            role = 'radio'
-            tabIndex = { 0 }>
-            <ContextMenuItem
-                accessibilityLabel = { children }
-                icon = { isSelected ? IconCheck : undefined }
-                overflowType = { TEXT_OVERFLOW_TYPES.SCROLL_ON_HOVER }
-                selected = { isSelected }
-                text = { children }
-                textClassName = { cx(classes.entryText, 'entryText', !isSelected && 'left-margin') }>
-                <Button
-                    className = { cx(classes.testButton, 'testButton') }
-                    label = 'Test'
-                    onClick = { _onTestButtonClick }
-                    onKeyPress = { _onTestButtonClick }
-                    type = { BUTTON_TYPES.SECONDARY } />
-            </ContextMenuItem>
-            <audio
-                preload = 'auto'
-                ref = { audioRef }
-                src = { TEST_SOUND_PATH } />
-        </li>
+            role = 'presentation'>
+            <li
+                aria-checked = { isSelected }
+                aria-posinset = { index + 1 } // Add one to offset the 0 based index.
+                aria-setsize = { length }
+                onClick = { _onClick }
+                onKeyPress = { _onKeyPress }
+                role = 'radio'
+                tabIndex = { 0 }>
+                <ContextMenuItem
+                    accessibilityLabel = { children }
+                    icon = { isSelected ? IconCheck : undefined }
+                    overflowType = { TEXT_OVERFLOW_TYPES.SCROLL_ON_HOVER }
+                    selected = { isSelected }
+                    text = { children }
+                    textClassName = { cx(classes.entryText, 'entryText', !isSelected && 'left-margin') } />
+                <audio
+                    preload = 'auto'
+                    ref = { audioRef }
+                    src = { TEST_SOUND_PATH } />
+            </li>
+            <Button
+                className = { cx(classes.testButton, 'testButton') }
+                label = 'Test'
+                onClick = { _onTestButtonClick }
+                onKeyPress = { _onTestButtonClick }
+                type = { BUTTON_TYPES.SECONDARY } />
+        </span>
     );
 };
 
