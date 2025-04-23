@@ -5,7 +5,7 @@ import { parseJWTFromURLParams } from '../base/jwt/functions';
 import { showErrorNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
 import { ADD_FILES, REMOVE_FILE } from './actionTypes';
-import { calculateFileHash, makeApiCall } from './functions';
+import { calculateFileHash, makeApiCall } from './functions.any';
 import { updateFileProgress } from './actions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import logger from './logger';
@@ -46,23 +46,22 @@ MiddlewareRegistry.register(store => next => async action => {
                     store.dispatch(updateFileProgress(file.id, progress / 2));
                 });
 
-                // Check if file already exists
-                const existingFiles = await makeApiCall({
-                    method: 'GET',
-                    endpoint: `/documents?md5=${fileHash}&meetingFqn=${meetingFqn}`,
-                    headers
-                });
-
-                if (existingFiles?.length > 0) {
-                    store.dispatch(showNotification({
-                        titleKey: 'fileSharing.uploadFailedTitle',
-                        descriptionKey: 'fileSharing.fileAlreadyUploaded',
-                        appearance: NOTIFICATION_TYPE.WARNING,
-                        maxLines: 2
-                    }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
-
-                    return result;
-                }
+                // const existingFiles = await makeApiCall({
+                //     method: 'GET',
+                //     endpoint: `/documents?md5=${fileHash}&meetingFqn=${meetingFqn}`,
+                //     headers
+                // });
+                //
+                // if (existingFiles?.length > 0) {
+                //     store.dispatch(showNotification({
+                //         titleKey: 'fileSharing.uploadFailedTitle',
+                //         descriptionKey: 'fileSharing.fileAlreadyUploaded',
+                //         appearance: NOTIFICATION_TYPE.WARNING,
+                //         maxLines: 2
+                //     }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+                //
+                //     return result;
+                // }
 
                 const fileMetadata = {
                     sessionId,
@@ -79,7 +78,7 @@ MiddlewareRegistry.register(store => next => async action => {
                 const formData = new FormData();
 
                 formData.append('metadata', JSON.stringify(fileMetadata));
-                formData.append('file', file.file);
+                formData.append('file', file.file as Blob, file.file.name);
 
                 await makeApiCall({
                     method: 'POST',
@@ -137,8 +136,9 @@ MiddlewareRegistry.register(store => next => async action => {
                     headers
                 });
 
-                // Update conference metadata to remove the file
-                const { [action.fileId]: _, ...remainingFiles } = existingMetadata;
+                const remainingFiles = { ...existingMetadata };
+
+                delete remainingFiles[action.fileId];
 
                 conference?.getMetadataHandler().setMetadata(FILE_SHARING_ID, {
                     files: remainingFiles

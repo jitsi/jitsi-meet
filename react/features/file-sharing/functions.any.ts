@@ -1,4 +1,7 @@
 import md5 from 'js-md5';
+import { IReduxState } from '../app/types';
+import { isLocalParticipantModerator } from '../base/participants/functions';
+
 import { API_BASE_URL } from './constants';
 
 /**
@@ -62,7 +65,7 @@ export async function calculateFileHash(file: File, progressCallback?: (progress
  * @param {string} options.method - The HTTP method to use.
  * @param {string} options.endpoint - The API endpoint.
  * @param {Object} options.headers - The request headers.
- * @param {Object} [options.body] - The request body(POST).
+ * @param {Object} [options.body] - The request body.
  * @returns {Promise<any>}
  * @throws {Error}
  */
@@ -89,5 +92,23 @@ export async function makeApiCall({
         throw new Error(`${method} request failed with status: ${response.status}. Error: ${errorText}`);
     }
 
-    return method === 'DELETE' ? undefined : response.json();
+    try {
+        return await response.json();
+    } catch {
+        // If the response is empty or not JSON, return undefined
+        return undefined;
+    }
+}
+
+/**
+ * Checks whether file sharing feature is enabled.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean} - Indicates if file sharing feature is enabled.
+ */
+export function isFileSharingEnabled(state: IReduxState) {
+    const { fileSharingEnabled = true } = state['features/base/config'];
+    const isModerator = isLocalParticipantModerator(state);
+
+    return fileSharingEnabled && isModerator;
 }

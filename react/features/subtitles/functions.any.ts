@@ -3,7 +3,6 @@ import { IStateful } from '../base/app/types';
 import { TRANSLATION_LANGUAGES, TRANSLATION_LANGUAGES_HEAD } from '../base/i18n/i18next';
 import { toState } from '../base/redux/functions';
 import { canAddTranscriber, isTranscribing } from '../transcribing/functions';
-import {isLocalParticipantModerator} from "../base/participants/functions";
 
 /**
  * Checks whether the participant can start the subtitles.
@@ -69,17 +68,4 @@ export function isCCTabEnabled(state: IReduxState) {
     const { showSubtitlesOnStage = false } = state['features/base/settings'];
 
     return areClosedCaptionsEnabled(state) && !showSubtitlesOnStage;
-}
-
-/**
- * Checks whether file sharing feature is enabled.
- *
- * @param {IReduxState} state - The redux state.
- * @returns {boolean} - Indicates if file sharing feature is enabled.
- */
-export function isFileSharingEnabled(state: IReduxState) {
-    const { fileSharingEnabled = true } = state['features/base/config'];
-    const isModerator = isLocalParticipantModerator(state);
-
-    return fileSharingEnabled && isModerator;
 }
