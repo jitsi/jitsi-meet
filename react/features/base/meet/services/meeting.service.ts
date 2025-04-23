@@ -42,7 +42,7 @@ class MeetingService {
     /**
      * Joins an existing call by its ID
      * @param callId The ID of the call to join
-     * @param payload The join call payload (name, lastname, isAnonymous)
+     * @param payload The join call payload (name, lastname, anonymous)
      * @returns The join call response with session details
      * @async
      **/
