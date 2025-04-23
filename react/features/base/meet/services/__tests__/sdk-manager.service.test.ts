@@ -1,8 +1,8 @@
-import "../../__tests__/setup";
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { SdkManager } from "../sdk-manager.service";
-import { ConfigService } from "../config.service";
 import { Auth, Drive } from "@internxt/sdk";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import "../../__tests__/setup";
+import { ConfigService } from "../config.service";
+import { SdkManager } from "../sdk-manager.service";
 
 vi.mock("@internxt/sdk", () => ({
     Auth: {
@@ -94,13 +94,6 @@ describe("SdkManager", () => {
             });
         });
 
-        it("When getting auth client, then the correct client is returned with proper configuration", () => {
-            SdkManager.init(mockApiSecurity);
-            const authClient = SdkManager.instance.getAuth();
-            expect(authClient).toBeDefined();
-            expect(Auth.client).toHaveBeenCalledWith("https://test-drive-api.com", expect.any(Object), mockApiSecurity);
-        });
-
         it("When getting new auth client, then the correct client is returned with proper configuration", () => {
             SdkManager.init(mockApiSecurity);
             const newAuthClient = SdkManager.instance.getNewAuth();
@@ -124,11 +117,9 @@ describe("SdkManager", () => {
         });
 
         it("When getting clients without api security, then they are created with undefined security", () => {
-            SdkManager.instance.getAuth();
             SdkManager.instance.getNewAuth();
             SdkManager.instance.getUsers();
 
-            expect(Auth.client).toHaveBeenCalledWith("https://test-drive-api.com", expect.any(Object), undefined);
             expect(Auth.client).toHaveBeenCalledWith("https://test-drive-new-api.com", expect.any(Object), undefined);
             expect(Drive.Users.client).toHaveBeenCalledWith(
                 "https://test-drive-api.com",
