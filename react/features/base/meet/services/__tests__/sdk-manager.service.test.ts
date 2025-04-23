@@ -1,4 +1,4 @@
-import { Auth, Drive } from "@internxt/sdk";
+import { Auth, Drive, Meet } from "@internxt/sdk";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import "../../__tests__/setup";
 import { ConfigService } from "../config.service";
@@ -22,8 +22,40 @@ vi.mock("@internxt/sdk", () => ({
                 unauthorizedCallback: vi.fn(),
             })),
         },
+        Payments: {
+            client: vi.fn().mockImplementation((baseUrl, appDetails, security) => ({
+                baseUrl,
+                appDetails,
+                security,
+                unauthorizedCallback: vi.fn(),
+            })),
+        },
+    },
+    Meet: {
+        client: vi.fn().mockImplementation((baseUrl, appDetails, security) => ({
+            baseUrl,
+            appDetails,
+            security,
+            unauthorizedCallback: vi.fn(),
+        })),
     },
 }));
+
+const mockLocalStorage = {
+    getItem: vi.fn().mockImplementation((key) => {
+        if (key === "xNewToken") return "mock-new-token";
+        return null;
+    }),
+    clearCredentials: vi.fn(),
+};
+
+Object.defineProperty(global, "localStorage", {
+    value: mockLocalStorage,
+    writable: true,
+});
+
+// @ts-ignore - Ignore TypeScript error for test purposes
+SdkManager.instance.localStorage = mockLocalStorage;
 
 describe("SdkManager", () => {
     beforeEach(() => {
@@ -89,6 +121,8 @@ describe("SdkManager", () => {
                 const config: Record<string, string> = {
                     DRIVE_API_URL: "https://test-drive-api.com",
                     DRIVE_NEW_API_URL: "https://test-drive-new-api.com",
+                    PAYMENTS_API_URL: "https://test-payments-api.com",
+                    MEET_API_URL: "https://test-meet-api.com",
                 };
                 return config[key];
             });
@@ -116,6 +150,40 @@ describe("SdkManager", () => {
             );
         });
 
+        it("When getting payments client, then the correct client is returned with proper configuration", () => {
+            const getItemSpy = vi.spyOn(global.localStorage, "getItem");
+
+            const paymentsClient = SdkManager.instance.getPayments();
+            expect(paymentsClient).toBeDefined();
+
+            expect(getItemSpy).toHaveBeenCalledWith("xNewToken");
+
+            expect(Drive.Payments.client).toHaveBeenCalledWith(
+                "https://test-payments-api.com",
+                expect.any(Object),
+                expect.objectContaining({
+                    token: "mock-new-token",
+                })
+            );
+        });
+
+        it("When getting meet client, then the correct client is returned with proper configuration", () => {
+            const getItemSpy = vi.spyOn(global.localStorage, "getItem");
+
+            const meetClient = SdkManager.instance.getMeet();
+            expect(meetClient).toBeDefined();
+
+            expect(getItemSpy).toHaveBeenCalledWith("xNewToken");
+
+            expect(Meet.client).toHaveBeenCalledWith(
+                "https://test-meet-api.com",
+                expect.any(Object),
+                expect.objectContaining({
+                    token: "mock-new-token",
+                })
+            );
+        });
+
         it("When getting clients without api security, then they are created with undefined security", () => {
             SdkManager.instance.getNewAuth();
             SdkManager.instance.getUsers();
@@ -126,6 +194,13 @@ describe("SdkManager", () => {
                 expect.any(Object),
                 undefined
             );
+        });
+
+        it("Tests the unauthorizedCallback in getNewTokenApiSecurity", () => {
+            SdkManager.instance.getPayments();
+            const securityArg = (Drive.Payments.client as any).mock.calls[0][2];
+            securityArg.unauthorizedCallback();
+            expect(mockLocalStorage.clearCredentials).toHaveBeenCalled();
         });
     });
 });
