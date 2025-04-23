@@ -18,8 +18,8 @@ export class SdkManager {
      * Sets the security details needed to create SDK clients
      * @param apiSecurity Security properties to be setted
      **/
-    public static readonly init = (localStorage: typeof LocalStorageManager) => {
-        SdkManager.instance.localStorage = localStorage;
+    public static readonly init = (apiSecurity: SdkManagerApiSecurity) => {
+        SdkManager.apiSecurity = apiSecurity;
     };
 
     /**
@@ -48,7 +48,9 @@ export class SdkManager {
         return {
             token: localStorage.getItem("xNewToken") ?? "",
             unauthorizedCallback: async () => {
-                this.localStorage.clearCredentials();
+                if (this.localStorage.clearCredentials) {
+                    this.localStorage.clearCredentials();
+                }
             },
         };
     }
@@ -68,10 +70,17 @@ export class SdkManager {
     getAuth() {
         const DRIVE_API_URL = ConfigService.instance.get("DRIVE_API_URL");
 
-        const apiSecurity = SdkManager.getApiSecurity({ throwErrorOnMissingCredentials: false });
         const appDetails = SdkManager.getAppDetails();
 
-        return Auth.client(DRIVE_API_URL, appDetails, apiSecurity);
+        try {
+            const apiSecurity = SdkManager.getApiSecurity({ throwErrorOnMissingCredentials: false });
+            return Auth.client(DRIVE_API_URL, appDetails, apiSecurity);
+        } catch {
+            return Auth.client(DRIVE_API_URL, appDetails, {
+                token: "",
+                unauthorizedCallback: async () => {},
+            });
+        }
     }
 
     getNewAuth() {
