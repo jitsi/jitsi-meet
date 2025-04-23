@@ -120,7 +120,7 @@ export default {
      */
     extraBarPadding: {
         paddingBottom: 30,
-        marginBottom:20
+        marginBottom: 20
     },
 
     inputBarNarrow: {
