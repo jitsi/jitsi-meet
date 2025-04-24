@@ -1,117 +1,124 @@
-import { describe, expect, it, vi } from "vitest";
-import ReducerRegistry from "../../../../../redux/ReducerRegistry";
-import { MeetingActionTypes, SET_CURRENT_ROOM, UPDATE_MEETING_CONFIG } from "../actionTypes";
-import { MEETING_REDUCER, meetingReducer } from "../reducer";
+import { describe, expect, it } from "vitest";
+import { IReduxState } from "../../../../../../app/types";
+import { MEETING_REDUCER } from "../reducer";
+import { getCurrentRoomId, getMaxParticipantsPerCall, getMeetingConfig, isMeetingEnabled } from "../selectors";
+import { MeetingState } from "../types";
 
-vi.mock("../../../../../redux/ReducerRegistry", () => ({
-    default: {
-        register: vi.fn(),
-    },
-}));
-
-describe("Meeting Reducer", () => {
-    const initialState = {
-        enabled: false,
-        paxPerCall: 0,
-        currentRoomId: null,
+describe("Meeting Selectors", () => {
+    const createMockState = (meetingState: MeetingState): IReduxState => {
+        return {
+            [MEETING_REDUCER]: meetingState,
+        } as unknown as IReduxState;
     };
 
-    describe("Registration", () => {
-        it("When module is loaded, then it should register with ReducerRegistry", () => {
-            expect(ReducerRegistry.register).toHaveBeenCalledWith(MEETING_REDUCER, meetingReducer);
-        });
-    });
+    describe("getMeetingConfig", () => {
+        it("When called with state, then it should return the meeting configuration", () => {
+            const mockState = createMockState({
+                enabled: true,
+                paxPerCall: 8,
+                currentRoomId: "room-123",
+            });
 
-    describe("UPDATE_MEETING_CONFIG", () => {
-        it("When UPDATE_MEETING_CONFIG action is dispatched, then it should update state correctly", () => {
-            const action = {
-                type: UPDATE_MEETING_CONFIG,
-                payload: {
-                    enabled: true,
-                    paxPerCall: 5,
-                },
-            } as MeetingActionTypes;
-
-            const result = meetingReducer(initialState, action);
+            const result = getMeetingConfig(mockState);
 
             expect(result).toEqual({
-                ...initialState,
                 enabled: true,
-                paxPerCall: 5,
+                paxPerCall: 8,
             });
         });
 
-        it("When UPDATE_MEETING_CONFIG action is dispatched with disabled config, then it should disable meeting", () => {
-            const previousState = {
-                ...initialState,
-                enabled: true,
-                paxPerCall: 10,
-            };
+        it("When called with disabled state, then it should return disabled configuration", () => {
+            const mockState = createMockState({
+                enabled: false,
+                paxPerCall: 0,
+                currentRoomId: null,
+            });
 
-            const action = {
-                type: UPDATE_MEETING_CONFIG,
-                payload: {
-                    enabled: false,
-                    paxPerCall: 0,
-                },
-            } as MeetingActionTypes;
-
-            const result = meetingReducer(previousState, action);
+            const result = getMeetingConfig(mockState);
 
             expect(result).toEqual({
-                ...previousState,
                 enabled: false,
                 paxPerCall: 0,
             });
         });
     });
 
-    describe("SET_CURRENT_ROOM", () => {
-        it("When SET_CURRENT_ROOM action is dispatched with roomId, then it should update currentRoomId", () => {
-            const roomId = "room-456";
-            const action = {
-                type: SET_CURRENT_ROOM,
-                payload: { roomId },
-            } as MeetingActionTypes;
-
-            const result = meetingReducer(initialState, action);
-
-            expect(result).toEqual({
-                ...initialState,
-                currentRoomId: roomId,
+    describe("isMeetingEnabled", () => {
+        it("When meeting is enabled, then it should return true", () => {
+            const mockState = createMockState({
+                enabled: true,
+                paxPerCall: 5,
+                currentRoomId: "room-123",
             });
+
+            const result = isMeetingEnabled(mockState);
+
+            expect(result).toBe(true);
         });
 
-        it("When SET_CURRENT_ROOM action is dispatched with null, then it should clear currentRoomId", () => {
-            const previousState = {
-                ...initialState,
-                currentRoomId: "existing-room-id",
-            };
-
-            const action = {
-                type: SET_CURRENT_ROOM,
-                payload: { roomId: null },
-            } as MeetingActionTypes;
-
-            const result = meetingReducer(previousState, action);
-
-            expect(result).toEqual({
-                ...previousState,
-                currentRoomId: null,
+        it("When meeting is disabled, then it should return false", () => {
+            const mockState = createMockState({
+                enabled: false,
+                paxPerCall: 0,
+                currentRoomId: "room-123",
             });
+
+            const result = isMeetingEnabled(mockState);
+
+            expect(result).toBe(false);
         });
     });
 
-    describe("Unknown action", () => {
-        it("When unknown action is dispatched, then it should return the original state", () => {
-            const action = {
-                type: "UNKNOWN_ACTION",
-                payload: {},
-            } as any;
+    describe("getCurrentRoomId", () => {
+        it("When room is set, then it should return the room ID", () => {
+            const roomId = "room-456";
+            const mockState = createMockState({
+                enabled: true,
+                paxPerCall: 10,
+                currentRoomId: roomId,
+            });
 
-            const result = meetingReducer(initialState, action);
+            const result = getCurrentRoomId(mockState);
 
-            expect(result).toBe(initialState);
+            expect(result).toBe(roomId);
+        });
+
+        it("When no room is set, then it should return null", () => {
+            const mockState = createMockState({
+                enabled: true,
+                paxPerCall: 10,
+                currentRoomId: null,
+            });
+
+            const result = getCurrentRoomId(mockState);
+
+            expect(result).toBe(null);
+        });
+    });
+
+    describe("getMaxParticipantsPerCall", () => {
+        it("When state has paxPerCall, then it should return the correct value", () => {
+            const mockState = createMockState({
+                enabled: true,
+                paxPerCall: 15,
+                currentRoomId: "room-id",
+            });
+
+            const result = getMaxParticipantsPerCall(mockState);
+
+            expect(result).toBe(15);
+        });
+
+        it("When state has zero paxPerCall, then it should return 0", () => {
+            const mockState = createMockState({
+                enabled: false,
+                paxPerCall: 0,
+                currentRoomId: null,
+            });
+
+            const result = getMaxParticipantsPerCall(mockState);
+
+            expect(result).toBe(0);
         });
     });
 });
