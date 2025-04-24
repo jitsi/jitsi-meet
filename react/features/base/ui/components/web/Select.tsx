@@ -19,6 +19,11 @@ interface ISelectProps {
     className?: string;
 
     /**
+     * Class name for additional styles for container.
+     */
+    containerClassName?: string;
+
+    /**
      * Whether or not the select is disabled.
      */
     disabled?: boolean;
@@ -143,6 +148,7 @@ const useStyles = makeStyles()(theme => {
 
 const Select = ({
     bottomLabel,
+    containerClassName,
     className,
     disabled,
     error,
@@ -155,7 +161,7 @@ const Select = ({
     const isMobile = isMobileBrowser();
 
     return (
-        <div className = { classes.container }>
+        <div className = { cx(classes.container, containerClassName) }>
             {label && <label
                 className = { cx(classes.label, isMobile && 'is-mobile') }
                 htmlFor = { id } >

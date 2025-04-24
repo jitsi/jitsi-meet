@@ -9,6 +9,7 @@ import {
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     EDIT_MESSAGE,
+    NOTIFY_PRIVATE_RECIPIENTS_CHANGED,
     OPEN_CHAT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     SET_CHAT_IS_RESIZING,
@@ -26,6 +27,7 @@ const DEFAULT_STATE = {
     groupChatWithPermissions: false,
     isOpen: false,
     messages: [],
+    notifyPrivateRecipientsChangedTimestamp: undefined,
     reactions: {},
     nbUnreadMessages: 0,
     privateMessageRecipient: undefined,
@@ -57,6 +59,7 @@ export interface IChatState {
         current: number;
         userSet: number | null;
     };
+    notifyPrivateRecipientsChangedTimestamp?: number;
 }
 
 ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, action): IChatState => {
@@ -262,6 +265,11 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             isResizing: action.resizing
         };
     }
+    case NOTIFY_PRIVATE_RECIPIENTS_CHANGED:
+        return {
+            ...state,
+            notifyPrivateRecipientsChangedTimestamp: action.payload
+        };
     }
 
     return state;
