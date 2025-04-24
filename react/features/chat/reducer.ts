@@ -8,6 +8,7 @@ import {
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     EDIT_MESSAGE,
+    NOTIFY_PRIVATE_RECIPIENTS_CHANGED,
     OPEN_CHAT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     SET_LOBBY_CHAT_ACTIVE_STATE,
@@ -22,6 +23,7 @@ const DEFAULT_STATE = {
     groupChatWithPermissions: false,
     isOpen: false,
     messages: [],
+    notifyPrivateRecipientsChangedTimestamp: undefined,
     reactions: {},
     nbUnreadMessages: 0,
     privateMessageRecipient: undefined,
@@ -42,6 +44,7 @@ export interface IChatState {
     } | ILocalParticipant;
     messages: IMessage[];
     nbUnreadMessages: number;
+    notifyPrivateRecipientsChangedTimestamp?: number;
     privateMessageRecipient?: IParticipant;
 }
 
@@ -216,6 +219,11 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             ...state,
             focusedTab: action.tabId,
             nbUnreadMessages: action.tabId === ChatTabs.CHAT ? 0 : state.nbUnreadMessages
+        };
+    case NOTIFY_PRIVATE_RECIPIENTS_CHANGED:
+        return {
+            ...state,
+            notifyPrivateRecipientsChangedTimestamp: action.payload
         };
     }
 

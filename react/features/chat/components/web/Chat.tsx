@@ -1,17 +1,24 @@
-import React, { useCallback } from 'react';
-import { connect } from 'react-redux';
+import React, { useCallback, useMemo } from 'react';
+import { connect, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { getLocalParticipant } from '../../../base/participants/functions';
+import { getLocalParticipant, getRemoteParticipants } from '../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import Select from '../../../base/ui/components/web/Select';
 import Tabs from '../../../base/ui/components/web/Tabs';
 import { arePollsDisabled } from '../../../conference/functions.any';
 import PollsPane from '../../../polls/components/web/PollsPane';
 import { isCCTabEnabled } from '../../../subtitles/functions.any';
-import { sendMessage, setFocusedTab, toggleChat } from '../../actions.web';
-import { CHAT_SIZE, ChatTabs, SMALL_WIDTH_THRESHOLD } from '../../constants';
+import {
+    sendMessage,
+    setFocusedTab,
+    setPrivateMessageRecipient,
+    setPrivateMessageRecipientById,
+    toggleChat
+} from '../../actions.web';
+import { CHAT_SIZE, ChatTabs, OPTION_GROUPCHAT, SMALL_WIDTH_THRESHOLD } from '../../constants';
 import { IChatProps as AbstractProps } from '../../types';
 
 import ChatHeader from './ChatHeader';
@@ -146,6 +153,10 @@ const useStyles = makeStyles()(theme => {
         pollsPanel: {
             // extract header + tabs height
             height: 'calc(100% - 110px)'
+        },
+
+        privateMessageRecipientsList: {
+            padding: '0 16px 5px'
         }
     };
 });
@@ -168,6 +179,34 @@ const Chat = ({
     t
 }: IProps) => {
     const { classes, cx } = useStyles();
+    const notifyTimestamp = useSelector((state: IReduxState) =>
+        state['features/chat'].notifyPrivateRecipientsChangedTimestamp
+    );
+    const {
+        defaultRemoteDisplayName = 'Fellow Jitster'
+    } = useSelector((state: IReduxState) => state['features/base/config']);
+    const privateMessageRecipient = useSelector((state: IReduxState) => state['features/chat'].privateMessageRecipient);
+    const participants = useSelector(getRemoteParticipants);
+
+    const options = useMemo(() => {
+        const o = Array.from(participants?.values() || [])
+                .filter(p => !p.fakeParticipant)
+                .map(p => {
+                    return {
+                        value: p.id,
+                        label: p.name ?? defaultRemoteDisplayName
+                    };
+                });
+
+        o.sort((a, b) => a.label.localeCompare(b.label));
+
+        o.unshift({
+            label: t('chat.everyone'),
+            value: OPTION_GROUPCHAT
+        });
+
+        return o;
+    }, [ notifyTimestamp ]);
 
     /**
     * Sends a text message.
@@ -214,6 +253,17 @@ const Chat = ({
         dispatch(setFocusedTab(id as ChatTabs));
     }, [ dispatch ]);
 
+
+    const onSelectedRecipientChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selected = e.target.value;
+
+        if (selected === OPTION_GROUPCHAT) {
+            dispatch(setPrivateMessageRecipient());
+        } else {
+            dispatch(setPrivateMessageRecipientById(selected));
+        }
+    }, []);
+
     /**
      * Returns a React Element for showing chat messages and a form to send new
      * chat messages.
@@ -238,6 +288,12 @@ const Chat = ({
                     <MessageContainer
                         messages = { _messages } />
                     <MessageRecipient />
+                    <Select
+                        containerClassName = { cx(classes.privateMessageRecipientsList) }
+                        id = 'select-chat-recipient'
+                        onChange = { onSelectedRecipientChange }
+                        options = { options }
+                        value = { privateMessageRecipient?.id || OPTION_GROUPCHAT } />
                     <ChatInput
                         onSend = { onSendMessage } />
                 </div>
