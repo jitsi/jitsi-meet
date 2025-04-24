@@ -764,6 +764,18 @@
                 }
             }
         },
+        "modals": {
+            "schedule": {
+                "title": "Schedule meeting",
+                "subtitle": "Here's the link to your meeting.",
+                "description": "Send this to people who you want to join your call. Save this link so you can use it later, too.",
+                "linkLabel": "Secure link",
+                "cancelButton": "Cancel",
+                "copyButton": "Copy",
+                "copiedButton": "Copied!",
+                "joinNow": "Join now"
+            }
+        },
         "meeting": {
             "button": {
                 "gallery": "Gallery",
