@@ -35,7 +35,7 @@ const CACHED_MEETING_CONFIG_KEY = "cachedMeetingConfig";
 /**
  * Middleware for automatically managing meeting configuration.
  */
-const meetingConfigMiddleware: Middleware = (store) => (next) => (action) => {
+export const meetingConfigMiddleware: Middleware = (store) => (next) => (action) => {
     const result = next(action);
 
     switch (action.type) {
@@ -48,7 +48,7 @@ const meetingConfigMiddleware: Middleware = (store) => (next) => (action) => {
             break;
 
         case AUTH_ACTIONS.INITIALIZE_AUTH:
-            if (action.payload && action.payload.isAuthenticated) {
+            if (action.payload?.isAuthenticated) {
                 const meetingState = store.getState()[MEETING_REDUCER];
 
                 if (!meetingState.enabled) {
@@ -63,6 +63,8 @@ const meetingConfigMiddleware: Middleware = (store) => (next) => (action) => {
             try {
                 LocalStorageManager.instance.remove(LAST_CONFIG_CHECK_KEY);
                 LocalStorageManager.instance.remove(CACHED_MEETING_CONFIG_KEY);
+                LocalStorageManager.instance.clearCredentials();
+
             } catch (error) {
                 console.error("Error clearing meeting config from localStorage", error);
             }
@@ -82,7 +84,7 @@ const meetingConfigMiddleware: Middleware = (store) => (next) => (action) => {
  * @param force - Force update even if the interval hasn't passed
  * @returns Promise<void>
  */
-const updateUserMeetingConfig = async (dispatch: Dispatch<AnyAction>, force: boolean = false): Promise<void> => {
+export const updateUserMeetingConfig = async (dispatch: Dispatch<AnyAction>, force: boolean = false): Promise<void> => {
     try {
         const now = Date.now();
         const lastCheckTime = LocalStorageManager.instance.get<number>(LAST_CONFIG_CHECK_KEY, 0) ?? 0;
