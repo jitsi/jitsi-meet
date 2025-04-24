@@ -2,9 +2,9 @@ import { Button } from "@internxt/ui";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { AuthFormValues } from "../../types";
-import PasswordInput from "../PasswordInput";
-import TextInput from "../TextInput";
 import { ErrorMessage } from "./ErrorMessage";
+import PasswordInput from "./PasswordInput";
+import TextInput from "./TextInput";
 
 interface LoginFormProps {
     onSubmit: (data: AuthFormValues) => void;

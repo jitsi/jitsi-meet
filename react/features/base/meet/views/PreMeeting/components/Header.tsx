@@ -6,8 +6,8 @@ import React, { useEffect, useRef, useState } from "react";
  * @returns {JSX.Element} The left content component
  */
 const LeftContent = React.memo(
-    (): JSX.Element => (
-        <div className="rounded-2xl border bg-black/50 border-white/10 ">
+    ({onClick}:{onClick: () => void}): JSX.Element => (
+        <button className="rounded-2xl border bg-black/50 border-white/10" onClick={onClick}>
             <div
                 className="flex items-center space-x-2 h-12 px-3"
                 style={{ paddingLeft: "12px", paddingRight: "12px" }}
@@ -18,7 +18,7 @@ const LeftContent = React.memo(
                 </span>
                 <img src={"images/beta.png"} alt="logo" className="h-6" style={{ margin: "0px" }} />
             </div>
-        </div>
+        </button>
     )
 );
 
@@ -281,6 +281,12 @@ interface HeaderProps {
      * Whether a new meeting is being created
      */
     isCreatingMeeting?: boolean;
+
+
+     /**
+     * Handler for navigate to home page
+     */
+    navigateToHomePage: () => void;
 }
 
 /**
@@ -298,9 +304,10 @@ const Header = ({
     onOpenSettings,
     className = "z-50 py-3",
     isCreatingMeeting = false,
+    navigateToHomePage,
 }: HeaderProps) => (
     <IntxHeader
-        leftContent={<LeftContent />}
+        leftContent={<LeftContent onClick={navigateToHomePage}/>}
         rightContent={
             <RightContent
                 isLogged={!!userData}

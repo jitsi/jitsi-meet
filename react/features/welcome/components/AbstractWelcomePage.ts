@@ -44,9 +44,15 @@ export interface IProps extends WithTranslation {
     _recentListEnabled: Boolean;
 
     /**
-     * Room name to join to.
+     * Jitsi Room name to join to.
      */
     _room: string;
+
+      /**
+     * Generated meet room id to join to.
+     */
+    roomID: string | null;
+
 
     /**
      * The current settings.
@@ -295,6 +301,7 @@ export function _mapStateToProps(state: IReduxState) {
         _moderatedRoomServiceUrl: state["features/base/config"].moderatedRoomServiceUrl,
         _recentListEnabled: isRecentListEnabled(),
         _room: state["features/base/conference"].room ?? "",
+        roomID: state["features/meet-room"].roomID,
         _settings: state["features/base/settings"],
     };
 }

@@ -281,6 +281,10 @@ const PreMeetingScreen = ({
         dispatch(redirectToStaticPage("/"));
     };
 
+    const navigateToHomePage = () => {
+        dispatch(appNavigate("/"));
+    };
+
     return (
         <div className="flex flex-col h-full">
             <div className={`flex flex-col px-5 ${classes.container}`}>
@@ -292,6 +296,7 @@ const PreMeetingScreen = ({
                     onSignUp={handleRedirectToSignUp}
                     onNewMeeting={isInNewMeeting ? undefined : handleNewMeeting}
                     isCreatingMeeting={isCreatingMeeting}
+                    navigateToHomePage={navigateToHomePage}
                 />
                 <ErrorModals
                     errorType={getErrorType()}
@@ -358,8 +363,8 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const userName = getDisplayName(state);
     const { localFlipX } = state["features/base/settings"];
 
-    const joinRoomError = state["features/join-room-error"]?.joinRoomError || false;
-    const createRoomError = state["features/join-room-error"]?.createRoomError || false;
+    const joinRoomError = state["features/meet-room"]?.joinRoomError || false;
+    const createRoomError = state["features/meet-room"]?.createRoomError || false;
     return {
         // For keeping backwards compat.: if we pass an empty hiddenPremeetingButtons
         // array through external api, we have all prejoin buttons present on premeeting

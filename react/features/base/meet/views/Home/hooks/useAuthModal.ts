@@ -1,10 +1,13 @@
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 
 import { get8x8BetaJWT } from "../../../../connection/options8x8";
 import { useLocalStorage } from "../../../LocalStorageManager";
 import { AuthService } from "../../../services/auth.service";
 import { AuthFormValues } from "../types";
+import { setRoomID } from "../../../general/store/errors/actions";
+
 
 interface UseAuthModalProps {
     onClose: () => void;
@@ -18,6 +21,7 @@ export function useAuthModal({ onClose, onLogin, translate }: UseAuthModalProps)
     const [loginError, setLoginError] = useState("");
 
     const storageManager = useLocalStorage();
+    const dispatch = useDispatch();
 
     const {
         register,
@@ -89,6 +93,13 @@ export function useAuthModal({ onClose, onLogin, translate }: UseAuthModalProps)
         [storageManager, onLogin]
     );
 
+    const saveRoomId = useCallback(
+        (roomID: string) => {
+            dispatch(setRoomID(roomID));
+        },
+        [dispatch]
+    );
+
     const processLogin = async (email: string, password: string, twoFactorCode: string) => {
         if (!showTwoFactor) {
             const is2FANeeded = await AuthService.instance.is2FANeeded(email);
@@ -105,12 +116,13 @@ export function useAuthModal({ onClose, onLogin, translate }: UseAuthModalProps)
             throw new Error(translate("meet.auth.modal.error.invalidCredentials"));
         }
 
-        const meetToken = await createMeetToken(loginCredentials.newToken);
+        const meetData = await createMeetToken(loginCredentials.newToken);
 
-        if (!meetToken?.token || !meetToken?.room) {
+        if (!meetData?.token || !meetData?.room) {
             throw new Error(translate("meet.auth.modal.error.cannotCreateMeetings"));
         }
 
+        saveRoomId(meetData.room);
         saveUserSession(loginCredentials);
         onClose();
     };
