@@ -761,6 +761,38 @@
                     "invalidCredentials": "Invalid credentials. Please try again.",
                     "cannotCreateMeetings": "User cannot create meetings",
                     "genericError": "Unable to log in. Please try again or contact support if the problem persists."
+                },
+                "signup": {
+                    "title": "Sign up",
+                    "createAccountTitle": "Create account",
+                    "creatingAccount": "Creating account...",
+                    "signupButton": "Sign up",
+                    "fullNamePlaceholder": "Full name",
+                    "newPasswordPlaceholder": "New password",
+                    "confirmPasswordPlaceholder": "Confirm password",
+                    "alreadyHaveAccount": "Already have an account?",
+                    "loginLink": "Log in",
+                    "termsNotice": "By creating an account,",
+                    "terms": "you accept the terms & condtitions",
+                    "info": {
+                        "normalText": "Internxt doesn’t store passwords.",
+                        "boldText": "If you forget your password, you can download a backup key to regain access to your files.",
+                        "cta": "Learn more"
+                    },
+                    "password": {
+                        "weak": "Password is weak",
+                        "strong": "Password is strong",
+                        "notComplex": "Password is not complex enough",
+                        "tooShort": "Password must be at least 8 characters long",
+                        "tooLong": "Password is too long"
+                    },
+                    "error": {
+                        "fullNameEmpty": "Full name must not be empty",
+                        "passwordTooShort": "Password must be at least 8 characters long",
+                        "passwordsDoNotMatch": "Passwords do not match",
+                        "signupFailed": "Unable to create account. Please try again or contact support.",
+                        "missingFields": "Please fill in all required fields"
+                    }
                 }
             }
         },

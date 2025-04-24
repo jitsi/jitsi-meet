@@ -1,12 +1,7 @@
 import React from "react";
 import { FieldError, Path, UseFormRegister, ValidationRule } from "react-hook-form";
+import { IFormValues } from "../../types";
 
-export interface IFormValues {
-    email: string;
-    password: string;
-    twoFactorCode?: string;
-    [key: string]: any;
-}
 
 interface InputProps {
     label: Path<IFormValues>;
@@ -67,9 +62,9 @@ const TextInput = ({
                     pattern,
                     onBlur: onBlur ? () => onBlur() : undefined,
                 })}
-                className={`w-full ${error ? "input-error" : "input-primary"}`}
+                className={`w-full text-lg text-gray-80 ${error ? "input-error" : "input-primary"}`}
             />
-            {error && <p className="mt-1 text-sm text-red">{error.message}</p>}
+            {error && <p className="mt-1 text-sm  text-red">{error.message}</p>}
         </div>
     );
 };

@@ -46,3 +46,13 @@ export interface LoadingProps {
 export interface ErrorProps {
     error?: string;
 }
+
+
+export interface IFormValues {
+    email: string;
+    password: string;
+    twoFactorCode?: string;
+    confirmPassword?: string;
+    fullName?: string;
+    [key: string]: any;
+}

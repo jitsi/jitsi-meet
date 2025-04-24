@@ -708,6 +708,38 @@
                     "invalidCredentials": "Credenciales inválidas. Por favor, inténtalo de nuevo.",
                     "cannotCreateMeetings": "El usuario no puede crear reuniones",
                     "genericError": "No se pudo iniciar sesión. Por favor, inténtelo de nuevo o contacte a soporte si el problema persiste"
+                },
+                "signup": {
+                    "title": "Regístrate",
+                    "createAccountTitle": "Crear cuenta",
+                    "creatingAccount": "Creando cuenta...",
+                    "signupButton": "Crear cuenta",
+                    "fullNamePlaceholder": "Nombre completo",
+                    "newPasswordPlaceholder": "Nueva contraseña",
+                    "confirmPasswordPlaceholder": "Confirmar contraseña",
+                    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+                    "loginLink": "Iniciar sesión",
+                    "termsNotice": "Al crear una cuenta,",
+                    "terms": "aceptas nuestros Términos y Condiciones",
+                    "info": {
+                        "normalText": "Internxt no almacena contraseñas.",
+                        "boldText": "Si olvidas tu contraseña, puedes descargar una clave de respaldo para recuperar el acceso a tus archivos.",
+                        "cta": "Más información"
+                    },
+                    "password": {
+                        "weak": "Contraseña débil",
+                        "strong": "Contraseña fuerte",
+                        "notComplex": "La contraseña no es lo suficientemente compleja",
+                        "tooShort": "La contraseña debe tener al menos 8 caracteres",
+                        "tooLong": "La contraseña es demasiado larga"
+                    },
+                    "error": {
+                        "fullNameEmpty": "El nombre no puede estar vacío",
+                        "passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
+                        "passwordsDoNotMatch": "Las contraseñas no coinciden",
+                        "signupFailed": "No se pudo crear la cuenta. Por favor, inténtalo de nuevo o contacta a soporte.",
+                        "missingFields": "Por favor, completa todos los campos requeridos"
+                    }
                 }
             }
         },
