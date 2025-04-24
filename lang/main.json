@@ -829,7 +829,8 @@
             "nameRequired": "A name is required",
             "newMeeting": "New Meeting",
             "participants": "Participants",
-            "upToParticipants": "Up to {{num}} participants"
+            "upToParticipants": "Up to {{num}} participants",
+            "upgrade": "Upgrade"
         },
         "joinRoomErrorDialog": {
             "joinRoomError": "Unable to join meeting",

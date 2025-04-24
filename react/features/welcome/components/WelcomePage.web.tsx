@@ -2,22 +2,19 @@ import React from "react";
 import { connect } from "react-redux";
 
 import { isMobileBrowser } from "../../base/environment/utils";
-import { translate, translateToHTML } from "../../base/i18n/functions";
+import { translate } from "../../base/i18n/functions";
 import Icon from "../../base/icons/components/Icon";
 import { IconWarning } from "../../base/icons/svg";
-import Watermarks from "../../base/react/components/web/Watermarks";
 import getUnsafeRoomText from "../../base/util/getUnsafeRoomText.web";
 import CalendarList from "../../calendar-sync/components/CalendarList.web";
 import RecentList from "../../recent-list/components/RecentList.web";
-import SettingsButton from "../../settings/components/web/SettingsButton";
-import { SETTINGS_TABS } from "../../settings/constants";
-
 
 import HomePage from "../../base/meet/views/Home/HomePage";
 import { AbstractWelcomePage, IProps, _mapStateToProps } from "./AbstractWelcomePage";
 
-import Tabs from "./Tabs";
 import { appNavigate } from "../../app/actions.web";
+import { initializeAuth } from "../../base/meet/general/store/auth/actions";
+import Tabs from "./Tabs";
 
 /**
  * The pattern used to validate room name.
@@ -140,6 +137,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
     componentWillMount(): void {
         const inxtToken = localStorage.getItem("xNewToken") || undefined;
         this.setState({ inxtToken });
+        this.props.dispatch(initializeAuth());
     }
 
     /**
@@ -203,7 +201,12 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
         return (
             <>
-                <HomePage onLogin={this._updateInxtToken} translate={t} startNewMeeting={this._onFormSubmit} roomID={roomID} />
+                <HomePage
+                    onLogin={this._updateInxtToken}
+                    translate={t}
+                    startNewMeeting={this._onFormSubmit}
+                    roomID={roomID}
+                />
                 {/* {this.state.inxtToken ? (
                     <div className={`welcome ${contentClassName} ${footerClassName}`} id="welcome_page">
                         <div className="header" style={{ minHeight: "100vh" }}>

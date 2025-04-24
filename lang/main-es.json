@@ -776,7 +776,8 @@
             "nameRequired": "Se requiere un nombre",
             "newMeeting": "Nueva reunión",
             "participants": "Participantes",
-            "upToParticipants": "Hasta {{num}} participantes"
+            "upToParticipants": "Hasta {{num}} participantes",
+            "upgrade": "Actualizar"
         },
         "joinRoomErrorDialog": {
             "joinRoomError": "No se pudo unir a la reunión",

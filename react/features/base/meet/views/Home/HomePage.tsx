@@ -1,8 +1,8 @@
-import { Button } from "@internxt/ui";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { appNavigate } from "../../../../app/actions.web";
 import { useLocalStorage } from "../../LocalStorageManager";
+import MeetingButton from "../../general/containers/MeetingButton";
 import { setRoomID } from "../../general/store/errors/actions";
 import MeetingService from "../../services/meeting.service";
 import { useUserData } from "../PreMeeting/hooks/useUserData";
@@ -163,13 +163,12 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
                         <p className="text-lg text-gray-300 mb-8 ">{translate("meet.landing.subtitle")}</p>
                         <div className="flex flex-col sm:flex-row pt-9 gap-4 border-t border-white/25 items-end">
                             <div className="relative inline-block">
-                                <Button
-                                    onClick={handleStartMeeting}
+                                <MeetingButton
+                                    onNewMeeting={handleStartMeeting}
+                                    translate={translate}
                                     loading={isStartingMeeting}
                                     className="w-full sm:w-auto"
-                                >
-                                    {translate("meet.preMeeting.newMeeting")}
-                                </Button>
+                                />
                             </div>
                         </div>
                     </div>

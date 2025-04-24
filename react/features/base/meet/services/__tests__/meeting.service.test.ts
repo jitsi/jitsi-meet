@@ -1,10 +1,9 @@
 import { JoinCallPayload } from "@internxt/sdk/dist/meet/types";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { get8x8BetaJWT } from "../../connection/options8x8";
-import MeetingService from "./meeting.service";
-import { SdkManager } from "./sdk-manager.service";
+import { get8x8BetaJWT } from "../../../connection/options8x8";
+import MeetingService from "../meeting.service";
+import { SdkManager } from "../sdk-manager.service";
 
-// Crear tipos para los mocks que faciliten la verificación estricta
 type MockedGet8x8BetaJWT = ReturnType<typeof vi.fn> & typeof get8x8BetaJWT;
 type MockedGetMeet = ReturnType<typeof vi.fn> & typeof SdkManager.instance.getMeet;
 
@@ -23,7 +22,6 @@ vi.mock("./sdk-manager.service", () => ({
 describe("MeetingService", () => {
     const originalConsoleError = console.error;
 
-    // Obtener las versiones mockeadas con tipos adecuados
     const mockedGet8x8BetaJWT = get8x8BetaJWT as MockedGet8x8BetaJWT;
     const mockedGetMeet = SdkManager.instance.getMeet as MockedGetMeet;
 
@@ -113,7 +111,7 @@ describe("MeetingService", () => {
             expect(mockedGet8x8BetaJWT).toHaveBeenCalledTimes(1);
             expect(mockedGet8x8BetaJWT).toHaveBeenCalledWith("");
             expect(mockedGet8x8BetaJWT.mock.calls[0].length).toBe(1);
-            expect(mockedGet8x8BetaJWT.mock.calls[0][0]).toBe(""); // Verify parameter
+            expect(mockedGet8x8BetaJWT.mock.calls[0][0]).toBe("");
         });
     });
 

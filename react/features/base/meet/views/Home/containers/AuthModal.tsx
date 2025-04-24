@@ -2,7 +2,6 @@ import { Modal } from "@internxt/ui";
 import { X } from "@phosphor-icons/react";
 import React, { useEffect, useState } from "react";
 import { LoginForm } from "../components/auth/LoginForm";
-
 import { SignupForm } from "../components/auth/SignUpForm";
 import { Divider } from "../components/Divider";
 import { useLoginModal } from "../hooks/useLoginModal";
@@ -31,14 +30,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, onSignu
         translate,
     });
 
-    const switchToLogin = () => {
-        setIsLoginView(true);
-    };
-
-    const switchToSignup = () => {
-        setIsLoginView(false);
-    };
-
     useEffect(() => {
         setIsLoginView(openLogin);
     }, [openLogin]);
@@ -50,6 +41,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, onSignu
         }
     }, [isOpen]);
 
+    const switchToLogin = () => {
+        setIsLoginView(true);
+    };
+
+    const switchToSignup = () => {
+        setIsLoginView(false);
+    };
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} className="p-0">
             <ModalHeader onClose={onClose} translate={translate} isLoginView={isLoginView} />
@@ -57,7 +56,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, onSignu
                 <h1 className="text-3xl font-medium text-gray-100 mb-6">
                     {isLoginView ? translate("meet.auth.modal.loginTitle") : translate("meet.auth.modal.signup.title")}
                 </h1>
-
                 {isLoginView ? (
                     <>
                         <LoginForm

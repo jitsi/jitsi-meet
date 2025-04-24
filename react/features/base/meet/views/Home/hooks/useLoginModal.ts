@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
 import { get8x8BetaJWT } from "../../../../connection/options8x8";
+import { loginSuccess } from "../../../general/store/auth/actions";
 import { setRoomID } from "../../../general/store/errors/actions";
 import { useLocalStorage } from "../../../LocalStorageManager";
 import { AuthService } from "../../../services/auth.service";
@@ -86,10 +87,10 @@ export function useLoginModal({ onClose, onLogin, translate }: UseAuthModalProps
                 credentials.mnemonic,
                 credentials.user
             );
-            // TODO: CHECK TO CHANGE THIS WHEN BEGIN TO IMPLEMENT IN OTHER PROJECT PLACES
+            dispatch(loginSuccess(credentials));
             onLogin?.(credentials.newToken);
         },
-        [storageManager, onLogin]
+        [storageManager, onLogin, dispatch]
     );
 
     const saveRoomId = useCallback(
@@ -115,13 +116,8 @@ export function useLoginModal({ onClose, onLogin, translate }: UseAuthModalProps
             throw new Error(translate("meet.auth.modal.error.invalidCredentials"));
         }
 
-        const meetData = await createMeetToken(loginCredentials.newToken);
-
-        if (!meetData?.token || !meetData?.room) {
-            throw new Error(translate("meet.auth.modal.error.cannotCreateMeetings"));
-        }
-
-        saveRoomId(meetData.room);
+        // TODO: NEED TO SAVE MEET ROOM TO COMPLETE LOGIN AND REDIRECT TO SCHEDULE MODAL FLOW
+        // saveRoomId(meetData.room);
         saveUserSession(loginCredentials);
 
         onClose();

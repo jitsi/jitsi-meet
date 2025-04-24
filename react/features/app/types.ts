@@ -40,6 +40,8 @@ import { IEtherpadState } from "../etherpad/reducer";
 import { IFaceLandmarksState } from "../face-landmarks/reducer";
 import { IFeedbackState } from "../feedback/reducer";
 
+import { MeetingState } from "../base/meet/general/store/meeting/types";
+import { IFilmstripState } from "../filmstrip/reducer";
 import { IFollowMeState } from "../follow-me/reducer";
 import { IGifsState } from "../gifs/reducer";
 import { IGoogleApiState } from "../google-api/reducer";
@@ -83,8 +85,6 @@ import { IVirtualBackground } from "../virtual-background/reducer";
 import { IVisitorsState } from "../visitors/reducer";
 import { IWebHid } from "../web-hid/reducer";
 import { IWhiteboardState } from "../whiteboard/reducer";
-import { IFilmstripState } from '../filmstrip/reducer';
-
 
 export interface IStore {
     dispatch: ThunkDispatch<IReduxState, void, AnyAction>;
@@ -178,6 +178,7 @@ export interface IReduxState {
     "features/web-hid": IWebHid;
     "features/whiteboard": IWhiteboardState;
     "features/meet-room": IJoinRoomErrorState;
+    "features/meet": MeetingState;
 }
 
 export interface IReloadNowOptions {
