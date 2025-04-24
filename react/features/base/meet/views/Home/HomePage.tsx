@@ -28,6 +28,7 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
     const [fromNewMeetingFlow, setFromNewMeetingFlow] = useState<boolean>(false);
     const [meetingLink, setMeetingLink] = useState<string | null>(null);
     const [meetingLinkErrorMessage, setMeetingLinkErrorMessage] = useState<string | null>(null);
+    const [openLogin, setOpenLogin] = useState<boolean>(true);
     const meetingService = MeetingService.getInstance();
     const storageManager = useLocalStorage();
 
@@ -76,7 +77,6 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
     const handleSuccessfulLogin = useCallback(
         (token: string): void => {
             onLogin(token);
-
             if (fromNewMeetingFlow) {
                 setIsScheduleModalOpen(true);
                 setFromNewMeetingFlow(false);
@@ -94,6 +94,7 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
                 setIsAuthModalOpen(true);
                 return;
             }
+
             const token = storageManager.getNewToken();
 
             if (token) {
@@ -121,6 +122,12 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
             <HeaderWrapper
                 onLogin={() => {
                     setFromNewMeetingFlow(false);
+                    setOpenLogin(true);
+                    setIsAuthModalOpen(true);
+                }}
+                onSignUp={() => {
+                    setFromNewMeetingFlow(false);
+                    setOpenLogin(false);
                     setIsAuthModalOpen(true);
                 }}
                 translate={translate}
@@ -128,6 +135,7 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
             />
             <AuthModal
                 isOpen={isAuthModalOpen}
+                openLogin={openLogin}
                 onClose={() => setIsAuthModalOpen(false)}
                 onLogin={handleSuccessfulLogin}
                 translate={translate}

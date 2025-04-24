@@ -1,5 +1,5 @@
-import { CryptoProvider } from '@internxt/sdk';
-import { Keys, Password } from '@internxt/sdk/dist/auth';
+import { CryptoProvider } from "@internxt/sdk";
+import { Keys, Password } from "@internxt/sdk/dist/auth";
 import crypto from "crypto";
 import { ConfigService } from "./config.service";
 import { KeysService } from "./keys.service";
@@ -47,6 +47,7 @@ export class CryptoService {
             salt,
             hash,
         };
+
         return hashedObjetc;
     };
 
@@ -87,9 +88,9 @@ export class CryptoService {
         const encrypted = Buffer.concat([cipher.update(textToEncrypt, "utf8"), cipher.final()]);
 
         /* CryptoJS applies the OpenSSL format for the ciphertext, i.e. the encrypted data starts with the ASCII
-    encoding of 'Salted__' followed by the salt and then the ciphertext.
-    Therefore the beginning of the Base64 encoded ciphertext starts always with U2FsdGVkX1
-    */
+        encoding of 'Salted__' followed by the salt and then the ciphertext.
+        Therefore the beginning of the Base64 encoded ciphertext starts always with U2FsdGVkX1
+        */
         const openSSLstart = Buffer.from("Salted__");
 
         return Buffer.concat([openSSLstart, salt, encrypted]).toString("hex");

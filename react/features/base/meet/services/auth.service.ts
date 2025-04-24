@@ -28,18 +28,19 @@ export class AuthService {
     const { privateKey, publicKey } = user;
 
     const plainPrivateKeyInBase64 = privateKey
-      ? Buffer.from(KeysService.instance.decryptPrivateKey(privateKey, password)).toString('base64')
-      : '';
+        ? Buffer.from(KeysService.instance.decryptPrivateKey(privateKey, password)).toString("base64")
+        : "";
 
     if (privateKey) {
-      await KeysService.instance.assertPrivateKeyIsValid(privateKey, password);
-      await KeysService.instance.assertValidateKeys(
-        Buffer.from(plainPrivateKeyInBase64, 'base64').toString(),
-        Buffer.from(publicKey, 'base64').toString(),
-      );
+        await KeysService.instance.assertPrivateKeyIsValid(privateKey, password);
+        await KeysService.instance.assertValidateKeys(
+            Buffer.from(plainPrivateKeyInBase64, "base64").toString(),
+            Buffer.from(publicKey, "base64").toString()
+        );
     }
 
     const clearMnemonic = CryptoService.instance.decryptTextWithKey(user.mnemonic, password);
+
     const clearUser = {
       ...user,
       mnemonic: clearMnemonic,
