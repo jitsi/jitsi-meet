@@ -1,5 +1,5 @@
 import ReducerRegistry from "../../../../redux/ReducerRegistry";
-import { SET_CURRENT_ROOM, UPDATE_MEETING_CONFIG } from "./actionTypes";
+import { MeetingActionTypes, SET_CURRENT_ROOM, UPDATE_MEETING_CONFIG } from "./actionTypes";
 import { MeetingState } from "./types";
 
 /**
@@ -23,7 +23,7 @@ export const MEETING_REDUCER = "features/meeting";
  * @param action
  * @returns New state
  */
-export const meetingReducer = (state: MeetingState = DEFAULT_STATE, action: any): MeetingState => {
+export const meetingReducer = (state: MeetingState = DEFAULT_STATE, action: MeetingActionTypes): MeetingState => {
     switch (action.type) {
         case UPDATE_MEETING_CONFIG: {
             return {
