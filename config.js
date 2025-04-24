@@ -1112,7 +1112,7 @@ var config = {
 
     analytics: {
         // True if the analytics should be disabled
-        disabled: true,
+        disabled: false,
 
         // Matomo configuration:
         // matomoEndpoint: 'https://your-matomo-endpoint/',
@@ -1150,9 +1150,9 @@ var config = {
         // rtcstatsSendSdp: false,
 
         // Array of script URLs to load as lib-jitsi-meet "analytics handlers".
-        // scriptURLs: [
-        //      "https://example.com/my-custom-analytics.js",
-        // ],
+        scriptURLs: [
+            '/static/analytics.js',
+        ],
 
         // By enabling watchRTCEnabled option you would want to use watchRTC feature
         // This would also require to configure watchRTCConfigParams.
