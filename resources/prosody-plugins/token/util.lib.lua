@@ -391,9 +391,10 @@ function Util:process_and_verify_token(session)
 
         if claims["context"] == nil or 
            claims["context"]["user"] == nil or 
-           claims["context"]["user"]["subscription_status"] ~= "active" then
-            -- module:log("error", "User %s is not an active subscriber", claims["email"]);
-            return false, "not-allowed", 'user is not an active subscriber';
+           (claims["context"]["user"]["subscription_status"] ~= "active" and
+            claims["context"]["user"]["subscription_status"] ~= "trialing") then
+            -- module:log("error", "User %s is not an active or trialing subscriber", claims["email"]);
+            return false, "not-allowed", 'user is not an active or trialing subscriber';
         end
 
         return true;
