@@ -7,11 +7,11 @@ import { SdkManager } from "../sdk-manager.service";
 type MockedGet8x8BetaJWT = ReturnType<typeof vi.fn> & typeof get8x8BetaJWT;
 type MockedGetMeet = ReturnType<typeof vi.fn> & typeof SdkManager.instance.getMeet;
 
-vi.mock("../../connection/options8x8", () => ({
+vi.mock("../../../connection/options8x8", () => ({
     get8x8BetaJWT: vi.fn(),
 }));
 
-vi.mock("./sdk-manager.service", () => ({
+vi.mock("../sdk-manager.service", () => ({
     SdkManager: {
         instance: {
             getMeet: vi.fn(),
