@@ -72,11 +72,15 @@ export function getInitials(s?: string) {
 /**
  * Checks if the passed URL should be loaded with CORS.
  *
- * @param {string} url - The URL.
+ * @param {string | Function} url - The URL (on mobile we use a specific Icon component for avatars).
  * @param {Array<string>} corsURLs - The URL pattern that matches a URL that needs to be handled with CORS.
- * @returns {void}
+ * @returns {boolean}
  */
-export function isCORSAvatarURL(url: string, corsURLs: Array<string> = []): boolean {
+export function isCORSAvatarURL(url: string | Function, corsURLs: Array<string> = []): boolean {
+    if (typeof url === 'function') {
+        return false;
+    }
+
     return corsURLs.some(pattern => url.startsWith(pattern));
 }
 
