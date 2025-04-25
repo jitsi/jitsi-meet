@@ -1,9 +1,8 @@
-import React, { useCallback, useState, useRef, ReactElement } from 'react';
+import React, { useCallback, useState, useRef, ReactNode } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
-import { IconCloudUpload, IconShareDoc, IconVideo, IconVolumeUp, IconWarning } from '../../base/icons/svg';
+import { IconCloudUpload } from '../../base/icons/svg';
 import { withPixelLineHeight } from '../../base/styles/functions.web';
-import { IFile } from '../types';
 import Button from '../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../base/ui/constants.web';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,6 +10,8 @@ import { IReduxState } from '../../app/types';
 import Icon from '../../base/icons/components/Icon';
 import BaseTheme from '../../base/ui/components/BaseTheme.web';
 import { addFiles, removeFile } from '../actions';
+import logger from '../logger';
+import { createFilePreview, getFileIcon } from '../functions.any';
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -125,7 +126,7 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const FileSharing: React.FC<{}> = (): ReactElement => {
+const FileSharing = () => {
     const { classes } = useStyles();
     const [ isDragging, setIsDragging ] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -150,48 +151,28 @@ const FileSharing: React.FC<{}> = (): ReactElement => {
         e.stopPropagation();
     }, []);
 
-    const renderFilePreview = (file: IFile): ReactElement => {
-        if (file.preview?.startsWith('data:')) {
-            return (
-                <img
-                    alt = { file.file.name }
-                    className = { classes.filePreview }
-                    src = { file.preview } />
-            );
+    const renderFilePreview = (file: File): ReactNode => (
+        <div className = { classes.fileIconContainer }>
+            <Icon
+                color = { BaseTheme.palette.icon01 }
+                size = { 24 }
+                src = { getFileIcon(file) } />
+        </div>
+    );
+
+    const processFiles = useCallback(async (fileList: FileList | File[]) => {
+        try {
+            const newFiles = await Promise.all(Array.from(fileList).map(async file => ({
+                file,
+                id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(36),
+                preview: await createFilePreview(file),
+                progress: 0
+            })));
+
+            dispatch(addFiles(newFiles));
+        } catch (error) {
+            logger.error('Error processing files:', error);
         }
-
-        const iconMap = {
-            'pdf-icon': IconShareDoc,
-            'document-icon': IconShareDoc,
-            'audio-icon': IconVolumeUp,
-            'video-icon': IconVideo,
-            'spreadsheet-icon': IconShareDoc,
-            'presentation-icon': IconShareDoc,
-            'archive-icon': IconShareDoc,
-            'file-icon': IconShareDoc
-        };
-
-        const IconComponent = iconMap[file.preview as keyof typeof iconMap] || IconWarning;
-
-        return (
-            <>
-                <Icon
-                    color = { BaseTheme.palette.icon01 }
-                    size = { 24 }
-                    src = { IconComponent } />
-            </>
-        );
-    };
-
-    const processFiles = useCallback((fileList: FileList | File[]) => {
-        const newFiles = Array.from(fileList).map(file => ({
-            file,
-            id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(36),
-            preview: '',
-            progress: 0
-        }));
-
-        dispatch(addFiles(newFiles));
     }, [ dispatch ]);
 
     const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -259,7 +240,14 @@ const FileSharing: React.FC<{}> = (): ReactElement => {
                             { file.progress === 100 && (
                                 <>
                                     <div className = { classes.fileIconContainer }>
-                                        { renderFilePreview(file) }
+                                        {file.file.type.startsWith('image/') ? (
+                                            <img
+                                                alt = { file.file.name }
+                                                className = { classes.filePreview }
+                                                src = { file.preview } />
+                                        ) : (
+                                            renderFilePreview(file.file)
+                                        )}
                                     </div>
                                     <span className = { classes.fileName }>
                                         { file.file.name }

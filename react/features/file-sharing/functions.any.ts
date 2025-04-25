@@ -1,6 +1,7 @@
 import md5 from 'js-md5';
 import { IReduxState } from '../app/types';
 import { isLocalParticipantModerator } from '../base/participants/functions';
+import { IconShareDoc, IconVideo, IconVolumeUp } from '../base/icons/svg';
 
 import { API_BASE_URL } from './constants';
 
@@ -111,4 +112,43 @@ export function isFileSharingEnabled(state: IReduxState) {
     const isModerator = isLocalParticipantModerator(state);
 
     return fileSharingEnabled && isModerator;
+}
+
+/**
+ * Creates a preview URL for a image files.
+ *
+ * @param {File} file - The file to create a preview for.
+ * @returns {Promise<string>} A promise that resolves to the preview URL or empty string.
+ */
+export function createFilePreview(file: File): Promise<string> {
+    if (!file.type.startsWith('image/')) {
+        return Promise.resolve('');
+    }
+
+    return new Promise(resolve => {
+        const reader = new FileReader();
+
+        reader.onload = () => resolve(reader.result as string || '');
+        reader.readAsDataURL(file);
+    });
+}
+
+/**
+ * Gets the appropriate icon for a file based on its type.
+ *
+ * @param {File} file - The file.
+ * @returns {Function} The icon component to use.
+ */
+export function getFileIcon(file: File) {
+    const extension = file.name.split('.').pop()?.toLowerCase();
+
+    if ([ 'mp4', 'mov', 'avi', 'webm' ].includes(extension || '')) {
+        return IconVideo;
+    }
+
+    if ([ 'mp3', 'wav', 'ogg' ].includes(extension || '')) {
+        return IconVolumeUp;
+    }
+
+    return IconShareDoc;
 }
