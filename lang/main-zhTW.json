@@ -1066,7 +1066,7 @@
         "incomingMessage": "新訊息",
         "language": "語言",
         "loggedIn": "以{{name}}登入",
-        "maxStageParticipants": "可被釘選的最大與會者人數（實驗性功能）",
+        "maxStageParticipants": "可被釘選的最大與會者人數",
         "microphones": "麥克風",
         "moderator": "主持人",
         "moderatorOptions": "主持人選項",

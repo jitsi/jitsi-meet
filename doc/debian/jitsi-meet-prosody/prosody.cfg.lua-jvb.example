@@ -15,6 +15,7 @@ external_services = {
 
 cross_domain_bosh = false;
 consider_bosh_secure = true;
+consider_websocket_secure = true;
 -- https_ports = { }; -- Remove this line to prevent listening on port 5284
 
 -- by default prosody 0.12 sends cors headers, if you want to disable it uncomment the following (the config is available on 0.12.1)
@@ -63,6 +64,7 @@ VirtualHost "jitmeet.example.com"
     -- we need bosh
     modules_enabled = {
         "bosh";
+        "websocket";
         "smacks";
         "ping"; -- Enable mod_ping
         "speakerstats";

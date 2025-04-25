@@ -130,6 +130,7 @@ function MeetingParticipants({
                 accessibilityLabel = { t('participantsPane.search') }
                 className = { styles.search }
                 clearable = { true }
+                hiddenDescription = { t('participantsPane.searchDescription') }
                 id = 'participants-search-input'
                 onChange = { setSearchString }
                 placeholder = { t('participantsPane.search') }

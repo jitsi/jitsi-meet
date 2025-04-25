@@ -13,6 +13,7 @@ local get_room_from_jid = util.get_room_from_jid;
 local get_focus_occupant = util.get_focus_occupant;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
+local table_find = util.table_find;
 local is_vpaas = util.is_vpaas;
 local is_sip_jibri_join = util.is_sip_jibri_join;
 local process_host_module = util.process_host_module;
@@ -75,20 +76,22 @@ local function request_promotion_received(room, from_jid, from_vnode, nick, time
     -- if visitors is enabled for the room
     if visitors_promotion_map[room.jid] then
         local force_promote = auto_allow_promotion;
-
         if not force_promote and force_promote_requested == 'true' then
             -- Let's do the force_promote checks if requested
-
-            -- _data.moderator_id can be used from external modules to set single moderator for a meeting
-            -- or a whole group of moderators
-            if room._data.moderator_id == user_id or room._data.moderator_id == group_id
+            -- if it is vpaas meeting we trust the moderator computation from visitor node (value of force_promote_requested)
+            -- if it is not vpaas we need to check further settings only if they exist
+            if is_vpaas(room) or (not room._data.moderator_id and not room._data.moderators)
+                -- _data.moderator_id can be used from external modules to set single moderator for a meeting
+                -- or a whole group of moderators
+                or (room._data.moderator_id
+                    and room._data.moderator_id == user_id or room._data.moderator_id == group_id)
 
                 -- all moderators are allowed to auto promote, the fact that user_id and force_promote_requested are set
                 -- means that the user has token and is moderator on visitor node side
                 or room._data.allModerators
 
-                -- can be used by external modules to set a 'util.set' of multiple moderator ids
-                or (room._data.moderators and room._data.moderators:contains(user_id))
+                -- can be used by external modules to set multiple moderator ids (table of values)
+                or table_find(room._data.moderators, user_id)
             then
                 force_promote = true;
             end

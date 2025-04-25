@@ -1,7 +1,6 @@
 -- this is auto loaded by meeting_id
 local filters = require 'util.filters';
 local jid = require 'util.jid';
-local modulemanager = require "prosody.core.modulemanager";
 
 local util = module:require 'util';
 local is_admin = util.is_admin;
@@ -73,7 +72,9 @@ function process_set_affiliation(event)
 
     if previous_affiliation == 'none' and affiliation == 'owner' then
         occupant_session.granted_jitsi_meet_context_features = actor_session.jitsi_meet_context_features;
-        occupant_session.granted_jitsi_meet_context_user_id = actor_session.jitsi_meet_context_user['id'];
+        if actor_session.jitsi_meet_context_user then
+            occupant_session.granted_jitsi_meet_context_user_id = actor_session.jitsi_meet_context_user['id'];
+        end
         occupant_session.granted_jitsi_meet_context_group_id = actor_session.jitsi_meet_context_group;
     elseif previous_affiliation == 'owner' and ( affiliation == 'member' or affiliation == 'none' ) then
         occupant_session.granted_jitsi_meet_context_features = nil;

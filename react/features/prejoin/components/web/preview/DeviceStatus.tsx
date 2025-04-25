@@ -67,7 +67,9 @@ function DeviceStatus() {
             role = 'alert'
             tabIndex = { -1 }>
             {!hasError && <div className = { classes.indicator } />}
-            <span role = 'heading'>
+            <span
+                aria-level = { 3 }
+                role = 'heading'>
                 {hasError ? t('prejoin.errorNoPermissions') : t(deviceStatusText ?? '')}
             </span>
         </div>

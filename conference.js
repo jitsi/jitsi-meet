@@ -1061,6 +1061,14 @@ export default {
     },
 
     /**
+     * Download app state, a function that can be called from console while debugging.
+     * @param filename (optional) specify target filename
+     */
+    saveState(filename = 'meet-state.json') {
+        downloadJSON(APP.store.getState(), filename);
+    },
+
+    /**
      * Exposes a Command(s) API on this instance. It is necessitated by (1) the
      * desire to keep room private to this instance and (2) the need of other
      * modules to send and receive commands to and from participants.
@@ -1548,7 +1556,6 @@ export default {
                 }
 
                 APP.store.dispatch(localParticipantRoleChanged(role));
-                APP.API.notifyUserRoleChanged(id, role);
             } else {
                 APP.store.dispatch(participantRoleChanged(id, role));
             }

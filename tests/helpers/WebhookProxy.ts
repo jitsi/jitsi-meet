@@ -41,15 +41,25 @@ export default class WebhookProxy {
             const msg = JSON.parse(data.toString());
 
             if (msg.eventType) {
+                let processed = false;
+
                 if (this.consumers.has(msg.eventType)) {
                     this.consumers.get(msg.eventType)(msg);
                     this.consumers.delete(msg.eventType);
+
+                    processed = true;
                 } else {
                     this.cache.set(msg.eventType, msg);
                 }
 
                 if (this.listeners.has(msg.eventType)) {
                     this.listeners.get(msg.eventType)(msg);
+                    processed = true;
+                }
+
+                if (!processed && msg.eventType === 'SETTINGS_PROVISIONING') {
+                    // just in case to not be empty
+                    this.ws?.send(JSON.stringify({ someField: 'someValue' }));
                 }
             }
         });

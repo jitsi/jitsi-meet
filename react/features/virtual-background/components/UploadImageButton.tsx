@@ -144,6 +144,7 @@ function UploadImageButton({
                 id = 'file-upload'
                 onChange = { uploadImage }
                 ref = { uploadImageButton }
+                role = 'button'
                 type = 'file' />
         </>
     );

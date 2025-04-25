@@ -1026,7 +1026,7 @@
         "incomingMessage": "پیام ورودی",
         "language": "زبان",
         "loggedIn": "واردشده به عنوان {{name}}",
-        "maxStageParticipants": "بیشینه تعداد شرکت‌کنندگانی که می‌توانند به صحنه اصلی سنجاق شوند (<b>آزمایشی</b>)",
+        "maxStageParticipants": "بیشینه تعداد شرکت‌کنندگانی که می‌توانند به صحنه اصلی سنجاق شوند",
         "microphones": "میکروفون‌ها",
         "moderator": "مدیر",
         "moderatorOptions": "گزینه‌های مدیر",

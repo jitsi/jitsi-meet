@@ -99,8 +99,8 @@ export default class Filmstrip extends BasePageObject {
             async () => await this.participant.getLargeVideo().getId() === videoIdToSwitchTo,
             {
                 timeout: 3_000,
-                timeoutMsg: `${this.participant.displayName} did not switch the large video to ${
-                    participant.displayName}`
+                timeoutMsg: `${this.participant.name} did not switch the large video to ${
+                    participant.name}`
             }
         );
     }
@@ -120,7 +120,7 @@ export default class Filmstrip extends BasePageObject {
 
         await this.participant.driver.$(`//div[ @id="pin-indicator-${epId}" ]`).waitForDisplayed({
             timeout: 2_000,
-            timeoutMsg: `${this.participant.displayName} did not unpin ${participant.displayName}`,
+            timeoutMsg: `${this.participant.name} did not unpin ${participant.name}`,
             reverse: true
         });
     }

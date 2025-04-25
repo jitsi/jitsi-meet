@@ -11,9 +11,9 @@
 #chatconversation {
     box-sizing: border-box;
     flex: 1;
-    font-size: 10pt;
+    font-size: 0.75rem;
     height: calc(100% - 10px);
-    line-height: 20px;
+    line-height: 1.25rem;
     overflow: auto;
     padding: 16px;
     text-align: left;
@@ -72,7 +72,7 @@
 #nickname {
     text-align: center;
     color: #9d9d9d;
-    font-size: 16px;
+    font-size: 1rem;
     margin: auto 0;
     padding: 0 16px;
 
@@ -86,7 +86,7 @@
     }
 
     label {
-        line-height: 24px;
+        line-height: 1.5rem;
     }
 }
 
@@ -98,7 +98,7 @@
     }
 
     .chatmessage .usermessage {
-        font-size: 16px;
+        font-size: 1rem;
     }
 }
 
@@ -124,7 +124,7 @@
 }
 
 #smileys {
-    font-size: 20pt;
+    font-size: 1.625rem;
     margin: auto;
     cursor: pointer;
 }
@@ -168,7 +168,7 @@
 }
 
 #smileysContainer .smiley {
-    font-size: 20pt;
+    font-size: 1.625rem;
 }
 
 .smileyContainer {
@@ -219,8 +219,8 @@
         box-sizing: border-box;
         color: #fff;
         font-weight: 600;
-        font-size: 24px;
-        line-height: 32px;
+        font-size: 1.5rem;
+        line-height: 2rem;
 
         .jitsi-icon {
             cursor: pointer;

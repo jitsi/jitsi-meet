@@ -1,21 +1,25 @@
 import { isEqual } from 'lodash-es';
 
-import { P1_DISPLAY_NAME, P2_DISPLAY_NAME, Participant } from '../../helpers/Participant';
+import { P1, P2, Participant } from '../../helpers/Participant';
 import { ensureTwoParticipants, parseJid } from '../../helpers/participants';
+import { IContext } from '../../helpers/types';
 
 /**
  * Tests PARTICIPANT_LEFT webhook.
  */
-async function checkParticipantLeftHook(p: Participant, reason: string) {
+async function checkParticipantLeftHook(ctx: IContext, p: Participant, reason: string, checkId = false) {
     const { webhooksProxy } = ctx;
 
     if (webhooksProxy) {
         // PARTICIPANT_LEFT webhook
         // @ts-ignore
         const event: {
+            customerId: string;
             data: {
                 conference: string;
                 disconnectReason: string;
+                group: string;
+                id: string;
                 isBreakout: boolean;
                 name: string;
                 participantId: string;
@@ -24,11 +28,19 @@ async function checkParticipantLeftHook(p: Participant, reason: string) {
         } = await webhooksProxy.waitForEvent('PARTICIPANT_LEFT');
 
         expect('PARTICIPANT_LEFT').toBe(event.eventType);
-        expect(event.data.conference).toBe(ctx.conferenceJid);
+        expect(event.data.conference).toBe(ctx.data.conferenceJid);
         expect(event.data.disconnectReason).toBe(reason);
         expect(event.data.isBreakout).toBe(false);
         expect(event.data.participantId).toBe(await p.getEndpointId());
-        expect(event.data.name).toBe(p.displayName);
+        expect(event.data.name).toBe(p.name);
+
+        if (checkId) {
+            const jwtPayload = ctx.data[`${p.name}-jwt-payload`];
+
+            expect(event.data.id).toBe(jwtPayload?.context?.user?.id);
+            expect(event.data.group).toBe(jwtPayload?.context?.group);
+            expect(event.customerId).toBe(process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', ''));
+        }
     }
 }
 
@@ -101,7 +113,7 @@ describe('Participants presence', () => {
 
             const { node, resource } = parseJid(roomsInfo.jid);
 
-            ctx.conferenceJid = roomsInfo.jid.substring(0, roomsInfo.jid.indexOf('/'));
+            ctx.data.conferenceJid = roomsInfo.jid.substring(0, roomsInfo.jid.indexOf('/'));
 
             const p1EpId = await p1.getEndpointId();
 
@@ -123,7 +135,7 @@ describe('Participants presence', () => {
                 } = await webhooksProxy.waitForEvent('ROOM_CREATED');
 
                 expect('ROOM_CREATED').toBe(event.eventType);
-                expect(event.data.conference).toBe(ctx.conferenceJid);
+                expect(event.data.conference).toBe(ctx.data.conferenceJid);
                 expect(event.data.isBreakout).toBe(false);
             }
         }
@@ -192,18 +204,34 @@ describe('Participants presence', () => {
     });
 
     it('kick participant', async () => {
-        const { p1, p2, roomName } = ctx;
+        // we want to join second participant with token, so we can check info in webhook
+        await ctx.p2.getIframeAPI().addEventListener('videoConferenceLeft');
+        await ctx.p2.switchToAPI();
+        await ctx.p2.getIframeAPI().executeCommand('hangup');
+        await ctx.p2.driver.waitUntil(() =>
+            ctx.p2.getIframeAPI().getEventResult('videoConferenceLeft'), {
+            timeout: 4000,
+            timeoutMsg: 'videoConferenceLeft not received'
+        });
+
+        await ensureTwoParticipants(ctx, { preferGenerateToken: true });
+
+        const { p1, p2, roomName, webhooksProxy } = ctx;
+
+        webhooksProxy?.clearCache();
+
         const p1EpId = await p1.getEndpointId();
         const p2EpId = await p2.getEndpointId();
-
-        await p1.switchInPage();
-        await p2.switchInPage();
 
         const p1DisplayName = await p1.getLocalDisplayName();
         const p2DisplayName = await p2.getLocalDisplayName();
 
         await p1.switchToAPI();
         await p2.switchToAPI();
+
+        const roomsInfo = (await p1.getIframeAPI().getRoomsInfo()).rooms[0];
+
+        ctx.data.conferenceJid = roomsInfo.jid.substring(0, roomsInfo.jid.indexOf('/'));
 
         await p1.getIframeAPI().addEventListener('participantKickedOut');
         await p2.getIframeAPI().addEventListener('participantKickedOut');
@@ -213,14 +241,14 @@ describe('Participants presence', () => {
 
         const eventP1 = await p1.driver.waitUntil(() => p1.getIframeAPI().getEventResult('participantKickedOut'), {
             timeout: 2000,
-            timeoutMsg: 'participantKickedOut event not received on participant1 side'
+            timeoutMsg: 'participantKickedOut event not received on p1 side'
         });
         const eventP2 = await p2.driver.waitUntil(() => p2.getIframeAPI().getEventResult('participantKickedOut'), {
             timeout: 2000,
-            timeoutMsg: 'participantKickedOut event not received on participant2 side'
+            timeoutMsg: 'participantKickedOut event not received on p2 side'
         });
 
-        await checkParticipantLeftHook(p2, 'kicked');
+        await checkParticipantLeftHook(ctx, p2, 'kicked', true);
 
         expect(eventP1).toBeDefined();
         expect(eventP2).toBeDefined();
@@ -252,7 +280,7 @@ describe('Participants presence', () => {
 
         const eventConferenceLeftP2 = await p2.driver.waitUntil(() =>
             p2.getIframeAPI().getEventResult('videoConferenceLeft'), {
-            timeout: 2000,
+            timeout: 4000,
             timeoutMsg: 'videoConferenceLeft not received'
         });
 
@@ -287,12 +315,12 @@ describe('Participants presence', () => {
             } = await webhooksProxy.waitForEvent('PARTICIPANT_JOINED');
 
             expect('PARTICIPANT_JOINED').toBe(event.eventType);
-            expect(event.data.conference).toBe(ctx.conferenceJid);
+            expect(event.data.conference).toBe(ctx.data.conferenceJid);
             expect(event.data.isBreakout).toBe(false);
             expect(event.data.moderator).toBe(false);
             expect(event.data.name).toBe(await p2.getLocalDisplayName());
             expect(event.data.participantId).toBe(await p2.getEndpointId());
-            expect(event.data.name).toBe(p2.displayName);
+            expect(event.data.name).toBe(p2.name);
         }
 
         await p1.switchToAPI();
@@ -317,8 +345,8 @@ describe('Participants presence', () => {
         const p1EpId = await p1.getEndpointId();
         const p2EpId = await p2.getEndpointId();
 
-        const newP1Name = P1_DISPLAY_NAME;
-        const newP2Name = P2_DISPLAY_NAME;
+        const newP1Name = P1;
+        const newP2Name = P2;
         const newNames: ({ id: string; name: string; })[] = [ {
             id: p2EpId,
             name: newP2Name
@@ -350,14 +378,14 @@ describe('Participants presence', () => {
 
         const eventConferenceLeftP2 = await p2.driver.waitUntil(() =>
             p2.getIframeAPI().getEventResult('videoConferenceLeft'), {
-            timeout: 2000,
+            timeout: 4000,
             timeoutMsg: 'videoConferenceLeft not received'
         });
 
         expect(eventConferenceLeftP2).toBeDefined();
         expect(eventConferenceLeftP2.roomName).toBe(roomName);
 
-        await checkParticipantLeftHook(p2, 'left');
+        await checkParticipantLeftHook(ctx, p2, 'left');
 
         const eventReadyToCloseP2 = await p2.driver.waitUntil(() => p2.getIframeAPI().getEventResult('readyToClose'), {
             timeout: 2000,
@@ -368,7 +396,7 @@ describe('Participants presence', () => {
     });
 
     it('dispose conference', async () => {
-        const { conferenceJid, p1, roomName, webhooksProxy } = ctx;
+        const { data: { conferenceJid }, p1, roomName, webhooksProxy } = ctx;
 
         await p1.switchToAPI();
 
@@ -379,14 +407,14 @@ describe('Participants presence', () => {
 
         const eventConferenceLeft = await p1.driver.waitUntil(() =>
             p1.getIframeAPI().getEventResult('videoConferenceLeft'), {
-            timeout: 2000,
+            timeout: 4000,
             timeoutMsg: 'videoConferenceLeft not received'
         });
 
         expect(eventConferenceLeft).toBeDefined();
         expect(eventConferenceLeft.roomName).toBe(roomName);
 
-        await checkParticipantLeftHook(p1, 'left');
+        await checkParticipantLeftHook(ctx, p1, 'left', true);
         if (webhooksProxy) {
             // ROOM_DESTROYED webhook
             // @ts-ignore

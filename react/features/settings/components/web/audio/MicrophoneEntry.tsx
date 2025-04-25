@@ -29,9 +29,10 @@ interface IProps {
     hasError?: boolean;
 
     /**
-     * Flag indicating if there is a problem with the device.
+     * Index of the device item used to generate this entry.
+     * Indexes are 0 based.
      */
-    index?: number;
+    index: number;
 
     /**
      * Flag indicating the selection state.
@@ -190,7 +191,7 @@ const MicrophoneEntry = ({
     return (
         <li
             aria-checked = { isSelected }
-            aria-posinset = { index }
+            aria-posinset = { index + 1 } // Add one to offset the 0 based index.
             aria-setsize = { length }
             className = { classes.container }
             onClick = { onClick }

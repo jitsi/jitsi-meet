@@ -1,11 +1,10 @@
 import { IConfig } from '../../react/features/base/config/configType';
 
 import type { Participant } from './Participant';
-import WebhookProxy from './WebhookProxy';
+import type WebhookProxy from './WebhookProxy';
 
 export type IContext = {
-    conferenceJid: string;
-    dialInPin: string;
+    data: any;
     iframeAPI: boolean;
     isJaasAvailable: () => boolean;
     jwtKid: string;
@@ -15,7 +14,6 @@ export type IContext = {
     p2: Participant;
     p3: Participant;
     p4: Participant;
-    roomKey: string;
     roomName: string;
     skipSuiteTests: boolean;
     times: any;

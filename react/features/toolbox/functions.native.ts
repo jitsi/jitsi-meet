@@ -66,8 +66,8 @@ export function isVideoMuteButtonDisabled(state: IReduxState) {
  * @param {IGetVisibleButtonsParams} params - The parameters needed to extract the visible buttons.
  * @returns {Object} - The visible buttons arrays .
  */
-export function getVisibleNativeButtons({ allButtons, clientWidth, mainToolbarButtonsThresholds, toolbarButtons
-}: IGetVisibleNativeButtonsParams) {
+export function getVisibleNativeButtons(
+        { allButtons, clientWidth, mainToolbarButtonsThresholds, toolbarButtons }: IGetVisibleNativeButtonsParams) {
     const filteredButtons = Object.keys(allButtons).filter(key =>
         typeof key !== 'undefined' // filter invalid buttons that may be coming from config.mainToolbarButtons override
         && isButtonEnabled(key, toolbarButtons));

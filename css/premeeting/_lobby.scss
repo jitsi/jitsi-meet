@@ -1,7 +1,7 @@
 .lobby-screen {
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 400;
-    line-height: 26px;
+    line-height: 1.625rem;
 
     &-content {
         align-items: center;
@@ -43,7 +43,7 @@
     flex-direction: column;
 
     .description {
-        font-size: 13px;
+        font-size: 0.75rem;
     }
 
     .control-row {
@@ -53,7 +53,7 @@
         margin-top: 15px;
 
         label {
-            font-size: 14px;
+            font-size: 0.875rem;
             font-weight: bold;
         }
     }
@@ -191,9 +191,9 @@
                 .title {
                     flex: 1;
                     color: #fff;
-                    font-size: 20px;
+                    font-size: 1.25rem;
                     font-weight: 600;
-                    line-height: 28px;
+                    line-height: 1.75rem;
                     letter-spacing: -1.2%;
                 }
             }
@@ -214,8 +214,8 @@
     border-radius: 6px;
     box-sizing: border-box;
     color: white;
-    font-size: 12px;
-    line-height: 16px;
+    font-size: 0.75rem;
+    line-height: 1rem;
     margin-bottom: 16px;
     margin-top: -8px;
     padding: 4px;

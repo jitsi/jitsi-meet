@@ -24,7 +24,6 @@ export function _cleanupConfig(config: IConfig) {
         delete config.analytics?.rtcstatsEndpoint;
         delete config.analytics?.rtcstatsPollInterval;
         delete config.analytics?.rtcstatsSendSdp;
-        delete config.analytics?.rtcstatsUseLegacy;
         delete config.analytics?.obfuscateRoomName;
         delete config.analytics?.watchRTCEnabled;
         delete config.watchRTCConfigParams;

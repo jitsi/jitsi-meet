@@ -198,6 +198,35 @@ function process_main_muc_loaded(main_muc, host_module)
     host_module:hook("room-metadata-changed", function(event)
         broadcastMetadata(event.room);
     end);
+
+    -- TODO: Once clients update to read/write metadata for startMuted policy we can drop this
+    -- this is to convert presence settings from old clients to metadata
+    host_module:hook('muc-broadcast-presence', function (event)
+        local actor, occupant, room, stanza, x = event.actor, event.occupant, event.room, event.stanza, event.x;
+
+        if is_healthcheck_room(room.jid) or occupant.role ~= 'moderator' then
+            return;
+        end
+
+        local startMuted = stanza:get_child('startmuted', 'http://jitsi.org/jitmeet/start-muted');
+
+        if not startMuted then
+            return;
+        end
+
+        if not room.jitsiMetadata then
+            room.jitsiMetadata = {};
+        end
+
+        local startMutedMetadata = room.jitsiMetadata.startMuted or {};
+
+        startMutedMetadata.audio = startMuted.attr.audio == 'true';
+        startMutedMetadata.video = startMuted.attr.video == 'true';
+
+        room.jitsiMetadata.startMuted = startMutedMetadata;
+
+        host_module:fire_event('room-metadata-changed', { room = room; });
+    end);
 end
 
 -- process or waits to process the main muc component

@@ -1069,7 +1069,7 @@
         "incomingMessage": "Móttekin skilaboð",
         "language": "Tungumál",
         "loggedIn": "Skráð inn sem {{name}}",
-        "maxStageParticipants": "Hámarksfjöldi þátttakenda sem hægt er að festa á aðalgluggann (Á TILRAUNASTIGI)",
+        "maxStageParticipants": "Hámarksfjöldi þátttakenda sem hægt er að festa á aðalgluggann",
         "microphones": "Hljóðnemar",
         "moderator": "Stjórnandi",
         "moderatorOptions": "Valkostir umsjónarmanns",

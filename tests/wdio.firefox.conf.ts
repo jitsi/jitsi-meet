@@ -21,6 +21,7 @@ if (process.env.HEADLESS === 'true') {
 
 const ffExcludes = [
     'specs/2way/iFrameApiParticipantsPresence.spec.ts', // FF does not support uploading files (uploadFile)
+    'specs/2way/iFrameApiTranscriptions.spec.ts',
 
     // FF does not support setting a file as mic input, no dominant speaker events
     'specs/3way/activeSpeaker.spec.ts',
@@ -37,7 +38,7 @@ const ffExcludes = [
 const mergedConfig = merge(defaultConfig, {
     ffExcludes,
     capabilities: {
-        participant1: {
+        p1: {
             capabilities: {
                 browserName: 'firefox',
                 browserVersion: process.env.BROWSER_FF_BETA ? 'beta' : undefined,
@@ -48,26 +49,26 @@ const mergedConfig = merge(defaultConfig, {
                 acceptInsecureCerts: process.env.ALLOW_INSECURE_CERTS === 'true'
             }
         },
-        participant2: {
+        p2: {
             capabilities: {
                 'wdio:exclude': [
-                    ...defaultConfig.capabilities.participant2.capabilities['wdio:exclude'],
+                    ...defaultConfig.capabilities.p2.capabilities['wdio:exclude'],
                     ...ffExcludes
                 ]
             }
         },
-        participant3: {
+        p3: {
             capabilities: {
                 'wdio:exclude': [
-                    ...defaultConfig.capabilities.participant3.capabilities['wdio:exclude'],
+                    ...defaultConfig.capabilities.p3.capabilities['wdio:exclude'],
                     ...ffExcludes
                 ]
             }
         },
-        participant4: {
+        p4: {
             capabilities: {
                 'wdio:exclude': [
-                    ...defaultConfig.capabilities.participant4.capabilities['wdio:exclude'],
+                    ...defaultConfig.capabilities.p4.capabilities['wdio:exclude'],
                     ...ffExcludes
                 ]
             }
@@ -77,6 +78,6 @@ const mergedConfig = merge(defaultConfig, {
 
 // Remove the chrome options from the first participant
 // @ts-ignore
-mergedConfig.capabilities.participant1.capabilities['goog:chromeOptions'] = undefined;
+mergedConfig.capabilities.p1.capabilities['goog:chromeOptions'] = undefined;
 
 export const config = mergedConfig;

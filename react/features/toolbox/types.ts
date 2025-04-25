@@ -65,6 +65,11 @@ export type IMainToolbarButtonThresholds = Array<{
     width: number;
 }>;
 
+export type IMainToolbarButtonThresholdsUnfiltered = Array<{
+    order: Array<ToolbarButton | NativeToolbarButton | string> | Symbol;
+    width: number;
+}>;
+
 export interface ICustomToolbarButton {
     Content?: ComponentType<any>;
     backgroundColor?: string;

@@ -1,7 +1,7 @@
 .meetings-list {
-    font-size: 14px;
+    font-size: 0.875rem;
     color: #253858;
-    line-height: 20px;
+    line-height: 1.25rem;
     text-align: left;
     text-overflow: ellipsis;
     display: flex;
@@ -20,8 +20,8 @@
 
         .description {
             color: #2f3237;
-            font-size: 14px;
-            line-height: 18px;
+            font-size: 0.875rem;
+            line-height: 1.125rem;
             margin-bottom: 16px;
             max-width: 436px;
         }
@@ -37,8 +37,8 @@
         color: #0163FF;
         cursor: pointer;
         display: flex;
-        font-size: 14px;
-        line-height: 18px;
+        font-size: 0.875rem;
+        line-height: 1.125rem;
         margin: 24px 0 32px 0;
     }
 
@@ -101,17 +101,17 @@
         }
 
         .title {
-            font-size: 12px;
+            font-size: 0.75rem;
             font-weight: 600;
-            line-height: 16px;
+            line-height: 1rem;
             margin-bottom: 4px;
         }
 
         .subtitle {
             color: #5E6D7A;
             font-weight: normal;
-            font-size: 12px;
-            line-height: 16px;
+            font-size: 0.75rem;
+            line-height: 1rem;
         }
 
 

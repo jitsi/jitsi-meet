@@ -280,6 +280,11 @@ function extract_subdomain(room_node)
     end
 
     local subdomain, room_name = room_node:match("^%[([^%]]+)%](.+)$");
+
+    if not subdomain then
+        room_name = room_node;
+    end
+
     local _, customer_id = subdomain and subdomain:match("^(vpaas%-magic%-cookie%-)(.*)$") or nil, nil;
     local cache_value = { subdomain=subdomain, room=room_name, customer_id=customer_id };
     extract_subdomain_cache:set(room_node, cache_value);
@@ -591,6 +596,19 @@ function table_shallow_copy(t)
     return t2
 end
 
+local function table_find(tab, val)
+    if not tab then
+        return nil
+    end
+
+    for i, v in ipairs(tab) do
+        if v == val then
+            return i
+        end
+    end
+    return nil
+end
+
 -- Splits a string using delimiter
 function split_string(str, delimiter)
     str = str .. delimiter;
@@ -672,4 +690,5 @@ return {
     starts_with = starts_with;
     starts_with_one_of = starts_with_one_of;
     table_shallow_copy = table_shallow_copy;
+    table_find = table_find;
 };
