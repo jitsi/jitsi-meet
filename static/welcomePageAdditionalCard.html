@@ -27,6 +27,7 @@
                 if (userData && userData.user) {
                     // User is logged in
                     const { name, email } = userData.user;
+                    const onboardingUrl = "https://auth.sonacove.com/realms/jitsi/protocol/openid-connect/auth?client_id=jitsi-web&redirect_uri=https%3A%2F%2Fsonacove.com%2Fonboarding&response_type=token"
 
                     authContainer.innerHTML = `
                         <div class="auth-user-info">
@@ -49,6 +50,9 @@
                                 <button id="jitsi-logout-button" class="welcome-page-button auth-button auth-logout">
                                     Logout
                                 </button>
+                                <p class="subscription-completion-text">
+                                    If you have not yet already, <a href="${onboardingUrl}" target="_blank" class="subscription-link">complete your subscription</a> here.
+                                </p>
                             </div>
                         </div>
                     `;

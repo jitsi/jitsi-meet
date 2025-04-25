@@ -1270,7 +1270,7 @@ var config = {
     // For information about the properties of
     // deeplinking.[ios/android].dynamicLink check:
     // https://firebase.google.com/docs/dynamic-links/create-manually
-    // deeplinking: {
+    deeplinking: {
     //
     //     // The desktop deeplinking config, disabled by default.
     //     desktop: {
@@ -1284,28 +1284,28 @@ var config = {
     //         },
     //         enabled: false
     //     },
-    //     // If true, any checks to handoff to another application will be prevented
-    //     // and instead the app will continue to display in the current browser.
-    //     disabled: false,
+        // If true, any checks to handoff to another application will be prevented
+        // and instead the app will continue to display in the current browser.
+        disabled: true,
 
-    //     // whether to hide the logo on the deep linking pages.
-    //     hideLogo: false,
+        //     // whether to hide the logo on the deep linking pages.
+        //     hideLogo: false,
 
-    //     // The ios deeplinking config.
-    //     ios: {
-    //         appName: 'Jitsi Meet',
-    //         // Specify mobile app scheme for opening the app from the mobile browser.
-    //         appScheme: 'org.jitsi.meet',
-    //         // Custom URL for downloading ios mobile app.
-    //         downloadLink: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
-    //         dynamicLink: {
-    //             apn: 'org.jitsi.meet',
-    //             appCode: 'w2atb',
-    //             customDomain: undefined,
-    //             ibi: 'com.atlassian.JitsiMeet.ios',
-    //             isi: '1165103905'
-    //         }
-    //     },
+        //     // The ios deeplinking config.
+        //     ios: {
+        //         appName: 'Jitsi Meet',
+        //         // Specify mobile app scheme for opening the app from the mobile browser.
+        //         appScheme: 'org.jitsi.meet',
+        //         // Custom URL for downloading ios mobile app.
+        //         downloadLink: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
+        //         dynamicLink: {
+        //             apn: 'org.jitsi.meet',
+        //             appCode: 'w2atb',
+        //             customDomain: undefined,
+        //             ibi: 'com.atlassian.JitsiMeet.ios',
+        //             isi: '1165103905'
+        //         }
+        //     },
 
     //     // The android deeplinking config.
     //     android: {
@@ -1325,7 +1325,7 @@ var config = {
     //             isi: '1165103905'
     //         }
     //     }
-    // },
+    },
 
     // // The terms, privacy and help centre URL's.
     legalUrls: {

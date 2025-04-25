@@ -61,5 +61,21 @@
         }
       }
     }
+
+    .subscription-completion-text {
+      margin-top: 8px;
+      color: #5E6D7A;
+      font-size: 14px;
+      text-align: center;
+
+      .subscription-link {
+        color: #5E6D7A;
+        text-decoration: underline;
+        
+        &:hover {
+          color: #0361D4;
+        }
+      }
+    }
   }
 }
