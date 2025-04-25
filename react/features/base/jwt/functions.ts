@@ -20,12 +20,21 @@ import logger from './logger';
  * {@code url}; otherwise, {@code undefined}.
  */
 export function parseJWTFromURLParams(url: URL | typeof window.location = window.location) {
-    // @ts-ignore
-    const jwt = parseURLParams(url, false, 'hash').jwt;
+    // Convert window.location to a URL object if it's not already one
+    const urlObj = url instanceof URL ? url : url?.href && new URL(url.href);
+    const jwt = parseURLParams(urlObj, false, 'hash').jwt;
 
     // TODO: eventually remove the search param and only pull from the hash
-    // @ts-ignore
-    return jwt ? jwt : parseURLParams(url, true, 'search').jwt;
+    const jwt1 = jwt ? jwt : parseURLParams(urlObj, true, 'search').jwt;
+    const jwt2 = jwt1 ? jwt1 : parseURLParams(urlObj, true, 'hash').access_token;
+
+    if (jwt2) {
+        logger.info('found jwt in url params.');
+
+        // TODO: Remove the access_token param from the URL
+    }
+
+    return jwt2;
 }
 
 /**

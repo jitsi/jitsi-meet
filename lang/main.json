@@ -597,7 +597,7 @@
         "searchPlaceholder": "Participant or phone number",
         "send": "Send"
     },
-    "jitsiHome": "{{logo}} Logo, links to  Homepage",
+    "jitsiHome": "{{logo}} Logo, links to Sonacove Meets Homepage",
     "keyboardShortcuts": {
         "focusLocal": "Focus on your video",
         "focusRemote": "Focus on another person's video",
@@ -1553,7 +1553,7 @@
         "go": "GO",
         "goSmall": "GO",
         "headerSubtitle": "Secure and high quality meetings",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Dial-in info",
         "jitsiOnMobile": "Jitsi on mobile – download our apps and start a meeting from anywhere",
         "join": "CREATE / JOIN",

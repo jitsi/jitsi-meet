@@ -291,7 +291,6 @@ export interface IConfig {
     disableAP?: boolean;
     disableAddingBackgroundImages?: boolean;
     disableAudioLevels?: boolean;
-    disableBeforeUnloadHandlers?: boolean;
     disableCameraTintForeground?: boolean;
     disableChatSmileys?: boolean;
     disableDeepLinking?: boolean;

@@ -282,14 +282,14 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
                 <div className = 'welcome-cards-container'>
                     <div className = 'welcome-card-column'>
+                        {showAdditionalCard
+                            ? <div
+                                className = 'welcome-card'
+                                ref = { this._setAdditionalCardRef } />
+                            : null}
                         <div className = 'welcome-tabs welcome-card welcome-card--blue'>
                             {this._renderTabs()}
                         </div>
-                        {showAdditionalCard
-                            ? <div
-                                className = 'welcome-card welcome-card--dark'
-                                ref = { this._setAdditionalCardRef } />
-                            : null}
                     </div>
 
                     {showAdditionalContent

@@ -68,8 +68,9 @@ export function parseURLParams(
 
             }
         } catch (e: any) {
-            reportError(
-                e, `Failed to parse URL parameter value: ${String(value)}`);
+            // Commented out to avoid excessive console output
+            // reportError(
+            //     e, `Failed to parse URL parameter value: ${String(value)}`);
 
             return;
         }

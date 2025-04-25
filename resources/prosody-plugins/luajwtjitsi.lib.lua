@@ -122,6 +122,27 @@ local function verify_claim(claim, acceptedClaims)
   return false;
 end
 
+-- Verifies 'aud' claim (supports string or array)
+-- Checks if claim contains atleast one matching allowed claim. Catch all wildcard '*' is supported.
+-- @param claim The claim to be verified.
+-- @param acceptedClaims A table of accepted claims.
+-- @return True if the claim is allowed, false otherwise.
+local function verify_aud_claim(claim, acceptedClaims)
+	if type(claim) == "string" then
+		return verify_claim(claim, acceptedClaims)
+	elseif type(claim) == "table" then
+		for _, value in ipairs(claim) do
+			if verify_claim(value, acceptedClaims) then
+				return true
+			end
+		end
+
+		return false
+	end
+
+	return false -- Invalid type
+end
+
 local M = {}
 
 -- Encodes the data into a signed JWT token.
@@ -252,7 +273,7 @@ function M.verify(token, expectedAlgo, key, acceptedIssuers, acceptedAudiences)
 		if audClaim == nil then
         return nil, "'aud' claim is missing";
     end
-    if not verify_claim(audClaim, acceptedAudiences) then
+    if not verify_aud_claim(audClaim, acceptedAudiences) then
         return nil, "invalid 'aud' claim";
     end
 	end
