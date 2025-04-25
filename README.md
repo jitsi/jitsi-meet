@@ -50,7 +50,7 @@ Our development standards include:
 
 5. Create an environment file from the template:
    ```bash
-   cp .env.example .env.local
+   cp .env.template .env
    ```
 
 6. Configure the required environment variables in `.env` file.
