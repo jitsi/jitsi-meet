@@ -27,7 +27,7 @@
         "@internxt/css-config": "^1.0.2",
         "@internxt/eslint-config-internxt": "^2.0.0",
         "@internxt/lib": "^1.2.0",
-        "@internxt/sdk": "=1.9.12",
+        "@internxt/sdk": "=1.9.13",
         "@internxt/ui": "^0.0.22",
         "@jitsi/excalidraw": "https://github.com/jitsi/excalidraw/releases/download/v0.0.17/jitsi-excalidraw-0.0.17.tgz",
         "@jitsi/js-utils": "2.2.1",
