@@ -11,6 +11,13 @@ const hints = [
 ];
 
 /**
+ * Navigate to the home page
+ */
+function goToHomePage() {
+    window.location.href = '/';
+}
+
+/**
  * Get a random hint message from hint array.
  *
  * @return {string} the hint message.

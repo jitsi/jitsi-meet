@@ -436,7 +436,7 @@ var config = {
         notifyAllParticipants: true,
 
         // Whether to disable the self recording feature (only local participant streams).
-        disableSelfRecording: false,
+        disableSelfRecording: true,
     },
 
     // Customize the Live Streaming dialog. Can be modified for a non-YouTube provider.
@@ -1104,9 +1104,8 @@ var config = {
 
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [
-
-            // { urls: 'stun:meet.sonacove.com:3478' },
-            { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' },
+            { urls: 'stun:stun.cloudflare.com:3478' },
+            { urls: 'stun:stun.cloudflare.com:53' }
         ],
     },
 
