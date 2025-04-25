@@ -1,25 +1,53 @@
 import { RegisterDetails } from "@internxt/sdk";
+import { UserSettings } from "@internxt/sdk/dist/shared/types/userSettings";
 import * as bip39 from "bip39";
 import { useState } from "react";
+import { useLocalStorage } from "../../../LocalStorageManager";
 import { CryptoService } from "../../../services/crypto.service";
 import { KeysService } from "../../../services/keys.service";
 import { SdkManager } from "../../../services/sdk-manager.service";
 import { IFormValues } from "../types";
 
+export interface OnSignUpPayload {
+    token: string;
+    newToken: string;
+    userData: UserSettings;
+}
+
 interface useSignupProps {
     onClose: () => void;
-    onSignup?: (token: string, userData?: any) => void;
+    onSignup?: (signupData: OnSignUpPayload) => void;
     translate: (key: string) => string;
     referrer?: string;
+}
+
+export interface RegisterResponse {
+    token: string;
+    newToken: string;
+    user: UserSettings;
+    uuid: string;
 }
 
 export const useSignup = ({ onClose, onSignup, translate, referrer }: useSignupProps) => {
     const [isSigningUp, setIsSigningUp] = useState(false);
     const [signupError, setSignupError] = useState("");
+    const storageManager = useLocalStorage();
 
     const resetSignupState = () => {
         setIsSigningUp(false);
         setSignupError("");
+    };
+
+    const handleAutoLogin = async (registerData: RegisterResponse, mnemonic: string) => {
+        const { token, newToken, user } = registerData;
+
+        storageManager.saveCredentials(token, newToken, mnemonic, user);
+
+        onSignup?.({
+            token,
+            newToken,
+            userData: user,
+        });
     };
 
     const handleSignup = async (data: IFormValues) => {
@@ -57,15 +85,14 @@ export const useSignup = ({ onClose, onSignup, translate, referrer }: useSignupP
 
             const authClient = SdkManager.instance.getNewAuth();
 
-            const response = await authClient.register(registerDetails);
+            const registerUserData = await authClient.register(registerDetails);
 
-            // need to add login flow after this
-            if (onSignup) {
-                onSignup(response.token, {
-                    ...response.user,
-                    mnemonic: mnemonic,
-                });
-            }
+            const fullResponse: RegisterResponse = {
+                ...registerUserData,
+                // CAST DONE BECAUSE THE SDK TYPE IS NOT CORRECT
+            } as unknown as RegisterResponse;
+
+            await handleAutoLogin(fullResponse, mnemonic);
 
             onClose();
         } catch (error: any) {

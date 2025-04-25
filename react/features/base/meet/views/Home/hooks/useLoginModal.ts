@@ -7,6 +7,7 @@ import { loginSuccess } from "../../../general/store/auth/actions";
 import { setRoomID } from "../../../general/store/errors/actions";
 import { useLocalStorage } from "../../../LocalStorageManager";
 import { AuthService } from "../../../services/auth.service";
+import { LoginCredentials } from "../../../services/types/command.types";
 import { AuthFormValues } from "../types";
 
 interface UseAuthModalProps {
@@ -80,7 +81,7 @@ export function useLoginModal({ onClose, onLogin, translate }: UseAuthModalProps
     );
 
     const saveUserSession = useCallback(
-        (credentials: any) => {
+        (credentials: LoginCredentials) => {
             storageManager.saveCredentials(
                 credentials.token,
                 credentials.newToken,

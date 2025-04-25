@@ -5,13 +5,13 @@ import { LoginForm } from "../components/auth/LoginForm";
 import { SignupForm } from "../components/auth/SignUpForm";
 import { Divider } from "../components/Divider";
 import { useLoginModal } from "../hooks/useLoginModal";
-import { useSignup } from "../hooks/useSignUp";
+import { OnSignUpPayload, useSignup } from "../hooks/useSignUp";
 
 interface AuthModalProps {
     isOpen: boolean;
     onClose: () => void;
     onLogin?: (token: string) => void;
-    onSignup?: (token: string) => void;
+    onSignup?: (signupData: OnSignUpPayload) => void;
     translate: (key: string) => string;
     openLogin?: boolean;
 }
