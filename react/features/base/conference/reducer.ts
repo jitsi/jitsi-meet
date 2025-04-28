@@ -54,19 +54,17 @@ const DEFAULT_STATE = {
 };
 
 export interface IConferenceMetadata {
-    fileSharing?: {
-        files: {
-            [fileId: string]: {
-                authorParticipantJid: string;
-                contentType: string;
-                md5: string;
-                meetingFqn: string;
-                name: string;
-                participantsIds: string[];
-                sessionId: string;
-                size: number;
-                timestamp: number;
-            };
+    files: {
+        [fileId: string]: {
+            authorParticipantJid: string;
+            contentType: string;
+            md5: string;
+            meetingFqn: string;
+            name: string;
+            participantsIds: string[];
+            sessionId: string;
+            size: number;
+            timestamp: number;
         };
     };
     recording?: {

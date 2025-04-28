@@ -27,4 +27,14 @@ export const ADD_FILES = 'ADD_FILES';
  *     fileId: string
  * }
  */
-export const REMOVE_FILE = 'REMOVE_FILE'; 
+export const REMOVE_FILE = 'REMOVE_FILE';
+
+/**
+ * The type of redux action to download a file.
+ *
+ * {
+ *     type: DOWNLOAD_FILE,
+ *     fileId: string
+ * }
+ */
+export const DOWNLOAD_FILE = 'DOWNLOAD_FILE'; 

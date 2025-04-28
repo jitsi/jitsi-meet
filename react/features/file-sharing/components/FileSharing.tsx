@@ -9,9 +9,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IReduxState } from '../../app/types';
 import Icon from '../../base/icons/components/Icon';
 import BaseTheme from '../../base/ui/components/BaseTheme.web';
-import { addFiles, removeFile } from '../actions';
+import { addFiles, removeFile, downloadFile } from '../actions';
 import logger from '../logger';
 import { createFilePreview, getFileIcon } from '../functions.any';
+import { isLocalParticipantModerator } from '../../base/participants/functions';
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -122,6 +123,16 @@ const useStyles = makeStyles()(theme => {
             alignItems: 'center',
             height: '100%',
             width: '100%'
+        },
+
+        buttonContainer: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+        },
+
+        downloadButton: {
+            marginRight: theme.spacing(1)
         }
     };
 });
@@ -133,6 +144,7 @@ const FileSharing = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const { files } = useSelector((state: IReduxState) => state['features/file-sharing']);
+    const isModerator = useSelector(isLocalParticipantModerator);
 
     const handleDragEnter = useCallback((e: React.DragEvent) => {
         e.preventDefault();
@@ -199,37 +211,35 @@ const FileSharing = () => {
         }
     }, []);
 
-    const handleRemoveFile = useCallback((fileId: string) => () => {
-        dispatch(removeFile(fileId));
-    }, [ dispatch ]);
-
     return (
         <div className = { classes.container }>
-            <div
-                className = { `${classes.dropZone} ${
-                    isDragging ? 'dragging' : ''
-                }` }
-                onClick = { handleClick }
-                onDragEnter = { handleDragEnter }
-                onDragLeave = { handleDragLeave }
-                onDragOver = { handleDragOver }
-                onDrop = { handleDrop }
-                onKeyPress = { handleKeyPress }
-                role = 'button'
-                tabIndex = { 0 }>
-                <input
-                    className = { classes.hiddenInput }
-                    multiple = { true }
-                    onChange = { handleFileSelect }
-                    ref = { fileInputRef }
-                    type = 'file' />
-                <Button
-                    className = { classes.uploadButton }
-                    icon = { IconCloudUpload }
-                    labelKey = { 'fileSharing.uploadFiles' }
-                    type = { BUTTON_TYPES.PRIMARY } />
-                <p>{ t('fileSharing.dragAndDrop') }</p>
-            </div>
+            { isModerator && (
+                <div
+                    className = { `${classes.dropZone} ${
+                        isDragging ? 'dragging' : ''
+                    }` }
+                    onClick = { handleClick }
+                    onDragEnter = { handleDragEnter }
+                    onDragLeave = { handleDragLeave }
+                    onDragOver = { handleDragOver }
+                    onDrop = { handleDrop }
+                    onKeyPress = { handleKeyPress }
+                    role = 'button'
+                    tabIndex = { 0 }>
+                    <input
+                        className = { classes.hiddenInput }
+                        multiple = { true }
+                        onChange = { handleFileSelect }
+                        ref = { fileInputRef }
+                        type = 'file' />
+                    <Button
+                        className = { classes.uploadButton }
+                        icon = { IconCloudUpload }
+                        labelKey = { 'fileSharing.uploadFiles' }
+                        type = { BUTTON_TYPES.PRIMARY } />
+                    <p>{ t('fileSharing.dragAndDrop') }</p>
+                </div>
+            ) }
 
             { files.length > 0 && (
                 <div className = { classes.fileList }>
@@ -252,12 +262,25 @@ const FileSharing = () => {
                                     <span className = { classes.fileName }>
                                         { file.file.name }
                                     </span>
-                                    <Button
-                                        accessibilityLabel = { t('fileSharing.removeFile') }
-                                        className = { classes.removeButton }
-                                        labelKey = { 'fileSharing.removeFile' }
-                                        onClick = { handleRemoveFile(file.id) }
-                                        type = { BUTTON_TYPES.DESTRUCTIVE } />
+                                    <div className = { classes.buttonContainer }>
+                                        <Button
+                                            accessibilityLabel = { t('fileSharing.downloadFile') }
+                                            className = { classes.downloadButton }
+                                            labelKey = { 'fileSharing.downloadFile' }
+
+                                            // eslint-disable-next-line react/jsx-no-bind
+                                            onClick = { () => dispatch(downloadFile(file.id, file.file.name, file.md5)) }
+                                            type = { BUTTON_TYPES.PRIMARY } />
+                                        { isModerator && (
+                                            <Button
+                                                accessibilityLabel = { t('fileSharing.removeFile') }
+                                                labelKey = { 'fileSharing.removeFile' }
+
+                                                // eslint-disable-next-line react/jsx-no-bind
+                                                onClick = { () => dispatch(removeFile(file.id)) }
+                                                type = { BUTTON_TYPES.DESTRUCTIVE } />
+                                        ) }
+                                    </div>
                                 </>
                             ) }
                             { file.progress < 100 && (

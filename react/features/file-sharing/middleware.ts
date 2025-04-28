@@ -4,7 +4,7 @@ import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 import { parseJWTFromURLParams } from '../base/jwt/functions';
 import { showErrorNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
-import { ADD_FILES, REMOVE_FILE } from './actionTypes';
+import { ADD_FILES, REMOVE_FILE, DOWNLOAD_FILE } from './actionTypes';
 import { calculateFileHash, makeApiCall } from './functions.any';
 import { updateFileProgress } from './actions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
@@ -48,10 +48,10 @@ MiddlewareRegistry.register(store => next => async action => {
 
                 // const existingFiles = await makeApiCall({
                 //     method: 'GET',
-                //     endpoint: `/documents?md5=${fileHash}&meetingFqn=${meetingFqn}`,
+                //     endpoint: `/documents/file-metadata/jaas/${sessionId}`,
                 //     headers
                 // });
-                //
+
                 // if (existingFiles?.length > 0) {
                 //     store.dispatch(showNotification({
                 //         titleKey: 'fileSharing.uploadFailedTitle',
@@ -59,7 +59,7 @@ MiddlewareRegistry.register(store => next => async action => {
                 //         appearance: NOTIFICATION_TYPE.WARNING,
                 //         maxLines: 2
                 //     }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
-                //
+
                 //     return result;
                 // }
 
@@ -80,21 +80,20 @@ MiddlewareRegistry.register(store => next => async action => {
                 formData.append('metadata', JSON.stringify(fileMetadata));
                 formData.append('file', file.file as Blob, file.file.name);
 
-                await makeApiCall({
-                    method: 'POST',
-                    endpoint: '/documents',
-                    headers,
-                    body: formData
-                });
-
-                // Update conference metadata with file information
-                const existingMetadata = conference?.getMetadataHandler().getMetadata()?.fileSharing?.files || {};
+                const existingMetadata = conference?.getMetadataHandler()?.getMetadata()?.[FILE_SHARING_ID]?.files || {};
 
                 conference?.getMetadataHandler().setMetadata(FILE_SHARING_ID, {
                     files: {
                         ...existingMetadata,
                         [file.id]: fileMetadata
                     }
+                });
+
+                await makeApiCall({
+                    method: 'POST',
+                    endpoint: '/documents',
+                    headers,
+                    body: formData
                 });
 
                 store.dispatch(updateFileProgress(file.id, 100));
@@ -126,7 +125,7 @@ MiddlewareRegistry.register(store => next => async action => {
 
         try {
             // Get file metadata from conference metadata
-            const existingMetadata = conference?.getMetadataHandler().getMetadata()?.fileSharing?.files || {};
+            const existingMetadata = conference?.getMetadataHandler().getMetadata()?.[FILE_SHARING_ID]?.files || {};
             const fileMetadata = existingMetadata[action.fileId];
 
             if (fileMetadata) {
@@ -146,6 +145,49 @@ MiddlewareRegistry.register(store => next => async action => {
             }
         } catch (error) {
             logger.warn('Could not delete file:', error);
+        }
+
+        return result;
+    }
+
+    case DOWNLOAD_FILE: {
+        const result = next(action);
+        const state = store.getState();
+        const { locationURL } = state['features/base/connection'];
+        const jwt = parseJWTFromURLParams(locationURL);
+        const meetingFqn = extractFqnFromPath(state);
+
+        const headers = {
+            ...jwt && { 'Authorization': `Bearer ${jwt}` }
+        };
+
+        try {
+            const response = await makeApiCall({
+                method: 'GET',
+                endpoint: `/documents/download?md5=${action.md5}&meetingFqn=${meetingFqn}`,
+                headers
+            });
+
+            if (response) {
+                const blob = new Blob([ response ], { type: 'application/octet-stream' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+
+                a.href = url;
+                a.download = action.fileName;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            }
+        } catch (error) {
+            logger.warn('Could not download file:', error);
+
+            store.dispatch(showErrorNotification({
+                titleKey: 'fileSharing.downloadFailedTitle',
+                descriptionKey: 'fileSharing.downloadFailedDescription',
+                appearance: NOTIFICATION_TYPE.ERROR
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
         }
 
         return result;

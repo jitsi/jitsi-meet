@@ -81,24 +81,43 @@ export async function makeApiCall({
     headers: Record<string, string>;
     method: string;
 }): Promise<any> {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        method,
-        headers,
-        ...(body && { body })
-    });
+    let responseError;
 
-    if (!response.ok) {
-        const errorText = await response.text();
+    for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+            const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                method,
+                headers,
+                ...(body && { body })
+            });
 
-        throw new Error(`${method} request failed with status: ${response.status}. Error: ${errorText}`);
+            if (!response.ok) {
+                const errorText = await response.text();
+
+                responseError = new Error(`${method} request failed with status: ${response.status}. Error: ${errorText}`);
+
+                if (response.status >= 500 && attempt === 0) {
+                    continue;
+                }
+
+                throw responseError;
+            }
+
+            try {
+                return await response.json();
+            } catch {
+                return undefined;
+            }
+        } catch (error) {
+            responseError = error;
+
+            if (attempt === 1) {
+                throw responseError;
+            }
+        }
     }
 
-    try {
-        return await response.json();
-    } catch {
-        // If the response is empty or not JSON, return undefined
-        return undefined;
-    }
+    throw responseError;
 }
 
 /**
@@ -109,9 +128,8 @@ export async function makeApiCall({
  */
 export function isFileSharingEnabled(state: IReduxState) {
     const { fileSharingEnabled = true } = state['features/base/config'];
-    const isModerator = isLocalParticipantModerator(state);
 
-    return fileSharingEnabled && isModerator;
+    return fileSharingEnabled;
 }
 
 /**

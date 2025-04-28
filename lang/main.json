@@ -543,12 +543,15 @@
         }
     },
     "fileSharing": {
-        "uploadFailedTitle": "Upload failed",
-        "uploadFailedDescription": "Please try again.",
+        "downloadFile": "Download",
+        "downloadFailedTitle": "Download failed",
+        "downloadFailedDescription": "Please try again.",
+        "dragAndDrop": "Drag and drop files here or click to upload",
         "fileAlreadyUploaded": "File has already been uploaded to this meeting",
         "removeFile": "Remove",
-        "uploadFiles": "Upload Files",
-        "dragAndDrop": "Drag and drop files here or click to upload"
+        "uploadFailedTitle": "Upload failed",
+        "uploadFailedDescription": "Please try again.",
+        "uploadFiles": "Upload Files"
     },
     "giphy": {
         "noResults": "No results found :(",

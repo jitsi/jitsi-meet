@@ -2,7 +2,8 @@ import { IFile } from './types';
 import {
     ADD_FILES,
     REMOVE_FILE,
-    UPDATE_FILE_UPLOAD_PROGRESS
+    UPDATE_FILE_UPLOAD_PROGRESS,
+    DOWNLOAD_FILE
 } from './actionTypes';
 
 /**
@@ -43,5 +44,22 @@ export function removeFile(fileId: string) {
     return {
         type: REMOVE_FILE,
         fileId
+    };
+}
+
+/**
+ * Download a file.
+ *
+ * @param {string} fileId - The ID of the file to download.
+ * @param {string} fileName - The name of the file to download.
+ * @param {string} fileHash - The MD5 hash of the file.
+ * @returns {Object}
+ */
+export function downloadFile(fileId: string, fileName: string, fileHash: string) {
+    return {
+        type: DOWNLOAD_FILE,
+        fileId,
+        fileName,
+        fileHash
     };
 }
