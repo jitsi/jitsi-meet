@@ -145,7 +145,7 @@ module:hook("pre-iq/full", function(event)
                 dial:tag("header", {
                     xmlns = "urn:xmpp:rayo:1",
                     name = OUT_INITIATOR_USER_ATTR_NAME,
-                    value = user_id });
+                    value = tostring(user_id)});
                 dial:up();
 
                 -- Add the initiator group information if it is present
@@ -153,7 +153,7 @@ module:hook("pre-iq/full", function(event)
                     dial:tag("header", {
                         xmlns = "urn:xmpp:rayo:1",
                         name = OUT_INITIATOR_GROUP_ATTR_NAME,
-                        value = session.jitsi_meet_context_group });
+                        value = tostring(session.jitsi_meet_context_group) });
                     dial:up();
                 end
             end
