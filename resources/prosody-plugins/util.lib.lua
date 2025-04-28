@@ -321,8 +321,11 @@ function starts_with_one_of(str, prefixes)
     return false
 end
 
-
 function ends_with(str, ending)
+    if not str then
+        return false;
+    end
+
     return ending == "" or str:sub(-#ending) == ending
 end
 
