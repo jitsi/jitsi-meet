@@ -1053,7 +1053,7 @@
         "localRecordingStartWarningTitle": "Apturiet ierakstīšanu, lai to saglabātu",
         "localRecordingVideoStop": "Apturot vide, tiks apturēta arī lokālā ierakstīšana. Vai tiešām vēlaties turpināt?",
         "localRecordingVideoWarning": "Lai ierakstītu video, tas ir jāieslēdz, uzsākot ierakstīšanu",
-        "localRecordingWarning": "Noteikti izvēlieties pašreizējo cilni, lai izmantotu pareizo video un audio. Ieraksts pašlaik ir ierobežots līdz 1 GB, kas ir aptuveni 100 minūtes.",
+        "localRecordingWarning": "Noteikti izvēlieties pašreizējo cilni, lai izmantotu pareizo video un audio.",
         "loggedIn": "Pierakstījies kā {{userName}}",
         "noMicPermission": "Mikrofona ierakstu nevarēja izveidot. Lūdzu, piešķiriet atļauju lietot mikrofonu.",
         "noStreams": "Nav konstatēta audio vai video straume.",

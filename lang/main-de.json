@@ -1055,7 +1055,7 @@
         "localRecordingStartWarningTitle": "Aufzeichnung zum Speichern beenden",
         "localRecordingVideoStop": "Wenn Sie ihre Kamera abschalten wird auch die Aufnahme beendet. Sind Sie sicher, dass Sie fortfahren möchten?",
         "localRecordingVideoWarning": "Um Ihr eigenes Kamerabild aufzuzeichnen, müssen Sie Ihre Kamera beim Start der Aufnahme einschalten",
-        "localRecordingWarning": "Bitte prüfen Sie, dass das aktuelle Tab auswählen, um Bild und Ton aufzuzeichnen. Die Länge der Aufzeichnung ist aktuell auf 1GB beschränkt, was ungefähr 100 Minuten entspricht.",
+        "localRecordingWarning": "Bitte prüfen Sie, dass das aktuelle Tab auswählen, um Bild und Ton aufzuzeichnen.",
         "loggedIn": "Als {{userName}} angemeldet",
         "noMicPermission": "Zugriff auf Mikrofon fehlgeschlagen. Bitte erlauben Sie den Zugriff auf das Mikrofon.",
         "noStreams": "Kein Ton oder Video erkannt.",

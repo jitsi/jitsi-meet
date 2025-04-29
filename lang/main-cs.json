@@ -1047,7 +1047,7 @@
         "localRecordingStartWarningTitle": "Zastavte záznam, abyste jej uložili",
         "localRecordingVideoStop": "Zastavením videa se zastaví také místní nahrávání. Opravdu chcete pokračovat?",
         "localRecordingVideoWarning": "Chcete-li nahrát video, musíte jej mít zapnutý při zahájení nahrávání",
-        "localRecordingWarning": "Ujistěte se, že jste vybrali aktuální kartu, abyste mohli použít správné video a zvuk. Záznam je aktuálně omezen na 1GB, což je kolem 100 minut.",
+        "localRecordingWarning": "Ujistěte se, že jste vybrali aktuální kartu, abyste mohli použít správné video a zvuk.",
         "loggedIn": "Přihlášen/a jako {{userName}}",
         "noMicPermission": "Kanál mikrofonu nelze vytvořit. Udělte prosím povolení k použití mikrofonu.",
         "noStreams": "Nebyl zjištěn žádný audio nebo video stream.",

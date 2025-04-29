@@ -1007,7 +1007,7 @@
         "localRecordingStartWarningTitle": "Parar a gravação para salvá-la",
         "localRecordingVideoStop": "Ao parar o seu vídeo a gravação local também será parada. Tem certeza que deseja continuar?",
         "localRecordingVideoWarning": "Para gravar o seu vídeo você precisa ativá-lo antes de inicar a gravação",
-        "localRecordingWarning": "Tenha certeza de selecionar a aba atual para usar o áudio e vídeo corretos. A gravação está atualmente limitada a 1GB, que corresponde a aproximadamente 100 minutos.",
+        "localRecordingWarning": "Tenha certeza de selecionar a aba atual para usar o áudio e vídeo corretos.",
         "loggedIn": "Conectado como {{userName}}",
         "noMicPermission": "Trilha para o microfone não pôde ser criada. Por favor conceda permissão para usar o microfone.",
         "noStreams": "Nenhum fluxo de áudio ou vídeo detectado.",

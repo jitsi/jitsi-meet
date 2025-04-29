@@ -1064,7 +1064,7 @@
         "localRecordingStartWarningTitle": "Stop the recording to save it",
         "localRecordingVideoStop": "Stopping your video will also stop the local recording. Are you sure you want to continue?",
         "localRecordingVideoWarning": "To record your video you must have it on when starting the recording",
-        "localRecordingWarning": "Make sure you select the current tab in order to use the right video and audio. The recording is currently limited to 1GB, which is around 100 minutes.",
+        "localRecordingWarning": "Make sure you select the current tab in order to use the right video and audio.",
         "loggedIn": "Logged in as {{userName}}",
         "noMicPermission": "Microphone track could not be created. Please grant permission to use the microphone.",
         "noStreams": "No audio or video stream detected.",

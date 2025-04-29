@@ -915,7 +915,7 @@
         "localRecordingStartWarningTitle": "Ferma la registrazione per salvarla",
         "localRecordingVideoStop": "Fermare il video fermerà anche la registrazione. Sei sicuro di voler terminare?",
         "localRecordingVideoWarning": "Per registrare il video, deve essere già avviato prima dell'inizio della registrazione",
-        "localRecordingWarning": "Assicurati di aver selezionato la scheda corrente, per registrare gli audio e video corretti. La registrazione è limitata ad 1GB, cioè circa 100 minuti.",
+        "localRecordingWarning": "Assicurati di aver selezionato la scheda corrente, per registrare gli audio e video corretti.",
         "loggedIn": "Accesso effettuato come {{userName}}",
         "noStreams": "Audio e video non trovati.",
         "off": "Registrazione interrotta",
