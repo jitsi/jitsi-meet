@@ -125,16 +125,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
      * @returns {void}
      * */
     stopLocalRecording() {
-        if (this.recorder) {
-            this.recorder.stop();
-            this.recorder = undefined;
-            this.audioContext = undefined;
-            this.audioDestination = undefined;
-            this.writableStream?.close().then(() => {
-                this.fileHandle = undefined;
-                this.writableStream = undefined;
-            });
-        }
+        this.recorder?.stop();
     },
 
     /**
@@ -238,18 +229,29 @@ const LocalRecordingManager: ILocalRecordingManager = {
             mimeType: this.mediaType,
             videoBitsPerSecond: VIDEO_BIT_RATE
         });
+
         this.recorder.addEventListener('dataavailable', async e => {
             if (this.recorder && e.data && e.data.size > 0) {
                 await this.writableStream?.write(e.data);
             }
         });
 
-        if (!onlySelf) {
-            this.recorder.addEventListener('stop', () => {
-                this.stream?.getTracks().forEach((track: MediaStreamTrack) => track.stop());
-                gdmStream?.getTracks().forEach((track: MediaStreamTrack) => track.stop());
-            });
+        this.recorder.addEventListener('stop', () => {
+            this.stream?.getTracks().forEach((track: MediaStreamTrack) => track.stop());
+            gdmStream?.getTracks().forEach((track: MediaStreamTrack) => track.stop());
 
+            // The stop event is emitted when the recorder is done, and _after_ the last buffered
+            // data has been handed over to the dataavailable event.
+            this.recorder = undefined;
+            this.audioContext = undefined;
+            this.audioDestination = undefined;
+            this.writableStream?.close().then(() => {
+                this.fileHandle = undefined;
+                this.writableStream = undefined;
+            });
+        });
+
+        if (!onlySelf) {
             gdmStream?.addEventListener('inactive', () => {
                 dispatch(stopLocalVideoRecording());
             });
@@ -259,7 +261,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
             });
         }
 
-        this.recorder.start(5000);
+        this.recorder.start(1000);
     },
 
     /**
