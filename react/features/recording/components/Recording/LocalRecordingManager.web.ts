@@ -167,25 +167,19 @@ const LocalRecordingManager: ILocalRecordingManager = {
         const tracks = getTrackState(getState());
 
         if (onlySelf) {
-            let audioTrack: MediaStreamTrack | undefined = getLocalTrack(tracks, MEDIA_TYPE.AUDIO)?.jitsiTrack?.track;
+            const audioTrack: MediaStreamTrack | undefined = getLocalTrack(tracks, MEDIA_TYPE.AUDIO)?.jitsiTrack?.track;
             let videoTrack: MediaStreamTrack | undefined = getLocalTrack(tracks, MEDIA_TYPE.VIDEO)?.jitsiTrack?.track;
 
-            if (!audioTrack) {
-                APP.conference.muteAudio(false);
-                setTimeout(() => APP.conference.muteAudio(true), 100);
-                await new Promise(resolve => {
-                    setTimeout(resolve, 100);
-                });
-            }
             if (videoTrack && videoTrack.readyState !== 'live') {
                 videoTrack = undefined;
             }
-            audioTrack = getLocalTrack(getTrackState(getState()), MEDIA_TYPE.AUDIO)?.jitsiTrack?.track;
+
             if (!audioTrack && !videoTrack) {
                 throw new Error('NoLocalStreams');
             }
+
             this.selfRecording.withVideo = Boolean(videoTrack);
-            const localTracks = [];
+            const localTracks: MediaStreamTrack[] = [];
 
             audioTrack && localTracks.push(audioTrack);
             videoTrack && localTracks.push(videoTrack);
@@ -197,22 +191,6 @@ const LocalRecordingManager: ILocalRecordingManager = {
                     handle: `JitsiMeet-${tabId}`,
                     permittedOrigins: [ '*' ]
                 });
-            }
-            const localAudioTrack = getLocalTrack(tracks, MEDIA_TYPE.AUDIO)?.jitsiTrack?.track;
-
-            // Starting chrome 107, the recorder does not record any data if the audio stream has no tracks
-            // To fix this we create a track for the local user(muted track)
-            if (!localAudioTrack) {
-                APP.conference.muteAudio(false);
-                setTimeout(() => APP.conference.muteAudio(true), 100);
-                await new Promise(resolve => {
-                    setTimeout(resolve, 100);
-                });
-            }
-
-            // handle no mic permission
-            if (!getLocalTrack(getTrackState(getState()), MEDIA_TYPE.AUDIO)?.jitsiTrack?.track) {
-                throw new Error('NoMicTrack');
             }
 
             gdmStream = await navigator.mediaDevices.getDisplayMedia({
@@ -229,9 +207,10 @@ const LocalRecordingManager: ILocalRecordingManager = {
                 surfaceSwitching: 'exclude'
             });
 
-            const isBrowser = gdmStream.getVideoTracks()[0].getSettings().displaySurface === 'browser';
+            const gdmVideoTrack = gdmStream.getVideoTracks()[0];
+            const isBrowser = gdmVideoTrack.getSettings().displaySurface === 'browser';
             const matchesHandle = (supportsCaptureHandle // @ts-ignore
-                && gdmStream.getVideoTracks()[0].getCaptureHandle()?.handle === `JitsiMeet-${tabId}`);
+                && gdmVideoTrack.getCaptureHandle()?.handle === `JitsiMeet-${tabId}`);
 
             if (!isBrowser || !matchesHandle) {
                 gdmStream.getTracks().forEach((track: MediaStreamTrack) => track.stop());
@@ -240,14 +219,18 @@ const LocalRecordingManager: ILocalRecordingManager = {
 
             this.initializeAudioMixer();
 
-            this.addAudioTrackToLocalRecording(localAudioTrack);
+            const localAudioTrack = getLocalTrack(tracks, MEDIA_TYPE.AUDIO)?.jitsiTrack?.track;
+
+            if (localAudioTrack) {
+                this.addAudioTrackToLocalRecording(localAudioTrack);
+            }
 
             gdmStream.getAudioTracks().forEach((track: MediaStreamTrack) => {
                 this.addAudioTrackToLocalRecording(track);
             });
             this.stream = new MediaStream([
                 ...this.audioDestination?.stream.getAudioTracks() || [],
-                gdmStream.getVideoTracks()[0]
+                gdmVideoTrack
             ]);
         }
 
