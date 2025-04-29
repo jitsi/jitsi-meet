@@ -279,7 +279,7 @@ function extract_subdomain(room_node)
         return ret.subdomain, ret.room, ret.customer_id;
     end
 
-    local subdomain, room_name = room_node:match("^%[([^%]]+)%](.+)$") or nil, room_node;
+    local subdomain, room_name = room_node:match("^%[([^%]]+)%](.+)$");
 
     if not subdomain then
         room_name = room_node;
