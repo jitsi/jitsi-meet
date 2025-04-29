@@ -216,18 +216,21 @@ const LocalRecordingManager: ILocalRecordingManager = {
                 throw new Error('NoMicTrack');
             }
 
-            // @ts-ignore
             gdmStream = await navigator.mediaDevices.getDisplayMedia({
-                video: { displaySurface: 'browser',
-                    frameRate: 30 },
-                audio: false, // @ts-ignore
+                video: {
+                    displaySurface: 'browser',
+                    frameRate: 30
+                },
+                audio: false,
+                // @ts-ignore
                 preferCurrentTab: true
             });
 
             const isBrowser = gdmStream.getVideoTracks()[0].getSettings().displaySurface === 'browser';
+            const matchesHandle = (supportsCaptureHandle // @ts-ignore
+                && gdmStream.getVideoTracks()[0].getCaptureHandle()?.handle === `JitsiMeet-${tabId}`);
 
-            if (!isBrowser || (supportsCaptureHandle // @ts-ignore
-                && gdmStream.getVideoTracks()[0].getCaptureHandle()?.handle !== `JitsiMeet-${tabId}`)) {
+            if (!isBrowser || !matchesHandle) {
                 gdmStream.getTracks().forEach((track: MediaStreamTrack) => track.stop());
                 throw new Error('WrongSurfaceSelected');
             }
