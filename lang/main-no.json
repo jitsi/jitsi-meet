@@ -1047,7 +1047,7 @@
         "localRecordingStartWarningTitle": "Stopp opptaket for å lagre det",
         "localRecordingVideoStop": "Hvis du stopper videoen, vil også det lokale opptaket stoppe. Er du sikker på at du vil fortsette?",
         "localRecordingVideoWarning": "For å ta opp videoen din, må du ha den på når opptaket starter",
-        "localRecordingWarning": "Pass på å velge den gjeldende fanen for å bruke riktig video og lyd. Opptaket er for øyeblikket begrenset til 1 GB, noe som tilsvarer rundt 100 minutter.",
+        "localRecordingWarning": "Pass på å velge den gjeldende fanen for å bruke riktig video og lyd.",
         "loggedIn": "Logget inn som {{userName}}",
         "noMicPermission": "Kunne ikke opprette mikrofonspor. Vennligst gi tillatelse til å bruke mikrofonen.",
         "noStreams": "Ingen lyd- eller videostrøm oppdaget.",

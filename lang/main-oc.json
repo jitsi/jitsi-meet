@@ -1047,7 +1047,7 @@
         "localRecordingStartWarningTitle": "Arrestar l'enregistrament per lo salvar",
         "localRecordingVideoStop": "Arrestar la vidèo arrestarà tanben l'enregistrament local. Volètz vertadièrament contunhar ?",
         "localRecordingVideoWarning": "Per enregistrar vòstra vidèo, devètz l'aver activada en començant l'enregistrament",
-        "localRecordingWarning": "Asseguratz-vos de causir l'onglet actual per utilizar lo son e la vidèo corrècts. L'enregistrament es actualament limitat a 1 Go, siá aproximativament 100 minutas.",
+        "localRecordingWarning": "Asseguratz-vos de causir l'onglet actual per utilizar lo son e la vidèo corrècts.",
         "loggedIn": "Session a {{userName}}",
         "noMicPermission": "Se pòt pas crear la pista del microfòn. Volgatz autorizar l'utilizacion del microfòn.",
         "noStreams": "Cap de flux àudio o vidèo pas detectat.",

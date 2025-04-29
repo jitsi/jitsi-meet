@@ -1006,7 +1006,7 @@
         "localRecordingStartWarningTitle": "停用錄製以保存",
         "localRecordingVideoStop": "關閉您的視訊也將停止本機錄製，確定繼續嗎？",
         "localRecordingVideoWarning": "錄製視訊必須在開始時啟用",
-        "localRecordingWarning": "確保選擇目前的分頁以錄製正確的視訊和音訊。錄製目前限制為1GB，約可錄製100分鐘。",
+        "localRecordingWarning": "確保選擇目前的分頁以錄製正確的視訊和音訊。",
         "loggedIn": "以 {{userName}} 登入",
         "noMicPermission": "無法建立麥克風軌，請允許使用麥克風的權限。",
         "noStreams": "未檢測到音訊或視訊。",

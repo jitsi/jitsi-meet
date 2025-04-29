@@ -1046,7 +1046,7 @@
         "localRecordingStartWarningTitle": "Ndaleni regjistrimin që ta ruani",
         "localRecordingVideoStop": "Ndalja e videos tuaj do të ndalë gjithashtu edhe regjistrimin vendor. Jeni i sigurt se doni të vazhdohet?",
         "localRecordingVideoWarning": "Që ta regjistroni, videon tuaj duhet ta keni të hapur, kur niset regjistrimi",
-        "localRecordingWarning": "Sigurohuni se përzgjidhni skedën e tanishme, që të mund të përdoret videoja dhe audioja e saktë. Regjistrimi aktualisht është i kufizuar deri në 1GB, çka është aty afër 100 minutave.",
+        "localRecordingWarning": "Sigurohuni se përzgjidhni skedën e tanishme, që të mund të përdoret videoja dhe audioja e saktë.",
         "loggedIn": "I futur si {{userName}}",
         "noMicPermission": "S’u krijua dot pistë mikrofoni. Ju lutemi, akordoni leje për përdorim të mikrofonit.",
         "noStreams": "S’u pikas rrjedhë audio ose video.",
