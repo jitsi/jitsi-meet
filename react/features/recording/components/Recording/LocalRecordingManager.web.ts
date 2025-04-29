@@ -160,8 +160,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
         this.fileHandle = await window.showSaveFilePicker(options);
         this.writableStream = await this.fileHandle?.createWritable();
 
-        // @ts-ignore
-        const supportsCaptureHandle = Boolean(navigator.mediaDevices.setCaptureHandleConfig) && !isEmbedded();
+        const supportsCaptureHandle = !isEmbedded();
         const tabId = uuidV4();
 
         this.selfRecording.on = onlySelf;
@@ -217,10 +216,6 @@ const LocalRecordingManager: ILocalRecordingManager = {
                 throw new Error('NoMicTrack');
             }
 
-            const currentTitle = document.title;
-
-            document.title = i18next.t('localRecording.selectTabTitle');
-
             // @ts-ignore
             gdmStream = await navigator.mediaDevices.getDisplayMedia({
                 video: { displaySurface: 'browser',
@@ -228,7 +223,6 @@ const LocalRecordingManager: ILocalRecordingManager = {
                 audio: false, // @ts-ignore
                 preferCurrentTab: true
             });
-            document.title = currentTitle;
 
             const isBrowser = gdmStream.getVideoTracks()[0].getSettings().displaySurface === 'browser';
 
@@ -294,6 +288,8 @@ const LocalRecordingManager: ILocalRecordingManager = {
             && !browser.isReactNative()
             && !isMobileBrowser()
 
+            // @ts-expect-error
+            && Boolean(navigator.mediaDevices.setCaptureHandleConfig)
             // @ts-expect-error
             && typeof window.showSaveFilePicker !== 'undefined'
             && MediaRecorder.isTypeSupported(PREFERRED_MEDIA_TYPE);
