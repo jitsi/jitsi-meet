@@ -1046,7 +1046,7 @@
         "localRecordingStartWarningTitle": "저장을 위해 녹화를 중지하세요",
         "localRecordingVideoStop": "비디오를 중지하면 로컬 녹화도 중지됩니다. 계속하시겠습니까?",
         "localRecordingVideoWarning": "비디오를 녹화하려면 녹화를 시작할 때 켜져 있어야 합니다",
-        "localRecordingWarning": "올바른 비디오 및 오디오를 사용하려면 현재 탭을 선택해야 합니다. 녹화는 현재 1GB로 제한되어 있으며, 이는 약 100분입니다.",
+        "localRecordingWarning": "올바른 비디오 및 오디오를 사용하려면 현재 탭을 선택해야 합니다.",
         "loggedIn": "{{userName}}으로 로그인했습니다.",
         "noMicPermission": "마이크 트랙을 생성할 수 없습니다. 마이크 사용 권한을 부여하세요.",
         "noStreams": "오디오 또는 비디오 스트림이 감지되지 않았습니다.",

@@ -726,7 +726,7 @@
         "localRecordingNoNotificationWarning": "A felvételt nem közöljük más résztvevőkkel. Értesítenie kell velük, hogy a találkozót rögzítették.",
         "localRecordingStartWarning": "A megbeszélésből való kilépés előtt feltétlenül állítsa le a felvételt, hogy elmentse azt.",
         "localRecordingStartWarningTitle": "Állítsa le a felvételt a mentéshez",
-        "localRecordingWarning": "Győződjön meg arról, hogy az aktuális lapot választotta a megfelelő videó és hang használatához. A felvétel jelenleg 1 GB-ra van korlátozva, ami körülbelül 100 perc.",
+        "localRecordingWarning": "Győződjön meg arról, hogy az aktuális lapot választotta a megfelelő videó és hang használatához.",
         "loggedIn": "Belépve mint {{userName}}",
         "off": "Felvétel leállítva",
         "offBy": "{{name}} leállította a felvételt",

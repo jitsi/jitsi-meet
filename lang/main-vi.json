@@ -1019,7 +1019,7 @@
         "localRecordingStartWarningTitle": "Dừng ghi âm để lưu lại",
         "localRecordingVideoStop": "Dừng video của bạn cũng sẽ dừng ghi âm cục bộ. Bạn có chắc chắn muốn tiếp tục không?",
         "localRecordingVideoWarning": "Để ghi lại video của bạn, bạn phải bật nó khi bắt đầu ghi âm",
-        "localRecordingWarning": "Đảm bảo bạn chọn tab hiện tại để sử dụng video và âm thanh đúng cách. Hiện tại, ghi âm bị giới hạn chỉ là 1GB, tương đương với khoảng 100 phút.",
+        "localRecordingWarning": "Đảm bảo bạn chọn tab hiện tại để sử dụng video và âm thanh đúng cách.",
         "loggedIn": "Đã đăng nhập dưới tên {{userName}}",
         "noMicPermission": "Không thể tạo track microphone. Vui lòng cấp quyền sử dụng microphone.",
         "noStreams": "Không phát hiện luồng âm thanh hoặc video nào.",

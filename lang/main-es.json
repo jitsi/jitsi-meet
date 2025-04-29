@@ -958,7 +958,7 @@
         "localRecordingStartWarningTitle": "Detenga la grabación para guardarla",
         "localRecordingVideoStop": "Detener su video también detendrá la grabación local. ¿Está seguro de querer continuar?",
         "localRecordingVideoWarning": "Para grabar su video debe tenerlo encendido al iniciar la grabación",
-        "localRecordingWarning": "Asegúrese de seleccionar la pestaña actual para usar el video y audio correctos. La grabación está actualmente limitada a 1GB, que son aproximadamente 100 minutos.",
+        "localRecordingWarning": "Asegúrese de seleccionar la pestaña actual para usar el video y audio correctos.",
         "loggedIn": "Sesión iniciada como {{userName}}",
         "noMicPermission": "No se pudo crear la pista de micrófono. Por favor otorgue permiso para usar el micrófono.",
         "noStreams": "",

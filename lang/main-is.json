@@ -1007,7 +1007,7 @@
         "localRecordingStartWarningTitle": "Stöðvaðu upptöku til að vista hana",
         "localRecordingVideoStop": "Ef þú stöðvar myndmerkið þitt stöðvast einnig upptakan á tölvunni. Ertu viss um að þú viljir halda áfram?",
         "localRecordingVideoWarning": "Til að taka upp myndmerkið þitt þarf það að vera í gangi þegar upptakan er sett af stað",
-        "localRecordingWarning": "Gakktu úr skugga um að þú veljir fyrirliggjandi flipa til að nota rétt mynd- og hljóðmerki. Upptakan er takmörkuð við 1GB, sem gera í kringum 100 mínútur.",
+        "localRecordingWarning": "Gakktu úr skugga um að þú veljir fyrirliggjandi flipa til að nota rétt mynd- og hljóðmerki.",
         "loggedIn": "Skráð inn sem {{userName}}",
         "noMicPermission": "Ekki var hægt að útbúa hljóðnemarás. Veittu heimildir til að nota hljóðnemann.",
         "noStreams": "Ekkert hljóð eða myndstreymi fannst",

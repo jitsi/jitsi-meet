@@ -1047,7 +1047,7 @@
         "localRecordingStartWarningTitle": "Arrêter l’enregistrement pour le sauvegarder",
         "localRecordingVideoStop": "Arrêter votre vidéo va aussi arrêter votre enregistrement local. Êtes-vous sûrs de vouloir continuer ?",
         "localRecordingVideoWarning": "Pour enregistrer votre vidéo, vous devez avoir celle-ci active au moment de commencer l’enregistrement.",
-        "localRecordingWarning": "Assurez-vous de sélectionner l’onglet courant pour utiliser le bon son et la bonne vidéo. L’enregistrement est pour le moment limité à 1 Go, soit approximativement 100 minutes.",
+        "localRecordingWarning": "Assurez-vous de sélectionner l’onglet courant pour utiliser le bon son et la bonne vidéo.",
         "loggedIn": "Connecté en tant que {{userName}}",
         "noMicPermission": "La piste microphone ne peut pas être créée. Veuillez autoriser l’utilisation du microphone.",
         "noStreams": "Aucun flux audio ou vidéo détectés.",

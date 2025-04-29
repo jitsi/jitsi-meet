@@ -1035,7 +1035,7 @@
         "localRecordingStartWarningTitle": "Parar a gravação para a salvar",
         "localRecordingVideoStop": "A paragem do seu vídeo também irá parar a gravação local. Tem a certeza de que quer continuar?",
         "localRecordingVideoWarning": "Para gravar o seu vídeo deve tê-lo ligado quando iniciar a gravação",
-        "localRecordingWarning": "Certifique-se de selecionar o separador actual a fim de utilizar o vídeo e áudio corretos. A gravação está actualmente limitada a 1 GB, o que é cerca de 100 minutos.",
+        "localRecordingWarning": "Certifique-se de selecionar o separador actual a fim de utilizar o vídeo e áudio corretos.",
         "loggedIn": "Conectado como {{userName}}",
         "noMicPermission": "Não foi possível criar a faixa de microfone. Por favor, conceda permissão para utilizar o microfone.",
         "noStreams": "Não foi detetado nenhum sinal áudio ou vídeo.",
