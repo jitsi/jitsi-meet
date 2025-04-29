@@ -1,4 +1,3 @@
-import i18next from 'i18next';
 import { v4 as uuidV4 } from 'uuid';
 
 import { IStore } from '../../../app/types';
@@ -221,9 +220,13 @@ const LocalRecordingManager: ILocalRecordingManager = {
                     displaySurface: 'browser',
                     frameRate: 30
                 },
-                audio: false,
+                audio: {
+                    // @ts-ignore
+                    suppressLocalAudioPlayback: false,
+                },
                 // @ts-ignore
-                preferCurrentTab: true
+                preferCurrentTab: true,
+                surfaceSwitching: 'exclude'
             });
 
             const isBrowser = gdmStream.getVideoTracks()[0].getSettings().displaySurface === 'browser';
@@ -237,14 +240,10 @@ const LocalRecordingManager: ILocalRecordingManager = {
 
             this.initializeAudioMixer();
 
-            const allTracks = getTrackState(getState());
+            this.addAudioTrackToLocalRecording(localAudioTrack);
 
-            allTracks.forEach((track: any) => {
-                if (track.mediaType === MEDIA_TYPE.AUDIO) {
-                    const audioTrack = track?.jitsiTrack?.track;
-
-                    this.addAudioTrackToLocalRecording(audioTrack);
-                }
+            gdmStream.getAudioTracks().forEach((track: MediaStreamTrack) => {
+                this.addAudioTrackToLocalRecording(track);
             });
             this.stream = new MediaStream([
                 ...this.audioDestination?.stream.getAudioTracks() || [],
