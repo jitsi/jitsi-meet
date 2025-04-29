@@ -308,7 +308,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case TRACK_ADDED: {
         const { track } = action;
 
-        if (LocalRecordingManager.isRecordingLocally() && track.mediaType === MEDIA_TYPE.AUDIO) {
+        if (LocalRecordingManager.isRecordingLocally()
+                && track.mediaType === MEDIA_TYPE.AUDIO && track.local) {
             const audioTrack = track.jitsiTrack.track;
 
             LocalRecordingManager.addAudioTrackToLocalRecording(audioTrack);
