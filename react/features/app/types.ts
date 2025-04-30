@@ -178,7 +178,7 @@ export interface IReduxState {
     "features/web-hid": IWebHid;
     "features/whiteboard": IWhiteboardState;
     "features/meet-room": IJoinRoomErrorState;
-    "features/meet": MeetingState;
+    "features/meeting": MeetingState;
 }
 
 export interface IReloadNowOptions {
