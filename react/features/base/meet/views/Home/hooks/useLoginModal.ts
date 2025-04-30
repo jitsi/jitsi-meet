@@ -61,7 +61,6 @@ export function useLoginModal({ onClose, onLogin, translate }: UseAuthModalProps
             try {
                 return await AuthService.instance.doLogin(email, password, twoFactorCode);
             } catch (err) {
-                console.error("Error in authenticateUser", err);
                 throw new Error(translate("meet.auth.modal.error.invalidCredentials"));
             }
         },
@@ -124,6 +123,7 @@ export function useLoginModal({ onClose, onLogin, translate }: UseAuthModalProps
 
         saveRoomId(meetData.room);
         saveUserSession(loginCredentials);
+
         onClose();
     };
 

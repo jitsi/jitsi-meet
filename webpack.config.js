@@ -223,6 +223,7 @@ function getConfig(options = {}) {
                 // Provide some empty Node modules (required by AtlasKit, olm).
                 crypto: "crypto-browserify",
                 vm: "vm-browserify",
+                buffer: require.resolve("buffer/"),
                 fs: false,
                 path: false,
                 process: false,

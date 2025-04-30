@@ -66,10 +66,9 @@ export const useSignup = ({ onClose, onSignup, translate, referrer }: useSignupP
                     mnemonic: mnemonic,
                 });
             }
-            console.log("aqui");
+
             onClose();
         } catch (error: any) {
-            console.error("Signup error:", error);
             setSignupError(error.message ?? translate("meet.auth.modal.signup.error.signupFailed"));
         } finally {
             setIsSigningUp(false);

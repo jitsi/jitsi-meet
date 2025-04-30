@@ -1,7 +1,8 @@
-import { Auth, Drive } from '@internxt/sdk';
-import { ApiSecurity, AppDetails } from '@internxt/sdk/dist/shared';
-import packageJson from '../../../../../package.json';
-import { ConfigService } from './config.service';
+import { Auth, Drive, Meet } from "@internxt/sdk";
+import { ApiSecurity, AppDetails } from "@internxt/sdk/dist/shared";
+import packageJson from "../../../../../package.json";
+import LocalStorageManager from "../LocalStorageManager";
+import { ConfigService } from "./config.service";
 
 export type SdkManagerApiSecurity = ApiSecurity & { newToken: string };
 /**
@@ -11,6 +12,7 @@ export type SdkManagerApiSecurity = ApiSecurity & { newToken: string };
 export class SdkManager {
     public static readonly instance: SdkManager = new SdkManager();
     private static apiSecurity?: SdkManagerApiSecurity;
+    private readonly localStorage = LocalStorageManager;
 
     /**
      * Sets the security details needed to create SDK clients
@@ -42,6 +44,17 @@ export class SdkManager {
         return SdkManager.apiSecurity as SdkManagerApiSecurity;
     };
 
+    private getNewTokenApiSecurity(): ApiSecurity {
+        return {
+            token: localStorage.getItem("xNewToken") ?? "",
+            unauthorizedCallback: () => {
+                if (this.localStorage.clearCredentials) {
+                    this.localStorage.clearCredentials();
+                }
+            },
+        };
+    }
+
     /**
      * Returns the application details from package.json
      * @returns The name and the version of the app from package.json
@@ -52,16 +65,6 @@ export class SdkManager {
             clientVersion: packageJson.version,
         };
     };
-
-    /** Auth old client SDK */
-    getAuth() {
-        const DRIVE_API_URL = ConfigService.instance.get("DRIVE_API_URL");
-
-        const apiSecurity = SdkManager.getApiSecurity({ throwErrorOnMissingCredentials: false });
-        const appDetails = SdkManager.getAppDetails();
-
-        return Auth.client(DRIVE_API_URL, appDetails, apiSecurity);
-    }
 
     getNewAuth() {
         const DRIVE_NEW_API_URL = ConfigService.instance.get("DRIVE_NEW_API_URL");
@@ -80,5 +83,25 @@ export class SdkManager {
         const appDetails = SdkManager.getAppDetails();
 
         return Drive.Users.client(DRIVE_API_URL, appDetails, apiSecurity);
+    }
+
+    /** Payments SDK */
+    getPayments() {
+        const PAYMENTS_API_URL = ConfigService.instance.get("PAYMENTS_API_URL");
+
+        const apiSecurity = this.getNewTokenApiSecurity();
+        const appDetails = SdkManager.getAppDetails();
+
+        return Drive.Payments.client(PAYMENTS_API_URL, appDetails, apiSecurity);
+    }
+
+    /** Meet SDK */
+    getMeet() {
+        const MEET_API_URL = ConfigService.instance.get("MEET_API_URL");
+
+        const apiSecurity = this.getNewTokenApiSecurity();
+        const appDetails = SdkManager.getAppDetails();
+
+        return Meet.client(MEET_API_URL, appDetails, apiSecurity);
     }
 }
