@@ -36,6 +36,7 @@ import { isRecorderTranscriptionsRunning } from '../transcribing/functions';
 import { RECORDING_SESSION_UPDATED, START_LOCAL_RECORDING, STOP_LOCAL_RECORDING } from './actionTypes';
 import {
     clearRecordingSessions,
+    markConsentRequested,
     hidePendingRecordingNotification,
     showPendingRecordingNotification,
     showRecordingError,
@@ -420,6 +421,7 @@ function _showExplicitConsentDialog(recorderSession: any, dispatch: IStore['disp
     }
 
     batch(() => {
+        dispatch(markConsentRequested(recorderSession.getID()));
         dispatch(setAudioUnmutePermissions(true, true));
         dispatch(setVideoUnmutePermissions(true, true));
         dispatch(setAudioMuted(true));

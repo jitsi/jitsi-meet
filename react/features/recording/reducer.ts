@@ -2,6 +2,7 @@ import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     CLEAR_RECORDING_SESSIONS,
+    MARK_CONSENT_REQUESTED,
     RECORDING_SESSION_UPDATED,
     SET_MEETING_HIGHLIGHT_BUTTON_STATE,
     SET_PENDING_RECORDING_NOTIFICATION_UID,
@@ -11,6 +12,7 @@ import {
 } from './actionTypes';
 
 const DEFAULT_STATE = {
+    consentRequested: new Set(),
     disableHighlightMeetingMoment: false,
     pendingNotificationUids: {},
     selectedRecordingService: '',
@@ -29,6 +31,7 @@ export interface ISessionData {
 }
 
 export interface IRecordingState {
+    consentRequested: Set<any>;
     disableHighlightMeetingMoment: boolean;
     pendingNotificationUids: {
         [key: string]: string | undefined;
@@ -55,6 +58,15 @@ ReducerRegistry.register<IRecordingState>(STORE_NAME,
             return {
                 ...state,
                 sessionDatas: []
+            };
+
+        case MARK_CONSENT_REQUESTED:
+            return {
+                ...state,
+                consentRequested: new Set([
+                    ...state.consentRequested,
+                    action.sessionId
+                ])
             };
 
         case RECORDING_SESSION_UPDATED:

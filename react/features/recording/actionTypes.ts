@@ -9,6 +9,16 @@
 export const CLEAR_RECORDING_SESSIONS = 'CLEAR_RECORDING_SESSIONS';
 
 /**
+ * The type of Redux action which marks a session ID as consent requested.
+ *
+ * {
+ *     type: MARK_CONSENT_REQUESTED,
+ *     sessionId: string
+ * }
+ */
+export const MARK_CONSENT_REQUESTED = 'MARK_CONSENT_REQUESTED';
+
+/**
  * The type of Redux action which updates the current known state of a recording
  * session.
  *
