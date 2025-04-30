@@ -547,6 +547,7 @@ export interface IConfig {
         requireConsent?: boolean;
         showPrejoinWarning?: boolean;
         showRecordingLink?: boolean;
+        skipConsentInMeeting?: boolean;
         suggestRecording?: boolean;
     };
     remoteVideoMenu?: {
