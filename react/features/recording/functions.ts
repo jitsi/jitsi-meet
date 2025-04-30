@@ -442,6 +442,7 @@ export function shouldRequireRecordingConsent(recorderSession: any, state: IRedu
     const { requireRecordingConsent } = state['features/dynamic-branding'] || {};
     const { requireConsent } = state['features/base/config'].recordings || {};
     const { iAmRecorder } = state['features/base/config'];
+    const { consentRequested } = state['features/recording'];
 
     if (iAmRecorder) {
         return false;
@@ -455,10 +456,15 @@ export function shouldRequireRecordingConsent(recorderSession: any, state: IRedu
         return false;
     }
 
-    if (!recorderSession.getInitiator()
-        || recorderSession.getStatus() === JitsiRecordingConstants.status.OFF) {
+    if (consentRequested.has(recorderSession.getID())) {
         return false;
     }
 
-    return recorderSession.getInitiator() !== getLocalParticipant(state)?.id;
+    const initiator = recorderSession.getInitiator();
+
+    if (!initiator || recorderSession.getStatus() === JitsiRecordingConstants.status.OFF) {
+        return false;
+    }
+
+    return initiator !== getLocalParticipant(state)?.id;
 }
