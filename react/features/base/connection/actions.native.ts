@@ -22,9 +22,8 @@ export function connect(id?: string, password?: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { jwt } = state['features/base/jwt'];
-        const { iAmRecorder, iAmSipGateway } = state['features/base/config'];
 
-        if (!iAmRecorder && !iAmSipGateway && isVpaasMeeting(state)) {
+        if (isVpaasMeeting(state)) {
             return dispatch(getCustomerDetails())
                 .then(() => {
                     if (!jwt) {
