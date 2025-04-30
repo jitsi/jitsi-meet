@@ -401,6 +401,8 @@ var config = {
     //    // If true, mutes audio and video when a recording begins and displays a dialog
     //    // explaining the effect of unmuting.
     //    // requireConsent: true,
+    //    // If true consent will be skipped for users who are already in the meeting.
+    //    // skipConsentInMeeting: true,
     // },
 
     // recordingService: {

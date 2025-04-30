@@ -439,8 +439,10 @@ export function isLiveStreamingButtonVisible({
  * @returns {boolean}
  */
 export function shouldRequireRecordingConsent(recorderSession: any, state: IReduxState) {
-    const { requireRecordingConsent } = state['features/dynamic-branding'] || {};
-    const { requireConsent } = state['features/base/config'].recordings || {};
+    const { requireRecordingConsent, skipRecordingConsentInMeeting }
+        = state['features/dynamic-branding'] || {};
+    const { conference } = state['features/base/conference'] || {};
+    const { requireConsent, skipConsentInMeeting } = state['features/base/config'].recordings || {};
     const { iAmRecorder } = state['features/base/config'];
     const { consentRequested } = state['features/recording'];
 
@@ -457,6 +459,13 @@ export function shouldRequireRecordingConsent(recorderSession: any, state: IRedu
     }
 
     if (consentRequested.has(recorderSession.getID())) {
+        return false;
+    }
+
+    // If we join a meeting that has an ongoing recording `conference` will be undefined since
+    // we get the recording state through the initial presence which happens in between the
+    // WILL_JOIN and JOINED events.
+    if (conference && (skipConsentInMeeting || skipRecordingConsentInMeeting)) {
         return false;
     }
 
