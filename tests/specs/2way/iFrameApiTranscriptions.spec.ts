@@ -197,7 +197,7 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
 
     // @ts-ignore
     const firstEntryData = result[0].value.data;
-    const stable = firstEntryData.stable;
+    const stable = firstEntryData.stable || firstEntryData.final;
     const language = firstEntryData.language;
     const messageID = firstEntryData.messageID;
     const p1Id = await p1.getEndpointId();
@@ -210,7 +210,7 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
 
         return v.data;
     }).forEach(tr => {
-        const checkTranscripts = stable.includes(tr.stable) || tr.stable.includes(stable);
+        const checkTranscripts = stable.includes(tr.stable || tr.final) || (tr.stable || tr.final).includes(stable);
 
         if (!checkTranscripts) {
             console.log('received events', result);
