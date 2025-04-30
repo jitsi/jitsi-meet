@@ -41,10 +41,10 @@ export default class IframeAPI extends BasePageObject {
     addEventListener(eventName: string) {
         return this.participant.execute(
             (event, prefix) => {
-                console.log(`${new Date().toISOString()} ${prefix} Adding listener for event: ${event}`);
+                console.log(`${new Date().toISOString()} ${prefix}iframeAPI - Adding listener for event: ${event}`);
                 window.jitsiAPI.addListener(event, evt => {
                     console.log(
-                        `${new Date().toISOString()} ${prefix} Received ${event} event: ${JSON.stringify(evt)}`);
+                        `${new Date().toISOString()} ${prefix}iframeAPI - Received ${event} event: ${JSON.stringify(evt)}`);
                     window.jitsiAPI.test[event] = evt;
                 });
             }, eventName, LOG_PREFIX);
