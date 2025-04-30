@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
  * @returns {JSX.Element} The left content component
  */
 const LeftContent = React.memo(
-    ({onClick}:{onClick: () => void}): JSX.Element => (
+    ({ onClick }: { onClick: () => void }): JSX.Element => (
         <button className="rounded-2xl border bg-black/50 border-white/10" onClick={onClick}>
             <div
                 className="flex items-center space-x-2 h-12 px-3"
@@ -47,9 +47,9 @@ interface RightContentProps {
     translate: Function;
 
     /**
-     * Handler for the new meeting button
+     * MeetingButton component (handles New Meeting or Upgrade)
      */
-    onNewMeeting?: () => void;
+    meetingButton?: React.ReactNode;
 
     /**
      * Handler for the login button
@@ -70,11 +70,6 @@ interface RightContentProps {
      * Handler for the settings button
      */
     onOpenSettings?: () => void;
-
-    /**
-     * Whether the new meeting button should be disabled
-     */
-    isCreatingMeeting?: boolean;
 }
 
 /**
@@ -88,12 +83,11 @@ const RightContent = React.memo(
         avatar,
         fullName,
         translate,
-        onNewMeeting,
+        meetingButton,
         onLogin,
         onSignUp,
         onLogout,
         onOpenSettings,
-        isCreatingMeeting = false,
     }: RightContentProps): JSX.Element => {
         const [showMenu, setShowMenu] = useState(false);
 
@@ -124,16 +118,7 @@ const RightContent = React.memo(
 
         return isLogged ? (
             <div className="flex space-x-2 flex-row">
-                {onNewMeeting && (
-                    <Button
-                        variant="primary"
-                        onClick={onNewMeeting}
-                        disabled={isCreatingMeeting}
-                        loading={isCreatingMeeting}
-                    >
-                        {translate("meet.preMeeting.newMeeting")}
-                    </Button>
-                )}
+                {meetingButton}
 
                 <div className="relative">
                     <button
@@ -248,9 +233,9 @@ interface HeaderProps {
     translate: Function;
 
     /**
-     * Handler for the new meeting button
+     * MeetingButton component (handles New Meeting or Upgrade)
      */
-    onNewMeeting?: () => void;
+    meetingButton?: React.ReactNode;
 
     /**
      * Handler for the login button
@@ -278,12 +263,6 @@ interface HeaderProps {
     className?: string;
 
     /**
-     * Whether a new meeting is being created
-     */
-    isCreatingMeeting?: boolean;
-
-
-     /**
      * Handler for navigate to home page
      */
     navigateToHomePage: () => void;
@@ -297,29 +276,27 @@ interface HeaderProps {
 const Header = ({
     userData,
     translate,
-    onNewMeeting,
+    meetingButton,
     onLogin,
     onSignUp,
     onLogout,
     onOpenSettings,
     className = "z-50 py-3",
-    isCreatingMeeting = false,
     navigateToHomePage,
 }: HeaderProps) => (
     <IntxHeader
-        leftContent={<LeftContent onClick={navigateToHomePage}/>}
+        leftContent={<LeftContent onClick={navigateToHomePage} />}
         rightContent={
             <RightContent
                 isLogged={!!userData}
                 avatar={userData?.avatar ?? null}
                 fullName={userData ? `${userData.name} ${userData.lastname}` : ""}
                 translate={translate}
-                onNewMeeting={onNewMeeting}
+                meetingButton={meetingButton}
                 onLogin={onLogin}
                 onSignUp={onSignUp}
                 onLogout={onLogout}
                 onOpenSettings={onOpenSettings}
-                isCreatingMeeting={isCreatingMeeting}
             />
         }
         className={className}

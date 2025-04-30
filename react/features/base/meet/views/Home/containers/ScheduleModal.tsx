@@ -57,14 +57,18 @@ const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                     <Button onClick={onClose} variant="secondary" className="px-6 py-3">
                         {translate("meet.modals.schedule.cancelButton")}
                     </Button>
-                    <Button onClick={handleCopy} className="px-6 py-3">
-                        {copied
-                            ? translate("meet.modals.schedule.copiedButton")
-                            : translate("meet.modals.schedule.copyButton")}
-                    </Button>
-                    <Button onClick={onJoinNow} variant="primary" className="px-6 py-3">
-                        {translate("meet.modals.schedule.joinNow")}
-                    </Button>
+                    {!inputErrorMessage && (
+                        <>
+                            <Button onClick={handleCopy} className="px-6 py-3">
+                                {copied
+                                    ? translate("meet.modals.schedule.copiedButton")
+                                    : translate("meet.modals.schedule.copyButton")}
+                            </Button>
+                            <Button onClick={onJoinNow} variant="primary" className="px-6 py-3">
+                                {translate("meet.modals.schedule.joinNow")}
+                            </Button>
+                        </>
+                    )}
                 </div>
             </div>
         </Modal>

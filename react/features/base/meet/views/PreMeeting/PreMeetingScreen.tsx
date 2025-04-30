@@ -18,6 +18,7 @@ import UnsafeRoomWarning from "../../../premeeting/components/web/UnsafeRoomWarn
 import { updateSettings } from "../../../settings/actions";
 import { getDisplayName } from "../../../settings/functions.web";
 import { withPixelLineHeight } from "../../../styles/functions.web";
+import MeetingButton from "../../general/containers/MeetingButton";
 import { setCreateRoomError } from "../../general/store/errors/actions";
 import { useLocalStorage } from "../../LocalStorageManager";
 import { ErrorModals, ErrorType } from "./components/ErrorModals";
@@ -294,8 +295,16 @@ const PreMeetingScreen = ({
                     onLogin={handleRedirectToLogin}
                     onLogout={onLogout}
                     onSignUp={handleRedirectToSignUp}
-                    onNewMeeting={isInNewMeeting ? undefined : handleNewMeeting}
-                    isCreatingMeeting={isCreatingMeeting}
+                    meetingButton={
+                        isInNewMeeting ? (
+                            <MeetingButton
+                                onNewMeeting={handleNewMeeting}
+                                translate={t}
+                                loading={isCreatingMeeting}
+                                className="w-full sm:w-auto"
+                            />
+                        ) : null
+                    }
                     navigateToHomePage={navigateToHomePage}
                 />
                 <ErrorModals
