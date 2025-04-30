@@ -1,4 +1,4 @@
-import { Tier } from "@internxt/sdk/dist/drive/payments/Tier";
+import { Tier } from "@internxt/sdk/dist/drive/payments/types/tiers";
 import { SET_CURRENT_ROOM, UPDATE_MEETING_CONFIG } from "./actionTypes";
 
 /**
