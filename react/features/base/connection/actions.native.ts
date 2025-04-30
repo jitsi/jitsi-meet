@@ -1,10 +1,13 @@
 import { appNavigate } from '../../app/actions.native';
 import { IStore } from '../../app/types';
+import { getCustomerDetails } from '../../jaas/actions.any';
+import { isVpaasMeeting, getJaasJWT } from '../../jaas/functions';
 import { navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../mobile/navigation/routes';
+import { setJWT } from '../jwt/actions';
 import { JitsiConnectionErrors } from '../lib-jitsi-meet';
 
-import { _connectInternal } from './actions.any';
+import { _connectInternal } from './actions.native';
 
 export * from './actions.any';
 
@@ -16,12 +19,32 @@ export * from './actions.any';
  * @returns {Function}
  */
 export function connect(id?: string, password?: string) {
-    return (dispatch: IStore['dispatch']) => dispatch(_connectInternal(id, password))
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const { jwt } = state['features/base/jwt'];
+
+        if (isVpaasMeeting(state)) {
+            return dispatch(getCustomerDetails())
+                .then(() => {
+                    if (!jwt) {
+                        return getJaasJWT(state);
+                    }
+                })
+                .then(j => {
+                    j && dispatch(setJWT(j));
+
+                    return dispatch(_connectInternal(id, password));
+                });
+        }
+
+        dispatch(_connectInternal(id, password))
+
         .catch(error => {
             if (error === JitsiConnectionErrors.NOT_LIVE_ERROR) {
                 navigateRoot(screen.visitorsQueue);
             }
         });
+    };
 }
 
 /**
