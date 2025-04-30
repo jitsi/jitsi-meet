@@ -11,6 +11,19 @@ vi.mock("bip39");
 vi.mock("../../../services/crypto.service");
 vi.mock("../../../services/keys.service");
 vi.mock("../../../services/sdk-manager.service");
+vi.mock("../../../LocalStorageManager", () => {
+    const mockInstance = {
+        getToken: vi.fn(),
+    };
+    return {
+        default: {
+            instance: mockInstance,
+        },
+        useLocalStorage: () => ({
+            saveCredentials: vi.fn(),
+        }),
+    };
+});
 
 describe("useSignup", () => {
     const mockTranslate = vi.fn((key: string) => `translated-${key}`);
@@ -74,7 +87,9 @@ describe("useSignup", () => {
 
         mockAuthClient.register.mockResolvedValue({
             token: "test-token",
+            newToken: "test-new-token",
             user: { id: "user-id", email: "test@example.com" },
+            uuid: "test-uuid",
         });
     });
 
@@ -170,24 +185,21 @@ describe("useSignup", () => {
         });
 
         it("should process signup successfully including the onSignup callback", async () => {
-            const capturedArgs = { token: null, userData: null };
-            mockOnSignup.mockImplementation((token, userData) => {
-                capturedArgs.token = token;
-                capturedArgs.userData = userData;
+            let capturedSignupData = null;
+
+            mockOnSignup.mockImplementation((signupData) => {
+                capturedSignupData = signupData;
             });
 
-            mockAuthClient.register.mockImplementation(async () => {
-                const response = {
-                    token: "direct-token",
-                    user: { id: "direct-id", email: "direct@example.com" },
-                };
-
-                mockOnSignup(response.token, {
-                    ...response.user,
+            mockAuthClient.register.mockResolvedValue({
+                token: "direct-token",
+                newToken: "direct-new-token",
+                user: {
+                    id: "direct-id",
+                    email: "direct@example.com",
+                    uuid: "direct-uuid",
                     mnemonic: "test-mnemonic",
-                });
-
-                return response;
+                },
             });
 
             const { result } = renderHook(() =>
@@ -204,11 +216,15 @@ describe("useSignup", () => {
             });
 
             expect(mockOnSignup).toHaveBeenCalled();
-            expect(capturedArgs.token).toBe("direct-token");
-            expect(capturedArgs.userData).toEqual({
-                id: "direct-id",
-                email: "direct@example.com",
-                mnemonic: "test-mnemonic",
+            expect(capturedSignupData).toEqual({
+                token: "direct-token",
+                newToken: "direct-new-token",
+                userData: {
+                    id: "direct-id",
+                    email: "direct@example.com",
+                    uuid: "direct-uuid",
+                    mnemonic: "test-mnemonic",
+                },
             });
         });
 
