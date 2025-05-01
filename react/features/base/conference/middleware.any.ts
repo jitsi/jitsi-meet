@@ -74,12 +74,12 @@ import { IConferenceMetadata } from './reducer';
 /**
  * Handler for page hide event.
  */
-let pageHideHandler: ((e?: any) => void) | undefined;
+let pageHideHandler: ((_e: PageTransitionEvent) => void) | undefined;
 
 /**
  * Handler for before unload event.
  */
-let beforeUnloadHandler: ((e?: any) => void) | undefined;
+let beforeUnloadHandler: ((e: BeforeUnloadEvent) => boolean) | undefined;
 
 /**
  * Implements the middleware of the feature base/conference.
@@ -302,13 +302,9 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
     // handles the process of leaving the conference. This is temporary solution
     // that should cover the described use case as part of the effort to
     // implement the conferenceWillLeave action for web.
-    pageHideHandler = (e?: any) => {
+    pageHideHandler = (_e: PageTransitionEvent) => {
         if (LocalRecordingManager.isRecordingLocally()) {
             dispatch(stopLocalVideoRecording());
-            if (e) {
-                e.preventDefault();
-                e.returnValue = null;
-            }
         }
         dispatch(conferenceWillLeave(conference));
     };
@@ -319,11 +315,12 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
         dispatch(overwriteConfig({ disableFocus: false }));
     }
 
-    beforeUnloadHandler = (e?: any) => {
+    beforeUnloadHandler = (e: BeforeUnloadEvent): boolean => {
         e.preventDefault();
-
         // Included for legacy support, e.g. Chrome/Edge < 119
         e.returnValue = true;
+
+        return true;
     };
 
     window.addEventListener('beforeunload', beforeUnloadHandler);

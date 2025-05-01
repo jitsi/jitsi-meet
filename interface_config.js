@@ -22,7 +22,7 @@ var interfaceConfig = {
      * Note: this mode is experimental and subject to breakage.
      */
     AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only',
-        BRAND_WATERMARK_LINK: '',
+    BRAND_WATERMARK_LINK: '',
 
     /**
      * A html text to be shown to guests on the close page, false disables it
@@ -74,7 +74,7 @@ var interfaceConfig = {
      */
     HIDE_INVITE_MORE_HEADER: false,
 
-        JITSI_WATERMARK_LINK: 'https://sonacove.com',
+    JITSI_WATERMARK_LINK: 'https://sonacove.com',
 
     LANG_DETECTION: true, // Allow i18n to detect the system language
     LOCAL_THUMBNAIL_RATIO: 16 / 9, // 16:9
@@ -122,7 +122,7 @@ var interfaceConfig = {
      */
     SHARING_FEATURES: [ 'email', 'url' ],
 
-        SHOW_BRAND_WATERMARK: false,
+    SHOW_BRAND_WATERMARK: false,
 
     /**
      * Decides whether the chrome extension banner should be rendered on the landing page and during the meeting.
@@ -131,8 +131,8 @@ var interfaceConfig = {
      */
     SHOW_CHROME_EXTENSION_BANNER: false,
 
-        SHOW_JITSI_WATERMARK: false,
-        SHOW_POWERED_BY: false,
+    SHOW_JITSI_WATERMARK: true,
+    SHOW_POWERED_BY: false,
     SHOW_PROMOTIONAL_CLOSE_PAGE: false,
 
     /*

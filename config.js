@@ -1286,7 +1286,7 @@ var config = {
     //     },
         // If true, any checks to handoff to another application will be prevented
         // and instead the app will continue to display in the current browser.
-        disabled: true,
+        disabled: false,
 
         //     // whether to hide the logo on the deep linking pages.
         //     hideLogo: false,

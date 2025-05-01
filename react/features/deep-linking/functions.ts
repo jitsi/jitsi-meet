@@ -57,11 +57,15 @@ export function getDeepLinkingPage(state: IReduxState) {
     const { launchInWeb } = state['features/deep-linking'];
     const deeplinking = state['features/base/config'].deeplinking || {};
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const skipDeepLink = urlParams.get('skipDeepLink') === 'true';
+
     // @ts-ignore
     const { appScheme } = deeplinking?.[Platform.OS as keyof typeof deeplinking] || {};
 
     // Show only if we are about to join a conference.
     if (launchInWeb
+            || skipDeepLink
             || !room
             || state['features/base/config'].deeplinking?.disabled
             || browser.isElectron()
