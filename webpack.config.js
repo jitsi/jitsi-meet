@@ -8,13 +8,6 @@ const webpack = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 /**
- * The URL of the Jitsi Meet deployment to be proxy to in the context of
- * development with webpack-dev-server.
- */
-const devServerProxyTarget
-    = process.env.WEBPACK_DEV_SERVER_PROXY_TARGET || 'https://alpha.jitsi.net';
-
-/**
  * Build a Performance configuration object for the given size.
  * See: https://webpack.js.org/configuration/performance/
  *
@@ -54,34 +47,54 @@ function getBundleAnalyzerPlugin(analyzeBundle, name) {
 }
 
 /**
- * Determines whether a specific (HTTP) request is to bypass the proxy of
- * webpack-dev-server (i.e. is to be handled by the proxy target) and, if not,
- * which local file is to be served in response to the request.
- *
- * @param {Object} request - The (HTTP) request received by the proxy.
- * @returns {string|undefined} If the request is to be served by the proxy
- * target, undefined; otherwise, the path to the local file to be served.
+ * Simple SSI processing function
+ * @param {string} html - The HTML content to process
+ * @param {number} depth - Current recursion depth
+ * @param {Set<string>} includedFiles - Set of already included files to prevent cycles
+ * @returns {string} The processed HTML with SSI directives resolved
  */
-function devServerProxyBypass({ path }) {
-    if (path.startsWith('/css/')
-            || path.startsWith('/doc/')
-            || path.startsWith('/fonts/')
-            || path.startsWith('/images/')
-            || path.startsWith('/lang/')
-            || path.startsWith('/sounds/')
-            || path.startsWith('/static/')
-            || path.endsWith('.wasm')) {
+function processSSI(html, depth = 0, includedFiles = new Set()) {
+    const MAX_DEPTH = 3;
 
-        return path;
+    // Basic SSI implementation - handles <!--#include virtual="/path/to/file" -->
+    const ssiPattern = /<!--#include\s+virtual="([^"]+)"\s*-->/g;
+    let result = html;
+
+    if (depth >= MAX_DEPTH) {
+        console.warn(`SSI processing reached max depth of ${MAX_DEPTH}, stopping recursion`);
+
+        return result;
     }
 
-    if (path.startsWith('/libs/')) {
-        if (path.endsWith('.min.js') && !fs.existsSync(join(process.cwd(), path))) {
-            return path.replace('.min.js', '.js');
+    result = result.replace(ssiPattern, (fullMatch, includePath) => {
+        try {
+            const absolutePath = join(process.cwd(), includePath);
+
+            if (includedFiles.has(absolutePath)) {
+                console.warn(`SSI circular include detected: ${absolutePath}`);
+
+                return '<!-- SSI circular include detected -->';
+            }
+
+            // console.log(`SSI processing: ${includePath} -> ${absolutePath}`);
+            if (fs.existsSync(absolutePath)) {
+                const content = fs.readFileSync(absolutePath, 'utf8');
+
+                includedFiles.add(absolutePath);
+
+                return processSSI(content, depth + 1, includedFiles);
+            }
+            console.warn(`SSI include file not found: ${absolutePath}`);
+
+            return '<!-- SSI include file not found -->';
+        } catch (err) {
+            console.error(`SSI include error for ${includePath}:`, err);
+
+            return `<!-- SSI error: ${err.message} -->`;
         }
+    });
 
-        return path;
-    }
+    return result;
 }
 
 /**
@@ -249,66 +262,66 @@ function getDevServerConfig() {
                 throw new Error('webpack-dev-server is not defined');
             }
 
-            // Simple SSI processor
-            const processSSI = (content, basePath) => {
-                const includeRegex = /<!--#include\s+virtual="([^"]+)"\s*-->/g;
+            // Middleware 1: Handle .min.js fallback to .js in /libs/ directory
+            devServer.app.use((req, res, next) => {
+                const urlPath = req.url.split('?')[0];
 
-                return content.replace(includeRegex, (match, path) => {
-                    const includePath = join(basePath, path.startsWith('/') ? path.slice(1) : path);
-
-                    console.log('Processing SSI include:', includePath);
-                    try {
-                        return fs.readFileSync(includePath, 'utf-8');
-                    } catch (err) {
-                        console.error('Failed to read include file:', includePath, err);
-
-                        return `<!-- Failed to include ${path} -->`;
+                if (urlPath.startsWith('/libs/') && urlPath.endsWith('.min.js')) {
+                    if (!fs.existsSync(join(process.cwd(), urlPath))) {
+                        req.url = urlPath.replace('.min.js', '.js');
                     }
-                });
-            };
+                }
+                next();
+            });
 
-            // Add SSI processing middleware
-            middlewares.unshift({
-                name: 'ssi-middleware',
-                middleware: (req, res, next) => {
-                    // console.log('Request path:', req.path);
+            // Middleware 2: Handle SPA fallback to index.html
+            devServer.app.use((req, res, next) => {
+                const urlPath = req.url.split('?')[0].split('#')[0]; // Remove query params and hash
+                const pathName = urlPath === '/' ? '/' : urlPath.replace(/\/$/, ''); // Normalize path
 
-                    // Handle root path and HTML files
-                    if (req.path === '/' || req.path.endsWith('.html')) {
-                        const filePath
-                            = req.path === '/' ? join(process.cwd(), 'index.html') : join(process.cwd(), req.path);
+                // Skip assets, existing files, and special paths
+                if (urlPath.match(/\.(js|css|map|json|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/)) {
+                    return next();
+                }
+                const filePath = join(process.cwd(), pathName);
 
-                        // console.log('Processing file:', filePath);
+                if (
+                    pathName === '/'
+                    || pathName === '/index.html'
+                    || !fs.existsSync(filePath)
+                    || fs.statSync(filePath).isDirectory()
+                ) {
+                    req.url = '/index.html';
+                }
+                next();
+            });
 
-                        try {
-                            let content = fs.readFileSync(filePath, 'utf-8');
+            // Middleware 3: Apply SSI for html files
+            devServer.app.use((req, res, next) => {
+                const urlPath = req.url.split('?')[0];
+                const filePath = join(process.cwd(), urlPath);
 
-                            content = processSSI(content, process.cwd());
-                            res.set('Content-Type', 'text/html');
-                            res.send(content);
-                        } catch (err) {
-                            console.error('Error processing file:', err);
-                            next(err);
-                        }
-                    } else {
+                if (!urlPath.endsWith('.html')) {
+                    return next();
+                }
+
+                // If the file exists, read it, process SSI, and send the result
+                if (fs.existsSync(filePath)) {
+                    try {
+                        const content = fs.readFileSync(filePath, 'utf8');
+
+                        res.setHeader('Content-Type', 'text/html');
+                        res.send(processSSI(content));
+                    } catch (err) {
                         next();
                     }
+                } else {
+                    next();
                 }
             });
 
             return middlewares;
         },
-        proxy: [
-            {
-                context: [ '/' ],
-                bypass: devServerProxyBypass,
-                secure: false,
-                target: devServerProxyTarget,
-                headers: {
-                    'Host': new URL(devServerProxyTarget).host
-                }
-            }
-        ],
         server: process.env.CODESPACES ? 'http' : 'https',
         static: {
             directory: process.cwd(),
