@@ -73,6 +73,11 @@ interface IProps extends IIconProps {
     id?: string;
 
     /**
+     * On click handler.
+     */
+    onClick?: Function;
+
+    /**
      * Keydown handler.
      */
     onKeyDown?: Function;

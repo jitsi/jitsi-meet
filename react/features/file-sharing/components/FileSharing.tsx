@@ -2,7 +2,6 @@ import React, { useCallback, useState, useRef, ReactNode } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
 import { IconCloudUpload } from '../../base/icons/svg';
-import { withPixelLineHeight } from '../../base/styles/functions.web';
 import Button from '../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../base/ui/constants.web';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,37 +12,56 @@ import { addFiles, removeFile, downloadFile } from '../actions';
 import logger from '../logger';
 import { createFilePreview, getFileIcon } from '../functions.any';
 import { isLocalParticipantModerator } from '../../base/participants/functions';
+import { withPixelLineHeight } from '../../base/styles/functions.web';
 
 const useStyles = makeStyles()(theme => {
     return {
+        buttonContainer: {
+            alignItems: 'center',
+            display: 'flex',
+            justifyContent: 'space-between'
+        },
+
         container: {
             boxSizing: 'border-box',
+            height: '100%',
             margin: '0 auto',
             maxWidth: '600px',
             padding: theme.spacing(3),
+            position: 'relative',
             width: '100%'
+        },
+
+        downloadButton: {
+            marginRight: theme.spacing(1)
         },
 
         dropZone: {
             backgroundColor: theme.palette.ui02,
             border: `2px dashed ${theme.palette.ui03}`,
             borderRadius: theme.shape.borderRadius,
-            cursor: 'pointer',
-            marginBottom: theme.spacing(3),
-            padding: theme.spacing(4),
-            textAlign: 'center',
-            transition: 'all 0.3s ease',
+            bottom: 0,
+            left: 0,
+            opacity: 0,
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            transition: 'opacity 0.15s ease-in-out',
+            zIndex: 1,
 
-            '&:hover, &.dragging': {
+            '&.dragging': {
                 backgroundColor: theme.palette.ui03,
-                borderColor: theme.palette.action01
+                borderColor: theme.palette.action01,
+                opacity: 0.8
             }
         },
 
-        error: {
-            color: theme.palette.actionDanger,
-            marginTop: theme.spacing(1),
-            ...withPixelLineHeight(theme.typography.labelBold)
+        fileIconContainer: {
+            alignItems: 'center',
+            display: 'flex',
+            height: '100%',
+            justifyContent: 'center',
+            width: '100%'
         },
 
         fileItem: {
@@ -52,22 +70,20 @@ const useStyles = makeStyles()(theme => {
             display: 'flex',
             flexDirection: 'column',
             gap: theme.spacing(1),
-            padding: theme.spacing(3),
-            position: 'relative',
-            marginBottom: theme.spacing(3)
+            marginBottom: theme.spacing(3),
+            padding: theme.spacing(3)
+        },
+
+        fileList: {
+            gap: theme.spacing(2),
+            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))'
         },
 
         fileName: {
             color: theme.palette.text01,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            ...withPixelLineHeight(theme.typography.bodyShortRegular)
-        },
-
-        fileList: {
-            gap: theme.spacing(2),
-            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+            whiteSpace: 'nowrap'
         },
 
         filePreview: {
@@ -76,6 +92,25 @@ const useStyles = makeStyles()(theme => {
             height: '104px',
             objectFit: 'cover',
             width: '100%'
+        },
+
+        hiddenInput: {
+            visibility: 'hidden'
+        },
+
+        noFilesContainer: {
+            display: 'flex',
+            flexDirection: 'column',
+            height: '88%',
+            justifyContent: 'center',
+            textAlign: 'center'
+        },
+
+        noFilesText: {
+            ...withPixelLineHeight(theme.typography.bodyLongBold),
+            color: theme.palette.text02,
+            padding: '0 24px',
+            textAlign: 'center'
         },
 
         progressBar: {
@@ -100,39 +135,17 @@ const useStyles = makeStyles()(theme => {
         },
 
         uploadButton: {
+            bottom: theme.spacing(4),
             cursor: 'pointer',
-            margin: '0 auto',
-
-            '&:hover': {
-                backgroundColor: theme.palette.action01Hover
-            },
-
-            '&:focus': {
-                boxShadow: `0 0 0 2px ${theme.palette.focus01}`,
-                outline: 'none'
-            }
+            left: '50%',
+            position: 'absolute',
+            transform: 'translateX(-50%)',
+            width: '85%',
+            zIndex: 2
         },
 
-        hiddenInput: {
-            display: 'none'
-        },
-
-        fileIconContainer: {
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100%',
-            width: '100%'
-        },
-
-        buttonContainer: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-        },
-
-        downloadButton: {
-            marginRight: theme.spacing(1)
+        uploadIcon: {
+            margin: '0 auto'
         }
     };
 });
@@ -198,8 +211,10 @@ const FileSharing = () => {
         e.stopPropagation();
         setIsDragging(false);
 
-        processFiles(e.dataTransfer.files);
-    }, [ processFiles, setIsDragging ]);
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            processFiles(e.dataTransfer.files);
+        }
+    }, [ processFiles ]);
 
     const handleClick = useCallback(() => {
         fileInputRef.current?.click();
@@ -213,34 +228,41 @@ const FileSharing = () => {
 
     return (
         <div className = { classes.container }>
-            { isModerator && (
-                <div
-                    className = { `${classes.dropZone} ${
-                        isDragging ? 'dragging' : ''
-                    }` }
-                    onClick = { handleClick }
-                    onDragEnter = { handleDragEnter }
-                    onDragLeave = { handleDragLeave }
-                    onDragOver = { handleDragOver }
-                    onDrop = { handleDrop }
-                    onKeyPress = { handleKeyPress }
-                    role = 'button'
-                    tabIndex = { 0 }>
-                    <input
-                        className = { classes.hiddenInput }
-                        multiple = { true }
-                        onChange = { handleFileSelect }
-                        ref = { fileInputRef }
-                        type = 'file' />
-                    <Button
-                        className = { classes.uploadButton }
-                        icon = { IconCloudUpload }
-                        labelKey = { 'fileSharing.uploadFiles' }
-                        type = { BUTTON_TYPES.PRIMARY } />
-                    <p>{ t('fileSharing.dragAndDrop') }</p>
-                </div>
-            ) }
-
+            {
+                isModerator && (
+                    <>
+                        <div
+                            className = { `${classes.dropZone} ${
+                                isDragging ? 'dragging' : ''
+                            }` }
+                            onDragEnter = { handleDragEnter }
+                            onDragLeave = { handleDragLeave }
+                            onDragOver = { handleDragOver }
+                            onDrop = { handleDrop }
+                            role = 'button'
+                            tabIndex = { 0 }>
+                            <input
+                                className = { classes.hiddenInput }
+                                multiple = { true }
+                                onChange = { handleFileSelect }
+                                ref = { fileInputRef }
+                                type = 'file' />
+                        </div>
+                        { files.length === 0 && (
+                            <div className = { classes.noFilesContainer }>
+                                <Icon
+                                    className = { classes.uploadIcon }
+                                    color = { BaseTheme.palette.icon03 }
+                                    size = { 160 }
+                                    src = { IconCloudUpload } />
+                                <span className = { classes.noFilesText }>
+                                    { t('fileSharing.dragAndDrop') }
+                                </span>
+                            </div>
+                        ) }
+                    </>
+                )
+            }
             { files.length > 0 && (
                 <div className = { classes.fileList }>
                     { files.map(file => (
@@ -293,7 +315,14 @@ const FileSharing = () => {
                         </div>
                     )) }
                 </div>
-            ) }
+            )}
+            <Button
+                accessibilityLabel = { t('fileSharing.uploadFile') }
+                className = { classes.uploadButton }
+                labelKey = { 'fileSharing.uploadFile' }
+                onClick = { handleClick }
+                onKeyPress = { handleKeyPress }
+                type = { BUTTON_TYPES.PRIMARY } />
         </div>
     );
 };
