@@ -6,6 +6,7 @@ import {
     retrievePin,
     waitForAudioFromDialInParticipant
 } from '../helpers/DialIn';
+import type { Participant } from '../../helpers/Participant';
 
 describe('Invite iframeAPI', () => {
     it('join participant', async () => {
@@ -50,62 +51,7 @@ describe('Invite iframeAPI', () => {
 
         await waitForAudioFromDialInParticipant(p1);
 
-        const { webhooksProxy } = ctx;
-
-        if (webhooksProxy) {
-            const customerId = process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', '');
-            const dialInStartedEvent: {
-                customerId: string;
-                data: {
-                    direction: string;
-                    participantFullJid: string;
-                    participantId: string;
-                    participantJid: string;
-                };
-                eventType: string;
-            } = await webhooksProxy.waitForEvent('DIAL_IN_STARTED');
-
-            expect('DIAL_IN_STARTED').toBe(dialInStartedEvent.eventType);
-            expect(dialInStartedEvent.data.direction).toBe('in');
-            expect(dialInStartedEvent.customerId).toBe(customerId);
-
-            const participantId = dialInStartedEvent.data.participantId;
-            const participantJid = dialInStartedEvent.data.participantJid;
-            const participantFullJid = dialInStartedEvent.data.participantFullJid;
-
-            const usageEvent: {
-                customerId: string;
-                data: any;
-                eventType: string;
-            } = await webhooksProxy.waitForEvent('USAGE');
-
-            expect('USAGE').toBe(usageEvent.eventType);
-            expect(usageEvent.customerId).toBe(customerId);
-
-            expect(usageEvent.data.some((el: any) =>
-                el.participantId === participantId && el.callDirection === 'in')).toBe(true);
-
-            await cleanup(p1);
-
-            const dialInEndedEvent: {
-                customerId: string;
-                data: {
-                    direction: string;
-                    participantFullJid: string;
-                    participantId: string;
-                    participantJid: string;
-                };
-                eventType: string;
-            } = await webhooksProxy.waitForEvent('DIAL_IN_ENDED');
-
-            expect('DIAL_IN_ENDED').toBe(dialInEndedEvent.eventType);
-            expect(dialInEndedEvent.customerId).toBe(customerId);
-            expect(dialInEndedEvent.data.participantFullJid).toBe(participantFullJid);
-            expect(dialInEndedEvent.data.participantId).toBe(participantId);
-            expect(dialInEndedEvent.data.participantJid).toBe(participantJid);
-        } else {
-            await cleanup(p1);
-        }
+        await checkDialEvents(p1, 'in', 'DIAL_IN_STARTED', 'DIAL_IN_ENDED');
     });
 
     it('dial-out', async () => {
@@ -125,62 +71,7 @@ describe('Invite iframeAPI', () => {
 
         await waitForAudioFromDialInParticipant(p1);
 
-        const { webhooksProxy } = ctx;
-
-        if (webhooksProxy) {
-            const customerId = process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', '');
-            const dialInStartedEvent: {
-                customerId: string;
-                data: {
-                    direction: string;
-                    participantFullJid: string;
-                    participantId: string;
-                    participantJid: string;
-                };
-                eventType: string;
-            } = await webhooksProxy.waitForEvent('DIAL_OUT_STARTED');
-
-            expect('DIAL_OUT_STARTED').toBe(dialInStartedEvent.eventType);
-            expect(dialInStartedEvent.data.direction).toBe('out');
-            expect(dialInStartedEvent.customerId).toBe(customerId);
-
-            const participantId = dialInStartedEvent.data.participantId;
-            const participantJid = dialInStartedEvent.data.participantJid;
-            const participantFullJid = dialInStartedEvent.data.participantFullJid;
-
-            const usageEvent: {
-                customerId: string;
-                data: any;
-                eventType: string;
-            } = await webhooksProxy.waitForEvent('USAGE');
-
-            expect('USAGE').toBe(usageEvent.eventType);
-            expect(usageEvent.customerId).toBe(customerId);
-
-            expect(usageEvent.data.some((el: any) =>
-                el.participantId === participantId && el.callDirection === 'out')).toBe(true);
-
-            await cleanup(p1);
-
-            const dialInEndedEvent: {
-                customerId: string;
-                data: {
-                    direction: string;
-                    participantFullJid: string;
-                    participantId: string;
-                    participantJid: string;
-                };
-                eventType: string;
-            } = await webhooksProxy.waitForEvent('DIAL_OUT_ENDED');
-
-            expect('DIAL_OUT_ENDED').toBe(dialInEndedEvent.eventType);
-            expect(dialInEndedEvent.customerId).toBe(customerId);
-            expect(dialInEndedEvent.data.participantFullJid).toBe(participantFullJid);
-            expect(dialInEndedEvent.data.participantId).toBe(participantId);
-            expect(dialInEndedEvent.data.participantJid).toBe(participantJid);
-        } else {
-            await cleanup(p1);
-        }
+        await checkDialEvents(p1, 'out', 'DIAL_OUT_STARTED', 'DIAL_OUT_ENDED');
     });
 
     it('sip jibri', async () => {
@@ -246,3 +137,69 @@ describe('Invite iframeAPI', () => {
         }
     });
 });
+
+/**
+ * Checks the dial events for a participant and clean up at the end.
+ * @param participant
+ * @param startedEventName
+ * @param endedEventName
+ * @param direction
+ */
+async function checkDialEvents(participant: Participant, direction: string, startedEventName: string, endedEventName: string) {
+    const { webhooksProxy } = ctx;
+
+    if (webhooksProxy) {
+        const customerId = process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', '');
+        const dialInStartedEvent: {
+            customerId: string;
+            data: {
+                direction: string;
+                participantFullJid: string;
+                participantId: string;
+                participantJid: string;
+            };
+            eventType: string;
+        } = await webhooksProxy.waitForEvent(startedEventName);
+
+        expect(startedEventName).toBe(dialInStartedEvent.eventType);
+        expect(dialInStartedEvent.data.direction).toBe(direction);
+        expect(dialInStartedEvent.customerId).toBe(customerId);
+
+        const participantId = dialInStartedEvent.data.participantId;
+        const participantJid = dialInStartedEvent.data.participantJid;
+        const participantFullJid = dialInStartedEvent.data.participantFullJid;
+
+        const usageEvent: {
+            customerId: string;
+            data: any;
+            eventType: string;
+        } = await webhooksProxy.waitForEvent('USAGE');
+
+        expect('USAGE').toBe(usageEvent.eventType);
+        expect(usageEvent.customerId).toBe(customerId);
+
+        expect(usageEvent.data.some((el: any) =>
+            el.participantId === participantId && el.callDirection === direction)).toBe(true);
+
+        await cleanup(participant);
+
+        const dialInEndedEvent: {
+            customerId: string;
+            data: {
+                direction: string;
+                participantFullJid: string;
+                participantId: string;
+                participantJid: string;
+            };
+            eventType: string;
+        } = await webhooksProxy.waitForEvent(endedEventName);
+
+        expect(endedEventName).toBe(dialInEndedEvent.eventType);
+        expect(dialInEndedEvent.customerId).toBe(customerId);
+        expect(dialInEndedEvent.data.participantFullJid).toBe(participantFullJid);
+        expect(dialInEndedEvent.data.participantId).toBe(participantId);
+        expect(dialInEndedEvent.data.participantJid).toBe(participantJid);
+    } else {
+        await cleanup(participant);
+    }
+}
