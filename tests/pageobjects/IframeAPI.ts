@@ -89,4 +89,24 @@ export default class IframeAPI extends BasePageObject {
     dispose() {
         return this.participant.execute(() => window.jitsiAPI.dispose());
     }
+
+    /**
+     * Invite the given participant to the meeting via PSTN.
+     */
+    invitePhone(value: string) {
+        return this.participant.execute(v => window.jitsiAPI.invite([ {
+            type: 'phone',
+            number: v
+        } ]), value);
+    }
+
+    /**
+     * Invite the given participant to the meeting via sip (sip jibri).
+     */
+    inviteSIP(value: string) {
+        return this.participant.execute(v => window.jitsiAPI.invite([ {
+            type: 'sip',
+            address: v
+        } ]), value);
+    }
 }

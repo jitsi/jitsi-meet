@@ -22,6 +22,7 @@ if (process.env.HEADLESS === 'true') {
 const ffExcludes = [
     'specs/2way/iFrameApiParticipantsPresence.spec.ts', // FF does not support uploading files (uploadFile)
     'specs/2way/iFrameApiTranscriptions.spec.ts',
+    'specs/alone/iFrameApiInvite.spec.ts',
 
     // FF does not support setting a file as mic input, no dominant speaker events
     'specs/3way/activeSpeaker.spec.ts',

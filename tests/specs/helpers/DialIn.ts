@@ -1,4 +1,6 @@
 import type { Participant } from '../../helpers/Participant';
+import process from 'node:process';
+import https from 'node:https';
 
 /**
  * Helper functions for dial-in related operations.
@@ -48,4 +50,52 @@ export async function cleanup(participant: Participant) {
 export async function isDialInEnabled(participant: Participant) {
     return await participant.execute(() => Boolean(
         config.dialInConfCodeUrl && config.dialInNumbersUrl && config.hosts?.muc));
+}
+
+/**
+ * Retrieves the dial-in pin number from the invite dialog of the participant.
+ * @param participant
+ */
+export async function retrievePin(participant: Participant) {
+    const dialInPin = await participant.getInviteDialog().getPinNumber();
+
+    await participant.getInviteDialog().clickCloseButton();
+
+    ctx.data.dialInPin = dialInPin;
+}
+
+/**
+ * Sends a request to the REST API to dial in the participant using the provided pin.
+ * @param participant
+ */
+export async function dialIn(participant: Participant) {
+    if (!await participant.isInMuc()) {
+        // local participant did not join abort
+        return;
+    }
+
+    const restUrl = process.env.DIAL_IN_REST_URL?.replace('{0}', ctx.data.dialInPin);
+
+    // we have already checked in the first test that DIAL_IN_REST_URL exist so restUrl cannot be ''
+    const responseData: string = await new Promise((resolve, reject) => {
+        https.get(restUrl || '', res => {
+            let data = '';
+
+            res.on('data', chunk => {
+                data += chunk;
+            });
+
+            res.on('end', () => {
+                ctx.times.restAPIExecutionTS = performance.now();
+
+                resolve(data);
+            });
+        }).on('error', err => {
+            console.error('dial-in.test.restAPI.request.fail');
+            console.error(err);
+            reject(err);
+        });
+    });
+
+    console.log(`dial-in.test.call_session_history_id:${JSON.parse(responseData).call_session_history_id}`);
 }
