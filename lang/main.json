@@ -405,7 +405,7 @@
         "recentlyUsedObjects": "Your recently used objects",
         "recording": "Recording",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Not possible while a live stream is active",
-        "recordingInProgressDescription": "This meeting is being recorded and analyzed by AI ({{learnMore}}). Your audio and video have been muted. If you choose to unmute, you consent to being recorded.",
+        "recordingInProgressDescription": "This meeting is being recorded and analyzed by AI{{learnMore}}. Your audio and video have been muted. If you choose to unmute, you consent to being recorded.",
         "recordingInProgressTitle": "Recording in progress",
         "rejoinNow": "Rejoin now",
         "remoteControlAllowedMessage": "{{user}} accepted your remote control request!",

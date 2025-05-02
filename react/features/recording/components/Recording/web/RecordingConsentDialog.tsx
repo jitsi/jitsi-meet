@@ -11,6 +11,7 @@ import {
     setVideoUnmutePermissions
 } from '../../../../base/media/actions';
 import Dialog from '../../../../base/ui/components/web/Dialog';
+import { hideDialog } from '../../../../base/dialog/actions';
 
 /**
  * Component that renders the dialog for explicit consent for recordings.
@@ -22,7 +23,7 @@ export default function RecordingConsentDialog() {
     const dispatch = useDispatch();
     const { recordings } = useSelector((state: IReduxState) => state['features/base/config']);
     const { consentLearnMoreLink } = recordings ?? {};
-    const learnMore = `<a href="${consentLearnMoreLink}" target="_blank" rel="noopener noreferrer">${t('dialog.learnMore')}</a>`;
+    const learnMore = ` (<a href="${consentLearnMoreLink}" target="_blank" rel="noopener noreferrer">${t('dialog.learnMore')}</a>)`;
 
     const consent = useCallback(() => {
         batch(() => {
@@ -37,6 +38,7 @@ export default function RecordingConsentDialog() {
             dispatch(setVideoUnmutePermissions(false, true));
             dispatch(setAudioMuted(false));
             dispatch(setVideoMuted(false));
+            dispatch(hideDialog());
         });
     }, []);
 
