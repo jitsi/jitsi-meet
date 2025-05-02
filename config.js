@@ -753,7 +753,7 @@ var config = {
 
     // Message to show the users. Example: 'The service will be down for
     // maintenance at 01:00 AM GMT,
-    // noticeMessage: '',
+    noticeMessage: 'Whiteboard integration is coming soon, in the meantime please use www.excalidraw.com to draw.',
 
     // Enables calendar integration, depends on googleApiApplicationClientID
     // and microsoftApiApplicationClientID
