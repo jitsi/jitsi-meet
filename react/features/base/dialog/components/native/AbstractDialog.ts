@@ -40,6 +40,7 @@ export default class AbstractDialog<P extends IProps, S extends IState = IState>
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
+        this._onBack = this._onBack.bind(this);
         this._onCancel = this._onCancel.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
         this._onSubmitFulfilled = this._onSubmitFulfilled.bind(this);
@@ -73,6 +74,14 @@ export default class AbstractDialog<P extends IProps, S extends IState = IState>
      */
     _hide() {
         return this.props.dispatch(hideDialog());
+    }
+
+    _onBack() {
+        const { backDisabled = false, onBack } = this.props;
+
+        if (!backDisabled && (!onBack || onBack())) {
+            this._hide();
+        }
     }
 
     /**

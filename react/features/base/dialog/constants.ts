@@ -3,6 +3,16 @@ import { ReactNode } from 'react';
 export type DialogProps = {
 
     /**
+     * Whether back button is disabled. Enabled by default.
+     */
+    backDisabled?: boolean;
+
+    /**
+     * Optional i18n key to change the back button title.
+     */
+    backKey?: string;
+
+    /**
      * Whether cancel button is disabled. Enabled by default.
      */
     cancelDisabled?: boolean;
@@ -26,6 +36,11 @@ export type DialogProps = {
      * Optional i18n key to change the ok button title.
      */
     okKey?: string;
+
+    /**
+     * The handler for onBack event.
+     */
+    onBack?: Function;
 
     /**
      * The handler for onCancel event.

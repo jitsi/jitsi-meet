@@ -17,6 +17,11 @@ import styles from './styles';
 interface IProps extends AbstractProps, WithTranslation {
 
     /**
+     * The i18n key of the text label for the back button.
+     */
+    backLabel?: string;
+
+    /**
      * The i18n key of the text label for the cancel button.
      */
     cancelLabel?: string;
@@ -35,6 +40,11 @@ interface IProps extends AbstractProps, WithTranslation {
      * Dialog description key for translations.
      */
     descriptionKey?: string | { key: string; params: string; };
+
+    /**
+     * Whether the back button is hidden.
+     */
+    isBackHidden?: Boolean;
 
     /**
      * Whether the cancel button is hidden.
@@ -102,9 +112,11 @@ class ConfirmDialog extends AbstractDialog<IProps> {
      */
     override render() {
         const {
+            backLabel,
             cancelLabel,
             children,
             confirmLabel,
+            isBackHidden = true,
             isCancelHidden,
             isConfirmDestructive,
             isConfirmHidden,
@@ -127,6 +139,12 @@ class ConfirmDialog extends AbstractDialog<IProps> {
                 }
                 { this._renderDescription() }
                 { children }
+                {
+                    !isBackHidden && <Dialog.Button
+                        label = { t(backLabel || 'dialog.confirmBack') }
+                        onPress = { this._onBack }
+                        style = { styles.dialogButton } />
+                }
                 {
                     !isCancelHidden && <Dialog.Button
                         label = { t(cancelLabel || 'dialog.confirmNo') }
