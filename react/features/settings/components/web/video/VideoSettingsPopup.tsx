@@ -93,6 +93,7 @@ function VideoSettingsPopup({
                 headingId = 'video-settings-button'
                 onPopoverClose = { onClose }
                 position = { popupPlacement }
+                role = 'menu'
                 trigger = 'click'
                 visible = { isOpen }>
                 { children }
