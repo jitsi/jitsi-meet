@@ -26,7 +26,6 @@ import { showOverflowDrawer } from '../../functions.web';
 import Drawer from './Drawer';
 import JitsiPortal from './JitsiPortal';
 import OverflowToggleButton from './OverflowToggleButton';
-import { isMobileBrowser } from '../../../base/environment/utils';
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenuButton}.
@@ -202,7 +201,7 @@ const OverflowMenuButton = ({
             }
         </ContextMenu>);
 
-    if (overflowDrawer || isMobileBrowser()) {
+    if (overflowDrawer) {
         return (
             <div className = 'toolbox-button-wth-dialog context-menu'>
                 <>
