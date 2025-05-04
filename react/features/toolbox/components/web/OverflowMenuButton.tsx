@@ -26,6 +26,8 @@ import { showOverflowDrawer } from '../../functions.web';
 import Drawer from './Drawer';
 import JitsiPortal from './JitsiPortal';
 import OverflowToggleButton from './OverflowToggleButton';
+import { IconCloseLarge } from '../../../base/icons/svg';
+import Icon from '../../../base/icons/components/Icon';
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenuButton}.
@@ -188,6 +190,14 @@ const OverflowMenuButton = ({
             id = 'overflow-context-menu'
             inDrawer = { overflowDrawer }
             onKeyDown = { onToolboxEscKey }>
+             <div className='close-icon' onClick={onCloseDialog}>
+            <Icon
+                ariaLabel={t('toolbar.accessibilitylabel.close')}
+                role='button'
+                src={IconCloseLarge}
+                tabIndex={0}
+            />
+        </div>
             <div className = { classes.content }>
                 { groupsJSX }
             </div>
@@ -236,6 +246,7 @@ const OverflowMenuButton = ({
     return (
         <div className = 'toolbox-button-wth-dialog context-menu'>
             <Popover
+              
                 content = { overflowMenu }
                 headingId = 'overflow-context-menu'
                 onPopoverClose = { onCloseDialog }

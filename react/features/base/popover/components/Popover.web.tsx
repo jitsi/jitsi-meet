@@ -97,6 +97,7 @@ interface IProps {
      * Whether the popover is visible or not.
      */
     visible: boolean;
+    closeIcon?: React.ReactNode;
 }
 
 /**
@@ -218,6 +219,8 @@ class Popover extends Component<IProps, IState> {
         }
     }
 
+
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -233,7 +236,8 @@ class Popover extends Component<IProps, IState> {
             id,
             overflowDrawer,
             visible,
-            trigger
+            trigger,
+
         } = this.props;
 
         if (overflowDrawer) {
@@ -300,6 +304,7 @@ class Popover extends Component<IProps, IState> {
                     </DialogPortal>
                 )}
                 { children }
+                
             </div>
         );
     }
@@ -463,7 +468,7 @@ class Popover extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     _renderContent() {
-        const { content, position, trigger, headingId, headingLabel } = this.props;
+        const { content, position, trigger, headingId, headingLabel,closeIcon } = this.props;
 
         return (
             <div className = { `popover ${trigger}` }>

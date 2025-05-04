@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-
+import Icon from '../../../base/icons/components/Icon';
 import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { translate } from '../../../base/i18n/functions';
 import Popover from '../../../base/popover/components/Popover.web';
 
 import HangupToggleButton from './HangupToggleButton';
+import { IconCloseLarge } from '../../../base/icons/svg';
 
 /**
  * The type of the React {@code Component} props of {@link HangupMenuButton}.
@@ -54,7 +55,6 @@ class HangupMenuButton extends Component<IProps> {
      */
     constructor(props: IProps) {
         super(props);
-
         // Bind event handlers so they are only bound once per instance.
         this._onCloseDialog = this._onCloseDialog.bind(this);
         this._toggleDialogVisibility
@@ -83,7 +83,7 @@ class HangupMenuButton extends Component<IProps> {
      * @returns {ReactElement}
      */
     override render() {
-        const { children, isOpen, t } = this.props;
+        const { children, isOpen, t, } = this.props;
 
         return (
             <div className = 'toolbox-button-wth-dialog context-menu'>
@@ -102,6 +102,7 @@ class HangupMenuButton extends Component<IProps> {
                         notifyMode = { this.props.notifyMode }
                         onKeyDown = { this._onEscClick } />
                 </Popover>
+             
             </div>
         );
     }
