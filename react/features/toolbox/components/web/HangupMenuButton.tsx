@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import Icon from '../../../base/icons/components/Icon';
 import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { translate } from '../../../base/i18n/functions';
 import Popover from '../../../base/popover/components/Popover.web';
 
 import HangupToggleButton from './HangupToggleButton';
-import { IconCloseLarge } from '../../../base/icons/svg';
 
 /**
  * The type of the React {@code Component} props of {@link HangupMenuButton}.

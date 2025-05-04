@@ -1,9 +1,7 @@
 import React, { ReactNode, useRef } from 'react';
 import { keyframes } from 'tss-react';
 import { makeStyles } from 'tss-react/mui';
-import Icon from '../../../icons/components/Icon';
 import { TEXT_OVERFLOW_TYPES } from '../../constants.web';
-import { IconCloseLarge } from '../../../icons/svg';
 
 interface ITextWithOverflowProps {
     children: ReactNode;

@@ -1,7 +1,6 @@
 import React, { Component, ReactNode } from 'react';
 import { FocusOn } from 'react-focus-on';
 import { connect } from 'react-redux';
-
 import { IReduxState } from '../../../app/types';
 import DialogPortal from '../../../toolbox/components/web/DialogPortal';
 import Drawer from '../../../toolbox/components/web/Drawer';
@@ -97,7 +96,6 @@ interface IProps {
      * Whether the popover is visible or not.
      */
     visible: boolean;
-    closeIcon?: React.ReactNode;
 }
 
 /**
@@ -468,7 +466,7 @@ class Popover extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     _renderContent() {
-        const { content, position, trigger, headingId, headingLabel,closeIcon } = this.props;
+        const { content, position, trigger, headingId, headingLabel} = this.props;
 
         return (
             <div className = { `popover ${trigger}` }>
