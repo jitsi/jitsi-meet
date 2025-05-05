@@ -4,7 +4,7 @@
 export const CHAR_LIMIT = 500;
 
 /**
- * The size of the chat. Equal to $sidebarWidth SCSS variable.
+ * The initial size of the chat.
  */
 export const CHAT_SIZE = 315;
 

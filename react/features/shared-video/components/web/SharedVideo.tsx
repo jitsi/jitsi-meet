@@ -165,6 +165,7 @@ function _mapStateToProps(state: IReduxState) {
     const { videoUrl } = state['features/shared-video'];
     const { clientHeight, videoSpaceWidth } = state['features/base/responsive-ui'];
     const { visible, isResizing } = state['features/filmstrip'];
+    const { isResizing: isChatResizing } = state['features/chat'];
     const onStage = getLargeVideoParticipant(state)?.fakeParticipant === FakeParticipant.SharedVideo;
     const isVideoShared = isVideoPlaying(state);
 
@@ -174,7 +175,7 @@ function _mapStateToProps(state: IReduxState) {
         filmstripVisible: visible,
         filmstripWidth: getVerticalViewMaxWidth(state),
         isEnabled: isSharedVideoEnabled(state),
-        isResizing,
+        isResizing: isResizing || isChatResizing,
         isVideoShared,
         onStage,
         videoUrl

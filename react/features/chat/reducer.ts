@@ -10,11 +10,15 @@ import {
     EDIT_MESSAGE,
     OPEN_CHAT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
+    SET_CHAT_IS_RESIZING,
+    SET_CHAT_WIDTH,
+    SET_FOCUSED_TAB,
     SET_LOBBY_CHAT_ACTIVE_STATE,
     SET_LOBBY_CHAT_RECIPIENT,
     SET_PRIVATE_MESSAGE_RECIPIENT,
-    SET_FOCUSED_TAB
+    SET_USER_CHAT_WIDTH
 } from './actionTypes';
+import { CHAT_SIZE } from './constants';
 import { IMessage } from './types';
 import { UPDATE_CONFERENCE_METADATA } from '../base/conference/actionTypes';
 
@@ -27,7 +31,12 @@ const DEFAULT_STATE = {
     privateMessageRecipient: undefined,
     lobbyMessageRecipient: undefined,
     isLobbyChatActive: false,
-    focusedTab: ChatTabs.CHAT
+    focusedTab: ChatTabs.CHAT,
+    isResizing: false,
+    width: {
+        current: CHAT_SIZE,
+        userSet: null
+    }
 };
 
 export interface IChatState {
@@ -35,6 +44,7 @@ export interface IChatState {
     groupChatWithPermissions: boolean;
     isLobbyChatActive: boolean;
     isOpen: boolean;
+    isResizing: boolean;
     lastReadMessage?: IMessage;
     lobbyMessageRecipient?: {
         id: string;
@@ -43,6 +53,10 @@ export interface IChatState {
     messages: IMessage[];
     nbUnreadMessages: number;
     privateMessageRecipient?: IParticipant;
+    width: {
+        current: number;
+        userSet: number | null;
+    };
 }
 
 ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, action): IChatState => {
@@ -217,6 +231,35 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             focusedTab: action.tabId,
             nbUnreadMessages: action.tabId === ChatTabs.CHAT ? 0 : state.nbUnreadMessages
         };
+
+    case SET_CHAT_WIDTH: {
+        return {
+            ...state,
+            width: {
+                ...state.width,
+                current: action.width
+            }
+        };
+    }
+
+    case SET_USER_CHAT_WIDTH: {
+        const { width } = action;
+
+        return {
+            ...state,
+            width: {
+                current: width,
+                userSet: width
+            }
+        };
+    }
+
+    case SET_CHAT_IS_RESIZING: {
+        return {
+            ...state,
+            isResizing: action.resizing
+        };
+    }
     }
 
     return state;

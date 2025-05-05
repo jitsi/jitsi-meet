@@ -8,9 +8,9 @@ import { IconPerformance } from '../../base/icons/svg';
 import Label from '../../base/label/components/web/Label';
 import { COLORS } from '../../base/label/constants';
 import Tooltip from '../../base/tooltip/components/Tooltip';
-import { shouldDisplayTileView } from '../../video-layout/functions.web';
 
 import VideoQualityDialog from './VideoQualityDialog.web';
+import { shouldDisplayVideoQualityLabel } from '../selector';
 
 /**
  * React {@code Component} responsible for displaying a label that indicates
@@ -23,8 +23,7 @@ import VideoQualityDialog from './VideoQualityDialog.web';
  */
 const VideoQualityLabel = () => {
     const _audioOnly = useSelector((state: IReduxState) => state['features/base/audio-only'].enabled);
-    const _visible = useSelector((state: IReduxState) => !(shouldDisplayTileView(state)
-        || interfaceConfig.VIDEO_QUALITY_LABEL_DISABLED));
+    const _visible = useSelector(shouldDisplayVideoQualityLabel);
     const dispatch = useDispatch();
     const { t } = useTranslation();
 
