@@ -83,7 +83,7 @@ export function resizeFilmStrip(width: number) {
 export function setTileViewDimensions() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-        const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+        const { clientHeight, videoSpaceWidth } = state['features/base/responsive-ui'];
         const {
             disableResponsiveTiles,
             disableTileEnlargement,
@@ -101,7 +101,7 @@ export function setTileViewDimensions() {
         } = disableResponsiveTiles
             ? calculateNonResponsiveTileViewDimensions(state)
             : calculateResponsiveTileViewDimensions({
-                clientWidth,
+                clientWidth: videoSpaceWidth,
                 clientHeight,
                 disableTileEnlargement,
                 maxColumns,
@@ -112,7 +112,7 @@ export function setTileViewDimensions() {
         const availableHeight = clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN;
         const hasScroll = availableHeight < thumbnailsTotalHeight;
         const filmstripWidth
-            = Math.min(clientWidth - TILE_VIEW_GRID_HORIZONTAL_MARGIN,
+            = Math.min(videoSpaceWidth - TILE_VIEW_GRID_HORIZONTAL_MARGIN,
                 (columns ?? 1) * (TILE_HORIZONTAL_MARGIN + (width ?? 0)))
                 + (hasScroll ? SCROLL_SIZE : 0);
         const filmstripHeight = Math.min(availableHeight, thumbnailsTotalHeight);
@@ -144,7 +144,7 @@ export function setTileViewDimensions() {
 export function setVerticalViewDimensions() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-        const { clientHeight = 0, clientWidth = 0 } = state['features/base/responsive-ui'];
+        const { clientHeight = 0, videoSpaceWidth = 0 } = state['features/base/responsive-ui'];
         const { width: filmstripWidth } = state['features/filmstrip'];
         const disableSelfView = getHideSelfView(state);
         const resizableFilmstrip = isFilmstripResizable(state);
@@ -207,7 +207,7 @@ export function setVerticalViewDimensions() {
                 width: widthOfFilmstrip
             };
         } else {
-            thumbnails = calculateThumbnailSizeForVerticalView(clientWidth, filmstripWidth.current ?? 0,
+            thumbnails = calculateThumbnailSizeForVerticalView(videoSpaceWidth, filmstripWidth.current ?? 0,
                 resizableFilmstrip);
 
             remoteVideosContainerWidth
@@ -254,11 +254,11 @@ export function setVerticalViewDimensions() {
 export function setHorizontalViewDimensions() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-        const { clientHeight = 0, clientWidth = 0 } = state['features/base/responsive-ui'];
+        const { clientHeight = 0, videoSpaceWidth = 0 } = state['features/base/responsive-ui'];
         const disableSelfView = getHideSelfView(state);
         const thumbnails = calculateThumbnailSizeForHorizontalView(clientHeight);
         const remoteVideosContainerWidth
-            = clientWidth - (disableSelfView ? 0 : thumbnails?.local?.width) - HORIZONTAL_FILMSTRIP_MARGIN;
+            = videoSpaceWidth - (disableSelfView ? 0 : thumbnails?.local?.width) - HORIZONTAL_FILMSTRIP_MARGIN;
         const remoteVideosContainerHeight
             = thumbnails?.local?.height + TILE_VERTICAL_MARGIN + STAGE_VIEW_THUMBNAIL_VERTICAL_BORDER + SCROLL_SIZE;
         const numberOfRemoteParticipants = getRemoteParticipantCountWithFake(state);
@@ -288,7 +288,7 @@ export function setHorizontalViewDimensions() {
 export function setStageFilmstripViewDimensions() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-        const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+        const { clientHeight, videoSpaceWidth } = state['features/base/responsive-ui'];
         const {
             tileView = {}
         } = state['features/base/config'];
@@ -296,7 +296,7 @@ export function setStageFilmstripViewDimensions() {
         const verticalWidth = visible ? getVerticalViewMaxWidth(state) : 0;
         const { numberOfVisibleTiles = MAX_ACTIVE_PARTICIPANTS } = tileView;
         const numberOfParticipants = state['features/filmstrip'].activeParticipants.length;
-        const availableWidth = clientWidth - verticalWidth;
+        const availableWidth = videoSpaceWidth - verticalWidth;
         const maxColumns = getMaxColumnCount(state, {
             width: availableWidth,
             disableResponsiveTiles: false,
@@ -322,7 +322,7 @@ export function setStageFilmstripViewDimensions() {
         const thumbnailsTotalHeight = (rows ?? 1) * (TILE_VERTICAL_MARGIN + (height ?? 0));
         const hasScroll = clientHeight < thumbnailsTotalHeight;
         const filmstripWidth
-            = Math.min(clientWidth - TILE_VIEW_GRID_HORIZONTAL_MARGIN,
+            = Math.min(videoSpaceWidth - TILE_VIEW_GRID_HORIZONTAL_MARGIN,
                 (columns ?? 1) * (TILE_HORIZONTAL_MARGIN + (width ?? 0)))
             + (hasScroll ? SCROLL_SIZE : 0);
         const filmstripHeight = Math.min(clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN, thumbnailsTotalHeight);
@@ -543,10 +543,10 @@ export function clearStageParticipants() {
 export function setScreensharingTileDimensions() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-        const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+        const { clientHeight, videoSpaceWidth } = state['features/base/responsive-ui'];
         const { visible, topPanelHeight, topPanelVisible } = state['features/filmstrip'];
         const verticalWidth = visible ? getVerticalViewMaxWidth(state) : 0;
-        const availableWidth = clientWidth - verticalWidth;
+        const availableWidth = videoSpaceWidth - verticalWidth;
         const topPanel = isStageFilmstripTopPanel(state) && topPanelVisible;
         const availableHeight = clientHeight - (topPanel ? topPanelHeight?.current || TOP_FILMSTRIP_HEIGHT : 0);
 

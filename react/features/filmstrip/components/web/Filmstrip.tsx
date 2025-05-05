@@ -891,12 +891,12 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
     const { isOpen: shiftRight } = state['features/chat'];
     const disableSelfView = getHideSelfView(state);
-    const { clientWidth, clientHeight } = state['features/base/responsive-ui'];
+    const { videoSpaceWidth, clientHeight } = state['features/base/responsive-ui'];
     const filmstripDisabled = isFilmstripDisabled(state);
 
     const collapseTileView = reduceHeight
         && isMobileBrowser()
-        && clientWidth <= ASPECT_RATIO_BREAKPOINT;
+        && videoSpaceWidth <= ASPECT_RATIO_BREAKPOINT;
 
     const shouldReduceHeight = reduceHeight && isMobileBrowser();
     const _topPanelVisible = isStageFilmstripTopPanel(state) && topPanelVisible;
@@ -929,7 +929,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _isVerticalFilmstrip,
         _localScreenShareId: localScreenShare?.id,
         _mainFilmstripVisible: notDisabled,
-        _maxFilmstripWidth: clientWidth - MIN_STAGE_VIEW_WIDTH,
+        _maxFilmstripWidth: videoSpaceWidth - MIN_STAGE_VIEW_WIDTH,
         _maxTopPanelHeight: clientHeight - MIN_STAGE_VIEW_HEIGHT,
         _remoteParticipantsLength: _remoteParticipants?.length ?? 0,
         _topPanelHeight: topPanelHeight.current,

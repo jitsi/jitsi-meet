@@ -60,12 +60,12 @@ StateListenerRegistry.register(
  */
 StateListenerRegistry.register(
     /* selector */ state => {
-        const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+        const { clientHeight, videoSpaceWidth } = state['features/base/responsive-ui'];
 
         return {
             layout: getCurrentLayout(state),
             height: clientHeight,
-            width: clientWidth
+            width: videoSpaceWidth
         };
     },
     /* listener */ ({ layout }, store) => {
@@ -131,7 +131,7 @@ StateListenerRegistry.register(
  * Listens for changes in the client width to determine whether the overflow menu(s) should be displayed as drawers.
  */
 StateListenerRegistry.register(
-    /* selector */ state => state['features/base/responsive-ui'].clientWidth < DISPLAY_DRAWER_THRESHOLD,
+    /* selector */ state => state['features/base/responsive-ui'].videoSpaceWidth < DISPLAY_DRAWER_THRESHOLD,
     /* listener */ (widthBelowThreshold, store) => {
         store.dispatch(setOverflowDrawer(widthBelowThreshold));
         store.dispatch(setNarrowLayout(widthBelowThreshold));
@@ -141,7 +141,7 @@ StateListenerRegistry.register(
  * Gracefully hide/show the filmstrip when going past threshold.
  */
 StateListenerRegistry.register(
-    /* selector */ state => state['features/base/responsive-ui'].clientWidth < ASPECT_RATIO_BREAKPOINT,
+    /* selector */ state => state['features/base/responsive-ui'].videoSpaceWidth < ASPECT_RATIO_BREAKPOINT,
     /* listener */ (widthBelowThreshold, store) => {
         const state = store.getState();
         const { disableFilmstripAutohiding } = state['features/base/config'];
@@ -179,7 +179,7 @@ StateListenerRegistry.register(
             length: state['features/filmstrip'].activeParticipants.length,
             width: state['features/filmstrip'].width?.current,
             visible: state['features/filmstrip'].visible,
-            clientWidth: state['features/base/responsive-ui'].clientWidth,
+            clientWidth: state['features/base/responsive-ui'].videoSpaceWidth,
             clientHeight: state['features/base/responsive-ui'].clientHeight,
             tileView: state['features/video-layout'].tileViewEnabled,
             height: state['features/filmstrip'].topPanelHeight?.current
@@ -212,7 +212,7 @@ StateListenerRegistry.register(
     /* selector */ state => {
         return {
             length: state['features/video-layout'].remoteScreenShares.length,
-            clientWidth: state['features/base/responsive-ui'].clientWidth,
+            clientWidth: state['features/base/responsive-ui'].videoSpaceWidth,
             clientHeight: state['features/base/responsive-ui'].clientHeight,
             height: state['features/filmstrip'].topPanelHeight?.current,
             width: state['features/filmstrip'].width?.current,
