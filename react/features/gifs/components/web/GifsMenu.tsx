@@ -101,7 +101,7 @@ function GifsMenu({ columns = 2, parent }: IProps) {
     const { t } = useTranslation();
     const isInOverflowMenu
         = parent === IReactionsMenuParent.OverflowDrawer || parent === IReactionsMenuParent.OverflowMenu;
-    const { clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
+    const { videoSpaceWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
     const rating = useSelector(getGifRating);
 
     const fetchGifs = useCallback(async (offset = 0) => {
@@ -225,7 +225,7 @@ function GifsMenu({ columns = 2, parent }: IProps) {
                     onGifClick = { handleGifClick }
                     onGifKeyPress = { handleGifKeyPress }
                     width = { parent === IReactionsMenuParent.OverflowDrawer
-                        ? clientWidth - (2 * OVERFLOW_DRAWER_PADDING) - SCROLL_SIZE
+                        ? videoSpaceWidth - (2 * OVERFLOW_DRAWER_PADDING) - SCROLL_SIZE
                         : parent === IReactionsMenuParent.OverflowMenu ? 201 : 320
                     } />
             </div>

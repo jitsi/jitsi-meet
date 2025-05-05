@@ -49,7 +49,7 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
     const isOpen = useSelector(isWhiteboardOpen);
     const isVisible = useSelector(isWhiteboardVisible);
     const isInTileView = useSelector(shouldDisplayTileView);
-    const { clientHeight, clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
+    const { clientHeight, videoSpaceWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
     const { visible: filmstripVisible, isResizing } = useSelector((state: IReduxState) => state['features/filmstrip']);
     const filmstripWidth: number = useSelector(getVerticalViewMaxWidth);
     const collabDetails = useSelector(getCollabDetails);
@@ -76,9 +76,9 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
 
         if (interfaceConfig.VERTICAL_FILMSTRIP) {
             if (filmstripVisible) {
-                width = clientWidth - filmstripWidth;
+                width = videoSpaceWidth - filmstripWidth;
             } else {
-                width = clientWidth;
+                width = videoSpaceWidth;
             }
             height = clientHeight - getToolboxHeight();
         } else {
@@ -87,7 +87,7 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
             } else {
                 height = clientHeight;
             }
-            width = clientWidth;
+            width = videoSpaceWidth;
         }
 
         return {

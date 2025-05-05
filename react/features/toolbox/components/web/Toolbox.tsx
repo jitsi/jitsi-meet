@@ -74,7 +74,7 @@ export default function Toolbox({
 
     const conference = useSelector((state: IReduxState) => state['features/base/conference'].conference);
     const isNarrowLayout = useSelector((state: IReduxState) => state['features/base/responsive-ui'].isNarrowLayout);
-    const clientWidth = useSelector((state: IReduxState) => state['features/base/responsive-ui'].clientWidth);
+    const videoSpaceWidth = useSelector((state: IReduxState) => state['features/base/responsive-ui'].videoSpaceWidth);
     const isModerator = useSelector(isLocalParticipantModerator);
     const customToolbarButtons = useSelector(
         (state: IReduxState) => state['features/base/config'].customToolbarButtons);
@@ -229,7 +229,7 @@ export default function Toolbox({
         allButtons,
         buttonsWithNotifyClick,
         toolbarButtons: toolbarButtonsToUse,
-        clientWidth,
+        clientWidth: videoSpaceWidth,
         jwtDisabledButtons,
         mainToolbarButtonsThresholds
     });

@@ -59,9 +59,10 @@ export function clientResized(clientWidth: number, clientHeight: number) {
             dispatch({
                 type: CLIENT_RESIZED,
                 clientHeight,
-                clientWidth: availableWidth
+                clientWidth,
+                videoSpaceWidth: availableWidth
             });
-            dispatch(setAspectRatio(clientWidth, clientHeight));
+            dispatch(setAspectRatio(availableWidth, clientHeight));
         });
     };
 }

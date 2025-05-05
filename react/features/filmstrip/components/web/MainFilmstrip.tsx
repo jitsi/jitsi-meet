@@ -123,7 +123,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     let gridDimensions = dimensions;
     let _hasScroll = false;
 
-    const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+    const { clientHeight, videoSpaceWidth } = state['features/base/responsive-ui'];
     const availableSpace = clientHeight - Number(filmstripHeight);
     let filmstripPadding = 0;
 
@@ -139,7 +139,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
 
     const collapseTileView = reduceHeight
         && isMobileBrowser()
-        && clientWidth <= ASPECT_RATIO_BREAKPOINT;
+        && videoSpaceWidth <= ASPECT_RATIO_BREAKPOINT;
 
     const shouldReduceHeight = reduceHeight && (
         isMobileBrowser() || (_currentLayout !== LAYOUTS.VERTICAL_FILMSTRIP_VIEW

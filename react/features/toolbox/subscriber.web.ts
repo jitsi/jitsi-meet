@@ -82,12 +82,12 @@ const throttledCheckOverlap = throttle(checkToolboxOverlap, 100, {
  */
 StateListenerRegistry.register(
     /* selector */ state => {
-        const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+        const { clientHeight, videoSpaceWidth } = state['features/base/responsive-ui'];
 
         return {
             participantCount: getParticipantCount(state),
             clientHeight,
-            clientWidth,
+            clientWidth: videoSpaceWidth,
             isTileView: isLayoutTileView(state)
         };
     },

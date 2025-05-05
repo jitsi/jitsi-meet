@@ -109,12 +109,12 @@ function VideoSettingsPopup({
  * @returns {Object}
  */
 function mapStateToProps(state: IReduxState) {
-    const { clientWidth } = state['features/base/responsive-ui'];
+    const { videoSpaceWidth } = state['features/base/responsive-ui'];
 
     return {
         currentCameraDeviceId: getCurrentCameraDeviceId(state),
         isOpen: Boolean(getVideoSettingsVisibility(state)),
-        popupPlacement: clientWidth <= Number(SMALL_MOBILE_WIDTH) ? 'auto' : 'top-end',
+        popupPlacement: videoSpaceWidth <= Number(SMALL_MOBILE_WIDTH) ? 'auto' : 'top-end',
         videoDeviceIds: getVideoDeviceIds(state) ?? []
     };
 }

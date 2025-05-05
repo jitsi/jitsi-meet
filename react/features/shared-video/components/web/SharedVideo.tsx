@@ -163,14 +163,14 @@ class SharedVideo extends Component<IProps> {
  */
 function _mapStateToProps(state: IReduxState) {
     const { videoUrl } = state['features/shared-video'];
-    const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+    const { clientHeight, videoSpaceWidth } = state['features/base/responsive-ui'];
     const { visible, isResizing } = state['features/filmstrip'];
     const onStage = getLargeVideoParticipant(state)?.fakeParticipant === FakeParticipant.SharedVideo;
     const isVideoShared = isVideoPlaying(state);
 
     return {
         clientHeight,
-        clientWidth,
+        clientWidth: videoSpaceWidth,
         filmstripVisible: visible,
         filmstripWidth: getVerticalViewMaxWidth(state),
         isEnabled: isSharedVideoEnabled(state),
