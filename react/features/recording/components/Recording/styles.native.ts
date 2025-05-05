@@ -97,7 +97,7 @@ export default {
     },
     consentButtons: {
         flexDirection: 'column',
-        gap: 16,
+        gap: 8,
         width: '100%'
     },
     learnMoreLink: {
