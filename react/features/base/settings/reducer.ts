@@ -48,8 +48,7 @@ const DEFAULT_STATE: ISettingsState = {
     userSelectedNotifications: {
         'notify.chatMessages': true
     },
-    userSelectedMicDeviceLabel: undefined,
-    userSelectedSkipPrejoin: undefined
+    userSelectedMicDeviceLabel: undefined
 };
 
 export interface ISettingsState {
@@ -88,7 +87,6 @@ export interface ISettingsState {
     userSelectedNotifications?: {
         [key: string]: boolean;
     };
-    userSelectedSkipPrejoin?: boolean;
     videoSettingsVisible?: boolean;
     visible?: boolean;
 }
