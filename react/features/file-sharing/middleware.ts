@@ -91,7 +91,7 @@ MiddlewareRegistry.register(store => next => async action => {
 
                 await makeApiCall({
                     method: 'POST',
-                    endpoint: '/documents',
+                    endpoint: `/documents/${sessionId}`,
                     headers,
                     body: formData
                 });
@@ -117,7 +117,7 @@ MiddlewareRegistry.register(store => next => async action => {
         const conference = getCurrentConference(state);
         const { locationURL } = state['features/base/connection'];
         const jwt = parseJWTFromURLParams(locationURL);
-        const meetingFqn = extractFqnFromPath(state);
+        const sessionId = conference?.getMeetingUniqueId();
 
         const headers = {
             ...jwt && { 'Authorization': `Bearer ${jwt}` }
@@ -131,7 +131,7 @@ MiddlewareRegistry.register(store => next => async action => {
             if (fileMetadata) {
                 await makeApiCall({
                     method: 'DELETE',
-                    endpoint: `/documents?md5=${fileMetadata.md5}&meetingFqn=${meetingFqn}`,
+                    endpoint: `/documents/${sessionId}/files/${action.fileId}`,
                     headers
                 });
 
@@ -155,7 +155,8 @@ MiddlewareRegistry.register(store => next => async action => {
         const state = store.getState();
         const { locationURL } = state['features/base/connection'];
         const jwt = parseJWTFromURLParams(locationURL);
-        const meetingFqn = extractFqnFromPath(state);
+        const conference = getCurrentConference(state);
+        const sessionId = conference?.getMeetingUniqueId();
 
         const headers = {
             ...jwt && { 'Authorization': `Bearer ${jwt}` }
@@ -164,7 +165,7 @@ MiddlewareRegistry.register(store => next => async action => {
         try {
             const response = await makeApiCall({
                 method: 'GET',
-                endpoint: `/documents/download?md5=${action.md5}&meetingFqn=${meetingFqn}`,
+                endpoint: `/documents/${sessionId}/${action.fileId}`,
                 headers
             });
 
