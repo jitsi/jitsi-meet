@@ -41,19 +41,19 @@ export default function RecordingConsentDialog() {
         <ConfirmDialog
             backLabel = { 'dialog.UnderstandAndUnmute' }
             confirmLabel = { 'dialog.Understand' }
-            footerStyle = { styles.consentButtons }
             isBackHidden = { false }
             isCancelHidden = { true }
             onBack = { consentAndUnmute }
             onSubmit = { consent }
-            title = { 'dialog.recordingInProgressTitle' }>
+            title = { 'dialog.recordingInProgressTitle' }
+            verticalButtons = { true }>
             <Dialog.Description>
                 {t('dialog.recordingInProgressDescriptionFirstHalf')}
                 {consentLearnMoreLink && (
                     <Link
                         style = { styles.learnMoreLink }
                         url = { consentLearnMoreLink }>
-                        {` (${t('dialog.learnMore')})`}
+                        {`(${t('dialog.learnMore')})`}
                     </Link>
                 )}
                 {t('dialog.recordingInProgressDescriptionSecondHalf')}

@@ -95,10 +95,6 @@ export default {
         height: 16,
         width: '100%'
     },
-    consentButtons: {
-        flexDirection: 'column',
-        width: '100%'
-    },
     learnMoreLink: {
         color: BaseTheme.palette.link01,
         fontWeight: 'bold'
