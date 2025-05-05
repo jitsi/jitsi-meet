@@ -229,6 +229,7 @@ class AbstractVideoManager extends PureComponent<IProps> {
      */
     onPlay() {
         this.smartAudioMute();
+
         sendAnalytics(createEvent('play'));
         this.fireUpdateSharedVideoEvent();
     }
