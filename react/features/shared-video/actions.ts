@@ -7,7 +7,8 @@ import {
     RESET_SHARED_VIDEO_STATUS,
     SET_ALLOWED_URL_DOMAINS,
     SET_CONFIRM_SHOW_VIDEO,
-    SET_SHARED_VIDEO_STATUS
+    SET_SHARED_VIDEO_STATUS,
+    SET_YOUTUBE_SPECIFIED_TIME
 } from './actionTypes';
 import { ShareVideoConfirmDialog, SharedVideoDialog } from './components';
 import { PLAYBACK_START, PLAYBACK_STATUSES } from './constants';
@@ -25,6 +26,21 @@ import { isSharedVideoEnabled, sendShareVideoCommand } from './functions';
 export function setConfirmShowVideo(value: boolean) {
     return {
         type: SET_CONFIRM_SHOW_VIDEO,
+        value
+    };
+}
+
+/**
+ * Set the startTime to play video.
+ *
+ * @param {number} value - The value to set.
+ * @returns {{
+*     type: SET_YOUTUBE_SPECIFIED_TIME,
+* }}
+*/
+export function setYoutubeStartTime(value: number) {
+    return {
+        type: SET_YOUTUBE_SPECIFIED_TIME,
         value
     };
 }
@@ -149,6 +165,24 @@ export function toggleSharedVideo() {
         } else {
             dispatch(showSharedVideoDialog((id: string) => dispatch(playSharedVideo(id))));
         }
+    };
+}
+
+/**
+ *
+ * Set the specified time to state.
+ *
+ * @param {number} startTime - The start time to play video.
+ *
+ * @returns {Function}
+ */
+export function setStartTime(startTime: number) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        dispatch(setYoutubeStartTime(startTime));
+        const state = getState();
+
+        state['features/shared-video'].startTime = startTime;
+
     };
 }
 
