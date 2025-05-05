@@ -105,12 +105,6 @@ StateListenerRegistry.register(
     /* listener */ (isChatOpen, store) => {
         const { innerWidth, innerHeight } = window;
 
-        if (isChatOpen) {
-            document.body.classList.add('shift-right');
-        } else {
-            document.body.classList.remove('shift-right');
-        }
-
         store.dispatch(clientResized(innerWidth, innerHeight));
     });
 

@@ -50,7 +50,9 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
     const isVisible = useSelector(isWhiteboardVisible);
     const isInTileView = useSelector(shouldDisplayTileView);
     const { clientHeight, videoSpaceWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
-    const { visible: filmstripVisible, isResizing } = useSelector((state: IReduxState) => state['features/filmstrip']);
+    const { visible: filmstripVisible, isResizing: isFilmstripResizing } = useSelector((state: IReduxState) => state['features/filmstrip']);
+    const isChatResizing = useSelector((state: IReduxState) => state['features/chat'].isResizing);
+    const isResizing = isFilmstripResizing || isChatResizing;
     const filmstripWidth: number = useSelector(getVerticalViewMaxWidth);
     const collabDetails = useSelector(getCollabDetails);
     const collabServerUrl = useSelector(getCollabServerUrl);

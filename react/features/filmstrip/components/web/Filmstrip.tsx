@@ -47,12 +47,204 @@ import {
 import AudioTracksContainer from './AudioTracksContainer';
 import Thumbnail from './Thumbnail';
 import ThumbnailWrapper from './ThumbnailWrapper';
-import { styles } from './styles';
+import { Theme } from '@mui/material';
+import { isNarrowScreenWithChatOpen } from '../../../base/responsive-ui/functions';
+
+
+const BACKGROUND_COLOR = 'rgba(51, 51, 51, .5)';
+
+/**
+ * Creates the styles for the component.
+ *
+ * @param {Object} theme - The current theme.
+ * @param {IProps} props - The component props.
+ * @returns {Object}
+ */
+function styles(theme: Theme, props: IProps) {
+    const result = {
+        toggleFilmstripContainer: {
+            display: 'flex',
+            flexWrap: 'nowrap' as const,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: BACKGROUND_COLOR,
+            width: '32px',
+            height: '24px',
+            position: 'absolute' as const,
+            borderRadius: '4px',
+            top: 'calc(-24px - 2px)',
+            left: 'calc(50% - 16px)',
+            opacity: 0,
+            transition: 'opacity .3s',
+            zIndex: 1,
+
+            '&:hover, &:focus-within': {
+                backgroundColor: theme.palette.ui02
+            }
+        },
+
+        toggleFilmstripButton: {
+            fontSize: '14px',
+            lineHeight: 1.2,
+            textAlign: 'center' as const,
+            background: 'transparent',
+            height: 'auto',
+            width: '100%',
+            padding: 0,
+            margin: 0,
+            border: 'none',
+
+            '-webkit-appearance': 'none',
+
+            '& svg': {
+                fill: theme.palette.icon01
+            }
+        },
+
+        toggleVerticalFilmstripContainer: {
+            transform: 'rotate(-90deg)',
+            left: 'calc(-24px - 2px - 4px)',
+            top: 'calc(50% - 12px)'
+        },
+
+        toggleTopPanelContainer: {
+            transform: 'rotate(180deg)',
+            bottom: 'calc(-24px - 6px)',
+            top: 'auto'
+        },
+
+        toggleTopPanelContainerHidden: {
+            visibility: 'hidden' as const
+        },
+
+        filmstrip: {
+            transition: 'background .2s ease-in-out, right 1s, bottom 1s, top 1s, height .3s ease-in',
+            right: 0,
+            bottom: 0,
+
+            '&:hover, &:focus-within': {
+                '& .resizable-filmstrip': {
+                    backgroundColor: BACKGROUND_COLOR
+                },
+
+                '& .filmstrip-hover': {
+                    backgroundColor: BACKGROUND_COLOR
+                },
+
+                '& .toggleFilmstripContainer': {
+                    opacity: 1
+                },
+
+                '& .dragHandleContainer': {
+                    visibility: 'visible' as const
+                }
+            },
+
+            '.horizontal-filmstrip &.hidden': {
+                bottom: '-50px',
+
+                '&:hover': {
+                    backgroundColor: 'transparent'
+                }
+            },
+
+            '&.hidden': {
+                '& .toggleFilmstripContainer': {
+                    opacity: 1
+                }
+            }
+        },
+
+        filmstripBackground: {
+            backgroundColor: theme.palette.uiBackground,
+
+            '&:hover, &:focus-within': {
+                backgroundColor: theme.palette.uiBackground
+            }
+        },
+
+        resizableFilmstripContainer: {
+            display: 'flex',
+            position: 'relative' as const,
+            flexDirection: 'row' as const,
+            alignItems: 'center',
+            height: '100%',
+            width: '100%',
+            transition: 'background .2s ease-in-out' as const,
+
+            '& .avatar-container': {
+                maxWidth: 'initial',
+                maxHeight: 'initial'
+            },
+
+            '&.top-panel-filmstrip': {
+                flexDirection: 'column' as const
+            }
+        },
+
+        dragHandleContainer: {
+            height: '100%',
+            width: '9px',
+            backgroundColor: 'transparent',
+            position: 'relative' as const,
+            cursor: 'col-resize',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            visibility: 'hidden' as const,
+
+            '&:hover': {
+                '& .dragHandle': {
+                    backgroundColor: theme.palette.icon01
+                }
+            },
+
+            '&.visible': {
+                visibility: 'visible' as const,
+
+                '& .dragHandle': {
+                    backgroundColor: theme.palette.icon01
+                }
+            },
+
+            '&.top-panel': {
+                order: 2,
+                width: '100%',
+                height: '9px',
+                cursor: 'row-resize',
+
+                '& .dragHandle': {
+                    height: '3px',
+                    width: '100px'
+                }
+            }
+        },
+
+        dragHandle: {
+            backgroundColor: theme.palette.icon02,
+            height: '100px',
+            width: '3px',
+            borderRadius: '1px'
+        }
+    };
+
+    if (props._isNarrowScreenWithChatOpen) {
+        result.filmstrip = {
+            ...result.filmstrip,
+            '& .vertical-filmstrip': {
+                display: 'none' as const
+            }
+        } as typeof result.filmstrip;
+    }
+
+    return result;
+}
+
 
 /**
  * The type of the React {@code Component} props of {@link Filmstrip}.
  */
-interface IProps extends WithTranslation {
+export interface IProps extends WithTranslation {
 
     /**
      * Additional CSS class names top add to the root.
@@ -103,6 +295,11 @@ interface IProps extends WithTranslation {
      * Whether the filmstrip button is enabled.
      */
     _isFilmstripButtonEnabled: boolean;
+
+    /**
+     * Whether the available space is when the chat is open. The filmstrip will be hidden if true.
+     */
+    _isNarrowScreenWithChatOpen: boolean;
 
     /**
     * Whether or not the toolbox is displayed.
@@ -384,7 +581,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
             }
         }
 
-        let toolbar = null;
+        let toolbar: React.ReactNode = null;
 
         if (!this.props._iAmRecorder && this.props._isFilmstripButtonEnabled
             && _currentLayout !== LAYOUTS.TILE_VIEW
@@ -889,7 +1086,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { localScreenShare } = state['features/base/participants'];
     const reduceHeight = state['features/toolbox'].visible && toolbarButtons?.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
-    const { isOpen: shiftRight } = state['features/chat'];
     const disableSelfView = getHideSelfView(state);
     const { videoSpaceWidth, clientHeight } = state['features/base/responsive-ui'];
     const filmstripDisabled = isFilmstripDisabled(state);
@@ -910,7 +1106,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const videosClassName = `filmstrip__videos${isVisible ? '' : ' hidden'}${_hasScroll ? ' has-scroll' : ''}`;
     const className = `${remoteVideosVisible || ownProps._verticalViewGrid ? '' : 'hide-videos'} ${
         shouldReduceHeight ? 'reduce-height' : ''
-    } ${shiftRight ? 'shift-right' : ''} ${collapseTileView ? 'collapse' : ''} ${isVisible ? '' : 'hidden'}`.trim();
+    } ${collapseTileView ? 'collapse' : ''} ${isVisible ? '' : 'hidden'}`.trim();
 
     const _currentLayout = getCurrentLayout(state);
     const _isVerticalFilmstrip = _currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW
@@ -925,6 +1121,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _hasScroll,
         _iAmRecorder: Boolean(iAmRecorder),
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
+        _isNarrowScreenWithChatOpen: isNarrowScreenWithChatOpen(state),
         _isToolboxVisible: isToolboxVisible(state),
         _isVerticalFilmstrip,
         _localScreenShareId: localScreenShare?.id,

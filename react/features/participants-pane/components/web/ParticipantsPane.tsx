@@ -27,8 +27,18 @@ import { FooterContextMenu } from './FooterContextMenu';
 import LobbyParticipants from './LobbyParticipants';
 import MeetingParticipants from './MeetingParticipants';
 import VisitorsList from './VisitorsList';
+import { isMobileBrowser } from '../../../base/environment/utils';
 
-const useStyles = makeStyles()(theme => {
+/**
+ * Interface representing the properties used for styles.
+ *
+ * @property {boolean} [isMobileBrowser] - Indicates whether the application is being accessed from a mobile browser.
+ * @property {boolean} [isChatOpen] - Specifies whether the chat panel is currently open.
+ */
+interface IStylesProps {
+    isChatOpen?: boolean;
+}
+const useStyles = makeStyles<IStylesProps>()((theme, { isChatOpen }) => {
     return {
         participantsPane: {
             backgroundColor: theme.palette.ui01,
@@ -37,7 +47,7 @@ const useStyles = makeStyles()(theme => {
             position: 'relative',
             transition: 'width .16s ease-in-out',
             width: '315px',
-            zIndex: 0,
+            zIndex: isMobileBrowser() && isChatOpen ? -1 : 0,
             display: 'flex',
             flexDirection: 'column',
             fontWeight: 600,
@@ -114,7 +124,8 @@ const useStyles = makeStyles()(theme => {
 });
 
 const ParticipantsPane = () => {
-    const { classes, cx } = useStyles();
+    const isChatOpen = useSelector((state: IReduxState) => state['features/chat'].isOpen);
+    const { classes } = useStyles({ isChatOpen });
     const paneOpen = useSelector(getParticipantsPaneOpen);
     const isBreakoutRoomsSupported = useSelector((state: IReduxState) => state['features/base/conference'])
         .conference?.getBreakoutRooms()?.isSupported();
@@ -163,7 +174,9 @@ const ParticipantsPane = () => {
     }
 
     return (
-        <div className = { cx('participants_pane', classes.participantsPane) }>
+        <div
+            className = { classes.participantsPane }
+            id = 'participants-pane'>
             <div className = { classes.header }>
                 <ClickableIcon
                     accessibilityLabel = { t('participantsPane.close', 'Close') }

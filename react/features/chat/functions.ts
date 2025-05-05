@@ -14,6 +14,8 @@ import { escapeRegexp } from '../base/util/helpers';
 
 import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, TIMESTAMP_FORMAT } from './constants';
 import { IMessage } from './types';
+import { getParticipantsPaneWidth } from '../participants-pane/functions';
+import { VIDEO_SPACE_MIN_SIZE } from '../video-layout/constants';
 
 /**
  * An ASCII emoticon regexp array to find and replace old-style ASCII
@@ -208,4 +210,18 @@ export function isSendGroupChatDisabled(state: IReduxState) {
     }
 
     return !isJwtFeatureEnabled(state, MEET_FEATURES.SEND_GROUPCHAT, false);
+}
+
+/**
+ * Calculates the maximum width available for the chat panel based on the current window size
+ * and other UI elements.
+ *
+ * @param {IReduxState} state - The Redux state containing the application's current state.
+ * @returns {number} The maximum width in pixels available for the chat panel. Returns 0 if there
+ * is no space available.
+ */
+export function getChatMaxSize(state: IReduxState) {
+    const { clientWidth } = state['features/base/responsive-ui'];
+
+    return Math.max(clientWidth - getParticipantsPaneWidth(state) - VIDEO_SPACE_MIN_SIZE, 0);
 }

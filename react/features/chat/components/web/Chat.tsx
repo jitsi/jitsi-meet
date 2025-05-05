@@ -1,16 +1,16 @@
-import React, { useCallback } from 'react';
-import { connect } from 'react-redux';
+import React, { useCallback, useEffect, useState } from 'react';
+import { connect, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
+import { throttle } from 'lodash-es';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { getLocalParticipant } from '../../../base/participants/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Tabs from '../../../base/ui/components/web/Tabs';
 import { arePollsDisabled } from '../../../conference/functions.any';
 import PollsPane from '../../../polls/components/web/PollsPane';
 import { isCCTabEnabled } from '../../../subtitles/functions.any';
-import { sendMessage, setFocusedTab, toggleChat } from '../../actions.web';
+import { setChatIsResizing, setUserChatWidth, sendMessage, setFocusedTab, toggleChat } from '../../actions.web';
 import { CHAT_SIZE, ChatTabs, SMALL_WIDTH_THRESHOLD } from '../../constants';
 import { IChatProps as AbstractProps } from '../../types';
 
@@ -21,6 +21,7 @@ import DisplayNameForm from './DisplayNameForm';
 import KeyboardAvoider from './KeyboardAvoider';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
+import { getChatMaxSize } from '../../functions';
 
 interface IProps extends AbstractProps {
 
@@ -48,6 +49,11 @@ interface IProps extends AbstractProps {
      * True if the polls feature is enabled.
      */
     _isPollsEnabled: boolean;
+
+    /**
+     * Whether the user is currently resizing the chat panel.
+     */
+    _isResizing: boolean;
 
     /**
      * Number of unread poll messages.
@@ -84,18 +90,29 @@ interface IProps extends AbstractProps {
      * Whether or not to block chat access with a nickname input form.
      */
     _showNamePrompt: boolean;
+
+    /**
+     * The current width of the chat panel.
+     */
+    _width: number;
 }
 
-const useStyles = makeStyles()(theme => {
+const useStyles = makeStyles<{ _isResizing: boolean; width: number; }>()((theme, { _isResizing, width }) => {
     return {
         container: {
             backgroundColor: theme.palette.ui01,
             flexShrink: 0,
             overflow: 'hidden',
             position: 'relative',
-            transition: 'width .16s ease-in-out',
-            width: `${CHAT_SIZE}px`,
+            transition: _isResizing ? undefined : 'width .16s ease-in-out',
+            width: `${width}px`,
             zIndex: 300,
+
+            '&:hover, &:focus-within': {
+                '& .dragHandleContainer': {
+                    visibility: 'visible'
+                }
+            },
 
             '@media (max-width: 580px)': {
                 height: '100dvh',
@@ -123,7 +140,8 @@ const useStyles = makeStyles()(theme => {
             alignItems: 'center',
             boxSizing: 'border-box',
             color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.heading6),
+            ...theme.typography.heading6,
+            fontWeight: theme.typography.heading6.fontWeight as any,
 
             '.jitsi-icon': {
                 cursor: 'pointer'
@@ -146,6 +164,48 @@ const useStyles = makeStyles()(theme => {
         pollsPanel: {
             // extract header + tabs height
             height: 'calc(100% - 110px)'
+        },
+
+        resizableChat: {
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%'
+        },
+
+        dragHandleContainer: {
+            height: '100%',
+            width: '9px',
+            backgroundColor: 'transparent',
+            position: 'absolute',
+            cursor: 'col-resize',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            visibility: 'hidden',
+            right: '4px',
+            top: 0,
+
+            '&:hover': {
+                '& .dragHandle': {
+                    backgroundColor: theme.palette.icon01
+                }
+            },
+
+            '&.visible': {
+                visibility: 'visible',
+
+                '& .dragHandle': {
+                    backgroundColor: theme.palette.icon01
+                }
+            }
+        },
+
+        dragHandle: {
+            backgroundColor: theme.palette.icon02,
+            height: '100px',
+            width: '3px',
+            borderRadius: '1px'
         }
     };
 });
@@ -156,6 +216,7 @@ const Chat = ({
     _isPollsEnabled,
     _isCCTabEnabled,
     _focusedTab,
+    _isResizing,
     _messages,
     _nbUnreadMessages,
     _nbUnreadPolls,
@@ -164,10 +225,100 @@ const Chat = ({
     _onToggleChatTab,
     _onTogglePollsTab,
     _showNamePrompt,
+    _width,
     dispatch,
     t
 }: IProps) => {
-    const { classes, cx } = useStyles();
+    const { classes, cx } = useStyles({ _isResizing, width: _width });
+    const [ isMouseDown, setIsMouseDown ] = useState(false);
+    const [ mousePosition, setMousePosition ] = useState<number | null>(null);
+    const [ dragChatWidth, setDragChatWidth ] = useState<number | null>(null);
+    const maxChatWidth = useSelector(getChatMaxSize);
+
+    /**
+     * Handles mouse down on the drag handle.
+     *
+     * @param {MouseEvent} e - The mouse down event.
+     * @returns {void}
+     */
+    const onDragHandleMouseDown = useCallback((e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Store the initial mouse position and chat width
+        setIsMouseDown(true);
+        setMousePosition(e.clientX);
+        setDragChatWidth(_width);
+
+        // Indicate that resizing is in progress
+        dispatch(setChatIsResizing(true));
+
+        // Add visual feedback that we're dragging
+        document.body.style.cursor = 'col-resize';
+
+        // Disable text selection during resize
+        document.body.style.userSelect = 'none';
+
+        console.log('Chat resize: Mouse down', { clientX: e.clientX, initialWidth: _width });
+    }, [ _width, dispatch ]);
+
+    /**
+     * Drag handle mouse up handler.
+     *
+     * @returns {void}
+     */
+    const onDragMouseUp = useCallback(() => {
+        if (isMouseDown) {
+            setIsMouseDown(false);
+            dispatch(setChatIsResizing(false));
+
+            // Restore cursor and text selection
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+
+            console.log('Chat resize: Mouse up');
+        }
+    }, [ isMouseDown, dispatch ]);
+
+    /**
+     * Handles drag handle mouse move.
+     *
+     * @param {MouseEvent} e - The mousemove event.
+     * @returns {void}
+     */
+    const onChatResize = useCallback(throttle((e: MouseEvent) => {
+        // console.log('Chat resize: Mouse move', { clientX: e.clientX, isMouseDown, mousePosition, _width });
+        if (isMouseDown && mousePosition !== null && dragChatWidth !== null) {
+            // For chat panel resizing on the left edge:
+            // - Dragging left (decreasing X coordinate) should make the panel wider
+            // - Dragging right (increasing X coordinate) should make the panel narrower
+            const diff = e.clientX - mousePosition;
+
+            const newWidth = Math.max(
+                Math.min(dragChatWidth + diff, maxChatWidth),
+                CHAT_SIZE
+            );
+
+            // Update the width only if it has changed
+            if (newWidth !== _width) {
+                dispatch(setUserChatWidth(newWidth));
+            }
+        }
+    }, 50, {
+        leading: true,
+        trailing: false
+    }), [ isMouseDown, mousePosition, dragChatWidth, _width, maxChatWidth, dispatch ]);
+
+    // Set up event listeners when component mounts
+    useEffect(() => {
+        document.addEventListener('mouseup', onDragMouseUp);
+        document.addEventListener('mousemove', onChatResize);
+
+        return () => {
+            document.removeEventListener('mouseup', onDragMouseUp);
+            document.removeEventListener('mousemove', onChatResize);
+        };
+    }, [ onDragMouseUp, onChatResize ]);
 
     /**
     * Sends a text message.
@@ -329,6 +480,15 @@ const Chat = ({
                     isCCTabEnabled = { _isCCTabEnabled }
                     isPollsEnabled = { _isPollsEnabled } />
                 : renderChat()}
+            <div
+                className = { cx(
+                    classes.dragHandleContainer,
+                    (isMouseDown || _isResizing) && 'visible',
+                    'dragHandleContainer'
+                ) }
+                onMouseDown = { onDragHandleMouseDown }>
+                <div className = { cx(classes.dragHandle, 'dragHandle') } />
+            </div>
         </div> : null
     );
 };
@@ -349,11 +509,13 @@ const Chat = ({
  *     _messages: Array<Object>,
  *     _nbUnreadMessages: number,
  *     _nbUnreadPolls: number,
- *     _showNamePrompt: boolean
+ *     _showNamePrompt: boolean,
+ *     _width: number,
+ *     _isResizing: boolean
  * }}
  */
 function _mapStateToProps(state: IReduxState, _ownProps: any) {
-    const { isOpen, focusedTab, messages, nbUnreadMessages } = state['features/chat'];
+    const { isOpen, focusedTab, messages, nbUnreadMessages, width, isResizing } = state['features/chat'];
     const { nbUnreadPolls } = state['features/polls'];
     const _localParticipant = getLocalParticipant(state);
 
@@ -366,7 +528,9 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _messages: messages,
         _nbUnreadMessages: nbUnreadMessages,
         _nbUnreadPolls: nbUnreadPolls,
-        _showNamePrompt: !_localParticipant?.name
+        _showNamePrompt: !_localParticipant?.name,
+        _width: width?.current || CHAT_SIZE,
+        _isResizing: isResizing
     };
 }
 

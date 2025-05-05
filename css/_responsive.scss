@@ -60,21 +60,3 @@
         }
     }
 }
-
-.desktop-browser {
-    &.shift-right {
-
-        @media only screen and (max-width: $verySmallScreen + $sidebarWidth) {
-
-            #videoResolutionLabel {
-                display: none;
-            }
-            .vertical-filmstrip .filmstrip {
-                display: none;
-            }
-            .chrome-extension-banner {
-                display: none;
-            }
-        }
-    }
-}
