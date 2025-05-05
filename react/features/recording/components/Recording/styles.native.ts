@@ -94,8 +94,16 @@ export default {
     highlightDialogButtonsSpace: {
         height: 16,
         width: '100%'
+    },
+    consentButtons: {
+        flexDirection: 'column',
+        gap: 16,
+        width: '100%'
+    },
+    learnMoreLink: {
+        color: BaseTheme.palette.link01,
+        fontWeight: 'bold'
     }
-
 };
 
 /**

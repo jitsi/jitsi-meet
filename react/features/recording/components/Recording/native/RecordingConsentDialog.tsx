@@ -1,12 +1,13 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import Dialog from 'react-native-dialog';
 
 import ConfirmDialog from '../../../../base/dialog/components/native/ConfirmDialog';
 import Link from '../../../../base/react/components/native/Link';
 import { setAudioMuted, setAudioUnmutePermissions, setVideoMuted, setVideoUnmutePermissions } from '../../../../base/media/actions';
 import { IReduxState } from '../../../../app/types';
-import { useTranslation } from 'react-i18next';
+import styles from '../styles.native';
 
 /**
  * Component that renders the dialog for explicit consent for recordings.
@@ -40,21 +41,23 @@ export default function RecordingConsentDialog() {
         <ConfirmDialog
             backLabel = { 'dialog.UnderstandAndUnmute' }
             confirmLabel = { 'dialog.Understand' }
+            footerStyle = { styles.consentButtons }
             isBackHidden = { false }
             isCancelHidden = { true }
             onBack = { consentAndUnmute }
             onSubmit = { consent }
             title = { 'dialog.recordingInProgressTitle' }>
-            <Text>
+            <Dialog.Description>
                 {t('dialog.recordingInProgressDescriptionFirstHalf')}
                 {consentLearnMoreLink && (
                     <Link
+                        style = { styles.learnMoreLink }
                         url = { consentLearnMoreLink }>
                         {t('dialog.learnMore')}
                     </Link>
                 )}
                 {t('dialog.recordingInProgressDescriptionSecondHalf')}
-            </Text>
+            </Dialog.Description>
         </ConfirmDialog>
     );
 }

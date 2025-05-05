@@ -42,6 +42,11 @@ interface IProps extends AbstractProps, WithTranslation {
     descriptionKey?: string | { key: string; params: string; };
 
     /**
+     * Extra style applied to the dialog footer.
+     */
+    footerStyle?: any;
+
+    /**
      * Whether the back button is hidden.
      */
     isBackHidden?: Boolean;
@@ -116,6 +121,7 @@ class ConfirmDialog extends AbstractDialog<IProps> {
             cancelLabel,
             children,
             confirmLabel,
+            footerStyle = {},
             isBackHidden = true,
             isCancelHidden,
             isConfirmDestructive,
@@ -131,6 +137,7 @@ class ConfirmDialog extends AbstractDialog<IProps> {
         return (
             <Dialog.Container
                 coverScreen = { false }
+                footerStyle = { footerStyle }
                 visible = { true }>
                 {
                     title && <Dialog.Title>
