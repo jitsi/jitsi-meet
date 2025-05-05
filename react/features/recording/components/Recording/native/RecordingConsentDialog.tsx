@@ -53,7 +53,7 @@ export default function RecordingConsentDialog() {
                     <Link
                         style = { styles.learnMoreLink }
                         url = { consentLearnMoreLink }>
-                        {t('dialog.learnMore')}
+                        {` (${t('dialog.learnMore')})`}
                     </Link>
                 )}
                 {t('dialog.recordingInProgressDescriptionSecondHalf')}
