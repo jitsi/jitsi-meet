@@ -135,3 +135,12 @@ export const SET_FOCUSED_TAB = 'SET_FOCUSED_TAB';
   * }
   */
  export const REMOVE_LOBBY_CHAT_PARTICIPANT = 'REMOVE_LOBBY_CHAT_PARTICIPANT';
+
+  /**
+  * The type of action sets the timestamp of the last private chat recipients list changed.
+  *
+  * {
+  *     type: NOTIFY_PRIVATE_RECIPIENTS_CHANGED
+  * }
+  */
+ export const NOTIFY_PRIVATE_RECIPIENTS_CHANGED = 'NOTIFY_PRIVATE_RECIPIENTS_CHANGED';
