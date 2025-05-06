@@ -15,6 +15,7 @@ import { isCCTabEnabled } from '../../../subtitles/functions.any';
 import { sendMessage, setFocusedTab, toggleChat } from '../../actions.web';
 import { CHAT_SIZE, ChatTabs, SMALL_WIDTH_THRESHOLD } from '../../constants';
 import { IChatProps as AbstractProps } from '../../types';
+import { IconMessage, IconInfo, IconSubtitles, IconShareDoc } from '../../../base/icons/svg';
 
 import ChatHeader from './ChatHeader';
 import ChatInput from './ChatInput';
@@ -300,7 +301,7 @@ const Chat = ({
                     _focusedTab !== ChatTabs.CHAT && _nbUnreadMessages > 0 ? _nbUnreadMessages : undefined,
                 id: ChatTabs.CHAT,
                 controlsId: `${ChatTabs.CHAT}-panel`,
-                label: t('chat.tabs.chat')
+                icon: IconMessage
             }
         ];
 
@@ -310,7 +311,7 @@ const Chat = ({
                 countBadge: _focusedTab !== ChatTabs.POLLS && _nbUnreadPolls > 0 ? _nbUnreadPolls : undefined,
                 id: ChatTabs.POLLS,
                 controlsId: `${ChatTabs.POLLS}-panel`,
-                label: t('chat.tabs.polls')
+                icon: IconInfo
             });
         }
 
@@ -320,7 +321,7 @@ const Chat = ({
                 countBadge: undefined,
                 id: ChatTabs.CLOSED_CAPTIONS,
                 controlsId: `${ChatTabs.CLOSED_CAPTIONS}-panel`,
-                label: t('chat.tabs.closedCaptions')
+                icon: IconSubtitles
             });
         }
 
@@ -330,7 +331,7 @@ const Chat = ({
                 countBadge: undefined,
                 id: ChatTabs.FILE_SHARING,
                 controlsId: `${ChatTabs.FILE_SHARING}-panel`,
-                label: t('chat.tabs.fileSharing')
+                icon: IconShareDoc
             });
         }
 
