@@ -190,6 +190,12 @@ const LocalRecordingManager: ILocalRecordingManager = {
                     frameRate: 30
                 },
                 audio: {
+                    autoGainControl: false,
+                    channelCount: 2,
+                    echoCancellation: false,
+                    noiseSuppression: false,
+                    // @ts-ignore
+                    restrictOwnAudio: false,
                     // @ts-ignore
                     suppressLocalAudioPlayback: false,
                 },
