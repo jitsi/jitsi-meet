@@ -122,7 +122,7 @@
         "nickname": {
             "popover": "Wähle einen Alias",
             "title": "Geben Sie einen Alias zum Chatten ein",
-            "titleWithCC": "Geben Sie eien Alias zum Chatten und für Untertitel ein",
+            "titleWithCC": "Geben Sie einen Alias zum Chatten und für Untertitel ein",
             "titleWithPolls": "Geben Sie einen Alias zum Chatten und für Umfragen ein",
             "titleWithPollsAndCC": "Geben Sie einen Alias zum Chatten, für Umfragen und Untertitel ein"
         },
@@ -137,7 +137,7 @@
             "polls": "Umfragen"
         },
         "title": "Chatten",
-        "titleWithCC": "Chat und Untertitel",
+        "titleWithCC": "Chatten und Untertitel",
         "titleWithPolls": "Chatten und Umfragen",
         "titleWithPollsAndCC": "Chatten, Umfragen und Untertitel",
         "you": "Sie"
