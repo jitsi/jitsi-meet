@@ -337,7 +337,16 @@ const Chat = ({
 
         return (
             <Tabs
-                accessibilityLabel = { t(_isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
+                accessibilityLabel = { _isPollsEnabled || _isCCTabEnabled || _isFileSharingTabEnabled
+                    ? t('chat.titleWithFeatures', {
+                        features: [
+                            _isPollsEnabled ? t('chat.titleWithPolls') : '',
+                            _isCCTabEnabled ? t('chat.titleWithCC') : '',
+                            _isFileSharingTabEnabled ? t('chat.titleWithFileSharing') : ''
+                        ].filter(Boolean).join(', ')
+                    })
+                    : t('chat.title')
+                }
                 onChange = { onChangeTab }
                 selected = { _focusedTab }
                 tabs = { tabs } />

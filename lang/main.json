@@ -139,10 +139,10 @@
             "polls": "Polls"
         },
         "title": "Chat",
-        "titleWithCC": "Chat and CC",
-        "titleWithFileSharing": "Chat and Files",
-        "titleWithPolls": "Chat and Polls",
-        "titleWithPollsAndCC": "Chat, Polls, CC and Files",
+        "titleWithFeatures": "Chat and",
+        "titleWithCC": "CC",
+        "titleWithFileSharing": "Files",
+        "titleWithPolls": "Polls",
         "you": "you"
     },
     "chromeExtensionBanner": {
