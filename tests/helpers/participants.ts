@@ -319,7 +319,8 @@ function getToken(ctx: IContext, displayName: string, moderator = true) {
                 'outbound-call': 'true',
                 'transcription': 'true',
                 'recording': 'true',
-                'sip-outbound-call': true
+                'sip-outbound-call': true,
+                'livestreaming': true
             },
         },
         'room': '*'
