@@ -216,15 +216,20 @@ const LocalRecordingManager: ILocalRecordingManager = {
 
             this.initializeAudioMixer();
 
+            const gdmAudioTrack = gdmStream.getAudioTracks()[0];
+
+            if (!gdmAudioTrack) {
+                throw new Error('NoAudioTrackFound');
+            }
+
+            this.addAudioTrackToLocalRecording(gdmAudioTrack);
+
             const localAudioTrack = getLocalTrack(tracks, MEDIA_TYPE.AUDIO)?.jitsiTrack?.track;
 
             if (localAudioTrack) {
                 this.addAudioTrackToLocalRecording(localAudioTrack);
             }
 
-            gdmStream.getAudioTracks().forEach((track: MediaStreamTrack) => {
-                this.addAudioTrackToLocalRecording(track);
-            });
             this.stream = new MediaStream([
                 ...this.audioDestination?.stream.getAudioTracks() || [],
                 gdmVideoTrack
