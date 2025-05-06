@@ -176,6 +176,7 @@ class Popover extends Component<IProps, IState> {
         this._setContextMenuStyle = this._setContextMenuStyle.bind(this);
         this._getCustomDialogStyle = this._getCustomDialogStyle.bind(this);
         this._onOutsideClick = this._onOutsideClick.bind(this);
+        this._onOutsideTouchStart = this._onOutsideTouchStart.bind(this);
     }
 
     /**
@@ -185,7 +186,7 @@ class Popover extends Component<IProps, IState> {
      * @returns {void}
      */
     override componentDidMount() {
-        window.addEventListener('touchstart', this._onTouchStart);
+        window.addEventListener('touchstart', this._onOutsideTouchStart);
         if (this.props.trigger === 'click') {
             // @ts-ignore
             window.addEventListener('click', this._onOutsideClick);
@@ -199,7 +200,7 @@ class Popover extends Component<IProps, IState> {
      * @returns {void}
      */
     override componentWillUnmount() {
-        window.removeEventListener('touchstart', this._onTouchStart);
+        window.removeEventListener('touchstart', this._onOutsideTouchStart);
         if (this.props.trigger === 'click') {
             // @ts-ignore
             window.removeEventListener('click', this._onOutsideClick);
@@ -261,6 +262,7 @@ class Popover extends Component<IProps, IState> {
                 id = { id }
                 onClick = { this._onClick }
                 onKeyPress = { this._onKeyPress }
+                onTouchStart = { this._onTouchStart }
                 { ...(trigger === 'hover' ? {
                     onMouseEnter: this._onShowDialog,
                     onMouseLeave: this._onHideDialog
@@ -337,7 +339,7 @@ class Popover extends Component<IProps, IState> {
      * @private
      * @returns {void}
      */
-    _onTouchStart(event: TouchEvent) {
+    _onOutsideTouchStart(event: TouchEvent) {
         if (this.props.visible
             && !this.props.overflowDrawer
             && !this._contextMenuRef?.contains?.(event.target as Node)
@@ -399,6 +401,24 @@ class Popover extends Component<IProps, IState> {
                 this._onShowDialog();
             }
         }
+    }
+
+    /**
+     * Stops propagation of touchstart events originating from the Popover's trigger container.
+     * This prevents the window's 'touchstart' listener (_onOutsideTouchStart) from
+     * immediately closing the Popover if the touch begins on the trigger area itself.
+     * Without this, the subsequent synthesized 'click' event will not execute
+     * because the Popover would already be closing or removed, breaking interactions
+     * within the Popover on touch devices.
+     *
+     * e.g. On a mobile device overflow buttons don't execute their click actions.
+     *
+     * @param {React.TouchEvent} event - The touch start event.
+     * @private
+     * @returns {void}
+     */
+    _onTouchStart(event: React.TouchEvent) {
+        event.stopPropagation();
     }
 
     /**
