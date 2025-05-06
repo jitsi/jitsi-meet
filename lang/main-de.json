@@ -122,7 +122,9 @@
         "nickname": {
             "popover": "Wähle einen Alias",
             "title": "Geben Sie einen Alias zum Chatten ein",
-            "titleWithPolls": "Geben Sie einen Alias zum Chatten ein"
+            "titleWithCC": "Geben Sie einen Alias zum Chatten und für Untertitel ein",
+            "titleWithPolls": "Geben Sie einen Alias zum Chatten und für Umfragen ein",
+            "titleWithPollsAndCC": "Geben Sie einen Alias zum Chatten, für Umfragen und Untertitel ein"
         },
         "noMessagesMessage": "Es gibt noch keine Nachricht in dieser Konferenz. Starten Sie hier eine Unterhaltung!",
         "privateNotice": "Private Nachricht an {{recipient}}",
@@ -131,10 +133,13 @@
         "systemDisplayName": "System",
         "tabs": {
             "chat": "Chatten",
+            "closedCaptions": "Untertitel",
             "polls": "Umfragen"
         },
         "title": "Chatten",
+        "titleWithCC": "Chatten und Untertitel",
         "titleWithPolls": "Chatten und Umfragen",
+        "titleWithPollsAndCC": "Chatten, Umfragen und Untertitel",
         "you": "Sie"
     },
     "chromeExtensionBanner": {
@@ -143,6 +148,10 @@
         "close": "Schließen",
         "dontShowAgain": "Hinweis nicht mehr anzeigen",
         "installExtensionText": "Installieren Sie die Erweiterung für die Integration von Google Calendar und Office 365"
+    },
+    "closedCaptionsTab": {
+        "emptyState": "Die Untertitel sind verfügbar, sobald sie von der Moderation gestartet wurden",
+        "startClosedCaptionsButton": "Untertitel starten"
     },
     "connectingOverlay": {
         "joiningRoom": "Eine Verbindung zu Ihrer Konferenz wird hergestellt…"
@@ -263,7 +272,8 @@
         "Remove": "Entfernen",
         "Share": "Teilen",
         "Submit": "OK",
-        "Understand": "Verstanden",
+        "Understand": "Verstanden, Stummschaltung beibehalten",
+        "UnderstandAndUnmute": "Verstanden, bitte Stummschaltung aufheben",
         "WaitForHostMsg": "Die Konferenz wurde noch nicht gestartet. Falls Sie die Konferenz leiten, authentifizieren Sie sich bitte. Warten Sie andernfalls, bis die Konferenz gestartet wird.",
         "WaitForHostNoAuthMsg": "Die Konferenz wurde noch nicht gestartet. Bitte warten Sie, bis die Konferenz gestartet wird.",
         "WaitingForHostButton": "Auf Moderation warten",
@@ -300,6 +310,7 @@
         "conferenceReloadMsg": "Wir versuchen das zu beheben. Verbinde in {{seconds}} Sekunden …",
         "conferenceReloadTitle": "Leider ist etwas schiefgegangen.",
         "confirm": "Bestätigen",
+        "confirmBack": "Zurück",
         "confirmNo": "Nein",
         "confirmYes": "Ja",
         "connectError": "Oh! Es hat etwas nicht geklappt und der Konferenz konnte nicht beigetreten werden.",
@@ -337,6 +348,7 @@
         "kickParticipantTitle": "Person entfernen?",
         "kickSystemTitle": "Autsch! Sie wurden aus der Konferenz geworfen",
         "kickTitle": "Autsch! {{participantDisplayName}} hat Sie aus der Konferenz geworfen",
+        "learnMore": "Mehr erfahren",
         "linkMeeting": "Konferenz verlinken",
         "linkMeetingTitle": "Konferenz mit Salesforce verlinken",
         "liveStreaming": "Livestreaming",
@@ -394,7 +406,9 @@
         "recentlyUsedObjects": "Ihre zuletzt verwendeten Objekte",
         "recording": "Aufnahme",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Während eines Livestreams nicht möglich",
-        "recordingInProgressDescription": "Diese Konferenz wird aufgezeichnet. Ihr Ton und Video ist deaktiviert, wenn Sie es aktivieren, stimmen Sie der Aufzeichnung zu.",
+        "recordingInProgressDescription": "Diese Konferenz wird aufgezeichnet und von KI analysiert {{learnMore}}. Ihr Ton und Video ist deaktiviert, wenn Sie es aktivieren, stimmen Sie der Aufzeichnung zu.",
+        "recordingInProgressDescriptionFirstHalf": "Diese Konferenz wird aufgezeichnet und von KI analysiert",
+        "recordingInProgressDescriptionSecondHalf": ". Ihr Ton und Video ist deaktiviert, wenn Sie es aktivieren, stimmen Sie der Aufzeichnung zu.",
         "recordingInProgressTitle": "Aufnahme läuft",
         "rejoinNow": "Jetzt erneut beitreten",
         "remoteControlAllowedMessage": "{{user}} hat die Anfrage zur Fernsteuerung angenommen!",
@@ -1138,6 +1152,7 @@
         "selectMic": "Mikrofon",
         "selfView": "Eigene Ansicht",
         "shortcuts": "Tastaturkürzel",
+        "showSubtitlesOnStage": "Untertitel in Hauptansicht anzeigen",
         "speakers": "Lautsprecher",
         "startAudioMuted": "Alle Personen treten stummgeschaltet bei",
         "startReactionsMuted": "Interaktionstöne für alle deaktivieren",
@@ -1234,6 +1249,7 @@
             "closeChat": "Chat schließen",
             "closeMoreActions": "„Weitere Einstellungen“ schließen",
             "closeParticipantsPane": "Anwesendenliste schließen",
+            "closedCaptions": "Untertitel",
             "collapse": "Einklappen",
             "document": "Geteiltes Dokument schließen",
             "documentClose": "Geteiltes Dokument schließen",
@@ -1324,6 +1340,7 @@
         "closeChat": "Chat schließen",
         "closeParticipantsPane": "Anwesenheitsliste schließen",
         "closeReactionsMenu": "Interaktionsmenü schließen",
+        "closedCaptions": "Untertitel",
         "disableNoiseSuppression": "Rauschunterdrückung deaktivieren",
         "disableReactionSounds": "Sie können die Interaktionstöne für diese Konferenz deaktivieren",
         "documentClose": "Geteiltes Dokument schließen",
@@ -1416,13 +1433,16 @@
         "failed": "Transkribieren fehlgeschlagen",
         "labelTooltip": "Die Konferenz wird transkribiert",
         "labelTooltipExtra": "Zusätzlich wird das Transkript später verfügbar sein.",
+        "openClosedCaptions": "Untertitel öffnen",
+        "original": "Original",
         "sourceLanguageDesc": "Aktuell ist die Sprache der Konferenz auf <b>{{sourceLanguage}}</b> eingestellt. <br/> Sie könne dies hier ",
         "sourceLanguageHere": "ändern",
         "start": "Anzeige der Untertitel starten",
         "stop": "Anzeige der Untertitel stoppen",
         "subtitles": "Untertitel",
         "subtitlesOff": "Ausschalten",
-        "tr": "TR"
+        "tr": "TR",
+        "translateTo": "Übersetzen in"
     },
     "unpinParticipant": "{{participantName}} - Nicht mehr anheften",
     "userMedia": {
