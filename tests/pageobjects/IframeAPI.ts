@@ -109,4 +109,27 @@ export default class IframeAPI extends BasePageObject {
             address: v
         } ]), value);
     }
+
+    /**
+     * Starts a file recording or streaming session.
+     * @param options
+     */
+    startRecording(options: any) {
+        return this.participant.execute(o => window.jitsiAPI.startRecording(o), options);
+    }
+
+    /**
+     * Stop a file recording or streaming session.
+     * @param mode
+     */
+    stopRecording(mode: string) {
+        return this.participant.execute(m => window.jitsiAPI.stopRecording(m), mode);
+    }
+
+    /**
+     * Returns the live-streaming url.
+     */
+    async getLivestreamUrl() {
+        return this.participant.execute(() => window.jitsiAPI.getLivestreamUrl());
+    }
 }
