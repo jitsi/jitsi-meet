@@ -542,6 +542,7 @@ export interface IConfig {
     };
     recordingSharingUrl?: string;
     recordings?: {
+        consentLearnMoreLink?: string;
         recordAudioAndVideo?: boolean;
         requireConsent?: boolean;
         showPrejoinWarning?: boolean;
