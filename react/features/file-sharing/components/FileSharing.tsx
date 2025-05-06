@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useRef, ReactNode } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
-import { IconCloudUpload } from '../../base/icons/svg';
+import { IconCloudUpload, IconDownload, IconTrash } from '../../base/icons/svg';
 import Button from '../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../base/ui/constants.web';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,7 +19,8 @@ const useStyles = makeStyles()(theme => {
         buttonContainer: {
             alignItems: 'center',
             display: 'flex',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
+            gap: theme.spacing(2)
         },
 
         container: {
@@ -47,7 +48,7 @@ const useStyles = makeStyles()(theme => {
             right: 0,
             top: 0,
             transition: 'opacity 0.15s ease-in-out',
-            zIndex: 1,
+            zIndex: 0,
 
             '&.dragging': {
                 backgroundColor: theme.palette.ui03,
@@ -71,19 +72,32 @@ const useStyles = makeStyles()(theme => {
             flexDirection: 'column',
             gap: theme.spacing(1),
             marginBottom: theme.spacing(3),
-            padding: theme.spacing(3)
+            padding: theme.spacing(3),
+
+            '&:hover': {
+                backgroundColor: theme.palette.ui03,
+                borderRadius: theme.shape.borderRadius,
+
+                '& .actionIconVisibility': {
+                    visibility: 'visible'
+                }
+            }
         },
 
         fileList: {
             gap: theme.spacing(2),
-            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))'
+            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+            position: 'relative',
+            zIndex: 1
         },
 
         fileName: {
-            color: theme.palette.text01,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap'
+            ...theme.typography.labelBold,
+            gap: theme.spacing(1)
+        },
+
+        fileSize: {
+            ...theme.typography.labelRegular
         },
 
         filePreview: {
@@ -141,11 +155,17 @@ const useStyles = makeStyles()(theme => {
             position: 'absolute',
             transform: 'translateX(-50%)',
             width: '85%',
-            zIndex: 2
+            zIndex: 1
         },
 
         uploadIcon: {
             margin: '0 auto'
+        },
+
+        actionIcon: {
+            cursor: 'pointer',
+            padding: theme.spacing(1),
+            visibility: 'hidden'
         }
     };
 });
@@ -284,23 +304,27 @@ const FileSharing = () => {
                                     <span className = { classes.fileName }>
                                         { file.file.name }
                                     </span>
+                                    <span className = { classes.fileSize }>
+                                        { file.file.size } KB
+                                    </span>
                                     <div className = { classes.buttonContainer }>
-                                        <Button
-                                            accessibilityLabel = { t('fileSharing.downloadFile') }
-                                            className = { classes.downloadButton }
-                                            labelKey = { 'fileSharing.downloadFile' }
+                                        <Icon
+                                            className = { `${classes.actionIcon} actionIconVisibility` }
+                                            color = { BaseTheme.palette.icon01 }
 
                                             // eslint-disable-next-line react/jsx-no-bind
                                             onClick = { () => dispatch(downloadFile(file.id, file.file.name, file.md5)) }
-                                            type = { BUTTON_TYPES.PRIMARY } />
+                                            size = { 24 }
+                                            src = { IconDownload } />
                                         { isModerator && (
-                                            <Button
-                                                accessibilityLabel = { t('fileSharing.removeFile') }
-                                                labelKey = { 'fileSharing.removeFile' }
+                                            <Icon
+                                                className = { `${classes.actionIcon} actionIconVisibility` }
+                                                color = { BaseTheme.palette.icon01 }
 
                                                 // eslint-disable-next-line react/jsx-no-bind
                                                 onClick = { () => dispatch(removeFile(file.id)) }
-                                                type = { BUTTON_TYPES.DESTRUCTIVE } />
+                                                size = { 24 }
+                                                src = { IconTrash } />
                                         ) }
                                     </div>
                                 </>
