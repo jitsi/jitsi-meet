@@ -1,6 +1,7 @@
 import { createStartMutedConfigurationEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState, IStore } from '../../app/types';
+import { readyToClose } from '../../mobile/external-api/actions';
 import { transcriberJoined, transcriberLeft } from '../../transcribing/actions';
 import { setIAmVisitor } from '../../visitors/actions';
 import { iAmVisitor } from '../../visitors/functions';
@@ -26,7 +27,7 @@ import {
     participantSourcesUpdated,
     participantUpdated
 } from '../participants/actions';
-import { getNormalizedDisplayName, getParticipantByIdOrUndefined } from '../participants/functions';
+import { getLocalParticipant, getNormalizedDisplayName, getParticipantByIdOrUndefined } from '../participants/functions';
 import { IJitsiParticipant } from '../participants/types';
 import { toState } from '../redux/functions';
 import {
@@ -143,7 +144,24 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
 
     conference.on(
         JitsiConferenceEvents.KICKED,
-        (participant: any) => dispatch(kickedOut(conference, participant)));
+        (participant: any, reason: any, isReplaced: boolean) => {
+
+            if (isReplaced) {
+                const localParticipant = getLocalParticipant(state);
+
+                dispatch(participantUpdated({
+                    conference,
+
+                    // @ts-ignore
+                    id: localParticipant.id,
+                    isReplaced
+                }));
+
+                dispatch(readyToClose());
+            } else {
+                dispatch(kickedOut(conference, participant));
+            }
+        });
 
     conference.on(
         JitsiConferenceEvents.PARTICIPANT_KICKED,
