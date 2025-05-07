@@ -1,7 +1,7 @@
 import React from "react";
+import { useAspectRatio } from "../../../general/hooks/useAspectRatio";
 import { VideoParticipantType } from "../types";
 import VideoParticipant from "./VideoParticipant";
-import { useAspectRatio } from "../../../general/hooks/useAspectRatio";
 
 export interface VideoGalleryProps {
     participants: VideoParticipantType[];
@@ -30,7 +30,7 @@ const VideoGallery = ({ participants, flipX, translate }: VideoGalleryProps) => 
         let heightClass = "";
 
         if (hasOneParticipant) {
-            return "relative aspect-square sm:aspect-video h-full max-w-full";
+            return "relative aspect-square sm:aspect-video max-w-full";
         } else if (participantsNumber === 2) {
             widthClass = "w-[calc(50%-5px)]";
             heightClass = "sm:max-h-[75%]";
@@ -48,7 +48,6 @@ const VideoGallery = ({ participants, flipX, translate }: VideoGalleryProps) => 
             heightClass = "sm:max-h-[18%]";
         }
 
-
         const mobileHeightClass = participantsNumber > 4 ? "max-h-[120px]" : "";
 
         return `relative ${widthClass} ${heightClass} ${mobileHeightClass} aspect-square sm:aspect-video`;
@@ -60,7 +59,11 @@ const VideoGallery = ({ participants, flipX, translate }: VideoGalleryProps) => 
                 className={`max-h-[85vh] sm:h-[90%] w-[95%] sm:w-[90%] flex justify-center items-center`}
                 style={containerStyle}
             >
-                <div className={`${hasOneParticipant ? "h-full": ""} w-full flex flex-wrap justify-center items-start content-start gap-2.5`}>
+                <div
+                    className={`${
+                        hasOneParticipant ? "h-full" : ""
+                    } w-full flex flex-wrap justify-center items-start content-start gap-2.5`}
+                >
                     {sortedParticipants.map((participant) => (
                         <VideoParticipant
                             key={participant.id}
