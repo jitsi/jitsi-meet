@@ -24,8 +24,8 @@ export function getStageParticipantTypography(theme: Theme) {
  */
 export function getStageParticipantFontSizeRange(theme: Theme) {
     return {
-        max: theme.typography.bodyShortRegularLarge.fontSize,
-        min: theme.typography.bodyShortRegularSmall.fontSize
+        max: remToPixels(theme.typography.bodyShortRegularLarge.fontSize),
+        min: remToPixels(theme.typography.bodyShortRegularSmall.fontSize)
     };
 }
 
