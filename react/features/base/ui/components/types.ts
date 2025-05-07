@@ -32,7 +32,7 @@ export interface IButtonProps {
     /**
      * Click callback.
      */
-    onClick?: (e?: React.MouseEvent<HTMLButtonElement> | GestureResponderEvent) => void;
+    onClick?: (e?: any) => void;
 
     /**
      * Key press callback.

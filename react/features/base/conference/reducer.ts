@@ -54,6 +54,18 @@ const DEFAULT_STATE = {
 };
 
 export interface IConferenceMetadata {
+    files: {
+        [fileId: string]: {
+            authorParticipantJid: string;
+            authorParticipantName: string;
+            conferenceFullName: string;
+            md5: string;
+            name: string;
+            size: number;
+            timestamp: number;
+            type: string;
+        };
+    };
     recording?: {
         isTranscribingEnabled: boolean;
     };

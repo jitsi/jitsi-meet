@@ -124,7 +124,8 @@
             "title": "Enter a nickname to use chat",
             "titleWithCC": "Enter a nickname to use chat and closed captions",
             "titleWithPolls": "Enter a nickname to use chat and polls",
-            "titleWithPollsAndCC": "Enter a nickname to use chat, polls and closed captions"
+            "titleWithPollsAndCC": "Enter a nickname to use chat, polls and closed captions",
+            "titleWithPollsAndCCAndFileSharing": "Enter a nickname to use chat, polls, closed captions and files"
         },
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "privateNotice": "Private message to {{recipient}}",
@@ -134,12 +135,14 @@
         "tabs": {
             "chat": "Chat",
             "closedCaptions": "CC",
+            "fileSharing": "Files",
             "polls": "Polls"
         },
         "title": "Chat",
-        "titleWithCC": "Chat and CC",
-        "titleWithPolls": "Chat and Polls",
-        "titleWithPollsAndCC": "Chat, Polls and CC",
+        "titleWithCC": "CC",
+        "titleWithFeatures": "Chat and",
+        "titleWithFileSharing": "Files",
+        "titleWithPolls": "Polls",
         "you": "you"
     },
     "chromeExtensionBanner": {
@@ -538,6 +541,17 @@
         "star": "Star",
         "veryBad": "Very Bad",
         "veryGood": "Very Good"
+    },
+    "fileSharing": {
+        "downloadFailedDescription": "Please try again.",
+        "downloadFailedTitle": "Download failed",
+        "downloadFile": "Download",
+        "dragAndDrop": "Drag and drop files here",
+        "fileAlreadyUploaded": "File has already been uploaded to this meeting",
+        "removeFile": "Remove",
+        "uploadFailedDescription": "Please try again.",
+        "uploadFailedTitle": "Upload failed",
+        "uploadFile": "Share file"
     },
     "filmstrip": {
         "accessibilityLabel": {

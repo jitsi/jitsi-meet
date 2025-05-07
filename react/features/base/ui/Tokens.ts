@@ -118,8 +118,8 @@ export const colorMap = {
 
 
 export const font = {
-    weightRegular: 400,
-    weightSemiBold: 600
+    weightRegular: 'normal',
+    weightSemiBold: 'bold'
 };
 
 export const shape = {

@@ -1,10 +1,13 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Icon from '../../../base/icons/components/Icon';
 import { IconCloseLarge } from '../../../base/icons/svg';
 import { toggleChat } from '../../actions.web';
+import { IReduxState } from '../../../app/types';
+import { ChatTabs } from '../../constants';
+import { isFileSharingEnabled } from '../../../file-sharing/functions.any';
 
 interface IProps {
 
@@ -34,9 +37,11 @@ interface IProps {
  *
  * @returns {React$Element<any>}
  */
-function ChatHeader({ className, isPollsEnabled, isCCTabEnabled }: IProps) {
+function ChatHeader({ className, isCCTabEnabled, isPollsEnabled }: IProps) {
     const dispatch = useDispatch();
     const { t } = useTranslation();
+    const { focusedTab } = useSelector((state: IReduxState) => state['features/chat']);
+    const fileSharingTabEnabled = useSelector(isFileSharingEnabled);
 
     const onCancel = useCallback(() => {
         dispatch(toggleChat());
@@ -51,12 +56,14 @@ function ChatHeader({ className, isPollsEnabled, isCCTabEnabled }: IProps) {
 
     let title = 'chat.title';
 
-    if (isCCTabEnabled && isPollsEnabled) {
-        title = 'chat.titleWithPollsAndCC';
-    } else if (isCCTabEnabled) {
-        title = 'chat.titleWithCC';
-    } else if (isPollsEnabled) {
-        title = 'chat.titleWithPolls';
+    if (focusedTab === ChatTabs.CHAT) {
+        title = 'chat.tabs.chat';
+    } else if (isPollsEnabled && focusedTab === ChatTabs.POLLS) {
+        title = 'chat.tabs.polls';
+    } else if (isCCTabEnabled && focusedTab === ChatTabs.CLOSED_CAPTIONS) {
+        title = 'chat.tabs.closedCaptions';
+    } else if (fileSharingTabEnabled && focusedTab === ChatTabs.FILE_SHARING) {
+        title = 'chat.tabs.fileSharing';
     }
 
     return (
