@@ -1,6 +1,6 @@
 interface ITypographyType {
     fontSize: number;
-    fontWeight: string;
+    fontWeight: ('bold' | 'normal' | 'bolder' | 'lighter')[] | undefined;
     letterSpacing: number;
     lineHeight: number;
 }

@@ -139,8 +139,8 @@
             "polls": "Polls"
         },
         "title": "Chat",
-        "titleWithFeatures": "Chat and",
         "titleWithCC": "CC",
+        "titleWithFeatures": "Chat and",
         "titleWithFileSharing": "Files",
         "titleWithPolls": "Polls",
         "you": "you"
@@ -537,21 +537,21 @@
         "veryBad": "Very Bad",
         "veryGood": "Very Good"
     },
+    "fileSharing": {
+        "downloadFailedDescription": "Please try again.",
+        "downloadFailedTitle": "Download failed",
+        "downloadFile": "Download",
+        "dragAndDrop": "Drag and drop files here",
+        "fileAlreadyUploaded": "File has already been uploaded to this meeting",
+        "removeFile": "Remove",
+        "uploadFailedDescription": "Please try again.",
+        "uploadFailedTitle": "Upload failed",
+        "uploadFile": "Share file"
+    },
     "filmstrip": {
         "accessibilityLabel": {
             "heading": "Video thumbnails"
         }
-    },
-    "fileSharing": {
-        "downloadFile": "Download",
-        "downloadFailedTitle": "Download failed",
-        "downloadFailedDescription": "Please try again.",
-        "dragAndDrop": "Drag and drop files here",
-        "fileAlreadyUploaded": "File has already been uploaded to this meeting",
-        "removeFile": "Remove",
-        "uploadFailedTitle": "Upload failed",
-        "uploadFailedDescription": "Please try again.",
-        "uploadFile": "Share file"
     },
     "giphy": {
         "noResults": "No results found :(",

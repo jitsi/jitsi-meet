@@ -5,7 +5,7 @@ import { showErrorNotification, showNotification } from '../notifications/action
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
 import { ADD_FILES, REMOVE_FILE, DOWNLOAD_FILE, SET_FILES } from './actionTypes';
 import { calculateFileHash, makeApiCall } from './functions.any';
-import { updateFileProgress } from './actions';
+import { removeFile, updateFileProgress } from './actions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import logger from './logger';
 import { FILE_SHARING_ID } from './constants';
@@ -52,7 +52,7 @@ MiddlewareRegistry.register(store => next => async action => {
                     headers
                 });
 
-                const fileExists = uploadedFiles?.some(item => item.md5 === fileHash);
+                const fileExists = uploadedFiles?.some((item: any) => item.md5 === fileHash);
 
                 if (fileExists) {
 
@@ -104,6 +104,8 @@ MiddlewareRegistry.register(store => next => async action => {
                 store.dispatch(updateFileProgress(file.id, 100));
             } catch (error) {
                 logger.warn('Could not upload file:', error);
+
+                store.dispatch(removeFile(file.id));
 
                 store.dispatch(showErrorNotification({
                     titleKey: 'fileSharing.uploadFailedTitle',

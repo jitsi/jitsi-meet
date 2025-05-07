@@ -38,6 +38,7 @@ import { IE2EEState } from '../e2ee/reducer';
 import { IEtherpadState } from '../etherpad/reducer';
 import { IFaceLandmarksState } from '../face-landmarks/reducer';
 import { IFeedbackState } from '../feedback/reducer';
+import { IFileSharingState } from '../file-sharing/reducer';
 import { IFilmstripState } from '../filmstrip/reducer';
 import { IFollowMeState } from '../follow-me/reducer';
 import { IGifsState } from '../gifs/reducer';
@@ -128,6 +129,7 @@ export interface IReduxState {
     'features/etherpad': IEtherpadState;
     'features/face-landmarks': IFaceLandmarksState;
     'features/feedback': IFeedbackState;
+    'features/file-sharing': IFileSharingState;
     'features/filmstrip': IFilmstripState;
     'features/follow-me': IFollowMeState;
     'features/full-screen': IFullScreenState;

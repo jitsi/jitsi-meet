@@ -1,6 +1,5 @@
 import md5 from 'js-md5';
 import { IReduxState } from '../app/types';
-import { isLocalParticipantModerator } from '../base/participants/functions';
 import { IconShareDoc, IconVideo, IconVolumeUp } from '../base/icons/svg';
 
 import { API_BASE_URL } from './constants';

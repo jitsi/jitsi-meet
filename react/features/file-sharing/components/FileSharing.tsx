@@ -207,7 +207,7 @@ const FileSharing = () => {
 
     const processFiles = useCallback(async (fileList: FileList | File[]) => {
         try {
-            const newFiles = await Promise.all(Array.from(fileList).map(async file => ({
+            const newFiles = await Promise.all(Array.from(fileList).map(async (file: any) => ({
                 file,
                 id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(36),
                 preview: await createFilePreview(file),
@@ -285,7 +285,7 @@ const FileSharing = () => {
             }
             { files.length > 0 && (
                 <div className = { classes.fileList }>
-                    { files.map(file => (
+                    { files.map((file: any) => (
                         <div
                             className = { classes.fileItem }
                             key = { file.id }>
@@ -340,13 +340,17 @@ const FileSharing = () => {
                     )) }
                 </div>
             )}
-            <Button
-                accessibilityLabel = { t('fileSharing.uploadFile') }
-                className = { classes.uploadButton }
-                labelKey = { 'fileSharing.uploadFile' }
-                onClick = { handleClick }
-                onKeyPress = { handleKeyPress }
-                type = { BUTTON_TYPES.PRIMARY } />
+            {
+                isModerator && (
+                    <Button
+                        accessibilityLabel = { t('fileSharing.uploadFile') }
+                        className = { classes.uploadButton }
+                        labelKey = { 'fileSharing.uploadFile' }
+                        onClick = { handleClick }
+                        onKeyPress = { handleKeyPress }
+                        type = { BUTTON_TYPES.PRIMARY } />
+                )
+            }
         </div>
     );
 };
