@@ -2,9 +2,9 @@ import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
-import { get8x8BetaJWT } from "../../../../connection/options8x8";
 import { loginSuccess } from "../../../general/store/auth/actions";
 import { setRoomID } from "../../../general/store/errors/actions";
+import { setUser } from "../../../general/store/user/actions";
 import { useLocalStorage } from "../../../LocalStorageManager";
 import { AuthService } from "../../../services/auth.service";
 import { LoginCredentials } from "../../../services/types/command.types";
@@ -69,17 +69,6 @@ export function useLoginModal({ onClose, onLogin, translate }: UseAuthModalProps
         [translate]
     );
 
-    const createMeetToken = useCallback(
-        async (token: string) => {
-            try {
-                return await get8x8BetaJWT(token);
-            } catch (err) {
-                throw new Error(translate("meet.auth.modal.error.cannotCreateMeetings"));
-            }
-        },
-        [translate]
-    );
-
     const saveUserSession = useCallback(
         (credentials: LoginCredentials) => {
             storageManager.saveCredentials(
@@ -89,6 +78,7 @@ export function useLoginModal({ onClose, onLogin, translate }: UseAuthModalProps
                 credentials.user
             );
             dispatch(loginSuccess(credentials));
+            dispatch(setUser(credentials.user));
             onLogin?.(credentials.newToken);
         },
         [storageManager, onLogin, dispatch]
@@ -117,8 +107,6 @@ export function useLoginModal({ onClose, onLogin, translate }: UseAuthModalProps
             throw new Error(translate("meet.auth.modal.error.invalidCredentials"));
         }
 
-        // TODO: NEED TO SAVE MEET ROOM TO COMPLETE LOGIN AND REDIRECT TO SCHEDULE MODAL FLOW
-        // saveRoomId(meetData.room);
         saveUserSession(loginCredentials);
 
         onClose();

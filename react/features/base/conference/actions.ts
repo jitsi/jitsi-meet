@@ -715,8 +715,8 @@ export function kickedOut(conference: IJitsiConference, participant: Object) {
  *
  * @returns {Function}
  */
-export function leaveConference() {
-    return async (dispatch: IStore['dispatch']) => dispatch(hangup(true));
+export function leaveConference(roomID: string) {
+    return async (dispatch: IStore["dispatch"]) => dispatch(hangup(true, roomID));
 }
 
 /**

@@ -31,12 +31,12 @@ import ConferenceInfo from "../../../../../conference/components/web/ConferenceI
 import { default as Notice } from "../../../../../conference/components/web/Notice";
 import Header, { Mode } from "../components/Header";
 
-import ConferenceControlsWrapper from "../containers/ConferenceControlsWrapper";
-import VideoGalleryWrapper from "../containers/VideoGalleryWrapper";
-import { DEFAULT_STATE } from "../../../../known-domains/reducer";
-import PersistenceRegistry from "../../../../redux/PersistenceRegistry";
 import { setConferenceViewMode } from "../../../../../filmstrip/actions.web";
 import { ViewMode } from "../../../../../filmstrip/reducer";
+import { DEFAULT_STATE } from "../../../../known-domains/reducer";
+import PersistenceRegistry from "../../../../redux/PersistenceRegistry";
+import ConferenceControlsWrapper from "./ConferenceControlsWrapper";
+import VideoGalleryWrapper from "./VideoGalleryWrapper";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need

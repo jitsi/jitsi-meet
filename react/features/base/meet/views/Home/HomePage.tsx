@@ -99,8 +99,9 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
 
             if (token) {
                 try {
-                    const newRoomID = await meetingService.generateMeetingRoom(token);
-                    dispatch(setRoomID(newRoomID));
+                    const meetingData = await meetingService.createCall();
+                    dispatch(setRoomID(meetingData.room));
+
                     setIsScheduleModalOpen(true);
                 } catch (error) {
                     setIsScheduleModalOpen(true);

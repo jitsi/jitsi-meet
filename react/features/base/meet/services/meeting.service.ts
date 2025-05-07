@@ -4,7 +4,6 @@ import {
     JoinCallResponse,
     UsersInCallResponse,
 } from "@internxt/sdk/dist/meet/types";
-import { get8x8BetaJWT } from "../../connection/options8x8";
 import { SdkManager } from "./sdk-manager.service";
 
 class MeetingService {
@@ -16,17 +15,6 @@ class MeetingService {
             MeetingService.instance = new MeetingService();
         }
         return MeetingService.instance;
-    }
-
-    /**
-     * Generates a new meeting room
-     * @param token - The JWT authentication token
-     * @returns A promise that resolves to the generated roomID
-     * @throws {MeetingError} If there's an error generating the meeting room
-     */
-    public async generateMeetingRoom(token: string): Promise<string | null> {
-        const meetData = await get8x8BetaJWT(token);
-        return meetData?.room;
     }
 
     /**
@@ -49,6 +37,11 @@ class MeetingService {
     public joinCall = async (callId: string, payload: JoinCallPayload): Promise<JoinCallResponse> => {
         const meetClient = SdkManager.instance.getMeet();
         return await meetClient.joinCall(callId, payload);
+    };
+
+    public leaveCall = async (callId: string): Promise<any> => {
+        const meetClient = SdkManager.instance.getMeet();
+        return await meetClient.leaveCall(callId);
     };
 
     /**

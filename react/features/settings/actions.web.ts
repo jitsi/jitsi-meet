@@ -40,39 +40,41 @@ import {
  * @returns {Function}
  */
 export function openLogoutDialog() {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
 
-        const config = state['features/base/config'];
+        const config = state["features/base/config"];
         const logoutUrl = config.tokenLogoutUrl;
 
-        const { conference } = state['features/base/conference'];
-        const { jwt } = state['features/base/jwt'];
+        const { conference } = state["features/base/conference"];
+        const { jwt } = state["features/base/jwt"];
+        const _room = state["features/base/conference"].room ?? "";
 
-        dispatch(openDialog(LogoutDialog, {
-            onLogout() {
-                if (isTokenAuthEnabled(config) && config.tokenAuthUrlAutoRedirect && jwt) {
-
-                    // user is logging out remove auto redirect indication
-                    dispatch(setTokenAuthUrlSuccess(false));
-                }
-
-                if (logoutUrl && browser.isElectron()) {
-                    const url = appendURLHashParam(logoutUrl, 'electron', 'true');
-
-                    window.open(url, '_blank');
-                    dispatch(hangup(true));
-                } else {
-                    if (logoutUrl) {
-                        window.location.href = logoutUrl;
-
-                        return;
+        dispatch(
+            openDialog(LogoutDialog, {
+                onLogout() {
+                    if (isTokenAuthEnabled(config) && config.tokenAuthUrlAutoRedirect && jwt) {
+                        // user is logging out remove auto redirect indication
+                        dispatch(setTokenAuthUrlSuccess(false));
                     }
 
-                    conference?.room.xmpp.moderator.logout(() => dispatch(hangup(true)));
-                }
-            }
-        }));
+                    if (logoutUrl && browser.isElectron()) {
+                        const url = appendURLHashParam(logoutUrl, "electron", "true");
+
+                        window.open(url, "_blank");
+
+                        if (_room) dispatch(hangup(true, _room));
+                    } else {
+                        if (logoutUrl) {
+                            window.location.href = logoutUrl;
+
+                            return;
+                        }
+                        if (_room) conference?.room.xmpp.moderator.logout(() => dispatch(hangup(true, _room)));
+                    }
+                },
+            })
+        );
     };
 }
 

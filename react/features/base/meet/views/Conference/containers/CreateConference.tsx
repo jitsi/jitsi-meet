@@ -1,17 +1,16 @@
-import _ from "lodash";
 import React from "react";
 import { WithTranslation } from "react-i18next";
 import { connect as reactReduxConnect } from "react-redux";
 
 // @ts-ignore
+import { appNavigate } from "../../../../../app/actions.web";
 import { IReduxState } from "../../../../../app/types";
 import type { AbstractProps } from "../../../../../conference/components/AbstractConference";
 import { AbstractConference, abstractMapStateToProps } from "../../../../../conference/components/AbstractConference";
+import { SET_PREJOIN_PAGE_VISIBILITY } from "../../../../../prejoin/actionTypes";
 import Prejoin from "../../../../../prejoin/components/web/Prejoin";
 import { translate } from "../../../../i18n/functions";
-import { SET_PREJOIN_PAGE_VISIBILITY } from "../../../../../prejoin/actionTypes";
-import { get8x8BetaJWT } from "../../../../connection/options8x8";
-import { appNavigate } from "../../../../../app/actions.web";
+import MeetingService from "../../../services/meeting.service";
 
 /**
  * The type of the React {@code Component} props of {@link CreateConference}.
@@ -27,10 +26,10 @@ class CreateConference extends AbstractConference<IProps, any> {
     _onCreateConference = async () => {
         this.props.dispatch({ type: SET_PREJOIN_PAGE_VISIBILITY, value: false });
 
-        const meetTokenCreator = await get8x8BetaJWT(localStorage.getItem("xNewToken") || "");
+        const meetingData = await MeetingService.getInstance().createCall();
 
-        if (meetTokenCreator?.room) {
-            this.props.dispatch(appNavigate(meetTokenCreator.room));
+        if (meetingData?.room) {
+            this.props.dispatch(appNavigate(meetingData.room));
         }
     };
 
