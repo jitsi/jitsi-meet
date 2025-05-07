@@ -2,6 +2,7 @@ import { IFile } from './types';
 import {
     ADD_FILES,
     REMOVE_FILE,
+    SET_FILES,
     UPDATE_FILE_UPLOAD_PROGRESS
 } from './actionTypes';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
@@ -37,6 +38,15 @@ ReducerRegistry.register<IFileSharingState>('features/file-sharing', (state = DE
                     : file
             )
         };
+
+    case SET_FILES:
+        const newState = {
+            ...state,
+            files: action.files
+        };
+
+        return newState;
+
 
     default:
         return state;

@@ -57,14 +57,13 @@ export interface IConferenceMetadata {
     files: {
         [fileId: string]: {
             authorParticipantJid: string;
-            contentType: string;
+            authorParticipantName: string;
+            conferenceFullName: string;
             md5: string;
-            meetingFqn: string;
             name: string;
-            participantsIds: string[];
-            sessionId: string;
             size: number;
             timestamp: number;
+            type: string;
         };
     };
     recording?: {

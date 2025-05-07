@@ -37,4 +37,14 @@ export const REMOVE_FILE = 'REMOVE_FILE';
  *     fileId: string
  * }
  */
-export const DOWNLOAD_FILE = 'DOWNLOAD_FILE'; 
+export const DOWNLOAD_FILE = 'DOWNLOAD_FILE';
+
+/**
+ * The type of redux action to set files in the state.
+ *
+ * {
+ *     type: SET_FILES,
+ *     files: Array<IFile>
+ * }
+ */
+export const SET_FILES = 'SET_FILES'; 

@@ -1,15 +1,15 @@
-import { getCurrentConference } from '../base/conference/functions';
-import { getLocalParticipant, getRemoteParticipants } from '../base/participants/functions';
-import { extractFqnFromPath } from '../dynamic-branding/functions.any';
+import { getConferenceName, getCurrentConference } from '../base/conference/functions';
+import { getLocalParticipant, getParticipantDisplayName, getRemoteParticipants } from '../base/participants/functions';
 import { parseJWTFromURLParams } from '../base/jwt/functions';
 import { showErrorNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
-import { ADD_FILES, REMOVE_FILE, DOWNLOAD_FILE } from './actionTypes';
+import { ADD_FILES, REMOVE_FILE, DOWNLOAD_FILE, SET_FILES } from './actionTypes';
 import { calculateFileHash, makeApiCall } from './functions.any';
 import { updateFileProgress } from './actions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import logger from './logger';
 import { FILE_SHARING_ID } from './constants';
+import { OPEN_CHAT } from '../chat/actionTypes';
 
 /**
  * Middleware that handles file sharing actions.
@@ -28,7 +28,7 @@ MiddlewareRegistry.register(store => next => async action => {
         const remoteParticipants = getRemoteParticipants(state);
         const { connection, locationURL } = state['features/base/connection'];
         const jwt = parseJWTFromURLParams(locationURL);
-        const meetingFqn = extractFqnFromPath(state);
+        const conferenceFullName = getConferenceName(state);
 
         for (const file of action.files) {
             const jid = connection?.getJid();
@@ -46,33 +46,32 @@ MiddlewareRegistry.register(store => next => async action => {
                     store.dispatch(updateFileProgress(file.id, progress / 2));
                 });
 
-                // const existingFiles = await makeApiCall({
-                //     method: 'GET',
-                //     endpoint: `/documents/file-metadata/jaas/${sessionId}`,
-                //     headers
-                // });
+                const uploadedFiles = await makeApiCall({
+                    method: 'GET',
+                    endpoint: `/sessions/${sessionId}/files`,
+                    headers
+                });
 
-                // if (existingFiles?.length > 0) {
-                //     store.dispatch(showNotification({
-                //         titleKey: 'fileSharing.uploadFailedTitle',
-                //         descriptionKey: 'fileSharing.fileAlreadyUploaded',
-                //         appearance: NOTIFICATION_TYPE.WARNING,
-                //         maxLines: 2
-                //     }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+                const fileExists = uploadedFiles?.some(item => item.md5 === fileHash);
 
-                //     return result;
-                // }
+                if (fileExists) {
+
+                    // This should also through 400 on the server side
+                    store.dispatch(showNotification({
+                        titleKey: 'fileSharing.uploadFailedTitle',
+                        descriptionKey: 'fileSharing.fileAlreadyUploaded',
+                        appearance: NOTIFICATION_TYPE.WARNING,
+                        maxLines: 2
+                    }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+
+                    return result;
+                }
 
                 const fileMetadata = {
-                    sessionId,
-                    contentType: file.file.name.split('.').pop()?.toUpperCase(),
-                    meetingFqn,
-                    timestamp: Date.now(),
-                    size: file.file.size,
-                    md5: fileHash,
                     authorParticipantJid: jid,
-                    participantsIds: participants.filter(Boolean) as string[],
-                    name: file.file.name
+                    conferenceFullName,
+                    md5: fileHash,
+                    timestamp: Date.now()
                 };
 
                 const formData = new FormData();
@@ -85,13 +84,19 @@ MiddlewareRegistry.register(store => next => async action => {
                 conference?.getMetadataHandler().setMetadata(FILE_SHARING_ID, {
                     files: {
                         ...existingMetadata,
-                        [file.id]: fileMetadata
+                        [file.id]: {
+                            ...fileMetadata,
+                            authorParticipantName: localParticipant && getParticipantDisplayName(state, localParticipant.id),
+                            name: file.file.name,
+                            size: file.file.size,
+                            type: file.file.name.split('.').pop()?.toUpperCase()
+                        }
                     }
                 });
 
                 await makeApiCall({
                     method: 'POST',
-                    endpoint: `/documents/${sessionId}`,
+                    endpoint: `/sessions/${sessionId}`,
                     headers,
                     body: formData
                 });
@@ -131,7 +136,7 @@ MiddlewareRegistry.register(store => next => async action => {
             if (fileMetadata) {
                 await makeApiCall({
                     method: 'DELETE',
-                    endpoint: `/documents/${sessionId}/files/${action.fileId}`,
+                    endpoint: `/sessions/${sessionId}/files/${action.fileId}`,
                     headers
                 });
 
@@ -165,7 +170,7 @@ MiddlewareRegistry.register(store => next => async action => {
         try {
             const response = await makeApiCall({
                 method: 'GET',
-                endpoint: `/documents/${sessionId}/${action.fileId}`,
+                endpoint: `/sessions/${sessionId}/${action.fileId}`,
                 headers
             });
 
@@ -189,6 +194,22 @@ MiddlewareRegistry.register(store => next => async action => {
                 descriptionKey: 'fileSharing.downloadFailedDescription',
                 appearance: NOTIFICATION_TYPE.ERROR
             }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        }
+
+        return result;
+    }
+
+    case OPEN_CHAT: {
+        const result = next(action);
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+        const metadataFiles = conference?.getMetadataHandler().getMetadata()?.[FILE_SHARING_ID]?.files;
+
+        if (metadataFiles) {
+            store.dispatch({
+                type: SET_FILES,
+                files: metadataFiles
+            });
         }
 
         return result;
