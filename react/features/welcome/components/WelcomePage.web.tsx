@@ -14,6 +14,7 @@ import { AbstractWelcomePage, IProps, _mapStateToProps } from "./AbstractWelcome
 
 import { appNavigate } from "../../app/actions.web";
 import { initializeAuth } from "../../base/meet/general/store/auth/actions";
+import { initializeUser } from "../../base/meet/general/store/user/actions";
 import Tabs from "./Tabs";
 
 /**
@@ -138,6 +139,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         const inxtToken = localStorage.getItem("xNewToken") || undefined;
         this.setState({ inxtToken });
         this.props.dispatch(initializeAuth());
+        this.props.dispatch(initializeUser());
     }
 
     /**
