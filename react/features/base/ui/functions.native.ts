@@ -1,21 +1,9 @@
 import { DefaultTheme } from 'react-native-paper';
 
 import { createColorTokens } from './utils';
+import { remToPixels } from './functions.any';
 
-// Base font size in pixels (standard is 16px = 1rem)
-const BASE_FONT_SIZE = 16;
-
-/**
- * Converts rem to pixels.
- *
- * @param {string} remValue - The value in rem units (e.g. '0.875rem').
- * @returns {number}
- */
-function remToPixels(remValue: string): number {
-    const numericValue = parseFloat(remValue.replace('rem', ''));
-
-    return Math.round(numericValue * BASE_FONT_SIZE);
-}
+export * from './functions.any';
 
 /**
  * Converts all rem to pixels in an object.
