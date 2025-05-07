@@ -63,7 +63,7 @@ const styles = (theme: Theme, props: IProps) => {
     if (_isLifted) {
         // 10px is the space between the onstage participant display name label and subtitles. We also need
         // to add the padding of the subtitles because it will decrease the gap between the label and subtitles.
-        bottom += getStageParticipantNameLabelHeight(theme, _clientHeight) + 10 + padding;
+        bottom = `calc(${bottom} + ${getStageParticipantNameLabelHeight(theme, _clientHeight) + 10 + padding}px)`;
     }
 
     if (_shiftUp) {
@@ -73,7 +73,7 @@ const styles = (theme: Theme, props: IProps) => {
 
     return {
         transcriptionSubtitles: {
-            bottom: `${bottom}px`,
+            bottom,
             marginBottom: `${marginBottom}px`,
             fontSize: `${fontSize}px`,
             left: '50%',
