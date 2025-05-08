@@ -1,7 +1,6 @@
 import React, { ReactNode, useRef } from 'react';
 import { keyframes } from 'tss-react';
 import { makeStyles } from 'tss-react/mui';
-
 import { TEXT_OVERFLOW_TYPES } from '../../constants.web';
 
 interface ITextWithOverflowProps {
@@ -59,6 +58,7 @@ const TextWithOverflow = ({
     const { classes: styles, cx } = useStyles({ translateDiff });
 
     return (
+        <>
         <div
             className = { cx(className, styles.textContainer) }
             ref = { containerRef }>
@@ -68,6 +68,8 @@ const TextWithOverflow = ({
                 {children}
             </span>
         </div>
+      
+     </>
     );
 };
 

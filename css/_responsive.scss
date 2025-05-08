@@ -78,3 +78,12 @@
         }
     }
 }
+
+@media screen and (max-width: $closeIconwidth) {
+    .close-icon {
+        top: 200px; 
+        right: 16px;
+    }
+  
+    
+}

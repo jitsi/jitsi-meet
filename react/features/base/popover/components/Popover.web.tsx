@@ -1,7 +1,6 @@
 import React, { Component, ReactNode } from 'react';
 import { FocusOn } from 'react-focus-on';
 import { connect } from 'react-redux';
-
 import { IReduxState } from '../../../app/types';
 import DialogPortal from '../../../toolbox/components/web/DialogPortal';
 import Drawer from '../../../toolbox/components/web/Drawer';
@@ -219,6 +218,8 @@ class Popover extends Component<IProps, IState> {
         }
     }
 
+
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -234,7 +235,8 @@ class Popover extends Component<IProps, IState> {
             id,
             overflowDrawer,
             visible,
-            trigger
+            trigger,
+
         } = this.props;
 
         if (overflowDrawer) {
@@ -302,6 +304,7 @@ class Popover extends Component<IProps, IState> {
                     </DialogPortal>
                 )}
                 { children }
+                
             </div>
         );
     }
@@ -483,7 +486,7 @@ class Popover extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     _renderContent() {
-        const { content, position, trigger, headingId, headingLabel } = this.props;
+        const { content, position, trigger, headingId, headingLabel} = this.props;
 
         return (
             <div className = { `popover ${trigger}` }>

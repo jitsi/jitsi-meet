@@ -253,7 +253,6 @@ export default function Toolbox({
                         onMouseOut,
                         onMouseOver
                     }) }>
-
                     <div
                         className = 'toolbox-content-items'
                         ref = { _toolboxRef }>
@@ -262,7 +261,6 @@ export default function Toolbox({
                                 { ...rest }
                                 buttonKey = { key }
                                 key = { key } />))}
-
                         {Boolean(overflowMenuButtons.length) && (
                             <OverflowMenuButton
                                 ariaControls = 'overflow-menu'
@@ -294,10 +292,10 @@ export default function Toolbox({
                                 key = 'overflow-menu'
                                 onToolboxEscKey = { onEscKey }
                                 onVisibilityChange = { onSetOverflowVisible }
+   
                                 showRaiseHandInReactionsMenu = { showRaiseHandInReactionsMenu }
                                 showReactionsMenu = { showReactionsInOverflowMenu } />
                         )}
-
                         {isButtonEnabled('hangup', toolbarButtonsToUse) && (
                             endConferenceSupported
                                 ? <HangupMenuButton
@@ -305,7 +303,7 @@ export default function Toolbox({
                                     isOpen = { hangupMenuVisible }
                                     key = 'hangup-menu'
                                     notifyMode = { buttonsWithNotifyClick?.get('hangup-menu') }
-                                    onVisibilityChange = { onSetHangupVisible }>
+                                    onVisibilityChange = { onSetHangupVisible }>                                   
                                     <ContextMenu
                                         accessibilityLabel = { t(toolbarAccLabel) }
                                         className = { classes.hangupMenu }
@@ -330,6 +328,6 @@ export default function Toolbox({
                     </div>
                 </div>
             </div>
-        </div>
+        </div> 
     );
 }
