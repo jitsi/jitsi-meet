@@ -286,37 +286,36 @@ const AudioSettingsContent = ({
             className = { classes.contextMenu }
             hidden = { false }
             id = 'audio-settings-dialog'
+            role = 'menu'
             tabIndex = { -1 }>
-            <ContextMenuItemGroup>
+            <ContextMenuItemGroup
+                aria-labelledby = { microphoneHeaderId }
+                role = 'group'>
                 <ContextMenuItem
-                    accessibilityLabel = { t('settings.microphones') }
                     className = { classes.header }
                     icon = { IconMic }
                     id = { microphoneHeaderId }
                     text = { t('settings.microphones') } />
                 <ul
-                    aria-labelledby = { microphoneHeaderId }
                     className = { classes.list }
-                    role = 'radiogroup'
-                    tabIndex = { -1 }>
+                    role = 'presentation'>
                     {audioTracks.map((data, i) =>
                         _renderMicrophoneEntry(data, i, audioTracks.length)
                     )}
                 </ul>
             </ContextMenuItemGroup>
             {outputDevices.length > 0 && (
-                <ContextMenuItemGroup>
+                <ContextMenuItemGroup
+                    aria-labelledby = { speakerHeaderId }
+                    role = 'group'>
                     <ContextMenuItem
-                        accessibilityLabel = { t('settings.speakers') }
                         className = { classes.header }
                         icon = { IconVolumeUp }
                         id = { speakerHeaderId }
                         text = { t('settings.speakers') } />
                     <ul
-                        aria-labelledby = { speakerHeaderId }
                         className = { classes.list }
-                        role = 'radiogroup'
-                        tabIndex = { -1 }>
+                        role = 'presentation'>
                         {outputDevices.map((data: any, i: number) =>
                             _renderSpeakerEntry(data, i, outputDevices.length)
                         )}

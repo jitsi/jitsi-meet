@@ -12,9 +12,19 @@ interface IProps {
     actions?: Array<ItemProps>;
 
     /**
+     * The id of the element that labels this group.
+     */
+    'aria-labelledby'?: string;
+
+    /**
      * The children of the component.
      */
     children?: ReactNode;
+
+    /**
+     * The HTML role of the menu item group.
+     */
+    role?: string;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -41,12 +51,17 @@ const useStyles = makeStyles()(theme => {
 
 const ContextMenuItemGroup = ({
     actions,
-    children
+    'aria-labelledby': ariaLabelledBy,
+    children,
+    role
 }: IProps) => {
     const { classes: styles } = useStyles();
 
     return (
-        <div className = { styles.contextMenuItemGroup }>
+        <div
+            aria-labelledby = { ariaLabelledBy }
+            className = { styles.contextMenuItemGroup }
+            role = { role || undefined }>
             {children}
             {actions?.map(actionProps => (
                 <ContextMenuItem

@@ -14,7 +14,7 @@ export interface IProps {
     /**
      * Label used for accessibility.
      */
-    accessibilityLabel: string;
+    accessibilityLabel?: string;
 
     /**
      * The context menu item background color.
@@ -232,7 +232,7 @@ const ContextMenuItem = ({
         <div
             aria-controls = { controls }
             aria-disabled = { disabled }
-            aria-label = { accessibilityLabel }
+            aria-label = { accessibilityLabel || undefined }
             aria-selected = { role === 'tab' ? selected : undefined }
             className = { cx(styles.contextMenuItem,
                     _overflowDrawer && styles.contextMenuItemDrawer,
