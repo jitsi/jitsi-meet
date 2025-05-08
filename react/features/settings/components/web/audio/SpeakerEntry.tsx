@@ -135,11 +135,13 @@ const SpeakerEntry = (props: IProps) => {
     }
 
     const { children, isSelected, index, length } = props;
+    const testLabel = 'Test';
 
     /* eslint-disable react/jsx-no-bind */
     return (
         <li
             aria-checked = { isSelected }
+            aria-label = { children }
             aria-posinset = { index + 1 } // Add one to offset the 0 based index.
             aria-setsize = { length }
             className = { classes.container }
@@ -148,7 +150,6 @@ const SpeakerEntry = (props: IProps) => {
             role = 'menuitemradio'
             tabIndex = { 0 }>
             <ContextMenuItem
-                accessibilityLabel = { children }
                 icon = { isSelected ? IconCheck : undefined }
                 overflowType = { TEXT_OVERFLOW_TYPES.SCROLL_ON_HOVER }
                 selected = { isSelected }
@@ -159,8 +160,9 @@ const SpeakerEntry = (props: IProps) => {
                 ref = { audioRef }
                 src = { TEST_SOUND_PATH } />
             <Button
+                accessibilityLabel = { `${testLabel} ${children}` }
                 className = { cx(classes.testButton, 'testButton') }
-                label = 'Test'
+                label = { testLabel }
                 onClick = { _onTestButtonClick }
                 onKeyPress = { _onTestButtonClick }
                 type = { BUTTON_TYPES.SECONDARY } />

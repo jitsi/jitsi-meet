@@ -15,6 +15,11 @@ interface IProps {
      * The children of the component.
      */
     children?: ReactNode;
+
+    /**
+     * The HTML role of the menu item group.
+     */
+    role?: string;
 }
 
 const useStyles = makeStyles()(theme => {
