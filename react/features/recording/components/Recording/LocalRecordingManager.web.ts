@@ -35,14 +35,14 @@ interface ILocalRecordingManager {
 }
 
 /**
- * We want to use the MP4 container due to it not suffering from the resulting file
+ * We want to use the Matroska container due to it not suffering from the resulting file
  * not being seek-able.
  *
  * The choice of VP9 as the video codec and Opus as the audio codec is for compatibility.
  * While Chrome does support avc1 and avc3 (we'd need the latter since the resolution can change)
  * it's not supported across the board.
  */
-const PREFERRED_MEDIA_TYPE = 'video/mp4;codecs=vp9,opus';
+const PREFERRED_MEDIA_TYPE = 'video/x-matroska;codecs=vp8,opus';
 
 const VIDEO_BIT_RATE = 2500000; // 2.5Mbps in bits
 
@@ -143,7 +143,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
         // Get a handle to the file we are going to write.
         const options = {
             startIn: 'downloads',
-            suggestedName: `${this.getFilename()}.mp4`,
+            suggestedName: `${this.getFilename()}.mkv`,
         };
 
         // @ts-expect-error
