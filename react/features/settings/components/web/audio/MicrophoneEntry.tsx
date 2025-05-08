@@ -196,7 +196,7 @@ const MicrophoneEntry = ({
             className = { classes.container }
             onClick = { onClick }
             onKeyPress = { onKeyPress }
-            role = 'radio'
+            role = 'menuitemradio'
             tabIndex = { 0 }>
             <ContextMenuItem
                 accessibilityLabel = { children }
