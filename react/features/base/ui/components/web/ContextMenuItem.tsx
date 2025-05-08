@@ -232,7 +232,7 @@ const ContextMenuItem = ({
         <div
             aria-controls = { controls }
             aria-disabled = { disabled }
-            { ...(accessibilityLabel ? { 'aria-label': accessibilityLabel } : {}) }
+            aria-label = { accessibilityLabel || undefined }
             aria-selected = { role === 'tab' ? selected : undefined }
             className = { cx(styles.contextMenuItem,
                     _overflowDrawer && styles.contextMenuItemDrawer,
@@ -252,15 +252,15 @@ const ContextMenuItem = ({
             {customIcon ? customIcon
                 : icon && <Icon
                     className = { cx(styles.contextMenuItemIcon,
-                    disabled && styles.contextMenuItemIconDisabled) }
+                        disabled && styles.contextMenuItemIconDisabled) }
                     size = { 20 }
                     src = { icon } />}
             {text && (
                 <TextWithOverflow
                     className = { cx(styles.text,
-                _overflowDrawer && styles.drawerText,
-                disabled && styles.contextMenuItemLabelDisabled,
-                textClassName) }
+                    _overflowDrawer && styles.drawerText,
+                    disabled && styles.contextMenuItemLabelDisabled,
+                    textClassName) }
                     overflowType = { overflowType } >
                     {text}
                 </TextWithOverflow>
