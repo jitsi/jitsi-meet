@@ -89,6 +89,11 @@ interface IProps {
     position: string;
 
     /**
+     * The ARIA role.
+     */
+    role?: string;
+
+    /**
      * Whether the trigger for open/ close should be click or hover.
      */
     trigger?: 'hover' | 'click';
@@ -483,20 +488,24 @@ class Popover extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     _renderContent() {
-        const { content, position, trigger, headingId, headingLabel } = this.props;
+        const { content, position, trigger, headingId, headingLabel, role = 'dialog' } = this.props;
+        const isFocusLockEnabled = this.state.enableFocusLock;
+        const isDialogRole = role === 'dialog';
 
         return (
             <div className = { `popover ${trigger}` }>
                 <div
                     className = { `popover-content ${position.split('-')[0]}` }
-                    data-autofocus = { this.state.enableFocusLock }
+                    data-autofocus = { isFocusLockEnabled }
                     onKeyDown = { this._onEscKey }
-                    { ...(this.state.enableFocusLock && {
+                    { ...(isFocusLockEnabled && {
+                        role,
+                        tabIndex: -1
+                    }) }
+                    { ...(isFocusLockEnabled && isDialogRole && {
                         'aria-modal': true,
                         'aria-label': !headingId && headingLabel ? headingLabel : undefined,
-                        'aria-labelledby': headingId,
-                        role: 'dialog',
-                        tabIndex: -1
+                        'aria-labelledby': headingId ? headingId : undefined
                     }) }>
                     { content }
                 </div>
