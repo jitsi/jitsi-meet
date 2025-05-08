@@ -46,12 +46,15 @@ const useStyles = makeStyles()(theme => {
 
 const ContextMenuItemGroup = ({
     actions,
-    children
+    children,
+    role
 }: IProps) => {
     const { classes: styles } = useStyles();
 
     return (
-        <div className = { styles.contextMenuItemGroup }>
+        <div
+            className = { styles.contextMenuItemGroup }
+            role = { role || undefined }>
             {children}
             {actions?.map(actionProps => (
                 <ContextMenuItem
