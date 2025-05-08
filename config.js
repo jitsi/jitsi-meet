@@ -53,10 +53,11 @@ var config = {
 
     // Websocket URL (XMPP)
     websocket: 'wss://meet.sonacove.com/' + subdir + 'xmpp-websocket',
+    websocketKeepAlive: 0, // 0 = disabled, there is an issue with the keep alive
     websocketKeepAliveUrl: 'https://meet.sonacove.com/' + subdir + '_unlock',
 
     // Whether BOSH should be preferred over WebSocket if both are configured.
-    preferBosh: true,
+    preferBosh: false,
 
     // The real JID of focus participant - can be overridden here
     // Do not change username - FIXME: Make focus username configurable
@@ -1150,7 +1151,7 @@ var config = {
 
         // Array of script URLs to load as lib-jitsi-meet "analytics handlers".
         scriptURLs: [
-            '/static/analytics.js',
+            'static/analytics.js',
         ],
 
         // By enabling watchRTCEnabled option you would want to use watchRTC feature
@@ -1329,9 +1330,9 @@ var config = {
 
     // // The terms, privacy and help centre URL's.
     legalUrls: {
-        helpCentre: 'https://sonacove.com/blog',
-        privacy: 'https://sonacove.com/privacy',
-        terms: 'https://sonacove.com/terms',
+        helpCentre: '/blog',
+        privacy: '/privacy',
+        terms: '/terms',
     },
 
     // A property to disable the right click context menu for localVideo
@@ -1637,6 +1638,8 @@ var config = {
 
     // Sets the peer connection ICE transport policy to "relay".
     // forceTurnRelay: true,
+
+    disableRemoteControl: false,
 
     // List of undocumented settings used in jitsi-meet
     /**
