@@ -237,6 +237,8 @@ const LocalRecordingManager: ILocalRecordingManager = {
         }
 
         this.recorder = new MediaRecorder(this.stream, {
+            // @ts-ignore
+            audioBitrateMode: 'constant',
             mimeType: this.mediaType,
             videoBitsPerSecond: VIDEO_BIT_RATE
         });
