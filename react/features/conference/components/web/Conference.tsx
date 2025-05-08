@@ -36,8 +36,8 @@ import { default as Notice } from "./Notice";
 
 import ConferenceControlsWrapper from "../../../base/meet/views/Conference/containers/ConferenceControlsWrapper";
 import VideoGalleryWrapper from "../../../base/meet/views/Conference/containers/VideoGalleryWrapper";
-import { ViewMode } from '../../../filmstrip/reducer';
-import { setConferenceViewMode } from '../../../filmstrip/actions.web';
+import { setConferenceViewMode } from "../../../filmstrip/actions.web";
+import { ViewMode } from "../../../filmstrip/reducer";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -100,6 +100,8 @@ interface IProps extends AbstractProps, WithTranslation {
     isParticipantsPaneOpened: boolean;
 
     viewMode: ViewMode;
+
+    roomId?: string;
 }
 
 /**
@@ -113,7 +115,7 @@ class Conference extends AbstractConference<IProps, any> {
     };
 
     _onSetVideoModeClicked = (newMode: Mode) => {
-        this.props.dispatch(setConferenceViewMode(newMode))
+        this.props.dispatch(setConferenceViewMode(newMode));
     };
     /**
      * Initializes a new Conference instance.
@@ -186,7 +188,7 @@ class Conference extends AbstractConference<IProps, any> {
 
         FULL_SCREEN_EVENTS.forEach((name) => document.removeEventListener(name, this._onFullScreenChange));
 
-        APP.conference.isJoined() && this.props.dispatch(hangup());
+        if (this.props.roomId) APP.conference.isJoined() && this.props.dispatch(hangup(true, this.props.roomId));
     }
 
     /**
@@ -401,7 +403,7 @@ function _mapStateToProps(state: IReduxState) {
     const { backgroundAlpha, mouseMoveCallbackInterval } = state["features/base/config"];
     const { viewMode } = state["features/filmstrip"];
     const { overflowDrawer } = state["features/toolbox"];
-
+    const roomId = state["features/base/conference"].room;
     return {
         ...abstractMapStateToProps(state),
         _backgroundAlpha: backgroundAlpha,
@@ -413,6 +415,7 @@ function _mapStateToProps(state: IReduxState) {
         _showLobby: getIsLobbyVisible(state),
         _showPrejoin: isPrejoinPageVisible(state),
         viewMode,
+        roomId,
     };
 }
 

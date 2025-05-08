@@ -1,11 +1,12 @@
 import { Button, TransparentModal } from "@internxt/ui";
 import React from "react";
+import { useTranslation } from "react-i18next";
+import { MAX_SIZE_PARTICIPANTS } from "../../../constants";
 import MediaControlsWrapper from "../../../general/containers/MediaControlsWrapper";
+import { MeetingUser } from "../../../services/types/meeting.types";
 import NameInputSection from "./NameInputSection";
 import ParticipantsList from "./ParticipantsList";
 import VideoPreviewSection from "./VideoPreviewSection";
-import { MAX_SIZE_PARTICIPANTS } from "../../../constants";
-import { useTranslation } from "react-i18next";
 
 interface PreMeetingModalProps {
     /**
@@ -46,7 +47,7 @@ interface PreMeetingModalProps {
     /**
      * List of participants
      */
-    participants: any[];
+    participants: MeetingUser[];
 
     /**
      * Join conference handler

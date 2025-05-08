@@ -1,13 +1,12 @@
 import { Avatar } from "@internxt/ui";
 import React from "react";
-import { ParticipantData } from "../types";
-
+import { MeetingUser } from "../../../services/types/meeting.types";
 
 const ParticipantsList = ({
     participants,
     translate,
 }: {
-    participants: ParticipantData[];
+    participants: MeetingUser[];
     translate: (key: string) => string;
 }) => {
     const participantsNumber = participants.length;
