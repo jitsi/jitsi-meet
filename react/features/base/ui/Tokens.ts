@@ -128,8 +128,7 @@ export const shape = {
     boxShadow: 'inset 0px -1px 0px rgba(255, 255, 255, 0.15)'
 };
 
-export const spacing
-    = [ '0rem', '0.25rem', '0.5rem', '1rem', '1.5rem', '2rem', '2.5rem', '3rem', '3.5rem', '4rem', '4.5rem', '5rem', '5.5rem', '6rem', '6.5rem', '7rem', '7.5rem', '8rem' ];
+export const spacing = [ 0, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128 ];
 
 export const typography = {
     labelRegular: 'label01',

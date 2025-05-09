@@ -213,7 +213,7 @@ const ContextMenu = ({
 
             if (offsetTop + height > offsetHeight + scrollTop && height > offsetTop) {
                 // top offset and + padding + border
-                container.style.maxHeight = `calc(${offsetTop}px - (${spacing[2]} * 2 + 2px))`;
+                container.style.maxHeight = `${offsetTop - ((spacing[2] * 2) + 2)}px`;
             }
 
             // get the height after style changes

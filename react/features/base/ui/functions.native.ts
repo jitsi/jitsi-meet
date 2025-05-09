@@ -42,7 +42,7 @@ export function createNativeTheme({ font, colorMap, shape, spacing, typography }
         ...DefaultTheme,
         palette: createColorTokens(colorMap),
         shape,
-        spacing: spacing.map(remToPixels),
+        spacing,
         typography: {
             font,
             ...convertRemValues(typography)
