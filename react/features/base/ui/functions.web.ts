@@ -117,5 +117,5 @@ export function operatesWithEnterKey(element: Element): boolean {
  * @returns {number}
  */
 export function getVideospaceFloatingElementsBottomSpacing(theme: Theme, isToolbarVisible: boolean) {
-    return isToolbarVisible ? theme.spacing(12) : theme.spacing(6);
+    return parseInt(isToolbarVisible ? theme.spacing(12) : theme.spacing(6), 10);
 }
