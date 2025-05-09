@@ -31,7 +31,7 @@ class HangupButton extends AbstractHangupButton<AbstractButtonProps> {
 
         this._hangup = _.once(() => {
             sendAnalytics(createToolbarEvent('hangup'));
-            this.props.dispatch(leaveConference());
+            this.props.dispatch(leaveConference(props.roomId));
         });
     }
 
