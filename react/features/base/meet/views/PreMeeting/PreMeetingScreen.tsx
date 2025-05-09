@@ -185,7 +185,7 @@ const PreMeetingScreen = ({
     const [isCreatingMeeting, setIsCreatingMeeting] = useState(false);
     const [meetingUsersData, setMeetingUsersData] = useState<MeetingUser[]>([]);
     const userData = useUserData();
-    // const { allParticipants } = useParticipants();
+
     const storageManager = useLocalStorage();
     const dispatch = useDispatch();
 
