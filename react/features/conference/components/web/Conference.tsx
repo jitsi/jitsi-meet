@@ -101,7 +101,7 @@ interface IProps extends AbstractProps, WithTranslation {
 
     viewMode: ViewMode;
 
-    roomId: string;
+    roomId?: string;
 }
 
 /**
