@@ -136,6 +136,12 @@ interface IProps extends WithTranslation {
      * Explicitly passed array with the buttons which this Toolbox should display.
      */
     toolbarButtons: Array<string>;
+
+    /**
+     * The meeting room id.
+     */
+    roomId?: string;
+
 }
 
 const useStyles = makeStyles()(() => {
@@ -183,7 +189,8 @@ const Toolbox = ({
     _visible,
     dispatch,
     t,
-    toolbarButtons
+    toolbarButtons,
+    roomId,
 }: IProps) => {
     const { classes, cx } = useStyles();
     const _toolboxRef = useRef<HTMLDivElement>(null);
@@ -435,7 +442,8 @@ const Toolbox = ({
                                             notifyMode = { _buttonsWithNotifyClick?.get('end-meeting') } />
                                         <LeaveConferenceButton
                                             buttonKey = 'hangup'
-                                            notifyMode = { _buttonsWithNotifyClick?.get('hangup') } />
+                                            notifyMode = { _buttonsWithNotifyClick?.get('hangup') } 
+                                            roomId={roomId} />
                                     </ContextMenu>
                                 </HangupMenuButton>
                                 : <HangupButton
@@ -443,7 +451,8 @@ const Toolbox = ({
                                     customClass = 'hangup-button'
                                     key = 'hangup-button'
                                     notifyMode = { _buttonsWithNotifyClick.get('hangup') }
-                                    visible = { isButtonEnabled('hangup', _toolbarButtons) } />
+                                    visible = { isButtonEnabled('hangup', _toolbarButtons) } 
+                                    roomId={roomId} />
                         )}
                     </div>
                 </div>
@@ -493,13 +502,13 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     } = state['features/toolbox'];
     const { clientWidth } = state['features/base/responsive-ui'];
     const toolbarButtons = ownProps.toolbarButtons || state['features/toolbox'].toolbarButtons;
-
+    const { room } = state["features/base/conference"];
     return {
-        _buttonsWithNotifyClick: state['features/toolbox'].buttonsWithNotifyClick,
-        _chatOpen: state['features/chat'].isOpen,
+        _buttonsWithNotifyClick: state["features/toolbox"].buttonsWithNotifyClick,
+        _chatOpen: state["features/chat"].isOpen,
         _clientWidth: clientWidth,
         _customToolbarButtons: customToolbarButtons,
-        _dialog: Boolean(state['features/base/dialog'].component),
+        _dialog: Boolean(state["features/base/dialog"].component),
         _disabled: Boolean(iAmRecorder || iAmSipGateway),
         _endConferenceSupported: Boolean(endConferenceSupported),
         _isMobile: isMobileBrowser(),
@@ -509,10 +518,11 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _overflowMenuVisible: overflowMenuVisible,
         _overflowDrawer: overflowDrawer,
         _reactionsButtonEnabled: isReactionsButtonEnabled(state),
-        _shiftUp: state['features/toolbox'].shiftUp,
+        _shiftUp: state["features/toolbox"].shiftUp,
         _shouldDisplayReactionsButtons: shouldDisplayReactionsButtons(state),
         _toolbarButtons: toolbarButtons,
-        _visible: isToolboxVisible(state)
+        _visible: isToolboxVisible(state),
+        roomId: room,
     };
 }
 

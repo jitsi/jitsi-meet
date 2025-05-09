@@ -81,8 +81,7 @@ export function connect(id?: string, password?: string) {
  * @param {string} [feedbackTitle] - The feedback title.
  * @returns {Function}
  */
-export function hangup(requestFeedback = false, roomId: string, feedbackTitle?: string) {
-    MeetingService.getInstance().leaveCall(roomId);
+export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?: string) {
     // XXX For web based version we use conference hanging up logic from the old app.
     return async (dispatch: IStore["dispatch"]) => {
         if (LocalRecordingManager.isRecordingLocally()) {
@@ -102,6 +101,11 @@ export function hangup(requestFeedback = false, roomId: string, feedbackTitle?: 
                 setTimeout(res, 1000);
             });
         }
+
+        if (!roomId) {
+            return Promise.reject(new Error("No roomId provided to hangup"));
+        }
+        MeetingService.getInstance().leaveCall(roomId);
 
         return APP.conference.hangup(requestFeedback, feedbackTitle);
     };

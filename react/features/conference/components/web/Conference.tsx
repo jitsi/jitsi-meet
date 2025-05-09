@@ -403,7 +403,7 @@ function _mapStateToProps(state: IReduxState) {
     const { backgroundAlpha, mouseMoveCallbackInterval } = state["features/base/config"];
     const { viewMode } = state["features/filmstrip"];
     const { overflowDrawer } = state["features/toolbox"];
-    const roomId = state["features/base/conference"].room;
+    const room = state["features/base/conference"].room;
     return {
         ...abstractMapStateToProps(state),
         _backgroundAlpha: backgroundAlpha,
@@ -415,7 +415,7 @@ function _mapStateToProps(state: IReduxState) {
         _showLobby: getIsLobbyVisible(state),
         _showPrejoin: isPrejoinPageVisible(state),
         viewMode,
-        roomId,
+        roomId: room,
     };
 }
 
