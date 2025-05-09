@@ -1,10 +1,10 @@
 import { getConferenceName, getCurrentConference } from '../base/conference/functions';
 import { getLocalParticipant, getParticipantDisplayName, getRemoteParticipants } from '../base/participants/functions';
 import { parseJWTFromURLParams } from '../base/jwt/functions';
-import { showErrorNotification, showNotification } from '../notifications/actions';
+import { showErrorNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
 import { ADD_FILES, REMOVE_FILE, DOWNLOAD_FILE, SET_FILES } from './actionTypes';
-import { calculateFileHash, makeApiCall } from './functions.any';
+import { makeApiCall } from './functions.any';
 import { removeFile, updateFileProgress } from './actions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import logger from './logger';
@@ -42,35 +42,9 @@ MiddlewareRegistry.register(store => next => async action => {
             };
 
             try {
-                const fileHash = await calculateFileHash(file.file, progress => {
-                    store.dispatch(updateFileProgress(file.id, progress / 2));
-                });
-
-                const uploadedFiles = await makeApiCall({
-                    method: 'GET',
-                    endpoint: `/sessions/${sessionId}/files`,
-                    headers
-                });
-
-                const fileExists = uploadedFiles?.some((item: any) => item.md5 === fileHash);
-
-                if (fileExists) {
-
-                    // This should also through 400 on the server side
-                    store.dispatch(showNotification({
-                        titleKey: 'fileSharing.uploadFailedTitle',
-                        descriptionKey: 'fileSharing.fileAlreadyUploaded',
-                        appearance: NOTIFICATION_TYPE.WARNING,
-                        maxLines: 2
-                    }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
-
-                    return result;
-                }
-
                 const fileMetadata = {
                     authorParticipantJid: jid,
                     conferenceFullName,
-                    md5: fileHash,
                     timestamp: Date.now()
                 };
 

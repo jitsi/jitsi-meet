@@ -1,62 +1,8 @@
-import md5 from 'js-md5';
 import { IReduxState } from '../app/types';
 import { IconShareDoc, IconVideo, IconVolumeUp } from '../base/icons/svg';
 
 import { API_BASE_URL } from './constants';
 
-/**
- * Reads a chunk of file as ArrayBuffer.
- *
- * @param {Blob} chunk - The chunk of file data to read.
- * @returns {Promise<ArrayBuffer>}
- * @throws {Error}
- */
-export function readChunkAsArrayBuffer(chunk: Blob): Promise<ArrayBuffer> {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-
-        reader.onload = e => {
-            if (!e.target?.result) {
-                reject(new Error('Failed to read chunk: No result available'));
-
-                return;
-            }
-
-            resolve(e.target.result as ArrayBuffer);
-        };
-
-        reader.onerror = e => reject(new Error(`Failed to read chunk: ${e.target?.error?.message || 'Unknown error'}`));
-
-        reader.readAsArrayBuffer(chunk);
-    });
-}
-
-/**
- * Calculates MD5 hash of a file by reading it in chunks.
- *
- * @param {File} file - The file to calculate hash for.
- * @param {Function} [progressCallback] - Optional callback for progress updates.
- * @returns {Promise<string>}
- */
-export async function calculateFileHash(file: File, progressCallback?: (progress: number) => void): Promise<string> {
-    const chunkSize = 2 * 1024 * 1024; // 2MB chunks
-    const chunks = Math.ceil(file.size / chunkSize);
-    const hashObj = md5.create();
-
-    for (let i = 0; i < chunks; i++) {
-        const start = i * chunkSize;
-        const end = Math.min(start + chunkSize, file.size);
-        const chunk = await readChunkAsArrayBuffer(file.slice(start, end));
-
-        hashObj.update(new Uint8Array(chunk));
-
-        if (progressCallback) {
-            progressCallback((i + 1) / chunks * 100);
-        }
-    }
-
-    return hashObj.hex();
-}
 
 /**
  * Makes an API call to the file sharing server.
