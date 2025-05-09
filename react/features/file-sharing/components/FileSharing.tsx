@@ -1,6 +1,8 @@
 import React, { useCallback, useState, useRef, ReactNode } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
+import { v4 as uuidv4 } from 'uuid';
+
 import { IconCloudUpload, IconDownload, IconTrash } from '../../base/icons/svg';
 import Button from '../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../base/ui/constants.web';
@@ -209,14 +211,14 @@ const FileSharing = () => {
         try {
             const newFiles = await Promise.all(Array.from(fileList).map(async (file: any) => ({
                 file,
-                id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(36),
+                id: uuidv4(),
                 preview: await createFilePreview(file),
                 progress: 0
             })));
 
             dispatch(addFiles(newFiles));
-        } catch (error) {
-            logger.error('Error processing files:', error);
+        } catch (_) {
+            // Cannot happen.
         }
     }, [ dispatch ]);
 

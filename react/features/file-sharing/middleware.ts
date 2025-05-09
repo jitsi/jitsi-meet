@@ -45,6 +45,7 @@ MiddlewareRegistry.register(store => next => async action => {
                 const fileMetadata = {
                     authorParticipantJid: jid,
                     conferenceFullName,
+                    fileId: file.id,
                     timestamp: Date.now()
                 };
 
