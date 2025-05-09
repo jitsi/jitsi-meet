@@ -81,7 +81,7 @@ export function connect(id?: string, password?: string) {
  * @param {string} [feedbackTitle] - The feedback title.
  * @returns {Function}
  */
-export function hangup(requestFeedback = false, roomId: string, feedbackTitle?: string) {
+export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?: string) {
     // XXX For web based version we use conference hanging up logic from the old app.
     return async (dispatch: IStore["dispatch"]) => {
         if (LocalRecordingManager.isRecordingLocally()) {
