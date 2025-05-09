@@ -97,6 +97,22 @@ export function createFilePreview(file: File): Promise<string> {
 }
 
 /**
+ * Gets the file extension from a file name.
+ *
+ * @param {string} fileName - The name of the file to extract the extension from.
+ * @returns {string} The file extension or an empty string if none exists.
+ */
+export function getFileExtension(fileName: string): string {
+    const parts = fileName.split('.');
+
+    if (parts.length > 1) {
+        return parts.pop()?.toLowerCase() || '';
+    }
+
+    return '';
+}
+
+/**
  * Gets the appropriate icon for a file based on its type.
  *
  * @param {File} file - The file.

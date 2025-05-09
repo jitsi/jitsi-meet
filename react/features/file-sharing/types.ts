@@ -8,10 +8,12 @@ export interface IFile {
 export interface IFileMetadata {
     authorParticipantJid: string | undefined;
     contentType: string | undefined;
-    md5: string;
+    fileId: string;
+    fileName: string;
+    fileSize: number;
+    fileType: string;
     meetingFqn: string;
     participantsIds: string[];
     sessionId: string;
-    size: number;
     timestamp: number;
 }

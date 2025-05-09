@@ -47,7 +47,6 @@ ReducerRegistry.register<IFileSharingState>('features/file-sharing', (state = DE
 
         return newState;
 
-
     default:
         return state;
     }
