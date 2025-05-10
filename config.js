@@ -1599,7 +1599,7 @@ var config = {
     // Disables the auto gain control for local audio tracks.
     // disableAGC: true,
 
-    // Disables the audio processing (echo cancellation, auto gain control and noise suppression) for local audio tracks.
+    // Disables the audio processing (echo cancellation, auto gain control + noise suppression) for local audio tracks.
     // disableAP: true,
 
     // Disables the anoise suppression for local audio tracks.
