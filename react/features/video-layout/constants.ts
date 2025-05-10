@@ -22,3 +22,8 @@ export const LAYOUT_CLASSNAMES = {
     [LAYOUTS.VERTICAL_FILMSTRIP_VIEW]: 'vertical-filmstrip',
     [LAYOUTS.STAGE_FILMSTRIP_VIEW]: 'stage-filmstrip'
 };
+
+/**
+ * The minimum width of the video space. Used for calculating the maximum chat size.
+ */
+export const VIDEO_SPACE_MIN_SIZE = 500;

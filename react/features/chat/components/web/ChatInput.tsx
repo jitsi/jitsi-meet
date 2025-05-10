@@ -1,6 +1,8 @@
+import { Theme } from '@mui/material';
 import React, { Component, RefObject } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
@@ -11,6 +13,31 @@ import Input from '../../../base/ui/components/web/Input';
 import { areSmileysDisabled, isSendGroupChatDisabled } from '../../functions';
 
 import SmileysPanel from './SmileysPanel';
+import { CHAT_SIZE } from '../../constants';
+
+
+const styles = (_theme: Theme, { _chatWidth }: IProps) => {
+    return {
+        smileysPanel: {
+            bottom: '100%',
+            boxSizing: 'border-box' as const,
+            backgroundColor: 'rgba(0, 0, 0, .6) !important',
+            height: 'auto',
+            display: 'flex' as const,
+            overflow: 'hidden',
+            position: 'absolute' as const,
+            width: `${_chatWidth - 32}px`,
+            marginBottom: '5px',
+            marginLeft: '-5px',
+            transition: 'max-height 0.3s',
+
+            '& #smileysContainer': {
+                backgroundColor: '#131519',
+                borderTop: '1px solid #A4B8D1'
+            }
+        }
+    };
+};
 
 /**
  * The type of the React {@code Component} props of {@link ChatInput}.
@@ -22,6 +49,9 @@ interface IProps extends WithTranslation {
      */
     _areSmileysDisabled: boolean;
 
+
+    _chatWidth: number;
+
     /**
      * Whether sending group chat messages is disabled.
      */
@@ -31,6 +61,11 @@ interface IProps extends WithTranslation {
      * The id of the message recipient, if any.
      */
     _privateMessageRecipientId?: string;
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * Invoked to send chat messages.
@@ -123,6 +158,9 @@ class ChatInput extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     override render() {
+        const classes = withStyles.getClasses(this.props);
+
+
         return (
             <div className = { `chat-input-container${this.state.message.trim().length ? ' populated' : ''}` }>
                 <div id = 'chat-input' >
@@ -130,7 +168,7 @@ class ChatInput extends Component<IProps, IState> {
                         <div
                             className = 'smiley-input'>
                             <div
-                                className = 'smileys-panel' >
+                                className = { classes.smileysPanel } >
                                 <SmileysPanel
                                     onSmileySelect = { this._onSmileySelect } />
                             </div>
@@ -291,14 +329,15 @@ class ChatInput extends Component<IProps, IState> {
  * }}
  */
 const mapStateToProps = (state: IReduxState) => {
-    const { privateMessageRecipient } = state['features/chat'];
+    const { privateMessageRecipient, width } = state['features/chat'];
     const isGroupChatDisabled = isSendGroupChatDisabled(state);
 
     return {
         _areSmileysDisabled: areSmileysDisabled(state),
         _privateMessageRecipientId: privateMessageRecipient?.id,
-        _isSendGroupChatDisabled: isGroupChatDisabled
+        _isSendGroupChatDisabled: isGroupChatDisabled,
+        _chatWidth: width.current ?? CHAT_SIZE,
     };
 };
 
-export default translate(connect(mapStateToProps)(ChatInput));
+export default translate(connect(mapStateToProps)(withStyles(ChatInput, styles)));

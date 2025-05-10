@@ -88,7 +88,6 @@ export default function Toolbox({
         = useSelector((state: IReduxState) => state['features/toolbox'].buttonsWithNotifyClick);
     const reduxToolbarButtons = useSelector((state: IReduxState) => state['features/toolbox'].toolbarButtons);
     const toolbarButtonsToUse = toolbarButtons || reduxToolbarButtons;
-    const chatOpen = useSelector((state: IReduxState) => state['features/chat'].isOpen);
     const isDialogVisible = useSelector((state: IReduxState) => Boolean(state['features/base/dialog'].component));
     const localParticipant = useSelector(getLocalParticipant);
     const transcribing = useSelector(isTranscribing);
@@ -220,7 +219,7 @@ export default function Toolbox({
 
 
     const rootClassNames = `new-toolbox ${toolbarVisible ? 'visible' : ''} ${
-        toolbarButtonsToUse.length ? '' : 'no-buttons'} ${chatOpen ? 'shift-right' : ''}`;
+        toolbarButtonsToUse.length ? '' : 'no-buttons'}`;
 
     const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
     const containerClassName = `toolbox-content${isMobile || isNarrowLayout ? ' toolbox-content-mobile' : ''}`;

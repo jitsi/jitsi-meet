@@ -209,7 +209,7 @@ class LargeVideo extends Component<IProps> {
             _showSubtitles
         } = this.props;
         const style = this._getCustomStyles();
-        const className = `videocontainer${_isChatOpen ? ' shift-right' : ''}`;
+        const className = 'videocontainer';
 
         return (
             <div

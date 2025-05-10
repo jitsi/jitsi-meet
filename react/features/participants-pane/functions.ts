@@ -6,6 +6,7 @@ import {
     isSupported
 } from '../av-moderation/functions';
 import { IStateful } from '../base/app/types';
+import theme from '../base/components/themes/participantsPaneTheme.json';
 import { getCurrentConference } from '../base/conference/functions';
 import { INVITE_ENABLED, PARTICIPANTS_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
@@ -320,3 +321,19 @@ export const isParticipantsPaneEnabled = (stateful: IStateful) => {
 
     return Boolean(getFeatureFlag(state, PARTICIPANTS_ENABLED, true) && enabled);
 };
+
+/**
+ * Returns the width of the participants pane based on its open state.
+ *
+ * @param {IReduxState} state - The Redux state object containing the application state.
+ * @returns {number} - The width of the participants pane in pixels when open, or 0 when closed.
+ */
+export function getParticipantsPaneWidth(state: IReduxState) {
+    const { isOpen } = getState(state);
+
+    if (isOpen) {
+        return theme.participantsPaneWidth;
+    }
+
+    return 0;
+}

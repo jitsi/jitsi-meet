@@ -34,6 +34,8 @@ import { ENDPOINT_REACTION_NAME } from '../reactions/constants';
 import { getReactionMessageFromBuffer, isReactionsEnabled } from '../reactions/functions.any';
 import { showToolbox } from '../toolbox/actions';
 
+import './subscriber';
+
 import {
     ADD_MESSAGE,
     CLOSE_CHAT,

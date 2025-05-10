@@ -141,32 +141,6 @@
     left: 0;
 }
 
-.smileys-panel {
-    bottom: 100%;
-    box-sizing: border-box;
-    background-color: rgba(0, 0, 0, .6) !important;
-    height: auto;
-    display: flex;
-    overflow: hidden;
-    position: absolute;
-    width: calc(#{$sidebarWidth} - 32px);
-    margin-bottom: 5px;
-    margin-left: -5px;
-
-    /**
-     * CSS transitions do not apply for auto dimensions. So to produce the css
-     * accordion effect for showing and hiding the smiley-panel, while allowing
-     * for variable panel, height, use a very large max-height and animate off
-     * of that.
-     */
-    transition: max-height 0.3s;
-
-    #smileysContainer {
-        background-color: $chatBackgroundColor;
-        border-top: 1px solid #A4B8D1;
-    }
-}
-
 #smileysContainer .smiley {
     font-size: 1.625rem;
 }
