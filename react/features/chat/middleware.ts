@@ -15,11 +15,13 @@ import {
     JitsiConferenceErrors,
     JitsiConferenceEvents
 } from '../base/lib-jitsi-meet';
+import { PARTICIPANT_JOINED, PARTICIPANT_LEFT, PARTICIPANT_UPDATED } from '../base/participants/actionTypes';
 import {
     getLocalParticipant,
     getParticipantById,
     getParticipantDisplayName
 } from '../base/participants/functions';
+import { IParticipant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
@@ -42,7 +44,14 @@ import {
     SEND_REACTION,
     SET_FOCUSED_TAB
 } from './actionTypes';
-import { addMessage, addMessageReaction, clearMessages, closeChat, setPrivateMessageRecipient } from './actions.any';
+import {
+    addMessage,
+    addMessageReaction,
+    clearMessages,
+    closeChat,
+    notifyPrivateRecipientsChanged,
+    setPrivateMessageRecipient
+} from './actions.any';
 import { ChatPrivacyDialog } from './components';
 import {
     ChatTabs,
@@ -193,6 +202,19 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case PARTICIPANT_JOINED:
+    case PARTICIPANT_LEFT:
+    case PARTICIPANT_UPDATED: {
+        if (_shouldNotifyPrivateRecipiensChanged(store, action)) {
+            const result = next(action);
+
+            dispatch(notifyPrivateRecipientsChanged());
+
+            return result;
+        }
+        break;
+    }
+
     case SEND_MESSAGE: {
         const state = store.getState();
         const conference = getCurrentConference(state);
@@ -294,6 +316,27 @@ StateListenerRegistry.register(
         }
     }
 );
+
+/**
+ * Checks whether a notification for private chat recipients is needed.
+ *
+ * @param {IStore} store - The redux store.
+ * @param {{ participant: IParticipant, type: string }} action - The action.
+ * @returns {boolean}
+ */
+function _shouldNotifyPrivateRecipiensChanged(
+        store: IStore, action: { participant: IParticipant; type: string; }
+) {
+    const { type, participant } = action;
+
+    if ([ PARTICIPANT_LEFT, PARTICIPANT_JOINED ].includes(type)) {
+        return true;
+    }
+
+    const { id, name } = participant;
+
+    return name !== getParticipantDisplayName(store, id);
+}
 
 /**
  * Registers listener for {@link JitsiConferenceEvents.MESSAGE_RECEIVED} that
