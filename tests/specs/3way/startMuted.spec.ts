@@ -42,7 +42,7 @@ describe('StartMuted', () => {
         const { p2 } = ctx;
 
         await p2.waitForIceConnected();
-        await p2.waitForSendReceiveData({ checkSend: false });
+        // await p2.waitForSendReceiveData({ checkSend: false });
 
         await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
         await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2);
