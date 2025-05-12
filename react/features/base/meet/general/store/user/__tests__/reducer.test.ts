@@ -16,7 +16,7 @@ describe("User Reducer", () => {
         lastUpdated: null,
     };
 
-    let dateSpy;
+    let dateSpy: ReturnType<typeof vi.spyOn>;
     const mockTimestamp = 1620000000000;
 
     beforeEach(() => {
