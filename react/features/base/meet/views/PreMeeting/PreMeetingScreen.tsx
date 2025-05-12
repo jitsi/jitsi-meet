@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { WithTranslation } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { makeStyles } from "tss-react/mui";
@@ -23,7 +23,6 @@ import { setCreateRoomError } from "../../general/store/errors/actions";
 import { useLocalStorage } from "../../LocalStorageManager";
 import MeetingService from "../../services/meeting.service";
 import { MeetingUser } from "../../services/types/meeting.types";
-import { ErrorModals, ErrorType } from "./components/ErrorModals";
 import Header from "./components/Header";
 import PreMeetingModal from "./components/PreMeetingModal";
 import { useUserData } from "./hooks/useUserData";
@@ -150,11 +149,17 @@ interface IProps extends WithTranslation {
     flipX?: boolean;
 
     /**
-     * Flag to indicate if conference is creating.
+     * Function to create Meeting.
      */
     createConference?: Function;
 
     room: string;
+
+    /**
+     * The error messages to display.
+     */
+    joinRoomErrorMessage?: string;
+    createRoomErrorMessage?: string;
 }
 
 const PreMeetingScreen = ({
@@ -179,6 +184,8 @@ const PreMeetingScreen = ({
     flipX,
     createConference,
     room,
+    joinRoomErrorMessage,
+    createRoomErrorMessage,
 }: IProps) => {
     const { classes } = useStyles();
     const [isNameInputFocused, setIsNameInputFocused] = useState(false);
@@ -191,6 +198,7 @@ const PreMeetingScreen = ({
 
     const isInNewMeeting = window.location.href.includes("new-meeting");
     const showNameError = userName.length === 0 && !isNameInputFocused;
+    const errorMessage = createRoomError ? createRoomErrorMessage : joinRoomErrorMessage;
 
     const toolbarSection = useMemo(
         () => (
@@ -214,8 +222,10 @@ const PreMeetingScreen = ({
     );
 
     const getUsersInMeeting = async () => {
-        const meetingUsers = await MeetingService.getInstance().getCurrentUsersInCall(room);
-        setMeetingUsersData(meetingUsers);
+        if (!isInNewMeeting) {
+            const meetingUsers = await MeetingService.getInstance().getCurrentUsersInCall(room);
+            setMeetingUsersData(meetingUsers);
+        }
     };
 
     useEffect(() => {
@@ -243,8 +253,7 @@ const PreMeetingScreen = ({
             window.history.replaceState({}, document.title, newUrl);
             dispatch(appNavigate(newUrl));
         } catch (error) {
-            console.error("Error creating new meeting:", error);
-            dispatch(setCreateRoomError(true));
+            dispatch(setCreateRoomError(true, error.message));
         } finally {
             setIsCreatingMeeting(false);
         }
@@ -279,16 +288,6 @@ const PreMeetingScreen = ({
         updateNameInStorage(displayName);
     };
 
-    const handleGoHome = () => {
-        window.location.href = "/";
-    };
-
-    const getErrorType = (): ErrorType | undefined => {
-        if (createRoomError) return "createRoom";
-        if (joinRoomError) return "joinRoom";
-        return undefined;
-    };
-
     // TODO: EXTRACT ONLGOUT AND HEADER, CHECK HeaderWrapper.tsx
     const localStorageManager = useLocalStorage();
     const onLogout = () => {
@@ -321,35 +320,24 @@ const PreMeetingScreen = ({
                     }
                     navigateToHomePage={navigateToHomePage}
                 />
-                <ErrorModals
-                    errorType={getErrorType()}
-                    translate={t}
-                    onGoHome={handleGoHome}
-                    onRetry={() => {
-                        dispatch(setCreateRoomError(false));
-                        handleNewMeeting();
+                <PreMeetingModal
+                    videoTrack={videoTrack}
+                    videoMuted={!!videoMuted}
+                    audioTrack={audioTrack}
+                    userName={userName}
+                    showNameError={showNameError}
+                    setUserName={setName}
+                    setIsNameInputFocused={setIsNameInputFocused}
+                    participants={meetingUsersData}
+                    joinConference={async () => {
+                        createConference && (await createConference());
+                        joinConference && joinConference();
                     }}
+                    disableJoinButton={disableJoinButton}
+                    flipX={flipX}
+                    isCreatingConference={!!createConference}
+                    errorMessage={errorMessage}
                 />
-
-                {!getErrorType() && (
-                    <PreMeetingModal
-                        videoTrack={videoTrack}
-                        videoMuted={!!videoMuted}
-                        audioTrack={audioTrack}
-                        userName={userName}
-                        showNameError={showNameError}
-                        setUserName={setName}
-                        setIsNameInputFocused={setIsNameInputFocused}
-                        participants={meetingUsersData}
-                        joinConference={async () => {
-                            createConference && (await createConference());
-                            joinConference && joinConference();
-                        }}
-                        disableJoinButton={disableJoinButton}
-                        flipX={flipX}
-                        isCreatingConference={!!createConference}
-                    />
-                )}
                 {/* UNCOMMENT IN DEV MODE TO SEE OLD IMPLEMENTATION  */}
                 {/* <div className="flex flex-row">
                     <div>
@@ -388,7 +376,10 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
 
     const joinRoomError = state["features/meet-room"]?.joinRoomError || false;
     const createRoomError = state["features/meet-room"]?.createRoomError || false;
+    const joinRoomErrorMessage = state["features/meet-room"]?.joinRoomErrorMessage;
+    const createRoomErrorMessage = state["features/meet-room"]?.createRoomErrorMessage;
     const room = state["features/base/conference"].room ?? "";
+
     return {
         // For keeping backwards compat.: if we pass an empty hiddenPremeetingButtons
         // array through external api, we have all prejoin buttons present on premeeting
@@ -405,6 +396,8 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         createRoomError,
         flipX: localFlipX,
         room,
+        joinRoomErrorMessage,
+        createRoomErrorMessage,
     };
 }
 

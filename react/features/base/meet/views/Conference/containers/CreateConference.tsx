@@ -10,6 +10,7 @@ import { AbstractConference, abstractMapStateToProps } from "../../../../../conf
 import { SET_PREJOIN_PAGE_VISIBILITY } from "../../../../../prejoin/actionTypes";
 import Prejoin from "../../../../../prejoin/components/web/Prejoin";
 import { translate } from "../../../../i18n/functions";
+import { setCreateRoomError } from "../../../general/store/errors/actions";
 import MeetingService from "../../../services/meeting.service";
 
 /**
@@ -26,10 +27,14 @@ class CreateConference extends AbstractConference<IProps, any> {
     _onCreateConference = async () => {
         this.props.dispatch({ type: SET_PREJOIN_PAGE_VISIBILITY, value: false });
 
-        const meetingData = await MeetingService.getInstance().createCall();
+        try {
+            const meetingData = await MeetingService.getInstance().createCall();
 
-        if (meetingData?.room) {
-            this.props.dispatch(appNavigate(meetingData.room));
+            if (meetingData?.room) {
+                this.props.dispatch(appNavigate(meetingData.room));
+            }
+        } catch (error) {
+            this.props.dispatch(setCreateRoomError(true, error.message));
         }
     };
 
