@@ -2,8 +2,6 @@ import { DefaultTheme } from 'react-native-paper';
 
 import { createColorTokens } from './utils';
 
-export * from './functions.any';
-
 /**
  * Creates a React Native Paper theme based on local UI tokens.
  *

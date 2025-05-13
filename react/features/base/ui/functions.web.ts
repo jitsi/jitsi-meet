@@ -5,8 +5,6 @@ import { ITypography, IPalette as Palette1 } from '../ui/types';
 
 import { createColorTokens } from './utils';
 
-export * from './functions.any';
-
 declare module '@mui/material/styles' {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
     interface Palette extends Palette1 {}
