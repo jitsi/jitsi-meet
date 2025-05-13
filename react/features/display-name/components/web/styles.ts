@@ -1,5 +1,4 @@
 import { Theme } from '@mui/material';
-import { remToPixels } from '../../../base/ui/functions.any';
 
 /**
  * The vertical padding for the display name.
@@ -37,8 +36,8 @@ export function getStageParticipantFontSizeRange(theme: Theme) {
  */
 export function getStageParticipantLineHeightRange(theme: Theme) {
     return {
-        max: remToPixels(String(theme.typography.bodyShortRegularLarge.lineHeight)),
-        min: remToPixels(String(theme.typography.bodyShortRegularSmall.lineHeight))
+        max: theme.typography.bodyShortRegularLarge.lineHeight,
+        min: theme.typography.bodyShortRegularSmall.lineHeight
     };
 }
 
