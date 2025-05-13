@@ -23,6 +23,7 @@ import { notifyTranscriptionChunkReceived } from './functions';
 import { areClosedCaptionsEnabled, isCCTabEnabled } from './functions.any';
 import logger from './logger';
 import { ISubtitle, ITranscriptMessage } from './types';
+import { showErrorNotification } from '../notifications/actions';
 
 /**
  * The type of json-message which indicates that json carries a
@@ -352,6 +353,10 @@ function _requestingSubtitlesChange(
 
                     // let's back to the correct state
                     dispatch(setRequestingSubtitles(false, false, null));
+
+                    dispatch(showErrorNotification({
+                        titleKey: 'transcribing.failed'
+                    }));
                 });
         }
     }
