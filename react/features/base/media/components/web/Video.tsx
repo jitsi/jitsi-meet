@@ -1,7 +1,6 @@
-import React, { Component, ReactEventHandler } from 'react';
-
-import { ITrack } from '../../../tracks/types';
-import logger from '../../logger';
+import React, { Component, ReactEventHandler, useEffect } from "react";
+import { ITrack } from "../../../tracks/types";
+import logger from "../../logger";
 
 /**
  * The type of the React {@code Component} props of {@link Video}.
@@ -18,6 +17,7 @@ interface IProps {
      * CSS classes to add to the video element.
      */
     className: string;
+
 
     /**
      * A map of the event handlers for the video HTML element.
@@ -103,6 +103,7 @@ interface IProps {
          * OnWaiting event handler.
          */
         onWaiting?: ReactEventHandler<HTMLVideoElement>;
+
     };
 
     /**
@@ -110,62 +111,67 @@ interface IProps {
      * locate video elements.
      */
     id: string;
-
+    
     /**
      * Used on native.
      */
     mirror?: boolean;
-
+    
     /**
      * The value of the muted attribute for the underlying video element.
      */
     muted?: boolean;
-
+    
     /**
      * Used on native.
      */
     onPlaying?: Function;
-
+    
     /**
      * Used on native.
      */
     onPress?: Function;
-
+    
     /**
      * Optional callback to invoke once the video starts playing.
      */
     onVideoPlaying?: Function;
-
+    
     /**
      * Used to determine the value of the autoplay attribute of the underlying
      * video element.
      */
     playsinline: boolean;
-
+    
     /**
      * Used on native.
      */
     stream?: any;
-
+    
     /**
      * A styles that will be applied on the video element.
      */
     style?: Object;
-
+    
     /**
      * The JitsiLocalTrack to display.
      */
     videoTrack?: Partial<ITrack>;
-
+    
     /**
      * Used on native.
      */
     zOrder?: number;
-
+    
     /**
      * Used on native.
      */
     zoomEnabled?: boolean;
+    
+    /**
+     * Flag to determine if se debe codificar el video
+     */
+    encodeVideo?: boolean;
 }
 
 /**
@@ -176,6 +182,7 @@ interface IProps {
 class Video extends Component<IProps> {
     _videoElement?: HTMLVideoElement | null;
     _mounted: boolean;
+    _encodingChanged: boolean;
 
     /**
      * Default values for {@code Video} component's properties.
@@ -183,10 +190,11 @@ class Video extends Component<IProps> {
      * @static
      */
     static defaultProps = {
-        className: '',
+        className: "",
         autoPlay: true,
-        id: '',
-        playsinline: true
+        id: "",
+        playsinline: true,
+        encodeVideo: false,
     };
 
     /**
@@ -206,7 +214,8 @@ class Video extends Component<IProps> {
          * @type {HTMLVideoElement}
          */
         this._videoElement = null;
-
+        this._mounted = false;
+        this._encodingChanged = false;
 
         // Bind event handlers so they are only bound once for every instance.
         this._onVideoPlaying = this._onVideoPlaying.bind(this);
@@ -233,9 +242,7 @@ class Video extends Component<IProps> {
                 // Ensure the video gets play() called on it. This may be necessary in the
                 // case where the local video container was moved and re-attached, in which
                 // case video does not autoplay.
-
-                this._videoElement.play()
-                .catch(error => {
+                this._videoElement.play().catch((error) => {
                     // Prevent uncaught "DOMException: The play() request was interrupted by a new load request"
                     // when video playback takes long to start and it starts after the component was unmounted.
                     if (this._mounted) {
@@ -259,6 +266,28 @@ class Video extends Component<IProps> {
     }
 
     /**
+     * Updates the video display only if a new track is added or encoding changed.
+     * This component's updating is blackboxed from React to prevent re-rendering of video
+     * element, as the lib uses {@code track.attach(videoElement)} instead.
+     *
+     * @inheritdoc
+     * @returns {boolean} - False is always returned to blackbox this component
+     * from React.
+     */
+    componentDidUpdate(prevProps: IProps) {
+        if (prevProps.encodeVideo !== this.props.encodeVideo && this.props.videoTrack?.jitsiTrack) {
+            console.log("Encoding configuration changed, reattaching track with encoding:", this.props.encodeVideo);
+            this._encodingChanged = true;
+
+            this._detachTrack(this.props.videoTrack);
+
+            this._attachTrack(this.props.videoTrack).catch((_error: Error) => {
+                console.error("Error reattaching track with new encoding setting:", _error);
+            });
+        }
+    }
+
+    /**
      * Updates the video display only if a new track is added. This component's
      * updating is blackboxed from React to prevent re-rendering of video
      * element, as the lib uses {@code track.attach(videoElement)} instead.
@@ -278,7 +307,11 @@ class Video extends Component<IProps> {
             });
         }
 
-        if (this.props.style !== nextProps.style || this.props.className !== nextProps.className) {
+        if (
+            this.props.style !== nextProps.style ||
+            this.props.className !== nextProps.className ||
+            this.props.encodeVideo !== nextProps.encodeVideo
+        ) {
             return true;
         }
 
@@ -292,26 +325,20 @@ class Video extends Component<IProps> {
      * @returns {ReactElement}
      */
     render() {
-        const {
-            autoPlay,
-            className,
-            id,
-            muted,
-            playsinline,
-            style,
-            eventHandlers
-        } = this.props;
+        const { autoPlay, className, id, muted, playsinline, style, eventHandlers, encodeVideo } = this.props;
 
         return (
             <video
-                autoPlay = { autoPlay }
-                className = { className }
-                id = { id }
-                muted = { muted }
-                playsInline = { playsinline }
-                ref = { this._setVideoElement }
-                style = { style }
-                { ...eventHandlers } />
+                autoPlay={autoPlay}
+                className={className}
+                id={id}
+                muted={muted}
+                playsInline={playsinline}
+                ref={this._setVideoElement}
+                style={style}
+                data-encode-video={encodeVideo}
+                {...eventHandlers}
+            />
         );
     }
 
@@ -325,7 +352,7 @@ class Video extends Component<IProps> {
      * @returns {void}
      */
     _attachTrack(videoTrack?: Partial<ITrack>) {
-        const { id } = this.props;
+        const { id, encodeVideo } = this.props;
 
         if (!videoTrack?.jitsiTrack) {
             logger.warn(`Attach is called on video element ${id} without tracks passed!`);
@@ -335,12 +362,19 @@ class Video extends Component<IProps> {
             return Promise.resolve();
         }
 
-        return videoTrack.jitsiTrack.attach(this._videoElement)
-            .catch((error: Error) => {
+        console.log("Attaching track with encodeVideo:", encodeVideo);
+
+        try {
+            return videoTrack.jitsiTrack.attach(this._videoElement, encodeVideo).catch((error: Error) => {
                 logger.error(
                     `Attaching the remote track ${videoTrack.jitsiTrack} to video with id ${id} has failed with `,
-                    error);
+                    error
+                );
             });
+        } catch (error) {
+            console.error("Error in _attachTrack:", error);
+            return Promise.resolve();
+        }
     }
 
     /**
@@ -355,7 +389,11 @@ class Video extends Component<IProps> {
      */
     _detachTrack(videoTrack?: Partial<ITrack>) {
         if (this._videoElement && videoTrack && videoTrack.jitsiTrack) {
-            videoTrack.jitsiTrack.detach(this._videoElement);
+            try {
+                videoTrack.jitsiTrack.detach(this._videoElement);
+            } catch (error) {
+                console.error("Error detaching track:", error);
+            }
         }
     }
 
