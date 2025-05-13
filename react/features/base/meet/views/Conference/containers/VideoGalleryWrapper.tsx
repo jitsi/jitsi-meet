@@ -25,7 +25,7 @@ const GalleryVideoWrapper = ({ videoMode, participants, flipX, t, room }: Galler
     const [meetingParticipants, setMeetingParticipants] = React.useState<MeetingUser[]>([]);
 
     useEffect(() => {
-        const fetchMeetingParticipants = async () => {
+        const fetchMeetingParticipants = async (): Promise<void> => {
             if (!room) return;
 
             try {
@@ -43,7 +43,7 @@ const GalleryVideoWrapper = ({ videoMode, participants, flipX, t, room }: Galler
         if (!participants || participants.length === 0) return [];
         if (!meetingParticipants || meetingParticipants.length === 0) return participants;
 
-        const avatarMap = {};
+        const avatarMap: Record<string, string | undefined> = {};
         meetingParticipants.forEach((mp) => {
             if (mp.userId) {
                 avatarMap[mp.userId] = mp.avatar;
