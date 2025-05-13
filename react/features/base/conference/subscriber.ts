@@ -13,26 +13,45 @@ let hasShownNotification = false;
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/conference'].startAudioMutedPolicy,
     /* listener */ (startAudioMutedPolicy, store) => {
-        _updateTrackMuteState(store, startAudioMutedPolicy, true);
+        _updateTrackMuteState(store, true);
     });
 
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/conference'].startVideoMutedPolicy,
     /* listener */(startVideoMutedPolicy, store) => {
-        _updateTrackMuteState(store, startVideoMutedPolicy, false);
+        _updateTrackMuteState(store, false);
     });
 
-function _updateTrackMuteState(store: IStore, mutedPolicy: boolean, isAudio: boolean) {
-    const { dispatch } = store;
+/**
+ * Updates the mute state of the track based on the start muted policy.
+ *
+ * @param store {IStore} - The redux store.
+ * @param isAudio {boolean} - Whether the track is audio or video.
+ * @returns {void}
+ */
+function _updateTrackMuteState(store: IStore, isAudio: boolean) {
+    const { dispatch, getState } = store;
+    const mutedPolicyKey = isAudio ? 'startAudioMutedPolicy' : 'startVideoMutedPolicy';
+    const mutedPolicyValue = getState()['features/base/conference'][mutedPolicyKey];
 
-    // Only enforce joining muted as of now.
-    if (isAudio) {
-        mutedPolicy && dispatch(setAudioMuted(mutedPolicy, true));
-    } else {
-        mutedPolicy && dispatch(setVideoMuted(mutedPolicy, VIDEO_MUTISM_AUTHORITY.USER, true));
+    // Currently, the policy only supports force muting others, not unmuting them.
+    if (!mutedPolicyValue) {
+        return;
     }
 
-    if (!hasShownNotification) {
+    let muteStateUpdated = false;
+    const { muted } = isAudio ? getState()['features/base/media'].audio : getState()['features/base/media'].video;
+
+    if (isAudio && !Boolean(muted)) {
+        dispatch(setAudioMuted(mutedPolicyValue, true));
+        muteStateUpdated = true;
+    } else if (!isAudio && !Boolean(muted)) {
+        // TODO: Add a new authority for video mutism for the moderator case.
+        dispatch(setVideoMuted(mutedPolicyValue, VIDEO_MUTISM_AUTHORITY.USER, true));
+        muteStateUpdated = true;
+    }
+
+    if (!hasShownNotification && muteStateUpdated) {
         hasShownNotification = true;
         dispatch(showNotification({
             titleKey: 'notify.mutedTitle',
