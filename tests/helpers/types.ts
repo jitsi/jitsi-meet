@@ -33,6 +33,11 @@ export type IJoinOptions = {
     displayName?: string;
 
     /**
+     * Whether to create a moderator token for joining.
+     */
+    moderator?: boolean;
+
+    /**
      * When joining the first participant and jwt singing material is available and a provided token
      * is available, prefer generating a new token for the first participant.
      */
@@ -58,4 +63,9 @@ export type IJoinOptions = {
      * based on the logic of the test.
      */
     skipWaitToJoin?: boolean;
+
+    /**
+     * Whether to create a visitor token for joining.
+     */
+    visitor?: boolean;
 };

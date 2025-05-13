@@ -21,6 +21,7 @@ import SecurityDialog from '../pageobjects/SecurityDialog';
 import SettingsDialog from '../pageobjects/SettingsDialog';
 import Toolbar from '../pageobjects/Toolbar';
 import VideoQualityDialog from '../pageobjects/VideoQualityDialog';
+import Visitors from '../pageobjects/Visitors';
 
 import { LOG_PREFIX, logInfo } from './browserLogger';
 import { IContext, IJoinOptions } from './types';
@@ -568,6 +569,16 @@ export class Participant {
     getLobbyScreen(): LobbyScreen {
         return new LobbyScreen(this);
     }
+
+    /**
+     * Returns the Visitors page object.
+     *
+     * @returns {Visitors}
+     */
+    getVisitors(): Visitors {
+        return new Visitors(this);
+    }
+
 
     /**
      * Switches to the iframe API context

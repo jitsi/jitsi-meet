@@ -94,7 +94,9 @@ export default function VisitorsList() {
     return (
         <>
             <div className = { classes.headingContainer }>
-                <div className = { cx(classes.heading, classes.headingW) }>
+                <div
+                    className = { cx(classes.heading, classes.headingW) }
+                    id = 'visitor-list-header' >
                     { t('participantsPane.headings.visitors', { count: visitorsCount })}
                     { requests.length > 0
                         && t('participantsPane.headings.visitorRequests', { count: requests.length }) }

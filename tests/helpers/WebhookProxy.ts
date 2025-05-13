@@ -12,6 +12,7 @@ export default class WebhookProxy {
     private cache = new Map();
     private listeners = new Map();
     private consumers = new Map();
+    private _defaultMeetingSettings: object | undefined;
 
     /**
      * Initializes the webhook proxy.
@@ -65,7 +66,13 @@ export default class WebhookProxy {
 
                 if (!processed && msg.eventType === 'SETTINGS_PROVISIONING') {
                     // just in case to not be empty
-                    this.ws?.send(JSON.stringify({ someField: 'someValue' }));
+                    let response: any = { someField: 'someValue' };
+
+                    if (this._defaultMeetingSettings) {
+                        response = this._defaultMeetingSettings;
+                    }
+
+                    this.ws?.send(JSON.stringify(response));
                 }
             }
         });
@@ -162,5 +169,26 @@ export default class WebhookProxy {
         } catch (err) {
             console.error(err);
         }
+    }
+
+    /**
+     * Sets the settings provider.
+     * @param value
+     */
+    set defaultMeetingSettings(value: {
+        autoAudioRecording?: boolean;
+        autoTranscriptions?: boolean;
+        autoVideoRecording?: boolean;
+        lobbyEnabled?: boolean;
+        lobbyType?: 'WAIT_FOR_APPROVAL' | 'WAIT_FOR_MODERATOR';
+        maxOccupants?: number;
+        outboundPhoneNo?: string;
+        participantsSoftLimit?: number;
+        passcode?: string;
+        transcriberType?: 'GOOGLE' | 'ORACLE_CLOUD_AI_SPEECH' | 'EGHT_WHISPER';
+        visitorsEnabled?: boolean;
+        visitorsLive?: boolean;
+    }) {
+        this._defaultMeetingSettings = value;
     }
 }
