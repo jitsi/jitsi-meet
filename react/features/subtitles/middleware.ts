@@ -16,6 +16,7 @@ import {
     removeCachedTranscriptMessage,
     removeTranscriptMessage,
     setRequestingSubtitles,
+    setSubtitlesError,
     storeSubtitle,
     updateTranscriptMessage
 } from './actions.any';
@@ -357,6 +358,7 @@ function _requestingSubtitlesChange(
                     dispatch(showErrorNotification({
                         titleKey: 'transcribing.failed'
                     }));
+                    dispatch(setSubtitlesError(true));
                 });
         }
     }

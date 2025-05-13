@@ -6,7 +6,8 @@ import {
     SET_REQUESTING_SUBTITLES,
     STORE_SUBTITLE,
     TOGGLE_REQUESTING_SUBTITLES,
-    UPDATE_TRANSCRIPT_MESSAGE
+    UPDATE_TRANSCRIPT_MESSAGE,
+    SET_SUBTITLES_ERROR
 } from './actionTypes';
 import { ISubtitle } from './types';
 
@@ -114,5 +115,21 @@ export function storeSubtitle(subtitle: ISubtitle) {
     return {
         type: STORE_SUBTITLE,
         subtitle
+    };
+}
+
+/**
+ * Signals that an error occurred while starting subtitles.
+ *
+ * @param {boolean} hasError - Whether an error occurred or not.
+ * @returns {{
+ *    type: SET_SUBTITLES_ERROR,
+ *    hasError: boolean
+ * }}
+ */
+export function setSubtitlesError(hasError: boolean) {
+    return {
+        type: SET_SUBTITLES_ERROR,
+        hasError
     };
 }
