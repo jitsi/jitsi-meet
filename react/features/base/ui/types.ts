@@ -1,8 +1,8 @@
 interface ITypographyType {
-    fontSize: string;
+    fontSize: number;
     fontWeight: string;
     letterSpacing: number;
-    lineHeight: string;
+    lineHeight: number;
 }
 
 export interface IPalette {
