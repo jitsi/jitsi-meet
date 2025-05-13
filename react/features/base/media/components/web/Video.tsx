@@ -1,4 +1,4 @@
-import React, { Component, ReactEventHandler, useEffect } from "react";
+import React, { Component, ReactEventHandler } from "react";
 import { ITrack } from "../../../tracks/types";
 import logger from "../../logger";
 
@@ -6,7 +6,6 @@ import logger from "../../logger";
  * The type of the React {@code Component} props of {@link Video}.
  */
 interface IProps {
-
     /**
      * Used to determine the value of the autoplay attribute of the underlying
      * video element.
@@ -18,12 +17,10 @@ interface IProps {
      */
     className: string;
 
-
     /**
      * A map of the event handlers for the video HTML element.
      */
     eventHandlers?: {
-
         /**
          * OnAbort event handler.
          */
@@ -103,7 +100,6 @@ interface IProps {
          * OnWaiting event handler.
          */
         onWaiting?: ReactEventHandler<HTMLVideoElement>;
-
     };
 
     /**
@@ -111,63 +107,63 @@ interface IProps {
      * locate video elements.
      */
     id: string;
-    
+
     /**
      * Used on native.
      */
     mirror?: boolean;
-    
+
     /**
      * The value of the muted attribute for the underlying video element.
      */
     muted?: boolean;
-    
+
     /**
      * Used on native.
      */
     onPlaying?: Function;
-    
+
     /**
      * Used on native.
      */
     onPress?: Function;
-    
+
     /**
      * Optional callback to invoke once the video starts playing.
      */
     onVideoPlaying?: Function;
-    
+
     /**
      * Used to determine the value of the autoplay attribute of the underlying
      * video element.
      */
     playsinline: boolean;
-    
+
     /**
      * Used on native.
      */
     stream?: any;
-    
+
     /**
      * A styles that will be applied on the video element.
      */
     style?: Object;
-    
+
     /**
      * The JitsiLocalTrack to display.
      */
     videoTrack?: Partial<ITrack>;
-    
+
     /**
      * Used on native.
      */
     zOrder?: number;
-    
+
     /**
      * Used on native.
      */
     zoomEnabled?: boolean;
-    
+
     /**
      * Flag to determine if se debe codificar el video
      */
