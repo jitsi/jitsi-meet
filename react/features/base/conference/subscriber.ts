@@ -25,8 +25,8 @@ StateListenerRegistry.register(
 /**
  * Updates the mute state of the track based on the start muted policy.
  *
- * @param store {IStore} - The redux store.
- * @param isAudio {boolean} - Whether the track is audio or video.
+ * @param {IStore} store - The redux store.
+ * @param {boolean} isAudio - Whether the track is audio or video.
  * @returns {void}
  */
 function _updateTrackMuteState(store: IStore, isAudio: boolean) {
