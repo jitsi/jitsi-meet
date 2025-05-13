@@ -1578,7 +1578,7 @@ export default {
         });
 
         room.on(JitsiConferenceEvents.TRACK_REMOVED, track => {
-            if (!track || track.isLocal()) {
+            if (!track) {
                 return;
             }
 
@@ -1830,6 +1830,14 @@ export default {
             }
         );
         room.on(JitsiConferenceEvents.STARTED_MUTED, () => {
+            // If the policy has already been set through meta data, ignore start muted setting received in the Jingle
+            // message from Jicofo.
+            const { startAudioMutedPolicy, startVideoMutedPolicy } = APP.store.getState()['features/base/conference'];
+
+            if (startAudioMutedPolicy || startVideoMutedPolicy) {
+                return;
+            }
+
             const audioMuted = room.isStartAudioMuted();
             const videoMuted = room.isStartVideoMuted();
             const localTracks = getLocalTracks(APP.store.getState()['features/base/tracks']);
