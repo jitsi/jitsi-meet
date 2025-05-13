@@ -1,3 +1,4 @@
+
 // Mapping between the token used and the color
 export const colorMap = {
     // ----- Surfaces -----
@@ -118,8 +119,8 @@ export const colorMap = {
 
 
 export const font = {
-    weightRegular: 400,
-    weightSemiBold: 600
+    weightRegular: '400',
+    weightSemiBold: '600'
 };
 
 export const shape = {
