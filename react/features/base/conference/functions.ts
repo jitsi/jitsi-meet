@@ -295,7 +295,7 @@ export function getVisitorOptions(stateful: IStateful, vnode: string, focusJid: 
             return {
                 hosts: config.oldConfig.hosts,
                 focusUserJid: focusJid,
-                disableLocalStats: false,
+                disableLocalStatsBroadcast: false,
                 bosh: config.oldConfig.bosh && appendURLParam(config.oldConfig.bosh, 'customusername', username),
                 p2p: config.oldConfig.p2p,
                 websocket: config.oldConfig.websocket
@@ -330,7 +330,7 @@ export function getVisitorOptions(stateful: IStateful, vnode: string, focusJid: 
         },
         focusUserJid: focusJid,
         disableFocus: true, // This flag disables sending the initial conference request
-        disableLocalStats: true,
+        disableLocalStatsBroadcast: true,
         bosh: config.bosh && appendURLParam(config.bosh, 'vnode', vnode),
         p2p: {
             ...config.p2p,
