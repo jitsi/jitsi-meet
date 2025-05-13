@@ -5,7 +5,7 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import { getParticipantDisplayName, isScreenShareParticipant } from '../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
-import { getVideospaceFloatingElementsBottomSpacing, remToPixels } from '../../../base/ui/functions.web';
+import { getVideospaceFloatingElementsBottomSpacing } from '../../../base/ui/functions.web';
 import { getLargeVideoParticipant } from '../../../large-video/functions';
 import {
     getTransitionParamsForElementsAboveToolbox,
@@ -28,13 +28,9 @@ interface IOptions {
 }
 
 const useStyles = makeStyles<IOptions, 'screenSharing'>()((theme, options: IOptions = {}, classes) => {
-    const originalTypography = getStageParticipantTypography(theme);
     const typography = {
-        ...originalTypography,
-        fontSize: remToPixels(originalTypography.fontSize),
-        lineHeight: remToPixels(originalTypography.lineHeight)
+        ...getStageParticipantTypography(theme)
     };
-
     const { clientHeight } = options;
 
     if (typeof clientHeight === 'number' && clientHeight > 0) {
