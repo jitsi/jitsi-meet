@@ -26,7 +26,7 @@ export async function ensureOneParticipant(ctx: IContext, options?: IJoinOptions
  * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<void>}
  */
-export async function ensureThreeParticipants(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
+export async function ensureThreeParticipants(ctx: IContext, options?: IJoinOptions): Promise<void> {
     await joinTheModeratorAsP1(ctx, options);
 
     // these need to be all, so we get the error when one fails
@@ -35,7 +35,7 @@ export async function ensureThreeParticipants(ctx: IContext, options: IJoinOptio
         _joinParticipant(P3, ctx, options)
     ]);
 
-    if (options.skipInMeetingChecks) {
+    if (options?.skipInMeetingChecks) {
         return Promise.resolve();
     }
 
@@ -69,7 +69,7 @@ export function joinFirstParticipant(ctx: IContext, options: IJoinOptions = {}):
  * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<void>}
  */
-export function joinSecondParticipant(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
+export function joinSecondParticipant(ctx: IContext, options?: IJoinOptions): Promise<void> {
     return _joinParticipant(P2, ctx, options);
 }
 
@@ -80,7 +80,7 @@ export function joinSecondParticipant(ctx: IContext, options: IJoinOptions = {})
  * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<void>}
  */
-export function joinThirdParticipant(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
+export function joinThirdParticipant(ctx: IContext, options?: IJoinOptions): Promise<void> {
     return _joinParticipant(P3, ctx, options);
 }
 
@@ -91,7 +91,7 @@ export function joinThirdParticipant(ctx: IContext, options: IJoinOptions = {}):
  * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<void>}
  */
-export async function ensureFourParticipants(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
+export async function ensureFourParticipants(ctx: IContext, options?: IJoinOptions): Promise<void> {
     await joinTheModeratorAsP1(ctx, options);
 
     // these need to be all, so we get the error when one fails
@@ -101,7 +101,7 @@ export async function ensureFourParticipants(ctx: IContext, options: IJoinOption
         _joinParticipant(P4, ctx, options)
     ]);
 
-    if (options.skipInMeetingChecks) {
+    if (options?.skipInMeetingChecks) {
         return Promise.resolve();
     }
 
@@ -137,12 +137,12 @@ async function joinTheModeratorAsP1(ctx: IContext, options?: IJoinOptions) {
  * @param {Object} ctx - The context.
  * @param {IJoinOptions} options - The options to join.
  */
-export async function ensureTwoParticipants(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
+export async function ensureTwoParticipants(ctx: IContext, options?: IJoinOptions): Promise<void> {
     await joinTheModeratorAsP1(ctx, options);
 
     await _joinParticipant(P2, ctx, options);
 
-    if (options.skipInMeetingChecks) {
+    if (options?.skipInMeetingChecks) {
         return Promise.resolve();
     }
 
@@ -165,7 +165,7 @@ export async function ensureTwoParticipants(ctx: IContext, options: IJoinOptions
 async function _joinParticipant( // eslint-disable-line max-params
         name: string,
         ctx: IContext,
-        options: IJoinOptions = {}) {
+        options?: IJoinOptions) {
 
     // @ts-ignore
     const p = ctx[name] as Participant;
@@ -201,11 +201,11 @@ async function _joinParticipant( // eslint-disable-line max-params
                     || !ctx.jwtPrivateKeyPath)) {
                 jwtToken = process.env.JWT_ACCESS_TOKEN;
             } else if (ctx.jwtPrivateKeyPath) {
-                jwtToken = getToken(ctx, name);
+                jwtToken = getToken(ctx, name, options);
             }
         }
     } else if (name === P2) {
-        jwtToken = options.preferGenerateToken ? getToken(ctx, P2) : undefined;
+        jwtToken = options?.preferGenerateToken ? getToken(ctx, P2, options) : undefined;
     }
 
     const newParticipant = new Participant(name, jwtToken);
@@ -286,7 +286,7 @@ export async function muteVideoAndCheck(testee: Participant, observer: Participa
 /**
  * Get a JWT token for a moderator.
  */
-function getToken(ctx: IContext, displayName: string, moderator = true) {
+function getToken(ctx: IContext, displayName: string, options?: IJoinOptions) {
     const keyid = process.env.JWT_KID;
     const headers = {
         algorithm: 'RS256',
@@ -326,9 +326,13 @@ function getToken(ctx: IContext, displayName: string, moderator = true) {
         'room': '*'
     };
 
-    if (moderator) {
+    // if the moderator is set, or options are missing, we assume moderator
+    if (options?.moderator || !options) {
         // @ts-ignore
         payload.context.user.moderator = true;
+    } else if (options.visitor) {
+        // @ts-ignore
+        payload.context.user.role = 'visitor';
     }
 
     ctx.data[`${displayName}-jwt-payload`] = payload;
