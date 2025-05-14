@@ -10,18 +10,21 @@
 -- Component "metadata.jitmeet.example.com" "room_metadata_component"
 --      muc_component = "conference.jitmeet.example.com"
 --      breakout_rooms_component = "breakout.jitmeet.example.com"
-
+local filters = require 'util.filters';
 local jid_node = require 'util.jid'.node;
 local json = require 'cjson.safe';
 local st = require 'util.stanza';
+local jid = require 'util.jid';
 
 local util = module:require 'util';
+local is_admin = util.is_admin;
 local is_healthcheck_room = util.is_healthcheck_room;
 local get_room_from_jid = util.get_room_from_jid;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local process_host_module = util.process_host_module;
 
+local MUC_NS = 'http://jabber.org/protocol/muc';
 local COMPONENT_IDENTITY_TYPE = 'room_metadata';
 local FORM_KEY = 'muc#roominfo_jitsimetadata';
 
@@ -96,6 +99,8 @@ function room_created(event)
     if not room.jitsiMetadata then
         room.jitsiMetadata = {};
     end
+
+    room.sent_initial_metadata = {};
 end
 
 function on_message(event)
@@ -281,3 +286,57 @@ if breakout_rooms_component_host then
         end
     end);
 end
+
+-- Send a message update for metadata before sending the first self presence
+function filter_stanza(stanza, session)
+    if not stanza.attr or not stanza.attr.to or stanza.name ~= 'presence'
+        or stanza.attr.type == 'unavailable' or ends_with(stanza.attr.from, '/focus') then
+        return stanza;
+    end
+
+    local bare_to = jid.bare(stanza.attr.to);
+    if is_admin(bare_to) then
+        return stanza;
+    end
+
+    local muc_x = stanza:get_child('x', MUC_NS..'#user');
+    if not muc_x or not presence_check_status(muc_x, '110') then
+        return stanza;
+    end
+
+    local room = get_room_from_jid(room_jid_match_rewrite(jid.bare(stanza.attr.from)));
+
+    if not room or not room.sent_initial_metadata or is_healthcheck_room(room.jid) then
+        return stanza;
+    end
+
+    if room.sent_initial_metadata[bare_to] then
+        return stanza;
+    end
+
+    local occupant;
+    for _, o in room:each_occupant() do
+        if o.bare_jid == bare_to then
+            occupant = o;
+        end
+    end
+
+    if not occupant then
+        module:log('warn', 'No occupant %s found for %s', bare_to, room.jid);
+        return stanza;
+    end
+
+    room.sent_initial_metadata[bare_to] = true;
+
+    send_json_msg(occupant.jid, internal_room_jid_match_rewrite(room.jid), getMetadataJSON(room));
+
+    return stanza;
+end
+function filter_session(session)
+    -- domain mapper is filtering on default priority 0
+    -- allowners is -1 and we need it after that, permissions is -2
+    filters.add_filter(session, 'stanzas/out', filter_stanza, -3);
+end
+
+-- enable filtering presences
+filters.add_filter_hook(filter_session);
