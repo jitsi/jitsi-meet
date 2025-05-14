@@ -43,13 +43,17 @@ export async function getDynamicBrandingUrl(stateful: IStateful) {
     const config
         = navigator.product === 'ReactNative' ? state['features/base/config'] : window.config;
     const { dynamicBrandingUrl } = config;
+    const fqn = extractFqnFromPath(state);
 
     if (dynamicBrandingUrl) {
+        if (fqn) {
+            return `${dynamicBrandingUrl}?conferenceFqn=${encodeURIComponent(fqn)}`;
+        }
+
         return dynamicBrandingUrl;
     }
 
     const { brandingDataUrl: baseUrl } = config;
-    const fqn = extractFqnFromPath(state);
 
     if (baseUrl && fqn) {
         return `${baseUrl}?conferenceFqn=${encodeURIComponent(fqn)}`;
