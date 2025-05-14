@@ -4,6 +4,8 @@ import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 import { setAudioMuted, setVideoMuted } from '../media/actions';
 import { VIDEO_MUTISM_AUTHORITY } from '../media/constants';
+import { trackRemoved } from '../tracks/actions.any';
+import { getLocalAudioTrack, getLocalVideoTrack } from '../tracks/functions.any';
 
 let hasShownNotification = false;
 
@@ -31,6 +33,7 @@ StateListenerRegistry.register(
  */
 function _updateTrackMuteState(store: IStore, isAudio: boolean) {
     const { dispatch, getState } = store;
+    const state = getState();
     const mutedPolicyKey = isAudio ? 'startAudioMutedPolicy' : 'startVideoMutedPolicy';
     const mutedPolicyValue = getState()['features/base/conference'][mutedPolicyKey];
 
@@ -41,13 +44,18 @@ function _updateTrackMuteState(store: IStore, isAudio: boolean) {
 
     let muteStateUpdated = false;
     const { muted } = isAudio ? getState()['features/base/media'].audio : getState()['features/base/media'].video;
+    const tracks = state['features/base/tracks'];
+    const audioTrack = getLocalAudioTrack(tracks);
+    const videoTrack = getLocalVideoTrack(tracks);
 
     if (isAudio && !Boolean(muted)) {
         dispatch(setAudioMuted(mutedPolicyValue, true));
+        audioTrack && dispatch(trackRemoved(audioTrack));
         muteStateUpdated = true;
     } else if (!isAudio && !Boolean(muted)) {
         // TODO: Add a new authority for video mutism for the moderator case.
         dispatch(setVideoMuted(mutedPolicyValue, VIDEO_MUTISM_AUTHORITY.USER, true));
+        videoTrack && dispatch(trackRemoved(videoTrack));
         muteStateUpdated = true;
     }
 

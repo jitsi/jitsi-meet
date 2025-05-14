@@ -1578,7 +1578,7 @@ export default {
         });
 
         room.on(JitsiConferenceEvents.TRACK_REMOVED, track => {
-            if (!track) {
+            if (!track || track.isLocal()) {
                 return;
             }
 
