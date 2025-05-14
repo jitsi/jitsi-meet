@@ -10,6 +10,7 @@ import LobbySection from '../../../../lobby/components/web/LobbySection';
 import { isEnablingLobbyAllowed } from '../../../../lobby/functions';
 
 import PasswordSection from './PasswordSection';
+import { isInBreakoutRoom } from '../../../../breakout-rooms/functions';
 
 export interface INotifyClick {
     key: string;
@@ -22,10 +23,16 @@ export interface INotifyClick {
  * @returns {React$Element<any>}
  */
 export default function SecurityDialog() {
+    const lobbySupported = useSelector((state: IReduxState) =>
+        state['features/base/conference'].conference?.isLobbySupported());
     const e2eeSupported = useSelector((state: IReduxState) => state['features/base/conference'].e2eeSupported);
-    const disableLobbyPassword = useSelector((state: IReduxState) => getSecurityUiConfig(state)?.disableLobbyPassword);
-    const _isEnablingLobbyAllowed = useSelector(isEnablingLobbyAllowed);
+    const isInBreakout = useSelector(isInBreakoutRoom);
+    const disableLobbyPassword = useSelector((state: IReduxState) => getSecurityUiConfig(state)?.disableLobbyPassword)
+        || isInBreakout;
     const isModerator = useSelector(isLocalParticipantModerator);
+    const { hideLobbyButton } = useSelector(getSecurityUiConfig);
+    const _isLobbyVisible = useSelector(isEnablingLobbyAllowed)
+        && lobbySupported && isModerator && !isInBreakout && !hideLobbyButton;
     const showE2ee = Boolean(e2eeSupported) && isModerator;
 
     return (
@@ -35,19 +42,19 @@ export default function SecurityDialog() {
             titleKey = 'security.title'>
             <div className = 'security-dialog'>
                 {
-                    _isEnablingLobbyAllowed && <LobbySection />
+                    _isLobbyVisible && <LobbySection />
                 }
                 {
                     !disableLobbyPassword && (
                         <>
-                            { _isEnablingLobbyAllowed && <div className = 'separator-line' /> }
+                            { _isLobbyVisible && <div className = 'separator-line' /> }
                             <PasswordSection />
                         </>
                     )
                 }
                 {
                     showE2ee ? <>
-                        { (_isEnablingLobbyAllowed || !disableLobbyPassword) && <div className = 'separator-line' /> }
+                        { (_isLobbyVisible || !disableLobbyPassword) && <div className = 'separator-line' /> }
                         <E2EESection />
                     </> : null
                 }
