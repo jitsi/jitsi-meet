@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../../app/types';
-import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import { getDialInfoPageURL, hasMultipleNumbers } from '../../../functions';
 
 import DialInNumber from './DialInNumber';
@@ -22,12 +21,12 @@ const useStyles = makeStyles()(theme => {
     return {
         container: {
             '& .info-label': {
-                ...withPixelLineHeight(theme.typography.bodyLongBold)
+                ...theme.typography.bodyLongBold
             }
         },
 
         link: {
-            ...withPixelLineHeight(theme.typography.bodyLongRegular),
+            ...theme.typography.bodyLongRegular,
             color: theme.palette.link01,
 
             '&:hover': {
