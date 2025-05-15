@@ -122,7 +122,9 @@
         "nickname": {
             "popover": "Izvēlieties vārdu",
             "title": "Ierakstiet vārdu, lai izmantotu tērzēšanā",
-            "titleWithPolls": "Ierakstiet vārdu, lai izmantotu tērzēšanā un aptaujās"
+            "titleWithCC": "Ievadiet segvārdu, lai izmantotu tērzēšanā un slēptos subtitros",
+            "titleWithPolls": "Ierakstiet segvārdu, lai izmantotu tērzēšanā un aptaujās",
+            "titleWithPollsAndCC": "Ievadiet segvārdu, lai izmantotu tērzēšanā, aptaujās un slēptos subtitros"
         },
         "noMessagesMessage": "Sapulcē pagaidām nav nevienas ziņas. Uzsāciet saraksti!",
         "privateNotice": "Privāta ziņa adresātam {{recipient}}",
@@ -131,10 +133,13 @@
         "systemDisplayName": "Sistēma",
         "tabs": {
             "chat": "Tērzēšana",
+            "closedCaptions": "Slēptie subtitri",
             "polls": "Aptaujas"
         },
         "title": "Tērzēšana",
+        "titleWithCC": "Tērzēšana un slēptie subtitri",
         "titleWithPolls": "Tērzēšana un Aptaujas",
+        "titleWithPollsAndCC": "Tērzēšana, Aptaujas un Slēptie subtitri",
         "you": "jūs"
     },
     "chromeExtensionBanner": {
@@ -143,6 +148,10 @@
         "close": "Aizvērt",
         "dontShowAgain": "Nerādīt man šo vēlreiz",
         "installExtensionText": "Uzstādīt spraudni Google kalendāra un Office 365 integrācijai"
+    },
+    "closedCaptionsTab": {
+        "emptyState": "Slēpto subtitru saturs būs pieejams, tiklīdz moderators uzsāks to.",
+        "startClosedCaptionsButton": "Uzsākt slēptos subtitrus"
     },
     "connectingOverlay": {
         "joiningRoom": "Notiek pieslēgšanās jūsu sapulcei…"
@@ -264,6 +273,7 @@
         "Share": "Kopīgot",
         "Submit": "Iesniegt",
         "Understand": "Saprotu",
+        "UnderstandAndUnmute": "Es saprotu, lūdzu, ieslēdziet skaņu.",
         "WaitForHostMsg": "Sapulce vēl nav sākusies, jo vēl nav ieradies neviens moderators. Lūdzu, autorizējieties, lai kļūtu par moderatoru. Pretējā gadījumā, lūdzu, uzgaidiet.",
         "WaitForHostNoAuthMsg": "Sapulce vēl nav sākusies, jo vēl nav ieradies neviens moderators. Lūdzu, uzgaidiet.",
         "WaitingForHostButton": "Gaidīt rīkotāju",
@@ -300,6 +310,7 @@
         "conferenceReloadMsg": "Cenšamies to labot. Atkārtota savienojuma izveide pēc {{seconds}} sek….",
         "conferenceReloadTitle": "Diemžēl kaut kas nogāja greizi.",
         "confirm": "Apstiprināt",
+        "confirmBack": "Atpakaļ",
         "confirmNo": "Nē",
         "confirmYes": "Jā",
         "connectError": "Hmm! Radās problēma, un mēs nevarējām izveidot savienojumu ar sapulci.",
@@ -337,6 +348,7 @@
         "kickParticipantTitle": "Izraidīt šo dalībnieku?",
         "kickSystemTitle": "Ak! Jūs izraidīja no sapulces",
         "kickTitle": "Ak! {{participantDisplayName}} izraidīja jūs no sapulces",
+        "learnMore": "uzzināt vairāk",
         "linkMeeting": "Sasaistīt sapulci",
         "linkMeetingTitle": "Sasaistīt sapulci ar Salesforce",
         "liveStreaming": "Tiešraides straumēšana",
@@ -395,6 +407,8 @@
         "recording": "Ieraksts",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Nav iespējams, kamēr ir aktīva tiešraides straume",
         "recordingInProgressDescription": "Šī sapulce tiek ierakstīta. Jūsu audio un video ir izslēgti. Ja izvēlaties ieslēgt skaņu vai video, jūs piekrītat ierakstīšanai.",
+        "recordingInProgressDescriptionFirstHalf": "Šo sanāksmi ieraksta un analizē mākslīgais intelekts",
+        "recordingInProgressDescriptionSecondHalf": ". Jūsu audio un video skaņa ir izslēgta. Ja izvēlaties ieslēgt skaņu, jūs piekrītat ierakstīšanai.",
         "recordingInProgressTitle": "Notiek ierakstīšana",
         "rejoinNow": "Pieslēgties no jauna",
         "remoteControlAllowedMessage": "{{user}} apstiprināja jūsu attālās pārvaldības pieprasījumu!",
@@ -752,7 +766,8 @@
         "dataChannelClosedDescriptionWithAudio": "Savienojuma kanāls nedarbojas, tāpēc var rasties audio un video traucējumi.",
         "dataChannelClosedWithAudio": "Audio un video kvalitāte var būt traucēta",
         "disabledIframe": "Iegulšana ir paredzēta tikai demonstrācijas nolūkiem, tāpēc šis zvans tiks atvienots pēc {{timeout}} minūtēm.",
-        "disabledIframeSecondary": "{{domain}} iegulšana ir paredzēta tikai demonstrācijas nolūkiem, tāpēc šis zvans tiks atvienots pēc {{timeout}} minūtēm. Lūdzu, izmantojiet <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi kā Pakalpojums</a> produkcijas iegulšanai!",
+        "disabledIframeSecondaryNative": "Domēna {{domain}} iegulšana ir paredzēta tikai demonstrācijas nolūkiem, tāpēc šis zvans tiks pārtraukts pēc {{timeout}} minūtēm.",
+        "disabledIframeSecondaryWeb": "Domēna {{domain}} iegulšana ir paredzēta tikai demonstrācijas nolūkiem, tāpēc šis zvans tiks pārtraukts pēc {{timeout}} minūtēm. Lūdzu, produkcijas videi izmantojiet <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a>!",
         "disconnected": "savienojums pārtraukts",
         "displayNotifications": "Rādīt paziņojumus",
         "dontRemindMe": "Neatgādināt man",
@@ -880,6 +895,7 @@
             "waitingLobby": "Gaida vestibilā ({{count}})"
         },
         "search": "Meklēt dalībniekus",
+        "searchDescription": "Sāciet rakstīt, lai atlasītu dalībnieks",
         "title": "Dalībnieki"
     },
     "passwordDigitsOnly": "Līdz {{number}} cipariem",
@@ -1106,6 +1122,7 @@
             "signedIn": "Pašreiz ir piekļuve e-pasta adreses {{email}} kalendāra notikumiem. Noklikšķiniet uz pogas |Atslēgt|, lai izslēgtu piekļuvi šiem kalendāra pasākumiem.",
             "title": "Kalendārs"
         },
+        "chatWithPermissions": "Tērzēšanai nepieciešama atļauja",
         "desktopShareFramerate": "Darbvirsmas koplietošanas kadru ātrums",
         "desktopShareHighFpsWarning": "Lielāks kadru nomaiņas ātrums darbvirsmas koplietošanai var ietekmēt joslas platumu. Lai jaunie iestatījumi stātos spēkā, ir jārestartē ekrāna kopīgošana.",
         "desktopShareWarning": "Lai jaunie iestatījumi stātos spēkā, ir jārestartē ekrāna kopīgošana.",
@@ -1135,6 +1152,7 @@
         "selectMic": "Mikrofons",
         "selfView": "Pašskats",
         "shortcuts": "Īsceļi",
+        "showSubtitlesOnStage": "Rādīt subtitrus galvenajā skatā",
         "speakers": "Skaļruņi",
         "startAudioMuted": "Dalībnieki pievienojas ar izslēgtu mikrofonu",
         "startReactionsMuted": "Izslēgt reakcijas skaņas visiem",
@@ -1194,6 +1212,7 @@
         "neutral": "Neitrāls",
         "sad": "Bēdīgs",
         "search": "Meklēt",
+        "searchDescription": "Sāciet rakstīt, lai atlasītu dalībnieks",
         "searchHint": "Meklēt dalībniekus",
         "seconds": "{{count}}s",
         "speakerStats": "Dalībnieka uzstāšanās statistika",
@@ -1230,6 +1249,7 @@
             "closeChat": "Aizvērt tērzēšanu",
             "closeMoreActions": "Aizvērt vairāk darbību izvēlni",
             "closeParticipantsPane": "Aizvērt dalībnieku paneli",
+            "closedCaptions": "Slēptie subtitri",
             "collapse": "Sakļaut",
             "document": "Kopīgotais dokuments (iesl./izsl.)",
             "documentClose": "Aizvērt kopīgoto dokumentu",
@@ -1320,6 +1340,7 @@
         "closeChat": "Aizvērt tērzētavu",
         "closeParticipantsPane": "Aizvērt dalībnieku paneli",
         "closeReactionsMenu": "Aizvērt reakciju izvēlni",
+        "closedCaptions": "Slēptie subtitri",
         "disableNoiseSuppression": "Atspējot trokšņu slāpēšanu",
         "disableReactionSounds": "Šai sapulcei varat atspējot reakcijas skaņas",
         "documentClose": "Aizvērt kopīgoto dokumentu",
@@ -1412,13 +1433,16 @@
         "failed": "Atšifrējuma izveide neizdevās",
         "labelTooltip": "Šajā sapulcē notiek atšifrējuma izveide.",
         "labelTooltipExtra": "Turklāt vēlāk būs pieejams atšifrējums.",
+        "openClosedCaptions": "Atvērt slēptos subtitrus",
+        "original": "Oriģināls",
         "sourceLanguageDesc": "Pašlaik sapulces valoda ir iestatīta uz <b>{{sourceLanguage}}</b>. <br/> Varat to mainīt no ",
         "sourceLanguageHere": "šeit",
         "start": "Iesl. subtitru rādīšanu",
         "stop": "Izsl. subtitru rādīšanu",
         "subtitles": "Subtitri",
         "subtitlesOff": "Izslēgts",
-        "tr": "TR"
+        "tr": "TR",
+        "translateTo": "Tulkot uz"
     },
     "unpinParticipant": "{{participantName}} — atspraust",
     "userMedia": {
