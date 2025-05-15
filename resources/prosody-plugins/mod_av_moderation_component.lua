@@ -207,6 +207,20 @@ function on_message(event)
                         room.av_moderation_actors = {};
                     end
                     room.av_moderation[mediaType] = array{};
+
+                    -- We want to set startMuted policy in metadata, in case of new participants are joining to respect
+                    -- it, that will be enforced by jicofo
+                    local startMutedMetadata = room.jitsiMetadata.startMuted or {};
+
+                    -- We want to keep the previous value of startMuted for this mediaType if av moderation is disabled
+                    -- to be able to restore
+                    local av_moderation_startMuted_restore = room.av_moderation_startMuted_restore or {};
+                    av_moderation_startMuted_restore = startMutedMetadata[mediaType];
+                    room.av_moderation_startMuted_restore = av_moderation_startMuted_restore;
+
+                    startMutedMetadata[mediaType] = true;
+                    room.jitsiMetadata.startMuted = startMutedMetadata;
+
                     room.av_moderation_actors[mediaType] = occupant.nick;
                 end
             else
@@ -218,7 +232,11 @@ function on_message(event)
                     room.av_moderation[mediaType] = nil;
                     room.av_moderation_actors[mediaType] = nil;
 
-                    -- clears room.av_moderation if empty
+                    local startMutedMetadata = room.jitsiMetadata.startMuted or {};
+                    local av_moderation_startMuted_restore = room.av_moderation_startMuted_restore or {};
+                    startMutedMetadata[mediaType] = av_moderation_startMuted_restore[mediaType];
+                    room.jitsiMetadata.startMuted = startMutedMetadata;
+
                     local is_empty = true;
                     for key,_ in pairs(room.av_moderation) do
                         if room.av_moderation[key] then
