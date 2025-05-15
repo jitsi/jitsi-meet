@@ -40,8 +40,8 @@ deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-excalidraw dep
 deploy-init:
 	rm -fr $(DEPLOY_DIR)
 	mkdir -p $(DEPLOY_DIR)/models
-	cp  $(LIBJITSIMEET_DIR)/modules/RTC/models/Encoder.onnx \
-		$(LIBJITSIMEET_DIR)/modules/RTC/models/Decoder.onnx \
+	cp  $(LIBJITSIMEET_DIR)/models/RTC/Encoder.onnx \
+		$(LIBJITSIMEET_DIR)/models/RTC/Decoder.onnx \
 		$(DEPLOY_DIR)/models
 	cp	$(LIBJITSIMEET_DIR)/modules/RTC/channels.wasm \
 		$(LIBJITSIMEET_DIR)/modules/RTC/channels.js \
