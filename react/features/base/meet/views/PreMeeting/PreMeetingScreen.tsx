@@ -25,6 +25,7 @@ import { ErrorModals, ErrorType } from "./components/ErrorModals";
 import Header from "./components/Header";
 import PreMeetingModal from "./components/PreMeetingModal";
 import { useParticipants } from "./hooks/useParticipants";
+import VideoEncodingToggle from "./containers/VideoEncodingToggle";
 import { useUserData } from "./hooks/useUserData";
 
 interface IProps extends WithTranslation {
@@ -336,6 +337,9 @@ const PreMeetingScreen = ({
                         isCreatingConference={!!createConference}
                     />
                 )}
+                <div className="mt-[640px]">
+                    <VideoEncodingToggle />
+                </div>
                 {/* UNCOMMENT IN DEV MODE TO SEE OLD IMPLEMENTATION  */}
                 {/* <div className="flex flex-row">
                     <div>
