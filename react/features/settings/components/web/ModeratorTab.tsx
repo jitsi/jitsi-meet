@@ -13,6 +13,10 @@ import Checkbox from '../../../base/ui/components/web/Checkbox';
  * The type of the React {@code Component} props of {@link ModeratorTab}.
  */
 export interface IProps extends AbstractDialogTabProps, WithTranslation {
+    /**
+     * Whether the user has selected the audio moderation feature to be enabled.
+     */
+    audioModerationEnabled: boolean;
 
     /**
      * Whether the user has selected the chat with permissions feature to be enabled.
@@ -71,6 +75,11 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
      * enabled.
      */
     startVideoMuted: boolean;
+
+    /**
+     * Whether the user has selected the video moderation feature to be enabled.
+     */
+    videoModerationEnabled: boolean;
 }
 
 const styles = (theme: Theme) => {
@@ -200,6 +209,7 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
      */
     override render() {
         const {
+            audioModerationEnabled,
             chatWithPermissionsEnabled,
             disableChatWithPermissions,
             disableReactionsModeration,
@@ -210,7 +220,8 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
             startAudioMuted,
             startVideoMuted,
             startReactionsMuted,
-            t
+            t,
+            videoModerationEnabled
         } = this.props;
         const classes = withStyles.getClasses(this.props);
 
@@ -223,18 +234,18 @@ class ModeratorTab extends AbstractDialogTab<IProps, any> {
                 <h2 className = { classes.title }>
                     {t('settings.moderatorOptions')}
                 </h2>
-                <Checkbox
+                { !audioModerationEnabled && <Checkbox
                     checked = { startAudioMuted }
                     className = { classes.checkbox }
                     label = { t('settings.startAudioMuted') }
                     name = 'start-audio-muted'
-                    onChange = { this._onStartAudioMutedChanged } />
-                <Checkbox
+                    onChange = { this._onStartAudioMutedChanged } /> }
+                { !videoModerationEnabled && <Checkbox
                     checked = { startVideoMuted }
                     className = { classes.checkbox }
                     label = { t('settings.startVideoMuted') }
                     name = 'start-video-muted'
-                    onChange = { this._onStartVideoMutedChanged } />
+                    onChange = { this._onStartVideoMutedChanged } /> }
                 <Checkbox
                     checked = { followMeEnabled && !followMeActive && !followMeRecorderChecked }
                     className = { classes.checkbox }

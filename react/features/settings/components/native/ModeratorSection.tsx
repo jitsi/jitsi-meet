@@ -18,6 +18,7 @@ import FormSection from './FormSection';
 const ModeratorSection = () => {
     const dispatch = useDispatch();
     const {
+        audioModerationEnabled,
         chatWithPermissionsEnabled,
         followMeActive,
         followMeEnabled,
@@ -25,7 +26,8 @@ const ModeratorSection = () => {
         followMeRecorderEnabled,
         startAudioMuted,
         startVideoMuted,
-        startReactionsMuted
+        startReactionsMuted,
+        videoModerationEnabled
     } = useSelector((state: IReduxState) => getModeratorTabProps(state));
 
     const { disableReactionsModeration } = useSelector((state: IReduxState) => state['features/base/config']);
@@ -68,13 +70,13 @@ const ModeratorSection = () => {
     const moderationSettings = useMemo(() => {
         const moderation = [
             {
-                disabled: false,
+                disabled: audioModerationEnabled,
                 label: 'settings.startAudioMuted',
                 state: startAudioMuted,
                 onChange: onStartAudioMutedToggled
             },
             {
-                disabled: false,
+                disabled: videoModerationEnabled,
                 label: 'settings.startVideoMuted',
                 state: startVideoMuted,
                 onChange: onStartVideoMutedToggled
