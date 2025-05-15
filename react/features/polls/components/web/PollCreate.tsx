@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
@@ -22,7 +21,7 @@ const useStyles = makeStyles()(theme => {
             overflowY: 'auto'
         },
         header: {
-            ...withPixelLineHeight(theme.typography.heading6),
+            ...theme.typography.heading6,
             color: theme.palette.text01,
             margin: '24px 0 16px'
         },
@@ -39,7 +38,7 @@ const useStyles = makeStyles()(theme => {
             marginBottom: '24px'
         },
         removeOption: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: theme.palette.link01,
             marginTop: '8px',
             border: 0,

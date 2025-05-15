@@ -32,6 +32,7 @@ import AbstractConnectionIndicator, {
 
 import ConnectionIndicatorContent from './ConnectionIndicatorContent';
 import { ConnectionIndicatorIcon } from './ConnectionIndicatorIcon';
+import { pixelsToRem } from '../../../base/ui/functions.any';
 
 /**
  * An array of display configurations for the connection indicator and its bars.
@@ -355,7 +356,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
 
         return (
             <div
-                style = {{ fontSize: iconSize }}>
+                style = {{ fontSize: pixelsToRem(iconSize) }}>
                 <span className = 'sr-only'>{ t('videothumbnail.connectionInfo') }</span>
                 <ConnectionIndicatorIcon
                     classes = { classes }

@@ -4,7 +4,6 @@ import { makeStyles } from 'tss-react/mui';
 import { isMobileBrowser } from '../../../environment/utils';
 import Icon from '../../../icons/components/Icon';
 import { IconArrowDown } from '../../../icons/svg';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 
 interface ISelectProps {
 
@@ -72,11 +71,11 @@ const useStyles = makeStyles()(theme => {
 
         label: {
             color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             marginBottom: theme.spacing(2),
 
             '&.is-mobile': {
-                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
+                ...theme.typography.bodyShortRegularLarge
             }
         },
 
@@ -88,7 +87,7 @@ const useStyles = makeStyles()(theme => {
             backgroundColor: theme.palette.ui03,
             borderRadius: `${theme.shape.borderRadius}px`,
             width: '100%',
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: theme.palette.text01,
             padding: '10px 16px',
             paddingRight: '42px',
@@ -108,7 +107,7 @@ const useStyles = makeStyles()(theme => {
             },
 
             '&.is-mobile': {
-                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+                ...theme.typography.bodyShortRegularLarge,
                 padding: '12px 16px',
                 paddingRight: '46px'
             },
@@ -132,11 +131,11 @@ const useStyles = makeStyles()(theme => {
 
         bottomLabel: {
             marginTop: theme.spacing(2),
-            ...withPixelLineHeight(theme.typography.labelRegular),
+            ...theme.typography.labelRegular,
             color: theme.palette.text02,
 
             '&.is-mobile': {
-                ...withPixelLineHeight(theme.typography.bodyShortRegular)
+                ...theme.typography.bodyShortRegular
             },
 
             '&.error': {

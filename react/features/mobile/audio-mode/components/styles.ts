@@ -33,7 +33,7 @@ export default createStyleSheet({
      */
     deviceText: {
         color: BaseTheme.palette.text01,
-        fontSize: 16,
+        fontSize: '1rem',
         marginLeft: BaseTheme.spacing[5]
     },
 

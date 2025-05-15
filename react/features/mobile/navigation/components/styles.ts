@@ -9,11 +9,9 @@ const unreadCounterDescription = {
     color: BaseTheme.palette.text03
 };
 
-const HEADER_ACTION_BUTTON_SIZE = 16;
-
 const headerNavigationButtonLabel = {
     color: BaseTheme.palette.link01,
-    fontSize: HEADER_ACTION_BUTTON_SIZE,
+    fontSize: '1rem',
     lineHeight: BaseTheme.spacing[3]
 };
 

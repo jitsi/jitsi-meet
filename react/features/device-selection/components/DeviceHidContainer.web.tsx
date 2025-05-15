@@ -5,7 +5,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../base/icons/components/Icon';
 import { IconTrash } from '../../base/icons/svg';
-import { withPixelLineHeight } from '../../base/styles/functions.web';
 import Button from '../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../base/ui/constants.any';
 import { closeHidDevice, requestHidDevice } from '../../web-hid/actions';
@@ -20,7 +19,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         label: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: theme.palette.text01,
             marginBottom: theme.spacing(2)
         },

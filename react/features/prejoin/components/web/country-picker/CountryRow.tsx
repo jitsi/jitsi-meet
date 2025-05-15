@@ -1,7 +1,6 @@
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 
 interface IProps {
 
@@ -35,7 +34,7 @@ const useStyles = makeStyles()(theme => {
 
         text: {
             color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             flexGrow: 1,
             overflow: 'hidden',
             textOverflow: 'ellipsis',

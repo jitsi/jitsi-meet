@@ -3,7 +3,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Switch from '../../../base/ui/components/web/Switch';
 
 const useStyles = makeStyles()((theme: Theme) => {
@@ -15,7 +14,7 @@ const useStyles = makeStyles()((theme: Theme) => {
 
         switchLabel: {
             marginRight: 10,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular)
+            ...theme.typography.bodyShortRegular
         }
     };
 });

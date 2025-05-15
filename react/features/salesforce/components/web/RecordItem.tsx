@@ -52,14 +52,14 @@ const useStyles = makeStyles()(theme => {
             textOverflow: 'ellipsis'
         },
         recordName: {
-            fontSize: '15px',
+            fontSize: '1rem',
             fontWeight: 400,
             lineHeight: '20px',
             overflow: 'hidden',
             textOverflow: 'ellipsis'
         },
         recordType: {
-            fontSize: '13px',
+            fontSize: '0.875rem',
             fontWeight: 400,
             lineHeight: '18px'
         }
