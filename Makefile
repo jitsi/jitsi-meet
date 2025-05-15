@@ -43,7 +43,7 @@ deploy-init:
 	cp  $(LIBJITSIMEET_DIR)/models/RTC/Encoder.onnx \
 		$(LIBJITSIMEET_DIR)/models/RTC/Decoder.onnx \
 		$(DEPLOY_DIR)/models
-	cp	$(LIBJITSIMEET_DIR)/modules/RTC/channels.wasm \
+	cp	$(LIBJITSIMEET_DIR)/wasm/RTC/channels.wasm \
 		$(LIBJITSIMEET_DIR)/modules/RTC/channels.js \
 		$(DEPLOY_DIR)
 	cp -r $(LIBJITSIMEET_DIR)/node_modules/onnxruntime-web/dist \
