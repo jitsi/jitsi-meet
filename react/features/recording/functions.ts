@@ -469,11 +469,14 @@ export function shouldRequireRecordingConsent(recorderSession: any, state: IRedu
         return false;
     }
 
+    // lib-jitsi-meet may set a JitsiParticipant as the initiator of the recording session or the
+    // JID resource in case it cannot find it. We need to handle both cases.
     const initiator = recorderSession.getInitiator();
+    const initiatorId = initiator?.getId?.() ?? initiator;
 
-    if (!initiator || recorderSession.getStatus() === JitsiRecordingConstants.status.OFF) {
+    if (!initiatorId || recorderSession.getStatus() === JitsiRecordingConstants.status.OFF) {
         return false;
     }
 
-    return initiator !== getLocalParticipant(state)?.id;
+    return initiatorId !== getLocalParticipant(state)?.id;
 }

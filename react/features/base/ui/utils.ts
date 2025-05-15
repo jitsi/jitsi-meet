@@ -19,3 +19,24 @@ export function createColorTokens(colorMap: Object): any {
             return Object.assign(result, { [token]: color });
         }, {});
 }
+
+/**
+ * Create the typography tokens based on the typography theme and the association map.
+ *
+ * @param {Object} typography - A map between the token name and the actual typography value.
+ * @returns {Object}
+ */
+export function createTypographyTokens(typography: Object): any {
+    const allTokens = merge({}, tokens, jitsiTokens);
+
+    return Object.entries(typography)
+        .reduce((result, [ token, value ]: [any, any]) => {
+            let typographyValue = value;
+
+            if (typeof value === 'string') {
+                typographyValue = allTokens[value as keyof typeof allTokens] || value;
+            }
+
+            return Object.assign(result, { [token]: typographyValue });
+        }, {});
+}

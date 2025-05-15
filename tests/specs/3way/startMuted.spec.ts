@@ -42,14 +42,14 @@ describe('StartMuted', () => {
         const { p2 } = ctx;
 
         await p2.waitForIceConnected();
-        // await p2.waitForSendReceiveData({ checkSend: false });
+        await p2.waitForSendReceiveData({ checkSend: false });
 
         await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
         await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2);
         await p1.waitForAudioMuted(p2, true);
 
-        // await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p1, true);
-        // await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1, true);
+        await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p1, true);
+        await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1, true);
 
         // Enable video on p2 and check if p2 appears unmuted on p1.
         await Promise.all([
@@ -76,7 +76,6 @@ describe('StartMuted', () => {
         await p3.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2, true);
     });
 
-
     it('config options test', async () => {
         await hangupAllParticipants();
 
@@ -92,14 +91,20 @@ describe('StartMuted', () => {
         };
 
         await ensureOneParticipant(ctx, options);
-        await joinSecondParticipant(ctx, { skipInMeetingChecks: true });
+        await joinSecondParticipant(ctx, {
+            ...options,
+            skipInMeetingChecks: true
+        });
 
         const { p2 } = ctx;
 
         await p2.waitForIceConnected();
         await p2.waitForSendReceiveData({ checkSend: false });
 
-        await joinThirdParticipant(ctx, { skipInMeetingChecks: true });
+        await joinThirdParticipant(ctx, {
+            ...options,
+            skipInMeetingChecks: true
+        });
 
         const { p3 } = ctx;
 
@@ -110,9 +115,7 @@ describe('StartMuted', () => {
 
         const p2ID = await p2.getEndpointId();
 
-
         p1.log(`Start configOptionsTest, second participant: ${p2ID}`);
-
 
         // Participant 3 should be muted, 1 and 2 unmuted.
         await p3.getFilmstrip().assertAudioMuteIconIsDisplayed(p3);

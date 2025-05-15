@@ -105,8 +105,6 @@ export interface IJitsiConference {
     isLobbySupported: Function;
     isP2PActive: Function;
     isSIPCallingSupported: Function;
-    isStartAudioMuted: Function;
-    isStartVideoMuted: Function;
     join: Function;
     joinLobby: Function;
     kickParticipant: Function;
