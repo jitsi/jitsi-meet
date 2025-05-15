@@ -3,7 +3,7 @@ import { Theme, adaptV4Theme, createTheme } from '@mui/material/styles';
 
 import { ITypography, IPalette as Palette1 } from '../ui/types';
 
-import { createColorTokens } from './utils';
+import { createColorTokens, createTypographyTokens } from './utils';
 
 declare module '@mui/material/styles' {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -36,7 +36,7 @@ export function createWebTheme({ font, colorMap, shape, spacing, typography, bre
         typography: {
             // @ts-ignore
             font,
-            ...typography
+            ...createTypographyTokens(typography)
         },
         breakpoints
     }));
