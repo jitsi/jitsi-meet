@@ -1,4 +1,3 @@
-import { remToPixels } from '../ui/functions.any';
 import { StyleType } from './functions.any';
 
 export * from './functions.any';
@@ -23,24 +22,4 @@ export function getFixedPlatformStyle(style?: StyleType | StyleType[]) {
     }
 
     return style;
-}
-
-/**
- * Sets the line height of a CSS Object group in pixels.
- * By default lineHeight is unitless in CSS, but not in RN.
- *
- * @param {Object} base - The base object containing the `lineHeight` property.
- * @returns {Object}
- */
-export function withPixelLineHeight(base: any) {
-    let lineHeight = base.lineHeight;
-
-    if (typeof lineHeight === 'string') {
-        lineHeight = remToPixels(base.lineHeight);
-    }
-
-    return {
-        ...base,
-        lineHeight: `${lineHeight}px`
-    };
 }

@@ -84,7 +84,7 @@ function styles(theme: Theme, props: IProps) {
         },
 
         toggleFilmstripButton: {
-            fontSize: '14px',
+            fontSize: '0.875rem',
             lineHeight: 1.2,
             textAlign: 'center' as const,
             background: 'transparent',

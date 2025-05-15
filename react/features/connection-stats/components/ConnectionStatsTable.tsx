@@ -222,7 +222,7 @@ const useStyles = makeStyles()(theme => {
         },
         connectionStatsTable: {
             '&, & > table': {
-                fontSize: '12px',
+                fontSize: '0.75rem',
                 fontWeight: 400,
 
                 '& td': {

@@ -1,4 +1,5 @@
 import { Theme } from '@mui/material';
+import { pixelsToRem } from '../../../base/ui/functions.any';
 
 /**
  * The vertical padding for the display name.
@@ -46,12 +47,12 @@ export function getStageParticipantLineHeightRange(theme: Theme) {
  *
  * @param {Theme} theme - The current theme.
  * @param {number} clientHeight - The height of the visible area.
- * @returns {number}
+ * @returns {string}
  */
-export function getStageParticipantNameLabelHeight(theme: Theme, clientHeight?: number) {
+export function getStageParticipantNameLabelHeight(theme: Theme, clientHeight?: number): string {
     const lineHeight = getStageParticipantNameLabelLineHeight(theme, clientHeight);
 
-    return lineHeight + DISPLAY_NAME_VERTICAL_PADDING;
+    return lineHeight + pixelsToRem(DISPLAY_NAME_VERTICAL_PADDING);
 }
 
 /**
@@ -59,13 +60,18 @@ export function getStageParticipantNameLabelHeight(theme: Theme, clientHeight?: 
  *
  * @param {Theme} theme - The current theme.
  * @param {number} clientHeight - The height of the visible area.
- * @returns {number}
+ * @returns {string}
  */
-export function getStageParticipantNameLabelLineHeight(theme: Theme, clientHeight?: number) {
+export function getStageParticipantNameLabelLineHeight(theme: Theme, clientHeight?: number): string {
     return scaleFontProperty(clientHeight, getStageParticipantLineHeightRange(theme));
 }
 
 interface ILimits {
+    max: string;
+    min: string;
+}
+
+interface INumberLimits {
     max: number;
     min: number;
 }
@@ -86,21 +92,33 @@ const DEFAULT_CLIENT_HEIGHT_LIMITS = {
  * @param {number|undefined} screenHeight - The current screen height.
  * @param {ILimits} propValuesLimits - The max and min value for the font property that we are scaling.
  * @param {ILimits} screenHeightLimits - The max and min value for screen height.
- * @returns {number} - The scaled prop value.
+ * @returns {string} - The scaled prop value.
  */
 export function scaleFontProperty(
         screenHeight: number | undefined,
         propValuesLimits: ILimits,
-        screenHeightLimits: ILimits = DEFAULT_CLIENT_HEIGHT_LIMITS) {
+        screenHeightLimits: INumberLimits = DEFAULT_CLIENT_HEIGHT_LIMITS) {
     if (typeof screenHeight !== 'number') {
         return propValuesLimits.max;
     }
 
     const { max: maxPropSize, min: minPropSize } = propValuesLimits;
     const { max: maxHeight, min: minHeight } = screenHeightLimits;
-    const propSizePerPxHeight = (maxPropSize - minPropSize) / (maxHeight - minHeight);
+    const numericalMinRem = parseFloat(minPropSize); // 0.8
+    const numericalMaxRem = parseFloat(maxPropSize); // 1.2
 
-    return Math.round(
-        (Math.max(Math.min(screenHeight, maxHeight), minHeight) - minHeight) * propSizePerPxHeight
-    ) + minPropSize;
+    // Calculate how much the 'rem' value changes per pixel of screen height.
+    // (max 'rem' - min 'rem') / (max screen height in px - min screen height in px)
+    const propSizeRemPerPxHeight = (numericalMaxRem - numericalMinRem) / (maxHeight - minHeight);
+
+    // Clamp the screenHeight to be within the defined minHeight and maxHeight.
+    const clampedScreenHeightPx = Math.max(Math.min(screenHeight, maxHeight), minHeight);
+
+    // Calculate the scaled 'rem' value:
+    // Start with the base min 'rem' value.
+    // Add the scaled portion: (how far the current screen height is from the min height) * (rem change per pixel).
+    // (clampedScreenHeightPx - minHeigh) gives the effective height within the range.
+    const calculatedRemValue = (clampedScreenHeightPx - minHeight) * propSizeRemPerPxHeight + numericalMinRem;
+
+    return `${calculatedRemValue.toFixed(3)}rem`;
 }

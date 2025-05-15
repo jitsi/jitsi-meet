@@ -8,7 +8,6 @@ import Drawer from '../../../../toolbox/components/web/Drawer';
 import JitsiPortal from '../../../../toolbox/components/web/JitsiPortal';
 import { showOverflowDrawer } from '../../../../toolbox/functions.web';
 import participantsPaneTheme from '../../../components/themes/participantsPaneTheme.json';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 import { spacing } from '../../Tokens';
 
 
@@ -139,7 +138,7 @@ const useStyles = makeStyles()(theme => {
             borderRadius: `${Number(theme.shape.borderRadius)}px`,
             boxShadow: '0px 1px 2px rgba(41, 41, 41, 0.25)',
             color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             marginTop: '48px',
             position: 'absolute',
             right: `${participantsPaneTheme.panePadding}px`,
@@ -159,7 +158,7 @@ const useStyles = makeStyles()(theme => {
             paddingTop: '16px',
 
             '& > div': {
-                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+                ...theme.typography.bodyShortRegularLarge,
 
                 '& svg': {
                     fill: theme.palette.icon01

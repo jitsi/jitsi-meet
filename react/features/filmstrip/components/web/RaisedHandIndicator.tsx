@@ -68,7 +68,7 @@ const RaisedHandIndicator = ({
             <BaseIndicator
                 icon = { IconRaiseHand }
                 iconColor = { theme.palette.uiBackground }
-                iconSize = { `${iconSize}px` }
+                iconSize = { iconSize }
                 tooltipKey = 'raisedHand'
                 tooltipPosition = { tooltipPosition } />
         </div>
