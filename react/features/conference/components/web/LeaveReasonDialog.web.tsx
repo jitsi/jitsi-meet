@@ -11,7 +11,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         text: {
-            fontSize: '20px'
+            fontSize: '1.25rem'
         }
     };
 });

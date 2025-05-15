@@ -6,7 +6,6 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../../app/types';
 import { hideDialog } from '../../../dialog/actions';
 import { IconArrowBack, IconCloseLarge } from '../../../icons/svg';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 
 import BaseDialog, { IProps as IBaseProps } from './BaseDialog';
 import Button from './Button';
@@ -70,7 +69,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         title: {
-            ...withPixelLineHeight(theme.typography.heading5),
+            ...theme.typography.heading5,
             color: `${theme.palette.text01} !important`,
             margin: 0,
             padding: 0
