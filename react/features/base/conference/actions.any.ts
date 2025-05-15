@@ -1,5 +1,3 @@
-import { createStartMutedConfigurationEvent } from '../../analytics/AnalyticsEvents';
-import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState, IStore } from '../../app/types';
 import { readyToClose } from '../../mobile/external-api/actions';
 import { transcriberJoined, transcriberLeft } from '../../transcribing/actions';
@@ -12,9 +10,7 @@ import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection/constants';
 import { hasAvailableDevices } from '../devices/functions.any';
 import JitsiMeetJS, { JitsiConferenceEvents, JitsiE2ePingEvents } from '../lib-jitsi-meet';
 import {
-    setAudioMuted,
     setAudioUnmutePermissions,
-    setVideoMuted,
     setVideoUnmutePermissions
 } from '../media/actions';
 import { MEDIA_TYPE, MediaType } from '../media/constants';
@@ -32,7 +28,6 @@ import { IJitsiParticipant } from '../participants/types';
 import { toState } from '../redux/functions';
 import {
     destroyLocalTracks,
-    replaceLocalTrack,
     trackAdded,
     trackRemoved
 } from '../tracks/actions.any';
@@ -180,39 +175,6 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
         (properties: Object) => dispatch(conferencePropertiesChanged(properties)));
 
     // Dispatches into features/base/media follow:
-
-    conference.on(
-        JitsiConferenceEvents.STARTED_MUTED,
-        () => {
-            const audioMuted = Boolean(conference.isStartAudioMuted());
-            const videoMuted = Boolean(conference.isStartVideoMuted());
-            const localTracks = getLocalTracks(state['features/base/tracks']);
-
-            sendAnalytics(createStartMutedConfigurationEvent('remote', audioMuted, videoMuted));
-            logger.log(`Start muted: ${audioMuted ? 'audio, ' : ''}${videoMuted ? 'video' : ''}`);
-
-            // XXX Jicofo tells lib-jitsi-meet to start with audio and/or video
-            // muted i.e. Jicofo expresses an intent. Lib-jitsi-meet has turned
-            // Jicofo's intent into reality by actually muting the respective
-            // tracks. The reality is expressed in base/tracks already so what
-            // is left is to express Jicofo's intent in base/media.
-            // TODO Maybe the app needs to learn about Jicofo's intent and
-            // transfer that intent to lib-jitsi-meet instead of lib-jitsi-meet
-            // acting on Jicofo's intent without the app's knowledge.
-            dispatch(setAudioMuted(audioMuted));
-            dispatch(setVideoMuted(videoMuted));
-
-            // Remove the tracks from peerconnection as well.
-            for (const track of localTracks) {
-                const trackType = track.jitsiTrack.getType();
-
-                // Do not remove the audio track on RN. Starting with iOS 15 it will fail to unmute otherwise.
-                if ((audioMuted && trackType === MEDIA_TYPE.AUDIO && navigator.product !== 'ReactNative')
-                        || (videoMuted && trackType === MEDIA_TYPE.VIDEO)) {
-                    dispatch(replaceLocalTrack(track.jitsiTrack, null, conference));
-                }
-            }
-        });
 
     conference.on(
         JitsiConferenceEvents.AUDIO_UNMUTE_PERMISSIONS_CHANGED,
@@ -826,10 +788,8 @@ export function nonParticipantMessageReceived(id: string, json: Object) {
 /**
  * Updates the known state of start muted policies.
  *
- * @param {boolean} audioMuted - Whether or not members will join the conference
- * as audio muted.
- * @param {boolean} videoMuted - Whether or not members will join the conference
- * as video muted.
+ * @param {boolean} audioMuted - Whether or not members will join the conference as audio muted.
+ * @param {boolean} videoMuted - Whether or not members will join the conference as video muted.
  * @returns {{
  *     type: SET_START_MUTED_POLICY,
  *     startAudioMutedPolicy: boolean,
@@ -1040,10 +1000,8 @@ export function setRoom(room?: string) {
 /**
  * Sets whether or not members should join audio and/or video muted.
  *
- * @param {boolean} startAudioMuted - Whether or not members will join the
- * conference as audio muted.
- * @param {boolean} startVideoMuted - Whether or not members will join the
- * conference as video muted.
+ * @param {boolean} startAudioMuted - Whether or not members will join the conference as audio muted.
+ * @param {boolean} startVideoMuted - Whether or not members will join the conference as video muted.
  * @returns {Function}
  */
 export function setStartMutedPolicy(
@@ -1055,9 +1013,6 @@ export function setStartMutedPolicy(
             audio: startAudioMuted,
             video: startVideoMuted
         });
-
-        dispatch(
-            onStartMutedPolicyChanged(startAudioMuted, startVideoMuted));
     };
 }
 
