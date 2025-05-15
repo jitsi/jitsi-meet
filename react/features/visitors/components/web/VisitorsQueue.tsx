@@ -2,7 +2,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
-import { withPixelLineHeight } from '../../../base/styles/functions';
 import LoadingIndicator from '../../../base/ui/components/web/Spinner';
 
 const useStyles = makeStyles()(theme => {
@@ -54,7 +53,7 @@ const useStyles = makeStyles()(theme => {
             width: '100%'
         },
         roomName: {
-            ...withPixelLineHeight(theme.typography.heading5),
+            ...theme.typography.heading5,
             color: theme.palette.text01,
             marginBottom: theme.spacing(4),
             overflow: 'hidden',

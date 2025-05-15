@@ -22,7 +22,6 @@ import {
 } from '../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { getRaiseHandsQueue } from '../../../base/participants/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
@@ -44,7 +43,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         text: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: theme.palette.text02,
             padding: '10px 16px',
             height: '40px',

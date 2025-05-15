@@ -12,7 +12,6 @@ import { getLegalUrls } from '../../base/config/functions.any';
 import { isSupportedBrowser } from '../../base/environment/environment';
 import { translate, translateToHTML } from '../../base/i18n/functions';
 import Platform from '../../base/react/Platform.web';
-import { withPixelLineHeight } from '../../base/styles/functions.web';
 import Button from '../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../base/ui/constants.any';
 import {
@@ -46,15 +45,15 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
         launchingMeetingLabel: {
             marginBottom: 16,
-            ...withPixelLineHeight(theme.typography.heading4)
+            ...theme.typography.heading4
         },
         roomName: {
             marginBottom: 32,
-            ...withPixelLineHeight(theme.typography.heading5)
+            ...theme.typography.heading5
         },
         descriptionLabel: {
             marginBottom: 32,
-            ...withPixelLineHeight(theme.typography.bodyLongRegular)
+            ...theme.typography.bodyLongRegular
         },
         buttonsContainer: {
             display: 'flex',
@@ -71,7 +70,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
         label: {
             marginTop: 40,
-            ...withPixelLineHeight(theme.typography.labelRegular),
+            ...theme.typography.labelRegular,
             color: theme.palette.text02,
             '& a': {
                 color: theme.palette.link01

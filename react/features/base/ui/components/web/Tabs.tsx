@@ -2,7 +2,6 @@ import React, { useCallback, useEffect } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import { isMobileBrowser } from '../../../environment/utils';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 
 interface ITabProps {
     accessibilityLabel: string;
@@ -26,7 +25,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         tab: {
-            ...withPixelLineHeight(theme.typography.bodyShortBold),
+            ...theme.typography.bodyShortBold,
             color: theme.palette.text02,
             flex: 1,
             padding: '14px',
@@ -63,12 +62,12 @@ const useStyles = makeStyles()(theme => {
             },
 
             '&.is-mobile': {
-                ...withPixelLineHeight(theme.typography.bodyShortBoldLarge)
+                ...theme.typography.bodyShortBoldLarge
             }
         },
 
         badge: {
-            ...withPixelLineHeight(theme.typography.labelBold),
+            ...theme.typography.labelBold,
             color: theme.palette.text04,
             padding: `0 ${theme.spacing(1)}`,
             borderRadius: '100%',
