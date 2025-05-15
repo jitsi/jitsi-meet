@@ -1,9 +1,11 @@
 import { IReduxState } from '../app/types';
+import { isEnabledFromState } from '../av-moderation/functions';
 import { IStateful } from '../base/app/types';
 import { isNameReadOnly } from '../base/config/functions.any';
 import { SERVER_URL_CHANGE_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import i18next, { DEFAULT_LANGUAGE, LANGUAGES } from '../base/i18n/i18next';
+import { MEDIA_TYPE } from '../base/media/constants';
 import { getLocalParticipant } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { getHideSelfView } from '../base/settings/functions.any';
@@ -144,9 +146,13 @@ export function getModeratorTabProps(stateful: IStateful) {
     const followMeRecorderActive = isFollowMeRecorderActive(state);
     const showModeratorSettings = shouldShowModeratorSettings(state);
     const disableChatWithPermissions = !conference?.getMetadataHandler().getMetadata().allownersEnabled;
+    const isAudioModerationEnabled = isEnabledFromState(MEDIA_TYPE.AUDIO, state);
+    const isVideoModerationEnabled = isEnabledFromState(MEDIA_TYPE.VIDEO, state);
 
     // The settings sections to display.
     return {
+        audioModerationEnabled: isAudioModerationEnabled,
+        videoModerationEnabled: isVideoModerationEnabled,
         chatWithPermissionsEnabled: Boolean(groupChatWithPermissions),
         showModeratorSettings: Boolean(conference && showModeratorSettings),
         disableChatWithPermissions: Boolean(disableChatWithPermissions),
