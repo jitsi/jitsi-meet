@@ -40,23 +40,18 @@ export async function getDynamicBrandingUrl(stateful: IStateful) {
 
     // NB: On web this is dispatched really early, before the config has been stored in the
     // state. Thus, fetch it from the window global.
-    const config
-        = navigator.product === 'ReactNative' ? state['features/base/config'] : window.config;
-    const { dynamicBrandingUrl } = config;
-    const fqn = extractFqnFromPath(state);
+    const config = navigator.product === 'ReactNative' ? state['features/base/config'] : window.config;
+    const baseUrl = config.brandingDataUrl ?? config.dynamicBrandingUrl;
 
-    if (dynamicBrandingUrl) {
-        if (fqn) {
-            return `${dynamicBrandingUrl}?conferenceFqn=${encodeURIComponent(fqn)}`;
+    if (baseUrl) {
+        // Warn of dynamicBrandingUrl deprecation (even if brandingDataUrl is set too)
+        if (config.dynamicBrandingUrl) {
+            logger.warn("Deprecation: dynamicBrandingUrl in configuration will be removed in a future version. Use brandingDataUrl instead for the same behavior.");
         }
 
-        return dynamicBrandingUrl;
-    }
-
-    const { brandingDataUrl: baseUrl } = config;
-
-    if (baseUrl && fqn) {
-        return `${baseUrl}?conferenceFqn=${encodeURIComponent(fqn)}`;
+        // Append fqn to the branding url to allow dynamic branding.
+        const fqn = extractFqnFromPath(state);
+        return baseUrl + (fqn ? `?conferenceFqn=${encodeURIComponent(fqn)}` : "");
     }
 }
 
