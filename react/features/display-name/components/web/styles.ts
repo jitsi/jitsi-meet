@@ -37,8 +37,8 @@ export function getStageParticipantFontSizeRange(theme: Theme) {
  */
 export function getStageParticipantLineHeightRange(theme: Theme) {
     return {
-        max: theme.typography.bodyShortRegularLarge.lineHeight,
-        min: theme.typography.bodyShortRegularSmall.lineHeight
+        max: String(theme.typography.bodyShortRegularLarge.lineHeight),
+        min: String(theme.typography.bodyShortRegularSmall.lineHeight)
     };
 }
 
