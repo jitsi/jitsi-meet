@@ -450,7 +450,7 @@ export function shouldRequireRecordingConsent(recorderSession: any, state: IRedu
         return false;
     }
 
-    if (isSpotTV()) {
+    if (isSpotTV(state)) {
         return false;
     }
 

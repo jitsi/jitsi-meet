@@ -170,6 +170,7 @@ export default [
     'hideLobbyButton',
     'iAmRecorder',
     'iAmSipGateway',
+    'iAmSpot',
     'ignoreStartMuted',
     'inviteAppName',
     'liveStreaming.enabled',

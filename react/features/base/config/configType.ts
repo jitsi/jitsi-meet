@@ -442,6 +442,7 @@ export interface IConfig {
     };
     iAmRecorder?: boolean;
     iAmSipGateway?: boolean;
+    iAmSpot?: boolean;
     ignoreStartMuted?: boolean;
     inviteAppName?: string | null;
     inviteServiceCallFlowsUrl?: string;
