@@ -46,12 +46,13 @@ export async function getDynamicBrandingUrl(stateful: IStateful) {
     if (baseUrl) {
         // Warn of dynamicBrandingUrl deprecation (even if brandingDataUrl is set too)
         if (config.dynamicBrandingUrl) {
-            logger.warn("Deprecation: dynamicBrandingUrl in configuration will be removed in a future version. Use brandingDataUrl instead for the same behavior.");
+            logger.warn('Deprecation: dynamicBrandingUrl in configuration will be removed in a future version. Use brandingDataUrl instead for the same behavior.');
         }
 
         // Append fqn to the branding url to allow dynamic branding.
         const fqn = extractFqnFromPath(state);
-        return baseUrl + (fqn ? `?conferenceFqn=${encodeURIComponent(fqn)}` : "");
+
+        return baseUrl + (fqn ? `?conferenceFqn=${encodeURIComponent(fqn)}` : '');
     }
 }
 
