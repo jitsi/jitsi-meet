@@ -613,6 +613,7 @@ var config = {
     //     medium: 5000,
     //     long: 10000,
     //     extraLong: 60000,
+    //     sticky: 0,
     // },
 
     // // Options for the recording limit notification.
