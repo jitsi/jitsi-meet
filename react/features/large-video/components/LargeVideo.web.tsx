@@ -383,7 +383,7 @@ function _mapStateToProps(state: IReduxState) {
         _customBackgroundColor: backgroundColor,
         _customBackgroundImageUrl: backgroundImageUrl,
         _displayScreenSharingPlaceholder:
-            Boolean(isLocalScreenshareOnLargeVideo && !seeWhatIsBeingShared && !isSpotTV()),
+            Boolean(isLocalScreenshareOnLargeVideo && !seeWhatIsBeingShared && !isSpotTV(state)),
         _hideSelfView: getHideSelfView(state),
         _isChatOpen: isChatOpen,
         _isDisplayNameVisible: isDisplayNameVisible(state),
