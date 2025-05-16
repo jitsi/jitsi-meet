@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import React, { ReactNode, useEffect, useMemo, useState } from "react";
 import { WithTranslation } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { makeStyles } from "tss-react/mui";
