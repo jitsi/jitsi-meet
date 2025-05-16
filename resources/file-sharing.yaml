@@ -77,7 +77,7 @@ paths:
               properties:
                 metadata:
                   type: string
-                  example: '{"conferenceFullName":"ltorje@conference.meetteam.8x8.vc","timestamp":1741017572040,"fileSize":1042157,"fileId":"e393a7e5-e790-4f43-836e-d27238201904","authorParticipantJid":"9b9a25dc-7e1a-46b8-bae1-ad8be604871c@stage.8x8.vc/SVBypbHvcgRT"}'
+                  example: '{"conferenceFullName":"myroomname@conference.tenant.jitsi-meet.example.com","timestamp":1741017572040,"fileSize":1042157,"fileId":"e393a7e5-e790-4f43-836e-d27238201904","authorParticipantJid":"9b9a25dc-7e1a-46b8-bae1-ad8be604871c@jitsi-meet.example.com/SVBypbHvcgRT"}'
                 file:
                   type: string
                   format: binary
