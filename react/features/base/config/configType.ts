@@ -489,6 +489,7 @@ export interface IConfig {
         long?: number;
         medium?: number;
         short?: number;
+        sticky?: number;
     };
     notifications?: Array<string>;
     notifyOnConferenceDestruction?: boolean;
