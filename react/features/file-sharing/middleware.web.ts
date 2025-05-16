@@ -19,7 +19,7 @@ import { IFileMetadata } from './types';
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(store => next => async action => {
+MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case UPLOAD_FILES: {
         const state = store.getState();
