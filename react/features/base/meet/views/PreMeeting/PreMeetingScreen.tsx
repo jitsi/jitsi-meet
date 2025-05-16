@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { WithTranslation } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { makeStyles } from "tss-react/mui";
@@ -24,8 +24,8 @@ import { useLocalStorage } from "../../LocalStorageManager";
 import { ErrorModals, ErrorType } from "./components/ErrorModals";
 import Header from "./components/Header";
 import PreMeetingModal from "./components/PreMeetingModal";
-import { useParticipants } from "./hooks/useParticipants";
 import VideoEncodingToggle from "./containers/VideoEncodingToggle";
+import { useParticipants } from "./hooks/useParticipants";
 import { useUserData } from "./hooks/useUserData";
 
 interface IProps extends WithTranslation {
@@ -337,9 +337,10 @@ const PreMeetingScreen = ({
                         isCreatingConference={!!createConference}
                     />
                 )}
-                <div className="mt-[640px]">
+                <div className={classes.videoEncodingToggleContainer}>
                     <VideoEncodingToggle />
                 </div>
+
                 {/* UNCOMMENT IN DEV MODE TO SEE OLD IMPLEMENTATION  */}
                 {/* <div className="flex flex-row">
                     <div>
@@ -411,6 +412,12 @@ const useStyles = makeStyles()((theme) => ({
         "@media (max-width: 720px)": {
             flexDirection: "column-reverse",
         },
+    },
+    videoEncodingToggleContainer: {
+        position: "absolute",
+        bottom: "20px",
+        left: "20px",
+        zIndex: 999,
     },
     content: {
         display: "flex",
