@@ -1,6 +1,6 @@
 interface ITypographyType {
     fontSize: number;
-    fontWeight: string;
+    fontWeight: number; // TODO: revisit this.
     letterSpacing: number;
     lineHeight: number;
 }

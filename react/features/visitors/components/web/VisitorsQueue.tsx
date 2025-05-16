@@ -78,7 +78,9 @@ export default function VisitorsQueue() {
     const { classes } = useStyles();
     const { t } = useTranslation();
 
-    return (<div className = { classes.container }>
+    return (<div
+        className = { classes.container }
+        id = 'visitors-waiting-queue'>
         <div className = { classes.content }>
             <div className = { classes.contentControls }>
                 <span className = { classes.roomName }>

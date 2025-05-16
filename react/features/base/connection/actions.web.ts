@@ -11,6 +11,7 @@ import LocalRecordingManager from '../../recording/components/Recording/LocalRec
 import { setJWT } from '../jwt/actions';
 
 import { _connectInternal } from './actions.any';
+import logger from './logger';
 
 export * from './actions.any';
 
@@ -38,6 +39,8 @@ export function connect(id?: string, password?: string) {
                     j && dispatch(setJWT(j));
 
                     return dispatch(_connectInternal(id, password));
+                }).catch(e => {
+                    logger.error('Connection error', e);
                 });
         }
 

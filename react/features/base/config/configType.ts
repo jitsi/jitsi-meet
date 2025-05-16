@@ -387,6 +387,10 @@ export interface IConfig {
     feedbackPercentage?: number;
     fileRecordingsServiceEnabled?: boolean;
     fileRecordingsServiceSharingEnabled?: boolean;
+    fileSharing?: {
+        apiUrl?: string;
+        enabled?: boolean;
+    };
     filmstrip?: {
         disableResizable?: boolean;
         disableStageFilmstrip?: boolean;
@@ -438,6 +442,7 @@ export interface IConfig {
     };
     iAmRecorder?: boolean;
     iAmSipGateway?: boolean;
+    iAmSpot?: boolean;
     ignoreStartMuted?: boolean;
     inviteAppName?: string | null;
     inviteServiceCallFlowsUrl?: string;
@@ -484,6 +489,7 @@ export interface IConfig {
         long?: number;
         medium?: number;
         short?: number;
+        sticky?: number;
     };
     notifications?: Array<string>;
     notifyOnConferenceDestruction?: boolean;
