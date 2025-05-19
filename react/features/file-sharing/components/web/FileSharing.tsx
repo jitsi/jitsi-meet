@@ -23,8 +23,8 @@ const useStyles = makeStyles()(theme => {
             gap: theme.spacing(2),
             position: 'absolute',
             top: 0,
-            right: 16,
-            bottom: 16,
+            right: theme.spacing(3),
+            bottom: 0,
             left: 0
         },
 
@@ -36,10 +36,6 @@ const useStyles = makeStyles()(theme => {
             padding: theme.spacing(3),
             position: 'relative',
             width: '100%'
-        },
-
-        downloadButton: {
-            marginRight: theme.spacing(1)
         },
 
         dropZone: {
@@ -72,10 +68,10 @@ const useStyles = makeStyles()(theme => {
             borderRadius: theme.shape.borderRadius,
             display: 'flex',
             flexDirection: 'row',
-            gap: theme.spacing(1),
+            gap: theme.spacing(3),
             justifyContent: 'space-between',
-            marginBottom: theme.spacing(3),
             padding: theme.spacing(3),
+            position: 'relative',
 
             '&:hover': {
                 backgroundColor: theme.palette.ui03,
@@ -104,7 +100,6 @@ const useStyles = makeStyles()(theme => {
             flexDirection: 'column',
             gap: theme.spacing(2),
             gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-            position: 'relative',
             zIndex: 1
         },
 
@@ -289,7 +284,8 @@ const FileSharing = () => {
                     { Array.from(files.entries()).map(([ fileId, file ]) => (
                         <div
                             className = { classes.fileItem }
-                            key = { fileId }>
+                            key = { fileId }
+                            title = { file.fileName }>
                             { (file.progress ?? 100) === 100 && (
                                 <>
                                     <div className = { classes.fileIconContainer }>
