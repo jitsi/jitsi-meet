@@ -59,7 +59,19 @@ MiddlewareRegistry.register(store => next => action => {
             // Use XMLHttpRequest to track upload
             const xhr = new XMLHttpRequest();
 
+            const handleError = () => {
+                logger.warn('Could not upload file:', xhr.statusText);
+
+                store.dispatch(removeFile(fileId));
+                store.dispatch(showErrorNotification({
+                    titleKey: 'fileSharing.uploadFailedTitle',
+                    descriptionKey: 'fileSharing.uploadFailedDescription',
+                    appearance: NOTIFICATION_TYPE.ERROR
+                }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+            };
+
             xhr.open('POST', `${fileSharing!.apiUrl!}/sessions/${sessionId}/files`);
+            xhr.responseType = 'json';
 
             if (jwt) {
                 xhr.setRequestHeader('Authorization', `Bearer ${jwt}`);
@@ -74,28 +86,23 @@ MiddlewareRegistry.register(store => next => action => {
             };
 
             xhr.onload = () => {
-                const metadataHandler = conference?.getMetadataHandler();
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    const metadataHandler = conference?.getMetadataHandler();
 
-                if (metadataHandler) {
-                    const existingMetadata = metadataHandler.getMetadata()[FILE_SHARING_ID] ?? {};
+                    if (metadataHandler) {
+                        const existingMetadata = metadataHandler.getMetadata()[FILE_SHARING_ID] ?? {};
 
-                    metadataHandler.setMetadata(FILE_SHARING_ID, {
-                        ...existingMetadata,
-                        [fileId]: fileMetadata
-                    });
+                        metadataHandler.setMetadata(FILE_SHARING_ID, {
+                            ...existingMetadata,
+                            [fileId]: fileMetadata
+                        });
+                    }
+                } else {
+                    handleError();
                 }
             };
 
-            xhr.onerror = () => {
-                logger.warn('Could not upload file:', xhr.statusText);
-
-                store.dispatch(removeFile(fileId));
-                store.dispatch(showErrorNotification({
-                    titleKey: 'fileSharing.uploadFailedTitle',
-                    descriptionKey: 'fileSharing.uploadFailedDescription',
-                    appearance: NOTIFICATION_TYPE.ERROR
-                }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
-            };
+            xhr.onerror = handleError;
 
             xhr.send(formData);
         }
