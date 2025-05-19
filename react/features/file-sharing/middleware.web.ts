@@ -150,14 +150,12 @@ MiddlewareRegistry.register(store => next => action => {
     case DOWNLOAD_FILE: {
         const state = store.getState();
         const { fileSharing } = state['features/base/config'];
-        const { jwt } = state['features/base/jwt'];
         const conference = getCurrentConference(state);
         const sessionId = conference?.getMeetingUniqueId();
 
         fetch(`${fileSharing!.apiUrl!}/sessions/${sessionId}/document`, {
             method: 'GET',
             headers: {
-                ...jwt && { 'Authorization': `Bearer ${jwt}` },
                 'X-File-Id': action.fileId,
             }
         })
