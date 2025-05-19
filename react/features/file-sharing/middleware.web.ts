@@ -169,11 +169,7 @@ MiddlewareRegistry.register(store => next => action => {
                 throw new Error('No presigned URL found in the response.');
             }
 
-            const newTab = window.open(url, '_blank', 'noreferrer,noopener');
-
-            if (!newTab) {
-                throw new Error('Failed to open a new tab for the file download.');
-            }
+            window.open(url, '_blank', 'noreferrer,noopener');
         })
         .catch(error => {
             logger.warn('Could not download file:', error);
