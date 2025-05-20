@@ -26,6 +26,9 @@ describe('Recording', () => {
 
         await testRecordingStarted(true);
         await testRecordingStopped(true);
+
+        // to avoid limits
+        await ctx.p1.driver.pause(30000);
     });
 
     it('start/stop command', async () => {
@@ -35,6 +38,9 @@ describe('Recording', () => {
 
         await testRecordingStarted(false);
         await testRecordingStopped(false);
+
+        // to avoid limits
+        await ctx.p1.driver.pause(30000);
     });
 
     it('start/stop Livestreaming command', async () => {
@@ -82,7 +88,7 @@ describe('Recording', () => {
             const liveStreamEvent: {
                 customerId: string;
                 eventType: string;
-            } = await webhooksProxy.waitForEvent('LIVE_STREAM_ENDED');
+            } = await webhooksProxy.waitForEvent('LIVE_STREAM_ENDED', 20000);
 
             expect('LIVE_STREAM_ENDED').toBe(liveStreamEvent.eventType);
             expect(liveStreamEvent.customerId).toBe(customerId);
@@ -160,7 +166,7 @@ async function testRecordingStopped(command: boolean) {
         const liveStreamEvent: {
             customerId: string;
             eventType: string;
-        } = await webhooksProxy.waitForEvent('RECORDING_ENDED');
+        } = await webhooksProxy.waitForEvent('RECORDING_ENDED', 20000);
 
         expect('RECORDING_ENDED').toBe(liveStreamEvent.eventType);
         expect(liveStreamEvent.customerId).toBe(customerId);

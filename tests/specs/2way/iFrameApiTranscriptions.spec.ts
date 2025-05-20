@@ -137,6 +137,10 @@ describe('Transcriptions', () => {
         await p1.getIframeAPI().executeCommand('hangup');
         await p2.getIframeAPI().executeCommand('hangup');
 
+        // sometimes events are not immediately received,
+        // let's wait for destroy event before waiting for those that depends on it
+        await webhooksProxy.waitForEvent('ROOM_DESTROYED', 10000);
+
         if (webhooksProxy) {
             const event: {
                 data: {
@@ -213,7 +217,7 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
         const checkTranscripts = stable.includes(tr.stable || tr.final) || (tr.stable || tr.final).includes(stable);
 
         if (!checkTranscripts) {
-            console.log('received events', result);
+            console.log('received events', JSON.stringify(result));
         }
 
         expect(checkTranscripts).toBe(true);

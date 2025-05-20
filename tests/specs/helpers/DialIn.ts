@@ -98,4 +98,5 @@ export async function dialIn(participant: Participant) {
     });
 
     console.log(`dial-in.test.call_session_history_id:${JSON.parse(responseData).call_session_history_id}`);
+    console.log(`API response:${responseData}`);
 }
