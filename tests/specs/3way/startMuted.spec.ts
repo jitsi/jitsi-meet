@@ -1,4 +1,5 @@
 import {
+    checkForScreensharingTile,
     ensureOneParticipant,
     ensureTwoParticipants,
     hangupAllParticipants,
@@ -23,6 +24,7 @@ describe('StartMuted', () => {
         await ensureOneParticipant(ctx, options);
 
         const { p1 } = ctx;
+        const p1EndpointId = await p1.getEndpointId();
 
         await p1.getToolbar().clickSettingsButton();
 
@@ -34,12 +36,21 @@ describe('StartMuted', () => {
         await settingsDialog.setStartVideoMuted(true);
         await settingsDialog.submit();
 
+        //  Check that p1 doesn't get muted.
+        await p1.getFilmstrip().assertAudioMuteIconIsDisplayed(p1, true);
+        await p1.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1, true);
+
         await joinSecondParticipant(ctx, {
             ...options,
             skipInMeetingChecks: true
         });
 
+        // Enable screenshare on p1.
+        p1.getToolbar().clickDesktopSharingButton();
+        await checkForScreensharingTile(p1, p1);
+
         const { p2 } = ctx;
+        const p2EndpointId = await p2.getEndpointId();
 
         await p2.waitForIceConnected();
         await p2.waitForSendReceiveData({ checkSend: false });
@@ -47,9 +58,15 @@ describe('StartMuted', () => {
         await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
         await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2);
         await p1.waitForAudioMuted(p2, true);
+        await p1.waitForRemoteVideo(p2EndpointId, true);
 
         await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p1, true);
         await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1, true);
+        await p2.waitForAudioMuted(p1, false);
+        await p2.waitForRemoteVideo(p1EndpointId, false);
+
+        // Check if a remote screenshare tile is created on p2.
+        await checkForScreensharingTile(p1, p2);
 
         // Enable video on p2 and check if p2 appears unmuted on p1.
         await Promise.all([
@@ -60,6 +77,7 @@ describe('StartMuted', () => {
         await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2, true);
 
         await p1.waitForAudioMuted(p2, false);
+        await p1.waitForRemoteVideo(p2EndpointId, false);
 
         // Add a third participant and check p3 is able to receive audio and video from p2.
         await joinThirdParticipant(ctx, {
@@ -74,6 +92,7 @@ describe('StartMuted', () => {
 
         await p3.getFilmstrip().assertAudioMuteIconIsDisplayed(p2, true);
         await p3.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2, true);
+        await checkForScreensharingTile(p1, p3);
     });
 
     it('config options test', async () => {
