@@ -79,7 +79,9 @@ MiddlewareRegistry.register(store => next => action => {
 
             xhr.upload.onprogress = event => {
                 if (event.lengthComputable) {
-                    const percent = (event.loaded / event.total) * 100;
+                    // We use 99% as the max value to avoid showing 100% before the
+                    // upload is actually finished, that is, when the request is completed.
+                    const percent = Math.max((event.loaded / event.total) * 100, 99);
 
                     store.dispatch(updateFileProgress(fileId, percent));
                 }
@@ -87,6 +89,8 @@ MiddlewareRegistry.register(store => next => action => {
 
             xhr.onload = () => {
                 if (xhr.status >= 200 && xhr.status < 300) {
+                    store.dispatch(updateFileProgress(fileId, 100));
+
                     const metadataHandler = conference?.getMetadataHandler();
 
                     if (metadataHandler) {
