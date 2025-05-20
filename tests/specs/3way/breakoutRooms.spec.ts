@@ -319,7 +319,8 @@ describe('BreakoutRooms', () => {
         // because the participants rejoin so fast, the meeting is not properly ended,
         // so the previous breakout rooms would still be there.
         // To avoid this issue we use a different meeting
-        ctx.roomName += '-breakout-rooms';
+        // Respect room name suffix as it is important in multi-shard testing
+        ctx.roomName += `new-${ctx.roomName}`;
 
         await ensureTwoParticipants(ctx);
         const { p1, p2 } = ctx;
