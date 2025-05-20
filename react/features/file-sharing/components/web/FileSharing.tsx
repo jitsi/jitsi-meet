@@ -35,7 +35,9 @@ const useStyles = makeStyles()(theme => {
             maxWidth: '600px',
             padding: theme.spacing(3),
             position: 'relative',
-            width: '100%'
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column'
         },
 
         dropZone: {
@@ -54,7 +56,8 @@ const useStyles = makeStyles()(theme => {
             '&.dragging': {
                 backgroundColor: theme.palette.ui03,
                 borderColor: theme.palette.action01,
-                opacity: 0.8
+                opacity: 0.8,
+                zIndex: 2
             }
         },
 
@@ -92,6 +95,7 @@ const useStyles = makeStyles()(theme => {
             flexDirection: 'column',
             flexGrow: 2,
             gap: theme.spacing(1),
+            justifyContent: 'center',
             minWidth: 0
         },
 
@@ -100,7 +104,10 @@ const useStyles = makeStyles()(theme => {
             flexDirection: 'column',
             gap: theme.spacing(2),
             gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-            zIndex: 1
+            zIndex: 1,
+            overflowY: 'auto',
+            flex: 1,
+            marginBottom: theme.spacing(8)
         },
 
         fileName: {
@@ -153,13 +160,6 @@ const useStyles = makeStyles()(theme => {
             backgroundColor: theme.palette.action01,
             height: '100%',
             transition: 'width 0.3s ease'
-        },
-
-        removeButton: {
-            alignItems: 'center',
-            cursor: 'pointer',
-            display: 'flex',
-            justifyContent: 'center'
         },
 
         uploadButton: {
