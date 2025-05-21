@@ -4,7 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
+import Avatar from '../../../base/avatar/components/Avatar';
+import { getCurrentConference } from '../../../base/conference/functions';
 import { IconCloudUpload, IconDownload, IconTrash } from '../../../base/icons/svg';
+import { IJitsiParticipant } from '../../../base/participants/types';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import Icon from '../../../base/icons/components/Icon';
@@ -118,15 +121,29 @@ const useStyles = makeStyles()(theme => {
             whiteSpace: 'nowrap'
         },
 
+        fileAuthorParticipant: {
+            alignItems: 'center',
+            display: 'inline-flex',
+            gap: theme.spacing(1)
+        },
+
+        fileAuthorParticipantName: {
+            ...theme.typography.labelBold,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
+        },
+
         fileSize: {
             ...theme.typography.labelRegular
         },
 
         fileTimestamp: {
             ...theme.typography.labelRegular,
-            alignItems: 'center',
             display: 'flex',
-            textAlign: 'center'
+            lineHeight: '1.2rem',
+            marginTop: theme.spacing(1),
+            textAlign: 'center',
         },
 
         hiddenInput: {
@@ -151,7 +168,7 @@ const useStyles = makeStyles()(theme => {
         progressBar: {
             backgroundColor: theme.palette.ui03,
             borderRadius: theme.shape.borderRadius,
-            height: '4px',
+            height: 4,
             overflow: 'hidden',
             width: '100%'
         },
@@ -192,6 +209,8 @@ const FileSharing = () => {
     const dispatch = useDispatch();
     const { files } = useSelector((state: IReduxState) => state['features/file-sharing']);
     const isModerator = useSelector(isLocalParticipantModerator);
+    const currentConference = useSelector(getCurrentConference);
+    const participants = currentConference?.getParticipants();
 
     const handleDragEnter = useCallback((e: React.DragEvent) => {
         e.preventDefault();
@@ -281,63 +300,79 @@ const FileSharing = () => {
             }
             { files.size > 0 && (
                 <div className = { classes.fileList }>
-                    { Array.from(files.entries()).sort((a, b) => a[1].fileName.localeCompare(b[1].fileName)).map(([ fileId, file ]) => (
-                        <div
-                            className = { classes.fileItem }
-                            key = { fileId }
-                            title = { file.fileName }>
-                            { (file.progress ?? 100) === 100 && (
-                                <>
-                                    <div className = { classes.fileIconContainer }>
-                                        <Icon
-                                            color = { BaseTheme.palette.icon01 }
-                                            size = { 64 }
-                                            src = { getFileIcon(file.fileType) } />
-                                    </div>
-                                    <div className = { classes.fileItemDetails }>
-                                        <div className = { classes.fileName }>
-                                            { file.fileName }
-                                        </div>
-                                        <div className = { classes.fileSize }>
-                                            { formatFileSize(file.fileSize) }
-                                        </div>
-                                    </div>
-                                    <div className = { `${classes.fileTimestamp} timestampVisibility` }>
-                                        <pre>
-                                            { formatTimestamp(file.timestamp) }
-                                        </pre>
-                                    </div>
-                                    <div className = { classes.buttonContainer }>
-                                        <Icon
-                                            className = { `${classes.actionIcon} actionIconVisibility` }
-                                            color = { BaseTheme.palette.icon01 }
+                    {
+                        Array.from(files.entries()).sort((a, b) => a[1].fileName.localeCompare(b[1].fileName)).map(([ fileId, file ]) => {
+                            const authorParticipant = participants.find((p: IJitsiParticipant) => p.getJid() === file.authorParticipantJid);
+                            const authorParticipantId = authorParticipant?.getId();
 
-                                            // eslint-disable-next-line react/jsx-no-bind
-                                            onClick = { () => dispatch(downloadFile(file.fileId)) }
-                                            size = { 24 }
-                                            src = { IconDownload } />
-                                        { isModerator && (
-                                            <Icon
-                                                className = { `${classes.actionIcon} actionIconVisibility` }
-                                                color = { BaseTheme.palette.icon01 }
+                            return (
+                                <div
+                                    className = { classes.fileItem }
+                                    key = { fileId }
+                                    title = { file.fileName }>
+                                    { (file.progress ?? 100) === 100 && (
+                                        <>
+                                            <div className = { classes.fileIconContainer }>
+                                                <Icon
+                                                    color = { BaseTheme.palette.icon01 }
+                                                    size = { 64 }
+                                                    src = { getFileIcon(file.fileType) } />
+                                            </div>
+                                            <div className = { classes.fileItemDetails }>
+                                                <div className = { classes.fileName }>
+                                                    { file.fileName }
+                                                </div>
+                                                <div className = { classes.fileSize }>
+                                                    { formatFileSize(file.fileSize) }
+                                                </div>
+                                                <div className = { classes.fileAuthorParticipant }>
+                                                    <Avatar
+                                                        displayName = { file.authorParticipantName }
+                                                        participantId = { authorParticipantId }
+                                                        size = { 16 } />
+                                                    <div className = { classes.fileAuthorParticipantName }>
+                                                        { file.authorParticipantName }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className = { `${classes.fileTimestamp} timestampVisibility` }>
+                                                <pre>
+                                                    { formatTimestamp(file.timestamp) }
+                                                </pre>
+                                            </div>
+                                            <div className = { classes.buttonContainer }>
+                                                <Icon
+                                                    className = { `${classes.actionIcon} actionIconVisibility` }
+                                                    color = { BaseTheme.palette.icon01 }
 
-                                                // eslint-disable-next-line react/jsx-no-bind
-                                                onClick = { () => dispatch(removeFile(file.fileId)) }
-                                                size = { 24 }
-                                                src = { IconTrash } />
-                                        ) }
-                                    </div>
-                                </>
-                            ) }
-                            { (file.progress ?? 100) < 100 && (
-                                <div className = { classes.progressBar }>
-                                    <div
-                                        className = { classes.progressFill }
-                                        style = {{ width: `${file.progress}%` }} />
+                                                    // eslint-disable-next-line react/jsx-no-bind
+                                                    onClick = { () => dispatch(downloadFile(file.fileId)) }
+                                                    size = { 24 }
+                                                    src = { IconDownload } />
+                                                { isModerator && (
+                                                    <Icon
+                                                        className = { `${classes.actionIcon} actionIconVisibility` }
+                                                        color = { BaseTheme.palette.icon01 }
+
+                                                        // eslint-disable-next-line react/jsx-no-bind
+                                                        onClick = { () => dispatch(removeFile(file.fileId)) }
+                                                        size = { 24 }
+                                                        src = { IconTrash } />
+                                                ) }
+                                            </div>
+                                        </>
+                                    ) }
+                                    { (file.progress ?? 100) < 100 && (
+                                        <div className = { classes.progressBar }>
+                                            <div
+                                                className = { classes.progressFill }
+                                                style = {{ width: `${file.progress}%` }} />
+                                        </div>
+                                    ) }
                                 </div>
-                            ) }
-                        </div>
-                    )) }
+                            );
+                        })
+                    }
                 </div>
             )}
             {
