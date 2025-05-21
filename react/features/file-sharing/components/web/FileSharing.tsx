@@ -30,14 +30,14 @@ const useStyles = makeStyles()(theme => {
 
         container: {
             boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
             height: '100%',
             margin: '0 auto',
             maxWidth: '600px',
             padding: theme.spacing(3),
             position: 'relative',
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column'
+            width: '100%'
         },
 
         dropZone: {
@@ -101,13 +101,13 @@ const useStyles = makeStyles()(theme => {
 
         fileList: {
             display: 'flex',
+            flex: 1,
             flexDirection: 'column',
             gap: theme.spacing(2),
             gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-            zIndex: 1,
+            marginBottom: theme.spacing(8),
             overflowY: 'auto',
-            flex: 1,
-            marginBottom: theme.spacing(8)
+            zIndex: 1
         },
 
         fileName: {
@@ -281,7 +281,7 @@ const FileSharing = () => {
             }
             { files.size > 0 && (
                 <div className = { classes.fileList }>
-                    { Array.from(files.entries()).map(([ fileId, file ]) => (
+                    { Array.from(files.entries()).sort((a, b) => a[1].fileName.localeCompare(b[1].fileName)).map(([ fileId, file ]) => (
                         <div
                             className = { classes.fileItem }
                             key = { fileId }
