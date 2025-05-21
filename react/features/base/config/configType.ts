@@ -308,6 +308,7 @@ export interface IConfig {
     disablePolls?: boolean;
     disableProfile?: boolean;
     disableReactions?: boolean;
+    disableReactionsInChat?: boolean;
     disableReactionsModeration?: boolean;
     disableRecordAudioNotification?: boolean;
     disableRemoteControl?: boolean;
