@@ -17,7 +17,7 @@ export interface IProps {
  * @augments PureComponent
  */
 export default class AbstractMessageContainer<P extends IProps, S> extends Component<P, S> {
-    static contextType = ReactReduxContext;
+    static override contextType = ReactReduxContext;
     declare context: React.ContextType<typeof ReactReduxContext>;
 
     static defaultProps = {
