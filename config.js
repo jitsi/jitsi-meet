@@ -505,6 +505,11 @@ var config = {
     //     // Enables automatic request of subtitles when transcriber is present in the meeting, uses the default
     //     // language that is set
     //     autoCaptionOnTranscribe: false,
+    //
+    //     // Disables everything related to closed captions - the tab in the chat area, the button in the menu,
+    //     // subtitles on stage and the "Show subtitles on stage" checkbox in the settings.
+    //     // Note: Starting transcriptions from the recording dialog will still work.
+    //     disableClosedCaptions: false
     // },
 
     // Misc
