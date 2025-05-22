@@ -68,7 +68,7 @@ MiddlewareRegistry.register(store => next => action => {
                     titleKey: 'fileSharing.uploadFailedTitle',
                     descriptionKey: 'fileSharing.uploadFailedDescription',
                     appearance: NOTIFICATION_TYPE.ERROR
-                }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+                }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
             };
 
             xhr.open('POST', `${fileSharing!.apiUrl!}/sessions/${sessionId}/files`);
@@ -180,7 +180,7 @@ MiddlewareRegistry.register(store => next => action => {
                 titleKey: 'fileSharing.downloadFailedTitle',
                 descriptionKey: 'fileSharing.downloadFailedDescription',
                 appearance: NOTIFICATION_TYPE.ERROR
-            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
         });
 
         return next(action);
