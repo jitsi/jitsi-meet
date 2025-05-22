@@ -51,7 +51,6 @@ const useStyles = makeStyles()(theme => {
             position: 'absolute',
             right: 0,
             top: 0,
-            transition: 'opacity 0.15s ease-in-out',
             zIndex: 0,
 
             '&.dragging': {
