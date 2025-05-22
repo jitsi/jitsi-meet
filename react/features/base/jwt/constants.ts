@@ -7,6 +7,7 @@ export const MEET_FEATURES: Record<string, ParticipantFeaturesKey> = {
     BRANDING: 'branding',
     CALENDAR: 'calendar',
     CREATE_POLLS: 'create-polls',
+    FILE_UPLOAD: 'file-upload',
     FLIP: 'flip',
     INBOUND_CALL: 'inbound-call',
     LIVESTREAMING: 'livestreaming',
