@@ -75,7 +75,7 @@ const styles = (theme: Theme, props: IProps) => {
         transcriptionSubtitles: {
             bottom: `${bottom}px`,
             marginBottom: `${marginBottom}px`,
-            fontSize: `${pixelsToRem(fontSize)}rem`,
+            fontSize: pixelsToRem(fontSize),
             left: '50%',
             maxWidth: '50vw',
             overflowWrap: 'break-word' as const,
