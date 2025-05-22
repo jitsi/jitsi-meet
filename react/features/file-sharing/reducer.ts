@@ -1,12 +1,13 @@
+import { isEqual } from 'lodash-es';
+
 import { UPDATE_CONFERENCE_METADATA } from '../base/conference/actionTypes';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
-
 import {
     ADD_FILE,
     REMOVE_FILE,
     UPDATE_FILE_UPLOAD_PROGRESS
 } from './actionTypes';
-import { FILE_SHARING_ID } from './constants';
+import { FILE_SHARING_PREFIX } from './constants';
 import { IFileMetadata } from './types';
 
 export interface IFileSharingState {
@@ -55,20 +56,38 @@ ReducerRegistry.register<IFileSharingState>('features/file-sharing',
 
     case UPDATE_CONFERENCE_METADATA: {
         const { metadata } = action;
-        const files = metadata?.[FILE_SHARING_ID];
+        const files = new Map();
 
-        if (files) {
-            const newFiles: Map<string, IFileMetadata> = new Map(Object.entries(files));
+        for (const [ key, value ] of Object.entries(metadata)) {
+            if (key.startsWith(FILE_SHARING_PREFIX)) {
+                const fileId = key.substring(FILE_SHARING_PREFIX.length + 1);
 
-            return {
-                files: new Map([
-                    ...state.files,
-                    ...newFiles
-                ])
-            };
+                files.set(fileId, value);
+            }
         }
 
-        return state;
+        if (files.size === 0) {
+            return state;
+        }
+
+        const newFiles: Map<string, IFileMetadata> = new Map(state.files);
+
+        for (const [ key, value ] of files) {
+            // Deleted files will not have fileId.
+            if (!value.fileId) {
+                newFiles.delete(key);
+            } else {
+                newFiles.set(key, value);
+            }
+        }
+
+        if (isEqual(newFiles, state.files)) {
+            return state;
+        }
+
+        return {
+            files: newFiles
+        };
     }
 
     default:
