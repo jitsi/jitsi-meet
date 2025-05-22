@@ -107,6 +107,7 @@ export interface IJitsiConference {
     getParticipantCount: Function;
     getParticipants: Function;
     getRole: Function;
+    getShortTermCredentials: Function;
     getSpeakerStats: () => ISpeakerStats;
     getSsrcByTrack: Function;
     getTranscriptionStatus: Function;
