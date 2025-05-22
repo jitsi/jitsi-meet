@@ -224,7 +224,7 @@ class ChatInput extends Component<IProps, IState> {
             return;
         }
 
-        const trimmed = this.state.message.trim();
+        let trimmed = this.state.message.trim();
 
         if (trimmed) {
             onSend(trimmed);
@@ -239,6 +239,8 @@ class ChatInput extends Component<IProps, IState> {
         }
 
     }
+
+    
 
     /**
      * Detects if enter has been pressed. If so, submit the message in the chat
