@@ -10,8 +10,12 @@ import { getConferenceNameForTitle } from '../../../base/conference/functions';
 import { hangup } from '../../../base/connection/actions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { setColorAlpha } from '../../../base/util/helpers';
+import { openChat, setFocusedTab } from '../../../chat/actions.web';
 import Chat from '../../../chat/components/web/Chat';
+import { ChatTabs } from '../../../chat/constants';
+import { isFileSharingEnabled } from '../../../file-sharing/functions.any';
 import MainFilmstrip from '../../../filmstrip/components/web/MainFilmstrip';
 import ScreenshareFilmstrip from '../../../filmstrip/components/web/ScreenshareFilmstrip';
 import StageFilmstrip from '../../../filmstrip/components/web/StageFilmstrip';
@@ -22,7 +26,7 @@ import { getIsLobbyVisible } from '../../../lobby/functions';
 import { getOverlayToRender } from '../../../overlay/functions.web';
 import ParticipantsPane from '../../../participants-pane/components/web/ParticipantsPane';
 import Prejoin from '../../../prejoin/components/web/Prejoin';
-import { isPrejoinPageVisible } from '../../../prejoin/functions';
+import { isPrejoinPageVisible } from '../../../prejoin/functions.web';
 import ReactionAnimations from '../../../reactions/components/web/ReactionsAnimations';
 import { toggleToolboxVisible } from '../../../toolbox/actions.any';
 import { fullScreenChanged, showToolbox } from '../../../toolbox/actions.web';
@@ -42,9 +46,6 @@ import type { AbstractProps } from '../AbstractConference';
 
 import ConferenceInfo from './ConferenceInfo';
 import { default as Notice } from './Notice';
-import { openChat, setFocusedTab } from '../../../chat/actions.web';
-import { ChatTabs } from '../../../chat/constants';
-import { isLocalParticipantModerator } from '../../../base/participants/functions';
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -440,6 +441,7 @@ export default reactReduxConnect(_mapStateToProps)(translate(props => {
 
     const isModerator = useSelector(isLocalParticipantModerator);
     const { isOpen: isChatOpen } = useSelector((state: IReduxState) => state['features/chat']);
+    const fileSharingEnabled = useSelector(isFileSharingEnabled);
 
     const handleDragEnter = useCallback((e: React.DragEvent) => {
         e.preventDefault();
@@ -456,6 +458,10 @@ export default reactReduxConnect(_mapStateToProps)(translate(props => {
     const handleDragOver = useCallback((e: React.DragEvent) => {
         e.preventDefault();
         e.stopPropagation();
+
+        if (!fileSharingEnabled) {
+            return;
+        }
 
         if (isModerator && isDragging) {
             if (!isChatOpen) {
