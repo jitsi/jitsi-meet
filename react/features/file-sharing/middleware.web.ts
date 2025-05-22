@@ -10,7 +10,7 @@ import { DOWNLOAD_FILE, REMOVE_FILE, UPLOAD_FILES } from './actionTypes';
 import { addFile, removeFile, updateFileProgress } from './actions';
 import { getFileExtension } from './functions.any';
 import logger from './logger';
-import { FILE_SHARING_ID } from './constants';
+import { FILE_SHARING_PREFIX } from './constants';
 import { IFileMetadata } from './types';
 
 /**
@@ -94,14 +94,7 @@ MiddlewareRegistry.register(store => next => action => {
 
                     const metadataHandler = conference?.getMetadataHandler();
 
-                    if (metadataHandler) {
-                        const existingMetadata = metadataHandler.getMetadata()[FILE_SHARING_ID] ?? {};
-
-                        metadataHandler.setMetadata(FILE_SHARING_ID, {
-                            ...existingMetadata,
-                            [fileId]: fileMetadata
-                        });
-                    }
+                    metadataHandler?.setMetadata(`${FILE_SHARING_PREFIX}.${fileId}`, fileMetadata);
                 } else {
                     handleError();
                 }
@@ -127,13 +120,12 @@ MiddlewareRegistry.register(store => next => action => {
         const metadataHandler = conference?.getMetadataHandler();
 
         if (metadataHandler) {
-            const existingMetadata = metadataHandler.getMetadata()[FILE_SHARING_ID] ?? {};
-            const fileMetadata = existingMetadata[action.fileId];
+            const metadataId = `${FILE_SHARING_PREFIX}.${action.fileId}`;
+            const existingMetadata = metadataHandler.getMetadata()[metadataId] ?? {};
 
-            doDelete = (fileMetadata?.process ?? 100) === 100;
+            doDelete = (existingMetadata?.process ?? 100) === 100;
 
-            delete existingMetadata[action.fileId];
-            metadataHandler.setMetadata(FILE_SHARING_ID, existingMetadata);
+            metadataHandler.setMetadata(metadataId, {});
         }
 
         if (!doDelete) {
