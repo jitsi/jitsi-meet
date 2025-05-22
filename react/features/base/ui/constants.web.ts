@@ -45,7 +45,7 @@ export const commonStyles = (theme: Theme) => {
             fontSize: '0.875rem',
             fontWeight: 400,
             height: 40,
-            lineHeight: '24px',
+            lineHeight: '1.5rem',
             padding: '8px 16px',
             boxSizing: 'border-box' as const,
             '& > div': {
@@ -249,7 +249,7 @@ export const commonStyles = (theme: Theme) => {
             color: theme.palette.text01,
             cursor: 'pointer',
             display: 'inline-block',
-            lineHeight: '48px',
+            lineHeight: '3rem',
             textAlign: 'center' as const
         },
 
