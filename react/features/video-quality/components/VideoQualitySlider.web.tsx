@@ -184,7 +184,8 @@ class VideoQualitySlider extends Component<IProps> {
     override render() {
         const { t } = this.props;
         const classes = withStyles.getClasses(this.props);
-        const activeSliderOption = this._mapCurrentQualityToSliderValue();
+        const activeSliderOptionIndex = this._mapCurrentQualityToSliderValue();
+        const activeSliderOption = this._sliderOptions[activeSliderOptionIndex];
 
         return (
             <div className = { clsx('video-quality-dialog', classes.dialog) }>
@@ -202,11 +203,12 @@ class VideoQualitySlider extends Component<IProps> {
                     </div>
                     <Slider
                         ariaLabel = { t('videoStatus.callQuality') }
+                        ariaValuetext = { t(activeSliderOption.textKey) }
                         max = { this._sliderOptions.length - 1 }
                         min = { 0 }
                         onChange = { this._onSliderChange }
                         step = { 1 }
-                        value = { activeSliderOption } />
+                        value = { activeSliderOptionIndex } />
                 </div>
             </div>
         );
