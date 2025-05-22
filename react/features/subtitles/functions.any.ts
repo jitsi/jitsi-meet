@@ -55,7 +55,7 @@ export function getAvailableSubtitlesLanguages(stateful: IStateful, selectedLang
 export function areClosedCaptionsEnabled(state: IReduxState) {
     const { transcription } = state['features/base/config'];
 
-    return !transcription?.disableClosedCaptions;
+    return !transcription?.disableClosedCaptions && Boolean(transcription?.enabled);
 }
 
 /**
