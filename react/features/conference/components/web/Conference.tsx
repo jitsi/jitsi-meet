@@ -1,7 +1,7 @@
 import { throttle } from 'lodash-es';
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { connect as reactReduxConnect } from 'react-redux';
+import { connect as reactReduxConnect, useDispatch, useSelector } from 'react-redux';
 
 // @ts-expect-error
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
@@ -42,6 +42,9 @@ import type { AbstractProps } from '../AbstractConference';
 
 import ConferenceInfo from './ConferenceInfo';
 import { default as Notice } from './Notice';
+import { openChat, setFocusedTab } from '../../../chat/actions.web';
+import { ChatTabs } from '../../../chat/constants';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -430,4 +433,46 @@ function _mapStateToProps(state: IReduxState) {
     };
 }
 
-export default reactReduxConnect(_mapStateToProps)(translate(Conference));
+export default reactReduxConnect(_mapStateToProps)(translate(props => {
+    const dispatch = useDispatch();
+
+    const [ isDragging, setIsDragging ] = useState(false);
+
+    const isModerator = useSelector(isLocalParticipantModerator);
+    const { isOpen: isChatOpen } = useSelector((state: IReduxState) => state['features/chat']);
+
+    const handleDragEnter = useCallback((e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(true);
+    }, []);
+
+    const handleDragLeave = useCallback((e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+    }, []);
+
+    const handleDragOver = useCallback((e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (isModerator && isDragging) {
+            if (!isChatOpen) {
+                dispatch(openChat());
+            }
+            dispatch(setFocusedTab(ChatTabs.FILE_SHARING));
+        }
+    }, [ isDragging, isModerator, isChatOpen ]);
+
+    return (
+        <div
+            onDragEnter = { handleDragEnter }
+            onDragLeave = { handleDragLeave }
+            onDragOver = { handleDragOver }
+            tabIndex = { 0 }>
+            {/* @ts-ignore */}
+            <Conference { ...props } />
+        </div>
+    );
+}));
