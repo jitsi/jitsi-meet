@@ -73,9 +73,11 @@ function process_set_affiliation(event)
     if previous_affiliation == 'none' and affiliation == 'owner' then
         occupant_session.granted_jitsi_meet_context_features = actor_session.jitsi_meet_context_features;
         if actor_session.jitsi_meet_context_user then
-            occupant_session.granted_jitsi_meet_context_user_id = actor_session.jitsi_meet_context_user['id'];
+            occupant_session.granted_jitsi_meet_context_user_id = actor_session.jitsi_meet_context_user['id']
+                or actor_session.granted_jitsi_meet_context_user_id;
         end
-        occupant_session.granted_jitsi_meet_context_group_id = actor_session.jitsi_meet_context_group;
+        occupant_session.granted_jitsi_meet_context_group_id = actor_session.jitsi_meet_context_group
+            or actor_session.granted_jitsi_meet_context_group_id;
     elseif previous_affiliation == 'owner' and ( affiliation == 'member' or affiliation == 'none' ) then
         occupant_session.granted_jitsi_meet_context_features = nil;
         occupant_session.granted_jitsi_meet_context_user_id = nil;
