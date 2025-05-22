@@ -54,14 +54,14 @@ const useStyles = makeStyles()(theme => {
         recordName: {
             fontSize: '1rem',
             fontWeight: 400,
-            lineHeight: '20px',
+            lineHeight: '1.25rem',
             overflow: 'hidden',
             textOverflow: 'ellipsis'
         },
         recordType: {
             fontSize: '0.875rem',
             fontWeight: 400,
-            lineHeight: '18px'
+            lineHeight: '1.125rem'
         }
     };
 });

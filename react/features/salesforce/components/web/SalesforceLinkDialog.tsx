@@ -106,7 +106,7 @@ const useStyles = makeStyles()(theme => {
             padding: '10px 0'
         },
         notes: {
-            lineHeight: '18px',
+            lineHeight: '1.125rem',
             minHeight: '130px',
             resize: 'vertical',
             width: '100%',
