@@ -9,11 +9,15 @@ import { IconCloudUpload, IconDownload, IconTrash } from '../../../base/icons/sv
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import Icon from '../../../base/icons/components/Icon';
-import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import BaseTheme from '../../../base/ui/components/BaseTheme.web';
 import { downloadFile, removeFile, uploadFiles } from '../../actions';
-import { formatFileSize, formatTimestamp, getFileIcon } from '../../functions.any';
+import {
+    isFileUploadingEnabled,
+    formatFileSize,
+    formatTimestamp,
+    getFileIcon
+} from '../../functions.any';
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -207,7 +211,7 @@ const FileSharing = () => {
     const dispatch = useDispatch();
     const { files } = useSelector((state: IReduxState) => state['features/file-sharing']);
     const sortedFiles = Array.from(files.values()).sort((a, b) => a.fileName.localeCompare(b.fileName));
-    const isModerator = useSelector(isLocalParticipantModerator);
+    const isUploadEnabled = useSelector(isFileUploadingEnabled);
 
     const handleDragEnter = useCallback((e: React.DragEvent) => {
         e.preventDefault();
@@ -261,7 +265,7 @@ const FileSharing = () => {
     return (
         <div className = { classes.container }>
             {
-                isModerator && (
+                isUploadEnabled && (
                     <>
                         <div
                             className = { `${classes.dropZone} ${
@@ -347,7 +351,7 @@ const FileSharing = () => {
                                                         size = { 24 }
                                                         src = { IconDownload } />
                                                     {
-                                                        isModerator && (
+                                                        isUploadEnabled && (
                                                             <Icon
                                                                 className = { `${classes.actionIcon} actionIconVisibility` }
                                                                 color = { BaseTheme.palette.icon01 }
@@ -378,7 +382,7 @@ const FileSharing = () => {
                 )
             }
             {
-                isModerator && (
+                isUploadEnabled && (
                     <Button
                         accessibilityLabel = { t('fileSharing.uploadFile') }
                         className = { classes.uploadButton }
