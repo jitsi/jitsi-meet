@@ -288,6 +288,9 @@ module.exports = (_env, argv) => {
             plugins: [
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'app'),
+                new webpack.DefinePlugin({
+                    '__DEV__': !isProduction
+                }),
                 new webpack.IgnorePlugin({
                     resourceRegExp: /^canvas$/,
                     contextRegExp: /resemblejs$/
