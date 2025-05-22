@@ -1,4 +1,5 @@
 export interface IFileMetadata {
+    authorParticipantId: string;
     authorParticipantJid: string;
     authorParticipantName: string;
     conferenceFullName: string;

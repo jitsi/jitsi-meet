@@ -35,6 +35,7 @@ MiddlewareRegistry.register(store => next => action => {
             const jid = connection!.getJid();
             const fileId = uuidv4();
             const fileMetadata: IFileMetadata = {
+                authorParticipantId: localParticipant!.id,
                 authorParticipantJid: jid,
                 authorParticipantName: getParticipantDisplayName(state, localParticipant!.id),
                 conferenceFullName: roomJid ?? '',
