@@ -37,8 +37,8 @@ export function getStageParticipantFontSizeRange(theme: Theme) {
  */
 export function getStageParticipantLineHeightRange(theme: Theme) {
     return {
-        max: String(theme.typography.bodyShortRegularLarge.lineHeight),
-        min: String(theme.typography.bodyShortRegularSmall.lineHeight)
+        max: theme.typography.bodyShortRegularLarge.lineHeight,
+        min: theme.typography.bodyShortRegularSmall.lineHeight
     };
 }
 
@@ -50,9 +50,9 @@ export function getStageParticipantLineHeightRange(theme: Theme) {
  * @returns {string}
  */
 export function getStageParticipantNameLabelHeight(theme: Theme, clientHeight?: number): string {
-    const lineHeight = getStageParticipantNameLabelLineHeight(theme, clientHeight);
+    const lineHeight = parseFloat(getStageParticipantNameLabelLineHeight(theme, clientHeight));
 
-    return lineHeight + pixelsToRem(DISPLAY_NAME_VERTICAL_PADDING);
+    return `${lineHeight + parseFloat(pixelsToRem(DISPLAY_NAME_VERTICAL_PADDING))}rem`;
 }
 
 /**

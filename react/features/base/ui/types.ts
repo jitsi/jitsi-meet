@@ -2,7 +2,7 @@ interface ITypographyType {
     fontSize: string;
     fontWeight: 'normal' | 'bold' | 'bolder' | 'lighter' | number;
     letterSpacing: number;
-    lineHeight: number;
+    lineHeight: string;
 }
 
 export interface IPalette {
