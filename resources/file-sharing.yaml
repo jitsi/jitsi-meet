@@ -10,13 +10,7 @@ security:
   - HttpBearerKey: []
 tags:
   - name: Content sharing history
-    description: crud operation for screenshots
-  - name: Webhook controller
-    description: listens for room destroy events and generates screenshots webhooks and return jaas sign links
-  - name: Document sharing history
     description: crud operation for shared documents
-  - name: JaaS controller
-    description: Management of jaas screenshots
 paths:
   /v1/documents/sessions/{sessionId}/files:
     get:
@@ -58,11 +52,12 @@ paths:
       tags:
         - Document sharing history
       summary: Save an document and metadata
-      description: Add a  document to a meeting - allowed only to moderators if any
+      description: Add a  document to a meeting - allowed only to those with file-sharing feature if any
       operationId: addDocumentInMeeting
       parameters:
         - name: sessionId
           in: path
+          description: The session ID of the meeting.
           required: true
           schema:
             type: string
@@ -77,9 +72,11 @@ paths:
               properties:
                 metadata:
                   type: string
-                  example: '{"conferenceFullName":"myroomname@conference.tenant.jitsi-meet.example.com","timestamp":1741017572040,"fileSize":1042157,"fileId":"e393a7e5-e790-4f43-836e-d27238201904","authorParticipantJid":"9b9a25dc-7e1a-46b8-bae1-ad8be604871c@jitsi-meet.example.com/SVBypbHvcgRT"}'
+                  description: The metadata of the document in JSON format.
+                  example: '{"conferenceFullName":"myroomname@conference.tenant.jitsi-meet.example.com","timestamp":1741017572040,"fileSize":1042157,"fileId":"e393a7e5-e790-4f43-836e-d27238201904"}'
                 file:
                   type: string
+                  description: The file to be uploaded.
                   format: binary
       responses:
         '200':
@@ -114,21 +111,22 @@ paths:
       responses:
         '204':
           description: No Content
-  /v1/documents/sessions/{sessionId}/document:
+  /v1/documents/sessions/{sessionId}/files/{fileId}:
     get:
       tags:
         - Document sharing history
       summary: Get file pre-signed URL plus document info
       description: Used by UI to get the presign url for the file before serving it to the user who needs it
-      operationId: getFileInfo
+      operationId: getDocumentInfoDuringMeeting
       parameters:
         - name: sessionId
           in: path
           required: true
           schema:
             type: string
-        - name: X-File-Id
-          in: header
+        - name: fileId
+          in: path
+          description: The file ID to be deleted.
           required: true
           schema:
             type: string
@@ -139,7 +137,6 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DocumentMetadataResponse'
-  /v1/documents/sessions/{sessionId}/files/{fileId}:
     delete:
       tags:
         - Document sharing history
@@ -149,11 +146,14 @@ paths:
       parameters:
         - name: sessionId
           in: path
+          description: The session ID of the meeting.
           required: true
           schema:
             type: string
+          example: 86bf35e2-62a5-497e-9cae-efd35139f81f
         - name: fileId
           in: path
+          description: The file ID to be deleted.
           required: true
           schema:
             type: string
