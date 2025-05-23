@@ -149,6 +149,7 @@ const useStyles = makeStyles<{ _isResizing: boolean; width: number; }>()((theme,
             boxSizing: 'border-box',
             color: theme.palette.text01,
             ...theme.typography.heading6,
+            lineHeight: 'unset',
             fontWeight: theme.typography.heading6.fontWeight as any,
 
             '.jitsi-icon': {
