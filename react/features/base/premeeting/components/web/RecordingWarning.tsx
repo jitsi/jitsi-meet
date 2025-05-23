@@ -2,8 +2,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
-import { withPixelLineHeight } from '../../../styles/functions.web';
-
 const useStyles = makeStyles()(theme => {
     return {
         warning: {
@@ -11,7 +9,7 @@ const useStyles = makeStyles()(theme => {
             color: theme.palette.text03,
             display: 'flex',
             justifyContent: 'center',
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             marginBottom: theme.spacing(3),
             marginTop: theme.spacing(2),
             paddingLeft: theme.spacing(3),
