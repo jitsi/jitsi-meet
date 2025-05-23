@@ -112,36 +112,48 @@ function filter_stanza(stanza, session)
     end
 
     local muc_x = stanza:get_child('x', MUC_NS..'#user');
-    if not muc_x then
+    if not muc_x or not presence_check_status(muc_x, '110') then
         return stanza;
     end
 
     local room = get_room_from_jid(room_jid_match_rewrite(jid.bare(stanza.attr.from)));
 
-    if not room or not room.send_default_permissions_to or is_healthcheck_room(room.jid) then
+    if not room or is_healthcheck_room(room.jid)  then
         return stanza;
     end
 
-    if session.auth_token and session.jitsi_meet_context_features then -- token and features are set so skip
-        room.send_default_permissions_to[bare_to] = nil;
-        return stanza;
+    if not room.send_default_permissions_to then
+        room.send_default_permissions_to = {};
     end
 
-    -- we are sending permissions only when becoming a member
-    local is_moderator = false;
-    for item in muc_x:childtags('item') do
-        if item.attr.role == 'moderator' then
-            is_moderator = true;
-            break;
+    if not session.force_permissions_update then
+        if session.auth_token and session.jitsi_meet_context_features then -- token and features are set so skip
+            room.send_default_permissions_to[bare_to] = nil;
+            return stanza;
+        end
+
+        -- we are sending permissions only when becoming a member
+        local is_moderator = false;
+        for item in muc_x:childtags('item') do
+            if item.attr.role == 'moderator' then
+                is_moderator = true;
+                break;
+            end
+        end
+
+        if not is_moderator then
+            return stanza;
+        end
+
+        if not room.send_default_permissions_to[bare_to] then
+            return stanza;
         end
     end
 
-    if not is_moderator or not room.send_default_permissions_to[bare_to]
-        or not presence_check_status(muc_x, '110') then
-        return stanza;
-    end
+    session.force_permissions_update = false;
 
-    local permissions_to_send = session.granted_jitsi_meet_context_features or default_permissions;
+    local permissions_to_send
+        = session.jitsi_meet_context_features or session.granted_jitsi_meet_context_features or default_permissions;
 
     room.send_default_permissions_to[bare_to] = nil;
 
