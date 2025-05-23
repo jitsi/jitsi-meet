@@ -43,10 +43,12 @@ local stanza = event.stanza;
                         local initiator = {};
 
                         if session.jitsi_meet_context_user ~= nil then
-                            initiator.id = session.jitsi_meet_context_user.id;
+                            initiator.id = session.jitsi_meet_context_user.id
+                                or session.granted_jitsi_meet_context_user_id;
                         end
                         if session.jitsi_meet_context_group ~= nil then
-                            initiator.group = session.jitsi_meet_context_group;
+                            initiator.group = session.jitsi_meet_context_group
+                                or session.granted_jitsi_meet_context_group_id;
                         end
 
                         app_data.file_recording_metadata.initiator = initiator
