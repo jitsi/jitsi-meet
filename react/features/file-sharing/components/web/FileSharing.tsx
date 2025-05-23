@@ -12,11 +12,8 @@ import Icon from '../../../base/icons/components/Icon';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import BaseTheme from '../../../base/ui/components/BaseTheme.web';
-import { showErrorNotification } from '../../../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../../notifications/constants';
-import { downloadFile, removeFile, uploadFiles } from '../../actions';
-import { MAX_FILE_SIZE } from '../../constants';
-import { formatFileSize, formatTimestamp, getFileIcon } from '../../functions.any';
+import { downloadFile, removeFile } from '../../actions';
+import { formatFileSize, formatTimestamp, getFileIcon, processFiles } from '../../functions.any';
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -228,31 +225,9 @@ const FileSharing = () => {
         e.stopPropagation();
     }, []);
 
-    const processFiles = useCallback((fileList: FileList | File[]) => {
-        const newFiles = Array.from(fileList).filter(file => {
-
-            // Add file size check before upload
-            if (file.size > MAX_FILE_SIZE) {
-                dispatch(showErrorNotification({
-                    titleKey: 'fileSharing.fileTooLargeTitle',
-                    descriptionKey: 'fileSharing.fileTooLargeDescription',
-                    appearance: NOTIFICATION_TYPE.ERROR
-                }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
-
-                return false;
-            }
-
-            return true;
-        });
-
-        if (newFiles.length > 0) {
-            dispatch(uploadFiles(newFiles));
-        }
-    }, [ dispatch ]);
-
     const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
-            processFiles(e.target.files);
+            processFiles(e.target.files as FileList, dispatch);
         }
     }, [ processFiles ]);
 
@@ -262,7 +237,7 @@ const FileSharing = () => {
         setIsDragging(false);
 
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            processFiles(e.dataTransfer.files);
+            processFiles(e.dataTransfer.files as FileList, dispatch);
         }
     }, [ processFiles ]);
 

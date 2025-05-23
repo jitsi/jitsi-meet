@@ -15,7 +15,7 @@ import { setColorAlpha } from '../../../base/util/helpers';
 import { openChat, setFocusedTab } from '../../../chat/actions.web';
 import Chat from '../../../chat/components/web/Chat';
 import { ChatTabs } from '../../../chat/constants';
-import { isFileSharingEnabled } from '../../../file-sharing/functions.any';
+import { isFileSharingEnabled, processFiles } from '../../../file-sharing/functions.any';
 import MainFilmstrip from '../../../filmstrip/components/web/MainFilmstrip';
 import ScreenshareFilmstrip from '../../../filmstrip/components/web/ScreenshareFilmstrip';
 import StageFilmstrip from '../../../filmstrip/components/web/StageFilmstrip';
@@ -471,12 +471,22 @@ export default reactReduxConnect(_mapStateToProps)(translate(props => {
         }
     }, [ isDragging, isModerator, isChatOpen ]);
 
+    const handleDrop = useCallback((e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            processFiles(e.dataTransfer.files, dispatch);
+        }
+    }, [ processFiles ]);
+
     return (
         <div
             onDragEnter = { handleDragEnter }
             onDragLeave = { handleDragLeave }
             onDragOver = { handleDragOver }
-            tabIndex = { 0 }>
+            onDrop = { handleDrop }>
             {/* @ts-ignore */}
             <Conference { ...props } />
         </div>
