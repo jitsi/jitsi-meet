@@ -177,6 +177,9 @@ function filter_stanza(stanza, session)
 end
 
 -- we need to indicate that we will send permissions if we need to
+-- we need to handle granted features and stuff in the pre-set hook so they are unavailable
+-- when the self presence is set, so we can update the client, the checks
+-- whether the actor is allowed to set the affiliation are done before pre-set hook is fired
 module:hook('muc-pre-set-affiliation', function(event)
     local jid, room = event.jid, event.room;
 
@@ -184,8 +187,9 @@ module:hook('muc-pre-set-affiliation', function(event)
         room.send_default_permissions_to = {};
     end
     room.send_default_permissions_to[jid] = true;
+
+    process_set_affiliation(event);
 end);
-module:hook('muc-set-affiliation', process_set_affiliation);
 
 function filter_session(session)
     -- domain mapper is filtering on default priority 0
