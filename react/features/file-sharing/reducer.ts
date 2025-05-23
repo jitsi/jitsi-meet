@@ -56,6 +56,11 @@ ReducerRegistry.register<IFileSharingState>('features/file-sharing',
 
     case UPDATE_CONFERENCE_METADATA: {
         const { metadata } = action;
+
+        if (!metadata) {
+            return state;
+        }
+
         const files = new Map();
 
         for (const [ key, value ] of Object.entries(metadata)) {
