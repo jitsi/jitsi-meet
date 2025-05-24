@@ -73,9 +73,11 @@ function process_set_affiliation(event)
     if previous_affiliation == 'none' and affiliation == 'owner' then
         occupant_session.granted_jitsi_meet_context_features = actor_session.jitsi_meet_context_features;
         if actor_session.jitsi_meet_context_user then
-            occupant_session.granted_jitsi_meet_context_user_id = actor_session.jitsi_meet_context_user['id'];
+            occupant_session.granted_jitsi_meet_context_user_id = actor_session.jitsi_meet_context_user['id']
+                or actor_session.granted_jitsi_meet_context_user_id;
         end
-        occupant_session.granted_jitsi_meet_context_group_id = actor_session.jitsi_meet_context_group;
+        occupant_session.granted_jitsi_meet_context_group_id = actor_session.jitsi_meet_context_group
+            or actor_session.granted_jitsi_meet_context_group_id;
     elseif previous_affiliation == 'owner' and ( affiliation == 'member' or affiliation == 'none' ) then
         occupant_session.granted_jitsi_meet_context_features = nil;
         occupant_session.granted_jitsi_meet_context_user_id = nil;
@@ -175,6 +177,9 @@ function filter_stanza(stanza, session)
 end
 
 -- we need to indicate that we will send permissions if we need to
+-- we need to handle granted features and stuff in the pre-set hook so they are unavailable
+-- when the self presence is set, so we can update the client, the checks
+-- whether the actor is allowed to set the affiliation are done before pre-set hook is fired
 module:hook('muc-pre-set-affiliation', function(event)
     local jid, room = event.jid, event.room;
 
@@ -182,8 +187,9 @@ module:hook('muc-pre-set-affiliation', function(event)
         room.send_default_permissions_to = {};
     end
     room.send_default_permissions_to[jid] = true;
+
+    process_set_affiliation(event);
 end);
-module:hook('muc-set-affiliation', process_set_affiliation);
 
 function filter_session(session)
     -- domain mapper is filtering on default priority 0

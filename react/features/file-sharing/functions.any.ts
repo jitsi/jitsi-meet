@@ -6,6 +6,8 @@ import {
     IconVolumeUp
 } from '../base/icons/svg';
 import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
+import { MEET_FEATURES } from '../base/jwt/constants';
 
 /**
  * Checks whether file sharing feature is enabled.
@@ -91,4 +93,14 @@ export function formatTimestamp(timestamp: number): string {
     const time = date.format('h:mm A'); // Eg. "2:30 PM"
 
     return `${monthDay}\n${time}`;
+}
+
+/**
+ * Determines if file uploading is enabled based on JWT feature flags and file sharing settings.
+ *
+ * @param {IReduxState} state - Current state.
+ * @returns {boolean} Indication of whether local user can upload files.
+ */
+export function isFileUploadingEnabled(state: IReduxState): boolean {
+    return isJwtFeatureEnabled(state, MEET_FEATURES.FILE_UPLOAD, false) && isFileSharingEnabled(state);
 }
