@@ -23,6 +23,72 @@ const styles = () => {
             bottom: '3px',
             right: '3px'
         }
+// TODO: Ideally, these should come from a theme provider or imported from SCSS variables
+// For now, hardcoding based on _variables.scss
+const themeColors = {
+    backgroundColorDark: '#1A1E2D',
+    textColorPrimary: '#FFFFFF',
+    primaryColor: '#7B61FF',
+    disabledColor: '#5E6272', // A dimmer color for disabled state
+    hoverColor: '#252A3A' // Slightly lighter than backgroundColorDark for hover
+};
+
+const styles = ()_theme => { // tss-react can take theme as an argument
+    return {
+        button_override: { // Class to apply to the AbstractButton
+            backgroundColor: themeColors.backgroundColorDark,
+            borderRadius: '50%',
+            width: '44px', // Adjust size as needed
+            height: '44px',
+            padding: 0, // Remove default padding if any from AbstractButton
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 4px', // Minimal margin between buttons
+            border: 'none', // Remove any default border
+            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.15)', // Subtle shadow
+
+            '&.toggled': { // When button is in "on" or "active" state (e.g., mic is unmuted)
+                // For mic, "toggled" often means unmuted (icon changes, not background)
+                // The icon itself will change (mic vs mic-disabled)
+                // If mic is unmuted (icon is IconMic), and we want to show it as "active"
+                // This style might be for when it's explicitly "on" not "off"
+            },
+
+            '&.disabled': {
+                backgroundColor: themeColors.disabledColor,
+                boxShadow: 'none',
+                cursor: 'not-allowed',
+
+                '& .jitsi-icon svg': {
+                    fill: themeColors.textColorPrimary + '80', // Dim the icon
+                }
+            },
+
+            '&:not(.disabled):hover': {
+                backgroundColor: themeColors.hoverColor,
+                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+            },
+
+            // Style for the icon itself if needed, though currentColor should work
+            '& .jitsi-icon svg': {
+                fill: themeColors.textColorPrimary, // Default icon color
+                width: '24px', // Adjust icon size
+                height: '24px',
+            },
+        },
+        toggledButton: { // Specifically for when the mic is "muted" (icon is IconMicDisabled)
+            // The Dribbble design shows the main action buttons (mic, cam) having a purple icon when "active" / "warning"
+            // For mute button, "muted" is the "active" state of being muted.
+            '& .jitsi-icon svg': {
+                fill: themeColors.primaryColor, // Purple icon when muted
+            }
+        },
+        pendingContainer: {
+            position: 'absolute' as const,
+            bottom: '3px',
+            right: '3px'
+        }
     };
 };
 
@@ -49,7 +115,6 @@ interface IProps extends AbstractAudioMuteButtonProps {
  * @augments AbstractAudioMuteButton
  */
 class AudioMuteButton extends AbstractAudioMuteButton<IProps> {
-
     /**
      * Initializes a new {@code AudioMuteButton} instance.
      *
@@ -141,6 +206,41 @@ class AudioMuteButton extends AbstractAudioMuteButton<IProps> {
     }
 
     /**
+     * Overrides AbstractButton's_className to apply new styles.
+     *
+     * @override
+     * @protected
+     * @returns {string}
+     */
+    override get _className() {
+        const classes = withStyles.getClasses(this.props);
+        let className = `dribbble-toolbox-button ${classes.button_override}`;
+
+        if (this._isAudioMuted()) {
+            className += ` ${classes.toggledButton}`; // Apply special style if muted
+        }
+
+        if (this._isDisabled()) {
+            className += ' disabled';
+        }
+
+        return className;
+    }
+
+    /**
+     * Overrides AbstractButton's icon to adjust for new styling if necessary.
+     * For now, we rely on AbstractAudioMuteButton's icon logic.
+     *
+     * @override
+     * @protected
+     * @returns {ReactElement}
+     */
+    // override get _icon() {
+    //     // return custom icon component or modify props.icon
+    // }
+
+
+    /**
      * Creates an analytics keyboard shortcut event and dispatches an action to
      * toggle the audio muting.
      *
@@ -171,14 +271,18 @@ class AudioMuteButton extends AbstractAudioMuteButton<IProps> {
         const { _gumPending } = this.props;
         const classes = withStyles.getClasses(this.props);
 
-        return _gumPending === IGUMPendingState.NONE ? null
-            : (
+        // Ensure spinner is visible with new button style
+        if (_gumPending !== IGUMPendingState.NONE) {
+            return (
                 <div className = { classes.pendingContainer }>
                     <Spinner
-                        color = { SPINNER_COLOR }
+                        color = { SPINNER_COLOR } // This might need to be themeColors.textColorPrimary
                         size = 'small' />
                 </div>
             );
+        }
+
+        return null;
     }
 }
 

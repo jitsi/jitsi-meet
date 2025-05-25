@@ -4,12 +4,23 @@ import { useTranslation } from 'react-i18next';
 import { keyframes } from 'tss-react';
 import { makeStyles } from 'tss-react/mui';
 
+import {主题色色板, 主题色色板 as themeColors} from '../../../../../theme/ColorPalette'; // Assuming a central theme color definition
 import { withPixelLineHeight } from '../../../styles/functions.web';
 import { isElementInTheViewport } from '../../functions.web';
 
 import { DialogTransitionContext } from './DialogTransition';
 
-const useStyles = makeStyles()(theme => {
+// Define themeColors based on _variables.scss (hardcoded for now)
+const localThemeColors = {
+    backgroundColorLight: '#252A3A',
+    textColorPrimary: '#FFFFFF', // Default text color for dialog content
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadiusLarge: '12px', // For modals
+    modalBackdropColor: 'rgba(0, 0, 0, 0.6)', // Darker backdrop
+    // Define other colors if needed by specific dialog elements here
+};
+
+const useStyles = makeStyles()(theme => { // theme is Jitsi's existing MUI theme
     return {
         container: {
             width: '100%',
@@ -50,15 +61,15 @@ const useStyles = makeStyles()(theme => {
             height: '100%',
             top: 0,
             left: 0,
-            backgroundColor: theme.palette.ui02,
-            opacity: 0.75
+            backgroundColor: localThemeColors.modalBackdropColor, // Use themed backdrop color
+            opacity: 1 // Color itself has alpha
         },
-
         modal: {
-            backgroundColor: theme.palette.ui01,
-            border: `1px solid ${theme.palette.ui03}`,
-            boxShadow: '0px 4px 25px 4px rgba(20, 20, 20, 0.6)',
-            borderRadius: `${theme.shape.borderRadius}px`,
+            backgroundColor: localThemeColors.backgroundColorLight, // Use themed background
+            border: `1px solid ${localThemeColors.borderColor}`, // Use themed border
+            boxShadow: '0px 12px 35px rgba(0, 0, 0, 0.35)', // Enhanced shadow
+            borderRadius: localThemeColors.borderRadiusLarge, // Use themed border radius
+            color: localThemeColors.textColorPrimary, // Default text color for dialog
             display: 'flex',
             flexDirection: 'column',
             height: 'auto',

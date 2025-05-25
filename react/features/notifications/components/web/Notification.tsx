@@ -37,16 +37,31 @@ interface IProps extends INotificationProps {
  */
 
 
-const useStyles = makeStyles()((theme: Theme) => {
+// Define themeColors based on _variables.scss (hardcoded for now)
+const localThemeColors = {
+    backgroundColorLight: '#252A3A',
+    textColorPrimary: '#FFFFFF',
+    textColorSecondary: '#B0B0CC',
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: '10px',
+    primaryColor: '#7B61FF', // Info
+    hangupRed: '#FF3B30', // Error
+    warningColorOrange: '#FFA500', // Warning
+    successColorGreen: '#28A745', // Success
+    spacingSmall: '8px',
+    spacingMedium: '16px',
+};
+
+const useStyles = makeStyles()((theme: Theme) => { // theme is Jitsi's existing MUI theme, can be used for fallbacks or typography
     return {
         container: {
-            backgroundColor: theme.palette.ui10,
-            padding: '8px 16px 8px 20px',
+            backgroundColor: localThemeColors.backgroundColorLight,
+            padding: localThemeColors.spacingMedium, // Consistent padding
             display: 'flex',
             position: 'relative' as const,
-            borderRadius: `${theme.shape.borderRadius}px`,
-            boxShadow: '0px 6px 20px rgba(0, 0, 0, 0.25)',
-            marginBottom: theme.spacing(2),
+            borderRadius: localThemeColors.borderRadius,
+            boxShadow: '0px 6px 20px rgba(0, 0, 0, 0.3)', // Slightly more pronounced shadow
+            marginBottom: localThemeColors.spacingMedium, // Use themed spacing
 
             '&:last-of-type': {
                 marginBottom: 0
@@ -82,26 +97,25 @@ const useStyles = makeStyles()((theme: Theme) => {
             height: 'calc(100% - 16px)',
             position: 'absolute' as const,
             left: 0,
-            top: '8px',
-            borderRadius: '4px',
+            top: localThemeColors.spacingSmall, // Align with padding
+            borderRadius: `calc(${localThemeColors.borderRadius} / 2)`, // Rounded ribbon ends
 
             '&.normal': {
-                backgroundColor: theme.palette.action01
+                backgroundColor: localThemeColors.primaryColor
             },
 
             '&.error': {
-                backgroundColor: theme.palette.iconError
+                backgroundColor: localThemeColors.hangupRed
             },
 
             '&.success': {
-                backgroundColor: theme.palette.success01
+                backgroundColor: localThemeColors.successColorGreen
             },
 
             '&.warning': {
-                backgroundColor: theme.palette.warning01
+                backgroundColor: localThemeColors.warningColorOrange
             }
         },
-
         content: {
             display: 'flex',
             alignItems: 'flex-start',
@@ -113,31 +127,32 @@ const useStyles = makeStyles()((theme: Theme) => {
         textContainer: {
             display: 'flex',
             flexDirection: 'column' as const,
-            justifyContent: 'space-between',
-            color: theme.palette.text04,
+            justifyContent: 'center', // Better vertical alignment if content is short
+            color: localThemeColors.textColorPrimary, // Default text color for this container
             flex: 1,
-            margin: '0 8px',
+            margin: `0 ${localThemeColors.spacingMedium}`, // Use themed spacing
 
             // maxWidth: 100% minus the icon on left (20px) minus the close icon on the right (20px) minus the margins
-            maxWidth: 'calc(100% - 40px - 16px)',
-            maxHeight: '150px'
+            maxWidth: `calc(100% - 20px - 20px - ${localThemeColors.spacingMedium} - ${localThemeColors.spacingMedium})`,
+            maxHeight: '150px' // Keep existing maxHeight
         },
-
         title: {
-            ...withPixelLineHeight(theme.typography.bodyShortBold)
+            ...withPixelLineHeight(theme.typography.bodyShortBold), // Keep existing typography for now
+            color: localThemeColors.textColorPrimary, // Ensure title is primary text color
+            fontWeight: 600, // Semibold title
+            marginBottom: `calc(${localThemeColors.spacingSmall} / 2)` // Small gap if description follows
         },
-
         description: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...withPixelLineHeight(theme.typography.bodyShortRegular), // Keep existing typography
+            color: localThemeColors.textColorSecondary, // Description is secondary text color
             overflow: 'auto',
             overflowWrap: 'break-word',
             userSelect: 'all',
 
             '&:not(:empty)': {
-                marginTop: theme.spacing(1)
+                marginTop: localThemeColors.spacingSmall // Use themed spacing
             }
         },
-
         actionsContainer: {
             display: 'flex',
             width: '100%',
@@ -151,23 +166,42 @@ const useStyles = makeStyles()((theme: Theme) => {
             border: 0,
             outline: 0,
             backgroundColor: 'transparent',
-            color: theme.palette.action01,
-            ...withPixelLineHeight(theme.typography.bodyShortBold),
-            marginRight: theme.spacing(3),
+            color: localThemeColors.primaryColor, // Actions use primary color for text
+            ...withPixelLineHeight(theme.typography.bodyShortBold), // Keep existing typography
+            fontWeight: 600, // Semibold for actions
+            marginRight: localThemeColors.spacingMedium, // Use themed spacing
             padding: 0,
             cursor: 'pointer',
+            border: 'none', // Ensure no border
+            '&:hover': {
+                // color: lighten(localThemeColors.primaryColor, 0.1) // Optional: slightly lighten text on hover
+                textDecoration: 'underline',
+            },
 
             '&:last-of-type': {
                 marginRight: 0
             },
 
             '&.destructive': {
-                color: theme.palette.textError
+                color: localThemeColors.hangupRed, // Destructive actions use error color
+                // '&:hover': {
+                //    color: lighten(localThemeColors.hangupRed, 0.1)
+                // }
             }
         },
-
-        closeIcon: {
-            cursor: 'pointer'
+        closeIconContainer: { // Container for the close icon button
+            display: 'flex',
+            alignItems: 'flex-start', // Align to top if notification content wraps
+            paddingLeft: localThemeColors.spacingSmall, // Space from text content
+        },
+        closeIcon: { // Applied to the Icon component for the close button
+            cursor: 'pointer',
+            '& svg': {
+                fill: localThemeColors.textColorSecondary, // Default close icon color
+            },
+            '&:hover svg': {
+                fill: localThemeColors.textColorPrimary, // Hover color for close icon
+            }
         }
     };
 });
@@ -189,16 +223,17 @@ const Notification = ({
     titleKey,
     uid
 }: IProps) => {
-    const { classes, cx, theme } = useStyles();
+    const { classes, cx } = useStyles(); // Removed 'theme' as we use localThemeColors now
     const { t } = useTranslation();
     const { unmounting } = useContext(NotificationsTransitionContext);
     const supportUrl = useSelector(getSupportUrl);
 
-    const ICON_COLOR = {
-        error: theme.palette.iconError,
-        normal: theme.palette.action01,
-        success: theme.palette.success01,
-        warning: theme.palette.warning01
+    // Updated ICON_COLOR map to use localThemeColors
+    const ICON_COLOR_MAP = {
+        error: localThemeColors.hangupRed,
+        normal: localThemeColors.primaryColor,
+        success: localThemeColors.successColorGreen,
+        warning: localThemeColors.warningColorOrange
     };
 
     const onDismiss = useCallback(() => {
@@ -323,7 +358,7 @@ const Notification = ({
             <div className = { classes.content }>
                 <div className = { icon }>
                     <Icon
-                        color = { ICON_COLOR[appearance as keyof typeof ICON_COLOR] }
+                        color = { ICON_COLOR_MAP[appearance as keyof typeof ICON_COLOR_MAP] }
                         size = { 20 }
                         src = { getIcon() } />
                 </div>
@@ -333,25 +368,29 @@ const Notification = ({
                     <div className = { classes.actionsContainer }>
                         {mapAppearanceToButtons().map(({ content, onClick, type, testId }) => (
                             <button
-                                className = { cx(classes.action, type) }
+                                className = { cx(classes.action, type === 'destructive' && 'destructive') } // Apply destructive class if type matches
                                 data-testid = { testId }
                                 key = { content }
-                                onClick = { onClick }>
+                                onClick = { onClick }
+                                type = 'button'> {/* Explicitly type button */}
                                 {content}
                             </button>
                         ))}
                     </div>
                 </div>
                 { !disableClosing && (
-                    <Icon
-                        className = { classes.closeIcon }
-                        color = { theme.palette.icon04 }
-                        id = 'close-notification'
-                        onClick = { onDismiss }
-                        size = { 20 }
-                        src = { IconCloseLarge }
-                        tabIndex = { 0 }
-                        testId = { `${titleKey || descriptionKey}-dismiss` } />
+                    <div className = { classes.closeIconContainer }>
+                        <Icon
+                            accessibilityLabel = { t('dialog.close') }
+                            className = { classes.closeIcon }
+                            // color prop for Icon component might not directly take a hex, relies on fill via CSS
+                            id = 'close-notification'
+                            onClick = { onDismiss }
+                            size = { 18 } // Slightly smaller close icon for notifications
+                            src = { IconCloseLarge } // Using the updated large close icon
+                            tabIndex = { 0 }
+                            testId = { `${titleKey || descriptionKey}-dismiss` } />
+                    </div>
                 )}
             </div>
         </div>

@@ -1,7 +1,29 @@
 /**
  * Style variables
  */
-$baseFontFamily: -apple-system, BlinkMacSystemFont, 'open_sanslight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+// Import in head.html: <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+$baseFontFamily: 'Inter', -apple-system, BlinkMacSystemFont, 'open_sanslight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+/**
+ * Theme Colors
+ */
+$primaryColor: #7B61FF;
+$secondaryColor: #C959E0;
+$backgroundColorDark: #1A1E2D;
+$backgroundColorLight: #252A3A;
+$textColorPrimary: #FFFFFF;
+$textColorSecondary: #B0B0CC; // For dimmer text
+$borderColor: rgba(255, 255, 255, 0.1);
+$hangupRed: #FF3B30; // Color for hangup/destructive actions
+
+/**
+ * Spacing variables
+ */
+$spacingSmall: 8px;
+$spacingMedium: 16px;
+$spacingLarge: 24px;
+$spacingExtraLarge: 32px;
 
 /**
  * Size variables.
@@ -13,7 +35,7 @@ $thumbnailsBorder: 2px;
 /**
  * Toolbar
  */
-$newToolbarBackgroundColor: #131519;
+$newToolbarBackgroundColor: $backgroundColorLight;
 $newToolbarSize: 48px;
 $newToolbarSizeMobile: 60px;
 $newToolbarSizeWithPadding: calc(#{$newToolbarSize} + 24px);
@@ -21,12 +43,12 @@ $newToolbarSizeWithPadding: calc(#{$newToolbarSize} + 24px);
 /**
  * Chat
  */
-$chatBackgroundColor: #131519;
+$chatBackgroundColor: $backgroundColorLight;
 
 /**
  * Misc.
  */
-$borderRadius: 4px;
+$borderRadius: 10px;
 $scrollHeight: 7px;
 
 /**
@@ -46,13 +68,13 @@ $filmstripVideosZ: $toolbarZ + 1;
 /**
  * Unsupported browser
  */
-$primaryUnsupportedBrowserButtonBgColor: #0052CC;
-$unsupportedBrowserButtonBgColor: rgba(9, 30, 66, 0.04);
-$unsupportedBrowserTextColor: #4a4a4a;
+$primaryUnsupportedBrowserButtonBgColor: $primaryColor;
+$unsupportedBrowserButtonBgColor: rgba(9, 30, 66, 0.04); // This might need adjustment later based on new background
+$unsupportedBrowserTextColor: #4a4a4a; // This might need adjustment later based on new background
 $unsupportedBrowserTextSmallFontSize: 1rem;
-$unsupportedBrowserTitleColor: #fff;
+$unsupportedBrowserTitleColor: $textColorPrimary;
 $unsupportedBrowserTitleFontSize: 1.5rem;
-$unsupportedDesktopBrowserTextColor: rgba(255, 255, 255, 0.7);
+$unsupportedDesktopBrowserTextColor: $textColorSecondary;
 $unsupportedDesktopBrowserTextFontSize: 1.25rem;
 
 /**
@@ -67,21 +89,21 @@ $welcomePageWatermarkHeight: 32px;
 /**
  * Welcome page variables.
  */
-$welcomePageDescriptionColor: #fff;
+$welcomePageDescriptionColor: $textColorSecondary;
 $welcomePageFontFamily: inherit;
-$welcomePageBackground: none;
-$welcomePageTitleColor: #fff;
+$welcomePageBackground: none; // Potentially update to $backgroundColorDark or $backgroundColorLight
+$welcomePageTitleColor: $textColorPrimary;
 
-$welcomePageHeaderBackground: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../images/welcome-background.png');
+$welcomePageHeaderBackground: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../images/welcome-background.png'); // This background image might clash with the new theme. Keep for now.
 $welcomePageHeaderBackgroundPosition: center;
 $welcomePageHeaderBackgroundRepeat: none;
 $welcomePageHeaderBackgroundSize: cover;
 $welcomePageHeaderPadding: 1rem;
 $welcomePageHeaderTitleMaxWidth: initial;
 $welcomePageHeaderTextAlign: center;
-$welcomePageButtonBg: #0074E0;
-$welcomePageButtonHoverBg: #4687ED;
-$welcomePageButtonFocusOutline: #00225A;
+$welcomePageButtonBg: $primaryColor;
+$welcomePageButtonHoverBg: #917CFF; // Lighter shade of primaryColor
+$welcomePageButtonFocusOutline: darken($primaryColor, 20%);
 
 $welcomePageHeaderContainerMarginTop: 104px;
 $welcomePageHeaderContainerDisplay: flex;

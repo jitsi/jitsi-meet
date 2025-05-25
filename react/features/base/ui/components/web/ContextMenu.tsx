@@ -4,6 +4,8 @@ import { FocusOn } from 'react-focus-on';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
+// Assuming a central theme color definition or define locally
+// import { themeColors } from '../../../../../theme/ColorPalette'; 
 import Drawer from '../../../../toolbox/components/web/Drawer';
 import JitsiPortal from '../../../../toolbox/components/web/JitsiPortal';
 import { showOverflowDrawer } from '../../../../toolbox/functions.web';
@@ -131,25 +133,36 @@ interface IProps {
 
 const MAX_HEIGHT = 400;
 
-const useStyles = makeStyles()(theme => {
+// Define themeColors based on _variables.scss (hardcoded for now)
+const localThemeColors = {
+    backgroundColorLight: '#252A3A',
+    textColorPrimary: '#FFFFFF',
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: '8px', // Slightly smaller for menus than modals
+    spacingSmall: '8px',
+    // Add other colors if needed for items, though item styling is likely in ContextMenuItem.tsx
+};
+
+const useStyles = makeStyles()(theme => { // theme is Jitsi's existing MUI theme
     return {
         contextMenu: {
-            backgroundColor: theme.palette.ui01,
-            border: `1px solid ${theme.palette.ui04}`,
-            borderRadius: `${Number(theme.shape.borderRadius)}px`,
-            boxShadow: '0px 1px 2px rgba(41, 41, 41, 0.25)',
-            color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
-            marginTop: '48px',
+            backgroundColor: localThemeColors.backgroundColorLight,
+            border: `1px solid ${localThemeColors.borderColor}`,
+            borderRadius: localThemeColors.borderRadius,
+            boxShadow: '0px 6px 20px rgba(0, 0, 0, 0.3)',
+            color: localThemeColors.textColorPrimary, // Default text color for items
+            ...withPixelLineHeight(theme.typography.bodyShortRegular), // Keep existing typography for now
+            marginTop: '48px', // This might need adjustment based on where it appears
             position: 'absolute',
-            right: `${participantsPaneTheme.panePadding}px`,
-            top: 0,
-            zIndex: 2,
+            // 'right' and 'top' are often dynamically calculated or set by parent,
+            // but if there's a default, ensure it fits the new design.
+            // right: `${participantsPaneTheme.panePadding}px`, // Keep if still relevant
+            // top: 0, // Keep if still relevant
+            zIndex: 1000, // Ensure menus are above most content (adjust as needed, $toolbarZ is 250)
             maxHeight: `${MAX_HEIGHT}px`,
             overflowY: 'auto',
-            padding: `${theme.spacing(2)} 0`
+            padding: `${localThemeColors.spacingSmall} 0`, // Vertical padding, items will have horizontal
         },
-
         contextMenuHidden: {
             pointerEvents: 'none',
             visibility: 'hidden'

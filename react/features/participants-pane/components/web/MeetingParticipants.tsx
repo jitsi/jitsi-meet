@@ -23,28 +23,54 @@ import { InviteButton } from './InviteButton';
 import MeetingParticipantContextMenu from './MeetingParticipantContextMenu';
 import MeetingParticipantItems from './MeetingParticipantItems';
 
+// Hardcoded theme colors (ideally from a theme context or SCSS variables)
+const themeColors = {
+    textColorPrimary: '#FFFFFF',
+    textColorSecondary: '#B0B0CC',
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColorDark: '#1A1E2D', // For input background
+    spacingMedium: '16px',
+    spacingLarge: '24px',
+    borderRadius: '10px'
+};
+
 const useStyles = makeStyles()(theme => {
     return {
+        container: { // Added a main container for padding
+            padding: `0 ${themeColors.spacingMedium} ${themeColors.spacingMedium}`, // Padding for the whole pane content area
+        },
         headingW: {
-            color: theme.palette.warning02
+            color: theme.palette.warning02 // Keep as is, assuming it's for specific warnings
         },
         heading: {
-            color: theme.palette.text02,
+            color: themeColors.textColorPrimary, // Updated color
             ...withPixelLineHeight(theme.typography.bodyShortBold),
-            marginBottom: theme.spacing(3),
+            marginBottom: themeColors.spacingLarge, // Use defined spacing
 
             [`@media(max-width: ${participantsPaneTheme.MD_BREAKPOINT})`]: {
                 ...withPixelLineHeight(theme.typography.bodyShortBoldLarge)
             }
         },
-
         search: {
-            margin: `${theme.spacing(3)} 0`,
-
+            margin: `${themeColors.spacingLarge} 0`, // Use defined spacing
+            '& .input-control': { // Targeting the inner structure of Input component
+                width: '100% !important' // Ensure it takes full width if not already
+            },
             '& input': {
-                textAlign: 'center',
-                paddingRight: '16px'
+                backgroundColor: themeColors.backgroundColorDark, // Darker background for input
+                color: themeColors.textColorPrimary,
+                border: `1px solid ${themeColors.borderColor}`,
+                borderRadius: `calc(${themeColors.borderRadius} / 2)`, // Slightly less rounded than main border
+                padding: `${themeColors.spacingSmall} ${themeColors.spacingMedium}`, // Consistent padding
+                textAlign: 'left', // Align text to left for standard search input
+                '&::placeholder': {
+                    color: themeColors.textColorSecondary
+                }
             }
+        },
+        // Ensure MeetingParticipantItems has some top margin if search is hidden
+        meetingParticipantItemsContainer: {
+            marginTop: themeColors.spacingMedium 
         }
     };
 });
@@ -106,10 +132,10 @@ function MeetingParticipants({
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
     const _isCurrentRoomRenamable = useSelector(isCurrentRoomRenamable);
 
-    const { classes: styles } = useStyles();
+    const { classes: styles, cx } = useStyles(); // Added cx
 
     return (
-        <>
+        <div className = { styles.container }> {/* Added main container div */}
             <span
                 aria-level = { 1 }
                 className = 'sr-only'
@@ -135,7 +161,7 @@ function MeetingParticipants({
                 onChange = { setSearchString }
                 placeholder = { t('participantsPane.search') }
                 value = { searchString } />
-            <div>
+            <div className={styles.meetingParticipantItemsContainer}>
                 <MeetingParticipantItems
                     isInBreakoutRoom = { isBreakoutRoom }
                     lowerMenu = { lowerMenu }
@@ -160,7 +186,7 @@ function MeetingParticipants({
                 onSelect = { lowerMenu }
                 overflowDrawer = { overflowDrawer }
                 participantID = { raiseContext?.entity } />
-        </>
+        </div>
     );
 }
 

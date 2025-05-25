@@ -138,52 +138,146 @@ interface IProps {
     videoTrack?: Object;
 }
 
+// Hardcoded theme colors (ideally from a theme context or SCSS variables)
+const themeColors = {
+    backgroundColorDark: '#1A1E2D',
+    backgroundColorLight: '#252A3A',
+    textColorPrimary: '#FFFFFF',
+    textColorSecondary: '#B0B0CC',
+    primaryColor: '#7B61FF',
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: '10px',
+    spacingSmall: '8px',
+    spacingMedium: '16px',
+    spacingLarge: '24px',
+    spacingExtraLarge: '32px'
+};
+
 const useStyles = makeStyles()(theme => {
     return {
-        inputContainer: {
-            width: '100%'
+        // Main dashboard layout
+        dashboardLayout: {
+            display: 'flex',
+            flexDirection: 'column',
+            padding: themeColors.spacingLarge,
+            width: '100%',
+            maxWidth: '1200px', // Max width for the dashboard content
+            margin: '0 auto'
         },
 
-        input: {
-            width: '100%',
-            marginBottom: theme.spacing(3),
+        // Profile section
+        profileSection: {
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: themeColors.spacingExtraLarge,
+            backgroundColor: themeColors.backgroundColorLight, // Card background
+            padding: themeColors.spacingMedium,
+            borderRadius: themeColors.borderRadius,
+            boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.1)'
+        },
+        profileAvatar: {
+            marginRight: themeColors.spacingMedium,
+            // Avatar component itself handles size, using default for now
+        },
+        profileName: {
+            ...withPixelLineHeight(theme.typography.h4), // Larger name
+            color: themeColors.textColorPrimary,
+            fontWeight: '600'
+        },
 
-            '& input': {
-                textAlign: 'center'
+        // Dashboard cards container
+        dashboardCardsContainer: {
+            display: 'flex',
+            gap: themeColors.spacingLarge,
+            // On smaller screens, stack them
+            '@media (max-width: 768px)': {
+                flexDirection: 'column'
             }
         },
 
-        avatarContainer: {
+        // Individual card style
+        dashboardCard: {
+            backgroundColor: themeColors.backgroundColorLight,
+            borderRadius: themeColors.borderRadius,
+            padding: themeColors.spacingLarge,
+            boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.1)',
+            flex: 1, // Make cards share space
             display: 'flex',
-            alignItems: 'center',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            minWidth: '300px' // Minimum width for a card
+        },
+        cardTitle: {
+            ...withPixelLineHeight(theme.typography.h6),
+            color: themeColors.textColorPrimary,
+            marginBottom: themeColors.spacingMedium,
+            fontWeight: '600'
         },
 
-        avatar: {
-            margin: `${theme.spacing(2)} auto ${theme.spacing(3)}`
+        // Specific styles for join meeting card content
+        joinMeetingCardContent: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: themeColors.spacingMedium
         },
 
-        avatarName: {
-            ...withPixelLineHeight(theme.typography.bodyShortBoldLarge),
-            color: theme.palette.text01,
-            marginBottom: theme.spacing(5),
-            textAlign: 'center'
+        // Input field styling (for display name)
+        displayNameInput: { // Applied to the Input component's container
+            width: '100%',
+            '& input': {
+                backgroundColor: themeColors.backgroundColorDark, // Darker than card bg
+                color: themeColors.textColorPrimary,
+                border: `1px solid ${themeColors.borderColor}`,
+                borderRadius: `calc(${themeColors.borderRadius} / 1.5)`, // Slightly less rounded
+                padding: `${themeColors.spacingSmall} ${themeColors.spacingMedium}`,
+                fontSize: '1rem',
+                textAlign: 'left', // Default text align
+                '&::placeholder': {
+                    color: themeColors.textColorSecondary
+                }
+            }
+        },
+        inputError: { // For the error message below input
+            color: theme.palette.error01, // Using existing theme error color
+            fontSize: '0.8rem',
+            marginTop: themeColors.spacingSmall
         },
 
-        error: {
+        // ActionButton styling (for Join Meeting button)
+        joinButton: { // Applied to ActionButton component
+            // These styles will be applied to the root element of ActionButton if it accepts a className prop
+            // For more specific styling, internal elements of ActionButton would need to be targeted,
+            // or ActionButton itself would need to be modified/replaced.
+            width: '100%', // Make button full width of its container in the card
+            padding: `${themeColors.spacingMedium} ${themeColors.spacingLarge}`, // Larger padding
+            fontSize: '1.1rem', // Larger font size
+            borderRadius: `calc(${themeColors.borderRadius} / 1.5)`, // Consistent rounding
+            // The ActionButton's 'primary' type should ideally use $primaryColor from the theme.
+            // If not, these would be needed:
+            // backgroundColor: themeColors.primaryColor,
+            // color: themeColors.textColorPrimary,
+            // '&:hover': {
+            //    backgroundColor: darken(themeColors.primaryColor, 10%),
+            // },
+            textTransform: 'none' // Ensure text isn't all caps if default is so
+        },
+
+        // Fallback for existing styles to avoid breaking things not touched yet
+        inputContainer: { // Original class, might not be needed if fully restructured
+            width: '100%'
+        },
+        error: { // Original error style
             backgroundColor: theme.palette.actionDanger,
             color: theme.palette.text01,
             borderRadius: theme.shape.borderRadius,
             width: '100%',
             ...withPixelLineHeight(theme.typography.labelRegular),
             boxSizing: 'border-box',
-            padding: theme.spacing(1),
+            padding: theme.spacing(1), // Keep for now
             textAlign: 'center',
-            marginTop: `-${theme.spacing(2)}`,
-            marginBottom: theme.spacing(3)
+            marginTop: `-${theme.spacing(2)}`, // Keep for now
+            marginBottom: theme.spacing(3) // Keep for now
         },
-
-        dropdownContainer: {
+        dropdownContainer: { // For join options - may remove or simplify
             position: 'relative',
             width: '100%'
         },
@@ -407,80 +501,105 @@ const Prejoin = ({
             showDeviceStatus = { deviceStatusVisible }
             showRecordingWarning = { showRecordingWarning }
             showUnsafeRoomWarning = { showUnsafeRoomWarning }
-            title = { t('prejoin.joinMeeting') }
+            title = { t('prejoin.joinMeeting') } // Title for PreMeetingScreen, may not be visible with new layout
             videoMuted = { !showCameraPreview }
             videoTrack = { videoTrack }>
-            <div
-                className = { classes.inputContainer }
-                data-testid = 'prejoin.screen'>
-                {showDisplayNameField ? (<Input
-                    accessibilityLabel = { t('dialog.enterDisplayName') }
-                    autoComplete = { 'name' }
-                    autoFocus = { true }
-                    className = { classes.input }
-                    error = { showErrorOnField }
-                    id = 'premeeting-name-input'
-                    onChange = { setName }
-                    onKeyPress = { showUnsafeRoomWarning && !unsafeRoomConsent ? undefined : onInputKeyPress }
-                    placeholder = { t('dialog.enterDisplayName') }
-                    readOnly = { readOnlyName }
-                    value = { name } />
-                ) : (
-                    <div className = { classes.avatarContainer }>
+
+            {/* New Dashboard Layout */}
+            <div className = { classes.dashboardLayout } data-testid = 'prejoin.dashboard'>
+
+                {/* Profile Section */}
+                {isDisplayNameVisible && (
+                    <div className = { classes.profileSection }>
                         <Avatar
-                            className = { classes.avatar }
+                            className = { classes.profileAvatar }
                             displayName = { name }
                             participantId = { participantId }
-                            size = { 72 } />
-                        {isDisplayNameVisible && <div className = { classes.avatarName }>{name}</div>}
+                            size = { 60 } /> {/* Slightly larger avatar */}
+                        <div className = { classes.profileName }>{name || t('prejoin.anonymousUser')}</div>
                     </div>
                 )}
 
-                {showErrorOnField && <div
-                    className = { classes.error }
-                    data-testid = 'prejoin.errorMessage'>
-                    <p aria-live = 'polite' >
-                        {t('prejoin.errorMissingName')}
-                    </p>
-                </div>}
+                {/* Dashboard Cards Container */}
+                <div className = { classes.dashboardCardsContainer }>
+                    {/* Join Meeting Card */}
+                    <div className = { classes.dashboardCard }>
+                        <div className = { classes.cardTitle }>{t('prejoin.joinMeetingCardTitle', 'Join or Start a Meeting')}</div>
+                        <div className = { classes.joinMeetingCardContent }>
+                            {showDisplayNameField && (
+                                <Input
+                                    accessibilityLabel = { t('dialog.enterDisplayName') }
+                                    autoComplete = { 'name' }
+                                    autoFocus = { true }
+                                    className = { classes.displayNameInput } // New style
+                                    error = { showErrorOnField }
+                                    id = 'premeeting-name-input'
+                                    onChange = { setName }
+                                    onKeyPress = { showUnsafeRoomWarning && !unsafeRoomConsent ? undefined : onInputKeyPress }
+                                    placeholder = { t('dialog.enterDisplayName') }
+                                    readOnly = { readOnlyName }
+                                    value = { name } />
+                            )}
+                            {showErrorOnField && (
+                                <div className = { classes.inputError } data-testid = 'prejoin.errorMessage'>
+                                    {t('prejoin.errorMissingName')}
+                                </div>
+                            )}
+                            <ActionButton
+                                className = { classes.joinButton } // For potential specific overrides if ActionButton styling is tricky
+                                disabled = { joiningInProgress
+                                    || (showUnsafeRoomWarning && !unsafeRoomConsent)
+                                    || showErrorOnField }
+                                onClick = { onJoinButtonClick }
+                                testId = 'prejoin.joinMeeting'
+                                type = 'primary'>
+                                {t('prejoin.joinMeeting')}
+                            </ActionButton>
+                            {/* Simplified Join Options - TODO: Revisit for better UI for these options */}
+                            {hasExtraJoinButtons && (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
+                                {extraButtonsToRender.map(({ key, label, icon: BtnIcon, onClick: btnOnClick, onKeyPress: btnOnKeyPress }) => (
+                                    <Button
+                                        accessibilityLabel={label}
+                                        disabled = { joiningInProgress || showErrorOnField }
+                                        fullWidth = { true }
+                                        icon={BtnIcon}
+                                        key = { key }
+                                        label={label}
+                                        onClick={btnOnClick}
+                                        onKeyPress={btnOnKeyPress}
+                                        type = { BUTTON_TYPES.TERTIARY } /> // Use tertiary for less emphasis
+                                ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
 
-                <div className = { classes.dropdownContainer }>
-                    <Popover
-                        content = { hasExtraJoinButtons && <div className = { classes.dropdownButtons }>
-                            {extraButtonsToRender.map(({ key, ...rest }) => (
-                                <Button
-                                    disabled = { joiningInProgress || showErrorOnField }
-                                    fullWidth = { true }
-                                    key = { key }
-                                    type = { BUTTON_TYPES.SECONDARY }
-                                    { ...rest } />
-                            ))}
-                        </div> }
-                        onPopoverClose = { onDropdownClose }
-                        position = 'bottom'
-                        trigger = 'click'
-                        visible = { showJoinByPhoneButtons }>
-                        <ActionButton
-                            OptionsIcon = { showJoinByPhoneButtons ? IconArrowUp : IconArrowDown }
-                            ariaDropDownLabel = { t('prejoin.joinWithoutAudio') }
-                            ariaLabel = { t('prejoin.joinMeeting') }
-                            ariaPressed = { showJoinByPhoneButtons }
-                            disabled = { joiningInProgress
-                                || (showUnsafeRoomWarning && !unsafeRoomConsent)
-                                || showErrorOnField }
-                            hasOptions = { hasExtraJoinButtons }
-                            onClick = { onJoinButtonClick }
-                            onOptionsClick = { onOptionsClick }
-                            role = 'button'
-                            tabIndex = { 0 }
-                            testId = 'prejoin.joinMeeting'
-                            type = 'primary'>
-                            {t('prejoin.joinMeeting')}
-                        </ActionButton>
-                    </Popover>
+                    {/* Scheduled Meetings Card (Placeholder) */}
+                    <div className = { classes.dashboardCard }>
+                        <div className = { classes.cardTitle }>{t('prejoin.scheduledMeetingsCardTitle', 'Upcoming Meetings')}</div>
+                        <div>{t('prejoin.scheduledMeetingsPlaceholder', 'Your scheduled meetings will appear here.')}</div>
+                        {/* Placeholder items */}
+                        <ul style={{ listStyle: 'none', padding: 0, marginTop: themeColors.spacingMedium }}>
+                            <li style={{ padding: `${themeColors.spacingSmall} 0`, borderBottom: `1px solid ${themeColors.borderColor}` }}>
+                                {t('prejoin.placeholderMeeting1', 'Team Sync - 10:00 AM')}
+                            </li>
+                            <li style={{ padding: `${themeColors.spacingSmall} 0`, borderBottom: `1px solid ${themeColors.borderColor}` }}>
+                                {t('prejoin.placeholderMeeting2', 'Project Review - 2:00 PM')}
+                            </li>
+                            <li style={{ padding: `${themeColors.spacingSmall} 0`}}>
+                                {t('prejoin.placeholderMeeting3', 'Client Call - 4:30 PM')}
+                            </li>
+                        </ul>
+                    </div>
                 </div>
+
+                {/* TODO: Integrate Device Status/Preview section here if it's not part of PreMeetingScreen controls */}
+                {/* For now, assuming PreMeetingScreen handles the preview and its controls are styled elsewhere or accept global styles */}
+
             </div>
-            {showDialog && (
+
+            {showDialog && ( /* This is for JoinByPhoneDialog, keep it at the Prejoin root level */
                 <JoinByPhoneDialog
                     joinConferenceWithoutAudio = { joinConferenceWithoutAudio }
                     onClose = { closeDialog } />

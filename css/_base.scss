@@ -28,12 +28,28 @@ body {
     margin: 0px;
     width: 100%;
     height: 100%;
-    font-size: 0.75rem;
+    font-family: $baseFontFamily; // Ensure base font family
+    font-size: 1rem; // Base font size for rem calculation (16px default)
     font-weight: 400;
     overflow: hidden;
-    color: #F1F1F1;
-    background: #040404; // should match DEFAULT_BACKGROUND from interface_config
+    color: $textColorPrimary; // Use theme variable
+    background: $backgroundColorDark; // Use theme variable
 }
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: $baseFontFamily;
+    color: $textColorPrimary;
+    margin-top: 0;
+    margin-bottom: $spacingMedium; // Use theme variable
+    font-weight: 600; // Semibold for headings
+}
+
+h1 { font-size: 2.5rem; } // ~40px
+h2 { font-size: 2rem; }   // ~32px
+h3 { font-size: 1.75rem; } // ~28px
+h4 { font-size: 1.5rem; }  // ~24px
+h5 { font-size: 1.25rem; } // ~20px
+h6 { font-size: 1rem; }    // ~16px
 
 /**
  * This will hide the focus indicator if an element receives focus via the mouse,
@@ -45,16 +61,16 @@ body {
 
 .jitsi-icon {
     &-default svg {
-        fill: white;
+        fill: $textColorPrimary; // Use theme variable
     }
 }
 
 .disabled .jitsi-icon svg {
-    fill: #929292;
+    fill: $textColorSecondary; // Use theme variable for disabled state (dimmer)
 }
 
-.jitsi-icon.gray svg {
-    fill: #5E6D7A;
+.jitsi-icon.gray svg { // This class might be used for specific icons that need a neutral color
+    fill: $textColorSecondary; // Use theme variable
     cursor: pointer;
 }
 
@@ -63,13 +79,14 @@ p {
 }
 
 body, input, textarea, keygen, select, button {
-    font-family: $baseFontFamily !important;
+    font-family: $baseFontFamily; // Important removed, should cascade
 }
 
 button, input, select, textarea {
     margin: 0;
     vertical-align: baseline;
-    font-size: 1em;
+    font-size: 1em; // Base font size, specific elements can override
+    font-family: $baseFontFamily; // Ensure all form elements inherit font
 }
 
 button, select, input[type="button"],
@@ -79,27 +96,58 @@ input[type="reset"], input[type="submit"] {
 
 textarea {
     word-wrap: break-word;
-    resize: none;
+    resize: none; // Consider allowing vertical resize: resize: vertical;
     line-height: 1.5em;
-}
-
-input[type='text'], input[type='password'], textarea {
-    outline: none; /* removes the default outline */
-    resize: none; /* prevents the user-resizing, adjust to taste */
-}
-
-button {
-    color: #FFF;
-    background-color: #44A5FF;
-    border-radius: $borderRadius;
-
-    &.no-icon {
-        padding: 0 1em;
+    padding: $spacingSmall $spacingMedium; // Default padding
+    border: 1px solid $borderColor;
+    border-radius: calc($borderRadius / 1.5); // e.g., 7px
+    background-color: $backgroundColorDark; // Default input background
+    color: $textColorPrimary;
+    &::placeholder {
+        color: $textColorSecondary;
     }
 }
 
-button,
-form {
+input[type='text'], input[type='password'] { // Specific input types
+    outline: none;
+    resize: none;
+    padding: $spacingSmall $spacingMedium;
+    border: 1px solid $borderColor;
+    border-radius: calc($borderRadius / 1.5);
+    background-color: $backgroundColorDark;
+    color: $textColorPrimary;
+    &::placeholder {
+        color: $textColorSecondary;
+    }
+}
+
+// General button styling - to be overridden by specific classes
+button {
+    color: $textColorPrimary;
+    background-color: $primaryColor;
+    border-radius: $borderRadius; // Use theme variable (10px)
+    padding: $spacingSmall $spacingMedium; // Default padding
+    border: none;
+    font-weight: 600; // Semibold for buttons
+
+    &:hover {
+        background-color: lighten($primaryColor, 5%); // Consistent hover effect
+    }
+
+    &.no-icon { // This class seems to be for text-only buttons
+        padding: $spacingSmall $spacingMedium; // Ensure consistent padding
+    }
+
+    &:disabled, &[disabled] { // Styling for disabled buttons
+        background-color: darken($backgroundColorLight, 10%); // A muted background
+        color: $textColorSecondary;
+        cursor: not-allowed;
+        // Consider box-shadow: none; if default buttons have shadow
+    }
+}
+
+button, // display: block was here, removing it for more flexible button usage inline
+form { // form display: block is fine
     display: block;
 }
 

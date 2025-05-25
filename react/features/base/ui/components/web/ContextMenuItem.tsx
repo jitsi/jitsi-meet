@@ -1,6 +1,7 @@
 import React, { ReactNode, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
+import { darken, lighten } from '@mui/material/styles'; // For hover/active states
 
 import { showOverflowDrawer } from '../../../../toolbox/functions.web';
 import Icon from '../../../icons/components/Icon';
@@ -108,78 +109,111 @@ export interface IProps {
     textClassName?: string;
 }
 
-const useStyles = makeStyles()(theme => {
+// Define themeColors based on _variables.scss (hardcoded for now)
+const localThemeColors = {
+    backgroundColorLight: '#252A3A',
+    backgroundColorDark: '#1A1E2D', // For hover or selected states
+    textColorPrimary: '#FFFFFF',
+    textColorSecondary: '#B0B0CC',
+    primaryColor: '#7B61FF',
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: '6px', // Slightly less than main borderRadius for menu items
+    hoverDarkSubtle: 'rgba(255, 255, 255, 0.05)', // For tertiary hover
+    focusOutline: '#5343D0', // A derivative of primaryColor for focus, or use primaryColor itself
+
+    // Spacing
+    spacingUnit: 8,
+    get spacingSmall() { return `${this.spacingUnit}px`; }, // 8px
+    get spacingMedium() { return `${this.spacingUnit * 2}px`; }, // 16px
+};
+
+const useStyles = makeStyles()(theme => { // theme is Jitsi's existing MUI theme
     return {
         contextMenuItem: {
             alignItems: 'center',
             cursor: 'pointer',
             display: 'flex',
-            minHeight: '40px',
-            padding: '10px 16px',
+            minHeight: '36px', // Slightly reduced minHeight
+            padding: `${localThemeColors.spacingSmall} ${localThemeColors.spacingMedium}`, // 8px 16px
             boxSizing: 'border-box',
+            color: localThemeColors.textColorPrimary, // Default text color
+            backgroundColor: 'transparent', // Explicitly transparent
+            borderRadius: localThemeColors.borderRadius, // Rounded corners for items
+            margin: `0 ${localThemeColors.spacingSmall}`, // Add horizontal margin for spacing from container edge
+            marginBottom: `calc(${localThemeColors.spacingSmall} / 2)`, // Small gap between items
 
-            '& > *:not(:last-child)': {
-                marginRight: theme.spacing(3)
+            '& > *:not(:last-child)': { // Spacing between icon and text
+                marginRight: localThemeColors.spacingMedium, // 16px
             },
 
             '&:hover': {
-                backgroundColor: theme.palette.ui02
+                backgroundColor: localThemeColors.hoverDarkSubtle, // Use subtle hover
+                color: localThemeColors.textColorPrimary, // Ensure text color remains primary on hover
             },
 
-            '&:active': {
-                backgroundColor: theme.palette.ui03
+            '&:active': { // Keep an active state, slightly darker than hover
+                backgroundColor: darken(localThemeColors.hoverDarkSubtle, 0.1),
             },
 
-            '&.focus-visible': {
-                boxShadow: `inset 0 0 0 2px ${theme.palette.action01Hover}`
+            '&.focus-visible': { // Themed focus state
+                outline: 'none', // Remove default outline
+                boxShadow: `0 0 0 2px ${localThemeColors.focusOutline}`, // Themed outline
+                backgroundColor: localThemeColors.hoverDarkSubtle, // Consistent with hover
             }
         },
 
-        selected: {
-            borderLeft: `3px solid ${theme.palette.action01Hover}`,
-            paddingLeft: '13px',
-            backgroundColor: theme.palette.ui02
+        selected: { // Style for selected menu item
+            backgroundColor: localThemeColors.primaryColor, // Use primary color for selection
+            color: localThemeColors.textColorPrimary,
+            // borderLeft: `3px solid ${localThemeColors.primaryColor}`, // Alternative selection style (like old one)
+            // paddingLeft: '13px', // If using borderLeft
+            '&:hover': { // Hover on selected item
+                backgroundColor: lighten(localThemeColors.primaryColor, 0.1),
+            },
+            // Remove left border, use background for selection indication
+            borderLeft: 'none',
+            paddingLeft: localThemeColors.spacingMedium, // Restore default padding
         },
 
         contextMenuItemDisabled: {
-            pointerEvents: 'none'
+            pointerEvents: 'none',
+            // Text and icon color will be handled by specific classes below
         },
 
-        contextMenuItemIconDisabled: {
+        contextMenuItemIcon: { // Default icon styling
+            display: 'flex', // Ensure icon is flex item for alignment
+            alignItems: 'center',
             '& svg': {
-                fill: `${theme.palette.text03} !important`
+                fill: 'currentColor', // Inherit color from parent (text color)
+                // Size is handled by Icon component's size prop (20px)
+            }
+        },
+        contextMenuItemIconDisabled: { // Disabled icon styling
+            '& svg': {
+                fill: `${localThemeColors.textColorSecondary} !important`, // Ensure disabled color
             }
         },
 
-        contextMenuItemLabelDisabled: {
-            color: theme.palette.text03,
-
+        text: { // Default text styling
+            ...withPixelLineHeight(theme.typography.bodyShortRegular), // Keep existing typography for now
+            color: 'inherit', // Inherit color (textColorPrimary by default)
+            flexGrow: 1, // Allow text to take available space
+            overflow: 'hidden', // Needed for TextWithOverflow
+        },
+        contextMenuItemLabelDisabled: { // Disabled text styling
+            color: `${localThemeColors.textColorSecondary} !important`,
             '&:hover': {
-                background: 'none'
-            },
-
-            '& svg': {
-                fill: theme.palette.text03
+                background: 'none', // No hover effect on text when disabled
             }
         },
 
+        // Drawer specific styles (keep for now, review if drawers are used with this theme)
         contextMenuItemDrawer: {
-            padding: '13px 16px'
+            padding: '13px 16px', // Existing drawer padding
+            // Ensure drawer items also look good with new theme if they differ
         },
-
-        contextMenuItemIcon: {
-            '& svg': {
-                fill: theme.palette.icon01
-            }
-        },
-
-        text: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
-            color: theme.palette.text01
-        },
-
         drawerText: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
+            ...withPixelLineHeight(theme.typography.bodyShortRegularLarge) // Existing drawer text
         }
     };
 });

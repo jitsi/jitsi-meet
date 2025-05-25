@@ -1,0 +1,53 @@
+// Import variables if needed, though they should be globally available
+@import 'variables'; // Ensure variables are imported
+
+// Define a placeholder for spacing if not globally available
+// TODO: Replace with a global spacing variable if available, e.g., $spacingMedium from _variables.scss
+// $spacingMedium: 20px; // Removed local override, will use global $spacingMedium (16px)
+
+#videoconference_page {
+  display: flex;
+  height: 100vh; // Or appropriate height
+  width: 100%;
+  overflow: hidden; // Prevent scrollbars from main layout
+}
+
+.left-sidebar-panel {
+  width: 280px; // Example width
+  background-color: $backgroundColorLight; // Use new theme variable
+  padding: $spacingMedium;
+  height: 100%;
+  color: $textColorPrimary;
+  flex-shrink: 0; // Prevent shrinking
+  // border-right: 1px solid $borderColor; // Uncomment if design requires
+}
+
+.main-content-area {
+  flex-grow: 1; // Takes up remaining space
+  height: 100%;
+  display: flex;
+  flex-direction: column; // To stack video and controls
+  position: relative; // For positioning elements like Toolbox within it
+  background-color: $backgroundColorDark; // Use new theme variable
+}
+
+.right-sidebar-panel {
+  width: 320px; // Example width
+  background-color: $backgroundColorLight; // Use new theme variable
+  padding: $spacingMedium;
+  height: 100%;
+  color: $textColorPrimary;
+  flex-shrink: 0; // Prevent shrinking
+  // border-left: 1px solid $borderColor; // Uncomment if design requires
+}
+
+// Ensure LargeVideo fills its container in the main content area
+#videospace {
+    flex-grow: 1;
+    position: relative; // Keep this if it's important for VideoLayout
+    // any other specific styles for videospace might need adjustment
+}
+
+// Initially hide filmstrip and participants pane if they are not yet placed
+// .filmstrip { display: none !important; }
+// .participants-pane-container { display: none !important; }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
+import { darken, lighten } from '@mui/material/styles'; // For hover/active states
 
 import Icon from '../../../icons/components/Icon';
 import { withPixelLineHeight } from '../../../styles/functions.web';
@@ -46,129 +47,145 @@ interface IProps extends IButtonProps {
     testId?: string;
 }
 
-const useStyles = makeStyles()(theme => {
+// Define themeColors based on _variables.scss (hardcoded for now)
+const localThemeColors = {
+    primaryColor: '#7B61FF',
+    backgroundColorLight: '#252A3A',
+    backgroundColorDark: '#1A1E2D', // For secondary button variant or hover states
+    textColorPrimary: '#FFFFFF',
+    textColorSecondary: '#B0B0CC',
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: '10px',
+    disabledColor: '#4A4E5E', // A darker, more desaturated version of backgroundColorLight
+    hangupRed: '#FF3B30', // For destructive actions
+    hoverDarkSubtle: 'rgba(255, 255, 255, 0.05)', // For tertiary hover
+
+    // Spacing (using existing theme.spacing for consistency if possible, or define here)
+    spacingUnit: 8, // Assuming theme.spacing(1) = 8px
+    get spacingSmall() { return `${this.spacingUnit}px`; }, // 8px
+    get spacingMedium() { return `${this.spacingUnit * 2}px`; }, // 16px
+    get spacingLarge() { return `${this.spacingUnit * 3}px`; } // 24px
+};
+
+const useStyles = makeStyles()(theme => { // theme is Jitsi's existing MUI theme
     return {
-        button: {
-            backgroundColor: theme.palette.action01,
-            color: theme.palette.text01,
-            borderRadius: theme.shape.borderRadius,
-            padding: '10px 16px',
+        button: { // Base style for all buttons
+            fontFamily: '"Inter", sans-serif', // Ensure $baseFontFamily
+            borderRadius: localThemeColors.borderRadius,
+            padding: `${localThemeColors.spacingSmall} ${localThemeColors.spacingMedium}`, // Default padding: 8px 16px
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            border: 0,
-            ...withPixelLineHeight(theme.typography.bodyShortBold),
-            transition: 'background .2s',
+            border: 'none', // All buttons are borderless by default unless specified by type
+            ...withPixelLineHeight(theme.typography.bodyShortBold), // Existing typography for boldness
+            fontWeight: 600, // Explicit semibold
+            transition: 'background-color 0.2s ease-out, color 0.2s ease-out, border-color 0.2s ease-out',
             cursor: 'pointer',
+            textTransform: 'none', // Ensure buttons don't default to uppercase
 
-            '&:hover': {
-                backgroundColor: theme.palette.action01Hover
-            },
-
-            '&:active': {
-                backgroundColor: theme.palette.action01Active
-            },
-
-            '&.focus-visible': {
+            '&.focus-visible': { // Keep existing focus style for accessibility
                 outline: 0,
-                boxShadow: `0px 0px 0px 2px ${theme.palette.focus01}`
+                boxShadow: `0px 0px 0px 2px ${theme.palette.focus01}` // Use existing focus color from theme
             },
 
-            '& div > svg': {
-                fill: theme.palette.icon01
+            // Default icon color within buttons
+            '& div > svg, & svg': { // Target Icon component and direct SVGs
+                fill: 'currentColor', // Icons inherit text color by default
             }
         },
 
-        primary: {},
-
-        secondary: {
-            backgroundColor: theme.palette.action02,
-            color: theme.palette.text04,
-
-            '&:hover': {
-                backgroundColor: theme.palette.action02Hover
+        primary: { // Primary button style
+            backgroundColor: localThemeColors.primaryColor,
+            color: localThemeColors.textColorPrimary,
+            '&:hover:not(.disabled)': {
+                backgroundColor: lighten(localThemeColors.primaryColor, 0.1)
             },
-
-            '&:active': {
-                backgroundColor: theme.palette.action02Active
-            },
-
-            '& div > svg': {
-                fill: theme.palette.icon04
+            '&:active:not(.disabled)': {
+                backgroundColor: darken(localThemeColors.primaryColor, 0.1)
             }
         },
 
-        tertiary: {
-            backgroundColor: theme.palette.action03,
-
-            '&:hover': {
-                backgroundColor: theme.palette.action03Hover
+        secondary: { // Secondary button style
+            backgroundColor: localThemeColors.backgroundColorLight,
+            color: localThemeColors.textColorPrimary,
+            border: `1px solid ${localThemeColors.borderColor}`,
+            '&:hover:not(.disabled)': {
+                backgroundColor: lighten(localThemeColors.backgroundColorLight, 0.05),
+                borderColor: lighten(localThemeColors.borderColor, 0.2)
             },
-
-            '&:active': {
-                backgroundColor: theme.palette.action03Active
+            '&:active:not(.disabled)': {
+                backgroundColor: darken(localThemeColors.backgroundColorLight, 0.05)
             }
         },
 
-        destructive: {
-            backgroundColor: theme.palette.actionDanger,
-
-            '&:hover': {
-                backgroundColor: theme.palette.actionDangerHover
+        tertiary: { // Tertiary / Text button style
+            backgroundColor: 'transparent',
+            color: localThemeColors.textColorPrimary, // Or primaryColor for an accent text button
+            '&:hover:not(.disabled)': {
+                backgroundColor: localThemeColors.hoverDarkSubtle
             },
-
-            '&:active': {
-                backgroundColor: theme.palette.actionDangerActive
+            '&:active:not(.disabled)': {
+                backgroundColor: darken(localThemeColors.hoverDarkSubtle, 0.05) // Slightly darker subtle hover
             }
         },
 
-        disabled: {
-            backgroundColor: theme.palette.disabled01,
-            color: theme.palette.text03,
-
-            '&:hover': {
-                backgroundColor: theme.palette.disabled01,
-                color: theme.palette.text03
+        destructive: { // Destructive action button style
+            backgroundColor: localThemeColors.hangupRed,
+            color: localThemeColors.textColorPrimary,
+            '&:hover:not(.disabled)': {
+                backgroundColor: lighten(localThemeColors.hangupRed, 0.1)
             },
-
-            '&:active': {
-                backgroundColor: theme.palette.disabled01,
-                color: theme.palette.text03
-            },
-
-            '& div > svg': {
-                fill: theme.palette.icon03
+            '&:active:not(.disabled)': {
+                backgroundColor: darken(localThemeColors.hangupRed, 0.1)
             }
         },
 
-        iconButton: {
-            padding: theme.spacing(2)
+        disabled: { // Disabled state for all button types
+            backgroundColor: localThemeColors.disabledColor,
+            color: localThemeColors.textColorSecondary,
+            cursor: 'not-allowed',
+            border: 'none', // Ensure no border on disabled, even if type usually has one
+            '&:hover': { // Override hover for disabled
+                backgroundColor: localThemeColors.disabledColor,
+                color: localThemeColors.textColorSecondary,
+            },
+            '&:active': { // Override active for disabled
+                backgroundColor: localThemeColors.disabledColor,
+                color: localThemeColors.textColorSecondary,
+            }
         },
 
-        textWithIcon: {
-            marginLeft: theme.spacing(2)
-        },
-
+        // Size variations
         small: {
-            padding: '8px 16px',
-            ...withPixelLineHeight(theme.typography.labelBold),
-
-            '&.iconButton': {
-                padding: theme.spacing(1)
+            padding: `calc(${localThemeColors.spacingSmall} / 2) ${localThemeColors.spacingSmall}`, // 4px 8px
+            ...withPixelLineHeight(theme.typography.labelBold), // Existing typography for small
+            '&.iconButton': { // If it's an icon-only button
+                padding: `calc(${localThemeColors.spacingSmall} / 2)` // 4px
             }
         },
-
-        medium: {},
-
+        medium: {
+            // Default padding is medium: 8px 16px
+            '&.iconButton': {
+                padding: localThemeColors.spacingSmall // 8px
+            }
+        },
         large: {
-            padding: '13px 16px',
-            ...withPixelLineHeight(theme.typography.bodyShortBoldLarge),
-
+            padding: `${localThemeColors.spacingMedium} ${localThemeColors.spacingLarge}`, // 16px 24px
+            ...withPixelLineHeight(theme.typography.bodyShortBoldLarge), // Existing typography for large
             '&.iconButton': {
-                padding: '12px'
+                padding: localThemeColors.spacingMedium // 16px
             }
         },
 
+        // Icon specific styles
+        iconButton: { // Base style for icon-only buttons (applied if no label)
+            // Size-specific paddings handle this
+        },
+        textWithIcon: { // Space between icon and text
+            marginLeft: localThemeColors.spacingSmall // 8px
+        },
+
+        // Full width button
         fullWidth: {
             width: '100%'
         }

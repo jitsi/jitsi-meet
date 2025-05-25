@@ -1,0 +1,103 @@
+// Import variables to ensure global variables are used.
+@import 'variables';
+
+// Local variable definitions for spacing and hangupRed are removed.
+// Global $spacingMedium (16px), $spacingSmall (8px), and $hangupRed (#FF3B30) from _variables.scss will be used.
+
+#new-toolbox.dribbble-redesign-toolbar {
+    // Styling for the main toolbar container itself (the one that gets 'visible' class)
+    // This element is often positioned, so let's ensure it doesn't conflict with the new layout
+    // For the Dribbble design, the toolbar appears to be an overlay at the bottom center of the main content area.
+
+    // Remove default Jitsi positioning/sizing for the main #new-toolbox if it interferes.
+    // The .toolbox-content-wrapper will be the visible, styled bar.
+    all: unset; // Reset most browser styles for this specific element to avoid conflicts
+    display: block; // Or flex, depending on how visibility is handled
+    position: absolute; // Positioned within main-content-area
+    bottom: $spacingMedium;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: $toolbarZ + 5; // Ensure it's above video, below popups that need to be higher
+
+    // Make sure it's visible when the 'visible' class is applied by Jitsi logic
+    &.visible {
+        // display: block; // or flex
+        opacity: 1;
+        visibility: visible;
+    }
+
+    // The following styles are for the actual visible bar, which is a child
+    .toolbox-content-wrapper.dribbble-redesign-toolbar-wrapper {
+        background-color: $backgroundColorLight; // New theme variable
+        padding: $spacingSmall $spacingMedium;
+        border-radius: 40px; // More rounded for pill shape
+        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.25); // Enhanced shadow from design
+        display: flex;
+        align-items: center;
+        // transition for smooth appearance if Jitsi adds/removes this element or changes visibility
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .toolbox-content-items.dribbble-redesign-toolbar-items {
+        display: flex;
+        align-items: center;
+        gap: $spacingSmall; // Gap between buttons
+    }
+
+    // Styling for individual buttons will be in their respective component JSS or a shared button style file.
+    // However, we can set some defaults here if needed.
+    .toolbox-button {
+        // Basic reset for default button styling if necessary
+        // Ensure Jitsi's default .toolbox-button styles don't override our new designs.
+        // The JSS-styled buttons (mic, cam, screenshare) get specific classes.
+        // The HangupButton gets .dribbble-hangup-button.
+        &.dribbble-hangup-button {
+            background-color: $hangupRed;
+            border-radius: 50%; // Ensuring circular shape
+            width: 44px;        // Consistent with JSS styled buttons
+            height: 44px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 4px;      // Consistent with JSS styled buttons
+            border: none;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15); // Consistent
+
+            .jitsi-icon svg {
+                fill: $textColorPrimary; // White icon
+                width: 24px;
+                height: 24px;
+            }
+
+            &:hover {
+                background-color: darken($hangupRed, 8%);
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); // Consistent
+            }
+
+            &.disabled, &:disabled { // Ensure disabled state is handled
+                background-color: lighten($hangupRed, 25%); // Much lighter red or grey
+                cursor: not-allowed;
+                box-shadow: none;
+
+                .jitsi-icon svg {
+                    fill: $textColorPrimary + '99'; // Dimmer white icon
+                }
+            }
+        }
+    }
+}
+
+// Adjustments for when the toolbox is shifted up (e.g., chat open)
+#new-toolbox.dribbble-redesign-toolbar.shift-up {
+    // transform: translate(-50%, -60px); // Example shift, adjust as needed
+    // This might need to be more dynamic based on the height of the element causing the shift
+}
+
+// Ensure the hangup menu (if it becomes part of this bar) is styled appropriately
+.jitsi-popover-wrapper {
+    .hangup-menu {
+        // Styles for hangup menu if it's used within this new toolbar context
+        // May need to adjust its positioning relative to the new toolbar
+    }
+}

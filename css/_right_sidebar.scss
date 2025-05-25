@@ -1,0 +1,54 @@
+// css/_right_sidebar.scss
+@import 'variables'; // Ensure variables are available
+
+.right-sidebar-panel {
+  display: flex;
+  flex-direction: column; // To stack tabs and content
+  overflow: hidden; // Content should scroll internally
+
+  .right-sidebar-tabs {
+    display: flex;
+    border-bottom: 1px solid $borderColor; // Use theme variable
+    flex-shrink: 0;
+
+    button.tab-button {
+      padding: $spacingSmall $spacingMedium;
+      background-color: transparent;
+      color: $textColorSecondary;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem; // Adjust as needed
+      flex-grow: 1; // Make tabs share space
+
+      &.active {
+        color: $textColorPrimary;
+        border-bottom: 2px solid $primaryColor; // Active indicator
+        font-weight: bold;
+      }
+
+      &:hover:not(.active) {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+    }
+  }
+
+  .right-sidebar-content {
+    flex-grow: 1;
+    overflow-y: auto; // Allow content to scroll
+    position: relative; // For absolutely positioned children if any
+  }
+}
+
+// Styling for Chat and ParticipantsPane when inside the sidebar
+#sideToolbarContainer, // Chat component's main container
+#participants-pane {  // ParticipantsPane's main container
+  width: 100% !important; // Override existing width
+  height: 100% !important; // Override existing height
+  position: static !important; // Override fixed/absolute positioning
+  background-color: transparent !important; // Let sidebar background show
+  box-shadow: none !important; // Remove their own shadows
+  border: none !important; // Remove their own borders
+
+  // Adjust internal padding if necessary, or let their own padding work
+  // .chat-panel, .participants-pane-container might need padding adjustments.
+}

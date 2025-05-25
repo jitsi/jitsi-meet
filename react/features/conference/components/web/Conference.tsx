@@ -1,5 +1,5 @@
 import { throttle } from 'lodash-es';
-import React from 'react';
+import React, { useState } from 'react'; // Added useState
 import { WithTranslation } from 'react-i18next';
 import { connect as reactReduxConnect } from 'react-redux';
 
@@ -125,7 +125,11 @@ function shouldShowPrejoin({ _showLobby, _showPrejoin, _showVisitorsQueue }: IPr
 /**
  * The conference page of the Web application.
  */
-class Conference extends AbstractConference<IProps, any> {
+
+// Define a new type for the sidebar tab state
+type RightSidebarTabType = 'chat' | 'participants' | null;
+
+class Conference extends AbstractConference<IProps, { activeRightSidebarTab: RightSidebarTabType }> {
     _originalOnMouseMove: Function;
     _originalOnShowToolbar: Function;
 
@@ -137,6 +141,11 @@ class Conference extends AbstractConference<IProps, any> {
      */
     constructor(props: IProps) {
         super(props);
+
+        // Initialize state for the active right sidebar tab
+        this.state = {
+            activeRightSidebarTab: null // Initially no tab is active or default to one if always shown
+        };
 
         const { _mouseMoveCallbackInterval } = props;
 
@@ -226,8 +235,38 @@ class Conference extends AbstractConference<IProps, any> {
             _showLobby,
             _showPrejoin,
             _showVisitorsQueue,
+            _displayChat, // from AbstractConference mapStateToProps
+            _isParticipantsPaneVisible, // from AbstractConference mapStateToProps
             t
         } = this.props;
+
+        // @ts-ignore
+        const { activeRightSidebarTab } = this.state;
+
+        // Determine initial active tab if none is set but one of the panes is open
+        // This logic helps to show a tab if a pane was opened by default or by other means
+        let currentActiveTab = activeRightSidebarTab;
+        if (currentActiveTab === null) {
+            if (_displayChat) {
+                currentActiveTab = 'chat';
+            } else if (_isParticipantsPaneVisible) {
+                currentActiveTab = 'participants';
+            }
+        }
+
+
+        const setActiveRightSidebarTab = (tab: RightSidebarTabType) => {
+            // If clicking the current active tab that is already open, toggle it off (close sidebar)
+            // Otherwise, switch to the new tab
+            // @ts-ignore
+            this.setState({ activeRightSidebarTab: this.state.activeRightSidebarTab === tab ? null : tab });
+        };
+
+
+        // Show right sidebar only if a tab is selected and its content is available
+        const isRightSidebarVisible = currentActiveTab === 'chat' && _displayChat
+                                   || currentActiveTab === 'participants' && _isParticipantsPaneVisible;
+
 
         return (
             <div
@@ -236,52 +275,88 @@ class Conference extends AbstractConference<IProps, any> {
                 onMouseLeave = { this._onMouseLeave }
                 onMouseMove = { this._onMouseMove }
                 ref = { this._setBackground }>
-                <Chat />
+                {/* <Chat /> {/* Moved to sidebar */}
                 <div
                     className = { _layoutClassName }
                     id = 'videoconference_page'
                     onMouseMove = { isMobileBrowser() ? undefined : this._onShowToolbar }>
-                    { _showPrejoin || _showLobby || <ConferenceInfo /> }
-                    <Notice />
-                    <div
-                        id = 'videospace'
-                        onTouchStart = { this._onVideospaceTouchStart }>
-                        <LargeVideo />
-                        {
-                            _showPrejoin || _showLobby || (<>
-                                <StageFilmstrip />
-                                <ScreenshareFilmstrip />
-                                <MainFilmstrip />
-                            </>)
+
+                    {/* Three-column layout */}
+                    <div className = 'left-sidebar-panel'>
+                        {/* Placeholder for Left Sidebar Content */}
+                        Left Sidebar
+                    </div>
+
+                    <div className = 'main-content-area'>
+                        { _showPrejoin || _showLobby || <ConferenceInfo /> }
+                        <Notice />
+                        <div
+                            id = 'videospace'
+                            onTouchStart = { this._onVideospaceTouchStart }>
+                            <LargeVideo />
+                            {
+                                _showPrejoin || _showLobby || (<>
+                                    {/* <StageFilmstrip /> */}
+                                    {/* <ScreenshareFilmstrip /> */}
+                                    {/* <MainFilmstrip /> */}
+                                </>)
+                            }
+                        </div>
+
+                        { _showPrejoin || _showLobby || (
+                            <>
+                                <span
+                                    aria-level = { 1 }
+                                    className = 'sr-only'
+                                    role = 'heading'>
+                                    { t('toolbar.accessibilityLabel.heading') }
+                                </span>
+                                <Toolbox />
+                            </>
+                        )}
+
+                        {/* Notifications should ideally be part of the main content or overlay appropriately */}
+                        {_notificationsVisible && !_isAnyOverlayVisible && (_overflowDrawer
+                            ? <JitsiPortal className = 'notification-portal'>
+                                {this.renderNotificationsContainer({ portal: true })}
+                            </JitsiPortal>
+                            : this.renderNotificationsContainer())
                         }
                     </div>
 
-                    { _showPrejoin || _showLobby || (
-                        <>
-                            <span
-                                aria-level = { 1 }
-                                className = 'sr-only'
-                                role = 'heading'>
-                                { t('toolbar.accessibilityLabel.heading') }
-                            </span>
-                            <Toolbox />
-                        </>
+                    {isRightSidebarVisible && (
+                        <div className = 'right-sidebar-panel'>
+                            <div className = 'right-sidebar-tabs'>
+                                <button
+                                    aria-pressed = { currentActiveTab === 'chat' }
+                                    className = { `tab-button ${currentActiveTab === 'chat' ? 'active' : ''}` }
+                                    onClick = { () => setActiveRightSidebarTab('chat') }
+                                    type = 'button'>
+                                    {t('chat.title')}
+                                </button>
+                                <button
+                                    aria-pressed = { currentActiveTab === 'participants' }
+                                    className = { `tab-button ${currentActiveTab === 'participants' ? 'active' : ''}` }
+                                    onClick = { () => setActiveRightSidebarTab('participants') }
+                                    type = 'button'>
+                                    {t('participantsPane.title')}
+                                </button>
+                            </div>
+                            <div className = 'right-sidebar-content'>
+                                {currentActiveTab === 'chat' && _displayChat && <Chat />}
+                                {currentActiveTab === 'participants' && _isParticipantsPaneVisible && <ParticipantsPane />}
+                            </div>
+                        </div>
                     )}
 
-                    {_notificationsVisible && !_isAnyOverlayVisible && (_overflowDrawer
-                        ? <JitsiPortal className = 'notification-portal'>
-                            {this.renderNotificationsContainer({ portal: true })}
-                        </JitsiPortal>
-                        : this.renderNotificationsContainer())
-                    }
 
+                    {/* Overlays and full-page components remain outside the 3-column structure */}
                     <CalleeInfoContainer />
-
                     { shouldShowPrejoin(this.props) && <Prejoin />}
                     { (_showLobby && !_showVisitorsQueue) && <LobbyScreen />}
                     { _showVisitorsQueue && <VisitorsQueue />}
                 </div>
-                <ParticipantsPane />
+                {/* <ParticipantsPane /> {/* Moved to sidebar */}
                 <ReactionAnimations />
             </div>
         );

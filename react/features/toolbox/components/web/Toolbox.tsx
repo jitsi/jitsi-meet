@@ -56,7 +56,7 @@ const useStyles = makeStyles()(() => {
             marginBottom: '8px'
         }
     };
-});
+}, { name: 'Toolbox' });
 
 /**
  * A component that renders the main toolbar.
@@ -224,7 +224,7 @@ export default function Toolbox({
     const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
     const containerClassName = `toolbox-content${isMobile || isNarrowLayout ? ' toolbox-content-mobile' : ''}`;
 
-    const { mainMenuButtons, overflowMenuButtons } = getVisibleButtons({
+    let { mainMenuButtons, overflowMenuButtons } = getVisibleButtons({
         allButtons,
         buttonsWithNotifyClick,
         toolbarButtons: toolbarButtonsToUse,
@@ -232,6 +232,11 @@ export default function Toolbox({
         jwtDisabledButtons,
         mainToolbarButtonsThresholds
     });
+
+    // Dribbble Redesign: Filter for core buttons
+    const coreButtonKeys = ['microphone', 'camera', 'desktop'];
+    mainMenuButtons = mainMenuButtons.filter(button => coreButtonKeys.includes(button.key));
+
     const raiseHandInOverflowMenu = overflowMenuButtons.some(({ key }) => key === 'raisehand');
     const showReactionsInOverflowMenu = _shouldDisplayReactionsButtons
         && (
@@ -241,11 +246,11 @@ export default function Toolbox({
 
     return (
         <div
-            className = { cx(rootClassNames, shiftUp && 'shift-up') }
+            className = { cx(rootClassNames, shiftUp && 'shift-up', 'dribbble-redesign-toolbar') }
             id = 'new-toolbox'>
-            <div className = { containerClassName }>
+            <div className = { cx(containerClassName, 'dribbble-redesign-toolbar-content') }>
                 <div
-                    className = 'toolbox-content-wrapper'
+                    className = 'toolbox-content-wrapper dribbble-redesign-toolbar-wrapper'
                     onBlur = { handleBlur }
                     onFocus = { handleFocus }
                     { ...(isMobile ? {} : {
@@ -254,15 +259,48 @@ export default function Toolbox({
                     }) }>
 
                     <div
-                        className = 'toolbox-content-items'
+                        className = 'toolbox-content-items dribbble-redesign-toolbar-items'
                         ref = { _toolboxRef }>
+                        {/* Render core buttons */}
                         {mainMenuButtons.map(({ Content, key, ...rest }) => Content !== Separator && (
                             <Content
                                 { ...rest }
                                 buttonKey = { key }
                                 key = { key } />))}
 
-                        {Boolean(overflowMenuButtons.length) && (
+                        {/* Hangup Button - special handling due to its separate logic */}
+                        {isButtonEnabled('hangup', toolbarButtonsToUse) && (
+                            endConferenceSupported
+                                ? <HangupMenuButton
+                                    ariaControls = 'hangup-menu'
+                                    isOpen = { hangupMenuVisible }
+                                    key = 'hangup-menu'
+                                    notifyMode = { buttonsWithNotifyClick?.get('hangup-menu') }
+                                    onVisibilityChange = { onSetHangupVisible }>
+                                    <ContextMenu
+                                        accessibilityLabel = { t(toolbarAccLabel) }
+                                        className = { classes.hangupMenu }
+                                        hidden = { false }
+                                        inDrawer = { overflowDrawer }
+                                        onKeyDown = { onEscKey }>
+                                        <EndConferenceButton
+                                            buttonKey = 'end-meeting'
+                                            notifyMode = { buttonsWithNotifyClick?.get('end-meeting') } />
+                                        <LeaveConferenceButton
+                                            buttonKey = 'hangup'
+                                            notifyMode = { buttonsWithNotifyClick?.get('hangup') } />
+                                    </ContextMenu>
+                                </HangupMenuButton>
+                                : <HangupButton
+                                    buttonKey = 'hangup'
+                                    customClass = 'hangup-button dribbble-hangup-button' // Added dribbble-hangup-button
+                                    key = 'hangup-button'
+                                    notifyMode = { buttonsWithNotifyClick.get('hangup') }
+                                    visible = { isButtonEnabled('hangup', toolbarButtonsToUse) } />
+                        )}
+
+                        {/* Overflow Menu Button - keep for now, will be styled later */}
+                        {Boolean(overflowMenuButtons.length) && !mainMenuButtons.some(b => b.key === 'overflowmenu') && (
                             <OverflowMenuButton
                                 ariaControls = 'overflow-menu'
                                 buttons = { overflowMenuButtons.reduce<Array<IToolboxButton[]>>((acc, val) => {
@@ -295,36 +333,6 @@ export default function Toolbox({
                                 onVisibilityChange = { onSetOverflowVisible }
                                 showRaiseHandInReactionsMenu = { showRaiseHandInReactionsMenu }
                                 showReactionsMenu = { showReactionsInOverflowMenu } />
-                        )}
-
-                        {isButtonEnabled('hangup', toolbarButtonsToUse) && (
-                            endConferenceSupported
-                                ? <HangupMenuButton
-                                    ariaControls = 'hangup-menu'
-                                    isOpen = { hangupMenuVisible }
-                                    key = 'hangup-menu'
-                                    notifyMode = { buttonsWithNotifyClick?.get('hangup-menu') }
-                                    onVisibilityChange = { onSetHangupVisible }>
-                                    <ContextMenu
-                                        accessibilityLabel = { t(toolbarAccLabel) }
-                                        className = { classes.hangupMenu }
-                                        hidden = { false }
-                                        inDrawer = { overflowDrawer }
-                                        onKeyDown = { onEscKey }>
-                                        <EndConferenceButton
-                                            buttonKey = 'end-meeting'
-                                            notifyMode = { buttonsWithNotifyClick?.get('end-meeting') } />
-                                        <LeaveConferenceButton
-                                            buttonKey = 'hangup'
-                                            notifyMode = { buttonsWithNotifyClick?.get('hangup') } />
-                                    </ContextMenu>
-                                </HangupMenuButton>
-                                : <HangupButton
-                                    buttonKey = 'hangup'
-                                    customClass = 'hangup-button'
-                                    key = 'hangup-button'
-                                    notifyMode = { buttonsWithNotifyClick.get('hangup') }
-                                    visible = { isButtonEnabled('hangup', toolbarButtonsToUse) } />
                         )}
                     </div>
                 </div>
