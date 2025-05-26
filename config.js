@@ -1898,6 +1898,8 @@ var config = {
     //     apiUrl: 'https://example.com',
     //     // Whether the file sharing service is enabled or not.
     //     enabled: true,
+    //     // Maximum file size limit (-1 value disables any file size limit check)
+    //     maxFileSize: 50,
     // },
 };
 

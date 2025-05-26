@@ -106,13 +106,27 @@ export function formatTimestamp(timestamp: number): string {
  * @returns {void}
  */
 // @ts-ignore
-export const processFiles = (fileList: FileList | File[], dispatch: IStore['dispatch']) => {
+export const processFiles = (fileList: FileList | File[], store: IStore) => {
+    const state = store.getState();
+    const dispatch = store.dispatch;
+
+    const { maxFileSize = MAX_FILE_SIZE } = state['features/base/config']?.fileSharing ?? {};
+
     const newFiles = Array.from(fileList as File[]).filter((file: File) => {
+
+        // No file size limitation
+        if (maxFileSize === -1) {
+            return true;
+        }
+
         // Check file size before upload
-        if (file.size > MAX_FILE_SIZE) {
+        if (file.size > maxFileSize) {
             dispatch(showErrorNotification({
                 titleKey: 'fileSharing.fileTooLargeTitle',
                 descriptionKey: 'fileSharing.fileTooLargeDescription',
+                descriptionArguments: {
+                    maxFileSize: formatFileSize(maxFileSize)
+                },
                 appearance: NOTIFICATION_TYPE.ERROR
             }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 

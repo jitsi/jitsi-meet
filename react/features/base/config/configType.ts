@@ -391,6 +391,7 @@ export interface IConfig {
     fileSharing?: {
         apiUrl?: string;
         enabled?: boolean;
+        maxFileSize?: number;
     };
     filmstrip?: {
         disableResizable?: boolean;

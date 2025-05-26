@@ -548,7 +548,7 @@
         "downloadFile": "Download",
         "dragAndDrop": "Drag and drop files here or anywhere on screen",
         "fileAlreadyUploaded": "File has already been uploaded to this meeting.",
-        "fileTooLargeDescription": "Please make sure the file does not exceed 50MB.",
+        "fileTooLargeDescription": "Please make sure the file does not exceed {{ maxFileSize }}.",
         "fileTooLargeTitle": "The selected file is too large",
         "removeFile": "Remove",
         "uploadFailedDescription": "Please try again.",

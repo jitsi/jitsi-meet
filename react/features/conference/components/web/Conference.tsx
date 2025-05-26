@@ -1,7 +1,7 @@
 import { throttle } from 'lodash-es';
 import React, { useCallback, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { connect as reactReduxConnect, useDispatch, useSelector } from 'react-redux';
+import { connect as reactReduxConnect, useDispatch, useSelector, useStore } from 'react-redux';
 
 // @ts-expect-error
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
@@ -436,6 +436,7 @@ function _mapStateToProps(state: IReduxState) {
 
 export default reactReduxConnect(_mapStateToProps)(translate(props => {
     const dispatch = useDispatch();
+    const store = useStore();
 
     const [ isDragging, setIsDragging ] = useState(false);
 
@@ -476,8 +477,8 @@ export default reactReduxConnect(_mapStateToProps)(translate(props => {
         e.stopPropagation();
         setIsDragging(false);
 
-        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            processFiles(e.dataTransfer.files, dispatch);
+        if (e.dataTransfer.files?.length > 0) {
+            processFiles(e.dataTransfer.files, store);
         }
     }, [ processFiles ]);
 

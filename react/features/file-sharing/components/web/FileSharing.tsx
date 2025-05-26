@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
@@ -204,6 +204,7 @@ const FileSharing = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const store = useStore();
     const { files } = useSelector((state: IReduxState) => state['features/file-sharing']);
     const sortedFiles = Array.from(files.values()).sort((a, b) => a.fileName.localeCompare(b.fileName));
     const isModerator = useSelector(isLocalParticipantModerator);
@@ -227,7 +228,7 @@ const FileSharing = () => {
 
     const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
-            processFiles(e.target.files as FileList, dispatch);
+            processFiles(e.target.files as FileList, store);
         }
     }, [ processFiles ]);
 
@@ -236,8 +237,8 @@ const FileSharing = () => {
         e.stopPropagation();
         setIsDragging(false);
 
-        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            processFiles(e.dataTransfer.files as FileList, dispatch);
+        if (e.dataTransfer.files?.length > 0) {
+            processFiles(e.dataTransfer.files as FileList, store);
         }
     }, [ processFiles ]);
 
