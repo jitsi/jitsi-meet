@@ -1,4 +1,4 @@
-import { IReduxState } from '../app/types';
+import { IReduxState, IStore } from '../app/types';
 import {
     IconImage,
     IconShareDoc,
@@ -6,6 +6,11 @@ import {
     IconVolumeUp
 } from '../base/icons/svg';
 import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
+import { showErrorNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
+
+import { uploadFiles } from './actions';
+import { MAX_FILE_SIZE } from './constants';
 
 /**
  * Checks whether file sharing feature is enabled.
@@ -92,3 +97,46 @@ export function formatTimestamp(timestamp: number): string {
 
     return `${monthDay}\n${time}`;
 }
+
+/**
+ * Processes a list of files for upload.
+ *
+ * @param {FileList|File[]} fileList - The list of files to process.
+ * @param {Dispatch} dispatch - The Redux dispatch function.
+ * @returns {void}
+ */
+// @ts-ignore
+export const processFiles = (fileList: FileList | File[], store: IStore) => {
+    const state = store.getState();
+    const dispatch = store.dispatch;
+
+    const { maxFileSize = MAX_FILE_SIZE } = state['features/base/config']?.fileSharing ?? {};
+
+    const newFiles = Array.from(fileList as File[]).filter((file: File) => {
+
+        // No file size limitation
+        if (maxFileSize === -1) {
+            return true;
+        }
+
+        // Check file size before upload
+        if (file.size > maxFileSize) {
+            dispatch(showErrorNotification({
+                titleKey: 'fileSharing.fileTooLargeTitle',
+                descriptionKey: 'fileSharing.fileTooLargeDescription',
+                descriptionArguments: {
+                    maxFileSize: formatFileSize(maxFileSize)
+                },
+                appearance: NOTIFICATION_TYPE.ERROR
+            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+
+            return false;
+        }
+
+        return true;
+    });
+
+    if (newFiles.length > 0) {
+        dispatch(uploadFiles(newFiles as File[]));
+    }
+};
