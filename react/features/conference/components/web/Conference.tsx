@@ -10,12 +10,11 @@ import { getConferenceNameForTitle } from '../../../base/conference/functions';
 import { hangup } from '../../../base/connection/actions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
-import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { setColorAlpha } from '../../../base/util/helpers';
 import { openChat, setFocusedTab } from '../../../chat/actions.web';
 import Chat from '../../../chat/components/web/Chat';
 import { ChatTabs } from '../../../chat/constants';
-import { isFileSharingEnabled, processFiles } from '../../../file-sharing/functions.any';
+import { isFileUploadingEnabled, processFiles } from '../../../file-sharing/functions.any';
 import MainFilmstrip from '../../../filmstrip/components/web/MainFilmstrip';
 import ScreenshareFilmstrip from '../../../filmstrip/components/web/ScreenshareFilmstrip';
 import StageFilmstrip from '../../../filmstrip/components/web/StageFilmstrip';
@@ -440,9 +439,8 @@ export default reactReduxConnect(_mapStateToProps)(translate(props => {
 
     const [ isDragging, setIsDragging ] = useState(false);
 
-    const isModerator = useSelector(isLocalParticipantModerator);
     const { isOpen: isChatOpen } = useSelector((state: IReduxState) => state['features/chat']);
-    const fileSharingEnabled = useSelector(isFileSharingEnabled);
+    const isFileUploadEnabled = useSelector(isFileUploadingEnabled);
 
     const handleDragEnter = useCallback((e: React.DragEvent) => {
         e.preventDefault();
@@ -460,27 +458,31 @@ export default reactReduxConnect(_mapStateToProps)(translate(props => {
         e.preventDefault();
         e.stopPropagation();
 
-        if (!fileSharingEnabled) {
+        if (!isFileUploadEnabled) {
             return;
         }
 
-        if (isModerator && isDragging) {
+        if (isDragging) {
             if (!isChatOpen) {
                 dispatch(openChat());
             }
             dispatch(setFocusedTab(ChatTabs.FILE_SHARING));
         }
-    }, [ isDragging, isModerator, isChatOpen ]);
+    }, [ isChatOpen, isDragging, isFileUploadEnabled ]);
 
     const handleDrop = useCallback((e: React.DragEvent) => {
         e.preventDefault();
         e.stopPropagation();
         setIsDragging(false);
 
+        if (!isFileUploadEnabled) {
+            return;
+        }
+
         if (e.dataTransfer.files?.length > 0) {
             processFiles(e.dataTransfer.files, store);
         }
-    }, [ processFiles ]);
+    }, [ isFileUploadEnabled, processFiles ]);
 
     return (
         <div
