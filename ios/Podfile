@@ -19,7 +19,6 @@ target 'JitsiMeet' do
 
   pod 'Firebase/Analytics', '~> 8.0'
   pod 'Firebase/Crashlytics', '~> 8.0'
-  pod 'Firebase/DynamicLinks', '~> 8.0'
 end
 
 target 'JitsiMeetSDK' do

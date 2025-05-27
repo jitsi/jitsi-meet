@@ -83,10 +83,8 @@ dependencies {
 
         // Firebase
         //  - Crashlytics
-        //  - Dynamic Links
         implementation 'com.google.firebase:firebase-analytics:21.3.0'
         implementation 'com.google.firebase:firebase-crashlytics:18.4.3'
-        implementation 'com.google.firebase:firebase-dynamic-links:21.1.0'
     }
 
     implementation project(':sdk')

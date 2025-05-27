@@ -27,9 +27,6 @@ PODS:
   - Firebase/Crashlytics (8.15.0):
     - Firebase/CoreOnly
     - FirebaseCrashlytics (~> 8.15.0)
-  - Firebase/DynamicLinks (8.15.0):
-    - Firebase/CoreOnly
-    - FirebaseDynamicLinks (~> 8.15.0)
   - FirebaseAnalytics (8.15.0):
     - FirebaseAnalytics/AdIdSupport (= 8.15.0)
     - FirebaseCore (~> 8.0)
@@ -64,8 +61,6 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (~> 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
-  - FirebaseDynamicLinks (8.15.0):
-    - FirebaseCore (~> 8.0)
   - FirebaseInstallations (8.15.0):
     - FirebaseCore (~> 8.0)
     - GoogleUtilities/Environment (~> 7.7)
@@ -1798,7 +1793,6 @@ DEPENDENCIES:
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - Firebase/Analytics (~> 8.0)
   - Firebase/Crashlytics (~> 8.0)
-  - Firebase/DynamicLinks (~> 8.0)
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
   - "giphy-react-native-sdk (from `../node_modules/@giphy/react-native-sdk`)"
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
@@ -1898,7 +1892,6 @@ SPEC REPOS:
     - FirebaseCore
     - FirebaseCoreDiagnostics
     - FirebaseCrashlytics
-    - FirebaseDynamicLinks
     - FirebaseInstallations
     - Giphy
     - GoogleAppMeasurement
@@ -2108,7 +2101,6 @@ SPEC CHECKSUMS:
   FirebaseCore: 5743c5785c074a794d35f2fff7ecc254a91e08b1
   FirebaseCoreDiagnostics: 92e07a649aeb66352b319d43bdd2ee3942af84cb
   FirebaseCrashlytics: feb07e4e9187be3c23c6a846cce4824e5ce2dd0b
-  FirebaseDynamicLinks: 1dc816ef789c5adac6fede0b46d11478175c70e4
   FirebaseInstallations: 40bd9054049b2eae9a2c38ef1c3dd213df3605cd
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
   Giphy: 83628960ed04e1c3428ff1b4fb2b027f65e82f50
@@ -2209,6 +2201,6 @@ SPEC CHECKSUMS:
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: 1dd9dabb9df8fe08f12cd522eae04a2da0e252eb
 
-PODFILE CHECKSUM: 4f6abcf3cec0d9e8e1d5f5d81a35d99adde9ae45
+PODFILE CHECKSUM: 8ff981f2324fa4b013b6690257898dcd2be9d3c3
 
 COCOAPODS: 1.16.2
