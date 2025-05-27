@@ -106,29 +106,10 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
     const { classes: styles } = useStyles();
 
     const generateDownloadURL = useCallback(() => {
-        const { downloadLink, dynamicLink, appScheme }
+        const { downloadLink }
             = (deeplinkingCfg?.[Platform.OS as keyof typeof deeplinkingCfg] || {}) as IDeeplinkingMobileConfig;
 
-        if (downloadLink && typeof dynamicLink === 'undefined') {
-            return downloadLink;
-        }
-
-        const {
-            apn,
-            appCode,
-            customDomain,
-            ibi,
-            isi
-        } = dynamicLink || {};
-
-        const domain = customDomain ?? `https://${appCode}.app.goo.gl`;
-
-        return `${domain}/?link=${
-            encodeURIComponent(window.location.href)}&apn=${
-            apn}&ibi=${
-            ibi}&isi=${
-            isi}&ius=${
-            appScheme}&efr=1`;
+        return downloadLink;
     }, [ deeplinkingCfg ]);
 
     const onDownloadApp = useCallback(() => {

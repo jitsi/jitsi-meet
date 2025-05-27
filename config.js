@@ -1269,9 +1269,6 @@ var config = {
     // disableDeepLinking: false,
 
     // The deeplinking config.
-    // For information about the properties of
-    // deeplinking.[ios/android].dynamicLink check:
-    // https://firebase.google.com/docs/dynamic-links/create-manually
     // deeplinking: {
     //
     //     // The desktop deeplinking config, disabled by default.
@@ -1300,13 +1297,6 @@ var config = {
     //         appScheme: 'org.jitsi.meet',
     //         // Custom URL for downloading ios mobile app.
     //         downloadLink: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
-    //         dynamicLink: {
-    //             apn: 'org.jitsi.meet',
-    //             appCode: 'w2atb',
-    //             customDomain: undefined,
-    //             ibi: 'com.atlassian.JitsiMeet.ios',
-    //             isi: '1165103905'
-    //         }
     //     },
 
     //     // The android deeplinking config.
@@ -1319,13 +1309,6 @@ var config = {
     //         // Android app package name.
     //         appPackage: 'org.jitsi.meet',
     //         fDroidUrl: 'https://f-droid.org/en/packages/org.jitsi.meet/',
-    //         dynamicLink: {
-    //             apn: 'org.jitsi.meet',
-    //             appCode: 'w2atb',
-    //             customDomain: undefined,
-    //             ibi: 'com.atlassian.JitsiMeet.ios',
-    //             isi: '1165103905'
-    //         }
     //     }
     // },
 
