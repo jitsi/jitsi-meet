@@ -193,17 +193,6 @@ var interfaceConfig = {
     // NATIVE_APP_NAME: 'Jitsi Meet',
 
     /**
-     * Specify Firebase dynamic link properties for the mobile apps.
-     */
-    // MOBILE_DYNAMIC_LINK: {
-    //    APN: 'org.jitsi.meet',
-    //    APP_CODE: 'w2atb',
-    //    CUSTOM_DOMAIN: undefined,
-    //    IBI: 'com.atlassian.JitsiMeet.ios',
-    //    ISI: '1165103905'
-    // },
-
-    /**
      * Hide the logo on the deep linking pages.
      */
     // HIDE_DEEP_LINKING_LOGO: false,

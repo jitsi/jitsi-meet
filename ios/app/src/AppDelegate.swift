@@ -54,19 +54,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: Linking delegate methods
 
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        if self.appContainsRealServiceInfoPlist() {
-            let handled = DynamicLinks.dynamicLinks().handleUniversalLink(userActivity.webpageURL!) { dynamicLink, error in
-                if let firebaseUrl = self.extractURL(from: dynamicLink) {
-                    userActivity.webpageURL = firebaseUrl
-                    JitsiMeet.sharedInstance().application(application, continue: userActivity, restorationHandler: restorationHandler)
-                }
-            }
-
-            if handled {
-                return handled
-            }
-        }
-
         return JitsiMeet.sharedInstance().application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
 
@@ -75,16 +62,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return false
         }
 
-        var openUrl = url
-
-        if self.appContainsRealServiceInfoPlist() {
-            if let dynamicLink = DynamicLinks.dynamicLinks().dynamicLink(fromCustomSchemeURL: url),
-               let firebaseUrl = self.extractURL(from: dynamicLink) {
-                openUrl = firebaseUrl
-            }
-        }
-
-        return JitsiMeet.sharedInstance().application(app, open: openUrl, options: options)
+        return JitsiMeet.sharedInstance().application(app, open: url, options: options)
     }
 
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
@@ -96,14 +74,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 extension AppDelegate {
     func appContainsRealServiceInfoPlist() -> Bool {
         return InfoPlistUtil.containsRealServiceInfoPlist(in: Bundle.main)
-    }
-
-    func extractURL(from dynamicLink: DynamicLink?) -> URL? {
-        guard let dynamicLink = dynamicLink,
-              let dynamicLinkURL = dynamicLink.url,
-              dynamicLink.matchType == .unique || dynamicLink.matchType == .default else {
-            return nil
-        }
-        return dynamicLinkURL
     }
 }
