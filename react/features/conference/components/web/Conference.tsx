@@ -470,17 +470,17 @@ export default reactReduxConnect(_mapStateToProps)(translate(props => {
             }
             dispatch(setFocusedTab(ChatTabs.FILE_SHARING));
         }
-    }, [ isDragging, isModerator, isChatOpen ]);
+    }, [ isChatOpen, isDragging, isModerator, fileSharingEnabled ]);
 
     const handleDrop = useCallback((e: React.DragEvent) => {
         e.preventDefault();
         e.stopPropagation();
         setIsDragging(false);
 
-        if (e.dataTransfer.files?.length > 0) {
+        if (isModerator && e.dataTransfer.files?.length > 0) {
             processFiles(e.dataTransfer.files, store);
         }
-    }, [ processFiles ]);
+    }, [ isModerator, processFiles ]);
 
     return (
         <div
