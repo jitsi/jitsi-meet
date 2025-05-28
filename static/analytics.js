@@ -65,7 +65,7 @@ class EventSaver {
      * @param {Object} userProperties
      * @returns {void}
      */
-    setUserProperties(userProperties) {
+    setUserProperties(_userProperties) {
         // if (window.posthog) {
         //     window.posthog.identify(userProperties.id, userProperties);
         // }

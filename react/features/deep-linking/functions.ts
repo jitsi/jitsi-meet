@@ -57,15 +57,16 @@ export function getDeepLinkingPage(state: IReduxState) {
     const { launchInWeb } = state['features/deep-linking'];
     const deeplinking = state['features/base/config'].deeplinking || {};
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const skipDeepLink = urlParams.get('skipDeepLink') === 'true';
+    // Show only if there is no history
+    if (history.length < 2 && isMobileBrowser()) {
+        return Promise.resolve(DeepLinkingMobilePage);
+    } else return Promise.resolve();
 
     // @ts-ignore
     const { appScheme } = deeplinking?.[Platform.OS as keyof typeof deeplinking] || {};
 
     // Show only if we are about to join a conference.
     if (launchInWeb
-            || skipDeepLink
             || !room
             || state['features/base/config'].deeplinking?.disabled
             || browser.isElectron()

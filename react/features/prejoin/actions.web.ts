@@ -36,6 +36,9 @@ import {
     isJoinByPhoneDialogVisible
 } from './functions.any';
 import logger from './logger';
+import { LOGIN } from '../authentication/actionTypes';
+import { validateJwt } from '../base/jwt/functions';
+import { JWT_VALIDATION_ERRORS } from '../base/jwt/constants';
 
 const dialOutStatusToKeyMap = {
     INITIATED: 'presenceStatus.calling',
@@ -195,8 +198,18 @@ export function dialOut(onSuccess: Function, onFail: Function) {
 export function joinConference(options?: Object, ignoreJoiningInProgress = false,
         jid?: string, password?: string) {
     return function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
+        const state = getState();
+        const { jwt } = state['features/base/jwt'];
+
+        // Check if the jwt is expired. If so, get a new one.
+        if (jwt && validateJwt(jwt).some(e =>
+            (e as any).key === JWT_VALIDATION_ERRORS.TOKEN_EXPIRED)) {
+            dispatch({ type: LOGIN });
+
+            return;
+        }
+
         if (!ignoreJoiningInProgress) {
-            const state = getState();
             const { joiningInProgress } = state['features/prejoin'];
 
             if (joiningInProgress) {

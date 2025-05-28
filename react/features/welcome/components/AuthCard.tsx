@@ -3,11 +3,11 @@ import { connect } from 'react-redux';
 import type { IReduxState } from '../../app/types';
 import type { IJwtState } from '../../base/jwt/reducer';
 import type { IConfig } from '../../base/config/configType';
+import { getTokenAuthUrl } from '../../authentication/functions.web';
 
 interface IProps {
+    config: IConfig;
     jwtFromRedux?: IJwtState;
-    tokenAuthURL: IConfig['tokenAuthUrl'];
-    tokenLogoutURL: IConfig['tokenLogoutUrl'];
 }
 
 function base64UrlDecode(base64Url: string): string {
@@ -26,8 +26,13 @@ function parseJwtPayload(token: string) {
     }
 }
 
-const AuthCard: React.FC<IProps> = ({ jwtFromRedux, tokenAuthURL, tokenLogoutURL }) => {
+const AuthCard: React.FC<IProps> = ({ jwtFromRedux, config }) => {
+    const hostname = window.location.host;
+    const isProd = hostname === 'sonacove.com' || hostname === 'www.sonacove.com';
+    const authDomain = isProd ? 'auth.sonacove.com' : 'staj.sonacove.com/auth';
+
     const [ isExpired, setIsExpired ] = useState(false);
+    const [ subscriptionUrl, setSubscriptionUrl ] = useState('https://' + hostname + '/onboarding/');
 
     const userData = useMemo(() => {
         const token = jwtFromRedux?.jwt;
@@ -71,26 +76,59 @@ const AuthCard: React.FC<IProps> = ({ jwtFromRedux, tokenAuthURL, tokenLogoutURL
         return () => clearTimeout(timeout);
     }, [ jwtFromRedux ]);
 
+    useEffect(() => {
+        setSubscriptionUrl(`https://${hostname}/onboarding#access_token=${jwtFromRedux?.jwt}`);
+        if (userData?.user.subscriptionStatus === 'active') {
+            fetch('https://' + hostname + '/api/paddle-customer-portal',
+                {
+                    headers: {
+                        Authorization: `Bearer ${jwtFromRedux?.jwt}`,
+                    },
+                }
+            )
+            .then(response => response.json())
+            .then(data => {
+                data.url && setSubscriptionUrl(data.url);
+            })
+            .catch(error => {
+                console.error('Error fetching subscription URL:', error);
+            });
+        }
+    }, [ userData, jwtFromRedux ]);
 
     const handleLogin = useCallback(() => {
-        let loginUrl = tokenAuthURL;
-
-        if (loginUrl) {
-            loginUrl = loginUrl
-                .replace('{room}', '&no_room=true')
-                .replace('{code_challenge}', 'dummy')
-                .replace('{state}', '{}');
-            window.location.href = loginUrl;
-        }
-    }, [ tokenAuthURL ]);
+        getTokenAuthUrl(
+            config,
+            new URL(window.location.href),
+            {
+                audioMuted: undefined,
+                audioOnlyEnabled: undefined,
+                skipPrejoin: undefined,
+                videoMuted: undefined
+            },
+            undefined,
+            undefined
+        ).then(url => {
+            if (url) {
+                window.location.href = url;
+            }
+        });
+    }, [ config.tokenAuthUrl ]);
 
     const handleLogout = useCallback(() => {
-        const logoutUrl = tokenLogoutURL;
+        const logoutUrl = config.tokenLogoutUrl;
 
         if (logoutUrl) {
             window.location.href = logoutUrl;
         }
-    }, [ tokenLogoutURL ]);
+    }, [ config.tokenLogoutUrl ]);
+
+    const handleSubscription = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+        if (isExpired) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }, [ isExpired ]);
 
     return (
         <div className = 'welcome-card-text auth-card'>
@@ -100,26 +138,28 @@ const AuthCard: React.FC<IProps> = ({ jwtFromRedux, tokenAuthURL, tokenLogoutURL
                         <div className = 'auth-header-row'>
                             <h3 className = 'auth-title'>Account</h3>
                             <div className = 'auth-header-buttons'>
-                                {/* <button
-                                    className = 'welcome-page-button auth-button'
-                                    onClick = { handleLogin }
-                                    title = 'Refresh Session'>
-                                    <svg
-                                        fill = 'none'
-                                        height = '20'
-                                        stroke = 'currentColor'
-                                        strokeLinecap = 'round'
-                                        strokeLinejoin = 'round'
-                                        strokeWidth = '2'
-                                        viewBox = '0 0 24 24'
-                                        width = '20'
-                                        xmlns = 'http://www.w3.org/2000/svg'>
-                                        <path d = 'M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8' />
-                                        <path d = 'M21 3v5h-5' />
-                                        <path d = 'M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16' />
-                                        <path d = 'M8 16H3v5' />
-                                    </svg>
-                                </button> */}
+                                {isExpired && (
+                                    <button
+                                        className = 'welcome-page-button auth-button'
+                                        onClick = { handleLogin }
+                                        title = 'Refresh Session'>
+                                        <svg
+                                            fill = 'none'
+                                            height = '20'
+                                            stroke = 'currentColor'
+                                            strokeLinecap = 'round'
+                                            strokeLinejoin = 'round'
+                                            strokeWidth = '2'
+                                            viewBox = '0 0 24 24'
+                                            width = '20'
+                                            xmlns = 'http://www.w3.org/2000/svg'>
+                                            <path d = 'M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8' />
+                                            <path d = 'M21 3v5h-5' />
+                                            <path d = 'M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16' />
+                                            <path d = 'M8 16H3v5' />
+                                        </svg>
+                                    </button>
+                                )}
                                 <button
                                     className = 'welcome-page-button auth-button auth-logout'
                                     onClick = { handleLogout }>
@@ -147,19 +187,16 @@ const AuthCard: React.FC<IProps> = ({ jwtFromRedux, tokenAuthURL, tokenLogoutURL
                             <div className = 'auth-button-row'>
                                 <a
                                     className = { 'welcome-page-button auth-button' }
-                                    href = 'https://auth.sonacove.com/realms/jitsi/account'
+                                    href = { 'https://' + authDomain + '/realms/jitsi/account' }
                                     rel = 'noopener noreferrer'
                                     target = '_blank'>
                                     Manage Account
                                 </a>
 
                                 <a
-                                    className = 'welcome-page-button auth-button'
-                                    href = {
-                                        userData.user.subscriptionStatus === 'active'
-                                            ? 'https://customer-portal.paddle.com/cpl_01jmwrfanv7gtn3y160bcw8c7w'
-                                            : 'https://sonacove.com/onboarding/'
-                                    }
+                                    className = { `welcome-page-button auth-button ${isExpired ? 'disabled' : ''}` }
+                                    href = { subscriptionUrl }
+                                    onClick = { handleSubscription }
                                     rel = 'noopener noreferrer'
                                     target = '_blank'>
                                     Manage Subscription
@@ -186,8 +223,7 @@ const AuthCard: React.FC<IProps> = ({ jwtFromRedux, tokenAuthURL, tokenLogoutURL
 
 const mapStateToProps = (state: IReduxState) => ({
     jwtFromRedux: state['features/base/jwt'],
-    tokenAuthURL: state['features/base/config'].tokenAuthUrl,
-    tokenLogoutURL: state['features/base/config'].tokenLogoutUrl
+    config: state['features/base/config']
 });
 
 export default connect(mapStateToProps)(AuthCard);

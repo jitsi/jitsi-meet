@@ -25,6 +25,10 @@ if (subdomain.startsWith('<!--')) {
     subdomain = '';
 }
 
+var domain = window.location.host;
+var isProd = domain === 'sonacove.com' || domain === 'www.sonacove.com';
+var authdomain = isProd ? 'auth.sonacove.com' : 'staj.sonacove.com/auth';
+var meetdomain = isProd ? 'meet.sonacove.com' : 'staj.sonacove.com/meet';
 var enableJaaS = false;
 
 var config = {
@@ -33,28 +37,28 @@ var config = {
 
     hosts: {
         // XMPP domain.
-        domain: 'meet.sonacove.com',
+        domain: meetdomain,
 
         // When using authentication, domain for guest users.
-        anonymousdomain: 'guest.meet.sonacove.com',
+        anonymousdomain: 'guest.' + meetdomain,
 
         // Domain for authenticated users. Defaults to <domain>.
-        // authdomain: 'meet.sonacove.com',
+        // authdomain: meetdomain,
 
         // Focus component domain. Defaults to focus.<domain>.
-        // focus: 'focus.meet.sonacove.com',
+        // focus: 'focus.' + meetdomain,
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.' + subdomain + 'meet.sonacove.com',
+        muc: 'conference.' + subdomain + meetdomain,
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: 'https://meet.sonacove.com/' + subdir + 'http-bind',
+    bosh: 'https://' + meetdomain + '/' + subdir + 'http-bind',
 
     // Websocket URL (XMPP)
-    websocket: 'wss://meet.sonacove.com/' + subdir + 'xmpp-websocket',
-    websocketKeepAlive: 0, // 0 = disabled, there is an issue with the keep alive
-    websocketKeepAliveUrl: 'https://meet.sonacove.com/' + subdir + '_unlock',
+    websocket: 'wss://' + meetdomain + '/' + subdir + 'xmpp-websocket',
+    websocketKeepAlive: 0, // 0 = disabled. NOTE: There is an issue with the keep alive
+    websocketKeepAliveUrl: 'https://' + meetdomain + '/' + subdir + '_unlock',
 
     // Whether BOSH should be preferred over WebSocket if both are configured.
     preferBosh: false,
@@ -674,7 +678,7 @@ var config = {
     // hideAddRoomButton: false,
 
     // Require users to always specify a display name.
-    requireDisplayName: false,
+    requireDisplayName: true,
 
     // Enables webhid functionality for Audio.
     enableWebHIDFeature: true,
@@ -1567,8 +1571,10 @@ var config = {
     // You can use tokenAuthUrl config to point to a URL of such service.
     // The URL for the service supports few params which will be filled in by the code.
     tokenAuthUrl:
-        // eslint-disable-next-line max-len
-        'https://auth.sonacove.com/realms/jitsi/protocol/openid-connect/auth?client_id=jitsi-web&redirect_uri=https://meet.sonacove.com/{room}&response_type=token',
+        'https://' + authdomain + '/realms/jitsi/protocol/openid-connect/auth'
+        + '?client_id=jitsi-web'
+        + '&redirect_uri=https%3A%2F%2F' + domain + '%2Fmeet%2F{room}%23{state}'
+        + '&response_type=token',
 
     // Supported parameters in tokenAuthUrl:
     //      {room} - will be replaced with the room name
@@ -1586,8 +1592,9 @@ var config = {
     //          - electron=true (when web is loaded in electron app)
     // If there is a logout service you can specify its URL with:
     tokenLogoutUrl:
-        // eslint-disable-next-line max-len
-        'https://auth.sonacove.com/realms/jitsi/protocol/openid-connect/logout?post_logout_redirect_uri=https://meet.sonacove.com&client_id=jitsi-web',
+        'https://' + authdomain + '/realms/jitsi/protocol/openid-connect/logout'
+        + '?post_logout_redirect_uri=https%3A%2F%2F' + domain + '%2Fmeet%2F'
+        + '&client_id=jitsi-web',
 
     // You can enable tokenAuthUrlAutoRedirect which will detect that you have logged in successfully before
     // and will automatically redirect to the token service to get the token for the meeting.
@@ -1851,12 +1858,15 @@ var config = {
     // whiteboard: {
     //     // Whether the feature is enabled or not.
     //     enabled: true,
+
     //     // The server used to support whiteboard collaboration.
     //     // https://github.com/jitsi/excalidraw-backend
     //     collabServerBaseUrl: 'https://excalidraw-backend.example.com',
+
     //     // The user access limit to the whiteboard, introduced as a means
     //     // to control the performance.
     //     userLimit: 25,
+
     //     // The url for more info about the whiteboard and its usage limitations.
     //     limitUrl: 'https://example.com/blog/whiteboard-limits',
     // },

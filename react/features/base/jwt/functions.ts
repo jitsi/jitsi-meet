@@ -19,7 +19,7 @@ import logger from './logger';
  * @returns {string} The JSON Web Token (JWT), if any, defined by the specified
  * {@code url}; otherwise, {@code undefined}.
  */
-export function parseJWTFromURLParams(url: URL | typeof window.location = window.location) {
+export function parseJWTFromURLParams(url: URL | typeof window.location) {
     // Convert window.location to a URL object if it's not already one
     const urlObj = url instanceof URL ? url : url?.href && new URL(url.href);
     const jwt = parseURLParams(urlObj, false, 'hash').jwt;
@@ -30,8 +30,6 @@ export function parseJWTFromURLParams(url: URL | typeof window.location = window
 
     if (jwt2) {
         logger.info('found jwt in url params.');
-
-        // TODO: Remove the access_token param from the URL
     }
 
     return jwt2;

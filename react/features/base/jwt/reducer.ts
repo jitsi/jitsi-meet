@@ -51,4 +51,5 @@ PersistenceRegistry.register('features/base/jwt', {
     server: true,
     group: true,
     callee: true,
+    jwt: true,
 });

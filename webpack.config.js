@@ -266,9 +266,11 @@ function getDevServerConfig() {
             devServer.app.use((req, res, next) => {
                 const urlPath = req.url.split('?')[0];
 
-                if (urlPath.startsWith('/libs/') && urlPath.endsWith('.min.js')) {
-                    if (!fs.existsSync(join(process.cwd(), urlPath))) {
-                        req.url = urlPath.replace('.min.js', '.js');
+                if (urlPath.startsWith('/meet/libs/') && urlPath.endsWith('.min.js')) {
+                    const mappedPath = urlPath.replace('/meet/libs/', '/libs/');
+
+                    if (!fs.existsSync(join(process.cwd(), mappedPath))) {
+                        req.url = mappedPath.replace('.min.js', '.js');
                     }
                 }
                 next();
@@ -327,7 +329,10 @@ function getDevServerConfig() {
             directory: process.cwd(),
             watch: {
                 ignored: file => file.endsWith('.log')
-            }
+            },
+
+            // TODO: Don't apply publicPath to manifest.json and pwa-worker.js
+            publicPath: '/meet/'
         }
     };
 }
