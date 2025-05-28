@@ -23,6 +23,7 @@ local get_room_from_jid = util.get_room_from_jid;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local process_host_module = util.process_host_module;
+local table_shallow_copy = util.table_shallow_copy;
 
 local MUC_NS = 'http://jabber.org/protocol/muc';
 local COMPONENT_IDENTITY_TYPE = 'room_metadata';
@@ -49,10 +50,13 @@ local main_muc_module;
 
 -- Utility functions
 
-function getMetadataJSON(room)
+-- Returns json string with the metadata for the room.
+-- @param room The room object.
+-- @param metadata Optional metadata to use instead of the room's jitsiMetadata.
+function getMetadataJSON(room, metadata)
     local res, error = json.encode({
         type = COMPONENT_IDENTITY_TYPE,
-        metadata = room.jitsiMetadata or {}
+        metadata = metadata or room.jitsiMetadata or {}
     });
 
     if not res then
@@ -62,28 +66,36 @@ function getMetadataJSON(room)
     return res;
 end
 
--- Putting the information on the config form / disco-info allows us to save
--- an extra message to users who join later.
-function getFormData(room)
-    return {
-        name = FORM_KEY;
-        type = 'text-multi';
-        label = 'Room metadata';
-        value = getMetadataJSON(room);
-    };
-end
-
 function broadcastMetadata(room)
     local json_msg = getMetadataJSON(room);
 
+    if not json_msg then
+        return;
+    end
+
     for _, occupant in room:each_occupant() do
-        send_json_msg(occupant.jid, internal_room_jid_match_rewrite(room.jid), json_msg)
+        send_metadata(occupant, room, json_msg)
     end
 end
 
-function send_json_msg(to_jid, room_jid, json_msg)
-    local stanza = st.message({ from = module.host; to = to_jid; })
-         :tag('json-message', { xmlns = 'http://jitsi.org/jitmeet', room = room_jid }):text(json_msg):up();
+function send_metadata(occupant, room, json_msg)
+    if not json_msg or is_admin(occupant.bare_jid) then
+        local metadata_to_send = room.jitsiMetadata or {};
+
+        -- we want to send the main meeting participants only to jicofo
+        if is_admin(occupant.bare_jid) and room._data.mainMeetingParticipants then
+            metadata_to_send = table_shallow_copy(metadata_to_send);
+            metadata_to_send.mainMeetingParticipants = room._data.mainMeetingParticipants;
+        end
+
+        json_msg = getMetadataJSON(room, metadata_to_send);
+    end
+
+    local stanza = st.message({ from = module.host; to = occupant.jid; })
+         :tag('json-message', {
+             xmlns = 'http://jitsi.org/jitmeet',
+             room = internal_room_jid_match_rewrite(room.jid)
+         }):text(json_msg):up();
     module:send(stanza);
 end
 
@@ -93,7 +105,7 @@ function room_created(event)
     local room = event.room;
 
     if is_healthcheck_room(room.jid) then
-        return ;
+        return;
     end
 
     if not room.jitsiMetadata then
@@ -188,17 +200,6 @@ function process_main_muc_loaded(main_muc, host_module)
 
     host_module:hook("muc-room-created", room_created, -1);
 
-    host_module:hook('muc-disco#info', function (event)
-        local room = event.room;
-
-        table.insert(event.form, getFormData(room));
-    end);
-
-    host_module:hook("muc-config-form", function(event)
-        local room = event.room;
-
-        table.insert(event.form, getFormData(room));
-    end);
     -- The room metadata was updated internally (from another module).
     host_module:hook("room-metadata-changed", function(event)
         broadcastMetadata(event.room);
@@ -256,18 +257,6 @@ function process_breakout_muc_loaded(breakout_muc, host_module)
     module:log("info", "Hook to muc events on %s", breakout_rooms_component_host);
 
     host_module:hook("muc-room-created", room_created, -1);
-
-    host_module:hook('muc-disco#info', function (event)
-        local room = event.room;
-
-        table.insert(event.form, getFormData(room));
-    end);
-
-    host_module:hook("muc-config-form", function(event)
-        local room = event.room;
-
-        table.insert(event.form, getFormData(room));
-    end);
 end
 
 if breakout_rooms_component_host then
@@ -295,10 +284,6 @@ function filter_stanza(stanza, session)
     end
 
     local bare_to = jid.bare(stanza.attr.to);
-    if is_admin(bare_to) then
-        return stanza;
-    end
-
     local muc_x = stanza:get_child('x', MUC_NS..'#user');
     if not muc_x or not presence_check_status(muc_x, '110') then
         return stanza;
@@ -328,7 +313,7 @@ function filter_stanza(stanza, session)
 
     room.sent_initial_metadata[bare_to] = true;
 
-    send_json_msg(occupant.jid, internal_room_jid_match_rewrite(room.jid), getMetadataJSON(room));
+    send_metadata(occupant, room);
 
     return stanza;
 end
