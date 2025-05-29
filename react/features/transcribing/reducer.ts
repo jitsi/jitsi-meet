@@ -48,15 +48,10 @@ ReducerRegistry.register<ITranscribingState>('features/transcribing',
         case CONFERENCE_PROPERTIES_CHANGED: {
             const audioRecordingEnabled = action.properties?.['audio-recording-enabled'] === 'true';
 
-            if (!state.isTranscribing && audioRecordingEnabled) {
+            if (state.isTranscribing !== audioRecordingEnabled) {
                 return {
                     ...state,
-                    isTranscribing: true
-                };
-            } else if (state.isTranscribing && !audioRecordingEnabled) {
-                return {
-                    ...state,
-                    isTranscribing: false
+                    isTranscribing: audioRecordingEnabled
                 };
             }
 
