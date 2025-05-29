@@ -512,7 +512,7 @@ var config = {
     //     disableClosedCaptions: false,
 
     //     // Whether to invite jigasi when backend transcriptions are enabled. By default, we invite it.
-    //     skipJigasiOnBackendTranscribing: false,
+    //     inviteJigasiOnBackendTranscribing: true,
     // },
 
     // Misc

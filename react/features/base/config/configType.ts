@@ -619,8 +619,8 @@ export interface IConfig {
         autoTranscribeOnRecord?: boolean;
         disableClosedCaptions?: boolean;
         enabled?: boolean;
+        inviteJigasiOnBackendTranscribing?: boolean;
         preferredLanguage?: string;
-        skipJigasiOnBackendTranscribing?: boolean;
         translationLanguages?: Array<string>;
         translationLanguagesHead?: Array<string>;
         useAppLanguage?: boolean;
