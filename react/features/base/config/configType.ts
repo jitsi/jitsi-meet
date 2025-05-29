@@ -620,6 +620,7 @@ export interface IConfig {
         disableClosedCaptions?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;
+        skipJigasiOnBackendTranscribing?: boolean;
         translationLanguages?: Array<string>;
         translationLanguagesHead?: Array<string>;
         useAppLanguage?: boolean;
