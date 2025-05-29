@@ -87,8 +87,6 @@ function send_metadata(occupant, room, json_msg)
         if is_admin(occupant.bare_jid) then
             local participants = {};
 
-            new_metadata.mainMeetingParticipants = room._data.mainMeetingParticipants;
-
             if room._data.mainMeetingParticipants then
                 table_add(participants, room._data.mainMeetingParticipants);
             end
