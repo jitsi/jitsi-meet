@@ -37,7 +37,7 @@ StateListenerRegistry.register(
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/participants'].raisedHandsQueue,
     /* listener */ (raisedHandsQueue, store) => {
-        if (raisedHandsQueue.length
+        if (raisedHandsQueue?.length > 0
             && isNextToSpeak(store.getState())
             && !hasBeenNotified(store.getState())
             && !getDisableNextSpeakerNotification(store.getState())
