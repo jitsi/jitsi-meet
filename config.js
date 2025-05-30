@@ -509,7 +509,10 @@ var config = {
     //     // Disables everything related to closed captions - the tab in the chat area, the button in the menu,
     //     // subtitles on stage and the "Show subtitles on stage" checkbox in the settings.
     //     // Note: Starting transcriptions from the recording dialog will still work.
-    //     disableClosedCaptions: false
+    //     disableClosedCaptions: false,
+
+    //     // Whether to invite jigasi when backend transcriptions are enabled. By default, we invite it.
+    //     inviteJigasiOnBackendTranscribing: true,
     // },
 
     // Misc

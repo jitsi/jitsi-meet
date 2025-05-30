@@ -465,7 +465,7 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
                         conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
                             isTranscribingEnabled: true
                         });
-                        dispatch(setRequestingSubtitles(true, false, null));
+                        dispatch(setRequestingSubtitles(true, false, null, true));
                     }
                 } else {
                     openRecordingDialog();
