@@ -1,4 +1,4 @@
-import { merge } from 'lodash';
+import { merge } from 'lodash-es';
 
 import * as jitsiTokens from './jitsiTokens.json';
 import * as tokens from './tokens.json';
