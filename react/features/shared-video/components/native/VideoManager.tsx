@@ -49,6 +49,19 @@ class VideoManager extends AbstractVideoManager<IState> {
     }
 
     /**
+     * Trigger after the component load in DOM.
+     *
+     * @returns {void}
+     */
+    componentDidMount() {
+        const { _time } = this.props;
+
+        if (_time) {
+            this.seek(_time);
+        }
+    }
+
+    /**
      * Indicates the playback state of the video.
      *
      * @returns {string}

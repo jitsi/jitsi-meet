@@ -27,6 +27,19 @@ export interface IProps extends WithTranslation {
 }
 
 /**
+ * Function to get time from url.
+ *
+ * @param {string} url - Url of video.
+ * @returns {number | null }
+ */
+function getTimeFromURL(url: string) {
+    const urlObj = new URL(url);
+    const time = urlObj.searchParams.get('t');
+
+    return time ? parseInt(time, 10) : null;
+}
+
+/**
  * Implements an abstract class for {@code SharedVideoDialog}.
  */
 export default class AbstractSharedVideoDialog<S> extends Component < IProps, S > {
@@ -54,14 +67,13 @@ export default class AbstractSharedVideoDialog<S> extends Component < IProps, S 
      */
     _onSetVideoLink(link: string) {
         const { onPostSubmit } = this.props;
-
+        const time = getTimeFromURL(link);
         const id = extractYoutubeIdOrURL(link);
 
         if (!id) {
             return false;
         }
-
-        onPostSubmit(id);
+        onPostSubmit(id, time);
 
         return true;
     }
