@@ -5,7 +5,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../icons/components/Icon';
 import { IconArrowDown, IconCloseCircle, IconWifi1Bar, IconWifi2Bars, IconWifi3Bars } from '../../../icons/svg';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 import { PREJOIN_DEFAULT_CONTENT_WIDTH } from '../../../ui/components/variables';
 import Spinner from '../../../ui/components/web/Spinner';
 import { runPreCallTest } from '../../actions.web';
@@ -16,7 +15,7 @@ const useStyles = makeStyles()(theme => {
     return {
         connectionStatus: {
             color: '#fff',
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             position: 'absolute',
             width: '100%',
 
