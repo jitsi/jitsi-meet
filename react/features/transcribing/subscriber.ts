@@ -1,7 +1,6 @@
 import { batch } from 'react-redux';
 
 import { IStore } from '../app/types';
-import { isConferenceAudioRecordingOn } from '../base/conference/functions';
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound } from '../base/sounds/actions';
@@ -26,16 +25,6 @@ StateListenerRegistry.register(
             notifyTranscribingStatusChanged(getState, false);
             maybeEmitRecordingNotification(dispatch, getState, false);
         }
-    }
-);
-
-/**
- * Listens for audio-recording-enabled conference property change.
- */
-StateListenerRegistry.register(
-    /* selector */ isConferenceAudioRecordingOn,
-    /* listener */ (audioRecordingOn, { getState, dispatch }) => {
-        maybeEmitRecordingNotification(dispatch, getState, audioRecordingOn);
     }
 );
 
