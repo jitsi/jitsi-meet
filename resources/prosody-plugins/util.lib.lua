@@ -612,6 +612,13 @@ local function table_find(tab, val)
     return nil
 end
 
+-- Adds second table values to the first table
+local function table_add(t1, t2)
+    for _,v in ipairs(t2) do
+       table.insert(t1, v);
+    end
+end
+
 -- Splits a string using delimiter
 function split_string(str, delimiter)
     str = str .. delimiter;
@@ -692,6 +699,7 @@ return {
     split_string = split_string;
     starts_with = starts_with;
     starts_with_one_of = starts_with_one_of;
+    table_add = table_add;
     table_shallow_copy = table_shallow_copy;
     table_find = table_find;
 };

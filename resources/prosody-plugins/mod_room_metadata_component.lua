@@ -24,6 +24,7 @@ local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local process_host_module = util.process_host_module;
 local table_shallow_copy = util.table_shallow_copy;
+local table_add = util.table_add;
 
 local MUC_NS = 'http://jabber.org/protocol/muc';
 local COMPONENT_IDENTITY_TYPE = 'room_metadata';
@@ -83,9 +84,25 @@ function send_metadata(occupant, room, json_msg)
         local metadata_to_send = room.jitsiMetadata or {};
 
         -- we want to send the main meeting participants only to jicofo
-        if is_admin(occupant.bare_jid) and room._data.mainMeetingParticipants then
-            metadata_to_send = table_shallow_copy(metadata_to_send);
-            metadata_to_send.mainMeetingParticipants = room._data.mainMeetingParticipants;
+        if is_admin(occupant.bare_jid) then
+            local participants = {};
+
+            if room._data.mainMeetingParticipants then
+                table_add(participants, room._data.mainMeetingParticipants);
+            end
+
+            if room._data.moderator_id then
+                table.insert(participants, room._data.moderator_id);
+            end
+
+            if room._data.moderators then
+                table_add(participants, room._data.moderators);
+            end
+
+            if #participants > 0 then
+                metadata_to_send = table_shallow_copy(metadata_to_send);
+                metadata_to_send.mainMeetingParticipants = participants;
+            end
         end
 
         json_msg = getMetadataJSON(room, metadata_to_send);
