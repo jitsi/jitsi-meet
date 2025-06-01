@@ -107,7 +107,7 @@ export function getLocalizedDurationFormatter(duration: number) {
     const d = dayjs.duration(duration);
 
     if (d.hours() !== 0) {
-        return d.format('h:mm:ss');
+        return d.format('H:mm:ss');
     }
 
     return d.format('mm:ss');
