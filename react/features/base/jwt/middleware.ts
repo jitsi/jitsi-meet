@@ -195,8 +195,6 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
                     if (newUser.avatarURL) {
                         const { knownAvatarUrl } = state['features/base/jwt'];
 
-                        console.error('knownAvatarUrl', knownAvatarUrl, newUser.avatarURL);
-
                         if (knownAvatarUrl !== newUser.avatarURL) {
                             store.dispatch(setDelayedLoadOfAvatarUrl(newUser.avatarURL));
 
