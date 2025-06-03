@@ -23,6 +23,7 @@ import InviteButton from '../invite/components/add-people-dialog/web/InviteButto
 import { registerShortcut, unregisterShortcut } from '../keyboard-shortcuts/actions';
 import { useKeyboardShortcutsButton } from '../keyboard-shortcuts/hooks';
 import NoiseSuppressionButton from '../noise-suppression/components/NoiseSuppressionButton';
+import SoundButton from './components/web/SoundButton';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane
@@ -151,6 +152,12 @@ const shareAudio = {
 const noiseSuppression = {
     key: 'noisesuppression',
     Content: NoiseSuppressionButton,
+    group: 3
+};
+
+const sound = {
+    key: 'sound',
+    Content: SoundButton,
     group: 3
 };
 
@@ -315,6 +322,7 @@ export function useToolboxButtons(
         // sharedvideo: shareVideo,
         shareaudio,
         // noisesuppression: noiseSuppression,
+        sound,
         // whiteboard,
         etherpad,
         // 'select-background': virtualBackground,
