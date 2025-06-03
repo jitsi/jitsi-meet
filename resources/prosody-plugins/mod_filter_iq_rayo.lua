@@ -3,7 +3,6 @@ local new_throttle = require "util.throttle".create;
 local st = require "util.stanza";
 local jid = require "util.jid";
 
-local token_util = module:require "token/util".new(module);
 local util = module:require 'util';
 local is_admin = util.is_admin;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
@@ -24,11 +23,6 @@ if main_muc_component_host == nil then
 end
 local main_muc_service;
 
--- no token configuration but required
-if token_util == nil then
-    module:log("error", "no token configuration but it is required");
-    return;
-end
 
 -- this is the main virtual host of the main prosody that this vnode serves
 local main_domain = module:get_option_string('main_domain');
@@ -37,6 +31,21 @@ local is_visitor_prosody = main_domain ~= nil;
 
 -- this is the main virtual host of this vnode
 local local_domain = module:get_option_string('muc_mapper_domain_base');
+
+local parentCtx = module:context(local_domain);
+if parentCtx == nil then
+    log("error",
+        "Failed to start - unable to get parent context for host: %s",
+        tostring(local_domain));
+    return;
+end
+local token_util = module:require "token/util".new(parentCtx);
+
+-- no token configuration but required
+if token_util == nil then
+    module:log("error", "no token configuration but it is required");
+    return;
+end
 
 -- The maximum number of simultaneous calls,
 -- and also the maximum number of new calls per minute that a session is allowed to create.
