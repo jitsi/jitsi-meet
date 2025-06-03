@@ -350,7 +350,6 @@ function _requestingSubtitlesChange(
     if (enabled && conference?.getTranscriptionStatus() === JitsiMeetJS.constants.transcriptionStatus.OFF) {
         const featureAllowed = isJwtFeatureEnabled(getState(), MEET_FEATURES.TRANSCRIPTION, false);
 
-
         // the default value for inviteJigasiOnBackendTranscribing is true (when undefined)
         if (featureAllowed && (!backendRecordingOn || (transcription?.inviteJigasiOnBackendTranscribing ?? true))) {
             conference?.dial(TRANSCRIBER_DIAL_NUMBER)
