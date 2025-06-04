@@ -1593,7 +1593,7 @@ var config = {
     // If there is a logout service you can specify its URL with:
     tokenLogoutUrl:
         'https://' + authdomain + '/realms/jitsi/protocol/openid-connect/logout'
-        + '?post_logout_redirect_uri=https%3A%2F%2F' + domain + '%2Fmeet%2F'
+        + '?post_logout_redirect_uri=https%3A%2F%2F' + domain + '%2Fmeet%2F%23loggedOut%3Dtrue'
         + '&client_id=jitsi-web',
 
     // You can enable tokenAuthUrlAutoRedirect which will detect that you have logged in successfully before
