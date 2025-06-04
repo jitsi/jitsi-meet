@@ -1576,9 +1576,9 @@ var config = {
     // tokenAuthUrlAutoRedirect: false
     // An option to respect the context.tenant jwt field compared to the current tenant from the url
     // tokenRespectTenant: false,
-    // An option to check for user info (name, picture, email) in the token outside the user context.
+    // An option to get for user info (name, picture, email) in the token outside the user context.
     // Can be used with Firebase tokens.
-    // tokenCheckUserInfoOutOfContext: false,
+    // tokenGetUserInfoOutOfContext: false,
 
     // You can put an array of values to target different entity types in the invite dialog.
     // Valid values are "phone", "room", "sip", "user", "videosipgw" and "email"

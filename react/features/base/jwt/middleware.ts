@@ -165,7 +165,7 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
 
             if (jwtPayload) {
                 const { context, iss, sub } = jwtPayload;
-                const { tokenCheckUserInfoOutOfContext, tokenRespectTenant } = state['features/base/config'];
+                const { tokenGetUserInfoOutOfContext, tokenRespectTenant } = state['features/base/config'];
 
                 action.jwt = jwt;
                 action.issuer = iss;
@@ -210,7 +210,7 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
                     if (context.user && context.user.role === 'visitor') {
                         action.preferVisitor = true;
                     }
-                } else if (tokenCheckUserInfoOutOfContext
+                } else if (tokenGetUserInfoOutOfContext
                     && (jwtPayload.name || jwtPayload.picture || jwtPayload.email)) {
                     // there are some tokens (firebase) having picture and name on the main level.
                     _overwriteLocalParticipant(store, {

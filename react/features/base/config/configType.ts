@@ -603,7 +603,7 @@ export interface IConfig {
     };
     tokenAuthUrl?: string;
     tokenAuthUrlAutoRedirect?: string;
-    tokenCheckUserInfoOutOfContext?: boolean;
+    tokenGetUserInfoOutOfContext?: boolean;
     tokenLogoutUrl?: string;
     tokenRespectTenant?: boolean;
     toolbarButtons?: Array<ToolbarButton>;
