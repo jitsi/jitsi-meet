@@ -603,8 +603,9 @@ export interface IConfig {
     };
     tokenAuthUrl?: string;
     tokenAuthUrlAutoRedirect?: string;
+    tokenCheckUserInfoOutOfContext?: boolean;
     tokenLogoutUrl?: string;
-    tokenRespectTenant?: string;
+    tokenRespectTenant?: boolean;
     toolbarButtons?: Array<ToolbarButton>;
     toolbarConfig?: {
         alwaysVisible?: boolean;
