@@ -18,7 +18,7 @@ export default {
      */
     connectionInfoText: {
         color: ColorPalette.white,
-        fontSize: 12,
+        fontSize: '0.75rem',
         marginVertical: BoxModel.margin,
         marginHorizontal: BoxModel.margin,
         textAlign: 'center'
