@@ -39,9 +39,9 @@ import { init } from '../../actions.web';
 import { maybeShowSuboptimalExperienceNotification } from '../../functions.web';
 import {
     AbstractConference,
+    type AbstractProps,
     abstractMapStateToProps
 } from '../AbstractConference';
-import type { AbstractProps } from '../AbstractConference';
 
 import ConferenceInfo from './ConferenceInfo';
 import { default as Notice } from './Notice';

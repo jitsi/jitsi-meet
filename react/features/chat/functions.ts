@@ -11,11 +11,11 @@ import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { getParticipantById } from '../base/participants/functions';
 import { escapeRegexp } from '../base/util/helpers';
+import { getParticipantsPaneWidth } from '../participants-pane/functions';
+import { VIDEO_SPACE_MIN_SIZE } from '../video-layout/constants';
 
 import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, TIMESTAMP_FORMAT } from './constants';
 import { IMessage } from './types';
-import { getParticipantsPaneWidth } from '../participants-pane/functions';
-import { VIDEO_SPACE_MIN_SIZE } from '../video-layout/constants';
 
 /**
  * An ASCII emoticon regexp array to find and replace old-style ASCII

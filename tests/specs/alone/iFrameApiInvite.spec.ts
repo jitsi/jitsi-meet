@@ -1,3 +1,4 @@
+import type { Participant } from '../../helpers/Participant';
 import { ensureOneParticipant } from '../../helpers/participants';
 import {
     cleanup,
@@ -6,7 +7,6 @@ import {
     retrievePin,
     waitForAudioFromDialInParticipant
 } from '../helpers/DialIn';
-import type { Participant } from '../../helpers/Participant';
 
 describe('Invite iframeAPI', () => {
     it('join participant', async () => {

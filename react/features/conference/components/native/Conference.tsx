@@ -46,9 +46,9 @@ import Toolbox from '../../../toolbox/components/native/Toolbox';
 import { isToolboxVisible } from '../../../toolbox/functions.native';
 import {
     AbstractConference,
+    type AbstractProps,
     abstractMapStateToProps
 } from '../AbstractConference';
-import type { AbstractProps } from '../AbstractConference';
 import { isConnecting } from '../functions.native';
 
 import AlwaysOnLabels from './AlwaysOnLabels';

@@ -2,6 +2,7 @@
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { clientResized } from '../base/responsive-ui/actions';
+
 import { setChatWidth } from './actions.web';
 import { CHAT_SIZE } from './constants';
 import { getChatMaxSize } from './functions';

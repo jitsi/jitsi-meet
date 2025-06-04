@@ -1,5 +1,6 @@
-import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
 import { expect } from '@wdio/globals';
+
+import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
 
 describe('Visitors', () => {
     it('joining the meeting', async () => {

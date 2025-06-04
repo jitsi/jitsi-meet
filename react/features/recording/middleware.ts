@@ -36,8 +36,8 @@ import { isRecorderTranscriptionsRunning } from '../transcribing/functions';
 import { RECORDING_SESSION_UPDATED, START_LOCAL_RECORDING, STOP_LOCAL_RECORDING } from './actionTypes';
 import {
     clearRecordingSessions,
-    markConsentRequested,
     hidePendingRecordingNotification,
+    markConsentRequested,
     showPendingRecordingNotification,
     showRecordingError,
     showRecordingLimitNotification,

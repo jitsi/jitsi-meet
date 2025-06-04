@@ -7,9 +7,9 @@ import Icon from '../../../base/icons/components/Icon';
 import { IconSearch } from '../../../base/icons/svg';
 import { getFieldValue } from '../../../base/react/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import { HiddenDescription } from '../../../base/ui/components/web/HiddenDescription';
 import { MOBILE_BREAKPOINT } from '../../constants';
 import { isSpeakerStatsSearchDisabled } from '../../functions';
-import { HiddenDescription } from '../../../base/ui/components/web/HiddenDescription';
 
 const useStyles = makeStyles()(theme => {
     return {

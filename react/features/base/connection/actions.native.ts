@@ -1,7 +1,7 @@
 import { appNavigate } from '../../app/actions.native';
 import { IStore } from '../../app/types';
 import { getCustomerDetails } from '../../jaas/actions.any';
-import { isVpaasMeeting, getJaasJWT } from '../../jaas/functions';
+import { getJaasJWT, isVpaasMeeting } from '../../jaas/functions';
 import { navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../mobile/navigation/routes';
 import { setJWT } from '../jwt/actions';

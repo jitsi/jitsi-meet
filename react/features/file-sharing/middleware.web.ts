@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
+import { IStore } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
 import { getLocalParticipant, getParticipantDisplayName } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
@@ -8,11 +9,10 @@ import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/c
 
 import { DOWNLOAD_FILE, REMOVE_FILE, UPLOAD_FILES } from './actionTypes';
 import { addFile, removeFile, updateFileProgress } from './actions';
+import { FILE_SHARING_PREFIX, FILE_SHARING_SERVICE } from './constants';
 import { getFileExtension } from './functions.any';
 import logger from './logger';
-import { FILE_SHARING_PREFIX, FILE_SHARING_SERVICE } from './constants';
 import { IFileMetadata } from './types';
-import { IStore } from '../app/types';
 
 /**
  * Middleware that handles file sharing actions.

@@ -1,7 +1,9 @@
-import { ensureTwoParticipants } from '../../helpers/participants';
-import type { Participant } from '../../helpers/Participant';
-import { fetchJson } from '../../helpers/utils';
 import { expect } from '@wdio/globals';
+
+import type { Participant } from '../../helpers/Participant';
+import { ensureTwoParticipants } from '../../helpers/participants';
+import { fetchJson } from '../../helpers/utils';
+
 
 describe('Chat', () => {
     it('joining the meeting', async () => {

@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import durationPlugin from 'dayjs/plugin/duration';
-import relativeTimePlugin from 'dayjs/plugin/relativeTime';
 import localizedFormatPlugin from 'dayjs/plugin/localizedFormat';
+import relativeTimePlugin from 'dayjs/plugin/relativeTime';
 
 import i18next from './i18next';
 

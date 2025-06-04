@@ -2,6 +2,7 @@ import { isEqual } from 'lodash-es';
 
 import { UPDATE_CONFERENCE_METADATA } from '../base/conference/actionTypes';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
+
 import {
     ADD_FILE,
     REMOVE_FILE,

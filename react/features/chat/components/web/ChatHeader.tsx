@@ -2,12 +2,12 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { IReduxState } from '../../../app/types';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCloseLarge } from '../../../base/icons/svg';
-import { toggleChat } from '../../actions.web';
-import { IReduxState } from '../../../app/types';
-import { ChatTabs } from '../../constants';
 import { isFileSharingEnabled } from '../../../file-sharing/functions.any';
+import { toggleChat } from '../../actions.web';
+import { ChatTabs } from '../../constants';
 
 interface IProps {
 
