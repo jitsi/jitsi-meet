@@ -9,10 +9,12 @@ import { IconAddUser } from '../../../base/icons/svg';
 import {
     addPeopleFeatureControl,
     getLocalParticipant,
-    getParticipantCountWithFake,
+    getParticipantById,
     getRemoteParticipants,
+    isScreenShareParticipant,
     setShareDialogVisiblity
 } from '../../../base/participants/functions';
+import { IParticipant } from '../../../base/participants/types';
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
@@ -22,7 +24,7 @@ import {
 } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
 import { getInviteOthersControl } from '../../../share-room/functions';
-import { participantMatchesSearch, shouldRenderInviteButton } from '../../functions';
+import { getSortedParticipantIds, participantMatchesSearch, shouldRenderInviteButton } from '../../functions';
 
 import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
@@ -44,8 +46,16 @@ const MeetingParticipantList = () => {
     const [ searchString, setSearchString ] = useState('');
     const onSearchStringChange = useCallback((text: string) =>
         setSearchString(text), []);
-    const participantsCount = useSelector(getParticipantCountWithFake);
     const remoteParticipants = useSelector(getRemoteParticipants);
+    const showInviteButton = useSelector(shouldRenderInviteButton);
+    const sortedParticipantIds = useSelector((state: IReduxState) =>
+        getSortedParticipantIds(state).filter((id: any) => {
+            const participant = getParticipantById(state, id);
+
+            return !isScreenShareParticipant(participant as IParticipant);
+        })
+    );
+    const participantsCount = sortedParticipantIds.length;
     const renderParticipant = ({ item/* , index, separators */ }: any) => {
         const participant = item === localParticipant?.id
             ? localParticipant : remoteParticipants.get(item);
@@ -60,9 +70,6 @@ const MeetingParticipantList = () => {
 
         return null;
     };
-    const showInviteButton = useSelector(shouldRenderInviteButton);
-    const sortedRemoteParticipants = useSelector(
-        (state: IReduxState) => state['features/filmstrip'].remoteParticipants);
     const { t } = useTranslation();
     const title = currentRoom?.name
         ? `${currentRoom.name} (${participantsCount})`
@@ -103,7 +110,7 @@ const MeetingParticipantList = () => {
                 placeholder = { t('participantsPane.search') }
                 value = { searchString } />
             <FlatList
-                data = { [ localParticipant?.id, ...sortedRemoteParticipants ] as Array<any> }
+                data = { sortedParticipantIds as Array<any> }
                 keyExtractor = { keyExtractor }
 
                 /* eslint-disable react/jsx-no-bind */

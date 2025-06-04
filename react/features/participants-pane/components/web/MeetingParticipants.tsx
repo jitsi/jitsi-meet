@@ -16,7 +16,7 @@ import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../b
 import { isButtonEnabled, showOverflowDrawer } from '../../../toolbox/functions.web';
 import { muteRemote } from '../../../video-menu/actions.web';
 import { getSortedParticipantIds, isCurrentRoomRenamable, shouldRenderInviteButton } from '../../functions';
-import { useParticipantDrawer } from '../../hooks';
+import { useParticipantDrawer } from '../../hooks.web';
 import RenameButton from '../breakout-rooms/components/web/RenameButton';
 
 import { InviteButton } from './InviteButton';
