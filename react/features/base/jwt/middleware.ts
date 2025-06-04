@@ -165,6 +165,7 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
 
             if (jwtPayload) {
                 const { context, iss, sub } = jwtPayload;
+                const { tokenGetUserInfoOutOfContext, tokenRespectTenant } = state['features/base/config'];
 
                 action.jwt = jwt;
                 action.issuer = iss;
@@ -180,7 +181,6 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
                     const newUser = user ? { ...user } : {};
 
                     let features = context.features;
-                    const { tokenRespectTenant } = state['features/base/config'];
 
                     // eslint-disable-next-line max-depth
                     if (!isVpaasMeeting(state) && tokenRespectTenant && context.tenant) {
@@ -210,7 +210,8 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
                     if (context.user && context.user.role === 'visitor') {
                         action.preferVisitor = true;
                     }
-                } else if (jwtPayload.name || jwtPayload.picture || jwtPayload.email) {
+                } else if (tokenGetUserInfoOutOfContext
+                    && (jwtPayload.name || jwtPayload.picture || jwtPayload.email)) {
                     // there are some tokens (firebase) having picture and name on the main level.
                     _overwriteLocalParticipant(store, {
                         avatarURL: jwtPayload.picture,
