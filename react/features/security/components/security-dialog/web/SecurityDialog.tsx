@@ -5,12 +5,12 @@ import { IReduxState } from '../../../../app/types';
 import { getSecurityUiConfig } from '../../../../base/config/functions.any';
 import { isLocalParticipantModerator } from '../../../../base/participants/functions';
 import Dialog from '../../../../base/ui/components/web/Dialog';
+import { isInBreakoutRoom } from '../../../../breakout-rooms/functions';
 import E2EESection from '../../../../e2ee/components/E2EESection';
 import LobbySection from '../../../../lobby/components/web/LobbySection';
 import { isEnablingLobbyAllowed } from '../../../../lobby/functions';
 
 import PasswordSection from './PasswordSection';
-import { isInBreakoutRoom } from '../../../../breakout-rooms/functions';
 
 export interface INotifyClick {
     key: string;

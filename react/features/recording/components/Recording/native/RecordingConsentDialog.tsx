@@ -1,12 +1,12 @@
 import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import Dialog from 'react-native-dialog';
+import { useDispatch, useSelector } from 'react-redux';
 
-import ConfirmDialog from '../../../../base/dialog/components/native/ConfirmDialog';
-import Link from '../../../../base/react/components/native/Link';
-import { setAudioMuted, setAudioUnmutePermissions, setVideoMuted, setVideoUnmutePermissions } from '../../../../base/media/actions';
 import { IReduxState } from '../../../../app/types';
+import ConfirmDialog from '../../../../base/dialog/components/native/ConfirmDialog';
+import { setAudioMuted, setAudioUnmutePermissions, setVideoMuted, setVideoUnmutePermissions } from '../../../../base/media/actions';
+import Link from '../../../../base/react/components/native/Link';
 import styles from '../styles.native';
 
 /**

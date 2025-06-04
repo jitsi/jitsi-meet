@@ -10,10 +10,10 @@ import { translate } from '../../../base/i18n/functions';
 import { IconFaceSmile, IconSend } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
+import { CHAT_SIZE } from '../../constants';
 import { areSmileysDisabled, isSendGroupChatDisabled } from '../../functions';
 
 import SmileysPanel from './SmileysPanel';
-import { CHAT_SIZE } from '../../constants';
 
 
 const styles = (_theme: Theme, { _chatWidth }: IProps) => {

@@ -1,9 +1,9 @@
 import { IStore } from '../../app/types';
 import { showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
-import StateListenerRegistry from '../redux/StateListenerRegistry';
 import { setAudioMuted, setVideoMuted } from '../media/actions';
 import { VIDEO_MUTISM_AUTHORITY } from '../media/constants';
+import StateListenerRegistry from '../redux/StateListenerRegistry';
 
 let hasShownNotification = false;
 

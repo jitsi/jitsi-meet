@@ -8,9 +8,9 @@ import { IconPerformance } from '../../base/icons/svg';
 import Label from '../../base/label/components/web/Label';
 import { COLORS } from '../../base/label/constants';
 import Tooltip from '../../base/tooltip/components/Tooltip';
+import { shouldDisplayVideoQualityLabel } from '../selector';
 
 import VideoQualityDialog from './VideoQualityDialog.web';
-import { shouldDisplayVideoQualityLabel } from '../selector';
 
 /**
  * React {@code Component} responsible for displaying a label that indicates

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
+import { IReduxState } from '../../../app/types';
 import Icon from '../../../base/icons/components/Icon';
 import { IconSubtitles } from '../../../base/icons/svg';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
@@ -15,7 +16,6 @@ import { ISubtitle } from '../../../subtitles/types';
 import { isTranscribing } from '../../../transcribing/functions';
 
 import { SubtitlesMessagesContainer } from './SubtitlesMessagesContainer';
-import { IReduxState } from '../../../app/types';
 
 /**
  * The styles for the ClosedCaptionsTab component.

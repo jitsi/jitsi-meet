@@ -1,9 +1,9 @@
 import {
     ADD_FILE,
+    DOWNLOAD_FILE,
     REMOVE_FILE,
     UPDATE_FILE_UPLOAD_PROGRESS,
-    UPLOAD_FILES,
-    DOWNLOAD_FILE
+    UPLOAD_FILES
 } from './actionTypes';
 import { IFileMetadata } from './types';
 

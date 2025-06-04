@@ -6,6 +6,7 @@ import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { showErrorNotification } from '../notifications/actions';
 import { TRANSCRIBER_JOINED } from '../transcribing/actionTypes';
 
 import {
@@ -24,7 +25,6 @@ import { notifyTranscriptionChunkReceived } from './functions';
 import { areClosedCaptionsEnabled, isCCTabEnabled } from './functions.any';
 import logger from './logger';
 import { ISubtitle, ITranscriptMessage } from './types';
-import { showErrorNotification } from '../notifications/actions';
 
 /**
  * The type of json-message which indicates that json carries a

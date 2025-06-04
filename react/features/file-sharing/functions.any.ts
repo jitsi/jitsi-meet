@@ -1,13 +1,13 @@
 import { IReduxState, IStore } from '../app/types';
+import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
 import {
     IconImage,
     IconShareDoc,
     IconVideo,
     IconVolumeUp
 } from '../base/icons/svg';
-import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
-import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { MEET_FEATURES } from '../base/jwt/constants';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { showErrorNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
 

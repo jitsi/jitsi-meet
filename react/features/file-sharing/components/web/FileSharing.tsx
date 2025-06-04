@@ -1,22 +1,22 @@
-import React, { useCallback, useState, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
-import { IconCloudUpload, IconDownload, IconTrash } from '../../../base/icons/svg';
-import Button from '../../../base/ui/components/web/Button';
-import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import Icon from '../../../base/icons/components/Icon';
+import { IconCloudUpload, IconDownload, IconTrash } from '../../../base/icons/svg';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import BaseTheme from '../../../base/ui/components/BaseTheme.web';
+import Button from '../../../base/ui/components/web/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import { downloadFile, removeFile } from '../../actions';
 import {
-    isFileUploadingEnabled,
     formatFileSize,
     formatTimestamp,
     getFileIcon,
+    isFileUploadingEnabled,
     processFiles
 } from '../../functions.any';
 

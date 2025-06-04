@@ -1,5 +1,4 @@
-import { Action, combineReducers } from 'redux';
-import type { Reducer } from 'redux';
+import { Action, type Reducer, combineReducers } from 'redux';
 
 /**
  * The type of the dictionary/map which associates a reducer (function) with the

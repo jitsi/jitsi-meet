@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconSubtitles } from '../../../base/icons/svg';
 import { openCCPanel } from '../../../chat/actions.any';
@@ -10,7 +11,6 @@ import {
     IAbstractProps,
     _abstractMapStateToProps
 } from '../AbstractClosedCaptionButton';
-import { IReduxState } from '../../../app/types';
 
 /**
  * A button which starts/stops the transcriptions.

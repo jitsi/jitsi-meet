@@ -17,9 +17,9 @@ import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconCloseLarge } from '../../base/icons/svg';
 import { browser } from '../../base/lib-jitsi-meet';
+import { isNarrowScreenWithChatOpen } from '../../base/responsive-ui/functions';
 import { isVpaasMeeting } from '../../jaas/functions';
 import logger from '../logger';
-import { isNarrowScreenWithChatOpen } from '../../base/responsive-ui/functions';
 
 const emptyObject = {};
 

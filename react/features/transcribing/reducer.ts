@@ -1,10 +1,10 @@
+import { CONFERENCE_PROPERTIES_CHANGED } from '../base/conference/actionTypes';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     TRANSCRIBER_JOINED,
     TRANSCRIBER_LEFT
 } from './actionTypes';
-import { CONFERENCE_PROPERTIES_CHANGED } from '../base/conference/actionTypes';
 
 /**
  * Returns initial state for transcribing feature part of Redux store.

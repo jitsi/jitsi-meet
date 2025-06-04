@@ -1,6 +1,7 @@
-import type { Participant } from '../../helpers/Participant';
-import process from 'node:process';
 import https from 'node:https';
+import process from 'node:process';
+
+import type { Participant } from '../../helpers/Participant';
 
 /**
  * Helper functions for dial-in related operations.

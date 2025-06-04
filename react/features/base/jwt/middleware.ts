@@ -4,20 +4,20 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
 import { isVpaasMeeting } from '../../jaas/functions';
+import { getCurrentConference } from '../conference/functions';
 import { SET_CONFIG } from '../config/actionTypes';
 import { CONNECTION_ESTABLISHED, SET_LOCATION_URL } from '../connection/actionTypes';
 import { participantUpdated } from '../participants/actions';
 import { getLocalParticipant } from '../participants/functions';
 import { IParticipant } from '../participants/types';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import StateListenerRegistry from '../redux/StateListenerRegistry';
 import { parseURIString } from '../util/uri';
 
 import { SET_JWT } from './actionTypes';
 import { setDelayedLoadOfAvatarUrl, setJWT, setKnownAvatarUrl } from './actions';
 import { parseJWTFromURLParams } from './functions';
 import logger from './logger';
-import StateListenerRegistry from '../redux/StateListenerRegistry';
-import { getCurrentConference } from '../conference/functions';
 
 /**
  * Set up a state change listener to perform maintenance tasks when the conference

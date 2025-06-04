@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { batch, useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../../app/types';
+import { hideDialog } from '../../../../base/dialog/actions';
 import { translateToHTML } from '../../../../base/i18n/functions';
 import {
     setAudioMuted,
@@ -11,7 +12,6 @@ import {
     setVideoUnmutePermissions
 } from '../../../../base/media/actions';
 import Dialog from '../../../../base/ui/components/web/Dialog';
-import { hideDialog } from '../../../../base/dialog/actions';
 
 /**
  * Component that renders the dialog for explicit consent for recordings.

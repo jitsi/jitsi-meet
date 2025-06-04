@@ -1,10 +1,11 @@
+import { throttle } from 'lodash-es';
 import React, { useCallback, useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
-import { throttle } from 'lodash-es';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
+import { IconInfo, IconMessage, IconShareDoc, IconSubtitles } from '../../../base/icons/svg';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import Tabs from '../../../base/ui/components/web/Tabs';
 import { arePollsDisabled } from '../../../conference/functions.any';
@@ -12,10 +13,10 @@ import FileSharing from '../../../file-sharing/components/web/FileSharing';
 import { isFileSharingEnabled } from '../../../file-sharing/functions.any';
 import PollsPane from '../../../polls/components/web/PollsPane';
 import { isCCTabEnabled } from '../../../subtitles/functions.any';
-import { setChatIsResizing, setUserChatWidth, sendMessage, setFocusedTab, toggleChat } from '../../actions.web';
+import { sendMessage, setChatIsResizing, setFocusedTab, setUserChatWidth, toggleChat } from '../../actions.web';
 import { CHAT_SIZE, ChatTabs, SMALL_WIDTH_THRESHOLD } from '../../constants';
+import { getChatMaxSize } from '../../functions';
 import { IChatProps as AbstractProps } from '../../types';
-import { IconMessage, IconInfo, IconSubtitles, IconShareDoc } from '../../../base/icons/svg';
 
 import ChatHeader from './ChatHeader';
 import ChatInput from './ChatInput';
@@ -24,7 +25,7 @@ import DisplayNameForm from './DisplayNameForm';
 import KeyboardAvoider from './KeyboardAvoider';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
-import { getChatMaxSize } from '../../functions';
+
 
 interface IProps extends AbstractProps {
 

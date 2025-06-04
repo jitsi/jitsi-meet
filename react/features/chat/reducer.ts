@@ -1,6 +1,6 @@
+import { UPDATE_CONFERENCE_METADATA } from '../base/conference/actionTypes';
 import { ILocalParticipant, IParticipant } from '../base/participants/types';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
-import { ChatTabs } from './constants';
 
 import {
     ADD_MESSAGE,
@@ -18,9 +18,8 @@ import {
     SET_PRIVATE_MESSAGE_RECIPIENT,
     SET_USER_CHAT_WIDTH
 } from './actionTypes';
-import { CHAT_SIZE } from './constants';
+import { CHAT_SIZE, ChatTabs } from './constants';
 import { IMessage } from './types';
-import { UPDATE_CONFERENCE_METADATA } from '../base/conference/actionTypes';
 
 const DEFAULT_STATE = {
     groupChatWithPermissions: false,
