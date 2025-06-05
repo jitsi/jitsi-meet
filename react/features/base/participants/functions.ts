@@ -5,6 +5,7 @@ import { IReduxState, IStore } from '../../app/types';
 import { isStageFilmstripAvailable } from '../../filmstrip/functions';
 import { isAddPeopleEnabled, isDialOutEnabled } from '../../invite/functions';
 import { toggleShareDialog } from '../../share-room/actions';
+import { iAmVisitor } from '../../visitors/functions';
 import { IStateful } from '../app/types';
 import { GRAVATAR_BASE_URL } from '../avatar/constants';
 import { isCORSAvatarURL } from '../avatar/functions';
@@ -256,8 +257,10 @@ export function getParticipantCount(stateful: IStateful) {
         fakeParticipants,
         sortedRemoteVirtualScreenshareParticipants
     } = state['features/base/participants'];
+    const _iAmVisitor = iAmVisitor(stateful);
 
-    return remote.size - fakeParticipants.size - sortedRemoteVirtualScreenshareParticipants.size + (local ? 1 : 0);
+    return remote.size - fakeParticipants.size - sortedRemoteVirtualScreenshareParticipants.size
+        + (local && !_iAmVisitor ? 1 : 0);
 }
 
 /**
@@ -409,8 +412,9 @@ export function getMutedStateByParticipantAndMediaType(
 export function getParticipantCountWithFake(stateful: IStateful) {
     const state = toState(stateful);
     const { local, localScreenShare, remote } = state['features/base/participants'];
+    const _iAmVisitor = iAmVisitor(stateful);
 
-    return remote.size + (local ? 1 : 0) + (localScreenShare ? 1 : 0);
+    return remote.size + (local && !_iAmVisitor ? 1 : 0) + (localScreenShare ? 1 : 0);
 }
 
 /**
