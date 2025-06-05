@@ -15,7 +15,8 @@ import {
     SET_VIDEO_MUTED,
     SET_VIDEO_UNMUTE_PERMISSIONS,
     STORE_VIDEO_TRANSFORM,
-    TOGGLE_CAMERA_FACING_MODE
+    TOGGLE_CAMERA_FACING_MODE,
+    SET_DEAFENED
 } from './actionTypes';
 import {
     MEDIA_TYPE,
@@ -75,6 +76,46 @@ export function setAudioUnmutePermissions(blocked: boolean, skipNotification = f
         type: SET_AUDIO_UNMUTE_PERMISSIONS,
         blocked,
         skipNotification
+    };
+}
+
+/**
+ * Sets the deafened state (mutes/unmutes all incoming audio).
+ *
+ * @param {boolean} deafened - True to deafen (mute all incoming audio), false to undeafen.
+ * @returns {Function}
+ */
+export function setDeafened(deafened: boolean) {
+    return (dispatch: IStore['dispatch'], getState:  IStore['getState']) => {
+        const conference = getState()['features/base/conference'].conference;
+        
+        if (!conference) {
+            return;
+        }
+
+        conference.sendMessage({
+            type: 'ReceiverAudioMetadata',
+            deafened
+        });
+
+        dispatch({
+            type: SET_DEAFENED,
+            deafened
+        });
+    };
+}
+
+/**
+ * Toggles the deafened state.
+ *
+ * @returns {Function}
+ */
+export function toggleDeafen() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const currentlyDeafened = state['features/base/media'].deafen.deafened || false;
+        
+        dispatch(setDeafened(!currentlyDeafened));
     };
 }
 
