@@ -2,7 +2,6 @@ import { batch } from 'react-redux';
 
 import { IStore } from '../../app/types';
 import { _RESET_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
-import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { getCurrentConference } from '../conference/functions';
 import {
     SET_AUDIO_MUTED,
@@ -203,7 +202,7 @@ function _setMuted(store: IStore, { ensureTrack, muted }: {
             setTrackMuted(jitsiTrack, muted, state, dispatch)
                 .catch(() => dispatch(trackMuteUnmuteFailed(localTrack, muted)));
         }
-    } else if (!muted && ensureTrack && (typeof APP === 'undefined' || isPrejoinPageVisible(state))) {
+    } else if (!muted && ensureTrack) {
         typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.PENDING_UNMUTE));
 
         // FIXME: This only runs on mobile now because web has its own way of
