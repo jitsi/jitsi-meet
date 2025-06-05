@@ -27,6 +27,7 @@ import {
     close as closeParticipantsPane,
     open as openParticipantsPane
 } from '../participants-pane/actions.web';
+import DeafenButton from './components/web/DeafenButton';
 import {
     getParticipantsPaneOpen,
     isParticipantsPaneEnabled
@@ -84,6 +85,12 @@ const camera = {
     Content: VideoSettingsButton,
     group: 0
 };
+
+const deafen = {
+    key: 'deafen',
+    Content: DeafenButton,
+    group: 0
+}
 
 const profile = {
     key: 'profile',
@@ -295,6 +302,7 @@ export function useToolboxButtons(
 
     const buttons: { [key in ToolbarButton]?: IToolboxButton; } = {
         microphone,
+        deafen,
         camera,
         profile,
         desktop: desktopSharing,

@@ -146,6 +146,7 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'camera',
     'chat',
     'closedcaptions',
+    'deafen',
     'desktop',
     'download',
     'embedmeeting',
