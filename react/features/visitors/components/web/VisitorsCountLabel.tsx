@@ -3,11 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IReduxState } from '../../../app/types';
 import { IconUsers } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
 import Tooltip from '../../../base/tooltip/components/Tooltip';
-import { getVisitorsCount, getVisitorsShortText, iAmVisitor } from '../../functions';
+import { getVisitorsCount, getVisitorsShortText } from '../../functions';
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -20,11 +19,10 @@ const useStyles = makeStyles()(theme => {
 
 const VisitorsCountLabel = () => {
     const { classes: styles, theme } = useStyles();
-    const visitorsMode = useSelector((state: IReduxState) => iAmVisitor(state));
     const visitorsCount = useSelector(getVisitorsCount);
     const { t } = useTranslation();
 
-    return !visitorsMode && visitorsCount > 0 ? (<Tooltip
+    return visitorsCount > 0 ? (<Tooltip
         content = { t('visitors.labelTooltip', { count: visitorsCount }) }
         position = { 'bottom' }>
         <Label

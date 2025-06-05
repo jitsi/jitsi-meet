@@ -22,6 +22,7 @@ import {
 } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
 import { getInviteOthersControl } from '../../../share-room/functions';
+import { iAmVisitor } from '../../../visitors/functions';
 import { participantMatchesSearch, shouldRenderInviteButton } from '../../functions';
 
 import MeetingParticipantItem from './MeetingParticipantItem';
@@ -37,6 +38,7 @@ const MeetingParticipantList = () => {
     const keyExtractor
         = useCallback((e: undefined, i: number) => i.toString(), []);
     const localParticipant = useSelector(getLocalParticipant);
+    const _iAmVisitor = useSelector(iAmVisitor);
     const onInvite = useCallback(() => {
         setShareDialogVisiblity(isAddPeopleFeatureEnabled, dispatch);
         dispatch(doInvitePeople());
@@ -103,7 +105,10 @@ const MeetingParticipantList = () => {
                 placeholder = { t('participantsPane.search') }
                 value = { searchString } />
             <FlatList
-                data = { [ localParticipant?.id, ...sortedRemoteParticipants ] as Array<any> }
+                data = { _iAmVisitor
+                    ? [ ...sortedRemoteParticipants ]
+                    : [ localParticipant?.id, ...sortedRemoteParticipants ] as Array<any>
+                }
                 keyExtractor = { keyExtractor }
 
                 /* eslint-disable react/jsx-no-bind */
