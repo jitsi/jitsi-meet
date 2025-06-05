@@ -92,6 +92,7 @@ export type NativeToolbarButton = 'camera' |
 export interface IGetVisibleNativeButtonsParams {
     allButtons: { [key: string]: IToolboxNativeButton; };
     clientWidth: number;
+    iAmVisitor: boolean;
     mainToolbarButtonsThresholds: IMainToolbarButtonThresholds;
     toolbarButtons: string[];
 }
