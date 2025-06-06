@@ -204,9 +204,6 @@ function _setMuted(store: IStore, { ensureTrack, muted }: {
         }
     } else if (!muted && ensureTrack) {
         typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.PENDING_UNMUTE));
-
-        // FIXME: This only runs on mobile now because web has its own way of
-        // creating local tracks. Adjust the check once they are unified.
         dispatch(createLocalTracksA({ devices: [ mediaType ] })).then(() => {
             typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.NONE));
         });

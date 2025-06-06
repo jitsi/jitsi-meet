@@ -16,18 +16,21 @@ import { IStore } from '../../app/types';
 import { removeLobbyChatParticipant } from '../../chat/actions.any';
 import { openDisplayNamePrompt } from '../../display-name/actions';
 import { isVpaasMeeting } from '../../jaas/functions';
+import { setNoiseSuppressionEnabled } from '../../noise-suppression/actions';
 import { showErrorNotification, showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { INotificationProps } from '../../notifications/types';
 import { hasDisplayName } from '../../prejoin/utils';
 import { stopLocalVideoRecording } from '../../recording/actions.any';
 import LocalRecordingManager from '../../recording/components/Recording/LocalRecordingManager';
+import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
 import { iAmVisitor } from '../../visitors/functions';
 import { overwriteConfig } from '../config/actions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection/actionTypes';
 import { connectionDisconnected, disconnect } from '../connection/actions';
 import { validateJwt } from '../jwt/functions';
 import { JitsiConferenceErrors, JitsiConferenceEvents, JitsiConnectionErrors } from '../lib-jitsi-meet';
+import { MEDIA_TYPE } from '../media/constants';
 import { PARTICIPANT_UPDATED, PIN_PARTICIPANT } from '../participants/actionTypes';
 import { PARTICIPANT_ROLE } from '../participants/constants';
 import {
@@ -656,15 +659,14 @@ function _setRoom({ dispatch, getState }: IStore, next: Function, action: AnyAct
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _trackAddedOrRemoved(store: IStore, next: Function, action: AnyAction) {
+async function _trackAddedOrRemoved(store: IStore, next: Function, action: AnyAction) {
     const track = action.track;
 
     // TODO All track swapping should happen here instead of conference.js.
     if (track?.local) {
-        const { getState } = store;
+        const { dispatch, getState } = store;
         const state = getState();
         const conference = getCurrentConference(state);
-        let promise;
 
         if (conference) {
             const jitsiTrack = action.track.jitsiTrack;
@@ -673,14 +675,23 @@ function _trackAddedOrRemoved(store: IStore, next: Function, action: AnyAction) 
                 // If gUM is slow and tracks are created after the user has already joined the conference, avoid
                 // adding the tracks to the conference if the user is a visitor.
                 if (!iAmVisitor(state)) {
-                    promise = _addLocalTracksToConference(conference, [ jitsiTrack ]);
+                    const { desktopAudioTrack } = state['features/screen-share'];
+
+                    // If the user is sharing their screen and has a desktop audio track, we need to replace that with
+                    // the audio mixer effect so that the desktop audio is mixed in with the microphone audio.
+                    if (desktopAudioTrack && track.mediaType === MEDIA_TYPE.AUDIO) {
+                        await dispatch(setNoiseSuppressionEnabled(false));
+                        await conference.replaceTrack(desktopAudioTrack, null);
+                        const audioMixerEffect = new AudioMixerEffect(desktopAudioTrack);
+
+                        await jitsiTrack.setEffect(audioMixerEffect);
+                        await conference.replaceTrack(null, jitsiTrack);
+                    } else {
+                        await _addLocalTracksToConference(conference, [ jitsiTrack ]);
+                    }
                 }
             } else {
-                promise = _removeLocalTracksFromConference(conference, [ jitsiTrack ]);
-            }
-
-            if (promise) {
-                return promise.then(() => next(action));
+                await _removeLocalTracksFromConference(conference, [ jitsiTrack ]);
             }
         }
     }
