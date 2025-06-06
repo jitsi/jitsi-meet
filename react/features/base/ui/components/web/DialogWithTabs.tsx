@@ -320,9 +320,11 @@ const DialogWithTabs = ({
             titleKey = { titleKey }>
             {(!isMobile || !selectedTab) && (
                 <div
+                    aria-label = { titleKey ? t(titleKey) : undefined }
                     aria-orientation = 'vertical'
                     className = { classes.sidebar }
-                    role = { isMobile ? undefined : 'tablist' }>
+                    role = { isMobile ? undefined : 'tablist' }
+                    tabIndex = { 0 }>
                     <div className = { classes.titleContainer }>
                         <h1
                             className = { classes.title }
@@ -384,8 +386,7 @@ const DialogWithTabs = ({
                             className = { cx(classes.content, tab.name !== selectedTab && 'hide') }
                             id = { `dialogtab-content-${tab.name}` }
                             key = { tab.name }
-                            role = { isMobile ? undefined : 'tabpanel' }
-                            tabIndex = { isMobile ? -1 : 0 }>
+                            role = { isMobile ? undefined : 'tabpanel' }>
                             { tab.name === selectedTab && selectedTabComponent }
                         </div>
                     ))}
