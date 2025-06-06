@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IReduxState } from '../../../../app/types';
 import ConfirmDialog from '../../../../base/dialog/components/native/ConfirmDialog';
 import { setAudioMuted, setAudioUnmutePermissions, setVideoMuted, setVideoUnmutePermissions } from '../../../../base/media/actions';
+import { VIDEO_MUTISM_AUTHORITY } from '../../../../base/media/constants';
 import Link from '../../../../base/react/components/native/Link';
 import styles from '../styles.native';
 
@@ -31,8 +32,8 @@ export default function RecordingConsentDialog() {
     const consentAndUnmute = useCallback(() => {
         dispatch(setAudioUnmutePermissions(false, true));
         dispatch(setVideoUnmutePermissions(false, true));
-        dispatch(setAudioMuted(false));
-        dispatch(setVideoMuted(false));
+        dispatch(setAudioMuted(false, true));
+        dispatch(setVideoMuted(false, VIDEO_MUTISM_AUTHORITY.USER, true));
 
         return true;
     }, []);
