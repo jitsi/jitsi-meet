@@ -93,10 +93,7 @@ export function setDeafened(deafened: boolean) {
             return;
         }
 
-        conference.sendMessage({
-            type: 'ReceiverAudioMetadata',
-            deafened
-        });
+        conference.setIsDeafened(deafened);
 
         dispatch({
             type: SET_DEAFENED,
