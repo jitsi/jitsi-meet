@@ -6,6 +6,8 @@ const CHAT = 'Open chat';
 const CLOSE_CHAT = 'Close chat';
 const CLOSE_PARTICIPANTS_PANE = 'Close participants pane';
 const DESKTOP = 'Start sharing your screen';
+const DEAFEN = 'Deafen';
+const UNDEAFEN = 'Undeafen';
 const HANGUP = 'Leave the meeting';
 const OVERFLOW_MENU = 'More actions menu';
 const OVERFLOW = 'More actions';
@@ -106,6 +108,28 @@ export default class Toolbar extends BasePageObject {
         this.participant.log('Clicking on: Video Unmute Button');
 
         return this.videoUnMuteBtn.click();
+    }
+
+    /**
+     * Clicks deafen button.
+     * 
+     * @returns {Promise<void>}
+     */
+    clickDeafenButton(): Promise<void> {
+        this.participant.log('Clicking on: Deafen Button');
+
+        return this.getButton(DEAFEN).click();
+    }
+
+    /**
+     * Clicks undeafen button.
+     *
+     * @returns {Promise<void>}
+     */
+    clickUndeafenButton(): Promise<void> {
+        this.participant.log('Clicking on: Undeafen Button');
+        
+        return this.getButton(UNDEAFEN).click();
     }
 
     /**
