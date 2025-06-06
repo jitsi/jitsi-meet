@@ -4,7 +4,7 @@
 import Logger from '@jitsi/logger';
 import $ from 'jquery';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import { browser } from '../../../react/features/base/lib-jitsi-meet';
 import { FILMSTRIP_BREAKPOINT } from '../../../react/features/filmstrip/constants';
@@ -116,25 +116,25 @@ function computeCameraVideoSize( // eslint-disable-line max-params
         return [ videoSpaceWidth, videoSpaceWidth / aspectRatio ];
     case 'nocrop':
         return computeCameraVideoSize(
-            videoWidth,
-            videoHeight,
-            videoSpaceWidth,
-            videoSpaceHeight,
-            videoSpaceRatio < aspectRatio ? 'width' : 'height');
+                videoWidth,
+                videoHeight,
+                videoSpaceWidth,
+                videoSpaceHeight,
+                videoSpaceRatio < aspectRatio ? 'width' : 'height');
     case 'both': {
         const maxZoomCoefficient = interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT
-            || Infinity;
+                || Infinity;
 
         if (videoSpaceRatio === aspectRatio) {
             return [ videoSpaceWidth, videoSpaceHeight ];
         }
 
         let [ width, height ] = computeCameraVideoSize(
-            videoWidth,
-            videoHeight,
-            videoSpaceWidth,
-            videoSpaceHeight,
-            videoSpaceRatio < aspectRatio ? 'height' : 'width');
+                videoWidth,
+                videoHeight,
+                videoSpaceWidth,
+                videoSpaceHeight,
+                videoSpaceRatio < aspectRatio ? 'height' : 'width');
         const maxWidth = videoSpaceWidth * maxZoomCoefficient;
         const maxHeight = videoSpaceHeight * maxZoomCoefficient;
 
@@ -176,8 +176,10 @@ function getCameraVideoPosition( // eslint-disable-line max-params
     const horizontalIndent = (videoSpaceWidth - videoWidth) / 2;
     const verticalIndent = (videoSpaceHeight - videoHeight) / 2;
 
-    return { horizontalIndent,
-        verticalIndent };
+    return {
+        horizontalIndent,
+        verticalIndent
+    };
 }
 
 /**
@@ -210,6 +212,7 @@ export class VideoContainer extends LargeContainer {
         this.videoType = null;
         this.localFlipX = true;
         this.resizeContainer = resizeContainer;
+        this.largeVideoBackgroundRoot = null;
 
         /**
          * Whether the background should fit the height of the container
@@ -358,9 +361,9 @@ export class VideoContainer extends LargeContainer {
         }
 
         return getCameraVideoPosition(width,
-                height,
-                containerWidthToUse,
-                containerHeight);
+            height,
+            containerWidthToUse,
+            containerHeight);
 
     }
 
@@ -483,8 +486,8 @@ export class VideoContainer extends LargeContainer {
             })
             .catch(e => {
                 if (retries < 3) {
-                    logger.debug(`Error while trying to playing the large video. Will retry after 1s. Retries: ${
-                        retries}. Error: ${e}`);
+                    logger.debug(`Error while trying to playing the large video. 
+                    Will retry after 1s. Retries: ${retries}. Error: ${e}`);
                     window.setTimeout(() => {
                         this._play(retries + 1);
                     }, 1000);
@@ -549,8 +552,8 @@ export class VideoContainer extends LargeContainer {
             this.video.style.transform = flipX ? 'scaleX(-1)' : 'none';
             this._updateBackground();
         } else {
-            logger.debug(`SetStream on the large video won't attach a track for ${
-                userID} because no large video element was found!`);
+            logger.debug(`SetStream on the large video won't attach a track for 
+            ${userID} because no large video element was found!`);
         }
     }
 
@@ -654,23 +657,31 @@ export class VideoContainer extends LargeContainer {
         // performance issues from the presence of the background or if
         // explicitly disabled.
         if (interfaceConfig.DISABLE_VIDEO_BACKGROUND
-                || browser.isFirefox()
-                || browser.isWebKitBased()) {
+            || browser.isFirefox()
+            || browser.isWebKitBased()) {
             return;
         }
 
-        ReactDOM.render(
-            <LargeVideoBackground
-                hidden = { this._hideBackground || this._isHidden }
-                mirror = {
-                    this.stream
-                    && this.stream.isLocal()
-                    && this.localFlipX
-                }
-                orientationFit = { this._backgroundOrientation }
-                videoElement = { this.video }
-                videoTrack = { this.stream } />,
-            document.getElementById('largeVideoBackgroundContainer')
-        );
+        if (this.largeVideoBackgroundRoot) {
+            this.largeVideoBackgroundRoot.render(
+                <LargeVideoBackground
+                    hidden={this._hideBackground || this._isHidden}
+                    mirror={
+                        this.stream
+                        && this.stream.isLocal()
+                        && this.localFlipX
+                    }
+                    orientationFit={this._backgroundOrientation}
+                    videoElement={this.video}
+                    videoTrack={this.stream} />
+            );
+        } else {
+            const container = document.getElementById('largeVideoBackgroundContainer');
+
+            if (container) {
+                this.largeVideoBackgroundRoot = createRoot(container);
+            }
+        }
+
     }
 }
