@@ -62,7 +62,7 @@ function generateToken(session, audience, room, occupant)
         exp = exp,
         sub = session.jitsi_web_query_prefix or module.host,
         context = {
-            group = session.jitsi_meet_context_group or session.granted_jitsi_meet_context_group,
+            group = session.jitsi_meet_context_group or session.granted_jitsi_meet_context_group_id,
             user = session.jitsi_meet_context_user or {
                 id = session.full_jid,
                 name = presence:get_child_text('nick', 'http://jabber.org/protocol/nick'),
@@ -74,7 +74,7 @@ function generateToken(session, audience, room, occupant)
         room = session.jitsi_web_query_room,
         meeting_id = room._data.meetingId,
         granted_from = session.granted_jitsi_meet_context_user_id,
-        customer_id = id or session.jitsi_meet_context_group or session.granted_jitsi_meet_context_group,
+        customer_id = id or session.jitsi_meet_context_group or session.granted_jitsi_meet_context_group_id,
         backend_region = server_region_name,
         user_region = session.user_region
     };
@@ -115,6 +115,8 @@ module:hook('external_service/credentials', function (event)
                 password = generateToken(session, host, room, occupant);
                 expires = os.time() + options.ttl_seconds;
                 restricted = true;
+                transport = 'https';
+                port = 443;
             });
         end
     end
