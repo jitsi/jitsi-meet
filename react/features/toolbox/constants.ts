@@ -121,7 +121,8 @@ export const MAIN_TOOLBAR_BUTTONS_PRIORITY = [
     'embedmeeting',
     'feedback',
     'download',
-    'help'
+    'help',
+    'deafen',
 ];
 
 export const TOOLBAR_TIMEOUT = 4000;
@@ -210,5 +211,6 @@ export const VISITORS_MODE_BUTTONS: ToolbarButton[] = [
     'settings',
     'stats',
     'tileview',
-    'videoquality'
+    'videoquality',
+    'deafen',
 ];
