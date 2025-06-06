@@ -112,7 +112,7 @@ export default class Toolbar extends BasePageObject {
 
     /**
      * Clicks deafen button.
-     * 
+     *
      * @returns {Promise<void>}
      */
     clickDeafenButton(): Promise<void> {
@@ -128,7 +128,7 @@ export default class Toolbar extends BasePageObject {
      */
     clickUndeafenButton(): Promise<void> {
         this.participant.log('Clicking on: Undeafen Button');
-        
+
         return this.getButton(UNDEAFEN).click();
     }
 

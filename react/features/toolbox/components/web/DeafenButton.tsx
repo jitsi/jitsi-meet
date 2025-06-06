@@ -1,5 +1,4 @@
 import { connect } from 'react-redux';
-import { withStyles } from 'tss-react/mui';
 import AbstractDeafenButton, {
     IProps as AbstractDeafenButtonProps,
     mapStateToProps as abstractMapStateToProps

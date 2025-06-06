@@ -79,7 +79,7 @@ export default class AbstractDeafenButton<P extends IProps> extends BaseDeafenBu
  */
 export function mapStateToProps(state: IReduxState) {
     const deafen = state['features/base/media'].deafen;
-    const _deafened = Boolean(deafen && deafen.deafened);
+    const _deafened = deafen?.deafened;
     const _disabled = false;
     const enabledFlag = getFeatureFlag(state, DEAFEN_BUTTON_ENABLED, true);
 

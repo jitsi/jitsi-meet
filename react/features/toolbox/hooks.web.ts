@@ -90,7 +90,7 @@ const deafen = {
     key: 'deafen',
     Content: DeafenButton,
     group: 0
-}
+};
 
 const profile = {
     key: 'profile',

@@ -1,15 +1,15 @@
-import { IconVolumeOff, IconVolumeUp } from "../../icons/svg";
-import AbstractButton, { IProps } from "./AbstractButton";
+import { IconVolumeOff, IconVolumeUp } from '../../icons/svg';
+import AbstractButton, { IProps } from './AbstractButton';
 
 /**
  * An abstract implementation of a button for toggling audio deafen.
  */
 export default class BaseDeafenButton<P extends IProps, S=any> extends AbstractButton<P, S> {
 
-  override icon = IconVolumeUp;
-  override toggledIcon = IconVolumeOff;
+    override icon = IconVolumeUp;
+    override toggledIcon = IconVolumeOff;
 
-  /**
+    /**
      * Handles clicking / pressing the button, and toggles the deaf state
      * accordingly.
      *

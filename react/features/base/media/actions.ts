@@ -86,9 +86,9 @@ export function setAudioUnmutePermissions(blocked: boolean, skipNotification = f
  * @returns {Function}
  */
 export function setDeafened(deafened: boolean) {
-    return (dispatch: IStore['dispatch'], getState:  IStore['getState']) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const conference = getState()['features/base/conference'].conference;
-        
+
         if (!conference) {
             return;
         }
@@ -111,7 +111,7 @@ export function toggleDeafen() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const currentlyDeafened = state['features/base/media'].deafen.deafened || false;
-        
+
         dispatch(setDeafened(!currentlyDeafened));
     };
 }
