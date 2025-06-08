@@ -123,4 +123,5 @@ test-results
 /prosody-plugins
 /robots.txt
 /scripts/
-
+dist/
+scratch/

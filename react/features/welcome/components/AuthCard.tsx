@@ -3,7 +3,7 @@ import { connect, useDispatch } from 'react-redux';
 import type { IReduxState } from '../../app/types';
 import type { IJwtState } from '../../base/jwt/reducer';
 import type { IConfig } from '../../base/config/configType';
-import { getTokenAuthUrl } from '../../authentication/functions.web';
+import { getTokenAuthUrl } from '../../authentication/functions';
 import { setJWT } from '../../base/jwt/actions';
 
 interface IProps {
@@ -42,7 +42,7 @@ const AuthCard: React.FC<IProps> = ({ jwtFromRedux, config }) => {
 
         if (isLoggedOut) {
             dispatch(setJWT(undefined));
-            window.history.replaceState({}, '', window.location.pathname + window.location.search);
+                window.history.replaceState({}, '', window.location.pathname + window.location.search);
         }
     }, [ dispatch ]);
 

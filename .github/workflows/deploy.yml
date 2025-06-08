@@ -1,0 +1,31 @@
+name: Deploy to Cloudflare
+
+on:
+    push:
+        branches:
+            - sonacove
+    pull_request:
+        types: [opened, synchronize]
+
+jobs:
+    deploy:
+        name: Build and Deploy
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: ".nvmrc"
+                  cache: "npm"
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Build and Deploy to Cloudflare
+              run: node config/deploy-cf.mjs --skip-deps
+              env:
+                  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
