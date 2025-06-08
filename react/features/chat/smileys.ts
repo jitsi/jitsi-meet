@@ -18,5 +18,4 @@ export const smileys = {
     smiley17: ';(',
     smiley18: ':clap:',
     smiley19: ';)',
-    smiley20: ':beer:'
 };

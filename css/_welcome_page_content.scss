@@ -1,1 +1,145 @@
 /** Insert custom CSS for any additional content in the welcome page **/
+
+.auth-card {
+  display: flex;
+  flex-direction: column;
+
+
+  .auth-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #131519;
+  }
+
+
+  .auth-description {
+    margin-bottom: 24px;
+    color: #5E6D7A;
+  }
+
+  .auth-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+
+    .auth-header-buttons {
+      display: flex;
+      gap: 12px;
+    }
+  }
+
+
+  .auth-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+
+    .auth-header-buttons {
+      display: flex;
+      gap: 12px;
+    }
+  }
+
+  .auth-user-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+
+  .auth-user-detail {
+    display: flex;
+    margin-bottom: 12px;
+    font-size: 16px;
+
+
+    .auth-label {
+      font-weight: 600;
+      min-width: 180px;
+      min-width: 180px;
+      color: #5E6D7A;
+    }
+
+
+    .auth-value {
+      color: #131519;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+
+  .auth-buttons {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    gap: 12px;
+
+    .auth-button-row {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+    }
+
+
+    .auth-button-row {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .auth-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      text-decoration: none;
+      transition: background-color 0.2s;
+    }
+
+    .auth-button-row .auth-button {
+      width: 50%;
+    }
+
+    .auth-button:hover {
+      background: #0361D4;
+    }
+
+    .subscription-completion-text {
+      margin-top: 8px;
+      color: #5E6D7A;
+      font-size: 14px;
+      text-align: center;
+
+      .subscription-link {
+        color: #5E6D7A;
+        text-decoration: underline;
+        
+        &:hover {
+          color: #0361D4;
+        }
+      }
+    }
+  }
+}
+
+.auth-button.auth-logout {
+  background: #E04757 !important;
+  padding: 10px 16px;
+
+  &:hover {
+    background: #C03747 !important;
+  }
+}
+
+.auth-button.auth-refresh {
+  color: #0361D4;
+  background-color: #d2d6da;
+
+  &:hover {
+    background-color: #c3c7cb;
+  }
+}

@@ -3,7 +3,7 @@ import { IStore } from '../app/types';
 import { openDialog } from '../base/dialog/actions';
 import { browser } from '../base/lib-jitsi-meet';
 
-import { CANCEL_LOGIN } from './actionTypes';
+import { CANCEL_LOGIN, STOP_WAIT_FOR_OWNER } from './actionTypes';
 import LoginQuestionDialog from './components/web/LoginQuestionDialog';
 
 export * from './actions.any';
@@ -22,18 +22,13 @@ export function cancelLogin() {
 }
 
 /**
- * Cancels authentication, closes {@link WaitForOwnerDialog}
- * and navigates back to the welcome page only in the case of authentication required error.
- * We can be showing the dialog while lobby is enabled and participant is still waiting there and hiding this dialog
- * should do nothing.
+ * Cancels waiting for the owner and closes {@link WaitForOwnerDialog}.
  *
  * @returns {Function}
  */
 export function cancelWaitForOwner() {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const { authRequired } = getState()['features/base/conference'];
-
-        authRequired && dispatch(maybeRedirectToWelcomePage());
+    return {
+        type: STOP_WAIT_FOR_OWNER
     };
 }
 

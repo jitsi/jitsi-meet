@@ -13,6 +13,7 @@ import SettingsButton from '../../settings/components/web/SettingsButton';
 import { SETTINGS_TABS } from '../../settings/constants';
 
 import { AbstractWelcomePage, IProps, _mapStateToProps } from './AbstractWelcomePage';
+import AuthCard from './AuthCard';
 import Tabs from './Tabs';
 
 /**
@@ -290,6 +291,9 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                 className = 'welcome-card welcome-card--dark'
                                 ref = { this._setAdditionalCardRef } />
                             : null}
+                        <div className = 'welcome-card'>
+                            <AuthCard />
+                        </div>
                     </div>
 
                     {showAdditionalContent

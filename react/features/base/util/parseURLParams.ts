@@ -1,7 +1,7 @@
 // @ts-ignore
 import { safeJsonParse } from '@jitsi/js-utils/json';
 
-import { reportError } from './helpers';
+// import { reportError } from './helpers';
 
 /**
  * A list if keys to ignore when parsing.
@@ -68,8 +68,9 @@ export function parseURLParams(
 
             }
         } catch (e: any) {
-            reportError(
-                e, `Failed to parse URL parameter value: ${String(value)}`);
+            // Commented out to avoid excessive console output
+            // reportError(
+            //     e, `Failed to parse URL parameter value: ${String(value)}`);
 
             return;
         }

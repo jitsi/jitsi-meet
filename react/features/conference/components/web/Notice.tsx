@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
+import Linkify from '../../../base/react/components/web/Linkify';
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -34,7 +35,7 @@ const Notice = () => {
     return (
         <div className = { classes.notice }>
             <span className = { classes.message } >
-                {message}
+                <Linkify>{message}</Linkify>
             </span>
         </div>
     );

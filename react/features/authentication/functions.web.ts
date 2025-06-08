@@ -1,4 +1,4 @@
-import base64js from 'base64-js';
+import * as base64js from 'base64-js';
 
 import { IConfig } from '../base/config/configType';
 import { browser } from '../base/lib-jitsi-meet';
@@ -22,6 +22,28 @@ function _cryptoRandom() {
     const randomValue = crypto.getRandomValues(typedArray)[0];
 
     return randomValue / Math.pow(2, 8);
+}
+
+/**
+ * Converts a state object to URL hash parameters format.
+ *
+ * Example:
+ * Input: { room: "example", "config.startWithAudioMuted": true, tenant: "myTenant" }
+ * Output: "room=example&config.startWithAudioMuted=true&tenant=myTenant".
+ *
+ * @param {Object} state - The state object to convert.
+ * @returns {string} The URL-encoded hash parameters string.
+ */
+function _stateToHashParams(state: Record<string, any>): string {
+    const params = new URLSearchParams();
+
+    for (const [ key, value ] of Object.entries(state)) {
+        if (value !== undefined && value !== null) {
+            params.append(key, String(value));
+        }
+    }
+
+    return params.toString();
 }
 
 /**
@@ -68,7 +90,7 @@ export const getTokenAuthUrl = (
 
     let url = config.tokenAuthUrl;
 
-    if (!url || !roomName) {
+    if (!url) {
         return Promise.resolve(undefined);
     }
 
@@ -90,10 +112,10 @@ export const getTokenAuthUrl = (
             state.electron = true;
         }
 
-        url = url.replace('{state}', encodeURIComponent(JSON.stringify(state)));
+        url = url.replace('{state}', encodeURIComponent(_stateToHashParams(state)));
     }
 
-    url = url.replace('{room}', roomName);
+    url = url.replace('{room}', roomName || '');
 
     if (url.indexOf('{code_challenge}')) {
         let codeVerifier = '';

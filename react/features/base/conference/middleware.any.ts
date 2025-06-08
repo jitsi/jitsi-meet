@@ -73,9 +73,14 @@ import { IConferenceMetadata } from './reducer';
 import './subscriber';
 
 /**
+ * Handler for page hide event.
+ */
+let pageHideHandler: ((_e: PageTransitionEvent) => void) | undefined;
+
+/**
  * Handler for before unload event.
  */
-let beforeUnloadHandler: ((e?: any) => void) | undefined;
+let beforeUnloadHandler: ((e: BeforeUnloadEvent) => boolean) | undefined;
 
 /**
  * Implements the middleware of the feature base/conference.
@@ -101,7 +106,7 @@ MiddlewareRegistry.register(store => next => action => {
         return _conferenceSubjectChanged(store, next, action);
 
     case CONFERENCE_WILL_LEAVE:
-        _conferenceWillLeave(store);
+        _conferenceWillLeave();
         break;
 
     case P2P_STATUS_CHANGED:
@@ -259,7 +264,7 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
     // conference is handled by /conference.js and appropriate failure handlers
     // are set there.
     if (typeof APP !== 'undefined') {
-        _removeUnloadHandler(getState);
+        _removeHandlers();
     }
 
     if (enableForcedReload
@@ -289,10 +294,7 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
     const result = next(action);
     const { conference } = action;
     const { pendingSubjectChange } = getState()['features/base/conference'];
-    const {
-        disableBeforeUnloadHandlers = false,
-        requireDisplayName
-    } = getState()['features/base/config'];
+    const { requireDisplayName } = getState()['features/base/config'];
 
     dispatch(removeLobbyChatParticipant(true));
 
@@ -303,13 +305,9 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
     // handles the process of leaving the conference. This is temporary solution
     // that should cover the described use case as part of the effort to
     // implement the conferenceWillLeave action for web.
-    beforeUnloadHandler = (e?: any) => {
+    pageHideHandler = (_e: PageTransitionEvent) => {
         if (LocalRecordingManager.isRecordingLocally()) {
             dispatch(stopLocalVideoRecording());
-            if (e) {
-                e.preventDefault();
-                e.returnValue = null;
-            }
         }
         dispatch(conferenceWillLeave(conference));
     };
@@ -320,7 +318,16 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
         dispatch(overwriteConfig({ disableFocus: false }));
     }
 
-    window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
+    beforeUnloadHandler = (e: BeforeUnloadEvent): boolean => {
+        e.preventDefault();
+        // Included for legacy support, e.g. Chrome/Edge < 119
+        e.returnValue = true;
+
+        return true;
+    };
+
+    window.addEventListener('beforeunload', beforeUnloadHandler);
+    window.addEventListener('pagehide', pageHideHandler);
 
     if (requireDisplayName
         && !getLocalParticipant(getState)?.name
@@ -449,7 +456,7 @@ function _connectionFailed({ dispatch, getState }: IStore, next: Function, actio
 
     const result = next(action);
 
-    _removeUnloadHandler(getState);
+    _removeHandlers();
 
     forEachConference(getState, conference => {
         // TODO: revisit this
@@ -521,8 +528,8 @@ function _conferenceSubjectChanged({ dispatch, getState }: IStore, next: Functio
  * @param {Object} store - The redux store.
  * @returns {void}
  */
-function _conferenceWillLeave({ getState }: IStore) {
-    _removeUnloadHandler(getState);
+function _conferenceWillLeave() {
+    _removeHandlers();
 }
 
 /**
@@ -575,17 +582,19 @@ function _pinParticipant({ getState }: IStore, next: Function, action: AnyAction
 }
 
 /**
- * Removes the unload handler.
+ * Removes the page hide and before unload handlers.
  *
  * @param {Function} getState - The redux getState function.
  * @returns {void}
  */
-function _removeUnloadHandler(getState: IStore['getState']) {
+function _removeHandlers() {
     if (typeof beforeUnloadHandler !== 'undefined') {
-        const { disableBeforeUnloadHandlers = false } = getState()['features/base/config'];
-
-        window.removeEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
+        window.removeEventListener('beforeunload', beforeUnloadHandler);
         beforeUnloadHandler = undefined;
+    }
+    if (typeof pageHideHandler !== 'undefined') {
+        window.removeEventListener('pagehide', pageHideHandler);
+        pageHideHandler = undefined;
     }
 }
 
