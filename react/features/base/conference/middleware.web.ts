@@ -8,7 +8,7 @@ import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { iAmVisitor } from '../../visitors/functions';
 import { CONNECTION_DISCONNECTED, CONNECTION_ESTABLISHED } from '../connection/actionTypes';
 import { hangup } from '../connection/actions.web';
-import { JitsiConferenceErrors, browser } from '../lib-jitsi-meet';
+import { JitsiConferenceErrors, JitsiConnectionErrors, browser } from '../lib-jitsi-meet';
 import { gumPending, setInitialGUMPromise } from '../media/actions';
 import { MEDIA_TYPE } from '../media/constants';
 import { IGUMPendingState } from '../media/types';
@@ -117,7 +117,9 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_FAILED: {
         const errorName = action.error?.name;
 
-        if (enableForcedReload && errorName === JitsiConferenceErrors.CONFERENCE_RESTARTED) {
+        if (enableForcedReload
+            && (errorName === JitsiConferenceErrors.CONFERENCE_RESTARTED
+                || errorName === JitsiConnectionErrors.SHARD_CHANGED_ERROR)) {
             dispatch(setSkipPrejoinOnReload(true));
         }
 

@@ -1,14 +1,14 @@
+import { IStateful } from '../base/app/types';
+import { getCurrentConference } from '../base/conference/functions';
+import { PARTICIPANT_ROLE_CHANGED } from '../base/participants/actionTypes';
+import { PARTICIPANT_ROLE } from '../base/participants/constants';
+import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { toState } from '../base/redux/functions';
 
 import { SET_DYNAMIC_BRANDING_DATA, SET_DYNAMIC_BRANDING_READY } from './actionTypes';
 import { fetchCustomIcons } from './functions.any';
 import logger from './logger';
-import { getCurrentConference } from '../base/conference/functions';
-import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants/functions';
-import { PARTICIPANT_ROLE_CHANGED } from '../base/participants/actionTypes';
-import { PARTICIPANT_ROLE } from '../base/participants/constants';
-import { IStateful } from '../base/app/types';
-import { toState } from '../base/redux/functions';
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {

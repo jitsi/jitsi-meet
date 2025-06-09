@@ -72,7 +72,7 @@ module:hook('jitsi-endpoint-message-received', function(event)
 
     if string.len(event.raw_message) >= POLL_PAYLOAD_LIMIT then
         module:log('error', 'Poll payload too large, discarding. Sender: %s to:%s', stanza.attr.from, stanza.attr.to);
-        return nil;
+        return true;
     end
 
     if data.type == "new-poll" then
@@ -86,7 +86,7 @@ module:hook('jitsi-endpoint-message-received', function(event)
 
         if room.polls.count >= POLLS_LIMIT then
             module:log("error", "Too many polls created in %s", room.jid)
-            return
+            return true;
         end
 
         if room.polls.by_id[data.pollId] ~= nil then

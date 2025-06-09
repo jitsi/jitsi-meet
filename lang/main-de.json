@@ -122,7 +122,9 @@
         "nickname": {
             "popover": "Wähle einen Alias",
             "title": "Geben Sie einen Alias zum Chatten ein",
-            "titleWithPolls": "Geben Sie einen Alias zum Chatten ein"
+            "titleWithCC": "Geben Sie einen Alias zum Chatten und für Untertitel ein",
+            "titleWithPolls": "Geben Sie einen Alias zum Chatten und für Umfragen ein",
+            "titleWithPollsAndCC": "Geben Sie einen Alias zum Chatten, für Umfragen und Untertitel ein"
         },
         "noMessagesMessage": "Es gibt noch keine Nachricht in dieser Konferenz. Starten Sie hier eine Unterhaltung!",
         "privateNotice": "Private Nachricht an {{recipient}}",
@@ -131,10 +133,13 @@
         "systemDisplayName": "System",
         "tabs": {
             "chat": "Chatten",
+            "closedCaptions": "Untertitel",
             "polls": "Umfragen"
         },
         "title": "Chatten",
+        "titleWithCC": "Chatten und Untertitel",
         "titleWithPolls": "Chatten und Umfragen",
+        "titleWithPollsAndCC": "Chatten, Umfragen und Untertitel",
         "you": "Sie"
     },
     "chromeExtensionBanner": {
@@ -143,6 +148,10 @@
         "close": "Schließen",
         "dontShowAgain": "Hinweis nicht mehr anzeigen",
         "installExtensionText": "Installieren Sie die Erweiterung für die Integration von Google Calendar und Office 365"
+    },
+    "closedCaptionsTab": {
+        "emptyState": "Die Untertitel sind verfügbar, sobald sie von der Moderation gestartet wurden",
+        "startClosedCaptionsButton": "Untertitel starten"
     },
     "connectingOverlay": {
         "joiningRoom": "Eine Verbindung zu Ihrer Konferenz wird hergestellt…"
@@ -263,6 +272,8 @@
         "Remove": "Entfernen",
         "Share": "Teilen",
         "Submit": "OK",
+        "Understand": "Verstanden, Stummschaltung beibehalten",
+        "UnderstandAndUnmute": "Verstanden, bitte Stummschaltung aufheben",
         "WaitForHostMsg": "Die Konferenz wurde noch nicht gestartet. Falls Sie die Konferenz leiten, authentifizieren Sie sich bitte. Warten Sie andernfalls, bis die Konferenz gestartet wird.",
         "WaitForHostNoAuthMsg": "Die Konferenz wurde noch nicht gestartet. Bitte warten Sie, bis die Konferenz gestartet wird.",
         "WaitingForHostButton": "Auf Moderation warten",
@@ -299,6 +310,7 @@
         "conferenceReloadMsg": "Wir versuchen das zu beheben. Verbinde in {{seconds}} Sekunden …",
         "conferenceReloadTitle": "Leider ist etwas schiefgegangen.",
         "confirm": "Bestätigen",
+        "confirmBack": "Zurück",
         "confirmNo": "Nein",
         "confirmYes": "Ja",
         "connectError": "Oh! Es hat etwas nicht geklappt und der Konferenz konnte nicht beigetreten werden.",
@@ -336,6 +348,7 @@
         "kickParticipantTitle": "Person entfernen?",
         "kickSystemTitle": "Autsch! Sie wurden aus der Konferenz geworfen",
         "kickTitle": "Autsch! {{participantDisplayName}} hat Sie aus der Konferenz geworfen",
+        "learnMore": "Mehr erfahren",
         "linkMeeting": "Konferenz verlinken",
         "linkMeetingTitle": "Konferenz mit Salesforce verlinken",
         "liveStreaming": "Livestreaming",
@@ -393,6 +406,10 @@
         "recentlyUsedObjects": "Ihre zuletzt verwendeten Objekte",
         "recording": "Aufnahme",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Während eines Livestreams nicht möglich",
+        "recordingInProgressDescription": "Diese Konferenz wird aufgezeichnet und von KI analysiert {{learnMore}}. Ihr Ton und Video ist deaktiviert, wenn Sie es aktivieren, stimmen Sie der Aufzeichnung zu.",
+        "recordingInProgressDescriptionFirstHalf": "Diese Konferenz wird aufgezeichnet und von KI analysiert",
+        "recordingInProgressDescriptionSecondHalf": ". Ihr Ton und Video ist deaktiviert, wenn Sie es aktivieren, stimmen Sie der Aufzeichnung zu.",
+        "recordingInProgressTitle": "Aufnahme läuft",
         "rejoinNow": "Jetzt erneut beitreten",
         "remoteControlAllowedMessage": "{{user}} hat die Anfrage zur Fernsteuerung angenommen!",
         "remoteControlDeniedMessage": "{{user}} hat die Anfrage zur Fernsteuerung verweigert!",
@@ -749,7 +766,8 @@
         "dataChannelClosedDescriptionWithAudio": "Die Steuerungsverbindung (Bridge Channel) wurde unterbrochen, daher können Video- und Tonprobleme auftreten.",
         "dataChannelClosedWithAudio": "Ton- und Videoqualität können beeinträchtigt sein",
         "disabledIframe": "Die Einbettung ist nur für Demo-Zwecke vorgesehen. Diese Konferenz wird in {{timeout}} Minuten beendet.",
-        "disabledIframeSecondary": "Die Einbettung von {{domain}} ist nur für Demo-Zwecke vorgesehen. Diese Konferenz wird in {{timeout}} Minuten beendet. Bitte nutzen Sie <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> für produktive Zwecke!",
+        "disabledIframeSecondaryNative": "Die Einbettung von {{domain}} ist nur für Demo-Zwecke vorgesehen. Diese Konferenz wird in {{timeout}} Minuten beendet.",
+        "disabledIframeSecondaryWeb": "Die Einbettung von {{domain}} ist nur für Demo-Zwecke vorgesehen. Diese Konferenz wird in {{timeout}} Minuten beendet. Bitte nutzen Sie <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> für produktive Zwecke!",
         "disconnected": "getrennt",
         "displayNotifications": "Benachrichtigungen anzeigen für",
         "dontRemindMe": "Nicht erinnern",
@@ -877,6 +895,7 @@
             "waitingLobby": "In der Lobby ({{count}})"
         },
         "search": "Suche Anwesende",
+        "searchDescription": "Tippen Sie um die Anwesendenliste zu filtern",
         "title": "Anwesende"
     },
     "passwordDigitsOnly": "Bis zu {{number}} Ziffern",
@@ -979,7 +998,6 @@
         "proceedAnyway": "Trotzdem fortsetzen",
         "recordingWarning": "Diese Konferenz wird möglicherweise von anderen Personen aufgezeichnet",
         "screenSharingError": "Fehler bei Bildschirmfreigabe:",
-        "showScreen": "Konferenzvorschau aktivieren",
         "startWithPhone": "Mit Telefonaudio starten",
         "unsafeRoomConsent": "Ich verstehe das Risiko und möchte der Konferenz beitreten",
         "videoOnlyError": "Videofehler:",
@@ -1050,7 +1068,7 @@
         "localRecordingStartWarningTitle": "Aufzeichnung zum Speichern beenden",
         "localRecordingVideoStop": "Wenn Sie ihre Kamera abschalten wird auch die Aufnahme beendet. Sind Sie sicher, dass Sie fortfahren möchten?",
         "localRecordingVideoWarning": "Um Ihr eigenes Kamerabild aufzuzeichnen, müssen Sie Ihre Kamera beim Start der Aufnahme einschalten",
-        "localRecordingWarning": "Bitte prüfen Sie, dass das aktuelle Tab auswählen, um Bild und Ton aufzuzeichnen. Die Länge der Aufzeichnung ist aktuell auf 1GB beschränkt, was ungefähr 100 Minuten entspricht.",
+        "localRecordingWarning": "Bitte prüfen Sie, dass das aktuelle Tab auswählen, um Bild und Ton aufzuzeichnen.",
         "loggedIn": "Als {{userName}} angemeldet",
         "noMicPermission": "Zugriff auf Mikrofon fehlgeschlagen. Bitte erlauben Sie den Zugriff auf das Mikrofon.",
         "noStreams": "Kein Ton oder Video erkannt.",
@@ -1104,6 +1122,7 @@
             "signedIn": "Momentan wird auf Kalendertermine von {{email}} zugegriffen. Klicken Sie auf die folgende Schaltfläche „Trennen“, um den Zugriff auf die Kalendertermine zu stoppen.",
             "title": "Kalender"
         },
+        "chatWithPermissions": "Chat mit Freigaben",
         "desktopShareFramerate": "Framerate für Bildschirmfreigabe",
         "desktopShareHighFpsWarning": "Eine höhere Framerate könnte sich auf Ihre Datenrate auswirken. Sie müssen die Bildschirmfreigabe neustarten, damit die Einstellung übernommen wird.",
         "desktopShareWarning": "Sie müssen die Bildschirmfreigabe neustarten, damit die Einstellung übernommen wird.",
@@ -1133,6 +1152,7 @@
         "selectMic": "Mikrofon",
         "selfView": "Eigene Ansicht",
         "shortcuts": "Tastaturkürzel",
+        "showSubtitlesOnStage": "Untertitel in Hauptansicht anzeigen",
         "speakers": "Lautsprecher",
         "startAudioMuted": "Alle Personen treten stummgeschaltet bei",
         "startReactionsMuted": "Interaktionstöne für alle deaktivieren",
@@ -1192,6 +1212,7 @@
         "neutral": "Neutral",
         "sad": "Traurig",
         "search": "Suche",
+        "searchDescription": "Tippen Sie um die Anwesendenliste zu filtern",
         "searchHint": "Suche Anwesende",
         "seconds": "{{count}} Sek.",
         "speakerStats": "Sprechstatistik",
@@ -1228,6 +1249,7 @@
             "closeChat": "Chat schließen",
             "closeMoreActions": "„Weitere Einstellungen“ schließen",
             "closeParticipantsPane": "Anwesendenliste schließen",
+            "closedCaptions": "Untertitel",
             "collapse": "Einklappen",
             "document": "Geteiltes Dokument schließen",
             "documentClose": "Geteiltes Dokument schließen",
@@ -1270,7 +1292,7 @@
             "muteGUMPending": "Verbinde Ihr Mikrofon",
             "noiseSuppression": "Rauschunterdrückung",
             "openChat": "Chat öffnen",
-            "participants": "Anwesende",
+            "participants": "Anwesenheitsliste öffnen. {{participantsCount}} anwesend",
             "pip": "Bild-in-Bild-Modus ein-/ausschalten",
             "privateMessage": "Private Nachricht senden",
             "profile": "Profil bearbeiten",
@@ -1318,6 +1340,7 @@
         "closeChat": "Chat schließen",
         "closeParticipantsPane": "Anwesenheitsliste schließen",
         "closeReactionsMenu": "Interaktionsmenü schließen",
+        "closedCaptions": "Untertitel",
         "disableNoiseSuppression": "Rauschunterdrückung deaktivieren",
         "disableReactionSounds": "Sie können die Interaktionstöne für diese Konferenz deaktivieren",
         "documentClose": "Geteiltes Dokument schließen",
@@ -1408,14 +1431,18 @@
         "ccButtonTooltip": "Untertitel ein-/ausschalten",
         "expandedLabel": "Transkribieren ist derzeit eingeschaltet",
         "failed": "Transkribieren fehlgeschlagen",
-        "labelToolTip": "Die Konferenz wird transkribiert",
+        "labelTooltip": "Die Konferenz wird transkribiert",
+        "labelTooltipExtra": "Zusätzlich wird das Transkript später verfügbar sein.",
+        "openClosedCaptions": "Untertitel öffnen",
+        "original": "Original",
         "sourceLanguageDesc": "Aktuell ist die Sprache der Konferenz auf <b>{{sourceLanguage}}</b> eingestellt. <br/> Sie könne dies hier ",
         "sourceLanguageHere": "ändern",
         "start": "Anzeige der Untertitel starten",
         "stop": "Anzeige der Untertitel stoppen",
         "subtitles": "Untertitel",
         "subtitlesOff": "Ausschalten",
-        "tr": "TR"
+        "tr": "TR",
+        "translateTo": "Übersetzen in"
     },
     "unpinParticipant": "{{participantName}} - Nicht mehr anheften",
     "userMedia": {

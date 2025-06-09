@@ -17,6 +17,11 @@ import styles from './styles';
 interface IProps extends AbstractProps, WithTranslation {
 
     /**
+     * The i18n key of the text label for the back button.
+     */
+    backLabel?: string;
+
+    /**
      * The i18n key of the text label for the cancel button.
      */
     cancelLabel?: string;
@@ -37,6 +42,11 @@ interface IProps extends AbstractProps, WithTranslation {
     descriptionKey?: string | { key: string; params: string; };
 
     /**
+     * Whether the back button is hidden.
+     */
+    isBackHidden?: Boolean;
+
+    /**
      * Whether the cancel button is hidden.
      */
     isCancelHidden?: Boolean;
@@ -55,6 +65,11 @@ interface IProps extends AbstractProps, WithTranslation {
      * Dialog title.
      */
     title?: string;
+
+    /**
+     * Renders buttons vertically.
+     */
+    verticalButtons?: boolean;
 }
 
 /**
@@ -102,14 +117,17 @@ class ConfirmDialog extends AbstractDialog<IProps> {
      */
     override render() {
         const {
+            backLabel,
             cancelLabel,
             children,
             confirmLabel,
+            isBackHidden = true,
             isCancelHidden,
             isConfirmDestructive,
             isConfirmHidden,
             t,
-            title
+            title,
+            verticalButtons
         } = this.props;
 
         const dialogButtonStyle
@@ -119,6 +137,7 @@ class ConfirmDialog extends AbstractDialog<IProps> {
         return (
             <Dialog.Container
                 coverScreen = { false }
+                verticalButtons = { verticalButtons }
                 visible = { true }>
                 {
                     title && <Dialog.Title>
@@ -127,6 +146,12 @@ class ConfirmDialog extends AbstractDialog<IProps> {
                 }
                 { this._renderDescription() }
                 { children }
+                {
+                    !isBackHidden && <Dialog.Button
+                        label = { t(backLabel || 'dialog.confirmBack') }
+                        onPress = { this._onBack }
+                        style = { styles.dialogButton } />
+                }
                 {
                     !isCancelHidden && <Dialog.Button
                         label = { t(cancelLabel || 'dialog.confirmNo') }

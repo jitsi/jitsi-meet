@@ -2,8 +2,7 @@ import { batch } from 'react-redux';
 
 import { IStore } from '../../app/types';
 import { CHAT_SIZE } from '../../chat/constants';
-import { getParticipantsPaneOpen } from '../../participants-pane/functions';
-import theme from '../components/themes/participantsPaneTheme.json';
+import { getParticipantsPaneWidth } from '../../participants-pane/functions';
 
 import {
     CLIENT_RESIZED,
@@ -43,25 +42,23 @@ export function clientResized(clientWidth: number, clientHeight: number) {
 
         if (navigator.product !== 'ReactNative') {
             const state = getState();
-            const { isOpen: isChatOpen } = state['features/chat'];
-            const isParticipantsPaneOpen = getParticipantsPaneOpen(state);
+            const { isOpen: isChatOpen, width } = state['features/chat'];
 
             if (isChatOpen) {
-                availableWidth -= CHAT_SIZE;
+                availableWidth -= width?.current ?? CHAT_SIZE;
             }
 
-            if (isParticipantsPaneOpen) {
-                availableWidth -= theme.participantsPaneWidth;
-            }
+            availableWidth -= getParticipantsPaneWidth(state);
         }
 
         batch(() => {
             dispatch({
                 type: CLIENT_RESIZED,
                 clientHeight,
-                clientWidth: availableWidth
+                clientWidth,
+                videoSpaceWidth: availableWidth
             });
-            dispatch(setAspectRatio(clientWidth, clientHeight));
+            dispatch(setAspectRatio(availableWidth, clientHeight));
         });
     };
 }

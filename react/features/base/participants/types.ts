@@ -58,6 +58,7 @@ export interface IParticipantFeatures {
     'branding'?: boolean | string;
     'calendar'?: boolean | string;
     'create-polls'?: boolean | string;
+    'file-upload'?: boolean | string;
     'flip'?: boolean | string;
     'inbound-call'?: boolean | string;
     'livestreaming'?: boolean | string;

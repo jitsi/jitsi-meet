@@ -158,7 +158,7 @@ export function calculateThumbnailSizeForHorizontalView(clientHeight = 0) {
 /**
  * Calculates the size for thumbnails when in vertical view layout.
  *
- * @param {number} clientWidth - The height of the app window.
+ * @param {number} clientWidth - The available video space width.
  * @param {number} filmstripWidth - The width of the filmstrip.
  * @param {boolean} isResizable - Whether the filmstrip is resizable or not.
  * @returns {{local: {height, width}, remote: {height, width}}}
@@ -186,7 +186,7 @@ export function calculateThumbnailSizeForVerticalView(clientWidth = 0, filmstrip
 /**
  * Returns the minimum height of a thumbnail.
  *
- * @param {number} clientWidth - The width of the window.
+ * @param {number} clientWidth - The available width for rendering thumbnails.
  * @returns {number} The minimum height of a thumbnail.
  */
 export function getThumbnailMinHeight(clientWidth: number) {
@@ -198,7 +198,7 @@ export function getThumbnailMinHeight(clientWidth: number) {
  *
  * @param {boolean} disableResponsiveTiles - Indicates whether the responsive tiles functionality is disabled.
  * @param {boolean} disableTileEnlargement - Indicates whether the tiles enlargement functionality is disabled.
- * @param {number} clientWidth - The width of the window.
+ * @param {number} clientWidth - The available video space width.
  * @returns {number} The default aspect ratio for a tile.
  */
 export function getTileDefaultAspectRatio(disableResponsiveTiles: boolean,
@@ -236,13 +236,13 @@ export function getNumberOfPartipantsForTileView(state: IReduxState) {
  * @returns {Object} - The dimensions.
  */
 export function calculateNonResponsiveTileViewDimensions(state: IReduxState) {
-    const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+    const { clientHeight, videoSpaceWidth } = state['features/base/responsive-ui'];
     const { disableTileEnlargement } = state['features/base/config'];
     const { columns: c, minVisibleRows, rows: r } = getNotResponsiveTileViewGridDimensions(state);
     const size = calculateThumbnailSizeForTileView({
         columns: c,
         minVisibleRows,
-        clientWidth,
+        clientWidth: videoSpaceWidth,
         clientHeight,
         disableTileEnlargement,
         disableResponsiveTiles: true
@@ -250,10 +250,10 @@ export function calculateNonResponsiveTileViewDimensions(state: IReduxState) {
 
     if (typeof size === 'undefined') { // The columns don't fit into the screen. We will have horizontal scroll.
         const aspectRatio = disableTileEnlargement
-            ? getTileDefaultAspectRatio(true, disableTileEnlargement, clientWidth)
+            ? getTileDefaultAspectRatio(true, disableTileEnlargement, videoSpaceWidth)
             : TILE_PORTRAIT_ASPECT_RATIO;
 
-        const height = getThumbnailMinHeight(clientWidth);
+        const height = getThumbnailMinHeight(videoSpaceWidth);
 
         return {
             height,

@@ -163,7 +163,8 @@ export function processExternalDeviceRequest( // eslint-disable-line max-params
 
     switch (request.name) {
     case 'isDeviceListAvailable':
-        responseCallback(JitsiMeetJS.mediaDevices.isDeviceListAvailable());
+        // TODO(saghul): remove this, eventually.
+        responseCallback(true);
         break;
     case 'isDeviceChangeAvailable':
         responseCallback(

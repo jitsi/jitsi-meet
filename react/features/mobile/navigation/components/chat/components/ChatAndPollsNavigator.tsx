@@ -9,9 +9,9 @@ import {
     getClientHeight,
     getClientWidth
 } from '../../../../../base/modal/components/functions';
-import { setIsPollsTabFocused } from '../../../../../chat/actions.native';
-// @ts-ignore
+import { setFocusedTab } from '../../../../../chat/actions.any';
 import Chat from '../../../../../chat/components/native/Chat';
+import { ChatTabs } from '../../../../../chat/constants';
 import { resetNbUnreadPollsMessages } from '../../../../../polls/actions';
 import PollsPane from '../../../../../polls/components/native/PollsPane';
 import { screen } from '../../../routes';
@@ -23,8 +23,8 @@ const ChatAndPolls = () => {
     const clientHeight = useSelector(getClientHeight);
     const clientWidth = useSelector(getClientWidth);
     const dispatch = useDispatch();
-    const { isPollsTabFocused } = useSelector((state: IReduxState) => state['features/chat']);
-    const initialRouteName = isPollsTabFocused
+    const { focusedTab } = useSelector((state: IReduxState) => state['features/chat']);
+    const initialRouteName = focusedTab === ChatTabs.POLLS
         ? screen.conference.chatandpolls.tab.polls
         : screen.conference.chatandpolls.tab.chat;
 
@@ -42,7 +42,7 @@ const ChatAndPolls = () => {
                 component = { Chat }
                 listeners = {{
                     tabPress: () => {
-                        dispatch(setIsPollsTabFocused(false));
+                        dispatch(setFocusedTab(ChatTabs.CHAT));
                     }
                 }}
                 name = { screen.conference.chatandpolls.tab.chat } />
@@ -50,7 +50,7 @@ const ChatAndPolls = () => {
                 component = { PollsPane }
                 listeners = {{
                     tabPress: () => {
-                        dispatch(setIsPollsTabFocused(true));
+                        dispatch(setFocusedTab(ChatTabs.POLLS));
                         dispatch(resetNbUnreadPollsMessages);
                     }
                 }}

@@ -20,6 +20,7 @@ import { isRecorderTranscriptionsRunning } from '../transcribing/functions';
 
 import {
     CLEAR_RECORDING_SESSIONS,
+    MARK_CONSENT_REQUESTED,
     RECORDING_SESSION_UPDATED,
     SET_MEETING_HIGHLIGHT_BUTTON_STATE,
     SET_PENDING_RECORDING_NOTIFICATION_UID,
@@ -285,10 +286,19 @@ export function showStartedRecordingNotification(
 
                     // add the option to copy recording link
                     if (showRecordingLink) {
+                        const actions = [
+                            ...notifyProps.dialogProps.customActionNameKey ?? [],
+                            'recording.copyLink'
+                        ];
+                        const handlers = [
+                            ...notifyProps.dialogProps.customActionHandler ?? [],
+                            () => copyText(link)
+                        ];
+
                         notifyProps.dialogProps = {
                             ...notifyProps.dialogProps,
-                            customActionNameKey: [ 'recording.copyLink' ],
-                            customActionHandler: [ () => copyText(link) ],
+                            customActionNameKey: actions,
+                            customActionHandler: handlers,
                             titleKey: 'recording.on',
                             descriptionKey: 'recording.linkGenerated'
                         };
@@ -455,7 +465,7 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
                         conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
                             isTranscribingEnabled: true
                         });
-                        dispatch(setRequestingSubtitles(true, false, null));
+                        dispatch(setRequestingSubtitles(true, false, null, true));
                     }
                 } else {
                     openRecordingDialog();
@@ -465,5 +475,19 @@ export function showStartRecordingNotificationWithCallback(openRecordingDialog: 
             } ],
             appearance: NOTIFICATION_TYPE.NORMAL
         }, NOTIFICATION_TIMEOUT_TYPE.EXTRA_LONG));
+    };
+}
+
+/**
+ * Marks the given session as consent requested. No further consent requests will be
+ * made for this session.
+ *
+ * @param {string} sessionId - The session id.
+ * @returns {Object}
+ */
+export function markConsentRequested(sessionId: string) {
+    return {
+        type: MARK_CONSENT_REQUESTED,
+        sessionId
     };
 }

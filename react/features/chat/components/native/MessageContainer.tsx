@@ -1,26 +1,28 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { FlatList, Text, TextStyle, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
+import { IMessageGroup, groupMessagesBySender } from '../../../base/util/messageGrouping';
 import { IMessage } from '../../types';
-import AbstractMessageContainer, { IProps as AbstractProps } from '../AbstractMessageContainer';
 
 import ChatMessageGroup from './ChatMessageGroup';
 import styles from './styles';
 
-interface IProps extends AbstractProps {
-
-    /**
-     * Function to be used to translate i18n labels.
-     */
+interface IProps {
+    messages: IMessage[];
     t: Function;
 }
 
 /**
  * Implements a container to render all the chat messages in a conference.
  */
-class MessageContainer extends AbstractMessageContainer<IProps, any> {
+class MessageContainer extends Component<IProps, any> {
+
+    static defaultProps = {
+        messages: [] as IMessage[]
+    };
+
     /**
      * Instantiates a new instance of the component.
      *
@@ -32,6 +34,7 @@ class MessageContainer extends AbstractMessageContainer<IProps, any> {
         this._keyExtractor = this._keyExtractor.bind(this);
         this._renderListEmptyComponent = this._renderListEmptyComponent.bind(this);
         this._renderMessageGroup = this._renderMessageGroup.bind(this);
+        this._getMessagesGroupedBySender = this._getMessagesGroupedBySender.bind(this);
     }
 
     /**
@@ -94,8 +97,20 @@ class MessageContainer extends AbstractMessageContainer<IProps, any> {
      * @param {Array<Object>} messages - The chat message to render.
      * @returns {React$Element<*>}
      */
-    _renderMessageGroup({ item: messages }: { item: IMessage[]; }) {
+    _renderMessageGroup({ item: group }: { item: IMessageGroup<IMessage>; }) {
+        const { messages } = group;
+
         return <ChatMessageGroup messages = { messages } />;
+    }
+
+    /**
+     * Returns an array of message groups, where each group is an array of messages
+     * grouped by the sender.
+     *
+     * @returns {Array<Array<Object>>}
+     */
+    _getMessagesGroupedBySender() {
+        return groupMessagesBySender(this.props.messages);
     }
 }
 

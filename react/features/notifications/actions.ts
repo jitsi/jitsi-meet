@@ -38,9 +38,11 @@ function getNotificationTimeout(type?: string, notificationTimeouts?: IConfig['n
         return notificationTimeouts?.long ?? NOTIFICATION_TIMEOUT.LONG;
     } else if (type === NOTIFICATION_TIMEOUT_TYPE.EXTRA_LONG) {
         return notificationTimeouts?.extraLong ?? NOTIFICATION_TIMEOUT.EXTRA_LONG;
+    } else if (type === NOTIFICATION_TIMEOUT_TYPE.STICKY) {
+        return notificationTimeouts?.sticky ?? NOTIFICATION_TIMEOUT.STICKY;
     }
 
-    return NOTIFICATION_TIMEOUT.STICKY;
+    return 0;
 }
 
 /**

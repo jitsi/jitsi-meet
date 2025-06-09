@@ -6,9 +6,9 @@ import AVModerationMenu from './AVModerationMenu';
 import BasePageObject from './BasePageObject';
 
 /**
- * Classname of the closed/hidden participants pane
+ * ID of the closed/hidden participants pane
  */
-const PARTICIPANTS_PANE = 'participants_pane';
+const PARTICIPANTS_PANE = 'participants-pane';
 
 const INVITE = 'Invite someone';
 
@@ -27,7 +27,7 @@ export default class ParticipantsPane extends BasePageObject {
      * Checks if the pane is open.
      */
     isOpen() {
-        return this.participant.driver.$(`.${PARTICIPANTS_PANE}`).isExisting();
+        return this.participant.driver.$(`#${PARTICIPANTS_PANE}`).isExisting();
     }
 
     /**
@@ -36,7 +36,7 @@ export default class ParticipantsPane extends BasePageObject {
     async open() {
         await this.participant.getToolbar().clickParticipantsPaneButton();
 
-        const pane = this.participant.driver.$(`.${PARTICIPANTS_PANE}`);
+        const pane = this.participant.driver.$(`#${PARTICIPANTS_PANE}`);
 
         await pane.waitForExist();
         await pane.waitForStable();
@@ -49,7 +49,7 @@ export default class ParticipantsPane extends BasePageObject {
     async close() {
         await this.participant.getToolbar().clickCloseParticipantsPaneButton();
 
-        await this.participant.driver.$(`.${PARTICIPANTS_PANE}`).waitForDisplayed({ reverse: true });
+        await this.participant.driver.$(`#${PARTICIPANTS_PANE}`).waitForDisplayed({ reverse: true });
     }
 
     /**

@@ -18,6 +18,11 @@ import { MAX_ACTIVE_PARTICIPANTS } from '../../../filmstrip/constants';
 export interface IProps extends AbstractDialogTabProps, WithTranslation {
 
     /**
+     *  Indicates if closed captions are enabled.
+     */
+    areClosedCaptionsEnabled: boolean;
+
+    /**
      * CSS classes object.
      */
     classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
@@ -69,14 +74,9 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     showModeratorSettings: boolean;
 
     /**
-     * Whether or not to show prejoin screen.
+     * Whether or not to show subtitles on stage.
      */
-    showPrejoinPage: boolean;
-
-    /**
-     * Whether or not to display the prejoin settings section.
-     */
-    showPrejoinSettings: boolean;
+    showSubtitlesOnStage: boolean;
 
     /**
      * Whether or not the stage filmstrip is enabled.
@@ -122,10 +122,10 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.
-        this._onShowPrejoinPageChanged = this._onShowPrejoinPageChanged.bind(this);
         this._renderMaxStageParticipantsSelect = this._renderMaxStageParticipantsSelect.bind(this);
         this._onMaxStageParticipantsSelect = this._onMaxStageParticipantsSelect.bind(this);
         this._onHideSelfViewChanged = this._onHideSelfViewChanged.bind(this);
+        this._onShowSubtitlesOnStageChanged = this._onShowSubtitlesOnStageChanged.bind(this);
         this._onLanguageItemSelect = this._onLanguageItemSelect.bind(this);
     }
 
@@ -137,11 +137,12 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
      */
     override render() {
         const {
-            showPrejoinSettings,
+            areClosedCaptionsEnabled,
             disableHideSelfView,
             iAmVisitor,
             hideSelfView,
             showLanguageSettings,
+            showSubtitlesOnStage,
             t
         } = this.props;
         const classes = withStyles.getClasses(this.props);
@@ -150,10 +151,6 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
             <div
                 className = { clsx('more-tab', classes.container) }
                 key = 'more'>
-                {showPrejoinSettings && <>
-                    {this._renderPrejoinScreenSettings()}
-                    <hr className = { classes.divider } />
-                </>}
                 {this._renderMaxStageParticipantsSelect()}
                 {!disableHideSelfView && !iAmVisitor && (
                     <Checkbox
@@ -163,21 +160,15 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
                         name = 'hide-self-view'
                         onChange = { this._onHideSelfViewChanged } />
                 )}
+                {areClosedCaptionsEnabled && <Checkbox
+                    checked = { showSubtitlesOnStage }
+                    className = { classes.checkbox }
+                    label = { t('settings.showSubtitlesOnStage') }
+                    name = 'show-subtitles-button'
+                    onChange = { this._onShowSubtitlesOnStageChanged } /> }
                 {showLanguageSettings && this._renderLanguageSelect()}
             </div>
         );
-    }
-
-    /**
-     * Callback invoked to select if the lobby
-     * should be shown.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onShowPrejoinPageChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
-        super._onChange({ showPrejoinPage: checked });
     }
 
     /**
@@ -205,6 +196,17 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
     }
 
     /**
+     * Callback invoked to select if show subtitles button should be enabled.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onShowSubtitlesOnStageChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
+        super._onChange({ showSubtitlesOnStage: checked });
+    }
+
+    /**
      * Callback invoked to select a language from select dropdown.
      *
      * @param {Object} e - The key event to handle.
@@ -215,24 +217,6 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
         const language = e.target.value;
 
         super._onChange({ currentLanguage: language });
-    }
-
-    /**
-     * Returns the React Element for modifying prejoin screen settings.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderPrejoinScreenSettings() {
-        const { t, showPrejoinPage } = this.props;
-
-        return (
-            <Checkbox
-                checked = { showPrejoinPage }
-                label = { t('prejoin.showScreen') }
-                name = 'show-prejoin-page'
-                onChange = { this._onShowPrejoinPageChanged } />
-        );
     }
 
     /**

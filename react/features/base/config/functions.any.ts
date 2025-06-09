@@ -193,6 +193,13 @@ export function overrideConfigJSON(config: IConfig, interfaceConfig: any, json: 
  * that are whitelisted.
  */
 export function getWhitelistedJSON(configName: 'interfaceConfig' | 'config', configJSON: any): Object {
+    // Disable whitelisting in dev mode.
+    if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        logger.warn('Whitelisting is disabled in dev mode, accepting any overrides');
+
+        return configJSON;
+    }
+
     if (configName === 'interfaceConfig') {
         return pick(configJSON, INTERFACE_CONFIG_WHITELIST);
     } else if (configName === 'config') {

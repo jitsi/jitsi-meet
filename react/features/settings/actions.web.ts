@@ -132,14 +132,6 @@ export function submitMoreTab(newState: any) {
         const state = getState();
         const currentState = getMoreTabProps(state);
 
-        const showPrejoinPage = newState.showPrejoinPage;
-
-        if (showPrejoinPage !== currentState.showPrejoinPage) {
-            dispatch(updateSettings({
-                userSelectedSkipPrejoin: !showPrejoinPage
-            }));
-        }
-
         if (newState.maxStageParticipants !== currentState.maxStageParticipants) {
             dispatch(updateSettings({ maxStageParticipants: Number(newState.maxStageParticipants) }));
         }
@@ -154,6 +146,10 @@ export function submitMoreTab(newState: any) {
             const { conference } = getConferenceState(state);
 
             conference?.setTranscriptionLanguage(newState.currentLanguage);
+        }
+
+        if (newState.showSubtitlesOnStage !== currentState.showSubtitlesOnStage) {
+            dispatch(updateSettings({ showSubtitlesOnStage: newState.showSubtitlesOnStage }));
         }
     };
 }

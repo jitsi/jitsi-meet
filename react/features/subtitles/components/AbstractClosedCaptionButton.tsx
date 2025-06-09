@@ -4,9 +4,20 @@ import { IReduxState } from '../../app/types';
 import { MEET_FEATURES } from '../../base/jwt/constants';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
 import { maybeShowPremiumFeatureDialog } from '../../jaas/actions';
-import { canStartSubtitles } from '../functions.any';
+import { canStartSubtitles, isCCTabEnabled } from '../functions.any';
 
+/**
+ * Props interface for the Abstract Closed Caption Button component.
+ *
+ * @interface IAbstractProps
+ * @augments {AbstractButtonProps}
+ */
 export interface IAbstractProps extends AbstractButtonProps {
+
+    /**
+     * Whether the subtitles tab is enabled in the UI.
+     */
+    _isCCTabEnabled: boolean;
 
     _language: string | null;
 
@@ -109,6 +120,7 @@ export function _abstractMapStateToProps(state: IReduxState, ownProps: IAbstract
     const { visible = canStartSubtitles(state) } = ownProps;
 
     return {
+        _isCCTabEnabled: isCCTabEnabled(state),
         _requestingSubtitles,
         _language,
         visible

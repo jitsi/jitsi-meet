@@ -122,7 +122,10 @@
         "nickname": {
             "popover": "Choose a nickname",
             "title": "Enter a nickname to use chat",
-            "titleWithPolls": "Enter a nickname to use chat and polls"
+            "titleWithCC": "Enter a nickname to use chat and closed captions",
+            "titleWithPolls": "Enter a nickname to use chat and polls",
+            "titleWithPollsAndCC": "Enter a nickname to use chat, polls and closed captions",
+            "titleWithPollsAndCCAndFileSharing": "Enter a nickname to use chat, polls, closed captions and files"
         },
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "privateNotice": "Private message to {{recipient}}",
@@ -131,10 +134,15 @@
         "systemDisplayName": "System",
         "tabs": {
             "chat": "Chat",
+            "closedCaptions": "CC",
+            "fileSharing": "Files",
             "polls": "Polls"
         },
         "title": "Chat",
-        "titleWithPolls": "Chat and Polls",
+        "titleWithCC": "CC",
+        "titleWithFeatures": "Chat and",
+        "titleWithFileSharing": "Files",
+        "titleWithPolls": "Polls",
         "you": "you"
     },
     "chromeExtensionBanner": {
@@ -143,6 +151,10 @@
         "close": "Close",
         "dontShowAgain": "Don’t show me this again",
         "installExtensionText": "Install the extension for Google Calendar and Office 365 integration"
+    },
+    "closedCaptionsTab": {
+        "emptyState": "The closed captions content will be available once a moderator starts it",
+        "startClosedCaptionsButton": "Start closed captions"
     },
     "connectingOverlay": {
         "joiningRoom": "Connecting you to your meeting…"
@@ -263,7 +275,8 @@
         "Remove": "Remove",
         "Share": "Share",
         "Submit": "Submit",
-        "Understand": "I understand",
+        "Understand": "I understand, keep me muted for now",
+        "UnderstandAndUnmute": "I understand, please unmute me",
         "WaitForHostMsg": "The conference has not yet started because no moderators have yet arrived. If you'd like to become a moderator please log-in. Otherwise, please wait.",
         "WaitForHostNoAuthMsg": "The conference has not yet started because no moderators have yet arrived. Please wait.",
         "WaitingForHostButton": "Wait for moderator",
@@ -300,6 +313,7 @@
         "conferenceReloadMsg": "We're trying to fix this. Reconnecting in {{seconds}} sec…",
         "conferenceReloadTitle": "Unfortunately, something went wrong.",
         "confirm": "Confirm",
+        "confirmBack": "Back",
         "confirmNo": "No",
         "confirmYes": "Yes",
         "connectError": "Oops! Something went wrong and we couldn't connect to the conference.",
@@ -337,6 +351,7 @@
         "kickParticipantTitle": "Remove this participant?",
         "kickSystemTitle": "You were removed from the meeting",
         "kickTitle": "{{participantDisplayName}} removed you from the meeting",
+        "learnMore": "learn more",
         "linkMeeting": "Link meeting",
         "linkMeetingTitle": "Link meeting to Salesforce",
         "liveStreaming": "Live Streaming",
@@ -394,7 +409,9 @@
         "recentlyUsedObjects": "Your recently used objects",
         "recording": "Recording",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Not possible while a live stream is active",
-        "recordingInProgressDescription": "This meeting is being recorded. Your audio and video have been muted. If you choose to unmute, you consent to being recorded.",
+        "recordingInProgressDescription": "This meeting is being recorded and analyzed by AI{{learnMore}}. Your audio and video have been muted. If you choose to unmute, you consent to being recorded.",
+        "recordingInProgressDescriptionFirstHalf": "This meeting is being recorded and analyzed by AI",
+        "recordingInProgressDescriptionSecondHalf": ". Your audio and video have been muted. If you choose to unmute, you consent to being recorded.",
         "recordingInProgressTitle": "Recording in progress",
         "rejoinNow": "Rejoin now",
         "remoteControlAllowedMessage": "{{user}} accepted your remote control request!",
@@ -524,6 +541,19 @@
         "star": "Star",
         "veryBad": "Very Bad",
         "veryGood": "Very Good"
+    },
+    "fileSharing": {
+        "downloadFailedDescription": "Please try again.",
+        "downloadFailedTitle": "Download failed",
+        "downloadFile": "Download",
+        "dragAndDrop": "Drag and drop files here or anywhere on screen",
+        "fileAlreadyUploaded": "File has already been uploaded to this meeting.",
+        "fileTooLargeDescription": "Please make sure the file does not exceed {{ maxFileSize }}.",
+        "fileTooLargeTitle": "The selected file is too large",
+        "removeFile": "Remove",
+        "uploadFailedDescription": "Please try again.",
+        "uploadFailedTitle": "Upload failed",
+        "uploadFile": "Share file"
     },
     "filmstrip": {
         "accessibilityLabel": {
@@ -984,7 +1014,6 @@
         "proceedAnyway": "Proceed anyway",
         "recordingWarning": "Other participants may be recording this call",
         "screenSharingError": "Screen sharing error:",
-        "showScreen": "Enable pre meeting screen",
         "startWithPhone": "Start with phone audio",
         "unsafeRoomConsent": "I understand the risks, I want to join the meeting",
         "videoOnlyError": "Video error:",
@@ -1055,7 +1084,7 @@
         "localRecordingStartWarningTitle": "Stop the recording to save it",
         "localRecordingVideoStop": "Stopping your video will also stop the local recording. Are you sure you want to continue?",
         "localRecordingVideoWarning": "To record your video you must have it on when starting the recording",
-        "localRecordingWarning": "Make sure you select the current tab in order to use the right video and audio. The recording is currently limited to 1GB, which is around 100 minutes.",
+        "localRecordingWarning": "Make sure you select the current tab in order to use the right video and audio.",
         "loggedIn": "Logged in as {{userName}}",
         "noMicPermission": "Microphone track could not be created. Please grant permission to use the microphone.",
         "noStreams": "No audio or video stream detected.",
@@ -1139,6 +1168,7 @@
         "selectMic": "Microphone",
         "selfView": "Self view",
         "shortcuts": "Shortcuts",
+        "showSubtitlesOnStage": "Show subtitles on stage",
         "speakers": "Speakers",
         "startAudioMuted": "Everyone starts muted",
         "startReactionsMuted": "Mute reaction sounds for everyone",
@@ -1235,6 +1265,7 @@
             "closeChat": "Close chat",
             "closeMoreActions": "Close more actions menu",
             "closeParticipantsPane": "Close participants pane",
+            "closedCaptions": "Closed captions",
             "collapse": "Collapse",
             "document": "Toggle shared document",
             "documentClose": "Close shared document",
@@ -1325,6 +1356,7 @@
         "closeChat": "Close chat",
         "closeParticipantsPane": "Close participants pane",
         "closeReactionsMenu": "Close reactions menu",
+        "closedCaptions": "Closed captions",
         "disableNoiseSuppression": "Disable extra noise suppression (BETA)",
         "disableReactionSounds": "You can disable reaction sounds for this meeting",
         "documentClose": "Close shared document",
@@ -1417,13 +1449,16 @@
         "failed": "Transcribing failed",
         "labelTooltip": "This meeting is being transcribed.",
         "labelTooltipExtra": "In addition, a transcript will be available later.",
+        "openClosedCaptions": "Open closed captions",
+        "original": "Original",
         "sourceLanguageDesc": "Currently the meeting language is set to <b>{{sourceLanguage}}</b>. <br/> You can change it from ",
         "sourceLanguageHere": "here",
         "start": "Start showing subtitles",
         "stop": "Stop showing subtitles",
         "subtitles": "Subtitles",
         "subtitlesOff": "Off",
-        "tr": "TR"
+        "tr": "TR",
+        "translateTo": "Translate to"
     },
     "unpinParticipant": "{{participantName}} - Unpin",
     "userMedia": {

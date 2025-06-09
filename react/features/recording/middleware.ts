@@ -37,6 +37,7 @@ import { RECORDING_SESSION_UPDATED, START_LOCAL_RECORDING, STOP_LOCAL_RECORDING 
 import {
     clearRecordingSessions,
     hidePendingRecordingNotification,
+    markConsentRequested,
     showPendingRecordingNotification,
     showRecordingError,
     showRecordingLimitNotification,
@@ -307,7 +308,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case TRACK_ADDED: {
         const { track } = action;
 
-        if (LocalRecordingManager.isRecordingLocally() && track.mediaType === MEDIA_TYPE.AUDIO) {
+        if (LocalRecordingManager.isRecordingLocally()
+                && track.mediaType === MEDIA_TYPE.AUDIO && track.local) {
             const audioTrack = track.jitsiTrack.track;
 
             LocalRecordingManager.addAudioTrackToLocalRecording(audioTrack);
@@ -420,6 +422,7 @@ function _showExplicitConsentDialog(recorderSession: any, dispatch: IStore['disp
     }
 
     batch(() => {
+        dispatch(markConsentRequested(recorderSession.getID()));
         dispatch(setAudioUnmutePermissions(true, true));
         dispatch(setVideoUnmutePermissions(true, true));
         dispatch(setAudioMuted(true));

@@ -15,6 +15,11 @@ interface IProps {
      * The children of the component.
      */
     children?: ReactNode;
+
+    /**
+     * The optional role of the component.
+     */
+    role?: string;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -41,12 +46,15 @@ const useStyles = makeStyles()(theme => {
 
 const ContextMenuItemGroup = ({
     actions,
-    children
+    children,
+    ...rest
 }: IProps) => {
     const { classes: styles } = useStyles();
 
     return (
-        <div className = { styles.contextMenuItemGroup }>
+        <div
+            className = { styles.contextMenuItemGroup }
+            { ...rest }>
             {children}
             {actions?.map(actionProps => (
                 <ContextMenuItem

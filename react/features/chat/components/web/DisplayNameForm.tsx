@@ -21,6 +21,11 @@ interface IProps extends WithTranslation {
     dispatch: IStore['dispatch'];
 
     /**
+     * Whether CC tab is enabled or not.
+     */
+    isCCTabEnabled: boolean;
+
+    /**
      * Whether the polls feature is enabled or not.
      */
     isPollsEnabled: boolean;
@@ -69,16 +74,26 @@ class DisplayNameForm extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     override render() {
-        const { isPollsEnabled, t } = this.props;
+        const { isCCTabEnabled, isPollsEnabled, t } = this.props;
+
+        let title = 'chat.nickname.title';
+
+        if (isCCTabEnabled && isPollsEnabled) {
+            title = 'chat.nickname.titleWithPollsAndCC';
+        } else if (isCCTabEnabled) {
+            title = 'chat.nickname.titleWithCC';
+        } else if (isPollsEnabled) {
+            title = 'chat.nickname.titleWithPolls';
+        }
 
         return (
             <div id = 'nickname'>
                 <form onSubmit = { this._onSubmit }>
                     <Input
-                        accessibilityLabel = { t('chat.nickname.title') }
+                        accessibilityLabel = { t(title) }
                         autoFocus = { true }
                         id = 'nickinput'
-                        label = { t(isPollsEnabled ? 'chat.nickname.titleWithPolls' : 'chat.nickname.title') }
+                        label = { t(title) }
                         name = 'name'
                         onChange = { this._onDisplayNameChange }
                         placeholder = { t('chat.nickname.popover') }

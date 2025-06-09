@@ -70,6 +70,7 @@ import {
 } from './functions';
 import logger from './logger';
 import { IConferenceMetadata } from './reducer';
+import './subscriber';
 
 /**
  * Handler for page hide event.
@@ -266,7 +267,9 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
         _removeHandlers();
     }
 
-    if (enableForcedReload && error?.name === JitsiConferenceErrors.CONFERENCE_RESTARTED) {
+    if (enableForcedReload
+        && (error?.name === JitsiConferenceErrors.CONFERENCE_RESTARTED
+            || error?.name === JitsiConnectionErrors.SHARD_CHANGED_ERROR)) {
         dispatch(conferenceWillLeave(conference));
         dispatch(reloadNow());
     }

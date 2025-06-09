@@ -7,6 +7,7 @@ import Icon from '../../../icons/components/Icon';
 import { IconCloseCircle } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 import { IInputProps } from '../types';
+
 import { HiddenDescription } from './HiddenDescription';
 
 interface IProps extends IInputProps {

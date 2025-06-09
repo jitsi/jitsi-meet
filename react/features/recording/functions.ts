@@ -1,13 +1,13 @@
 import i18next from 'i18next';
 
 import { IReduxState, IStore } from '../app/types';
-import { isMobileBrowser } from '../base/environment/utils';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
-import { JitsiRecordingConstants, browser } from '../base/lib-jitsi-meet';
+import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { getSoundFileSrc } from '../base/media/functions';
 import { getLocalParticipant, getRemoteParticipants } from '../base/participants/functions';
 import { registerSound, unregisterSound } from '../base/sounds/actions';
+import { isSpotTV } from '../base/util/spot';
 import { isInBreakoutRoom as isInBreakoutRoomF } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
@@ -151,8 +151,7 @@ export function getSessionStatusToShow(state: IReduxState, mode: string): string
  * @returns {boolean} - Whether local recording is supported or not.
  */
 export function supportsLocalRecording() {
-    return browser.isChromiumBased() && !browser.isElectron() && !isMobileBrowser()
-        && navigator.product !== 'ReactNative';
+    return LocalRecordingManager.isSupported();
 }
 
 /**
@@ -440,11 +439,18 @@ export function isLiveStreamingButtonVisible({
  * @returns {boolean}
  */
 export function shouldRequireRecordingConsent(recorderSession: any, state: IReduxState) {
-    const { requireRecordingConsent } = state['features/dynamic-branding'] || {};
-    const { requireConsent } = state['features/base/config'].recordings || {};
+    const { requireRecordingConsent, skipRecordingConsentInMeeting }
+        = state['features/dynamic-branding'] || {};
+    const { conference } = state['features/base/conference'] || {};
+    const { requireConsent, skipConsentInMeeting } = state['features/base/config'].recordings || {};
     const { iAmRecorder } = state['features/base/config'];
+    const { consentRequested } = state['features/recording'];
 
     if (iAmRecorder) {
+        return false;
+    }
+
+    if (isSpotTV(state)) {
         return false;
     }
 
@@ -452,10 +458,25 @@ export function shouldRequireRecordingConsent(recorderSession: any, state: IRedu
         return false;
     }
 
-    if (!recorderSession.getInitiator()
-        || recorderSession.getStatus() === JitsiRecordingConstants.status.OFF) {
+    if (consentRequested.has(recorderSession.getID())) {
         return false;
     }
 
-    return recorderSession.getInitiator() !== getLocalParticipant(state)?.id;
+    // If we join a meeting that has an ongoing recording `conference` will be undefined since
+    // we get the recording state through the initial presence which happens in between the
+    // WILL_JOIN and JOINED events.
+    if (conference && (skipConsentInMeeting || skipRecordingConsentInMeeting)) {
+        return false;
+    }
+
+    // lib-jitsi-meet may set a JitsiParticipant as the initiator of the recording session or the
+    // JID resource in case it cannot find it. We need to handle both cases.
+    const initiator = recorderSession.getInitiator();
+    const initiatorId = initiator?.getId?.() ?? initiator;
+
+    if (!initiatorId || recorderSession.getStatus() === JitsiRecordingConstants.status.OFF) {
+        return false;
+    }
+
+    return initiatorId !== getLocalParticipant(state)?.id;
 }

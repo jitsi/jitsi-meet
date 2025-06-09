@@ -295,7 +295,7 @@ export function getVisitorOptions(stateful: IStateful, vnode: string, focusJid: 
             return {
                 hosts: config.oldConfig.hosts,
                 focusUserJid: focusJid,
-                disableLocalStats: false,
+                disableLocalStatsBroadcast: false,
                 bosh: config.oldConfig.bosh && appendURLParam(config.oldConfig.bosh, 'customusername', username),
                 p2p: config.oldConfig.p2p,
                 websocket: config.oldConfig.websocket
@@ -330,7 +330,7 @@ export function getVisitorOptions(stateful: IStateful, vnode: string, focusJid: 
         },
         focusUserJid: focusJid,
         disableFocus: true, // This flag disables sending the initial conference request
-        disableLocalStats: true,
+        disableLocalStatsBroadcast: true,
         bosh: config.bosh && appendURLParam(config.bosh, 'vnode', vnode),
         p2p: {
             ...config.p2p,
@@ -392,19 +392,6 @@ export function isP2pActive(stateful: IStateful): boolean | null {
     }
 
     return conference.isP2PActive();
-}
-
-/**
- * Returns whether the current conference has audio recording property which is on.
- *
- * @param {IStateful} stateful - The redux store, state, or {@code getState} function.
- * @returns {boolean|null}
- */
-export function isConferenceAudioRecordingOn(stateful: IStateful): boolean | null {
-    const state = getConferenceState(toState(stateful));
-
-    // @ts-ignore
-    return state.properties?.['audio-recording-enabled'] === 'true';
 }
 
 /**

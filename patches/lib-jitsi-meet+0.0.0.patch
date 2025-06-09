@@ -1,0 +1,40 @@
+diff --git a/node_modules/lib-jitsi-meet/dist/esm/modules/xmpp/xmpp.js b/node_modules/lib-jitsi-meet/dist/esm/modules/xmpp/xmpp.js
+index 31b0ee6..bb0c46e 100644
+--- a/node_modules/lib-jitsi-meet/dist/esm/modules/xmpp/xmpp.js
++++ b/node_modules/lib-jitsi-meet/dist/esm/modules/xmpp/xmpp.js
+@@ -178,7 +178,7 @@ export default class XMPP extends Listenable {
+         // they wanted to utilize the connected connection in an unload handler
+         // of their own. However, it should be fairly easy for them to do that
+         // by registering their unload handler before us.
+-        $(window).on(`${this.options.disableBeforeUnloadHandlers ? '' : 'beforeunload '}unload`, ev => {
++        $(window).on('pagehide', ev => {
+             this.disconnect(ev).catch(() => {
+                 // ignore errors in order to not brake the unload.
+             });
+@@ -664,7 +664,7 @@ export default class XMPP extends Listenable {
+      * Disconnects this from the XMPP server (if this is connected).
+      *
+      * @param {Object} ev - Optionally, the event which triggered the necessity to
+-     * disconnect from the XMPP server (e.g. beforeunload, unload).
++     * disconnect from the XMPP server (e.g. beforeunload, pagehide).
+      * @returns {Promise} - Resolves when the disconnect process is finished or rejects with an error.
+      */
+     disconnect(ev) {
+@@ -693,7 +693,7 @@ export default class XMPP extends Listenable {
+      * participant will be removed from the conference XMPP MUC, so that it doesn't leave a "ghost" participant behind.
+      *
+      * @param {Object} ev - Optionally, the event which triggered the necessity to disconnect from the XMPP server
+-     * (e.g. beforeunload, unload).
++     * (e.g. beforeunload, pagehide).
+      * @private
+      * @returns {void}
+      */
+@@ -709,7 +709,7 @@ export default class XMPP extends Listenable {
+         !this.connection.isUsingWebSocket && this.connection.flush();
+         if (!this.connection.isUsingWebSocket && ev !== null && typeof ev !== 'undefined') {
+             const evType = ev.type;
+-            if (evType === 'beforeunload' || evType === 'unload') {
++            if (evType === 'beforeunload' || evType === 'pagehide') {
+                 // XXX Whatever we said above, synchronous sending is the best (known) way to properly disconnect from
+                 // the XMPP server. Consequently, it may be fine to have the source code and comment it in or out
+                 // depending on whether we want to run with it for some time.

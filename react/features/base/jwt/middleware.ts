@@ -4,18 +4,32 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
 import { isVpaasMeeting } from '../../jaas/functions';
+import { getCurrentConference } from '../conference/functions';
 import { SET_CONFIG } from '../config/actionTypes';
-import { SET_LOCATION_URL } from '../connection/actionTypes';
+import { CONNECTION_ESTABLISHED, SET_LOCATION_URL } from '../connection/actionTypes';
 import { participantUpdated } from '../participants/actions';
 import { getLocalParticipant } from '../participants/functions';
 import { IParticipant } from '../participants/types';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import StateListenerRegistry from '../redux/StateListenerRegistry';
 import { parseURIString } from '../util/uri';
 
 import { SET_JWT } from './actionTypes';
-import { setJWT } from './actions';
+import { setDelayedLoadOfAvatarUrl, setJWT, setKnownAvatarUrl } from './actions';
 import { parseJWTFromURLParams } from './functions';
 import logger from './logger';
+
+/**
+ * Set up a state change listener to perform maintenance tasks when the conference
+ * is left or failed, e.g. Clear any delayed load avatar url.
+ */
+StateListenerRegistry.register(
+    state => getCurrentConference(state),
+    (conference, { dispatch }, previousConference): void => {
+        if (conference !== previousConference) {
+            dispatch(setDelayedLoadOfAvatarUrl());
+        }
+    });
 
 /**
  * Middleware to parse token data upon setting a new room URL.
@@ -31,7 +45,18 @@ MiddlewareRegistry.register(store => next => action => {
         // XXX The JSON Web Token (JWT) is not the only piece of state that we
         // have decided to store in the feature jwt
         return _setConfigOrLocationURL(store, next, action);
+    case CONNECTION_ESTABLISHED: {
+        const state = store.getState();
+        const delayedLoadOfAvatarUrl = state['features/base/jwt'].delayedLoadOfAvatarUrl;
 
+        if (delayedLoadOfAvatarUrl) {
+            _overwriteLocalParticipant(store, {
+                avatarURL: delayedLoadOfAvatarUrl
+            });
+            store.dispatch(setDelayedLoadOfAvatarUrl());
+            store.dispatch(setKnownAvatarUrl(delayedLoadOfAvatarUrl));
+        }
+    }
     case SET_JWT:
         return _setJWT(store, next, action);
     }
@@ -144,6 +169,7 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
 
             if (jwtPayload) {
                 const { context, iss, sub } = jwtPayload;
+                const { tokenGetUserInfoOutOfContext, tokenRespectTenant } = state['features/base/config'];
 
                 action.jwt = jwt;
                 action.issuer = iss;
@@ -159,7 +185,6 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
                     const newUser = user ? { ...user } : {};
 
                     let features = context.features;
-                    const { tokenRespectTenant } = state['features/base/config'];
 
                     // eslint-disable-next-line max-depth
                     if (!isVpaasMeeting(state) && tokenRespectTenant && context.tenant) {
@@ -171,6 +196,16 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
                         features = context.tenant === tenant || tenant === '' ? features : {};
                     }
 
+                    if (newUser.avatarURL) {
+                        const { knownAvatarUrl } = state['features/base/jwt'];
+
+                        if (knownAvatarUrl !== newUser.avatarURL) {
+                            store.dispatch(setDelayedLoadOfAvatarUrl(newUser.avatarURL));
+
+                            newUser.avatarURL = undefined;
+                        }
+                    }
+
                     _overwriteLocalParticipant(
                         store, { ...newUser,
                             features });
@@ -179,7 +214,8 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
                     if (context.user && context.user.role === 'visitor') {
                         action.preferVisitor = true;
                     }
-                } else if (jwtPayload.name || jwtPayload.picture || jwtPayload.email) {
+                } else if (tokenGetUserInfoOutOfContext
+                    && (jwtPayload.name || jwtPayload.picture || jwtPayload.email)) {
                     // there are some tokens (firebase) having picture and name on the main level.
                     _overwriteLocalParticipant(store, {
                         avatarURL: jwtPayload.picture,

@@ -41,10 +41,10 @@ export default class IframeAPI extends BasePageObject {
     addEventListener(eventName: string) {
         return this.participant.execute(
             (event, prefix) => {
-                console.log(`${new Date().toISOString()} ${prefix} Adding listener for event: ${event}`);
+                console.log(`${new Date().toISOString()} ${prefix}iframeAPI - Adding listener for event: ${event}`);
                 window.jitsiAPI.addListener(event, evt => {
                     console.log(
-                        `${new Date().toISOString()} ${prefix} Received ${event} event: ${JSON.stringify(evt)}`);
+                        `${new Date().toISOString()} ${prefix}iframeAPI - Received ${event} event: ${JSON.stringify(evt)}`);
                     window.jitsiAPI.test[event] = evt;
                 });
             }, eventName, LOG_PREFIX);
@@ -88,5 +88,48 @@ export default class IframeAPI extends BasePageObject {
      */
     dispose() {
         return this.participant.execute(() => window.jitsiAPI.dispose());
+    }
+
+    /**
+     * Invite the given participant to the meeting via PSTN.
+     */
+    invitePhone(value: string) {
+        return this.participant.execute(v => window.jitsiAPI.invite([ {
+            type: 'phone',
+            number: v
+        } ]), value);
+    }
+
+    /**
+     * Invite the given participant to the meeting via sip (sip jibri).
+     */
+    inviteSIP(value: string) {
+        return this.participant.execute(v => window.jitsiAPI.invite([ {
+            type: 'sip',
+            address: v
+        } ]), value);
+    }
+
+    /**
+     * Starts a file recording or streaming session.
+     * @param options
+     */
+    startRecording(options: any) {
+        return this.participant.execute(o => window.jitsiAPI.startRecording(o), options);
+    }
+
+    /**
+     * Stop a file recording or streaming session.
+     * @param mode
+     */
+    stopRecording(mode: string) {
+        return this.participant.execute(m => window.jitsiAPI.stopRecording(m), mode);
+    }
+
+    /**
+     * Returns the live-streaming url.
+     */
+    async getLivestreamUrl() {
+        return this.participant.execute(() => window.jitsiAPI.getLivestreamUrl());
     }
 }

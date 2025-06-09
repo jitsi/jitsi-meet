@@ -15,6 +15,7 @@ import { normalizeAccents } from '../../../base/util/strings.web';
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { isButtonEnabled, showOverflowDrawer } from '../../../toolbox/functions.web';
 import { muteRemote } from '../../../video-menu/actions.web';
+import { iAmVisitor } from '../../../visitors/functions';
 import { getSortedParticipantIds, isCurrentRoomRenamable, shouldRenderInviteButton } from '../../functions';
 import { useParticipantDrawer } from '../../hooks';
 import RenameButton from '../breakout-rooms/components/web/RenameButton';
@@ -174,11 +175,17 @@ function MeetingParticipants({
  */
 function _mapStateToProps(state: IReduxState) {
     let sortedParticipantIds: any = getSortedParticipantIds(state);
+    const _iAmVisitor = iAmVisitor(state);
 
     // Filter out the virtual screenshare participants since we do not want them to be displayed as separate
     // participants in the participants pane.
+    // Filter local participant when in visitor mode
     sortedParticipantIds = sortedParticipantIds.filter((id: any) => {
         const participant = getParticipantById(state, id);
+
+        if (_iAmVisitor && participant?.local) {
+            return false;
+        }
 
         return !isScreenShareParticipant(participant);
     });

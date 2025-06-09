@@ -4,7 +4,7 @@ import { getCurrentConference } from '../base/conference/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound } from '../base/sounds/actions';
-import { INCOMING_MSG_SOUND_ID } from '../chat/constants';
+import { ChatTabs, INCOMING_MSG_SOUND_ID } from '../chat/constants';
 import { arePollsDisabled } from '../conference/functions.any';
 import { showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
@@ -96,7 +96,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         }
 
         const isChatOpen: boolean = state['features/chat'].isOpen;
-        const isPollsTabFocused: boolean = state['features/chat'].isPollsTabFocused;
+        const isPollsTabFocused: boolean = state['features/chat'].focusedTab === ChatTabs.POLLS;
 
         // Finally, we notify user they received a new poll if their pane is not opened
         if (action.notify && (!isChatOpen || !isPollsTabFocused)) {

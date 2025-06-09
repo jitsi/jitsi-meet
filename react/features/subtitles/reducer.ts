@@ -5,10 +5,12 @@ import {
     REMOVE_CACHED_TRANSCRIPT_MESSAGE,
     REMOVE_TRANSCRIPT_MESSAGE,
     SET_REQUESTING_SUBTITLES,
+    SET_SUBTITLES_ERROR,
+    STORE_SUBTITLE,
     TOGGLE_REQUESTING_SUBTITLES,
     UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
-import { ITranscriptMessage } from './types';
+import { ISubtitle, ITranscriptMessage } from './types';
 
 /**
  * Default State for 'features/transcription' feature.
@@ -18,15 +20,21 @@ const defaultState = {
     _displaySubtitles: false,
     _transcriptMessages: new Map(),
     _requestingSubtitles: false,
-    _language: null
+    _language: null,
+    messages: [],
+    subtitlesHistory: [],
+    _hasError: false
 };
 
 export interface ISubtitlesState {
     _cachedTranscriptMessages: Map<string, ITranscriptMessage>;
     _displaySubtitles: boolean;
+    _hasError: boolean;
     _language: string | null;
     _requestingSubtitles: boolean;
     _transcriptMessages: Map<string, ITranscriptMessage>;
+    messages: ITranscriptMessage[];
+    subtitlesHistory: Array<ISubtitle>;
 }
 
 /**
@@ -47,17 +55,48 @@ ReducerRegistry.register<ISubtitlesState>('features/subtitles', (
             ...state,
             _displaySubtitles: action.displaySubtitles,
             _language: action.language,
-            _requestingSubtitles: action.enabled
+            _requestingSubtitles: action.enabled,
+            _hasError: false
         };
     case TOGGLE_REQUESTING_SUBTITLES:
         return {
             ...state,
-            _requestingSubtitles: !state._requestingSubtitles
+            _requestingSubtitles: !state._requestingSubtitles,
+            _hasError: false
         };
     case TRANSCRIBER_LEFT:
         return {
             ...state,
             ...defaultState
+        };
+    case STORE_SUBTITLE: {
+        const existingIndex = state.subtitlesHistory.findIndex(
+            subtitle => subtitle.id === action.subtitle.id
+        );
+
+        if (existingIndex >= 0 && state.subtitlesHistory[existingIndex].interim) {
+            const newHistory = [ ...state.subtitlesHistory ];
+
+            newHistory[existingIndex] = action.subtitle;
+
+            return {
+                ...state,
+                subtitlesHistory: newHistory
+            };
+        }
+
+        return {
+            ...state,
+            subtitlesHistory: [
+                ...state.subtitlesHistory,
+                action.subtitle
+            ]
+        };
+    }
+    case SET_SUBTITLES_ERROR:
+        return {
+            ...state,
+            _hasError: action.hasError
         };
     }
 

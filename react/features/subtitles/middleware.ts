@@ -6,6 +6,7 @@ import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { showErrorNotification } from '../notifications/actions';
 import { TRANSCRIBER_JOINED } from '../transcribing/actionTypes';
 
 import {
@@ -16,12 +17,14 @@ import {
     removeCachedTranscriptMessage,
     removeTranscriptMessage,
     setRequestingSubtitles,
+    setSubtitlesError,
+    storeSubtitle,
     updateTranscriptMessage
 } from './actions.any';
 import { notifyTranscriptionChunkReceived } from './functions';
+import { areClosedCaptionsEnabled, isCCTabEnabled } from './functions.any';
 import logger from './logger';
-import { ITranscriptMessage } from './types';
-
+import { ISubtitle, ITranscriptMessage } from './types';
 
 /**
  * The type of json-message which indicates that json carries a
@@ -92,7 +95,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case SET_REQUESTING_SUBTITLES:
-        _requestingSubtitlesChange(store, action.enabled, action.language);
+        _requestingSubtitlesChange(store, action.enabled, action.language, action.backendRecordingOn);
         break;
     }
 
@@ -122,11 +125,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
 
     const { dispatch, getState } = store;
     const state = getState();
-    const language
-        = state['features/base/conference'].conference
-            ?.getLocalParticipantProperty(P_NAME_TRANSLATION_LANGUAGE);
-    const { dumpTranscript, skipInterimTranscriptions } = state['features/base/config'].testing ?? {};
-
+    const _areClosedCaptionsEnabled = areClosedCaptionsEnabled(store.getState());
     const transcriptMessageID = json.message_id;
     const { name, id, avatar_url: avatarUrl } = json.participant;
     const participant = {
@@ -134,25 +133,57 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
         id,
         name
     };
+    const { timestamp } = json;
+    const participantId = participant.id;
+
+    // Handle transcript messages
+    const language = state['features/base/conference'].conference
+        ?.getLocalParticipantProperty(P_NAME_TRANSLATION_LANGUAGE);
+    const { dumpTranscript, skipInterimTranscriptions } = state['features/base/config'].testing ?? {};
 
     let newTranscriptMessage: ITranscriptMessage | undefined;
 
-    if (json.type === JSON_TYPE_TRANSLATION_RESULT && json.language === language) {
-        // Displays final results in the target language if translation is
-        // enabled.
-        newTranscriptMessage = {
-            clearTimeOut: undefined,
-            final: json.text?.trim(),
-            participant
-        };
+    if (json.type === JSON_TYPE_TRANSLATION_RESULT) {
+        if (!_areClosedCaptionsEnabled) {
+            // If closed captions are not enabled, bail out.
+            return next(action);
+        }
+
+        const translation = json.text?.trim();
+
+        if (isCCTabEnabled(state)) {
+            dispatch(storeSubtitle({
+                participantId,
+                text: translation,
+                language: json.language,
+                interim: false,
+                isTranscription: false,
+                timestamp,
+                id: transcriptMessageID
+            }));
+
+            return next(action);
+        }
+
+        if (json.language === language) {
+            // Displays final results in the target language if translation is
+            // enabled.
+            newTranscriptMessage = {
+                clearTimeOut: undefined,
+                final: json.text?.trim(),
+                participant
+            };
+        }
     } else if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT) {
+        const isInterim = json.is_interim;
+
         // Displays interim and final results without any translation if
         // translations are disabled.
 
         const { text } = json.transcript[0];
 
         // First, notify the external API.
-        if (!(json.is_interim && skipInterimTranscriptions)) {
+        if (!(isInterim && skipInterimTranscriptions)) {
             const txt: any = {};
 
             if (!json.is_interim) {
@@ -190,6 +221,27 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
                     }
                 }
             }
+        }
+
+        if (!_areClosedCaptionsEnabled) {
+            // If closed captions are not enabled, bail out.
+            return next(action);
+        }
+
+        const subtitle: ISubtitle = {
+            id: transcriptMessageID,
+            participantId,
+            language: json.language,
+            text,
+            interim: isInterim,
+            timestamp,
+            isTranscription: true
+        };
+
+        if (isCCTabEnabled(state)) {
+            dispatch(storeSubtitle(subtitle));
+
+            return next(action);
         }
 
         // If the user is not requesting transcriptions just bail.
@@ -278,15 +330,18 @@ function _getPrimaryLanguageCode(language: string) {
  * @param {Store} store - The redux store.
  * @param {boolean} enabled - Whether subtitles should be enabled or not.
  * @param {string} language - The language to use for translation.
+ * @param {boolean} backendRecordingOn - Whether backend recording is on or not.
  * @private
  * @returns {void}
  */
 function _requestingSubtitlesChange(
         { dispatch, getState }: IStore,
         enabled: boolean,
-        language?: string | null) {
+        language?: string | null,
+        backendRecordingOn = false) {
     const state = getState();
     const { conference } = state['features/base/conference'];
+    const { transcription } = state['features/base/config'];
 
     conference?.setLocalParticipantProperty(
         P_NAME_REQUESTING_TRANSCRIPTION,
@@ -295,13 +350,19 @@ function _requestingSubtitlesChange(
     if (enabled && conference?.getTranscriptionStatus() === JitsiMeetJS.constants.transcriptionStatus.OFF) {
         const featureAllowed = isJwtFeatureEnabled(getState(), MEET_FEATURES.TRANSCRIPTION, false);
 
-        if (featureAllowed) {
+        // the default value for inviteJigasiOnBackendTranscribing is true (when undefined)
+        if (featureAllowed && (!backendRecordingOn || (transcription?.inviteJigasiOnBackendTranscribing ?? true))) {
             conference?.dial(TRANSCRIBER_DIAL_NUMBER)
                 .catch((e: any) => {
                     logger.error('Error dialing', e);
 
                     // let's back to the correct state
                     dispatch(setRequestingSubtitles(false, false, null));
+
+                    dispatch(showErrorNotification({
+                        titleKey: 'transcribing.failed'
+                    }));
+                    dispatch(setSubtitlesError(true));
                 });
         }
     }

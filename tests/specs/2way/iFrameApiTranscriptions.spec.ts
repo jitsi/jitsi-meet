@@ -1,7 +1,8 @@
-import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
 import { expect } from '@wdio/globals';
+
 import type { Participant } from '../../helpers/Participant';
 import type WebhookProxy from '../../helpers/WebhookProxy';
+import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
 
 describe('Transcriptions', () => {
     it('joining the meeting', async () => {
@@ -137,6 +138,10 @@ describe('Transcriptions', () => {
         await p1.getIframeAPI().executeCommand('hangup');
         await p2.getIframeAPI().executeCommand('hangup');
 
+        // sometimes events are not immediately received,
+        // let's wait for destroy event before waiting for those that depends on it
+        await webhooksProxy.waitForEvent('ROOM_DESTROYED', 10000);
+
         if (webhooksProxy) {
             const event: {
                 data: {
@@ -197,7 +202,7 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
 
     // @ts-ignore
     const firstEntryData = result[0].value.data;
-    const stable = firstEntryData.stable;
+    const stable = firstEntryData.stable || firstEntryData.final;
     const language = firstEntryData.language;
     const messageID = firstEntryData.messageID;
     const p1Id = await p1.getEndpointId();
@@ -210,10 +215,10 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
 
         return v.data;
     }).forEach(tr => {
-        const checkTranscripts = stable.includes(tr.stable) || tr.stable.includes(stable);
+        const checkTranscripts = stable.includes(tr.stable || tr.final) || (tr.stable || tr.final).includes(stable);
 
         if (!checkTranscripts) {
-            console.log('received events', result);
+            console.log('received events', JSON.stringify(result));
         }
 
         expect(checkTranscripts).toBe(true);

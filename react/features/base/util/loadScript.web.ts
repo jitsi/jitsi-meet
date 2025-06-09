@@ -1,12 +1,3 @@
-interface ILoadScriptOptions {
-    async: boolean;
-    errorCallback?: () => void;
-    loadCallback?: () => void;
-    prepend: boolean;
-    relativeURL: boolean;
-    src: string;
-}
-
 /**
  * Loads a script from a specific URL. The script will be interpreted upon load.
  *
@@ -15,20 +6,13 @@ interface ILoadScriptOptions {
  * rejected with the error from JitsiMeetJS.ScriptUtil.loadScript method.
  */
 export function loadScript(url: string): Promise<void> {
-    const options: ILoadScriptOptions = {
-        async: true,
-        prepend: false,
-        relativeURL: false,
-        src: url
-    };
-
     return new Promise((resolve, reject) =>
         JitsiMeetJS.util.ScriptUtil.loadScript(
-            {
-                ...options,
+            { src: url,
+                async: true,
+                prepend: false,
+                relativeURL: false,
                 loadCallback: resolve,
                 errorCallback: reject
-            }
-        )
-    );
+            }));
 }

@@ -27,11 +27,13 @@ export function isAudioMuteButtonDisabled(state: IReduxState) {
  * This function is stateless as it returns a new array and may cause re-rendering.
  *
  * @param {boolean} isTranscribing - Whether there is currently a transcriber in the meeting.
+ * @param {boolean} isCCTabEnabled - Whether the closed captions tab is enabled.
  * @param {ILocalParticipant} localParticipantFeatures - The features of the local participant.
  * @returns {string[]} - The disabled by jwt buttons array.
  */
 export function getJwtDisabledButtons(
         isTranscribing: boolean,
+        isCCTabEnabled: boolean,
         localParticipantFeatures?: IParticipantFeatures) {
     const acc = [];
 
@@ -43,7 +45,7 @@ export function getJwtDisabledButtons(
         acc.push('livestreaming');
     }
 
-    if (!isTranscribing && !isJwtFeatureEnabledStateless({
+    if (!isTranscribing && !isCCTabEnabled && !isJwtFeatureEnabledStateless({
         localParticipantFeatures,
         feature: 'transcription',
         ifNotInFeatures: false

@@ -1,24 +1,29 @@
+import fs from 'node:fs';
 import WebSocket from 'ws';
 
 /**
  * Uses the webhook proxy service to proxy events to the testing clients.
  */
 export default class WebhookProxy {
-    private url;
-    private secret;
+    private readonly url;
+    private readonly secret;
+    private logFile;
     private ws: WebSocket | undefined;
     private cache = new Map();
     private listeners = new Map();
     private consumers = new Map();
+    private _defaultMeetingSettings: object | undefined;
 
     /**
      * Initializes the webhook proxy.
      * @param url
      * @param secret
+     * @param logFile
      */
-    constructor(url: string, secret: string) {
+    constructor(url: string, secret: string, logFile: string) {
         this.url = url;
         this.secret = secret;
+        this.logFile = logFile;
     }
 
     /**
@@ -40,6 +45,8 @@ export default class WebhookProxy {
         this.ws.on('message', (data: any) => {
             const msg = JSON.parse(data.toString());
 
+            this.logInfo(`${msg.eventType} event: ${JSON.stringify(msg)}`);
+
             if (msg.eventType) {
                 let processed = false;
 
@@ -59,7 +66,13 @@ export default class WebhookProxy {
 
                 if (!processed && msg.eventType === 'SETTINGS_PROVISIONING') {
                     // just in case to not be empty
-                    this.ws?.send(JSON.stringify({ someField: 'someValue' }));
+                    let response: any = { someField: 'someValue' };
+
+                    if (this._defaultMeetingSettings) {
+                        response = this._defaultMeetingSettings;
+                    }
+
+                    this.ws?.send(JSON.stringify(response));
                 }
             }
         });
@@ -85,6 +98,7 @@ export default class WebhookProxy {
      * Clear any stored event.
      */
     clearCache() {
+        this.logInfo('cache cleared');
         this.cache.clear();
     }
 
@@ -98,7 +112,11 @@ export default class WebhookProxy {
         const error = new Error(`Timeout waiting for event:${eventType}`);
 
         return new Promise((resolve, reject) => {
-            const waiter = setTimeout(() => reject(error), timeout);
+            const waiter = setTimeout(() => {
+                this.logInfo(error.message);
+
+                return reject(error);
+            }, timeout);
 
             this.addConsumer(eventType, event => {
                 clearTimeout(waiter);
@@ -134,6 +152,43 @@ export default class WebhookProxy {
             this.ws.close();
             console.log('WebhookProxy disconnected');
             this.ws = undefined;
+            this.logInfo('disconnected');
         }
+    }
+
+    /**
+     * Logs a message in the logfile.
+     *
+     * @param {string} message - The message to add.
+     * @returns {void}
+     */
+    logInfo(message: string) {
+        try {
+            // @ts-ignore
+            fs.appendFileSync(this.logFile, `${new Date().toISOString()} ${message}\n`);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    /**
+     * Sets the settings provider.
+     * @param value
+     */
+    set defaultMeetingSettings(value: {
+        autoAudioRecording?: boolean;
+        autoTranscriptions?: boolean;
+        autoVideoRecording?: boolean;
+        lobbyEnabled?: boolean;
+        lobbyType?: 'WAIT_FOR_APPROVAL' | 'WAIT_FOR_MODERATOR';
+        maxOccupants?: number;
+        outboundPhoneNo?: string;
+        participantsSoftLimit?: number;
+        passcode?: string;
+        transcriberType?: 'GOOGLE' | 'ORACLE_CLOUD_AI_SPEECH' | 'EGHT_WHISPER';
+        visitorsEnabled?: boolean;
+        visitorsLive?: boolean;
+    }) {
+        this._defaultMeetingSettings = value;
     }
 }
