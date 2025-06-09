@@ -83,7 +83,7 @@ function devServerProxyBypass({ path }) {
     }
 
     if (tpath.startsWith('/libs/')) {
-        if (tpath.endsWith('.min.js') && !fs.existsSync(join(process.cwd(), path))) {
+        if (tpath.endsWith('.min.js') && !fs.existsSync(join(process.cwd(), tpath))) {
             return tpath.replace('.min.js', '.js');
         }
 
