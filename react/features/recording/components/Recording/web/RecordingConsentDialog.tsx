@@ -10,6 +10,7 @@ import {
     setVideoMuted,
     setVideoUnmutePermissions
 } from '../../../../base/media/actions';
+import { VIDEO_MUTISM_AUTHORITY } from '../../../../base/media/constants';
 import Dialog from '../../../../base/ui/components/web/Dialog';
 import { hideDialog } from '../../../../base/dialog/actions';
 
@@ -36,8 +37,8 @@ export default function RecordingConsentDialog() {
         batch(() => {
             dispatch(setAudioUnmutePermissions(false, true));
             dispatch(setVideoUnmutePermissions(false, true));
-            dispatch(setAudioMuted(false));
-            dispatch(setVideoMuted(false));
+            dispatch(setAudioMuted(false, true));
+            dispatch(setVideoMuted(false, VIDEO_MUTISM_AUTHORITY.USER, true));
             dispatch(hideDialog());
         });
     }, []);

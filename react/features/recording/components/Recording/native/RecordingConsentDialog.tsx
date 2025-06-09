@@ -4,8 +4,9 @@ import { useTranslation } from 'react-i18next';
 import Dialog from 'react-native-dialog';
 
 import ConfirmDialog from '../../../../base/dialog/components/native/ConfirmDialog';
-import Link from '../../../../base/react/components/native/Link';
 import { setAudioMuted, setAudioUnmutePermissions, setVideoMuted, setVideoUnmutePermissions } from '../../../../base/media/actions';
+import { VIDEO_MUTISM_AUTHORITY } from '../../../../base/media/constants';
+import Link from '../../../../base/react/components/native/Link';
 import { IReduxState } from '../../../../app/types';
 import styles from '../styles.native';
 
@@ -31,8 +32,8 @@ export default function RecordingConsentDialog() {
     const consentAndUnmute = useCallback(() => {
         dispatch(setAudioUnmutePermissions(false, true));
         dispatch(setVideoUnmutePermissions(false, true));
-        dispatch(setAudioMuted(false));
-        dispatch(setVideoMuted(false));
+        dispatch(setAudioMuted(false, true));
+        dispatch(setVideoMuted(false, VIDEO_MUTISM_AUTHORITY.USER, true));
 
         return true;
     }, []);
