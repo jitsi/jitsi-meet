@@ -89,7 +89,7 @@ import {
     setVideoMuted,
     setVideoUnmutePermissions
 } from './react/features/base/media/actions';
-import { MEDIA_TYPE, VIDEO_TYPE } from './react/features/base/media/constants';
+import { MEDIA_TYPE, VIDEO_MUTISM_AUTHORITY, VIDEO_TYPE } from './react/features/base/media/constants';
 import {
     getStartWithAudioMuted,
     getStartWithVideoMuted,
@@ -203,23 +203,6 @@ function sendData(command, value) {
 
     room.removeCommand(command);
     room.sendCommand(command, { value });
-}
-
-/**
- * Mute or unmute local audio stream if it exists.
- * @param {boolean} muted - if audio stream should be muted or unmuted.
- */
-function muteLocalAudio(muted) {
-    APP.store.dispatch(setAudioMuted(muted));
-}
-
-/**
- * Mute or unmute local video stream if it exists.
- * @param {boolean} muted if video stream should be muted or unmuted.
- *
- */
-function muteLocalVideo(muted) {
-    APP.store.dispatch(setVideoMuted(muted));
 }
 
 /**
@@ -708,11 +691,10 @@ export default {
      * Simulates toolbar button click for audio mute. Used by shortcuts and API.
      *
      * @param {boolean} mute true for mute and false for unmute.
-     * @param {boolean} [showUI] when set to false will not display any error
      * dialogs in case of media permissions error.
      * @returns {Promise}
      */
-    async muteAudio(mute, showUI = true) {
+    async muteAudio(mute) {
         const state = APP.store.getState();
 
         if (!mute
@@ -731,47 +713,7 @@ export default {
             return;
         }
 
-        // Not ready to modify track's state yet
-        if (!this._localTracksInitialized) {
-            // This will only modify base/media.audio.muted which is then synced
-            // up with the track at the end of local tracks initialization.
-            muteLocalAudio(mute);
-            this.updateAudioIconEnabled();
-
-            return;
-        } else if (this.isLocalAudioMuted() === mute) {
-            // NO-OP
-            return;
-        }
-
-        const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
-
-        if (!localAudio && !mute) {
-            const maybeShowErrorDialog = error => {
-                showUI && APP.store.dispatch(notifyMicError(error));
-            };
-
-            APP.store.dispatch(gumPending([ MEDIA_TYPE.AUDIO ], IGUMPendingState.PENDING_UNMUTE));
-
-            await createLocalTracksF({ devices: [ 'audio' ] })
-                .then(([ audioTrack ]) => audioTrack)
-                .catch(error => {
-                    maybeShowErrorDialog(error);
-
-                    // Rollback the audio muted status by using null track
-                    return null;
-                })
-                .then(async audioTrack => {
-                    await this._maybeApplyAudioMixerEffect(audioTrack);
-
-                    return this.useAudioStream(audioTrack);
-                })
-                .finally(() => {
-                    APP.store.dispatch(gumPending([ MEDIA_TYPE.AUDIO ], IGUMPendingState.NONE));
-                });
-        } else {
-            muteLocalAudio(mute);
-        }
+        await APP.store.dispatch(setAudioMuted(mute, true));
     },
 
     /**
@@ -801,10 +743,9 @@ export default {
     /**
      * Simulates toolbar button click for video mute. Used by shortcuts and API.
      * @param mute true for mute and false for unmute.
-     * @param {boolean} [showUI] when set to false will not display any error
      * dialogs in case of media permissions error.
      */
-    muteVideo(mute, showUI = true) {
+    muteVideo(mute) {
         if (this.videoSwitchInProgress) {
             logger.warn('muteVideo - unable to perform operations while video switch is in progress');
 
@@ -825,60 +766,7 @@ export default {
             return;
         }
 
-        // If not ready to modify track's state yet adjust the base/media
-        if (!this._localTracksInitialized) {
-            // This will only modify base/media.video.muted which is then synced
-            // up with the track at the end of local tracks initialization.
-            muteLocalVideo(mute);
-            this.setVideoMuteStatus();
-
-            return;
-        } else if (this.isLocalVideoMuted() === mute) {
-            // NO-OP
-            return;
-        }
-
-        const localVideo = getLocalJitsiVideoTrack(state);
-
-        if (!localVideo && !mute && !this.isCreatingLocalTrack) {
-            const maybeShowErrorDialog = error => {
-                showUI && APP.store.dispatch(notifyCameraError(error));
-            };
-
-            this.isCreatingLocalTrack = true;
-
-            APP.store.dispatch(gumPending([ MEDIA_TYPE.VIDEO ], IGUMPendingState.PENDING_UNMUTE));
-
-            // Try to create local video if there wasn't any.
-            // This handles the case when user joined with no video
-            // (dismissed screen sharing screen or in audio only mode), but
-            // decided to add it later on by clicking on muted video icon or
-            // turning off the audio only mode.
-            //
-            // FIXME when local track creation is moved to react/redux
-            // it should take care of the use case described above
-            createLocalTracksF({ devices: [ 'video' ] })
-                .then(([ videoTrack ]) => videoTrack)
-                .catch(error => {
-                    // FIXME should send some feedback to the API on error ?
-                    maybeShowErrorDialog(error);
-
-                    // Rollback the video muted status by using null track
-                    return null;
-                })
-                .then(videoTrack => {
-                    logger.debug(`muteVideo: calling useVideoStream for track: ${videoTrack}`);
-
-                    return this.useVideoStream(videoTrack);
-                })
-                .finally(() => {
-                    this.isCreatingLocalTrack = false;
-                    APP.store.dispatch(gumPending([ MEDIA_TYPE.VIDEO ], IGUMPendingState.NONE));
-                });
-        } else {
-            // FIXME show error dialog if it fails (should be handled by react)
-            muteLocalVideo(mute);
-        }
+        APP.store.dispatch(setVideoMuted(mute, VIDEO_MUTISM_AUTHORITY.USER, true));
     },
 
     /**
