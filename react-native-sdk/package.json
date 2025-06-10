@@ -22,6 +22,7 @@
         "@react-navigation/stack": "0.0.0",
         "@stomp/stompjs": "0.0.0",
         "@xmldom/xmldom": "0.0.0",
+        "abab": "0.0.0",
         "base64-js": "0.0.0",
         "dayjs": "0.0.0",
         "grapheme-splitter": "0.0.0",
