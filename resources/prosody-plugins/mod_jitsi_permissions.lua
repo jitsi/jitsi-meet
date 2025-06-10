@@ -71,7 +71,7 @@ function process_set_affiliation(event)
     end
 
     if previous_affiliation == 'none' and affiliation == 'owner' then
-        occupant_session.granted_jitsi_meet_context_features = actor_session.jitsi_meet_context_features;
+        occupant_session.jitsi_meet_context_features = actor_session.jitsi_meet_context_features;
         if actor_session.jitsi_meet_context_user then
             occupant_session.granted_jitsi_meet_context_user_id = actor_session.jitsi_meet_context_user['id']
                 or actor_session.granted_jitsi_meet_context_user_id;
@@ -79,7 +79,6 @@ function process_set_affiliation(event)
         occupant_session.granted_jitsi_meet_context_group_id = actor_session.jitsi_meet_context_group
             or actor_session.granted_jitsi_meet_context_group_id;
     elseif previous_affiliation == 'owner' and ( affiliation == 'member' or affiliation == 'none' ) then
-        occupant_session.granted_jitsi_meet_context_features = nil;
         occupant_session.granted_jitsi_meet_context_user_id = nil;
         occupant_session.granted_jitsi_meet_context_group_id = nil;
 
@@ -154,22 +153,16 @@ function filter_stanza(stanza, session)
 
     session.force_permissions_update = false;
 
-    local permissions_to_send
-        = session.jitsi_meet_context_features or session.granted_jitsi_meet_context_features or default_permissions;
+    if not session.jitsi_meet_context_features then
+        session.jitsi_meet_context_features = default_permissions;
+    end
 
     room.send_default_permissions_to[bare_to] = nil;
 
-    if not session.granted_jitsi_meet_context_features and not session.jitsi_meet_context_features then
-        session.jitsi_meet_context_features = {};
-    end
-
     stanza:tag('permissions', { xmlns='http://jitsi.org/jitmeet' });
-    for k, v in pairs(permissions_to_send) do
+    for k, v in pairs(session.jitsi_meet_context_features) do
         local val = tostring(v);
         stanza:tag('p', { name = k, val = val }):up();
-        if session.jitsi_meet_context_features then
-            session.jitsi_meet_context_features[k] = val;
-        end
     end
     stanza:up();
 
