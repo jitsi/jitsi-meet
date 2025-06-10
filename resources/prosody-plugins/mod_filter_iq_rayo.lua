@@ -107,7 +107,6 @@ module:hook("pre-iq/full", function(event)
             local is_session_allowed = is_feature_allowed(
                 feature,
                 session.jitsi_meet_context_features,
-                session.granted_jitsi_meet_context_features,
                 room:get_affiliation(stanza.attr.from) == 'owner');
 
             if roomName == nil
