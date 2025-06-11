@@ -257,10 +257,8 @@ export function getParticipantCount(stateful: IStateful) {
         fakeParticipants,
         sortedRemoteVirtualScreenshareParticipants
     } = state['features/base/participants'];
-    const _iAmVisitor = iAmVisitor(stateful);
 
-    return remote.size - fakeParticipants.size - sortedRemoteVirtualScreenshareParticipants.size
-        + (local && !_iAmVisitor ? 1 : 0);
+    return remote.size - fakeParticipants.size - sortedRemoteVirtualScreenshareParticipants.size + (local ? 1 : 0);
 }
 
 /**
@@ -412,9 +410,24 @@ export function getMutedStateByParticipantAndMediaType(
 export function getParticipantCountWithFake(stateful: IStateful) {
     const state = toState(stateful);
     const { local, localScreenShare, remote } = state['features/base/participants'];
+
+    return remote.size + (local ? 1 : 0) + (localScreenShare ? 1 : 0);
+}
+
+/**
+ * Returns a count of the known participants in the passed in redux state,
+ * including fake participants. Subtract 1 when the local participant is a visitor as we do not show a local thumbnail.
+ * The number used to display the participant count in the UI.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {number}
+ */
+export function getParticipantCountForDisplay(stateful: IStateful) {
     const _iAmVisitor = iAmVisitor(stateful);
 
-    return remote.size + (local && !_iAmVisitor ? 1 : 0) + (localScreenShare ? 1 : 0);
+    return getParticipantCount(stateful) - (_iAmVisitor ? 1 : 0);
 }
 
 /**

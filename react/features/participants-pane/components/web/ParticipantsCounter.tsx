@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { getParticipantCount } from '../../../base/participants/functions';
+import { getParticipantCountForDisplay } from '../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 
 const useStyles = makeStyles()(theme => {
@@ -26,7 +26,7 @@ const useStyles = makeStyles()(theme => {
 
 const ParticipantsCounter = () => {
     const { classes } = useStyles();
-    const participantsCount = useSelector(getParticipantCount);
+    const participantsCount = useSelector(getParticipantCountForDisplay);
 
     return <span className = { classes.badge }>{participantsCount}</span>;
 };

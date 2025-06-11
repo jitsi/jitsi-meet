@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconUsers } from '../../../base/icons/svg';
-import { getParticipantCount } from '../../../base/participants/functions';
+import { getParticipantCountForDisplay } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import {
     close as closeParticipantsPane,
@@ -131,7 +131,7 @@ function mapStateToProps(state: IReduxState) {
     return {
         _isOpen: isOpen,
         _isParticipantsPaneEnabled: isParticipantsPaneEnabled(state),
-        _participantsCount: getParticipantCount(state)
+        _participantsCount: getParticipantCountForDisplay(state)
     };
 }
 
