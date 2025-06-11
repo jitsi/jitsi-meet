@@ -31,7 +31,7 @@ end
 
 local main_virtual_host = module:get_option_string('muc_mapper_domain_base');
 if not main_virtual_host then
-    module:log('warn', 'No "muc_mapper_domain_base" option set, disabling AV moderation.');
+    module:log('warn', 'No "muc_mapper_domain_base" option set, disabling end conference component.');
     return ;
 end
 
