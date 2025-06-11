@@ -15,6 +15,12 @@ if muc_component_host == nil then
     return;
 end
 
+local main_virtual_host = module:get_option_string('muc_mapper_domain_base');
+if not main_virtual_host then
+    module:log('warn', 'No "muc_mapper_domain_base" option set, disabling AV moderation.');
+    return ;
+end
+
 module:log('info', 'Starting av_moderation for %s', muc_component_host);
 
 -- Returns the index of the given element in the table
@@ -356,4 +362,10 @@ process_host_module(muc_component_host, function(host_module, host)
     module:log('info','Hook to muc events on %s', host);
     host_module:hook('muc-occupant-joined', occupant_joined, -2); -- make sure it runs after allowners or similar
     host_module:hook('muc-set-affiliation', occupant_affiliation_changed, -1);
+end);
+
+process_host_module(main_virtual_host, function(host_module)
+    module:context(host_module.host):fire_event('jitsi-add-identity', {
+        name = 'av_moderation'; host = module.host;
+    });
 end);
