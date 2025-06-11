@@ -7,11 +7,10 @@ import { openDialog } from '../../../base/dialog/actions';
 import { IconUsers } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
 import { COLORS } from '../../../base/label/constants';
-import { getParticipantCount } from '../../../base/participants/functions';
+import { getParticipantCountForDisplay } from '../../../base/participants/functions';
 import Tooltip from '../../../base/tooltip/components/Tooltip';
 import SpeakerStats from '../../../speaker-stats/components/web/SpeakerStats';
 import { isSpeakerStatsDisabled } from '../../../speaker-stats/functions';
-import { iAmVisitor } from '../../../visitors/functions';
 
 /**
  * ParticipantsCount react component.
@@ -21,16 +20,10 @@ import { iAmVisitor } from '../../../visitors/functions';
  */
 function SpeakerStatsLabel() {
     const conference = useSelector((state: IReduxState) => state['features/base/conference'].conference);
-    let count = useSelector(getParticipantCount);
-    const iAmVisitorState = useSelector(iAmVisitor);
+    const count = useSelector(getParticipantCountForDisplay);
     const _isSpeakerStatsDisabled = useSelector(isSpeakerStatsDisabled);
     const dispatch = useDispatch();
     const { t } = useTranslation();
-
-    // visitor has hidden its own video and should not count itself
-    if (iAmVisitorState) {
-        count--;
-    }
 
     const onClick = () => {
         dispatch(openDialog(SpeakerStats, { conference }));

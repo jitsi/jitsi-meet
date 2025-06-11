@@ -5,12 +5,11 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconUsers } from '../../../base/icons/svg';
-import { getParticipantCount } from '../../../base/participants/functions';
+import { getParticipantCountForDisplay } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { navigate }
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
-import { iAmVisitor } from '../../../visitors/functions';
 
 import ParticipantsCounter from './ParticipantsConter';
 import styles from './styles';
@@ -83,11 +82,8 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
  * @returns {IProps}
  */
 function mapStateToProps(state: IReduxState) {
-    // when visitor we want to subtract the local participant which we hide
-    const _iAmVisitor = iAmVisitor(state);
-
     return {
-        _participantsCount: getParticipantCount(state) - (_iAmVisitor ? 1 : 0)
+        _participantsCount: getParticipantCountForDisplay(state)
     };
 }
 

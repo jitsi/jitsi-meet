@@ -5,6 +5,7 @@ import { IReduxState, IStore } from '../../app/types';
 import { isStageFilmstripAvailable } from '../../filmstrip/functions';
 import { isAddPeopleEnabled, isDialOutEnabled } from '../../invite/functions';
 import { toggleShareDialog } from '../../share-room/actions';
+import { iAmVisitor } from '../../visitors/functions';
 import { IStateful } from '../app/types';
 import { GRAVATAR_BASE_URL } from '../avatar/constants';
 import { isCORSAvatarURL } from '../avatar/functions';
@@ -411,6 +412,22 @@ export function getParticipantCountWithFake(stateful: IStateful) {
     const { local, localScreenShare, remote } = state['features/base/participants'];
 
     return remote.size + (local ? 1 : 0) + (localScreenShare ? 1 : 0);
+}
+
+/**
+ * Returns a count of the known participants in the passed in redux state,
+ * including fake participants. Subtract 1 when the local participant is a visitor as we do not show a local thumbnail.
+ * The number used to display the participant count in the UI.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {number}
+ */
+export function getParticipantCountForDisplay(stateful: IStateful) {
+    const _iAmVisitor = iAmVisitor(stateful);
+
+    return getParticipantCount(stateful) - (_iAmVisitor ? 1 : 0);
 }
 
 /**
