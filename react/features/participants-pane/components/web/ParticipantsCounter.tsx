@@ -4,6 +4,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import { getParticipantCount } from '../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import { iAmVisitor } from '../../../visitors/functions';
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -25,8 +26,10 @@ const useStyles = makeStyles()(theme => {
 });
 
 const ParticipantsCounter = () => {
+    // when visitor we want to subtract the local participant which we hide
+    const iAmVisitorState = useSelector(iAmVisitor);
     const { classes } = useStyles();
-    const participantsCount = useSelector(getParticipantCount);
+    const participantsCount = useSelector(getParticipantCount) - (iAmVisitorState ? 1 : 0);
 
     return <span className = { classes.badge }>{participantsCount}</span>;
 };

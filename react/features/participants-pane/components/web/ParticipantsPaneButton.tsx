@@ -11,6 +11,7 @@ import {
     open as openParticipantsPane
 } from '../../../participants-pane/actions.web';
 import { closeOverflowMenuIfOpen } from '../../../toolbox/actions.web';
+import { iAmVisitor } from '../../../visitors/functions';
 import { isParticipantsPaneEnabled } from '../../functions';
 
 import ParticipantsCounter from './ParticipantsCounter';
@@ -128,10 +129,13 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
 function mapStateToProps(state: IReduxState) {
     const { isOpen } = state['features/participants-pane'];
 
+    // when visitor we want to subtract the local participant which we hide
+    const _iAmVisitor = iAmVisitor(state);
+
     return {
         _isOpen: isOpen,
         _isParticipantsPaneEnabled: isParticipantsPaneEnabled(state),
-        _participantsCount: getParticipantCount(state)
+        _participantsCount: getParticipantCount(state) - (_iAmVisitor ? 1 : 0)
     };
 }
 

@@ -10,6 +10,7 @@ import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/too
 import { navigate }
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
+import { iAmVisitor } from '../../../visitors/functions';
 
 import ParticipantsCounter from './ParticipantsConter';
 import styles from './styles';
@@ -82,8 +83,11 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
  * @returns {IProps}
  */
 function mapStateToProps(state: IReduxState) {
+    // when visitor we want to subtract the local participant which we hide
+    const _iAmVisitor = iAmVisitor(state);
+
     return {
-        _participantsCount: getParticipantCount(state)
+        _participantsCount: getParticipantCount(state) - (_iAmVisitor ? 1 : 0)
     };
 }
 
