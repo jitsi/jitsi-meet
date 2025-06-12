@@ -421,12 +421,14 @@ export function trackAdded(track: any) {
             }
 
             track.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED,
-                () => dispatch({
-                    type: TRACK_STOPPED,
-                    track: {
-                        jitsiTrack: track
-                    }
-                }));
+                () => {
+                    logger.debug(`Local track stopped: ${track}, removing it from the conference`);
+                    dispatch({
+                        type: TRACK_STOPPED,
+                        track: {
+                            jitsiTrack: track
+                        } });
+                });
         } else {
             participantId = track.getParticipantId();
             isReceivingData = true;
