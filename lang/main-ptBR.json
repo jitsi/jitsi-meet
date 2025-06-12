@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Adicionar um link da reunião",
-        "confirmAddLink": "Gostaria de adicionar um link do Jitsi a esse evento?",
+        "confirmAddLink": "Gostaria de adicionar um link do Sonacove a esse evento?",
         "error": {
             "appConfiguration": "A integração com calendário não está configurada adequadamente.",
             "generic": "Ocorreu um erro. Verifique as configurações de calendário ou tente atualizar o calendário.",
@@ -524,7 +524,7 @@
         "answer": "Responder",
         "audioCallTitle": "Chamada recebida",
         "decline": "Dispensar",
-        "productLabel": "do Jitsi Meet",
+        "productLabel": "do Sonacove Meets",
         "videoCallTitle": "Chamada de vídeo recebida"
     },
     "info": {
@@ -730,7 +730,7 @@
         "dataChannelClosed": "Qualidade do vídeo prejudicada",
         "dataChannelClosedDescription": "O canal da ponte foi desconectado, assim a qualidade do vídeo foi limitada a sua configuração mais baixa.",
         "disabledIframe": "Incorporação destina-se apenas a fins de demonstração, assim esta chamada será desconectada em {{timeout}} minutos.",
-        "disabledIframeSecondary": "Incorporação de {{domain}} é apenas destinado para fins de demonstração, então esta chamada será desconectada em {{timeout}} minutos. Por favor use o <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> para incorporação em produção!",
+        "disabledIframeSecondary": "Incorporação de {{domain}} é apenas destinado para fins de demonstração, então esta chamada será desconectada em {{timeout}} minutos. Por favor use o <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Sonacove as a Service</a> para incorporação em produção!",
         "disconnected": "desconectado",
         "displayNotifications": "Exibir notificações para",
         "dontRemindMe": "Não me lembrar",
@@ -778,7 +778,7 @@
         "noiseSuppressionDesktopAudioDescription": "A supressão de ruído não pode ser habilitada enquanto compartilha o áudio da área de trabalho. Por favor desabilite e tente novamente.",
         "noiseSuppressionFailedTitle": "Falha ao iniciar a supressão de ruído",
         "noiseSuppressionStereoDescription": "Supressão de ruído de áudio estéreo não é suportado no momento.",
-        "oldElectronClientDescription1": "Você está usando um versão antiga do cliente Jitsi Meet que possui uma conhecida vulnerabilidade de segurança. Por favor tenha certeza de atulizar para a nossa ",
+        "oldElectronClientDescription1": "Você está usando um versão antiga do cliente Sonacove Meets que possui uma conhecida vulnerabilidade de segurança. Por favor tenha certeza de atulizar para a nossa ",
         "oldElectronClientDescription2": "última versão",
         "oldElectronClientDescription3": " agora!",
         "participantWantsToJoin": "Deseja entrar na reunião",
@@ -1483,15 +1483,15 @@
         "go": "IR",
         "goSmall": "IR",
         "headerSubtitle": "Reuniões com segurança e alta qualidade",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Informações",
-        "jitsiOnMobile": "Jitsi em dispositivos móveis – baixe nossos aplicativos e inicie uma reunião em qualquer lugar",
+        "jitsiOnMobile": "Sonacove em dispositivos móveis – baixe nossos aplicativos e inicie uma reunião em qualquer lugar",
         "join": "CRIAR / ENTRAR",
         "logo": {
             "calendar": "Logo do Calendário",
             "desktopPreviewThumbnail": "Miniatura de Visualização do Desktop",
             "googleLogo": "Logo do Google",
-            "logoDeepLinking": "Logo do Jitsi Meet",
+            "logoDeepLinking": "Logo do Sonacove Meets",
             "microsoftLogo": "Logo da Microsoft",
             "policyLogo": "Logo da Política de Privacidade"
         },

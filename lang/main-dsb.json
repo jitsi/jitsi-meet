@@ -446,7 +446,7 @@
         "answer": "wótegroniś",
         "audioCallTitle": "pśiźecy telefonat",
         "decline": "OK",
-        "productLabel": "wót Jitsi Meet",
+        "productLabel": "wót Sonacove Meets",
         "videoCallTitle": "pśiźecy wideo-tefonat"
     },
     "info": {
@@ -1337,15 +1337,15 @@
         "go": "dalej",
         "goSmall": "dalej",
         "headerSubtitle": "Wěste a wusokokwalitatiwne konference",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "informacije",
-        "jitsiOnMobile": "Jitsi pśecej pódla – ześěńśo sebje našu aplikaciju a startujśo konference wšuźi, źož rowno sćo",
+        "jitsiOnMobile": "Sonacove pśecej pódla – ześěńśo sebje našu aplikaciju a startujśo konference wšuźi, źož rowno sćo",
         "join": "ŽAŁOŽYŚ / PŚISTUPIŚ",
         "logo": {
             "calendar": "logo kalendarja",
             "desktopPreviewThumbnail": "naglěd desktopa ako miniatura",
             "googleLogo": "logo Google",
-            "logoDeepLinking": "logo Jitsi Meet",
+            "logoDeepLinking": "logo Sonacove Meets",
             "microsoftLogo": "logo Microsoft",
             "policyLogo": "logo za směrnice"
         },

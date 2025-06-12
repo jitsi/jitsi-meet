@@ -72,7 +72,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Agregar un vínculo a la reunión",
-        "confirmAddLink": "¿Quiere añadir un enlace de Jitsi a este evento?",
+        "confirmAddLink": "¿Quiere añadir un enlace de Sonacove a este evento?",
         "error": {
             "appConfiguration": "La integración del calendario no está configurada correctamente",
             "generic": "Se ha producido un error. Compruebe la configuración del calendario o pruebe cargarlo nuevamente.",
@@ -481,7 +481,7 @@
         "answer": "Contestar",
         "audioCallTitle": "Llamada entrante",
         "decline": "Descartar",
-        "productLabel": "de Jitsi Meet",
+        "productLabel": "de Sonacove Meets",
         "videoCallTitle": "Videollamada"
     },
     "info": {
@@ -732,7 +732,7 @@
         "noiseSuppressionFailedTitle": "Error al activar la supresión de ruido",
         "noiseSuppressionNoTrackDescription": "Por favor active su micrófono primero.",
         "noiseSuppressionStereoDescription": "La supresión de ruido en audio estéreo no tiene soporte actualmente",
-        "oldElectronClientDescription1": "Estás usando una versión vieja de la aplicación de Jitsi Meet que tiene problemas de seguridad. ¡Por favor, actualiza a la ",
+        "oldElectronClientDescription1": "Estás usando una versión vieja de la aplicación de Sonacove Meets que tiene problemas de seguridad. ¡Por favor, actualiza a la ",
         "oldElectronClientDescription2": "versión más reciente",
         "oldElectronClientDescription3": " YA!",
         "participantWantsToJoin": "Quiere unirse a la reunión",
@@ -1427,15 +1427,15 @@
         "go": "IR",
         "goSmall": "IR",
         "headerSubtitle": "Reuniones seguras y de alta calidad",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Información",
-        "jitsiOnMobile": "Jitsi en el móvil: descarga nuestras aplicaciones y comienza una reunión desde cualquier lugar",
+        "jitsiOnMobile": "Sonacove en el móvil: descarga nuestras aplicaciones y comienza una reunión desde cualquier lugar",
         "join": "CREAR / UNIRSE",
         "logo": {
             "calendar": "Logotipo del calendario",
             "desktopPreviewThumbnail": "Vista previa del escritorio en miniatura",
             "googleLogo": "Logotipo de Google",
-            "logoDeepLinking": "Logotipo de la reunión de Jitsi",
+            "logoDeepLinking": "Logotipo de la reunión de Sonacove",
             "microsoftLogo": "Logotipo de Microsoft",
             "policyLogo": "Logotipo de la política"
         },

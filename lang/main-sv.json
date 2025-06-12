@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Lägg till en möteslänk",
-        "confirmAddLink": "Vill du lägga till en Jitsi-länk i händelsen?",
+        "confirmAddLink": "Vill du lägga till en Sonacove-länk i händelsen?",
         "error": {
             "appConfiguration": "Kalenderintegrationen är inte rätt inställd.",
             "generic": "Ett fel har inträffat. Kontrollera dina kalenderinställningar eller uppdatera kalendern.",
@@ -535,7 +535,7 @@
         "answer": "Svara",
         "audioCallTitle": "Inkommande samtal",
         "decline": "Avvisa",
-        "productLabel": "från Jitsi Meet",
+        "productLabel": "från Sonacove Meets",
         "videoCallTitle": "Inkommande videosamtal"
     },
     "info": {
@@ -747,7 +747,7 @@
         "dataChannelClosedDescriptionWithAudio": "Bryggkanalen har kopplats bort och därmed kan abvrott i ljud och bild uppstå.",
         "dataChannelClosedWithAudio": "Ljud och bild kvalite kan vara försämrad.",
         "disabledIframe": "Inbäddning är endast avsedd för demonstrationsändamål, så det här samtalet kommer att kopplas ner om {{timeout}} minuter.",
-        "disabledIframeSecondary": "Bädda in {{domain}} är bara till för demo, så detta samtal kommer att kopplas bort inom {{timeout}} minuter. Var god använd <a href='{{jaasDomain}}' rel='nooper noreferrer' target='_blank'>Jitsi som tjänst</a> för att bädda in i produktion.",
+        "disabledIframeSecondary": "Bädda in {{domain}} är bara till för demo, så detta samtal kommer att kopplas bort inom {{timeout}} minuter. Var god använd <a href='{{jaasDomain}}' rel='nooper noreferrer' target='_blank'>Sonacove som tjänst</a> för att bädda in i produktion.",
         "disconnected": "frånkopplad",
         "displayNotifications": "Visa aviseringar för",
         "dontRemindMe": "Påminn mig inte",
@@ -799,7 +799,7 @@
         "noiseSuppressionDesktopAudioDescription": "Brusreducering kan inte aktiveras när du delar skrivbordsljud, vänligen inaktivera det och försök igen.",
         "noiseSuppressionFailedTitle": "Det gick inte att starta brusreducering",
         "noiseSuppressionStereoDescription": "Brusreducering i stereoljud stöds för närvarande inte.",
-        "oldElectronClientDescription1": "Den version av Jitsi meet som används är gammal och har säkerhetsluckor. Var god uppdatera till den senaste versionen.",
+        "oldElectronClientDescription1": "Den version av Sonacove Meets som används är gammal och har säkerhetsluckor. Var god uppdatera till den senaste versionen.",
         "oldElectronClientDescription2": "senast build",
         "oldElectronClientDescription3": "nu!",
         "participantWantsToJoin": "Vill vara med på mötet",
@@ -1541,15 +1541,15 @@
         "go": "KÖR",
         "goSmall": "BÖRJA",
         "headerSubtitle": "Säkra möten med hög kvalitet",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Info",
-        "jitsiOnMobile": "Jitsi på mobilen - ladda ner våra appar och starta ett möte var som helst",
+        "jitsiOnMobile": "Sonacove på mobilen - ladda ner våra appar och starta ett möte var som helst",
         "join": "Gå med",
         "logo": {
             "calendar": "Kalender logotyp",
             "desktopPreviewThumbnail": "Miniatyrbild av skrivbordsförhandsgranskning",
             "googleLogo": "Google logotyp",
-            "logoDeepLinking": "Jitsi logotyp",
+            "logoDeepLinking": "Sonacove logotyp",
             "microsoftLogo": "Microsoft logotyp",
             "policyLogo": "Policy-logotyp"
         },

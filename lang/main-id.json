@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Tambahkan tautan rapat",
-        "confirmAddLink": "Apakah Anda ingin menambahkan tautan Jitsi ke acara ini?",
+        "confirmAddLink": "Apakah Anda ingin menambahkan tautan Sonacove ke acara ini?",
         "error": {
             "appConfiguration": "Integrasi kalender tidak dikonfigurasi dengan benar.",
             "generic": "Terjadi kesalahan. Harap periksa pengaturan kalender Anda atau coba perbarui kalender.",
@@ -531,7 +531,7 @@
         "answer": "Jawab",
         "audioCallTitle": "Panggilan Masuk",
         "decline": "Tolak",
-        "productLabel": "dari Jitsi Meet",
+        "productLabel": "dari Sonacove Meets",
         "videoCallTitle": "Panggilan Video Masuk"
     },
     "info": {
@@ -741,7 +741,7 @@
         "dataChannelClosedDescriptionWithAudio": "Saluran jembatan tidak aktif dan karenanya gangguan audio dan video mungkin terjadi.",
         "dataChannelClosedWithAudio": "Kualitas audio dan video mungkin terganggu",
         "disabledIframe": "Embedding hanya ditujukan untuk tujuan demonstrasi, jadi panggilan ini akan terputus dalam {{timeout}} menit.",
-        "disabledIframeSecondary": "Embedding {{domain}} hanya ditujukan untuk tujuan demonstrasi, jadi panggilan ini akan terputus dalam {{timeout}} menit. Harap gunakan <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> untuk embedding produksi!",
+        "disabledIframeSecondary": "Embedding {{domain}} hanya ditujukan untuk tujuan demonstrasi, jadi panggilan ini akan terputus dalam {{timeout}} menit. Harap gunakan <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Sonacove as a Service</a> untuk embedding produksi!",
         "disconnected": "terputus",
         "displayNotifications": "Tampilkan notifikasi untuk",
         "dontRemindMe": "Jangan ingatkan saya",
@@ -789,7 +789,7 @@
         "noiseSuppressionDesktopAudioDescription": "Pengurangan kebisingan tidak dapat diaktifkan saat berbagi audio desktop, harap nonaktifkan dan coba lagi.",
         "noiseSuppressionFailedTitle": "Gagal memulai pengurangan kebisingan",
         "noiseSuppressionStereoDescription": "Pengurangan kebisingan audio stereo saat ini tidak didukung.",
-        "oldElectronClientDescription1": "Anda sepertinya menggunakan versi lama dari klien Jitsi Meet yang memiliki kerentanan keamanan yang diketahui. Pastikan Anda memperbarui ke ",
+        "oldElectronClientDescription1": "Anda sepertinya menggunakan versi lama dari klien Sonacove Meets yang memiliki kerentanan keamanan yang diketahui. Pastikan Anda memperbarui ke ",
         "oldElectronClientDescription2": "build terbaru",
         "oldElectronClientDescription3": " sekarang!",
         "participantWantsToJoin": "Ingin bergabung dengan pertemuan",
@@ -1507,15 +1507,15 @@
         "go": "LANJUT",
         "goSmall": "LANJUT",
         "headerSubtitle": "Pertemuan yang aman dan berkualitas tinggi",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Info panggilan",
-        "jitsiOnMobile": "Jitsi di ponsel - unduh aplikasi kami dan mulai pertemuan dari mana saja",
+        "jitsiOnMobile": "Sonacove di ponsel - unduh aplikasi kami dan mulai pertemuan dari mana saja",
         "join": "BUAT / BERGABUNG",
         "logo": {
             "calendar": "Logo kalender",
             "desktopPreviewThumbnail": "Thumbnail pratinjau desktop",
             "googleLogo": "Logo Google",
-            "logoDeepLinking": "Logo Jitsi meet",
+            "logoDeepLinking": "Logo Sonacove Meets",
             "microsoftLogo": "Logo Microsoft",
             "policyLogo": "Logo Kebijakan"
         },

@@ -736,7 +736,7 @@
         "dataChannelClosed": "Качество видео ухудшилось",
         "dataChannelClosedDescription": "Канал связи был отключен, поэтому качество видео ограничено минимально возможным.",
         "disabledIframe": "Встраивание предназначено только для демонстрационных целей, поэтому этот вызов будет отключен через {{timeout}} минут.",
-        "disabledIframeSecondary": "Встраивание {{domain}} предназначено только для демонстрационных целей, поэтому этот вызов будет отключен через {{timeout}} минут. Пожалуйста, используйте <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi как сервис</a> для встраивания в продакшн!",
+        "disabledIframeSecondary": "Встраивание {{domain}} предназначено только для демонстрационных целей, поэтому этот вызов будет отключен через {{timeout}} минут. Пожалуйста, используйте <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Sonacove как сервис</a> для встраивания в продакшн!",
         "disconnected": "соединение разорвано",
         "displayNotifications": "Отображение уведомлений для",
         "dontRemindMe": "Не напоминать мне",

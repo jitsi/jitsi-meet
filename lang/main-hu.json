@@ -48,7 +48,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Értekezlet hivatkozásának hozzáadása",
-        "confirmAddLink": "Hozzáadható egy Jitsi hivatkozás az eseményhez?",
+        "confirmAddLink": "Hozzáadható egy Sonacove hivatkozás az eseményhez?",
         "error": {
             "appConfiguration": "A naptárintegráció nincs helyesen konfigurálva.",
             "generic": "Hiba történt. Ellenőrizze a naptár beállításait vagy próbálja frissíteni a naptárat.",
@@ -360,7 +360,7 @@
         "answer": "Válasz",
         "audioCallTitle": "Bejövő hívás",
         "decline": "Elutasítás",
-        "productLabel": "a Jitsi Meettől",
+        "productLabel": "a Sonacove Meetstől",
         "videoCallTitle": "Bejövő videohívás"
     },
     "info": {
@@ -1080,7 +1080,7 @@
         "goSmall": "Indítás",
         "headerSubtitle": "Biztonságos és magas színvonalú konferenciák",
         "info": "Információ",
-        "jitsiOnMobile": "Jitsi Mobil – töltse le az app-ot, és indítson megbeszélést bárhonnan",
+        "jitsiOnMobile": "Sonacove Mobil – töltse le az app-ot, és indítson megbeszélést bárhonnan",
         "join": "LÉTREHOZ /HOZZÁAD",
         "privacy": "Adatvédelem",
         "recentList": "Legutóbbi",

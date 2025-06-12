@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Legg til en møtelenke",
-        "confirmAddLink": "Vil du legge til en Jitsi-lenke til denne hendelsen?",
+        "confirmAddLink": "Vil du legge til en Sonacove-lenke til denne hendelsen?",
         "error": {
             "appConfiguration": "Kalenderintegrasjonen er ikke riktig konfigurert.",
             "generic": "En feil har oppstått. Sjekk kalenderinnstillingene dine eller prøv å oppdatere kalenderen.",
@@ -535,7 +535,7 @@
         "answer": "Svar",
         "audioCallTitle": "Innkommende anrop",
         "decline": "Avvis",
-        "productLabel": "fra Jitsi Meet",
+        "productLabel": "fra Sonacove Meets",
         "videoCallTitle": "Innkommende videoanrop"
     },
     "info": {
@@ -747,7 +747,7 @@
         "dataChannelClosedDescriptionWithAudio": "Brokkanalen er nede, og dermed kan det oppstå forstyrrelser i lyd og video.",
         "dataChannelClosedWithAudio": "Lyd- og videokvaliteten kan være svekket",
         "disabledIframe": "Innebygging er kun ment for demonstrasjonsformål, så denne samtalen vil kobles fra om {{timeout}} minutter.",
-        "disabledIframeSecondary": "Innebygging av {{domain}} er kun ment for demonstrasjonsformål, så denne samtalen vil kobles fra om {{timeout}} minutter. Vennligst bruk <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> for innebygging i produksjon!",
+        "disabledIframeSecondary": "Innebygging av {{domain}} er kun ment for demonstrasjonsformål, så denne samtalen vil kobles fra om {{timeout}} minutter. Vennligst bruk <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Sonacove as a Service</a> for innebygging i produksjon!",
         "disconnected": "frakoblet",
         "displayNotifications": "Vis varsler for",
         "dontRemindMe": "Ikke minn meg på dette",
@@ -799,7 +799,7 @@
         "noiseSuppressionDesktopAudioDescription": "Ekstra støydemping kan ikke aktiveres mens du deler skrivebordets lyd. Deaktiver det og prøv igjen.",
         "noiseSuppressionFailedTitle": "Kunne ikke starte ekstra støydemping",
         "noiseSuppressionStereoDescription": "Ekstra støydemping støttes foreløpig ikke med stereolyd.",
-        "oldElectronClientDescription1": "Det ser ut til at du bruker en gammel versjon av Jitsi Meet-klienten som har kjente sikkerhetsproblemer. Vennligst oppdater til vår ",
+        "oldElectronClientDescription1": "Det ser ut til at du bruker en gammel versjon av Sonacove Meets-klienten som har kjente sikkerhetsproblemer. Vennligst oppdater til vår ",
         "oldElectronClientDescription2": "nyeste versjon",
         "oldElectronClientDescription3": " nå!",
         "participantWantsToJoin": "Ønsker å bli med i møtet",
@@ -1541,15 +1541,15 @@
         "go": "GÅ",
         "goSmall": "GÅ",
         "headerSubtitle": "Sikre møter av høy kvalitet",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Innringingsinformasjon",
-        "jitsiOnMobile": "Jitsi på mobil – last ned appene våre og start et møte fra hvor som helst",
+        "jitsiOnMobile": "Sonacove på mobil – last ned appene våre og start et møte fra hvor som helst",
         "join": "OPPRETT / BLI MED",
         "logo": {
             "calendar": "Kalenderlogo",
             "desktopPreviewThumbnail": "Forhåndsvisningsminiatyr for skrivebord",
             "googleLogo": "Google-logo",
-            "logoDeepLinking": "Jitsi Meet-logo",
+            "logoDeepLinking": "Sonacove Meets-logo",
             "microsoftLogo": "Microsoft-logo",
             "policyLogo": "Retningslinjelogo"
         },

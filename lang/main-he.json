@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "הוסף קישור מפגש",
-        "confirmAddLink": "האם ברצונך הוסיף קישור Jitsi לאירוע זה?",
+        "confirmAddLink": "האם ברצונך הוסיף קישור Sonacove לאירוע זה?",
         "error": {
             "appConfiguration": "שילוב לוח השנה אינו מוגדר כראוי.",
             "generic": "אירעה שגיאה. אנא בדוק את הגדרות לוח השנה שלך או נסה לרענן את לוח השנה.",
@@ -307,7 +307,7 @@
         "answer": "תשובה",
         "audioCallTitle": "שיחה נכנסת",
         "decline": "דחה",
-        "productLabel": "מפגישת Jitsi",
+        "productLabel": "מפגישת Sonacove",
         "videoCallTitle": "שיחת וידאו נכנסת"
     },
     "info": {
@@ -462,7 +462,7 @@
         "newDeviceAction": "השתמש",
         "newDeviceAudioTitle": "זוהה התקן שמע חדש",
         "newDeviceCameraTitle": "זוהתה מצלמה חדשה",
-        "oldElectronClientDescription1": "נראה שאתה משתמש בגירסה ישנה של לקוח Jitsi Meet עם פגיעויות אבטחה ידועות. אנא וודא שאתה מעדכן ",
+        "oldElectronClientDescription1": "נראה שאתה משתמש בגירסה ישנה של לקוח Sonacove Meets עם פגיעויות אבטחה ידועות. אנא וודא שאתה מעדכן ",
         "oldElectronClientDescription2": "לגירסה האחרונה",
         "oldElectronClientDescription3": " כעת!",
         "passwordRemovedRemotely": "",

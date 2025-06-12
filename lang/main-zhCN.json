@@ -77,7 +77,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "添加会议链接",
-        "confirmAddLink": "是否在此事件中添加Jitsi链接",
+        "confirmAddLink": "是否在此事件中添加Sonacove链接",
         "error": {
             "appConfiguration": "日历整合没有正确配置。",
             "generic": "发生错误，请检查日历设置或尝试刷新日历。",
@@ -511,7 +511,7 @@
         "answer": "接听",
         "audioCallTitle": "呼入通话",
         "decline": "拒听",
-        "productLabel": "来自 Jitsi Meet",
+        "productLabel": "来自 Sonacove Meets",
         "videoCallTitle": "呼入视频通话"
     },
     "info": {
@@ -763,7 +763,7 @@
         "noiseSuppressionDesktopAudioDescription": "在共享桌面音频时无法启用降噪功能，请禁用并重试。",
         "noiseSuppressionFailedTitle": "无法启动降噪功能",
         "noiseSuppressionStereoDescription": "暂不支持立体声音频降噪。",
-        "oldElectronClientDescription1": "你似乎正在使用存在已知安全漏洞的旧版Jitsi Meet客户端，请确保您更新到我们的",
+        "oldElectronClientDescription1": "你似乎正在使用存在已知安全漏洞的旧版Sonacove Meets客户端，请确保您更新到我们的",
         "oldElectronClientDescription2": "最新版本",
         "oldElectronClientDescription3": "！",
         "participantWantsToJoin": "想要加入会议",
@@ -1463,15 +1463,15 @@
         "go": "开始",
         "goSmall": "开始",
         "headerSubtitle": "安全且高品质的会议",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "拨入信息",
-        "jitsiOnMobile": "手机版Jitsi – 下载我们的APP，随时随地开始会议",
+        "jitsiOnMobile": "手机版Sonacove – 下载我们的APP，随时随地开始会议",
         "join": "创建/加入",
         "logo": {
             "calendar": "日历图标",
             "desktopPreviewThumbnail": "桌面预览缩略图",
             "googleLogo": "谷歌图标",
-            "logoDeepLinking": "Jitsi Meet图标",
+            "logoDeepLinking": "Sonacove Meets图标",
             "microsoftLogo": "微软图标",
             "policyLogo": "政策图标"
         },

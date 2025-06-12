@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Tilføj et mødelink",
-        "confirmAddLink": "Ønsker du at tilføje et Jitsi link til denne aftale?",
+        "confirmAddLink": "Ønsker du at tilføje et Sonacove link til denne aftale?",
         "error": {
             "appConfiguration": "Kalenderintegration er ikke sat korrekt op.",
             "generic": "Der er sket en fejl. Verificér venligst dine kalenderindstillinger eller prøv at genopfriske din kalender.",

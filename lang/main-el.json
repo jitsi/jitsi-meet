@@ -60,7 +60,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Προσθήκη ενός συνδέσμου συνάντησης",
-        "confirmAddLink": "Θέλετε να προσθέσετε έναν σύνδεσμο του Jitsi σε αυτή την εκδήλωση;",
+        "confirmAddLink": "Θέλετε να προσθέσετε έναν σύνδεσμο του Sonacove σε αυτή την εκδήλωση;",
         "error": {
             "appConfiguration": "Η ενσωμάτωση ημερολογίου δεν έχει ρυθμιστεί σωστά.",
             "generic": "Παρουσιάστηκε ένα σφάλμα. Παρακαλείστε να ελέγξετε τις ρυθμίσεις ημερολογίου σας ή να δοκιμάσετε να ανανεώσετε το ημερολόγιο.",
@@ -465,7 +465,7 @@
         "answer": "Απάντηση",
         "audioCallTitle": "Εισερχόμενη κλήση",
         "decline": "Απόρριψη",
-        "productLabel": "από το Jitsi Meet",
+        "productLabel": "από το Sonacove Meets",
         "videoCallTitle": "Εισερχόμενη βιντεοκλήση"
     },
     "info": {
@@ -709,7 +709,7 @@
         "noiseSuppressionFailedTitle": "Αποτυχία στην ενεργοποίηση της εξάλειψης θορύβου",
         "noiseSuppressionNoTrackDescription": "Παρακαλώ βγάλτε πρώτα την σίγηση.",
         "noiseSuppressionStereoDescription": "Δεν υποστηρίζεται ακόμα η καταστολή θορύβου για στερεοφωνικό ήχο.",
-        "oldElectronClientDescription1": "Φαίνεται να χρησιμοποιείτε μια παλιά έκδοση του Jitsi Meet με γνωστά θέματα ευπάθειας ασφαλείας. Παρακαλώ βεβαιωθείτε ότι έχετε την ενημερωμένη έκδοση για ",
+        "oldElectronClientDescription1": "Φαίνεται να χρησιμοποιείτε μια παλιά έκδοση του Sonacove Meets με γνωστά θέματα ευπάθειας ασφαλείας. Παρακαλώ βεβαιωθείτε ότι έχετε την ενημερωμένη έκδοση για ",
         "oldElectronClientDescription2": "τελευταία έκδοση",
         "oldElectronClientDescription3": " τώρα!",
         "participantWantsToJoin": "Θέλει να συμμετέχει στη σύσκεψη",
@@ -1380,15 +1380,15 @@
         "go": "ΠΑΜΕ",
         "goSmall": "ΠΑΜΕ",
         "headerSubtitle": "Ασφαλείς και υψηλής ποιότητας συσκέψεις",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Πληροφορίες Κλήσης",
-        "jitsiOnMobile": "Jitsi στο κινητό – κατεβάστε τις εφαρμογές και ξεκινήστε μια σύσκεψη από παντού",
+        "jitsiOnMobile": "Sonacove στο κινητό – κατεβάστε τις εφαρμογές και ξεκινήστε μια σύσκεψη από παντού",
         "join": "ΔΗΜΙΟΥΡΓΙΑ / ΕΙΣΟΔΟΣ",
         "logo": {
             "calendar": "Λογότυπο ημερολογίου",
             "desktopPreviewThumbnail": "Εικονίδιο προεπισκόπησης επιφάνειας",
             "googleLogo": "Λογότυπο Google",
-            "logoDeepLinking": "Λογότυπο Jitsi meet",
+            "logoDeepLinking": "Λογότυπο Sonacove Meets",
             "microsoftLogo": "Λογότυπο Microsoft",
             "policyLogo": "Λογότυπο πολιτικής"
         },

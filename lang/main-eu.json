@@ -41,7 +41,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Bileraren esteka gehitu",
-        "confirmAddLink": "Jitsi esteka gertaera honetara gehitu nahi duzu?",
+        "confirmAddLink": "Sonacove esteka gertaera honetara gehitu nahi duzu?",
         "error": {
             "appConfiguration": "Egutegiaren integrazioa ez dago ondo konfiguratuta.",
             "generic": "Errore bat gertatu da. Egiaztatu zure egutegiaren ezarpenak edo saiatu egutegia eguneratzen.",
@@ -360,7 +360,7 @@
         "answer": "Erantzun",
         "audioCallTitle": "Sarrerako deia",
         "decline": "Baztertu",
-        "productLabel": "Jitsi Meet-etik",
+        "productLabel": "Sonacove Meets-etik",
         "videoCallTitle": "Bideo-deia sartzen"
     },
     "info": {
@@ -554,7 +554,7 @@
         "newDeviceAction": "Erabilera",
         "newDeviceAudioTitle": "Audio-gailu berria hauteman da",
         "newDeviceCameraTitle": "Kamera berria hauteman da",
-        "oldElectronClientDescription1": "Segurtasun arazoak dituen Jitsi Meet aplikazioa erabiltzen arai zara. Eguneratu ezazu",
+        "oldElectronClientDescription1": "Segurtasun arazoak dituen Sonacove Meets aplikazioa erabiltzen arai zara. Eguneratu ezazu",
         "oldElectronClientDescription2": "bertsio berriagora",
         "oldElectronClientDescription3": "ORAIN!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) beste erabiltzaile batek kendu du",
@@ -1005,15 +1005,15 @@
         "go": "JOAN",
         "goSmall": "JOAN",
         "headerSubtitle": "Secure and high quality meetings",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Informazioa",
-        "jitsiOnMobile": "Jitsi eramangarrian – deskargatu gure aplikazioak eta hasi bilerak edonondik",
+        "jitsiOnMobile": "Sonacove eramangarrian – deskargatu gure aplikazioak eta hasi bilerak edonondik",
         "join": "SORTU / SARTU",
         "logo": {
             "calendar": "Egutegiaren logoa",
             "desktopPreviewThumbnail": "Aurrebistaren iruditxoa",
             "googleLogo": "Googleren logoa",
-            "logoDeepLinking": "Jitsi meeten logo",
+            "logoDeepLinking": "Sonacove Meetsen logo",
             "microsoftLogo": "Microsoften logo",
             "policyLogo": "Politikaren logoa"
         },

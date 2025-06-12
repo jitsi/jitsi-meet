@@ -489,7 +489,7 @@
         "answer": "پاسخ‌دادن",
         "audioCallTitle": "تماس ورودی",
         "decline": "ردکردن",
-        "productLabel": "از جلسه Jitsi",
+        "productLabel": "از جلسه Sonacove",
         "videoCallTitle": "تماس ویدیویی ورودی"
     },
     "info": {
@@ -1439,15 +1439,15 @@
         "go": "برویم",
         "goSmall": "برویم",
         "headerSubtitle": "جلسات امن و با کیفیت بالا",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "اطلاعات شماره‌گیری",
-        "jitsiOnMobile": "Jitsi روی تلفن همراه - برنامه ما را بارگیری کنید و جلسه‌ای را از هرکجا آغاز کنید",
+        "jitsiOnMobile": "Sonacove روی تلفن همراه - برنامه ما را بارگیری کنید و جلسه‌ای را از هرکجا آغاز کنید",
         "join": "ایجاد / پیوستن",
         "logo": {
             "calendar": "نشان‌وارهٔ تقویم",
             "desktopPreviewThumbnail": "تصویر بندانگشتی پیش‌نمایش میزکار",
             "googleLogo": "نشان‌وارهٔ گوگل",
-            "logoDeepLinking": "نشان‌وارهٔ Jitsi Meet",
+            "logoDeepLinking": "نشان‌وارهٔ Sonacove Meets",
             "microsoftLogo": "نشان‌وارهٔ Microsoft",
             "policyLogo": "نشان‌وارهٔ خط مشی"
         },

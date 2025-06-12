@@ -60,7 +60,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Agiunghe unu ligòngiu a s'addòbiu",
-        "confirmAddLink": "Boles agiùnghere unu ligòngiu de Jitsi a custu addòbiu?",
+        "confirmAddLink": "Boles agiùnghere unu ligòngiu de Sonacove a custu addòbiu?",
         "error": {
             "appConfiguration": "S'integratzione de su calendàriu no est cunfigurada bene.",
             "generic": "Faddina. Controlla sa cunfiguratzione de calendàriu o proa de atualizare su calendàriu.",
@@ -444,7 +444,7 @@
         "answer": "Risponde",
         "audioCallTitle": "Mutida in intrada",
         "decline": "Iscarta",
-        "productLabel": "dae Jitsi Meet",
+        "productLabel": "dae Sonacove Meets",
         "videoCallTitle": "Mutida de vìdeu in intrada"
     },
     "info": {
@@ -693,7 +693,7 @@
         "noiseSuppressionFailedTitle": "Faddina in s'ativatzione de sa limpiadura de abbolotu",
         "noiseSuppressionNoTrackDescription": "Ativa prima su telèfonu tuo.",
         "noiseSuppressionStereoDescription": "Sa limpiadura de abbolotu de àudio stereo no est suportada.",
-        "oldElectronClientDescription1": "Paret chi ses impreende una versione betza de su cliente de Jitsi Meet, chi tenet vulnerabilidades de seguresa connotas. Assegura·ti chi atualizas a ",
+        "oldElectronClientDescription1": "Paret chi ses impreende una versione betza de su cliente de Sonacove Meets, chi tenet vulnerabilidades de seguresa connotas. Assegura·ti chi atualizas a ",
         "oldElectronClientDescription2": "s'ùrtima versione",
         "oldElectronClientDescription3": " immoe.",
         "participantWantsToJoin": "Bolet intrare a sa riunione",
@@ -1338,15 +1338,15 @@
         "go": "BAE",
         "goSmall": "BAE",
         "headerSubtitle": "Riunione seguras e de arta calidade",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Informatzione pro sa mutida",
-        "jitsiOnMobile": "Jitsi pro mòbiles - iscàrriga is aplicatziones nostras e avia una riunione dae ònnia logu",
+        "jitsiOnMobile": "Sonacove pro mòbiles - iscàrriga is aplicatziones nostras e avia una riunione dae ònnia logu",
         "join": "CREA / INTRA",
         "logo": {
             "calendar": "Icona de calendàriu",
             "desktopPreviewThumbnail": "Miniadura de previsualizatzione de iscrivania",
             "googleLogo": "Icona de Google",
-            "logoDeepLinking": "Icona de Jitsi meet",
+            "logoDeepLinking": "Icona de Sonacove Meets",
             "microsoftLogo": "Icona de Microsoft",
             "policyLogo": "Polìtica de iconas"
         },
