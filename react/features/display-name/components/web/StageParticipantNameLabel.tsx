@@ -37,8 +37,8 @@ const useStyles = makeStyles<IOptions, 'screenSharing'>()((theme, options: IOpti
         // the clientHeight will be 960px if there are some titlebars, toolbars, addressbars, etc visible.For any other
         // screen size we will decrease/increase the font size based on the screen size.
 
-        typography.fontSize = scaleFontProperty(clientHeight, getStageParticipantFontSizeRange(theme));
-        typography.lineHeight = getStageParticipantNameLabelLineHeight(theme, clientHeight);
+        typography.fontSize = `${scaleFontProperty(clientHeight, getStageParticipantFontSizeRange(theme))}rem`;
+        typography.lineHeight = `${getStageParticipantNameLabelLineHeight(theme, clientHeight)}rem`;
     }
 
     const toolbarVisibleTransitionProps = getTransitionParamsForElementsAboveToolbox(true);
