@@ -1363,14 +1363,6 @@ var config = {
     //     disablePrivateChat: true,
     // },
 
-    // Endpoint that enables support for salesforce integration with in-meeting resource linking
-    // This is required for:
-    // listing the most recent records - salesforceUrl/records/recents
-    // searching records - salesforceUrl/records?text=${text}
-    // retrieving record details - salesforceUrl/records/${id}?type=${type}
-    // and linking the meeting - salesforceUrl/sessions/${sessionId}/records/${id}
-    //
-    // salesforceUrl: 'https://api.example.com/',
 
     // If set to true all muting operations of remote participants will be disabled.
     // disableRemoteMute: true,
@@ -1395,6 +1387,13 @@ var config = {
         logoClickUrl: 'https://example-company.org',
         // The url used for the image used as logo
         logoImageUrl: 'https://example.com/logo-img.png',
+        // Endpoint that enables support for salesforce integration with in-meeting resource linking
+        // This is required for:
+        // listing the most recent records - salesforceUrl/records/recents
+        // searching records - salesforceUrl/records?text=${text}
+        // retrieving record details - salesforceUrl/records/${id}?type=${type}
+        // and linking the meeting - salesforceUrl/sessions/${sessionId}/records/${id}
+        // salesforceUrl: 'https://api.example.com/',
         // Overwrite for pool of background images for avatars
         avatarBackgrounds: ['url(https://example.com/avatar-background-1.png)', '#FFF'],
         // The lobby/prejoin screen background
