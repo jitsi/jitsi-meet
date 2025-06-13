@@ -148,6 +148,9 @@ Component "endconference.jitmeet.example.com" "end_conference"
 Component "avmoderation.jitmeet.example.com" "av_moderation_component"
     muc_component = "conference.jitmeet.example.com"
 
+Component "filesharing.jitmeet.example.com" "filesharing_component"
+    muc_component = "conference.jitmeet.example.com"
+
 Component "lobby.jitmeet.example.com" "muc"
     storage = "memory"
     restrict_room_creation = true
