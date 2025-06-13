@@ -92,6 +92,7 @@ const {
     IconShortcuts,
     IconSip,
     IconSites,
+    IconSpeakerHighlight,
     IconStop,
     IconSubtitles,
     IconTileView,
@@ -211,6 +212,7 @@ export {
     IconShortcuts,
     IconSip,
     IconSites,
+    IconSpeakerHighlight,
     IconStop,
     IconSubtitles,
     IconTileView,
@@ -231,3 +233,5 @@ export {
     IconWifi3Bars,
     IconYahoo
 };
+
+

@@ -48,6 +48,7 @@ import { useSecurityDialogButton } from '../security/hooks.web';
 import SettingsButton from '../settings/components/web/SettingsButton';
 import { useSharedVideoButton } from '../shared-video/hooks';
 import SpeakerStats from '../speaker-stats/components/web/SpeakerStats';
+import SpeakerHighlightButton from './components/web/SpeakerHighlightButton';
 import { isSpeakerStatsDisabled } from '../speaker-stats/functions';
 import { useSpeakerStatsButton } from '../speaker-stats/hooks.web';
 import { useClosedCaptionButton } from '../subtitles/hooks.web';
@@ -177,6 +178,12 @@ const help = {
     key: 'help',
     Content: HelpButton,
     group: 4
+};
+
+const speakerHighlight = {
+    key: 'speaker-highlight',
+    Content: SpeakerHighlightButton,
+    group: 3
 };
 
 /**
@@ -323,6 +330,7 @@ export function useToolboxButtons(
         shareaudio,
         // noisesuppression: noiseSuppression,
         sound,
+        'speaker-highlight': speakerHighlight,
         // whiteboard,
         etherpad,
         // 'select-background': virtualBackground,
