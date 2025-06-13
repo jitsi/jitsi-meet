@@ -187,7 +187,6 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
         overwritesDefaultLogoUrl?: boolean;
         overwritesDeploymentUrls?: boolean;
         overwritesLiveStreamingUrls?: boolean;
-        overwritesSalesforceUrl?: boolean;
         overwritesSupportUrl?: boolean;
         server?: string;
         tenant?: string;
