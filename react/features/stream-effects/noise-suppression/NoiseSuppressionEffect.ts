@@ -1,5 +1,6 @@
 import { INoiseSuppressionConfig } from '../../base/config/configType';
 import { getBaseUrl } from '../../base/util/helpers';
+import { getAudioContext } from '../../base/media/audioContext';
 
 import logger from './logger';
 
@@ -16,8 +17,6 @@ const krispState: IKrispState = {
     sdk: undefined,
     sdkInitialized: false
 };
-
-let audioContext: AudioContext;
 
 /**
  * Class Implementing the effect interface expected by a JitsiLocalTrack.
@@ -79,9 +78,7 @@ export class NoiseSuppressionEffect {
     startEffect(audioStream: MediaStream): MediaStream {
         this._originalMediaTrack = audioStream.getAudioTracks()[0];
 
-        if (!audioContext) {
-            audioContext = new AudioContext();
-        }
+        const audioContext = getAudioContext();
 
         this._audioSource = audioContext.createMediaStreamSource(audioStream);
         this._audioDestination = audioContext.createMediaStreamDestination();
@@ -175,6 +172,7 @@ async function _initializeKrisp(
         options: INoiseSuppressionConfig,
         stream: MediaStream
 ): Promise<AudioWorkletNode | undefined> {
+    const audioContext = getAudioContext();
     await audioContext.resume();
 
     if (!krispState.sdk) {
@@ -258,6 +256,7 @@ async function _initializeKrisp(
  * @returns {Promise<AudioWorkletNode | undefined>}
  */
 async function _initializeKRnnoise(): Promise<AudioWorkletNode | undefined> {
+    const audioContext = getAudioContext();
     await audioContext.resume();
 
     const baseUrl = `${getBaseUrl()}libs/`;

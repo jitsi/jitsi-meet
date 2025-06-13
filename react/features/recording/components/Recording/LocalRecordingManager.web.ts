@@ -10,6 +10,7 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { browser } from '../../../base/lib-jitsi-meet';
 import { isEmbedded } from '../../../base/util/embedUtils';
 import { stopLocalVideoRecording } from '../../actions.any';
+import { getAudioContext } from '../../../base/media/audioContext';
 
 interface ISelfRecording {
     on: boolean;
@@ -55,7 +56,6 @@ const VIDEO_BIT_RATE = 2500000; // 2.5Mbps in bits
 const LocalRecordingManager: ILocalRecordingManager = {
     recorder: undefined,
     stream: undefined,
-    audioContext: undefined,
     audioDestination: undefined,
     roomName: '',
     selfRecording: {
@@ -81,8 +81,8 @@ const LocalRecordingManager: ILocalRecordingManager = {
      * @returns {void}
      */
     initializeAudioMixer() {
-        this.audioContext = new AudioContext();
-        this.audioDestination = this.audioContext.createMediaStreamDestination();
+        const audioContext = getAudioContext();
+        this.audioDestination = audioContext.createMediaStreamDestination();
     },
 
     /**
@@ -93,7 +93,8 @@ const LocalRecordingManager: ILocalRecordingManager = {
      * */
     mixAudioStream(stream) {
         if (stream.getAudioTracks().length > 0 && this.audioDestination) {
-            this.audioContext?.createMediaStreamSource(stream).connect(this.audioDestination);
+            const audioContext = getAudioContext();
+            audioContext.createMediaStreamSource(stream).connect(this.audioDestination);
         }
     },
 
@@ -275,8 +276,6 @@ const LocalRecordingManager: ILocalRecordingManager = {
             // The stop event is emitted when the recorder is done, and _after_ the last buffered
             // data has been handed over to the dataavailable event.
             this.recorder = undefined;
-            this.audioContext = undefined;
-            this.audioDestination = undefined;
             this.startTime = undefined;
 
             if (this.writableStream) {
