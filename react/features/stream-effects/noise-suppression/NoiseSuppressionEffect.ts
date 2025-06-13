@@ -1,5 +1,6 @@
 import { INoiseSuppressionConfig } from '../../base/config/configType';
 import { getBaseUrl } from '../../base/util/helpers';
+import { getAudioContext } from '../../base/media/audioContext';
 
 import logger from './logger';
 
@@ -16,8 +17,6 @@ const krispState: IKrispState = {
     sdk: undefined,
     sdkInitialized: false
 };
-
-let audioContext: AudioContext;
 
 /**
  * Class Implementing the effect interface expected by a JitsiLocalTrack.
@@ -77,15 +76,20 @@ export class NoiseSuppressionEffect {
      * @returns {MediaStream} - MediaStream containing both audio tracks mixed together.
      */
     startEffect(audioStream: MediaStream): MediaStream {
+        logger.info('NoiseSuppressionEffect: startEffect aufgerufen');
         this._originalMediaTrack = audioStream.getAudioTracks()[0];
 
-        if (!audioContext) {
-            audioContext = new AudioContext();
-        }
+        const audioContext = getAudioContext();
+        logger.debug('NoiseSuppressionEffect: AudioContext erhalten', {
+            state: audioContext.state,
+            sampleRate: audioContext.sampleRate
+        });
 
         this._audioSource = audioContext.createMediaStreamSource(audioStream);
         this._audioDestination = audioContext.createMediaStreamDestination();
         this._outputMediaTrack = this._audioDestination.stream.getAudioTracks()[0];
+
+        logger.debug('NoiseSuppressionEffect: Audio-Nodes erstellt');
 
         let init;
 
@@ -140,6 +144,8 @@ export class NoiseSuppressionEffect {
      * @returns {void}
      */
     stopEffect(): void {
+        logger.info('NoiseSuppressionEffect: stopEffect aufgerufen');
+        
         // Sync original track muted state with effect state before removing the effect.
         this._originalMediaTrack.enabled = this._outputMediaTrack.enabled;
 
@@ -159,7 +165,10 @@ export class NoiseSuppressionEffect {
         this._noiseSuppressorNode?.disconnect();
         this._audioSource?.disconnect();
 
+        const audioContext = getAudioContext();
         audioContext.suspend();
+        
+        logger.debug('NoiseSuppressionEffect: AudioContext suspended');
     }
 }
 
@@ -175,7 +184,10 @@ async function _initializeKrisp(
         options: INoiseSuppressionConfig,
         stream: MediaStream
 ): Promise<AudioWorkletNode | undefined> {
+    logger.info('Krisp wird initialisiert...');
+    const audioContext = getAudioContext();
     await audioContext.resume();
+    logger.debug('AudioContext für Krisp resumed');
 
     if (!krispState.sdk) {
         const baseUrl = `${getBaseUrl()}libs/krisp`;
@@ -258,7 +270,10 @@ async function _initializeKrisp(
  * @returns {Promise<AudioWorkletNode | undefined>}
  */
 async function _initializeKRnnoise(): Promise<AudioWorkletNode | undefined> {
+    logger.info('RNNoise wird initialisiert...');
+    const audioContext = getAudioContext();
     await audioContext.resume();
+    logger.debug('AudioContext für RNNoise resumed');
 
     const baseUrl = `${getBaseUrl()}libs/`;
     const workletUrl = `${baseUrl}noise-suppressor-worklet.min.js`;

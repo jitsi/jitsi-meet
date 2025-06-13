@@ -68,3 +68,16 @@ window.APP = {
 // the execution of the Web app to start from app.js in order to reduce the
 // complexity of the beginning step.
 import './react';
+
+// Initialisiere den AudioContext früh in der App
+import { initAudioContext } from './react/features/base/media/audioContext';
+
+console.log('App wird gestartet - AudioContext wird initialisiert...');
+
+// Initialisiere AudioContext direkt nach dem Setup
+try {
+    initAudioContext();
+    console.log('AudioContext erfolgreich in app.js initialisiert');
+} catch (error) {
+    console.error('Fehler beim Initialisieren des AudioContext in app.js:', error);
+}
