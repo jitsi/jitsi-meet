@@ -34,8 +34,7 @@ const useStyles = makeStyles()(theme => {
         messageContent: {
             maxWidth: '100%',
             overflow: 'hidden',
-            flex: 1,
-            fontSize: '0.75rem'
+            flex: 1
         },
 
         messageHeader: {

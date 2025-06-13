@@ -52,8 +52,7 @@ const useStyles = makeStyles()(theme => {
             color: theme.palette.text01,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            fontSize: '0.75rem'
+            whiteSpace: 'nowrap'
         },
 
         editDisplayName: {
