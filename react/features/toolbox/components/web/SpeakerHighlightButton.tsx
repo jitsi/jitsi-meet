@@ -4,6 +4,8 @@ import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconSpeakerHighlight } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import { toggleSpeakerHighlight } from '../../../speaker-highlight/actions';
+import { isSpeakerHighlightEnabled } from '../../../speaker-highlight/functions';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerHighlightButton}.
@@ -32,14 +34,17 @@ class SpeakerHighlightButton extends AbstractButton<IProps> {
      * @returns {void}
      */
     override _handleClick() {
-        const { _speakerHighlightEnabled } = this.props;
+        const { dispatch, _speakerHighlightEnabled } = this.props;
         
-        // For now, just log to console
+        // Log to console for debugging
         if (_speakerHighlightEnabled) {
             console.log('Speaker highlighting deaktiviert');
         } else {
             console.log('Speaker highlighting aktiviert');
         }
+        
+        // Dispatch the toggle action
+        dispatch(toggleSpeakerHighlight());
     }
 
     /**
@@ -62,8 +67,7 @@ class SpeakerHighlightButton extends AbstractButton<IProps> {
  */
 function _mapStateToProps(state: IReduxState) {
     return {
-        // For now, default to enabled (true)
-        _speakerHighlightEnabled: true
+        _speakerHighlightEnabled: isSpeakerHighlightEnabled(state)
     };
 }
 

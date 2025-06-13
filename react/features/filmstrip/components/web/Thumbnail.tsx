@@ -39,6 +39,7 @@ import { getVideoObjectPosition } from '../../../face-landmarks/functions';
 import { hideGif, showGif } from '../../../gifs/actions';
 import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions';
 import PresenceLabel from '../../../presence-status/components/PresenceLabel';
+import { isSpeakerHighlightEnabled } from '../../../speaker-highlight/functions';
 import { LAYOUTS } from '../../../video-layout/constants';
 import { getCurrentLayout } from '../../../video-layout/functions.web';
 import { togglePinStageParticipant } from '../../actions';
@@ -186,6 +187,11 @@ export interface IProps extends WithTranslation {
      * Whether or not to display a tint background over tile.
      */
     _shouldDisplayTintBackground: boolean;
+
+    /**
+     * Whether speaker highlighting is enabled.
+     */
+    _speakerHighlightEnabled: boolean;
 
     /**
      * Whether or not the current layout is stage filmstrip layout.
@@ -941,6 +947,7 @@ class Thumbnail extends Component<IProps, IState> {
             _isDominantSpeakerDisabled,
             _participant,
             _raisedHand,
+            _speakerHighlightEnabled,
             _thumbnailType
         } = this.props;
         const classes = withStyles.getClasses(this.props);
@@ -951,7 +958,7 @@ class Thumbnail extends Component<IProps, IState> {
             className += ` ${classes.raisedHand}`;
         }
 
-        if (!_isDominantSpeakerDisabled && _participant?.dominantSpeaker) {
+        if (!_isDominantSpeakerDisabled && _participant?.dominantSpeaker && _speakerHighlightEnabled) {
             className += ` ${classes.activeSpeaker} dominant-speaker`;
         }
         if (_thumbnailType !== THUMBNAIL_TYPE.TILE && _participant?.pinned) {
@@ -1383,6 +1390,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         _localFlipX: Boolean(localFlipX),
         _participant: participant,
         _raisedHand: hasRaisedHand(participant),
+        _speakerHighlightEnabled: isSpeakerHighlightEnabled(state),
         _stageFilmstripLayout: isStageFilmstripAvailable(state),
         _stageParticipantsVisible: _currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW,
         _shouldDisplayTintBackground: !disableTintForeground && shouldDisplayTintBackground,
