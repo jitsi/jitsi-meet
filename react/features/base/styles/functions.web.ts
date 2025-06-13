@@ -2,7 +2,6 @@ import { StyleType } from './functions.any';
 
 export * from './functions.any';
 
-
 /**
  * Fixes the style prop that is passed to a platform generic component based on platform specific
  * format requirements.
