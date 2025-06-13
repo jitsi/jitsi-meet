@@ -175,6 +175,7 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'noisesuppression',
     'sharedvideo',
     'shortcuts',
+    'speaker-highlight',
     'stats',
     'tileview',
     'toggle-camera',
