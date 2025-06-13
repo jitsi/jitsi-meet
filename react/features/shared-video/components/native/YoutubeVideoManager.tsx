@@ -145,6 +145,11 @@ class YoutubeVideoManager extends AbstractVideoManager<IState> {
      * @returns {void}
      */
     _onReady() {
+        const { _time } = this.props;
+
+        if (_time) {
+            this.seek(_time);
+        }
         this.setState({
             paused: false
         });
