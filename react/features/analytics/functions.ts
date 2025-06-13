@@ -187,7 +187,6 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
         overwritesDefaultLogoUrl?: boolean;
         overwritesDeploymentUrls?: boolean;
         overwritesLiveStreamingUrls?: boolean;
-        overwritesSalesforceUrl?: boolean;
         overwritesSupportUrl?: boolean;
         server?: string;
         tenant?: string;
@@ -229,7 +228,6 @@ export function initAnalytics(store: IStore, handlers: Array<Object>): boolean {
 
     // TODO: Temporary metric. To be removed once we don't need it.
     permanentProperties.overwritesSupportUrl = 'interfaceConfig.SUPPORT_URL' in params;
-    permanentProperties.overwritesSalesforceUrl = 'config.salesforceUrl' in params;
     permanentProperties.overwritesDefaultLogoUrl = 'config.defaultLogoUrl' in params;
 
     const deploymentUrlsConfig = params['config.deploymentUrls'] ?? {};
