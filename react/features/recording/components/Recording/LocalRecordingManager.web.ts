@@ -11,6 +11,7 @@ import { browser } from '../../../base/lib-jitsi-meet';
 import { isEmbedded } from '../../../base/util/embedUtils';
 import { stopLocalVideoRecording } from '../../actions.any';
 import { getAudioContext } from '../../../base/media/audioContext';
+import logger from '../../logger';
 
 interface ISelfRecording {
     on: boolean;
@@ -19,7 +20,6 @@ interface ISelfRecording {
 
 interface ILocalRecordingManager {
     addAudioTrackToLocalRecording: (track: MediaStreamTrack) => void;
-    audioContext: AudioContext | undefined;
     audioDestination: MediaStreamAudioDestinationNode | undefined;
     fileHandle: FileSystemFileHandle | undefined;
     firstChunk: Blob | undefined;
@@ -81,8 +81,12 @@ const LocalRecordingManager: ILocalRecordingManager = {
      * @returns {void}
      */
     initializeAudioMixer() {
+        logger.info('LocalRecordingManager: Audio Mixer wird initialisiert...');
         const audioContext = getAudioContext();
         this.audioDestination = audioContext.createMediaStreamDestination();
+        logger.debug('LocalRecordingManager: Audio Mixer erfolgreich initialisiert', {
+            audioContextState: audioContext.state
+        });
     },
 
     /**
@@ -93,8 +97,14 @@ const LocalRecordingManager: ILocalRecordingManager = {
      * */
     mixAudioStream(stream) {
         if (stream.getAudioTracks().length > 0 && this.audioDestination) {
+            logger.debug('LocalRecordingManager: Audio Stream wird gemischt', {
+                trackCount: stream.getAudioTracks().length
+            });
             const audioContext = getAudioContext();
             audioContext.createMediaStreamSource(stream).connect(this.audioDestination);
+            logger.debug('LocalRecordingManager: Audio Stream erfolgreich verbunden');
+        } else {
+            logger.warn('LocalRecordingManager: Keine Audio Tracks zum Mischen gefunden oder Destination nicht verfügbar');
         }
     },
 

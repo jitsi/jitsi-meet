@@ -72,5 +72,12 @@ import './react';
 // Initialisiere den AudioContext früh in der App
 import { initAudioContext } from './react/features/base/media/audioContext';
 
+console.log('App wird gestartet - AudioContext wird initialisiert...');
+
 // Initialisiere AudioContext direkt nach dem Setup
-initAudioContext();
+try {
+    initAudioContext();
+    console.log('AudioContext erfolgreich in app.js initialisiert');
+} catch (error) {
+    console.error('Fehler beim Initialisieren des AudioContext in app.js:', error);
+}
