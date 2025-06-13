@@ -582,7 +582,7 @@ function process_host_module(name, callback)
         module:log('info', 'No host/component found, will wait for it: %s', name)
 
         -- when a host or component is added
-        prosody.events.add_handler('host-activated', process_host);
+        prosody.events.add_handler('host-activated', process_host, -100); -- make sure everything is loaded
     else
         process_host(name);
     end

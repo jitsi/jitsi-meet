@@ -16,7 +16,7 @@ local muc_domain_prefix = module:get_option_string('muc_mapper_domain_prefix', '
 
 local muc_domain_base = module:get_option_string('muc_mapper_domain_base');
 if not muc_domain_base then
-    module:log('warn', 'No "muc_domain_base" option set, disabling kick check endpoint.');
+    module:log('warn', 'No "muc_domain_base" option set, disabling module.');
     return ;
 end
 

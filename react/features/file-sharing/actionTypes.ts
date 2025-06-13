@@ -30,7 +30,27 @@ export const UPLOAD_FILES = 'UPLOAD_FILES';
 export const ADD_FILE = 'ADD_FILE';
 
 /**
+ * The type of redux action to add files to the state.
+ *
+ * {
+ *    type: FILE_LIST_RECEIVED,
+ *    files: Array<IFileMetadata>
+ * }
+ */
+export const FILE_LIST_RECEIVED = 'FILE_LIST_RECEIVED';
+
+/**
  * The type of redux action to remove a file from the state.
+ *
+ * {
+ *    type: FILE_REMOVED,
+ *    fileId: string
+ * }
+ */
+export const FILE_REMOVED = 'FILE_REMOVED';
+
+/**
+ * The type of redux action to remove a file from the backend.
  *
  * {
  *     type: REMOVE_FILE,

@@ -1,12 +1,5 @@
 -- This module implements a generic metadata storage system for rooms.
 --
--- VirtualHost "jitmeet.example.com"
---     modules_enabled = {
---         "room_metadata"
---     }
---     room_metadata_component = "metadata.jitmeet.example.com"
---     main_muc = "conference.jitmeet.example.com"
---
 -- Component "metadata.jitmeet.example.com" "room_metadata_component"
 --      muc_component = "conference.jitmeet.example.com"
 --      breakout_rooms_component = "breakout.jitmeet.example.com"
@@ -37,9 +30,9 @@ if muc_component_host == nil then
     return;
 end
 
-local muc_domain_base = module:get_option_string('muc_mapper_domain_base');
-if not muc_domain_base then
-    module:log('warn', 'No muc_domain_base option set.');
+local main_virtual_host = module:get_option_string('muc_mapper_domain_base');
+if not main_virtual_host then
+    module:log('warn', 'No muc_mapper_domain_base option set.');
     return;
 end
 
@@ -182,7 +175,7 @@ function on_message(event)
 
     if occupant.role ~= 'moderator' then
         -- will return a non nil filtered data to use, if it is nil, it is not allowed
-        local res = module:context(muc_domain_base):fire_event('jitsi-metadata-allow-moderation',
+        local res = module:context(main_virtual_host):fire_event('jitsi-metadata-allow-moderation',
                 { room = room; actor = occupant; key = jsonData.key ; data = jsonData.data; session = session; });
 
         if not res then
@@ -342,3 +335,9 @@ end
 
 -- enable filtering presences
 filters.add_filter_hook(filter_session);
+
+process_host_module(main_virtual_host, function(host_module)
+    module:context(host_module.host):fire_event('jitsi-add-identity', {
+        name = 'room_metadata'; host = module.host;
+    });
+end);

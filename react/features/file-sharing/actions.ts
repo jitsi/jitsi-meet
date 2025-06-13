@@ -1,6 +1,7 @@
 import {
     ADD_FILE,
     DOWNLOAD_FILE,
+    FILE_REMOVED,
     REMOVE_FILE,
     UPDATE_FILE_UPLOAD_PROGRESS,
     UPLOAD_FILES
@@ -49,7 +50,7 @@ export function addFile(file: IFileMetadata) {
 }
 
 /**
- * Remove a file.
+ * Remove a file from the backend.
  *
  * @param {string} fileId - The ID of the file to remove.
  * @returns {Object}
@@ -57,6 +58,19 @@ export function addFile(file: IFileMetadata) {
 export function removeFile(fileId: string) {
     return {
         type: REMOVE_FILE,
+        fileId
+    };
+}
+
+/**
+ * Remove a file from redux.
+ *
+ * @param {string} fileId - The ID of the file that was removed.
+ * @returns {Object}
+ */
+export function fileRemoved(fileId: string) {
+    return {
+        type: FILE_REMOVED,
         fileId
     };
 }
