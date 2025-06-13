@@ -34,7 +34,7 @@ const chat = {
 };
 
 const screensharing = {
-    key: 'screensharing',
+    key: 'desktop',
     Content: ScreenSharingButton,
     group: 1
 };
@@ -149,7 +149,7 @@ export function useNativeToolboxButtons(
         microphone: audioMuteButton,
         camera: videoMuteButton,
         chat: chatButton,
-        screensharing: screenSharingButton,
+        desktop: screenSharingButton,
         raisehand,
         tileview: tileViewButton,
         overflowmenu: overflowMenuButton,

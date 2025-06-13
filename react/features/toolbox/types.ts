@@ -84,7 +84,7 @@ export type NativeToolbarButton = 'camera' |
     'chat' |
     'microphone' |
     'raisehand' |
-    'screensharing' |
+    'desktop' |
     'tileview' |
     'overflowmenu' |
     'hangup';
