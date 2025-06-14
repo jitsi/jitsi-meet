@@ -297,110 +297,38 @@ export function calculateResponsiveTileViewDimensions({
     noHorizontalContainerMargin?: boolean;
     numberOfParticipants: number;
 }) {
-    let height, width;
-    let columns, rows;
+    // Simple logic: Always use up to 4 columns per row
+    const columns = Math.min(4, numberOfParticipants, maxColumns);
+    const rows = Math.ceil(numberOfParticipants / columns);
+    
+    // Calculate thumbnail size based on the simple grid
+    const size = calculateThumbnailSizeForTileView({
+        columns,
+        minVisibleRows: rows,
+        clientWidth,
+        clientHeight,
+        disableTileEnlargement,
+        disableResponsiveTiles: false,
+        noHorizontalContainerMargin,
+        minTileHeight
+    });
 
-    interface IDimensions {
-        columns?: number;
-        height?: number;
-        maxArea: number;
-        numberOfVisibleParticipants?: number;
-        rows?: number;
-        width?: number;
+    if (size) {
+        return {
+            height: size.height,
+            width: size.width,
+            columns,
+            rows
+        };
     }
 
-    let dimensions: IDimensions = {
-        maxArea: 0
-    };
-    let minHeightEnforcedDimensions: IDimensions = {
-        maxArea: 0
-    };
-    let zeroVisibleRowsDimensions: IDimensions = {
-        maxArea: 0
-    };
+    // Fallback if size calculation fails
+    const aspectRatio = disableTileEnlargement
+        ? getTileDefaultAspectRatio(false, disableTileEnlargement, clientWidth)
+        : TILE_PORTRAIT_ASPECT_RATIO;
 
-    for (let c = 1; c <= Math.min(maxColumns, numberOfParticipants, desiredNumberOfVisibleTiles); c++) {
-        const r = Math.ceil(numberOfParticipants / c);
-
-        // we want to display as much as possible thumbnails up to desiredNumberOfVisibleTiles
-        const visibleRows
-            = numberOfParticipants <= desiredNumberOfVisibleTiles ? r : Math.floor(desiredNumberOfVisibleTiles / c);
-
-        const size = calculateThumbnailSizeForTileView({
-            columns: c,
-            minVisibleRows: visibleRows,
-            clientWidth,
-            clientHeight,
-            disableTileEnlargement,
-            disableResponsiveTiles: false,
-            noHorizontalContainerMargin,
-            minTileHeight
-        });
-
-        if (size) {
-            const { height: currentHeight, width: currentWidth, minHeightEnforced, maxVisibleRows } = size;
-            const numberOfVisibleParticipants = Math.min(c * maxVisibleRows, numberOfParticipants);
-
-            let area = Math.round(
-                (currentHeight + TILE_VERTICAL_MARGIN)
-                * (currentWidth + TILE_HORIZONTAL_MARGIN)
-                * numberOfVisibleParticipants);
-
-            const currentDimensions = {
-                maxArea: area,
-                height: currentHeight,
-                width: currentWidth,
-                columns: c,
-                rows: r,
-                numberOfVisibleParticipants
-            };
-            const { numberOfVisibleParticipants: oldNumberOfVisibleParticipants = 0 } = dimensions;
-
-            if (!minHeightEnforced) {
-                if (area > dimensions.maxArea) {
-                    dimensions = currentDimensions;
-                } else if ((area === dimensions.maxArea)
-                    && ((oldNumberOfVisibleParticipants > desiredNumberOfVisibleTiles
-                            && oldNumberOfVisibleParticipants >= numberOfParticipants)
-                        || (oldNumberOfVisibleParticipants < numberOfParticipants
-                            && numberOfVisibleParticipants <= desiredNumberOfVisibleTiles))
-                ) { // If the area of the new candidates and the old ones are equal we prefer the one that will have
-                    // closer number of visible participants to desiredNumberOfVisibleTiles config.
-                    dimensions = currentDimensions;
-                }
-            } else if (minHeightEnforced && area >= minHeightEnforcedDimensions.maxArea) {
-                // If we choose configuration with minHeightEnforced there will be less than desiredNumberOfVisibleTiles
-                // visible tiles, that's why we prefer more columns when the area is the same.
-                minHeightEnforcedDimensions = currentDimensions;
-            } else if (minHeightEnforced && maxVisibleRows === 0) {
-                area = currentHeight * currentWidth * Math.min(c, numberOfParticipants);
-
-                if (area > zeroVisibleRowsDimensions.maxArea) {
-                    zeroVisibleRowsDimensions = {
-                        ...currentDimensions,
-                        maxArea: area
-                    };
-                }
-            }
-        }
-    }
-
-    if (dimensions.maxArea > 0) {
-        ({ height, width, columns, rows } = dimensions);
-    } else if (minHeightEnforcedDimensions.maxArea > 0) {
-        ({ height, width, columns, rows } = minHeightEnforcedDimensions);
-    } else if (zeroVisibleRowsDimensions.maxArea > 0) {
-        ({ height, width, columns, rows } = zeroVisibleRowsDimensions);
-    } else { // This would mean that we can't fit even one thumbnail with minimal size.
-        const aspectRatio = disableTileEnlargement
-            ? getTileDefaultAspectRatio(false, disableTileEnlargement, clientWidth)
-            : TILE_PORTRAIT_ASPECT_RATIO;
-
-        height = getThumbnailMinHeight(clientWidth);
-        width = aspectRatio * height;
-        columns = 1;
-        rows = numberOfParticipants;
-    }
+    const height = getThumbnailMinHeight(clientWidth);
+    const width = aspectRatio * height;
 
     return {
         height,
