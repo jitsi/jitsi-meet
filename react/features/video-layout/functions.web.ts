@@ -73,8 +73,7 @@ export function getNotResponsiveTileViewGridDimensions(state: IReduxState, stage
     const maxColumns = getMaxColumnCount(state);
     const { activeParticipants } = state['features/filmstrip'];
     const numberOfParticipants = stageFilmstrip ? activeParticipants.length : getNumberOfPartipantsForTileView(state);
-    const columnsToMaintainASquare = Math.ceil(Math.sqrt(numberOfParticipants));
-    const columns = Math.min(columnsToMaintainASquare, maxColumns);
+    const columns = Math.min(4, numberOfParticipants, maxColumns);
     const rows = Math.ceil(numberOfParticipants / columns);
     const minVisibleRows = Math.min(maxColumns, rows);
 
