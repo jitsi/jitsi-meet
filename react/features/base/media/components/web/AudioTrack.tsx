@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { createAudioPlayErrorEvent, createAudioPlaySuccessEvent } from '../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../analytics/functions';
 import { IReduxState } from '../../../../app/types';
-import { getParticipantDisplayName } from '../../../participants/functions';
+import { getParticipantDisplayName, getRemoteParticipants } from '../../../participants/functions';
 import { ITrack } from '../../../tracks/types';
 import logger from '../../logger';
 
@@ -16,6 +16,65 @@ declare global {
         context: AudioContext;
         spatialAudio: boolean;
         audioTracks: NodeListOf<Element>;
+    }
+}
+
+/**
+ * Global tracker for all AudioTrack instances to provide overview logging
+ */
+class AudioTrackTracker {
+    private static instances: Map<string, {
+        participantId: string;
+        participantName: string;
+        trackIndex: number;
+        totalTracks: number;
+        xPos: number;
+        yPos: number;
+    }> = new Map();
+
+    static updateInstance(instanceId: string, data: {
+        participantId: string;
+        participantName: string;
+        trackIndex: number;
+        totalTracks: number;
+        xPos: number;
+        yPos: number;
+    }) {
+        this.instances.set(instanceId, data);
+        this.logOverview();
+    }
+
+    static removeInstance(instanceId: string) {
+        this.instances.delete(instanceId);
+    }
+
+    private static logOverview() {
+        if (this.instances.size === 0) return;
+
+        const participantData = Array.from(this.instances.values())
+            .sort((a, b) => a.trackIndex - b.trackIndex);
+
+        console.group('🎧 Spatial Audio - Participant Positions Overview');
+        console.log(`Total Participants: ${participantData.length}`);
+        console.log('┌─────┬─────────────────────────────┬─────────┬─────────┐');
+        console.log('│ #   │ Participant Name            │ X-Pos   │ Y-Pos   │');
+        console.log('├─────┼─────────────────────────────┼─────────┼─────────┤');
+        
+        participantData.forEach((participant) => {
+            const name = participant.participantName.length > 27 
+                ? participant.participantName.substring(0, 24) + '...' 
+                : participant.participantName;
+            const nameFormatted = name.padEnd(27);
+            const indexFormatted = (participant.trackIndex + 1).toString().padStart(3);
+            const xFormatted = participant.xPos.toFixed(2).padStart(7);
+            const yFormatted = participant.yPos.toFixed(2).padStart(7);
+            
+            console.log(`│ ${indexFormatted} │ ${nameFormatted} │ ${xFormatted} │ ${yFormatted} │`);
+        });
+        
+        console.log('└─────┴─────────────────────────────┴─────────┴─────────┘');
+        console.log('Position Range: X from -2.00 (far left) to +2.00 (far right), Y always 0');
+        console.groupEnd();
     }
 }
 
@@ -200,6 +259,9 @@ class AudioTrack extends Component<IProps> {
         if (this._spatialAudioInterval) {
             clearInterval(this._spatialAudioInterval);
         }
+
+        // Remove this instance from the global tracker
+        AudioTrackTracker.removeInstance(this.props.id);
 
         // @ts-ignore
         this._ref?.current?.removeEventListener('error', this._errorHandler);
@@ -575,10 +637,20 @@ class AudioTrack extends Component<IProps> {
         
         const yPos = 0; // Keep all participants at same depth
         
-        console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Participant ${trackIndex + 1}/${totalTracks} positioned at x=${xPos.toFixed(2)}, y=${yPos}`);
+        // Update the global tracker with this participant's data
+        AudioTrackTracker.updateInstance(this.props.id, {
+            participantId: this.props.participantId,
+            participantName: this.props._participantDisplayName || this.props.participantId,
+            trackIndex: trackIndex,
+            totalTracks: totalTracks,
+            xPos: xPos,
+            yPos: yPos
+        });
 
         return [xPos, yPos];
     }
+
+
 
     /**
      * Start monitoring spatial audio state changes
