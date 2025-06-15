@@ -85,6 +85,11 @@ class AudioTrack extends Component<IProps> {
     _trackLen?: number;
 
     /**
+     * The interval ID for spatial audio monitoring
+     */
+    _spatialAudioInterval?: number;
+
+    /**
      * Default values for {@code AudioTrack} component's properties.
      *
      * @static
@@ -185,6 +190,11 @@ class AudioTrack extends Component<IProps> {
         this._detachTrack(this.props.audioTrack);
         this._source?.disconnect(); // disconnect old audio stream (prevents lingering audio)
 
+        // Clear spatial audio monitoring interval
+        if (this._spatialAudioInterval) {
+            clearInterval(this._spatialAudioInterval);
+        }
+
         // @ts-ignore
         this._ref?.current?.removeEventListener('error', this._errorHandler);
     }
@@ -251,13 +261,6 @@ class AudioTrack extends Component<IProps> {
                 
                 console.log('Spatial-Audio: Current participants:', nextLength, 'This track index:', nextIndex);
             }
-        }
-
-        // Check if spatial audio state changed
-        if (this._spatialAudio !== window.spatialAudio) {
-            console.log('Spatial-Audio: State changed to', window.spatialAudio);
-            this._spatialAudio = window.spatialAudio;
-            this.switchCondition();
         }
 
         return false;
@@ -564,8 +567,18 @@ class AudioTrack extends Component<IProps> {
      * @returns {void}
      */
     startSpatialAudioMonitoring = () => {
-        // No longer needed - state changes are handled in shouldComponentUpdate
-        console.log('Spatial-Audio: Monitoring setup complete');
+        // Check every 200ms for spatial audio state changes
+        const checkInterval = setInterval(() => {
+            if (this._spatialAudio !== window.spatialAudio) {
+                console.log('Spatial-Audio: State change detected in monitoring:', window.spatialAudio);
+                this._spatialAudio = window.spatialAudio;
+                this.switchCondition();
+            }
+        }, 200);
+        
+        // Store interval ID to clear on unmount
+        this._spatialAudioInterval = checkInterval;
+        console.log('Spatial-Audio: Monitoring active, checking every 200ms');
     }
 
     /**
