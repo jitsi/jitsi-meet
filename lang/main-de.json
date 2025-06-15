@@ -1429,8 +1429,7 @@
         "sound": "Sound-Menü",
         "soundDefault": "Standard",
         "soundEqualpower": "Equalpower",
-        "soundHrtf": "HRTF",
-        "soundSpatial": "Spatial Audio"
+        "soundHrtf": "HRTF"
     },
     "transcribing": {
         "ccButtonTooltip": "Untertitel ein-/ausschalten",

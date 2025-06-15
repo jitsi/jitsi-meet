@@ -20,7 +20,7 @@ import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuIte
 import { toggleSpatialAudio } from '../../../video-layout/actions.any';
 import logger from '../logger';
 
-const OPTIONS = ['default', 'equalpower', 'hrtf', 'spatial'];
+const OPTIONS = ['default', 'equalpower', 'hrtf'];
 
 interface IProps extends WithTranslation, AbstractButtonProps {
     /**
@@ -72,7 +72,7 @@ function SoundSettingsPopup({ children, popupPlacement, t, spatialAudioEnabled, 
     dispatch: Function;
 }) {
     const [ isOpen, setIsOpen ] = useState(false);
-    const [ option, setOption ] = useState(spatialAudioEnabled ? 'spatial' : 'default');
+    const [ option, setOption ] = useState(spatialAudioEnabled ? 'hrtf' : 'default');
     const { classes, cx } = useStyles();
 
     const onOpen = useCallback(() => setIsOpen(true), []);
@@ -81,15 +81,17 @@ function SoundSettingsPopup({ children, popupPlacement, t, spatialAudioEnabled, 
         setOption(opt);
         logger.info(`Sound option selected: ${opt}`);
         
-        // Handle spatial audio toggle
-        if (opt === 'spatial' && !spatialAudioEnabled) {
+        // Handle spatial audio toggle when HRTF is selected/deselected
+        if (opt === 'hrtf' && !spatialAudioEnabled && spatialAudioFeatureEnabled) {
+            // Enable spatial audio when HRTF is selected
             sendAnalytics(createToolbarEvent(
                 'spatial.button',
                 {
                     'is_enabled': false
                 }));
             dispatch(toggleSpatialAudio());
-        } else if (opt !== 'spatial' && spatialAudioEnabled) {
+        } else if (opt !== 'hrtf' && spatialAudioEnabled && spatialAudioFeatureEnabled) {
+            // Disable spatial audio when switching away from HRTF
             sendAnalytics(createToolbarEvent(
                 'spatial.button',
                 {
@@ -100,12 +102,9 @@ function SoundSettingsPopup({ children, popupPlacement, t, spatialAudioEnabled, 
         
         console.log('Sound option selected:', opt);
         onClose();
-    }, [ onClose, spatialAudioEnabled, dispatch ]);
+    }, [ onClose, spatialAudioEnabled, spatialAudioFeatureEnabled, dispatch ]);
 
     const getKey = (opt: string) => `toolbar.sound${opt.charAt(0).toUpperCase()}${opt.slice(1)}`;
-
-    // Filter options based on spatial audio feature availability
-    const availableOptions = spatialAudioFeatureEnabled ? OPTIONS : OPTIONS.filter(opt => opt !== 'spatial');
 
     const menu = (
         <ContextMenu
@@ -114,7 +113,7 @@ function SoundSettingsPopup({ children, popupPlacement, t, spatialAudioEnabled, 
             hidden = { false }
             id = 'sound-context-menu'>
             <ContextMenuItemGroup>
-                {availableOptions.map(opt => (
+                {OPTIONS.map(opt => (
                     <ContextMenuItem
                         accessibilityLabel = { t(getKey(opt)) }
                         key = { opt }
