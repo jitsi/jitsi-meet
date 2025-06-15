@@ -55,11 +55,13 @@ class AudioTrackTracker {
      * This should be called whenever the total number of participants changes
      */
     static recalculateAllPositions() {
-        console.log('🔄 Spatial-Audio: Recalculating positions for all participants');
+        console.log('Spatial-Audio: Recalculating positions for all participants');
         
         // Get current total number of participants
         window.audioTracks = document.querySelectorAll('.audio-track');
         const totalTracks = window.audioTracks.length;
+        
+        console.log(`Spatial-Audio: Pans werden neu kalkuliert für ${totalTracks} Teilnehmer`);
         
         // Update each instance with new track info and trigger position recalculation
         this.instances.forEach((data, instanceId) => {
@@ -75,6 +77,8 @@ class AudioTrackTracker {
             
             console.log(`Spatial-Audio: Updated ${data.participantName} to index ${newIndex} of ${totalTracks}`);
         });
+        
+        console.log('Spatial-Audio: Neuberechnung der Panning-Parameter abgeschlossen');
     }
 
     private static logOverview() {
@@ -83,7 +87,7 @@ class AudioTrackTracker {
         const participantData = Array.from(this.instances.values())
             .sort((a, b) => a.trackIndex - b.trackIndex);
 
-        console.group('🎧 Spatial Audio - Participant Positions Overview');
+        console.group('Spatial Audio - Participant Positions Overview');
         console.log(`Total Participants: ${participantData.length}`);
         console.log('┌─────┬─────────────────────────────┬─────────┬─────────┐');
         console.log('│ #   │ Participant Name            │ X-Pos   │ Y-Pos   │');
