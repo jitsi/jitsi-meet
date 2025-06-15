@@ -1,0 +1,7 @@
+.hide-me {
+    display: none !important
+}
+
+#localVideoTileViewContainer {
+    display: none !important
+} 

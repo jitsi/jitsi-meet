@@ -69,6 +69,7 @@ import FullscreenButton from './components/web/FullscreenButton';
 import LinkToSalesforceButton from './components/web/LinkToSalesforceButton';
 import ProfileButton from './components/web/ProfileButton';
 import ShareDesktopButton from './components/web/ShareDesktopButton';
+import SpatialAudioButton from './components/web/SpatialAudioButton';
 import ToggleCameraButton from './components/web/ToggleCameraButton';
 import VideoSettingsButton from './components/web/VideoSettingsButton';
 import { isButtonEnabled, isDesktopShareButtonDisabled } from './functions.web';
@@ -183,6 +184,12 @@ const help = {
 const speakerHighlight = {
     key: 'speaker-highlight',
     Content: SpeakerHighlightButton,
+    group: 3
+};
+
+const spatialaudio = {
+    key: 'spatialaudio',
+    Content: SpatialAudioButton,
     group: 3
 };
 
@@ -306,6 +313,7 @@ export function useToolboxButtons(
     const feedback = useFeedbackButton();
     const _download = useDownloadButton();
     const _help = useHelpButton();
+    const noiseSuppression = { key: 'noisesuppression', Content: NoiseSuppressionButton, group: 3 };
 
     const buttons: { [key in ToolbarButton]?: IToolboxButton; } = {
         microphone,
@@ -322,14 +330,15 @@ export function useToolboxButtons(
         videoquality: videoQuality,
         fullscreen: _fullscreen,
         // security,
-        closedcaptions: cc,
+        // closedcaptions: cc,
         // recording,
-        livestreaming: liveStreaming,
+        // livestreaming: liveStreaming,
         // linktosalesforce,
         // sharedvideo: shareVideo,
-        shareaudio,
+        // shareaudio,
         // noisesuppression: noiseSuppression,
         sound,
+        spatialaudio,
         'speaker-highlight': speakerHighlight,
         // whiteboard,
         etherpad,

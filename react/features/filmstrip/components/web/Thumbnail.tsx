@@ -13,6 +13,7 @@ import Avatar from '../../../base/avatar/components/Avatar';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
+import AudioTrack from '../../../base/media/components/web/AudioTrack';
 import VideoTrack from '../../../base/media/components/web/VideoTrack';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { pinParticipant } from '../../../base/participants/actions';
@@ -1147,6 +1148,14 @@ class Thumbnail extends Component<IProps, IState> {
                             participantID = { id } />
                     </div>
                 )}
+                {
+                    _audioTrack && <div className = 'audio-track'>
+                        <AudioTrack
+                            audioTrack = { _audioTrack }
+                            id = { `remoteAudio_${_audioTrack?.jitsiTrack?.getId() || ''}` }
+                            participantId = { id } />
+                    </div>
+                }
                 <ThumbnailAudioIndicator _audioTrack = { _audioTrack } />
                 {this._renderGif()}
                 <div

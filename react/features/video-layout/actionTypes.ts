@@ -28,3 +28,13 @@ export const SET_TILE_VIEW = 'SET_TILE_VIEW';
  * }}
  */
 export const VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED = 'VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED';
+
+/**
+ * The type of the action which toggles spatial audio.
+ *
+ * @returns {{
+ *     type: TOGGLE_SPATIAL_AUDIO,
+ *     spatialState: boolean
+ * }}
+ */
+export const TOGGLE_SPATIAL_AUDIO = 'TOGGLE_SPATIAL_AUDIO';
