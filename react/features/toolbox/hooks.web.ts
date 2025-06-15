@@ -69,7 +69,7 @@ import FullscreenButton from './components/web/FullscreenButton';
 import LinkToSalesforceButton from './components/web/LinkToSalesforceButton';
 import ProfileButton from './components/web/ProfileButton';
 import ShareDesktopButton from './components/web/ShareDesktopButton';
-import SpatialAudioButton from './components/web/SpatialAudioButton';
+
 import ToggleCameraButton from './components/web/ToggleCameraButton';
 import VideoSettingsButton from './components/web/VideoSettingsButton';
 import { isButtonEnabled, isDesktopShareButtonDisabled } from './functions.web';
@@ -187,11 +187,7 @@ const speakerHighlight = {
     group: 3
 };
 
-const spatialaudio = {
-    key: 'spatialaudio',
-    Content: SpatialAudioButton,
-    group: 3
-};
+
 
 /**
  * A hook that returns the toggle camera button if it is enabled and undefined otherwise.
@@ -338,7 +334,6 @@ export function useToolboxButtons(
         // shareaudio,
         // noisesuppression: noiseSuppression,
         sound,
-        spatialaudio,
         'speaker-highlight': speakerHighlight,
         // whiteboard,
         etherpad,

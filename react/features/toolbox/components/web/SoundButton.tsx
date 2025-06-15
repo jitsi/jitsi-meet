@@ -3,7 +3,11 @@ import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
+import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState } from '../../../app/types';
+import { SPATIAL_AUDIO_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n/functions';
 import { IconArrowUp, IconVolumeUp } from '../../../base/icons/svg';
 import Popover from '../../../base/popover/components/Popover.web';
@@ -13,15 +17,26 @@ import AbstractButton, { type IProps as AbstractButtonProps } from '../../../bas
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
+import { toggleSpatialAudio } from '../../../video-layout/actions.any';
 import logger from '../logger';
 
-const OPTIONS = ['default', 'equalpower', 'hrtf'];
+const OPTIONS = ['default', 'equalpower', 'hrtf', 'spatial'];
 
 interface IProps extends WithTranslation, AbstractButtonProps {
     /**
      * The popup placement enum value.
      */
     popupPlacement: string;
+
+    /**
+     * Whether spatial audio is currently enabled.
+     */
+    _spatialAudioEnabled: boolean;
+
+    /**
+     * Whether spatial audio feature is available.
+     */
+    _spatialAudioFeatureEnabled: boolean;
 }
 
 const useStyles = makeStyles()(() => {
@@ -48,9 +63,16 @@ class SoundIconButton extends AbstractButton<IProps> {
     override tooltip = 'toolbar.sound';
 }
 
-function SoundSettingsPopup({ children, popupPlacement, t }: { children: React.ReactNode; popupPlacement: string; t: Function }) {
+function SoundSettingsPopup({ children, popupPlacement, t, spatialAudioEnabled, spatialAudioFeatureEnabled, dispatch }: { 
+    children: React.ReactNode; 
+    popupPlacement: string; 
+    t: Function;
+    spatialAudioEnabled: boolean;
+    spatialAudioFeatureEnabled: boolean;
+    dispatch: Function;
+}) {
     const [ isOpen, setIsOpen ] = useState(false);
-    const [ option, setOption ] = useState('default');
+    const [ option, setOption ] = useState(spatialAudioEnabled ? 'spatial' : 'default');
     const { classes, cx } = useStyles();
 
     const onOpen = useCallback(() => setIsOpen(true), []);
@@ -58,12 +80,32 @@ function SoundSettingsPopup({ children, popupPlacement, t }: { children: React.R
     const onSelect = useCallback((opt: string) => {
         setOption(opt);
         logger.info(`Sound option selected: ${opt}`);
-        // eslint-disable-next-line no-console
+        
+        // Handle spatial audio toggle
+        if (opt === 'spatial' && !spatialAudioEnabled) {
+            sendAnalytics(createToolbarEvent(
+                'spatial.button',
+                {
+                    'is_enabled': false
+                }));
+            dispatch(toggleSpatialAudio());
+        } else if (opt !== 'spatial' && spatialAudioEnabled) {
+            sendAnalytics(createToolbarEvent(
+                'spatial.button',
+                {
+                    'is_enabled': true
+                }));
+            dispatch(toggleSpatialAudio());
+        }
+        
         console.log('Sound option selected:', opt);
         onClose();
-    }, [ onClose ]);
+    }, [ onClose, spatialAudioEnabled, dispatch ]);
 
     const getKey = (opt: string) => `toolbar.sound${opt.charAt(0).toUpperCase()}${opt.slice(1)}`;
+
+    // Filter options based on spatial audio feature availability
+    const availableOptions = spatialAudioFeatureEnabled ? OPTIONS : OPTIONS.filter(opt => opt !== 'spatial');
 
     const menu = (
         <ContextMenu
@@ -72,7 +114,7 @@ function SoundSettingsPopup({ children, popupPlacement, t }: { children: React.R
             hidden = { false }
             id = 'sound-context-menu'>
             <ContextMenuItemGroup>
-                {OPTIONS.map(opt => (
+                {availableOptions.map(opt => (
                     <ContextMenuItem
                         accessibilityLabel = { t(getKey(opt)) }
                         key = { opt }
@@ -101,13 +143,18 @@ function SoundSettingsPopup({ children, popupPlacement, t }: { children: React.R
     );
 }
 
-function SoundButton({ t, dispatch, i18n, tReady, popupPlacement }: IProps) {
+function SoundButton({ t, dispatch, i18n, tReady, popupPlacement, _spatialAudioEnabled, _spatialAudioFeatureEnabled }: IProps) {
     const onClick = useCallback(() => {
         // Handle click if needed
     }, []);
 
     return (
-        <SoundSettingsPopup popupPlacement={popupPlacement} t={t}>
+        <SoundSettingsPopup 
+            popupPlacement={popupPlacement} 
+            t={t}
+            spatialAudioEnabled={_spatialAudioEnabled}
+            spatialAudioFeatureEnabled={_spatialAudioFeatureEnabled}
+            dispatch={dispatch}>
             <ToolboxButtonWithIcon
                 ariaControls = 'sound-settings-dialog'
                 ariaExpanded = { false }
@@ -123,7 +170,9 @@ function SoundButton({ t, dispatch, i18n, tReady, popupPlacement }: IProps) {
                     dispatch = { dispatch }
                     i18n = { i18n }
                     tReady = { tReady }
-                    popupPlacement = { popupPlacement } />
+                    popupPlacement = { popupPlacement }
+                    _spatialAudioEnabled = { _spatialAudioEnabled }
+                    _spatialAudioFeatureEnabled = { _spatialAudioFeatureEnabled } />
             </ToolboxButtonWithIcon>
         </SoundSettingsPopup>
     );
@@ -137,9 +186,12 @@ function SoundButton({ t, dispatch, i18n, tReady, popupPlacement }: IProps) {
  */
 function mapStateToProps(state: IReduxState) {
     const { videoSpaceWidth } = state['features/base/responsive-ui'];
+    const spatialAudioFeatureEnabled = getFeatureFlag(state, SPATIAL_AUDIO_ENABLED, true);
 
     return {
-        popupPlacement: videoSpaceWidth <= Number(SMALL_MOBILE_WIDTH) ? 'auto' : 'top-end'
+        popupPlacement: videoSpaceWidth <= Number(SMALL_MOBILE_WIDTH) ? 'auto' : 'top-end',
+        _spatialAudioEnabled: (window as any).spatialAudio || false,
+        _spatialAudioFeatureEnabled: spatialAudioFeatureEnabled
     };
 }
 

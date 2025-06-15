@@ -1425,7 +1425,12 @@
         "videoSettings": "Kamera-Einstellungen",
         "videomute": "Kamera stoppen",
         "videomuteGUMPending": "Verbinde Ihre Kamera",
-        "videounmute": "Kamera einschalten"
+        "videounmute": "Kamera einschalten",
+        "sound": "Sound-Menü",
+        "soundDefault": "Standard",
+        "soundEqualpower": "Equalpower",
+        "soundHrtf": "HRTF",
+        "soundSpatial": "Spatial Audio"
     },
     "transcribing": {
         "ccButtonTooltip": "Untertitel ein-/ausschalten",
