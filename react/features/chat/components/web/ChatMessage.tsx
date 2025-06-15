@@ -9,6 +9,7 @@ import { getParticipantDisplayName } from '../../../base/participants/functions'
 import Popover from '../../../base/popover/components/Popover.web';
 import Message from '../../../base/react/components/web/Message';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import ModeratorIndicator from '../../../filmstrip/components/web/ModeratorIndicator';
 import { getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
 
@@ -16,6 +17,7 @@ import MessageMenu from './MessageMenu';
 import ReactButton from './ReactButton';
 
 interface IProps extends IChatMessageProps {
+    isModerator: boolean;
     shouldDisplayChatMessageMenu: boolean;
     state?: IReduxState;
     type: string;
@@ -134,7 +136,11 @@ const useStyles = makeStyles()((theme: Theme) => {
             textOverflow: 'ellipsis',
             overflow: 'hidden',
             marginBottom: theme.spacing(1),
-            maxWidth: '130px'
+            width: '100%',
+            display: 'flex',
+            gap: '6px',
+            alignItems: 'center',
+            justifyContent: 'space-between'
         },
         userMessage: {
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
@@ -196,6 +202,7 @@ const ChatMessage = ({
     type,
     shouldDisplayChatMessageMenu,
     knocking,
+    isModerator,
     t
 }: IProps) => {
     const { classes, cx } = useStyles();
@@ -229,6 +236,9 @@ const ChatMessage = ({
                 aria-hidden = { true }
                 className = { cx('display-name', classes.displayName) }>
                 {message.displayName}
+                {isModerator && <ModeratorIndicator
+                    key = { message.messageId }
+                    tooltipPosition = 'top' />}
             </div>
         );
     }
