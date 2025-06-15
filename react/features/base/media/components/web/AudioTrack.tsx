@@ -460,11 +460,22 @@ class AudioTrack extends Component<IProps> {
             (this._pannerNode as any).setOrientation(1, 0, 0);
         }
 
-        // finally, connect graph
-        this._source?.connect(this._pannerNode);
-        this._pannerNode.connect(this._gainNode);
-        this._gainNode.connect(window.context.destination);
+        // Set spatial audio state and connect appropriate graph
         this._spatialAudio = window.spatialAudio;
+
+        // Connect the appropriate audio chain based on initial state
+        if (this._spatialAudio) {
+            // Start with spatial audio enabled
+            this._source?.connect(this._pannerNode);
+            this._pannerNode.connect(this._gainNode);
+            console.log('Spatial-Audio: Initial setup with spatial audio chain');
+        } else {
+            // Start with mono audio (bypass panner)
+            this._source?.connect(this._gainNode);
+            console.log('Spatial-Audio: Initial setup with mono audio chain');
+        }
+
+        this._gainNode.connect(window.context.destination);
     }
 
     /**
@@ -509,6 +520,8 @@ class AudioTrack extends Component<IProps> {
             console.warn('Spatial-Audio: Global spatialAudio state not initialized, setting to false');
             window.spatialAudio = false;
         }
+        
+        console.log('Spatial-Audio: Initial spatial audio state:', window.spatialAudio);
     }
 
     /**
