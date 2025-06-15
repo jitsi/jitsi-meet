@@ -6,10 +6,12 @@ import { connect as reactReduxConnect, useDispatch, useSelector, useStore } from
 // @ts-expect-error
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
 import { IReduxState, IStore } from '../../../app/types';
+import { CONFERENCE_JOINED } from '../../../base/conference/actionTypes';
 import { getConferenceNameForTitle } from '../../../base/conference/functions';
 import { hangup } from '../../../base/connection/actions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
+import MiddlewareRegistry from '../../../base/redux/MiddlewareRegistry';
 import { setColorAlpha } from '../../../base/util/helpers';
 import { openChat, setFocusedTab } from '../../../chat/actions.web';
 import Chat from '../../../chat/components/web/Chat';
@@ -18,6 +20,7 @@ import { isFileUploadingEnabled, processFiles } from '../../../file-sharing/func
 import MainFilmstrip from '../../../filmstrip/components/web/MainFilmstrip';
 import ScreenshareFilmstrip from '../../../filmstrip/components/web/ScreenshareFilmstrip';
 import StageFilmstrip from '../../../filmstrip/components/web/StageFilmstrip';
+import { beginAddPeople } from '../../../invite/actions.any';
 import CalleeInfoContainer from '../../../invite/components/callee-info/CalleeInfoContainer';
 import LargeVideo from '../../../large-video/components/LargeVideo.web';
 import LobbyScreen from '../../../lobby/components/web/LobbyScreen';
@@ -45,6 +48,24 @@ import {
 
 import ConferenceInfo from './ConferenceInfo';
 import { default as Notice } from './Notice';
+
+MiddlewareRegistry.register(store => next => action => {
+    switch (action.type) {
+    case CONFERENCE_JOINED: {
+        const state = store.getState();
+        const participants = state['features/base/participants'];
+
+        if (!Boolean(participants.remote.size)) {
+            store.dispatch(beginAddPeople());
+        }
+
+        break;
+    }
+    }
+
+    return next(action);
+});
+
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
