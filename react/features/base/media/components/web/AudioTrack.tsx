@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { createAudioPlayErrorEvent, createAudioPlaySuccessEvent } from '../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../analytics/functions';
 import { IReduxState } from '../../../../app/types';
+import { getParticipantDisplayName } from '../../../participants/functions';
 import { ITrack } from '../../../tracks/types';
 import logger from '../../logger';
 
@@ -53,6 +54,11 @@ interface IProps {
      * The ID of the participant associated with the audio element.
      */
     participantId: string;
+
+    /**
+     * The display name of the participant associated with the audio element.
+     */
+    _participantDisplayName?: string;
 
     /**
      * Callback to invoke when the initial volume is set.
@@ -136,10 +142,10 @@ class AudioTrack extends Component<IProps> {
                         : (audio as any).captureStream();
     
             if (stream?.active) {
-                console.log('Spatial-Audio: Chrome browser detected, using MediaStreamSource');
+                console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Chrome browser detected, using MediaStreamSource`);
                 this._source = window.context.createMediaStreamSource(stream);
             } else { // in the case of Firefox, streams are duplicated?
-                console.log('Spatial-Audio: Firefox browser detected, using MediaElementSource');
+                console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Firefox browser detected, using MediaElementSource`);
                 audio.volume = 0;
                 this._source = window.context.createMediaElementSource(audio);
                 audio.play();
@@ -147,12 +153,12 @@ class AudioTrack extends Component<IProps> {
 
             // Always refresh audio tracks list to get current participants
             window.audioTracks = document.querySelectorAll('.audio-track');
-            console.log('Spatial-Audio: Found', window.audioTracks.length, 'audio tracks');
+            console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Found ${window.audioTracks.length} audio tracks`);
 
             // Index and length for the first time
             this._trackLen = window.audioTracks.length; 
             this._trackIdx = this.getIndex();
-            console.log('Spatial-Audio: This track has index', this._trackIdx, 'of', this._trackLen);
+            console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: This track has index ${this._trackIdx} of ${this._trackLen}`);
             
             // Set up initial spatialization
             this.setupSpatial();
@@ -259,7 +265,7 @@ class AudioTrack extends Component<IProps> {
                 const nextIndex = this.getIndex();
                 const nextLength = window.audioTracks.length;
                 
-                console.log('Spatial-Audio: Current participants:', nextLength, 'This track index:', nextIndex);
+                console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Current participants: ${nextLength}, this track index: ${nextIndex}`);
             }
         }
 
@@ -468,11 +474,11 @@ class AudioTrack extends Component<IProps> {
             // Start with spatial audio enabled
             this._source?.connect(this._pannerNode);
             this._pannerNode.connect(this._gainNode);
-            console.log('Spatial-Audio: Initial setup with spatial audio chain');
+            console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Initial setup with spatial audio chain`);
         } else {
             // Start with mono audio (bypass panner)
             this._source?.connect(this._gainNode);
-            console.log('Spatial-Audio: Initial setup with mono audio chain');
+            console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Initial setup with mono audio chain`);
         }
 
         this._gainNode.connect(window.context.destination);
@@ -485,7 +491,7 @@ class AudioTrack extends Component<IProps> {
      */
     updateSpatial = () => {
         // change location of source when its an update
-        console.log('Spatial-Audio: Updating panner position');
+        console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Updating panner position`);
 
         const [xPos, yPos] = this.calcLocation();
         const scale = (this._pannerNode as any)?.scale || 1;
@@ -499,7 +505,7 @@ class AudioTrack extends Component<IProps> {
             (this._pannerNode as any)?.setPosition(xPos * scale, yPos * scale, 0);
         }
         
-        console.log(`Spatial-Audio: Set panner position to x=${xPos * scale}, y=${yPos * scale}, z=0`);
+        console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Set panner position to x=${xPos * scale}, y=${yPos * scale}, z=0`);
     }
 
     /**
@@ -540,10 +546,10 @@ class AudioTrack extends Component<IProps> {
                     } 
                     i++;
                 }
-                console.warn('Spatial-Audio: Track index not found for', this._ref?.current?.id);
+                console.warn(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Track index not found for ${this._ref?.current?.id}`);
                 return 0;
             } catch (err) {
-                console.warn('Spatial-Audio: Error getting track index:', err);
+                console.warn(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Error getting track index:`, err);
                 return 0;
             }
         } else {
@@ -569,7 +575,7 @@ class AudioTrack extends Component<IProps> {
         
         const yPos = 0; // Keep all participants at same depth
         
-        console.log(`Spatial-Audio: Participant ${trackIndex + 1}/${totalTracks} positioned at x=${xPos.toFixed(2)}, y=${yPos}`);
+        console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Participant ${trackIndex + 1}/${totalTracks} positioned at x=${xPos.toFixed(2)}, y=${yPos}`);
 
         return [xPos, yPos];
     }
@@ -583,7 +589,7 @@ class AudioTrack extends Component<IProps> {
         // Check every 200ms for spatial audio state changes
         const checkInterval = setInterval(() => {
             if (this._spatialAudio !== window.spatialAudio) {
-                console.log('Spatial-Audio: State change detected in monitoring:', window.spatialAudio);
+                console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: State change detected in monitoring:`, window.spatialAudio);
                 this._spatialAudio = window.spatialAudio;
                 this.switchCondition();
             }
@@ -591,7 +597,7 @@ class AudioTrack extends Component<IProps> {
         
         // Store interval ID to clear on unmount
         this._spatialAudioInterval = checkInterval;
-        console.log('Spatial-Audio: Monitoring active, checking every 200ms');
+        console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Monitoring active, checking every 200ms`);
     }
 
     /**
@@ -600,7 +606,7 @@ class AudioTrack extends Component<IProps> {
      * @returns {void}
      */
     switchCondition = () => {
-        console.log('Spatial-Audio: Switching audio mode. Spatial enabled:', this._spatialAudio);
+        console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Switching audio mode. Spatial enabled:`, this._spatialAudio);
         this._source?.disconnect();
         this._pannerNode?.disconnect();
 
@@ -609,13 +615,13 @@ class AudioTrack extends Component<IProps> {
             if (this._source && this._pannerNode && this._gainNode) {
                 this._source.connect(this._pannerNode);
                 this._pannerNode.connect(this._gainNode);
-                console.log('Spatial-Audio: Connected spatial audio chain');
+                console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Connected spatial audio chain`);
             }
         } else {
             // Spatial audio disabled: bypass panner
             if (this._source && this._gainNode) {
                 this._source.connect(this._gainNode);
-                console.log('Spatial-Audio: Connected mono audio chain (source → gain → destination)');
+                console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Connected mono audio chain (source → gain → destination)`);
             }
         }
     }
@@ -634,7 +640,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
     return {
         _muted: state['features/base/config'].startSilent,
-        _volume: participantsVolume[ownProps.participantId]
+        _volume: participantsVolume[ownProps.participantId],
+        _participantDisplayName: getParticipantDisplayName(state, ownProps.participantId)
     };
 }
 
