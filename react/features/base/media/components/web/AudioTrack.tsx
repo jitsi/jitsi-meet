@@ -30,6 +30,7 @@ class AudioTrackTracker {
         totalTracks: number;
         xPos: number;
         yPos: number;
+        audioTrackRef: AudioTrack; // Reference to the AudioTrack instance
     }> = new Map();
 
     static updateInstance(instanceId: string, data: {
@@ -39,6 +40,7 @@ class AudioTrackTracker {
         totalTracks: number;
         xPos: number;
         yPos: number;
+        audioTrackRef: AudioTrack;
     }) {
         this.instances.set(instanceId, data);
         this.logOverview();
@@ -46,6 +48,33 @@ class AudioTrackTracker {
 
     static removeInstance(instanceId: string) {
         this.instances.delete(instanceId);
+    }
+
+    /**
+     * Notify all AudioTrack instances to recalculate their positions
+     * This should be called whenever the total number of participants changes
+     */
+    static recalculateAllPositions() {
+        console.log('🔄 Spatial-Audio: Recalculating positions for all participants');
+        
+        // Get current total number of participants
+        window.audioTracks = document.querySelectorAll('.audio-track');
+        const totalTracks = window.audioTracks.length;
+        
+        // Update each instance with new track info and trigger position recalculation
+        this.instances.forEach((data, instanceId) => {
+            const audioTrack = data.audioTrackRef;
+            const newIndex = audioTrack.getIndex();
+            
+            // Update the stored data
+            audioTrack._trackIdx = newIndex;
+            audioTrack._trackLen = totalTracks;
+            
+            // Trigger position update
+            audioTrack.updateSpatial();
+            
+            console.log(`Spatial-Audio: Updated ${data.participantName} to index ${newIndex} of ${totalTracks}`);
+        });
     }
 
     private static logOverview() {
@@ -223,6 +252,12 @@ class AudioTrack extends Component<IProps> {
             this.setupSpatial();
             this.updateSpatial();
 
+            // Check if we need to recalculate ALL positions (when participant count changed)
+            // We do this after a short delay to ensure all DOM elements are properly initialized
+            setTimeout(() => {
+                this.checkAndRecalculatePositions();
+            }, 100);
+
             // Start monitoring spatial audio state changes
             this.startSpatialAudioMonitoring();
 
@@ -328,6 +363,19 @@ class AudioTrack extends Component<IProps> {
                 const nextLength = window.audioTracks.length;
                 
                 console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Current participants: ${nextLength}, this track index: ${nextIndex}`);
+                
+                // If participant count changed, recalculate positions for ALL participants
+                if (currentLength !== nextLength) {
+                    console.log(`Spatial-Audio: Participant count changed from ${currentLength} to ${nextLength} - recalculating all positions`);
+                    AudioTrackTracker.recalculateAllPositions();
+                }
+                // If only this participant's index changed (but total count stayed same), update just this one
+                else if (currentIndex !== nextIndex) {
+                    this._trackIdx = nextIndex;
+                    this._trackLen = nextLength;
+                    this.updateSpatial();
+                    console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Individual position updated`);
+                }
             }
         }
 
@@ -644,13 +692,31 @@ class AudioTrack extends Component<IProps> {
             trackIndex: trackIndex,
             totalTracks: totalTracks,
             xPos: xPos,
-            yPos: yPos
+            yPos: yPos,
+            audioTrackRef: this
         });
 
         return [xPos, yPos];
     }
 
 
+
+    /**
+     * Check if participant count has changed and trigger global recalculation if needed
+     *
+     * @returns {void}
+     */
+    checkAndRecalculatePositions = () => {
+        if (!window.spatialAudio) {
+            return;
+        }
+
+        console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Checking if global recalculation is needed...`);
+        
+        // Always trigger global recalculation when a new participant mounts
+        // This ensures all existing participants get updated positions
+        AudioTrackTracker.recalculateAllPositions();
+    }
 
     /**
      * Start monitoring spatial audio state changes
