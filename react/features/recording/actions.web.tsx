@@ -45,7 +45,7 @@ export function grantRecordingConsentAndUnmute() {
         batch(() => {
             dispatch(setAudioUnmutePermissions(false, true));
             dispatch(setVideoUnmutePermissions(false, true));
-            dispatch(setAudioMuted(false));
+            dispatch(setAudioMuted(false, true));
             dispatch(setVideoMuted(false, VIDEO_MUTISM_AUTHORITY.USER, true));
             dispatch(hideDialog());
         });
