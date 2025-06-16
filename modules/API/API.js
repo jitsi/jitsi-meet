@@ -108,6 +108,7 @@ import {
 } from '../../react/features/participants-pane/actions';
 import { getParticipantsPaneOpen, isForceMuted } from '../../react/features/participants-pane/functions';
 import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording/actions.any';
+import { grantRecordingConsent, grantRecordingConsentAndUnmute } from '../../react/features/recording/actions.web';
 import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
 import { startAudioScreenShareFlow, startScreenShareFlow } from '../../react/features/screen-share/actions';
@@ -208,6 +209,10 @@ function initCommands() {
                 return;
             }
             APP.store.dispatch(grantModerator(participantId));
+        },
+        'grant-recording-consent': unmute => {
+            unmute ? APP.store.dispatch(grantRecordingConsentAndUnmute())
+                : APP.store.dispatch(grantRecordingConsent());
         },
         'display-name': displayName => {
             sendAnalytics(createApiEvent('display.name.changed'));
@@ -1915,6 +1920,19 @@ class API {
             name: 'participant-kicked-out',
             kicked,
             kicker
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the recording consent dialog open state has changed.
+     *
+     * @param {boolean} open - True if the dialog is open, false otherwise.
+     * @returns {void}
+     */
+    notifyRecordingConsentDialogOpen(open) {
+        this._sendEvent({
+            name: 'recording-consent-dialog-open',
+            open
         });
     }
 
