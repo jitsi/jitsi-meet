@@ -2,10 +2,10 @@
  * Round badge.
  */
 .badge-round {
-    background-color: $toolbarBadgeBackground;
+    background-color: #165ECC;
     border-radius: 50%;
     box-sizing: border-box;
-    color: $toolbarBadgeColor;
+    color: #FFFFFF;
     // Do not inherit the font-family from the toolbar button, because it's an
     // icon style.
     font-family: $baseFontFamily;
@@ -32,6 +32,14 @@
     pointer-events: none;
     z-index: $toolbarZ + 2;
 
+    &.shift-up {
+        bottom: calc(((#{$newToolbarSize} + 30px) * 2) * -1);
+
+        .toolbox-content {
+            margin-bottom: 46px;
+        }
+    }
+
     &.visible {
         bottom: 0;
     }
@@ -49,21 +57,6 @@
     position: relative;
     z-index: $toolbarZ;
     pointer-events: none;
-
-    .button-group-center,
-    .button-group-left,
-    .button-group-right {
-        display: flex;
-        width: 33%;
-    }
-
-    .button-group-center {
-        justify-content: center;
-    }
-
-    .button-group-right {
-        justify-content: flex-end;
-    }
 
     .toolbox-button-wth-dialog {
         display: inline-block;
@@ -104,28 +97,22 @@
     padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
-.beta-tag {
-    background: #36383C;
-    border-radius: 3px;
-    color: #fff;
-    font-size: 12px;
-    margin-left: 8px;
-    padding: 0 4px;
-    text-transform: uppercase;
-}
-
 .overflow-menu-hr {
     border-top: 1px solid #4C4D50;
     border-bottom: 0;
     margin: 8px 0;
 }
 
-.hangup-button {
-    background-color: $hangupColor;
+div.hangup-button {
+    background-color: #CB2233;
 
     @media (hover: hover) and (pointer: fine) {
         &:hover {
-            background-color: $hangupHoverColor;
+            background-color: #E04757;
+        }
+
+        &:active {
+            background-color: #A21B29;
         }
     }
 
@@ -134,12 +121,16 @@
     }
 }
 
-.hangup-menu-button {
-    background-color: $hangupMenuButtonColor;
+div.hangup-menu-button {
+    background-color: #CB2233;
 
     @media (hover: hover) and (pointer: fine) {
         &:hover {
-            background-color: $hangupMenuButtonHoverColor;
+            background-color: #E04757;
+        }
+
+        &:active {
+            background-color: #A21B29;
         }
     }
 
@@ -176,7 +167,7 @@
         background: none;
 
         &:hover {
-            background: $newToolbarButtonHoverColor;
+            background: rgba(255, 255, 255, 0.2);
         }
     }
 

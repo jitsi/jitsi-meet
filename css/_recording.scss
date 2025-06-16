@@ -1,7 +1,3 @@
-.recordingSpinner {
-    vertical-align: top;
-}
-
 .recording-dialog {
     flex: 0;
     flex-direction: column;
@@ -18,6 +14,11 @@
             align-items: center;
             font-size: 14px;
             margin-left: 16px;
+            max-width: 70%;
+
+            &-no-space {
+                margin-left: 0;
+            }
         }
 
         &.space-top {
@@ -49,10 +50,6 @@
         }
     }
 
-    .recording-switch-disabled {
-        opacity: 0.5;
-    }
-
     .recording-icon-container {
         display: inline-flex;
         align-items: center;
@@ -82,7 +79,7 @@
         background-color: #FFFFFF;
         border-radius: 4px;
         height: 40px;
-        width: 56px;
+        width: 40px;
     }
 
     .jitsi-content-recording-icon-container-without-switch {
@@ -155,8 +152,7 @@
      */
     font-size: 14px;
 
-    .broadcast-dropdown,
-    .broadcast-dropdown-trigger {
+    .broadcast-dropdown {
         text-align: left;
     }
 
@@ -185,7 +181,7 @@
     }
 
     .google-error {
-        color: $errorColor;
+        color: #c61600;
     }
 
     .google-panel {
@@ -194,14 +190,6 @@
         display: flex;
         flex-direction: column;
         padding-bottom: 10px;
-    }
-
-    .helper-link {
-        cursor: pointer;
-        font-weight: bold;
-        display: inline-block;
-        flex-shrink: 0;
-        margin-left: auto;
     }
 
     .warning-text {

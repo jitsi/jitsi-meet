@@ -52,3 +52,20 @@ export const WHITEBOARD_UI_OPTIONS = {
         }
     }
 };
+
+/**
+ * Whiteboard default lower limit.
+ */
+export const MIN_USER_LIMIT = 10;
+
+/**
+ * Whiteboard soft limit diff.
+ */
+export const USER_LIMIT_THRESHOLD = 5;
+
+/**
+ * The pathName for the whiteboard page.
+ *
+ * @type {string}
+ */
+export const WHITEBOARD_PATH_NAME = 'static/whiteboard.html';

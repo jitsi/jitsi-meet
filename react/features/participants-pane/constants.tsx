@@ -2,10 +2,10 @@ import React from 'react';
 
 import Icon from '../base/icons/components/Icon';
 import {
-    IconCameraEmpty,
-    IconCameraEmptyDisabled,
-    IconMicrophoneEmpty,
-    IconMicrophoneEmptySlash
+    IconMic,
+    IconMicSlash,
+    IconVideo,
+    IconVideoOff
 } from '../base/icons/svg';
 
 /**
@@ -36,19 +36,23 @@ export const MEDIA_STATE: { [key: string]: MediaState; } = {
     NONE: 'None'
 };
 
-export type QuickActionButtonType = 'Mute' | 'AskToUnmute' | 'None';
+export type QuickActionButtonType = 'Mute' | 'AskToUnmute' | 'AllowVideo' | 'StopVideo' | 'None';
 
 /**
  * Enum of possible participant mute button states.
  */
 export const QUICK_ACTION_BUTTON: {
+    ALLOW_VIDEO: QuickActionButtonType;
     ASK_TO_UNMUTE: QuickActionButtonType;
     MUTE: QuickActionButtonType;
     NONE: QuickActionButtonType;
+    STOP_VIDEO: QuickActionButtonType;
 } = {
+    ALLOW_VIDEO: 'AllowVideo',
     MUTE: 'Mute',
     ASK_TO_UNMUTE: 'AskToUnmute',
-    NONE: 'None'
+    NONE: 'None',
+    STOP_VIDEO: 'StopVideo'
 };
 
 /**
@@ -59,23 +63,23 @@ export const AudioStateIcons = {
         <Icon
             className = 'jitsi-icon-dominant-speaker'
             size = { 16 }
-            src = { IconMicrophoneEmpty } />
+            src = { IconMic } />
     ),
     [MEDIA_STATE.FORCE_MUTED]: (
         <Icon
             color = '#E04757'
             size = { 16 }
-            src = { IconMicrophoneEmptySlash } />
+            src = { IconMicSlash } />
     ),
     [MEDIA_STATE.MUTED]: (
         <Icon
             size = { 16 }
-            src = { IconMicrophoneEmptySlash } />
+            src = { IconMicSlash } />
     ),
     [MEDIA_STATE.UNMUTED]: (
         <Icon
             size = { 16 }
-            src = { IconMicrophoneEmpty } />
+            src = { IconMic } />
     ),
     [MEDIA_STATE.NONE]: null
 };
@@ -90,18 +94,18 @@ export const VideoStateIcons = {
             color = '#E04757'
             id = 'videoMuted'
             size = { 16 }
-            src = { IconCameraEmptyDisabled } />
+            src = { IconVideoOff } />
     ),
     [MEDIA_STATE.MUTED]: (
         <Icon
             id = 'videoMuted'
             size = { 16 }
-            src = { IconCameraEmptyDisabled } />
+            src = { IconVideoOff } />
     ),
     [MEDIA_STATE.UNMUTED]: (
         <Icon
             size = { 16 }
-            src = { IconCameraEmpty } />
+            src = { IconVideo } />
     ),
     [MEDIA_STATE.NONE]: null
 };

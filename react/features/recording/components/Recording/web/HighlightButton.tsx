@@ -1,29 +1,23 @@
-/* eslint-disable lines-around-comment */
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import React from 'react';
+import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
-// @ts-ignore
-import { StartRecordingDialog } from '../..';
-// @ts-ignore
-import { openDialog } from '../../../../base/dialog';
+import { openDialog } from '../../../../base/dialog/actions';
 import { translate } from '../../../../base/i18n/functions';
 import { IconHighlight } from '../../../../base/icons/svg';
 import { MEET_FEATURES } from '../../../../base/jwt/constants';
 import Label from '../../../../base/label/components/web/Label';
-import { connect } from '../../../../base/redux/functions';
-// @ts-ignore
-import { Tooltip } from '../../../../base/tooltip';
+import Tooltip from '../../../../base/tooltip/components/Tooltip';
 import BaseTheme from '../../../../base/ui/components/BaseTheme.web';
-// @ts-ignore
 import { maybeShowPremiumFeatureDialog } from '../../../../jaas/actions';
+import StartRecordingDialog from '../../Recording/web/StartRecordingDialog';
 import AbstractHighlightButton, {
-    type Props as AbstractProps,
+    IProps as AbstractProps,
     _abstractMapStateToProps
-    // @ts-ignore
 } from '../AbstractHighlightButton';
 
-type Props = AbstractProps & {
+interface IProps extends AbstractProps {
     _disabled: boolean;
 
     /**
@@ -35,18 +29,23 @@ type Props = AbstractProps & {
      * Flag controlling visibility of the component.
      */
     _visible: boolean;
-};
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
+}
 
 /**
  * The type of the React {@code Component} state of {@link HighlightButton}.
  */
-type State = {
+interface IState {
 
     /**
      * Whether the notification which prompts for starting recording is open is not.
      */
     isNotificationOpen: boolean;
-};
+}
 
 /**
  * Creates the styles for the component.
@@ -58,34 +57,32 @@ type State = {
 const styles = (theme: Theme) => {
     return {
         container: {
-            position: 'relative'
+            position: 'relative' as const
         },
         disabled: {
-            background: theme.palette.text02,
-            margin: '0 4px 4px 4px'
+            background: theme.palette.text02
         },
-        regular: { // @ts-ignore
-            background: theme.palette.field02,
-            margin: '0 4px 4px 4px'
+        regular: {
+            background: theme.palette.ui10
         },
-        highlightNotification: { // @ts-ignore
-            backgroundColor: theme.palette.field02,
+        highlightNotification: {
+            backgroundColor: theme.palette.ui10,
             borderRadius: '6px',
             boxShadow: '0px 6px 20px rgba(0, 0, 0, 0.25)',
-            boxSizing: 'border-box',
+            boxSizing: 'border-box' as const,
             color: theme.palette.uiBackground,
             fontSize: '14px',
-            fontWeight: '400',
+            fontWeight: 400,
             left: '4px',
             padding: '16px',
-            position: 'absolute',
+            position: 'absolute' as const,
             top: '32px',
             width: 320
         },
-        highlightNotificationButton: { // @ts-ignore
-            color: theme.palette.field01Focus,
+        highlightNotificationButton: {
+            color: theme.palette.action01,
             cursor: 'pointer',
-            fontWeight: '600',
+            fontWeight: 600,
             marginTop: '8px'
         }
     };
@@ -95,17 +92,16 @@ const styles = (theme: Theme) => {
  * React {@code Component} responsible for displaying an action that
  * allows users to highlight a meeting moment.
  */
-export class HighlightButton extends AbstractHighlightButton<Props, State> {
+export class HighlightButton extends AbstractHighlightButton<IProps, IState> {
     /**
      * Initializes a new HighlightButton instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
-        // @ts-ignore
         this.state = {
             isNotificationOpen: false
         };
@@ -137,10 +133,9 @@ export class HighlightButton extends AbstractHighlightButton<Props, State> {
     *
     * @returns {void}
     */
-    async _onOpenDialog() {
-        // @ts-ignore
+    _onOpenDialog() {
         const { dispatch } = this.props;
-        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
+        const dialogShown = dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
 
         if (!dialogShown) {
             dispatch(openDialog(StartRecordingDialog));
@@ -157,11 +152,9 @@ export class HighlightButton extends AbstractHighlightButton<Props, State> {
     _onClick(e?: React.MouseEvent) {
         e?.stopPropagation();
 
-        // @ts-ignore
         const { _disabled } = this.props;
 
         if (_disabled) {
-            // @ts-ignore
             this.setState({
                 isNotificationOpen: true
             });
@@ -176,7 +169,6 @@ export class HighlightButton extends AbstractHighlightButton<Props, State> {
      * @returns {void}
      */
     _onWindowClickListener() {
-        // @ts-ignore
         this.setState({
             isNotificationOpen: false
         });
@@ -192,11 +184,9 @@ export class HighlightButton extends AbstractHighlightButton<Props, State> {
         const {
             _disabled,
             _visible,
-            classes,
             t
-            // @ts-ignore
         } = this.props;
-
+        const classes = withStyles.getClasses(this.props);
 
         if (!_visible) {
             return null;
@@ -217,7 +207,6 @@ export class HighlightButton extends AbstractHighlightButton<Props, State> {
                         id = 'highlightMeetingLabel'
                         onClick = { this._onClick } />
                 </Tooltip>
-                {/* @ts-ignore */}
                 {this.state.isNotificationOpen && (
                     <div className = { classes.highlightNotification }>
                         {t('recording.highlightMomentDisabled')}
@@ -233,5 +222,4 @@ export class HighlightButton extends AbstractHighlightButton<Props, State> {
     }
 }
 
-// @ts-ignore
-export default withStyles(styles)(translate(connect(_abstractMapStateToProps)(HighlightButton)));
+export default withStyles(translate(connect(_abstractMapStateToProps)(HighlightButton)), styles);

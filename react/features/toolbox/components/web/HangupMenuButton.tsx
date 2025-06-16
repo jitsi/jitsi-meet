@@ -1,18 +1,17 @@
-/* eslint-disable lines-around-comment */
-import InlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { translate } from '../../../base/i18n/functions';
+import Popover from '../../../base/popover/components/Popover.web';
 
 import HangupToggleButton from './HangupToggleButton';
 
 /**
  * The type of the React {@code Component} props of {@link HangupMenuButton}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * ID of the menu that is controlled by this button.
@@ -30,6 +29,12 @@ interface Props extends WithTranslation {
     isOpen: boolean;
 
     /**
+     * Notify mode for `toolbarButtonClicked` event -
+     * whether to only notify or to also prevent button click routine.
+     */
+    notifyMode?: string;
+
+    /**
      * Callback to change the visibility of the hangup menu.
      */
     onVisibilityChange: Function;
@@ -40,14 +45,14 @@ interface Props extends WithTranslation {
  *
  * @augments Component
  */
-class HangupMenuButton extends Component<Props> {
+class HangupMenuButton extends Component<IProps> {
     /**
      * Initializes a new {@code HangupMenuButton} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -78,21 +83,25 @@ class HangupMenuButton extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { children, isOpen } = this.props;
+        const { children, isOpen, t } = this.props;
 
         return (
             <div className = 'toolbox-button-wth-dialog context-menu'>
-                <InlineDialog
+                <Popover
                     content = { children }
-                    isOpen = { isOpen }
-                    onClose = { this._onCloseDialog }
-                    placement = 'top-end'>
+                    headingLabel = { t('toolbar.accessibilityLabel.hangup') }
+                    onPopoverClose = { this._onCloseDialog }
+                    position = 'top'
+                    trigger = 'click'
+                    visible = { isOpen }>
                     <HangupToggleButton
+                        buttonKey = 'hangup-menu'
                         customClass = 'hangup-menu-button'
                         handleClick = { this._toggleDialogVisibility }
                         isOpen = { isOpen }
+                        notifyMode = { this.props.notifyMode }
                         onKeyDown = { this._onEscClick } />
-                </InlineDialog>
+                </Popover>
             </div>
         );
     }

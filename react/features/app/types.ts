@@ -9,7 +9,7 @@ import { IAudioOnlyState } from '../base/audio-only/reducer';
 import { IConferenceState } from '../base/conference/reducer';
 import { IConfigState } from '../base/config/reducer';
 import { IConnectionState } from '../base/connection/reducer';
-import { IDevicesState } from '../base/devices/reducer';
+import { IDevicesState } from '../base/devices/types';
 import { IDialogState } from '../base/dialog/reducer';
 import { IFlagsState } from '../base/flags/reducer';
 import { IJwtState } from '../base/jwt/reducer';
@@ -20,10 +20,12 @@ import { ILoggingState } from '../base/logging/reducer';
 import { IMediaState } from '../base/media/reducer';
 import { INetInfoState } from '../base/net-info/reducer';
 import { IParticipantsState } from '../base/participants/reducer';
+import { IPreMeetingState } from '../base/premeeting/types';
 import { IResponsiveUIState } from '../base/responsive-ui/reducer';
 import { ISettingsState } from '../base/settings/reducer';
 import { ISoundsState } from '../base/sounds/reducer';
 import { ITestingState } from '../base/testing/reducer';
+import { ITooltipState } from '../base/tooltip/reducer';
 import { INoSrcDataState, ITracksState } from '../base/tracks/reducer';
 import { IUserInteractionState } from '../base/user-interaction/reducer';
 import { IBreakoutRoomsState } from '../breakout-rooms/reducer';
@@ -42,10 +44,11 @@ import { IGifsState } from '../gifs/reducer';
 import { IGoogleApiState } from '../google-api/reducer';
 import { IInviteState } from '../invite/reducer';
 import { IJaaSState } from '../jaas/reducer';
+import { IKeyboardShortcutsState } from '../keyboard-shortcuts/types';
 import { ILargeVideoState } from '../large-video/reducer';
 import { ILobbyState } from '../lobby/reducer';
 import { IMobileAudioModeState } from '../mobile/audio-mode/reducer';
-import { IBackgroundState } from '../mobile/background/reducer';
+import { IMobileBackgroundState } from '../mobile/background/reducer';
 import { ICallIntegrationState } from '../mobile/call-integration/reducer';
 import { IMobileExternalApiState } from '../mobile/external-api/reducer';
 import { IFullScreenState } from '../mobile/full-screen/reducer';
@@ -54,9 +57,9 @@ import { INoAudioSignalState } from '../no-audio-signal/reducer';
 import { INoiseDetectionState } from '../noise-detection/reducer';
 import { INoiseSuppressionState } from '../noise-suppression/reducer';
 import { INotificationsState } from '../notifications/reducer';
-import { IOverlayState } from '../overlay/reducer';
 import { IParticipantsPaneState } from '../participants-pane/reducer';
 import { IPollsState } from '../polls/reducer';
+import { IPollsHistoryState } from '../polls-history/reducer';
 import { IPowerMonitorState } from '../power-monitor/reducer';
 import { IPrejoinState } from '../prejoin/reducer';
 import { IReactionsState } from '../reactions/reducer';
@@ -65,6 +68,7 @@ import { IRecordingState } from '../recording/reducer';
 import { IRemoteControlState } from '../remote-control/reducer';
 import { IScreenShareState } from '../screen-share/reducer';
 import { IScreenshotCaptureState } from '../screenshot-capture/reducer';
+import { IShareRoomState } from '../share-room/reducer';
 import { ISharedVideoState } from '../shared-video/reducer';
 import { ISpeakerStatsState } from '../speaker-stats/reducer';
 import { ISubtitlesState } from '../subtitles/reducer';
@@ -75,20 +79,22 @@ import { IVideoLayoutState } from '../video-layout/reducer';
 import { IVideoQualityPersistedState, IVideoQualityState } from '../video-quality/reducer';
 import { IVideoSipGW } from '../videosipgw/reducer';
 import { IVirtualBackground } from '../virtual-background/reducer';
+import { IVisitorsState } from '../visitors/reducer';
+import { IWebHid } from '../web-hid/reducer';
 import { IWhiteboardState } from '../whiteboard/reducer';
 
 export interface IStore {
-    dispatch: ThunkDispatch<IState, void, AnyAction>;
-    getState: () => IState;
+    dispatch: ThunkDispatch<IReduxState, void, AnyAction>;
+    getState: () => IReduxState;
 }
 
-export interface IState {
+export interface IReduxState {
     'features/analytics': IAnalyticsState;
     'features/authentication': IAuthenticationState;
     'features/av-moderation': IAVModerationState;
-    'features/background': IBackgroundState;
     'features/base/app': IAppState;
     'features/base/audio-only': IAudioOnlyState;
+    'features/base/color-scheme': any;
     'features/base/conference': IConferenceState;
     'features/base/config': IConfigState;
     'features/base/connection': IConnectionState;
@@ -104,9 +110,11 @@ export interface IState {
     'features/base/net-info': INetInfoState;
     'features/base/no-src-data': INoSrcDataState;
     'features/base/participants': IParticipantsState;
+    'features/base/premeeting': IPreMeetingState;
     'features/base/responsive-ui': IResponsiveUIState;
     'features/base/settings': ISettingsState;
     'features/base/sounds': ISoundsState;
+    'features/base/tooltip': ITooltipState;
     'features/base/tracks': ITracksState;
     'features/base/user-interaction': IUserInteractionState;
     'features/breakout-rooms': IBreakoutRoomsState;
@@ -127,18 +135,20 @@ export interface IState {
     'features/google-api': IGoogleApiState;
     'features/invite': IInviteState;
     'features/jaas': IJaaSState;
+    'features/keyboard-shortcuts': IKeyboardShortcutsState;
     'features/large-video': ILargeVideoState;
     'features/lobby': ILobbyState;
     'features/mobile/audio-mode': IMobileAudioModeState;
+    'features/mobile/background': IMobileBackgroundState;
     'features/mobile/external-api': IMobileExternalApiState;
     'features/mobile/watchos': IMobileWatchOSState;
     'features/no-audio-signal': INoAudioSignalState;
     'features/noise-detection': INoiseDetectionState;
     'features/noise-suppression': INoiseSuppressionState;
     'features/notifications': INotificationsState;
-    'features/overlay': IOverlayState;
     'features/participants-pane': IParticipantsPaneState;
     'features/polls': IPollsState;
+    'features/polls-history': IPollsHistoryState;
     'features/power-monitor': IPowerMonitorState;
     'features/prejoin': IPrejoinState;
     'features/reactions': IReactionsState;
@@ -148,6 +158,7 @@ export interface IState {
     'features/screen-share': IScreenShareState;
     'features/screenshot-capture': IScreenshotCaptureState;
     'features/settings': ISettingsState;
+    'features/share-room': IShareRoomState;
     'features/shared-video': ISharedVideoState;
     'features/speaker-stats': ISpeakerStatsState;
     'features/subtitles': ISubtitlesState;
@@ -160,5 +171,11 @@ export interface IState {
     'features/video-quality-persistent-storage': IVideoQualityPersistedState;
     'features/videosipgw': IVideoSipGW;
     'features/virtual-background': IVirtualBackground;
+    'features/visitors': IVisitorsState;
+    'features/web-hid': IWebHid;
     'features/whiteboard': IWhiteboardState;
+}
+
+export interface IReloadNowOptions {
+    hidePrejoin?: boolean;
 }

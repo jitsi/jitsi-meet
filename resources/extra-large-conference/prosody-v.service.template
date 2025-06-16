@@ -1,0 +1,46 @@
+[Unit]
+### see man systemd.unit
+Description=Prosody vX (visitor vX) JVB XMPP Server
+Documentation=https://prosody.im/doc
+
+Requires=network-online.target
+After=network-online.target network.target mariadb.service mysql.service postgresql.service
+Before=biboumi.service
+
+[Service]
+### see man systemd.service
+Type=simple
+
+# Start by executing the main executable
+# Note: -F option requires Prosody 0.11.5 or later
+ExecStart=/usr/bin/prosody --config /etc/prosody-vX/prosody.cfg.lua -F
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-abnormal
+
+### see man systemd.exec
+User=prosody
+Group=prosody
+UMask=0027
+
+RuntimeDirectory=prosody-vX
+ConfigurationDirectory=prosody-vX
+StateDirectory=prosody-vX
+StateDirectoryMode=0750
+LogsDirectory=prosody-vX
+WorkingDirectory=~
+
+# Set stdin to /dev/null since Prosody does not need it
+StandardInput=null
+
+# Direct stdout/-err to journald for use with log = "*stdout"
+StandardOutput=journal
+StandardError=inherit
+
+# Allow binding low ports
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+
+[Install]
+### see man systemd.unit
+WantedBy=multi-user.target
+
+# vim: filetype=systemd

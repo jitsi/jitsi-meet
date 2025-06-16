@@ -10,6 +10,11 @@ export interface IWhiteboardState {
     collabDetails?: { roomId: string; roomKey: string; };
 
     /**
+     * The whiteboard collaboration url.
+     */
+    collabServerUrl?: string;
+
+    /**
      * The indicator which determines whether the whiteboard is open.
      *
      * @type {boolean}
@@ -18,15 +23,22 @@ export interface IWhiteboardState {
 }
 
 const DEFAULT_STATE: IWhiteboardState = {
-    isOpen: false
+    isOpen: false,
+    collabDetails: undefined,
+    collabServerUrl: undefined
 };
 
-export interface WhiteboardAction extends Partial<IWhiteboardState> {
+export interface IWhiteboardAction extends Partial<IWhiteboardState> {
 
     /**
      * The whiteboard collaboration details.
      */
     collabDetails?: { roomId: string; roomKey: string; };
+
+    /**
+     * The whiteboard collaboration url.
+     */
+    collabServerUrl?: string;
 
     /**
      * The action type.
@@ -36,13 +48,14 @@ export interface WhiteboardAction extends Partial<IWhiteboardState> {
 
 ReducerRegistry.register(
     'features/whiteboard',
-    (state: IWhiteboardState = DEFAULT_STATE, action: WhiteboardAction) => {
+    (state: IWhiteboardState = DEFAULT_STATE, action: IWhiteboardAction) => {
         switch (action.type) {
         case SETUP_WHITEBOARD: {
             return {
                 ...state,
                 isOpen: true,
-                collabDetails: action.collabDetails
+                collabDetails: action.collabDetails,
+                collabServerUrl: action.collabServerUrl
             };
         }
         case RESET_WHITEBOARD:

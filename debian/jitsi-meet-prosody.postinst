@@ -44,12 +44,7 @@ case "$1" in
         fi
         JVB_SECRET="$RET"
 
-        db_get jicofo/jicofo-authuser
-        if [ -z "$RET" ] ; then
-            db_input critical jicofo/jicofo-authuser || true
-            db_go
-        fi
-        JICOFO_AUTH_USER="$RET"
+        JICOFO_AUTH_USER="focus"
 
         db_get jicofo/jicofo-authpassword
         if [ -z "$RET" ] ; then
@@ -83,9 +78,11 @@ case "$1" in
             TURN_SECRET="$RET"
         fi
 
+        SELF_SIGNED_CHOICE="Generate a new self-signed certificate"
         # In the case of updating from an older version the configure of -prosody package may happen before the -config
         # one, so if JAAS_INPUT is empty (the question is not asked), let's ask it now.
-        db_get jitsi-meet/cert-choice
+        # If db_get returns an error (workaround for strange Debian failure) continue without stopping the config
+        db_get jitsi-meet/cert-choice || CERT_CHOICE=$SELF_SIGNED_CHOICE
         CERT_CHOICE="$RET"
         if [ -z "$CERT_CHOICE" ] ; then
             db_input critical jitsi-meet/cert-choice || true
@@ -93,7 +90,6 @@ case "$1" in
             db_get jitsi-meet/cert-choice
             CERT_CHOICE="$RET"
         fi
-        SELF_SIGNED_CHOICE="Generate a new self-signed certificate"
         if [ "$CERT_CHOICE" != "$SELF_SIGNED_CHOICE" ]; then
             db_get jitsi-meet/jaas-choice
             JAAS_INPUT="$RET"
@@ -142,10 +138,8 @@ case "$1" in
             PROSODY_CONFIG_PRESENT="false"
         fi
 
-        USER_EXISTS_CHECK=`prosodyctl adduser jvb@$JICOFO_AUTH_DOMAIN < /dev/null || true`
-        if [ ! "$USER_EXISTS_CHECK" = "That user already exists" ]; then
-            prosodyctl register jvb $JICOFO_AUTH_DOMAIN $JVB_SECRET || true
-        fi
+        # creates the user if it does not exist
+        echo -e "$JVB_SECRET\n$JVB_SECRET" | prosodyctl adduser jvb@$JICOFO_AUTH_DOMAIN > /dev/null || true
 
         # Check whether prosody config has the internal muc, if not add it,
         # as we are migrating configs
@@ -258,9 +252,10 @@ case "$1" in
         if [ "$PROSODY_CONFIG_PRESENT" = "false" ]; then
             invoke-rc.d prosody restart || true
 
-            # In case we had updated the certificates and restarted prosody, let's restart and the bridge if possible
+            # In case we had updated the certificates and restarted prosody, let's restart and the bridge and jicofo if possible
             if [ -d /run/systemd/system ] && [ "$CERT_ADDED_TO_TRUST" = "true" ]; then
                 systemctl restart jitsi-videobridge2.service >/dev/null || true
+                systemctl restart jicofo.service >/dev/null || true
             fi
         fi
     ;;

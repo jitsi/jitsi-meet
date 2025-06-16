@@ -42,6 +42,8 @@
 --      * set "reservations_enable_password_support" to allow optional "password" (string)
 --        field in API payload. If set and not empty, then room password will be set
 --        to the given string.
+--      * By default, reservation checks are skipped for breakout rooms. You can subject
+--        breakout rooms to the same checks by setting "reservations_skip_breakout_rooms" to false.
 --
 --
 --  Example config:
@@ -70,14 +72,16 @@
 
 local jid = require 'util.jid';
 local http = require "net.http";
-local json = require "util.json";
+local json = require 'cjson.safe';
 local st = require "util.stanza";
 local timer = require 'util.timer';
 local datetime = require 'util.datetime';
 
-local get_room_from_jid = module:require "util".get_room_from_jid;
-local is_healthcheck_room = module:require "util".is_healthcheck_room;
-local room_jid_match_rewrite = module:require "util".room_jid_match_rewrite;
+local util = module:require "util";
+local get_room_from_jid = util.get_room_from_jid;
+local is_healthcheck_room = util.is_healthcheck_room;
+local room_jid_match_rewrite = util.room_jid_match_rewrite;
+local process_host_module = util.process_host_module;
 
 local api_prefix = module:get_option("reservations_api_prefix");
 local api_headers = module:get_option("reservations_api_headers");
@@ -87,6 +91,7 @@ local api_retry_delay = tonumber(module:get_option("reservations_api_retry_delay
 local max_occupants_enabled = module:get_option("reservations_enable_max_occupants", false);
 local lobby_support_enabled = module:get_option("reservations_enable_lobby_support", false);
 local password_support_enabled = module:get_option("reservations_enable_password_support", false);
+local skip_breakout_room = module:get_option("reservations_skip_breakout_rooms", true);
 
 
 -- Option for user to control HTTP response codes that will result in a retry.
@@ -97,6 +102,8 @@ end)
 
 
 local muc_component_host = module:get_option_string("main_muc");
+local breakout_muc_component_host = module:get_option_string('breakout_rooms_muc', 'breakout.'..module.host);
+
 
 -- How often to check and evict expired reservation data
 local expiry_check_period = 60;
@@ -247,7 +254,7 @@ end
 function RoomReservation:enqueue_or_route_event(event)
     if self.meta.status == STATUS.PENDING then
         table.insert(self.pending_events, event)
-        if not self.api_call_triggered == true then
+        if self.api_call_triggered ~= true then
             self:call_api_create_conference();
         end
     else
@@ -389,10 +396,10 @@ end
 --  Ref: https://github.com/jitsi/jicofo/blob/master/doc/reservation.md
 --  @return nil if invalid, or table with payload parsed from JSON response
 function RoomReservation:parse_conference_response(response_body)
-    local data = json.decode(response_body);
+    local data, error = json.decode(response_body);
 
     if data == nil then  -- invalid JSON payload
-        module:log("error", "Invalid JSON response from API - %s", response_body);
+        module:log("error", "Invalid JSON response from API - %s error:%s", response_body, error);
         return;
     end
 
@@ -591,6 +598,14 @@ module:hook("pre-iq/host", function(event)
         return;  -- room already exists. Continue with normal flow
     end
 
+    if skip_breakout_room then
+        local _, host = jid.split(room_jid);
+        if host == breakout_muc_component_host then
+            module:log("debug", "Skip reservation check for breakout room %s", room_jid);
+            return;
+        end
+    end
+
     local res = get_or_create_reservations(room_jid, stanza.attr.from);
     res:enqueue_or_route_event(event);  -- hand over to reservation obj to route event
     return true;
@@ -664,27 +679,17 @@ local function room_pre_create(event)
     end
 end
 
-
-function process_host(host)
-    if host == muc_component_host then -- the conference muc component
+process_host_module(muc_component_host, function(host_module, host)
         module:log("info", "Hook to muc-room-destroyed on %s", host);
-        module:context(host):hook("muc-room-destroyed", room_destroyed, -1);
+        host_module:hook("muc-room-destroyed", room_destroyed, -1);
 
         if max_occupants_enabled or password_support_enabled then
             module:log("info", "Hook to muc-room-created on %s (max_occupants or password integration enabled)", host);
-            module:context(host):hook("muc-room-created", room_created);
+            host_module:hook("muc-room-created", room_created);
         end
 
         if lobby_support_enabled then
             module:log("info", "Hook to muc-room-pre-create on %s (lobby integration enabled)", host);
-            module:context(host):hook("muc-room-pre-create", room_pre_create);
+            host_module:hook("muc-room-pre-create", room_pre_create);
         end
-    end
-end
-
-if prosody.hosts[muc_component_host] == nil then
-    module:log("info", "No muc component found, will listen for it: %s", muc_component_host)
-    prosody.events.add_handler("host-activated", process_host);
-else
-    process_host(muc_component_host);
-end
+end);

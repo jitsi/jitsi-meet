@@ -1,6 +1,5 @@
-/* eslint-disable lines-around-comment */
 import i18next from 'i18next';
-import _ from 'lodash';
+import { chunk, filter, shuffle } from 'lodash-es';
 
 import { createBreakoutRoomsEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
@@ -8,28 +7,19 @@ import { IStore } from '../app/types';
 import {
     conferenceLeft,
     conferenceWillLeave,
-    createConference,
-    getCurrentConference
-    // @ts-ignore
-} from '../base/conference';
+    createConference
+} from '../base/conference/actions';
 import { CONFERENCE_LEAVE_REASONS } from '../base/conference/constants';
-import {
-    setAudioMuted,
-    setVideoMuted
-    // @ts-ignore
-} from '../base/media';
+import { getCurrentConference } from '../base/conference/functions';
+import { setAudioMuted, setVideoMuted } from '../base/media/actions';
 import { MEDIA_TYPE } from '../base/media/constants';
 import { getRemoteParticipants } from '../base/participants/functions';
+import { createDesiredLocalTracks } from '../base/tracks/actions';
 import {
     getLocalTracks,
-    isLocalCameraTrackMuted,
     isLocalTrackMuted
-    // @ts-ignore
-} from '../base/tracks';
-// @ts-ignore
-import { createDesiredLocalTracks } from '../base/tracks/actions';
-// @ts-ignore
-import { clearNotifications, showNotification } from '../notifications';
+} from '../base/tracks/functions';
+import { clearNotifications, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { _RESET_BREAKOUT_ROOMS, _UPDATE_ROOM_COUNTER } from './actionTypes';
@@ -40,8 +30,6 @@ import {
     getRoomByJid
 } from './functions';
 import logger from './logger';
-
-declare let APP: any;
 
 /**
  * Action to create a breakout room.
@@ -90,6 +78,25 @@ export function closeBreakoutRoom(roomId: string) {
 }
 
 /**
+ * Action to rename a breakout room.
+ *
+ * @param {string} breakoutRoomJid - The jid of the breakout room to rename.
+ * @param {string} name - New name / subject for the breakout room.
+ * @returns {Function}
+ */
+export function renameBreakoutRoom(breakoutRoomJid: string, name = '') {
+    return (_dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const trimmedName = name.trim();
+
+        if (trimmedName.length !== 0) {
+            sendAnalytics(createBreakoutRoomsEvent('rename'));
+            getCurrentConference(getState)?.getBreakoutRooms()
+                ?.renameBreakoutRoom(breakoutRoomJid, trimmedName);
+        }
+    };
+}
+
+/**
  * Action to remove a breakout room.
  *
  * @param {string} breakoutRoomJid - The jid of the breakout room to remove.
@@ -122,14 +129,14 @@ export function removeBreakoutRoom(breakoutRoomJid: string) {
 export function autoAssignToBreakoutRooms() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const rooms = getBreakoutRooms(getState);
-        const breakoutRooms = _.filter(rooms, room => !room.isMainRoom);
+        const breakoutRooms = filter(rooms, room => !room.isMainRoom);
 
         if (breakoutRooms) {
             sendAnalytics(createBreakoutRoomsEvent('auto.assign'));
             const participantIds = Array.from(getRemoteParticipants(getState).keys());
             const length = Math.ceil(participantIds.length / breakoutRooms.length);
 
-            _.chunk(_.shuffle(participantIds), length).forEach((group, index) =>
+            chunk(shuffle(participantIds), length).forEach((group, index) =>
                 group.forEach(participantId => {
                     dispatch(sendParticipantToRoom(participantId, breakoutRooms[index].id));
                 })
@@ -192,6 +199,7 @@ export function moveToRoom(roomId?: string) {
 
             // eslint-disable-next-line no-new-wrappers
             _roomId = new String(id);
+
             // @ts-ignore
             _roomId.domain = domainParts.join('@');
         }
@@ -218,7 +226,7 @@ export function moveToRoom(roomId?: string) {
             dispatch(conferenceWillLeave(conference));
 
             try {
-                await conference.leave(CONFERENCE_LEAVE_REASONS.SWITCH_ROOM);
+                await conference?.leave(CONFERENCE_LEAVE_REASONS.SWITCH_ROOM);
             } catch (error) {
                 logger.warn('JitsiConference.leave() rejected with:', error);
 
@@ -226,16 +234,14 @@ export function moveToRoom(roomId?: string) {
             }
 
             dispatch(clearNotifications());
-
-            // dispatch(setRoom(_roomId));
             dispatch(createConference(_roomId));
             dispatch(setAudioMuted(audio.muted));
-            dispatch(setVideoMuted(video.muted));
+            dispatch(setVideoMuted(Boolean(video.muted)));
             dispatch(createDesiredLocalTracks());
         } else {
             const localTracks = getLocalTracks(getState()['features/base/tracks']);
             const isAudioMuted = isLocalTrackMuted(localTracks, MEDIA_TYPE.AUDIO);
-            const isVideoMuted = isLocalCameraTrackMuted(localTracks);
+            const isVideoMuted = isLocalTrackMuted(localTracks, MEDIA_TYPE.VIDEO);
 
             try {
                 // all places we fire notifyConferenceLeft we pass the room name from APP.conference
@@ -279,7 +285,7 @@ export function moveToRoom(roomId?: string) {
  * @param {string} participantId - ID of the given participant.
  * @returns {string|undefined} - The participant connection JID if found.
  */
-function _findParticipantJid(getState: Function, participantId: string) {
+function _findParticipantJid(getState: IStore['getState'], participantId: string) {
     const conference = getCurrentConference(getState);
 
     if (!conference) {

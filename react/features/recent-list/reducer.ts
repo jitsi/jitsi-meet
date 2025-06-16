@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import { getURLWithoutParamsNormalized } from '../base/connection/utils';
 import PersistenceRegistry from '../base/redux/PersistenceRegistry';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
@@ -8,7 +7,6 @@ import {
     _STORE_CURRENT_CONFERENCE,
     _UPDATE_CONFERENCE_DURATION
 } from './actionTypes';
-// @ts-ignore
 import { isRecentListEnabled } from './functions';
 
 interface IRecent {
@@ -84,7 +82,7 @@ function _deleteRecentListEntry(
  * @returns {Object}
  */
 function _storeCurrentConference(state: IRecentListState, { locationURL }: { locationURL: { href: string; }; }) {
-    const conference = locationURL.href;
+    const conference = getURLWithoutParamsNormalized(new URL(locationURL.href));
 
     // If the current conference is already in the list, we remove it to re-add
     // it to the top.

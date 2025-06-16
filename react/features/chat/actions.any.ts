@@ -1,16 +1,18 @@
 import { IStore } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
 import { getLocalParticipant } from '../base/participants/functions';
-import { Participant } from '../base/participants/types';
+import { IParticipant } from '../base/participants/types';
 import { LOBBY_CHAT_INITIALIZED } from '../lobby/constants';
 
 import {
     ADD_MESSAGE,
+    ADD_MESSAGE_REACTION,
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     EDIT_MESSAGE,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     SEND_MESSAGE,
+    SEND_REACTION,
     SET_IS_POLL_TAB_FOCUSED,
     SET_LOBBY_CHAT_ACTIVE_STATE,
     SET_LOBBY_CHAT_RECIPIENT,
@@ -46,6 +48,27 @@ export function addMessage(messageDetails: Object) {
     return {
         type: ADD_MESSAGE,
         ...messageDetails
+    };
+}
+
+/**
+ * Adds a reaction to a chat message.
+ *
+ * @param {Object} reactionDetails - The reaction to add.
+ * @param {string} reactionDetails.participantId - The ID of the message to react to.
+ * @param {string} reactionDetails.reactionList - The reaction to add.
+ * @param {string} reactionDetails.messageId - The receiver ID of the reaction.
+ * @returns {{
+ *     type: ADD_MESSAGE_REACTION,
+ *     participantId: string,
+ *     reactionList: string[],
+ *     messageId: string
+ * }}
+ */
+export function addMessageReaction(reactionDetails: Object) {
+    return {
+        type: ADD_MESSAGE_REACTION,
+        ...reactionDetails
     };
 }
 
@@ -112,15 +135,33 @@ export function sendMessage(message: string, ignorePrivacy = false) {
 }
 
 /**
+ * Sends a reaction to a message.
+ *
+ * @param {string} reaction - The reaction to send.
+ * @param {string} messageId - The message ID to react to.
+ * @param {string} receiverId - The receiver ID of the reaction.
+ * @returns {Function}
+ */
+export function sendReaction(reaction: string, messageId: string, receiverId?: string) {
+
+    return {
+        type: SEND_REACTION,
+        reaction,
+        messageId,
+        receiverId
+    };
+}
+
+/**
  * Initiates the sending of a private message to the supplied participant.
  *
- * @param {Participant} participant - The participant to set the recipient to.
+ * @param {IParticipant} participant - The participant to set the recipient to.
  * @returns {{
- *     participant: Participant,
+ *     participant: IParticipant,
  *     type: SET_PRIVATE_MESSAGE_RECIPIENT
  * }}
  */
-export function setPrivateMessageRecipient(participant: Object) {
+export function setPrivateMessageRecipient(participant?: Object) {
     return {
         participant,
         type: SET_PRIVATE_MESSAGE_RECIPIENT
@@ -148,12 +189,12 @@ export function setIsPollsTabFocused(isPollsTabFocused: boolean) {
  *
  * @returns {Function}
  */
-export function onLobbyChatInitialized(lobbyChatInitializedInfo: { attendee: Participant; moderator: Participant; }) {
+export function onLobbyChatInitialized(lobbyChatInitializedInfo: { attendee: IParticipant; moderator: IParticipant; }) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const conference = getCurrentConference(state);
 
-        const lobbyLocalId = conference.myLobbyUserId();
+        const lobbyLocalId = conference?.myLobbyUserId();
 
         if (!lobbyLocalId) {
             return;

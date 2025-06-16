@@ -1,10 +1,8 @@
 import { ComponentType } from 'react';
 
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
 import { IStateful } from '../app/types';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { ColorSchemeRegistry } from '../color-scheme';
+import ColorSchemeRegistry from '../color-scheme/ColorSchemeRegistry';
 import { toState } from '../redux/functions';
 
 /**
@@ -28,19 +26,19 @@ export function isAnyDialogOpen(stateful: IStateful) {
  * {@code Dialog} to be checked.
  * @returns {boolean}
  */
-export function isDialogOpen(stateful: IStateful, component: ComponentType) {
+export function isDialogOpen(stateful: IStateful, component: ComponentType<any>) {
     return toState(stateful)['features/base/dialog'].component === component;
 }
 
 /**
  * Maps part of the Redux state to the props of any Dialog based component.
  *
- * @param {IState} state - The Redux state.
+ * @param {IReduxState} state - The Redux state.
  * @returns {{
  *     _dialogStyles: StyleType
  * }}
  */
-export function _abstractMapStateToProps(state: IState) {
+export function _abstractMapStateToProps(state: IReduxState) {
     return {
         _dialogStyles: ColorSchemeRegistry.get(state, 'Dialog')
     };

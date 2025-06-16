@@ -1,56 +1,47 @@
-/* eslint-disable lines-around-comment */
+import { AnyAction } from 'redux';
+
 import { IStore } from '../app/types';
 import {
     CONFERENCE_JOINED,
-    CONFERENCE_WILL_LEAVE
+    CONFERENCE_WILL_LEAVE,
+    ENDPOINT_MESSAGE_RECEIVED
 } from '../base/conference/actionTypes';
-// @ts-ignore
 import { getCurrentConference } from '../base/conference/functions';
-import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, getParticipantCount } from '../base/participants/functions';
-import { Participant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from '../base/tracks/actionTypes';
 
 import FaceLandmarksDetector from './FaceLandmarksDetector';
-import { ADD_FACE_EXPRESSION, NEW_FACE_COORDINATES, UPDATE_FACE_COORDINATES } from './actionTypes';
-import {
-    addToFaceExpressionsBuffer
-} from './actions';
+import { ADD_FACE_LANDMARKS, NEW_FACE_COORDINATES, UPDATE_FACE_COORDINATES } from './actionTypes';
 import { FACE_BOX_EVENT_TYPE } from './constants';
-import { sendFaceBoxToParticipants, sendFaceExpressionToParticipants, sendFaceExpressionToServer } from './functions';
+import { sendFaceBoxToParticipants, sendFaceExpressionToParticipants } from './functions';
 
 
-MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any) => {
+MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyAction) => {
     const { dispatch, getState } = store;
-    const { faceLandmarks } = getState()['features/base/config'];
-    const isEnabled = faceLandmarks?.enableFaceCentering || faceLandmarks?.enableFaceExpressionsDetection;
+    const { faceLandmarks: faceLandmarksConfig } = getState()['features/base/config'];
+    const isEnabled = faceLandmarksConfig?.enableFaceCentering || faceLandmarksConfig?.enableFaceExpressionsDetection;
 
     if (action.type === CONFERENCE_JOINED) {
         if (isEnabled) {
             FaceLandmarksDetector.init(store);
         }
 
-        // allow using remote face centering data when local face centering is not enabled
-        action.conference.on(
-            JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-            (participant: Participant | undefined, eventData: any) => {
-                if (!participant || !eventData || !participant.getId) {
-                    return;
-                }
+        return next(action);
+    } else if (action.type === ENDPOINT_MESSAGE_RECEIVED) {
+        // Allow using remote face centering data when local face centering is not enabled.
+        const { participant, data } = action;
 
-                if (eventData.type === FACE_BOX_EVENT_TYPE) {
-                    dispatch({
-                        type: UPDATE_FACE_COORDINATES,
-                        faceBox: eventData.faceBox,
-                        id: participant.getId()
-                    });
-                }
+        if (data?.type === FACE_BOX_EVENT_TYPE) {
+            dispatch({
+                type: UPDATE_FACE_COORDINATES,
+                faceBox: data.faceBox,
+                id: participant.getId()
             });
+        }
 
         return next(action);
     }
-
 
     if (!isEnabled) {
         return next(action);
@@ -60,7 +51,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
     case CONFERENCE_WILL_LEAVE : {
         FaceLandmarksDetector.stopDetection(store);
 
-        return next(action);
+        break;
     }
     case TRACK_ADDED: {
         const { jitsiTrack: { isLocal, videoType }, muted } = action.track;
@@ -70,18 +61,18 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
             FaceLandmarksDetector.startDetection(store, action.track);
         }
 
-        return next(action);
+        break;
     }
     case TRACK_UPDATED: {
         const { jitsiTrack: { isLocal, videoType } } = action.track;
 
         if (videoType !== 'camera' || !isLocal()) {
-            return next(action);
+            break;
         }
 
         const { muted } = action.track;
 
-        if (muted !== undefined) {
+        if (typeof muted !== 'undefined') {
             // addresses video mute state changes
             if (muted) {
                 FaceLandmarksDetector.stopDetection(store);
@@ -90,7 +81,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
             }
         }
 
-        return next(action);
+        break;
     }
     case TRACK_REMOVED: {
         const { jitsiTrack: { isLocal, videoType } } = action.track;
@@ -99,23 +90,21 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
             FaceLandmarksDetector.stopDetection(store);
         }
 
-        return next(action);
+        break;
     }
-    case ADD_FACE_EXPRESSION: {
+    case ADD_FACE_LANDMARKS: {
         const state = getState();
-        const { faceExpression, duration, timestamp } = action;
+        const { faceLandmarks } = action;
         const conference = getCurrentConference(state);
 
         if (getParticipantCount(state) > 1) {
-            sendFaceExpressionToParticipants(conference, faceExpression, duration);
+            sendFaceExpressionToParticipants(conference, faceLandmarks);
         }
-        sendFaceExpressionToServer(conference, faceExpression, duration);
-        dispatch(addToFaceExpressionsBuffer({
-            emotion: faceExpression,
-            timestamp
-        }));
 
-        return next(action);
+        // Disabling for now as there is no value of having the data in speakerstats at the server
+        // sendFaceExpressionToServer(conference, faceLandmarks);
+
+        break;
     }
     case NEW_FACE_COORDINATES: {
         const state = getState();
@@ -132,6 +121,8 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any)
             faceBox,
             id: localParticipant?.id
         });
+
+        break;
     }
     }
 

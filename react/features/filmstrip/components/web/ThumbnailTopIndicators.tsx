@@ -1,30 +1,20 @@
-/* eslint-disable lines-around-comment */
-
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
-// @ts-ignore
-import { getMultipleVideoSupportFeatureFlag } from '../../../base/config';
+import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
-// @ts-ignore
+import { isScreenShareParticipantById } from '../../../base/participants/functions';
 import ConnectionIndicator from '../../../connection-indicator/components/web/ConnectionIndicator';
 import { STATS_POPOVER_POSITION, THUMBNAIL_TYPE } from '../../constants';
-// @ts-ignore
 import { getIndicatorsTooltipPosition } from '../../functions.web';
 
-// @ts-ignore
 import PinnedIndicator from './PinnedIndicator';
-// @ts-ignore
 import RaisedHandIndicator from './RaisedHandIndicator';
-// @ts-ignore
 import StatusIndicators from './StatusIndicators';
 import VideoMenuTriggerButton from './VideoMenuTriggerButton';
 
-declare let interfaceConfig: any;
-
-type Props = {
+interface IProps {
 
     /**
      * Whether to hide the connection indicator.
@@ -34,12 +24,12 @@ type Props = {
     /**
      * Hide popover callback.
      */
-    hidePopover: Function;
+    hidePopover?: Function;
 
     /**
      * Class name for the status indicators container.
      */
-    indicatorsClassName: string;
+    indicatorsClassName?: string;
 
     /**
      * Whether or not the thumbnail is hovered.
@@ -47,14 +37,9 @@ type Props = {
     isHovered: boolean;
 
     /**
-     * Whether or not the thumbnail is a virtual screen share participant.
-     */
-    isVirtualScreenshareParticipant?: boolean;
-
-    /**
      * Whether or not the indicators are for the local participant.
      */
-    local: boolean;
+    local?: boolean;
 
     /**
      * Id of the participant for which the component is displayed.
@@ -64,18 +49,18 @@ type Props = {
     /**
      * Whether popover is visible or not.
      */
-    popoverVisible: boolean;
+    popoverVisible?: boolean;
 
     /**
      * Show popover callback.
      */
-    showPopover: Function;
+    showPopover?: Function;
 
     /**
      * The type of thumbnail.
      */
     thumbnailType: string;
-};
+}
 
 const useStyles = makeStyles()(() => {
     return {
@@ -93,27 +78,28 @@ const ThumbnailTopIndicators = ({
     disableConnectionIndicator,
     hidePopover,
     indicatorsClassName,
-    isVirtualScreenshareParticipant,
     isHovered,
     local,
     participantId,
     popoverVisible,
     showPopover,
     thumbnailType
-}: Props) => {
+}: IProps) => {
     const { classes: styles, cx } = useStyles();
 
     const _isMobile = isMobileBrowser();
     const { NORMAL = 16 } = interfaceConfig.INDICATOR_FONT_SIZES || {};
     const _indicatorIconSize = NORMAL;
     const _connectionIndicatorAutoHideEnabled = Boolean(
-        useSelector((state: IState) => state['features/base/config'].connectionIndicators?.autoHide) ?? true);
+        useSelector((state: IReduxState) => state['features/base/config'].connectionIndicators?.autoHide) ?? true);
     const _connectionIndicatorDisabled = _isMobile || disableConnectionIndicator
-        || Boolean(useSelector((state: IState) => state['features/base/config'].connectionIndicators?.disabled));
-    const _isMultiStreamEnabled = useSelector(getMultipleVideoSupportFeatureFlag);
+        || Boolean(useSelector((state: IReduxState) => state['features/base/config'].connectionIndicators?.disabled));
     const showConnectionIndicator = isHovered || !_connectionIndicatorAutoHideEnabled;
+    const isVirtualScreenshareParticipant = useSelector(
+        (state: IReduxState) => isScreenShareParticipantById(state, participantId)
+    );
 
-    if (_isMultiStreamEnabled && isVirtualScreenshareParticipant) {
+    if (isVirtualScreenshareParticipant) {
         return (
             <div className = { styles.container }>
                 {!_connectionIndicatorDisabled
@@ -152,7 +138,7 @@ const ThumbnailTopIndicators = ({
                 <div className = { cx(indicatorsClassName, 'top-indicators') }>
                     <StatusIndicators
                         participantID = { participantId }
-                        screenshare = { !_isMultiStreamEnabled } />
+                        screenshare = { false } />
                 </div>
             )}
         </div>

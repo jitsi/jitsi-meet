@@ -2,7 +2,7 @@ import { IStore } from '../app/types';
 import { getConferenceState } from '../base/conference/functions';
 import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
 import { getParticipantById, isParticipantModerator } from '../base/participants/functions';
-import { Participant } from '../base/participants/types';
+import { IParticipant } from '../base/participants/types';
 import { isForceMuted } from '../participants-pane/functions';
 
 import {
@@ -133,10 +133,10 @@ export const disableModeration = (mediaType: MediaType, actor: Object) => {
 /**
  * Hides the notification with the participant that asked to unmute audio.
  *
- * @param {Participant} participant - The participant for which the notification to be hidden.
+ * @param {IParticipant} participant - The participant for which the notification to be hidden.
  * @returns {Object}
  */
-export function dismissPendingAudioParticipant(participant: Participant) {
+export function dismissPendingAudioParticipant(participant: IParticipant) {
     return dismissPendingParticipant(participant.id, MEDIA_TYPE.AUDIO);
 }
 
@@ -270,10 +270,10 @@ export function showModeratedNotification(mediaType: MediaType) {
 /**
  * Shows a notification with the participant that asked to audio unmute.
  *
- * @param {Participant} participant - The participant for which is the notification.
+ * @param {IParticipant} participant - The participant for which is the notification.
  * @returns {Object}
  */
-export function participantPendingAudio(participant: Participant) {
+export function participantPendingAudio(participant: IParticipant) {
     return {
         type: PARTICIPANT_PENDING_AUDIO,
         participant

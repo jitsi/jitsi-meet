@@ -1,11 +1,14 @@
-// @ts-ignore
+// @ts-expect-error
 import jwtDecode from 'jwt-decode';
 
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
+import { isVpaasMeeting } from '../../jaas/functions';
 import { getLocalParticipant } from '../participants/functions';
+import { IParticipantFeatures } from '../participants/types';
 import { parseURLParams } from '../util/parseURLParams';
 
-import { MEET_FEATURES } from './constants';
+import { JWT_VALIDATION_ERRORS, MEET_FEATURES } from './constants';
+import logger from './logger';
 
 /**
  * Retrieves the JSON Web Token (JWT), if any, defined by a specific
@@ -16,18 +19,22 @@ import { MEET_FEATURES } from './constants';
  * @returns {string} The JSON Web Token (JWT), if any, defined by the specified
  * {@code url}; otherwise, {@code undefined}.
  */
-export function parseJWTFromURLParams(url: URL | Location = window.location) {
+export function parseJWTFromURLParams(url: URL | typeof window.location = window.location) {
     // @ts-ignore
-    return parseURLParams(url, true, 'search').jwt;
+    const jwt = parseURLParams(url, false, 'hash').jwt;
+
+    // TODO: eventually remove the search param and only pull from the hash
+    // @ts-ignore
+    return jwt ? jwt : parseURLParams(url, true, 'search').jwt;
 }
 
 /**
  * Returns the user name after decoding the jwt.
  *
- * @param {IState} state - The app state.
+ * @param {IReduxState} state - The app state.
  * @returns {string}
  */
-export function getJwtName(state: IState) {
+export function getJwtName(state: IReduxState) {
     const { user } = state['features/base/jwt'];
 
     return user?.name;
@@ -36,23 +43,66 @@ export function getJwtName(state: IState) {
 /**
  * Check if the given JWT feature is enabled.
  *
- * @param {IState} state - The app state.
+ * @param {IReduxState} state - The app state.
  * @param {string} feature - The feature we want to check.
  * @param {boolean} ifNoToken - Default value if there is no token.
- * @returns {string}
+ * @param {boolean} ifNotInFeatures - Default value if features prop exists but does not have the {@code feature}.
+ * @returns {boolean}
  */
-export function isJwtFeatureEnabled(state: IState, feature: string, ifNoToken = false) {
+export function isJwtFeatureEnabled(state: IReduxState, feature: string, ifNoToken: boolean, ifNotInFeatures: boolean) {
     const { jwt } = state['features/base/jwt'];
+    let { features } = getLocalParticipant(state) || {};
 
+    if (typeof features === 'undefined' && isVpaasMeeting(state)) {
+        // for vpaas the backend is always initialized with empty features if those are missing
+        features = {};
+    }
+
+    return isJwtFeatureEnabledStateless({
+        jwt,
+        localParticipantFeatures: features,
+        feature,
+        ifNoToken,
+        ifNotInFeatures
+    });
+}
+
+interface IIsJwtFeatureEnabledStatelessParams {
+    feature: string;
+    ifNoToken: boolean;
+    ifNotInFeatures: boolean;
+    jwt?: string;
+    localParticipantFeatures?: IParticipantFeatures;
+}
+
+/**
+ * Check if the given JWT feature is enabled.
+ *
+ * @param {string | undefined} jwt - The jwt token.
+ * @param {ILocalParticipant} localParticipantFeatures - The features of the local participant.
+ * @param {string} feature - The feature we want to check.
+ * @param {boolean} ifNoToken - Default value if there is no token.
+ * @param {boolean} ifNotInFeatures - Default value if features is missing
+ * or prop exists but does not have the {@code feature}.
+ * @returns {boolean}
+ */
+export function isJwtFeatureEnabledStateless({
+    jwt,
+    localParticipantFeatures: features,
+    feature,
+    ifNoToken,
+    ifNotInFeatures
+}: IIsJwtFeatureEnabledStatelessParams) {
     if (!jwt) {
         return ifNoToken;
     }
 
-    const { features } = getLocalParticipant(state) || {};
-
-    // If `features` is undefined, act as if everything is enabled.
     if (typeof features === 'undefined') {
-        return true;
+        return ifNoToken;
+    }
+
+    if (typeof features[feature as keyof typeof features] === 'undefined') {
+        return ifNotInFeatures;
     }
 
     return String(features[feature as keyof typeof features]) === 'true';
@@ -73,23 +123,24 @@ function isValidUnixTimestamp(timestamp: number | string) {
  * Returns a list with all validation errors for the given jwt.
  *
  * @param {string} jwt - The jwt.
- * @returns {Array<string>} - An array containing all jwt validation errors.
+ * @returns {Array} - An array containing all jwt validation errors.
  */
 export function validateJwt(jwt: string) {
-    const errors: string[] = [];
-
-    if (!jwt) {
-        return errors;
-    }
-
+    const errors: Object[] = [];
     const currentTimestamp = new Date().getTime();
 
     try {
         const header = jwtDecode(jwt, { header: true });
         const payload = jwtDecode(jwt);
 
-        if (!header || !payload) {
-            errors.push('- Missing header or payload');
+        if (!header) {
+            errors.push({ key: JWT_VALIDATION_ERRORS.HEADER_NOT_FOUND });
+
+            return errors;
+        }
+
+        if (!payload) {
+            errors.push({ key: JWT_VALIDATION_ERRORS.PAYLOAD_NOT_FOUND });
 
             return errors;
         }
@@ -109,42 +160,44 @@ export function validateJwt(jwt: string) {
 
             // if Key ID is missing, we return the error immediately without further validations.
             if (!kid) {
-                errors.push('- Key ID(kid) missing');
+                errors.push({ key: JWT_VALIDATION_ERRORS.KID_NOT_FOUND });
 
                 return errors;
             }
 
             if (kid.substring(0, kid.indexOf('/')) !== sub) {
-                errors.push('- Key ID(kid) does not match sub');
+                errors.push({ key: JWT_VALIDATION_ERRORS.KID_MISMATCH });
             }
 
             if (aud !== 'jitsi') {
-                errors.push('- invalid `aud` value. It should be `jitsi`');
+                errors.push({ key: JWT_VALIDATION_ERRORS.AUD_INVALID });
             }
 
             if (iss !== 'chat') {
-                errors.push('- invalid `iss` value. It should be `chat`');
+                errors.push({ key: JWT_VALIDATION_ERRORS.ISS_INVALID });
             }
 
             if (!context?.features) {
-                errors.push('- `features` object is missing from the payload');
+                errors.push({ key: JWT_VALIDATION_ERRORS.FEATURES_NOT_FOUND });
             }
         }
 
-        if (!isValidUnixTimestamp(nbf)) {
-            errors.push('- invalid `nbf` value');
-        } else if (currentTimestamp < nbf * 1000) {
-            errors.push('- `nbf` value is in the future');
+        if (nbf) { // nbf value is optional
+            if (!isValidUnixTimestamp(nbf)) {
+                errors.push({ key: JWT_VALIDATION_ERRORS.NBF_INVALID });
+            } else if (currentTimestamp < nbf * 1000) {
+                errors.push({ key: JWT_VALIDATION_ERRORS.NBF_FUTURE });
+            }
         }
 
         if (!isValidUnixTimestamp(exp)) {
-            errors.push('- invalid `exp` value');
+            errors.push({ key: JWT_VALIDATION_ERRORS.EXP_INVALID });
         } else if (currentTimestamp > exp * 1000) {
-            errors.push('- token is expired');
+            errors.push({ key: JWT_VALIDATION_ERRORS.TOKEN_EXPIRED });
         }
 
         if (!context) {
-            errors.push('- `context` object is missing from the payload');
+            errors.push({ key: JWT_VALIDATION_ERRORS.CONTEXT_NOT_FOUND });
         } else if (context.features) {
             const { features } = context;
             const meetFeatures = Object.values(MEET_FEATURES);
@@ -160,16 +213,42 @@ export function validateJwt(jwt: string) {
                         && featureValue !== 'true'
                         && featureValue !== 'false'
                     ) {
-                        errors.push(`- Invalid value for feature: ${feature}`);
+                        errors.push({
+                            key: JWT_VALIDATION_ERRORS.FEATURE_VALUE_INVALID,
+                            args: { feature }
+                        });
                     }
                 } else {
-                    errors.push(`- Invalid feature: ${feature}`);
+                    errors.push({
+                        key: JWT_VALIDATION_ERRORS.FEATURE_INVALID,
+                        args: { feature }
+                    });
                 }
             });
         }
     } catch (e: any) {
-        errors.push(e ? e.message : '- unspecified jwt error');
+        logger.error(`Unspecified JWT error${e?.message ? `: ${e.message}` : ''}`);
     }
 
     return errors;
+}
+
+/**
+ * Extracts and returns the expiration date of jwt.
+ *
+ * @param {string|undefined} jwt - The jwt to check.
+ * @returns {Date} The expiration date of the jwt.
+ */
+export function getJwtExpirationDate(jwt: string | undefined) {
+    if (!jwt) {
+        return;
+    }
+
+    const payload = jwtDecode(jwt);
+
+    if (payload) {
+        const { exp } = payload;
+
+        return new Date(exp * 1000);
+    }
 }

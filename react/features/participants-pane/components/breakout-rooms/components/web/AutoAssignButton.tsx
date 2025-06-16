@@ -1,14 +1,16 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import Button from '../../../../../base/ui/components/web/Button';
-import { BUTTON_TYPES } from '../../../../../base/ui/constants';
-// @ts-ignore
+import { BUTTON_TYPES } from '../../../../../base/ui/constants.web';
 import { autoAssignToBreakoutRooms } from '../../../../../breakout-rooms/actions';
 
-export const AutoAssignButton = () => {
+interface IProps {
+    className?: string;
+}
+
+export const AutoAssignButton = ({ className }: IProps) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
@@ -19,6 +21,7 @@ export const AutoAssignButton = () => {
     return (
         <Button
             accessibilityLabel = { t('breakoutRooms.actions.autoAssign') }
+            className = { className }
             fullWidth = { true }
             labelKey = { 'breakoutRooms.actions.autoAssign' }
             onClick = { onAutoAssign }

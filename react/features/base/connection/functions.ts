@@ -89,6 +89,13 @@ export function isInviteURLReady(stateOrGetState: IStateful): boolean {
  * @returns {string} A string in the form of a JID (i.e.
  * {@code user@server.com}).
  */
-export function toJid(id: string, { authdomain, domain }: { authdomain?: string; domain?: string; }): string {
+export function toJid(id: string, { authdomain, domain }: {
+    anonymousdomain?: string;
+    authdomain?: string;
+    domain?: string;
+    focus?: string;
+    muc?: string;
+    visitorFocus?: string;
+}): string {
     return id.indexOf('@') >= 0 ? id : `${id}@${authdomain || domain}`;
 }

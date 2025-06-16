@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
@@ -8,30 +7,30 @@ import { RECORD_TYPE } from '../../constants';
 /**
  * The type of the React {@code Component} props of {@link RecordItem}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The id of the record.
      */
-    id: string;
+    id?: string;
 
     /**
      * The name of the record.
      */
-    name: string;
+    name?: string;
 
     /**
      * The handler for the click event.
      */
-    onClick: (e?: React.MouseEvent) => void;
+    onClick?: (e?: React.MouseEvent) => void;
 
     /**
      * The type of the record.
      */
-    type: string;
-};
+    type?: string;
+}
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         recordItem: {
             display: 'flex',
@@ -70,7 +69,7 @@ const useStyles = makeStyles()((theme: Theme) => {
 /**
  * Component to render Record data.
  *
- * @param {Props} props - The props of the component.
+ * @param {IProps} props - The props of the component.
  * @returns {React$Element<any>}
  */
 export const RecordItem = ({
@@ -79,7 +78,7 @@ export const RecordItem = ({
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     onClick = () => {},
     type
-}: Props) => {
+}: IProps) => {
     const { t } = useTranslation();
     const Icon = RECORD_TYPE[type as keyof typeof RECORD_TYPE].icon;
     const { classes } = useStyles();
@@ -100,7 +99,7 @@ export const RecordItem = ({
                 <div
                     className = { classes.recordType }
                     key = { type }>
-                    {t(RECORD_TYPE[type].label)}
+                    {t(RECORD_TYPE[type ?? ''].label)}
                 </div>
             </div>
         </li>

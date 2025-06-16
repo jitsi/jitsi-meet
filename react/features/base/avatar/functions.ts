@@ -1,5 +1,5 @@
 import GraphemeSplitter from 'grapheme-splitter';
-import _ from 'lodash';
+import { split } from 'lodash-es';
 
 const AVATAR_COLORS = [
     '#6A50D3',
@@ -9,7 +9,7 @@ const AVATAR_COLORS = [
     '#B23683',
     '#F96E57',
     '#4380E2',
-    '#2AA076',
+    '#238561',
     '#00A8B3'
 ];
 const wordSplitRegex = (/\s+|\.+|_+|;+|-+|,+|\|+|\/+|\\+|"+|'+|\(+|\)+|#+|&+/);
@@ -63,7 +63,7 @@ function getFirstGraphemeUpper(word: string) {
  */
 export function getInitials(s?: string) {
     // We don't want to use the domain part of an email address, if it is one
-    const initialsBasis = _.split(s, '@')[0];
+    const initialsBasis = split(s, '@')[0];
     const [ firstWord, secondWord ] = initialsBasis.split(wordSplitRegex).filter(Boolean);
 
     return getFirstGraphemeUpper(firstWord) + getFirstGraphemeUpper(secondWord);
@@ -78,4 +78,14 @@ export function getInitials(s?: string) {
  */
 export function isCORSAvatarURL(url: string, corsURLs: Array<string> = []): boolean {
     return corsURLs.some(pattern => url.startsWith(pattern));
+}
+
+/**
+ * Checks if the passed prop is a loaded icon or not.
+ *
+ * @param {string? | Object?} iconProp - The prop to check.
+ * @returns {boolean}
+ */
+export function isIcon(iconProp?: string | Function): iconProp is Function {
+    return Boolean(iconProp) && (typeof iconProp === 'object' || typeof iconProp === 'function');
 }

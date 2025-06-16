@@ -1,35 +1,30 @@
-/* eslint-disable import/order */
-/* eslint-disable lines-around-comment */
-
 import { ExcalidrawApp } from '@jitsi/excalidraw';
-import React, { useCallback, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import clsx from 'clsx';
+import i18next from 'i18next';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { WithTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
-// @ts-ignore
+// @ts-expect-error
 import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
-// @ts-ignore
+import { IReduxState } from '../../../app/types';
+import { translate } from '../../../base/i18n/functions';
+import { getLocalParticipant } from '../../../base/participants/functions';
 import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
-// @ts-ignore
 import { getToolboxHeight } from '../../../toolbox/functions.web';
+import { shouldDisplayTileView } from '../../../video-layout/functions.any';
+import { WHITEBOARD_UI_OPTIONS } from '../../constants';
 import {
     getCollabDetails,
     getCollabServerUrl,
     isWhiteboardOpen,
     isWhiteboardVisible
 } from '../../functions';
-// @ts-ignore
-import { shouldDisplayTileView } from '../../../video-layout/functions.any';
-import { getLocalParticipant } from '../../../base/participants/functions';
-import { WHITEBOARD_UI_OPTIONS } from '../../constants';
-import { IState } from '../../../app/types';
 
 /**
  * Space taken by meeting elements like the subject and the watermark.
  */
 const HEIGHT_OFFSET = 80;
-
-declare const interfaceConfig: any;
 
 interface IDimensions {
 
@@ -43,21 +38,23 @@ interface IDimensions {
 /**
  * The Whiteboard component.
  *
+ * @param {Props} props - The React props passed to this component.
  * @returns {JSX.Element} - The React component.
  */
-const Whiteboard: () => JSX.Element = () => {
+const Whiteboard = (props: WithTranslation): JSX.Element => {
     const excalidrawRef = useRef<any>(null);
+    const excalidrawAPIRef = useRef<any>(null);
     const collabAPIRef = useRef<any>(null);
 
     const isOpen = useSelector(isWhiteboardOpen);
     const isVisible = useSelector(isWhiteboardVisible);
     const isInTileView = useSelector(shouldDisplayTileView);
-    const { clientHeight, clientWidth } = useSelector((state: IState) => state['features/base/responsive-ui']);
-    const { visible: filmstripVisible, isResizing } = useSelector((state: IState) => state['features/filmstrip']);
+    const { clientHeight, clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
+    const { visible: filmstripVisible, isResizing } = useSelector((state: IReduxState) => state['features/filmstrip']);
     const filmstripWidth: number = useSelector(getVerticalViewMaxWidth);
     const collabDetails = useSelector(getCollabDetails);
     const collabServerUrl = useSelector(getCollabServerUrl);
-    const { defaultRemoteDisplayName } = useSelector((state: IState) => state['features/base/config']);
+    const { defaultRemoteDisplayName } = useSelector((state: IReduxState) => state['features/base/config']);
     const localParticipantName = useSelector(getLocalParticipant)?.name || defaultRemoteDisplayName || 'Fellow Jitster';
 
     useEffect(() => {
@@ -99,6 +96,13 @@ const Whiteboard: () => JSX.Element = () => {
         };
     };
 
+    const getExcalidrawAPI = useCallback(excalidrawAPI => {
+        if (excalidrawAPIRef.current) {
+            return;
+        }
+        excalidrawAPIRef.current = excalidrawAPI;
+    }, []);
+
     const getCollabAPI = useCallback(collabAPI => {
         if (collabAPIRef.current) {
             return;
@@ -121,17 +125,34 @@ const Whiteboard: () => JSX.Element = () => {
             {
                 isOpen && (
                     <div className = 'excalidraw-wrapper'>
+                        {/*
+                          * Excalidraw renders a few lvl 2 headings. This is
+                          * quite fortunate, because we actually use lvl 1
+                          * headings to mark the big sections of our app. So make
+                          * sure to mark the Excalidraw context with a lvl 1
+                          * heading before showing the whiteboard.
+                          */
+                            <span
+                                aria-level = { 1 }
+                                className = 'sr-only'
+                                role = 'heading'>
+                                { props.t('whiteboard.accessibilityLabel.heading') }
+                            </span>
+                        }
                         <ExcalidrawApp
                             collabDetails = { collabDetails }
                             collabServerUrl = { collabServerUrl }
                             excalidraw = {{
                                 isCollaborating: true,
+                                langCode: i18next.language,
+
                                 // @ts-ignore
                                 ref: excalidrawRef,
                                 theme: 'light',
                                 UIOptions: WHITEBOARD_UI_OPTIONS
                             }}
-                            getCollabAPI = { getCollabAPI } />
+                            getCollabAPI = { getCollabAPI }
+                            getExcalidrawAPI = { getExcalidrawAPI } />
                     </div>
                 )
             }
@@ -139,4 +160,4 @@ const Whiteboard: () => JSX.Element = () => {
     );
 };
 
-export default Whiteboard;
+export default translate(Whiteboard);

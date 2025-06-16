@@ -1,16 +1,4 @@
 /**
- * The type of the action which sets the list of known remote participant IDs which
- * have an active screen share.
- *
- * @returns {{
- *     type: SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
- *     participantIds: Array<string>
- * }}
- */
-export const SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED
-    = 'SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED';
-
-/**
  * The type of the action which tells whether we are in carmode.
  *
  * @returns {{

@@ -1,23 +1,30 @@
 /* eslint-disable lines-around-comment */
+
 import React, { useCallback } from 'react';
-import { View } from 'react-native';
+import { View, ViewStyle } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
-// @ts-ignore
-import { openDialog, openSheet } from '../../../base/dialog';
-import { IconHorizontalPoints } from '../../../base/icons/svg';
-import IconButton from '../../../base/react/components/native/IconButton';
+import { IReduxState } from '../../../app/types';
+import { openDialog, openSheet } from '../../../base/dialog/actions';
+import {
+    BREAKOUT_ROOMS_BUTTON_ENABLED
+} from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
+import Icon from '../../../base/icons/components/Icon';
+import { IconDotsHorizontal, IconRingGroup } from '../../../base/icons/svg';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
-import { BUTTON_TYPES } from '../../../base/ui/constants';
-import MuteEveryoneDialog
+import IconButton from '../../../base/ui/components/native/IconButton';
+import { BUTTON_TYPES } from '../../../base/ui/constants.native';
+import {
+    navigate
+} from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { screen } from '../../../mobile/navigation/routes';
 // @ts-ignore
-    from '../../../video-menu/components/native/MuteEveryoneDialog';
-// @ts-ignore
+import MuteEveryoneDialog from '../../../video-menu/components/native/MuteEveryoneDialog';
 import { isMoreActionsVisible, isMuteAllVisible } from '../../functions';
 
-// @ts-ignore
 import { ContextMenuMore } from './ContextMenuMore';
-// @ts-ignore
 import styles from './styles';
 
 
@@ -28,6 +35,12 @@ import styles from './styles';
  */
 const ParticipantsPaneFooter = (): JSX.Element => {
     const dispatch = useDispatch();
+    const isBreakoutRoomsSupported = useSelector((state: IReduxState) =>
+        state['features/base/conference'].conference?.getBreakoutRooms()?.isSupported()
+    );
+    const isBreakoutRoomsEnabled = useSelector((state: IReduxState) =>
+        getFeatureFlag(state, BREAKOUT_ROOMS_BUTTON_ENABLED, true)
+    );
     const openMoreMenu = useCallback(() => dispatch(openSheet(ContextMenuMore)), [ dispatch ]);
     const muteAll = useCallback(() => dispatch(openDialog(MuteEveryoneDialog)),
         [ dispatch ]);
@@ -35,25 +48,46 @@ const ParticipantsPaneFooter = (): JSX.Element => {
     const showMuteAll = useSelector(isMuteAllVisible);
 
     return (
-        <View style = { styles.participantsPaneFooter }>
+        <View style = { styles.participantsPaneFooterContainer as ViewStyle }>
             {
-                showMuteAll && (
-                    <Button
-                        accessibilityLabel = 'participantsPane.actions.muteAll'
-                        labelKey = 'participantsPane.actions.muteAll'
-                        onClick = { muteAll }
-                        type = { BUTTON_TYPES.SECONDARY } />
-                )
+                isBreakoutRoomsSupported
+                && isBreakoutRoomsEnabled
+                && <Button
+                    accessibilityLabel = 'participantsPane.actions.breakoutRooms'
+                    // eslint-disable-next-line react/jsx-no-bind, no-confusing-arrow
+                    icon = { () => (
+                        <Icon
+                            color = { BaseTheme.palette.icon04 }
+                            size = { 20 }
+                            src = { IconRingGroup } />
+                    ) }
+                    labelKey = 'participantsPane.actions.breakoutRooms'
+                    // eslint-disable-next-line react/jsx-no-bind, no-confusing-arrow
+                    onClick = { () => navigate(screen.conference.breakoutRooms) }
+                    style = { styles.breakoutRoomsButton }
+                    type = { BUTTON_TYPES.SECONDARY } />
             }
-            {
-                showMoreActions && (
-                    <IconButton
-                        onPress = { openMoreMenu }
-                        src = { IconHorizontalPoints }
-                        style = { styles.moreButton }
-                        type = { BUTTON_TYPES.SECONDARY } />
-                )
-            }
+
+            <View style = { styles.participantsPaneFooter as ViewStyle }>
+                {
+                    showMuteAll && (
+                        <Button
+                            accessibilityLabel = 'participantsPane.actions.muteAll'
+                            labelKey = 'participantsPane.actions.muteAll'
+                            onClick = { muteAll }
+                            type = { BUTTON_TYPES.SECONDARY } />
+                    )
+                }
+                {
+                    showMoreActions && (
+                        <IconButton
+                            onPress = { openMoreMenu }
+                            src = { IconDotsHorizontal }
+                            style = { styles.moreButton }
+                            type = { BUTTON_TYPES.SECONDARY } />
+                    )
+                }
+            </View>
         </View>
     );
 };

@@ -1,15 +1,12 @@
-/* eslint-disable lines-around-comment */
 import React from 'react';
 import { Platform } from 'react-native';
+import { connect } from 'react-redux';
 
-import { connect } from '../../../base/redux/functions';
-// @ts-ignore
+import { IReduxState } from '../../../app/types';
 import { isDesktopShareButtonDisabled } from '../../functions.native';
 
-// @ts-ignore
-import ScreenSharingAndroidButton from './ScreenSharingAndroidButton.js';
-// @ts-ignore
-import ScreenSharingIosButton from './ScreenSharingIosButton.js';
+import ScreenSharingAndroidButton from './ScreenSharingAndroidButton';
+import ScreenSharingIosButton from './ScreenSharingIosButton';
 
 const ScreenSharingButton = (props: any) => (
     <>
@@ -30,7 +27,7 @@ const ScreenSharingButton = (props: any) => (
  * @private
  * @returns {Object}
  */
-function _mapStateToProps(state: object): object {
+function _mapStateToProps(state: IReduxState) {
     return {
         _disabled: isDesktopShareButtonDisabled(state)
     };

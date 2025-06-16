@@ -4,14 +4,13 @@ import { makeStyles } from 'tss-react/mui';
 
 import { translate } from '../../../i18n/functions';
 import Icon from '../../../icons/components/Icon';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { Tooltip } from '../../../tooltip';
+import Tooltip from '../../../tooltip/components/Tooltip';
+import { TOOLTIP_POSITION } from '../../../ui/constants.any';
 
 /**
  * The type of the React {@code Component} props of {@link BaseIndicator}.
  */
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Additional CSS class name.
@@ -41,7 +40,7 @@ interface Props extends WithTranslation {
     /**
      * The font size for the icon.
      */
-    iconSize: string;
+    iconSize: string | number;
 
     /**
      * The ID attribute to set on the root element of the component.
@@ -58,14 +57,12 @@ interface Props extends WithTranslation {
      * From which side of the indicator the tooltip should appear from,
      * defaulting to "top".
      */
-    tooltipPosition: string;
+    tooltipPosition: TOOLTIP_POSITION;
 }
 
 const useStyles = makeStyles()(() => {
     return {
         indicator: {
-            width: '20px',
-            height: '20px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
@@ -89,9 +86,9 @@ const BaseIndicator = ({
     t,
     tooltipKey,
     tooltipPosition = 'top'
-}: Props) => {
+}: IProps) => {
     const { classes: styles } = useStyles();
-    const style: any = {};
+    const style: { fontSize?: string | number; } = {};
 
     if (iconSize) {
         style.fontSize = iconSize;
@@ -106,6 +103,7 @@ const BaseIndicator = ({
                     className = { className }
                     id = { id }>
                     <Icon
+                        alt = { t(tooltipKey) }
                         className = { iconClassName }
                         color = { iconColor }
                         id = { iconId }

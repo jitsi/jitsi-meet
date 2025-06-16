@@ -10,13 +10,14 @@ if [ -z "${DOMAIN}" ] || [ -z "${EMAIL}" ]; then
     exit 1
 fi
 
+JITSI_INSTALLATION="DEBIAN"
 JAAS_ENDPOINT="https://account-provisioning.cloudflare.jitsi.net/operations"
 CHALLENGE_FILE="/usr/share/jitsi-meet/.well-known/jitsi-challenge.txt"
 SUPPORT_MSG="Reach out to JaaS support or retry with /usr/share/jitsi-meet/scripts/register-jaas-account.sh"
 
 create_error=0
 create_data=$(curl -s -f -X 'POST' "${JAAS_ENDPOINT}" -H 'Content-Type: application/json' -H 'accept: */*' \
-  -d "{ \"domain\": \"${DOMAIN}\", \"email\": \"${EMAIL}\" }") || create_error=$?
+  -d "{ \"domain\": \"${DOMAIN}\", \"email\": \"${EMAIL}\", \"jitsiInstallation\": \"${JITSI_INSTALLATION}\" }") || create_error=$?
 if [ ${create_error} -ne 0 ]; then
     echo "Account creation failed. Status: ${create_error}, response: ${create_data}"
     exit 2

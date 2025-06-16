@@ -21,12 +21,14 @@
 #import "JitsiMeetConferenceOptions.h"
 #import "JitsiMeetViewDelegate.h"
 
+typedef NS_ENUM(NSInteger, RecordingMode);
+
 @interface JitsiMeetView : UIView
 
 @property (nonatomic, nullable, weak) id<JitsiMeetViewDelegate> delegate;
 
 /**
- * Joins the conference specified by the given options. The gievn options will
+ * Joins the conference specified by the given options. The given options will
  * be merged with the defaultConferenceOptions (if set) in JitsiMeet. If there
  * is an already active conference it will be automatically left prior to
  * joining the new one.
@@ -46,5 +48,10 @@
 - (void)sendChatMessage:(NSString * _Nonnull)message :(NSString * _Nullable)to;
 - (void)setVideoMuted:(BOOL)muted;
 - (void)setClosedCaptionsEnabled:(BOOL)enabled;
+- (void)toggleCamera;
+- (void)showNotification:(NSString * _Nonnull)appearance :(NSString * _Nullable)description :(NSString * _Nullable)timeout :(NSString * _Nullable)title :(NSString * _Nullable)uid;
+- (void)hideNotification:(NSString * _Nullable)uid;
+- (void)startRecording:(RecordingMode)mode :(NSString * _Nullable)dropboxToken :(BOOL)shouldShare :(NSString * _Nullable)rtmpStreamKey :(NSString * _Nullable)rtmpBroadcastID :(NSString * _Nullable)youtubeStreamKey :(NSString * _Nullable)youtubeBroadcastID :(NSString * _Nullable)extraMetadata :(BOOL)transcription;
+- (void)stopRecording:(RecordingMode)mode :(BOOL)transcription;
 
 @end

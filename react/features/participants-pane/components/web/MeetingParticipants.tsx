@@ -1,57 +1,46 @@
-/* eslint-disable lines-around-comment */
-
-import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
-// @ts-ignore
-import { rejectParticipantAudio } from '../../../av-moderation/actions';
-// @ts-ignore
-import useContextMenu from '../../../base/components/context-menu/useContextMenu';
+import { IReduxState } from '../../../app/types';
+import { rejectParticipantAudio, rejectParticipantVideo } from '../../../av-moderation/actions';
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
-// @ts-ignore
-import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { MEDIA_TYPE } from '../../../base/media/constants';
-import { getParticipantById } from '../../../base/participants/functions';
-import { connect } from '../../../base/redux/functions';
+import { getParticipantById, isScreenShareParticipant } from '../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Input from '../../../base/ui/components/web/Input';
+import useContextMenu from '../../../base/ui/hooks/useContextMenu.web';
 import { normalizeAccents } from '../../../base/util/strings.web';
-// @ts-ignore
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
-// @ts-ignore
-import { showOverflowDrawer } from '../../../toolbox/functions';
-// @ts-ignore
-import { muteRemote } from '../../../video-menu/actions.any';
-// @ts-ignore
-import { getSortedParticipantIds, shouldRenderInviteButton } from '../../functions';
-// @ts-ignore
+import { isButtonEnabled, showOverflowDrawer } from '../../../toolbox/functions.web';
+import { muteRemote } from '../../../video-menu/actions.web';
+import { getSortedParticipantIds, isCurrentRoomRenamable, shouldRenderInviteButton } from '../../functions';
 import { useParticipantDrawer } from '../../hooks';
+import RenameButton from '../breakout-rooms/components/web/RenameButton';
 
 import { InviteButton } from './InviteButton';
-// @ts-ignore
 import MeetingParticipantContextMenu from './MeetingParticipantContextMenu';
-// @ts-ignore
 import MeetingParticipantItems from './MeetingParticipantItems';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
+        headingW: {
+            color: theme.palette.warning02
+        },
         heading: {
             color: theme.palette.text02,
-            // @ts-ignore
-            ...withPixelLineHeight(theme.typography.labelButton),
-            margin: `8px 0 ${participantsPaneTheme.panePadding}px`,
+            ...withPixelLineHeight(theme.typography.bodyShortBold),
+            marginBottom: theme.spacing(3),
 
             [`@media(max-width: ${participantsPaneTheme.MD_BREAKPOINT})`]: {
-                // @ts-ignore
-                ...withPixelLineHeight(theme.typography.labelButtonLarge)
+                ...withPixelLineHeight(theme.typography.bodyShortBoldLarge)
             }
         },
 
         search: {
+            margin: `${theme.spacing(3)} 0`,
+
             '& input': {
                 textAlign: 'center',
                 paddingRight: '16px'
@@ -60,15 +49,18 @@ const useStyles = makeStyles()((theme: Theme) => {
     };
 });
 
-type Props = {
-    currentRoom?: { name: string; };
+interface IProps {
+    currentRoom?: {
+        jid: string;
+        name: string;
+    };
     overflowDrawer?: boolean;
     participantsCount?: number;
     searchString: string;
     setSearchString: (newValue: string) => void;
     showInviteButton?: boolean;
     sortedParticipantIds?: Array<string>;
-};
+}
 
 /**
  * Renders the MeetingParticipantList component.
@@ -88,15 +80,18 @@ function MeetingParticipants({
     setSearchString,
     showInviteButton,
     sortedParticipantIds = []
-}: Props) {
+}: IProps) {
     const dispatch = useDispatch();
     const { t } = useTranslation();
 
-    const [ lowerMenu, , toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu();
-
+    const [ lowerMenu, , toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu<string>();
     const muteAudio = useCallback(id => () => {
         dispatch(muteRemote(id, MEDIA_TYPE.AUDIO));
         dispatch(rejectParticipantAudio(id));
+    }, [ dispatch ]);
+    const stopVideo = useCallback(id => () => {
+        dispatch(muteRemote(id, MEDIA_TYPE.VIDEO));
+        dispatch(rejectParticipantVideo(id));
     }, [ dispatch ]);
     const [ drawerParticipant, closeDrawer, openDrawerForParticipant ] = useParticipantDrawer();
 
@@ -108,40 +103,49 @@ function MeetingParticipants({
     // mounted.
     const participantActionEllipsisLabel = t('participantsPane.actions.moreParticipantOptions');
     const youText = t('chat.you');
-    const askUnmuteText = t('participantsPane.actions.askUnmute');
-    const muteParticipantButtonText = t('dialog.muteParticipantButton');
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
+    const _isCurrentRoomRenamable = useSelector(isCurrentRoomRenamable);
 
     const { classes: styles } = useStyles();
 
     return (
         <>
+            <span
+                aria-level = { 1 }
+                className = 'sr-only'
+                role = 'heading'>
+                { t('participantsPane.title') }
+            </span>
             <div className = { styles.heading }>
                 {currentRoom?.name
                     ? `${currentRoom.name} (${participantsCount})`
                     : t('participantsPane.headings.participantsList', { count: participantsCount })}
+                { currentRoom?.name && _isCurrentRoomRenamable
+                    && <RenameButton
+                        breakoutRoomJid = { currentRoom?.jid }
+                        name = { currentRoom?.name } /> }
             </div>
             {showInviteButton && <InviteButton />}
             <Input
+                accessibilityLabel = { t('participantsPane.search') }
                 className = { styles.search }
                 clearable = { true }
+                id = 'participants-search-input'
                 onChange = { setSearchString }
                 placeholder = { t('participantsPane.search') }
                 value = { searchString } />
             <div>
                 <MeetingParticipantItems
-                    askUnmuteText = { askUnmuteText }
                     isInBreakoutRoom = { isBreakoutRoom }
                     lowerMenu = { lowerMenu }
                     muteAudio = { muteAudio }
-                    muteParticipantButtonText = { muteParticipantButtonText }
                     openDrawerForParticipant = { openDrawerForParticipant }
                     overflowDrawer = { overflowDrawer }
                     participantActionEllipsisLabel = { participantActionEllipsisLabel }
                     participantIds = { sortedParticipantIds }
-                    participantsCount = { participantsCount }
                     raiseContextId = { raiseContext.entity }
                     searchString = { normalizeAccents(searchString) }
+                    stopVideo = { stopVideo }
                     toggleMenu = { toggleMenu }
                     youText = { youText } />
             </div>
@@ -165,9 +169,9 @@ function MeetingParticipants({
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState): Object {
+function _mapStateToProps(state: IReduxState) {
     let sortedParticipantIds: any = getSortedParticipantIds(state);
 
     // Filter out the virtual screenshare participants since we do not want them to be displayed as separate
@@ -175,11 +179,11 @@ function _mapStateToProps(state: IState): Object {
     sortedParticipantIds = sortedParticipantIds.filter((id: any) => {
         const participant = getParticipantById(state, id);
 
-        return !participant?.isVirtualScreenshareParticipant;
+        return !isScreenShareParticipant(participant);
     });
 
     const participantsCount = sortedParticipantIds.length;
-    const showInviteButton = shouldRenderInviteButton(state) && isToolbarButtonEnabled('invite', state);
+    const showInviteButton = shouldRenderInviteButton(state) && isButtonEnabled('invite', state);
     const overflowDrawer = showOverflowDrawer(state);
     const currentRoomId = getCurrentRoomId(state);
     const currentRoom = getBreakoutRooms(state)[currentRoomId];

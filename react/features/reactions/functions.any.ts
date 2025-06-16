@@ -1,14 +1,13 @@
-/* eslint-disable lines-around-comment */
 import { v4 as uuidv4 } from 'uuid';
 
-import { IState } from '../app/types';
-// @ts-ignore
-import { REACTIONS_ENABLED, getFeatureFlag } from '../base/flags';
+import { IReduxState } from '../app/types';
+import { REACTIONS_ENABLED } from '../base/flags/constants';
+import { getFeatureFlag } from '../base/flags/functions';
 import { getLocalParticipant } from '../base/participants/functions';
-// @ts-ignore
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
+import { iAmVisitor } from '../visitors/functions';
 
-import { REACTIONS, ReactionEmojiProps, ReactionThreshold, SOUNDS_THRESHOLDS } from './constants';
+import { IReactionEmojiProps, REACTIONS, ReactionThreshold, SOUNDS_THRESHOLDS } from './constants';
 import logger from './logger';
 
 /**
@@ -17,7 +16,7 @@ import logger from './logger';
  * @param {Object} state - The state of the application.
  * @returns {Array}
  */
-export function getReactionsQueue(state: IState): Array<ReactionEmojiProps> {
+export function getReactionsQueue(state: IReduxState): Array<IReactionEmojiProps> {
     return state['features/reactions'].queue;
 }
 
@@ -37,8 +36,8 @@ export function getReactionMessageFromBuffer(buffer: Array<string>): string {
  * @param {Array} buffer - The reactions buffer.
  * @returns {Array}
  */
-export function getReactionsWithId(buffer: Array<string>): Array<ReactionEmojiProps> {
-    return buffer.map<ReactionEmojiProps>(reaction => {
+export function getReactionsWithId(buffer: Array<string>): Array<IReactionEmojiProps> {
+    return buffer.map<IReactionEmojiProps>(reaction => {
         return {
             reaction,
             uid: uuidv4()
@@ -53,7 +52,7 @@ export function getReactionsWithId(buffer: Array<string>): Array<ReactionEmojiPr
  * @param {Array} reactions - Reactions array to be sent.
  * @returns {void}
  */
-export async function sendReactionsWebhook(state: IState, reactions: Array<string>) {
+export async function sendReactionsWebhook(state: IReduxState, reactions: Array<string>) {
     const { webhookProxyUrl: url } = state['features/base/config'];
     const { conference } = state['features/base/conference'];
     const { jwt } = state['features/base/jwt'];
@@ -154,7 +153,7 @@ export function getReactionsSoundsThresholds(reactions: Array<string>): Array<Re
  * @param {Object} state - The Redux state object.
  * @returns {boolean}
  */
-export function isReactionsEnabled(state: IState): boolean {
+export function isReactionsEnabled(state: IReduxState): boolean {
     const { disableReactions } = state['features/base/config'];
 
     if (navigator.product === 'ReactNative') {
@@ -162,4 +161,14 @@ export function isReactionsEnabled(state: IState): boolean {
     }
 
     return !disableReactions;
+}
+
+/**
+ * Returns true if the reactions buttons should be displayed anywhere on the page and false otherwise.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function shouldDisplayReactionsButtons(state: IReduxState): boolean {
+    return isReactionsEnabled(state) && !iAmVisitor(state);
 }

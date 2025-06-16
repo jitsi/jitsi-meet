@@ -1,5 +1,6 @@
-import { IState } from '../app/types';
-import { getParticipantById } from '../base/participants/functions';
+import { IReduxState } from '../app/types';
+import { IAnswerData } from './types';
+import { getParticipantById, getParticipantDisplayName } from '../base/participants/functions';
 
 /**
  * Selector creator for determining if poll results should be displayed or not.
@@ -8,7 +9,7 @@ import { getParticipantById } from '../base/participants/functions';
  * @returns {Function}
  */
 export function shouldShowResults(id: string) {
-    return function(state: IState) {
+    return function(state: IReduxState) {
         return Boolean(state['features/polls']?.polls[id].showResults);
     };
 }
@@ -20,7 +21,7 @@ export function shouldShowResults(id: string) {
  * @returns {Function}
  */
 export function getPoll(pollId: string) {
-    return function(state: IState) {
+    return function(state: IReduxState) {
         return state['features/polls'].polls[pollId];
     };
 }
@@ -31,25 +32,38 @@ export function getPoll(pollId: string) {
  * @returns {Function}
  */
 export function getPolls() {
-    return function(state: IState) {
-        const { polls } = state['features/polls'];
-        return Object.values(polls).map(poll => {
-          const participant = getParticipantById(state, poll.senderId);
-          return {
-            ...poll,
-            creatorName: participant ? participant.name : ''
-          }
-        })
-    };
+  return function (state: IReduxState) {
+    const { polls } = state['features/polls'];
+    return Object.values(polls).map(poll => {
+      const creatorName = getParticipantDisplayName(state, poll.senderId ?? "");
+      const answers = poll.answers?.map(answer => {
+        const answerVoters = answer.voters?.length ? [...answer.voters] : Object.keys({ ...answer.voters });
+        return {
+          ...answer,
+          voters: answerVoters.map(id => {
+            return {
+              id,
+              name: getParticipantDisplayName(state, id)
+            };
+          })
+        }
+      })
+      return {
+        ...poll,
+        answers,
+        creatorName
+      }
+    })
+  };
 }
 
 /**
  * Selector for calculating the number of unread poll messages.
  *
- * @param {IState} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @returns {number} The number of unread messages.
  */
-export function getUnreadPollCount(state: IState) {
+export function getUnreadPollCount(state: IReduxState) {
     const { nbUnreadPolls } = state['features/polls'];
 
     return nbUnreadPolls;
@@ -65,3 +79,17 @@ export function isSubmitAnswerDisabled(checkBoxStates: Array<boolean>) {
     return !checkBoxStates.find(checked => checked);
 }
 
+/**
+ * Check if the input array has identical answers.
+ *
+ * @param {Array<IAnswerData>} currentAnswers - The array of current answers to compare.
+ * @returns {boolean} - Returns true if the answers are identical.
+ */
+export function hasIdenticalAnswers(currentAnswers: Array<IAnswerData>): boolean {
+
+    const nonEmptyCurrentAnswers = currentAnswers.filter((answer): boolean => answer.name !== '');
+
+    const currentAnswersSet = new Set(nonEmptyCurrentAnswers.map(answer => answer.name));
+
+    return currentAnswersSet.size !== nonEmptyCurrentAnswers.length;
+}

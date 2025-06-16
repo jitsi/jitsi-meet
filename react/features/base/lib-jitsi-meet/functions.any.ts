@@ -1,8 +1,9 @@
 import { IStateful } from '../app/types';
+import { ConnectionFailedError } from '../connection/types';
 import { toState } from '../redux/functions';
 
-// @ts-ignore
 import JitsiMeetJS from './_';
+
 
 const JitsiConferenceErrors = JitsiMeetJS.errors.conference;
 const JitsiConnectionErrors = JitsiMeetJS.errors.connection;
@@ -18,15 +19,12 @@ const JitsiConnectionErrors = JitsiMeetJS.errors.connection;
  *
  * @returns {Promise<JitsiLocalTrack>}
  */
-export function createLocalTrack(type: string, deviceId: string, timeout?: number, additionalOptions?: Object) {
+export function createLocalTrack(type: string, deviceId: string | null, timeout?: number | null,
+        additionalOptions?: Object) {
     return (
         JitsiMeetJS.createLocalTracks({
             cameraDeviceId: deviceId,
             devices: [ type ],
-
-            // eslint-disable-next-line camelcase
-            firefox_fake_device:
-                window.config?.firefox_fake_device,
             micDeviceId: deviceId,
             timeout,
             ...additionalOptions
@@ -89,7 +87,7 @@ export function isFatalJitsiConferenceError(error: Error | string) {
  * indicates a fatal {@code JitsiConnection} error, {@code true}; otherwise,
  * {@code false}.
  */
-export function isFatalJitsiConnectionError(error: Error | string) {
+export function isFatalJitsiConnectionError(error: Error | string | ConnectionFailedError) {
     if (typeof error !== 'string') {
         error = error.name; // eslint-disable-line no-param-reassign
     }

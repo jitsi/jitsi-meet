@@ -24,11 +24,15 @@
 }
 
 + (void)activateWithAudioSession:(AVAudioSession *)session {
-    [self.rtcAudioSession audioSessionDidActivate:session];
+    if (!self.rtcAudioSession.useManualAudio) {
+        [self.rtcAudioSession audioSessionDidActivate:session];
+    }
 }
 
 + (void)deactivateWithAudioSession:(AVAudioSession *)session {
-    [self.rtcAudioSession audioSessionDidDeactivate:session];
+    if (!self.rtcAudioSession.useManualAudio) {
+        [self.rtcAudioSession audioSessionDidDeactivate:session];
+    }
 }
 
 @end

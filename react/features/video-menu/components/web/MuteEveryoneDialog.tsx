@@ -1,13 +1,10 @@
-/* eslint-disable lines-around-comment */
 import React from 'react';
+import { connect } from 'react-redux';
 
-// @ts-ignore
-import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n/functions';
-import { connect } from '../../../base/redux/functions';
+import Dialog from '../../../base/ui/components/web/Dialog';
 import Switch from '../../../base/ui/components/web/Switch';
-import AbstractMuteEveryoneDialog, { type Props, abstractMapStateToProps }
-// @ts-ignore
+import AbstractMuteEveryoneDialog, { type IProps, abstractMapStateToProps }
     from '../AbstractMuteEveryoneDialog';
 
 /**
@@ -16,25 +13,7 @@ import AbstractMuteEveryoneDialog, { type Props, abstractMapStateToProps }
  *
  * @augments AbstractMuteEveryoneDialog
  */
-class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
-
-    /**
-     * Toggles advanced moderation switch.
-     *
-     * @returns {void}
-     */
-    _onToggleModeration() {
-        // @ts-ignore
-        this.setState(state => {
-            return {
-                audioModerationEnabled: !state.audioModerationEnabled,
-                // @ts-ignore
-                content: this.props.t(state.audioModerationEnabled
-                    ? 'dialog.muteEveryoneDialog' : 'dialog.muteEveryoneDialogModerationOn'
-                )
-            };
-        });
-    }
+class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<IProps> {
 
     /**
      * Implements React's {@link Component#render()}.
@@ -45,38 +24,32 @@ class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
     render() {
         return (
             <Dialog
-                okKey = 'dialog.muteParticipantButton'
+                ok = {{ translationKey: 'dialog.muteParticipantButton' }}
                 onSubmit = { this._onSubmit }
-                // @ts-ignore
-                titleString = { this.props.title }
-                width = 'small'>
+                title = { this.props.title }>
                 <div className = 'mute-dialog'>
-                    {/* @ts-ignore */}
-                    { this.state.content }
-                    {/* @ts-ignore */}
-                    { this.props.isModerationSupported && this.props.exclude.length === 0 && (
-                        <>
-                            <div className = 'separator-line' />
-                            <div className = 'control-row'>
-                                <label htmlFor = 'moderation-switch'>
-                                    {/* @ts-ignore */}
-                                    {this.props.t('dialog.moderationAudioLabel')}
-                                </label>
-                                <Switch
-                                    // @ts-ignore
-                                    checked = { !this.state.audioModerationEnabled }
-                                    id = 'moderation-switch'
-                                    onChange = { this._onToggleModeration } />
-                            </div>
-                        </>
-                    )}
+                    {this.state.content}
+                    {
+                        this.props.isModerationSupported
+                        && this.props.exclude.length === 0
+                        && !this.props.isEveryoneModerator && (
+                            <>
+                                <div className = 'separator-line' />
+                                <div className = 'control-row'>
+                                    <label htmlFor = 'moderation-switch'>
+                                        {this.props.t('dialog.moderationAudioLabel')}
+                                    </label>
+                                    <Switch
+                                        checked = { !this.state.audioModerationEnabled }
+                                        id = 'moderation-switch'
+                                        onChange = { this._onToggleModeration } />
+                                </div>
+                            </>
+                        )}
                 </div>
             </Dialog>
         );
     }
-
-    _onSubmit: () => boolean;
 }
 
-// @ts-ignore
 export default translate(connect(abstractMapStateToProps)(MuteEveryoneDialog));

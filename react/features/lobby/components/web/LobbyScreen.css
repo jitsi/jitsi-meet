@@ -46,7 +46,6 @@
 }
 
 .lobby-screen {
-  padding-top: 130px;
   background-image: url("/images/lobby-bg-sm.jpeg") !important;
   background-repeat: no-repeat !important;    
   background-position: center !important;
@@ -58,6 +57,12 @@
   .lobby-screen {
       flex-direction: column-reverse;
       justify-content: initial;
+  }
+}
+
+@media (min-width: 1001px) {
+  .lobby-screen {
+    padding-top: 130px;
   }
 }
 
@@ -76,27 +81,27 @@
   }
 }
  
-.lobby-screen .content-controls { 
+.lobby-screen .we-team-content-controls { 
   margin-top: 16px;
 }
 
-.lobby-screen .content-controls span[role=heading],
-.lobby-screen .content-controls .title { 
+.lobby-screen .we-team-content-controls span[role=heading],
+.lobby-screen .we-team-content-controls .we-team-title { 
   color: #000 !important;
 }
 
-.lobby-screen .content-controls .title { 
+.lobby-screen .we-team-content-controls .we-team-title { 
   display: none;
 }
 
-.lobby-screen .content-controls .new-toolbox {
+.lobby-screen .we-team-content-controls .new-toolbox {
   background: #000000a6;
   border-radius: 10px;
   margin-bottom: 20px;
 }
 
 @media (min-width: 1001px) {
-  .lobby-screen .content-controls .new-toolbox {
+  .lobby-screen .we-team-content-controls .new-toolbox {
     position: fixed !important;
     left: 0;
     right: 0;
@@ -106,7 +111,7 @@
 }
 
  
-.lobby-screen .content {
+.lobby-screen .we-team-content {
   background: #ffffff8a !important;
   height: initial !important;
   padding: 0 20px!important;
@@ -116,7 +121,7 @@
 }
 
 @media (max-width: 1000px) {
-  .lobby-screen .content {
+  .lobby-screen .we-team-content {
     width: 100%;
     margin: 0 auto;
     border-radius: 0;
@@ -151,6 +156,11 @@
   bottom: 10px;
   background: #c9c3bdc7;
   border-radius: 5px;
+  padding: 6px;
+}
+
+.lobby-screen .preview-device-status > div {  
+  margin-top: 0px;
 }
 
 .we-team-lobby-music-control {

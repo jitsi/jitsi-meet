@@ -10,7 +10,7 @@ The translation of Jitsi Meet is handled editing manually the language files.
 
 You can use the `update-translation.js` script as follows to help you with that:
 
-```js
+```sh
 cd lang
 node update-translation.js main-es.json
 ```
@@ -29,7 +29,7 @@ You can add translatable text in the HTML:
 * **via attribute on HTML element** - add **data-i18n** attribute with value the key of the translatable text.
 
 
- ```
+ ```html
  <span data-i18n="dialog.OK">OK</span>
  ```
 
@@ -37,7 +37,7 @@ You can add translatable text in the HTML:
  You can also use APP.translation.generateTranslationHTML(key, options) to get this HTML code as Javascript string.
 
 
- ```
+ ```js
  APP.translation.generateTranslationHTML("dialog.OK") // returns <span data-i18n="dialog.OK">OK</span>
  ```
 
@@ -46,7 +46,7 @@ You can add translatable text in the HTML:
  **Note:** If you dynamically add HTML elements don't forget to call APP.translation.translateElement(jquery_selector) to translate the text initially.
 
 
- ```
+ ```js
  APP.translation.translateString("dialog.OK") // returns the value for the key of the current language file. "OK" for example.
  ```
 

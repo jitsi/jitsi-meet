@@ -1,6 +1,9 @@
-import _ from 'lodash';
+import { merge, union } from 'lodash-es';
 
 import { CONFERENCE_INFO } from '../../conference/components/constants';
+import { TOOLBAR_BUTTONS } from '../../toolbox/constants';
+import { ToolbarButton } from '../../toolbox/types';
+import { CONNECTION_PROPERTIES_UPDATED } from '../connection/actionTypes';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { equals } from '../redux/functions';
 
@@ -11,12 +14,14 @@ import {
     SET_CONFIG,
     UPDATE_CONFIG
 } from './actionTypes';
-import { IConfig } from './configType';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { _cleanupConfig } from './functions';
-
-declare let interfaceConfig: any;
+import {
+    IConfig,
+    IDeeplinkingConfig,
+    IDeeplinkingDesktopConfig,
+    IDeeplinkingMobileConfig,
+    IMobileDynamicLink
+} from './configType';
+import { _cleanupConfig, _setDeeplinkingDefaults } from './functions';
 
 /**
  * The initial state of the feature base/config when executing in a
@@ -41,29 +46,13 @@ const INITIAL_NON_RN_STATE: IConfig = {
  * @type {Object}
  */
 const INITIAL_RN_STATE: IConfig = {
-    analytics: {},
-
-    // FIXME The support for audio levels in lib-jitsi-meet polls the statistics
-    // of WebRTC at a short interval multiple times a second. Unfortunately,
-    // React Native is slow to fetch these statistics from the native WebRTC
-    // API, through the React Native bridge and eventually to JavaScript.
-    // Because the audio levels are of no interest to the mobile app, it is
-    // fastest to merely disable them.
-    disableAudioLevels: true,
-
-    p2p: {
-        disabledCodec: '',
-        disableH264: false, // deprecated
-        preferredCodec: 'H264',
-        preferH264: true // deprecated
-    }
 };
 
 /**
  * Mapping between old configs controlling the conference info headers visibility and the
  * new configs. Needed in order to keep backwards compatibility.
  */
-const CONFERENCE_HEADER_MAPPING: any = {
+const CONFERENCE_HEADER_MAPPING = {
     hideConferenceTimer: [ 'conference-timer' ],
     hideConferenceSubject: [ 'subject' ],
     hideParticipantsStats: [ 'participants-count' ],
@@ -75,6 +64,16 @@ export interface IConfigState extends IConfig {
         obfuscateRoomName?: boolean;
     };
     error?: Error;
+    oldConfig?: {
+        bosh?: string;
+        focusUserJid?: string;
+        hosts: {
+            domain: string;
+            muc: string;
+        };
+        p2p?: object;
+        websocket?: string;
+    };
 }
 
 ReducerRegistry.register<IConfigState>('features/base/config', (state = _getInitialState(), action): IConfigState => {
@@ -94,6 +93,24 @@ ReducerRegistry.register<IConfigState>('features/base/config', (state = _getInit
             */
             locationURL: action.locationURL
         };
+
+    case CONNECTION_PROPERTIES_UPDATED: {
+        const { region, shard } = action.properties;
+        const { deploymentInfo } = state;
+
+        if (deploymentInfo?.region === region && deploymentInfo?.shard === shard) {
+            return state;
+        }
+
+        return {
+            ...state,
+            deploymentInfo: JSON.parse(JSON.stringify({
+                ...deploymentInfo,
+                region,
+                shard
+            }))
+        };
+    }
 
     case LOAD_CONFIG_ERROR:
         // XXX LOAD_CONFIG_ERROR is one of the settlement execution paths of
@@ -169,7 +186,7 @@ function _setConfig(state: IConfig, { config }: { config: IConfig; }) {
         });
     }
 
-    const newState = _.merge(
+    const newState = merge(
         {},
         config,
         hdAudioOptions,
@@ -287,6 +304,55 @@ function _translateInterfaceConfig(oldValue: IConfig) {
         }
     }
 
+    // if we have `deeplinking` defined, ignore deprecated values, except `disableDeepLinking`.
+    // Otherwise, compose the config.
+    if (oldValue.deeplinking && newValue.deeplinking) { // make TS happy
+        newValue.deeplinking.disabled = oldValue.deeplinking.hasOwnProperty('disabled')
+            ? oldValue.deeplinking.disabled
+            : Boolean(oldValue.disableDeepLinking);
+    } else {
+        const disabled = Boolean(oldValue.disableDeepLinking);
+        const deeplinking: IDeeplinkingConfig = {
+            desktop: {} as IDeeplinkingDesktopConfig,
+            hideLogo: false,
+            disabled,
+            android: {} as IDeeplinkingMobileConfig,
+            ios: {} as IDeeplinkingMobileConfig
+        };
+
+        if (typeof interfaceConfig === 'object') {
+            const mobileDynamicLink = interfaceConfig.MOBILE_DYNAMIC_LINK;
+            const dynamicLink: IMobileDynamicLink | undefined = mobileDynamicLink ? {
+                apn: mobileDynamicLink.APN,
+                appCode: mobileDynamicLink.APP_CODE,
+                ibi: mobileDynamicLink.IBI,
+                isi: mobileDynamicLink.ISI,
+                customDomain: mobileDynamicLink.CUSTOM_DOMAIN
+            } : undefined;
+
+            if (deeplinking.desktop) {
+                deeplinking.desktop.appName = interfaceConfig.NATIVE_APP_NAME;
+            }
+
+            deeplinking.hideLogo = Boolean(interfaceConfig.HIDE_DEEP_LINKING_LOGO);
+            deeplinking.android = {
+                appName: interfaceConfig.NATIVE_APP_NAME,
+                appScheme: interfaceConfig.APP_SCHEME,
+                downloadLink: interfaceConfig.MOBILE_DOWNLOAD_LINK_ANDROID,
+                appPackage: interfaceConfig.ANDROID_APP_PACKAGE,
+                fDroidUrl: interfaceConfig.MOBILE_DOWNLOAD_LINK_F_DROID,
+                dynamicLink
+            };
+            deeplinking.ios = {
+                appName: interfaceConfig.NATIVE_APP_NAME,
+                appScheme: interfaceConfig.APP_SCHEME,
+                downloadLink: interfaceConfig.MOBILE_DOWNLOAD_LINK_IOS,
+                dynamicLink
+            };
+        }
+        newValue.deeplinking = deeplinking;
+    }
+
     return newValue;
 }
 
@@ -323,15 +389,23 @@ function _translateLegacyConfig(oldValue: IConfig) {
                     = (newValue.conferenceInfo?.alwaysVisible ?? [])
                     .filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
                 newValue.conferenceInfo.autoHide
-                    = _.union(newValue.conferenceInfo.autoHide, CONFERENCE_HEADER_MAPPING[key]);
+                    = union(newValue.conferenceInfo.autoHide, CONFERENCE_HEADER_MAPPING[key]);
             } else {
                 newValue.conferenceInfo.alwaysVisible
                     = (newValue.conferenceInfo.alwaysVisible ?? [])
-                    .filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+                    .filter(c => !CONFERENCE_HEADER_MAPPING[key as keyof typeof CONFERENCE_HEADER_MAPPING].includes(c));
                 newValue.conferenceInfo.autoHide
-                    = (newValue.conferenceInfo.autoHide ?? []).filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+                    = (newValue.conferenceInfo.autoHide ?? []).filter(c =>
+                        !CONFERENCE_HEADER_MAPPING[key as keyof typeof CONFERENCE_HEADER_MAPPING].includes(c));
             }
         });
+    }
+
+    newValue.welcomePage = oldValue.welcomePage || {};
+    if (oldValue.hasOwnProperty('enableWelcomePage')
+        && !newValue.welcomePage.hasOwnProperty('disabled')
+    ) {
+        newValue.welcomePage.disabled = !oldValue.enableWelcomePage;
     }
 
     newValue.prejoinConfig = oldValue.prejoinConfig || {};
@@ -360,6 +434,12 @@ function _translateLegacyConfig(oldValue: IConfig) {
         newValue.disabledSounds.unshift('INCOMING_MSG_SOUND');
     }
 
+    newValue.raisedHands = newValue.raisedHands || {};
+
+    if (oldValue.disableRemoveRaisedHandOnFocus) {
+        newValue.raisedHands.disableRemoveRaisedHandOnFocus = oldValue.disableRemoveRaisedHandOnFocus;
+    }
+
     if (oldValue.stereo || oldValue.opusMaxAverageBitrate) {
         newValue.audioQuality = {
             opusMaxAverageBitrate: oldValue.audioQuality?.opusMaxAverageBitrate ?? oldValue.opusMaxAverageBitrate,
@@ -370,7 +450,7 @@ function _translateLegacyConfig(oldValue: IConfig) {
     newValue.e2ee = newValue.e2ee || {};
 
     if (oldValue.e2eeLabels) {
-        newValue.e2ee.e2eeLabels = oldValue.e2eeLabels;
+        newValue.e2ee.labels = oldValue.e2eeLabels;
     }
 
     newValue.defaultLocalDisplayName
@@ -409,7 +489,7 @@ function _translateLegacyConfig(oldValue: IConfig) {
     if (oldValue.autoCaptionOnRecord !== undefined) {
         newValue.transcription = {
             ...newValue.transcription,
-            autoCaptionOnRecord: oldValue.autoCaptionOnRecord
+            autoTranscribeOnRecord: oldValue.autoCaptionOnRecord
         };
     }
 
@@ -449,6 +529,56 @@ function _translateLegacyConfig(oldValue: IConfig) {
         };
     }
 
+    newValue.speakerStats = newValue.speakerStats || {};
+
+    if (oldValue.disableSpeakerStatsSearch !== undefined
+        && newValue.speakerStats.disableSearch === undefined
+    ) {
+        newValue.speakerStats = {
+            ...newValue.speakerStats,
+            disableSearch: oldValue.disableSpeakerStatsSearch
+        };
+    }
+
+    if (oldValue.speakerStatsOrder !== undefined
+         && newValue.speakerStats.order === undefined) {
+        newValue.speakerStats = {
+            ...newValue.speakerStats,
+            order: oldValue.speakerStatsOrder
+        };
+    }
+
+    if (oldValue.autoKnockLobby !== undefined
+        && newValue.lobby?.autoKnock === undefined) {
+        newValue.lobby = {
+            ...newValue.lobby || {},
+            autoKnock: oldValue.autoKnockLobby
+        };
+    }
+
+    if (oldValue.enableLobbyChat !== undefined
+        && newValue.lobby?.enableChat === undefined) {
+        newValue.lobby = {
+            ...newValue.lobby || {},
+            enableChat: oldValue.enableLobbyChat
+        };
+    }
+
+    if (oldValue.hideLobbyButton !== undefined
+        && newValue.securityUi?.hideLobbyButton === undefined) {
+        newValue.securityUi = {
+            ...newValue.securityUi || {},
+            hideLobbyButton: oldValue.hideLobbyButton
+        };
+    }
+
+    if (oldValue.disableProfile) {
+        newValue.toolbarButtons = (newValue.toolbarButtons || TOOLBAR_BUTTONS)
+            .filter((button: ToolbarButton) => button !== 'profile');
+    }
+
+    _setDeeplinkingDefaults(newValue.deeplinking as IDeeplinkingConfig);
+
     return newValue;
 }
 
@@ -461,7 +591,7 @@ function _translateLegacyConfig(oldValue: IConfig) {
  * @returns {Object} The new state after the reduction of the specified action.
  */
 function _updateConfig(state: IConfig, { config }: { config: IConfig; }) {
-    const newState = _.merge({}, state, config);
+    const newState = merge({}, state, config);
 
     _cleanupConfig(newState);
 

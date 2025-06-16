@@ -20,7 +20,7 @@
         "noResults": "Geen resultaten die overeenkomen met de zoekopdracht",
         "outlookEmail": "Outlook e-mail",
         "phoneNumbers": "telefoonnummers",
-        "searching": "Zoeken...",
+        "searching": "Zoeken…",
         "shareInvite": "Uitnodiging voor vergadering delen",
         "shareLink": "Deel de link naar de vergadering om anderen uit te nodigen",
         "shareStream": "Deel de link naar de livestream",
@@ -93,6 +93,7 @@
         },
         "noMessagesMessage": "Er zijn nog geen berichten in de vergadering. Begin hier een gesprek!",
         "privateNotice": "Privébericht aan {{recipient}}",
+        "sendButton": "Verzenden",
         "smileysPanel": "Smiley paneel",
         "tabs": {
             "chat": "Gesprek",
@@ -109,7 +110,7 @@
         "installExtensionText": "Installeer de extensie voor Google Calendar en Office 365 integratie"
     },
     "connectingOverlay": {
-        "joiningRoom": "U wordt verbonden met uw vergadering..."
+        "joiningRoom": "U wordt verbonden met uw vergadering…"
     },
     "connection": {
         "ATTACHED": "Bijgevoegd",
@@ -121,9 +122,9 @@
         "DISCONNECTED": "Verbinding verbroken",
         "DISCONNECTING": "Verbinding verbreken",
         "ERROR": "Fout",
-        "FETCH_SESSION_ID": "Sessie-id ophalen...",
+        "FETCH_SESSION_ID": "Sessie-id ophalen…",
         "GET_SESSION_ID_ERROR": "Fout bij ophalen sessie-id: {{code}}",
-        "GOT_SESSION_ID": "Sessie-id ophalen... Klaar",
+        "GOT_SESSION_ID": "Sessie-id ophalen… Klaar",
         "LOW_BANDWIDTH": "Video voor {{displayName}} is uitgeschakeld om bandbreedte te besparen"
     },
     "connectionindicator": {
@@ -176,7 +177,7 @@
         "ifHaveApp": "Als u de app al hebt:",
         "joinInApp": "Deelnemen aan deze vergadering met de app",
         "launchWebButton": "Starten in web",
-        "title": "Uw vergadering wordt gestart in {{app}}...",
+        "title": "Uw vergadering wordt gestart in {{app}}…",
         "tryAgainButton": "Opnieuw proberen in desktop",
         "unsupportedBrowser": "Het lijkt erop dat u een browser gebruikt die wij niet ondersteunen."
     },
@@ -225,9 +226,9 @@
         "cameraUnknownError": "Kan de camera om een onbekende reden niet gebruiken.",
         "cameraUnsupportedResolutionError": "Uw camera ondersteunt de vereiste videoresolutie niet.",
         "close": "Sluiten",
-        "conferenceDisconnectMsg": "Controleer uw netwerkverbinding. Over {{seconds}} sec. wordt opnieuw geprobeerd verbinding te maken...",
+        "conferenceDisconnectMsg": "Controleer uw netwerkverbinding. Over {{seconds}} sec. wordt opnieuw geprobeerd verbinding te maken…",
         "conferenceDisconnectTitle": "Uw verbinding is verbroken.",
-        "conferenceReloadMsg": "Er wordt geprobeerd om dit op te lossen. Over {{seconds}} sec. wordt opnieuw geprobeerd verbinding te maken...",
+        "conferenceReloadMsg": "Er wordt geprobeerd om dit op te lossen. Over {{seconds}} sec. wordt opnieuw geprobeerd verbinding te maken…",
         "conferenceReloadTitle": "Er is helaas iets misgegaan.",
         "confirm": "Bevestigen",
         "confirmNo": "Nee",
@@ -375,7 +376,7 @@
         "veryGood": "Zeer Goed"
     },
     "helpView": {
-        "header": "Helpcentrum"
+        "title": "Helpcentrum"
     },
     "incomingCall": {
         "answer": "Beantwoorden",
@@ -461,7 +462,7 @@
         "errorLiveStreamNotEnabled": "Livestreamen is niet ingeschakeld voor {{email}}. Schakel livestreamen in of meld u aan met een account waarbij livestreamen is ingeschakeld.",
         "expandedOff": "De livestream is gestopt",
         "expandedOn": "De vergadering wordt momenteel gestreamd naar YouTube.",
-        "expandedPending": "De livestream wordt gestart...",
+        "expandedPending": "De livestream wordt gestart…",
         "failedToStart": "Livestream starten mislukt",
         "getStreamKeyManually": "Er konden geen livestreams opgehaald worden. Probeer uw livestream-sleutel van YouTube te krijgen.",
         "googlePrivacyPolicy": "Privacybeleid Google",
@@ -472,7 +473,7 @@
         "offBy": "{{name}} heeft de livestream gestopt.",
         "on": "Livestream",
         "onBy": "{{name}} heeft de livestream gestart.",
-        "pending": "Livestream starten...",
+        "pending": "Livestream starten…",
         "serviceName": "Livestreamservice",
         "signIn": "Aanmelden met Google",
         "signInCTA": "Meld u aan of voer uw livestream-sleutel van YouTube in.",
@@ -480,12 +481,11 @@
         "signedInAs": "U bent momenteel aangemeld als:",
         "start": "Een livestream starten",
         "streamIdHelp": "Wat is dit?",
+        "title": "Livestream",
         "unavailableTitle": "Livestreamen niet beschikbaar",
         "youtubeTerms": "Servicevoorwaarden YouTube"
     },
     "lobby": {
-        "admit": "Toelaten",
-        "admitAll": "Allen toelaten",
         "allow": "Toestaan",
         "backToKnockModeButton": "Geen wachtwoord, vraag om deel te mogen nemen",
         "dialogTitle": "Lobby-modus",
@@ -502,10 +502,10 @@
         "joinRejectedMessage": "Uw verzoek tot deelname is afgewezen door een moderator.",
         "joinRejectedTitle": "Verzoek tot deelname afgewezen",
         "joinTitle": "Deelnemen aan vergadering",
-        "joinWithPasswordMessage": "Poging tot deelname met wachtwoord, even geduld a.u.b...",
+        "joinWithPasswordMessage": "Poging tot deelname met wachtwoord, even geduld a.u.b…",
         "joiningMessage": "U neemt deel aan de vergadering zodra iemand uw verzoek accepteert",
-        "joiningTitle": "Vragen om deel te nemen aan vergadering...",
-        "joiningWithPasswordTitle": "Deelnemen met wachtwoord...",
+        "joiningTitle": "Vragen om deel te nemen aan vergadering…",
+        "joiningWithPasswordTitle": "Deelnemen met wachtwoord…",
         "knockButton": "Vragen om deel te nemen",
         "knockTitle": "Iemand wil deelnemen aan de vergadering",
         "knockingParticipantList": "Lijst van aankloppende deelnemers",
@@ -517,8 +517,7 @@
         "notificationTitle": "Lobby",
         "passwordField": "Voer wachtwoord voor vergadering in",
         "passwordJoinButton": "Deelnemen",
-        "reject": "Afwijzen",
-        "rejectAll": "Allen afwijzen",
+        "title": "Lobby",
         "toggleLabel": "Lobby inschakelen"
     },
     "localRecording": {
@@ -621,6 +620,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Toelaten",
+            "admitAll": "Allen toelaten",
             "allow": "Sta deelnemers toe:",
             "allowVideo": "Video toestaan",
             "askUnmute": "Vragen om dempen op te heffen",
@@ -633,19 +634,20 @@
             "mute": "Dempen",
             "muteAll": "Allen dempen",
             "muteEveryoneElse": "Alle anderen dempen",
+            "reject": "Afwijzen",
             "stopEveryonesVideo": "Camera's van iedereen uitzetten",
             "stopVideo": "Camera uitzetten",
             "unblockEveryoneMicCamera": "Deblokkeer microfoon en camera van allen",
             "videoModeration": "Hun camera aan te zetten"
         },
         "close": "Sluiten",
-        "header": "Deelnemers",
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Deelnemers aan vergadering ({{count}})",
             "waitingLobby": "In de lobby aan het wachten ({{count}})"
         },
-        "search": "Zoek deelnemers"
+        "search": "Zoek deelnemers",
+        "title": "Deelnemers"
     },
     "passwordDigitsOnly": "Maximaal {{number}} cijfers",
     "passwordSetRemotely": "ingesteld door een andere deelnemer",
@@ -665,6 +667,9 @@
             "questionPlaceholder": "Stel een vraag",
             "removeOption": "Verwijder optie",
             "send": "Verstuur"
+        },
+        "errors": {
+            "notUniqueOption": "Opties moeten uniek zijn"
         },
         "notification": {
             "description": "Open het peilingen tabblad om te stemmen",
@@ -687,7 +692,7 @@
         "callMe": "Bel me",
         "callMeAtNumber": "Bel me op dit nummer:",
         "calling": "Bellen",
-        "configuringDevices": "Apparaten instellen...",
+        "configuringDevices": "Apparaten instellen…",
         "connectedWithAudioQ": "Bent u verbonden met audio?",
         "connection": {
             "good": "Uw internetverbinding lijkt goed te zijn!",
@@ -726,20 +731,20 @@
     },
     "presenceStatus": {
         "busy": "Bezet",
-        "calling": "Bellen...",
+        "calling": "Bellen…",
         "connected": "Verbonden",
-        "connecting": "Verbinding maken...",
-        "connecting2": "Verbinding maken*...",
+        "connecting": "Verbinding maken…",
+        "connecting2": "Verbinding maken*…",
         "disconnected": "Verbinding verbroken",
         "expired": "Verlopen",
         "ignored": "Genegeerd",
-        "initializingCall": "Oproep Starten...",
+        "initializingCall": "Oproep Starten…",
         "invited": "Uitgenodigd",
         "rejected": "Geweigerd",
-        "ringing": "Gaat over..."
+        "ringing": "Gaat over…"
     },
     "privacyView": {
-        "header": "Privacy"
+        "title": "Privacy"
     },
     "profile": {
         "setDisplayNameLabel": "Uw weergavenaam instellen",
@@ -757,7 +762,7 @@
         "error": "Opname is mislukt. Probeer het opnieuw.",
         "expandedOff": "Opname is gestopt",
         "expandedOn": "De vergadering wordt momenteel opgenomen.",
-        "expandedPending": "Opname wordt gestart...",
+        "expandedPending": "Opname wordt gestart…",
         "failedToStart": "Opname starten mislukt",
         "fileSharingdescription": "Opname delen met deelnemers aan vergadering",
         "limitNotificationDescriptionNative": "Vanwege een grote vraag wordt uw opname beperkt tot {{limit}} min. Voor ongelimiteerde opnamen, probeer <3>{{app}}</3>.",
@@ -768,12 +773,13 @@
         "offBy": "{{name}} heeft de opname gestopt",
         "on": "Opnemen",
         "onBy": "{{name}} heeft de opname gestart",
-        "pending": "Voorbereiden op opnemen van de vergadering...",
+        "pending": "Voorbereiden op opnemen van de vergadering…",
         "rec": "OPN",
         "serviceDescription": "Uw opname wordt opgeslagen door de opnameservice",
         "serviceName": "Opnameservice",
         "signIn": "Aanmelden",
         "signOut": "Afmelden",
+        "title": "Opnemen",
         "unavailable": "Oeps! {{serviceName}} is momenteel niet beschikbaar. Er wordt aan een oplossing gewerkt. Probeer het later opnieuw.",
         "unavailableTitle": "Opname niet beschikbaar"
     },
@@ -785,7 +791,7 @@
         "about": "U kunt een $t(lockRoomPassword) toevoegen aan uw vergadering. Deelnemers moeten het $t(lockRoomPassword) opgeven voordat zij aan de vergadering mogen deelnemen.",
         "aboutReadOnly": "Moderators kunnen een $t(lockRoomPassword) toevoegen aan de vergadering. Deelnemers moeten het $t(lockRoomPassword) opgeven voordat zij aan de vergadering mogen deelnemen.",
         "insecureRoomNameWarning": "De naam van de ruimte is onveilig. Ongewenste deelnemers kunnen deelnemen aan uw vergadering. Overweeg uw vergadering te beveiligen via de beveiligingsknop.",
-        "securityOptions": "Beveiligingsopties"
+        "title": "Beveiligingsopties"
     },
     "settings": {
         "calendar": {
@@ -851,6 +857,8 @@
         "hours": "{{count}}u",
         "minutes": "{{count}}m",
         "name": "Naam",
+        "search": "Zoeken",
+        "searchHint": "Zoek deelnemers",
         "seconds": "{{count}}s",
         "speakerStats": "Sprekerstatistieken",
         "speakerTime": "Sprekertijd"
@@ -878,6 +886,7 @@
             "document": "Gedeeld document in- of uitschakelen",
             "download": "Download onze apps",
             "embedMeeting": "Vergadering embedden",
+            "endConference": "Vergadering voor iedereen beëindigen",
             "feedback": "Feedback achterlaten",
             "fullScreen": "Volledig scherm in- of uitschakelen",
             "grantModerator": "Moderatorrechten verlenen",
@@ -885,6 +894,7 @@
             "help": "Hulp",
             "invite": "Personen uitnodigen",
             "kick": "Deelnemer verwijderen",
+            "leaveConference": "Vergadering verlaten",
             "lobbyButton": "Lobby-modus in- of uitschakelen",
             "localRecording": "Besturingselementen voor lokale opname in- of uitschakelen",
             "lockRoom": "Wachtwoord voor vergadering in- of uitschakelen",
@@ -934,6 +944,7 @@
         "download": "Download onze apps",
         "e2ee": "Eind-tot-eind-versleuteling",
         "embedMeeting": "Vergadering embedden",
+        "endConference": "Vergadering voor iedereen beëindigen",
         "enterFullScreen": "Volledig scherm weergeven",
         "enterTileView": "Tegelweergave openen",
         "exitFullScreen": "Volledig scherm sluiten",
@@ -944,6 +955,7 @@
         "invite": "Personen uitnodigen",
         "joinBreakoutRoom": "Deelnemen aan aparte vergaderruimte",
         "leaveBreakoutRoom": "Aparte vergaderruimte verlaten",
+        "leaveConference": "Vergadering verlaten",
         "lobbyButtonDisable": "Schakel lobby-modus uit",
         "lobbyButtonEnable": "Schakel lobby-modus in",
         "login": "Aanmelden",
@@ -995,22 +1007,13 @@
         "failedToStart": "Transcriberen starten mislukt",
         "labelToolTip": "De vergadering wordt getranscribeerd",
         "off": "Transcriberen gestopt",
-        "pending": "Voorbereiden op transcriberen van de vergadering...",
+        "pending": "Voorbereiden op transcriberen van de vergadering…",
         "start": "Weergave van ondertiteling starten",
         "stop": "Weergave van ondertiteling stoppen",
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Selecteer <b><i>Toestaan</i></b> wanneer uw browser om toegangsrechten vraagt.",
-        "chromeGrantPermissions": "Selecteer <b><i>Toestaan</i></b> wanneer uw browser om toegangsrechten vraagt.",
-        "edgeGrantPermissions": "Selecteer <b><i>Ja</i></b> wanneer uw browser om toegangsrechten vraagt.",
-        "electronGrantPermissions": "Verleen toestemming om uw camera en microfoon te gebruiken.",
-        "firefoxGrantPermissions": "Selecteer <b><i>Geselecteerd apparaat delen</i></b> wanneer uw browser om toegangsrechten vraagt.",
-        "iexplorerGrantPermissions": "Selecteer <b><i>OK</i></b> wanneer uw browser om toegangsrechten vraagt.",
-        "nwjsGrantPermissions": "Verleen toestemming om uw camera en microfoon te gebruiken.",
-        "operaGrantPermissions": "Selecteer <b><i>Toestaan</i></b> wanneer uw browser om toegangsrechten vraagt.",
-        "react-nativeGrantPermissions": "Selecteer <b><i>Toestaan</i></b> wanneer uw browser om toegangsrechten vraagt.",
-        "safariGrantPermissions": "Selecteer <b><i>OK</i></b> wanneer uw browser om toegangsrechten vraagt."
+        "grantPermissions": "Verleen toestemming om uw camera en microfoon te gebruiken."
     },
     "videoSIPGW": {
         "busy": "Er worden middelen vrijgemaakt. Probeer het over enkele minuten opnieuw.",
@@ -1065,7 +1068,7 @@
         "apply": "Toepassen",
         "blur": "Vervagen",
         "none": "Geen",
-        "pleaseWait": "Even geduld a.u.b...",
+        "pleaseWait": "Even geduld a.u.b…",
         "removeBackground": "Verwijder achtergrond",
         "slightBlur": "Licht vervagen",
         "title": "Achtergronden"

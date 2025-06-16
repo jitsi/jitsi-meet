@@ -12,6 +12,7 @@ export interface IJwtState {
     server?: string;
     tenant?: string;
     user?: {
+        id: string;
         name: string;
     };
 }

@@ -1,30 +1,37 @@
-export interface Participant {
+import { IJitsiConference } from '../conference/reducer';
+
+export enum FakeParticipant {
+    LocalScreenShare = 'LocalScreenShare',
+    RemoteScreenShare = 'RemoteScreenShare',
+    SharedVideo = 'SharedVideo',
+    Whiteboard = 'Whiteboard'
+}
+
+export interface IParticipant {
     avatarURL?: string;
     botType?: string;
-    conference?: Object;
-    connectionStatus?: string;
+    conference?: IJitsiConference;
     displayName?: string;
     dominantSpeaker?: boolean;
     e2eeEnabled?: boolean;
     e2eeSupported?: boolean;
+    e2eeVerificationAvailable?: boolean;
+    e2eeVerified?: boolean;
     email?: string;
-    features?: {
-        'screen-sharing'?: boolean | string;
-    };
+    fakeParticipant?: FakeParticipant;
+    features?: IParticipantFeatures;
     getId?: Function;
     id: string;
-    isFakeParticipant?: boolean;
     isJigasi?: boolean;
-    isLocalScreenShare?: boolean;
+    isPromoted?: boolean;
     isReplaced?: boolean;
     isReplacing?: number;
-    isVirtualScreenshareParticipant?: boolean;
-    isWhiteboard?: boolean;
+    isSilent?: boolean;
     jwtId?: string;
     loadableAvatarUrl?: string;
     loadableAvatarUrlUseCORS?: boolean;
     local?: boolean;
-    localRecording?: string;
+    localRecording?: boolean;
     name?: string;
     pinned?: boolean;
     presence?: string;
@@ -32,10 +39,11 @@ export interface Participant {
     region?: string;
     remoteControlSessionStatus?: boolean;
     role?: string;
+    sources?: Map<string, Map<string, ISourceInfo>>;
     supportsRemoteControl?: boolean;
 }
 
-export interface LocalParticipant extends Participant {
+export interface ILocalParticipant extends IParticipant {
     audioOutputDeviceId?: string;
     cameraDeviceId?: string;
     jwtId?: string;
@@ -46,6 +54,33 @@ export interface LocalParticipant extends Participant {
     userSelectedMicDeviceLabel?: string;
 }
 
+export interface IParticipantFeatures {
+    'branding'?: boolean | string;
+    'calendar'?: boolean | string;
+    'flip'?: boolean | string;
+    'inbound-call'?: boolean | string;
+    'livestreaming'?: boolean | string;
+    'lobby'?: boolean | string;
+    'moderation'?: boolean | string;
+    'outbound-call'?: boolean | string;
+    'recording'?: boolean | string;
+    'room'?: boolean | string;
+    'screen-sharing'?: boolean | string;
+    'sip-inbound-call'?: boolean | string;
+    'sip-outbound-call'?: boolean | string;
+    'transcription'?: boolean | string;
+}
+
+export interface ISourceInfo {
+    muted: boolean;
+    videoType: string;
+}
+
 export interface IJitsiParticipant {
+    getDisplayName: () => string;
     getId: () => string;
+    getJid: () => string;
+    getRole: () => string;
+    getSources: () => Map<string, Map<string, ISourceInfo>>;
+    isHidden: () => boolean;
 }

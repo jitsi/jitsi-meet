@@ -1,48 +1,42 @@
-/* eslint-disable lines-around-comment */
-import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
+import { IReduxState } from '../../../app/types';
 import {
     requestDisableAudioModeration,
     requestDisableVideoModeration,
     requestEnableAudioModeration,
     requestEnableVideoModeration
-    // @ts-ignore
 } from '../../../av-moderation/actions';
 import {
     isEnabled as isAvModerationEnabled,
     isSupported as isAvModerationSupported
-    // @ts-ignore
 } from '../../../av-moderation/functions';
-import ContextMenu from '../../../base/components/context-menu/ContextMenu';
-import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
-// @ts-ignore
-import { openDialog } from '../../../base/dialog';
+import { openDialog } from '../../../base/dialog/actions';
 import {
     IconCheck,
-    IconHorizontalPoints,
+    IconDotsHorizontal,
     IconVideoOff
 } from '../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import {
     getParticipantCount,
+    getRaiseHandsQueue,
     isEveryoneModerator
 } from '../../../base/participants/functions';
-// @ts-ignore
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import ContextMenu from '../../../base/ui/components/web/ContextMenu';
+import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
-import {
-    openSettingsDialog,
-    shouldShowModeratorSettings
-    // @ts-ignore
-} from '../../../settings';
+import { openSettingsDialog } from '../../../settings/actions.web';
 import { SETTINGS_TABS } from '../../../settings/constants';
-// @ts-ignore
-import { MuteEveryonesVideoDialog } from '../../../video-menu/components';
+import { shouldShowModeratorSettings } from '../../../settings/functions.web';
+import LowerHandButton from '../../../video-menu/components/web/LowerHandButton';
+import MuteEveryonesVideoDialog from '../../../video-menu/components/web/MuteEveryonesVideoDialog';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         contextMenu: {
             bottom: 'auto',
@@ -54,6 +48,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
 
         text: {
+            ...withPixelLineHeight(theme.typography.bodyShortRegular),
             color: theme.palette.text02,
             padding: '10px 16px',
             height: '40px',
@@ -71,7 +66,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     };
 });
 
-type Props = {
+interface IProps {
 
     /**
      * Whether the menu is open.
@@ -87,11 +82,12 @@ type Props = {
      * Callback for the mouse leaving this item.
      */
     onMouseLeave?: (e?: React.MouseEvent) => void;
-};
+}
 
-export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props) => {
+export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProps) => {
     const dispatch = useDispatch();
-    const isModerationSupported = useSelector(isAvModerationSupported);
+    const isModerationSupported = useSelector((state: IReduxState) => isAvModerationSupported()(state));
+    const raisedHandsQueue = useSelector(getRaiseHandsQueue);
     const allModerators = useSelector(isEveryoneModerator);
     const isModeratorSettingsTabEnabled = useSelector(shouldShowModeratorSettings);
     const participantCount = useSelector(getParticipantCount);
@@ -140,6 +136,7 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props
 
     return (
         <ContextMenu
+            activateFocusTrap = { true }
             className = { classes.contextMenu }
             hidden = { !isOpen }
             isDrawerOpen = { isOpen }
@@ -153,6 +150,7 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props
                     onClick: muteAllVideo,
                     text: t('participantsPane.actions.stopEveryonesVideo')
                 } ] } />
+            {raisedHandsQueue.length !== 0 && <LowerHandButton />}
             {!isBreakoutRoom && isModerationSupported && (participantCount === 1 || !allModerators) && (
                 <ContextMenuItemGroup actions = { actions }>
                     <div className = { classes.text }>
@@ -165,7 +163,7 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props
                     actions = { [ {
                         accessibilityLabel: t('participantsPane.actions.moreModerationControls'),
                         id: 'participants-pane-open-moderation-control-settings',
-                        icon: IconHorizontalPoints,
+                        icon: IconDotsHorizontal,
                         onClick: openModeratorSettings,
                         text: t('participantsPane.actions.moreModerationControls')
                     } ] } />

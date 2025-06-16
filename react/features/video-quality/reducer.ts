@@ -13,8 +13,6 @@ import {
     SET_PREFERRED_VIDEO_QUALITY
 } from './actionTypes';
 import { VIDEO_QUALITY_LEVELS } from './constants';
-/* eslint-disable-next-line lines-around-comment */
-// @ts-ignore
 import { validateMinHeightForQualityLvl } from './functions';
 import logger from './logger';
 

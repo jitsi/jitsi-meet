@@ -1,4 +1,5 @@
-import { MediaType } from '../media/constants';
+import { AnyAction } from 'redux';
+
 import { PARTICIPANT_ID_CHANGED } from '../participants/actionTypes';
 import ReducerRegistry from '../redux/ReducerRegistry';
 import { set } from '../redux/functions';
@@ -11,51 +12,9 @@ import {
     TRACK_NO_DATA_FROM_SOURCE,
     TRACK_REMOVED,
     TRACK_UPDATED,
-    TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
     TRACK_WILL_CREATE
 } from './actionTypes';
-
-export interface ITrack {
-    isReceivingData: boolean;
-    jitsiTrack: any;
-    lastMediaEvent?: string;
-    local: boolean;
-    mediaType: MediaType;
-    mirror: boolean;
-    muted: boolean;
-    noDataFromSourceNotificationInfo?: {
-        timeout?: number;
-        uid?: string;
-    };
-    participantId: string;
-    streamingStatus?: string;
-    videoStarted: boolean;
-    videoType?: string | null;
-}
-
-/**
- * Track type.
- *
- * @typedef {object} Track
- * @property {JitsiLocalTrack|JitsiRemoteTrack} jitsiTrack - The associated
- * {@code JitsiTrack} instance. Optional for local tracks if those are still
- * being created (ie {@code getUserMedia} is still in progress).
- * @property {Promise} [gumProcess] - If a local track is still being created,
- * it will have no {@code JitsiTrack}, but a {@code gumProcess} set to a
- * {@code Promise} with and extra {@code cancel()}.
- * @property {boolean} local=false - If the track is local.
- * @property {MEDIA_TYPE} mediaType=false - The media type of the track.
- * @property {boolean} mirror=false - The indicator which determines whether the
- * display/rendering of the track should be mirrored. It only makes sense in the
- * context of video (at least at the time of this writing).
- * @property {boolean} muted=false - If the track is muted.
- * @property {(string|undefined)} participantId - The ID of the participant whom
- * the track belongs to.
- * @property {boolean} videoStarted=false - If the video track has already
- * started to play.
- * @property {(VIDEO_TYPE|undefined)} videoType - The type of video track if
- * any.
- */
+import { ITrack } from './types';
 
 /**
  * Reducer function for a single track.
@@ -72,7 +31,7 @@ export interface ITrack {
  * @param {Participant} action.participant - Information about participant.
  * @returns {Track|undefined}
  */
-function track(state: ITrack, action: any) {
+function track(state: ITrack, action: AnyAction) {
     switch (action.type) {
     case PARTICIPANT_ID_CHANGED:
         if (state.participantId === action.oldValue) {
@@ -102,20 +61,7 @@ function track(state: ITrack, action: any) {
         }
         break;
     }
-    case TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT: {
-        const t = action.track;
 
-        if (state.jitsiTrack === t) {
-            if (state.lastMediaEvent !== action.name) {
-
-                return {
-                    ...state,
-                    lastMediaEvent: action.name
-                };
-            }
-        }
-        break;
-    }
     case TRACK_NO_DATA_FROM_SOURCE: {
         const t = action.track;
 
@@ -145,10 +91,8 @@ ReducerRegistry.register<ITracksState>('features/base/tracks', (state = [], acti
     switch (action.type) {
     case PARTICIPANT_ID_CHANGED:
     case TRACK_NO_DATA_FROM_SOURCE:
-    case TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT:
     case TRACK_UPDATED:
         return state.map((t: ITrack) => track(t, action));
-
     case TRACK_ADDED: {
         let withoutTrackStub = state;
 

@@ -9,6 +9,7 @@ import {
     OPEN_SHEET
 } from './actionTypes';
 import { isDialogOpen } from './functions';
+import logger from './logger';
 
 /**
  * Signals Dialog to close its dialog.
@@ -22,7 +23,9 @@ import { isDialogOpen } from './functions';
  *     component: (React.Component | undefined)
  * }}
  */
-export function hideDialog(component?: ComponentType) {
+export function hideDialog(component?: ComponentType<any>) {
+    logger.info(`Hide dialog: ${getComponentDisplayName(component)}`);
+
     return {
         type: HIDE_DIALOG,
         component
@@ -54,7 +57,9 @@ export function hideSheet() {
  *     componentProps: (Object | undefined)
  * }}
  */
-export function openDialog(component: ComponentType, componentProps?: Object) {
+export function openDialog(component: ComponentType<any>, componentProps?: Object) {
+    logger.info(`Open dialog: ${getComponentDisplayName(component)}`);
+
     return {
         type: OPEN_DIALOG,
         component,
@@ -74,7 +79,7 @@ export function openDialog(component: ComponentType, componentProps?: Object) {
  *     componentProps: (Object | undefined)
  * }}
  */
-export function openSheet(component: ComponentType, componentProps?: Object) {
+export function openSheet(component: ComponentType<any>, componentProps?: Object) {
     return {
         type: OPEN_SHEET,
         component,
@@ -92,7 +97,7 @@ export function openSheet(component: ComponentType, componentProps?: Object) {
  * specified {@code component}.
  * @returns {Function}
  */
-export function toggleDialog(component: ComponentType, componentProps?: Object) {
+export function toggleDialog(component: ComponentType<any>, componentProps?: Object) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         if (isDialogOpen(getState, component)) {
             dispatch(hideDialog(component));
@@ -100,4 +105,22 @@ export function toggleDialog(component: ComponentType, componentProps?: Object) 
             dispatch(openDialog(component, componentProps));
         }
     };
+}
+
+/**
+ * Extracts a printable name for a dialog component.
+ *
+ * @param {Object} component - The component to extract the name for.
+ *
+ * @returns {string} The display name.
+ */
+function getComponentDisplayName(component?: ComponentType<any>) {
+    if (!component) {
+        return '';
+    }
+
+    const name = component.displayName ?? component.name ?? 'Component';
+
+    return name.replace('withI18nextTranslation(Connect(', '') // dialogs with translations
+        .replace('))', ''); // dialogs with translations suffix
 }

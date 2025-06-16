@@ -120,12 +120,6 @@ function getConfig(options = {}) {
                     // Avoid loading babel.config.js, since we only use it for React Native.
                     configFile: false,
 
-                    // XXX The require.resolve below solves failures to locate the
-                    // presets when lib-jitsi-meet, for example, is npm linked in
-                    // jitsi-meet.
-                    plugins: [
-                        require.resolve('@babel/plugin-proposal-export-default-from')
-                    ],
                     presets: [
                         [
                             require.resolve('@babel/preset-env'),
@@ -143,15 +137,24 @@ function getConfig(options = {}) {
                                     electron: 10,
                                     firefox: 68,
                                     safari: 14
-                                }
+                                },
 
+                                // Consider stage 3 proposals which are implemented by some browsers already.
+                                shippedProposals: true,
+
+                                // Detect usage of modern JavaScript features and automatically polyfill them
+                                // with core-js.
+                                useBuiltIns: 'usage',
+
+                                // core-js version to use, must be in sync with the version in package.json.
+                                corejs: '3.40'
                             }
                         ],
-                        require.resolve('@babel/preset-flow'),
                         require.resolve('@babel/preset-react')
                     ]
                 },
-                test: /\.jsx?$/
+                test: /\.(j|t)sx?$/,
+                exclude: /node_modules/
             }, {
                 // Allow CSS to be imported into JavaScript.
 
@@ -160,21 +163,6 @@ function getConfig(options = {}) {
                     'style-loader',
                     'css-loader'
                 ]
-            }, {
-                test: /\/node_modules\/@atlaskit\/modal-dialog\/.*\.js$/,
-                resolve: {
-                    alias: {
-                        'react-focus-lock': `${__dirname}/react/features/base/util/react-focus-lock-wrapper.js`,
-                        '../styled/Modal': `${__dirname}/react/features/base/dialog/components/web/ThemedDialog.js`
-                    }
-                }
-            }, {
-                test: /\/react\/features\/base\/util\/react-focus-lock-wrapper.js$/,
-                resolve: {
-                    alias: {
-                        'react-focus-lock': `${__dirname}/node_modules/react-focus-lock`
-                    }
-                }
             }, {
                 test: /\.svg$/,
                 use: [ {
@@ -189,7 +177,8 @@ function getConfig(options = {}) {
                 exclude: /node_modules/,
                 loader: 'ts-loader',
                 options: {
-                    transpileOnly: !isProduction // Skip type checking for dev builds.
+                    configFile: 'tsconfig.web.json',
+                    transpileOnly: !isProduction // Skip type checking for dev builds.,
                 }
             } ]
         },
@@ -227,6 +216,7 @@ function getConfig(options = {}) {
             extensions: [
                 '.web.js',
                 '.web.ts',
+                '.web.tsx',
 
                 // Typescript:
                 '.tsx',
@@ -265,8 +255,9 @@ function getDevServerConfig() {
         },
         host: '127.0.0.1',
         hot: true,
-        proxy: {
-            '/': {
+        proxy: [
+            {
+                context: [ '/' ],
                 bypass: devServerProxyBypass,
                 secure: false,
                 target: devServerProxyTarget,
@@ -274,10 +265,13 @@ function getDevServerConfig() {
                     'Host': new URL(devServerProxyTarget).host
                 }
             }
-        },
-        server: 'https',
+        ],
+        server: process.env.CODESPACES ? 'http' : 'https',
         static: {
-            directory: process.cwd()
+            directory: process.cwd(),
+            watch: {
+                ignored: file => file.endsWith('.log')
+            }
         }
     };
 }
@@ -323,47 +317,13 @@ module.exports = (_env, argv) => {
         }),
         Object.assign({}, config, {
             entry: {
-                'alwaysontop': './react/features/always-on-top/index.js'
+                'alwaysontop': './react/features/always-on-top/index.tsx'
             },
             plugins: [
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'alwaysontop')
             ],
             performance: getPerformanceHints(perfHintOptions, 800 * 1024)
-        }),
-        Object.assign({}, config, {
-            entry: {
-                'dial_in_info_bundle': './react/features/invite/components/dial-in-info-page'
-            },
-            plugins: [
-                ...config.plugins,
-                ...getBundleAnalyzerPlugin(analyzeBundle, 'dial_in_info'),
-                new webpack.IgnorePlugin({
-                    resourceRegExp: /^\.\/locale$/,
-                    contextRegExp: /moment$/
-                })
-            ],
-            performance: getPerformanceHints(perfHintOptions, 500 * 1024)
-        }),
-        Object.assign({}, config, {
-            entry: {
-                'do_external_connect': './connection_optimization/do_external_connect.js'
-            },
-            plugins: [
-                ...config.plugins,
-                ...getBundleAnalyzerPlugin(analyzeBundle, 'do_external_connect')
-            ],
-            performance: getPerformanceHints(perfHintOptions, 5 * 1024)
-        }),
-        Object.assign({}, config, {
-            entry: {
-                'analytics-ga': './react/features/analytics/handlers/GoogleAnalyticsHandler.ts'
-            },
-            plugins: [
-                ...config.plugins,
-                ...getBundleAnalyzerPlugin(analyzeBundle, 'analytics-ga')
-            ],
-            performance: getPerformanceHints(perfHintOptions, 5 * 1024)
         }),
         Object.assign({}, config, {
             entry: {
@@ -388,7 +348,7 @@ module.exports = (_env, argv) => {
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'external_api')
             ],
-            performance: getPerformanceHints(perfHintOptions, 35 * 1024)
+            performance: getPerformanceHints(perfHintOptions, 95 * 1024)
         }),
         Object.assign({}, config, {
             entry: {
@@ -425,13 +385,24 @@ module.exports = (_env, argv) => {
             ] },
             plugins: [
             ],
-            performance: getPerformanceHints(perfHintOptions, 200 * 1024),
+            performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 2),
 
             output: {
                 ...config.output,
 
                 globalObject: 'AudioWorkletGlobalScope'
             }
+        }),
+
+        Object.assign({}, config, {
+            entry: {
+                'screenshot-capture-worker': './react/features/screenshot-capture/worker.ts'
+            },
+            plugins: [
+                ...config.plugins,
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'screenshot-capture-worker')
+            ],
+            performance: getPerformanceHints(perfHintOptions, 30 * 1024)
         })
     ];
 };

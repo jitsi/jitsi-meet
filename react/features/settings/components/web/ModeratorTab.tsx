@@ -1,18 +1,23 @@
-/* eslint-disable lines-around-comment */
+import { Theme } from '@mui/material';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
+import { withStyles } from 'tss-react/mui';
 
-// @ts-ignore
-import { AbstractDialogTab } from '../../../base/dialog';
-// @ts-ignore
-import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
+import AbstractDialogTab, {
+    IProps as AbstractDialogTabProps } from '../../../base/dialog/components/web/AbstractDialogTab';
 import { translate } from '../../../base/i18n/functions';
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 
 /**
  * The type of the React {@code Component} props of {@link ModeratorTab}.
  */
-export type Props = AbstractDialogTabProps & WithTranslation & {
+export interface IProps extends AbstractDialogTabProps, WithTranslation {
+
+    /**
+     * CSS classes object.
+     */
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * If set hides the reactions moderation setting.
@@ -28,6 +33,16 @@ export type Props = AbstractDialogTabProps & WithTranslation & {
      * Whether or not the user has selected the Follow Me feature to be enabled.
      */
     followMeEnabled: boolean;
+
+    /**
+     * Whether follow me for recorder is currently active (enabled by some other participant).
+     */
+    followMeRecorderActive: boolean;
+
+    /**
+     * Whether the user has selected the Follow Me Recorder feature to be enabled.
+     */
+    followMeRecorderEnabled: boolean;
 
     /**
      * Whether or not the user has selected the Start Audio Muted feature to be
@@ -46,11 +61,25 @@ export type Props = AbstractDialogTabProps & WithTranslation & {
      * enabled.
      */
     startVideoMuted: boolean;
+}
 
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function;
+const styles = (theme: Theme) => {
+    return {
+        container: {
+            display: 'flex',
+            flexDirection: 'column' as const
+        },
+
+        title: {
+            ...withPixelLineHeight(theme.typography.heading6),
+            color: `${theme.palette.text01} !important`,
+            marginBottom: theme.spacing(3)
+        },
+
+        checkbox: {
+            marginBottom: theme.spacing(3)
+        }
+    };
 };
 
 /**
@@ -58,14 +87,14 @@ export type Props = AbstractDialogTabProps & WithTranslation & {
  *
  * @augments Component
  */
-class ModeratorTab extends AbstractDialogTab<Props> {
+class ModeratorTab extends AbstractDialogTab<IProps, any> {
     /**
      * Initializes a new {@code ModeratorTab} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.
@@ -73,16 +102,7 @@ class ModeratorTab extends AbstractDialogTab<Props> {
         this._onStartVideoMutedChanged = this._onStartVideoMutedChanged.bind(this);
         this._onStartReactionsMutedChanged = this._onStartReactionsMutedChanged.bind(this);
         this._onFollowMeEnabledChanged = this._onFollowMeEnabledChanged.bind(this);
-    }
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        return <div className = 'moderator-tab box'>{ this._renderModeratorSettings() }</div>;
+        this._onFollowMeRecorderEnabledChanged = this._onFollowMeRecorderEnabledChanged.bind(this);
     }
 
     /**
@@ -130,62 +150,91 @@ class ModeratorTab extends AbstractDialogTab<Props> {
      * @returns {void}
      */
     _onFollowMeEnabledChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
-        super._onChange({ followMeEnabled: checked });
+        super._onChange({
+            followMeEnabled: checked,
+            followMeRecorderEnabled: checked ? false : undefined
+        });
     }
 
     /**
-     * Returns the React Element for modifying conference-wide settings.
+     * Callback invoked to select if follow-me for recorder mode should be activated.
      *
-     * @private
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onFollowMeRecorderEnabledChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
+        super._onChange({
+            followMeEnabled: checked ? false : undefined,
+            followMeRecorderEnabled: checked
+        });
+    }
+
+    /**
+     * Implements React's {@link Component#render()}.
+     *
+     * @inheritdoc
      * @returns {ReactElement}
      */
-    _renderModeratorSettings() {
+    render() {
         const {
             disableReactionsModeration,
             followMeActive,
             followMeEnabled,
+            followMeRecorderActive,
+            followMeRecorderEnabled,
             startAudioMuted,
             startVideoMuted,
             startReactionsMuted,
-            t // @ts-ignore
+            t
         } = this.props;
+        const classes = withStyles.getClasses(this.props);
+
+        const followMeRecorderChecked = followMeRecorderEnabled && !followMeRecorderActive;
 
         return (
             <div
-                className = 'settings-sub-pane-element'
+                className = { `moderator-tab ${classes.container}` }
                 key = 'moderator'>
-                <div className = 'moderator-settings-wrapper'>
-                    <Checkbox
-                        checked = { startAudioMuted }
-                        className = 'settings-checkbox'
-                        label = { t('settings.startAudioMuted') }
-                        name = 'start-audio-muted'
-                        onChange = { this._onStartAudioMutedChanged } />
-                    <Checkbox
-                        checked = { startVideoMuted }
-                        className = 'settings-checkbox'
-                        label = { t('settings.startVideoMuted') }
-                        name = 'start-video-muted'
-                        onChange = { this._onStartVideoMutedChanged } />
-                    <Checkbox
-                        checked = { followMeEnabled && !followMeActive }
-                        className = 'settings-checkbox'
-                        disabled = { followMeActive }
-                        label = { t('settings.followMe') }
-                        name = 'follow-me'
-                        onChange = { this._onFollowMeEnabledChanged } />
-                    { !disableReactionsModeration
+                <h2 className = { classes.title }>
+                    {t('settings.moderatorOptions')}
+                </h2>
+                <Checkbox
+                    checked = { startAudioMuted }
+                    className = { classes.checkbox }
+                    label = { t('settings.startAudioMuted') }
+                    name = 'start-audio-muted'
+                    onChange = { this._onStartAudioMutedChanged } />
+                <Checkbox
+                    checked = { startVideoMuted }
+                    className = { classes.checkbox }
+                    label = { t('settings.startVideoMuted') }
+                    name = 'start-video-muted'
+                    onChange = { this._onStartVideoMutedChanged } />
+                <Checkbox
+                    checked = { followMeEnabled && !followMeActive && !followMeRecorderChecked }
+                    className = { classes.checkbox }
+                    disabled = { followMeActive || followMeRecorderActive }
+                    label = { t('settings.followMe') }
+                    name = 'follow-me'
+                    onChange = { this._onFollowMeEnabledChanged } />
+                <Checkbox
+                    checked = { followMeRecorderChecked }
+                    className = { classes.checkbox }
+                    disabled = { followMeRecorderActive || followMeActive }
+                    label = { t('settings.followMeRecorder') }
+                    name = 'follow-me-recorder'
+                    onChange = { this._onFollowMeRecorderEnabledChanged } />
+                { !disableReactionsModeration
                         && <Checkbox
                             checked = { startReactionsMuted }
-                            className = 'settings-checkbox'
+                            className = { classes.checkbox }
                             label = { t('settings.startReactionsMuted') }
                             name = 'start-reactions-muted'
                             onChange = { this._onStartReactionsMutedChanged } /> }
-                </div>
             </div>
         );
     }
 }
 
-// @ts-ignore
-export default translate(ModeratorTab);
+export default withStyles(translate(ModeratorTab), styles);

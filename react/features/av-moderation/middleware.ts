@@ -1,10 +1,10 @@
-/* eslint-disable lines-around-comment */
 import { batch } from 'react-redux';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 import { getConferenceState } from '../base/conference/functions';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE, MediaType } from '../base/media/constants';
+import { isAudioMuted, isVideoMuted } from '../base/media/functions';
 import { PARTICIPANT_UPDATED } from '../base/participants/actionTypes';
 import { raiseHand } from '../base/participants/actions';
 import {
@@ -19,7 +19,6 @@ import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
 import { hideNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
-// @ts-ignore
 import { muteLocal } from '../video-menu/actions.any';
 
 import {
@@ -60,8 +59,6 @@ import {
 } from './functions';
 import { ASKED_TO_UNMUTE_FILE } from './sounds';
 
-declare const APP: any;
-
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const { type } = action;
     const { conference } = getConferenceState(getState());
@@ -93,7 +90,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             uid = VIDEO_MODERATION_NOTIFICATION_ID;
             break;
         }
-        case MEDIA_TYPE.PRESENTER: {
+        case MEDIA_TYPE.SCREENSHARE: {
             titleKey = 'notify.moderationInEffectCSTitle';
             uid = CS_MODERATION_NOTIFICATION_ID;
             break;
@@ -212,24 +209,46 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
  */
 StateListenerRegistry.register(
     state => state['features/base/conference'].conference,
-    (conference, { dispatch }, previousConference) => {
+    (conference, { dispatch, getState }, previousConference) => {
         if (conference && !previousConference) {
             // local participant is allowed to unmute
             conference.on(JitsiConferenceEvents.AV_MODERATION_APPROVED, ({ mediaType }: { mediaType: MediaType; }) => {
                 dispatch(localParticipantApproved(mediaType));
 
-                // Audio & video moderation are both enabled at the same time.
-                // Avoid displaying 2 different notifications.
-                if (mediaType === MEDIA_TYPE.AUDIO) {
-                    dispatch(showNotification({
-                        titleKey: 'notify.hostAskedUnmute',
-                        sticky: true,
-                        customActionNameKey: [ 'notify.unmute' ],
-                        customActionHandler: [ () => dispatch(muteLocal(false, MEDIA_TYPE.AUDIO)) ],
-                        uid: ASKED_TO_UNMUTE_NOTIFICATION_ID
-                    }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
-                    dispatch(playSound(ASKED_TO_UNMUTE_SOUND_ID));
+                const customActionNameKey = [];
+                const customActionHandler = [];
+
+                if ((mediaType === MEDIA_TYPE.AUDIO || getState()['features/av-moderation'].audioUnmuteApproved)
+                    && isAudioMuted(getState())) {
+                    customActionNameKey.push('notify.unmute');
+                    customActionHandler.push(() => {
+                        dispatch(muteLocal(false, MEDIA_TYPE.AUDIO));
+                        dispatch(hideNotification(ASKED_TO_UNMUTE_NOTIFICATION_ID));
+                    });
                 }
+
+                if ((mediaType === MEDIA_TYPE.VIDEO || getState()['features/av-moderation'].videoUnmuteApproved)
+                    && isVideoMuted(getState())) {
+                    customActionNameKey.push('notify.unmuteVideo');
+                    customActionHandler.push(() => {
+                        dispatch(muteLocal(false, MEDIA_TYPE.VIDEO));
+                        dispatch(hideNotification(ASKED_TO_UNMUTE_NOTIFICATION_ID));
+
+                        // lower hand as there will be no audio and change in dominant speaker to clear it
+                        dispatch(raiseHand(false));
+
+                    });
+                }
+
+                dispatch(showNotification({
+                    titleKey: 'notify.hostAskedUnmute',
+                    sticky: true,
+                    customActionNameKey,
+                    customActionHandler,
+                    uid: ASKED_TO_UNMUTE_NOTIFICATION_ID
+                }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+
+                dispatch(playSound(ASKED_TO_UNMUTE_SOUND_ID));
             });
 
             conference.on(JitsiConferenceEvents.AV_MODERATION_REJECTED, ({ mediaType }: { mediaType: MediaType; }) => {

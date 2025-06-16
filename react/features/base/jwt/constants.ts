@@ -4,7 +4,6 @@
 export const MEET_FEATURES = {
     BRANDING: 'branding',
     CALENDAR: 'calendar',
-    CALLSTATS: 'callstats',
     FLIP: 'flip',
     INBOUND_CALL: 'inbound-call',
     LIVESTREAMING: 'livestreaming',
@@ -20,10 +19,21 @@ export const MEET_FEATURES = {
 };
 
 /**
- * A mapping between jwt features and toolbar buttons keys.
+ * The JWT validation errors for JaaS.
  */
-export const FEATURES_TO_BUTTONS_MAPPING = {
-    'livestreaming': 'livestreaming',
-    'recording': 'recording',
-    'transcription': 'closedcaptions'
+export const JWT_VALIDATION_ERRORS = {
+    AUD_INVALID: 'audInvalid',
+    CONTEXT_NOT_FOUND: 'contextNotFound',
+    EXP_INVALID: 'expInvalid',
+    FEATURE_INVALID: 'featureInvalid',
+    FEATURE_VALUE_INVALID: 'featureValueInvalid',
+    FEATURES_NOT_FOUND: 'featuresNotFound',
+    HEADER_NOT_FOUND: 'headerNotFound',
+    ISS_INVALID: 'issInvalid',
+    KID_NOT_FOUND: 'kidNotFound',
+    KID_MISMATCH: 'kidMismatch',
+    NBF_FUTURE: 'nbfFuture',
+    NBF_INVALID: 'nbfInvalid',
+    PAYLOAD_NOT_FOUND: 'payloadNotFound',
+    TOKEN_EXPIRED: 'tokenExpired'
 };

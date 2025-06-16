@@ -70,10 +70,7 @@ RCT_EXPORT_MODULE();
         = [[NSBundle bundleForClass:self.class] infoDictionary];
     NSString *sdkVersion = sdkInfoDictionary[@"CFBundleShortVersionString"];
     if (sdkVersion == nil) {
-        sdkVersion = sdkInfoDictionary[@"CFBundleVersion"];
-        if (sdkVersion == nil) {
-            sdkVersion = @"";
-        }
+        sdkVersion = @"";
     }
 
     // build number

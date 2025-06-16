@@ -42,14 +42,6 @@ var interfaceConfig = {
     DISABLE_PRESENCE_STATUS: false,
 
     /**
-     * Whether the ringing sound in the call/ring overlay is disabled. If
-     * {@code undefined}, defaults to {@code false}.
-     *
-     * @type {boolean}
-     */
-    DISABLE_RINGING: false,
-
-    /**
      * Whether the speech to text transcription subtitles panel is disabled.
      * If {@code undefined}, defaults to {@code false}.
      *
@@ -70,16 +62,9 @@ var interfaceConfig = {
 
     ENABLE_DIAL_OUT: true,
 
-    ENABLE_FEEDBACK_ANIMATION: false, // Enables feedback star animation.
-
     FILM_STRIP_MAX_HEIGHT: 120,
 
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
-
-    /**
-     * Hide the logo on the deep linking pages.
-     */
-    HIDE_DEEP_LINKING_LOGO: false,
 
     /**
      * Hide the invite prompt in the header when alone in the meeting.
@@ -108,28 +93,11 @@ var interfaceConfig = {
      */
     MOBILE_APP_PROMO: true,
 
-    /**
-     * Specify custom URL for downloading android mobile app.
-     */
-    MOBILE_DOWNLOAD_LINK_ANDROID: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
-
-    /**
-     * Specify custom URL for downloading f droid app.
-     */
-    MOBILE_DOWNLOAD_LINK_F_DROID: 'https://f-droid.org/en/packages/org.jitsi.meet/',
-
-    /**
-     * Specify URL for downloading ios mobile app.
-     */
-    MOBILE_DOWNLOAD_LINK_IOS: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
-
-    NATIVE_APP_NAME: 'Jitsi Meet',
-
     // Names of browsers which should show a warning stating the current browser
     // has a suboptimal experience. Browsers which are not listed as optimal or
     // unsupported are considered suboptimal. Valid values are:
-    // chrome, chromium, edge, electron, firefox, nwjs, opera, safari
-    OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'nwjs', 'electron', 'safari' ],
+    // chrome, chromium, electron, firefox , safari, webkit
+    OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'electron', 'safari', 'webkit' ],
 
     POLICY_LOGO: null,
     PROVIDER_NAME: 'Jitsi',
@@ -159,7 +127,6 @@ var interfaceConfig = {
      */
     SHOW_CHROME_EXTENSION_BANNER: false,
 
-    SHOW_DEEP_LINKING_IMAGE: false,
     SHOW_JITSI_WATERMARK: true,
     SHOW_POWERED_BY: false,
     SHOW_PROMOTIONAL_CLOSE_PAGE: false,
@@ -200,6 +167,31 @@ var interfaceConfig = {
      */
     // TILE_VIEW_MAX_COLUMNS: 5,
 
+    // List of undocumented settings
+    /**
+     INDICATOR_FONT_SIZES
+     PHONE_NUMBER_REGEX
+    */
+
+    // -----------------DEPRECATED CONFIGS BELOW THIS LINE-----------------------------
+
+    /**
+     * Specify URL for downloading ios mobile app.
+     */
+    // MOBILE_DOWNLOAD_LINK_IOS: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
+
+    /**
+     * Specify custom URL for downloading android mobile app.
+     */
+    // MOBILE_DOWNLOAD_LINK_ANDROID: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
+
+    /**
+     * Specify mobile app scheme for opening the app from the mobile browser.
+     */
+    // APP_SCHEME: 'org.jitsi.meet',
+
+    // NATIVE_APP_NAME: 'Jitsi Meet',
+
     /**
      * Specify Firebase dynamic link properties for the mobile apps.
      */
@@ -212,22 +204,19 @@ var interfaceConfig = {
     // },
 
     /**
-     * Specify mobile app scheme for opening the app from the mobile browser.
+     * Hide the logo on the deep linking pages.
      */
-    // APP_SCHEME: 'org.jitsi.meet',
+    // HIDE_DEEP_LINKING_LOGO: false,
 
     /**
      * Specify the Android app package name.
      */
     // ANDROID_APP_PACKAGE: 'org.jitsi.meet',
 
-    // List of undocumented settings
     /**
-     INDICATOR_FONT_SIZES
-     PHONE_NUMBER_REGEX
-    */
-
-    // -----------------DEPRECATED CONFIGS BELOW THIS LINE-----------------------------
+     * Specify custom URL for downloading f droid app.
+     */
+    // MOBILE_DOWNLOAD_LINK_F_DROID: 'https://f-droid.org/packages/org.jitsi.meet/',
 
     // Connection indicators (
     // CONNECTION_INDICATOR_AUTO_HIDE_ENABLED,

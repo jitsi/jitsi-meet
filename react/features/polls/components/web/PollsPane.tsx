@@ -1,32 +1,46 @@
-/* eslint-disable lines-around-comment */
 import React from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import Button from '../../../base/ui/components/web/Button';
-// @ts-ignore
-import AbstractPollsPane from '../AbstractPollsPane';
-// @ts-ignore
-import type { AbstractProps } from '../AbstractPollsPane';
+import AbstractPollsPane, { AbstractProps } from '../AbstractPollsPane';
 
 import PollCreate from './PollCreate';
-// @ts-ignore
 import PollsList from './PollsList';
-// @ts-ignore
+/* eslint-enable lines-around-comment */
 import PollsDownload from './PollsDownload';
 
+const useStyles = makeStyles()(() => {
+    return {
+        container: {
+            height: '100%',
+            position: 'relative'
+        },
+        listContainer: {
+            height: 'calc(100% - 88px)',
+            overflowY: 'auto'
+        },
+        footer: {
+            position: 'absolute',
+            bottom: 0,
+            padding: '24px',
+            width: '100%',
+            boxSizing: 'border-box'
+        }
+    };
+});
 
-const PollsPane = (props: AbstractProps) => {
-    const { createMode, onCreate, setCreateMode, t } = props;
+const PollsPane = ({ createMode, onCreate, setCreateMode, t }: AbstractProps) => {
+    const { classes } = useStyles();
 
     return createMode
         ? <PollCreate setCreateMode = { setCreateMode } />
-        : <div className = 'polls-pane-content'>
-            <div className = { 'poll-container' } >
-                <PollsList />
+        : <div className = { classes.container }>
+            <div className = { classes.listContainer } >
+                <PollsList setCreateMode = { setCreateMode } />
             </div>
-            <div className = 'poll-footer poll-create-footer poll-footer-wrap'>
+            <div className = { classes.footer }>
                 <Button
                     accessibilityLabel = { t('polls.create.create') }
-                    autoFocus = { true }
                     fullWidth = { true }
                     labelKey = { 'polls.create.create' }
                     onClick = { onCreate } />

@@ -1,6 +1,7 @@
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash-es';
 
 import { IStore } from '../app/types';
+import { IConfig } from '../base/config/configType';
 import { NOTIFICATIONS_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import { getParticipantCount } from '../base/participants/functions';
@@ -19,6 +20,7 @@ import {
     SILENT_JOIN_THRESHOLD,
     SILENT_LEFT_THRESHOLD
 } from './constants';
+import { INotificationProps } from './types';
 
 /**
  * Function that returns notification timeout value based on notification timeout type.
@@ -27,17 +29,15 @@ import {
  * @param {Object} notificationTimeouts - Config notification timeouts.
  * @returns {number}
  */
-function getNotificationTimeout(type?: string, notificationTimeouts?: {
-    long?: number;
-    medium?: number;
-    short?: number;
-}) {
+function getNotificationTimeout(type?: string, notificationTimeouts?: IConfig['notificationTimeouts']) {
     if (type === NOTIFICATION_TIMEOUT_TYPE.SHORT) {
         return notificationTimeouts?.short ?? NOTIFICATION_TIMEOUT.SHORT;
     } else if (type === NOTIFICATION_TIMEOUT_TYPE.MEDIUM) {
         return notificationTimeouts?.medium ?? NOTIFICATION_TIMEOUT.MEDIUM;
     } else if (type === NOTIFICATION_TIMEOUT_TYPE.LONG) {
         return notificationTimeouts?.long ?? NOTIFICATION_TIMEOUT.LONG;
+    } else if (type === NOTIFICATION_TIMEOUT_TYPE.EXTRA_LONG) {
+        return notificationTimeouts?.extraLong ?? NOTIFICATION_TIMEOUT.EXTRA_LONG;
     }
 
     return NOTIFICATION_TIMEOUT.STICKY;
@@ -89,23 +89,6 @@ export function setNotificationsEnabled(enabled: boolean) {
     };
 }
 
-interface INotificationProps {
-    appearance?: string;
-    concatText?: boolean;
-    customActionHandler?: Function[];
-    customActionNameKey?: string[];
-    description?: string;
-    descriptionKey?: string;
-    icon?: string;
-    sticky?: boolean;
-    title?: string;
-    titleArguments?: {
-        [key: string]: string;
-    };
-    titleKey?: string;
-    uid?: string;
-}
-
 /**
  * Queues an error notification for display.
  *
@@ -113,10 +96,24 @@ interface INotificationProps {
  * @param {string} type - Notification type.
  * @returns {Object}
  */
-export function showErrorNotification(props: INotificationProps, type?: string) {
+export function showErrorNotification(props: INotificationProps, type = NOTIFICATION_TIMEOUT_TYPE.STICKY) {
     return showNotification({
         ...props,
         appearance: NOTIFICATION_TYPE.ERROR
+    }, type);
+}
+
+/**
+ * Queues a success notification for display.
+ *
+ * @param {Object} props - The props needed to show the notification component.
+ * @param {string} type - Notification type.
+ * @returns {Object}
+ */
+export function showSuccessNotification(props: INotificationProps, type?: string) {
+    return showNotification({
+        ...props,
+        appearance: NOTIFICATION_TYPE.SUCCESS
     }, type);
 }
 
@@ -132,19 +129,25 @@ export function showNotification(props: INotificationProps = {}, type?: string) 
         const { disabledNotifications = [], notifications, notificationTimeouts } = getState()['features/base/config'];
         const enabledFlag = getFeatureFlag(getState(), NOTIFICATIONS_ENABLED, true);
 
+        const { descriptionKey, titleKey } = props;
+
         const shouldDisplay = enabledFlag
-            && !(disabledNotifications.includes(props.descriptionKey ?? '')
-                || disabledNotifications.includes(props.titleKey ?? ''))
+            && !(disabledNotifications.includes(descriptionKey ?? '')
+                || disabledNotifications.includes(titleKey ?? ''))
             && (!notifications
-                || notifications.includes(props.descriptionKey ?? '')
-                || notifications.includes(props.titleKey ?? ''));
+                || notifications.includes(descriptionKey ?? '')
+                || notifications.includes(titleKey ?? ''));
+
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyNotificationTriggered(titleKey, descriptionKey);
+        }
 
         if (shouldDisplay) {
             return dispatch({
                 type: SHOW_NOTIFICATION,
                 props,
                 timeout: getNotificationTimeout(type, notificationTimeouts),
-                uid: props.uid || window.Date.now().toString()
+                uid: props.uid || Date.now().toString()
             });
         }
     };

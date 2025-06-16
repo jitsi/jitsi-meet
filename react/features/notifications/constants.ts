@@ -5,18 +5,20 @@ export const NOTIFICATION_TIMEOUT = {
     SHORT: 2500,
     MEDIUM: 5000,
     LONG: 10000,
+    EXTRA_LONG: 60000,
     STICKY: false
 };
 
 /**
  * Notification timeout type.
  */
-export const NOTIFICATION_TIMEOUT_TYPE = {
-    SHORT: 'short',
-    MEDIUM: 'medium',
-    LONG: 'long',
-    STICKY: 'sticky'
-};
+export enum NOTIFICATION_TIMEOUT_TYPE {
+    EXTRA_LONG = 'extra_long',
+    LONG = 'long',
+    MEDIUM = 'medium',
+    SHORT = 'short',
+    STICKY = 'sticky'
+}
 
 /**
  * The set of possible notification types.
@@ -25,7 +27,6 @@ export const NOTIFICATION_TIMEOUT_TYPE = {
  */
 export const NOTIFICATION_TYPE = {
     ERROR: 'error',
-    INFO: 'info',
     NORMAL: 'normal',
     SUCCESS: 'success',
     WARNING: 'warning'
@@ -38,7 +39,6 @@ export const NOTIFICATION_TYPE = {
  */
 export const NOTIFICATION_TYPE_PRIORITIES = {
     [NOTIFICATION_TYPE.ERROR]: 5,
-    [NOTIFICATION_TYPE.INFO]: 3,
     [NOTIFICATION_TYPE.NORMAL]: 3,
     [NOTIFICATION_TYPE.SUCCESS]: 3,
     [NOTIFICATION_TYPE.WARNING]: 4
@@ -55,6 +55,27 @@ export const NOTIFICATION_ICON = {
     PARTICIPANT: 'participant',
     PARTICIPANTS: 'participants'
 };
+
+/**
+ * The identifier of the calendar notification.
+ *
+ * @type {string}
+ */
+export const CALENDAR_NOTIFICATION_ID = 'CALENDAR_NOTIFICATION_ID';
+
+/**
+ * The identifier of the disable self view notification.
+ *
+ * @type {string}
+ */
+export const DATA_CHANNEL_CLOSED_NOTIFICATION_ID = 'DATA_CHANNEL_CLOSED_NOTIFICATION_ID';
+
+/**
+ * The identifier of the disable self view notification.
+ *
+ * @type {string}
+ */
+export const DISABLE_SELF_VIEW_NOTIFICATION_ID = 'DISABLE_SELF_VIEW_NOTIFICATION_ID';
 
 /**
  * The identifier of the lobby notification.
@@ -83,6 +104,20 @@ export const RAISE_HAND_NOTIFICATION_ID = 'RAISE_HAND_NOTIFICATION';
  * @type {string}
  */
 export const SALESFORCE_LINK_NOTIFICATION_ID = 'SALESFORCE_LINK_NOTIFICATION';
+
+/**
+ * The identifier of the visitors promotion notification.
+ *
+ * @type {string}
+ */
+export const VISITORS_PROMOTION_NOTIFICATION_ID = 'VISITORS_PROMOTION_NOTIFICATION';
+
+/**
+ * The identifier of the visitors notification indicating the meeting is not live.
+ *
+ * @type {string}
+ */
+export const VISITORS_NOT_LIVE_NOTIFICATION_ID = 'VISITORS_NOT_LIVE_NOTIFICATION_ID';
 
 /**
  * Amount of participants beyond which no join notification will be emitted.

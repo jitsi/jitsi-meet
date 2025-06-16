@@ -1,11 +1,10 @@
-import { Theme } from '@mui/material';
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../base/icons/components/Icon';
-import { IconRaisedHandHollow } from '../../../base/icons/svg';
+import { IconRaiseHand } from '../../../base/icons/svg';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         indicator: {
             backgroundColor: theme.palette.warning02,
@@ -22,9 +21,9 @@ export const RaisedHandIndicator = () => {
     return (
         <div className = { styles.indicator }>
             <Icon
-                color = { theme.palette.uiBackground }
+                color = { theme.palette.icon04 }
                 size = { 16 }
-                src = { IconRaisedHandHollow } />
+                src = { IconRaiseHand } />
         </div>
     );
 };

@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * The type of (redux) action which sets the last-n for the conference.
  *

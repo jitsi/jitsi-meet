@@ -1,5 +1,3 @@
-// @flow
-
 import { RTCPeerConnection as PC } from 'react-native-webrtc';
 
 import { synthesizeIPv6Addresses } from './ipv6utils';
@@ -15,7 +13,7 @@ export default class RTCPeerConnection extends PC {
      * @param {Object} description - SDP.
      * @returns {Promise<undefined>} A promise which is resolved once the operation is complete.
      */
-    async setRemoteDescription(description: Object) {
+    async setRemoteDescription(description) {
         return super.setRemoteDescription(await synthesizeIPv6Addresses(description));
     }
 }

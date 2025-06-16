@@ -1,14 +1,15 @@
-import { Dispatch } from 'redux';
-
+import { IStore } from '../../app/types';
 import { showModeratedNotification } from '../../av-moderation/actions';
 import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { isModerationNotificationDisplayed } from '../../notifications/functions';
 
 import {
+    GUM_PENDING,
     SET_AUDIO_AVAILABLE,
     SET_AUDIO_MUTED,
     SET_AUDIO_UNMUTE_PERMISSIONS,
     SET_CAMERA_FACING_MODE,
+    SET_INITIAL_GUM_PROMISE,
     SET_SCREENSHARE_MUTED,
     SET_VIDEO_AVAILABLE,
     SET_VIDEO_MUTED,
@@ -18,10 +19,11 @@ import {
 } from './actionTypes';
 import {
     MEDIA_TYPE,
-    type MediaType,
+    MediaType,
     SCREENSHARE_MUTISM_AUTHORITY,
     VIDEO_MUTISM_AUTHORITY
 } from './constants';
+import { IGUMPendingState } from './types';
 
 /**
  * Action to adjust the availability of the local audio.
@@ -93,20 +95,34 @@ export function setCameraFacingMode(cameraFacingMode: string) {
 }
 
 /**
+ * Sets the initial GUM promise.
+ *
+ * @param {Promise<Array<Object>> | undefined} promise - The promise.
+ * @returns {{
+ *     type: SET_INITIAL_GUM_PROMISE,
+ *     promise: Promise
+ * }}
+ */
+export function setInitialGUMPromise(promise: Promise<{ errors: any; tracks: Array<any>; }> | null = null) {
+    return {
+        type: SET_INITIAL_GUM_PROMISE,
+        promise
+    };
+}
+
+/**
  * Action to set the muted state of the local screenshare.
  *
  * @param {boolean} muted - True if the local screenshare is to be enabled or false otherwise.
- * @param {MEDIA_TYPE} mediaType - The type of media.
  * @param {number} authority - The {@link SCREENSHARE_MUTISM_AUTHORITY} which is muting/unmuting the local screenshare.
  * @param {boolean} ensureTrack - True if we want to ensure that a new track is created if missing.
  * @returns {Function}
  */
 export function setScreenshareMuted(
         muted: boolean,
-        mediaType: MediaType = MEDIA_TYPE.SCREENSHARE,
         authority: number = SCREENSHARE_MUTISM_AUTHORITY.USER,
         ensureTrack = false) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
 
         // check for A/V Moderation when trying to unmute
@@ -123,10 +139,9 @@ export function setScreenshareMuted(
         // eslint-disable-next-line no-bitwise
         const newValue = muted ? oldValue | authority : oldValue & ~authority;
 
-        return dispatch({
+        dispatch({
             type: SET_SCREENSHARE_MUTED,
             authority,
-            mediaType,
             ensureTrack,
             muted: newValue
         });
@@ -155,7 +170,6 @@ export function setVideoAvailable(available: boolean) {
  *
  * @param {boolean} muted - True if the local video is to be muted or false if
  * the local video is to be unmuted.
- * @param {MEDIA_TYPE} mediaType - The type of media.
  * @param {number} authority - The {@link VIDEO_MUTISM_AUTHORITY} which is
  * muting/unmuting the local video.
  * @param {boolean} ensureTrack - True if we want to ensure that a new track is
@@ -163,11 +177,10 @@ export function setVideoAvailable(available: boolean) {
  * @returns {Function}
  */
 export function setVideoMuted(
-        muted: boolean,
-        mediaType: string = MEDIA_TYPE.VIDEO,
+        muted: boolean | number,
         authority: number = VIDEO_MUTISM_AUTHORITY.USER,
         ensureTrack = false) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
 
         // check for A/V Moderation when trying to unmute
@@ -184,10 +197,9 @@ export function setVideoMuted(
         // eslint-disable-next-line no-bitwise
         const newValue = muted ? oldValue | authority : oldValue & ~authority;
 
-        return dispatch({
+        dispatch({
             type: SET_VIDEO_MUTED,
             authority,
-            mediaType,
             ensureTrack,
             muted: newValue
         });
@@ -243,5 +255,24 @@ export function storeVideoTransform(streamId: string, transform: Object) {
 export function toggleCameraFacingMode() {
     return {
         type: TOGGLE_CAMERA_FACING_MODE
+    };
+}
+
+/**
+ * Sets the GUM pending status from unmute and initial track creation operation.
+ *
+ * @param {Array<MediaType>} mediaTypes - An array with the media types that GUM is called with.
+ * @param {IGUMPendingState} status - The GUM status.
+ * @returns {{
+ *     type: TOGGLE_CAMERA_FACING_MODE,
+ *     mediaTypes: Array<MediaType>,
+ *     status: IGUMPendingState
+ * }}
+ */
+export function gumPending(mediaTypes: Array<MediaType>, status: IGUMPendingState) {
+    return {
+        type: GUM_PENDING,
+        mediaTypes,
+        status
     };
 }

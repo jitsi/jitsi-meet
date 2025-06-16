@@ -1,24 +1,64 @@
-/* eslint-disable lines-around-comment */
-import { Theme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import Icon from '../../../base/icons/components/Icon';
-import { IconMenu } from '../../../base/icons/svg';
-// @ts-ignore
-import { Tooltip } from '../../../base/tooltip';
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
-import { BUTTON_TYPES } from '../../../base/ui/constants';
+import Input from '../../../base/ui/components/web/Input';
+import { BUTTON_TYPES } from '../../../base/ui/constants.web';
+import { editPoll } from '../../actions';
 import { ANSWERS_LIMIT, CHAR_LIMIT } from '../../constants';
-// @ts-ignore
-import AbstractPollCreate from '../AbstractPollCreate';
-// @ts-ignore
-import type { AbstractProps } from '../AbstractPollCreate';
+import AbstractPollCreate, { AbstractProps } from '../AbstractPollCreate';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
+        container: {
+            height: '100%',
+            position: 'relative'
+        },
+        createContainer: {
+            padding: '0 24px',
+            height: 'calc(100% - 88px)',
+            overflowY: 'auto'
+        },
+        header: {
+            ...withPixelLineHeight(theme.typography.heading6),
+            color: theme.palette.text01,
+            margin: '24px 0 16px'
+        },
+        questionContainer: {
+            paddingBottom: '24px',
+            borderBottom: `1px solid ${theme.palette.ui03}`
+        },
+        answerList: {
+            listStyleType: 'none',
+            margin: 0,
+            padding: 0
+        },
+        answer: {
+            marginBottom: '24px'
+        },
+        removeOption: {
+            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            color: theme.palette.link01,
+            marginTop: '8px',
+            border: 0,
+            background: 'transparent'
+        },
+        addButtonContainer: {
+            display: 'flex'
+        },
+        footer: {
+            position: 'absolute',
+            bottom: 0,
+            display: 'flex',
+            justifyContent: 'flex-end',
+            padding: '24px',
+            width: '100%',
+            boxSizing: 'border-box'
+        },
         buttonMargin: {
-            marginRight: theme.spacing(2)
+            marginRight: theme.spacing(3)
         }
     };
 });
@@ -26,8 +66,9 @@ const useStyles = makeStyles()((theme: Theme) => {
 const PollCreate = ({
     addAnswer,
     answers,
+    editingPoll,
+    editingPollId,
     isSubmitDisabled,
-    moveAnswer,
     onSubmit,
     question,
     removeAnswer,
@@ -36,7 +77,8 @@ const PollCreate = ({
     setQuestion,
     t
 }: AbstractProps) => {
-    const { classes: styles } = useStyles();
+    const { classes } = useStyles();
+    const dispatch = useDispatch();
 
     /*
      * This ref stores the Array of answer input fields, allowing us to focus on them.
@@ -143,115 +185,69 @@ const PollCreate = ({
         }
     }, [ answers, addAnswer, removeAnswer, requestFocus ]);
 
-    const [ grabbing, setGrabbing ] = useState(null);
-
-    const interchangeHeights = (i: number, j: number) => {
-        const h = answerInputs.current[i].scrollHeight;
-
-        answerInputs.current[i].style.height = `${answerInputs.current[j].scrollHeight}px`;
-        answerInputs.current[j].style.height = `${h}px`;
-    };
-
-    const onGrab = useCallback((i, ev) => {
-        if (ev.button !== 0) {
-            return;
-        }
-        setGrabbing(i);
-        window.addEventListener('mouseup', () => {
-            setGrabbing(_grabbing => {
-                requestFocus(_grabbing);
-
-                return null;
-            });
-        }, { once: true });
-    }, []);
-
-    const onMouseOver = useCallback(i => {
-        if (grabbing !== null && grabbing !== i) {
-            interchangeHeights(i, grabbing);
-            moveAnswer(grabbing, i);
-            setGrabbing(i);
-        }
-    }, []);
-
-    const autogrow = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
-        const el = ev.target;
-
-        el.style.height = '1px';
-        el.style.height = `${el.scrollHeight + 2}px`;
-    };
-
     /* eslint-disable react/jsx-no-bind */
     return (<form
-        className = 'polls-pane-content'
+        className = { classes.container }
         onSubmit = { onSubmit }>
-        <div className = 'poll-create-container poll-container'>
-            <div className = 'poll-create-header'>
+        <div className = { classes.createContainer }>
+            <div className = { classes.header }>
                 { t('polls.create.create') }
             </div>
-            <div className = 'poll-question-field'>
-                <span className = 'poll-create-label'>
-                    { t('polls.create.pollQuestion') }
-                </span>
-                <textarea
+            <div className = { classes.questionContainer }>
+                <Input
                     autoFocus = { true }
-                    className = 'expandable-input'
+                    id = 'polls-create-input'
+                    label = { t('polls.create.pollQuestion') }
                     maxLength = { CHAR_LIMIT }
-                    onChange = { ev => setQuestion(ev.target.value) }
-                    onInput = { autogrow }
-                    onKeyDown = { onQuestionKeyDown }
+                    onChange = { setQuestion }
+                    onKeyPress = { onQuestionKeyDown }
                     placeholder = { t('polls.create.questionPlaceholder') }
-                    required = { true }
-                    rows = { 1 }
+                    textarea = { true }
                     value = { question } />
             </div>
-            <ol className = 'poll-answer-field-list'>
-                {answers.map((answer: any, i: number) =>
-                    (<li
-                        className = { `poll-answer-field${grabbing === i ? ' poll-dragged' : ''}` }
-                        key = { i }
-                        onMouseOver = { () => onMouseOver(i) }>
-                        <span className = 'poll-create-label'>
-                            { t('polls.create.pollOption', { index: i + 1 })}
-                        </span>
-                        <div className = 'poll-create-option-row'>
-                            <textarea
-                                className = 'expandable-input'
-                                maxLength = { CHAR_LIMIT }
-                                onChange = { ev => setAnswer(i, ev.target.value) }
-                                onInput = { autogrow }
-                                onKeyDown = { ev => onAnswerKeyDown(i, ev) }
-                                placeholder = { t('polls.create.answerPlaceholder', { index: i + 1 }) }
-                                ref = { r => registerFieldRef(i, r) }
-                                required = { true }
-                                rows = { 1 }
-                                value = { answer } />
-                            <button
-                                className = 'poll-drag-handle'
-                                onMouseDown = { ev => onGrab(i, ev) }
-                                tabIndex = { -1 }
-                                type = 'button'>
-                                <Icon src = { IconMenu } />
-                            </button>
-                        </div>
+            <ol className = { classes.answerList }>
+                {answers.map((answer, i: number) => {
+
+                    const isIdenticalAnswer = answers.slice(0, i).length === 0 ? false
+                        : answers.slice(0, i).some(prevAnswer =>
+                            prevAnswer.name === answer.name
+                            && prevAnswer.name !== '' && answer.name !== '');
+
+                    return (<li
+                        className = { classes.answer }
+                        key = { i }>
+                        <Input
+                            bottomLabel = { (isIdenticalAnswer ? t('polls.errors.notUniqueOption',
+                             { index: i + 1 }) : '') }
+                            error = { isIdenticalAnswer }
+                            id = { `polls-answer-input-${i}` }
+                            label = { t('polls.create.pollOption', { index: i + 1 }) }
+                            maxLength = { CHAR_LIMIT }
+                            onChange = { name => setAnswer(i, {
+                                name,
+                                voters: []
+                            }) }
+                            onKeyPress = { ev => onAnswerKeyDown(i, ev) }
+                            placeholder = { t('polls.create.answerPlaceholder', { index: i + 1 }) }
+                            ref = { r => registerFieldRef(i, r) }
+                            textarea = { true }
+                            value = { answer.name } />
 
                         { answers.length > 2
-                        && <Tooltip content = { t('polls.create.removeOption') }>
-                            <button
-                                className = 'poll-remove-option-button'
-                                onClick = { () => removeAnswer(i) }
-                                type = 'button'>
-                                { t('polls.create.removeOption') }
-                            </button>
-                        </Tooltip>}
-                    </li>)
+                        && <button
+                            className = { classes.removeOption }
+                            onClick = { () => removeAnswer(i) }
+                            type = 'button'>
+                            { t('polls.create.removeOption') }
+                        </button>}
+                    </li>);
+                }
                 )}
             </ol>
-            <div className = 'poll-add-button'>
+            <div className = { classes.addButtonContainer }>
                 <Button
                     accessibilityLabel = { t('polls.create.addOption') }
                     disabled = { answers.length >= ANSWERS_LIMIT }
-                    fullWidth = { true }
                     labelKey = { 'polls.create.addOption' }
                     onClick = { () => {
                         addAnswer();
@@ -260,23 +256,25 @@ const PollCreate = ({
                     type = { BUTTON_TYPES.SECONDARY } />
             </div>
         </div>
-        <div className = 'poll-footer poll-create-footer'>
+        <div className = { classes.footer }>
             <Button
                 accessibilityLabel = { t('polls.create.cancel') }
-                className = { styles.buttonMargin }
-                fullWidth = { true }
+                className = { classes.buttonMargin }
                 labelKey = { 'polls.create.cancel' }
-                onClick = { () => setCreateMode(false) }
+                onClick = { () => {
+                    setCreateMode(false);
+                    editingPollId
+                    && editingPoll?.editing
+                    && dispatch(editPoll(editingPollId, false));
+                } }
                 type = { BUTTON_TYPES.SECONDARY } />
             <Button
-                accessibilityLabel = { t('polls.create.send') }
+                accessibilityLabel = { t('polls.create.save') }
                 disabled = { isSubmitDisabled }
-                fullWidth = { true }
                 isSubmit = { true }
-                labelKey = { 'polls.create.send' } />
+                labelKey = { 'polls.create.save' } />
         </div>
     </form>);
-
 };
 
 /*

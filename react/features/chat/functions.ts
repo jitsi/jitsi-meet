@@ -1,11 +1,17 @@
-// @ts-ignore
+// @ts-expect-error
 import aliases from 'react-emoji-render/data/aliases';
 // eslint-disable-next-line lines-around-comment
-// @ts-ignore
+// @ts-expect-error
 import emojiAsciiAliases from 'react-emoji-render/data/asciiAliases';
 
-import { IState } from '../app/types';
+import { IReduxState } from '../app/types';
+import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
+import i18next from '../base/i18n/i18next';
+import { getParticipantById } from '../base/participants/functions';
 import { escapeRegexp } from '../base/util/helpers';
+
+import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, TIMESTAMP_FORMAT } from './constants';
+import { IMessage } from './types';
 
 /**
  * An ASCII emoticon regexp array to find and replace old-style ASCII
@@ -81,10 +87,10 @@ export function replaceNonUnicodeEmojis(message: string) {
 /**
  * Selector for calculating the number of unread chat messages.
  *
- * @param {IState} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @returns {number} The number of unread messages.
  */
-export function getUnreadCount(state: IState) {
+export function getUnreadCount(state: IReduxState) {
     const { lastReadMessage, messages } = state['features/chat'];
     const messagesCount = messages.length;
 
@@ -93,14 +99,11 @@ export function getUnreadCount(state: IState) {
     }
 
     let reactionMessages = 0;
-
-    if (!lastReadMessage) {
-        return 0;
-    }
+    let lastReadIndex;
 
     if (navigator.product === 'ReactNative') {
         // React native stores the messages in a reversed order.
-        const lastReadIndex = messages.indexOf(lastReadMessage);
+        lastReadIndex = messages.indexOf(<IMessage>lastReadMessage);
 
         for (let i = 0; i < lastReadIndex; i++) {
             if (messages[i].isReaction) {
@@ -111,7 +114,7 @@ export function getUnreadCount(state: IState) {
         return lastReadIndex - reactionMessages;
     }
 
-    const lastReadIndex = messages.lastIndexOf(lastReadMessage);
+    lastReadIndex = messages.lastIndexOf(<IMessage>lastReadMessage);
 
     for (let i = lastReadIndex + 1; i < messagesCount; i++) {
         if (messages[i].isReaction) {
@@ -123,25 +126,67 @@ export function getUnreadCount(state: IState) {
 }
 
 /**
- * Selector for calculating the number of unread chat messages.
- *
- * @param {IState} state - The redux state.
- * @returns {number} The number of unread messages.
- */
-export function getUnreadMessagesCount(state: IState) {
-    const { nbUnreadMessages } = state['features/chat'];
-
-    return nbUnreadMessages;
-}
-
-/**
  * Get whether the chat smileys are disabled or not.
  *
- * @param {IState} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @returns {boolean} The disabled flag.
  */
-export function areSmileysDisabled(state: IState) {
+export function areSmileysDisabled(state: IReduxState) {
     const disableChatSmileys = state['features/base/config']?.disableChatSmileys === true;
 
     return disableChatSmileys;
+}
+
+/**
+ * Returns the timestamp to display for the message.
+ *
+ * @param {IMessage} message - The message from which to get the timestamp.
+ * @returns {string}
+ */
+export function getFormattedTimestamp(message: IMessage) {
+    return getLocalizedDateFormatter(new Date(message.timestamp))
+        .format(TIMESTAMP_FORMAT);
+}
+
+/**
+ * Generates the message text to be rendered in the component.
+ *
+ * @param {IMessage} message - The message from which to get the text.
+ * @returns {string}
+ */
+export function getMessageText(message: IMessage) {
+    return message.messageType === MESSAGE_TYPE_ERROR
+        ? i18next.t('chat.error', {
+            error: message.message
+        })
+        : message.message;
+}
+
+
+/**
+ * Returns whether a message can be replied to.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {IMessage} message - The message to be checked.
+ * @returns {boolean}
+ */
+export function getCanReplyToMessage(state: IReduxState, message: IMessage) {
+    const { knocking } = state['features/lobby'];
+    const participant = getParticipantById(state, message.participantId);
+
+    return Boolean(participant)
+        && (message.privateMessage || (message.lobbyChat && !knocking))
+        && message.messageType !== MESSAGE_TYPE_LOCAL;
+}
+
+/**
+ * Returns the message that is displayed as a notice for private messages.
+ *
+ * @param {IMessage} message - The message to be checked.
+ * @returns {string}
+ */
+export function getPrivateNoticeMessage(message: IMessage) {
+    return i18next.t('chat.privateNotice', {
+        recipient: message.messageType === MESSAGE_TYPE_LOCAL ? message.recipient : i18next.t('chat.you')
+    });
 }

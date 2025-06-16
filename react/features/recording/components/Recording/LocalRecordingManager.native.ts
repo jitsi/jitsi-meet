@@ -1,17 +1,26 @@
 import { IStore } from '../../../app/types';
 
 interface ILocalRecordingManager {
-    addAudioTrackToLocalRecording: (track: MediaStreamTrack) => void;
+    addAudioTrackToLocalRecording: (track: any) => void;
     isRecordingLocally: () => boolean;
-    startLocalRecording: (store: IStore) => void;
+    selfRecording: {
+        on: boolean;
+        withVideo: boolean;
+    };
+    startLocalRecording: (store: IStore, onlySelf: boolean) => Promise<void>;
     stopLocalRecording: () => void;
 }
 
 const LocalRecordingManager: ILocalRecordingManager = {
+    selfRecording: {
+        on: false,
+        withVideo: false
+    },
+
     /**
      * Adds audio track to the recording stream.
      *
-     * @param {MediaStreamTrack} track - Track to be added,.
+     * @param {any} track - Track to be added,.
      * @returns {void}
      */
     addAudioTrackToLocalRecording() { }, // eslint-disable-line @typescript-eslint/no-empty-function

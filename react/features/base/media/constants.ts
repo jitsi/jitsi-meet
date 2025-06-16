@@ -8,16 +8,19 @@ export const CAMERA_FACING_MODE = {
     USER: 'user'
 };
 
-export type MediaType = 'audio' | 'video' | 'presenter' | 'screenshare';
+export type MediaType = 'audio' | 'video' | 'screenshare';
 
 /**
  * The set of media types.
  *
  * @enum {string}
  */
-export const MEDIA_TYPE: { [key: string]: MediaType; } = {
+export const MEDIA_TYPE: {
+    AUDIO: MediaType;
+    SCREENSHARE: MediaType;
+    VIDEO: MediaType;
+} = {
     AUDIO: 'audio',
-    PRESENTER: 'presenter',
     SCREENSHARE: 'screenshare',
     VIDEO: 'video'
 };
@@ -34,6 +37,15 @@ export const SCREENSHARE_MUTISM_AUTHORITY = {
     AUDIO_ONLY: 1 << 0,
     USER: 1 << 2
 };
+
+/**
+ * The languages supported for audio files.
+ */
+export enum AudioSupportedLanguage {
+    en = 'en',
+    fr = 'fr',
+    frCA = 'frCA'
+}
 
 /**
  * The types of authorities which may mute/unmute the local video.

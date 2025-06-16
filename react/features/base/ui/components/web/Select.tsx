@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { ChangeEvent } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
@@ -7,7 +6,7 @@ import Icon from '../../../icons/components/Icon';
 import { IconArrowDown } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 
-interface SelectProps {
+interface ISelectProps {
 
     /**
      * Helper text to be displayed below the select.
@@ -20,14 +19,20 @@ interface SelectProps {
     className?: string;
 
     /**
-     * Wether or not the select is disabled.
+     * Whether or not the select is disabled.
      */
     disabled?: boolean;
 
     /**
-     * Wether or not the select is in the error state.
+     * Whether or not the select is in the error state.
      */
     error?: boolean;
+
+    /**
+     * Id of the <select> element.
+     * Necessary for screen reader users, to link the label and error to the select.
+     */
+    id: string;
 
     /**
      * Label to be displayed above the select.
@@ -53,7 +58,7 @@ interface SelectProps {
     value: number | string;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         container: {
             display: 'flex',
@@ -80,7 +85,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             width: '100%',
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
             color: theme.palette.text01,
-            padding: '8px 16px',
+            padding: '10px 16px',
             paddingRight: '42px',
             border: 0,
             appearance: 'none',
@@ -141,20 +146,27 @@ const Select = ({
     className,
     disabled,
     error,
+    id,
     label,
     onChange,
     options,
-    value }: SelectProps) => {
+    value }: ISelectProps) => {
     const { classes, cx, theme } = useStyles();
     const isMobile = isMobileBrowser();
 
     return (
         <div className = { classes.container }>
-            {label && <span className = { cx(classes.label, isMobile && 'is-mobile') }>{label}</span>}
+            {label && <label
+                className = { cx(classes.label, isMobile && 'is-mobile') }
+                htmlFor = { id } >
+                {label}
+            </label>}
             <div className = { classes.selectContainer }>
                 <select
+                    aria-describedby = { bottomLabel ? `${id}-description` : undefined }
                     className = { cx(classes.select, isMobile && 'is-mobile', className, error && 'error') }
                     disabled = { disabled }
+                    id = { id }
                     onChange = { onChange }
                     value = { value }>
                     {options.map(option => (<option
@@ -168,7 +180,9 @@ const Select = ({
                     src = { IconArrowDown } />
             </div>
             {bottomLabel && (
-                <span className = { cx(classes.bottomLabel, isMobile && 'is-mobile', error && 'error') }>
+                <span
+                    className = { cx(classes.bottomLabel, isMobile && 'is-mobile', error && 'error') }
+                    id = { `${id}-description` }>
                     {bottomLabel}
                 </span>
             )}

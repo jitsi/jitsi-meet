@@ -8,6 +8,7 @@ import {
 
 export interface IFollowMeState {
     moderator?: string;
+    recorder?: boolean;
     state?: {
         [key: string]: string;
     };
@@ -24,9 +25,12 @@ ReducerRegistry.register<IFollowMeState>(
         case SET_FOLLOW_ME_MODERATOR: {
             let newState = set(state, 'moderator', action.id);
 
-            if (!action.id) {
+            if (action.id) {
+                newState = set(newState, 'recorder', action.forRecorder);
+            } else {
                 // clear the state if feature becomes disabled
                 newState = set(newState, 'state', undefined);
+                newState = set(newState, 'recorder', undefined);
             }
 
             return newState;

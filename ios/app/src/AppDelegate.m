@@ -29,16 +29,22 @@
   didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     JitsiMeet *jitsiMeet = [JitsiMeet sharedInstance];
 
+#if 0
+    jitsiMeet.webRtcLoggingSeverity = WebRTCLoggingSeverityVerbose;
+#endif
+
     jitsiMeet.conferenceActivityType = JitsiMeetConferenceActivityType;
     jitsiMeet.customUrlScheme = @"org.jitsi.meet";
     jitsiMeet.universalLinkDomains = @[@"meet.jit.si", @"alpha.jitsi.net", @"beta.meet.jit.si"];
 
     jitsiMeet.defaultConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
+
+        // For testing configOverrides a room needs to be set
+        // builder.room = @"https://meet.jit.si/test0988test";
+
         [builder setFeatureFlag:@"welcomepage.enabled" withBoolean:YES];
-        [builder setFeatureFlag:@"resolution" withValue:@(360)];
         [builder setFeatureFlag:@"ios.screensharing.enabled" withBoolean:YES];
         [builder setFeatureFlag:@"ios.recording.enabled" withBoolean:YES];
-        builder.serverURL = [NSURL URLWithString:@"https://meet.jit.si"];
     }];
 
   [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
@@ -126,7 +132,7 @@
 
 - (UIInterfaceOrientationMask)application:(UIApplication *)application
   supportedInterfaceOrientationsForWindow:(UIWindow *)window {
-    return [[JitsiMeet sharedInstance] application:application 
+    return [[JitsiMeet sharedInstance] application:application
            supportedInterfaceOrientationsForWindow:window];
 }
 

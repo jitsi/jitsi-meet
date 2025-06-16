@@ -1,15 +1,11 @@
-/* eslint-disable lines-around-comment */
-
-import { Theme } from '@mui/material';
-import React, { ReactElement, useCallback } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
-// @ts-ignore
-import { Avatar } from '../../../base/avatar';
-import ListItem from '../../../base/components/participants-pane-list/ListItem';
+import Avatar from '../../../base/avatar/components/Avatar';
 import { translate } from '../../../base/i18n/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import ListItem from '../../../base/ui/components/web/ListItem';
 import {
     ACTION_TRIGGER,
     type ActionTrigger,
@@ -21,7 +17,7 @@ import {
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Type of trigger for the participant actions.
@@ -36,7 +32,7 @@ interface Props extends WithTranslation {
     /**
      * React children.
      */
-    children?: ReactElement | boolean;
+    children?: ReactNode;
 
     /**
      * Whether or not to disable the moderator indicator.
@@ -99,7 +95,7 @@ interface Props extends WithTranslation {
     youText?: string;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         nameContainer: {
             display: 'flex',
@@ -114,8 +110,12 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
 
         moderatorLabel: {
-            ...withPixelLineHeight(theme.typography.labelRegular),
+            ...withPixelLineHeight(theme.typography.labelBold),
             color: theme.palette.text03
+        },
+
+        avatar: {
+            marginRight: theme.spacing(3)
         }
     };
 });
@@ -123,7 +123,7 @@ const useStyles = makeStyles()((theme: Theme) => {
 /**
  * A component representing a participant entry in ParticipantPane and Lobby.
  *
- * @param {Props} props - The props of the component.
+ * @param {IProps} props - The props of the component.
  * @returns {ReactNode}
  */
 function ParticipantItem({
@@ -143,18 +143,18 @@ function ParticipantItem({
     t,
     videoMediaState = MEDIA_STATE.NONE,
     youText
-}: Props) {
+}: IProps) {
     const onClick = useCallback(
         () => openDrawerForParticipant?.({
             participantID,
             displayName
         }), []);
 
-    const { classes: styles } = useStyles();
+    const { classes } = useStyles();
 
     const icon = (
         <Avatar
-            className = 'participant-avatar'
+            className = { classes.avatar }
             displayName = { displayName }
             participantId = { participantID }
             size = { 32 } />
@@ -162,13 +162,13 @@ function ParticipantItem({
 
     const text = (
         <>
-            <div className = { styles.nameContainer }>
-                <div className = { styles.name }>
+            <div className = { classes.nameContainer }>
+                <div className = { classes.name }>
                     {displayName}
                 </div>
                 {local ? <span>&nbsp;({youText})</span> : null}
             </div>
-            {isModerator && !disableModeratorIndicator && <div className = { styles.moderatorLabel }>
+            {isModerator && !disableModeratorIndicator && <div className = { classes.moderatorLabel }>
                 {t('videothumbnail.moderator')}
             </div>}
         </>

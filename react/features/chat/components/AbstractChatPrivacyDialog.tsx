@@ -1,14 +1,12 @@
 import { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 
-import { IState, IStore } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { getParticipantById } from '../../base/participants/functions';
-import { Participant } from '../../base/participants/types';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
+import { IParticipant } from '../../base/participants/types';
 import { sendMessage, setPrivateMessageRecipient } from '../actions';
 
-interface Props extends WithTranslation {
+interface IProps extends WithTranslation {
 
     /**
      * Prop to be invoked on sending the message.
@@ -21,9 +19,9 @@ interface Props extends WithTranslation {
     _onSetMessageRecipient: Function;
 
     /**
-     * The participant retrieved from Redux by the participanrID prop.
+     * The participant retrieved from Redux by the participantID prop.
      */
-    _participant: Object;
+    _participant?: IParticipant;
 
     /**
      * The message that is about to be sent.
@@ -39,13 +37,13 @@ interface Props extends WithTranslation {
 /**
  * Abstract class for the dialog displayed to avoid mis-sending private messages.
  */
-export class AbstractChatPrivacyDialog extends PureComponent<Props> {
+export class AbstractChatPrivacyDialog extends PureComponent<IProps> {
     /**
      * Instantiates a new instance.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._onSendGroupMessage = this._onSendGroupMessage.bind(this);
@@ -82,15 +80,15 @@ export class AbstractChatPrivacyDialog extends PureComponent<Props> {
  * Maps part of the props of this component to Redux actions.
  *
  * @param {Function} dispatch - The Redux dispatch function.
- * @returns {Props}
+ * @returns {IProps}
  */
 export function _mapDispatchToProps(dispatch: IStore['dispatch']) {
     return {
-        _onSendMessage: (message: Object) => {
+        _onSendMessage: (message: string) => {
             dispatch(sendMessage(message, true));
         },
 
-        _onSetMessageRecipient: (participant: Participant) => {
+        _onSetMessageRecipient: (participant: IParticipant) => {
             dispatch(setPrivateMessageRecipient(participant));
         }
     };
@@ -99,11 +97,11 @@ export function _mapDispatchToProps(dispatch: IStore['dispatch']) {
 /**
  * Maps part of the Redux store to the props of this component.
  *
- * @param {IState} state - The Redux state.
- * @param {Props} ownProps - The own props of the component.
- * @returns {Props}
+ * @param {IReduxState} state - The Redux state.
+ * @param {IProps} ownProps - The own props of the component.
+ * @returns {IProps}
  */
-export function _mapStateToProps(state: IState, ownProps: Props) {
+export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     return {
         _participant: getParticipantById(state, ownProps.participantID)
     };

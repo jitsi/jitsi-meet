@@ -1,17 +1,23 @@
-/* eslint-disable lines-around-comment */
-// @ts-ignore
-import Bourne from '@hapi/bourne';
 // @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils';
-import _ from 'lodash';
+// eslint-disable-next-line lines-around-comment
+// @ts-ignore
+import { safeJsonParse } from '@jitsi/js-utils/json';
+import { isEmpty, mergeWith, pick } from 'lodash-es';
 
-import { IState } from '../../app/types';
-import { browser } from '../lib-jitsi-meet';
+import { IReduxState } from '../../app/types';
+import { getLocalParticipant } from '../participants/functions';
 import { parseURLParams } from '../util/parseURLParams';
 
 import { IConfig } from './configType';
 import CONFIG_WHITELIST from './configWhitelist';
-import { FEATURE_FLAGS, _CONFIG_STORE_PREFIX } from './constants';
+import {
+    DEFAULT_HELP_CENTRE_URL,
+    DEFAULT_PRIVACY_URL,
+    DEFAULT_TERMS_URL,
+    FEATURE_FLAGS,
+    _CONFIG_STORE_PREFIX
+} from './constants';
 import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
 import logger from './logger';
 
@@ -49,40 +55,18 @@ export function createFakeConfig(baseURL: string) {
  * @param {Object} state - The global state.
  * @returns {string}
  */
-export function getMeetingRegion(state: IState) {
+export function getMeetingRegion(state: IReduxState) {
     return state['features/base/config']?.deploymentInfo?.region || '';
 }
 
 /**
- * Selector for determining if receiving multiple stream support is enabled.
+ * Selector used to get the SSRC-rewriting feature flag.
  *
  * @param {Object} state - The global state.
  * @returns {boolean}
  */
-export function getMultipleVideoSupportFeatureFlag(state: IState) {
-    return (getFeatureFlag(state, FEATURE_FLAGS.MULTIPLE_VIDEO_STREAMS_SUPPORT)
-        && getSourceNameSignalingFeatureFlag(state)) ?? true;
-}
-
-/**
- * Selector for determining if sending multiple stream support is enabled.
- *
- * @param {Object} state - The global state.
- * @returns {boolean}
- */
-export function getMultipleVideoSendingSupportFeatureFlag(state: IState) {
-    return navigator.product !== 'ReactNative'
-        && ((getMultipleVideoSupportFeatureFlag(state) ?? true) && isUnifiedPlanEnabled(state));
-}
-
-/**
- * Selector used to get the sourceNameSignaling feature flag.
- *
- * @param {Object} state - The global state.
- * @returns {boolean}
- */
-export function getSourceNameSignalingFeatureFlag(state: IState) {
-    return getFeatureFlag(state, FEATURE_FLAGS.SOURCE_NAME_SIGNALING) ?? true;
+export function getSsrcRewritingFeatureFlag(state: IReduxState) {
+    return getFeatureFlag(state, FEATURE_FLAGS.SSRC_REWRITING) ?? true;
 }
 
 /**
@@ -92,7 +76,7 @@ export function getSourceNameSignalingFeatureFlag(state: IState) {
  * @param {string} featureFlag - The name of the feature flag.
  * @returns {boolean}
  */
-export function getFeatureFlag(state: IState, featureFlag: string) {
+export function getFeatureFlag(state: IReduxState, featureFlag: string) {
     const featureFlags = state['features/base/config']?.flags || {};
 
     return featureFlags[featureFlag as keyof typeof featureFlags];
@@ -104,8 +88,38 @@ export function getFeatureFlag(state: IState, featureFlag: string) {
  * @param {Object} state - The global state.
  * @returns {boolean}
  */
-export function getDisableRemoveRaisedHandOnFocus(state: IState) {
-    return state['features/base/config']?.disableRemoveRaisedHandOnFocus || false;
+export function getDisableRemoveRaisedHandOnFocus(state: IReduxState) {
+    return state['features/base/config']?.raisedHands?.disableRemoveRaisedHandOnFocus || false;
+}
+
+/**
+ * Selector used to get the disableLowerHandByModerator.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getDisableLowerHandByModerator(state: IReduxState) {
+    return state['features/base/config']?.raisedHands?.disableLowerHandByModerator || false;
+}
+
+/**
+ * Selector used to get the disableLowerHandNotification.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getDisableLowerHandNotification(state: IReduxState) {
+    return state['features/base/config']?.raisedHands?.disableLowerHandNotification || true;
+}
+
+/**
+ * Selector used to get the disableNextSpeakerNotification.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getDisableNextSpeakerNotification(state: IReduxState) {
+    return state['features/base/config']?.raisedHands?.disableNextSpeakerNotification || false;
 }
 
 /**
@@ -114,7 +128,7 @@ export function getDisableRemoveRaisedHandOnFocus(state: IState) {
  * @param {Object} state - The global state.
  * @returns {string}
  */
-export function getRecordingSharingUrl(state: IState) {
+export function getRecordingSharingUrl(state: IReduxState) {
     return state['features/base/config'].recordingSharingUrl;
 }
 
@@ -152,13 +166,11 @@ export function overrideConfigJSON(config: IConfig, interfaceConfig: any, json: 
             const configJSON
                 = getWhitelistedJSON(configName as 'interfaceConfig' | 'config', json[configName]);
 
-            if (!_.isEmpty(configJSON)) {
-                logger.info(
-                    `Extending ${configName} with: ${
-                        JSON.stringify(configJSON)}`);
+            if (!isEmpty(configJSON)) {
+                logger.info(`Extending ${configName} with: ${JSON.stringify(configJSON)}`);
 
                 // eslint-disable-next-line arrow-body-style
-                _.mergeWith(configObj, configJSON, (oldValue, newValue) => {
+                mergeWith(configObj, configJSON, (oldValue, newValue) => {
 
                     // XXX We don't want to merge the arrays, we want to
                     // overwrite them.
@@ -182,9 +194,9 @@ export function overrideConfigJSON(config: IConfig, interfaceConfig: any, json: 
  */
 export function getWhitelistedJSON(configName: 'interfaceConfig' | 'config', configJSON: any): Object {
     if (configName === 'interfaceConfig') {
-        return _.pick(configJSON, INTERFACE_CONFIG_WHITELIST);
+        return pick(configJSON, INTERFACE_CONFIG_WHITELIST);
     } else if (configName === 'config') {
-        return _.pick(configJSON, CONFIG_WHITELIST);
+        return pick(configJSON, CONFIG_WHITELIST);
     }
 
     return configJSON;
@@ -196,9 +208,34 @@ export function getWhitelistedJSON(configName: 'interfaceConfig' | 'config', con
  * @param {Object} state - The state of the app.
  * @returns {boolean}
  */
-export function isNameReadOnly(state: IState): boolean {
+export function isNameReadOnly(state: IReduxState): boolean {
     return Boolean(state['features/base/config'].disableProfile
         || state['features/base/config'].readOnlyName);
+}
+
+/**
+ * Selector for determining if the participant is the next one in the queue to speak.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function isNextToSpeak(state: IReduxState): boolean {
+    const raisedHandsQueue = state['features/base/participants'].raisedHandsQueue || [];
+    const participantId = getLocalParticipant(state)?.id;
+
+    return participantId === raisedHandsQueue[0]?.id;
+}
+
+/**
+ * Selector for determining if the next to speak participant in the queue has been notified.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function hasBeenNotified(state: IReduxState): boolean {
+    const raisedHandsQueue = state['features/base/participants'].raisedHandsQueue;
+
+    return Boolean(raisedHandsQueue[0]?.hasBeenNotified);
 }
 
 /**
@@ -207,21 +244,8 @@ export function isNameReadOnly(state: IState): boolean {
  * @param {Object} state - The state of the app.
  * @returns {boolean}
  */
-export function isDisplayNameVisible(state: IState): boolean {
+export function isDisplayNameVisible(state: IReduxState): boolean {
     return !state['features/base/config'].hideDisplayName;
-}
-
-/**
- * Selector for determining if Unified plan support is enabled.
- *
- * @param {Object} state - The state of the app.
- * @returns {boolean}
- */
-export function isUnifiedPlanEnabled(state: IState): boolean {
-    const { enableUnifiedOnChrome = true } = state['features/base/config'];
-
-    return browser.supportsUnifiedPlan()
-        && (!browser.isChromiumBased() || (browser.isChromiumBased() && enableUnifiedOnChrome));
 }
 
 /**
@@ -241,7 +265,7 @@ export function restoreConfig(baseURL: string) {
 
     if (config) {
         try {
-            return Bourne.parse(config) || undefined;
+            return safeJsonParse(config) || undefined;
         } catch (e) {
             // Somehow incorrect data ended up in the storage. Clean it up.
             jitsiLocalStorage.removeItem(key);
@@ -250,8 +274,6 @@ export function restoreConfig(baseURL: string) {
 
     return undefined;
 }
-
-/* eslint-disable max-params */
 
 /**
  * Inspects the hash part of the location URI and overrides values specified
@@ -305,6 +327,118 @@ export function setConfigFromURLParams(
     }
 
     overrideConfigJSON(config, interfaceConfig, json);
+
+    // Print warning about depricated URL params
+    if ('interfaceConfig.SUPPORT_URL' in params) {
+        logger.warn('Using SUPPORT_URL interfaceConfig URL overwrite is deprecated.'
+            + ' Please use supportUrl from advanced branding!');
+    }
+
+    if ('config.defaultLogoUrl' in params) {
+        logger.warn('Using defaultLogoUrl config URL overwrite is deprecated.'
+            + ' Please use logoImageUrl from advanced branding!');
+    }
+
+    const deploymentUrlsConfig = params['config.deploymentUrls'] ?? {};
+
+    if ('config.deploymentUrls.downloadAppsUrl' in params || 'config.deploymentUrls.userDocumentationURL' in params
+            || (typeof deploymentUrlsConfig === 'object'
+                && ('downloadAppsUrl' in deploymentUrlsConfig || 'userDocumentationURL' in deploymentUrlsConfig))) {
+        logger.warn('Using deploymentUrls config URL overwrite is deprecated.'
+            + ' Please use downloadAppsUrl and/or userDocumentationURL from advanced branding!');
+    }
+
+    const liveStreamingConfig = params['config.liveStreaming'] ?? {};
+
+    if (('interfaceConfig.LIVE_STREAMING_HELP_LINK' in params)
+            || ('config.liveStreaming.termsLink' in params)
+            || ('config.liveStreaming.dataPrivacyLink' in params)
+            || ('config.liveStreaming.helpLink' in params)
+            || (typeof params['config.liveStreaming'] === 'object' && 'config.liveStreaming' in params
+                && (
+                    'termsLink' in liveStreamingConfig
+                    || 'dataPrivacyLink' in liveStreamingConfig
+                    || 'helpLink' in liveStreamingConfig
+                )
+            )) {
+        logger.warn('Using liveStreaming config URL overwrite and/or LIVE_STREAMING_HELP_LINK interfaceConfig URL'
+            + ' overwrite is deprecated. Please use liveStreaming from advanced branding!');
+    }
+
+    if ('config.customToolbarButtons' in params) {
+        logger.warn('Using customToolbarButtons config URL overwrite is deprecated.'
+            + ' Please use liveStreaming from advanced branding!');
+    }
+
 }
 
 /* eslint-enable max-params */
+
+/**
+ * Returns the dial out url.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {string}
+ */
+export function getDialOutStatusUrl(state: IReduxState) {
+    return state['features/base/config'].guestDialOutStatusUrl;
+}
+
+/**
+ * Returns the dial out status url.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {string}
+ */
+export function getDialOutUrl(state: IReduxState) {
+    return state['features/base/config'].guestDialOutUrl;
+}
+
+/**
+ * Selector to return the security UI config.
+ *
+ * @param {IReduxState} state - State object.
+ * @returns {Object}
+ */
+export function getSecurityUiConfig(state: IReduxState) {
+    return state['features/base/config']?.securityUi || {};
+}
+
+/**
+ * Returns the terms, privacy and help centre URL's.
+ *
+ * @param {IReduxState} state - The state of the application.
+ * @returns {{
+ *  privacy: string,
+ *  helpCentre: string,
+ *  terms: string
+ * }}
+ */
+export function getLegalUrls(state: IReduxState) {
+    const helpCentreURL = state['features/base/config']?.helpCentreURL;
+    const configLegalUrls = state['features/base/config']?.legalUrls;
+
+    return {
+        privacy: configLegalUrls?.privacy || DEFAULT_PRIVACY_URL,
+        helpCentre: helpCentreURL || configLegalUrls?.helpCentre || DEFAULT_HELP_CENTRE_URL,
+        terms: configLegalUrls?.terms || DEFAULT_TERMS_URL
+    };
+}
+
+/**
+ * Utility function to debounce the execution of a callback function.
+ *
+ * @param {Function} callback - The callback to debounce.
+ * @param {number} delay - The debounce delay in milliseconds.
+ * @returns {Function} - A debounced function that delays the execution of the callback.
+ */
+export function debounce(callback: (...args: any[]) => void, delay: number) {
+    let timerId: any;
+
+    return (...args: any[]) => {
+        if (timerId) {
+            clearTimeout(timerId);
+        }
+        timerId = setTimeout(() => callback(...args), delay);
+    };
+}

@@ -13,11 +13,36 @@ local main_util = module:require "util";
 local ends_with = main_util.ends_with;
 local http_get_with_retry = main_util.http_get_with_retry;
 local extract_subdomain = main_util.extract_subdomain;
+local starts_with = main_util.starts_with;
+local table_shallow_copy = main_util.table_shallow_copy;
+local cjson_safe  = require 'cjson.safe'
+local timer = require "util.timer";
+local async = require "util.async";
+local inspect = require 'inspect';
 
 local nr_retries = 3;
+local ssl = require "ssl";
 
 -- TODO: Figure out a less arbitrary default cache size.
 local cacheSize = module:get_option_number("jwt_pubkey_cache_size", 128);
+
+-- the cache for generated asap jwt tokens
+local jwtKeyCache = require 'util.cache'.new(cacheSize);
+
+local ASAPTTL_THRESHOLD = module:get_option_number('asap_ttl_threshold', 600);
+local ASAPTTL = module:get_option_number('asap_ttl', 3600);
+local ASAPIssuer = module:get_option_string('asap_issuer', 'jitsi');
+local ASAPAudience = module:get_option_string('asap_audience', 'jitsi');
+local ASAPKeyId = module:get_option_string('asap_key_id', 'jitsi');
+local ASAPKeyPath = module:get_option_string('asap_key_path', '/etc/prosody/certs/asap.key');
+
+local ASAPKey;
+local f = io.open(ASAPKeyPath, 'r');
+
+if f then
+    ASAPKey = f:read('*all');
+    f:close();
+end
 
 local Util = {}
 Util.__index = Util
@@ -34,6 +59,9 @@ function Util.new(module)
     self.appId = module:get_option_string("app_id");
     self.appSecret = module:get_option_string("app_secret");
     self.asapKeyServer = module:get_option_string("asap_key_server");
+    -- A URL that will return json file with a mapping between kids and public keys
+    -- If the response Cache-Control header we will respect it and refresh it
+    self.cacheKeysUrl = module:get_option_string("cache_keys_url");
     self.signatureAlgorithm = module:get_option_string("signature_algorithm");
     self.allowEmptyToken = module:get_option_boolean("allow_empty_token");
 
@@ -52,7 +80,7 @@ function Util.new(module)
         These setups relay on configuration 'muc_domain_base' which holds
         the main domain and we use it to subtract subdomains from the
         virtual addresses.
-        The following confgurations are for multidomain setups and domain name
+        The following configurations are for multidomain setups and domain name
         verification:
      --]]
 
@@ -109,6 +137,55 @@ function Util.new(module)
         return nil;
     end
 
+    if self.cacheKeysUrl then
+        self.cachedKeys = {};
+        local update_keys_cache;
+        update_keys_cache = async.runner(function (name)
+            local content, code, cache_for;
+            content, code, cache_for = http_get_with_retry(self.cacheKeysUrl, nr_retries);
+            if content ~= nil then
+                local keys_to_delete = table_shallow_copy(self.cachedKeys);
+                -- Let's convert any certificate to public key
+                for k, v in pairs(cjson_safe.decode(content)) do
+                    if starts_with(v, '-----BEGIN CERTIFICATE-----') then
+                        self.cachedKeys[k] = ssl.loadcertificate(v):pubkey();
+                        -- do not clean this key if it already exists
+                        keys_to_delete[k] = nil;
+                    end
+                end
+                -- let's schedule the clean in an hour and a half, current tokens will be valid for an hour
+                timer.add_task(90*60, function ()
+                    for k, _ in pairs(keys_to_delete) do
+                        self.cachedKeys[k] = nil;
+                    end
+                end);
+
+                if cache_for then
+                    cache_for = tonumber(cache_for);
+                    -- let's schedule new update 60 seconds before the cache expiring
+                    if cache_for > 60 then
+                        cache_for = cache_for - 60;
+                    end
+                    timer.add_task(cache_for, function ()
+                        update_keys_cache:run("update_keys_cache");
+                    end);
+                else
+                    -- no cache header let's consider updating in 6hours
+                    timer.add_task(6*60*60, function ()
+                        update_keys_cache:run("update_keys_cache");
+                    end);
+                end
+            else
+                module:log('warn', 'Failed to retrieve cached public keys code:%s', code);
+                -- failed let's retry in 30 seconds
+                timer.add_task(30, function ()
+                    update_keys_cache:run("update_keys_cache");
+                end);
+            end
+        end);
+        update_keys_cache:run("update_keys_cache");
+    end
+
     return self
 end
 
@@ -137,19 +214,25 @@ end
 -- @return the public key (the content of requested resource) or nil
 function Util:get_public_key(keyId)
     local content = self.cache:get(keyId);
+    local code;
     if content == nil then
         -- If the key is not found in the cache.
-        module:log("debug", "Cache miss for key: %s", keyId);
+        -- module:log("debug", "Cache miss for key: %s", keyId);
         local keyurl = path.join(self.asapKeyServer, hex.to(sha256(keyId))..'.pem');
-        module:log("debug", "Fetching public key from: %s", keyurl);
-        content = http_get_with_retry(keyurl, nr_retries);
+        -- module:log("debug", "Fetching public key from: %s", keyurl);
+        content, code = http_get_with_retry(keyurl, nr_retries);
         if content ~= nil then
             self.cache:set(keyId, content);
+        else
+            if code == nil then
+                -- this is timeout after nr_retries retries
+                module:log('warn', 'Timeout retrieving %s from %s', keyId, keyurl);
+            end
         end
         return content;
     else
         -- If the key is in the cache, use it.
-        module:log("debug", "Cache hit for key: %s", keyId);
+        -- module:log("debug", "Cache hit for key: %s", keyId);
         return content;
     end
 end
@@ -160,16 +243,12 @@ end
 -- session.jitsi_meet_room - the room name value from the token
 -- session.jitsi_meet_domain - the domain name value from the token
 -- session.jitsi_meet_context_user - the user details from the token
+-- session.jitsi_meet_context_room - the room details from the token
 -- session.jitsi_meet_context_group - the group value from the token
 -- session.jitsi_meet_context_features - the features value from the token
 -- @param session the current session
--- @param acceptedIssuers optional list of accepted issuers to check
 -- @return false and error
-function Util:process_and_verify_token(session, acceptedIssuers)
-    if not acceptedIssuers then
-        acceptedIssuers = self.acceptedIssuers;
-    end
-
+function Util:process_and_verify_token(session)
     if session.auth_token == nil then
         if self.allowEmptyToken then
             return true;
@@ -181,7 +260,7 @@ function Util:process_and_verify_token(session, acceptedIssuers)
     local key;
     if session.public_key then
         -- We're using an public key stored in the session
-        module:log("debug","Public key was found on the session");
+        -- module:log("debug","Public key was found on the session");
         key = session.public_key;
     elseif self.asapKeyServer and session.auth_token ~= nil then
         -- We're fetching an public key from an ASAP server
@@ -202,7 +281,13 @@ function Util:process_and_verify_token(session, acceptedIssuers)
         if alg.sub(alg,1,2) ~= "RS" then
             return false, "not-allowed", "'kid' claim only support with RS family";
         end
-        key = self:get_public_key(kid);
+
+        if self.cachedKeys and self.cachedKeys[kid] then
+            key = self.cachedKeys[kid];
+        else
+            key = self:get_public_key(kid);
+        end
+
         if key == nil then
             return false, "not-allowed", "could not obtain public key";
         end
@@ -220,7 +305,7 @@ function Util:process_and_verify_token(session, acceptedIssuers)
         session.auth_token,
         self.signatureAlgorithm,
         key,
-        acceptedIssuers,
+        self.acceptedIssuers,
         self.acceptedAudiences
     )
     if claims ~= nil then
@@ -238,6 +323,8 @@ function Util:process_and_verify_token(session, acceptedIssuers)
 
         -- Binds the user details to the session if available
         if claims["context"] ~= nil then
+          session.jitsi_meet_str_tenant = claims["context"]["tenant"];
+
           if claims["context"]["user"] ~= nil then
             session.jitsi_meet_context_user = claims["context"]["user"];
           end
@@ -254,7 +341,21 @@ function Util:process_and_verify_token(session, acceptedIssuers)
           if claims["context"]["room"] ~= nil then
             session.jitsi_meet_context_room = claims["context"]["room"]
           end
+        elseif claims["user_id"] then
+          session.jitsi_meet_context_user = {};
+          session.jitsi_meet_context_user.id = claims["user_id"];
         end
+
+        -- fire event that token has been verified and pass the session and the decoded token
+        prosody.events.fire_event('jitsi-authentication-token-verified', {
+            session = session;
+            claims = claims;
+        });
+
+        if session.contextRequired and claims["context"] == nil then
+            return false, "not-allowed", 'jwt missing required context claim';
+        end
+
         return true;
     else
         return false, "not-allowed", msg;
@@ -273,9 +374,7 @@ end
 --         and was not successful
 function Util:verify_room(session, room_address)
     if self.allowEmptyToken and session.auth_token == nil then
-        module:log(
-            "debug",
-            "Skipped room token verification - empty tokens are allowed");
+        --module:log("debug", "Skipped room token verification - empty tokens are allowed");
         return true;
     end
 
@@ -289,7 +388,11 @@ function Util:verify_room(session, room_address)
 
     local auth_room = session.jitsi_meet_room;
     if auth_room then
-        auth_room = string.lower(auth_room);
+        if type(auth_room) == 'string' then
+            auth_room = string.lower(auth_room);
+        else
+            module:log('warn', 'session.jitsi_meet_room not string: %s', inspect(auth_room));
+        end
     end
     if not self.enableDomainVerification then
         -- if auth_room is missing, this means user is anonymous (no token for
@@ -335,10 +438,25 @@ function Util:verify_room(session, room_address)
             -- not a regex
             room_to_check = auth_room;
         end
-        module:log("debug", "room to check: %s", room_to_check)
+        -- module:log("debug", "room to check: %s", room_to_check)
         if not room_to_check then
-            return false
+            if not self.requireRoomClaim then
+                -- if we do not require to have the room claim, and it is missing
+                -- there is no point of continue and verifying the roomName and the tenant
+                return true;
+            end
+
+            return false;
         end
+    end
+
+    if session.jitsi_meet_str_tenant
+        and string.lower(session.jitsi_meet_str_tenant) ~= session.jitsi_web_query_prefix then
+        module:log('warn', 'Tenant differs for user:%s group:%s url_tenant:%s token_tenant:%s',
+            session.jitsi_meet_context_user and session.jitsi_meet_context_user.id or '',
+            session.jitsi_meet_context_group,
+            session.jitsi_web_query_prefix, session.jitsi_meet_str_tenant);
+        session.jitsi_meet_tenant_mismatch = true;
     end
 
     local auth_domain = string.lower(session.jitsi_meet_domain);
@@ -371,6 +489,50 @@ function Util:verify_room(session, room_address)
         -- we do not have a domain part (multidomain is not enabled)
         -- verify with info from the token
         return room_address_to_verify == jid.join(room_to_check, subdomain_to_check);
+    end
+end
+
+function Util:generateAsapToken(audience)
+    if not ASAPKey then
+        module:log('warn', 'No ASAP Key read, asap key generation is disabled');
+        return ''
+    end
+
+    audience = audience or ASAPAudience
+    local t = os.time()
+    local err
+    local exp_key = 'asap_exp.'..audience
+    local token_key = 'asap_token.'..audience
+    local exp = jwtKeyCache:get(exp_key)
+    local token = jwtKeyCache:get(token_key)
+
+    --if we find a token and it isn't too far from expiry, then use it
+    if token ~= nil and exp ~= nil then
+        exp = tonumber(exp)
+        if (exp - t) > ASAPTTL_THRESHOLD then
+            return token
+        end
+    end
+
+    --expiry is the current time plus TTL
+    exp = t + ASAPTTL
+    local payload = {
+        iss = ASAPIssuer,
+        aud = audience,
+        nbf = t,
+        exp = exp,
+    }
+
+    -- encode
+    local alg = 'RS256'
+    token, err = jwt.encode(payload, ASAPKey, alg, { kid = ASAPKeyId })
+    if not err then
+        token = 'Bearer '..token
+        jwtKeyCache:set(exp_key, exp)
+        jwtKeyCache:set(token_key, token)
+        return token
+    else
+        return ''
     end
 end
 

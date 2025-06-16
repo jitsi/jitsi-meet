@@ -1,16 +1,13 @@
-import React, { Component } from 'react';
-import { WithTranslation } from 'react-i18next';
+import React, { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { translate } from '../../../../base/i18n/functions';
 import Input from '../../../../base/ui/components/web/Input';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { LOCKED_LOCALLY } from '../../../../room-lock';
+import { LOCKED_LOCALLY } from '../../../../room-lock/constants';
 
 /**
  * The type of the React {@code Component} props of {@link PasswordForm}.
  */
-interface Props extends WithTranslation {
+interface IProps {
 
     /**
      * Whether or not to show the password editing field.
@@ -21,7 +18,7 @@ interface Props extends WithTranslation {
      * The value for how the conference is locked (or undefined if not locked)
      * as defined by room-lock constants.
      */
-    locked: string;
+    locked?: string;
 
     /**
      * Callback to invoke when the local participant is submitting a password
@@ -32,7 +29,7 @@ interface Props extends WithTranslation {
     /**
      * The current known password for the JitsiConference.
      */
-    password: string;
+    password?: string;
 
     /**
      * The number of digits to be used in the password.
@@ -46,155 +43,73 @@ interface Props extends WithTranslation {
 }
 
 /**
- * The type of the React {@code Component} state of {@link PasswordForm}.
- */
-type State = {
-
-    /**
-     * The value of the password being entered by the local participant.
-     */
-    enteredPassword: string;
-};
-
-/**
  * React {@code Component} for displaying and editing the conference password.
  *
- * @augments Component
+ * @returns {ReactElement}
  */
-class PasswordForm extends Component<Props, State> {
-    /**
-     * Implements React's {@link Component#getDerivedStateFromProps()}.
-     *
-     * @inheritdoc
-     */
-    static getDerivedStateFromProps(props: Props, state: State) {
-        return {
-            enteredPassword: props.editEnabled ? state.enteredPassword : ''
-        };
-    }
-
-    state = {
-        enteredPassword: ''
-    };
-
-    /**
-     * Initializes a new {@code PasswordForm} instance.
-     *
-     * @param {Props} props - The React {@code Component} props to initialize
-     * the new {@code PasswordForm} instance with.
-     */
-    constructor(props: Props) {
-        super(props);
-
-        // Bind event handlers so they are only bound once per instance.
-        this._onEnteredPasswordChange = this._onEnteredPasswordChange.bind(this);
-        this._onKeyPress = this._onKeyPress.bind(this);
-    }
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        return (
-            <div className = 'info-password'>
-                {this._renderPassword()}
-                {this._renderPasswordField()}
-            </div>
-        );
-    }
-
-    /** .........
-     * Renders the password if there is any.
-     *
-     * @returns {ReactElement}
-     */
-    _renderPassword() {
-        const { locked, t } = this.props;
-
-        return locked && <>
-            <span className = 'info-label'>
-                {t('info.password')}
-            </span>
-            <span className = 'spacer'>&nbsp;</span>
-            <span className = 'info-password-field info-value'>
-                {locked === LOCKED_LOCALLY ? (
-                    <div className = 'info-password-local'>
-                        {this.props.visible ? this.props.password : '******' }
-                    </div>
-                ) : (
-                    <div className = 'info-password-remote'>
-                        {this.props.t('passwordSetRemotely')}
-                    </div>
-                ) }
-                {this._renderPasswordField()}
-            </span>
-        </>;
-    }
-
-    /**
-     * Returns a ReactElement for showing the current state of the password or
-     * for editing the current password.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderPasswordField() {
-        if (this.props.editEnabled) {
-            let placeHolderText = this.props.t('dialog.password');
-
-            if (this.props.passwordNumberOfDigits) {
-                placeHolderText = this.props.t('passwordDigitsOnly', {
-                    number: this.props.passwordNumberOfDigits });
-            }
-
-            return (
-                <div
-                    className = 'info-password-form'>
-                    <Input
-                        accessibilityLabel = { this.props.t('info.addPassword') }
-                        autoFocus = { true }
-                        id = 'info-password-input'
-                        maxLength = { this.props.passwordNumberOfDigits }
-                        onChange = { this._onEnteredPasswordChange }
-                        onKeyPress = { this._onKeyPress }
-                        placeholder = { placeHolderText }
-                        type = 'password'
-                        value = { this.state.enteredPassword } />
-                </div>
-            );
-        }
-    }
-
-    /**
-     * Updates the internal state of entered password.
-     *
-     * @param {string} value - DOM Event for value change.
-     * @private
-     * @returns {void}
-     */
-    _onEnteredPasswordChange(value: string) {
-        this.setState({ enteredPassword: value });
-    }
-
-    /**
-     * Stops the the EnterKey for propagation in order to prevent the dialog
-     * to close.
-     *
-     * @param {Object} event - The key event.
-     * @private
-     * @returns {void}
-     */
-    _onKeyPress(event: React.KeyboardEvent) {
+export default function PasswordForm({
+    editEnabled,
+    locked,
+    onSubmit,
+    password,
+    passwordNumberOfDigits,
+    visible
+}: IProps) {
+    const { t } = useTranslation();
+    const [ enteredPassword, setEnteredPassword ] = useState('');
+    const onKeyPress = useCallback(event => {
         if (event.key === 'Enter') {
             event.preventDefault();
             event.stopPropagation();
 
-            this.props.onSubmit(this.state.enteredPassword);
+            onSubmit(enteredPassword);
         }
-    }
-}
+    }, [ onSubmit, enteredPassword ]);
 
-export default translate(PasswordForm);
+    if (!editEnabled && enteredPassword && enteredPassword !== '') {
+        setEnteredPassword('');
+    }
+
+    const placeHolderText
+        = passwordNumberOfDigits ? t('passwordDigitsOnly', { number: passwordNumberOfDigits }) : t('dialog.password');
+
+
+    return (
+        <div className = 'info-password'>
+            { locked && <>
+                <span className = 'info-label'>
+                    {t('info.password')}
+                </span>
+                <span className = 'spacer'>&nbsp;</span>
+                <span className = 'info-password-field info-value'>
+                    {locked === LOCKED_LOCALLY ? (
+                        <div className = 'info-password-local'>
+                            { visible ? password : '******' }
+                        </div>
+                    ) : (
+                        <div className = 'info-password-remote'>
+                            { t('passwordSetRemotely') }
+                        </div>
+                    ) }
+                </span>
+            </>
+            }
+            {
+                editEnabled && <div
+                    className = 'info-password-form'>
+                    <Input
+                        accessibilityLabel = { t('info.addPassword') }
+                        autoFocus = { true }
+                        id = 'info-password-input'
+                        maxLength = { passwordNumberOfDigits }
+                        mode = { passwordNumberOfDigits ? 'numeric' : undefined }
+                        onChange = { setEnteredPassword }
+                        onKeyPress = { onKeyPress }
+                        placeholder = { placeHolderText }
+                        type = 'password'
+                        value = { enteredPassword } />
+                </div>
+            }
+        </div>
+    );
+}

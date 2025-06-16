@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-import { Theme } from '@mui/material';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
@@ -8,7 +6,7 @@ import { translate } from '../../../../base/i18n/functions';
 import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import { UPGRADE_OPTIONS_LINK, UPGRADE_OPTIONS_TEXT } from '../../../constants';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         limitContainer: {
             backgroundColor: theme.palette.warning01,
@@ -16,11 +14,11 @@ const useStyles = makeStyles()((theme: Theme) => {
             padding: '8px 16px'
         },
         limitInfo: {
-            color: theme.palette.field01,
+            color: theme.palette.text.primary,
             ...withPixelLineHeight(theme.typography.bodyShortRegular)
         },
         link: {
-            color: theme.palette.field01,
+            color: `${theme.palette.text.primary} !important`,
             fontWeight: 'bold',
             textDecoration: 'underline'
         }

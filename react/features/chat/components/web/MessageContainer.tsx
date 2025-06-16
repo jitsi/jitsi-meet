@@ -1,28 +1,29 @@
-/* eslint-disable lines-around-comment */
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash-es';
 import React, { RefObject } from 'react';
 import { scrollIntoView } from 'seamless-scroll-polyfill';
 
-import { MESSAGE_TYPE_REMOTE } from '../../constants';
-import AbstractMessageContainer, { Props } from '../AbstractMessageContainer';
+import { MESSAGE_TYPE_LOCAL, MESSAGE_TYPE_REMOTE } from '../../constants';
+import AbstractMessageContainer, { IProps } from '../AbstractMessageContainer';
 
-// @ts-ignore
 import ChatMessageGroup from './ChatMessageGroup';
 import NewMessagesButton from './NewMessagesButton';
 
-interface State {
+interface IState {
+
     /**
      * Whether or not message container has received new messages.
      */
     hasNewMessages: boolean;
+
     /**
      * Whether or not scroll position is at the bottom of container.
      */
     isScrolledToBottom: boolean;
+
     /**
      * The id of the last read message.
      */
-    lastReadMessageId: string;
+    lastReadMessageId: string | null;
 }
 
 /**
@@ -30,12 +31,12 @@ interface State {
  *
  * @augments AbstractMessageContainer
  */
-export default class MessageContainer extends AbstractMessageContainer<Props, State> {
+export default class MessageContainer extends AbstractMessageContainer<IProps, IState> {
     /**
      * Component state used to decide when the hasNewMessages button to appear
      * and where to scroll when click on hasNewMessages button.
      */
-    state: State = {
+    state: IState = {
         hasNewMessages: false,
         isScrolledToBottom: true,
         lastReadMessageId: ''
@@ -61,10 +62,10 @@ export default class MessageContainer extends AbstractMessageContainer<Props, St
     /**
      * Initializes a new {@code MessageContainer} instance.
      *
-     * @param {Props} props - The React {@code Component} props to initialize
+     * @param {IProps} props - The React {@code Component} props to initialize
      * the new {@code MessageContainer} instance with.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this._messageListRef = React.createRef<HTMLDivElement>();
@@ -133,17 +134,19 @@ export default class MessageContainer extends AbstractMessageContainer<Props, St
 
     /**
      * Implements {@code Component#componentDidUpdate}.
-     * If the user receive a new message scroll automatically to the bottom if scroll position was at the bottom.
+     * If the user receive a new message or the local user send a new message,
+     * scroll automatically to the bottom if scroll position was at the bottom.
      * Otherwise update hasNewMessages from component state.
      *
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate(prevProps: Props) {
-        const hasNewMessages = this.props.messages.length !== prevProps.messages.length;
+    componentDidUpdate(prevProps: IProps) {
+        const newMessages = this.props.messages.filter(message => !prevProps.messages.includes(message));
+        const hasLocalMessage = newMessages.map(message => message.messageType).includes(MESSAGE_TYPE_LOCAL);
 
-        if (hasNewMessages) {
-            if (this.state.isScrolledToBottom) {
+        if (newMessages.length > 0) {
+            if (this.state.isScrolledToBottom || hasLocalMessage) {
                 this.scrollToElement(false, null);
             } else {
                 // eslint-disable-next-line react/no-did-update-set-state
@@ -275,6 +278,7 @@ export default class MessageContainer extends AbstractMessageContainer<Props, St
     */
     _findFirstUnreadMessage() {
         const messagesNodeList = document.querySelectorAll('.chatmessage-wrapper');
+
         // @ts-ignore
         const messagesToArray = [ ...messagesNodeList ];
 
@@ -293,7 +297,7 @@ export default class MessageContainer extends AbstractMessageContainer<Props, St
     /**
      * Check if a message is visible in view.
      *
-     * @param {Element} message -
+     * @param {Element} message - The message.
      *
      * @returns {boolean}
      */

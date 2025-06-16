@@ -19,7 +19,7 @@ input[type=range]:focus {
  * Include the mixin for a range input style.
  */
 @include slider {
-    background: $sliderTrackBackground;
+    background: #474747;
     border: none;
     border-radius: 3px;
     cursor: pointer;
@@ -33,9 +33,9 @@ input[type=range]:focus {
 @include slider-thumb {
     -webkit-appearance: none;
     background: white;
-    border: 1px solid $sliderThumbBackground;
+    border: 1px solid #3572b0;
     border-radius: 50%;
-    box-shadow: 0px 0px 1px $sliderThumbBackground;
+    box-shadow: 0px 0px 1px #3572b0;
     cursor: pointer;
     height: 14px;
     margin-top: -4px;

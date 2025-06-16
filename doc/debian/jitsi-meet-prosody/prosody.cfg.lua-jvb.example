@@ -51,12 +51,10 @@ VirtualHost "jitmeet.example.com"
     }
     av_moderation_component = "avmoderation.jitmeet.example.com"
     speakerstats_component = "speakerstats.jitmeet.example.com"
-    conference_duration_component = "conferenceduration.jitmeet.example.com"
     end_conference_component = "endconference.jitmeet.example.com"
     -- we need bosh
     modules_enabled = {
         "bosh";
-        "pubsub";
         "ping"; -- Enable mod_ping
         "speakerstats";
         "external_services";
@@ -78,13 +76,18 @@ Component "conference.jitmeet.example.com" "muc"
     restrict_room_creation = true
     storage = "memory"
     modules_enabled = {
+        "muc_hide_all";
         "muc_meeting_id";
         "muc_domain_mapper";
         "polls";
         --"token_verification";
         "muc_rate_limit";
+        "muc_password_whitelist";
     }
     admins = { "focusUser@auth.jitmeet.example.com" }
+    muc_password_whitelist = {
+        "focusUser@auth.jitmeet.example.com"
+    }
     muc_room_locking = false
     muc_room_default_public_jids = true
 
@@ -92,6 +95,7 @@ Component "breakout.jitmeet.example.com" "muc"
     restrict_room_creation = true
     storage = "memory"
     modules_enabled = {
+        "muc_hide_all";
         "muc_meeting_id";
         "muc_domain_mapper";
         "muc_rate_limit";
@@ -105,6 +109,7 @@ Component "breakout.jitmeet.example.com" "muc"
 Component "internal.auth.jitmeet.example.com" "muc"
     storage = "memory"
     modules_enabled = {
+        "muc_hide_all";
         "ping";
     }
     admins = { "focusUser@auth.jitmeet.example.com", "jvb@auth.jitmeet.example.com" }
@@ -114,17 +119,16 @@ Component "internal.auth.jitmeet.example.com" "muc"
 VirtualHost "auth.jitmeet.example.com"
     modules_enabled = {
         "limits_exception";
+        "smacks";
     }
     authentication = "internal_hashed"
+    smacks_hibernation_time = 15;
 
 -- Proxy to jicofo's user JID, so that it doesn't have to register as a component.
 Component "focus.jitmeet.example.com" "client_proxy"
     target_address = "focusUser@auth.jitmeet.example.com"
 
 Component "speakerstats.jitmeet.example.com" "speakerstats_component"
-    muc_component = "conference.jitmeet.example.com"
-
-Component "conferenceduration.jitmeet.example.com" "conference_duration_component"
     muc_component = "conference.jitmeet.example.com"
 
 Component "endconference.jitmeet.example.com" "end_conference"
@@ -139,6 +143,7 @@ Component "lobby.jitmeet.example.com" "muc"
     muc_room_locking = false
     muc_room_default_public_jids = true
     modules_enabled = {
+        "muc_hide_all";
         "muc_rate_limit";
         "polls";
     }

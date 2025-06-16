@@ -1,7 +1,7 @@
-/* eslint-disable lines-around-comment */
+import { IStore } from '../../app/types';
+import { getConferenceState } from '../conference/functions';
 import { Sounds } from '../config/configType';
-// @ts-ignore
-import type { AudioElement } from '../media';
+import { AudioElement } from '../media/components/AbstractAudio';
 
 import {
     PLAY_SOUND,
@@ -11,7 +11,6 @@ import {
     _ADD_AUDIO_ELEMENT,
     _REMOVE_AUDIO_ELEMENT
 } from './actionTypes';
-// @ts-ignore
 import { getSoundsPath } from './functions';
 import { getDisabledSounds } from './functions.any';
 
@@ -69,8 +68,15 @@ export function _removeAudioElement(soundId: string) {
  * @returns {Function}
  */
 export function playSound(soundId: string) {
-    return (dispatch: Function, getState: Function) => {
-        const disabledSounds = getDisabledSounds(getState());
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const disabledSounds = getDisabledSounds(state);
+        const { leaving } = getConferenceState(state);
+
+        // Skip playing sounds when leaving, to avoid hearing that recording has stopped and so on.
+        if (leaving) {
+            return;
+        }
 
         if (!disabledSounds.includes(soundId as Sounds) && !disabledSounds.find(id => soundId.startsWith(id))) {
             dispatch({

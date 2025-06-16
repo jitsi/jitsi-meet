@@ -1,10 +1,10 @@
-/* eslint-disable lines-around-comment */
-// @ts-ignore
+// @ts-expect-error
 import Logger from '@jitsi/logger';
+import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
 import { APP_WILL_MOUNT } from '../app/actionTypes';
-import { CONFERENCE_JOINED } from '../conference/actionTypes';
+import { CONFERENCE_FAILED, CONFERENCE_JOINED } from '../conference/actionTypes';
 import { getCurrentConference } from '../conference/functions';
 import { SET_CONFIG } from '../config/actionTypes';
 import JitsiMeetJS, {
@@ -20,8 +20,6 @@ import JitsiMeetLogStorage from './JitsiMeetLogStorage';
 import { SET_LOGGING_CONFIG } from './actionTypes';
 import { setLogCollector, setLoggingConfig } from './actions';
 
-declare let APP: any;
-
 /**
  * The Redux middleware of the feature base/logging.
  *
@@ -36,6 +34,15 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
+
+    case CONFERENCE_FAILED: {
+        const result = next(action);
+        const { logCollector } = store.getState()['features/base/logging'];
+
+        logCollector?.flush();
+
+        return result;
+    }
 
     case LIB_WILL_INIT:
         return _libWillInit(store, next, action);
@@ -64,7 +71,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
-function _appWillMount({ getState }: IStore, next: Function, action: any) {
+function _appWillMount({ getState }: IStore, next: Function, action: AnyAction) {
     const { config } = getState()['features/base/logging'];
 
     _setLogLevels(Logger, config);
@@ -90,7 +97,7 @@ function _appWillMount({ getState }: IStore, next: Function, action: any) {
  * @private
  * @returns {*}
  */
-function _conferenceJoined({ getState }: IStore, next: Function, action: any) {
+function _conferenceJoined({ getState }: IStore, next: Function, action: AnyAction) {
 
     // Wait until the joined event is processed, so that the JitsiMeetLogStorage
     // will be ready.
@@ -108,7 +115,7 @@ function _conferenceJoined({ getState }: IStore, next: Function, action: any) {
         logCollector.flush();
 
         // This event listener will flush the logs, before the statistics module
-        // (CallStats) is stopped.
+        // is stopped.
         //
         // NOTE The LogCollector is not stopped, because this event can be
         // triggered multiple times during single conference (whenever
@@ -194,7 +201,7 @@ function _initLogging({ dispatch, getState }: IStore,
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
-function _libWillInit({ getState }: IStore, next: Function, action: any) {
+function _libWillInit({ getState }: IStore, next: Function, action: AnyAction) {
     // Adding the if in order to preserve the logic for web after enabling
     // LIB_WILL_INIT action for web in initLib action.
     if (typeof APP === 'undefined') {
@@ -218,7 +225,7 @@ function _libWillInit({ getState }: IStore, next: Function, action: any) {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified action.
  */
-function _setConfig({ dispatch }: IStore, next: Function, action: any) {
+function _setConfig({ dispatch }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
 
     dispatch(setLoggingConfig(action.config?.logging));
@@ -241,7 +248,7 @@ function _setConfig({ dispatch }: IStore, next: Function, action: any) {
  * specified {@code action}.
  */
 function _setLoggingConfig({ dispatch, getState }: IStore,
-        next: Function, action: any) {
+        next: Function, action: AnyAction) {
     const result = next(action);
     const newValue = getState()['features/base/logging'].config;
     const isTestingEnabled = isTestModeEnabled(getState());

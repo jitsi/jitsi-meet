@@ -20,7 +20,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.PictureInPictureParams;
-import android.os.Build;
 import android.util.Rational;
 
 import com.facebook.react.bridge.Promise;
@@ -53,7 +52,7 @@ class PictureInPictureModule extends ReactContextBaseJavaModule {
         // Android Go devices don't support PiP. There doesn't seem to be a better way to detect it than
         // to use ActivityManager.isLowRamDevice().
         // https://stackoverflow.com/questions/58340558/how-to-detect-android-go
-        isSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !am.isLowRamDevice();
+        isSupported = !am.isLowRamDevice();
     }
 
     /**
@@ -82,7 +81,6 @@ class PictureInPictureModule extends ReactContextBaseJavaModule {
      * including when the activity is not visible (paused or stopped), if the
      * screen is locked or if the user has an activity pinned.
      */
-    @TargetApi(Build.VERSION_CODES.O)
     public void enterPictureInPicture() {
         if (!isEnabled) {
             return;

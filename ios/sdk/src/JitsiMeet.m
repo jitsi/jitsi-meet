@@ -15,7 +15,7 @@
  */
 
 #import <Intents/Intents.h>
-#import <WebRTC/RTCLogging.h>
+
 #import "Orientation.h"
 
 #import "JitsiMeet+Private.h"
@@ -25,6 +25,8 @@
 #import "ReactUtils.h"
 #import "RNSplashScreen.h"
 #import "ScheenshareEventEmiter.h"
+
+#import <react-native-webrtc/WebRTCModuleOptions.h>
 
 #if !defined(JITSI_MEET_SDK_LITE)
 #import <RNGoogleSignin/RNGoogleSignin.h>
@@ -52,9 +54,10 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        // Initialize the one and only bridge for interfacing with React Native.
-        _bridgeWrapper = [[RCTBridgeWrapper alloc] init];
-        
+        // Initialize WebRTC options.
+        self.rtcAudioDevice = nil;
+        self.webRtcLoggingSeverity = WebRTCLoggingSeverityNone;
+
         // Initialize the listener for handling start/stop screensharing notifications.
         _screenshareEventEmiter = [[ScheenshareEventEmiter alloc] init];
 
@@ -63,11 +66,6 @@
 
         // Register a log handler for React.
         registerReactLogHandler();
-
-#if 0
-        // Enable WebRTC logs
-        RTCSetMinDebugLogLevel(RTCLoggingSeverityInfo);
-#endif
     }
 
     return self;
@@ -138,7 +136,13 @@
     if (_bridgeWrapper != nil) {
         return;
     };
-    
+
+    // Initialize WebRTC options.
+    WebRTCModuleOptions *options = [WebRTCModuleOptions sharedInstance];
+    options.audioDevice = _rtcAudioDevice;
+    options.loggingSeverity = (RTCLoggingSeverity)_webRtcLoggingSeverity;
+
+    // Initialize the one and only bridge for interfacing with React Native.
     _bridgeWrapper = [[RCTBridgeWrapper alloc] init];
 }
 
@@ -228,7 +232,10 @@
 }
 
 - (void)setDefaultConferenceOptions:(JitsiMeetConferenceOptions *)defaultConferenceOptions {
-    if (defaultConferenceOptions != nil && _defaultConferenceOptions.room != nil) {
+    
+    // For testing configOverrides a room needs to be set,
+    // thus the following check needs to be commented out
+    if (defaultConferenceOptions != nil && defaultConferenceOptions.room != nil) {
         @throw [NSException exceptionWithName:@"RuntimeError"
                                        reason:@"'room' must be null in the default conference options"
                                      userInfo:nil];
@@ -243,6 +250,8 @@
 }
 
 - (RCTBridge *)getReactBridge {
+    // Initialize bridge lazily.
+    [self instantiateReactNativeBridge];
     return _bridgeWrapper.bridge;
 }
 

@@ -226,7 +226,11 @@ function M.verify(token, expectedAlgo, key, acceptedIssuers, acceptedAudiences)
 
 
 	if body.exp and os.time() >= body.exp then
-		return nil, "Not acceptable by exp"
+        local extra_msg = '';
+        if body.iat then
+            extra_msg = ", valid for:"..tostring(body.exp-body.iat).." sec";
+        end
+		return nil, "Not acceptable by exp ("..tostring(os.time()-body.exp).." sec since expired"..extra_msg..")"
 	end
 
 	if body.nbf and os.time() < body.nbf then
@@ -239,7 +243,7 @@ function M.verify(token, expectedAlgo, key, acceptedIssuers, acceptedAudiences)
         return nil, "'iss' claim is missing";
     end
     if not verify_claim(issClaim, acceptedIssuers) then
-    	return nil, "invalid 'iss' claim";
+        return nil, "invalid 'iss' claim";
     end
 	end
 
@@ -249,7 +253,7 @@ function M.verify(token, expectedAlgo, key, acceptedIssuers, acceptedAudiences)
         return nil, "'aud' claim is missing";
     end
     if not verify_claim(audClaim, acceptedAudiences) then
-    	return nil, "invalid 'aud' claim";
+        return nil, "invalid 'aud' claim";
     end
 	end
 

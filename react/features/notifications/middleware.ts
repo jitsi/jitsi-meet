@@ -1,4 +1,4 @@
-import { IState, IStore } from '../app/types';
+import { IReduxState, IStore } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
 import {
     PARTICIPANT_JOINED,
@@ -9,7 +9,9 @@ import { PARTICIPANT_ROLE } from '../base/participants/constants';
 import {
     getLocalParticipant,
     getParticipantById,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    isScreenShareParticipant,
+    isWhiteboardParticipant
 } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
@@ -68,7 +70,7 @@ const createTimeoutId = (notification: { timeout: number; uid: string; }, dispat
  * @param {Object} state - Global state.
  * @returns {Array<Object>} - Notifications state.
  */
-const getNotifications = (state: IState) => {
+const getNotifications = (state: IReduxState) => {
     const _visible = areThereNotifications(state);
     const { notifications } = state['features/notifications'];
 
@@ -87,41 +89,35 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case CLEAR_NOTIFICATIONS: {
-        if (navigator.product !== 'ReactNative') {
-            const _notifications = getNotifications(state);
+        const _notifications = getNotifications(state);
 
-            for (const notification of _notifications) {
-                if (timers.has(notification.uid)) {
-                    const timeout = timers.get(notification.uid);
+        for (const notification of _notifications) {
+            if (timers.has(notification.uid)) {
+                const timeout = timers.get(notification.uid);
 
-                    clearTimeout(timeout);
-                    timers.delete(notification.uid);
-                }
+                clearTimeout(timeout);
+                timers.delete(notification.uid);
             }
-            timers.clear();
         }
+        timers.clear();
         break;
     }
     case SHOW_NOTIFICATION: {
-        if (navigator.product !== 'ReactNative') {
-            if (timers.has(action.uid)) {
-                const timer = timers.get(action.uid);
-
-                clearTimeout(timer);
-                timers.delete(action.uid);
-            }
-
-            createTimeoutId(action, dispatch);
-        }
-        break;
-    }
-    case HIDE_NOTIFICATION: {
-        if (navigator.product !== 'ReactNative') {
+        if (timers.has(action.uid)) {
             const timer = timers.get(action.uid);
 
             clearTimeout(timer);
             timers.delete(action.uid);
         }
+
+        createTimeoutId(action, dispatch);
+        break;
+    }
+    case HIDE_NOTIFICATION: {
+        const timer = timers.get(action.uid);
+
+        clearTimeout(timer);
+        timers.delete(action.uid);
         break;
     }
     case PARTICIPANT_JOINED: {
@@ -132,8 +128,8 @@ MiddlewareRegistry.register(store => next => action => {
         // Do not display notifications for the virtual screenshare and whiteboard tiles.
         if (conference
             && !p.local
-            && !p.isVirtualScreenshareParticipant
-            && !p.isWhiteboard
+            && !isScreenShareParticipant(p)
+            && !isWhiteboardParticipant(p)
             && !joinLeaveNotificationsDisabled()
             && !p.isReplacing) {
             dispatch(showParticipantJoinedNotification(
@@ -153,8 +149,8 @@ MiddlewareRegistry.register(store => next => action => {
             // Do not display notifications for the virtual screenshare tiles.
             if (participant
                 && !participant.local
-                && !participant.isVirtualScreenshareParticipant
-                && !participant.isWhiteboard
+                && !isScreenShareParticipant(participant)
+                && !isWhiteboardParticipant(participant)
                 && !action.participant.isReplaced) {
                 dispatch(showParticipantLeftNotification(
                     getParticipantDisplayName(state, participant.id)

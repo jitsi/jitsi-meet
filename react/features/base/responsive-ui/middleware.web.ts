@@ -1,5 +1,6 @@
 import { IStore } from '../../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app/actionTypes';
+import { CONFERENCE_JOINED } from '../conference/actionTypes';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import { clientResized } from './actions';
@@ -27,6 +28,19 @@ MiddlewareRegistry.register(store => next => action => {
         _appWillMount(store);
         break;
 
+    case CONFERENCE_JOINED: {
+        const { clientHeight = 0, clientWidth = 0 } = store.getState()['features/base/responsive-ui'];
+
+        if (!clientHeight && !clientWidth) {
+            const {
+                innerHeight,
+                innerWidth
+            } = window;
+
+            store.dispatch(clientResized(innerWidth, innerHeight));
+        }
+        break;
+    }
     }
 
     return result;

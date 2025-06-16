@@ -1,14 +1,12 @@
-/* eslint-disable lines-around-comment */
-import './middleware.any.js';
+import './middleware.any';
+import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
 import { showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import LocalRecordingManager from '../../recording/components/Recording/LocalRecordingManager.web';
-// @ts-ignore
 import StopRecordingDialog from '../../recording/components/Recording/web/StopRecordingDialog';
-// @ts-ignore
-import { openDialog } from '../dialog';
+import { openDialog } from '../dialog/actions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import { SET_VIDEO_MUTED } from './actionTypes';
@@ -21,7 +19,7 @@ import './subscriber';
  * @param {IStore} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: any) => {
+MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyAction) => {
     const { dispatch } = store;
 
     switch (action.type) {

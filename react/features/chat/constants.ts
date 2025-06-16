@@ -1,7 +1,10 @@
-// @flow
+/**
+ * Maximum number of characters allowed.
+ */
+export const CHAR_LIMIT = 500;
 
 /**
- * The size of the chat.
+ * The size of the chat. Equal to $sidebarWidth SCSS variable.
  */
 export const CHAT_SIZE = 315;
 
@@ -40,3 +43,13 @@ export const CHAT_TABS = {
     POLLS: 'polls-tab',
     CHAT: 'chat-tab'
 };
+
+/**
+ * Formatter string to display the message timestamp.
+ */
+export const TIMESTAMP_FORMAT = 'H:mm';
+
+/**
+ * The namespace for system messages.
+ */
+export const MESSAGE_TYPE_SYSTEM = 'system_chat_message';

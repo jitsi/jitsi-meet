@@ -10,6 +10,10 @@ import { setConnectionState } from './actions';
 import {
     getRemoteVideoType,
     isLargeVideoReceived,
+    isLocalCameraEncodingAv1,
+    isLocalCameraEncodingH264,
+    isLocalCameraEncodingVp8,
+    isLocalCameraEncodingVp9,
     isRemoteVideoReceived,
     isTestModeEnabled
 } from './functions';
@@ -86,6 +90,10 @@ function _bindTortureHelpers(store: IStore) {
     getJitsiMeetGlobalNS().testing = {
         getRemoteVideoType: getRemoteVideoType.bind(null, store),
         isLargeVideoReceived: isLargeVideoReceived.bind(null, store),
+        isLocalCameraEncodingAv1: isLocalCameraEncodingAv1.bind(null, store),
+        isLocalCameraEncodingH264: isLocalCameraEncodingH264.bind(null, store),
+        isLocalCameraEncodingVp8: isLocalCameraEncodingVp8.bind(null, store),
+        isLocalCameraEncodingVp9: isLocalCameraEncodingVp9.bind(null, store),
         isRemoteVideoReceived: isRemoteVideoReceived.bind(null, store)
     };
 }

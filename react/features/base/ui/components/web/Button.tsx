@@ -1,14 +1,13 @@
-import { Theme } from '@mui/material';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../icons/components/Icon';
 import { withPixelLineHeight } from '../../../styles/functions.web';
-import { BUTTON_TYPES } from '../../constants';
-import { ButtonProps } from '../types';
+import { BUTTON_TYPES } from '../../constants.web';
+import { IButtonProps } from '../types';
 
-interface IButtonProps extends ButtonProps {
+interface IProps extends IButtonProps {
 
     /**
      * Class name used for additional styles.
@@ -47,12 +46,12 @@ interface IButtonProps extends ButtonProps {
     testId?: string;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         button: {
             backgroundColor: theme.palette.action01,
             color: theme.palette.text01,
-            borderRadius: theme.shape.borderRadius,
+            borderRadius: 50,
             padding: '10px 16px',
             display: 'flex',
             alignItems: 'center',
@@ -70,7 +69,7 @@ const useStyles = makeStyles()((theme: Theme) => {
                 backgroundColor: theme.palette.action01Active
             },
 
-            '&:focus': {
+            '&.focus-visible': {
                 outline: 0,
                 boxShadow: `0px 0px 0px 2px ${theme.palette.focus01}`
             },
@@ -143,7 +142,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
 
         iconButton: {
-            padding: '10px'
+            padding: theme.spacing(2)
         },
 
         textWithIcon: {
@@ -155,7 +154,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             ...withPixelLineHeight(theme.typography.labelBold),
 
             '&.iconButton': {
-                padding: '6px'
+                padding: theme.spacing(1)
             }
         },
 
@@ -166,7 +165,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             ...withPixelLineHeight(theme.typography.bodyShortBoldLarge),
 
             '&.iconButton': {
-                padding: '14px'
+                padding: '12px'
             }
         },
 
@@ -188,10 +187,11 @@ const Button = React.forwardRef<any, any>(({
     label,
     labelKey,
     onClick = () => null,
+    onKeyPress = () => null,
     size = 'medium',
     testId,
     type = BUTTON_TYPES.PRIMARY
-}: IButtonProps, ref) => {
+}: IProps, ref) => {
     const { classes: styles, cx } = useStyles();
     const { t } = useTranslation();
 
@@ -207,11 +207,12 @@ const Button = React.forwardRef<any, any>(({
             disabled = { disabled }
             { ...(id ? { id } : {}) }
             onClick = { onClick }
+            onKeyPress = { onKeyPress }
             ref = { ref }
             title = { accessibilityLabel }
             type = { isSubmit ? 'submit' : 'button' }>
             {icon && <Icon
-                size = { 20 }
+                size = { 24 }
                 src = { icon } />}
             {(labelKey || label) && <span className = { icon ? styles.textWithIcon : '' }>
                 {labelKey ? t(labelKey) : label}

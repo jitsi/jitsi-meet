@@ -82,7 +82,7 @@
         },
         "labels": {
             "buttonLabel": "وضع السيارة",
-            "title": "وضع القيادة الآمنة",
+            "title": "وضع السيارة",
             "videoStopped": "تم إيقاف الفيديو الخاص بك"
         }
     },
@@ -104,6 +104,7 @@
         },
         "noMessagesMessage": "لا يوجد أي رسالة في المُلتقى بعد. ابدأ محادثة هنا.",
         "privateNotice": "أرسل رسالة خاصة إلى {{recipient}}",
+        "sendButton": "أرسل",
         "smileysPanel": "واجهة الإيموجي",
         "tabs": {
             "chat": "دردشة",
@@ -121,7 +122,7 @@
         "installExtensionText": "نزِّل الإضافة للدمج مع رزنامة غوغل ورزنامة أوفيس 365"
     },
     "connectingOverlay": {
-        "joiningRoom": "قيد وصلك بالإجتماع..."
+        "joiningRoom": "قيد وصلك بالإجتماع…"
     },
     "connection": {
         "ATTACHED": "رُبِط",
@@ -133,7 +134,7 @@
         "DISCONNECTED": "فُصِل",
         "DISCONNECTING": "قيد الفصل",
         "ERROR": "خطأ",
-        "FETCH_SESSION_ID": "قيد الحصول على مُعرِّف الجلسة...",
+        "FETCH_SESSION_ID": "قيد الحصول على مُعرِّف الجلسة…",
         "GET_SESSION_ID_ERROR": "خطأ في الحصول على مُعرِّف الجلسة: {{code}}",
         "GOT_SESSION_ID": "جرى الحصول على مُعرِّف الجلسة",
         "LOW_BANDWIDTH": "أوقف فيديو {{displayName}} لتوفير كمية البيانات المتبادلة"
@@ -188,7 +189,7 @@
         "ifHaveApp": "إن كان لديك التطبيق:",
         "joinInApp": "انضم للمُلتقى عبر تطبيق الجوال",
         "launchWebButton": "افتح تطبيق الويب",
-        "title": "قيد عقد مُلتقىك في {{app}}...",
+        "title": "قيد عقد مُلتقىك في {{app}}…",
         "tryAgainButton": "جرب مرة أخرى في تطبيق الحاسوب",
         "unsupportedBrowser": "يبدو أنك تستخدم متصفحًا لا ندعمه."
     },
@@ -221,7 +222,7 @@
         "Share": "شارك",
         "Submit": "أرسل",
         "WaitForHostMsg": "لم يبدأ المؤتمر بعد. إن كنت المضيف والراعي، فنرجو تأكيد ذلك عبر الاستيثاق أو انتظر وصول المضيف رجاءً. ",
-        "WaitingForHostTitle": "في انتظار المضيف ...",
+        "WaitingForHostTitle": "في انتظار المضيف…",
         "Yes": "نعم",
         "accessibilityLabel": {
             "liveStreaming": "بث حي مباشر"
@@ -243,9 +244,9 @@
         "cameraUnknownError": "يصعب استعمال الكاميرا لأسباب مجهولة.",
         "cameraUnsupportedResolutionError": "لا تدعم كاميرتك دقة الفيديو المطلوبة.",
         "close": "أغلق",
-        "conferenceDisconnectMsg": "قد تضطر للتحقق من اتصال الشبكة لديك. سيعاد الاتصال خلال {{seconds}} ثانية...",
+        "conferenceDisconnectMsg": "قد تضطر للتحقق من اتصال الشبكة لديك. سيعاد الاتصال خلال {{seconds}} ثانية…",
         "conferenceDisconnectTitle": "فُصِل الاتصال لديك.",
-        "conferenceReloadMsg": "نحاول إصلاح الأمر. سيعاد الاتصال خلال {{seconds}} ثانية...",
+        "conferenceReloadMsg": "نحاول إصلاح الأمر. سيعاد الاتصال خلال {{seconds}} ثانية…",
         "conferenceReloadTitle": "لم تسر الأمور على ما يرام، نأسف لذلك!",
         "confirm": "أكِّد",
         "confirmNo": "لا",
@@ -435,7 +436,7 @@
         "search": "ابحث في GIPHY"
     },
     "helpView": {
-        "header": "مركز المساعدة"
+        "title": "مركز المساعدة"
     },
     "incomingCall": {
         "answer": "أجب",
@@ -530,7 +531,7 @@
         "errorLiveStreamNotEnabled": "البث الحي غير مفعَّل على على {{email}}. فعَّل البث الحي رجاءً، أو سجِّل الدخل إلى حسابٍ مُفعَّل فيه البث الحي",
         "expandedOff": "أُوقِف البث الحي",
         "expandedOn": "يجري بث المُلتقى على يوتيوب",
-        "expandedPending": "تبدأ عملية البث الحي...",
+        "expandedPending": "تبدأ عملية البث الحي…",
         "failedToStart": "فشلت عملية بدء البث الحي",
         "getStreamKeyManually": "لم نتمكن من الوصول إلى أي بث حي. جرب جلب مفتاح بث حي خاص بك من يوتيوب.",
         "googlePrivacyPolicy": "سياسية خصوصية غوغل",
@@ -551,12 +552,11 @@
         "signedInAs": "أنت مسجل حاليًا بصفة:",
         "start": "ابدأبثًّا حيًّا",
         "streamIdHelp": "ما هذا؟",
+        "title": "البث المباشر الحي",
         "unavailableTitle": "خدمة البث الحي غير متوفرة",
         "youtubeTerms": "شروط خدمة يوتيوب"
     },
     "lobby": {
-        "admit": "سمح بالدخول",
-        "admitAll": "سمح للجميع بالدخول",
         "allow": "اسمح",
         "backToKnockModeButton": "لا يوجد كلمة مرور، اطلب الإذن بالدخول بدلًا من ذلك.",
         "chat": "دردشة",
@@ -574,10 +574,10 @@
         "joinRejectedMessage": "رفض رئيس الجلسة منحك الإذن بالدخول إلى المُلتقى",
         "joinRejectedTitle": "تم رفض طلب الانضمام.",
         "joinTitle": "انضم للمُلتقى",
-        "joinWithPasswordMessage": "الرجاء الانتظار أثناء محاولة الدخول دون كلمة مرور...",
+        "joinWithPasswordMessage": "الرجاء الانتظار أثناء محاولة الدخول دون كلمة مرور…",
         "joiningMessage": "ستتمكن من الانضمام للمُلتقى بعد الموافقة على طلبك",
-        "joiningTitle": "يجري طلب إذنٍ للدخول...",
-        "joiningWithPasswordTitle": "الدخول مع كلمة مرور...",
+        "joiningTitle": "يجري طلب إذنٍ للدخول…",
+        "joiningWithPasswordTitle": "الدخول مع كلمة مرور…",
         "knockButton": "اطلب إذن الدخول",
         "knockTitle": "يريد أحدٌ الدخول إلى المُلتقى",
         "knockingParticipantList": "تنبيه قائمة المشاركين",
@@ -591,8 +591,7 @@
         "notificationTitle": "غرفة الانتظار",
         "passwordField": "أدخل كلمة الدخول إلى المُلتقى",
         "passwordJoinButton": "انضم",
-        "reject": "رفض",
-        "rejectAll": "رفض الكل",
+        "title": "غرفة الانتظار",
         "toggleLabel": "فعِّل غرفة الانتظار"
     },
     "localRecording": {
@@ -659,7 +658,7 @@
         "linkToSalesforceDescription": "يمكنك ربط ملخص الاجتماع بكائن Salesforce.",
         "linkToSalesforceError": "فشل ربط المُلتقى بـ Salesforce",
         "linkToSalesforceKey": "ربط هذا المُلتقى",
-        "linkToSalesforceProgress": "جارٍ ربط الاجتماع بـ Salesforce ...",
+        "linkToSalesforceProgress": "جارٍ ربط الاجتماع بـ Salesforce…",
         "linkToSalesforceSuccess": "تم ربط الاجتماع بـ Salesforce",
         "localRecordingStarted": "بدأ {{name}} تسجيلًا محليًا.",
         "localRecordingStopped": "أوقف {{name}} التسجيل المحلي.",
@@ -717,6 +716,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "سمح بالدخول",
+            "admitAll": "سمح للجميع بالدخول",
             "allow": "السماح للحاضرين بـ:",
             "allowVideo": "السماح بالفيديو",
             "askUnmute": "اطلب إعادة الصوت",
@@ -729,19 +730,20 @@
             "mute": "كتم الصوت",
             "muteAll": "كتم الكل",
             "muteEveryoneElse": "كتم صوت  الآخرين",
+            "reject": "رفض",
             "stopEveryonesVideo": "أوقف فيديو الجميع",
             "stopVideo": "أوقف الفيديو",
             "unblockEveryoneMicCamera": "قم بإلغاء حظر ميكروفون وكاميرا الجميع",
             "videoModeration": "ابدأ الفيديو الخاص بهم"
         },
         "close": "غلق",
-        "header": "مشاركون",
         "headings": {
             "lobby": "الردهة ({{count}})",
             "participantsList": "المشاركون في المُلتقى({{count}})",
             "waitingLobby": "منتظرون في الردهة ({{count}})"
         },
-        "search": "بحث"
+        "search": "بحث",
+        "title": "مشاركون"
     },
     "passwordDigitsOnly": "حتى {{number}} عدد",
     "passwordSetRemotely": "ضبطها مشارك آخر",
@@ -762,6 +764,9 @@
             "questionPlaceholder": "طرح سؤال",
             "removeOption": "إزالة خيار",
             "send": "أرسل"
+        },
+        "errors": {
+            "notUniqueOption": "يجب أن تكون الخيارات فريدة"
         },
         "notification": {
             "description": "افتح علامة تبويب الاقتراع للتصويت",
@@ -784,7 +789,7 @@
         "callMe": "اتصل بي",
         "callMeAtNumber": "اتصل بي على هذا الرقم:",
         "calling": "قيد الاتصال",
-        "configuringDevices": "يجري ضبط الأجهزة...",
+        "configuringDevices": "يجري ضبط الأجهزة…",
         "connectedWithAudioQ": "هل متصل بجهاز صوت؟",
         "connection": {
             "good": "اتصال الإنترنت لديك جيد!",
@@ -838,20 +843,20 @@
     },
     "presenceStatus": {
         "busy": "مشغول",
-        "calling": "يتحدث...",
+        "calling": "يتحدث…",
         "connected": "متصل",
-        "connecting": "يتصل...",
-        "connecting2": "يتصل...",
+        "connecting": "يتصل…",
+        "connecting2": "يتصل…",
         "disconnected": "غير الاتصال",
         "expired": "منتهي الصلاحية",
         "ignored": "مهمل",
-        "initializingCall": "تهيئة مكالمة...",
+        "initializingCall": "تهيئة مكالمة…",
         "invited": "مدعو",
         "rejected": "مرفوض",
-        "ringing": "يرن..."
+        "ringing": "يرن…"
     },
     "privacyView": {
-        "header": "خصوصية"
+        "title": "خصوصية"
     },
     "profile": {
         "avatar": "avatar",
@@ -885,7 +890,7 @@
         "errorFetchingLink": "خطأ في جلب رابط التسجيل.",
         "expandedOff": "أوقٍف التسجيل",
         "expandedOn": "يُسجَّل المُلتقى الآن",
-        "expandedPending": "بدء التسجيل...",
+        "expandedPending": "بدء التسجيل…",
         "failedToStart": "فشل بدء التسجيل",
         "fileSharingdescription": "شارك التسجيل مع المشاركين للمُلتقى",
         "highlight": "تسليط الضوء",
@@ -912,7 +917,7 @@
         "on": "تسجيل",
         "onBy": "بدأ {{name}} التسجيل",
         "onlyRecordSelf": "تسجيل فقط دفق الصوت والفيديو الخاصة بي",
-        "pending": "التحضير لتسجيل المُلتقى...",
+        "pending": "التحضير لتسجيل المُلتقى…",
         "rec": "تسجيل",
         "saveLocalRecording": "حفظ ملف التسجيل محليا",
         "serviceDescription": "ستحفظ خدمة التسجيل الفيديو المستجل",
@@ -923,6 +928,7 @@
         "signIn": "دخول",
         "signOut": "خروج",
         "surfaceError": "الرجاء تحديد علامة التبويب الحالية.",
+        "title": "قيد التسجيل",
         "unavailable": "عجبًا! {{serviceName}} غير متاحة حاليًا. نعمل على حل المشكلة. حاول مرة أخرى لاحقًا.",
         "unavailableTitle": "التسجيل غير متاح",
         "uploadToCloud": "تحميل إلى السحابة"
@@ -934,8 +940,8 @@
     "security": {
         "about": "يمكنك إضافة $t(lockRoomPassword) إلى المُلتقى. سيتوجب على المشاركين إدخال $t(lockRoomPassword) قبل السماح لهم بالانضمام إلى المُلتقى.",
         "aboutReadOnly": "المشاركون بصفة رئيس الجلسة يمكنهم إضافة $t(lockRoomPassword) إلى المُلتقى. سيتوجب على المشاركين إدخال $t(lockRoomPassword) قبل السماح لهم بالانضمام إلى المُلتقى.",
-        "header": "خيارات الأمان",
-        "insecureRoomNameWarning": "اسم الغرفة غير آمن، فقد ينضم عبره مشاركون غرباء إلى المُلتقى. ننصحك بتأمين المُلتقى عبر  وسائل الحماية التي يوفرها زر الحماية."
+        "insecureRoomNameWarning": "اسم الغرفة غير آمن، فقد ينضم عبره مشاركون غرباء إلى المُلتقى. ننصحك بتأمين المُلتقى عبر  وسائل الحماية التي يوفرها زر الحماية.",
+        "title": "خيارات الأمان"
     },
     "settings": {
         "buttonLabel": "إعدادات",
@@ -1024,6 +1030,7 @@
         "neutral": "حيادي",
         "sad": "حزين",
         "search": "بحث",
+        "searchHint": "البحث عن المشاركين",
         "seconds": "{{count}}ثا",
         "speakerStats": "حالة المتحدث",
         "speakerTime": "وقت المتحدث",
@@ -1040,7 +1047,7 @@
         "title": "قُطِع اتصال الفيديو لدخول هذا الحاسوب في وضع النوم."
     },
     "termsView": {
-        "header": "مصطلحات"
+        "title": "مصطلحات"
     },
     "toggleTopPanelLabel": "تبديل اللوحة العلوية",
     "toolbar": {
@@ -1057,7 +1064,6 @@
             "chat": "اظهِر/اخفِ نافذة الدردشة",
             "clap": "تصفيق",
             "collapse": "قلّص",
-            "dock": "إرساء في النافذة الرئيسية",
             "document": "اظهِر/اخفِ الملف المشارك",
             "download": "نزِّل التطبيق",
             "embedMeeting": "ضمِّن المُلتقى",
@@ -1111,7 +1117,6 @@
             "tileView": "اظهِر/اخفِ عرض العنوان",
             "toggleCamera": "بدِّل الكاميرا",
             "toggleFilmstrip": "بدِّل وضع الشريط السينمائي (filmstrip)",
-            "undock": "فك في نافذة منفصلة",
             "videoblur": "استعمل/اخرج من وضع تغبيش خلفية الفيديو",
             "videomute": "بدِّل وضع اخفاء الفيديو"
         },
@@ -1129,7 +1134,6 @@
         "closeReactionsMenu": "إغلاق قائمة ردود الفعل",
         "disableNoiseSuppression": "قم بتعطيل خاصية منع الضوضاء",
         "disableReactionSounds": "يمكنك تعطيل أصوات ردود الفعل لهذا المُلتقى",
-        "dock": "إرساء في النافذة الرئيسية",
         "documentClose": "أغلق الملف المشارك",
         "documentOpen": "افتح الملف المشارك",
         "download": "نزِّل التطبيق",
@@ -1201,7 +1205,6 @@
         "talkWhileMutedPopup": "أتحاول التحدث؟ الميكروفون لديك مكتوم.",
         "tileViewToggle": "بدِّل عنوان العرض",
         "toggleCamera": "بدِّل الكاميرا",
-        "undock": "فك في نافذة منفصلة",
         "videoSettings": "اعدادات الفيديو",
         "videomute": "استعمل / أوقف الكاميرا"
     },
@@ -1212,7 +1215,7 @@
         "failedToStart": "فشلت عملية بدء الإذاعة",
         "labelToolTip": "يجري إذاعة المُلتقى",
         "off": "أوقفت الإذاعة",
-        "pending": "التحضير لإذاعة المُلتقى...",
+        "pending": "التحضير لإذاعة المُلتقى…",
         "start": "بدء إظهار الترجمة",
         "stop": "إيقاف عرض الترجمة",
         "subtitles": "ترجمات",
@@ -1220,16 +1223,7 @@
         "tr": "يذاع"
     },
     "userMedia": {
-        "androidGrantPermissions": "اختر <b><i>السماح</i></b> عندما يطلب المتصفح الأذونات.",
-        "chromeGrantPermissions": "اختر <b><i>السماح</i></b> عندما يطلب المتصفح الأذونات.",
-        "edgeGrantPermissions": "اختر <b><i>نعم</i></b> عندما يطلب المتصفح الأذونات.",
-        "electronGrantPermissions": "امنح إذنًا باستعمال الكاميرا والمايكروفون.",
-        "firefoxGrantPermissions": "اختر <b><i>مشاركة الجهاز المحدَّد</i></b> عندما يطل بالمتصفح الأذونات.",
-        "iexplorerGrantPermissions": "اختر <b><i>تمام</i></b> عندما يطلب المتصفح الأذونات.",
-        "nwjsGrantPermissions": "امنح إذنًا باستعمال الكاميرا والمايكروفون.",
-        "operaGrantPermissions": "اختر <b><i>السماح</i></b> عندما يطلب المتصفح الأذونات.",
-        "react-nativeGrantPermissions": "اختر <b><i>السماح</i></b> عندما يطلب المتصفح الأذونات.",
-        "safariGrantPermissions": "اختر <b><i>تمام</i></b> عندما يطلب المتصفح الأذونات."
+        "grantPermissions": "امنح إذنًا باستعمال الكاميرا والمايكروفون."
     },
     "videoSIPGW": {
         "busy": "نعمل على تحرير الموارد. حاول مرة أخرى لاحقًا بعد بضعة دقائق.",
@@ -1299,7 +1293,7 @@
         "image6": "غابة",
         "image7": "شروق الشمس",
         "none": "بدون",
-        "pleaseWait": "يرجى الانتظار...",
+        "pleaseWait": "يرجى الانتظار…",
         "removeBackground": "إزالة خلفية",
         "slightBlur": "طمس طفيف",
         "title": "خلفيات افتراضية",

@@ -1,0 +1,42 @@
+{
+    "include": ["react/features/**/*.ts", "react/features/**/*.tsx", "./custom.d.ts", "./globals.native.d.ts"],
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "target": "es2020",
+        "jsx": "react-native",
+        "lib": [ "ES2020", "ES2024.Promise" ],
+        "types": [ "react-native" ],
+        "skipLibCheck": true,
+        "moduleResolution": "Node",
+        "strict": true,
+        "noImplicitAny": true,
+        "strictPropertyInitialization": false,
+        "resolveJsonModule": true,
+        "moduleSuffixes": [".native", ".ios", ".android", ""]
+    },
+    "exclude": [
+        "node_modules",
+        "react/features/always-on-top",
+        "react/features/base/components/participants-pane-list",
+        "react/features/base/tooltip",
+        "react/features/connection-stats",
+        "react/features/desktop-picker",
+        "react/features/e2ee",
+        "react/features/embed-meeting",
+        "react/features/face-landmarks",
+        "react/features/keyboard-shortcuts",
+        "react/features/no-audio-signal",
+        "react/features/noise-suppression",
+        "react/features/old-client-notification",
+        "react/features/remote-control",
+        "react/features/screen-share",
+        "react/features/screenshot-capture",
+        "react/features/stream-effects",
+        "react/features/virtual-background",
+        "react/features/web-hid",
+        "react/features/whiteboard",
+        "**/web/*",
+        "**/*.web.ts",
+        "**/*.web.tsx"
+    ]
+}

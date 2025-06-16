@@ -1,44 +1,30 @@
-/* eslint-disable import/order */
-import type { Dispatch } from 'redux';
-import { IState } from '../../../app/types';
+import { connect } from 'react-redux';
 
-// @ts-ignore
-import { translate } from '../../../base/i18n';
-import { IconHideWhiteboard, IconShowWhiteboard } from '../../../base/icons/svg';
-
-// @ts-ignore
-import { connect } from '../../../base/redux';
-
-// @ts-ignore
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-
-// @ts-ignore
+import { IReduxState } from '../../../app/types';
+import { translate } from '../../../base/i18n/functions';
+import { IconWhiteboard, IconWhiteboardHide } from '../../../base/icons/svg';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { setOverflowMenuVisible } from '../../../toolbox/actions.web';
-import { setWhiteboardOpen } from '../../actions';
-import { isWhiteboardVisible } from '../../functions';
+import { setWhiteboardOpen } from '../../actions.any';
+import { isWhiteboardButtonVisible, isWhiteboardVisible } from '../../functions';
 
-
-type Props = AbstractButtonProps & {
+interface IProps extends AbstractButtonProps {
 
     /**
      * Whether or not the button is toggled.
      */
     _toggled: boolean;
-
-    /**
-     * The redux {@code dispatch} function.
-     */
-    dispatch: Dispatch<any>;
-};
+}
 
 /**
  * Component that renders a toolbar button for the whiteboard.
  */
-class WhiteboardButton extends AbstractButton<Props, any, any> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.whiteboard';
-    icon = IconShowWhiteboard;
+class WhiteboardButton extends AbstractButton<IProps> {
+    accessibilityLabel = 'toolbar.accessibilityLabel.showWhiteboard';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.hideWhiteboard';
+    icon = IconWhiteboard;
     label = 'toolbar.showWhiteboard';
-    toggledIcon = IconHideWhiteboard;
+    toggledIcon = IconWhiteboardHide;
     toggledLabel = 'toolbar.hideWhiteboard';
     toggledTooltip = 'toolbar.hideWhiteboard';
     tooltip = 'toolbar.showWhiteboard';
@@ -50,8 +36,6 @@ class WhiteboardButton extends AbstractButton<Props, any, any> {
      * @returns {void}
      */
     _handleClick() {
-
-        // @ts-ignore
         const { dispatch, _toggled } = this.props;
 
         dispatch(setWhiteboardOpen(!_toggled));
@@ -66,7 +50,6 @@ class WhiteboardButton extends AbstractButton<Props, any, any> {
      * @returns {boolean}
      */
     _isToggled() {
-        // @ts-ignore
         return this.props._toggled;
     }
 }
@@ -76,13 +59,13 @@ class WhiteboardButton extends AbstractButton<Props, any, any> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function _mapStateToProps(state: IState) {
+function _mapStateToProps(state: IReduxState) {
     return {
-        _toggled: isWhiteboardVisible(state)
+        _toggled: isWhiteboardVisible(state),
+        visible: isWhiteboardButtonVisible(state)
     };
 }
 
-// @ts-ignore
 export default translate(connect(_mapStateToProps)(WhiteboardButton));

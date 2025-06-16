@@ -2,17 +2,13 @@ import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { getParticipantById } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { editMessage } from '../chat';
+import { editMessage } from '../chat/actions.any';
 import { MESSAGE_TYPE_REMOTE } from '../chat/constants';
 
 import { UPDATE_BREAKOUT_ROOMS } from './actionTypes';
 import { moveToRoom } from './actions';
 import logger from './logger';
 import { IRooms } from './types';
-
-declare const APP: any;
 
 /**
  * Registers a change handler for state['features/base/conference'].conference to
@@ -87,12 +83,12 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const { messages } = getState()['features/chat'];
 
         messages?.forEach(m => {
-            if (m.messageType === MESSAGE_TYPE_REMOTE && !getParticipantById(getState(), m.id)) {
+            if (m.messageType === MESSAGE_TYPE_REMOTE && !getParticipantById(getState(), m.participantId)) {
                 const rooms: IRooms = action.rooms;
 
                 for (const room of Object.values(rooms)) {
                     const participants = room.participants || {};
-                    const matchedJid = Object.keys(participants).find(jid => jid.endsWith(m.id));
+                    const matchedJid = Object.keys(participants).find(jid => jid.endsWith(m.participantId));
 
                     if (matchedJid) {
                         m.displayName = participants[matchedJid].displayName;

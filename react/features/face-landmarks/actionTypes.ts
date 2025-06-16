@@ -1,32 +1,21 @@
 /**
- * Redux action type dispatched in order to add a face expression.
+ * Redux action type dispatched in order to add real-time faceLandmarks to timeline.
  *
  * {
- *      type: ADD_FACE_EXPRESSION,
- *      faceExpression: string,
- *      duration: number
+ *      type: ADD_FACE_LANDMARKS,
+ *      faceLandmarks: FaceLandmarks
  * }
  */
-export const ADD_FACE_EXPRESSION = 'ADD_FACE_EXPRESSION';
+export const ADD_FACE_LANDMARKS = 'ADD_FACE_LANDMARKS';
 
 /**
- * Redux action type dispatched in order to add a expression to the face expressions buffer.
+ * Redux action type dispatched in order to clear the faceLandmarks buffer for webhook in the state.
  *
  * {
- *      type: ADD_TO_FACE_EXPRESSIONS_BUFFER,
- *      faceExpression: string
+ *      type: CLEAR_FACE_LANDMARKS_BUFFER
  * }
 */
-export const ADD_TO_FACE_EXPRESSIONS_BUFFER = 'ADD_TO_FACE_EXPRESSIONS_BUFFER';
-
-/**
- * Redux action type dispatched in order to clear the face expressions buffer in the state.
- *
- * {
- *      type: CLEAR_FACE_EXPRESSIONS_BUFFER
- * }
-*/
-export const CLEAR_FACE_EXPRESSIONS_BUFFER = 'CLEAR_FACE_EXPRESSIONS_BUFFER';
+export const CLEAR_FACE_LANDMARKS_BUFFER = 'CLEAR_FACE_LANDMARKS_BUFFER';
 
 /**
  * Redux action type dispatched in order to update coordinates of a detected face.
@@ -49,12 +38,3 @@ export const UPDATE_FACE_COORDINATES = 'UPDATE_FACE_COORDINATES';
  * }
  */
  export const NEW_FACE_COORDINATES = 'NEW_FACE_COORDINATES';
-
- /**
-  * Redux action type dispatched in order to signal that the face landmarks detection stopped.
-  * {
-  *      type: FACE_LANDMARK_DETECTION_STOPPED,
-  *      timestamp: number,
-  * }
-*/
-export const FACE_LANDMARK_DETECTION_STOPPED = 'FACE_LANDMARK_DETECTION_STOPPED';

@@ -1,7 +1,6 @@
-/* eslint-disable lines-around-comment */
-// @ts-ignore
+// @ts-expect-error
 import { jitsiLocalStorage } from '@jitsi/js-utils';
-import _ from 'lodash';
+import { escape } from 'lodash-es';
 
 import { APP_WILL_MOUNT } from '../app/actionTypes';
 import PersistenceRegistry from '../redux/PersistenceRegistry';
@@ -37,6 +36,7 @@ const DEFAULT_STATE: ISettingsState = {
     soundsTalkWhileMuted: true,
     soundsReactions: true,
     startAudioOnly: false,
+    startCarMode: false,
     startWithAudioMuted: false,
     startWithVideoMuted: false,
     userSelectedAudioOutputDeviceId: undefined,
@@ -52,7 +52,7 @@ const DEFAULT_STATE: ISettingsState = {
 };
 
 export interface ISettingsState {
-    audioOutputDeviceId?: string | boolean;
+    audioOutputDeviceId?: string;
     audioSettingsVisible?: boolean;
     avatarURL?: string;
     cameraDeviceId?: string | boolean;
@@ -74,6 +74,7 @@ export interface ISettingsState {
     soundsReactions?: boolean;
     soundsTalkWhileMuted?: boolean;
     startAudioOnly?: boolean;
+    startCarMode?: boolean;
     startWithAudioMuted?: boolean;
     startWithVideoMuted?: boolean;
     userSelectedAudioOutputDeviceId?: string;
@@ -84,7 +85,7 @@ export interface ISettingsState {
     userSelectedMicDeviceLabel?: string;
     userSelectedNotifications?: {
         [key: string]: boolean;
-    } | boolean;
+    };
     userSelectedSkipPrejoin?: boolean;
     videoSettingsVisible?: boolean;
     visible?: boolean;
@@ -107,6 +108,7 @@ Object.keys(DEFAULT_STATE).forEach(key => {
 
 // we want to filter these props, to not be stored as they represent
 // what is currently opened/used as devices
+// @ts-ignore
 filterSubtree.audioOutputDeviceId = false;
 filterSubtree.cameraDeviceId = false;
 filterSubtree.micDeviceId = false;
@@ -152,8 +154,8 @@ function _initSettings(featureState: ISettingsState) {
     // is a defined value, it will override any value found in local storage.
     // The workaround is sidestepping _.escape when the value is not set in
     // local storage.
-    const displayName = savedDisplayName === null ? undefined : _.escape(savedDisplayName);
-    const email = savedEmail === null ? undefined : _.escape(savedEmail);
+    const displayName = savedDisplayName === null ? undefined : escape(savedDisplayName);
+    const email = savedEmail === null ? undefined : escape(savedEmail);
 
     settings = assignIfDefined({
         displayName,

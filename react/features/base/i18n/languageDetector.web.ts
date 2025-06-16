@@ -3,8 +3,6 @@ import BrowserLanguageDetector from 'i18next-browser-languagedetector';
 import configLanguageDetector from './configLanguageDetector';
 import customNavigatorDetector from './customNavigatorDetector';
 
-declare let interfaceConfig: any;
-
 /**
  * The ordered list (by name) of language detectors to be utilized as backends
  * by the singleton language detector for Web.

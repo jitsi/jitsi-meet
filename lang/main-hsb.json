@@ -20,7 +20,7 @@
         "noResults": "žane přitrjechjace wuslědki",
         "outlookEmail": "Outlook-e-mejl",
         "phoneNumbers": "telefoniske čisła",
-        "searching": "pyta...",
+        "searching": "pyta…",
         "shareInvite": "přeprošenje na zhromadźiznu dźělić",
         "shareLink": "za přeprošenje druhich dźělće link za konferencu ",
         "shareStream": "link za live-streaming dźělić",
@@ -104,6 +104,7 @@
         },
         "noMessagesMessage": "Njejsu hišće powěsće w tutej konferency. Započće z rozmołwu tule!",
         "privateNotice": "priwatna powěsć na {{recipient}}",
+        "sendButton": "pósłać",
         "smileysPanel": "wuběr emojijow",
         "tabs": {
             "chat": "chatować",
@@ -433,7 +434,7 @@
         "search": "GIPHY přepytać"
     },
     "helpView": {
-        "header": "pomoc"
+        "title": "pomoc"
     },
     "incomingCall": {
         "answer": "wotmołwić",
@@ -545,12 +546,11 @@
         "signedInAs": "Wy sće přizjewjeny jako:",
         "start": "live-stream startować",
         "streamIdHelp": "Što to je?",
+        "title": "live-stream",
         "unavailableTitle": "live-streaming njeje wužiwajomny",
         "youtubeTerms": "wuměnjenja wužiwanja na YouTube"
     },
     "lobby": {
-        "admit": "přizwolić",
-        "admitAll": "wšitko přizwolić",
         "allow": "přiwzać",
         "backToKnockModeButton": "žane hesło, město toho wo přistup prosyć",
         "chat": "chat",
@@ -585,8 +585,7 @@
         "notificationTitle": "lobby",
         "passwordField": "konferencne hesło zapodać",
         "passwordJoinButton": "přistupić",
-        "reject": "wotpokazać",
-        "rejectAll": "wšitko wotpokazać",
+        "title": "lobby",
         "toggleLabel": "lobby aktiwěrować"
     },
     "localRecording": {
@@ -653,7 +652,7 @@
         "linkToSalesforceDescription": "Móžeće zjeće konferency z objektom w Salesforce zwjazać.",
         "linkToSalesforceError": "Konferenca njemóžeše so ze Salesforce zwjazać.",
         "linkToSalesforceKey": "konferencu zalinkować",
-        "linkToSalesforceProgress": "konferenca so ze Salesforce zwjaza...",
+        "linkToSalesforceProgress": "konferenca so ze Salesforce zwjaza…",
         "linkToSalesforceSuccess": "Konferenca bu ze Salesforce zwjazana.",
         "localRecordingStarted": "{{name}} je z lokalnym nahrawanjom započinał.",
         "localRecordingStopped": "{{name}} je lokalne nahrawanje skónčił.",
@@ -707,6 +706,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "přizwolić",
+            "admitAll": "wšitko přizwolić",
             "allow": "přitomnym dowolić",
             "allowVideo": "kameru zaswěčić",
             "askUnmute": "wo wotstajenje šaltowanja na němosć prosyć",
@@ -719,19 +720,20 @@
             "mute": "něme šaltować",
             "muteAll": "wšěch němych šaltować",
             "muteEveryoneElse": "wšěch druhich němych šaltować",
+            "reject": "wotpokazać",
             "stopEveryonesVideo": "wšitke kamery hasnyć",
             "stopVideo": "kameru hasnyć",
             "unblockEveryoneMicCamera": "kameru a mikrofon wšěch wočinić",
             "videoModeration": "kameru zaspinyć"
         },
         "close": "začinić",
-        "header": "přitomni",
         "headings": {
             "lobby": "lobby ({{count}})",
             "participantsList": "přitomni ({{count}})",
             "waitingLobby": "w lobbyji ({{count}})"
         },
-        "search": "přitomnych pytać"
+        "search": "přitomnych pytać",
+        "title": "přitomni"
     },
     "passwordDigitsOnly": "hač do {{number}} cyfrow",
     "passwordSetRemotely": "wot druheho wobdźělnika postajene",
@@ -752,6 +754,9 @@
             "questionPlaceholder": "prašenje stajić",
             "removeOption": "wotmołwu wotstronić",
             "send": "zestajić"
+        },
+        "errors": {
+            "notUniqueOption": "opcije dyrbja jasne być"
         },
         "notification": {
             "description": "Za wobdźělenje wočińće tab za naprašowanje.",
@@ -840,7 +845,7 @@
         "ringing": "zwoni …"
     },
     "privacyView": {
-        "header": "datowy škit"
+        "title": "datowy škit"
     },
     "profile": {
         "avatar": "wobraz wužiwarja/awatar",
@@ -904,6 +909,7 @@
         "signIn": "přizjewić",
         "signOut": "wotzjewić",
         "surfaceError": "prošu aktualny tab wužiwać",
+        "title": "nahrawanje",
         "unavailable": "Ow! {{serviceName}} tuchwilu wužiwajomny njeje. Dźěłamy na rozrisanju problema. Prošu pozdźišo znowa spytać .",
         "unavailableTitle": "nahrawanje njeje wužiwajomne",
         "uploadToCloud": "do cloud přenošować"
@@ -915,8 +921,8 @@
     "security": {
         "about": "Móžeće Wašu konferencu z hesłom škitać. Wobdźělnicy dyrbja tute zapodać, prjedy hač smědźa so na konferency wobdźělić.",
         "aboutReadOnly": " Moderatorojo móža konferencu z hesłom škitać. Wobdźělnicy dyrbja tute zapodać, prjedy hač smědźa so wobdźělić.",
-        "header": "opcije wěstoty",
-        "insecureRoomNameWarning": "Mjeno ruma je njewěste. Njewitani wobdźělnicy móhli Wašej konferency přistupić."
+        "insecureRoomNameWarning": "Mjeno ruma je njewěste. Njewitani wobdźělnicy móhli Wašej konferency přistupić.",
+        "title": "opcije wěstoty"
     },
     "settings": {
         "calendar": {
@@ -997,6 +1003,7 @@
         "neutral": "neutralny",
         "sad": "zrudny",
         "search": "pytać",
+        "searchHint": "přitomnych pytać",
         "seconds": "{{count}}s",
         "speakerStats": "statistika rěčnikow",
         "speakerTime": "čas rěčnikow",
@@ -1013,7 +1020,7 @@
         "title": "Konferenca bu přetorhnjena, dokelž bu standby-modus aktiwěrowany."
     },
     "termsView": {
-        "header": "wuměnjenja za wužiwanje"
+        "title": "wuměnjenja za wužiwanje"
     },
     "toolbar": {
         "Settings": "nastajenja",
@@ -1029,7 +1036,6 @@
             "chat": "chat-woknješko pokazać/schować",
             "clap": "placać",
             "collapse": "pomjeńšić",
-            "dock": "we hłownej wobrazowce fiksěrować",
             "document": "dźěleny dokument začinić",
             "download": "naše aplikacije downloadować ",
             "embedMeeting": "konferencu integrować",
@@ -1081,7 +1087,6 @@
             "tileView": "kachlicowy napohlad zapnyć/hasnyć",
             "toggleCamera": "kameru měnić",
             "toggleFilmstrip": "miniaturowy napohlad zapnyć/hasnyć ",
-            "undock": "rozwjazać",
             "videoblur": "njejasny widejo zapnyć/hasnyć ",
             "videomute": "„něme šaltowanje wideja zapnyć/hasnyć "
         },
@@ -1098,7 +1103,6 @@
         "closeChat": "chat začinić",
         "closeReactionsMenu": "meni za interakcije začinić",
         "disableReactionSounds": "Móžeće zwuki za interakcije za tutu konferencu deaktiwěrować.",
-        "dock": "fiksěrować",
         "documentClose": "dźěleny dokument začinić",
         "documentOpen": "dźěleny dokument wočinić",
         "download": "naše aplikacije downloadować",
@@ -1168,7 +1172,6 @@
         "talkWhileMutedPopup": "Spytaće Wy rěčeć? Waš mikrofon je němy.",
         "tileViewToggle": " kachlicowy napohlad zapnyć/hasnyć ",
         "toggleCamera": "kameru měnić",
-        "undock": "rozwjazać",
         "videoSettings": "nastajenja za widejo",
         "videomute": "kameru startować/hasnyć"
     },
@@ -1185,16 +1188,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Wuzwolće <b><i>dowolić</i></b>, hdyž so browser za prawom praša.",
-        "chromeGrantPermissions": "Wuzwolće<b><i>dowolić</i></b>, hdyž so browser za prawom praša.",
-        "edgeGrantPermissions": "Wuzwolće <b><i>haj</i></b>, hdyž so browser za prawom praša.",
-        "electronGrantPermissions": " wužiwanje kamery a mikrofona dowolić",
-        "firefoxGrantPermissions": " Wuzwolće<b><i>dowolić</i></b>, hdyž so browser za prawom praša.",
-        "iexplorerGrantPermissions": "Wuzwolće <b><i>OK</i></b>, hdyž so browser za prawom praša.",
-        "nwjsGrantPermissions": "prošu wužiwanje kamery a mikrofona dowolić ",
-        "operaGrantPermissions": " Wuzwolće<b><i>dowolić</i></b>, hdyž so browser za prawom praša.",
-        "react-nativeGrantPermissions": " Wuzwolće<b><i>dowolić</i></b>, hdyž so browser za prawom praša.",
-        "safariGrantPermissions": " Wuzwolće<b><i>OK</i></b>, hdyž so browser za prawom praša."
+        "grantPermissions": "prošu wužiwanje kamery a mikrofona dowolić."
     },
     "videoSIPGW": {
         "busy": "Njesteja žane resursy k dispoziciji. Prošu spytajće pozdźišo znowa.",
@@ -1264,7 +1258,7 @@
         "image6": "lěs",
         "image7": "schadźenje słónca",
         "none": "žadyn",
-        "pleaseWait": "wokomik...",
+        "pleaseWait": "wokomik…",
         "removeBackground": "pozadk wotstronić",
         "slightBlur": "pozadk snadnje njejasny",
         "title": "pozadk",

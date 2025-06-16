@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * The type of the action which signals to add a new chat message.
  *
@@ -14,6 +12,18 @@
  * }
  */
 export const ADD_MESSAGE = 'ADD_MESSAGE';
+
+/**
+ * The type of the action that adds a reaction to a chat message.
+ *
+ * {
+ *     type: ADD_MESSAGE_REACTION,
+ *     reaction: string,
+ *     messageID: string,
+ *     receiverID: string,
+ * }
+ */
+export const ADD_MESSAGE_REACTION = 'ADD_MESSAGE_REACTION';
 
 /**
  * The type of the action which signals to clear messages in Redux.
@@ -63,6 +73,18 @@ export const OPEN_CHAT = 'OPEN_CHAT';
  * }
  */
 export const SEND_MESSAGE = 'SEND_MESSAGE';
+
+/**
+ * The type of the action which signals a reaction to a message.
+ *
+ * {
+ *     type: SEND_REACTION,
+ *     reaction: string,
+ *     messageID: string,
+ *     receiverID: string
+ * }
+ */
+export const SEND_REACTION = 'SEND_REACTION';
 
 /**
  * The type of action which signals the initiation of sending of as private message to the

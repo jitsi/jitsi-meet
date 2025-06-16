@@ -1,38 +1,9 @@
-#sideToolbarContainer {
-    background-color: $chatBackgroundColor;
-    flex-shrink: 0;
-    overflow: hidden;
-    position: relative;
-    transition: width .16s ease-in-out;
-    width: $sidebarWidth;
-    z-index: $sideToolbarContainerZ;
-
-    @media (max-width: 580px) {
-        height: 100vh;
-        height: -webkit-fill-available;
-        left: 0;
-        position: fixed;
-        right: 0;
-        top: 0;
-        width: auto;
-    }
-}
-
-.chat-panel {
-    display: flex;
-    flex-direction: column;
-    // extract header + tabs height
-    height: calc(100% - 119px);
-}
-
-.chat-panel-no-tabs {
-    // extract header height
-    height: calc(100% - 70px);
-}
+@use './variables';
 
 #chat-conversation-container {
     // extract message input height
-    height: calc(100% - 68px);
+    box-sizing: border-box;
+    height: calc(100% - 64px);
     overflow: hidden;
     position: relative;
 }
@@ -41,7 +12,7 @@
     box-sizing: border-box;
     flex: 1;
     font-size: 10pt;
-    height: 100%;
+    height: calc(100% - 10px);
     line-height: 20px;
     overflow: auto;
     padding: 16px;
@@ -50,6 +21,13 @@
 
     display: flex;
     flex-direction: column;
+
+    &.focus-visible {
+        outline: 0;
+        margin: 4px;
+        border-radius: 0 0 variables.$borderRadius variables.$borderRadius;
+        box-shadow: 0px 0px 0px 2px #4687ed; // focus01/primary07
+    }
 
     & > :first-child {
         margin-top: auto;
@@ -76,61 +54,13 @@
     }
 }
 
-#chat-recipient {
-    align-items: center;
-    background-color: $chatPrivateMessageBackgroundColor;
-    display: flex;
-    flex-direction: row;
-    font-weight: 100;
-    padding: 10px;
-
-    span {
-        color: white;
-        display: flex;
-        flex: 1;
-    }
-
-    div {
-        svg {
-            cursor: pointer;
-            fill: white;
-        }
-    }
-
-    &.lobby-chat-recipient {
-        background-color: $chatLobbyMessageBackgroundColor;
-    }
-}
-
-
-.chat-header {
-    height: 70px;
-    position: relative;
-    width: 100%;
-    z-index: 1;
-    display: flex;
-    justify-content: space-between;
-    padding: 16px;
-    align-items: center;
-    box-sizing: border-box;
-    color: #fff;
-    font-weight: 600;
-    font-size: 24px;
-    line-height: 32px;
-
-    .jitsi-icon {
-        cursor: pointer;
-    }
-}
-
 .chat-input-container {
-    padding: 0 16px 16px;
+    padding: 0 16px 24px;
 }
 
 #chat-input {
     display: flex;
     align-items: flex-end;
-    padding: 4px;
     position: relative;
 }
 
@@ -139,72 +69,12 @@
     margin-right: 8px;
 }
 
-.smiley-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 38px;
-    width: 38px;
-    margin: 2px;
-    border-radius: 3px;
-}
-
-#chat-input .smiley-button {
-    @media (hover: hover) and (pointer: fine) {
-        &:hover {
-            background-color: #484A4F;
-        }
-    }
-}
-
-.remoteuser {
-    color: #B8C7E0;
-}
-
-.usrmsg-form {
-    flex: 1;
-}
-
-#usermsg {
-    -ms-overflow-style: none;
-    border: 0px none;
-    border-radius:0;
-    box-shadow: none;
-    color: white;
-    font-size: 14px;
-    padding: 10px;
-    overflow-y: auto;
-    resize: none;
-    scrollbar-width: none;
-    width: 100%;
-    word-break: break-word;
-
-    &::-webkit-scrollbar {
-        display: none;
-    }
-}
-
-#usermsg:hover {
-    border: 0px none;
-    box-shadow: none;
-}
-#usermsg:focus,
-#usermsg:active {
-    border-bottom: 1px solid white;
-    padding-bottom: 8px;
- }
-
 #nickname {
     text-align: center;
     color: #9d9d9d;
     font-size: 16px;
     margin: auto 0;
     padding: 0 16px;
-
-    #nickname-title {
-        margin-bottom: 5px;
-        display: block;
-    }
 
     label[for="nickinput"] {
         > div > span {
@@ -218,24 +88,6 @@
     label {
         line-height: 24px;
     }
-
-    .enter-chat {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-top: 16px;
-        height: 40px;
-        background: #1B67EC;
-        border-radius: 3px;
-        color: #fff;
-        cursor: pointer;
-
-        &.disabled {
-            color: #AFB6BC;
-            background: #11336E;
-            pointer-events: none;
-        }
-    }
 }
 
 .mobile-browser {
@@ -243,14 +95,6 @@
         input {
             height: 48px;
         }
-
-        .enter-chat {
-            height: 48px;
-        }
-    }
-
-    #usermsg {
-        font-size: 16px;
     }
 
     .chatmessage .usermessage {
@@ -258,54 +102,7 @@
     }
 }
 
-.sideToolbarContainer {
-    * {
-        -webkit-user-select: text;
-        user-select: text;
-    }
-
-    .display-name {
-        font-size: 12px;
-        font-weight: 600;
-        margin-bottom: 5px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
-}
-
-.sr-only {
-    border: 0 !important;
-    clip: rect(1px, 1px, 1px, 1px) !important;
-    clip-path: inset(50%) !important;
-    height: 1px !important;
-    margin: -1px !important;
-    overflow: hidden !important;
-    padding: 0 !important;
-    position: absolute !important;
-    width: 1px !important;
-    white-space: nowrap !important;
-}
-
 .chatmessage {
-    background-color: $chatRemoteMessageBackgroundColor;
-    border-radius: 0px 6px 6px 6px;
-    box-sizing: border-box;
-    color: white;
-    margin-top: 3px;
-    max-width: 100%;
-    position: relative;
-
-    &.localuser {
-        background-color: $chatLocalMessageBackgroundColor;
-        border-radius: 6px 0px 6px 6px;
-    }
-
-    .usermessage {
-        white-space: pre-wrap;
-        font-size: 14px;
-    }
-
     &.error {
         border-radius: 0px;
 
@@ -315,25 +112,15 @@
         }
 
         .usermessage {
-            color: red;
+            color: #ffffff;
             padding: 0;
         }
     }
 
-    .privatemessagenotice {
-        font-size: 11px;
-        font-weight: 100;
-    }
-
     .messagecontent {
-        margin: 8px;
         max-width: 100%;
         overflow: hidden;
     }
-}
-
-.timestamp {
-    color: #757575;
 }
 
 #smileys {
@@ -345,13 +132,6 @@
 #smileys img {
     width: 22px;
     padding: 2px;
-}
-
-#smileysarea {
-    display: flex;
-    max-height: 150px;
-    min-height: 35px;
-    overflow: hidden;
 }
 
 .smiley-input {
@@ -383,7 +163,7 @@
 
     #smileysContainer {
         background-color: $chatBackgroundColor;
-        border-top: 1px solid $chatInputSeparatorColor;
+        border-top: 1px solid #A4B8D1;
     }
 }
 
@@ -399,33 +179,14 @@
 }
 
 .smileyContainer:hover {
-    background-color: $newToolbarButtonToggleColor;
+    background-color: rgba(255, 255, 255, 0.15);
     border-radius: 5px;
     cursor: pointer;
 }
 
-#usermsg::-webkit-scrollbar-track-piece {
-    background: #3a3a3a;
-}
-
 .chat-message-group {
-    display: flex;
-    flex-direction: column;
-
     &.local {
         align-items: flex-end;
-
-        .chatmessage {
-            background-color: $chatLocalMessageBackgroundColor;
-            border-radius: 6px 0px 6px 6px;
-
-            &.privatemessage {
-                background-color: $chatPrivateMessageBackgroundColor;
-            }
-            &.lobbymessage {
-                background-color: $chatLobbyMessageBackgroundColor;
-            }
-        }
 
         .display-name {
             display: none;
@@ -437,56 +198,8 @@
     }
 
     &.error {
-        .chatmessage {
-            background-color: $defaultWarningColor;
-            border-radius: 0px;
-            font-weight: 100;
-        }
-
         .display-name {
             display: none;
-        }
-    }
-
-    .chatmessage-wrapper {
-        max-width: 100%;
-
-        .replywrapper {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-
-            .messageactions {
-                align-self: stretch;
-                border-left: 1px solid $chatActionsSeparatorColor;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                padding: 5px;
-
-                &.lobbychatmessageactions {
-                    border-left-color: $chatLobbyActionsSeparatorColor;
-                }
-
-                .toolbox-icon {
-                    cursor: pointer;
-                }
-            }
-        }
-    }
-
-    .chatmessage {
-        background-color: $chatRemoteMessageBackgroundColor;
-        border-radius: 0px 6px 6px 6px;
-        display: inline-block;
-        margin-top: 3px;
-        color: white;
-
-        &.privatemessage {
-            background-color: $chatPrivateMessageBackgroundColor;
-        }
-        &.lobbymessage {
-            background-color: $chatLobbyMessageBackgroundColor;
         }
     }
 }

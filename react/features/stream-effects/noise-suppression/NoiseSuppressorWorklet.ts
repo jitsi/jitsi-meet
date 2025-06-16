@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import { createRNNWasmModuleSync } from '@jitsi/rnnoise-wasm';
 
 import { leastCommonMultiple } from '../../base/util/math';
@@ -105,6 +105,12 @@ class NoiseSuppressorWorklet extends AudioWorkletProcessor {
         // investigation is required.
         const inData = inputs[0][0];
         const outData = outputs[0][0];
+
+        // Exit out early if there is no input data (input node not connected/disconnected)
+        // as rest of worklet will crash otherwise
+        if (!inData) {
+            return true;
+        }
 
         // Append new raw PCM sample.
         this._circularBuffer.set(inData, this._inputBufferLength);

@@ -1,7 +1,6 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
-    SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
     SET_CAR_MODE,
     SET_TILE_VIEW,
     VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED
@@ -41,7 +40,6 @@ const STORE_NAME = 'features/video-layout';
 
 ReducerRegistry.register<IVideoLayoutState>(STORE_NAME, (state = DEFAULT_STATE, action): IVideoLayoutState => {
     switch (action.type) {
-    case SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED:
     case VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED:
         return {
             ...state,

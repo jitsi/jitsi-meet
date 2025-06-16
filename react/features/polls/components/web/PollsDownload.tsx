@@ -2,9 +2,9 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
-import { BUTTON_TYPES } from "../../../base/ui/constants";
+import { BUTTON_TYPES } from "../../../base/ui/constants.web";
 import Button from "../../../base/ui/components/web/Button";
-import { IState } from "../../../app/types";
+import { IReduxState } from "../../../app/types";
 import { makeStyles } from "tss-react/mui";
 import { showNotification } from "../../../notifications/actions";
 import {
@@ -32,7 +32,7 @@ const PollsDownload = () => {
     const { classes } = useStyles();
     const polls = useSelector(getPolls());
 
-    const roomName = useSelector((state: IState) => getConferenceName(state));
+    const roomName = useSelector((state: IReduxState) => getConferenceName(state));
 
     if (!polls.length) {
         return null;

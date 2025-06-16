@@ -161,5 +161,4 @@ function module.command(arg)
 		warn("Unknown command: %s", command);
 		return 1;
 	end
-	return 0;
 end

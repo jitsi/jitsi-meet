@@ -1,33 +1,28 @@
-import { ModalTransition } from '@atlaskit/modal-dialog';
 import React, { Component, ComponentType } from 'react';
+import { connect } from 'react-redux';
 
-import { IState } from '../../../../app/types';
-import { ReactionEmojiProps } from '../../../../reactions/constants';
-import { connect } from '../../../redux/functions';
+import { IReduxState } from '../../../../app/types';
+import JitsiPortal from '../../../../toolbox/components/web/JitsiPortal';
+import { showOverflowDrawer } from '../../../../toolbox/functions.web';
 
 import DialogTransition from './DialogTransition';
 
-interface Props {
+interface IProps {
 
     /**
      * The component to render.
      */
-    _component: ComponentType;
+    _component?: ComponentType;
 
     /**
      * The props to pass to the component that will be rendered.
      */
-    _componentProps: Object;
+    _componentProps?: Object;
 
     /**
-     * Whether the dialog is using the new component.
+     * Whether the overflow drawer should be used.
      */
-    _isNewDialog: boolean;
-
-    /**
-     * Array of reactions to be displayed.
-     */
-    _reactionsQueue: Array<ReactionEmojiProps>;
+    _overflowDrawer: boolean;
 
     /**
      * True if the UI is in a compact state where we don't show dialogs.
@@ -40,7 +35,7 @@ interface Props {
  * for supporting @atlaskit's modal animations.
  *
  */
-class DialogContainer extends Component<Props> {
+class DialogContainer extends Component<IProps> {
 
     /**
      * Returns the dialog to be displayed.
@@ -67,14 +62,12 @@ class DialogContainer extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        return this.props._isNewDialog ? (
+        return (
             <DialogTransition>
-                {this._renderDialogContent()}
+                {this.props._overflowDrawer
+                    ? <JitsiPortal>{this._renderDialogContent()}</JitsiPortal>
+                    : this._renderDialogContent()}
             </DialogTransition>
-        ) : (
-            <ModalTransition>
-                { this._renderDialogContent() }
-            </ModalTransition>
         );
     }
 }
@@ -85,16 +78,17 @@ class DialogContainer extends Component<Props> {
  *
  * @param {Object} state - The redux state.
  * @private
- * @returns {Props}
+ * @returns {IProps}
  */
-function mapStateToProps(state: IState) {
+function mapStateToProps(state: IReduxState) {
     const stateFeaturesBaseDialog = state['features/base/dialog'];
     const { reducedUI } = state['features/base/responsive-ui'];
+    const overflowDrawer = showOverflowDrawer(state);
 
     return {
         _component: stateFeaturesBaseDialog.component,
         _componentProps: stateFeaturesBaseDialog.componentProps,
-        _isNewDialog: stateFeaturesBaseDialog.isNewDialog,
+        _overflowDrawer: overflowDrawer,
         _reducedUI: reducedUI
     };
 }

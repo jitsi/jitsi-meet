@@ -1,18 +1,15 @@
-/* eslint-disable lines-around-comment */
-import { IState } from '../app/types';
-// @ts-ignore
-import { showWarningNotification } from '../notifications';
+import { IReduxState, IStore } from '../app/types';
+import { showWarningNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
-// @ts-ignore
-import { isScreenAudioShared } from '../screen-share';
+import { isScreenAudioShared } from '../screen-share/functions';
 
 /**
  * Is noise suppression currently enabled.
  *
- * @param {IState} state - The state of the application.
+ * @param {IReduxState} state - The state of the application.
  * @returns {boolean}
  */
-export function isNoiseSuppressionEnabled(state: IState): boolean {
+export function isNoiseSuppressionEnabled(state: IReduxState): boolean {
     return state['features/noise-suppression'].enabled;
 }
 
@@ -24,16 +21,7 @@ export function isNoiseSuppressionEnabled(state: IState): boolean {
  * @param {*} localAudio - Current local audio track.
  * @returns {boolean}
  */
-export function canEnableNoiseSuppression(state: IState, dispatch: Function, localAudio: any): boolean {
-    if (!localAudio) {
-        dispatch(showWarningNotification({
-            titleKey: 'notify.noiseSuppressionFailedTitle',
-            descriptionKey: 'notify.noiseSuppressionNoTrackDescription'
-        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
-
-        return false;
-    }
-
+export function canEnableNoiseSuppression(state: IReduxState, dispatch: IStore['dispatch'], localAudio: any): boolean {
     const { channelCount } = localAudio.track.getSettings();
 
     // Sharing screen audio implies an effect being applied to the local track, because currently we don't support

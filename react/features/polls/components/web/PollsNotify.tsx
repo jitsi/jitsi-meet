@@ -1,9 +1,9 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { IState } from '../../../app/types';
+import { IReduxState } from '../../../app/types';
 
 const PollsNotify = () => {
-    const polls = useSelector((state: IState) => state['features/polls'].polls);
+    const polls = useSelector((state: IReduxState) => state['features/polls'].polls);
 
     React.useEffect(()=>{
       if (typeof APP !== 'undefined') {

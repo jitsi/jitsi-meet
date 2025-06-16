@@ -4,7 +4,7 @@ import { set } from '../base/redux/functions';
 import { SET_CURRENT_NOTIFICATION_UID } from './actionTypes';
 
 export interface ITalkWhileMutedState {
-    currentNotificationUid?: number;
+    currentNotificationUid?: string;
 }
 
 /**

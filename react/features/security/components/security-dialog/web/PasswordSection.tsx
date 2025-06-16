@@ -1,147 +1,73 @@
 /* eslint-disable react/jsx-no-bind */
-import React, { useRef, useState } from 'react';
-import { WithTranslation } from 'react-i18next';
+import React, { useCallback, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { translate } from '../../../../base/i18n/functions';
-import { copyText } from '../../../../base/util/copyText';
+import { IReduxState } from '../../../../app/types';
+import { setPassword } from '../../../../base/conference/actions';
+import { isLocalParticipantModerator } from '../../../../base/participants/functions';
+import { copyText } from '../../../../base/util/copyText.web';
 import { LOCKED_LOCALLY } from '../../../../room-lock/constants';
-import { NOTIFY_CLICK_MODE } from '../../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../../toolbox/types';
 
 import PasswordForm from './PasswordForm';
-import { NotifyClick } from './SecurityDialog';
 
 const DIGITS_ONLY = /^\d+$/;
 const KEY = 'add-passcode';
-
-interface Props extends WithTranslation {
-
-    /**
-     * Toolbar buttons which have their click exposed through the API.
-     */
-    buttonsWithNotifyClick: Array<string | NotifyClick>;
-
-    /**
-     * Whether or not the current user can modify the current password.
-     */
-    canEditPassword: boolean;
-
-    /**
-     * The JitsiConference for which to display a lock state and change the
-     * password.
-     */
-    conference: any;
-
-    /**
-     * The value for how the conference is locked (or undefined if not locked)
-     * as defined by room-lock constants.
-     */
-    locked: string;
-
-    /**
-     * The current known password for the JitsiConference.
-     */
-    password: string;
-
-    /**
-     * Whether or not to show the password in editing mode.
-     */
-    passwordEditEnabled: boolean;
-
-    /**
-     * The number of digits to be used in the password.
-     */
-    passwordNumberOfDigits?: number;
-
-    /**
-     * Action that sets the conference password.
-     */
-    setPassword: Function;
-
-    /**
-     * Method that sets whether the password editing is enabled or not.
-     */
-    setPasswordEditEnabled: Function;
-}
-
-declare let APP: any;
 
 /**
  * Component that handles the password manipulation from the invite dialog.
  *
  * @returns {React$Element<any>}
  */
-function PasswordSection({
-    buttonsWithNotifyClick,
-    canEditPassword,
-    conference,
-    locked,
-    password,
-    passwordEditEnabled,
-    passwordNumberOfDigits,
-    setPassword,
-    setPasswordEditEnabled,
-    t }: Props) {
-
+function PasswordSection() {
+    const { t } = useTranslation();
+    const dispatch = useDispatch();
+    const canEditPassword = useSelector(isLocalParticipantModerator);
+    const passwordNumberOfDigits = useSelector(
+        (state: IReduxState) => state['features/base/config'].roomPasswordNumberOfDigits);
+    const conference = useSelector((state: IReduxState) => state['features/base/conference'].conference);
+    const locked = useSelector((state: IReduxState) => state['features/base/conference'].locked);
+    const password = useSelector((state: IReduxState) => state['features/base/conference'].password);
     const formRef = useRef<HTMLDivElement>(null);
     const [ passwordVisible, setPasswordVisible ] = useState(false);
+    const buttonsWithNotifyClick = useSelector(
+        (state: IReduxState) => state['features/toolbox'].buttonsWithNotifyClick);
+    const [ passwordEditEnabled, setPasswordEditEnabled ] = useState(false);
 
-    /**
-     * Callback invoked to set a password on the current JitsiConference.
-     *
-     * @param {string} enteredPassword - The new password to be used to lock the
-     * current JitsiConference.
-     * @private
-     * @returns {void}
-     */
-    function onPasswordSubmit(enteredPassword: string) {
+    if (passwordEditEnabled && (password || locked)) {
+        setPasswordEditEnabled(false);
+    }
+
+    const onPasswordSubmit = useCallback((enteredPassword: string) => {
         if (enteredPassword && passwordNumberOfDigits && !DIGITS_ONLY.test(enteredPassword)) {
             // Don't set the password.
             return;
         }
-        setPassword(conference, conference.lock, enteredPassword);
-    }
+        dispatch(setPassword(conference, conference?.lock, enteredPassword));
+    }, [ dispatch, passwordNumberOfDigits, conference?.lock ]);
 
-    /**
-     * Toggles whether or not the password should currently be shown as being
-     * edited locally.
-     *
-     * @private
-     * @returns {void}
-     */
-    function onTogglePasswordEditState() {
-        if (typeof APP === 'undefined' || !buttonsWithNotifyClick?.length) {
+    const onTogglePasswordEditState = useCallback(() => {
+        if (typeof APP === 'undefined' || !buttonsWithNotifyClick?.size) {
             setPasswordEditEnabled(!passwordEditEnabled);
 
             return;
         }
 
-        let notifyMode;
-        const notify = buttonsWithNotifyClick.find(
-            (btn: string | NotifyClick) =>
-                (typeof btn === 'string' && btn === KEY)
-                || (typeof btn === 'object' && btn.key === KEY)
-        );
+        const notifyMode = buttonsWithNotifyClick?.get(KEY);
 
-        if (notify) {
-            notifyMode = typeof notify === 'string' || notify.preventExecution
-                ? NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
-                : NOTIFY_CLICK_MODE.ONLY_NOTIFY;
+        if (notifyMode) {
             APP.API.notifyToolbarButtonClicked(
                 KEY, notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
             );
         }
 
-        if (notifyMode === NOTIFY_CLICK_MODE.ONLY_NOTIFY) {
+        if (!notifyMode || notifyMode === NOTIFY_CLICK_MODE.ONLY_NOTIFY) {
             setPasswordEditEnabled(!passwordEditEnabled);
         }
-    }
+    }, [ buttonsWithNotifyClick, setPasswordEditEnabled, passwordEditEnabled ]);
 
-    /**
-     * Method to remotely submit the password from outside of the password form.
-     *
-     * @returns {void}
-     */
-    function onPasswordSave() {
+    const onPasswordSave = useCallback(() => {
         if (formRef.current) {
             // @ts-ignore
             const { value } = formRef.current.querySelector('div > input');
@@ -150,210 +76,89 @@ function PasswordSection({
                 onPasswordSubmit(value);
             }
         }
-    }
+    }, [ formRef.current, onPasswordSubmit ]);
 
-    /**
-     * Callback invoked to unlock the current JitsiConference.
-     *
-     * @returns {void}
-     */
-    function onPasswordRemove() {
+    const onPasswordRemove = useCallback(() => {
         onPasswordSubmit('');
-    }
+    }, [ onPasswordSubmit ]);
 
-    /**
-     * Copies the password to the clipboard.
-     *
-     * @returns {void}
-     */
-    function onPasswordCopy() {
-        copyText(password);
-    }
 
-    /**
-     * Toggles whether or not the password should currently be shown as being
-     * edited locally.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @private
-     * @returns {void}
-     */
-    function onTogglePasswordEditStateKeyPressHandler(e: React.KeyboardEvent) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            onTogglePasswordEditState();
-        }
-    }
+    const onPasswordCopy = useCallback(() => {
+        copyText(password ?? '');
+    }, [ password ]);
 
-    /**
-     * Method to remotely submit the password from outside of the password form.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @private
-     * @returns {void}
-     */
-    function onPasswordSaveKeyPressHandler(e: React.KeyboardEvent) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            onPasswordSave();
-        }
-    }
-
-    /**
-     * Callback invoked to unlock the current JitsiConference.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @private
-     * @returns {void}
-     */
-    function onPasswordRemoveKeyPressHandler(e: React.KeyboardEvent) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            onPasswordRemove();
-        }
-    }
-
-    /**
-     * Copies the password to the clipboard.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @private
-     * @returns {void}
-     */
-    function onPasswordCopyKeyPressHandler(e: React.KeyboardEvent) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            onPasswordCopy();
-        }
-    }
-
-    /**
-     * Callback invoked to show the current password.
-     *
-     * @returns {void}
-     */
-    function onPasswordShow() {
+    const onPasswordShow = useCallback(() => {
         setPasswordVisible(true);
-    }
+    }, [ setPasswordVisible ]);
 
-    /**
-     * Callback invoked to show the current password.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    function onPasswordShowKeyPressHandler(e: React.KeyboardEvent) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            setPasswordVisible(true);
-        }
-    }
-
-    /**
-     * Callback invoked to hide the current password.
-     *
-     * @returns {void}
-     */
-    function onPasswordHide() {
+    const onPasswordHide = useCallback(() => {
         setPasswordVisible(false);
-    }
+    }, [ setPasswordVisible ]);
 
-    /**
-     * Callback invoked to hide the current password.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    function onPasswordHideKeyPressHandler(e: React.KeyboardEvent) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            setPasswordVisible(false);
-        }
-    }
+    let actions = null;
 
-    /**
-     * Method that renders the password action(s) based on the current
-     * locked-status of the conference.
-     *
-     * @returns {React$Element<any>}
-     */
-    function renderPasswordActions() {
-        if (!canEditPassword) {
-            return null;
-        }
-
+    if (canEditPassword) {
         if (passwordEditEnabled) {
-            return (
+            actions = (
                 <>
-                    <a
-                        aria-label = { t('dialog.Cancel') }
+                    <button
+                        className = 'as-link'
                         onClick = { onTogglePasswordEditState }
-                        onKeyPress = { onTogglePasswordEditStateKeyPressHandler }
-                        role = 'button'
-                        tabIndex = { 0 }>{ t('dialog.Cancel') }</a>
-                    <a
-                        aria-label = { t('dialog.add') }
+                        type = 'button'>
+                        { t('dialog.Cancel') }
+                        <span className = 'sr-only'>({ t('dialog.password') })</span>
+                    </button>
+                    <button
+                        className = 'as-link'
                         onClick = { onPasswordSave }
-                        onKeyPress = { onPasswordSaveKeyPressHandler }
-                        role = 'button'
-                        tabIndex = { 0 }>{ t('dialog.add') }</a>
+                        type = 'button'>
+                        { t('dialog.add') }
+                        <span className = 'sr-only'>({ t('dialog.password') })</span>
+                    </button>
                 </>
             );
-        }
-
-        if (locked) {
-            return (
+        } else if (locked) {
+            actions = (
                 <>
-                    <a
-                        aria-label = { t('dialog.Remove') }
-                        className = 'remove-password'
+                    <button
+                        className = 'remove-password as-link'
                         onClick = { onPasswordRemove }
-                        onKeyPress = { onPasswordRemoveKeyPressHandler }
-                        role = 'button'
-                        tabIndex = { 0 }>{ t('dialog.Remove') }</a>
+                        type = 'button'>
+                        { t('dialog.Remove') }
+                        <span className = 'sr-only'>({ t('dialog.password') })</span>
+                    </button>
                     {
 
                         // There are cases like lobby and grant moderator when password is not available
                         password ? <>
-                            <a
-                                aria-label = { t('dialog.copy') }
-                                className = 'copy-password'
+                            <button
+                                className = 'copy-password as-link'
                                 onClick = { onPasswordCopy }
-                                onKeyPress = { onPasswordCopyKeyPressHandler }
-                                role = 'button'
-                                tabIndex = { 0 }>{ t('dialog.copy') }</a>
+                                type = 'button'>
+                                { t('dialog.copy') }
+                                <span className = 'sr-only'>({ t('dialog.password') })</span>
+                            </button>
                         </> : null
                     }
                     {locked === LOCKED_LOCALLY && (
-                        <a
-                            aria-label = { t(passwordVisible ? 'dialog.hide' : 'dialog.show') }
+                        <button
+                            className = 'as-link'
                             onClick = { passwordVisible ? onPasswordHide : onPasswordShow }
-                            onKeyPress = { passwordVisible
-                                ? onPasswordHideKeyPressHandler
-                                : onPasswordShowKeyPressHandler
-                            }
-                            role = 'button'
-                            tabIndex = { 0 }>{t(passwordVisible ? 'dialog.hide' : 'dialog.show')}</a>
+                            type = 'button'>
+                            {t(passwordVisible ? 'dialog.hide' : 'dialog.show')}
+                            <span className = 'sr-only'>({ t('dialog.password') })</span>
+                        </button>
                     )}
                 </>
             );
+        } else {
+            actions = (
+                <button
+                    className = 'add-password as-link'
+                    onClick = { onTogglePasswordEditState }
+                    type = 'button'>{ t('info.addPassword') }</button>
+            );
         }
-
-        return (
-            <a
-                aria-label = { t('info.addPassword') }
-                className = 'add-password'
-                onClick = { onTogglePasswordEditState }
-                onKeyPress = { onTogglePasswordEditStateKeyPressHandler }
-                role = 'button'
-                tabIndex = { 0 }>{ t('info.addPassword') }</a>
-        );
     }
 
     return (
@@ -374,11 +179,11 @@ function PasswordSection({
                         visible = { passwordVisible } />
                 </div>
                 <div className = 'security-dialog password-actions'>
-                    { renderPasswordActions() }
+                    { actions }
                 </div>
             </div>
         </div>
     );
 }
 
-export default translate(PasswordSection);
+export default PasswordSection;

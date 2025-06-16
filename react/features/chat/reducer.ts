@@ -1,10 +1,9 @@
-import { v4 as uuidv4 } from 'uuid';
-
-import { LocalParticipant, Participant } from '../base/participants/types';
+import { ILocalParticipant, IParticipant } from '../base/participants/types';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     ADD_MESSAGE,
+    ADD_MESSAGE_REACTION,
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     EDIT_MESSAGE,
@@ -15,31 +14,19 @@ import {
     SET_LOBBY_CHAT_RECIPIENT,
     SET_PRIVATE_MESSAGE_RECIPIENT
 } from './actionTypes';
+import { IMessage } from './types';
 
 const DEFAULT_STATE = {
     isOpen: false,
     isPollsTabFocused: false,
     lastReadMessage: undefined,
     messages: [],
+    reactions: {},
     nbUnreadMessages: 0,
     privateMessageRecipient: undefined,
     lobbyMessageRecipient: undefined,
     isLobbyChatActive: false
 };
-
-export interface IMessage {
-    displayName: string;
-    error?: Object;
-    id: string;
-    isReaction: boolean;
-    lobbyChat: boolean;
-    message: string;
-    messageId: string;
-    messageType: string;
-    privateMessage: boolean;
-    recipient: string;
-    timestamp: string;
-}
 
 export interface IChatState {
     isLobbyChatActive: boolean;
@@ -49,10 +36,10 @@ export interface IChatState {
     lobbyMessageRecipient?: {
         id: string;
         name: string;
-    } | LocalParticipant;
+    } | ILocalParticipant;
     messages: IMessage[];
     nbUnreadMessages: number;
-    privateMessageRecipient?: Participant;
+    privateMessageRecipient?: IParticipant;
 }
 
 ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, action): IChatState => {
@@ -61,11 +48,12 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         const newMessage: IMessage = {
             displayName: action.displayName,
             error: action.error,
-            id: action.id,
+            participantId: action.participantId,
             isReaction: action.isReaction,
-            messageId: uuidv4(),
+            messageId: action.messageId,
             messageType: action.messageType,
             message: action.message,
+            reactions: action.reactions,
             privateMessage: action.privateMessage,
             lobbyChat: action.lobbyChat,
             recipient: action.recipient,
@@ -88,6 +76,39 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             lastReadMessage:
                 action.hasRead ? newMessage : state.lastReadMessage,
             nbUnreadMessages: state.isPollsTabFocused ? state.nbUnreadMessages + 1 : state.nbUnreadMessages,
+            messages
+        };
+    }
+
+    case ADD_MESSAGE_REACTION: {
+        const { participantId, reactionList, messageId } = action;
+
+        const messages = state.messages.map(message => {
+            if (messageId === message.messageId) {
+                const newReactions = new Map(message.reactions);
+
+                reactionList.forEach((reaction: string) => {
+                    let participants = newReactions.get(reaction);
+
+                    if (!participants) {
+                        participants = new Set();
+                        newReactions.set(reaction, participants);
+                    }
+
+                    participants.add(participantId);
+                });
+
+                return {
+                    ...message,
+                    reactions: newReactions
+                };
+            }
+
+            return message;
+        });
+
+        return {
+            ...state,
             messages
         };
     }

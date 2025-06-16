@@ -1,8 +1,8 @@
 import { GestureResponderEvent } from 'react-native';
 
-import { BUTTON_TYPES } from '../constants';
+import { BUTTON_TYPES } from '../constants.any';
 
-export interface ButtonProps {
+export interface IButtonProps {
 
     /**
      * Label used for accessibility.
@@ -35,12 +35,17 @@ export interface ButtonProps {
     onClick?: (e?: React.MouseEvent<HTMLButtonElement> | GestureResponderEvent) => void;
 
     /**
+     * Key press callback.
+     */
+    onKeyPress?: (e?: React.KeyboardEvent<HTMLButtonElement>) => void;
+
+    /**
      * The type of button to be displayed.
      */
     type?: BUTTON_TYPES;
 }
 
-export interface InputProps {
+export interface IInputProps {
 
     /**
      * Whether the input is be clearable. (show clear button).
@@ -70,7 +75,7 @@ export interface InputProps {
     /**
      * Change callback.
      */
-    onChange: (value: string) => void;
+    onChange?: (value: string) => void;
 
     /**
      * The input placeholder text.
@@ -83,7 +88,7 @@ export interface InputProps {
     value: string | number;
 }
 
-export interface SwitchProps {
+export interface ISwitchProps {
 
     /**
      * Whether or not the toggle is on.
@@ -100,3 +105,11 @@ export interface SwitchProps {
      */
     onChange: (on?: boolean) => void;
 }
+
+export type MultiSelectItem = {
+    content: string;
+    description?: string;
+    elemBefore?: Element;
+    isDisabled?: boolean;
+    value: string;
+};

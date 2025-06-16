@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { makeStyles } from 'tss-react/mui';
@@ -7,25 +6,40 @@ import { isMobileBrowser } from '../../../environment/utils';
 import Icon from '../../../icons/components/Icon';
 import { IconCloseCircle } from '../../../icons/svg';
 import { withPixelLineHeight } from '../../../styles/functions.web';
-import { InputProps } from '../types';
+import { IInputProps } from '../types';
 
-interface IInputProps extends InputProps {
+interface IProps extends IInputProps {
     accessibilityLabel?: string;
+    autoComplete?: string;
     autoFocus?: boolean;
     bottomLabel?: string;
     className?: string;
     iconClick?: () => void;
-    id?: string;
+
+    /**
+     * The id to set on the input element.
+     * This is required because we need it internally to tie the input to its
+     * info (label, error) so that screen reader users don't get lost.
+     */
+    id: string;
     maxLength?: number;
     maxRows?: number;
+    maxValue?: number;
     minRows?: number;
+    minValue?: number;
+    mode?: 'text' | 'none' | 'decimal' | 'numeric' | 'tel' | 'search' | ' email' | 'url';
     name?: string;
+    onBlur?: (e: any) => void;
+    onFocus?: (event: React.FocusEvent) => void;
     onKeyPress?: (e: React.KeyboardEvent) => void;
+    readOnly?: boolean;
+    required?: boolean;
+    testId?: string;
     textarea?: boolean;
     type?: 'text' | 'email' | 'number' | 'password';
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         inputContainer: {
             display: 'flex',
@@ -49,6 +63,7 @@ const useStyles = makeStyles()((theme: Theme) => {
 
         input: {
             backgroundColor: theme.palette.ui03,
+            background: theme.palette.ui03,
             color: theme.palette.text01,
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
             padding: '10px 16px',
@@ -83,7 +98,19 @@ const useStyles = makeStyles()((theme: Theme) => {
 
             '&.error': {
                 boxShadow: `0px 0px 0px 2px ${theme.palette.textError}`
+            },
+            '&.clearable-input': {
+                paddingRight: '46px'
             }
+        },
+
+        'input::-webkit-outer-spin-button, input::-webkit-inner-spin-button': {
+            '-webkit-appearance': 'none',
+            margin: 0
+        },
+
+        'input[type=number]': {
+            '-moz-appearance': 'textfield'
         },
 
         icon: {
@@ -95,10 +122,6 @@ const useStyles = makeStyles()((theme: Theme) => {
 
         iconClickable: {
             cursor: 'pointer'
-        },
-
-        clearableInput: {
-            paddingRight: '46px'
         },
 
         clearButton: {
@@ -127,8 +150,9 @@ const useStyles = makeStyles()((theme: Theme) => {
     };
 });
 
-const Input = React.forwardRef<any, IInputProps>(({
+const Input = React.forwardRef<any, IProps>(({
     accessibilityLabel,
+    autoComplete,
     autoFocus,
     bottomLabel,
     className,
@@ -139,28 +163,41 @@ const Input = React.forwardRef<any, IInputProps>(({
     iconClick,
     id,
     label,
+    maxValue,
     maxLength,
     maxRows,
+    minValue,
     minRows,
+    mode,
     name,
+    onBlur,
     onChange,
+    onFocus,
     onKeyPress,
     placeholder,
+    readOnly = false,
+    required,
+    testId,
     textarea = false,
     type = 'text',
     value
-}: IInputProps, ref) => {
+}: IProps, ref) => {
     const { classes: styles, cx } = useStyles();
     const isMobile = isMobileBrowser();
+    const showClearIcon = clearable && value !== '' && !disabled;
 
     const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-        onChange(e.target.value), []);
+        onChange?.(e.target.value), []);
 
-    const clearInput = useCallback(() => onChange(''), []);
+    const clearInput = useCallback(() => onChange?.(''), []);
 
     return (
         <div className = { cx(styles.inputContainer, className) }>
-            {label && <span className = { cx(styles.label, isMobile && 'is-mobile') }>{label}</span>}
+            {label && <label
+                className = { cx(styles.label, isMobile && 'is-mobile') }
+                htmlFor = { id } >
+                {label}
+            </label>}
             <div className = { styles.fieldContainer }>
                 {icon && <Icon
                     { ...(iconClick ? { tabIndex: 0 } : {}) }
@@ -171,37 +208,51 @@ const Input = React.forwardRef<any, IInputProps>(({
                 {textarea ? (
                     <TextareaAutosize
                         aria-label = { accessibilityLabel }
+                        autoComplete = { autoComplete }
                         autoFocus = { autoFocus }
                         className = { cx(styles.input, isMobile && 'is-mobile',
-                            error && 'error', clearable && styles.clearableInput, icon && 'icon-input') }
+                            error && 'error', showClearIcon && 'clearable-input', icon && 'icon-input') }
                         disabled = { disabled }
-                        { ...(id ? { id } : {}) }
+                        id = { id }
+                        maxLength = { maxLength }
                         maxRows = { maxRows }
                         minRows = { minRows }
                         name = { name }
                         onChange = { handleChange }
                         onKeyPress = { onKeyPress }
                         placeholder = { placeholder }
+                        readOnly = { readOnly }
                         ref = { ref }
+                        required = { required }
                         value = { value } />
                 ) : (
                     <input
+                        aria-describedby = { bottomLabel ? `${id}-description` : undefined }
                         aria-label = { accessibilityLabel }
+                        autoComplete = { autoComplete }
                         autoFocus = { autoFocus }
                         className = { cx(styles.input, isMobile && 'is-mobile',
-                            error && 'error', clearable && styles.clearableInput, icon && 'icon-input') }
+                            error && 'error', showClearIcon && 'clearable-input', icon && 'icon-input') }
+                        data-testid = { testId }
                         disabled = { disabled }
-                        { ...(id ? { id } : {}) }
+                        id = { id }
+                        { ...(mode ? { inputmode: mode } : {}) }
+                        { ...(type === 'number' ? { max: maxValue } : {}) }
                         maxLength = { maxLength }
+                        { ...(type === 'number' ? { min: minValue } : {}) }
                         name = { name }
+                        onBlur = { onBlur }
                         onChange = { handleChange }
+                        onFocus = { onFocus }
                         onKeyPress = { onKeyPress }
                         placeholder = { placeholder }
+                        readOnly = { readOnly }
                         ref = { ref }
+                        required = { required }
                         type = { type }
                         value = { value } />
                 )}
-                {clearable && !disabled && value !== '' && <button className = { styles.clearButton }>
+                {showClearIcon && <button className = { styles.clearButton }>
                     <Icon
                         onClick = { clearInput }
                         size = { 20 }
@@ -209,7 +260,9 @@ const Input = React.forwardRef<any, IInputProps>(({
                 </button>}
             </div>
             {bottomLabel && (
-                <span className = { cx(styles.bottomLabel, isMobile && 'is-mobile', error && 'error') }>
+                <span
+                    className = { cx(styles.bottomLabel, isMobile && 'is-mobile', error && 'error') }
+                    id = { `${id}-description` }>
                     {bottomLabel}
                 </span>
             )}

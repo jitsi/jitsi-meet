@@ -24,6 +24,9 @@ set -e
 
 case "$1" in
     remove)
+        if [ -x "/etc/init.d/openresty" ]; then
+            invoke-rc.d openresty reload || true
+        fi
         if [ -x "/etc/init.d/nginx" ]; then
             invoke-rc.d nginx reload || true
         fi
@@ -38,6 +41,7 @@ case "$1" in
             rm -f /etc/jitsi/meet/$JVB_HOSTNAME-config.js
             rm -f /etc/nginx/sites-available/$JVB_HOSTNAME.conf
             rm -f /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf
+            rm -f /usr/local/openresty/nginx/conf/$JVB_HOSTNAME.conf
             rm -f /etc/apache2/sites-available/$JVB_HOSTNAME.conf
             rm -f /etc/apache2/sites-enabled/$JVB_HOSTNAME.conf
             rm -f /etc/jitsi/meet/$JVB_HOSTNAME.key

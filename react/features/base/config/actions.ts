@@ -1,7 +1,7 @@
-// @ts-ignore
+// @ts-expect-error
 import { jitsiLocalStorage } from '@jitsi/js-utils';
-import { Dispatch } from 'redux';
 
+import { IStore } from '../../app/types';
 import { addKnownDomains } from '../known-domains/actions';
 import { parseURIString } from '../util/uri';
 
@@ -98,8 +98,8 @@ export function overwriteConfig(config: Object) {
  * base/config.
  * @returns {Function}
  */
-export function setConfig(config: Object = {}) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
+export function setConfig(config: IConfig = {}) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const { locationURL } = getState()['features/base/connection'];
 
         // Now that the loading of the config was successful override the values
@@ -119,6 +119,26 @@ export function setConfig(config: Object = {}) {
                 window.interfaceConfig,
                 locationURL);
 
+        let { bosh } = config;
+
+        if (bosh) {
+            // Normalize the BOSH URL.
+            if (bosh.startsWith('//')) {
+                // By default our config.js doesn't include the protocol.
+                bosh = `${locationURL?.protocol}${bosh}`;
+            } else if (bosh.startsWith('/')) {
+                // Handle relative URLs, which won't work on mobile.
+                const {
+                    protocol,
+                    host,
+                    contextRoot
+                } = parseURIString(locationURL?.href);
+
+                bosh = `${protocol}//${host}${contextRoot || '/'}${bosh.substr(1)}`;
+            }
+            config.bosh = bosh;
+        }
+
         dispatch({
             type: SET_CONFIG,
             config
@@ -135,7 +155,7 @@ export function setConfig(config: Object = {}) {
  * @returns {Function}
  */
 export function storeConfig(baseURL: string, config: Object) {
-    return (dispatch: Dispatch<any>) => {
+    return (dispatch: IStore['dispatch']) => {
         // Try to store the configuration in localStorage. If the deployment
         // specified 'getroom' as a function, for example, it does not make
         // sense to and it will not be stored.

@@ -1,16 +1,19 @@
-import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
-import clsx from 'clsx';
-import React from 'react';
+import React, { useCallback } from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../icons/components/Icon';
 import { withPixelLineHeight } from '../../../styles/functions.web';
 import { COLORS } from '../../constants';
-import AbstractLabel, {
-    type Props as AbstractProps
-} from '../AbstractLabel';
 
-type Props = AbstractProps & {
+interface IProps {
+
+    /**
+     * Optional label for screen reader users, invisible in the UI.
+     *
+     * Note: if the text prop is set, a screen reader will first announce
+     * the accessibilityText, then the text.
+     */
+    accessibilityText?: string;
 
     /**
      * Own CSS class name.
@@ -18,15 +21,14 @@ type Props = AbstractProps & {
     className?: string;
 
     /**
-     * An object containing the CSS classes.
-     */
-    classes: any;
-
-    /**
      * The color of the label.
      */
     color?: string;
 
+    /**
+     * An SVG icon to be rendered as the content of the label.
+     */
+    icon?: Function;
 
     /**
      * Color for the icon.
@@ -43,27 +45,26 @@ type Props = AbstractProps & {
      */
     onClick?: (e?: React.MouseEvent) => void;
 
-};
+    /**
+     * String or component that will be rendered as the label itself.
+     */
+    text?: string;
 
-/**
- * Creates the styles for the component.
- *
- * @param {Object} theme - The current UI theme.
- *
- * @returns {Object}
- */
-const styles = (theme: Theme) => {
+}
+
+const useStyles = makeStyles()(theme => {
     return {
         label: {
             ...withPixelLineHeight(theme.typography.labelRegular),
             alignItems: 'center',
             background: theme.palette.ui04,
-            borderRadius: Number(theme.shape.borderRadius) / 2,
+            borderRadius: '4px',
             color: theme.palette.text01,
             display: 'flex',
+            margin: '0 2px',
+            padding: '6px',
             height: 28,
-            margin: '0 0 4px 4px',
-            padding: '0 8px'
+            boxSizing: 'border-box'
         },
         withIcon: {
             marginLeft: 8
@@ -72,11 +73,11 @@ const styles = (theme: Theme) => {
             cursor: 'pointer'
         },
         [COLORS.white]: {
-            background: theme.palette.text01,
-            color: theme.palette.ui04,
+            background: theme.palette.ui09,
+            color: theme.palette.text04,
 
             '& svg': {
-                fill: theme.palette.ui04
+                fill: theme.palette.icon04
             }
         },
         [COLORS.green]: {
@@ -86,51 +87,49 @@ const styles = (theme: Theme) => {
             background: theme.palette.actionDanger
         }
     };
+});
+
+const Label = ({
+    accessibilityText,
+    className,
+    color,
+    icon,
+    iconColor,
+    id,
+    onClick,
+    text
+}: IProps) => {
+    const { classes, cx } = useStyles();
+
+    const onKeyPress = useCallback(event => {
+        if (!onClick) {
+            return;
+        }
+
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onClick();
+        }
+    }, [ onClick ]);
+
+    return (
+        <div
+            className = { cx(classes.label, onClick && classes.clickable,
+                color && classes[color], className
+            ) }
+            id = { id }
+            onClick = { onClick }
+            onKeyPress = { onKeyPress }
+            role = { onClick ? 'button' : undefined }
+            tabIndex = { onClick ? 0 : undefined }>
+            {icon && <Icon
+                color = { iconColor }
+                size = '16'
+                src = { icon } />}
+            {accessibilityText && <span className = 'sr-only'>{accessibilityText}</span>}
+            {text && <span className = { icon && classes.withIcon }>{text}</span>}
+        </div>
+    );
 };
 
-
-/**
- * React Component for showing short text in a circle.
- *
- * @augments Component
- */
-class Label extends AbstractLabel<Props, any> {
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     */
-    render() {
-        const {
-            classes,
-            className,
-            color,
-            icon,
-            iconColor,
-            id,
-            onClick,
-            text
-        } = this.props;
-        const labelClassName = clsx(
-            classes.label,
-            onClick && classes.clickable,
-            color && classes[color],
-            className
-        );
-
-        return (
-            <div
-                className = { labelClassName }
-                id = { id }
-                onClick = { onClick }>
-                { icon && <Icon
-                    color = { iconColor }
-                    size = '16'
-                    src = { icon } /> }
-                { text && <span className = { icon && classes.withIcon }>{text}</span> }
-            </div>
-        );
-    }
-}
-
-export default withStyles(styles)(Label);
+export default Label;

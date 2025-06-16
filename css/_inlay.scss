@@ -3,20 +3,20 @@
     @include border-radius(4px);
     padding: 40px 38px 44px;
     color: #fff;
-    background: $inlayColorBg;
+    background: lighten(#474747, 20%);
     text-align: center;
 
     &__title {
         margin: 17px 0;
         padding-bottom: 17px;
-        color: $popoverFontColor;
+        color: #ffffff;
         font-size: 21px;
         letter-spacing: 0.3px;
-        border-bottom: 1px solid $inlayBorderColor;
+        border-bottom: 1px solid lighten(#FFFFFF, 10%);
     }
 
     &__text {
-        color: $popoverFontColor;
+        color: #ffffff;
         display: block;
         margin-top: 22px;
         font-size: 16px;

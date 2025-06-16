@@ -27,6 +27,11 @@ static NSString * const closeChatAction = @"org.jitsi.meet.CLOSE_CHAT";
 static NSString * const sendChatMessageAction = @"org.jitsi.meet.SEND_CHAT_MESSAGE";
 static NSString * const setVideoMutedAction = @"org.jitsi.meet.SET_VIDEO_MUTED";
 static NSString * const setClosedCaptionsEnabledAction = @"org.jitsi.meet.SET_CLOSED_CAPTIONS_ENABLED";
+static NSString * const toggleCameraAction = @"org.jitsi.meet.TOGGLE_CAMERA";
+static NSString * const showNotificationAction = @"org.jitsi.meet.SHOW_NOTIFICATION";
+static NSString * const hideNotificationAction = @"org.jitsi.meet.HIDE_NOTIFICATION";
+static NSString * const startRecordingAction = @"org.jitsi.meet.START_RECORDING";
+static NSString * const stopRecordingAction = @"org.jitsi.meet.STOP_RECORDING";
 
 @implementation ExternalAPI
 
@@ -50,7 +55,12 @@ RCT_EXPORT_MODULE();
         @"CLOSE_CHAT": closeChatAction,
         @"SEND_CHAT_MESSAGE": sendChatMessageAction,
         @"SET_VIDEO_MUTED" : setVideoMutedAction,
-        @"SET_CLOSED_CAPTIONS_ENABLED": setClosedCaptionsEnabledAction
+        @"SET_CLOSED_CAPTIONS_ENABLED": setClosedCaptionsEnabledAction,
+        @"TOGGLE_CAMERA": toggleCameraAction,
+        @"SHOW_NOTIFICATION": showNotificationAction,
+        @"HIDE_NOTIFICATION": hideNotificationAction,
+        @"START_RECORDING": startRecordingAction,
+        @"STOP_RECORDING": stopRecordingAction
     };
 };
 
@@ -75,7 +85,12 @@ RCT_EXPORT_MODULE();
               closeChatAction,
               sendChatMessageAction,
               setVideoMutedAction,
-              setClosedCaptionsEnabledAction
+              setClosedCaptionsEnabledAction,
+              toggleCameraAction,
+              showNotificationAction,
+              hideNotificationAction,
+              startRecordingAction,
+              stopRecordingAction
     ];
 }
 
@@ -173,4 +188,63 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     [self sendEventWithName:setClosedCaptionsEnabledAction body:data];
 }
 
+- (void)toggleCamera {
+    [self sendEventWithName:toggleCameraAction body:nil];
+}
+
+- (void)showNotification:(NSString*)appearance :(NSString*)description :(NSString*)timeout :(NSString*)title :(NSString*)uid {
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+    data[@"appearance"] = appearance;
+    data[@"description"] = description;
+    data[@"timeout"] = timeout;
+    data[@"title"] = title;
+    data[@"uid"] = uid;
+    
+    [self sendEventWithName:showNotificationAction body:data];
+}
+
+- (void)hideNotification:(NSString*)uid {
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+    data[@"uid"] = uid;
+    
+    [self sendEventWithName:hideNotificationAction body:data];
+}
+
+static inline NSString *RecordingModeToString(RecordingMode mode) {
+    switch (mode) {
+        case RecordingModeFile:
+            return @"file";
+        case RecordingModeStream:
+            return @"stream";
+        default:
+            return nil;
+    }
+}
+
+- (void)startRecording:(RecordingMode)mode :(NSString*)dropboxToken :(BOOL)shouldShare :(NSString*)rtmpStreamKey :(NSString*)rtmpBroadcastID :(NSString*)youtubeStreamKey :(NSString*)youtubeBroadcastID :(NSDictionary*)extraMetadata :(BOOL)transcription {
+    NSString *modeString = RecordingModeToString(mode);
+    NSDictionary *data = @{
+        @"mode": modeString,
+        @"dropboxToken": dropboxToken,
+        @"shouldShare": @(shouldShare),
+        @"rtmpStreamKey": rtmpStreamKey,
+        @"rtmpBroadcastID": rtmpBroadcastID,
+        @"youtubeStreamKey": youtubeStreamKey,
+        @"youtubeBroadcastID": youtubeBroadcastID,
+        @"extraMetadata": extraMetadata,
+        @"transcription": @(transcription)
+    };
+    
+    [self sendEventWithName:startRecordingAction body:data];
+}
+
+- (void)stopRecording:(RecordingMode)mode :(BOOL)transcription {
+    NSString *modeString = RecordingModeToString(mode);
+    NSDictionary *data = @{
+        @"mode": modeString,
+        @"transcription": @(transcription)
+    };
+    
+    [self sendEventWithName:stopRecordingAction body:data];
+}
 @end

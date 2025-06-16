@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-import { Theme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -7,14 +5,12 @@ import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../base/icons/components/Icon';
 import { IconSearch } from '../../../base/icons/svg';
-// @ts-ignore
-import { getFieldValue } from '../../../base/react';
+import { getFieldValue } from '../../../base/react/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { MOBILE_BREAKPOINT } from '../../constants';
-// @ts-ignore
 import { isSpeakerStatsSearchDisabled } from '../../functions';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         speakerStatsSearchContainer: {
             position: 'relative'
@@ -58,21 +54,21 @@ const useStyles = makeStyles()((theme: Theme) => {
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsSearch}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The function to initiate the change in the speaker stats table.
      */
     onSearch: Function;
 
-};
+}
 
 /**
  * React component for display an individual user's speaker stats.
  *
  * @returns {React$Element<any>}
  */
-function SpeakerStatsSearch({ onSearch }: Props) {
+function SpeakerStatsSearch({ onSearch }: IProps) {
     const { classes, theme } = useStyles();
     const { t } = useTranslation();
     const disableSpeakerStatsSearch = useSelector(isSpeakerStatsSearchDisabled);
@@ -107,6 +103,7 @@ function SpeakerStatsSearch({ onSearch }: Props) {
                 color = { theme.palette.icon03 }
                 src = { IconSearch } />
             <input
+                aria-label = { t('speakerStats.searchHint') }
                 autoComplete = 'off'
                 autoFocus = { false }
                 className = { classes.speakerStatsSearch }

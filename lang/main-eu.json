@@ -20,7 +20,7 @@
         "noResults": "Ez dago bat datorren bilaketa-emaitzarik",
         "outlookEmail": "Outlook Email",
         "phoneNumbers": "telefono zenbakiak",
-        "searching": "Bilatzen...",
+        "searching": "Bilatzen…",
         "shareInvite": "Partekatu bilerarako gonbidapena",
         "shareLink": "Partekatu bileraren esteka beste partaide batzuk gonbidatzeko",
         "shareStream": "Partekatu zuzenekoaren esteka",
@@ -73,6 +73,7 @@
         },
         "noMessagesMessage": "Bileran oraindik mezurik ez dago. Hasi elkarrizketa hemen!",
         "privateNotice": "Mezu pribatua {{recipient}}(e)ri",
+        "sendButton": "Bidali",
         "smileysPanel": "Emoji panela",
         "title": "Txata",
         "titleWithPolls": "Txata",
@@ -181,7 +182,7 @@
         "Share": "Partekatu",
         "Submit": "Bidali",
         "WaitForHostMsg": "Konferentzia oraindik ez da hasi. Ostalaria bazara, autentifikatu. Bestela, itxaron ostalaria iritsi arte.",
-        "WaitingForHostTitle": "Antolatzailearen zain...",
+        "WaitingForHostTitle": "Antolatzailearen zain…",
         "Yes": "Bai",
         "accessibilityLabel": {
             "liveStreaming": "Zuzeneko Erreprodukzioa"
@@ -353,7 +354,7 @@
         "veryGood": "Oso ona"
     },
     "helpView": {
-        "header": "Laguntza gunea"
+        "title": "Laguntza gunea"
     },
     "incomingCall": {
         "answer": "Erantzun",
@@ -457,12 +458,11 @@
         "signedInAs": "Honela hasi duzu saioa:",
         "start": "Hasi zuzeneko transmisioa",
         "streamIdHelp": "Zer da hau?",
+        "title": "Zuzeneko Erreprodukzioa",
         "unavailableTitle": "Zuzeneko transmisioa ez dago erabilgarri",
         "youtubeTerms": "YouTuberen erabilpen baldintzak"
     },
     "lobby": {
-        "admit": "Onartu",
-        "admitAll": "Onartu guztiak",
         "allow": "Baimendu",
         "backToKnockModeButton": "Ez du pasahitza erabili, baina sartzea eskatu du",
         "dialogTitle": "Itxaron-gela modua",
@@ -477,10 +477,10 @@
         "invalidPassword": "Pasahitza ez da zuzena",
         "joinRejectedMessage": "Sartzeko eskaera ukatu egin du moderatzaile batek",
         "joinTitle": "Sartu bileran",
-        "joinWithPasswordMessage": "Pasahitz gabe sartzen saiatzen, itxaron mesedez...",
+        "joinWithPasswordMessage": "Pasahitz gabe sartzen saiatzen, itxaron mesedez…",
         "joiningMessage": "Norbaitek zure eskaera sartu bezain laster sartuko zara bileran",
-        "joiningTitle": "Sartzeko eskatzen...",
-        "joiningWithPasswordTitle": "Pasahitzarekin sartzen...",
+        "joiningTitle": "Sartzeko eskatzen…",
+        "joiningWithPasswordTitle": "Pasahitzarekin sartzen…",
         "knockButton": "Eskatu sartzea",
         "knockTitle": "Norbaitek bileran sartu nahi du",
         "knockingParticipantList": "Zain dauden parte-hartzaileak",
@@ -492,7 +492,7 @@
         "notificationTitle": "Itxaron-gela",
         "passwordField": "Idatzi bileraren pasahitza",
         "passwordJoinButton": "Sartu",
-        "reject": "Baztertu",
+        "title": "Itxaron-gela",
         "toggleLabel": "Itxaron-gela aktibatu"
     },
     "localRecording": {
@@ -573,8 +573,11 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Onartu",
+            "admitAll": "Onartu guztiak",
             "invite": "Gonbidatu norbait",
             "muteAll": "Ixilarazi guztiak",
+            "reject": "Baztertu",
             "stopVideo": "Gelditu bideoa"
         },
         "close": "Itxi",
@@ -585,6 +588,11 @@
     },
     "passwordDigitsOnly": "{{number}} digitu arte",
     "passwordSetRemotely": "beste parte-hartzaile batek ezarrita",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Aukerak bakarrak izan behar dira"
+        }
+    },
     "poweredby": "garatzailea:",
     "prejoin": {
         "audioAndVideoError": "Errorea audio eta bideoan:",
@@ -594,7 +602,7 @@
         "callMe": "Deitu nazazu",
         "callMeAtNumber": "Deitu nazazu zenbaki honetara:",
         "calling": "Deitzen",
-        "configuringDevices": "Gailuak konfiguratzen...",
+        "configuringDevices": "Gailuak konfiguratzen…",
         "connectedWithAudioQ": "Audioarekin konektatuta zaude?",
         "connection": {
             "good": "Zure internet konexioa ondo dabil!",
@@ -693,6 +701,7 @@
         "serviceName": "Grabazio-zerbitzua",
         "signIn": "Sartu",
         "signOut": "Itxi saioa",
+        "title": "Grabatzen",
         "unavailable": "Atx! {{serviceName}} ez dago eskuragarri. Arazoa konpontzeko lanean gabiltza. Saiatu berriz beranduago.",
         "unavailableTitle": "Grabazioa ez dago eskuragarri"
     },
@@ -762,6 +771,8 @@
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "Izena",
+        "search": "Bilatu",
+        "searchHint": "Bilatu parte-hartzaileak",
         "seconds": "{{count}}s",
         "speakerStats": "Hizlariaren estatistikak",
         "speakerTime": "Hizlariaren denbora"
@@ -902,22 +913,13 @@
         "failedToStart": "Ezin da transkripzioa hasi",
         "labelToolTip": "Bilera transkribatzen ari da",
         "off": "Transkripzioa gelditu da",
-        "pending": "Bileraren transkripzioa prestatzen ...",
+        "pending": "Bileraren transkripzioa prestatzen…",
         "start": "Erakutsi azpitituluak",
         "stop": "Utzi azpitituluak erakusten",
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Hautatu <b><i>Baimendu</i></b> zure nabigatzaileak baimenak eskatzen dituenean.",
-        "chromeGrantPermissions": "Hautatu <b><i>Baimendu</i></b> zure nabigatzaileak baimenak eskatzen dituenean.",
-        "edgeGrantPermissions": "Hautatu <b><i>Bai</i></b> zure nabigatzaileak baimenak eskatzen dituenean.",
-        "electronGrantPermissions": "Mesedez eman zure kamera eta mikrofonoa erabiltzeko baimenak",
-        "firefoxGrantPermissions": "Hautatu <b><i>Partekatutako hautatutako gailua</i></b> zure nabigatzaileak baimenak eskatzen dituenean.",
-        "iexplorerGrantPermissions": "Hautatu <b><i>Ados</i></b> zure nabigatzaileak baimenak eskatzen dituenean.",
-        "nwjsGrantPermissions": "Mesedez, eman zure kamera eta mikrofonoa erabiltzeko baimenak",
-        "operaGrantPermissions": "Hautatu <b><i>Baimendu</i></b> zure nabigatzaileak baimenak eskatzen dituenean.",
-        "react-nativeGrantPermissions": "Hautatu <b><i>Baimendu</i></b> zure nabigatzaileak baimenak eskatzen dituenean.",
-        "safariGrantPermissions": "Hautatu <b><i>Ados</i></b> zure nabigatzaileak baimenak eskatzen dituenean."
+        "grantPermissions": "Mesedez, eman zure kamera eta mikrofonoa erabiltzeko baimenak."
     },
     "videoSIPGW": {
         "busy": "Baliabideak askatzeko lanetan gabiltza. Mesedez, saiatu berriro minutu batzuk barru.",
@@ -977,7 +979,7 @@
         "image6": "Basoa",
         "image7": "Egunsentia",
         "none": "Bat ere ez",
-        "pleaseWait": "Itxaron mesedez...",
+        "pleaseWait": "Itxaron mesedez…",
         "removeBackground": "Kendu atzeko planoa",
         "slightBlur": "Lausotze arina",
         "title": "Atzeko plano birtualak",

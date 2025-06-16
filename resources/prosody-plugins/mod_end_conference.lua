@@ -13,20 +13,22 @@ local get_room_by_name_and_subdomain = module:require 'util'.get_room_by_name_an
 
 local END_CONFERENCE_REASON = 'The meeting has been terminated';
 
-local end_conference_component = module:get_option_string('end_conference_component', 'endconference.'..module.host);
-if end_conference_component == nil then
-    log('error', 'No end_conference_component specified.');
-    return;
+-- Since this file serves as both the host module and the component, we rely on the assumption that
+-- end_conference_component var would only be define for the host and not in the end_conference component
+local end_conference_component = module:get_option_string('end_conference_component');
+if end_conference_component then
+    -- Advertise end conference so client can pick up the address and use it
+    module:add_identity('component', 'end_conference', end_conference_component);
+    return;  -- nothing left to do if called as host module
 end
 
--- Advertise end conference so client can pick up the address and use it
-module:add_identity('component', 'end_conference', end_conference_component);
+-- What follows is logic for the end_conference component
 
 module:depends("jitsi_session");
 
 local muc_component_host = module:get_option_string('muc_component');
 if muc_component_host == nil then
-    log('error', 'No muc_component specified. No muc to operate on!');
+    module:log('error', 'No muc_component specified. No muc to operate on!');
     return;
 end
 
@@ -61,17 +63,17 @@ function on_message(event)
         local from = event.stanza.attr.from;
         local occupant = room:get_occupant_by_real_jid(from);
         if not occupant then
-            log('warn', 'No occupant %s found for %s', from, room.jid);
+            module:log('warn', 'No occupant %s found for %s', from, room.jid);
             return false;
         end
         if occupant.role ~= 'moderator' then
-            log('warn', 'Occupant %s is not moderator and not allowed this operation for %s', from, room.jid);
+            module:log('warn', 'Occupant %s is not moderator and not allowed this operation for %s', from, room.jid);
             return false;
         end
 
         -- destroy the room
         room:destroy(nil, END_CONFERENCE_REASON);
-        log('info', 'Room %s destroyed by occupant %s', room.jid, from);
+        module:log('info', 'Room %s destroyed by occupant %s', room.jid, from);
         return true;
     end
 

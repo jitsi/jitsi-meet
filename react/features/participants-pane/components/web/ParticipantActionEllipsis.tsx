@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { IconHorizontalPoints } from '../../../base/icons/svg';
+import { IconDotsHorizontal } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
 
-type Props = {
+interface IProps {
 
     /**
      * Label used for accessibility.
@@ -14,14 +14,17 @@ type Props = {
      * Click handler function.
      */
     onClick: () => void;
-};
 
-const ParticipantActionEllipsis = ({ accessibilityLabel, onClick }: Props) => (
+    participantID?: string;
+}
+
+const ParticipantActionEllipsis = ({ accessibilityLabel, onClick, participantID }: IProps) => (
     <Button
         accessibilityLabel = { accessibilityLabel }
-        icon = { IconHorizontalPoints }
+        icon = { IconDotsHorizontal }
         onClick = { onClick }
-        size = 'small' />
+        size = 'small'
+        testId = { participantID ? `participant-more-options-${participantID}` : undefined } />
 );
 
 export default ParticipantActionEllipsis;

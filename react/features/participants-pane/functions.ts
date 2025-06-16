@@ -1,5 +1,4 @@
-/* eslint-disable lines-around-comment */
-import { IState } from '../app/types';
+import { IReduxState } from '../app/types';
 import {
     isEnabledFromState,
     isLocalParticipantApprovedFromState,
@@ -7,8 +6,9 @@ import {
     isSupported
 } from '../av-moderation/functions';
 import { IStateful } from '../base/app/types';
-// @ts-ignore
-import { INVITE_ENABLED, getFeatureFlag } from '../base/flags';
+import { getCurrentConference } from '../base/conference/functions';
+import { INVITE_ENABLED, PARTICIPANTS_ENABLED } from '../base/flags/constants';
+import { getFeatureFlag } from '../base/flags/functions';
 import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
 import {
     getDominantSpeakerParticipant,
@@ -18,38 +18,23 @@ import {
     isLocalParticipantModerator,
     isParticipantModerator
 } from '../base/participants/functions';
-import { Participant } from '../base/participants/types';
+import { IParticipant } from '../base/participants/types';
 import { toState } from '../base/redux/functions';
-// @ts-ignore
 import { normalizeAccents } from '../base/util/strings';
+import { BREAKOUT_ROOMS_RENAME_FEATURE } from '../breakout-rooms/constants';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 
 import { MEDIA_STATE, QUICK_ACTION_BUTTON, REDUCER_KEY } from './constants';
 
 /**
- * Find the first styled ancestor component of an element.
- *
- * @param {HTMLElement|null} target - Element to look up.
- * @param {string} cssClass - Styled component reference.
- * @returns {HTMLElement|null} Ancestor.
- */
-export const findAncestorByClass = (target: HTMLElement | null, cssClass: string): HTMLElement | null => {
-    if (!target || target.classList.contains(cssClass)) {
-        return target;
-    }
-
-    return findAncestorByClass(target.parentElement, cssClass);
-};
-
-/**
  * Checks if a participant is force muted.
  *
- * @param {Participant|undefined} participant - The participant.
+ * @param {IParticipant|undefined} participant - The participant.
  * @param {MediaType} mediaType - The media type.
- * @param {IState} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @returns {MediaState}
  */
-export function isForceMuted(participant: Participant | undefined, mediaType: MediaType, state: IState) {
+export function isForceMuted(participant: IParticipant | undefined, mediaType: MediaType, state: IReduxState) {
     if (isEnabledFromState(mediaType, state)) {
         if (participant?.local) {
             return !isLocalParticipantApprovedFromState(mediaType, state);
@@ -69,13 +54,18 @@ export function isForceMuted(participant: Participant | undefined, mediaType: Me
 /**
  * Determines the audio media state (the mic icon) for a participant.
  *
- * @param {Participant} participant - The participant.
+ * @param {IParticipant} participant - The participant.
  * @param {boolean} muted - The mute state of the participant.
- * @param {IState} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @returns {MediaState}
  */
-export function getParticipantAudioMediaState(participant: Participant, muted: Boolean, state: IState) {
+export function getParticipantAudioMediaState(participant: IParticipant | undefined,
+        muted: Boolean, state: IReduxState) {
     const dominantSpeaker = getDominantSpeakerParticipant(state);
+
+    if (participant?.isSilent) {
+        return MEDIA_STATE.NONE;
+    }
 
     if (muted) {
         if (isForceMuted(participant, MEDIA_TYPE.AUDIO, state)) {
@@ -95,12 +85,13 @@ export function getParticipantAudioMediaState(participant: Participant, muted: B
 /**
  * Determines the video media state (the mic icon) for a participant.
  *
- * @param {Participant} participant - The participant.
+ * @param {IParticipant} participant - The participant.
  * @param {boolean} muted - The mute state of the participant.
- * @param {IState} state - The redux state.
+ * @param {IReduxState} state - The redux state.
  * @returns {MediaState}
  */
-export function getParticipantVideoMediaState(participant: Participant, muted: Boolean, state: IState) {
+export function getParticipantVideoMediaState(participant: IParticipant | undefined,
+        muted: Boolean, state: IReduxState) {
     if (muted) {
         if (isForceMuted(participant, MEDIA_TYPE.VIDEO, state)) {
             return MEDIA_STATE.FORCE_MUTED;
@@ -112,38 +103,13 @@ export function getParticipantVideoMediaState(participant: Participant, muted: B
     return MEDIA_STATE.UNMUTED;
 }
 
-
-/**
- * Get a style property from a style declaration as a float.
- *
- * @param {CSSStyleDeclaration} styles - Style declaration.
- * @param {string} name - Property name.
- * @returns {number} Float value.
- */
-export const getFloatStyleProperty = (styles: CSSStyleDeclaration, name: string) =>
-    parseFloat(styles.getPropertyValue(name));
-
-/**
- * Gets the outer height of an element, including margins.
- *
- * @param {Element} element - Target element.
- * @returns {number} Computed height.
- */
-export const getComputedOuterHeight = (element: HTMLElement) => {
-    const computedStyle = getComputedStyle(element);
-
-    return element.offsetHeight
-    + getFloatStyleProperty(computedStyle, 'margin-top')
-    + getFloatStyleProperty(computedStyle, 'margin-bottom');
-};
-
 /**
  * Returns this feature's root state.
  *
- * @param {IState} state - Global state.
+ * @param {IReduxState} state - Global state.
  * @returns {Object} Feature state.
  */
-const getState = (state: IState) => state[REDUCER_KEY];
+const getState = (state: IReduxState) => state[REDUCER_KEY];
 
 /**
  * Returns the participants pane config.
@@ -162,28 +128,42 @@ export const getParticipantsPaneConfig = (stateful: IStateful) => {
 /**
  * Is the participants pane open.
  *
- * @param {IState} state - Global state.
+ * @param {IReduxState} state - Global state.
  * @returns {boolean} Is the participants pane open.
  */
-export const getParticipantsPaneOpen = (state: IState) => Boolean(getState(state)?.isOpen);
+export const getParticipantsPaneOpen = (state: IReduxState) => Boolean(getState(state)?.isOpen);
 
 /**
  * Returns the type of quick action button to be displayed for a participant.
  * The button is displayed when hovering a participant from the participant list.
  *
- * @param {Participant} participant - The participant.
+ * @param {IParticipant} participant - The participant.
  * @param {boolean} isAudioMuted - If audio is muted for the participant.
- * @param {IState} state - The redux state.
+ * @param {boolean} isVideoMuted - If audio is muted for the participant.
+ * @param {IReduxState} state - The redux state.
  * @returns {string} - The type of the quick action button.
  */
-export function getQuickActionButtonType(participant: Participant, isAudioMuted: Boolean, state: IState) {
+export function getQuickActionButtonType(
+        participant: IParticipant | undefined,
+        isAudioMuted: Boolean,
+        isVideoMuted: Boolean,
+        state: IReduxState) {
     // handled only by moderators
+    const isVideoForceMuted = isForceMuted(participant, MEDIA_TYPE.VIDEO, state);
+    const isParticipantSilent = participant?.isSilent || false;
+
     if (isLocalParticipantModerator(state)) {
-        if (!isAudioMuted) {
+        if (!isAudioMuted && !isParticipantSilent) {
             return QUICK_ACTION_BUTTON.MUTE;
         }
-        if (isSupported()(state)) {
+        if (!isVideoMuted) {
+            return QUICK_ACTION_BUTTON.STOP_VIDEO;
+        }
+        if (isSupported()(state) && !isParticipantSilent) {
             return QUICK_ACTION_BUTTON.ASK_TO_UNMUTE;
+        }
+        if (isVideoForceMuted) {
+            return QUICK_ACTION_BUTTON.ALLOW_VIDEO;
         }
     }
 
@@ -193,10 +173,10 @@ export function getQuickActionButtonType(participant: Participant, isAudioMuted:
 /**
  * Returns true if the invite button should be rendered.
  *
- * @param {IState} state - Global state.
+ * @param {IReduxState} state - Global state.
  * @returns {boolean}
  */
-export const shouldRenderInviteButton = (state: IState) => {
+export const shouldRenderInviteButton = (state: IReduxState) => {
     const { disableInviteFunctions } = toState(state)['features/base/config'];
     const flagEnabled = getFeatureFlag(state, INVITE_ENABLED, true);
     const inBreakoutRoom = isInBreakoutRoom(state);
@@ -261,33 +241,26 @@ export function getSortedParticipantIds(stateful: IStateful) {
  * @param {string} searchString - The participants search string.
  * @returns {boolean}
  */
-export function participantMatchesSearch(participant: { displayName: string; jid: string; name?: string; },
-        searchString: string) {
+export function participantMatchesSearch(participant: IParticipant | undefined
+    | { displayName?: string; name?: string; },
+searchString: string) {
     if (searchString === '') {
         return true;
     }
+    const participantName = normalizeAccents(participant?.name || participant?.displayName || '')
+        .toLowerCase();
+    const lowerCaseSearchString = searchString.trim().toLowerCase();
 
-    const names = normalizeAccents(participant?.name || participant?.displayName || '')
-        .toLowerCase()
-        .split(' ');
-    const lowerCaseSearchString = searchString.toLowerCase();
-
-    for (const name of names) {
-        if (name.startsWith(lowerCaseSearchString)) {
-            return true;
-        }
-    }
-
-    return false;
+    return participantName.includes(lowerCaseSearchString);
 }
 
 /**
  * Returns whether the more actions button is visible.
  *
- * @param {IState} state - Global state.
+ * @param {IReduxState} state - Global state.
  * @returns {boolean}
  */
-export const isMoreActionsVisible = (state: IState) => {
+export const isMoreActionsVisible = (state: IReduxState) => {
     const isLocalModerator = isLocalParticipantModerator(state);
     const inBreakoutRoom = isInBreakoutRoom(state);
     const { hideMoreActionsButton } = getParticipantsPaneConfig(state);
@@ -298,13 +271,52 @@ export const isMoreActionsVisible = (state: IState) => {
 /**
  * Returns whether the mute all button is visible.
  *
- * @param {IState} state - Global state.
+ * @param {IReduxState} state - Global state.
  * @returns {boolean}
  */
-export const isMuteAllVisible = (state: IState) => {
+export const isMuteAllVisible = (state: IReduxState) => {
     const isLocalModerator = isLocalParticipantModerator(state);
     const inBreakoutRoom = isInBreakoutRoom(state);
     const { hideMuteAllButton } = getParticipantsPaneConfig(state);
 
     return inBreakoutRoom ? false : !hideMuteAllButton && isLocalModerator;
+};
+
+/**
+ * Returns true if renaming the currently joined breakout room is allowed and false otherwise.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean} - True if renaming the currently joined breakout room is allowed and false otherwise.
+ */
+export function isCurrentRoomRenamable(state: IReduxState) {
+    return isInBreakoutRoom(state) && isBreakoutRoomRenameAllowed(state);
+}
+
+/**
+ * Returns true if renaming a breakout room is allowed and false otherwise.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean} - True if renaming a breakout room is allowed and false otherwise.
+ */
+export function isBreakoutRoomRenameAllowed(state: IReduxState) {
+    const isLocalModerator = isLocalParticipantModerator(state);
+    const conference = getCurrentConference(state);
+    const isRenameBreakoutRoomsSupported
+            = conference?.getBreakoutRooms()?.isFeatureSupported(BREAKOUT_ROOMS_RENAME_FEATURE) ?? false;
+
+    return isLocalModerator && isRenameBreakoutRoomsSupported;
+}
+
+/**
+ * Returns true if participants is enabled and false otherwise.
+ *
+ * @param {IStateful} stateful - The redux store, the redux
+ * {@code getState} function, or the redux state itself.
+ * @returns {boolean}
+ */
+export const isParticipantsPaneEnabled = (stateful: IStateful) => {
+    const state = toState(stateful);
+    const { enabled = true } = getParticipantsPaneConfig(state);
+
+    return Boolean(getFeatureFlag(state, PARTICIPANTS_ENABLED, true) && enabled);
 };

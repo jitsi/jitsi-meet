@@ -1,11 +1,15 @@
 import { DOMParser } from '@xmldom/xmldom';
-import { Platform } from 'react-native';
+import { atob, btoa } from 'abab';
+import { NativeModules, Platform } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
+import { TextDecoder, TextEncoder } from 'text-encoding';
 
-import 'promise.allsettled/auto'; // Promise.allSettled.
+import 'promise.withresolvers/auto'; // Promise.withResolvers.
 import 'react-native-url-polyfill/auto'; // Complete URL polyfill.
 
 import Storage from './Storage';
+
+const { AppInfo } = NativeModules;
 
 /**
  * Implements an absolute minimum of the common logic of
@@ -252,25 +256,27 @@ function _visitNode(node, callback) {
         //
         // Required by:
         // - lib-jitsi-meet/modules/browser/BrowserDetection.js
-        let userAgent = navigator.userAgent || '';
 
-        // react-native/version
-        const { name, version } = require('react-native/package.json');
-        let rn = name || 'react-native';
-
-        version && (rn += `/${version}`);
-        if (userAgent.indexOf(rn) === -1) {
-            userAgent = userAgent ? `${rn} ${userAgent}` : rn;
-        }
+        // React Native version
+        const { reactNativeVersion } = Platform.constants;
+        const rnVersion
+            = `react-native/${reactNativeVersion.major}.${reactNativeVersion.minor}.${reactNativeVersion.patch}`;
 
         // (OS version)
-        const os = `(${Platform.OS} ${Platform.Version})`;
+        const os = `${Platform.OS.toLowerCase()}/${Platform.Version}`;
 
-        if (userAgent.indexOf(os) === -1) {
-            userAgent = userAgent ? `${userAgent} ${os}` : os;
-        }
+        // SDK
+        const liteTxt = AppInfo.isLiteSDK ? '-lite' : '';
+        const sdkVersion = `JitsiMeetSDK/${AppInfo.sdkVersion}${liteTxt}`;
 
-        navigator.userAgent = userAgent;
+        const parts = [
+            navigator.userAgent ?? '',
+            sdkVersion,
+            os,
+            rnVersion
+        ];
+
+        navigator.userAgent = parts.filter(Boolean).join(' ');
     }
 
     // WebRTC
@@ -287,13 +293,6 @@ function _visitNode(node, callback) {
     global.performance = perf.default;
     global.performance.now = performanceNow;
     global.PerformanceObserver = perf.PerformanceObserver;
-
-    // CallStats
-    //
-    // Required by:
-    // - lib-jitsi-meet
-    require('react-native-callstats/csio-polyfill');
-    global.callstats = require('react-native-callstats/callstats');
 
     // Timers
     //
@@ -318,6 +317,25 @@ function _visitNode(node, callback) {
     // - Strophe
     if (typeof global.sessionStorage === 'undefined') {
         global.sessionStorage = new Storage();
+    }
+
+    global.TextDecoder = TextDecoder;
+    global.TextEncoder = TextEncoder;
+
+    // atob
+    //
+    // Required by:
+    // - Strophe
+    if (typeof global.atob === 'undefined') {
+        global.atob = atob;
+    }
+
+    // btoa
+    //
+    // Required by:
+    // - Strophe
+    if (typeof global.btoa === 'undefined') {
+        global.btoa = btoa;
     }
 
 })(global || window || this); // eslint-disable-line no-invalid-this

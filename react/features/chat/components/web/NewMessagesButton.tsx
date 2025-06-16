@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
@@ -7,6 +6,7 @@ import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconArrowDown } from '../../../base/icons/svg';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import BaseTheme from '../../../base/ui/components/BaseTheme.web';
 
 export interface INewMessagesButtonProps extends WithTranslation {
 
@@ -16,7 +16,7 @@ export interface INewMessagesButtonProps extends WithTranslation {
     onGoToFirstUnreadMessage: () => void;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         container: {
             position: 'absolute',
@@ -29,7 +29,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             alignItems: 'center',
             justifyContent: 'space-between',
             height: '32px',
-            padding: '6px 8px',
+            padding: '8px',
             border: 'none',
             borderRadius: theme.shape.borderRadius,
             backgroundColor: theme.palette.action02,
@@ -49,12 +49,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             width: '20px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            paddingLeft: '5px',
-
-            '& svg': {
-                fill: theme.palette.uiBackground
-            }
+            justifyContent: 'center'
         },
 
         textContainer: {
@@ -83,12 +78,13 @@ function NewMessagesButton({ onGoToFirstUnreadMessage, t }: INewMessagesButtonPr
                 type = 'button'>
                 <Icon
                     className = { styles.arrowDownIconContainer }
+                    color = { BaseTheme.palette.icon04 }
                     size = { 14 }
                     src = { IconArrowDown } />
-
                 <div className = { styles.textContainer }> { t('chat.newMessages') }</div>
             </button>
-        </div>);
+        </div>
+    );
 }
 
 export default translate(NewMessagesButton);

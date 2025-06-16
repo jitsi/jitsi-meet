@@ -1,4 +1,11 @@
-// @flow
+/**
+ * Create an action to mark the participant as notified to speak next.
+ *
+ * {
+ *     type: NOTIFIED_TO_SPEAK
+ * }
+ */
+export const NOTIFIED_TO_SPEAK = 'NOTIFIED_TO_SPEAK';
 
 /**
  * Create an action for when dominant speaker changes.
@@ -44,18 +51,6 @@ export const KICK_PARTICIPANT = 'KICK_PARTICIPANT';
  * }
  */
 export const MUTE_REMOTE_PARTICIPANT = 'MUTE_REMOTE_PARTICIPANT';
-
-/**
- * Create an action for when the local participant's display name is updated.
- *
- * {
- *     type: PARTICIPANT_DISPLAY_NAME_CHANGED,
- *     id: string,
- *     name: string
- * }
- */
-export const PARTICIPANT_DISPLAY_NAME_CHANGED
-    = 'PARTICIPANT_DISPLAY_NAME_CHANGED';
 
 /**
  * Action to signal that ID of participant has changed. This happens when
@@ -118,6 +113,18 @@ export const PARTICIPANT_KICKED = 'PARTICIPANT_KICKED';
 export const PARTICIPANT_LEFT = 'PARTICIPANT_LEFT';
 
 /**
+ * Action to handle case when the sources attached to a participant are updated.
+ *
+ * {
+ *      type: PARTICIPANT_SOURCES_UPDATED,
+ *      participant: {
+ *          id: string
+ *      }
+ * }
+ */
+export const PARTICIPANT_SOURCES_UPDATED = 'PARTICIPANT_SOURCES_UPDATED';
+
+/**
  * Action to handle case when info about participant changes.
  *
  * {
@@ -138,28 +145,6 @@ export const PARTICIPANT_UPDATED = 'PARTICIPANT_UPDATED';
  * }
  */
 export const PIN_PARTICIPANT = 'PIN_PARTICIPANT';
-
-/**
- * Action to signal that a hidden participant has joined.
- *
- * {
- *     type: HIDDEN_PARTICIPANT_JOINED,
- *     participant: Participant
- * }
- */
-export const HIDDEN_PARTICIPANT_JOINED = 'HIDDEN_PARTICIPANT_JOINED';
-
-/**
- * Action to handle case when hidden participant leaves.
- *
- * {
- *     type: PARTICIPANT_LEFT,
- *     participant: {
- *         id: string
- *     }
- * }
- */
-export const HIDDEN_PARTICIPANT_LEFT = 'HIDDEN_PARTICIPANT_LEFT';
 
 /**
  * The type of Redux action which notifies the app that the loadable avatar URL has changed.
@@ -192,6 +177,14 @@ export const SET_LOADABLE_AVATAR_URL = 'SET_LOADABLE_AVATAR_URL';
  * }
  */
 export const LOCAL_PARTICIPANT_RAISE_HAND = 'LOCAL_PARTICIPANT_RAISE_HAND';
+
+/**
+ * Clear the raise hand queue.
+ * {
+ *     type: RAISE_HAND_CLEAR
+ * }
+ */
+export const RAISE_HAND_CLEAR = 'RAISE_HAND_CLEAR';
 
 /**
  * Updates participant in raise hand queue.

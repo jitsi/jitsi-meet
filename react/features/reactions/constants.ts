@@ -1,6 +1,7 @@
 import {
     BOO_SOUND_FILES,
     CLAP_SOUND_FILES,
+    HEART_SOUND_FILES,
     LAUGH_SOUND_FILES,
     LIKE_SOUND_FILES,
     SILENCE_SOUND_FILES,
@@ -8,9 +9,24 @@ import {
 } from './sounds';
 
 /**
- * Reactions menu height on mobile web (px).
+ * The height of the raise hand row in the reactions menu.
  */
-export const REACTIONS_MENU_HEIGHT = 144;
+export const RAISE_HAND_ROW_HEIGHT = 54;
+
+/**
+ * The height of the gifs menu when displayed as part of the overflow menu.
+ */
+export const GIFS_MENU_HEIGHT_IN_OVERFLOW_MENU = 200;
+
+/**
+ * Reactions menu height when displayed as part of drawer.
+ */
+export const REACTIONS_MENU_HEIGHT_DRAWER = 144;
+
+/**
+ * Reactions menu height when displayed as part of overflow menu.
+ */
+export const REACTIONS_MENU_HEIGHT_IN_OVERFLOW_MENU = 106;
 
 /**
  * The payload name for the datachannel/endpoint reaction event.
@@ -83,9 +99,17 @@ export const SILENCE_SOUND_ID = `${REACTION_SOUND}_SILENCE_`;
  *
  * @type {string}
  */
+export const HEART_SOUND_ID = `${REACTION_SOUND}_HEART_`;
+
+/**
+ * The audio ID of the audio element for which the {@link playAudio} action is
+ * triggered when a new raise hand event is received.
+ *
+ * @type {string}
+ */
 export const RAISE_HAND_SOUND_ID = 'RAISE_HAND_SOUND';
 
-export interface ReactionEmojiProps {
+export interface IReactionEmojiProps {
 
     /**
      * Reaction to be displayed.
@@ -152,6 +176,13 @@ export const REACTIONS: IReactions = {
         shortcutChar: 'S',
         soundId: SILENCE_SOUND_ID,
         soundFiles: SILENCE_SOUND_FILES
+    },
+    love: {
+        message: ':heart:',
+        emoji: '💖',
+        shortcutChar: 'H',
+        soundId: HEART_SOUND_ID,
+        soundFiles: HEART_SOUND_FILES
     }
 };
 
@@ -160,6 +191,6 @@ export type ReactionThreshold = {
     threshold: number;
 };
 
-export interface MuteCommandAttributes {
+export interface IMuteCommandAttributes {
     startReactionsMuted?: string;
 }

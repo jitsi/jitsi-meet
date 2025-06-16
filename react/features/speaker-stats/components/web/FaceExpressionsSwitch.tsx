@@ -23,7 +23,7 @@ const useStyles = makeStyles()((theme: Theme) => {
 /**
  * The type of the React {@code Component} props of {@link ToggleFaceExpressionsButton}.
  */
-type Props = {
+interface IProps {
 
     /**
      * The function to initiate the change in the speaker stats table.
@@ -35,14 +35,14 @@ type Props = {
      */
     showFaceExpressions: boolean;
 
-};
+}
 
 /**
  * React component for toggling face expressions grid.
  *
  * @returns {React$Element<any>}
  */
-export default function FaceExpressionsSwitch({ onChange, showFaceExpressions }: Props) {
+export default function FaceExpressionsSwitch({ onChange, showFaceExpressions }: IProps) {
     const { classes } = useStyles();
     const { t } = useTranslation();
 

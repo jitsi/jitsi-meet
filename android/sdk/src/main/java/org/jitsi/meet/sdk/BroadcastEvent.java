@@ -75,6 +75,8 @@ public class BroadcastEvent {
     }
 
     public enum Type {
+        CONFERENCE_BLURRED("org.jitsi.meet.CONFERENCE_BLURRED"),
+        CONFERENCE_FOCUSED("org.jitsi.meet.CONFERENCE_FOCUSED"),
         CONFERENCE_JOINED("org.jitsi.meet.CONFERENCE_JOINED"),
         CONFERENCE_TERMINATED("org.jitsi.meet.CONFERENCE_TERMINATED"),
         CONFERENCE_WILL_JOIN("org.jitsi.meet.CONFERENCE_WILL_JOIN"),
@@ -87,8 +89,12 @@ public class BroadcastEvent {
         CHAT_MESSAGE_RECEIVED("org.jitsi.meet.CHAT_MESSAGE_RECEIVED"),
         CHAT_TOGGLED("org.jitsi.meet.CHAT_TOGGLED"),
         VIDEO_MUTED_CHANGED("org.jitsi.meet.VIDEO_MUTED_CHANGED"),
-        READY_TO_CLOSE("org.jitsi.meet.READY_TO_CLOSE");
+        READY_TO_CLOSE("org.jitsi.meet.READY_TO_CLOSE"),
+        TRANSCRIPTION_CHUNK_RECEIVED("org.jitsi.meet.TRANSCRIPTION_CHUNK_RECEIVED"),
+        CUSTOM_BUTTON_PRESSED("org.jitsi.meet.CUSTOM_BUTTON_PRESSED");
 
+        private static final String CONFERENCE_BLURRED_NAME = "CONFERENCE_BLURRED";
+        private static final String CONFERENCE_FOCUSED_NAME = "CONFERENCE_FOCUSED";
         private static final String CONFERENCE_WILL_JOIN_NAME = "CONFERENCE_WILL_JOIN";
         private static final String CONFERENCE_JOINED_NAME = "CONFERENCE_JOINED";
         private static final String CONFERENCE_TERMINATED_NAME = "CONFERENCE_TERMINATED";
@@ -102,6 +108,8 @@ public class BroadcastEvent {
         private static final String CHAT_TOGGLED_NAME = "CHAT_TOGGLED";
         private static final String VIDEO_MUTED_CHANGED_NAME = "VIDEO_MUTED_CHANGED";
         private static final String READY_TO_CLOSE_NAME = "READY_TO_CLOSE";
+        private static final String TRANSCRIPTION_CHUNK_RECEIVED_NAME = "TRANSCRIPTION_CHUNK_RECEIVED";
+        private static final String CUSTOM_BUTTON_PRESSED_NAME = "CUSTOM_BUTTON_PRESSED";
 
         private final String action;
 
@@ -124,6 +132,10 @@ public class BroadcastEvent {
 
         private static Type buildTypeFromName(String name) {
             switch (name) {
+                case CONFERENCE_BLURRED_NAME:
+                    return CONFERENCE_BLURRED;
+                case CONFERENCE_FOCUSED_NAME:
+                    return CONFERENCE_FOCUSED;
                 case CONFERENCE_WILL_JOIN_NAME:
                     return CONFERENCE_WILL_JOIN;
                 case CONFERENCE_JOINED_NAME:
@@ -150,6 +162,10 @@ public class BroadcastEvent {
                     return VIDEO_MUTED_CHANGED;
                 case READY_TO_CLOSE_NAME:
                     return READY_TO_CLOSE;
+                case TRANSCRIPTION_CHUNK_RECEIVED_NAME:
+                    return TRANSCRIPTION_CHUNK_RECEIVED;
+                case CUSTOM_BUTTON_PRESSED_NAME:
+                    return CUSTOM_BUTTON_PRESSED;
             }
 
             return null;

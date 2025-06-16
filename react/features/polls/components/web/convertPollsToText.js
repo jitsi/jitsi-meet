@@ -1,15 +1,16 @@
 export const convertPollsToText = (polls, t) => {
   return polls.reduce((previous, poll, index, arr) => {
-      const voterSet = new Set();
+      const allVoters = new Set();
 
-      // Getting every voters ID that participates to the poll
-      for (const answer of poll.answers) {
-          for (const [ voterId ] of answer.voters) {
-              voterSet.add(voterId);
-          }
-      }
+        // Getting every voters ID that participates to the poll
+        for (const answer of poll.answers) {
+            // checking if the voters is an array for supporting old structure model
+            const voters = answer.voters.length ? answer.voters : Object.keys(answer.voters);
 
-      const totalVoters = voterSet.size;
+            voters.forEach((voter) => allVoters.add(voter));
+        }
+
+      const totalVoters = allVoters.size;
 
       const { answers } = poll;
 
@@ -26,10 +27,10 @@ export const convertPollsToText = (polls, t) => {
       text.push('\r\n')
 
       answers.forEach(answer => {
-        const percentage = totalVoters === 0 ? 0 : Math.round(answer.voters.size / totalVoters * 100);
-        text.push(`${answer.name}: ${answer.voters.size} (${percentage}%)`)
+        const percentage = totalVoters === 0 ? 0 : Math.round(answer.voters.length / totalVoters * 100);
+        text.push(`${answer.name}: ${answer.voters.length} (${percentage}%)`)
         text.push('\r\n')
-        Array.from(answer.voters).forEach(([ id, name ]) => {
+        answer.voters.forEach(({ id, name }) => {
           text.push(name)
           text.push('\r\n')
         })

@@ -1,30 +1,22 @@
-/* eslint-disable lines-around-comment */
-import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-// @ts-ignore
-import { Avatar } from '../../../base/avatar';
+import Avatar from '../../../base/avatar/components/Avatar';
 import Icon from '../../../base/icons/components/Icon';
-import { IconCheck, IconClose } from '../../../base/icons/svg';
+import { IconCheck, IconCloseLarge } from '../../../base/icons/svg';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
-// @ts-ignore
 import { admitMultiple } from '../../../lobby/actions.web';
-// @ts-ignore
 import { getKnockingParticipants, getLobbyEnabled } from '../../../lobby/functions';
-// @ts-ignore
-import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
-// @ts-ignore
-import { showOverflowDrawer } from '../../../toolbox/functions';
-// @ts-ignore
+import Drawer from '../../../toolbox/components/web/Drawer';
+import JitsiPortal from '../../../toolbox/components/web/JitsiPortal';
+import { showOverflowDrawer } from '../../../toolbox/functions.web';
 import { useLobbyActions, useParticipantDrawer } from '../../hooks';
 
-// @ts-ignore
 import LobbyParticipantItems from './LobbyParticipantItems';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         drawerActions: {
             listStyleType: 'none',
@@ -56,8 +48,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             justifyContent: 'space-between'
         },
         heading: {
-            // @ts-ignore
-            ...withPixelLineHeight(theme.typography.heading7),
+            ...withPixelLineHeight(theme.typography.bodyShortBold),
             color: theme.palette.text02
         },
         link: {
@@ -75,7 +66,7 @@ const useStyles = makeStyles()((theme: Theme) => {
  */
 export default function LobbyParticipants() {
     const lobbyEnabled = useSelector(getLobbyEnabled);
-    const participants: Array<Object> = useSelector(getKnockingParticipants);
+    const participants = useSelector(getKnockingParticipants);
     const { t } = useTranslation();
     const { classes } = useStyles();
     const dispatch = useDispatch();
@@ -100,7 +91,7 @@ export default function LobbyParticipants() {
                     participants.length > 1
                     && <div
                         className = { classes.link }
-                        onClick = { admitAll }>{t('lobby.admitAll')}</div>
+                        onClick = { admitAll }>{t('participantsPane.actions.admitAll')}</div>
                 }
             </div>
             <LobbyParticipantItems
@@ -126,7 +117,7 @@ export default function LobbyParticipants() {
                                 className = { classes.icon }
                                 size = { 20 }
                                 src = { IconCheck } />
-                            <span>{ t('lobby.admit') }</span>
+                            <span>{ t('participantsPane.actions.admit') }</span>
                         </li>
                         <li
                             className = { classes.drawerItem }
@@ -134,8 +125,8 @@ export default function LobbyParticipants() {
                             <Icon
                                 className = { classes.icon }
                                 size = { 20 }
-                                src = { IconClose } />
-                            <span>{ t('lobby.reject')}</span>
+                                src = { IconCloseLarge } />
+                            <span>{ t('participantsPane.actions.reject')}</span>
                         </li>
                     </ul>
                 </Drawer>

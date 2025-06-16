@@ -46,7 +46,7 @@ module:hook("muc-occupant-pre-join", function (event)
 
     join:tag("password", { xmlns = MUC_NS }):text(room:get_password());
 
-    module:log("debug", "Applied password access whitelist for %s in room %s", event.stanza.attr.from, room.jid);
+    -- module:log("debug", "Applied password access whitelist for %s in room %s", event.stanza.attr.from, room.jid);
 end, -7); --- Run before the password check (priority -20), runs after lobby(priority -4) and members-only (priority -5).
 
 

@@ -18,7 +18,7 @@ import {
     SIP_GW_INVITE_ROOMS
 } from './actionTypes';
 import logger from './logger';
-import { SipRoom, SipSessionChangedEvent } from './types';
+import { ISipRoom, ISipSessionChangedEvent } from './types';
 
 /**
  * Middleware that captures conference video sip gw events and stores
@@ -39,12 +39,10 @@ MiddlewareRegistry.register(({ dispatch }) => next => action => {
 
         conference.on(
             JitsiConferenceEvents.VIDEO_SIP_GW_AVAILABILITY_CHANGED,
-
-            // @ts-ignore
-            (...args) => dispatch(_availabilityChanged(...args)));
+            (status: string) => dispatch(_availabilityChanged(status)));
         conference.on(
             JitsiConferenceEvents.VIDEO_SIP_GW_SESSION_STATE_CHANGED,
-            (event: SipSessionChangedEvent) => {
+            (event: ISipSessionChangedEvent) => {
                 const toDispatch = _sessionStateChanged(event);
 
                 // sessionStateChanged can decide there is nothing to dispatch
@@ -91,7 +89,7 @@ function _availabilityChanged(status: string) {
  * @private
  * @returns {void}
  */
-function _inviteRooms(rooms: SipRoom[], conference: IJitsiConference, dispatch: IStore['dispatch']) {
+function _inviteRooms(rooms: ISipRoom[], conference: IJitsiConference, dispatch: IStore['dispatch']) {
     for (const room of rooms) {
         const { id: sipAddress, name: displayName } = room;
 
@@ -107,7 +105,7 @@ function _inviteRooms(rooms: SipRoom[], conference: IJitsiConference, dispatch: 
                     dispatch(showErrorNotification({
                         descriptionKey: 'videoSIPGW.errorInvite',
                         titleKey: 'videoSIPGW.errorInviteTitle'
-                    }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+                    }));
 
                     return;
                 }
@@ -144,7 +142,7 @@ function _inviteRooms(rooms: SipRoom[], conference: IJitsiConference, dispatch: 
  * @private
  */
 function _sessionStateChanged(
-        event: SipSessionChangedEvent) {
+        event: ISipSessionChangedEvent) {
     switch (event.newState) {
     case JitsiSIPVideoGWStatus.STATE_PENDING: {
         return showNotification({
@@ -161,14 +159,14 @@ function _sessionStateChanged(
                 displayName: event.displayName
             },
             descriptionKey: 'videoSIPGW.errorInviteFailed'
-        }, NOTIFICATION_TIMEOUT_TYPE.LONG);
+        });
     }
     case JitsiSIPVideoGWStatus.STATE_OFF: {
         if (event.failureReason === JitsiSIPVideoGWStatus.STATUS_BUSY) {
             return showErrorNotification({
                 descriptionKey: 'videoSIPGW.busy',
                 titleKey: 'videoSIPGW.busyTitle'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG);
+            });
         } else if (event.failureReason) {
             logger.error(`Unknown sip videogw error ${event.newState} ${
                 event.failureReason}`);

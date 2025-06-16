@@ -2,7 +2,7 @@
 -- by keeping track of the state of polls in each room, and sending
 -- that state to new participants when they join.
 
-local json = require("util.json");
+local json = require 'cjson.safe';
 local st = require("util.stanza");
 local jid = require "util.jid";
 local util = module:require("util");
@@ -11,23 +11,8 @@ local muc = module:depends("muc");
 local NS_NICK = 'http://jabber.org/protocol/nick';
 local is_healthcheck_room = util.is_healthcheck_room;
 
--- Checks if the given stanza contains a JSON message,
--- and that the message type pertains to the polls feature.
--- If yes, returns the parsed message. Otherwise, returns nil.
-local function get_poll_message(stanza)
-    if stanza.attr.type ~= "groupchat" then
-        return nil;
-    end
-    local json_data = stanza:get_child_text("json-message", "http://jitsi.org/jitmeet");
-    if json_data == nil then
-        return nil;
-    end
-    local data = json.decode(json_data);
-    if not data or (data.type ~= "new-poll" and data.type ~= "answer-poll") then
-        return nil;
-    end
-    return data;
-end
+local POLLS_LIMIT = 128;
+local POLL_PAYLOAD_LIMIT = 1024;
 
 -- Logs a warning and returns true if a room does not
 -- have poll data associated with it.
@@ -69,6 +54,7 @@ module:hook("muc-room-created", function(event)
     room.polls = {
         by_id = {};
         order = {};
+        count = 0;
     };
 end);
 
@@ -76,25 +62,37 @@ end);
 -- by listening to "new-poll" and "answer-poll" messages,
 -- and updating the room poll data accordingly.
 -- This mirrors the client-side poll update logic.
-module:hook("message/bare", function(event)
-    local data = get_poll_message(event.stanza);
-    if data == nil then return end
+module:hook('jitsi-endpoint-message-received', function(event)
+    local data, error, occupant, room, origin, stanza
+        = event.message, event.error, event.occupant, event.room, event.origin, event.stanza;
 
-    local room = muc.get_room_from_jid(event.stanza.attr.to);
+    if not data or (data.type ~= "new-poll" and data.type ~= "answer-poll") then
+        return;
+    end
+
+    if string.len(event.raw_message) >= POLL_PAYLOAD_LIMIT then
+        module:log('error', 'Poll payload too large, discarding. Sender: %s to:%s', stanza.attr.from, stanza.attr.to);
+        return nil;
+    end
 
     if data.type == "new-poll" then
         if check_polls(room) then return end
 
-        local occupant_jid = event.stanza.attr.from;
-        local occupant = room:get_occupant_by_real_jid(occupant_jid);
-        if not occupant then
-            module:log("error", "Occupant %s was not found in room %s", occupant_jid, room.jid)
-            return
-        end
         local poll_creator = get_occupant_details(occupant)
         if not poll_creator then
             module:log("error", "Cannot retrieve poll creator id and name for %s from %s", occupant.jid, room.jid)
             return
+        end
+
+        if room.polls.count >= POLLS_LIMIT then
+            module:log("error", "Too many polls created in %s", room.jid)
+            return
+        end
+
+        if room.polls.by_id[data.pollId] ~= nil then
+            module:log("error", "Poll already exists: %s", data.pollId);
+            origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Poll already exists'));
+            return true;
         end
 
         local answers = {}
@@ -114,6 +112,7 @@ module:hook("message/bare", function(event)
 
         room.polls.by_id[data.pollId] = poll
         table.insert(room.polls.order, poll)
+        room.polls.count = room.polls.count + 1;
 
         local pollData = {
             event = event,
@@ -127,16 +126,9 @@ module:hook("message/bare", function(event)
             }
         }
         module:fire_event("poll-created", pollData);
-
     elseif data.type == "answer-poll" then
         if check_polls(room) then return end
 
-        local occupant_jid = event.stanza.attr.from;
-        local occupant = room:get_occupant_by_real_jid(occupant_jid);
-        if not occupant then
-            module:log("error", "Occupant %s does not exists for room %s", occupant_jid, room.jid)
-            return
-        end
         local poll = room.polls.by_id[data.pollId];
         if poll == nil then
             module:log("warn", "answering inexistent poll");
@@ -192,12 +184,17 @@ module:hook("muc-occupant-joined", function(event)
         };
     end
 
+    local json_msg_str, error = json.encode(data);
+    if not json_msg_str then
+        module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
+    end
+
     local stanza = st.message({
         from = room.jid,
         to = event.occupant.jid
     })
     :tag("json-message", { xmlns = "http://jitsi.org/jitmeet" })
-    :text(json.encode(data))
+    :text(json_msg_str)
     :up();
     room:route_stanza(stanza);
 end);

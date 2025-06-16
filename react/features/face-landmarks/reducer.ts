@@ -1,42 +1,25 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
-    ADD_FACE_EXPRESSION,
-    ADD_TO_FACE_EXPRESSIONS_BUFFER,
-    CLEAR_FACE_EXPRESSIONS_BUFFER,
+    ADD_FACE_LANDMARKS,
+    CLEAR_FACE_LANDMARKS_BUFFER,
     UPDATE_FACE_COORDINATES
 } from './actionTypes';
-import { FaceBox } from './types';
+import { FaceBox, FaceLandmarks } from './types';
 
 const defaultState = {
     faceBoxes: {},
-    faceExpressions: {
-        happy: 0,
-        neutral: 0,
-        surprised: 0,
-        angry: 0,
-        fearful: 0,
-        disgusted: 0,
-        sad: 0
-    },
-    faceExpressionsBuffer: [],
+    faceLandmarks: [],
+    faceLandmarksBuffer: [],
     recognitionActive: false
 };
 
 export interface IFaceLandmarksState {
     faceBoxes: { [key: string]: FaceBox; };
-    faceExpressions: {
-        angry: number;
-        disgusted: number;
-        fearful: number;
-        happy: number;
-        neutral: number;
-        sad: number;
-        surprised: number;
-    };
-    faceExpressionsBuffer: Array<{
+    faceLandmarks: Array<FaceLandmarks>;
+    faceLandmarksBuffer: Array<{
         emotion: string;
-        timestamp: string;
+        timestamp: number;
     }>;
     recognitionActive: boolean;
 }
@@ -44,26 +27,23 @@ export interface IFaceLandmarksState {
 ReducerRegistry.register<IFaceLandmarksState>('features/face-landmarks',
 (state = defaultState, action): IFaceLandmarksState => {
     switch (action.type) {
-    case ADD_FACE_EXPRESSION: {
+    case ADD_FACE_LANDMARKS: {
+        const { addToBuffer, faceLandmarks }: { addToBuffer: boolean; faceLandmarks: FaceLandmarks; } = action;
+
         return {
             ...state,
-            faceExpressions: {
-                ...state.faceExpressions,
-                [action.faceExpression]: state.faceExpressions[
-                    action.faceExpression as keyof typeof state.faceExpressions] + action.duration
-            }
+            faceLandmarks: [ ...state.faceLandmarks, faceLandmarks ],
+            faceLandmarksBuffer: addToBuffer ? [ ...state.faceLandmarksBuffer,
+                {
+                    emotion: faceLandmarks.faceExpression,
+                    timestamp: faceLandmarks.timestamp
+                } ] : state.faceLandmarksBuffer
         };
     }
-    case ADD_TO_FACE_EXPRESSIONS_BUFFER: {
+    case CLEAR_FACE_LANDMARKS_BUFFER: {
         return {
             ...state,
-            faceExpressionsBuffer: [ ...state.faceExpressionsBuffer, action.faceExpression ]
-        };
-    }
-    case CLEAR_FACE_EXPRESSIONS_BUFFER: {
-        return {
-            ...state,
-            faceExpressionsBuffer: []
+            faceLandmarksBuffer: []
         };
     }
     case UPDATE_FACE_COORDINATES: {

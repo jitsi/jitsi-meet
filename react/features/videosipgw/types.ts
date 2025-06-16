@@ -1,9 +1,9 @@
-export interface SipRoom {
+export interface ISipRoom {
     id: string;
     name: string;
 }
 
-export interface SipSessionChangedEvent {
+export interface ISipSessionChangedEvent {
     displayName: string;
     failureReason: string;
     newState: string;

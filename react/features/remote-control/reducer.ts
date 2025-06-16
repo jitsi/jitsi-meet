@@ -34,7 +34,12 @@ export interface IRemoteControlState {
     receiver: {
         controller?: string;
         enabled: boolean;
-        transport?: Object;
+        transport?: {
+            dispose: Function;
+            on: Function;
+            sendEvent: Function;
+            sendRequest: Function;
+        };
     };
 }
 

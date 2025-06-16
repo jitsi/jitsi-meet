@@ -1,55 +1,36 @@
-/* eslint-disable lines-around-comment */
-import Spinner from '@atlaskit/spinner';
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
-import { IState } from '../../app/types';
-// @ts-ignore
-import { hideDialog } from '../../base/dialog';
-// @ts-ignore
-import { translate } from '../../base/i18n';
-// @ts-ignore
-import Video from '../../base/media/components/Video';
-import { VIDEO_TYPE } from '../../base/media/constants';
-import { connect, equals } from '../../base/redux/functions';
-// @ts-ignore
-import { getCurrentCameraDeviceId } from '../../base/settings';
-// @ts-ignore
+import { IStore } from '../../app/types';
+import { hideDialog } from '../../base/dialog/actions';
+import { translate } from '../../base/i18n/functions';
+import { Video } from '../../base/media/components/index';
+import { equals } from '../../base/redux/functions';
 import { createLocalTracksF } from '../../base/tracks/functions';
-// @ts-ignore
+import Spinner from '../../base/ui/components/web/Spinner';
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
-// @ts-ignore
 import { toggleBackgroundEffect } from '../actions';
-import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
-// @ts-ignore
-import { localTrackStopped } from '../functions';
-// @ts-ignore
 import logger from '../logger';
-
-const videoClassName = 'video-preview-video';
+import { IVirtualBackground } from '../reducer';
 
 /**
  * The type of the React {@code PureComponent} props of {@link VirtualBackgroundPreview}.
  */
-export type Props = WithTranslation & {
-
-    /**
-     * The deviceId of the camera device currently being used.
-     */
-    _currentCameraDeviceId: string;
+export interface IProps extends WithTranslation {
 
     /**
      * An object containing the CSS classes.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * Dialog callback that indicates if the background preview was loaded.
@@ -59,13 +40,18 @@ export type Props = WithTranslation & {
     /**
      * Represents the virtual background set options.
      */
-    options: any;
-};
+    options: IVirtualBackground;
+
+    /**
+     * The id of the selected video device.
+     */
+    selectedVideoInputId: string;
+}
 
 /**
  * The type of the React {@code Component} state of {@link VirtualBackgroundPreview}.
  */
-type State = {
+interface IState {
 
     /**
      * Activate the selected device camera only.
@@ -81,7 +67,7 @@ type State = {
      * Flag that indicates if the local track was loaded.
      */
     localTrackLoaded: boolean;
-};
+}
 
 /**
  * Creates the styles for the component.
@@ -93,41 +79,39 @@ type State = {
 const styles = (theme: Theme) => {
     return {
         virtualBackgroundPreview: {
-            '& .video-preview': {
-                height: '250px'
-            },
+            height: 'auto',
+            width: '100%',
+            overflow: 'hidden',
+            marginBottom: theme.spacing(3),
+            zIndex: 2,
+            borderRadius: '3px',
+            backgroundColor: theme.palette.uiBackground,
+            position: 'relative' as const
+        },
 
-            '& .video-background-preview-entry': {
-                marginLeft: '-10px',
-                height: '250px',
-                width: '570px',
-                marginBottom: theme.spacing(2),
-                zIndex: 2,
+        previewLoader: {
+            height: '220px',
 
-                '@media (max-width: 632px)': {
-                    maxWidth: '336px'
-                }
-            },
-
-            '& .video-preview-loader': {
-                borderRadius: '6px',
-                backgroundColor: 'transparent',
-                height: '250px',
-                marginBottom: theme.spacing(2),
-                width: '572px',
-                position: 'fixed',
-                zIndex: 2,
-
-                '& svg': {
-                    position: 'absolute',
-                    top: '40%',
-                    left: '45%'
-                },
-
-                '@media (min-width: 432px) and (max-width: 632px)': {
-                    width: '340px'
-                }
+            '& svg': {
+                position: 'absolute' as const,
+                top: '40%',
+                left: '45%'
             }
+        },
+
+        previewVideo: {
+            height: '100%',
+            width: '100%',
+            objectFit: 'cover' as const
+        },
+
+        error: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            height: '220px',
+            position: 'relative' as const
         }
     };
 };
@@ -138,7 +122,7 @@ const styles = (theme: Theme) => {
  *
  * @augments PureComponent
  */
-class VirtualBackgroundPreview extends PureComponent<Props, State> {
+class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
     _componentWasUnmounted: boolean;
 
     /**
@@ -147,7 +131,7 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
@@ -178,7 +162,7 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
         try {
             this.setState({ loading: true });
             const [ jitsiTrack ] = await createLocalTracksF({
-                cameraDeviceId: this.props._currentCameraDeviceId,
+                cameraDeviceId: this.props.selectedVideoInputId,
                 devices: [ 'video' ]
             });
 
@@ -208,11 +192,6 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
 
             return;
         }
-
-        if (this.props.options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
-                && this.state.localTrackLoaded) {
-            this._applyBackgroundEffect();
-        }
     }
 
     /**
@@ -234,13 +213,11 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      * @returns {Promise}
      */
     _loadVideoPreview() {
+        const classes = withStyles.getClasses(this.props);
+
         return (
-            <div className = 'video-preview-loader'>
-                <Spinner
-                    // @ts-ignore
-                    invertColor = { true }
-                    isCompleting = { false }
-                    size = { 'large' } />
+            <div className = { classes.previewLoader }>
+                <Spinner size = 'large' />
             </div>
         );
     }
@@ -253,31 +230,23 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      */
     _renderPreviewEntry(data: Object) {
         const { t } = this.props;
-        const className = 'video-background-preview-entry';
+        const classes = withStyles.getClasses(this.props);
 
         if (this.state.loading) {
             return this._loadVideoPreview();
         }
         if (!data) {
             return (
-                <div
-                    className = { className }
-                    video-preview-container = { true }>
-                    <div className = 'video-preview-error'>{t('deviceSelection.previewUnavailable')}</div>
-                </div>
+                <div className = { classes.error }>{t('deviceSelection.previewUnavailable')}</div>
             );
         }
-        const props: Object = {
-            className
-        };
 
         return (
-            <div { ...props }>
-                <Video
-                    className = { videoClassName }
-                    playsinline = { true }
-                    videoTrack = {{ jitsiTrack: data }} />
-            </div>
+            <Video
+                className = { classes.previewVideo }
+                id = 'virtual_background_preview'
+                playsinline = { true }
+                videoTrack = {{ jitsiTrack: data }} />
         );
     }
 
@@ -305,18 +274,12 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      *
      * @inheritdoc
      */
-    async componentDidUpdate(prevProps: Props) {
-        if (!equals(this.props._currentCameraDeviceId, prevProps._currentCameraDeviceId)) {
+    async componentDidUpdate(prevProps: IProps) {
+        if (!equals(this.props.selectedVideoInputId, prevProps.selectedVideoInputId)) {
             this._setTracks();
         }
         if (!equals(this.props.options, prevProps.options) && this.state.localTrackLoaded) {
-            if (prevProps.options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-                prevProps.options.url.dispose();
-            }
             this._applyBackgroundEffect();
-        }
-        if (this.props.options.url?.videoType === VIDEO_TYPE.DESKTOP) {
-            localTrackStopped(this.props.dispatch, this.props.options.url, this.state.jitsiTrack);
         }
     }
 
@@ -327,28 +290,16 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      */
     render() {
         const { jitsiTrack } = this.state;
-        const { classes } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
-        return (<div className = { classes.virtualBackgroundPreview }>
-            {jitsiTrack
-                ? <div className = 'video-preview'>{this._renderPreviewEntry(jitsiTrack)}</div>
-                : <div className = 'video-preview-loader'>{this._loadVideoPreview()}</div>
-            }</div>);
+        return (
+            <div className = { classes.virtualBackgroundPreview }>
+                {jitsiTrack
+                    ? this._renderPreviewEntry(jitsiTrack)
+                    : this._loadVideoPreview()
+                }</div>
+        );
     }
 }
 
-/**
- * Maps (parts of) the redux state to the associated props for the
- * {@code VirtualBackgroundPreview} component.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {{Props}}
- */
-function _mapStateToProps(state: IState): Object {
-    return {
-        _currentCameraDeviceId: getCurrentCameraDeviceId(state)
-    };
-}
-
-export default translate(connect(_mapStateToProps)(withStyles(styles)(VirtualBackgroundPreview)));
+export default translate(connect()(withStyles(VirtualBackgroundPreview, styles)));

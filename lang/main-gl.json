@@ -57,6 +57,7 @@
         },
         "noMessagesMessage": "Aínda non hai mensaxes na reunión. Comece unha conversación aquí!",
         "privateNotice": "Mensaxe privada para {{recipient}}",
+        "sendButton": "Enviar",
         "title": "Chat",
         "titleWithPolls": "Chat",
         "you": "vostede"
@@ -79,7 +80,7 @@
         "DISCONNECTED": "Desconectado",
         "DISCONNECTING": "Desconectando",
         "ERROR": "Erro",
-        "RECONNECTING": "Produciuse un problema na rede. Reconectando..."
+        "RECONNECTING": "Produciuse un problema na rede. Reconectando…"
     },
     "connectionindicator": {
         "address": "Enderezo:",
@@ -385,6 +386,7 @@
         "signedInAs": "Está conectado como:",
         "start": "Arrincar unha difusión ao vivo",
         "streamIdHelp": "Que é isto?",
+        "title": "Difusión ao vivo",
         "unavailableTitle": "A difusión ao vivo non está dispoñíbel"
     },
     "localRecording": {
@@ -452,13 +454,18 @@
     },
     "passwordDigitsOnly": "Ata {{number}} díxitos",
     "passwordSetRemotely": "estabelecida por outro participante",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "As opcións deben ser únicas"
+        }
+    },
     "poweredby": "fornecido por",
     "presenceStatus": {
         "busy": "Ocupado",
         "calling": "Chamando…",
         "connected": "Conectado",
         "connecting": "Conectando…",
-        "connecting2": "Conectando*...",
+        "connecting2": "Conectando*…",
         "disconnected": "Desconectado",
         "expired": "Expirou",
         "ignored": "Ignorado",
@@ -498,6 +505,7 @@
         "serviceName": "Servizo de gravación",
         "signIn": "Conectarse",
         "signOut": "Desconectarse",
+        "title": "Gravando",
         "unavailable": "Opa! O {{serviceName}} non está dispoñíbel actualmente. Estamos traballando na resolución da incidencia. Ténteo de novo máis adiante.",
         "unavailableTitle": "A gravación non está dispoñíbel"
     },
@@ -555,6 +563,8 @@
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "Nome",
+        "search": "Procurar",
+        "searchHint": "Procurar participantes",
         "seconds": "{{count}}s",
         "speakerStats": "Estatísticas do falante",
         "speakerTime": "Tempo do falante"
@@ -671,16 +681,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Seleccionar <b><i>Permitir</i></b> cando o seu navegador pida permisos.",
-        "chromeGrantPermissions": "Seleccionar <b><i>Permitir</i></b> cando o seu navegador pida permisos.",
-        "edgeGrantPermissions": "Seleccionar <b><i>Si</i></b> cando o seu navegador pida permisos.",
-        "electronGrantPermissions": "Conceda permisos para utilizar a súa cámara e micrófono",
-        "firefoxGrantPermissions": "Seleccionar <b><i>Compartir o dispositivo seleccionado</i></b> cando o navegador pida permisos.",
-        "iexplorerGrantPermissions": "Seleccionar <b><i>Aceptar</i></b> cando o seu navegador lle pida permisos. ",
-        "nwjsGrantPermissions": "Conceda permisos para utilizar a súa cámara e micrófono",
-        "operaGrantPermissions": "Seleccionar <b><i>Permitir</i></b> cando o seu navegador pida permisos.",
-        "react-nativeGrantPermissions": "Seleccionar <b><i>Permitir</i></b> cando o seu navegador pida permisos.",
-        "safariGrantPermissions": "Seleccionar <b><i>Aceptar</i></b> cando o seu navegador lle pida permisos. "
+        "grantPermissions": "Conceda permisos para utilizar a súa cámara e micrófono."
     },
     "videoSIPGW": {
         "busy": "Estamos liberando recursos. Ténteo de novo nuns minutos.",

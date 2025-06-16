@@ -1,4 +1,3 @@
-local ext_events = module:require "ext_events"
 local jid = require "util.jid"
 local extract_subdomain = module:require "util".extract_subdomain;
 
@@ -58,6 +57,8 @@ module:hook(
     "muc-broadcast-presence",
     function (event)
         -- Detect if the presence is for a poltergeist or not.
+	-- FIX ME: luacheck warning 581
+	--   not (x == y)' can be replaced by 'x ~= y' (if neither side is a table or NaN)
         if not (jid.bare(event.occupant.jid) == poltergeist_component) then
             return
         end
@@ -75,13 +76,18 @@ module:hook(
 
         local invite = function()
             local url = assert(url_from_room_jid(event.stanza.attr.from))
-            ext_events.invite(event.stanza, url, call_id)
+            module:fire_event('jitsi-call-invite', { stanza = event.stanza; url = url; call_id = call_id; });
         end
 
         local cancel = function()
             local url = assert(url_from_room_jid(event.stanza.attr.from))
             local status = event.stanza:get_child_text("status")
-            ext_events.cancel(event.stanza, url, string.lower(status), call_id)
+            module:fire_event('jitsi-call-cancel', {
+                stanza = event.stanza;
+                url = url;
+                reason = string.lower(status);
+                call_id = call_id;
+            });
         end
 
         -- If for any reason call_cancel is set to true then a cancel
@@ -94,7 +100,7 @@ module:hook(
 
         local missed = function()
             cancel()
-            ext_events.missed(event.stanza, call_id)
+            module:fire_event('jitsi-call-missed', { stanza = event.stanza; call_id = call_id; });
         end
 
         -- All other call flow actions will require a status.

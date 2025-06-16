@@ -27,7 +27,7 @@
         "searchNumbers": "Agregar números telefónicos",
         "searchPeople": "Buscar personas",
         "searchPeopleAndNumbers": "Buscar personas o añadir sus números de teléfono",
-        "searching": "Buscando...",
+        "searching": "Buscando…",
         "shareInvite": "Compartir la invitación a la reunión",
         "shareLink": "Compartir el link de la reunion",
         "shareStream": "Compartir el link de la transmición en vivo",
@@ -112,7 +112,7 @@
         "GET_SESSION_ID_ERROR": "Obtener session-id error: {{code}}",
         "GOT_SESSION_ID": "Obteniendo session-ID… Listo",
         "LOW_BANDWIDTH": "El video para {{displayName}} ha sido desactivado para ahorrar ancho de banda",
-        "RECONNECTING": "Ocurrió un problema en la red. Reconectando..."
+        "RECONNECTING": "Ocurrió un problema en la red. Reconectando…"
     },
     "connectionindicator": {
         "address": "Dirección:",
@@ -195,7 +195,7 @@
         "Submit": "Enviar",
         "WaitForHostMsg": "La conferencia aún no ha comenzado. Si eres el anfitrión, inicia sesión. De lo contrario, espera a que llegue el anfitrión.",
         "WaitingForHost": "Esperando al anfitrión…",
-        "WaitingForHostTitle": "Esperando al anfitrión...",
+        "WaitingForHostTitle": "Esperando al anfitrión…",
         "Yes": "Sí",
         "accessibilityLabel": {
             "liveStreaming": "Transmisión en vivo"
@@ -406,7 +406,7 @@
         "veryGood": "Muy buena"
     },
     "helpView": {
-        "header": "Centro de ayuda"
+        "title": "Centro de ayuda"
     },
     "incomingCall": {
         "answer": "Contestar",
@@ -516,12 +516,11 @@
         "signedInAs": "Actualmente, la sesión está iniciada como:",
         "start": "Iniciar una transmisión en vivo",
         "streamIdHelp": "¿Qué es esto?",
+        "title": "Transmisión en vivo",
         "unavailableTitle": "Transmisión en vivo no disponible",
         "youtubeTerms": "Términos de servicios de YouTube"
     },
     "lobby": {
-        "admit": "Admitir",
-        "admitAll": "Admitir todo",
         "allow": "permitir",
         "backToKnockModeButton": "No hay contraseña, pide permiso para entrar.",
         "dialogTitle": "Sala de espera",
@@ -537,10 +536,10 @@
         "invalidPassword": "Contraseña inválida",
         "joinRejectedMessage": "Tu solicitud para entrar ha sido rechazada por un moderador.",
         "joinTitle": "Entrar a la reunión",
-        "joinWithPasswordMessage": "Tratando de entrar con contraseña, por favor espera...",
+        "joinWithPasswordMessage": "Tratando de entrar con contraseña, por favor espera…",
         "joiningMessage": "Podrás entrar tan pronto te acepten tu solicitud.",
-        "joiningTitle": "Pidiendo entrar a la reunión...",
-        "joiningWithPasswordTitle": "Uniéndose con la contraseña...",
+        "joiningTitle": "Pidiendo entrar a la reunión…",
+        "joiningWithPasswordTitle": "Uniéndose con la contraseña…",
         "knockButton": "Pedir entrar",
         "knockTitle": "Alguien quiere entrar a la reunión",
         "knockingParticipantList": "Participantes que quieren entrar",
@@ -552,8 +551,7 @@
         "notificationTitle": "Sala de espera",
         "passwordField": "Introduce la contraseña de la reunión",
         "passwordJoinButton": "Entrar",
-        "reject": "Rechazar",
-        "rejectAll": "Rechazar todo",
+        "title": "Sala de espera",
         "toggleLabel": "Activar sala de espera"
     },
     "localRecording": {
@@ -650,6 +648,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "Admitir",
+            "admitAll": "Admitir todo",
             "allow": "Permitir a los asistentes:",
             "allowVideo": "Permitir vídeo",
             "askUnmute": "Pida que le quiten el silencio",
@@ -659,18 +659,19 @@
             "mute": "Silenciar",
             "muteAll": "Silenciar a todos los demás",
             "muteEveryoneElse": "Silenciar al resto",
+            "reject": "Rechazar",
             "stopEveryonesVideo": "Detener el vídeo de todos",
             "stopVideo": "Detener el vídeo",
             "unblockEveryoneMicCamera": "Desbloquear el micrófono y la cámara de todos",
             "videoModeration": "Iniciar su vídeo"
         },
         "close": "Cerrar",
-        "header": "Participantes",
         "headings": {
             "lobby": "Vestíbulo ({{count}})",
             "participantsList": "Participantes en la reunión ({{count}})",
             "waitingLobby": "Esperando en el vestíbulo ({{count}})"
-        }
+        },
+        "title": "Participantes"
     },
     "passwordDigitsOnly": "Hasta {{number}} cifras",
     "passwordSetRemotely": "definida por otro participante",
@@ -689,6 +690,9 @@
             "questionPlaceholder": "Haz una pregunta",
             "removeOption": "Eliminar la opción",
             "send": "Enviar"
+        },
+        "errors": {
+            "notUniqueOption": "Las opciones deben ser únicas"
         },
         "notification": {
             "description": "Abre la pestaña de encuestas para votar",
@@ -711,7 +715,7 @@
         "callMe": "Llámame",
         "callMeAtNumber": "Llamame a este número:",
         "calling": "Llamando",
-        "configuringDevices": "Configurando dispositivos...",
+        "configuringDevices": "Configurando dispositivos…",
         "connectedWithAudioQ": "¿Estás está conectado con audio?",
         "connection": {
             "good": "¡Su conexión a internet es buena!",
@@ -813,6 +817,7 @@
         "serviceName": "Servicio de grabación",
         "signIn": "Iniciar sesión",
         "signOut": "Cerrar sesión",
+        "title": "Grabando",
         "unavailable": "¡Uy! {{serviceName}} actualmente no está disponible. Estamos trabajando para resolver el problema. Vuelve a intentarlo más tarde.",
         "unavailableTitle": "Grabación no disponible",
         "uploadToCloud": "Subir a la nube"
@@ -895,6 +900,7 @@
         "minutes": "{{count}} min",
         "name": "Nombre",
         "search": "Buscar",
+        "searchHint": "Buscar participantes",
         "seconds": "{{count}} s",
         "speakerStats": "Estadísticas de participantes",
         "speakerTime": "Tiempo hablado"
@@ -1069,16 +1075,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Selecciona <b><i>Permitir</i></b> cuando el navegador solicite permisos.",
-        "chromeGrantPermissions": "Selecciona <b><i>Permitir</i></b> cuando el navegador solicite permisos.",
-        "edgeGrantPermissions": "Selecciona <b><i>Sí</i></b> cuando el navegador solicite permisos.",
-        "electronGrantPermissions": "Otorga permisos para usar la cámara y el micrófono",
-        "firefoxGrantPermissions": "Selecciona <b><i>Compartir dispositivo seleccionado</i></b> cuando el navegador solicite permisos.",
-        "iexplorerGrantPermissions": "Selecciona <b><i>Aceptar</i></b> cuando el navegador solicite permisos.",
-        "nwjsGrantPermissions": "Otorga permisos para usar la cámara y el micrófono",
-        "operaGrantPermissions": "Selecciona <b><i>Permitir</i></b> cuando el navegador solicite permisos.",
-        "react-nativeGrantPermissions": "Selecciona <b><i>Permitir</i></b> cuando el navegador solicite permisos.",
-        "safariGrantPermissions": "Selecciona <b><i>Aceptar</i></b> cuando el navegador solicite permisos."
+        "grantPermissions": "Otorga permisos para usar la cámara y el micrófono."
     },
     "videoSIPGW": {
         "busy": "Estamos trabajando para liberar recursos. Vuelve a intentarlo en unos minutos.",
@@ -1141,7 +1138,7 @@
         "image6": "Bosque",
         "image7": "Amanecer",
         "none": "Ninguno",
-        "pleaseWait": "Por favor, espera...",
+        "pleaseWait": "Por favor, espera…",
         "removeBackground": "Eliminar el fondo",
         "slightBlur": "Desenfoque Ligero",
         "title": "Fondos virtuales",

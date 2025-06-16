@@ -1,34 +1,64 @@
-/* eslint-disable lines-around-comment */
-
-import { Theme } from '@mui/material';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IState } from '../../../app/types';
-// @ts-ignore
-import { isDisplayNameVisible } from '../../../base/config/functions.any';
-import { getLocalParticipant, getParticipantDisplayName } from '../../../base/participants/functions';
-import { Participant } from '../../../base/participants/types';
+import { IReduxState } from '../../../app/types';
+import { getParticipantDisplayName, isScreenShareParticipant } from '../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
-// @ts-ignore
+import { getVideospaceFloatingElementsBottomSpacing } from '../../../base/ui/functions.web';
 import { getLargeVideoParticipant } from '../../../large-video/functions';
-// @ts-ignore
-import { isToolboxVisible } from '../../../toolbox/functions.web';
-// @ts-ignore
-import { isLayoutTileView } from '../../../video-layout';
+import {
+    getTransitionParamsForElementsAboveToolbox,
+    isToolboxVisible,
+    toCSSTransitionValue
+} from '../../../toolbox/functions.web';
+import { isLayoutTileView } from '../../../video-layout/functions.any';
+import { shouldDisplayStageParticipantBadge } from '../../functions';
 
 import DisplayNameBadge from './DisplayNameBadge';
+import {
+    getStageParticipantFontSizeRange,
+    getStageParticipantNameLabelLineHeight,
+    getStageParticipantTypography,
+    scaleFontProperty
+} from './styles';
 
-const useStyles = makeStyles()((theme: Theme) => {
+interface IOptions {
+    clientHeight?: number;
+}
+
+const useStyles = makeStyles<IOptions, 'screenSharing'>()((theme, options: IOptions = {}, classes) => {
+    const typography = {
+        ...getStageParticipantTypography(theme)
+    };
+    const { clientHeight } = options;
+
+    if (typeof clientHeight === 'number' && clientHeight > 0) {
+        // We want to show the fontSize and lineHeight configured in theme on a screen with height 1080px. In this case
+        // the clientHeight will be 960px if there are some titlebars, toolbars, addressbars, etc visible.For any other
+        // screen size we will decrease/increase the font size based on the screen size.
+
+        typography.fontSize = scaleFontProperty(clientHeight, getStageParticipantFontSizeRange(theme));
+        typography.lineHeight = getStageParticipantNameLabelLineHeight(theme, clientHeight);
+    }
+
+    const toolbarVisibleTransitionProps = getTransitionParamsForElementsAboveToolbox(true);
+    const toolbarHiddenTransitionProps = getTransitionParamsForElementsAboveToolbox(false);
+    const showTransitionDuration = toolbarVisibleTransitionProps.delay + toolbarVisibleTransitionProps.duration;
+    const hideTransitionDuration = toolbarHiddenTransitionProps.delay + toolbarHiddenTransitionProps.duration;
+    const showTransition = `opacity ${showTransitionDuration}s ${toolbarVisibleTransitionProps.easingFunction}`;
+    const hideTransition = `opacity ${hideTransitionDuration}s ${toolbarHiddenTransitionProps.easingFunction}`;
+    const moveUpTransition = `margin-bottom ${toCSSTransitionValue(toolbarVisibleTransitionProps)}`;
+    const moveDownTransition = `margin-bottom ${toCSSTransitionValue(toolbarHiddenTransitionProps)}`;
+
     return {
         badgeContainer: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+            ...withPixelLineHeight(typography),
             alignItems: 'center',
             display: 'inline-flex',
             justifyContent: 'center',
-            marginBottom: theme.spacing(7),
-            transition: 'margin-bottom 0.3s',
+            marginBottom: getVideospaceFloatingElementsBottomSpacing(theme, false),
+            transition: moveDownTransition,
             pointerEvents: 'none',
             position: 'absolute',
             bottom: 0,
@@ -37,7 +67,16 @@ const useStyles = makeStyles()((theme: Theme) => {
             zIndex: 1
         },
         containerElevated: {
-            marginBottom: theme.spacing(12)
+            marginBottom: getVideospaceFloatingElementsBottomSpacing(theme, true),
+            transition: moveUpTransition,
+            [`&.${classes.screenSharing}`]: {
+                opacity: 1,
+                transition: `${showTransition}, ${moveUpTransition}`
+            }
+        },
+        screenSharing: {
+            opacity: 0,
+            transition: `${hideTransition}, ${moveDownTransition}`
         }
     };
 });
@@ -48,31 +87,27 @@ const useStyles = makeStyles()((theme: Theme) => {
  * @returns {ReactElement|null}
  */
 const StageParticipantNameLabel = () => {
-    const { classes, cx } = useStyles();
-    const largeVideoParticipant: Participant = useSelector(getLargeVideoParticipant);
+    const clientHeight = useSelector((state: IReduxState) => state['features/base/responsive-ui'].clientHeight);
+    const { classes, cx } = useStyles({ clientHeight });
+    const largeVideoParticipant = useSelector(getLargeVideoParticipant);
     const selectedId = largeVideoParticipant?.id;
-    const nameToDisplay = useSelector((state: IState) => getParticipantDisplayName(state, selectedId));
-
-    const localParticipant = useSelector(getLocalParticipant);
-    const localId = localParticipant?.id;
-
-    const isTileView = useSelector(isLayoutTileView);
+    const nameToDisplay = useSelector((state: IReduxState) => getParticipantDisplayName(state, selectedId ?? ''));
     const toolboxVisible: boolean = useSelector(isToolboxVisible);
-    const showDisplayName = useSelector(isDisplayNameVisible);
+    const visible = useSelector(shouldDisplayStageParticipantBadge);
+    const isTileView = useSelector(isLayoutTileView);
+    const _isScreenShareParticipant = isScreenShareParticipant(largeVideoParticipant);
 
-    if (showDisplayName
-        && nameToDisplay
-        && selectedId !== localId
-        && !isTileView
-        && !largeVideoParticipant?.isWhiteboard
-    ) {
+    if (visible || (_isScreenShareParticipant && !isTileView)) {
+        // For stage participant visibility is true only when the toolbar is visible but we need to keep the element
+        // in the DOM in order to make it disappear with an animation.
         return (
             <div
                 className = { cx(
-                    'stage-participant-label',
                     classes.badgeContainer,
-                    toolboxVisible && classes.containerElevated
-                ) }>
+                    toolboxVisible && classes.containerElevated,
+                    _isScreenShareParticipant && classes.screenSharing
+                ) }
+                data-testid = 'stage-display-name' >
                 <DisplayNameBadge name = { nameToDisplay } />
             </div>
         );

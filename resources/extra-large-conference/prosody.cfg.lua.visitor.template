@@ -1,0 +1,138 @@
+---------- Server-wide settings ----------
+s2s_ports = { 52691 };
+c2s_ports = { 52221 }
+http_ports = { 52801 }
+https_ports = { 52811 }
+
+daemonize = true;
+
+-- we use a common jid for jicofo
+admins = {
+    'focus@auth.meet.jitsi'
+}
+
+-- Enable use of native prosody 0.11 support for epoll over select
+network_backend = 'epoll';
+network_settings = {
+  tcp_backlog = 511;
+}
+
+modules_enabled = {
+      'saslauth';
+      'tls';
+      'disco';
+      'posix';
+
+      'secure_interfaces';
+
+    -- jitsi
+      'websocket';
+      'bosh';
+      's2s_bidi';
+      's2s_whitelist';
+      's2sout_override';
+      'certs_s2soutinjection';
+};
+
+s2s_whitelist = {
+    'conference.jitmeet.example.com', -- needed for visitors to send messages to main room
+    'visitors.jitmeet.example.com'; -- needed for sending promotion request to visitors.jitmeet.example.com component
+    'jitmeet.example.com'; -- unavailable presences back to main room
+};
+
+s2sout_override = {
+    ["conference.jitmeet.example.com"] = "tcp://127.0.0.1:5269"; -- needed for visitors to send messages to main room
+    ["jitmeet.example.com"] = "tcp://127.0.0.1:5269"; -- needed for the main room when connecting in to send main participants
+    ["visitors.jitmeet.example.com"] = "tcp://127.0.0.1:5269"; -- needed for sending promotion request to visitors.jitmeet.example.com component
+}
+
+external_service_secret = '__turnSecret__';
+
+external_services = {
+    { type = 'stun', host = 'jitmeet.example.com', port = 3478 },
+    { type = 'turn', host = 'jitmeet.example.com', port = 3478, transport = 'udp', secret = true, ttl = 86400, algorithm = 'turn' },
+    { type = 'turns', host = 'jitmeet.example.com', port = 5349, transport = 'tcp', secret = true, ttl = 86400, algorithm = 'turn' }
+};
+
+muc_mapper_domain_base = 'vX.meet.jitsi';
+main_domain = 'jitmeet.example.com';
+
+-- https://prosody.im/doc/modules/mod_smacks
+smacks_max_unacked_stanzas = 5;
+smacks_hibernation_time = 60;
+-- this is dropped in 0.12
+smacks_max_hibernated_sessions = 1;
+smacks_max_old_sessions = 1;
+
+unlimited_jids = { 'focus@auth.meet.jitsi' }
+limits = {
+    c2s = {
+        rate = '512kb/s';
+    };
+}
+
+modules_disabled = {
+    'offline';
+    'pubsub';
+    'register';
+};
+
+allow_registration = false;
+authentication = 'internal_hashed'
+storage = 'internal'
+log = {
+    -- Log files (change 'info' to 'debug' for debug logs):
+    info = '/var/log/prosody-vX/prosody.log';
+    error = '/var/log/prosody-vX/prosody.err';
+}
+
+consider_websocket_secure = true;
+consider_bosh_secure = true;
+bosh_max_inactivity = 60;
+
+plugin_paths = { '/usr/share/jitsi-meet/prosody-plugins/' }
+
+----------- Virtual hosts -----------
+VirtualHost 'vX.meet.jitsi'
+    authentication = 'jitsi-anonymous'
+    ssl = {
+        key = '/etc/prosody/certs/jitmeet.example.com.key';
+        certificate = '/etc/prosody/certs/jitmeet.example.com.crt';
+    }
+    modules_enabled = {
+      'bosh';
+      'ping';
+      'external_services';
+      'smacks';
+      'jiconop';
+      'conference_duration';
+    }
+    main_muc = 'conference.vX.meet.jitsi';
+
+VirtualHost 'auth.meet.jitsi'
+    modules_enabled = {
+          'limits_exception';
+          'ping';
+          'smacks';
+    }
+    authentication = 'internal_hashed'
+    smacks_hibernation_time = 15;
+
+Component 'conference.vX.meet.jitsi' 'muc'
+    storage = 'memory'
+    muc_room_cache_size = 10000
+    restrict_room_creation = true
+    modules_enabled = {
+        'muc_hide_all';
+        'muc_domain_mapper';
+        'muc_meeting_id';
+        'fmuc';
+        's2soutinjection';
+    }
+    muc_room_default_presence_broadcast = {
+        visitor = false;
+        participant = true;
+        moderator = true;
+    };
+    muc_room_locking = false
+    muc_room_default_public_jids = true

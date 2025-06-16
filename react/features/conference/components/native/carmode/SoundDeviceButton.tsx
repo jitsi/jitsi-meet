@@ -1,16 +1,12 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-// @ts-ignore
 import { openSheet } from '../../../../base/dialog/actions';
 import Button from '../../../../base/ui/components/native/Button';
-import { BUTTON_TYPES } from '../../../../base/ui/constants';
-// @ts-ignore
+import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
 import AudioRoutePickerDialog from '../../../../mobile/audio-mode/components/AudioRoutePickerDialog';
 
 import AudioIcon from './AudioIcon';
-// @ts-ignore
 import styles from './styles';
 
 /**

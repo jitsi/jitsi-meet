@@ -1,56 +1,60 @@
-/* eslint-disable lines-around-comment */
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-    Button as NativePaperButton,
-    Text,
-    TouchableRipple
-} from 'react-native-paper';
+import { StyleProp, TouchableHighlight } from 'react-native';
+import { Button as NativePaperButton, Text } from 'react-native-paper';
+import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 
-import { BUTTON_MODES, BUTTON_TYPES } from '../../constants';
+import { BUTTON_MODES, BUTTON_TYPES } from '../../constants.native';
 import BaseTheme from '../BaseTheme.native';
-import { ButtonProps } from '../types';
+import { IButtonProps } from '../types';
 
 import styles from './buttonStyles';
 
-export interface IButtonProps extends ButtonProps {
-    color?: string;
+
+export interface IProps extends IButtonProps {
+    color?: string | undefined;
+    contentStyle?: Object | undefined;
+    id?: string;
     labelStyle?: Object | undefined;
+    mode?: any;
     style?: Object | undefined;
 }
 
-const Button: React.FC<IButtonProps> = ({
+const Button: React.FC<IProps> = ({
     accessibilityLabel,
     color: buttonColor,
+    contentStyle,
     disabled,
     icon,
+    id,
     labelKey,
     labelStyle,
+    mode = BUTTON_MODES.CONTAINED,
     onClick: onPress,
     style,
     type
-}: IButtonProps) => {
+}: IProps) => {
     const { t } = useTranslation();
-    const { CONTAINED } = BUTTON_MODES;
     const { DESTRUCTIVE, PRIMARY, SECONDARY, TERTIARY } = BUTTON_TYPES;
+    const { CONTAINED, TEXT } = BUTTON_MODES;
 
     let buttonLabelStyles;
     let buttonStyles;
     let color;
-    let mode;
 
     if (type === PRIMARY) {
-        buttonLabelStyles = styles.buttonLabelPrimary;
-        color = BaseTheme.palette.action01;
-        mode = CONTAINED;
+        buttonLabelStyles = mode === TEXT
+            ? styles.buttonLabelPrimaryText
+            : styles.buttonLabelPrimary;
+        color = mode === CONTAINED && BaseTheme.palette.action01;
     } else if (type === SECONDARY) {
         buttonLabelStyles = styles.buttonLabelSecondary;
-        color = BaseTheme.palette.action02;
-        mode = CONTAINED;
+        color = mode === CONTAINED && BaseTheme.palette.action02;
     } else if (type === DESTRUCTIVE) {
-        color = BaseTheme.palette.actionDanger;
-        buttonLabelStyles = styles.buttonLabelDestructive;
-        mode = CONTAINED;
+        buttonLabelStyles = mode === TEXT
+            ? styles.buttonLabelDestructiveText
+            : styles.buttonLabelDestructive;
+        color = mode === CONTAINED && BaseTheme.palette.actionDanger;
     } else {
         color = buttonColor;
         buttonLabelStyles = styles.buttonLabel;
@@ -64,43 +68,52 @@ const Button: React.FC<IButtonProps> = ({
     }
 
     if (type === TERTIARY) {
+        if (disabled) {
+            buttonLabelStyles = styles.buttonLabelTertiaryDisabled;
+        }
+        buttonLabelStyles = styles.buttonLabelTertiary;
+
         return (
-            <TouchableRipple
+            <TouchableHighlight
                 accessibilityLabel = { accessibilityLabel }
                 disabled = { disabled }
+                id = { id }
                 onPress = { onPress }
-                rippleColor = 'transparent'
                 style = { [
                     buttonStyles,
                     style
-                ] }>
+                ] as StyleProp<object> }>
                 <Text
                     style = { [
                         buttonLabelStyles,
                         labelStyle
-                    ] }>{ t(labelKey ?? '') }</Text>
-            </TouchableRipple>
+                    ] as StyleProp<object> }>{ t(labelKey ?? '') }</Text>
+            </TouchableHighlight>
         );
     }
 
     return (
         <NativePaperButton
             accessibilityLabel = { t(accessibilityLabel ?? '') }
+            buttonColor = { color }
             children = { t(labelKey ?? '') }
-            color = { color }
+            contentStyle = { [
+                styles.buttonContent,
+                contentStyle
+            ] as StyleProp<object> }
             disabled = { disabled }
-            // @ts-ignore
-            icon = { icon }
+            icon = { icon as IconSource | undefined }
+            id = { id }
             labelStyle = { [
                 buttonLabelStyles,
                 labelStyle
-            ] }
+            ] as StyleProp<object> }
             mode = { mode }
             onPress = { onPress }
             style = { [
                 buttonStyles,
                 style
-            ] } />
+            ] as StyleProp<object> } />
     );
 };
 

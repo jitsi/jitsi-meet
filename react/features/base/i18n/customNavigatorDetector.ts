@@ -59,7 +59,7 @@ export default {
 function normalizeLanguage(language: string) {
     const [ lang, variant ] = language.replace('_', '-').split('-');
 
-    if (!variant || lang === variant) {
+    if (!variant || lang.toUpperCase() === variant.toUpperCase()) {
         return lang;
     }
 

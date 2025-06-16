@@ -1,10 +1,7 @@
-/* eslint-disable lines-around-comment */
 import logger from '../logger';
 
 import AbstractHandler, { IEvent } from './AbstractHandler';
-// @ts-ignore
 import { fixDeviceID } from './amplitude/fixDeviceID';
-// @ts-ignore
 import amplitude from './amplitude/lib';
 
 /**
@@ -13,17 +10,23 @@ import amplitude from './amplitude/lib';
 export default class AmplitudeHandler extends AbstractHandler {
     _deviceId: string;
     _userId: Object;
+
     /**
      * Creates new instance of the Amplitude analytics handler.
      *
-     * @param {Object} options -
-     * @param {string} options.amplitudeAPPKey - The Amplitude app key required
-     * by the Amplitude API.
+     * @param {Object} options - The amplitude options.
+     * @param {string} options.amplitudeAPPKey - The Amplitude app key required by the Amplitude API.
+     * @param {boolean} options.amplitudeIncludeUTM - Whether to include UTM parameters
+     * in the Amplitude events.
      */
     constructor(options: any) {
         super(options);
 
-        const { amplitudeAPPKey, user } = options;
+        const {
+            amplitudeAPPKey,
+            amplitudeIncludeUTM: includeUtm = true,
+            user
+        } = options;
 
         this._enabled = true;
 
@@ -32,20 +35,32 @@ export default class AmplitudeHandler extends AbstractHandler {
             this._enabled = false;
         };
 
+        // Forces sending all events on exit (flushing) via sendBeacon
+        const onExitPage = () => {
+            // @ts-ignore
+            amplitude.getInstance().sendEvents();
+        };
+
         if (navigator.product === 'ReactNative') {
             amplitude.getInstance().init(amplitudeAPPKey);
             fixDeviceID(amplitude.getInstance()).then(() => {
                 amplitude.getInstance().getDeviceId()
+
+                // @ts-ignore
                     .then((deviceId: string) => {
                         this._deviceId = deviceId;
                     });
             });
         } else {
-            const amplitudeOptions = {
+            const amplitudeOptions: any = {
                 includeReferrer: true,
-                onError
+                includeUtm,
+                saveParamsReferrerOncePerSession: false,
+                onError,
+                onExitPage
             };
 
+            // @ts-ignore
             amplitude.getInstance().init(amplitudeAPPKey, undefined, amplitudeOptions);
             fixDeviceID(amplitude.getInstance());
         }
@@ -62,7 +77,7 @@ export default class AmplitudeHandler extends AbstractHandler {
      * @param {Object} userProps - The user portperties.
      * @returns {void}
      */
-    setUserProperties(userProps: Object) {
+    setUserProperties(userProps: any) {
         if (this._enabled) {
             amplitude.getInstance().setUserProperties(userProps);
         }
@@ -81,7 +96,8 @@ export default class AmplitudeHandler extends AbstractHandler {
             return;
         }
 
-        amplitude.getInstance().logEvent(this._extractName(event), event);
+        // @ts-ignore
+        amplitude.getInstance().logEvent(this._extractName(event) ?? '', event);
     }
 
     /**
@@ -99,7 +115,11 @@ export default class AmplitudeHandler extends AbstractHandler {
 
         return {
             sessionId: amplitude.getInstance().getSessionId(),
+
+            // @ts-ignore
             deviceId: amplitude.getInstance().options.deviceId,
+
+            // @ts-ignore
             userId: amplitude.getInstance().options.userId
         };
     }

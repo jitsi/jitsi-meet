@@ -1,15 +1,12 @@
-/* eslint-disable lines-around-comment */
-import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { useStore } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { translate } from '../../base/i18n/functions';
-// @ts-ignore
 import { setSeeWhatIsBeingShared } from '../actions.web';
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         overlayContainer: {
             width: '100%',
@@ -18,7 +15,10 @@ const useStyles = makeStyles()((theme: Theme) => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            position: 'absolute'
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            zIndex: 2
         },
         content: {
             display: 'flex',

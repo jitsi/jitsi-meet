@@ -1,17 +1,19 @@
+import { NativeEventSubscription } from 'react-native';
+
 import ReducerRegistry from '../../base/redux/ReducerRegistry';
 
-import { _SET_IMMERSIVE_LISTENER } from './actionTypes';
+import { _SET_IMMERSIVE_SUBSCRIPTION } from './actionTypes';
 
 export interface IFullScreenState {
-    listener?: Function;
+    subscription?: NativeEventSubscription;
 }
 
 ReducerRegistry.register<IFullScreenState>('features/full-screen', (state = {}, action): IFullScreenState => {
     switch (action.type) {
-    case _SET_IMMERSIVE_LISTENER:
+    case _SET_IMMERSIVE_SUBSCRIPTION:
         return {
             ...state,
-            listener: action.listener
+            subscription: action.subscription
         };
     }
 

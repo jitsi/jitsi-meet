@@ -1,0 +1,11 @@
+diff --git a/node_modules/@giphy/react-native-sdk/giphy-react-native-sdk.podspec b/node_modules/@giphy/react-native-sdk/giphy-react-native-sdk.podspec
+index ddd41ac..a7b143e 100644
+--- a/node_modules/@giphy/react-native-sdk/giphy-react-native-sdk.podspec
++++ b/node_modules/@giphy/react-native-sdk/giphy-react-native-sdk.podspec
+@@ -16,5 +16,5 @@ Pod::Spec.new do |s|
+   s.source_files = "ios/**/*.{h,m,mm,swift}"
+ 
+   s.dependency "React-Core"
+-  s.dependency "Giphy", "2.2.4"
++  s.dependency "Giphy", "2.2.12"
+ end

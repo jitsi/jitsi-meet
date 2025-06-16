@@ -1,0 +1,14 @@
+diff -r 423f240d1173 core/stanza_router.lua
+--- a/core/stanza_router.lua	Tue Feb 21 10:06:54 2023 +0000
++++ b/core/stanza_router.lua	Wed May 24 11:56:02 2023 -0500
+@@ -207,7 +207,9 @@
+ 	else
+ 		local host_session = hosts[from_host];
+ 		if not host_session then
+-			log("error", "No hosts[from_host] (please report): %s", stanza);
++			-- moved it to debug as it fills visitor's prosody logs and this is a situation where we try to send
++			-- presence back to the main server and we don't need anyway as it came from there
++			log("debug", "No hosts[from_host] (please report): %s", stanza);
+ 		else
+ 			local xmlns = stanza.attr.xmlns;
+ 			stanza.attr.xmlns = nil;

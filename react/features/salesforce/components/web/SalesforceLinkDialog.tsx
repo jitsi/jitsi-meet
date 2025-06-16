@@ -1,29 +1,24 @@
-/* eslint-disable lines-around-comment */
-import Spinner from '@atlaskit/spinner';
-import { Theme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-// @ts-ignore
-import { Dialog, hideDialog } from '../../../base/dialog';
+import { hideDialog } from '../../../base/dialog/actions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconSearch } from '../../../base/icons/svg';
-// @ts-ignore
-import { getFieldValue } from '../../../base/react';
+import { getFieldValue } from '../../../base/react/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import Dialog from '../../../base/ui/components/web/Dialog';
+import Spinner from '../../../base/ui/components/web/Spinner';
 import { NOTES_MAX_LENGTH } from '../../constants';
-// @ts-ignore
 import { useSalesforceLinkDialog } from '../../useSalesforceLinkDialog';
 
 import { RecordItem } from './RecordItem';
 
-// @ts-ignore
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         container: {
-            minHeight: '450px',
+            height: '450px',
             overflowY: 'auto',
             position: 'relative'
         },
@@ -61,23 +56,38 @@ const useStyles = makeStyles()((theme: Theme) => {
         spinner: {
             alignItems: 'center',
             display: 'flex',
-            height: 'calc(100% - 100px)',
+            height: 'calc(100% - 70px)',
             justifyContent: 'center',
-            width: '100%'
+            width: '100%',
+
+            '@media (max-width: 448px)': {
+                height: 'auto',
+                marginTop: '24px'
+            }
         },
         noRecords: {
             height: 'calc(100% - 150px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            flexDirection: 'column'
+            flexDirection: 'column',
+
+            '@media (max-width: 448px)': {
+                height: 'auto',
+                marginTop: '24px'
+            }
         },
         recordsError: {
-            height: 'calc(100% - 80px)',
+            height: 'calc(100% - 42px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            flexDirection: 'column'
+            flexDirection: 'column',
+
+            '@media (max-width: 448px)': {
+                height: 'auto',
+                marginTop: '24px'
+            }
         },
         recordList: {
             listStyle: 'none',
@@ -101,13 +111,12 @@ const useStyles = makeStyles()((theme: Theme) => {
             minHeight: '130px',
             resize: 'vertical',
             width: '100%',
-            boxSizing: 'borderBox',
+            boxSizing: 'border-box',
             overflow: 'hidden',
             border: '1px solid',
             borderColor: theme.palette.ui05,
             backgroundColor: theme.palette.field01,
-            // @ts-ignore
-            color: theme.palette.field02,
+            color: theme.palette.text01,
             borderRadius: theme.shape.borderRadius,
             padding: '10px 16px'
         }
@@ -149,15 +158,12 @@ function SalesforceLinkDialog() {
 
     const handleSubmit = useCallback(() => {
         dispatch(hideDialog());
-        linkMeeting();
+        selectedRecord && linkMeeting();
     }, [ hideDialog, linkMeeting ]);
 
     const renderSpinner = () => (
         <div className = { classes.spinner }>
-            <Spinner
-                // @ts-ignore
-                isCompleting = { false }
-                size = 'medium' />
+            <Spinner />
         </div>
     );
 
@@ -201,7 +207,7 @@ function SalesforceLinkDialog() {
                 onChange = { handleChange }
                 placeholder = { t('dialog.searchInSalesforce') }
                 tabIndex = { 0 }
-                value = { searchTerm } />
+                value = { searchTerm ?? '' } />
             {(!isLoading && !hasRecordsErrors) && (
                 <div className = { classes.resultLabel }>
                     {showSearchResults
@@ -255,16 +261,19 @@ function SalesforceLinkDialog() {
 
     return (
         <Dialog
+            back = {{
+                hidden: !selectedRecord,
+                onClick: () => setSelectedRecord(null),
+                translationKey: 'dialog.Back'
+            }}
+            cancel = {{ hidden: true }}
             disableEnter = { true }
-            disableFooter = { !selectedRecord }
-            height = { 'medium' }
-            okDisabled = { !selectedRecord }
-            okKey = 'dialog.linkMeeting'
-            /* eslint-disable-next-line react/jsx-no-bind */
-            onDecline = { () => setSelectedRecord(null) }
+            ok = {{
+                translationKey: 'dialog.linkMeeting',
+                hidden: !selectedRecord
+            }}
             onSubmit = { handleSubmit }
-            titleKey = 'dialog.linkMeetingTitle'
-            width = { 'small' }>
+            titleKey = 'dialog.linkMeetingTitle'>
             <div className = { classes.container } >
                 {renderRecordsSearch()}
                 {renderContent()}

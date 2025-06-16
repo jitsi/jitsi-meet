@@ -1,37 +1,23 @@
-import { IState } from '../../app/types';
+import { IReduxState } from '../../app/types';
+import JitsiMeetJS from '../../base/lib-jitsi-meet';
 
-import { IConfig } from './configType';
-import { TOOLBAR_BUTTONS } from './constants';
+import {
+    IConfig,
+    IDeeplinkingConfig,
+    IDeeplinkingDesktopConfig,
+    IDeeplinkingMobileConfig
+} from './configType';
 
 export * from './functions.any';
 
 /**
  * Removes all analytics related options from the given configuration, in case of a libre build.
  *
- * @param {*} config - The configuration which needs to be cleaned up.
+ * @param {*} _config - The configuration which needs to be cleaned up.
  * @returns {void}
  */
-export function _cleanupConfig(config: IConfig) { // eslint-disable-line @typescript-eslint/no-unused-vars
-}
-
-/**
- * Returns the dial out url.
- *
- * @param {Object} state - The state of the app.
- * @returns {string}
- */
-export function getDialOutStatusUrl(state: IState): string | undefined {
-    return state['features/base/config'].guestDialOutStatusUrl;
-}
-
-/**
- * Returns the dial out status url.
- *
- * @param {Object} state - The state of the app.
- * @returns {string}
- */
-export function getDialOutUrl(state: IState): string | undefined {
-    return state['features/base/config'].guestDialOutUrl;
+export function _cleanupConfig(_config: IConfig) {
+    return;
 }
 
 /**
@@ -40,34 +26,18 @@ export function getDialOutUrl(state: IState): string | undefined {
  * @param {Object} state - The state of the app.
  * @returns {boolean}
  */
-export function getReplaceParticipant(state: IState): string | undefined {
+export function getReplaceParticipant(state: IReduxState): string | undefined {
     return state['features/base/config'].replaceParticipant;
 }
 
 /**
- * Returns the list of enabled toolbar buttons.
+ * Returns the configuration value of web-hid feature.
  *
- * @param {Object} state - The redux state.
- * @returns {Array<string>} - The list of enabled toolbar buttons.
+ * @param {Object} state - The state of the app.
+ * @returns {boolean} True if web-hid feature should be enabled, otherwise false.
  */
-export function getToolbarButtons(state: IState): Array<string> {
-    const { toolbarButtons } = state['features/base/config'];
-
-    return Array.isArray(toolbarButtons) ? toolbarButtons : TOOLBAR_BUTTONS;
-}
-
-/**
- * Checks if the specified button is enabled.
- *
- * @param {string} buttonName - The name of the button.
- * {@link interfaceConfig}.
- * @param {Object|Array<string>} state - The redux state or the array with the enabled buttons.
- * @returns {boolean} - True if the button is enabled and false otherwise.
- */
-export function isToolbarButtonEnabled(buttonName: string, state: IState | Array<string>) {
-    const buttons = Array.isArray(state) ? state : getToolbarButtons(state);
-
-    return buttons.includes(buttonName);
+export function getWebHIDFeatureConfig(state: IReduxState): boolean {
+    return state['features/base/config'].enableWebHIDFeature || false;
 }
 
 /**
@@ -76,7 +46,54 @@ export function isToolbarButtonEnabled(buttonName: string, state: IState | Array
  * @param {Object} state - The state of the app.
  * @returns {boolean}
  */
-export function areAudioLevelsEnabled(state: IState): boolean {
-    // Default to false for React Native as audio levels are of no interest to the mobile app.
-    return navigator.product !== 'ReactNative' && !state['features/base/config'].disableAudioLevels;
+export function areAudioLevelsEnabled(state: IReduxState): boolean {
+    return !state['features/base/config'].disableAudioLevels && JitsiMeetJS.isCollectingLocalStats();
+}
+
+/**
+ * Sets the defaults for deeplinking.
+ *
+ * @param {IDeeplinkingConfig} deeplinking - The deeplinking config.
+ * @returns {void}
+ */
+export function _setDeeplinkingDefaults(deeplinking: IDeeplinkingConfig) {
+    deeplinking.desktop = deeplinking.desktop || {} as IDeeplinkingDesktopConfig;
+    deeplinking.android = deeplinking.android || {} as IDeeplinkingMobileConfig;
+    deeplinking.ios = deeplinking.ios || {} as IDeeplinkingMobileConfig;
+
+    const { android, desktop, ios } = deeplinking;
+
+    desktop.appName = desktop.appName || 'Jitsi Meet';
+    desktop.appScheme = desktop.appScheme || 'jitsi-meet';
+    desktop.download = desktop.download || {};
+    desktop.download.windows = desktop.download.windows
+        || 'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet.exe';
+    desktop.download.macos = desktop.download.macos
+        || 'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet.dmg';
+    desktop.download.linux = desktop.download.linux
+        || 'https://github.com/jitsi/jitsi-meet-electron/releases/latest/download/jitsi-meet-x86_64.AppImage';
+
+    ios.appName = ios.appName || 'Jitsi Meet';
+    ios.appScheme = ios.appScheme || 'org.jitsi.meet';
+    ios.downloadLink = ios.downloadLink
+        || 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905';
+    if (ios.dynamicLink) {
+        ios.dynamicLink.apn = ios.dynamicLink.apn || 'org.jitsi.meet';
+        ios.dynamicLink.appCode = ios.dynamicLink.appCode || 'w2atb';
+        ios.dynamicLink.ibi = ios.dynamicLink.ibi || 'com.atlassian.JitsiMeet.ios';
+        ios.dynamicLink.isi = ios.dynamicLink.isi || '1165103905';
+    }
+
+    android.appName = android.appName || 'Jitsi Meet';
+    android.appScheme = android.appScheme || 'org.jitsi.meet';
+    android.downloadLink = android.downloadLink
+        || 'https://play.google.com/store/apps/details?id=org.jitsi.meet';
+    android.appPackage = android.appPackage || 'org.jitsi.meet';
+    android.fDroidUrl = android.fDroidUrl || 'https://f-droid.org/packages/org.jitsi.meet/';
+    if (android.dynamicLink) {
+        android.dynamicLink.apn = android.dynamicLink.apn || 'org.jitsi.meet';
+        android.dynamicLink.appCode = android.dynamicLink.appCode || 'w2atb';
+        android.dynamicLink.ibi = android.dynamicLink.ibi || 'com.atlassian.JitsiMeet.ios';
+        android.dynamicLink.isi = android.dynamicLink.isi || '1165103905';
+    }
 }

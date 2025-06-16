@@ -4,7 +4,7 @@ import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED
 } from '../base/participants/actionTypes';
-import { Participant } from '../base/participants/types';
+import { IParticipant } from '../base/participants/types';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
@@ -48,7 +48,7 @@ export interface IAVModerationState {
  * @private
  * @returns {boolean} - Whether state instance was modified.
  */
-function _updatePendingParticipant(mediaType: MediaType, participant: Participant, state: IAVModerationState) {
+function _updatePendingParticipant(mediaType: MediaType, participant: IParticipant, state: IAVModerationState) {
     let arrayItemChanged = false;
     const storeKey = MEDIA_TYPE_TO_PENDING_STORE_KEY[mediaType];
     const arr = state[storeKey];

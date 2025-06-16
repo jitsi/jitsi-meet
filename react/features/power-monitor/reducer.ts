@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import { Transport } from '../../../modules/transport';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 import { set } from '../base/redux/functions';

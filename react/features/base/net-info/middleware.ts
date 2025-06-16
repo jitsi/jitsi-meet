@@ -1,7 +1,6 @@
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app/actionTypes';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
-// @ts-ignore
 import NetworkInfoService from './NetworkInfoService';
 import { _storeNetworkInfoCleanup, setNetworkInfo } from './actions';
 import { STORE_NAME } from './constants';
@@ -15,7 +14,6 @@ import type { NetworkInfo } from './types';
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-// eslint-disable-next-line no-unused-vars
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const result = next(action);
 
@@ -25,9 +23,12 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             const networkInfoService = new NetworkInfoService();
             const stop = () => {
                 networkInfoService.stop();
+
+                // @ts-ignore
                 networkInfoService.removeAllListeners();
             };
 
+            // @ts-ignore
             networkInfoService.addListener(
                 ONLINE_STATE_CHANGED_EVENT,
                 ({ isOnline, networkType, details }: NetworkInfo) => {

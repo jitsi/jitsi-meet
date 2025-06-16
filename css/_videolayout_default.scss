@@ -76,9 +76,42 @@
     }
 }
 
+.animatedFadeIn {
+    opacity: 0;
+    animation: fadeInAnimation 0.3s ease forwards;
+}
+
+@keyframes fadeInAnimation {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.animatedFadeOut {
+    opacity: 1;
+    animation: fadeOutAnimation 0.3s ease forwards;
+}
+
+@keyframes fadeOutAnimation {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
 #largeVideoContainer {
     height: 100%;
     width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0 !important;
 }
 
 #largeVideoWrapper {
@@ -156,7 +189,7 @@
         opacity: 0;
         display: inline-block;
         @include circle(5px);
-        background: $audioLevelShadow;
+        background: rgba(9, 36, 77, 0.9);
         margin: 1px 0 1px 0;
         transition: opacity .25s ease-in-out;
         -moz-transition: opacity .25s ease-in-out;
@@ -172,25 +205,8 @@
         border-radius: 50%;
         -webkit-filter: blur(0.5px);
         filter: blur(0.5px);
-        background: $audioLevelBg;
+        background: #44A5FF;
     }
-}
-
-#reloadPresentation {
-    display: none;
-    position: absolute;
-    color: #FFFFFF;
-    top: 0;
-    right:0;
-    padding: 10px 10px;
-    font-size: 11pt;
-    cursor: pointer;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 5px;
-    background-clip: padding-box;
-    -webkit-border-radius: 5px;
-    -webkit-background-clip: padding-box;
-    z-index: $reloadZ; /*The reload button should appear on top of the header!*/
 }
 
 #dominantSpeaker {
@@ -201,10 +217,6 @@
     position: relative;
     top: 50%;
     transform: translateY(-50%);
-}
-
-#mixedstream {
-    display:none !important;
 }
 
 #dominantSpeakerAvatarContainer,
@@ -254,10 +266,10 @@
     #avatarContainer {
         border-radius: 50%;
         display: inline-block;
-        height: 50vh;
-        margin-top: 25vh;
+        height: 50dvh;
+        margin-top: 25dvh;
         overflow: hidden;
-        width: 50vh;
+        width: 50dvh;
 
         #avatar {
             height: 100%;
@@ -274,11 +286,6 @@
     height: 100%;
     width: 100%;
     object-fit: cover;
-}
-
-.videoMessageFilter {
-    -webkit-filter: grayscale(.5) opacity(0.8);
-    filter: grayscale(.5) opacity(0.8);
 }
 
 #remotePresenceMessage,
@@ -332,7 +339,7 @@
 }
 
 .presence-label {
-    color: $participantNameColor;
+    color: #fff;
     font-size: 12px;
     font-weight: 100;
     left: 0;
