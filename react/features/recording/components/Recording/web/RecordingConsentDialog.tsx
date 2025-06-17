@@ -1,18 +1,12 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { batch, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../../app/types';
-import { hideDialog } from '../../../../base/dialog/actions';
 import { translateToHTML } from '../../../../base/i18n/functions';
-import {
-    setAudioMuted,
-    setAudioUnmutePermissions,
-    setVideoMuted,
-    setVideoUnmutePermissions
-} from '../../../../base/media/actions';
-import { VIDEO_MUTISM_AUTHORITY } from '../../../../base/media/constants';
 import Dialog from '../../../../base/ui/components/web/Dialog';
+import { grantRecordingConsent, grantRecordingConsentAndUnmute } from '../../../actions.web';
+
 
 /**
  * Component that renders the dialog for explicit consent for recordings.
@@ -26,21 +20,20 @@ export default function RecordingConsentDialog() {
     const { consentLearnMoreLink } = recordings ?? {};
     const learnMore = ` (<a href="${consentLearnMoreLink}" target="_blank" rel="noopener noreferrer">${t('dialog.learnMore')}</a>)`;
 
+    useEffect(() => {
+        APP.API.notifyRecordingConsentDialogOpen(true);
+
+        return () => {
+            APP.API.notifyRecordingConsentDialogOpen(false);
+        };
+    }, []);
+
     const consent = useCallback(() => {
-        batch(() => {
-            dispatch(setAudioUnmutePermissions(false, true));
-            dispatch(setVideoUnmutePermissions(false, true));
-        });
+        dispatch(grantRecordingConsent());
     }, []);
 
     const consentAndUnmute = useCallback(() => {
-        batch(() => {
-            dispatch(setAudioUnmutePermissions(false, true));
-            dispatch(setVideoUnmutePermissions(false, true));
-            dispatch(setAudioMuted(false, true));
-            dispatch(setVideoMuted(false, VIDEO_MUTISM_AUTHORITY.USER, true));
-            dispatch(hideDialog());
-        });
+        dispatch(grantRecordingConsentAndUnmute());
     }, []);
 
     return (
