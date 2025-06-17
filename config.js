@@ -511,7 +511,8 @@ var config = {
     //     // Note: Starting transcriptions from the recording dialog will still work.
     //     disableClosedCaptions: false,
 
-    //     // Whether to invite jigasi when backend transcriptions are enabled. By default, we invite it.
+    //     // Whether to invite jigasi when backend transcriptions are enabled (asyncTranscription is true in metadata).
+    //     // By default, we invite it.
     //     inviteJigasiOnBackendTranscribing: true,
     // },
 
