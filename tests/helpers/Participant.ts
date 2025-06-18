@@ -624,7 +624,7 @@ export class Participant {
                 const u = await this.driver.getUrl();
 
                 // trying to debug some failures of reporting not leaving, where we see the close page in screenshot
-                console.log(`initialUrl: ${current} currentUrl: ${u}`);
+                console.log(`${this.name} initialUrl: ${current} currentUrl: ${u}`);
 
                 return current !== u;
             },
