@@ -539,7 +539,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if test \"$PRODUCT_BUNDLE_IDENTIFIER\" = \"com.atlassian.JitsiMeet.ios\"; then\n    ENTITLEMENTS_PLIST=\"$PROJECT_DIR/app.entitlements\"\n    \n    /usr/libexec/PlistBuddy -c \"Add :com.apple.developer.avfoundation.multitasking-camera-access bool 1\" $ENTITLEMENTS_PLIST\nfi\n";
+			shellScript = "#if test \"$PRODUCT_BUNDLE_IDENTIFIER\" = \"com.atlassian.JitsiMeet.ios\"; then\n#    ENTITLEMENTS_PLIST=\"$PROJECT_DIR/app.entitlements\"\n#    \n#    /usr/libexec/PlistBuddy -c \"Add :com.apple.developer.avfoundation.multitasking-camera-access bool 1\" $ENTITLEMENTS_PLIST\n#fi\n";
 		};
 		69BC5020DBE393B56BD76636 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
