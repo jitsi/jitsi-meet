@@ -371,12 +371,6 @@ export function setConfigFromURLParams(
         logger.warn('Using liveStreaming config URL overwrite and/or LIVE_STREAMING_HELP_LINK interfaceConfig URL'
             + ' overwrite is deprecated. Please use liveStreaming from advanced branding!');
     }
-
-    if ('config.customToolbarButtons' in params) {
-        logger.warn('Using customToolbarButtons config URL overwrite is deprecated.'
-            + ' Please use liveStreaming from advanced branding!');
-    }
-
 }
 
 /* eslint-enable max-params */
