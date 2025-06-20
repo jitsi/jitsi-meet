@@ -23,6 +23,11 @@ export type IContext = {
 export type IJoinOptions = {
 
     /**
+     * Overwrites the base url set in the config.
+     */
+    baseUrl?: string;
+
+    /**
      * Config overwrites to use.
      */
     configOverwrite?: IConfig;
