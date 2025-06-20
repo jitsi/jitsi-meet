@@ -12,13 +12,7 @@ const JITSI_MEET_APPS = [
     'org.jitsi.meet',
 
     // Android debug app.
-    'org.jitsi.meet.debug',
-
-    // 8x8 Work (Android).
-    'org.vom8x8.sipua',
-
-    // 8x8 Work (iOS).
-    'com.yourcompany.Virtual-Office'
+    'org.jitsi.meet.debug'
 ];
 
 /**
