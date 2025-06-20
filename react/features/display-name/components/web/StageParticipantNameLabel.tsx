@@ -4,7 +4,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import { getParticipantDisplayName, isScreenShareParticipant } from '../../../base/participants/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { getVideospaceFloatingElementsBottomSpacing } from '../../../base/ui/functions.web';
 import { getLargeVideoParticipant } from '../../../large-video/functions';
 import {
@@ -38,8 +37,8 @@ const useStyles = makeStyles<IOptions, 'screenSharing'>()((theme, options: IOpti
         // the clientHeight will be 960px if there are some titlebars, toolbars, addressbars, etc visible.For any other
         // screen size we will decrease/increase the font size based on the screen size.
 
-        typography.fontSize = scaleFontProperty(clientHeight, getStageParticipantFontSizeRange(theme));
-        typography.lineHeight = getStageParticipantNameLabelLineHeight(theme, clientHeight);
+        typography.fontSize = `${scaleFontProperty(clientHeight, getStageParticipantFontSizeRange(theme))}rem`;
+        typography.lineHeight = `${getStageParticipantNameLabelLineHeight(theme, clientHeight)}rem`;
     }
 
     const toolbarVisibleTransitionProps = getTransitionParamsForElementsAboveToolbox(true);
@@ -53,7 +52,7 @@ const useStyles = makeStyles<IOptions, 'screenSharing'>()((theme, options: IOpti
 
     return {
         badgeContainer: {
-            ...withPixelLineHeight(typography),
+            ...typography,
             alignItems: 'center',
             display: 'inline-flex',
             justifyContent: 'center',

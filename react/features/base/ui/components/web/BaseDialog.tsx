@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { keyframes } from 'tss-react';
 import { makeStyles } from 'tss-react/mui';
 
-import { withPixelLineHeight } from '../../../styles/functions.web';
 import { isElementInTheViewport } from '../../functions.web';
 
 import { DialogTransitionContext } from './DialogTransition';
@@ -16,7 +15,7 @@ const useStyles = makeStyles()(theme => {
             height: '100%',
             position: 'fixed',
             color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.bodyLongRegular),
+            ...theme.typography.bodyLongRegular,
             top: 0,
             left: 0,
             display: 'flex',

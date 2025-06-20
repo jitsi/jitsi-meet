@@ -3,7 +3,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../icons/components/Icon';
 import { IconArrowDown } from '../../../icons/svg';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 
 interface IProps {
 
@@ -82,7 +81,7 @@ interface IProps {
 const useStyles = makeStyles()(theme => {
     return {
         actionButton: {
-            ...withPixelLineHeight(theme.typography.bodyLongBold),
+            ...theme.typography.bodyLongBold,
             borderRadius: theme.shape.borderRadius,
             boxSizing: 'border-box',
             color: theme.palette.text01,
@@ -115,7 +114,7 @@ const useStyles = makeStyles()(theme => {
 
             '&.text': {
                 width: 'auto',
-                fontSize: '13px',
+                fontSize: '0.875rem',
                 margin: '0',
                 padding: '0'
             },
@@ -135,7 +134,7 @@ const useStyles = makeStyles()(theme => {
 
 
             [theme.breakpoints.down(400)]: {
-                fontSize: 16,
+                fontSize: '1rem',
                 marginBottom: 8,
                 padding: '11px 16px'
             }

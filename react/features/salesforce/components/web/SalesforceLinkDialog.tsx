@@ -7,7 +7,6 @@ import { hideDialog } from '../../../base/dialog/actions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconSearch } from '../../../base/icons/svg';
 import { getFieldValue } from '../../../base/react/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Dialog from '../../../base/ui/components/web/Dialog';
 import Spinner from '../../../base/ui/components/web/Spinner';
 import { NOTES_MAX_LENGTH } from '../../constants';
@@ -36,7 +35,7 @@ const useStyles = makeStyles()(theme => {
             height: 20
         },
         resultLabel: {
-            fontSize: '15px',
+            fontSize: '1rem',
             margin: '16px 0 8px'
         },
         recordsSearch: {
@@ -50,7 +49,7 @@ const useStyles = makeStyles()(theme => {
             height: 40,
             '&::placeholder': {
                 color: theme.palette.text03,
-                ...withPixelLineHeight(theme.typography.bodyShortRegular)
+                ...theme.typography.bodyShortRegular
             }
         },
         spinner: {
@@ -107,7 +106,7 @@ const useStyles = makeStyles()(theme => {
             padding: '10px 0'
         },
         notes: {
-            lineHeight: '18px',
+            lineHeight: '1.125rem',
             minHeight: '130px',
             resize: 'vertical',
             width: '100%',
