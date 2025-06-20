@@ -19,23 +19,21 @@ if (process.env.HEADLESS === 'true') {
     ffArgs.push('--headless');
 }
 
-const ffExcludes = [
-    'specs/**/iFrameApi*.spec.ts', // FF does not support uploading files (uploadFile)
-
-    // FF does not support setting a file as mic input, no dominant speaker events
-    'specs/3way/activeSpeaker.spec.ts',
-    'specs/3way/startMuted.spec.ts', // bad audio levels
-    'specs/4way/desktopSharing.spec.ts',
-    'specs/4way/lastN.spec.ts',
-
-    // when unmuting a participant, we see the presence in debug logs imidiately,
-    // but for 15 seconds it is not received/processed by the client
-    // (also menu disappears after clicking one of the moderation option, does not happen manually)
-    'specs/3way/audioVideoModeration.spec.ts'
-];
-
 const mergedConfig = merge(defaultConfig, {
-    ffExcludes,
+    exclude: [
+        'specs/**/iFrameApi*.spec.ts', // FF does not support uploading files (uploadFile)
+
+        // FF does not support setting a file as mic input, no dominant speaker events
+        'specs/3way/activeSpeaker.spec.ts',
+        'specs/3way/startMuted.spec.ts', // bad audio levels
+        'specs/4way/desktopSharing.spec.ts',
+        'specs/4way/lastN.spec.ts',
+
+        // when unmuting a participant, we see the presence in debug logs imidiately,
+        // but for 15 seconds it is not received/processed by the client
+        // (also the menu disappears after clicking one of the moderation options, does not happen manually)
+        'specs/3way/audioVideoModeration.spec.ts'
+    ],
     capabilities: {
         p1: {
             capabilities: {
@@ -46,30 +44,6 @@ const mergedConfig = merge(defaultConfig, {
                     prefs: ffPreferences
                 },
                 acceptInsecureCerts: process.env.ALLOW_INSECURE_CERTS === 'true'
-            }
-        },
-        p2: {
-            capabilities: {
-                'wdio:exclude': [
-                    ...defaultConfig.capabilities.p2.capabilities['wdio:exclude'],
-                    ...ffExcludes
-                ]
-            }
-        },
-        p3: {
-            capabilities: {
-                'wdio:exclude': [
-                    ...defaultConfig.capabilities.p3.capabilities['wdio:exclude'],
-                    ...ffExcludes
-                ]
-            }
-        },
-        p4: {
-            capabilities: {
-                'wdio:exclude': [
-                    ...defaultConfig.capabilities.p4.capabilities['wdio:exclude'],
-                    ...ffExcludes
-                ]
             }
         }
     }
