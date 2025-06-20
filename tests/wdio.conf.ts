@@ -62,7 +62,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
     runner: 'local',
 
     specs: [
-        'specs/**'
+        'specs/**/*.spec.ts'
     ],
     maxInstances: parseInt(process.env.MAX_INSTANCES || '1', 10), // if changing check onWorkerStart logic
 
