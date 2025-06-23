@@ -1,8 +1,9 @@
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-import { DISPLAY_NAME_VERTICAL_PADDING } from './styles';
 import { remToPixels } from '../../../base/ui/functions.any';
+
+import { DISPLAY_NAME_VERTICAL_PADDING } from './styles';
 
 const useStyles = makeStyles()(theme => {
     const { text01 } = theme.palette;

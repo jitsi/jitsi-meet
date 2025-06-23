@@ -1,7 +1,7 @@
 import { DefaultTheme } from 'react-native-paper';
 
-import { createColorTokens } from './utils';
 import { remToPixels } from './functions.any';
+import { createColorTokens } from './utils';
 
 export * from './functions.any';
 

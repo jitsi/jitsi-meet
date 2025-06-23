@@ -2,7 +2,6 @@ import { StyleSheet } from 'react-native';
 
 import { ColorPalette } from '../../../styles/components/styles/ColorPalette';
 import { PRESENCE_AVAILABLE_COLOR, PRESENCE_AWAY_COLOR, PRESENCE_BUSY_COLOR, PRESENCE_IDLE_COLOR } from '../styles';
-import { pixelsToRem } from '../../../ui/functions.any';
 
 const DEFAULT_SIZE = 65;
 
@@ -71,7 +70,7 @@ export default {
     initialsText: (size: number = DEFAULT_SIZE) => {
         return {
             color: 'white',
-            fontSize: pixelsToRem(size * 0.45),
+            fontSize: size * 0.45,
             fontWeight: '100'
         };
     },
