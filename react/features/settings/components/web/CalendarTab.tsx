@@ -75,7 +75,7 @@ const styles = (theme: Theme) => {
             flexDirection: 'column' as const,
             alignItems: 'center',
             justifyContent: 'center',
-            textAlign: 'center',
+            textAlign: 'center' as const,
             minHeight: '100px',
             color: theme.palette.text01,
             ...theme.typography.bodyShortRegular

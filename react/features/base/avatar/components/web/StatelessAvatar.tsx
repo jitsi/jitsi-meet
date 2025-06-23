@@ -2,10 +2,10 @@ import React, { useCallback } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../icons/components/Icon';
+import { pixelsToRem } from '../../../ui/functions.any';
 import { isIcon } from '../../functions';
 import { IAvatarProps } from '../../types';
 import { PRESENCE_AVAILABLE_COLOR, PRESENCE_AWAY_COLOR, PRESENCE_BUSY_COLOR, PRESENCE_IDLE_COLOR } from '../styles';
-import { pixelsToRem } from '../../../ui/functions.any';
 
 interface IProps extends IAvatarProps {
 
