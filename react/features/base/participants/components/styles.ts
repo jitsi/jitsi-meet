@@ -1,5 +1,6 @@
 import { BoxModel } from '../../styles/components/styles/BoxModel';
 import { ColorPalette } from '../../styles/components/styles/ColorPalette';
+import { remToPixels } from '../../ui/functions.any';
 
 /**
  * The styles of the feature base/participants.
@@ -18,7 +19,7 @@ export default {
      */
     connectionInfoText: {
         color: ColorPalette.white,
-        fontSize: '0.75rem',
+        fontSize: remToPixels('0.75rem'),
         marginVertical: BoxModel.margin,
         marginHorizontal: BoxModel.margin,
         textAlign: 'center'

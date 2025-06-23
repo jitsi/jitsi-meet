@@ -19,6 +19,7 @@ import {
     getVirtualScreenshareParticipantTrack
 } from '../../../base/tracks/functions';
 import { ITrack } from '../../../base/tracks/types';
+import { pixelsToRem } from '../../../base/ui/functions.any';
 import {
     isTrackStreamingStatusInactive,
     isTrackStreamingStatusInterrupted
@@ -32,7 +33,6 @@ import AbstractConnectionIndicator, {
 
 import ConnectionIndicatorContent from './ConnectionIndicatorContent';
 import { ConnectionIndicatorIcon } from './ConnectionIndicatorIcon';
-import { pixelsToRem } from '../../../base/ui/functions.any';
 
 /**
  * An array of display configurations for the connection indicator and its bars.
