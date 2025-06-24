@@ -60,7 +60,7 @@ export function createMuiBrandingTheme(customTheme: Theme) {
     }
 
     for (const variant of Object.keys(newTypography)) {
-        convertTypographyToRem(newTypography[variant]);
+        convertTypographyToRem((newTypography as Record<string, any>)[variant]);
     }
 
     const newBreakpoints = { ...breakpoints };
