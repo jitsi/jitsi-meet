@@ -78,6 +78,8 @@ function process_set_affiliation(event)
         end
         occupant_session.granted_jitsi_meet_context_group_id = actor_session.jitsi_meet_context_group
             or actor_session.granted_jitsi_meet_context_group_id;
+        -- even if token and features are set we may want to re-send permissions
+        occupant_session.force_permissions_update = true;
     elseif previous_affiliation == 'owner' and ( affiliation == 'member' or affiliation == 'none' ) then
         occupant_session.granted_jitsi_meet_context_user_id = nil;
         occupant_session.granted_jitsi_meet_context_group_id = nil;
