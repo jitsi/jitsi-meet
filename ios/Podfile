@@ -77,6 +77,19 @@ target 'JitsiMeetSDKLite' do
 end
 
 post_install do |installer|
+  
+  # yoga/style/Style.h file not found issue
+  # https://github.com/facebook/react-native/issues/46208#issuecomment-2473406800
+
+  # Path to the Yoga headers in Private
+  private_yoga_headers = "#{installer.sandbox.root}/Headers/Private/Yoga"
+  # Path to the Yoga headers in Public
+  public_yoga_headers = "#{installer.sandbox.root}/Headers/Public/Yoga"
+
+  # Copy the Yoga headers from Private to Public
+  FileUtils.mkdir_p(public_yoga_headers) unless Dir.exist?(public_yoga_headers)
+  system("rsync -a #{private_yoga_headers}/ #{public_yoga_headers}")
+
   react_native_post_install(
     installer,
     use_native_modules![:reactNativePath],
@@ -99,4 +112,30 @@ post_install do |installer|
 
   # Patch SocketRocket to support TLS 1.3
   %x(patch Pods/SocketRocket/SocketRocket/SRSecurityPolicy.m -N < patches/ws-tls13.diff)
+
+  # 'folly/experimental/coro/Coroutine.h' file not found issue
+  # https://github.com/facebook/folly/issues/2297#issuecomment-2450007156
+  
+  # Modify RCT-Folly Portability.h to disable coroutines
+  Dir.glob(installer.sandbox.root + "RCT-Folly/folly/Portability.h") do |file|
+    begin
+      # First try to make the file writable
+      system "chmod +w #{file}"
+    
+      contents = File.read(file)
+      modified_contents = contents.gsub(/#define FOLLY_HAS_COROUTINES 1/, '#define FOLLY_HAS_COROUTINES 0')
+      
+      # Try writing with elevated privileges if needed
+      if !File.writable?(file)
+        system "sudo chmod +w #{file}"
+      end
+      
+      File.write(file, modified_contents)
+      
+      # Optionally restore original permissions
+      system "chmod -w #{file}"
+      rescue => e
+        Pod::UI.warn "Failed to modify Portability.h: #{e.message}"
+      end
+    end
 end
