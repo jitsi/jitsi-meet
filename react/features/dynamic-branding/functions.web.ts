@@ -40,6 +40,15 @@ export function createMuiBrandingTheme(customTheme: Theme) {
         overwriteRecurrsive(newTypography, customTypography);
     }
 
+    // Ensure all uniteless font values are converted to pixels
+    for (const variant of Object.keys(newTypography)) {
+        const style = newTypography[variant];
+
+        if (style && typeof style.lineHeight === 'number') {
+            style.lineHeight = `${style.lineHeight}px`;
+        }
+    }
+
     const newBreakpoints = { ...breakpoints };
 
     if (customBreakpoints) {
