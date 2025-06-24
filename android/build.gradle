@@ -10,7 +10,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'com.android.tools.build:gradle:8.1.4'
         classpath 'com.google.gms:google-services:4.4.0'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
     }
@@ -23,7 +23,7 @@ ext {
     minSdkVersion    = 26
     targetSdkVersion = 34
     supportLibVersion = "28.0.0"
-    ndkVersion = "26.1.10909125"
+    ndkVersion = "27.1.12297006"
 
     // The Maven artifact groupId of the third-party react-native modules which
     // Jitsi Meet SDK for Android depends on and which are not available in
@@ -42,7 +42,7 @@ ext {
     googleServicesEnabled = project.file('app/google-services.json').exists() && !libreBuild
 
     //React Native and Hermes Version
-    rnVersion = "0.75.5"
+    rnVersion = "0.77.2"
 }
 
 allprojects {
@@ -134,7 +134,7 @@ allprojects {
             project.version = "${json.version}-jitsi-${versionQualifierNumber}"
 
             task jitsiAndroidSourcesJar(type: Jar) {
-                classifier = 'sources'
+                archiveClassifier = 'sources'
                 from android.sourceSets.main.java.source
             }
 
@@ -195,6 +195,44 @@ subprojects { subproject ->
                 && rootProject.ext.has('buildToolsVersion')) {
             android {
                 buildToolsVersion rootProject.ext.buildToolsVersion
+
+                // Add Java version configuration for all subprojects
+                compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_1_8
+                    targetCompatibility JavaVersion.VERSION_1_8
+                }
+            }
+        }
+
+        // Problem is about namespace.
+        // Earlier versions of gradle, they removed namespace from AndroidManifest.xml and transfer to gradle file.
+        // Even your project's namespace is transferred to new system, some flutter plugins may not be updated to recent gradle versions.
+        if (project.hasProperty('android')) {
+            project.android {
+                if (namespace == null) {
+                    namespace project.group
+                }
+
+                // Enable buildConfig if it's not already configured.
+                buildFeatures {
+                    if (buildConfig == null) {
+                        buildConfig true
+                    }
+                }
+            }
+        }
+
+        // Remove package attribute from AndroidManifest.xml files in React Native modules
+        // to fix namespace issues with newer Android Gradle Plugin versions
+        if (project.name.startsWith('react-native-')) {
+            def manifestFile = project.file('src/main/AndroidManifest.xml')
+            if (manifestFile.exists()) {
+                def manifestText = manifestFile.text
+                if (manifestText.contains('package=')) {
+                    // Remove the package attribute from the manifest tag
+                    manifestText = manifestText.replaceAll(/package="[^"]*"/, '')
+                    manifestFile.text = manifestText
+                }
             }
         }
     }
