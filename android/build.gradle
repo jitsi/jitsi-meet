@@ -1,6 +1,7 @@
 import groovy.json.JsonSlurper
 import org.gradle.util.VersionNumber
 
+
 // Top-level build file where you can add configuration options common to all
 // sub-projects/modules.
 
@@ -10,6 +11,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24'
         classpath 'com.android.tools.build:gradle:8.1.4'
         classpath 'com.google.gms:google-services:4.4.0'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
@@ -193,22 +195,12 @@ subprojects { subproject ->
         if ((subproject.plugins.hasPlugin('android')
                     || subproject.plugins.hasPlugin('android-library'))
                 && rootProject.ext.has('buildToolsVersion')) {
+
             android {
                 buildToolsVersion rootProject.ext.buildToolsVersion
 
-                // Add Java version configuration for all subprojects
-                compileOptions {
-                    sourceCompatibility JavaVersion.VERSION_1_8
-                    targetCompatibility JavaVersion.VERSION_1_8
-                }
-            }
-        }
-
-        // Problem is about namespace.
-        // Earlier versions of gradle, they removed namespace from AndroidManifest.xml and transfer to gradle file.
-        // Even your project's namespace is transferred to new system, some flutter plugins may not be updated to recent gradle versions.
-        if (project.hasProperty('android')) {
-            project.android {
+                // Issue about namespace.
+                // In earlier versions of gradle, namespace got removed from AndroidManifest.xml and transferred to gradle file.
                 if (namespace == null) {
                     namespace project.group
                 }
@@ -222,8 +214,15 @@ subprojects { subproject ->
             }
         }
 
-        // Remove package attribute from AndroidManifest.xml files in React Native modules
-        // to fix namespace issues with newer Android Gradle Plugin versions
+        // Add Kotlin configuration for subprojects that use Kotlin
+        if (subproject.plugins.hasPlugin('kotlin-android')) {
+            subproject.kotlin {
+                jvmToolchain(17)
+            }
+        }
+
+        // Remove package attribute from AndroidManifest.xml files in React Native modules,
+        // fixes namespace issues with newer Android Gradle Plugin versions
         if (project.name.startsWith('react-native-')) {
             def manifestFile = project.file('src/main/AndroidManifest.xml')
             if (manifestFile.exists()) {
