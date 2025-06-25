@@ -265,3 +265,13 @@ export function isVisitorChatParticipant(
 ): participant is IVisitorChatParticipant {
     return Boolean(participant && 'isVisitor' in participant && participant.isVisitor === true);
 }
+
+/**
+ * Selector for whether reactions are disabled in chat.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean} True if reactions in chat are disabled.
+ */
+export function getDisableReactionsInChat(state: IReduxState): boolean {
+    return state['features/base/config']?.disableReactionsInChat === true;
+}
