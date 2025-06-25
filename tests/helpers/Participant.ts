@@ -300,7 +300,11 @@ export class Participant {
      */
     async waitForPageToLoad(): Promise<boolean> {
         return this.driver.waitUntil(
-            () => this.execute(() => document.readyState === 'complete'),
+            () => this.execute(() => {
+                console.log(`${new Date().toISOString()} document.readyState: ${document.readyState}`);
+
+                return document.readyState === 'complete';
+            }),
             {
                 timeout: 30_000, // 30 seconds
                 timeoutMsg: `Timeout waiting for Page Load Request to complete for ${this.name}.`
