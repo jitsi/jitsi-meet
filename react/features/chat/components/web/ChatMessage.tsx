@@ -150,10 +150,9 @@ const useStyles = makeStyles()((theme: Theme) => {
         timestamp: {
             ...withPixelLineHeight(theme.typography.labelRegular),
             color: theme.palette.text03,
-            marginTop: theme.spacing(1),
-            marginLeft: theme.spacing(1),
             whiteSpace: 'nowrap',
-            flexShrink: 0
+            flexShrink: 0,
+            marginLeft: 'auto'
         },
         reactionsPopover: {
             padding: theme.spacing(2),
@@ -185,6 +184,21 @@ const useStyles = makeStyles()((theme: Theme) => {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap'
+        },
+        messageContainer: {
+            display: 'flex',
+            flexDirection: 'column',
+            maxWidth: '100%'
+        },
+        messageFooter: {
+            display: 'flex',
+            alignItems: 'center',
+            marginTop: theme.spacing(0.5),
+            marginLeft: theme.spacing(1),
+            justifyContent: 'space-between'
+        },
+        reactionsContainer: {
+            marginRight: theme.spacing(2)
         }
     };
 });
@@ -344,39 +358,39 @@ const ChatMessage = ({
                             shouldDisplayChatMessageMenu = { shouldDisplayChatMessageMenu } />}
                     </div>
                 )}
-                <div
-                    className = { cx(
-                        'chatmessage',
-                        classes.chatMessage,
-                        type,
-                        message.privateMessage && 'privatemessage',
-                        message.lobbyChat && !knocking && 'lobbymessage'
-                    ) }>
-                    <div className = { classes.replyWrapper }>
-                        <div className = { cx('messagecontent', classes.messageContent) }>
-                            {showDisplayName && _renderDisplayName()}
-                            <div className = { cx('usermessage', classes.userMessage) }>
-                                <Message
-                                    screenReaderHelpText = { message.displayName === message.recipient
-                                        ? t<string>('chat.messageAccessibleTitleMe')
-                                        : t<string>('chat.messageAccessibleTitle', {
-                                            user: message.displayName
-                                        }) }
-                                    text = { getMessageText(message) } />
-                                {(message.privateMessage || (message.lobbyChat && !knocking))
-                                    && _renderPrivateNotice()}
-                                <div className = { classes.chatMessageFooter }>
-                                    <div className = { classes.chatMessageFooterLeft }>
-                                        {message.reactions && message.reactions.size > 0 && (
-                                            <>
-                                                {renderReactions}
-                                            </>
-                                        )}
-                                    </div>
-                                    {_renderTimestamp()}
+                <div className = { classes.messageContainer }>
+                    <div
+                        className = { cx(
+                            'chatmessage',
+                            classes.chatMessage,
+                            type,
+                            message.privateMessage && 'privatemessage',
+                            message.lobbyChat && !knocking && 'lobbymessage'
+                        ) }>
+                        <div className = { classes.replyWrapper }>
+                            <div className = { cx('messagecontent', classes.messageContent) }>
+                                {showDisplayName && _renderDisplayName()}
+                                <div className = { cx('usermessage', classes.userMessage) }>
+                                    <Message
+                                        screenReaderHelpText = { message.displayName === message.recipient
+                                            ? t<string>('chat.messageAccessibleTitleMe')
+                                            : t<string>('chat.messageAccessibleTitle', {
+                                                user: message.displayName
+                                            }) }
+                                        text = { getMessageText(message) } />
+                                    {(message.privateMessage || (message.lobbyChat && !knocking))
+                                        && _renderPrivateNotice()}
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div className = { classes.messageFooter }>
+                        {message.reactions && message.reactions.size > 0 && (
+                            <div className = { classes.reactionsContainer }>
+                                {renderReactions}
+                            </div>
+                        )}
+                        {_renderTimestamp()}
                     </div>
                 </div>
                 {shouldDisplayChatMessageMenu && (
