@@ -1,5 +1,6 @@
 import { throttle } from 'lodash-es';
 import React, { Component, RefObject } from 'react';
+import { ReactReduxContext } from 'react-redux';
 import { scrollIntoView } from 'seamless-scroll-polyfill';
 
 import { groupMessagesBySender } from '../../../base/util/messageGrouping';
@@ -38,6 +39,8 @@ interface IState {
  * @augments Component
  */
 export default class MessageContainer extends Component<IProps, IState> {
+    static override contextType = ReactReduxContext;
+
     /**
      * Component state used to decide when the hasNewMessages button to appear
      * and where to scroll when click on hasNewMessages button.
@@ -332,6 +335,10 @@ export default class MessageContainer extends Component<IProps, IState> {
      * @returns {Array<Array<Object>>}
      */
     _getMessagesGroupedBySender() {
-        return groupMessagesBySender(this.props.messages);
+        const store = this.context?.store;
+        const state = store.getState();
+        const { disableReactionsInChat } = state['features/base/config'];
+
+        return groupMessagesBySender(this.props.messages, disableReactionsInChat);
     }
 }

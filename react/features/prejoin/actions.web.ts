@@ -1,9 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { IStore } from '../app/types';
+import { LOGIN } from '../authentication/actionTypes';
 import { updateConfig } from '../base/config/actions';
 import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
 import { connect } from '../base/connection/actions';
+import { JWT_VALIDATION_ERRORS } from '../base/jwt/constants';
+import { validateJwt } from '../base/jwt/functions';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
 import { isVideoMutedByUser } from '../base/media/functions';
 import { updateSettings } from '../base/settings/actions';
@@ -36,9 +39,6 @@ import {
     isJoinByPhoneDialogVisible
 } from './functions.any';
 import logger from './logger';
-import { LOGIN } from '../authentication/actionTypes';
-import { validateJwt } from '../base/jwt/functions';
-import { JWT_VALIDATION_ERRORS } from '../base/jwt/constants';
 
 const dialOutStatusToKeyMap = {
     INITIATED: 'presenceStatus.calling',
