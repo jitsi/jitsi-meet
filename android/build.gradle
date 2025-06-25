@@ -1,7 +1,6 @@
 import groovy.json.JsonSlurper
 import org.gradle.util.VersionNumber
 
-
 // Top-level build file where you can add configuration options common to all
 // sub-projects/modules.
 
@@ -11,15 +10,15 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24'
-        classpath 'com.android.tools.build:gradle:8.1.4'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21'
+        classpath 'com.android.tools.build:gradle:8.3.2'
         classpath 'com.google.gms:google-services:4.4.0'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
     }
 }
 
 ext {
-    kotlinVersion = "1.9.24"
+    kotlinVersion = "2.0.21"
     buildToolsVersion = "34.0.0"
     compileSdkVersion = 34
     minSdkVersion    = 26
@@ -211,6 +210,12 @@ subprojects { subproject ->
                         buildConfig true
                     }
                 }
+
+                // Set JVM target across all subprojects
+                compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_17
+                    targetCompatibility JavaVersion.VERSION_17
+                }
             }
         }
 
@@ -218,6 +223,13 @@ subprojects { subproject ->
         if (subproject.plugins.hasPlugin('kotlin-android')) {
             subproject.kotlin {
                 jvmToolchain(17)
+            }
+
+            // Set Kotlin JVM target
+            subproject.android {
+                kotlinOptions {
+                    jvmTarget = '17'
+                }
             }
         }
 
