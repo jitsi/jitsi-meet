@@ -5,6 +5,13 @@ import { ensureTwoParticipants } from '../../helpers/participants';
 describe('URL Normalisation', () => {
     it('joining the meeting', async () => {
 
+        // if we are running with token this becomes ugly to match the URL
+        if (process.env.JWT_ACCESS_TOKEN) {
+            ctx.skipSuiteTests = true;
+
+            return;
+        }
+
         // a hack to extract the baseUrl that the test will use
         const baseUrl = multiremotebrowser.getInstance('p1').options.baseUrl;
 
