@@ -37,14 +37,13 @@ const PollsPane = ({ createMode, isCreatePollsDisabled, onCreate, setCreateMode,
             <div className = { classes.listContainer } >
                 <PollsList setCreateMode = { setCreateMode } />
             </div>
-            <div className = { classes.footer }>
+            { !isCreatePollsDisabled && <div className = { classes.footer }>
                 <Button
                     accessibilityLabel = { t('polls.create.create') }
-                    disabled = { isCreatePollsDisabled }
                     fullWidth = { true }
                     labelKey = { 'polls.create.create' }
                     onClick = { onCreate } />
-            </div>
+            </div>}
         </div>;
 };
 
