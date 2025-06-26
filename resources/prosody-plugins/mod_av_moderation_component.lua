@@ -91,7 +91,7 @@ function notify_whitelist_change(jid, moderators, room, mediaType, removed)
     body_json.mediaType = mediaType;
 
     -- sanitize, make sure we don't have an empty array as it will encode it as {} not as []
-    for _,mediaType in pairs({'audio', 'video'}) do
+    for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
         if body_json.whitelists[mediaType] and #body_json.whitelists[mediaType] == 0 then
             body_json.whitelists[mediaType] = nil;
         end
@@ -215,7 +215,7 @@ function on_message(event)
 
         local mediaType = moderation_command.attr.mediaType;
         if mediaType then
-            if mediaType ~= 'audio' and mediaType ~= 'video' then
+            if mediaType ~= 'audio' and mediaType ~= 'video' and mediaType ~= 'desktop' then
                 module:log('warn', 'Wrong mediaType %s for %s', mediaType, room.jid);
                 return false;
             end
@@ -335,7 +335,7 @@ function occupant_joined(event)
         and room:get_role(occupant.nick) == 'moderator' then
 
         if not room._data.av_can_unmute then
-            for _,mediaType in pairs({'audio', 'video'}) do
+            for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
                 start_av_moderation(room, mediaType, occupant);
 
                 notify_occupants_enable(nil, true, room, occupant.nick, mediaType);
@@ -347,7 +347,7 @@ function occupant_joined(event)
     end
 
     if room.av_moderation then
-        for _,mediaType in pairs({'audio', 'video'}) do
+        for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
             if room.av_moderation[mediaType] then
                 notify_occupants_enable(
                     occupant.jid, true, room, room.av_moderation_actors[mediaType], mediaType);
