@@ -447,7 +447,7 @@ const Chat = ({
      * @returns {ReactElement}
      */
     function renderTabs() {
-        const tabs = [
+        let tabs = [
             {
                 accessibilityLabel: t('chat.tabs.chat'),
                 countBadge:
@@ -486,6 +486,10 @@ const Chat = ({
                 controlsId: `${ChatTabs.FILE_SHARING}-panel`,
                 icon: IconShareDoc
             });
+        }
+
+        if (tabs.length === 1) {
+            tabs = [];
         }
 
         return (
