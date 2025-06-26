@@ -130,7 +130,7 @@ export default createStyleSheet({
      */
     notificationIcon: {
         color: 'white',
-        fontSize: 25
+        fontSize: '1.5rem'
     },
 
     /**
@@ -148,7 +148,7 @@ export default createStyleSheet({
      */
     notificationText: {
         color: 'white',
-        fontSize: 13
+        fontSize: '0.875rem'
     },
 
     /**

@@ -6,7 +6,6 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import Icon from '../../../base/icons/components/Icon';
 import { IconSubtitles } from '../../../base/icons/svg';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import { groupMessagesBySender } from '../../../base/util/messageGrouping';
 import { setRequestingSubtitles } from '../../../subtitles/actions.any';
@@ -67,7 +66,7 @@ const useStyles = makeStyles()(theme => {
             }
         },
         emptyState: {
-            ...withPixelLineHeight(theme.typography.bodyLongBold),
+            ...theme.typography.bodyLongBold,
             color: theme.palette.text02
         }
     };

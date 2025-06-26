@@ -62,86 +62,86 @@
          "weightSemiBold": "600"
       },
       "labelRegular": {
-         "fontSize": 12,
-         "lineHeight": 16,
+         "fontSize": "0.75rem",
+         "lineHeight": "1rem",
          "fontWeight": "400",
          "letterSpacing": 0.16
       },
       "labelBold": {
-         "fontSize": 12,
-         "lineHeight": 16,
+         "fontSize": "0.75rem",
+         "lineHeight": "1rem",
          "fontWeight": "600",
          "letterSpacing": 0.16
       },
       "bodyShortRegular": {
-         "fontSize": 14,
-         "lineHeight": 18,
+         "fontSize": "0.875rem",
+         "lineHeight": "1.125rem",
          "fontWeight": "400",
          "letterSpacing": 0
       },
       "bodyShortBold": {
-         "fontSize": 14,
-         "lineHeight": 18,
+         "fontSize": "0.875rem",
+         "lineHeight": "1.125rem",
          "fontWeight": "600",
          "letterSpacing": 0
       },
       "bodyShortRegularLarge": {
-         "fontSize": 16,
-         "lineHeight": 24,
+         "fontSize": "1rem",
+         "lineHeight": "1.5rem",
          "fontWeight": "400",
          "letterSpacing": 0
       },
       "bodyShortBoldLarge": {
-         "fontSize": 16,
-         "lineHeight": 24,
+         "fontSize": "1rem",
+         "lineHeight": "1.5rem",
          "fontWeight": "600",
          "letterSpacing": 0
       },
       "bodyLongRegular": {
-         "fontSize": 14,
-         "lineHeight": 24,
+         "fontSize": "0.875rem",
+         "lineHeight": "1.5rem",
          "fontWeight": "400",
          "letterSpacing": 0
       },
       "bodyLongBold": {
-         "fontSize": 14,
-         "lineHeight": 24,
+         "fontSize": "0.875rem",
+         "lineHeight": "1.5rem",
          "fontWeight": "600",
          "letterSpacing": 0
       },
       "heading1": {
-         "fontSize": 54,
-         "lineHeight": 64,
+         "fontSize": "3.375rem",
+         "lineHeight": "4rem",
          "fontWeight": "600",
          "letterSpacing": 0
       },
       "heading2": {
-         "fontSize": 42,
-         "lineHeight": 50,
+         "fontSize": "2.625rem",
+         "lineHeight": "3.125rem",
          "fontWeight": "600",
          "letterSpacing": 0
       },
       "heading3": {
-         "fontSize": 32,
-         "lineHeight": 40,
+         "fontSize": "2rem",
+         "lineHeight": "2.5rem",
          "fontWeight": "600",
          "letterSpacing": 0
       },
       "heading4": {
-         "fontSize": 28,
-         "lineHeight": 36,
+         "fontSize": "1.75rem",
+         "lineHeight": "2.25rem",
          "fontWeight": "600",
          "letterSpacing": 0
       },
       "heading5": {
-         "fontSize": 20,
-         "lineHeight": 28,
+         "fontSize": "1.25rem",
+         "lineHeight": "1.75rem",
          "fontWeight": "600",
          "letterSpacing": 0
       },
       "heading6": {
-         "fontSize": 16,
-         "lineHeight": 26,
+         "fontSize": "1rem",
+         "lineHeight": "1.625rem",
          "fontWeight": "600",
          "letterSpacing": 0
       }

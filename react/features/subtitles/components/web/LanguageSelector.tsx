@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Select from '../../../base/ui/components/web/Select';
 import { setRequestingSubtitles } from '../../actions.any';
 import { getAvailableSubtitlesLanguages } from '../../functions.any';
@@ -28,7 +27,7 @@ const useStyles = makeStyles()(theme => {
             minWidth: 200
         },
         label: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: theme.palette.text01,
             whiteSpace: 'nowrap'
         }
