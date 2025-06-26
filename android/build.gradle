@@ -44,6 +44,11 @@ ext {
 
     //React Native and Hermes Version
     rnVersion = "0.77.2"
+
+    // Java dependencies
+    javaVersion = JavaVersion.VERSION_17
+    jvmToolchainVersion = 17
+    jvmTargetVersion = '17'
 }
 
 allprojects {
@@ -232,8 +237,8 @@ subprojects { subproject ->
 
                 // Set JVM target across all subprojects
                 compileOptions {
-                    sourceCompatibility JavaVersion.VERSION_17
-                    targetCompatibility JavaVersion.VERSION_17
+                    sourceCompatibility rootProject.ext.javaVersion
+                    targetCompatibility rootProject.ext.javaVersion
                 }
             }
         }
@@ -241,13 +246,13 @@ subprojects { subproject ->
         // Add Kotlin configuration for subprojects that use Kotlin
         if (subproject.plugins.hasPlugin('kotlin-android')) {
             subproject.kotlin {
-                jvmToolchain(17)
+                jvmToolchain(rootProject.ext.jvmToolchainVersion)
             }
 
             // Set Kotlin JVM target
             subproject.android {
                 kotlinOptions {
-                    jvmTarget = '17'
+                    jvmTarget = rootProject.ext.jvmTargetVersion
                 }
             }
         }
