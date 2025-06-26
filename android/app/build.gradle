@@ -67,16 +67,16 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility rootProject.ext.javaVersion
+        targetCompatibility rootProject.ext.javaVersion
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17
+        jvmTarget = rootProject.ext.jvmTargetVersion
     }
 
     kotlin {
-        jvmToolchain(17)
+        jvmToolchain(rootProject.ext.jvmToolchainVersion)
     }
 
     namespace 'org.jitsi.meet'
@@ -190,12 +190,12 @@ subprojects { subproject ->
                 buildToolsVersion rootProject.ext.buildToolsVersion
 
                 compileOptions {
-                    sourceCompatibility JavaVersion.VERSION_17
-                    targetCompatibility JavaVersion.VERSION_17
+                    sourceCompatibility rootProject.ext.javaVersion
+                    targetCompatibility rootProject.ext.javaVersion
                 }
 
                 kotlinOptions {
-                    jvmTarget = '17'
+                    jvmTarget = rootProject.ext.jvmTargetVersion
                 }
             }
         }

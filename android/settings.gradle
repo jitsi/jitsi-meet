@@ -1,7 +1,3 @@
-// Commented out because I don't see any use for it and build throws
-// Package 'jitsi-meet' from AndroidManifest.xml is not a valid Java package name as 'jitsi-meet' is not a valid Java identifier.
-// rootProject.name = 'jitsi-meet'
-
 include ':app', ':sdk'
 
 include ':react-native-amplitude'
