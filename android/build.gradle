@@ -19,10 +19,10 @@ buildscript {
 
 ext {
     kotlinVersion = "2.0.21"
-    buildToolsVersion = "34.0.0"
-    compileSdkVersion = 34
+    buildToolsVersion = "35.0.0"
+    compileSdkVersion = 35
     minSdkVersion    = 26
-    targetSdkVersion = 34
+    targetSdkVersion = 35
     supportLibVersion = "28.0.0"
     ndkVersion = "27.1.12297006"
 
@@ -198,15 +198,34 @@ subprojects { subproject ->
             android {
                 buildToolsVersion rootProject.ext.buildToolsVersion
 
-                // Issue about namespace.
-                // In earlier versions of gradle, namespace got removed from AndroidManifest.xml and transferred to gradle file.
-                if (namespace == null) {
-                    namespace project.group
+                // Automatically detect namespace from Java package structure
+                def javaSrcDir = new File(subproject.projectDir, 'src/main/java')
+                def detectedNamespace = null
+
+                if (javaSrcDir.exists()) {
+                    def javaFiles = fileTree(javaSrcDir).include('**/*.java')
+                    if (!javaFiles.isEmpty()) {
+                        def firstJavaFile = javaFiles.first()
+                        def relativePath = firstJavaFile.path.substring(javaSrcDir.path.length() + 1)
+                        def packagePath = relativePath.substring(0, relativePath.lastIndexOf('/'))
+                        detectedNamespace = packagePath.replace('/', '.')
+                    }
                 }
 
-                // Enable buildConfig if it's not already configured.
+                // Set namespace if not already set and we detected one
+                if (!android.hasProperty('namespace') || android.namespace == null) {
+                    if (detectedNamespace != null) {
+                        android.namespace = detectedNamespace
+                    } else if (project.group != null && project.group != '') {
+                        android.namespace = project.group
+                    } else {
+                        android.namespace = "com.${subproject.name.replaceAll('-', '_')}"
+                    }
+                }
+
+                // Only enable buildConfig if namespace is set
                 buildFeatures {
-                    if (buildConfig == null) {
+                    if (android.namespace != null) {
                         buildConfig true
                     }
                 }
@@ -235,7 +254,7 @@ subprojects { subproject ->
 
         // Remove package attribute from AndroidManifest.xml files in React Native modules,
         // fixes namespace issues with newer Android Gradle Plugin versions
-        if (project.name.startsWith('react-native-')) {
+        if (subproject.name.startsWith('react-native-')) {
             def manifestFile = project.file('src/main/AndroidManifest.xml')
             if (manifestFile.exists()) {
                 def manifestText = manifestFile.text
