@@ -5,7 +5,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { getParticipantDisplayName } from '../../../base/participants/functions';
+import { getParticipantById, getParticipantDisplayName, isPrivateChatEnabled } from '../../../base/participants/functions';
 import Popover from '../../../base/popover/components/Popover.web';
 import Message from '../../../base/react/components/web/Message';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
@@ -412,10 +412,12 @@ const ChatMessage = ({
  */
 function _mapStateToProps(state: IReduxState, { message }: IProps) {
     const { knocking } = state['features/lobby'];
-    const localParticipantId = state['features/base/participants'].local?.id;
+
+    const participant = getParticipantById(state, message.participantId);
+    const enablePrivateChat = isPrivateChatEnabled(participant, state);
 
     return {
-        shouldDisplayChatMessageMenu: message.participantId !== localParticipantId,
+        shouldDisplayChatMessageMenu: enablePrivateChat,
         knocking,
         state
     };

@@ -552,7 +552,7 @@ export interface IConfig {
         disableDemote?: boolean;
         disableGrantModerator?: boolean;
         disableKick?: boolean;
-        disablePrivateChat?: boolean;
+        disablePrivateChat?: 'all' | 'allow-moderator-chat';
         disabled?: boolean;
     };
     replaceParticipant?: string;
