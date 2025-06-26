@@ -83,7 +83,7 @@ dependencies {
     implementation project(':react-native-screens')
     implementation project(':react-native-slider')
     implementation project(':react-native-sound')
-    implementation project(':react-native-splash-screen')
+    implementation project(':react-native-splash-view')
     implementation project(':react-native-svg')
     implementation project(':react-native-video')
     implementation project(':react-native-webview')
