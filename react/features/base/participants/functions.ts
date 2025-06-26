@@ -823,3 +823,25 @@ export const setShareDialogVisiblity = (addPeopleFeatureEnabled: boolean, dispat
         dispatch(toggleShareDialog(true));
     }
 };
+
+/**
+ * Checks if private chat is enabled for the given participant.
+ *
+ * @param {IParticipant|undefined} participant - The participant to check.
+ * @param {IReduxState} state - The Redux state.
+ * @returns {boolean} - True if private chat is enabled, false otherwise.
+ */
+export function isPrivateChatEnabled(participant: IParticipant | undefined, state: IReduxState) {
+    const { remoteVideoMenu = {} } = state['features/base/config'];
+    const { disablePrivateChat } = remoteVideoMenu;
+
+    if (participant?.local || state['features/visitors'].iAmVisitor || disablePrivateChat === 'all') {
+        return false;
+    }
+
+    if (disablePrivateChat === 'allow-moderator-chat') {
+        return isLocalParticipantModerator(state) || isParticipantModerator(participant);
+    }
+
+    return !disablePrivateChat;
+}

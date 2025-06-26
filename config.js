@@ -1360,8 +1360,9 @@ var config = {
     //     disableKick: true,
     //     // If set to true the 'Grant moderator' button will be disabled.
     //     disableGrantModerator: true,
-    //     // If set to true the 'Send private message' button will be disabled.
-    //     disablePrivateChat: true,
+    //     // If set to 'all' the 'Private chat' button will be disabled for all participants.
+    //     // If set to 'allow-moderator-chat' the 'Private chat' button will be available for chats with moderators.
+    //     disablePrivateChat: 'all' | 'allow-moderator-chat',
     // },
 
 

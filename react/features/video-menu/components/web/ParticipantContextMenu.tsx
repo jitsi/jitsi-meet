@@ -9,7 +9,7 @@ import Avatar from '../../../base/avatar/components/Avatar';
 import { isIosMobileBrowser, isMobileBrowser } from '../../../base/environment/utils';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
-import { getLocalParticipant, hasRaisedHand } from '../../../base/participants/functions';
+import { getLocalParticipant, hasRaisedHand, isPrivateChatEnabled } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
 import { isParticipantAudioMuted, isParticipantVideoMuted } from '../../../base/tracks/functions.any';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
@@ -24,7 +24,6 @@ import { getQuickActionButtonType, isForceMuted } from '../../../participants-pa
 import { requestRemoteControl, stopController } from '../../../remote-control/actions';
 import { getParticipantMenuButtonsWithNotifyClick, showOverflowDrawer } from '../../../toolbox/functions.web';
 import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
-import { iAmVisitor } from '../../../visitors/functions';
 import { PARTICIPANT_MENU_BUTTONS as BUTTONS } from '../../constants';
 
 import AskToUnmuteButton from './AskToUnmuteButton';
@@ -141,9 +140,8 @@ const ParticipantContextMenu = ({
     const _overflowDrawer: boolean = useSelector(showOverflowDrawer);
     const { remoteVideoMenu = {}, disableRemoteMute, startSilent, customParticipantMenuButtons }
         = useSelector((state: IReduxState) => state['features/base/config']);
-    const visitorsMode = useSelector((state: IReduxState) => iAmVisitor(state));
     const visitorsSupported = useSelector((state: IReduxState) => state['features/visitors'].supported);
-    const { disableDemote, disableKick, disableGrantModerator, disablePrivateChat } = remoteVideoMenu;
+    const { disableDemote, disableKick, disableGrantModerator } = remoteVideoMenu;
     const { participantsVolume } = useSelector((state: IReduxState) => state['features/filmstrip']);
     const _volume = (participant?.local ?? true ? undefined
         : participant?.id ? participantsVolume[participant?.id] : undefined) ?? 1;
@@ -153,6 +151,7 @@ const ParticipantContextMenu = ({
     const stageFilmstrip = useSelector(isStageFilmstripAvailable);
     const shouldDisplayVerification = useSelector((state: IReduxState) => displayVerification(state, participant?.id));
     const buttonsWithNotifyClick = useSelector(getParticipantMenuButtonsWithNotifyClick);
+    const enablePrivateChat = useSelector((state: IReduxState) => isPrivateChatEnabled(participant, state));
 
     const _currentRoomId = useSelector(getCurrentRoomId);
     const _rooms: IRoom[] = Object.values(useSelector(getBreakoutRooms));
@@ -268,7 +267,7 @@ const ParticipantContextMenu = ({
         buttons2.push(<TogglePinToStageButton { ...getButtonProps(BUTTONS.PIN_TO_STAGE) } />);
     }
 
-    if (!disablePrivateChat && !visitorsMode) {
+    if (enablePrivateChat) {
         buttons2.push(<PrivateMessageMenuButton { ...getButtonProps(BUTTONS.PRIVATE_MESSAGE) } />);
     }
 
