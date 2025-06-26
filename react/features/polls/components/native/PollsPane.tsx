@@ -56,14 +56,13 @@ const PollsPane = (props: AbstractProps) => {
                     ? <PollCreate setCreateMode = { setCreateMode } />
                     : <>
                         <PollsList setCreateMode = { setCreateMode } />
-                        <Button
+                        {!isCreatePollsDisabled && <Button
                             accessibilityLabel = 'polls.create.create'
-                            disabled = { isCreatePollsDisabled }
                             id = { t('polls.create.create') }
                             labelKey = 'polls.create.create'
                             onClick = { onCreate }
                             style = { createPollButtonStyles }
-                            type = { BUTTON_TYPES.PRIMARY } />
+                            type = { BUTTON_TYPES.PRIMARY } />}
                     </>
             }
         </JitsiScreen>

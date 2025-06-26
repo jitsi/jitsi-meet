@@ -948,7 +948,7 @@
         },
         "results": {
             "changeVote": "Change vote",
-            "empty": "There are no polls in the meeting yet. Start a poll here!",
+            "empty": "There are no polls in the meeting yet.",
             "hideDetailedResults": "Hide details",
             "showDetailedResults": "Show details",
             "vote": "Vote"
