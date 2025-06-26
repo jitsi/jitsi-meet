@@ -154,3 +154,38 @@ android.libraryVariants.all { def variant ->
         }
     }
 }
+
+
+afterEvaluate{
+    if ((subproject.plugins.hasPlugin('android')
+                || subproject.plugins.hasPlugin('android-library'))
+            && rootProject.ext.has('buildToolsVersion')) {
+        android {
+            buildToolsVersion rootProject.ext.buildToolsVersion
+
+            compileOptions {
+                sourceCompatibility rootProject.ext.javaVersion
+                targetCompatibility rootProject.ext.javaVersion
+            }
+
+            kotlinOptions {
+                jvmTarget = rootProject.ext.jvmTargetVersion
+            }
+        }
+    }
+
+    // Remove package attribute from AndroidManifest.xml files in React Native modules,
+    // fixes namespace issues with newer Android Gradle Plugin versions
+    if (subproject.name.startsWith('react-native-')) {
+        def manifestFile = project.file('src/main/AndroidManifest.xml')
+        if (manifestFile.exists()) {
+            def manifestText = manifestFile.text
+            if (manifestText.contains('package=')) {
+                // Remove the package attribute from the manifest tag
+                manifestText = manifestText.replaceAll(/package="[^"]*"/, '')
+                manifestFile.text = manifestText
+            }
+        }
+    }
+}
+
