@@ -3,8 +3,8 @@ import { Identify } from '@amplitude/analytics-core';
 import logger from '../logger';
 
 import AbstractHandler, { IEvent } from './AbstractHandler';
-import { fixDeviceID } from './amplitude/fixDeviceID';
-import amplitude from './amplitude/lib';
+import { fixDeviceID } from './amplitude/fixDeviceID.native';
+import amplitude from './amplitude/lib.native';
 
 /**
  * Analytics handler for Amplitude.
@@ -81,11 +81,11 @@ export default class AmplitudeHandler extends AbstractHandler {
         if (this._enabled) {
             const identify = new Identify();
 
+            // Set all properties
             Object.entries(userProps).forEach(([ key, value ]) => {
-                if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' || Array.isArray(value)) {
-                    identify.set(key, value as any);
-                }
+                identify.set(key, value as any);
             });
+
             amplitude.identify(identify);
         }
     }
