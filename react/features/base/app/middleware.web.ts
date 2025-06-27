@@ -24,20 +24,17 @@ MiddlewareRegistry.register(() => (next: Function) => (action: AnyAction) => {
     case APP_WILL_MOUNT: {
         // Disable it inside an iframe until Google fixes the origin trial for 3rd party sources:
         // https://bugs.chromium.org/p/chromium/issues/detail?id=1504167
-        if (!isEmbedded() && 'PressureObserver' in globalThis) {
+        if (!isEmbedded() && 'PressureObserver' in window) {
             pressureObserver = new window.PressureObserver(
                     (records: typeof window.PressureRecord) => {
                         logger.info('Compute pressure state changed:', JSON.stringify(records));
-                        if (typeof APP !== 'undefined') {
-                            APP.API.notifyComputePressureChanged(records);
-                        }
-                    },
-                    { sampleRate: 1 }
+                        APP.API.notifyComputePressureChanged(records);
+                    }
             );
 
             try {
                 pressureObserver
-                    .observe('cpu')
+                    .observe('cpu', { sampleInterval: 30_000 })
                     .catch((e: any) => logger.error('CPU pressure observer failed to start', e));
             } catch (e: any) {
                 logger.error('CPU pressure observer failed to start', e);
