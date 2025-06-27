@@ -83,7 +83,7 @@ dependencies {
     implementation project(':react-native-screens')
     implementation project(':react-native-slider')
     implementation project(':react-native-sound')
-    implementation project(':react-native-splash-screen')
+    implementation project(':react-native-splash-view')
     implementation project(':react-native-svg')
     implementation project(':react-native-video')
     implementation project(':react-native-webview')
@@ -149,6 +149,15 @@ android.libraryVariants.all { def variant ->
 
         // Disable bundling on dev builds
         enabled !devEnabled
+    }
+
+    // Add explicit dependencies on react-native-amplitude tasks to fix Gradle validation errors
+    if (!rootProject.ext.libreBuild) {
+        currentBundleTask.dependsOn(":react-native-amplitude:compile${targetName}JavaWithJavac")
+        currentBundleTask.dependsOn(":react-native-amplitude:package${targetName}Resources")
+        currentBundleTask.dependsOn(":react-native-amplitude:generate${targetName}ResValues")
+        currentBundleTask.dependsOn(":react-native-amplitude:generate${targetName}BuildConfig")
+        currentBundleTask.dependsOn(":react-native-amplitude:process${targetName}Manifest")
     }
 
     currentBundleTask.ext.generatedResFolders = files(resourcesDir).builtBy(currentBundleTask)
