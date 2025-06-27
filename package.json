@@ -16,6 +16,7 @@
   "author": "",
   "readmeFilename": "README.md",
   "dependencies": {
+    "@amplitude/analytics-browser": "2.17.12",
     "@amplitude/analytics-react-native": "1.4.13",
     "@braintree/sanitize-url": "7.0.0",
     "@emotion/react": "11.10.6",
@@ -30,7 +31,7 @@
     "@matrix-org/olm": "https://gitlab.matrix.org/api/v4/projects/27/packages/npm/@matrix-org/olm/-/@matrix-org/olm-3.2.3.tgz",
     "@microsoft/microsoft-graph-client": "3.0.1",
     "@mui/material": "5.12.1",
-    "@react-native-async-storage/async-storage": "1.23.1",
+    "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-clipboard/clipboard": "1.14.3",
     "@react-native-community/netinfo": "11.1.0",
     "@react-native-community/slider": "4.4.3",
