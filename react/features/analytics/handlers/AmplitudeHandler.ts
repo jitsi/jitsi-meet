@@ -39,7 +39,6 @@ export default class AmplitudeHandler extends AbstractHandler {
 
         // Forces sending all events on exit (flushing) via sendBeacon
         const onExitPage = () => {
-            // @ts-ignore
             amplitude.flush();
         };
 
