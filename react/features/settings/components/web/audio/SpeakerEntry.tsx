@@ -135,39 +135,38 @@ const SpeakerEntry = (props: IProps) => {
     }
 
     const { children, isSelected, index, length } = props;
+    const testLabel = 'Test';
 
     /* eslint-disable react/jsx-no-bind */
     return (
-        <span
+        <li
+            aria-checked = { isSelected }
+            aria-label = { children }
+            aria-posinset = { index + 1 } // Add one to offset the 0 based index.
+            aria-setsize = { length }
             className = { classes.container }
-            role = 'presentation'>
-            <li
-                aria-checked = { isSelected }
-                aria-posinset = { index + 1 } // Add one to offset the 0 based index.
-                aria-setsize = { length }
-                onClick = { _onClick }
-                onKeyPress = { _onKeyPress }
-                role = 'radio'
-                tabIndex = { 0 }>
-                <ContextMenuItem
-                    accessibilityLabel = { children }
-                    icon = { isSelected ? IconCheck : undefined }
-                    overflowType = { TEXT_OVERFLOW_TYPES.SCROLL_ON_HOVER }
-                    selected = { isSelected }
-                    text = { children }
-                    textClassName = { cx(classes.entryText, 'entryText', !isSelected && 'left-margin') } />
-                <audio
-                    preload = 'auto'
-                    ref = { audioRef }
-                    src = { TEST_SOUND_PATH } />
-            </li>
+            onClick = { _onClick }
+            onKeyPress = { _onKeyPress }
+            role = 'menuitemradio'
+            tabIndex = { 0 }>
+            <ContextMenuItem
+                icon = { isSelected ? IconCheck : undefined }
+                overflowType = { TEXT_OVERFLOW_TYPES.SCROLL_ON_HOVER }
+                selected = { isSelected }
+                text = { children }
+                textClassName = { cx(classes.entryText, 'entryText', !isSelected && 'left-margin') } />
+            <audio
+                preload = 'auto'
+                ref = { audioRef }
+                src = { TEST_SOUND_PATH } />
             <Button
+                accessibilityLabel = { `${testLabel} ${children}` }
                 className = { cx(classes.testButton, 'testButton') }
-                label = 'Test'
+                label = { testLabel }
                 onClick = { _onTestButtonClick }
                 onKeyPress = { _onTestButtonClick }
                 type = { BUTTON_TYPES.SECONDARY } />
-        </span>
+        </li>
     );
 };
 
