@@ -130,9 +130,9 @@ PODS:
     - AppAuth/Core (~> 1.7)
     - GTMSessionFetcher/Core (< 4.0, >= 3.3)
   - GTMSessionFetcher/Core (3.5.0)
-  - hermes-engine (0.75.5):
-    - hermes-engine/Pre-built (= 0.75.5)
-  - hermes-engine/Pre-built (0.75.5)
+  - hermes-engine (0.77.2):
+    - hermes-engine/Pre-built (= 0.77.2)
+  - hermes-engine/Pre-built (0.77.2)
   - JitsiWebRTC (124.0.2)
   - libwebp (1.5.0):
     - libwebp/demux (= 1.5.0)
@@ -153,8 +153,6 @@ PODS:
   - nanopb/encode (2.30908.0)
   - ObjectiveDropboxOfficial (6.2.3)
   - PromisesObjC (2.4.0)
-  - PromisesSwift (2.4.0):
-    - PromisesObjC (= 2.4.0)
   - RCT-Folly (2024.11.18.00):
     - boost
     - DoubleConversion
@@ -1540,14 +1538,71 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-splash-screen (3.3.0):
+  - react-native-video (6.13.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
-  - react-native-video (6.0.0-alpha.11):
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - react-native-video/Video (= 6.13.0)
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
+  - react-native-video/Fabric (6.13.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
-    - react-native-video/Video (= 6.0.0-alpha.11)
-  - react-native-video/Video (6.0.0-alpha.11):
-    - PromisesSwift
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
+  - react-native-video/Video (6.13.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - react-native-video/Fabric
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-webrtc (124.0.4):
     - JitsiWebRTC (~> 124.0.0)
     - React-Core
@@ -1983,7 +2038,7 @@ PODS:
     - RNSound/Core (= 0.11.2)
   - RNSound/Core (0.11.2):
     - React-Core
-  - RNSVG (15.12.0):
+  - RNSVG (15.11.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2003,9 +2058,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNSVG/common (= 15.12.0)
+    - RNSVG/common (= 15.11.2)
     - Yoga
-  - RNSVG/common (15.12.0):
+  - RNSVG/common (15.11.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2029,6 +2084,27 @@ PODS:
   - RNWatch (1.1.0):
     - React
   - SocketRocket (0.7.1)
+  - SplashView (0.0.18):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -2085,7 +2161,6 @@ DEPENDENCIES:
   - react-native-performance (from `../node_modules/react-native-performance`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
-  - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-video (from `../node_modules/react-native-video`)
   - react-native-webrtc (from `../node_modules/react-native-webrtc`)
   - react-native-webview (from `../node_modules/react-native-webview`)
@@ -2129,6 +2204,7 @@ DEPENDENCIES:
   - RNSound (from `../node_modules/react-native-sound`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNWatch (from `../node_modules/react-native-watch-connectivity`)
+  - SplashView (from `../node_modules/react-native-splash-view`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -2153,7 +2229,6 @@ SPEC REPOS:
     - nanopb
     - ObjectiveDropboxOfficial
     - PromisesObjC
-    - PromisesSwift
     - SocketRocket
 
 EXTERNAL SOURCES:
@@ -2252,8 +2327,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-slider:
     :path: "../node_modules/@react-native-community/slider"
-  react-native-splash-screen:
-    :path: "../node_modules/react-native-splash-screen"
   react-native-video:
     :path: "../node_modules/react-native-video"
   react-native-webrtc:
@@ -2340,13 +2413,15 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-svg"
   RNWatch:
     :path: "../node_modules/react-native-watch-connectivity"
+  SplashView:
+    :path: "../node_modules/react-native-splash-view"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
   amplitude-react-native: d0039a3ce502eb441ba818af1b8c8ba710ef16e7
   AppAuth: d4f13a8fe0baf391b2108511793e4b479691fb73
-  boost: 4cb898d0bf20404aab1850c656dcea009429d6c1
+  boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
   CocoaLumberjack: 543c79c114dadc3b1aba95641d8738b06b05b646
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
@@ -2367,13 +2442,12 @@ SPEC CHECKSUMS:
   GoogleUtilities: ea963c370a38a8069cc5f7ba4ca849a60b6d7d15
   GTMAppAuth: f69bd07d68cd3b766125f7e072c45d7340dea0de
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
-  hermes-engine: c9fe5870af65876125fdbbf833071b6f329db30d
+  hermes-engine: 8eb265241fa1d7095d3a40d51fd90f7dce68217c
   JitsiWebRTC: b47805ab5668be38e7ee60e2258f49badfe8e1d0
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   ObjectiveDropboxOfficial: fe206ce8c0bc49976c249d472db7fdbc53ebbd53
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
-  PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
   RCT-Folly: e78785aa9ba2ed998ea4151e314036f6c49e6d82
   RCTDeprecation: 85b72250b63cfb54f29ca96ceb108cb9ef3c2079
   RCTRequired: 567cb8f5d42b990331bfd93faad1d8999b1c1736
@@ -2412,8 +2486,7 @@ SPEC CHECKSUMS:
   react-native-performance: 0749722f8f1ee951066153a661f6c41febe898d7
   react-native-safe-area-context: afcc2e2b3e78ae8ef90d81e658aacee34ebc27ea
   react-native-slider: bb7eb4732940fab78217e1c096bb647d8b0d1cf3
-  react-native-splash-screen: 95994222cc95c236bd3cdc59fe45ed5f27969594
-  react-native-video: 2259c0828a2c78ce2e32e761ab1a38f765aa0dda
+  react-native-video: d5047e417227b0c3bc9c2be83ec70d7103c08335
   react-native-webrtc: 2261a482150195092246fe70b3aff976f2e11ec5
   react-native-webview: 5095dd03fc98a529e44a6bb81aed21062b5f879e
   React-nativeconfig: ecf4dc92c40b97e2b3f0c619938f78bfd6507b08
@@ -2454,9 +2527,10 @@ SPEC CHECKSUMS:
   RNGoogleSignin: 30e1aee80140dc0706cd78a4951c411376c88329
   RNScreens: 8aec64fb213fd52a64445e2e470f7a9b546c5df3
   RNSound: 314cc5226453ef4a3314a196c65e8a65e5106a7b
-  RNSVG: 85f373e6a24cf79a882d4809f3633946ed9facb8
+  RNSVG: 877cd57c2db63dc9f1fd1bbb5e95506ccd481df6
   RNWatch: 28fe1f5e0c6410d45fd20925f4796fce05522e3f
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
+  SplashView: 0d39548ddc5e8b2f7ba571f20865820810961973
   Yoga: 31a098f74c16780569aebd614a0f37a907de0189
 
 PODFILE CHECKSUM: ee679aeb6851d238c60a66636f6af4d2eb807127
