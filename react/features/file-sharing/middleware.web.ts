@@ -215,7 +215,7 @@ function uploadFile(file: File, store: IStore, token: string): void {
         if (event.lengthComputable) {
             // We use 99% as the max value to avoid showing 100% before the
             // upload is actually finished, that is, when the request is completed.
-            const percent = Math.max((event.loaded / event.total) * 100, 99);
+            const percent = Math.min((event.loaded / event.total) * 100, 99);
 
             store.dispatch(updateFileProgress(fileId, percent));
         }
