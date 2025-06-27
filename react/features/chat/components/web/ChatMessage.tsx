@@ -413,9 +413,11 @@ const ChatMessage = ({
 function _mapStateToProps(state: IReduxState, { message }: IProps) {
     const { knocking } = state['features/lobby'];
     const localParticipantId = state['features/base/participants'].local?.id;
+    const { remoteVideoMenu = {} } = state['features/base/config'];
+    const { disablePrivateChat } = remoteVideoMenu;
 
     return {
-        shouldDisplayChatMessageMenu: message.participantId !== localParticipantId,
+        shouldDisplayChatMessageMenu: !disablePrivateChat && message.participantId !== localParticipantId,
         knocking,
         state
     };
