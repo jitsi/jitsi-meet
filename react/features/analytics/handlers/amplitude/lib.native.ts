@@ -1,3 +1,3 @@
-import { Amplitude } from '@amplitude/react-native';
+import { createInstance } from '@amplitude/analytics-react-native';
 
-export default Amplitude;
+export default createInstance();

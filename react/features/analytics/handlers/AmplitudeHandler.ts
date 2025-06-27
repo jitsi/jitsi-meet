@@ -1,3 +1,5 @@
+import { Identify } from '@amplitude/analytics-core';
+
 import logger from '../logger';
 
 import AbstractHandler, { IEvent } from './AbstractHandler';
@@ -37,19 +39,17 @@ export default class AmplitudeHandler extends AbstractHandler {
 
         // Forces sending all events on exit (flushing) via sendBeacon
         const onExitPage = () => {
-            // @ts-ignore
-            amplitude.getInstance().sendEvents();
+            amplitude.flush();
         };
 
         if (navigator.product === 'ReactNative') {
-            amplitude.getInstance().init(amplitudeAPPKey);
-            fixDeviceID(amplitude.getInstance()).then(() => {
-                amplitude.getInstance().getDeviceId()
+            amplitude.init(amplitudeAPPKey);
+            fixDeviceID(amplitude).then(() => {
+                const deviceId = amplitude.getDeviceId();
 
-                // @ts-ignore
-                    .then((deviceId: string) => {
-                        this._deviceId = deviceId;
-                    });
+                if (deviceId) {
+                    this._deviceId = deviceId;
+                }
             });
         } else {
             const amplitudeOptions: any = {
@@ -60,14 +60,13 @@ export default class AmplitudeHandler extends AbstractHandler {
                 onExitPage
             };
 
-            // @ts-ignore
-            amplitude.getInstance().init(amplitudeAPPKey, undefined, amplitudeOptions);
-            fixDeviceID(amplitude.getInstance());
+            amplitude.init(amplitudeAPPKey, undefined, amplitudeOptions);
+            fixDeviceID(amplitude);
         }
 
         if (user) {
             this._userId = user;
-            amplitude.getInstance().setUserId(user);
+            amplitude.setUserId(user);
         }
     }
 
@@ -79,7 +78,14 @@ export default class AmplitudeHandler extends AbstractHandler {
      */
     setUserProperties(userProps: any) {
         if (this._enabled) {
-            amplitude.getInstance().setUserProperties(userProps);
+            const identify = new Identify();
+
+            // Set all properties
+            Object.entries(userProps).forEach(([ key, value ]) => {
+                identify.set(key, value as any);
+            });
+
+            amplitude.identify(identify);
         }
     }
 
@@ -96,8 +102,9 @@ export default class AmplitudeHandler extends AbstractHandler {
             return;
         }
 
-        // @ts-ignore
-        amplitude.getInstance().logEvent(this._extractName(event) ?? '', event);
+        const eventName = this._extractName(event) ?? '';
+
+        amplitude.logEvent(eventName, event);
     }
 
     /**
@@ -114,13 +121,9 @@ export default class AmplitudeHandler extends AbstractHandler {
         }
 
         return {
-            sessionId: amplitude.getInstance().getSessionId(),
-
-            // @ts-ignore
-            deviceId: amplitude.getInstance().options.deviceId,
-
-            // @ts-ignore
-            userId: amplitude.getInstance().options.userId
+            sessionId: amplitude.getSessionId(),
+            deviceId: amplitude.getDeviceId(),
+            userId: amplitude.getUserId()
         };
     }
 }

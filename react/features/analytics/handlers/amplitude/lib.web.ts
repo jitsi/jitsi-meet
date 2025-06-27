@@ -1,3 +1,3 @@
-import amplitude from 'amplitude-js';
+import { createInstance } from '@amplitude/analytics-browser';
 
-export default amplitude;
+export default createInstance();
