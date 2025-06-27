@@ -57,7 +57,7 @@
         "zxcvbn": "0.0.0"
     },
     "peerDependencies": {
-        "@amplitude/react-native": "0.0.0",
+        "@amplitude/analytics-react-native": "0.0.0",
         "@giphy/react-native-sdk": "0.0.0",
         "@react-native-async-storage/async-storage": "0.0.0",
         "@react-native-clipboard/clipboard": "0.0.0",
