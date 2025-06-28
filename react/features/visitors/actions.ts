@@ -11,7 +11,9 @@ import {
     SET_IN_VISITORS_QUEUE,
     SET_VISITORS_SUPPORTED,
     SET_VISITOR_DEMOTE_ACTOR,
+    SUBSCRIBE_VISITORS_LIST,
     UPDATE_VISITORS_IN_QUEUE_COUNT,
+    UPDATE_VISITORS_LIST,
     VISITOR_PROMOTION_REQUEST
 } from './actionTypes';
 import logger from './logger';
@@ -213,6 +215,32 @@ export function updateVisitorsInQueueCount(count: number) {
     return {
         type: UPDATE_VISITORS_IN_QUEUE_COUNT,
         count
+    };
+}
+
+/**
+ * Updates the current list of visitors.
+ *
+ * @param {Array<Object>} visitors - The visitors list.
+ * @returns {{
+ *     type: UPDATE_VISITORS_LIST,
+ * }}
+ */
+export function updateVisitorsList(visitors: Array<{ id: string; name: string; }>) {
+    return {
+        type: UPDATE_VISITORS_LIST,
+        visitors
+    };
+}
+
+/**
+ * Signals the start of the visitors list websocket subscription.
+ *
+ * @returns {{ type: SUBSCRIBE_VISITORS_LIST }}
+ */
+export function subscribeVisitorsList() {
+    return {
+        type: SUBSCRIBE_VISITORS_LIST
     };
 }
 

@@ -909,6 +909,7 @@
             "visitorInQueue": " (waiting {{count}})",
             "visitorRequests": " (requests {{count}})",
             "visitors": "Viewers {{count}}",
+            "visitorsList": "Viewers ({{count}})",
             "waitingLobby": "Waiting in lobby ({{count}})"
         },
         "search": "Search participants",
