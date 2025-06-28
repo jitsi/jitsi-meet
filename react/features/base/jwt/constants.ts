@@ -18,6 +18,7 @@ export const MEET_FEATURES: Record<string, ParticipantFeaturesKey> = {
     ROOM: 'room',
     SCREEN_SHARING: 'screen-sharing',
     SEND_GROUPCHAT: 'send-groupchat',
+    LIST_VISITORS: 'list-visitors',
     SIP_INBOUND_CALL: 'sip-inbound-call',
     SIP_OUTBOUND_CALL: 'sip-outbound-call',
     TRANSCRIPTION: 'transcription'

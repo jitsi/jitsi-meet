@@ -61,6 +61,7 @@ export interface IParticipantFeatures {
     'file-upload'?: boolean | string;
     'flip'?: boolean | string;
     'inbound-call'?: boolean | string;
+    'list-visitors'?: boolean | string;
     'livestreaming'?: boolean | string;
     'lobby'?: boolean | string;
     'moderation'?: boolean | string;
