@@ -69,6 +69,7 @@ import FullscreenButton from './components/web/FullscreenButton';
 import LinkToSalesforceButton from './components/web/LinkToSalesforceButton';
 import ProfileButton from './components/web/ProfileButton';
 import ShareDesktopButton from './components/web/ShareDesktopButton';
+import SpatialAudioDebugButton from './components/web/SpatialAudioDebugButton';
 
 import ToggleCameraButton from './components/web/ToggleCameraButton';
 import VideoSettingsButton from './components/web/VideoSettingsButton';
@@ -160,6 +161,12 @@ const noiseSuppression = {
 const sound = {
     key: 'sound',
     Content: SoundButton,
+    group: 3
+};
+
+const spatialAudioDebug = {
+    key: 'spatialaudio-debug',
+    Content: SpatialAudioDebugButton,
     group: 3
 };
 
@@ -334,6 +341,7 @@ export function useToolboxButtons(
         // shareaudio,
         // noisesuppression: noiseSuppression,
         sound,
+        'spatialaudio-debug': spatialAudioDebug,
         'speaker-highlight': speakerHighlight,
         // whiteboard,
         etherpad,

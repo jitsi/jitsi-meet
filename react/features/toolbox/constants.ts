@@ -173,6 +173,7 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'settings',
     'shareaudio',
     'sound',
+    'spatialaudio-debug',
     'noisesuppression',
     'sharedvideo',
     'shortcuts',

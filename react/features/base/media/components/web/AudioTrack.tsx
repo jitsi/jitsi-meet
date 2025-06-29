@@ -331,6 +331,11 @@ class AudioTrack extends Component<IProps> {
             clearInterval(this._spatialAudioInterval);
         }
 
+        // Remove manual recalculation event listener
+        if ((this as any)._manualRecalculationListener) {
+            window.removeEventListener('spatialAudioRecalculate', (this as any)._manualRecalculationListener);
+        }
+
         // Remove this instance from the global tracker
         AudioTrackTracker.removeInstance(this.props.id);
 
@@ -837,6 +842,20 @@ class AudioTrack extends Component<IProps> {
         // Store interval ID to clear on unmount
         this._spatialAudioInterval = checkInterval;
         console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Monitoring active, checking every 200ms`);
+
+        // Listen for manual recalculation events from debug button
+        const handleManualRecalculation = (event: CustomEvent) => {
+            if (window.spatialAudio && event.detail?.manually_triggered) {
+                console.log(`🔧 Spatial-Audio Debug [${this.props._participantDisplayName || this.props.participantId}]: Received manual recalculation event`);
+                // Trigger global recalculation
+                AudioTrackTracker.recalculateAllPositions();
+            }
+        };
+
+        window.addEventListener('spatialAudioRecalculate', handleManualRecalculation as EventListener);
+        
+        // Store the event listener reference for cleanup
+        (this as any)._manualRecalculationListener = handleManualRecalculation;
     }
 
     /**
