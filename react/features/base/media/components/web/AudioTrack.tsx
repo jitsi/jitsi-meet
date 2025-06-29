@@ -87,11 +87,25 @@ class AudioTrackTracker {
         const participantData = Array.from(this.instances.values())
             .sort((a, b) => a.trackIndex - b.trackIndex);
 
-        console.group('Spatial Audio - Participant Positions Overview');
-        console.log(`Total Participants: ${participantData.length}`);
-        console.log('┌─────┬─────────────────────────────┬─────────┬─────────┐');
-        console.log('│ #   │ Participant Name            │ X-Pos   │ Y-Pos   │');
-        console.log('├─────┼─────────────────────────────┼─────────┼─────────┤');
+        const totalParticipants = participantData.length;
+        let layoutDescription = '';
+        
+        if (totalParticipants <= 4) {
+            layoutDescription = '1 Row Layout (Elevation: 0)';
+        } else if (totalParticipants <= 8) {
+            layoutDescription = '2 Row Layout (Upper: +1, Lower: -1)';
+        } else if (totalParticipants <= 12) {
+            layoutDescription = '3 Row Layout (Upper: +1.5, Middle: 0, Lower: -1.5)';
+        } else {
+            layoutDescription = 'Fallback Horizontal Layout';
+        }
+
+        console.group('Spatial Audio - Grid-Based Participant Positions');
+        console.log(`Total Participants: ${totalParticipants} - ${layoutDescription}`);
+        console.log('┌─────┬─────────────────────────────┬─────────┬──────────┬─────────┐');
+        console.log('│ #   │ Participant Name            │ X-Pos   │ Y-Pos    │ Row     │');
+        console.log('│     │                             │ (Pan)   │ (Elev)   │         │');
+        console.log('├─────┼─────────────────────────────┼─────────┼──────────┼─────────┤');
         
         participantData.forEach((participant) => {
             const name = participant.participantName.length > 27 
@@ -100,13 +114,31 @@ class AudioTrackTracker {
             const nameFormatted = name.padEnd(27);
             const indexFormatted = (participant.trackIndex + 1).toString().padStart(3);
             const xFormatted = participant.xPos.toFixed(2).padStart(7);
-            const yFormatted = participant.yPos.toFixed(2).padStart(7);
+            const yFormatted = participant.yPos.toFixed(2).padStart(8);
             
-            console.log(`│ ${indexFormatted} │ ${nameFormatted} │ ${xFormatted} │ ${yFormatted} │`);
+            // Determine row info based on Y position
+            let rowInfo = '';
+            if (participant.yPos > 1) {
+                rowInfo = 'Upper  ';
+            } else if (participant.yPos > 0) {
+                rowInfo = 'Upper  ';
+            } else if (participant.yPos === 0) {
+                if (totalParticipants <= 4) {
+                    rowInfo = 'Single ';
+                } else {
+                    rowInfo = 'Middle ';
+                }
+            } else if (participant.yPos > -1.5) {
+                rowInfo = 'Lower  ';
+            } else {
+                rowInfo = 'Lower  ';
+            }
+            
+            console.log(`│ ${indexFormatted} │ ${nameFormatted} │ ${xFormatted} │ ${yFormatted} │ ${rowInfo} │`);
         });
         
-        console.log('└─────┴─────────────────────────────┴─────────┴─────────┘');
-        console.log('Position Range: X from -2.00 (far left) to +2.00 (far right), Y always 0');
+        console.log('└─────┴─────────────────────────────┴─────────┴──────────┴─────────┘');
+        console.log('Position Range: X from -2.00 (left) to +2.00 (right), Y for elevation');
         console.groupEnd();
     }
 }
@@ -672,7 +704,11 @@ class AudioTrack extends Component<IProps> {
     }
 
     /**
-     * Calculate the location of a participant's audio stream
+     * Calculate the location of a participant's audio stream with grid-based positioning
+     * Grid layout supports up to 3 rows with elevation:
+     * - 1 row (0-4 participants): elevation = 0
+     * - 2 rows (5-8 participants): upper row = +1, lower row = -1
+     * - 3 rows (9-12 participants): upper row = +1.5, middle row = 0, lower row = -1.5
      *
      * @returns {[number, number]}
      */
@@ -680,14 +716,75 @@ class AudioTrack extends Component<IProps> {
         const trackIndex = this._trackIdx || 0;
         const totalTracks = this._trackLen || 1;
         
-        // Simple left-to-right positioning
-        // First participant: far left (-2), last participant: far right (+2)
         let xPos = 0;
-        if (totalTracks > 1) {
-            xPos = ((trackIndex / (totalTracks - 1)) * 4) - 2; // Range: -2 to +2
-        }
+        let yPos = 0; // yPos represents elevation (vertical positioning)
         
-        const yPos = 0; // Keep all participants at same depth
+        // Determine grid layout based on total participants
+        if (totalTracks <= 4) {
+            // Single row layout (0-4 participants)
+            if (totalTracks > 1) {
+                xPos = ((trackIndex / (totalTracks - 1)) * 4) - 2; // Range: -2 to +2
+            }
+            yPos = 0; // No elevation
+            
+            console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Single row layout - position ${trackIndex + 1} of ${totalTracks}`);
+            
+        } else if (totalTracks <= 8) {
+            // Two row layout (5-8 participants)
+            const participantsPerRow = Math.ceil(totalTracks / 2);
+            const row = Math.floor(trackIndex / participantsPerRow);
+            const indexInRow = trackIndex % participantsPerRow;
+            const participantsInThisRow = row === 0 ? participantsPerRow : totalTracks - participantsPerRow;
+            
+            // Calculate horizontal position within the row
+            if (participantsInThisRow > 1) {
+                xPos = ((indexInRow / (participantsInThisRow - 1)) * 4) - 2; // Range: -2 to +2
+            }
+            
+            // Set elevation: upper row = +1, lower row = -1
+            yPos = row === 0 ? 1 : -1;
+            
+            console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Two row layout - row ${row + 1}, position ${indexInRow + 1} of ${participantsInThisRow} in row`);
+            
+        } else if (totalTracks <= 12) {
+            // Three row layout (9-12 participants)
+            const participantsPerRow = Math.ceil(totalTracks / 3);
+            const row = Math.floor(trackIndex / participantsPerRow);
+            const indexInRow = trackIndex % participantsPerRow;
+            
+            // Calculate how many participants are actually in this row
+            let participantsInThisRow;
+            if (row === 0) {
+                participantsInThisRow = Math.min(participantsPerRow, totalTracks);
+            } else if (row === 1) {
+                participantsInThisRow = Math.min(participantsPerRow, totalTracks - participantsPerRow);
+            } else {
+                participantsInThisRow = totalTracks - (2 * participantsPerRow);
+            }
+            
+            // Calculate horizontal position within the row
+            if (participantsInThisRow > 1) {
+                xPos = ((indexInRow / (participantsInThisRow - 1)) * 4) - 2; // Range: -2 to +2
+            }
+            
+            // Set elevation: upper row = +1.5, middle row = 0, lower row = -1.5
+            if (row === 0) {
+                yPos = 1.5; // Upper row
+            } else if (row === 1) {
+                yPos = 0;   // Middle row
+            } else {
+                yPos = -1.5; // Lower row
+            }
+            
+            console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Three row layout - row ${row + 1}, position ${indexInRow + 1} of ${participantsInThisRow} in row`);
+        } else {
+            // Fallback for more than 12 participants - use simple horizontal layout
+            console.warn(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: More than 12 participants (${totalTracks}) - using fallback horizontal layout`);
+            if (totalTracks > 1) {
+                xPos = ((trackIndex / (totalTracks - 1)) * 4) - 2;
+            }
+            yPos = 0;
+        }
         
         // Update the global tracker with this participant's data
         AudioTrackTracker.updateInstance(this.props.id, {
