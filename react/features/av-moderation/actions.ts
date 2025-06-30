@@ -1,9 +1,9 @@
+import { batch } from 'react-redux';
+
 import { IStore } from '../app/types';
 import { getConferenceState } from '../base/conference/functions';
-import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
 import { getParticipantById, isParticipantModerator } from '../base/participants/functions';
 import { IParticipant } from '../base/participants/types';
-import { isForceMuted } from '../participants-pane/functions';
 
 import {
     DISABLE_MODERATION,
@@ -16,11 +16,14 @@ import {
     PARTICIPANT_PENDING_AUDIO,
     PARTICIPANT_REJECTED,
     REQUEST_DISABLE_AUDIO_MODERATION,
+    REQUEST_DISABLE_DESKTOP_MODERATION,
     REQUEST_DISABLE_VIDEO_MODERATION,
     REQUEST_ENABLE_AUDIO_MODERATION,
+    REQUEST_ENABLE_DESKTOP_MODERATION,
     REQUEST_ENABLE_VIDEO_MODERATION
 } from './actionTypes';
-import { isEnabledFromState } from './functions';
+import { MEDIA_TYPE, type MediaType } from './constants';
+import { isEnabledFromState, isForceMuted } from './functions';
 
 /**
  * Action used by moderator to approve audio for a participant.
@@ -39,6 +42,25 @@ export const approveParticipantAudio = (id: string) => (dispatch: IStore['dispat
 
     if (isAudioModerationOn || !isVideoModerationOn || !isVideoForceMuted) {
         conference?.avModerationApprove(MEDIA_TYPE.AUDIO, id);
+    }
+};
+
+/**
+ * Action used by moderator to approve desktop for a participant.
+ *
+ * @param {staring} id - The id of the participant to be approved.
+ * @returns {void}
+ */
+export const approveParticipantDesktop = (id: string) => (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    const state = getState();
+    const { conference } = getConferenceState(state);
+    const participant = getParticipantById(state, id);
+
+    const isDesktopForceMuted = isForceMuted(participant, MEDIA_TYPE.DESKTOP, state);
+    const isDesktopModerationOn = isEnabledFromState(MEDIA_TYPE.DESKTOP, state);
+
+    if (isDesktopModerationOn && isDesktopForceMuted) {
+        conference?.avModerationApprove(MEDIA_TYPE.DESKTOP, id);
     }
 };
 
@@ -68,8 +90,11 @@ export const approveParticipantVideo = (id: string) => (dispatch: IStore['dispat
  * @returns {void}
  */
 export const approveParticipant = (id: string) => (dispatch: IStore['dispatch']) => {
-    dispatch(approveParticipantAudio(id));
-    dispatch(approveParticipantVideo(id));
+    batch(() => {
+        dispatch(approveParticipantAudio(id));
+        dispatch(approveParticipantDesktop(id));
+        dispatch(approveParticipantVideo(id));
+    });
 };
 
 /**
@@ -89,6 +114,26 @@ export const rejectParticipantAudio = (id: string) => (dispatch: IStore['dispatc
 
     if (audioModeration && !isAudioForceMuted && !isModerator) {
         conference?.avModerationReject(MEDIA_TYPE.AUDIO, id);
+    }
+};
+
+/**
+ * Action used by moderator to reject desktop for a participant.
+ *
+ * @param {staring} id - The id of the participant to be rejected.
+ * @returns {void}
+ */
+export const rejectParticipantDesktop = (id: string) => (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    const state = getState();
+    const { conference } = getConferenceState(state);
+    const desktopModeration = isEnabledFromState(MEDIA_TYPE.DESKTOP, state);
+
+    const participant = getParticipantById(state, id);
+    const isDesktopForceMuted = isForceMuted(participant, MEDIA_TYPE.DESKTOP, state);
+    const isModerator = isParticipantModerator(participant);
+
+    if (desktopModeration && !isDesktopForceMuted && !isModerator) {
+        conference?.avModerationReject(MEDIA_TYPE.DESKTOP, id);
     }
 };
 
@@ -189,6 +234,19 @@ export const requestDisableAudioModeration = () => {
  * Requests disable of video moderation.
  *
  * @returns {{
+ *     type: REQUEST_DISABLE_DESKTOP_MODERATION
+ * }}
+ */
+export const requestDisableDesktopModeration = () => {
+    return {
+        type: REQUEST_DISABLE_DESKTOP_MODERATION
+    };
+};
+
+/**
+ * Requests disable of video moderation.
+ *
+ * @returns {{
  *     type: REQUEST_DISABLE_VIDEO_MODERATION
  * }}
  */
@@ -208,6 +266,19 @@ export const requestDisableVideoModeration = () => {
 export const requestEnableAudioModeration = () => {
     return {
         type: REQUEST_ENABLE_AUDIO_MODERATION
+    };
+};
+
+/**
+ * Requests enable of video moderation.
+ *
+ * @returns {{
+ *     type: REQUEST_ENABLE_DESKTOP_MODERATION
+ * }}
+ */
+export const requestEnableDesktopModeration = () => {
+    return {
+        type: REQUEST_ENABLE_DESKTOP_MODERATION
     };
 };
 
@@ -313,4 +384,3 @@ export function participantRejected(id: string, mediaType: MediaType) {
         mediaType
     };
 }
-

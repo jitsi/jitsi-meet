@@ -6,10 +6,13 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import {
     requestDisableAudioModeration,
+    requestDisableDesktopModeration,
     requestDisableVideoModeration,
     requestEnableAudioModeration,
+    requestEnableDesktopModeration,
     requestEnableVideoModeration
 } from '../../../av-moderation/actions';
+import { MEDIA_TYPE } from '../../../av-moderation/constants';
 import {
     isEnabled as isAvModerationEnabled,
     isSupported as isAvModerationSupported
@@ -18,9 +21,9 @@ import { openDialog } from '../../../base/dialog/actions';
 import {
     IconCheck,
     IconDotsHorizontal,
+    IconScreenshare,
     IconVideoOff
 } from '../../../base/icons/svg';
-import { MEDIA_TYPE } from '../../../base/media/constants';
 import { getRaiseHandsQueue } from '../../../base/participants/functions';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
@@ -30,6 +33,7 @@ import { openSettingsDialog } from '../../../settings/actions.web';
 import { SETTINGS_TABS } from '../../../settings/constants';
 import { shouldShowModeratorSettings } from '../../../settings/functions.web';
 import LowerHandButton from '../../../video-menu/components/web/LowerHandButton';
+import MuteEveryonesDesktopDialog from '../../../video-menu/components/web/MuteEveryonesDesktopDialog';
 import MuteEveryonesVideoDialog from '../../../video-menu/components/web/MuteEveryonesVideoDialog';
 
 const useStyles = makeStyles()(theme => {
@@ -86,23 +90,25 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
     const raisedHandsQueue = useSelector(getRaiseHandsQueue);
     const isModeratorSettingsTabEnabled = useSelector(shouldShowModeratorSettings);
     const isAudioModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.AUDIO));
+    const isDesktopModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.DESKTOP));
     const isVideoModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.VIDEO));
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
-
     const { t } = useTranslation();
 
     const disableAudioModeration = useCallback(() => dispatch(requestDisableAudioModeration()), [ dispatch ]);
-
+    const disableDesktopModeration = useCallback(() => dispatch(requestDisableDesktopModeration()), [ dispatch ]);
     const disableVideoModeration = useCallback(() => dispatch(requestDisableVideoModeration()), [ dispatch ]);
-
     const enableAudioModeration = useCallback(() => dispatch(requestEnableAudioModeration()), [ dispatch ]);
-
+    const enableDesktopModeration = useCallback(() => dispatch(requestEnableDesktopModeration()), [ dispatch ]);
     const enableVideoModeration = useCallback(() => dispatch(requestEnableVideoModeration()), [ dispatch ]);
 
     const { classes } = useStyles();
 
     const muteAllVideo = useCallback(
         () => dispatch(openDialog(MuteEveryonesVideoDialog)), [ dispatch ]);
+
+    const muteAllDesktop = useCallback(
+        () => dispatch(openDialog(MuteEveryonesDesktopDialog)), [ dispatch ]);
 
     const openModeratorSettings = () => dispatch(openSettingsDialog(SETTINGS_TABS.MODERATOR));
 
@@ -125,6 +131,15 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
             icon: !isVideoModerationEnabled && IconCheck,
             onClick: isVideoModerationEnabled ? disableVideoModeration : enableVideoModeration,
             text: t('participantsPane.actions.videoModeration')
+        }, {
+            accessibilityLabel: t('participantsPane.actions.desktopModeration'),
+            className: isDesktopModerationEnabled ? classes.indentedLabel : '',
+            id: isDesktopModerationEnabled
+                ? 'participants-pane-context-menu-stop-desktop-moderation'
+                : 'participants-pane-context-menu-start-desktop-moderation',
+            icon: !isDesktopModerationEnabled && IconCheck,
+            onClick: isDesktopModerationEnabled ? disableDesktopModeration : enableDesktopModeration,
+            text: t('participantsPane.actions.desktopModeration')
         }
     ];
 
@@ -137,13 +152,22 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
             onDrawerClose = { onDrawerClose }
             onMouseLeave = { onMouseLeave }>
             <ContextMenuItemGroup
-                actions = { [ {
-                    accessibilityLabel: t('participantsPane.actions.stopEveryonesVideo'),
-                    id: 'participants-pane-context-menu-stop-video',
-                    icon: IconVideoOff,
-                    onClick: muteAllVideo,
-                    text: t('participantsPane.actions.stopEveryonesVideo')
-                } ] } />
+                actions = { [
+                    {
+                        accessibilityLabel: t('participantsPane.actions.stopEveryonesVideo'),
+                        id: 'participants-pane-context-menu-stop-video',
+                        icon: IconVideoOff,
+                        onClick: muteAllVideo,
+                        text: t('participantsPane.actions.stopEveryonesVideo')
+                    },
+                    {
+                        accessibilityLabel: t('participantsPane.actions.stopEveryonesDesktop'),
+                        id: 'participants-pane-context-menu-stop-desktop',
+                        icon: IconScreenshare,
+                        onClick: muteAllDesktop,
+                        text: t('participantsPane.actions.stopEveryonesDesktop')
+                    }
+                ] } />
             {raisedHandsQueue.length !== 0 && <LowerHandButton />}
             {!isBreakoutRoom && isModerationSupported && (
                 <ContextMenuItemGroup actions = { actions }>

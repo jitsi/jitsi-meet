@@ -18,8 +18,6 @@ import {
     maybeRedirectToWelcomePage,
     reloadWithStoredParams
 } from './react/features/app/actions';
-import { showModeratedNotification } from './react/features/av-moderation/actions';
-import { shouldShowModeratedNotification } from './react/features/av-moderation/functions';
 import {
     _conferenceWillJoin,
     authStatusChanged,
@@ -153,7 +151,6 @@ import {
     DATA_CHANNEL_CLOSED_NOTIFICATION_ID,
     NOTIFICATION_TIMEOUT_TYPE
 } from './react/features/notifications/constants';
-import { isModerationNotificationDisplayed } from './react/features/notifications/functions';
 import { suspendDetected } from './react/features/power-monitor/actions';
 import { initPrejoin, isPrejoinPageVisible } from './react/features/prejoin/functions';
 import { disableReceiver, stopReceiver } from './react/features/remote-control/actions';
@@ -704,15 +701,6 @@ export default {
             return;
         }
 
-        // check for A/V Moderation when trying to unmute
-        if (!mute && shouldShowModeratedNotification(MEDIA_TYPE.AUDIO, state)) {
-            if (!isModerationNotificationDisplayed(MEDIA_TYPE.AUDIO, state)) {
-                APP.store.dispatch(showModeratedNotification(MEDIA_TYPE.AUDIO));
-            }
-
-            return;
-        }
-
         await APP.store.dispatch(setAudioMuted(mute, true));
     },
 
@@ -746,23 +734,12 @@ export default {
      * dialogs in case of media permissions error.
      */
     muteVideo(mute) {
-        if (this.videoSwitchInProgress) {
-            logger.warn('muteVideo - unable to perform operations while video switch is in progress');
-
-            return;
-        }
-
         const state = APP.store.getState();
 
         if (!mute
                 && isUserInteractionRequiredForUnmute(state)) {
             logger.error('Unmuting video requires user interaction');
 
-            return;
-        }
-
-        // check for A/V Moderation when trying to unmute and return early
-        if (!mute && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, state)) {
             return;
         }
 
@@ -1019,7 +996,6 @@ export default {
 
         // Restore initial state.
         this._localTracksInitialized = false;
-        this.isSharingScreen = false;
         this.roomName = roomName;
 
         const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(options);
@@ -1198,8 +1174,6 @@ export default {
         return Boolean(APP.store.getState()['features/base/audio-only'].enabled);
     },
 
-    videoSwitchInProgress: false,
-
     /**
      * This fields stores a handler which will create a Promise which turns off
      * the screen sharing and restores the previous video state (was there
@@ -1228,7 +1202,6 @@ export default {
      */
     async _turnScreenSharingOff(didHaveVideo, ignoreDidHaveVideo) {
         this._untoggleScreenSharing = null;
-        this.videoSwitchInProgress = true;
 
         APP.store.dispatch(stopReceiver());
 
@@ -1280,13 +1253,11 @@ export default {
 
         return promise.then(
             () => {
-                this.videoSwitchInProgress = false;
                 sendAnalytics(createScreenSharingEvent('stopped',
                     duration === 0 ? null : duration));
                 logger.info('Screen sharing stopped.');
             },
             error => {
-                this.videoSwitchInProgress = false;
                 logger.error(`_turnScreenSharingOff failed: ${error}`);
 
                 throw error;
@@ -1316,34 +1287,18 @@ export default {
             this._untoggleScreenSharing
                 = this._turnScreenSharingOff.bind(this, didHaveVideo);
 
-            const desktopVideoStream = desktopStreams.find(stream => stream.getType() === MEDIA_TYPE.VIDEO);
             const desktopAudioStream = desktopStreams.find(stream => stream.getType() === MEDIA_TYPE.AUDIO);
 
             if (desktopAudioStream) {
                 desktopAudioStream.on(
                     JitsiTrackEvents.LOCAL_TRACK_STOPPED,
                     () => {
-                        logger.debug(`Local screensharing audio track stopped. ${this.isSharingScreen}`);
+                        logger.debug('Local screensharing audio track stopped.');
 
                         // Handle case where screen share was stopped from  the browsers 'screen share in progress'
                         // window. If audio screen sharing is stopped via the normal UX flow this point shouldn't
                         // be reached.
                         isScreenAudioShared(APP.store.getState())
-                            && this._untoggleScreenSharing
-                            && this._untoggleScreenSharing();
-                    }
-                );
-            }
-
-            if (desktopVideoStream) {
-                desktopVideoStream.on(
-                    JitsiTrackEvents.LOCAL_TRACK_STOPPED,
-                    () => {
-                        logger.debug(`Local screensharing track stopped. ${this.isSharingScreen}`);
-
-                        // If the stream was stopped during screen sharing
-                        // session then we should switch back to video.
-                        this.isSharingScreen
                             && this._untoggleScreenSharing
                             && this._untoggleScreenSharing();
                     }
@@ -1497,10 +1452,6 @@ export default {
         room.on(JitsiConferenceEvents.TRACK_MUTE_CHANGED, (track, participantThatMutedUs) => {
             if (participantThatMutedUs) {
                 APP.store.dispatch(participantMutedUs(participantThatMutedUs, track));
-                if (this.isSharingScreen && track.isVideoTrack()) {
-                    logger.debug('TRACK_MUTE_CHANGED while screen sharing');
-                    this._turnScreenSharingOff(false);
-                }
             }
         });
 

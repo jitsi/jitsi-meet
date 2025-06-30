@@ -17,6 +17,7 @@ import {
     PARTICIPANT_JOINED,
     PARTICIPANT_KICKED,
     PARTICIPANT_LEFT,
+    PARTICIPANT_MUTED_US,
     PARTICIPANT_ROLE_CHANGED,
     PARTICIPANT_SOURCES_UPDATED,
     PARTICIPANT_UPDATED,
@@ -467,19 +468,10 @@ export function participantUpdated(participant: IParticipant = { id: '' }) {
  * @returns {Promise}
  */
 export function participantMutedUs(participant: any, track: any) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        if (!participant) {
-            return;
-        }
-
-        const isAudio = track.isAudioTrack();
-
-        dispatch(showNotification({
-            titleKey: isAudio ? 'notify.mutedRemotelyTitle' : 'notify.videoMutedRemotelyTitle',
-            titleArguments: {
-                participantDisplayName: getParticipantDisplayName(getState, participant.getId())
-            }
-        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+    return {
+        type: PARTICIPANT_MUTED_US,
+        participant,
+        track
     };
 }
 

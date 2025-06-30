@@ -1,24 +1,24 @@
 import { IReduxState } from '../../app/types';
-import { requestDisableVideoModeration, requestEnableVideoModeration } from '../../av-moderation/actions';
+import { requestDisableDesktopModeration, requestEnableDesktopModeration } from '../../av-moderation/actions';
 import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../../av-moderation/constants';
 import { isEnabledFromState, isSupported } from '../../av-moderation/functions';
 import { MEDIA_TYPE } from '../../base/media/constants';
 import { getLocalParticipant, getParticipantDisplayName } from '../../base/participants/functions';
 import { muteAllParticipants } from '../actions';
 
-import AbstractMuteRemoteParticipantsVideoDialog, {
+import AbstractMuteRemoteParticipantsDesktopDialog, {
     type IProps as AbstractProps
-} from './AbstractMuteRemoteParticipantsVideoDialog';
+} from './AbstractMuteRemoteParticipantsDesktopDialog';
 
 /**
  * The type of the React {@code Component} props of
- * {@link AbstractMuteEveryonesVideoDialog}.
+ * {@link AbstractMuteEveryonesDesktopDialog}.
  */
 export interface IProps extends AbstractProps {
     content?: string;
     exclude: Array<string>;
+    isModerationEnabled?: boolean;
     isModerationSupported?: boolean;
-    isVideoModerationEnabled?: boolean;
     showAdvancedModerationToggle: boolean;
     title: string;
 }
@@ -33,17 +33,17 @@ interface IState {
  * An abstract Component with the contents for a dialog that asks for confirmation
  * from the user before disabling all remote participants cameras.
  *
- * @augments AbstractMuteRemoteParticipantsVideoDialog
+ * @augments AbstractMuteRemoteParticipantsDesktopDialog
  */
-export default class AbstractMuteEveryonesVideoDialog<P extends IProps>
-    extends AbstractMuteRemoteParticipantsVideoDialog<P, IState> {
+export default class AbstractMuteEveryonesDesktopDialog<P extends IProps>
+    extends AbstractMuteRemoteParticipantsDesktopDialog<P, IState> {
     static defaultProps = {
         exclude: [],
         muteLocal: false
     };
 
     /**
-     * Initializes a new {@code AbstractMuteRemoteParticipantsVideoDialog} instance.
+     * Initializes a new {@code AbstractMuteRemoteParticipantsDesktopDialog} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
@@ -52,9 +52,9 @@ export default class AbstractMuteEveryonesVideoDialog<P extends IProps>
         super(props);
 
         this.state = {
-            moderationEnabled: props.isVideoModerationEnabled,
-            content: props.content || props.t(props.isVideoModerationEnabled
-                ? 'dialog.muteEveryonesVideoDialogModerationOn' : 'dialog.muteEveryonesVideoDialog'
+            moderationEnabled: props.isModerationEnabled,
+            content: props.content || props.t(props.isModerationEnabled
+                ? 'dialog.muteEveryonesDesktopDialogModerationOn' : 'dialog.muteEveryonesDesktopDialog'
             )
         };
 
@@ -73,7 +73,7 @@ export default class AbstractMuteEveryonesVideoDialog<P extends IProps>
             return {
                 moderationEnabled: !state.moderationEnabled,
                 content: this.props.t(state.moderationEnabled
-                    ? 'dialog.muteEveryonesVideoDialog' : 'dialog.muteEveryonesVideoDialogModerationOn'
+                    ? 'dialog.muteEveryonesDesktopDialog' : 'dialog.muteEveryonesDesktopDialogModerationOn'
                 )
             };
         });
@@ -90,11 +90,11 @@ export default class AbstractMuteEveryonesVideoDialog<P extends IProps>
             exclude
         } = this.props;
 
-        dispatch(muteAllParticipants(exclude, MEDIA_TYPE.VIDEO));
+        dispatch(muteAllParticipants(exclude, MEDIA_TYPE.SCREENSHARE));
         if (this.state.moderationEnabled) {
-            dispatch(requestEnableVideoModeration());
+            dispatch(requestEnableDesktopModeration());
         } else if (this.state.moderationEnabled !== undefined) {
-            dispatch(requestDisableVideoModeration());
+            dispatch(requestDisableDesktopModeration());
         }
 
         return true;
@@ -102,7 +102,7 @@ export default class AbstractMuteEveryonesVideoDialog<P extends IProps>
 }
 
 /**
- * Maps (parts of) the Redux state to the associated {@code AbstractMuteEveryonesVideoDialog}'s props.
+ * Maps (parts of) the Redux state to the associated {@code AbstractMuteEveryonesDesktopDialog}'s props.
  *
  * @param {IReduxState} state - The redux state.
  * @param {Object} ownProps - The properties explicitly passed to the component.
@@ -110,7 +110,7 @@ export default class AbstractMuteEveryonesVideoDialog<P extends IProps>
  */
 export function abstractMapStateToProps(state: IReduxState, ownProps: IProps) {
     const { exclude = [], t } = ownProps;
-    const isVideoModerationEnabled = isEnabledFromState(AVM_MEDIA_TYPE.VIDEO, state);
+    const isModerationEnabled = isEnabledFromState(AVM_MEDIA_TYPE.DESKTOP, state);
 
     const whom = exclude
         // eslint-disable-next-line no-confusing-arrow
@@ -120,11 +120,11 @@ export function abstractMapStateToProps(state: IReduxState, ownProps: IProps) {
         .join(', ');
 
     return whom.length ? {
-        content: t('dialog.muteEveryoneElsesVideoDialog'),
-        title: t('dialog.muteEveryoneElsesVideoTitle', { whom })
+        content: t('dialog.muteEveryoneElsesDesktopDialog'),
+        title: t('dialog.muteEveryoneElsesDesktopTitle', { whom })
     } : {
-        title: t('dialog.muteEveryonesVideoTitle'),
-        isVideoModerationEnabled,
+        title: t('dialog.muteEveryonesDesktopTitle'),
+        isModerationEnabled,
         isModerationSupported: isSupported()(state)
     };
 }
