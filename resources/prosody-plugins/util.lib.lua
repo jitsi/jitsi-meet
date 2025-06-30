@@ -597,7 +597,7 @@ function table_shallow_copy(t)
 end
 
 local function table_find(tab, val)
-    if not tab then
+    if not tab or val == nil then
         return nil
     end
 

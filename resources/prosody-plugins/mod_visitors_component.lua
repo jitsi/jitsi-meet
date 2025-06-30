@@ -476,7 +476,8 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
         if auto_allow_promotion
             or ignore_list:contains(jid.host(stanza.attr.from)) -- jibri or other domains to ignore
             or is_sip_jigasi(stanza)
-            or is_sip_jibri_join(stanza) then
+            or is_sip_jibri_join(stanza)
+            or table_find(room._data.mainMeetingParticipants, session.jitsi_meet_context_user and session.jitsi_meet_context_user.id) then
             return;
         end
 
