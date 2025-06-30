@@ -1,10 +1,12 @@
 import { IReduxState, IStore } from '../../app/types';
+import { getSsrcRewritingFeatureFlag } from '../config/functions.any';
 import { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { gumPending } from '../media/actions';
 import { CAMERA_FACING_MODE, MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
 import { IMediaState } from '../media/reducer';
 import { IGUMPendingState } from '../media/types';
 import {
+    getMutedStateByParticipantAndMediaType,
     getVirtualScreenshareParticipantOwnerId,
     isScreenShareParticipant
 } from '../participants/functions';
@@ -35,6 +37,10 @@ export function isParticipantMediaMuted(participant: IParticipant | undefined,
         return false;
     }
 
+    if (getSsrcRewritingFeatureFlag(state)) {
+        return getMutedStateByParticipantAndMediaType(state, participant, mediaType);
+    }
+
     const tracks = getTrackState(state);
 
     if (participant?.local) {
@@ -53,8 +59,19 @@ export function isParticipantMediaMuted(participant: IParticipant | undefined,
  * @param {IReduxState} state - Global state.
  * @returns {boolean} - Is audio muted for the participant.
  */
-export function isParticipantAudioMuted(participant: IParticipant, state: IReduxState) {
+export function isParticipantAudioMuted(participant: IParticipant | undefined, state: IReduxState) {
     return isParticipantMediaMuted(participant, MEDIA_TYPE.AUDIO, state);
+}
+
+/**
+ * Checks if the participant is screen-share muted.
+ *
+ * @param {IParticipant} participant - Participant reference.
+ * @param {IReduxState} state - Global state.
+ * @returns {boolean} - Is screen-share muted for the participant.
+ */
+export function isParticipantScreenShareMuted(participant: IParticipant | undefined, state: IReduxState) {
+    return isParticipantMediaMuted(participant, MEDIA_TYPE.SCREENSHARE, state);
 }
 
 /**
@@ -118,6 +135,10 @@ export function getLocalJitsiDesktopTrack(state: IReduxState) {
  * @returns {(Track|undefined)}
  */
 export function getLocalTrack(tracks: ITrack[], mediaType: MediaType, includePending = false) {
+    if (mediaType === MEDIA_TYPE.SCREENSHARE) {
+        return getLocalDesktopTrack(tracks, includePending);
+    }
+
     return (
         getLocalTracks(tracks, includePending)
             .find(t => t.mediaType === mediaType));
@@ -216,6 +237,14 @@ export function getTrackByMediaTypeAndParticipant(
         tracks: ITrack[],
         mediaType: MediaType,
         participantId?: string) {
+    if (!participantId) {
+        return;
+    }
+
+    if (mediaType === MEDIA_TYPE.SCREENSHARE) {
+        return getScreenShareTrack(tracks, participantId);
+    }
+
     return tracks.find(
         t => Boolean(t.jitsiTrack) && t.participantId === participantId && t.mediaType === mediaType
     );

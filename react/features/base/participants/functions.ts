@@ -392,7 +392,7 @@ export function getMutedStateByParticipantAndMediaType(
     if (mediaType === MEDIA_TYPE.AUDIO) {
         return Array.from(sources.values())[0].muted;
     }
-    const videoType = mediaType === MEDIA_TYPE.VIDEO ? VIDEO_TYPE.CAMERA : VIDEO_TYPE.SCREENSHARE;
+    const videoType = mediaType === MEDIA_TYPE.VIDEO ? VIDEO_TYPE.CAMERA : VIDEO_TYPE.DESKTOP;
     const source = Array.from(sources.values()).find(src => src.videoType === videoType);
 
     return source?.muted ?? true;

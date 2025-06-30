@@ -3,8 +3,12 @@ import { batch } from 'react-redux';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 import { getConferenceState } from '../base/conference/functions';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
-import { MEDIA_TYPE, MediaType } from '../base/media/constants';
-import { isAudioMuted, isVideoMuted } from '../base/media/functions';
+import { MEDIA_TYPE as TRACK_MEDIA_TYPE } from '../base/media/constants';
+import {
+    isAudioMuted,
+    isScreenshareMuted,
+    isVideoMuted
+} from '../base/media/functions';
 import { PARTICIPANT_UPDATED } from '../base/participants/actionTypes';
 import { raiseHand } from '../base/participants/actions';
 import {
@@ -30,8 +34,10 @@ import {
     PARTICIPANT_APPROVED,
     PARTICIPANT_REJECTED,
     REQUEST_DISABLE_AUDIO_MODERATION,
+    REQUEST_DISABLE_DESKTOP_MODERATION,
     REQUEST_DISABLE_VIDEO_MODERATION,
     REQUEST_ENABLE_AUDIO_MODERATION,
+    REQUEST_ENABLE_DESKTOP_MODERATION,
     REQUEST_ENABLE_VIDEO_MODERATION
 } from './actionTypes';
 import {
@@ -49,8 +55,10 @@ import {
     ASKED_TO_UNMUTE_NOTIFICATION_ID,
     ASKED_TO_UNMUTE_SOUND_ID,
     AUDIO_MODERATION_NOTIFICATION_ID,
-    CS_MODERATION_NOTIFICATION_ID,
-    VIDEO_MODERATION_NOTIFICATION_ID
+    DESKTOP_MODERATION_NOTIFICATION_ID,
+    MEDIA_TYPE,
+    MediaType,
+    VIDEO_MODERATION_NOTIFICATION_ID,
 } from './constants';
 import {
     isEnabledFromState,
@@ -90,9 +98,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             uid = VIDEO_MODERATION_NOTIFICATION_ID;
             break;
         }
-        case MEDIA_TYPE.SCREENSHARE: {
+        case MEDIA_TYPE.DESKTOP: {
             titleKey = 'notify.moderationInEffectCSTitle';
-            uid = CS_MODERATION_NOTIFICATION_ID;
+            uid = DESKTOP_MODERATION_NOTIFICATION_ID;
             break;
         }
         }
@@ -115,12 +123,20 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         conference?.disableAVModeration(MEDIA_TYPE.AUDIO);
         break;
     }
+    case REQUEST_DISABLE_DESKTOP_MODERATION: {
+        conference?.disableAVModeration(MEDIA_TYPE.DESKTOP);
+        break;
+    }
     case REQUEST_DISABLE_VIDEO_MODERATION: {
         conference?.disableAVModeration(MEDIA_TYPE.VIDEO);
         break;
     }
     case REQUEST_ENABLE_AUDIO_MODERATION: {
         conference?.enableAVModeration(MEDIA_TYPE.AUDIO);
+        break;
+    }
+    case REQUEST_ENABLE_DESKTOP_MODERATION: {
+        conference?.enableAVModeration(MEDIA_TYPE.DESKTOP);
         break;
     }
     case REQUEST_ENABLE_VIDEO_MODERATION: {
@@ -219,24 +235,37 @@ StateListenerRegistry.register(
                 const customActionHandler = [];
 
                 if ((mediaType === MEDIA_TYPE.AUDIO || getState()['features/av-moderation'].audioUnmuteApproved)
-                    && isAudioMuted(getState())) {
+                        && isAudioMuted(getState())) {
                     customActionNameKey.push('notify.unmute');
                     customActionHandler.push(() => {
-                        dispatch(muteLocal(false, MEDIA_TYPE.AUDIO));
+                        dispatch(muteLocal(false, TRACK_MEDIA_TYPE.AUDIO));
                         dispatch(hideNotification(ASKED_TO_UNMUTE_NOTIFICATION_ID));
                     });
                 }
 
-                if ((mediaType === MEDIA_TYPE.VIDEO || getState()['features/av-moderation'].videoUnmuteApproved)
-                    && isVideoMuted(getState())) {
-                    customActionNameKey.push('notify.unmuteVideo');
+                if ((mediaType === MEDIA_TYPE.DESKTOP || getState()['features/av-moderation'].desktopUnmuteApproved)
+                        && isScreenshareMuted(getState())) {
+                    customActionNameKey.push('notify.unmuteScreen');
                     customActionHandler.push(() => {
-                        dispatch(muteLocal(false, MEDIA_TYPE.VIDEO));
+                        dispatch(muteLocal(false, TRACK_MEDIA_TYPE.SCREENSHARE));
                         dispatch(hideNotification(ASKED_TO_UNMUTE_NOTIFICATION_ID));
 
-                        // lower hand as there will be no audio and change in dominant speaker to clear it
+                        // Since permission is requested by raising the hand, lower it not to rely on dominant speaker detection
+                        // to clear the hand.
                         dispatch(raiseHand(false));
+                    });
+                }
 
+                if ((mediaType === MEDIA_TYPE.VIDEO || getState()['features/av-moderation'].videoUnmuteApproved)
+                        && isVideoMuted(getState())) {
+                    customActionNameKey.push('notify.unmuteVideo');
+                    customActionHandler.push(() => {
+                        dispatch(muteLocal(false, TRACK_MEDIA_TYPE.VIDEO));
+                        dispatch(hideNotification(ASKED_TO_UNMUTE_NOTIFICATION_ID));
+
+                        // Since permission is requested by raising the hand, lower it not to rely on dominant speaker detection
+                        // to clear the hand.
+                        dispatch(raiseHand(false));
                     });
                 }
 
