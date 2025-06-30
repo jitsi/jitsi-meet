@@ -2,8 +2,8 @@ import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
-import { approveParticipantAudio, approveParticipantVideo } from '../../../av-moderation/actions';
-import { IconMic, IconVideo } from '../../../base/icons/svg';
+import { approveParticipantAudio, approveParticipantDesktop, approveParticipantVideo } from '../../../av-moderation/actions';
+import { IconMic, IconScreenshare, IconVideo } from '../../../base/icons/svg';
 import { MEDIA_TYPE, MediaType } from '../../../base/media/constants';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
@@ -36,6 +36,8 @@ const AskToUnmuteButton = ({
             dispatch(approveParticipantAudio(participantID));
         } else if (buttonType === MEDIA_TYPE.VIDEO) {
             dispatch(approveParticipantVideo(participantID));
+        } else if (buttonType === MEDIA_TYPE.SCREENSHARE) {
+            dispatch(approveParticipantDesktop(participantID));
         }
     }, [ buttonType, dispatch, notifyClick, notifyMode, participantID ]);
 
@@ -44,6 +46,8 @@ const AskToUnmuteButton = ({
             return t('participantsPane.actions.askUnmute');
         } else if (buttonType === MEDIA_TYPE.VIDEO) {
             return t('participantsPane.actions.allowVideo');
+        } else if (buttonType === MEDIA_TYPE.SCREENSHARE) {
+            return t('participantsPane.actions.allowDesktop');
         }
 
         return '';
@@ -54,6 +58,8 @@ const AskToUnmuteButton = ({
             return IconMic;
         } else if (buttonType === MEDIA_TYPE.VIDEO) {
             return IconVideo;
+        } else if (buttonType === MEDIA_TYPE.SCREENSHARE) {
+            return IconScreenshare;
         }
     }, [ buttonType ]);
 

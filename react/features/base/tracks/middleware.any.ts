@@ -188,10 +188,6 @@ function _setMuted(store: IStore, { ensureTrack, muted }: {
     const localTrack = _getLocalTrack(store, mediaType, /* includePending */ true);
     const state = getState();
 
-    if (mediaType === MEDIA_TYPE.SCREENSHARE && !muted) {
-        return;
-    }
-
     if (localTrack) {
         // The `jitsiTrack` property will have a value only for a localTrack for which `getUserMedia` has already
         // completed. If there's no `jitsiTrack`, then the `muted` state will be applied once the `jitsiTrack` is
@@ -203,8 +199,11 @@ function _setMuted(store: IStore, { ensureTrack, muted }: {
                 .catch(() => dispatch(trackMuteUnmuteFailed(localTrack, muted)));
         }
     } else if (!muted && ensureTrack) {
+        // TODO(saghul): reconcile these 2 types.
+        const createMediaType = mediaType === MEDIA_TYPE.SCREENSHARE ? 'desktop' : mediaType;
+
         typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.PENDING_UNMUTE));
-        dispatch(createLocalTracksA({ devices: [ mediaType ] })).then(() => {
+        dispatch(createLocalTracksA({ devices: [ createMediaType ] })).then(() => {
             typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.NONE));
         });
     }

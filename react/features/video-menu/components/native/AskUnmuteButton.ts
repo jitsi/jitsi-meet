@@ -2,13 +2,12 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { approveParticipant } from '../../../av-moderation/actions';
-import { isSupported } from '../../../av-moderation/functions';
+import { MEDIA_TYPE } from '../../../av-moderation/constants';
+import { isForceMuted, isSupported } from '../../../av-moderation/functions';
 import { translate } from '../../../base/i18n/functions';
 import { IconMic, IconVideo } from '../../../base/icons/svg';
-import { MEDIA_TYPE } from '../../../base/media/constants';
 import { getParticipantById, isLocalParticipantModerator } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
-import { isForceMuted } from '../../../participants-pane/functions';
 
 export interface IProps extends AbstractButtonProps {
 

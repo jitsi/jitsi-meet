@@ -1,8 +1,7 @@
 import { IReduxState } from '../app/types';
+import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../av-moderation/constants';
 import {
-    isEnabledFromState,
-    isLocalParticipantApprovedFromState,
-    isParticipantApproved,
+    isForceMuted,
     isSupported
 } from '../av-moderation/functions';
 import { IStateful } from '../base/app/types';
@@ -10,47 +9,25 @@ import theme from '../base/components/themes/participantsPaneTheme.json';
 import { getCurrentConference } from '../base/conference/functions';
 import { INVITE_ENABLED, PARTICIPANTS_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
-import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
 import {
     getDominantSpeakerParticipant,
     getLocalParticipant,
     getRaiseHandsQueue,
     getRemoteParticipantsSorted,
-    isLocalParticipantModerator,
-    isParticipantModerator
+    isLocalParticipantModerator
 } from '../base/participants/functions';
 import { IParticipant } from '../base/participants/types';
 import { toState } from '../base/redux/functions';
+import {
+    isParticipantAudioMuted,
+    isParticipantScreenShareMuted,
+    isParticipantVideoMuted
+} from '../base/tracks/functions.any';
 import { normalizeAccents } from '../base/util/strings';
 import { BREAKOUT_ROOMS_RENAME_FEATURE } from '../breakout-rooms/constants';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 
 import { MEDIA_STATE, QUICK_ACTION_BUTTON, REDUCER_KEY } from './constants';
-
-/**
- * Checks if a participant is force muted.
- *
- * @param {IParticipant|undefined} participant - The participant.
- * @param {MediaType} mediaType - The media type.
- * @param {IReduxState} state - The redux state.
- * @returns {MediaState}
- */
-export function isForceMuted(participant: IParticipant | undefined, mediaType: MediaType, state: IReduxState) {
-    if (isEnabledFromState(mediaType, state)) {
-        if (participant?.local) {
-            return !isLocalParticipantApprovedFromState(mediaType, state);
-        }
-
-        // moderators cannot be force muted
-        if (isParticipantModerator(participant)) {
-            return false;
-        }
-
-        return !isParticipantApproved(participant?.id ?? '', mediaType)(state);
-    }
-
-    return false;
-}
 
 /**
  * Determines the audio media state (the mic icon) for a participant.
@@ -69,7 +46,7 @@ export function getParticipantAudioMediaState(participant: IParticipant | undefi
     }
 
     if (muted) {
-        if (isForceMuted(participant, MEDIA_TYPE.AUDIO, state)) {
+        if (isForceMuted(participant, AVM_MEDIA_TYPE.AUDIO, state)) {
             return MEDIA_STATE.FORCE_MUTED;
         }
 
@@ -94,7 +71,7 @@ export function getParticipantAudioMediaState(participant: IParticipant | undefi
 export function getParticipantVideoMediaState(participant: IParticipant | undefined,
         muted: Boolean, state: IReduxState) {
     if (muted) {
-        if (isForceMuted(participant, MEDIA_TYPE.VIDEO, state)) {
+        if (isForceMuted(participant, AVM_MEDIA_TYPE.VIDEO, state)) {
             return MEDIA_STATE.FORCE_MUTED;
         }
 
@@ -139,33 +116,44 @@ export const getParticipantsPaneOpen = (state: IReduxState) => Boolean(getState(
  * The button is displayed when hovering a participant from the participant list.
  *
  * @param {IParticipant} participant - The participant.
- * @param {boolean} isAudioMuted - If audio is muted for the participant.
- * @param {boolean} isVideoMuted - If audio is muted for the participant.
  * @param {IReduxState} state - The redux state.
  * @returns {string} - The type of the quick action button.
  */
-export function getQuickActionButtonType(
-        participant: IParticipant | undefined,
-        isAudioMuted: Boolean,
-        isVideoMuted: Boolean,
-        state: IReduxState) {
-    // handled only by moderators
-    const isVideoForceMuted = isForceMuted(participant, MEDIA_TYPE.VIDEO, state);
-    const isParticipantSilent = participant?.isSilent || false;
+export function getQuickActionButtonType(participant: IParticipant | undefined, state: IReduxState) {
+    if (!isLocalParticipantModerator(state)) {
+        return QUICK_ACTION_BUTTON.NONE;
+    }
 
-    if (isLocalParticipantModerator(state)) {
-        if (!isAudioMuted && !isParticipantSilent) {
-            return QUICK_ACTION_BUTTON.MUTE;
-        }
-        if (!isVideoMuted) {
-            return QUICK_ACTION_BUTTON.STOP_VIDEO;
-        }
-        if (isSupported()(state) && !isParticipantSilent) {
-            return QUICK_ACTION_BUTTON.ASK_TO_UNMUTE;
-        }
-        if (isVideoForceMuted) {
-            return QUICK_ACTION_BUTTON.ALLOW_VIDEO;
-        }
+    // Handled only by moderators.
+    const isAudioMuted = isParticipantAudioMuted(participant, state);
+    const isScreenShareMuted = isParticipantScreenShareMuted(participant, state);
+    const isVideoMuted = isParticipantVideoMuted(participant, state);
+    const isDesktopForceMuted = isForceMuted(participant, AVM_MEDIA_TYPE.DESKTOP, state);
+    const isVideoForceMuted = isForceMuted(participant, AVM_MEDIA_TYPE.VIDEO, state);
+    const isParticipantSilent = participant?.isSilent ?? false;
+
+    if (!isAudioMuted && !isParticipantSilent) {
+        return QUICK_ACTION_BUTTON.MUTE;
+    }
+
+    if (!isVideoMuted) {
+        return QUICK_ACTION_BUTTON.STOP_VIDEO;
+    }
+
+    if (!isScreenShareMuted) {
+        return QUICK_ACTION_BUTTON.STOP_DESKTOP;
+    }
+
+    if (isSupported()(state) && !isParticipantSilent) {
+        return QUICK_ACTION_BUTTON.ASK_TO_UNMUTE;
+    }
+
+    if (isVideoForceMuted) {
+        return QUICK_ACTION_BUTTON.ALLOW_VIDEO;
+    }
+
+    if (isDesktopForceMuted) {
+        return QUICK_ACTION_BUTTON.ALLOW_DESKTOP;
     }
 
     return QUICK_ACTION_BUTTON.NONE;
