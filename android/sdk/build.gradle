@@ -94,6 +94,22 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
+// Helper function to add standard React Native module dependencies
+def addReactNativeModuleDependencies(task, moduleName, targetName) {
+    task.dependsOn(":${moduleName}:compile${targetName}JavaWithJavac")
+    task.dependsOn(":${moduleName}:package${targetName}Resources")
+    task.dependsOn(":${moduleName}:generate${targetName}ResValues")
+    task.dependsOn(":${moduleName}:generate${targetName}BuildConfig")
+    task.dependsOn(":${moduleName}:process${targetName}Manifest")
+    task.dependsOn(":${moduleName}:bundleLibCompileToJar${targetName}")
+    
+    // Add javaPreCompile for modules that have it (like async-storage)
+    try {
+        task.dependsOn(":${moduleName}:javaPreCompile${targetName}")
+    } catch (Exception e) {
+        // Module doesn't have javaPreCompile task, ignore
+    }
+}
 
 // Here we bundle all assets, resources and React files. We cannot use the
 // react.gradle file provided by react-native because it's designed to be used
@@ -153,12 +169,12 @@ android.libraryVariants.all { def variant ->
 
     // Add explicit dependencies on react-native-amplitude tasks to fix Gradle validation errors
     if (!rootProject.ext.libreBuild) {
-        currentBundleTask.dependsOn(":react-native-amplitude:compile${targetName}JavaWithJavac")
-        currentBundleTask.dependsOn(":react-native-amplitude:package${targetName}Resources")
-        currentBundleTask.dependsOn(":react-native-amplitude:generate${targetName}ResValues")
-        currentBundleTask.dependsOn(":react-native-amplitude:generate${targetName}BuildConfig")
-        currentBundleTask.dependsOn(":react-native-amplitude:process${targetName}Manifest")
+        addReactNativeModuleDependencies(currentBundleTask, "react-native-amplitude", targetName)
+        addReactNativeModuleDependencies(currentBundleTask, "react-native-giphy", targetName)
     }
+    
+    // Add explicit dependencies on react-native-async-storage tasks
+    addReactNativeModuleDependencies(currentBundleTask, "react-native-async-storage", targetName)
 
     currentBundleTask.ext.generatedResFolders = files(resourcesDir).builtBy(currentBundleTask)
     currentBundleTask.ext.generatedAssetsFolders = files(jsBundleDir).builtBy(currentBundleTask)
