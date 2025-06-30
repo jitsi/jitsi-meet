@@ -110,6 +110,10 @@ jobs:
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
+    - uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
     - name: Check Node / npm versions
       run: |
         node -v
