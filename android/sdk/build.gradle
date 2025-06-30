@@ -151,15 +151,6 @@ android.libraryVariants.all { def variant ->
         enabled !devEnabled
     }
 
-    // Add explicit dependencies on react-native-amplitude tasks to fix Gradle validation errors
-    if (!rootProject.ext.libreBuild) {
-        currentBundleTask.dependsOn(":react-native-amplitude:compile${targetName}JavaWithJavac")
-        currentBundleTask.dependsOn(":react-native-amplitude:package${targetName}Resources")
-        currentBundleTask.dependsOn(":react-native-amplitude:generate${targetName}ResValues")
-        currentBundleTask.dependsOn(":react-native-amplitude:generate${targetName}BuildConfig")
-        currentBundleTask.dependsOn(":react-native-amplitude:process${targetName}Manifest")
-    }
-
     currentBundleTask.ext.generatedResFolders = files(resourcesDir).builtBy(currentBundleTask)
     currentBundleTask.ext.generatedAssetsFolders = files(jsBundleDir).builtBy(currentBundleTask)
     variant.registerGeneratedResFolders(currentBundleTask.generatedResFolders)
