@@ -80,7 +80,7 @@
         "react-native-safe-area-context": "0.0.0",
         "react-native-screens": "0.0.0",
         "react-native-sound": "0.0.0",
-        "react-native-splash-screen": "0.0.0",
+        "react-native-splash-view": "0.0.0",
         "react-native-svg": "0.0.0",
         "react-native-video": "0.0.0",
         "react-native-watch-connectivity": "0.0.0",
