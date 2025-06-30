@@ -7,139 +7,16 @@ import { IReduxState } from '../../../../app/types';
 import { getParticipantDisplayName, getRemoteParticipants } from '../../../participants/functions';
 import { ITrack } from '../../../tracks/types';
 import logger from '../../logger';
+import { getSpatialAudioManager, SpatialAudioDebug, ISpatialAudioSettings } from '../../../../spatial-audio';
 
 /**
- * Declare global variables for spatial audio
+ * Declare global variables for backward compatibility
  */
 declare global {
     interface Window {
         context: AudioContext;
         spatialAudio: boolean;
         audioTracks: NodeListOf<Element>;
-    }
-}
-
-/**
- * Global tracker for all AudioTrack instances to provide overview logging
- */
-class AudioTrackTracker {
-    private static instances: Map<string, {
-        participantId: string;
-        participantName: string;
-        trackIndex: number;
-        totalTracks: number;
-        xPos: number;
-        yPos: number;
-        audioTrackRef: AudioTrack; // Reference to the AudioTrack instance
-    }> = new Map();
-
-    static updateInstance(instanceId: string, data: {
-        participantId: string;
-        participantName: string;
-        trackIndex: number;
-        totalTracks: number;
-        xPos: number;
-        yPos: number;
-        audioTrackRef: AudioTrack;
-    }) {
-        this.instances.set(instanceId, data);
-        this.logOverview();
-    }
-
-    static removeInstance(instanceId: string) {
-        this.instances.delete(instanceId);
-    }
-
-    /**
-     * Notify all AudioTrack instances to recalculate their positions
-     * This should be called whenever the total number of participants changes
-     */
-    static recalculateAllPositions() {
-        console.log('Spatial-Audio: Recalculating positions for all participants');
-        
-        // Get current total number of participants
-        window.audioTracks = document.querySelectorAll('.audio-track');
-        const totalTracks = window.audioTracks.length;
-        
-        console.log(`Spatial-Audio: Pans werden neu kalkuliert für ${totalTracks} Teilnehmer`);
-        
-        // Update each instance with new track info and trigger position recalculation
-        this.instances.forEach((data, instanceId) => {
-            const audioTrack = data.audioTrackRef;
-            const newIndex = audioTrack.getIndex();
-            
-            // Update the stored data
-            audioTrack._trackIdx = newIndex;
-            audioTrack._trackLen = totalTracks;
-            
-            // Trigger position update
-            audioTrack.updateSpatial();
-            
-            console.log(`Spatial-Audio: Updated ${data.participantName} to index ${newIndex} of ${totalTracks}`);
-        });
-        
-        console.log('Spatial-Audio: Neuberechnung der Panning-Parameter abgeschlossen');
-    }
-
-    private static logOverview() {
-        if (this.instances.size === 0) return;
-
-        const participantData = Array.from(this.instances.values())
-            .sort((a, b) => a.trackIndex - b.trackIndex);
-
-        const totalParticipants = participantData.length;
-        let layoutDescription = '';
-        
-        if (totalParticipants <= 4) {
-            layoutDescription = '1 Row Layout (Elevation: 0)';
-        } else if (totalParticipants <= 8) {
-            layoutDescription = '2 Row Layout (Upper: +1, Lower: -1)';
-        } else if (totalParticipants <= 12) {
-            layoutDescription = '3 Row Layout (Upper: +1.5, Middle: 0, Lower: -1.5)';
-        } else {
-            layoutDescription = 'Fallback Horizontal Layout';
-        }
-
-        console.group('Spatial Audio - Grid-Based Participant Positions');
-        console.log(`Total Participants: ${totalParticipants} - ${layoutDescription}`);
-        console.log('┌─────┬─────────────────────────────┬─────────┬──────────┬─────────┐');
-        console.log('│ #   │ Participant Name            │ X-Pos   │ Y-Pos    │ Row     │');
-        console.log('│     │                             │ (Pan)   │ (Elev)   │         │');
-        console.log('├─────┼─────────────────────────────┼─────────┼──────────┼─────────┤');
-        
-        participantData.forEach((participant) => {
-            const name = participant.participantName.length > 27 
-                ? participant.participantName.substring(0, 24) + '...' 
-                : participant.participantName;
-            const nameFormatted = name.padEnd(27);
-            const indexFormatted = (participant.trackIndex + 1).toString().padStart(3);
-            const xFormatted = participant.xPos.toFixed(2).padStart(7);
-            const yFormatted = participant.yPos.toFixed(2).padStart(8);
-            
-            // Determine row info based on Y position
-            let rowInfo = '';
-            if (participant.yPos > 1) {
-                rowInfo = 'Upper  ';
-            } else if (participant.yPos > 0) {
-                rowInfo = 'Upper  ';
-            } else if (participant.yPos === 0) {
-                if (totalParticipants <= 4) {
-                    rowInfo = 'Single ';
-                } else {
-                    rowInfo = 'Middle ';
-                }
-            } else if (participant.yPos > -1.5) {
-                rowInfo = 'Lower  ';
-            } else {
-                rowInfo = 'Lower  ';
-            }
-            
-            console.log(`│ ${indexFormatted} │ ${nameFormatted} │ ${xFormatted} │ ${yFormatted} │ ${rowInfo} │`);
-        });
-        
-        console.log('└─────┴─────────────────────────────┴─────────┴──────────┴─────────┘');
-        console.log('Position Range: X from -2.00 (left) to +2.00 (right), Y for elevation');
-        console.groupEnd();
     }
 }
 
@@ -200,706 +77,523 @@ class AudioTrack extends Component<IProps> {
     _ref: React.RefObject<HTMLAudioElement>;
 
     /**
-     * The current timeout ID for play() retries.
+     * Timeout to avoid errors when the audio element is not ready.
      */
     _playTimeout: number | undefined;
 
     /**
-     * Web Audio API nodes for spatial processing
+     * Audio source node for Web Audio API
      */
     _source?: MediaElementAudioSourceNode | MediaStreamAudioSourceNode;
-    _gainNode?: GainNode;
-    _pannerNode?: PannerNode;
-    _spatialAudio?: boolean;
-    _trackIdx?: number;
-    _trackLen?: number;
 
     /**
-     * The interval ID for spatial audio monitoring
+     * Track index for position calculation
      */
-    _spatialAudioInterval?: number;
+    _trackIdx?: number;
 
     /**
-     * Default values for {@code AudioTrack} component's properties.
-     *
-     * @static
+     * Spatial audio manager instance
+     */
+    private spatialAudioManager = getSpatialAudioManager();
+
+    /**
+     * Indicates if this participant has been registered with the spatial audio manager
+     */
+    private isRegisteredWithManager = false;
+
+    /**
+     * The default props of {@code AudioTrack}.
      */
     static defaultProps = {
-        autoPlay: false,
+        autoPlay: true,
         id: ''
     };
 
-
     /**
-     * Creates new <code>Audio</code> element instance with given props.
+     * Initializes a new {@code AudioTrack} instance.
      *
-     * @param {Object} props - The read-only properties with which the new
+     * @param {IProps} props - The read-only properties with which the new
      * instance is to be initialized.
      */
     constructor(props: IProps) {
         super(props);
 
-        // Bind event handlers so they are only bound once for every instance.
-        this._errorHandler = this._errorHandler.bind(this);
         this._ref = React.createRef();
-        this._play = this._play.bind(this);
-        this._setRef = this._setRef.bind(this);
     }
 
-
     /**
-     * Attaches the audio track to the audio element and plays it.
+     * Starts playing the audio track.
      *
      * @inheritdoc
      * @returns {void}
      */
     override componentDidMount() {
         this._attachTrack(this.props.audioTrack);
-        this.initContext();
 
-        if (this._ref?.current) {
-            const audio = this._ref?.current;
-            const { _muted, _volume } = this.props;
+        // Initialize backward compatibility
+        this.initBackwardCompatibility();
 
-            let stream = (audio as any).mozCaptureStream
-                        ? (audio as any).mozCaptureStream()
-                        : (audio as any).captureStream();
-    
-            if (stream?.active) {
-                console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Chrome browser detected, using MediaStreamSource`);
-                this._source = window.context.createMediaStreamSource(stream);
-            } else { // in the case of Firefox, streams are duplicated?
-                console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Firefox browser detected, using MediaElementSource`);
-                audio.volume = 0;
-                this._source = window.context.createMediaElementSource(audio);
-                audio.play();
-            }
+        // Register with spatial audio manager
+        this.registerWithSpatialAudioManager();
 
-            // Always refresh audio tracks list to get current participants
-            window.audioTracks = document.querySelectorAll('.audio-track');
-            console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Found ${window.audioTracks.length} audio tracks`);
+        // Listen for spatial audio settings changes
+        this.spatialAudioManager.addEventListener('settingsUpdated', this.handleSpatialAudioSettingsChange);
+        
+        // Set initial volume based on current settings
+        this.handleSpatialAudioSettingsChange({ settings: this.spatialAudioManager.getSettings() });
 
-            // Index and length for the first time
-            this._trackLen = window.audioTracks.length; 
-            this._trackIdx = this.getIndex();
-            console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: This track has index ${this._trackIdx} of ${this._trackLen}`);
-            
-            // Set up initial spatialization
-            this.setupSpatial();
-            this.updateSpatial();
-
-            // Check if we need to recalculate ALL positions (when participant count changed)
-            // We do this after a short delay to ensure all DOM elements are properly initialized
-            setTimeout(() => {
-                this.checkAndRecalculatePositions();
-            }, 100);
-
-            // Start monitoring spatial audio state changes
-            this.startSpatialAudioMonitoring();
-
-            if (typeof _volume === 'number') {
-                // audio.volume = volume;
-                if (this._gainNode) {
-                    this._gainNode.gain.value = _volume;
-                }
-            }
-
-            if (typeof _muted === 'boolean') {
-                audio.muted = _muted;
-            }
-
-            // @ts-ignore
-            audio.addEventListener('error', this._errorHandler);
-        } else { // This should never happen
-            logger.error(`The react reference is null for AudioTrack ${this.props?.id}`);
+        if (this._ref.current) {
+            this._ref.current.addEventListener('error', this._errorHandler);
         }
     }
 
     /**
-     * Remove any existing associations between the current audio track and the
-     * component's audio element.
+     * Stops playing the audio track.
      *
      * @inheritdoc
      * @returns {void}
      */
     override componentWillUnmount() {
+        // Unregister from spatial audio manager
+        this.unregisterFromSpatialAudioManager();
+
+        // Stop listening for settings changes
+        this.spatialAudioManager.removeEventListener('settingsUpdated', this.handleSpatialAudioSettingsChange);
+
         this._detachTrack(this.props.audioTrack);
-        this._source?.disconnect(); // disconnect old audio stream (prevents lingering audio)
 
-        // Clear spatial audio monitoring interval
-        if (this._spatialAudioInterval) {
-            clearInterval(this._spatialAudioInterval);
-        }
-
-        // Remove manual recalculation event listener
-        if ((this as any)._manualRecalculationListener) {
-            window.removeEventListener('spatialAudioRecalculate', (this as any)._manualRecalculationListener);
-        }
-
-        // Remove this instance from the global tracker
-        AudioTrackTracker.removeInstance(this.props.id);
-
-        // @ts-ignore
-        this._ref?.current?.removeEventListener('error', this._errorHandler);
+        clearTimeout(this._playTimeout);
     }
 
     /**
-     * This component's updating is blackboxed from React to prevent re-rendering of the audio
-     * element, as we set all the properties manually.
+     * Determines if audio element needs to be updated.
      *
-     * @inheritdoc
-     * @returns {boolean} - False is always returned to blackbox this component
-     * from React.
+     * @param {IProps} nextProps - The new props.
+     * @returns {boolean}
      */
     override shouldComponentUpdate(nextProps: IProps) {
         const currentJitsiTrack = this.props.audioTrack?.jitsiTrack;
         const nextJitsiTrack = nextProps.audioTrack?.jitsiTrack;
 
-        if (window.context?.state === 'suspended') {
-            console.warn('Spatial-Audio: AudioContext is suspended, attempting to resume');
-            window.context.resume();
-        }
-
-        if (currentJitsiTrack !== nextJitsiTrack) {
-            this._detachTrack(this.props.audioTrack);
-            this._attachTrack(nextProps.audioTrack);
-        }
-
-        // Check if current track is hidden - if so, don't update!
-        if (this._ref?.current) {
-            const currentVolume = this._gainNode ? this._gainNode.gain.value : this._ref.current.volume;
-            const nextVolume = nextProps._volume;
-
-            if (typeof nextVolume === 'number' && !isNaN(nextVolume) && currentVolume !== nextVolume) {
-                if (nextVolume === 0) {
-                    logger.debug(`Setting audio element ${nextProps?.id} volume to 0`);
-                }
-                if (this._gainNode) {
-                    this._gainNode.gain.value = nextVolume;
-                } else {
-                    this._ref.current.volume = nextVolume;
-                }
-            }
-
-            const currentMuted = this._ref.current.muted;
-            const nextMuted = nextProps._muted;
-
-            if (typeof nextMuted === 'boolean' && currentMuted !== nextMuted) {
-                logger.debug(`Setting audio element ${nextProps?.id} muted to ${nextMuted}`);
-
-                this._ref.current.muted = nextMuted;
-            }
-
-
-            if (window.spatialAudio) {
-                // Always refresh audio tracks to get current participants
-                window.audioTracks = document.querySelectorAll('.audio-track');
-                
-                // Check if user is in a new position in queue
-                const currentIndex = this._trackIdx;
-                const currentLength = this._trackLen;
-
-                // Update index
-                const nextIndex = this.getIndex();
-                const nextLength = window.audioTracks.length;
-                
-                console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Current participants: ${nextLength}, this track index: ${nextIndex}`);
-                
-                // If participant count changed, recalculate positions for ALL participants
-                if (currentLength !== nextLength) {
-                    console.log(`Spatial-Audio: Participant count changed from ${currentLength} to ${nextLength} - recalculating all positions`);
-                    AudioTrackTracker.recalculateAllPositions();
-                }
-                // If only this participant's index changed (but total count stayed same), update just this one
-                else if (currentIndex !== nextIndex) {
-                    this._trackIdx = nextIndex;
-                    this._trackLen = nextLength;
-                    this.updateSpatial();
-                    console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Individual position updated`);
-                }
-            }
-        }
-
-        return false;
+        return currentJitsiTrack !== nextJitsiTrack;
     }
 
     /**
-     * Implements React's {@link Component#render()}.
+     * Renders the component.
      *
-     * @inheritdoc
      * @returns {ReactElement}
      */
     override render() {
-        const { autoPlay, id } = this.props;
+        const {
+            autoPlay,
+            id,
+            _muted: muted,
+            _volume: volume
+        } = this.props;
 
         return (
             <audio
                 autoPlay = { autoPlay }
+                className = 'audio-track'
                 id = { id }
+                muted = { muted }
                 ref = { this._setRef } />
         );
     }
 
     /**
-     * Calls into the passed in track to associate the track with the component's audio element.
+     * Attaches the passed track to the audio element and enables/disables it.
      *
-     * @param {Object} track - The redux representation of the {@code JitsiLocalTrack}.
-     * @private
+     * @param {ITrack} track - The track to attach to the audio element.
      * @returns {void}
      */
     _attachTrack(track?: ITrack) {
-        const { id } = this.props;
-
-        if (!track?.jitsiTrack) {
-            logger.warn(`Attach is called on audio element ${id} without tracks passed!`);
-
-            return;
-        }
-
-        if (!this._ref?.current) {
-            logger.warn(`Attempting to attach track ${track?.jitsiTrack} on AudioTrack ${id} without reference!`);
-
+        if (!track || !track.jitsiTrack) {
             return;
         }
 
         track.jitsiTrack.attach(this._ref.current)
-            .catch((error: Error) => {
-                logger.error(
-                    `Attaching the remote track ${track.jitsiTrack} to video with id ${id} has failed with `,
-                    error);
+            .then(() => {
+                // Create audio source for spatial audio after successful attach
+                this.createAudioSource();
             })
-            .finally(() => {
-                this._play();
+            .catch((error: Error) => {
+                logger.error('Failed to attach track:', error);
             });
     }
 
     /**
-     * Removes the association to the component's audio element from the passed
-     * in redux representation of jitsi audio track.
+     * Detaches the passed track from the audio element.
      *
-     * @param {Object} track -  The redux representation of the {@code JitsiLocalTrack}.
-     * @private
+     * @param {ITrack} track - The track to detach from the audio element.
      * @returns {void}
      */
     _detachTrack(track?: ITrack) {
-        if (this._ref?.current && track?.jitsiTrack) {
-            clearTimeout(this._playTimeout);
-            this._playTimeout = undefined;
-            track.jitsiTrack.detach(this._ref.current);
-        }
-    }
-
-    /**
-     * Reattaches the audio track to the underlying HTMLAudioElement when an 'error' event is fired.
-     *
-     * @param {Error} error - The error event fired on the HTMLAudioElement.
-     * @returns {void}
-     */
-    _errorHandler(error: Error) {
-        logger.error(`Error ${error?.message} called on audio track ${this.props.audioTrack?.jitsiTrack}. `
-            + 'Attempting to reattach the audio track to the element and execute play on it');
-        this._detachTrack(this.props.audioTrack);
-        this._attachTrack(this.props.audioTrack);
-    }
-
-    /**
-     * Plays the underlying HTMLAudioElement.
-     *
-     * @param {number} retries - The number of previously failed retries.
-     * @returns {void}
-     */
-    _play(retries = 0) {
-        const { autoPlay, id } = this.props;
-
-        if (!this._ref?.current) {
-            // nothing to play.
-            logger.warn(`Attempting to call play on AudioTrack ${id} without reference!`);
-
+        if (!track || !track.jitsiTrack) {
             return;
         }
 
-        if (autoPlay) {
-            // Ensure the audio gets play() called on it. This may be necessary in the
-            // case where the local video container was moved and re-attached, in which
-            // case the audio may not autoplay.
-            this._ref.current.play()
-            .then(() => {
-                if (retries !== 0) {
-                    // success after some failures
-                    this._playTimeout = undefined;
-                    sendAnalytics(createAudioPlaySuccessEvent(id));
-                    logger.info(`Successfully played audio track! retries: ${retries}`);
-                }
-            }, e => {
-                logger.error(`Failed to play audio track on audio element ${id}! retry: ${retries} ; Error:`, e);
+        track.jitsiTrack.detach(this._ref.current);
 
-                if (retries < 3) {
-                    this._playTimeout = window.setTimeout(() => this._play(retries + 1), 1000);
+        // Disconnect audio source
+        this.disconnectAudioSource();
+    }
 
-                    if (retries === 0) {
-                        // send only 1 error event.
-                        sendAnalytics(createAudioPlayErrorEvent(id));
-                    }
-                } else {
-                    this._playTimeout = undefined;
+    /**
+     * Handles errors that occur when playing the audio element.
+     *
+     * @param {Error} error - The error that occurred.
+     * @returns {void}
+     */
+    _errorHandler = (event: ErrorEvent | Error) => {
+        const message = event instanceof Error ? event.message : event.message || 'Unknown error';
+        logger.error('Failed to play audio track', message);
+        sendAnalytics(createAudioPlayErrorEvent());
+    }
+
+    /**
+     * Plays the underlying audio element.
+     *
+     * @param {number} retries - Number of retries when play fails.
+     * @returns {void}
+     */
+    _play(retries = 0) {
+        const { autoPlay } = this.props;
+
+        if (!autoPlay) {
+            return;
+        }
+
+        if (this._ref.current) {
+            const { current: audio } = this._ref;
+
+            if (audio.readyState >= 1) {
+                const playPromise = audio.play();
+
+                if (playPromise) {
+                    playPromise
+                        .then(() => {
+                            sendAnalytics(createAudioPlaySuccessEvent());
+                        })
+                        .catch((error: Error) => this._errorHandler(error));
                 }
-            });
+            } else if (retries < 5) {
+                this._playTimeout = window.setTimeout(() => this._play(retries + 1), 200);
+            } else {
+                this._errorHandler(new Error('Audio element failed to load.'));
+            }
         }
     }
 
     /**
      * Sets the reference to the HTML audio element.
      *
-     * @param {HTMLAudioElement} audioElement - The audio element.
-     * @private
+     * @param {HTMLAudioElement} audioElement - The HTML audio element instance.
      * @returns {void}
      */
-    _setRef(audioElement: HTMLAudioElement | null) {
+    _setRef = (audioElement: HTMLAudioElement | null) => {
         (this._ref as any).current = audioElement;
-        const { onInitialVolumeSet } = this.props;
 
-        if (this._ref?.current && this._gainNode && onInitialVolumeSet) {
-            onInitialVolumeSet(this._gainNode.gain.value);
+        if (audioElement) {
+            audioElement.addEventListener('loadeddata', () => this._play(0));
+            audioElement.addEventListener('error', this._errorHandler);
         }
     }
 
     /**
-     * Set up required variables for WebAudio spatialization
-     * Note: This doesn't set up location of sounds (done in update)
-     * 
-     * @returns {void}
+     * Initialize backward compatibility globals
      */
-    setupSpatial = () => {
-        // setup listener once, one per context
-        if (window.context.listener) {
-            const listener = window.context.listener;
-
-            if ((listener as any).forwardX) {
-                (listener as any).forwardX.value = 0;
-                (listener as any).forwardY.value = 0;
-                (listener as any).forwardZ.value = -1;
-                (listener as any).upX.value = 0;
-                (listener as any).upY.value = 1;
-                (listener as any).upZ.value = 0;
-            } else {
-                (listener as any).setOrientation(0, 0, -1, 0, 1, 0);
-            }
-
-            if ((listener as any).positionX) {
-                (listener as any).positionX.value = 0; // horizontal
-                (listener as any).positionY.value = 0; // vertical
-                (listener as any).positionZ.value = 1; // depth
-            } else {
-                (listener as any).setPosition(0, 0, 1);
-            }
+    private initBackwardCompatibility(): void {
+        // Initialize AudioContext if not exists
+        if (!window.context) {
+            (window as any).context = this.spatialAudioManager.getAudioContext();
         }
 
-        // create and link nodes
-        this._gainNode = window.context.createGain();
-        this._pannerNode = window.context.createPanner();
-
-        // setup source location
-        this._pannerNode.panningModel = 'HRTF';
-        this._pannerNode.distanceModel = 'inverse';
-        this._pannerNode.refDistance = 1;
-        this._pannerNode.maxDistance = 10000;
-        this._pannerNode.rolloffFactor = 1;
-        this._pannerNode.coneInnerAngle = 360;
-        this._pannerNode.coneOuterAngle = 0;
-        this._pannerNode.coneOuterGain = 0;
-        (this._pannerNode as any).scale = 1;
-
-        if ((this._pannerNode as any).orientationX) {
-            (this._pannerNode as any).orientationX.value = 1; // horizontal (should not matter without a cone)
-            (this._pannerNode as any).orientationY.value = 0; // vertical
-            (this._pannerNode as any).orientationZ.value = 0; // depth
-        } else {
-            (this._pannerNode as any).setOrientation(1, 0, 0);
+        // Initialize spatial audio state
+        if (typeof window.spatialAudio === 'undefined') {
+            window.spatialAudio = this.spatialAudioManager.getSettings().enabled;
         }
 
-        // Set spatial audio state and connect appropriate graph
-        this._spatialAudio = window.spatialAudio;
-
-        // Connect the appropriate audio chain based on initial state
-        if (this._spatialAudio) {
-            // Start with spatial audio enabled
-            this._source?.connect(this._pannerNode);
-            this._pannerNode.connect(this._gainNode);
-            console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Initial setup with spatial audio chain`);
-        } else {
-            // Start with mono audio (bypass panner)
-            this._source?.connect(this._gainNode);
-            console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Initial setup with mono audio chain`);
-        }
-
-        this._gainNode.connect(window.context.destination);
+        // Update audio tracks list
+        window.audioTracks = document.querySelectorAll('.audio-track');
     }
 
     /**
-     * Update location of audio stream
-     *
-     * @returns {void}
+     * Register this participant with the spatial audio manager
      */
-    updateSpatial = () => {
-        // change location of source when its an update
-        console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Updating panner position`);
-
-        const [xPos, yPos] = this.calcLocation();
-        const scale = (this._pannerNode as any)?.scale || 1;
-
-        // set x, y position
-        if ((this._pannerNode as any)?.positionX) {
-            (this._pannerNode as any).positionX.value = xPos * scale;
-            (this._pannerNode as any).positionY.value = yPos * scale;
-            (this._pannerNode as any).positionZ.value = 0;
-        } else {
-            (this._pannerNode as any)?.setPosition(xPos * scale, yPos * scale, 0);
-        }
-        
-        console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Set panner position to x=${xPos * scale}, y=${yPos * scale}, z=0`);
-    }
-
-    /**
-     * Initializes Web Audio context
-     *
-     * @returns {void}
-     */
-    initContext = () => {
-        if (window.context) {
-            console.log('Spatial-Audio: AudioContext already exists');
-        } else {
-            window.context = new ((window as any).AudioContext || (window as any).webkitAudioContext)();
-            console.warn('Spatial-Audio: Creating new AudioContext');
-        }
-
-        // Sets both global and local states initially
-        if (typeof(window.spatialAudio) === 'undefined') {
-            console.warn('Spatial-Audio: Global spatialAudio state not initialized, setting to false');
-            window.spatialAudio = false;
-        }
-        
-        console.log('Spatial-Audio: Initial spatial audio state:', window.spatialAudio);
-    }
-
-    /**
-     * Get index of audio stream
-     *
-     * @returns {number}
-     */
-    getIndex = (): number => {
-        let i = 0;
-
-        if (window.audioTracks.length > 1) {
-            try {
-                for (const item of window.audioTracks) {
-                    if (item.firstElementChild?.id === this._ref?.current?.id) {
-                        return i;
-                    } 
-                    i++;
-                }
-                console.warn(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Track index not found for ${this._ref?.current?.id}`);
-                return 0;
-            } catch (err) {
-                console.warn(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Error getting track index:`, err);
-                return 0;
-            }
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * Calculate the location of a participant's audio stream with grid-based positioning
-     * Grid layout supports up to 3 rows with elevation:
-     * - 1 row (0-4 participants): elevation = 0
-     * - 2 rows (5-8 participants): upper row = +1, lower row = -1
-     * - 3 rows (9-12 participants): upper row = +1.5, middle row = 0, lower row = -1.5
-     *
-     * @returns {[number, number]}
-     */
-    calcLocation = (): [number, number] => {
-        const trackIndex = this._trackIdx || 0;
-        const totalTracks = this._trackLen || 1;
-        
-        let xPos = 0;
-        let yPos = 0; // yPos represents elevation (vertical positioning)
-        
-        // Determine grid layout based on total participants
-        if (totalTracks <= 4) {
-            // Single row layout (0-4 participants)
-            if (totalTracks > 1) {
-                xPos = ((trackIndex / (totalTracks - 1)) * 4) - 2; // Range: -2 to +2
-            }
-            yPos = 0; // No elevation
-            
-            console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Single row layout - position ${trackIndex + 1} of ${totalTracks}`);
-            
-        } else if (totalTracks <= 8) {
-            // Two row layout (5-8 participants)
-            const participantsPerRow = Math.ceil(totalTracks / 2);
-            const row = Math.floor(trackIndex / participantsPerRow);
-            const indexInRow = trackIndex % participantsPerRow;
-            const participantsInThisRow = row === 0 ? participantsPerRow : totalTracks - participantsPerRow;
-            
-            // Calculate horizontal position within the row
-            if (participantsInThisRow > 1) {
-                xPos = ((indexInRow / (participantsInThisRow - 1)) * 4) - 2; // Range: -2 to +2
-            }
-            
-            // Set elevation: upper row = +1, lower row = -1
-            yPos = row === 0 ? 1 : -1;
-            
-            console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Two row layout - row ${row + 1}, position ${indexInRow + 1} of ${participantsInThisRow} in row`);
-            
-        } else if (totalTracks <= 12) {
-            // Three row layout (9-12 participants)
-            const participantsPerRow = Math.ceil(totalTracks / 3);
-            const row = Math.floor(trackIndex / participantsPerRow);
-            const indexInRow = trackIndex % participantsPerRow;
-            
-            // Calculate how many participants are actually in this row
-            let participantsInThisRow;
-            if (row === 0) {
-                participantsInThisRow = Math.min(participantsPerRow, totalTracks);
-            } else if (row === 1) {
-                participantsInThisRow = Math.min(participantsPerRow, totalTracks - participantsPerRow);
-            } else {
-                participantsInThisRow = totalTracks - (2 * participantsPerRow);
-            }
-            
-            // Calculate horizontal position within the row
-            if (participantsInThisRow > 1) {
-                xPos = ((indexInRow / (participantsInThisRow - 1)) * 4) - 2; // Range: -2 to +2
-            }
-            
-            // Set elevation: upper row = +1.5, middle row = 0, lower row = -1.5
-            if (row === 0) {
-                yPos = 1.5; // Upper row
-            } else if (row === 1) {
-                yPos = 0;   // Middle row
-            } else {
-                yPos = -1.5; // Lower row
-            }
-            
-            console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Three row layout - row ${row + 1}, position ${indexInRow + 1} of ${participantsInThisRow} in row`);
-        } else {
-            // Fallback for more than 12 participants - use simple horizontal layout
-            console.warn(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: More than 12 participants (${totalTracks}) - using fallback horizontal layout`);
-            if (totalTracks > 1) {
-                xPos = ((trackIndex / (totalTracks - 1)) * 4) - 2;
-            }
-            yPos = 0;
-        }
-        
-        // Update the global tracker with this participant's data
-        AudioTrackTracker.updateInstance(this.props.id, {
-            participantId: this.props.participantId,
-            participantName: this.props._participantDisplayName || this.props.participantId,
-            trackIndex: trackIndex,
-            totalTracks: totalTracks,
-            xPos: xPos,
-            yPos: yPos,
-            audioTrackRef: this
-        });
-
-        return [xPos, yPos];
-    }
-
-
-
-    /**
-     * Check if participant count has changed and trigger global recalculation if needed
-     *
-     * @returns {void}
-     */
-    checkAndRecalculatePositions = () => {
-        if (!window.spatialAudio) {
+    private registerWithSpatialAudioManager(): void {
+        if (this.isRegisteredWithManager) {
+            console.log(`SpatialAudioManager: Participant ${this.props.participantId} already registered, skipping`);
             return;
         }
 
-        console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Checking if global recalculation is needed...`);
-        
-        // Always trigger global recalculation when a new participant mounts
-        // This ensures all existing participants get updated positions
-        AudioTrackTracker.recalculateAllPositions();
+        // Check if participant is already registered by ID
+        if (this.spatialAudioManager.getParticipant(this.props.participantId)) {
+            console.log(`SpatialAudioManager: Participant ${this.props.participantId} already exists in manager, skipping registration`);
+            this.isRegisteredWithManager = true;
+            return;
+        }
+
+        // Calculate track index
+        this._trackIdx = this.getTrackIndex();
+
+        // Register participant
+        this.spatialAudioManager.addParticipant({
+            participantId: this.props.participantId,
+            displayName: this.props._participantDisplayName,
+            isLocal: false, // Assuming remote participant for now
+            isMuted: this.props._muted || false,
+            trackIndex: this._trackIdx,
+            source: this._source
+        });
+
+        this.isRegisteredWithManager = true;
+
+        console.log(`SpatialAudioManager: Registered participant ${this.props._participantDisplayName || this.props.participantId}`);
     }
 
     /**
-     * Start monitoring spatial audio state changes
-     *
-     * @returns {void}
+     * Unregister this participant from the spatial audio manager
      */
-    startSpatialAudioMonitoring = () => {
-        // Check every 200ms for spatial audio state changes
-        const checkInterval = setInterval(() => {
-            if (this._spatialAudio !== window.spatialAudio) {
-                console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: State change detected in monitoring:`, window.spatialAudio);
-                this._spatialAudio = window.spatialAudio;
-                this.switchCondition();
-            }
-        }, 200);
-        
-        // Store interval ID to clear on unmount
-        this._spatialAudioInterval = checkInterval;
-        console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Monitoring active, checking every 200ms`);
+    private unregisterFromSpatialAudioManager(): void {
+        if (!this.isRegisteredWithManager) {
+            return;
+        }
 
-        // Listen for manual recalculation events from debug button
-        const handleManualRecalculation = (event: CustomEvent) => {
-            if (window.spatialAudio && event.detail?.manually_triggered) {
-                console.log(`🔧 Spatial-Audio Debug [${this.props._participantDisplayName || this.props.participantId}]: Received manual recalculation event`);
-                // Trigger global recalculation
-                AudioTrackTracker.recalculateAllPositions();
-            }
-        };
+        this.spatialAudioManager.removeParticipant(this.props.participantId);
+        this.isRegisteredWithManager = false;
 
-        window.addEventListener('spatialAudioRecalculate', handleManualRecalculation as EventListener);
-        
-        // Store the event listener reference for cleanup
-        (this as any)._manualRecalculationListener = handleManualRecalculation;
+        console.log(`SpatialAudioManager: Unregistered participant ${this.props._participantDisplayName || this.props.participantId}`);
     }
 
     /**
-     * Switches mono/spatial reproduction by dis/connecting nodes
-     *
-     * @returns {void}
+     * Handler for spatial audio settings updates.
+     * Controls HTML audio element volume to prevent double audio output.
+     * CRITICAL: We use volume=0 for HTML element but keep it unmuted so MediaElementAudioSourceNode works.
      */
-    switchCondition = () => {
-        console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Switching audio mode. Spatial enabled:`, this._spatialAudio);
-        this._source?.disconnect();
-        this._pannerNode?.disconnect();
+    private handleSpatialAudioSettingsChange = ({ settings }: { settings: ISpatialAudioSettings }): void => {
+        const audioElement = this._ref.current;
+        if (!audioElement) {
+            console.log(`Spatial: No audio element found for ${this.props.participantId}`);
+            return;
+        }
 
-        if (this._spatialAudio) {
-            // Spatial audio enabled: use panner
-            if (this._source && this._pannerNode && this._gainNode) {
-                this._source.connect(this._pannerNode);
-                this._pannerNode.connect(this._gainNode);
-                console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Connected spatial audio chain`);
-            }
+        console.log(`Spatial: Handling settings change for ${this.props.participantId}, enabled: ${settings.enabled}`);
+
+        if (settings.enabled) {
+            // Spatial audio ON: Reduce HTML element volume but keep unmuted
+            // This prevents browser audio output while allowing MediaElementAudioSourceNode to work
+            audioElement.volume = 0.01; // Very low but not zero
+            audioElement.muted = false;  // Keep unmuted for MediaElementAudioSourceNode
+            console.log(`Spatial: Set HTML audio volume to 0.01 for ${this.props.participantId} (MediaElementAudioSourceNode should work)`);
         } else {
-            // Spatial audio disabled: bypass panner
-            if (this._source && this._gainNode) {
-                this._source.connect(this._gainNode);
-                console.log(`Spatial-Audio [${this.props._participantDisplayName || this.props.participantId}]: Connected mono audio chain (source → gain → destination)`);
+            // Spatial audio OFF: Restore normal HTML audio playback
+            audioElement.volume = 1.0;
+            audioElement.muted = false;
+            console.log(`Spatial: Restored HTML audio volume to 1.0 for ${this.props.participantId}`);
+        }
+    }
+
+    /**
+     * Create audio source node for Web Audio API
+     */
+    private createAudioSource(): void {
+        const audioElement = this._ref.current;
+        if (!audioElement || this._source) {
+            return;
+        }
+
+        try {
+            const audioContext = this.spatialAudioManager.getAudioContext();
+            
+            if ((audioElement as any).audioSourceNode) {
+                this._source = (audioElement as any).audioSourceNode;
+            } else {
+                // CRITICAL FIX: Use MediaStream for Chrome (independent of HTML element)
+                let stream = (audioElement as any).captureStream 
+                    ? (audioElement as any).captureStream(0)
+                    : (audioElement as any).mozCaptureStream 
+                    ? (audioElement as any).mozCaptureStream(0)
+                    : null;
+
+                if (stream && stream.active) {
+                    // Chrome: MediaStreamSource - INDEPENDENT of HTML element volume!
+                    console.log(`Spatial: Using MediaStreamSource for ${this.props.participantId}`);
+                    this._source = audioContext.createMediaStreamSource(stream);
+                } else {
+                    // Firefox: MediaElementSource
+                    console.log(`Spatial: Using MediaElementSource for ${this.props.participantId}`);
+                    audioElement.volume = 0; // Mute HTML element for Firefox
+                    this._source = audioContext.createMediaElementSource(audioElement);
+                    audioElement.play().catch(e => console.log('Play failed:', e));
+                }
+                
+                (audioElement as any).audioSourceNode = this._source;
+            }
+            
+            if (this.isRegisteredWithManager && this._source) {
+                this.spatialAudioManager.connectParticipantSource(this.props.participantId, this._source);
+            }
+            
+        } catch (error) {
+            console.warn(`Spatial: Failed to create audio source:`, error);
+            this.tryCreateStreamSource();
+        }
+    }
+
+    /**
+     * Alternative method to create audio source using MediaStream
+     */
+    private tryCreateStreamSource(): void {
+        const audioElement = this._ref.current;
+        if (!audioElement) {
+            return;
+        }
+
+        try {
+            const audioContext = this.spatialAudioManager.getAudioContext();
+            
+            // Try to get MediaStream from audio element
+            let stream = (audioElement as any).mozCaptureStream
+                ? (audioElement as any).mozCaptureStream(0)
+                : (audioElement as any).captureStream(0);
+
+            if (stream && stream.active) {
+                console.log(`SpatialAudioManager: Using MediaStream source for ${this.props.participantId}`);
+                this._source = audioContext.createMediaStreamSource(stream);
+                
+                // Connect to spatial audio manager if participant is registered
+                if (this.isRegisteredWithManager) {
+                    this.spatialAudioManager.connectParticipantSource(this.props.participantId, this._source);
+                }
+                
+                console.log(`SpatialAudioManager: Created MediaStream source for ${this.props._participantDisplayName || this.props.participantId}`);
+            } else {
+                console.warn(`SpatialAudioManager: No active MediaStream available for ${this.props.participantId}`);
+            }
+        } catch (error) {
+            console.warn(`SpatialAudioManager: Failed to create MediaStream source for ${this.props.participantId}:`, error);
+        }
+    }
+
+    /**
+     * Disconnect audio source
+     */
+    private disconnectAudioSource(): void {
+        if (this._source) {
+            this._source.disconnect();
+            this._source = undefined;
+        }
+    }
+
+    /**
+     * Get the track index for this participant
+     */
+    private getTrackIndex(): number {
+        if (!this._ref.current) {
+            return 0;
+        }
+
+        const audioTracks = document.querySelectorAll('.audio-track');
+        for (let i = 0; i < audioTracks.length; i++) {
+            if (audioTracks[i].id === this._ref.current.id) {
+                return i;
             }
         }
+        
+        return 0;
+    }
+
+    // Legacy methods for backward compatibility
+    
+    /**
+     * Legacy method - now handled by SpatialAudioManager
+     * @deprecated Use SpatialAudioManager instead
+     */
+    setupSpatial = () => {
+        console.warn('AudioTrack.setupSpatial is deprecated. Spatial audio is now handled by SpatialAudioManager.');
+    }
+
+    /**
+     * Legacy method - now handled by SpatialAudioManager
+     * @deprecated Use SpatialAudioManager instead
+     */
+    updateSpatial = () => {
+        console.warn('AudioTrack.updateSpatial is deprecated. Spatial audio is now handled by SpatialAudioManager.');
+    }
+
+    /**
+     * Legacy method for backward compatibility
+     * @deprecated Use SpatialAudioManager instead
+     */
+    initContext = () => {
+        this.initBackwardCompatibility();
+    }
+
+    /**
+     * Legacy method for backward compatibility
+     * @deprecated Use SpatialAudioManager instead
+     */
+    getIndex = (): number => {
+        return this.getTrackIndex();
+    }
+
+    /**
+     * Legacy method for backward compatibility
+     * @deprecated Use SpatialAudioManager instead
+     */
+    calcLocation = (): [number, number] => {
+        const participant = this.spatialAudioManager.getParticipant(this.props.participantId);
+        if (participant) {
+            return [participant.position.x, participant.position.y];
+        }
+        return [0, 0];
+    }
+
+    /**
+     * Legacy method for backward compatibility
+     * @deprecated Use SpatialAudioManager instead
+     */
+    checkAndRecalculatePositions = () => {
+        // No-op - handled automatically by SpatialAudioManager
+    }
+
+    /**
+     * Legacy method for backward compatibility
+     * @deprecated Use SpatialAudioManager instead
+     */
+    startSpatialAudioMonitoring = () => {
+        // No-op - handled automatically by SpatialAudioManager
+    }
+
+    /**
+     * Legacy method for backward compatibility
+     * @deprecated Use SpatialAudioManager instead
+     */
+    switchCondition = () => {
+        const settings = this.spatialAudioManager.getSettings();
+        window.spatialAudio = settings.enabled;
     }
 }
 
 /**
- * Maps (parts of) the Redux state to the associated {@code AudioTrack}'s props.
+ * Maps (parts of) the redux state to the associated props for the
+ * {@code AudioTrack} component.
  *
  * @param {Object} state - The Redux state.
- * @param {Object} ownProps - The props passed to the component.
- * @private
+ * @param {Object} ownProps - The own props of the component.
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
-    const { participantsVolume } = state['features/filmstrip'];
+    const { participantId } = ownProps;
+    const participants = getRemoteParticipants(state);
+    const participant = participants instanceof Map 
+        ? participants.get(participantId)
+        : Array.from(participants).find((p: any) => p.id === participantId);
 
     return {
-        _muted: state['features/base/config'].startSilent,
-        _volume: participantsVolume[ownProps.participantId],
-        _participantDisplayName: getParticipantDisplayName(state, ownProps.participantId)
+        _participantDisplayName: getParticipantDisplayName(state, participantId),
+        _muted: Boolean((participant as any)?.audioMuted)
     };
 }
 

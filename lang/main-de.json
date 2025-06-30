@@ -1428,6 +1428,7 @@
         "videounmute": "Kamera einschalten",
         "sound": "Sound-Menü",
         "soundDefault": "Standard",
+        "soundStereo": "Stereo",
         "soundEqualpower": "Equalpower",
         "soundHrtf": "HRTF",
         "spatialAudioDebug": "Spatial Audio debuggen"

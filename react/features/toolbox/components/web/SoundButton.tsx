@@ -18,9 +18,10 @@ import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { toggleSpatialAudio } from '../../../video-layout/actions.any';
+import { getSpatialAudioManager } from '../../../spatial-audio';
 import logger from '../logger';
 
-const OPTIONS = ['default', 'equalpower', 'hrtf'];
+const OPTIONS = ['default', 'stereo', 'equalpower', 'hrtf'];
 
 interface IProps extends WithTranslation, AbstractButtonProps {
     /**
@@ -72,35 +73,84 @@ function SoundSettingsPopup({ children, popupPlacement, t, spatialAudioEnabled, 
     dispatch: Function;
 }) {
     const [ isOpen, setIsOpen ] = useState(false);
-    const [ option, setOption ] = useState(spatialAudioEnabled ? 'hrtf' : 'default');
+    
+    // Get current option from spatial audio manager
+    const spatialManager = getSpatialAudioManager();
+    const currentSettings = spatialManager.getSettings();
+    const getInitialOption = () => {
+        if (!currentSettings.enabled) {
+            return 'default';
+        }
+        return currentSettings.type;
+    };
+    
+    const [ option, setOption ] = useState(getInitialOption());
     const { classes, cx } = useStyles();
 
-    const onOpen = useCallback(() => setIsOpen(true), []);
+    const onOpen = useCallback(() => {
+        // Update current option when opening popup
+        const currentSettings = spatialManager.getSettings();
+        const currentOption = currentSettings.enabled ? currentSettings.type : 'default';
+        setOption(currentOption);
+        setIsOpen(true);
+    }, [spatialManager]);
+    
     const onClose = useCallback(() => setIsOpen(false), []);
     const onSelect = useCallback((opt: string) => {
         setOption(opt);
         logger.info(`Sound option selected: ${opt}`);
         
-        // Handle spatial audio toggle when HRTF is selected/deselected
-        if (opt === 'hrtf' && !spatialAudioEnabled && spatialAudioFeatureEnabled) {
-            // Enable spatial audio when HRTF is selected
-            sendAnalytics(createToolbarEvent(
-                'spatial.button',
-                {
-                    'is_enabled': false
-                }));
-            dispatch(toggleSpatialAudio());
-        } else if (opt !== 'hrtf' && spatialAudioEnabled && spatialAudioFeatureEnabled) {
-            // Disable spatial audio when switching away from HRTF
-            sendAnalytics(createToolbarEvent(
-                'spatial.button',
-                {
-                    'is_enabled': true
-                }));
-            dispatch(toggleSpatialAudio());
+        // Get spatial audio manager
+        const spatialManager = getSpatialAudioManager();
+        
+        // Handle different audio options
+        switch (opt) {
+            case 'default':
+                // Disable spatial audio and use mono
+                spatialManager.updateSettings({ enabled: false, type: 'none' });
+                // Update Redux state if needed
+                if (spatialAudioEnabled && spatialAudioFeatureEnabled) {
+                    sendAnalytics(createToolbarEvent('spatial.button', { 'is_enabled': true }));
+                    dispatch(toggleSpatialAudio());
+                }
+                break;
+                
+            case 'stereo':
+                // Enable spatial audio with stereo panning
+                spatialManager.updateSettings({ enabled: true, type: 'stereo' });
+                // Update Redux state if needed
+                if (!spatialAudioEnabled && spatialAudioFeatureEnabled) {
+                    sendAnalytics(createToolbarEvent('spatial.button', { 'is_enabled': false }));
+                    dispatch(toggleSpatialAudio());
+                }
+                break;
+                
+            case 'equalpower':
+                // Enable spatial audio with equalpower panning
+                spatialManager.updateSettings({ enabled: true, type: 'equalpower' });
+                // Update Redux state if needed
+                if (!spatialAudioEnabled && spatialAudioFeatureEnabled) {
+                    sendAnalytics(createToolbarEvent('spatial.button', { 'is_enabled': false }));
+                    dispatch(toggleSpatialAudio());
+                }
+                break;
+                
+            case 'hrtf':
+                // Enable spatial audio with HRTF
+                spatialManager.updateSettings({ enabled: true, type: 'hrtf' });
+                // Update Redux state if needed
+                if (!spatialAudioEnabled && spatialAudioFeatureEnabled) {
+                    sendAnalytics(createToolbarEvent('spatial.button', { 'is_enabled': false }));
+                    dispatch(toggleSpatialAudio());
+                }
+                break;
+                
+            default:
+                console.warn('Unknown sound option:', opt);
+                break;
         }
         
-        console.log('Sound option selected:', opt);
+        console.log(`Sound option selected: ${opt}, spatial manager settings:`, spatialManager.getSettings());
         onClose();
     }, [ onClose, spatialAudioEnabled, spatialAudioFeatureEnabled, dispatch ]);
 

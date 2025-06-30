@@ -1432,6 +1432,7 @@
         "shareaudio": "Share audio",
         "sound": "Sound",
         "soundDefault": "Default",
+        "soundStereo": "Stereo",
         "soundEqualpower": "Equalpower",
         "soundHrtf": "HRTF",
         "spatialAudioDebug": "Debug Spatial Audio",
