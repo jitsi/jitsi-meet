@@ -23,7 +23,7 @@
 #import "JitsiMeetView+Private.h"
 #import "RCTBridgeWrapper.h"
 #import "ReactUtils.h"
-#import "RNSplashScreen.h"
+#import "SplashView.h"
 #import "ScheenshareEventEmiter.h"
 
 #import <react-native-webrtc/WebRTCModuleOptions.h>
@@ -221,8 +221,8 @@
     return nil;
 }
 
-- (void)showSplashScreen:(UIView*)rootView {
-    [RNSplashScreen showSplash:@"LaunchScreen" inRootView:rootView];
+- (void)showSplashScreen {
+    [[SplashView sharedInstance] showSplashScreen];
 }
 
 #pragma mark - Property getter / setters
