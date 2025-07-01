@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-default-preference/android/build.gradle b/node_modules/react-native-default-preference/android/build.gradle
+index 93ed6ed..be03f95 100644
+--- a/node_modules/react-native-default-preference/android/build.gradle
++++ b/node_modules/react-native-default-preference/android/build.gradle
+@@ -20,6 +20,8 @@ android {
+     lintOptions {
+        warning 'InvalidPackage'
+     }
++
++    namespace "com.kevinresol.react_native_default_preference"
+ }
+ 
+ dependencies {
