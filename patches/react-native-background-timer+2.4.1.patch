@@ -1,0 +1,12 @@
+diff --git a/node_modules/react-native-background-timer/android/build.gradle b/node_modules/react-native-background-timer/android/build.gradle
+index 85cda09..191b8e8 100644
+--- a/node_modules/react-native-background-timer/android/build.gradle
++++ b/node_modules/react-native-background-timer/android/build.gradle
+@@ -6,6 +6,7 @@ def safeExtGet(prop, fallback) {
+ 
+ android {
+     compileSdkVersion safeExtGet('compileSdkVersion', 28)
++    namespace "com.ocetnik.timer"
+     
+     defaultConfig {
+         minSdkVersion safeExtGet('minSdkVersion', 16)
