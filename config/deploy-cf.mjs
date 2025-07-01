@@ -5,7 +5,7 @@ import path from "path";
 import { spawn, exec } from "child_process";
 
 // Utility function to execute commands and log output in real-time
-async function runCommand(command, cwd) {
+async function runCommand(command, cwd, captureOutput = false) {
     const actualCwd = cwd || process.cwd();
     console.log(`\n🚀 Running: ${command} (in ${actualCwd})`);
 
@@ -17,19 +17,29 @@ async function runCommand(command, cwd) {
             stdio: "pipe",
         });
 
+        let capturedOutput = "";
+
         child.stdout.on("data", (data) => {
+            const output = data.toString();
             process.stdout.write(data);
+            if (captureOutput) {
+                capturedOutput += output;
+            }
         });
 
         child.stderr.on("data", (data) => {
+            const output = data.toString();
             process.stderr.write(data);
+            if (captureOutput) {
+                capturedOutput += output;
+            }
         });
 
         child.on("close", (code) => {
             if (code === 0) {
                 process.stdout.write("\n");
                 console.log(`✅ Command finished: ${command}`);
-                resolve();
+                resolve(captureOutput || undefined);
             } else {
                 process.stdout.write("\n");
                 console.error(`❌ Command failed with code ${code}: ${command}`);
@@ -44,6 +54,34 @@ async function runCommand(command, cwd) {
             reject(err);
         });
     });
+}
+
+// Function to add content to GitHub Step Summary
+function addToGitHubSummary(content) {
+    const summaryPath = process.env.GITHUB_STEP_SUMMARY;
+    if (summaryPath) {
+        try {
+            fs.appendFileSync(summaryPath, content + "\n");
+            console.log("📝 Added content to GitHub step summary");
+        } catch (error) {
+            console.warn("⚠️ Failed to write to GitHub step summary:", error.message);
+        }
+    }
+}
+
+// Function to add GitHub annotation
+function addGitHubAnnotation(type, title, message) {
+    // Only add annotations if running in GitHub Actions
+    if (process.env.GITHUB_ACTIONS) {
+        console.log(`::${type} title=${title}::${message}`);
+        console.log(`📢 Added GitHub ${type} annotation: ${title}`);
+    }
+}
+
+// Function to extract preview URL from wrangler output
+function extractPreviewUrl(output) {
+    const urlMatch = output.match(/Version Preview URL:\s*(https:\/\/[^\s]+)/);
+    return urlMatch ? urlMatch[1] : null;
 }
 
 // Check if a command exists in the PATH
@@ -350,10 +388,59 @@ async function deploy() {
 
             const wranglerConfigPath = "config/wrangler.jsonc";
 
+            let deployOutput;
             if (branch === "sonacove") {
-                await runCommand(`npx wrangler deploy -c ${wranglerConfigPath}`);
+                deployOutput = await runCommand(`npx wrangler deploy -c ${wranglerConfigPath}`, undefined, true);
             } else {
-                await runCommand(`npx wrangler versions upload -c ${wranglerConfigPath}`);
+                deployOutput = await runCommand(
+                    `npx wrangler versions upload -c ${wranglerConfigPath}`,
+                    undefined,
+                    true
+                );
+            }
+
+            // Extract and add preview URL to GitHub summary if available
+            if (deployOutput) {
+                const previewUrl = extractPreviewUrl(deployOutput);
+                if (previewUrl) {
+                    console.log(`🔗 Preview URL: ${previewUrl}`);
+
+                    // Add to GitHub Step Summary if running in GitHub Actions
+                    const summaryContent = [
+                        `**Preview URL:** [${previewUrl}](${previewUrl})`,
+                        `**Deployment Type:** ${branch === "sonacove" ? "Production Deploy" : "Version Upload"}`,
+                    ].join("\n");
+
+                    addToGitHubSummary(summaryContent);
+
+                    // Add GitHub annotation based on deployment type
+                    if (branch === "sonacove") {
+                        addGitHubAnnotation(
+                            "notice",
+                            "Production Deployment",
+                            `🚀 Deployed to production: ${previewUrl}`
+                        );
+                    } else {
+                        addGitHubAnnotation("notice", "Preview Deployment", `🚀 Preview deployed: ${previewUrl}`);
+                    }
+                } else {
+                    console.warn("⚠️ Could not extract preview URL from wrangler output");
+
+                    // Add annotation even if URL extraction failed
+                    if (branch === "sonacove") {
+                        addGitHubAnnotation(
+                            "notice",
+                            "Production Deployment",
+                            "🚀 Production deployment completed successfully"
+                        );
+                    } else {
+                        addGitHubAnnotation(
+                            "notice",
+                            "Preview Deployment",
+                            "🚀 Preview deployment created successfully"
+                        );
+                    }
+                }
             }
         }
 

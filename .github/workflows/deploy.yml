@@ -1,15 +1,14 @@
-name: Deploy to Cloudflare
+name: Deploy
 
 on:
     push:
-        branches:
-            - sonacove
+        branches: [sonacove]
     pull_request:
-        types: [opened, synchronize]
+        branches: [sonacove]
 
 jobs:
     deploy:
-        name: Build and Deploy
+        name: Cloudflare
         runs-on: ubuntu-latest
         steps:
             - name: Checkout repository
@@ -24,7 +23,7 @@ jobs:
             - name: Install dependencies
               run: npm ci
 
-            - name: Build and Deploy to Cloudflare
+            - name: Run deploy script
               run: node config/deploy-cf.mjs --skip-deps
               env:
                   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
