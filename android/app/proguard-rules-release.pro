@@ -4,3 +4,8 @@
 -keepattributes *Annotation*
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
+
+# R8 missing classes - suppress warnings
+-dontwarn com.facebook.fresco.ui.common.LoggingListener
+-dontwarn com.facebook.memory.config.MemorySpikeConfig
+-dontwarn kotlinx.parcelize.Parcelize
