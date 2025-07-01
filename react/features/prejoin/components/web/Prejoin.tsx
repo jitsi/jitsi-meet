@@ -32,8 +32,8 @@ import {
     isDisplayNameRequired,
     isJoinByPhoneButtonVisible,
     isJoinByPhoneDialogVisible,
-    isPrejoinDisplayNameVisible,
-    isNameReadOnly
+    isNameReadOnly,
+    isPrejoinDisplayNameVisible
 } from '../../functions';
 import logger from '../../logger';
 import { hasDisplayName } from '../../utils';
