@@ -4,6 +4,7 @@ apply plugin: 'maven-publish'
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     ndkVersion rootProject.ext.ndkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
@@ -31,7 +32,72 @@ android {
             }
         }
     }
-    namespace 'org.jitsi.meet.sdk'
+    
+    // Automatically detect namespace from Java/Kotlin package structure
+    def javaSrcDir = new File(project.projectDir, 'src/main/java')
+    def kotlinSrcDir = new File(project.projectDir, 'src/main/kotlin')
+    def detectedNamespace = null
+
+    // Check Java files first
+    if (javaSrcDir.exists()) {
+        def javaFiles = fileTree(javaSrcDir).include('**/*.java')
+        if (!javaFiles.isEmpty()) {
+            def firstJavaFile = javaFiles.first()
+            def relativePath = firstJavaFile.path.substring(javaSrcDir.path.length() + 1)
+            def packagePath = relativePath.substring(0, relativePath.lastIndexOf('/'))
+            detectedNamespace = packagePath.replace('/', '.')
+        }
+    }
+    
+    // If no Java files found, check Kotlin files
+    if (detectedNamespace == null && kotlinSrcDir.exists()) {
+        def kotlinFiles = fileTree(kotlinSrcDir).include('**/*.kt')
+        if (!kotlinFiles.isEmpty()) {
+            def firstKotlinFile = kotlinFiles.first()
+            def relativePath = firstKotlinFile.path.substring(kotlinSrcDir.path.length() + 1)
+            def packagePath = relativePath.substring(0, relativePath.lastIndexOf('/'))
+            detectedNamespace = packagePath.replace('/', '.')
+        }
+    }
+
+    // Set namespace if not already set and we detected one
+    if (!android.hasProperty('namespace') || android.namespace == null) {
+        if (detectedNamespace != null) {
+            namespace = detectedNamespace
+        } else if (project.group != null && project.group != '') {
+            namespace = project.group
+        } else {
+            namespace = "org.jitsi.meet.sdk"
+        }
+    }
+
+    // Only enable buildConfig if namespace is set
+    buildFeatures {
+        if (android.namespace != null) {
+            buildConfig true
+        }
+    }
+
+    // Set JVM target
+    compileOptions {
+        sourceCompatibility rootProject.ext.javaVersion
+        targetCompatibility rootProject.ext.javaVersion
+    }
+}
+
+// Add Kotlin configuration if Kotlin plugin is applied
+afterEvaluate {
+    if (plugins.hasPlugin('kotlin-android')) {
+        kotlin {
+            jvmToolchain(rootProject.ext.jvmToolchainVersion)
+        }
+
+        android {
+            kotlinOptions {
+                jvmTarget = rootProject.ext.jvmTargetVersion
+            }
+        }
+    }
 }
 
 dependencies {
@@ -149,6 +215,47 @@ android.libraryVariants.all { def variant ->
 
         // Disable bundling on dev builds
         enabled !devEnabled
+    }
+
+    // Add explicit dependencies on React Native module tasks to fix Gradle warnings
+    afterEvaluate {
+        // Helper function to add dependencies for a configuration
+        def addDependenciesForConfig = { configName ->
+            try {
+                project.configurations.getByName(configName).dependencies.each { dependency ->
+                    if (dependency.hasProperty('dependencyProject')) {
+                        def moduleProject = dependency.dependencyProject
+                        if (moduleProject.name.startsWith('react-native-')) {
+                            def moduleTask = moduleProject.tasks.findByName("package${targetName}Resources")
+                            if (moduleTask != null) {
+                                currentBundleTask.dependsOn(moduleTask)
+                            }
+                            
+                            def moduleResValuesTask = moduleProject.tasks.findByName("generate${targetName}ResValues")
+                            if (moduleResValuesTask != null) {
+                                currentBundleTask.dependsOn(moduleResValuesTask)
+                            }
+                            
+                            def moduleAarMetadataTask = moduleProject.tasks.findByName("write${targetName}AarMetadata")
+                            if (moduleAarMetadataTask != null) {
+                                currentBundleTask.dependsOn(moduleAarMetadataTask)
+                            }
+                            
+                            def moduleGenerateResourcesTask = moduleProject.tasks.findByName("generate${targetName}Resources")
+                            if (moduleGenerateResourcesTask != null) {
+                                currentBundleTask.dependsOn(moduleGenerateResourcesTask)
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // Configuration might not exist, ignore
+            }
+        }
+        
+        // Add dependencies for both implementation and api configurations
+        addDependenciesForConfig('implementation')
+        addDependenciesForConfig('api')
     }
 
     currentBundleTask.ext.generatedResFolders = files(resourcesDir).builtBy(currentBundleTask)

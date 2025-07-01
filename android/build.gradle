@@ -260,7 +260,7 @@ subprojects { subproject ->
         // Remove package attribute from AndroidManifest.xml files in React Native modules,
         // fixes namespace issues with newer Android Gradle Plugin versions
         if (subproject.name.startsWith('react-native-')) {
-            def manifestFile = project.file('src/main/AndroidManifest.xml')
+            def manifestFile = subproject.file('src/main/AndroidManifest.xml')
             if (manifestFile.exists()) {
                 def manifestText = manifestFile.text
                 if (manifestText.contains('package=')) {
