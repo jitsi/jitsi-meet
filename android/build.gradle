@@ -203,31 +203,6 @@ subprojects { subproject ->
             android {
                 buildToolsVersion rootProject.ext.buildToolsVersion
 
-                // Automatically detect namespace from Java package structure
-                def javaSrcDir = new File(subproject.projectDir, 'src/main/java')
-                def detectedNamespace = null
-
-                if (javaSrcDir.exists()) {
-                    def javaFiles = fileTree(javaSrcDir).include('**/*.java')
-                    if (!javaFiles.isEmpty()) {
-                        def firstJavaFile = javaFiles.first()
-                        def relativePath = firstJavaFile.path.substring(javaSrcDir.path.length() + 1)
-                        def packagePath = relativePath.substring(0, relativePath.lastIndexOf('/'))
-                        detectedNamespace = packagePath.replace('/', '.')
-                    }
-                }
-
-                // Set namespace if not already set and we detected one
-                if (!android.hasProperty('namespace') || android.namespace == null) {
-                    if (detectedNamespace != null) {
-                        android.namespace = detectedNamespace
-                    } else if (project.group != null && project.group != '') {
-                        android.namespace = project.group
-                    } else {
-                        android.namespace = "com.${subproject.name.replaceAll('-', '_')}"
-                    }
-                }
-
                 // Only enable buildConfig if namespace is set
                 buildFeatures {
                     if (android.namespace != null) {
@@ -253,20 +228,6 @@ subprojects { subproject ->
             subproject.android {
                 kotlinOptions {
                     jvmTarget = rootProject.ext.jvmTargetVersion
-                }
-            }
-        }
-
-        // Remove package attribute from AndroidManifest.xml files in React Native modules,
-        // fixes namespace issues with newer Android Gradle Plugin versions
-        if (subproject.name.startsWith('react-native-')) {
-            def manifestFile = project.file('src/main/AndroidManifest.xml')
-            if (manifestFile.exists()) {
-                def manifestText = manifestFile.text
-                if (manifestText.contains('package=')) {
-                    // Remove the package attribute from the manifest tag
-                    manifestText = manifestText.replaceAll(/package="[^"]*"/, '')
-                    manifestFile.text = manifestText
                 }
             }
         }
