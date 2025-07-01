@@ -81,13 +81,13 @@ export function shouldRemoteVideosBeVisible(state: IReduxState) {
     // in the filmstrip.
     const participantCount = getParticipantCountWithFake(state);
     let pinnedParticipant;
-    const { disable1On1Mode } = state['features/base/config'];
+    const { disable1On1Mode, filmstrip: { alwaysShowResizeBar } = {} } = state['features/base/config'];
     const { contextMenuOpened } = state['features/base/responsive-ui'];
 
     return Boolean(
         contextMenuOpened
             || participantCount > 2
-
+            || alwaysShowResizeBar
             // Always show the filmstrip when there is another participant to
             // show and the  local video is pinned, or the toolbar is displayed.
             || (participantCount > 1

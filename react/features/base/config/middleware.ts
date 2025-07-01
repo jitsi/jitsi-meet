@@ -2,6 +2,7 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
 import { SET_DYNAMIC_BRANDING_DATA } from '../../dynamic-branding/actionTypes';
+import { setUserFilmstripWidth } from '../../filmstrip/actions.web';
 import { getFeatureFlag } from '../flags/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { updateSettings } from '../settings/actions';
@@ -79,10 +80,16 @@ function _setConfig({ dispatch, getState }: IStore, next: Function, action: AnyA
         }));
     }
 
-    if (action.config.filmstrip?.stageFilmstripParticipants !== undefined) {
+    const { initialWidth, stageFilmstripParticipants } = action.config.filmstrip || {};
+
+    if (stageFilmstripParticipants !== undefined) {
         dispatch(updateSettings({
-            maxStageParticipants: action.config.filmstrip.stageFilmstripParticipants
+            maxStageParticipants: stageFilmstripParticipants
         }));
+    }
+
+    if (initialWidth) {
+        dispatch(setUserFilmstripWidth(initialWidth));
     }
 
     dispatch(updateConfig(config));

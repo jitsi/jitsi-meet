@@ -1779,6 +1779,13 @@ var config = {
     //     // The minimum number of participants that must be in the call for
     //     // the top panel layout to be used.
     //     minParticipantCountForTopPanel: 50,
+
+    //     // The width of the filmstrip on joining meeting. Can be resized afterwards.
+    //     initialWidth: 400,
+
+    //     // Whether the draggable resize bar of the filmstrip is always visible. Setting this to true will make
+    //     // the filmstrip always visible in case `disableResizable` is false.
+    //     alwaysShowResizeBar: true,
     // },
 
     // Tile view related config options.
