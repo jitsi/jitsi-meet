@@ -185,6 +185,15 @@ function _setConfig(state: IConfig, { config }: { config: IConfig; }) {
         });
     }
 
+    const { alwaysShowResizeBar, disableResizable } = config.filmstrip || {};
+
+    if (alwaysShowResizeBar && disableResizable) {
+        config.filmstrip = {
+            ...config.filmstrip,
+            alwaysShowResizeBar: false
+        };
+    }
+
     const newState = merge(
         {},
         config,
