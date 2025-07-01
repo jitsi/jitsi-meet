@@ -104,7 +104,7 @@ class ReactInstanceManagerHolder {
             new org.linusu.RNGetRandomValuesPackage(),
             new com.rnimmersivemode.RNImmersiveModePackage(),
             new com.swmansion.rnscreens.RNScreensPackage(),
-            new com.zmxv.RNSound.RNSoundPackage(),
+            new com.zmxv.RNSound.SoundPackage(),
             new com.th3rdwave.safeareacontext.SafeAreaContextPackage(),
             new com.horcrux.svg.SvgPackage(),
             new org.wonday.orientation.OrientationPackage(),
