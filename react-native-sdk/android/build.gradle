@@ -5,7 +5,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.5.3'
+    classpath 'com.android.tools.build:gradle:8.5.0'
   }
 }
 
@@ -170,20 +170,6 @@ afterEvaluate{
 
             kotlinOptions {
                 jvmTarget = rootProject.ext.jvmTargetVersion
-            }
-        }
-    }
-
-    // Remove package attribute from AndroidManifest.xml files in React Native modules,
-    // fixes namespace issues with newer Android Gradle Plugin versions
-    if (subproject.name.startsWith('react-native-')) {
-        def manifestFile = project.file('src/main/AndroidManifest.xml')
-        if (manifestFile.exists()) {
-            def manifestText = manifestFile.text
-            if (manifestText.contains('package=')) {
-                // Remove the package attribute from the manifest tag
-                manifestText = manifestText.replaceAll(/package="[^"]*"/, '')
-                manifestFile.text = manifestText
             }
         }
     }
