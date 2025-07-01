@@ -64,11 +64,30 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 7.7)
     - PromisesObjC (< 3.0, >= 1.2)
   - fmt (11.0.2)
-  - Giphy (2.2.12):
+  - Giphy (2.2.13):
     - libwebp
-  - giphy-react-native-sdk (2.3.0):
-    - Giphy (= 2.2.12)
+  - giphy-react-native-sdk (3.3.1):
+    - DoubleConversion
+    - Giphy (= 2.2.13)
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - glog (0.3.5)
   - GoogleAppMeasurement (8.15.0):
     - GoogleAppMeasurement/AdIdSupport (= 8.15.0)
@@ -192,6 +211,7 @@ PODS:
     - React-RCTText (= 0.77.2)
     - React-RCTVibration (= 0.77.2)
   - React-callinvoker (0.77.2)
+  - React-Codegen (0.1.0)
   - React-Core (0.77.2):
     - glog
     - hermes-engine
@@ -1357,10 +1377,16 @@ PODS:
     - ReactCommon/turbomodule/core
   - react-native-background-timer (2.4.1):
     - React-Core
-  - react-native-get-random-values (1.9.0):
+  - react-native-get-random-values (1.11.0):
     - React-Core
-  - react-native-keep-awake (4.0.0):
-    - React
+  - react-native-keep-awake (1.3.1):
+    - RCT-Folly
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-RCTFabric
+    - ReactCommon/turbomodule/core
   - react-native-netinfo (11.1.0):
     - React-Core
   - react-native-orientation-locker (1.6.0):
@@ -1408,7 +1434,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-performance (5.0.0):
+  - react-native-performance (5.1.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2034,10 +2060,26 @@ PODS:
     - ReactCommon/turbomodule/core
     - Yoga
   - RNSound (0.11.2):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
-    - RNSound/Core (= 0.11.2)
-  - RNSound/Core (0.11.2):
-    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNSVG (15.11.2):
     - DoubleConversion
     - glog
@@ -2154,7 +2196,7 @@ DEPENDENCIES:
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
-  - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
+  - "react-native-keep-awake (from `../node_modules/@sayem314/react-native-keep-awake`)"
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-orientation-locker (from `../node_modules/react-native-orientation-locker`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
@@ -2229,6 +2271,7 @@ SPEC REPOS:
     - nanopb
     - ObjectiveDropboxOfficial
     - PromisesObjC
+    - React-Codegen
     - SocketRocket
 
 EXTERNAL SOURCES:
@@ -2314,7 +2357,7 @@ EXTERNAL SOURCES:
   react-native-get-random-values:
     :path: "../node_modules/react-native-get-random-values"
   react-native-keep-awake:
-    :path: "../node_modules/react-native-keep-awake"
+    :path: "../node_modules/@sayem314/react-native-keep-awake"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-orientation-locker:
@@ -2433,8 +2476,8 @@ SPEC CHECKSUMS:
   FirebaseCrashlytics: feb07e4e9187be3c23c6a846cce4824e5ce2dd0b
   FirebaseInstallations: 40bd9054049b2eae9a2c38ef1c3dd213df3605cd
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
-  Giphy: 83628960ed04e1c3428ff1b4fb2b027f65e82f50
-  giphy-react-native-sdk: b39b5fb4efdbb0b8afe6d2c98dcf3cfaff69481d
+  Giphy: a11dd02b51ac2ec37b881de1717ebf2cc8e9df62
+  giphy-react-native-sdk: 9f465e29986e986f01fc6507ed1f244fd54a9a9d
   glog: eb93e2f488219332457c3c4eafd2738ddc7e80b8
   GoogleAppMeasurement: 4c19f031220c72464d460c9daa1fb5d1acce958e
   GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
@@ -2454,6 +2497,7 @@ SPEC CHECKSUMS:
   RCTTypeSafety: 5e57924492a5e0a762654f814dd018953274eca9
   React: 53c9bd6f974c5dd019ee466e46477eb679149c38
   React-callinvoker: d6484472c1c742917b51338525336d6a74ab8a9f
+  React-Codegen: 4b8b4817cea7a54b83851d4c1f91f79aa73de30a
   React-Core: 4ddb741e08144902ce4e0e66b7c67c6f2dc5bfc7
   React-CoreModules: 0a31ca662ac169edd0c210efd324e19b3012d7ed
   React-cxxreact: f8ecc64ebf8b795c550ae8b65ba4908ffe7350d0
@@ -2478,12 +2522,12 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 595c88852c1dcb1c4faafad88148de8690a70aae
   React-microtasksnativemodule: b56986b155ae82e9bcb1d1c0ca8726bac52dbb6e
   react-native-background-timer: 4638ae3bee00320753647900b21260b10587b6f7
-  react-native-get-random-values: 419569b6ed3d15bfb9b6781b2f2e058f8e8d2698
-  react-native-keep-awake: 21ff40767cde4bd81021ffee12480aee4b5b91bb
+  react-native-get-random-values: d16467cf726c618e9c7a8c3c39c31faa2244bbba
+  react-native-keep-awake: a351e6f67006b47f316ae2b17ee8ee69386167f4
   react-native-netinfo: 5364263f903da576bdef9c84a76fe243ab06812c
   react-native-orientation-locker: ee8bb2177365ca74f51dc1e11218fe544634d523
   react-native-pager-view: 932eb80f9448b463b63badae42dd20c11f3e37dd
-  react-native-performance: 0749722f8f1ee951066153a661f6c41febe898d7
+  react-native-performance: 0550198d1e7cc17456ad48158e10d7f6047255ff
   react-native-safe-area-context: afcc2e2b3e78ae8ef90d81e658aacee34ebc27ea
   react-native-slider: bb7eb4732940fab78217e1c096bb647d8b0d1cf3
   react-native-video: d5047e417227b0c3bc9c2be83ec70d7103c08335
@@ -2526,7 +2570,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: 8b1080a6db0be82dbca18550d6212b885bfab6b2
   RNGoogleSignin: 30e1aee80140dc0706cd78a4951c411376c88329
   RNScreens: 8aec64fb213fd52a64445e2e470f7a9b546c5df3
-  RNSound: 314cc5226453ef4a3314a196c65e8a65e5106a7b
+  RNSound: 3660728066ee020247803d086b59ad45c8cdc185
   RNSVG: 877cd57c2db63dc9f1fd1bbb5e95506ccd481df6
   RNWatch: 28fe1f5e0c6410d45fd20925f4796fce05522e3f
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748

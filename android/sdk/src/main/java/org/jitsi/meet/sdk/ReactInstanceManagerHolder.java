@@ -132,7 +132,7 @@ class ReactInstanceManagerHolder {
 
         // GiphyReactNativeSdkPackage
         try {
-            Class<?> giphyPackageClass = Class.forName("com.giphyreactnativesdk.GiphyReactNativeSdkPackage");
+            Class<?> giphyPackageClass = Class.forName("com.giphyreactnativesdk.RTNGiphySdkPackage");
             Constructor<?> constructor = giphyPackageClass.getConstructor();
             packages.add((ReactPackage)constructor.newInstance());
         } catch (Exception e) {
