@@ -7,6 +7,7 @@ import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { getSoundFileSrc } from '../base/media/functions';
 import { getLocalParticipant, getRemoteParticipants } from '../base/participants/functions';
 import { registerSound, unregisterSound } from '../base/sounds/actions';
+import { isSpotTV } from '../base/util/spot';
 import { isInBreakoutRoom as isInBreakoutRoomF } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
@@ -442,10 +443,16 @@ export function shouldRequireRecordingConsent(recorderSession: any, state: IRedu
         = state['features/dynamic-branding'] || {};
     const { conference } = state['features/base/conference'] || {};
     const { requireConsent, skipConsentInMeeting } = state['features/base/config'].recordings || {};
-    const { iAmRecorder } = state['features/base/config'];
+    const { iAmRecorder, testing: { showSpotConsentDialog = false } = {} } = state['features/base/config'];
     const { consentRequested } = state['features/recording'];
 
     if (iAmRecorder) {
+        return false;
+    }
+
+    // For Spot TV instances, check the showSpotConsentDialog config parameter
+    // If showSpotConsentDialog is false (or undefined, defaulting to false), don't show consent dialog
+    if (isSpotTV(state) && !showSpotConsentDialog) {
         return false;
     }
 
