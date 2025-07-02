@@ -441,10 +441,10 @@ var config = {
     // localRecording: {
     //     // Whether to disable local recording or not.
     //     disable: false,
-    //
+
     //     // Whether to notify all participants when a participant is recording locally.
     //     notifyAllParticipants: false,
-    //
+
     //     // Whether to disable the self recording feature (only local participant streams).
     //     disableSelfRecording: false,
     // },
@@ -482,40 +482,40 @@ var config = {
     // transcription: {
     //     // Whether the feature should be enabled or not.
     //     enabled: false,
-    //
+
     //     // Translation languages.
     //     // Available languages can be found in
     //     // ./lang/translation-languages.json.
     //     translationLanguages: ['en', 'es', 'fr', 'ro'],
-    //
+
     //     // Important languages to show on the top of the language list.
     //     translationLanguagesHead: ['en'],
-    //
+
     //     // If true transcriber will use the application language.
     //     // The application language is either explicitly set by participants in their settings or automatically
     //     // detected based on the environment, e.g. if the app is opened in a chrome instance which
     //     // is using french as its default language then transcriptions for that participant will be in french.
     //     // Defaults to true.
     //     useAppLanguage: true,
-    //
+
     //     // Transcriber language. This settings will only work if "useAppLanguage"
     //     // is explicitly set to false.
     //     // Available languages can be found in
     //     // ./src/react/features/transcribing/transcriber-langs.json.
     //     preferredLanguage: 'en-US',
-    //
+
     //     // Enables automatic turning on transcribing when recording is started
     //     autoTranscribeOnRecord: false,
-    //
+
     //     // Enables automatic request of subtitles when transcriber is present in the meeting, uses the default
     //     // language that is set
     //     autoCaptionOnTranscribe: false,
-    //     //
+    //
     //     // Disables everything related to closed captions - the tab in the chat area, the button in the menu,
     //     // subtitles on stage and the "Show subtitles on stage" checkbox in the settings.
     //     // Note: Starting transcriptions from the recording dialog will still work.
     //     disableClosedCaptions: false,
-    //
+
     //     // Whether to invite jigasi when backend transcriptions are enabled (asyncTranscription is true in metadata).
     //     // By default, we invite it.
     //     inviteJigasiOnBackendTranscribing: true,
@@ -1047,19 +1047,19 @@ var config = {
     // faceLandmarks: {
     //     // Enables sharing your face coordinates. Used for centering faces within a video.
     //     enableFaceCentering: false,
-    //
+
     //     // Enables detecting face expressions and sharing data with other participants
     //     enableFaceExpressionsDetection: false,
-    //
+
     //     // Enables displaying face expressions in speaker stats
     //     enableDisplayFaceExpressions: false,
-    //
+
     //     // Enable rtc stats for face landmarks
     //     enableRTCStats: false,
-    //
+
     //     // Minimum required face movement percentage threshold for sending new face centering coordinates data.
     //     faceCenteringThreshold: 10,
-    //
+
     //     // Milliseconds for processing a new image capture in order to detect face coordinates if they exist.
     //     captureInterval: 1000,
     // },
@@ -1223,7 +1223,7 @@ var config = {
     //     // The chrome extension to be installed address
     //     url: 'https://chrome.google.com/webstore/detail/jitsi-meetings/kglhbbefdnlheedjiejgomgmfplipfeb',
     //     edgeUrl: 'https://microsoftedge.microsoft.com/addons/detail/jitsi-meetings/eeecajlpbgjppibfledfihobcabccihn',
-    //
+
     //     // Extensions info which allows checking if they are installed or not
     //     chromeExtensionsInfo: [
     //         {
@@ -1295,10 +1295,10 @@ var config = {
     //     // If true, any checks to handoff to another application will be prevented
     //     // and instead the app will continue to display in the current browser.
     //     disabled: false,
-    //
+
     //     // whether to hide the logo on the deep linking pages.
     //     hideLogo: false,
-    //
+
     //     // The ios deeplinking config.
     //     ios: {
     //         appName: 'Jitsi Meet',
@@ -1307,7 +1307,7 @@ var config = {
     //         // Custom URL for downloading ios mobile app.
     //         downloadLink: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
     //     },
-    //
+
     //     // The android deeplinking config.
     //     android: {
     //         appName: 'Jitsi Meet',
@@ -1768,18 +1768,18 @@ var config = {
     //     // Disables user resizable filmstrip. Also, allows configuration of the filmstrip
     //     // (width, tiles aspect ratios) through the interfaceConfig options.
     //     disableResizable: false,
-    //
+
     //     // Disables the stage filmstrip
     //     // (displaying multiple participants on stage besides the vertical filmstrip)
     //     disableStageFilmstrip: false,
-    //
+
     //     // Default number of participants that can be displayed on stage.
     //     // The user can change this in settings. Number must be between 1 and 6.
     //     stageFilmstripParticipants: 1,
-    //
+
     //     // Disables the top panel (only shown when a user is sharing their screen).
     //     disableTopPanel: false,
-    //
+
     //     // The minimum number of participants that must be in the call for
     //     // the top panel layout to be used.
     //     minParticipantCountForTopPanel: 50,
