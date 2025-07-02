@@ -1943,7 +1943,7 @@ PODS:
     - React-perflogger (= 0.77.2)
     - React-utils (= 0.77.2)
   - RNCalendarEvents (2.2.0):
-    - React
+    - React-Core
   - RNCAsyncStorage (1.23.1):
     - DoubleConversion
     - glog
@@ -2562,7 +2562,7 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: f334cebc0beed0a72490492e978007082c03d533
   ReactCodegen: 6f764a42662ad6379fd3fbb9c09baff6e4797b20
   ReactCommon: 7763e59534d58e15f8f22121cdfe319040e08888
-  RNCalendarEvents: f90f73666b6bcbb3cc8a491ffbb5e48c0db3de37
+  RNCalendarEvents: 62e1ac89d3afbfa77cf2dafa8727af93fa70825f
   RNCAsyncStorage: 6c619a6d28e188d33efbd39df77a2c3933d9ca72
   RNCClipboard: c16c9ed4efaceea9ca3c4a406106bbee610e725f
   RNDefaultPreference: ee13d69e6693d193cd223d10e15e5b3c012d31ba
