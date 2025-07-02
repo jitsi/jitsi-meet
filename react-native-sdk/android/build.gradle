@@ -154,24 +154,3 @@ android.libraryVariants.all { def variant ->
         }
     }
 }
-
-
-afterEvaluate{
-    if ((subproject.plugins.hasPlugin('android')
-                || subproject.plugins.hasPlugin('android-library'))
-            && rootProject.ext.has('buildToolsVersion')) {
-        android {
-            buildToolsVersion rootProject.ext.buildToolsVersion
-
-            compileOptions {
-                sourceCompatibility rootProject.ext.javaVersion
-                targetCompatibility rootProject.ext.javaVersion
-            }
-
-            kotlinOptions {
-                jvmTarget = rootProject.ext.jvmTargetVersion
-            }
-        }
-    }
-}
-

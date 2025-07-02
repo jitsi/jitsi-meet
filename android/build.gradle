@@ -191,9 +191,7 @@ allprojects {
     }
 }
 
-// Force the version of the Android build tools we have chosen on all
-// subprojects. The forcing was introduced for react-native and the third-party
-// modules that we utilize such as react-native-background-timer.
+// Force the version of the Android build tools we have chosen on all subprojects.
 subprojects { subproject ->
     afterEvaluate{
         if ((subproject.plugins.hasPlugin('android')
@@ -203,11 +201,8 @@ subprojects { subproject ->
             android {
                 buildToolsVersion rootProject.ext.buildToolsVersion
 
-                // Only enable buildConfig if namespace is set
                 buildFeatures {
-                    if (android.namespace != null) {
-                        buildConfig true
-                    }
+                    buildConfig true
                 }
 
                 // Set JVM target across all subprojects
