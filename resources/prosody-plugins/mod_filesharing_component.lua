@@ -130,6 +130,10 @@ function on_message(event)
             return true;
         end
 
+        if not room.jitsi_shared_files then
+            return;
+        end
+
         room.jitsi_shared_files[message.attr.fileId] = nil;
 
         local json_msg, error = json.encode({
