@@ -14,6 +14,7 @@ import { addFile, removeFile, updateFileProgress } from './actions';
 import { getFileExtension } from './functions.any';
 import logger from './logger';
 import { IFileMetadata } from './types';
+import { downloadFile } from './utils';
 
 
 /**
@@ -122,14 +123,14 @@ MiddlewareRegistry.register(store => next => action => {
             }
         }))
         .then((response: any) => response.json())
-        .then((data: { presignedUrl: any; }) => {
-            const url = data.presignedUrl;
+        .then((data: { fileName: string; presignedUrl: string; }) => {
+            const { presignedUrl, fileName } = data;
 
-            if (!url) {
+            if (!presignedUrl) {
                 throw new Error('No presigned URL found in the response.');
             }
 
-            window.open(url, '_blank', 'noreferrer,noopener');
+            return downloadFile(presignedUrl, fileName);
         })
         .catch((error: any) => {
             logger.warn('Could not download file:', error);
