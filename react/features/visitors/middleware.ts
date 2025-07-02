@@ -154,9 +154,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         }
 
         const { hosts, visitors: visitorsConfig } = getState()['features/base/config'];
-        const { locationURL, preferVisitor } = getState()['features/base/connection'];
+        const { locationURL } = getState()['features/base/connection'];
 
-        if (!visitorsConfig?.queueService || !locationURL || !preferVisitor) {
+        if (!visitorsConfig?.queueService || !locationURL) {
             break;
         }
 
