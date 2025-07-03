@@ -36,6 +36,7 @@ import { INotificationProps } from '../notifications/types';
 import { open as openParticipantsPane } from '../participants-pane/actions';
 import { joinConference } from '../prejoin/actions';
 
+import { VisitorsListWebsocketClient } from './VisitorsListWebsocketClient';
 import { SUBSCRIBE_VISITORS_LIST, UPDATE_VISITORS_IN_QUEUE_COUNT } from './actionTypes';
 import {
     approveRequest,
@@ -139,10 +140,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
     case CONFERENCE_WILL_LEAVE: {
         WebsocketClient.getInstance().disconnect();
+        VisitorsListWebsocketClient.getInstance().disconnect();
         break;
     }
     case SUBSCRIBE_VISITORS_LIST: {
-        if (isVisitorsListEnabled(getState()) && !WebsocketClient.getInstance().isActive()) {
+        if (isVisitorsListEnabled(getState()) && !VisitorsListWebsocketClient.getInstance().isActive()) {
             _subscribeVisitorsList(getState, dispatch);
         }
         break;
@@ -326,6 +328,14 @@ function _subscribeQueueStats(stateful: IStateful, dispatch: IStore['dispatch'])
             toState(stateful)['features/base/jwt'].jwt);
 }
 
+/**
+ * Subscribes to the visitors list via WebSocket for real-time updates. This function establishes a WebSocket
+ * connection to track visitors in a conference.
+ *
+ * @param {IStore.getState} getState - Function to retrieve the current Redux state.
+ * @param {IStore.dispatch} dispatch - Function to dispatch Redux actions.
+ * @returns {void}
+ */
 function _subscribeVisitorsList(getState: IStore['getState'], dispatch: IStore['dispatch']) {
     const state = getState();
     const { visitors: visitorsConfig } = state['features/base/config'];
@@ -349,8 +359,8 @@ function _subscribeVisitorsList(getState: IStore['getState'], dispatch: IStore['
 
     logger.debug('Starting visitors list subscription');
 
-    WebsocketClient.getInstance()
-        .connectVisitorsListWithInitial(
+    VisitorsListWebsocketClient.getInstance()
+        .connectVisitorsList(
             `wss://${visitorsConfig.queueService}/visitors-list/websocket`,
             queueEndpoint,
             topicEndpoint,
