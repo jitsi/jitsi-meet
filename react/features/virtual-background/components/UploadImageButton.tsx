@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconPlus } from '../../base/icons/svg';
-import { withPixelLineHeight } from '../../base/styles/functions.web';
 import { type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { resizeImage } from '../functions';
 import logger from '../logger';
@@ -42,7 +41,7 @@ interface IProps extends WithTranslation {
 const useStyles = makeStyles()(theme => {
     return {
         label: {
-            ...withPixelLineHeight(theme.typography.bodyShortBold),
+            ...theme.typography.bodyShortBold,
             color: theme.palette.link01,
             marginBottom: theme.spacing(3),
             cursor: 'pointer',

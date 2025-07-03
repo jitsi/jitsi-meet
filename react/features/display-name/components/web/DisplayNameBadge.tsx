@@ -1,6 +1,8 @@
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
+import { remToPixels } from '../../../base/ui/functions.any';
+
 import { DISPLAY_NAME_VERTICAL_PADDING } from './styles';
 
 const useStyles = makeStyles()(theme => {
@@ -13,7 +15,7 @@ const useStyles = makeStyles()(theme => {
             color: text01,
             maxWidth: '50%',
             overflow: 'hidden',
-            padding: `${DISPLAY_NAME_VERTICAL_PADDING / 2}px 16px`,
+            padding: `${remToPixels(`${DISPLAY_NAME_VERTICAL_PADDING}rem`) / 2}px 16px`,
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap'
         }

@@ -4,6 +4,25 @@ import { adaptV4Theme, createTheme } from '@mui/material/styles';
 import { breakpoints, colorMap, font, shape, spacing, typography } from '../base/ui/Tokens';
 import { createColorTokens } from '../base/ui/utils';
 
+const DEFAULT_FONT_SIZE = 16;
+
+/**
+ * Converts unitless fontSize and lineHeight values in a typography style object to rem units.
+ *
+ * @param {Object} style - The typography style object to convert.
+ * @returns {void}
+ */
+function convertTypographyToRem(style: any): void {
+    if (style) {
+        if (typeof style.fontSize === 'number') {
+            style.fontSize = `${style.fontSize / DEFAULT_FONT_SIZE}rem`;
+        }
+        if (typeof style.lineHeight === 'number') {
+            style.lineHeight = `${style.lineHeight / DEFAULT_FONT_SIZE}rem`;
+        }
+    }
+}
+
 /**
  * Creates MUI branding theme based on the custom theme json.
  *
@@ -38,6 +57,10 @@ export function createMuiBrandingTheme(customTheme: Theme) {
 
     if (customTypography) {
         overwriteRecurrsive(newTypography, customTypography);
+    }
+
+    for (const variant of Object.keys(newTypography)) {
+        convertTypographyToRem((newTypography as Record<string, any>)[variant]);
     }
 
     const newBreakpoints = { ...breakpoints };
