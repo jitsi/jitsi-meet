@@ -9,7 +9,8 @@ import {
     getPromotionRequests,
     getVisitorsCount,
     getVisitorsInQueueCount,
-    isVisitorsLive
+    isVisitorsLive,
+    shouldDisplayCurrentVisitorsList
 } from '../../../visitors/functions';
 
 import { VisitorsItem } from './VisitorsItem';
@@ -74,6 +75,7 @@ export default function VisitorsList() {
     const visitorsInQueueCount = useSelector(getVisitorsInQueueCount);
     const isLive = useSelector(isVisitorsLive);
     const showVisitorsInQueue = visitorsInQueueCount > 0 && isLive === false;
+    const showCurrentVisitorsList = useSelector(shouldDisplayCurrentVisitorsList);
 
     const { t } = useTranslation();
     const { classes, cx } = useStyles();
@@ -91,15 +93,19 @@ export default function VisitorsList() {
         return null;
     }
 
+    if (showCurrentVisitorsList && requests.length <= 0 && !showVisitorsInQueue) {
+        return null;
+    }
+
     return (
         <>
             <div className = { classes.headingContainer }>
                 <div
                     className = { cx(classes.heading, classes.headingW) }
                     id = 'visitor-list-header' >
-                    { t('participantsPane.headings.visitors', { count: visitorsCount })}
+                    { !showCurrentVisitorsList && t('participantsPane.headings.visitors', { count: visitorsCount })}
                     { requests.length > 0
-                        && t('participantsPane.headings.visitorRequests', { count: requests.length }) }
+                        && t(`participantsPane.headings.${showCurrentVisitorsList ? 'viewerRequests' : 'visitorRequests'}`, { count: requests.length }) }
                     { showVisitorsInQueue
                         && t('participantsPane.headings.visitorInQueue', { count: visitorsInQueueCount }) }
                 </div>
@@ -116,17 +122,19 @@ export default function VisitorsList() {
                         onClick = { goLiveCb }>{ t('participantsPane.actions.goLive') }</div>
                 }
             </div>
-            <div
-                className = { classes.container }
-                id = 'visitor-list'>
-                {
-                    requests.map(r => (
-                        <VisitorsItem
-                            key = { r.from }
-                            request = { r } />)
-                    )
-                }
-            </div>
+            { requests.length > 0
+                && <div
+                    className = { classes.container }
+                    id = 'visitor-list'>
+                    {
+                        requests.map(r => (
+                            <VisitorsItem
+                                key = { r.from }
+                                request = { r } />)
+                        )
+                    }
+                </div>
+            }
         </>
     );
 }
