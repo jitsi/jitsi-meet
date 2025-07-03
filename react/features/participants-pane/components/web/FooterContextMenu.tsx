@@ -20,6 +20,7 @@ import {
 import { openDialog } from '../../../base/dialog/actions';
 import {
     IconCheck,
+    IconCloseLarge,
     IconDotsHorizontal,
     IconScreenshare,
     IconVideoOff
@@ -119,7 +120,7 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
             id: isAudioModerationEnabled
                 ? 'participants-pane-context-menu-stop-audio-moderation'
                 : 'participants-pane-context-menu-start-audio-moderation',
-            icon: !isAudioModerationEnabled && IconCheck,
+            icon: isAudioModerationEnabled ? IconCloseLarge : IconCheck,
             onClick: isAudioModerationEnabled ? disableAudioModeration : enableAudioModeration,
             text: t('participantsPane.actions.audioModeration')
         }, {
@@ -128,7 +129,7 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
             id: isVideoModerationEnabled
                 ? 'participants-pane-context-menu-stop-video-moderation'
                 : 'participants-pane-context-menu-start-video-moderation',
-            icon: !isVideoModerationEnabled && IconCheck,
+            icon: isVideoModerationEnabled ? IconCloseLarge : IconCheck,
             onClick: isVideoModerationEnabled ? disableVideoModeration : enableVideoModeration,
             text: t('participantsPane.actions.videoModeration')
         }, {
@@ -137,7 +138,7 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
             id: isDesktopModerationEnabled
                 ? 'participants-pane-context-menu-stop-desktop-moderation'
                 : 'participants-pane-context-menu-start-desktop-moderation',
-            icon: !isDesktopModerationEnabled && IconCheck,
+            icon: isDesktopModerationEnabled ? IconCloseLarge : IconCheck,
             onClick: isDesktopModerationEnabled ? disableDesktopModeration : enableDesktopModeration,
             text: t('participantsPane.actions.desktopModeration')
         }
