@@ -41,6 +41,16 @@ export const SET_AUDIO_MUTED = 'SET_AUDIO_MUTED';
 export const SET_AUDIO_UNMUTE_PERMISSIONS = 'SET_AUDIO_UNMUTE_PERMISSIONS';
 
 /**
+ * The type of (redux) action to set the deafened state.
+ *
+ * {
+ *     type: SET_DEAFENED,
+ *     deafened: boolean
+ * }
+ */
+export const SET_DEAFENED = 'SET_DEAFENED';
+
+/**
  * The type of (redux) action to set the facing mode of the local video camera
  * to a specific value.
  *
