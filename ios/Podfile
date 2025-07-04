@@ -93,7 +93,8 @@ post_install do |installer|
   react_native_post_install(
     installer,
     use_native_modules![:reactNativePath],
-    :mac_catalyst_enabled => false
+    :mac_catalyst_enabled => false,
+    # :ccache_enabled => true
   )
   installer.pods_project.targets.each do |target|
     # https://github.com/CocoaPods/CocoaPods/issues/11402
