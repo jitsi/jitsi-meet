@@ -434,11 +434,10 @@ local function go_live(room)
 
     -- if missing we assume room is live, only skip if it is marked explicitly as false
     if room.jitsiMetadata and room.jitsiMetadata.visitors
-            and room.jitsiMetadata.visitors.live ~= nil and room.jitsiMetadata.visitors.live == false then
-        
-                if DEBUG then
-                    module:log('debug', 'Room %s is not live, skipping go live request', room.jid);
-                end
+            and room.jitsiMetadata.visitors.live ~= nil and room.jitsiMetadata.visitors.live == false then    
+        if DEBUG then
+            module:log('debug', 'Room %s is not live, skipping go live request', room.jid);
+        end
         return;
     end
 
@@ -518,8 +517,7 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
             or ignore_list:contains(jid.host(stanza.attr.from)) -- jibri or other domains to ignore
             or is_sip_jigasi(stanza)
             or is_sip_jibri_join(stanza)
-            or table_find(room._data.mainMeetingParticipants, session.jitsi_meet_context_user and session.jitsi_meet_context_user.id) then
-            
+            or table_find(room._data.mainMeetingParticipants, session.jitsi_meet_context_user and session.jitsi_meet_context_user.id) then       
             if DEBUG then
                 module:log('debug', 'Auto-allowing visitor %s in room %s', stanza.attr.from, room.jid);
             end
