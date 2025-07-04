@@ -222,7 +222,7 @@
 }
 
 - (void)showSplashScreen {
-    [[SplashView sharedInstance] showSplashScreen];
+    [[SplashView sharedInstance] showSplash];
 }
 
 #pragma mark - Property getter / setters
