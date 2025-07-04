@@ -89,6 +89,16 @@ export function getStartWithVideoMuted(stateful: IStateful) {
 }
 
 /**
+ * Determines whether screen-share is currently muted.
+ *
+ * @param {Function|Object} stateful - The redux store, state, or {@code getState} function.
+ * @returns {boolean}
+ */
+export function isScreenshareMuted(stateful: IStateful) {
+    return Boolean(toState(stateful)['features/base/media'].screenshare.muted);
+}
+
+/**
  * Determines whether video is currently muted.
  *
  * @param {Function|Object} stateful - The redux store, state, or {@code getState} function.

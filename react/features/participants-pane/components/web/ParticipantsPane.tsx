@@ -45,7 +45,6 @@ const useStyles = makeStyles<IStylesProps>()((theme, { isChatOpen }) => {
         participantsPane: {
             backgroundColor: theme.palette.ui01,
             flexShrink: 0,
-            overflow: 'hidden',
             position: 'relative',
             transition: 'width .16s ease-in-out',
             width: '315px',
@@ -72,7 +71,6 @@ const useStyles = makeStyles<IStylesProps>()((theme, { isChatOpen }) => {
         container: {
             boxSizing: 'border-box',
             flex: 1,
-            overflowY: 'auto',
             position: 'relative',
             padding: `0 ${participantsPaneTheme.panePadding}px`,
             display: 'flex',

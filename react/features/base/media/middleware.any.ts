@@ -8,10 +8,11 @@ import {
 } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IStore } from '../../app/types';
+import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../../av-moderation/constants';
+import { isForceMuted } from '../../av-moderation/functions';
 import { APP_STATE_CHANGED } from '../../mobile/background/actionTypes';
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
-import { isForceMuted } from '../../participants-pane/functions';
 import { isScreenMediaShared } from '../../screen-share/functions';
 import { SET_AUDIO_ONLY } from '../audio-only/actionTypes';
 import { setAudioOnly } from '../audio-only/actions';
@@ -88,7 +89,7 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const participant = getLocalParticipant(state);
 
-        if (!action.muted && isForceMuted(participant, MEDIA_TYPE.AUDIO, state)) {
+        if (!action.muted && isForceMuted(participant, AVM_MEDIA_TYPE.AUDIO, state)) {
             return;
         }
         break;
@@ -113,7 +114,7 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const participant = getLocalParticipant(state);
 
-        if (!action.muted && isForceMuted(participant, MEDIA_TYPE.SCREENSHARE, state)) {
+        if (!action.muted && isForceMuted(participant, AVM_MEDIA_TYPE.DESKTOP, state)) {
             return;
         }
         break;
@@ -122,7 +123,7 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const participant = getLocalParticipant(state);
 
-        if (!action.muted && isForceMuted(participant, MEDIA_TYPE.VIDEO, state)) {
+        if (!action.muted && isForceMuted(participant, AVM_MEDIA_TYPE.VIDEO, state)) {
             return;
         }
         break;

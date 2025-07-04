@@ -64,6 +64,11 @@ export const ACTION_SHORTCUT_TRIGGERED = 'triggered';
 export const AUDIO_MUTE = 'audio.mute';
 
 /**
+ * The name of the keyboard shortcut or toolbar button for muting desktop sharing.
+ */
+export const DESKTOP_MUTE = 'desktop.mute';
+
+/**
  * The name of the keyboard shortcut or toolbar button for muting video.
  */
 export const VIDEO_MUTE = 'video.mute';

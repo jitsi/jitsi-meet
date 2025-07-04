@@ -8,6 +8,7 @@ local table_shallow_copy = util.table_shallow_copy;
 local array = require "util.array";
 local json = require 'cjson.safe';
 local st = require 'util.stanza';
+local jid = require 'util.jid';
 
 local muc_component_host = module:get_option_string('muc_component');
 if muc_component_host == nil then
@@ -90,7 +91,7 @@ function notify_whitelist_change(jid, moderators, room, mediaType, removed)
     body_json.mediaType = mediaType;
 
     -- sanitize, make sure we don't have an empty array as it will encode it as {} not as []
-    for _,mediaType in pairs({'audio', 'video'}) do
+    for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
         if body_json.whitelists[mediaType] and #body_json.whitelists[mediaType] == 0 then
             body_json.whitelists[mediaType] = nil;
         end
@@ -191,7 +192,7 @@ function on_message(event)
 
         local mediaType = moderation_command.attr.mediaType;
         if mediaType then
-            if mediaType ~= 'audio' and mediaType ~= 'video' then
+            if mediaType ~= 'audio' and mediaType ~= 'video' and mediaType ~= 'desktop' then
                 module:log('warn', 'Wrong mediaType %s for %s', mediaType, room.jid);
                 return false;
             end
@@ -298,7 +299,7 @@ function on_message(event)
                 local whitelist = room.av_moderation[mediaType];
                 if whitelist then
                     local index = get_index_in_table(whitelist, occupant_jid)
-                    if(index) then
+                    if index then
                         whitelist:pop(index);
                         notify_whitelist_change(occupant_to_remove.jid, true, room, mediaType, true);
                     end
@@ -322,7 +323,7 @@ function occupant_joined(event)
     end
 
     if room.av_moderation then
-        for _,mediaType in pairs({'audio', 'video'}) do
+        for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
             if room.av_moderation[mediaType] then
                 notify_occupants_enable(
                     occupant.jid, true, room, room.av_moderation_actors[mediaType], mediaType);
@@ -355,6 +356,41 @@ function occupant_affiliation_changed(event)
     end
 end
 
+-- handles presence messages to drop desktop sharing when not allowed
+function on_presence_message(event)
+    local stanza, session = event.stanza, event.origin;
+
+    local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+
+    if not room or not room.av_moderation then
+        return;
+    end
+
+    local desktop_whitelist = room.av_moderation['desktop'];
+
+    if not desktop_whitelist then
+        return; -- no desktop sharing moderation enabled, so we don't care about presence messages
+    end
+
+    local occupant_jid = internal_room_jid_match_rewrite(room.jid)..'/'..jid.resource(stanza.attr.to);
+    local index = get_index_in_table(desktop_whitelist, occupant_jid)
+    if index then
+        return;
+    end
+
+    local source_info = event.stanza:get_child_text('SourceInfo');
+    if source_info then
+        local source_info_obj = json.decode(source_info);
+        for index, value in pairs(source_info_obj) do
+            if value.videoType == 'desktop' then
+                module:log('warn', 'Dropping presence message for desktop sharing from %s in %s, not allowed',
+                    occupant_jid, room.jid);
+                return true;
+            end
+        end
+    end
+end
+
 -- we will receive messages from the clients
 module:hook('message/host', on_message);
 
@@ -362,6 +398,9 @@ process_host_module(muc_component_host, function(host_module, host)
     module:log('info','Hook to muc events on %s', host);
     host_module:hook('muc-occupant-joined', occupant_joined, -2); -- make sure it runs after allowners or similar
     host_module:hook('muc-set-affiliation', occupant_affiliation_changed, -1);
+
+    -- we will drop presence messages for desktop sharing when not allowed, do it early in the chain
+    host_module:hook('presence/full', on_presence_message, 100);
 end);
 
 process_host_module(main_virtual_host, function(host_module)

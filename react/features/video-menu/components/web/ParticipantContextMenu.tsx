@@ -4,14 +4,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../app/types';
-import { isSupported as isAvModerationSupported } from '../../../av-moderation/functions';
+import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../../../av-moderation/constants';
+import { isSupported as isAvModerationSupported, isForceMuted } from '../../../av-moderation/functions';
 import Avatar from '../../../base/avatar/components/Avatar';
 import { isIosMobileBrowser, isMobileBrowser } from '../../../base/environment/utils';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
 import { getLocalParticipant, hasRaisedHand, isPrivateChatEnabled } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
-import { isParticipantAudioMuted, isParticipantVideoMuted } from '../../../base/tracks/functions.any';
+import { isParticipantAudioMuted } from '../../../base/tracks/functions.any';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
@@ -20,7 +21,7 @@ import { displayVerification } from '../../../e2ee/functions';
 import { setVolume } from '../../../filmstrip/actions.web';
 import { isStageFilmstripAvailable } from '../../../filmstrip/functions.web';
 import { QUICK_ACTION_BUTTON } from '../../../participants-pane/constants';
-import { getQuickActionButtonType, isForceMuted } from '../../../participants-pane/functions';
+import { getQuickActionButtonType } from '../../../participants-pane/functions';
 import { requestRemoteControl, stopController } from '../../../remote-control/actions';
 import { getParticipantMenuButtonsWithNotifyClick, showOverflowDrawer } from '../../../toolbox/functions.web';
 import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
@@ -34,7 +35,9 @@ import GrantModeratorButton from './GrantModeratorButton';
 import KickButton from './KickButton';
 import LowerHandButton from './LowerHandButton';
 import MuteButton from './MuteButton';
+import MuteDesktopButton from './MuteDesktopButton';
 import MuteEveryoneElseButton from './MuteEveryoneElseButton';
+import MuteEveryoneElsesDesktopButton from './MuteEveryoneElsesDesktopButton';
 import MuteEveryoneElsesVideoButton from './MuteEveryoneElsesVideoButton';
 import MuteVideoButton from './MuteVideoButton';
 import PrivateMessageMenuButton from './PrivateMessageMenuButton';
@@ -134,9 +137,10 @@ const ParticipantContextMenu = ({
     const localParticipant = useSelector(getLocalParticipant);
     const _isModerator = Boolean(localParticipant?.role === PARTICIPANT_ROLE.MODERATOR);
     const _isVideoForceMuted = useSelector<IReduxState>(state =>
-        isForceMuted(participant, MEDIA_TYPE.VIDEO, state));
+        isForceMuted(participant, AVM_MEDIA_TYPE.VIDEO, state));
+    const _isDesktopForceMuted = useSelector<IReduxState>(state =>
+        isForceMuted(participant, AVM_MEDIA_TYPE.DESKTOP, state));
     const _isAudioMuted = useSelector((state: IReduxState) => isParticipantAudioMuted(participant, state));
-    const _isVideoMuted = useSelector((state: IReduxState) => isParticipantVideoMuted(participant, state));
     const _overflowDrawer: boolean = useSelector(showOverflowDrawer);
     const { remoteVideoMenu = {}, disableRemoteMute, startSilent, customParticipantMenuButtons }
         = useSelector((state: IReduxState) => state['features/base/config']);
@@ -190,7 +194,7 @@ const ParticipantContextMenu = ({
         () => !_overflowDrawer && !thumbnailMenu,
     [ _overflowDrawer, thumbnailMenu ]);
     const quickActionButtonType = useSelector((state: IReduxState) =>
-        getQuickActionButtonType(participant, _isAudioMuted, _isVideoMuted, state));
+        getQuickActionButtonType(participant, state));
 
     const buttons: JSX.Element[] = [];
     const buttons2: JSX.Element[] = [];
@@ -229,6 +233,13 @@ const ParticipantContextMenu = ({
                     buttonType = { MEDIA_TYPE.VIDEO } />
                 );
             }
+            if (_isDesktopForceMuted
+                && !(isClickedFromParticipantPane && quickActionButtonType === QUICK_ACTION_BUTTON.ALLOW_DESKTOP)) {
+                buttons.push(<AskToUnmuteButton
+                    { ...getButtonProps(BUTTONS.ALLOW_DESKTOP) }
+                    buttonType = { MEDIA_TYPE.SCREENSHARE } />
+                );
+            }
         }
 
         if (!disableRemoteMute && !participant.isSilent) {
@@ -240,6 +251,10 @@ const ParticipantContextMenu = ({
                 buttons.push(<MuteVideoButton { ...getButtonProps(BUTTONS.MUTE_VIDEO) } />);
             }
             buttons.push(<MuteEveryoneElsesVideoButton { ...getButtonProps(BUTTONS.MUTE_OTHERS_VIDEO) } />);
+            if (!(isClickedFromParticipantPane && quickActionButtonType === QUICK_ACTION_BUTTON.STOP_DESKTOP)) {
+                buttons.push(<MuteDesktopButton { ...getButtonProps(BUTTONS.MUTE_DESKTOP) } />);
+            }
+            buttons.push(<MuteEveryoneElsesDesktopButton { ...getButtonProps(BUTTONS.MUTE_OTHERS_DESKTOP) } />);
         }
 
         if (raisedHands) {

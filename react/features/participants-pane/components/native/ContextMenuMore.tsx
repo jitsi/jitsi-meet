@@ -11,6 +11,7 @@ import {
     requestEnableAudioModeration,
     requestEnableVideoModeration
 } from '../../../av-moderation/actions';
+import { MEDIA_TYPE } from '../../../av-moderation/constants';
 import {
     isEnabled as isAvModerationEnabled,
     isSupported as isAvModerationSupported
@@ -20,7 +21,6 @@ import { hideSheet, openDialog } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCheck, IconRaiseHand, IconVideoOff } from '../../../base/icons/svg';
-import { MEDIA_TYPE } from '../../../base/media/constants';
 import { raiseHand } from '../../../base/participants/actions';
 import { getRaiseHandsQueue, isLocalParticipantModerator } from '../../../base/participants/functions';
 import { LOWER_HAND_MESSAGE } from '../../../base/tracks/constants';

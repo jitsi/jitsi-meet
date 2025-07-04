@@ -2,12 +2,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { getSsrcRewritingFeatureFlag } from '../../../base/config/functions.any';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import {
     getLocalParticipant,
-    getMutedStateByParticipantAndMediaType,
     getParticipantByIdOrUndefined,
     getParticipantDisplayName,
     hasRaisedHand,
@@ -124,11 +122,6 @@ interface IProps {
     isInBreakoutRoom: boolean;
 
     /**
-     * Callback used to open a confirmation dialog for audio muting.
-     */
-    muteAudio: Function;
-
-    /**
      * The translated text for the mute participant button.
      */
     muteParticipantButtonText: string;
@@ -153,7 +146,6 @@ interface IProps {
      */
     overflowDrawer: boolean;
 
-
     /**
      * The aria-label for the ellipsis action.
      */
@@ -163,11 +155,6 @@ interface IProps {
      * The ID of the participant.
      */
     participantID?: string;
-
-    /**
-     * Callback used to stop a participant's video.
-    */
-    stopVideo: Function;
 
     /**
      * The translated "you" text.
@@ -196,13 +183,11 @@ function MeetingParticipantItem({
     _videoMediaState,
     isHighlighted,
     isInBreakoutRoom,
-    muteAudio,
     onContextMenu,
     onLeave,
     openDrawerForParticipant,
     overflowDrawer,
     participantActionEllipsisLabel,
-    stopVideo,
     youText
 }: IProps) {
 
@@ -268,10 +253,8 @@ function MeetingParticipantItem({
                     {!isInBreakoutRoom && (
                         <ParticipantQuickAction
                             buttonType = { _quickActionButtonType }
-                            muteAudio = { muteAudio }
                             participantID = { _participantID }
-                            participantName = { _displayName }
-                            stopVideo = { stopVideo } />
+                            participantName = { _displayName } />
                     )}
                     <ParticipantActionEllipsis
                         accessibilityLabel = { participantActionEllipsisLabel }
@@ -304,15 +287,11 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const participant = getParticipantByIdOrUndefined(state, participantID);
     const _displayName = getParticipantDisplayName(state, participant?.id ?? '');
     const _matchesSearch = participantMatchesSearch(participant, searchString);
-    const _isAudioMuted = getSsrcRewritingFeatureFlag(state)
-        ? Boolean(participant && getMutedStateByParticipantAndMediaType(state, participant, MEDIA_TYPE.AUDIO))
-        : Boolean(participant && isParticipantAudioMuted(participant, state));
-    const _isVideoMuted = getSsrcRewritingFeatureFlag(state)
-        ? Boolean(participant && getMutedStateByParticipantAndMediaType(state, participant, MEDIA_TYPE.VIDEO))
-        : isParticipantVideoMuted(participant, state);
+    const _isAudioMuted = isParticipantAudioMuted(participant, state);
+    const _isVideoMuted = isParticipantVideoMuted(participant, state);
     const _audioMediaState = getParticipantAudioMediaState(participant, _isAudioMuted, state);
     const _videoMediaState = getParticipantVideoMediaState(participant, _isVideoMuted, state);
-    const _quickActionButtonType = getQuickActionButtonType(participant, _isAudioMuted, _isVideoMuted, state);
+    const _quickActionButtonType = getQuickActionButtonType(participant, state);
 
     const tracks = state['features/base/tracks'];
     const _audioTrack = participantID === localParticipantId

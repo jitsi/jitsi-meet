@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
 import { IReduxState, IStore } from '../../app/types';
-import { rejectParticipantVideo } from '../../av-moderation/actions';
+import { rejectParticipantDesktop } from '../../av-moderation/actions';
 import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../../av-moderation/constants';
 import { isEnabledFromState } from '../../av-moderation/functions';
 import { MEDIA_TYPE } from '../../base/media/constants';
@@ -10,7 +10,7 @@ import { muteRemote } from '../actions';
 
 /**
  * The type of the React {@code Component} props of
- * {@link AbstractMuteRemoteParticipantsVideoDialog}.
+ * {@link AbstractMuteRemoteParticipantsDesktopDialog}.
  */
 export interface IProps extends WithTranslation {
 
@@ -20,9 +20,9 @@ export interface IProps extends WithTranslation {
     dispatch: IStore['dispatch'];
 
     /**
-     * Whether or not video moderation is on.
+     * Whether or not desktop moderation is on.
      */
-    isVideoModerationOn: boolean;
+    isModerationOn: boolean;
 
     /**
      * The ID of the remote participant to be muted.
@@ -31,14 +31,14 @@ export interface IProps extends WithTranslation {
 }
 
 /**
- * Abstract dialog to confirm a remote participant video ute action.
+ * Abstract dialog to confirm a remote participant desktop mute action.
  *
  * @augments Component
  */
-export default class AbstractMuteRemoteParticipantsVideoDialog<P extends IProps = IProps, State=any>
+export default class AbstractMuteRemoteParticipantsDesktopDialog<P extends IProps = IProps, State=any>
     extends Component<P, State> {
     /**
-     * Initializes a new {@code AbstractMuteRemoteParticipantsVideoDialog} instance.
+     * Initializes a new {@code AbstractMuteRemoteParticipantsDesktopDialog} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
@@ -59,8 +59,8 @@ export default class AbstractMuteRemoteParticipantsVideoDialog<P extends IProps 
     _onSubmit() {
         const { dispatch, participantID } = this.props;
 
-        dispatch(muteRemote(participantID, MEDIA_TYPE.VIDEO));
-        dispatch(rejectParticipantVideo(participantID));
+        dispatch(muteRemote(participantID, MEDIA_TYPE.SCREENSHARE));
+        dispatch(rejectParticipantDesktop(participantID));
 
         return true;
     }
@@ -76,6 +76,6 @@ export default class AbstractMuteRemoteParticipantsVideoDialog<P extends IProps 
  */
 export function abstractMapStateToProps(state: IReduxState) {
     return {
-        isVideoModerationOn: isEnabledFromState(AVM_MEDIA_TYPE.VIDEO, state)
+        isModerationOn: isEnabledFromState(AVM_MEDIA_TYPE.DESKTOP, state)
     };
 }
