@@ -10,8 +10,6 @@ import amplitude from './amplitude/lib';
  * Analytics handler for Amplitude.
  */
 export default class AmplitudeHandler extends AbstractHandler {
-    _deviceId: string;
-    _userId: Object;
 
     /**
      * Creates new instance of the Amplitude analytics handler.
@@ -44,13 +42,7 @@ export default class AmplitudeHandler extends AbstractHandler {
 
         if (navigator.product === 'ReactNative') {
             amplitude.init(amplitudeAPPKey);
-            fixDeviceID(amplitude).then(() => {
-                const deviceId = amplitude.getDeviceId();
-
-                if (deviceId) {
-                    this._deviceId = deviceId;
-                }
-            });
+            fixDeviceID(amplitude);
         } else {
             const amplitudeOptions: any = {
                 includeReferrer: true,
@@ -65,7 +57,6 @@ export default class AmplitudeHandler extends AbstractHandler {
         }
 
         if (user) {
-            this._userId = user;
             amplitude.setUserId(user);
         }
     }
@@ -113,13 +104,6 @@ export default class AmplitudeHandler extends AbstractHandler {
      * @returns {Object}
      */
     getIdentityProps() {
-        if (navigator.product === 'ReactNative') {
-            return {
-                deviceId: this._deviceId,
-                userId: this._userId
-            };
-        }
-
         return {
             sessionId: amplitude.getSessionId(),
             deviceId: amplitude.getDeviceId(),
