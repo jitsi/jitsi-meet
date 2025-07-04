@@ -17,7 +17,7 @@ export async function fixDeviceID(amplitude: Types.ReactNativeClient) {
     const current = await DefaultPreference.get('amplitudeDeviceId');
 
     if (current) {
-        await amplitude.setDeviceId(current);
+        amplitude.setDeviceId(current);
     } else {
         const uid = await getUniqueId();
 
@@ -27,7 +27,7 @@ export async function fixDeviceID(amplitude: Types.ReactNativeClient) {
             return;
         }
 
-        await amplitude.setDeviceId(uid as string);
+        amplitude.setDeviceId(uid as string);
         await DefaultPreference.set('amplitudeDeviceId', uid as string);
     }
 }
