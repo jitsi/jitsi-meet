@@ -22,7 +22,6 @@ local split_string = util.split_string;
 local new_id = require 'util.id'.medium;
 local json = require 'cjson.safe';
 local inspect = require 'inspect';
-local socket = require 'socket';
 
 -- Debug flag
 local DEBUG = module:get_option_boolean('debug', false);
@@ -88,7 +87,6 @@ function send_json_message(to_jid, json_message)
 end
 
 local function request_promotion_received(room, from_jid, from_vnode, nick, time, user_id, group_id, force_promote_requested)
-    
     if DEBUG then
          module:log('debug', 'Received promotion request from %s for room %s, nick: %s, time: %s, user_id: %s, group_id: %s, force_promote_requested: %s',
         from_jid, room.jid, nick, time, user_id, group_id, force_promote_requested);
@@ -434,7 +432,7 @@ local function go_live(room)
 
     -- if missing we assume room is live, only skip if it is marked explicitly as false
     if room.jitsiMetadata and room.jitsiMetadata.visitors
-            and room.jitsiMetadata.visitors.live ~= nil and room.jitsiMetadata.visitors.live == false then    
+            and room.jitsiMetadata.visitors.live ~= nil and room.jitsiMetadata.visitors.live == false then
         if DEBUG then
             module:log('debug', 'Room %s is not live, skipping go live request', room.jid);
         end
@@ -517,7 +515,7 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
             or ignore_list:contains(jid.host(stanza.attr.from)) -- jibri or other domains to ignore
             or is_sip_jigasi(stanza)
             or is_sip_jibri_join(stanza)
-            or table_find(room._data.mainMeetingParticipants, session.jitsi_meet_context_user and session.jitsi_meet_context_user.id) then       
+            or table_find(room._data.mainMeetingParticipants, session.jitsi_meet_context_user and session.jitsi_meet_context_user.id) then
             if DEBUG then
                 module:log('debug', 'Auto-allowing visitor %s in room %s', stanza.attr.from, room.jid);
             end
