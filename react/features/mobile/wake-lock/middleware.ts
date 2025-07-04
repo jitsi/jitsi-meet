@@ -1,4 +1,4 @@
-import KeepAwake from 'react-native-keep-awake';
+import { activateKeepAwake, deactivateKeepAwake } from '@sayem314/react-native-keep-awake';
 
 import { getCurrentConference } from '../../base/conference/functions';
 import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
@@ -28,8 +28,8 @@ StateListenerRegistry.register(
  */
 function _setWakeLock(wakeLock: boolean) {
     if (wakeLock) {
-        KeepAwake.activate();
+        activateKeepAwake();
     } else {
-        KeepAwake.deactivate();
+        deactivateKeepAwake();
     }
 }

@@ -1,4 +1,7 @@
 import UIKit
+import React
+import React_RCTAppDelegate
+import ReactAppDependencyProvider
 import Firebase
 import JitsiMeetSDK
 
@@ -7,8 +10,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        self.moduleName = "JitsiMeet"
+        self.dependencyProvider = RCTAppDependencyProvider()
         self.window = UIWindow(frame: UIScreen.main.bounds)
+        self.initialProps = [:]
 
         let jitsiMeet = JitsiMeet.sharedInstance()
 
@@ -27,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             builder.setFeatureFlag("ios.recording.enabled", withBoolean: true)
         }
 
-        jitsiMeet.application(application, didFinishLaunchingWithOptions: launchOptions ?? [:])
+        jitsiMeet.application(application, didFinishLaunchingWithOptions: launchOptions ?? self.initialProps)
 
         if self.appContainsRealServiceInfoPlist() {
             print("Enabling Firebase")
@@ -35,9 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(!jitsiMeet.isCrashReportingDisabled())
         }
 
-        let vc = ViewController()
-        self.window?.rootViewController = vc
-        jitsiMeet.showSplashScreen(vc.view)
+        jitsiMeet.showSplashScreen()
 
         self.window?.makeKeyAndVisible()
 
@@ -67,6 +71,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         return JitsiMeet.sharedInstance().application(application, supportedInterfaceOrientationsFor: window)
+    }
+
+    override func sourceURL(for bridge: RCTBridge) -> URL? {
+        self.bundleURL()
+    }
+
+    override func bundleURL() -> URL? {
+#if DEBUG
+    RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
+#else
+    Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+#endif
     }
 }
 

@@ -103,7 +103,7 @@ jobs:
   android-sdk-build:
     name: Build mobile SDK (Android)
     runs-on: ubuntu-latest
-    container: reactnativecommunity/react-native-android:v13.0
+    container: reactnativecommunity/react-native-android:v18.0
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4

@@ -22,7 +22,7 @@ import android.os.Bundle;
 
 import com.facebook.react.ReactInstanceManager;
 
-import org.devio.rn.splashscreen.SplashScreen;
+import com.splashview.SplashView;
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 public class JitsiMeet {
@@ -92,7 +92,7 @@ public class JitsiMeet {
      */
     public static void showSplashScreen(Activity activity) {
         try {
-            SplashScreen.show(activity);
+            SplashView.INSTANCE.showSplashView(activity);
         } catch (Exception e) {
             JitsiMeetLogger.e(e, "Failed to show splash screen");
         }
