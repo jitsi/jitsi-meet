@@ -1,5 +1,6 @@
 # The build artifacts of the jitsi-meet project.
 build/*
+dist/*
 
 doc/*
 

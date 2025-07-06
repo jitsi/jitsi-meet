@@ -20,7 +20,8 @@ import logger from './logger';
  * {@code url}; otherwise, {@code undefined}.
  */
 export function parseJWTFromURLParams(url: URL | typeof window.location) {
-    // Convert window.location to a URL object if it's not already one
+    // Need this on web to convert Location to URL
+    // @ts-ignore This throws an error on native
     const urlObj = url instanceof URL ? url : url?.href && new URL(url.href);
     const jwt = parseURLParams(urlObj, false, 'hash').jwt;
 

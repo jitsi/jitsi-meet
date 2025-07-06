@@ -28,7 +28,7 @@ if (subdomain.startsWith('<!--')) {
 var domain = window.location.host;
 var isProd = domain === 'sonacove.com' || domain === 'www.sonacove.com';
 var authdomain = isProd ? 'auth.sonacove.com' : 'staj.sonacove.com/auth';
-var meetdomain = isProd ? 'meet.sonacove.com' : 'meet.sonacove.com';
+var meetdomain = isProd ? 'meet.sonacove.com' : 'staj.sonacove.com';
 var enableJaaS = false;
 
 var config = {

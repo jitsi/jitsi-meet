@@ -15,7 +15,7 @@ interface IProps {
 function base64UrlDecode(base64Url: string): string {
     const padded = base64Url + '==='.slice((base64Url.length + 3) % 4);
 
-    return atob(padded.replace(/-/g, '+').replace(/_/g, '/'));
+    return window.atob(padded.replace(/-/g, '+').replace(/_/g, '/'));
 }
 
 function parseJwtPayload(token: string) {

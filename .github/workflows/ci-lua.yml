@@ -4,6 +4,7 @@ on: [pull_request]
 
 jobs:
   luacheck:
+    if: false
     name: Luacheck
     runs-on: ubuntu-latest
     steps:

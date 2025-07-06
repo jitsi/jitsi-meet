@@ -5,7 +5,7 @@ import path from "path";
 import { spawn, exec } from "child_process";
 
 // Utility function to execute commands and log output in real-time
-async function runCommand(command, cwd) {
+async function runCommand(command, cwd, captureOutput = false) {
     const actualCwd = cwd || process.cwd();
     console.log(`\n🚀 Running: ${command} (in ${actualCwd})`);
 
@@ -17,19 +17,29 @@ async function runCommand(command, cwd) {
             stdio: "pipe",
         });
 
+        let capturedOutput = "";
+
         child.stdout.on("data", (data) => {
+            const output = data.toString();
             process.stdout.write(data);
+            if (captureOutput) {
+                capturedOutput += output;
+            }
         });
 
         child.stderr.on("data", (data) => {
+            const output = data.toString();
             process.stderr.write(data);
+            if (captureOutput) {
+                capturedOutput += output;
+            }
         });
 
         child.on("close", (code) => {
             if (code === 0) {
                 process.stdout.write("\n");
                 console.log(`✅ Command finished: ${command}`);
-                resolve();
+                resolve(capturedOutput || undefined);
             } else {
                 process.stdout.write("\n");
                 console.error(`❌ Command failed with code ${code}: ${command}`);
@@ -56,24 +66,11 @@ async function commandExists(command) {
     }
 }
 
-async function getGitBranch() {
-    return new Promise((resolve, reject) => {
-        exec("git rev-parse --abbrev-ref HEAD", (error, stdout, stderr) => {
-            if (error) {
-                console.error(`Error getting git branch: ${stderr}`);
-                reject(new Error("Could not get git branch."));
-                return;
-            }
-            resolve(stdout.trim());
-        });
-    });
-}
-
 // Utility function to ensure a directory exists
 function ensureDirectoryExists(dirPath) {
     if (!fs.existsSync(dirPath)) {
         fs.mkdirSync(dirPath, { recursive: true });
-        console.log(`�� Created directory: ${dirPath}`);
+        console.log(`📁 Created directory: ${dirPath}`);
     }
 }
 
@@ -220,10 +217,9 @@ async function deploy() {
     const args = process.argv.slice(2);
     const skipDeps = args.includes("--skip-deps");
     const skipBuild = args.includes("--skip-build");
-    const skipDeploy = args.includes("--skip-deploy");
 
     try {
-        console.log("🚀 Starting Cloudflare deployment process...");
+        console.log("🚀 Starting build and preparation process...");
 
         // Step 1: Make sure we are running from the project root
         if (!fs.existsSync(path.join(projectRoot, "package.json"))) {
@@ -231,19 +227,6 @@ async function deploy() {
             process.exit(1);
         }
         console.log("✅ Running from project root.");
-
-        const hasWrangler = await commandExists("wrangler");
-        if (!hasWrangler) {
-            console.log("📦 Wrangler not found, attempting to install it globally via npm...");
-            await runCommand("npm install -g wrangler");
-            if (!(await commandExists("wrangler"))) {
-                console.error("❌ Wrangler installation failed. Please install it manually.");
-                process.exit(1);
-            }
-            console.log("✅ Wrangler installed successfully.");
-        } else {
-            console.log("✅ Wrangler is already installed.");
-        }
 
         console.log("\n🧹 Cleaning dist folder...");
         if (fs.existsSync(distDir)) {
@@ -311,7 +294,7 @@ async function deploy() {
             console.log(`  -> Copied ${cssFile}`);
         } else {
             console.error(`❌ Critical file not found after build: ${cssSrc}`);
-            console.error("Deployment cannot continue without the main stylesheet.");
+            console.error("Build cannot continue without the main stylesheet.");
             process.exit(1);
         }
 
@@ -340,26 +323,10 @@ async function deploy() {
         processDirectoryForSSI(distMeetDir, distMeetDir);
         console.log("✅ SSI processing complete.");
 
-        // Step 6: Deploy by running wrangler deploy
-        if (skipDeploy) {
-            console.log("\n⏭️ Skipping deployment (--skip-deploy).");
-        } else {
-            console.log("\n🚀 Step 6: Deploying to Cloudflare...");
-            const branch = await getGitBranch();
-            console.log(`Detected git branch: ${branch}`);
-
-            const wranglerConfigPath = "config/wrangler.jsonc";
-
-            if (branch === "sonacove") {
-                await runCommand(`npx wrangler deploy -c ${wranglerConfigPath}`);
-            } else {
-                await runCommand(`npx wrangler versions upload -c ${wranglerConfigPath}`);
-            }
-        }
-
-        console.log("\n🎉 Deployment completed successfully!");
+        console.log("\n🎉 Build and preparation completed successfully!");
+        console.log("📁 Built files are ready in the dist directory for deployment.");
     } catch (error) {
-        console.error("\n❌ Deployment failed:", error instanceof Error ? error.message : error);
+        console.error("\n❌ Build failed:", error instanceof Error ? error.message : error);
         process.exit(1);
     }
 }
