@@ -757,6 +757,141 @@
         "linkCopied": "Se copió el link",
         "lookGood": "Tu micrófono funciona bien.",
         "or": "o",
+        "permissionsGuide": {
+            "close": "Cerrar",
+            "detected": "Detectado:",
+            "deviceHelp": {
+                "Android": [
+                    "Abre la configuración del teléfono.",
+                    "Toca \"Aplicaciones\" > tu navegador (por ejemplo, Chrome o Brave).",
+                    "Toca \"Permisos\".",
+                    "Permite el acceso a la cámara y al micrófono.",
+                    "Reinicia el navegador e inténtalo de nuevo."
+                ],
+                "iOS": [
+                    "Abre la configuración de iOS.",
+                    "Desplázate hacia abajo y selecciona tu navegador (por ejemplo, Safari o Chrome).",
+                    "Toca \"Cámara\" y \"Micrófono\".",
+                    "Configura ambos en \"Permitir\".",
+                    "Vuelve al navegador y recarga la página."
+                ]
+            },
+            "howToAllow": "Cómo permitir el acceso:",
+            "needHelp": "¿Necesitas ayuda?",
+            "steps": {
+                "Brave_Android": [
+                    "Haz clic en el ícono <0>Tune</0> junto a la URL.",
+                    "Toca 'Permisos'.",
+                    "Permite la cámara y el micrófono.",
+                    "Actualiza la página."
+                ],
+                "Brave_Linux": [
+                    "Haz clic en el ícono <0>Tune</0> en la barra de direcciones.",
+                    "Permite la cámara y el micrófono en la lista de permisos.",
+                    "Actualiza la página."
+                ],
+                "Brave_Windows": [
+                    "Haz clic en el ícono <0>Tune</0> en la barra de direcciones.",
+                    "Activa el micrófono y la cámara.",
+                    "Actualiza la página."
+                ],
+                "Brave_iOS": [
+                    "Abre Configuración de iOS > Brave.",
+                    "Toca 'Cámara' y 'Micrófono'.",
+                    "Configúralos en 'Permitir'.",
+                    "Regresa a Brave y actualiza la página."
+                ],
+                "Brave_macOS": [
+                    "Haz clic en el ícono <0>Tune</0> en la barra de direcciones.",
+                    "Activa la cámara y el micrófono en la configuración de permisos.",
+                    "Actualiza la página."
+                ],
+                "Chrome_Android": [
+                    "Haz clic en el ícono <0>Tune</0> en la barra de direcciones.",
+                    "Selecciona 'Permisos'.",
+                    "Configura 'Cámara' y 'Micrófono' en 'Permitir'."
+                ],
+                "Chrome_Linux": [
+                    "Haz clic en el ícono de candado junto a la URL en la barra de direcciones.",
+                    "Haz clic en 'Configuración del sitio'.",
+                    "Permite la cámara y el micrófono.",
+                    "Actualiza la página."
+                ],
+                "Chrome_Windows": [
+                    "Haz clic en el ícono <0>Tune</0> en la barra de direcciones.",
+                    "Haz clic en 'Configuración del sitio'.",
+                    "Permite la cámara y el micrófono en 'Permisos'."
+                ],
+                "Chrome_iOS": [
+                    "Abre Configuración de iOS > Chrome.",
+                    "Toca 'Cámara' y 'Micrófono'.",
+                    "Actívalos en 'Permitir'.",
+                    "Regresa a Chrome y actualiza la página."
+                ],
+                "Chrome_macOS": [
+                    "Haz clic en el ícono <0>Tune</0> en la barra de direcciones.",
+                    "Haz clic en 'Configuración del sitio'.",
+                    "Permite la cámara y el micrófono en 'Permisos'."
+                ],
+                "Edge_Windows": [
+                    "Haz clic en el ícono de candado junto a la URL.",
+                    "Permite la cámara y el micrófono.",
+                    "Actualiza la página."
+                ],
+                "Edge_macOS": [
+                    "Haz clic en el ícono <0>Tune</0> en la barra de direcciones.",
+                    "Configura cámara y micrófono en 'Permitir'."
+                ],
+                "Firefox_Android": [
+                    "Toca el ícono de candado junto a la barra de URL.",
+                    "Toca 'Editar configuración del sitio'.",
+                    "Permite la cámara y el micrófono.",
+                    "Actualiza la página."
+                ],
+                "Firefox_Linux": [
+                    "Haz clic en el ícono de candado junto a la barra de direcciones.",
+                    "Haz clic en 'Más información'.",
+                    "Permite la cámara y el micrófono en permisos.",
+                    "Actualiza la página."
+                ],
+                "Firefox_Windows": [
+                    "Haz clic en el ícono <0>Tune</0> junto a la URL.",
+                    "Activa el micrófono y la cámara.",
+                    "Actualiza la página."
+                ],
+                "Firefox_iOS": [
+                    "Abre Configuración de iOS > Firefox.",
+                    "Activa la cámara y el micrófono.",
+                    "Regresa a Firefox y actualiza la página."
+                ],
+                "Firefox_macOS": [
+                    "Haz clic en el ícono <0>Tune</0> junto a la URL.",
+                    "Haz clic en la flecha > 'Más información'.",
+                    "Ve a la pestaña 'Permisos'.",
+                    "Permite la cámara y el micrófono.",
+                    "Actualiza la página."
+                ],
+                "Safari_iOS": [
+                    "Ve a Configuración de iOS > Safari.",
+                    "Toca 'Cámara' y 'Micrófono'.",
+                    "Configúralos en 'Permitir'.",
+                    "Regresa a Safari y actualiza la página."
+                ],
+                "Safari_macOS": [
+                    "En la barra de menú, haz clic en 'Safari' > 'Configuración para este sitio web'.",
+                    "Configura cámara y micrófono en 'Permitir'.",
+                    "Actualiza la página."
+                ],
+                "default": [
+                    "Abre la configuración del navegador.",
+                    "Busca la sección de 'Privacidad' o 'Permisos'.",
+                    "Activa cámara y micrófono para este sitio.",
+                    "Actualiza la página."
+                ]
+            },
+            "stillNotWorking": "¿Todavía no funciona?",
+            "title": "Activa el micrófono y la cámara"
+        },
         "premeeting": "Pre-reunión",
         "screenSharingError": "Error al compartir pantalla:",
         "startWithPhone": "Iniciar con audio de llamada telefónica",

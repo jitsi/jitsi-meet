@@ -1008,6 +1008,141 @@
         "linkCopied": "Collegamento copiato negli appunti",
         "lookGood": "I tuoi dispositivi funzionano correttamente",
         "or": "o",
+        "permissionsGuide": {
+            "close": "Chiudi",
+            "detected": "Rilevato:",
+            "deviceHelp": {
+                "Android": [
+                    "Apri le impostazioni del telefono.",
+                    "Tocca \"App\" > il tuo browser (ad esempio Chrome o Brave).",
+                    "Tocca \"Autorizzazioni\".",
+                    "Consenti l'accesso alla fotocamera e al microfono.",
+                    "Riavvia il browser e riprova."
+                ],
+                "iOS": [
+                    "Apri le impostazioni di iOS.",
+                    "Scorri verso il basso e seleziona il tuo browser (ad esempio Safari o Chrome).",
+                    "Tocca \"Fotocamera\" e \"Microfono\".",
+                    "Imposta entrambi su \"Consenti\".",
+                    "Torna al browser e ricarica la pagina."
+                ]
+            },
+            "howToAllow": "Come consentire l'accesso:",
+            "needHelp": "Hai bisogno di aiuto?",
+            "steps": {
+                "Brave_Android": [
+                    "Fai clic sull'icona <0>Tune</0> accanto all'URL.",
+                    "Tocca 'Autorizzazioni'.",
+                    "Consenti videocamera e microfono.",
+                    "Aggiorna la pagina."
+                ],
+                "Brave_Linux": [
+                    "Fai clic sull'icona <0>Tune</0> nella barra degli indirizzi.",
+                    "Consenti videocamera e microfono nell'elenco delle autorizzazioni.",
+                    "Aggiorna la pagina."
+                ],
+                "Brave_Windows": [
+                    "Fai clic sull'icona <0>Tune</0> nella barra degli indirizzi.",
+                    "Abilita microfono e videocamera.",
+                    "Aggiorna la pagina."
+                ],
+                "Brave_iOS": [
+                    "Apri Impostazioni iOS > Brave.",
+                    "Tocca 'Fotocamera' e 'Microfono'.",
+                    "Impostali su 'Consenti'.",
+                    "Torna a Brave e aggiorna la pagina."
+                ],
+                "Brave_macOS": [
+                    "Fai clic sull'icona <0>Tune</0> nella barra degli indirizzi.",
+                    "Abilita videocamera e microfono nelle impostazioni delle autorizzazioni.",
+                    "Aggiorna la pagina."
+                ],
+                "Chrome_Android": [
+                    "Fai clic sull'icona <0>Tune</0> nella barra degli indirizzi.",
+                    "Seleziona 'Autorizzazioni'.",
+                    "Imposta 'Fotocamera' e 'Microfono' su 'Consenti'."
+                ],
+                "Chrome_Linux": [
+                    "Fai clic sull'icona del lucchetto accanto all'URL nella barra degli indirizzi.",
+                    "Fai clic su 'Impostazioni sito'.",
+                    "Consenti videocamera e microfono.",
+                    "Aggiorna la pagina."
+                ],
+                "Chrome_Windows": [
+                    "Fai clic sull'icona <0>Tune</0> nella barra degli indirizzi.",
+                    "Fai clic su 'Impostazioni sito'.",
+                    "Consenti videocamera e microfono nelle 'Autorizzazioni'."
+                ],
+                "Chrome_iOS": [
+                    "Apri Impostazioni iOS > Chrome.",
+                    "Tocca 'Fotocamera' e 'Microfono'.",
+                    "Impostali su 'Consenti'.",
+                    "Torna a Chrome e aggiorna la pagina."
+                ],
+                "Chrome_macOS": [
+                    "Fai clic sull'icona <0>Tune</0> nella barra degli indirizzi.",
+                    "Fai clic su 'Impostazioni sito'.",
+                    "Consenti videocamera e microfono nelle 'Autorizzazioni'."
+                ],
+                "Edge_Windows": [
+                    "Fai clic sull'icona del lucchetto accanto all'URL.",
+                    "Consenti videocamera e microfono.",
+                    "Aggiorna la pagina."
+                ],
+                "Edge_macOS": [
+                    "Fai clic sull'icona <0>Tune</0> nella barra degli indirizzi.",
+                    "Imposta videocamera e microfono su 'Consenti'."
+                ],
+                "Firefox_Android": [
+                    "Tocca l'icona del lucchetto accanto alla barra degli URL.",
+                    "Tocca 'Modifica impostazioni sito'.",
+                    "Consenti videocamera e microfono.",
+                    "Aggiorna la pagina."
+                ],
+                "Firefox_Linux": [
+                    "Fai clic sull'icona del lucchetto accanto alla barra degli indirizzi.",
+                    "Fai clic su 'Ulteriori informazioni'.",
+                    "Consenti videocamera e microfono nelle autorizzazioni.",
+                    "Aggiorna la pagina."
+                ],
+                "Firefox_Windows": [
+                    "Fai clic sull'icona <0>Tune</0> accanto all'URL.",
+                    "Abilita microfono e videocamera.",
+                    "Aggiorna la pagina."
+                ],
+                "Firefox_iOS": [
+                    "Apri Impostazioni iOS > Firefox.",
+                    "Abilita videocamera e microfono.",
+                    "Torna a Firefox e aggiorna la pagina."
+                ],
+                "Firefox_macOS": [
+                    "Fai clic sull'icona <0>Tune</0> accanto all'URL.",
+                    "Fai clic sulla freccia > 'Ulteriori informazioni'.",
+                    "Vai alla scheda 'Autorizzazioni'.",
+                    "Consenti videocamera e microfono.",
+                    "Aggiorna la pagina."
+                ],
+                "Safari_iOS": [
+                    "Vai a Impostazioni iOS > Safari.",
+                    "Tocca 'Fotocamera' e 'Microfono'.",
+                    "Impostali su 'Consenti'.",
+                    "Torna a Safari e aggiorna la pagina."
+                ],
+                "Safari_macOS": [
+                    "Fai clic su 'Safari' > 'Impostazioni per questo sito' nella barra del menu.",
+                    "Imposta videocamera e microfono su 'Consenti'.",
+                    "Aggiorna la pagina."
+                ],
+                "default": [
+                    "Apri le impostazioni del browser.",
+                    "Cerca la sezione 'Privacy' o 'Autorizzazioni'.",
+                    "Abilita videocamera e microfono per questo sito.",
+                    "Aggiorna la pagina."
+                ]
+            },
+            "stillNotWorking": "Non funziona ancora?",
+            "title": "Attiva microfono e videocamera"
+        },
         "premeeting": "Pre-riunione",
         "proceedAnyway": "Procedi comunque",
         "recordingWarning": "Gli altri partecipanti potrebbero registrare la riunione",

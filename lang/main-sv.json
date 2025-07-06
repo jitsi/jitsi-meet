@@ -972,6 +972,141 @@
         "linkCopied": "Länken kopierades till urklipp",
         "lookGood": "Din mikrofon fungerar som den ska",
         "or": "eller",
+        "permissionsGuide": {
+            "close": "Stäng",
+            "detected": "Upptäckt:",
+            "deviceHelp": {
+                "Android": [
+                    "Öppna telefonens inställningar.",
+                    "Tryck på \"Appar\" > din webbläsare (t.ex. Chrome eller Brave).",
+                    "Tryck på \"Behörigheter\".",
+                    "Tillåt åtkomst till kamera och mikrofon.",
+                    "Starta om webbläsaren och försök igen."
+                ],
+                "iOS": [
+                    "Öppna iOS-inställningarna.",
+                    "Bläddra ner och välj din webbläsare (t.ex. Safari eller Chrome).",
+                    "Tryck på \"Kamera\" och \"Mikrofon\".",
+                    "Ställ in båda till \"Tillåt\".",
+                    "Gå tillbaka till webbläsaren och ladda om sidan."
+                ]
+            },
+            "howToAllow": "Så här tillåter du åtkomst:",
+            "needHelp": "Behöver du hjälp?",
+            "steps": {
+                "Brave_Android": [
+                    "Klicka på <0>Tune</0>-ikonen bredvid URL:en.",
+                    "Tryck på 'Behörigheter'.",
+                    "Tillåt kamera och mikrofon.",
+                    "Ladda om sidan."
+                ],
+                "Brave_Linux": [
+                    "Klicka på <0>Tune</0>-ikonen i adressfältet.",
+                    "Tillåt kamera och mikrofon i behörighetslistan.",
+                    "Ladda om sidan."
+                ],
+                "Brave_Windows": [
+                    "Klicka på <0>Tune</0>-ikonen i adressfältet.",
+                    "Aktivera mikrofon och kamera.",
+                    "Ladda om sidan."
+                ],
+                "Brave_iOS": [
+                    "Öppna iOS-inställningar > Brave.",
+                    "Tryck på 'Kamera' och 'Mikrofon'.",
+                    "Ställ in dem på 'Tillåt'.",
+                    "Gå tillbaka till Brave och ladda om sidan."
+                ],
+                "Brave_macOS": [
+                    "Klicka på <0>Tune</0>-ikonen i adressfältet.",
+                    "Aktivera kamera och mikrofon i behörighetsinställningarna.",
+                    "Ladda om sidan."
+                ],
+                "Chrome_Android": [
+                    "Klicka på <0>Tune</0>-ikonen i adressfältet.",
+                    "Välj 'Behörigheter'.",
+                    "Ställ in 'Kamera' och 'Mikrofon' till 'Tillåt'."
+                ],
+                "Chrome_Linux": [
+                    "Klicka på hänglåset bredvid URL:en i adressfältet.",
+                    "Klicka på 'Webbplatsinställningar'.",
+                    "Tillåt kamera och mikrofon.",
+                    "Ladda om sidan."
+                ],
+                "Chrome_Windows": [
+                    "Klicka på <0>Tune</0>-ikonen i adressfältet.",
+                    "Klicka på 'Webbplatsinställningar'.",
+                    "Tillåt kamera och mikrofon under 'Behörigheter'."
+                ],
+                "Chrome_iOS": [
+                    "Öppna iOS-inställningar > Chrome.",
+                    "Tryck på 'Kamera' och 'Mikrofon'.",
+                    "Ställ in dem på 'Tillåt'.",
+                    "Gå tillbaka till Chrome och ladda om sidan."
+                ],
+                "Chrome_macOS": [
+                    "Klicka på <0>Tune</0>-ikonen i adressfältet.",
+                    "Klicka på 'Webbplatsinställningar'.",
+                    "Tillåt kamera och mikrofon under 'Behörigheter'."
+                ],
+                "Edge_Windows": [
+                    "Klicka på hänglåset bredvid URL:en.",
+                    "Tillåt kamera och mikrofon.",
+                    "Ladda om sidan."
+                ],
+                "Edge_macOS": [
+                    "Klicka på <0>Tune</0>-ikonen i adressfältet.",
+                    "Ställ in kamera och mikrofon till 'Tillåt'."
+                ],
+                "Firefox_Android": [
+                    "Tryck på hänglåset bredvid URL-fältet.",
+                    "Tryck på 'Redigera sidinställningar'.",
+                    "Tillåt kamera och mikrofon.",
+                    "Ladda om sidan."
+                ],
+                "Firefox_Linux": [
+                    "Klicka på hänglåset bredvid adressfältet.",
+                    "Klicka på 'Mer information'.",
+                    "Tillåt kamera och mikrofon under behörigheter.",
+                    "Ladda om sidan."
+                ],
+                "Firefox_Windows": [
+                    "Klicka på <0>Tune</0>-ikonen bredvid URL:en.",
+                    "Aktivera mikrofon och kamera.",
+                    "Ladda om sidan."
+                ],
+                "Firefox_iOS": [
+                    "Öppna iOS-inställningar > Firefox.",
+                    "Aktivera kamera och mikrofon.",
+                    "Gå tillbaka till Firefox och ladda om sidan."
+                ],
+                "Firefox_macOS": [
+                    "Klicka på <0>Tune</0>-ikonen bredvid URL:en.",
+                    "Klicka på pilen > 'Mer information'.",
+                    "Gå till fliken 'Behörigheter'.",
+                    "Tillåt kamera och mikrofon.",
+                    "Ladda om sidan."
+                ],
+                "Safari_iOS": [
+                    "Gå till iOS-inställningar > Safari.",
+                    "Tryck på 'Kamera' och 'Mikrofon'.",
+                    "Ställ in dem på 'Tillåt'.",
+                    "Gå tillbaka till Safari och ladda om sidan."
+                ],
+                "Safari_macOS": [
+                    "Klicka på 'Safari' i menyraden > 'Inställningar för den här webbplatsen'.",
+                    "Ställ in kamera och mikrofon på 'Tillåt'.",
+                    "Ladda om sidan."
+                ],
+                "default": [
+                    "Öppna webbläsarens inställningar.",
+                    "Sök efter 'Sekretess' eller 'Behörigheter'.",
+                    "Aktivera kamera och mikrofon för denna sida.",
+                    "Ladda om sidan."
+                ]
+            },
+            "stillNotWorking": "Fungerar det fortfarande inte?",
+            "title": "Aktivera mikrofon och kamera"
+        },
         "premeeting": "Förmöte",
         "proceedAnyway": "Fortsätt ändå",
         "recordingWarning": "",

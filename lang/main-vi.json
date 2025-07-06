@@ -944,6 +944,141 @@
         "linkCopied": "Liên kết đã được sao chép vào clipboard",
         "lookGood": "Mọi thứ đều hoạt động bình thường",
         "or": "hoặc",
+        "permissionsGuide": {
+            "close": "Đóng",
+            "detected": "Đã phát hiện:",
+            "deviceHelp": {
+                "Android": [
+                    "Mở Cài đặt trên điện thoại của bạn.",
+                    "Chạm vào \"Ứng dụng\" > trình duyệt của bạn (ví dụ: Chrome hoặc Brave).",
+                    "Chạm vào \"Quyền\".",
+                    "Cho phép truy cập Camera và Microphone.",
+                    "Khởi động lại trình duyệt và thử lại."
+                ],
+                "iOS": [
+                    "Mở Cài đặt iOS.",
+                    "Kéo xuống và chọn trình duyệt của bạn (ví dụ: Safari hoặc Chrome).",
+                    "Chạm vào \"Camera\" và \"Microphone\".",
+                    "Đặt cả hai thành \"Cho phép\".",
+                    "Quay lại trình duyệt và tải lại trang."
+                ]
+            },
+            "howToAllow": "Cách cho phép truy cập:",
+            "needHelp": "Cần trợ giúp?",
+            "steps": {
+                "Brave_Android": [
+                    "Nhấp vào biểu tượng <0>Tune</0> bên cạnh URL.",
+                    "Chọn 'Quyền'.",
+                    "Bật camera và mic.",
+                    "Tải lại trang."
+                ],
+                "Brave_Linux": [
+                    "Nhấp vào biểu tượng <0>Tune</0> trên thanh địa chỉ.",
+                    "Cho phép camera và mic trong danh sách quyền.",
+                    "Tải lại trang."
+                ],
+                "Brave_Windows": [
+                    "Nhấp vào biểu tượng <0>Tune</0> trên thanh địa chỉ.",
+                    "Bật mic và camera.",
+                    "Tải lại trang."
+                ],
+                "Brave_iOS": [
+                    "Mở Cài đặt iOS > Brave.",
+                    "Chọn 'Camera' và 'Mic'.",
+                    "Đặt thành 'Cho phép'.",
+                    "Quay lại Brave và tải lại trang."
+                ],
+                "Brave_macOS": [
+                    "Nhấp vào biểu tượng <0>Tune</0> trên thanh địa chỉ.",
+                    "Bật camera và mic trong cài đặt quyền.",
+                    "Tải lại trang."
+                ],
+                "Chrome_Android": [
+                    "Nhấp vào biểu tượng <0>Tune</0> trên thanh địa chỉ.",
+                    "Chọn 'Quyền'.",
+                    "Đặt 'Camera' và 'Mic' thành 'Cho phép'."
+                ],
+                "Chrome_Linux": [
+                    "Nhấp vào biểu tượng ổ khóa bên cạnh URL trên thanh địa chỉ.",
+                    "Chọn 'Cài đặt trang web'.",
+                    "Bật camera và mic.",
+                    "Tải lại trang."
+                ],
+                "Chrome_Windows": [
+                    "Nhấp vào biểu tượng <0>Tune</0> trên thanh địa chỉ.",
+                    "Chọn 'Cài đặt trang web'.",
+                    "Bật camera và mic trong phần 'Quyền'."
+                ],
+                "Chrome_iOS": [
+                    "Mở Cài đặt iOS > Chrome.",
+                    "Chọn 'Camera' và 'Mic'.",
+                    "Đặt thành 'Cho phép'.",
+                    "Quay lại Chrome và tải lại trang."
+                ],
+                "Chrome_macOS": [
+                    "Nhấp vào biểu tượng <0>Tune</0> trên thanh địa chỉ.",
+                    "Chọn 'Cài đặt trang web'.",
+                    "Bật camera và mic trong phần 'Quyền'."
+                ],
+                "Edge_Windows": [
+                    "Nhấp vào biểu tượng ổ khóa bên cạnh URL.",
+                    "Bật camera và mic.",
+                    "Tải lại trang."
+                ],
+                "Edge_macOS": [
+                    "Nhấp vào biểu tượng <0>Tune</0> trên thanh địa chỉ.",
+                    "Đặt camera và mic thành 'Cho phép'."
+                ],
+                "Firefox_Android": [
+                    "Nhấn vào biểu tượng ổ khóa bên cạnh thanh URL.",
+                    "Chọn 'Chỉnh sửa cài đặt trang'.",
+                    "Bật camera và mic.",
+                    "Tải lại trang."
+                ],
+                "Firefox_Linux": [
+                    "Nhấp vào biểu tượng ổ khóa bên cạnh thanh địa chỉ.",
+                    "Nhấp vào 'Thông tin thêm'.",
+                    "Bật camera và mic trong phần quyền.",
+                    "Tải lại trang."
+                ],
+                "Firefox_Windows": [
+                    "Nhấp vào biểu tượng <0>Tune</0> bên cạnh URL.",
+                    "Bật mic và camera.",
+                    "Tải lại trang."
+                ],
+                "Firefox_iOS": [
+                    "Mở Cài đặt iOS > Firefox.",
+                    "Bật camera và mic.",
+                    "Quay lại Firefox và tải lại trang."
+                ],
+                "Firefox_macOS": [
+                    "Nhấp vào biểu tượng <0>Tune</0> bên cạnh URL.",
+                    "Nhấp vào mũi tên > 'Thông tin thêm'.",
+                    "Đi đến tab 'Quyền'.",
+                    "Bật camera và mic.",
+                    "Tải lại trang."
+                ],
+                "Safari_iOS": [
+                    "Đi tới Cài đặt iOS > Safari.",
+                    "Chọn 'Camera' và 'Mic'.",
+                    "Đặt thành 'Cho phép'.",
+                    "Quay lại Safari và tải lại trang."
+                ],
+                "Safari_macOS": [
+                    "Trong thanh menu Safari, nhấp 'Safari' > 'Cài đặt cho trang web này'.",
+                    "Đặt camera và mic thành 'Cho phép'.",
+                    "Tải lại trang."
+                ],
+                "default": [
+                    "Mở cài đặt trình duyệt.",
+                    "Tìm phần 'Quyền riêng tư' hoặc 'Quyền'.",
+                    "Bật camera và mic cho trang này.",
+                    "Tải lại trang."
+                ]
+            },
+            "stillNotWorking": "Vẫn chưa hoạt động?",
+            "title": "Bật mic và camera"
+        },
         "premeeting": "Trước cuộc họp",
         "proceedAnyway": "Tiếp tục dù sao",
         "recordingWarning": "Có thể có người tham gia khác đang ghi lại cuộc gọi này",

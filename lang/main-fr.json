@@ -972,6 +972,141 @@
         "linkCopied": "Lien copié dans le presse-papiers",
         "lookGood": "Il semble que votre microphone fonctionne correctement",
         "or": "ou",
+        "permissionsGuide": {
+            "close": "Fermer",
+            "detected": "Détecté :",
+            "deviceHelp": {
+                "Android": [
+                    "Ouvrez les paramètres de votre téléphone.",
+                    "Appuyez sur « Applications » > votre navigateur (par exemple Chrome ou Brave).",
+                    "Appuyez sur « Autorisations ».",
+                    "Autorisez l'accès à la caméra et au microphone.",
+                    "Redémarrez le navigateur et réessayez."
+                ],
+                "iOS": [
+                    "Ouvrez les réglages iOS.",
+                    "Faites défiler vers le bas et sélectionnez votre navigateur (par exemple Safari ou Chrome).",
+                    "Appuyez sur « Caméra » et « Microphone ».",
+                    "Activez-les tous les deux sur « Autoriser ».",
+                    "Retournez dans le navigateur et rechargez la page."
+                ]
+            },
+            "howToAllow": "Comment autoriser l'accès :",
+            "needHelp": "Besoin d'aide ?",
+            "steps": {
+                "Brave_Android": [
+                    "Cliquez sur l'icône <0>Tune</0> à côté de l'URL.",
+                    "Touchez 'Permissions'.",
+                    "Autorisez la caméra et le microphone.",
+                    "Rechargez la page."
+                ],
+                "Brave_Linux": [
+                    "Cliquez sur l'icône <0>Tune</0> dans la barre d'adresse.",
+                    "Autorisez la caméra et le microphone dans la liste des permissions.",
+                    "Rechargez la page."
+                ],
+                "Brave_Windows": [
+                    "Cliquez sur l'icône <0>Tune</0> dans la barre d'adresse.",
+                    "Activez le microphone et la caméra.",
+                    "Rechargez la page."
+                ],
+                "Brave_iOS": [
+                    "Ouvrez les Réglages iOS > Brave.",
+                    "Touchez 'Caméra' et 'Microphone'.",
+                    "Mettez-les sur 'Autoriser'.",
+                    "Retournez sur Brave et rechargez la page."
+                ],
+                "Brave_macOS": [
+                    "Cliquez sur l'icône <0>Tune</0> dans la barre d'adresse.",
+                    "Activez la caméra et le microphone dans les paramètres de permissions.",
+                    "Rechargez la page."
+                ],
+                "Chrome_Android": [
+                    "Cliquez sur l'icône <0>Tune</0> dans la barre d'adresse.",
+                    "Sélectionnez 'Permissions'.",
+                    "Réglez la 'Caméra' et le 'Microphone' sur 'Autoriser'."
+                ],
+                "Chrome_Linux": [
+                    "Cliquez sur l'icône du cadenas à côté de l'URL dans la barre d'adresse.",
+                    "Cliquez sur 'Paramètres du site'.",
+                    "Autorisez la caméra et le microphone.",
+                    "Rechargez la page."
+                ],
+                "Chrome_Windows": [
+                    "Cliquez sur l'icône <0>Tune</0> dans la barre d'adresse.",
+                    "Cliquez sur 'Paramètres du site'.",
+                    "Autorisez la caméra et le microphone dans les 'Permissions'."
+                ],
+                "Chrome_iOS": [
+                    "Ouvrez les Réglages iOS > Chrome.",
+                    "Touchez 'Caméra' et 'Microphone'.",
+                    "Mettez-les sur 'Autoriser'.",
+                    "Retournez sur Chrome et rechargez la page."
+                ],
+                "Chrome_macOS": [
+                    "Cliquez sur l'icône <0>Tune</0> dans la barre d'adresse.",
+                    "Cliquez sur 'Paramètres du site'.",
+                    "Autorisez la caméra et le microphone dans les 'Permissions'."
+                ],
+                "Edge_Windows": [
+                    "Cliquez sur l'icône du cadenas à côté de l'URL.",
+                    "Autorisez la caméra et le microphone.",
+                    "Rechargez la page."
+                ],
+                "Edge_macOS": [
+                    "Cliquez sur l'icône <0>Tune</0> dans la barre d'adresse.",
+                    "Mettez la caméra et le microphone sur 'Autoriser'."
+                ],
+                "Firefox_Android": [
+                    "Touchez l'icône du cadenas à côté de la barre URL.",
+                    "Touchez 'Modifier les paramètres du site'.",
+                    "Autorisez la caméra et le microphone.",
+                    "Rechargez la page."
+                ],
+                "Firefox_Linux": [
+                    "Cliquez sur l'icône du cadenas dans la barre d'adresse.",
+                    "Cliquez sur 'Plus d'informations'.",
+                    "Autorisez la caméra et le microphone dans les permissions.",
+                    "Rechargez la page."
+                ],
+                "Firefox_Windows": [
+                    "Cliquez sur l'icône <0>Tune</0> à côté de l'URL.",
+                    "Activez le microphone et la caméra.",
+                    "Rechargez la page."
+                ],
+                "Firefox_iOS": [
+                    "Ouvrez les Réglages iOS > Firefox.",
+                    "Activez la caméra et le microphone.",
+                    "Retournez sur Firefox et rechargez la page."
+                ],
+                "Firefox_macOS": [
+                    "Cliquez sur l'icône <0>Tune</0> à côté de l'URL.",
+                    "Cliquez sur la flèche > 'Plus d'informations'.",
+                    "Allez à l'onglet 'Permissions'.",
+                    "Autorisez la caméra et le microphone.",
+                    "Rechargez la page."
+                ],
+                "Safari_iOS": [
+                    "Allez dans Réglages iOS > Safari.",
+                    "Touchez 'Caméra' et 'Microphone'.",
+                    "Mettez-les sur 'Autoriser'.",
+                    "Retournez sur Safari et rechargez la page."
+                ],
+                "Safari_macOS": [
+                    "Dans la barre de menu, cliquez sur 'Safari' > 'Réglages pour ce site web'.",
+                    "Mettez la caméra et le microphone sur 'Autoriser'.",
+                    "Rechargez la page."
+                ],
+                "default": [
+                    "Ouvrez les paramètres du navigateur.",
+                    "Cherchez la section 'Confidentialité' ou 'Permissions'.",
+                    "Activez la caméra et le microphone pour ce site.",
+                    "Rechargez la page."
+                ]
+            },
+            "stillNotWorking": "Ça ne fonctionne toujours pas ?",
+            "title": "Activer le microphone et la caméra"
+        },
         "premeeting": "Pré-séance",
         "proceedAnyway": "Continuer quand même",
         "recordingWarning": "D'autres participants peuvent enregistrer cet appel",

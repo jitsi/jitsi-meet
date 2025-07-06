@@ -966,6 +966,141 @@
         "linkCopied": "Bağlantı panoya kopyalandı",
         "lookGood": "Mikrofonunuz düzgün çalışıyor gibi görünüyor",
         "or": "veya",
+        "permissionsGuide": {
+            "close": "Kapat",
+            "detected": "Algılandı:",
+            "deviceHelp": {
+                "Android": [
+                    "Telefonunuzun Ayarlarını açın.",
+                    "\"Uygulamalar\" > tarayıcınız (örneğin Chrome veya Brave) seçeneğine dokunun.",
+                    "\"İzinler\"e dokunun.",
+                    "Kamera ve Mikrofon erişimine izin verin.",
+                    "Tarayıcıyı yeniden başlatın ve tekrar deneyin."
+                ],
+                "iOS": [
+                    "iOS Ayarlarını açın.",
+                    "Aşağı kaydırarak tarayıcınızı seçin (örneğin Safari veya Chrome).",
+                    "\"Kamera\" ve \"Mikrofon\"a dokunun.",
+                    "İkisini de \"İzin Ver\" olarak ayarlayın.",
+                    "Tarayıcıya geri dönün ve sayfayı yenileyin."
+                ]
+            },
+            "howToAllow": "Erişime izin vermek için:",
+            "needHelp": "Yardıma mı ihtiyacınız var?",
+            "steps": {
+                "Brave_Android": [
+                    "URL'nin yanındaki <0>Tune</0> simgesine tıklayın.",
+                    "'İzinler'e dokunun.",
+                    "Kamera ve mikrofonu etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Brave_Linux": [
+                    "Adres çubuğundaki <0>Tune</0> simgesine tıklayın.",
+                    "İzin listesinden kamera ve mikrofonu etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Brave_Windows": [
+                    "Adres çubuğundaki <0>Tune</0> simgesine tıklayın.",
+                    "Mikrofon ve kamerayı etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Brave_iOS": [
+                    "iOS Ayarları > Brave'i açın.",
+                    "'Kamera' ve 'Mikrofon'a dokunun.",
+                    "'İzin Ver' olarak ayarlayın.",
+                    "Brave'e geri dönün ve sayfayı yenileyin."
+                ],
+                "Brave_macOS": [
+                    "Adres çubuğundaki <0>Tune</0> simgesine tıklayın.",
+                    "İzin ayarlarında kamera ve mikrofonu etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Chrome_Android": [
+                    "Adres çubuğundaki <0>Tune</0> simgesine tıklayın.",
+                    "'İzinler'i seçin.",
+                    "'Kamera' ve 'Mikrofon'u 'İzin Ver' olarak ayarlayın."
+                ],
+                "Chrome_Linux": [
+                    "URL'nin yanındaki kilit simgesine tıklayın.",
+                    "'Site Ayarları'na tıklayın.",
+                    "Kamera ve mikrofonu etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Chrome_Windows": [
+                    "Adres çubuğundaki <0>Tune</0> simgesine tıklayın.",
+                    "'Site Ayarları'na tıklayın.",
+                    "'İzinler' altında kamera ve mikrofonu etkinleştirin."
+                ],
+                "Chrome_iOS": [
+                    "iOS Ayarları > Chrome'u açın.",
+                    "'Kamera' ve 'Mikrofon'a dokunun.",
+                    "'İzin Ver' olarak ayarlayın.",
+                    "Chrome'a geri dönün ve sayfayı yenileyin."
+                ],
+                "Chrome_macOS": [
+                    "Adres çubuğundaki <0>Tune</0> simgesine tıklayın.",
+                    "'Site Ayarları'na tıklayın.",
+                    "'İzinler' altında kamera ve mikrofonu etkinleştirin."
+                ],
+                "Edge_Windows": [
+                    "URL'nin yanındaki kilit simgesine tıklayın.",
+                    "Kamera ve mikrofonu etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Edge_macOS": [
+                    "Adres çubuğundaki <0>Tune</0> simgesine tıklayın.",
+                    "Kamera ve mikrofonu 'İzin Ver' olarak ayarlayın."
+                ],
+                "Firefox_Android": [
+                    "URL çubuğundaki kilit simgesine dokunun.",
+                    "'Site Ayarlarını Düzenle'ye dokunun.",
+                    "Kamera ve mikrofonu etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Firefox_Linux": [
+                    "Adres çubuğundaki kilit simgesine tıklayın.",
+                    "'Daha Fazla Bilgi'ye tıklayın.",
+                    "'İzinler' altında kamera ve mikrofonu etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Firefox_Windows": [
+                    "URL'nin yanındaki <0>Tune</0> simgesine tıklayın.",
+                    "Mikrofon ve kamerayı etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Firefox_iOS": [
+                    "iOS Ayarları > Firefox'u açın.",
+                    "Kamera ve mikrofonu etkinleştirin.",
+                    "Firefox'a geri dönün ve sayfayı yenileyin."
+                ],
+                "Firefox_macOS": [
+                    "URL'nin yanındaki <0>Tune</0> simgesine tıklayın.",
+                    "Açılır oka ve 'Daha Fazla Bilgi'ye tıklayın.",
+                    "'İzinler' sekmesine gidin.",
+                    "Kamera ve mikrofonu etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Safari_iOS": [
+                    "iOS Ayarları > Safari'ye gidin.",
+                    "'Kamera' ve 'Mikrofon'a dokunun.",
+                    "'İzin Ver' olarak ayarlayın.",
+                    "Safari'ye geri dönün ve sayfayı yenileyin."
+                ],
+                "Safari_macOS": [
+                    "'Safari' menüsünde 'Bu Web Sitesi Ayarları'nı tıklayın.",
+                    "Kamera ve mikrofonu 'İzin Ver' olarak ayarlayın.",
+                    "Sayfayı yenileyin."
+                ],
+                "default": [
+                    "Tarayıcı ayarlarını açın.",
+                    "'Gizlilik' veya 'İzinler' bölümünü bulun.",
+                    "Bu site için kamera ve mikrofonu etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ]
+            },
+            "stillNotWorking": "Hala çalışmıyor mu?",
+            "title": "Mikrofon ve Kamerayı Açın"
+        },
         "premeeting": "Toplantı öncesi",
         "proceedAnyway": "Yine de devam et",
         "recordingWarning": "Diğer katılımcılar bu çağrıyı kaydediyor olabilir",

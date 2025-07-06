@@ -971,6 +971,141 @@
         "linkCopied": "Lidhja u kopjua në të papastër",
         "lookGood": "Gjithçka po punon si duhet",
         "or": "ose",
+        "permissionsGuide": {
+            "close": "Mbyll",
+            "detected": "I zbuluar:",
+            "deviceHelp": {
+                "Android": [
+                    "Hapni Cilësimet e telefonit tuaj.",
+                    "Trokitni mbi \"Aplikacionet\" > shfletuesin tuaj (p.sh., Chrome ose Brave).",
+                    "Trokitni mbi \"Lejet\".",
+                    "Lejoni aksesin në kamerë dhe mikrofon.",
+                    "Rinisni shfletuesin dhe provoni përsëri."
+                ],
+                "iOS": [
+                    "Hapni Cilësimet e iOS-it.",
+                    "Lëvizni poshtë dhe zgjidhni shfletuesin tuaj (p.sh., Safari ose Chrome).",
+                    "Trokitni mbi \"Kamera\" dhe \"Mikrofon\".",
+                    "Vendosni të dy në \"Lejo\".",
+                    "Kthehuni te shfletuesi dhe rifreskoni faqen."
+                ]
+            },
+            "howToAllow": "Si të lejoni qasjen:",
+            "needHelp": "Ke nevojë për ndihmë?",
+            "steps": {
+                "Brave_Android": [
+                    "Kliko ikonën <0>Tune</0> pranë URL-së.",
+                    "Trokit mbi 'Lejet'.",
+                    "Lejo kamerën dhe mikrofonin.",
+                    "Rifresko faqen."
+                ],
+                "Brave_Linux": [
+                    "Kliko ikonën <0>Tune</0> në shiritin e adresës.",
+                    "Lejo kamerën dhe mikrofonin në listën e lejeve.",
+                    "Rifresko faqen."
+                ],
+                "Brave_Windows": [
+                    "Kliko ikonën <0>Tune</0> në shiritin e adresës.",
+                    "Aktivizo mikrofonin dhe kamerën.",
+                    "Rifresko faqen."
+                ],
+                "Brave_iOS": [
+                    "Hap Cilësimet e iOS > Brave.",
+                    "Trokit mbi 'Kamera' dhe 'Mikrofoni'.",
+                    "Vendos ato në 'Lejo'.",
+                    "Kthehu në Brave dhe rifresko faqen."
+                ],
+                "Brave_macOS": [
+                    "Kliko ikonën <0>Tune</0> në shiritin e adresës.",
+                    "Aktivizo kamerën dhe mikrofonin në cilësimet e lejeve.",
+                    "Rifresko faqen."
+                ],
+                "Chrome_Android": [
+                    "Kliko ikonën <0>Tune</0> në shiritin e adresës.",
+                    "Zgjidh 'Lejet'.",
+                    "Vendos 'Kamera' dhe 'Mikrofoni' në 'Lejo'."
+                ],
+                "Chrome_Linux": [
+                    "Kliko ikonën e drynit pranë URL-së në shiritin e adresës.",
+                    "Kliko 'Cilësimet e faqes'.",
+                    "Lejo kamerën dhe mikrofonin.",
+                    "Rifresko faqen."
+                ],
+                "Chrome_Windows": [
+                    "Kliko ikonën <0>Tune</0> në shiritin e adresës.",
+                    "Kliko 'Cilësimet e faqes'.",
+                    "Lejo kamerën dhe mikrofonin në 'Lejet'."
+                ],
+                "Chrome_iOS": [
+                    "Hap Cilësimet e iOS > Chrome.",
+                    "Trokit mbi 'Kamera' dhe 'Mikrofoni'.",
+                    "Vendos ato në 'Lejo'.",
+                    "Kthehu në Chrome dhe rifresko faqen."
+                ],
+                "Chrome_macOS": [
+                    "Kliko ikonën <0>Tune</0> në shiritin e adresës.",
+                    "Kliko 'Cilësimet e faqes'.",
+                    "Lejo kamerën dhe mikrofonin në 'Lejet'."
+                ],
+                "Edge_Windows": [
+                    "Kliko ikonën e drynit pranë URL-së.",
+                    "Lejo kamerën dhe mikrofonin.",
+                    "Rifresko faqen."
+                ],
+                "Edge_macOS": [
+                    "Kliko ikonën <0>Tune</0> në shiritin e adresës.",
+                    "Vendos kamerën dhe mikrofonin në 'Lejo'."
+                ],
+                "Firefox_Android": [
+                    "Trokit mbi ikonën e drynit pranë shiritit të URL-së.",
+                    "Trokit mbi 'Ndrysho cilësimet e faqes'.",
+                    "Lejo kamerën dhe mikrofonin.",
+                    "Rifresko faqen."
+                ],
+                "Firefox_Linux": [
+                    "Kliko ikonën e drynit pranë shiritit të adresës.",
+                    "Kliko 'Më shumë informacione'.",
+                    "Lejo kamerën dhe mikrofonin në leje.",
+                    "Rifresko faqen."
+                ],
+                "Firefox_Windows": [
+                    "Kliko ikonën <0>Tune</0> pranë URL-së.",
+                    "Aktivizo mikrofonin dhe kamerën.",
+                    "Rifresko faqen."
+                ],
+                "Firefox_iOS": [
+                    "Hap Cilësimet e iOS > Firefox.",
+                    "Aktivizo kamerën dhe mikrofonin.",
+                    "Kthehu në Firefox dhe rifresko faqen."
+                ],
+                "Firefox_macOS": [
+                    "Kliko ikonën <0>Tune</0> pranë URL-së.",
+                    "Kliko shigjetën > 'Më shumë informacione'.",
+                    "Hyr në skedën 'Lejet'.",
+                    "Lejo kamerën dhe mikrofonin.",
+                    "Rifresko faqen."
+                ],
+                "Safari_iOS": [
+                    "Shko te Cilësimet e iOS > Safari.",
+                    "Trokit mbi 'Kamera' dhe 'Mikrofoni'.",
+                    "Vendos ato në 'Lejo'.",
+                    "Kthehu në Safari dhe rifresko faqen."
+                ],
+                "Safari_macOS": [
+                    "Kliko 'Safari' në shiritin e menusë > 'Cilësimet për këtë faqe'.",
+                    "Vendos kamerën dhe mikrofonin në 'Lejo'.",
+                    "Rifresko faqen."
+                ],
+                "default": [
+                    "Hap cilësimet e shfletuesit.",
+                    "Kërko seksionin 'Privatësia' ose 'Lejet'.",
+                    "Aktivizo kamerën dhe mikrofonin për këtë faqe.",
+                    "Rifresko faqen."
+                ]
+            },
+            "stillNotWorking": "Ende nuk funksionon?",
+            "title": "Aktivizo mikrofonin dhe kamerën"
+        },
         "premeeting": "Para takimit",
         "proceedAnyway": "Vazhdo, sido qoftë",
         "recordingWarning": "Këtë thirrje pjesëmarrës të tjerë mund ta regjistrojnë",

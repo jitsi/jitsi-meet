@@ -838,6 +838,141 @@
         "linkCopied": "Poveznica kopirana u međuspremnik",
         "lookGood": "Tvoj mikrofon radi ispravno",
         "or": "ili",
+        "permissionsGuide": {
+            "close": "Zatvori",
+            "detected": "Otkriveno:",
+            "deviceHelp": {
+                "Android": [
+                    "Otvorite postavke telefona.",
+                    "Dodirnite \"Aplikacije\" > svoj preglednik (npr. Chrome ili Brave).",
+                    "Dodirnite \"Dozvole\".",
+                    "Omogućite pristup kameri i mikrofonu.",
+                    "Ponovno pokrenite preglednik i pokušajte ponovno."
+                ],
+                "iOS": [
+                    "Otvorite iOS postavke.",
+                    "Pomaknite se dolje i odaberite svoj preglednik (npr. Safari ili Chrome).",
+                    "Dodirnite \"Kamera\" i \"Mikrofon\".",
+                    "Postavite oba na \"Dopusti\".",
+                    "Vratite se u preglednik i osvježite stranicu."
+                ]
+            },
+            "howToAllow": "Kako omogućiti pristup:",
+            "needHelp": "Trebate pomoć?",
+            "steps": {
+                "Brave_Android": [
+                    "Kliknite na <0>Tune</0> ikonu pored URL-a.",
+                    "Dodirnite 'Dozvole'.",
+                    "Dopustite kameru i mikrofon.",
+                    "Osvježite stranicu."
+                ],
+                "Brave_Linux": [
+                    "Kliknite na <0>Tune</0> ikonu u adresnoj traci.",
+                    "Dopustite kameru i mikrofon na popisu dozvola.",
+                    "Osvježite stranicu."
+                ],
+                "Brave_Windows": [
+                    "Kliknite na <0>Tune</0> ikonu u adresnoj traci.",
+                    "Omogućite mikrofon i kameru.",
+                    "Osvježite stranicu."
+                ],
+                "Brave_iOS": [
+                    "Otvorite iOS Postavke > Brave.",
+                    "Dodirnite 'Kamera' i 'Mikrofon'.",
+                    "Postavite ih na 'Dopusti'.",
+                    "Vratite se na Brave i osvježite stranicu."
+                ],
+                "Brave_macOS": [
+                    "Kliknite na <0>Tune</0> ikonu u adresnoj traci.",
+                    "Omogućite kameru i mikrofon u postavkama dozvola.",
+                    "Osvježite stranicu."
+                ],
+                "Chrome_Android": [
+                    "Kliknite na <0>Tune</0> ikonu u adresnoj traci.",
+                    "Odaberite 'Dozvole'.",
+                    "Postavite 'Kamera' i 'Mikrofon' na 'Dopusti'."
+                ],
+                "Chrome_Linux": [
+                    "Kliknite na ikonu lokota pored URL-a u adresnoj traci.",
+                    "Kliknite na 'Postavke web-mjesta'.",
+                    "Dopustite kameru i mikrofon.",
+                    "Osvježite stranicu."
+                ],
+                "Chrome_Windows": [
+                    "Kliknite na <0>Tune</0> ikonu u adresnoj traci.",
+                    "Kliknite na 'Postavke web-mjesta'.",
+                    "Dopustite kameru i mikrofon u 'Dozvolama'."
+                ],
+                "Chrome_iOS": [
+                    "Otvorite iOS Postavke > Chrome.",
+                    "Dodirnite 'Kamera' i 'Mikrofon'.",
+                    "Postavite ih na 'Dopusti'.",
+                    "Vratite se na Chrome i osvježite stranicu."
+                ],
+                "Chrome_macOS": [
+                    "Kliknite na <0>Tune</0> ikonu u adresnoj traci.",
+                    "Kliknite na 'Postavke web-mjesta'.",
+                    "Dopustite kameru i mikrofon u 'Dozvolama'."
+                ],
+                "Edge_Windows": [
+                    "Kliknite na ikonu lokota pored URL-a.",
+                    "Dopustite kameru i mikrofon.",
+                    "Osvježite stranicu."
+                ],
+                "Edge_macOS": [
+                    "Kliknite na <0>Tune</0> ikonu u adresnoj traci.",
+                    "Postavite kameru i mikrofon na 'Dopusti'."
+                ],
+                "Firefox_Android": [
+                    "Dodirnite ikonu lokota pored URL trake.",
+                    "Dodirnite 'Uredi postavke stranice'.",
+                    "Dopustite kameru i mikrofon.",
+                    "Osvježite stranicu."
+                ],
+                "Firefox_Linux": [
+                    "Kliknite na ikonu lokota pored adresne trake.",
+                    "Kliknite na 'Više informacija'.",
+                    "Dopustite kameru i mikrofon u dozvolama.",
+                    "Osvježite stranicu."
+                ],
+                "Firefox_Windows": [
+                    "Kliknite na <0>Tune</0> ikonu pored URL-a.",
+                    "Omogućite mikrofon i kameru.",
+                    "Osvježite stranicu."
+                ],
+                "Firefox_iOS": [
+                    "Otvorite iOS Postavke > Firefox.",
+                    "Omogućite kameru i mikrofon.",
+                    "Vratite se na Firefox i osvježite stranicu."
+                ],
+                "Firefox_macOS": [
+                    "Kliknite na <0>Tune</0> ikonu pored URL-a.",
+                    "Kliknite na strelicu > 'Više informacija'.",
+                    "Idite na karticu 'Dozvole'.",
+                    "Dopustite kameru i mikrofon.",
+                    "Osvježite stranicu."
+                ],
+                "Safari_iOS": [
+                    "Idite u iOS Postavke > Safari.",
+                    "Dodirnite 'Kamera' i 'Mikrofon'.",
+                    "Postavite ih na 'Dopusti'.",
+                    "Vratite se na Safari i osvježite stranicu."
+                ],
+                "Safari_macOS": [
+                    "U traci izbornika kliknite 'Safari' > 'Postavke za ovu web-stranicu'.",
+                    "Postavite kameru i mikrofon na 'Dopusti'.",
+                    "Osvježite stranicu."
+                ],
+                "default": [
+                    "Otvorite postavke preglednika.",
+                    "Potražite odjeljak 'Privatnost' ili 'Dozvole'.",
+                    "Omogućite kameru i mikrofon za ovu stranicu.",
+                    "Osvježite stranicu."
+                ]
+            },
+            "stillNotWorking": "Još uvijek ne radi?",
+            "title": "Omogući mikrofon i kameru"
+        },
         "premeeting": "Predsastanak",
         "screenSharingError": "Greška dijeljenja ekrana:",
         "startWithPhone": "Počni s telefonom",

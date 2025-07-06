@@ -972,6 +972,141 @@
         "linkCopied": "Ligam copiat al quichapapièrs",
         "lookGood": "Sembla que lo microfòn fonciona pas coma cal",
         "or": "o",
+        "permissionsGuide": {
+            "close": "Tampar",
+            "detected": "Detectat :",
+            "deviceHelp": {
+                "Android": [
+                    "Dobrir los paramètres del telefòn.",
+                    "Tocar sus «Aplicacions» > vòstre navegador (per exemple Chrome o Brave).",
+                    "Tocar sus «Permissiús».",
+                    "Permetre l'accès a la camèra e al microfòn.",
+                    "Reeniciar lo navegador e tornar ensajar."
+                ],
+                "iOS": [
+                    "Dobrir los paramètres iOS.",
+                    "Desplaçar a la basa e seleccionar vòstre navegador (per exemple Safari o Chrome).",
+                    "Tocar sus «Camèra» e «Microfòn».",
+                    "Ajustar los dos sus «Permetre».",
+                    "Tornar al navegador e recargar la pagina."
+                ]
+            },
+            "howToAllow": "Cossí autorizar l'accès :",
+            "needHelp": "Besonh d'ajuda ?",
+            "steps": {
+                "Brave_Android": [
+                    "Clickatz sul simbòl <0>Tune</0> al costat de l'URL.",
+                    "Tocatz 'Permissions'.",
+                    "Autorizar la camèra e lo micròfon.",
+                    "Recarregatz la pagina."
+                ],
+                "Brave_Linux": [
+                    "Clickatz sul simbòl <0>Tune</0> dins la barra d'adreça.",
+                    "Autorizar la camèra e lo micròfon dins la lista de permissions.",
+                    "Recarregatz la pagina."
+                ],
+                "Brave_Windows": [
+                    "Clickatz sul simbòl <0>Tune</0> dins la barra d'adreça.",
+                    "Activatz micròfon e camèra.",
+                    "Recarregatz la pagina."
+                ],
+                "Brave_iOS": [
+                    "Dubrir los paramètres iOS > Brave.",
+                    "Tocatz 'Camèra' e 'Micròfon'.",
+                    "Metètz los a 'Autorizar'.",
+                    "Tornatz a Brave e rechargatz la pagina."
+                ],
+                "Brave_macOS": [
+                    "Clickatz sul simbòl <0>Tune</0> dins la barra d'adreça.",
+                    "Activatz camèra e micròfon dins los paramètres de permissions.",
+                    "Recarregatz la pagina."
+                ],
+                "Chrome_Android": [
+                    "Clickatz sul simbòl <0>Tune</0> dins la barra d'adreça.",
+                    "Seleccionatz 'Permissions'.",
+                    "Metètz 'Camèra' e 'Micròfon' a 'Autorizar'."
+                ],
+                "Chrome_Linux": [
+                    "Clickatz sus l'icòna de cadeat al costat de l'URL dins la barra d'adreça.",
+                    "Clickatz sus 'Paramètres del siti web'.",
+                    "Autorizar la camèra e lo micròfon.",
+                    "Recarregatz la pagina."
+                ],
+                "Chrome_Windows": [
+                    "Clickatz sul simbòl <0>Tune</0> dins la barra d'adreça.",
+                    "Clickatz sus 'Paramètres del siti web'.",
+                    "Autorizar la camèra e lo micròfon dins 'Permissions'."
+                ],
+                "Chrome_iOS": [
+                    "Dubrir los paramètres d’iOS > Chrome.",
+                    "Tocatz 'Camèra' e 'Micròfon'.",
+                    "Metètz los a 'Autorizar'.",
+                    "Tornatz a Chrome e rechargatz la pagina."
+                ],
+                "Chrome_macOS": [
+                    "Clickatz sul simbòl <0>Tune</0> dins la barra d'adreça.",
+                    "Clickatz sus 'Paramètres del siti web'.",
+                    "Autorizar la camèra e lo micròfon dins 'Permissions'."
+                ],
+                "Edge_Windows": [
+                    "Clickatz sus l'icòna de cadeat al costat de l'URL.",
+                    "Autorizar la camèra e lo micròfon.",
+                    "Recarregatz la pagina."
+                ],
+                "Edge_macOS": [
+                    "Clickatz sul simbòl <0>Tune</0> dins la barra d'adreça.",
+                    "Metètz camèra e micròfon a 'Autorizar'."
+                ],
+                "Firefox_Android": [
+                    "Tocatz l'icòna de cadeat al costat de la barra d'URL.",
+                    "Tocatz 'Modificar los paramètres de la pagina'.",
+                    "Autorizar la camèra e lo micròfon.",
+                    "Recarregatz la pagina."
+                ],
+                "Firefox_Linux": [
+                    "Clickatz sus l'icòna de cadeat al costat de la barra d'adreça.",
+                    "Clickatz sus 'Mai d'informacions'.",
+                    "Autorizar la camèra e lo micròfon dins las permissions.",
+                    "Recarregatz la pagina."
+                ],
+                "Firefox_Windows": [
+                    "Clickatz sul simbòl <0>Tune</0> al costat de l'URL.",
+                    "Activatz micròfon e camèra.",
+                    "Recarregatz la pagina."
+                ],
+                "Firefox_iOS": [
+                    "Dubrir los paramètres iOS > Firefox.",
+                    "Activatz camèra e micròfon.",
+                    "Tornatz a Firefox e rechargatz la pagina."
+                ],
+                "Firefox_macOS": [
+                    "Clickatz sul simbòl <0>Tune</0> al costat de l'URL.",
+                    "Clickatz sus la frecha > 'Mai d'informacions'.",
+                    "Anatz dins l'onglet 'Permissions'.",
+                    "Autorizar la camèra e lo micròfon.",
+                    "Recarregatz la pagina."
+                ],
+                "Safari_iOS": [
+                    "Anatz dins los paramètres iOS > Safari.",
+                    "Tocatz 'Camèra' e 'Micròfon'.",
+                    "Metètz los a 'Autorizar'.",
+                    "Tornatz a Safari e rechargatz la pagina."
+                ],
+                "Safari_macOS": [
+                    "Clickatz sus 'Safari' dins la barra de menús > 'Paramètres per aqueste siti web'.",
+                    "Metètz camèra e micròfon a 'Autorizar'.",
+                    "Recarregatz la pagina."
+                ],
+                "default": [
+                    "Dubrir los paramètres del navegador.",
+                    "Cercatz la seccion 'Confidencialitat' o 'Permissions'.",
+                    "Activatz camèra e micròfon per aquel siti.",
+                    "Recarregatz la pagina."
+                ]
+            },
+            "stillNotWorking": "Fonciona pas encara ?",
+            "title": "Activar lo micròfon e la camèra"
+        },
         "premeeting": "Prereünion",
         "proceedAnyway": "Contunhar malgrat tot",
         "recordingWarning": "D'autres participants pòdon enregistrar aquesta sonada",

@@ -1010,6 +1010,141 @@
         "linkCopied": "Link copied to clipboard",
         "lookGood": "Your devices are working properly",
         "or": "or",
+        "permissionsGuide": {
+            "close": "Close",
+            "detected": "Detected:",
+            "deviceHelp": {
+                "Android": [
+                    "Open your phone’s Settings.",
+                    "Tap \"Apps\" > your browser (e.g. Chrome, Brave).",
+                    "Tap \"Permissions\".",
+                    "Allow access to Camera and Microphone.",
+                    "Restart the browser and try again."
+                ],
+                "iOS": [
+                    "Open iOS Settings.",
+                    "Scroll down and select your browser (e.g. Safari, Chrome).",
+                    "Tap \"Camera\" and \"Microphone\".",
+                    "Set both to \"Allow\".",
+                    "Return to the browser and reload the page."
+                ]
+            },
+            "howToAllow": "How to allow access:",
+            "needHelp": "Need help?",
+            "steps": {
+                "Brave_Android": [
+                    "Click the Tune icon <0>Tune</0> next to the URL.",
+                    "Tap 'Permissions'.",
+                    "Allow Camera and Microphone.",
+                    "Refresh the page."
+                ],
+                "Brave_Linux": [
+                    "Click the Tune icon <0>Tune</0> in the address bar.",
+                    "Allow Camera and Microphone in the permissions list.",
+                    "Refresh the page."
+                ],
+                "Brave_Windows": [
+                    "Click the Tune icon <0>Tune</0> in the address bar.",
+                    "Enable Mic and Camera.",
+                    "Refresh the page."
+                ],
+                "Brave_iOS": [
+                    "Open iOS Settings > Brave.",
+                    "Tap 'Camera' and 'Microphone'.",
+                    "Set both to 'Allow'.",
+                    "Return to Brave and refresh."
+                ],
+                "Brave_macOS": [
+                    "Click the Tune icon <0>Tune</0> in the address bar.",
+                    "Enable Camera and Microphone in the permissions menu.",
+                    "Reload the page."
+                ],
+                "Chrome_Android": [
+                    "Click the Tune icon <0>Tune</0> in the address bar.",
+                    "Select 'Permissions'.",
+                    "Set 'Camera' and 'Microphone' to 'Allow'."
+                ],
+                "Chrome_Linux": [
+                    "Click the lock icon next to the URL in the address bar.",
+                    "Click 'Site settings'.",
+                    "Allow Camera and Microphone.",
+                    "Reload the page."
+                ],
+                "Chrome_Windows": [
+                    "Click the Tune icon <0>Tune</0> in the address bar.",
+                    "Click 'Site settings'.",
+                    "Allow Camera and Microphone under Permissions."
+                ],
+                "Chrome_iOS": [
+                    "Open iOS Settings > Chrome.",
+                    "Tap 'Camera' and 'Microphone'.",
+                    "Set both to 'Allow'.",
+                    "Return to Chrome and reload the page."
+                ],
+                "Chrome_macOS": [
+                    "Click the Tune icon <0>Tune</0> in the address bar.",
+                    "Click 'Site settings'.",
+                    "Allow Camera and Microphone under Permissions."
+                ],
+                "Edge_Windows": [
+                    "Click the lock icon next to the site URL.",
+                    "Allow Camera and Microphone.",
+                    "Refresh the page."
+                ],
+                "Edge_macOS": [
+                    "Click the Tune icon <0>Tune</0> in the address bar.",
+                    "Set Camera and Microphone to 'Allow'."
+                ],
+                "Firefox_Android": [
+                    "Tap the lock icon next to the URL bar.",
+                    "Tap 'Edit site settings'.",
+                    "Allow Camera and Microphone.",
+                    "Reload the page."
+                ],
+                "Firefox_Linux": [
+                    "Click the lock icon near the address bar.",
+                    "Click 'More information'.",
+                    "In Permissions, allow Camera and Microphone.",
+                    "Refresh the page."
+                ],
+                "Firefox_Windows": [
+                    "Click the Tune icon <0>Tune</0> next to the URL.",
+                    "Enable Mic and Camera.",
+                    "Refresh the page."
+                ],
+                "Firefox_iOS": [
+                    "Open iOS Settings > Firefox.",
+                    "Enable Camera and Microphone.",
+                    "Return to Firefox and refresh the page."
+                ],
+                "Firefox_macOS": [
+                    "Click the Tune icon <0>Tune</0> next to the URL.",
+                    "Click the arrow > 'More information'.",
+                    "Go to the 'Permissions' tab.",
+                    "Allow Camera and Microphone.",
+                    "Reload the page."
+                ],
+                "Safari_iOS": [
+                    "Go to iOS Settings > Safari.",
+                    "Tap 'Camera' and 'Microphone'.",
+                    "Set both to 'Allow'.",
+                    "Return to Safari and refresh."
+                ],
+                "Safari_macOS": [
+                    "Click 'Safari' in the menu bar > 'Settings for This Website'.",
+                    "Set Camera and Microphone to 'Allow'.",
+                    "Reload the page."
+                ],
+                "default": [
+                    "Open your browser settings.",
+                    "Find 'Privacy' or 'Permissions' section.",
+                    "Enable Camera and Microphone for this site.",
+                    "Reload the page."
+                ]
+            },
+            "stillNotWorking": "Still not working?",
+            "title": "Enable Mic and Camera"
+        },
         "premeeting": "Pre meeting",
         "proceedAnyway": "Proceed anyway",
         "recordingWarning": "Other participants may be recording this call",

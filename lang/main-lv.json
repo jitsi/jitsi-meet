@@ -994,6 +994,141 @@
         "linkCopied": "Saite ir kopēta starpliktuvē",
         "lookGood": "Jūsu mikrofons darbojas pareizi",
         "or": "vai",
+        "permissionsGuide": {
+            "close": "Aizvērt",
+            "detected": "Atklāts:",
+            "deviceHelp": {
+                "Android": [
+                    "Atveriet tālruņa iestatījumus.",
+                    "Pieskarieties “Lietotnes” > savam pārlūkam (piemēram, Chrome vai Brave).",
+                    "Pieskarieties “Atļaujas”.",
+                    "Atļaujiet piekļuvi kamerai un mikrofonam.",
+                    "Restartējiet pārlūku un mēģiniet vēlreiz."
+                ],
+                "iOS": [
+                    "Atveriet iOS iestatījumus.",
+                    "Ritiniet lejup un izvēlieties savu pārlūku (piemēram, Safari vai Chrome).",
+                    "Pieskarieties “Kamera” un “Mikrofons”.",
+                    "Iestatiet abus uz “Atļaut”.",
+                    "Atgriezieties pārlūkprogrammā un pārslādējiet lapu."
+                ]
+            },
+            "howToAllow": "Kā atļaut piekļuvi:",
+            "needHelp": "Vai nepieciešama palīdzība?",
+            "steps": {
+                "Brave_Android": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas blakus URL.",
+                    "Pieskarieties 'Atļaujas'.",
+                    "Atļaujiet kameru un mikrofonu.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Brave_Linux": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Atļaujiet kameru un mikrofonu atļauju sarakstā.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Brave_Windows": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Ieslēdziet mikrofonu un kameru.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Brave_iOS": [
+                    "Atveriet iOS iestatījumus > Brave.",
+                    "Pieskarieties 'Kamera' un 'Mikrofons'.",
+                    "Iestatiet tos uz 'Atļaut'.",
+                    "Atgriezieties pie Brave un atsvaidziniet lapu."
+                ],
+                "Brave_macOS": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Ieslēdziet kameru un mikrofonu atļauju iestatījumos.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Chrome_Android": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Izvēlieties 'Atļaujas'.",
+                    "Iestatiet 'Kamera' un 'Mikrofons' uz 'Atļaut'."
+                ],
+                "Chrome_Linux": [
+                    "Noklikšķiniet uz slēdzenes ikonas blakus URL adreses joslai.",
+                    "Noklikšķiniet uz 'Tīmekļa vietnes iestatījumi'.",
+                    "Atļaujiet kameru un mikrofonu.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Chrome_Windows": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Noklikšķiniet uz 'Tīmekļa vietnes iestatījumi'.",
+                    "Atļaujiet kameru un mikrofonu sadaļā 'Atļaujas'."
+                ],
+                "Chrome_iOS": [
+                    "Atveriet iOS iestatījumus > Chrome.",
+                    "Pieskarieties 'Kamera' un 'Mikrofons'.",
+                    "Iestatiet tos uz 'Atļaut'.",
+                    "Atgriezieties pie Chrome un atsvaidziniet lapu."
+                ],
+                "Chrome_macOS": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Noklikšķiniet uz 'Tīmekļa vietnes iestatījumi'.",
+                    "Atļaujiet kameru un mikrofonu sadaļā 'Atļaujas'."
+                ],
+                "Edge_Windows": [
+                    "Noklikšķiniet uz slēdzenes ikonas blakus URL.",
+                    "Atļaujiet kameru un mikrofonu.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Edge_macOS": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Iestatiet kameru un mikrofonu uz 'Atļaut'."
+                ],
+                "Firefox_Android": [
+                    "Pieskarieties slēdzenes ikonai blakus URL joslai.",
+                    "Pieskarieties 'Rediģēt lapas iestatījumus'.",
+                    "Atļaujiet kameru un mikrofonu.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Firefox_Linux": [
+                    "Noklikšķiniet uz slēdzenes ikonas blakus adreses joslai.",
+                    "Noklikšķiniet uz 'Vairāk informācijas'.",
+                    "Atļaujiet kameru un mikrofonu sadaļā 'Atļaujas'.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Firefox_Windows": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas blakus URL.",
+                    "Ieslēdziet mikrofonu un kameru.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Firefox_iOS": [
+                    "Atveriet iOS iestatījumus > Firefox.",
+                    "Ieslēdziet kameru un mikrofonu.",
+                    "Atgriezieties pie Firefox un atsvaidziniet lapu."
+                ],
+                "Firefox_macOS": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas blakus URL.",
+                    "Noklikšķiniet uz bultiņas > 'Vairāk informācijas'.",
+                    "Atveriet cilni 'Atļaujas'.",
+                    "Atļaujiet kameru un mikrofonu.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Safari_iOS": [
+                    "Atveriet iOS iestatījumus > Safari.",
+                    "Pieskarieties 'Kamera' un 'Mikrofons'.",
+                    "Iestatiet tos uz 'Atļaut'.",
+                    "Atgriezieties pie Safari un atsvaidziniet lapu."
+                ],
+                "Safari_macOS": [
+                    "Noklikšķiniet uz 'Safari' izvēlnes joslā > 'Šīs vietnes iestatījumi'.",
+                    "Iestatiet kameru un mikrofonu uz 'Atļaut'.",
+                    "Atsvaidziniet lapu."
+                ],
+                "default": [
+                    "Atveriet pārlūkprogrammas iestatījumus.",
+                    "Meklējiet sadaļu 'Privātums' vai 'Atļaujas'.",
+                    "Ieslēdziet kameru un mikrofonu šai vietnei.",
+                    "Atsvaidziniet lapu."
+                ]
+            },
+            "stillNotWorking": "Joprojām nedarbojas?",
+            "title": "Ieslēgt mikrofonu un kameru"
+        },
         "premeeting": "Pirms sapulces",
         "proceedAnyway": "Tik un tā turpināt",
         "recordingWarning": "Citi dalībnieki var ierakstīt šo zvanu",

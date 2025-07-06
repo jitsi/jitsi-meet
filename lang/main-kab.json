@@ -734,6 +734,141 @@
         "linkCopied": "Aseɣwen yettwanɣel 'ɣef wafus'",
         "lookGood": "Asawaḍ-inek·inem akka i d-yettban, iteddu akken ilaq",
         "or": "neɣ",
+        "permissionsGuide": {
+            "close": "Selleḍ",
+            "detected": "Yeǧǧa-d:",
+            "deviceHelp": {
+                "Android": [
+                    "Sefṛeḍ d iselmed n umḍiq.",
+                    "Sɛeḍ \"Ttwasin\" > awiḍ n umezruy-inek (aṭas Chrome neɣ Brave).",
+                    "Sɛeḍ \"Ttreḥt\".",
+                    "Sellek ad teɛdil awal di tikkelt d umikrifun.",
+                    "Sekcem aṭas utezruy, ḥeṛṛeb seg wakken ad tefruḥ."
+                ],
+                "iOS": [
+                    "Sefṛeḍ iselmed n iOS.",
+                    "Sdeṛḥ adlis d asenfel akken teǧǧaḍ umezruy-inek (aṭas Safari neɣ Chrome).",
+                    "Sɛeḍ \"Tikkelt\" d \"Umikrifun\".",
+                    "Settaɣ-d s wumi \"Sekcem\".",
+                    "Æewwleɣ ɣef umezruy-inek u sniḍ afus."
+                ]
+            },
+            "howToAllow": "Amek ad teḥelleḍ ṭṭufɣa:",
+            "needHelp": "Tzemreḍ-ik sɣur-ik?",
+            "steps": {
+                "Brave_Android": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Šuṛ-iyi 'Imedyazen'.",
+                    "Rnu takkamart d mikrofon.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Brave_Linux": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Rnu takkamart d mikrofon deg tazwara n imedyazen.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Brave_Windows": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Rnu mikrofon d takkamart.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Brave_iOS": [
+                    "Fuq iṭṭunef iOS > Brave.",
+                    "Šuṛ-iyi 'Takkamart' d 'Mikrofon'.",
+                    "Settaw-dent i 'Rnu'.",
+                    "Rṛeḥ ɣer Brave, d zrezzeḍ asebter."
+                ],
+                "Brave_macOS": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Rnu takkamart d mikrofon deg tazwara n imedyazen.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Chrome_Android": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Fru 'Imedyazen'.",
+                    "Settaw 'Takkamart' d 'Mikrofon' i 'Rnu'."
+                ],
+                "Chrome_Linux": [
+                    "Šuṛ-iyi amḍakṛ n uɣal-agi seg yiwen n uselkim n tmeddurt.",
+                    "Šuṛ-iyi 'Tazwara n imedyazen'.",
+                    "Rnu i takkamart d mikrofon.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Chrome_Windows": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Šuṛ-iyi 'Tazwara n imedyazen'.",
+                    "Rnu i takkamart d mikrofon deg 'Imedyazen'."
+                ],
+                "Chrome_iOS": [
+                    "Fuq iṭṭunef iOS > Chrome.",
+                    "Šuṛ-iyi 'Takkamart' d 'Mikrofon'.",
+                    "Settaw-dent i 'Rnu'.",
+                    "Rṛeḥ ɣer Chrome, d zrezzeḍ asebter."
+                ],
+                "Chrome_macOS": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Šuṛ-iyi 'Tazwara n imedyazen'.",
+                    "Rnu i takkamart d mikrofon deg 'Imedyazen'."
+                ],
+                "Edge_Windows": [
+                    "Šuṛ-iyi amḍakṛ n uɣal seg usselkim n tmeddurt.",
+                    "Rnu takkamart d mikrofon.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Edge_macOS": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Settaw takkamart d mikrofon i 'Rnu'."
+                ],
+                "Firefox_Android": [
+                    "Šuṛ-iyi amḍakṛ n uɣal deg usselkim n tmeddurt.",
+                    "Šuṛ-iyi 'Ssutru n idammen n tayri'.",
+                    "Rnu takkamart d mikrofon.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Firefox_Linux": [
+                    "Šuṛ-iyi amḍakṛ n uɣal seg usselkim n tmeddurt.",
+                    "Šuṛ-iyi 'Asefruḍ n tmurt'.",
+                    "Rnu takkamart d mikrofon deg imedyazen.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Firefox_Windows": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Rnu mikrofon d takkamart.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Firefox_iOS": [
+                    "Fuq iṭṭunef iOS > Firefox.",
+                    "Rnu takkamart d mikrofon.",
+                    "Rṛeḥ ɣer Firefox, d zrezzeḍ asebter."
+                ],
+                "Firefox_macOS": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Šuṛ-iyi azelmad > 'Asefruḍ n tmurt'.",
+                    "Fuq taburt 'Imedyazen'.",
+                    "Rnu takkamart d mikrofon.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Safari_iOS": [
+                    "Fuq iṭṭunef iOS > Safari.",
+                    "Šuṛ-iyi 'Takkamart' d 'Mikrofon'.",
+                    "Settaw-dent i 'Rnu'.",
+                    "Rṛeḥ ɣer Safari, d zrezzeḍ asebter."
+                ],
+                "Safari_macOS": [
+                    "Šuṛ-iyi 'Safari' > 'Tazwara n yiwet n wennaḍ'.",
+                    "Settaw takkamart d mikrofon i 'Rnu'.",
+                    "Zrezzeḍ asebter."
+                ],
+                "default": [
+                    "Fuq iṭṭunef n amzruy.",
+                    "Fuq agdud n ‘Aserḥel’ neɣ ‘Imedyazen’.",
+                    "Rnu takkamart d mikrofon i yiwen n uselkim.",
+                    "Zrezzeḍ asebter."
+                ]
+            },
+            "stillNotWorking": "Ur yettwaḥden ara?",
+            "title": "Sɣuṛ i mikrofon d takkamart"
+        },
         "premeeting": "Timlilit tuzwirt",
         "screenSharingError": "Tuccḍa deg beṭṭu n ugdil:",
         "startWithPhone": "Bdu s umeslaw n tiliɣri",

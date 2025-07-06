@@ -840,6 +840,141 @@
         "linkCopied": "Ligòngiu copiadu in punta de billete",
         "lookGood": "Su micròfonu tuo est funtzionende",
         "or": "opuru",
+        "permissionsGuide": {
+            "close": "Serra",
+            "detected": "Detetadu:",
+            "deviceHelp": {
+                "Android": [
+                    "Aberti is impostatziones de su telefonu.",
+                    "Toca \"Aplicatziones\" > su navegador tui (per esempiu Chrome o Brave).",
+                    "Toca \"Permessus\".",
+                    "Permetti s'accèssu a sa càmera e su microfonu.",
+                    "Rigistra su navegador e torra a provare."
+                ],
+                "iOS": [
+                    "Aberti is impostatziones de iOS.",
+                    "Scorridi a bàsciu e seleziona su navegador tui (per esempiu Safari o Chrome).",
+                    "Toca \"Càmera\" e \"Microfonu\".",
+                    "Imposta ambos a \"Permettiri\".",
+                    "Torra a su navegador e rigarga sa pàgina."
+                ]
+            },
+            "howToAllow": "Cumenti permittere su acceso:",
+            "needHelp": "Bisònghidu d’ajudu?",
+            "steps": {
+                "Brave_Android": [
+                    "Clica in su simbulu <0>Tune</0> a pustis de sa URL.",
+                    "Tappa in «Permissos».",
+                    "Permetti càmera e microfono.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Brave_Linux": [
+                    "Clica in su simbulu <0>Tune</0> in sa barra de indirìtzios.",
+                    "Permetti càmera e microfono in sa lista de permissos.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Brave_Windows": [
+                    "Clica in su simbulu <0>Tune</0> in sa barra de indirìtzios.",
+                    "Attiva microfono e càmera.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Brave_iOS": [
+                    "Apri is impostatziones de iOS > Brave.",
+                    "Tappa in «Càmera» e «Microfono».",
+                    "Appunta is permìssos a «Permetti».",
+                    "Torna a Brave e aggiorna sa pàgina."
+                ],
+                "Brave_macOS": [
+                    "Clica in su simbulu <0>Tune</0> in sa barra de indirìtzios.",
+                    "Attiva càmera e microfono in is impostatziones de permissos.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Chrome_Android": [
+                    "Clica in su simbulu <0>Tune</0> in sa barra de indirìtzios.",
+                    "Seleziona «Permissos».",
+                    "Appunta càmera e microfono a «Permetti»."
+                ],
+                "Chrome_Linux": [
+                    "Clica in su simbulu de s’ochju inoghe de sa URL in sa barra de indirìtzios.",
+                    "Clica in «Impostatziones de su situ».",
+                    "Permetti càmera e microfono.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Chrome_Windows": [
+                    "Clica in su simbulu <0>Tune</0> in sa barra de indirìtzios.",
+                    "Clica in «Impostatziones de su situ».",
+                    "Permetti càmera e microfono in sa sesione «Permissos»."
+                ],
+                "Chrome_iOS": [
+                    "Apri is impostatziones de iOS > Chrome.",
+                    "Clica in «Càmera» e «Microfono».",
+                    "Appunta is permìssos a «Permetti».",
+                    "Torna a Chrome e aggiorna sa pàgina."
+                ],
+                "Chrome_macOS": [
+                    "Clica in su simbulu <0>Tune</0> in sa barra de indirìtzios.",
+                    "Clica in «Impostatziones de su situ».",
+                    "Permetti càmera e microfono in sa sesione «Permissos»."
+                ],
+                "Edge_Windows": [
+                    "Clica in su simbulu de s’ochju a pustis de sa URL.",
+                    "Permetti càmera e microfono.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Edge_macOS": [
+                    "Clica in su simbulu <0>Tune</0> in sa barra de indirìtzios.",
+                    "Appunta càmera e microfono a «Permetti»."
+                ],
+                "Firefox_Android": [
+                    "Tappa su simbulu de s’ochju a pustis de sa barra de indirìtzios URL.",
+                    "Tappa in «Modifica impostatziones de su situ».",
+                    "Permetti càmera e microfono.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Firefox_Linux": [
+                    "Clica in su simbulu de s’ochju a pustis de sa barra de indirìtzios.",
+                    "Clica in «Più informatziones».",
+                    "Permetti càmera e microfono in is permissos.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Firefox_Windows": [
+                    "Clica in su simbulu <0>Tune</0> a pustis de sa URL.",
+                    "Attiva su microfono e sa càmera.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Firefox_iOS": [
+                    "Apri is impostatziones de iOS > Firefox.",
+                    "Attiva càmera e microfono.",
+                    "Torna a Firefox e aggiorna sa pàgina."
+                ],
+                "Firefox_macOS": [
+                    "Clica in su simbulu <0>Tune</0> a pustis de sa URL.",
+                    "Clica sa freccia > «Più informatziones».",
+                    "Andai a sa tab «Permissos».",
+                    "Permetti càmera e microfono.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Safari_iOS": [
+                    "Vai in is impostatziones de iOS > Safari.",
+                    "Tappa in «Càmera» e «Microfono».",
+                    "Appunta is permìssos a «Permetti».",
+                    "Torna a Safari e aggiorna sa pàgina."
+                ],
+                "Safari_macOS": [
+                    "Clica in «Safari» in sa barra de menu > «Impostatziones pro custu situ».",
+                    "Appunta càmera e microfono a «Permetti».",
+                    "Aggiorna sa pàgina."
+                ],
+                "default": [
+                    "Apri is impostatziones de su browser.",
+                    "Circa sa partizione «Privacy» o «Permissos».",
+                    "Attiva càmera e microfono pro custu situ.",
+                    "Aggiorna sa pàgina."
+                ]
+            },
+            "stillNotWorking": "Non funzionat ancora?",
+            "title": "Ativa su microfono e sa càmera"
+        },
         "premeeting": "Pre-riunione",
         "screenSharingError": "Faddina in sa cumpartzidura de s'ischermu",
         "startWithPhone": "Avia imperende s'àudio de su telèfonu",

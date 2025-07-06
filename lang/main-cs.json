@@ -931,8 +931,7 @@
             "failed": "Test připojení se nezdařil!",
             "good": "Vaše internetové připojení vypadá dobře!",
             "nonOptimal": "Vaše internetové připojení není optimální",
-            "poor": "Máte slabé internetové připojení",
-            "running": "Probíhá test připojení…"
+            "poor": "Máte špatné internetové připojení"
         },
         "connectionDetails": {
             "audioClipping": "Váš zvuk bude pravděpodobně osekaný.",
@@ -969,13 +968,146 @@
         "joinMeetingInLowBandwidthMode": "Připojte se v režimu nízké šířky pásma",
         "joinWithoutAudio": "Vstoupit bez zvuku",
         "keyboardShortcuts": "Povolit klávesové zkratky",
-        "linkCopied": "Odkaz se zkopíroval do schránky",
-        "lookGood": "Váš mikrofon zní, jako že funguje správně",
+        "linkCopied": "Odkaz byl zkopírován do schránky",
+        "lookGood": "Mikrofon funguje správně",
         "or": "nebo",
+        "permissionsGuide": {
+            "close": "Zavřít",
+            "detected": "Detekováno:",
+            "deviceHelp": {
+                "Android": [
+                    "Otevřete nastavení telefonu.",
+                    "Klepněte na \"Aplikace\" > váš prohlížeč (např. Chrome nebo Brave).",
+                    "Klepněte na \"Oprávnění\".",
+                    "Povolte přístup ke kameře a mikrofonu.",
+                    "Restartujte prohlížeč a zkuste to znovu."
+                ],
+                "iOS": [
+                    "Otevřete nastavení iOS.",
+                    "Sjeďte dolů a vyberte svůj prohlížeč (např. Safari nebo Chrome).",
+                    "Klepněte na \"Kamera\" a \"Mikrofon\".",
+                    "Nastavte obě na \"Povolit\".",
+                    "Vraťte se do prohlížeče a znovu načtěte stránku."
+                ]
+            },
+            "howToAllow": "Jak povolit přístup:",
+            "needHelp": "Potřebujete pomoc?",
+            "steps": {
+                "Brave_Android": [
+                    "Klikněte na ikonu <0>Tune</0> vedle URL.",
+                    "Klepněte na 'Oprávnění'.",
+                    "Povolte kameru a mikrofon.",
+                    "Obnovte stránku."
+                ],
+                "Brave_Linux": [
+                    "Klikněte na ikonu <0>Tune</0> na liště adresy.",
+                    "Povolte kameru a mikrofon v seznamu oprávnění.",
+                    "Obnovte stránku."
+                ],
+                "Brave_Windows": [
+                    "Klikněte na ikonu <0>Tune</0> na liště adresy.",
+                    "Povolte mikrofon a kameru.",
+                    "Obnovte stránku."
+                ],
+                "Brave_iOS": [
+                    "Otevřete Nastavení iOS > Brave.",
+                    "Klepněte na 'Kamera' a 'Mikrofon'.",
+                    "Nastavte je na 'Povolit'.",
+                    "Vraťte se do Brave a obnovte stránku."
+                ],
+                "Brave_macOS": [
+                    "Klikněte na ikonu <0>Tune</0> na liště adresy.",
+                    "Povolte kameru a mikrofon v nastavení oprávnění.",
+                    "Obnovte stránku."
+                ],
+                "Chrome_Android": [
+                    "Klikněte na ikonu <0>Tune</0> na liště adresy.",
+                    "Vyberte 'Oprávnění'.",
+                    "Nastavte 'Kamera' a 'Mikrofon' na 'Povolit'."
+                ],
+                "Chrome_Linux": [
+                    "Klikněte na ikonu zámku vedle URL na liště adresy.",
+                    "Klikněte na 'Nastavení webu'.",
+                    "Povolte kameru a mikrofon.",
+                    "Obnovte stránku."
+                ],
+                "Chrome_Windows": [
+                    "Klikněte na ikonu <0>Tune</0> na liště adresy.",
+                    "Klikněte na 'Nastavení webu'.",
+                    "Povolte kameru a mikrofon v 'Oprávnění'."
+                ],
+                "Chrome_iOS": [
+                    "Otevřete Nastavení iOS > Chrome.",
+                    "Klepněte na 'Kamera' a 'Mikrofon'.",
+                    "Nastavte je na 'Povolit'.",
+                    "Vraťte se do Chrome a obnovte stránku."
+                ],
+                "Chrome_macOS": [
+                    "Klikněte na ikonu <0>Tune</0> na liště adresy.",
+                    "Klikněte na 'Nastavení webu'.",
+                    "Povolte kameru a mikrofon v 'Oprávnění'."
+                ],
+                "Edge_Windows": [
+                    "Klikněte na ikonu zámku vedle URL.",
+                    "Povolte kameru a mikrofon.",
+                    "Obnovte stránku."
+                ],
+                "Edge_macOS": [
+                    "Klikněte na ikonu <0>Tune</0> na liště adresy.",
+                    "Nastavte kameru a mikrofon na 'Povolit'."
+                ],
+                "Firefox_Android": [
+                    "Klepněte na ikonu zámku vedle lišty URL.",
+                    "Klepněte na 'Upravit nastavení webu'.",
+                    "Povolte kameru a mikrofon.",
+                    "Obnovte stránku."
+                ],
+                "Firefox_Linux": [
+                    "Klikněte na ikonu zámku vedle lišty adresy.",
+                    "Klikněte na 'Více informací'.",
+                    "V oprávněních povolte kameru a mikrofon.",
+                    "Obnovte stránku."
+                ],
+                "Firefox_Windows": [
+                    "Klikněte na ikonu <0>Tune</0> vedle URL.",
+                    "Povolte mikrofon a kameru.",
+                    "Obnovte stránku."
+                ],
+                "Firefox_iOS": [
+                    "Otevřete Nastavení iOS > Firefox.",
+                    "Povolte kameru a mikrofon.",
+                    "Vraťte se do Firefoxu a obnovte stránku."
+                ],
+                "Firefox_macOS": [
+                    "Klikněte na ikonu <0>Tune</0> vedle URL.",
+                    "Klikněte na šipku > 'Více informací'.",
+                    "Přejděte na záložku 'Oprávnění'.",
+                    "Povolte kameru a mikrofon.",
+                    "Obnovte stránku."
+                ],
+                "Safari_iOS": [
+                    "Přejděte do Nastavení iOS > Safari.",
+                    "Klepněte na 'Kamera' a 'Mikrofon'.",
+                    "Nastavte je na 'Povolit'.",
+                    "Vraťte se do Safari a obnovte stránku."
+                ],
+                "Safari_macOS": [
+                    "Klikněte na 'Safari' v liště nabídek > 'Nastavení pro tento web'.",
+                    "Nastavte kameru a mikrofon na 'Povolit'.",
+                    "Obnovte stránku."
+                ],
+                "default": [
+                    "Otevřete nastavení prohlížeče.",
+                    "Vyhledejte sekci 'Soukromí' nebo 'Oprávnění'.",
+                    "Povolte kameru a mikrofon pro tento web.",
+                    "Obnovte stránku."
+                ]
+            },
+            "stillNotWorking": "Stále nefunguje?",
+            "title": "Povolte mikrofon a kameru"
+        },
         "premeeting": "Před setkáním",
         "proceedAnyway": "Přesto pokračujte",
-        "recordingWarning": "Ostatní účastníci mohou tento hovor nahrávat",
-        "screenSharingError": "Chyba sdílení obrazovky:",
         "startWithPhone": "Začít se zvukem přes telefon",
         "unsafeRoomConsent": "Chápu rizika, chci se připojit k setkání",
         "videoOnlyError": "Chyba videa:",
