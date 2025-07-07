@@ -515,7 +515,9 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
             or ignore_list:contains(jid.host(stanza.attr.from)) -- jibri or other domains to ignore
             or is_sip_jigasi(stanza)
             or is_sip_jibri_join(stanza)
-            or table_find(room._data.mainMeetingParticipants, session.jitsi_meet_context_user and session.jitsi_meet_context_user.id) then
+            or table_find(room._data.moderators, session.jitsi_meet_context_user and session.jitsi_meet_context_user.id)
+            or (room._data.moderator_id and room._data.moderator_id == (session.jitsi_meet_context_user and session.jitsi_meet_context_user.id))
+            or table_find(room._data.participants, session.jitsi_meet_context_user and session.jitsi_meet_context_user.id) then
             if DEBUG then
                 module:log('debug', 'Auto-allowing visitor %s in room %s', stanza.attr.from, room.jid);
             end
@@ -556,9 +558,7 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
                         :tag('no-main-participants', { xmlns = 'jitsi:visitors' }));
                 return true;
             end
-        elseif is_live == false
-            and room._data.mainMeetingParticipants
-            and #room._data.mainMeetingParticipants > 0 then
+        elseif is_live == false and room._data.participants then
                 -- This is non jaas room which is not live and has a list of participants
                 -- allowed to participate in the main room, but this participant is not one of them
                 session.log('warn',
