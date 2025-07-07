@@ -234,6 +234,7 @@ const FileSharing = () => {
     const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             processFiles(e.target.files as FileList, store);
+            e.target.value = ''; // Reset the input value to allow re-uploading the same file
         }
     }, [ processFiles ]);
 
