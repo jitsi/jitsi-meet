@@ -321,6 +321,22 @@ function occupant_joined(event)
         return;
     end
 
+    -- when first moderator joins if av_can_unmute from password preset is set to false, we enable av moderation for both
+    -- audio and video, and set the first moderator as the actor that enabled it
+    if (occupant.role == 'moderator') and room._data.av_can_unmute ~= nil and not room._data.av_first_moderator_joined then
+        if not room._data.av_can_unmute then
+            room.av_moderation = {
+                audio = array{},
+                video = array{}
+            };
+            room.av_moderation_actors = {
+                audio = occupant.nick,
+                video = occupant.nick
+            };
+            room._data.av_first_moderator_joined = true;
+        end
+    end
+
     if room.av_moderation then
         for _,mediaType in pairs({'audio', 'video'}) do
             if room.av_moderation[mediaType] then
