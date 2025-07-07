@@ -78,24 +78,25 @@ function send_metadata(occupant, room, json_msg)
 
         -- we want to send the main meeting participants only to jicofo
         if is_admin(occupant.bare_jid) then
-            local participants = {};
+            local participants;
+            local moderators = {};
 
-            if room._data.mainMeetingParticipants then
-                table_add(participants, room._data.mainMeetingParticipants);
+            if room._data.participants then
+                participants = {};
+                table_add(participants, room._data.participants);
             end
 
             if room._data.moderator_id then
-                table.insert(participants, room._data.moderator_id);
+                table.insert(moderators, room._data.moderator_id);
             end
 
             if room._data.moderators then
-                table_add(participants, room._data.moderators);
+                table_add(moderators, room._data.moderators);
             end
 
-            if #participants > 0 then
-                metadata_to_send = table_shallow_copy(metadata_to_send);
-                metadata_to_send.mainMeetingParticipants = participants;
-            end
+            metadata_to_send = table_shallow_copy(metadata_to_send);
+            metadata_to_send.participants = participants;
+            metadata_to_send.moderators = moderators;
         end
 
         json_msg = getMetadataJSON(room, metadata_to_send);
