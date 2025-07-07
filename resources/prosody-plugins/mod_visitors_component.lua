@@ -23,6 +23,8 @@ local new_id = require 'util.id'.medium;
 local json = require 'cjson.safe';
 local inspect = require 'inspect';
 
+-- Debug flag
+local DEBUG = false;
 
 -- will be initialized once the main virtual host module is initialized
 local token_util;
