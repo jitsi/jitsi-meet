@@ -255,6 +255,7 @@ export function goLive() {
         const { conference } = getState()['features/base/conference'];
 
         conference?.getMetadataHandler().setMetadata('visitors', {
+            ...(conference?.getMetadataHandler().getMetadata()?.visitors || {}),
             live: true
         });
     };
