@@ -185,7 +185,7 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
             this.props.dispatch(
                 showWarningNotification({
                     titleKey: 'virtualBackground.backgroundEffectError',
-                    description: 'Failed to access camera device.'
+                    descriptionKey: 'deviceError.cameraError'
                 }, NOTIFICATION_TIMEOUT_TYPE.LONG)
             );
             logger.error('Failed to access camera device. Error on apply background effect.');
