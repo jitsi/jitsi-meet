@@ -3,9 +3,10 @@
 -- Component "metadata.jitmeet.example.com" "room_metadata_component"
 --      muc_component = "conference.jitmeet.example.com"
 --      breakout_rooms_component = "breakout.jitmeet.example.com"
+local array = require 'util.array';
 local filters = require 'util.filters';
 local jid_node = require 'util.jid'.node;
-local json = require 'cjson.safe';
+local json = require 'util.json';
 local st = require 'util.stanza';
 local jid = require 'util.jid';
 
@@ -79,19 +80,19 @@ function send_metadata(occupant, room, json_msg)
         -- we want to send the main meeting participants only to jicofo
         if is_admin(occupant.bare_jid) then
             local participants;
-            local moderators = {};
+            local moderators = array();
 
             if room._data.participants then
-                participants = {};
-                table_add(participants, room._data.participants);
+                participants = array();
+                participants:append(room._data.participants);
             end
 
             if room._data.moderator_id then
-                table.insert(moderators, room._data.moderator_id);
+                moderators:push(room._data.moderator_id);
             end
 
             if room._data.moderators then
-                table_add(moderators, room._data.moderators);
+                moderators:append(room._data.moderators);
             end
 
             metadata_to_send = table_shallow_copy(metadata_to_send);
