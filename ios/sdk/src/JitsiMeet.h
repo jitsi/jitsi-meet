@@ -100,6 +100,9 @@ typedef NS_ENUM(NSInteger, WebRTCLoggingSeverity) {
 
 - (BOOL)isCrashReportingDisabled;
 
+/**
+ * Shows the splash screen.
+ */
 - (void)showSplashScreen;
 
 @end
