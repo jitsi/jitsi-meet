@@ -337,9 +337,12 @@ function occupant_joined(event)
         if not room._data.av_can_unmute then
             for _,mediaType in pairs({'audio', 'video'}) do
                 start_av_moderation(room, mediaType, occupant);
+
+                notify_occupants_enable(nil, true, room, occupant.nick, mediaType);
             end
 
             room._data.av_first_moderator_joined = true;
+            return;
         end
     end
 
