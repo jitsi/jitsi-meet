@@ -210,6 +210,13 @@ subprojects { subproject ->
                     sourceCompatibility rootProject.ext.javaVersion
                     targetCompatibility rootProject.ext.javaVersion
                 }
+
+                // Disable lint errors for problematic third-party modules
+                // react-native-background-timer
+                // react-native-calendar-events
+                lint {
+                    abortOnError = false
+                }
             }
         }
 
