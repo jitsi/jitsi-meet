@@ -5,6 +5,7 @@ local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local process_host_module = util.process_host_module;
 local table_shallow_copy = util.table_shallow_copy;
+local is_admin = util.is_admin;
 local array = require "util.array";
 local json = require 'cjson.safe';
 local st = require 'util.stanza';
@@ -151,6 +152,29 @@ function notify_jid_approved(jid, from, room, mediaType)
     send_json_message(jid, json_message);
 end
 
+function start_av_moderation(room, mediaType, occupant)
+    if not room.av_moderation then
+        room.av_moderation = {};
+        room.av_moderation_actors = {};
+    end
+    room.av_moderation[mediaType] = array{};
+
+    -- We want to set startMuted policy in metadata, in case of new participants are joining to respect
+    -- it, that will be enforced by jicofo
+    local startMutedMetadata = room.jitsiMetadata.startMuted or {};
+
+    -- We want to keep the previous value of startMuted for this mediaType if av moderation is disabled
+    -- to be able to restore
+    local av_moderation_startMuted_restore = room.av_moderation_startMuted_restore or {};
+    av_moderation_startMuted_restore = startMutedMetadata[mediaType];
+    room.av_moderation_startMuted_restore = av_moderation_startMuted_restore;
+
+    startMutedMetadata[mediaType] = true;
+    room.jitsiMetadata.startMuted = startMutedMetadata;
+
+    room.av_moderation_actors[mediaType] = occupant.nick;
+end
+
 -- receives messages from clients to the component sending A/V moderation enable/disable commands or adding
 -- jids to the whitelist
 function on_message(event)
@@ -208,26 +232,7 @@ function on_message(event)
                     module:log('warn', 'Concurrent moderator enable/disable request or something is out of sync');
                     return true;
                 else
-                    if not room.av_moderation then
-                        room.av_moderation = {};
-                        room.av_moderation_actors = {};
-                    end
-                    room.av_moderation[mediaType] = array{};
-
-                    -- We want to set startMuted policy in metadata, in case of new participants are joining to respect
-                    -- it, that will be enforced by jicofo
-                    local startMutedMetadata = room.jitsiMetadata.startMuted or {};
-
-                    -- We want to keep the previous value of startMuted for this mediaType if av moderation is disabled
-                    -- to be able to restore
-                    local av_moderation_startMuted_restore = room.av_moderation_startMuted_restore or {};
-                    av_moderation_startMuted_restore = startMutedMetadata[mediaType];
-                    room.av_moderation_startMuted_restore = av_moderation_startMuted_restore;
-
-                    startMutedMetadata[mediaType] = true;
-                    room.jitsiMetadata.startMuted = startMutedMetadata;
-
-                    room.av_moderation_actors[mediaType] = occupant.nick;
+                    start_av_moderation(room, mediaType, occupant);
                 end
             else
                 enabled = false;
@@ -317,22 +322,23 @@ end
 function occupant_joined(event)
     local room, occupant = event.room, event.occupant;
 
-    if is_healthcheck_room(room.jid) then
+    if is_healthcheck_room(room.jid) or is_admin(occupant.bare_jid) then
         return;
     end
 
     -- when first moderator joins if av_can_unmute from password preset is set to false, we enable av moderation for both
     -- audio and video, and set the first moderator as the actor that enabled it
-    if (occupant.role == 'moderator') and room._data.av_can_unmute ~= nil and not room._data.av_first_moderator_joined then
+    if room._data.av_can_unmute ~= nil
+        and not room._data.av_first_moderator_joined
+
+        -- occupant.role is not reflecting the actual role after set_affiliation is used in same occupant_joined event
+        and room:get_role(occupant.nick) == 'moderator' then
+
         if not room._data.av_can_unmute then
-            room.av_moderation = {
-                audio = array{},
-                video = array{}
-            };
-            room.av_moderation_actors = {
-                audio = occupant.nick,
-                video = occupant.nick
-            };
+            for _,mediaType in pairs({'audio', 'video'}) do
+                start_av_moderation(room, mediaType, occupant);
+            end
+
             room._data.av_first_moderator_joined = true;
         end
     end
