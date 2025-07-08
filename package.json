@@ -98,7 +98,7 @@
     "react-native-performance": "5.1.2",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "4.11.1",
-    "react-native-sound": "git+https://github.com/jitsi/react-native-sound/tree/jitsi#",
+    "react-native-sound": "https://github.com/jitsi/react-native-sound.git#ea13c97b5c2a4ff5e0d9bacbd9ff5e4457fe2c3c",
     "react-native-splash-view": "0.0.18",
     "react-native-svg": "15.11.2",
     "react-native-svg-transformer": "1.2.0",
