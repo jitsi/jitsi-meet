@@ -558,13 +558,14 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
                         :tag('no-main-participants', { xmlns = 'jitsi:visitors' }));
                 return true;
             end
-        elseif is_live == false and room._data.participants then
-                -- This is non jaas room which is not live and has a list of participants
-                -- allowed to participate in the main room, but this participant is not one of them
+        elseif room._data.participants then
+                -- This is non jaas room which has a list of participants allowed to participate in the main room
+                -- but this occupant is not one of them and the room is either not live or has no participants joined
                 session.log('warn',
                     'Deny user join in the main not live meeting, not in the list of main participants');
                 session.send(st.error_reply(
-                    stanza, 'cancel', 'not-allowed', 'Tried to join the main (not live) room')
+                    stanza, 'cancel', 'not-allowed',
+                    'Tried to join the main (not live or without main participants) room')
                         :tag('not-live-room', { xmlns = 'jitsi:visitors' }));
                 return true;
         end
