@@ -1,7 +1,10 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
+import PersistenceRegistry from '../base/redux/PersistenceRegistry';
 
 import {
     CLEAR_TRANSLATION_ERROR,
+    DISABLE_UNIVERSAL_TRANSLATOR_EFFECT,
+    ENABLE_UNIVERSAL_TRANSLATOR_EFFECT,
     INIT_UNIVERSAL_TRANSLATOR,
     SET_API_KEYS,
     SET_SOURCE_LANGUAGE,
@@ -53,40 +56,42 @@ const DEFAULT_STATE = {
         google: '',
         microsoft: ''
     },
-    config: null
+    config: null,
+    effectEnabled: false
 };
 
 export interface IUniversalTranslatorState {
-    isInitialized: boolean;
-    isRecording: boolean;
-    showDialog: boolean;
-    status: string;
-    currentStep: string | null;
-    sttProvider: string;
-    ttsProvider: string;
-    translationProvider: string;
-    sourceLanguage: string;
-    targetLanguage: string;
-    transcriptionResult: any;
-    translationResult: any;
-    latencyMetrics: {
-        stt: { averageLatency: number; lastLatency: number; requestCount: number };
-        translation: { averageLatency: number; lastLatency: number; requestCount: number };
-        tts: { averageLatency: number; lastLatency: number; requestCount: number };
-    };
-    error: string | null;
     apiKeys: {
-        openai: string;
-        groq: string;
-        deepgram: string;
         assemblyai: string;
-        cartesia: string;
-        elevenlabs: string;
         azure: string;
+        cartesia: string;
+        deepgram: string;
+        elevenlabs: string;
         google: string;
+        groq: string;
         microsoft: string;
+        openai: string;
     };
     config: any;
+    currentStep: string | null;
+    effectEnabled: boolean;
+    error: string | null;
+    isInitialized: boolean;
+    isRecording: boolean;
+    latencyMetrics: {
+        stt: { averageLatency: number; lastLatency: number; requestCount: number; };
+        translation: { averageLatency: number; lastLatency: number; requestCount: number; };
+        tts: { averageLatency: number; lastLatency: number; requestCount: number; };
+    };
+    showDialog: boolean;
+    sourceLanguage: string;
+    status: string;
+    sttProvider: string;
+    targetLanguage: string;
+    transcriptionResult: any;
+    translationProvider: string;
+    translationResult: any;
+    ttsProvider: string;
 }
 
 /**
@@ -96,7 +101,7 @@ export interface IUniversalTranslatorState {
  * @param {Object} action - The redux action.
  * @returns {Object} The new state after applying the action.
  */
-ReducerRegistry.register<IUniversalTranslatorState>('features/universal-translator', 
+ReducerRegistry.register<IUniversalTranslatorState>('features/universal-translator',
     (state = DEFAULT_STATE, action): IUniversalTranslatorState => {
         switch (action.type) {
         case INIT_UNIVERSAL_TRANSLATOR:
@@ -216,7 +221,48 @@ ReducerRegistry.register<IUniversalTranslatorState>('features/universal-translat
                 showDialog: !state.showDialog
             };
 
+        case ENABLE_UNIVERSAL_TRANSLATOR_EFFECT:
+            return {
+                ...state,
+                effectEnabled: true
+            };
+
+        case DISABLE_UNIVERSAL_TRANSLATOR_EFFECT:
+            return {
+                ...state,
+                effectEnabled: false
+            };
+
         default:
             return state;
         }
     });
+
+/**
+ * Register for persistence to save API keys and user preferences across sessions.
+ * Only persist configuration data, not temporary state like recording status or results.
+ */
+PersistenceRegistry.register('features/universal-translator', {
+    // Persist API keys - the most important for user experience
+    apiKeys: true,
+    
+    // Persist user preferences
+    sttProvider: true,
+    ttsProvider: true,
+    translationProvider: true,
+    sourceLanguage: true,
+    targetLanguage: true,
+    effectEnabled: true,
+    
+    // Don't persist temporary state
+    isInitialized: false,
+    isRecording: false,
+    showDialog: false,
+    status: false,
+    currentStep: false,
+    transcriptionResult: false,
+    translationResult: false,
+    latencyMetrics: false,
+    error: false,
+    config: false
+}, DEFAULT_STATE);

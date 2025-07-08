@@ -3,6 +3,8 @@ import { hideDialog, openDialog } from '../base/dialog/actions';
 
 import {
     CLEAR_TRANSLATION_ERROR,
+    DISABLE_UNIVERSAL_TRANSLATOR_EFFECT,
+    ENABLE_UNIVERSAL_TRANSLATOR_EFFECT,
     INIT_UNIVERSAL_TRANSLATOR,
     SET_API_KEYS,
     SET_SOURCE_LANGUAGE,
@@ -233,13 +235,13 @@ export function toggleUniversalTranslator() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const universalTranslator = state['features/universal-translator'];
-        
+
         if (universalTranslator?.showDialog) {
             dispatch(hideDialog(UniversalTranslatorDialog));
         } else {
             dispatch(openDialog(UniversalTranslatorDialog));
         }
-        
+
         dispatch({
             type: TOGGLE_UNIVERSAL_TRANSLATOR
         });
@@ -271,5 +273,27 @@ export function hideUniversalTranslatorDialog() {
         dispatch({
             type: TOGGLE_UNIVERSAL_TRANSLATOR
         });
+    };
+}
+
+/**
+ * Enables the universal translator effect on the audio track.
+ *
+ * @returns {Object} Redux action.
+ */
+export function enableUniversalTranslatorEffect() {
+    return {
+        type: ENABLE_UNIVERSAL_TRANSLATOR_EFFECT
+    };
+}
+
+/**
+ * Disables the universal translator effect on the audio track.
+ *
+ * @returns {Object} Redux action.
+ */
+export function disableUniversalTranslatorEffect() {
+    return {
+        type: DISABLE_UNIVERSAL_TRANSLATOR_EFFECT
     };
 }

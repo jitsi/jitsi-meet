@@ -88,6 +88,7 @@ import { default as IconRemoteControlStop } from './stop-remote-control.svg';
 import { default as IconStop } from './stop.svg';
 import { default as IconSubtitles } from './subtitles.svg';
 import { default as IconTileView } from './tile-view.svg';
+import { default as IconTranslate } from './translate.svg';
 import { default as IconTrash } from './trash.svg';
 import { default as IconUserDeleted } from './user-deleted.svg';
 import { default as IconUser } from './user.svg';
@@ -106,7 +107,6 @@ import { default as IconWifi1Bar } from './wifi-1.svg';
 import { default as IconWifi2Bars } from './wifi-2.svg';
 import { default as IconWifi3Bars } from './wifi-3.svg';
 import { default as IconYahoo } from './yahoo.svg';
-import { default as IconTranslate } from './translate.svg';
 
 /**
  * Map containing the default icons.

@@ -1,5 +1,6 @@
 import { IStore } from '../app/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { UniversalTranslatorEffect } from '../stream-effects/universal-translator';
 
 import {
     INIT_UNIVERSAL_TRANSLATOR,
@@ -7,8 +8,8 @@ import {
     STOP_TRANSLATION_RECORDING
 } from './actionTypes';
 import {
-    setTranslationError,
     setTranscriptionResult,
+    setTranslationError,
     setTranslationResult,
     updateLatencyMetrics,
     updateProcessingStep,
@@ -17,15 +18,13 @@ import {
 // @ts-ignore - whisper-processor is a .js file without types
 // import { WhisperProcessor } from './audio/whisper-processor';
 // @ts-ignore - audio-utils is a .js file without types
-import { getUserMediaForSpeech, convertWebMToFloat32, createAudioRecorder } from './audio/audio-utils';
-// @ts-ignore - stt-providers is a .js file without types
-import { STTProviderFactory } from './services/stt-providers';
-// @ts-ignore - tts-providers is a .js file without types
-import { TTSProviderFactory } from './services/tts-providers';
-// @ts-ignore - translation is a .js file without types
-import { TranslationProviderFactory } from './services/translation';
-// @ts-ignore - BlackHole router is a .js file without types
+import { convertWebMToFloat32, createAudioRecorder, getUserMediaForSpeech, float32ArrayToBlob } from './audio/audio-utils';
+// @ts-ignore - blackhole-router is a .js file without types  
 import { BlackHoleRouter } from './audio/blackhole-router';
+import { getUniversalTranslatorEffect } from './middleware/streamEffectMiddleware';
+import { STTProviderFactory } from './services/stt-providers';
+import { TranslationProviderFactory } from './services/translation';
+import { TTSProviderFactory } from './services/tts-providers';
 
 /**
  * Universal translator service instance.
@@ -44,6 +43,10 @@ class UniversalTranslatorService {
     private mediaRecorder: MediaRecorder | null = null;
     private audioChunks: Blob[] = [];
     private stream: MediaStream | null = null;
+    private processingInterval: number = 3000; // Process every 3 seconds
+    private isRecordingContinuously: boolean = false;
+    private isProcessingChunk: boolean = false; // Prevent overlapping processing
+    private intervalId: any = null;
     private dispatch: IStore['dispatch'];
     private getState: IStore['getState'];
 
@@ -60,13 +63,13 @@ class UniversalTranslatorService {
     async initialize(config: any) {
         try {
             console.log('Initializing Universal Translator Service...');
-            
+
             // Initialize Whisper processor
             // await this.whisperProcessor.initializeModel();
-            
+
             // Initialize BlackHole router
             await this.blackHoleRouter.initialize();
-            
+
             console.log('Universal Translator Service initialized successfully');
         } catch (error) {
             console.error('Failed to initialize Universal Translator Service:', error);
@@ -79,34 +82,78 @@ class UniversalTranslatorService {
      */
     async startRecording() {
         try {
-            console.log('Starting universal translator recording...');
+            console.log('Starting universal translator real-time translation...');
             this.dispatch(updateProcessingStep('recording'));
             this.dispatch(updateTranslationStatus('recording'));
 
             // Get audio stream (prefer BlackHole if available)
             this.stream = this.blackHoleRouter.getInputStream() || await getUserMediaForSpeech();
             console.log('Audio stream acquired');
-            
-            // Create media recorder
-            this.mediaRecorder = createAudioRecorder(this.stream);
+
+            // Create media recorder for continuous recording without time slicing
+            // This will record continuously and we'll process complete recordings at intervals
+            this.mediaRecorder = createAudioRecorder(this.stream, {
+                mimeType: 'audio/webm;codecs=opus'
+            });
             this.audioChunks = [];
+            this.isRecordingContinuously = true;
 
             if (this.mediaRecorder) {
-                this.mediaRecorder.ondataavailable = (event) => {
-                    if (event.data.size > 0) {
-                        this.audioChunks?.push(event.data);
-                        console.log(`Audio chunk received: ${event.data.size} bytes`);
+                this.mediaRecorder.ondataavailable = async (event) => {
+                    if (event.data.size > 0 && this.isRecordingContinuously) {
+                        console.log(`Complete audio recording received: ${event.data.size} bytes`);
+                        
+                        if (!this.isProcessingChunk) {
+                            this.isProcessingChunk = true;
+                            
+                            try {
+                                // Convert complete WebM file to WAV
+                                const float32Array = await convertWebMToFloat32(event.data);
+                                const wavBlob = float32ArrayToBlob(float32Array);
+                                await this.processAudioChunk(wavBlob);
+                            } catch (conversionError) {
+                                console.warn('WebM conversion failed:', conversionError);
+                            } finally {
+                                this.isProcessingChunk = false;
+                            }
+                        }
                     }
                 };
 
                 this.mediaRecorder.onstop = () => {
-                    console.log('Recording stopped, processing audio...');
-                    this.processRecording();
+                    console.log('MediaRecorder stopped');
+                    if (this.isRecordingContinuously) {
+                        // Restart recording if we're still supposed to be recording
+                        setTimeout(() => {
+                            if (this.mediaRecorder && this.isRecordingContinuously) {
+                                this.mediaRecorder.start();
+                                console.log('MediaRecorder restarted for next interval');
+                            }
+                        }, 100);
+                    }
+                };
+                
+                this.mediaRecorder.onerror = (event) => {
+                    console.error('MediaRecorder error:', event);
+                };
+                
+                this.mediaRecorder.onstart = () => {
+                    console.log('MediaRecorder started successfully');
                 };
             }
 
+            // Start recording without time slicing (will record until manually stopped)
             this.mediaRecorder?.start();
-            console.log('MediaRecorder started successfully');
+            
+            // Set up interval to stop and restart recording every few seconds for processing
+            this.intervalId = setInterval(() => {
+                if (this.mediaRecorder && this.mediaRecorder.state === 'recording' && !this.isProcessingChunk) {
+                    console.log(`Stopping recording for processing (${this.processingInterval}ms interval)`);
+                    this.mediaRecorder.stop();
+                }
+            }, this.processingInterval);
+            
+            console.log(`Real-time translation started - processing every ${this.processingInterval}ms`);
 
         } catch (error) {
             console.error('Failed to start recording:', error);
@@ -114,13 +161,26 @@ class UniversalTranslatorService {
         }
     }
 
+
     /**
      * Stop translation recording.
      */
     async stopRecording() {
+        this.isRecordingContinuously = false;
+        this.isProcessingChunk = false;
+        
+        // Clear the interval
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
+        }
+        
+        // Clear any remaining chunks
+        this.audioChunks = [];
+        
         if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
             this.mediaRecorder.stop();
-            
+
             if (this.stream) {
                 this.stream.getTracks().forEach(track => track.stop());
             }
@@ -128,39 +188,47 @@ class UniversalTranslatorService {
     }
 
     /**
-     * Process the recorded audio through the translation pipeline.
+     * Process a single audio chunk for real-time translation.
      */
-    private async processRecording() {
+    private async processAudioChunk(audioChunk: Blob) {
         try {
             const state = this.getState();
             const universalTranslator = state['features/universal-translator'];
-            
-            if (!universalTranslator || this.audioChunks.length === 0) {
-                throw new Error('No audio recorded or invalid state');
+
+            if (!universalTranslator || !this.isRecordingContinuously) {
+                return;
             }
 
-            // Create audio blob
-            const audioBlob = new Blob(this.audioChunks, { 
-                type: 'audio/webm;codecs=opus'
-            } as any);
-            
+            // Check if audio chunk is large enough (minimum 1KB)
+            if (audioChunk.size < 1024) {
+                console.log('Skipping chunk - too small:', audioChunk.size, 'bytes');
+                return;
+            }
+
+            console.log('Processing audio chunk for real-time translation...', audioChunk.size, 'bytes');
+
             // Step 1: Speech-to-Text
-            this.dispatch(updateProcessingStep('transcription'));
-            const transcriptionResult = await this.performSTT(audioBlob, universalTranslator);
+            const transcriptionResult = await this.performSTT(audioChunk, universalTranslator);
+
+            // Skip if no meaningful transcription
+            if (!transcriptionResult.text || transcriptionResult.text.trim().length < 2) {
+                console.log('Skipping chunk - no meaningful speech detected:', transcriptionResult.text);
+                return;
+            }
+
             this.dispatch(setTranscriptionResult(transcriptionResult));
 
             // Step 2: Translation
-            this.dispatch(updateProcessingStep('translation'));
             const translationResult = await this.performTranslation(
                 transcriptionResult.text,
                 universalTranslator.sourceLanguage,
                 universalTranslator.targetLanguage,
                 universalTranslator
             );
+
             this.dispatch(setTranslationResult(translationResult));
 
             // Step 3: Text-to-Speech
-            this.dispatch(updateProcessingStep('synthesis'));
             const ttsResult = await this.performTTS(
                 translationResult.translatedText,
                 universalTranslator.targetLanguage,
@@ -168,15 +236,13 @@ class UniversalTranslatorService {
             );
 
             // Step 4: Audio Playback
-            this.dispatch(updateProcessingStep('playback'));
             await this.playTranslatedAudio(ttsResult.audioBlob);
 
-            this.dispatch(updateTranslationStatus('completed'));
-            console.log('Translation pipeline completed successfully');
+            console.log('Real-time translation chunk completed successfully');
 
         } catch (error) {
-            console.error('Translation pipeline failed:', error);
-            this.dispatch(setTranslationError(`Translation failed: ${error instanceof Error ? error.message : 'Unknown error'}`));
+            console.error('Failed to process audio chunk:', error);
+            // Don't dispatch error for individual chunks to avoid spam
         }
     }
 
@@ -185,10 +251,10 @@ class UniversalTranslatorService {
      */
     private async performSTT(audioBlob: Blob, config: any) {
         const startTime = performance.now();
-        
+
         try {
             let result;
-            
+
             if (config.sttProvider === 'whisper') {
                 // Use local Whisper processing (currently disabled - missing @xenova/transformers dependency)
                 // const audioData = await convertWebMToFloat32(audioBlob);
@@ -197,6 +263,7 @@ class UniversalTranslatorService {
             } else {
                 // Use external STT provider
                 const provider = await this.getOrCreateSTTProvider(config.sttProvider, config.apiKeys);
+
                 result = await provider.transcribe(audioBlob);
             }
 
@@ -222,7 +289,7 @@ class UniversalTranslatorService {
      */
     private async performTranslation(text: string, sourceLang: string, targetLang: string, config: any) {
         const startTime = performance.now();
-        
+
         try {
             const provider = await this.getOrCreateTranslationProvider(config.translationProvider, config.apiKeys);
             const result = await provider.translate(text, sourceLang, targetLang);
@@ -249,7 +316,7 @@ class UniversalTranslatorService {
      */
     private async performTTS(text: string, language: string, config: any) {
         const startTime = performance.now();
-        
+
         try {
             const provider = await this.getOrCreateTTSProvider(config.ttsProvider, config.apiKeys);
             const result = await provider.synthesize(text, language);
@@ -272,25 +339,34 @@ class UniversalTranslatorService {
     }
 
     /**
-     * Play translated audio through BlackHole for Jitsi Meet integration.
+     * Play translated audio through Universal Translator Effect or fallback methods.
      */
     private async playTranslatedAudio(audioBlob: Blob) {
         try {
-            if (this.blackHoleRouter.isActive()) {
-                // Convert blob to audio buffer and route through BlackHole to Jitsi Meet
+            const effect = getUniversalTranslatorEffect();
+
+            if (effect && effect.isActive()) {
+                // Convert blob to audio buffer and route through the effect
+                const audioBuffer = await effect.createAudioBufferFromBlob(audioBlob);
+
+                await effect.playTranslatedAudio(audioBuffer);
+
+                console.log('Translated audio routed to Jitsi Meet via UniversalTranslatorEffect');
+            } else if (this.blackHoleRouter.isActive()) {
+                // Fallback to BlackHole if effect is not active
                 const audioContext = this.blackHoleRouter.getOutputContext();
                 const arrayBuffer = await audioBlob.arrayBuffer();
                 const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-                
-                // Route to Jitsi Meet via BlackHole
+
                 await this.blackHoleRouter.routeToJitsiMeet(audioBuffer);
-                
-                console.log('Translated audio routed to Jitsi Meet via BlackHole');
+
+                console.log('Translated audio routed to Jitsi Meet via BlackHole (fallback)');
             } else {
-                // Fallback to regular audio playback
+                // Final fallback to regular audio playback
                 const audio = new Audio(URL.createObjectURL(audioBlob));
+
                 await audio.play();
-                console.log('Translated audio played via default output');
+                console.log('Translated audio played via default output (fallback)');
             }
         } catch (error) {
             console.warn('Audio playback failed:', error);
@@ -307,10 +383,12 @@ class UniversalTranslatorService {
             const provider = STTProviderFactory.create(providerName, {
                 apiKey: apiKeys[providerName]
             });
+
             await provider.initialize();
             this.sttProviders.set(providerName, provider);
             console.log(`STT provider ${providerName} initialized successfully`);
         }
+
         return this.sttProviders.get(providerName);
     }
 
@@ -323,10 +401,12 @@ class UniversalTranslatorService {
             const provider = TTSProviderFactory.create(providerName, {
                 apiKey: apiKeys[providerName]
             });
+
             await provider.initialize();
             this.ttsProviders.set(providerName, provider);
             console.log(`TTS provider ${providerName} initialized successfully`);
         }
+
         return this.ttsProviders.get(providerName);
     }
 
@@ -339,10 +419,12 @@ class UniversalTranslatorService {
             const provider = TranslationProviderFactory.create(providerName, {
                 apiKey: apiKeys[providerName]
             });
+
             await provider.initialize();
             this.translationProviders.set(providerName, provider);
             console.log(`Translation provider ${providerName} initialized successfully`);
         }
+
         return this.translationProviders.get(providerName);
     }
 }

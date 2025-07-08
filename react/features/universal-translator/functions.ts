@@ -20,7 +20,7 @@ export function getUniversalTranslatorState(state: IReduxState): IUniversalTrans
  */
 export function isUniversalTranslatorAvailable(state: IReduxState): boolean {
     const translatorState = getUniversalTranslatorState(state);
-    
+
     return Boolean(translatorState?.isInitialized);
 }
 
@@ -32,7 +32,7 @@ export function isUniversalTranslatorAvailable(state: IReduxState): boolean {
  */
 export function isUniversalTranslatorRecording(state: IReduxState): boolean {
     const translatorState = getUniversalTranslatorState(state);
-    
+
     return Boolean(translatorState?.isRecording);
 }
 
@@ -44,7 +44,7 @@ export function isUniversalTranslatorRecording(state: IReduxState): boolean {
  */
 export function getTranslationStatus(state: IReduxState): string {
     const translatorState = getUniversalTranslatorState(state);
-    
+
     return translatorState?.status || 'idle';
 }
 
@@ -56,7 +56,7 @@ export function getTranslationStatus(state: IReduxState): string {
  */
 export function isUniversalTranslatorDialogOpen(state: IReduxState): boolean {
     const translatorState = getUniversalTranslatorState(state);
-    
+
     return Boolean(translatorState?.showDialog);
 }
 
@@ -68,7 +68,7 @@ export function isUniversalTranslatorDialogOpen(state: IReduxState): boolean {
  */
 export function getLatencyMetrics(state: IReduxState) {
     const translatorState = getUniversalTranslatorState(state);
-    
+
     return translatorState?.latencyMetrics || {
         stt: { averageLatency: 0, lastLatency: 0, requestCount: 0 },
         translation: { averageLatency: 0, lastLatency: 0, requestCount: 0 },
@@ -84,10 +84,10 @@ export function getLatencyMetrics(state: IReduxState) {
  */
 export function getTotalLatency(state: IReduxState): number {
     const metrics = getLatencyMetrics(state);
-    
-    return (metrics.stt.lastLatency || 0) + 
-           (metrics.translation.lastLatency || 0) + 
-           (metrics.tts.lastLatency || 0);
+
+    return (metrics.stt.lastLatency || 0)
+           + (metrics.translation.lastLatency || 0)
+           + (metrics.tts.lastLatency || 0);
 }
 
 /**
@@ -98,27 +98,27 @@ export function getTotalLatency(state: IReduxState): number {
  */
 export function areApiKeysConfigured(state: IReduxState): boolean {
     const translatorState = getUniversalTranslatorState(state);
-    
+
     if (!translatorState) {
         return false;
     }
-    
+
     const { sttProvider, ttsProvider, translationProvider, apiKeys } = translatorState;
-    
+
     // Check if required API keys are present (skip local/free providers)
     const requiredKeys = [];
-    
+
     if (sttProvider !== 'whisper') {
         requiredKeys.push(sttProvider);
     }
-    
+
     if (ttsProvider !== 'webspeech') {
         requiredKeys.push(ttsProvider);
     }
-    
+
     requiredKeys.push(translationProvider);
-    
-    return requiredKeys.every(provider => 
+
+    return requiredKeys.every(provider =>
         apiKeys[provider as keyof typeof apiKeys] && apiKeys[provider as keyof typeof apiKeys].length > 0
     );
 }
@@ -132,7 +132,7 @@ export function areApiKeysConfigured(state: IReduxState): boolean {
 export function getSupportedLanguages(state: IReduxState): string[] {
     // Common languages supported by most providers
     return [
-        'en', 'es', 'fr', 'de', 'it', 'pt', 'ru', 
+        'en', 'es', 'fr', 'de', 'it', 'pt', 'ru',
         'ja', 'ko', 'zh', 'ar', 'hi', 'tr', 'pl', 'nl'
     ];
 }
@@ -145,11 +145,11 @@ export function getSupportedLanguages(state: IReduxState): string[] {
  */
 export function getProviderConfiguration(state: IReduxState) {
     const translatorState = getUniversalTranslatorState(state);
-    
+
     if (!translatorState) {
         return null;
     }
-    
+
     return {
         stt: translatorState.sttProvider,
         translation: translatorState.translationProvider,

@@ -1,22 +1,23 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../app/types';
-import Dialog from '../../base/ui/components/web/Dialog';
 import { hideDialog } from '../../base/dialog/actions';
-
+import Dialog from '../../base/ui/components/web/Dialog';
 import {
-    setSTTProvider,
-    setTTSProvider,
-    setTranslationProvider,
-    setSourceLanguage,
-    setTargetLanguage,
-    startTranslationRecording,
-    stopTranslationRecording,
-    setApiKeys,
     clearTranslationError,
+    disableUniversalTranslatorEffect,
+    enableUniversalTranslatorEffect,
     initUniversalTranslator,
-    setTranslationError
+    setApiKeys,
+    setSTTProvider,
+    setSourceLanguage,
+    setTTSProvider,
+    setTargetLanguage,
+    setTranslationError,
+    setTranslationProvider,
+    startTranslationRecording,
+    stopTranslationRecording
 } from '../actions';
 import { IUniversalTranslatorState } from '../reducer';
 
@@ -28,6 +29,7 @@ const languages = [
     { code: 'de', name: 'German', flag: '🇩🇪' },
     { code: 'it', name: 'Italian', flag: '🇮🇹' },
     { code: 'pt', name: 'Portuguese', flag: '🇵🇹' },
+    { code: 'ro', name: 'Romanian', flag: '🇷🇴' },
     { code: 'ja', name: 'Japanese', flag: '🇯🇵' },
     { code: 'ko', name: 'Korean', flag: '🇰🇷' },
     { code: 'zh', name: 'Chinese', flag: '🇨🇳' }
@@ -63,13 +65,14 @@ export const UniversalTranslatorDialog = () => {
         (state: IReduxState) => state['features/universal-translator']
     );
 
-    const [localApiKeys, setLocalApiKeys] = useState(universalTranslator?.apiKeys || {});
+    const [ localApiKeys, setLocalApiKeys ] = useState(universalTranslator?.apiKeys || {});
+    const [ saveIndicator, setSaveIndicator ] = useState<string | null>(null);
 
     useEffect(() => {
         if (universalTranslator?.apiKeys) {
             setLocalApiKeys(universalTranslator.apiKeys);
         }
-    }, [universalTranslator?.apiKeys]);
+    }, [ universalTranslator?.apiKeys ]);
 
     // Initialize the universal translator service when dialog opens
     useEffect(() => {
@@ -82,33 +85,33 @@ export const UniversalTranslatorDialog = () => {
                 apiKeys: universalTranslator?.apiKeys || {}
             }));
         }
-    }, [dispatch, universalTranslator?.isInitialized]);
+    }, [ dispatch, universalTranslator?.isInitialized ]);
 
     const handleClose = useCallback(() => {
         dispatch(hideDialog());
-    }, [dispatch]);
+    }, [ dispatch ]);
 
     const handleSTTProviderChange = useCallback((provider: string) => {
         dispatch(setSTTProvider(provider));
-    }, [dispatch]);
+    }, [ dispatch ]);
 
     const handleTTSProviderChange = useCallback((provider: string) => {
         dispatch(setTTSProvider(provider));
-    }, [dispatch]);
+    }, [ dispatch ]);
 
     const handleTranslationProviderChange = useCallback((provider: string) => {
         dispatch(setTranslationProvider(provider));
-    }, [dispatch]);
+    }, [ dispatch ]);
 
     const handleSourceLanguageChange = useCallback((language: string) => {
         dispatch(setSourceLanguage(language));
-    }, [dispatch]);
+    }, [ dispatch ]);
 
     const handleTargetLanguageChange = useCallback((language: string) => {
         dispatch(setTargetLanguage(language));
-    }, [dispatch]);
+    }, [ dispatch ]);
 
-    const handleStartRecording = useCallback(() => {
+    const handleStartTranslation = useCallback(() => {
         // Validate API keys before starting
         const requiredKeys: Record<string, boolean> = {
             deepgram: universalTranslator?.sttProvider === 'deepgram',
@@ -117,37 +120,53 @@ export const UniversalTranslatorDialog = () => {
         };
 
         const missingKeys = Object.entries(requiredKeys)
-            .filter(([key, required]) => required && !localApiKeys[key as keyof typeof localApiKeys])
-            .map(([key]) => key);
+            .filter(([ key, required ]) => required && !localApiKeys[key as keyof typeof localApiKeys])
+            .map(([ key ]) => key);
 
         if (missingKeys.length > 0) {
             console.error('Missing API keys:', missingKeys);
             dispatch(setTranslationError(`Missing API keys: ${missingKeys.join(', ')}`));
+
             return;
         }
 
-        console.log('Starting translation with providers:', {
+        console.log('Starting real-time translation with providers:', {
             stt: universalTranslator?.sttProvider,
             translation: universalTranslator?.translationProvider,
             tts: universalTranslator?.ttsProvider
         });
 
         dispatch(startTranslationRecording());
-    }, [dispatch, localApiKeys, universalTranslator]);
+    }, [ dispatch, localApiKeys, universalTranslator ]);
 
-    const handleStopRecording = useCallback(() => {
+    const handleStopTranslation = useCallback(() => {
         dispatch(stopTranslationRecording());
-    }, [dispatch]);
+    }, [ dispatch ]);
 
     const handleApiKeyChange = useCallback((service: string, value: string) => {
         const newKeys = { ...localApiKeys, [service]: value };
+
         setLocalApiKeys(newKeys);
         dispatch(setApiKeys(newKeys));
-    }, [localApiKeys, dispatch]);
+        
+        // Show save indicator
+        if (value.trim()) {
+            setSaveIndicator(service);
+            setTimeout(() => setSaveIndicator(null), 2000);
+        }
+    }, [ localApiKeys, dispatch ]);
 
     const handleClearError = useCallback(() => {
         dispatch(clearTranslationError());
-    }, [dispatch]);
+    }, [ dispatch ]);
+
+    const handleEffectToggle = useCallback((enabled: boolean) => {
+        if (enabled) {
+            dispatch(enableUniversalTranslatorEffect());
+        } else {
+            dispatch(disableUniversalTranslatorEffect());
+        }
+    }, [ dispatch ]);
 
     const formatLatency = (latency: number) => {
         return latency ? `${Math.round(latency)}ms` : '-';
@@ -155,6 +174,7 @@ export const UniversalTranslatorDialog = () => {
 
     const getTotalLatency = () => {
         const { stt, translation, tts } = universalTranslator?.latencyMetrics || { stt: {}, translation: {}, tts: {} };
+
         return (stt.lastLatency || 0) + (translation.lastLatency || 0) + (tts.lastLatency || 0);
     };
 
@@ -165,32 +185,34 @@ export const UniversalTranslatorDialog = () => {
             onCancel = { handleClose }
             size = 'large'
             titleKey = 'universalTranslator.title'>
-            <div className='universal-translator-dialog'>
+            <div className = 'universal-translator-dialog'>
                 {/* Language Selection */}
-                <div className='language-selection'>
+                <div className = 'language-selection'>
                     <h3>Language Settings</h3>
-                    <div className='language-selectors'>
-                        <div className='language-selector'>
+                    <div className = 'language-selectors'>
+                        <div className = 'language-selector'>
                             <label>From:</label>
-                            <select 
-                                value={universalTranslator?.sourceLanguage || 'en'}
-                                onChange={(e) => handleSourceLanguageChange(e.target.value)}
-                            >
+                            <select
+                                onChange = { e => handleSourceLanguageChange(e.target.value) }
+                                value = { universalTranslator?.sourceLanguage || 'en' }>
                                 {languages.map(lang => (
-                                    <option key={lang.code} value={lang.code}>
+                                    <option
+                                        key = { lang.code }
+                                        value = { lang.code }>
                                         {lang.flag} {lang.name}
                                     </option>
                                 ))}
                             </select>
                         </div>
-                        <div className='language-selector'>
+                        <div className = 'language-selector'>
                             <label>To:</label>
-                            <select 
-                                value={universalTranslator?.targetLanguage || 'es'}
-                                onChange={(e) => handleTargetLanguageChange(e.target.value)}
-                            >
+                            <select
+                                onChange = { e => handleTargetLanguageChange(e.target.value) }
+                                value = { universalTranslator?.targetLanguage || 'es' }>
                                 {languages.map(lang => (
-                                    <option key={lang.code} value={lang.code}>
+                                    <option
+                                        key = { lang.code }
+                                        value = { lang.code }>
                                         {lang.flag} {lang.name}
                                     </option>
                                 ))}
@@ -200,106 +222,126 @@ export const UniversalTranslatorDialog = () => {
                 </div>
 
                 {/* Service Selection */}
-                <div className='service-selection'>
+                <div className = 'service-selection'>
                     <h3>Service Providers</h3>
-                    
-                    <div className='service-group'>
+
+                    <div className = 'service-group'>
                         <label>Speech-to-Text:</label>
-                        <select 
-                            value={universalTranslator?.sttProvider || 'whisper'}
-                            onChange={(e) => handleSTTProviderChange(e.target.value)}
-                        >
+                        <select
+                            onChange = { e => handleSTTProviderChange(e.target.value) }
+                            value = { universalTranslator?.sttProvider || 'whisper' }>
                             {sttOptions.map(option => (
-                                <option key={option.id} value={option.id}>
+                                <option
+                                    key = { option.id }
+                                    value = { option.id }>
                                     {option.name} ({option.latency})
                                 </option>
                             ))}
                         </select>
                     </div>
 
-                    <div className='service-group'>
+                    <div className = 'service-group'>
                         <label>Translation:</label>
-                        <select 
-                            value={universalTranslator?.translationProvider || 'openai'}
-                            onChange={(e) => handleTranslationProviderChange(e.target.value)}
-                        >
+                        <select
+                            onChange = { e => handleTranslationProviderChange(e.target.value) }
+                            value = { universalTranslator?.translationProvider || 'openai' }>
                             {translationOptions.map(option => (
-                                <option key={option.id} value={option.id}>
+                                <option
+                                    key = { option.id }
+                                    value = { option.id }>
                                     {option.name} ({option.latency})
                                 </option>
                             ))}
                         </select>
                     </div>
 
-                    <div className='service-group'>
+                    <div className = 'service-group'>
                         <label>Text-to-Speech:</label>
-                        <select 
-                            value={universalTranslator?.ttsProvider || 'cartesia'}
-                            onChange={(e) => handleTTSProviderChange(e.target.value)}
-                        >
+                        <select
+                            onChange = { e => handleTTSProviderChange(e.target.value) }
+                            value = { universalTranslator?.ttsProvider || 'cartesia' }>
                             {ttsOptions.map(option => (
-                                <option key={option.id} value={option.id}>
+                                <option
+                                    key = { option.id }
+                                    value = { option.id }>
                                     {option.name} ({option.latency})
                                 </option>
                             ))}
                         </select>
+                    </div>
+
+                    <div className = 'service-group'>
+                        <label>
+                            <input
+                                checked = { universalTranslator?.effectEnabled || false }
+                                onChange = { e => handleEffectToggle(e.target.checked) }
+                                type = 'checkbox' />
+                            Route translated audio to conference (replaces your microphone)
+                        </label>
                     </div>
                 </div>
 
                 {/* API Keys */}
-                <div className='api-keys-section'>
+                <div className = 'api-keys-section'>
                     <h3>API Keys</h3>
-                    <div className='api-keys-grid'>
-                        {Object.entries(localApiKeys).map(([service, key]) => (
-                            <div key={service} className='api-key-input'>
+                    <p className = 'persistence-note'>
+                        API keys and preferences are automatically saved locally and will be remembered across sessions.
+                    </p>
+                    <div className = 'api-keys-grid'>
+                        {Object.entries(localApiKeys).map(([ service, key ]) => (
+                            <div
+                                className = 'api-key-input'
+                                key = { service }>
                                 <label>{service.charAt(0).toUpperCase() + service.slice(1)}:</label>
                                 <input
-                                    type='password'
-                                    value={key}
-                                    onChange={(e) => handleApiKeyChange(service, e.target.value)}
-                                    placeholder={`Enter ${service} API key`}
-                                />
+                                    onChange = { e => handleApiKeyChange(service, e.target.value) }
+                                    placeholder = { `Enter ${service} API key` }
+                                    type = 'password'
+                                    value = { key } />
+                                {saveIndicator === service && (
+                                    <span className = 'save-indicator'>✓ Saved</span>
+                                )}
                             </div>
                         ))}
                     </div>
                 </div>
 
                 {/* Translation Status */}
-                <div className='translation-status'>
+                <div className = 'translation-status'>
                     <h3>Translation Status</h3>
-                    <div className='status-info'>
-                        <div className='status-indicator'>
-                            <span className={`status-dot ${universalTranslator?.status || 'idle'}`}></span>
-                            <span className='status-text'>
-                                {universalTranslator?.isRecording ? 'Recording...' : 
-                                 universalTranslator?.status === 'processing' ? 'Processing...' :
-                                 universalTranslator?.status === 'completed' ? 'Translation Complete' :
-                                 universalTranslator?.status === 'error' ? 'Error' : 'Ready'}
+                    <div className = 'status-info'>
+                        <div className = 'status-indicator'>
+                            <span className = { `status-dot ${universalTranslator?.status || 'idle'}` } />
+                            <span className = 'status-text'>
+                                {universalTranslator?.isRecording ? 'Translating in real-time...'
+                                    : universalTranslator?.status === 'processing' ? 'Processing...'
+                                        : universalTranslator?.status === 'completed' ? 'Translation Complete'
+                                            : universalTranslator?.status === 'error' ? 'Error' : 'Ready'}
                             </span>
                         </div>
                         {getTotalLatency() > 0 && (
-                            <div className='latency-info'>
+                            <div className = 'latency-info'>
                                 Total Latency: {formatLatency(getTotalLatency())}
                             </div>
                         )}
                     </div>
 
                     {universalTranslator?.error && (
-                        <div className='error-message'>
+                        <div className = 'error-message'>
                             <span>{universalTranslator?.error}</span>
-                            <button onClick={handleClearError}>Clear</button>
+                            <button onClick = { handleClearError }>Clear</button>
                         </div>
                     )}
 
                     {universalTranslator?.transcriptionResult && (
-                        <div className='transcription-result'>
+                        <div className = 'transcription-result'>
                             <h4>Transcription:</h4>
                             <p>{universalTranslator?.transcriptionResult?.text}</p>
                         </div>
                     )}
 
                     {universalTranslator?.translationResult && (
-                        <div className='translation-result'>
+                        <div className = 'translation-result'>
                             <h4>Translation:</h4>
                             <p>{universalTranslator?.translationResult?.translatedText}</p>
                         </div>
@@ -308,22 +350,22 @@ export const UniversalTranslatorDialog = () => {
 
                 {/* Performance Metrics */}
                 {universalTranslator?.status === 'completed' && (
-                    <div className='performance-metrics'>
+                    <div className = 'performance-metrics'>
                         <h3>Performance Metrics</h3>
-                        <div className='metrics-grid'>
-                            <div className='metric'>
+                        <div className = 'metrics-grid'>
+                            <div className = 'metric'>
                                 <label>STT Latency:</label>
                                 <span>{formatLatency(universalTranslator?.latencyMetrics?.stt?.lastLatency)}</span>
                             </div>
-                            <div className='metric'>
+                            <div className = 'metric'>
                                 <label>Translation Latency:</label>
                                 <span>{formatLatency(universalTranslator?.latencyMetrics?.translation?.lastLatency)}</span>
                             </div>
-                            <div className='metric'>
+                            <div className = 'metric'>
                                 <label>TTS Latency:</label>
                                 <span>{formatLatency(universalTranslator?.latencyMetrics?.tts?.lastLatency)}</span>
                             </div>
-                            <div className='metric'>
+                            <div className = 'metric'>
                                 <label>Total Requests:</label>
                                 <span>{universalTranslator?.latencyMetrics?.stt?.requestCount || 0}</span>
                             </div>
@@ -332,21 +374,19 @@ export const UniversalTranslatorDialog = () => {
                 )}
 
                 {/* Control Buttons */}
-                <div className='control-buttons'>
+                <div className = 'control-buttons'>
                     {!universalTranslator?.isRecording ? (
-                        <button 
-                            className='record-button'
-                            onClick={handleStartRecording}
-                            disabled={universalTranslator?.status === 'processing'}
-                        >
-                            🎤 Start Translation
+                        <button
+                            className = 'record-button'
+                            disabled = { universalTranslator?.status === 'processing' }
+                            onClick = { handleStartTranslation }>
+                            🗣️ Start Real-time Translation
                         </button>
                     ) : (
-                        <button 
-                            className='stop-button'
-                            onClick={handleStopRecording}
-                        >
-                            ⏹️ Stop Recording
+                        <button
+                            className = 'stop-button'
+                            onClick = { handleStopTranslation }>
+                            ⏹️ Stop Translation
                         </button>
                     )}
                 </div>

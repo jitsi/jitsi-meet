@@ -50,6 +50,7 @@ import SpeakerStats from '../speaker-stats/components/web/SpeakerStats';
 import { isSpeakerStatsDisabled } from '../speaker-stats/functions';
 import { useSpeakerStatsButton } from '../speaker-stats/hooks.web';
 import { useClosedCaptionButton } from '../subtitles/hooks.web';
+import { UniversalTranslatorButton } from '../universal-translator/components';
 import { toggleTileView } from '../video-layout/actions.any';
 import { shouldDisplayTileView } from '../video-layout/functions.web';
 import { useTileViewButton } from '../video-layout/hooks';
@@ -57,7 +58,6 @@ import VideoQualityButton from '../video-quality/components/VideoQualityButton.w
 import VideoQualityDialog from '../video-quality/components/VideoQualityDialog.web';
 import { useVirtualBackgroundButton } from '../virtual-background/hooks';
 import { useWhiteboardButton } from '../whiteboard/hooks';
-import { UniversalTranslatorButton } from '../universal-translator/components';
 
 import { setFullScreen } from './actions.web';
 import DownloadButton from './components/DownloadButton';

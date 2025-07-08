@@ -86,3 +86,13 @@ export const SET_API_KEYS = 'SET_API_KEYS';
  * Action to update processing step.
  */
 export const UPDATE_PROCESSING_STEP = 'UPDATE_PROCESSING_STEP';
+
+/**
+ * Action type to enable universal translator effect.
+ */
+export const ENABLE_UNIVERSAL_TRANSLATOR_EFFECT = 'ENABLE_UNIVERSAL_TRANSLATOR_EFFECT';
+
+/**
+ * Action type to disable universal translator effect.
+ */
+export const DISABLE_UNIVERSAL_TRANSLATOR_EFFECT = 'DISABLE_UNIVERSAL_TRANSLATOR_EFFECT';

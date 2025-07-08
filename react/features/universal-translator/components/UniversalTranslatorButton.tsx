@@ -1,12 +1,10 @@
 import React, { useCallback } from 'react';
+import { WithTranslation, withTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { withTranslation } from 'react-i18next';
-import { WithTranslation } from 'react-i18next';
 
 import { IReduxState } from '../../app/types';
-import ToolboxItem from '../../base/toolbox/components/ToolboxItem';
 import { IconTranslate } from '../../base/icons/svg';
-
+import ToolboxItem from '../../base/toolbox/components/ToolboxItem';
 import { toggleUniversalTranslator } from '../actions';
 import { IUniversalTranslatorState } from '../reducer';
 
@@ -21,31 +19,30 @@ const UniversalTranslatorButton = ({ t, tReady, i18n }: WithTranslation) => {
 
     const handleClick = useCallback(() => {
         dispatch(toggleUniversalTranslator());
-    }, [dispatch]);
+    }, [ dispatch ]);
 
     const handleKeyDown = useCallback((e?: React.KeyboardEvent) => {
         if (e?.key === 'Enter' || e?.key === ' ') {
             handleClick();
         }
-    }, [handleClick]);
+    }, [ handleClick ]);
 
     const isActive = universalTranslator?.showDialog || universalTranslator?.isRecording;
-    const tooltip = universalTranslator?.isRecording 
-        ? 'universalTranslator.recording' 
+    const tooltip = universalTranslator?.isRecording
+        ? 'universalTranslator.recording'
         : 'universalTranslator.tooltip';
 
     return (
         <ToolboxItem
             accessibilityLabel = 'universalTranslator.accessibilityLabel'
+            i18n = { i18n }
             icon = { IconTranslate }
+            labelProps = {{}}
             onClick = { handleClick }
             onKeyDown = { handleKeyDown }
-            toggled = { isActive }
-            tooltip = { tooltip }
-            labelProps = {{}}
-            i18n = { i18n }
             tReady = { tReady }
-        />
+            toggled = { isActive }
+            tooltip = { tooltip } />
     );
 };
 
