@@ -19,6 +19,7 @@ import '../web-hid/middleware';
 import '../settings/middleware';
 import '../talk-while-muted/middleware';
 import '../toolbox/middleware';
+import '../universal-translator/middleware';
 import '../face-landmarks/middleware';
 import '../gifs/middleware';
 import '../whiteboard/middleware.web';

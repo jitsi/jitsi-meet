@@ -121,7 +121,8 @@ export const MAIN_TOOLBAR_BUTTONS_PRIORITY = [
     'embedmeeting',
     'feedback',
     'download',
-    'help'
+    'help',
+    'universal-translator'
 ];
 
 export const TOOLBAR_TIMEOUT = 4000;
@@ -176,6 +177,7 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'stats',
     'tileview',
     'toggle-camera',
+    'universal-translator',
     'videoquality',
     'whiteboard'
 ];

@@ -57,6 +57,7 @@ import VideoQualityButton from '../video-quality/components/VideoQualityButton.w
 import VideoQualityDialog from '../video-quality/components/VideoQualityDialog.web';
 import { useVirtualBackgroundButton } from '../virtual-background/hooks';
 import { useWhiteboardButton } from '../whiteboard/hooks';
+import { UniversalTranslatorButton } from '../universal-translator/components';
 
 import { setFullScreen } from './actions.web';
 import DownloadButton from './components/DownloadButton';
@@ -166,11 +167,18 @@ const download = {
     group: 4
 };
 
+const universalTranslator = {
+    key: 'universal-translator',
+    Content: UniversalTranslatorButton,
+    group: 3
+};
+
 const help = {
     key: 'help',
     Content: HelpButton,
     group: 4
 };
+
 
 /**
  * A hook that returns the toggle camera button if it is enabled and undefined otherwise.
@@ -324,7 +332,8 @@ export function useToolboxButtons(
         embedmeeting: embed,
         feedback,
         download: _download,
-        help: _help
+        help: _help,
+        'universal-translator': universalTranslator
     };
     const buttonKeys = Object.keys(buttons) as ToolbarButton[];
 

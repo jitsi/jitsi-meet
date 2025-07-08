@@ -76,6 +76,7 @@ import { ISubtitlesState } from '../subtitles/reducer';
 import { ITalkWhileMutedState } from '../talk-while-muted/reducer';
 import { IToolboxState } from '../toolbox/reducer';
 import { ITranscribingState } from '../transcribing/reducer';
+import { IUniversalTranslatorState } from '../universal-translator/reducer';
 import { IVideoLayoutState } from '../video-layout/reducer';
 import { IVideoQualityPersistedState, IVideoQualityState } from '../video-quality/reducer';
 import { IVideoSipGW } from '../videosipgw/reducer';
@@ -168,6 +169,7 @@ export interface IReduxState {
     'features/testing': ITestingState;
     'features/toolbox': IToolboxState;
     'features/transcribing': ITranscribingState;
+    'features/universal-translator': IUniversalTranslatorState;
     'features/video-layout': IVideoLayoutState;
     'features/video-quality': IVideoQualityState;
     'features/video-quality-persistent-storage': IVideoQualityPersistedState;

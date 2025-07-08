@@ -1,0 +1,70 @@
+{
+    "universalTranslator": {
+        "title": "Universal Translator",
+        "tooltip": "Open Universal Translator",
+        "recording": "Translation Recording Active",
+        "accessibilityLabel": "Universal Translator",
+        "languages": {
+            "from": "Translate from:",
+            "to": "Translate to:",
+            "autoDetect": "Auto-detect"
+        },
+        "providers": {
+            "stt": "Speech-to-Text Service:",
+            "translation": "Translation Service:",
+            "tts": "Text-to-Speech Service:"
+        },
+        "status": {
+            "idle": "Ready to translate",
+            "recording": "Recording audio...",
+            "processing": "Processing translation...",
+            "transcribing": "Converting speech to text...",
+            "translating": "Translating text...",
+            "synthesizing": "Generating speech...",
+            "playing": "Playing translated audio...",
+            "completed": "Translation complete",
+            "error": "Translation error"
+        },
+        "buttons": {
+            "start": "🎤 Start Translation",
+            "stop": "⏹️ Stop Recording",
+            "clear": "Clear",
+            "close": "Close"
+        },
+        "metrics": {
+            "title": "Performance Metrics",
+            "sttLatency": "STT Latency:",
+            "translationLatency": "Translation Latency:",
+            "ttsLatency": "TTS Latency:",
+            "totalLatency": "Total Latency:",
+            "totalRequests": "Total Requests:",
+            "successRate": "Success Rate:"
+        },
+        "apiKeys": {
+            "title": "API Keys",
+            "openai": "OpenAI API Key",
+            "groq": "Groq API Key",
+            "deepgram": "Deepgram API Key",
+            "assemblyai": "AssemblyAI API Key",
+            "cartesia": "Cartesia API Key",
+            "elevenlabs": "ElevenLabs API Key",
+            "azure": "Azure API Key",
+            "google": "Google API Key",
+            "microsoft": "Microsoft API Key"
+        },
+        "results": {
+            "transcription": "Transcription:",
+            "translation": "Translation:"
+        },
+        "errors": {
+            "notInitialized": "Universal Translator not initialized",
+            "recordingFailed": "Failed to start recording",
+            "transcriptionFailed": "Speech recognition failed",
+            "translationFailed": "Translation failed",
+            "synthesisFailed": "Speech synthesis failed",
+            "apiKeyMissing": "API key required for selected service",
+            "microphonePermission": "Microphone permission required",
+            "unsupportedBrowser": "Browser not supported"
+        }
+    }
+}
