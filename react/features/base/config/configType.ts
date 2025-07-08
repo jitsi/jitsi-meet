@@ -172,7 +172,6 @@ export interface IConfig {
     _screenshotHistoryRegionUrl?: number;
     analytics?: {
         amplitudeAPPKey?: string;
-        amplitudeIncludeUTM?: boolean;
         blackListedEvents?: string[];
         disabled?: boolean;
         matomoEndpoint?: string;
