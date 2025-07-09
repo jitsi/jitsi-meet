@@ -714,6 +714,13 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
         host_module:context(host):hook("muc-config-form", function(event)
             table.insert(event.form, visitorsEnabledField);
         end);
+
+        if not room.jitsiMetadata then
+            room.jitsiMetadata = {};
+        end
+        room.jitsiMetadata.visitorsEnabled = true;
+        module:context(muc_domain_prefix..'.'..muc_domain_base)
+            :fire_event('room-metadata-changed', { room = room; });
     end
 end);
 
