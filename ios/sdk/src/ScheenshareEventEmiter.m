@@ -15,14 +15,33 @@
  */
 
 #import "ScheenshareEventEmiter.h"
-#import "JitsiMeet+Private.h"
-#import "ExternalAPI.h"
+#import <React/RCTLog.h>
+#import <React/RCTBridge.h>
 
 NSNotificationName const kBroadcastStartedNotification = @"iOS_BroadcastStarted";
 NSNotificationName const kBroadcastStoppedNotification = @"iOS_BroadcastStopped";
 
+static NSString * const toggleScreenShareAction = @"org.jitsi.meet.TOGGLE_SCREEN_SHARE";
+
+
 @implementation ScheenshareEventEmiter {
     CFNotificationCenterRef _notificationCenter;
+}
+
+RCT_EXPORT_MODULE();
+
++ (BOOL)requiresMainQueueSetup {
+    return YES;
+}
+
+- (NSDictionary *)constantsToExport {
+    return @{
+        @"TOGGLE_SCREEN_SHARE": toggleScreenShareAction,
+    };
+};
+
+- (NSArray<NSString *> *)supportedEvents {
+    return @[toggleScreenShareAction];
 }
 
 - (instancetype)init {
@@ -56,8 +75,10 @@ void broadcastStartedNotificationCallback(CFNotificationCenterRef center,
                                           CFStringRef name,
                                           const void *object,
                                           CFDictionaryRef userInfo) {
-    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
-    [externalAPI toggleScreenShare:true];
+    ScheenshareEventEmiter *self = (__bridge ScheenshareEventEmiter *)observer;
+    if (self.bridge) {        
+        [self sendEventWithName:toggleScreenShareAction body:@{@"enabled": @TRUE}];
+    }
 }
 
 void broadcastStoppedNotificationCallback(CFNotificationCenterRef center,
@@ -65,8 +86,10 @@ void broadcastStoppedNotificationCallback(CFNotificationCenterRef center,
                                           CFStringRef name,
                                           const void *object,
                                           CFDictionaryRef userInfo) {
-    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
-    [externalAPI toggleScreenShare:false];
+    ScheenshareEventEmiter *self = (__bridge ScheenshareEventEmiter *)observer;
+    if (self.bridge) {
+        [self sendEventWithName:toggleScreenShareAction body:@{@"enabled": @FALSE}];
+    }
 }
 
 @end
