@@ -1,12 +1,12 @@
 import { NativeModules } from 'react-native';
 
 /**
- * Determines if the ScreenShareEventEmitter native module is available.
+ * Determines if the ScheenshareEventEmiter native module is available.
  *
  * @returns {boolean} If yes {@code true} otherwise {@code false}.
  */
 export function isScreenShareAPIAvailable() {
-    const { ScreenShareEventEmitter } = NativeModules;
+    const { ScheenshareEventEmiter } = NativeModules;
 
-    return ScreenShareEventEmitter !== null;
+    return ScheenshareEventEmiter !== null;
 }
