@@ -16,7 +16,7 @@ import { IStore } from '../../app/types';
 import { removeLobbyChatParticipant } from '../../chat/actions.any';
 import { openDisplayNamePrompt } from '../../display-name/actions';
 import { isVpaasMeeting } from '../../jaas/functions';
-import { showErrorNotification, showNotification } from '../../notifications/actions';
+import { clearNotifications, showErrorNotification, showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { INotificationProps } from '../../notifications/types';
 import { hasDisplayName } from '../../prejoin/utils';
@@ -25,7 +25,7 @@ import LocalRecordingManager from '../../recording/components/Recording/LocalRec
 import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
 import { iAmVisitor } from '../../visitors/functions';
 import { overwriteConfig } from '../config/actions';
-import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection/actionTypes';
+import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, CONNECTION_WILL_CONNECT } from '../connection/actionTypes';
 import { connectionDisconnected, disconnect } from '../connection/actions';
 import { validateJwt } from '../jwt/functions';
 import { JitsiConferenceErrors, JitsiConferenceEvents, JitsiConnectionErrors } from '../lib-jitsi-meet';
@@ -98,6 +98,11 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONNECTION_FAILED:
         return _connectionFailed(store, next, action);
+
+    case CONNECTION_WILL_CONNECT:
+        // we are starting a new join process, let's clear the error notifications if any from any previous attempt
+        store.dispatch(clearNotifications());
+        break;
 
     case CONFERENCE_SUBJECT_CHANGED:
         return _conferenceSubjectChanged(store, next, action);
