@@ -3,7 +3,6 @@ import Firebase
 import JitsiMeetSDK
 
 @main
-
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
@@ -38,7 +37,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let vc = ViewController()
         self.window?.rootViewController = vc
-        
         jitsiMeet.showSplashScreen()
 
         self.window?.makeKeyAndVisible()

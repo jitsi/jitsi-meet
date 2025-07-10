@@ -44,7 +44,6 @@ class CustomOptionButton extends AbstractButton<ICustomOptionButton> {
         if (this.iconSrc?.includes('svg')) {
             iconComponent = (
                 <SvgCssUri
-
                     // @ts-ignore
                     height = { BaseTheme.spacing[4] }
                     uri = { this.iconSrc }
