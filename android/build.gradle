@@ -5,50 +5,49 @@ import org.gradle.util.VersionNumber
 // sub-projects/modules.
 
 buildscript {
+    ext {
+        kotlinVersion = "2.0.21"
+        buildToolsVersion = "34.0.0"
+        compileSdkVersion = 34
+        minSdkVersion    = 26
+        targetSdkVersion = 34
+        supportLibVersion = "28.0.0"
+        ndkVersion = "27.1.12297006"
+
+        // The Maven artifact groupId of the third-party react-native modules which
+        // Jitsi Meet SDK for Android depends on and which are not available in
+        // third-party Maven repositories so we have to deploy to a Maven repository
+        // of ours.
+        moduleGroupId = 'com.facebook.react'
+
+        // Maven repo where artifacts will be published
+        mavenRepo = System.env.MVN_REPO ?: ""
+        mavenUser = System.env.MVN_USER ?: ""
+        mavenPassword = System.env.MVN_PASSWORD ?: ""
+
+        // Libre build
+        libreBuild = (System.env.LIBRE_BUILD ?: "false").toBoolean()
+
+        googleServicesEnabled = project.file('app/google-services.json').exists() && !libreBuild
+
+        //React Native and Hermes Version
+        rnVersion = "0.77.2"
+
+        // Java dependencies
+        javaVersion = JavaVersion.VERSION_17
+        jvmToolchainVersion = 17
+        jvmTargetVersion = '17'
+    }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21'
-        classpath 'com.android.tools.build:gradle:8.5.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$rootProject.ext.kotlinVersion"
+        classpath 'com.android.tools.build:gradle:8.4.2'
         classpath 'com.google.gms:google-services:4.4.0'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
     }
-}
-
-ext {
-    kotlinVersion = "2.0.21"
-    buildToolsVersion = "34.0.0"
-    compileSdkVersion = 34
-    minSdkVersion    = 26
-    targetSdkVersion = 34
-    supportLibVersion = "28.0.0"
-    ndkVersion = "27.1.12297006"
-
-    // The Maven artifact groupId of the third-party react-native modules which
-    // Jitsi Meet SDK for Android depends on and which are not available in
-    // third-party Maven repositories so we have to deploy to a Maven repository
-    // of ours.
-    moduleGroupId = 'com.facebook.react'
-
-    // Maven repo where artifacts will be published
-    mavenRepo = System.env.MVN_REPO ?: ""
-    mavenUser = System.env.MVN_USER ?: ""
-    mavenPassword = System.env.MVN_PASSWORD ?: ""
-
-    // Libre build
-    libreBuild = (System.env.LIBRE_BUILD ?: "false").toBoolean()
-
-    googleServicesEnabled = project.file('app/google-services.json').exists() && !libreBuild
-
-    //React Native and Hermes Version
-    rnVersion = "0.77.2"
-
-    // Java dependencies
-    javaVersion = JavaVersion.VERSION_17
-    jvmToolchainVersion = 17
-    jvmTargetVersion = '17'
 }
 
 allprojects {

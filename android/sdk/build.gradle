@@ -137,8 +137,16 @@ android.libraryVariants.all { def variant ->
         def devEnabled = !targetName.toLowerCase().contains("release")
 
         // Run the bundler
+        // Use full path to node to avoid PATH issues in Gradle
+        def nodePath = System.getenv('NVM_BIN') ? "${System.getenv('NVM_BIN')}/node" : "node"
+
+        // Debug: Print the node path and environment
+        println "Using node path: ${nodePath}"
+        println "NVM_BIN: ${System.getenv('NVM_BIN')}"
+        println "Working directory: ${reactRoot}"
+
         commandLine(
-                "node",
+                nodePath,
                 "node_modules/react-native/scripts/bundle.js",
                 "--platform", "android",
                 "--dev", "${devEnabled}",
@@ -154,13 +162,13 @@ android.libraryVariants.all { def variant ->
     // GRADLE REQUIREMENTS (Gradle 8.7+ / AGP 8.5.0+):
     
     // This task requires explicit dependencies on resource tasks from all React Native modules
-    // due to Gradle's strict validation of task dependencies. 
-    
+    // due to Gradle's strict validation of task dependencies.
+
     // Without these dependencies,
     // builds will fail with errors like:
-    // "Task ':sdk:bundleReleaseJsAndAssets' uses the output of task ':react-native-amplitude:packageReleaseResources' 
+    // "Task ':sdk:bundleReleaseJsAndAssets' uses the output of task ':react-native-amplitude:packageReleaseResources'
     // without declaring a dependency on it."
-        
+
     // The automatic dependency resolution below ensures all required resource tasks are properly
     // declared as dependencies before this task executes.
 
@@ -173,7 +181,7 @@ android.libraryVariants.all { def variant ->
             ) {
                 [
                     "packageReleaseResources",
-                    "generateReleaseResValues", 
+                    "generateReleaseResValues",
                     "generateReleaseResources",
                     "generateReleaseBuildConfig",
                     "processReleaseManifest",
@@ -191,13 +199,22 @@ android.libraryVariants.all { def variant ->
                     "processReleaseJavaRes",
                     "prepareReleaseArtProfile",
                     "copyReleaseJniLibsProjectOnly",
-                    "extractDeepLinksRelease"
+                    "extractDeepLinksRelease",
+                    "createFullJarRelease",
+                    "generateReleaseLintModel",
+                    "writeReleaseLintModelMetadata",
+                    "generateReleaseLintVitalModel",
+                    "lintVitalAnalyzeRelease",
+                    "lintReportRelease",
+                    "lintAnalyzeRelease",
+                    "lintReportDebug",
+                    "lintAnalyzeDebug"
                 ].each { taskName ->
                     if (subproject.tasks.findByName(taskName)) {
                         currentBundleTask.dependsOn(subproject.tasks.named(taskName))
                     }
                 }
-                
+
                 // Also depend on the main build task to ensure all sub-tasks are completed
                 if (subproject.tasks.findByName("build")) {
                     currentBundleTask.dependsOn(subproject.tasks.named("build"))
