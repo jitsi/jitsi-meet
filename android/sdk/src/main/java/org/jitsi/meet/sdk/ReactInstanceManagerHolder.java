@@ -33,7 +33,6 @@ import com.facebook.react.uimanager.ViewManager;
 import com.oney.WebRTCModule.EglUtils;
 import com.oney.WebRTCModule.WebRTCModuleOptions;
 
-import org.devio.rn.splashscreen.SplashScreenModule;
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 import org.webrtc.EglBase;
 
@@ -68,7 +67,6 @@ class ReactInstanceManagerHolder {
                 new JavaScriptSandboxModule(reactContext),
                 new LocaleDetector(reactContext),
                 new LogBridgeModule(reactContext),
-                new SplashScreenModule(reactContext),
                 new PictureInPictureModule(reactContext),
                 new ProximityModule(reactContext),
                 new org.jitsi.meet.sdk.net.NAT64AddrInfoModule(reactContext)));
@@ -90,7 +88,7 @@ class ReactInstanceManagerHolder {
             new com.reactnativecommunity.asyncstorage.AsyncStoragePackage(),
             new com.ocetnik.timer.BackgroundTimerPackage(),
             new com.calendarevents.RNCalendarEventsPackage(),
-            new com.corbt.keepawake.KCKeepAwakePackage(),
+            new com.sayem.keepawake.KCKeepAwakePackage(),
             new com.facebook.react.shell.MainReactPackage(),
             new com.reactnativecommunity.clipboard.ClipboardPackage(),
             new com.reactnativecommunity.netinfo.NetInfoPackage(),
@@ -110,6 +108,7 @@ class ReactInstanceManagerHolder {
             new com.th3rdwave.safeareacontext.SafeAreaContextPackage(),
             new com.horcrux.svg.SvgPackage(),
             new org.wonday.orientation.OrientationPackage(),
+            new com.splashview.SplashViewPackage(),
             new ReactPackageAdapter() {
                 @Override
                 public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
@@ -133,7 +132,7 @@ class ReactInstanceManagerHolder {
 
         // GiphyReactNativeSdkPackage
         try {
-            Class<?> giphyPackageClass = Class.forName("com.giphyreactnativesdk.GiphyReactNativeSdkPackage");
+            Class<?> giphyPackageClass = Class.forName("com.giphyreactnativesdk.RTNGiphySdkPackage");
             Constructor<?> constructor = giphyPackageClass.getConstructor();
             packages.add((ReactPackage)constructor.newInstance());
         } catch (Exception e) {

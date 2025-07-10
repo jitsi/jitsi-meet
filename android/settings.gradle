@@ -1,5 +1,3 @@
-rootProject.name = 'jitsi-meet'
-
 include ':app', ':sdk'
 
 include ':react-native-amplitude'
@@ -29,7 +27,7 @@ project(':react-native-google-signin').projectDir = new File(rootProject.project
 include ':react-native-immersive-mode'
 project(':react-native-immersive-mode').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-immersive-mode/android')
 include ':react-native-keep-awake'
-project(':react-native-keep-awake').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-keep-awake/android')
+project(':react-native-keep-awake').projectDir = new File(rootProject.projectDir, '../node_modules/@sayem314/react-native-keep-awake/android')
 include ':react-native-orientation-locker'
 project(':react-native-orientation-locker').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-orientation-locker/android')
 include ':react-native-pager-view'
@@ -44,8 +42,8 @@ include ':react-native-slider'
 project(':react-native-slider').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/slider/android')
 include ':react-native-sound'
 project(':react-native-sound').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-sound/android')
-include ':react-native-splash-screen'
-project(':react-native-splash-screen').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-splash-screen/android')
+include ':react-native-splash-view'
+project(':react-native-splash-view').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-splash-view/android')
 include ':react-native-svg'
 project(':react-native-svg').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-svg/android')
 include ':react-native-video'
