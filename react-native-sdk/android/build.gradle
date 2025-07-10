@@ -5,9 +5,9 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:8.4.2'
+    classpath "com.android.tools.build:gradle:$rootProject.ext.gradlePluginVersion"
   }
-  namespace 'org.jitsi.meet.rnsdk'
+  namespace 'org.jitsi.meet.reactnativesdk'
 }
 
 def isNewArchitectureEnabled() {

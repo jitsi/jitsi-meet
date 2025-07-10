@@ -7,6 +7,7 @@ import org.gradle.util.VersionNumber
 buildscript {
     ext {
         kotlinVersion = "2.0.21"
+        gradlePluginVersion = "8.4.2"
         buildToolsVersion = "34.0.0"
         compileSdkVersion = 34
         minSdkVersion    = 26
@@ -44,7 +45,7 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$rootProject.ext.kotlinVersion"
-        classpath 'com.android.tools.build:gradle:8.4.2'
+        classpath "com.android.tools.build:gradle:$rootProject.ext.gradlePluginVersion"
         classpath 'com.google.gms:google-services:4.4.0'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
     }

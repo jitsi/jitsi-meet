@@ -65,7 +65,7 @@
         "@react-native-community/slider": "0.0.0",
         "@react-native-google-signin/google-signin": "0.0.0",
         "@sayem314/react-native-keep-awake": "0.0.0",
-        "react-native": "*",
+        "react-native": "0.0.0",
         "react": "*",
         "react-native-background-timer": "0.0.0",
         "react-native-calendar-events": "0.0.0",
