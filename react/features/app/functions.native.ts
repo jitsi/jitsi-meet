@@ -5,7 +5,6 @@ import { toState } from '../base/redux/functions';
 import { getServerURL } from '../base/settings/functions.native';
 
 export * from './functions.any';
-import logger from './logger';
 
 /**
  * Retrieves the default URL for the app. This can either come from a prop to
@@ -39,18 +38,3 @@ export function getName() {
 export function getSdkBundlePath() {
     return NativeModules.AppInfo.sdkBundlePath;
 }
-
-/**
- * This is a dummy implementation for compatibility with web. It executes the passed handler right away.
- *
- * @param {Function} handler - The callback function to execute.
- * @returns {void}
- */
-export function executeAfterLoad(handler: () => void) {
-    try {
-        handler();
-    } catch (error) {
-        logger.error('Error executing handler after load:', error);
-    }
-}
-
