@@ -1,4 +1,4 @@
-import { executeAfterLoad } from '../app/functions';
+import { executeAfterLoad } from '../app/functions.web';
 import { IReduxState } from '../app/types';
 import { URI_PROTOCOL_PATTERN } from '../base/util/uri';
 

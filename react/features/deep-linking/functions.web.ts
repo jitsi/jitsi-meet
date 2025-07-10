@@ -8,7 +8,7 @@ import { isVpaasMeeting } from '../jaas/functions';
 import DeepLinkingDesktopPage from './components/DeepLinkingDesktopPage';
 import DeepLinkingMobilePage from './components/DeepLinkingMobilePage';
 import NoMobileApp from './components/NoMobileApp';
-import { _openDesktopApp } from './openDesktopApp';
+import { _openDesktopApp } from './openDesktopApp.web';
 
 /**
  * Generates a deep linking URL based on the current window URL.
