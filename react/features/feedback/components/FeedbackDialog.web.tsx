@@ -10,7 +10,6 @@ import { IJitsiConference } from '../../base/conference/reducer';
 import { isMobileBrowser } from '../../base/environment/utils';
 import Icon from '../../base/icons/components/Icon';
 import { IconFavorite, IconFavoriteSolid } from '../../base/icons/svg';
-import { withPixelLineHeight } from '../../base/styles/functions.web';
 import Dialog from '../../base/ui/components/web/Dialog';
 import Input from '../../base/ui/components/web/Input';
 import { cancelFeedback, submitFeedback } from '../actions.web';
@@ -31,7 +30,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         ratingLabel: {
-            ...withPixelLineHeight(theme.typography.bodyShortBold),
+            ...theme.typography.bodyShortBold,
             color: theme.palette.text01,
             marginBottom: theme.spacing(2),
             height: '20px'
@@ -61,7 +60,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         title: {
-            fontSize: '16px'
+            fontSize: '1rem'
         },
 
         details: {

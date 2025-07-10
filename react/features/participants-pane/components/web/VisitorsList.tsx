@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { admitMultiple, goLive } from '../../../visitors/actions';
 import {
     getPromotionRequests,
@@ -33,7 +32,7 @@ const useStyles = makeStyles()(theme => {
             color: theme.palette.text01,
             display: 'flex',
             padding: '12px 16px',
-            ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+            ...theme.typography.bodyShortRegularLarge,
 
             '&:first-child': {
                 marginTop: '15px'
@@ -53,11 +52,11 @@ const useStyles = makeStyles()(theme => {
             justifyContent: 'space-between'
         },
         heading: {
-            ...withPixelLineHeight(theme.typography.bodyShortBold),
+            ...theme.typography.bodyShortBold,
             color: theme.palette.text02
         },
         link: {
-            ...withPixelLineHeight(theme.typography.labelBold),
+            ...theme.typography.labelBold,
             color: theme.palette.link01,
             cursor: 'pointer'
         }
