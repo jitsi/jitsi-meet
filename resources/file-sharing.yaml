@@ -72,7 +72,7 @@ paths:
               properties:
                 metadata:
                   type: string
-                  description: The metadata of the document in JSON format.
+                  description: The metadata of the document in JSON format. Must conform to FileMetadata schema.
                   example: '{"conferenceFullName":"myroomname@conference.tenant.jitsi-meet.example.com","timestamp":1741017572040,"fileSize":1042157,"fileId":"e393a7e5-e790-4f43-836e-d27238201904"}'
                 file:
                   type: string
@@ -162,6 +162,34 @@ paths:
           description: OK
 components:
   schemas:
+    FileMetadata:
+      type: object
+      required:
+        - fileId
+        - conferenceFullName
+        - timestamp
+        - fileSize
+      properties:
+        fileId:
+          type: string
+          format: uuid
+          description: Client-generated unique identifier for the file
+          example: e393a7e5-e790-4f43-836e-d27238201904
+        conferenceFullName:
+          type: string
+          description: Full name of the conference/meeting room
+          example: myroomname@conference.tenant.jitsi-meet.example.com
+        timestamp:
+          type: integer
+          format: int64
+          description: Upload timestamp in milliseconds since epoch
+          example: 1741017572040
+        fileSize:
+          type: integer
+          format: int64
+          description: Size of the file in bytes
+          example: 1042157
+      description: Metadata structure that must be sent as JSON string in the metadata field
     Payload:
       type: object
       properties:

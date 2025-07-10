@@ -13,6 +13,11 @@ local JSON_TYPE_REMOVE_FILE = 'remove';
 local JSON_TYPE_LIST_FILES = 'list';
 local NICK_NS = 'http://jabber.org/protocol/nick';
 
+-- this is the main virtual host of the main prosody that this vnode serves
+local main_domain = module:get_option_string('main_domain');
+-- only the visitor prosody has main_domain setting
+local is_visitor_prosody = main_domain ~= nil;
+
 local muc_component_host = module:get_option_string('muc_component');
 if muc_component_host == nil then
     module:log('error', 'No muc_component specified. No muc to operate on!');
@@ -94,34 +99,13 @@ function on_message(event)
         end
         msg_obj.conferenceFullName = internal_room_jid_match_rewrite(room.jid);
 
-        if not room.jitsi_shared_files then
-            room.jitsi_shared_files = {};
-        end
-
-        room.jitsi_shared_files[msg_obj.fileId] = msg_obj;
-
-        local json_msg, error = json.encode({
-            type = FILE_SHARING_IDENTITY_TYPE,
-            event = JSON_TYPE_ADD_FILE,
-            file = msg_obj
+        module:context(muc_domain_base):fire_event('jitsi-filesharing-add', {
+            room = room; file = msg_obj; actor = occupant.nick;
         });
 
-        if not json_msg then
-            module:log('error', 'skip sending add request room:%s error:%s', room.jid, error);
-            return false
-        end
-
-        local stanza = st.message({ from = module.host; }):tag('json-message', { xmlns = 'http://jitsi.org/jitmeet' })
-            :text(json_msg):up();
-
-        -- send add file to all occupants except jicofo and sender
-        for _, room_occupant in room:each_occupant() do
-            if not is_admin(room_occupant.bare_jid) and room_occupant.nick ~= occupant.nick then
-                local to_send = st.clone(stanza);
-                to_send.attr.to = room_occupant.jid;
-                module:send(to_send);
-            end
-        end
+        module:context(muc_domain_base):fire_event('jitsi-filesharing-updated', {
+            room = room;
+        });
 
         return true;
     elseif message.attr.type == JSON_TYPE_REMOVE_FILE then
@@ -130,34 +114,13 @@ function on_message(event)
             return true;
         end
 
-        if not room.jitsi_shared_files then
-            return;
-        end
-
-        room.jitsi_shared_files[message.attr.fileId] = nil;
-
-        local json_msg, error = json.encode({
-            type = FILE_SHARING_IDENTITY_TYPE,
-            event = JSON_TYPE_REMOVE_FILE,
-            fileId = message.attr.fileId
+        module:context(muc_domain_base):fire_event('jitsi-filesharing-remove', {
+            room = room; id = message.attr.fileId; actor = occupant.nick;
         });
 
-        if not json_msg then
-            module:log('error', 'skip sending remove request room:%s error:%s', room.jid, error);
-            return false
-        end
-
-        local stanza = st.message({ from = module.host; }):tag('json-message', { xmlns = 'http://jitsi.org/jitmeet' })
-            :text(json_msg):up();
-
-        -- send remove file to all occupants except jicofo and sender
-        for _, room_occupant in room:each_occupant() do
-            if not is_admin(room_occupant.bare_jid) and room_occupant.nick ~= occupant.nick then
-                local to_send = st.clone(stanza);
-                to_send.attr.to = room_occupant.jid;
-                module:send(to_send);
-            end
-        end
+        module:context(muc_domain_base):fire_event('jitsi-filesharing-updated', {
+            room = room;
+        });
 
         return true;
     else
@@ -202,7 +165,81 @@ end);
 module:hook('message/host', on_message);
 
 process_host_module(muc_domain_base, function(host_module, host)
-    module:context(host_module.host):fire_event('jitsi-add-identity', {
+    module:context(muc_domain_base):fire_event('jitsi-add-identity', {
         name = FILE_SHARING_IDENTITY_TYPE; host = module.host;
     });
+    module:context(muc_domain_base):hook('jitsi-filesharing-add', function(event)
+        local actor, file, room = event.actor, event.file, event.room;
+
+        if not room.jitsi_shared_files then
+            room.jitsi_shared_files = {};
+        end
+
+        room.jitsi_shared_files[file.fileId] = file;
+
+        local json_msg, error = json.encode({
+            type = FILE_SHARING_IDENTITY_TYPE,
+            event = JSON_TYPE_ADD_FILE,
+            file = file
+        });
+
+        if not json_msg then
+            module:log('error', 'skip sending add request room:%s error:%s', room.jid, error);
+            return false
+        end
+
+        local stanza = st.message({ from = module.host; }):tag('json-message', { xmlns = 'http://jitsi.org/jitmeet' })
+            :text(json_msg):up();
+
+        -- send add file to all occupants except jicofo and sender
+        -- if this is visitor prosody send it only to visitors
+        for _, room_occupant in room:each_occupant() do
+            local send_event = not is_admin(room_occupant.bare_jid) and room_occupant.nick ~= actor;
+            if is_visitor_prosody then
+                send_event = room_occupant.role == 'visitor';
+            end
+            if send_event then
+                local to_send = st.clone(stanza);
+                to_send.attr.to = room_occupant.jid;
+                module:send(to_send);
+            end
+        end
+    end);
+    module:context(muc_domain_base):hook('jitsi-filesharing-remove', function(event)
+        local actor, id, room = event.actor, event.id, event.room;
+
+        if not room.jitsi_shared_files then
+            return;
+        end
+
+        room.jitsi_shared_files[id] = nil;
+
+        local json_msg, error = json.encode({
+            type = FILE_SHARING_IDENTITY_TYPE,
+            event = JSON_TYPE_REMOVE_FILE,
+            fileId = id
+        });
+
+        if not json_msg then
+            module:log('error', 'skip sending remove request room:%s error:%s', room.jid, error);
+            return false
+        end
+
+        local stanza = st.message({ from = module.host; }):tag('json-message', { xmlns = 'http://jitsi.org/jitmeet' })
+            :text(json_msg):up();
+
+        -- send remove file to all occupants except jicofo and sender
+        -- if this is visitor prosody send it only to visitors
+        for _, room_occupant in room:each_occupant() do
+            local send_event = not is_admin(room_occupant.bare_jid) and room_occupant.nick ~= actor;
+            if is_visitor_prosody then
+                send_event = room_occupant.role == 'visitor';
+            end
+            if send_event then
+                local to_send = st.clone(stanza);
+                to_send.attr.to = room_occupant.jid;
+                module:send(to_send);
+            end
+        end
+    end);
 end);

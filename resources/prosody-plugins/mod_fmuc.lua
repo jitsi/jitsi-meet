@@ -16,6 +16,7 @@ local new_id = require 'util.id'.medium;
 local filters = require 'util.filters';
 local array = require 'util.array';
 local set = require 'util.set';
+local json = require 'cjson.safe';
 
 local util = module:require 'util';
 local is_admin = util.is_admin;
@@ -27,6 +28,7 @@ local get_focus_occupant = util.get_focus_occupant;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local presence_check_status = util.presence_check_status;
 local respond_iq_result = util.respond_iq_result;
+local table_compare = util.table_compare;
 
 local PARTICIPANT_PROP_RAISE_HAND = 'jitsi_participant_raisedHand';
 local PARTICIPANT_PROP_REQUEST_TRANSCRIPTION = 'jitsi_participant_requestingTranscription';
@@ -669,6 +671,29 @@ local function iq_from_main_handler(event)
                 and room.moderators_list:contains(jid.resource(o.nick)) then
                 room:set_affiliation(true, o.bare_jid, 'owner');
             end
+        end
+    end
+
+    local files = node:get_child('files');
+    if files then
+        local received_files = {};
+        for _, child in ipairs(files.tags) do
+            if child.name == 'file' then
+                received_files[child.attr.id] = json.decode(child:get_text());
+            end
+        end
+
+        -- fire events so file sharing component will add/remove files and will notify clients
+        local removed, added = table_compare(room.jitsi_shared_files or {}, received_files)
+        for _, id in ipairs(removed) do
+            module:context(local_domain):fire_event('jitsi-filesharing-remove', {
+                room = room; id = id;
+            });
+        end
+        for _, id in ipairs(added) do
+            module:context(local_domain):fire_event('jitsi-filesharing-add', {
+                room = room; file = received_files[id];
+            });
         end
     end
 

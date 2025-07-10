@@ -616,6 +616,28 @@ local function table_add(t1, t2)
     end
 end
 
+-- Returns as a first result the removed items and as a second the added items
+local function table_compare(old_table, new_table)
+    local removed = {}
+    local added = {}
+
+    -- Find removed items (in old but not in new)
+    for id, _ in pairs(old_table) do
+        if new_table[id] == nil then
+            table.insert(removed, id)
+        end
+    end
+
+    -- Find added items (in new but not in old)
+    for id, _ in pairs(new_table) do
+        if old_table[id] == nil then
+            table.insert(added, id)
+        end
+    end
+
+    return removed, added
+end
+
 -- Splits a string using delimiter
 function split_string(str, delimiter)
     str = str .. delimiter;
@@ -697,6 +719,7 @@ return {
     starts_with = starts_with;
     starts_with_one_of = starts_with_one_of;
     table_add = table_add;
+    table_compare = table_compare;
     table_shallow_copy = table_shallow_copy;
     table_find = table_find;
 };

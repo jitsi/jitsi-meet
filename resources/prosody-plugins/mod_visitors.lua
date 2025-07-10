@@ -16,6 +16,7 @@ local is_admin = util.is_admin;
 local presence_check_status = util.presence_check_status;
 local process_host_module = util.process_host_module;
 local is_transcriber_jigasi = util.is_transcriber_jigasi;
+local json = require 'cjson.safe';
 
 local MUC_NS = 'http://jabber.org/protocol/muc';
 
@@ -78,6 +79,17 @@ local function send_visitors_iq(conference_service, room, type)
         end
 
         visitors_iq:up();
+
+        -- files that are shared in the room
+        if room.jitsi_shared_files then
+            visitors_iq:tag('files', { xmlns = 'jitsi:visitors' });
+            for k, v in pairs(room.jitsi_shared_files) do
+                visitors_iq:tag('file', {
+                    id = k
+                }):text(json.encode(v)):up();
+            end
+            visitors_iq:up();
+        end
     end
 
     visitors_iq:up();
@@ -370,23 +382,17 @@ process_host_module(main_muc_component_config, function(host_module, host)
     end, -2);
 end);
 
-module:hook('jitsi-lobby-enabled', function(event)
+local function update_vnodes_for_room(event)
     local room = event.room;
-    if visitors_nodes[room.jid] then
-        -- we need to update all vnodes
-        local vnodes = visitors_nodes[room.jid].nodes;
-        for conference_service in pairs(vnodes) do
-            send_visitors_iq(conference_service, room, 'update');
+        if visitors_nodes[room.jid] then
+            -- we need to update all vnodes
+            local vnodes = visitors_nodes[room.jid].nodes;
+            for conference_service in pairs(vnodes) do
+                send_visitors_iq(conference_service, room, 'update');
+            end
         end
-    end
-end);
-module:hook('jitsi-lobby-disabled', function(event)
-local room = event.room;
-    if visitors_nodes[room.jid] then
-        -- we need to update all vnodes
-        local vnodes = visitors_nodes[room.jid].nodes;
-        for conference_service in pairs(vnodes) do
-            send_visitors_iq(conference_service, room, 'update');
-        end
-    end
-end);
+end
+
+module:hook('jitsi-lobby-enabled', update_vnodes_for_room);
+module:hook('jitsi-lobby-disabled', update_vnodes_for_room);
+module:hook('jitsi-filesharing-updated', update_vnodes_for_room);
