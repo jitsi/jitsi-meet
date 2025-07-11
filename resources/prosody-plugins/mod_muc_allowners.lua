@@ -23,7 +23,7 @@ load_config();
 -- List of the bare_jids of all occupants that are currently joining (went through pre-join) and will be promoted
 -- as moderators. As pre-join (where added) and joined event (where removed) happen one after another this list should
 -- have length of 1
-local joining_moderator_participants = {};
+local joining_moderator_participants = module:shared('moderators/joining_moderator_participants');
 
 module:hook("muc-room-created", function(event)
     local room = event.room;
