@@ -18,6 +18,7 @@ package org.jitsi.meet.sdk;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Application;
 
 import androidx.annotation.Nullable;
 
@@ -207,9 +208,9 @@ class ReactInstanceManagerHolder {
      * time. All {@code ReactRootView} instances will be tied to the one and
      * only {@code ReactInstanceManager}.
      *
-     * @param activity {@code Activity} current running Activity.
+     * @param app {@code Application}
      */
-    static void initReactInstanceManager(Activity activity) {
+    static void initReactInstanceManager(Application app) {
         if (reactInstanceManager != null) {
             return;
         }
@@ -231,8 +232,8 @@ class ReactInstanceManagerHolder {
 
         reactInstanceManager
             = ReactInstanceManager.builder()
-                .setApplication(activity.getApplication())
-                .setCurrentActivity(activity)
+                .setApplication(app)
+                .setCurrentActivity(null)
                 .setBundleAssetName("index.android.bundle")
                 .setJSMainModulePath("index.android")
                 .setJavaScriptExecutorFactory(new HermesExecutorFactory())
