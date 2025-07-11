@@ -35,6 +35,11 @@ export default {
         width: 352
     },
 
+    hangupButton: {
+        marginTop: BaseTheme.spacing[3],
+        width: 352
+    },
+
     joiningMessage: {
         color: BaseTheme.palette.text01,
         marginHorizontal: BaseTheme.spacing[3],

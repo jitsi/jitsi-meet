@@ -67,7 +67,7 @@ const useStyles = makeStyles()(theme => {
             width: '100%'
         },
         spinner: {
-            margin: '8px'
+            margin: theme.spacing(4),
         }
     };
 });
@@ -98,10 +98,10 @@ export default function VisitorsQueue() {
                     <LoadingIndicator size = 'large' />
                 </div>
                 <Button
-                    labelKey = 'toolbar.accessibilityLabel.hangup'
+                    labelKey = 'toolbar.accessibilityLabel.leaveConference'
                     onClick = { onHangupClick }
-                    testId = 'toolbar.accessibilityLabel.hangup'
-                    type = 'secondary' />
+                    testId = 'toolbar.accessibilityLabel.leaveConference'
+                    type = 'destructive' />
             </div>
         </div>
     </div>);

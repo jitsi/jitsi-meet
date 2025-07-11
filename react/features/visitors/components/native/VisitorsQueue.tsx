@@ -31,10 +31,11 @@ export default function VisitorsQueue() {
                 color = { BaseTheme.palette.icon01 }
                 style = { styles.loadingIndicator } />
             <Button
-                accessibilityLabel = 'toolbar.accessibilityLabel.hangup'
-                labelKey = 'toolbar.accessibilityLabel.hangup'
+                accessibilityLabel = 'toolbar.accessibilityLabel.leaveConference'
+                labelKey = 'toolbar.accessibilityLabel.leaveConference'
                 onClick = { onHangupClick }
-                type = { BUTTON_TYPES.TERTIARY } />
+                style = { styles.hangupButton }
+                type = { BUTTON_TYPES.DESTRUCTIVE } />
         </View>
     );
 }
