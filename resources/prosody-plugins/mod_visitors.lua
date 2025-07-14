@@ -103,7 +103,7 @@ local function send_visitors_iq(conference_service, room, type)
 end
 
 local function filter_stanza_nick_if_needed(stanza, room)
-    if stanza.name ~= 'presence' or stanza.attr.type == 'error' or stanza.attr.type == 'unavailable' then
+    if not stanza or stanza.name ~= 'presence' or stanza.attr.type == 'error' or stanza.attr.type == 'unavailable' then
         return stanza;
     end
 
@@ -117,6 +117,23 @@ local function filter_stanza_nick_if_needed(stanza, room)
     end
 
     stanza:remove_children('nick', NICK_NS);
+    stanza:remove_children('email');
+    stanza:tag('email'):text('guest@guest.com'):up();  -- Add new email with guest value
+    -- Remove email from identity/user element (this is what you actually need)
+    local identity = stanza:get_child('identity');
+    if identity then
+        local user = identity:get_child('user');
+        local name = identity:get_child('name');
+        if user then
+            user:remove_children('email');  -- Remove email with no namespace
+            user:tag('email'):text('guest@guest.com'):up();  -- Add new email with guest value
+        end
+
+        if name then
+            name:remove_children('name');  -- Remove name with no namespace
+            name:tag('name'):text('Guest'):up();  -- Add new name with guest value
+        end
+    end
 
     return stanza;
 end
