@@ -157,7 +157,7 @@ function start_av_moderation(room, mediaType, occupant)
         room.av_moderation = {};
         room.av_moderation_actors = {};
     end
-    room.av_moderation[mediaType] = array{};
+    room.av_moderation[mediaType] = array{ internal_room_jid_match_rewrite(occupant.nick) };
 
     -- We want to set startMuted policy in metadata, in case of new participants are joining to respect
     -- it, that will be enforced by jicofo
@@ -358,7 +358,7 @@ function occupant_joined(event)
         -- from allowners module) but iterating over room occupants returns the correct role
         for _, room_occupant in room:each_occupant() do
             -- if moderator send the whitelist
-            if room_occupant.nick == occupant.nick and room_occupant.role == 'moderator'  then
+            if (room_occupant.nick == occupant.nick and room_occupant.role == 'moderator') or ends_with(room_occupant.nick, '/focus') then
                 notify_whitelist_change(room_occupant.jid, false, room);
             end
         end
