@@ -113,7 +113,7 @@ local function filter_stanza_nick_if_needed(stanza, room)
     end
 
     if DEBUG then
-        module:log('debug', 'filter_stanza_out_node: removing nick from stanza %s', stanza.attr.from);
+        module:log('debug', 'filter_stanza_nick_if_needed: removing nick from stanza %s', stanza.attr.from);
     end
 
     stanza:remove_children('nick', NICK_NS);
