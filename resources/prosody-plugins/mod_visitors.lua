@@ -123,6 +123,7 @@ local function filter_stanza_nick_if_needed(stanza, room)
 
     stanza:remove_children('nick', NICK_NS);
     stanza:remove_children('email');
+    stanza:remove_children('stats-id');
     stanza:tag('email'):text('guest@guest.com'):up();  -- Add new email with guest value
     -- Remove email from identity/user element (this is what you actually need)
     local identity = stanza:get_child('identity');
@@ -132,6 +133,7 @@ local function filter_stanza_nick_if_needed(stanza, room)
         if user then
             user:remove_children('email');  -- Remove email with no namespace
             user:tag('email'):text('guest@guest.com'):up();  -- Add new email with guest value
+            user:remove_children('name');
         end
 
         if name then
