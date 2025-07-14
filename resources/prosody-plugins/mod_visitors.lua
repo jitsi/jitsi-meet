@@ -12,6 +12,7 @@ local st = require 'util.stanza';
 local jid = require 'util.jid';
 local new_id = require 'util.id'.medium;
 local util = module:require 'util';
+local filter_identity_from_presence = util.filter_identity_from_presence;
 local is_admin = util.is_admin;
 local presence_check_status = util.presence_check_status;
 local process_host_module = util.process_host_module;
@@ -21,7 +22,6 @@ local json = require 'cjson.safe';
 -- Debug flag
 local DEBUG = false;
 
-local NICK_NS = 'http://jabber.org/protocol/nick';
 local MUC_NS = 'http://jabber.org/protocol/muc';
 
 -- required parameter for custom muc component prefix, defaults to 'conference'
@@ -113,33 +113,8 @@ local function filter_stanza_nick_if_needed(stanza, room)
     end
 
     -- if hideDisplayNameForGuests we want to drop any display name from the presence stanza
-    if not room or room._data.hideDisplayNameForGuests ~= true then
-        return stanza;
-    end
-
-    if DEBUG then
-        module:log('debug', 'filter_stanza_nick_if_needed: removing nick from stanza %s', stanza.attr.from);
-    end
-
-    stanza:remove_children('nick', NICK_NS);
-    stanza:remove_children('email');
-    stanza:remove_children('stats-id');
-    stanza:tag('email'):text('guest@guest.com'):up();  -- Add new email with guest value
-    -- Remove email from identity/user element (this is what you actually need)
-    local identity = stanza:get_child('identity');
-    if identity then
-        local user = identity:get_child('user');
-        local name = identity:get_child('name');
-        if user then
-            user:remove_children('email');  -- Remove email with no namespace
-            user:tag('email'):text('guest@guest.com'):up();  -- Add new email with guest value
-            user:remove_children('name');
-        end
-
-        if name then
-            name:remove_children('name');  -- Remove name with no namespace
-            name:tag('name'):text('Guest'):up();  -- Add new name with guest value
-        end
+    if room and room._data.hideDisplayNameForGuests == true then
+        return filter_identity_from_presence(stanza);
     end
 
     return stanza;

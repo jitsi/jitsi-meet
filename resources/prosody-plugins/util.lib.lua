@@ -685,11 +685,36 @@ local function is_admin(_jid)
     return false;
 end
 
+-- Filter out identity information (nick name, email, etc) from a presence stanza.
+local function filter_identity_from_presence(stanza)
+    stanza:remove_children('nick', 'http://jabber.org/protocol/nick');
+    stanza:remove_children('email');
+    stanza:remove_children('stats-id');
+    stanza:tag('email'):text('guest@guest.com'):up();
+    local identity = stanza:get_child('identity');
+    if identity then
+        local user = identity:get_child('user');
+        local name = identity:get_child('name');
+        if user then
+            user:remove_children('email');
+            user:tag('email'):text('guest@guest.com'):up();
+            user:remove_children('name');
+        end
+        if name then
+            name:remove_children('name');  -- Remove name with no namespace
+            name:tag('name'):text('Guest'):up();  -- Add new name with guest value
+        end
+    end
+
+    return stanza;
+end
+
 return {
     OUTBOUND_SIP_JIBRI_PREFIXES = OUTBOUND_SIP_JIBRI_PREFIXES;
     INBOUND_SIP_JIBRI_PREFIXES = INBOUND_SIP_JIBRI_PREFIXES;
     RECORDER_PREFIXES = RECORDER_PREFIXES;
     extract_subdomain = extract_subdomain;
+    filter_identity_from_presence = filter_identity_from_presence;
     is_admin = is_admin;
     is_feature_allowed = is_feature_allowed;
     is_jibri = is_jibri;
