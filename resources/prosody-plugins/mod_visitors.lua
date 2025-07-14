@@ -17,7 +17,12 @@ local presence_check_status = util.presence_check_status;
 local process_host_module = util.process_host_module;
 local is_transcriber_jigasi = util.is_transcriber_jigasi;
 local json = require 'cjson.safe';
+local socket = require "socket";
 
+-- Debug flag
+local DEBUG = false;
+
+local NICK_NS = 'http://jabber.org/protocol/nick';
 local MUC_NS = 'http://jabber.org/protocol/muc';
 
 -- required parameter for custom muc component prefix, defaults to 'conference'
@@ -95,6 +100,25 @@ local function send_visitors_iq(conference_service, room, type)
     visitors_iq:up();
 
     module:send(visitors_iq);
+end
+
+local function filter_stanza_nick_if_needed(stanza, room)
+    if stanza.name ~= 'presence' or stanza.attr.type == 'error' or stanza.attr.type == 'unavailable' then
+        return stanza;
+    end
+
+    -- if hideDisplayNameForAll we want to drop any display name from the presence stanza
+    if not room or room._data.hideDisplayNameForAll ~= true then
+        return stanza;
+    end
+
+    if DEBUG then
+        module:log('debug', 'filter_stanza_out_node: removing nick from stanza %s', stanza.attr.from);
+    end
+
+    stanza:remove_children('nick', NICK_NS);
+
+    return stanza;
 end
 
 -- an event received from visitors component, which receives iqs from jicofo
@@ -206,7 +230,8 @@ end, 900);
 process_host_module(main_muc_component_config, function(host_module, host)
     -- detects presence change in a main participant and propagate it to the used visitor nodes
     host_module:hook('muc-occupant-pre-change', function (event)
-        local room, stanza, occupant = event.room, event.stanza, event.dest_occupant;
+        local room, stanzaEv, occupant = event.room, event.stanza, event.dest_occupant;
+        local stanza = filter_stanza_nick_if_needed(stanzaEv, room);
 
         -- filter focus and configured domains (used for jibri and transcribers)
         if is_admin(stanza.attr.from) or visitors_nodes[room.jid] == nil
@@ -227,7 +252,8 @@ process_host_module(main_muc_component_config, function(host_module, host)
 
     -- when a main participant leaves inform the visitor nodes
     host_module:hook('muc-occupant-left', function (event)
-        local room, stanza, occupant = event.room, event.stanza, event.occupant;
+        local room, stanzaEv, occupant = event.room, event.stanza, event.occupant;
+        local stanza = filter_stanza_nick_if_needed(stanzaEv, room);
 
         -- ignore configured domains (jibri and transcribers)
         if is_admin(occupant.bare_jid) or visitors_nodes[room.jid] == nil or visitors_nodes[room.jid].nodes == nil
@@ -270,7 +296,8 @@ process_host_module(main_muc_component_config, function(host_module, host)
 
     -- detects new participants joining main room and sending them to the visitor nodes
     host_module:hook('muc-occupant-joined', function (event)
-        local room, stanza, occupant = event.room, event.stanza, event.occupant;
+        local room, stanzaEv, occupant = event.room, event.stanza, event.occupant;
+        local stanza = filter_stanza_nick_if_needed(stanzaEv, room);
 
         -- filter focus, ignore configured domains (jibri and transcribers)
         if is_admin(stanza.attr.from) or visitors_nodes[room.jid] == nil
@@ -294,7 +321,8 @@ process_host_module(main_muc_component_config, function(host_module, host)
     end);
     -- forwards messages from main participants to vnodes
     host_module:hook('muc-occupant-groupchat', function(event)
-        local room, stanza, occupant = event.room, event.stanza, event.occupant;
+        local room, stanzaEv, occupant = event.room, event.stanza, event.occupant;
+        local stanza = filter_stanza_nick_if_needed(stanzaEv, room);
 
         -- filter sending messages from transcribers/jibris to visitors
         if not visitors_nodes[room.jid] then
@@ -314,7 +342,8 @@ process_host_module(main_muc_component_config, function(host_module, host)
     -- receiving messages from visitor nodes and forward them to local main participants
     -- and forward them to the rest of visitor nodes
     host_module:hook('muc-occupant-groupchat', function(event)
-        local occupant, room, stanza = event.occupant, event.room, event.stanza;
+        local occupant, room, stanzaEv = event.occupant, event.room, event.stanza;
+        local stanza = filter_stanza_nick_if_needed(stanzaEv, room);
         local to = stanza.attr.to;
         local from = stanza.attr.from;
         local from_vnode = jid.host(from);
