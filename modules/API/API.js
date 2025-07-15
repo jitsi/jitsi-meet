@@ -113,7 +113,10 @@ import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../react/features/rec
 import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
 import { startAudioScreenShareFlow, startScreenShareFlow } from '../../react/features/screen-share/actions';
 import { isScreenAudioSupported } from '../../react/features/screen-share/functions';
-import { toggleScreenshotCaptureSummary } from '../../react/features/screenshot-capture/actions';
+import {
+    openCameraCaptureDialog,
+    toggleScreenshotCaptureSummary
+} from '../../react/features/screenshot-capture/actions';
 import { isScreenshotCaptureEnabled } from '../../react/features/screenshot-capture/functions';
 import SettingsDialog from '../../react/features/settings/components/web/SettingsDialog';
 import { SETTINGS_TABS } from '../../react/features/settings/constants';
@@ -940,6 +943,12 @@ function initCommands() {
                     });
                 });
             break;
+        case 'capture-camera-picture' : {
+            const { cameraFacingMode } = request;
+
+            APP.store.dispatch(openCameraCaptureDialog(callback, cameraFacingMode));
+            break;
+        }
         case 'deployment-info':
             callback(APP.store.getState()['features/base/config'].deploymentInfo);
             break;

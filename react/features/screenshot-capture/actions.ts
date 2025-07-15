@@ -1,6 +1,8 @@
 import { IStore } from '../app/types';
+import { openDialog } from '../base/dialog/actions';
 import { getLocalJitsiDesktopTrack } from '../base/tracks/functions';
 
+import CameraCaptureDialog from './CameraCaptureDialog';
 import { SET_SCREENSHOT_CAPTURE } from './actionTypes';
 import { createScreenshotCaptureSummary } from './functions';
 import logger from './logger';
@@ -59,5 +61,22 @@ export function toggleScreenshotCaptureSummary(enabled: boolean) {
         }
 
         return Promise.resolve();
+    };
+}
+
+/**
+ * Opens {@code CameraCaptureDialog}.
+ *
+ * @param {Function} callback - The callback to execute on picture taken.
+ * @param {string} cameraFacingMode - The camera facing mode.
+ * @returns {Function}
+ */
+export function openCameraCaptureDialog(callback: Function, cameraFacingMode: string) {
+    return (dispatch: IStore['dispatch']) => {
+
+        dispatch(openDialog(CameraCaptureDialog, {
+            callback,
+            cameraFacingMode
+        }));
     };
 }

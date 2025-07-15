@@ -300,6 +300,15 @@
         "alreadySharedVideoTitle": "Only one shared video is allowed at a time",
         "applicationWindow": "Application window",
         "authenticationRequired": "Authentication required",
+        "cameraCaptureDialog": {
+            "captureLabel": "Open camera",
+            "captureTitle": "Take a picture",
+            "environment": "Environment",
+            "facingMode": "Camera facing mode:",
+            "sendFileLabel": "Open image file",
+            "sendFileTitle": "Send a picture",
+            "user": "User"
+        },
         "cameraConstraintFailedError": "Your camera does not satisfy some of the required constraints.",
         "cameraNotFoundError": "Camera was not found.",
         "cameraNotSendingData": "We are unable to access your camera. Please check if another application is using this device, select another device from the settings menu or try to reload the application.",
