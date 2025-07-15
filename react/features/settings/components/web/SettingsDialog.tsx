@@ -160,6 +160,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
                 return {
                     ...newProps,
+                    audioSettings: tabState.audioSettings,
                     noiseSuppressionEnabled: tabState.noiseSuppressionEnabled,
                     selectedAudioInputId: tabState.selectedAudioInputId,
                     selectedAudioOutputId: tabState.selectedAudioOutputId
