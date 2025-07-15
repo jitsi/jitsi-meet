@@ -113,7 +113,7 @@ local function filter_stanza_nick_if_needed(stanza, room)
     end
 
     -- if hideDisplayNameForGuests we want to drop any display name from the presence stanza
-    if room and room._data.hideDisplayNameForGuests == true then
+    if room and (room._data.hideDisplayNameForGuests or room._data.hideDisplayNameForAll) then
         return filter_identity_from_presence(stanza);
     end
 
