@@ -11,12 +11,13 @@ import AbstractDialogTab, {
 } from '../../base/dialog/components/web/AbstractDialogTab';
 import { translate } from '../../base/i18n/functions';
 import { createLocalTrack } from '../../base/lib-jitsi-meet/functions.web';
+import { IAudioSettings } from '../../base/tracks/actions.web';
 import Checkbox from '../../base/ui/components/web/Checkbox';
 import { iAmVisitor as iAmVisitorCheck } from '../../visitors/functions';
 import logger from '../logger';
 
-import AudioInputPreview from './AudioInputPreview';
-import AudioOutputPreview from './AudioOutputPreview';
+import AudioInputPreview from './AudioInputPreview.web';
+import AudioOutputPreview from './AudioOutputPreview.web';
 import DeviceHidContainer from './DeviceHidContainer.web';
 import DeviceSelector from './DeviceSelector.web';
 
@@ -24,6 +25,8 @@ import DeviceSelector from './DeviceSelector.web';
  * The type of the React {@code Component} props of {@link AudioDevicesSelection}.
  */
 interface IProps extends AbstractDialogTabProps, WithTranslation {
+
+    audioSettings: IAudioSettings;
 
     /**
      * All known audio and video devices split by type. This prop comes from
@@ -150,6 +153,11 @@ const styles = (theme: Theme) => {
 
         noiseSuppressionContainer: {
             marginBottom: theme.spacing(5)
+        },
+
+        checkbox: {
+            marginTop: theme.spacing(3),
+            marginBottom: theme.spacing(1),
         }
     };
 };
@@ -228,12 +236,33 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
     }
 
     /**
+     * Toggles the audio settings based on the input change event and updates the state.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onToggleAudioSettings = ({ target: { checked, name } }: React.ChangeEvent<HTMLInputElement>) => {
+        const { audioSettings } = this.props;
+
+        const newValue = name === 'channelCount' ? (checked ? 2 : 1) : checked;
+
+        super._onChange({
+            audioSettings: {
+                ...audioSettings,
+                [name]: newValue
+            }
+        });
+    };
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      */
     override render() {
         const {
+            audioSettings,
             hasAudioPermission,
             hideAudioInputPreview,
             hideAudioOutputPreview,
@@ -248,6 +277,8 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
 
         const classes = withStyles.getClasses(this.props);
 
+        const isAudioSettingsEnabled = Boolean(audioSettings?.autoGainControl || audioSettings?.channelCount === 2 || audioSettings?.echoCancellation || audioSettings?.noiseSuppression);
+
         return (
             <div className = { classes.container }>
                 {!iAmVisitor && <div
@@ -255,9 +286,57 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
                     className = { classes.inputContainer }>
                     {this._renderSelector(audioInput)}
                 </div>}
+
                 {!hideAudioInputPreview && hasAudioPermission && !iAmVisitor
-                        && <AudioInputPreview
-                            track = { this.state.previewAudioTrack } />}
+                    && <AudioInputPreview
+                        track = { this.state.previewAudioTrack } />}
+
+                {!hideNoiseSuppression && (
+                    <fieldset className = { classes.container }>
+                        {audioSettings && hasAudioPermission && (
+                            <>
+                                <Checkbox
+                                    checked = { audioSettings.echoCancellation }
+                                    className = { classes.checkbox }
+                                    disabled = { noiseSuppressionEnabled }
+                                    label = { 'Echo cancellation' }
+                                    name = { 'echoCancellation' }
+                                    onChange = { this._onToggleAudioSettings } />
+                                <Checkbox
+                                    checked = { audioSettings.autoGainControl }
+                                    className = { classes.checkbox }
+                                    disabled = { noiseSuppressionEnabled }
+                                    label = { 'Gain control' }
+                                    name = { 'autoGainControl' }
+                                    onChange = { this._onToggleAudioSettings } />
+                                <Checkbox
+                                    checked = { audioSettings.noiseSuppression }
+                                    className = { classes.checkbox }
+                                    disabled = { noiseSuppressionEnabled }
+                                    label = { 'Noise suppressions' }
+                                    name = { 'noiseSuppression' }
+                                    onChange = { this._onToggleAudioSettings } />
+                                <Checkbox
+                                    checked = { audioSettings.channelCount === 2 }
+                                    className = { classes.checkbox }
+                                    disabled = { noiseSuppressionEnabled }
+                                    label = { 'Stereo' }
+                                    name = { 'channelCount' }
+                                    onChange = { this._onToggleAudioSettings } />
+                            </>
+                        )}
+                        {!iAmVisitor && (
+                            <Checkbox
+                                checked = { noiseSuppressionEnabled }
+                                disabled = { isAudioSettingsEnabled && !noiseSuppressionEnabled }
+                                label = { t('toolbar.enableNoiseSuppression') }
+                                // eslint-disable-next-line react/jsx-no-bind
+                                onChange = { () => super._onChange({
+                                    noiseSuppressionEnabled: !noiseSuppressionEnabled
+                                }) } />
+                        )}
+                    </fieldset>
+                )}
                 <div
                     aria-live = 'polite'
                     className = { classes.outputContainer }>
@@ -267,17 +346,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
                             className = { classes.outputButton }
                             deviceId = { selectedAudioOutputId } />}
                 </div>
-                {!hideNoiseSuppression && !iAmVisitor && (
-                    <div className = { classes.noiseSuppressionContainer }>
-                        <Checkbox
-                            checked = { noiseSuppressionEnabled }
-                            label = { t('toolbar.enableNoiseSuppression') }
-                            // eslint-disable-next-line react/jsx-no-bind
-                            onChange = { () => super._onChange({
-                                noiseSuppressionEnabled: !noiseSuppressionEnabled
-                            }) } />
-                    </div>
-                )}
+
                 {!hideDeviceHIDContainer && !iAmVisitor
                     && <DeviceHidContainer />}
             </div>

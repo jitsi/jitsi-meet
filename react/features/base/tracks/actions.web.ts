@@ -42,6 +42,13 @@ import { ICreateInitialTracksOptions, IInitialTracksErrors, IShareOptions, ITogg
 
 export * from './actions.any';
 
+export interface IAudioSettings {
+    autoGainControl: boolean;
+    channelCount: 1 | 2;
+    echoCancellation: boolean;
+    noiseSuppression: boolean;
+}
+
 /**
  * Signals that the local participant is ending screensharing or beginning the screensharing flow.
  *
@@ -541,3 +548,18 @@ export function toggleCamera() {
         await dispatch(replaceLocalTrack(null, newVideoTrack));
     };
 }
+
+export function toggleUpdateSettings(settings: IAudioSettings) {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+
+        const track = getLocalJitsiAudioTrack(state);
+
+        try {
+            await track.applyConstraints(settings);
+        } catch (error) {
+            logger.error('Failed to apply audio constraints ', error);
+        }
+    };
+}
+
