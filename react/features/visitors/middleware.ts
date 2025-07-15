@@ -359,6 +359,29 @@ function _subscribeVisitorsList(getState: IStore['getState'], dispatch: IStore['
 
     logger.debug('Starting visitors list subscription');
 
+    let initialListReceived = false;
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    // Set up 10-second timeout for initial list
+    const setupTimeout = () => {
+        timeoutId = setTimeout(() => {
+            if (!initialListReceived) {
+                logger.warn('Initial visitors list not received within 10 seconds, reconnecting...');
+
+                // Disconnect and reconnect
+                VisitorsListWebsocketClient.getInstance().disconnect()
+                    .then(() => {
+                        // Retry the subscription after a brief delay
+                        setTimeout(() => {
+                            _subscribeVisitorsList(getState, dispatch);
+                        }, 1000);
+                    });
+            }
+        }, 10000); // 10 seconds
+    };
+
+    setupTimeout();
+
     VisitorsListWebsocketClient.getInstance()
         .connectVisitorsList(
             `wss://${visitorsConfig.queueService}/visitors-list/websocket`,
@@ -366,9 +389,12 @@ function _subscribeVisitorsList(getState: IStore['getState'], dispatch: IStore['
             topicEndpoint,
             // Initial list callback - replace entire list
             initialVisitors => {
+                initialListReceived = true;
+                clearTimeout(timeoutId); // Clear the timeout since we received the initial list
                 const visitors = initialVisitors.map(v => ({ id: v.r, name: v.n }));
 
                 dispatch(updateVisitorsList(visitors));
+                logger.debug(`Received initial visitors list with ${visitors.length} visitors`);
             },
             // Delta updates callback - apply incremental changes
             updates => {
@@ -390,7 +416,12 @@ function _subscribeVisitorsList(getState: IStore['getState'], dispatch: IStore['
 
                 dispatch(updateVisitorsList(visitors));
             },
-            getState()['features/base/jwt'].jwt);
+            getState()['features/base/jwt'].jwt,
+            // Connect callback - called when WebSocket connection is established
+            () => {
+                logger.debug('Visitors list WebSocket connection established');
+                setupTimeout(); // Reset timeout when connection is established
+            });
 }
 
 /**
