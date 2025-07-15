@@ -25,45 +25,26 @@ function filter_stanza_out(stanza, session)
     end
 
     local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+    local shouldFilter = false;
 
-    if not room or room._data.hideDisplayNameForGuests ~= true then
-        return stanza;
-    end
-
-    local occupant = room:get_occupant_by_real_jid(stanza.attr.to);
-    if occupant then
-        if stanza.attr.from == internal_room_jid_match_rewrite(occupant.nick) then
-            -- we ignore self-presences, in this case and role will not be correct
-            return stanza;
-        end
-
-        if occupant.role ~= 'moderator' and not joining_moderator_participants[occupant.bare_jid] then
-            return filter_identity_from_presence(stanza);
+    if room and (room._data.hideDisplayNameForGuests == true or room._data.hideDisplayNameForAll == true) then
+        local occupant = room:get_occupant_by_real_jid(stanza.attr.to);
+        -- don't touch self-presence
+        if occupant and stanza.attr.from ~= internal_room_jid_match_rewrite(occupant.nick) then
+            local isModerator = (occupant.role == 'moderator' or joining_moderator_participants[occupant.bare_jid]);
+            shouldFilter = room._data.hideDisplayNameForAll or not isModerator;
         end
     end
 
-    return stanza;
-end
-
---- Filter presence received from anyone in a room when the hideDisplayNameForAll option is set.
-function filter_stanza_in(stanza, session)
-    if stanza.name ~= 'presence' or stanza.attr.type == 'error' or stanza.attr.type == 'unavailable' then
-        return stanza;
-    end
-
-    local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
-
-    -- if hideDisplayNameForAll we want to drop any display name from the presence stanza
-    if room and room._data.hideDisplayNameForAll == true then
+    if shouldFilter then
         return filter_identity_from_presence(stanza);
+    else
+        return stanza;
     end
-
-    return stanza;
 end
 
 function filter_session(session)
     filters.add_filter(session, 'stanzas/out', filter_stanza_out, -100);
-    filters.add_filter(session, 'stanzas/in', filter_stanza_in, -100);
 end
 
 function module.load()
