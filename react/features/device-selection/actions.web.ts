@@ -7,6 +7,7 @@ import {
 } from '../base/devices/actions';
 import { getDeviceLabelById, setAudioOutputDeviceId } from '../base/devices/functions';
 import { updateSettings } from '../base/settings/actions';
+import { toggleUpdateSettings } from '../base/tracks/actions.web';
 import { toggleNoiseSuppression } from '../noise-suppression/actions';
 import { setScreenshareFramerate } from '../screen-share/actions';
 
@@ -58,6 +59,8 @@ export function submitAudioDeviceSelectionTab(newState: any, isDisplayedOnWelcom
         if (newState.noiseSuppressionEnabled !== currentState.noiseSuppressionEnabled) {
             dispatch(toggleNoiseSuppression());
         }
+
+        dispatch(toggleUpdateSettings(newState.audioSettings));
     };
 }
 
