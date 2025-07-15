@@ -176,7 +176,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         // let's subscribe for visitor waiting queue
         const { room } = getState()['features/base/conference'];
+        const { disableBeforeUnloadHandlers = false } = getState()['features/base/config'];
         const conferenceJid = `${room}@${hosts?.muc}`;
+        const beforeUnloadHandler = () => {
+            WebsocketClient.getInstance().disconnect();
+        };
 
         WebsocketClient.getInstance()
             .connect(`wss://${visitorsConfig?.queueService}/visitor/websocket`,
@@ -185,8 +189,12 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                     if ('status' in msg && msg.status === 'live') {
                         logger.info('The conference is now live!');
 
+
                         WebsocketClient.getInstance().disconnect()
                             .then(() => {
+                                window.removeEventListener(
+                                    disableBeforeUnloadHandlers ? 'unload' : 'beforeunload',
+                                    beforeUnloadHandler);
                                 let delay = 0;
 
                                 // now let's connect to meeting
@@ -212,6 +220,12 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 () => {
                     dispatch(setInVisitorsQueue(true));
                 });
+
+        /**
+         * Disconnecting the WebSocket client when the user closes the page.
+         */
+        window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', beforeUnloadHandler);
+
 
         break;
     }
