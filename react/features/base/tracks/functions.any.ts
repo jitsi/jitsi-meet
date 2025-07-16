@@ -203,19 +203,19 @@ export function getLocalJitsiAudioTrack(state: IReduxState) {
 }
 
 /**
- * Extracts and returns audio settings from the local Jitsi audio track.
+ * Returns audio settings from the local Jitsi audio track.
  *
  * @param {IReduxState} state - The Redux state.
- * @returns {IAudioSettings | undefined} The extracted audio settings, or undefined if no local audio track is found.
+ * @returns {IAudioSettings} The extracted audio settings.
  */
 export function getLocalJitsiAudioTrackSettings(state: IReduxState): IAudioSettings | undefined {
-    const track = getLocalAudioTrack(getTrackState(state));
+    const jitsiTrack = getLocalJitsiAudioTrack(state);
 
-    if (!track) {
-        return;
-    }
+    const hasAudioMixerEffect = Boolean(typeof jitsiTrack._streamEffect?.setMuted === 'function' && jitsiTrack._streamEffect?._originalTrack);
 
-    const { echoCancellation, noiseSuppression, autoGainControl, channelCount } = track.jitsiTrack.getTrack().getSettings();
+    const track = hasAudioMixerEffect ? jitsiTrack._streamEffect._originalTrack : jitsiTrack.getTrack();
+
+    const { echoCancellation, noiseSuppression, autoGainControl, channelCount } = track.getSettings();
 
     return { echoCancellation, noiseSuppression, autoGainControl, channelCount };
 }
