@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Client } from '@stomp/stompjs';
+import { Client, StompSubscription } from '@stomp/stompjs';
 
 import logger from './logger';
 
@@ -27,6 +27,8 @@ export class WebsocketClient {
     protected retriesCount = 0;
 
     private _connectCount = 0;
+
+    private _subscription: StompSubscription | undefined;
 
     /**
      *  WebsocketClient getInstance.
@@ -100,7 +102,7 @@ export class WebsocketClient {
             this._connectCount++;
             connectCallback?.();
 
-            this.stompClient.subscribe(endpoint, message => {
+            this._subscription = this.stompClient.subscribe(endpoint, message => {
                 try {
                     callback(JSON.parse(message.body));
                 } catch (e) {
@@ -113,7 +115,31 @@ export class WebsocketClient {
     }
 
     /**
-     * Disconnects the current stomp  client instance and clears it.
+     * Unsubscribes from the current subscription.
+     *
+     * @returns {Promise<void>}
+     */
+    unsubscribe(): Promise<void> {
+        return new Promise(resolve => {
+            if (this._subscription) {
+                try {
+                    this._subscription.unsubscribe();
+                    logger.info('Unsubscribed from WebSocket topic');
+                } catch (error) {
+                    logger.warn('Error during unsubscribe:', error);
+                } finally {
+                    this._subscription = undefined;
+                    resolve();
+                }
+            } else {
+                resolve();
+            }
+        });
+    }
+
+    /**
+     * Disconnects the current stomp client instance and clears it.
+     * Unsubscribes from any active subscriptions first if available
      *
      * @returns {Promise}
      */
@@ -124,9 +150,13 @@ export class WebsocketClient {
 
         const url = this.stompClient.brokerURL;
 
-        return this.stompClient.deactivate().then(() => {
-            logger.info(`disconnected from: ${url}`);
-            this.stompClient = undefined;
+        // Unsubscribe first, then disconnect
+        return this.unsubscribe().then(() => {
+            return this.stompClient!.deactivate().then(() => {
+                logger.info(`disconnected from: ${url}`);
+                this.stompClient = undefined;
+                this._subscription = undefined;
+            });
         });
     }
 
