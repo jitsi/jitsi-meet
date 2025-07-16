@@ -128,6 +128,14 @@ fs.copyFileSync(
     `${iosSrcPath}/Proximity.m`,
     `${iosDestPath}/Proximity.m`
 );
+fs.copyFileSync(
+    `${iosSrcPath}/ScheenshareEventEmiter.h`,
+    `${iosDestPath}/ScheenshareEventEmiter.h`
+);
+fs.copyFileSync(
+    `${iosSrcPath}/ScheenshareEventEmiter.m`,
+    `${iosDestPath}/ScheenshareEventEmiter.m`
+);
 copyFolderRecursiveSync(
     `${androidSourcePath}/log`,
      `${androidTargetPath}/log`
