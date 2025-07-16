@@ -139,7 +139,7 @@ export class WebsocketClient {
 
     /**
      * Disconnects the current stomp client instance and clears it.
-     * Unsubscribes from any active subscriptions first if available
+     * Unsubscribes from any active subscriptions first if available.
      *
      * @returns {Promise}
      */
