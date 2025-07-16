@@ -63,7 +63,7 @@ ReducerRegistry.register<IVisitorsState>('features/visitors', (state = DEFAULT_S
         };
     }
     case UPDATE_VISITORS_IN_QUEUE_COUNT: {
-        if (state.count === action.count) {
+        if (state.inQueueCount === action.count) {
             return state;
         }
 
