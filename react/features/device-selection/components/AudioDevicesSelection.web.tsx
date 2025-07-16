@@ -291,7 +291,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
                     && <AudioInputPreview
                         track = { this.state.previewAudioTrack } />}
 
-                {!hideNoiseSuppression && (
+                {!hideNoiseSuppression && !iAmVisitor && (
                     <fieldset className = { classes.container }>
                         {audioSettings && hasAudioPermission && (
                             <>
