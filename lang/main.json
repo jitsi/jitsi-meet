@@ -303,11 +303,8 @@
         "cameraCaptureDialog": {
             "captureLabel": "Open camera",
             "captureTitle": "Take a picture",
-            "environment": "Environment",
-            "facingMode": "Camera facing mode:",
             "sendFileLabel": "Open image file",
-            "sendFileTitle": "Send a picture",
-            "user": "User"
+            "sendFileTitle": "Send a picture"
         },
         "cameraConstraintFailedError": "Your camera does not satisfy some of the required constraints.",
         "cameraNotFoundError": "Camera was not found.",

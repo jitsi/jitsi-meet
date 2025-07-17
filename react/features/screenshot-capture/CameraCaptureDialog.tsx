@@ -6,15 +6,21 @@ import { makeStyles } from 'tss-react/mui';
 import { hideDialog } from '../base/dialog/actions';
 import { isMobileBrowser } from '../base/environment/utils';
 import { translate } from '../base/i18n/functions';
-import { CAMERA_FACING_MODE } from '../base/media/constants';
 import { withPixelLineHeight } from '../base/styles/functions.web';
 import Dialog from '../base/ui/components/web/Dialog';
-import Select from '../base/ui/components/web/Select';
 
 const FILE_INPUT_ID = 'captureCameraPictureInput';
 
 const useStyles = makeStyles()(theme => {
     return {
+        container: {
+            display: 'flex',
+            height: '100%',
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center'
+        },
+
         hidden: {
             display: 'none'
         },
@@ -26,7 +32,6 @@ const useStyles = makeStyles()(theme => {
             boxSizing: 'border-box',
             cursor: 'pointer',
             display: 'inline-block',
-            marginBottom: '16px',
             padding: '7px 16px',
             position: 'relative' as const,
             textAlign: 'center',
@@ -67,17 +72,10 @@ const CameraCaptureDialog = ({ callback, t, cameraFacingMode }: IProps) => {
     const dispatch = useDispatch();
     const { classes } = useStyles();
     const isMobile = isMobileBrowser();
-    const [ facingMode, setFacingMode ] = useState(cameraFacingMode || CAMERA_FACING_MODE.ENVIRONMENT);
     const titleTranslationKey = useMemo(() =>
         `dialog.cameraCaptureDialog.${isMobile ? 'captureTitle' : 'sendFileTitle'}`, []);
     const labelTranslationkKey = useMemo(() =>
         `dialog.cameraCaptureDialog.${isMobile ? 'captureLabel' : 'sendFileLabel'}`, []);
-    const facingModeOptions = useMemo(() => Object.keys(CAMERA_FACING_MODE).map(key => (
-        {
-            value: CAMERA_FACING_MODE[key],
-            label: t(`dialog.cameraCaptureDialog.${CAMERA_FACING_MODE[key]}`)
-        })
-    ), []);
 
     const onCancel = useCallback(() => callback({
         error: 'User canceled!'
@@ -107,14 +105,13 @@ const CameraCaptureDialog = ({ callback, t, cameraFacingMode }: IProps) => {
         reader.readAsDataURL(files[0]);
     }, []);
 
-    const onSelectChange = useCallback(event => setFacingMode(event.target.value), []);
-
     return (
         <Dialog
+            cancel = {{ hidden: true }}
             ok = {{ hidden: true }}
             onCancel = { onCancel }
             titleKey = { t(titleTranslationKey) }>
-            <div>
+            <div className = { classes.container } >
                 <label
                     aria-label = { t(labelTranslationkKey) }
                     className = { classes.label }
@@ -123,20 +120,11 @@ const CameraCaptureDialog = ({ callback, t, cameraFacingMode }: IProps) => {
                 </label>
                 <input
                     accept = 'image/*'
-                    { ...isMobile ? { capture: facingMode } : {} }
+                    { ...isMobile ? { capture: cameraFacingMode } : {} }
                     className = { classes.hidden }
                     id = { FILE_INPUT_ID }
                     onChange = { onInputChange }
                     type = 'file' />
-                {isMobile && (<div className = { classes.selectContainer }>
-                    <Select
-                        id = 'camera-facing-mode-select'
-                        label = { t('dialog.cameraCaptureDialog.facingMode') }
-                        onChange = { onSelectChange }
-                        options = { facingModeOptions }
-                        value = { facingMode } />
-                </div>)
-                }
             </div>
         </Dialog>
     );
