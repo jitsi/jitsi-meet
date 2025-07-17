@@ -18,6 +18,8 @@ import {
     maybeRedirectToWelcomePage,
     reloadWithStoredParams
 } from './react/features/app/actions';
+import { showModeratedNotification } from './react/features/av-moderation/actions';
+import { shouldShowModeratedNotification } from './react/features/av-moderation/functions';
 import {
     _conferenceWillJoin,
     authStatusChanged,
@@ -151,6 +153,7 @@ import {
     DATA_CHANNEL_CLOSED_NOTIFICATION_ID,
     NOTIFICATION_TIMEOUT_TYPE
 } from './react/features/notifications/constants';
+import { isModerationNotificationDisplayed } from './react/features/notifications/functions';
 import { suspendDetected } from './react/features/power-monitor/actions';
 import { initPrejoin, isPrejoinPageVisible } from './react/features/prejoin/functions';
 import { disableReceiver, stopReceiver } from './react/features/remote-control/actions';
@@ -701,6 +704,14 @@ export default {
             return;
         }
 
+        if (!mute && shouldShowModeratedNotification(MEDIA_TYPE.AUDIO, state)) {
+            if (!isModerationNotificationDisplayed(MEDIA_TYPE.AUDIO, state)) {
+                APP.store.dispatch(showModeratedNotification(MEDIA_TYPE.AUDIO));
+            }
+
+            return;
+        }
+
         await APP.store.dispatch(setAudioMuted(mute, true));
     },
 
@@ -739,6 +750,15 @@ export default {
         if (!mute
                 && isUserInteractionRequiredForUnmute(state)) {
             logger.error('Unmuting video requires user interaction');
+
+            return;
+        }
+
+        // check for A/V Moderation when trying to unmute and return early
+        if (!mute && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, state)) {
+            if (!isModerationNotificationDisplayed(MEDIA_TYPE.VIDEO, state)) {
+                APP.store.dispatch(showModeratedNotification(MEDIA_TYPE.VIDEO));
+            }
 
             return;
         }

@@ -1,8 +1,12 @@
 import { IStore } from '../app/types';
+import { showModeratedNotification } from '../av-moderation/actions';
+import { MEDIA_TYPE } from '../av-moderation/constants';
+import { shouldShowModeratedNotification } from '../av-moderation/functions';
 import { openDialog } from '../base/dialog/actions';
 import { browser } from '../base/lib-jitsi-meet';
 import { shouldHideShareAudioHelper } from '../base/settings/functions.web';
 import { toggleScreensharing } from '../base/tracks/actions.web';
+import { isModerationNotificationDisplayed } from '../notifications/functions';
 
 import {
     SET_SCREENSHARE_TRACKS,
@@ -57,6 +61,15 @@ export function startAudioScreenShareFlow() {
         const state = getState();
         const audioOnlySharing = isAudioOnlySharing(state);
 
+        // check for A/V Moderation when trying to unmute and return early
+        if (shouldShowModeratedNotification(MEDIA_TYPE.DESKTOP, state)) {
+            if (!isModerationNotificationDisplayed(MEDIA_TYPE.DESKTOP, state)) {
+                dispatch(showModeratedNotification(MEDIA_TYPE.DESKTOP));
+            }
+
+            return;
+        }
+
         // If we're already in a normal screen sharing session, warn the user.
         if (isScreenVideoShared(state)) {
             dispatch(openDialog(ShareMediaWarningDialog, { _isAudioScreenShareWarning: true }));
@@ -92,6 +105,14 @@ export function startScreenShareFlow(enabled: boolean) {
         const state = getState();
         const audioOnlySharing = isAudioOnlySharing(state);
 
+        // check for A/V Moderation when trying to unmute and return early
+        if (enabled && shouldShowModeratedNotification(MEDIA_TYPE.DESKTOP, state)) {
+            if (!isModerationNotificationDisplayed(MEDIA_TYPE.DESKTOP, state)) {
+                dispatch(showModeratedNotification(MEDIA_TYPE.DESKTOP));
+            }
+
+            return;
+        }
         // If we're in an audio screen sharing session, warn the user.
         if (audioOnlySharing) {
             dispatch(openDialog(ShareMediaWarningDialog, { _isAudioScreenShareWarning: false }));
