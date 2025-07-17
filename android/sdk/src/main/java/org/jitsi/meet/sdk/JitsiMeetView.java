@@ -17,6 +17,7 @@
 package org.jitsi.meet.sdk;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.AttributeSet;
@@ -197,7 +198,9 @@ public class JitsiMeetView extends FrameLayout {
 
         setBackgroundColor(BACKGROUND_COLOR);
 
-        ReactInstanceManagerHolder.initReactInstanceManager((Activity) context);
+        // ReactInstanceManagerHolder.initReactInstanceManager((Application) context.getApplicationContext());
+        // ReactInstanceManager is now initialized by JitsiInitializer during application startup
+        // No need to initialize it here anymore
     }
 
     /**
