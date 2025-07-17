@@ -206,10 +206,14 @@ export function getLocalJitsiAudioTrack(state: IReduxState) {
  * Returns audio settings from the local Jitsi audio track.
  *
  * @param {IReduxState} state - The Redux state.
- * @returns {IAudioSettings} The extracted audio settings.
+ * @returns {IAudioSettings | undefined} The extracted audio settings or undefined.
  */
 export function getLocalJitsiAudioTrackSettings(state: IReduxState): IAudioSettings | undefined {
     const jitsiTrack = getLocalJitsiAudioTrack(state);
+
+    if (!jitsiTrack) {
+        return;
+    }
 
     const hasAudioMixEffect = typeof jitsiTrack._streamEffect?.setMuted === 'function' && jitsiTrack._streamEffect?._originalTrack;
 
