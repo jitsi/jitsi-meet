@@ -248,7 +248,7 @@ class ReactInstanceManagerHolder {
                 .setJavaScriptExecutorFactory(new HermesExecutorFactory())
                 .addPackages(getReactNativePackages())
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
-                .setInitialLifecycleState(LifecycleState.RESUMED)
+                .setInitialLifecycleState(LifecycleState.BEFORE_CREATE)
                 .build();
     }
 }
