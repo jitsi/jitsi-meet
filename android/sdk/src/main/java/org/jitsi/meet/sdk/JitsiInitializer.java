@@ -49,6 +49,10 @@ public class JitsiInitializer implements Initializer<Boolean> {
         // Register activity lifecycle handler for the orientation locker module.
         ((Application) context).registerActivityLifecycleCallbacks(OrientationActivityLifecycle.getInstance());
 
+        // Initialize ReactInstanceManager during application startup
+        // This ensures it's ready before any Activity onCreate is called
+        ReactInstanceManagerHolder.initReactInstanceManager((Application) context);
+
         return true;
     }
 
