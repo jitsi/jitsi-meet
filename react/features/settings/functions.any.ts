@@ -91,6 +91,23 @@ export function getNotificationsMap(stateful: IStateful): { [key: string]: boole
         }, {});
 }
 
+function normalizeCurrentLanguage(language: string) {
+    if (!language) {
+        return;
+    }
+
+    const [ country, lang ] = language.split('-');
+    const jitsiNormalized = `${country}${lang ?? ''}`;
+
+    if (LANGUAGES.includes(jitsiNormalized)) {
+        return jitsiNormalized;
+    }
+
+    if (LANGUAGES.includes(country)) {
+        return country;
+    }
+}
+
 /**
  * Returns the properties for the "More" tab from settings dialog from Redux
  * state.
@@ -102,7 +119,7 @@ export function getNotificationsMap(stateful: IStateful): { [key: string]: boole
 export function getMoreTabProps(stateful: IStateful) {
     const state = toState(stateful);
     const stageFilmstripEnabled = isStageFilmstripEnabled(state);
-    const language = i18next.language || DEFAULT_LANGUAGE;
+    const language = normalizeCurrentLanguage(i18next.language) || DEFAULT_LANGUAGE;
     const configuredTabs: string[] = interfaceConfig.SETTINGS_SECTIONS || [];
 
     // when self view is controlled by the config we hide the settings
