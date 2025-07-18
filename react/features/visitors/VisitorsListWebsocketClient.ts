@@ -135,32 +135,20 @@ export class VisitorsListWebsocketClient extends WebsocketClient {
     /**
      * Unsubscribes from both topic and queue subscriptions.
      *
-     * @returns {Promise<void>}
+     * @returns {void}
      */
-    override unsubscribe(): Promise<void> {
-        return new Promise(resolve => {
-            try {
-                if (this._topicSubscription) {
-                    this._topicSubscription.unsubscribe();
-                    logger.info('Unsubscribed from visitors list topic');
-                    this._topicSubscription = undefined;
-                }
+    override unsubscribe(): void {
+        if (this._topicSubscription) {
+            this._topicSubscription.unsubscribe();
+            logger.debug('Unsubscribed from visitors list topic');
+            this._topicSubscription = undefined;
+        }
 
-                if (this._queueSubscription) {
-                    this._queueSubscription.unsubscribe();
-                    logger.info('Unsubscribed from visitors list queue');
-                    this._queueSubscription = undefined;
-                }
-
-                // Also call parent unsubscribe in case there are other subscriptions
-                super.unsubscribe().then(() => {
-                    resolve();
-                });
-            } catch (error) {
-                logger.warn('Error during VisitorsListWebsocketClient unsubscribe:', error);
-                resolve();
-            }
-        });
+        if (this._queueSubscription) {
+            this._queueSubscription.unsubscribe();
+            logger.debug('Unsubscribed from visitors list queue');
+            this._queueSubscription = undefined;
+        }
     }
 
     /**
@@ -176,14 +164,12 @@ export class VisitorsListWebsocketClient extends WebsocketClient {
 
         const url = this.stompClient.brokerURL;
 
-        // Unsubscribe first, then disconnect
-        return this.unsubscribe().then(() => {
-            return this.stompClient!.deactivate().then(() => {
-                logger.info(`disconnected from: ${url}`);
-                this.stompClient = undefined;
-                this._topicSubscription = undefined;
-                this._queueSubscription = undefined;
-            });
+        // Unsubscribe first (synchronous), then disconnect
+        this.unsubscribe();
+
+        return this.stompClient.deactivate().then(() => {
+            logger.debug(`disconnected from: ${url}`);
+            this.stompClient = undefined;
         });
     }
 }

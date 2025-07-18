@@ -117,24 +117,14 @@ export class WebsocketClient {
     /**
      * Unsubscribes from the current subscription.
      *
-     * @returns {Promise<void>}
+     * @returns {void}
      */
-    unsubscribe(): Promise<void> {
-        return new Promise(resolve => {
-            if (this._subscription) {
-                try {
-                    this._subscription.unsubscribe();
-                    logger.info('Unsubscribed from WebSocket topic');
-                } catch (error) {
-                    logger.warn('Error during unsubscribe:', error);
-                } finally {
-                    this._subscription = undefined;
-                    resolve();
-                }
-            } else {
-                resolve();
-            }
-        });
+    unsubscribe(): void {
+        if (this._subscription) {
+            this._subscription.unsubscribe();
+            logger.debug('Unsubscribed from WebSocket topic');
+            this._subscription = undefined;
+        }
     }
 
     /**
@@ -150,13 +140,12 @@ export class WebsocketClient {
 
         const url = this.stompClient.brokerURL;
 
-        // Unsubscribe first, then disconnect
-        return this.unsubscribe().then(() => {
-            return this.stompClient!.deactivate().then(() => {
-                logger.info(`disconnected from: ${url}`);
-                this.stompClient = undefined;
-                this._subscription = undefined;
-            });
+        // Unsubscribe first (synchronous), then disconnect
+        this.unsubscribe();
+
+        return this.stompClient.deactivate().then(() => {
+            logger.debug(`disconnected from: ${url}`);
+            this.stompClient = undefined;
         });
     }
 
