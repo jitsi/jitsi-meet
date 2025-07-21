@@ -638,6 +638,19 @@ local function table_compare(old_table, new_table)
     return removed, added
 end
 
+local function table_equals(t1, t2)
+    if t1 == nil then
+        return t2 == nil;
+    end
+    if t2 == nil then
+        return t1 == nil;
+    end
+
+    local removed, added = table_compare(t1, t2);
+
+    return next(removed) == nil and next(added) == nil
+end
+
 -- Splits a string using delimiter
 function split_string(str, delimiter)
     str = str .. delimiter;
@@ -746,4 +759,5 @@ return {
     table_compare = table_compare;
     table_shallow_copy = table_shallow_copy;
     table_find = table_find;
+    table_equals = table_equals;
 };
