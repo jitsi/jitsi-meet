@@ -166,7 +166,7 @@ function start_av_moderation(room, mediaType, occupant)
     -- We want to keep the previous value of startMuted for this mediaType if av moderation is disabled
     -- to be able to restore
     local av_moderation_startMuted_restore = room.av_moderation_startMuted_restore or {};
-    av_moderation_startMuted_restore = startMutedMetadata[mediaType];
+    av_moderation_startMuted_restore[mediaType] = startMutedMetadata[mediaType];
     room.av_moderation_startMuted_restore = av_moderation_startMuted_restore;
 
     startMutedMetadata[mediaType] = true;
