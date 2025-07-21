@@ -692,19 +692,16 @@ local function filter_identity_from_presence(orig_stanza)
     stanza:remove_children('nick', 'http://jabber.org/protocol/nick');
     stanza:remove_children('email');
     stanza:remove_children('stats-id');
-    stanza:tag('email'):text('guest@guest.com'):up();
     local identity = stanza:get_child('identity');
     if identity then
         local user = identity:get_child('user');
         local name = identity:get_child('name');
         if user then
             user:remove_children('email');
-            user:tag('email'):text('guest@guest.com'):up();
             user:remove_children('name');
         end
         if name then
             name:remove_children('name');  -- Remove name with no namespace
-            name:tag('name'):text('Guest'):up();  -- Add new name with guest value
         end
     end
 
