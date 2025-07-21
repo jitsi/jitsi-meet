@@ -3,9 +3,13 @@ import { upperFirst, words } from 'lodash-es';
 
 import { getName } from '../../app/functions';
 import { IReduxState, IStore } from '../../app/types';
+import { showNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { determineTranscriptionLanguage } from '../../transcribing/functions';
 import { IStateful } from '../app/types';
 import { JitsiTrackErrors } from '../lib-jitsi-meet';
+import { setAudioMuted, setVideoMuted } from '../media/actions';
+import { VIDEO_MUTISM_AUTHORITY } from '../media/constants';
 import {
     participantJoined,
     participantLeft
@@ -22,7 +26,8 @@ import { setObfuscatedRoom } from './actions';
 import {
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
-    JITSI_CONFERENCE_URL_KEY
+    JITSI_CONFERENCE_URL_KEY,
+    START_MUTED_NOTIFICATION_ID
 } from './constants';
 import logger from './logger';
 import { IJitsiConference } from './reducer';
@@ -573,4 +578,43 @@ function safeStartCase(s = '') {
     return words(`${s}`.replace(/['\u2019]/g, '')).reduce(
         (result, word, index) => result + (index ? ' ' : '') + upperFirst(word)
         , '');
+}
+
+/**
+ * Updates the mute state of the track based on the start muted policy.
+ *
+ * @param {Object|Function} stateful - Either the whole Redux state object or the Redux store's {@code getState} method.
+ * @param {Function} dispatch - Redux dispatch function.
+ * @param {boolean} isAudio - Whether the track is audio or video.
+ * @returns {void}
+ */
+export function updateTrackMuteState(stateful: IStateful, dispatch: IStore['dispatch'], isAudio: boolean) {
+    const state = toState(stateful);
+    const mutedPolicyKey = isAudio ? 'startAudioMutedPolicy' : 'startVideoMutedPolicy';
+    const mutedPolicyValue = state['features/base/conference'][mutedPolicyKey];
+
+    // Currently, the policy only supports force muting others, not unmuting them.
+    if (!mutedPolicyValue) {
+        return;
+    }
+
+    let muteStateUpdated = false;
+    const { muted } = isAudio ? state['features/base/media'].audio : state['features/base/media'].video;
+
+    if (isAudio && !Boolean(muted)) {
+        dispatch(setAudioMuted(mutedPolicyValue, true));
+        muteStateUpdated = true;
+    } else if (!isAudio && !Boolean(muted)) {
+        // TODO: Add a new authority for video mutism for the moderator case.
+        dispatch(setVideoMuted(mutedPolicyValue, VIDEO_MUTISM_AUTHORITY.USER, true));
+        muteStateUpdated = true;
+    }
+
+    if (muteStateUpdated) {
+        dispatch(showNotification({
+            titleKey: 'notify.mutedTitle',
+            descriptionKey: 'notify.muted',
+            uid: START_MUTED_NOTIFICATION_ID // use the same id, to make sure we show one notification
+        }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+    }
 }

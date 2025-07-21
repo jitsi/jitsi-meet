@@ -50,7 +50,8 @@ import {
     commonUserJoinedHandling,
     commonUserLeftHandling,
     getConferenceOptions,
-    sendLocalParticipant
+    sendLocalParticipant,
+    updateTrackMuteState
 } from './react/features/base/conference/functions';
 import { getReplaceParticipant, getSsrcRewritingFeatureFlag } from './react/features/base/config/functions';
 import { connect } from './react/features/base/connection/actions.web';
@@ -1663,8 +1664,12 @@ export default {
         room.on(
             JitsiConferenceEvents.START_MUTED_POLICY_CHANGED,
             ({ audio, video }) => {
-                APP.store.dispatch(
-                    onStartMutedPolicyChanged(audio, video));
+                APP.store.dispatch(onStartMutedPolicyChanged(audio, video));
+
+                const state = APP.store.getState();
+
+                updateTrackMuteState(state, APP.store.dispatch, true);
+                updateTrackMuteState(state, APP.store.dispatch, false);
             }
         );
 
