@@ -19,6 +19,7 @@ local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local process_host_module = util.process_host_module;
 local table_shallow_copy = util.table_shallow_copy;
 local table_add = util.table_add;
+local table_equals = util.table_equals;
 
 local MUC_NS = 'http://jabber.org/protocol/muc';
 local COMPONENT_IDENTITY_TYPE = 'room_metadata';
@@ -188,12 +189,15 @@ function on_message(event)
         jsonData.data = res;
     end
 
-    room.jitsiMetadata[jsonData.key] = jsonData.data;
+    local old_value = room.jitsiMetadata[jsonData.key];
+    if not table_equals(old_value, jsonData.data) then
+        room.jitsiMetadata[jsonData.key] = jsonData.data;
 
-    broadcastMetadata(room);
+        broadcastMetadata(room);
 
-    -- fire and event for the change
-    main_muc_module:fire_event('jitsi-metadata-updated', { room = room; actor = occupant; key = jsonData.key; });
+        -- fire and event for the change
+        main_muc_module:fire_event('jitsi-metadata-updated', { room = room; actor = occupant; key = jsonData.key; });
+    end
 
     return true;
 end
@@ -238,12 +242,24 @@ function process_main_muc_loaded(main_muc, host_module)
 
         local startMutedMetadata = room.jitsiMetadata.startMuted or {};
 
-        startMutedMetadata.audio = startMuted.attr.audio == 'true';
-        startMutedMetadata.video = startMuted.attr.video == 'true';
+        local audioNewValue = startMuted.attr.audio == 'true';
+        local videoNewValue = startMuted.attr.video == 'true';
+        local send_update = false;
 
-        room.jitsiMetadata.startMuted = startMutedMetadata;
+        if startMutedMetadata.audio ~= audioNewValue then
+            startMutedMetadata.audio = audioNewValue;
+            send_update = true;
+        end
+        if startMutedMetadata.video ~= videoNewValue then
+            startMutedMetadata.video = videoNewValue;
+            send_update = true;
+        end
 
-        host_module:fire_event('room-metadata-changed', { room = room; });
+        if send_update then
+            room.jitsiMetadata.startMuted = startMutedMetadata;
+
+            host_module:fire_event('room-metadata-changed', { room = room; });
+        end
     end);
 end
 
