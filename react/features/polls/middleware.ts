@@ -16,6 +16,7 @@ import {
     COMMAND_NEW_POLL,
     COMMAND_OLD_POLLS
 } from './constants';
+import logger from './logger';
 import { IAnswer, IPoll, IPollData } from './types';
 
 /**
@@ -43,7 +44,16 @@ const parsePollData = (pollData: Partial<IPollData>): IPoll | null => {
     const { id, senderId, question, answers } = pollData;
 
     if (typeof id !== 'string' || typeof senderId !== 'string'
-        || typeof question !== 'string' || !(answers instanceof Array)) {
+            || typeof question !== 'string' || !(answers instanceof Array)) {
+        logger.error('Malformed poll data received:', pollData);
+
+        return null;
+    }
+
+    // Validate answers.
+    if (answers.some(answer => typeof answer !== 'string')) {
+        logger.error('Malformed answers data received:', answers);
+
         return null;
     }
 
@@ -173,7 +183,7 @@ function _handleReceivePollsMessage(data: any, dispatch: IStore['dispatch'], get
         const receivedAnswer: IAnswer = {
             voterId,
             pollId,
-            answers: answers.slice(0, MAX_ANSWERS)
+            answers: answers.slice(0, MAX_ANSWERS).map(Boolean)
         };
 
         dispatch(receiveAnswer(pollId, receivedAnswer));
@@ -188,7 +198,7 @@ function _handleReceivePollsMessage(data: any, dispatch: IStore['dispatch'], get
             const poll = parsePollData(pollData);
 
             if (poll === null) {
-                console.warn('[features/polls] Invalid old poll data');
+                logger.warn('Malformed old poll data', pollData);
             } else {
                 dispatch(receivePoll(pollData.id, poll, false));
             }
