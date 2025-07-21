@@ -686,7 +686,9 @@ local function is_admin(_jid)
 end
 
 -- Filter out identity information (nick name, email, etc) from a presence stanza.
-local function filter_identity_from_presence(stanza)
+local function filter_identity_from_presence(orig_stanza)
+    local stanza = st.clone(orig_stanza);
+
     stanza:remove_children('nick', 'http://jabber.org/protocol/nick');
     stanza:remove_children('email');
     stanza:remove_children('stats-id');
