@@ -1,49 +1,27 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect, useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { hideDialog } from '../base/dialog/actions';
 import { translate } from '../base/i18n/functions';
-import { withPixelLineHeight } from '../base/styles/functions.web';
+import Label from '../base/label/components/web/Label';
 import Dialog from '../base/ui/components/web/Dialog';
+const useStyles = makeStyles()({
+    container: {
+        display: 'flex',
+        height: '100%',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
 
-const FILE_INPUT_ID = 'captureCameraPictureInput';
-
-const useStyles = makeStyles()(theme => {
-    return {
-        container: {
-            display: 'flex',
-            height: '100%',
-            width: '100%',
-            justifyContent: 'center',
-            alignItems: 'center'
-        },
-
-        hidden: {
-            display: 'none'
-        },
-        label: {
-            background: theme.palette.action02,
-            color: theme.palette.text04,
-            ...withPixelLineHeight(theme.typography.bodyLongBold),
-            borderRadius: theme.shape.borderRadius,
-            boxSizing: 'border-box',
-            cursor: 'pointer',
-            display: 'inline-block',
-            padding: '7px 16px',
-            position: 'relative' as const,
-            textAlign: 'center',
-            border: 0,
-
-            '&:hover': {
-                backgroundColor: theme.palette.action02Hover
-            }
-        },
-        selectContainer: {
-            marginBottom: '8px'
-        }
-    };
+    hidden: {
+        display: 'none'
+    },
+    label: {
+        background: 'transparent',
+    }
 });
 
 /**
@@ -70,10 +48,14 @@ interface IProps extends WithTranslation {
 const CameraCaptureDialog = ({ callback, t, cameraFacingMode }: IProps) => {
     const dispatch = useDispatch();
     const { classes } = useStyles();
-
+    const inputRef = useRef<HTMLInputElement>(null);
     const onCancel = useCallback(() => callback({
         error: 'User canceled!'
     }), []);
+
+    const onSubmit = useCallback(() => {
+        inputRef.current?.click();
+    }, []);
 
     const onInputChange = useCallback(event => {
         const reader = new FileReader();
@@ -101,23 +83,23 @@ const CameraCaptureDialog = ({ callback, t, cameraFacingMode }: IProps) => {
 
     return (
         <Dialog
-            cancel = {{ hidden: true }}
-            ok = {{ hidden: true }}
+            cancel = {{ translationKey: 'dialog.cameraCaptureDialog.reject' }}
+            disableAutoHideOnSubmit = { true }
+            ok = {{ translationKey: 'dialog.cameraCaptureDialog.ok' }}
             onCancel = { onCancel }
-            titleKey = { t('dialog.cameraCaptureDialog.captureTitle') }>
+            onSubmit = { onSubmit }
+            titleKey = { t('dialog.cameraCaptureDialog.title') }>
             <div className = { classes.container } >
-                <label
-                    aria-label = { t('dialog.cameraCaptureDialog.captureLabel') }
+                <Label
+                    aria-label = { t('dialog.cameraCaptureDialog.description') }
                     className = { classes.label }
-                    htmlFor = { FILE_INPUT_ID }>
-                    {t('dialog.cameraCaptureDialog.captureLabel')}
-                </label>
+                    text = { t('dialog.cameraCaptureDialog.description') } />
                 <input
                     accept = 'image/*'
                     capture = { cameraFacingMode }
                     className = { classes.hidden }
-                    id = { FILE_INPUT_ID }
                     onChange = { onInputChange }
+                    ref = { inputRef }
                     type = 'file' />
             </div>
         </Dialog>

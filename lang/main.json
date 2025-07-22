@@ -301,8 +301,10 @@
         "applicationWindow": "Application window",
         "authenticationRequired": "Authentication required",
         "cameraCaptureDialog": {
-            "captureLabel": "Open camera",
-            "captureTitle": "Take a picture"
+            "description": "Take and send a picture using your mobile camera",
+            "ok": "Open camera",
+            "reject": "Reject",
+            "title": "Take a picture"
         },
         "cameraConstraintFailedError": "Your camera does not satisfy some of the required constraints.",
         "cameraNotFoundError": "Camera was not found.",
