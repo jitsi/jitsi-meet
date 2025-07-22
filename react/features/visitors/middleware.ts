@@ -9,6 +9,7 @@ import {
     ENDPOINT_MESSAGE_RECEIVED,
     UPDATE_CONFERENCE_METADATA
 } from '../base/conference/actionTypes';
+import { IConferenceMetadata } from '../base/conference/reducer';
 import { SET_CONFIG } from '../base/config/actionTypes';
 import { CONNECTION_FAILED } from '../base/connection/actionTypes';
 import { connect, setPreferVisitor } from '../base/connection/actions';
@@ -230,17 +231,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         break;
     }
     case PARTICIPANT_UPDATED: {
-        const { visitors: visitorsConfig } = toState(getState)['features/base/config'];
+        const { metadata } = getState()['features/base/conference'];
 
-        if (visitorsConfig?.queueService && isLocalParticipantModerator(getState)) {
-            const { metadata } = getState()['features/base/conference'];
-
-            if (metadata?.visitors?.live === false && !WebsocketClient.getInstance().isActive()) {
-                // when go live is available and false, we should subscribe
-                // to the service if available to listen for waiting visitors
-                _subscribeQueueStats(getState(), dispatch);
-            }
-        }
+        _handleQueueAndNotification(dispatch, getState, metadata);
 
         break;
     }
@@ -256,26 +249,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
     case UPDATE_CONFERENCE_METADATA: {
         const { metadata } = action;
-        const { visitors: visitorsConfig } = toState(getState)['features/base/config'];
 
-        if (!visitorsConfig?.queueService) {
-            break;
-        }
-
-        if (isLocalParticipantModerator(getState)) {
-            if (metadata?.visitors?.live === false) {
-                if (!WebsocketClient.getInstance().isActive()) {
-                    // if metadata go live changes to goLive false and local is moderator
-                    // we should subscribe to the service if available to listen for waiting visitors
-                    _subscribeQueueStats(getState(), dispatch);
-                }
-
-                _showNotLiveNotification(dispatch, getVisitorsInQueueCount(getState));
-            } else if (metadata?.visitors?.live) {
-                dispatch(hideNotification(VISITORS_NOT_LIVE_NOTIFICATION_ID));
-                WebsocketClient.getInstance().disconnect();
-            }
-        }
+        _handleQueueAndNotification(dispatch, getState, metadata);
 
         break;
     }
@@ -288,6 +263,38 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     return next(action);
 });
+
+/**
+ * Handles the queue connection and notification for visitors if needed.
+ *
+ * @param {IStore.dispatch} dispatch - The Redux dispatch function.
+ * @param {IStore.getState} getState - The Redux getState function.
+ * @param {IConferenceMetadata} metadata - The conference metadata.
+ * @returns {void}
+ */
+function _handleQueueAndNotification(
+        dispatch: IStore['dispatch'],
+        getState: IStore['getState'],
+        metadata: IConferenceMetadata | undefined): void {
+    const { visitors: visitorsConfig } = toState(getState)['features/base/config'];
+
+    if (!(visitorsConfig?.queueService && isLocalParticipantModerator(getState))) {
+        return;
+    }
+
+    if (metadata?.visitors?.live === false) {
+        if (!WebsocketClient.getInstance().isActive()) {
+            // if metadata go live changes to goLive false and local is moderator
+            // we should subscribe to the service if available to listen for waiting visitors
+            _subscribeQueueStats(getState(), dispatch);
+        }
+
+        _showNotLiveNotification(dispatch, getVisitorsInQueueCount(getState));
+    } else if (metadata?.visitors?.live) {
+        dispatch(hideNotification(VISITORS_NOT_LIVE_NOTIFICATION_ID));
+        WebsocketClient.getInstance().disconnect();
+    }
+}
 
 /**
  * Shows a notification that the meeting is not live.
