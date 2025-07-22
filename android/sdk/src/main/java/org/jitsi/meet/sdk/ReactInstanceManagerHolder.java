@@ -203,15 +203,6 @@ class ReactInstanceManagerHolder {
     }
 
     /**
-     * Checks if the ReactInstanceManager has been initialized.
-     *
-     * @return {@code true} if the ReactInstanceManager is initialized, {@code false} otherwise.
-     */
-    static boolean isInitialized() {
-        return reactInstanceManager != null;
-    }
-
-    /**
      * Internal method to initialize the React Native instance manager. We
      * create a single instance in order to load the JavaScript bundle a single
      * time. All {@code ReactRootView} instances will be tied to the one and
