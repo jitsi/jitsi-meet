@@ -197,10 +197,6 @@ public class JitsiMeetView extends FrameLayout {
         }
 
         setBackgroundColor(BACKGROUND_COLOR);
-
-        // ReactInstanceManagerHolder.initReactInstanceManager((Application) context.getApplicationContext());
-        // ReactInstanceManager is now initialized by JitsiInitializer during application startup
-        // No need to initialize it here anymore
     }
 
     /**
