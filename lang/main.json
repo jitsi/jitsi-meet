@@ -302,9 +302,7 @@
         "authenticationRequired": "Authentication required",
         "cameraCaptureDialog": {
             "captureLabel": "Open camera",
-            "captureTitle": "Take a picture",
-            "sendFileLabel": "Open image file",
-            "sendFileTitle": "Send a picture"
+            "captureTitle": "Take a picture"
         },
         "cameraConstraintFailedError": "Your camera does not satisfy some of the required constraints.",
         "cameraNotFoundError": "Camera was not found.",

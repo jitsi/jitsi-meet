@@ -1,5 +1,6 @@
 import { IStore } from '../app/types';
 import { openDialog } from '../base/dialog/actions';
+import { isMobileBrowser } from '../base/environment/utils';
 import { getLocalJitsiDesktopTrack } from '../base/tracks/functions';
 
 import CameraCaptureDialog from './CameraCaptureDialog';
@@ -73,6 +74,9 @@ export function toggleScreenshotCaptureSummary(enabled: boolean) {
  */
 export function openCameraCaptureDialog(callback: Function, cameraFacingMode: string) {
     return (dispatch: IStore['dispatch']) => {
+        if (!isMobileBrowser()) {
+            return;
+        }
 
         dispatch(openDialog(CameraCaptureDialog, {
             callback,

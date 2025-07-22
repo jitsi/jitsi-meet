@@ -30,6 +30,7 @@ import { overwriteConfig } from '../../react/features/base/config/actions';
 import { getWhitelistedJSON } from '../../react/features/base/config/functions.any';
 import { toggleDialog } from '../../react/features/base/dialog/actions';
 import { isSupportedBrowser } from '../../react/features/base/environment/environment';
+import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt/functions';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../react/features/base/media/constants';
@@ -945,6 +946,12 @@ function initCommands() {
             break;
         case 'capture-camera-picture' : {
             const { cameraFacingMode } = request;
+
+            if (!isMobileBrowser()) {
+                logger.error('This feature is only supported on mobile');
+
+                return;
+            }
 
             APP.store.dispatch(openCameraCaptureDialog(callback, cameraFacingMode));
             break;

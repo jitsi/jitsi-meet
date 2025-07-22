@@ -1,10 +1,9 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect, useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { hideDialog } from '../base/dialog/actions';
-import { isMobileBrowser } from '../base/environment/utils';
 import { translate } from '../base/i18n/functions';
 import { withPixelLineHeight } from '../base/styles/functions.web';
 import Dialog from '../base/ui/components/web/Dialog';
@@ -71,11 +70,6 @@ interface IProps extends WithTranslation {
 const CameraCaptureDialog = ({ callback, t, cameraFacingMode }: IProps) => {
     const dispatch = useDispatch();
     const { classes } = useStyles();
-    const isMobile = isMobileBrowser();
-    const titleTranslationKey = useMemo(() =>
-        `dialog.cameraCaptureDialog.${isMobile ? 'captureTitle' : 'sendFileTitle'}`, []);
-    const labelTranslationkKey = useMemo(() =>
-        `dialog.cameraCaptureDialog.${isMobile ? 'captureLabel' : 'sendFileLabel'}`, []);
 
     const onCancel = useCallback(() => callback({
         error: 'User canceled!'
@@ -110,17 +104,17 @@ const CameraCaptureDialog = ({ callback, t, cameraFacingMode }: IProps) => {
             cancel = {{ hidden: true }}
             ok = {{ hidden: true }}
             onCancel = { onCancel }
-            titleKey = { t(titleTranslationKey) }>
+            titleKey = { t('dialog.cameraCaptureDialog.captureTitle') }>
             <div className = { classes.container } >
                 <label
-                    aria-label = { t(labelTranslationkKey) }
+                    aria-label = { t('dialog.cameraCaptureDialog.captureLabel') }
                     className = { classes.label }
                     htmlFor = { FILE_INPUT_ID }>
-                    {t(labelTranslationkKey)}
+                    {t('dialog.cameraCaptureDialog.captureLabel')}
                 </label>
                 <input
                     accept = 'image/*'
-                    { ...isMobile ? { capture: cameraFacingMode } : {} }
+                    capture = { cameraFacingMode }
                     className = { classes.hidden }
                     id = { FILE_INPUT_ID }
                     onChange = { onInputChange }
