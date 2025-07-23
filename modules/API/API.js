@@ -945,7 +945,7 @@ function initCommands() {
                 });
             break;
         case 'capture-camera-picture' : {
-            const { cameraFacingMode } = request;
+            const { cameraFacingMode, descriptionText, titleText } = request;
 
             if (!isMobileBrowser()) {
                 logger.error('This feature is only supported on mobile');
@@ -953,7 +953,9 @@ function initCommands() {
                 return;
             }
 
-            APP.store.dispatch(openCameraCaptureDialog(callback, cameraFacingMode));
+            APP.store.dispatch(openCameraCaptureDialog(callback, { cameraFacingMode,
+                descriptionText,
+                titleText }));
             break;
         }
         case 'deployment-info':

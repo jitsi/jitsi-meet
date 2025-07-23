@@ -1,3 +1,4 @@
+import { Theme } from '@mui/material';
 import React, { useCallback, useRef } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect, useDispatch } from 'react-redux';
@@ -6,14 +7,29 @@ import { makeStyles } from 'tss-react/mui';
 import { hideDialog } from '../base/dialog/actions';
 import { translate } from '../base/i18n/functions';
 import Label from '../base/label/components/web/Label';
+import Button from '../base/ui/components/web/Button';
 import Dialog from '../base/ui/components/web/Dialog';
-const useStyles = makeStyles()({
+import { BUTTON_TYPES } from '../base/ui/constants.any';
+
+import { ICameraCapturePayload } from './actionTypes';
+
+const useStyles = makeStyles()((theme: Theme) => ({
     container: {
         display: 'flex',
         height: '100%',
         width: '100%',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        flexDirection: 'column',
+        gap: theme.spacing(3),
+        textAlign: 'center'
+    },
+    buttonsContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: theme.spacing(3),
+        width: '100%',
+        maxWidth: '100%'
     },
 
     hidden: {
@@ -21,8 +37,14 @@ const useStyles = makeStyles()({
     },
     label: {
         background: 'transparent',
+        marginBottom: '48px'
+    },
+    button: {
+        width: '100%',
+        height: '48px',
+        maxWidth: '400px'
     }
-});
+}));
 
 /**
  * The type of {@link CameraCaptureDialog}'s React {@code Component} props.
@@ -34,9 +56,9 @@ interface IProps extends WithTranslation {
     callback: ({ error, dataURL }: { dataURL?: string; error?: string; }) => void;
 
     /**
-     * Camera facing mode (environment/user).
+     * The camera capture payload.
      */
-    cameraFacingMode?: string;
+    componentProps: ICameraCapturePayload;
 }
 
 /**
@@ -45,13 +67,23 @@ interface IProps extends WithTranslation {
  * @param {Object} props - The props of the component.
  * @returns {React$Element}
  */
-const CameraCaptureDialog = ({ callback, t, cameraFacingMode }: IProps) => {
+const CameraCaptureDialog = ({
+    callback,
+    componentProps,
+    t,
+}: IProps) => {
+    const { cameraFacingMode,
+        descriptionText,
+        titleText } = componentProps;
     const dispatch = useDispatch();
     const { classes } = useStyles();
     const inputRef = useRef<HTMLInputElement>(null);
-    const onCancel = useCallback(() => callback({
-        error: 'User canceled!'
-    }), []);
+    const onCancel = useCallback(() => {
+        callback({
+            error: 'User canceled!'
+        });
+        dispatch(hideDialog());
+    }, []);
 
     const onSubmit = useCallback(() => {
         inputRef.current?.click();
@@ -83,24 +115,36 @@ const CameraCaptureDialog = ({ callback, t, cameraFacingMode }: IProps) => {
 
     return (
         <Dialog
-            cancel = {{ translationKey: 'dialog.cameraCaptureDialog.reject' }}
+            cancel = {{ hidden: true }}
             disableAutoHideOnSubmit = { true }
-            ok = {{ translationKey: 'dialog.cameraCaptureDialog.ok' }}
+            ok = {{ hidden: true }}
             onCancel = { onCancel }
-            onSubmit = { onSubmit }
-            titleKey = { t('dialog.cameraCaptureDialog.title') }>
-            <div className = { classes.container } >
+            titleKey = { titleText || t('dialog.cameraCaptureDialog.title') }>
+            <div className = { classes.container }>
                 <Label
-                    aria-label = { t('dialog.cameraCaptureDialog.description') }
+                    aria-label = { descriptionText || t('dialog.cameraCaptureDialog.description') }
                     className = { classes.label }
-                    text = { t('dialog.cameraCaptureDialog.description') } />
-                <input
-                    accept = 'image/*'
-                    capture = { cameraFacingMode }
-                    className = { classes.hidden }
-                    onChange = { onInputChange }
-                    ref = { inputRef }
-                    type = 'file' />
+                    text = { descriptionText || t('dialog.cameraCaptureDialog.description') } />
+                <div className = { classes.buttonsContainer } >
+                    <Button
+                        accessibilityLabel = { t('dialog.cameraCaptureDialog.ok') }
+                        className = { classes.button }
+                        labelKey = { 'dialog.cameraCaptureDialog.ok' }
+                        onClick = { onSubmit } />
+                    <Button
+                        accessibilityLabel = { t('dialog.cameraCaptureDialog.reject') }
+                        className = { classes.button }
+                        labelKey = { 'dialog.cameraCaptureDialog.reject' }
+                        onClick = { onCancel }
+                        type = { BUTTON_TYPES.TERTIARY } />
+                    <input
+                        accept = 'image/*'
+                        capture = { cameraFacingMode }
+                        className = { classes.hidden }
+                        onChange = { onInputChange }
+                        ref = { inputRef }
+                        type = 'file' />
+                </div>
             </div>
         </Dialog>
     );

@@ -303,7 +303,7 @@
         "cameraCaptureDialog": {
             "description": "Take and send a picture using your mobile camera",
             "ok": "Open camera",
-            "reject": "Reject",
+            "reject": "Not now",
             "title": "Take a picture"
         },
         "cameraConstraintFailedError": "Your camera does not satisfy some of the required constraints.",

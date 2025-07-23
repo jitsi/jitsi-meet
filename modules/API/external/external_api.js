@@ -824,12 +824,20 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Captures a picture through OS camera.
      *
      * @param {string} cameraFacingMode - The OS camera facing mode (environment/user).
+     * @param {string} descriptionText - The OS camera facing mode (environment/user).
+     * @param {string} titleText - The OS camera facing mode (environment/user).
      * @returns {Promise<string>} - Resolves with a base64 encoded image data of the screenshot.
      */
-    captureCameraPicture(cameraFacingMode) {
+    captureCameraPicture(
+            cameraFacingMode,
+            descriptionText,
+            titleText
+    ) {
         return this._transport.sendRequest({
             name: 'capture-camera-picture',
-            cameraFacingMode
+            cameraFacingMode,
+            descriptionText,
+            titleText
         });
     }
 

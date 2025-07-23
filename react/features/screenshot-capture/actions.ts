@@ -4,7 +4,7 @@ import { isMobileBrowser } from '../base/environment/utils';
 import { getLocalJitsiDesktopTrack } from '../base/tracks/functions';
 
 import CameraCaptureDialog from './CameraCaptureDialog';
-import { SET_SCREENSHOT_CAPTURE } from './actionTypes';
+import { ICameraCapturePayload, SET_SCREENSHOT_CAPTURE } from './actionTypes';
 import { createScreenshotCaptureSummary } from './functions';
 import logger from './logger';
 
@@ -69,10 +69,10 @@ export function toggleScreenshotCaptureSummary(enabled: boolean) {
  * Opens {@code CameraCaptureDialog}.
  *
  * @param {Function} callback - The callback to execute on picture taken.
- * @param {string} cameraFacingMode - The camera facing mode.
+ * @param {ICameraCapturePayload} componentProps - The camera capture payload.
  * @returns {Function}
  */
-export function openCameraCaptureDialog(callback: Function, cameraFacingMode: string) {
+export function openCameraCaptureDialog(callback: Function, componentProps: ICameraCapturePayload) {
     return (dispatch: IStore['dispatch']) => {
         if (!isMobileBrowser()) {
             return;
@@ -80,7 +80,7 @@ export function openCameraCaptureDialog(callback: Function, cameraFacingMode: st
 
         dispatch(openDialog(CameraCaptureDialog, {
             callback,
-            cameraFacingMode
+            componentProps
         }));
     };
 }
