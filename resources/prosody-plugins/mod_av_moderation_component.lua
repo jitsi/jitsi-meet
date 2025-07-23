@@ -157,7 +157,14 @@ function start_av_moderation(room, mediaType, occupant)
         room.av_moderation = {};
         room.av_moderation_actors = {};
     end
-    room.av_moderation[mediaType] = array{ internal_room_jid_match_rewrite(occupant.nick) };
+    room.av_moderation[mediaType] = array();
+
+    -- add all current moderators to the new whitelist
+    for _, room_occupant in room:each_occupant() do
+        if room_occupant.role == 'moderator' and not ends_with(room_occupant.nick, '/focus') then
+            room.av_moderation[mediaType]:push(internal_room_jid_match_rewrite(room_occupant.nick));
+        end
+    end
 
     -- We want to set startMuted policy in metadata, in case of new participants are joining to respect
     -- it, that will be enforced by jicofo
@@ -262,6 +269,12 @@ function on_message(event)
 
             -- send message to all occupants
             notify_occupants_enable(nil, enabled, room, occupant.nick, mediaType);
+
+            if enabled then
+                -- inform all moderators for the newly created whitelist
+                notify_whitelist_change(nil, true, room, mediaType);
+            end
+
             return true;
         elseif moderation_command.attr.jidToWhitelist then
             local occupant_jid = moderation_command.attr.jidToWhitelist;
@@ -357,9 +370,13 @@ function occupant_joined(event)
         -- NOTE for some reason event.occupant.role is not reflecting the actual occupant role (when changed
         -- from allowners module) but iterating over room occupants returns the correct role
         for _, room_occupant in room:each_occupant() do
-            -- if moderator send the whitelist
-            if (room_occupant.nick == occupant.nick and room_occupant.role == 'moderator') or ends_with(room_occupant.nick, '/focus') then
-                notify_whitelist_change(room_occupant.jid, false, room);
+            -- if it is a moderator, send the whitelist to every moderator
+            if room_occupant.nick == occupant.nick and room_occupant.role == 'moderator' then
+                for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
+                    if room.av_moderation[mediaType] then
+                        notify_whitelist_change(nil, true, room, mediaType);
+                    end
+                end
             end
         end
     end
@@ -367,14 +384,30 @@ end
 
 -- when a occupant was granted moderator we need to update him with the whitelist
 function occupant_affiliation_changed(event)
+    local room = event.room;
+    if not room.av_moderation or is_healthcheck_room(room.jid) or is_admin(event.jid)
+        or event.affiliation ~= 'owner' then
+        return;
+    end
+
+    -- in any enabled media type add the new moderator to the whitelist
+    for _, room_occupant in room:each_occupant() do
+        if room_occupant.bare_jid == event.jid then
+            for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
+                if room.av_moderation[mediaType] then
+                    room.av_moderation[mediaType]:push(internal_room_jid_match_rewrite(room_occupant.nick));
+                end
+            end
+        end
+    end
+
     -- the actor can be nil if is coming from allowners or similar module we want to skip it here
     -- as we will handle it in occupant_joined
-    if event.actor and event.affiliation == 'owner' and event.room.av_moderation then
-        local room = event.room;
-        -- event.jid is the bare jid of participant
-        for _, occupant in room:each_occupant() do
-            if occupant.bare_jid == event.jid then
-                notify_whitelist_change(occupant.jid, false, room);
+    if event.actor and event.affiliation == 'owner' then
+        -- notify all moderators for the new grant moderator and the change in whitelists
+        for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
+            if room.av_moderation[mediaType] then
+                notify_whitelist_change(nil, true, room, mediaType);
             end
         end
     end
