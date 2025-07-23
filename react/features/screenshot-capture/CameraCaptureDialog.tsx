@@ -37,7 +37,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
     },
     label: {
         background: 'transparent',
-        marginBottom: '48px'
+        margin: `${theme.spacing(3)} 0 ${theme.spacing(6)}`,
     },
     button: {
         width: '100%',
