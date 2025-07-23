@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, View, ViewStyle } from 'react-native';
-import { SvgCssUri } from 'react-native-svg';
+import { SvgCssUri } from 'react-native-svg/css';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
