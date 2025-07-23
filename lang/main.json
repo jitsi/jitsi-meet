@@ -300,6 +300,12 @@
         "alreadySharedVideoTitle": "Only one shared video is allowed at a time",
         "applicationWindow": "Application window",
         "authenticationRequired": "Authentication required",
+        "cameraCaptureDialog": {
+            "description": "Take and send a picture using your mobile camera",
+            "ok": "Open camera",
+            "reject": "Not now",
+            "title": "Take a picture"
+        },
         "cameraConstraintFailedError": "Your camera does not satisfy some of the required constraints.",
         "cameraNotFoundError": "Camera was not found.",
         "cameraNotSendingData": "We are unable to access your camera. Please check if another application is using this device, select another device from the settings menu or try to reload the application.",

@@ -3,7 +3,7 @@
  *
  * @enum {string}
  */
-export const CAMERA_FACING_MODE = {
+export const CAMERA_FACING_MODE: Record<string, string> = {
     ENVIRONMENT: 'environment',
     USER: 'user'
 };
