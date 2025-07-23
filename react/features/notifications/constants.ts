@@ -99,13 +99,6 @@ export const LOCAL_RECORDING_NOTIFICATION_ID = 'LOCAL_RECORDING_NOTIFICATION_ID'
 export const RAISE_HAND_NOTIFICATION_ID = 'RAISE_HAND_NOTIFICATION';
 
 /**
- * The identifier of the salesforce link notification.
- *
- * @type {string}
- */
-export const SALESFORCE_LINK_NOTIFICATION_ID = 'SALESFORCE_LINK_NOTIFICATION';
-
-/**
  * The identifier of the visitors promotion notification.
  *
  * @type {string}

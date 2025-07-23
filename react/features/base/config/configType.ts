@@ -560,7 +560,6 @@ export interface IConfig {
     requireDisplayName?: boolean;
     resolution?: number;
     roomPasswordNumberOfDigits?: number;
-    salesforceUrl?: string;
     screenshotCapture?: {
         enabled?: boolean;
         mode?: 'always' | 'recording';

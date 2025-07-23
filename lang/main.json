@@ -291,8 +291,6 @@
             "sharingTabs": "Sharing options"
         },
         "add": "Add",
-        "addMeetingNote": "Add a note about this meeting",
-        "addOptionalNote": "Add a note (optional):",
         "allow": "Allow",
         "allowToggleCameraDialog": "Do you allow {{initiatorName}} to toggle your camera facing mode?",
         "allowToggleCameraTitle": "Allow toggle camera?",
@@ -353,8 +351,6 @@
         "kickSystemTitle": "Ouch! You were kicked out of the meeting",
         "kickTitle": "Ouch! {{participantDisplayName}} kicked you out of the meeting",
         "learnMore": "learn more",
-        "linkMeeting": "Link meeting",
-        "linkMeetingTitle": "Link meeting to Salesforce",
         "liveStreaming": "Live Streaming",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Not possible while recording is active",
         "localUserControls": "Local user controls",
@@ -447,12 +443,6 @@
         "screenSharingFailed": "Oops! Something went wrong, we weren't able to start screen sharing!",
         "screenSharingFailedTitle": "Screen sharing failed!",
         "screenSharingPermissionDeniedError": "Oops! Something went wrong with your screen sharing permissions. Please reload and try again.",
-        "searchInSalesforce": "Search in Salesforce",
-        "searchResults": "Search results({{count}})",
-        "searchResultsDetailsError": "Something went wrong while retrieving owner data.",
-        "searchResultsError": "Something went wrong while retrieving data.",
-        "searchResultsNotFound": "No search results found.",
-        "searchResultsTryAgain": "Try using alternative keywords.",
         "sendPrivateMessage": "You recently received a private message. Did you intend to reply to that privately, or you want to send your message to the group?",
         "sendPrivateMessageCancel": "Send to the group",
         "sendPrivateMessageOk": "Send privately",
@@ -818,12 +808,6 @@
         "leftOneMember": "{{name}} left the meeting",
         "leftThreePlusMembers": "{{name}} and many others left the meeting",
         "leftTwoMembers": "{{first}} and {{second}} left the meeting",
-        "linkToSalesforce": "Link to Salesforce",
-        "linkToSalesforceDescription": "You can link the meeting summary to a Salesforce object.",
-        "linkToSalesforceError": "Failed to link meeting to Salesforce",
-        "linkToSalesforceKey": "Link this meeting",
-        "linkToSalesforceProgress": "Linking meeting to Salesforce…",
-        "linkToSalesforceSuccess": "The meeting was linked to Salesforce",
         "localRecordingStarted": "{{name}} has started a local recording.",
         "localRecordingStopped": "{{name}} has stopped a local recording.",
         "me": "Me",
@@ -1066,18 +1050,6 @@
     },
     "raisedHand": "Would like to speak",
     "raisedHandsLabel": "Number of raised hands",
-    "record": {
-        "already": {
-            "linked": "The meeting is already linked to this Salesforce object."
-        },
-        "type": {
-            "account": "Account",
-            "contact": "Contact",
-            "lead": "Lead",
-            "opportunity": "Opportunity",
-            "owner": "Owner"
-        }
-    },
     "recording": {
         "authDropboxText": "Upload to Dropbox",
         "availableSpace": "Available space: {{spaceLeft}} MB (approximately {{duration}} minutes of recording)",
@@ -1314,7 +1286,6 @@
             "laugh": "Laugh",
             "leaveConference": "Leave meeting",
             "like": "Thumbs Up",
-            "linkToSalesforce": "Link to Salesforce",
             "lobbyButton": "Enable/disable lobby mode",
             "localRecording": "Toggle local recording controls",
             "lockRoom": "Toggle meeting password",
@@ -1404,7 +1375,6 @@
         "leaveBreakoutRoom": "Leave breakout room",
         "leaveConference": "Leave meeting",
         "like": "Thumbs Up",
-        "linkToSalesforce": "Link to Salesforce",
         "lobbyButtonDisable": "Disable lobby mode",
         "lobbyButtonEnable": "Enable lobby mode",
         "login": "Log-in",

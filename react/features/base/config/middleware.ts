@@ -127,7 +127,6 @@ function _setDynamicBrandingData({ dispatch }: IStore, next: Function, action: A
         etherpadBase,
         liveStreamingDialogUrls = {},
         preCallTest = {},
-        salesforceUrl,
         userDocumentationUrl,
         peopleSearchUrl,
     } = action.value;
@@ -159,10 +158,6 @@ function _setDynamicBrandingData({ dispatch }: IStore, next: Function, action: A
         if (userDocumentationUrl) {
             config.deploymentUrls.userDocumentationURL = userDocumentationUrl;
         }
-    }
-
-    if (salesforceUrl) {
-        config.salesforceUrl = salesforceUrl;
     }
 
     if (peopleSearchUrl) {

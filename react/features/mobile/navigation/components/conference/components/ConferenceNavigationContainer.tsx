@@ -31,9 +31,6 @@ import StartLiveStreamDialog from '../../../../../recording/components/LiveStrea
 import StartRecordingDialog
 // @ts-ignore
     from '../../../../../recording/components/Recording/native/StartRecordingDialog';
-import SalesforceLinkDialog
-// @ts-ignore
-    from '../../../../../salesforce/components/native/SalesforceLinkDialog';
 import SecurityDialog
 // @ts-ignore
     from '../../../../../security/components/security-dialog/native/SecurityDialog';
@@ -58,7 +55,6 @@ import {
     navigationContainerTheme,
     participantsScreenOptions,
     recordingScreenOptions,
-    salesforceScreenOptions,
     securityScreenOptions,
     settingsNavigationContainerScreenOptions,
     sharedDocumentScreenOptions,
@@ -153,13 +149,6 @@ const ConferenceNavigationContainer = () => {
                     options = {{
                         ...speakerStatsScreenOptions,
                         title: t('speakerStats.speakerStats')
-                    }} />
-                <ConferenceStack.Screen
-                    component = { SalesforceLinkDialog }
-                    name = { screen.conference.salesforce }
-                    options = {{
-                        ...salesforceScreenOptions,
-                        title: t('notify.linkToSalesforce')
                     }} />
                 <ConferenceStack.Screen
                     component = { GifsMenu }
