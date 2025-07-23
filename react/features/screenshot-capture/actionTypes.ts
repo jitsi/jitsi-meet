@@ -15,7 +15,7 @@ export interface ICameraCapturePayload {
   /**
    * Selected camera on open.
    */
-  cameraFacingMode: string;
+  cameraFacingMode?: string;
 
   /**
    * Custom explanatory text to show.

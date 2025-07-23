@@ -7,6 +7,7 @@ import { makeStyles } from 'tss-react/mui';
 import { hideDialog } from '../base/dialog/actions';
 import { translate } from '../base/i18n/functions';
 import Label from '../base/label/components/web/Label';
+import { CAMERA_FACING_MODE } from '../base/media/constants';
 import Button from '../base/ui/components/web/Button';
 import Dialog from '../base/ui/components/web/Dialog';
 import { BUTTON_TYPES } from '../base/ui/constants.any';
@@ -72,7 +73,7 @@ const CameraCaptureDialog = ({
     componentProps,
     t,
 }: IProps) => {
-    const { cameraFacingMode,
+    const { cameraFacingMode = CAMERA_FACING_MODE.ENVIRONMENT,
         descriptionText,
         titleText } = componentProps;
     const dispatch = useDispatch();
