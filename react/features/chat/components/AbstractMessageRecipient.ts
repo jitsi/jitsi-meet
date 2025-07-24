@@ -3,7 +3,9 @@ import { WithTranslation } from 'react-i18next';
 
 import { IReduxState, IStore } from '../../app/types';
 import { getParticipantDisplayName, isLocalParticipantModerator } from '../../base/participants/functions';
+import { getVisitorDisplayName } from '../../visitors/functions';
 import { setLobbyChatActiveState, setPrivateMessageRecipient } from '../actions.any';
+import { isVisitorChatParticipant } from '../functions';
 
 
 export interface IProps extends WithTranslation {
@@ -12,6 +14,11 @@ export interface IProps extends WithTranslation {
       * Is lobby messaging active.
       */
     _isLobbyChatActive: boolean;
+
+    /**
+     * Whether the private message recipient is a visitor.
+     */
+    _isVisitor?: boolean;
 
     /**
       * The name of the lobby message recipient, if any.
@@ -72,10 +79,18 @@ export function _mapDispatchToProps(dispatch: IStore['dispatch']) {
  */
 export function _mapStateToProps(state: IReduxState, _ownProps: any) {
     const { privateMessageRecipient, lobbyMessageRecipient, isLobbyChatActive } = state['features/chat'];
+    let _privateMessageRecipient;
+    const _isVisitor = isVisitorChatParticipant(privateMessageRecipient);
+
+    if (privateMessageRecipient) {
+        _privateMessageRecipient = _isVisitor
+            ? getVisitorDisplayName(state, privateMessageRecipient.name)
+            : getParticipantDisplayName(state, privateMessageRecipient.id);
+    }
 
     return {
-        _privateMessageRecipient:
-            privateMessageRecipient ? getParticipantDisplayName(state, privateMessageRecipient.id) : undefined,
+        _privateMessageRecipient,
+        _isVisitor,
         _isLobbyChatActive: isLobbyChatActive,
         _lobbyMessageRecipient:
                 isLobbyChatActive && lobbyMessageRecipient ? lobbyMessageRecipient.name : undefined,

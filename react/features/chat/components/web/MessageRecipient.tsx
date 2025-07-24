@@ -48,6 +48,7 @@ const useStyles = makeStyles()(theme => {
 const MessageRecipient = ({
     _privateMessageRecipient,
     _isLobbyChatActive,
+    _isVisitor,
     _lobbyMessageRecipient,
     _onRemovePrivateMessageRecipient,
     _onHideLobbyChatRecipient,
@@ -80,9 +81,9 @@ const MessageRecipient = ({
             id = 'chat-recipient'
             role = 'alert'>
             <span className = { classes.text }>
-                {t(_isLobbyChatActive ? 'chat.lobbyChatMessageTo' : 'chat.messageTo', {
-                    recipient: _isLobbyChatActive ? _lobbyMessageRecipient : _privateMessageRecipient
-                })}
+                { _isLobbyChatActive
+                    ? t('chat.lobbyChatMessageTo', { recipient: _lobbyMessageRecipient })
+                    : t('chat.messageTo', { recipient: `${_privateMessageRecipient}${_isVisitor ? ` ${t('visitors.chatIndicator')}` : ''}` }) }
             </span>
             <Button
                 accessibilityLabel = { t('dialog.close') }
