@@ -623,7 +623,7 @@ local function table_compare(old_table, new_table)
     local modified = {}
 
     -- Find removed items (in old but not in new)
-    for id, _ in pairs(old_table) do
+    for id, value in pairs(old_table) do
         if new_table[id] == nil then
             table.insert(removed, id)
         elseif new_table[id] ~= value then
