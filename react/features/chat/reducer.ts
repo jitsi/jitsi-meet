@@ -1,6 +1,7 @@
 import { UPDATE_CONFERENCE_METADATA } from '../base/conference/actionTypes';
 import { ILocalParticipant, IParticipant } from '../base/participants/types';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
+import { IVisitorChatParticipant } from '../visitors/types';
 
 import {
     ADD_MESSAGE,
@@ -51,7 +52,7 @@ export interface IChatState {
     } | ILocalParticipant;
     messages: IMessage[];
     nbUnreadMessages: number;
-    privateMessageRecipient?: IParticipant;
+    privateMessageRecipient?: IParticipant | IVisitorChatParticipant;
     width: {
         current: number;
         userSet: number | null;
@@ -64,6 +65,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         const newMessage: IMessage = {
             displayName: action.displayName,
             error: action.error,
+            isFromVisitor: Boolean(action.isFromVisitor),
             participantId: action.participantId,
             isReaction: action.isReaction,
             messageId: action.messageId,
@@ -73,6 +75,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             privateMessage: action.privateMessage,
             lobbyChat: action.lobbyChat,
             recipient: action.recipient,
+            sentToVisitor: Boolean(action.sentToVisitor),
             timestamp: action.timestamp
         };
 
