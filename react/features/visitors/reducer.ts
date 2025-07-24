@@ -12,7 +12,7 @@ import {
     UPDATE_VISITORS_LIST,
     VISITOR_PROMOTION_REQUEST
 } from './actionTypes';
-import { IPromotionRequest, IVisitor } from './types';
+import { IPromotionRequest, IVisitorListParticipant } from './types';
 
 const DEFAULT_STATE = {
     count: 0,
@@ -22,7 +22,7 @@ const DEFAULT_STATE = {
     showNotification: false,
     supported: false,
     promotionRequests: [],
-    visitors: [] as IVisitor[],
+    visitors: [] as IVisitorListParticipant[],
     visitorsListSubscribed: false
 };
 
@@ -34,7 +34,7 @@ export interface IVisitorsState {
     inQueueCount?: number;
     promotionRequests: IPromotionRequest[];
     supported: boolean;
-    visitors: IVisitor[];
+    visitors: IVisitorListParticipant[];
     visitorsListSubscribed: boolean;
 }
 ReducerRegistry.register<IVisitorsState>('features/visitors', (state = DEFAULT_STATE, action): IVisitorsState => {

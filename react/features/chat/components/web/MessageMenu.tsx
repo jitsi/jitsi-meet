@@ -15,6 +15,8 @@ import { handleLobbyChatInitialized, openChat } from '../../actions.web';
 
 export interface IProps {
     className?: string;
+    displayName?: string;
+    isFromVisitor?: boolean;
     isLobbyMessage: boolean;
     message: string;
     participantId: string;
@@ -58,7 +60,7 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const MessageMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChatMessageMenu }: IProps) => {
+const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, shouldDisplayChatMessageMenu, displayName }: IProps) => {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
@@ -82,10 +84,23 @@ const MessageMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChat
         if (isLobbyMessage) {
             dispatch(handleLobbyChatInitialized(participantId));
         } else {
-            dispatch(openChat(participant));
+            // For visitor messages, participant will be undefined but we can still open chat
+            // using the participantId which contains the visitor's original JID
+            if (isFromVisitor) {
+                // Handle visitor participant that doesn't exist in main participant list
+                const visitorParticipant = {
+                    id: participantId,
+                    name: displayName,
+                    isVisitor: true
+                };
+
+                dispatch(openChat(visitorParticipant));
+            } else {
+                dispatch(openChat(participant));
+            }
         }
         handleClose();
-    }, [ dispatch, isLobbyMessage, participant, participantId ]);
+    }, [ dispatch, isLobbyMessage, participant, participantId, displayName ]);
 
     const handleCopyClick = useCallback(() => {
         copyText(message)

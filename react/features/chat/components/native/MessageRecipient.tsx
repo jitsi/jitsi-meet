@@ -12,7 +12,8 @@ import {
 } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { setLobbyChatActiveState, setPrivateMessageRecipient } from '../../actions.any';
 import AbstractMessageRecipient, {
-    IProps as AbstractProps
+    IProps as AbstractProps,
+    _mapStateToProps as _mapStateToPropsAbstract
 } from '../AbstractMessageRecipient';
 
 import styles from './styles';
@@ -36,11 +37,6 @@ interface IProps extends AbstractProps {
         id: string;
         name: string;
     } | ILocalParticipant;
-
-    /**
-     * The participant object set for private messaging.
-     */
-    privateMessageRecipient: { name: string; };
 }
 
 /**
@@ -96,7 +92,8 @@ class MessageRecipient extends AbstractMessageRecipient<IProps> {
         const {
             isLobbyChatActive,
             lobbyMessageRecipient,
-            privateMessageRecipient,
+            _privateMessageRecipient,
+            _isVisitor,
             t
         } = this.props;
 
@@ -120,7 +117,7 @@ class MessageRecipient extends AbstractMessageRecipient<IProps> {
             );
         }
 
-        if (!privateMessageRecipient) {
+        if (!_privateMessageRecipient) {
             return null;
         }
 
@@ -130,7 +127,7 @@ class MessageRecipient extends AbstractMessageRecipient<IProps> {
                 style = { styles.messageRecipientContainer as ViewStyle }>
                 <Text style = { styles.messageRecipientText }>
                     { t('chat.messageTo', {
-                        recipient: privateMessageRecipient.name
+                        recipient: `${_privateMessageRecipient}${_isVisitor ? ` ${t('visitors.chatIndicator')}` : ''}`
                     }) }
                 </Text>
                 <TouchableHighlight
@@ -157,6 +154,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     const { lobbyMessageRecipient, isLobbyChatActive } = state['features/chat'];
 
     return {
+        ..._mapStateToPropsAbstract(state, _ownProps),
         isLobbyChatActive,
         lobbyMessageRecipient
     };
