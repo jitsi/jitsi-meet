@@ -620,11 +620,14 @@ end
 local function table_compare(old_table, new_table)
     local removed = {}
     local added = {}
+    local modified = {}
 
     -- Find removed items (in old but not in new)
     for id, _ in pairs(old_table) do
         if new_table[id] == nil then
             table.insert(removed, id)
+        elseif new_table[id] ~= value then
+            table.insert(modified, id)
         end
     end
 
@@ -635,7 +638,7 @@ local function table_compare(old_table, new_table)
         end
     end
 
-    return removed, added
+    return removed, added, modified
 end
 
 local function table_equals(t1, t2)
@@ -646,9 +649,9 @@ local function table_equals(t1, t2)
         return t1 == nil;
     end
 
-    local removed, added = table_compare(t1, t2);
+    local removed, added, modified = table_compare(t1, t2);
 
-    return next(removed) == nil and next(added) == nil
+    return next(removed) == nil and next(added) == nil and next(modified) == nil
 end
 
 -- Splits a string using delimiter
