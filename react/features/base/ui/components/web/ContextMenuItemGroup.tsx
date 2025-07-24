@@ -12,11 +12,6 @@ interface IProps {
     actions?: Array<ItemProps>;
 
     /**
-     * The id of the element that labels this group.
-     */
-    'aria-labelledby'?: string;
-
-    /**
      * The children of the component.
      */
     children?: ReactNode;
@@ -51,7 +46,6 @@ const useStyles = makeStyles()(theme => {
 
 const ContextMenuItemGroup = ({
     actions,
-    'aria-labelledby': ariaLabelledBy,
     children,
     ...rest
 }: IProps) => {
@@ -59,7 +53,6 @@ const ContextMenuItemGroup = ({
 
     return (
         <div
-            aria-labelledby = { ariaLabelledBy }
             className = { styles.contextMenuItemGroup }
             { ...rest }>
             {children}

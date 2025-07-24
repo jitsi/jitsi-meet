@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
 import { IconCheck } from '../../../../base/icons/svg';
@@ -91,6 +92,7 @@ const useStyles = makeStyles()(() => {
 const SpeakerEntry = (props: IProps) => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const { classes, cx } = useStyles();
+    const { t } = useTranslation();
 
     /**
      * Click handler for the entry.
@@ -135,7 +137,7 @@ const SpeakerEntry = (props: IProps) => {
     }
 
     const { children, isSelected, index, length } = props;
-    const testLabel = 'Test';
+    const testLabel = t('deviceSelection.testAudio');
 
     /* eslint-disable react/jsx-no-bind */
     return (
