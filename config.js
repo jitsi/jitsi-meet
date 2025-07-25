@@ -866,7 +866,6 @@ var config = {
     //    'help',
     //    'highlight',
     //    'invite',
-    //    'linktosalesforce',
     //    'livestreaming',
     //    'microphone',
     //    'noisesuppression',
@@ -1390,13 +1389,6 @@ var config = {
         logoClickUrl: 'https://example-company.org',
         // The url used for the image used as logo
         logoImageUrl: 'https://example.com/logo-img.png',
-        // Endpoint that enables support for salesforce integration with in-meeting resource linking
-        // This is required for:
-        // listing the most recent records - salesforceUrl/records/recents
-        // searching records - salesforceUrl/records?text=${text}
-        // retrieving record details - salesforceUrl/records/${id}?type=${type}
-        // and linking the meeting - salesforceUrl/sessions/${sessionId}/records/${id}
-        // salesforceUrl: 'https://api.example.com/',
         // Overwrite for pool of background images for avatars
         avatarBackgrounds: ['url(https://example.com/avatar-background-1.png)', '#FFF'],
         // The lobby/prejoin screen background
@@ -1713,7 +1705,6 @@ var config = {
     //     'notify.leftOneMember', // show when a participant left
     //     'notify.leftThreePlusMembers', // show when more than 2 participants left simultaneously
     //     'notify.leftTwoMembers', // show when two participants left simultaneously
-    //     'notify.linkToSalesforce', // shown when joining a meeting with salesforce integration
     //     'notify.localRecordingStarted', // shown when the local recording has been started
     //     'notify.localRecordingStopped', // shown when the local recording has been stopped
     //     'notify.moderationInEffectCSTitle', // shown when user attempts to share content during AV moderation

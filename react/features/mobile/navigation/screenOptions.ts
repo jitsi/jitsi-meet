@@ -166,11 +166,6 @@ export const lobbyChatScreenOptions = {
 };
 
 /**
- * Screen options for salesforce link modal.
- */
-export const salesforceScreenOptions = presentationScreenOptions;
-
-/**
  * Screen options for GIPHY integration modal.
  */
 export const gifsMenuOptions = presentationScreenOptions;
