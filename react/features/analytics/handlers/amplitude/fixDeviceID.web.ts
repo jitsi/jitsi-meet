@@ -35,3 +35,12 @@ export function fixDeviceID(amplitude: Types.BrowserClient) {
         }
     }
 }
+
+/**
+ * Returns the amplitude shared deviceId.
+ *
+ * @returns {string} - The amplitude deviceId.
+ */
+export function getDeviceID() {
+    return jitsiLocalStorage.getItem(DEVICE_ID_KEY);
+}
