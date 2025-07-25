@@ -6,7 +6,6 @@ import { makeStyles } from 'tss-react/mui';
 import Icon from '../../../base/icons/components/Icon';
 import { IconSearch } from '../../../base/icons/svg';
 import { getFieldValue } from '../../../base/react/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { HiddenDescription } from '../../../base/ui/components/web/HiddenDescription';
 import { MOBILE_BREAKPOINT } from '../../constants';
 import { isSpeakerStatsSearchDisabled } from '../../functions';
@@ -39,13 +38,13 @@ const useStyles = makeStyles()(theme => {
             height: 40,
             '&::placeholder': {
                 color: theme.palette.text03,
-                ...withPixelLineHeight(theme.typography.bodyShortRegular)
+                ...theme.typography.bodyShortRegular
             },
             [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
                 height: 48,
                 padding: '13px 16px 13px 44px',
                 '&::placeholder': {
-                    ...withPixelLineHeight(theme.typography.bodyShortRegular)
+                    ...theme.typography.bodyShortRegular
                 }
             }
         }

@@ -37,13 +37,13 @@ const useStyles = makeStyles()(theme => {
             },
 
             '& .prejoin-dialog-calling-label': {
-                fontSize: '15px',
+                fontSize: '1rem',
                 margin: `${theme.spacing(2)} 0 ${theme.spacing(3)} 0`
             },
 
             '& .prejoin-dialog-calling-number': {
-                fontSize: '19px',
-                lineHeight: '28px',
+                fontSize: '1.25rem',
+                lineHeight: '1.75rem',
                 margin: `${theme.spacing(3)} 0`
             }
         }

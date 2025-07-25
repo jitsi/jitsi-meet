@@ -32,7 +32,7 @@ export const commonStyles = (theme: Theme) => {
                 marginTop: theme.spacing(3),
 
                 '& label': {
-                    fontSize: '14px'
+                    fontSize: '0.875rem'
                 }
             }
         },
@@ -42,10 +42,10 @@ export const commonStyles = (theme: Theme) => {
             color: theme.palette.text01,
             cursor: 'pointer',
             display: 'flex',
-            fontSize: 14,
+            fontSize: '0.875rem',
             fontWeight: 400,
             height: 40,
-            lineHeight: '24px',
+            lineHeight: '1.5rem',
             padding: '8px 16px',
             boxSizing: 'border-box' as const,
             '& > div': {
@@ -85,7 +85,7 @@ export const commonStyles = (theme: Theme) => {
 
             '& i': {
                 display: 'inline',
-                fontSize: 24
+                fontSize: '1.5rem'
             },
 
             '@media (hover: hover) and (pointer: fine)': {
@@ -120,8 +120,8 @@ export const commonStyles = (theme: Theme) => {
             },
 
             '.prejoin-dialog-label': {
-                fontSize: '15px',
-                lineHeight: '24px'
+                fontSize: '1rem',
+                lineHeight: '1.5rem'
             },
 
             '.prejoin-dialog-label-num': {
@@ -156,8 +156,8 @@ export const commonStyles = (theme: Theme) => {
 
             '.prejoin-dialog-title': {
                 display: 'inline-block',
-                fontSize: '24px',
-                lineHeight: '32px'
+                fontSize: '1.5rem',
+                lineHeight: '2rem'
             },
 
             '.prejoin-dialog-icon': {
@@ -196,7 +196,7 @@ export const commonStyles = (theme: Theme) => {
             '.prejoin-dialog-delimiter-txt': {
                 background: theme.palette.uiBackground,
                 color: theme.palette.text01,
-                fontSize: '11px',
+                fontSize: '0.75rem',
                 textTransform: 'uppercase' as const,
                 padding: `0 ${theme.spacing(2)}`
             }
@@ -212,7 +212,7 @@ export const commonStyles = (theme: Theme) => {
             display: 'flex',
             borderRadius: 3,
             flexDirection: 'column' as const,
-            fontSize: 24,
+            fontSize: '1.5rem',
             height: 48,
             justifyContent: 'center',
             width: 48,
@@ -249,7 +249,7 @@ export const commonStyles = (theme: Theme) => {
             color: theme.palette.text01,
             cursor: 'pointer',
             display: 'inline-block',
-            lineHeight: '48px',
+            lineHeight: '3rem',
             textAlign: 'center' as const
         },
 

@@ -6,7 +6,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../base/icons/components/Icon';
 import { IconCloseLarge } from '../../../base/icons/svg';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
@@ -31,12 +30,12 @@ const useStyles = makeStyles()(theme => {
             marginBottom: '24px'
         },
         question: {
-            ...withPixelLineHeight(theme.typography.heading6),
+            ...theme.typography.heading6,
             color: theme.palette.text01,
             marginBottom: '8px'
         },
         creator: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: theme.palette.text02
         },
         answerList: {
