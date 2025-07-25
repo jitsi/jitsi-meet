@@ -7,7 +7,6 @@ buildscript {
   dependencies {
     classpath "com.android.tools.build:gradle:$rootProject.ext.gradlePluginVersion"
   }
-  namespace 'org.jitsi.meet.reactnativesdk'
 }
 
 def isNewArchitectureEnabled() {
@@ -29,6 +28,7 @@ def getExtOrIntegerDefault(name) {
 }
 
 android {
+  namespace 'org.jitsi.meet.sdk'
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
 
   defaultConfig {
