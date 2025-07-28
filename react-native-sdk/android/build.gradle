@@ -5,7 +5,7 @@ buildscript {
   }
 
   dependencies {
-    classpath "com.android.tools.build:gradle:$rootProject.ext.gradlePluginVersion"
+    classpath "com.android.tools.build:gradle:8.4.2"
   }
 }
 
