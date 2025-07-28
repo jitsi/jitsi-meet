@@ -20,6 +20,30 @@ export type IContext = {
     webhooksProxy: WebhookProxy;
 };
 
+export type ITokenOptions = {
+    /**
+     * The room for which the token is valid, or '*'. Defaults to '*'.
+     */
+    room?: string;
+    /**
+     * The duration for which the token is valid, e.g. "1h" for one hour.
+     */
+    exp?: string;
+    /**
+     * The key ID to use for the token.
+     * If not provided, the default key ID from the config will be used.
+     */
+    keyId?: string;
+    /**
+     * Whether to set the 'moderator' flag.
+     */
+    moderator?: boolean;
+    /**
+     * Whether to set the 'visitor' flag.
+     */
+    visitor?: boolean;
+}
+
 export type IJoinOptions = {
 
     /**
@@ -37,10 +61,7 @@ export type IJoinOptions = {
      */
     displayName?: string;
 
-    /**
-     * Whether to create a moderator token for joining.
-     */
-    moderator?: boolean;
+    tokenOptions?: ITokenOptions;
 
     /**
      * When joining the first participant and jwt singing material is available and a provided token
@@ -68,9 +89,4 @@ export type IJoinOptions = {
      * based on the logic of the test.
      */
     skipWaitToJoin?: boolean;
-
-    /**
-     * Whether to create a visitor token for joining.
-     */
-    visitor?: boolean;
 };

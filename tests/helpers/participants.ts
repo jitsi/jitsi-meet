@@ -4,7 +4,7 @@ import process from 'node:process';
 import { v4 as uuidv4 } from 'uuid';
 
 import { P1, P2, P3, P4, Participant } from './Participant';
-import { IContext, IJoinOptions } from './types';
+import { IContext, IJoinOptions, ITokenOptions } from './types';
 
 const SUBJECT_XPATH = '//div[starts-with(@class, "subject-text")]';
 
@@ -201,11 +201,11 @@ async function _joinParticipant( // eslint-disable-line max-params
                     || !ctx.jwtPrivateKeyPath)) {
                 jwtToken = process.env.JWT_ACCESS_TOKEN;
             } else if (ctx.jwtPrivateKeyPath) {
-                jwtToken = getToken(ctx, name, options);
+                jwtToken = getToken(ctx, name, options?.tokenOptions);
             }
         }
     } else if (name === P2) {
-        jwtToken = options?.preferGenerateToken ? getToken(ctx, P2, options) : undefined;
+        jwtToken = options?.preferGenerateToken ? getToken(ctx, P2, options.tokenOptions) : undefined;
     }
 
     const newParticipant = new Participant(name, jwtToken);
@@ -284,14 +284,14 @@ export async function muteVideoAndCheck(testee: Participant, observer: Participa
 }
 
 /**
- * Get a JWT token for a moderator.
+ * Generate a JWT token.
  */
-function getToken(ctx: IContext, displayName: string, options?: IJoinOptions) {
-    const keyid = process.env.JWT_KID;
+export function getToken(ctx: IContext, displayName: string, options?: ITokenOptions) {
+    const keyid = options?.keyId || process.env.JWT_KID;
     const headers = {
         algorithm: 'RS256',
         noTimestamp: true,
-        expiresIn: '24h',
+        expiresIn: options?.exp || '24h',
         keyid
     };
 
@@ -323,7 +323,7 @@ function getToken(ctx: IContext, displayName: string, options?: IJoinOptions) {
                 'livestreaming': true
             },
         },
-        'room': '*'
+        'room': options?.room || '*'
     };
 
     // if the moderator is set, or options are missing, we assume moderator
