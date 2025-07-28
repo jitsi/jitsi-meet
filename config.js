@@ -204,18 +204,19 @@ var config = {
     startAudioOnly: false,
 
     // Every participant after the Nth will start audio muted.
-    startAudioMuted: 2,
+    // startAudioMuted: 2,
+    ignoreStartMuted: true,
 
     // Start calls with audio muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
-    startWithAudioMuted: true,
+    startWithAudioMuted: false,
 
     // Enabling it (with #params) will disable local audio output of remote
     // participants and to enable it back a reload is needed.
     // startSilent: false,
 
     // Enables support for opus-red (redundancy for Opus).
-    // enableOpusRed: false,
+    enableOpusRed: true,
 
     // Specify audio quality stereo and opusMaxAverageBitrate values in order to enable HD audio.
     // Beware, by doing so, you are disabling echo cancellation, noise suppression and AGC.
@@ -341,13 +342,13 @@ var config = {
         video: {
             height: {
                 ideal: 720,
-                max: 720,
-                min: 180,
+                max: 1080,
+                min: 240,
             },
             width: {
                 ideal: 1280,
-                max: 1280,
-                min: 320,
+                max: 1920,
+                min: 426,
             },
             frameRate: {
                 max: 30,
@@ -359,17 +360,17 @@ var config = {
     disableSimulcast: false,
 
     // Every participant after the Nth will start video muted.
-    startVideoMuted: 2,
+    // startVideoMuted: 2,
 
     // Start calls with video muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
-    startWithVideoMuted: true,
+    startWithVideoMuted: false,
 
     // Desktop sharing
 
     // Optional desktop sharing frame rate options. Default value: min:5, max:5.
     desktopSharingFrameRate: {
-        min: 5,
+        min: 15,
         max: 30,
     },
 
@@ -567,10 +568,10 @@ var config = {
             maxBitratesVideo: {
                 low: 100000,
                 standard: 300000,
-                high: 1000000,
-                fullHd: 2000000,
-                ultraHd: 4000000,
-                ssHigh: 2500000,
+                high: 1200000,
+                fullHd: 2500000,
+                ultraHd: 5000000,
+                ssHigh: 5000000,
             },
             scalabilityModeEnabled: true,
             useSimulcast: false,
@@ -580,10 +581,10 @@ var config = {
             maxBitratesVideo: {
                 low: 200000,
                 standard: 500000,
-                high: 1500000,
-                fullHd: 3000000,
-                ultraHd: 6000000,
-                ssHigh: 2500000,
+                high: 1800000,
+                fullHd: 3500000,
+                ultraHd: 7000000,
+                ssHigh: 5000000,
             },
             scalabilityModeEnabled: true,
         },
@@ -591,10 +592,10 @@ var config = {
             maxBitratesVideo: {
                 low: 200000,
                 standard: 500000,
-                high: 1500000,
-                fullHd: 3000000,
-                ultraHd: 6000000,
-                ssHigh: 2500000,
+                high: 1800000,
+                fullHd: 3500000,
+                ultraHd: 7000000,
+                ssHigh: 5000000,
             },
             scalabilityModeEnabled: false,
         },
@@ -602,10 +603,10 @@ var config = {
             maxBitratesVideo: {
                 low: 100000,
                 standard: 300000,
-                high: 1200000,
-                fullHd: 2500000,
-                ultraHd: 5000000,
-                ssHigh: 2500000,
+                high: 1500000,
+                fullHd: 3000000,
+                ultraHd: 6000000,
+                ssHigh: 5000000,
             },
             scalabilityModeEnabled: true,
             useSimulcast: false,
@@ -1155,7 +1156,7 @@ var config = {
 
         // Obfuscates room name sent to analytics (amplitude, rtcstats)
         // Default value is false.
-        obfuscateRoomName: false,
+        obfuscateRoomName: true,
 
         // Configuration for the rtcstats server:
         // By enabling rtcstats server every time a conference is joined the rtcstats
