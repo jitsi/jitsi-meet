@@ -26,7 +26,24 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
 
         ndk {
-            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86'
+        }
+
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON", "-DANDROID_STL=c++_shared"
+                cppFlags "-std=c++17"
+                cFlags "-DANDROID_PLATFORM=android-26"
+            }
+        }
+        
+        // Add alignment flags for native libraries
+        packagingOptions {
+            jniLibs {
+                useLegacyPackaging = false
+            }
+            pickFirst '**/libc++_shared.so'
+            pickFirst '**/libduktape.so'
         }
     }
 
@@ -47,7 +64,7 @@ android {
         }
         release {
             // Uncomment the following line for singing a test release build.
-            //signingConfig signingConfigs.debug
+            signingConfig signingConfigs.debug
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-release.pro'
             buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${googleServicesEnabled}"
@@ -102,8 +119,6 @@ dependencies {
 
 gradle.projectsEvaluated {
     // Dropbox integration
-    //
-
     def dropboxAppKey
     if (project.file('dropbox.key').exists()) {
         dropboxAppKey = project.file('dropbox.key').text.trim() - 'db-'
@@ -174,7 +189,6 @@ gradle.projectsEvaluated {
 
         packageTask.dependsOn(currentRunPackagerTask)
     }
-
 }
 
 if (googleServicesEnabled) {

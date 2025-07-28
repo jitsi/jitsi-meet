@@ -7,11 +7,11 @@ import org.gradle.util.VersionNumber
 buildscript {
     ext {
         kotlinVersion = "2.0.21"
-        gradlePluginVersion = "8.4.2"
-        buildToolsVersion = "34.0.0"
-        compileSdkVersion = 34
+        gradlePluginVersion = "8.6.0"
+        buildToolsVersion = "35.0.0"
+        compileSdkVersion = 35
         minSdkVersion    = 26
-        targetSdkVersion = 34
+        targetSdkVersion = 35
         supportLibVersion = "28.0.0"
         ndkVersion = "27.1.12297006"
 
@@ -82,15 +82,15 @@ allprojects {
     configurations.configureEach {
         resolutionStrategy {
             forcedModules = [
-                'com.facebook.fresco:fresco:3.2.0',
-                'com.facebook.fresco:animated-gif:3.2.0',
-                'com.facebook.fresco:animated-base:3.2.0',
-                'com.facebook.fresco:animated-drawable:3.2.0',
-                'com.facebook.fresco:animated-webp:3.2.0',
-                'com.facebook.fresco:webpsupport:3.2.0',
-                'com.facebook.fresco:imagepipeline-okhttp3:3.2.0',
-                'com.facebook.fresco:middleware:3.2.0',
-                'com.facebook.fresco:nativeimagetranscoder:3.2.0'
+                'com.facebook.fresco:fresco:3.6.0',
+                'com.facebook.fresco:animated-gif:3.6.0',
+                'com.facebook.fresco:animated-base:3.6.0',
+                'com.facebook.fresco:animated-drawable:3.6.0',
+                'com.facebook.fresco:animated-webp:3.6.0',
+                'com.facebook.fresco:webpsupport:3.6.0',
+                'com.facebook.fresco:imagepipeline-okhttp3:3.6.0',
+                'com.facebook.fresco:middleware:3.6.0',
+                'com.facebook.fresco:nativeimagetranscoder:3.6.0'
             ]
         }
     }
@@ -216,6 +216,19 @@ subprojects { subproject ->
                 // react-native-calendar-events
                 lint {
                     abortOnError = false
+                }
+
+                // Suppress deprecation warnings from dependencies
+                tasks.withType(JavaCompile) {
+                    options.compilerArgs << "-Xlint:-deprecation"
+                }
+                tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+                    kotlinOptions {
+                        freeCompilerArgs += [
+                            "-Xsuppress-version-warnings",
+                            "-Xno-deprecation-warnings"
+                        ]
+                    }
                 }
             }
         }
