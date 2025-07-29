@@ -26,7 +26,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
 
         ndk {
-            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86'
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         }
 
         externalNativeBuild {
@@ -35,15 +35,6 @@ android {
                 cppFlags "-std=c++17"
                 cFlags "-DANDROID_PLATFORM=android-26"
             }
-        }
-        
-        // Add alignment flags for native libraries
-        packagingOptions {
-            jniLibs {
-                useLegacyPackaging = false
-            }
-            pickFirst '**/libc++_shared.so'
-            pickFirst '**/libduktape.so'
         }
     }
 
