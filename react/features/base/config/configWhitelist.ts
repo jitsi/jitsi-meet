@@ -92,6 +92,7 @@ export default [
     'disableAP',
     'disableAddingBackgroundImages',
     'disableAudioLevels',
+    'disableBeforeUnloadHandlers',
     'disableCameraTintForeground',
     'disableChatSmileys',
     'disableDeepLinking',

@@ -237,10 +237,13 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case SET_CONFIG: {
+        const state = store.getState();
+        const { disableBeforeUnloadHandlers = false } = state['features/base/config'];
+
         /**
          * Disposing the API when the user closes the page.
          */
-        window.addEventListener('pagehide', () => {
+        window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', () => {
             APP.API.notifyConferenceLeft(APP.conference.roomName);
             APP.API.dispose();
             getJitsiMeetTransport().dispose();
