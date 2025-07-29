@@ -15,6 +15,7 @@ import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import { findAncestorByClass } from '../../../base/ui/functions.web';
 import { isAddBreakoutRoomButtonVisible } from '../../../breakout-rooms/functions';
 import MuteEveryoneDialog from '../../../video-menu/components/web/MuteEveryoneDialog';
+import { shouldDisplayCurrentVisitorsList } from '../../../visitors/functions';
 import { close } from '../../actions.web';
 import {
     getParticipantsPaneOpen,
@@ -24,6 +25,7 @@ import {
 import { AddBreakoutRoomButton } from '../breakout-rooms/components/web/AddBreakoutRoomButton';
 import { RoomList } from '../breakout-rooms/components/web/RoomList';
 
+import CurrentVisitorsList from './CurrentVisitorsList';
 import { FooterContextMenu } from './FooterContextMenu';
 import LobbyParticipants from './LobbyParticipants';
 import MeetingParticipants from './MeetingParticipants';
@@ -43,7 +45,6 @@ const useStyles = makeStyles<IStylesProps>()((theme, { isChatOpen }) => {
         participantsPane: {
             backgroundColor: theme.palette.ui01,
             flexShrink: 0,
-            overflow: 'hidden',
             position: 'relative',
             transition: 'width .16s ease-in-out',
             width: '315px',
@@ -70,9 +71,10 @@ const useStyles = makeStyles<IStylesProps>()((theme, { isChatOpen }) => {
         container: {
             boxSizing: 'border-box',
             flex: 1,
-            overflowY: 'auto',
             position: 'relative',
             padding: `0 ${participantsPaneTheme.panePadding}px`,
+            display: 'flex',
+            flexDirection: 'column',
 
             '&::-webkit-scrollbar': {
                 display: 'none'
@@ -129,6 +131,7 @@ const ParticipantsPane = () => {
     const paneOpen = useSelector(getParticipantsPaneOpen);
     const isBreakoutRoomsSupported = useSelector((state: IReduxState) => state['features/base/conference'])
         .conference?.getBreakoutRooms()?.isSupported();
+    const showCurrentVisitorsList = useSelector(shouldDisplayCurrentVisitorsList);
     const showAddRoomButton = useSelector(isAddBreakoutRoomButtonVisible);
     const showFooter = useSelector(isLocalParticipantModerator);
     const showMuteAllButton = useSelector(isMuteAllVisible);
@@ -193,6 +196,7 @@ const ParticipantsPane = () => {
                     setSearchString = { setSearchString } />
                 {isBreakoutRoomsSupported && <RoomList searchString = { searchString } />}
                 {showAddRoomButton && <AddBreakoutRoomButton />}
+                {showCurrentVisitorsList && <CurrentVisitorsList searchString = { searchString } />}
             </div>
             {showFooter && (
                 <div className = { classes.footer }>

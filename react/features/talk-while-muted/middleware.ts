@@ -1,15 +1,15 @@
+import { MEDIA_TYPE } from '../av-moderation/constants';
+import { isForceMuted } from '../av-moderation/functions';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { setAudioMuted } from '../base/media/actions';
-import { MEDIA_TYPE } from '../base/media/constants';
 import { raiseHand } from '../base/participants/actions';
 import { getLocalParticipant } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
 import { hideNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
-import { isForceMuted } from '../participants-pane/functions';
 import { isAudioMuteButtonDisabled } from '../toolbox/functions.any';
 
 import { setCurrentNotificationUid } from './actions';

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { Platform, View, ViewStyle } from 'react-native';
+import { Platform, TextStyle, View, ViewStyle } from 'react-native';
+import { Text } from 'react-native-paper';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -92,6 +93,18 @@ class ChatInputBar extends Component<IProps, IState> {
             inputBarStyles = styles.inputBarNarrow;
         }
 
+        if (this.props._isSendGroupChatDisabled && !this.props._privateMessageRecipientId) {
+            return (
+                <View
+                    id = 'no-messages-message'
+                    style = { styles.disabledSendWrapper as ViewStyle }>
+                    <Text style = { styles.emptyComponentText as TextStyle }>
+                        { this.props.t('chat.disabled') }
+                    </Text>
+                </View>
+            );
+        }
+
         return (
             <View
                 id = 'chat-input'
@@ -112,8 +125,7 @@ class ChatInputBar extends Component<IProps, IState> {
                     returnKeyType = 'send'
                     value = { this.state.message } />
                 <IconButton
-                    disabled = { !this.state.message
-                        || (this.props._isSendGroupChatDisabled && !this.props._privateMessageRecipientId) }
+                    disabled = { !this.state.message }
                     id = { this.props.t('chat.sendButton') }
                     onPress = { this._onSubmit }
                     src = { IconSend }

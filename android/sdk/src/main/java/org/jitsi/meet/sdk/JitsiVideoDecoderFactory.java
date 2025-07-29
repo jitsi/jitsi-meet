@@ -10,13 +10,15 @@ package org.jitsi.meet.sdk;
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+import android.media.MediaCodecInfo;
 import androidx.annotation.Nullable;
 
 import com.oney.WebRTCModule.webrtcutils.SoftwareVideoDecoderFactoryProxy;
 
 import org.webrtc.EglBase;
 import org.webrtc.HardwareVideoDecoderFactory;
-import org.webrtc.PlatformSoftwareVideoDecoderFactory;
+import org.webrtc.JitsiPlatformVideoDecoderFactory;
+import org.webrtc.Predicate;
 import org.webrtc.VideoCodecInfo;
 import org.webrtc.VideoDecoder;
 import org.webrtc.VideoDecoderFactory;
@@ -31,29 +33,34 @@ import java.util.LinkedHashSet;
 public class JitsiVideoDecoderFactory implements VideoDecoderFactory {
     private final VideoDecoderFactory hardwareVideoDecoderFactory;
     private final VideoDecoderFactory softwareVideoDecoderFactory = new SoftwareVideoDecoderFactoryProxy();
-    private final @Nullable VideoDecoderFactory platformSoftwareVideoDecoderFactory;
+    private final VideoDecoderFactory platformSoftwareVideoDecoderFactory;
+
+    /**
+     * Predicate to filter out the AV1 hardware decoder, as we've seen decoding issues with it.
+     */
+    private static final String GOOGLE_AV1_DECODER = "c2.google.av1";
+    private static final Predicate<MediaCodecInfo> hwCodecPredicate = arg -> {
+        // Filter out the Google AV1 codec.
+        return !arg.getName().startsWith(GOOGLE_AV1_DECODER);
+    };
+    private static final Predicate<MediaCodecInfo> swCodecPredicate = arg -> {
+        // Noop, just making sure we can customize it easily if needed.
+        return true;
+    };
 
     /**
      * Create decoder factory using default hardware decoder factory.
      */
     public JitsiVideoDecoderFactory(@Nullable EglBase.Context eglContext) {
-        this.hardwareVideoDecoderFactory = new HardwareVideoDecoderFactory(eglContext);
-        this.platformSoftwareVideoDecoderFactory = new PlatformSoftwareVideoDecoderFactory(eglContext);
-    }
-
-    /**
-     * Create decoder factory using explicit hardware decoder factory.
-     */
-    JitsiVideoDecoderFactory(VideoDecoderFactory hardwareVideoDecoderFactory) {
-        this.hardwareVideoDecoderFactory = hardwareVideoDecoderFactory;
-        this.platformSoftwareVideoDecoderFactory = null;
+        this.hardwareVideoDecoderFactory = new HardwareVideoDecoderFactory(eglContext, hwCodecPredicate);
+        this.platformSoftwareVideoDecoderFactory = new JitsiPlatformVideoDecoderFactory(eglContext, swCodecPredicate);
     }
 
     @Override
     public @Nullable VideoDecoder createDecoder(VideoCodecInfo codecType) {
         VideoDecoder softwareDecoder = softwareVideoDecoderFactory.createDecoder(codecType);
         final VideoDecoder hardwareDecoder = hardwareVideoDecoderFactory.createDecoder(codecType);
-        if (softwareDecoder == null && platformSoftwareVideoDecoderFactory != null) {
+        if (softwareDecoder == null) {
             softwareDecoder = platformSoftwareVideoDecoderFactory.createDecoder(codecType);
         }
         if (hardwareDecoder != null && softwareDecoder != null) {
@@ -70,10 +77,7 @@ public class JitsiVideoDecoderFactory implements VideoDecoderFactory {
 
         supportedCodecInfos.addAll(Arrays.asList(softwareVideoDecoderFactory.getSupportedCodecs()));
         supportedCodecInfos.addAll(Arrays.asList(hardwareVideoDecoderFactory.getSupportedCodecs()));
-        if (platformSoftwareVideoDecoderFactory != null) {
-            supportedCodecInfos.addAll(
-                Arrays.asList(platformSoftwareVideoDecoderFactory.getSupportedCodecs()));
-        }
+        supportedCodecInfos.addAll(Arrays.asList(platformSoftwareVideoDecoderFactory.getSupportedCodecs()));
 
         return supportedCodecInfos.toArray(new VideoCodecInfo[supportedCodecInfos.size()]);
     }

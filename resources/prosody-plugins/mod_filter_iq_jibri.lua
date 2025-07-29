@@ -38,7 +38,6 @@ module:hook("pre-iq/full", function(event)
             local is_allowed = is_feature_allowed(
                 feature,
                 session.jitsi_meet_context_features,
-                session.granted_jitsi_meet_context_features,
                 occupant.role == 'moderator');
 
             if jibri.attr.action == 'start' or jibri.attr.action == 'stop' then

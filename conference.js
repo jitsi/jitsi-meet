@@ -18,8 +18,6 @@ import {
     maybeRedirectToWelcomePage,
     reloadWithStoredParams
 } from './react/features/app/actions';
-import { showModeratedNotification } from './react/features/av-moderation/actions';
-import { shouldShowModeratedNotification } from './react/features/av-moderation/functions';
 import {
     _conferenceWillJoin,
     authStatusChanged,
@@ -52,7 +50,8 @@ import {
     commonUserJoinedHandling,
     commonUserLeftHandling,
     getConferenceOptions,
-    sendLocalParticipant
+    sendLocalParticipant,
+    updateTrackMuteState
 } from './react/features/base/conference/functions';
 import { getReplaceParticipant, getSsrcRewritingFeatureFlag } from './react/features/base/config/functions';
 import { connect } from './react/features/base/connection/actions.web';
@@ -89,7 +88,7 @@ import {
     setVideoMuted,
     setVideoUnmutePermissions
 } from './react/features/base/media/actions';
-import { MEDIA_TYPE, VIDEO_TYPE } from './react/features/base/media/constants';
+import { MEDIA_TYPE, VIDEO_MUTISM_AUTHORITY, VIDEO_TYPE } from './react/features/base/media/constants';
 import {
     getStartWithAudioMuted,
     getStartWithVideoMuted,
@@ -153,7 +152,6 @@ import {
     DATA_CHANNEL_CLOSED_NOTIFICATION_ID,
     NOTIFICATION_TIMEOUT_TYPE
 } from './react/features/notifications/constants';
-import { isModerationNotificationDisplayed } from './react/features/notifications/functions';
 import { suspendDetected } from './react/features/power-monitor/actions';
 import { initPrejoin, isPrejoinPageVisible } from './react/features/prejoin/functions';
 import { disableReceiver, stopReceiver } from './react/features/remote-control/actions';
@@ -203,23 +201,6 @@ function sendData(command, value) {
 
     room.removeCommand(command);
     room.sendCommand(command, { value });
-}
-
-/**
- * Mute or unmute local audio stream if it exists.
- * @param {boolean} muted - if audio stream should be muted or unmuted.
- */
-function muteLocalAudio(muted) {
-    APP.store.dispatch(setAudioMuted(muted));
-}
-
-/**
- * Mute or unmute local video stream if it exists.
- * @param {boolean} muted if video stream should be muted or unmuted.
- *
- */
-function muteLocalVideo(muted) {
-    APP.store.dispatch(setVideoMuted(muted));
 }
 
 /**
@@ -708,11 +689,10 @@ export default {
      * Simulates toolbar button click for audio mute. Used by shortcuts and API.
      *
      * @param {boolean} mute true for mute and false for unmute.
-     * @param {boolean} [showUI] when set to false will not display any error
      * dialogs in case of media permissions error.
      * @returns {Promise}
      */
-    async muteAudio(mute, showUI = true) {
+    async muteAudio(mute) {
         const state = APP.store.getState();
 
         if (!mute
@@ -722,56 +702,7 @@ export default {
             return;
         }
 
-        // check for A/V Moderation when trying to unmute
-        if (!mute && shouldShowModeratedNotification(MEDIA_TYPE.AUDIO, state)) {
-            if (!isModerationNotificationDisplayed(MEDIA_TYPE.AUDIO, state)) {
-                APP.store.dispatch(showModeratedNotification(MEDIA_TYPE.AUDIO));
-            }
-
-            return;
-        }
-
-        // Not ready to modify track's state yet
-        if (!this._localTracksInitialized) {
-            // This will only modify base/media.audio.muted which is then synced
-            // up with the track at the end of local tracks initialization.
-            muteLocalAudio(mute);
-            this.updateAudioIconEnabled();
-
-            return;
-        } else if (this.isLocalAudioMuted() === mute) {
-            // NO-OP
-            return;
-        }
-
-        const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
-
-        if (!localAudio && !mute) {
-            const maybeShowErrorDialog = error => {
-                showUI && APP.store.dispatch(notifyMicError(error));
-            };
-
-            APP.store.dispatch(gumPending([ MEDIA_TYPE.AUDIO ], IGUMPendingState.PENDING_UNMUTE));
-
-            await createLocalTracksF({ devices: [ 'audio' ] })
-                .then(([ audioTrack ]) => audioTrack)
-                .catch(error => {
-                    maybeShowErrorDialog(error);
-
-                    // Rollback the audio muted status by using null track
-                    return null;
-                })
-                .then(async audioTrack => {
-                    await this._maybeApplyAudioMixerEffect(audioTrack);
-
-                    return this.useAudioStream(audioTrack);
-                })
-                .finally(() => {
-                    APP.store.dispatch(gumPending([ MEDIA_TYPE.AUDIO ], IGUMPendingState.NONE));
-                });
-        } else {
-            muteLocalAudio(mute);
-        }
+        await APP.store.dispatch(setAudioMuted(mute, true));
     },
 
     /**
@@ -801,16 +732,9 @@ export default {
     /**
      * Simulates toolbar button click for video mute. Used by shortcuts and API.
      * @param mute true for mute and false for unmute.
-     * @param {boolean} [showUI] when set to false will not display any error
      * dialogs in case of media permissions error.
      */
-    muteVideo(mute, showUI = true) {
-        if (this.videoSwitchInProgress) {
-            logger.warn('muteVideo - unable to perform operations while video switch is in progress');
-
-            return;
-        }
-
+    muteVideo(mute) {
         const state = APP.store.getState();
 
         if (!mute
@@ -820,65 +744,7 @@ export default {
             return;
         }
 
-        // check for A/V Moderation when trying to unmute and return early
-        if (!mute && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, state)) {
-            return;
-        }
-
-        // If not ready to modify track's state yet adjust the base/media
-        if (!this._localTracksInitialized) {
-            // This will only modify base/media.video.muted which is then synced
-            // up with the track at the end of local tracks initialization.
-            muteLocalVideo(mute);
-            this.setVideoMuteStatus();
-
-            return;
-        } else if (this.isLocalVideoMuted() === mute) {
-            // NO-OP
-            return;
-        }
-
-        const localVideo = getLocalJitsiVideoTrack(state);
-
-        if (!localVideo && !mute && !this.isCreatingLocalTrack) {
-            const maybeShowErrorDialog = error => {
-                showUI && APP.store.dispatch(notifyCameraError(error));
-            };
-
-            this.isCreatingLocalTrack = true;
-
-            APP.store.dispatch(gumPending([ MEDIA_TYPE.VIDEO ], IGUMPendingState.PENDING_UNMUTE));
-
-            // Try to create local video if there wasn't any.
-            // This handles the case when user joined with no video
-            // (dismissed screen sharing screen or in audio only mode), but
-            // decided to add it later on by clicking on muted video icon or
-            // turning off the audio only mode.
-            //
-            // FIXME when local track creation is moved to react/redux
-            // it should take care of the use case described above
-            createLocalTracksF({ devices: [ 'video' ] })
-                .then(([ videoTrack ]) => videoTrack)
-                .catch(error => {
-                    // FIXME should send some feedback to the API on error ?
-                    maybeShowErrorDialog(error);
-
-                    // Rollback the video muted status by using null track
-                    return null;
-                })
-                .then(videoTrack => {
-                    logger.debug(`muteVideo: calling useVideoStream for track: ${videoTrack}`);
-
-                    return this.useVideoStream(videoTrack);
-                })
-                .finally(() => {
-                    this.isCreatingLocalTrack = false;
-                    APP.store.dispatch(gumPending([ MEDIA_TYPE.VIDEO ], IGUMPendingState.NONE));
-                });
-        } else {
-            // FIXME show error dialog if it fails (should be handled by react)
-            muteLocalVideo(mute);
-        }
+        APP.store.dispatch(setVideoMuted(mute, VIDEO_MUTISM_AUTHORITY.USER, true));
     },
 
     /**
@@ -1131,7 +997,6 @@ export default {
 
         // Restore initial state.
         this._localTracksInitialized = false;
-        this.isSharingScreen = false;
         this.roomName = roomName;
 
         const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(options);
@@ -1310,8 +1175,6 @@ export default {
         return Boolean(APP.store.getState()['features/base/audio-only'].enabled);
     },
 
-    videoSwitchInProgress: false,
-
     /**
      * This fields stores a handler which will create a Promise which turns off
      * the screen sharing and restores the previous video state (was there
@@ -1340,7 +1203,6 @@ export default {
      */
     async _turnScreenSharingOff(didHaveVideo, ignoreDidHaveVideo) {
         this._untoggleScreenSharing = null;
-        this.videoSwitchInProgress = true;
 
         APP.store.dispatch(stopReceiver());
 
@@ -1392,13 +1254,11 @@ export default {
 
         return promise.then(
             () => {
-                this.videoSwitchInProgress = false;
                 sendAnalytics(createScreenSharingEvent('stopped',
                     duration === 0 ? null : duration));
                 logger.info('Screen sharing stopped.');
             },
             error => {
-                this.videoSwitchInProgress = false;
                 logger.error(`_turnScreenSharingOff failed: ${error}`);
 
                 throw error;
@@ -1428,34 +1288,18 @@ export default {
             this._untoggleScreenSharing
                 = this._turnScreenSharingOff.bind(this, didHaveVideo);
 
-            const desktopVideoStream = desktopStreams.find(stream => stream.getType() === MEDIA_TYPE.VIDEO);
             const desktopAudioStream = desktopStreams.find(stream => stream.getType() === MEDIA_TYPE.AUDIO);
 
             if (desktopAudioStream) {
                 desktopAudioStream.on(
                     JitsiTrackEvents.LOCAL_TRACK_STOPPED,
                     () => {
-                        logger.debug(`Local screensharing audio track stopped. ${this.isSharingScreen}`);
+                        logger.debug('Local screensharing audio track stopped.');
 
                         // Handle case where screen share was stopped from  the browsers 'screen share in progress'
                         // window. If audio screen sharing is stopped via the normal UX flow this point shouldn't
                         // be reached.
                         isScreenAudioShared(APP.store.getState())
-                            && this._untoggleScreenSharing
-                            && this._untoggleScreenSharing();
-                    }
-                );
-            }
-
-            if (desktopVideoStream) {
-                desktopVideoStream.on(
-                    JitsiTrackEvents.LOCAL_TRACK_STOPPED,
-                    () => {
-                        logger.debug(`Local screensharing track stopped. ${this.isSharingScreen}`);
-
-                        // If the stream was stopped during screen sharing
-                        // session then we should switch back to video.
-                        this.isSharingScreen
                             && this._untoggleScreenSharing
                             && this._untoggleScreenSharing();
                     }
@@ -1609,10 +1453,6 @@ export default {
         room.on(JitsiConferenceEvents.TRACK_MUTE_CHANGED, (track, participantThatMutedUs) => {
             if (participantThatMutedUs) {
                 APP.store.dispatch(participantMutedUs(participantThatMutedUs, track));
-                if (this.isSharingScreen && track.isVideoTrack()) {
-                    logger.debug('TRACK_MUTE_CHANGED while screen sharing');
-                    this._turnScreenSharingOff(false);
-                }
             }
         });
 
@@ -1824,8 +1664,12 @@ export default {
         room.on(
             JitsiConferenceEvents.START_MUTED_POLICY_CHANGED,
             ({ audio, video }) => {
-                APP.store.dispatch(
-                    onStartMutedPolicyChanged(audio, video));
+                APP.store.dispatch(onStartMutedPolicyChanged(audio, video));
+
+                const state = APP.store.getState();
+
+                updateTrackMuteState(state, APP.store.dispatch, true);
+                updateTrackMuteState(state, APP.store.dispatch, false);
             }
         );
 

@@ -223,6 +223,10 @@ export class Participant {
             url = `${url}&jwt="${this._jwt}"`;
         }
 
+        if (options.baseUrl) {
+            this.driver.options.baseUrl = options.baseUrl;
+        }
+
         await this.driver.setTimeout({ 'pageLoad': 30000 });
 
         let urlToLoad = url.startsWith('/') ? url.substring(1) : url;
@@ -292,11 +296,15 @@ export class Participant {
     /**
      * Waits for the page to load.
      *
-     * @returns {Promise<void>}
+     * @returns {Promise<boolean>}
      */
-    async waitForPageToLoad(): Promise<void> {
+    async waitForPageToLoad(): Promise<boolean> {
         return this.driver.waitUntil(
-            () => this.execute(() => document.readyState === 'complete'),
+            () => this.execute(() => {
+                console.log(`${new Date().toISOString()} document.readyState: ${document.readyState}`);
+
+                return document.readyState === 'complete';
+            }),
             {
                 timeout: 30_000, // 30 seconds
                 timeoutMsg: `Timeout waiting for Page Load Request to complete for ${this.name}.`
@@ -364,9 +372,9 @@ export class Participant {
     /**
      * Waits for ICE to get connected.
      *
-     * @returns {Promise<void>}
+     * @returns {Promise<boolean>}
      */
-    waitForIceConnected(): Promise<void> {
+    waitForIceConnected(): Promise<boolean> {
         return this.driver.waitUntil(() =>
             this.execute(() => APP?.conference?.getConnectionState() === 'connected'), {
             timeout: 15_000,
@@ -377,9 +385,9 @@ export class Participant {
     /**
      * Waits for ICE to get connected on the p2p connection.
      *
-     * @returns {Promise<void>}
+     * @returns {Promise<boolean>}
      */
-    waitForP2PIceConnected(): Promise<void> {
+    waitForP2PIceConnected(): Promise<boolean> {
         return this.driver.waitUntil(() =>
             this.execute(() => APP?.conference?.getP2PConnectionState() === 'connected'), {
             timeout: 15_000,
@@ -392,16 +400,16 @@ export class Participant {
      *
      * @param {Object} options
      * @param {boolean} options.checkSend - If true we will chec
-     * @returns {Promise<void>}
+     * @returns {Promise<boolean>}
      */
     waitForSendReceiveData({
         checkSend = true,
         checkReceive = true,
         timeout = 15_000,
         msg
-    } = {} as IWaitForSendReceiveDataOptions): Promise<void> {
+    } = {} as IWaitForSendReceiveDataOptions): Promise<boolean> {
         if (!checkSend && !checkReceive) {
-            return Promise.resolve();
+            return Promise.resolve(true);
         }
 
         const lMsg = msg ?? `expected to ${
@@ -426,9 +434,9 @@ export class Participant {
      * Waits for remote streams.
      *
      * @param {number} number - The number of remote streams to wait for.
-     * @returns {Promise<void>}
+     * @returns {Promise<boolean>}
      */
-    async waitForRemoteStreams(number: number): Promise<void> {
+    async waitForRemoteStreams(number: number): Promise<boolean> {
         return await this.driver.waitUntil(async () => await this.execute(
             count => (APP?.conference?.getNumberOfParticipantsWithTracks() ?? -1) >= count,
             number
@@ -443,9 +451,9 @@ export class Participant {
      *
      * @param {number} number - The number of participant to wait for.
      * @param {string} msg - A custom message to use.
-     * @returns {Promise<void>}
+     * @returns {Promise<boolean>}
      */
-    waitForParticipants(number: number, msg?: string): Promise<void> {
+    waitForParticipants(number: number, msg?: string): Promise<boolean> {
         return this.driver.waitUntil(
             () => this.execute(count => (APP?.conference?.listMembers()?.length ?? -1) === count, number),
             {

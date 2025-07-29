@@ -17,6 +17,7 @@
 package org.jitsi.meet.sdk;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.AttributeSet;
@@ -196,8 +197,6 @@ public class JitsiMeetView extends FrameLayout {
         }
 
         setBackgroundColor(BACKGROUND_COLOR);
-
-        ReactInstanceManagerHolder.initReactInstanceManager((Activity) context);
     }
 
     /**

@@ -2,6 +2,7 @@
 import { AUDIO_ONLY_SCREEN_SHARE_NO_TRACK } from '../../../../modules/UI/UIErrors';
 import { IReduxState, IStore } from '../../app/types';
 import { showModeratedNotification } from '../../av-moderation/actions';
+import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../../av-moderation/constants';
 import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { setNoiseSuppressionEnabled } from '../../noise-suppression/actions';
 import { showErrorNotification, showNotification } from '../../notifications/actions';
@@ -55,10 +56,10 @@ export function toggleScreensharing(
         shareOptions: IShareOptions = {}) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         // check for A/V Moderation when trying to start screen sharing
-        if ((enabled || enabled === undefined) && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, getState())) {
-            dispatch(showModeratedNotification(MEDIA_TYPE.SCREENSHARE));
+        if ((enabled || enabled === undefined) && shouldShowModeratedNotification(AVM_MEDIA_TYPE.DESKTOP, getState())) {
+            dispatch(showModeratedNotification(AVM_MEDIA_TYPE.DESKTOP));
 
-            return Promise.reject();
+            return Promise.resolve();
         }
 
         return _toggleScreenSharing({

@@ -1,24 +1,21 @@
--- This module is added under the main virtual host domain
---
--- VirtualHost "jitmeet.example.com"
---     modules_enabled = {
---         "end_conference"
---     }
---     end_conference_component = "endconference.jitmeet.example.com"
 --
 -- Component "endconference.jitmeet.example.com" "end_conference"
 --     muc_component = muc.jitmeet.example.com
 --
-local get_room_by_name_and_subdomain = module:require 'util'.get_room_by_name_and_subdomain;
+local util = module:require 'util';
+local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
+local process_host_module = util.process_host_module;
 
 local END_CONFERENCE_REASON = 'The meeting has been terminated';
 
 -- Since this file serves as both the host module and the component, we rely on the assumption that
 -- end_conference_component var would only be define for the host and not in the end_conference component
+-- TODO: Remove this if block after several stable releases when people update their configs
 local end_conference_component = module:get_option_string('end_conference_component');
 if end_conference_component then
-    -- Advertise end conference so client can pick up the address and use it
-    module:add_identity('component', 'end_conference', end_conference_component);
+    module:log('warn', 'Please update your config by removing muc_end_conference module from '
+     .. 'the list of loaded modules in the main virtual host.');
+    module:depends("features_identity");
     return;  -- nothing left to do if called as host module
 end
 
@@ -30,6 +27,12 @@ local muc_component_host = module:get_option_string('muc_component');
 if muc_component_host == nil then
     module:log('error', 'No muc_component specified. No muc to operate on!');
     return;
+end
+
+local main_virtual_host = module:get_option_string('muc_mapper_domain_base');
+if not main_virtual_host then
+    module:log('warn', 'No "muc_mapper_domain_base" option set, disabling end conference component.');
+    return ;
 end
 
 module:log('info', 'Starting end_conference for %s', muc_component_host);
@@ -84,3 +87,9 @@ end
 
 -- we will receive messages from the clients
 module:hook('message/host', on_message);
+
+process_host_module(main_virtual_host, function(host_module)
+    module:context(host_module.host):fire_event('jitsi-add-identity', {
+        name = 'end_conference'; host = module.host;
+    });
+end);

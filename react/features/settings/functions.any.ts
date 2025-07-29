@@ -1,11 +1,11 @@
 import { IReduxState } from '../app/types';
+import { MEDIA_TYPE } from '../av-moderation/constants';
 import { isEnabledFromState } from '../av-moderation/functions';
 import { IStateful } from '../base/app/types';
 import { isNameReadOnly } from '../base/config/functions.any';
 import { SERVER_URL_CHANGE_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import i18next, { DEFAULT_LANGUAGE, LANGUAGES } from '../base/i18n/i18next';
-import { MEDIA_TYPE } from '../base/media/constants';
 import { getLocalParticipant } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { getHideSelfView } from '../base/settings/functions.any';
@@ -91,6 +91,23 @@ export function getNotificationsMap(stateful: IStateful): { [key: string]: boole
         }, {});
 }
 
+function normalizeCurrentLanguage(language: string) {
+    if (!language) {
+        return;
+    }
+
+    const [ country, lang ] = language.split('-');
+    const jitsiNormalized = `${country}${lang ?? ''}`;
+
+    if (LANGUAGES.includes(jitsiNormalized)) {
+        return jitsiNormalized;
+    }
+
+    if (LANGUAGES.includes(country)) {
+        return country;
+    }
+}
+
 /**
  * Returns the properties for the "More" tab from settings dialog from Redux
  * state.
@@ -102,7 +119,7 @@ export function getNotificationsMap(stateful: IStateful): { [key: string]: boole
 export function getMoreTabProps(stateful: IStateful) {
     const state = toState(stateful);
     const stageFilmstripEnabled = isStageFilmstripEnabled(state);
-    const language = i18next.language || DEFAULT_LANGUAGE;
+    const language = normalizeCurrentLanguage(i18next.language) || DEFAULT_LANGUAGE;
     const configuredTabs: string[] = interfaceConfig.SETTINGS_SECTIONS || [];
 
     // when self view is controlled by the config we hide the settings

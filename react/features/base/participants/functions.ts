@@ -257,10 +257,8 @@ export function getParticipantCount(stateful: IStateful) {
         fakeParticipants,
         sortedRemoteVirtualScreenshareParticipants
     } = state['features/base/participants'];
-    const _iAmVisitor = iAmVisitor(stateful);
 
-    return remote.size - fakeParticipants.size - sortedRemoteVirtualScreenshareParticipants.size
-        + (local && !_iAmVisitor ? 1 : 0);
+    return remote.size - fakeParticipants.size - sortedRemoteVirtualScreenshareParticipants.size + (local ? 1 : 0);
 }
 
 /**
@@ -394,7 +392,7 @@ export function getMutedStateByParticipantAndMediaType(
     if (mediaType === MEDIA_TYPE.AUDIO) {
         return Array.from(sources.values())[0].muted;
     }
-    const videoType = mediaType === MEDIA_TYPE.VIDEO ? VIDEO_TYPE.CAMERA : VIDEO_TYPE.SCREENSHARE;
+    const videoType = mediaType === MEDIA_TYPE.VIDEO ? VIDEO_TYPE.CAMERA : VIDEO_TYPE.DESKTOP;
     const source = Array.from(sources.values()).find(src => src.videoType === videoType);
 
     return source?.muted ?? true;
@@ -412,9 +410,24 @@ export function getMutedStateByParticipantAndMediaType(
 export function getParticipantCountWithFake(stateful: IStateful) {
     const state = toState(stateful);
     const { local, localScreenShare, remote } = state['features/base/participants'];
+
+    return remote.size + (local ? 1 : 0) + (localScreenShare ? 1 : 0);
+}
+
+/**
+ * Returns a count of the known participants in the passed in redux state,
+ * including fake participants. Subtract 1 when the local participant is a visitor as we do not show a local thumbnail.
+ * The number used to display the participant count in the UI.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {number}
+ */
+export function getParticipantCountForDisplay(stateful: IStateful) {
     const _iAmVisitor = iAmVisitor(stateful);
 
-    return remote.size + (local && !_iAmVisitor ? 1 : 0) + (localScreenShare ? 1 : 0);
+    return getParticipantCount(stateful) - (_iAmVisitor ? 1 : 0);
 }
 
 /**
@@ -810,3 +823,25 @@ export const setShareDialogVisiblity = (addPeopleFeatureEnabled: boolean, dispat
         dispatch(toggleShareDialog(true));
     }
 };
+
+/**
+ * Checks if private chat is enabled for the given participant.
+ *
+ * @param {IParticipant|undefined} participant - The participant to check.
+ * @param {IReduxState} state - The Redux state.
+ * @returns {boolean} - True if private chat is enabled, false otherwise.
+ */
+export function isPrivateChatEnabled(participant: IParticipant | undefined, state: IReduxState) {
+    const { remoteVideoMenu = {} } = state['features/base/config'];
+    const { disablePrivateChat } = remoteVideoMenu;
+
+    if (participant?.local || state['features/visitors'].iAmVisitor || disablePrivateChat === 'all') {
+        return false;
+    }
+
+    if (disablePrivateChat === 'allow-moderator-chat') {
+        return isLocalParticipantModerator(state) || isParticipantModerator(participant);
+    }
+
+    return !disablePrivateChat;
+}

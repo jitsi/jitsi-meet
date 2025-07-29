@@ -35,6 +35,12 @@ const styles = (_theme: Theme, { _chatWidth }: IProps) => {
                 backgroundColor: '#131519',
                 borderTop: '1px solid #A4B8D1'
             }
+        },
+        chatDisabled: {
+            borderTop: `1px solid ${_theme.palette.ui02}`,
+            boxSizing: 'border-box' as const,
+            padding: _theme.spacing(4),
+            textAlign: 'center' as const,
         }
     };
 };
@@ -159,7 +165,15 @@ class ChatInput extends Component<IProps, IState> {
      */
     override render() {
         const classes = withStyles.getClasses(this.props);
+        const hideInput = this.props._isSendGroupChatDisabled && !this.props._privateMessageRecipientId;
 
+        if (hideInput) {
+            return (
+                <div className = { classes.chatDisabled }>
+                    {this.props.t('chat.disabled')}
+                </div>
+            );
+        }
 
         return (
             <div className = { `chat-input-container${this.state.message.trim().length ? ' populated' : ''}` }>
@@ -188,8 +202,7 @@ class ChatInput extends Component<IProps, IState> {
                         value = { this.state.message } />
                     <Button
                         accessibilityLabel = { this.props.t('chat.sendButton') }
-                        disabled = { !this.state.message.trim()
-                            || (this.props._isSendGroupChatDisabled && !this.props._privateMessageRecipientId) }
+                        disabled = { !this.state.message.trim() }
                         icon = { IconSend }
                         onClick = { this._onSubmitMessage }
                         size = { isMobileBrowser() ? 'large' : 'medium' } />

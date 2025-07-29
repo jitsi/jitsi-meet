@@ -6,6 +6,5 @@ export default [
     'customToolbarButtons',
     'defaultLogoUrl',
     'deploymentUrls',
-    'liveStreaming',
-    'salesforceUrl'
+    'liveStreaming'
 ];

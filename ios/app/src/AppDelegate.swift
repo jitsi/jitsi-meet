@@ -37,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let vc = ViewController()
         self.window?.rootViewController = vc
-        jitsiMeet.showSplashScreen(vc.view)
+        jitsiMeet.showSplashScreen()
 
         self.window?.makeKeyAndVisible()
 

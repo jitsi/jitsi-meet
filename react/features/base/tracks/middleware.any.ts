@@ -2,7 +2,6 @@ import { batch } from 'react-redux';
 
 import { IStore } from '../../app/types';
 import { _RESET_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
-import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { getCurrentConference } from '../conference/functions';
 import {
     SET_AUDIO_MUTED,
@@ -189,10 +188,6 @@ function _setMuted(store: IStore, { ensureTrack, muted }: {
     const localTrack = _getLocalTrack(store, mediaType, /* includePending */ true);
     const state = getState();
 
-    if (mediaType === MEDIA_TYPE.SCREENSHARE && !muted) {
-        return;
-    }
-
     if (localTrack) {
         // The `jitsiTrack` property will have a value only for a localTrack for which `getUserMedia` has already
         // completed. If there's no `jitsiTrack`, then the `muted` state will be applied once the `jitsiTrack` is
@@ -203,12 +198,12 @@ function _setMuted(store: IStore, { ensureTrack, muted }: {
             setTrackMuted(jitsiTrack, muted, state, dispatch)
                 .catch(() => dispatch(trackMuteUnmuteFailed(localTrack, muted)));
         }
-    } else if (!muted && ensureTrack && (typeof APP === 'undefined' || isPrejoinPageVisible(state))) {
-        typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.PENDING_UNMUTE));
+    } else if (!muted && ensureTrack) {
+        // TODO(saghul): reconcile these 2 types.
+        const createMediaType = mediaType === MEDIA_TYPE.SCREENSHARE ? 'desktop' : mediaType;
 
-        // FIXME: This only runs on mobile now because web has its own way of
-        // creating local tracks. Adjust the check once they are unified.
-        dispatch(createLocalTracksA({ devices: [ mediaType ] })).then(() => {
+        typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.PENDING_UNMUTE));
+        dispatch(createLocalTracksA({ devices: [ createMediaType ] })).then(() => {
             typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.NONE));
         });
     }

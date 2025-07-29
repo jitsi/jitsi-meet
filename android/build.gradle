@@ -5,44 +5,50 @@ import org.gradle.util.VersionNumber
 // sub-projects/modules.
 
 buildscript {
+    ext {
+        kotlinVersion = "2.0.21"
+        gradlePluginVersion = "8.4.2"
+        buildToolsVersion = "34.0.0"
+        compileSdkVersion = 34
+        minSdkVersion    = 26
+        targetSdkVersion = 34
+        supportLibVersion = "28.0.0"
+        ndkVersion = "27.1.12297006"
+
+        // The Maven artifact groupId of the third-party react-native modules which
+        // Jitsi Meet SDK for Android depends on and which are not available in
+        // third-party Maven repositories so we have to deploy to a Maven repository
+        // of ours.
+        moduleGroupId = 'com.facebook.react'
+
+        // Maven repo where artifacts will be published
+        mavenRepo = System.env.MVN_REPO ?: ""
+        mavenUser = System.env.MVN_USER ?: ""
+        mavenPassword = System.env.MVN_PASSWORD ?: ""
+
+        // Libre build
+        libreBuild = (System.env.LIBRE_BUILD ?: "false").toBoolean()
+
+        googleServicesEnabled = project.file('app/google-services.json').exists() && !libreBuild
+
+        //React Native and Hermes Version
+        rnVersion = "0.77.2"
+
+        // Java dependencies
+        javaVersion = JavaVersion.VERSION_17
+        jvmToolchainVersion = 17
+        jvmTargetVersion = '17'
+    }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$rootProject.ext.kotlinVersion"
+        classpath "com.android.tools.build:gradle:$rootProject.ext.gradlePluginVersion"
         classpath 'com.google.gms:google-services:4.4.0'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
     }
-}
-
-ext {
-    kotlinVersion = "1.9.24"
-    buildToolsVersion = "34.0.0"
-    compileSdkVersion = 34
-    minSdkVersion    = 26
-    targetSdkVersion = 34
-    supportLibVersion = "28.0.0"
-    ndkVersion = "26.1.10909125"
-
-    // The Maven artifact groupId of the third-party react-native modules which
-    // Jitsi Meet SDK for Android depends on and which are not available in
-    // third-party Maven repositories so we have to deploy to a Maven repository
-    // of ours.
-    moduleGroupId = 'com.facebook.react'
-
-    // Maven repo where artifacts will be published
-    mavenRepo = System.env.MVN_REPO ?: ""
-    mavenUser = System.env.MVN_USER ?: ""
-    mavenPassword = System.env.MVN_PASSWORD ?: ""
-
-    // Libre build
-    libreBuild = (System.env.LIBRE_BUILD ?: "false").toBoolean()
-
-    googleServicesEnabled = project.file('app/google-services.json').exists() && !libreBuild
-
-    //React Native and Hermes Version
-    rnVersion = "0.75.5"
 }
 
 allprojects {
@@ -134,7 +140,7 @@ allprojects {
             project.version = "${json.version}-jitsi-${versionQualifierNumber}"
 
             task jitsiAndroidSourcesJar(type: Jar) {
-                classifier = 'sources'
+                archiveClassifier = 'sources'
                 from android.sourceSets.main.java.source
             }
 
@@ -185,16 +191,46 @@ allprojects {
     }
 }
 
-// Force the version of the Android build tools we have chosen on all
-// subprojects. The forcing was introduced for react-native and the third-party
-// modules that we utilize such as react-native-background-timer.
+// Force the version of the Android build tools we have chosen on all subprojects.
 subprojects { subproject ->
     afterEvaluate{
         if ((subproject.plugins.hasPlugin('android')
                     || subproject.plugins.hasPlugin('android-library'))
                 && rootProject.ext.has('buildToolsVersion')) {
+
             android {
                 buildToolsVersion rootProject.ext.buildToolsVersion
+
+                buildFeatures {
+                    buildConfig true
+                }
+
+                // Set JVM target across all subprojects
+                compileOptions {
+                    sourceCompatibility rootProject.ext.javaVersion
+                    targetCompatibility rootProject.ext.javaVersion
+                }
+
+                // Disable lint errors for problematic third-party modules
+                // react-native-background-timer
+                // react-native-calendar-events
+                lint {
+                    abortOnError = false
+                }
+            }
+        }
+
+        // Add Kotlin configuration for subprojects that use Kotlin
+        if (subproject.plugins.hasPlugin('kotlin-android')) {
+            subproject.kotlin {
+                jvmToolchain(rootProject.ext.jvmToolchainVersion)
+            }
+
+            // Set Kotlin JVM target
+            subproject.android {
+                kotlinOptions {
+                    jvmTarget = rootProject.ext.jvmTargetVersion
+                }
             }
         }
     }

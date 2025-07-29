@@ -69,7 +69,7 @@ function generateToken(session, audience, room, occupant)
                 email = presence:get_child_text("email") or nil,
                 nick = jid.resource(occupant.nick)
             },
-            features = session.jitsi_meet_context_features or session.granted_jitsi_meet_context_features
+            features = session.jitsi_meet_context_features
         },
         room = session.jitsi_web_query_room,
         meeting_id = room._data.meetingId,

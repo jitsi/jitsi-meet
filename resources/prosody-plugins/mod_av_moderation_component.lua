@@ -5,6 +5,7 @@ local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local process_host_module = util.process_host_module;
 local table_shallow_copy = util.table_shallow_copy;
+local is_admin = util.is_admin;
 local array = require "util.array";
 local json = require 'cjson.safe';
 local st = require 'util.stanza';
@@ -13,6 +14,12 @@ local muc_component_host = module:get_option_string('muc_component');
 if muc_component_host == nil then
     module:log('error', 'No muc_component specified. No muc to operate on!');
     return;
+end
+
+local main_virtual_host = module:get_option_string('muc_mapper_domain_base');
+if not main_virtual_host then
+    module:log('warn', 'No "muc_mapper_domain_base" option set, disabling AV moderation.');
+    return ;
 end
 
 module:log('info', 'Starting av_moderation for %s', muc_component_host);
@@ -84,7 +91,7 @@ function notify_whitelist_change(jid, moderators, room, mediaType, removed)
     body_json.mediaType = mediaType;
 
     -- sanitize, make sure we don't have an empty array as it will encode it as {} not as []
-    for _,mediaType in pairs({'audio', 'video'}) do
+    for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
         if body_json.whitelists[mediaType] and #body_json.whitelists[mediaType] == 0 then
             body_json.whitelists[mediaType] = nil;
         end
@@ -145,6 +152,36 @@ function notify_jid_approved(jid, from, room, mediaType)
     send_json_message(jid, json_message);
 end
 
+function start_av_moderation(room, mediaType, occupant)
+    if not room.av_moderation then
+        room.av_moderation = {};
+        room.av_moderation_actors = {};
+    end
+    room.av_moderation[mediaType] = array();
+
+    -- add all current moderators to the new whitelist
+    for _, room_occupant in room:each_occupant() do
+        if room_occupant.role == 'moderator' and not ends_with(room_occupant.nick, '/focus') then
+            room.av_moderation[mediaType]:push(internal_room_jid_match_rewrite(room_occupant.nick));
+        end
+    end
+
+    -- We want to set startMuted policy in metadata, in case of new participants are joining to respect
+    -- it, that will be enforced by jicofo
+    local startMutedMetadata = room.jitsiMetadata.startMuted or {};
+
+    -- We want to keep the previous value of startMuted for this mediaType if av moderation is disabled
+    -- to be able to restore
+    local av_moderation_startMuted_restore = room.av_moderation_startMuted_restore or {};
+    av_moderation_startMuted_restore[mediaType] = startMutedMetadata[mediaType];
+    room.av_moderation_startMuted_restore = av_moderation_startMuted_restore;
+
+    startMutedMetadata[mediaType] = true;
+    room.jitsiMetadata.startMuted = startMutedMetadata;
+
+    room.av_moderation_actors[mediaType] = occupant.nick;
+end
+
 -- receives messages from clients to the component sending A/V moderation enable/disable commands or adding
 -- jids to the whitelist
 function on_message(event)
@@ -185,7 +222,7 @@ function on_message(event)
 
         local mediaType = moderation_command.attr.mediaType;
         if mediaType then
-            if mediaType ~= 'audio' and mediaType ~= 'video' then
+            if mediaType ~= 'audio' and mediaType ~= 'video' and mediaType ~= 'desktop' then
                 module:log('warn', 'Wrong mediaType %s for %s', mediaType, room.jid);
                 return false;
             end
@@ -202,26 +239,7 @@ function on_message(event)
                     module:log('warn', 'Concurrent moderator enable/disable request or something is out of sync');
                     return true;
                 else
-                    if not room.av_moderation then
-                        room.av_moderation = {};
-                        room.av_moderation_actors = {};
-                    end
-                    room.av_moderation[mediaType] = array{};
-
-                    -- We want to set startMuted policy in metadata, in case of new participants are joining to respect
-                    -- it, that will be enforced by jicofo
-                    local startMutedMetadata = room.jitsiMetadata.startMuted or {};
-
-                    -- We want to keep the previous value of startMuted for this mediaType if av moderation is disabled
-                    -- to be able to restore
-                    local av_moderation_startMuted_restore = room.av_moderation_startMuted_restore or {};
-                    av_moderation_startMuted_restore = startMutedMetadata[mediaType];
-                    room.av_moderation_startMuted_restore = av_moderation_startMuted_restore;
-
-                    startMutedMetadata[mediaType] = true;
-                    room.jitsiMetadata.startMuted = startMutedMetadata;
-
-                    room.av_moderation_actors[mediaType] = occupant.nick;
+                    start_av_moderation(room, mediaType, occupant);
                 end
             else
                 enabled = false;
@@ -251,6 +269,12 @@ function on_message(event)
 
             -- send message to all occupants
             notify_occupants_enable(nil, enabled, room, occupant.nick, mediaType);
+
+            if enabled then
+                -- inform all moderators for the newly created whitelist
+                notify_whitelist_change(nil, true, room, mediaType);
+            end
+
             return true;
         elseif moderation_command.attr.jidToWhitelist then
             local occupant_jid = moderation_command.attr.jidToWhitelist;
@@ -311,12 +335,32 @@ end
 function occupant_joined(event)
     local room, occupant = event.room, event.occupant;
 
-    if is_healthcheck_room(room.jid) then
+    if is_healthcheck_room(room.jid) or is_admin(occupant.bare_jid) then
         return;
     end
 
+    -- when first moderator joins if av_can_unmute from password preset is set to false, we enable av moderation for both
+    -- audio and video, and set the first moderator as the actor that enabled it
+    if room._data.av_can_unmute ~= nil
+        and not room._data.av_first_moderator_joined
+
+        -- occupant.role is not reflecting the actual role after set_affiliation is used in same occupant_joined event
+        and room:get_role(occupant.nick) == 'moderator' then
+
+        if not room._data.av_can_unmute then
+            for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
+                start_av_moderation(room, mediaType, occupant);
+
+                notify_occupants_enable(nil, true, room, occupant.nick, mediaType);
+            end
+
+            room._data.av_first_moderator_joined = true;
+            return;
+        end
+    end
+
     if room.av_moderation then
-        for _,mediaType in pairs({'audio', 'video'}) do
+        for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
             if room.av_moderation[mediaType] then
                 notify_occupants_enable(
                     occupant.jid, true, room, room.av_moderation_actors[mediaType], mediaType);
@@ -326,9 +370,13 @@ function occupant_joined(event)
         -- NOTE for some reason event.occupant.role is not reflecting the actual occupant role (when changed
         -- from allowners module) but iterating over room occupants returns the correct role
         for _, room_occupant in room:each_occupant() do
-            -- if moderator send the whitelist
-            if room_occupant.nick == occupant.nick and room_occupant.role == 'moderator'  then
-                notify_whitelist_change(room_occupant.jid, false, room);
+            -- if it is a moderator, send the whitelist to every moderator
+            if room_occupant.nick == occupant.nick and room_occupant.role == 'moderator' then
+                for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
+                    if room.av_moderation[mediaType] then
+                        notify_whitelist_change(nil, true, room, mediaType);
+                    end
+                end
             end
         end
     end
@@ -336,14 +384,30 @@ end
 
 -- when a occupant was granted moderator we need to update him with the whitelist
 function occupant_affiliation_changed(event)
+    local room = event.room;
+    if not room.av_moderation or is_healthcheck_room(room.jid) or is_admin(event.jid)
+        or event.affiliation ~= 'owner' then
+        return;
+    end
+
+    -- in any enabled media type add the new moderator to the whitelist
+    for _, room_occupant in room:each_occupant() do
+        if room_occupant.bare_jid == event.jid then
+            for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
+                if room.av_moderation[mediaType] then
+                    room.av_moderation[mediaType]:push(internal_room_jid_match_rewrite(room_occupant.nick));
+                end
+            end
+        end
+    end
+
     -- the actor can be nil if is coming from allowners or similar module we want to skip it here
     -- as we will handle it in occupant_joined
-    if event.actor and event.affiliation == 'owner' and event.room.av_moderation then
-        local room = event.room;
-        -- event.jid is the bare jid of participant
-        for _, occupant in room:each_occupant() do
-            if occupant.bare_jid == event.jid then
-                notify_whitelist_change(occupant.jid, false, room);
+    if event.actor and event.affiliation == 'owner' then
+        -- notify all moderators for the new grant moderator and the change in whitelists
+        for _,mediaType in pairs({'audio', 'video', 'desktop'}) do
+            if room.av_moderation[mediaType] then
+                notify_whitelist_change(nil, true, room, mediaType);
             end
         end
     end
@@ -356,4 +420,10 @@ process_host_module(muc_component_host, function(host_module, host)
     module:log('info','Hook to muc events on %s', host);
     host_module:hook('muc-occupant-joined', occupant_joined, -2); -- make sure it runs after allowners or similar
     host_module:hook('muc-set-affiliation', occupant_affiliation_changed, -1);
+end);
+
+process_host_module(main_virtual_host, function(host_module)
+    module:context(host_module.host):fire_event('jitsi-add-identity', {
+        name = 'av_moderation'; host = module.host;
+    });
 end);

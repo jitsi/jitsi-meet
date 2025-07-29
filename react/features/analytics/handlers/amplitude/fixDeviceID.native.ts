@@ -1,4 +1,4 @@
-import { Amplitude } from '@amplitude/react-native';
+import { Types } from '@amplitude/analytics-react-native';
 import DefaultPreference from 'react-native-default-preference';
 import { getUniqueId } from 'react-native-device-info';
 
@@ -8,16 +8,16 @@ import logger from '../../logger';
 /**
  * Custom logic for setting the correct device id.
  *
- * @param {AmplitudeClient} amplitude - The amplitude instance.
+ * @param {Types.ReactNativeClient} amplitude - The amplitude instance.
  * @returns {void}
  */
-export async function fixDeviceID(amplitude: Amplitude) {
+export async function fixDeviceID(amplitude: Types.ReactNativeClient) {
     await DefaultPreference.setName('jitsi-preferences');
 
     const current = await DefaultPreference.get('amplitudeDeviceId');
 
     if (current) {
-        await amplitude.setDeviceId(current);
+        amplitude.setDeviceId(current);
     } else {
         const uid = await getUniqueId();
 
@@ -27,7 +27,7 @@ export async function fixDeviceID(amplitude: Amplitude) {
             return;
         }
 
-        await amplitude.setDeviceId(uid as string);
+        amplitude.setDeviceId(uid as string);
         await DefaultPreference.set('amplitudeDeviceId', uid as string);
     }
 }
