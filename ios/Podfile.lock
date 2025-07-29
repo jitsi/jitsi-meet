@@ -64,11 +64,11 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 7.7)
     - PromisesObjC (< 3.0, >= 1.2)
   - fmt (11.0.2)
-  - Giphy (2.2.13):
+  - Giphy (2.2.16):
     - libwebp
-  - giphy-react-native-sdk (3.3.1):
+  - giphy-react-native-sdk (4.1.0):
     - DoubleConversion
-    - Giphy (= 2.2.13)
+    - Giphy (= 2.2.16)
     - glog
     - hermes-engine
     - RCT-Folly (= 2024.11.18.00)
@@ -1382,9 +1382,9 @@ PODS:
     - React-Core
   - react-native-netinfo (11.1.0):
     - React-Core
-  - react-native-orientation-locker (1.6.0):
+  - react-native-orientation-locker (1.5.0):
     - React-Core
-  - react-native-pager-view (6.4.1):
+  - react-native-pager-view (6.8.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1407,7 +1407,7 @@ PODS:
     - Yoga
   - react-native-performance (5.1.2):
     - React-Core
-  - react-native-safe-area-context (5.4.0):
+  - react-native-safe-area-context (5.5.2):
     - React-Core
   - react-native-slider (4.5.6):
     - DoubleConversion
@@ -1794,7 +1794,7 @@ PODS:
     - React-Core
   - RNDefaultPreference (1.4.4):
     - React-Core
-  - RNDeviceInfo (10.9.0):
+  - RNDeviceInfo (12.1.0):
     - React-Core
   - RNGestureHandler (2.24.0):
     - DoubleConversion
@@ -2201,8 +2201,8 @@ SPEC CHECKSUMS:
   FirebaseCrashlytics: feb07e4e9187be3c23c6a846cce4824e5ce2dd0b
   FirebaseInstallations: 40bd9054049b2eae9a2c38ef1c3dd213df3605cd
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
-  Giphy: a11dd02b51ac2ec37b881de1717ebf2cc8e9df62
-  giphy-react-native-sdk: 678a115ea5a47a43d39d1b61703e0d08b1e48917
+  Giphy: 55914215541027873875757f350530e6d8986fba
+  giphy-react-native-sdk: 733177b2537b527cfa55979c396cc1f2046eb457
   glog: eb93e2f488219332457c3c4eafd2738ddc7e80b8
   GoogleAppMeasurement: 4c19f031220c72464d460c9daa1fb5d1acce958e
   GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
@@ -2249,10 +2249,10 @@ SPEC CHECKSUMS:
   react-native-get-random-values: d16467cf726c618e9c7a8c3c39c31faa2244bbba
   react-native-keep-awake: 03b74eebe4f2bb5e8478fc8f420651a92463b6f8
   react-native-netinfo: 5364263f903da576bdef9c84a76fe243ab06812c
-  react-native-orientation-locker: ee8bb2177365ca74f51dc1e11218fe544634d523
-  react-native-pager-view: 68e8a65a607a6f91a1e25865002192c3c4f53fcf
+  react-native-orientation-locker: dbd3f6ddbe9e62389cb0807dc2af63f6c36dec36
+  react-native-pager-view: 11662c698c8f11d39e05891316d2a144fa00adc4
   react-native-performance: 125a96c145e29918b55b45ce25cbba54f1e24dcd
-  react-native-safe-area-context: 9d72abf6d8473da73033b597090a80b709c0b2f1
+  react-native-safe-area-context: 0f7bf11598f9a61b7ceac8dc3f59ef98697e99e1
   react-native-slider: 1205801a8d29b28cacc14eef08cb120015cdafcb
   react-native-video: eb861d67a71dfef1bbf6086a811af5f338b13781
   react-native-webrtc: 2261a482150195092246fe70b3aff976f2e11ec5
@@ -2290,7 +2290,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: aa75595c1aefa18f868452091fa0c411a516ce11
   RNCClipboard: 7c3e3b5f71d84ef61690ad377b6c50cf27864ff5
   RNDefaultPreference: ee13d69e6693d193cd223d10e15e5b3c012d31ba
-  RNDeviceInfo: 8af23685571b7867d8dc15fb89e7fb5fa8607e1e
+  RNDeviceInfo: 723e97dd98af9b7913477e7a40252c15517c258c
   RNGestureHandler: 9f3109e11ed88fe5bed280bf7762b25e4c52f396
   RNGoogleSignin: 30e1aee80140dc0706cd78a4951c411376c88329
   RNScreens: 9ef996b6041d0960a4794a845f7d0808b171b4ef
