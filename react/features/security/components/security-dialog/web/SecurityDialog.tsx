@@ -6,7 +6,6 @@ import { getSecurityUiConfig } from '../../../../base/config/functions.any';
 import { isLocalParticipantModerator } from '../../../../base/participants/functions';
 import Dialog from '../../../../base/ui/components/web/Dialog';
 import { isInBreakoutRoom } from '../../../../breakout-rooms/functions';
-import E2EESection from '../../../../e2ee/components/E2EESection';
 import LobbySection from '../../../../lobby/components/web/LobbySection';
 import { isEnablingLobbyAllowed } from '../../../../lobby/functions';
 
@@ -52,12 +51,12 @@ export default function SecurityDialog() {
                         </>
                     )
                 }
-                {
+                {/* {
                     showE2ee ? <>
                         { (_isLobbyVisible || !disableLobbyPassword) && <div className = 'separator-line' /> }
                         <E2EESection />
                     </> : null
-                }
+                } */}
 
             </div>
         </Dialog>
