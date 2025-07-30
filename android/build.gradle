@@ -7,11 +7,11 @@ import org.gradle.util.VersionNumber
 buildscript {
     ext {
         kotlinVersion = "2.0.21"
-        gradlePluginVersion = "8.4.2"
-        buildToolsVersion = "34.0.0"
-        compileSdkVersion = 34
+        gradlePluginVersion = "8.6.0"
+        buildToolsVersion = "35.0.0"
+        compileSdkVersion = 35
         minSdkVersion    = 26
-        targetSdkVersion = 34
+        targetSdkVersion = 35
         supportLibVersion = "28.0.0"
         ndkVersion = "27.1.12297006"
 
@@ -72,26 +72,6 @@ allprojects {
                     }
                 }
             }
-        }
-    }
-
-    // Due to a dependency conflict between React Native and the Fresco library used by GiphySDK,
-    // GIFs appear as static images instead of animating
-    // https://github.com/Giphy/giphy-react-native-sdk/commit/7fe466ed6fddfaec95f9cbc959d33bd75ad8f900
-
-    configurations.configureEach {
-        resolutionStrategy {
-            forcedModules = [
-                'com.facebook.fresco:fresco:3.2.0',
-                'com.facebook.fresco:animated-gif:3.2.0',
-                'com.facebook.fresco:animated-base:3.2.0',
-                'com.facebook.fresco:animated-drawable:3.2.0',
-                'com.facebook.fresco:animated-webp:3.2.0',
-                'com.facebook.fresco:webpsupport:3.2.0',
-                'com.facebook.fresco:imagepipeline-okhttp3:3.2.0',
-                'com.facebook.fresco:middleware:3.2.0',
-                'com.facebook.fresco:nativeimagetranscoder:3.2.0'
-            ]
         }
     }
 
