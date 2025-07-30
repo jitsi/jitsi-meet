@@ -168,7 +168,7 @@ function Util.new(module)
                                         n = basexx.from_base64(key.n:gsub("-", "+"):gsub("_", "/")),
                                         e = basexx.from_base64(key.e:gsub("-", "+"):gsub("_", "/"))
                                     }
-                                    _pubkey = pkey.new(rsa_params);
+                                    _pubkey = pkey.new(rsa_params):tostring("PEM");
                                 end
                                 if _pubkey then
                                     self.cachedKeys[key.kid] = _pubkey;
