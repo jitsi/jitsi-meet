@@ -18,7 +18,6 @@ export const screen = {
         participants: 'Participants',
         root: 'Conference root',
         recording: 'Recording',
-        salesforce: 'Link to Salesforce',
         security: 'Security Options',
         sharedDocument: 'Shared document',
         speakerStats: 'Speaker Stats',
