@@ -63,7 +63,7 @@ export function _setDeeplinkingDefaults(deeplinking: IDeeplinkingConfig) {
 
     const { android, desktop, ios } = deeplinking;
 
-    desktop.appName = desktop.appName || 'Jitsi Meet';
+    desktop.appName = desktop.appName || 'Hey Joe';
     desktop.appScheme = desktop.appScheme || 'jitsi-meet';
     desktop.download = desktop.download || {};
     desktop.download.windows = desktop.download.windows
