@@ -5,6 +5,13 @@
     width: 100%;
 }
 
+#conference_info {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    height: 28px;
+}
+
 #layout_wrapper {
     @include ltr;
     display: flex;
@@ -210,7 +217,7 @@
 }
 
 #dominantSpeaker {
-    visibility: hidden;
+    visibility: visible;
     width: 300px;
     height: 300px;
     margin: auto;
