@@ -77,8 +77,9 @@ describe('AVModeration', () => {
     });
 
     it('hangup and change moderator', async () => {
-        // no moderator switching if jaas is available
-        if (ctx.isJaasAvailable()) {
+        // no moderator switching if jaas is available. TODO: revisit this. why limit a non-jaas test based on whether
+        // jaas is configured or not?!
+        if (ctx.isJaasAvailable) {
             return;
         }
 

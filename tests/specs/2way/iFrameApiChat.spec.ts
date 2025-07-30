@@ -3,7 +3,13 @@ import { expect } from '@wdio/globals';
 import type { Participant } from '../../helpers/Participant';
 import { ensureTwoParticipants } from '../../helpers/participants';
 import { fetchJson } from '../../helpers/utils';
+import { setTestProperties } from "../../helpers/TestProperties";
 
+setTestProperties(__filename, {
+    useIFrameApi: true,
+    // TODO: does this actually use webhook proxy?
+    useWebhookProxy: true
+});
 
 describe('Chat', () => {
     it('joining the meeting', async () => {

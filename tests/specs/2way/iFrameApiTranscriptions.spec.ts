@@ -3,6 +3,13 @@ import { expect } from '@wdio/globals';
 import type { Participant } from '../../helpers/Participant';
 import type WebhookProxy from '../../helpers/WebhookProxy';
 import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
+import { setTestProperties } from "../../helpers/TestProperties";
+
+setTestProperties(__filename, {
+    useIFrameApi: true,
+    // TODO: does this actually use webhook proxy?
+    useWebhookProxy: true
+});
 
 describe('Transcriptions', () => {
     it('joining the meeting', async () => {

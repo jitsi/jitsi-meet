@@ -200,13 +200,13 @@ export class Participant {
             };
         }
 
-        if (ctx.iframeAPI) {
+        if (ctx.testProperties.useIFrameApi) {
             config.room = 'iframeAPITest.html';
         }
 
         let url = urlObjectToString(config) || '';
 
-        if (ctx.iframeAPI) {
+        if (ctx.testProperties.useIFrameApi) {
             const baseUrl = new URL(this.driver.options.baseUrl || '');
 
             // @ts-ignore
@@ -231,7 +231,8 @@ export class Participant {
 
         let urlToLoad = url.startsWith('/') ? url.substring(1) : url;
 
-        if (options.preferGenerateToken && !ctx.iframeAPI && ctx.isJaasAvailable() && process.env.IFRAME_TENANT) {
+        if (options.preferGenerateToken && !ctx.testProperties.useIFrameApi
+            && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-') && process.env.IFRAME_TENANT) {
             // This to enables tests like invite, which can force using the jaas auth instead of the provided token
             urlToLoad = `/${process.env.IFRAME_TENANT}/${urlToLoad}`;
         }
@@ -241,7 +242,7 @@ export class Participant {
 
         await this.waitForPageToLoad();
 
-        if (ctx.iframeAPI) {
+        if (ctx.testProperties.useIFrameApi) {
             const mainFrame = this.driver.$('iframe');
 
             await this.driver.switchFrame(mainFrame);
@@ -336,6 +337,11 @@ export class Participant {
     async isModerator() {
         return await this.execute(() => typeof APP !== 'undefined'
             && APP.store?.getState()['features/base/participants']?.local?.role === 'moderator');
+    }
+
+    async isVisitor() {
+        // TODO: cleaner way to check?
+        return await this.execute(() => APP?.conference?._room?.room?.roomjid?.endsWith('.meet.jitsi'));
     }
 
     /**
@@ -447,7 +453,7 @@ export class Participant {
     }
 
     /**
-     * Waits for number of participants.
+     * Waits until the number of participants is exactly the given number.
      *
      * @param {number} number - The number of participant to wait for.
      * @param {string} msg - A custom message to use.

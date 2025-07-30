@@ -2,11 +2,11 @@ import { IConfig } from '../../react/features/base/config/configType';
 
 import type { Participant } from './Participant';
 import type WebhookProxy from './WebhookProxy';
+import {ITestProperties} from "./TestProperties";
 
 export type IContext = {
     data: any;
-    iframeAPI: boolean;
-    isJaasAvailable: () => boolean;
+    isJaasAvailable: boolean;
     jwtKid: string;
     jwtPrivateKeyPath: string;
     keepAlive: Array<any>;
@@ -18,6 +18,7 @@ export type IContext = {
     skipSuiteTests: boolean;
     times: any;
     webhooksProxy: WebhookProxy;
+    testProperties: ITestProperties;
 };
 
 export type ITokenOptions = {

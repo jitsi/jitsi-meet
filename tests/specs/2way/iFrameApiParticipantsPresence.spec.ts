@@ -3,6 +3,13 @@ import { isEqual } from 'lodash-es';
 import { P1, P2, Participant } from '../../helpers/Participant';
 import { ensureTwoParticipants, parseJid } from '../../helpers/participants';
 import { IContext } from '../../helpers/types';
+import { setTestProperties } from "../../helpers/TestProperties";
+
+setTestProperties(__filename, {
+    useIFrameApi: true,
+    // TODO: does this actually use webhook proxy?
+    useWebhookProxy: true
+});
 
 /**
  * Tests PARTICIPANT_LEFT webhook.

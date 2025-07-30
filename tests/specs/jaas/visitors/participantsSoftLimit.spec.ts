@@ -1,0 +1,48 @@
+import { getToken } from '../../../helpers/participants';
+import { setTestProperties } from "../../../helpers/TestProperties";
+import { joinMuc } from "../../helpers/jaas";
+
+setTestProperties(__filename, {
+    useJaas: true,
+    useWebhookProxy: true
+});
+
+describe('Visitors triggered by reaching participantsSoftLimit', () => {
+    it('test participantsSoftLimit', async () => {
+        const { webhooksProxy } = ctx;
+
+        // Configure webhook for participantsSoftLimit=2 with visitors enabled
+        webhooksProxy.defaultMeetingSettings = {
+            participantsSoftLimit: 2,
+            visitorsEnabled: true
+        };
+
+        console.log('Setting up 3 participants with participantsSoftLimit=2...', new Error().stack);
+
+        /// XXX the "name" of the participant MUST match one of the "capabilities" defined in wdio. It's not a "participant", it's an instance configuration!
+        const m = await joinMuc(ctx.roomName, 'p1', getToken(ctx, "Mo de Rator", { room: ctx.roomName, moderator: true }));
+        expect(await m.isInMuc()).toBe(true);
+        expect(await m.isModerator()).toBe(true);
+        expect(await m.isVisitor()).toBe(false);
+        console.log('Moderator joined');
+
+        // Joining with a participant token before participantSoftLimit has been reached
+        const p = await joinMuc(ctx.roomName, 'p2', getToken(ctx, "Parti Cipant", { room: ctx.roomName }));
+        expect(await p.isInMuc()).toBe(true);
+        expect(await p.isModerator()).toBe(false);
+        expect(await p.isVisitor()).toBe(false);
+        console.log('Participant joined');
+
+        // Joining with a participant token after participantSoftLimit has been reached
+        const v = await joinMuc(ctx.roomName, 'p3', getToken(ctx, "Visi Tor", { room: ctx.roomName }));
+        expect(await v.isInMuc()).toBe(true);
+        expect(await v.isModerator()).toBe(false);
+        expect(await v.isVisitor()).toBe(true);
+        console.log('Visitor joined');
+
+        // await Promise.all([m, p, v].map(async (participant) => { await participant.hangup(); }));
+
+        // TODO Is this the proper way to reset?
+        webhooksProxy.defaultMeetingSettings = {}
+    })
+});

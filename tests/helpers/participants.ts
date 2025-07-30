@@ -171,7 +171,7 @@ async function _joinParticipant( // eslint-disable-line max-params
     const p = ctx[name] as Participant;
 
     if (p) {
-        if (ctx.iframeAPI) {
+        if (ctx.testProperties.useIFrameApi) {
             await p.switchInPage();
         }
 
@@ -179,7 +179,7 @@ async function _joinParticipant( // eslint-disable-line max-params
             return;
         }
 
-        if (ctx.iframeAPI) {
+        if (ctx.testProperties.useIFrameApi) {
             // when loading url make sure we are on the top page context or strange errors may occur
             await p.switchToAPI();
         }
@@ -197,7 +197,7 @@ async function _joinParticipant( // eslint-disable-line max-params
             // we prioritize the access token when iframe is not used and private key is set,
             // otherwise if private key is not specified we use the access token if set
             if (process.env.JWT_ACCESS_TOKEN
-                && ((ctx.jwtPrivateKeyPath && !ctx.iframeAPI && !options?.preferGenerateToken)
+                && ((ctx.jwtPrivateKeyPath && !ctx.testProperties.useIFrameApi && !options?.preferGenerateToken)
                     || !ctx.jwtPrivateKeyPath)) {
                 jwtToken = process.env.JWT_ACCESS_TOKEN;
             } else if (ctx.jwtPrivateKeyPath) {
@@ -296,9 +296,7 @@ export function getToken(ctx: IContext, displayName: string, options?: ITokenOpt
     };
 
     if (!keyid) {
-        console.error('JWT_KID is not set');
-
-        return;
+        throw new Error('JWT_KID is not set');
     }
 
     const key = fs.readFileSync(ctx.jwtPrivateKeyPath);
