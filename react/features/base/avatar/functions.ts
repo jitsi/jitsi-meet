@@ -64,9 +64,9 @@ function getFirstGraphemeUpper(word: string) {
 export function getInitials(s?: string) {
     // We don't want to use the domain part of an email address, if it is one
     const initialsBasis = split(s, '@')[0];
-    const [ firstWord, secondWord ] = initialsBasis.split(wordSplitRegex).filter(Boolean);
+    const [ firstWord, ...remainingWords ] = initialsBasis.split(wordSplitRegex).filter(Boolean);
 
-    return getFirstGraphemeUpper(firstWord) + getFirstGraphemeUpper(secondWord);
+    return getFirstGraphemeUpper(firstWord) + getFirstGraphemeUpper(remainingWords.pop() || '');
 }
 
 /**

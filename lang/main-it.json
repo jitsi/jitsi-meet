@@ -109,6 +109,7 @@
         }
     },
     "chat": {
+        "disabled": "L'invio di messaggi in chat è disabilitato.",
         "enter": "Entra nella conversazione",
         "error": "Errore: il tuo messaggio non è stato inviato. Motivo: {{error}}",
         "fieldPlaceHolder": "Scrivi qui il tuo messaggio",
@@ -546,8 +547,10 @@
         "downloadFailedDescription": "Si prega di riprovare.",
         "downloadFailedTitle": "Download non riuscito",
         "downloadFile": "Download",
-        "dragAndDrop": "Trascina e rilascia i file qui",
-        "fileAlreadyUploaded": "Questo file è già stato caricato nella riunione",
+        "dragAndDrop": "Trascina e rilascia i file qui o da qualsiasi altra parte nella schermata",
+        "fileAlreadyUploaded": "Questo file è già stato caricato nella riunione.",
+        "fileTooLargeDescription": "Assicurati che il file non superi {{ maxFileSize }}.",
+        "fileTooLargeTitle": "Il file selezionato è troppo grande",
         "removeFile": "Rimuovi",
         "uploadFailedDescription": "Si prega di riprovare.",
         "uploadFailedTitle": "Caricamento non riuscito",
@@ -906,6 +909,7 @@
             "visitorInQueue": " ({{count}} in attesa)",
             "visitorRequests": " ({{count}} richiesta/e)",
             "visitors": "Spettatori {{count}}",
+            "visitorsList": "Spettatori ({{count}})",
             "waitingLobby": "({{count}}) in attesa"
         },
         "search": "Cerca partecipanti",
@@ -946,7 +950,7 @@
         },
         "results": {
             "changeVote": "Cambia voto",
-            "empty": "Non ci sono ancora sondaggi in questa riunione. Crea un sondaggio qui!",
+            "empty": "Non ci sono ancora sondaggi in questa riunione.",
             "hideDetailedResults": "Nascondi dettagli",
             "showDetailedResults": "Mostra dettagli",
             "vote": "Voti"

@@ -258,8 +258,8 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
         if (this.state._fieldFocused) {
             return (
-                <Animated.View style = { this._getHintBoxStyle() as ViewStyle }>
-                    <View style = { styles.hintTextContainer } >
+                <Animated.View style = { this._getHintBoxStyle() as ViewStyle[] }>
+                    <View style = { styles.hintTextContainer as ViewStyle } >
                         <Text style = { styles.hintText as TextStyle }>
                             { t('welcomepage.roomnameHint') }
                         </Text>

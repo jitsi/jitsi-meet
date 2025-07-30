@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Client } from '@stomp/stompjs';
+import { Client, StompSubscription } from '@stomp/stompjs';
 
 import logger from './logger';
 
@@ -20,13 +20,15 @@ export interface VisitorResponse extends QueueServiceResponse {
  * Uses STOMP for authenticating (https://stomp.github.io/).
  */
 export class WebsocketClient {
-    private stompClient: Client | undefined;
+    protected stompClient: Client | undefined;
 
     private static instance: WebsocketClient;
 
-    private retriesCount = 0;
+    protected retriesCount = 0;
 
     private _connectCount = 0;
+
+    private _subscription: StompSubscription | undefined;
 
     /**
      *  WebsocketClient getInstance.
@@ -100,7 +102,7 @@ export class WebsocketClient {
             this._connectCount++;
             connectCallback?.();
 
-            this.stompClient.subscribe(endpoint, message => {
+            this._subscription = this.stompClient.subscribe(endpoint, message => {
                 try {
                     callback(JSON.parse(message.body));
                 } catch (e) {
@@ -113,7 +115,21 @@ export class WebsocketClient {
     }
 
     /**
-     * Disconnects the current stomp  client instance and clears it.
+     * Unsubscribes from the current subscription.
+     *
+     * @returns {void}
+     */
+    unsubscribe(): void {
+        if (this._subscription) {
+            this._subscription.unsubscribe();
+            logger.debug('Unsubscribed from WebSocket topic');
+            this._subscription = undefined;
+        }
+    }
+
+    /**
+     * Disconnects the current stomp client instance and clears it.
+     * Unsubscribes from any active subscriptions first if available.
      *
      * @returns {Promise}
      */
@@ -124,8 +140,11 @@ export class WebsocketClient {
 
         const url = this.stompClient.brokerURL;
 
+        // Unsubscribe first (synchronous), then disconnect
+        this.unsubscribe();
+
         return this.stompClient.deactivate().then(() => {
-            logger.info(`disconnected from: ${url}`);
+            logger.debug(`disconnected from: ${url}`);
             this.stompClient = undefined;
         });
     }

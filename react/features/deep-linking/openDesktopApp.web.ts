@@ -1,3 +1,4 @@
+import { executeAfterLoad } from '../app/functions.web';
 import { IReduxState } from '../app/types';
 import { URI_PROTOCOL_PATTERN } from '../base/util/uri';
 
@@ -16,7 +17,10 @@ export function _openDesktopApp(_state: Object) {
         const { appScheme } = deeplinkingDesktop;
         const regex = new RegExp(URI_PROTOCOL_PATTERN, 'gi');
 
-        window.location.href = window.location.href.replace(regex, `${appScheme}:`);
+        // This is needed to workaround https://issues.chromium.org/issues/41398687
+        executeAfterLoad(() => {
+            window.location.href = window.location.href.replace(regex, `${appScheme}:`);
+        });
 
         return Promise.resolve(true);
     }

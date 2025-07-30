@@ -38,6 +38,7 @@ const commands = {
     endConference: 'end-conference',
     email: 'email',
     grantModerator: 'grant-moderator',
+    grantRecordingConsent: 'grant-recording-consent',
     hangup: 'video-hangup',
     hideNotification: 'hide-notification',
     initiatePrivateChat: 'initiate-private-chat',
@@ -151,6 +152,7 @@ const events = {
     'proxy-connection-event': 'proxyConnectionEvent',
     'raise-hand-updated': 'raiseHandUpdated',
     'ready': 'ready',
+    'recording-consent-dialog-open': 'recordingConsentDialogOpen',
     'recording-link-available': 'recordingLinkAvailable',
     'recording-status-changed': 'recordingStatusChanged',
     'participant-menu-button-clicked': 'participantMenuButtonClick',
@@ -815,6 +817,27 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     captureLargeVideoScreenshot() {
         return this._transport.sendRequest({
             name: 'capture-largevideo-screenshot'
+        });
+    }
+
+    /**
+     * Captures a picture through OS camera.
+     *
+     * @param {string} cameraFacingMode - The OS camera facing mode (environment/user).
+     * @param {string} descriptionText - The OS camera facing mode (environment/user).
+     * @param {string} titleText - The OS camera facing mode (environment/user).
+     * @returns {Promise<string>} - Resolves with a base64 encoded image data of the screenshot.
+     */
+    captureCameraPicture(
+            cameraFacingMode,
+            descriptionText,
+            titleText
+    ) {
+        return this._transport.sendRequest({
+            name: 'capture-camera-picture',
+            cameraFacingMode,
+            descriptionText,
+            titleText
         });
     }
 

@@ -10,7 +10,7 @@ import { INotificationProps } from '../notifications/types';
 import { RECORDING_OFF_SOUND_ID, RECORDING_ON_SOUND_ID } from '../recording/constants';
 import { isLiveStreamingRunning, isRecordingRunning } from '../recording/functions';
 
-import { isRecorderTranscriptionsRunning } from './functions';
+import { isRecorderTranscriptionsRunning, isTranscribing } from './functions';
 
 /**
  * Listens for transcriber status change.
@@ -19,11 +19,19 @@ StateListenerRegistry.register(
     /* selector */ isRecorderTranscriptionsRunning,
     /* listener */ (isRecorderTranscriptionsRunningValue, { getState, dispatch }) => {
         if (isRecorderTranscriptionsRunningValue) {
-            notifyTranscribingStatusChanged(getState, true);
             maybeEmitRecordingNotification(dispatch, getState, true);
         } else {
-            notifyTranscribingStatusChanged(getState, false);
             maybeEmitRecordingNotification(dispatch, getState, false);
+        }
+    }
+);
+StateListenerRegistry.register(
+    /* selector */ isTranscribing,
+    /* listener */ (isTranscribingValue, { getState }) => {
+        if (isTranscribingValue) {
+            notifyTranscribingStatusChanged(getState, true);
+        } else {
+            notifyTranscribingStatusChanged(getState, false);
         }
     }
 );

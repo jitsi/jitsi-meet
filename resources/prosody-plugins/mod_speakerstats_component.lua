@@ -20,13 +20,13 @@ if not have_async then
 end
 
 local muc_component_host = module:get_option_string("muc_component");
-local muc_domain_base = module:get_option_string("muc_mapper_domain_base");
+local main_virtual_host = module:get_option_string("muc_mapper_domain_base");
 
-if muc_component_host == nil or muc_domain_base == nil then
+if muc_component_host == nil or main_virtual_host == nil then
     module:log("error", "No muc_component specified. No muc to operate on!");
     return;
 end
-local breakout_room_component_host = "breakout." .. muc_domain_base;
+local breakout_room_component_host = "breakout." .. main_virtual_host;
 
 module:log("info", "Starting speakerstats for %s", muc_component_host);
 
@@ -375,4 +375,10 @@ process_host_module(breakout_room_component_host, function(host_module, host)
             end
         end);
     end
+end);
+
+process_host_module(main_virtual_host, function(host_module)
+    module:context(host_module.host):fire_event('jitsi-add-identity', {
+        name = 'speakerstats'; host = module.host;
+    });
 end);

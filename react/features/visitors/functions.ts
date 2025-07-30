@@ -1,5 +1,7 @@
 import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
+import { MEET_FEATURES } from '../base/jwt/constants';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { toState } from '../base/redux/functions';
 
 /**
@@ -69,6 +71,26 @@ export function isVisitorsSupported(stateful: IStateful) {
 }
 
 /**
+ * Returns the current visitor list.
+ *
+ * @param {IStateful} stateful - The redux store or {@code getState} function.
+ * @returns {Array<Object>}
+ */
+export function getVisitorsList(stateful: IStateful) {
+    return toState(stateful)['features/visitors'].visitors ?? [];
+}
+
+/**
+ * Whether the visitors list websocket subscription has been requested.
+ *
+ * @param {IStateful} stateful - The redux store or {@code getState} function.
+ * @returns {boolean}
+ */
+export function isVisitorsListSubscribed(stateful: IStateful) {
+    return toState(stateful)['features/visitors'].visitorsListSubscribed;
+}
+
+/**
  * Whether visitor mode is live.
  *
  * @param {Function|Object} stateful - The redux store or {@code getState}
@@ -88,4 +110,32 @@ export function isVisitorsLive(stateful: IStateful) {
  */
 export function showVisitorsQueue(stateful: IStateful) {
     return toState(stateful)['features/visitors'].inQueue;
+}
+
+/**
+ * Checks if the visitors list feature is enabled based on JWT and config.js.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean} Whether the feature is allowed.
+ */
+export function isVisitorsListEnabled(state: IReduxState): boolean {
+    const { visitors: visitorsConfig } = state['features/base/config'];
+
+    if (!visitorsConfig?.queueService) { // if the queue service is not configured, we can't retrieve the visitors list
+        return false;
+    }
+
+    return isJwtFeatureEnabled(state, MEET_FEATURES.LIST_VISITORS, false);
+}
+
+/**
+ * Determines whether the current visitors list should be displayed.
+ *
+ * @param {IStateful} stateful - The redux store or {@code getState} function.
+ * @returns {boolean} Whether the visitors list should be shown.
+ */
+export function shouldDisplayCurrentVisitorsList(stateful: IStateful): boolean {
+    const state = toState(stateful);
+
+    return isVisitorsListEnabled(state) && getVisitorsCount(state) > 0;
 }

@@ -190,7 +190,8 @@ MiddlewareRegistry.register(store => next => action => {
 
 
                     return APP.conference.startConference(jitsiTracks);
-                });
+                })
+                .catch(logger.error);
             });
         } else {
             promise.then(({ tracks }) => {

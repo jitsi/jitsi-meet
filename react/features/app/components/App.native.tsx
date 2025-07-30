@@ -2,7 +2,8 @@ import React, { ComponentType } from 'react';
 import { NativeModules, Platform, StyleSheet, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import SplashScreen from 'react-native-splash-screen';
+// @ts-ignore
+import { hideSplash } from 'react-native-splash-view';
 
 import BottomSheetContainer from '../../base/dialog/components/native/BottomSheetContainer';
 import DialogContainer from '../../base/dialog/components/native/DialogContainer';
@@ -84,7 +85,7 @@ export class App extends AbstractApp<IProps> {
     override async componentDidMount() {
         await super.componentDidMount();
 
-        SplashScreen.hide();
+        hideSplash();
 
         const liteTxt = AppInfo.isLiteSDK ? ' (lite)' : '';
 

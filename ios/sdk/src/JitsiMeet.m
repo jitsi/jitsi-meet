@@ -23,7 +23,6 @@
 #import "JitsiMeetView+Private.h"
 #import "RCTBridgeWrapper.h"
 #import "ReactUtils.h"
-#import "RNSplashScreen.h"
 #import "ScheenshareEventEmiter.h"
 
 #import <react-native-webrtc/WebRTCModuleOptions.h>
@@ -221,8 +220,17 @@
     return nil;
 }
 
-- (void)showSplashScreen:(UIView*)rootView {
-    [RNSplashScreen showSplash:@"LaunchScreen" inRootView:rootView];
+- (void)showSplashScreen {
+    Class splashClass = NSClassFromString(@"SplashView");
+    if (splashClass && [splashClass respondsToSelector:@selector(sharedInstance)]) {
+        id splashInstance = [splashClass performSelector:@selector(sharedInstance)];
+        if (splashInstance && [splashInstance respondsToSelector:@selector(showSplash)]) {
+            [splashInstance performSelector:@selector(showSplash)];
+            NSLog(@"✅ Splash Screen Shown Successfully");
+        }
+    } else {
+        NSLog(@"⚠️ SplashView module not found");
+    }
 }
 
 #pragma mark - Property getter / setters

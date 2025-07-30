@@ -97,6 +97,37 @@ function processSSI(html, depth = 0, includedFiles = new Set()) {
     return result;
 }
 
+// Kept for upstream compat
+// eslint-disable-next-line require-jsdoc, no-unused-vars
+function devServerProxyBypass({ path }) {
+    let tpath = path;
+
+    if (tpath.startsWith('/v1/_cdn/')) {
+        // The CDN is not available in the dev server, so we need to bypass it.
+        tpath = tpath.replace(/\/v1\/_cdn\/[^/]+\//, '/');
+    }
+
+    if (tpath.startsWith('/css/')
+            || tpath.startsWith('/doc/')
+            || tpath.startsWith('/fonts/')
+            || tpath.startsWith('/images/')
+            || tpath.startsWith('/lang/')
+            || tpath.startsWith('/sounds/')
+            || tpath.startsWith('/static/')
+            || tpath.endsWith('.wasm')) {
+
+        return tpath;
+    }
+
+    if (tpath.startsWith('/libs/')) {
+        if (tpath.endsWith('.min.js') && !fs.existsSync(join(process.cwd(), tpath))) {
+            return tpath.replace('.min.js', '.js');
+        }
+    }
+
+    return tpath;
+}
+
 /**
  * The base Webpack configuration to bundle the JavaScript artifacts of
  * jitsi-meet such as app.bundle.js and external_api.js.

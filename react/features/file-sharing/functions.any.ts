@@ -10,6 +10,7 @@ import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { showErrorNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
+import { iAmVisitor } from '../visitors/functions';
 
 import { uploadFiles } from './actions';
 import { MAX_FILE_SIZE } from './constants';
@@ -150,5 +151,7 @@ export const processFiles = (fileList: FileList | File[], store: IStore) => {
  * @returns {boolean} Indication of whether local user can upload files.
  */
 export function isFileUploadingEnabled(state: IReduxState): boolean {
-    return isJwtFeatureEnabled(state, MEET_FEATURES.FILE_UPLOAD, false) && isFileSharingEnabled(state);
+    return !iAmVisitor(state)
+        && isJwtFeatureEnabled(state, MEET_FEATURES.FILE_UPLOAD, false)
+        && isFileSharingEnabled(state);
 }

@@ -49,7 +49,7 @@ export function addFile(file: IFileMetadata) {
 }
 
 /**
- * Remove a file.
+ * Remove a file from the backend.
  *
  * @param {string} fileId - The ID of the file to remove.
  * @returns {Object}

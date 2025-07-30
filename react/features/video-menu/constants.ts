@@ -17,6 +17,7 @@ export const VOLUME_SLIDER_SCALE = 100;
  * Participant context menu button keys.
  */
 export const PARTICIPANT_MENU_BUTTONS = {
+    ALLOW_DESKTOP: 'allow-desktop',
     ALLOW_VIDEO: 'allow-video',
     ASK_UNMUTE: 'ask-unmute',
     CONN_STATUS: 'conn-status',
@@ -27,7 +28,9 @@ export const PARTICIPANT_MENU_BUTTONS = {
     KICK: 'kick',
     LOWER_PARTICIPANT_HAND: 'lower-participant-hand',
     MUTE: 'mute',
+    MUTE_DESKTOP: 'mute-desktop',
     MUTE_OTHERS: 'mute-others',
+    MUTE_OTHERS_DESKTOP: 'mute-others-desktop',
     MUTE_OTHERS_VIDEO: 'mute-others-video',
     MUTE_VIDEO: 'mute-video',
     PIN_TO_STAGE: 'pinToStage',

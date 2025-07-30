@@ -58,7 +58,7 @@ const IconButton: React.FC<IIconButtonProps> = ({
             style = { [
                 iconButtonContainerStyles,
                 style
-            ] as ViewStyle }
+            ] as ViewStyle[] }
             underlayColor = { underlayColor }>
             <Icon
                 color = { color }

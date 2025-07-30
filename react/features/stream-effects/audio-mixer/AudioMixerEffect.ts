@@ -68,6 +68,7 @@ export class AudioMixerEffect {
      * @param {MediaStream} audioStream - Audio stream which will be mixed with _mixAudio.
      * @returns {MediaStream} - MediaStream containing both audio tracks mixed together.
      */
+    // @ts-ignore
     startEffect(audioStream: MediaStream) {
         this._originalStream = audioStream;
         this._originalTrack = audioStream.getTracks()[0];

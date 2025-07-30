@@ -40,3 +40,8 @@ export const CONFERENCE_LEAVE_REASONS = {
     SWITCH_ROOM: 'switch_room',
     UNRECOVERABLE_ERROR: 'unrecoverable_error'
 };
+
+/**
+ * The ID of the notification that is shown when the user is muted by focus.
+ */
+export const START_MUTED_NOTIFICATION_ID = 'start-muted';

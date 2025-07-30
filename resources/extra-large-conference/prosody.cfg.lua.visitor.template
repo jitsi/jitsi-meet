@@ -127,7 +127,9 @@ Component 'conference.vX.meet.jitsi' 'muc'
         'muc_domain_mapper';
         'muc_meeting_id';
         'fmuc';
-        's2soutinjection';
+        's2s_bidi';
+        's2s_whitelist';
+        's2sout_override';
     }
     muc_room_default_presence_broadcast = {
         visitor = false;

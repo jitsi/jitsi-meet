@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 });
 
-window.addEventListener('pagehide', () => {
+window.addEventListener('beforeunload', () => {
     /* eslint-disable-next-line react/no-deprecated */
     ReactDOM.unmountComponentAtNode(document.getElementById('react')!);
 });

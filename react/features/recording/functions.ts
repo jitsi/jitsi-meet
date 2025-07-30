@@ -443,14 +443,16 @@ export function shouldRequireRecordingConsent(recorderSession: any, state: IRedu
         = state['features/dynamic-branding'] || {};
     const { conference } = state['features/base/conference'] || {};
     const { requireConsent, skipConsentInMeeting } = state['features/base/config'].recordings || {};
-    const { iAmRecorder } = state['features/base/config'];
+    const { iAmRecorder, testing: { showSpotConsentDialog = false } = {} } = state['features/base/config'];
     const { consentRequested } = state['features/recording'];
 
     if (iAmRecorder) {
         return false;
     }
 
-    if (isSpotTV(state)) {
+    // For Spot TV instances, check the showSpotConsentDialog config parameter
+    // If showSpotConsentDialog is false (or undefined, defaulting to false), don't show consent dialog
+    if (isSpotTV(state) && !showSpotConsentDialog) {
         return false;
     }
 
