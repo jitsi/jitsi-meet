@@ -38,7 +38,7 @@ export class SpatialAudioManager {
         this.settings = {
             enabled: false,
             type: 'none',
-            masterVolume: 1.0,
+            masterVolume: 0.7, // Reduziert auf 70% um Übersteuerung zu verhindern
             listenerPosition: { x: 0, y: 0, z: 1 },
             listenerOrientation: {
                 forward: { x: 0, y: 0, z: -1 },
