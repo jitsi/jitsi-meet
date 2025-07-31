@@ -1,10 +1,8 @@
-import fs from 'fs';
-import jwt from 'jsonwebtoken';
 import process from 'node:process';
-import { v4 as uuidv4 } from 'uuid';
 
 import { P1, P2, P3, P4, Participant } from './Participant';
-import { IContext, IJoinOptions, ITokenOptions } from './types';
+import { generateToken } from './token';
+import { IContext, IJoinOptions } from './types';
 
 const SUBJECT_XPATH = '//div[starts-with(@class, "subject-text")]';
 
@@ -201,11 +199,27 @@ async function _joinParticipant( // eslint-disable-line max-params
                     || !ctx.jwtPrivateKeyPath)) {
                 jwtToken = process.env.JWT_ACCESS_TOKEN;
             } else if (ctx.jwtPrivateKeyPath) {
-                jwtToken = getToken(ctx, name, options?.tokenOptions);
+                const token = generateToken({
+                    ...options?.tokenOptions,
+                    displayName: name,
+                });
+
+                ctx.data[`${name}-jwt-payload`] = token.payload;
+                jwtToken = token.jwt;
             }
         }
     } else if (name === P2) {
-        jwtToken = options?.preferGenerateToken ? getToken(ctx, P2, options.tokenOptions) : undefined;
+        if (options?.preferGenerateToken) {
+            const token = generateToken({
+                ...options?.tokenOptions,
+                displayName: name,
+            });
+
+            ctx.data[`${name}-jwt-payload`] = token.payload;
+            jwtToken = token.jwt;
+        } else {
+            jwtToken = undefined;
+        }
     }
 
     const newParticipant = new Participant(name, jwtToken);
@@ -281,62 +295,6 @@ export async function muteVideoAndCheck(testee: Participant, observer: Participa
 
     await testee.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee);
     await observer.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee);
-}
-
-/**
- * Generate a JWT token.
- */
-export function getToken(ctx: IContext, displayName: string, options?: ITokenOptions) {
-    const keyid = options?.keyId || process.env.JWT_KID;
-    const headers = {
-        algorithm: 'RS256',
-        noTimestamp: true,
-        expiresIn: options?.exp || '24h',
-        keyid
-    };
-
-    if (!keyid) {
-        throw new Error('JWT_KID is not set');
-    }
-
-    const key = fs.readFileSync(ctx.jwtPrivateKeyPath);
-
-    const payload = {
-        'aud': 'jitsi',
-        'iss': 'chat',
-        'sub': keyid.substring(0, keyid.indexOf('/')),
-        'context': {
-            'user': {
-                'name': displayName,
-                'id': uuidv4(),
-                'avatar': 'https://avatars0.githubusercontent.com/u/3671647',
-                'email': 'john.doe@jitsi.org'
-            },
-            'group': uuidv4(),
-            'features': {
-                'outbound-call': 'true',
-                'transcription': 'true',
-                'recording': 'true',
-                'sip-outbound-call': true,
-                'livestreaming': true
-            },
-        },
-        'room': options?.room || '*'
-    };
-
-    // if the moderator is set, or options are missing, we assume moderator
-    if (options?.moderator || !options) {
-        // @ts-ignore
-        payload.context.user.moderator = true;
-    } else if (options.visitor) {
-        // @ts-ignore
-        payload.context.user.role = 'visitor';
-    }
-
-    ctx.data[`${displayName}-jwt-payload`] = payload;
-
-    // @ts-ignore
-    return jwt.sign(payload, key, headers);
 }
 
 /**

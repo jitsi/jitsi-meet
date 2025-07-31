@@ -1,5 +1,5 @@
 import { setTestProperties } from '../../../helpers/TestProperties';
-import { getToken } from '../../../helpers/participants';
+import { generateJwt as jwt } from '../../../helpers/token';
 import { joinMuc } from '../../helpers/jaas';
 
 setTestProperties(__filename, {
@@ -15,7 +15,11 @@ describe('Visitors triggered by reaching participantsSoftLimit', () => {
         };
 
         /// XXX the "name" of the participant MUST match one of the "capabilities" defined in wdio. It's not a "participant", it's an instance configuration!
-        const m = await joinMuc(ctx.roomName, 'p1', getToken(ctx, 'Mo de Rator', { room: ctx.roomName, moderator: true }));
+        const m = await joinMuc(
+            ctx.roomName,
+            'p1',
+            jwt({ room: ctx.roomName, displayName: 'Mo de Rator', moderator: true })
+        );
 
         expect(await m.isInMuc()).toBe(true);
         expect(await m.isModerator()).toBe(true);
@@ -23,7 +27,11 @@ describe('Visitors triggered by reaching participantsSoftLimit', () => {
         console.log('Moderator joined');
 
         // Joining with a participant token before participantSoftLimit has been reached
-        const p = await joinMuc(ctx.roomName, 'p2', getToken(ctx, 'Parti Cipant', { room: ctx.roomName }));
+        const p = await joinMuc(
+            ctx.roomName,
+            'p2',
+            jwt({ room: ctx.roomName, displayName: 'Parti Cipant' })
+        );
 
         expect(await p.isInMuc()).toBe(true);
         expect(await p.isModerator()).toBe(false);
@@ -31,7 +39,11 @@ describe('Visitors triggered by reaching participantsSoftLimit', () => {
         console.log('Participant joined');
 
         // Joining with a participant token after participantSoftLimit has been reached
-        const v = await joinMuc(ctx.roomName, 'p3', getToken(ctx, 'Visi Tor', { room: ctx.roomName }));
+        const v = await joinMuc(
+            ctx.roomName,
+            'p3',
+            jwt({ room: ctx.roomName, displayName: 'Visi Tor' })
+        );
 
         expect(await v.isInMuc()).toBe(true);
         expect(await v.isModerator()).toBe(false);

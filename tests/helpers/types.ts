@@ -3,6 +3,7 @@ import { IConfig } from '../../react/features/base/config/configType';
 import type { Participant } from './Participant';
 import { ITestProperties } from './TestProperties';
 import type WebhookProxy from './WebhookProxy';
+import { ITokenOptions } from './token';
 
 export type IContext = {
     data: any;
@@ -22,30 +23,6 @@ export type IContext = {
     testProperties: ITestProperties;
     times: any;
     webhooksProxy: WebhookProxy;
-};
-
-export type ITokenOptions = {
-    /**
-     * The duration for which the token is valid, e.g. "1h" for one hour.
-     */
-    exp?: string;
-    /**
-     * The key ID to use for the token.
-     * If not provided, the default key ID from the config will be used.
-     */
-    keyId?: string;
-    /**
-     * Whether to set the 'moderator' flag.
-     */
-    moderator?: boolean;
-    /**
-     * The room for which the token is valid, or '*'. Defaults to '*'.
-     */
-    room?: string;
-    /**
-     * Whether to set the 'visitor' flag.
-     */
-    visitor?: boolean;
 };
 
 export type IJoinOptions = {

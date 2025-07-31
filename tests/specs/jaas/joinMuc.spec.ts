@@ -1,5 +1,5 @@
 import { setTestProperties } from '../../helpers/TestProperties';
-import { getToken } from '../../helpers/participants';
+import { generateJwt as jwt } from '../../helpers/token';
 import { joinMuc } from '../helpers/jaas';
 
 setTestProperties(__filename, {
@@ -8,60 +8,45 @@ setTestProperties(__filename, {
 
 describe('XMPP login and MUC join test', () => {
     it('with a valid token (wildcard room)', async () => {
-        const token = getToken(ctx, 'displayName', { room: '*' }) || '';
-        const p = await joinMuc(ctx.roomName, 'p1', token);
+        const p = await joinMuc(ctx.roomName, 'p1', jwt({ room: '*' }));
 
         expect(await p.isInMuc()).toBe(true);
         expect(await p.isModerator()).toBe(false);
     });
 
     it('with a valid token (specific room)', async () => {
-        const token = getToken(ctx, 'displayName', { room: ctx.roomName }) || '';
-        const p = await joinMuc(ctx.roomName, 'p1', token);
+        const p = await joinMuc(ctx.roomName, 'p1', jwt({ room: ctx.roomName }));
 
         expect(await p.isInMuc()).toBe(true);
         expect(await p.isModerator()).toBe(false);
     });
 
     it('with a token with bad signature', async () => {
-        const token = getToken(ctx, 'displayName') + 'badSignature';
-        const p = await joinMuc(ctx.roomName, 'p1', token);
+        const p = await joinMuc(ctx.roomName, 'p1', jwt({}) + 'badSignature');
 
         expect(Boolean(await p.isInMuc())).toBe(false);
     });
 
     it('with an expired token', async () => {
-        const token = getToken(
-            ctx,
-            'displayName',
-            { exp: '-1m' }
-        ) || '';
-        const p = await joinMuc(ctx.roomName, 'p1', token);
+        const p = await joinMuc(ctx.roomName, 'p1', jwt({ exp: '-1m' }));
 
         expect(Boolean(await p.isInMuc())).toBe(false);
     });
 
     it('with a token using the wrong key ID', async () => {
-        const token = getToken(
-            ctx,
-            'displayName',
-            { keyId: 'invalid-key-id' }
-        ) || '';
-        const p = await joinMuc(ctx.roomName, 'p1', token);
+        const p = await joinMuc(ctx.roomName, 'p1', jwt({ keyId: 'invalid-key-id' }));
 
         expect(Boolean(await p.isInMuc())).toBe(false);
     });
 
     it('with a token for a different room', async () => {
-        const token = getToken(ctx, 'displayName', { room: ctx.roomName + 'different' }) || '';
-        const p = await joinMuc(ctx.roomName, 'p1', token);
+        const p = await joinMuc(ctx.roomName, 'p1', jwt({ room: ctx.roomName + 'different' }));
 
         expect(Boolean(await p.isInMuc())).toBe(false);
     });
 
     it('with a moderator token', async () => {
-        const token = getToken(ctx, 'displayName', { moderator: true }) || '';
-        const p = await joinMuc(ctx.roomName, 'p1', token);
+        const p = await joinMuc(ctx.roomName, 'p1', jwt({ moderator: true }));
 
         expect(await p.isInMuc()).toBe(true);
         expect(await p.isModerator()).toBe(true);

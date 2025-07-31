@@ -1,5 +1,5 @@
 import { setTestProperties } from '../../../helpers/TestProperties';
-import { getToken } from '../../../helpers/participants';
+import { generateJwt as jwt } from '../../../helpers/token';
 import { joinMuc } from '../../helpers/jaas';
 
 setTestProperties(__filename, {
@@ -13,7 +13,11 @@ describe('Visitors triggered by visitor tokens', () => {
             visitorsEnabled: true
         };
 
-        const m = await joinMuc(ctx.roomName, 'p1', getToken(ctx, 'Mo de Rator', { room: ctx.roomName, moderator: true }));
+        const m = await joinMuc(
+            ctx.roomName,
+            'p1',
+            jwt({ room: ctx.roomName, displayName: 'Mo de Rator', moderator: true })
+        );
 
         expect(await m.isInMuc()).toBe(true);
         expect(await m.isModerator()).toBe(true);
@@ -21,7 +25,11 @@ describe('Visitors triggered by visitor tokens', () => {
         console.log('Moderator joined');
 
         // Joining with a participant token before any visitors
-        const p = await joinMuc(ctx.roomName, 'p2', getToken(ctx, 'Parti Cipant', { room: ctx.roomName }));
+        const p = await joinMuc(
+            ctx.roomName,
+            'p2',
+            jwt({ room: ctx.roomName, displayName: 'Parti Cipant' })
+        );
 
         expect(await p.isInMuc()).toBe(true);
         expect(await p.isModerator()).toBe(false);
@@ -29,7 +37,11 @@ describe('Visitors triggered by visitor tokens', () => {
         console.log('Participant joined');
 
         // Joining with a visitor token
-        const v = await joinMuc(ctx.roomName, 'p3', getToken(ctx, 'Visi Tor', { room: ctx.roomName, visitor: true }));
+        const v = await joinMuc(
+            ctx.roomName,
+            'p3',
+            jwt({ room: ctx.roomName, displayName: 'Visi Tor', visitor: true })
+        );
 
         expect(await v.isInMuc()).toBe(true);
         expect(await v.isModerator()).toBe(false);
@@ -37,7 +49,10 @@ describe('Visitors triggered by visitor tokens', () => {
         console.log('Visitor joined');
 
         // Joining with a participant token after visitors...:mindblown:
-        const v2 = await joinMuc(ctx.roomName, 'p4', getToken(ctx, 'Visi Tor', { room: ctx.roomName }));
+        const v2 = await joinMuc(
+            ctx.roomName,
+            'p4',
+            jwt({ room: ctx.roomName, displayName: 'Visi Tor 2' }));
 
         expect(await v2.isInMuc()).toBe(true);
         expect(await v2.isModerator()).toBe(false);
