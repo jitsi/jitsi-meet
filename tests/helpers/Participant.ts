@@ -340,6 +340,13 @@ export class Participant {
         return this.execute(() => typeof APP !== 'undefined' && APP.conference?.isJoined());
     }
 
+    async waitForMucJoinedOrPasswordPrompt(): Promise<void> {
+        await this.driver.waitUntil(async () => await this.isInMuc() || await this.getPasswordDialog().isOpen(), {
+            timeout: 10_000,
+            timeoutMsg: 'Timeout waiting for MUC joined or password prompt.'
+        });
+    }
+
     /**
      * Checks if the participant is a moderator in the meeting.
      */

@@ -1,0 +1,61 @@
+import { setTestProperties } from '../../helpers/TestProperties';
+import { IToken } from '../../helpers/token';
+import { joinMuc, loadPage, generateJaasToken as t } from '../helpers/jaas';
+
+setTestProperties(__filename, {
+    useJaas: true,
+    useWebhookProxy: true
+});
+
+const passcode = '1234';
+
+describe('Setting passcode through settings provisioning', () => {
+    it('With a valid passcode', async () => {
+        ctx.webhooksProxy.defaultMeetingSettings = {
+            passcode: passcode,
+            visitorsEnabled: true
+        };
+
+        await joinWithPassword(ctx.roomName, 'p1', t({ room: ctx.roomName }));
+        await joinWithPassword(ctx.roomName, 'p2', t({ room: ctx.roomName, moderator: true }));
+        await joinWithPassword(ctx.roomName, 'p3', t({ room: ctx.roomName, visitor: true }));
+    });
+    it('With an invalid passcode', async () => {
+        ctx.webhooksProxy.defaultMeetingSettings = {
+            passcode: 'passcode-must-be-digits-only'
+        };
+
+        const roomName = ctx.roomName + '-2';
+        const p = await joinMuc(roomName, 'p1', t({ room: roomName }));
+
+        // Setting the passcode should fail, resulting in the room being accessible without a password
+        await p.waitToJoinMUC();
+        expect(await p.isInMuc()).toBe(true);
+        expect(await p.getPasswordDialog().isOpen()).toBe(false);
+    });
+});
+
+/**
+ * Join a password-protected room. Assert that a password is required, that a wrong password does not work, and that
+ * the correct password does work.
+ */
+async function joinWithPassword(roomName: string, instanceId: string, token: IToken) {
+    // @ts-ignore
+    const p = await loadPage(roomName, instanceId, token);
+
+    await p.waitForMucJoinedOrPasswordPrompt();
+    expect(await p.isInMuc()).toBe(false);
+    expect(await p.getPasswordDialog().isOpen()).toBe(true);
+
+    await p.getPasswordDialog().submitPassword('wrong password');
+    await p.waitForMucJoinedOrPasswordPrompt();
+    expect(await p.isInMuc()).toBe(false);
+    expect(await p.getPasswordDialog().isOpen()).toBe(true);
+
+    await p.getPasswordDialog().submitPassword(passcode);
+    await p.waitToJoinMUC();
+
+    expect(await p.isInMuc()).toBe(true);
+    expect(await p.getPasswordDialog().isOpen()).toBe(false);
+}
+
