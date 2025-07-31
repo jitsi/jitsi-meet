@@ -175,13 +175,6 @@ function getConfig(options = {}) {
                         transpileOnly: !isProduction, // Skip type checking for dev builds.,
                     },
                 },
-                {
-                    test: /\.(png|jpe?g|gif|webp|ico|bmp)$/i,
-                    type: "asset/resource",
-                    generator: {
-                        filename: "images/[name].[hash][ext]",
-                    },
-                },
             ],
         },
         node: {
