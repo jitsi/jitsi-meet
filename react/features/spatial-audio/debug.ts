@@ -19,6 +19,19 @@ export class SpatialAudioDebug {
         console.log('AudioContext state:', manager.getAudioContext().state);
         console.groupEnd();
     }
+
+    /**
+     * Zeigt eine umfassende Debug-Ausgabe mit Grid-Visualisierung an
+     * (Verwendet die gleiche Funktionalität wie der Debug-Button)
+     */
+    static showComprehensiveDebug(): void {
+        console.log('💡 Tipp: Verwende den Debug-Button in der Toolbar für eine noch detailliertere Ausgabe!');
+        console.log('💡 Oder öffne die Entwicklertools und klicke auf das Zahnrad-Symbol in der Toolbar.');
+        console.log();
+        
+        // Fallback für Konsolen-Debugging
+        this.logCurrentState();
+    }
     
     /**
      * Fügt Test-Teilnehmer hinzu für Debugging-Zwecke
