@@ -1363,7 +1363,9 @@ var config = {
     //     disableGrantModerator: true,
     //     // If set to 'all' the 'Private chat' button will be disabled for all participants.
     //     // If set to 'allow-moderator-chat' the 'Private chat' button will be available for chats with moderators.
-    //     disablePrivateChat: 'all' | 'allow-moderator-chat',
+    //     // If set to 'disable-visitor-chat' the 'Private chat' button will be disabled for visitor-main participant
+    //     // conversations.
+    //     disablePrivateChat: 'all' | 'allow-moderator-chat' | 'disable-visitor-chat',
     // },
 
 
