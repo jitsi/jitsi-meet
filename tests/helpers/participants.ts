@@ -1,7 +1,7 @@
 import process from 'node:process';
 
 import { P1, P2, P3, P4, Participant } from './Participant';
-import { generateToken } from './token';
+import { IToken, generateToken } from './token';
 import { IContext, IJoinOptions } from './types';
 
 const SUBJECT_XPATH = '//div[starts-with(@class, "subject-text")]';
@@ -188,7 +188,7 @@ async function _joinParticipant( // eslint-disable-line max-params
         // we want the participant instance re-recreated so we clear any kept state, like endpoint ID
     }
 
-    let jwtToken;
+    let token: IToken = { jwt: '' };
 
     if (name === P1) {
         if (!options?.skipFirstModerator) {
@@ -197,32 +197,28 @@ async function _joinParticipant( // eslint-disable-line max-params
             if (process.env.JWT_ACCESS_TOKEN
                 && ((ctx.jwtPrivateKeyPath && !ctx.testProperties.useIFrameApi && !options?.preferGenerateToken)
                     || !ctx.jwtPrivateKeyPath)) {
-                jwtToken = process.env.JWT_ACCESS_TOKEN;
+                token = { jwt: process.env.JWT_ACCESS_TOKEN };
             } else if (ctx.jwtPrivateKeyPath) {
-                const token = generateToken({
+                token = generateToken({
                     ...options?.tokenOptions,
                     displayName: name,
                 });
 
                 ctx.data[`${name}-jwt-payload`] = token.payload;
-                jwtToken = token.jwt;
             }
         }
     } else if (name === P2) {
         if (options?.preferGenerateToken) {
-            const token = generateToken({
+            token = generateToken({
                 ...options?.tokenOptions,
                 displayName: name,
             });
 
             ctx.data[`${name}-jwt-payload`] = token.payload;
-            jwtToken = token.jwt;
-        } else {
-            jwtToken = undefined;
         }
     }
 
-    const newParticipant = new Participant(name, jwtToken);
+    const newParticipant = new Participant(name, token);
 
     // set the new participant instance
     // @ts-ignore

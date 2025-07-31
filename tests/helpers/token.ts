@@ -32,7 +32,7 @@ export type IToken = {
     /**
      * The JWT headers, for easy reference.
      */
-    headers: any;
+    headers?: any;
     /**
      * The signed JWT.
      */
@@ -40,11 +40,11 @@ export type IToken = {
     /**
      * The options used to generate the token.
      */
-    options: ITokenOptions;
+    options?: ITokenOptions;
     /**
      * The token's payload, for easy reference.
      */
-    payload: any;
+    payload?: any;
 };
 
 export function generatePayload(options: ITokenOptions): any {

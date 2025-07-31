@@ -24,6 +24,7 @@ import VideoQualityDialog from '../pageobjects/VideoQualityDialog';
 import Visitors from '../pageobjects/Visitors';
 
 import { LOG_PREFIX, logInfo } from './browserLogger';
+import { IToken } from './token';
 import { IContext, IJoinOptions } from './types';
 
 export const P1 = 'p1';
@@ -49,7 +50,10 @@ export class Participant {
      */
     private _name: string;
     private _endpointId: string;
-    private _jwt?: string;
+    /**
+     * The token that this participant was initialized with.
+     */
+    private _token?: IToken;
 
     /**
      * The default config to use when joining.
@@ -110,11 +114,11 @@ export class Participant {
      * Creates a participant with given name.
      *
      * @param {string} name - The name of the participant.
-     * @param {string }jwt - The jwt if any.
+     * @param {string} token - The token if any.
      */
-    constructor(name: string, jwt?: string) {
+    constructor(name: string, token?: IToken) {
         this._name = name;
-        this._jwt = jwt;
+        this._token = token;
     }
 
     /**
@@ -219,8 +223,8 @@ export class Participant {
                 url = `${url}&tenant="${baseUrl.pathname.substring(1)}"`;
             }
         }
-        if (this._jwt) {
-            url = `${url}&jwt="${this._jwt}"`;
+        if (this._token?.jwt) {
+            url = `${url}&jwt="${this._token.jwt}"`;
         }
 
         if (options.baseUrl) {
@@ -895,5 +899,12 @@ export class Participant {
     waitForDominantSpeaker(endpointId: string) {
         return this.driver.$(`//span[@id="participant_${endpointId}" and contains(@class, "dominant-speaker")]`)
             .waitForDisplayed({ timeout: 5_000 });
+    }
+
+    /**
+     * Returns the token that this participant was initialized with.
+     */
+    getToken(): IToken | undefined {
+        return this._token;
     }
 }
