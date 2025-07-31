@@ -340,8 +340,7 @@ export class Participant {
     }
 
     async isVisitor() {
-        // TODO: cleaner way to check?
-        return await this.execute(() => APP?.conference?._room?.room?.roomjid?.endsWith('.meet.jitsi'));
+        return await this.execute(() => APP?.store?.getState()['features/visitors']?.iAmVisitor || false);
     }
 
     /**
