@@ -9,10 +9,7 @@ setTestProperties(__filename, {
 
 describe('Visitors triggered by reaching participantsSoftLimit', () => {
     it('test participantsSoftLimit', async () => {
-        const { webhooksProxy } = ctx;
-
-        // Configure webhook for participantsSoftLimit=2 with visitors enabled
-        webhooksProxy.defaultMeetingSettings = {
+        ctx.webhooksProxy.defaultMeetingSettings = {
             participantsSoftLimit: 2,
             visitorsEnabled: true
         };
@@ -39,10 +36,5 @@ describe('Visitors triggered by reaching participantsSoftLimit', () => {
         expect(await v.isModerator()).toBe(false);
         expect(await v.isVisitor()).toBe(true);
         console.log('Visitor joined');
-
-        // await Promise.all([m, p, v].map(async (participant) => { await participant.hangup(); }));
-
-        // TODO Is this the proper way to reset?
-        webhooksProxy.defaultMeetingSettings = {}
     })
 });

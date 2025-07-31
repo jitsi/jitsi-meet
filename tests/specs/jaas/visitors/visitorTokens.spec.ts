@@ -9,10 +9,7 @@ setTestProperties(__filename, {
 
 describe('Visitors triggered by visitor tokens', () => {
     it('test visitor tokens', async () => {
-        const { webhooksProxy } = ctx;
-
-        // Configure webhook with visitors enabled
-        webhooksProxy.defaultMeetingSettings = {
+        ctx.webhooksProxy.defaultMeetingSettings = {
             visitorsEnabled: true
         };
 
@@ -42,10 +39,5 @@ describe('Visitors triggered by visitor tokens', () => {
         expect(await v2.isModerator()).toBe(false);
         expect(await v2.isVisitor()).toBe(true);
         console.log('Visitor2 joined');
-
-        // await Promise.all([m, p, v, v2].map(async (participant) => { await participant.hangup(); }));
-
-        // TODO Is this the proper way to reset?
-        webhooksProxy.defaultMeetingSettings = {}
     })
 });
