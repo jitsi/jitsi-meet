@@ -39,4 +39,7 @@ export { default as spatialAudioReducers } from './reducer';
 export { default as SpatialAudioControls } from './components/SpatialAudioControls';
 
 // Debug utilities
-export { SpatialAudioDebug } from './debug'; 
+export { SpatialAudioDebug } from './debug';
+
+// Subscriber (wichtig: muss importiert werden damit er registriert wird)
+import './subscriber'; 

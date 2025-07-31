@@ -320,6 +320,7 @@ class AudioTrack extends Component<IProps> {
 
     /**
      * Register this participant with the spatial audio manager
+     * Now optimized to work with the synchronization system
      */
     private registerWithSpatialAudioManager(): void {
         if (this.isRegisteredWithManager) {
@@ -327,29 +328,23 @@ class AudioTrack extends Component<IProps> {
             return;
         }
 
-        // Check if participant is already registered by ID
-        if (this.spatialAudioManager.getParticipant(this.props.participantId)) {
-            console.log(`SpatialAudioManager: Participant ${this.props.participantId} already exists in manager, skipping registration`);
-            this.isRegisteredWithManager = true;
-            return;
-        }
-
         // Calculate track index
         this._trackIdx = this.getTrackIndex();
 
-        // Register participant
+        // Register/update participant (this will work with synchronized participants)
+        // The spatial audio manager will either update an existing placeholder or add a new participant
         this.spatialAudioManager.addParticipant({
             participantId: this.props.participantId,
             displayName: this.props._participantDisplayName,
             isLocal: false, // Assuming remote participant for now
             isMuted: this.props._muted || false,
-            trackIndex: this._trackIdx,
+            trackIndex: this._trackIdx, // This might be ignored if participant is already synchronized
             source: this._source
         });
 
         this.isRegisteredWithManager = true;
 
-        console.log(`SpatialAudioManager: Registered participant ${this.props._participantDisplayName || this.props.participantId}`);
+        console.log(`SpatialAudioManager: Registered/updated participant ${this.props._participantDisplayName || this.props.participantId} with audio track`);
     }
 
     /**

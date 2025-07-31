@@ -126,42 +126,121 @@ export class SpatialAudioManager {
     }
     
     /**
-     * Add or update a participant
+     * Synchronize with all visible participants (including muted ones)
+     * This ensures spatial positioning considers all participants, not just those with audio tracks
+     */
+    synchronizeWithAllParticipants(allParticipantIds: string[]): void {
+        console.log(`SpatialAudioManager: Synchronizing with ${allParticipantIds.length} participants:`, allParticipantIds);
+        
+        // Keep track of existing participants with audio sources
+        const existingParticipantsWithSources = new Map<string, AudioNode>();
+        const existingParticipantsData = new Map<string, IParticipantAudioData>();
+        
+        this.participants.forEach((participant, id) => {
+            existingParticipantsData.set(id, participant);
+            if (participant.source) {
+                existingParticipantsWithSources.set(id, participant.source);
+            }
+        });
+        
+        // Clear current participants
+        this.participants.clear();
+        
+        // Add all participants as placeholders (without audio sources initially)
+        allParticipantIds.forEach((participantId, index) => {
+            const existingData = existingParticipantsData.get(participantId);
+            const existingSource = existingParticipantsWithSources.get(participantId);
+            
+            const participantData: IParticipantAudioData = {
+                participantId,
+                displayName: existingData?.displayName || `Participant ${index + 1}`,
+                isLocal: existingData?.isLocal || false,
+                isMuted: existingData?.isMuted || !existingSource, // Assume muted if no source
+                trackIndex: index, // Use order from filmstrip
+                position: { x: 0, y: 0, z: 0 }, // Will be calculated
+                source: existingSource // Preserve existing source if available
+            };
+            
+            this.participants.set(participantId, participantData);
+        });
+        
+        // Recalculate positions based on ALL participants
+        this.recalculateAllPositions();
+        
+        // Reconnect existing audio sources to the spatial audio chain if enabled
+        if (this.settings.enabled) {
+            existingParticipantsWithSources.forEach((source, participantId) => {
+                // Only reconnect if participant still exists after sync
+                if (this.participants.has(participantId)) {
+                    this.currentStrategy.createNodes(participantId);
+                    this.currentStrategy.connectSource(participantId, source);
+                    
+                    const participant = this.participants.get(participantId);
+                    if (participant) {
+                        this.currentStrategy.updatePosition(participantId, participant.position);
+                    }
+                }
+            });
+        }
+        
+        console.log(`SpatialAudioManager: Synchronized with ${allParticipantIds.length} participants`);
+    }
+
+    /**
+     * Add or update a participant (modified to work with synchronization)
      */
     addParticipant(participantData: Omit<IParticipantAudioData, 'position'>): void {
         const participantId = participantData.participantId;
         
-        // Calculate position based on current participants
-        const position = this.calculateParticipantPosition(participantData.trackIndex);
+        // Check if participant already exists (from synchronization)
+        let existingParticipant = this.participants.get(participantId);
         
-        const fullData: IParticipantAudioData = {
-            ...participantData,
-            position
-        };
+        if (existingParticipant) {
+            // Update existing placeholder with real data
+            existingParticipant.displayName = participantData.displayName;
+            existingParticipant.isMuted = participantData.isMuted;
+            existingParticipant.source = participantData.source;
+            // Keep existing position and trackIndex from synchronization
+            
+            console.log(`SpatialAudioManager: Updated existing participant ${participantId} with audio data`);
+        } else {
+            // This is a new participant that wasn't in the synchronization - add normally
+            const position = this.calculateParticipantPosition(participantData.trackIndex);
+            
+            const fullData: IParticipantAudioData = {
+                ...participantData,
+                position
+            };
+            
+            this.participants.set(participantId, fullData);
+            
+            // Recalculate positions since participant count changed
+            this.recalculateAllPositions();
+            
+            console.log(`SpatialAudioManager: Added new participant ${participantId} at position`, position);
+        }
         
-        // Store participant data
-        this.participants.set(participantId, fullData);
-        
-        // Create audio nodes for this participant
+        // Create audio nodes for this participant if enabled
         if (this.settings.enabled) {
             this.currentStrategy.createNodes(participantId);
             
             // Connect source if available
-            if (fullData.source) {
-                this.currentStrategy.connectSource(participantId, fullData.source);
+            const participant = this.participants.get(participantId);
+            if (participant?.source) {
+                this.currentStrategy.connectSource(participantId, participant.source);
             }
             
             // Set position
-            this.currentStrategy.updatePosition(participantId, position);
+            if (participant) {
+                this.currentStrategy.updatePosition(participantId, participant.position);
+            }
         }
         
-        console.log(`SpatialAudioManager: Added participant ${participantId} at position`, position);
-        
         // Emit event
-        this.emit('participantAdded', { participantId, position });
-        
-        // Recalculate all positions when participant count changes
-        this.recalculateAllPositions();
+        const participant = this.participants.get(participantId);
+        if (participant) {
+            this.emit('participantAdded', { participantId, position: participant.position });
+        }
     }
     
     /**
