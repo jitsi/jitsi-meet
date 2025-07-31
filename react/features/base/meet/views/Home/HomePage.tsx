@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import meetGalleryImage from "../../../../../../images/internxt_meet_gallery.webp";
 import { appNavigate } from "../../../../app/actions.web";
 import { useLocalStorage } from "../../LocalStorageManager";
 import MeetingButton from "../../general/containers/MeetingButton";
@@ -11,6 +12,7 @@ import HeaderWrapper from "./containers/HeaderWrapper";
 import ScheduleMeetingModal from "./containers/ScheduleModal";
 
 const MEETING_BASE_URL = `${window.location.protocol}//${window.location.host}/`;
+
 interface HomePageProps {
     onLogin: (token: string) => void;
     translate: (key: string) => string;
@@ -186,7 +188,7 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
                         }}
                     >
                         <img
-                            src="./images/internxt_Meet_Gallery.webp"
+                            src={meetGalleryImage}
                             alt="Video call preview"
                             className="w-full h-auto"
                             style={{
