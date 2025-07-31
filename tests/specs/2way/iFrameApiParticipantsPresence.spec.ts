@@ -41,7 +41,7 @@ async function checkParticipantLeftHook(ctx: IContext, p: Participant, reason: s
         expect(event.data.name).toBe(p.name);
 
         if (checkId) {
-            const jwtPayload = ctx.data[`${p.name}-jwt-payload`];
+            const jwtPayload = p.getToken()?.payload;
 
             expect(event.data.id).toBe(jwtPayload?.context?.user?.id);
             expect(event.data.group).toBe(jwtPayload?.context?.group);

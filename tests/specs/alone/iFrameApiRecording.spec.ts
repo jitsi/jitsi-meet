@@ -186,7 +186,7 @@ async function testRecordingStopped(command: boolean) {
             eventType: string;
         } = await webhooksProxy.waitForEvent('RECORDING_UPLOADED', 20000);
 
-        const jwtPayload = ctx.data[`${p1.name}-jwt-payload`];
+        const jwtPayload = p1.getToken()?.payload;
 
         expect(recordingUploadedEvent.data.initiatorId).toBe(jwtPayload?.context?.user?.id);
         expect(recordingUploadedEvent.data.participants.some(

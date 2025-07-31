@@ -203,8 +203,6 @@ async function _joinParticipant( // eslint-disable-line max-params
                     ...options?.tokenOptions,
                     displayName: name,
                 });
-
-                ctx.data[`${name}-jwt-payload`] = token.payload;
             }
         }
     } else if (name === P2) {
@@ -213,8 +211,6 @@ async function _joinParticipant( // eslint-disable-line max-params
                 ...options?.tokenOptions,
                 displayName: name,
             });
-
-            ctx.data[`${name}-jwt-payload`] = token.payload;
         }
     }
 

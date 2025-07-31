@@ -78,7 +78,7 @@ describe('Visitors', () => {
                 eventType: string;
             } = await webhooksProxy.waitForEvent('PARTICIPANT_JOINED');
 
-            const jwtPayload = ctx.data[`${p2.name}-jwt-payload`];
+            const jwtPayload = p2.getToken()?.payload;
 
             expect('PARTICIPANT_JOINED').toBe(event.eventType);
             expect(event.data.avatar).toBe(jwtPayload.context.user.avatar);
