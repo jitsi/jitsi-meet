@@ -46,51 +46,65 @@
 //     whiteListedEvents
 // }
 
+if (typeof window.EventSaver === 'undefined') {
 /**
  * EventSaver
  *
  * @param {Object} handlerConstructorOptions
  */
-class EventSaver {
-    /**
-     * @param {Object} handlerConstructorOptions
-     * @returns {void}
-     */
-    constructor(handlerConstructorOptions) {
-        console.log('EventSaver PostHog created');
-        this.handlerConstructorOptions = handlerConstructorOptions;
-    }
+    class EventSaver {
+        /**
+         * @param {Object} handlerConstructorOptions
+         * @returns {void}
+         */
+        constructor(handlerConstructorOptions) {
+            console.log('EventSaver PostHog created');
+            this.handlerConstructorOptions = handlerConstructorOptions;
+        }
 
-    /**
-     * @param {Object} userProperties
-     * @returns {void}
-     */
-    setUserProperties(_userProperties) {
-        // if (window.posthog) {
-        //     window.posthog.identify(userProperties.id, userProperties);
-        // }
-    }
+        /**
+         * @param {Object} userProperties
+         * @returns {void}
+         */
+        setUserProperties(_userProperties) {
+            // if (window.posthog) {
+            //     window.posthog.identify(userProperties.id, userProperties);
+            // }
+        }
 
-    /**
-     * @param {Object} event
-     * @returns {void}
-     */
-    sendEvent(event) {
-        if (window.posthog) {
-            window.posthog.capture(event.type, event);
+        /**
+         * @param {Object} event
+         * @returns {void}
+         */
+        sendEvent(event) {
+            if (window.posthog) {
+                window.posthog.capture(event.type, event);
+            }
+        }
+
+        /**
+         * Cleans up PostHog analytics state (e.g., resets identity).
+         *
+         * @returns {void}
+         */
+        dispose() {
+            // if (window.posthog) {
+            //     window.posthog.reset();
+            // }
         }
     }
 
-    /**
-     * @returns {void}
-     */
-    dispose() {
-        // if (window.posthog) {
-        //     window.posthog.reset();
-        // }
-    }
+    // Store the class globally to prevent redeclaration
+    window.EventSaver = EventSaver;
 }
 
 if (window.JitsiMeetJS.app.analyticsHandlers) {
-    window.JitsiMeetJS.app.analyticsHandlers.push(EventSaver);
+    // Check if EventSaver is already in the handlers array to prevent duplicates
+    const isAlreadyAdded = window.JitsiMeetJS.app.analyticsHandlers.some(
+        handler => handler === window.EventSaver || handler.name === 'EventSaver'
+    );
+
+    if (!isAlreadyAdded) {
+        window.JitsiMeetJS.app.analyticsHandlers.push(window.EventSaver);
+    }
 }
