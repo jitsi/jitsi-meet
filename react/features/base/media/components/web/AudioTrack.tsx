@@ -382,10 +382,10 @@ class AudioTrack extends Component<IProps> {
             audioElement.muted = false;  // Keep unmuted for MediaElementAudioSourceNode
             console.log(`Spatial: Set HTML audio volume to 0.01 for ${this.props.participantId} (MediaElementAudioSourceNode should work)`);
         } else {
-            // Spatial audio OFF: Restore normal HTML audio playback
-            audioElement.volume = 1.0;
+            // Spatial audio OFF: Use masterVolume setting for HTML audio playback
+            audioElement.volume = settings.masterVolume; // Verwende masterVolume (0.7) statt 1.0
             audioElement.muted = false;
-            console.log(`Spatial: Restored HTML audio volume to 1.0 for ${this.props.participantId}`);
+            console.log(`Spatial: Set HTML audio volume to ${settings.masterVolume} for ${this.props.participantId} (Standard mode)`);
         }
     }
 
