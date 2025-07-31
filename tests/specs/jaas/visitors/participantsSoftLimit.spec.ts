@@ -1,5 +1,5 @@
 import { setTestProperties } from '../../../helpers/TestProperties';
-import { generateJwt as jwt } from '../../../helpers/token';
+import { generateToken as t } from '../../../helpers/token';
 import { joinMuc } from '../../helpers/jaas';
 
 setTestProperties(__filename, {
@@ -18,7 +18,7 @@ describe('Visitors triggered by reaching participantsSoftLimit', () => {
         const m = await joinMuc(
             ctx.roomName,
             'p1',
-            jwt({ room: ctx.roomName, displayName: 'Mo de Rator', moderator: true })
+            t({ room: ctx.roomName, displayName: 'Mo de Rator', moderator: true })
         );
 
         expect(await m.isInMuc()).toBe(true);
@@ -30,7 +30,7 @@ describe('Visitors triggered by reaching participantsSoftLimit', () => {
         const p = await joinMuc(
             ctx.roomName,
             'p2',
-            jwt({ room: ctx.roomName, displayName: 'Parti Cipant' })
+            t({ room: ctx.roomName, displayName: 'Parti Cipant' })
         );
 
         expect(await p.isInMuc()).toBe(true);
@@ -42,7 +42,7 @@ describe('Visitors triggered by reaching participantsSoftLimit', () => {
         const v = await joinMuc(
             ctx.roomName,
             'p3',
-            jwt({ room: ctx.roomName, displayName: 'Visi Tor' })
+            t({ room: ctx.roomName, displayName: 'Visi Tor' })
         );
 
         expect(await v.isInMuc()).toBe(true);

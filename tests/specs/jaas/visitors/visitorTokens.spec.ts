@@ -1,5 +1,5 @@
 import { setTestProperties } from '../../../helpers/TestProperties';
-import { generateJwt as jwt } from '../../../helpers/token';
+import { generateToken as t } from '../../../helpers/token';
 import { joinMuc } from '../../helpers/jaas';
 
 setTestProperties(__filename, {
@@ -16,7 +16,7 @@ describe('Visitors triggered by visitor tokens', () => {
         const m = await joinMuc(
             ctx.roomName,
             'p1',
-            jwt({ room: ctx.roomName, displayName: 'Mo de Rator', moderator: true })
+            t({ room: ctx.roomName, displayName: 'Mo de Rator', moderator: true })
         );
 
         expect(await m.isInMuc()).toBe(true);
@@ -28,7 +28,7 @@ describe('Visitors triggered by visitor tokens', () => {
         const p = await joinMuc(
             ctx.roomName,
             'p2',
-            jwt({ room: ctx.roomName, displayName: 'Parti Cipant' })
+            t({ room: ctx.roomName, displayName: 'Parti Cipant' })
         );
 
         expect(await p.isInMuc()).toBe(true);
@@ -40,7 +40,7 @@ describe('Visitors triggered by visitor tokens', () => {
         const v = await joinMuc(
             ctx.roomName,
             'p3',
-            jwt({ room: ctx.roomName, displayName: 'Visi Tor', visitor: true })
+            t({ room: ctx.roomName, displayName: 'Visi Tor', visitor: true })
         );
 
         expect(await v.isInMuc()).toBe(true);
@@ -52,7 +52,7 @@ describe('Visitors triggered by visitor tokens', () => {
         const v2 = await joinMuc(
             ctx.roomName,
             'p4',
-            jwt({ room: ctx.roomName, displayName: 'Visi Tor 2' }));
+            t({ room: ctx.roomName, displayName: 'Visi Tor 2' }));
 
         expect(await v2.isInMuc()).toBe(true);
         expect(await v2.isModerator()).toBe(false);
