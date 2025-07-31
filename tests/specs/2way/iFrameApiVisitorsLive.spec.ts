@@ -1,7 +1,7 @@
 import { expect } from '@wdio/globals';
 
+import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
-import { setTestProperties } from "../../helpers/TestProperties";
 
 setTestProperties(__filename, {
     useIFrameApi: true,

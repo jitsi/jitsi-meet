@@ -1,8 +1,8 @@
 import { IConfig } from '../../react/features/base/config/configType';
 
 import type { Participant } from './Participant';
+import { ITestProperties } from './TestProperties';
 import type WebhookProxy from './WebhookProxy';
-import {ITestProperties} from "./TestProperties";
 
 export type IContext = {
     data: any;
@@ -16,16 +16,12 @@ export type IContext = {
     p4: Participant;
     roomName: string;
     skipSuiteTests: boolean;
+    testProperties: ITestProperties;
     times: any;
     webhooksProxy: WebhookProxy;
-    testProperties: ITestProperties;
 };
 
 export type ITokenOptions = {
-    /**
-     * The room for which the token is valid, or '*'. Defaults to '*'.
-     */
-    room?: string;
     /**
      * The duration for which the token is valid, e.g. "1h" for one hour.
      */
@@ -40,10 +36,14 @@ export type ITokenOptions = {
      */
     moderator?: boolean;
     /**
+     * The room for which the token is valid, or '*'. Defaults to '*'.
+     */
+    room?: string;
+    /**
      * Whether to set the 'visitor' flag.
      */
     visitor?: boolean;
-}
+};
 
 export type IJoinOptions = {
 
@@ -61,8 +61,6 @@ export type IJoinOptions = {
      * The display name to use.
      */
     displayName?: string;
-
-    tokenOptions?: ITokenOptions;
 
     /**
      * When joining the first participant and jwt singing material is available and a provided token
@@ -90,4 +88,9 @@ export type IJoinOptions = {
      * based on the logic of the test.
      */
     skipWaitToJoin?: boolean;
+
+    /**
+     * Options used when generating a token.
+     */
+    tokenOptions?: ITokenOptions;
 };

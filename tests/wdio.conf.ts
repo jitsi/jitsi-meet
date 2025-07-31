@@ -5,8 +5,8 @@ import path from 'node:path';
 import process from 'node:process';
 import pretty from 'pretty';
 
-import WebhookProxy from './helpers/WebhookProxy';
 import { getTestProperties } from './helpers/TestProperties';
+import WebhookProxy from './helpers/WebhookProxy';
 import { getLogs, initLogger, logInfo } from './helpers/browserLogger';
 import { IContext } from './helpers/types';
 import { getRandomNumberAsStr } from './helpers/utils';
@@ -182,7 +182,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }
 
         const testFilePath = specs[0].replace(/^file:\/\//, '');
-        const testName = path.relative("tests/specs", testFilePath)
+        const testName = path.relative('tests/specs', testFilePath)
             .replace(/.spec.ts$/, '')
             .replace(/\//g, '-');
         const testProperties = await getTestProperties(testFilePath);

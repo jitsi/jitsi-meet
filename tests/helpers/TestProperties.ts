@@ -8,13 +8,15 @@ export type ITestProperties = {
     useJaas: boolean;
     /** The test requires the webhook proxy. */
     useWebhookProxy: boolean;
-}
+};
 
 const defaultProperties: ITestProperties = {
     useIFrameApi: false,
     useWebhookProxy: false,
     useJaas: false
 };
+
+const testProperties: Record<string, ITestProperties> = {};
 
 /**
  * Set properties for a test file. This was needed because I couldn't find a hook that executes with describe() before
@@ -39,5 +41,3 @@ export function setTestProperties(filename: string, properties: Partial<ITestPro
 export async function getTestProperties(testFilePath: string): Promise<ITestProperties> {
     return testProperties[testFilePath] || { ...defaultProperties };
 }
-
-const testProperties: Record<string, ITestProperties> = {}

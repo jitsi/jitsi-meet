@@ -1,9 +1,9 @@
 import { isEqual } from 'lodash-es';
 
 import { P1, P2, Participant } from '../../helpers/Participant';
+import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureTwoParticipants, parseJid } from '../../helpers/participants';
 import { IContext } from '../../helpers/types';
-import { setTestProperties } from "../../helpers/TestProperties";
 
 setTestProperties(__filename, {
     useIFrameApi: true,

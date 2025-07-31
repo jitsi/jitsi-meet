@@ -1,4 +1,4 @@
-import { Participant } from "../../helpers/Participant";
+import { Participant } from '../../helpers/Participant';
 
 /**
  * Creates a new Participant and joins the MUC with the given name. The jaas-specific properties must be set as
@@ -15,19 +15,22 @@ export async function joinMuc(roomName: string, instaceId: 'p1' | 'p2' | 'p3' | 
         throw new Error('JAAS_DOMAIN and IFRAME_TENANT environment variables must be set');
     }
 
-    let url = `https://${process.env.JAAS_DOMAIN}/${process.env.IFRAME_TENANT}/${roomName}`
+    let url = `https://${process.env.JAAS_DOMAIN}/${process.env.IFRAME_TENANT}/${roomName}`;
+
     if (token) {
-        url += `?jwt=${token}`
+        url += `?jwt=${token}`;
     }
-    url += '#config.prejoinConfig.enabled=false'
+    url += '#config.prejoinConfig.enabled=false';
 
     const newParticipant = new Participant(instaceId, token);
+
     try {
-        await newParticipant.driver.setTimeout({'pageLoad': 30000});
+        await newParticipant.driver.setTimeout({ 'pageLoad': 30000 });
         await newParticipant.driver.url(url);
         await newParticipant.waitForPageToLoad();
         await newParticipant.waitToJoinMUC();
     } catch (error) {
     }
+
     return newParticipant;
 }

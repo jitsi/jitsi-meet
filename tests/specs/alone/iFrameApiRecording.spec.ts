@@ -1,5 +1,5 @@
+import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureOneParticipant } from '../../helpers/participants';
-import { setTestProperties } from "../../helpers/TestProperties";
 
 setTestProperties(__filename, {
     useIFrameApi: true,
