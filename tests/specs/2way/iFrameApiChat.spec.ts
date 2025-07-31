@@ -7,7 +7,6 @@ import { setTestProperties } from "../../helpers/TestProperties";
 
 setTestProperties(__filename, {
     useIFrameApi: true,
-    // TODO: does this actually use webhook proxy?
     useWebhookProxy: true
 });
 
