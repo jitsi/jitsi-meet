@@ -761,7 +761,7 @@ var config = {
     // hideDominantSpeakerBadge: false,
 
     // Default language for the user interface. Cannot be overwritten.
-    // DEPRECATED! Use the `lang` iframe option directly instead.
+    // For iframe integrations, use the `lang` option directly instead.
     // defaultLanguage: 'en',
 
     // Disables profile and the edit of all fields from the profile settings (display name and email)
