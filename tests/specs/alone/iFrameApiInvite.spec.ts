@@ -5,7 +5,6 @@ import {
     cleanup,
     dialIn,
     isDialInEnabled,
-    retrievePin,
     waitForAudioFromDialInParticipant
 } from '../helpers/DialIn';
 
@@ -43,10 +42,9 @@ describe('Invite iframeAPI', () => {
         }
 
         const { p1 } = ctx;
+        const dialInPin = await p1.getDialInPin();
 
-        await retrievePin(p1);
-
-        expect(ctx.data.dialInPin.length >= 8).toBe(true);
+        expect(dialInPin.length >= 8).toBe(true);
 
         await dialIn(p1);
 

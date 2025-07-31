@@ -56,6 +56,11 @@ export class Participant {
     private _token?: IToken;
 
     /**
+     * Cache the dial in pin code so that it doesn't have to be read from the UI.
+     */
+    private _dialInPin?: string;
+
+    /**
      * The default config to use when joining.
      *
      * @private
@@ -906,5 +911,20 @@ export class Participant {
      */
     getToken(): IToken | undefined {
         return this._token;
+    }
+
+    /**
+     * Gets the dial in pin for the conference. Reads it from the invite dialog if the pin hasn't been cached yet.
+     */
+    async getDialInPin(): Promise<string> {
+        if (!this._dialInPin) {
+            const dialInPin = await this.getInviteDialog().getPinNumber();
+
+            await this.getInviteDialog().clickCloseButton();
+
+            this._dialInPin = dialInPin;
+        }
+
+        return this._dialInPin;
     }
 }
