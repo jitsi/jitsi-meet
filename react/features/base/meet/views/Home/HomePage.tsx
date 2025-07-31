@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import meetGalleryImage from "../../../../../../images/internxt_meet_gallery.webp";
 import { appNavigate } from "../../../../app/actions.web";
 import { useLocalStorage } from "../../LocalStorageManager";
 import MeetingButton from "../../general/containers/MeetingButton";
@@ -188,7 +187,7 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
                         }}
                     >
                         <img
-                            src={meetGalleryImage}
+                            src={"./images/gallery.png"}
                             alt="Video call preview"
                             className="w-full h-auto"
                             style={{
