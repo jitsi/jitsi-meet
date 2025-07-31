@@ -290,3 +290,9 @@ export const VIDEO_SHARE_BUTTON_ENABLED = 'video-share.enabled';
  * Default: disabled (false).
  */
 export const WELCOME_PAGE_ENABLED = 'welcomepage.enabled';
+
+/**
+ * Flag indicating if spatial audio should be enabled.
+ * Default: enabled (true).
+ */
+export const SPATIAL_AUDIO_ENABLED = 'spatial-audio.enabled';

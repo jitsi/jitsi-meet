@@ -47,8 +47,10 @@ export type ToolbarButton = 'camera' |
     'settings' |
     'shareaudio' |
     'sound' |
+    'spatialaudio-debug' |
     'sharedvideo' |
     'shortcuts' |
+    'spatialaudio' |
     'speaker-highlight' |
     'stats' |
     'tileview' |

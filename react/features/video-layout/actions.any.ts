@@ -3,6 +3,7 @@ import { isTileViewModeDisabled } from '../filmstrip/functions.any';
 
 import {
     SET_TILE_VIEW,
+    TOGGLE_SPATIAL_AUDIO,
     VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED
 } from './actionTypes';
 import { shouldDisplayTileView } from './functions';
@@ -56,5 +57,32 @@ export function toggleTileView() {
         const tileViewActive = shouldDisplayTileView(getState());
 
         dispatch(setTileView(!tileViewActive));
+    };
+}
+
+/**
+ * Creates a (redux) action which toggles spatial audio.
+ *
+ * @returns {{
+ *     type: TOGGLE_SPATIAL_AUDIO,
+ *     spatialState: boolean
+ * }}
+ */
+export function toggleSpatialAudio() {
+    const spatialState = !(window as any).spatialAudio;
+    (window as any).spatialAudio = spatialState;
+    console.warn(`toggleSpatialAudio: ${(window as any).spatialAudio}`);
+
+    const notificationProps = {
+        titleArguments: { state: spatialState ? 'enabled' : 'disabled' },
+        titleKey: 'notify.spatialAudio'
+    };
+    
+    // Note: You might need to import and call showNotification here
+    // APP.store.dispatch(showNotification(notificationProps, NOTIFICATION_TIMEOUT));
+
+    return {
+        type: TOGGLE_SPATIAL_AUDIO,
+        spatialState
     };
 }

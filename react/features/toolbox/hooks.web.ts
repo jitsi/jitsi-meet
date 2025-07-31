@@ -69,6 +69,8 @@ import FullscreenButton from './components/web/FullscreenButton';
 import LinkToSalesforceButton from './components/web/LinkToSalesforceButton';
 import ProfileButton from './components/web/ProfileButton';
 import ShareDesktopButton from './components/web/ShareDesktopButton';
+import SpatialAudioDebugButton from './components/web/SpatialAudioDebugButton';
+
 import ToggleCameraButton from './components/web/ToggleCameraButton';
 import VideoSettingsButton from './components/web/VideoSettingsButton';
 import { isButtonEnabled, isDesktopShareButtonDisabled } from './functions.web';
@@ -162,6 +164,12 @@ const sound = {
     group: 3
 };
 
+const spatialAudioDebug = {
+    key: 'spatialaudio-debug',
+    Content: SpatialAudioDebugButton,
+    group: 3
+};
+
 const settings = {
     key: 'settings',
     Content: SettingsButton,
@@ -185,6 +193,8 @@ const speakerHighlight = {
     Content: SpeakerHighlightButton,
     group: 3
 };
+
+
 
 /**
  * A hook that returns the toggle camera button if it is enabled and undefined otherwise.
@@ -306,6 +316,7 @@ export function useToolboxButtons(
     const feedback = useFeedbackButton();
     const _download = useDownloadButton();
     const _help = useHelpButton();
+    const noiseSuppression = { key: 'noisesuppression', Content: NoiseSuppressionButton, group: 3 };
 
     const buttons: { [key in ToolbarButton]?: IToolboxButton; } = {
         microphone,
@@ -322,14 +333,15 @@ export function useToolboxButtons(
         videoquality: videoQuality,
         fullscreen: _fullscreen,
         // security,
-        closedcaptions: cc,
+        // closedcaptions: cc,
         // recording,
-        livestreaming: liveStreaming,
+        // livestreaming: liveStreaming,
         // linktosalesforce,
         // sharedvideo: shareVideo,
-        shareaudio,
+        // shareaudio,
         // noisesuppression: noiseSuppression,
         sound,
+        'spatialaudio-debug': spatialAudioDebug,
         'speaker-highlight': speakerHighlight,
         // whiteboard,
         etherpad,

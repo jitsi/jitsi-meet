@@ -62,6 +62,8 @@ import { default as IconConnectionInactive } from './ninja.svg';
 import { default as IconNoiseSuppressionOff } from './noise-suppression-off.svg';
 import { default as IconNoiseSuppressionOn } from './noise-suppression-on.svg';
 import { default as IconOffice365 } from './office365.svg';
+import { default as IconOrbitAlt } from './orbit_alt.svg';
+import { default as IconOrbit } from './orbit.svg';
 import { default as IconRecordOpportunity } from './opportunity-record.svg';
 import { default as IconPerformance } from './performance.svg';
 import { default as IconPhoneRinging } from './phone-ringing.svg';
@@ -174,6 +176,8 @@ export const DEFAULT_ICON: Record<string, any> = {
     IconNoiseSuppressionOn,
     IconArrowRight,
     IconOffice365,
+    IconOrbit,
+    IconOrbitAlt,
     IconPerformance,
     IconPhoneRinging,
     IconPin,
