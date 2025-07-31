@@ -90,14 +90,14 @@ export const updateUserMeetingConfig = async (dispatch: Dispatch<AnyAction>, for
 
         if (force || hasExpiredVerificationInterval) {
             try {
-                // TODO: BYPASS UNTIL ADD MEET ENV VARIABLE
+                // TODO: BYPASS UNTIL checkMeetAvailability works fine
                 // const meetingConfig = await PaymentsService.instance.checkMeetAvailability();
                 // const { enabled, paxPerCall } = meetingConfig;
                 // dispatch(updateMeetingConfig({ enabled, paxPerCall }));
                 dispatch(updateMeetingConfig({ enabled: true, paxPerCall: 10 }));
 
                 LocalStorageManager.instance.set(LAST_CONFIG_CHECK_KEY, now);
-                // TODO: BYPASS UNTIL ADD MEET ENV VARIABLE
+                // TODO: BYPASS UNTIL checkMeetAvailability works fine
                 LocalStorageManager.instance.set(CACHED_MEETING_CONFIG_KEY, { enabled: true, paxPerCall: 10 });
 
                 console.info("Meeting configuration updated successfully");
