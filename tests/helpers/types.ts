@@ -6,7 +6,10 @@ import type WebhookProxy from './WebhookProxy';
 
 export type IContext = {
     data: any;
-    isJaasAvailable: boolean;
+    /**
+     * Whether the configuration specifies a JaaS account for the iFrame API tests.
+     */
+    iFrameUsesJaas: boolean;
     jwtKid: string;
     jwtPrivateKeyPath: string;
     keepAlive: Array<any>;
