@@ -195,8 +195,7 @@ describe('Lobby', () => {
     });
 
     it('change of moderators in lobby', async () => {
-        // no moderator switching if jaas is available. TODO: revisit this. why limit a non-jaas test based on whether
-        //  jaas is configured or not?!
+        // no moderator switching if jaas is available.
         if (ctx.isJaasAvailable) {
             return;
         }
@@ -288,8 +287,7 @@ describe('Lobby', () => {
     });
 
     it('moderator leaves while lobby enabled', async () => {
-        // no moderator switching if jaas is available. TODO: revisit this. why limit a non-jaas test based on whether
-        //  jaas is configured or not?!
+        // no moderator switching if jaas is available.
         if (ctx.isJaasAvailable) {
             return;
         }
