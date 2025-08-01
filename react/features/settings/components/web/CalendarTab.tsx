@@ -6,7 +6,6 @@ import { withStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import Spinner from '../../../base/ui/components/web/Spinner';
 import { bootstrapCalendarIntegration, clearCalendarIntegration, signIn } from '../../../calendar-sync/actions';
@@ -76,10 +75,10 @@ const styles = (theme: Theme) => {
             flexDirection: 'column' as const,
             alignItems: 'center',
             justifyContent: 'center',
-            textAlign: 'center',
+            textAlign: 'center' as const,
             minHeight: '100px',
             color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular)
+            ...theme.typography.bodyShortRegular
         },
 
         button: {

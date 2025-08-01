@@ -7,7 +7,6 @@ import { IReduxState } from '../../../app/types';
 import Icon from '../../../base/icons/components/Icon';
 import { IconMessage } from '../../../base/icons/svg';
 import { browser } from '../../../base/lib-jitsi-meet';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 
 import PollItem from './PollItem';
 
@@ -31,7 +30,7 @@ const useStyles = makeStyles()(theme => {
             }
         },
         emptyMessage: {
-            ...withPixelLineHeight(theme.typography.bodyLongBold),
+            ...theme.typography.bodyLongBold,
             color: theme.palette.text02,
             padding: '0 24px',
             textAlign: 'center'

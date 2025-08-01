@@ -45,8 +45,8 @@ const useStyles = makeStyles()(theme => {
         sharingMessage: {
             fontStyle: 'normal',
             fontWeight: 600,
-            fontSize: '20px',
-            lineHeight: '28px',
+            fontSize: '1.25rem',
+            lineHeight: '1.75rem',
             marginTop: '24px',
             letterSpacing: '-0.012em',
             color: theme.palette.text01
@@ -54,8 +54,8 @@ const useStyles = makeStyles()(theme => {
         showSharing: {
             fontStyle: 'normal',
             fontWeight: 600,
-            fontSize: '14px',
-            lineHeight: '20px',
+            fontSize: '0.875rem',
+            lineHeight: '1.25rem',
             height: '20px',
             marginTop: '16px',
             color: theme.palette.link01,

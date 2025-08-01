@@ -17,7 +17,6 @@ import {
 } from '../../../base/icons/svg';
 import Message from '../../../base/react/components/web/Message';
 import { getSupportUrl } from '../../../base/react/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { NOTIFICATION_ICON, NOTIFICATION_TYPE } from '../../constants';
 import { INotificationProps } from '../../types';
 import { NotificationsTransitionContext } from '../NotificationsTransition';
@@ -124,11 +123,11 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
 
         title: {
-            ...withPixelLineHeight(theme.typography.bodyShortBold)
+            ...theme.typography.bodyShortBold
         },
 
         description: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             overflow: 'auto',
             overflowWrap: 'break-word',
             userSelect: 'all',
@@ -152,7 +151,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             outline: 0,
             backgroundColor: 'transparent',
             color: theme.palette.action01,
-            ...withPixelLineHeight(theme.typography.bodyShortBold),
+            ...theme.typography.bodyShortBold,
             marginRight: theme.spacing(3),
             padding: 0,
             cursor: 'pointer',

@@ -30,7 +30,7 @@ const useStyles = makeStyles()(theme => {
             display: 'flex',
             color: theme.palette.text02,
             alignItems: 'center',
-            fontSize: '14px',
+            fontSize: '0.875rem',
             cursor: 'pointer',
             padding: '5px 0',
             '&:hover': {

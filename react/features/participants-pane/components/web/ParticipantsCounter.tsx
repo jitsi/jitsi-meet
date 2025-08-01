@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { getParticipantCountForDisplay } from '../../../base/participants/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -13,13 +12,14 @@ const useStyles = makeStyles()(theme => {
             height: '16px',
             minWidth: '16px',
             color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.labelBold),
+            ...theme.typography.labelBold,
             pointerEvents: 'none',
             position: 'absolute',
             right: '-4px',
             top: '-3px',
             textAlign: 'center',
-            padding: '1px'
+            padding: '1px',
+            fontSize: '0.75rem'
         }
     };
 });
