@@ -147,9 +147,9 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         document.body.classList.add('welcome-page');
         document.title = interfaceConfig.APP_NAME;
 
-        if (this.state.generateRoomNames) {
-            this._updateRoomName();
-        }
+        // if (this.state.generateRoomNames) {
+        //     this._updateRoomName();
+        // }
 
         if (this._shouldShowAdditionalContent()) {
             this._additionalContentRef?.appendChild(
@@ -206,7 +206,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                         <div className = 'header-watermark-container'>
                             <div className = 'welcome-watermark'>
                                 <Watermarks
-                                    defaultJitsiLogoURL = { DEFAULT_WELCOME_PAGE_LOGO_URL }
+                                    defaultJitsiLogoURL = { 'images/heyjoe-logo.png' }
                                     noMargins = { true } />
                             </div>
                         </div>
@@ -280,7 +280,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                     </div>
                 </div>
 
-                <div className = 'welcome-cards-container'>
+                {/* <div className = 'welcome-cards-container'>
                     <div className = 'welcome-card-column'>
                         <div className = 'welcome-tabs welcome-card welcome-card--blue'>
                             {this._renderTabs()}
@@ -297,7 +297,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                             className = 'welcome-page-content'
                             ref = { this._setAdditionalContentRef } />
                         : null}
-                </div>
+                </div> */}
                 {DISPLAY_WELCOME_FOOTER && this._renderFooter()}
             </div>
 
@@ -379,10 +379,9 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
             <div className = 'welcome-footer-centered'>
                 <div className = 'welcome-footer-padded'>
                     <div className = 'welcome-footer-row-block welcome-footer--row-1'>
-                        <div className = 'welcome-footer-row-1-text'>{t('welcomepage.jitsiOnMobile')}</div>
                         <a
                             className = 'welcome-badge'
-                            href = { iosDownloadLink }
+                            href = { 'https://apps.apple.com/us/app/hey-joe/id1514006633' }
                             rel = 'noopener noreferrer'
                             target = '_blank'>
                             <img
@@ -391,21 +390,12 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                         </a>
                         <a
                             className = 'welcome-badge'
-                            href = { androidDownloadLink }
+                            href = { 'https://play.google.com/store/apps/details?id=org.hey.meet' }
                             rel = 'noopener noreferrer'
                             target = '_blank'>
                             <img
                                 alt = { t('welcomepage.mobileDownLoadLinkAndroid') }
                                 src = './images/google-play-badge.png' />
-                        </a>
-                        <a
-                            className = 'welcome-badge'
-                            href = { fDroidUrl }
-                            rel = 'noopener noreferrer'
-                            target = '_blank'>
-                            <img
-                                alt = { t('welcomepage.mobileDownLoadLinkFDroid') }
-                                src = './images/f-droid-badge.png' />
                         </a>
                     </div>
                 </div>

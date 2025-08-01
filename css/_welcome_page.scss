@@ -4,8 +4,11 @@ body.welcome-page {
 }
 
 .welcome {
-    background-image: $welcomePageBackground;
-    background-color: #fff;
+    background-image: $welcomePageHeaderBackground;
+    background-position: $welcomePageHeaderBackgroundPosition;
+    background-repeat: $welcomePageHeaderBackgroundRepeat;
+    background-size: $welcomePageHeaderBackgroundSize;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     font-family: $welcomePageFontFamily;
@@ -14,12 +17,12 @@ body.welcome-page {
     position: relative;
 
     .header {
-        background-image: $welcomePageHeaderBackground;
-        background-position: $welcomePageHeaderBackgroundPosition;
-        background-repeat: $welcomePageHeaderBackgroundRepeat;
-        background-size: $welcomePageHeaderBackgroundSize;
-        padding: $welcomePageHeaderPadding;
-        background-color: #131519;
+        // background-image: $welcomePageHeaderBackground;
+        // background-position: $welcomePageHeaderBackgroundPosition;
+        // background-repeat: $welcomePageHeaderBackgroundRepeat;
+        // background-size: $welcomePageHeaderBackgroundSize;
+        // padding: $welcomePageHeaderPadding;
+        // background-color: #131519;
         overflow: hidden;
         position: relative;
 
@@ -30,7 +33,7 @@ body.welcome-page {
             z-index: $zindex2;
             align-items: center;
             position: relative;
-            max-width: 688px;
+            max-width: 1200px;
         }
 
         .header-watermark-container {
@@ -42,7 +45,7 @@ body.welcome-page {
 
         .header-text-title {
             color: $welcomePageTitleColor;
-            font-size: $welcomePageHeaderTextTitleFontSize;
+            font-size: 3.2rem;
             font-weight: $welcomePageHeaderTextTitleFontWeight;
             line-height: $welcomePageHeaderTextTitleLineHeight;
             margin-bottom: $welcomePageHeaderTextTitleMarginBottom;
@@ -261,7 +264,7 @@ body.welcome-page {
         height: 100%;
 
         .watermark.leftwatermark {
-            width: $welcomePageWatermarkWidth;
+            // width: $welcomePageWatermarkWidth;
             height: $welcomePageWatermarkHeight;
         }
     }
@@ -324,7 +327,7 @@ body.welcome-page {
     }
 
     .welcome-footer-centered {
-        max-width: 688px;
+        max-width: 350px;
         margin: 0 auto;
     }
 

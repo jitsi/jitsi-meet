@@ -244,7 +244,11 @@ class Conference extends AbstractConference<IProps, any> {
                     className = { _layoutClassName }
                     id = 'videoconference_page'
                     onMouseMove = { isMobileBrowser() ? undefined : this._onShowToolbar }>
-                    { _showPrejoin || _showLobby || <ConferenceInfo /> }
+                    { _showPrejoin || _showLobby
+                 || (<div id = 'conference_info'>
+                     <ConferenceInfo />
+                 </div>)
+                    }
                     <Notice />
                     <div
                         id = 'videospace'
