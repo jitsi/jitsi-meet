@@ -1,0 +1,75 @@
+name: Deploy Jitsi Meet to EC2
+
+on:
+  push:
+    branches: 
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-west-1  # Adjust to match your EC2 region
+        
+    - name: Get EC2 Instance ID
+      id: get-instance-id
+      run: |
+        INSTANCE_ID=$(aws ec2 describe-instances \
+          --filters "Name=ip-address,Values=13.52.18.125" "Name=instance-state-name,Values=running" \
+          --query "Reservations[0].Instances[0].InstanceId" \
+          --output text)
+        echo "instance-id=$INSTANCE_ID" >> $GITHUB_OUTPUT
+        echo "Found instance ID: $INSTANCE_ID"
+
+    - name: Deploy Jitsi Meet
+      run: |
+        aws ssm send-command \
+          --instance-ids ${{ steps.get-instance-id.outputs.instance-id }} \
+          --document-name "AWS-RunShellScript" \
+          --parameters 'commands=[
+            "set -e",
+            "echo \"Starting Jitsi Meet deployment...\"",
+            "sudo rm -rf /opt/jitsi-meet-build",
+            "echo \"Removed existing jitsi-meet-build directory\"",
+            "cd /opt",
+            "sudo git clone git@github.com:heyjoe-io/jitsi-meet.git jitsi-meet-build",
+            "echo \"Cloned repository to jitsi-meet-build\"",
+            "sudo chown -R $(whoami):$(whoami) /opt/jitsi-meet-build",
+            "echo \"Updated permissions\"",
+            "sudo /usr/local/bin/update-jitsi-ui.sh",
+            "echo \"Deployment completed successfully!\""
+          ]' \
+          --comment "Deploy Jitsi Meet from GitHub Actions" \
+          --timeout-seconds 300
+
+    - name: Wait for command completion and get results
+      run: |
+        sleep 10  # Wait a bit for command to start
+        
+        # Get the command ID from the most recent command
+        COMMAND_ID=$(aws ssm list-commands \
+          --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
+          --max-items 1 \
+          --query "Commands[0].CommandId" \
+          --output text)
+        
+        echo "Command ID: $COMMAND_ID"
+        
+        # Wait for completion and show results
+        aws ssm wait command-executed \
+          --command-id $COMMAND_ID \
+          --instance-id ${{ steps.get-instance-id.outputs.instance-id }}
+        
+        # Get command output
+        aws ssm get-command-invocation \
+          --command-id $COMMAND_ID \
+          --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
+          --query "[Status,StandardOutputContent,StandardErrorContent]" \
+          --output table
