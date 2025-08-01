@@ -126,7 +126,6 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"
-  implementation 'com.squareup.duktape:duktape-android:1.3.0'
   implementation 'com.dropbox.core:dropbox-core-sdk:4.0.1'
   implementation 'com.jakewharton.timber:timber:4.7.1'
 // From node_modules

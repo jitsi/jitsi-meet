@@ -21,32 +21,43 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.module.annotations.ReactModule;
-import com.squareup.duktape.Duktape;
 
 @ReactModule(name = JavaScriptSandboxModule.NAME)
 class JavaScriptSandboxModule extends ReactContextBaseJavaModule {
     public static final String NAME = "JavaScriptSandbox";
+
+    // Load the Hermes sandbox native library
+    static {
+        System.loadLibrary("hermes_sandbox");
+    }
 
     public JavaScriptSandboxModule(ReactApplicationContext reactContext) {
         super(reactContext);
     }
 
     /**
-     * Evaluates the given code in a Duktape VM.
-     * @param code - The code that needs to evaluated.
+     * Evaluates the given code in a Hermes runtime.
+     * @param code - The code that needs to be evaluated.
      * @param promise - Resolved with the output in case of success or rejected with an exception
      *                in case of failure.
      */
     @ReactMethod
     public void evaluate(String code, Promise promise) {
-        Duktape vm = Duktape.create();
+        long runtimeId = 0;
         try {
-            Object res = vm.evaluate(code);
-            promise.resolve(res.toString());
+            // Create an isolated Hermes runtime
+            runtimeId = createRuntime();
+            
+            // Evaluate the JavaScript code
+            String result = evaluateJavaScript(runtimeId, code);
+            promise.resolve(result);
         } catch (Throwable tr) {
             promise.reject(tr);
         } finally {
-            vm.close();
+            // Clean up the runtime
+            if (runtimeId != 0) {
+                deleteRuntime(runtimeId);
+            }
         }
     }
 
@@ -54,4 +65,9 @@ class JavaScriptSandboxModule extends ReactContextBaseJavaModule {
     public String getName() {
         return NAME;
     }
+
+    // Native methods for Hermes C API
+    private native long createRuntime();
+    private native String evaluateJavaScript(long runtimeId, String code);
+    private native void deleteRuntime(long runtimeId);
 }
