@@ -1,17 +1,19 @@
 import ReducerRegistry from "../../../../redux/ReducerRegistry";
-import { SET_CREATE_ROOM_ERROR, SET_JOIN_ROOM_ERROR } from "./actionTypes";
+import { SET_CREATE_ROOM_ERROR, SET_JOIN_ROOM_ERROR, SET_ROOM_ID } from "./actionTypes";
 
-const initialState: IJoinRoomErrorState = {
+export const initialState: IJoinRoomErrorState = {
     joinRoomError: false,
     createRoomError: false,
+    roomID: null,
 };
 
 export interface IJoinRoomErrorState {
     joinRoomError: boolean;
     createRoomError: boolean;
+    roomID: string | null;
 }
 
-ReducerRegistry.register("features/join-room-error", (state: IJoinRoomErrorState = initialState, action) => {
+export const meetRoomReducer = (state: IJoinRoomErrorState = initialState, action: any): IJoinRoomErrorState => {
     switch (action.type) {
         case SET_JOIN_ROOM_ERROR:
             return {
@@ -23,7 +25,15 @@ ReducerRegistry.register("features/join-room-error", (state: IJoinRoomErrorState
                 ...state,
                 createRoomError: action.createRoomError,
             };
+        case SET_ROOM_ID:
+            return {
+                ...state,
+                roomID: action.roomID,
+            };
         default:
             return state;
     }
-});
+};
+
+
+ReducerRegistry.register("features/meet-room", meetRoomReducer);

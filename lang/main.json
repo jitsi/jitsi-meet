@@ -730,6 +730,84 @@
             "login": "Log in",
             "signUp": "Sign up"
         },
+        "landing": {
+            "title": {
+                "line1": "Private video calls",
+                "line2": "and meetings",
+                "line3": "for everyone"
+            },
+            "subtitle": "Encrypted video calls straight from your browser. Zero tracking. Full privacy.",
+            "scheduleMeeting": "Schedule meeting",
+            "loginRequired": "First you need to log in"
+        },
+        "auth": {
+            "modal": {
+                "title": "New meeting",
+                "loginTitle": "Log in",
+                "decrypting": "Decrypting...",
+                "emailPlaceholder": "Email address",
+                "passwordPlaceholder": "Password",
+                "twoFactorCodePlaceholder": "Two Factor Authentication Code",
+                "loginButton": "Log in",
+                "forgotPassword": "I forgot my password",
+                "noAccount": "Don't have an account?",
+                "createAccount": "Create account",
+                "error": {
+                    "emailEmpty": "Email must not be empty",
+                    "emailInvalid": "Please enter a valid email",
+                    "passwordEmpty": "Password must not be empty",
+                    "twoFactorCodeLength": "Code must be 6 digits",
+                    "twoFactorCodeInvalid": "Enter a valid 6-digit code",
+                    "invalidCredentials": "Invalid credentials. Please try again.",
+                    "cannotCreateMeetings": "User cannot create meetings",
+                    "genericError": "Unable to log in. Please try again or contact support if the problem persists."
+                },
+                "signup": {
+                    "title": "Sign up",
+                    "createAccountTitle": "Create account",
+                    "creatingAccount": "Creating account...",
+                    "signupButton": "Sign up",
+                    "fullNamePlaceholder": "Full name",
+                    "newPasswordPlaceholder": "New password",
+                    "confirmPasswordPlaceholder": "Confirm password",
+                    "alreadyHaveAccount": "Already have an account?",
+                    "loginLink": "Log in",
+                    "termsNotice": "By creating an account,",
+                    "terms": "you accept the terms & condtitions",
+                    "info": {
+                        "normalText": "Internxt doesn’t store passwords.",
+                        "boldText": "If you forget your password, you can download a backup key to regain access to your files.",
+                        "cta": "Learn more"
+                    },
+                    "password": {
+                        "weak": "Password is weak",
+                        "strong": "Password is strong",
+                        "notComplex": "Password is not complex enough",
+                        "tooShort": "Password must be at least 8 characters long",
+                        "tooLong": "Password is too long"
+                    },
+                    "error": {
+                        "fullNameEmpty": "Full name must not be empty",
+                        "passwordTooShort": "Password must be at least 8 characters long",
+                        "passwordsDoNotMatch": "Passwords do not match",
+                        "signupFailed": "Unable to create account. Please try again or contact support.",
+                        "missingFields": "Please fill in all required fields"
+                    }
+                }
+            }
+        },
+        "modals": {
+            "schedule": {
+                "title": "Schedule meeting",
+                "subtitle": "Here's the link to your meeting.",
+                "description": "Send this to people who you want to join your call. Save this link so you can use it later, too.",
+                "linkLabel": "Secure link",
+                "cancelButton": "Cancel",
+                "copyButton": "Copy",
+                "copiedButton": "Copied!",
+                "joinNow": "Join now"
+            }
+        },
         "meeting": {
             "button": {
                 "gallery": "Gallery",
@@ -750,7 +828,9 @@
             "joinMeeting": "Join Meeting",
             "nameRequired": "A name is required",
             "newMeeting": "New Meeting",
-            "participants": "Participants"
+            "participants": "Participants",
+            "upToParticipants": "Up to {{num}} participants",
+            "upgrade": "Upgrade"
         },
         "joinRoomErrorDialog": {
             "joinRoomError": "Unable to join meeting",
@@ -766,12 +846,18 @@
         "invite": {
             "invitePeople": "Invite people",
             "copyLink": "Copy Link",
+            "copied": "Copied!",
             "meetingFull": "Meeting is full",
             "participants": "participants"
         },
         "secureMeetingMessage": {
             "title": "Your meeting is private",
             "description": "Only invited or approved participants can join"
+        },
+        "settings": {
+            "video": {
+                "videoInput": "Video input"
+            }
         }
     },
     "notify": {

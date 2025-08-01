@@ -1,20 +1,19 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React from "react";
+import { connect } from "react-redux";
 
-import { isMobileBrowser } from '../../base/environment/utils';
-import { translate, translateToHTML } from '../../base/i18n/functions';
-import Icon from '../../base/icons/components/Icon';
-import { IconWarning } from '../../base/icons/svg';
-import Watermarks from '../../base/react/components/web/Watermarks';
-import getUnsafeRoomText from '../../base/util/getUnsafeRoomText.web';
-import CalendarList from '../../calendar-sync/components/CalendarList.web';
-import RecentList from '../../recent-list/components/RecentList.web';
-import SettingsButton from '../../settings/components/web/SettingsButton';
-import { SETTINGS_TABS } from '../../settings/constants';
+import { isMobileBrowser } from "../../base/environment/utils";
+import { translate } from "../../base/i18n/functions";
+import Icon from "../../base/icons/components/Icon";
+import { IconWarning } from "../../base/icons/svg";
+import getUnsafeRoomText from "../../base/util/getUnsafeRoomText.web";
+import CalendarList from "../../calendar-sync/components/CalendarList.web";
+import RecentList from "../../recent-list/components/RecentList.web";
 
-import { Button } from "@internxt/ui";
+import HomePage from "../../base/meet/views/Home/HomePage";
 import { AbstractWelcomePage, IProps, _mapStateToProps } from "./AbstractWelcomePage";
-import Login from './LoginPage';
+
+import { appNavigate } from "../../app/actions.web";
+import { initializeAuth } from "../../base/meet/general/store/auth/actions";
 import Tabs from "./Tabs";
 
 /**
@@ -22,7 +21,7 @@ import Tabs from "./Tabs";
  *
  * @type {string}
  */
-export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
+export const ROOM_NAME_VALIDATE_PATTERN_STR = "^[^?&:\u0022\u0027%#]+$";
 
 /**
  * The Web container rendering the welcome page.
@@ -138,6 +137,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
     componentWillMount(): void {
         const inxtToken = localStorage.getItem("xNewToken") || undefined;
         this.setState({ inxtToken });
+        this.props.dispatch(initializeAuth());
     }
 
     /**
@@ -191,7 +191,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      * @returns {ReactElement|null}
      */
     render() {
-        const { _moderatedRoomServiceUrl, t } = this.props;
+        const { _moderatedRoomServiceUrl, t, roomID } = this.props;
         const { DEFAULT_WELCOME_PAGE_LOGO_URL, DISPLAY_WELCOME_FOOTER } = interfaceConfig;
         const showAdditionalCard = this._shouldShowAdditionalCard();
         const showAdditionalContent = this._shouldShowAdditionalContent();
@@ -201,7 +201,13 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
         return (
             <>
-                {this.state.inxtToken ? (
+                <HomePage
+                    onLogin={this._updateInxtToken}
+                    translate={t}
+                    startNewMeeting={this._onFormSubmit}
+                    roomID={roomID}
+                />
+                {/* {this.state.inxtToken ? (
                     <div className={`welcome ${contentClassName} ${footerClassName}`} id="welcome_page">
                         <div className="header" style={{ minHeight: "100vh" }}>
                             <div className="header-image" />
@@ -229,24 +235,9 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                 <h1 className="header-text-title">{t("welcomepage.headerTitle")}</h1>
                                 <span className="header-text-subtitle">{t("welcomepage.headerSubtitle")}</span>
                                 <div id="enter_room" style={{ justifyContent: "center" }}>
-                                    <Button
-                                        variant="primary"
-                                        onClick={this._onFormSubmit}
-                                        type="submit"
-                                    >
+                                    <Button variant="primary" onClick={this._onFormSubmit} type="submit">
                                         {t("welcomepage.startMeeting")}
                                     </Button>
-                                    {/* <button
-                                        aria-disabled="false"
-                                        aria-label="Start meeting"
-                                        className="welcome-page-button"
-                                        id="enter_room_button"
-                                        onClick={this._onFormSubmit}
-                                        tabIndex={0}
-                                        type="button"
-                                    >
-                                        {t("welcomepage.startMeeting")}
-                                    </button> */}
                                 </div>
                                 {this._titleHasNotAllowCharacter && (
                                     <div className="not-allow-title-character-div" role="alert">
@@ -269,8 +260,13 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                         </div>
                     </div>
                 ) : (
-                    <Login _updateInxtToken={this._updateInxtToken} />
-                )}
+                    <HomePage
+                        updateInxtToken={this._updateInxtToken}
+                        translate={t}
+                        startNewMeeting={this._onFormSubmit}
+                    />
+                    // <Login _updateInxtToken={this._updateInxtToken} />
+                )} */}
             </>
         );
     }
@@ -296,10 +292,21 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      * @private
      * @returns {void}
      */
-    _onFormSubmit() {
+    /*
+    _onJoinConference() {
         if (!this._roomInputRef || this._roomInputRef.reportValidity()) {
             this._onJoin();
+            this.props.dispatch({ type: SET_PREJOIN_PAGE_VISIBILITY, value: false });
+            //this.props.dispatch({ type: SET_NEW_MEETING_PAGE_VISIBILITY, value: true });
         }
+    }*/
+
+    _onFormSubmit() {
+        const locationURL = window.location;
+        const baseUrl = `${locationURL.protocol}//${locationURL.host}`;
+        const newUrl = `${baseUrl}/new-meeting`;
+        window.history.replaceState({}, document.title, newUrl);
+        this.props.dispatch(appNavigate(newUrl));
     }
 
     /**

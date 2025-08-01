@@ -9,6 +9,9 @@ all.css
 .env
 .npmrc
 
+# Coverage
+coverage
+
 # CocoaPods
 Pods/
 
