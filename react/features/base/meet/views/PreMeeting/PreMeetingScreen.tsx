@@ -12,18 +12,19 @@ import { redirectToStaticPage } from "../../../../app/actions.any";
 import { appNavigate } from "../../../../app/actions.web";
 import { getConferenceName } from "../../../conference/functions";
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from "../../../config/constants";
-import { get8x8BetaJWT } from "../../../connection/options8x8";
 import { translate } from "../../../i18n/functions";
 import RecordingWarning from "../../../premeeting/components/web/RecordingWarning";
 import UnsafeRoomWarning from "../../../premeeting/components/web/UnsafeRoomWarning";
 import { updateSettings } from "../../../settings/actions";
 import { getDisplayName } from "../../../settings/functions.web";
 import { withPixelLineHeight } from "../../../styles/functions.web";
+import MeetingButton from "../../general/containers/MeetingButton";
 import { setCreateRoomError } from "../../general/store/errors/actions";
 import { useLocalStorage } from "../../LocalStorageManager";
 import { ErrorModals, ErrorType } from "./components/ErrorModals";
 import Header from "./components/Header";
 import PreMeetingModal from "./components/PreMeetingModal";
+import VideoEncodingToggle from "./containers/VideoEncodingToggle";
 import { useParticipants } from "./hooks/useParticipants";
 import { useUserData } from "./hooks/useUserData";
 
@@ -142,6 +143,16 @@ interface IProps extends WithTranslation {
      * Flag to indicate if there was an error creating the room.
      */
     createRoomError?: boolean;
+
+    /**
+     * Flag to indicate if the video is mirrored.
+     */
+    flipX?: boolean;
+
+    /**
+     * Flag to indicate if conference is creating.
+     */
+    createConference?: Function;
 }
 
 const PreMeetingScreen = ({
@@ -163,6 +174,8 @@ const PreMeetingScreen = ({
     userName,
     joinRoomError,
     createRoomError,
+    flipX,
+    createConference,
 }: IProps) => {
     const { classes } = useStyles();
     const [isNameInputFocused, setIsNameInputFocused] = useState(false);
@@ -172,6 +185,7 @@ const PreMeetingScreen = ({
     const storageManager = useLocalStorage();
     const dispatch = useDispatch();
 
+    const isInNewMeeting = window.location.href.includes("new-meeting");
     const showNameError = userName.length === 0 && !isNameInputFocused;
 
     const toolbarSection = useMemo(
@@ -210,17 +224,11 @@ const PreMeetingScreen = ({
     const handleNewMeeting = async () => {
         setIsCreatingMeeting(true);
         try {
-            const newToken = storageManager.getNewToken() || "";
-            const meetTokenCreator = await get8x8BetaJWT(newToken);
-
-            if (meetTokenCreator?.room) {
-                const locationURL = window.location;
-                const baseUrl = `${locationURL.protocol}//${locationURL.host}`;
-                const newUrl = `${baseUrl}/${meetTokenCreator.room}`;
-                window.history.replaceState({}, document.title, newUrl);
-
-                await dispatch(appNavigate(meetTokenCreator.room));
-            }
+            const locationURL = window.location;
+            const baseUrl = `${locationURL.protocol}//${locationURL.host}`;
+            const newUrl = `${baseUrl}/new-meeting`;
+            window.history.replaceState({}, document.title, newUrl);
+            dispatch(appNavigate(newUrl));
         } catch (error) {
             console.error("Error creating new meeting:", error);
             dispatch(setCreateRoomError(true));
@@ -268,6 +276,17 @@ const PreMeetingScreen = ({
         return undefined;
     };
 
+    // TODO: EXTRACT ONLGOUT AND HEADER, CHECK HeaderWrapper.tsx
+    const localStorageManager = useLocalStorage();
+    const onLogout = () => {
+        localStorageManager.clearCredentials();
+        dispatch(redirectToStaticPage("/"));
+    };
+
+    const navigateToHomePage = () => {
+        dispatch(appNavigate("/"));
+    };
+
     return (
         <div className="flex flex-col h-full">
             <div className={`flex flex-col px-5 ${classes.container}`}>
@@ -275,9 +294,19 @@ const PreMeetingScreen = ({
                     userData={userData}
                     translate={t}
                     onLogin={handleRedirectToLogin}
+                    onLogout={onLogout}
                     onSignUp={handleRedirectToSignUp}
-                    onNewMeeting={handleNewMeeting}
-                    isCreatingMeeting={isCreatingMeeting}
+                    meetingButton={
+                        isInNewMeeting ? (
+                            <MeetingButton
+                                onNewMeeting={handleNewMeeting}
+                                translate={t}
+                                loading={isCreatingMeeting}
+                                className="w-full sm:w-auto"
+                            />
+                        ) : null
+                    }
+                    navigateToHomePage={navigateToHomePage}
                 />
                 <ErrorModals
                     errorType={getErrorType()}
@@ -299,11 +328,19 @@ const PreMeetingScreen = ({
                         setUserName={setName}
                         setIsNameInputFocused={setIsNameInputFocused}
                         participants={allParticipants}
-                        translate={t}
-                        joinConference={joinConference}
+                        joinConference={async () => {
+                            createConference && (await createConference());
+                            joinConference && joinConference();
+                        }}
                         disableJoinButton={disableJoinButton}
+                        flipX={flipX}
+                        isCreatingConference={!!createConference}
                     />
                 )}
+                <div className={classes.videoEncodingToggleContainer}>
+                    <VideoEncodingToggle />
+                </div>
+
                 {/* UNCOMMENT IN DEV MODE TO SEE OLD IMPLEMENTATION  */}
                 {/* <div className="flex flex-row">
                     <div>
@@ -338,9 +375,10 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     );
     const { premeetingBackground } = state["features/dynamic-branding"];
     const userName = getDisplayName(state);
+    const { localFlipX } = state["features/base/settings"];
 
-    const joinRoomError = state["features/join-room-error"]?.joinRoomError || false;
-    const createRoomError = state["features/join-room-error"]?.createRoomError || false;
+    const joinRoomError = state["features/meet-room"]?.joinRoomError || false;
+    const createRoomError = state["features/meet-room"]?.createRoomError || false;
     return {
         // For keeping backwards compat.: if we pass an empty hiddenPremeetingButtons
         // array through external api, we have all prejoin buttons present on premeeting
@@ -355,6 +393,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         userName,
         joinRoomError,
         createRoomError,
+        flipX: localFlipX,
     };
 }
 
@@ -373,6 +412,12 @@ const useStyles = makeStyles()((theme) => ({
         "@media (max-width: 720px)": {
             flexDirection: "column-reverse",
         },
+    },
+    videoEncodingToggleContainer: {
+        position: "absolute",
+        bottom: "20px",
+        left: "20px",
+        zIndex: 999,
     },
     content: {
         display: "flex",

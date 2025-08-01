@@ -16,7 +16,7 @@ export class AuthService {
    * @async
    **/
   public doLogin = async (email: string, password: string, twoFactorCode?: string): Promise<LoginCredentials> => {
-    const authClient = SdkManager.instance.getAuth();
+    const authClient = SdkManager.instance.getNewAuth();
     const loginDetails: LoginDetails = {
       email: email.toLowerCase(),
       password: password,
@@ -28,18 +28,19 @@ export class AuthService {
     const { privateKey, publicKey } = user;
 
     const plainPrivateKeyInBase64 = privateKey
-      ? Buffer.from(KeysService.instance.decryptPrivateKey(privateKey, password)).toString('base64')
-      : '';
+        ? Buffer.from(KeysService.instance.decryptPrivateKey(privateKey, password)).toString("base64")
+        : "";
 
     if (privateKey) {
-      await KeysService.instance.assertPrivateKeyIsValid(privateKey, password);
-      await KeysService.instance.assertValidateKeys(
-        Buffer.from(plainPrivateKeyInBase64, 'base64').toString(),
-        Buffer.from(publicKey, 'base64').toString(),
-      );
+        await KeysService.instance.assertPrivateKeyIsValid(privateKey, password);
+        await KeysService.instance.assertValidateKeys(
+            Buffer.from(plainPrivateKeyInBase64, "base64").toString(),
+            Buffer.from(publicKey, "base64").toString()
+        );
     }
 
     const clearMnemonic = CryptoService.instance.decryptTextWithKey(user.mnemonic, password);
+
     const clearUser = {
       ...user,
       mnemonic: clearMnemonic,
@@ -61,7 +62,7 @@ export class AuthService {
    * @async
    **/
   public is2FANeeded = async (email: string): Promise<boolean> => {
-    const authClient = SdkManager.instance.getAuth();
+    const authClient = SdkManager.instance.getNewAuth();
     const securityDetails = await authClient.securityDetails(email).catch((error) => {
       throw new Error(error.message ?? 'Login error');
     });

@@ -1,0 +1,1 @@
+// FILE HERE ONLY TO KNOW THAT react/features/filmstrip/reducer.ts has been modified to display all participants video ALWAYS (fix inactive videos issue)

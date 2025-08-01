@@ -1,14 +1,14 @@
 /* eslint-disable react/jsx-no-bind */
-import React, { useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { connect, useDispatch } from 'react-redux';
-import { makeStyles } from 'tss-react/mui';
+import React, { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { connect, useDispatch } from "react-redux";
+import { makeStyles } from "tss-react/mui";
 
-import { IReduxState } from '../../../app/types';
-import Avatar from '../../../base/avatar/components/Avatar';
-import { isNameReadOnly } from '../../../base/config/functions.web';
-import { IconArrowDown, IconArrowUp, IconPhoneRinging, IconVolumeOff } from '../../../base/icons/svg';
-import { isVideoMutedByUser } from '../../../base/media/functions';
+import { IReduxState } from "../../../app/types";
+import Avatar from "../../../base/avatar/components/Avatar";
+import { isNameReadOnly } from "../../../base/config/functions.web";
+import { IconArrowDown, IconArrowUp, IconPhoneRinging, IconVolumeOff } from "../../../base/icons/svg";
+import { isVideoMutedByUser } from "../../../base/media/functions";
 import PreMeetingScreen from "../../../base/meet/views/PreMeeting/PreMeetingScreen";
 import { getLocalParticipant } from "../../../base/participants/functions";
 import Popover from "../../../base/popover/components/Popover.web";
@@ -38,6 +38,7 @@ import {
 import { hasDisplayName } from "../../utils";
 
 import JoinByPhoneDialog from "./dialogs/JoinByPhoneDialog";
+import { SET_PREJOIN_PAGE_VISIBILITY } from "../../actionTypes";
 
 interface IProps {
     /**
@@ -139,6 +140,8 @@ interface IProps {
      * The JitsiLocalAudioTrack.
      */
     audioTrack?: Object;
+
+    createConference?: Function;
 }
 
 const useStyles = makeStyles()((theme) => {
@@ -234,6 +237,7 @@ const Prejoin = ({
     updateSettings: dispatchUpdateSettings,
     videoTrack,
     audioTrack,
+    createConference,
 }: IProps) => {
     const showDisplayNameField = useMemo(
         () => isDisplayNameVisible && !readOnlyName,
@@ -411,6 +415,7 @@ const Prejoin = ({
             audioTrack={audioTrack}
             joinConference={onJoinButtonClick}
             disableJoinButton={joiningInProgress || (showUnsafeRoomWarning && !unsafeRoomConsent) || showErrorOnField}
+            createConference={createConference}
         >
             <div className={classes.inputContainer} data-testid="prejoin.screen">
                 {showDisplayNameField ? (
@@ -530,7 +535,7 @@ const mapDispatchToProps = {
     joinConferenceWithoutAudio: joinConferenceWithoutAudioAction,
     joinConference: joinConferenceAction,
     setJoinByPhoneDialogVisiblity: setJoinByPhoneDialogVisiblityAction,
-    updateSettings
+    updateSettings,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Prejoin);

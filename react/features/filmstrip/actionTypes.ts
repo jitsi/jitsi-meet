@@ -229,3 +229,11 @@ export const SET_SCREENSHARING_TILE_DIMENSIONS = 'SET_SCREENSHARING_TILE_DIMENSI
  * }
  */
 export const SET_TOP_PANEL_VISIBILITY = 'SET_TOP_PANEL_VISIBILITY';
+
+/**
+ * The type of Redux action which sets the conference view mode.
+ * {
+ *     type: SET_VIEW_MODE
+ * }
+ */
+export const SET_VIEW_MODE = 'SET_VIEW_MODE';

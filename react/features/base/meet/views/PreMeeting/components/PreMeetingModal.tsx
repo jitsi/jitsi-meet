@@ -4,6 +4,8 @@ import MediaControlsWrapper from "../../../general/containers/MediaControlsWrapp
 import NameInputSection from "./NameInputSection";
 import ParticipantsList from "./ParticipantsList";
 import VideoPreviewSection from "./VideoPreviewSection";
+import { MAX_SIZE_PARTICIPANTS } from "../../../constants";
+import { useTranslation } from "react-i18next";
 
 interface PreMeetingModalProps {
     /**
@@ -47,11 +49,6 @@ interface PreMeetingModalProps {
     participants: any[];
 
     /**
-     * Translation function
-     */
-    translate: (key: string) => string;
-
-    /**
      * Join conference handler
      */
     joinConference?: () => void;
@@ -60,6 +57,16 @@ interface PreMeetingModalProps {
      * Disable join button
      */
     disableJoinButton?: boolean;
+
+    /**
+     * Mirror video
+     */
+    flipX?: boolean;
+
+    /**
+     * Flag to indicate if conference is creating.
+     */
+    isCreatingConference?: boolean;
 }
 
 /**
@@ -74,10 +81,13 @@ const PreMeetingModal = ({
     setUserName,
     setIsNameInputFocused,
     participants,
-    translate,
     joinConference,
     disableJoinButton,
+    flipX,
+    isCreatingConference,
 }: PreMeetingModalProps) => {
+    const num = MAX_SIZE_PARTICIPANTS;
+    const { t } = useTranslation();
     return (
         <TransparentModal
             className={"flex p-7 bg-black/50 border border-white/15 rounded-[20px]"}
@@ -90,16 +100,29 @@ const PreMeetingModal = ({
                     videoMuted={videoMuted}
                     videoTrack={videoTrack}
                     isAudioMuted={audioTrack?.isMuted()}
+                    flipX={flipX}
                 />
                 <NameInputSection
                     userName={userName}
                     showNameError={showNameError}
                     setUserName={setUserName}
                     setIsNameInputFocused={setIsNameInputFocused}
-                    translate={translate}
+                    translate={t}
                 />
                 <MediaControlsWrapper />
-                <ParticipantsList participants={participants} translate={translate} />
+                {isCreatingConference ? (
+                    <div className="flex flex-col items-center justify-center space-y-5">
+                        <div className="flex flex-col items-center justify-center">
+                            <span className="text-xl font-semibold text-white">{t("meet.internxtMeet")}</span>
+
+                            <span className="text-base font-normal text-white/75">
+                                {t("meet.preMeeting.upToParticipants", { num })}
+                            </span>
+                        </div>
+                    </div>
+                ) : (
+                    <ParticipantsList participants={participants} translate={t} />
+                )}
                 <Button
                     onClick={joinConference}
                     disabled={!userName || disableJoinButton}
@@ -107,7 +130,7 @@ const PreMeetingModal = ({
                     variant="primary"
                     className="mt-5"
                 >
-                    {translate("meet.preMeeting.joinMeeting")}
+                    {isCreatingConference ? t("meet.preMeeting.newMeeting") : t("meet.preMeeting.joinMeeting")}
                 </Button>
             </div>
         </TransparentModal>

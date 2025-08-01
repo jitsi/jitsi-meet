@@ -4,17 +4,22 @@ import React from "react";
 import ConnectionIndicator from "../../../../../connection-indicator/components/web/ConnectionIndicator";
 import Video from "../../../../media/components/web/Video";
 import { VideoParticipantType } from "../types";
+import clsx from "clsx";
+import { useVideoEncoding } from "../../PreMeeting/containers/VideoEncodingToggle";
 
 export type VideoParticipantProps = {
     participant: VideoParticipantType;
+    flipX?: boolean;
     className?: string;
     translate: (key: string) => string;
 };
 
-const VideoParticipant = ({ participant, className = "", translate }: VideoParticipantProps) => {
+const VideoParticipant = ({ participant, className = "", flipX, translate }: VideoParticipantProps) => {
     const { id, name, videoEnabled, audioMuted, videoTrack, local, dominantSpeaker, raisedHand, avatarSource } =
         participant;
 
+    const { isEncodingEnabled } = useVideoEncoding()
+    
     return (
         <div
             className={`flex aspect-square min-w-40 items-center justify-center rounded-[20px] overflow-hidden bg-gray-90 sm:aspect-video ${className}
@@ -24,8 +29,9 @@ const VideoParticipant = ({ participant, className = "", translate }: VideoParti
             {videoEnabled ? (
                 <Video
                     videoTrack={{ jitsiTrack: videoTrack }}
-                    className="w-full h-full object-cover"
+                    className={clsx("w-full h-full object-cover", flipX && local && "scale-x-[-1]")}
                     key={`video-${id}`}
+                    encodeVideo={isEncodingEnabled}
                 />
             ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gray-800">
