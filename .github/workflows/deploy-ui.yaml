@@ -52,7 +52,7 @@ jobs:
 
     - name: Wait for command completion and get results
       run: |
-        sleep 10  # Wait a bit for command to start
+        sleep 5  # Brief wait for command to start
         
         # Get the command ID from the most recent command
         COMMAND_ID=$(aws ssm list-commands \
@@ -62,9 +62,10 @@ jobs:
           --output text)
         
         echo "Command ID: $COMMAND_ID"
+        echo "Monitoring command execution..."
         
-        # Wait for completion with polling
-        for i in {1..30}; do
+        # Wait for completion with minimal polling
+        for i in {1..60}; do
           STATUS=$(aws ssm get-command-invocation \
             --command-id $COMMAND_ID \
             --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
@@ -76,34 +77,41 @@ jobs:
             break
           fi
           
-          echo "Command status: $STATUS - waiting..."
+          # Only show status every 30 seconds instead of every 10
+          if [ $((i % 3)) -eq 0 ]; then
+            echo "Still running... (${i}0 seconds elapsed)"
+          fi
+          
           sleep 10
         done
         
-        # Get command output
-        echo "=== Command Results ==="
-        aws ssm get-command-invocation \
-          --command-id $COMMAND_ID \
-          --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
-          --query "Status" \
-          --output text
-          
-        echo "=== Standard Output ==="
-        aws ssm get-command-invocation \
+        # Always show the output regardless of status
+        echo ""
+        echo "==================== COMMAND OUTPUT ===================="
+        
+        STDOUT=$(aws ssm get-command-invocation \
           --command-id $COMMAND_ID \
           --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
           --query "StandardOutputContent" \
-          --output text
+          --output text 2>/dev/null || echo "No stdout available")
           
-        echo "=== Standard Error ==="
-        aws ssm get-command-invocation \
+        STDERR=$(aws ssm get-command-invocation \
           --command-id $COMMAND_ID \
           --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
           --query "StandardErrorContent" \
-          --output text
+          --output text 2>/dev/null || echo "No stderr available")
+        
+        echo "STDOUT:"
+        echo "$STDOUT"
+        echo ""
+        echo "STDERR:"
+        echo "$STDERR"
+        echo "========================================================="
         
         # Fail the workflow if command failed
         if [ "$STATUS" != "Success" ]; then
-          echo "Command failed with status: $STATUS"
+          echo "❌ Command failed with status: $STATUS"
           exit 1
+        else
+          echo "✅ Command completed successfully!"
         fi
