@@ -5,6 +5,7 @@ import path from 'node:path';
 import process from 'node:process';
 import pretty from 'pretty';
 
+import { getTestProperties } from './helpers/TestProperties';
 import WebhookProxy from './helpers/WebhookProxy';
 import { getLogs, initLogger, logInfo } from './helpers/browserLogger';
 import { IContext } from './helpers/types';
@@ -180,7 +181,11 @@ export const config: WebdriverIO.MultiremoteConfig = {
             console.warn('We expect to run a single suite, but got more than one');
         }
 
-        const testName = path.basename(specs[0]).replace('.spec.ts', '');
+        const testFilePath = specs[0].replace(/^file:\/\//, '');
+        const testName = path.relative('tests/specs', testFilePath)
+            .replace(/.spec.ts$/, '')
+            .replace(/\//g, '-');
+        const testProperties = await getTestProperties(testFilePath);
 
         console.log(`Running test: ${testName} via worker: ${cid}`);
 
@@ -191,6 +196,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
             times: {}
         } as IContext;
         globalAny.ctx.keepAlive = [];
+        globalAny.ctx.testProperties = testProperties;
 
         await Promise.all(multiremotebrowser.instances.map(async (instance: string) => {
             const bInstance = multiremotebrowser.getInstance(instance);
@@ -224,13 +230,12 @@ export const config: WebdriverIO.MultiremoteConfig = {
         globalAny.ctx.roomName = globalAny.ctx.roomName.toLowerCase();
         globalAny.ctx.jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
         globalAny.ctx.jwtKid = process.env.JWT_KID;
-        globalAny.ctx.isJaasAvailable = () => globalAny.ctx.jwtKid?.startsWith('vpaas-magic-cookie-');
+        globalAny.ctx.iFrameUsesJaas = process.env.JWT_PRIVATE_KEY_PATH
+            && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-');
 
         // If we are running the iFrameApi tests, we need to mark it as such and if needed to create the proxy
         // and connect to it.
-        if (testName.startsWith('iFrameApi')) {
-            globalAny.ctx.iframeAPI = true;
-
+        if (testProperties.useWebhookProxy) {
             if (!globalAny.ctx.webhooksProxy
                 && process.env.WEBHOOKS_PROXY_URL && process.env.WEBHOOKS_PROXY_SHARED_SECRET) {
                 globalAny.ctx.webhooksProxy = new WebhookProxy(
@@ -239,6 +244,20 @@ export const config: WebdriverIO.MultiremoteConfig = {
                     `${TEST_RESULTS_DIR}/webhooks-${cid}-${testName}.log`);
                 globalAny.ctx.webhooksProxy.connect();
             }
+        }
+
+        if (testProperties.useWebhookProxy && !globalAny.ctx.webhooksProxy) {
+            console.warn(`WebhookProxy is not available, skipping ${testName}`);
+            globalAny.ctx.skipSuiteTests = true;
+        }
+
+        const isJaasConfigured = process.env.JAAS_DOMAIN && process.env.JAAS_TENANT
+            && process.env.JAAS_PRIVATE_KEY_PATH && process.env.JAAS_KID;
+
+        if (testProperties.useJaas && !isJaasConfigured) {
+            console.warn(`JaaS is not configured, skipping ${testName}. `
+                + 'Set JAAS_DOMAIN, JAAS_TENANT, JAAS_KID, and JAAS_PRIVATE_KEY_PATH to enable.');
+            globalAny.ctx.skipSuiteTests = true;
         }
     },
 

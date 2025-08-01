@@ -77,8 +77,8 @@ describe('AVModeration', () => {
     });
 
     it('hangup and change moderator', async () => {
-        // no moderator switching if jaas is available
-        if (ctx.isJaasAvailable()) {
+        // no moderator switching if jaas is available.
+        if (ctx.iFrameUsesJaas) {
             return;
         }
 

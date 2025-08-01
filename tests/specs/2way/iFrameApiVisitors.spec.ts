@@ -1,4 +1,10 @@
+import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
+
+setTestProperties(__filename, {
+    useIFrameApi: true,
+    useWebhookProxy: true
+});
 
 describe('Visitors', () => {
     it('joining the meeting', async () => {
@@ -33,7 +39,7 @@ describe('Visitors', () => {
     it('visitor joins', async () => {
         await ensureTwoParticipants(ctx, {
             preferGenerateToken: true,
-            visitor: true,
+            tokenOptions: { visitor: true },
             skipInMeetingChecks: true
         });
 
@@ -72,7 +78,7 @@ describe('Visitors', () => {
                 eventType: string;
             } = await webhooksProxy.waitForEvent('PARTICIPANT_JOINED');
 
-            const jwtPayload = ctx.data[`${p2.name}-jwt-payload`];
+            const jwtPayload = p2.getToken()?.payload;
 
             expect('PARTICIPANT_JOINED').toBe(event.eventType);
             expect(event.data.avatar).toBe(jwtPayload.context.user.avatar);

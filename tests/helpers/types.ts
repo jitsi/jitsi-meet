@@ -1,12 +1,16 @@
 import { IConfig } from '../../react/features/base/config/configType';
 
 import type { Participant } from './Participant';
+import { ITestProperties } from './TestProperties';
 import type WebhookProxy from './WebhookProxy';
+import { ITokenOptions } from './token';
 
 export type IContext = {
     data: any;
-    iframeAPI: boolean;
-    isJaasAvailable: () => boolean;
+    /**
+     * Whether the configuration specifies a JaaS account for the iFrame API tests.
+     */
+    iFrameUsesJaas: boolean;
     jwtKid: string;
     jwtPrivateKeyPath: string;
     keepAlive: Array<any>;
@@ -16,6 +20,7 @@ export type IContext = {
     p4: Participant;
     roomName: string;
     skipSuiteTests: boolean;
+    testProperties: ITestProperties;
     times: any;
     webhooksProxy: WebhookProxy;
 };
@@ -36,11 +41,6 @@ export type IJoinOptions = {
      * The display name to use.
      */
     displayName?: string;
-
-    /**
-     * Whether to create a moderator token for joining.
-     */
-    moderator?: boolean;
 
     /**
      * When joining the first participant and jwt singing material is available and a provided token
@@ -70,7 +70,7 @@ export type IJoinOptions = {
     skipWaitToJoin?: boolean;
 
     /**
-     * Whether to create a visitor token for joining.
+     * Options used when generating a token.
      */
-    visitor?: boolean;
+    tokenOptions?: ITokenOptions;
 };
