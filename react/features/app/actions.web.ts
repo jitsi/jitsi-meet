@@ -1,31 +1,36 @@
 // @ts-expect-error
-import { API_ID } from '../../../modules/API';
-import { setRoom } from '../base/conference/actions';
-import {
-    configWillLoad,
-    setConfig
-} from '../base/config/actions';
-import { setLocationURL } from '../base/connection/actions.web';
-import { loadConfig } from '../base/lib-jitsi-meet/functions.web';
-import { inIframe } from '../base/util/iframeUtils';
-import { parseURIString } from '../base/util/uri';
-import { isVpaasMeeting } from '../jaas/functions';
-import { clearNotifications, showNotification } from '../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
-import { isWelcomePageEnabled } from '../welcome/functions';
+import { API_ID } from "../../../modules/API";
+import { setRoom } from "../base/conference/actions";
+import { configWillLoad, setConfig } from "../base/config/actions";
+import { setLocationURL } from "../base/connection/actions.web";
+import { loadConfig } from "../base/lib-jitsi-meet/functions.web";
+import { inIframe } from "../base/util/iframeUtils";
+import { parseURIString } from "../base/util/uri";
+import { isVpaasMeeting } from "../jaas/functions";
+import { clearNotifications, showNotification } from "../notifications/actions";
+import { NOTIFICATION_TIMEOUT_TYPE } from "../notifications/constants";
+import { SET_NEW_MEETING_PAGE_VISIBILITY } from "../prejoin/actionTypes";
+import { isWelcomePageEnabled } from "../welcome/functions";
 
 import {
     maybeRedirectToTokenAuthUrl,
     redirectToStaticPage,
     redirectWithStoredParams,
-    reloadWithStoredParams
-} from './actions.any';
-import { getDefaultURL, getName } from './functions.web';
-import logger from './logger';
-import { IStore } from './types';
+    reloadWithStoredParams,
+} from "./actions.any";
+import { getDefaultURL, getName } from "./functions.web";
+import logger from "./logger";
+import { IStore } from "./types";
 
-export * from './actions.any';
+export const SET_NEW_MEETING_VIEW = "SET_NEW_MEETING_VIEW";
 
+export function setNewMeetingView() {
+    return {
+        type: SET_NEW_MEETING_VIEW,
+    };
+}
+
+export * from "./actions.any";
 
 /**
  * Triggers an in-app navigation to a specific route. Allows navigation to be
@@ -37,8 +42,12 @@ export * from './actions.any';
  * @returns {Function}
  */
 export function appNavigate(uri?: string) {
-    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return async (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         let location = parseURIString(uri);
+
+        if (location?.pathname === "/new-meeting") {
+            dispatch({ type: SET_NEW_MEETING_PAGE_VISIBILITY, value: true });
+        }
 
         // If the specified location (URI) does not identify a host, use the app's
         // default.
@@ -51,8 +60,10 @@ export function appNavigate(uri?: string) {
                 // FIXME Turn location's host, hostname, and port properties into
                 // setters in order to reduce the risks of inconsistent state.
                 location.hostname = defaultLocation.hostname;
-                location.pathname
-                    = defaultLocation.pathname + location.pathname.substr(1);
+                location.pathname =
+                    defaultLocation.pathname === "/new-meeting"
+                        ? "/" + location.pathname.substr(1)
+                        : defaultLocation.pathname + location.pathname.substr(1);
                 location.port = defaultLocation.port;
                 location.protocol = defaultLocation.protocol;
             } else {
@@ -60,7 +71,7 @@ export function appNavigate(uri?: string) {
             }
         }
 
-        location.protocol || (location.protocol = 'https:');
+        location.protocol || (location.protocol = "https:");
 
         const { room } = location;
         const locationURL = new URL(location.toString());
@@ -92,12 +103,9 @@ export function appNavigate(uri?: string) {
  * @param {boolean} options.feedbackSubmitted - Whether feedback was submitted.
  * @returns {Function}
  */
-export function maybeRedirectToWelcomePage(options: { feedbackSubmitted?: boolean; showThankYou?: boolean; } = {}) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-
-        const {
-            enableClosePage
-        } = getState()['features/base/config'];
+export function maybeRedirectToWelcomePage(options: { feedbackSubmitted?: boolean; showThankYou?: boolean } = {}) {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
+        const { enableClosePage } = getState()["features/base/config"];
 
         // if close page is enabled redirect to it, without further action
         if (enableClosePage) {
@@ -106,32 +114,32 @@ export function maybeRedirectToWelcomePage(options: { feedbackSubmitted?: boolea
 
                 if (isOpenedInIframe) {
                     // @ts-ignore
-                    window.location = 'about:blank';
+                    window.location = "about:blank";
                 } else {
-                    dispatch(redirectToStaticPage('/'));
+                    dispatch(redirectToStaticPage("/"));
                 }
 
                 return;
             }
 
-            const { jwt } = getState()['features/base/jwt'];
+            const { jwt } = getState()["features/base/jwt"];
 
             let hashParam;
 
             // save whether current user is guest or not, and pass auth token,
             // before navigating to close page
-            window.sessionStorage.setItem('guest', (!jwt).toString());
-            window.sessionStorage.setItem('jwt', jwt ?? '');
+            window.sessionStorage.setItem("guest", (!jwt).toString());
+            window.sessionStorage.setItem("jwt", jwt ?? "");
 
-            let path = 'close.html';
+            let path = "close.html";
 
             if (interfaceConfig.SHOW_PROMOTIONAL_CLOSE_PAGE) {
                 if (Number(API_ID) === API_ID) {
                     hashParam = `#jitsi_meet_external_api_id=${API_ID}`;
                 }
-                path = 'close3.html';
+                path = "close3.html";
             } else if (!options.feedbackSubmitted) {
-                path = 'close2.html';
+                path = "close2.html";
             }
 
             dispatch(redirectToStaticPage(`static/${path}`, hashParam));
@@ -141,10 +149,15 @@ export function maybeRedirectToWelcomePage(options: { feedbackSubmitted?: boolea
 
         // else: show thankYou dialog only if there is no feedback
         if (options.showThankYou) {
-            dispatch(showNotification({
-                titleArguments: { appName: 'Internxt Meet' },
-                titleKey: 'dialog.thankYou'
-            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+            dispatch(
+                showNotification(
+                    {
+                        titleArguments: { appName: "Internxt Meet" },
+                        titleKey: "dialog.thankYou",
+                    },
+                    NOTIFICATION_TIMEOUT_TYPE.STICKY
+                )
+            );
         }
 
         // if Welcome page is enabled redirect to welcome page after 3 sec, if
@@ -152,9 +165,10 @@ export function maybeRedirectToWelcomePage(options: { feedbackSubmitted?: boolea
         if (isWelcomePageEnabled(getState())) {
             setTimeout(
                 () => {
-                    dispatch(redirectWithStoredParams('/'));
+                    dispatch(redirectWithStoredParams("/"));
                 },
-                options.showThankYou ? 3000 : 500);
+                options.showThankYou ? 3000 : 500
+            );
         }
     };
 }
@@ -166,10 +180,9 @@ export function maybeRedirectToWelcomePage(options: { feedbackSubmitted?: boolea
  * @returns {Function}
  */
 export function reloadNow() {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
-        const { locationURL } = state['features/base/connection'];
+        const { locationURL } = state["features/base/connection"];
 
         const reloadAction = () => {
             logger.info(`Reloading the conference using URL: ${locationURL}`);

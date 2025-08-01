@@ -677,6 +677,84 @@
             "login": "Iniciar sesión",
             "signUp": "Registrarse"
         },
+        "landing": {
+            "title": {
+                "line1": "Videollamadas privadas",
+                "line2": "y reuniones",
+                "line3": "para todos"
+            },
+            "subtitle": "Videollamadas cifradas directamente desde tu navegador. Sin rastreo. Privacidad total.",
+            "scheduleMeeting": "Programar reunión",
+            "loginRequired": "Primero necesitas iniciar sesión"
+        },
+        "auth": {
+            "modal": {
+                "title": "Nueva reunión",
+                "loginTitle": "Iniciar sesión",
+                "decrypting": "Descifrando...",
+                "emailPlaceholder": "Dirección de correo",
+                "passwordPlaceholder": "Contraseña",
+                "twoFactorCodePlaceholder": "Código de autenticación de dos factores",
+                "loginButton": "Iniciar sesión",
+                "forgotPassword": "Olvidé mi contraseña",
+                "noAccount": "¿No tienes una cuenta?",
+                "createAccount": "Crear cuenta",
+                "error": {
+                    "emailEmpty": "El correo no puede estar vacío",
+                    "emailInvalid": "Por favor, introduce un correo válido",
+                    "passwordEmpty": "La contraseña no puede estar vacía",
+                    "twoFactorCodeLength": "El código debe tener 6 dígitos",
+                    "twoFactorCodeInvalid": "Introduce un código válido de 6 dígitos",
+                    "invalidCredentials": "Credenciales inválidas. Por favor, inténtalo de nuevo.",
+                    "cannotCreateMeetings": "El usuario no puede crear reuniones",
+                    "genericError": "No se pudo iniciar sesión. Por favor, inténtelo de nuevo o contacte a soporte si el problema persiste"
+                },
+                "signup": {
+                    "title": "Regístrate",
+                    "createAccountTitle": "Crear cuenta",
+                    "creatingAccount": "Creando cuenta...",
+                    "signupButton": "Crear cuenta",
+                    "fullNamePlaceholder": "Nombre completo",
+                    "newPasswordPlaceholder": "Nueva contraseña",
+                    "confirmPasswordPlaceholder": "Confirmar contraseña",
+                    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+                    "loginLink": "Iniciar sesión",
+                    "termsNotice": "Al crear una cuenta,",
+                    "terms": "aceptas nuestros Términos y Condiciones",
+                    "info": {
+                        "normalText": "Internxt no almacena contraseñas.",
+                        "boldText": "Si olvidas tu contraseña, puedes descargar una clave de respaldo para recuperar el acceso a tus archivos.",
+                        "cta": "Más información"
+                    },
+                    "password": {
+                        "weak": "Contraseña débil",
+                        "strong": "Contraseña fuerte",
+                        "notComplex": "La contraseña no es lo suficientemente compleja",
+                        "tooShort": "La contraseña debe tener al menos 8 caracteres",
+                        "tooLong": "La contraseña es demasiado larga"
+                    },
+                    "error": {
+                        "fullNameEmpty": "El nombre no puede estar vacío",
+                        "passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
+                        "passwordsDoNotMatch": "Las contraseñas no coinciden",
+                        "signupFailed": "No se pudo crear la cuenta. Por favor, inténtalo de nuevo o contacta a soporte.",
+                        "missingFields": "Por favor, completa todos los campos requeridos"
+                    }
+                }
+            }
+        },
+        "modals": {
+            "schedule": {
+                "title": "Programar reunión",
+                "subtitle": "Aquí está el enlace a tu reunión.",
+                "description": "Envía esto a las personas que quieres que se unan a tu llamada. Guarda este enlace para que puedas usarlo más tarde también.",
+                "linkLabel": "Enlace seguro",
+                "cancelButton": "Cancelar",
+                "copyButton": "Copiar",
+                "copiedButton": "¡Copiado!",
+                "joinNow": "Unirse ahora"
+            }
+        },
         "meeting": {
             "button": {
                 "gallery": "Galería",
@@ -697,7 +775,9 @@
             "joinMeeting": "Unirse a la reunión",
             "nameRequired": "Se requiere un nombre",
             "newMeeting": "Nueva reunión",
-            "participants": "Participantes"
+            "participants": "Participantes",
+            "upToParticipants": "Hasta {{num}} participantes",
+            "upgrade": "Actualizar"
         },
         "joinRoomErrorDialog": {
             "joinRoomError": "No se pudo unir a la reunión",
@@ -713,8 +793,14 @@
         "invite": {
             "invitePeople": "Invitar personas",
             "copyLink": "Copiar enlace",
+            "copied": "Copiado!",
             "meetingFull": "La reunión está llena",
             "participants": "participantes"
+        },
+        "settings": {
+            "video": {
+                "videoInput": "Entrada de vídeo"
+            }
         }
     },
     "notify": {
@@ -1417,7 +1503,7 @@
         "grantModerator": "Convertir en moderador",
         "hideSelfView": "Esconder vista propia",
         "kick": "Expulsar",
-        "mirrorVideo": "Espejar mi video",
+        "mirrorVideo": "Espejar mi vídeo",
         "moderator": "Moderador",
         "mute": "Se silenció el participante",
         "muted": "Silenciado",

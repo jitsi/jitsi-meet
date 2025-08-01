@@ -1,10 +1,12 @@
 import React from "react";
 import Video from "../../../../media/components/web/Video";
+import clsx from "clsx";
 
 interface VideoPreviewProps {
     videoTrack: any;
     isAudioMuted: boolean;
     videoMuted: boolean;
+    flipX?: boolean;
 }
 
 const AudioMutedIndicator = () => (
@@ -13,7 +15,11 @@ const AudioMutedIndicator = () => (
     </div>
 );
 
-const VideoPreview: React.FC<{ videoTrack: any; isAudioMuted?: boolean }> = ({ videoTrack, isAudioMuted }) => (
+const VideoPreview: React.FC<{ videoTrack: any; isAudioMuted?: boolean; flipX?: boolean }> = ({
+    videoTrack,
+    isAudioMuted,
+    flipX,
+}) => (
     <div className="relative w-[264px] h-[147px] rounded-[20px]">
         {/*  // to remove when finish this view
         // <Preview
@@ -22,7 +28,7 @@ const VideoPreview: React.FC<{ videoTrack: any; isAudioMuted?: boolean }> = ({ v
         //     className="w-[264px] h-[147px] rounded-[20px]"
         // /> */}
         <Video
-            className="w-[264px] h-[147px] rounded-[20px]"
+            className={clsx("w-[264px] h-[147px] rounded-[20px]", flipX && "scale-x-[-1]")}
             id="prejoinVideo"
             videoTrack={{ jitsiTrack: videoTrack }}
         />
@@ -36,12 +42,11 @@ const NoVideoPreview = () => (
     </div>
 );
 
-const VideoPreviewSection = React.memo(({ videoTrack, isAudioMuted, videoMuted }: VideoPreviewProps) => {
+const VideoPreviewSection = React.memo(({ videoTrack, isAudioMuted, videoMuted, flipX }: VideoPreviewProps) => {
     if (!videoTrack || videoMuted) {
         return <NoVideoPreview />;
     }
-    return <VideoPreview videoTrack={videoTrack} isAudioMuted={isAudioMuted} />;
+    return <VideoPreview videoTrack={videoTrack} isAudioMuted={isAudioMuted} flipX={flipX} />;
 });
 
-
-export default VideoPreviewSection
+export default VideoPreviewSection;
