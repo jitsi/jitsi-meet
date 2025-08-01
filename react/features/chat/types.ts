@@ -63,11 +63,6 @@ export interface IChatMessageProps extends WithTranslation {
     message: IMessage;
 
     /**
-     * Whether the chat message menu is visible or not.
-     */
-    shouldDisplayChatMessageMenu?: boolean;
-
-    /**
      * Whether or not the avatar image of the participant which sent the message
      * should be displayed.
      */

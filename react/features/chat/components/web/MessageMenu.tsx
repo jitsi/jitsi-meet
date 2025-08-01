@@ -16,11 +16,11 @@ import { handleLobbyChatInitialized, openChat } from '../../actions.web';
 export interface IProps {
     className?: string;
     displayName?: string;
+    enablePrivateChat: boolean;
     isFromVisitor?: boolean;
     isLobbyMessage: boolean;
     message: string;
     participantId: string;
-    shouldDisplayChatMessageMenu: boolean;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -60,7 +60,7 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, shouldDisplayChatMessageMenu, displayName }: IProps) => {
+const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, enablePrivateChat, displayName }: IProps) => {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
@@ -130,7 +130,7 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, sh
 
     const popoverContent = (
         <div className = { classes.menuPanel }>
-            {shouldDisplayChatMessageMenu && (
+            {enablePrivateChat && (
                 <div
                     className = { classes.menuItem }
                     onClick = { handlePrivateClick }>
