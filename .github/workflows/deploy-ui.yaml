@@ -29,89 +29,143 @@ jobs:
         echo "instance-id=$INSTANCE_ID" >> $GITHUB_OUTPUT
         echo "Found instance ID: $INSTANCE_ID"
 
-    - name: Deploy Jitsi Meet
+    - name: Clean existing directory
       run: |
-        aws ssm send-command \
+        COMMAND_ID=$(aws ssm send-command \
           --instance-ids ${{ steps.get-instance-id.outputs.instance-id }} \
           --document-name "AWS-RunShellScript" \
           --parameters 'commands=[
-            "set -e",
-            "echo \"Starting Jitsi Meet deployment...\"",
+            "echo \"=== Cleaning existing jitsi-meet-build directory ===\"",
             "sudo rm -rf /opt/jitsi-meet-build",
-            "echo \"Removed existing jitsi-meet-build directory\"",
-            "cd /opt",
-            "sudo git clone git@github.com:heyjoe-io/jitsi-meet.git jitsi-meet-build",
-            "echo \"Cloned repository to jitsi-meet-build\"",
-            "sudo chown -R $(whoami):$(whoami) /opt/jitsi-meet-build",
-            "echo \"Updated permissions\"",
-            "sudo /usr/local/bin/update-jitsi-ui.sh",
-            "echo \"Deployment completed successfully!\""
+            "echo \"✅ Removed existing jitsi-meet-build directory\""
           ]' \
-          --comment "Deploy Jitsi Meet from GitHub Actions" \
-          --timeout-seconds 300
-
-    - name: Wait for command completion and get results
-      run: |
-        sleep 5  # Brief wait for command to start
-        
-        # Get the command ID from the most recent command
-        COMMAND_ID=$(aws ssm list-commands \
-          --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
-          --max-items 1 \
-          --query "Commands[0].CommandId" \
+          --timeout-seconds 60 \
+          --query "Command.CommandId" \
           --output text)
         
-        echo "Command ID: $COMMAND_ID"
-        echo "Monitoring command execution..."
-        
-        # Wait for completion with minimal polling
-        for i in {1..60}; do
+        # Wait for completion
+        sleep 5
+        for i in {1..12}; do
           STATUS=$(aws ssm get-command-invocation \
             --command-id $COMMAND_ID \
             --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
             --query "Status" \
             --output text 2>/dev/null || echo "InProgress")
           
-          if [ "$STATUS" = "Success" ] || [ "$STATUS" = "Failed" ] || [ "$STATUS" = "Cancelled" ] || [ "$STATUS" = "TimedOut" ]; then
-            echo "Command completed with status: $STATUS"
-            break
-          fi
-          
-          # Only show status every 30 seconds instead of every 10
-          if [ $((i % 3)) -eq 0 ]; then
-            echo "Still running... (${i}0 seconds elapsed)"
-          fi
-          
-          sleep 10
+          if [ "$STATUS" != "InProgress" ]; then break; fi
+          sleep 5
         done
         
-        # Always show the output regardless of status
-        echo ""
-        echo "==================== COMMAND OUTPUT ===================="
-        
-        STDOUT=$(aws ssm get-command-invocation \
+        # Show output
+        aws ssm get-command-invocation \
           --command-id $COMMAND_ID \
           --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
           --query "StandardOutputContent" \
-          --output text 2>/dev/null || echo "No stdout available")
+          --output text
+        
+        if [ "$STATUS" != "Success" ]; then
+          echo "❌ Clean step failed"
+          aws ssm get-command-invocation \
+            --command-id $COMMAND_ID \
+            --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
+            --query "StandardErrorContent" \
+            --output text
+          exit 1
+        fi
+
+    - name: Clone repository
+      run: |
+        COMMAND_ID=$(aws ssm send-command \
+          --instance-ids ${{ steps.get-instance-id.outputs.instance-id }} \
+          --document-name "AWS-RunShellScript" \
+          --parameters 'commands=[
+            "echo \"=== Cloning jitsi-meet repository ===\"",
+            "cd /opt",
+            "sudo git clone git@github.com:heyjoe-io/jitsi-meet.git jitsi-meet-build",
+            "echo \"✅ Repository cloned successfully\"",
+            "sudo chown -R $(whoami):$(whoami) /opt/jitsi-meet-build",
+            "echo \"✅ Permissions updated\""
+          ]' \
+          --timeout-seconds 180 \
+          --query "Command.CommandId" \
+          --output text)
+        
+        # Wait for completion
+        sleep 5
+        for i in {1..36}; do
+          STATUS=$(aws ssm get-command-invocation \
+            --command-id $COMMAND_ID \
+            --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
+            --query "Status" \
+            --output text 2>/dev/null || echo "InProgress")
           
-        STDERR=$(aws ssm get-command-invocation \
+          if [ "$STATUS" != "InProgress" ]; then break; fi
+          if [ $((i % 6)) -eq 0 ]; then echo "Cloning... (${i}0 seconds elapsed)"; fi
+          sleep 5
+        done
+        
+        # Show output
+        aws ssm get-command-invocation \
           --command-id $COMMAND_ID \
           --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
-          --query "StandardErrorContent" \
-          --output text 2>/dev/null || echo "No stderr available")
+          --query "StandardOutputContent" \
+          --output text
         
-        echo "STDOUT:"
-        echo "$STDOUT"
-        echo ""
-        echo "STDERR:"
-        echo "$STDERR"
-        echo "========================================================="
-        
-        # Fail the workflow if command failed
         if [ "$STATUS" != "Success" ]; then
-          echo "❌ Command failed with status: $STATUS"
+          echo "❌ Clone step failed"
+          aws ssm get-command-invocation \
+            --command-id $COMMAND_ID \
+            --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
+            --query "StandardErrorContent" \
+            --output text
+          exit 1
+        fi
+
+    - name: Run update script
+      run: |
+        COMMAND_ID=$(aws ssm send-command \
+          --instance-ids ${{ steps.get-instance-id.outputs.instance-id }} \
+          --document-name "AWS-RunShellScript" \
+          --parameters 'commands=[
+            "echo \"=== Running Jitsi UI update script ===\"",
+            "sudo /usr/local/bin/update-jitsi-ui.sh",
+            "echo \"✅ Update script completed successfully!\""
+          ]' \
+          --timeout-seconds 600 \
+          --query "Command.CommandId" \
+          --output text)
+        
+        # Wait for completion with more frequent updates
+        sleep 5
+        for i in {1..120}; do
+          STATUS=$(aws ssm get-command-invocation \
+            --command-id $COMMAND_ID \
+            --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
+            --query "Status" \
+            --output text 2>/dev/null || echo "InProgress")
+          
+          if [ "$STATUS" != "InProgress" ]; then break; fi
+          if [ $((i % 12)) -eq 0 ]; then echo "Running update script... (${i}0 seconds elapsed)"; fi
+          sleep 5
+        done
+        
+        # Show output
+        echo "==================== UPDATE SCRIPT OUTPUT ===================="
+        aws ssm get-command-invocation \
+          --command-id $COMMAND_ID \
+          --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
+          --query "StandardOutputContent" \
+          --output text
+        
+        if [ "$STATUS" != "Success" ]; then
+          echo "❌ Update script failed"
+          echo "==================== ERROR OUTPUT ===================="
+          aws ssm get-command-invocation \
+            --command-id $COMMAND_ID \
+            --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
+            --query "StandardErrorContent" \
+            --output text
           exit 1
         else
-          echo "✅ Command completed successfully!"
+          echo "✅ Deployment completed successfully!"
         fi
