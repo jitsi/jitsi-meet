@@ -14,7 +14,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOL
 
 # Create the shared library
 add_library(hermes_sandbox_shared STATIC
-    hermes_sandbox_core.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../shared/hermes-sandbox/hermes_sandbox_core.cpp)
 
 # Include directories for React Native and Hermes headers
 target_include_directories(hermes_sandbox_shared PUBLIC
