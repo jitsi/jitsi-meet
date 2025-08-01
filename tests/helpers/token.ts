@@ -10,9 +10,14 @@ export type ITokenOptions = {
     exp?: string;
     /**
      * The key ID to use for the token.
-     * If not provided, the default key ID from the config will be used.
+     * If not provided, JWT_KID will be used from the environment variables.
      */
     keyId?: string;
+    /**
+     * The path to the private key file used to sign the token.
+     * If not provided, JWT_PRIVATE_KEY_PATH will be used from the environment variables.
+     */
+    keyPath?: string;
     /**
      * Whether to set the 'moderator' flag.
      */
@@ -87,22 +92,23 @@ export function generatePayload(options: ITokenOptions): any {
  */
 export function generateToken(options: ITokenOptions): IToken {
     const keyId = options.keyId || process.env.JWT_KID;
+    const keyPath = options.keyPath || process.env.JWT_PRIVATE_KEY_PATH;
     const headers = {
         algorithm: 'RS256',
         noTimestamp: true,
         expiresIn: options.exp || '24h',
-        keyId
+        keyid: keyId,
     };
 
     if (!keyId) {
         throw new Error('JWT_KID is not set');
     }
 
-    if (!process.env.JWT_PRIVATE_KEY_PATH) {
+    if (!keyPath) {
         throw new Error('JWT_PRIVATE_KEY_PATH is not set');
     }
 
-    const key = fs.readFileSync(process.env.JWT_PRIVATE_KEY_PATH);
+    const key = fs.readFileSync(keyPath);
     const payload = generatePayload({
         ...options,
         displayName: options?.displayName || '',

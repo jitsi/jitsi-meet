@@ -1,6 +1,5 @@
 import { setTestProperties } from '../../helpers/TestProperties';
-import { generateToken as t } from '../../helpers/token';
-import { joinMuc } from '../helpers/jaas';
+import { joinMuc, generateJaasToken as t } from '../helpers/jaas';
 
 setTestProperties(__filename, {
     useJaas: true
@@ -22,7 +21,8 @@ describe('XMPP login and MUC join test', () => {
     });
 
     it('with a token with bad signature', async () => {
-        let token = t({ room: ctx.roomName });
+        const token = t({ room: ctx.roomName });
+
         token.jwt = token.jwt + 'badSignature';
 
         const p = await joinMuc(ctx.roomName, 'p1', token);

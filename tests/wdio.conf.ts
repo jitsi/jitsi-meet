@@ -252,8 +252,9 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }
 
         const isJaasConfigured = process.env.JAAS_DOMAIN && process.env.JAAS_TENANT
-            && process.env.JAAS_PRIVATE_KEY_PATH && process.env.JAAS_KID
-        if (testProperties.useJaas && isJaasConfigured) {
+            && process.env.JAAS_PRIVATE_KEY_PATH && process.env.JAAS_KID;
+
+        if (testProperties.useJaas && !isJaasConfigured) {
             console.warn(`JaaS is not configured, skipping ${testName}. `
                 + 'Set JAAS_DOMAIN, JAAS_TENANT, JAAS_KID, and JAAS_PRIVATE_KEY_PATH to enable.');
             globalAny.ctx.skipSuiteTests = true;
