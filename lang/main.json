@@ -1168,6 +1168,7 @@
         "devices": "Devices",
         "followMe": "Everyone follows me",
         "followMeRecorder": "Recorder follows me",
+        "followMeOff": "Follow me off",
         "framesPerSecond": "frames-per-second",
         "incomingMessage": "Incoming message",
         "language": "Language",

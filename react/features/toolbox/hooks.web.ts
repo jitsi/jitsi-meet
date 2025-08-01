@@ -44,6 +44,7 @@ import { startScreenShareFlow } from '../screen-share/actions.web';
 import ShareAudioButton from '../screen-share/components/web/ShareAudioButton';
 import { isScreenAudioSupported, isScreenVideoShared } from '../screen-share/functions';
 import { useSecurityDialogButton } from '../security/hooks.web';
+import FollowMeContainerButton from '../settings/components/web/FollowMeContainerButtons';
 import SettingsButton from '../settings/components/web/SettingsButton';
 import { useSharedVideoButton } from '../shared-video/hooks';
 import SpeakerStats from '../speaker-stats/components/web/SpeakerStats';
@@ -71,7 +72,6 @@ import ToggleCameraButton from './components/web/ToggleCameraButton';
 import VideoSettingsButton from './components/web/VideoSettingsButton';
 import { isButtonEnabled, isDesktopShareButtonDisabled } from './functions.web';
 import { ICustomToolbarButton, IToolboxButton, ToolbarButton } from './types';
-
 
 const microphone = {
     key: 'microphone',
@@ -109,6 +109,12 @@ const desktop = {
 const raisehand = {
     key: 'raisehand',
     Content: RaiseHandContainerButton,
+    group: 2
+};
+
+const followme = {
+    key: 'followme',
+    Content: FollowMeContainerButton,
     group: 2
 };
 
@@ -300,6 +306,7 @@ export function useToolboxButtons(
         desktop: desktopSharing,
         chat,
         raisehand,
+        followme,
         reactions,
         'participants-pane': participants,
         invite,
