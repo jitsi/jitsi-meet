@@ -9,6 +9,7 @@ import { getParticipantById, getParticipantDisplayName, isPrivateChatEnabled } f
 import Popover from '../../../base/popover/components/Popover.web';
 import Message from '../../../base/react/components/web/Message';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import { MESSAGE_TYPE_LOCAL } from '../../constants';
 import { getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
 
@@ -16,9 +17,10 @@ import MessageMenu from './MessageMenu';
 import ReactButton from './ReactButton';
 
 interface IProps extends IChatMessageProps {
-    shouldDisplayChatMessageMenu: boolean;
+    className?: string;
+    enablePrivateChat?: boolean;
+    shouldDisplayMenuOnRight?: boolean;
     state?: IReduxState;
-    type: string;
 }
 
 const useStyles = makeStyles()((theme: Theme) => {
@@ -190,11 +192,12 @@ const useStyles = makeStyles()((theme: Theme) => {
 });
 
 const ChatMessage = ({
+    className = '',
     message,
     state,
     showDisplayName,
-    type,
-    shouldDisplayChatMessageMenu,
+    shouldDisplayMenuOnRight,
+    enablePrivateChat,
     knocking,
     t
 }: IProps) => {
@@ -331,28 +334,28 @@ const ChatMessage = ({
 
     return (
         <div
-            className = { cx(classes.chatMessageWrapper, type) }
+            className = { cx(classes.chatMessageWrapper, className) }
             id = { message.messageId }
             onMouseEnter = { handleMouseEnter }
             onMouseLeave = { handleMouseLeave }
             tabIndex = { -1 }>
             <div className = { classes.sideBySideContainer }>
-                {!shouldDisplayChatMessageMenu && (
+                {!shouldDisplayMenuOnRight && (
                     <div className = { classes.optionsButtonContainer }>
                         {isHovered && <MessageMenu
                             displayName = { message.displayName }
+                            enablePrivateChat = { Boolean(enablePrivateChat) }
                             isFromVisitor = { message.isFromVisitor }
                             isLobbyMessage = { message.lobbyChat }
                             message = { message.message }
-                            participantId = { message.participantId }
-                            shouldDisplayChatMessageMenu = { shouldDisplayChatMessageMenu } />}
+                            participantId = { message.participantId } />}
                     </div>
                 )}
                 <div
                     className = { cx(
                         'chatmessage',
                         classes.chatMessage,
-                        type,
+                        className,
                         message.privateMessage && 'privatemessage',
                         message.lobbyChat && !knocking && 'lobbymessage'
                     ) }>
@@ -383,7 +386,7 @@ const ChatMessage = ({
                         </div>
                     </div>
                 </div>
-                {shouldDisplayChatMessageMenu && (
+                {shouldDisplayMenuOnRight && (
                     <div className = { classes.sideBySideContainer }>
                         {!message.privateMessage && !message.lobbyChat && <div>
                             <div className = { classes.optionsButtonContainer }>
@@ -396,11 +399,11 @@ const ChatMessage = ({
                             <div className = { classes.optionsButtonContainer }>
                                 {isHovered && <MessageMenu
                                     displayName = { message.displayName }
+                                    enablePrivateChat = { Boolean(enablePrivateChat) }
                                     isFromVisitor = { message.isFromVisitor }
                                     isLobbyMessage = { message.lobbyChat }
                                     message = { message.message }
-                                    participantId = { message.participantId }
-                                    shouldDisplayChatMessageMenu = { shouldDisplayChatMessageMenu } />}
+                                    participantId = { message.participantId } />}
                             </div>
                         </div>
                     </div>
@@ -430,8 +433,13 @@ function _mapStateToProps(state: IReduxState, { message }: IProps) {
     const enablePrivateChat = (!message.isFromVisitor || message.privateMessage)
         && isPrivateChatEnabled(participantForCheck, state);
 
+    // Only the local messages appear on the right side of the chat therefore only for them the menu has to be on the
+    // left side.
+    const shouldDisplayMenuOnRight = message.messageType !== MESSAGE_TYPE_LOCAL;
+
     return {
-        shouldDisplayChatMessageMenu: enablePrivateChat,
+        shouldDisplayMenuOnRight,
+        enablePrivateChat,
         knocking,
         state
     };
