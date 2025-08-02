@@ -57,7 +57,7 @@ var config = {
 
     // Websocket URL (XMPP)
     websocket: 'wss://' + meetdomain + '/' + subdir + 'xmpp-websocket',
-    websocketKeepAlive: 0, // 0 = disabled. NOTE: There is an issue with the keep alive
+    websocketKeepAlive: 10000,
     websocketKeepAliveUrl: 'https://' + meetdomain + '/' + subdir + '_unlock',
 
     // Whether BOSH should be preferred over WebSocket if both are configured.
@@ -336,7 +336,7 @@ var config = {
 
     // How many participants while in the tile view mode, before the receiving video quality is reduced from HD to SD.
     // Use -1 to disable.
-    maxFullResolutionParticipants: 3,
+    maxFullResolutionParticipants: 8,
 
     // w3c spec-compliant video constraints to use for video capture. Currently
     // used by browsers that return true from lib-jitsi-meet's
