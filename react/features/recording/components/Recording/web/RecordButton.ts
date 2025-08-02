@@ -1,26 +1,15 @@
 import { connect } from 'react-redux';
 
-import { IReduxState, IStore } from '../../../../app/types';
+import { IReduxState } from '../../../../app/types';
 import { openDialog } from '../../../../base/dialog/actions';
 import { translate } from '../../../../base/i18n/functions';
-import { startLocalVideoRecording } from '../../../actions.any';
 import AbstractRecordButton, {
-    IProps as AbstractProps,
+    IProps,
     _mapStateToProps as _abstractMapStateToProps
 } from '../AbstractRecordButton';
 
+import StartRecordingDialog from './StartRecordingDialog';
 import StopRecordingDialog from './StopRecordingDialog';
-
-/**
- * The type of the React {@code Component} props of {@link RecordingButton}.
- */
-interface IProps extends AbstractProps {
-
-    /**
-     * Redux dispatch function.
-     */
-    dispatch: IStore['dispatch'];
-}
 
 
 /**
@@ -35,30 +24,12 @@ class RecordingButton extends AbstractRecordButton<IProps> {
      * @protected
      * @returns {void}
      */
-    override _onHandleClick() {
+    _onHandleClick() {
         const { _isRecordingRunning, dispatch } = this.props;
 
-        if (_isRecordingRunning) {
-            // If recording is running, show stop dialog
-            dispatch(openDialog(StopRecordingDialog));
-        } else {
-            // Start recording directly without dialog
-            this._startRecording();
-        }
-    }
-
-    /**
-     * Starts recording directly with default settings.
-     *
-     * @private
-     * @returns {void}
-     */
-    _startRecording() {
-        const { dispatch } = this.props;
-
-        // Use local video recording as a simpler alternative
-        // This avoids complex conference state management
-        dispatch(startLocalVideoRecording(false));
+        dispatch(openDialog(
+            _isRecordingRunning ? StopRecordingDialog : StartRecordingDialog
+        ));
     }
 }
 

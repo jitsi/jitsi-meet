@@ -14,7 +14,6 @@ import { getLocalParticipant, hasRaisedHand } from '../base/participants/functio
 import { isToggleCameraEnabled } from '../base/tracks/functions.web';
 import { toggleChat } from '../chat/actions.web';
 import ChatButton from '../chat/components/web/ChatButton';
-import SpeakerButton from './components/SpeakerButton';
 import { useEmbedButton } from '../embed-meeting/hooks';
 import { useEtherpadButton } from '../etherpad/hooks';
 import { useFeedbackButton } from '../feedback/hooks.web';
@@ -39,7 +38,8 @@ import RaiseHandContainerButton from '../reactions/components/web/RaiseHandConta
 import { REACTIONS } from '../reactions/constants';
 import { shouldDisplayReactionsButtons } from '../reactions/functions.any';
 import { useReactionsButton } from '../reactions/hooks.web';
-import { useLiveStreamingButton, useRecordingButton } from '../recording/hooks.web';
+import RecordButton from '../recording/components/Recording/web/RecordButton';
+import { useLiveStreamingButton } from '../recording/hooks.web';
 import { isSalesforceEnabled } from '../salesforce/functions';
 import { startScreenShareFlow } from '../screen-share/actions.web';
 import ShareAudioButton from '../screen-share/components/web/ShareAudioButton';
@@ -63,6 +63,7 @@ import { useWhiteboardButton } from '../whiteboard/hooks';
 import { setFullScreen } from './actions.web';
 import DownloadButton from './components/DownloadButton';
 import HelpButton from './components/HelpButton';
+import SpeakerButton from './components/SpeakerButton';
 import AudioSettingsButton from './components/web/AudioSettingsButton';
 import CustomOptionButton from './components/web/CustomOptionButton';
 import FullscreenButton from './components/web/FullscreenButton';
@@ -185,6 +186,12 @@ const help = {
     group: 4
 };
 
+const recording = {
+    key: 'recording',
+    Content: RecordButton,
+    group: 4
+};
+
 /**
  * A hook that returns the toggle camera button if it is enabled and undefined otherwise.
  *
@@ -291,7 +298,7 @@ export function useToolboxButtons(
     const participants = useParticipantPaneButton();
     const tileview = useTileViewButton();
     const cc = useClosedCaptionButton();
-    const recording = useRecordingButton();
+    // const recording = useRecordingButton();
     const liveStreaming = useLiveStreamingButton();
     const linktosalesforce = useLinkToSalesforceButton();
     const shareaudio = getShareAudioButton();
