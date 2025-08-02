@@ -1,9 +1,10 @@
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../../app/types';
+import { IJitsiConference } from '../../../../base/conference/reducer';
 import { openDialog } from '../../../../base/dialog/actions';
 import { translate } from '../../../../base/i18n/functions';
-import { startLocalVideoRecording } from '../../../actions.any';
+import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import AbstractRecordButton, {
     IProps as AbstractProps,
     _mapStateToProps as _abstractMapStateToProps
@@ -15,6 +16,11 @@ import StopRecordingDialog from './StopRecordingDialog';
  * The type of the React {@code Component} props of {@link RecordingButton}.
  */
 interface IProps extends AbstractProps {
+
+    /**
+     * The {@code JitsiConference} for the current conference.
+     */
+    _conference?: IJitsiConference;
 
     /**
      * Redux dispatch function.
@@ -48,17 +54,27 @@ class RecordingButton extends AbstractRecordButton<IProps> {
     }
 
     /**
-     * Starts recording directly with default settings.
+     * Starts recording directly with default settings using Jibri.
      *
      * @private
      * @returns {void}
      */
     _startRecording() {
-        const { dispatch } = this.props;
+        const { _conference } = this.props;
 
-        // Use local video recording as a simpler alternative
-        // This avoids complex conference state management
-        dispatch(startLocalVideoRecording(false));
+        if (_conference) {
+            // Start Jibri recording with file recording metadata
+            const appData = JSON.stringify({
+                'file_recording_metadata': {
+                    'share': false // You can set this to true if you want sharing enabled by default
+                }
+            });
+
+            _conference.startRecording({
+                mode: JitsiRecordingConstants.mode.FILE,
+                appData
+            });
+        }
     }
 }
 
@@ -69,6 +85,7 @@ class RecordingButton extends AbstractRecordButton<IProps> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
+ *     _conference: IJitsiConference,
  *     _fileRecordingsDisabledTooltipKey: ?string,
  *     _isRecordingRunning: boolean,
  *     _disabled: boolean,
@@ -82,6 +99,7 @@ export function _mapStateToProps(state: IReduxState) {
 
     return {
         ...abstractProps,
+        _conference: state['features/base/conference'].conference,
         visible
     };
 }
