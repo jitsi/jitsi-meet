@@ -30,7 +30,7 @@ var config = {
 
     hosts: {
         // XMPP domain.
-        domain: 'jitsi-meet.example.com',
+        domain: 'jitsi.heyjoe.io',
 
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
@@ -415,21 +415,21 @@ var config = {
     //    // consentLearnMoreLink: 'https://jitsi.org/meet/consent',
     // },
 
-    // recordingService: {
-    //     // When integrations like dropbox are enabled only that will be shown,
-    //     // by enabling fileRecordingsServiceEnabled, we show both the integrations
-    //     // and the generic recording service (its configuration and storage type
-    //     // depends on jibri configuration)
-    //     enabled: false,
+    recordingService: {
+        // When integrations like dropbox are enabled only that will be shown,
+        // by enabling fileRecordingsServiceEnabled, we show both the integrations
+        // and the generic recording service (its configuration and storage type
+        // depends on jibri configuration)
+        enabled: true,
 
-    //     // Whether to show the possibility to share file recording with other people
-    //     // (e.g. meeting participants), based on the actual implementation
-    //     // on the backend.
-    //     sharingEnabled: false,
+        // Whether to show the possibility to share file recording with other people
+        // (e.g. meeting participants), based on the actual implementation
+        // on the backend.
+        sharingEnabled: false,
 
-    //     // Hide the warning that says we only store the recording for 24 hours.
-    //     hideStorageWarning: false,
-    // },
+        // Hide the warning that says we only store the recording for 24 hours.
+        hideStorageWarning: false,
+    },
 
     // DEPRECATED. Use recordingService.enabled instead.
     // fileRecordingsServiceEnabled: false,
@@ -1375,76 +1375,76 @@ var config = {
      If there is no url set or there are missing fields, the defaults are applied.
      The config file should be in JSON.
      None of the fields are mandatory and the response must have the shape:
-    {
-        // Whether participant can only send group chat message if `send-groupchat` feature is enabled in jwt.
-        groupChatRequiresPermission: false,
-        // Whether participant can only create polls if `create-polls` feature is enabled in jwt.
-        pollCreationRequiresPermission: false,
-        // The domain url to apply (will replace the domain in the sharing conference link/embed section)
-        inviteDomain: 'example-company.org',
-        // The hex value for the colour used as background
-        backgroundColor: '#fff',
-        // The url for the image used as background
-        backgroundImageUrl: 'https://example.com/background-img.png',
-        // The anchor url used when clicking the logo image
-        logoClickUrl: 'https://example-company.org',
-        // The url used for the image used as logo
-        logoImageUrl: 'https://example.com/logo-img.png',
-        // Endpoint that enables support for salesforce integration with in-meeting resource linking
-        // This is required for:
-        // listing the most recent records - salesforceUrl/records/recents
-        // searching records - salesforceUrl/records?text=${text}
-        // retrieving record details - salesforceUrl/records/${id}?type=${type}
-        // and linking the meeting - salesforceUrl/sessions/${sessionId}/records/${id}
-        // salesforceUrl: 'https://api.example.com/',
-        // Overwrite for pool of background images for avatars
-        avatarBackgrounds: ['url(https://example.com/avatar-background-1.png)', '#FFF'],
-        // The lobby/prejoin screen background
-        premeetingBackground: 'url(https://example.com/premeeting-background.png)',
-        // A list of images that can be used as video backgrounds.
-        // When this field is present, the default images will be replaced with those provided.
-        virtualBackgrounds: ['https://example.com/img.jpg'],
-        // Object containing customized icons that should replace the default ones.
-        // The keys need to be the exact same icon names used in here:
-        // https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/icons/svg/index.ts
-        // To avoid having the icons trimmed or displayed in an unexpected way, please provide svg
-        // files containing svg xml icons in the size that the default icons come in.
-        customIcons: {
-            IconArrowUp: 'https://example.com/arrow-up.svg',
-            IconDownload: 'https://example.com/download.svg',
-            IconRemoteControlStart: 'https://example.com/remote-start.svg',
-        },
-        // Object containing a theme's properties. It also supports partial overwrites of the main theme.
-        // For a list of all possible theme tokens and their current defaults, please check:
-        // https://github.com/jitsi/jitsi-meet/tree/master/resources/custom-theme/custom-theme.json
-        // For a short explanations on each of the tokens, please check:
-        // https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/ui/Tokens.ts
-        // IMPORTANT!: This is work in progress so many of the various tokens are not yet applied in code
-        // or they are partially applied.
-        customTheme: {
-            palette: {
-                ui01: "orange !important",
-                ui02: "maroon",
-                surface02: 'darkgreen',
-                ui03: "violet",
-                ui04: "magenta",
-                ui05: "blueviolet",
-                action01: 'green',
-                action01Hover: 'lightgreen',
-                disabled01: 'beige',
-                success02: 'cadetblue',
-                action02Hover: 'aliceblue',
-            },
-            typography: {
-                labelRegular: {
-                    fontSize: 25,
-                    lineHeight: 30,
-                    fontWeight: 500,
-                }
-            }
-        }
-    }
-    */
+     {
+     // Whether participant can only send group chat message if `send-groupchat` feature is enabled in jwt.
+     groupChatRequiresPermission: false,
+     // Whether participant can only create polls if `create-polls` feature is enabled in jwt.
+     pollCreationRequiresPermission: false,
+     // The domain url to apply (will replace the domain in the sharing conference link/embed section)
+     inviteDomain: 'example-company.org',
+     // The hex value for the colour used as background
+     backgroundColor: '#fff',
+     // The url for the image used as background
+     backgroundImageUrl: 'https://example.com/background-img.png',
+     // The anchor url used when clicking the logo image
+     logoClickUrl: 'https://example-company.org',
+     // The url used for the image used as logo
+     logoImageUrl: 'https://example.com/logo-img.png',
+     // Endpoint that enables support for salesforce integration with in-meeting resource linking
+     // This is required for:
+     // listing the most recent records - salesforceUrl/records/recents
+     // searching records - salesforceUrl/records?text=${text}
+     // retrieving record details - salesforceUrl/records/${id}?type=${type}
+     // and linking the meeting - salesforceUrl/sessions/${sessionId}/records/${id}
+     // salesforceUrl: 'https://api.example.com/',
+     // Overwrite for pool of background images for avatars
+     avatarBackgrounds: ['url(https://example.com/avatar-background-1.png)', '#FFF'],
+     // The lobby/prejoin screen background
+     premeetingBackground: 'url(https://example.com/premeeting-background.png)',
+     // A list of images that can be used as video backgrounds.
+     // When this field is present, the default images will be replaced with those provided.
+     virtualBackgrounds: ['https://example.com/img.jpg'],
+     // Object containing customized icons that should replace the default ones.
+     // The keys need to be the exact same icon names used in here:
+     // https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/icons/svg/index.ts
+     // To avoid having the icons trimmed or displayed in an unexpected way, please provide svg
+     // files containing svg xml icons in the size that the default icons come in.
+     customIcons: {
+     IconArrowUp: 'https://example.com/arrow-up.svg',
+     IconDownload: 'https://example.com/download.svg',
+     IconRemoteControlStart: 'https://example.com/remote-start.svg',
+     },
+     // Object containing a theme's properties. It also supports partial overwrites of the main theme.
+     // For a list of all possible theme tokens and their current defaults, please check:
+     // https://github.com/jitsi/jitsi-meet/tree/master/resources/custom-theme/custom-theme.json
+     // For a short explanations on each of the tokens, please check:
+     // https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/ui/Tokens.ts
+     // IMPORTANT!: This is work in progress so many of the various tokens are not yet applied in code
+     // or they are partially applied.
+     customTheme: {
+     palette: {
+     ui01: "orange !important",
+     ui02: "maroon",
+     surface02: 'darkgreen',
+     ui03: "violet",
+     ui04: "magenta",
+     ui05: "blueviolet",
+     action01: 'green',
+     action01Hover: 'lightgreen',
+     disabled01: 'beige',
+     success02: 'cadetblue',
+     action02Hover: 'aliceblue',
+     },
+     typography: {
+     labelRegular: {
+     fontSize: 25,
+     lineHeight: 30,
+     fontWeight: 500,
+     }
+     }
+     }
+     }
+     */
     // dynamicBrandingUrl: '',
 
     // A list of allowed URL domains for shared video.
@@ -1666,13 +1666,13 @@ var config = {
     mouseMoveCallbackInterval: 1000,
 
     /**
-        Use this array to configure which notifications will be shown to the user
-        The items correspond to the title or description key of that notification
-        Some of these notifications also depend on some other internal logic to be displayed or not,
-        so adding them here will not ensure they will always be displayed
+     Use this array to configure which notifications will be shown to the user
+     The items correspond to the title or description key of that notification
+     Some of these notifications also depend on some other internal logic to be displayed or not,
+     so adding them here will not ensure they will always be displayed
 
-        A falsy value for this prop will result in having all notifications enabled (e.g null, undefined, false)
-    */
+     A falsy value for this prop will result in having all notifications enabled (e.g null, undefined, false)
+     */
     // notifications: [
     //     'connection.CONNFAIL', // shown when the connection fails,
     //     'dialog.cameraConstraintFailedError', // shown when the camera failed
