@@ -28,7 +28,6 @@ import { RoomList } from '../breakout-rooms/components/web/RoomList';
 import CurrentVisitorsList from './CurrentVisitorsList';
 import { FooterContextMenu } from './FooterContextMenu';
 import LobbyParticipants from './LobbyParticipants';
-import MeetingParticipants from './MeetingParticipants';
 import VisitorsList from './VisitorsList';
 
 /**
@@ -191,9 +190,6 @@ const ParticipantsPane = () => {
                 <br className = { classes.antiCollapse } />
                 <LobbyParticipants />
                 <br className = { classes.antiCollapse } />
-                <MeetingParticipants
-                    searchString = { searchString }
-                    setSearchString = { setSearchString } />
                 {isBreakoutRoomsSupported && <RoomList searchString = { searchString } />}
                 {showAddRoomButton && <AddBreakoutRoomButton />}
                 {showCurrentVisitorsList && <CurrentVisitorsList searchString = { searchString } />}
