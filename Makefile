@@ -27,7 +27,7 @@ endif
 all: compile deploy
 
 compile: clean
-	NODE_OPTIONS=--max-old-space-size=8192 \
+	NODE_OPTIONS=--max-old-space-size=12288 \
 	$(WEBPACK)
 
 clean:
