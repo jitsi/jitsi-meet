@@ -1,16 +1,19 @@
 import { connect } from 'react-redux';
 
+import { createRecordingDialogEvent } from '../../../../analytics/AnalyticsEvents';
+import { sendAnalytics } from '../../../../analytics/functions';
 import { IReduxState, IStore } from '../../../../app/types';
 import { IJitsiConference } from '../../../../base/conference/reducer';
-import { openDialog } from '../../../../base/dialog/actions';
 import { translate } from '../../../../base/i18n/functions';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
+import { setRequestingSubtitles } from '../../../../subtitles/actions.any';
+import { toggleScreenshotCaptureSummary } from '../../../../screenshot-capture/actions';
+import { RECORDING_METADATA_ID } from '../../../constants';
+import { getActiveSession } from '../../../functions';
 import AbstractRecordButton, {
     IProps as AbstractProps,
     _mapStateToProps as _abstractMapStateToProps
 } from '../AbstractRecordButton';
-
-import StopRecordingDialog from './StopRecordingDialog';
 
 /**
  * The type of the React {@code Component} props of {@link RecordingButton}.
@@ -21,6 +24,21 @@ interface IProps extends AbstractProps {
      * The {@code JitsiConference} for the current conference.
      */
     _conference?: IJitsiConference;
+
+    /**
+     * Whether subtitles should be displayed or not.
+     */
+    _displaySubtitles?: boolean;
+
+    /**
+     * The redux representation of the recording session to be stopped.
+     */
+    _fileRecordingSession?: any;
+
+    /**
+     * The selected language for subtitles.
+     */
+    _subtitlesLanguage: string | null;
 
     /**
      * Redux dispatch function.
@@ -42,11 +60,11 @@ class RecordingButton extends AbstractRecordButton<IProps> {
      * @returns {void}
      */
     override _onHandleClick() {
-        const { _isRecordingRunning, dispatch } = this.props;
+        const { _isRecordingRunning } = this.props;
 
         if (_isRecordingRunning) {
-            // If recording is running, show stop dialog
-            dispatch(openDialog(StopRecordingDialog));
+            // Stop recording directly without showing dialog
+            this._stopRecording();
         } else {
             // Start recording directly without dialog
             this._startRecording();
@@ -76,6 +94,36 @@ class RecordingButton extends AbstractRecordButton<IProps> {
             });
         }
     }
+
+    /**
+     * Stops the recording if it's currently running.
+     *
+     * @private
+     * @returns {void}
+     */
+    _stopRecording() {
+        const {
+            _conference,
+            _displaySubtitles,
+            _fileRecordingSession,
+            _subtitlesLanguage,
+            dispatch
+        } = this.props;
+
+        sendAnalytics(createRecordingDialogEvent('stop', 'confirm.button'));
+
+        // Only handle Jibri (file) recordings
+        if (_fileRecordingSession) {
+            _conference?.stopRecording(_fileRecordingSession.id);
+            dispatch(toggleScreenshotCaptureSummary(false));
+        }
+
+        dispatch(setRequestingSubtitles(Boolean(_displaySubtitles), _displaySubtitles, _subtitlesLanguage));
+
+        _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+            isTranscribingEnabled: false
+        });
+    }
 }
 
 /**
@@ -97,9 +145,17 @@ export function _mapStateToProps(state: IReduxState) {
     const { toolbarButtons } = state['features/toolbox'];
     const visible = Boolean(toolbarButtons?.includes('recording') && abstractProps.visible);
 
+    const {
+        _displaySubtitles,
+        _language: _subtitlesLanguage
+    } = state['features/subtitles'];
+
     return {
         ...abstractProps,
         _conference: state['features/base/conference'].conference,
+        _displaySubtitles,
+        _fileRecordingSession: getActiveSession(state, JitsiRecordingConstants.mode.FILE),
+        _subtitlesLanguage,
         visible
     };
 }
