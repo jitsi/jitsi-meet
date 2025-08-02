@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-@import JavaScriptCore;
-
 #import <React/RCTBridgeModule.h>
-
+#include "../../../shared/hermes-sandbox/hermes_sandbox.h"
 
 @interface JavaScriptSandbox : NSObject<RCTBridgeModule>
 @end
@@ -35,19 +33,27 @@ RCT_EXPORT_MODULE();
 RCT_EXPORT_METHOD(evaluate:(NSString *)code
                   resolve:(RCTPromiseResolveBlock)resolve
                    reject:(RCTPromiseRejectBlock)reject) {
-    __block BOOL hasError = NO;
-    JSContext *ctx = [[JSContext alloc] init];
-    ctx.exceptionHandler = ^(JSContext *context, JSValue *exception) {
-        hasError = YES;
-        reject(@"evaluate", [exception toString], nil);
-    };
-    JSValue *ret = [ctx evaluateScript:code];
-    if (!hasError) {
-        NSString *result = [ret toString];
-        if (result == nil) {
-            reject(@"evaluate", @"Error in string coercion", nil);
-        } else {
+    
+    int64_t runtimeId = 0;
+    const char* resultStr = NULL;
+    
+    @try {
+        runtimeId = hermes_sandbox_create_runtime();
+        resultStr = hermes_sandbox_evaluate_javascript(runtimeId, [code UTF8String]);
+        
+        if (resultStr) {
+            NSString *result = [NSString stringWithUTF8String:resultStr];
+            free((void*)resultStr);
             resolve(result);
+        } else {
+            reject(@"evaluate", @"Failed to evaluate JavaScript", nil);
+        }
+        
+    } @catch (NSException *exception) {
+        reject(@"evaluate", [exception reason], nil);
+    } @finally {
+        if (runtimeId != 0) {
+            hermes_sandbox_delete_runtime(runtimeId);
         }
     }
 }
