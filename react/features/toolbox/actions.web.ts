@@ -281,8 +281,45 @@ export function closeOverflowMenuIfOpen() {
 
 // eslint-disable-next-line require-jsdoc
 export function setSpeakerMuted(speakerMuted: boolean) {
-    return {
-        type: SPEAKER_MUTED,
-        speakerMuted
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        // Update the Redux state
+        dispatch({
+            type: SPEAKER_MUTED,
+            speakerMuted
+        });
+
+        // Control audio output by muting/unmuting all remote audio tracks
+        const state = getState();
+        const { conference } = state['features/base/conference'];
+
+        if (conference) {
+            // Get all remote participants and mute/unmute their audio
+            const participants = conference.getParticipants();
+
+            participants.forEach((participant: any) => {
+                const tracks = participant.getTracksByMediaType('audio');
+                tracks.forEach((track: any) => {
+                    try {
+                        if (speakerMuted) {
+                            // Mute the audio track
+                            track.mute();
+                        } else {
+                            // Unmute the audio track
+                            track.unmute();
+                        }
+                    } catch (error) {
+                        console.warn('Failed to mute/unmute track:', error);
+                    }
+                });
+            });
+        }
+
+        // Alternative approach: Control HTML audio elements directly
+        if (typeof document !== 'undefined') {
+            const audioElements = document.querySelectorAll('audio');
+            audioElements.forEach((audio: HTMLAudioElement) => {
+                audio.muted = speakerMuted;
+            });
+        }
     };
 }
