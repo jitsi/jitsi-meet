@@ -5,22 +5,22 @@ import { IconVolumeUp, IconVolumeOff } from '../../icons/svg';
 import AbstractButton, { IProps } from './AbstractButton';
 
 /**
- * An abstract implementation of a button for toggling video mute.
+ * An abstract implementation of a button for toggling speaker mute.
  */
 export default class AbstractSpeakerButton<P extends IProps, S=any>
     extends AbstractButton<P, S> {
 
-    icon = IconVolumeUp;
-    toggledIcon = IconVolumeOff;
+    override icon = IconVolumeUp;
+    override toggledIcon = IconVolumeOff;
 
     /**
-     * Handles clicking / pressing the button, and toggles the video mute state
+     * Handles clicking / pressing the button, and toggles the speaker mute state
      * accordingly.
      *
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         this._setSpeakerMuted(!this._isSpeakerMuted());
     }
 
@@ -31,13 +31,13 @@ export default class AbstractSpeakerButton<P extends IProps, S=any>
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this._isSpeakerMuted();
     }
 
     /**
      * Helper function to be implemented by subclasses, which must return a
-     * {@code boolean} value indicating if video is muted or not.
+     * {@code boolean} value indicating if speaker is muted or not.
      *
      * @protected
      * @returns {boolean}
@@ -48,10 +48,10 @@ export default class AbstractSpeakerButton<P extends IProps, S=any>
     }
 
     /**
-     * Helper function to perform the actual setting of the video mute / unmute
+     * Helper function to perform the actual setting of the speaker mute / unmute
      * action.
      *
-     * @param {boolean} videoMuted - Whether video should be muted or not.
+     * @param {boolean} speakerMuted - Whether speaker should be muted or not.
      * @protected
      * @returns {void}
      */

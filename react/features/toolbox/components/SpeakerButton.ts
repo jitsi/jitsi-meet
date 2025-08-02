@@ -8,30 +8,28 @@ import { IProps as AbstractButtonProps } from '../../base/toolbox/components/Abs
 import AbstractSpeakerButton from '../../base/toolbox/components/AbstractSpeakerButton';
 import { setSpeakerMuted } from '../actions.web';
 
-
 /**
- * The type of the React {@code Component} props of {@link VideoMuteButton}.
+ * The type of the React {@code Component} props of {@link SpeakerButton}.
  */
 interface IProps extends AbstractButtonProps {
-
     /**
-     * Whether video button is disabled or not.
+     * Whether speaker button is disabled or not.
      */
     _speakerMuted: boolean;
 }
 
 /**
- * Component that renders a toolbar button for toggling video mute.
+ * Component that renders a toolbar button for toggling speaker mute.
  *
- * @augments AbstractVideoMuteButton
+ * @augments AbstractSpeakerButton
  */
 class SpeakerButton extends AbstractSpeakerButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.speakermute';
-    label = 'toolbar.speakermute';
-    tooltip = 'toolbar.speakermute';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.speakermute';
+    override label = 'Speaker Mute';
+    override tooltip = 'Speaker Mute';
 
     /**
-     * Initializes a new {@code VideoMuteButton} instance.
+     * Initializes a new {@code SpeakerButton} instance.
      *
      * @param {Props} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
@@ -40,11 +38,11 @@ class SpeakerButton extends AbstractSpeakerButton<IProps> {
     //     super(props);
 
     //     // Bind event handlers so they are only bound once per instance.
-    //     // this._onKeyboardShortcut = this._onKeyboardShortcut.bind(this);
+    //     // this.onKeyboardShortcut = this._onKeyboardShortcut.bind(this);
     // }
 
     /**
-     * Registers the keyboard shortcut that toggles the video muting.
+     * Registers the keyboard shortcut that toggles the speaker muting.
      *
      * @inheritdoc
      * @returns {void}
@@ -54,7 +52,7 @@ class SpeakerButton extends AbstractSpeakerButton<IProps> {
     // }
 
     /**
-     * Unregisters the keyboard shortcut that toggles the video muting.
+     * Unregisters the keyboard shortcut that toggles the speaker muting.
      *
      * @inheritdoc
      * @returns {void}
@@ -64,7 +62,7 @@ class SpeakerButton extends AbstractSpeakerButton<IProps> {
     // }
 
     /**
-     * Indicates if video is currently disabled or not.
+     * Indicates if speaker is currently disabled or not.
      *
      * @override
      * @protected
@@ -75,13 +73,13 @@ class SpeakerButton extends AbstractSpeakerButton<IProps> {
     // }
 
     /**
-     * Indicates if video is currently muted ot nor.
+     * Indicates if speaker is currently muted or not.
      *
      * @override
      * @protected
      * @returns {boolean}
      */
-    _isSpeakerMuted() {
+    override _isSpeakerMuted() {
         return this.props._speakerMuted;
     }
 
@@ -89,7 +87,7 @@ class SpeakerButton extends AbstractSpeakerButton<IProps> {
 
     // /**
     //  * Creates an analytics keyboard shortcut event and dispatches an action to
-    //  * toggle the video muting.
+    //  * toggle the speaker muting.
     //  *
     //  * @private
     //  * @returns {void}
@@ -102,15 +100,14 @@ class SpeakerButton extends AbstractSpeakerButton<IProps> {
      * Changes the muted state.
      *
      * @override
-     * @param {boolean} speakerMuted - Whether video should be muted or not.
+     * @param {boolean} speakerMuted - Whether speaker should be muted or not.
      * @protected
      * @returns {void}
      */
-    _setSpeakerMuted(speakerMuted: boolean) {
-
+    override _setSpeakerMuted(speakerMuted: boolean) {
         this.props.dispatch(setSpeakerMuted(speakerMuted));
 
-        //   console.log(this.props._participants)
+        //   console.log(this.props.participants)
         //   this.props._participants.forEach(p => {
         //     APP.UI.speakerMuted(p.id, speakerMuted);
         //   })
@@ -121,13 +118,12 @@ class SpeakerButton extends AbstractSpeakerButton<IProps> {
 
 /**
  * Maps (parts of) the redux state to the associated props for the
- * {@code VideoMuteButton} component.
+ * {@code SpeakerButton} component.
  *
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _audioOnly: boolean,
- *     _videoMuted: boolean
+ *     _speakerMuted: boolean
  * }}
  */
 function _mapStateToProps(state: IReduxState): Object {
