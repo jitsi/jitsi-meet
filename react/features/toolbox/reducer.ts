@@ -15,7 +15,7 @@ import {
     SET_TOOLBOX_ENABLED,
     SET_TOOLBOX_SHIFT_UP,
     SET_TOOLBOX_TIMEOUT,
-    SET_TOOLBOX_VISIBLE,
+    SET_TOOLBOX_VISIBLE, SPEAKER_MUTED,
     TOGGLE_TOOLBOX_VISIBLE
 } from './actionTypes';
 import { NATIVE_THRESHOLDS, THRESHOLDS } from './constants';
@@ -109,6 +109,7 @@ const INITIAL_STATE = {
 };
 
 export interface IToolboxState {
+    speakerMuted?: boolean;
     buttonsWithNotifyClick: Map<string, NOTIFY_CLICK_MODE>;
     enabled: boolean;
     fullScreen?: boolean;
@@ -209,6 +210,12 @@ ReducerRegistry.register<IToolboxState>(
 
         case TOGGLE_TOOLBOX_VISIBLE:
             return set(state, 'visible', !state.visible);
+
+            case SPEAKER_MUTED:
+                return {
+                    ...state,
+                    speakerMuted: action.speakerMuted
+                };
         }
 
         return state;

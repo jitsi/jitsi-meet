@@ -30,15 +30,15 @@ export const THRESHOLDS = [
     },
     {
         width: 565,
-        order: [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'reactions', 'participants-pane', 'tileview', 'followme' ]
+        order: [ 'microphone', 'camera', 'desktop', 'speaker', 'chat', 'raisehand', 'reactions', 'participants-pane', 'tileview', 'followme' ]
     },
     {
         width: 520,
-        order: [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants-pane', 'tileview', 'followme' ]
+        order: [ 'microphone', 'camera', 'desktop', 'speaker', 'chat', 'raisehand', 'participants-pane', 'tileview', 'followme' ]
     },
     {
         width: 470,
-        order: [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants-pane', 'followme' ]
+        order: [ 'microphone', 'camera', 'desktop', 'speaker', 'chat', 'raisehand', 'participants-pane', 'followme' ]
     },
     {
         width: 420,
@@ -92,6 +92,7 @@ export const MAIN_TOOLBAR_BUTTONS_PRIORITY = [
     'microphone',
     'camera',
     'desktop',
+    'speaker',
     'chat',
     'raisehand',
     'reactions',
@@ -144,6 +145,7 @@ export const SPINNER_COLOR = '#929292';
  */
 export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'camera',
+    'speaker',
     'chat',
     'closedcaptions',
     'desktop',

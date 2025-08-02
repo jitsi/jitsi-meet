@@ -14,6 +14,7 @@ import { getLocalParticipant, hasRaisedHand } from '../base/participants/functio
 import { isToggleCameraEnabled } from '../base/tracks/functions.web';
 import { toggleChat } from '../chat/actions.web';
 import ChatButton from '../chat/components/web/ChatButton';
+import SpeakerButton from './components/SpeakerButton';
 import { useEmbedButton } from '../embed-meeting/hooks';
 import { useEtherpadButton } from '../etherpad/hooks';
 import { useFeedbackButton } from '../feedback/hooks.web';
@@ -89,6 +90,12 @@ const profile = {
     key: 'profile',
     Content: ProfileButton,
     group: 1
+};
+
+const speaker = {
+    key: 'speaker',
+    Content: SpeakerButton,
+    group: 2
 };
 
 const chat = {
@@ -305,6 +312,7 @@ export function useToolboxButtons(
         profile,
         recording,
         desktop: desktopSharing,
+        speaker,
         chat,
         raisehand,
         followme,

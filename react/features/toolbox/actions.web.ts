@@ -11,7 +11,7 @@ import {
     SET_OVERFLOW_DRAWER,
     SET_OVERFLOW_MENU_VISIBLE,
     SET_TOOLBAR_HOVERED,
-    SET_TOOLBOX_TIMEOUT
+    SET_TOOLBOX_TIMEOUT, SPEAKER_MUTED
 } from './actionTypes';
 import { setToolboxVisible } from './actions.web';
 import { getToolbarTimeout } from './functions.web';
@@ -276,5 +276,13 @@ export function closeOverflowMenuIfOpen() {
         const { overflowMenuVisible } = getState()['features/toolbox'];
 
         overflowMenuVisible && dispatch(setOverflowMenuVisible(false));
+    };
+}
+
+// eslint-disable-next-line require-jsdoc
+export function setSpeakerMuted(speakerMuted: boolean) {
+    return {
+        type: SPEAKER_MUTED,
+        speakerMuted
     };
 }
