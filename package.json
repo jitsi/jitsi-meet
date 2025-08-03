@@ -229,5 +229,14 @@
   "resolutions": {
     "@types/react": "17.0.14",
     "@types/react-dom": "17.0.14"
+  },
+  "overrides": {
+  "@emotion/react": "11.10.6",
+  "@emotion/styled": "11.10.6"
+  },
+  "peerDependenciesMeta": {
+    "@emotion/react": {
+      "optional": true
+    }
   }
 }
