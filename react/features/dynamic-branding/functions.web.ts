@@ -1,5 +1,5 @@
 import { Theme } from '@mui/material';
-import { adaptV4Theme, createTheme } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 
 import { breakpoints, colorMap, font, shape, spacing, typography } from '../base/ui/Tokens';
 import { createColorTokens } from '../base/ui/utils';
@@ -52,7 +52,7 @@ export function createMuiBrandingTheme(customTheme: Theme) {
         newSpacing = customSpacing;
     }
 
-    return createTheme(adaptV4Theme({
+    return createTheme({
         spacing: newSpacing,
         palette: newPalette,
         shape: newShape,
@@ -62,7 +62,7 @@ export function createMuiBrandingTheme(customTheme: Theme) {
 
         // @ts-ignore
         breakpoints: newBreakpoints
-    }));
+    });
 }
 
 /**
