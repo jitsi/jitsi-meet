@@ -47,7 +47,7 @@ export default class Notifications extends BasePageObject {
     }
 
     /**
-     * Closes the ask to unmute notification.
+     * Closes the muted notification.
      */
     async closeAVModerationMutedNotification(skipNonExisting = false) {
         return this.closeNotification(AV_MODERATION_MUTED_NOTIFICATION_ID, skipNonExisting);
@@ -92,7 +92,7 @@ export default class Notifications extends BasePageObject {
      * The notification on participants page when Lobby is being enabled or disabled.
      */
     getLobbyEnabledText() {
-        return this.getNotificationText(LOBBY_ENABLED_TEST_ID);
+        return this.waitForNotificationText(LOBBY_ENABLED_TEST_ID);
     }
 
     /**
@@ -174,7 +174,7 @@ export default class Notifications extends BasePageObject {
      * The notification that someone's access was approved.
      */
     getLobbyParticipantAccessGranted() {
-        return this.getNotificationText(LOBBY_PARTICIPANT_ACCESS_GRANTED_TEST_ID);
+        return this.waitForNotificationText(LOBBY_PARTICIPANT_ACCESS_GRANTED_TEST_ID);
     }
 
     /**
@@ -185,10 +185,10 @@ export default class Notifications extends BasePageObject {
     }
 
     /**
-     * Returns notification text if the notification is found in the next few seconds.
+     * Waits until a notifications with the given testId is found and returns its text.
      * @return the notification text.
      */
-    private async getNotificationText(testId: string) {
+    private async waitForNotificationText(testId: string) {
         const notificationElement = this.participant.driver.$(`[data-testid="${testId}"]`);
 
         await notificationElement.waitForExist({ timeout: 2_000 });
@@ -212,7 +212,7 @@ export default class Notifications extends BasePageObject {
      * The notification test that someone's access was denied.
      */
     getLobbyParticipantAccessDenied() {
-        return this.getNotificationText(LOBBY_PARTICIPANT_ACCESS_DENIED_TEST_ID);
+        return this.waitForNotificationText(LOBBY_PARTICIPANT_ACCESS_DENIED_TEST_ID);
     }
 
     /**
