@@ -28,7 +28,17 @@ export async function loadPage(roomName: string, instanceId: 'p1' | 'p2' | 'p3' 
 
     try {
         await newParticipant.driver.setTimeout({ 'pageLoad': 30000 });
-        await newParticipant.driver.url(url);
+
+        // Force a refresh if URL changes only in hash params. TODO: clean this up when reactoring.
+        const currentUrl = await newParticipant.driver.getUrl();
+
+        if (currentUrl.split('#')[0] === url.split('#')[0]) {
+            console.log('Refreshing the page to ensure the URL is loaded correctly');
+            await newParticipant.driver.url(url);
+            await newParticipant.driver.refresh();
+        } else {
+            await newParticipant.driver.url(url);
+        }
         await newParticipant.waitForPageToLoad();
     } catch (error) {
     }
@@ -63,7 +73,7 @@ export async function joinMuc(roomName: string, instanceId: 'p1' | 'p2' | 'p3' |
     const participant = await loadPage(roomName, instanceId, token);
 
     try {
-        await participant.waitToJoinMUC();
+        await participant.waitForMucJoinedOrError();
     } catch (error) {
     }
 

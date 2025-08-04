@@ -43,12 +43,12 @@ async function joinWithPassword(roomName: string, instanceId: string, token: ITo
     // @ts-ignore
     const p = await loadPage(roomName, instanceId, token);
 
-    await p.waitForMucJoinedOrPasswordPrompt();
+    await p.waitForMucJoinedOrError();
     expect(await p.isInMuc()).toBe(false);
     expect(await p.getPasswordDialog().isOpen()).toBe(true);
 
     await p.getPasswordDialog().submitPassword('wrong password');
-    await p.waitForMucJoinedOrPasswordPrompt();
+    await p.waitForMucJoinedOrError();
     expect(await p.isInMuc()).toBe(false);
     expect(await p.getPasswordDialog().isOpen()).toBe(true);
 

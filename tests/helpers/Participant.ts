@@ -13,7 +13,7 @@ import IframeAPI from '../pageobjects/IframeAPI';
 import InviteDialog from '../pageobjects/InviteDialog';
 import LargeVideo from '../pageobjects/LargeVideo';
 import LobbyScreen from '../pageobjects/LobbyScreen';
-import Notifications from '../pageobjects/Notifications';
+import Notifications, { TOKEN_AUTH_FAILED_TEST_ID, TOKEN_AUTH_FAILED_TITLE_TEST_ID } from '../pageobjects/Notifications';
 import ParticipantsPane from '../pageobjects/ParticipantsPane';
 import PasswordDialog from '../pageobjects/PasswordDialog';
 import PreJoinScreen from '../pageobjects/PreJoinScreen';
@@ -340,8 +340,16 @@ export class Participant {
         return this.execute(() => typeof APP !== 'undefined' && APP.conference?.isJoined());
     }
 
-    async waitForMucJoinedOrPasswordPrompt(): Promise<void> {
-        await this.driver.waitUntil(async () => await this.isInMuc() || await this.getPasswordDialog().isOpen(), {
+    /**
+     * Waits until either the MUC is joined, or a password prompt is displayed, or an authentication failure
+     * notification is displayed.
+     */
+    async waitForMucJoinedOrError(): Promise<void> {
+        await this.driver.waitUntil(async () => {
+            return await this.isInMuc() || await this.getPasswordDialog().isOpen()
+                || await this.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TEST_ID)
+                || await this.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TITLE_TEST_ID);
+        }, {
             timeout: 10_000,
             timeoutMsg: 'Timeout waiting for MUC joined or password prompt.'
         });
