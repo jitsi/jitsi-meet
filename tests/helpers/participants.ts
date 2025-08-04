@@ -1,9 +1,7 @@
-import fs from 'fs';
-import jwt from 'jsonwebtoken';
 import process from 'node:process';
-import { v4 as uuidv4 } from 'uuid';
 
 import { P1, P2, P3, P4, Participant } from './Participant';
+import { IToken, generateToken } from './token';
 import { IContext, IJoinOptions } from './types';
 
 const SUBJECT_XPATH = '//div[starts-with(@class, "subject-text")]';
@@ -171,7 +169,7 @@ async function _joinParticipant( // eslint-disable-line max-params
     const p = ctx[name] as Participant;
 
     if (p) {
-        if (ctx.iframeAPI) {
+        if (ctx.testProperties.useIFrameApi) {
             await p.switchInPage();
         }
 
@@ -179,7 +177,7 @@ async function _joinParticipant( // eslint-disable-line max-params
             return;
         }
 
-        if (ctx.iframeAPI) {
+        if (ctx.testProperties.useIFrameApi) {
             // when loading url make sure we are on the top page context or strange errors may occur
             await p.switchToAPI();
         }
@@ -190,25 +188,33 @@ async function _joinParticipant( // eslint-disable-line max-params
         // we want the participant instance re-recreated so we clear any kept state, like endpoint ID
     }
 
-    let jwtToken;
+    let token: IToken = { jwt: '' };
 
     if (name === P1) {
         if (!options?.skipFirstModerator) {
             // we prioritize the access token when iframe is not used and private key is set,
             // otherwise if private key is not specified we use the access token if set
             if (process.env.JWT_ACCESS_TOKEN
-                && ((ctx.jwtPrivateKeyPath && !ctx.iframeAPI && !options?.preferGenerateToken)
+                && ((ctx.jwtPrivateKeyPath && !ctx.testProperties.useIFrameApi && !options?.preferGenerateToken)
                     || !ctx.jwtPrivateKeyPath)) {
-                jwtToken = process.env.JWT_ACCESS_TOKEN;
+                token = { jwt: process.env.JWT_ACCESS_TOKEN };
             } else if (ctx.jwtPrivateKeyPath) {
-                jwtToken = getToken(ctx, name, options);
+                token = generateToken({
+                    ...options?.tokenOptions,
+                    displayName: name,
+                });
             }
         }
     } else if (name === P2) {
-        jwtToken = options?.preferGenerateToken ? getToken(ctx, P2, options) : undefined;
+        if (options?.preferGenerateToken) {
+            token = generateToken({
+                ...options?.tokenOptions,
+                displayName: name,
+            });
+        }
     }
 
-    const newParticipant = new Participant(name, jwtToken);
+    const newParticipant = new Participant(name, token);
 
     // set the new participant instance
     // @ts-ignore
@@ -281,64 +287,6 @@ export async function muteVideoAndCheck(testee: Participant, observer: Participa
 
     await testee.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee);
     await observer.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee);
-}
-
-/**
- * Get a JWT token for a moderator.
- */
-function getToken(ctx: IContext, displayName: string, options?: IJoinOptions) {
-    const keyid = process.env.JWT_KID;
-    const headers = {
-        algorithm: 'RS256',
-        noTimestamp: true,
-        expiresIn: '24h',
-        keyid
-    };
-
-    if (!keyid) {
-        console.error('JWT_KID is not set');
-
-        return;
-    }
-
-    const key = fs.readFileSync(ctx.jwtPrivateKeyPath);
-
-    const payload = {
-        'aud': 'jitsi',
-        'iss': 'chat',
-        'sub': keyid.substring(0, keyid.indexOf('/')),
-        'context': {
-            'user': {
-                'name': displayName,
-                'id': uuidv4(),
-                'avatar': 'https://avatars0.githubusercontent.com/u/3671647',
-                'email': 'john.doe@jitsi.org'
-            },
-            'group': uuidv4(),
-            'features': {
-                'outbound-call': 'true',
-                'transcription': 'true',
-                'recording': 'true',
-                'sip-outbound-call': true,
-                'livestreaming': true
-            },
-        },
-        'room': '*'
-    };
-
-    // if the moderator is set, or options are missing, we assume moderator
-    if (options?.moderator || !options) {
-        // @ts-ignore
-        payload.context.user.moderator = true;
-    } else if (options.visitor) {
-        // @ts-ignore
-        payload.context.user.role = 'visitor';
-    }
-
-    ctx.data[`${displayName}-jwt-payload`] = payload;
-
-    // @ts-ignore
-    return jwt.sign(payload, key, headers);
 }
 
 /**

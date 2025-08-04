@@ -1,4 +1,5 @@
 import type { Participant } from '../../helpers/Participant';
+import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureOneParticipant } from '../../helpers/participants';
 import {
     cleanup,
@@ -7,6 +8,11 @@ import {
     retrievePin,
     waitForAudioFromDialInParticipant
 } from '../helpers/DialIn';
+
+setTestProperties(__filename, {
+    useIFrameApi: true,
+    useWebhookProxy: true
+});
 
 describe('Invite iframeAPI', () => {
     it('join participant', async () => {
