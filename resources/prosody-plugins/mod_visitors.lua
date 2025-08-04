@@ -103,10 +103,8 @@ end
 
 -- Filter out identity information (nick name, email, etc) from a presence stanza,
 -- if the hideDisplayNameForGuests option for the room is set (note that the
--- hideDisplayNameForAll option is implemented in a diffrent way and does not
--- require filtering here)
--- This is applied to presence of main room participants before it is sent out to
--- vnodes.
+-- hideDisplayNameForAll option is implemented in a different way and does not require filtering here)
+-- This is applied to presence of main room participants before it is sent out to vnodes.
 local function filter_stanza_nick_if_needed(stanza, room)
     if not stanza or stanza.name ~= 'presence' or stanza.attr.type == 'error' or stanza.attr.type == 'unavailable' then
         return stanza;
