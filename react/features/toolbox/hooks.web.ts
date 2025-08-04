@@ -39,7 +39,6 @@ import { REACTIONS } from '../reactions/constants';
 import { shouldDisplayReactionsButtons } from '../reactions/functions.any';
 import { useReactionsButton } from '../reactions/hooks.web';
 import { useLiveStreamingButton, useRecordingButton } from '../recording/hooks.web';
-import { isSalesforceEnabled } from '../salesforce/functions';
 import { startScreenShareFlow } from '../screen-share/actions.web';
 import ShareAudioButton from '../screen-share/components/web/ShareAudioButton';
 import { isScreenAudioSupported, isScreenVideoShared } from '../screen-share/functions';
@@ -64,7 +63,6 @@ import HelpButton from './components/HelpButton';
 import AudioSettingsButton from './components/web/AudioSettingsButton';
 import CustomOptionButton from './components/web/CustomOptionButton';
 import FullscreenButton from './components/web/FullscreenButton';
-import LinkToSalesforceButton from './components/web/LinkToSalesforceButton';
 import ProfileButton from './components/web/ProfileButton';
 import ShareDesktopButton from './components/web/ShareDesktopButton';
 import ToggleCameraButton from './components/web/ToggleCameraButton';
@@ -136,12 +134,6 @@ const fullscreen = {
     group: 2
 };
 
-const linkToSalesforce = {
-    key: 'linktosalesforce',
-    Content: LinkToSalesforceButton,
-    group: 2
-};
-
 const shareAudio = {
     key: 'shareaudio',
     Content: ShareAudioButton,
@@ -208,20 +200,6 @@ function getFullscreenButton() {
 }
 
 /**
- * A hook that returns the "link to salesforce" button if it is enabled and undefined otherwise.
- *
- *  @returns {Object | undefined}
- */
-function useLinkToSalesforceButton() {
-    const _isSalesforceEnabled = useSelector(isSalesforceEnabled);
-
-    if (_isSalesforceEnabled) {
-        return linkToSalesforce;
-    }
-}
-
-
-/**
  * A hook that returns the share audio button if it is enabled and undefined otherwise.
  *
  *  @returns {Object | undefined}
@@ -280,7 +258,6 @@ export function useToolboxButtons(
     const cc = useClosedCaptionButton();
     const recording = useRecordingButton();
     const liveStreaming = useLiveStreamingButton();
-    const linktosalesforce = useLinkToSalesforceButton();
     const shareaudio = getShareAudioButton();
     const shareVideo = useSharedVideoButton();
     const whiteboard = useWhiteboardButton();
@@ -311,7 +288,6 @@ export function useToolboxButtons(
         closedcaptions: cc,
         recording,
         livestreaming: liveStreaming,
-        linktosalesforce,
         sharedvideo: shareVideo,
         shareaudio,
         noisesuppression: noiseSuppression,
