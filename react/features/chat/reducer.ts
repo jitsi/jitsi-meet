@@ -54,12 +54,12 @@ export interface IChatState {
     } | ILocalParticipant;
     messages: IMessage[];
     nbUnreadMessages: number;
+    notifyPrivateRecipientsChangedTimestamp?: number;
     privateMessageRecipient?: IParticipant | IVisitorChatParticipant;
     width: {
         current: number;
         userSet: number | null;
     };
-    notifyPrivateRecipientsChangedTimestamp?: number;
 }
 
 ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, action): IChatState => {

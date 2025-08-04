@@ -285,7 +285,7 @@ const Chat = ({
         });
 
         return o;
-    }, [ notifyTimestamp ]);
+    }, [ participants, defaultRemoteDisplayName, t, notifyTimestamp ]);
 
     /**
      * Handles mouse down on the drag handle.

@@ -210,7 +210,7 @@ MiddlewareRegistry.register(store => next => action => {
     case PARTICIPANT_JOINED:
     case PARTICIPANT_LEFT:
     case PARTICIPANT_UPDATED: {
-        if (_shouldNotifyPrivateRecipiensChanged(store, action)) {
+        if (_shouldNotifyPrivateRecipientsChanged(store, action)) {
             const result = next(action);
 
             dispatch(notifyPrivateRecipientsChanged());
@@ -332,7 +332,7 @@ StateListenerRegistry.register(
  * @param {{ participant: IParticipant, type: string }} action - The action.
  * @returns {boolean}
  */
-function _shouldNotifyPrivateRecipiensChanged(
+function _shouldNotifyPrivateRecipientsChanged(
         store: IStore, action: { participant: IParticipant; type: string; }
 ) {
     const { type, participant } = action;
