@@ -2,7 +2,6 @@ BUILD_DIR = build
 CLEANCSS = ./node_modules/.bin/cleancss
 DEPLOY_DIR = libs
 LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet
-DASHLANE_PQC_DIR = node_modules/@dashlane/pqc-kem-kyber512-browser/dist
 TF_WASM_DIR = node_modules/@tensorflow/tfjs-backend-wasm/dist/
 RNNOISE_WASM_DIR = node_modules/@jitsi/rnnoise-wasm/dist
 EXCALIDRAW_DIR = node_modules/@jitsi/excalidraw/dist/excalidraw-assets
