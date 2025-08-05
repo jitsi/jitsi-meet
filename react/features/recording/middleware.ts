@@ -245,7 +245,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 if (typeof recordingLimit === 'object') {
                     dispatch(showRecordingLimitNotification(mode));
                 } else {
-                    dispatch(showStartedRecordingNotification(mode, initiator, action.sessionData.id));
+                    // dispatch(showStartedRecordingNotification(mode, initiator, action.sessionData.id));
                 }
             }
 
@@ -271,9 +271,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             }
         } else if (updatedSessionData?.status === OFF && oldSessionData?.status !== OFF) {
             if (terminator) {
-                dispatch(
-                    showStoppedRecordingNotification(
-                        mode, getParticipantDisplayName(state, getResourceId(terminator))));
+                // dispatch(
+                //     showStoppedRecordingNotification(
+                //         mode, getParticipantDisplayName(state, getResourceId(terminator))));
             }
 
             let duration = 0, soundOff, soundOn;
