@@ -176,6 +176,11 @@ function getConfig(options = {}) {
                     configFile: 'tsconfig.web.json',
                     transpileOnly: !isProduction // Skip type checking for dev builds.,
                 }
+            }, {
+                test: /\.m?js$/,
+                resolve: {
+                    fullySpecified: false
+                }
             } ]
         },
         node: {
@@ -205,7 +210,9 @@ function getConfig(options = {}) {
         resolve: {
             alias: {
                 'focus-visible': 'focus-visible/dist/focus-visible.min.js',
-                '@giphy/js-analytics': resolve(__dirname, 'giphy-analytics-stub.js')
+                '@giphy/js-analytics': resolve(__dirname, 'giphy-analytics-stub.js'),
+                'react': resolve(__dirname, 'node_modules/react'),
+                'react-dom': resolve(__dirname, 'node_modules/react-dom')
             },
             aliasFields: [
                 'browser'
@@ -229,7 +236,13 @@ function getConfig(options = {}) {
                 fs: false,
                 path: false,
                 process: false
-            }
+            },
+            extensionAlias: {
+                '.js': ['.js', '.ts']
+            },
+            modules: [
+                'node_modules'
+            ]
         }
     };
 }
