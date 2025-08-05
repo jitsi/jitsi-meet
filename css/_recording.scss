@@ -136,17 +136,41 @@
 }
 
 // Recording button styling - red color when recording is active
-.toolbox-button[aria-pressed="true"] {
-    &[aria-label*="recording"],
-    &[aria-label*="Stop recording"] {
-        background-color: #dc3545 !important; // Red background when recording
+div[aria-label*="Stop recording"],
+div[aria-pressed="true"][aria-label*="recording"],
+div[aria-pressed="true"][aria-label*="Record"] {
+    background-color: #dc3545 !important; // Red background when recording
 
-        svg {
-            fill: #ffffff !important; // White icon color for contrast
-        }
+    svg {
+        fill: #ffffff !important; // White icon color for contrast
+    }
 
+    @media (hover: hover) and (pointer: fine) {
         &:hover {
             background-color: #c82333 !important; // Darker red on hover
+        }
+
+        &:active {
+            background-color: #a21b29 !important; // Even darker on click
+        }
+    }
+}
+
+// Alternative selector for recording button when toggled
+div[role="button"][aria-pressed="true"] {
+    &[aria-label*="recording"],
+    &[aria-label*="Record"],
+    &[aria-label*="Stop recording"] {
+        background-color: #dc3545 !important;
+
+        svg {
+            fill: #ffffff !important;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            &:hover {
+                background-color: #c82333 !important;
+            }
         }
     }
 }
