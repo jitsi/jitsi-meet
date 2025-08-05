@@ -1,23 +1,21 @@
-// @ts-expect-error
-import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
+import { generateRoomWithoutSeparator } from "@jitsi/js-utils/random";
 
-import { getTokenAuthUrl } from '../authentication/functions.web';
-import { IStateful } from '../base/app/types';
-import { isRoomValid } from '../base/conference/functions';
-import { isSupportedBrowser } from '../base/environment/environment';
-import { browser } from '../base/lib-jitsi-meet';
-import { toState } from '../base/redux/functions';
-import { parseURIString } from '../base/util/uri';
+import { getTokenAuthUrl } from "../authentication/functions.web";
+import { IStateful } from "../base/app/types";
+import { isRoomValid } from "../base/conference/functions";
+import { isSupportedBrowser } from "../base/environment/environment";
+import { browser } from "../base/lib-jitsi-meet";
+import { toState } from "../base/redux/functions";
+import { parseURIString } from "../base/util/uri";
 
-import { getDeepLinkingPage } from '../deep-linking/functions';
-import UnsupportedDesktopBrowser from '../unsupported-browser/components/UnsupportedDesktopBrowser';
-import BlankPage from '../welcome/components/BlankPage.web';
-import WelcomePage from '../welcome/components/WelcomePage.web';
-import { getCustomLandingPageURL, isWelcomePageEnabled } from '../welcome/functions';
+import { getDeepLinkingPage } from "../deep-linking/functions";
+import UnsupportedDesktopBrowser from "../unsupported-browser/components/UnsupportedDesktopBrowser";
+import BlankPage from "../welcome/components/BlankPage.web";
+import WelcomePage from "../welcome/components/WelcomePage.web";
+import { getCustomLandingPageURL, isWelcomePageEnabled } from "../welcome/functions";
 
 import Conference from "../base/meet/views/Conference/Conference";
 import { IReduxState } from "./types";
-// import Conference from "../conference/components/web/Conference";
 
 /**
  * Determines which route is to be rendered in order to depict a specific Redux
@@ -41,21 +39,26 @@ export function _getRouteToRender(stateful: IStateful) {
  * @returns {Promise|undefined}
  */
 function _getWebConferenceRoute(state: IReduxState) {
-    const room = state['features/base/conference'].room;
+    const room = state["features/base/conference"].room;
 
     if (!isRoomValid(room)) {
         return;
     }
 
     const route = _getEmptyRoute();
-    const config = state['features/base/config'];
+    const config = state["features/base/config"];
 
     // if we have auto redirect enabled, and we have previously logged in successfully
     // let's redirect to the auth url to get the token and login again
-    if (!browser.isElectron() && config.tokenAuthUrl && config.tokenAuthUrlAutoRedirect
-            && state['features/authentication'].tokenAuthUrlSuccessful
-            && !state['features/base/jwt'].jwt && room) {
-        const { locationURL = { href: '' } as URL } = state['features/base/connection'];
+    if (
+        !browser.isElectron() &&
+        config.tokenAuthUrl &&
+        config.tokenAuthUrlAutoRedirect &&
+        state["features/authentication"].tokenAuthUrlSuccessful &&
+        !state["features/base/jwt"].jwt &&
+        room
+    ) {
+        const { locationURL = { href: "" } as URL } = state["features/base/connection"];
         const { tenant } = parseURIString(locationURL.href) || {};
         const { startAudioOnly } = config;
 
@@ -66,7 +69,7 @@ function _getWebConferenceRoute(state: IReduxState) {
                 audioMuted: false,
                 audioOnlyEnabled: startAudioOnly,
                 skipPrejoin: false,
-                videoMuted: false
+                videoMuted: false,
             },
             room,
             tenant
@@ -83,7 +86,7 @@ function _getWebConferenceRoute(state: IReduxState) {
     // joined from the welcome page. The reason for doing this instead of using
     // the history API is that we want to load the config.js which takes the
     // room into account.
-    const { locationURL } = state['features/base/connection'];
+    const { locationURL } = state["features/base/connection"];
 
     if (window.location.href !== locationURL?.href) {
         route.href = locationURL?.href;
@@ -91,18 +94,17 @@ function _getWebConferenceRoute(state: IReduxState) {
         return Promise.resolve(route);
     }
 
-    return getDeepLinkingPage(state)
-        .then(deepLinkComponent => {
-            if (deepLinkComponent) {
-                route.component = deepLinkComponent;
-            } else if (isSupportedBrowser()) {
-                route.component = Conference;
-            } else {
-                route.component = UnsupportedDesktopBrowser;
-            }
+    return getDeepLinkingPage(state).then((deepLinkComponent) => {
+        if (deepLinkComponent) {
+            route.component = deepLinkComponent;
+        } else if (isSupportedBrowser()) {
+            route.component = Conference;
+        } else {
+            route.component = UnsupportedDesktopBrowser;
+        }
 
-            return route;
-        });
+        return route;
+    });
 }
 
 /**
@@ -145,9 +147,9 @@ function _getWebWelcomePageRoute(state: IReduxState) {
 function _getEmptyRoute(): {
     component: React.ReactNode;
     href?: string;
-    } {
+} {
     return {
         component: BlankPage,
-        href: undefined
+        href: undefined,
     };
 }
