@@ -227,7 +227,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         }
 
         if (isRecordingStarting) {
-            dispatch(showPendingRecordingNotification(mode));
             break;
         }
 

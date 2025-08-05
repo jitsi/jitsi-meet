@@ -175,6 +175,51 @@ div[role="button"][aria-pressed="true"] {
     }
 }
 
+// Enhanced recording button styling - ensure entire button is red when recording
+.toolbox-icon.toggled {
+    &[aria-label*="recording"],
+    &[aria-label*="Record"],
+    &[aria-label*="Stop recording"] {
+        background-color: #dc3545 !important;
+        border: 2px solid #dc3545 !important;
+
+        svg {
+            fill: #ffffff !important;
+        }
+
+        &:hover {
+            background-color: #c82333 !important;
+            border-color: #c82333 !important;
+        }
+
+        &:active {
+            background-color: #bd2130 !important;
+            border-color: #bd2130 !important;
+        }
+    }
+}
+
+// Additional selector for recording button in various states
+button.toolbox-icon {
+    &[aria-pressed="true"] {
+        &[aria-label*="recording"],
+        &[aria-label*="Record"],
+        &[aria-label*="Stop recording"] {
+            background-color: #dc3545 !important;
+            border: 2px solid #dc3545 !important;
+
+            svg {
+                fill: #ffffff !important;
+            }
+
+            &:hover {
+                background-color: #c82333 !important;
+                border-color: #c82333 !important;
+            }
+        }
+    }
+}
+
 .live-stream-dialog {
     /**
      * Set font-size to be consistent with Atlaskit FieldText.
