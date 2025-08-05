@@ -1,3 +1,4 @@
+// @ts-expect-error
 import { generateRoomWithoutSeparator } from "@jitsi/js-utils/random";
 
 import { getTokenAuthUrl } from "../authentication/functions.web";
