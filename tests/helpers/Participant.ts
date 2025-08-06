@@ -237,16 +237,14 @@ export class Participant {
 
         await this.driver.setTimeout({ 'pageLoad': 30000 });
 
-        let urlToLoad = url.startsWith('/') ? url.substring(1) : url;
+        // drop the leading '/' so we can use the tenant if any
+        url = url.startsWith('/') ? url.substring(1) : url;
 
-        if (options.preferGenerateToken && !this._iFrameApi
-            && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-') && process.env.IFRAME_TENANT) {
-            // This to enables tests like invite, which can force using the jaas auth instead of the provided token
-            urlToLoad = `/${process.env.IFRAME_TENANT}/${urlToLoad}`;
+        if (options.forceTenant) {
+            url = `/${options.forceTenant}/${url}`;
         }
 
-        // drop the leading '/' so we can use the tenant if any
-        await this.driver.url(urlToLoad);
+        await this.driver.url(url);
 
         await this.waitForPageToLoad();
 

@@ -220,8 +220,15 @@ async function _joinParticipant( // eslint-disable-line max-params
     // @ts-ignore
     ctx[name] = newParticipant;
 
+    let forceTenant;
+
+    if (options?.preferGenerateToken && !ctx.testProperties.useIFrameApi
+        && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-') && process.env.IFRAME_TENANT) {
+        forceTenant = process.env.IFRAME_TENANT;
+    }
     await newParticipant.joinConference({
         ...options,
+        forceTenant,
         roomName: ctx.roomName,
     });
 }

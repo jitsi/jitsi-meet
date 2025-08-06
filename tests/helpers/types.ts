@@ -48,10 +48,9 @@ export type IParticipantJoinOptions = {
     configOverwrite?: IConfig;
 
     /**
-     * When joining the first participant and jwt singing material is available and a provided token
-     * is available, prefer generating a new token for the first participant.
+     * An optional tenant to use. If provided the URL is prepended with /$forceTenant
      */
-    preferGenerateToken?: boolean;
+    forceTenant?: string;
 
     /** The name of the room to join */
     roomName: string;
