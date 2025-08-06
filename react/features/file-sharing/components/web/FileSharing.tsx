@@ -209,6 +209,7 @@ const FileSharing = () => {
     const { classes } = useStyles();
     const [ isDragging, setIsDragging ] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const uploadButtonRef = useRef<HTMLButtonElement>(null);
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const store = useStore();
@@ -237,7 +238,7 @@ const FileSharing = () => {
         if (e.target.files) {
             processFiles(e.target.files as FileList, store);
             e.target.value = ''; // Reset the input value to allow re-uploading the same file
-            e.target.blur(); // Remove focus so Enter/Space won't retrigger
+            uploadButtonRef.current?.focus();
         }
     }, [ processFiles ]);
 
@@ -393,6 +394,7 @@ const FileSharing = () => {
                         labelKey = { 'fileSharing.uploadFile' }
                         onClick = { handleClick }
                         onKeyPress = { handleKeyPress }
+                        ref = { uploadButtonRef }
                         type = { BUTTON_TYPES.PRIMARY } />
                 )
             }
