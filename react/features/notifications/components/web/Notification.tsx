@@ -1,5 +1,5 @@
 import { Theme } from '@mui/material';
-import React, { isValidElement, useCallback, useContext } from 'react';
+import React, { isValidElement, useCallback, useContext, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { keyframes } from 'tss-react';
@@ -193,6 +193,10 @@ const Notification = ({
     const { t } = useTranslation();
     const { unmounting } = useContext(NotificationsTransitionContext);
     const supportUrl = useSelector(getSupportUrl);
+    const isErrorOrWarning = useMemo(
+        () => appearance === NOTIFICATION_TYPE.ERROR || appearance === NOTIFICATION_TYPE.WARNING,
+        [ appearance ]
+    );
 
     const ICON_COLOR = {
         error: theme.palette.iconError,
@@ -314,11 +318,12 @@ const Notification = ({
 
     return (
         <div
-            aria-atomic = 'false'
-            aria-live = 'polite'
+            aria-atomic = { true }
+            aria-live = { isErrorOrWarning ? 'assertive' : 'polite' }
             className = { cx(classes.container, (unmounting.get(uid ?? '') && 'unmount') as string | undefined) }
             data-testid = { titleKey || descriptionKey }
-            id = { uid }>
+            id = { uid }
+            role = { isErrorOrWarning ? 'alert' : 'status' }>
             <div className = { cx(classes.ribbon, appearance) } />
             <div className = { classes.content }>
                 <div className = { icon }>
