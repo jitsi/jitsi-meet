@@ -3,7 +3,7 @@ import { IConfig } from '../../react/features/base/config/configType';
 import type { Participant } from './Participant';
 import { ITestProperties } from './TestProperties';
 import type WebhookProxy from './WebhookProxy';
-import { ITokenOptions } from './token';
+import { IToken, ITokenOptions } from './token';
 
 export type IContext = {
     /**
@@ -23,6 +23,15 @@ export type IContext = {
     times: any;
     webhooksProxy: WebhookProxy;
 };
+
+export type IParticipantOptions = {
+    /** Must be 'p1', 'p2', 'p3', or 'p4'. */
+    name: string;
+    /** Whether it should use the iFrame API. */
+    iFrameApi?: boolean;
+    /** An optional token to use. */
+    token?: IToken
+}
 
 export type IJoinOptions = {
 

@@ -214,7 +214,7 @@ async function _joinParticipant( // eslint-disable-line max-params
         }
     }
 
-    const newParticipant = new Participant(name, token);
+    const newParticipant = new Participant({ name, token, iFrameApi: ctx.testProperties.useIFrameApi });
 
     // set the new participant instance
     // @ts-ignore
