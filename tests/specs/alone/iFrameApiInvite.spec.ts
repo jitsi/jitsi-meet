@@ -5,7 +5,6 @@ import {
     cleanup,
     dialIn,
     isDialInEnabled,
-    retrievePin,
     waitForAudioFromDialInParticipant
 } from '../helpers/DialIn';
 
@@ -15,6 +14,10 @@ setTestProperties(__filename, {
 });
 
 describe('Invite iframeAPI', () => {
+    let dialInDisabled: boolean;
+    let dialOutDisabled: boolean;
+    let sipJibriDisabled: boolean;
+
     it('join participant', async () => {
         await ensureOneParticipant(ctx);
 
@@ -28,25 +31,24 @@ describe('Invite iframeAPI', () => {
             return;
         }
 
-        ctx.data.dialOutDisabled = Boolean(!await p1.execute(() => config.dialOutAuthUrl));
-        ctx.data.sipJibriDisabled = Boolean(!await p1.execute(() => config.inviteServiceUrl));
+        dialOutDisabled = Boolean(!await p1.execute(() => config.dialOutAuthUrl));
+        sipJibriDisabled = Boolean(!await p1.execute(() => config.inviteServiceUrl));
 
         // check dial-in is enabled
         if (!await isDialInEnabled(ctx.p1) || !process.env.DIAL_IN_REST_URL) {
-            ctx.data.dialInDisabled = true;
+            dialInDisabled = true;
         }
     });
 
     it('dial-in', async () => {
-        if (ctx.data.dialInDisabled) {
+        if (dialInDisabled) {
             return;
         }
 
         const { p1 } = ctx;
+        const dialInPin = await p1.getDialInPin();
 
-        await retrievePin(p1);
-
-        expect(ctx.data.dialInPin.length >= 8).toBe(true);
+        expect(dialInPin.length >= 8).toBe(true);
 
         await dialIn(p1);
 
@@ -61,7 +63,7 @@ describe('Invite iframeAPI', () => {
     });
 
     it('dial-out', async () => {
-        if (ctx.data.dialOutDisabled || !process.env.DIAL_OUT_URL) {
+        if (dialOutDisabled || !process.env.DIAL_OUT_URL) {
             return;
         }
 
@@ -81,7 +83,7 @@ describe('Invite iframeAPI', () => {
     });
 
     it('sip jibri', async () => {
-        if (ctx.data.sipJibriDisabled || !process.env.SIP_JIBRI_DIAL_OUT_URL) {
+        if (sipJibriDisabled || !process.env.SIP_JIBRI_DIAL_OUT_URL) {
             return;
         }
 

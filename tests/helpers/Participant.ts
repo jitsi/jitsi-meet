@@ -13,7 +13,7 @@ import IframeAPI from '../pageobjects/IframeAPI';
 import InviteDialog from '../pageobjects/InviteDialog';
 import LargeVideo from '../pageobjects/LargeVideo';
 import LobbyScreen from '../pageobjects/LobbyScreen';
-import Notifications from '../pageobjects/Notifications';
+import Notifications, { TOKEN_AUTH_FAILED_TEST_ID, TOKEN_AUTH_FAILED_TITLE_TEST_ID } from '../pageobjects/Notifications';
 import ParticipantsPane from '../pageobjects/ParticipantsPane';
 import PasswordDialog from '../pageobjects/PasswordDialog';
 import PreJoinScreen from '../pageobjects/PreJoinScreen';
@@ -54,6 +54,11 @@ export class Participant {
      * The token that this participant was initialized with.
      */
     private _token?: IToken;
+
+    /**
+     * Cache the dial in pin code so that it doesn't have to be read from the UI.
+     */
+    private _dialInPin?: string;
 
     /**
      * The default config to use when joining.
@@ -333,6 +338,21 @@ export class Participant {
      */
     isInMuc() {
         return this.execute(() => typeof APP !== 'undefined' && APP.conference?.isJoined());
+    }
+
+    /**
+     * Waits until either the MUC is joined, or a password prompt is displayed, or an authentication failure
+     * notification is displayed.
+     */
+    async waitForMucJoinedOrError(): Promise<void> {
+        await this.driver.waitUntil(async () => {
+            return await this.isInMuc() || await this.getPasswordDialog().isOpen()
+                || await this.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TEST_ID)
+                || await this.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TITLE_TEST_ID);
+        }, {
+            timeout: 10_000,
+            timeoutMsg: 'Timeout waiting for MUC joined or password prompt.'
+        });
     }
 
     /**
@@ -906,5 +926,20 @@ export class Participant {
      */
     getToken(): IToken | undefined {
         return this._token;
+    }
+
+    /**
+     * Gets the dial in pin for the conference. Reads it from the invite dialog if the pin hasn't been cached yet.
+     */
+    async getDialInPin(): Promise<string> {
+        if (!this._dialInPin) {
+            const dialInPin = await this.getInviteDialog().getPinNumber();
+
+            await this.getInviteDialog().clickCloseButton();
+
+            this._dialInPin = dialInPin;
+        }
+
+        return this._dialInPin;
     }
 }

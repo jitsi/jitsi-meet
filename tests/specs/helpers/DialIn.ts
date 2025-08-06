@@ -54,18 +54,6 @@ export async function isDialInEnabled(participant: Participant) {
 }
 
 /**
- * Retrieves the dial-in pin number from the invite dialog of the participant.
- * @param participant
- */
-export async function retrievePin(participant: Participant) {
-    const dialInPin = await participant.getInviteDialog().getPinNumber();
-
-    await participant.getInviteDialog().clickCloseButton();
-
-    ctx.data.dialInPin = dialInPin;
-}
-
-/**
  * Sends a request to the REST API to dial in the participant using the provided pin.
  * @param participant
  */
@@ -75,7 +63,9 @@ export async function dialIn(participant: Participant) {
         return;
     }
 
-    const restUrl = process.env.DIAL_IN_REST_URL?.replace('{0}', ctx.data.dialInPin);
+    const dialInPin = await participant.getDialInPin();
+
+    const restUrl = process.env.DIAL_IN_REST_URL?.replace('{0}', dialInPin);
 
     // we have already checked in the first test that DIAL_IN_REST_URL exist so restUrl cannot be ''
     const responseData: string = await new Promise((resolve, reject) => {

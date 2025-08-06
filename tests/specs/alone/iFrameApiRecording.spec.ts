@@ -7,6 +7,9 @@ setTestProperties(__filename, {
 });
 
 describe('Recording', () => {
+    let recordingDisabled: boolean;
+    let liveStreamingDisabled: boolean;
+
     it('join participant', async () => {
         await ensureOneParticipant(ctx);
 
@@ -20,13 +23,13 @@ describe('Recording', () => {
             return;
         }
 
-        ctx.data.recordingDisabled = Boolean(!await p1.execute(() => config.recordingService?.enabled));
-        ctx.data.liveStreamingDisabled = Boolean(!await p1.execute(() => config.liveStreaming?.enabled))
+        recordingDisabled = Boolean(!await p1.execute(() => config.recordingService?.enabled));
+        liveStreamingDisabled = Boolean(!await p1.execute(() => config.liveStreaming?.enabled))
             || !process.env.YTUBE_TEST_STREAM_KEY;
     });
 
     it('start/stop function', async () => {
-        if (ctx.data.recordingDisabled) {
+        if (recordingDisabled) {
             return;
         }
 
@@ -38,7 +41,7 @@ describe('Recording', () => {
     });
 
     it('start/stop command', async () => {
-        if (ctx.data.recordingDisabled) {
+        if (recordingDisabled) {
             return;
         }
 
@@ -50,7 +53,7 @@ describe('Recording', () => {
     });
 
     it('start/stop Livestreaming command', async () => {
-        if (ctx.data.liveStreamingDisabled) {
+        if (liveStreamingDisabled) {
             return;
         }
 

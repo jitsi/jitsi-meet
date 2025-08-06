@@ -20,6 +20,18 @@ export default class PasswordDialog extends BaseDialog {
         await input.waitForStable();
     }
 
+    async isOpen() {
+        const input = this.participant.driver.$(INPUT_KEY_XPATH);
+
+        try {
+            await input.isExisting();
+
+            return await input.isDisplayed();
+        } catch (e) {
+            return false;
+        }
+    }
+
     /**
      * Sets a password and submits the dialog.
      * @param password
