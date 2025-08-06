@@ -1,0 +1,158 @@
+name: Scale Jitsi Meet Infrastructure
+
+on:
+    workflow_dispatch:
+        inputs:
+            mode:
+                description: 'Scale mode'
+                required: true
+                default: 'scale-up'
+                type: choice
+                options:
+                    - scale-up
+                    - scale-down
+            jibri_desired_capacity:
+                description: 'Desired capacity for Jibri ASG (scale-up only)'
+                required: false
+                default: '1'
+                type: string
+            jvb_desired_capacity:
+                description: 'Desired capacity for JVB ASG (scale-up only)'
+                required: false
+                default: '1'
+                type: string
+
+jobs:
+    scale:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: us-west-1  # Adjust to match your EC2 region
+
+            - name: Get EC2 Instance ID
+              id: get-instance-id
+              run: |
+                  INSTANCE_ID=$(aws ec2 describe-instances \
+                    --filters "Name=ip-address,Values=13.52.18.125" "Name=instance-state-name,Values=running,stopped" \
+                    --query "Reservations[0].Instances[0].InstanceId" \
+                    --output text)
+                  echo "instance-id=$INSTANCE_ID" >> $GITHUB_OUTPUT
+                  echo "Found instance ID: $INSTANCE_ID"
+
+            - name: Scale Down Infrastructure
+              if: ${{ github.event.inputs.mode == 'scale-down' }}
+              run: |
+                  echo "🔽 Starting scale down operation..."
+
+                  # Stop EC2 instance
+                  echo "Stopping Jitsi Meet EC2 instance..."
+                  aws ec2 stop-instances --instance-ids ${{ steps.get-instance-id.outputs.instance-id }}
+
+                  # Wait for instance to stop
+                  echo "Waiting for instance to stop..."
+                  aws ec2 wait instance-stopped --instance-ids ${{ steps.get-instance-id.outputs.instance-id }}
+                  echo "✅ EC2 instance stopped successfully"
+
+                  # Scale down Jibri ASG to 0
+                  echo "Scaling down Jibri Auto Scaling Group to 0..."
+                  aws autoscaling update-auto-scaling-group \
+                    --auto-scaling-group-name jibri-asg \
+                    --desired-capacity 0 \
+                    --min-size 0
+
+                  # Scale down JVB ASG to 0
+                  echo "Scaling down JVB Auto Scaling Group to 0..."
+                  aws autoscaling update-auto-scaling-group \
+                    --auto-scaling-group-name jvb-asg \
+                    --desired-capacity 0 \
+                    --min-size 0
+
+                  echo "✅ Scale down completed successfully!"
+                  echo "- EC2 instance: Stopped"
+                  echo "- Jibri ASG: Scaled to 0"
+                  echo "- JVB ASG: Scaled to 0"
+
+            - name: Scale Up Infrastructure
+              if: ${{ github.event.inputs.mode == 'scale-up' }}
+              run: |
+                  echo "🔼 Starting scale up operation..."
+
+                  # Check current instance state
+                  INSTANCE_STATE=$(aws ec2 describe-instances \
+                    --instance-ids ${{ steps.get-instance-id.outputs.instance-id }} \
+                    --query "Reservations[0].Instances[0].State.Name" \
+                    --output text)
+
+                  echo "Current instance state: $INSTANCE_STATE"
+
+                  # Start EC2 instance if it's stopped
+                  if [ "$INSTANCE_STATE" = "stopped" ]; then
+                    echo "Starting Jitsi Meet EC2 instance..."
+                    aws ec2 start-instances --instance-ids ${{ steps.get-instance-id.outputs.instance-id }}
+
+                    # Wait for instance to be running
+                    echo "Waiting for instance to start..."
+                    aws ec2 wait instance-running --instance-ids ${{ steps.get-instance-id.outputs.instance-id }}
+
+                    # Wait additional time for services to be ready
+                    echo "Waiting for services to initialize..."
+                    sleep 60
+
+                    echo "✅ EC2 instance started successfully"
+                  else
+                    echo "✅ EC2 instance is already running"
+                  fi
+
+                  # Scale up Jibri ASG
+                  echo "Scaling up Jibri Auto Scaling Group to ${{ github.event.inputs.jibri_desired_capacity }}..."
+                  aws autoscaling update-auto-scaling-group \
+                    --auto-scaling-group-name jibri-asg \
+                    --desired-capacity ${{ github.event.inputs.jibri_desired_capacity }} \
+                    --min-size 0 \
+                    --max-size 10
+
+                  # Scale up JVB ASG
+                  echo "Scaling up JVB Auto Scaling Group to ${{ github.event.inputs.jvb_desired_capacity }}..."
+                  aws autoscaling update-auto-scaling-group \
+                    --auto-scaling-group-name jvb-asg \
+                    --desired-capacity ${{ github.event.inputs.jvb_desired_capacity }} \
+                    --min-size 0 \
+                    --max-size 15
+
+                  echo "✅ Scale up completed successfully!"
+                  echo "- EC2 instance: Running"
+                  echo "- Jibri ASG: Scaled to ${{ github.event.inputs.jibri_desired_capacity }}"
+                  echo "- JVB ASG: Scaled to ${{ github.event.inputs.jvb_desired_capacity }}"
+
+            - name: Display Current Infrastructure Status
+              run: |
+                  echo ""
+                  echo "==================== INFRASTRUCTURE STATUS ===================="
+
+                  # EC2 Instance Status
+                  INSTANCE_STATE=$(aws ec2 describe-instances \
+                    --instance-ids ${{ steps.get-instance-id.outputs.instance-id }} \
+                    --query "Reservations[0].Instances[0].State.Name" \
+                    --output text)
+                  echo "EC2 Instance (Jitsi Meet): $INSTANCE_STATE"
+
+                  # Jibri ASG Status
+                  JIBRI_STATUS=$(aws autoscaling describe-auto-scaling-groups \
+                    --auto-scaling-group-names jibri-asg \
+                    --query "AutoScalingGroups[0].[DesiredCapacity,Instances[?LifecycleState=='InService']|length(Instances)]" \
+                    --output text)
+                  echo "Jibri ASG: $JIBRI_STATUS (desired/running)"
+
+                  # JVB ASG Status
+                  JVB_STATUS=$(aws autoscaling describe-auto-scaling-groups \
+                    --auto-scaling-group-names jvb-asg \
+                    --query "AutoScalingGroups[0].[DesiredCapacity,Instances[?LifecycleState=='InService']|length(Instances)]" \
+                    --output text)
+                  echo "JVB ASG: $JVB_STATUS (desired/running)"
+
+                  echo "=========================================================="
