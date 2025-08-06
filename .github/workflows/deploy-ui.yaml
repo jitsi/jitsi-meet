@@ -1,100 +1,143 @@
 name: Deploy Jitsi Meet to EC2
 
 on:
-  push:
-    branches: 
-      - main
-      - master
-  workflow_dispatch:
+    push:
+        branches:
+            - main
+            - master
+    workflow_dispatch:
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-west-1  # Adjust to match your EC2 region
-        
-    - name: Get EC2 Instance ID
-      id: get-instance-id
-      run: |
-        INSTANCE_ID=$(aws ec2 describe-instances \
-          --filters "Name=ip-address,Values=13.52.18.125" "Name=instance-state-name,Values=running" \
-          --query "Reservations[0].Instances[0].InstanceId" \
-          --output text)
-        echo "instance-id=$INSTANCE_ID" >> $GITHUB_OUTPUT
-        echo "Found instance ID: $INSTANCE_ID"
+    deploy:
+        runs-on: ubuntu-latest
 
-    - name: Deploy Jitsi Meet
-      run: |
-        COMMAND_ID=$(aws ssm send-command \
-          --instance-ids ${{ steps.get-instance-id.outputs.instance-id }} \
-          --document-name "AWS-RunShellScript" \
-          --parameters 'commands=[
-            "echo \"=== Starting Jitsi Meet deployment ===\"",
-            "sudo /usr/local/bin/update-jitsi-ui.sh",
-            "echo \"✅ Deployment completed successfully!\""
-          ]' \
-          --timeout-seconds 900 \
-          --query "Command.CommandId" \
-          --output text)
-        
-        echo "Command ID: $COMMAND_ID"
-        echo "Running deployment script (this typically takes ~10 minutes)..."
-        
-        # Wait for completion with progress updates every minute
-        sleep 10
-        for i in {1..180}; do
-          STATUS=$(aws ssm get-command-invocation \
-            --command-id $COMMAND_ID \
-            --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
-            --query "Status" \
-            --output text 2>/dev/null || echo "InProgress")
-          
-          if [ "$STATUS" != "InProgress" ]; then
-            echo "Command completed with status: $STATUS"
-            break
-          fi
-          
-          # Show progress every minute (12 iterations * 5 seconds = 60 seconds)
-          if [ $((i % 12)) -eq 0 ]; then
-            MINUTES=$((i * 5 / 60))
-            echo "Still building... (${MINUTES} minutes elapsed)"
-          fi
-          
-          sleep 5
-        done
-        
-        # Show complete output
-        echo ""
-        echo "==================== UPDATE SCRIPT OUTPUT ===================="
-        aws ssm get-command-invocation \
-          --command-id $COMMAND_ID \
-          --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
-          --query "StandardOutputContent" \
-          --output text
-        
-        # Show any errors
-        STDERR=$(aws ssm get-command-invocation \
-          --command-id $COMMAND_ID \
-          --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
-          --query "StandardErrorContent" \
-          --output text 2>/dev/null)
-        
-        if [ "$STDERR" != "None" ] && [ ! -z "$STDERR" ]; then
-          echo ""
-          echo "==================== ERROR OUTPUT ===================="
-          echo "$STDERR"
-        fi
-        
-        # Check final status
-        if [ "$STATUS" != "Success" ]; then
-          echo "❌ Deployment failed with status: $STATUS"
-          exit 1
-        else
-          echo "✅ Deployment completed successfully!"
-        fi
+        steps:
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: us-west-1  # Adjust to match your EC2 region
+
+            - name: Check EC2 Instance State
+              id: check-instance-state
+              run: |
+                  INSTANCE_ID=$(aws ec2 describe-instances \
+                    --filters "Name=ip-address,Values=13.52.18.125" \
+                    --query "Reservations[0].Instances[0].InstanceId" \
+                    --output text 2>/dev/null || echo "NotFound")
+
+                  if [ "$INSTANCE_ID" = "NotFound" ] || [ "$INSTANCE_ID" = "None" ]; then
+                    echo "❌ EC2 instance not found with IP 13.52.18.125"
+                    echo "instance-found=false" >> $GITHUB_OUTPUT
+                    exit 1
+                  fi
+
+                  INSTANCE_STATE=$(aws ec2 describe-instances \
+                    --instance-ids $INSTANCE_ID \
+                    --query "Reservations[0].Instances[0].State.Name" \
+                    --output text)
+
+                  echo "instance-id=$INSTANCE_ID" >> $GITHUB_OUTPUT
+                  echo "instance-state=$INSTANCE_STATE" >> $GITHUB_OUTPUT
+                  echo "instance-found=true" >> $GITHUB_OUTPUT
+
+                  echo "Found instance ID: $INSTANCE_ID"
+                  echo "Instance state: $INSTANCE_STATE"
+
+                  if [ "$INSTANCE_STATE" = "running" ]; then
+                    echo "instance-running=true" >> $GITHUB_OUTPUT
+                  else
+                    echo "instance-running=false" >> $GITHUB_OUTPUT
+                  fi
+
+            - name: Skip Deployment - System Scaled Down
+              if: ${{ steps.check-instance-state.outputs.instance-running == 'false' }}
+              run: |
+                  echo "⚠️  DEPLOYMENT SKIPPED"
+                  echo ""
+                  echo "The Jitsi Meet EC2 instance is currently in '${{ steps.check-instance-state.outputs.instance-state }}' state."
+                  echo "The system appears to be scaled down, so changes will not be automatically applied."
+                  echo ""
+                  echo "To deploy your changes:"
+                  echo "1. Use the 'Scale Jitsi Meet Infrastructure' workflow to scale up the system"
+                  echo "2. Re-run this deployment workflow, or"
+                  echo "3. Push another commit to trigger automatic deployment"
+                  echo ""
+                  echo "Instance Details:"
+                  echo "- Instance ID: ${{ steps.check-instance-state.outputs.instance-id }}"
+                  echo "- Current State: ${{ steps.check-instance-state.outputs.instance-state }}"
+                  echo ""
+
+            - name: Deploy Jitsi Meet
+              if: ${{ steps.check-instance-state.outputs.instance-running == 'true' }}
+              run: |
+                  echo "✅ Instance is running - proceeding with deployment"
+
+                  COMMAND_ID=$(aws ssm send-command \
+                    --instance-ids ${{ steps.check-instance-state.outputs.instance-id }} \
+                    --document-name "AWS-RunShellScript" \
+                    --parameters 'commands=[
+                      "echo \"=== Starting Jitsi Meet deployment ===\"",
+                      "sudo /usr/local/bin/update-jitsi-ui.sh",
+                      "echo \"✅ Deployment completed successfully!\""
+                    ]' \
+                    --timeout-seconds 900 \
+                    --query "Command.CommandId" \
+                    --output text)
+
+                  echo "Command ID: $COMMAND_ID"
+                  echo "Running deployment script (this typically takes ~10 minutes)..."
+
+                  # Wait for completion with progress updates every minute
+                  sleep 10
+                  for i in {1..180}; do
+                    STATUS=$(aws ssm get-command-invocation \
+                      --command-id $COMMAND_ID \
+                      --instance-id ${{ steps.check-instance-state.outputs.instance-id }} \
+                      --query "Status" \
+                      --output text 2>/dev/null || echo "InProgress")
+
+                    if [ "$STATUS" != "InProgress" ]; then
+                      echo "Command completed with status: $STATUS"
+                      break
+                    fi
+
+                    # Show progress every minute (12 iterations * 5 seconds = 60 seconds)
+                    if [ $((i % 12)) -eq 0 ]; then
+                      MINUTES=$((i * 5 / 60))
+                      echo "Still building... (${MINUTES} minutes elapsed)"
+                    fi
+
+                    sleep 5
+                  done
+
+                  # Show complete output
+                  echo ""
+                  echo "==================== UPDATE SCRIPT OUTPUT ===================="
+                  aws ssm get-command-invocation \
+                    --command-id $COMMAND_ID \
+                    --instance-id ${{ steps.check-instance-state.outputs.instance-id }} \
+                    --query "StandardOutputContent" \
+                    --output text
+
+                  # Show any errors
+                  STDERR=$(aws ssm get-command-invocation \
+                    --command-id $COMMAND_ID \
+                    --instance-id ${{ steps.check-instance-state.outputs.instance-id }} \
+                    --query "StandardErrorContent" \
+                    --output text 2>/dev/null)
+
+                  if [ "$STDERR" != "None" ] && [ ! -z "$STDERR" ]; then
+                    echo ""
+                    echo "==================== ERROR OUTPUT ===================="
+                    echo "$STDERR"
+                  fi
+
+                  # Check final status
+                  if [ "$STATUS" != "Success" ]; then
+                    echo "❌ Deployment failed with status: $STATUS"
+                    exit 1
+                  else
+                    echo "✅ Deployment completed successfully!"
+                  fi
