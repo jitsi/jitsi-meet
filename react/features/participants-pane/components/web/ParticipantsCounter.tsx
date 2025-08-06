@@ -18,8 +18,7 @@ const useStyles = makeStyles()(theme => {
             right: '-4px',
             top: '-3px',
             textAlign: 'center',
-            padding: '1px',
-            fontSize: '0.75rem'
+            padding: '1px'
         }
     };
 });

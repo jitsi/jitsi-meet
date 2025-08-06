@@ -2,7 +2,6 @@ import React from 'react';
 
 import { IconCalendar, IconGear, IconRestore } from '../base/icons/svg';
 import BaseTheme from '../base/ui/components/BaseTheme';
-import { remToPixels } from '../base/ui/functions.any';
 
 import TabIcon from './components/TabIcon';
 
@@ -13,7 +12,7 @@ export const tabBarOptions = {
     tabBarActiveTintColor: ACTIVE_TAB_COLOR,
     tabBarInactiveTintColor: INACTIVE_TAB_COLOR,
     tabBarLabelStyle: {
-        fontSize: remToPixels('0.75rem'),
+        fontSize: 12,
     },
     tabBarStyle: {
         backgroundColor: BaseTheme.palette.ui01

@@ -99,8 +99,8 @@ export function scaleFontProperty(
         screenHeightLimits: INumberLimits = DEFAULT_CLIENT_HEIGHT_LIMITS): number {
     const { max: maxPropSize, min: minPropSize } = propValuesLimits;
     const { max: maxHeight, min: minHeight } = screenHeightLimits;
-    const numericalMinRem = parseFloat(minPropSize); // 0.8
-    const numericalMaxRem = parseFloat(maxPropSize); // 1.2
+    const numericalMinRem = parseFloat(minPropSize);
+    const numericalMaxRem = parseFloat(maxPropSize);
 
     if (typeof screenHeight !== 'number') {
         return numericalMaxRem;
@@ -119,5 +119,5 @@ export function scaleFontProperty(
     // (clampedScreenHeightPx - minHeigh) gives the effective height within the range.
     const calculatedRemValue = (clampedScreenHeightPx - minHeight) * propSizeRemPerPxHeight + numericalMinRem;
 
-    return Math.round(calculatedRemValue * 1000) / 1000;
+    return parseFloat(calculatedRemValue.toFixed(3));
 }

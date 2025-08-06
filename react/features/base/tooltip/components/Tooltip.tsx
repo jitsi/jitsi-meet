@@ -28,7 +28,6 @@ const useStyles = makeStyles()(theme => {
             ...theme.typography.labelRegular,
             color: theme.palette.text01,
             position: 'relative',
-            fontSize: '0.75rem',
 
             '&.mounting-animation': {
                 animation: `${keyframes`
