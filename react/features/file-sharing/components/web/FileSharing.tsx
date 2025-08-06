@@ -372,11 +372,19 @@ const FileSharing = () => {
                                     }
                                     {
                                         (file.progress ?? 100) < 100 && (
-                                            <div className = { classes.progressBar }>
+                                            <>
                                                 <div
-                                                    className = { classes.progressFill }
-                                                    style = {{ width: `${file.progress}%` }} />
-                                            </div>
+                                                    aria-label = { t('fileSharing.fileUploadProgress') }
+                                                    aria-valuemax = { 100 }
+                                                    aria-valuemin = { 0 }
+                                                    aria-valuenow = { file.progress }
+                                                    className = { classes.progressBar }
+                                                    role = 'progressbar'>
+                                                    <div
+                                                        className = { classes.progressFill }
+                                                        style = {{ width: `${file.progress}%` }} />
+                                                </div>
+                                            </>
                                         )
                                     }
                                 </li>
