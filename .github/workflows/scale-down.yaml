@@ -128,31 +128,3 @@ jobs:
                   echo "- EC2 instance: Running"
                   echo "- Jibri ASG: Scaled to ${{ github.event.inputs.jibri_desired_capacity }}"
                   echo "- JVB ASG: Scaled to ${{ github.event.inputs.jvb_desired_capacity }}"
-
-            - name: Display Current Infrastructure Status
-              run: |
-                  echo ""
-                  echo "==================== INFRASTRUCTURE STATUS ===================="
-
-                  # EC2 Instance Status
-                  INSTANCE_STATE=$(aws ec2 describe-instances \
-                    --instance-ids ${{ steps.get-instance-id.outputs.instance-id }} \
-                    --query "Reservations[0].Instances[0].State.Name" \
-                    --output text)
-                  echo "EC2 Instance (Jitsi Meet): $INSTANCE_STATE"
-
-                  # Jibri ASG Status
-                  JIBRI_STATUS=$(aws autoscaling describe-auto-scaling-groups \
-                    --auto-scaling-group-names jibri-asg \
-                    --query "AutoScalingGroups[0].[DesiredCapacity,Instances[?LifecycleState=='InService']|length(Instances)]" \
-                    --output text)
-                  echo "Jibri ASG: $JIBRI_STATUS (desired/running)"
-
-                  # JVB ASG Status
-                  JVB_STATUS=$(aws autoscaling describe-auto-scaling-groups \
-                    --auto-scaling-group-names jvb-asg \
-                    --query "AutoScalingGroups[0].[DesiredCapacity,Instances[?LifecycleState=='InService']|length(Instances)]" \
-                    --output text)
-                  echo "JVB ASG: $JVB_STATUS (desired/running)"
-
-                  echo "=========================================================="
