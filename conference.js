@@ -2,6 +2,7 @@
 
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import Logger from '@jitsi/logger';
+import i18next from 'i18next';
 
 import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
@@ -2131,6 +2132,12 @@ export default {
         if (requestFeedback) {
             const feedbackDialogClosed = (feedbackResult = {}) => {
                 if (!feedbackResult.wasDialogShown && hangupReason && notifyOnConferenceTermination) {
+                    const isTerminatedByModerator = hangupReason === i18next.t('dialog.sessTerminatedReason');
+
+                    if (isTerminatedByModerator) {
+                        return Promise.resolve(feedbackResult);
+                    }
+
                     return APP.store.dispatch(
                         openLeaveReasonDialog(hangupReason)).then(() => feedbackResult);
                 }
