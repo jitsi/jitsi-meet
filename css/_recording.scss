@@ -220,6 +220,84 @@ button.toolbox-icon {
     }
 }
 
+// More comprehensive recording button styling with higher specificity
+.new-toolbox .toolbox-content .toolbox-content-items .toolbox-icon {
+    &.toggled {
+        &[aria-label*="recording"],
+        &[aria-label*="Record"],
+        &[aria-label*="Stop recording"] {
+            background-color: #dc3545 !important;
+            border: 2px solid #dc3545 !important;
+
+            svg, path {
+                fill: #ffffff !important;
+            }
+
+            &:hover {
+                background-color: #c82333 !important;
+                border-color: #c82333 !important;
+            }
+
+            &:active {
+                background-color: #bd2130 !important;
+                border-color: #bd2130 !important;
+            }
+        }
+    }
+
+    // Also target by aria-pressed for additional coverage
+    &[aria-pressed="true"] {
+        &[aria-label*="recording"],
+        &[aria-label*="Record"],
+        &[aria-label*="Stop recording"] {
+            background-color: #dc3545 !important;
+            border: 2px solid #dc3545 !important;
+
+            svg, path {
+                fill: #ffffff !important;
+            }
+
+            &:hover {
+                background-color: #c82333 !important;
+                border-color: #c82333 !important;
+            }
+
+            &:active {
+                background-color: #bd2130 !important;
+                border-color: #bd2130 !important;
+            }
+        }
+    }
+}
+
+// Fallback with even higher specificity - target any recording button that's active
+.new-toolbox .toolbox-content .toolbox-content-items div[role="button"],
+.new-toolbox .toolbox-content .toolbox-content-items button {
+    &.toggled,
+    &[aria-pressed="true"] {
+        &[aria-label*="recording"],
+        &[aria-label*="Record"],
+        &[aria-label*="Stop recording"] {
+            background-color: #dc3545 !important;
+            border: 2px solid #dc3545 !important;
+
+            svg, path {
+                fill: #ffffff !important;
+            }
+
+            &:hover {
+                background-color: #c82333 !important;
+                border-color: #c82333 !important;
+            }
+
+            &:active {
+                background-color: #bd2130 !important;
+                border-color: #bd2130 !important;
+            }
+        }
+    }
+}
+
 .live-stream-dialog {
     /**
      * Set font-size to be consistent with Atlaskit FieldText.
