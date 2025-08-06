@@ -14,12 +14,12 @@ on:
             jibri_desired_capacity:
                 description: 'Desired capacity for Jibri ASG (scale-up only)'
                 required: false
-                default: '1'
+                default: '2'
                 type: string
             jvb_desired_capacity:
                 description: 'Desired capacity for JVB ASG (scale-up only)'
                 required: false
-                default: '1'
+                default: '3'
                 type: string
 
 jobs:
