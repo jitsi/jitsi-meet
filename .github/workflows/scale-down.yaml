@@ -104,6 +104,72 @@ jobs:
                     sleep 60
 
                     echo "✅ EC2 instance started successfully"
+
+                    # Execute post-startup commands
+                    echo "Executing post-startup commands..."
+                    COMMAND_ID=$(aws ssm send-command \
+                      --instance-ids ${{ steps.get-instance-id.outputs.instance-id }} \
+                      --document-name "AWS-RunShellScript" \
+                      --parameters 'commands=[
+                        "echo \"=== Stopping nginx service ===\"",
+                        "sudo systemctl stop nginx",
+                        "echo \"✅ nginx stopped successfully\"",
+                        "echo \"=== Starting Jitsi Meet containers ===\"",
+                        "cd /opt/jitsi-meet && sudo docker compose up -d",
+                        "echo \"✅ Jitsi Meet containers started successfully\""
+                      ]' \
+                      --timeout-seconds 300 \
+                      --query "Command.CommandId" \
+                      --output text)
+
+                    echo "Post-startup Command ID: $COMMAND_ID"
+                    echo "Executing post-startup commands..."
+
+                    # Wait for completion
+                    sleep 5
+                    for i in {1..60}; do
+                      STATUS=$(aws ssm get-command-invocation \
+                        --command-id $COMMAND_ID \
+                        --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
+                        --query "Status" \
+                        --output text 2>/dev/null || echo "InProgress")
+
+                      if [ "$STATUS" != "InProgress" ]; then
+                        echo "Post-startup command completed with status: $STATUS"
+                        break
+                      fi
+
+                      sleep 5
+                    done
+
+                    # Show command output
+                    echo "==================== POST-STARTUP COMMAND OUTPUT ===================="
+                    aws ssm get-command-invocation \
+                      --command-id $COMMAND_ID \
+                      --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
+                      --query "StandardOutputContent" \
+                      --output text
+
+                    # Show any errors
+                    STDERR=$(aws ssm get-command-invocation \
+                      --command-id $COMMAND_ID \
+                      --instance-id ${{ steps.get-instance-id.outputs.instance-id }} \
+                      --query "StandardErrorContent" \
+                      --output text 2>/dev/null)
+
+                    if [ "$STDERR" != "None" ] && [ ! -z "$STDERR" ]; then
+                      echo "==================== POST-STARTUP ERROR OUTPUT ===================="
+                      echo "$STDERR"
+                    fi
+
+                    # Check final status
+                    if [ "$STATUS" != "Success" ]; then
+                      echo "⚠️  Post-startup commands failed with status: $STATUS"
+                      echo "EC2 instance is running, but post-startup configuration may be incomplete"
+                    else
+                      echo "✅ Post-startup commands completed successfully"
+                    fi
+
                   else
                     echo "✅ EC2 instance is already running"
                   fi
