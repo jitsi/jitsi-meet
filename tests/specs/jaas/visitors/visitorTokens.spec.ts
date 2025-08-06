@@ -3,7 +3,8 @@ import { joinMuc, generateJaasToken as t } from '../../helpers/jaas';
 
 setTestProperties(__filename, {
     useJaas: true,
-    useWebhookProxy: true
+    useWebhookProxy: true,
+    usesBrowsers: [ 'p1', 'p2', 'p3' ]
 });
 
 describe('Visitors triggered by visitor tokens', () => {
@@ -50,7 +51,7 @@ describe('Visitors triggered by visitor tokens', () => {
         // Joining with a participant token after visitors...:mindblown:
         const v2 = await joinMuc(
             ctx.roomName,
-            'p4',
+            'p2',
             t({ room: ctx.roomName, displayName: 'Visi Tor 2' }));
 
         expect(await v2.isInMuc()).toBe(true);

@@ -17,8 +17,8 @@ describe('Setting passcode through settings provisioning', () => {
         };
 
         await joinWithPassword(ctx.roomName, 'p1', t({ room: ctx.roomName }));
-        await joinWithPassword(ctx.roomName, 'p2', t({ room: ctx.roomName, moderator: true }));
-        await joinWithPassword(ctx.roomName, 'p3', t({ room: ctx.roomName, visitor: true }));
+        await joinWithPassword(ctx.roomName, 'p1', t({ room: ctx.roomName, moderator: true }));
+        await joinWithPassword(ctx.roomName, 'p1', t({ room: ctx.roomName, visitor: true }));
     });
     it('With an invalid passcode', async () => {
         ctx.webhooksProxy.defaultMeetingSettings = {

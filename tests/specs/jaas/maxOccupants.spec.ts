@@ -3,7 +3,8 @@ import { joinMuc, generateJaasToken as t } from '../helpers/jaas';
 
 setTestProperties(__filename, {
     useJaas: true,
-    useWebhookProxy: true
+    useWebhookProxy: true,
+    usesBrowsers: [ 'p1', 'p2', 'p3' ]
 });
 
 describe('MaxOccupants limit enforcement', () => {
