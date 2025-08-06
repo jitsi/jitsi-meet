@@ -7,7 +7,8 @@ import { IContext } from '../../helpers/types';
 
 setTestProperties(__filename, {
     useIFrameApi: true,
-    useWebhookProxy: true
+    useWebhookProxy: true,
+    usesBrowsers: [ 'p1', 'p2' ]
 });
 
 /**

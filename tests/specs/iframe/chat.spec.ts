@@ -7,7 +7,8 @@ import { fetchJson } from '../../helpers/utils';
 
 setTestProperties(__filename, {
     useIFrameApi: true,
-    useWebhookProxy: true
+    useWebhookProxy: true,
+    usesBrowsers: [ 'p1', 'p2' ]
 });
 
 describe('Chat', () => {

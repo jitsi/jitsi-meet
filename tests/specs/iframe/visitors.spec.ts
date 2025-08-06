@@ -3,7 +3,8 @@ import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/parti
 
 setTestProperties(__filename, {
     useIFrameApi: true,
-    useWebhookProxy: true
+    useWebhookProxy: true,
+    usesBrowsers: [ 'p1', 'p2' ]
 });
 
 describe('Visitors', () => {
