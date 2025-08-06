@@ -25,7 +25,7 @@ import Visitors from '../pageobjects/Visitors';
 
 import { LOG_PREFIX, logInfo } from './browserLogger';
 import { IToken } from './token';
-import { IContext, IJoinOptions, IParticipantOptions } from './types';
+import { IParticipantJoinOptions, IParticipantOptions } from './types';
 
 export const P1 = 'p1';
 export const P2 = 'p2';
@@ -186,13 +186,12 @@ export class Participant {
     /**
      * Joins conference.
      *
-     * @param {IContext} ctx - The context.
      * @param {IJoinOptions} options - Options for joining.
      * @returns {Promise<void>}
      */
-    async joinConference(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
+    async joinConference(options: IParticipantJoinOptions): Promise<void> {
         const config = {
-            room: ctx.roomName,
+            room: options.roomName,
             configOverwrite: {
                 ...this.config,
                 ...options.configOverwrite || {}
@@ -219,7 +218,7 @@ export class Participant {
             const baseUrl = new URL(this.driver.options.baseUrl || '');
 
             // @ts-ignore
-            url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${ctx.roomName}"`;
+            url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${options.roomName}"`;
 
             if (process.env.IFRAME_TENANT) {
                 url = `${url}&tenant="${process.env.IFRAME_TENANT}"`;

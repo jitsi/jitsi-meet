@@ -220,9 +220,9 @@ async function _joinParticipant( // eslint-disable-line max-params
     // @ts-ignore
     ctx[name] = newParticipant;
 
-    await newParticipant.joinConference(ctx, {
-        displayName: name,
-        ...options
+    await newParticipant.joinConference({
+        ...options,
+        roomName: ctx.roomName,
     });
 }
 
