@@ -81,11 +81,6 @@ export type IJoinOptions = {
     configOverwrite?: IConfig;
 
     /**
-     * The display name to use.
-     */
-    displayName?: string;
-
-    /**
      * When joining the first participant and jwt singing material is available and a provided token
      * is available, prefer generating a new token for the first participant.
      */
