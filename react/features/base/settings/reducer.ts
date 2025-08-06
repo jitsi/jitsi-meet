@@ -66,6 +66,7 @@ export interface ISettingsState {
     localFlipX?: boolean;
     maxStageParticipants?: number;
     micDeviceId?: string | boolean;
+    previewAudioTrack?: any | null;
     serverURL?: string;
     showSubtitlesOnStage?: boolean;
     soundsIncomingMessage?: boolean;

@@ -24,6 +24,7 @@ import virtualBackgroundLogger from '../virtual-background/logger';
 
 import {
     SET_AUDIO_SETTINGS_VISIBILITY,
+    SET_PREVIEW_AUDIO_TRACK,
     SET_VIDEO_SETTINGS_VISIBILITY
 } from './actionTypes';
 import LogoutDialog from './components/web/LogoutDialog';
@@ -35,7 +36,6 @@ import {
     getProfileTabProps,
     getShortcutsTabProps
 } from './functions.web';
-
 
 /**
  * Opens {@code LogoutDialog}.
@@ -338,5 +338,18 @@ export function submitVirtualBackgroundTab(newState: any, isCancel = false) {
                         ? 'none' : newState.options.backgroundType}' applied!`);
             }
         }
+    };
+}
+
+/**
+ * Sets the audio preview track.
+ *
+ * @param {boolean} track - The track to set.
+ * @returns {Function}
+ */
+export function setAudioPreviewTrack(track: any) {
+    return {
+        type: SET_PREVIEW_AUDIO_TRACK,
+        track
     };
 }

@@ -336,7 +336,6 @@ export function setGUMPendingStateOnFailedTracks(tracks: Array<any>, dispatch: I
 export function createAndAddInitialAVTracks(devices: Array<MediaType>) {
     return async (dispatch: IStore['dispatch']) => {
         dispatch(gumPending(devices, IGUMPendingState.PENDING_UNMUTE));
-
         const { tracks, errors } = await dispatch(createInitialAVTracks({ devices }));
 
         setGUMPendingStateOnFailedTracks(tracks, dispatch);
@@ -552,7 +551,6 @@ export function toggleCamera() {
 export function toggleUpdateSettings(settings: IAudioSettings) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-
         const track = getLocalJitsiAudioTrack(state);
 
         try {
