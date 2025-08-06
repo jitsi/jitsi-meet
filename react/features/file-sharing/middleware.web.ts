@@ -6,7 +6,7 @@ import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, getParticipantDisplayName } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-import { showErrorNotification } from '../notifications/actions';
+import { showErrorNotification, showSuccessNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
 
 import { DOWNLOAD_FILE, REMOVE_FILE, UPLOAD_FILES, _FILE_LIST_RECEIVED, _FILE_REMOVED } from './actionTypes';
@@ -229,6 +229,9 @@ function uploadFile(file: File, store: IStore, token: string): void {
             const fileSharingHandler = conference?.getFileSharing();
 
             fileSharingHandler.addFile(fileMetadata);
+            store.dispatch(showSuccessNotification({
+                titleKey: 'fileSharing.fileUploadedSuccessfully'
+            }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
         } else {
             handleError();
         }
