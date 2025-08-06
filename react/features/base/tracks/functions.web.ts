@@ -13,7 +13,8 @@ import {
 } from '../settings/functions.web';
 import { getJitsiMeetGlobalNSConnectionTimes } from '../util/helpers';
 
-import { getCameraFacingMode } from './functions.any';
+import { IAudioSettings } from './actions.web';
+import { getCameraFacingMode, getLocalJitsiAudioTrack } from './functions.any';
 import loadEffects from './loadEffects';
 import logger from './logger';
 import { ITrackOptions } from './types';
@@ -213,4 +214,21 @@ export function isToggleCameraEnabled(stateful: IStateful) {
     const { videoInput } = state['features/base/devices'].availableDevices;
 
     return isMobileBrowser() && Number(videoInput?.length) > 1;
+}
+/**
+ * Applies audio constraints to the local Jitsi audio track.
+ *
+ * @param {Function|Object} stateful - The redux store or {@code getState} function.
+ * @param {IAudioSettings} settings - The audio settings to apply.
+ * @returns {Promise<void>}
+ */
+export async function applyConstraints(stateful: IStateful, settings: IAudioSettings): Promise<void> {
+    const state = toState(stateful);
+    const track = getLocalJitsiAudioTrack(state);
+
+    try {
+        await track.applyConstraints(settings);
+    } catch (error) {
+        logger.error('Failed to apply audio constraints ', error);
+    }
 }

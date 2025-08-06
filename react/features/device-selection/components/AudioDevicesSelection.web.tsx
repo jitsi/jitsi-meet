@@ -14,6 +14,8 @@ import { createLocalTrack } from '../../base/lib-jitsi-meet/functions.web';
 import Tooltip from '../../base/tooltip/components/Tooltip';
 import { IAudioSettings } from '../../base/tracks/actions.web';
 import Checkbox from '../../base/ui/components/web/Checkbox';
+import { setAudioPreviewTrack } from '../../settings/actions.web';
+import { disposeAudioInputPreview } from '../../settings/functions.web';
 import { iAmVisitor as iAmVisitorCheck } from '../../visitors/functions';
 import logger from '../logger';
 
@@ -27,6 +29,9 @@ import DeviceSelector from './DeviceSelector.web';
  */
 interface IProps extends AbstractDialogTabProps, WithTranslation {
 
+    /**
+     * The audio settings that are used for the audio input preview.
+     */
     audioSettings: IAudioSettings;
 
     /**
@@ -108,6 +113,11 @@ interface IProps extends AbstractDialogTabProps, WithTranslation {
     noiseSuppressionEnabled: boolean;
 
     /**
+     * The audio track that is used for previewing the audio input.
+     */
+    previewAudioTrack: any | null;
+
+    /**
      * The id of the audio input device to preview.
      */
     selectedAudioInputId: string;
@@ -118,16 +128,6 @@ interface IProps extends AbstractDialogTabProps, WithTranslation {
     selectedAudioOutputId: string;
 }
 
-/**
- * The type of the React {@code Component} state of {@link AudioDevicesSelection}.
- */
-interface IState {
-
-    /**
-     * The JitsiTrack to use for previewing audio input.
-     */
-    previewAudioTrack?: any | null;
-}
 
 const styles = (theme: Theme) => {
     return {
@@ -169,7 +169,7 @@ const styles = (theme: Theme) => {
  *
  * @augments Component
  */
-class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
+class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
 
     /**
      * Whether current component is mounted or not.
@@ -191,9 +191,6 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
     constructor(props: IProps) {
         super(props);
 
-        this.state = {
-            previewAudioTrack: null
-        };
         this._unMounted = true;
     }
 
@@ -234,7 +231,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
      */
     override componentWillUnmount() {
         this._unMounted = true;
-        this._disposeAudioInputPreview();
+        disposeAudioInputPreview(this.props.previewAudioTrack);
     }
 
     /**
@@ -290,8 +287,9 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
                 </div>}
 
                 {!hideAudioInputPreview && hasAudioPermission && !iAmVisitor
-                    && <AudioInputPreview
-                        track = { this.state.previewAudioTrack } />}
+                                    && <AudioInputPreview
+                                        track = { this.props.previewAudioTrack } />}
+
 
                 {audioSettings && !hideNoiseSuppression && !iAmVisitor && (
                     <fieldset className = { classes.container }>
@@ -347,7 +345,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
                             containerClassName = { classes.checkbox }
                             content = { 'Tooltip' }
                             position = { 'right' }>
-                           <Checkbox
+                            <Checkbox
                                 checked = { noiseSuppressionEnabled }
                                 disabled = { isAudioSettingsEnabled && !noiseSuppressionEnabled }
                                 label = { t('toolbar.enableNoiseSuppression') }
@@ -382,13 +380,13 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
      * @returns {void}
      */
     _createAudioInputTrack(deviceId: string) {
-        const { hideAudioInputPreview } = this.props;
+        const { hideAudioInputPreview, previewAudioTrack } = this.props;
 
         if (hideAudioInputPreview) {
             return;
         }
 
-        return this._disposeAudioInputPreview()
+        return disposeAudioInputPreview(previewAudioTrack)
             .then(() => createLocalTrack('audio', deviceId, 5000))
             .then(jitsiLocalTrack => {
                 if (this._unMounted) {
@@ -397,26 +395,11 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
                     return;
                 }
 
-                this.setState({
-                    previewAudioTrack: jitsiLocalTrack
-                });
+                this.props.dispatch(setAudioPreviewTrack(jitsiLocalTrack));
             })
             .catch(() => {
-                this.setState({
-                    previewAudioTrack: null
-                });
+                this.props.dispatch(setAudioPreviewTrack(null));
             });
-    }
-
-    /**
-     * Utility function for disposing the current audio input preview.
-     *
-     * @private
-     * @returns {Promise}
-     */
-    _disposeAudioInputPreview(): Promise<any> {
-        return this.state.previewAudioTrack
-            ? this.state.previewAudioTrack.dispose() : Promise.resolve();
     }
 
     /**
@@ -452,8 +435,8 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
             id: 'audioInput',
             label: 'settings.selectMic',
             onSelect: (selectedAudioInputId: string) => super._onChange({ selectedAudioInputId }),
-            selectedDeviceId: this.state.previewAudioTrack
-                ? this.state.previewAudioTrack.getDeviceId() : this.props.selectedAudioInputId
+            selectedDeviceId: this.props.previewAudioTrack
+                ? this.props.previewAudioTrack.getDeviceId() : this.props.selectedAudioInputId
         };
         let audioOutput;
 
@@ -479,7 +462,8 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
 const mapStateToProps = (state: IReduxState) => {
     return {
         availableDevices: state['features/base/devices'].availableDevices ?? {},
-        iAmVisitor: iAmVisitorCheck(state)
+        iAmVisitor: iAmVisitorCheck(state),
+        previewAudioTrack: state['features/settings'].previewAudioTrack
     };
 };
 
