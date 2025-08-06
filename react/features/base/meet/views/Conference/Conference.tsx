@@ -17,7 +17,6 @@ import { translate } from "../../../i18n/functions";
 import { setColorAlpha } from "../../../util/helpers";
 import { Mode } from "./components/Header";
 
-import { toggleE2EE } from "../../../../e2ee/actions";
 import CreateConference from "./components/CreateConference";
 import JoinConference from "./components/JoinConference";
 
@@ -144,17 +143,6 @@ class Conference extends AbstractConference<IProps, any> {
      * returns {void}
      */
     componentDidUpdate(prevProps: IProps) {
-        if (this.props._shouldDisplayTileView === prevProps._shouldDisplayTileView) {
-            const wasPrejoinOrLobbyVisible = prevProps._showPrejoin || prevProps._showLobby;
-            const isConferenceDisplayed = !this.props._showPrejoin && !this.props._showLobby;
-
-            // ACTIVATE E2EE BY DEFAULT WHEN CONFERENCE IS DISPLAYED
-            if (wasPrejoinOrLobbyVisible && isConferenceDisplayed) {
-                this.props.dispatch(toggleE2EE(true));
-            }
-            return;
-        }
-
         // TODO: For now VideoLayout is being called as LargeVideo and Filmstrip
         // sizing logic is still handled outside of React. Once all components
         // are in react they should calculate size on their own as much as
