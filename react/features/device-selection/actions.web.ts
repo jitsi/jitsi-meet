@@ -10,9 +10,11 @@ import { updateSettings } from '../base/settings/actions';
 import { toggleUpdateSettings } from '../base/tracks/actions.web';
 import { toggleNoiseSuppression } from '../noise-suppression/actions';
 import { setScreenshareFramerate } from '../screen-share/actions';
+import { disposeAudioInputPreview } from '../settings/functions.web';
 
 import { getAudioDeviceSelectionDialogProps, getVideoDeviceSelectionDialogProps } from './functions';
 import logger from './logger';
+import { isEqual } from 'lodash-es';
 
 /**
  * Submits the settings related to audio device selection.
@@ -23,10 +25,12 @@ import logger from './logger';
  * @returns {Function}
  */
 export function submitAudioDeviceSelectionTab(newState: any, isDisplayedOnWelcomePage: boolean) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const currentState = getAudioDeviceSelectionDialogProps(getState(), isDisplayedOnWelcomePage);
-
-        if (newState.selectedAudioInputId && newState.selectedAudioInputId !== currentState.selectedAudioInputId) {
+        const isSelectedAudioInputIdChanged = newState.selectedAudioInputId
+            && newState.selectedAudioInputId !== currentState.selectedAudioInputId;
+        
+        if (isSelectedAudioInputIdChanged) {
             dispatch(updateSettings({
                 userSelectedMicDeviceId: newState.selectedAudioInputId,
                 userSelectedMicDeviceLabel:
@@ -60,7 +64,15 @@ export function submitAudioDeviceSelectionTab(newState: any, isDisplayedOnWelcom
             dispatch(toggleNoiseSuppression());
         }
 
-        dispatch(toggleUpdateSettings(newState.audioSettings));
+        if (!isEqual(newState.audioSettings, currentState.audioSettings) && !isSelectedAudioInputIdChanged) {
+            const previewAudioTrack = getState()['features/settings']?.previewAudioTrack;
+
+            if (previewAudioTrack) {
+                await disposeAudioInputPreview(previewAudioTrack);
+            }
+
+            dispatch(toggleUpdateSettings(newState.audioSettings));
+        }
     };
 }
 
