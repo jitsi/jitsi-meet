@@ -1,11 +1,12 @@
 import AllureReporter from '@wdio/allure-reporter';
 import { multiremotebrowser } from '@wdio/globals';
 import { Buffer } from 'buffer';
+import { glob } from 'glob';
 import path from 'node:path';
 import process from 'node:process';
 import pretty from 'pretty';
 
-import { getTestProperties } from './helpers/TestProperties';
+import { getTestProperties, loadTestFiles } from './helpers/TestProperties';
 import WebhookProxy from './helpers/WebhookProxy';
 import { getLogs, initLogger, logInfo } from './helpers/browserLogger';
 import { IContext } from './helpers/types';
@@ -55,15 +56,80 @@ const chromePreferences = {
     'intl.accept_languages': 'en-US'
 };
 
+const specs = [
+    'specs/**/*.spec.ts'
+];
+
+/**
+ * Analyzes test files at config construction time to determine browser requirements
+ * and generate capabilities with appropriate exclusions.
+ */
+function generateCapabilitiesFromSpecs(): Record<string, any> {
+    const allSpecFiles: string[] = [];
+    const browsers = [ 'p1', 'p2', 'p3', 'p4' ];
+
+    for (const pattern of specs) {
+        const matches = glob.sync(pattern, { cwd: path.join(__dirname) });
+
+        allSpecFiles.push(...matches.map(f => path.resolve(__dirname, f)));
+    }
+
+    // Load test files to populate the testProperties registry
+    loadTestFiles(allSpecFiles);
+
+    // Import TestProperties to access the populated registry
+    const { testProperties } = require('./helpers/TestProperties');
+
+    // Determine which browsers need which exclusions
+    const browserExclusions: Record<string, Set<string>> = {
+        p1: new Set(),
+        p2: new Set(),
+        p3: new Set(),
+        p4: new Set()
+    };
+
+    for (const file of allSpecFiles) {
+        const props = testProperties[file];
+        const relativeFile = path.relative(__dirname, file);
+
+        // If a test doesn't use a particular browser, add it to exclusions for that browser
+        if (props?.usesBrowsers) {
+            browsers.forEach(browser => {
+                if (!props.usesBrowsers!.includes(browser)) {
+                    browserExclusions[browser].add(relativeFile);
+                }
+            });
+        }
+    }
+
+    return Object.fromEntries(
+        browsers.map(browser => [
+            browser,
+            {
+                capabilities: {
+                    browserName: 'chrome',
+                    ...(browser === 'p1' && process.env.BROWSER_CHROME_BETA ? { browserVersion: 'beta' } : {}),
+                    'goog:chromeOptions': {
+                        args: chromeArgs,
+                        prefs: chromePreferences
+                    },
+                    'wdio:exclude': Array.from(browserExclusions[browser] || [])
+                }
+            }
+        ])
+    );
+}
+
+const capabilities = generateCapabilitiesFromSpecs();
+
 const TEST_RESULTS_DIR = 'test-results';
 
 export const config: WebdriverIO.MultiremoteConfig = {
 
     runner: 'local',
 
-    specs: [
-        'specs/**/*.spec.ts'
-    ],
+    specs,
+
     maxInstances: parseInt(process.env.MAX_INSTANCES || '1', 10), // if changing check onWorkerStart logic
 
     baseUrl: process.env.BASE_URL || 'https://alpha.jitsi.net/torture/',
@@ -85,61 +151,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
         timeout: 180_000
     },
 
-    capabilities: {
-        // participant1
-        p1: {
-            capabilities: {
-                browserName: 'chrome',
-                browserVersion: process.env.BROWSER_CHROME_BETA ? 'beta' : undefined,
-                'goog:chromeOptions': {
-                    args: chromeArgs,
-                    prefs: chromePreferences
-                }
-            }
-        },
-        // participant2
-        p2: {
-            capabilities: {
-                browserName: 'chrome',
-                'goog:chromeOptions': {
-                    args: chromeArgs,
-                    prefs: chromePreferences
-                },
-                'wdio:exclude': [
-                    'specs/alone/**'
-                ]
-            }
-        },
-        // participant3
-        p3: {
-            capabilities: {
-                browserName: 'chrome',
-                'goog:chromeOptions': {
-                    args: chromeArgs,
-                    prefs: chromePreferences
-                },
-                'wdio:exclude': [
-                    'specs/alone/**',
-                    'specs/2way/**'
-                ]
-            }
-        },
-        // participant4
-        p4: {
-            capabilities: {
-                browserName: 'chrome',
-                'goog:chromeOptions': {
-                    args: chromeArgs,
-                    prefs: chromePreferences
-                },
-                'wdio:exclude': [
-                    'specs/alone/**',
-                    'specs/2way/**',
-                    'specs/3way/**'
-                ]
-            }
-        }
-    },
+    capabilities,
 
     // Level of logging verbosity: trace | debug | info | warn | error | silent
     logLevel: 'trace',
@@ -176,12 +188,12 @@ export const config: WebdriverIO.MultiremoteConfig = {
      *
      * @returns {Promise<void>}
      */
-    async before(cid, _, specs) {
-        if (specs.length !== 1) {
+    async before(cid, _, files) {
+        if (files.length !== 1) {
             console.warn('We expect to run a single suite, but got more than one');
         }
 
-        const testFilePath = specs[0].replace(/^file:\/\//, '');
+        const testFilePath = files[0].replace(/^file:\/\//, '');
         const testName = path.relative('tests/specs', testFilePath)
             .replace(/.spec.ts$/, '')
             .replace(/\//g, '-');
@@ -267,7 +279,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
         ctx?.keepAlive?.forEach(clearInterval);
     },
 
-    beforeSession(c, capabilities, specs, cid) {
+    beforeSession(c, capabilities_, specs_, cid) {
         const originalBefore = c.before;
 
         if (!originalBefore || !Array.isArray(originalBefore) || originalBefore.length !== 1) {
