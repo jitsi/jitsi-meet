@@ -1922,10 +1922,23 @@ export default {
 
         logDevices(ignoredDevices, 'Ignored devices on device list changed:');
 
+        APP.store.dispatch(updateDeviceList(filteredDevices));
+
+        /**
+         * Check if we have gUM pending while the device list has changed. This can happen when joining a meeting
+         * without the pre-join screen since we don't have the device list while the initial tracks are being created.
+         */
+        const { gumPending: audioGumPending } = state['features/base/media'].audio;
+        const { gumPending: videoGumPending } = state['features/base/media'].video;
+
+        if (audioGumPending !== IGUMPendingState.NONE || videoGumPending !== IGUMPendingState.NONE) {
+            logger.warn('Device list changed while gUM is pending, skipping device change handling.');
+
+            return Promise.resolve();
+        }
+
         const localAudio = getLocalJitsiAudioTrack(state);
         const localVideo = getLocalJitsiVideoTrack(state);
-
-        APP.store.dispatch(updateDeviceList(filteredDevices));
 
         // Firefox users can choose their preferred device in the gUM prompt. In that case
         // we should respect that and not attempt to switch to the preferred device from
