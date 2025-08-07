@@ -4,7 +4,6 @@ import { makeStyles } from 'tss-react/mui';
 import { ACTION_TRIGGER } from '../../../../participants-pane/constants';
 import participantsPaneTheme from '../../../components/themes/participantsPaneTheme.json';
 import { isMobileBrowser } from '../../../environment/utils';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 
 interface IProps {
 
@@ -86,7 +85,7 @@ const useStyles = makeStyles()(theme => {
             alignItems: 'center',
             color: theme.palette.text01,
             display: 'flex',
-            ...withPixelLineHeight(theme.typography.bodyShortBold),
+            ...theme.typography.bodyShortBold,
             margin: `0 -${participantsPaneTheme.panePadding}px`,
             padding: `${theme.spacing(2)} ${participantsPaneTheme.panePadding}px`,
             position: 'relative',
@@ -110,7 +109,7 @@ const useStyles = makeStyles()(theme => {
             },
 
             [`@media(max-width: ${participantsPaneTheme.MD_BREAKPOINT})`]: {
-                ...withPixelLineHeight(theme.typography.bodyShortBoldLarge),
+                ...theme.typography.bodyShortBoldLarge,
                 padding: `${theme.spacing(3)} ${participantsPaneTheme.panePadding}px`
             }
         },

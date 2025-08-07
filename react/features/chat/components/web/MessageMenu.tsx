@@ -48,7 +48,7 @@ const useStyles = makeStyles()(theme => {
             color: 'white',
             padding: '4px 8px',
             borderRadius: '4px',
-            fontSize: '12px',
+            fontSize: '0.75rem',
             zIndex: 1000,
             opacity: 0,
             transition: 'opacity 0.3s ease-in-out',

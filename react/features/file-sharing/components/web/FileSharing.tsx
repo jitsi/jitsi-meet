@@ -7,7 +7,6 @@ import { IReduxState } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCloudUpload, IconDownload, IconTrash } from '../../../base/icons/svg';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import BaseTheme from '../../../base/ui/components/BaseTheme.web';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
@@ -161,7 +160,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         noFilesText: {
-            ...withPixelLineHeight(theme.typography.bodyLongBold),
+            ...theme.typography.bodyLongBold,
             color: theme.palette.text02,
             padding: '0 24px',
             textAlign: 'center'

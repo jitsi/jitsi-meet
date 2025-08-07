@@ -67,7 +67,7 @@ const useStyles = makeStyles()(theme => {
                     color: theme.palette.text01,
                     cursor: 'pointer',
                     display: 'flex',
-                    fontSize: '16px',
+                    fontSize: '1rem',
 
                     '& div': {
                         display: 'flex',
