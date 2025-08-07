@@ -72,71 +72,62 @@ export function addPendingDeviceRequest(request: Object) {
  */
 export function configureInitialDevices() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const deviceLabels = getDevicesFromURL(getState());
-        let updateSettingsPromise;
+        const state = getState();
+        const deviceLabels = getDevicesFromURL(state);
 
         logger.debug(`(TIME) configureInitialDevices: deviceLabels=${
             Boolean(deviceLabels)}, performance.now=${window.performance.now()}`);
 
         if (deviceLabels) {
-            updateSettingsPromise = dispatch(getAvailableDevices()).then(() => {
-                const state = getState();
-
-                if (!areDeviceLabelsInitialized(state)) {
-                    // The labels are not available if the A/V permissions are
-                    // not yet granted.
-
-                    Object.keys(deviceLabels).forEach(key => {
-                        dispatch(addPendingDeviceRequest({
-                            type: 'devices',
-                            name: 'setDevice',
-                            device: {
-                                kind: key.toLowerCase(),
-                                label: deviceLabels[key as keyof typeof deviceLabels]
-                            },
-                            // eslint-disable-next-line @typescript-eslint/no-empty-function
-                            responseCallback() {}
-                        }));
-                    });
-
-                    return;
-                }
-
-                const newSettings: any = {};
+            if (!areDeviceLabelsInitialized(state)) {
+                // The labels are not available if the A/V permissions are
+                // not yet granted.
 
                 Object.keys(deviceLabels).forEach(key => {
-                    const label = deviceLabels[key as keyof typeof deviceLabels];
-
-                    // @ts-ignore
-                    const deviceId = getDeviceIdByLabel(state, label, key);
-
-                    if (deviceId) {
-                        const settingsTranslationMap = DEVICE_TYPE_TO_SETTINGS_KEYS[
-                            key as keyof typeof DEVICE_TYPE_TO_SETTINGS_KEYS];
-
-                        newSettings[settingsTranslationMap.currentDeviceId] = deviceId;
-                        newSettings[settingsTranslationMap.userSelectedDeviceId] = deviceId;
-                        newSettings[settingsTranslationMap.userSelectedDeviceLabel] = label;
-                    }
+                    dispatch(addPendingDeviceRequest({
+                        type: 'devices',
+                        name: 'setDevice',
+                        device: {
+                            kind: key.toLowerCase(),
+                            label: deviceLabels[key as keyof typeof deviceLabels]
+                        },
+                        // eslint-disable-next-line @typescript-eslint/no-empty-function
+                        responseCallback() {}
+                    }));
                 });
 
-                dispatch(updateSettings(newSettings));
+                return;
+            }
+
+            const newSettings: any = {};
+
+            Object.keys(deviceLabels).forEach(key => {
+                const label = deviceLabels[key as keyof typeof deviceLabels];
+
+                // @ts-ignore
+                const deviceId = getDeviceIdByLabel(state, label, key);
+
+                if (deviceId) {
+                    const settingsTranslationMap = DEVICE_TYPE_TO_SETTINGS_KEYS[
+                        key as keyof typeof DEVICE_TYPE_TO_SETTINGS_KEYS];
+
+                    newSettings[settingsTranslationMap.currentDeviceId] = deviceId;
+                    newSettings[settingsTranslationMap.userSelectedDeviceId] = deviceId;
+                    newSettings[settingsTranslationMap.userSelectedDeviceLabel] = label;
+                }
             });
-        } else {
-            updateSettingsPromise = Promise.resolve();
+
+            dispatch(updateSettings(newSettings));
         }
 
-        return updateSettingsPromise
-            .then(() => {
-                const userSelectedAudioOutputDeviceId = getUserSelectedOutputDeviceId(getState());
+        const userSelectedAudioOutputDeviceId = getUserSelectedOutputDeviceId(getState());
 
-                logger.debug(`(TIME) configureInitialDevices -> setAudioOutputDeviceId: performance.now=${
-                    window.performance.now()}`);
+        logger.debug(`(TIME) configureInitialDevices -> setAudioOutputDeviceId: performance.now=${
+            window.performance.now()}`);
 
-                return setAudioOutputDeviceId(userSelectedAudioOutputDeviceId, dispatch)
-                    .catch(ex => logger.warn(`Failed to set audio output device.
-                        Default audio output device will be used instead ${ex}`));
-            });
+        return setAudioOutputDeviceId(userSelectedAudioOutputDeviceId, dispatch)
+            .catch(ex => logger.warn(`Failed to set audio output device.
+                Default audio output device will be used instead ${ex}`));
     };
 }
 
