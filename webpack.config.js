@@ -204,7 +204,9 @@ function getConfig(options = {}) {
         ].filter(Boolean),
         resolve: {
             alias: {
-                'focus-visible': 'focus-visible/dist/focus-visible.min.js'
+                'focus-visible': 'focus-visible/dist/focus-visible.min.js',
+                '@emotion/react': require.resolve('@emotion/react'),
+                '@emotion/styled': require.resolve('@emotion/styled')
             },
             aliasFields: [
                 'browser'
