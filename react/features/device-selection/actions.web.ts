@@ -7,8 +7,10 @@ import {
 } from '../base/devices/actions';
 import { getDeviceLabelById, setAudioOutputDeviceId } from '../base/devices/functions';
 import { updateSettings } from '../base/settings/actions';
+import { toggleUpdateSettings } from '../base/tracks/actions.web';
 import { toggleNoiseSuppression } from '../noise-suppression/actions';
 import { setScreenshareFramerate } from '../screen-share/actions';
+import { disposeAudioInputPreview } from '../settings/functions.web';
 
 import { getAudioDeviceSelectionDialogProps, getVideoDeviceSelectionDialogProps } from './functions';
 import logger from './logger';
@@ -22,7 +24,7 @@ import logger from './logger';
  * @returns {Function}
  */
 export function submitAudioDeviceSelectionTab(newState: any, isDisplayedOnWelcomePage: boolean) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const currentState = getAudioDeviceSelectionDialogProps(getState(), isDisplayedOnWelcomePage);
 
         if (newState.selectedAudioInputId && newState.selectedAudioInputId !== currentState.selectedAudioInputId) {
@@ -57,6 +59,16 @@ export function submitAudioDeviceSelectionTab(newState: any, isDisplayedOnWelcom
 
         if (newState.noiseSuppressionEnabled !== currentState.noiseSuppressionEnabled) {
             dispatch(toggleNoiseSuppression());
+        }
+
+        if (newState.audioSettings !== currentState.audioSettings) {
+            const previewAudioTrack = getState()['features/settings']?.previewAudioTrack;
+
+            if (previewAudioTrack) {
+                await disposeAudioInputPreview(previewAudioTrack);
+            }
+
+            dispatch(toggleUpdateSettings(newState.audioSettings));
         }
     };
 }
