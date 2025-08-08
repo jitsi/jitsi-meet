@@ -18,7 +18,7 @@ export function generateJaasToken(options: ITokenOptions): IToken {
 
 /**
  * Creates a new Participant and joins the MUC with the given name. The jaas-specific properties must be set as
- * environment variables: JAAS_DOMAIN and IFRAME_TENANT.
+ * environment variables: IFRAME_TENANT.
  *
  * @param {IContext} ctx - The context.
  * @param instanceId This is the "name" passed to the Participant, I think it's used to match against one of the

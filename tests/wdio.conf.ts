@@ -244,8 +244,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
         globalAny.ctx.iFrameUsesJaas = process.env.JWT_PRIVATE_KEY_PATH
             && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-');
 
-        const isJaasConfigured = process.env.JAAS_DOMAIN && process.env.JAAS_TENANT
-            && process.env.JAAS_PRIVATE_KEY_PATH && process.env.JAAS_KID;
+        const isJaasConfigured = process.env.JAAS_TENANT && process.env.JAAS_PRIVATE_KEY_PATH && process.env.JAAS_KID;
 
         // If we are running the iFrameApi tests, we need to mark it as such and if needed to create the proxy
         // and connect to it.
@@ -269,7 +268,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         if (testProperties.useJaas && !isJaasConfigured) {
             console.warn(`JaaS is not configured, skipping ${testName}. `
-                + 'Set JAAS_DOMAIN, JAAS_TENANT, JAAS_KID, and JAAS_PRIVATE_KEY_PATH to enable.');
+                + 'Set JAAS_TENANT, JAAS_KID, and JAAS_PRIVATE_KEY_PATH to enable.');
             globalAny.ctx.skipSuiteTests = true;
         }
     },
