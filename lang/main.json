@@ -570,6 +570,7 @@
         "fileAlreadyUploaded": "File has already been uploaded to this meeting.",
         "fileTooLargeDescription": "Please make sure the file does not exceed {{ maxFileSize }}.",
         "fileTooLargeTitle": "The selected file is too large",
+        "fileUploadedSuccessfully": "File uploaded successfully",
         "removeFile": "Remove",
         "uploadFailedDescription": "Please try again.",
         "uploadFailedTitle": "Upload failed",
