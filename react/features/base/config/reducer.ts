@@ -406,9 +406,7 @@ function _translateLegacyConfig(oldValue: IConfig) {
     }
 
     newValue.prejoinConfig = oldValue.prejoinConfig || {};
-    if (oldValue.hasOwnProperty('prejoinPageEnabled')
-        && !newValue.prejoinConfig.hasOwnProperty('enabled')
-    ) {
+    if (oldValue.hasOwnProperty('prejoinPageEnabled')) {
         newValue.prejoinConfig.enabled = oldValue.prejoinPageEnabled;
     }
 

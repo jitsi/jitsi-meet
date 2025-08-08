@@ -7,6 +7,7 @@ import { isEmpty, mergeWith, pick } from 'lodash-es';
 
 import { IReduxState } from '../../app/types';
 import { getLocalParticipant } from '../participants/functions';
+import { isEmbedded } from '../util/embedUtils';
 import { parseURLParams } from '../util/parseURLParams';
 
 import { IConfig } from './configType';
@@ -335,7 +336,7 @@ export function setConfigFromURLParams(
 
     overrideConfigJSON(config, interfaceConfig, json);
 
-    // Print warning about depricated URL params
+    // Print warning about deprecated URL params
     if ('interfaceConfig.SUPPORT_URL' in params) {
         logger.warn('Using SUPPORT_URL interfaceConfig URL overwrite is deprecated.'
             + ' Please use supportUrl from advanced branding!');
@@ -370,6 +371,14 @@ export function setConfigFromURLParams(
             )) {
         logger.warn('Using liveStreaming config URL overwrite and/or LIVE_STREAMING_HELP_LINK interfaceConfig URL'
             + ' overwrite is deprecated. Please use liveStreaming from advanced branding!');
+    }
+
+    // When not in an iframe, start without media if the pre-join page is not enabled.
+    if (!isEmbedded()
+            && ('config.prejoinConfig.enabled' in params || 'config.prejoinPageEnabled' in params)
+            && (config.prejoinConfig?.enabled === false || config.prejoinPageEnabled === false)) {
+        logger.warn('Using prejoinConfig.enabled config URL overwrite implies starting without media.');
+        config.disableInitialGUM = true;
     }
 }
 
