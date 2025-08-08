@@ -13,7 +13,11 @@ import IframeAPI from '../pageobjects/IframeAPI';
 import InviteDialog from '../pageobjects/InviteDialog';
 import LargeVideo from '../pageobjects/LargeVideo';
 import LobbyScreen from '../pageobjects/LobbyScreen';
-import Notifications, { TOKEN_AUTH_FAILED_TEST_ID, TOKEN_AUTH_FAILED_TITLE_TEST_ID } from '../pageobjects/Notifications';
+import Notifications, {
+    MAXI_USERS_TEST_ID,
+    TOKEN_AUTH_FAILED_TEST_ID,
+    TOKEN_AUTH_FAILED_TITLE_TEST_ID
+} from '../pageobjects/Notifications';
 import ParticipantsPane from '../pageobjects/ParticipantsPane';
 import PasswordDialog from '../pageobjects/PasswordDialog';
 import PreJoinScreen from '../pageobjects/PreJoinScreen';
@@ -25,7 +29,7 @@ import Visitors from '../pageobjects/Visitors';
 
 import { LOG_PREFIX, logInfo } from './browserLogger';
 import { IToken } from './token';
-import { IParticipantJoinOptions, IParticipantOptions } from './types';
+import { IJoinOptions, IParticipantOptions } from './types';
 
 export const P1 = 'p1';
 export const P2 = 'p2';
@@ -137,9 +141,10 @@ export class Participant {
             script: string | ((...innerArgs: InnerArguments) => ReturnValue),
             ...args: InnerArguments): Promise<ReturnValue> {
         try {
+            // @ts-ignore
             return await this.driver.execute(script, ...args);
         } catch (error) {
-            console.error('An error occured while trying to execute a script: ', error);
+            console.error('An error occurred while trying to execute a script: ', error);
             throw error;
         }
     }
@@ -189,9 +194,9 @@ export class Participant {
      * @param {IJoinOptions} options - Options for joining.
      * @returns {Promise<void>}
      */
-    async joinConference(options: IParticipantJoinOptions): Promise<void> {
+    async joinConference(options: IJoinOptions): Promise<void> {
         const config = {
-            room: options.roomName,
+            room: ctx.roomName,
             configOverwrite: {
                 ...this.config,
                 ...options.configOverwrite || {}
@@ -218,7 +223,7 @@ export class Participant {
             const baseUrl = new URL(this.driver.options.baseUrl || '');
 
             // @ts-ignore
-            url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${options.roomName}"`;
+            url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${ctx.roomName}"`;
 
             if (process.env.IFRAME_TENANT) {
                 url = `${url}&tenant="${process.env.IFRAME_TENANT}"`;
@@ -255,7 +260,7 @@ export class Participant {
         }
 
         if (!options.skipWaitToJoin) {
-            await this.waitToJoinMUC();
+            await this.waitForMucJoinedOrError();
         }
 
         await this.postLoadProcess();
@@ -339,16 +344,17 @@ export class Participant {
 
     /**
      * Waits until either the MUC is joined, or a password prompt is displayed, or an authentication failure
-     * notification is displayed.
+     * notification is displayed, or max users notification is displayed.
      */
     async waitForMucJoinedOrError(): Promise<void> {
         await this.driver.waitUntil(async () => {
             return await this.isInMuc() || await this.getPasswordDialog().isOpen()
+                || await this.getNotifications().getNotificationText(MAXI_USERS_TEST_ID)
                 || await this.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TEST_ID)
                 || await this.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TITLE_TEST_ID);
         }, {
             timeout: 10_000,
-            timeoutMsg: 'Timeout waiting for MUC joined or password prompt.'
+            timeoutMsg: 'Timeout waiting for MUC joined or error.'
         });
     }
 

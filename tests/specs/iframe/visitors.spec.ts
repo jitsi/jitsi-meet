@@ -17,7 +17,7 @@ describe('Visitors', () => {
             };
         }
 
-        await ensureOneParticipant(ctx);
+        await ensureOneParticipant();
 
         const { p1 } = ctx;
 
@@ -38,7 +38,7 @@ describe('Visitors', () => {
     });
 
     it('visitor joins', async () => {
-        await ensureTwoParticipants(ctx, {
+        await ensureTwoParticipants({
             preferGenerateToken: true,
             tokenOptions: { visitor: true },
             skipInMeetingChecks: true

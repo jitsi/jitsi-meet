@@ -14,7 +14,7 @@ const LIST_ITEM_CONTAINER = 'list-item-container';
 
 describe('BreakoutRooms', () => {
     it('check support', async () => {
-        await ensureTwoParticipants(ctx);
+        await ensureTwoParticipants();
 
         if (!await ctx.p1.isBreakoutRoomsSupported()) {
             ctx.skipSuiteTests = true;
@@ -165,7 +165,7 @@ describe('BreakoutRooms', () => {
     });
 
     it('auto assign', async () => {
-        await ensureThreeParticipants(ctx);
+        await ensureThreeParticipants();
         const { p1, p2 } = ctx;
         const p1BreakoutRooms = p1.getBreakoutRooms();
 
@@ -322,7 +322,7 @@ describe('BreakoutRooms', () => {
         // Respect room name suffix as it is important in multi-shard testing
         ctx.roomName += `new-${ctx.roomName}`;
 
-        await ensureTwoParticipants(ctx);
+        await ensureTwoParticipants();
         const { p1, p2 } = ctx;
         const p1BreakoutRooms = p1.getBreakoutRooms();
 

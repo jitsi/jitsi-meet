@@ -19,6 +19,7 @@ const REENABLE_SELF_VIEW_CLOSE_NOTIFICATION = 'notify.selfViewTitle-dismiss';
 const REENABLE_SELF_VIEW_NOTIFICATION_ID = 'notify.selfViewTitle';
 const YOU_ARE_MUTED_TEST_ID = 'notify.mutedTitle';
 
+export const MAXI_USERS_TEST_ID = 'dialog.maxUsersLimitReached';
 export const TOKEN_AUTH_FAILED_TEST_ID = 'dialog.tokenAuthFailed';
 export const TOKEN_AUTH_FAILED_TITLE_TEST_ID = 'dialog.tokenAuthFailedTitle';
 

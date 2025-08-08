@@ -1,7 +1,7 @@
 import { ensureTwoParticipants } from '../../helpers/participants';
 
 describe('End Conference', () => {
-    it('joining the meeting', () => ensureTwoParticipants(ctx));
+    it('joining the meeting', () => ensureTwoParticipants());
 
     it('hangup call and check', async () => {
         const { p1 } = ctx;

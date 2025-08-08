@@ -1,7 +1,7 @@
 import { ensureOneParticipant } from '../../helpers/participants';
 
 describe('Video Layout', () => {
-    it('join participant', () => ensureOneParticipant(ctx));
+    it('join participant', () => ensureOneParticipant());
 
     it('check', async () => {
         const { p1 } = ctx;

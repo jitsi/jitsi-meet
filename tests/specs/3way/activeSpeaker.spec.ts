@@ -3,7 +3,7 @@ import { ensureThreeParticipants, muteAudioAndCheck } from '../../helpers/partic
 
 describe('ActiveSpeaker', () => {
     it('testActiveSpeaker', async () => {
-        await ensureThreeParticipants(ctx);
+        await ensureThreeParticipants();
 
         const { p1, p2, p3 } = ctx;
 

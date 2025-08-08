@@ -1,7 +1,13 @@
+import process from 'node:process';
+
 /**
  * An interface that tests can export (as a TEST_PROPERTIES property) to define what they require.
  */
 export type ITestProperties = {
+    /**
+     * Whether the configuration specifies a JaaS account for the iFrame API tests.
+     */
+    iFrameUsesJaas: boolean;
     /** The test uses the iFrame API. */
     useIFrameApi: boolean;
     /** The test requires jaas, it should be skipped when the jaas configuration is not enabled. */
@@ -12,6 +18,8 @@ export type ITestProperties = {
 };
 
 const defaultProperties: ITestProperties = {
+    iFrameUsesJaas: Boolean(process.env.JWT_PRIVATE_KEY_PATH
+        && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-')),
     useIFrameApi: false,
     useWebhookProxy: false,
     useJaas: false,

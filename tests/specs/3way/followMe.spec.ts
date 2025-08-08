@@ -2,7 +2,7 @@ import { ensureThreeParticipants, ensureTwoParticipants } from '../../helpers/pa
 
 describe('Follow Me', () => {
     it('joining the meeting', async () => {
-        await ensureTwoParticipants(ctx);
+        await ensureTwoParticipants();
 
         const { p1 } = ctx;
 
@@ -43,7 +43,7 @@ describe('Follow Me', () => {
     });
 
     it('tile view', async () => {
-        await ensureThreeParticipants(ctx);
+        await ensureThreeParticipants();
 
         const { p1, p2, p3 } = ctx;
 

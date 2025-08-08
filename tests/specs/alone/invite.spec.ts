@@ -2,7 +2,7 @@ import { ensureOneParticipant } from '../../helpers/participants';
 import { isDialInEnabled } from '../helpers/DialIn';
 
 describe('Invite', () => {
-    it('join participant', () => ensureOneParticipant(ctx, { preferGenerateToken: true }));
+    it('join participant', () => ensureOneParticipant({ preferGenerateToken: true }));
 
     it('url displayed', async () => {
         const { p1 } = ctx;
@@ -67,7 +67,7 @@ describe('Invite', () => {
 
         await p1.driver.switchWindow(moreNumbersWindow);
 
-        await browser.pause(5000);
+        await browser.pause(10000);
 
         await p1.driver.$('.dial-in-numbers-list').waitForExist();
 

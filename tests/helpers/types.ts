@@ -1,25 +1,16 @@
 import { IConfig } from '../../react/features/base/config/configType';
 
 import type { Participant } from './Participant';
-import { ITestProperties } from './TestProperties';
 import type WebhookProxy from './WebhookProxy';
 import { IToken, ITokenOptions } from './token';
 
 export type IContext = {
-    /**
-     * Whether the configuration specifies a JaaS account for the iFrame API tests.
-     */
-    iFrameUsesJaas: boolean;
-    jwtKid: string;
-    jwtPrivateKeyPath: string;
-    keepAlive: Array<any>;
     p1: Participant;
     p2: Participant;
     p3: Participant;
     p4: Participant;
     roomName: string;
     skipSuiteTests: boolean;
-    testProperties: ITestProperties;
     times: any;
     webhooksProxy: WebhookProxy;
 };
@@ -36,7 +27,8 @@ export type IParticipantOptions = {
 /**
  * Options for joinConference.
  */
-export type IParticipantJoinOptions = {
+export type IJoinOptions = {
+
     /**
      * Overwrites the base url set in the config.
      */
@@ -51,33 +43,6 @@ export type IParticipantJoinOptions = {
      * An optional tenant to use. If provided the URL is prepended with /$forceTenant
      */
     forceTenant?: string;
-
-    /** The name of the room to join */
-    roomName: string;
-
-    /**
-     * Whether to skip setting display name.
-     */
-    skipDisplayName?: boolean;
-
-    /**
-     * Whether to skip waiting for the participant to join the room. Cases like lobby where we do not succeed to join
-     * based on the logic of the test.
-     */
-    skipWaitToJoin?: boolean;
-};
-
-export type IJoinOptions = {
-
-    /**
-     * Overwrites the base url set in the config.
-     */
-    baseUrl?: string;
-
-    /**
-     * Config overwrites to use.
-     */
-    configOverwrite?: IConfig;
 
     /**
      * When joining the first participant and jwt singing material is available and a provided token

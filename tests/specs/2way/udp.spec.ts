@@ -2,7 +2,7 @@ import type { Participant } from '../../helpers/Participant';
 import { ensureTwoParticipants } from '../../helpers/participants';
 
 describe('UDP', () => {
-    it('joining the meeting', () => ensureTwoParticipants(ctx));
+    it('joining the meeting', () => ensureTwoParticipants());
 
     it('check', async () => {
         const { p1, p2 } = ctx;

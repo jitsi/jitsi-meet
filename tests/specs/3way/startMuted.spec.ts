@@ -21,7 +21,7 @@ describe('StartMuted', () => {
                 }
             } };
 
-        await ensureOneParticipant(ctx, options);
+        await ensureOneParticipant(options);
 
         const { p1 } = ctx;
         const p1EndpointId = await p1.getEndpointId();
@@ -40,7 +40,7 @@ describe('StartMuted', () => {
         await p1.getFilmstrip().assertAudioMuteIconIsDisplayed(p1, true);
         await p1.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1, true);
 
-        await joinSecondParticipant(ctx, {
+        await joinSecondParticipant({
             ...options,
             skipInMeetingChecks: true
         });
@@ -80,7 +80,7 @@ describe('StartMuted', () => {
         await p1.waitForRemoteVideo(p2EndpointId, false);
 
         // Add a third participant and check p3 is able to receive audio and video from p2.
-        await joinThirdParticipant(ctx, {
+        await joinThirdParticipant({
             ...options,
             skipInMeetingChecks: true
         });
@@ -109,8 +109,8 @@ describe('StartMuted', () => {
             }
         };
 
-        await ensureOneParticipant(ctx, options);
-        await joinSecondParticipant(ctx, {
+        await ensureOneParticipant(options);
+        await joinSecondParticipant({
             ...options,
             skipInMeetingChecks: true
         });
@@ -120,7 +120,7 @@ describe('StartMuted', () => {
         await p2.waitForIceConnected();
         await p2.waitForSendReceiveData({ checkSend: false });
 
-        await joinThirdParticipant(ctx, {
+        await joinThirdParticipant({
             ...options,
             skipInMeetingChecks: true
         });
@@ -172,7 +172,7 @@ describe('StartMuted', () => {
             }
         };
 
-        await ensureTwoParticipants(ctx, options);
+        await ensureTwoParticipants(options);
 
         const { p1, p2 } = ctx;
 
@@ -201,7 +201,7 @@ describe('StartMuted', () => {
             }
         };
 
-        await ensureTwoParticipants(ctx, options);
+        await ensureTwoParticipants(options);
 
         const { p1, p2 } = ctx;
 
@@ -223,8 +223,8 @@ describe('StartMuted', () => {
             }
         };
 
-        await ensureOneParticipant(ctx, options);
-        await joinSecondParticipant(ctx, {
+        await ensureOneParticipant(options);
+        await joinSecondParticipant({
             configOverwrite: {
                 testing: {
                     testMode: true,
@@ -260,7 +260,7 @@ describe('StartMuted', () => {
         // Mute p2's video just before p3 joins.
         await p2.getToolbar().clickVideoMuteButton();
 
-        await joinThirdParticipant(ctx, {
+        await joinThirdParticipant({
             configOverwrite: {
                 p2p: {
                     enabled: true

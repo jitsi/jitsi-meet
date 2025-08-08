@@ -14,7 +14,6 @@ describe('Visitors triggered by visitor tokens', () => {
         };
 
         const m = await joinMuc(
-            ctx.roomName,
             'p1',
             t({ room: ctx.roomName, displayName: 'Mo de Rator', moderator: true })
         );
@@ -26,7 +25,6 @@ describe('Visitors triggered by visitor tokens', () => {
 
         // Joining with a participant token before any visitors
         const p = await joinMuc(
-            ctx.roomName,
             'p2',
             t({ room: ctx.roomName, displayName: 'Parti Cipant' })
         );
@@ -38,7 +36,6 @@ describe('Visitors triggered by visitor tokens', () => {
 
         // Joining with a visitor token
         const v = await joinMuc(
-            ctx.roomName,
             'p3',
             t({ room: ctx.roomName, displayName: 'Visi Tor', visitor: true })
         );
@@ -48,9 +45,10 @@ describe('Visitors triggered by visitor tokens', () => {
         expect(await v.isVisitor()).toBe(true);
         console.log('Visitor joined');
 
+        await p.hangup();
+
         // Joining with a participant token after visitors...:mindblown:
         const v2 = await joinMuc(
-            ctx.roomName,
             'p2',
             t({ room: ctx.roomName, displayName: 'Visi Tor 2' }));
 

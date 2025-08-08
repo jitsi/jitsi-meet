@@ -3,7 +3,6 @@ import { isEqual } from 'lodash-es';
 import { P1, P2, Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureTwoParticipants, parseJid } from '../../helpers/participants';
-import { IContext } from '../../helpers/types';
 
 setTestProperties(__filename, {
     useIFrameApi: true,
@@ -14,7 +13,7 @@ setTestProperties(__filename, {
 /**
  * Tests PARTICIPANT_LEFT webhook.
  */
-async function checkParticipantLeftHook(ctx: IContext, p: Participant, reason: string, checkId = false, conferenceJid: string) {
+async function checkParticipantLeftHook(p: Participant, reason: string, checkId = false, conferenceJid: string) {
     const { webhooksProxy } = ctx;
 
     if (webhooksProxy) {
@@ -56,7 +55,7 @@ describe('Participants presence', () => {
 
     it('joining the meeting', async () => {
         // ensure 2 participants one moderator and one guest, we will load both with iframeAPI
-        await ensureTwoParticipants(ctx);
+        await ensureTwoParticipants();
 
         const { p1, p2, webhooksProxy } = ctx;
 
@@ -223,7 +222,9 @@ describe('Participants presence', () => {
             timeoutMsg: 'videoConferenceLeft not received'
         });
 
-        await ensureTwoParticipants(ctx, { preferGenerateToken: true });
+        await ensureTwoParticipants({
+            preferGenerateToken: true
+        });
 
         const { p1, p2, roomName, webhooksProxy } = ctx;
 
@@ -257,7 +258,7 @@ describe('Participants presence', () => {
             timeoutMsg: 'participantKickedOut event not received on p2 side'
         });
 
-        await checkParticipantLeftHook(ctx, p2, 'kicked', true, conferenceJid);
+        await checkParticipantLeftHook(p2, 'kicked', true, conferenceJid);
 
         expect(eventP1).toBeDefined();
         expect(eventP2).toBeDefined();
@@ -306,7 +307,7 @@ describe('Participants presence', () => {
         webhooksProxy?.clearCache();
 
         // join again
-        await ensureTwoParticipants(ctx);
+        await ensureTwoParticipants();
         const { p2 } = ctx;
 
         if (webhooksProxy) {
@@ -394,7 +395,7 @@ describe('Participants presence', () => {
         expect(eventConferenceLeftP2).toBeDefined();
         expect(eventConferenceLeftP2.roomName).toBe(roomName);
 
-        await checkParticipantLeftHook(ctx, p2, 'left', false, conferenceJid);
+        await checkParticipantLeftHook(p2, 'left', false, conferenceJid);
 
         const eventReadyToCloseP2 = await p2.driver.waitUntil(() => p2.getIframeAPI().getEventResult('readyToClose'), {
             timeout: 2000,
@@ -423,7 +424,7 @@ describe('Participants presence', () => {
         expect(eventConferenceLeft).toBeDefined();
         expect(eventConferenceLeft.roomName).toBe(roomName);
 
-        await checkParticipantLeftHook(ctx, p1, 'left', true, conferenceJid);
+        await checkParticipantLeftHook(p1, 'left', true, conferenceJid);
         if (webhooksProxy) {
             // ROOM_DESTROYED webhook
             // @ts-ignore

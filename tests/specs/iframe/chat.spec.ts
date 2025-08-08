@@ -13,7 +13,7 @@ setTestProperties(__filename, {
 
 describe('Chat', () => {
     it('joining the meeting', async () => {
-        await ensureTwoParticipants(ctx);
+        await ensureTwoParticipants();
 
         const { p1, p2 } = ctx;
 

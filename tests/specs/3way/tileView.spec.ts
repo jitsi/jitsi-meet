@@ -14,7 +14,7 @@ const FILMSTRIP_VIEW_LOCAL_VIDEO_CSS_SELECTOR = '#filmstripLocalVideo #localVide
 const TILE_VIEW_LOCAL_VIDEO_CSS_SELECTOR = '.remote-videos #localVideoContainer';
 
 describe('TileView', () => {
-    it('joining the meeting', () => ensureTwoParticipants(ctx));
+    it('joining the meeting', () => ensureTwoParticipants());
 
     // TODO: implements etherpad check
 
@@ -68,7 +68,7 @@ describe('TileView', () => {
 
         await p2.getToolbar().clickAudioMuteButton();
 
-        await ensureThreeParticipants(ctx, {
+        await ensureThreeParticipants({
             configOverwrite: {
                 channelLastN: 1,
                 startWithAudioMuted: true

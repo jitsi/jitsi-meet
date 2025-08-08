@@ -2,20 +2,20 @@ import { ensureFourParticipants, ensureThreeParticipants, ensureTwoParticipants 
 
 describe('lastN', () => {
     it('joining the meeting', async () => {
-        await ensureTwoParticipants(ctx, {
-            skipInMeetingChecks: true,
+        await ensureTwoParticipants({
             configOverwrite: {
                 startWithAudioMuted: true,
                 startWithVideoMuted: true,
                 channelLastN: 1
-            }
+            },
+            skipInMeetingChecks: true
         });
 
-        await ensureThreeParticipants(ctx, {
-            skipInMeetingChecks: true,
+        await ensureThreeParticipants({
             configOverwrite: {
                 channelLastN: 1
-            }
+            },
+            skipInMeetingChecks: true,
         });
     });
 
@@ -30,11 +30,11 @@ describe('lastN', () => {
         // Mute audio on participant3.
         await p3Toolbar.clickAudioMuteButton();
 
-        await ensureFourParticipants(ctx, {
-            skipInMeetingChecks: true,
+        await ensureFourParticipants({
             configOverwrite: {
                 channelLastN: 1
-            }
+            },
+            skipInMeetingChecks: true
         });
 
         const { p1, p2, p4 } = ctx;
