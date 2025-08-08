@@ -24,7 +24,7 @@ export async function loadPage(roomName: string, instanceId: 'p1' | 'p2' | 'p3' 
     }
     url += '#config.prejoinConfig.enabled=false&config.requireDisplayName=false';
 
-    const newParticipant = new Participant(instanceId, token);
+    const newParticipant = new Participant({ name: instanceId, token });
 
     try {
         await newParticipant.driver.setTimeout({ 'pageLoad': 30000 });

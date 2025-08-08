@@ -25,7 +25,7 @@ import Visitors from '../pageobjects/Visitors';
 
 import { LOG_PREFIX, logInfo } from './browserLogger';
 import { IToken } from './token';
-import { IContext, IJoinOptions } from './types';
+import { IParticipantJoinOptions, IParticipantOptions } from './types';
 
 export const P1 = 'p1';
 export const P2 = 'p2';
@@ -59,6 +59,8 @@ export class Participant {
      * Cache the dial in pin code so that it doesn't have to be read from the UI.
      */
     private _dialInPin?: string;
+
+    private _iFrameApi: boolean = false;
 
     /**
      * The default config to use when joining.
@@ -116,14 +118,12 @@ export class Participant {
     } as IConfig;
 
     /**
-     * Creates a participant with given name.
-     *
-     * @param {string} name - The name of the participant.
-     * @param {string} token - The token if any.
+     * Creates a participant with given options.
      */
-    constructor(name: string, token?: IToken) {
-        this._name = name;
-        this._token = token;
+    constructor(options: IParticipantOptions) {
+        this._name = options.name;
+        this._token = options.token;
+        this._iFrameApi = options.iFrameApi || false;
     }
 
     /**
@@ -186,13 +186,12 @@ export class Participant {
     /**
      * Joins conference.
      *
-     * @param {IContext} ctx - The context.
      * @param {IJoinOptions} options - Options for joining.
      * @returns {Promise<void>}
      */
-    async joinConference(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
+    async joinConference(options: IParticipantJoinOptions): Promise<void> {
         const config = {
-            room: ctx.roomName,
+            room: options.roomName,
             configOverwrite: {
                 ...this.config,
                 ...options.configOverwrite || {}
@@ -209,17 +208,17 @@ export class Participant {
             };
         }
 
-        if (ctx.testProperties.useIFrameApi) {
+        if (this._iFrameApi) {
             config.room = 'iframeAPITest.html';
         }
 
         let url = urlObjectToString(config) || '';
 
-        if (ctx.testProperties.useIFrameApi) {
+        if (this._iFrameApi) {
             const baseUrl = new URL(this.driver.options.baseUrl || '');
 
             // @ts-ignore
-            url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${ctx.roomName}"`;
+            url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${options.roomName}"`;
 
             if (process.env.IFRAME_TENANT) {
                 url = `${url}&tenant="${process.env.IFRAME_TENANT}"`;
@@ -238,20 +237,18 @@ export class Participant {
 
         await this.driver.setTimeout({ 'pageLoad': 30000 });
 
-        let urlToLoad = url.startsWith('/') ? url.substring(1) : url;
+        // drop the leading '/' so we can use the tenant if any
+        url = url.startsWith('/') ? url.substring(1) : url;
 
-        if (options.preferGenerateToken && !ctx.testProperties.useIFrameApi
-            && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-') && process.env.IFRAME_TENANT) {
-            // This to enables tests like invite, which can force using the jaas auth instead of the provided token
-            urlToLoad = `/${process.env.IFRAME_TENANT}/${urlToLoad}`;
+        if (options.forceTenant) {
+            url = `/${options.forceTenant}/${url}`;
         }
 
-        // drop the leading '/' so we can use the tenant if any
-        await this.driver.url(urlToLoad);
+        await this.driver.url(url);
 
         await this.waitForPageToLoad();
 
-        if (ctx.testProperties.useIFrameApi) {
+        if (this._iFrameApi) {
             const mainFrame = this.driver.$('iframe');
 
             await this.driver.switchFrame(mainFrame);

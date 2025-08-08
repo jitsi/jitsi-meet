@@ -214,15 +214,22 @@ async function _joinParticipant( // eslint-disable-line max-params
         }
     }
 
-    const newParticipant = new Participant(name, token);
+    const newParticipant = new Participant({ name, token, iFrameApi: ctx.testProperties.useIFrameApi });
 
     // set the new participant instance
     // @ts-ignore
     ctx[name] = newParticipant;
 
-    await newParticipant.joinConference(ctx, {
-        displayName: name,
-        ...options
+    let forceTenant;
+
+    if (options?.preferGenerateToken && !ctx.testProperties.useIFrameApi
+        && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-') && process.env.IFRAME_TENANT) {
+        forceTenant = process.env.IFRAME_TENANT;
+    }
+    await newParticipant.joinConference({
+        ...options,
+        forceTenant,
+        roomName: ctx.roomName,
     });
 }
 

@@ -21,7 +21,7 @@ if (process.env.HEADLESS === 'true') {
 
 const mergedConfig = merge(defaultConfig, {
     exclude: [
-        'specs/**/iFrameApi*.spec.ts', // FF does not support uploading files (uploadFile)
+        'specs/iframe/*.spec.ts', // FF does not support uploading files (uploadFile)
 
         // FF does not support setting a file as mic input, no dominant speaker events
         'specs/3way/activeSpeaker.spec.ts',
