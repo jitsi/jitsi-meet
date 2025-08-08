@@ -162,6 +162,11 @@ const useStyles = makeStyles()((theme: Theme) => {
 
             '&.destructive': {
                 color: theme.palette.textError
+            },
+
+            '&:focus-visible': {
+                outline: `2px solid ${theme.palette.action01}`,
+                outlineOffset: 2
             }
         },
 
@@ -332,10 +337,12 @@ const Notification = ({
                     <div className = { classes.actionsContainer }>
                         {mapAppearanceToButtons().map(({ content, onClick, type, testId }) => (
                             <button
+                                aria-label = { content }
                                 className = { cx(classes.action, type) }
                                 data-testid = { testId }
                                 key = { content }
-                                onClick = { onClick }>
+                                onClick = { onClick }
+                                type = 'button'>
                                 {content}
                             </button>
                         ))}
