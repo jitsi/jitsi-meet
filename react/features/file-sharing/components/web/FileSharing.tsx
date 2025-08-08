@@ -237,6 +237,7 @@ const FileSharing = () => {
         if (e.target.files) {
             processFiles(e.target.files as FileList, store);
             e.target.value = ''; // Reset the input value to allow re-uploading the same file
+            e.target.blur(); // Remove focus so Enter/Space won't retrigger
         }
     }, [ processFiles ]);
 
@@ -255,6 +256,8 @@ const FileSharing = () => {
     }, []);
 
     const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
         if (e.key === 'Enter' || e.key === ' ') {
             fileInputRef.current?.click();
         }
@@ -272,19 +275,15 @@ const FileSharing = () => {
                             onDragEnter = { handleDragEnter }
                             onDragLeave = { handleDragLeave }
                             onDragOver = { handleDragOver }
-                            onDrop = { handleDrop }
-                            role = 'button'
-                            tabIndex = { 0 }>
-                            <input
-                                className = { classes.hiddenInput }
-                                multiple = { true }
-                                onChange = { handleFileSelect }
-                                ref = { fileInputRef }
-                                type = 'file' />
-                        </div>
+                            onDrop = { handleDrop } />
                         {
                             sortedFiles.length === 0 && (
-                                <div className = { classes.noFilesContainer }>
+                                <div
+                                    className = { classes.noFilesContainer }
+                                    onClick = { handleClick }
+                                    onKeyUp = { handleKeyPress }
+                                    role = 'button'
+                                    tabIndex = { 0 }>
                                     <Icon
                                         className = { classes.uploadIcon }
                                         color = { BaseTheme.palette.icon03 }
@@ -296,6 +295,13 @@ const FileSharing = () => {
                                 </div>
                             )
                         }
+                        <input
+                            className = { classes.hiddenInput }
+                            multiple = { true }
+                            onChange = { handleFileSelect }
+                            ref = { fileInputRef }
+                            tabIndex = { -1 }
+                            type = 'file' />
                     </>
                 )
             }
