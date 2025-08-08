@@ -19,15 +19,12 @@ describe('URL Normalisation', () => {
             throw new Error('baseUrl is not set');
         }
 
-        // we want to extract the host and use a custom tenant
-        const host = new URL(baseUrl).origin;
-
         // @ts-ignore
         ctx.oldRoomName = ctx.roomName;
         ctx.roomName = `${ctx.roomName}@example.com`;
 
         await ensureTwoParticipants(ctx, {
-            baseUrl: `${host}/tenant@example.com/`
+            forceTenant: 'tenant@example.com'
         });
     });
 

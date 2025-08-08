@@ -29,8 +29,8 @@ export async function ensureThreeParticipants(ctx: IContext, options?: IJoinOpti
 
     // these need to be all, so we get the error when one fails
     await Promise.all([
-        _joinParticipant({ name: P2 }, ctx, options),
-        _joinParticipant({ name: P3 }, ctx, options)
+        joinParticipant({ name: P2 }, ctx, options),
+        joinParticipant({ name: P3 }, ctx, options)
     ]);
 
     if (options?.skipInMeetingChecks) {
@@ -56,7 +56,7 @@ export async function ensureThreeParticipants(ctx: IContext, options?: IJoinOpti
  * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<void>}
  */
-export function joinFirstParticipant(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
+export function joinFirstParticipant(ctx: IContext, options: IJoinOptions = { }): Promise<void> {
     return joinTheModeratorAsP1(ctx, options);
 }
 
@@ -65,10 +65,10 @@ export function joinFirstParticipant(ctx: IContext, options: IJoinOptions = {}):
  *
  * @param {Object} ctx - The context.
  * @param {IJoinOptions} options - The options to use when joining the participant.
- * @returns {Promise<void>}
+ * @returns {Promise<Participant>}
  */
-export function joinSecondParticipant(ctx: IContext, options?: IJoinOptions): Promise<void> {
-    return _joinParticipant({ name: P2 }, ctx, options);
+export function joinSecondParticipant(ctx: IContext, options?: IJoinOptions): Promise<Participant> {
+    return joinParticipant({ name: P2 }, ctx, options);
 }
 
 /**
@@ -76,10 +76,10 @@ export function joinSecondParticipant(ctx: IContext, options?: IJoinOptions): Pr
  *
  * @param {Object} ctx - The context.
  * @param {IJoinOptions} options - The options to use when joining the participant.
- * @returns {Promise<void>}
+ * @returns {Promise<Participant>}
  */
-export function joinThirdParticipant(ctx: IContext, options?: IJoinOptions): Promise<void> {
-    return _joinParticipant({ name: P3 }, ctx, options);
+export function joinThirdParticipant(ctx: IContext, options?: IJoinOptions): Promise<Participant> {
+    return joinParticipant({ name: P3 }, ctx, options);
 }
 
 /**
@@ -94,9 +94,9 @@ export async function ensureFourParticipants(ctx: IContext, options?: IJoinOptio
 
     // these need to be all, so we get the error when one fails
     await Promise.all([
-        _joinParticipant({ name: P2 }, ctx, options),
-        _joinParticipant({ name: P3 }, ctx, options),
-        _joinParticipant({ name: P4 }, ctx, options)
+        joinParticipant({ name: P2 }, ctx, options),
+        joinParticipant({ name: P3 }, ctx, options),
+        joinParticipant({ name: P4 }, ctx, options)
     ]);
 
     if (options?.skipInMeetingChecks) {
@@ -143,7 +143,7 @@ async function joinTheModeratorAsP1(ctx: IContext, options?: IJoinOptions) {
     }
 
     // make sure the first participant is moderator, if supported by deployment
-    await _joinParticipant(participantOps, ctx, options);
+    await joinParticipant(participantOps, ctx, options);
 }
 
 /**
@@ -164,7 +164,7 @@ export async function ensureTwoParticipants(ctx: IContext, options?: IJoinOption
         });
     }
 
-    await _joinParticipant(participantOptions, ctx, options);
+    await joinParticipant({ name: P2 }, ctx, options);
 
     if (options?.skipInMeetingChecks) {
         return Promise.resolve();
@@ -185,11 +185,12 @@ export async function ensureTwoParticipants(ctx: IContext, options?: IJoinOption
  * @param participantOptions - The participant options, with required name set.
  * @param {IContext} ctx - The context.
  * @param {boolean} options - Join options.
+ * @returns {Promise<Participant>} - The participant instance.
  */
-async function _joinParticipant( // eslint-disable-line max-params
+export async function joinParticipant( // eslint-disable-line max-params
         participantOptions: IParticipantOptions,
         ctx: IContext,
-        options?: IJoinOptions) {
+        options?: IJoinOptions): Promise<Participant> {
 
     participantOptions.iFrameApi = ctx.testProperties.useIFrameApi;
 
@@ -202,7 +203,7 @@ async function _joinParticipant( // eslint-disable-line max-params
         }
 
         if (await p.isInMuc()) {
-            return;
+            return p;
         }
 
         if (ctx.testProperties.useIFrameApi) {
@@ -222,7 +223,7 @@ async function _joinParticipant( // eslint-disable-line max-params
     // @ts-ignore
     ctx[participantOptions.name] = newParticipant;
 
-    let forceTenant;
+    let forceTenant = options?.forceTenant;
 
     if (options?.preferGenerateToken && !ctx.testProperties.useIFrameApi
         && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-') && process.env.IFRAME_TENANT) {
@@ -233,6 +234,8 @@ async function _joinParticipant( // eslint-disable-line max-params
         forceTenant,
         roomName: ctx.roomName,
     });
+
+    return newParticipant;
 }
 
 /**

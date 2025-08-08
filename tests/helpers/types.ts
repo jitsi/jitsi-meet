@@ -37,10 +37,6 @@ export type IParticipantOptions = {
  * Options for joinConference.
  */
 export type IParticipantJoinOptions = {
-    /**
-     * Overwrites the base url set in the config.
-     */
-    baseUrl?: string;
 
     /**
      * Config overwrites to use.
@@ -70,14 +66,14 @@ export type IParticipantJoinOptions = {
 export type IJoinOptions = {
 
     /**
-     * Overwrites the base url set in the config.
-     */
-    baseUrl?: string;
-
-    /**
      * Config overwrites to use.
      */
     configOverwrite?: IConfig;
+
+    /**
+     * An optional tenant to use. If provided the URL is prepended with /$forceTenant
+     */
+    forceTenant?: string;
 
     /**
      * When joining the first participant and jwt singing material is available and a provided token

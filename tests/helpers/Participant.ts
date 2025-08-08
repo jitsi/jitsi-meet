@@ -141,9 +141,10 @@ export class Participant {
             script: string | ((...innerArgs: InnerArguments) => ReturnValue),
             ...args: InnerArguments): Promise<ReturnValue> {
         try {
+            // @ts-ignore
             return await this.driver.execute(script, ...args);
         } catch (error) {
-            console.error('An error occured while trying to execute a script: ', error);
+            console.error('An error occurred while trying to execute a script: ', error);
             throw error;
         }
     }
@@ -190,7 +191,7 @@ export class Participant {
     /**
      * Joins conference.
      *
-     * @param {IJoinOptions} options - Options for joining.
+     * @param {IParticipantJoinOptions} options - Options for joining.
      * @returns {Promise<void>}
      */
     async joinConference(options: IParticipantJoinOptions): Promise<void> {
@@ -235,10 +236,6 @@ export class Participant {
             url = `${url}&jwt="${this._token.jwt}"`;
         }
 
-        if (options.baseUrl) {
-            this.driver.options.baseUrl = options.baseUrl;
-        }
-
         await this.driver.setTimeout({ 'pageLoad': 30000 });
 
         // drop the leading '/' so we can use the tenant if any
@@ -259,7 +256,7 @@ export class Participant {
         }
 
         if (!options.skipWaitToJoin) {
-            await this.waitToJoinMUC();
+            await this.waitForMucJoinedOrError();
         }
 
         await this.postLoadProcess();
