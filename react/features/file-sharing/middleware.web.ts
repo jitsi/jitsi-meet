@@ -6,7 +6,7 @@ import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, getParticipantDisplayName } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-import { showErrorNotification, showSuccessNotification } from '../notifications/actions';
+import { showErrorNotification, showNotification, showSuccessNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
 
 import { DOWNLOAD_FILE, REMOVE_FILE, UPLOAD_FILES, _FILE_LIST_RECEIVED, _FILE_REMOVED } from './actionTypes';
@@ -101,6 +101,9 @@ MiddlewareRegistry.register(store => next => action => {
             if (!response.ok) {
                 throw new Error(`Failed to delete file: ${response.statusText}`);
             }
+            store.dispatch(showSuccessNotification({
+                titleKey: 'fileSharing.removeFileSuccess'
+            }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
         })
         .catch((error: any) => {
             logger.warn('Could not delete file:', error);
@@ -129,6 +132,10 @@ MiddlewareRegistry.register(store => next => action => {
             if (!presignedUrl) {
                 throw new Error('No presigned URL found in the response.');
             }
+
+            store.dispatch(showNotification({
+                titleKey: 'fileSharing.downloadStarted'
+            }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
 
             return downloadFile(presignedUrl, fileName);
         })
