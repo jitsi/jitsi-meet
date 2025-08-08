@@ -124,6 +124,8 @@ const capabilities = generateCapabilitiesFromSpecs();
 
 const TEST_RESULTS_DIR = 'test-results';
 
+const keepAlive: Array<any> = [];
+
 export const config: WebdriverIO.MultiremoteConfig = {
 
     runner: 'local',
@@ -206,7 +208,6 @@ export const config: WebdriverIO.MultiremoteConfig = {
         globalAny.ctx = {
             times: {}
         } as IContext;
-        globalAny.ctx.keepAlive = [];
         globalAny.ctx.testProperties = testProperties;
 
         await Promise.all(multiremotebrowser.instances.map(async (instance: string) => {
@@ -216,7 +217,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
             initLogger(bInstance, `${instance}-${cid}-${testName}`, TEST_RESULTS_DIR);
 
             // setup keepalive
-            globalAny.ctx.keepAlive.push(setInterval(async () => {
+            keepAlive.push(setInterval(async () => {
                 await bInstance.execute(() => console.log(`${new Date().toISOString()} keep-alive`));
             }, 20_000));
 
@@ -239,8 +240,6 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }
 
         globalAny.ctx.roomName = globalAny.ctx.roomName.toLowerCase();
-        globalAny.ctx.jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
-        globalAny.ctx.jwtKid = process.env.JWT_KID;
         globalAny.ctx.iFrameUsesJaas = process.env.JWT_PRIVATE_KEY_PATH
             && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-');
 
@@ -277,7 +276,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
         const { ctx }: any = global;
 
         ctx?.webhooksProxy?.disconnect();
-        ctx?.keepAlive?.forEach(clearInterval);
+        keepAlive.forEach(clearInterval);
     },
 
     beforeSession(c, capabilities_, specs_, cid) {

@@ -121,13 +121,15 @@ async function joinTheModeratorAsP1(options?: IJoinOptions) {
     const participantOps = { name: P1 } as IParticipantOptions;
 
     if (!options?.skipFirstModerator) {
+        const jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
+
         // we prioritize the access token when iframe is not used and private key is set,
         // otherwise if private key is not specified we use the access token if set
         if (process.env.JWT_ACCESS_TOKEN
-            && ((ctx.jwtPrivateKeyPath && !ctx.testProperties.useIFrameApi && !options?.preferGenerateToken)
-                || !ctx.jwtPrivateKeyPath)) {
+            && ((jwtPrivateKeyPath && !ctx.testProperties.useIFrameApi && !options?.preferGenerateToken)
+                || !jwtPrivateKeyPath)) {
             participantOps.token = { jwt: process.env.JWT_ACCESS_TOKEN };
-        } else if (ctx.jwtPrivateKeyPath) {
+        } else if (jwtPrivateKeyPath) {
             participantOps.token = generateToken({
                 ...options?.tokenOptions,
                 displayName: participantOps.name,

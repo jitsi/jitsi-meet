@@ -10,9 +10,6 @@ export type IContext = {
      * Whether the configuration specifies a JaaS account for the iFrame API tests.
      */
     iFrameUsesJaas: boolean;
-    jwtKid: string;
-    jwtPrivateKeyPath: string;
-    keepAlive: Array<any>;
     p1: Participant;
     p2: Participant;
     p3: Participant;
