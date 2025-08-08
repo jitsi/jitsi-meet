@@ -244,13 +244,18 @@ export const config: WebdriverIO.MultiremoteConfig = {
         globalAny.ctx.iFrameUsesJaas = process.env.JWT_PRIVATE_KEY_PATH
             && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-');
 
+        const isJaasConfigured = process.env.JAAS_DOMAIN && process.env.JAAS_TENANT
+            && process.env.JAAS_PRIVATE_KEY_PATH && process.env.JAAS_KID;
+
         // If we are running the iFrameApi tests, we need to mark it as such and if needed to create the proxy
         // and connect to it.
         if (testProperties.useWebhookProxy) {
             if (!globalAny.ctx.webhooksProxy
                 && process.env.WEBHOOKS_PROXY_URL && process.env.WEBHOOKS_PROXY_SHARED_SECRET) {
                 globalAny.ctx.webhooksProxy = new WebhookProxy(
-                    `${process.env.WEBHOOKS_PROXY_URL}&room=${globalAny.ctx.roomName}`,
+                    `${process.env.WEBHOOKS_PROXY_URL}?tenant=${
+                        isJaasConfigured ? process.env.JAAS_TENANT : process.env.IFRAME_TENANT
+                    }&room=${globalAny.ctx.roomName}`,
                     process.env.WEBHOOKS_PROXY_SHARED_SECRET,
                     `${TEST_RESULTS_DIR}/webhooks-${cid}-${testName}.log`);
                 globalAny.ctx.webhooksProxy.connect();
@@ -261,9 +266,6 @@ export const config: WebdriverIO.MultiremoteConfig = {
             console.warn(`WebhookProxy is not available, skipping ${testName}`);
             globalAny.ctx.skipSuiteTests = true;
         }
-
-        const isJaasConfigured = process.env.JAAS_DOMAIN && process.env.JAAS_TENANT
-            && process.env.JAAS_PRIVATE_KEY_PATH && process.env.JAAS_KID;
 
         if (testProperties.useJaas && !isJaasConfigured) {
             console.warn(`JaaS is not configured, skipping ${testName}. `
