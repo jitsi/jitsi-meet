@@ -2,7 +2,7 @@ import type { Participant } from '../../helpers/Participant';
 import { ensureTwoParticipants } from '../../helpers/participants';
 
 describe('Single port', () => {
-    it('joining the meeting', () => ensureTwoParticipants(ctx));
+    it('joining the meeting', () => ensureTwoParticipants());
 
     it('test', async () => {
         const { p1, p2 } = ctx;

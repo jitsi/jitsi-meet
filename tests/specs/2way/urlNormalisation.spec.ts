@@ -23,7 +23,7 @@ describe('URL Normalisation', () => {
         ctx.oldRoomName = ctx.roomName;
         ctx.roomName = `${ctx.roomName}@example.com`;
 
-        await ensureTwoParticipants(ctx, {
+        await ensureTwoParticipants({
             forceTenant: 'tenant@example.com'
         });
     });

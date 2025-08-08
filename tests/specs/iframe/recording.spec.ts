@@ -11,7 +11,7 @@ describe('Recording', () => {
     let liveStreamingDisabled: boolean;
 
     it('join participant', async () => {
-        await ensureOneParticipant(ctx);
+        await ensureOneParticipant();
 
         const { p1 } = ctx;
 

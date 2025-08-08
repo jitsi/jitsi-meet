@@ -1,7 +1,7 @@
 import { ensureTwoParticipants } from '../../helpers/participants';
 
 describe('DisplayName', () => {
-    it('joining the meeting', () => ensureTwoParticipants(ctx, { skipDisplayName: true }));
+    it('joining the meeting', () => ensureTwoParticipants({ skipDisplayName: true }));
 
     it('check change', async () => {
         const { p1, p2 } = ctx;
@@ -32,7 +32,7 @@ describe('DisplayName', () => {
 
         await p2.hangup();
 
-        await ensureTwoParticipants(ctx, {
+        await ensureTwoParticipants({
             skipDisplayName: true
         });
 

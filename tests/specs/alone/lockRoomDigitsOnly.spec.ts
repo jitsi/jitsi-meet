@@ -7,7 +7,7 @@ import { ensureOneParticipant } from '../../helpers/participants';
  * 2. Lock the room with a valid numeric password (should work)
  */
 describe('Lock Room with Digits only', () => {
-    it('join participant', () => ensureOneParticipant(ctx, {
+    it('join participant', () => ensureOneParticipant({
         configOverwrite: {
             roomPasswordNumberOfDigits: 5
         }

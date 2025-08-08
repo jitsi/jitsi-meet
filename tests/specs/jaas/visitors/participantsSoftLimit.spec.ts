@@ -16,7 +16,6 @@ describe('Visitors triggered by reaching participantsSoftLimit', () => {
 
         /// XXX the "name" of the participant MUST match one of the "capabilities" defined in wdio. It's not a "participant", it's an instance configuration!
         const m = await joinMuc(
-            ctx,
             'p1',
             t({ room: ctx.roomName, displayName: 'Mo de Rator', moderator: true })
         );
@@ -28,7 +27,6 @@ describe('Visitors triggered by reaching participantsSoftLimit', () => {
 
         // Joining with a participant token before participantSoftLimit has been reached
         const p = await joinMuc(
-            ctx,
             'p2',
             t({ room: ctx.roomName, displayName: 'Parti Cipant' })
         );
@@ -40,7 +38,6 @@ describe('Visitors triggered by reaching participantsSoftLimit', () => {
 
         // Joining with a participant token after participantSoftLimit has been reached
         const v = await joinMuc(
-            ctx,
             'p3',
             t({ room: ctx.roomName, displayName: 'Visi Tor' })
         );

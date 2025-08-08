@@ -1,7 +1,6 @@
 import type { Participant } from '../../helpers/Participant';
 import { joinParticipant } from '../../helpers/participants';
 import { IToken, ITokenOptions, generateToken } from '../../helpers/token';
-import { IContext } from '../../helpers/types';
 
 export function generateJaasToken(options: ITokenOptions): IToken {
     if (!process.env.JAAS_PRIVATE_KEY_PATH || !process.env.JAAS_KID) {
@@ -20,14 +19,13 @@ export function generateJaasToken(options: ITokenOptions): IToken {
  * Creates a new Participant and joins the MUC with the given name. The jaas-specific properties must be set as
  * environment variables: IFRAME_TENANT.
  *
- * @param {IContext} ctx - The context.
  * @param instanceId This is the "name" passed to the Participant, I think it's used to match against one of the
  * pre-configured browser instances in wdio? It must be one of 'p1', 'p2', 'p3', or 'p4'. TODO: figure out how this
  * should be used.
  * @param token the token to use, if any.
  * @returns {Promise<Participant>} The Participant that has joined the MUC.
  */
-export async function joinMuc(ctx: IContext, instanceId: 'p1' | 'p2' | 'p3' | 'p4', token?: IToken):
+export async function joinMuc(instanceId: 'p1' | 'p2' | 'p3' | 'p4', token?: IToken):
 Promise<Participant> {
     if (!process.env.JAAS_TENANT) {
         throw new Error('JAAS_TENANT environment variables must be set');
@@ -36,8 +34,7 @@ Promise<Participant> {
     return await joinParticipant({
         name: instanceId,
         token
-    }, ctx, {
-        forceTenant: process.env.JAAS_TENANT,
-        roomName: ctx.roomName
+    }, {
+        forceTenant: process.env.JAAS_TENANT
     });
 }

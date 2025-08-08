@@ -1,6 +1,5 @@
 import { setTestProperties } from '../../helpers/TestProperties';
 import { IToken } from '../../helpers/token';
-import { IContext } from '../../helpers/types';
 import { joinMuc, generateJaasToken as t } from '../helpers/jaas';
 
 setTestProperties(__filename, {
@@ -17,9 +16,9 @@ describe('Setting passcode through settings provisioning', () => {
             visitorsEnabled: true
         };
 
-        await joinWithPassword(ctx, 'p1', t({ room: ctx.roomName }));
-        await joinWithPassword(ctx, 'p1', t({ room: ctx.roomName, moderator: true }));
-        await joinWithPassword(ctx, 'p1', t({ room: ctx.roomName, visitor: true }));
+        await joinWithPassword('p1', t({ room: ctx.roomName }));
+        await joinWithPassword('p1', t({ room: ctx.roomName, moderator: true }));
+        await joinWithPassword('p1', t({ room: ctx.roomName, visitor: true }));
     });
     it('With an invalid passcode', async () => {
         ctx.webhooksProxy.defaultMeetingSettings = {
@@ -27,7 +26,7 @@ describe('Setting passcode through settings provisioning', () => {
         };
 
         ctx.roomName = ctx.roomName + '-2';
-        const p = await joinMuc(ctx, 'p1', t({ room: ctx.roomName }));
+        const p = await joinMuc('p1', t({ room: ctx.roomName }));
 
         // Setting the passcode should fail, resulting in the room being accessible without a password
         await p.waitToJoinMUC();
@@ -40,9 +39,9 @@ describe('Setting passcode through settings provisioning', () => {
  * Join a password-protected room. Assert that a password is required, that a wrong password does not work, and that
  * the correct password does work.
  */
-async function joinWithPassword(ctx: IContext, instanceId: string, token: IToken) {
+async function joinWithPassword(instanceId: string, token: IToken) {
     // @ts-ignore
-    const p = await joinMuc(ctx, instanceId, token);
+    const p = await joinMuc(instanceId, token);
 
     await p.waitForMucJoinedOrError();
     expect(await p.isInMuc()).toBe(false);

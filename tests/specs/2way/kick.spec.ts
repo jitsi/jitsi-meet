@@ -2,7 +2,7 @@ import { ensureTwoParticipants } from '../../helpers/participants';
 
 describe('Kick', () => {
     it('joining the meeting', async () => {
-        await ensureTwoParticipants(ctx);
+        await ensureTwoParticipants();
 
         if (!await ctx.p1.isModerator()) {
             ctx.skipSuiteTests = true;
@@ -12,7 +12,7 @@ describe('Kick', () => {
     it('kick and check', () => kickParticipant2AndCheck());
 
     it('kick p2p and check', async () => {
-        await ensureTwoParticipants(ctx, {
+        await ensureTwoParticipants({
             configOverwrite: {
                 p2p: {
                     enabled: true

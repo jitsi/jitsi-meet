@@ -16,7 +16,7 @@ const ONE_ON_ONE_CONFIG_OVERRIDES = {
 
 describe('OneOnOne', () => {
     it('filmstrip hidden in 1on1', async () => {
-        await ensureTwoParticipants(ctx, ONE_ON_ONE_CONFIG_OVERRIDES);
+        await ensureTwoParticipants(ONE_ON_ONE_CONFIG_OVERRIDES);
 
         const { p1, p2 } = ctx;
 
@@ -28,7 +28,7 @@ describe('OneOnOne', () => {
     });
 
     it('filmstrip visible with more than 2', async () => {
-        await ensureThreeParticipants(ctx, ONE_ON_ONE_CONFIG_OVERRIDES);
+        await ensureThreeParticipants(ONE_ON_ONE_CONFIG_OVERRIDES);
 
         const { p1, p2, p3 } = ctx;
 

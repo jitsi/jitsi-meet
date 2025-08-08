@@ -13,7 +13,7 @@ setTestProperties(__filename, {
 
 describe('Transcriptions', () => {
     it('joining the meeting', async () => {
-        await ensureOneParticipant(ctx);
+        await ensureOneParticipant();
 
         const { p1 } = ctx;
 
@@ -26,7 +26,7 @@ describe('Transcriptions', () => {
 
         await p1.switchToAPI();
 
-        await ensureTwoParticipants(ctx, {
+        await ensureTwoParticipants({
             configOverwrite: {
                 startWithAudioMuted: true
             }

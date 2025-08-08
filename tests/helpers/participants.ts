@@ -2,35 +2,33 @@ import process from 'node:process';
 
 import { P1, P2, P3, P4, Participant } from './Participant';
 import { generateToken } from './token';
-import { IContext, IJoinOptions, IParticipantOptions } from './types';
+import { IJoinOptions, IParticipantOptions } from './types';
 
 const SUBJECT_XPATH = '//div[starts-with(@class, "subject-text")]';
 
 /**
  * Ensure that there is on participant.
  *
- * @param {IContext} ctx - The context.
  * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<void>}
  */
-export async function ensureOneParticipant(ctx: IContext, options?: IJoinOptions): Promise<void> {
-    await joinTheModeratorAsP1(ctx, options);
+export async function ensureOneParticipant(options?: IJoinOptions): Promise<void> {
+    await joinTheModeratorAsP1(options);
 }
 
 /**
  * Ensure that there are three participants.
  *
- * @param {Object} ctx - The context.
  * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<void>}
  */
-export async function ensureThreeParticipants(ctx: IContext, options?: IJoinOptions): Promise<void> {
-    await joinTheModeratorAsP1(ctx, options);
+export async function ensureThreeParticipants(options?: IJoinOptions): Promise<void> {
+    await joinTheModeratorAsP1(options);
 
     // these need to be all, so we get the error when one fails
     await Promise.all([
-        joinParticipant({ name: P2 }, ctx, options),
-        joinParticipant({ name: P3 }, ctx, options)
+        joinParticipant({ name: P2 }, options),
+        joinParticipant({ name: P3 }, options)
     ]);
 
     if (options?.skipInMeetingChecks) {
@@ -52,51 +50,47 @@ export async function ensureThreeParticipants(ctx: IContext, options?: IJoinOpti
 /**
  * Creates the first participant instance or prepares one for re-joining.
  *
- * @param {Object} ctx - The context.
  * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<void>}
  */
-export function joinFirstParticipant(ctx: IContext, options: IJoinOptions = { }): Promise<void> {
-    return joinTheModeratorAsP1(ctx, options);
+export function joinFirstParticipant(options: IJoinOptions = { }): Promise<void> {
+    return joinTheModeratorAsP1(options);
 }
 
 /**
  * Creates the second participant instance or prepares one for re-joining.
  *
- * @param {Object} ctx - The context.
  * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<Participant>}
  */
-export function joinSecondParticipant(ctx: IContext, options?: IJoinOptions): Promise<Participant> {
-    return joinParticipant({ name: P2 }, ctx, options);
+export function joinSecondParticipant(options?: IJoinOptions): Promise<Participant> {
+    return joinParticipant({ name: P2 }, options);
 }
 
 /**
  * Creates the third participant instance or prepares one for re-joining.
  *
- * @param {Object} ctx - The context.
  * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<Participant>}
  */
-export function joinThirdParticipant(ctx: IContext, options?: IJoinOptions): Promise<Participant> {
-    return joinParticipant({ name: P3 }, ctx, options);
+export function joinThirdParticipant(options?: IJoinOptions): Promise<Participant> {
+    return joinParticipant({ name: P3 }, options);
 }
 
 /**
  * Ensure that there are four participants.
  *
- * @param {Object} ctx - The context.
  * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<void>}
  */
-export async function ensureFourParticipants(ctx: IContext, options?: IJoinOptions): Promise<void> {
-    await joinTheModeratorAsP1(ctx, options);
+export async function ensureFourParticipants(options?: IJoinOptions): Promise<void> {
+    await joinTheModeratorAsP1(options);
 
     // these need to be all, so we get the error when one fails
     await Promise.all([
-        joinParticipant({ name: P2 }, ctx, options),
-        joinParticipant({ name: P3 }, ctx, options),
-        joinParticipant({ name: P4 }, ctx, options)
+        joinParticipant({ name: P2 }, options),
+        joinParticipant({ name: P3 }, options),
+        joinParticipant({ name: P4 }, options)
     ]);
 
     if (options?.skipInMeetingChecks) {
@@ -120,11 +114,10 @@ export async function ensureFourParticipants(ctx: IContext, options?: IJoinOptio
 /**
  * Ensure that the first participant is moderator.
  *
- * @param {Object} ctx - The context.
  * @param {IJoinOptions} options - The options to join.
  * @returns {Promise<void>}
  */
-async function joinTheModeratorAsP1(ctx: IContext, options?: IJoinOptions) {
+async function joinTheModeratorAsP1(options?: IJoinOptions) {
     const participantOps = { name: P1 } as IParticipantOptions;
 
     if (!options?.skipFirstModerator) {
@@ -143,17 +136,16 @@ async function joinTheModeratorAsP1(ctx: IContext, options?: IJoinOptions) {
     }
 
     // make sure the first participant is moderator, if supported by deployment
-    await joinParticipant(participantOps, ctx, options);
+    await joinParticipant(participantOps, options);
 }
 
 /**
  * Ensure that there are two participants.
  *
- * @param {Object} ctx - The context.
  * @param {IJoinOptions} options - The options to join.
  */
-export async function ensureTwoParticipants(ctx: IContext, options?: IJoinOptions): Promise<void> {
-    await joinTheModeratorAsP1(ctx, options);
+export async function ensureTwoParticipants(options?: IJoinOptions): Promise<void> {
+    await joinTheModeratorAsP1(options);
 
     const participantOptions = { name: P2 } as IParticipantOptions;
 
@@ -164,7 +156,7 @@ export async function ensureTwoParticipants(ctx: IContext, options?: IJoinOption
         });
     }
 
-    await joinParticipant({ name: P2 }, ctx, options);
+    await joinParticipant({ name: P2 }, options);
 
     if (options?.skipInMeetingChecks) {
         return Promise.resolve();
@@ -183,13 +175,11 @@ export async function ensureTwoParticipants(ctx: IContext, options?: IJoinOption
 /**
  * Creates a participant instance or prepares one for re-joining.
  * @param participantOptions - The participant options, with required name set.
- * @param {IContext} ctx - The context.
  * @param {boolean} options - Join options.
  * @returns {Promise<Participant>} - The participant instance.
  */
 export async function joinParticipant( // eslint-disable-line max-params
         participantOptions: IParticipantOptions,
-        ctx: IContext,
         options?: IJoinOptions): Promise<Participant> {
 
     participantOptions.iFrameApi = ctx.testProperties.useIFrameApi;
