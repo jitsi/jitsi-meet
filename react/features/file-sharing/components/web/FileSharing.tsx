@@ -109,8 +109,11 @@ const useStyles = makeStyles()(theme => {
             flexDirection: 'column',
             gap: theme.spacing(2),
             gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+            listStyleType: 'none',
             marginBottom: theme.spacing(8),
+            marginTop: 0,
             overflowY: 'auto',
+            padding: 0,
             zIndex: 1
         },
 
@@ -298,10 +301,10 @@ const FileSharing = () => {
             }
             {
                 sortedFiles.length > 0 && (
-                    <div className = { classes.fileList }>
+                    <ul className = { classes.fileList }>
                         {
                             sortedFiles.map(file => (
-                                <div
+                                <li
                                     className = { classes.fileItem }
                                     key = { file.fileId }
                                     title = { file.fileName }>
@@ -370,10 +373,10 @@ const FileSharing = () => {
                                             </div>
                                         )
                                     }
-                                </div>
+                                </li>
                             ))
                         }
-                    </div>
+                    </ul>
                 )
             }
             {
