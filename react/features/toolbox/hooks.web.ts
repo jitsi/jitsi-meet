@@ -63,6 +63,7 @@ import DownloadButton from './components/DownloadButton';
 import HelpButton from './components/HelpButton';
 import AudioSettingsButton from './components/web/AudioSettingsButton';
 import CustomOptionButton from './components/web/CustomOptionButton';
+import DownloadDataButton from './components/web/DownloadDataButton';
 import FullscreenButton from './components/web/FullscreenButton';
 import LinkToSalesforceButton from './components/web/LinkToSalesforceButton';
 import ProfileButton from './components/web/ProfileButton';
@@ -169,6 +170,12 @@ const download = {
 const help = {
     key: 'help',
     Content: HelpButton,
+    group: 4
+};
+
+const downloadData = {
+    key: 'downloaddata',
+    Content: DownloadDataButton,
     group: 4
 };
 
@@ -298,6 +305,7 @@ export function useToolboxButtons(
         camera,
         profile,
         desktop: desktopSharing,
+        downloaddata: downloadData,
         chat,
         raisehand,
         reactions,
