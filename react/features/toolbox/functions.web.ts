@@ -3,6 +3,8 @@ import { hasAvailableDevices } from '../base/devices/functions.web';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { IGUMPendingState } from '../base/media/types';
+import { getLocalParticipant, getRemoteParticipants } from '../base/participants/functions';
+import { IParticipant } from '../base/participants/types';
 import { isScreenMediaShared } from '../screen-share/functions';
 import { isWhiteboardVisible } from '../whiteboard/functions';
 
@@ -248,4 +250,103 @@ export function toCSSTransitionValue(object: ICSSTransitionObject) {
     const { delay, duration, easingFunction } = object;
 
     return `${duration}s ${easingFunction} ${delay}s`;
+}
+
+/**
+ * Gathers and formats meeting data into a string.
+ *
+ * @param {IReduxState} state - The Redux state.
+ * @returns {string} - The formatted meeting data.
+ */
+export function getMeetingDataAsString(state: IReduxState): string {
+    const {
+        'features/base/conference': { room },
+        'features/chat': { messages },
+        'features/polls': { polls }
+    } = state;
+
+    const localParticipant = getLocalParticipant(state);
+    const remoteParticipants = getRemoteParticipants(state);
+    const allParticipants: IParticipant[] = [];
+
+    if (localParticipant) {
+        allParticipants.push(localParticipant);
+    }
+    allParticipants.push(...Array.from(remoteParticipants.values()));
+
+    const participantNameMap = new Map(allParticipants.map(p => [ p.id, p.name ]));
+
+    let dataString = `Meeting Data for: ${room}\n`;
+
+    dataString += `Date: ${new Date().toLocaleString()}\n\n`;
+
+    // 1. Format Attendance List
+    dataString += '--- Attendance ---\n';
+    allParticipants.forEach(p => {
+        const isLocal = p.id === localParticipant?.id;
+
+        dataString += `${p.name}${isLocal ? ' (Me)' : ''}\n`;
+    });
+    dataString += '\n';
+
+    // 2. Format Chat History
+    dataString += '--- Chat History ---\n';
+    messages.forEach(msg => {
+        const displayName = participantNameMap.get((msg as any).participantId) || 'Unknown User';
+        const timestamp = new Date(msg.timestamp).toLocaleTimeString();
+
+        dataString += `[${timestamp}] ${displayName}: ${msg.message}\n`;
+    });
+    dataString += '\n';
+
+    // 3. Format Poll Results
+    dataString += '--- Polls ---\n';
+    if (Object.keys(polls ?? {}).length > 0) {
+        Object.values(polls ?? {}).forEach((poll, index) => {
+            dataString += `Poll ${index + 1}: ${poll.question}\n`;
+            (poll.answers || []).forEach(answer => {
+                const voteCount = answer.voters.length;
+                const voterNames = answer.voters
+                    .map(voterId => participantNameMap.get(voterId) || 'Unknown User')
+                    .join(', ');
+
+                dataString += `  - ${answer.name} (${voteCount} votes): [${voterNames}]\n`;
+            });
+            dataString += '\n';
+        });
+    } else {
+        dataString += 'No polls were conducted.\n\n';
+    }
+
+    return dataString;
+}
+
+/**
+ * Gathers meeting data, formats it, and triggers a download of the resulting text file.
+ *
+ * @param {IReduxState} state - The Redux state.
+ * @returns {void}
+ */
+export function downloadMeetingData(state: IReduxState): void {
+    // Part 1: Get the formatted content string
+    const dataString = getMeetingDataAsString(state);
+
+    // Part 2: Generate the dynamic filename
+    const roomName = state['features/base/conference']?.room;
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const dateString = `${year}-${month}-${day}`;
+    const filename = `${roomName || 'meeting'}_meeting_data_${dateString}.txt`;
+
+    // Part 3: Trigger the file download
+    const element = document.createElement('a');
+    const file = new Blob([ dataString ], { type: 'text/plain' });
+
+    element.href = URL.createObjectURL(file);
+    element.download = filename;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
 }
