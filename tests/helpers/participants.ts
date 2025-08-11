@@ -8,12 +8,33 @@ const SUBJECT_XPATH = '//div[starts-with(@class, "subject-text")]';
 
 /**
  * Ensure that there is on participant.
+ * Ensure that the first participant is moderator if there is such an option.
  *
  * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<void>}
  */
 export async function ensureOneParticipant(options?: IJoinOptions): Promise<void> {
-    await joinTheModeratorAsP1(options);
+    const participantOps = { name: P1 } as IParticipantOptions;
+
+    if (!options?.skipFirstModerator) {
+        const jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
+
+        // we prioritize the access token when iframe is not used and private key is set,
+        // otherwise if private key is not specified we use the access token if set
+        if (process.env.JWT_ACCESS_TOKEN
+            && ((jwtPrivateKeyPath && !ctx.testProperties.useIFrameApi && !options?.preferGenerateToken)
+                || !jwtPrivateKeyPath)) {
+            participantOps.token = { jwt: process.env.JWT_ACCESS_TOKEN };
+        } else if (jwtPrivateKeyPath) {
+            participantOps.token = generateToken({
+                ...options?.tokenOptions,
+                displayName: participantOps.name,
+            });
+        }
+    }
+
+    // make sure the first participant is moderator, if supported by deployment
+    await joinParticipant(participantOps, options);
 }
 
 /**
@@ -23,7 +44,7 @@ export async function ensureOneParticipant(options?: IJoinOptions): Promise<void
  * @returns {Promise<void>}
  */
 export async function ensureThreeParticipants(options?: IJoinOptions): Promise<void> {
-    await joinTheModeratorAsP1(options);
+    await ensureOneParticipant(options);
 
     // these need to be all, so we get the error when one fails
     await Promise.all([
@@ -54,7 +75,7 @@ export async function ensureThreeParticipants(options?: IJoinOptions): Promise<v
  * @returns {Promise<void>}
  */
 export function joinFirstParticipant(options: IJoinOptions = { }): Promise<void> {
-    return joinTheModeratorAsP1(options);
+    return ensureOneParticipant(options);
 }
 
 /**
@@ -84,7 +105,7 @@ export function joinThirdParticipant(options?: IJoinOptions): Promise<Participan
  * @returns {Promise<void>}
  */
 export async function ensureFourParticipants(options?: IJoinOptions): Promise<void> {
-    await joinTheModeratorAsP1(options);
+    await ensureOneParticipant(options);
 
     // these need to be all, so we get the error when one fails
     await Promise.all([
@@ -112,42 +133,12 @@ export async function ensureFourParticipants(options?: IJoinOptions): Promise<vo
 }
 
 /**
- * Ensure that the first participant is moderator.
- *
- * @param {IJoinOptions} options - The options to join.
- * @returns {Promise<void>}
- */
-async function joinTheModeratorAsP1(options?: IJoinOptions) {
-    const participantOps = { name: P1 } as IParticipantOptions;
-
-    if (!options?.skipFirstModerator) {
-        const jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
-
-        // we prioritize the access token when iframe is not used and private key is set,
-        // otherwise if private key is not specified we use the access token if set
-        if (process.env.JWT_ACCESS_TOKEN
-            && ((jwtPrivateKeyPath && !ctx.testProperties.useIFrameApi && !options?.preferGenerateToken)
-                || !jwtPrivateKeyPath)) {
-            participantOps.token = { jwt: process.env.JWT_ACCESS_TOKEN };
-        } else if (jwtPrivateKeyPath) {
-            participantOps.token = generateToken({
-                ...options?.tokenOptions,
-                displayName: participantOps.name,
-            });
-        }
-    }
-
-    // make sure the first participant is moderator, if supported by deployment
-    await joinParticipant(participantOps, options);
-}
-
-/**
  * Ensure that there are two participants.
  *
  * @param {IJoinOptions} options - The options to join.
  */
 export async function ensureTwoParticipants(options?: IJoinOptions): Promise<void> {
-    await joinTheModeratorAsP1(options);
+    await ensureOneParticipant(options);
 
     const participantOptions = { name: P2 } as IParticipantOptions;
 
