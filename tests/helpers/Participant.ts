@@ -13,7 +13,7 @@ import IframeAPI from '../pageobjects/IframeAPI';
 import InviteDialog from '../pageobjects/InviteDialog';
 import LargeVideo from '../pageobjects/LargeVideo';
 import LobbyScreen from '../pageobjects/LobbyScreen';
-import Notifications from '../pageobjects/Notifications';
+import Notifications, { TOKEN_AUTH_FAILED_TEST_ID, TOKEN_AUTH_FAILED_TITLE_TEST_ID } from '../pageobjects/Notifications';
 import ParticipantsPane from '../pageobjects/ParticipantsPane';
 import PasswordDialog from '../pageobjects/PasswordDialog';
 import PreJoinScreen from '../pageobjects/PreJoinScreen';
@@ -24,7 +24,8 @@ import VideoQualityDialog from '../pageobjects/VideoQualityDialog';
 import Visitors from '../pageobjects/Visitors';
 
 import { LOG_PREFIX, logInfo } from './browserLogger';
-import { IContext, IJoinOptions } from './types';
+import { IToken } from './token';
+import { IParticipantJoinOptions, IParticipantOptions } from './types';
 
 export const P1 = 'p1';
 export const P2 = 'p2';
@@ -49,7 +50,17 @@ export class Participant {
      */
     private _name: string;
     private _endpointId: string;
-    private _jwt?: string;
+    /**
+     * The token that this participant was initialized with.
+     */
+    private _token?: IToken;
+
+    /**
+     * Cache the dial in pin code so that it doesn't have to be read from the UI.
+     */
+    private _dialInPin?: string;
+
+    private _iFrameApi: boolean = false;
 
     /**
      * The default config to use when joining.
@@ -107,14 +118,12 @@ export class Participant {
     } as IConfig;
 
     /**
-     * Creates a participant with given name.
-     *
-     * @param {string} name - The name of the participant.
-     * @param {string }jwt - The jwt if any.
+     * Creates a participant with given options.
      */
-    constructor(name: string, jwt?: string) {
-        this._name = name;
-        this._jwt = jwt;
+    constructor(options: IParticipantOptions) {
+        this._name = options.name;
+        this._token = options.token;
+        this._iFrameApi = options.iFrameApi || false;
     }
 
     /**
@@ -177,13 +186,12 @@ export class Participant {
     /**
      * Joins conference.
      *
-     * @param {IContext} ctx - The context.
      * @param {IJoinOptions} options - Options for joining.
      * @returns {Promise<void>}
      */
-    async joinConference(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
+    async joinConference(options: IParticipantJoinOptions): Promise<void> {
         const config = {
-            room: ctx.roomName,
+            room: options.roomName,
             configOverwrite: {
                 ...this.config,
                 ...options.configOverwrite || {}
@@ -200,17 +208,17 @@ export class Participant {
             };
         }
 
-        if (ctx.iframeAPI) {
+        if (this._iFrameApi) {
             config.room = 'iframeAPITest.html';
         }
 
         let url = urlObjectToString(config) || '';
 
-        if (ctx.iframeAPI) {
+        if (this._iFrameApi) {
             const baseUrl = new URL(this.driver.options.baseUrl || '');
 
             // @ts-ignore
-            url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${ctx.roomName}"`;
+            url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${options.roomName}"`;
 
             if (process.env.IFRAME_TENANT) {
                 url = `${url}&tenant="${process.env.IFRAME_TENANT}"`;
@@ -219,8 +227,8 @@ export class Participant {
                 url = `${url}&tenant="${baseUrl.pathname.substring(1)}"`;
             }
         }
-        if (this._jwt) {
-            url = `${url}&jwt="${this._jwt}"`;
+        if (this._token?.jwt) {
+            url = `${url}&jwt="${this._token.jwt}"`;
         }
 
         if (options.baseUrl) {
@@ -229,19 +237,18 @@ export class Participant {
 
         await this.driver.setTimeout({ 'pageLoad': 30000 });
 
-        let urlToLoad = url.startsWith('/') ? url.substring(1) : url;
+        // drop the leading '/' so we can use the tenant if any
+        url = url.startsWith('/') ? url.substring(1) : url;
 
-        if (options.preferGenerateToken && !ctx.iframeAPI && ctx.isJaasAvailable() && process.env.IFRAME_TENANT) {
-            // This to enables tests like invite, which can force using the jaas auth instead of the provided token
-            urlToLoad = `/${process.env.IFRAME_TENANT}/${urlToLoad}`;
+        if (options.forceTenant) {
+            url = `/${options.forceTenant}/${url}`;
         }
 
-        // drop the leading '/' so we can use the tenant if any
-        await this.driver.url(urlToLoad);
+        await this.driver.url(url);
 
         await this.waitForPageToLoad();
 
-        if (ctx.iframeAPI) {
+        if (this._iFrameApi) {
             const mainFrame = this.driver.$('iframe');
 
             await this.driver.switchFrame(mainFrame);
@@ -331,11 +338,30 @@ export class Participant {
     }
 
     /**
+     * Waits until either the MUC is joined, or a password prompt is displayed, or an authentication failure
+     * notification is displayed.
+     */
+    async waitForMucJoinedOrError(): Promise<void> {
+        await this.driver.waitUntil(async () => {
+            return await this.isInMuc() || await this.getPasswordDialog().isOpen()
+                || await this.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TEST_ID)
+                || await this.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TITLE_TEST_ID);
+        }, {
+            timeout: 10_000,
+            timeoutMsg: 'Timeout waiting for MUC joined or password prompt.'
+        });
+    }
+
+    /**
      * Checks if the participant is a moderator in the meeting.
      */
     async isModerator() {
         return await this.execute(() => typeof APP !== 'undefined'
             && APP.store?.getState()['features/base/participants']?.local?.role === 'moderator');
+    }
+
+    async isVisitor() {
+        return await this.execute(() => APP?.store?.getState()['features/visitors']?.iAmVisitor || false);
     }
 
     /**
@@ -447,7 +473,7 @@ export class Participant {
     }
 
     /**
-     * Waits for number of participants.
+     * Waits until the number of participants is exactly the given number.
      *
      * @param {number} number - The number of participant to wait for.
      * @param {string} msg - A custom message to use.
@@ -890,5 +916,27 @@ export class Participant {
     waitForDominantSpeaker(endpointId: string) {
         return this.driver.$(`//span[@id="participant_${endpointId}" and contains(@class, "dominant-speaker")]`)
             .waitForDisplayed({ timeout: 5_000 });
+    }
+
+    /**
+     * Returns the token that this participant was initialized with.
+     */
+    getToken(): IToken | undefined {
+        return this._token;
+    }
+
+    /**
+     * Gets the dial in pin for the conference. Reads it from the invite dialog if the pin hasn't been cached yet.
+     */
+    async getDialInPin(): Promise<string> {
+        if (!this._dialInPin) {
+            const dialInPin = await this.getInviteDialog().getPinNumber();
+
+            await this.getInviteDialog().clickCloseButton();
+
+            this._dialInPin = dialInPin;
+        }
+
+        return this._dialInPin;
     }
 }

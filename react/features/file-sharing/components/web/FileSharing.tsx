@@ -7,7 +7,6 @@ import { IReduxState } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCloudUpload, IconDownload, IconTrash } from '../../../base/icons/svg';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import BaseTheme from '../../../base/ui/components/BaseTheme.web';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
@@ -110,8 +109,11 @@ const useStyles = makeStyles()(theme => {
             flexDirection: 'column',
             gap: theme.spacing(2),
             gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+            listStyleType: 'none',
             marginBottom: theme.spacing(8),
+            marginTop: 0,
             overflowY: 'auto',
+            padding: 0,
             zIndex: 1
         },
 
@@ -161,7 +163,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         noFilesText: {
-            ...withPixelLineHeight(theme.typography.bodyLongBold),
+            ...theme.typography.bodyLongBold,
             color: theme.palette.text02,
             padding: '0 24px',
             textAlign: 'center'
@@ -207,6 +209,7 @@ const FileSharing = () => {
     const { classes } = useStyles();
     const [ isDragging, setIsDragging ] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const uploadButtonRef = useRef<HTMLButtonElement>(null);
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const store = useStore();
@@ -235,6 +238,7 @@ const FileSharing = () => {
         if (e.target.files) {
             processFiles(e.target.files as FileList, store);
             e.target.value = ''; // Reset the input value to allow re-uploading the same file
+            uploadButtonRef.current?.focus();
         }
     }, [ processFiles ]);
 
@@ -253,6 +257,8 @@ const FileSharing = () => {
     }, []);
 
     const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
         if (e.key === 'Enter' || e.key === ' ') {
             fileInputRef.current?.click();
         }
@@ -270,19 +276,15 @@ const FileSharing = () => {
                             onDragEnter = { handleDragEnter }
                             onDragLeave = { handleDragLeave }
                             onDragOver = { handleDragOver }
-                            onDrop = { handleDrop }
-                            role = 'button'
-                            tabIndex = { 0 }>
-                            <input
-                                className = { classes.hiddenInput }
-                                multiple = { true }
-                                onChange = { handleFileSelect }
-                                ref = { fileInputRef }
-                                type = 'file' />
-                        </div>
+                            onDrop = { handleDrop } />
                         {
                             sortedFiles.length === 0 && (
-                                <div className = { classes.noFilesContainer }>
+                                <div
+                                    className = { classes.noFilesContainer }
+                                    onClick = { handleClick }
+                                    onKeyUp = { handleKeyPress }
+                                    role = 'button'
+                                    tabIndex = { 0 }>
                                     <Icon
                                         className = { classes.uploadIcon }
                                         color = { BaseTheme.palette.icon03 }
@@ -294,15 +296,22 @@ const FileSharing = () => {
                                 </div>
                             )
                         }
+                        <input
+                            className = { classes.hiddenInput }
+                            multiple = { true }
+                            onChange = { handleFileSelect }
+                            ref = { fileInputRef }
+                            tabIndex = { -1 }
+                            type = 'file' />
                     </>
                 )
             }
             {
                 sortedFiles.length > 0 && (
-                    <div className = { classes.fileList }>
+                    <ul className = { classes.fileList }>
                         {
                             sortedFiles.map(file => (
-                                <div
+                                <li
                                     className = { classes.fileItem }
                                     key = { file.fileId }
                                     title = { file.fileName }>
@@ -364,17 +373,25 @@ const FileSharing = () => {
                                     }
                                     {
                                         (file.progress ?? 100) < 100 && (
-                                            <div className = { classes.progressBar }>
+                                            <>
                                                 <div
-                                                    className = { classes.progressFill }
-                                                    style = {{ width: `${file.progress}%` }} />
-                                            </div>
+                                                    aria-label = { t('fileSharing.fileUploadProgress') }
+                                                    aria-valuemax = { 100 }
+                                                    aria-valuemin = { 0 }
+                                                    aria-valuenow = { file.progress }
+                                                    className = { classes.progressBar }
+                                                    role = 'progressbar'>
+                                                    <div
+                                                        className = { classes.progressFill }
+                                                        style = {{ width: `${file.progress}%` }} />
+                                                </div>
+                                            </>
                                         )
                                     }
-                                </div>
+                                </li>
                             ))
                         }
-                    </div>
+                    </ul>
                 )
             }
             {
@@ -385,6 +402,7 @@ const FileSharing = () => {
                         labelKey = { 'fileSharing.uploadFile' }
                         onClick = { handleClick }
                         onKeyPress = { handleKeyPress }
+                        ref = { uploadButtonRef }
                         type = { BUTTON_TYPES.PRIMARY } />
                 )
             }

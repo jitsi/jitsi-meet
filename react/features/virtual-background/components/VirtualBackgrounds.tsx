@@ -12,7 +12,6 @@ import { IReduxState, IStore } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconCloseLarge } from '../../base/icons/svg';
-import { withPixelLineHeight } from '../../base/styles/functions.web';
 import Tooltip from '../../base/tooltip/components/Tooltip';
 import Spinner from '../../base/ui/components/web/Spinner';
 import { BACKGROUNDS_LIMIT, IMAGES, type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
@@ -107,7 +106,7 @@ const useStyles = makeStyles()(theme => {
             alignItems: 'center',
             justifyContent: 'center',
             textAlign: 'center',
-            ...withPixelLineHeight(theme.typography.labelBold),
+            ...theme.typography.labelBold,
             color: theme.palette.text01,
             objectFit: 'cover',
 

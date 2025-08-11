@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { ColorPalette } from '../../../../base/styles/components/styles/ColorPalette';
-import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import {
     getDeviceStatusText,
     getDeviceStatusType
@@ -16,7 +15,7 @@ const useStyles = makeStyles<{ deviceStatusType?: string; }>()((theme, { deviceS
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: '#fff',
             marginTop: theme.spacing(4),
 

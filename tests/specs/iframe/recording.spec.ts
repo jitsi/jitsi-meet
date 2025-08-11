@@ -1,6 +1,15 @@
+import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureOneParticipant } from '../../helpers/participants';
 
+setTestProperties(__filename, {
+    useIFrameApi: true,
+    useWebhookProxy: true
+});
+
 describe('Recording', () => {
+    let recordingDisabled: boolean;
+    let liveStreamingDisabled: boolean;
+
     it('join participant', async () => {
         await ensureOneParticipant(ctx);
 
@@ -14,13 +23,13 @@ describe('Recording', () => {
             return;
         }
 
-        ctx.data.recordingDisabled = Boolean(!await p1.execute(() => config.recordingService?.enabled));
-        ctx.data.liveStreamingDisabled = Boolean(!await p1.execute(() => config.liveStreaming?.enabled))
+        recordingDisabled = Boolean(!await p1.execute(() => config.recordingService?.enabled));
+        liveStreamingDisabled = Boolean(!await p1.execute(() => config.liveStreaming?.enabled))
             || !process.env.YTUBE_TEST_STREAM_KEY;
     });
 
     it('start/stop function', async () => {
-        if (ctx.data.recordingDisabled) {
+        if (recordingDisabled) {
             return;
         }
 
@@ -32,7 +41,7 @@ describe('Recording', () => {
     });
 
     it('start/stop command', async () => {
-        if (ctx.data.recordingDisabled) {
+        if (recordingDisabled) {
             return;
         }
 
@@ -44,7 +53,7 @@ describe('Recording', () => {
     });
 
     it('start/stop Livestreaming command', async () => {
-        if (ctx.data.liveStreamingDisabled) {
+        if (liveStreamingDisabled) {
             return;
         }
 
@@ -180,7 +189,7 @@ async function testRecordingStopped(command: boolean) {
             eventType: string;
         } = await webhooksProxy.waitForEvent('RECORDING_UPLOADED', 20000);
 
-        const jwtPayload = ctx.data[`${p1.name}-jwt-payload`];
+        const jwtPayload = p1.getToken()?.payload;
 
         expect(recordingUploadedEvent.data.initiatorId).toBe(jwtPayload?.context?.user?.id);
         expect(recordingUploadedEvent.data.participants.some(

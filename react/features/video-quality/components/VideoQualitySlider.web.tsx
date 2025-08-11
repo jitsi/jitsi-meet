@@ -12,7 +12,6 @@ import { setAudioOnly } from '../../base/audio-only/actions';
 import { translate } from '../../base/i18n/functions';
 import { setLastN } from '../../base/lastn/actions';
 import { getLastNForQualityLevel } from '../../base/lastn/functions';
-import { withPixelLineHeight } from '../../base/styles/functions.web';
 import { setPreferredVideoQuality } from '../actions';
 import { DEFAULT_LAST_N, VIDEO_QUALITY_LEVELS } from '../constants';
 import logger from '../logger';
@@ -92,7 +91,7 @@ const styles = (theme: Theme) => {
             color: theme.palette.text01
         },
         dialogDetails: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+            ...theme.typography.bodyShortRegularLarge,
             marginBottom: 16
         },
         dialogContents: {
@@ -100,7 +99,7 @@ const styles = (theme: Theme) => {
             padding: '16px 16px 48px 16px'
         },
         sliderDescription: {
-            ...withPixelLineHeight(theme.typography.heading6),
+            ...theme.typography.heading6,
 
             display: 'flex',
             justifyContent: 'space-between',

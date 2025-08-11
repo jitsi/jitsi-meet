@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { getParticipantDisplayName } from '../../../base/participants/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { ISubtitle } from '../../../subtitles/types';
 
 /**
@@ -39,7 +38,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         messageHeader: {
-            ...withPixelLineHeight(theme.typography.labelBold),
+            ...theme.typography.labelBold,
             color: theme.palette.text02,
             whiteSpace: 'nowrap',
             textOverflow: 'ellipsis',
@@ -49,14 +48,14 @@ const useStyles = makeStyles()(theme => {
         },
 
         messageText: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: theme.palette.text01,
             whiteSpace: 'pre-wrap',
             wordBreak: 'break-word'
         },
 
         timestamp: {
-            ...withPixelLineHeight(theme.typography.labelRegular),
+            ...theme.typography.labelRegular,
             color: theme.palette.text03,
             marginTop: theme.spacing(1)
         },

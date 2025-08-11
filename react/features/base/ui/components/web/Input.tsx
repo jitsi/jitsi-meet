@@ -5,7 +5,6 @@ import { makeStyles } from 'tss-react/mui';
 import { isMobileBrowser } from '../../../environment/utils';
 import Icon from '../../../icons/components/Icon';
 import { IconCloseCircle } from '../../../icons/svg';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 import { IInputProps } from '../types';
 
 import { HiddenDescription } from './HiddenDescription';
@@ -51,11 +50,11 @@ const useStyles = makeStyles()(theme => {
 
         label: {
             color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             marginBottom: theme.spacing(2),
 
             '&.is-mobile': {
-                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
+                ...theme.typography.bodyShortRegularLarge
             }
         },
 
@@ -68,7 +67,7 @@ const useStyles = makeStyles()(theme => {
             backgroundColor: theme.palette.ui03,
             background: theme.palette.ui03,
             color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             padding: '10px 16px',
             borderRadius: theme.shape.borderRadius,
             border: 0,
@@ -92,7 +91,7 @@ const useStyles = makeStyles()(theme => {
             '&.is-mobile': {
                 height: '48px',
                 padding: '13px 16px',
-                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
+                ...theme.typography.bodyShortRegularLarge
             },
 
             '&.icon-input': {
@@ -139,11 +138,11 @@ const useStyles = makeStyles()(theme => {
 
         bottomLabel: {
             marginTop: theme.spacing(2),
-            ...withPixelLineHeight(theme.typography.labelRegular),
+            ...theme.typography.labelRegular,
             color: theme.palette.text02,
 
             '&.is-mobile': {
-                ...withPixelLineHeight(theme.typography.bodyShortRegular)
+                ...theme.typography.bodyShortRegular
             },
 
             '&.error': {

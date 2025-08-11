@@ -3,7 +3,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../../base/icons/components/Icon';
 import { IconArrowDown } from '../../../../base/icons/svg';
-import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 
 interface IProps {
 
@@ -28,7 +27,7 @@ const useStyles = makeStyles()(theme => {
             backgroundColor: theme.palette.ui01,
             borderRight: `1px solid ${theme.palette.ui03}`,
             color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             position: 'relative',
             width: '88px',
             borderTopLeftRadius: theme.shape.borderRadius,

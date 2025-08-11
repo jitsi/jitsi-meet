@@ -1,12 +1,15 @@
 import { IConfig } from '../../react/features/base/config/configType';
 
 import type { Participant } from './Participant';
+import { ITestProperties } from './TestProperties';
 import type WebhookProxy from './WebhookProxy';
+import { IToken, ITokenOptions } from './token';
 
 export type IContext = {
-    data: any;
-    iframeAPI: boolean;
-    isJaasAvailable: () => boolean;
+    /**
+     * Whether the configuration specifies a JaaS account for the iFrame API tests.
+     */
+    iFrameUsesJaas: boolean;
     jwtKid: string;
     jwtPrivateKeyPath: string;
     keepAlive: Array<any>;
@@ -16,8 +19,52 @@ export type IContext = {
     p4: Participant;
     roomName: string;
     skipSuiteTests: boolean;
+    testProperties: ITestProperties;
     times: any;
     webhooksProxy: WebhookProxy;
+};
+
+export type IParticipantOptions = {
+    /** Whether it should use the iFrame API. */
+    iFrameApi?: boolean;
+    /** Must be 'p1', 'p2', 'p3', or 'p4'. */
+    name: string;
+    /** An optional token to use. */
+    token?: IToken;
+};
+
+/**
+ * Options for joinConference.
+ */
+export type IParticipantJoinOptions = {
+    /**
+     * Overwrites the base url set in the config.
+     */
+    baseUrl?: string;
+
+    /**
+     * Config overwrites to use.
+     */
+    configOverwrite?: IConfig;
+
+    /**
+     * An optional tenant to use. If provided the URL is prepended with /$forceTenant
+     */
+    forceTenant?: string;
+
+    /** The name of the room to join */
+    roomName: string;
+
+    /**
+     * Whether to skip setting display name.
+     */
+    skipDisplayName?: boolean;
+
+    /**
+     * Whether to skip waiting for the participant to join the room. Cases like lobby where we do not succeed to join
+     * based on the logic of the test.
+     */
+    skipWaitToJoin?: boolean;
 };
 
 export type IJoinOptions = {
@@ -31,16 +78,6 @@ export type IJoinOptions = {
      * Config overwrites to use.
      */
     configOverwrite?: IConfig;
-
-    /**
-     * The display name to use.
-     */
-    displayName?: string;
-
-    /**
-     * Whether to create a moderator token for joining.
-     */
-    moderator?: boolean;
 
     /**
      * When joining the first participant and jwt singing material is available and a provided token
@@ -70,7 +107,7 @@ export type IJoinOptions = {
     skipWaitToJoin?: boolean;
 
     /**
-     * Whether to create a visitor token for joining.
+     * Options used when generating a token.
      */
-    visitor?: boolean;
+    tokenOptions?: ITokenOptions;
 };

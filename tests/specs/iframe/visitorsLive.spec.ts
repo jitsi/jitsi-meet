@@ -1,6 +1,13 @@
 import { expect } from '@wdio/globals';
 
+import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
+
+setTestProperties(__filename, {
+    useIFrameApi: true,
+    useWebhookProxy: true,
+    usesBrowsers: [ 'p1', 'p2' ]
+});
 
 describe('Visitors', () => {
     it('joining the meeting', async () => {
@@ -37,7 +44,7 @@ describe('Visitors', () => {
     it('go live', async () => {
         await ensureTwoParticipants(ctx, {
             preferGenerateToken: true,
-            visitor: true,
+            tokenOptions: { visitor: true },
             skipWaitToJoin: true,
             skipInMeetingChecks: true
         });

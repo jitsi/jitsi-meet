@@ -7,7 +7,6 @@ import { IReduxState } from '../../../../../app/types';
 import Icon from '../../../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
-import { withPixelLineHeight } from '../../../../../base/styles/functions.web';
 import ListItem from '../../../../../base/ui/components/web/ListItem';
 import { IRoom } from '../../../../../breakout-rooms/types';
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
@@ -92,7 +91,7 @@ const useStyles = makeStyles()(theme => {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
-            ...withPixelLineHeight(theme.typography.bodyLongBold)
+            ...theme.typography.bodyLongBold
         },
 
         arrowContainer: {
