@@ -15,6 +15,19 @@ import { SETTINGS_TABS } from '../../settings/constants';
 import { AbstractWelcomePage, IProps, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
 
+
+declare const interfaceConfig: {
+    DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD: boolean;
+    DISPLAY_WELCOME_PAGE_CONTENT: boolean;
+    DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: boolean;
+    GENERATE_ROOMNAMES_ON_WELCOME_PAGE: boolean;
+    APP_NAME: string;
+    DEFAULT_WELCOME_PAGE_LOGO_URL: string;
+    DISPLAY_WELCOME_FOOTER: boolean;
+};
+
+
+
 /**
  * The pattern used to validate room name.
  *
@@ -27,6 +40,11 @@ export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
  *
  * @augments AbstractWelcomePage
  */
+interface IState {
+    [key: string]: any;
+  }
+  
+  
 class WelcomePage extends AbstractWelcomePage<IProps> {
     _additionalContentRef: HTMLDivElement | null;
     _additionalToolbarContentRef: HTMLDivElement | null;
