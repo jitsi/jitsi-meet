@@ -2,7 +2,7 @@ import { ensureOneParticipant, joinFirstParticipant, joinSecondParticipant } fro
 
 describe('PreJoin', () => {
     it('display name required', async () => {
-        await joinFirstParticipant(ctx, {
+        await joinFirstParticipant({
             configOverwrite: {
                 prejoinConfig: {
                     enabled: true,
@@ -31,7 +31,7 @@ describe('PreJoin', () => {
     });
 
     it('without lobby', async () => {
-        await joinFirstParticipant(ctx, {
+        await joinFirstParticipant({
             configOverwrite: {
                 prejoinConfig: {
                     enabled: true,
@@ -54,7 +54,7 @@ describe('PreJoin', () => {
     });
 
     it('without audio', async () => {
-        await joinFirstParticipant(ctx, {
+        await joinFirstParticipant({
             configOverwrite: {
                 prejoinConfig: {
                     enabled: true,
@@ -88,7 +88,7 @@ describe('PreJoin', () => {
     });
 
     it('with lobby', async () => {
-        await ensureOneParticipant(ctx);
+        await ensureOneParticipant();
 
         const { p1 } = ctx;
 
@@ -102,7 +102,7 @@ describe('PreJoin', () => {
         await p1SecurityDialog.toggleLobby();
         await p1SecurityDialog.waitForLobbyEnabled();
 
-        await joinSecondParticipant(ctx, {
+        await joinSecondParticipant({
             configOverwrite: {
                 prejoinConfig: {
                     enabled: true,

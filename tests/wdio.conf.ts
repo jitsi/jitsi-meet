@@ -124,6 +124,8 @@ const capabilities = generateCapabilitiesFromSpecs();
 
 const TEST_RESULTS_DIR = 'test-results';
 
+const keepAlive: Array<any> = [];
+
 export const config: WebdriverIO.MultiremoteConfig = {
 
     runner: 'local',
@@ -206,7 +208,6 @@ export const config: WebdriverIO.MultiremoteConfig = {
         globalAny.ctx = {
             times: {}
         } as IContext;
-        globalAny.ctx.keepAlive = [];
         globalAny.ctx.testProperties = testProperties;
 
         await Promise.all(multiremotebrowser.instances.map(async (instance: string) => {
@@ -216,7 +217,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
             initLogger(bInstance, `${instance}-${cid}-${testName}`, TEST_RESULTS_DIR);
 
             // setup keepalive
-            globalAny.ctx.keepAlive.push(setInterval(async () => {
+            keepAlive.push(setInterval(async () => {
                 await bInstance.execute(() => console.log(`${new Date().toISOString()} keep-alive`));
             }, 20_000));
 
@@ -239,10 +240,10 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }
 
         globalAny.ctx.roomName = globalAny.ctx.roomName.toLowerCase();
-        globalAny.ctx.jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
-        globalAny.ctx.jwtKid = process.env.JWT_KID;
         globalAny.ctx.iFrameUsesJaas = process.env.JWT_PRIVATE_KEY_PATH
             && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-');
+
+        const isJaasConfigured = process.env.JAAS_TENANT && process.env.JAAS_PRIVATE_KEY_PATH && process.env.JAAS_KID;
 
         // If we are running the iFrameApi tests, we need to mark it as such and if needed to create the proxy
         // and connect to it.
@@ -250,7 +251,9 @@ export const config: WebdriverIO.MultiremoteConfig = {
             if (!globalAny.ctx.webhooksProxy
                 && process.env.WEBHOOKS_PROXY_URL && process.env.WEBHOOKS_PROXY_SHARED_SECRET) {
                 globalAny.ctx.webhooksProxy = new WebhookProxy(
-                    `${process.env.WEBHOOKS_PROXY_URL}&room=${globalAny.ctx.roomName}`,
+                    `${process.env.WEBHOOKS_PROXY_URL}?tenant=${
+                        isJaasConfigured ? process.env.JAAS_TENANT : process.env.IFRAME_TENANT
+                    }&room=${globalAny.ctx.roomName}`,
                     process.env.WEBHOOKS_PROXY_SHARED_SECRET,
                     `${TEST_RESULTS_DIR}/webhooks-${cid}-${testName}.log`);
                 globalAny.ctx.webhooksProxy.connect();
@@ -262,12 +265,9 @@ export const config: WebdriverIO.MultiremoteConfig = {
             globalAny.ctx.skipSuiteTests = true;
         }
 
-        const isJaasConfigured = process.env.JAAS_DOMAIN && process.env.JAAS_TENANT
-            && process.env.JAAS_PRIVATE_KEY_PATH && process.env.JAAS_KID;
-
         if (testProperties.useJaas && !isJaasConfigured) {
             console.warn(`JaaS is not configured, skipping ${testName}. `
-                + 'Set JAAS_DOMAIN, JAAS_TENANT, JAAS_KID, and JAAS_PRIVATE_KEY_PATH to enable.');
+                + 'Set JAAS_TENANT, JAAS_KID, and JAAS_PRIVATE_KEY_PATH to enable.');
             globalAny.ctx.skipSuiteTests = true;
         }
     },
@@ -276,7 +276,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
         const { ctx }: any = global;
 
         ctx?.webhooksProxy?.disconnect();
-        ctx?.keepAlive?.forEach(clearInterval);
+        keepAlive.forEach(clearInterval);
     },
 
     beforeSession(c, capabilities_, specs_, cid) {

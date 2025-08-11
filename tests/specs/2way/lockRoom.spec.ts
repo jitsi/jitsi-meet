@@ -14,13 +14,13 @@ let roomKey: string;
  * the padlock is unlocked.
  */
 describe('Lock Room', () => {
-    it('joining the meeting', () => ensureOneParticipant(ctx));
+    it('joining the meeting', () => ensureOneParticipant());
 
     it('locks the room', () => participant1LockRoom());
 
     it('enter participant in locked room', async () => {
         // first enter wrong pin then correct one
-        await joinSecondParticipant(ctx, {
+        await joinSecondParticipant({
             skipWaitToJoin: true,
             skipInMeetingChecks: true
         });
@@ -61,7 +61,7 @@ describe('Lock Room', () => {
         // Just enter the room and check that is not locked.
         // if we fail to unlock the room this one will detect it
         // as participant will fail joining
-        await ensureTwoParticipants(ctx);
+        await ensureTwoParticipants();
 
         const { p2 } = ctx;
         const p2SecurityDialog = p2.getSecurityDialog();
@@ -97,7 +97,7 @@ describe('Lock Room', () => {
         // should enter of unlocked room.
         await ctx.p2.hangup();
         await participant1LockRoom();
-        await joinSecondParticipant(ctx, {
+        await joinSecondParticipant({
             skipWaitToJoin: true,
             skipInMeetingChecks: true
         });

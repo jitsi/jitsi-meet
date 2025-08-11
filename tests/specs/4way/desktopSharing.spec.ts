@@ -10,7 +10,7 @@ import {
 
 describe('Desktop sharing', () => {
     it('start', async () => {
-        await ensureTwoParticipants(ctx, {
+        await ensureTwoParticipants({
             configOverwrite: {
                 p2p: {
                     enabled: true
@@ -48,7 +48,7 @@ describe('Desktop sharing', () => {
     it('p2p to jvb switch', async () => {
         await ctx.p2.getToolbar().clickDesktopSharingButton();
 
-        await ensureThreeParticipants(ctx);
+        await ensureThreeParticipants();
         const { p1, p2, p3 } = ctx;
 
         // Check if a remote screen share tile is created on all participants.
@@ -81,7 +81,7 @@ describe('Desktop sharing', () => {
         await checkForScreensharingTile(p1, p1);
         await checkForScreensharingTile(p1, p2);
 
-        await ensureThreeParticipants(ctx);
+        await ensureThreeParticipants();
 
         await checkForScreensharingTile(p1, p3);
         await checkForScreensharingTile(p2, p3);
@@ -112,7 +112,7 @@ describe('Desktop sharing', () => {
         await checkForScreensharingTile(p2, p1);
 
         // Add p3 back to the conference and check if p1 and p2's shares are visible on p3.
-        await ensureThreeParticipants(ctx);
+        await ensureThreeParticipants();
 
         await checkForScreensharingTile(p1, p3);
         await checkForScreensharingTile(p2, p3);
@@ -129,7 +129,7 @@ describe('Desktop sharing', () => {
     it('screen sharing toggle before others join', async () => {
         await hangupAllParticipants();
 
-        await ensureOneParticipant(ctx, {
+        await ensureOneParticipant({
             configOverwrite: {
                 p2p: {
                     enabled: true
@@ -146,7 +146,7 @@ describe('Desktop sharing', () => {
         await p1.getToolbar().clickStopDesktopSharingButton();
 
         // Call switches to jvb.
-        await ensureThreeParticipants(ctx);
+        await ensureThreeParticipants();
         const { p2, p3 } = ctx;
 
         // p1 starts share again when call switches to jvb.
@@ -181,7 +181,7 @@ describe('Desktop sharing', () => {
     it('audio only and non dominant screen share', async () => {
         await hangupAllParticipants();
 
-        await ensureOneParticipant(ctx);
+        await ensureOneParticipant();
         const { p1 } = ctx;
 
         // a workaround to directly set audio only mode without going through the rest of the settings in the UI
@@ -194,7 +194,9 @@ describe('Desktop sharing', () => {
         }, SET_AUDIO_ONLY);
         await p1.getToolbar().clickAudioMuteButton();
 
-        await ensureThreeParticipants(ctx, { skipInMeetingChecks: true });
+        await ensureThreeParticipants({
+            skipInMeetingChecks: true
+        });
         const { p2, p3 } = ctx;
 
         await p3.getToolbar().clickAudioMuteButton();
@@ -218,7 +220,7 @@ describe('Desktop sharing', () => {
     it('audio only and dominant screen share', async () => {
         await hangupAllParticipants();
 
-        await ensureOneParticipant(ctx, {
+        await ensureOneParticipant({
             configOverwrite: {
                 startWithAudioMuted: true,
                 startWithVideoMuted: true
@@ -235,13 +237,13 @@ describe('Desktop sharing', () => {
             APP?.conference?.onToggleAudioOnly();
         }, SET_AUDIO_ONLY);
 
-        await ensureTwoParticipants(ctx, {
-            skipInMeetingChecks: true,
+        await ensureTwoParticipants({
             configOverwrite: {
                 startWithAudioMuted: true
-            }
+            },
+            skipInMeetingChecks: true
         });
-        await ensureThreeParticipants(ctx, {
+        await ensureThreeParticipants({
             skipInMeetingChecks: true
         });
         const { p2, p3 } = ctx;
@@ -267,7 +269,7 @@ describe('Desktop sharing', () => {
     it('with lastN', async () => {
         await hangupAllParticipants();
 
-        await ensureThreeParticipants(ctx);
+        await ensureThreeParticipants();
         const { p1, p2, p3 } = ctx;
 
         await p3.getToolbar().clickDesktopSharingButton();
@@ -275,7 +277,7 @@ describe('Desktop sharing', () => {
         await p1.getToolbar().clickAudioMuteButton();
         await p3.getToolbar().clickAudioMuteButton();
 
-        await ensureFourParticipants(ctx, {
+        await ensureFourParticipants({
             configOverwrite: {
                 channelLastN: 2,
                 startWithAudioMuted: true

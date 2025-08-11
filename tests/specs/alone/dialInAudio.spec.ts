@@ -12,7 +12,7 @@ describe('Dial-In', () => {
             return;
         }
 
-        await ensureOneParticipant(ctx, { preferGenerateToken: true });
+        await ensureOneParticipant({ preferGenerateToken: true });
 
         // check dial-in is enabled
         if (!await isDialInEnabled(ctx.p1)) {

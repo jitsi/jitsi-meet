@@ -19,7 +19,7 @@ describe('Invite iframeAPI', () => {
     let sipJibriDisabled: boolean;
 
     it('join participant', async () => {
-        await ensureOneParticipant(ctx);
+        await ensureOneParticipant();
 
         const { p1 } = ctx;
 

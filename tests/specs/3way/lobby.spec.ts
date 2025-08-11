@@ -10,7 +10,7 @@ import type PreMeetingScreen from '../../pageobjects/PreMeetingScreen';
 
 describe('Lobby', () => {
     it('joining the meeting', async () => {
-        await ensureOneParticipant(ctx);
+        await ensureOneParticipant();
 
         if (!await ctx.p1.execute(() => APP.conference._room.isLobbySupported())) {
             ctx.skipSuiteTests = true;
@@ -18,7 +18,7 @@ describe('Lobby', () => {
     });
 
     it('enable', async () => {
-        await ensureTwoParticipants(ctx);
+        await ensureTwoParticipants();
 
         await enableLobby();
     });
@@ -172,7 +172,7 @@ describe('Lobby', () => {
     });
 
     it('disable while participant in lobby', async () => {
-        await ensureTwoParticipants(ctx);
+        await ensureTwoParticipants();
 
         const { p1 } = ctx;
 
@@ -201,7 +201,7 @@ describe('Lobby', () => {
         }
         await hangupAllParticipants();
 
-        await ensureTwoParticipants(ctx);
+        await ensureTwoParticipants();
 
         const { p1, p2 } = ctx;
 
@@ -231,7 +231,7 @@ describe('Lobby', () => {
     it('shared password', async () => {
         await hangupAllParticipants();
 
-        await ensureTwoParticipants(ctx);
+        await ensureTwoParticipants();
 
         const { p1 } = ctx;
 
@@ -273,7 +273,7 @@ describe('Lobby', () => {
     it('enable with more than two participants', async () => {
         await hangupAllParticipants();
 
-        await ensureThreeParticipants(ctx);
+        await ensureThreeParticipants();
 
         await enableLobby();
 
@@ -312,7 +312,7 @@ describe('Lobby', () => {
     it('reject and approve in pre-join', async () => {
         await hangupAllParticipants();
 
-        await ensureTwoParticipants(ctx);
+        await ensureTwoParticipants();
         await enableLobby();
 
         const { p1 } = ctx;
@@ -414,7 +414,7 @@ async function enableLobby() {
  * @return the participant name knocking.
  */
 async function enterLobby(participant: Participant, enterDisplayName = false, usePreJoin = false) {
-    const options: IJoinOptions = {};
+    const options: IJoinOptions = { };
 
     if (usePreJoin) {
         options.configOverwrite = {
@@ -424,7 +424,7 @@ async function enterLobby(participant: Participant, enterDisplayName = false, us
         };
     }
 
-    await ensureThreeParticipants(ctx, {
+    await ensureThreeParticipants({
         ...options,
         skipDisplayName: true,
         skipWaitToJoin: true,

@@ -13,7 +13,11 @@ import IframeAPI from '../pageobjects/IframeAPI';
 import InviteDialog from '../pageobjects/InviteDialog';
 import LargeVideo from '../pageobjects/LargeVideo';
 import LobbyScreen from '../pageobjects/LobbyScreen';
-import Notifications, { TOKEN_AUTH_FAILED_TEST_ID, TOKEN_AUTH_FAILED_TITLE_TEST_ID } from '../pageobjects/Notifications';
+import Notifications, {
+    MAX_USERS_TEST_ID,
+    TOKEN_AUTH_FAILED_TEST_ID,
+    TOKEN_AUTH_FAILED_TITLE_TEST_ID
+} from '../pageobjects/Notifications';
 import ParticipantsPane from '../pageobjects/ParticipantsPane';
 import PasswordDialog from '../pageobjects/PasswordDialog';
 import PreJoinScreen from '../pageobjects/PreJoinScreen';
@@ -137,9 +141,10 @@ export class Participant {
             script: string | ((...innerArgs: InnerArguments) => ReturnValue),
             ...args: InnerArguments): Promise<ReturnValue> {
         try {
+            // @ts-ignore
             return await this.driver.execute(script, ...args);
         } catch (error) {
-            console.error('An error occured while trying to execute a script: ', error);
+            console.error('An error occurred while trying to execute a script: ', error);
             throw error;
         }
     }
@@ -186,7 +191,7 @@ export class Participant {
     /**
      * Joins conference.
      *
-     * @param {IJoinOptions} options - Options for joining.
+     * @param {IParticipantJoinOptions} options - Options for joining.
      * @returns {Promise<void>}
      */
     async joinConference(options: IParticipantJoinOptions): Promise<void> {
@@ -231,10 +236,6 @@ export class Participant {
             url = `${url}&jwt="${this._token.jwt}"`;
         }
 
-        if (options.baseUrl) {
-            this.driver.options.baseUrl = options.baseUrl;
-        }
-
         await this.driver.setTimeout({ 'pageLoad': 30000 });
 
         // drop the leading '/' so we can use the tenant if any
@@ -255,7 +256,7 @@ export class Participant {
         }
 
         if (!options.skipWaitToJoin) {
-            await this.waitToJoinMUC();
+            await this.waitForMucJoinedOrError();
         }
 
         await this.postLoadProcess();
@@ -339,16 +340,17 @@ export class Participant {
 
     /**
      * Waits until either the MUC is joined, or a password prompt is displayed, or an authentication failure
-     * notification is displayed.
+     * notification is displayed, or max users notification is displayed.
      */
     async waitForMucJoinedOrError(): Promise<void> {
         await this.driver.waitUntil(async () => {
             return await this.isInMuc() || await this.getPasswordDialog().isOpen()
+                || await this.getNotifications().getNotificationText(MAX_USERS_TEST_ID)
                 || await this.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TEST_ID)
                 || await this.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TITLE_TEST_ID);
         }, {
             timeout: 10_000,
-            timeoutMsg: 'Timeout waiting for MUC joined or password prompt.'
+            timeoutMsg: 'Timeout waiting for MUC joined or error.'
         });
     }
 

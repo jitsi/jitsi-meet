@@ -10,9 +10,6 @@ export type IContext = {
      * Whether the configuration specifies a JaaS account for the iFrame API tests.
      */
     iFrameUsesJaas: boolean;
-    jwtKid: string;
-    jwtPrivateKeyPath: string;
-    keepAlive: Array<any>;
     p1: Participant;
     p2: Participant;
     p3: Participant;
@@ -37,10 +34,6 @@ export type IParticipantOptions = {
  * Options for joinConference.
  */
 export type IParticipantJoinOptions = {
-    /**
-     * Overwrites the base url set in the config.
-     */
-    baseUrl?: string;
 
     /**
      * Config overwrites to use.
@@ -70,14 +63,14 @@ export type IParticipantJoinOptions = {
 export type IJoinOptions = {
 
     /**
-     * Overwrites the base url set in the config.
-     */
-    baseUrl?: string;
-
-    /**
-     * Config overwrites to use.
+     * Config overwrites to pass to IParticipantJoinOptions.
      */
     configOverwrite?: IConfig;
+
+    /**
+     * An optional tenant to use. If provided the URL is prepended with /$forceTenant
+     */
+    forceTenant?: string;
 
     /**
      * When joining the first participant and jwt singing material is available and a provided token
@@ -86,7 +79,12 @@ export type IJoinOptions = {
     preferGenerateToken?: boolean;
 
     /**
-     * Whether to skip setting display name.
+     * To be able to override the ctx generated room name. If missing the one from the context will be used.
+     */
+    roomName?: string;
+
+    /**
+     *The skip display name setting to pass to IParticipantJoinOptions.
      */
     skipDisplayName?: boolean;
 
@@ -101,8 +99,7 @@ export type IJoinOptions = {
     skipInMeetingChecks?: boolean;
 
     /**
-     * Whether to skip waiting for the participant to join the room. Cases like lobby where we do not succeed to join
-     * based on the logic of the test.
+     * The skip waiting for the participant to join the room setting to pass to IParticipantJoinOptions.
      */
     skipWaitToJoin?: boolean;
 

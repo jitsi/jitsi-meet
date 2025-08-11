@@ -1,7 +1,7 @@
 import { ensureTwoParticipants } from '../../helpers/participants';
 
 describe('SwitchVideo', () => {
-    it('joining the meeting', () => ensureTwoParticipants(ctx));
+    it('joining the meeting', () => ensureTwoParticipants());
 
     it('p1 click on local', () => ctx.p1.getFilmstrip().pinParticipant(ctx.p1));
 
