@@ -261,6 +261,17 @@ function process_main_muc_loaded(main_muc, host_module)
             host_module:fire_event('room-metadata-changed', { room = room; });
         end
     end);
+
+    -- The the connection jid for authenticated users (like jicofo) stays the same,
+    -- so leaving and re-joining will result not sending metatadata again.
+    -- Make sure we clear the sent_initial_metadata entry for the occupant on leave.
+    host_module:hook("muc-occupant-left", function(event)
+        local room, occupant = event.room, event.occupant;
+
+        if room.sent_initial_metadata then
+            room.sent_initial_metadata[jid.bare(event.occupant.jid)] = nil;
+        end
+    end);
 end
 
 -- process or waits to process the main muc component
