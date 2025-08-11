@@ -10,7 +10,7 @@ import { isButtonEnabled } from "../../../../toolbox/functions.web";
 
 import { redirectToStaticPage } from "../../../../app/actions.any";
 import { appNavigate } from "../../../../app/actions.web";
-import { getConferenceName } from "../../../conference/functions";
+import { getConferenceName, getCurrentConference } from "../../../conference/functions";
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from "../../../config/constants";
 import { translate } from "../../../i18n/functions";
 import RecordingWarning from "../../../premeeting/components/web/RecordingWarning";
@@ -154,6 +154,11 @@ interface IProps extends WithTranslation {
      * Flag to indicate if conference is creating.
      */
     createConference?: Function;
+
+    /**
+     * Flag to indicate if supports end to end encryption.
+     */
+    isE2EESupported?: Function;
 }
 
 const PreMeetingScreen = ({
@@ -177,6 +182,7 @@ const PreMeetingScreen = ({
     createRoomError,
     flipX,
     createConference,
+    isE2EESupported,
 }: IProps) => {
     const { classes } = useStyles();
     const [isNameInputFocused, setIsNameInputFocused] = useState(false);
@@ -242,7 +248,7 @@ const PreMeetingScreen = ({
         // HARDCODED, MODIFY WHEN SIGN UP PAGE IS READY
         window.location.href = "https://drive.internxt.com/new";
     };
-
+    console.log("isE2EESupported", isE2EESupported);
     const updateNameInStorage = (name: string) => {
         try {
             const user = storageManager.getUser();
@@ -339,7 +345,8 @@ const PreMeetingScreen = ({
                     />
                 )}
                 <div className="flex absolute bottom-7 right-7">
-                    <SecureMeetingMessage />
+                    {isE2EESupported && 
+                    <SecureMeetingMessage />}
                 </div>
                 <div className={classes.videoEncodingToggleContainer}>
                     <VideoEncodingToggle />
@@ -381,8 +388,12 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const userName = getDisplayName(state);
     const { localFlipX } = state["features/base/settings"];
 
-    const joinRoomError = state["features/meet-room"]?.joinRoomError || false;
-    const createRoomError = state["features/meet-room"]?.createRoomError || false;
+    const joinRoomError = state["features/meet-room"]?.joinRoomError ?? false;
+    const createRoomError = state["features/meet-room"]?.createRoomError ?? false;
+
+    const conference = getCurrentConference(state);
+    const isE2EESupported = conference?.isE2EESupported() ?? true;
+
     return {
         // For keeping backwards compat.: if we pass an empty hiddenPremeetingButtons
         // array through external api, we have all prejoin buttons present on premeeting
@@ -398,6 +409,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         joinRoomError,
         createRoomError,
         flipX: localFlipX,
+        isE2EESupported,
     };
 }
 

@@ -65,10 +65,6 @@ const GalleryVideoWrapper = ({ videoMode, t }: GalleryVideoWrapperProps) => {
 };
 
 function mapStateToProps(state: IReduxState, galleryProps: GalleryVideoWrapperProps) {
-    const participantsWithTracks = getParticipantsWithTracks(state);
-
-    const { localFlipX } = state["features/base/settings"];
-
     return {
         videoMode: galleryProps.videoMode || "gallery",
     };
