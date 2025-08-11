@@ -63,7 +63,7 @@ export type IParticipantJoinOptions = {
 export type IJoinOptions = {
 
     /**
-     * Config overwrites to use.
+     * Config overwrites to pass to IParticipantJoinOptions.
      */
     configOverwrite?: IConfig;
 
@@ -79,7 +79,7 @@ export type IJoinOptions = {
     preferGenerateToken?: boolean;
 
     /**
-     * Whether to skip setting display name.
+     *The skip display name setting to pass to IParticipantJoinOptions.
      */
     skipDisplayName?: boolean;
 
@@ -94,8 +94,7 @@ export type IJoinOptions = {
     skipInMeetingChecks?: boolean;
 
     /**
-     * Whether to skip waiting for the participant to join the room. Cases like lobby where we do not succeed to join
-     * based on the logic of the test.
+     * The skip waiting for the participant to join the room setting to pass to IParticipantJoinOptions.
      */
     skipWaitToJoin?: boolean;
 
