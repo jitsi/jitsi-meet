@@ -79,6 +79,11 @@ export type IJoinOptions = {
     preferGenerateToken?: boolean;
 
     /**
+     * To be able to override the ctx generated room name. If missing the one from the context will be used.
+     */
+    roomName?: string;
+
+    /**
      *The skip display name setting to pass to IParticipantJoinOptions.
      */
     skipDisplayName?: boolean;

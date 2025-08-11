@@ -23,9 +23,10 @@ export function generateJaasToken(options: ITokenOptions): IToken {
  * pre-configured browser instances in wdio? It must be one of 'p1', 'p2', 'p3', or 'p4'. TODO: figure out how this
  * should be used.
  * @param token the token to use, if any.
+ * @param roomName the name of the room to join, if any. If not provided, the ctx generated one will be used.
  * @returns {Promise<Participant>} The Participant that has joined the MUC.
  */
-export async function joinMuc(instanceId: 'p1' | 'p2' | 'p3' | 'p4', token?: IToken):
+export async function joinMuc(instanceId: 'p1' | 'p2' | 'p3' | 'p4', token?: IToken, roomName?: string):
 Promise<Participant> {
     if (!process.env.JAAS_TENANT) {
         throw new Error('JAAS_TENANT environment variables must be set');
@@ -35,6 +36,7 @@ Promise<Participant> {
         name: instanceId,
         token
     }, {
-        forceTenant: process.env.JAAS_TENANT
+        forceTenant: process.env.JAAS_TENANT,
+        roomName
     });
 }

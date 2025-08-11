@@ -25,8 +25,8 @@ describe('Setting passcode through settings provisioning', () => {
             passcode: 'passcode-must-be-digits-only'
         };
 
-        ctx.roomName = ctx.roomName + '-2';
-        const p = await joinMuc('p1', t({ room: ctx.roomName }));
+        const roomName = ctx.roomName + '-2';
+        const p = await joinMuc('p1', t({ room: roomName }), roomName);
 
         // Setting the passcode should fail, resulting in the room being accessible without a password
         await p.waitToJoinMUC();

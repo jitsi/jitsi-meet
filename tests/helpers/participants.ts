@@ -215,7 +215,7 @@ export async function joinParticipant( // eslint-disable-line max-params
     await newParticipant.joinConference({
         ...options,
         forceTenant,
-        roomName: ctx.roomName,
+        roomName: options?.roomName || ctx.roomName,
     });
 
     return newParticipant;
