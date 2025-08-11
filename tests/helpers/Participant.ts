@@ -196,7 +196,7 @@ export class Participant {
      */
     async joinConference(options: IParticipantJoinOptions): Promise<void> {
         const config = {
-            room: ctx.roomName,
+            room: options.roomName,
             configOverwrite: {
                 ...this.config,
                 ...options.configOverwrite || {}
@@ -223,7 +223,7 @@ export class Participant {
             const baseUrl = new URL(this.driver.options.baseUrl || '');
 
             // @ts-ignore
-            url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${ctx.roomName}"`;
+            url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${options.roomName}"`;
 
             if (process.env.IFRAME_TENANT) {
                 url = `${url}&tenant="${process.env.IFRAME_TENANT}"`;
