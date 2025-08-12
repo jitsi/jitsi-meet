@@ -10,7 +10,7 @@ import { getTestProperties, loadTestFiles } from './helpers/TestProperties';
 import WebhookProxy from './helpers/WebhookProxy';
 import { getLogs, initLogger, logInfo } from './helpers/browserLogger';
 import { IContext } from './helpers/types';
-import { getRandomNumberAsStr } from './helpers/utils';
+import { generateRoomName } from './helpers/utils';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const allure = require('allure-commandline');
@@ -231,15 +231,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
             bInstance.iframePageBase = `file://${path.dirname(rpath)}`;
         }));
 
-        globalAny.ctx.roomName = `${testName}-${getRandomNumberAsStr(40, 3)}`;
-        if (process.env.ROOM_NAME_PREFIX) {
-            globalAny.ctx.roomName = `${process.env.ROOM_NAME_PREFIX.trim()}_${globalAny.ctx.roomName}`;
-        }
-        if (process.env.ROOM_NAME_SUFFIX) {
-            globalAny.ctx.roomName += `_${process.env.ROOM_NAME_SUFFIX.trim()}`;
-        }
-
-        globalAny.ctx.roomName = globalAny.ctx.roomName.toLowerCase();
+        globalAny.ctx.roomName = generateRoomName(testName);
 
         const isJaasConfigured = process.env.JAAS_TENANT && process.env.JAAS_PRIVATE_KEY_PATH && process.env.JAAS_KID;
 
