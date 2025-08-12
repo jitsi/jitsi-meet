@@ -1,5 +1,3 @@
-import process from 'node:process';
-
 import { P1, P2, P3, P4, Participant } from './Participant';
 import { config } from './TestsConfig';
 import { generateToken } from './token';
@@ -18,14 +16,14 @@ export async function ensureOneParticipant(options?: IJoinOptions): Promise<void
     const participantOps = { name: P1 } as IParticipantOptions;
 
     if (!options?.skipFirstModerator) {
-        const jwtPrivateKeyPath = process.env.JWT_PRIVATE_KEY_PATH;
+        const jwtPrivateKeyPath = config.jwt.privateKeyPath;
 
         // we prioritize the access token when iframe is not used and private key is set,
         // otherwise if private key is not specified we use the access token if set
-        if (process.env.JWT_ACCESS_TOKEN
+        if (config.jwt.preconfiguredToken
             && ((jwtPrivateKeyPath && !ctx.testProperties.useIFrameApi && !options?.preferGenerateToken)
                 || !jwtPrivateKeyPath)) {
-            participantOps.token = { jwt: process.env.JWT_ACCESS_TOKEN };
+            participantOps.token = { jwt: config.jwt.preconfiguredToken };
         } else if (jwtPrivateKeyPath) {
             participantOps.token = generateToken({
                 ...options?.tokenOptions,
@@ -210,7 +208,7 @@ export async function joinParticipant( // eslint-disable-line max-params
     let forceTenant = options?.forceTenant;
 
     if (options?.preferGenerateToken && !ctx.testProperties.useIFrameApi
-        && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-') && config.iframe.tenant) {
+        && config.iframe.usesJaas && config.iframe.tenant) {
         forceTenant = config.iframe.tenant;
     }
     await newParticipant.joinConference({

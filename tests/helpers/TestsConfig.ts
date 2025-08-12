@@ -18,6 +18,12 @@ export const config = {
         /** The JaaS tenant (vpaas-magic-cookie-<ID>) . */
         tenant: process.env.JAAS_TENANT?.trim(),
     },
+    jwt: {
+        kid: process.env.JWT_KID?.trim(),
+        /** A pre-configured token used by some tests. */
+        preconfiguredToken: process.env.JWT_ACCESS_TOKEN?.trim(),
+        privateKeyPath: process.env.JWT_PRIVATE_KEY_PATH?.trim()
+    },
     roomName: {
         /** Optional prefix for room names used for tests. */
         prefix: process.env.ROOM_NAME_PREFIX?.trim(),
