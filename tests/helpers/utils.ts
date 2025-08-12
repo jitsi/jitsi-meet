@@ -1,16 +1,20 @@
+import { config as testsConfig } from './TestsConfig';
+
 const https = require('https');
 
-/**
- * Generates a random number between 1 and the specified maximum value (inclusive).
- *
- * @param {number} max - The maximum value for the random number (must be a positive integer).
- * @param numberOfDigits - The number of digits to pad the random number with leading zeros.
- * @return {string} The random number formatted with leading zeros if needed.
- */
-export function getRandomNumberAsStr(max: number, numberOfDigits: number): string {
-    const randomNumber = Math.floor(Math.random() * max) + 1;
+export function generateRoomName(testName: string) {
+    // XXX why chose between 1 and 40 and then always pad with an extra 0?
+    const rand = (Math.floor(Math.random() * 40) + 1).toString().padStart(3, '0');
+    let roomName = `${testName}-${rand}`;
 
-    return randomNumber.toString().padStart(numberOfDigits, '0');
+    if (testsConfig.roomName.prefix) {
+        roomName = `${testsConfig.roomName.prefix}_${roomName}`;
+    }
+    if (testsConfig.roomName.suffix) {
+        roomName += `_${testsConfig.roomName.suffix}`;
+    }
+
+    return roomName.toLowerCase();
 }
 
 /**

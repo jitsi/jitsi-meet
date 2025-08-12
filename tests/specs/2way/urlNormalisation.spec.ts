@@ -1,12 +1,13 @@
 import { multiremotebrowser } from '@wdio/globals';
 
+import { config } from '../../helpers/TestsConfig';
 import { ensureTwoParticipants } from '../../helpers/participants';
 
 describe('URL Normalisation', () => {
     it('joining the meeting', async () => {
 
         // if we are running with token this becomes ugly to match the URL
-        if (process.env.JWT_ACCESS_TOKEN) {
+        if (config.jwt.preconfiguredToken) {
             ctx.skipSuiteTests = true;
 
             return;
