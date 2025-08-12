@@ -18,7 +18,7 @@ export function generateJaasToken(options: ITokenOptions): IToken {
 
 /**
  * Creates a new Participant and joins the MUC with the given name. The jaas-specific properties must be set as
- * environment variables: IFRAME_TENANT.
+ * environment variables (see env.example and TestsConfig.ts).
  *
  * @param instanceId This is the "name" passed to the Participant, I think it's used to match against one of the
  * pre-configured browser instances in wdio? It must be one of 'p1', 'p2', 'p3', or 'p4'. TODO: figure out how this

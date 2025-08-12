@@ -1,10 +1,13 @@
 import { setTestProperties } from '../../helpers/TestProperties';
+import { config as testsConfig } from '../../helpers/TestsConfig';
 import { ensureOneParticipant } from '../../helpers/participants';
 
 setTestProperties(__filename, {
     useIFrameApi: true,
     useWebhookProxy: true
 });
+
+const { tenant, customerId } = testsConfig.iframe;
 
 describe('Recording', () => {
     let recordingDisabled: boolean;
@@ -69,7 +72,6 @@ describe('Recording', () => {
         });
 
         if (webhooksProxy) {
-            const customerId = process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', '');
             const liveStreamEvent: {
                 customerId: string;
                 eventType: string;
@@ -93,7 +95,6 @@ describe('Recording', () => {
         await p1.getIframeAPI().executeCommand('stopRecording', 'stream');
 
         if (webhooksProxy) {
-            const customerId = process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', '');
             const liveStreamEvent: {
                 customerId: string;
                 eventType: string;
@@ -132,7 +133,6 @@ async function testRecordingStarted(command: boolean) {
     }
 
     if (webhooksProxy) {
-        const customerId = process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', '');
         const recordingEvent: {
             customerId: string;
             eventType: string;
@@ -152,7 +152,7 @@ async function testRecordingStarted(command: boolean) {
     const linkEvent = (await p1.getIframeAPI().getEventResult('recordingLinkAvailable'));
 
     expect(linkEvent.link.startsWith('https://')).toBe(true);
-    expect(linkEvent.link.includes(process.env.IFRAME_TENANT)).toBe(true);
+    expect(linkEvent.link.includes(tenant)).toBe(true);
     expect(linkEvent.ttl > 0).toBe(true);
 }
 
@@ -171,7 +171,6 @@ async function testRecordingStopped(command: boolean) {
     }
 
     if (webhooksProxy) {
-        const customerId = process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', '');
         const liveStreamEvent: {
             customerId: string;
             eventType: string;

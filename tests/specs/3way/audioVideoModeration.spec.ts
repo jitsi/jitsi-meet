@@ -79,7 +79,7 @@ describe('AVModeration', () => {
 
     it('hangup and change moderator', async () => {
         // no moderator switching if jaas is available.
-        if (config.iFrameUsesJaas) {
+        if (config.iframe.usesJaas) {
             return;
         }
 

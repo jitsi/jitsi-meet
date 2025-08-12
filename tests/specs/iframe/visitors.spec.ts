@@ -1,4 +1,5 @@
 import { setTestProperties } from '../../helpers/TestProperties';
+import { config as testsConfig } from '../../helpers/TestsConfig';
 import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
 
 setTestProperties(__filename, {
@@ -90,7 +91,7 @@ describe('Visitors', () => {
             expect(event.data.participantJid.indexOf('meet.jitsi') != -1).toBe(true);
             expect(event.data.name).toBe(p2.name);
             expect(event.data.role).toBe('visitor');
-            expect(event.customerId).toBe(process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', ''));
+            expect(event.customerId).toBe(testsConfig.iframe.customerId);
 
             await p2.switchToAPI();
             await p2.getIframeAPI().executeCommand('hangup');
@@ -120,7 +121,7 @@ describe('Visitors', () => {
             expect(eventLeft.data.participantJid.indexOf('meet.jitsi') != -1).toBe(true);
             expect(eventLeft.data.name).toBe(p2.name);
             expect(eventLeft.data.role).toBe('visitor');
-            expect(eventLeft.customerId).toBe(process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', ''));
+            expect(eventLeft.customerId).toBe(testsConfig.iframe.customerId);
         }
     });
 });

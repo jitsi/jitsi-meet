@@ -3,7 +3,11 @@
  */
 export const config = {
     /** Whether the configuration specifies a JaaS account for the iFrame API tests. */
-    iFrameUsesJaas: Boolean(process.env.JWT_PRIVATE_KEY_PATH && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-')),
+    iframe: {
+        customerId: process.env.IFRAME_TENANT?.trim()?.replace('vpaas-magic-cookie-', ''),
+        tenant: process.env.IFRAME_TENANT?.trim(),
+        usesJaas: Boolean(process.env.JWT_PRIVATE_KEY_PATH && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-')),
+    },
     jaas: {
         /** Whether the configuration for JaaS specific tests is enabled. */
         enabled: Boolean(process.env.JAAS_TENANT && process.env.JAAS_PRIVATE_KEY_PATH && process.env.JAAS_KID),

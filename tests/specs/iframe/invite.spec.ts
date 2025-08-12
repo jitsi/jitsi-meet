@@ -1,5 +1,6 @@
 import type { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
+import { config as testsConfig } from '../../helpers/TestsConfig';
 import { ensureOneParticipant } from '../../helpers/participants';
 import {
     cleanup,
@@ -12,6 +13,8 @@ setTestProperties(__filename, {
     useIFrameApi: true,
     useWebhookProxy: true
 });
+
+const customerId = testsConfig.iframe.customerId;
 
 describe('Invite iframeAPI', () => {
     let dialInDisabled: boolean;
@@ -102,7 +105,6 @@ describe('Invite iframeAPI', () => {
         const { webhooksProxy } = ctx;
 
         if (webhooksProxy) {
-            const customerId = process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', '');
             const sipCallOutStartedEvent: {
                 customerId: string;
                 data: {
@@ -157,7 +159,6 @@ async function checkDialEvents(participant: Participant, direction: string, star
     const { webhooksProxy } = ctx;
 
     if (webhooksProxy) {
-        const customerId = process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', '');
         const dialInStartedEvent: {
             customerId: string;
             data: {

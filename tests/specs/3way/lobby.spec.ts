@@ -197,7 +197,7 @@ describe('Lobby', () => {
 
     it('change of moderators in lobby', async () => {
         // no moderator switching if jaas is available.
-        if (config.iFrameUsesJaas) {
+        if (config.iframe.usesJaas) {
             return;
         }
         await hangupAllParticipants();
@@ -289,7 +289,7 @@ describe('Lobby', () => {
 
     it('moderator leaves while lobby enabled', async () => {
         // no moderator switching if jaas is available.
-        if (config.iFrameUsesJaas) {
+        if (config.iframe.usesJaas) {
             return;
         }
         const { p1, p2, p3 } = ctx;

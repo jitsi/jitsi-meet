@@ -1,6 +1,7 @@
 import process from 'node:process';
 
 import { P1, P2, P3, P4, Participant } from './Participant';
+import { config } from './TestsConfig';
 import { generateToken } from './token';
 import { IJoinOptions, IParticipantOptions } from './types';
 
@@ -209,8 +210,8 @@ export async function joinParticipant( // eslint-disable-line max-params
     let forceTenant = options?.forceTenant;
 
     if (options?.preferGenerateToken && !ctx.testProperties.useIFrameApi
-        && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-') && process.env.IFRAME_TENANT) {
-        forceTenant = process.env.IFRAME_TENANT;
+        && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-') && config.iframe.tenant) {
+        forceTenant = config.iframe.tenant;
     }
     await newParticipant.joinConference({
         ...options,
