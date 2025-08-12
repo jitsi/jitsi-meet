@@ -23,5 +23,10 @@ export const config = {
         prefix: process.env.ROOM_NAME_PREFIX?.trim(),
         /** Optional suffix for room names used for tests. */
         suffix: process.env.ROOM_NAME_SUFFIX?.trim()
+    },
+    webhooksProxy: {
+        enabled: Boolean(process.env.WEBHOOKS_PROXY_URL && process.env.WEBHOOKS_PROXY_SHARED_SECRET),
+        sharedSecret: process.env.WEBHOOKS_PROXY_SHARED_SECRET?.trim(),
+        url: process.env.WEBHOOKS_PROXY_URL?.trim(),
     }
 };

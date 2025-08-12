@@ -236,17 +236,15 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         // If we are running the iFrameApi tests, we need to mark it as such and if needed to create the proxy
         // and connect to it.
-        if (testProperties.useWebhookProxy) {
-            if (!globalAny.ctx.webhooksProxy
-                && process.env.WEBHOOKS_PROXY_URL && process.env.WEBHOOKS_PROXY_SHARED_SECRET) {
-                globalAny.ctx.webhooksProxy = new WebhookProxy(
-                    `${process.env.WEBHOOKS_PROXY_URL}?tenant=${
-                        testsConfig.jaas.enabled ? testsConfig.jaas.tenant : testsConfig.iframe.tenant
-                    }&room=${globalAny.ctx.roomName}`,
-                    process.env.WEBHOOKS_PROXY_SHARED_SECRET,
-                    `${TEST_RESULTS_DIR}/webhooks-${cid}-${testName}.log`);
-                globalAny.ctx.webhooksProxy.connect();
-            }
+        if (testProperties.useWebhookProxy && testsConfig.webhooksProxy.enabled && !globalAny.ctx.webhooksProxy) {
+            // Note this prevents iframe and jaas test from running together.
+            const tenant = testsConfig.jaas.enabled ? testsConfig.jaas.tenant : testsConfig.iframe.tenant;
+
+            globalAny.ctx.webhooksProxy = new WebhookProxy(
+                `${testsConfig.webhooksProxy.url}?tenant=${tenant}&room=${globalAny.ctx.roomName}`,
+                testsConfig.webhooksProxy.sharedSecret!,
+                `${TEST_RESULTS_DIR}/webhooks-${cid}-${testName}.log`);
+            globalAny.ctx.webhooksProxy.connect();
         }
 
         if (testProperties.useWebhookProxy && !globalAny.ctx.webhooksProxy) {
