@@ -1,8 +1,9 @@
+import { Icon } from "@phosphor-icons/react";
 import React from "react";
 
 interface TextButtonProps {
     text: string;
-    icon?: React.ComponentType<{ size?: number; className?: string }>;
+    icon?: Icon;
     onClick: () => void;
     iconSize?: number;
     className?: string;
