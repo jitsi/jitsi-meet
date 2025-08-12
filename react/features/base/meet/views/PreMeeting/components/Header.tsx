@@ -1,9 +1,10 @@
+import { UserSubscription } from "@internxt/sdk/dist/drive/payments/types/types";
 import { Avatar, Button, Header as IntxHeader } from "@internxt/ui";
 import { ArrowSquareOut } from "@phosphor-icons/react";
 import React, { useEffect, useRef, useState } from "react";
 import PlanBadge from "../../../general/components/PlanBadge";
 import TextButton from "../../../general/components/TextButton";
-
+import { getPlanName } from "../../../services/utils/payments.utils";
 
 const Divider = () => (
     <div
@@ -34,6 +35,7 @@ const LeftContent = React.memo(
     )
 );
 
+
 /**
  * Props for the RightContent component
  */
@@ -57,6 +59,11 @@ interface RightContentProps {
      * Email of the user
      */
     email: string;
+
+    /**
+     * User subscription data
+     */
+    subscription?: UserSubscription | null;
 
     /**
      * Translation function
@@ -100,6 +107,7 @@ const RightContent = React.memo(
         avatar,
         fullName,
         email,
+        subscription,
         translate,
         meetingButton,
         onLogin,
@@ -133,6 +141,9 @@ const RightContent = React.memo(
         const toggleMenu = () => {
             setShowMenu(!showMenu);
         };
+
+        const planName = getPlanName(subscription);
+        const showUpgrade = !subscription || subscription.type === "free";
 
         return isLogged ? (
             <div className="flex space-x-2 flex-row">
@@ -185,13 +196,16 @@ const RightContent = React.memo(
 
                             {/* upgrade and plan display */}
                             <div className="flex items-center justify-between pl-3 py-2 transition-colors duration-200">
-                                <PlanBadge planName="X" />
-                                <TextButton
-                                    onClick={() => window.open("https://internxt.com/es/pricing", "_blank")}
-                                    text={translate("meet.preMeeting.upgrade")}
-                                    icon={ArrowSquareOut}
-                                />
+                                <PlanBadge planName={planName} />
+                                {showUpgrade && (
+                                    <TextButton
+                                        onClick={() => window.open("https://internxt.com/es/pricing", "_blank")}
+                                        text={translate("meet.preMeeting.upgrade")}
+                                        icon={ArrowSquareOut}
+                                    />
+                                )}
                             </div>
+
                             {/* Settings Option */}
                             {onOpenSettings && (
                                 <>
@@ -276,6 +290,11 @@ interface HeaderProps {
     userData?: UserData | null;
 
     /**
+     * User subscription data
+     */
+    subscription?: UserSubscription | null;
+
+    /**
      * Translation function
      */
     translate: Function;
@@ -323,6 +342,7 @@ interface HeaderProps {
  */
 const Header = ({
     userData,
+    subscription,
     translate,
     meetingButton,
     onLogin,
@@ -340,6 +360,7 @@ const Header = ({
                 avatar={userData?.avatar ?? null}
                 fullName={userData ? `${userData.name} ${userData.lastname}` : ""}
                 email={userData?.email ?? ""}
+                subscription={subscription}
                 translate={translate}
                 meetingButton={meetingButton}
                 onLogin={onLogin}

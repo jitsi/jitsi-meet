@@ -193,6 +193,8 @@ const PreMeetingScreen = ({
     const storageManager = useLocalStorage();
     const dispatch = useDispatch();
 
+    const subscription = storageManager.getSubscription();
+
     const isInNewMeeting = window.location.href.includes("new-meeting");
     const showNameError = userName.length === 0 && !isNameInputFocused;
 
@@ -300,6 +302,7 @@ const PreMeetingScreen = ({
             <div className={`flex flex-col px-5 ${classes.container}`}>
                 <Header
                     userData={userData}
+                    subscription={subscription}
                     translate={t}
                     onLogin={handleRedirectToLogin}
                     onLogout={onLogout}

@@ -7,6 +7,7 @@ import { loginSuccess } from "../../../general/store/auth/actions";
 import { setRoomID } from "../../../general/store/errors/actions";
 import { useLocalStorage } from "../../../LocalStorageManager";
 import { AuthService } from "../../../services/auth.service";
+import { PaymentsService } from "../../../services/payments.service";
 import { LoginCredentials } from "../../../services/types/command.types";
 import { AuthFormValues } from "../types";
 
@@ -80,18 +81,43 @@ export function useLoginModal({ onClose, onLogin, translate }: UseAuthModalProps
         [translate]
     );
 
+    const getUserSubscription = useCallback(async () => {
+        try {
+            return await PaymentsService.instance.getUserSubscription();
+        } catch (err) {
+            console.error("Error getting user subscription:", err);
+            return { type: "free" as const };
+        }
+    }, []);
+
     const saveUserSession = useCallback(
-        (credentials: LoginCredentials) => {
-            storageManager.saveCredentials(
-                credentials.token,
-                credentials.newToken,
-                credentials.mnemonic,
-                credentials.user
-            );
-            dispatch(loginSuccess(credentials));
-            onLogin?.(credentials.newToken);
+        async (credentials: LoginCredentials) => {
+            try {
+                const subscription = await getUserSubscription();
+
+                storageManager.saveCredentials(
+                    credentials.token,
+                    credentials.newToken,
+                    credentials.mnemonic,
+                    credentials.user,
+                    subscription
+                );
+
+                dispatch(loginSuccess(credentials));
+                onLogin?.(credentials.newToken);
+            } catch (err) {
+                storageManager.saveCredentials(
+                    credentials.token,
+                    credentials.newToken,
+                    credentials.mnemonic,
+                    credentials.user
+                );
+
+                dispatch(loginSuccess(credentials));
+                onLogin?.(credentials.newToken);
+            }
         },
-        [storageManager, onLogin, dispatch]
+        [storageManager, onLogin, dispatch, getUserSubscription]
     );
 
     const saveRoomId = useCallback(
@@ -119,7 +145,8 @@ export function useLoginModal({ onClose, onLogin, translate }: UseAuthModalProps
 
         // TODO: NEED TO SAVE MEET ROOM TO COMPLETE LOGIN AND REDIRECT TO SCHEDULE MODAL FLOW
         // saveRoomId(meetData.room);
-        saveUserSession(loginCredentials);
+
+        await saveUserSession(loginCredentials);
 
         onClose();
     };
