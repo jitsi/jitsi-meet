@@ -93,15 +93,18 @@ export function useLoginModal({ onClose, onLogin, translate }: UseAuthModalProps
     const saveUserSession = useCallback(
         async (credentials: LoginCredentials) => {
             try {
-                const subscription = await getUserSubscription();
-
                 storageManager.saveCredentials(
                     credentials.token,
                     credentials.newToken,
                     credentials.mnemonic,
-                    credentials.user,
-                    subscription
+                    credentials.user
                 );
+
+                const subscription = await getUserSubscription();
+
+                if (subscription) {
+                    storageManager.setSubscription(subscription);
+                }
 
                 dispatch(loginSuccess(credentials));
                 onLogin?.(credentials.newToken);
