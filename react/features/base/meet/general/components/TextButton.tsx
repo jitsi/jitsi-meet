@@ -1,6 +1,14 @@
 import React from "react";
 
-const TextButton = ({ text, icon: Icon, onClick, iconSize = 24, className = "" }) => {
+interface TextButtonProps {
+    text: string;
+    icon?: React.ComponentType<{ size?: number; className?: string }>;
+    onClick: () => void;
+    iconSize?: number;
+    className?: string;
+}
+
+const TextButton: React.FC<TextButtonProps> = ({ text, icon: Icon, onClick, iconSize = 24, className = "" }) => {
     return (
         <button
             className={`flex items-center space-x-1 px-4 py-3 bg-transparent hover:bg-gray-700/50 transition-colors duration-200 rounded-lg group ${className}`}

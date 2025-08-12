@@ -1,6 +1,10 @@
 import React from "react";
 
-const PlanBadge = ({ planName }) => {
+interface PlanBadgeProps {
+    planName: string;
+}
+
+const PlanBadge: React.FC<PlanBadgeProps> = ({ planName }) => {
     return (
         <div
             className="inline-block px-1 border rounded-sm bg-transparent"
