@@ -1,4 +1,5 @@
 import { P1, P3, Participant } from '../../helpers/Participant';
+import { config } from '../../helpers/TestsConfig';
 import {
     ensureOneParticipant,
     ensureThreeParticipants,
@@ -196,7 +197,7 @@ describe('Lobby', () => {
 
     it('change of moderators in lobby', async () => {
         // no moderator switching if jaas is available.
-        if (ctx.iFrameUsesJaas) {
+        if (config.iFrameUsesJaas) {
             return;
         }
         await hangupAllParticipants();
@@ -288,7 +289,7 @@ describe('Lobby', () => {
 
     it('moderator leaves while lobby enabled', async () => {
         // no moderator switching if jaas is available.
-        if (ctx.iFrameUsesJaas) {
+        if (config.iFrameUsesJaas) {
             return;
         }
         const { p1, p2, p3 } = ctx;

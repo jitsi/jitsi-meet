@@ -240,8 +240,6 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }
 
         globalAny.ctx.roomName = globalAny.ctx.roomName.toLowerCase();
-        globalAny.ctx.iFrameUsesJaas = process.env.JWT_PRIVATE_KEY_PATH
-            && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-');
 
         const isJaasConfigured = process.env.JAAS_TENANT && process.env.JAAS_PRIVATE_KEY_PATH && process.env.JAAS_KID;
 

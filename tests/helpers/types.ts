@@ -6,10 +6,6 @@ import type WebhookProxy from './WebhookProxy';
 import { IToken, ITokenOptions } from './token';
 
 export type IContext = {
-    /**
-     * Whether the configuration specifies a JaaS account for the iFrame API tests.
-     */
-    iFrameUsesJaas: boolean;
     p1: Participant;
     p2: Participant;
     p3: Participant;
