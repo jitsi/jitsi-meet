@@ -292,6 +292,7 @@ export function getMeetingDataAsString(state: IReduxState): string {
     // 2. Format Chat History
     dataString += '--- Chat History ---\n';
     messages.forEach(msg => {
+        if (msg.isReaction || msg.privateMessage) return;
         const displayName = participantNameMap.get((msg as any).participantId) || 'Unknown User';
         const timestamp = new Date(msg.timestamp).toLocaleTimeString();
 
@@ -338,11 +339,11 @@ export function downloadMeetingData(state: IReduxState): void {
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
     const dateString = `${year}-${month}-${day}`;
-    const filename = `${roomName || 'meeting'}_meeting_data_${dateString}.txt`;
+    const filename = `${roomName || 'meeting'}_${dateString}.txt`;
 
     // Part 3: Trigger the file download
     const element = document.createElement('a');
-    const file = new Blob([ dataString ], { type: 'text/plain' });
+    const file = new Blob([ dataString ]);
 
     element.href = URL.createObjectURL(file);
     element.download = filename;

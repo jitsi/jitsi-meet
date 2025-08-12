@@ -1086,6 +1086,7 @@
     },
     "recording": {
         "authDropboxText": "Upload to Dropbox",
+        "autoDownloadDataLabel": "Automatically download meeting content when recording ends",
         "availableSpace": "Available space: {{spaceLeft}} MB (approximately {{duration}} minutes of recording)",
         "beta": "BETA",
         "busy": "We're working on freeing recording resources. Please try again in a few minutes.",
@@ -1300,7 +1301,7 @@
             "documentClose": "Close shared document",
             "documentOpen": "Open shared document",
             "download": "Download our apps",
-            "downloadData": "Download meeting data",
+            "downloadData": "Download meeting content",
             "downloadDataTooltip": "Download chat, polls and attendance",
             "embedMeeting": "Embed meeting",
             "endConference": "End meeting for all",

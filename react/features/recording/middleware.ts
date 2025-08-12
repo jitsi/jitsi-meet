@@ -186,10 +186,15 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     case STOP_LOCAL_RECORDING: {
         const { localRecording } = getState()['features/base/config'];
+        const { autoDownloadMeetingData } = getState()['features/recording'];
 
         if (LocalRecordingManager.isRecordingLocally()) {
             LocalRecordingManager.stopLocalRecording();
-            downloadMeetingData(getState());
+            setTimeout(() => {
+                if (autoDownloadMeetingData) {
+                    downloadMeetingData(getState());
+                }
+            }, 0);
             dispatch(updateLocalRecordingStatus(false));
             if (localRecording?.notifyAllParticipants && !LocalRecordingManager.selfRecording) {
                 dispatch(playSound(RECORDING_OFF_SOUND_ID));

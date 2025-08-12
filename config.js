@@ -447,6 +447,9 @@ var config = {
 
     //     // Whether to disable the self recording feature (only local participant streams).
     //     disableSelfRecording: false,
+
+    //     // Whether to automatically download the recorded meeting data when the recording ends.
+    //     autoDownloadMeetingData: false
     // },
 
     // Customize the Live Streaming dialog. Can be modified for a non-YouTube provider.
@@ -851,49 +854,42 @@ var config = {
     // - it's possible to reorder the buttons in the maintoolbar by changing the order of the mainToolbarButtons
     // - 'desktop' controls the "Share your screen" button
     // - if `toolbarButtons` is undefined, we fallback to enabling all buttons on the UI
-    toolbarButtons: [
-        'camera',
-        'chat',
-
-        //    'closedcaptions',
-        'desktop',
-
-        //    'download',
-        'downloaddata',
-
-        //    'embedmeeting',
-        //    'etherpad',
-        //    'feedback',
-        'filmstrip',
-        'fullscreen',
-        'hangup',
-
-        //    'help',
-        //    'highlight',
-        'invite',
-
-        //    'linktosalesforce',
-        //    'livestreaming',
-        'microphone',
-        'noisesuppression',
-        'participants-pane',
-        'profile',
-        'raisehand',
-        'recording',
-        'security',
-        'select-background',
-        'settings',
-        'shareaudio',
-
-        'sharedvideo',
-        'shortcuts',
-        'stats',
-        'tileview',
-        'toggle-camera',
-        'videoquality',
-
-        //    'whiteboard',
-    ],
+    // toolbarButtons: [
+    //    'camera',
+    //    'chat',
+    //    'closedcaptions',
+    //    'desktop',
+    //    'download',
+    //    'downloaddata,
+    //    'embedmeeting',
+    //    'etherpad',
+    //    'feedback',
+    //    'filmstrip',
+    //    'fullscreen',
+    //    'hangup',
+    //    'help',
+    //    'highlight',
+    //    'invite',
+    //    'linktosalesforce',
+    //    'livestreaming',
+    //    'microphone',
+    //    'noisesuppression',
+    //    'participants-pane',
+    //    'profile',
+    //    'raisehand',
+    //    'recording',
+    //    'security',
+    //    'select-background',
+    //    'settings',
+    //    'shareaudio',
+    //    'sharedvideo',
+    //    'shortcuts',
+    //    'stats',
+    //    'tileview',
+    //    'toggle-camera',
+    //    'videoquality',
+    //    'whiteboard',
+    // ],
 
     // Holds values related to toolbar visibility control.
     // toolbarConfig: {

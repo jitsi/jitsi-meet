@@ -143,6 +143,12 @@ const linkToSalesforce = {
     group: 2
 };
 
+const downloadData = {
+    key: 'downloaddata',
+    Content: DownloadDataButton,
+    group: 2
+};
+
 const shareAudio = {
     key: 'shareaudio',
     Content: ShareAudioButton,
@@ -170,12 +176,6 @@ const download = {
 const help = {
     key: 'help',
     Content: HelpButton,
-    group: 4
-};
-
-const downloadData = {
-    key: 'downloaddata',
-    Content: DownloadDataButton,
     group: 4
 };
 
@@ -305,7 +305,6 @@ export function useToolboxButtons(
         camera,
         profile,
         desktop: desktopSharing,
-        downloaddata: downloadData,
         chat,
         raisehand,
         reactions,
@@ -317,6 +316,7 @@ export function useToolboxButtons(
         fullscreen: _fullscreen,
         security,
         closedcaptions: cc,
+        downloaddata: downloadData,
         recording,
         livestreaming: liveStreaming,
         linktosalesforce,
