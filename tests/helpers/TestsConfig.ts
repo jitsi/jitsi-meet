@@ -2,10 +2,12 @@
  * Global configuration that the tests are run with. Loaded from environment variables.
  */
 export const config = {
-    /** Whether the configuration specifies a JaaS account for the iFrame API tests. */
+    /** Enable debug logging. Note this includes private information from .env */
+    debug: Boolean(process.env.JITSI_DEBUG?.trim()),
     iframe: {
         customerId: process.env.IFRAME_TENANT?.trim()?.replace('vpaas-magic-cookie-', ''),
         tenant: process.env.IFRAME_TENANT?.trim(),
+        /** Whether the configuration specifies a JaaS account for the iFrame API tests. */
         usesJaas: Boolean(process.env.JWT_PRIVATE_KEY_PATH && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-')),
     },
     jaas: {
@@ -36,3 +38,7 @@ export const config = {
         url: process.env.WEBHOOKS_PROXY_URL?.trim(),
     }
 };
+
+if (config.debug) {
+    console.log('TestsConfig:', JSON.stringify(config, null, 2));
+}
