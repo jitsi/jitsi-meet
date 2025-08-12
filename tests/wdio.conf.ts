@@ -7,6 +7,7 @@ import process from 'node:process';
 import pretty from 'pretty';
 
 import { getTestProperties, loadTestFiles } from './helpers/TestProperties';
+import { config as testsConfig } from './helpers/TestsConfig';
 import WebhookProxy from './helpers/WebhookProxy';
 import { getLogs, initLogger, logInfo } from './helpers/browserLogger';
 import { IContext } from './helpers/types';
@@ -233,8 +234,6 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         globalAny.ctx.roomName = generateRoomName(testName);
 
-        const isJaasConfigured = process.env.JAAS_TENANT && process.env.JAAS_PRIVATE_KEY_PATH && process.env.JAAS_KID;
-
         // If we are running the iFrameApi tests, we need to mark it as such and if needed to create the proxy
         // and connect to it.
         if (testProperties.useWebhookProxy) {
@@ -242,7 +241,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 && process.env.WEBHOOKS_PROXY_URL && process.env.WEBHOOKS_PROXY_SHARED_SECRET) {
                 globalAny.ctx.webhooksProxy = new WebhookProxy(
                     `${process.env.WEBHOOKS_PROXY_URL}?tenant=${
-                        isJaasConfigured ? process.env.JAAS_TENANT : process.env.IFRAME_TENANT
+                        testsConfig.jaas.enabled ? testsConfig.jaas.tenant : process.env.IFRAME_TENANT
                     }&room=${globalAny.ctx.roomName}`,
                     process.env.WEBHOOKS_PROXY_SHARED_SECRET,
                     `${TEST_RESULTS_DIR}/webhooks-${cid}-${testName}.log`);
@@ -255,9 +254,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
             globalAny.ctx.skipSuiteTests = true;
         }
 
-        if (testProperties.useJaas && !isJaasConfigured) {
-            console.warn(`JaaS is not configured, skipping ${testName}. `
-                + 'Set JAAS_TENANT, JAAS_KID, and JAAS_PRIVATE_KEY_PATH to enable.');
+        if (testProperties.useJaas && !testsConfig.jaas.enabled) {
+            console.warn(`JaaS is not configured, skipping ${testName}.`);
             globalAny.ctx.skipSuiteTests = true;
         }
     },

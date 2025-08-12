@@ -1,17 +1,18 @@
 import type { Participant } from '../../helpers/Participant';
+import { config } from '../../helpers/TestsConfig';
 import { joinParticipant } from '../../helpers/participants';
 import { IToken, ITokenOptions, generateToken } from '../../helpers/token';
 
 export function generateJaasToken(options: ITokenOptions): IToken {
-    if (!process.env.JAAS_PRIVATE_KEY_PATH || !process.env.JAAS_KID) {
-        throw new Error('JAAS_PRIVATE_KEY_PATH and JAAS_KID environment variables must be set');
+    if (!config.jaas.enabled) {
+        throw new Error('JaaS is not configured.');
     }
 
     // Don't override the keyId and keyPath if they are already set in options, allow tests to set them.
     return generateToken({
         ...options,
-        keyId: options.keyId || process.env.JAAS_KID,
-        keyPath: options.keyPath || process.env.JAAS_PRIVATE_KEY_PATH,
+        keyId: options.keyId || config.jaas.kid,
+        keyPath: options.keyPath || config.jaas.privateKeyPath
     });
 }
 
@@ -28,15 +29,15 @@ export function generateJaasToken(options: ITokenOptions): IToken {
  */
 export async function joinMuc(instanceId: 'p1' | 'p2' | 'p3' | 'p4', token?: IToken, roomName?: string):
 Promise<Participant> {
-    if (!process.env.JAAS_TENANT) {
-        throw new Error('JAAS_TENANT environment variables must be set');
+    if (!config.jaas.enabled) {
+        throw new Error('JaaS is not configured.');
     }
 
     return await joinParticipant({
         name: instanceId,
         token
     }, {
-        forceTenant: process.env.JAAS_TENANT,
+        forceTenant: config.jaas.tenant,
         roomName
     });
 }
