@@ -10,6 +10,7 @@ import { isButtonEnabled } from "../../../../toolbox/functions.web";
 
 import { redirectToStaticPage } from "../../../../app/actions.any";
 import { appNavigate } from "../../../../app/actions.web";
+import { openSettingsDialog } from "../../../../settings/actions.web";
 import { getConferenceName, getCurrentConference } from "../../../conference/functions";
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from "../../../config/constants";
 import { translate } from "../../../i18n/functions";
@@ -248,7 +249,7 @@ const PreMeetingScreen = ({
         // HARDCODED, MODIFY WHEN SIGN UP PAGE IS READY
         window.location.href = "https://drive.internxt.com/new";
     };
-    console.log("isE2EESupported", isE2EESupported);
+
     const updateNameInStorage = (name: string) => {
         try {
             const user = storageManager.getUser();
@@ -314,6 +315,7 @@ const PreMeetingScreen = ({
                         ) : null
                     }
                     navigateToHomePage={navigateToHomePage}
+                    onOpenSettings={() => dispatch(openSettingsDialog(undefined, true))}
                 />
                 <ErrorModals
                     errorType={getErrorType()}
@@ -344,10 +346,7 @@ const PreMeetingScreen = ({
                         isCreatingConference={!!createConference}
                     />
                 )}
-                <div className="flex absolute bottom-7 right-7">
-                    {isE2EESupported && 
-                    <SecureMeetingMessage />}
-                </div>
+                <div className="flex absolute bottom-7 right-7">{isE2EESupported && <SecureMeetingMessage />}</div>
                 <div className={classes.videoEncodingToggleContainer}>
                     <VideoEncodingToggle />
                 </div>

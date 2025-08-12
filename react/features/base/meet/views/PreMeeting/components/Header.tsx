@@ -1,5 +1,17 @@
 import { Avatar, Button, Header as IntxHeader } from "@internxt/ui";
+import { ArrowSquareOut } from "@phosphor-icons/react";
 import React, { useEffect, useRef, useState } from "react";
+import PlanBadge from "../../../general/components/PlanBadge";
+import TextButton from "../../../general/components/TextButton";
+
+
+const Divider = () => (
+    <div
+        className="border-t mx-3"
+        // To force dark gray-5 color
+        style={{ borderColor: "rgb(58 58 59)", borderWidth: "1px" }}
+    />
+);
 
 /**
  * Component for the left content of the header
@@ -42,6 +54,11 @@ interface RightContentProps {
     fullName?: string;
 
     /**
+     * Email of the user
+     */
+    email: string;
+
+    /**
      * Translation function
      */
     translate: Function;
@@ -82,6 +99,7 @@ const RightContent = React.memo(
         isLogged,
         avatar,
         fullName,
+        email,
         translate,
         meetingButton,
         onLogin,
@@ -120,7 +138,7 @@ const RightContent = React.memo(
             <div className="flex space-x-2 flex-row">
                 {meetingButton}
 
-                <div className="relative">
+                <div className="relative dark">
                     <button
                         ref={avatarRef}
                         onClick={toggleMenu}
@@ -138,42 +156,72 @@ const RightContent = React.memo(
 
                     <div
                         ref={menuRef}
-                        className={`absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-90 border border-gray-10 z-50 overflow-hidden transition-all duration-200 ease-in-out transform origin-top-right
+                        className={`absolute dark right-0 mt-2 w-56 rounded-md shadow-lg z-50 overflow-hidden transition-all duration-200 ease-in-out transform origin-top-right
                             ${
                                 showMenu
                                     ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
                                     : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
                             }`}
+                        // To force dark gray-5 color
+                        style={{ backgroundColor: "rgb(44 44 48)", borderColor: "rgb(58 58 59)", borderWidth: "1px" }}
                     >
                         <div className="py-1">
+                            {/* user info */}
+                            <div className="flex items-center p-3">
+                                <Avatar src={avatar} fullName={fullName ?? ""} className="text-white" diameter={40} />
+                                <div className="ml-2 min-w-0">
+                                    <p
+                                        className="truncate font-medium text-white"
+                                        title={fullName}
+                                        style={{ lineHeight: 1 }}
+                                    >
+                                        {fullName}
+                                    </p>
+                                    <p className="truncate text-sm text-white/75" title={email}>
+                                        {email}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* upgrade and plan display */}
+                            <div className="flex items-center justify-between pl-3 py-2 transition-colors duration-200">
+                                <PlanBadge planName="X" />
+                                <TextButton
+                                    onClick={() => window.open("https://internxt.com/es/pricing", "_blank")}
+                                    text={translate("meet.preMeeting.upgrade")}
+                                    icon={ArrowSquareOut}
+                                />
+                            </div>
                             {/* Settings Option */}
                             {onOpenSettings && (
                                 <>
+                                    <Divider />
                                     <button
                                         onClick={() => {
                                             setShowMenu(false);
                                             if (onOpenSettings) onOpenSettings();
                                         }}
-                                        className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-100 transition-colors duration-150 hover:bg-gray-5 hover:text-primary dark:hover:bg-gray-80 active:bg-primary/20 active:text-primary"
+                                        className="flex items-center w-full text-left px-4 py-2 text-sm text-white/90 transition-colors duration-150 hover:bg-white/10 hover:text-white active:bg-white/20"
                                     >
                                         {translate("settings.title") ?? "Settings"}
                                     </button>
-
-                                    {/* Divider */}
-                                    <div className="border-t border-gray-10 my-1"></div>
                                 </>
                             )}
+
                             {/* Logout Option */}
                             {onLogout && (
-                                <button
-                                    onClick={() => {
-                                        setShowMenu(false);
-                                        onLogout?.();
-                                    }}
-                                    className="block w-full text-left px-4 py-2 text-sm text-gray-100 transition-colors duration-150 hover:bg-gray-5 hover:text-primary dark:hover:bg-gray-80 active:bg-primary/20 active:text-primary"
-                                >
-                                    {translate("dialog.logoutTitle")}
-                                </button>
+                                <>
+                                    <Divider />
+                                    <button
+                                        onClick={() => {
+                                            setShowMenu(false);
+                                            onLogout?.();
+                                        }}
+                                        className="block w-full text-left px-4 py-2 text-sm text-white/90 transition-colors duration-150 hover:bg-white/10 hover:text-white active:bg-white/20"
+                                    >
+                                        {translate("dialog.logoutTitle")}
+                                    </button>
+                                </>
                             )}
                         </div>
                     </div>
@@ -291,6 +339,7 @@ const Header = ({
                 isLogged={!!userData}
                 avatar={userData?.avatar ?? null}
                 fullName={userData ? `${userData.name} ${userData.lastname}` : ""}
+                email={userData?.email ?? ""}
                 translate={translate}
                 meetingButton={meetingButton}
                 onLogin={onLogin}

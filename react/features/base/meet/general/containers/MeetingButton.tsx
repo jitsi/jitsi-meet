@@ -45,10 +45,6 @@ const MeetingButton: React.FC<MeetingButtonProps> = ({
     const isMeetEnabled = useSelector(isMeetingEnabled);
     const isLogged = !!useUserData();
 
-    const handleUpgrade = () => {
-        window.location.href = "https://internxt.com/es/pricing";
-    };
-
     if (!isLogged) {
         return null;
     }
@@ -60,11 +56,7 @@ const MeetingButton: React.FC<MeetingButtonProps> = ({
             </Button>
         );
     } else {
-        return (
-            <Button variant={variant} onClick={handleUpgrade} className={className}>
-                {translate("meet.preMeeting.upgrade")}
-            </Button>
-        );
+        return null;
     }
 };
 
