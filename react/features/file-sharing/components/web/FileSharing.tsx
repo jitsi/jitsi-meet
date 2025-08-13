@@ -7,6 +7,7 @@ import { IReduxState } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCloudUpload, IconDownload, IconTrash } from '../../../base/icons/svg';
+import Tooltip from '../../../base/tooltip/components/Tooltip';
 import BaseTheme from '../../../base/ui/components/BaseTheme.web';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
@@ -367,9 +368,11 @@ const FileSharing = () => {
                                                         src = { getFileIcon(file.fileType) } />
                                                 </div>
                                                 <div className = { classes.fileItemDetails }>
-                                                    <div className = { classes.fileName }>
-                                                        { file.fileName }
-                                                    </div>
+                                                    <Tooltip content = { file.fileName }>
+                                                        <div className = { classes.fileName }>
+                                                            { file.fileName }
+                                                        </div>
+                                                    </Tooltip>
                                                     <div className = { classes.fileSize }>
                                                         { formatFileSize(file.fileSize) }
                                                     </div>
