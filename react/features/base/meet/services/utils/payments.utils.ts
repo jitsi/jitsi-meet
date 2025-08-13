@@ -1,9 +1,10 @@
 import { UserSubscription } from "@internxt/sdk/dist/drive/payments/types/types";
+import { filesize } from "filesize";
 
 /**
  * Utility function to get plan name from subscription
  */
-const getPlanName = (subscription?: UserSubscription | null ): string => {
+const getPlanName = (subscription?: UserSubscription | null): string => {
     if (!subscription) return "Free";
 
     switch (subscription.type) {
@@ -15,7 +16,10 @@ const getPlanName = (subscription?: UserSubscription | null ): string => {
             if (subscription.plan?.name) {
                 return subscription.plan.name;
             }
-            return subscription.interval === "year" ? "Premium Annual" : "Premium Monthly";
+            const planBytesName = subscription.plan?.storageLimit
+                ? filesize(subscription.plan.storageLimit)
+                : "Unknown";
+            return planBytesName;
         default:
             return "Free";
     }
