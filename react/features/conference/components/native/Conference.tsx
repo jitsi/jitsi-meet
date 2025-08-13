@@ -579,7 +579,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     const { startCarMode } = state['features/base/settings'];
     const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
     const brandingStyles = backgroundColor ? {
-        backgroundColor
+        background: backgroundColor
     } : undefined;
 
     return {
