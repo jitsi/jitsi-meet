@@ -13,12 +13,13 @@ const getPlanName = (subscription?: UserSubscription | null): string => {
         case "lifetime":
             return "Lifetime";
         case "subscription":
-            if (subscription.plan?.name) {
-                return subscription.plan.name;
-            }
+            // if (subscription.plan?.name) {
+            //     return subscription.plan.name;
+            // }
             const planBytesName = subscription.plan?.storageLimit
-                ? filesize(subscription.plan.storageLimit)
-                : "Unknown";
+                ? filesize(subscription.plan.storageLimit, { round: 0 })
+                : "";
+            console.log("Plan bytes name:", planBytesName);
             return planBytesName;
         default:
             return "Free";
