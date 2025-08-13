@@ -1,14 +1,15 @@
 import { CircleButton } from "@internxt/ui";
-import { UserPlus, X } from "@phosphor-icons/react";
-import React, { useState } from "react";
+import { Shield, UserPlus, X } from "@phosphor-icons/react";
+import { useState } from "react";
+import { WithTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { IReduxState } from "../../../../../app/types";
+import { toggleSecurityDialog } from "../../../../../security/actions";
 import { leaveConference } from "../../../../conference/actions";
-import MediaControlsWrapper from "../../../general/containers/MediaControlsWrapper";
-
-import { WithTranslation } from "react-i18next";
 import { getInviteURL } from "../../../../connection/functions";
 import { translate } from "../../../../i18n/functions";
+import MediaControlsWrapper from "../../../general/containers/MediaControlsWrapper";
+
 import InviteUserModal from "../components/InviteUserModal";
 import { VideoParticipantType } from "../types";
 import { getParticipantsWithTracks } from "../utils";
@@ -48,6 +49,9 @@ const ConferenceControls = ({ dispatch, participants, _inviteUrl, t, roomID }: C
                     </CircleButton>
                     <CircleButton variant="cancel" onClick={() => dispatch(leaveConference(roomID))}>
                         <X size={22} color="white" />
+                    </CircleButton>
+                    <CircleButton variant="default" onClick={() => dispatch(toggleSecurityDialog())}>
+                        <Shield size={22} color={"white"} weight="fill" />
                     </CircleButton>
                 </div>
             </div>

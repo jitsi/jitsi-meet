@@ -4,7 +4,6 @@ import MiddlewareRegistry from "../../redux/MiddlewareRegistry";
 import { updateMeetingConfig } from "../general/store/meeting/actions";
 import { MEETING_REDUCER } from "../general/store/meeting/reducer";
 import { LocalStorageManager } from "../LocalStorageManager";
-import { PaymentsService } from "../services/payments.service";
 
 /**
  * Constants for auth-related action types.
@@ -64,7 +63,6 @@ export const meetingConfigMiddleware: Middleware = (store) => (next) => (action)
                 LocalStorageManager.instance.remove(LAST_CONFIG_CHECK_KEY);
                 LocalStorageManager.instance.remove(CACHED_MEETING_CONFIG_KEY);
                 LocalStorageManager.instance.clearCredentials();
-
             } catch (error) {
                 console.error("Error clearing meeting config from localStorage", error);
             }
@@ -92,12 +90,15 @@ export const updateUserMeetingConfig = async (dispatch: Dispatch<AnyAction>, for
 
         if (force || hasExpiredVerificationInterval) {
             try {
-                const meetingConfig = await PaymentsService.instance.checkMeetAvailability();
-                const { enabled, paxPerCall } = meetingConfig;
-                dispatch(updateMeetingConfig({ enabled, paxPerCall }));
+                // TODO: BYPASS UNTIL checkMeetAvailability works fine
+                // const meetingConfig = await PaymentsService.instance.checkMeetAvailability();
+                // const { enabled, paxPerCall } = meetingConfig;
+                // dispatch(updateMeetingConfig({ enabled, paxPerCall }));
+                dispatch(updateMeetingConfig({ enabled: true, paxPerCall: 10 }));
 
                 LocalStorageManager.instance.set(LAST_CONFIG_CHECK_KEY, now);
-                LocalStorageManager.instance.set(CACHED_MEETING_CONFIG_KEY, meetingConfig);
+                // TODO: BYPASS UNTIL checkMeetAvailability works fine
+                LocalStorageManager.instance.set(CACHED_MEETING_CONFIG_KEY, { enabled: true, paxPerCall: 10 });
 
                 console.info("Meeting configuration updated successfully");
             } catch (error) {
