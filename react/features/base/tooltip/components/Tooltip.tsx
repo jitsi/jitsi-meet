@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, cloneElement, useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { keyframes } from 'tss-react';
 import { makeStyles } from 'tss-react/mui';
@@ -58,12 +58,14 @@ const Tooltip = ({ containerClassName, content, children, position = 'top' }: IP
     const dispatch = useDispatch();
     const [ visible, setVisible ] = useState(false);
     const [ isUnmounting, setIsUnmounting ] = useState(false);
+    const [ wasOpenedWithKeyboard, setWasOpenedWithKeyboard ] = useState(false);
     const overflowDrawer = useSelector((state: IReduxState) => state['features/toolbox'].overflowDrawer);
     const { classes, cx } = useStyles();
     const timeoutID = useRef({
         open: 0,
         close: 0
     });
+    const tooltipId = useRef(`tooltip-${Math.random().toString(36).substring(2, 11)}`);
     const {
         content: storeContent,
         previousContent,
@@ -73,7 +75,10 @@ const Tooltip = ({ containerClassName, content, children, position = 'top' }: IP
     const contentComponent = (
         <div
             className = { cx(classes.container, previousContent === '' && 'mounting-animation',
-                isUnmounting && 'unmounting') }>
+                isUnmounting && 'unmounting') }
+            id = { tooltipId.current }
+            role = 'tooltip'
+            tabIndex = { wasOpenedWithKeyboard ? 0 : -1 }>
             {content}
         </div>
     );
@@ -89,31 +94,37 @@ const Tooltip = ({ containerClassName, content, children, position = 'top' }: IP
         setIsUnmounting(false);
     };
 
-    const onPopoverOpen = useCallback(() => {
+    const onPopoverOpen = useCallback((keyboardTriggered = false) => {
         if (isUnmounting) {
             return;
         }
 
+        setWasOpenedWithKeyboard(keyboardTriggered);
         clearTimeout(timeoutID.current.close);
         timeoutID.current.close = 0;
         if (!visible) {
             if (isVisible) {
                 openPopover();
             } else {
+                const delay = keyboardTriggered ? 0 : TOOLTIP_DELAY;
+
                 timeoutID.current.open = window.setTimeout(() => {
                     openPopover();
-                }, TOOLTIP_DELAY);
+                }, delay);
             }
         }
     }, [ visible, isVisible, isUnmounting ]);
 
-    const onPopoverClose = useCallback(() => {
+    const onPopoverClose = useCallback((immediate = false) => {
         clearTimeout(timeoutID.current.open);
         if (visible) {
+            const delay = immediate ? 0 : TOOLTIP_DELAY;
+
             timeoutID.current.close = window.setTimeout(() => {
                 setIsUnmounting(true);
-            }, TOOLTIP_DELAY);
+            }, delay);
         }
+        setWasOpenedWithKeyboard(false);
     }, [ visible ]);
 
     useEffect(() => {
@@ -139,17 +150,43 @@ const Tooltip = ({ containerClassName, content, children, position = 'top' }: IP
         return children;
     }
 
+    const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            if (visible) {
+                onPopoverClose(true);
+            } else {
+                onPopoverOpen(true);
+            }
+        } else if (event.key === 'Escape' && visible) {
+            event.preventDefault();
+            onPopoverClose(true);
+        }
+    }, [ visible, onPopoverOpen, onPopoverClose ]);
+
+    const enhancedChildren = cloneElement(children, {
+        'aria-describedby': visible ? tooltipId.current : undefined,
+        tabIndex: children.props.tabIndex !== undefined ? children.props.tabIndex : 0,
+        onKeyDown: (event: React.KeyboardEvent) => {
+            handleKeyDown(event);
+            if (children.props.onKeyDown) {
+                children.props.onKeyDown(event);
+            }
+        }
+    });
+
     return (
         <Popover
             allowClick = { true }
             className = { containerClassName }
             content = { contentComponent }
-            focusable = { false }
+            focusable = { true }
             onPopoverClose = { onPopoverClose }
             onPopoverOpen = { onPopoverOpen }
             position = { position }
+            role = 'tooltip'
             visible = { visible }>
-            {children}
+            {enhancedChildren}
         </Popover>
     );
 };
