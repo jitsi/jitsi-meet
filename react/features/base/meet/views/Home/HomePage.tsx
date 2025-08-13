@@ -11,6 +11,7 @@ import HeaderWrapper from "./containers/HeaderWrapper";
 import ScheduleMeetingModal from "./containers/ScheduleModal";
 
 const MEETING_BASE_URL = `${window.location.protocol}//${window.location.host}/`;
+
 interface HomePageProps {
     onLogin: (token: string) => void;
     translate: (key: string) => string;
@@ -187,7 +188,7 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
                         }}
                     >
                         <img
-                            src="./images/internxt_Meet_Gallery.webp"
+                            src={"./images/gallery.png"}
                             alt="Video call preview"
                             className="w-full h-auto"
                             style={{

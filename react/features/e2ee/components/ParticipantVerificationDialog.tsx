@@ -61,7 +61,7 @@ const ParticipantVerificationDialog = ({
         return true;
     }, [ pId ]);
 
-    const { emoji } = sas;
+    const emoji = sas;
 
     return (
         <Dialog
