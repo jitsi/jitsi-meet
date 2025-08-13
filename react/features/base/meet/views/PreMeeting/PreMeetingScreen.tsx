@@ -24,6 +24,7 @@ import { useLocalStorage } from "../../LocalStorageManager";
 import { ErrorModals, ErrorType } from "./components/ErrorModals";
 import Header from "./components/Header";
 import PreMeetingModal from "./components/PreMeetingModal";
+import VideoEncodingToggle from "./containers/VideoEncodingToggle";
 import { useParticipants } from "./hooks/useParticipants";
 import { useUserData } from "./hooks/useUserData";
 
@@ -336,6 +337,10 @@ const PreMeetingScreen = ({
                         isCreatingConference={!!createConference}
                     />
                 )}
+                <div className={classes.videoEncodingToggleContainer}>
+                    <VideoEncodingToggle />
+                </div>
+
                 {/* UNCOMMENT IN DEV MODE TO SEE OLD IMPLEMENTATION  */}
                 {/* <div className="flex flex-row">
                     <div>
@@ -407,6 +412,12 @@ const useStyles = makeStyles()((theme) => ({
         "@media (max-width: 720px)": {
             flexDirection: "column-reverse",
         },
+    },
+    videoEncodingToggleContainer: {
+        position: "absolute",
+        bottom: "20px",
+        left: "20px",
+        zIndex: 999,
     },
     content: {
         display: "flex",

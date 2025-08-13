@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _ from "lodash";
 import React from "react";
 import { WithTranslation } from "react-i18next";
 import { connect as reactReduxConnect } from "react-redux";
