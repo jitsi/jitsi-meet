@@ -248,7 +248,7 @@ const PreMeetingScreen = ({
         // HARDCODED, MODIFY WHEN SIGN UP PAGE IS READY
         window.location.href = "https://drive.internxt.com/new";
     };
-    console.log("isE2EESupported", isE2EESupported);
+
     const updateNameInStorage = (name: string) => {
         try {
             const user = storageManager.getUser();
@@ -344,10 +344,7 @@ const PreMeetingScreen = ({
                         isCreatingConference={!!createConference}
                     />
                 )}
-                <div className="flex absolute bottom-7 right-7">
-                    {isE2EESupported && 
-                    <SecureMeetingMessage />}
-                </div>
+                <div className="flex absolute bottom-7 right-7">{isE2EESupported && <SecureMeetingMessage />}</div>
                 <div className={classes.videoEncodingToggleContainer}>
                     <VideoEncodingToggle />
                 </div>
