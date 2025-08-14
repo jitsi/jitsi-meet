@@ -23,12 +23,14 @@ class SoundManager {
         if (!SoundManager.instance) {
             SoundManager.instance = new SoundManager();
         }
+
         return SoundManager.instance;
     }
 
     play(soundId: string, src: string, loop: boolean): void {
         if (loop) {
             this.playLoop(soundId, src);
+
             return;
         }
         this.playOneShot(src);
@@ -36,6 +38,7 @@ class SoundManager {
 
     stop(soundId: string): void {
         const el = this.loopElementsById.get(soundId);
+
         if (el) {
             try {
                 el.pause();
@@ -62,6 +65,7 @@ class SoundManager {
 
     private playOneShot(src: string): void {
         const el = this.getOrCreateOneShotElement();
+
         if (!el) {
             return;
         }
@@ -81,6 +85,7 @@ class SoundManager {
 
     private playLoop(soundId: string, src: string): void {
         let el = this.loopElementsById.get(soundId);
+
         if (!el) {
             el = this.createAudioElement();
             if (!el) {
@@ -102,14 +107,17 @@ class SoundManager {
     private getOrCreateOneShotElement(): OptionalHTMLAudioElement {
         if (this.oneShotPool.length < this.poolSize) {
             const el = this.createAudioElement();
+
             if (!el) {
                 return null;
             }
             this.oneShotPool.push(el);
+
             return el;
         }
 
         const el = this.oneShotPool[this.nextPoolIndex];
+
         this.nextPoolIndex = (this.nextPoolIndex + 1) % this.oneShotPool.length;
 
         try {
@@ -128,11 +136,13 @@ class SoundManager {
     private createAudioElement(): OptionalHTMLAudioElement {
         try {
             const el = new Audio();
+
             // Minimize background work when idle
             el.preload = 'none';
             el.autoplay = false;
             // Ensure it is not visible and not attached to DOM; playback works fine off-DOM
             this.applySinkId(el);
+
             return el;
         } catch {
             return null;
@@ -152,5 +162,4 @@ class SoundManager {
 }
 
 export default SoundManager.getInstance();
-
 

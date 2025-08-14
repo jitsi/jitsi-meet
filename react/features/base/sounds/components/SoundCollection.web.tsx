@@ -15,4 +15,3 @@ class SoundCollection extends Component {
 
 export default connect((_: IReduxState) => ({}))(SoundCollection);
 
-
