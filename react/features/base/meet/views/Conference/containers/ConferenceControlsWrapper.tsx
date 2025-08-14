@@ -1,6 +1,6 @@
 import { CircleButton } from "@internxt/ui";
 import { Shield, UserPlus, X } from "@phosphor-icons/react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { WithTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { IReduxState } from "../../../../../app/types";
