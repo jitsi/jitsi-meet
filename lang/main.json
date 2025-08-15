@@ -1383,6 +1383,12 @@
         "audioOnlyOn": "Enable low bandwidth mode",
         "audioRoute": "Select the sound device",
         "audioSettings": "Audio settings",
+        "audioSettingsCheckboxes": {
+            "AEC": "Acoustic echo cancellation",
+            "AGC": "Automatic gain control",
+            "NS": "Noise suppression",
+            "stereo": "Stereo audio"
+        },
         "authenticate": "Authenticate",
         "boo": "Boo",
         "callQuality": "Manage video quality",

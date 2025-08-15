@@ -24,6 +24,7 @@ import AudioOutputPreview from './AudioOutputPreview.web';
 import DeviceHidContainer from './DeviceHidContainer.web';
 import DeviceSelector from './DeviceSelector.web';
 
+
 /**
  * The type of the React {@code Component} props of {@link AudioDevicesSelection}.
  */
@@ -32,7 +33,7 @@ interface IProps extends AbstractDialogTabProps, WithTranslation {
     /**
      * The audio settings that are used for the audio input preview.
      */
-    audioSettings: IAudioSettings;
+    audioSettings?: IAudioSettings;
 
     /**
      * All known audio and video devices split by type. This prop comes from
@@ -300,7 +301,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
                             <Checkbox
                                 checked = { audioSettings.echoCancellation }
                                 disabled = { noiseSuppressionEnabled }
-                                label = { 'Echo cancellation' }
+                                label = { t('toolbar.audioSettingsCheckboxes.AEC') }
                                 name = { 'echoCancellation' }
                                 onChange = { this._onToggleAudioSettings } />
                         </Tooltip>
@@ -312,7 +313,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
                             <Checkbox
                                 checked = { audioSettings.autoGainControl }
                                 disabled = { noiseSuppressionEnabled }
-                                label = { 'Automatic gain control' }
+                                label = { t('toolbar.audioSettingsCheckboxes.AGC') }
                                 name = { 'autoGainControl' }
                                 onChange = { this._onToggleAudioSettings } />
                         </Tooltip>
@@ -324,7 +325,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
                             <Checkbox
                                 checked = { audioSettings.noiseSuppression }
                                 disabled = { noiseSuppressionEnabled }
-                                label = { 'Noise suppression' }
+                                label = { t('toolbar.audioSettingsCheckboxes.NS') }
                                 name = { 'noiseSuppression' }
                                 onChange = { this._onToggleAudioSettings } />
                         </Tooltip>
@@ -336,7 +337,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
                             <Checkbox
                                 checked = { audioSettings.channelCount === 2 }
                                 disabled = { noiseSuppressionEnabled }
-                                label = { 'Stereo' }
+                                label = { t('toolbar.audioSettingsCheckboxes.stereo') }
                                 name = { 'channelCount' }
                                 onChange = { this._onToggleAudioSettings } />
                         </Tooltip>
