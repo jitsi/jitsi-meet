@@ -1,3 +1,5 @@
+import { isEqual } from 'lodash-es';
+
 import { createDeviceChangedEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
@@ -7,8 +9,12 @@ import {
 } from '../base/devices/actions';
 import { getDeviceLabelById, setAudioOutputDeviceId } from '../base/devices/functions';
 import { updateSettings } from '../base/settings/actions';
+import { toggleUpdateAudioSettings } from '../base/tracks/actions.web';
+import { getLocalJitsiAudioTrack } from '../base/tracks/functions.web';
 import { toggleNoiseSuppression } from '../noise-suppression/actions';
 import { setScreenshareFramerate } from '../screen-share/actions';
+import { setAudioSettings } from '../settings/actions.web';
+import { disposeAudioInputPreview } from '../settings/functions.web';
 
 import { getAudioDeviceSelectionDialogProps, getVideoDeviceSelectionDialogProps } from './functions';
 import logger from './logger';
@@ -22,16 +28,25 @@ import logger from './logger';
  * @returns {Function}
  */
 export function submitAudioDeviceSelectionTab(newState: any, isDisplayedOnWelcomePage: boolean) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const currentState = getAudioDeviceSelectionDialogProps(getState(), isDisplayedOnWelcomePage);
+        const isSelectedAudioInputIdChanged = newState.selectedAudioInputId
+            && newState.selectedAudioInputId !== currentState.selectedAudioInputId;
 
-        if (newState.selectedAudioInputId && newState.selectedAudioInputId !== currentState.selectedAudioInputId) {
+        if (isSelectedAudioInputIdChanged) {
             dispatch(updateSettings({
                 userSelectedMicDeviceId: newState.selectedAudioInputId,
                 userSelectedMicDeviceLabel:
                     getDeviceLabelById(getState(), newState.selectedAudioInputId, 'audioInput')
             }));
 
+            const previewAudioTrack = getState()['features/settings']?.previewAudioTrack;
+
+            if (previewAudioTrack) {
+                await disposeAudioInputPreview(previewAudioTrack);
+            }
+
+            dispatch(setAudioSettings(newState.audioSettings));
             dispatch(setAudioInputDevice(newState.selectedAudioInputId));
         }
 
@@ -57,6 +72,16 @@ export function submitAudioDeviceSelectionTab(newState: any, isDisplayedOnWelcom
 
         if (newState.noiseSuppressionEnabled !== currentState.noiseSuppressionEnabled) {
             dispatch(toggleNoiseSuppression());
+        }
+
+        if (!isEqual(newState.audioSettings, currentState.audioSettings) && !isSelectedAudioInputIdChanged && !newState.noiseSuppressionEnabled) {
+            const previewAudioTrack = getState()['features/settings']?.previewAudioTrack;
+
+            if (previewAudioTrack) {
+                await disposeAudioInputPreview(previewAudioTrack);
+            }
+
+            dispatch(toggleUpdateAudioSettings(newState.audioSettings));
         }
     };
 }

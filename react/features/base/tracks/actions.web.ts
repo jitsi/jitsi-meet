@@ -12,6 +12,7 @@ import { setScreenAudioShareState, setScreenshareAudioTrack } from '../../screen
 import { isAudioOnlySharing, isScreenVideoShared } from '../../screen-share/functions';
 import { toggleScreenshotCaptureSummary } from '../../screenshot-capture/actions';
 import { isScreenshotCaptureEnabled } from '../../screenshot-capture/functions';
+import { setAudioSettings } from '../../settings/actions.web';
 import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
 import { getCurrentConference } from '../conference/functions';
 import { notifyCameraError, notifyMicError } from '../devices/actions.web';
@@ -37,10 +38,18 @@ import {
     getLocalVideoTrack,
     isToggleCameraEnabled
 } from './functions';
+import { applyAudioConstraints, getLocalJitsiAudioTrackSettings } from './functions.web';
 import logger from './logger';
 import { ICreateInitialTracksOptions, IInitialTracksErrors, IShareOptions, IToggleScreenSharingOptions } from './types';
 
 export * from './actions.any';
+
+export interface IAudioSettings {
+    autoGainControl: boolean;
+    channelCount: 1 | 2;
+    echoCancellation: boolean;
+    noiseSuppression: boolean;
+}
 
 /**
  * Signals that the local participant is ending screensharing or beginning the screensharing flow.
@@ -329,7 +338,6 @@ export function setGUMPendingStateOnFailedTracks(tracks: Array<any>, dispatch: I
 export function createAndAddInitialAVTracks(devices: Array<MediaType>) {
     return async (dispatch: IStore['dispatch']) => {
         dispatch(gumPending(devices, IGUMPendingState.PENDING_UNMUTE));
-
         const { tracks, errors } = await dispatch(createInitialAVTracks({ devices }));
 
         setGUMPendingStateOnFailedTracks(tracks, dispatch);
@@ -539,5 +547,23 @@ export function toggleCamera() {
         const newVideoTrack = await createLocalTrack('video', null, null, { facingMode: targetFacingMode });
 
         await dispatch(replaceLocalTrack(null, newVideoTrack));
+    };
+}
+
+/**
+ * Toggles the audio settings.
+ *
+ * @param {IAudioSettings} settings - The settings to apply.
+ * @returns {Function}
+ */
+export function toggleUpdateAudioSettings(settings: IAudioSettings) {
+    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+
+        await applyAudioConstraints(state, settings);
+
+        const updatedSettings = getLocalJitsiAudioTrackSettings(state) as IAudioSettings;
+
+        dispatch(setAudioSettings(updatedSettings));
     };
 }
