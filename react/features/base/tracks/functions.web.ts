@@ -222,7 +222,7 @@ export function isToggleCameraEnabled(stateful: IStateful) {
  * @param {IAudioSettings} settings - The audio settings to apply.
  * @returns {Promise<void>}
  */
-export async function applyConstraints(stateful: IStateful, settings: IAudioSettings): Promise<void> {
+export async function applyAudioConstraints(stateful: IStateful, settings: IAudioSettings) {
     const state = toState(stateful);
     const track = getLocalJitsiAudioTrack(state);
 

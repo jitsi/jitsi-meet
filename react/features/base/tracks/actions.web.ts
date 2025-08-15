@@ -12,6 +12,7 @@ import { setScreenAudioShareState, setScreenshareAudioTrack } from '../../screen
 import { isAudioOnlySharing, isScreenVideoShared } from '../../screen-share/functions';
 import { toggleScreenshotCaptureSummary } from '../../screenshot-capture/actions';
 import { isScreenshotCaptureEnabled } from '../../screenshot-capture/functions';
+import { setAudioSettings } from '../../settings/actions.web';
 import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
 import { getCurrentConference } from '../conference/functions';
 import { notifyCameraError, notifyMicError } from '../devices/actions.web';
@@ -37,6 +38,7 @@ import {
     getLocalVideoTrack,
     isToggleCameraEnabled
 } from './functions';
+import { applyAudioConstraints, getLocalJitsiAudioTrackSettings } from './functions.web';
 import logger from './logger';
 import { ICreateInitialTracksOptions, IInitialTracksErrors, IShareOptions, IToggleScreenSharingOptions } from './types';
 
@@ -548,16 +550,14 @@ export function toggleCamera() {
     };
 }
 
-export function toggleUpdateSettings(settings: IAudioSettings) {
+export function toggleUpdateAudioSettings(settings: IAudioSettings) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-        const track = getLocalJitsiAudioTrack(state);
 
-        try {
-            await track.applyConstraints(settings);
-        } catch (error) {
-            logger.error('Failed to apply audio constraints ', error);
-        }
+        await applyAudioConstraints(state, settings);
+
+        const updatedSettings = getLocalJitsiAudioTrackSettings(state) as IAudioSettings;
+
+        dispatch(setAudioSettings(updatedSettings));
     };
 }
-
