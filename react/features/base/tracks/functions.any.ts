@@ -219,9 +219,14 @@ export function getLocalJitsiAudioTrackSettings(state: IReduxState): IAudioSetti
 
     const track = hasAudioMixEffect ? jitsiTrack._streamEffect._originalTrack : jitsiTrack.getTrack();
 
-    const { echoCancellation, noiseSuppression, autoGainControl, channelCount } = track.getSettings();
+    const { autoGainControl, channelCount, echoCancellation, noiseSuppression } = track.getSettings();
 
-    return { echoCancellation, noiseSuppression, autoGainControl, channelCount };
+    return {
+        autoGainControl,
+        channelCount,
+        echoCancellation,
+        noiseSuppression,
+    };
 }
 
 /**

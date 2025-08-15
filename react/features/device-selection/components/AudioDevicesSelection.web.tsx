@@ -294,7 +294,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
 
                 {audioSettings && !hideNoiseSuppression && !iAmVisitor && (
                     <fieldset className = { classes.container }>
-                     <Tooltip
+                        <Tooltip
                             containerClassName = { classes.checkbox }
                             content = { 'Tooltip' }
                             position = { 'right' }>
@@ -395,8 +395,8 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
 
                     return;
                 }
-
                 this.props.dispatch(setAudioPreviewTrack(jitsiLocalTrack));
+
             })
             .catch(() => {
                 this.props.dispatch(setAudioPreviewTrack(null));

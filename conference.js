@@ -1729,6 +1729,7 @@ export default {
      */
     async onAudioDeviceChanged(micDeviceId) {
         const audioWasMuted = this.isLocalAudioMuted();
+        const audioSettings = APP.store.getState()['features/settings'].audioSettings;
 
         // Disable noise suppression if it was enabled on the previous track.
         await APP.store.dispatch(setNoiseSuppressionEnabled(false));
@@ -1745,7 +1746,8 @@ export default {
         sendAnalytics(createDeviceChangedEvent('audio', 'input'));
         createLocalTracksF({
             devices: [ 'audio' ],
-            micDeviceId: selectedDeviceId
+            micDeviceId: selectedDeviceId,
+            constraints: audioSettings
         })
         .then(([ stream ]) => {
             // if audio was muted before changing the device, mute
