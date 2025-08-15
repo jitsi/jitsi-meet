@@ -346,8 +346,11 @@ export function submitVirtualBackgroundTab(newState: any, isCancel = false) {
 /**
  * Sets the audio preview track.
  *
- * @param {boolean} track - The track to set.
- * @returns {Function}
+ * @param {any} track - The track to set.
+ * @returns {{
+ *     type: SET_PREVIEW_AUDIO_TRACK,
+ *     track: any
+ * }}
  */
 export function setAudioPreviewTrack(track: any) {
     return {
@@ -357,10 +360,13 @@ export function setAudioPreviewTrack(track: any) {
 }
 
 /**
- * Sets the audio settings related to device selection.
+ * Sets the audio settings.
  *
- * @param {IAudioSettings} settings - The track to set.
- * @returns {Function}
+ * @param {IAudioSettings} settings - The settings to set.
+ * @returns {{
+ *     type: SET_AUDIO_SETTINGS,
+ *     settings: IAudioSettings
+ * }}
  */
 export function setAudioSettings(settings: IAudioSettings) {
     return {

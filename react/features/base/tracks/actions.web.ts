@@ -550,6 +550,12 @@ export function toggleCamera() {
     };
 }
 
+/**
+ * Toggles the audio settings.
+ *
+ * @param {IAudioSettings} settings - The settings to apply.
+ * @returns {Function}
+ */
 export function toggleUpdateAudioSettings(settings: IAudioSettings) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();

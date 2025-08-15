@@ -31,7 +31,7 @@ import DeviceSelector from './DeviceSelector.web';
 interface IProps extends AbstractDialogTabProps, WithTranslation {
 
     /**
-     * The audio settings that are used for the audio input preview.
+     * The audio local track settings.
      */
     audioSettings?: IAudioSettings;
 
