@@ -5,6 +5,7 @@ import { escape } from 'lodash-es';
 import { APP_WILL_MOUNT } from '../app/actionTypes';
 import PersistenceRegistry from '../redux/PersistenceRegistry';
 import ReducerRegistry from '../redux/ReducerRegistry';
+import { IAudioSettings } from '../tracks/actions.web';
 import { assignIfDefined } from '../util/helpers';
 
 import { SETTINGS_UPDATED } from './actionTypes';
@@ -53,6 +54,7 @@ const DEFAULT_STATE: ISettingsState = {
 
 export interface ISettingsState {
     audioOutputDeviceId?: string;
+    audioSettings?: IAudioSettings;
     audioSettingsVisible?: boolean;
     avatarURL?: string;
     cameraDeviceId?: string | boolean;

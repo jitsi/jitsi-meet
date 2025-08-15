@@ -51,7 +51,8 @@ export function getAudioDeviceSelectionDialogProps(stateful: IStateful, isDispla
     const deviceHidSupported = isDeviceHidSupported() && getWebHIDFeatureConfig(state);
     const noiseSuppressionEnabled = isNoiseSuppressionEnabled(state);
     const hideNoiseSuppression = isPrejoinPageVisible(state) || isDisplayedOnWelcomePage;
-    const audioSettings = getLocalJitsiAudioTrackSettings(state);
+    const audioSettings = state['features/settings'].audioSettings ?? getLocalJitsiAudioTrackSettings(state);
+
 
     // When the previews are disabled we don't need multiple audio input support in order to change the mic. This is the
     // case for Safari on iOS.
