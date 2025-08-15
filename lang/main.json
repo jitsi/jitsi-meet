@@ -566,6 +566,7 @@
         "downloadFailedDescription": "Please try again.",
         "downloadFailedTitle": "Download failed",
         "downloadFile": "Download",
+        "downloadStarted": "File download started",
         "dragAndDrop": "Drag and drop files here or anywhere on screen",
         "fileAlreadyUploaded": "File has already been uploaded to this meeting.",
         "fileTooLargeDescription": "Please make sure the file does not exceed {{ maxFileSize }}.",
@@ -573,6 +574,7 @@
         "fileUploadProgress": "File upload progress",
         "fileUploadedSuccessfully": "File uploaded successfully",
         "removeFile": "Remove",
+        "removeFileSuccess": "File removed successfully",
         "uploadFailedDescription": "Please try again.",
         "uploadFailedTitle": "Upload failed",
         "uploadFile": "Share file"
