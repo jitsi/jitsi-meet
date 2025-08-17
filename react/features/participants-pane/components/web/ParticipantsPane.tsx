@@ -187,11 +187,13 @@ const ParticipantsPane = () => {
                     onClick = { onClosePane } />
             </div>
             <div className = { classes.container }>
+                <MeetingParticipants
+                    searchString = { searchString }
+                    setSearchString = { setSearchString } />
+                <br className = { classes.antiCollapse } />
                 <VisitorsList />
                 <br className = { classes.antiCollapse } />
                 <LobbyParticipants />
-                <br className = { classes.antiCollapse } />
-                <MeetingParticipants />
                 <br className = { classes.antiCollapse } />
                 {isBreakoutRoomsSupported && <RoomList searchString = { searchString } />}
                 {showAddRoomButton && <AddBreakoutRoomButton />}
