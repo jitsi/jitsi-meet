@@ -256,7 +256,6 @@ class LargeVideo extends Component<IProps, IState> {
             VideoLayout.updateLargeVideo(_largeVideoParticipantId, true, false);
         }
 
-        // Reset zoom and pan if the participant on large video changes.
         if (prevProps._largeVideoParticipantId !== _largeVideoParticipantId) {
             this.setState({
                 scale: 1,
@@ -265,7 +264,6 @@ class LargeVideo extends Component<IProps, IState> {
             });
         }
 
-        // Reset zoom and pan if the participant on large video changes.
         if (prevProps._largeVideoParticipantId !== _largeVideoParticipantId) {
             this.setState({
                 scale: 1,
@@ -468,17 +466,8 @@ class LargeVideo extends Component<IProps, IState> {
      * @returns {void}
      */
     _onTouchStart(e: React.TouchEvent) {
-        const { _state } = this.props;
         const { scale } = this.state;
-        const largeVideoParticipant = getLargeVideoParticipant(_state);
-        const videoTrack = getVideoTrackByParticipant(_state, largeVideoParticipant);
-        const isScreenShare = videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
 
-        if (!isScreenShare) {
-            return;
-        }
-
-        // If two fingers are down, it's a pinch. Set the flag and record the start position.
         if (e.touches.length === 2) {
             e.preventDefault();
             this._isPinching = true;
@@ -487,7 +476,6 @@ class LargeVideo extends Component<IProps, IState> {
             this._panStart = this._getPinchMidpoint(e.touches);
             this._gestureStartPan = { ...this.state.pan };
         } else if (e.touches.length === 1 && scale > 1) {
-        // If one finger is down and we're already zoomed in, it's a pan.
             e.preventDefault();
             this._isPanning = true;
             this._isPinching = false;
@@ -544,7 +532,6 @@ class LargeVideo extends Component<IProps, IState> {
     _onTouchEnd(e: React.TouchEvent) {
         const wasGesture = this._isPinching || this._isPanning;
 
-        // Reset gesture flags
         this._isPinching = false;
         this._isPanning = false;
 
@@ -573,7 +560,6 @@ class LargeVideo extends Component<IProps, IState> {
             if (finalScale <= 1) {
                 finalPan = { x: 0, y: 0 };
             } else {
-            // Clamp the final pan value to stay within the viewport bounds
                 const { clientWidth, clientHeight } = container;
                 const maxPanX = (clientWidth * finalScale - clientWidth) / 2;
                 const maxPanY = (clientHeight * finalScale - clientHeight) / 2;
@@ -608,20 +594,11 @@ class LargeVideo extends Component<IProps, IState> {
     /**
  * Handles the mouse wheel event for zooming on desktop.
  *
- * @param {WheelEvent} e - The native wheel event.  <-- CHANGE THIS TYPE.
+ * @param {WheelEvent} e - The wheel event.
  * @private
  * @returns {void}
  */
-    _onWheel(e: WheelEvent) { // <-- Note the change from React.WheelEvent to WheelEvent
-        const { _state } = this.props;
-        const largeVideoParticipant = getLargeVideoParticipant(_state);
-        const videoTrack = getVideoTrackByParticipant(_state, largeVideoParticipant);
-        const isScreenShare = videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
-
-        if (!isScreenShare) {
-            return;
-        }
-
+    _onWheel(e: WheelEvent) {
         e.preventDefault();
         e.stopPropagation();
 
@@ -650,24 +627,14 @@ class LargeVideo extends Component<IProps, IState> {
  * @returns {void}
  */
     _onMouseDown(e: React.MouseEvent) {
-    // Only pan with the primary mouse button (left-click) and only when zoomed in
         if (e.button !== 0 || this.state.scale <= 1) {
-            return;
-        }
-
-        const { _state } = this.props;
-        const largeVideoParticipant = getLargeVideoParticipant(_state);
-        const videoTrack = getVideoTrackByParticipant(_state, largeVideoParticipant);
-        const isScreenShare = videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
-
-        if (!isScreenShare) {
             return;
         }
 
         e.preventDefault();
         this._isPanning = true;
         this._panStart = { x: e.clientX, y: e.clientY };
-        this._gestureStartPan = { ...this.state.pan }; // Store pan state at drag start
+        this._gestureStartPan = { ...this.state.pan }; 
     }
 
     /**
@@ -686,7 +653,6 @@ class LargeVideo extends Component<IProps, IState> {
         const panX = this._gestureStartPan.x + (e.clientX - this._panStart.x);
         const panY = this._gestureStartPan.y + (e.clientY - this._panStart.y);
 
-        // Directly update the style for smooth, lag-free panning
         if (this._wrapperRef.current) {
             this._wrapperRef.current.style.transform = `scale(${this.state.scale}) translate(${panX}px, ${panY}px)`;
         }
@@ -706,7 +672,6 @@ class LargeVideo extends Component<IProps, IState> {
 
         this._isPanning = false;
 
-        // This logic is identical to _onTouchEnd for committing the final state
         const wrapper = this._wrapperRef.current;
         const container = this._containerRef.current;
 
@@ -719,7 +684,7 @@ class LargeVideo extends Component<IProps, IState> {
         const translateMatch = transform.match(/translate\(([^)]+)\)/);
 
         if (!scaleMatch || !translateMatch) {
-            return; // Exit if transform isn't set, as no change occurred
+            return; 
         }
 
         const finalScale = parseFloat(scaleMatch[1]);
@@ -729,7 +694,6 @@ class LargeVideo extends Component<IProps, IState> {
         if (finalScale <= 1) {
             finalPan = { x: 0, y: 0 };
         } else {
-        // Clamp the final pan value to stay within the viewport bounds
             const { clientWidth, clientHeight } = container;
             const maxPanX = (clientWidth * finalScale - clientWidth) / 2;
             const maxPanY = (clientHeight * finalScale - clientHeight) / 2;
@@ -740,7 +704,6 @@ class LargeVideo extends Component<IProps, IState> {
             };
         }
 
-        // Commit the final, clamped values to React's state in a single call
         this.setState({
             scale: finalScale,
             pan: finalPan

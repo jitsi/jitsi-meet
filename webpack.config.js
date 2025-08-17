@@ -249,7 +249,6 @@ function getDevServerConfig() {
                 warnings: false
             }
         },
-        allowedHosts: 'all',
         host: '::',
         hot: true,
         proxy: [
