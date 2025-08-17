@@ -106,12 +106,6 @@ interface IProps {
     _showSubtitles?: boolean;
 
     /**
-     * The entire redux state. Passed to the component to avoid re-calculating
-     * selectors in every method.
-     */
-    _state: IReduxState;
-
-    /**
      * The width of the vertical filmstrip (user resized).
      */
     _verticalFilmstripWidth?: number | null;
@@ -149,16 +143,6 @@ interface IState {
 }
 
 /**
-/**
- * The type of the React {@code Component} state of {@link LargeVideo}.
- */
-interface IState {
-    pan: {
-        x: number;
-        y: number;
-    };
-    scale: number;
-}
 
 /**
  * Implements a React {@link Component} which represents the large video (a.k.a.
@@ -188,12 +172,6 @@ class LargeVideo extends Component<IProps, IState> {
      */
     constructor(props: IProps) {
         super(props);
-
-        this.state = {
-            scale: 1,
-            pan: { x: 0,
-                y: 0 }
-        };
 
         this.state = {
             scale: 1,
@@ -263,14 +241,6 @@ class LargeVideo extends Component<IProps, IState> {
                     y: 0 }
             });
         }
-
-        if (prevProps._largeVideoParticipantId !== _largeVideoParticipantId) {
-            this.setState({
-                scale: 1,
-                pan: { x: 0,
-                    y: 0 }
-            });
-        }
     }
 
     /**
@@ -281,13 +251,12 @@ class LargeVideo extends Component<IProps, IState> {
      */
     override render() {
         const {
-            _state,
             _displayScreenSharingPlaceholder,
+            _isDisplayNameVisible,
             _noAutoPlayVideo,
             _showDominantSpeakerBadge,
             _whiteboardEnabled,
-            _showSubtitles,
-            _isDisplayNameVisible
+            _showSubtitles
         } = this.props;
 
         const { scale, pan } = this.state;
@@ -732,7 +701,6 @@ function _mapStateToProps(state: IReduxState) {
         && videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
 
     return {
-        _state: state,
         _backgroundAlpha: state['features/base/config'].backgroundAlpha,
         _customBackgroundColor: backgroundColor,
         _customBackgroundImageUrl: backgroundImageUrl,
