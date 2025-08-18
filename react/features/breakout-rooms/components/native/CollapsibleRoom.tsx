@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { openSheet } from '../../../base/dialog/actions';
 import CollapsibleList from '../../../participants-pane/components/native/CollapsibleList';
 import { IRoom } from '../../types';
+import { Participants } from '../../utils';
 
 import BreakoutRoomContextMenu from './BreakoutRoomContextMenu';
 import BreakoutRoomParticipantItem from './BreakoutRoomParticipantItem';
@@ -36,7 +37,7 @@ export const CollapsibleRoom = ({ room, roomId }: IProps) => {
     const _openContextMenu = useCallback(() => {
         dispatch(openSheet(BreakoutRoomContextMenu, { room }));
     }, [ room ]);
-    const roomParticipantsNr = Object.values(room.participants || {}).length;
+    const roomParticipantsNr = Participants.count(room);
     const title
         = `${room.name
     || t('breakoutRooms.mainRoom')} (${roomParticipantsNr})`;
@@ -46,7 +47,7 @@ export const CollapsibleRoom = ({ room, roomId }: IProps) => {
             onLongPress = { _openContextMenu }
             title = { title }>
             <FlatList
-                data = { Object.values(room.participants || {}) }
+                data = { Participants.values(room) }
                 keyExtractor = { _keyExtractor }
 
                 /* @ts-ignore */

@@ -9,6 +9,7 @@ import { IconArrowDown, IconArrowUp } from '../../../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
 import ListItem from '../../../../../base/ui/components/web/ListItem';
 import { IRoom } from '../../../../../breakout-rooms/types';
+import { Participants } from '../../../../../breakout-rooms/utils';
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
 import { ACTION_TRIGGER } from '../../../../constants';
 import { participantMatchesSearch } from '../../../../functions';
@@ -144,8 +145,7 @@ export const CollapsibleRoom = ({
     </button>);
 
     const roomName = (<span className = { styles.roomName }>
-        {`${room.name || t('breakoutRooms.mainRoom')} (${Object.keys(room?.participants
-            || {}).length})`}
+        {`${room.name || t('breakoutRooms.mainRoom')} (${Participants.count(room)})`}
     </span>);
 
     const raiseParticipantMenu = useCallback(({ participantID, displayName }) => moderator
@@ -159,8 +159,7 @@ export const CollapsibleRoom = ({
         <ListItem
             actions = { children }
             className = { cx(styles.container, 'breakout-room-container') }
-            defaultName = { `${room.name || t('breakoutRooms.mainRoom')} (${Object.keys(room?.participants
-                || {}).length})` }
+            defaultName = { `${room.name || t('breakoutRooms.mainRoom')} (${Participants.count(room)})` }
             icon = { arrow }
             isHighlighted = { isHighlighted }
             onClick = { toggleCollapsed }
@@ -170,7 +169,7 @@ export const CollapsibleRoom = ({
             textChildren = { roomName }
             trigger = { actionsTrigger } />
         {!collapsed && room?.participants
-            && Object.values(room?.participants || {}).map(p =>
+            && Participants.values(room).map(p =>
                 participantMatchesSearch(p, searchString) && (
                     <ParticipantItem
                         actionsTrigger = { ACTION_TRIGGER.HOVER }

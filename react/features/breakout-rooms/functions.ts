@@ -13,6 +13,7 @@ import { toState } from '../base/redux/functions';
 
 import { FEATURE_KEY } from './constants';
 import { IRoom, IRoomInfo, IRoomInfoParticipant, IRooms, IRoomsInfo } from './types';
+import { Participants } from './utils';
 
 /**
  * Returns the rooms object for breakout rooms.
@@ -94,34 +95,33 @@ export const getRoomsInfo = (stateful: IStateful) => {
         } as IRoomsInfo;
     }
 
-    return {
-        ...initialRoomsInfo,
-        rooms: Object.keys(breakoutRooms).map(breakoutRoomKey => {
-            const breakoutRoomItem = breakoutRooms[breakoutRoomKey];
-
             return {
-                isMainRoom: Boolean(breakoutRoomItem.isMainRoom),
-                id: breakoutRoomItem.id,
-                jid: breakoutRoomItem.jid,
-                participants: breakoutRoomItem.participants && Object.keys(breakoutRoomItem.participants).length
-                    ? Object.keys(breakoutRoomItem.participants).map(participantLongId => {
-                        const participantItem = breakoutRoomItem.participants[participantLongId];
-                        const ids = participantLongId.split('/');
-                        const storeParticipant = getParticipantById(stateful,
-                            ids.length > 1 ? ids[1] : participantItem.jid);
+            ...initialRoomsInfo,
+            rooms: Object.keys(breakoutRooms).map(breakoutRoomKey => {
+                const breakoutRoomItem = breakoutRooms[breakoutRoomKey];
 
-                        return {
-                            jid: participantItem?.jid,
-                            role: participantItem?.role,
-                            displayName: participantItem?.displayName,
-                            avatarUrl: storeParticipant?.loadableAvatarUrl,
-                            id: storeParticipant ? storeParticipant.id
-                                : participantLongId
-                        } as IRoomInfoParticipant;
-                    }) : []
-            } as IRoomInfo;
-        })
-    } as IRoomsInfo;
+                return {
+                    isMainRoom: Boolean(breakoutRoomItem.isMainRoom),
+                    id: breakoutRoomItem.id,
+                    jid: breakoutRoomItem.jid,
+                    participants: breakoutRoomItem.participants && Participants.count(breakoutRoomItem)
+                        ? Participants.values(breakoutRoomItem).map(participantItem => {
+                            const ids = participantItem.jid.split('/');
+                            const storeParticipant = getParticipantById(stateful,
+                                ids.length > 1 ? ids[1] : participantItem.jid);
+
+                            return {
+                                jid: participantItem?.jid,
+                                role: participantItem?.role,
+                                displayName: participantItem?.displayName,
+                                avatarUrl: storeParticipant?.loadableAvatarUrl,
+                                id: storeParticipant ? storeParticipant.id
+                                    : participantItem.jid
+                            } as IRoomInfoParticipant;
+                        }) : []
+                } as IRoomInfo;
+            })
+        } as IRoomsInfo;
 };
 
 /**
