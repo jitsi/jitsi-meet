@@ -512,7 +512,8 @@ const Chat = ({
                     _focusedTab !== ChatTabs.CHAT && _nbUnreadMessages > 0 ? _nbUnreadMessages : undefined,
                 id: ChatTabs.CHAT,
                 controlsId: `${ChatTabs.CHAT}-panel`,
-                icon: IconMessage
+                icon: IconMessage,
+                title: t('chat.tabs.chat')
             }
         ];
 
@@ -522,7 +523,8 @@ const Chat = ({
                 countBadge: _focusedTab !== ChatTabs.POLLS && _nbUnreadPolls > 0 ? _nbUnreadPolls : undefined,
                 id: ChatTabs.POLLS,
                 controlsId: `${ChatTabs.POLLS}-panel`,
-                icon: IconInfo
+                icon: IconInfo,
+                title: t('chat.tabs.polls')
             });
         }
 
@@ -532,7 +534,8 @@ const Chat = ({
                 countBadge: undefined,
                 id: ChatTabs.CLOSED_CAPTIONS,
                 controlsId: `${ChatTabs.CLOSED_CAPTIONS}-panel`,
-                icon: IconSubtitles
+                icon: IconSubtitles,
+                title: t('chat.tabs.closedCaptions')
             });
         }
 
@@ -542,7 +545,8 @@ const Chat = ({
                 countBadge: undefined,
                 id: ChatTabs.FILE_SHARING,
                 controlsId: `${ChatTabs.FILE_SHARING}-panel`,
-                icon: IconShareDoc
+                icon: IconShareDoc,
+                title: t('chat.tabs.fileSharing')
             });
         }
 
