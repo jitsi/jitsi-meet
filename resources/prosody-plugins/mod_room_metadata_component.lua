@@ -317,8 +317,7 @@ end
 
 -- Send a message update for metadata before sending the first self presence
 function filter_stanza(stanza, session)
-    if not stanza.attr or not stanza.attr.to or stanza.name ~= 'presence'
-        or stanza.attr.type == 'unavailable' or ends_with(stanza.attr.from, '/focus') then
+    if not stanza.attr or not stanza.attr.to or stanza.name ~= 'presence' or stanza.attr.type == 'unavailable' then
         return stanza;
     end
 
