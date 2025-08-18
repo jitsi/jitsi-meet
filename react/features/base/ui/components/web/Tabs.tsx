@@ -17,6 +17,7 @@ interface ITabProps {
         icon?: Function;
         id: string;
         label?: string;
+        title?: string;
     }>;
 }
 
@@ -126,26 +127,34 @@ const Tabs = ({
             aria-label = { accessibilityLabel }
             className = { cx(classes.container, className) }
             role = 'tablist'>
-            {tabs.map((tab, index) => (
-                <button
-                    aria-controls = { tab.controlsId }
-                    aria-label = { tab.accessibilityLabel }
-                    aria-selected = { selected === tab.id }
-                    className = { cx(classes.tab, selected === tab.id && 'selected', isMobile && 'is-mobile') }
-                    disabled = { tab.disabled }
-                    id = { tab.id }
-                    key = { tab.id }
-                    onClick = { onClick(tab.id) }
-                    onKeyDown = { onKeyDown(index) }
-                    role = 'tab'
-                    tabIndex = { selected === tab.id ? undefined : -1 }>
-                    {tab.icon && <Icon
-                        className = { classes.icon }
-                        src = { tab.icon } />}
-                    {tab.label}
-                    {tab.countBadge && <span className = { classes.badge }>{tab.countBadge}</span>}
-                </button>
-            ))}
+            {
+                tabs.map((tab, index) => (
+                    <button
+                        aria-controls = { tab.controlsId }
+                        aria-label = { tab.accessibilityLabel }
+                        aria-selected = { selected === tab.id }
+                        className = { cx(classes.tab, selected === tab.id && 'selected', isMobile && 'is-mobile') }
+                        disabled = { tab.disabled }
+                        id = { tab.id }
+                        key = { tab.id }
+                        onClick = { onClick(tab.id) }
+                        onKeyDown = { onKeyDown(index) }
+                        role = 'tab'
+                        tabIndex = { selected === tab.id ? undefined : -1 }
+                        title = { tab.title }>
+                        {
+                            tab.icon && <Icon
+                                className = { classes.icon }
+                                src = { tab.icon } />
+                        }
+                        { tab.label }
+                        {
+                            tab.countBadge && <span className = { classes.badge }>
+                                { tab.countBadge }
+                            </span>
+                        }
+                    </button>
+                ))}
         </div>
     );
 };
