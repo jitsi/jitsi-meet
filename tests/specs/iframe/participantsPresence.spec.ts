@@ -2,6 +2,7 @@ import { isEqual } from 'lodash-es';
 
 import { P1, P2, Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
+import { config as testsConfig } from '../../helpers/TestsConfig';
 import { ensureTwoParticipants, parseJid } from '../../helpers/participants';
 
 setTestProperties(__filename, {
@@ -45,7 +46,7 @@ async function checkParticipantLeftHook(p: Participant, reason: string, checkId 
 
             expect(event.data.id).toBe(jwtPayload?.context?.user?.id);
             expect(event.data.group).toBe(jwtPayload?.context?.group);
-            expect(event.customerId).toBe(process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', ''));
+            expect(event.customerId).toBe(testsConfig.iframe.customerId);
         }
     }
 }

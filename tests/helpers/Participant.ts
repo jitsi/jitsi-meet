@@ -27,6 +27,7 @@ import Toolbar from '../pageobjects/Toolbar';
 import VideoQualityDialog from '../pageobjects/VideoQualityDialog';
 import Visitors from '../pageobjects/Visitors';
 
+import { config as testsConfig } from './TestsConfig';
 import { LOG_PREFIX, logInfo } from './browserLogger';
 import { IToken } from './token';
 import { IParticipantJoinOptions, IParticipantOptions } from './types';
@@ -225,8 +226,8 @@ export class Participant {
             // @ts-ignore
             url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${options.roomName}"`;
 
-            if (process.env.IFRAME_TENANT) {
-                url = `${url}&tenant="${process.env.IFRAME_TENANT}"`;
+            if (testsConfig.iframe.tenant) {
+                url = `${url}&tenant="${testsConfig.iframe.tenant}"`;
             } else if (baseUrl.pathname.length > 1) {
                 // remove leading slash
                 url = `${url}&tenant="${baseUrl.pathname.substring(1)}"`;

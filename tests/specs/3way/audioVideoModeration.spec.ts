@@ -1,4 +1,5 @@
 import { Participant } from '../../helpers/Participant';
+import { config } from '../../helpers/TestsConfig';
 import {
     ensureOneParticipant,
     ensureThreeParticipants, ensureTwoParticipants,
@@ -78,7 +79,7 @@ describe('AVModeration', () => {
 
     it('hangup and change moderator', async () => {
         // no moderator switching if jaas is available.
-        if (ctx.iFrameUsesJaas) {
+        if (config.iframe.usesJaas) {
             return;
         }
 

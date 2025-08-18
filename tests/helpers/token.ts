@@ -2,6 +2,8 @@ import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 
+import { config } from './TestsConfig';
+
 export type ITokenOptions = {
     displayName?: string;
     /**
@@ -10,12 +12,12 @@ export type ITokenOptions = {
     exp?: string;
     /**
      * The key ID to use for the token.
-     * If not provided, JWT_KID will be used from the environment variables.
+     * If not provided, the kid configured with environment variables will be used (see env.example).
      */
     keyId?: string;
     /**
      * The path to the private key file used to sign the token.
-     * If not provided, JWT_PRIVATE_KEY_PATH will be used from the environment variables.
+     * If not provided, the path configured with environment variables will be used (see env.example).
      */
     keyPath?: string;
     /**
@@ -91,8 +93,8 @@ export function generatePayload(options: ITokenOptions): any {
  * Generate a signed token.
  */
 export function generateToken(options: ITokenOptions): IToken {
-    const keyId = options.keyId || process.env.JWT_KID;
-    const keyPath = options.keyPath || process.env.JWT_PRIVATE_KEY_PATH;
+    const keyId = options.keyId || config.jwt.kid;
+    const keyPath = options.keyPath || config.jwt.privateKeyPath;
     const headers = {
         algorithm: 'RS256',
         noTimestamp: true,
@@ -101,11 +103,11 @@ export function generateToken(options: ITokenOptions): IToken {
     };
 
     if (!keyId) {
-        throw new Error('JWT_KID is not set');
+        throw new Error('No keyId provided (JWT_KID is not set?)');
     }
 
     if (!keyPath) {
-        throw new Error('JWT_PRIVATE_KEY_PATH is not set');
+        throw new Error('No keyPath provided (JWT_PRIVATE_KEY_PATH is not set?)');
     }
 
     const key = fs.readFileSync(keyPath);
