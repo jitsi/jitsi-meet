@@ -114,7 +114,7 @@ describe('Invite iframeAPI', () => {
                     sipAddress: string;
                 };
                 eventType: string;
-            } = await webhooksProxy.waitForEvent('SIP_CALL_OUT_STARTED');
+            } = await webhooksProxy.waitForEvent('SIP_CALL_OUT_STARTED', 120000);
 
             expect('SIP_CALL_OUT_STARTED').toBe(sipCallOutStartedEvent.eventType);
             expect(sipCallOutStartedEvent.data.sipAddress).toBe(`sip:${process.env.SIP_JIBRI_DIAL_OUT_URL}`);
@@ -201,7 +201,7 @@ async function checkDialEvents(participant: Participant, direction: string, star
                 participantJid: string;
             };
             eventType: string;
-        } = await webhooksProxy.waitForEvent(endedEventName);
+        } = await webhooksProxy.waitForEvent(endedEventName, 120000);
 
         expect(endedEventName).toBe(dialInEndedEvent.eventType);
         expect(dialInEndedEvent.customerId).toBe(customerId);

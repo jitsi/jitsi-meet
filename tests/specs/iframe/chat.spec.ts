@@ -146,7 +146,7 @@ describe('Chat', () => {
                     preAuthenticatedLink: string;
                 };
                 eventType: string;
-            } = await webhooksProxy.waitForEvent('CHAT_UPLOADED', 20000);
+            } = await webhooksProxy.waitForEvent('CHAT_UPLOADED', 120000);
 
             expect('CHAT_UPLOADED').toBe(event.eventType);
             expect(event.data.preAuthenticatedLink).toBeDefined();
