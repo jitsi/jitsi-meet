@@ -15,7 +15,7 @@
  */
 
 #import <React/RCTBridgeModule.h>
-#include "../../../shared/hermes-sandbox/hermes_sandbox.h"
+#include <hermes_sandbox.h>
 
 @interface JavaScriptSandbox : NSObject<RCTBridgeModule>
 @end

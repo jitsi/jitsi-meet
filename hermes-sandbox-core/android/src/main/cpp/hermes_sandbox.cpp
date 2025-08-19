@@ -2,7 +2,7 @@
 #include <string>
 
 // Include the shared platform-agnostic core
-#include "../../../shared/hermes-sandbox/hermes_sandbox.h"
+#include <hermes_sandbox.h>
 
 // Direct JNI functions that can be called from React Native
 extern "C" {

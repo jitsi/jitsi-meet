@@ -35,7 +35,7 @@ android {
     // Native build support for Hermes sandbox
     externalNativeBuild {
         cmake {
-            path "src/main/cpp/CMakeLists.txt"
+            path file("../../node_modules/hermes-sandbox-core/android/src/main/cpp/CMakeLists.txt")
         }
     }
     

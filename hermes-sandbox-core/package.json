@@ -1,0 +1,19 @@
+{
+  "name": "hermes-sandbox-core",
+  "version": "0.0.0",
+  "description": "Sandbox module with a Hermes twist",
+  "main": "src/index",
+  "codegenConfig": {
+    "name": "HermesSandboxCoreSpec",
+    "type": "modules",
+    "jsSrcsDir": "src"
+  },
+  "author": " <> ()",
+  "license": "UNLICENSED",
+  "homepage": "#readme",
+  "create-react-native-library": {
+    "languages": "kotlin-objc",
+    "type": "turbo-module",
+    "version": "0.52.1"
+  }
+}
