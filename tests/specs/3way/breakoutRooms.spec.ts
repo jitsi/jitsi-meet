@@ -40,6 +40,20 @@ console.log('1111');
 
 console.log('22222');
         await p2.getParticipantsPane().open();
+console.log('willl add listeners');
+        await p2.execute(() => {
+            console.log('adddingggggggg listeners');
+
+            APP.store.getState()['features/base/conference'].conference.on('conference.breakout-rooms.updated', ({ rooms, roomCounter }) => {
+                console.log('receiveddd1', roomCounter);
+            });
+            APP.store.getState()['features/base/conference'].conference.room.addListener(
+                'xmpp.breakout-rooms.updated',
+                ({ rooms, roomCounter }) => {
+                    console.log('receiveddd2', roomCounter);
+                }
+            );
+        });
 
         let res = await p2.execute(() => JSON.stringify(Object.getOwnPropertyNames(
                 APP.store.getState()['features/base/conference'].conference.eventEmitter._events)));
