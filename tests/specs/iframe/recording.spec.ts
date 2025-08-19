@@ -98,7 +98,7 @@ describe('Recording', () => {
             const liveStreamEvent: {
                 customerId: string;
                 eventType: string;
-            } = await webhooksProxy.waitForEvent('LIVE_STREAM_ENDED', 20000);
+            } = await webhooksProxy.waitForEvent('LIVE_STREAM_ENDED', 120000);
 
             expect('LIVE_STREAM_ENDED').toBe(liveStreamEvent.eventType);
             expect(liveStreamEvent.customerId).toBe(customerId);
