@@ -39,6 +39,8 @@ console.log('1111');
             });
 
 console.log('22222');
+        await p2.getParticipantsPane().open();
+console.log('33333');
         // second participant should also see one breakout room
         await p2.driver.waitUntil(
             async () => await p2.getBreakoutRooms().getRoomsCount() === 1, {
