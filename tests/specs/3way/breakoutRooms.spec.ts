@@ -29,19 +29,29 @@ describe('BreakoutRooms', () => {
         await p1.driver.pause(2000);
         expect(await p1BreakoutRooms.getRoomsCount()).toBe(0);
 console.log('0000');
-        // add one breakout room
-        await p1BreakoutRooms.addBreakoutRoom();
-console.log('1111');
-        await p1.driver.waitUntil(
-            async () => await p1BreakoutRooms.getRoomsCount() === 1, {
-                timeout: 6000,
-                timeoutMsg: 'No breakout room added for p1'
+
+        console.log('willl add listeners');
+        await p2.execute(() => {
+            console.log('adddingggggggg listeners');
+
+            APP.store.getState()['features/base/conference'].conference.on('conference.breakout-rooms.updated', ({ rooms, roomCounter }) => {
+                console.log('receiveddd1', roomCounter);
             });
 
-console.log('22222');
-        await p2.getParticipantsPane().open();
-console.log('willl add listeners');
-        await p2.execute(() => {
+            APP.store.getState()['features/base/conference'].conference.room.addListener(
+                'xmpp.breakout-rooms.updated',
+                ({ rooms, roomCounter }) => {
+                    console.log('receiveddd2', roomCounter);
+                }
+            );
+            APP.store.getState()['features/base/conference'].conference.room.xmpp.addListener(
+                'xmpp.breakout-rooms.event',
+                (payload) => {
+                    console.log('receiveddd3', JSON.stringify(payload));
+                }
+            );
+        });
+        await p1.execute(() => {
             console.log('adddingggggggg listeners');
 
             APP.store.getState()['features/base/conference'].conference.on('conference.breakout-rooms.updated', ({ rooms, roomCounter }) => {
@@ -53,7 +63,26 @@ console.log('willl add listeners');
                     console.log('receiveddd2', roomCounter);
                 }
             );
+            APP.store.getState()['features/base/conference'].conference.room.xmpp.addListener(
+                'xmpp.breakout-rooms.event',
+                (payload) => {
+                    console.log('receiveddd3', JSON.stringify(payload));
+                }
+            );
         });
+
+        // add one breakout room
+        await p1BreakoutRooms.addBreakoutRoom();
+console.log('1111');
+        await p1.driver.waitUntil(
+            async () => await p1BreakoutRooms.getRoomsCount() === 1, {
+                timeout: 6000,
+                timeoutMsg: 'No breakout room added for p1'
+            });
+
+console.log('22222');
+        await p2.getParticipantsPane().open();
+
 
         let res = await p2.execute(() => JSON.stringify(Object.getOwnPropertyNames(
                 APP.store.getState()['features/base/conference'].conference.eventEmitter._events)));
