@@ -116,7 +116,7 @@ async function muteP1BeforeP2JoinsAndScreenshare(p2p: boolean) {
         await p2.waitForIceConnected();
     }
 
-    await p2.waitForSendReceiveData({ checkReceive: false });
+    await p2.waitForSendMedia();
 
     // Check if p1 appears video muted on p2.
     await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1);

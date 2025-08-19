@@ -67,11 +67,8 @@ describe('Visitors', () => {
         await p1Visitors.goLive();
 
         await p2.waitToJoinMUC();
-
-        await p2.waitForSendReceiveData({
-            checkSend: false,
-            msg: 'Visitor is not receiving media'
-        }).then(() => p2.waitForRemoteStreams(1));
+        await p2.waitForReceiveMedia(15000, 'Visitor is not receiving media');
+        await p2.waitForRemoteStreams(1);
 
         await p2.driver.waitUntil(() => p2Visitors.hasVisitorsDialog(), {
             timeout: 5000,
