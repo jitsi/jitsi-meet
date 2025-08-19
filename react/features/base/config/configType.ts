@@ -521,7 +521,6 @@ export interface IConfig {
         preCallTestEnabled?: boolean;
         preCallTestICEUrl?: string;
     };
-    prejoinPageEnabled?: boolean;
     raisedHands?: {
         disableLowerHandByModerator?: boolean;
         disableLowerHandNotification?: boolean;
