@@ -57,7 +57,5 @@ async function joinWithPassword(instanceId: string, token: IToken) {
 
     expect(await p.isInMuc()).toBe(true);
     expect(await p.getPasswordDialog().isOpen()).toBe(false);
-
-    await p.hangup();
 }
 

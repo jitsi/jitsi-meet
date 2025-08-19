@@ -39,5 +39,6 @@ Promise<Participant> {
     }, {
         forceTenant: config.jaas.tenant,
         roomName
-    });
+    },
+        false);
 }
