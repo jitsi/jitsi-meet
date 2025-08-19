@@ -28,17 +28,17 @@ describe('BreakoutRooms', () => {
         // there should be no breakout rooms initially, list is sent with a small delay
         await p1.driver.pause(2000);
         expect(await p1BreakoutRooms.getRoomsCount()).toBe(0);
-
+console.log('0000');
         // add one breakout room
         await p1BreakoutRooms.addBreakoutRoom();
-
+console.log('1111');
         await p1.driver.waitUntil(
             async () => await p1BreakoutRooms.getRoomsCount() === 1, {
                 timeout: 6000,
                 timeoutMsg: 'No breakout room added for p1'
             });
 
-
+console.log('22222');
         // second participant should also see one breakout room
         await p2.driver.waitUntil(
             async () => await p2.getBreakoutRooms().getRoomsCount() === 1, {

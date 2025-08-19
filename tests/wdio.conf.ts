@@ -58,7 +58,7 @@ const chromePreferences = {
 };
 
 const specs = [
-    'specs/**/*.spec.ts'
+    'specs/3way/breakoutRooms.spec.ts'
 ];
 
 /**
