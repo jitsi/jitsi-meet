@@ -37,13 +37,6 @@ export const P2 = 'p2';
 export const P3 = 'p3';
 export const P4 = 'p4';
 
-interface IWaitForSendReceiveDataOptions {
-    checkReceive?: boolean;
-    checkSend?: boolean;
-    msg?: string;
-    timeout?: number;
-}
-
 /**
  * Participant.
  */
@@ -425,37 +418,50 @@ export class Participant {
     }
 
     /**
-     * Waits for send and receive data.
+     * Waits until the conference stats show positive upload and download bitrate (independently).
      *
-     * @param {Object} options
-     * @param {boolean} options.checkSend - If true we will chec
      * @returns {Promise<boolean>}
      */
-    waitForSendReceiveData({
-        checkSend = true,
-        checkReceive = true,
-        timeout = 15_000,
-        msg
-    } = {} as IWaitForSendReceiveDataOptions): Promise<boolean> {
-        if (!checkSend && !checkReceive) {
-            return Promise.resolve(true);
-        }
+    async waitForSendReceiveData(timeout = 15_000, msg?: string): Promise<boolean> {
+        const values = await Promise.all([
+            await this.waitForSendMedia(timeout, msg ? `${msg} (send)` : undefined),
+            await this.waitForReceiveMedia(timeout, msg ? `${msg} (receive)` : undefined)
+        ]);
 
-        const lMsg = msg ?? `expected to ${
-            checkSend && checkReceive ? 'receive/send' : checkSend ? 'send' : 'receive'} data in 15s for ${this.name}`;
+        return values[0] && values[1];
+    }
 
-        return this.driver.waitUntil(() => this.execute((pCheckSend: boolean, pCheckReceive: boolean) => {
-            const stats = APP?.conference?.getStats();
-            const bitrateMap = stats?.bitrate || {};
-            const rtpStats = {
-                uploadBitrate: bitrateMap.upload || 0,
-                downloadBitrate: bitrateMap.download || 0
-            };
+    /**
+     * Waits until the conference stats show positive upload bitrate.
+     * @param timeout max time to wait in ms
+     * @param timeoutMsg the message to log if the timeout is reached
+     */
+    async waitForSendMedia(
+            timeout = 15_000,
+            timeoutMsg = `expected to send media in ${timeout / 1000}s for ${this.name}`): Promise<boolean> {
 
-            return (rtpStats.uploadBitrate > 0 || !pCheckSend) && (rtpStats.downloadBitrate > 0 || !pCheckReceive);
-        }, checkSend, checkReceive), {
+        return this.driver.waitUntil(() => this.execute(() => {
+            return APP?.conference?.getStats()?.bitrate?.upload > 0;
+        }), {
             timeout,
-            timeoutMsg: lMsg
+            timeoutMsg
+        });
+    }
+
+    /**
+     * Waits until the conference stats show positive upload bitrate.
+     * @param timeout max time to wait in ms
+     * @param timeoutMsg the message to log if the timeout is reached
+     */
+    async waitForReceiveMedia(
+            timeout = 15_000,
+            timeoutMsg = `expected to receive media in ${timeout / 1000}s for ${this.name}`): Promise<boolean> {
+
+        return this.driver.waitUntil(() => this.execute(() => {
+            return APP?.conference?.getStats()?.bitrate?.download > 0;
+        }), {
+            timeout,
+            timeoutMsg
         });
     }
 

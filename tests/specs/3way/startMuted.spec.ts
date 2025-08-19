@@ -53,7 +53,7 @@ describe('StartMuted', () => {
         const p2EndpointId = await p2.getEndpointId();
 
         await p2.waitForIceConnected();
-        await p2.waitForSendReceiveData({ checkSend: false });
+        await p2.waitForReceiveMedia();
 
         await p2.getFilmstrip().assertAudioMuteIconIsDisplayed(p2);
         await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2);
@@ -88,7 +88,7 @@ describe('StartMuted', () => {
         const { p3 } = ctx;
 
         await p3.waitForIceConnected();
-        await p3.waitForSendReceiveData({ checkSend: false });
+        await p3.waitForReceiveMedia();
 
         await p3.getFilmstrip().assertAudioMuteIconIsDisplayed(p2, true);
         await p3.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2, true);
@@ -118,7 +118,7 @@ describe('StartMuted', () => {
         const { p2 } = ctx;
 
         await p2.waitForIceConnected();
-        await p2.waitForSendReceiveData({ checkSend: false });
+        await p2.waitForReceiveMedia();
 
         await joinThirdParticipant({
             ...options,
@@ -128,7 +128,7 @@ describe('StartMuted', () => {
         const { p3 } = ctx;
 
         await p3.waitForIceConnected();
-        await p3.waitForSendReceiveData({ checkSend: false });
+        await p3.waitForReceiveMedia();
 
         const { p1 } = ctx;
 
@@ -240,7 +240,7 @@ describe('StartMuted', () => {
         const { p1, p2 } = ctx;
 
         await p2.waitForIceConnected();
-        await p2.waitForSendReceiveData({ checkReceive: false });
+        await p2.waitForSendMedia();
 
         await p2.waitForAudioMuted(p1, true);
         await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1);

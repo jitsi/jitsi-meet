@@ -47,10 +47,8 @@ describe('Visitors', () => {
 
         const { p1, p2, webhooksProxy } = ctx;
 
-        await p2.waitForSendReceiveData({
-            checkSend: false,
-            msg: 'Visitor is not receiving media'
-        }).then(() => p2.waitForRemoteStreams(1));
+        await p2.waitForReceiveMedia(15_000, 'Visitor is not receiving media');
+        await p2.waitForRemoteStreams(1);
 
         const p2Visitors = p2.getVisitors();
         const p1Visitors = p1.getVisitors();
