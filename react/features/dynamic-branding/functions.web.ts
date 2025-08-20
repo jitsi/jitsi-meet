@@ -1,10 +1,21 @@
 import { Theme } from '@mui/material';
 import { adaptV4Theme, createTheme } from '@mui/material/styles';
+import DOMPurify from 'dompurify';
 
 import { breakpoints, colorMap, font, shape, spacing, typography } from '../base/ui/Tokens';
 import { createColorTokens } from '../base/ui/utils';
 
 const DEFAULT_FONT_SIZE = 16;
+
+/**
+ * Sanitizes the given SVG by removing dangerous elements.
+ *
+ * @param {string} svg - The SVG string to clean.
+ * @returns {string} The sanitized SVG string.
+ */
+export function cleanSvg(svg: string): string {
+    return DOMPurify.sanitize(svg);
+}
 
 /**
  * Converts unitless fontSize and lineHeight values in a typography style object to rem units.
