@@ -53,6 +53,10 @@ function copyFolderRecursiveSync(source, target) {
 }
 
 copyFolderRecursiveSync(
+    '../hermes-sandbox-core',
+    '.'
+);
+copyFolderRecursiveSync(
     '../images',
     '.'
 );

@@ -50,6 +50,13 @@ android {
     sourceCompatibility JavaVersion.VERSION_17
     targetCompatibility JavaVersion.VERSION_17
   }
+
+  // Native build support for Hermes sandbox
+  externalNativeBuild {
+      cmake {
+          path file("../node_modules/hermes-sandbox-core/android/src/main/cpp/CMakeLists.txt")
+      }
+  }
 }
 
 repositories {
