@@ -165,14 +165,16 @@ export async function ensureTwoParticipants(options?: IJoinOptions): Promise<voi
 }
 
 /**
- * Creates a participant instance or prepares one for re-joining.
+ * Creates a new participant instance, or returns an existing one if it is already joined.
  * @param participantOptions - The participant options, with required name set.
  * @param {boolean} options - Join options.
+ * @param reuse whether to reuse an existing participant instance if one is available.
  * @returns {Promise<Participant>} - The participant instance.
  */
-export async function joinParticipant( // eslint-disable-line max-params
+async function joinParticipant( // eslint-disable-line max-params
         participantOptions: IParticipantOptions,
-        options?: IJoinOptions): Promise<Participant> {
+        options?: IJoinOptions
+): Promise<Participant> {
 
     participantOptions.iFrameApi = ctx.testProperties.useIFrameApi;
 
@@ -195,8 +197,6 @@ export async function joinParticipant( // eslint-disable-line max-params
 
         // Change the page so we can reload same url if we need to, base.html is supposed to be empty or close to empty
         await p.driver.url('/base.html');
-
-        // we want the participant instance re-recreated so we clear any kept state, like endpoint ID
     }
 
     const newParticipant = new Participant(participantOptions);
@@ -211,13 +211,12 @@ export async function joinParticipant( // eslint-disable-line max-params
         && config.iframe.usesJaas && config.iframe.tenant) {
         forceTenant = config.iframe.tenant;
     }
-    await newParticipant.joinConference({
+
+    return await newParticipant.joinConference({
         ...options,
         forceTenant,
         roomName: options?.roomName || ctx.roomName,
     });
-
-    return newParticipant;
 }
 
 /**

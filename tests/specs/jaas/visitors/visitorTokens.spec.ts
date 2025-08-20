@@ -45,8 +45,6 @@ describe('Visitors triggered by visitor tokens', () => {
         expect(await v.isVisitor()).toBe(true);
         console.log('Visitor joined');
 
-        await p.hangup();
-
         // Joining with a participant token after visitors...:mindblown:
         const v2 = await joinMuc(
             'p2',

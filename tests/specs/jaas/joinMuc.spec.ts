@@ -13,8 +13,6 @@ describe('XMPP login and MUC join test', () => {
 
         expect(await p.isInMuc()).toBe(true);
         expect(await p.isModerator()).toBe(false);
-
-        await p.hangup();
     });
 
     it('with a valid token (specific room)', async () => {
@@ -23,8 +21,6 @@ describe('XMPP login and MUC join test', () => {
 
         expect(await p.isInMuc()).toBe(true);
         expect(await p.isModerator()).toBe(false);
-
-        await p.hangup();
     });
 
     it('with a token with bad signature', async () => {
@@ -41,8 +37,6 @@ describe('XMPP login and MUC join test', () => {
             || await p.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TITLE_TEST_ID);
 
         expect(errorText).toContain('not allowed to join');
-
-        await p.hangup();
     });
 
     it('with an expired token', async () => {
@@ -54,8 +48,6 @@ describe('XMPP login and MUC join test', () => {
         const errorText = await p.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TITLE_TEST_ID);
 
         expect(errorText).toContain('Token is expired');
-
-        await p.hangup();
     });
 
     it('with a token using the wrong key ID', async () => {
@@ -67,8 +59,6 @@ describe('XMPP login and MUC join test', () => {
         const errorText = await p.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TEST_ID);
 
         expect(errorText).toContain('not allowed to join');
-
-        await p.hangup();
     });
 
     it('with a token for a different room', async () => {
@@ -80,8 +70,6 @@ describe('XMPP login and MUC join test', () => {
         const errorText = await p.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TEST_ID);
 
         expect(errorText).toContain('not allowed to join');
-
-        await p.hangup();
     });
 
     it('with a moderator token', async () => {
@@ -90,8 +78,6 @@ describe('XMPP login and MUC join test', () => {
 
         expect(await p.isInMuc()).toBe(true);
         expect(await p.isModerator()).toBe(true);
-
-        await p.hangup();
     });
 
     // This is dependent on jaas account configuration. All tests under jaas/ expect that "unauthenticated access" is
@@ -105,8 +91,6 @@ describe('XMPP login and MUC join test', () => {
         const errorText = await p.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TEST_ID);
 
         expect(errorText).toContain('not allowed to join');
-
-        await p.hangup();
     });
 
     // it('without sending a conference-request', async () => {
