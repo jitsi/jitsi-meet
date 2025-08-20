@@ -188,7 +188,7 @@ export class Participant {
      * @param {IParticipantJoinOptions} options - Options for joining.
      * @returns {Promise<void>}
      */
-    async joinConference(options: IParticipantJoinOptions): Promise<void> {
+    async joinConference(options: IParticipantJoinOptions): Promise<Participant> {
         const config = {
             room: options.roomName,
             configOverwrite: {
@@ -254,6 +254,8 @@ export class Participant {
         }
 
         await this.postLoadProcess();
+
+        return this;
     }
 
     /**
