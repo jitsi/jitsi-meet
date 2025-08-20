@@ -4,7 +4,8 @@ import { joinMuc, generateJaasToken as t } from '../helpers/jaas';
 
 setTestProperties(__filename, {
     useJaas: true,
-    useWebhookProxy: true
+    useWebhookProxy: true,
+    usesBrowsers: [ 'p1', 'p2' ]
 });
 
 const passcode = '1234';
@@ -16,22 +17,11 @@ describe('Setting passcode through settings provisioning', () => {
             visitorsEnabled: true
         };
 
+        // We want to keep the room from getting destroyed, because the visitors queue has a timeout and causes
+        // problems. We could use different rooms instead, but the webhooksProxy is only configured for the default room.
         await joinWithPassword('p1', t({ room: ctx.roomName }));
-        await joinWithPassword('p1', t({ room: ctx.roomName, moderator: true }));
-        await joinWithPassword('p1', t({ room: ctx.roomName, visitor: true }));
-    });
-    it('With an invalid passcode', async () => {
-        ctx.webhooksProxy.defaultMeetingSettings = {
-            passcode: 'passcode-must-be-digits-only'
-        };
-
-        const roomName = ctx.roomName + '-2';
-        const p = await joinMuc('p1', t({ room: roomName }), roomName);
-
-        // Setting the passcode should fail, resulting in the room being accessible without a password
-        await p.waitToJoinMUC();
-        expect(await p.isInMuc()).toBe(true);
-        expect(await p.getPasswordDialog().isOpen()).toBe(false);
+        await joinWithPassword('p2', t({ room: ctx.roomName, moderator: true }));
+        await joinWithPassword('p2', t({ room: ctx.roomName, visitor: true }));
     });
 });
 
@@ -41,7 +31,7 @@ describe('Setting passcode through settings provisioning', () => {
  */
 async function joinWithPassword(instanceId: string, token: IToken) {
     // @ts-ignore
-    const p = await joinMuc(instanceId, token);
+    const p = await joinMuc(instanceId, token, ctx.roomName);
 
     await p.waitForMucJoinedOrError();
     expect(await p.isInMuc()).toBe(false);
