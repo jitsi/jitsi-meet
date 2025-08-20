@@ -1,5 +1,5 @@
 --- This module removes identity information from presence stanzas when the
---- hideDisplayNameForAll or hideDisplayNameForGuests options are enabled
+--- hideDisplayNameForGuests options are enabled
 --- for a room.
 
 --- To be enabled under the main muc component
@@ -27,12 +27,11 @@ function filter_stanza_out(stanza, session)
     local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
     local shouldFilter = false;
 
-    if room and (room._data.hideDisplayNameForGuests == true or room._data.hideDisplayNameForAll == true) then
+    if room and room._data.hideDisplayNameForGuests == true then
         local occupant = room:get_occupant_by_real_jid(stanza.attr.to);
         -- don't touch self-presence
         if occupant and stanza.attr.from ~= internal_room_jid_match_rewrite(occupant.nick) then
-            local isModerator = (occupant.role == 'moderator' or joining_moderator_participants[occupant.bare_jid]);
-            shouldFilter = room._data.hideDisplayNameForAll or not isModerator;
+            shouldFilter = occupant.role ~= 'moderator' and not joining_moderator_participants[occupant.bare_jid];
         end
     end
 
