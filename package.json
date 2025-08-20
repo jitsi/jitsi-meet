@@ -57,6 +57,7 @@
     "clipboard-copy": "4.0.1",
     "clsx": "1.1.1",
     "dayjs": "1.11.13",
+    "dompurify": "3.2.6",
     "dropbox": "10.7.0",
     "focus-visible": "5.1.0",
     "glob": "11.0.3",
