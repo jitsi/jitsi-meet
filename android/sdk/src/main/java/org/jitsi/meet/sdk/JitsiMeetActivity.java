@@ -23,7 +23,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -108,7 +107,7 @@ public class JitsiMeetActivity extends AppCompatActivity
                 v.setLayoutParams(params);
 
                 decorView.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-                    view.setBackgroundColor(Color.BLACK);
+                    view.setBackgroundColor(JitsiMeetView.BACKGROUND_COLOR);
 
                     return windowInsets;
                 });
