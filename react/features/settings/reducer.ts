@@ -1,5 +1,5 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
-import { IAudioSettings } from '../base/tracks/actions.web';
+import { IAudioSettings } from '../base/settings/reducer';
 
 import {
     SET_AUDIO_SETTINGS,

@@ -6,16 +6,17 @@ import { IStore } from '../app/types';
 import {
     setAudioInputDevice,
     setVideoInputDevice
-} from '../base/devices/actions';
-import { getDeviceLabelById, setAudioOutputDeviceId } from '../base/devices/functions';
+} from '../base/devices/actions.web';
+import { getDeviceLabelById, setAudioOutputDeviceId } from '../base/devices/functions.web';
 import { updateSettings } from '../base/settings/actions';
 import { toggleUpdateAudioSettings } from '../base/tracks/actions.web';
+import { getLocalJitsiAudioTrack } from '../base/tracks/functions.any';
 import { toggleNoiseSuppression } from '../noise-suppression/actions';
-import { setScreenshareFramerate } from '../screen-share/actions';
+import { setScreenshareFramerate } from '../screen-share/actions.web';
 import { setAudioSettings } from '../settings/actions.web';
 import { disposeAudioInputPreview } from '../settings/functions.web';
 
-import { getAudioDeviceSelectionDialogProps, getVideoDeviceSelectionDialogProps } from './functions';
+import { getAudioDeviceSelectionDialogProps, getVideoDeviceSelectionDialogProps } from './functions.web';
 import logger from './logger';
 
 /**
@@ -74,7 +75,16 @@ export function submitAudioDeviceSelectionTab(newState: any, isDisplayedOnWelcom
         }
 
         if (!isEqual(newState.audioSettings, currentState.audioSettings) && !isSelectedAudioInputIdChanged && !newState.noiseSuppressionEnabled) {
-            const previewAudioTrack = getState()['features/settings']?.previewAudioTrack;
+            const state = getState();
+            const jitsiTrack = getLocalJitsiAudioTrack(state);
+
+            if (!jitsiTrack) {
+                logger.debug('No local audio track found');
+
+                return;
+            }
+
+            const previewAudioTrack = state['features/settings']?.previewAudioTrack;
 
             if (previewAudioTrack) {
                 await disposeAudioInputPreview(previewAudioTrack);

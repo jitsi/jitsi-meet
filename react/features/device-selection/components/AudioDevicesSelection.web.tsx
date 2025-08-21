@@ -11,8 +11,8 @@ import AbstractDialogTab, {
 } from '../../base/dialog/components/web/AbstractDialogTab';
 import { translate } from '../../base/i18n/functions';
 import { createLocalTrack } from '../../base/lib-jitsi-meet/functions.web';
+import { IAudioSettings } from '../../base/settings/reducer';
 import Tooltip from '../../base/tooltip/components/Tooltip';
-import { IAudioSettings } from '../../base/tracks/actions.web';
 import Checkbox from '../../base/ui/components/web/Checkbox';
 import { setAudioPreviewTrack } from '../../settings/actions.web';
 import { disposeAudioInputPreview } from '../../settings/functions.web';

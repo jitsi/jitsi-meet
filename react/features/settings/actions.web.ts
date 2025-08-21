@@ -16,7 +16,7 @@ import i18next from '../base/i18n/i18next';
 import { browser } from '../base/lib-jitsi-meet';
 import { getNormalizedDisplayName } from '../base/participants/functions';
 import { updateSettings } from '../base/settings/actions';
-import { IAudioSettings } from '../base/tracks/actions.web';
+import { IAudioSettings } from '../base/settings/reducer';
 import { getLocalVideoTrack } from '../base/tracks/functions.web';
 import { appendURLHashParam } from '../base/util/uri';
 import { disableKeyboardShortcuts, enableKeyboardShortcuts } from '../keyboard-shortcuts/actions';
