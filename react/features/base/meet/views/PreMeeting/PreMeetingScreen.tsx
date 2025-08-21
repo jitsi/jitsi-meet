@@ -10,6 +10,7 @@ import { isButtonEnabled } from "../../../../toolbox/functions.web";
 
 import { redirectToStaticPage } from "../../../../app/actions.any";
 import { appNavigate } from "../../../../app/actions.web";
+import { openSettingsDialog } from "../../../../settings/actions.web";
 import { getConferenceName, getCurrentConference } from "../../../conference/functions";
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from "../../../config/constants";
 import { translate } from "../../../i18n/functions";
@@ -192,6 +193,8 @@ const PreMeetingScreen = ({
     const storageManager = useLocalStorage();
     const dispatch = useDispatch();
 
+    const subscription = storageManager.getSubscription();
+
     const isInNewMeeting = window.location.href.includes("new-meeting");
     const showNameError = userName.length === 0 && !isNameInputFocused;
 
@@ -299,6 +302,7 @@ const PreMeetingScreen = ({
             <div className={`flex flex-col px-5 ${classes.container}`}>
                 <Header
                     userData={userData}
+                    subscription={subscription}
                     translate={t}
                     onLogin={handleRedirectToLogin}
                     onLogout={onLogout}
@@ -314,6 +318,7 @@ const PreMeetingScreen = ({
                         ) : null
                     }
                     navigateToHomePage={navigateToHomePage}
+                    onOpenSettings={() => dispatch(openSettingsDialog(undefined, true))}
                 />
                 <ErrorModals
                     errorType={getErrorType()}

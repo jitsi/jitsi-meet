@@ -20,6 +20,7 @@ const HeaderWrapper = ({ onNewMeeting, onLogin, onSignUp, translate }: HeaderWra
     const userData = useUserData();
     const dispatch = useDispatch();
     const localStorageManager = useLocalStorage();
+    const subscription = localStorageManager.getSubscription();
 
     const handleNewMeeting = async () => {
         setIsCreatingMeeting(true);
@@ -49,6 +50,7 @@ const HeaderWrapper = ({ onNewMeeting, onLogin, onSignUp, translate }: HeaderWra
         <div className="px-5">
             <Header
                 userData={userData}
+                subscription={subscription}
                 translate={translate}
                 meetingButton={
                     userData ? (

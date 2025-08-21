@@ -77,12 +77,12 @@ export class SdkManager {
 
     /** Users SDK */
     getUsers() {
-        const DRIVE_API_URL = ConfigService.instance.get("DRIVE_API_URL");
+        const DRIVE_NEW_API_URL = ConfigService.instance.get("DRIVE_NEW_API_URL");
 
         const apiSecurity = SdkManager.getApiSecurity({ throwErrorOnMissingCredentials: false });
         const appDetails = SdkManager.getAppDetails();
 
-        return Drive.Users.client(DRIVE_API_URL, appDetails, apiSecurity);
+        return Drive.Users.client(DRIVE_NEW_API_URL, appDetails, apiSecurity);
     }
 
     /** Payments SDK */
