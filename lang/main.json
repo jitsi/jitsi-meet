@@ -850,6 +850,10 @@
             "meetingFull": "Meeting is full",
             "participants": "participants"
         },
+        "secureMeetingMessage": {
+            "title": "Your meeting is private",
+            "description": "Only invited or approved participants can join"
+        },
         "settings": {
             "video": {
                 "videoInput": "Video input"

@@ -797,6 +797,10 @@
             "meetingFull": "La reunión está llena",
             "participants": "participantes"
         },
+        "secureMeetingMessage": {
+            "title": "Tu reunión es privada",
+            "description": "Sólo pueden participar los participantes invitados o aprobados"
+        },
         "settings": {
             "video": {
                 "videoInput": "Entrada de vídeo"

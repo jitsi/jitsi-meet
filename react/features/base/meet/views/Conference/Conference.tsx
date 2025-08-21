@@ -143,10 +143,6 @@ class Conference extends AbstractConference<IProps, any> {
      * returns {void}
      */
     componentDidUpdate(prevProps: IProps) {
-        if (this.props._shouldDisplayTileView === prevProps._shouldDisplayTileView) {
-            return;
-        }
-
         // TODO: For now VideoLayout is being called as LargeVideo and Filmstrip
         // sizing logic is still handled outside of React. Once all components
         // are in react they should calculate size on their own as much as

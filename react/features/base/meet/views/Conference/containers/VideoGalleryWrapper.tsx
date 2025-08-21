@@ -1,24 +1,26 @@
 import React from "react";
 import { WithTranslation } from "react-i18next";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { IReduxState } from "../../../../../app/types";
+import AudioTracksContainer from "../../../../../filmstrip/components/web/AudioTracksContainer";
 import { translate } from "../../../../i18n/functions";
+import { useAspectRatio } from "../../../general/hooks/useAspectRatio";
+import { useE2EEActivation } from "../../../general/hooks/useE2EEActivation";
 import VideoGallery from "../components/VideoGallery";
 import VideoSpeaker from "../components/VideoSpeaker";
-import { VideoParticipantType } from "../types";
 import { getParticipantsWithTracks } from "../utils";
-import AudioTracksContainer from "../../../../../filmstrip/components/web/AudioTracksContainer";
-import { useAspectRatio } from "../../../general/hooks/useAspectRatio";
-
 
 interface GalleryVideoWrapperProps extends WithTranslation {
     videoMode: string;
-    participants?: VideoParticipantType[];
-    flipX?: boolean;
 }
 
-const GalleryVideoWrapper = ({ videoMode, participants, flipX, t }: GalleryVideoWrapperProps) => {
+const GalleryVideoWrapper = ({ videoMode, t }: GalleryVideoWrapperProps) => {
     const { containerStyle } = useAspectRatio();
+    useE2EEActivation();
+
+    const participants = useSelector((state: IReduxState) => getParticipantsWithTracks(state));
+    const flipX = useSelector((state: IReduxState) => state["features/base/settings"].localFlipX);
+
     const contStyle = videoMode === "gallery" ? containerStyle : {};
 
     return (
@@ -35,14 +37,8 @@ const GalleryVideoWrapper = ({ videoMode, participants, flipX, t }: GalleryVideo
 };
 
 function mapStateToProps(state: IReduxState, galleryProps: GalleryVideoWrapperProps) {
-    const participantsWithTracks = getParticipantsWithTracks(state);
-
-    const { localFlipX } = state["features/base/settings"];
-
     return {
         videoMode: galleryProps.videoMode || "gallery",
-        flipX: localFlipX,
-        participants: participantsWithTracks,
     };
 }
 
