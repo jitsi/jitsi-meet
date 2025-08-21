@@ -233,6 +233,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }));
 
         globalAny.ctx.roomName = generateRoomName(testName);
+        console.log(`Using room name: ${globalAny.ctx.roomName}`);
 
         // If we are running the iFrameApi tests, we need to mark it as such and if needed to create the proxy
         // and connect to it.

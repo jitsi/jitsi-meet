@@ -468,7 +468,7 @@ export class Participant {
     }
 
     /**
-     * Waits for remote streams.
+     * Waits until there are at least [number] participants that have at least one track.
      *
      * @param {number} number - The number of remote streams to wait for.
      * @returns {Promise<boolean>}
@@ -874,26 +874,46 @@ export class Participant {
         }
     }
 
+    /**
+     * Checks if video is currently received for the given remote endpoint ID (there is a track, it's not muted,
+     * and it's streaming status according to the connection-indicator is active).
+     */
+    async isRemoteVideoReceived(endpointId: string): Promise<boolean> {
+        return this.execute(e => JitsiMeetJS.app.testing.isRemoteVideoReceived(e), endpointId);
+    }
+
+    /**
+     * Checks if the remove video is displayed for the given remote endpoint ID.
+     * @param endpointId
+     */
+    async isRemoteVideoDisplayed(endpointId: string): Promise<boolean> {
+        return this.driver.$(
+            `//span[@id="participant_${endpointId}" and contains(@class, "display-video")]`).isExisting();
+    }
+
+    /**
+     * Check if remote video for a specific remote endpoint is both received and displayed.
+     * @param endpointId
+     */
+    async isRemoteVideoReceivedAndDisplayed(endpointId: string): Promise<boolean> {
+        return await this.isRemoteVideoReceived(endpointId) && await this.isRemoteVideoDisplayed(endpointId);
+    }
 
     /**
      * Waits for remote video state - receiving and displayed.
      * @param endpointId
-     * @param reverse
+     * @param reverse if true, waits for the remote video to NOT be received AND NOT displayed.
      */
     async waitForRemoteVideo(endpointId: string, reverse = false) {
         if (reverse) {
             await this.driver.waitUntil(async () =>
-                !await this.execute(epId => JitsiMeetJS.app.testing.isRemoteVideoReceived(`${epId}`),
-                    endpointId) && !await this.driver.$(
-                    `//span[@id="participant_${endpointId}" and contains(@class, "display-video")]`).isExisting(), {
+                !await this.isRemoteVideoReceived(endpointId) && !await this.isRemoteVideoDisplayed(endpointId), {
                 timeout: 15_000,
                 timeoutMsg: `expected remote video for ${endpointId} to not be received 15s by ${this.name}`
             });
         } else {
             await this.driver.waitUntil(async () =>
-                await this.execute(epId => JitsiMeetJS.app.testing.isRemoteVideoReceived(`${epId}`),
-                    endpointId) && await this.driver.$(
-                    `//span[@id="participant_${endpointId}" and contains(@class, "display-video")]`).isExisting(), {
+                await this.isRemoteVideoReceivedAndDisplayed(endpointId), {
                 timeout: 15_000,
                 timeoutMsg: `expected remote video for ${endpointId} to be received 15s by ${this.name}`
             });
