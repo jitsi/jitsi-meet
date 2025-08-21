@@ -11,9 +11,9 @@ import {
     getUserSelectedCameraDeviceId,
     getUserSelectedMicDeviceId
 } from '../settings/functions.web';
+import { IAudioSettings } from '../settings/reducer';
 import { getJitsiMeetGlobalNSConnectionTimes } from '../util/helpers';
 
-import { IAudioSettings } from './actions.web';
 import { getCameraFacingMode, getLocalJitsiAudioTrack } from './functions.any';
 import loadEffects from './loadEffects';
 import logger from './logger';
@@ -225,6 +225,12 @@ export function isToggleCameraEnabled(stateful: IStateful) {
 export async function applyAudioConstraints(stateful: IStateful, settings: IAudioSettings) {
     const state = toState(stateful);
     const track = getLocalJitsiAudioTrack(state);
+
+    if (!track) {
+        logger.debug('No local audio track found');
+
+        return;
+    }
 
     try {
         await track.applyConstraints(settings);
