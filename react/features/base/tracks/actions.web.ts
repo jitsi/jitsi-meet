@@ -28,6 +28,7 @@ import {
 } from '../media/constants';
 import { IGUMPendingState } from '../media/types';
 import { updateSettings } from '../settings/actions';
+import { IAudioSettings } from '../settings/reducer';
 
 import { addLocalTrack, replaceLocalTrack } from './actions.any';
 import AllowToggleCameraDialog from './components/web/AllowToggleCameraDialog';
@@ -43,13 +44,6 @@ import logger from './logger';
 import { ICreateInitialTracksOptions, IInitialTracksErrors, IShareOptions, IToggleScreenSharingOptions } from './types';
 
 export * from './actions.any';
-
-export interface IAudioSettings {
-    autoGainControl: boolean;
-    channelCount: 1 | 2;
-    echoCancellation: boolean;
-    noiseSuppression: boolean;
-}
 
 /**
  * Signals that the local participant is ending screensharing or beginning the screensharing flow.

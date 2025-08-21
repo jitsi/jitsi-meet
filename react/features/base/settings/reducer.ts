@@ -5,7 +5,6 @@ import { escape } from 'lodash-es';
 import { APP_WILL_MOUNT } from '../app/actionTypes';
 import PersistenceRegistry from '../redux/PersistenceRegistry';
 import ReducerRegistry from '../redux/ReducerRegistry';
-import { IAudioSettings } from '../tracks/actions.web';
 import { assignIfDefined } from '../util/helpers';
 
 import { SETTINGS_UPDATED } from './actionTypes';
@@ -52,6 +51,12 @@ const DEFAULT_STATE: ISettingsState = {
     userSelectedMicDeviceLabel: undefined
 };
 
+export interface IAudioSettings {
+    autoGainControl: boolean;
+    channelCount: 1 | 2;
+    echoCancellation: boolean;
+    noiseSuppression: boolean;
+}
 export interface ISettingsState {
     audioOutputDeviceId?: string;
     audioSettings?: IAudioSettings;

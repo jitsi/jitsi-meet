@@ -12,7 +12,6 @@ import {
 } from '../participants/functions';
 import { IParticipant } from '../participants/types';
 
-import { IAudioSettings } from './actions.web';
 import logger from './logger';
 import { ITrack } from './types';
 
@@ -206,10 +205,26 @@ export function getLocalJitsiAudioTrack(state: IReduxState) {
  * Returns audio settings from the local Jitsi audio track.
  *
  * @param {IReduxState} state - The Redux state.
- * @returns {IAudioSettings | undefined} The extracted audio settings or undefined.
+ * @returns {IAudioSettings} The extracted audio settings.
  */
-export function getLocalJitsiAudioTrackSettings(state: IReduxState): IAudioSettings | undefined {
+export function getLocalJitsiAudioTrackSettings(state: IReduxState) {
     const jitsiTrack = getLocalJitsiAudioTrack(state);
+
+    if (!jitsiTrack) {
+        const config = state['features/base/config'];
+        const disableAP = Boolean(config?.disableAP);
+        const disableAGC = Boolean(config?.disableAGC);
+        const disableAEC = Boolean(config?.disableAEC);
+        const disableNS = Boolean(config?.disableNS);
+        const stereo = Boolean(config?.audioQuality?.stereo);
+
+        return {
+            autoGainControl: !disableAP && !disableAGC,
+            channelCount: stereo ? 2 : 1,
+            echoCancellation: !disableAP && !disableAEC,
+            noiseSuppression: !disableAP && !disableNS,
+        };
+    }
 
     const hasAudioMixerEffect = Boolean(typeof jitsiTrack._streamEffect?.setMuted === 'function' && jitsiTrack._streamEffect?._originalTrack);
 
