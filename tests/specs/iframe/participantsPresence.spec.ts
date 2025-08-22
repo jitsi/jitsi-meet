@@ -246,6 +246,8 @@ describe('Participants presence', () => {
 
         await p1.getIframeAPI().addEventListener('participantKickedOut');
         await p2.getIframeAPI().addEventListener('participantKickedOut');
+
+        await p2.getIframeAPI().clearEventResults('videoConferenceLeft');
         await p2.getIframeAPI().addEventListener('videoConferenceLeft');
 
         await p1.getIframeAPI().executeCommand('kickParticipant', p2EpId);
@@ -382,6 +384,7 @@ describe('Participants presence', () => {
         await p1.switchToAPI();
         await p2.switchToAPI();
 
+        await p2.getIframeAPI().clearEventResults('videoConferenceLeft');
         await p2.getIframeAPI().addEventListener('videoConferenceLeft');
         await p2.getIframeAPI().addEventListener('readyToClose');
 
@@ -411,6 +414,7 @@ describe('Participants presence', () => {
 
         await p1.switchToAPI();
 
+        await p1.getIframeAPI().clearEventResults('videoConferenceLeft');
         await p1.getIframeAPI().addEventListener('videoConferenceLeft');
         await p1.getIframeAPI().addEventListener('readyToClose');
 
