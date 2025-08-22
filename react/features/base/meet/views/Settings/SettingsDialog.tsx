@@ -96,7 +96,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ tabs, title, defaultTab
                                                 ${
                                                     isActive
                                                         ? "bg-primary/25 text-primary"
-                                                        : "hover:bg-gray-700/50 text-gray-300 hover:text-white"
+                                                        : "hover:bg-primary/25 text-gray-300 hover:text-white"
                                                 }
                                             `}
                                         >
