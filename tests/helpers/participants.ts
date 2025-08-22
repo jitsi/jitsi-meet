@@ -149,7 +149,10 @@ console.log('1111', options?.preferGenerateToken)
         });
     }
 
-    await joinParticipant({ name: P2 }, options);
+    await joinParticipant({
+        ...participantOptions,
+        name: P2
+    }, options);
 
     if (options?.skipInMeetingChecks) {
         return Promise.resolve();
