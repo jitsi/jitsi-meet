@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import JitsiMeetJS from "../../../lib-jitsi-meet/_.web";
 
 const JitsiTrackEvents = JitsiMeetJS.events.track;
