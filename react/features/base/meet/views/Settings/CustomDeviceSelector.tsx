@@ -1,7 +1,6 @@
 import { CaretUp, Check } from "@phosphor-icons/react";
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import React from "react";
 
 /**
  * The type of the React {@code Component} props of {@link DeviceSelector}.
