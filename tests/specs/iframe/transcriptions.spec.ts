@@ -147,7 +147,7 @@ describe('Transcriptions', () => {
 
         // sometimes events are not immediately received,
         // let's wait for destroy event before waiting for those that depends on it
-        await webhooksProxy.waitForEvent('ROOM_DESTROYED', 10000);
+        await webhooksProxy.waitForEvent('ROOM_DESTROYED');
 
         if (webhooksProxy) {
             const event: {
@@ -155,7 +155,7 @@ describe('Transcriptions', () => {
                     preAuthenticatedLink: string;
                 };
                 eventType: string;
-            } = await webhooksProxy.waitForEvent('TRANSCRIPTION_UPLOADED', 20000);
+            } = await webhooksProxy.waitForEvent('TRANSCRIPTION_UPLOADED');
 
             expect('TRANSCRIPTION_UPLOADED').toBe(event.eventType);
             expect(event.data.preAuthenticatedLink).toBeDefined();
@@ -193,7 +193,7 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
                     stable: string;
                 };
                 eventType: string;
-            } = await webhooksProxy.waitForEvent('TRANSCRIPTION_CHUNK_RECEIVED', 60000);
+            } = await webhooksProxy.waitForEvent('TRANSCRIPTION_CHUNK_RECEIVED');
 
             expect('TRANSCRIPTION_CHUNK_RECEIVED').toBe(event.eventType);
 
