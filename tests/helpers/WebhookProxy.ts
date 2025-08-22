@@ -30,6 +30,7 @@ export default class WebhookProxy {
      * Connects.
      */
     connect() {
+        console.log('Connecting...' + this.url);
         this.ws = new WebSocket(this.url, {
             headers: {
                 Authorization: this.secret
