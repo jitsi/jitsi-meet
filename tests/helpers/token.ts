@@ -77,7 +77,8 @@ export function generatePayload(options: ITokenOptions): any {
         },
         'room': options.room || '*'
     };
-
+    console.log('4444', options.moderator);
+    console.log('5555', options.visitor);
     if (options.moderator) {
         // @ts-ignore
         payload.context.user.moderator = true;
@@ -93,6 +94,7 @@ export function generatePayload(options: ITokenOptions): any {
  * Generate a signed token.
  */
 export function generateToken(options: ITokenOptions): IToken {
+    console.log('2222', JSON.stringify(options));
     const keyId = options.keyId || config.jwt.kid;
     const keyPath = options.keyPath || config.jwt.privateKeyPath;
     const headers = {

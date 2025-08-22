@@ -58,7 +58,7 @@ const chromePreferences = {
 };
 
 const specs = [
-    'specs/iframe/invite.spec.ts',
+    'specs/iframe/visitors.spec.ts',
     // 'specs/iframe/participantsPresence.spec.ts'
 ];
 

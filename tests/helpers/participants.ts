@@ -141,7 +141,7 @@ export async function ensureTwoParticipants(options?: IJoinOptions): Promise<voi
     await ensureOneParticipant(options);
 
     const participantOptions = { name: P2 } as IParticipantOptions;
-
+console.log('1111', options?.preferGenerateToken)
     if (options?.preferGenerateToken) {
         participantOptions.token = generateToken({
             ...options?.tokenOptions,
