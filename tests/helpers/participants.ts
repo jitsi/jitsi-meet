@@ -28,6 +28,7 @@ export async function ensureOneParticipant(options?: IJoinOptions): Promise<void
             participantOps.token = generateToken({
                 ...options?.tokenOptions,
                 displayName: participantOps.name,
+                moderator: true
             });
         }
     }
