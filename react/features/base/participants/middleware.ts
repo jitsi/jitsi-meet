@@ -18,6 +18,7 @@ import {
 import { isForceMuted } from '../../av-moderation/functions';
 import { UPDATE_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
 import { getBreakoutRooms } from '../../breakout-rooms/functions';
+import { Participants } from '../../breakout-rooms/utils';
 import { toggleE2EE } from '../../e2ee/actions';
 import { MAX_MODE } from '../../e2ee/constants';
 import { hideNotification, showNotification } from '../../notifications/actions';
@@ -367,20 +368,19 @@ MiddlewareRegistry.register(store => next => action => {
             const newRooms: any = {};
 
             Object.entries(rooms).forEach(([ key, r ]) => {
-                const participants = r?.participants || {};
-                const jid = Object.keys(participants).find(p =>
-                    p.slice(p.indexOf('/') + 1) === identifier);
+                const participants = r?.participants || new Map();
+                const participant = Participants.findById(r, identifier);
 
-                if (jid) {
+                if (participant) {
+                    const updatedParticipants = new Map(participants);
+                    updatedParticipants.set(participant.jid, {
+                        ...participant,
+                        displayName: name
+                    });
+                    
                     newRooms[key] = {
                         ...r,
-                        participants: {
-                            ...participants,
-                            [jid]: {
-                                ...participants[jid],
-                                displayName: name
-                            }
-                        }
+                        participants: updatedParticipants
                     };
                 } else {
                     newRooms[key] = r;
