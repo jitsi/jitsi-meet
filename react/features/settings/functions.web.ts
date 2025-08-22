@@ -145,3 +145,15 @@ export function shouldShowModeratorSettings(stateful: IStateful) {
 
     return hasModeratorRights && !hideModeratorSettingsTab;
 }
+
+/**
+ * Disposes the audio input preview track.
+ *
+ * @param {Object} previewTrack - The audio input preview track to dispose.
+ * @returns {Promise<void>}
+ */
+export async function disposeAudioInputPreview(previewTrack: any) {
+    if (previewTrack) {
+        await previewTrack.dispose();
+    }
+}
