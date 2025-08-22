@@ -1,11 +1,11 @@
 #import "HermesSandboxCore.h"
+#include <hermes_sandbox.h>
 
 @implementation HermesSandboxCore
 RCT_EXPORT_MODULE()
 
 - (NSNumber *)multiply:(double)a b:(double)b {
     NSNumber *result = @(a * b);
-
     return result;
 }
 

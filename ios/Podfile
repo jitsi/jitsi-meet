@@ -46,6 +46,9 @@ target 'JitsiMeetSDK' do
   pod 'RNGoogleSignin', :path => '../node_modules/@react-native-google-signin/google-signin'
   pod 'RNWatch', :path => '../node_modules/react-native-watch-connectivity'
 
+  # Hermes Sandbox Core - shared C++ implementation
+  pod 'HermesSandboxCore', :path => '../hermes-sandbox-core'
+
   # Native pod dependencies
   #
 
@@ -71,6 +74,9 @@ target 'JitsiMeetSDKLite' do
       # An absolute path to your application root.
       :app_path => "#{Pod::Config.instance.installation_root}/.."
     )
+
+    # Hermes Sandbox Core - shared C++ implementation
+    pod 'HermesSandboxCore', :path => '../hermes-sandbox-core'
 
     # Native pod dependencies
     #

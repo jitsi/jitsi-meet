@@ -13,9 +13,9 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => min_ios_version_supported }
   s.source       = { :git => ".git", :tag => "#{s.version}" }
 
-  s.source_files = "ios/**/*.{h,m,mm,cpp}"
-  s.private_header_files = "ios/**/*.h"
-
+  # Include both iOS-specific files and the shared C++ core
+  s.source_files = "ios/**/*.{h,m,mm,cpp}", "hermes_sandbox_core.cpp", "hermes_sandbox.h"
+  s.private_header_files = "ios/**/*.h", "hermes_sandbox.h"
 
   install_modules_dependencies(s)
 end
