@@ -234,7 +234,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
             if (!globalAny.ctx.webhooksProxy
                 && process.env.WEBHOOKS_PROXY_URL && process.env.WEBHOOKS_PROXY_SHARED_SECRET) {
                 globalAny.ctx.webhooksProxy = new WebhookProxy(
-                    `${process.env.WEBHOOKS_PROXY_URL}&room=${globalAny.ctx.roomName}`,
+                    `${process.env.WEBHOOKS_PROXY_URL}?tenant=${
+                        process.env.IFRAME_TENANT}&room=${globalAny.ctx.roomName}`,
                     process.env.WEBHOOKS_PROXY_SHARED_SECRET,
                     `${TEST_RESULTS_DIR}/webhooks-${cid}-${testName}.log`);
                 globalAny.ctx.webhooksProxy.connect();
