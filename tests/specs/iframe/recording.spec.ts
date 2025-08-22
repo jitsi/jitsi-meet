@@ -75,7 +75,7 @@ describe('Recording', () => {
             const liveStreamEvent: {
                 customerId: string;
                 eventType: string;
-            } = await webhooksProxy.waitForEvent('LIVE_STREAM_STARTED', 15000);
+            } = await webhooksProxy.waitForEvent('LIVE_STREAM_STARTED');
 
             expect('LIVE_STREAM_STARTED').toBe(liveStreamEvent.eventType);
             expect(liveStreamEvent.customerId).toBe(customerId);
@@ -98,7 +98,7 @@ describe('Recording', () => {
             const liveStreamEvent: {
                 customerId: string;
                 eventType: string;
-            } = await webhooksProxy.waitForEvent('LIVE_STREAM_ENDED', 20000);
+            } = await webhooksProxy.waitForEvent('LIVE_STREAM_ENDED');
 
             expect('LIVE_STREAM_ENDED').toBe(liveStreamEvent.eventType);
             expect(liveStreamEvent.customerId).toBe(customerId);
@@ -136,7 +136,7 @@ async function testRecordingStarted(command: boolean) {
         const recordingEvent: {
             customerId: string;
             eventType: string;
-        } = await webhooksProxy.waitForEvent('RECORDING_STARTED', 15000);
+        } = await webhooksProxy.waitForEvent('RECORDING_STARTED');
 
         expect('RECORDING_STARTED').toBe(recordingEvent.eventType);
         expect(recordingEvent.customerId).toBe(customerId);
@@ -174,7 +174,7 @@ async function testRecordingStopped(command: boolean) {
         const liveStreamEvent: {
             customerId: string;
             eventType: string;
-        } = await webhooksProxy.waitForEvent('RECORDING_ENDED', 20000);
+        } = await webhooksProxy.waitForEvent('RECORDING_ENDED');
 
         expect('RECORDING_ENDED').toBe(liveStreamEvent.eventType);
         expect(liveStreamEvent.customerId).toBe(customerId);
@@ -186,7 +186,7 @@ async function testRecordingStopped(command: boolean) {
                 participants: Array<string>;
             };
             eventType: string;
-        } = await webhooksProxy.waitForEvent('RECORDING_UPLOADED', 20000);
+        } = await webhooksProxy.waitForEvent('RECORDING_UPLOADED');
 
         const jwtPayload = p1.getToken()?.payload;
 
