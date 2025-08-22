@@ -18,9 +18,6 @@ import { iAmVisitor } from "../../../../visitors/functions";
 import { hideDialog } from "../../../dialog/actions";
 import SettingsDialog, { TabConfig } from "./SettingsDialog";
 
-/**
- * Props for the wrapper component
- */
 interface IProps {
     generalTabs: TabConfig[];
     defaultTab: string;
@@ -30,10 +27,10 @@ interface IProps {
 }
 
 const SettingsDialogWrapper: React.FC<IProps> = ({ generalTabs, defaultTab, dispatch }) => {
+    const { t } = useTranslation();
     const onCloseHandler = useCallback(() => {
         dispatch(hideDialog());
     }, [dispatch]);
-    const { t } = useTranslation();
 
     const generalTabsMem = useMemo(() => generalTabs, [generalTabs]);
 
@@ -47,9 +44,6 @@ const SettingsDialogWrapper: React.FC<IProps> = ({ generalTabs, defaultTab, disp
     );
 };
 
-/**
- * Maps Redux state to component props
- */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { isDisplayedOnWelcomePage } = ownProps;
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS ?? [];
@@ -117,7 +111,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                 const videoTabState = tabStates?.[videoTabIndex];
                 return {
                     ...newProps,
-                    selectedVideoInputId: videoTabState?.selectedVideoInputId || newProps.selectedVideoInputId,
+                    selectedVideoInputId: videoTabState?.selectedVideoInputId ?? newProps.selectedVideoInputId,
                     options: tabState.options,
                 };
             },
