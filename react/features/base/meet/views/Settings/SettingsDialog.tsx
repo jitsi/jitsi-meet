@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 export interface TabConfig {
     id: string;
     label: string;
-    icon: Icon;
     component: ComponentType<any>;
     props?: Record<string, any>;
     propsUpdateFunction?: (tabState: any, newProps: any, tabStates?: any[]) => Record<string, any>;

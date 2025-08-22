@@ -1,4 +1,3 @@
-import { Image, Microphone, Video } from "@phosphor-icons/react";
 import React, { useCallback, useMemo } from "react";
 import { connect } from "react-redux";
 import { IReduxState, IStore } from "../../../../app/types";
@@ -58,7 +57,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         tabs.push({
             id: SETTINGS_TABS.AUDIO,
             label: "Audio",
-            icon: Microphone,
             component: AudioDevicesSelection,
             props: getAudioDeviceSelectionDialogProps(state, isDisplayedOnWelcomePage),
             propsUpdateFunction: (tabState: any, newProps: ReturnType<typeof getAudioDeviceSelectionDialogProps>) => {
@@ -77,7 +75,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             tabs.push({
                 id: SETTINGS_TABS.VIDEO,
                 label: "Video",
-                icon: Video,
                 component: VideoDeviceSelection,
                 props: getVideoDeviceSelectionDialogProps(state, isDisplayedOnWelcomePage),
                 propsUpdateFunction: (
@@ -100,7 +97,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         tabs.push({
             id: SETTINGS_TABS.VIRTUAL_BACKGROUND,
             label: "Background",
-            icon: Image,
             component: VirtualBackgroundTab,
             props: getVirtualBackgroundTabProps(state, isDisplayedOnWelcomePage),
             propsUpdateFunction: (
