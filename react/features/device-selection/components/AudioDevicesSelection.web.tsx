@@ -15,7 +15,7 @@ import Checkbox from "../../base/ui/components/web/Checkbox";
 import { iAmVisitor as iAmVisitorCheck } from "../../visitors/functions";
 import logger from "../logger";
 
-import AudioInputPreview from "./AudioInputPreview.web";
+import AudioInputPreview from "../../base/meet/views/Settings/CustomAudioInputPreview";
 
 import AudioOutputPreview from "../../base/meet/views/Settings/AudioOutputPreview";
 import DeviceSelector from "../../base/meet/views/Settings/CustomDeviceSelector";
@@ -246,13 +246,16 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
         return (
             <div className={`${classes.container}`}>
                 {!iAmVisitor && (
-                    <div aria-live="polite" className={classes.inputContainer}>
-                        {this._renderSelector(audioInput)}
+                    <div aria-live="polite" className={"flex flex-row items-end space-x-4"}>
+                        <div className="flex flex-grow">{this._renderSelector(audioInput)}</div>
+                        {!hideAudioInputPreview && hasAudioPermission && !iAmVisitor && (
+                            <div className="flex items-center justify-center">
+                                <AudioInputPreview track={this.state.previewAudioTrack} />
+                            </div>
+                        )}
                     </div>
                 )}
-                {!hideAudioInputPreview && hasAudioPermission && !iAmVisitor && (
-                    <AudioInputPreview track={this.state.previewAudioTrack} />
-                )}
+
                 <div aria-live="polite" className="flex flex-row items-end justify-center space-x-4 mt-8">
                     {this._renderSelector(audioOutput)}
                     {!hideAudioOutputPreview && hasAudioPermission && (
