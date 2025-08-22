@@ -1,4 +1,4 @@
-import { Icon, X } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react";
 import React, { ComponentType, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -13,18 +13,18 @@ export interface TabConfig {
 }
 
 export interface SettingsDialogProps {
-    tabs: TabConfig[];
+    generalTabs: TabConfig[];
     title: string;
     defaultTab?: string;
     onClose: () => void;
 }
 
-const SettingsDialog: React.FC<SettingsDialogProps> = ({ tabs, title, defaultTab, onClose }) => {
-    const [activeTab, setActiveTab] = useState(defaultTab || tabs[0]?.id);
+const SettingsDialog: React.FC<SettingsDialogProps> = ({ generalTabs, title, defaultTab, onClose }) => {
+    const [activeTab, setActiveTab] = useState(defaultTab ?? generalTabs[0]?.id);
     const [tabStates, setTabStates] = useState<Record<string, any>>(() => {
         const initialStates: Record<string, any> = {};
-        tabs.forEach((tab) => {
-            initialStates[tab.id] = tab.props || {};
+        generalTabs.forEach((tab) => {
+            initialStates[tab.id] = tab.props ?? {};
         });
         return initialStates;
     });
@@ -37,15 +37,15 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ tabs, title, defaultTab
         }));
     }, []);
 
-    const currentTab = useMemo(() => tabs.find((tab) => tab.id === activeTab), [tabs, activeTab]);
+    const currentTab = useMemo(() => generalTabs.find((tab) => tab.id === activeTab), [generalTabs, activeTab]);
 
     const getTabProps = useCallback(
         (tab: TabConfig) => {
             const currentTabState = tabStates[tab.id];
 
             if (tab.propsUpdateFunction) {
-                const tabStatesArray = tabs.map((t) => tabStates[t.id]);
-                return tab.propsUpdateFunction(currentTabState || {}, tab.props || {}, tabStatesArray);
+                const tabStatesArray = generalTabs.map((t) => tabStates[t.id]);
+                return tab.propsUpdateFunction(currentTabState ?? {}, tab.props ?? {}, tabStatesArray);
             }
 
             return {
@@ -53,7 +53,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ tabs, title, defaultTab
                 ...currentTabState,
             };
         },
-        [tabs, tabStates]
+        [generalTabs, tabStates]
     );
 
     return (
@@ -82,7 +82,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ tabs, title, defaultTab
                         <div className="mb-1">
                             <span className="text-sm font-medium text-white mb-3 px-2">{t("settings.general")}</span>
                             <div className="space-y-1">
-                                {tabs.slice(0, 3).map((tab) => {
+                                {generalTabs.map((tab) => {
                                     const isActive = tab.id === activeTab;
 
                                     return (
@@ -129,7 +129,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ tabs, title, defaultTab
                                 onTabStateChange={(tabId: number, newState: any) => {
                                     handleTabStateChange(currentTab.id, newState);
                                 }}
-                                tabId={tabs.findIndex((tab) => tab.id === currentTab.id)}
+                                tabId={generalTabs.findIndex((tab) => tab.id === currentTab.id)}
                             />
                         )}
                     </div>

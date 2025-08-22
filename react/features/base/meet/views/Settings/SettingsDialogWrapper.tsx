@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { IReduxState, IStore } from "../../../../app/types";
 import { submitAudioDeviceSelectionTab, submitVideoDeviceSelectionTab } from "../../../../device-selection/actions.web";
@@ -21,21 +22,29 @@ import SettingsDialog, { TabConfig } from "./SettingsDialog";
  * Props for the wrapper component
  */
 interface IProps {
-    _tabs: TabConfig[];
+    generalTabs: TabConfig[];
     defaultTab: string;
     dispatch: IStore["dispatch"];
     isOpen: boolean;
     onClose: () => void;
 }
 
-const SettingsDialogWrapper: React.FC<IProps> = ({ _tabs, defaultTab, dispatch }) => {
+const SettingsDialogWrapper: React.FC<IProps> = ({ generalTabs, defaultTab, dispatch }) => {
     const onCloseHandler = useCallback(() => {
         dispatch(hideDialog());
     }, [dispatch]);
+    const { t } = useTranslation();
 
-    const stableTabs = useMemo(() => _tabs, [_tabs]);
+    const generalTabsMem = useMemo(() => generalTabs, [generalTabs]);
 
-    return <SettingsDialog tabs={stableTabs} title="Settings" defaultTab={defaultTab} onClose={onCloseHandler} />;
+    return (
+        <SettingsDialog
+            generalTabs={generalTabsMem}
+            title={t("settings.title")}
+            defaultTab={defaultTab}
+            onClose={onCloseHandler}
+        />
+    );
 };
 
 /**
@@ -120,7 +129,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         });
     }
 
-    return { _tabs: tabs };
+    return { generalTabs: tabs };
 }
 
 export default connect(_mapStateToProps)(SettingsDialogWrapper);
