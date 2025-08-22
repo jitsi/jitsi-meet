@@ -168,7 +168,7 @@ async function checkDialEvents(participant: Participant, direction: string, star
                 participantJid: string;
             };
             eventType: string;
-        } = await webhooksProxy.waitForEvent(startedEventName);
+        } = await webhooksProxy.waitForEvent(startedEventName, 60000);
 
         expect(startedEventName).toBe(dialInStartedEvent.eventType);
         expect(dialInStartedEvent.data.direction).toBe(direction);

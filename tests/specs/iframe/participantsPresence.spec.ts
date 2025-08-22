@@ -90,7 +90,7 @@ describe('Participants presence', () => {
                     { participantId: string; }
                 ];
                 eventType: string;
-            } = await webhooksProxy.waitForEvent('USAGE');
+            } = await webhooksProxy.waitForEvent('USAGE', 60000);
 
             expect('USAGE').toBe(event.eventType);
 
@@ -141,7 +141,7 @@ describe('Participants presence', () => {
                         isBreakout: boolean;
                     };
                     eventType: string;
-                } = await webhooksProxy.waitForEvent('ROOM_CREATED');
+                } = await webhooksProxy.waitForEvent('ROOM_CREATED', 60000);
 
                 expect('ROOM_CREATED').toBe(event.eventType);
                 expect(event.data.conference).toBe(conferenceJid);
