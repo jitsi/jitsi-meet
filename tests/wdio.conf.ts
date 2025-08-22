@@ -211,6 +211,13 @@ export const config: WebdriverIO.MultiremoteConfig = {
         } as IContext;
         globalAny.ctx.testProperties = testProperties;
 
+        if (testProperties.useJaas && !testsConfig.jaas.enabled) {
+            console.warn(`JaaS is not configured, skipping ${testName}.`);
+            globalAny.ctx.skipSuiteTests = true;
+
+            return;
+        }
+
         await Promise.all(multiremotebrowser.instances.map(async (instance: string) => {
             const bInstance = multiremotebrowser.getInstance(instance);
 
@@ -250,11 +257,6 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         if (testProperties.useWebhookProxy && !globalAny.ctx.webhooksProxy) {
             console.warn(`WebhookProxy is not available, skipping ${testName}`);
-            globalAny.ctx.skipSuiteTests = true;
-        }
-
-        if (testProperties.useJaas && !testsConfig.jaas.enabled) {
-            console.warn(`JaaS is not configured, skipping ${testName}.`);
             globalAny.ctx.skipSuiteTests = true;
         }
     },
