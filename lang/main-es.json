@@ -234,7 +234,7 @@
         "noPermission": "Permiso no concedido",
         "previewUnavailable": "Vista previa no disponible",
         "selectADevice": "Seleccionar un dispositivo",
-        "testAudio": "Reproducir un sonido de prueba"
+        "testAudio": "Reproducir sonido"
     },
     "dialIn": {
         "screenTitle": ""
@@ -1159,6 +1159,7 @@
         "moderator": "Moderador",
         "moderatorOptions": "Opciones de moderador",
         "more": "Más",
+        "general": "General",
         "name": "Nombre",
         "noDevice": "Ninguno",
         "notifications": "Notificaciones",

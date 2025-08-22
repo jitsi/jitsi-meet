@@ -19,20 +19,19 @@ import { disableKeyboardShortcuts, enableKeyboardShortcuts } from '../keyboard-s
 import { toggleBackgroundEffect } from '../virtual-background/actions';
 import virtualBackgroundLogger from '../virtual-background/logger';
 
+import SettingsDialogWrapper from "../base/meet/views/Settings/SettingsDialogWrapper";
 import {
     SET_AUDIO_SETTINGS_VISIBILITY,
     SET_VIDEO_SETTINGS_VISIBILITY
 } from './actionTypes';
-import LogoutDialog from './components/web/LogoutDialog';
-import SettingsDialog from './components/web/SettingsDialog';
+import LogoutDialog from "./components/web/LogoutDialog";
 import {
     getModeratorTabProps,
     getMoreTabProps,
     getNotificationsTabProps,
     getProfileTabProps,
-    getShortcutsTabProps
-} from './functions.web';
-
+    getShortcutsTabProps,
+} from "./functions.web";
 
 /**
  * Opens {@code LogoutDialog}.
@@ -40,39 +39,40 @@ import {
  * @returns {Function}
  */
 export function openLogoutDialog() {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
 
-        const config = state['features/base/config'];
+        const config = state["features/base/config"];
         const logoutUrl = config.tokenLogoutUrl;
 
-        const { conference } = state['features/base/conference'];
-        const { jwt } = state['features/base/jwt'];
+        const { conference } = state["features/base/conference"];
+        const { jwt } = state["features/base/jwt"];
 
-        dispatch(openDialog(LogoutDialog, {
-            onLogout() {
-                if (isTokenAuthEnabled(config) && config.tokenAuthUrlAutoRedirect && jwt) {
-
-                    // user is logging out remove auto redirect indication
-                    dispatch(setTokenAuthUrlSuccess(false));
-                }
-
-                if (logoutUrl && browser.isElectron()) {
-                    const url = appendURLHashParam(logoutUrl, 'electron', 'true');
-
-                    window.open(url, '_blank');
-                    dispatch(hangup(true));
-                } else {
-                    if (logoutUrl) {
-                        window.location.href = logoutUrl;
-
-                        return;
+        dispatch(
+            openDialog(LogoutDialog, {
+                onLogout() {
+                    if (isTokenAuthEnabled(config) && config.tokenAuthUrlAutoRedirect && jwt) {
+                        // user is logging out remove auto redirect indication
+                        dispatch(setTokenAuthUrlSuccess(false));
                     }
 
-                    conference?.room.xmpp.moderator.logout(() => dispatch(hangup(true)));
-                }
-            }
-        }));
+                    if (logoutUrl && browser.isElectron()) {
+                        const url = appendURLHashParam(logoutUrl, "electron", "true");
+
+                        window.open(url, "_blank");
+                        dispatch(hangup(true));
+                    } else {
+                        if (logoutUrl) {
+                            window.location.href = logoutUrl;
+
+                            return;
+                        }
+
+                        conference?.room.xmpp.moderator.logout(() => dispatch(hangup(true)));
+                    }
+                },
+            })
+        );
     };
 }
 
@@ -86,9 +86,9 @@ export function openLogoutDialog() {
  * @returns {Function}
  */
 export function openSettingsDialog(defaultTab?: string, isDisplayedOnWelcomePage?: boolean) {
-    return openDialog(SettingsDialog, {
+    return openDialog(SettingsDialogWrapper, {
         defaultTab,
-        isDisplayedOnWelcomePage
+        isDisplayedOnWelcomePage,
     });
 }
 

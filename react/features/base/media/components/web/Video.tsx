@@ -358,8 +358,6 @@ class Video extends Component<IProps> {
             return Promise.resolve();
         }
 
-        console.log("Attaching track with encodeVideo:", encodeVideo);
-
         try {
             return videoTrack.jitsiTrack.attach(this._videoElement, encodeVideo).catch((error: Error) => {
                 logger.error(
