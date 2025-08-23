@@ -100,11 +100,6 @@ describe('Participants presence', () => {
             expect(event.data.filter(d => d.participantId === p1EpId
                 || d.participantId === p2EpId).length).toBe(2);
         }
-
-        // we will use it later
-        // TODO figure out why adding those just before grantModerator and we miss the events
-        await p1.getIframeAPI().addEventListener('participantRoleChanged');
-        await p2.getIframeAPI().addEventListener('participantRoleChanged');
     });
 
     it('participants info',
@@ -172,6 +167,9 @@ describe('Participants presence', () => {
         const { p1, p2, webhooksProxy } = ctx;
         const p2EpId = await p2.getEndpointId();
 
+        await p1.getIframeAPI().clearEventResults('participantRoleChanged');
+        await p2.getIframeAPI().clearEventResults('participantRoleChanged');
+
         await p1.getIframeAPI().executeCommand('grantModerator', p2EpId);
 
         await p2.driver.waitUntil(() => p2.getIframeAPI().getEventResult('isModerator'), {
@@ -179,12 +177,25 @@ describe('Participants presence', () => {
             timeoutMsg: 'Moderator role not granted'
         });
 
-        const event1 = await p1.getIframeAPI().getEventResult('participantRoleChanged');
+        type RoleChangedEvent = {
+            id: string;
+            role: string;
+        };
+
+        const event1: RoleChangedEvent = await p1.driver.waitUntil(
+            () => p1.getIframeAPI().getEventResult('participantRoleChanged'), {
+                timeout: 3000,
+                timeoutMsg: 'Role was not update on p1 side'
+            });
 
         expect(event1?.id).toBe(p2EpId);
         expect(event1?.role).toBe('moderator');
 
-        const event2 = await p2.getIframeAPI().getEventResult('participantRoleChanged');
+        const event2: RoleChangedEvent = await p2.driver.waitUntil(
+            () => p2.getIframeAPI().getEventResult('participantRoleChanged'), {
+                timeout: 3000,
+                timeoutMsg: 'Role was not update on p2 side'
+            });
 
         expect(event2?.id).toBe(p2EpId);
         expect(event2?.role).toBe('moderator');
