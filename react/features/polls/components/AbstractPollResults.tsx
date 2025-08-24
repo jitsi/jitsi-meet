@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createPollEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState } from '../../app/types';
-import { getParticipantById, getParticipantDisplayName } from '../../base/participants/functions';
+import { getParticipantById, getParticipantDisplayName, isLocalParticipantHost, isRemoteParticipantHost } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
 import { setVoteChanging } from '../actions';
 import { getPoll } from '../functions';
@@ -38,6 +38,7 @@ export type AbstractProps = {
     changeVote: (e?: React.MouseEvent<HTMLButtonElement> | GestureResponderEvent) => void;
     creatorName: string;
     haveVoted: boolean;
+    isParticipantHost: boolean;
     question: string;
     showDetails: boolean;
     t: Function;
@@ -57,6 +58,14 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
     const poll: IPoll = useSelector(getPoll(pollId));
     const participant = useBoundSelector(getParticipantById, poll.senderId);
     const reduxState = useSelector((state: IReduxState) => state);
+
+    let isParticipantHost;
+
+    if (participant?.local) {
+        isParticipantHost = isLocalParticipantHost(reduxState);
+    } else if (!participant?.local) {
+        isParticipantHost = isRemoteParticipantHost(participant);
+    }
 
     const [ showDetails, setShowDetails ] = useState(false);
     const toggleIsDetailed = useCallback(() => {
@@ -115,6 +124,7 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
             changeVote = { changeVote }
             creatorName = { participant ? participant.name : '' }
             haveVoted = { poll.lastVote !== null }
+            isParticipantHost = { isParticipantHost }
             question = { poll.question }
             showDetails = { showDetails }
             t = { t }

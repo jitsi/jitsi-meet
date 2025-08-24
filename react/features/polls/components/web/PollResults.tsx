@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import HostIndicator from '../../../filmstrip/components/web/HostIndicator';
 import AbstractPollResults, { AbstractProps } from '../AbstractPollResults';
 
 const useStyles = makeStyles()(theme => {
@@ -22,6 +23,8 @@ const useStyles = makeStyles()(theme => {
             marginBottom: '8px'
         },
         creator: {
+            display: 'flex',
+            gap: theme.spacing(1),
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
             color: theme.palette.text02
         },
@@ -114,6 +117,7 @@ const PollResults = ({
     changeVote,
     creatorName,
     haveVoted,
+    isParticipantHost,
     showDetails,
     question,
     t,
@@ -128,7 +132,7 @@ const PollResults = ({
                     {question}
                 </div>
                 <div className = { classes.creator }>
-                    {t('polls.by', { name: creatorName })}
+                    {t('polls.by', { name: creatorName })} { isParticipantHost && <HostIndicator tooltipPosition = 'right' /> }
                 </div>
             </div>
             <ul className = { classes.resultList }>
