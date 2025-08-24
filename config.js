@@ -91,13 +91,13 @@ var config = {
 
     testing: {
         // Allows the setting of a custom bandwidth value from the UI.
-        // assumeBandwidth: true,
+        assumeBandwidth: !isProd,
 
         // Enables use of getDisplayMedia in electron
         // electronUseGetDisplayMedia: false,
 
         // Enables AV1 codec for FF. Note: By default it is disabled.
-        enableAV1ForFF: true,
+        enableAV1ForFF: !isProd,
 
         // Enables the use of the codec selection API supported by the browsers .
         enableCodecSelectionAPI: true,
@@ -107,11 +107,11 @@ var config = {
         // p2pTestMode: false,
 
         // Enables the test specific features consumed by jitsi-meet-torture
-        // testMode: false,
+        testMode: !isProd,
 
         // Disables the auto-play behavior of *all* newly created video element.
         // This is useful when the client runs on a host with limited resources.
-        // noAutoPlayVideo: false,
+        noAutoPlayVideo: !isProd,
 
         // Experiment: Whether to skip interim transcriptions.
         // skipInterimTranscriptions: false,
@@ -120,7 +120,7 @@ var config = {
         // dumpTranscript: false,
 
         // Log the audio levels.
-        // debugAudioLevels: true,
+        debugAudioLevels: !isProd,
 
         // Will replace ice candidates IPs with invalid ones in order to fail ice.
         // failICE: true,
@@ -135,10 +135,10 @@ var config = {
     disableModeratorIndicator: false,
 
     // Disables the reactions feature.
-    disableReactions: false,
+    disableReactions: true,
 
     // Disables the reactions moderation feature.
-    disableReactionsModeration: false,
+    disableReactionsModeration: true,
 
     // Disables the reactions in chat feature.
     disableReactionsInChat: true,
@@ -375,8 +375,8 @@ var config = {
 
     // Optional desktop sharing frame rate options. Default value: min:5, max:5.
     desktopSharingFrameRate: {
-        min: 15,
-        max: 30,
+        min: 5,
+        max: 5
     },
 
     // Optional screenshare settings that give more control over screen capture in the browser.
@@ -461,7 +461,7 @@ var config = {
         notifyAllParticipants: true,
 
         // Whether to disable the self recording feature (only local participant streams).
-        disableSelfRecording: true,
+        disableSelfRecording: false,
     },
 
     // Customize the Live Streaming dialog. Can be modified for a non-YouTube provider.
@@ -793,7 +793,7 @@ var config = {
 
     // Message to show the users. Example: 'The service will be down for
     // maintenance at 01:00 AM GMT,
-    noticeMessage: 'Whiteboard integration is coming soon, in the meantime please use www.excalidraw.com to draw.',
+    noticeMessage: null,
 
     // Enables calendar integration, depends on googleApiApplicationClientID
     // and microsoftApiApplicationClientID
@@ -1728,6 +1728,9 @@ var config = {
      websocketKeepAlive
      websocketKeepAliveUrl
      */
+    flags: {
+        ssrcRewritingEnabled: false
+    },
 
     /**
      * Default interval (milliseconds) for triggering mouseMoved iframe API event

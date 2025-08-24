@@ -4,6 +4,7 @@ import process from 'node:process';
 import { v4 as uuidv4 } from 'uuid';
 
 import { P1, P2, P3, P4, Participant } from './Participant';
+import { getSonaToken } from './sona_auth';
 import { IContext, IJoinOptions } from './types';
 
 const SUBJECT_XPATH = '//div[starts-with(@class, "subject-text")]';
@@ -202,10 +203,14 @@ async function _joinParticipant( // eslint-disable-line max-params
                 jwtToken = process.env.JWT_ACCESS_TOKEN;
             } else if (ctx.jwtPrivateKeyPath) {
                 jwtToken = getToken(ctx, name, options);
+            } else {
+                // Use Sonacove authentication to get a fresh JWT token
+                jwtToken = await getSonaToken(ctx, name, options);
             }
         }
-    } else if (name === P2) {
-        jwtToken = options?.preferGenerateToken ? getToken(ctx, P2, options) : undefined;
+    } else {
+        // jwtToken = options?.preferGenerateToken ? getToken(ctx, P2, options) : undefined;
+        jwtToken = options?.preferGenerateToken ? await getSonaToken(ctx, name, options) : undefined;
     }
 
     const newParticipant = new Participant(name, jwtToken);

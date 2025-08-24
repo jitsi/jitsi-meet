@@ -662,6 +662,33 @@ export function isParticipantModerator(participant?: IParticipant) {
 }
 
 /**
+ * Returns true if the remote participant is a host.
+ *
+ * @param {IParticipant|undefined} participant - Participant object from redux.
+ * @returns {boolean}
+ */
+export function isRemoteParticipantHost(participant?: IParticipant) {
+    // Host is defined at the XMPP layer as affiliation 'owner'. For remote participants we
+    // consult the lib-jitsi-meet participant via conference.getParticipantById(...). For the
+    // local participant, participant.conference is undefined.
+
+    if (!participant || participant.local || !participant.conference) {
+        // WARN! we can't check local participant state here. Use isLocalParticipantHost instead.
+        return false;
+    }
+
+    // Ignore fake participants.
+    if (isScreenShareParticipant(participant) || isSharedVideoParticipant(participant) || isWhiteboardParticipant(participant)) {
+        return false;
+    }
+
+    // Remote participant: use lib participant helper.
+    const libParticipant: IJitsiParticipant | undefined = participant.conference.getParticipantById(participant.id);
+
+    return libParticipant ? libParticipant.isHost() : false;
+}
+
+/**
  * Returns the dominant speaker participant.
  *
  * @param {(Function|Object)} stateful - The (whole) redux state or redux's
@@ -720,6 +747,20 @@ export function isLocalParticipantModerator(stateful: IStateful) {
     }
 
     return isParticipantModerator(local);
+}
+
+/**
+ * Returns true if the current local participant is a host in the
+ * conference.
+ *
+ * @param {Object|Function} stateful - Object or function that can be resolved
+ * to the Redux state.
+ * @returns {boolean}
+ */
+export function isLocalParticipantHost(stateful: IStateful) {
+    const { conference } = toState(stateful)['features/base/conference'];
+
+    return Boolean(conference?.room.isHost());
 }
 
 /**

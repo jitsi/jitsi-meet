@@ -50,6 +50,11 @@ interface IProps extends WithTranslation {
     isHighlighted?: boolean;
 
     /**
+     * Whether or not the participant is the host.
+     */
+    isHost?: boolean;
+
+    /**
      * Whether or not the participant is a moderator.
      */
     isModerator?: boolean;
@@ -134,6 +139,7 @@ function ParticipantItem({
     displayName,
     isHighlighted,
     isModerator,
+    isHost,
     local,
     onLeave,
     openDrawerForParticipant,
@@ -168,9 +174,16 @@ function ParticipantItem({
                 </div>
                 {local ? <span>&nbsp;({youText})</span> : null}
             </div>
-            {isModerator && !disableModeratorIndicator && <div className = { classes.moderatorLabel }>
-                {t('videothumbnail.moderator')}
-            </div>}
+            {!disableModeratorIndicator && (
+                <>
+                    {isHost && <div className = { classes.moderatorLabel }>
+                        {t('host')}
+                    </div>}
+                    {!isHost && isModerator && <div className = { classes.moderatorLabel }>
+                        {t('videothumbnail.moderator')}
+                    </div>}
+                </>
+            )}
         </>
     );
 

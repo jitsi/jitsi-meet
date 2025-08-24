@@ -1,11 +1,21 @@
 #!/usr/bin/env node
 
+/**
+ * Deployment script for Sonacove Meets
+ *
+ * This script handles building and deploying the application to Cloudflare.
+ *
+ * Usage:
+ *   node config/deploy-cf.mjs [--skip-deps] [--skip-build]
+ */
+
 import fs from "fs";
 import path from "path";
 import { spawn, exec } from "child_process";
 
 // Utility function to execute commands and log output in real-time
-async function runCommand(command, cwd, captureOutput = false) {
+async function runCommand(command, cwd, captureOutput = false, timeoutMs = 300000) {
+    // 5 minute default timeout
     const actualCwd = cwd || process.cwd();
     console.log(`\n🚀 Running: ${command} (in ${actualCwd})`);
 
@@ -18,6 +28,17 @@ async function runCommand(command, cwd, captureOutput = false) {
         });
 
         let capturedOutput = "";
+        let timeoutId = null;
+
+        // Set up timeout
+        if (timeoutMs > 0) {
+            timeoutId = setTimeout(() => {
+                console.error(`⏰ Command timed out after ${timeoutMs / 1000} seconds: ${command}`);
+                child.kill("SIGTERM");
+                reject(new Error(`Command timed out after ${timeoutMs / 1000} seconds: ${command}`));
+            }, timeoutMs);
+            console.log(`⏱️  Command timeout set to ${timeoutMs / 1000} seconds`);
+        }
 
         child.stdout.on("data", (data) => {
             const output = data.toString();
@@ -36,6 +57,8 @@ async function runCommand(command, cwd, captureOutput = false) {
         });
 
         child.on("close", (code) => {
+            if (timeoutId) clearTimeout(timeoutId);
+
             if (code === 0) {
                 process.stdout.write("\n");
                 console.log(`✅ Command finished: ${command}`);
@@ -48,6 +71,8 @@ async function runCommand(command, cwd, captureOutput = false) {
         });
 
         child.on("error", (err) => {
+            if (timeoutId) clearTimeout(timeoutId);
+
             process.stdout.write("\n");
             console.error(`❌ Error executing command: ${command}`);
             console.error(err);
@@ -228,6 +253,24 @@ async function deploy() {
         }
         console.log("✅ Running from project root.");
 
+        // Step 1.5: Verify submodule is properly initialized
+        const submodulePath = path.join(projectRoot, "lib-jitsi-meet");
+        const submodulePackageJson = path.join(submodulePath, "package.json");
+        if (!fs.existsSync(submodulePath) || !fs.existsSync(submodulePackageJson)) {
+            console.log("⚠️  Submodule not found, attempting to initialize...");
+            try {
+                await runCommand("git submodule update --init --recursive");
+                console.log("✅ Submodule initialized successfully");
+            } catch (error) {
+                console.error("❌ Failed to initialize submodule:", error.message);
+                console.error("Please ensure you have access to the submodule repository and run:");
+                console.error("  git submodule update --init --recursive");
+                process.exit(1);
+            }
+        } else {
+            console.log("✅ Submodule verification passed.");
+        }
+
         console.log("\n🧹 Cleaning dist folder...");
         if (fs.existsSync(distDir)) {
             fs.rmSync(distDir, { recursive: true, force: true });
@@ -248,7 +291,7 @@ async function deploy() {
             console.log("\n⏭️ Skipping project build (--skip-build).");
         } else {
             console.log("\n🛠️ Step 3: Building the project...");
-            await runCommand("make all");
+            await runCommand("make all", undefined, true, 600000); // 10 minute timeout for full build
         }
 
         // Step 4: Copy files and folders to the dist folder

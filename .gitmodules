@@ -1,0 +1,3 @@
+[submodule "lib-jitsi-meet"]
+	path = lib-jitsi-meet
+	url = https://github.com/catFurr/lib-jitsi-meet.git
