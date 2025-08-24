@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>I-Meet Attendance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { margin:0; font-family: system-ui, Arial, sans-serif; background:#0b0b0b; color:#fff; }
+    header { padding:12px; background:#111; display:flex; gap:8px; align-items:center; }
+    input, button { padding:8px 12px; border-radius:8px; border:1px solid #333; background:#1a1a1a; color:#fff; }
+    button { cursor:pointer; }
+    .wrap { display:flex; height: calc(100vh - 52px); }
+    #meet { flex: 1 1 auto; background:#000; }
+    #panel { width: 320px; background:#141414; border-left:1px solid #222; overflow:auto; }
+    #panel h3 { margin:12px; }
+    #log { list-style:none; padding:0 12px 24px; margin:0; }
+    #log li { margin:8px 0; padding:8px; border:1px solid #2a2a2a; border-radius:10px; background:#101010; }
+    .in { border-color:#1f8b4c; }
+    .out { border-color:#a33; }
+    .row { display:flex; justify-content:space-between; gap:8px; font-size:14px; }
+    .muted { opacity:.75; font-size:12px; }
+  </style>
+  <!-- Stable, trusted copy of the Jitsi External API -->
+  <script src="https://meet.jit.si/external_api.js"></script>
+</head>
+<body>
+  <header>
+    <label>Room:</label>
+    <input id="room" placeholder="my-team-meet" />
+    <button id="startBtn">Start</button>
+    <button id="reportBtn" disabled>Download Excel</button>
+    <span id="status" class="muted"></span>
+  </header>
+
+  <div class="wrap">
+    <div id="meet"></div>
+    <aside id="panel">
+      <h3>Attendance</h3>
+      <ul id="log"></ul>
+    </aside>
+  </div>
+
+  <script>
+    let api = null;
+    let localId = null;
+    let currentRoom = '';
+
+    const logEl = document.getElementById('log');
+    const statusEl = document.getElementById('status');
+    const reportBtn = document.getElementById('reportBtn');
+
+    function now() { return new Date().toLocaleString(); }
+
+    function addLog(type, name, id) {
+      const li = document.createElement('li');
+      li.className = type === 'in' ? 'in' : 'out';
+      li.innerHTML = `
+        <div class="row"><strong>${type === 'in' ? '✔️ Check-In' : '⏹️ Check-Out'}</strong>
+          <span class="muted">${now()}</span></div>
+        <div class="muted">${name || '(no name)'} · ${id}</div>`;
+      logEl.prepend(li);
+    }
+
+    async function postJSON(url, body) {
+      try {
+        await fetch(url, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(body) });
+      } catch (e) { console.warn('POST failed:', e); }
+    }
+
+    document.getElementById('startBtn').onclick = () => {
+      const room = (document.getElementById('room').value || '').trim();
+      if (!room) { alert('Enter a room name'); return; }
+      currentRoom = room;
+      reportBtn.disabled = false;
+
+      // Destroy old meeting if any
+      if (api) { try { api.dispose(); } catch(e){} api = null; logEl.innerHTML=''; }
+
+      const domain = 'localhost:8080'; // your local Jitsi dev server
+      const options = {
+        roomName: room,
+        parentNode: document.querySelector('#meet'),
+        configOverwrite: { disableDeepLinking: true },
+        interfaceConfigOverwrite: { DISABLE_JOIN_LEAVE_NOTIFICATIONS: true }
+      };
+      api = new JitsiMeetExternalAPI(domain, options);
+      statusEl.textContent = `Connected to ${domain} · Room: ${room}`;
+
+      // Local user joined
+      api.addListener('videoConferenceJoined', (e) => {
+        localId = e.id;
+        addLog('in', e.displayName, e.id);
+        postJSON('/api/checkin', { conferenceId: room, participantId: e.id, name: e.displayName });
+      });
+
+      // Remote participant joined
+      api.addListener('participantJoined', (e) => {
+        addLog('in', e.displayName, e.id);
+        postJSON('/api/checkin', { conferenceId: room, participantId: e.id, name: e.displayName });
+      });
+
+      // Remote participant left
+      api.addListener('participantLeft', (e) => {
+        addLog('out', e.displayName, e.id);
+        postJSON('/api/checkout', { conferenceId: room, participantId: e.id });
+      });
+
+      // Local user left (hang up)
+      api.addListener('videoConferenceLeft', () => {
+        if (localId) {
+          addLog('out', 'You', localId);
+          postJSON('/api/checkout', { conferenceId: room, participantId: localId });
+          localId = null;
+        }
+      });
+    };
+
+    // Download Excel
+    reportBtn.onclick = () => {
+      if (!currentRoom) return;
+      window.location.href = `/api/report/${encodeURIComponent(currentRoom)}`;
+    };
+  </script>
+</body>
+</html>
