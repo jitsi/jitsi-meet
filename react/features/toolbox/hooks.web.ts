@@ -63,6 +63,7 @@ import DownloadButton from './components/DownloadButton';
 import HelpButton from './components/HelpButton';
 import AudioSettingsButton from './components/web/AudioSettingsButton';
 import CustomOptionButton from './components/web/CustomOptionButton';
+import DownloadDataButton from './components/web/DownloadDataButton';
 import FullscreenButton from './components/web/FullscreenButton';
 import LinkToSalesforceButton from './components/web/LinkToSalesforceButton';
 import ProfileButton from './components/web/ProfileButton';
@@ -139,6 +140,12 @@ const fullscreen = {
 const linkToSalesforce = {
     key: 'linktosalesforce',
     Content: LinkToSalesforceButton,
+    group: 2
+};
+
+const downloadData = {
+    key: 'downloaddata',
+    Content: DownloadDataButton,
     group: 2
 };
 
@@ -293,7 +300,7 @@ export function useToolboxButtons(
     const _download = useDownloadButton();
     const _help = useHelpButton();
 
-    const buttons: { [key in ToolbarButton]?: IToolboxButton; } = {
+    const buttons: { [key in ToolbarButton]?: IToolboxButton } = {
         microphone,
         camera,
         profile,
@@ -309,6 +316,7 @@ export function useToolboxButtons(
         fullscreen: _fullscreen,
         security,
         closedcaptions: cc,
+        downloaddata: downloadData,
         recording,
         livestreaming: liveStreaming,
         linktosalesforce,
