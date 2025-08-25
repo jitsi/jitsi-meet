@@ -5,8 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { openDialog } from '../../../base/dialog/actions';
 import { IconModerator } from '../../../base/icons/svg';
-import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
-import { getLocalParticipant, getParticipantById, isParticipantModerator } from '../../../base/participants/functions';
+import { getLocalParticipant, getParticipantById, isLocalParticipantHost, isParticipantModerator } from '../../../base/participants/functions';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { IButtonProps } from '../../types';
@@ -28,8 +27,8 @@ const GrantModeratorButton = ({
     const dispatch = useDispatch();
     const localParticipant = useSelector(getLocalParticipant);
     const targetParticipant = useSelector((state: IReduxState) => getParticipantById(state, participantID));
-    const visible = useMemo(() => Boolean(localParticipant?.role === PARTICIPANT_ROLE.MODERATOR)
-        && !isParticipantModerator(targetParticipant), [ isParticipantModerator, localParticipant, targetParticipant ]);
+    const isParticipantHost = useSelector((state: IReduxState) => isLocalParticipantHost(state));
+    const visible = useMemo(() => isParticipantHost && !isParticipantModerator(targetParticipant), [ isLocalParticipantHost, localParticipant, targetParticipant ]);
 
     const handleClick = useCallback(() => {
         notifyClick?.();
