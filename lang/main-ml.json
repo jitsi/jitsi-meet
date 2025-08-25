@@ -798,7 +798,7 @@
     },
     "security": {
         "about": "You can add a $t(lockRoomPassword) to your meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
-        "aboutReadOnly": "Moderator participants can add a $t(lockRoomPassword) to the meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
+        "aboutReadOnly": "The Host participant can add a $t(lockRoomPassword) to the meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
         "insecureRoomNameWarning": "റൂമിന്റെ പേര് സുരക്ഷിതമല്ല. അനാവശ്യ പങ്കാളികൾക്ക് നിങ്ങളുടെ കോൺഫറൻസിൽ ചേരാം. സുരക്ഷാ ബട്ടൺ ഉപയോഗിച്ച് നിങ്ങളുടെ മീറ്റിംഗ് സുരക്ഷിതമാക്കുന്നത് പരിഗണിക്കുക.",
         "securityOptions": "സുരക്ഷാ ഓപ്ഷനുകൾ"
     },

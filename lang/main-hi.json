@@ -819,7 +819,7 @@
     },
     "security": {
         "about": "आप अपनी मीटिंग में $t(lockRoomPassword) जोड़ सकते हैं। सहभागियों को मीटिंग में शामिल होने से पहले $t(lockRoomPassword) प्रदान करना होगा।",
-        "aboutReadOnly": "Moderator participants can add a $t(lockRoomPassword) to the meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
+        "aboutReadOnly": "The Host participant can add a $t(lockRoomPassword) to the meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
         "insecureRoomNameWarning": "कमरे का नाम असुरक्षित है। अनचाहे सहभागियों की कॉन्फ्रेंस में शामिल हो सकते हैं। सुरक्षा बटन का उपयोग करके अपनी मीटिंग को सुरक्षित बनाने का विचार करें।        ",
         "securityOptions": "Security options"
     },

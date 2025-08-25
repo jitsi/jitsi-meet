@@ -1108,7 +1108,7 @@
     },
     "security": {
         "about": "Та өөрийн уулзалтанд $t(lockRoomPassword) нууц үгийг нэмж болно. Оролцогчид энэ $t(lockRoomPassword)-г оруулснаар уулзалтанд орох боломжтой болно.",
-        "aboutReadOnly": "Moderator participants can add a $t(lockRoomPassword) to the meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
+        "aboutReadOnly": "The Host participant can add a $t(lockRoomPassword) to the meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
         "insecureRoomNameWarning": "Энэ өрөөний нэр сэжигтэй. Хүсээгүй оролцогч таны уулзалтанд орох магадлалтай. Аюулгүй байдлаа бодон энэ товчыг ашиглана ууn.",
         "title": "Аюулгүй байдлын тохиргоо"
     },
