@@ -55,7 +55,7 @@ android {
         }
         release {
             // Uncomment the following line for signing a test release build.
-            // signingConfig signingConfigs.debug
+            signingConfig signingConfigs.debug
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-release.pro'
             buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${googleServicesEnabled}"
