@@ -205,7 +205,8 @@ function getConfig(options = {}) {
         resolve: {
             alias: {
                 'focus-visible': 'focus-visible/dist/focus-visible.min.js',
-                '@giphy/js-analytics': resolve(__dirname, 'giphy-analytics-stub.js')
+                '@emotion/react': require.resolve('@emotion/react'),
+                '@emotion/styled': require.resolve('@emotion/styled')
             },
             aliasFields: [
                 'browser'
