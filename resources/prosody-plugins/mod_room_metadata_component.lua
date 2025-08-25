@@ -62,9 +62,7 @@ function getMetadataJSON(room, metadata)
     return res;
 end
 
-function broadcastMetadata(room)
-    local json_msg = getMetadataJSON(room);
-
+function broadcastMetadata(room, json_msg)
     if not json_msg then
         return;
     end
@@ -99,6 +97,8 @@ function send_metadata(occupant, room, json_msg)
             metadata_to_send = table_shallow_copy(metadata_to_send);
             metadata_to_send.participants = participants;
             metadata_to_send.moderators = moderators;
+
+            module:log('info', 'Sending metadata to jicofo room=%s,meeting_id=%s', room.jid, room._data.meeting_id);
         end
 
         json_msg = getMetadataJSON(room, metadata_to_send);
@@ -193,7 +193,8 @@ function on_message(event)
     if not table_equals(old_value, jsonData.data) then
         room.jitsiMetadata[jsonData.key] = jsonData.data;
 
-        broadcastMetadata(room);
+        module:log('info', 'Мetadata key "%s" updated by %s in room:%s,meeting_id:%s', jsonData.key, from, room.jid, room._data.meeting_id);
+        broadcastMetadata(room, getMetadataJSON(room));
 
         -- fire and event for the change
         main_muc_module:fire_event('jitsi-metadata-updated', { room = room; actor = occupant; key = jsonData.key; });
@@ -218,7 +219,11 @@ function process_main_muc_loaded(main_muc, host_module)
 
     -- The room metadata was updated internally (from another module).
     host_module:hook("room-metadata-changed", function(event)
-        broadcastMetadata(event.room);
+        local room = event.room;
+        local json_msg = getMetadataJSON(room);
+
+        module:log('info', 'Metadata changed internally in room:%s,meeting_id:%s - broadcasting data:%s', room.jid, room._data.meeting_id, json_msg);
+        broadcastMetadata(room, json_msg);
     end);
 
     -- TODO: Once clients update to read/write metadata for startMuted policy we can drop this
