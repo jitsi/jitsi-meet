@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../../app/types';
 import { setPassword } from '../../../../base/conference/actions';
-import { isLocalParticipantModerator } from '../../../../base/participants/functions';
+import { isLocalParticipantHost } from '../../../../base/participants/functions';
 import { copyText } from '../../../../base/util/copyText.web';
 import { LOCKED_LOCALLY } from '../../../../room-lock/constants';
 import { NOTIFY_CLICK_MODE } from '../../../../toolbox/types';
@@ -23,7 +23,7 @@ const KEY = 'add-passcode';
 function PasswordSection() {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const canEditPassword = useSelector(isLocalParticipantModerator);
+    const canEditPassword = useSelector(isLocalParticipantHost);
     const passwordNumberOfDigits = useSelector(
         (state: IReduxState) => state['features/base/config'].roomPasswordNumberOfDigits);
     const conference = useSelector((state: IReduxState) => state['features/base/conference'].conference);
