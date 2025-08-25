@@ -38,8 +38,8 @@ export type AbstractProps = {
     changeVote: (e?: React.MouseEvent<HTMLButtonElement> | GestureResponderEvent) => void;
     creatorName: string;
     haveVoted: boolean;
-    isParticipantModerator: boolean;
     isParticipantHost: boolean;
+    isParticipantModerator: boolean;
     question: string;
     showDetails: boolean;
     t: Function;
@@ -68,7 +68,7 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
         isParticipantHost = isRemoteParticipantHost(participant);
     }
 
-    const isParticipantModerator = participant?.role === 'moderator' && !isParticipantHost
+    const isParticipantModerator = participant?.role === 'moderator' && !isParticipantHost;
 
     const [ showDetails, setShowDetails ] = useState(false);
     const toggleIsDetailed = useCallback(() => {
@@ -127,8 +127,8 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
             changeVote = { changeVote }
             creatorName = { participant ? participant.name : '' }
             haveVoted = { poll.lastVote !== null }
-            isParticipantModerator = { isParticipantModerator }
             isParticipantHost = { isParticipantHost }
+            isParticipantModerator = { isParticipantModerator }
             question = { poll.question }
             showDetails = { showDetails }
             t = { t }
