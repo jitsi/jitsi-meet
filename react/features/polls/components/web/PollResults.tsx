@@ -3,6 +3,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import HostIndicator from '../../../filmstrip/components/web/HostIndicator';
+import ModeratorIndicator from '../../../filmstrip/components/web/ModeratorIndicator';
 import AbstractPollResults, { AbstractProps } from '../AbstractPollResults';
 
 const useStyles = makeStyles()(theme => {
@@ -117,6 +118,7 @@ const PollResults = ({
     changeVote,
     creatorName,
     haveVoted,
+    isParticipantModerator,
     isParticipantHost,
     showDetails,
     question,
@@ -125,6 +127,29 @@ const PollResults = ({
 }: AbstractProps) => {
     const { classes } = useStyles();
 
+    /**
+     * Renders role indicators (Moderator and Host) based on the participant's role.
+     *
+     * @returns {React$Element<*>}
+     */
+    function _renderRoleIndicators() {
+        if (isParticipantHost) {
+            return (
+                <HostIndicator
+                    tooltipPosition = 'right' />
+            );
+        }
+
+        if (isParticipantModerator) {
+            return (
+                <ModeratorIndicator
+                    tooltipPosition = 'right' />
+            );
+        }
+
+        return null;
+    }
+
     return (
         <div className = { classes.container }>
             <div className = { classes.header }>
@@ -132,7 +157,7 @@ const PollResults = ({
                     {question}
                 </div>
                 <div className = { classes.creator }>
-                    {t('polls.by', { name: creatorName })} { isParticipantHost && <HostIndicator tooltipPosition = 'right' /> }
+                    {t('polls.by', { name: creatorName })} { _renderRoleIndicators() }
                 </div>
             </div>
             <ul className = { classes.resultList }>

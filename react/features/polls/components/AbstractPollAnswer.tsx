@@ -28,6 +28,7 @@ export type AbstractProps = {
     checkBoxStates: boolean[];
     creatorName: string;
     isParticipantHost: boolean;
+    isParticipantModerator: boolean;
     poll: IPoll;
     pollId: string;
     sendPoll: () => void;
@@ -75,6 +76,8 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
     } else if (!participant?.local) {
         isParticipantHost = isRemoteParticipantHost(participant);
     }
+
+    const isParticipantModerator = participant?.role === 'moderator' && !isParticipantHost;
 
     const setCheckbox = useCallback((index, state) => {
         const newCheckBoxStates = [ ...checkBoxStates ];
@@ -125,6 +128,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
         checkBoxStates = { checkBoxStates }
         creatorName = { participantName }
         isParticipantHost = { isParticipantHost }
+        isParticipantModerator = { isParticipantModerator }
         poll = { poll }
         pollId = { pollId }
         sendPoll = { sendPoll }
