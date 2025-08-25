@@ -9,6 +9,7 @@ import { getLiveStreaming } from './components/LiveStream/functions';
 import LiveStreamButton from './components/LiveStream/web/LiveStreamButton';
 import RecordButton from './components/Recording/web/RecordButton';
 import { getRecordButtonProps, isLiveStreamingButtonVisible } from './functions';
+import { isLocalParticipantModerator } from '../base/participants/functions';
 
 
 const recording = {
@@ -31,8 +32,9 @@ const livestreaming = {
 export function useRecordingButton() {
     const recordingProps = useSelector(getRecordButtonProps);
     const toolbarButtons = useSelector((state: IReduxState) => state['features/toolbox'].toolbarButtons);
+    const isModerator = useSelector((state: IReduxState) => isLocalParticipantModerator(state));
 
-    if (toolbarButtons?.includes('recording') && recordingProps.visible) {
+    if (toolbarButtons?.includes('recording') && recordingProps.visible && isModerator) {
         return recording;
     }
 
