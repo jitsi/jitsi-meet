@@ -80,6 +80,7 @@ export function submitAudioDeviceSelectionTab(newState: any, isDisplayedOnWelcom
 
             if (!jitsiTrack) {
                 logger.debug('No local audio track found');
+                dispatch(setAudioSettings(newState.audioSettings));
 
                 return;
             }

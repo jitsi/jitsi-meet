@@ -52,10 +52,10 @@ const DEFAULT_STATE: ISettingsState = {
 };
 
 export interface IAudioSettings {
-    autoGainControl: boolean;
-    channelCount: 1 | 2;
-    echoCancellation: boolean;
-    noiseSuppression: boolean;
+    autoGainControl?: boolean;
+    channelCount?: 1 | 2;
+    echoCancellation?: boolean;
+    noiseSuppression?: boolean;
 }
 export interface ISettingsState {
     audioOutputDeviceId?: string;

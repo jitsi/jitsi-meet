@@ -568,7 +568,15 @@ export default {
                 if (browser.isWebKitBased()) {
                     this.muteAudio(true, true);
                 } else {
-                    localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.AUDIO);
+                    localTracks = localTracks.filter(track => {
+                        if (track.getType() === MEDIA_TYPE.AUDIO) {
+                            track.stopStream();
+
+                            return false;
+                        }
+
+                        return true;
+                    });
                 }
             }
 
