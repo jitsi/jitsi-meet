@@ -1,29 +1,26 @@
 /* global APP, JitsiMeetJS, config, interfaceConfig */
 
-import { jitsiLocalStorage } from '@jitsi/js-utils';
+import {jitsiLocalStorage} from '@jitsi/js-utils';
 import Logger from '@jitsi/logger';
 
-import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';
+import {ENDPOINT_TEXT_MESSAGE_NAME} from './modules/API/constants';
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 import Recorder from './modules/recorder/Recorder';
-import { createTaskQueue } from './modules/util/helpers';
+import {createTaskQueue} from './modules/util/helpers';
 import {
     createDeviceChangedEvent,
     createScreenSharingEvent,
     createStartSilentEvent,
     createTrackMutedEvent
 } from './react/features/analytics/AnalyticsEvents';
-import { sendAnalytics } from './react/features/analytics/functions';
-import {
-    maybeRedirectToWelcomePage,
-    reloadWithStoredParams
-} from './react/features/app/actions';
+import {sendAnalytics} from './react/features/analytics/functions';
+import {maybeRedirectToWelcomePage, reloadWithStoredParams} from './react/features/app/actions';
 import {
     _conferenceWillJoin,
     authStatusChanged,
     conferenceFailed,
-    conferenceJoinInProgress,
     conferenceJoined,
+    conferenceJoinInProgress,
     conferenceLeft,
     conferencePropertiesChanged,
     conferenceSubjectChanged,
@@ -41,11 +38,7 @@ import {
     onStartMutedPolicyChanged,
     p2pStatusChanged
 } from './react/features/base/conference/actions';
-import {
-    AVATAR_URL_COMMAND,
-    CONFERENCE_LEAVE_REASONS,
-    EMAIL_COMMAND
-} from './react/features/base/conference/constants';
+import {AVATAR_URL_COMMAND, CONFERENCE_LEAVE_REASONS, EMAIL_COMMAND} from './react/features/base/conference/constants';
 import {
     commonUserJoinedHandling,
     commonUserLeftHandling,
@@ -53,8 +46,8 @@ import {
     sendLocalParticipant,
     updateTrackMuteState
 } from './react/features/base/conference/functions';
-import { getReplaceParticipant, getSsrcRewritingFeatureFlag } from './react/features/base/config/functions';
-import { connect } from './react/features/base/connection/actions.web';
+import {getReplaceParticipant, getSsrcRewritingFeatureFlag} from './react/features/base/config/functions';
+import {connect} from './react/features/base/connection/actions.web';
 import {
     checkAndNotifyForNewDevice,
     getAvailableDevices,
@@ -71,12 +64,12 @@ import {
     setAudioOutputDeviceId
 } from './react/features/base/devices/functions.web';
 import {
+    browser,
     JitsiConferenceErrors,
     JitsiConferenceEvents,
     JitsiE2ePingEvents,
     JitsiMediaDevicesEvents,
-    JitsiTrackEvents,
-    browser
+    JitsiTrackEvents
 } from './react/features/base/lib-jitsi-meet';
 import {
     gumPending,
@@ -88,13 +81,13 @@ import {
     setVideoMuted,
     setVideoUnmutePermissions
 } from './react/features/base/media/actions';
-import { MEDIA_TYPE, VIDEO_MUTISM_AUTHORITY, VIDEO_TYPE } from './react/features/base/media/constants';
+import {MEDIA_TYPE, VIDEO_MUTISM_AUTHORITY, VIDEO_TYPE} from './react/features/base/media/constants';
 import {
     getStartWithAudioMuted,
     getStartWithVideoMuted,
     isVideoMutedByUser
 } from './react/features/base/media/functions';
-import { IGUMPendingState } from './react/features/base/media/types';
+import {IGUMPendingState} from './react/features/base/media/types';
 import {
     dominantSpeakerChanged,
     localParticipantAudioLevelChanged,
@@ -114,7 +107,7 @@ import {
     getParticipantByIdOrUndefined,
     getVirtualScreenshareParticipantByOwnerId
 } from './react/features/base/participants/functions';
-import { updateSettings } from './react/features/base/settings/actions';
+import {updateSettings} from './react/features/base/settings/actions';
 import {
     addLocalTrack,
     createInitialAVTracks,
@@ -134,35 +127,32 @@ import {
     isLocalTrackMuted,
     isUserInteractionRequiredForUnmute
 } from './react/features/base/tracks/functions';
-import { downloadJSON } from './react/features/base/util/downloadJSON';
-import { getJitsiMeetGlobalNSConnectionTimes } from './react/features/base/util/helpers';
-import { openLeaveReasonDialog } from './react/features/conference/actions.web';
-import { showDesktopPicker } from './react/features/desktop-picker/actions';
-import { appendSuffix } from './react/features/display-name/functions';
-import { maybeOpenFeedbackDialog, submitFeedback } from './react/features/feedback/actions';
-import { maybeSetLobbyChatMessageListener } from './react/features/lobby/actions.any';
-import { setNoiseSuppressionEnabled } from './react/features/noise-suppression/actions';
+import {downloadJSON} from './react/features/base/util/downloadJSON';
+import {getJitsiMeetGlobalNSConnectionTimes} from './react/features/base/util/helpers';
+import {openLeaveReasonDialog} from './react/features/conference/actions.web';
+import {showDesktopPicker} from './react/features/desktop-picker/actions';
+import {appendSuffix} from './react/features/display-name/functions';
+import {maybeOpenFeedbackDialog, submitFeedback} from './react/features/feedback/actions';
+import {maybeSetLobbyChatMessageListener} from './react/features/lobby/actions.any';
+import {setNoiseSuppressionEnabled} from './react/features/noise-suppression/actions';
 import {
     hideNotification,
     showErrorNotification,
     showNotification,
     showWarningNotification
 } from './react/features/notifications/actions';
-import {
-    DATA_CHANNEL_CLOSED_NOTIFICATION_ID,
-    NOTIFICATION_TIMEOUT_TYPE
-} from './react/features/notifications/constants';
-import { suspendDetected } from './react/features/power-monitor/actions';
-import { initPrejoin, isPrejoinPageVisible } from './react/features/prejoin/functions';
-import { disableReceiver, stopReceiver } from './react/features/remote-control/actions';
-import { setScreenAudioShareState } from './react/features/screen-share/actions.web';
-import { isScreenAudioShared } from './react/features/screen-share/functions';
-import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture/actions';
-import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
-import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise';
-import { handleToggleVideoMuted } from './react/features/toolbox/actions.any';
-import { transcriberJoined, transcriberLeft } from './react/features/transcribing/actions';
-import { muteLocal } from './react/features/video-menu/actions.any';
+import {DATA_CHANNEL_CLOSED_NOTIFICATION_ID, NOTIFICATION_TIMEOUT_TYPE} from './react/features/notifications/constants';
+import {suspendDetected} from './react/features/power-monitor/actions';
+import {initPrejoin, isPrejoinPageVisible} from './react/features/prejoin/functions';
+import {disableReceiver, stopReceiver} from './react/features/remote-control/actions';
+import {setScreenAudioShareState} from './react/features/screen-share/actions.web';
+import {isScreenAudioShared} from './react/features/screen-share/functions';
+import {toggleScreenshotCaptureSummary} from './react/features/screenshot-capture/actions';
+import {AudioMixerEffect} from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
+import {createRnnoiseProcessor} from './react/features/stream-effects/rnnoise';
+import {handleToggleVideoMuted} from './react/features/toolbox/actions.any';
+import {transcriberJoined, transcriberLeft} from './react/features/transcribing/actions';
+import {muteLocal} from './react/features/video-menu/actions.any';
 
 const logger = Logger.getLogger(__filename);
 let room;
@@ -1396,7 +1386,7 @@ export default {
                 const jwt = APP.store.getState()['features/base/jwt'];
 
                 // The JWT structure has the moderator flag in context.user.moderator
-                const jwtModerator = jwt? true : false;
+                const jwtModerator = jwt && jwt.jwt;
 
                 // If JWT says user is moderator, preserve that role regardless of XMPP role
                 const finalRole = jwtModerator ? 'moderator' : role;
