@@ -9,7 +9,7 @@ import { getParticipantById, getParticipantDisplayName, isPrivateChatEnabled } f
 import Popover from '../../../base/popover/components/Popover.web';
 import Message from '../../../base/react/components/web/Message';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
-import { getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
+import { getDisplayNameSuffix, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
 
 import MessageMenu from './MessageMenu';
@@ -226,13 +226,13 @@ const ChatMessage = ({
      * @returns {React$Element<*>}
      */
     function _renderDisplayName() {
-        const { displayName, isFromVisitor = false } = message;
+        const { displayName } = message;
 
         return (
             <div
                 aria-hidden = { true }
                 className = { cx('display-name', classes.displayName) }>
-                {`${displayName}${isFromVisitor ? ` ${t('visitors.chatIndicator')}` : ''}`}
+                {`${displayName}${getDisplayNameSuffix(message)}`}
             </div>
         );
     }

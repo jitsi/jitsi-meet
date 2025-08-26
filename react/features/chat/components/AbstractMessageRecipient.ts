@@ -3,7 +3,7 @@ import { WithTranslation } from 'react-i18next';
 
 import { IReduxState, IStore } from '../../app/types';
 import { getParticipantDisplayName, isLocalParticipantModerator } from '../../base/participants/functions';
-import { getVisitorDisplayName } from '../../visitors/functions';
+import { getDisplayName } from '../../visitors/functions';
 import { setLobbyChatActiveState, setPrivateMessageRecipient } from '../actions.any';
 import { isVisitorChatParticipant } from '../functions';
 
@@ -84,7 +84,7 @@ export function _mapStateToProps(state: IReduxState, _ownProps: any) {
 
     if (privateMessageRecipient) {
         _privateMessageRecipient = _isVisitor
-            ? getVisitorDisplayName(state, privateMessageRecipient.name)
+            ? getDisplayName(state, privateMessageRecipient.name)
             : getParticipantDisplayName(state, privateMessageRecipient.id);
     }
 

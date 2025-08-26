@@ -13,6 +13,11 @@ local is_admin = util.is_admin;
 local ends_with = util.ends_with;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local NICK_NS = 'http://jabber.org/protocol/nick';
+local DISPLAY_NAME_NS = 'http://jitsi.org/protocol/display-name';
+
+local sessions = prosody.full_sessions;
+
+local ignore_jwt_name = module:get_option_boolean('ignore_jwt_name', false);
 
 -- we need to get the shared resource for joining moderators, as participants are marked as moderators
 -- after joining which is after the filter for stanza/out, but we need to know will this participant be a moderator
@@ -74,6 +79,56 @@ function filter_stanza_in(stanza, session)
 
     return stanza;
 end
+
+-- 'muc-add-history' is called in 'muc-broadcast-message' with priority 0
+-- we want to clean up message after we have processed it for history, but do it for all messages
+-- not only those that are added to history (as someone can forge a message and add 'no-store')
+module:hook('muc-broadcast-message', function(event)
+    -- any message that is about to be delivered, clear up nick and display-name elements
+    event.stanza:remove_children('nick', NICK_NS);
+    event.stanza:remove_children('display-name', DISPLAY_NAME_NS);
+end, -1);
+
+module:hook('muc-add-history', function(event)
+    local room, stanza = event.room, event.stanza;
+    local name;
+    local source;
+
+    local occupant = room:get_occupant_by_nick(stanza.attr.from);
+
+    if occupant then
+        local session = sessions[occupant.jid];
+        if session and session.jitsi_meet_context_user then
+            if ignore_jwt_name then
+                name = occupant:get_presence():get_child('nick', NICK_NS):get_text();
+            else
+                name = session.jitsi_meet_context_user.name;
+            end
+
+            source = 'token';
+        else
+            name = occupant:get_presence():get_child('nick', NICK_NS):get_text();
+            source = 'guest';
+        end
+    else
+        -- if no occupant found it is a message from visitor let's check display-name source
+        local display_name_element = stanza:get_child('display-name', DISPLAY_NAME_NS);
+        if display_name_element and display_name_element.attr.source == 'visitor' then
+            name = display_name_element:get_text();
+            source = display_name_element.attr.source;
+        end
+    end
+
+    if name then
+        -- clone the stanza, so only history has the display_name extension
+        event.stanza = st.clone(stanza);
+
+        event.stanza:tag('display-name', {
+            xmlns = DISPLAY_NAME_NS,
+            source = source
+        }):text(name):up();
+    end
+end);
 
 function filter_session(session)
     filters.add_filter(session, 'stanzas/out', filter_stanza_out, -100);

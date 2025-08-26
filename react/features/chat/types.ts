@@ -5,6 +5,7 @@ import { IStore } from '../app/types';
 export interface IMessage {
     displayName: string;
     error?: Object;
+    isFromGuest?: boolean;
     isFromVisitor?: boolean;
     isReaction: boolean;
     lobbyChat: boolean;
