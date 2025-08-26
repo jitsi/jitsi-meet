@@ -21,8 +21,7 @@ describe('Lock Room', () => {
     it('enter participant in locked room', async () => {
         // first enter wrong pin then correct one
         await joinSecondParticipant({
-            skipWaitToJoin: true,
-            skipInMeetingChecks: true
+            skipWaitToJoin: true
         });
 
         const { p2 } = ctx;
@@ -98,8 +97,7 @@ describe('Lock Room', () => {
         await ctx.p2.hangup();
         await participant1LockRoom();
         await joinSecondParticipant({
-            skipWaitToJoin: true,
-            skipInMeetingChecks: true
+            skipWaitToJoin: true
         });
 
         const { p2 } = ctx;
