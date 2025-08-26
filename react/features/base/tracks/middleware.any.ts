@@ -2,6 +2,7 @@ import { batch } from 'react-redux';
 
 import { IStore } from '../../app/types';
 import { _RESET_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
+import { setAudioSettings } from '../../settings/actions.web';
 import { getCurrentConference } from '../conference/functions';
 import {
     SET_AUDIO_MUTED,
@@ -35,6 +36,8 @@ import {
     setTrackMuted
 } from './functions';
 import './subscriber';
+import { getLocalJitsiAudioTrackSettings } from './functions.any';
+import { ITrackOptions } from './types';
 
 /**
  * Middleware that captures LIB_DID_DISPOSE and LIB_DID_INIT actions and,
@@ -196,15 +199,36 @@ function _setMuted(store: IStore, { ensureTrack, muted }: {
 
         if (jitsiTrack) {
             setTrackMuted(jitsiTrack, muted, state, dispatch)
-                .catch(() => dispatch(trackMuteUnmuteFailed(localTrack, muted)));
+            .catch(() => {
+                dispatch(trackMuteUnmuteFailed(localTrack, muted));
+            });
         }
     } else if (!muted && ensureTrack) {
         // TODO(saghul): reconcile these 2 types.
         const createMediaType = mediaType === MEDIA_TYPE.SCREENSHARE ? 'desktop' : mediaType;
 
         typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.PENDING_UNMUTE));
-        dispatch(createLocalTracksA({ devices: [ createMediaType ] })).then(() => {
+
+        const createTrackOptions: ITrackOptions = {
+            devices: [ createMediaType ],
+        };
+
+        const isAudioTrack = mediaType === MEDIA_TYPE.AUDIO;
+
+        if (isAudioTrack) {
+            createTrackOptions.constraints = {
+                audio: state['features/settings'].audioSettings ?? getLocalJitsiAudioTrackSettings(state)
+            };
+        }
+
+        dispatch(createLocalTracksA(createTrackOptions)).then(() => {
             typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.NONE));
+
+            if (isAudioTrack) {
+                const updatedSettings = getLocalJitsiAudioTrackSettings(getState());
+
+                dispatch(setAudioSettings(updatedSettings));
+            }
         });
     }
 }
