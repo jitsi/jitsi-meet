@@ -114,6 +114,7 @@
         "error": "Error: your message was not sent. Reason: {{error}}",
         "everyone": "Everyone",
         "fieldPlaceHolder": "Aa",
+        "guestsChatIndicator": "(guest)",
         "lobbyChatMessageTo": "Lobby chat message to {{recipient}}",
         "message": "Message",
         "messageAccessibleTitle": "{{user}} says:",

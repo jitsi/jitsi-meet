@@ -68,6 +68,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         const newMessage: IMessage = {
             displayName: action.displayName,
             error: action.error,
+            isFromGuest: Boolean(action.isFromGuest),
             isFromVisitor: Boolean(action.isFromVisitor),
             participantId: action.participantId,
             isReaction: action.isReaction,
