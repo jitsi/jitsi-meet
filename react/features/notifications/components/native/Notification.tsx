@@ -154,7 +154,7 @@ const Notification = ({
                 <>
                     <Text
                         numberOfLines = { 1 }
-                        style = { styles.contentTextTitle as TextStyle }>
+                        style = { styles.contentTextTitleDescription as TextStyle }>
                         { titleText }
                     </Text>
                     {
