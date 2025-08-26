@@ -1,26 +1,26 @@
 /* global APP, JitsiMeetJS, config, interfaceConfig */
 
-import { jitsiLocalStorage } from '@jitsi/js-utils';
+import {jitsiLocalStorage} from '@jitsi/js-utils';
 import Logger from '@jitsi/logger';
 
-import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';
+import {ENDPOINT_TEXT_MESSAGE_NAME} from './modules/API/constants';
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 import Recorder from './modules/recorder/Recorder';
-import { createTaskQueue } from './modules/util/helpers';
+import {createTaskQueue} from './modules/util/helpers';
 import {
     createDeviceChangedEvent,
     createScreenSharingEvent,
     createStartSilentEvent,
     createTrackMutedEvent
 } from './react/features/analytics/AnalyticsEvents';
-import { sendAnalytics } from './react/features/analytics/functions';
-import { maybeRedirectToWelcomePage, reloadWithStoredParams } from './react/features/app/actions';
+import {sendAnalytics} from './react/features/analytics/functions';
+import {maybeRedirectToWelcomePage, reloadWithStoredParams} from './react/features/app/actions';
 import {
     _conferenceWillJoin,
     authStatusChanged,
     conferenceFailed,
-    conferenceJoinInProgress,
     conferenceJoined,
+    conferenceJoinInProgress,
     conferenceLeft,
     conferencePropertiesChanged,
     conferenceSubjectChanged,
@@ -38,7 +38,7 @@ import {
     onStartMutedPolicyChanged,
     p2pStatusChanged
 } from './react/features/base/conference/actions';
-import { AVATAR_URL_COMMAND, CONFERENCE_LEAVE_REASONS, EMAIL_COMMAND } from './react/features/base/conference/constants';
+import {AVATAR_URL_COMMAND, CONFERENCE_LEAVE_REASONS, EMAIL_COMMAND} from './react/features/base/conference/constants';
 import {
     commonUserJoinedHandling,
     commonUserLeftHandling,
@@ -46,8 +46,8 @@ import {
     sendLocalParticipant,
     updateTrackMuteState
 } from './react/features/base/conference/functions';
-import { getReplaceParticipant, getSsrcRewritingFeatureFlag } from './react/features/base/config/functions';
-import { connect } from './react/features/base/connection/actions.web';
+import {getReplaceParticipant, getSsrcRewritingFeatureFlag} from './react/features/base/config/functions';
+import {connect} from './react/features/base/connection/actions.web';
 import {
     checkAndNotifyForNewDevice,
     getAvailableDevices,
@@ -64,12 +64,12 @@ import {
     setAudioOutputDeviceId
 } from './react/features/base/devices/functions.web';
 import {
+    browser,
     JitsiConferenceErrors,
     JitsiConferenceEvents,
     JitsiE2ePingEvents,
     JitsiMediaDevicesEvents,
-    JitsiTrackEvents,
-    browser
+    JitsiTrackEvents
 } from './react/features/base/lib-jitsi-meet';
 import {
     gumPending,
@@ -81,13 +81,13 @@ import {
     setVideoMuted,
     setVideoUnmutePermissions
 } from './react/features/base/media/actions';
-import { MEDIA_TYPE, VIDEO_MUTISM_AUTHORITY, VIDEO_TYPE } from './react/features/base/media/constants';
+import {MEDIA_TYPE, VIDEO_MUTISM_AUTHORITY, VIDEO_TYPE} from './react/features/base/media/constants';
 import {
     getStartWithAudioMuted,
     getStartWithVideoMuted,
     isVideoMutedByUser
 } from './react/features/base/media/functions';
-import { IGUMPendingState } from './react/features/base/media/types';
+import {IGUMPendingState} from './react/features/base/media/types';
 import {
     dominantSpeakerChanged,
     localParticipantAudioLevelChanged,
@@ -107,7 +107,7 @@ import {
     getParticipantByIdOrUndefined,
     getVirtualScreenshareParticipantByOwnerId
 } from './react/features/base/participants/functions';
-import { updateSettings } from './react/features/base/settings/actions';
+import {updateSettings} from './react/features/base/settings/actions';
 import {
     addLocalTrack,
     createInitialAVTracks,
@@ -127,32 +127,32 @@ import {
     isLocalTrackMuted,
     isUserInteractionRequiredForUnmute
 } from './react/features/base/tracks/functions';
-import { downloadJSON } from './react/features/base/util/downloadJSON';
-import { getJitsiMeetGlobalNSConnectionTimes } from './react/features/base/util/helpers';
-import { openLeaveReasonDialog } from './react/features/conference/actions.web';
-import { showDesktopPicker } from './react/features/desktop-picker/actions';
-import { appendSuffix } from './react/features/display-name/functions';
-import { maybeOpenFeedbackDialog, submitFeedback } from './react/features/feedback/actions';
-import { maybeSetLobbyChatMessageListener } from './react/features/lobby/actions.any';
-import { setNoiseSuppressionEnabled } from './react/features/noise-suppression/actions';
+import {downloadJSON} from './react/features/base/util/downloadJSON';
+import {getJitsiMeetGlobalNSConnectionTimes} from './react/features/base/util/helpers';
+import {openLeaveReasonDialog} from './react/features/conference/actions.web';
+import {showDesktopPicker} from './react/features/desktop-picker/actions';
+import {appendSuffix} from './react/features/display-name/functions';
+import {maybeOpenFeedbackDialog, submitFeedback} from './react/features/feedback/actions';
+import {maybeSetLobbyChatMessageListener} from './react/features/lobby/actions.any';
+import {setNoiseSuppressionEnabled} from './react/features/noise-suppression/actions';
 import {
     hideNotification,
     showErrorNotification,
     showNotification,
     showWarningNotification
 } from './react/features/notifications/actions';
-import { DATA_CHANNEL_CLOSED_NOTIFICATION_ID, NOTIFICATION_TIMEOUT_TYPE } from './react/features/notifications/constants';
-import { suspendDetected } from './react/features/power-monitor/actions';
-import { initPrejoin, isPrejoinPageVisible } from './react/features/prejoin/functions';
-import { disableReceiver, stopReceiver } from './react/features/remote-control/actions';
-import { setScreenAudioShareState } from './react/features/screen-share/actions.web';
-import { isScreenAudioShared } from './react/features/screen-share/functions';
-import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture/actions';
-import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
-import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise';
-import { handleToggleVideoMuted } from './react/features/toolbox/actions.any';
-import { transcriberJoined, transcriberLeft } from './react/features/transcribing/actions';
-import { muteLocal } from './react/features/video-menu/actions.any';
+import {DATA_CHANNEL_CLOSED_NOTIFICATION_ID, NOTIFICATION_TIMEOUT_TYPE} from './react/features/notifications/constants';
+import {suspendDetected} from './react/features/power-monitor/actions';
+import {initPrejoin, isPrejoinPageVisible} from './react/features/prejoin/functions';
+import {disableReceiver, stopReceiver} from './react/features/remote-control/actions';
+import {setScreenAudioShareState} from './react/features/screen-share/actions.web';
+import {isScreenAudioShared} from './react/features/screen-share/functions';
+import {toggleScreenshotCaptureSummary} from './react/features/screenshot-capture/actions';
+import {AudioMixerEffect} from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
+import {createRnnoiseProcessor} from './react/features/stream-effects/rnnoise';
+import {handleToggleVideoMuted} from './react/features/toolbox/actions.any';
+import {transcriberJoined, transcriberLeft} from './react/features/transcribing/actions';
+import {muteLocal} from './react/features/video-menu/actions.any';
 
 const logger = Logger.getLogger(__filename);
 let room;
@@ -249,59 +249,59 @@ class ConferenceConnector {
 
         switch (err) {
 
-        case JitsiConferenceErrors.RESERVATION_ERROR: {
-            const [ code, msg ] = params;
+            case JitsiConferenceErrors.RESERVATION_ERROR: {
+                const [ code, msg ] = params;
 
-            APP.store.dispatch(showErrorNotification({
-                descriptionArguments: {
-                    code,
-                    msg
-                },
-                descriptionKey: 'dialog.reservationErrorMsg',
-                titleKey: 'dialog.reservationError'
-            }));
-            break;
-        }
+                APP.store.dispatch(showErrorNotification({
+                    descriptionArguments: {
+                        code,
+                        msg
+                    },
+                    descriptionKey: 'dialog.reservationErrorMsg',
+                    titleKey: 'dialog.reservationError'
+                }));
+                break;
+            }
 
-        case JitsiConferenceErrors.GRACEFUL_SHUTDOWN:
-            APP.store.dispatch(showErrorNotification({
-                descriptionKey: 'dialog.gracefulShutdown',
-                titleKey: 'dialog.serviceUnavailable'
-            }));
-            break;
+            case JitsiConferenceErrors.GRACEFUL_SHUTDOWN:
+                APP.store.dispatch(showErrorNotification({
+                    descriptionKey: 'dialog.gracefulShutdown',
+                    titleKey: 'dialog.serviceUnavailable'
+                }));
+                break;
 
             // FIXME FOCUS_DISCONNECTED is a confusing event name.
             // What really happens there is that the library is not ready yet,
             // because Jicofo is not available, but it is going to give it another
             // try.
-        case JitsiConferenceErrors.FOCUS_DISCONNECTED: {
-            const [ focus, retrySec ] = params;
+            case JitsiConferenceErrors.FOCUS_DISCONNECTED: {
+                const [ focus, retrySec ] = params;
 
-            APP.store.dispatch(showNotification({
-                descriptionKey: focus,
-                titleKey: retrySec
-            }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
-            break;
-        }
+                APP.store.dispatch(showNotification({
+                    descriptionKey: focus,
+                    titleKey: retrySec
+                }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+                break;
+            }
 
-        case JitsiConferenceErrors.FOCUS_LEFT:
-        case JitsiConferenceErrors.ICE_FAILED:
-        case JitsiConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE:
-        case JitsiConferenceErrors.OFFER_ANSWER_FAILED:
-            APP.store.dispatch(conferenceWillLeave(room));
+            case JitsiConferenceErrors.FOCUS_LEFT:
+            case JitsiConferenceErrors.ICE_FAILED:
+            case JitsiConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE:
+            case JitsiConferenceErrors.OFFER_ANSWER_FAILED:
+                APP.store.dispatch(conferenceWillLeave(room));
 
-            // FIXME the conference should be stopped by the library and not by
-            // the app. Both the errors above are unrecoverable from the library
-            // perspective.
-            room.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR).then(() => APP.connection.disconnect());
-            break;
+                // FIXME the conference should be stopped by the library and not by
+                // the app. Both the errors above are unrecoverable from the library
+                // perspective.
+                room.leave(CONFERENCE_LEAVE_REASONS.UNRECOVERABLE_ERROR).then(() => APP.connection.disconnect());
+                break;
 
-        case JitsiConferenceErrors.INCOMPATIBLE_SERVER_VERSIONS:
-            APP.store.dispatch(reloadWithStoredParams());
-            break;
+            case JitsiConferenceErrors.INCOMPATIBLE_SERVER_VERSIONS:
+                APP.store.dispatch(reloadWithStoredParams());
+                break;
 
-        default:
-            this._handleConferenceFailed(err, ...params);
+            default:
+                this._handleConferenceFailed(err, ...params);
         }
     }
 
@@ -324,46 +324,8 @@ class ConferenceConnector {
      *
      */
     _handleConferenceJoined() {
-        const { dispatch } = APP.store;
-        const jwt = APP.store.getState()['features/base/jwt'];
-
-        // Check if this user should be allowed to start the meeting
-        // Anyone with a JWT token (regardless of content) is considered a moderator
-        const hasJwtToken = jwt && jwt.jwt; // Check if JWT token exists
-        const participantCount = room.getParticipants().length;
-        const isFirstParticipant = participantCount === 0;
-
-        // If user is first participant and doesn't have any JWT token, prevent them from starting
-        // This prevents ENABLE_AUTO_OWNER=1 from making non-JWT users moderators
-        if (isFirstParticipant && !hasJwtToken) {
-            logger.info('User without JWT token attempting to start meeting - waiting for JWT user');
-
-            // Show waiting message
-            dispatch(showNotification({
-                descriptionKey: 'notify.waitingForModeratorDescription',
-                titleKey: 'notify.waitingForModerator',
-                uid: 'waiting-for-moderator'
-            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
-
-            // Leave the conference and wait
-            room.leave('waiting_for_moderator').then(() => {
-                // Set up a reconnection mechanism to check periodically
-                this._waitForModerator();
-            });
-
-            return;
-        }
-
-        APP.UI.initConference();
-
-        dispatch(conferenceJoined(room));
-
-        if (jwt?.user?.hiddenFromRecorder) {
-            dispatch(muteLocal(true, MEDIA_TYPE.AUDIO));
-            dispatch(muteLocal(true, MEDIA_TYPE.VIDEO));
-            dispatch(setAudioUnmutePermissions(true, true));
-            dispatch(setVideoUnmutePermissions(true, true));
-        }
+        this._unsubscribe();
+        this._resolve();
     }
 
     /**
@@ -1896,39 +1858,12 @@ export default {
      */
     _onConferenceJoined() {
         const { dispatch } = APP.store;
-        const jwt = APP.store.getState()['features/base/jwt'];
-
-        // Check if this user should be allowed to start the meeting
-        // Anyone with a JWT token (regardless of content) is considered a moderator
-        const hasJwtToken = jwt && jwt.jwt; // Check if JWT token exists
-        const participantCount = room.getParticipants().length;
-        const isFirstParticipant = participantCount === 0;
-
-        // If user is first participant and doesn't have any JWT token, prevent them from starting
-        // This prevents ENABLE_AUTO_OWNER=1 from making non-JWT users moderators
-        if (isFirstParticipant && !hasJwtToken) {
-            logger.info('User without JWT token attempting to start meeting - waiting for JWT user');
-
-            // Show waiting message
-            dispatch(showNotification({
-                descriptionKey: 'notify.waitingForModeratorDescription',
-                titleKey: 'notify.waitingForModerator',
-                uid: 'waiting-for-moderator'
-            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
-
-            // Leave the conference and wait
-            room.leave('waiting_for_moderator').then(() => {
-                // Set up a reconnection mechanism to check periodically
-                this._waitForModerator();
-            });
-
-            return;
-        }
 
         APP.UI.initConference();
 
         dispatch(conferenceJoined(room));
 
+        const jwt = APP.store.getState()['features/base/jwt'];
 
         if (jwt?.user?.hiddenFromRecorder) {
             dispatch(muteLocal(true, MEDIA_TYPE.AUDIO));
@@ -2132,60 +2067,282 @@ export default {
     },
 
     /**
-     * Waits for a moderator (JWT user) to join before allowing this user to join.
-     * This prevents non-JWT users from becoming auto-owners when ENABLE_AUTO_OWNER=1.
+     * Determines whether or not the audio button should be enabled.
      */
-    _waitForModerator() {
-        const checkInterval = 5000; // Check every 5 seconds
-        const maxWaitTime = 300000; // 5 minutes maximum wait
-        const startTime = Date.now();
+    updateAudioIconEnabled() {
+        const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
+        const audioMediaDevices = APP.store.getState()['features/base/devices'].availableDevices.audioInput;
+        const audioDeviceCount = audioMediaDevices ? audioMediaDevices.length : 0;
 
-        const checkForModerator = () => {
-            // Check if we've been waiting too long
-            if (Date.now() - startTime > maxWaitTime) {
-                logger.warn('Timeout waiting for moderator, allowing user to join anyway');
-                APP.store.dispatch(hideNotification('waiting-for-moderator'));
-                this._rejoinConference();
+        // The audio functionality is considered available if there are any
+        // audio devices detected or if the local audio stream already exists.
+        const available = audioDeviceCount > 0 || Boolean(localAudio);
 
-                return;
-            }
-
-            // Check current JWT status (in case user got a token while waiting)
-            const jwt = APP.store.getState()['features/base/jwt'];
-            const hasJwtToken = jwt && jwt.jwt;
-
-            if (hasJwtToken) {
-                logger.info('User received JWT token while waiting, allowing join');
-                APP.store.dispatch(hideNotification('waiting-for-moderator'));
-                this._rejoinConference();
-
-                return;
-            }
-
-            // For now, we'll use a simpler approach - just keep waiting
-            // In a real implementation, you'd want to check if moderators joined
-            // through websocket events or API calls rather than creating temp rooms
-            logger.info('Still waiting for moderator to join...');
-            setTimeout(checkForModerator, checkInterval);
-        };
-
-        // Start checking after initial delay
-        setTimeout(checkForModerator, checkInterval);
+        APP.store.dispatch(setAudioAvailable(available));
     },
 
     /**
-     * Rejoins the conference after waiting for moderator.
+     * Determines whether or not the video button should be enabled.
      */
-    _rejoinConference() {
-        try {
-            // Recreate the room and join
-            this._createRoom();
-            room.join();
-        } catch (error) {
-            logger.error('Failed to rejoin conference:', error);
+    updateVideoIconEnabled() {
+        const videoMediaDevices
+            = APP.store.getState()['features/base/devices'].availableDevices.videoInput;
+        const videoDeviceCount
+            = videoMediaDevices ? videoMediaDevices.length : 0;
+        const localVideo = getLocalJitsiVideoTrack(APP.store.getState());
 
-            // Fallback: redirect to welcome page
-            APP.store.dispatch(maybeRedirectToWelcomePage());
+        // The video functionality is considered available if there are any
+        // video devices detected or if there is local video stream already
+        // active which could be either screensharing stream or a video track
+        // created before the permissions were rejected (through browser
+        // config).
+        const available = videoDeviceCount > 0 || Boolean(localVideo);
+
+        APP.store.dispatch(setVideoAvailable(available));
+        APP.API.notifyVideoAvailabilityChanged(available);
+    },
+
+    /**
+     * Disconnect from the conference and optionally request user feedback.
+     * @param {boolean} [requestFeedback=false] if user feedback should be
+     * @param {string} [hangupReason] the reason for leaving the meeting
+     * requested
+     * @param {boolean} [notifyOnConferenceTermination] whether to notify
+     * the user on conference termination
+     */
+    hangup(requestFeedback = false, hangupReason, notifyOnConferenceTermination) {
+        APP.store.dispatch(disableReceiver());
+
+        this._stopProxyConnection();
+
+        APP.store.dispatch(destroyLocalTracks());
+        this._localTracksInitialized = false;
+
+        // Remove unnecessary event listeners from firing callbacks.
+        if (this.deviceChangeListener) {
+            JitsiMeetJS.mediaDevices.removeEventListener(
+                JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
+                this.deviceChangeListener);
         }
+
+        let feedbackResultPromise = Promise.resolve({});
+
+        if (requestFeedback) {
+            const feedbackDialogClosed = (feedbackResult = {}) => {
+                if (!feedbackResult.wasDialogShown && hangupReason && notifyOnConferenceTermination) {
+                    return APP.store.dispatch(
+                        openLeaveReasonDialog(hangupReason)).then(() => feedbackResult);
+                }
+
+                return Promise.resolve(feedbackResult);
+            };
+
+            feedbackResultPromise
+                = APP.store.dispatch(maybeOpenFeedbackDialog(room, hangupReason))
+                .then(feedbackDialogClosed, feedbackDialogClosed);
+        }
+
+        const leavePromise = this.leaveRoom().catch(() => Promise.resolve());
+
+        Promise.allSettled([ feedbackResultPromise, leavePromise ]).then(([ feedback, _ ]) => {
+            this._room = undefined;
+            room = undefined;
+
+            /**
+             * Don't call {@code notifyReadyToClose} if the promotional page flag is set
+             * and let the page take care of sending the message, since there will be
+             * a redirect to the page anyway.
+             */
+            if (!interfaceConfig.SHOW_PROMOTIONAL_CLOSE_PAGE) {
+                APP.API.notifyReadyToClose();
+            }
+
+            APP.store.dispatch(maybeRedirectToWelcomePage(feedback.value ?? {}));
+        });
+
+
+    },
+
+    /**
+     * Leaves the room.
+     *
+     * @param {boolean} doDisconnect - Whether leaving the room should also terminate the connection.
+     * @param {string} reason - reason for leaving the room.
+     * @returns {Promise}
+     */
+    leaveRoom(doDisconnect = true, reason = '') {
+        APP.store.dispatch(conferenceWillLeave(room));
+
+        const maybeDisconnect = () => {
+            if (doDisconnect) {
+                return disconnect();
+            }
+        };
+
+        if (room && room.isJoined()) {
+            return room.leave(reason).then(() => maybeDisconnect())
+                .catch(e => {
+                    logger.error(e);
+
+                    return maybeDisconnect();
+                });
+        }
+
+        return maybeDisconnect();
+    },
+
+    /**
+     * Changes the email for the local user
+     * @param email {string} the new email
+     */
+    changeLocalEmail(email = '') {
+        const formattedEmail = String(email).trim();
+
+        APP.store.dispatch(updateSettings({
+            email: formattedEmail
+        }));
+
+        sendData(commands.EMAIL, formattedEmail);
+    },
+
+    /**
+     * Changes the avatar url for the local user
+     * @param url {string} the new url
+     */
+    changeLocalAvatarUrl(url = '') {
+        const formattedUrl = String(url).trim();
+
+        APP.store.dispatch(updateSettings({
+            avatarURL: formattedUrl
+        }));
+
+        sendData(commands.AVATAR_URL, url);
+    },
+
+    /**
+     * Sends a message via the data channel.
+     * @param {string} to the id of the endpoint that should receive the
+     * message. If "" - the message will be sent to all participants.
+     * @param {object} payload the payload of the message.
+     * @throws NetworkError or InvalidStateError or Error if the operation
+     * fails.
+     */
+    sendEndpointMessage(to, payload) {
+        room.sendEndpointMessage(to, payload);
+    },
+
+    /**
+     * Callback invoked by the external api create or update a direct connection
+     * from the local client to an external client.
+     *
+     * @param {Object} event - The object containing information that should be
+     * passed to the {@code ProxyConnectionService}.
+     * @returns {void}
+     */
+    onProxyConnectionEvent(event) {
+        if (!this._proxyConnection) {
+            this._proxyConnection = new JitsiMeetJS.ProxyConnectionService({
+
+                /**
+                 * Pass the {@code JitsiConnection} instance which will be used
+                 * to fetch TURN credentials.
+                 */
+                jitsiConnection: APP.connection,
+
+                /**
+                 * The proxy connection feature is currently tailored towards
+                 * taking a proxied video stream and showing it as a local
+                 * desktop screen.
+                 */
+                convertVideoToDesktop: true,
+
+                /**
+                 * Callback invoked when the connection has been closed
+                 * automatically. Triggers cleanup of screensharing if active.
+                 *
+                 * @returns {void}
+                 */
+                onConnectionClosed: () => {
+                    if (this._untoggleScreenSharing) {
+                        this._untoggleScreenSharing();
+                    }
+                },
+
+                /**
+                 * Callback invoked to pass messages from the local client back
+                 * out to the external client.
+                 *
+                 * @param {string} peerJid - The jid of the intended recipient
+                 * of the message.
+                 * @param {Object} data - The message that should be sent. For
+                 * screensharing this is an iq.
+                 * @returns {void}
+                 */
+                onSendMessage: (peerJid, data) =>
+                    APP.API.sendProxyConnectionEvent({
+                        data,
+                        to: peerJid
+                    }),
+
+                /**
+                 * Callback invoked when the remote peer of the proxy connection
+                 * has provided a video stream, intended to be used as a local
+                 * desktop stream.
+                 *
+                 * @param {JitsiLocalTrack} remoteProxyStream - The media
+                 * stream to use as a local desktop stream.
+                 * @returns {void}
+                 */
+                onRemoteStream: desktopStream => {
+                    if (desktopStream.videoType !== 'desktop') {
+                        logger.warn('Received a non-desktop stream to proxy.');
+                        desktopStream.dispose();
+
+                        return;
+                    }
+
+                    APP.store.dispatch(toggleScreensharingA(undefined, false, { desktopStream }));
+                }
+            });
+        }
+
+        this._proxyConnection.processMessage(event);
+    },
+
+    /**
+     * Sets the video muted status.
+     */
+    setVideoMuteStatus() {
+        APP.UI.setVideoMuted(this.getMyUserId());
+    },
+
+    /**
+     * Dispatches the passed in feedback for submission. The submitted score
+     * should be a number inclusively between 1 through 5, or -1 for no score.
+     *
+     * @param {number} score - a number between 1 and 5 (inclusive) or -1 for no
+     * score.
+     * @param {string} message - An optional message to attach to the feedback
+     * in addition to the score.
+     * @returns {void}
+     */
+    submitFeedback(score = -1, message = '') {
+        if (score === -1 || (score >= 1 && score <= 5)) {
+            APP.store.dispatch(submitFeedback(score, message, room));
+        }
+    },
+
+    /**
+     * Terminates any proxy screensharing connection that is active.
+     *
+     * @private
+     * @returns {void}
+     */
+    _stopProxyConnection() {
+        if (this._proxyConnection) {
+            this._proxyConnection.stop();
+        }
+
+        this._proxyConnection = null;
     }
 };
