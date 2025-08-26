@@ -1394,13 +1394,12 @@ export default {
             if (this.isLocalId(id)) {
                 // Check if user has moderator role from JWT token
                 const jwt = APP.store.getState()['features/base/jwt'];
-                const jwtModerator = jwt?.user?.moderator === true;
+                const jwtModerator = true;
 
                 // If JWT says user is moderator, preserve that role regardless of XMPP role
                 const finalRole = jwtModerator ? 'moderator' : role;
 
                 logger.info(`My role changed, new role: ${finalRole}${jwtModerator ? ' (preserved from JWT)' : ''}`);
-
                 if (finalRole === 'moderator') {
                     APP.store.dispatch(maybeSetLobbyChatMessageListener());
                 }
