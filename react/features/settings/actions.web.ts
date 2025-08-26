@@ -352,7 +352,7 @@ export function submitVirtualBackgroundTab(newState: any, isCancel = false) {
  *     track: any
  * }}
  */
-export function setAudioPreviewTrack(track: any) {
+export function setPreviewAudioTrack(track: any) {
     return {
         type: SET_PREVIEW_AUDIO_TRACK,
         track

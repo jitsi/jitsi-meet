@@ -14,7 +14,7 @@ import { getLocalJitsiAudioTrack } from '../base/tracks/functions.any';
 import { toggleNoiseSuppression } from '../noise-suppression/actions';
 import { setScreenshareFramerate } from '../screen-share/actions.web';
 import { setAudioSettings } from '../settings/actions.web';
-import { disposeAudioInputPreview } from '../settings/functions.web';
+import { disposePreviewAudioTrack } from '../settings/functions.web';
 
 import { getAudioDeviceSelectionDialogProps, getVideoDeviceSelectionDialogProps } from './functions.web';
 import logger from './logger';
@@ -40,11 +40,7 @@ export function submitAudioDeviceSelectionTab(newState: any, isDisplayedOnWelcom
                     getDeviceLabelById(getState(), newState.selectedAudioInputId, 'audioInput')
             }));
 
-            const previewAudioTrack = getState()['features/settings']?.previewAudioTrack;
-
-            if (previewAudioTrack) {
-                await disposeAudioInputPreview(previewAudioTrack);
-            }
+            await disposePreviewAudioTrack(getState());
 
             dispatch(setAudioSettings(newState.audioSettings));
             dispatch(setAudioInputDevice(newState.selectedAudioInputId));
@@ -85,12 +81,7 @@ export function submitAudioDeviceSelectionTab(newState: any, isDisplayedOnWelcom
                 return;
             }
 
-            const previewAudioTrack = state['features/settings']?.previewAudioTrack;
-
-            if (previewAudioTrack) {
-                await disposeAudioInputPreview(previewAudioTrack);
-            }
-
+            await disposePreviewAudioTrack(getState());
             dispatch(toggleUpdateAudioSettings(newState.audioSettings));
         }
     };
