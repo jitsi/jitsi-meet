@@ -23,14 +23,13 @@ const useStyles = makeStyles()(theme => {
     return {
         buttonContainer: {
             alignItems: 'center',
+            bottom: 0,
             display: 'flex',
             justifyContent: 'end',
             gap: theme.spacing(2),
             position: 'absolute',
-            top: 0,
             right: theme.spacing(3),
-            bottom: 0,
-            left: 0
+            top: 0
         },
 
         container: {
@@ -80,17 +79,33 @@ const useStyles = makeStyles()(theme => {
             padding: theme.spacing(3),
             position: 'relative',
 
+            '& .actionIconVisibility': {
+                opacity: 0,
+                transition: 'opacity 0.2s'
+            },
+
+            '& .timestampVisibility': {
+                opacity: 1
+            },
+
             '&:hover': {
                 backgroundColor: theme.palette.ui03,
-                borderRadius: theme.shape.borderRadius,
 
                 '& .actionIconVisibility': {
-                    visibility: 'visible'
+                    opacity: 1
                 },
 
                 '& .timestampVisibility': {
-                    visibility: 'hidden'
+                    opacity: 0
                 }
+            },
+
+            '&.focused .actionIconVisibility': {
+                opacity: 1
+            },
+
+            '&.focused .timestampVisibility': {
+                opacity: 0
             }
         },
 
@@ -198,9 +213,30 @@ const useStyles = makeStyles()(theme => {
         },
 
         actionIcon: {
+            background: 'transparent',
+            border: 0,
             cursor: 'pointer',
             padding: theme.spacing(1),
-            visibility: 'hidden'
+            visibility: 'hidden',
+            '&:focus': {
+                outline: `2px solid ${theme.palette.action01}`
+            }
+        },
+
+        iconButton: {
+            background: 'none',
+            border: 'none',
+            padding: 0,
+            marginLeft: '8px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+
+            '&:focus-visible': {
+                outline: `2px solid ${theme.palette.action01}`,
+                borderRadius: '4px'
+            }
         }
     };
 });
@@ -208,6 +244,7 @@ const useStyles = makeStyles()(theme => {
 const FileSharing = () => {
     const { classes } = useStyles();
     const [ isDragging, setIsDragging ] = useState(false);
+    const [ isFocused, setIsFocused ] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const uploadButtonRef = useRef<HTMLButtonElement>(null);
     const { t } = useTranslation();
@@ -264,6 +301,7 @@ const FileSharing = () => {
         }
     }, []);
 
+    /* eslint-disable react/jsx-no-bind */
     return (
         <div className = { classes.container }>
             {
@@ -312,8 +350,12 @@ const FileSharing = () => {
                         {
                             sortedFiles.map(file => (
                                 <li
-                                    className = { classes.fileItem }
+                                    className = { `${classes.fileItem} ${isFocused ? 'focused' : ''}` }
                                     key = { file.fileId }
+                                    // Only remove focus when leaving the whole fileItem, not just moving between its buttons
+                                    onBlur = { e => !e.currentTarget.contains(e.relatedTarget as Node) && setIsFocused(false) }
+                                    onFocus = { () => setIsFocused(true) }
+                                    tabIndex = { -1 }
                                     title = { file.fileName }>
                                     {
                                         (file.progress ?? 100) === 100 && (
@@ -346,25 +388,30 @@ const FileSharing = () => {
                                                         { formatTimestamp(file.timestamp) }
                                                     </pre>
                                                 </div>
-                                                <div className = { classes.buttonContainer }>
-                                                    <Icon
-                                                        className = { `${classes.actionIcon} actionIconVisibility` }
-                                                        color = { BaseTheme.palette.icon01 }
-
-                                                        // eslint-disable-next-line react/jsx-no-bind
+                                                <div className = { `${classes.buttonContainer} actionIconVisibility` }>
+                                                    <button
+                                                        aria-label = { `${t('fileSharing.downloadFile')} ${file.fileName}` }
+                                                        className = { `${classes.iconButton}` }
                                                         onClick = { () => dispatch(downloadFile(file.fileId)) }
-                                                        size = { 24 }
-                                                        src = { IconDownload } />
+                                                        type = 'button'>
+                                                        <Icon
+                                                            color = { BaseTheme.palette.icon01 }
+                                                            size = { 24 }
+                                                            src = { IconDownload } />
+                                                    </button>
+
                                                     {
                                                         isUploadEnabled && (
-                                                            <Icon
-                                                                className = { `${classes.actionIcon} actionIconVisibility` }
-                                                                color = { BaseTheme.palette.icon01 }
-
-                                                                // eslint-disable-next-line react/jsx-no-bind
+                                                            <button
+                                                                aria-label = { `${t('fileSharing.removeFile')} ${file.fileName}` }
+                                                                className = { `${classes.iconButton}` }
                                                                 onClick = { () => dispatch(removeFile(file.fileId)) }
-                                                                size = { 24 }
-                                                                src = { IconTrash } />
+                                                                type = 'button'>
+                                                                <Icon
+                                                                    color = { BaseTheme.palette.icon01 }
+                                                                    size = { 24 }
+                                                                    src = { IconTrash } />
+                                                            </button>
                                                         )
                                                     }
                                                 </div>
