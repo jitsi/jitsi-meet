@@ -803,7 +803,7 @@ var config = {
     // enableCalendarIntegration: false,
 
     // Whether to notify when the conference is terminated because it was destroyed.
-    // notifyOnConferenceDestruction: true,
+    notifyOnConferenceDestruction: false,
 
     // The client id for the google APIs used for the calendar integration, youtube livestreaming, etc.
     // googleApiApplicationClientID: '<client_id>',
@@ -1860,7 +1860,7 @@ var config = {
         minParticipantCountForTopPanel: 50,
 
         // The width of the filmstrip on joining meeting. Can be resized afterwards.
-        initialWidth: 400,
+        initialWidth: 180,
 
         // Whether the draggable resize bar of the filmstrip is always visible. Setting this to true will make
         // the filmstrip always visible in case `disableResizable` is false.
