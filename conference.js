@@ -1394,12 +1394,14 @@ export default {
             if (this.isLocalId(id)) {
                 // Check if user has moderator role from JWT token
                 const jwt = APP.store.getState()['features/base/jwt'];
-                const jwtModerator = true;
+                // The JWT structure has the moderator flag in context.user.moderator
+                const jwtModerator = jwt?.context?.user?.moderator === true;
 
                 // If JWT says user is moderator, preserve that role regardless of XMPP role
                 const finalRole = jwtModerator ? 'moderator' : role;
 
                 logger.info(`My role changed, new role: ${finalRole}${jwtModerator ? ' (preserved from JWT)' : ''}`);
+
                 if (finalRole === 'moderator') {
                     APP.store.dispatch(maybeSetLobbyChatMessageListener());
                 }
@@ -2282,7 +2284,7 @@ export default {
                  * @param {string} peerJid - The jid of the intended recipient
                  * of the message.
                  * @param {Object} data - The message that should be sent. For
-                                 * screensharing this is an iq.
+                 * screensharing this is an iq.
                  * @returns {void}
                  */
                 onSendMessage: (peerJid, data) =>
