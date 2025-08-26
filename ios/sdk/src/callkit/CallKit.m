@@ -81,12 +81,22 @@ RCT_EXPORT_METHOD(endCall:(NSString *)callUUID
         return;
     }
 
-    CXEndCallAction *action
-        = [[CXEndCallAction alloc] initWithCallUUID:callUUID_];
+    // 🔎 Guard: check if the call is already ended
+    for (CXCall *call in self.callController.callObserver.calls) {
+        if ([call.UUID isEqual:callUUID_] && call.hasEnded) {
+            RCTLogInfo(@"[RNCallKit][endCall] Ignoring duplicate endCall request for %@", callUUID);
+            resolve(@(YES));
+            return;
+        }
+    }
+
+    // Normal flow
+    CXEndCallAction *action = [[CXEndCallAction alloc] initWithCallUUID:callUUID_];
     [self requestTransaction:[[CXTransaction alloc] initWithAction:action]
                      resolve:resolve
                       reject:reject];
 }
+
 
 // Mute / unmute (audio)
 RCT_EXPORT_METHOD(setMuted:(NSString *)callUUID
