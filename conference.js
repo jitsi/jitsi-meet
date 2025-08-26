@@ -1392,13 +1392,20 @@ export default {
 
         room.on(JitsiConferenceEvents.USER_ROLE_CHANGED, (id, role) => {
             if (this.isLocalId(id)) {
-                logger.info(`My role changed, new role: ${role}`);
+                // Check if user has moderator role from JWT token
+                const jwt = APP.store.getState()['features/base/jwt'];
+                const jwtModerator = jwt?.user?.moderator === true;
 
-                if (role === 'moderator') {
+                // If JWT says user is moderator, preserve that role regardless of XMPP role
+                const finalRole = jwtModerator ? 'moderator' : role;
+
+                logger.info(`My role changed, new role: ${finalRole}${jwtModerator ? ' (preserved from JWT)' : ''}`);
+
+                if (finalRole === 'moderator') {
                     APP.store.dispatch(maybeSetLobbyChatMessageListener());
                 }
 
-                APP.store.dispatch(localParticipantRoleChanged(role));
+                APP.store.dispatch(localParticipantRoleChanged(finalRole));
             } else {
                 APP.store.dispatch(participantRoleChanged(id, role));
             }
@@ -2276,7 +2283,7 @@ export default {
                  * @param {string} peerJid - The jid of the intended recipient
                  * of the message.
                  * @param {Object} data - The message that should be sent. For
-                 * screensharing this is an iq.
+                                 * screensharing this is an iq.
                  * @returns {void}
                  */
                 onSendMessage: (peerJid, data) =>
