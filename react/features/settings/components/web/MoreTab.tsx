@@ -8,6 +8,7 @@ import AbstractDialogTab, {
     IProps as AbstractDialogTabProps
 } from '../../../base/dialog/components/web/AbstractDialogTab';
 import { translate } from '../../../base/i18n/functions';
+import ThemeSwitcher from '../../../base/settings/components/web/ThemeSwitcher';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 import Select from '../../../base/ui/components/web/Select';
 import { MAX_ACTIVE_PARTICIPANTS } from '../../../filmstrip/constants';
@@ -167,6 +168,7 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
                     name = 'show-subtitles-button'
                     onChange = { this._onShowSubtitlesOnStageChanged } /> }
                 {showLanguageSettings && this._renderLanguageSelect()}
+                <ThemeSwitcher />
             </div>
         );
     }

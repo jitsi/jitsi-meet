@@ -15,7 +15,7 @@ import { getConnectionData } from '../../functions';
 const useStyles = makeStyles()(theme => {
     return {
         connectionStatus: {
-            color: '#fff',
+            color: theme.palette.text01,
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
             position: 'absolute',
             width: '100%',
@@ -38,7 +38,7 @@ const useStyles = makeStyles()(theme => {
             },
 
             '& .con-status-header': {
-                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                backgroundColor: theme.palette.ui04,
                 alignItems: 'center',
                 display: 'flex',
                 padding: '12px 16px',
@@ -90,7 +90,7 @@ const useStyles = makeStyles()(theme => {
             },
 
             '& .con-status-details': {
-                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                backgroundColor: theme.palette.ui04,
                 borderTop: '1px solid #5E6D7A',
                 padding: theme.spacing(3),
                 transition: 'opacity 0.16s ease-out'

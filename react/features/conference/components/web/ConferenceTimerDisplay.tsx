@@ -8,7 +8,7 @@ const useStyles = makeStyles()(theme => {
     return {
         timer: {
             ...withPixelLineHeight(theme.typography.labelRegular),
-            color: theme.palette.text01,
+            color: theme.palette.text04,
             padding: '6px 8px',
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             boxSizing: 'border-box',

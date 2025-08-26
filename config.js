@@ -1496,6 +1496,16 @@ var config = {
     }
     */
     // dynamicBrandingUrl: '',
+    availableThemes: [
+        {
+            name: 'Solarized Light',
+            file: '/meet/static/themes/solarized-light-theme.json'
+        },
+        {
+            name: 'Charcoal & Lime',
+            file: '/meet/static/themes/charcoal-lime-theme.json'
+        },
+    ],
 
     // A list of allowed URL domains for shared video.
     //

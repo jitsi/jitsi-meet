@@ -11,7 +11,7 @@ const useStyles = makeStyles()(theme => {
     return {
         container: {
             ...withPixelLineHeight(theme.typography.bodyLongRegular),
-            color: theme.palette.text01,
+            color: theme.palette.text04,
             padding: '2px 16px',
             backgroundColor: 'rgba(0, 0, 0, 0.6)',
             maxWidth: '324px',

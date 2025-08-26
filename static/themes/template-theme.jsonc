@@ -1,0 +1,327 @@
+{
+    "groupChatRequiresPermission": false, // Whether participant can only send group chat message if `send-groupchat` feature is enabled in jwt.
+    "pollCreationRequiresPermission": false, // Whether participant can only create polls if `create-polls` feature is enabled in jwt.
+    "backgroundColor": "#FFF",
+    "backgroundImageUrl": "https://mycompany.com/images/background.png",
+    "didPageUrl": "https://mycompany.com/dids", // The URL for a custom DID's page hosted by you
+    "inviteDomain": "https://mycompany.com/invite", // The base URL of the meeting invite link
+    "logoClickUrl": "https://mycompany.com", // The URL which should open on clicking the logo image
+    "logoImageUrl": "https://mycompany.com/images/logo.png", // The URL of the logo image for the meeting
+    "avatarBackgrounds": ["#12A378", "linear-gradient(125.83deg, #000 0%, #FFF 99.09%)"], // Backgrounds list overwriting the default avatar backgrounds pool
+    "premeetingBackground": "url(https://mycompany.com/images/premeetingBackground.png)", // Custom background for prejoin/lobby screens
+    "virtualBackgrounds": ["https://my.img01.jpg", "https://my.img02.jpg"], // A list of images that can be used as video backgrounds. When this field is present, the default images will be replaced with those provided. (NOTE: Fetching the images must not be protected by CORS.)
+    "labels": {  // Object containing customized icons that should replace the default ones. The object keys need to be the exact same icon names used in here: https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/icons/svg/index.ts. To avoid having the icons trimmed or displayed in an unexpected way, please provide svg files containing svg xml icons in the size that the default icons come in.
+        "en": "https://myenglishlabels.json",
+        "fr": "https://myfrenchlabels.json",
+        "ptBR": "https://mybrazilianlabels.json"
+    },
+    "customIcons": { //  Object containing customized icons that should replace the default ones. The object keys need to be the exact same icon names used in here
+        "IconAddUser": "https://example.com/add-user.svg",
+        "IconArrowBack": "https://example.com/arrow-back.svg",
+        "IconArrowDown": "https://example.com/arrow-down.svg",
+        "IconArrowDownLarge": "https://example.com/arrow-down-large.svg",
+        "IconArrowLeft": "https://example.com/arrow-left.svg",
+        "IconArrowUp": "https://example.com/arrow-up.svg",
+        "IconArrowUpLarge": "https://example.com/arrow-up-large.svg",
+        "IconAudioOnly": "https://example.com/audio-only.svg",
+        "IconAudioOnlyOff": "https://example.com/audio-only-off.svg",
+        "IconBluetooth": "https://example.com/bluetooth.svg",
+        "IconBell": "https://example.com/bell.svg",
+        "IconCalendar": "https://example.com/calendar.svg",
+        "IconCameraRefresh": "https://example.com/camera-refresh.svg",
+        "IconCar": "https://example.com/car.svg",
+        "IconChatUnread": "https://example.com/chat-unread.svg",
+        "IconCheck": "https://example.com/check.svg",
+        "IconCloseCircle": "https://example.com/close-circle.svg",
+        "IconCloseLarge": "https://example.com/close-large.svg",
+        "IconCloudUpload": "https://example.com/cloud-upload.svg",
+        "IconCode": "https://example.com/code.svg",
+        "IconConnection": "https://example.com/connection.svg",
+        "IconConnectionInactive": "https://example.com/connection-inactive.svg",
+        "IconCopy": "https://example.com/copy.svg",
+        "IconDeviceHeadphone": "https://example.com/device-headphone.svg",
+        "IconDotsHorizontal": "https://example.com/dots-horizontal.svg",
+        "IconDownload": "https://example.com/download.svg",
+        "IconE2EE": "https://example.com/e2ee.svg",
+        "IconEdit": "https://example.com/edit.svg",
+        "IconEnlarge": "https://example.com/enlarge.svg",
+        "IconEnterFullscreen": "https://example.com/enter-fullscreen.svg",
+        "IconEnvelope": "https://example.com/envelope.svg",
+        "IconEmotionsAngry": "https://example.com/emotions-angry.svg",
+        "IconEmotionsDisgusted": "https://example.com/emotions-disgusted.svg",
+        "IconEmotionsFearful": "https://example.com/emotions-fearful.svg",
+        "IconEmotionsHappy": "https://example.com/emotions-happy.svg",
+        "IconEmotionsNeutral": "https://example.com/emotions-neutral.svg",
+        "IconEmotionsSad": "https://example.com/emotions-sad.svg",
+        "IconEmotionsSurprised": "https://example.com/emotions-surprised.svg",
+        "IconExclamationSolid": "https://example.com/exclamation-solid.svg",
+        "IconExclamationTriangle": "https://example.com/exclamation-triangle.svg",
+        "IconExitFullscreen": "https://example.com/exit-fullscreen.svg",
+        "IconFaceSmile": "https://example.com/face-smile.svg",
+        "IconFavorite": "https://example.com/favorite.svg",
+        "IconFavoriteSolid": "https://example.com/favorite-solid.svg",
+        "IconFeedback": "https://example.com/feedback.svg",
+        "IconGear": "https://example.com/gear.svg",
+        "IconGoogle": "https://example.com/google.svg",
+        "IconHangup": "https://example.com/hangup.svg",
+        "IconHelp": "https://example.com/help.svg",
+        "IconHighlight": "https://example.com/highlight.svg",
+        "IconImage": "https://example.com/image.svg",
+        "IconInfo": "https://example.com/info.svg",
+        "IconInfoCircle": "https://example.com/info-circle.svg",
+        "IconMessage": "https://example.com/message.svg",
+        "IconMeter": "https://example.com/meter.svg",
+        "IconMic": "https://example.com/mic.svg",
+        "IconMicSlash": "https://example.com/mic-slash.svg",
+        "IconModerator": "https://example.com/moderator.svg",
+        "IconNoiseSuppressionOff": "https://example.com/noise-suppression-off.svg",
+        "IconNoiseSuppressionOn": "https://example.com/noise-suppression-on.svg",
+        "IconArrowRight": "https://example.com/arrow-right.svg",
+        "IconOffice365": "https://example.com/office365.svg",
+        "IconPerformance": "https://example.com/performance.svg",
+        "IconPhoneRinging": "https://example.com/phone-ringing.svg",
+        "IconPin": "https://example.com/pin.svg",
+        "IconPinned": "https://example.com/pinned.svg",
+        "IconPlay": "https://example.com/play.svg",
+        "IconPlus": "https://example.com/plus.svg",
+        "IconRaiseHand": "https://example.com/raise-hand.svg",
+        "IconRecord": "https://example.com/record.svg",
+        "IconRecordAccount": "https://example.com/record-account.svg",
+        "IconRecordContact": "https://example.com/record-contact.svg",
+        "IconRecordLead": "https://example.com/record-lead.svg",
+        "IconRecordOpportunity": "https://example.com/record-opportunity.svg",
+        "IconRemoteControlStart": "https://example.com/remote-control-start.svg",
+        "IconRemoteControlStop": "https://example.com/remote-control-stop.svg",
+        "IconReply": "https://example.com/reply.svg",
+        "IconRestore": "https://example.com/restore.svg",
+        "IconRingGroup": "https://example.com/ring-group.svg",
+        "IconScreenshare": "https://example.com/screenshare.svg",
+        "IconSearch": "https://example.com/search.svg",
+        "IconSecurityOff": "https://example.com/security-off.svg",
+        "IconSecurityOn": "https://example.com/security-on.svg",
+        "IconSend": "https://example.com/send.svg",
+        "IconShare": "https://example.com/share.svg",
+        "IconShareDoc": "https://example.com/share-doc.svg",
+        "IconShortcuts": "https://example.com/shortcuts.svg",
+        "IconSip": "https://example.com/sip.svg",
+        "IconSites": "https://example.com/sites.svg",
+        "IconStop": "https://example.com/stop.svg",
+        "IconSubtitles": "https://example.com/subtitles.svg",
+        "IconTileView": "https://example.com/tile-view.svg",
+        "IconTrash": "https://example.com/trash.svg",
+        "IconUserDeleted": "https://example.com/user-deleted.svg",
+        "IconUsers": "https://example.com/users.svg",
+        "IconUser": "https://example.com/user.svg",
+        "IconVideo": "https://example.com/video.svg",
+        "IconVideoOff": "https://example.com/video-off.svg",
+        "IconVolumeOff": "https://example.com/volume-off.svg",
+        "IconVolumeUp": "https://example.com/volume-up.svg",
+        "IconWarning": "https://example.com/warning.svg",
+        "IconWarningCircle": "https://example.com/warning-circle.svg",
+        "IconWhiteboard": "https://example.com/whiteboard.svg",
+        "IconWhiteboardHide": "https://example.com/whiteboard-hide.svg",
+        "IconWifi1Bar": "https://example.com/wifi-1-bar.svg",
+        "IconWifi2Bars": "https://example.com/wifi-2-bars.svg",
+        "IconWifi3Bars": "https://example.com/wifi-3-bars.svg",
+        "IconYahoo": "https://example.com/yahoo.svg"
+        },
+    "customTheme": { // Object containing a theme's properties
+        "palette": {
+            // Default page background.
+            "uiBackground": "#040404",
+
+            // Container backgrounds
+            "ui01": "#141414",
+            "ui02": "#292929",
+            "ui03": "#3D3D3D",
+            "ui04": "#525252",
+            "ui05": "#666",
+            "ui06": "#171719",
+            "ui07": "#F1F1F1",
+            "ui08": "#E0E0E0",
+            "ui09": "#CCDDF9",
+            "ui10": "#666666",
+
+            // ----- Actions -----
+
+            // Primary
+            "action01": "#4687ED",
+            "action01Hover": "#246FE5",
+            "action01Active": "#0045B3",
+
+            // Secondary
+            "action02": "#E0E0E0",
+            "action02Hover": "#525252",
+            "action02Active": "#292929",
+
+            // Tertiary
+            "action03": "transparent",
+            "action03Hover": "#525252",
+            "action03Active": "#292929",
+
+            // Destructive
+            "actionDanger": "#CB2233",
+            "actionDangerHover": "#E04757",
+            "actionDangerActive": "#A21B29",
+
+            // Disabled
+            "disabled01": "#C2C2C2",
+
+            // Focus
+            "focus01": "#D7E3F9",
+
+            // ----- Links -----
+
+            "link01": "#669AEC",
+            "link01Hover": "#99BBF3",
+            "link01Active": "#246FE5",
+
+            // ----- Text -----
+
+            "text01": "#FFF", // Primary
+            "text02": "#C2C2C2", // Secondary
+            "text03": "#858585", // Tertiary
+            "text04": "#AAAAAA", // High-contrast
+
+            "textError": "#F24D5F", // Error
+
+            // ----- Icons -----
+
+            "icon01": "#FFFFFF", // Primary
+            "icon02": "#FFFFFF", // Secondary
+            "icon03": "#666666", // Tertiary
+            "icon04": "#0056E0", // High-contrast
+
+            "iconError": "#E04757", // Error
+            "iconNormal": "##246FE5", // Normal
+            "iconSuccess": "#189B55", // Success
+            "iconWarning": "#F8AE1A", // Warning
+
+            // ----- Forms -----
+
+            "field01": "#292929",
+
+            // ----- Feedback -----
+
+            // Success
+            "success01": "#1EC26A",
+            "success02": "#189B55",
+
+            // Warning
+            "warning01": "#F8AE1A",
+            "warning02": "#ED9E1B",
+
+            // ----- Support -----
+
+            "support05": "#73348C",
+            "support06": "#6A50D3"
+        },
+        // Typography settings
+        "typography": {
+            "font": {
+                "weightRegular": "400",
+                "weightSemiBold": "600"
+            },
+            "labelRegular": {
+                "fontSize": 12,
+                "lineHeight": 16,
+                "fontWeight": "400",
+                "letterSpacing": 0.16
+            },
+            "labelBold": {
+                "fontSize": 12,
+                "lineHeight": 16,
+                "fontWeight": "600",
+                "letterSpacing": 0.16
+            },
+            "bodyShortRegular": {
+                "fontSize": 14,
+                "lineHeight": 18,
+                "fontWeight": "400",
+                "letterSpacing": 0
+            },
+            "bodyShortBold": {
+                "fontSize": 14,
+                "lineHeight": 18,
+                "fontWeight": "600",
+                "letterSpacing": 0
+            },
+            "bodyShortRegularLarge": {
+                "fontSize": 16,
+                "lineHeight": 24,
+                "fontWeight": "400",
+                "letterSpacing": 0
+            },
+            "bodyShortBoldLarge": {
+                "fontSize": 16,
+                "lineHeight": 24,
+                "fontWeight": "600",
+                "letterSpacing": 0
+            },
+            "bodyLongRegular": {
+                "fontSize": 14,
+                "lineHeight": 24,
+                "fontWeight": "400",
+                "letterSpacing": 0
+            },
+            "bodyLongBold": {
+                "fontSize": 14,
+                "lineHeight": 24,
+                "fontWeight": "600",
+                "letterSpacing": 0
+            },
+            "heading1": {
+                "fontSize": 54,
+                "lineHeight": 64,
+                "fontWeight": "600",
+                "letterSpacing": 0
+            },
+            "heading2": {
+                "fontSize": 42,
+                "lineHeight": 50,
+                "fontWeight": "600",
+                "letterSpacing": 0
+            },
+            "heading3": {
+                "fontSize": 32,
+                "lineHeight": 40,
+                "fontWeight": "600",
+                "letterSpacing": 0
+            },
+            "heading4": {
+                "fontSize": 28,
+                "lineHeight": 36,
+                "fontWeight": "600",
+                "letterSpacing": 0
+            },
+            "heading5": {
+                "fontSize": 20,
+                "lineHeight": 28,
+                "fontWeight": "600",
+                "letterSpacing": 0
+            },
+            "heading6": {
+                "fontSize": 16,
+                "lineHeight": 26,
+                "fontWeight": "600",
+                "letterSpacing": 0
+            }
+        },
+        // Shape settings
+        "shape": {
+            "borderRadius": 6,
+            "boxShadow": "inset 0px -1px 0px rgba(255, 255, 255, 0.15)"
+        },
+        // Spacing settings
+        "spacing": [0, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128],
+        // Breakpoints settings
+        "breakpoints": {
+            "values": {
+                "0": 0,
+                "320": 320,
+                "400": 400,
+                "480": 480
+            }
+        }
+    }
+}
