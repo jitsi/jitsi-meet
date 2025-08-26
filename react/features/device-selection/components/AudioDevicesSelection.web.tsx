@@ -14,8 +14,8 @@ import { createLocalTrack } from '../../base/lib-jitsi-meet/functions.web';
 import { IAudioSettings } from '../../base/settings/reducer';
 import Tooltip from '../../base/tooltip/components/Tooltip';
 import Checkbox from '../../base/ui/components/web/Checkbox';
-import { setAudioPreviewTrack } from '../../settings/actions.web';
-import { disposeAudioInputPreview } from '../../settings/functions.web';
+import { setPreviewAudioTrack } from '../../settings/actions.web';
+import { disposeTrack } from '../../settings/functions.web';
 import { iAmVisitor as iAmVisitorCheck } from '../../visitors/functions';
 import logger from '../logger';
 
@@ -232,7 +232,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
      */
     override componentWillUnmount() {
         this._unMounted = true;
-        disposeAudioInputPreview(this.props.previewAudioTrack);
+        disposeTrack(this.props.previewAudioTrack);
     }
 
     /**
@@ -387,7 +387,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
             return;
         }
 
-        return disposeAudioInputPreview(previewAudioTrack)
+        return disposeTrack(previewAudioTrack)
             .then(() => createLocalTrack('audio', deviceId, 5000))
             .then(jitsiLocalTrack => {
                 if (this._unMounted) {
@@ -395,11 +395,11 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
 
                     return;
                 }
-                this.props.dispatch(setAudioPreviewTrack(jitsiLocalTrack));
+                this.props.dispatch(setPreviewAudioTrack(jitsiLocalTrack));
 
             })
             .catch(() => {
-                this.props.dispatch(setAudioPreviewTrack(null));
+                this.props.dispatch(setPreviewAudioTrack(null));
             });
     }
 

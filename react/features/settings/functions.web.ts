@@ -147,13 +147,29 @@ export function shouldShowModeratorSettings(stateful: IStateful) {
 }
 
 /**
- * Disposes the audio input preview track.
+ * Disposes a track.
  *
- * @param {Object} previewTrack - The audio input preview track to dispose.
+ * @param {Object} track - The track to dispose.
  * @returns {Promise<void>}
  */
-export async function disposeAudioInputPreview(previewTrack: any) {
-    if (previewTrack) {
-        await previewTrack.dispose();
+export async function disposeTrack(track: any) {
+    if (!track) {
+        return;
     }
+
+    await track.dispose();
+}
+
+/**
+ * Disposes the audio input preview track from Redux state.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {Promise<void>}
+ */
+export async function disposePreviewAudioTrack(stateful: IStateful) {
+    const state = toState(stateful);
+    const previewTrack = state['features/settings']?.previewAudioTrack;
+
+    await disposeTrack(previewTrack);
 }
