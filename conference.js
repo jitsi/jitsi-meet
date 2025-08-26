@@ -341,7 +341,8 @@ class ConferenceConnector {
             // Show waiting message
             dispatch(showNotification({
                 descriptionKey: 'notify.waitingForModeratorDescription',
-                titleKey: 'notify.waitingForModerator'
+                titleKey: 'notify.waitingForModerator',
+                uid: 'waiting-for-moderator'
             }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 
             // Leave the conference and wait
@@ -1911,7 +1912,8 @@ export default {
             // Show waiting message
             dispatch(showNotification({
                 descriptionKey: 'notify.waitingForModeratorDescription',
-                titleKey: 'notify.waitingForModerator'
+                titleKey: 'notify.waitingForModerator',
+                uid: 'waiting-for-moderator'
             }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 
             // Leave the conference and wait
@@ -2142,7 +2144,7 @@ export default {
             // Check if we've been waiting too long
             if (Date.now() - startTime > maxWaitTime) {
                 logger.warn('Timeout waiting for moderator, allowing user to join anyway');
-                APP.store.dispatch(hideNotification());
+                APP.store.dispatch(hideNotification('waiting-for-moderator'));
                 this._rejoinConference();
 
                 return;
@@ -2154,7 +2156,7 @@ export default {
 
             if (hasJwtToken) {
                 logger.info('User received JWT token while waiting, allowing join');
-                APP.store.dispatch(hideNotification());
+                APP.store.dispatch(hideNotification('waiting-for-moderator'));
                 this._rejoinConference();
 
                 return;
