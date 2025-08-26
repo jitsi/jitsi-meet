@@ -77,11 +77,11 @@ MiddlewareRegistry.register(store => next => action => {
  */
 function _overwriteLocalParticipant(
         { dispatch, getState }: IStore,
-        { avatarURL, email, id: jwtId, name, features }:
-        { avatarURL?: string; email?: string; features?: any; id?: string; name?: string; }) {
+        { avatarURL, email, id: jwtId, name, features, role }:
+        { avatarURL?: string; email?: string; features?: any; id?: string; name?: string; role?: string; }) {
     let localParticipant;
 
-    if ((avatarURL || email || name || features) && (localParticipant = getLocalParticipant(getState))) {
+    if ((avatarURL || email || name || features || role) && (localParticipant = getLocalParticipant(getState))) {
         const newProperties: IParticipant = {
             id: localParticipant.id,
             local: true
@@ -101,6 +101,9 @@ function _overwriteLocalParticipant(
         }
         if (features) {
             newProperties.features = features;
+        }
+        if (role) {
+            newProperties.role = role;
         }
         dispatch(participantUpdated(newProperties));
     }
@@ -289,15 +292,16 @@ function _undoOverwriteLocalParticipant(
  *     hidden-from-recorder: ?boolean
  * }}
  */
-function _user2participant({ avatar, avatarUrl, email, id, name, 'hidden-from-recorder': hiddenFromRecorder }:
+function _user2participant({ avatar, avatarUrl, email, id, name, moderator, 'hidden-from-recorder': hiddenFromRecorder }:
 { avatar?: string; avatarUrl?: string; email: string; 'hidden-from-recorder': string | boolean;
-    id: string; name: string; }) {
+    id: string; moderator?: boolean; name: string; }) {
     const participant: {
         avatarURL?: string;
         email?: string;
         hiddenFromRecorder?: boolean;
         id?: string;
         name?: string;
+        role?: string;
     } = {};
 
     if (typeof avatarUrl === 'string') {
@@ -317,6 +321,10 @@ function _user2participant({ avatar, avatarUrl, email, id, name, 'hidden-from-re
 
     if (hiddenFromRecorder === 'true' || hiddenFromRecorder === true) {
         participant.hiddenFromRecorder = true;
+    }
+
+    if (moderator === true) {
+        participant.role = 'moderator';
     }
 
     return Object.keys(participant).length ? participant : undefined;
