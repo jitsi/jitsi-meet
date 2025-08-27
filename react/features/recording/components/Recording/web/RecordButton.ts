@@ -81,20 +81,16 @@ class RecordingButton extends AbstractRecordButton<IProps> {
         const { _conference } = this.props;
 
         if (_conference) {
-            // Start Jibri recording with file recording metadata and JWT token
+            // Start Jibri recording with file recording metadata
             const appData = JSON.stringify({
                 'file_recording_metadata': {
-                    'share': false
+                    'share': false // You can set this to true if you want sharing enabled by default
                 }
             });
 
-            // Hardcoded JWT token - REPLACE with your actual token
-            const jwtToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJoZXlqb2UiLCJhdWQiOiJoZXlqb2UiLCJzdWIiOiJqaXRzaS5oZXlqb2UuaW8iLCJyb29tIjoidGVzdC1yb29tIiwiaWF0IjoxNzU2MjQ2MDExLCJleHAiOjE3NTYzMzI0MTEsIm5iZiI6MTc1NjI0NjAwMSwiY29udGV4dCI6eyJ1c2VyIjp7ImlkIjoibW9kZXJhdG9yMUBoZXlqb2UuaW8iLCJuYW1lIjoiTW9kZXJhdG9yIDEiLCJlbWFpbCI6Im1vZGVyYXRvcjFAaGV5am9lLmlvIiwiYXZhdGFyIjoiaHR0cHM6Ly9ncmF2YXRhci5jb20vYXZhdGFyL2JXOWtaWEpoZEc5eU1VQm9aWGxxYjJVdWFXOD0_ZD1pZGVudGljb24iLCJtb2RlcmF0b3IiOnRydWUsImFmZmlsaWF0aW9uIjoib3duZXIifSwiZmVhdHVyZXMiOnsicmVjb3JkaW5nIjp0cnVlLCJsaXZlc3RyZWFtaW5nIjp0cnVlLCJmb2xsb3ctbWUiOnRydWUsInRyYW5zY3JpcHRpb24iOnRydWUsImxvYmJ5Ijp0cnVlLCJvdXRib3VuZF9jYWxsIjpmYWxzZX0sInJvb20iOnsicmVnZXgiOmZhbHNlfX19.Ff0-t693KaSeqjWkCPwnzf15EaxYAGnzqfkj2KpgzXo';
-
             _conference.startRecording({
                 mode: JitsiRecordingConstants.mode.FILE,
-                appData,
-                token: jwtToken  // Add the JWT token here
+                appData
             });
         }
     }

@@ -7,7 +7,7 @@ import { isVpaasMeeting } from '../../jaas/functions';
 import { getCurrentConference } from '../conference/functions';
 import { SET_CONFIG } from '../config/actionTypes';
 import { CONNECTION_ESTABLISHED, SET_LOCATION_URL } from '../connection/actionTypes';
-import { participantUpdated } from '../participants/actions';
+import { grantModerator, participantUpdated } from '../participants/actions';
 import { getLocalParticipant } from '../participants/functions';
 import { IParticipant } from '../participants/types';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
@@ -106,6 +106,11 @@ function _overwriteLocalParticipant(
             newProperties.role = role;
         }
         dispatch(participantUpdated(newProperties));
+
+        // If JWT specifies moderator role, grant MUC owner privileges
+        if (role === 'moderator') {
+            dispatch(grantModerator(localParticipant.id));
+        }
     }
 }
 
