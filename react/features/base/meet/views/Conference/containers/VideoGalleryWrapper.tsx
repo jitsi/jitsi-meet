@@ -11,10 +11,15 @@ import VideoGallery from "../components/VideoGallery";
 import VideoSpeaker from "../components/VideoSpeaker";
 import { getParticipantsWithTracks } from "../utils";
 
-interface GalleryVideoWrapperProps extends WithTranslation {
+interface OwnProps {
     videoMode: string;
+}
+
+interface MappedStateProps {
     isE2EESupported: boolean;
 }
+
+interface GalleryVideoWrapperProps extends WithTranslation, OwnProps, MappedStateProps {}
 
 const GalleryVideoWrapper = ({ videoMode, t, isE2EESupported }: GalleryVideoWrapperProps) => {
     const { containerStyle } = useAspectRatio();
@@ -38,12 +43,12 @@ const GalleryVideoWrapper = ({ videoMode, t, isE2EESupported }: GalleryVideoWrap
     );
 };
 
-function mapStateToProps(state: IReduxState, galleryProps: GalleryVideoWrapperProps) {
+function mapStateToProps(state: IReduxState, ownProps: OwnProps): MappedStateProps & OwnProps {
     const conference = getCurrentConference(state);
     const isE2EESupported = conference?.isE2EESupported() ?? false;
     return {
-        videoMode: galleryProps.videoMode || "gallery",
-        isE2EESupported
+        ...ownProps,
+        isE2EESupported,
     };
 }
 
