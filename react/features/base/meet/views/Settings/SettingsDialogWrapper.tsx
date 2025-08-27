@@ -1,3 +1,4 @@
+import { ArrowSquareOut } from "@phosphor-icons/react";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { connect } from "react-redux";
@@ -25,6 +26,7 @@ interface IProps {
     isOpen: boolean;
     onClose: () => void;
 }
+const EXTERNAL_ACCOUNT_URL = "https://drive.internxt.com/?preferences=open&section=account&subsection=account";
 
 const SettingsDialogWrapper: React.FC<IProps> = ({ generalTabs, defaultTab, dispatch }) => {
     const { t } = useTranslation();
@@ -33,10 +35,19 @@ const SettingsDialogWrapper: React.FC<IProps> = ({ generalTabs, defaultTab, disp
     }, [dispatch]);
 
     const generalTabsMem = useMemo(() => generalTabs, [generalTabs]);
+    const accountTabs: TabConfig[] = [
+        {
+            id: "manage-account",
+            label: t("settings.account.manage"),
+            onClick: () => window.open(EXTERNAL_ACCOUNT_URL, "_blank", "noopener,noreferrer"),
+            Icon: ArrowSquareOut,
+        },
+    ];
 
     return (
         <SettingsDialog
             generalTabs={generalTabsMem}
+            accountTabs={accountTabs}
             title={t("settings.title")}
             defaultTab={defaultTab}
             onClose={onCloseHandler}

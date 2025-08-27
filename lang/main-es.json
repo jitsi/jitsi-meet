@@ -1180,7 +1180,11 @@
         "startVideoMuted": "Todos inician con cámara desactivada",
         "talkWhileMuted": "Hablar en silencio",
         "title": "Ajustes",
-        "video": "Video"
+        "video": "Video",
+        "account": {
+            "title": "Cuenta",
+            "manage": "Administrar cuenta"
+        }
     },
     "settingsView": {
         "advanced": "Avanzado",

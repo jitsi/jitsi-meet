@@ -1,29 +1,39 @@
-import { X } from "@phosphor-icons/react";
+import { Icon, X } from "@phosphor-icons/react";
 import React, { ComponentType, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export interface TabConfig {
     id: string;
     label: string;
-    component: ComponentType<any>;
+    component?: ComponentType<any>;
     props?: Record<string, any>;
     propsUpdateFunction?: (tabState: any, newProps: any, tabStates?: any[]) => Record<string, any>;
     submit?: (newState: any) => any;
     cancel?: () => any;
+    onClick?: () => void;
+    Icon?: Icon;
 }
 
 export interface SettingsDialogProps {
     generalTabs: TabConfig[];
+    accountTabs?: TabConfig[];
     title: string;
     defaultTab?: string;
     onClose: () => void;
 }
 
-const SettingsDialog: React.FC<SettingsDialogProps> = ({ generalTabs, title, defaultTab, onClose }) => {
+const SettingsDialog: React.FC<SettingsDialogProps> = ({
+    generalTabs,
+    accountTabs = [],
+    title,
+    defaultTab,
+    onClose,
+}) => {
+    const allTabs = [...generalTabs, ...accountTabs];
     const [activeTab, setActiveTab] = useState(defaultTab ?? generalTabs[0]?.id);
     const [tabStates, setTabStates] = useState<Record<string, any>>(() => {
         const initialStates: Record<string, any> = {};
-        generalTabs.forEach((tab) => {
+        allTabs.forEach((tab) => {
             initialStates[tab.id] = tab.props ?? {};
         });
         return initialStates;
@@ -37,14 +47,22 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ generalTabs, title, def
         }));
     }, []);
 
-    const currentTab = useMemo(() => generalTabs.find((tab) => tab.id === activeTab), [generalTabs, activeTab]);
+    const currentTab = useMemo(() => allTabs.find((tab) => tab.id === activeTab), [allTabs, activeTab]);
+
+    const handleTabClick = (tab: TabConfig) => {
+        if (tab.onClick) {
+            tab.onClick();
+        } else {
+            setActiveTab(tab.id);
+        }
+    };
 
     const getTabProps = useCallback(
         (tab: TabConfig) => {
             const currentTabState = tabStates[tab.id];
 
             if (tab.propsUpdateFunction) {
-                const tabStatesArray = generalTabs.map((t) => tabStates[t.id]);
+                const tabStatesArray = allTabs.map((t) => tabStates[t.id]);
                 return tab.propsUpdateFunction(currentTabState ?? {}, tab.props ?? {}, tabStatesArray);
             }
 
@@ -53,7 +71,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ generalTabs, title, def
                 ...currentTabState,
             };
         },
-        [generalTabs, tabStates]
+        [allTabs, tabStates]
     );
 
     return (
@@ -79,32 +97,69 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ generalTabs, title, def
                     {/* Tabs */}
                     <div className="flex-1 overflow-y-auto px-2.5 pb-4">
                         {/* General Category */}
-                        <div className="mb-1">
-                            <span className="text-sm font-medium text-white mb-3 px-2">{t("settings.general")}</span>
-                            <div className="space-y-1">
-                                {generalTabs.map((tab) => {
-                                    const isActive = tab.id === activeTab;
+                        {generalTabs.length > 0 && (
+                            <div className="mb-6">
+                                <span className="text-sm font-medium text-white mb-3 px-2 block">
+                                    {t("settings.general")}
+                                </span>
+                                <div className="space-y-1">
+                                    {generalTabs.map((tab) => {
+                                        const isActive = tab.id === activeTab;
 
-                                    return (
-                                        <button
-                                            key={tab.id}
-                                            onClick={() => setActiveTab(tab.id)}
-                                            className={`
-                                                w-full flex items-center gap-3 px-6 py-2.5
-                                                rounded-lg transition-colors
-                                                ${
-                                                    isActive
-                                                        ? "bg-primary/25 text-primary"
-                                                        : "hover:bg-primary/25 text-gray-300 hover:text-white"
-                                                }
-                                            `}
-                                        >
-                                            <span className="font-medium text-sm">{tab.label}</span>
-                                        </button>
-                                    );
-                                })}
+                                        return (
+                                            <button
+                                                key={tab.id}
+                                                onClick={() => handleTabClick(tab)}
+                                                className={`
+                                                    w-full flex items-center gap-3 px-6 py-2.5
+                                                    rounded-lg transition-colors
+                                                    ${
+                                                        isActive
+                                                            ? "bg-primary/25 text-primary"
+                                                            : "hover:bg-primary/25 text-gray-300 hover:text-white"
+                                                    }
+                                                `}
+                                            >
+                                                <span className="font-medium text-sm">{tab.label}</span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
                             </div>
-                        </div>
+                        )}
+
+                        {/* Account Category */}
+                        {accountTabs.length > 0 && (
+                            <div className="mb-6">
+                                <span className="text-sm font-medium text-white mb-3 px-2 block">
+                                    {t("settings.account.title")}
+                                </span>
+                                <div className="space-y-1">
+                                    {accountTabs.map((tab) => {
+                                        const isActive = tab.id === activeTab;
+
+                                        return (
+                                            <button
+                                                key={tab.id}
+                                                onClick={() => handleTabClick(tab)}
+                                                className={`
+                                                    w-full flex items-center gap-3 px-6 py-2.5
+                                                    rounded-lg transition-colors
+                                                    ${
+                                                        isActive
+                                                            ? "bg-primary/25 text-primary"
+                                                            : "hover:bg-primary/25 text-gray-300 hover:text-white"
+                                                    }
+                                                `}
+                                            >
+                                                <span className="font-medium text-sm">{tab.label}</span>
+                                                {tab.Icon && <tab.Icon size={24} />}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -123,13 +178,13 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ generalTabs, title, def
                     </div>
                     {/* Tab content */}
                     <div className="flex-1 overflow-y-auto px-6 py-2">
-                        {currentTab && (
+                        {currentTab?.component && (
                             <currentTab.component
                                 {...getTabProps(currentTab)}
                                 onTabStateChange={(tabId: number, newState: any) => {
                                     handleTabStateChange(currentTab.id, newState);
                                 }}
-                                tabId={generalTabs.findIndex((tab) => tab.id === currentTab.id)}
+                                tabId={allTabs.findIndex((tab) => tab.id === currentTab.id)}
                             />
                         )}
                     </div>

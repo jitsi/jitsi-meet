@@ -1243,7 +1243,11 @@
         "startVideoMuted": "Everyone starts hidden",
         "talkWhileMuted": "Talk while muted",
         "title": "Settings",
-        "video": "Video"
+        "video": "Video",
+        "account": {
+            "title": "Account",
+            "manage": "Manage account"
+        }
     },
     "settingsView": {
         "advanced": "Advanced",
