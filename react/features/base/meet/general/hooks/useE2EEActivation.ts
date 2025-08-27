@@ -14,7 +14,7 @@ import { isLocalParticipantModerator } from "../../../participants/functions";
  * - The conference is being displayed (no prejoin or lobby is visible)
  * - There has been a transition from prejoin/lobby to conference
  */
-export const useE2EEActivation = () => {
+export const useE2EEActivation = (isE2EESupported?: boolean) => {
     const dispatch = useDispatch();
 
     const isModerator = useSelector(isLocalParticipantModerator);
@@ -30,7 +30,7 @@ export const useE2EEActivation = () => {
         const wasPrejoinOrLobbyVisible = prevShowStateRef.current.showPrejoin || prevShowStateRef.current.showLobby;
         const isConferenceDisplayed = !_showPrejoin && !_showLobby;
 
-        const shouldActivateE2EE =
+        const shouldActivateE2EE = isE2EESupported &&
             (isConferenceDisplayed && isModerator) ||
             (wasPrejoinOrLobbyVisible && isConferenceDisplayed && isModerator);
 
@@ -42,5 +42,5 @@ export const useE2EEActivation = () => {
             showLobby: _showLobby,
             showPrejoin: _showPrejoin,
         };
-    }, [_showLobby, _showPrejoin, dispatch, isModerator]);
+    }, [_showLobby, _showPrejoin, dispatch, isModerator, isE2EESupported]);
 };
