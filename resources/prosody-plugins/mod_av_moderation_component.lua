@@ -352,6 +352,8 @@ function occupant_joined(event)
                 start_av_moderation(room, mediaType, occupant);
 
                 notify_occupants_enable(nil, true, room, occupant.nick, mediaType);
+
+                notify_whitelist_change(nil, true, room, mediaType);
             end
 
             room._data.av_first_moderator_joined = true;
