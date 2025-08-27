@@ -7,7 +7,7 @@
 export function isSecurityDialogButtonVisible({
     conference,
     securityUIConfig,
-    isModerator,
+    isHost,
     enabledLobbyModeFlag,
     enabledSecurityOptionsFlag,
     enabledMeetingPassFlag
@@ -16,12 +16,16 @@ export function isSecurityDialogButtonVisible({
     enabledLobbyModeFlag: boolean;
     enabledMeetingPassFlag: boolean;
     enabledSecurityOptionsFlag: boolean;
-    isModerator: boolean;
+    isHost: boolean;
     securityUIConfig: { hideLobbyButton?: boolean; };
 }) {
     const { hideLobbyButton } = securityUIConfig;
     const lobbySupported = conference?.isLobbySupported();
-    const lobby = lobbySupported && isModerator && !hideLobbyButton;
+    const lobby = lobbySupported && isHost && !hideLobbyButton;
+
+    if (!isHost) {
+        return false;
+    }
 
 
     return enabledSecurityOptionsFlag && ((enabledLobbyModeFlag && lobby) || enabledMeetingPassFlag);

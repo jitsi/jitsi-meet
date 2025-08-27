@@ -11,8 +11,10 @@ import { getConferenceNameForTitle } from '../../../base/conference/functions';
 import { hangup } from '../../../base/connection/actions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
+import { isLocalParticipantHost } from '../../../base/participants/functions';
 import MiddlewareRegistry from '../../../base/redux/MiddlewareRegistry';
 import { setColorAlpha } from '../../../base/util/helpers';
+import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { openChat, setFocusedTab } from '../../../chat/actions.web';
 import Chat from '../../../chat/components/web/Chat';
 import { ChatTabs } from '../../../chat/constants';
@@ -49,15 +51,22 @@ import {
 import ConferenceInfo from './ConferenceInfo';
 import { default as Notice } from './Notice';
 
+let inviteDialogShown = false;
+
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_JOINED: {
-        const state = store.getState();
-        const participants = state['features/base/participants'];
+        setTimeout(() => {
+            const state = store.getState();
+            const participants = state['features/base/participants'];
+            const inBreakoutRoom = isInBreakoutRoom(state);
+            const isParticipantHost = isLocalParticipantHost(state);
 
-        if (!Boolean(participants.remote.size)) {
-            store.dispatch(beginAddPeople());
-        }
+            if (isParticipantHost && !Boolean(participants.remote.size) && !inBreakoutRoom && !inviteDialogShown) {
+                store.dispatch(beginAddPeople());
+                inviteDialogShown = true;
+            }
+        }, 200);
 
         break;
     }

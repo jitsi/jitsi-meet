@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createPollEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState } from '../../app/types';
-import { getParticipantDisplayName } from '../../base/participants/functions';
+import { getParticipantById, getParticipantDisplayName, isLocalParticipantHost, isRemoteParticipantHost } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
 import { registerVote, removePoll, setVoteChanging } from '../actions';
 import { COMMAND_ANSWER_POLL, COMMAND_NEW_POLL } from '../constants';
@@ -27,6 +27,8 @@ type InputProps = {
 export type AbstractProps = {
     checkBoxStates: boolean[];
     creatorName: string;
+    isParticipantHost: boolean;
+    isParticipantModerator: boolean;
     poll: IPoll;
     pollId: string;
     sendPoll: () => void;
@@ -64,6 +66,18 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
     });
 
     const participantName = useBoundSelector(getParticipantDisplayName, senderId);
+
+    const reduxState = useSelector((state: IReduxState) => state);
+    const participant = getParticipantById(reduxState, senderId ?? '');
+    let isParticipantHost = false;
+
+    if (participant?.local) {
+        isParticipantHost = isLocalParticipantHost(reduxState);
+    } else if (!participant?.local) {
+        isParticipantHost = isRemoteParticipantHost(participant);
+    }
+
+    const isParticipantModerator = participant?.role === 'moderator' && !isParticipantHost;
 
     const setCheckbox = useCallback((index, state) => {
         const newCheckBoxStates = [ ...checkBoxStates ];
@@ -113,6 +127,8 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
     return (<Component
         checkBoxStates = { checkBoxStates }
         creatorName = { participantName }
+        isParticipantHost = { isParticipantHost }
+        isParticipantModerator = { isParticipantModerator }
         poll = { poll }
         pollId = { pollId }
         sendPoll = { sendPoll }
