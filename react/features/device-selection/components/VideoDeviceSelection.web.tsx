@@ -16,8 +16,8 @@ import Select from '../../base/ui/components/web/Select';
 import { SS_DEFAULT_FRAME_RATE } from '../../settings/constants';
 import logger from '../logger';
 
-import DeviceSelector from './DeviceSelector.web';
-import VideoInputPreview from './VideoInputPreview';
+import DeviceSelector from "../../base/meet/views/Settings/CustomDeviceSelector";
+import VideoInputPreview from "./VideoInputPreview.web";
 
 /**
  * The type of the React {@code Component} props of {@link VideoDeviceSelection}.
@@ -212,25 +212,26 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
         const classes = withStyles.getClasses(this.props);
 
         return (
-            <div className = { classes.container }>
-                { !hideVideoInputPreview
-                    && <VideoInputPreview
-                        error = { this.state.previewVideoTrackError }
-                        localFlipX = { localFlipX }
-                        track = { this.state.previewVideoTrack } />
-                }
-                <div
-                    aria-live = 'polite'>
-                    {this._renderVideoSelector()}
-                </div>
+            <div className={classes.container}>
+                <label className="block text-lg font-medium text-gray-300 mb-4">{t("settings.selectCamera")}</label>
+
+                {!hideVideoInputPreview && (
+                    <VideoInputPreview
+                        error={this.state.previewVideoTrackError}
+                        localFlipX={localFlipX}
+                        track={this.state.previewVideoTrack}
+                    />
+                )}
+                <div aria-live="polite">{this._renderVideoSelector()}</div>
                 {!hideAdditionalSettings && (
                     <>
-                        <div className = { classes.checkboxContainer }>
+                        <div className={classes.checkboxContainer}>
                             <Checkbox
-                                checked = { localFlipX }
-                                label = { t('videothumbnail.mirrorVideo') }
+                                checked={localFlipX}
+                                label={t("videothumbnail.mirrorVideo")}
                                 // eslint-disable-next-line react/jsx-no-bind
-                                onChange = { () => super._onChange({ localFlipX: !localFlipX }) } />
+                                onChange={() => super._onChange({ localFlipX: !localFlipX })}
+                            />
                         </div>
                         {this._renderFramerateSelect()}
                     </>
@@ -303,14 +304,15 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
         const videoConfig = {
             devices: availableDevices.videoInput,
             hasPermission: hasVideoPermission,
-            icon: 'icon-camera',
+            icon: "icon-camera",
             isDisabled: this.props.disableVideoInputSelect || this.props.disableDeviceChange,
-            key: 'videoInput',
-            id: 'videoInput',
-            label: 'settings.selectCamera',
+            key: "videoInput",
+            id: "videoInput",
+            label: "",
             onSelect: (selectedVideoInputId: string) => super._onChange({ selectedVideoInputId }),
             selectedDeviceId: this.state.previewVideoTrack
-                ? this.state.previewVideoTrack.getDeviceId() : this.props.selectedVideoInputId
+                ? this.state.previewVideoTrack.getDeviceId()
+                : this.props.selectedVideoInputId,
         };
 
         return (

@@ -247,7 +247,7 @@
         "noPermission": "Permission not granted",
         "previewUnavailable": "Preview unavailable",
         "selectADevice": "Select a device",
-        "testAudio": "Test"
+        "testAudio": "Test speaker"
     },
     "dialIn": {
         "screenTitle": "Dial-in summary"
@@ -1222,6 +1222,7 @@
         "moderator": "Moderator",
         "moderatorOptions": "Moderator options",
         "more": "General",
+        "general": "General",
         "name": "Name",
         "noDevice": "None",
         "notifications": "Notifications",
@@ -1590,7 +1591,7 @@
             "currentBackground": "Current background: {{background}}",
             "selectBackground": "Select a background"
         },
-        "addBackground": "Add background",
+        "addBackground": "Upload background",
         "apply": "Apply",
         "backgroundEffectError": "Failed to apply background effect.",
         "blur": "Blur",
