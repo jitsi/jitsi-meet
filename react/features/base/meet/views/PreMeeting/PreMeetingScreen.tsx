@@ -394,7 +394,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const createRoomError = state["features/meet-room"]?.createRoomError ?? false;
 
     const conference = getCurrentConference(state);
-    const isE2EESupported = conference?.isE2EESupported() ?? true;
+    const isE2EESupported = conference?.isE2EESupported() ?? false;
 
     return {
         // For keeping backwards compat.: if we pass an empty hiddenPremeetingButtons
