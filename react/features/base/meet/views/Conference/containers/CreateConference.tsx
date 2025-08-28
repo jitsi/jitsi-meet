@@ -33,7 +33,7 @@ class CreateConference extends AbstractConference<IProps, any> {
             if (meetingData?.room) {
                 this.props.dispatch(appNavigate(meetingData.room));
             }
-        } catch (error) {
+        } catch (error: Error | any) {
             this.props.dispatch(setCreateRoomError(true, error.message));
         }
     };

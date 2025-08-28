@@ -376,7 +376,7 @@ export function _connectInternal({
                         name,
                     });
                 });
-            } catch (error) {
+            } catch (error: Error | any) {
                 // DISPLAY ERROR MESSAGE - NOW NOT DISPLAY WHICH ERROR
                 // TODO - https://inxt.atlassian.net/browse/PB-4295
                 dispatch(setJoinRoomError(true, error.message));

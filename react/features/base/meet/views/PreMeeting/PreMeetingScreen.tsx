@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { WithTranslation } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { makeStyles } from "tss-react/mui";
@@ -163,7 +163,7 @@ interface IProps extends WithTranslation {
      */
     joinRoomErrorMessage?: string;
     createRoomErrorMessage?: string;
-    
+
     /**
      * Flag to indicate if supports end to end encryption.
      */
@@ -263,7 +263,7 @@ const PreMeetingScreen = ({
             const newUrl = `${baseUrl}/new-meeting`;
             window.history.replaceState({}, document.title, newUrl);
             dispatch(appNavigate(newUrl));
-        } catch (error) {
+        } catch (error: Error | any) {
             dispatch(setCreateRoomError(true, error.message));
         } finally {
             setIsCreatingMeeting(false);
@@ -392,7 +392,6 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { premeetingBackground } = state["features/dynamic-branding"];
     const userName = getDisplayName(state);
     const { localFlipX } = state["features/base/settings"];
-
 
     const joinRoomErrorMessage = state["features/meet-room"]?.joinRoomErrorMessage;
     const createRoomErrorMessage = state["features/meet-room"]?.createRoomErrorMessage;
