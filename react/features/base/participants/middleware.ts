@@ -24,12 +24,14 @@ import { hideNotification, showNotification } from '../../notifications/actions'
 import {
     LOCAL_RECORDING_NOTIFICATION_ID,
     NOTIFICATION_TIMEOUT_TYPE,
-    RAISE_HAND_NOTIFICATION_ID
+    RAISE_HAND_NOTIFICATION_ID,
+    VISITOR_ASKED_TO_JOIN_NOTIFICATION_ID
 } from '../../notifications/constants';
 import { open as openParticipantsPane } from '../../participants-pane/actions';
 import { CALLING, INVITED } from '../../presence-status/constants';
 import { RAISE_HAND_SOUND_ID } from '../../reactions/constants';
 import { RECORDING_OFF_SOUND_ID, RECORDING_ON_SOUND_ID } from '../../recording/constants';
+import { iAmVisitor } from '../../visitors/functions';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app/actionTypes';
 import { CONFERENCE_JOINED, CONFERENCE_WILL_JOIN } from '../conference/actionTypes';
 import { forEachConference, getCurrentConference } from '../conference/functions';
@@ -167,7 +169,10 @@ MiddlewareRegistry.register(store => next => action => {
 
     case LOCAL_PARTICIPANT_RAISE_HAND: {
         const { raisedHandTimestamp } = action;
-        const localId = getLocalParticipant(store.getState())?.id;
+        const localParticipant = getLocalParticipant(store.getState());
+        const localId = localParticipant?.id;
+        const _iAmVisitor = iAmVisitor(store.getState());
+        const isHandRaised = hasRaisedHand(localParticipant);
 
         store.dispatch(participantUpdated({
             // XXX Only the local participant is allowed to update without
@@ -185,6 +190,18 @@ MiddlewareRegistry.register(store => next => action => {
             id: localId ?? '',
             raisedHandTimestamp
         }));
+
+        if (_iAmVisitor) {
+            const notifyAction = isHandRaised
+                ? hideNotification(VISITOR_ASKED_TO_JOIN_NOTIFICATION_ID)
+                : showNotification({
+                    titleKey: 'visitors.notification.requestToJoin',
+                    descriptionKey: 'visitors.notification.requestToJoinDescription',
+                    uid: VISITOR_ASKED_TO_JOIN_NOTIFICATION_ID
+                }, NOTIFICATION_TIMEOUT_TYPE.STICKY);
+
+            store.dispatch(notifyAction);
+        }
 
         if (typeof APP !== 'undefined') {
             APP.API.notifyRaiseHandUpdated(localId, raisedHandTimestamp);
