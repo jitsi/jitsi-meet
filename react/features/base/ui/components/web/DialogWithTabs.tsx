@@ -11,7 +11,6 @@ import { withPixelLineHeight } from '../../../styles/functions.web';
 import { redirectToStaticPage } from "../../../../app/actions.any";
 import LocalStorageManager from "../../../meet/LocalStorageManager";
 import BaseDialog, { IProps as IBaseProps } from './BaseDialog';
-import Button from './Button';
 import ClickableIcon from './ClickableIcon';
 import ContextMenuItem from "./ContextMenuItem";
 
@@ -405,7 +404,7 @@ const DialogWithTabs = ({
                     )}
                     <div
                         className = { cx(classes.buttonContainer, classes.footer) }>
-                        <Button
+                        {/* <Button
                             accessibilityLabel = { t('dialog.logoutTitle') }
                             id = 'modal-dialog-logout-button'
                             labelKey = { 'dialog.logoutTitle' }
@@ -421,7 +420,7 @@ const DialogWithTabs = ({
                             accessibilityLabel = { t('dialog.accessibilityLabel.Ok') }
                             id = 'modal-dialog-ok-button'
                             labelKey = { 'dialog.Ok' }
-                            onClick = { onSubmit } />
+                            onClick = { onSubmit } /> */}
                     </div>
                 </div>
             )}

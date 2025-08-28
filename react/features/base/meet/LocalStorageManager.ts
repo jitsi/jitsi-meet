@@ -1,3 +1,4 @@
+import { UserSubscription } from "@internxt/sdk/dist/drive/payments/types/types";
 import { UserSettings } from "@internxt/sdk/dist/shared/types/userSettings";
 
 export class LocalStorageManager {
@@ -8,6 +9,7 @@ export class LocalStorageManager {
         NEW_TOKEN: "xNewToken",
         MNEMONIC: "xMnemonic",
         USER: "xUser",
+        SUBSCRIPTION: "xSubscription",
     };
 
     private constructor() {}
@@ -153,17 +155,49 @@ export class LocalStorageManager {
     }
 
     /**
+     * Gets the user subscription
+     */
+    public getSubscription(): UserSubscription | null | undefined {
+        return this.get<UserSubscription>(LocalStorageManager.KEYS.SUBSCRIPTION);
+    }
+
+    /**
+     * Sets the user subscription
+     */
+    public setSubscription(subscription: UserSubscription): void {
+        this.set(LocalStorageManager.KEYS.SUBSCRIPTION, subscription);
+    }
+
+    /**
+     * Removes the user subscription
+     */
+    public removeSubscription(): void {
+        this.remove(LocalStorageManager.KEYS.SUBSCRIPTION);
+    }
+
+    /**
      * Saves the session credentials
      * @param token Token
      * @param newToken New token
      * @param mnemonic Mnemonic
      * @param user User information
+     * @param subscription User subscription (optional)
      */
-    public saveCredentials(token: string, newToken: string, mnemonic: string, user: UserSettings): void {
+    public saveCredentials(
+        token: string,
+        newToken: string,
+        mnemonic: string,
+        user: UserSettings,
+        subscription?: UserSubscription
+    ): void {
         this.setToken(token);
         this.setNewToken(newToken);
         this.setMnemonic(mnemonic);
         this.setUser(user);
+
+        if (subscription) {
+            this.setSubscription(subscription);
+        }
     }
 
     /**
@@ -174,6 +208,7 @@ export class LocalStorageManager {
         this.remove(LocalStorageManager.KEYS.NEW_TOKEN);
         this.remove(LocalStorageManager.KEYS.MNEMONIC);
         this.remove(LocalStorageManager.KEYS.USER);
+        this.remove(LocalStorageManager.KEYS.SUBSCRIPTION);
     }
 }
 

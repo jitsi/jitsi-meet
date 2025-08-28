@@ -2,11 +2,13 @@ import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
+import { get8x8BetaJWT } from "../../../../connection/options8x8";
 import { loginSuccess } from "../../../general/store/auth/actions";
 import { setRoomID } from "../../../general/store/errors/actions";
 import { setUser } from "../../../general/store/user/actions";
 import { useLocalStorage } from "../../../LocalStorageManager";
 import { AuthService } from "../../../services/auth.service";
+import { PaymentsService } from "../../../services/payments.service";
 import { LoginCredentials } from "../../../services/types/command.types";
 import { AuthFormValues } from "../types";
 
@@ -69,19 +71,58 @@ export function useLoginModal({ onClose, onLogin, translate }: UseAuthModalProps
         [translate]
     );
 
-    const saveUserSession = useCallback(
-        (credentials: LoginCredentials) => {
-            storageManager.saveCredentials(
-                credentials.token,
-                credentials.newToken,
-                credentials.mnemonic,
-                credentials.user
-            );
-            dispatch(loginSuccess(credentials));
-            dispatch(setUser(credentials.user));
-            onLogin?.(credentials.newToken);
+    const createMeetToken = useCallback(
+        async (token: string) => {
+            try {
+                return await get8x8BetaJWT(token);
+            } catch (err) {
+                throw new Error(translate("meet.auth.modal.error.cannotCreateMeetings"));
+            }
         },
-        [storageManager, onLogin, dispatch]
+        [translate]
+    );
+
+    const getUserSubscription = useCallback(async () => {
+        try {
+            return await PaymentsService.instance.getUserSubscription();
+        } catch (err) {
+            console.error("Error getting user subscription:", err);
+            return { type: "free" as const };
+        }
+    }, []);
+
+    const saveUserSession = useCallback(
+        async (credentials: LoginCredentials) => {
+            try {
+                storageManager.saveCredentials(
+                    credentials.token,
+                    credentials.newToken,
+                    credentials.mnemonic,
+                    credentials.user
+                );
+
+                const subscription = await getUserSubscription();
+
+                if (subscription) {
+                    storageManager.setSubscription(subscription);
+                }
+
+               dispatch(loginSuccess(credentials));
+               dispatch(setUser(credentials.user));
+               onLogin?.(credentials.newToken);
+            } catch (err) {
+                storageManager.saveCredentials(
+                    credentials.token,
+                    credentials.newToken,
+                    credentials.mnemonic,
+                    credentials.user
+                );
+
+                dispatch(loginSuccess(credentials));
+                onLogin?.(credentials.newToken);
+            }
+        },
+        [storageManager, onLogin, dispatch, getUserSubscription]
     );
 
     const saveRoomId = useCallback(
@@ -107,7 +148,10 @@ export function useLoginModal({ onClose, onLogin, translate }: UseAuthModalProps
             throw new Error(translate("meet.auth.modal.error.invalidCredentials"));
         }
 
-        saveUserSession(loginCredentials);
+        // TODO: NEED TO SAVE MEET ROOM TO COMPLETE LOGIN AND REDIRECT TO SCHEDULE MODAL FLOW
+        // saveRoomId(meetData.room);
+
+        await saveUserSession(loginCredentials);
 
         onClose();
     };

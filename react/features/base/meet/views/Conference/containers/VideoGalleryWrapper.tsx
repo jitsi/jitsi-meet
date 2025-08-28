@@ -1,26 +1,36 @@
 import React, { useEffect, useMemo } from "react";
 import { WithTranslation } from "react-i18next";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { IReduxState } from "../../../../../app/types";
 import AudioTracksContainer from "../../../../../filmstrip/components/web/AudioTracksContainer";
+import { getCurrentConference } from "../../../../conference/functions";
 import { translate } from "../../../../i18n/functions";
 import { useAspectRatio } from "../../../general/hooks/useAspectRatio";
+import { useE2EEActivation } from "../../../general/hooks/useE2EEActivation";
 import MeetingService from "../../../services/meeting.service";
 import { MeetingUser } from "../../../services/types/meeting.types";
 import VideoGallery from "../components/VideoGallery";
 import VideoSpeaker from "../components/VideoSpeaker";
-import { VideoParticipantType } from "../types";
 import { getParticipantsWithTracks } from "../utils";
 
-interface GalleryVideoWrapperProps extends WithTranslation {
+interface OwnProps {
     videoMode: string;
-    participants?: VideoParticipantType[];
-    flipX?: boolean;
+}
+
+interface MappedStateProps {
+    isE2EESupported: boolean;
     room?: string;
 }
 
-const GalleryVideoWrapper = ({ videoMode, participants, flipX, t, room }: GalleryVideoWrapperProps) => {
+interface GalleryVideoWrapperProps extends WithTranslation, OwnProps, MappedStateProps {}
+
+const GalleryVideoWrapper = ({ videoMode, t, isE2EESupported, room }: GalleryVideoWrapperProps) => {
     const { containerStyle } = useAspectRatio();
+    useE2EEActivation(isE2EESupported);
+
+    const participants = useSelector((state: IReduxState) => getParticipantsWithTracks(state));
+    const flipX = useSelector((state: IReduxState) => state["features/base/settings"].localFlipX);
+
     const contStyle = videoMode === "gallery" ? containerStyle : {};
     const [meetingParticipants, setMeetingParticipants] = React.useState<MeetingUser[]>([]);
 
@@ -69,17 +79,15 @@ const GalleryVideoWrapper = ({ videoMode, participants, flipX, t, room }: Galler
     );
 };
 
-function mapStateToProps(state: IReduxState, galleryProps: GalleryVideoWrapperProps) {
-    const participantsWithTracks = getParticipantsWithTracks(state);
-
-    const { localFlipX } = state["features/base/settings"];
+function mapStateToProps(state: IReduxState, ownProps: OwnProps): MappedStateProps & OwnProps {
+    const conference = getCurrentConference(state);
+    const isE2EESupported = conference?.isE2EESupported() ?? false;
     const room = state["features/base/conference"].room ?? "";
 
     return {
-        videoMode: galleryProps.videoMode || "gallery",
-        flipX: localFlipX,
-        participants: participantsWithTracks,
-        room,
+        ...ownProps,
+        isE2EESupported,
+        room
     };
 }
 

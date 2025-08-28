@@ -1,30 +1,30 @@
-import { Theme } from '@mui/material';
+import { Theme } from "@mui/material";
+import { WithTranslation } from "react-i18next";
+import { connect } from "react-redux";
+import { withStyles } from "tss-react/mui";
 import React from 'react';
-import { WithTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
-import { withStyles } from 'tss-react/mui';
 
-import { IReduxState, IStore } from '../../app/types';
-import { getAvailableDevices } from '../../base/devices/actions.web';
+import { IReduxState, IStore } from "../../app/types";
+import { getAvailableDevices } from "../../base/devices/actions.web";
 import AbstractDialogTab, {
-    type IProps as AbstractDialogTabProps
-} from '../../base/dialog/components/web/AbstractDialogTab';
-import { translate } from '../../base/i18n/functions';
-import { createLocalTrack } from '../../base/lib-jitsi-meet/functions.web';
-import Checkbox from '../../base/ui/components/web/Checkbox';
-import { iAmVisitor as iAmVisitorCheck } from '../../visitors/functions';
-import logger from '../logger';
+    type IProps as AbstractDialogTabProps,
+} from "../../base/dialog/components/web/AbstractDialogTab";
+import { translate } from "../../base/i18n/functions";
+import { createLocalTrack } from "../../base/lib-jitsi-meet/functions.web";
+import Checkbox from "../../base/ui/components/web/Checkbox";
+import { iAmVisitor as iAmVisitorCheck } from "../../visitors/functions";
+import logger from "../logger";
 
-import AudioInputPreview from './AudioInputPreview';
-import AudioOutputPreview from './AudioOutputPreview';
-import DeviceHidContainer from './DeviceHidContainer.web';
-import DeviceSelector from './DeviceSelector.web';
+import AudioInputPreview from "../../base/meet/views/Settings/CustomAudioInputPreview";
+
+import AudioOutputPreview from "../../base/meet/views/Settings/AudioOutputPreview";
+import DeviceSelector from "../../base/meet/views/Settings/CustomDeviceSelector";
+import DeviceHidContainer from "./DeviceHidContainer.web";
 
 /**
  * The type of the React {@code Component} props of {@link AudioDevicesSelection}.
  */
 interface IProps extends AbstractDialogTabProps, WithTranslation {
-
     /**
      * All known audio and video devices split by type. This prop comes from
      * the app state.
@@ -56,7 +56,7 @@ interface IProps extends AbstractDialogTabProps, WithTranslation {
     /**
      * Redux dispatch function.
      */
-    dispatch: IStore['dispatch'];
+    dispatch: IStore["dispatch"];
 
     /**
      * Whether or not the audio permission was granted.
@@ -118,7 +118,6 @@ interface IProps extends AbstractDialogTabProps, WithTranslation {
  * The type of the React {@code Component} state of {@link AudioDevicesSelection}.
  */
 interface IState {
-
     /**
      * The JitsiTrack to use for previewing audio input.
      */
@@ -128,29 +127,29 @@ interface IState {
 const styles = (theme: Theme) => {
     return {
         container: {
-            display: 'flex',
-            flexDirection: 'column' as const,
-            padding: '0 2px',
-            width: '100%'
+            display: "flex",
+            flexDirection: "column" as const,
+            padding: "0 2px",
+            width: "100%",
         },
 
         inputContainer: {
-            marginBottom: theme.spacing(3)
+            marginBottom: theme.spacing(3),
         },
 
         outputContainer: {
             margin: `${theme.spacing(5)} 0`,
-            display: 'flex',
-            alignItems: 'flex-end'
+            display: "flex",
+            alignItems: "flex-end",
         },
 
         outputButton: {
-            marginLeft: theme.spacing(3)
+            marginLeft: theme.spacing(3),
         },
 
         noiseSuppressionContainer: {
-            marginBottom: theme.spacing(5)
-        }
+            marginBottom: theme.spacing(5),
+        },
     };
 };
 
@@ -160,7 +159,6 @@ const styles = (theme: Theme) => {
  * @augments Component
  */
 class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
-
     /**
      * Whether current component is mounted or not.
      *
@@ -182,7 +180,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
         super(props);
 
         this.state = {
-            previewAudioTrack: null
+            previewAudioTrack: null,
         };
         this._unMounted = true;
     }
@@ -194,10 +192,8 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
      */
     componentDidMount() {
         this._unMounted = false;
-        Promise.all([
-            this._createAudioInputTrack(this.props.selectedAudioInputId)
-        ])
-            .catch(err => logger.warn('Failed to initialize preview tracks', err))
+        Promise.all([this._createAudioInputTrack(this.props.selectedAudioInputId)])
+            .catch((err) => logger.warn("Failed to initialize preview tracks", err))
             .then(() => {
                 this.props.dispatch(getAvailableDevices());
             });
@@ -211,8 +207,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
      * @returns {void}
      */
     componentDidUpdate(prevProps: IProps) {
-        if (prevProps.selectedAudioInputId
-            !== this.props.selectedAudioInputId) {
+        if (prevProps.selectedAudioInputId !== this.props.selectedAudioInputId) {
             this._createAudioInputTrack(this.props.selectedAudioInputId);
         }
     }
@@ -242,44 +237,46 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
             iAmVisitor,
             noiseSuppressionEnabled,
             selectedAudioOutputId,
-            t
+            t,
         } = this.props;
         const { audioInput, audioOutput } = this._getSelectors();
 
         const classes = withStyles.getClasses(this.props);
 
         return (
-            <div className = { classes.container }>
-                {!iAmVisitor && <div
-                    aria-live = 'polite'
-                    className = { classes.inputContainer }>
-                    {this._renderSelector(audioInput)}
-                </div>}
-                {!hideAudioInputPreview && hasAudioPermission && !iAmVisitor
-                        && <AudioInputPreview
-                            track = { this.state.previewAudioTrack } />}
-                <div
-                    aria-live = 'polite'
-                    className = { classes.outputContainer }>
-                    {this._renderSelector(audioOutput)}
-                    {!hideAudioOutputPreview && hasAudioPermission
-                        && <AudioOutputPreview
-                            className = { classes.outputButton }
-                            deviceId = { selectedAudioOutputId } />}
-                </div>
-                {!hideNoiseSuppression && !iAmVisitor && (
-                    <div className = { classes.noiseSuppressionContainer }>
-                        <Checkbox
-                            checked = { noiseSuppressionEnabled }
-                            label = { t('toolbar.enableNoiseSuppression') }
-                            // eslint-disable-next-line react/jsx-no-bind
-                            onChange = { () => super._onChange({
-                                noiseSuppressionEnabled: !noiseSuppressionEnabled
-                            }) } />
+            <div className={`${classes.container}`}>
+                {!iAmVisitor && (
+                    <div aria-live="polite" className={"flex flex-row items-end space-x-4"}>
+                        <div className="flex flex-grow">{this._renderSelector(audioInput)}</div>
+                        {!hideAudioInputPreview && hasAudioPermission && !iAmVisitor && (
+                            <div className="flex items-center justify-center">
+                                <AudioInputPreview track={this.state.previewAudioTrack} />
+                            </div>
+                        )}
                     </div>
                 )}
-                {!hideDeviceHIDContainer && !iAmVisitor
-                    && <DeviceHidContainer />}
+
+                <div aria-live="polite" className="flex flex-row items-end justify-center space-x-4 mt-8">
+                    {this._renderSelector(audioOutput)}
+                    {!hideAudioOutputPreview && hasAudioPermission && (
+                        <AudioOutputPreview deviceId={selectedAudioOutputId} />
+                    )}
+                </div>
+                {!hideNoiseSuppression && !iAmVisitor && (
+                    <div className={classes.noiseSuppressionContainer}>
+                        <Checkbox
+                            checked={noiseSuppressionEnabled}
+                            label={t("toolbar.enableNoiseSuppression")}
+                            // eslint-disable-next-line react/jsx-no-bind
+                            onChange={() =>
+                                super._onChange({
+                                    noiseSuppressionEnabled: !noiseSuppressionEnabled,
+                                })
+                            }
+                        />
+                    </div>
+                )}
+                {!hideDeviceHIDContainer && !iAmVisitor && <DeviceHidContainer />}
             </div>
         );
     }
@@ -299,8 +296,8 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
         }
 
         return this._disposeAudioInputPreview()
-            .then(() => createLocalTrack('audio', deviceId, 5000))
-            .then(jitsiLocalTrack => {
+            .then(() => createLocalTrack("audio", deviceId, 5000))
+            .then((jitsiLocalTrack) => {
                 if (this._unMounted) {
                     jitsiLocalTrack.dispose();
 
@@ -308,12 +305,12 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
                 }
 
                 this.setState({
-                    previewAudioTrack: jitsiLocalTrack
+                    previewAudioTrack: jitsiLocalTrack,
                 });
             })
             .catch(() => {
                 this.setState({
-                    previewAudioTrack: null
+                    previewAudioTrack: null,
                 });
             });
     }
@@ -325,8 +322,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
      * @returns {Promise}
      */
     _disposeAudioInputPreview(): Promise<any> {
-        return this.state.previewAudioTrack
-            ? this.state.previewAudioTrack.dispose() : Promise.resolve();
+        return this.state.previewAudioTrack ? this.state.previewAudioTrack.dispose() : Promise.resolve();
     }
 
     /**
@@ -337,11 +333,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
      * @returns {ReactElement}
      */
     _renderSelector(deviceSelectorProps: any) {
-        return deviceSelectorProps ? (
-            <DeviceSelector
-                { ...deviceSelectorProps }
-                key = { deviceSelectorProps.id } />
-        ) : null;
+        return deviceSelectorProps ? <DeviceSelector {...deviceSelectorProps} key={deviceSelectorProps.id} /> : null;
     }
 
     /**
@@ -356,14 +348,15 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
         const audioInput = {
             devices: availableDevices.audioInput,
             hasPermission: hasAudioPermission,
-            icon: 'icon-microphone',
+            icon: "icon-microphone",
             isDisabled: this.props.disableAudioInputChange || this.props.disableDeviceChange,
-            key: 'audioInput',
-            id: 'audioInput',
-            label: 'settings.selectMic',
+            key: "audioInput",
+            id: "audioInput",
+            label: "settings.selectMic",
             onSelect: (selectedAudioInputId: string) => super._onChange({ selectedAudioInputId }),
             selectedDeviceId: this.state.previewAudioTrack
-                ? this.state.previewAudioTrack.getDeviceId() : this.props.selectedAudioInputId
+                ? this.state.previewAudioTrack.getDeviceId()
+                : this.props.selectedAudioInputId,
         };
         let audioOutput;
 
@@ -371,25 +364,24 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, IState> {
             audioOutput = {
                 devices: availableDevices.audioOutput,
                 hasPermission: hasAudioPermission,
-                icon: 'icon-speaker',
+                icon: "icon-speaker",
                 isDisabled: this.props.disableDeviceChange,
-                key: 'audioOutput',
-                id: 'audioOutput',
-                label: 'settings.selectAudioOutput',
+                key: "audioOutput",
+                id: "audioOutput",
+                label: "settings.selectAudioOutput",
                 onSelect: (selectedAudioOutputId: string) => super._onChange({ selectedAudioOutputId }),
-                selectedDeviceId: this.props.selectedAudioOutputId
+                selectedDeviceId: this.props.selectedAudioOutputId,
             };
         }
 
-        return { audioInput,
-            audioOutput };
+        return { audioInput, audioOutput };
     }
 }
 
 const mapStateToProps = (state: IReduxState) => {
     return {
-        availableDevices: state['features/base/devices'].availableDevices ?? {},
-        iAmVisitor: iAmVisitorCheck(state)
+        availableDevices: state["features/base/devices"].availableDevices ?? {},
+        iAmVisitor: iAmVisitorCheck(state),
     };
 };
 
