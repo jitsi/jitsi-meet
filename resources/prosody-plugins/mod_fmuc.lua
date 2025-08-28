@@ -53,6 +53,7 @@ local muc_domain_prefix = module:get_option_string('muc_mapper_domain_prefix', '
 local local_muc_domain = muc_domain_prefix..'.'..local_domain;
 
 local NICK_NS = 'http://jabber.org/protocol/nick';
+local DISPLAY_NAME_NS = 'http://jitsi.org/protocol/display-name';
 
 -- in certain cases we consider participants with token as moderators, this is the default behavior which can be turned off
 local auto_promoted_with_token = module:get_option_boolean('visitors_auto_promoted_with_token', true);
@@ -480,6 +481,30 @@ process_host_module(local_domain, function(host_module, host)
     host_module:hook('message/full', message_handler);
 end);
 
+-- add to message stanza display name for the visitor
+-- remove existing nick to avoid forgery
+local function process_display_name(stanza, occupant)
+    -- TODO drop nick extension used in messages in favor of new display-name extension
+    -- we want mobile client to update before dropping support for nick from messages
+    stanza:remove_children('nick', NICK_NS);
+    stanza:remove_children('display-name', DISPLAY_NAME_NS);
+    local nick_element = occupant:get_presence():get_child('nick', NICK_NS);
+    if nick_element then
+        stanza:add_child(nick_element);
+        stanza:tag('display-name', {
+            xmlns = DISPLAY_NAME_NS,
+            source = 'visitor'
+        }):text(nick_element:get_text()):up();
+    else
+        stanza:tag('nick', { xmlns = NICK_NS })
+            :text('anonymous'):up();
+        stanza:tag('display-name', {
+            xmlns = DISPLAY_NAME_NS,
+            source = 'visitor'
+        }):text('anonymous'):up();
+    end
+end
+
 -- only live chat is supported for visitors
 module:hook('muc-occupant-groupchat', function(event)
     local occupant, room, stanza = event.occupant, event.room, event.stanza;
@@ -492,16 +517,7 @@ module:hook('muc-occupant-groupchat', function(event)
 
         -- we manage nick only for visitors
         if occupant_host ~= main_domain then
-            -- add to message stanza display name for the visitor
-            -- remove existing nick to avoid forgery
-            stanza:remove_children('nick', NICK_NS);
-            local nick_element = occupant:get_presence():get_child('nick', NICK_NS);
-            if nick_element then
-                stanza:add_child(nick_element);
-            else
-                stanza:tag('nick', { xmlns = NICK_NS })
-                    :text('anonymous'):up();
-            end
+            process_display_name(stanza, occupant);
         end
 
         stanza.attr.from = occupant.nick;
@@ -556,15 +572,7 @@ module:hook('muc-private-message', function(event)
         local original_to = stanza.attr.to;
         local original_from = stanza.attr.from;
 
-        -- Add nick element for visitor identification
-        -- remove existing nick to avoid forgery
-        stanza:remove_children('nick', NICK_NS);
-        local nick_element = sender_occupant:get_presence():get_child('nick', NICK_NS);
-        if nick_element then
-            stanza:add_child(nick_element);
-        else
-            stanza:tag('nick', { xmlns = NICK_NS }):text('anonymous'):up();
-        end
+        process_display_name(stanza, sender_occupant);
 
         -- Forward to main prosody, preserving the resource and original from
         stanza.attr.to = jid.join(jid.node(room.jid), muc_domain_prefix..'.'..main_domain, jid.resource(to));

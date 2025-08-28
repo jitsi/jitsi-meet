@@ -6,7 +6,6 @@
 - breakout_rooms_active - Whether there was a breakout room created in the main room.
 - breakout_rooms_counter - A counter for breakout rooms created in the main room.
 - flip_participant_nick - Used in mod_muc_flip, when flipping a participant we store the nick of the second device/participant. Same processing as kicked_participant_nick.
-- hideDisplayNameForAll - TODO: drop.
 - hideDisplayNameForGuests - When set to true, the display name of participants is hidden for guests.
 - jicofo_lock - A boolean value, when set to true the room is locked waiting for Jicofo to join. All attempts to join will be queued until Jicofo joins.
 - kicked_participant_nick - Used in mod_muc_flip, when flipping a participant we store the nick of the initial device/participant so we can kick it after the second on joins, everything happens in the same pass when the second join presence is processed, so concurrency and overwriting are not a concern.
