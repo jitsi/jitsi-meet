@@ -67,6 +67,7 @@
         "crypto-js": "4.1.1",
         "dotenv": "^16.4.5",
         "dropbox": "10.7.0",
+        "filesize": "^11.0.2",
         "focus-visible": "5.1.0",
         "grapheme-splitter": "1.0.4",
         "hash-wasm": "=4.11.0",

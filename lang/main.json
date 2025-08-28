@@ -247,7 +247,7 @@
         "noPermission": "Permission not granted",
         "previewUnavailable": "Preview unavailable",
         "selectADevice": "Select a device",
-        "testAudio": "Test"
+        "testAudio": "Test speaker"
     },
     "dialIn": {
         "screenTitle": "Dial-in summary"
@@ -850,6 +850,10 @@
             "meetingFull": "Meeting is full",
             "participants": "participants"
         },
+        "secureMeetingMessage": {
+            "title": "Your meeting is private",
+            "description": "Only invited or approved participants can join"
+        },
         "settings": {
             "video": {
                 "videoInput": "Video input"
@@ -1218,6 +1222,7 @@
         "moderator": "Moderator",
         "moderatorOptions": "Moderator options",
         "more": "General",
+        "general": "General",
         "name": "Name",
         "noDevice": "None",
         "notifications": "Notifications",
@@ -1238,7 +1243,11 @@
         "startVideoMuted": "Everyone starts hidden",
         "talkWhileMuted": "Talk while muted",
         "title": "Settings",
-        "video": "Video"
+        "video": "Video",
+        "account": {
+            "title": "Account",
+            "manage": "Manage account"
+        }
     },
     "settingsView": {
         "advanced": "Advanced",
@@ -1586,7 +1595,7 @@
             "currentBackground": "Current background: {{background}}",
             "selectBackground": "Select a background"
         },
-        "addBackground": "Add background",
+        "addBackground": "Upload background",
         "apply": "Apply",
         "backgroundEffectError": "Failed to apply background effect.",
         "blur": "Blur",

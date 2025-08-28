@@ -10,7 +10,8 @@ import { isButtonEnabled } from "../../../../toolbox/functions.web";
 
 import { redirectToStaticPage } from "../../../../app/actions.any";
 import { appNavigate } from "../../../../app/actions.web";
-import { getConferenceName } from "../../../conference/functions";
+import { openSettingsDialog } from "../../../../settings/actions.web";
+import { getConferenceName, getCurrentConference } from "../../../conference/functions";
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from "../../../config/constants";
 import { translate } from "../../../i18n/functions";
 import RecordingWarning from "../../../premeeting/components/web/RecordingWarning";
@@ -25,6 +26,7 @@ import MeetingService from "../../services/meeting.service";
 import { MeetingUser } from "../../services/types/meeting.types";
 import Header from "./components/Header";
 import PreMeetingModal from "./components/PreMeetingModal";
+import SecureMeetingMessage from "./components/SecureMeetingMessage";
 import VideoEncodingToggle from "./containers/VideoEncodingToggle";
 import { useUserData } from "./hooks/useUserData";
 
@@ -161,6 +163,11 @@ interface IProps extends WithTranslation {
      */
     joinRoomErrorMessage?: string;
     createRoomErrorMessage?: string;
+    
+    /**
+     * Flag to indicate if supports end to end encryption.
+     */
+    isE2EESupported?: Function;
 }
 
 const PreMeetingScreen = ({
@@ -187,6 +194,7 @@ const PreMeetingScreen = ({
     room,
     joinRoomErrorMessage,
     createRoomErrorMessage,
+    isE2EESupported,
 }: IProps) => {
     const { classes } = useStyles();
     const [isNameInputFocused, setIsNameInputFocused] = useState(false);
@@ -196,6 +204,8 @@ const PreMeetingScreen = ({
 
     const storageManager = useLocalStorage();
     const dispatch = useDispatch();
+
+    const subscription = storageManager.getSubscription();
 
     const isInNewMeeting = window.location.href.includes("new-meeting");
     const showNameError = userName.length === 0 && !isNameInputFocused;
@@ -305,6 +315,7 @@ const PreMeetingScreen = ({
             <div className={`flex flex-col px-5 ${classes.container}`}>
                 <Header
                     userData={userData}
+                    subscription={subscription}
                     translate={t}
                     onLogin={handleRedirectToLogin}
                     onLogout={onLogout}
@@ -320,6 +331,7 @@ const PreMeetingScreen = ({
                         ) : null
                     }
                     navigateToHomePage={navigateToHomePage}
+                    onOpenSettings={() => dispatch(openSettingsDialog(undefined, true))}
                 />
                 <PreMeetingModal
                     videoTrack={videoTrack}
@@ -339,6 +351,8 @@ const PreMeetingScreen = ({
                     isCreatingConference={!!createConference}
                     errorMessage={errorMessage}
                 />
+
+                <div className="flex absolute bottom-7 right-7">{isE2EESupported && <SecureMeetingMessage />}</div>
                 <div className={classes.videoEncodingToggleContainer}>
                     <VideoEncodingToggle />
                 </div>
@@ -379,11 +393,15 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const userName = getDisplayName(state);
     const { localFlipX } = state["features/base/settings"];
 
-    const joinRoomError = state["features/meet-room"]?.joinRoomError || false;
-    const createRoomError = state["features/meet-room"]?.createRoomError || false;
+
     const joinRoomErrorMessage = state["features/meet-room"]?.joinRoomErrorMessage;
     const createRoomErrorMessage = state["features/meet-room"]?.createRoomErrorMessage;
     const room = state["features/base/conference"].room ?? "";
+    const joinRoomError = state["features/meet-room"]?.joinRoomError ?? false;
+    const createRoomError = state["features/meet-room"]?.createRoomError ?? false;
+
+    const conference = getCurrentConference(state);
+    const isE2EESupported = conference?.isE2EESupported() ?? false;
 
     return {
         // For keeping backwards compat.: if we pass an empty hiddenPremeetingButtons
@@ -403,6 +421,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         room,
         joinRoomErrorMessage,
         createRoomErrorMessage,
+        isE2EESupported,
     };
 }
 

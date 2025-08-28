@@ -234,7 +234,7 @@
         "noPermission": "Permiso no concedido",
         "previewUnavailable": "Vista previa no disponible",
         "selectADevice": "Seleccionar un dispositivo",
-        "testAudio": "Reproducir un sonido de prueba"
+        "testAudio": "Reproducir sonido"
     },
     "dialIn": {
         "screenTitle": ""
@@ -797,6 +797,10 @@
             "meetingFull": "La reunión está llena",
             "participants": "participantes"
         },
+        "secureMeetingMessage": {
+            "title": "Tu reunión es privada",
+            "description": "Sólo pueden participar los participantes invitados o aprobados"
+        },
         "settings": {
             "video": {
                 "videoInput": "Entrada de vídeo"
@@ -1155,6 +1159,7 @@
         "moderator": "Moderador",
         "moderatorOptions": "Opciones de moderador",
         "more": "Más",
+        "general": "General",
         "name": "Nombre",
         "noDevice": "Ninguno",
         "notifications": "Notificaciones",
@@ -1175,7 +1180,11 @@
         "startVideoMuted": "Todos inician con cámara desactivada",
         "talkWhileMuted": "Hablar en silencio",
         "title": "Ajustes",
-        "video": "Video"
+        "video": "Video",
+        "account": {
+            "title": "Cuenta",
+            "manage": "Administrar cuenta"
+        }
     },
     "settingsView": {
         "advanced": "Avanzado",

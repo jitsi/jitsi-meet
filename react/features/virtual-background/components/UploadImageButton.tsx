@@ -5,11 +5,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
-import { IconPlus } from '../../base/icons/svg';
 import { withPixelLineHeight } from '../../base/styles/functions.web';
 import { type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { resizeImage } from '../functions';
 import logger from '../logger';
+import {  UploadSimple } from '@phosphor-icons/react';
 
 interface IProps extends WithTranslation {
 
@@ -47,7 +47,8 @@ const useStyles = makeStyles()(theme => {
             marginBottom: theme.spacing(3),
             cursor: 'pointer',
             display: 'flex',
-            alignItems: 'center'
+            alignItems: 'center',
+            padding: "16px",
         },
 
         addBackground: {
@@ -129,7 +130,7 @@ function UploadImageButton({
                 <Icon
                     className = { classes.addBackground }
                     size = { 24 }
-                    src = { IconPlus } />
+                    src = { UploadSimple } />
                 {t('virtualBackground.addBackground')}
             </label>}
 
