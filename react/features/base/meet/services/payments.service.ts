@@ -1,3 +1,4 @@
+import { UserSubscription } from "@internxt/sdk/dist/drive/payments/types/types";
 import { SdkManager } from "./sdk-manager.service";
 
 export class PaymentsService {
@@ -9,5 +10,10 @@ export class PaymentsService {
         const meetObject = userTier.featuresPerService["meet"];
 
         return meetObject;
+    };
+
+    public getUserSubscription = async (): Promise<UserSubscription> => {
+        const paymentsClient = await SdkManager.instance.getPayments();
+        return paymentsClient.getUserSubscription();
     };
 }

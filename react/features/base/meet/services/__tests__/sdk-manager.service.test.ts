@@ -144,7 +144,7 @@ describe("SdkManager", () => {
             const usersClient = SdkManager.instance.getUsers();
             expect(usersClient).toBeDefined();
             expect(Drive.Users.client).toHaveBeenCalledWith(
-                "https://test-drive-api.com",
+                "https://test-drive-new-api.com",
                 expect.any(Object),
                 mockApiSecurity
             );
@@ -190,7 +190,7 @@ describe("SdkManager", () => {
 
             expect(Auth.client).toHaveBeenCalledWith("https://test-drive-new-api.com", expect.any(Object), undefined);
             expect(Drive.Users.client).toHaveBeenCalledWith(
-                "https://test-drive-api.com",
+                "https://test-drive-new-api.com",
                 expect.any(Object),
                 undefined
             );

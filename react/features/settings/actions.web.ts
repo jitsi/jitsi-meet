@@ -19,20 +19,19 @@ import { disableKeyboardShortcuts, enableKeyboardShortcuts } from '../keyboard-s
 import { toggleBackgroundEffect } from '../virtual-background/actions';
 import virtualBackgroundLogger from '../virtual-background/logger';
 
+import SettingsDialogWrapper from "../base/meet/views/Settings/SettingsDialogWrapper";
 import {
     SET_AUDIO_SETTINGS_VISIBILITY,
     SET_VIDEO_SETTINGS_VISIBILITY
 } from './actionTypes';
-import LogoutDialog from './components/web/LogoutDialog';
-import SettingsDialog from './components/web/SettingsDialog';
+import LogoutDialog from "./components/web/LogoutDialog";
 import {
     getModeratorTabProps,
     getMoreTabProps,
     getNotificationsTabProps,
     getProfileTabProps,
-    getShortcutsTabProps
-} from './functions.web';
-
+    getShortcutsTabProps,
+} from "./functions.web";
 
 /**
  * Opens {@code LogoutDialog}.
@@ -88,9 +87,9 @@ export function openLogoutDialog() {
  * @returns {Function}
  */
 export function openSettingsDialog(defaultTab?: string, isDisplayedOnWelcomePage?: boolean) {
-    return openDialog(SettingsDialog, {
+    return openDialog(SettingsDialogWrapper, {
         defaultTab,
-        isDisplayedOnWelcomePage
+        isDisplayedOnWelcomePage,
     });
 }
 

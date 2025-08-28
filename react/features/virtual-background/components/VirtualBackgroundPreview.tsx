@@ -79,40 +79,40 @@ interface IState {
 const styles = (theme: Theme) => {
     return {
         virtualBackgroundPreview: {
-            height: 'auto',
-            width: '100%',
-            overflow: 'hidden',
+            aspectRatio: "16 / 9",
+            width: "100%",
+            overflow: "hidden",
             marginBottom: theme.spacing(3),
             zIndex: 2,
-            borderRadius: '3px',
+            borderRadius: "20px",
             backgroundColor: theme.palette.uiBackground,
-            position: 'relative' as const
+            position: "relative" as const,
         },
 
         previewLoader: {
-            height: '220px',
+            height: "220px",
 
-            '& svg': {
-                position: 'absolute' as const,
-                top: '40%',
-                left: '45%'
-            }
+            "& svg": {
+                position: "absolute" as const,
+                top: "40%",
+                left: "45%",
+            },
         },
 
         previewVideo: {
-            height: '100%',
-            width: '100%',
-            objectFit: 'cover' as const
+            height: "100%",
+            width: "100%",
+            objectFit: "cover" as const,
         },
 
         error: {
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            height: '220px',
-            position: 'relative' as const
-        }
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+            height: "220px",
+            position: "relative" as const,
+        },
     };
 };
 

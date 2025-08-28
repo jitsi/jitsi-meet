@@ -69,108 +69,108 @@ const onError = (event: any) => {
 const useStyles = makeStyles()(theme => {
     return {
         virtualBackgroundLoading: {
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '50px'
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "50px",
         },
 
         container: {
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column'
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
         },
 
         thumbnailContainer: {
-            width: '100%',
-            display: 'inline-grid',
-            gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
-            gap: theme.spacing(1),
+            width: "100%",
+            display: "inline-grid",
+            gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr",
+            gap: "8px",
 
-            '@media (min-width: 608px) and (max-width: 712px)': {
-                gridTemplateColumns: '1fr 1fr 1fr 1fr'
+            "@media (min-width: 608px) and (max-width: 712px)": {
+                gridTemplateColumns: "1fr 1fr 1fr 1fr",
             },
 
-            '@media (max-width: 607px)': {
-                gridTemplateColumns: '1fr 1fr 1fr',
-                gap: theme.spacing(2)
-            }
+            "@media (max-width: 607px)": {
+                gridTemplateColumns: "1fr 1fr 1fr",
+                gap: "8px",
+            },
         },
 
         thumbnail: {
-            height: '54px',
-            width: '100%',
-            borderRadius: '4px',
-            boxSizing: 'border-box',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            textAlign: 'center',
+            width: "100%", // Ocupa todo el ancho disponible del grid
+            aspectRatio: "7 / 4",
+            borderRadius: "4px",
+            boxSizing: "border-box",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
             ...withPixelLineHeight(theme.typography.labelBold),
             color: theme.palette.text01,
-            objectFit: 'cover',
+            objectFit: "cover",
 
-            [[ '&:hover', '&:focus' ] as any]: {
+            [["&:hover", "&:focus"] as any]: {
                 opacity: 0.5,
-                cursor: 'pointer',
+                cursor: "pointer",
 
-                '& ~ .delete-image-icon': {
-                    display: 'block'
-                }
+                "& ~ .delete-image-icon": {
+                    display: "block",
+                },
             },
 
-            '@media (max-width: 607px)': {
-                height: '70px'
-            }
+            "@media (max-width: 607px)": {
+                height: "70px",
+            },
         },
 
         selectedThumbnail: {
-            border: `2px solid ${theme.palette.action01Hover}`
+            border: `2px solid #FAFAFA`,
         },
 
         noneThumbnail: {
-            backgroundColor: theme.palette.ui04
+            backgroundColor: theme.palette.ui04,
         },
 
         slightBlur: {
-            boxShadow: 'inset 0 0 12px #000000',
-            background: '#a4a4a4'
+            boxShadow: "inset 0 0 12px #000000",
+            background: "#a4a4a4",
         },
 
         blur: {
-            boxShadow: 'inset 0 0 12px #000000',
-            background: '#7e8287'
+            boxShadow: "inset 0 0 12px #000000",
+            background: "#7e8287",
         },
 
         storedImageContainer: {
-            position: 'relative',
-            display: 'flex',
-            flexDirection: 'column',
+            position: "relative",
+            display: "flex",
+            flexDirection: "column",
 
-            '&:focus-within .delete-image-container': {
-                display: 'block'
-            }
+            "&:focus-within .delete-image-container": {
+                display: "block",
+            },
         },
 
         deleteImageIcon: {
-            position: 'absolute',
-            top: '3px',
-            right: '3px',
+            position: "absolute",
+            top: "3px",
+            right: "3px",
             background: theme.palette.ui03,
-            borderRadius: '3px',
-            cursor: 'pointer',
-            display: 'none',
+            borderRadius: "3px",
+            cursor: "pointer",
+            display: "none",
 
-            '@media (max-width: 607px)': {
-                display: 'block',
-                padding: '3px'
+            "@media (max-width: 607px)": {
+                display: "block",
+                padding: "3px",
             },
 
-            [[ '&:hover', '&:focus' ] as any]: {
-                display: 'block'
-            }
-        }
+            [["&:hover", "&:focus"] as any]: {
+                display: "block",
+            },
+        },
     };
 });
 
@@ -354,129 +354,136 @@ function VirtualBackgrounds({
     return (
         <>
             <VirtualBackgroundPreview
-                loadedPreview = { loadedPreviewState }
-                options = { options }
-                selectedVideoInputId = { selectedVideoInputId } />
+                loadedPreview={loadedPreviewState}
+                options={options}
+                selectedVideoInputId={selectedVideoInputId}
+            />
             {loading ? (
-                <div className = { classes.virtualBackgroundLoading }>
+                <div className={classes.virtualBackgroundLoading}>
                     <Spinner />
                 </div>
             ) : (
-                <div className = { classes.container }>
-                    <span
-                        className = 'sr-only'
-                        id = 'virtual-background-current-info'>
-                        { t('virtualBackground.accessibilityLabel.currentBackground', {
-                            background: currentBackgroundLabel
-                        }) }
+                <div className={classes.container}>
+                    <span className="sr-only" id="virtual-background-current-info">
+                        {t("virtualBackground.accessibilityLabel.currentBackground", {
+                            background: currentBackgroundLabel,
+                        })}
                     </span>
-                    {_showUploadButton
-                    && <UploadImageButton
-                        setLoading = { setLoading }
-                        setOptions = { onOptionsChange }
-                        setStoredImages = { setStoredImages }
-                        showLabel = { previewIsLoaded }
-                        storedImages = { storedImages } />}
+
                     <div
-                        aria-describedby = 'virtual-background-current-info'
-                        aria-label = { t('virtualBackground.accessibilityLabel.selectBackground') }
-                        className = { classes.thumbnailContainer }
-                        role = 'radiogroup'
-                        tabIndex = { -1 }>
-                        <Tooltip
-                            content = { t('virtualBackground.removeBackground') }
-                            position = { 'top' }>
+                        aria-describedby="virtual-background-current-info"
+                        aria-label={t("virtualBackground.accessibilityLabel.selectBackground")}
+                        className={classes.thumbnailContainer}
+                        role="radiogroup"
+                        tabIndex={-1}
+                    >
+                        <Tooltip content={t("virtualBackground.removeBackground")} position={"top"}>
                             <div
-                                aria-checked = { isThumbnailSelected('none') }
-                                aria-label = { t('virtualBackground.removeBackground') }
-                                className = { cx(classes.thumbnail, classes.noneThumbnail,
-                                    getSelectedThumbnailClass('none')) }
-                                onClick = { removeBackground }
-                                onKeyPress = { removeBackgroundKeyPress }
-                                role = 'radio'
-                                tabIndex = { 0 } >
-                                {t('virtualBackground.none')}
+                                aria-checked={isThumbnailSelected("none")}
+                                aria-label={t("virtualBackground.removeBackground")}
+                                className={cx(
+                                    classes.thumbnail,
+                                    classes.noneThumbnail,
+                                    getSelectedThumbnailClass("none")
+                                )}
+                                onClick={removeBackground}
+                                onKeyPress={removeBackgroundKeyPress}
+                                role="radio"
+                                tabIndex={0}
+                            >
+                                {t("virtualBackground.none")}
                             </div>
                         </Tooltip>
-                        <Tooltip
-                            content = { t('virtualBackground.slightBlur') }
-                            position = { 'top' }>
+                        <Tooltip content={t("virtualBackground.slightBlur")} position={"top"}>
                             <div
-                                aria-checked = { isThumbnailSelected('slight-blur') }
-                                aria-label = { t('virtualBackground.slightBlur') }
-                                className = { cx(classes.thumbnail, classes.slightBlur,
-                                    getSelectedThumbnailClass('slight-blur')) }
-                                onClick = { enableSlideBlur }
-                                onKeyPress = { enableSlideBlurKeyPress }
-                                role = 'radio'
-                                tabIndex = { 0 }>
-                                {t('virtualBackground.slightBlur')}
+                                aria-checked={isThumbnailSelected("slight-blur")}
+                                aria-label={t("virtualBackground.slightBlur")}
+                                className={cx(
+                                    classes.thumbnail,
+                                    classes.slightBlur,
+                                    getSelectedThumbnailClass("slight-blur")
+                                )}
+                                onClick={enableSlideBlur}
+                                onKeyPress={enableSlideBlurKeyPress}
+                                role="radio"
+                                tabIndex={0}
+                            >
+                                {t("virtualBackground.slightBlur")}
                             </div>
                         </Tooltip>
-                        <Tooltip
-                            content = { t('virtualBackground.blur') }
-                            position = { 'top' }>
+                        <Tooltip content={t("virtualBackground.blur")} position={"top"}>
                             <div
-                                aria-checked = { isThumbnailSelected('blur') }
-                                aria-label = { t('virtualBackground.blur') }
-                                className = { cx(classes.thumbnail, classes.blur,
-                                    getSelectedThumbnailClass('blur')) }
-                                onClick = { enableBlur }
-                                onKeyPress = { enableBlurKeyPress }
-                                role = 'radio'
-                                tabIndex = { 0 }>
-                                {t('virtualBackground.blur')}
+                                aria-checked={isThumbnailSelected("blur")}
+                                aria-label={t("virtualBackground.blur")}
+                                className={cx(classes.thumbnail, classes.blur, getSelectedThumbnailClass("blur"))}
+                                onClick={enableBlur}
+                                onKeyPress={enableBlurKeyPress}
+                                role="radio"
+                                tabIndex={0}
+                            >
+                                {t("virtualBackground.blur")}
                             </div>
                         </Tooltip>
-                        {_images.map(image => (
+                        {_images.map((image) => (
                             <Tooltip
-                                content = { (image.tooltip && t(`virtualBackground.${image.tooltip}`)) ?? '' }
-                                key = { image.id }
-                                position = { 'top' }>
+                                content={(image.tooltip && t(`virtualBackground.${image.tooltip}`)) ?? ""}
+                                key={image.id}
+                                position={"top"}
+                            >
                                 <img
-                                    alt = { image.tooltip && t(`virtualBackground.${image.tooltip}`) }
-                                    aria-checked = { isThumbnailSelected(image.id) }
-                                    className = { cx(classes.thumbnail,
-                                        getSelectedThumbnailClass(image.id)) }
-                                    data-imageid = { image.id }
-                                    onClick = { setImageBackground }
-                                    onError = { onError }
-                                    onKeyPress = { setImageBackgroundKeyPress }
-                                    role = 'radio'
-                                    src = { image.src }
-                                    tabIndex = { 0 } />
+                                    alt={image.tooltip && t(`virtualBackground.${image.tooltip}`)}
+                                    aria-checked={isThumbnailSelected(image.id)}
+                                    className={cx(classes.thumbnail, getSelectedThumbnailClass(image.id))}
+                                    data-imageid={image.id}
+                                    onClick={setImageBackground}
+                                    onError={onError}
+                                    onKeyPress={setImageBackgroundKeyPress}
+                                    role="radio"
+                                    src={image.src}
+                                    tabIndex={0}
+                                />
                             </Tooltip>
                         ))}
                         {storedImages.map((image, index) => (
-                            <div
-                                className = { classes.storedImageContainer }
-                                key = { image.id }>
+                            <div className={classes.storedImageContainer} key={image.id}>
                                 <img
-                                    alt = { t('virtualBackground.uploadedImage', { index: index + 1 }) }
-                                    aria-checked = { isThumbnailSelected(image.id) }
-                                    className = { cx(classes.thumbnail,
-                                        getSelectedThumbnailClass(image.id)) }
-                                    data-imageid = { image.id }
-                                    onClick = { setUploadedImageBackground }
-                                    onError = { onError }
-                                    onKeyPress = { setUploadedImageBackgroundKeyPress }
-                                    role = 'radio'
-                                    src = { image.src }
-                                    tabIndex = { 0 } />
+                                    alt={t("virtualBackground.uploadedImage", { index: index + 1 })}
+                                    aria-checked={isThumbnailSelected(image.id)}
+                                    className={cx(classes.thumbnail, getSelectedThumbnailClass(image.id))}
+                                    data-imageid={image.id}
+                                    onClick={setUploadedImageBackground}
+                                    onError={onError}
+                                    onKeyPress={setUploadedImageBackgroundKeyPress}
+                                    role="radio"
+                                    src={image.src}
+                                    tabIndex={0}
+                                />
 
                                 <Icon
-                                    ariaLabel = { t('virtualBackground.deleteImage') }
-                                    className = { cx(classes.deleteImageIcon, 'delete-image-icon') }
-                                    data-imageid = { image.id }
-                                    onClick = { deleteStoredImage }
-                                    onKeyPress = { deleteStoredImageKeyPress }
-                                    role = 'button'
-                                    size = { 16 }
-                                    src = { IconCloseLarge }
-                                    tabIndex = { 0 } />
+                                    ariaLabel={t("virtualBackground.deleteImage")}
+                                    className={cx(classes.deleteImageIcon, "delete-image-icon")}
+                                    data-imageid={image.id}
+                                    onClick={deleteStoredImage}
+                                    onKeyPress={deleteStoredImageKeyPress}
+                                    role="button"
+                                    size={16}
+                                    src={IconCloseLarge}
+                                    tabIndex={0}
+                                />
                             </div>
                         ))}
                     </div>
+                    {_showUploadButton && (
+                        <div className="flex justify-end mt-4">
+                            <UploadImageButton
+                                setLoading={setLoading}
+                                setOptions={onOptionsChange}
+                                setStoredImages={setStoredImages}
+                                showLabel={previewIsLoaded}
+                                storedImages={storedImages}
+                            />{" "}
+                        </div>
+                    )}
                 </div>
             )}
         </>

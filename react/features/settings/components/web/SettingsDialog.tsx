@@ -94,10 +94,11 @@ const SettingsDialog = ({ _tabs, defaultTab, dispatch }: IProps) => {
     const { classes } = useStyles();
 
     const correctDefaultTab = _tabs.find(tab => tab.name === defaultTab)?.name;
+    console.log(`SettingsDialog: defaultTab is ${correctDefaultTab}`);
     const tabs = _tabs.map(tab => {
         return {
             ...tab,
-            className: `settings-pane ${classes.settingsDialog}`,
+            className: ` ${classes.settingsDialog}`,
             submit: (...args: any) => tab.submit
                 && dispatch(tab.submit(...args))
         };
