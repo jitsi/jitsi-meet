@@ -47,22 +47,22 @@ describe('Follow Me', () => {
 
         const { p1, p2, p3 } = ctx;
 
-        await p1.waitForTileViewDisplay();
+        await p1.waitForTileViewDisplayed();
 
         await p1.getToolbar().clickExitTileViewButton();
 
         await Promise.all([
-            p1.waitForTileViewDisplay(true),
-            p2.waitForTileViewDisplay(true),
-            p3.waitForTileViewDisplay(true)
+            p1.waitForTileViewDisplayed(true),
+            p2.waitForTileViewDisplayed(true),
+            p3.waitForTileViewDisplayed(true)
         ]);
 
         await p1.getToolbar().clickEnterTileViewButton();
 
         await Promise.all([
-            p1.waitForTileViewDisplay(),
-            p2.waitForTileViewDisplay(),
-            p3.waitForTileViewDisplay()
+            p1.waitForTileViewDisplayed(),
+            p2.waitForTileViewDisplayed(),
+            p3.waitForTileViewDisplayed()
         ]);
     });
 

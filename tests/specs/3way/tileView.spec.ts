@@ -16,23 +16,20 @@ const TILE_VIEW_LOCAL_VIDEO_CSS_SELECTOR = '.remote-videos #localVideoContainer'
 describe('TileView', () => {
     it('joining the meeting', () => ensureTwoParticipants());
 
-    // TODO: implements etherpad check
-
     it('pinning exits', async () => {
-        await enterTileView();
-
         const { p1, p2 } = ctx;
 
+        await p1.getToolbar().clickEnterTileViewButton();
+        await p1.waitForTileViewDisplayed();
         await p1.getFilmstrip().pinParticipant(p2);
-
-        await p1.waitForTileViewDisplay(true);
+        await p1.waitForTileViewDisplayed(true);
     });
 
     it('local video display', async () => {
-        await enterTileView();
-
         const { p1 } = ctx;
 
+        await p1.getToolbar().clickEnterTileViewButton();
+        await p1.waitForTileViewDisplayed();
         await p1.driver.$(TILE_VIEW_LOCAL_VIDEO_CSS_SELECTOR).waitForDisplayed({ timeout: 3000 });
         await p1.driver.$(FILMSTRIP_VIEW_LOCAL_VIDEO_CSS_SELECTOR).waitForDisplayed({
             timeout: 3000,
@@ -44,7 +41,7 @@ describe('TileView', () => {
         const { p1 } = ctx;
 
         await p1.getToolbar().clickExitTileViewButton();
-        await p1.waitForTileViewDisplay(true);
+        await p1.waitForTileViewDisplayed(true);
     });
 
     it('local video display independently from remote', async () => {
@@ -103,11 +100,3 @@ describe('TileView', () => {
         await p3.waitForRemoteVideo(p2EpId);
     });
 });
-
-/**
- * Attempts to enter tile view and verifies tile view has been entered.
- */
-async function enterTileView() {
-    await ctx.p1.getToolbar().clickEnterTileViewButton();
-    await ctx.p1.waitForTileViewDisplay();
-}

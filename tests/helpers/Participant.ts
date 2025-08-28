@@ -319,7 +319,7 @@ export class Participant {
     /**
      * Waits for the tile view to display.
      */
-    async waitForTileViewDisplay(reverse = false) {
+    async waitForTileViewDisplayed(reverse = false) {
         await this.driver.$('//div[@id="videoconference_page" and contains(@class, "tile-view")]').waitForDisplayed({
             reverse,
             timeout: 10_000,
