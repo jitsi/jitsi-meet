@@ -164,7 +164,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
                 </div>
 
                 {/* Content area */}
-                <div className="flex-1 flex flex-col border-l border-[#8C8C8C]">
+                <div className="flex-1 flex flex-col border-l border-[#8C8C8C]/25">
                     {/* Content Header */}
                     <div className="px-6 py-4">
                         <span className="text-base font-medium text-white">{currentTab?.label}</span>
