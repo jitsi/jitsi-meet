@@ -222,7 +222,7 @@ export function getLocalJitsiAudioTrackSettings(state: IReduxState) {
             autoGainControl: !disableAP && !disableAGC,
             channelCount: stereo ? 2 : 1,
             echoCancellation: !disableAP && !disableAEC,
-            noiseSuppression: !disableAP && !disableNS,
+            noiseSuppression: !disableAP && !disableNS
         };
     }
 
@@ -236,7 +236,7 @@ export function getLocalJitsiAudioTrackSettings(state: IReduxState) {
         autoGainControl,
         channelCount,
         echoCancellation,
-        noiseSuppression,
+        noiseSuppression
     };
 }
 
