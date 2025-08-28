@@ -1,0 +1,215 @@
+<html itemscope itemtype="http://schema.org/Product" prefix="og: http://ogp.me/ns#" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <!--#include virtual="head.html" -->
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="theme-color" content="#2A3A4B">
+    <!--#include virtual="base.html" -->
+
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="stylesheet" href="css/all.css">
+    <!--#include virtual="fonts.html"-->
+    <link rel="manifest" id="manifest-placeholder">
+
+    <script>
+        function contextRoot(pathname) {
+            const contextRootEndIndex = pathname.lastIndexOf('/');
+
+            return (
+                contextRootEndIndex === -1
+                ? '/'
+                : pathname.substring(0, contextRootEndIndex + 1)
+            );
+        }
+        window.EXCALIDRAW_ASSET_PATH = 'libs/';
+        // Dynamically generate the manifest location URL. It must be served from the document origin, and we may have
+        // the base pointing to the CDN. This way we can generate a full URL which will bypass the base.
+        document.querySelector('#manifest-placeholder').setAttribute('href', window.location.origin + contextRoot(window.location.pathname) + 'manifest.json');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!JitsiMeetJS.app) {
+                return;
+            }
+
+            JitsiMeetJS.app.renderEntryPoint({
+                Component: JitsiMeetJS.app.entryPoints.APP
+            })
+
+            const isEmbedded = () => {
+                try {
+                    return window.self !== window.top;
+                } catch (e) {
+                    return true;
+                }
+            };
+
+            const isElectron = navigator.userAgent.includes('Electron');
+            const shouldRegisterWorker = !isElectron && !isEmbedded() && 'serviceWorker' in navigator;
+
+            if (shouldRegisterWorker) {
+                navigator.serviceWorker
+                    .register(window.location.origin + contextRoot(window.location.pathname) + 'pwa-worker.js')
+                    .then(reg => {
+                        console.log('Service worker registered.', reg);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            }
+        });
+    </script>
+    <script>
+        // IE11 and earlier can be identified via their user agent and be
+        // redirected to a page that is known to have no newer js syntax.
+        if (window.navigator.userAgent.match(/(MSIE|Trident)/)) {
+            var roomName = encodeURIComponent(window.location.pathname);
+            window.location.pathname = 'static/recommendedBrowsers.html';
+        }
+
+        window.indexLoadedTime = window.performance.now();
+        console.log("(TIME) index.html loaded:\t", indexLoadedTime);
+        window.addEventListener('load', function() {
+            window.loadedEventTime = window.performance.now();
+            console.log("(TIME) window loaded event:\t", loadedEventTime);
+        });
+
+        // XXX the code below listeners for errors and displays an error message
+        // in the document body when any of the required files fails to load.
+        // The intention is to prevent from displaying broken page.
+        var criticalFiles = [
+            "config.js",
+            "utils.js",
+            "do_external_connect.js",
+            "interface_config.js",
+            "lib-jitsi-meet.min.js",
+            "app.bundle.min.js",
+            "all.css"
+        ];
+        var loadErrHandler = function(e) {
+            var target = e.target;
+            // Error on <script> and <link>(CSS)
+            // <script> will have .src and <link> .href
+            var fileRef = (target.src ? target.src : target.href);
+            if (("SCRIPT" === target.tagName || "LINK" === target.tagName)
+                && criticalFiles.some(
+                    function(file) { return fileRef.indexOf(file) !== -1 })) {
+                window.onload = function() {
+                    // The whole complex part below implements page reloads with
+                    // "exponential backoff". The retry attempt is passes as
+                    // "rCounter" query parameter
+                    var href = window.location.href;
+
+                    var retryMatch = href.match(/.+(\?|&)rCounter=(\d+)/);
+                    var retryCountStr = retryMatch ? retryMatch[2] : "0";
+                    var retryCount = Number.parseInt(retryCountStr);
+
+                    if (retryMatch == null) {
+                        var separator = href.indexOf("?") === -1 ? "?" : "&";
+                        var hashIdx = href.indexOf("#");
+
+                        if (hashIdx === -1) {
+                            href += separator + "rCounter=1";
+                        } else {
+                            var hashPart = href.substr(hashIdx);
+
+                            href = href.substr(0, hashIdx)
+                                + separator + "rCounter=1" + hashPart;
+                        }
+                    } else {
+                        var separator = retryMatch[1];
+
+                        href = href.replace(
+                            /(\?|&)rCounter=(\d+)/,
+                            separator + "rCounter=" + (retryCount + 1));
+                    }
+
+                    var delay = Math.pow(2, retryCount) * 2000;
+                    if (isNaN(delay) || delay < 2000 || delay > 60000)
+                        delay = 10000;
+
+                    var showMoreText = "show more";
+                    var showLessText = "show less";
+
+                    document.body.innerHTML
+                        = "<div style='"
+                        + "position: absolute;top: 50%;left: 50%;"
+                        + "text-align: center;"
+                        + "font-size: medium;"
+                        + "font-weight: 400;"
+                        + "transform: translate(-50%, -50%)'>"
+                        + "Uh oh! We couldn't fully download everything we needed :("
+                        + "<br/> "
+                        + "We will try again shortly. In the mean time, check for problems with your Internet connection!"
+                        + "<br/><br/> "
+                        + "<div id='moreInfo' style='"
+                        + "display: none;'>" + "Missing " + fileRef
+                        + "<br/><br/></div>"
+                        + "<a id='showMore' style='"
+                        + "text-decoration: underline;"
+                        + "font-size:small;"
+                        + "cursor: pointer'>" + showMoreText + "</a>"
+                        + "&nbsp;&nbsp;&nbsp;"
+                        + "<a id ='reloadLink' style='"
+                        + "text-decoration: underline;"
+                        + "font-size:small;"
+                        + "'>reload now</a>"
+                        + "</div>";
+
+                    var reloadLink = document.getElementById('reloadLink');
+                    reloadLink.setAttribute('href', href);
+
+                    var showMoreElem = document.getElementById("showMore");
+                    showMoreElem.addEventListener('click', function () {
+                            var moreInfoElem
+                                    = document.getElementById("moreInfo");
+
+                            if (showMoreElem.innerHTML === showMoreText) {
+                                moreInfoElem.setAttribute(
+                                    "style",
+                                    "display: block;"
+                                    + "color:#FF991F;"
+                                    + "font-size:small;"
+                                    + "user-select:text;");
+                                showMoreElem.innerHTML = showLessText;
+                            }
+                            else {
+                                moreInfoElem.setAttribute(
+                                    "style", "display: none;");
+                                showMoreElem.innerHTML = showMoreText;
+                            }
+                        });
+
+                    window.setTimeout(
+                        function () { window.location.replace(href); }, delay);
+
+                    // Call extra handler if defined.
+                    if (typeof postLoadErrorHandler === "function") {
+                        postLoadErrorHandler(fileRef);
+                    }
+                };
+                window.removeEventListener(
+                    'error', loadErrHandler, true /* capture phase */);
+            }
+        };
+        window.addEventListener(
+            'error', loadErrHandler, true /* capture phase type of listener */);
+    </script>
+    <script><!--#include virtual="/config.js" --></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
+    <script><!--#include virtual="/interface_config.js" --></script>
+    <script src="libs/lib-jitsi-meet.min.js?v=139"></script>
+    <script src="libs/app.bundle.min.js?v=139"></script>
+    <!--#include virtual="title.html" -->
+    <!--#include virtual="plugin.head.html" -->
+    <!--#include virtual="static/welcomePageAdditionalContent.html" -->
+    <!--#include virtual="static/welcomePageAdditionalCard.html" -->
+    <!--#include virtual="static/settingsToolbarAdditionalContent.html" -->
+  </head>
+  <body>
+    <noscript aria-hidden="true">
+        <div>JavaScript is disabled. </br>For this site to work you have to enable JavaScript.</div>
+    </noscript>
+    <!--#include virtual="body.html" -->
+    <div id="react" role="main"></div>
+  </body>
+</html>

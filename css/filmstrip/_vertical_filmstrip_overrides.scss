@@ -1,0 +1,57 @@
+/**
+ * Overrides for video containers that should not be centered aligned to avoid=
+ * clashing with the filmstrip.
+ */
+.vertical-filmstrip #etherpad,
+.stage-filmstrip #etherpad,
+.vertical-filmstrip #sharedvideo,
+.stage-filmstrip #sharedvideo {
+    text-align: left;
+}
+
+/**
+ * Overrides for small videos in vertical filmstrip mode.
+ */
+.vertical-filmstrip .filmstrip__videos .videocontainer,
+.stage-filmstrip .filmstrip__videos .videocontainer {
+    .self-view-mobile-portrait video {
+        object-fit: contain;
+    }
+}
+
+/**
+ * Overrides for quality labels in filmstrip only mode. The styles adjust the
+ * labels' positioning as the filmstrip itself or filmstrip's remote videos
+ * appear and disappear.
+ *
+ * The class with-filmstrip is for when the filmstrip is visible.
+ * The class without-filmstrip is for when the filmstrip has been toggled to
+ * be hidden.
+ * The class opening is for when the filmstrip is transitioning from hidden
+ * to visible.
+ */
+.vertical-filmstrip .large-video-labels,
+.stage-filmstrip .large-video-labels {
+    &.with-filmstrip {
+        right: 150px;
+    }
+
+    &.with-filmstrip.opening {
+        transition: 0.9s;
+        transition-timing-function: ease-in-out;
+    }
+
+    &.without-filmstrip {
+        transition: 1.2s ease-in-out;
+        transition-delay: 0.1s;
+    }
+}
+
+/**
+ * Overrides for self view when in portrait mode on mobile.
+ * This is done in order to keep the aspect ratio.
+ */
+.vertical-filmstrip .self-view-mobile-portrait #localVideo_container,
+.stage-filmstrip .self-view-mobile-portrait #localVideo_container {
+    object-fit: contain;
+}

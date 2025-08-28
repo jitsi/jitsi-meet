@@ -1,0 +1,319 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    ndkVersion rootProject.ext.ndkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        buildConfigField "String", "SDK_VERSION", "\"$sdkVersion\""
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
+            buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${rootProject.ext.googleServicesEnabled}"
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
+            buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${rootProject.ext.googleServicesEnabled}"
+        }
+    }
+
+    sourceSets {
+        main {
+            java {
+                exclude "test/"
+            }
+        }
+    }
+    namespace 'org.jitsi.meet.sdk'
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.fragment:fragment:1.4.1'
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
+    api "com.facebook.react:react-android:$rootProject.ext.rnVersion"
+    api "com.facebook.react:hermes-android:$rootProject.ext.rnVersion"
+
+    implementation 'com.dropbox.core:dropbox-core-sdk:4.0.1'
+    implementation 'com.jakewharton.timber:timber:5.0.1'
+    implementation 'com.squareup.duktape:duktape-android:1.3.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'androidx.startup:startup-runtime:1.1.0'
+    implementation 'com.google.j2objc:j2objc-annotations:3.0.0'
+
+    // Only add these packages if we are NOT doing a LIBRE_BUILD
+    if (!rootProject.ext.libreBuild) {
+        implementation project(':react-native-amplitude')
+        implementation project(':react-native-giphy')
+        implementation(project(':react-native-google-signin')) {
+            exclude group: 'com.google.android.gms'
+            exclude group: 'androidx'
+        }
+    }
+
+    implementation project(':react-native-async-storage')
+    implementation project(':react-native-background-timer')
+    implementation project(':react-native-calendar-events')
+    implementation project(':react-native-community_clipboard')
+    implementation project(':react-native-community_netinfo')
+    implementation project(':react-native-default-preference')
+    implementation(project(':react-native-device-info')) {
+        exclude group: 'com.google.firebase'
+        exclude group: 'com.google.android.gms'
+        exclude group: 'com.android.installreferrer'
+    }
+    implementation project(':react-native-gesture-handler')
+    implementation project(':react-native-get-random-values')
+    implementation project(':react-native-immersive-mode')
+    implementation project(':react-native-keep-awake')
+    implementation project(':react-native-orientation-locker')
+    implementation project(':react-native-pager-view')
+    implementation project(':react-native-performance')
+    implementation project(':react-native-safe-area-context')
+    implementation project(':react-native-screens')
+    implementation project(':react-native-slider')
+    implementation project(':react-native-sound')
+    implementation project(':react-native-splash-view')
+    implementation project(':react-native-svg')
+    implementation project(':react-native-video')
+    implementation project(':react-native-webview')
+
+    // Use `api` here so consumers can use WebRTCModuleOptions.
+    api project(':react-native-webrtc')
+
+    testImplementation 'junit:junit:4.12'
+}
+
+
+// Here we bundle all assets, resources and React files. We cannot use the
+// react.gradle file provided by react-native because it's designed to be used
+// in an application (it taps into applicationVariants, but the SDK is a library
+// so we need libraryVariants instead).
+android.libraryVariants.all { def variant ->
+    // Create variant and target names
+    def targetName = variant.name.capitalize()
+    def targetPath = variant.dirName
+
+    // React js bundle directories
+    def jsBundleDir = file("$buildDir/generated/assets/react/${targetPath}")
+    def resourcesDir = file("$buildDir/generated/res/react/${targetPath}")
+
+    def jsBundleFile = file("$jsBundleDir/index.android.bundle")
+
+    def currentBundleTask = tasks.create(
+            name: "bundle${targetName}JsAndAssets",
+            type: Exec) {
+        group = "react"
+        description = "bundle JS and assets for ${targetName}."
+
+        // Create dirs if they are not there (e.g. the "clean" task just ran)
+        doFirst {
+            jsBundleDir.deleteDir()
+            jsBundleDir.mkdirs()
+            resourcesDir.deleteDir()
+            resourcesDir.mkdirs()
+        }
+
+        // Set up inputs and outputs so gradle can cache the result
+        def reactRoot = file("${projectDir}/../../")
+        inputs.files fileTree(dir: reactRoot, excludes: ["android/**", "ios/**"])
+        outputs.dir jsBundleDir
+        outputs.dir resourcesDir
+
+        // Set up the call to the react-native cli
+        workingDir reactRoot
+
+        // Set up dev mode
+        def devEnabled = !targetName.toLowerCase().contains("release")
+
+        // Run the bundler
+        // Use full path to node to avoid PATH issues in Gradle
+        def nodePath = System.getenv('NVM_BIN') ? "${System.getenv('NVM_BIN')}/node" : "node"
+
+        // Debug: Print the node path and environment
+        println "Using node path: ${nodePath}"
+        println "NVM_BIN: ${System.getenv('NVM_BIN')}"
+        println "Working directory: ${reactRoot}"
+
+        commandLine(
+                nodePath,
+                "node_modules/react-native/scripts/bundle.js",
+                "--platform", "android",
+                "--dev", "${devEnabled}",
+                "--reset-cache",
+                "--entry-file", "index.android.js",
+                "--bundle-output", jsBundleFile,
+                "--assets-dest", resourcesDir)
+
+        // Disable bundling on dev builds
+        enabled !devEnabled
+    }
+
+    // GRADLE REQUIREMENTS (Gradle 8.7+ / AGP 8.5.0+):
+    
+    // This task requires explicit dependencies on resource tasks from all React Native modules
+    // due to Gradle's strict validation of task dependencies.
+
+    // Without these dependencies,
+    // builds will fail with errors like:
+    // "Task ':sdk:bundleReleaseJsAndAssets' uses the output of task ':react-native-amplitude:packageReleaseResources'
+    // without declaring a dependency on it."
+
+    // The automatic dependency resolution below ensures all required resource tasks are properly
+    // declared as dependencies before this task executes.
+
+    if (variant.name.toLowerCase().contains("release")) {
+        rootProject.subprojects.each { subproject ->
+            if (
+                subproject.name.startsWith("react-native-") ||
+                subproject.name.startsWith("@react-native-") ||
+                subproject.name.startsWith("@giphy/")
+            ) {
+                [
+                    "packageReleaseResources",
+                    "generateReleaseResValues",
+                    "generateReleaseResources",
+                    "generateReleaseBuildConfig",
+                    "processReleaseManifest",
+                    "writeReleaseAarMetadata",
+                    "generateReleaseRFile",
+                    "compileReleaseLibraryResources",
+                    "compileReleaseJavaWithJavac",
+                    "javaPreCompileRelease",
+                    "bundleLibCompileToJarRelease",
+                    "exportReleaseConsumerProguardFiles",
+                    "mergeReleaseGeneratedProguardFiles",
+                    "mergeReleaseJniLibFolders",
+                    "mergeReleaseShaders",
+                    "packageReleaseAssets",
+                    "processReleaseJavaRes",
+                    "prepareReleaseArtProfile",
+                    "copyReleaseJniLibsProjectOnly",
+                    "extractDeepLinksRelease",
+                    "createFullJarRelease",
+                    "generateReleaseLintModel",
+                    "writeReleaseLintModelMetadata",
+                    "generateReleaseLintVitalModel",
+                    "lintVitalAnalyzeRelease",
+                    "lintReportRelease",
+                    "lintAnalyzeRelease",
+                    "lintReportDebug",
+                    "lintAnalyzeDebug"
+                ].each { taskName ->
+                    if (subproject.tasks.findByName(taskName)) {
+                        currentBundleTask.dependsOn(subproject.tasks.named(taskName))
+                    }
+                }
+
+                // Also depend on the main build task to ensure all sub-tasks are completed
+                if (subproject.tasks.findByName("build")) {
+                    currentBundleTask.dependsOn(subproject.tasks.named("build"))
+                }
+            }
+        }
+    }
+
+    currentBundleTask.ext.generatedResFolders = files(resourcesDir).builtBy(currentBundleTask)
+    currentBundleTask.ext.generatedAssetsFolders = files(jsBundleDir).builtBy(currentBundleTask)
+    variant.registerGeneratedResFolders(currentBundleTask.generatedResFolders)
+
+    def mergeAssetsTask = variant.mergeAssetsProvider.get()
+    def mergeResourcesTask = variant.mergeResourcesProvider.get()
+
+    mergeAssetsTask.dependsOn(currentBundleTask)
+    mergeResourcesTask.dependsOn(currentBundleTask)
+
+    mergeAssetsTask.doLast {
+        def assetsDir = mergeAssetsTask.outputDir.get()
+
+        // Bundle sounds
+        //
+        copy {
+            from("${projectDir}/../../sounds")
+            include("*.wav")
+            include("*.mp3")
+            into("${assetsDir}/sounds")
+        }
+
+        // Copy React assets
+        //
+        if (currentBundleTask.enabled) {
+            copy {
+                from(jsBundleFile)
+                into(assetsDir)
+            }
+        }
+    }
+
+    mergeResourcesTask.doLast {
+        // Copy React resources
+        //
+        if (currentBundleTask.enabled) {
+            copy {
+                from(resourcesDir)
+                into(mergeResourcesTask.outputDir.get())
+            }
+        }
+    }
+}
+
+
+publishing {
+    publications {
+        aarArchive(MavenPublication) {
+            groupId 'org.jitsi.react'
+            artifactId 'jitsi-meet-sdk'
+            version System.env.OVERRIDE_SDK_VERSION ?: project.sdkVersion
+
+            artifact("${project.buildDir}/outputs/aar/${project.name}-release.aar") {
+                extension "aar"
+            }
+            pom.withXml {
+                def pomXml = asNode()
+                pomXml.appendNode('name', 'jitsi-meet-sdk')
+                pomXml.appendNode('description', 'Jitsi Meet SDK for Android')
+                def dependencies = pomXml.appendNode('dependencies')
+                configurations.getByName('releaseCompileClasspath').getResolvedConfiguration().getFirstLevelModuleDependencies().each {
+                    // The (third-party) React Native modules that we depend on
+                    // are in source code form and do not have groupId. That is
+                    // why we have a dedicated groupId for them. But the other
+                    // dependencies come through Maven and, consequently, have
+                    // groupId.
+                    def groupId = it.moduleGroup
+                    def artifactId = it.moduleName
+
+                    if (artifactId.startsWith('react-native-')) {
+                        groupId = rootProject.ext.moduleGroupId
+                    }
+
+                    def dependency = dependencies.appendNode('dependency')
+                    dependency.appendNode('groupId', groupId)
+                    dependency.appendNode('artifactId', artifactId)
+                    dependency.appendNode('version', it.moduleVersion)
+                }
+            }
+        }
+
+    }
+    repositories {
+        maven {
+            url rootProject.ext.mavenRepo
+            if (!rootProject.ext.mavenRepo.startsWith("file")) {
+                credentials {
+                    username rootProject.ext.mavenUser
+                    password rootProject.ext.mavenPassword
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,214 @@
+@use 'sass:math';
+
+.reactions-menu {
+	width: 330px;
+	background: #242528;
+	box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.6), 0px 0px 4px 1px rgba(0, 0, 0, 0.25);
+	border-radius: 6px;
+	padding: 16px;
+
+	&.with-gif {
+		width: 380px;
+
+		.reactions-row .toolbox-button:last-of-type {
+			top: 3px;
+
+			& .toolbox-icon.toggled {
+				background-color: #000000;
+			}
+		}
+	}
+
+	&.overflow {
+		width: 100%;
+
+		.toolbox-icon {
+			width: 48px;
+			height: 48px;
+
+			span.emoji {
+				width: 48px;
+				height: 48px;
+			}
+		}
+
+		.reactions-row {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
+
+			.toolbox-button {
+				margin-right: 0;
+			}
+
+			.toolbox-button:last-of-type {
+				top: 0;
+			}
+		}
+	}
+
+	.toolbox-icon {
+		width: 40px;
+		height: 40px;
+		border-radius: 6px;
+
+		span.emoji {
+			width: 40px;
+			height: 40px;
+			font-size: 1.375rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: font-size ease .1s;
+
+			@for $i from 1 through 12 {
+				&.increase-#{$i}{
+					font-size: calc(1.25rem + #{$i}px);
+				}
+			}
+		}
+	}
+
+	.reactions-row {
+		.toolbox-button {
+			margin-right: 8px;
+			touch-action: manipulation;
+			position: relative;
+		}
+
+		.toolbox-button:last-of-type {
+			margin-right: 0;
+		}
+	}
+
+	.raise-hand-row {
+		margin-top: 16px;
+
+		.toolbox-button {
+			width: 100%;
+		}
+
+		.toolbox-icon {
+			width: 100%;
+			flex-direction: row;
+			align-items: center;
+
+			span.text {
+				font-style: normal;
+				font-weight: 600;
+				font-size: 0.875rem;
+				line-height: 1.5rem;
+				margin-left: 8px;
+			}
+		}
+	}
+}
+
+.reactions-animations-overflow-container {
+	position: absolute;
+	width: 20%;
+	bottom: 0;
+	left: 40%;
+	height: 0;
+}
+
+.reactions-menu-popup-container {
+	display: inline-block;
+	position: relative;
+}
+
+.reactions-animations-container {
+	left: 50%;
+	bottom: 0px;
+	display: inline-block;
+	position: absolute;
+}
+
+$reactionCount: 20;
+
+@function random($min, $max) {
+  @return math.random() * ($max - $min) + $min;
+}
+
+.reaction-emoji {
+	position: absolute;
+	font-size: 1.5rem;
+	line-height: 2rem;
+	width: 32px;
+	height: 32px;
+	top: 0;
+	left: 20px;
+	opacity: 0;
+	z-index: 1;
+
+	&.reaction-0 {
+		animation: flowToRight 5s forwards ease-in-out;
+	}
+
+	@for $i from 1 through $reactionCount {
+	&.reaction-#{$i} {
+		animation: animation-#{$i} 5s forwards ease-in-out;
+		top: #{random(-40, 10)}px;
+		left: #{random(0, 30)}px;
+	}
+}
+}
+
+@keyframes flowToRight {
+	0% {
+		transform: translate(0px, 0px) scale(0.6);
+		opacity: 1;
+	}
+
+	70% {
+		transform: translate(40px, -70dvh) scale(1.5);
+		opacity: 1;
+	}
+
+	75% {
+		transform: translate(40px, -70dvh) scale(1.5);
+		opacity: 1;
+	}
+
+	100% {
+		transform: translate(140px, -50dvh) scale(1);
+		opacity: 0;
+	}
+}
+
+@mixin animation-list {
+	@for $i from 1 through $reactionCount {
+		$topX: random(-100, 100);
+		$topY: random(65, 75);
+		$bottomX: random(150, 200);
+		$bottomY: random(40, 50);
+
+		@if $topX < 0 {
+			$bottomX: -$bottomX;
+		}
+
+		@keyframes animation-#{$i} {
+			0% {
+				transform: translate(0, 0) scale(0.6);
+				opacity: 1;
+			}
+
+			70% {
+				transform: translate(#{$topX}px, -#{$topY}dvh) scale(1.5);
+				opacity: 1;
+			}
+
+			75% {
+				transform: translate(#{$topX}px, -#{$topY}dvh) scale(1.5);
+				opacity: 1;
+			}
+
+			100% {
+				transform: translate(#{$bottomX}px, -#{$bottomY}dvh) scale(1);
+				opacity: 0;
+			}
+		}
+	}
+}
+
+@include animation-list;

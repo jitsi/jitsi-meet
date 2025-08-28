@@ -1,0 +1,49 @@
+Template: jitsi-meet/cert-choice
+Type: select
+__Choices: Let's Encrypt certificates, I want to use my own certificate, Generate a new self-signed certificate
+_Description: SSL certificate
+ .
+ Jitsi Meet requires an SSL certificate. This installer can generate one automatically for your using "Let’s Encrypt". This is the recommended and simplest option for most installations.
+ .
+ In the event you need to use a certificate of your own, you can configure its location which defaults to /etc/ssl/--domain.name--.key for the key and /etc/ssl/--domain.name--.crt for the certificate.
+ .
+ If you are a developer and are only looking for a quick way to test basic Jitsi Meet functionality then this installer can also generate a self-signed certificate.
+
+Template: jitsi-meet/cert-path-key
+Type: string
+_Description: Full local server path to the SSL key file:
+ The full path to the SSL key file on the server.
+ If it has not been uploaded, now is a good time to do so.
+
+Template: jitsi-meet/cert-path-crt
+Type: string
+_Description: Full local server path to the SSL certificate file:
+ The full path to the SSL certificate file on the server.
+ If you haven't uploaded it, now is a good time to upload it in another console.
+
+Template: jitsi-meet/jvb-hostname
+Type: string
+_Description: The domain of the current installation (e.g. meet.jitsi.com):
+ The value of the domain that is set in the Jitsi Videobridge installation.
+
+Template: jitsi-videobridge/jvb-hostname
+Type: string
+_Description: Hostname:
+ The Jitsi Meet web config package needs the DNS hostname of your instance.
+
+Template: jitsi-meet/jaas-choice
+Type: boolean
+_Description: Add telephony to your Jitsi meetings?
+ You can easily add dial-in support to your meetings. To allow this we would need your permission to create a free JaaS (Jitsi as a Service) account for you.
+
+Template: jitsi-meet/email
+Type: string
+_Description: Enter your email:
+ To successfully issue Let's Encrypt certificates:
+ .
+ You need a working DNS record pointing to this machine(for hostname ${domain})"
+ .
+ You need to agree to the ACME server's Subscriber Agreement (https://letsencrypt.org/documents/LE-SA-v1.1.1-August-1-2016.pdf)
+ by providing an email address for important account notifications.
+ .
+ We will use the email for creating your JaaS (Jitsi as a Service) account if that option was selected.

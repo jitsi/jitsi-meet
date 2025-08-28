@@ -1,0 +1,217 @@
+import groovy.json.JsonSlurper
+import org.gradle.util.VersionNumber
+
+// Top-level build file where you can add configuration options common to all
+// sub-projects/modules.
+
+buildscript {
+    ext {
+        kotlinVersion = "2.0.21"
+        gradlePluginVersion = "8.6.0"
+        buildToolsVersion = "35.0.0"
+        compileSdkVersion = 35
+        minSdkVersion    = 26
+        targetSdkVersion = 35
+        supportLibVersion = "28.0.0"
+        ndkVersion = "27.1.12297006"
+
+        // The Maven artifact groupId of the third-party react-native modules which
+        // Jitsi Meet SDK for Android depends on and which are not available in
+        // third-party Maven repositories so we have to deploy to a Maven repository
+        // of ours.
+        moduleGroupId = 'com.facebook.react'
+
+        // Maven repo where artifacts will be published
+        mavenRepo = System.env.MVN_REPO ?: ""
+        mavenUser = System.env.MVN_USER ?: ""
+        mavenPassword = System.env.MVN_PASSWORD ?: ""
+
+        // Libre build
+        libreBuild = (System.env.LIBRE_BUILD ?: "false").toBoolean()
+
+        googleServicesEnabled = project.file('app/google-services.json').exists() && !libreBuild
+
+        //React Native and Hermes Version
+        rnVersion = "0.77.2"
+
+        // Java dependencies
+        javaVersion = JavaVersion.VERSION_17
+        jvmToolchainVersion = 17
+        jvmTargetVersion = '17'
+    }
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$rootProject.ext.kotlinVersion"
+        classpath "com.android.tools.build:gradle:$rootProject.ext.gradlePluginVersion"
+        classpath 'com.google.gms:google-services:4.4.0'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        google()
+        maven { url 'https://www.jitpack.io' }
+    }
+
+    // Make sure we use the react-native version in node_modules and not the one
+    // published in jcenter / elsewhere.
+    configurations.all {
+        resolutionStrategy {
+            eachDependency { DependencyResolveDetails details ->
+                if (details.requested.group == 'com.facebook.react') {
+                    if (details.requested.name == 'react-native') {
+                        details.useTarget "com.facebook.react:react-android:$rnVersion"
+                    }
+                    if (details.requested.name == 'react-android') {
+                        details.useVersion rootProject.ext.rnVersion
+                    }
+                }
+            }
+        }
+    }
+
+    // Third-party react-native modules which Jitsi Meet SDK for Android depends
+    // on and which are not available in third-party Maven repositories need to
+    // be deployed in a Maven repository of ours.
+
+    if (project.name.startsWith('react-native-')) {
+        apply plugin: 'maven-publish'
+        publishing {
+            publications {}
+            repositories {
+                maven {
+                    url rootProject.ext.mavenRepo
+                    if (!rootProject.ext.mavenRepo.startsWith("file")) {
+                        credentials {
+                            username rootProject.ext.mavenUser
+                            password rootProject.ext.mavenPassword
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Use the number of seconds/10 since Jan 1 2019 as the version qualifier number.
+    // This will last for the next ~680 years.
+    // https://stackoverflow.com/a/38643838
+    def versionQualifierNumber = (int)(((new Date().getTime()/1000) - 1546297200) / 10)
+
+    afterEvaluate { project ->
+        if (project.plugins.hasPlugin('android') || project.plugins.hasPlugin('android-library')) {
+            project.android {
+                compileSdkVersion rootProject.ext.compileSdkVersion
+                buildToolsVersion rootProject.ext.buildToolsVersion
+            }
+        }
+
+        if (project.name.startsWith('react-native-')) {
+            def npmManifest = project.file('../package.json')
+            def json = new JsonSlurper().parseText(npmManifest.text)
+
+            // Release every dependency the SDK has with a -jitsi-XXX qualified version. This allows
+            // us to pin the dependencies and make sure they are always updated, no matter what.
+
+            project.version = "${json.version}-jitsi-${versionQualifierNumber}"
+
+            task jitsiAndroidSourcesJar(type: Jar) {
+                archiveClassifier = 'sources'
+                from android.sourceSets.main.java.source
+            }
+
+            publishing.publications {
+                aarArchive(MavenPublication) {
+                    groupId rootProject.ext.moduleGroupId
+                    artifactId project.name
+                    version project.version
+
+                    artifact("${project.buildDir}/outputs/aar/${project.name}-release.aar") {
+                        extension "aar"
+                    }
+                    artifact(jitsiAndroidSourcesJar)
+                    pom.withXml {
+                        def pomXml = asNode()
+                        pomXml.appendNode('name', project.name)
+                        pomXml.appendNode('description', json.description)
+                        pomXml.appendNode('url', json.homepage)
+                        if (json.license) {
+                            def license = pomXml.appendNode('licenses').appendNode('license')
+                            license.appendNode('name', json.license)
+                            license.appendNode('distribution', 'repo')
+                        }
+
+                        def dependencies = pomXml.appendNode('dependencies')
+                        configurations.getByName('releaseCompileClasspath').getResolvedConfiguration().getFirstLevelModuleDependencies().each {
+                            def artifactId = it.moduleName
+                            def version = it.moduleVersion
+                            // React Native signals breaking changes by
+                            // increasing the minor version number. So the
+                            // (third-party) React Native modules we utilize can
+                            // depend not on a specific react-native release but
+                            // a wider range.
+                            if (artifactId == 'react-native') {
+                                def versionNumber = VersionNumber.parse(version)
+                                version = "${versionNumber.major}.${versionNumber.minor}"
+                            }
+
+                            def dependency = dependencies.appendNode('dependency')
+                            dependency.appendNode('groupId', it.moduleGroup)
+                            dependency.appendNode('artifactId', artifactId)
+                            dependency.appendNode('version', version)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Force the version of the Android build tools we have chosen on all subprojects.
+subprojects { subproject ->
+    afterEvaluate{
+        if ((subproject.plugins.hasPlugin('android')
+                    || subproject.plugins.hasPlugin('android-library'))
+                && rootProject.ext.has('buildToolsVersion')) {
+
+            android {
+                buildToolsVersion rootProject.ext.buildToolsVersion
+
+                buildFeatures {
+                    buildConfig true
+                }
+
+                // Set JVM target across all subprojects
+                compileOptions {
+                    sourceCompatibility rootProject.ext.javaVersion
+                    targetCompatibility rootProject.ext.javaVersion
+                }
+
+                // Disable lint errors for problematic third-party modules
+                // react-native-background-timer
+                // react-native-calendar-events
+                lint {
+                    abortOnError = false
+                }
+            }
+        }
+
+        // Add Kotlin configuration for subprojects that use Kotlin
+        if (subproject.plugins.hasPlugin('kotlin-android')) {
+            subproject.kotlin {
+                jvmToolchain(rootProject.ext.jvmToolchainVersion)
+            }
+
+            // Set Kotlin JVM target
+            subproject.android {
+                kotlinOptions {
+                    jvmTarget = rootProject.ext.jvmTargetVersion
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,23 @@
+.share-screen-warn-dialog {
+    font-size: 0.875rem;
+
+    .separator-line {
+        margin: 24px 0 24px -20px;
+        padding: 0 20px;
+        width: 100%;
+        height: 1px;
+        background: #5E6D7A;
+
+        &:last-child {
+            display: none;
+        }
+    }
+
+    .header {
+        font-weight: 600;
+    }
+
+    .description {
+        margin-top: 16px;
+    }
+}

@@ -1,0 +1,26 @@
+name: Lua CI
+
+on: [pull_request]
+
+jobs:
+  luacheck:
+    name: Luacheck
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install luarocks
+      run: sudo apt-get --install-recommends -y install luarocks
+
+    - name: Install luacheck
+      run: sudo luarocks install luacheck
+
+    - name: Check lua codes
+      run: |
+        set -o pipefail && luacheck . \
+        --exclude-files=resources/prosody-plugins/mod_firewall/mod_firewall.lua | awk -F: '
+          {
+            print $0
+            printf "::warning file=%s,line=%s,col=%s::%s\n", $1, $2, $3, $4
+          }
+        '

@@ -1,0 +1,43 @@
+/**
+ * Styles errors and links in the AddPeopleDialog.
+ */
+.modal-dialog-form {
+    .add-people-form-wrap {
+        margin-top: 8px;
+
+        .error {
+            padding-left: 5px;
+
+            a {
+                padding-left: 5px;
+            }
+        }
+
+        .add-telephone-icon {
+            display: flex;
+            height: 28px;
+            transform: scaleX(-1);
+            width: 28px;
+
+            i {
+                line-height: 1.75rem;
+                margin: auto;
+            }
+        }
+
+        .footer-text-wrap {
+            display: flex;
+        }
+
+        .footer-telephone-icon {
+            display: flex;
+            transform: scaleX(-1);
+            padding-left: 10px;
+
+            i {
+                line-height: 1.25rem;
+                margin: auto;
+            }
+        }
+    }
+}

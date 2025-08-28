@@ -1,0 +1,34 @@
+ENV["FASTLANE_SKIP_UPDATE_CHECK"] = "1"
+opt_out_usage
+
+default_platform(:android)
+
+platform :android do
+    desc "Deploy a new version to Goolge Play (Closed Beta)"
+    lane :deploy do
+        # Cleanup
+        gradle(task: "clean")
+
+        # Build and sign the app
+        gradle(
+            task: "assemble",
+            build_type: "Release",
+            print_command: false,
+            properties: {
+                "android.injected.signing.store.file" => ENV["JITSI_KEYSTORE"],
+                "android.injected.signing.store.password" => ENV["JITSI_KEYSTORE_PASSWORD"],
+                "android.injected.signing.key.alias" => ENV["JITSI_KEY_ALIAS"],
+                "android.injected.signing.key.password" => ENV["JITSI_KEY_PASSWORD"],
+            }
+        )
+
+        # Upload built artifact to the Closed Beta track
+        upload_to_play_store(
+            track: "beta",
+            json_key: ENV["JITSI_JSON_KEY_FILE"],
+            skip_upload_metadata: true,
+            skip_upload_images: true,
+            skip_upload_screenshots: true
+        )
+    end
+end

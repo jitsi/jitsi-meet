@@ -1,0 +1,5 @@
+jitsi-meet-web (1.0.1-1) unstable; urgency=low
+
+  * Initial release. (Closes: #760485)
+
+ -- Damian Minkov <damencho@jitsi.org>  Wed, 22 Oct 2014 10:30:00 +0200

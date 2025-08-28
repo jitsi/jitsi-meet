@@ -1,0 +1,42 @@
+$sidePanelWidth: 300px;
+
+.prejoin-third-party {
+  flex-direction: column-reverse;
+  z-index: auto;
+  align-items: center;
+
+  .content {
+      height: auto;
+      margin: 0 auto;
+      width: auto;
+
+      .new-toolbox {
+          width: auto;
+      }
+  }
+
+  #preview {
+      background-color: transparent;
+      bottom: 0;
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+
+      .avatar {
+          display: none;
+      }
+  }
+
+  &.splash {
+      .content {
+          margin-left: calc((100% - #{$prejoinDefaultContentWidth} + #{$sidePanelWidth}) / 2)
+      }
+  }
+
+  &.guest {
+      .content {
+          margin-bottom: auto;
+      }
+  }
+}

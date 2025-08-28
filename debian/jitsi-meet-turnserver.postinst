@@ -1,0 +1,150 @@
+#!/bin/bash
+# postinst script for jitsi-meet-turnserver
+#
+# see: dh_installdeb(1)
+
+set -e
+
+# summary of how this script can be called:
+#        * <postinst> `configure' <most-recently-configured-version>
+#        * <old-postinst> `abort-upgrade' <new version>
+#        * <conflictor's-postinst> `abort-remove' `in-favour' <package>
+#          <new-version>
+#        * <postinst> `abort-remove'
+#        * <deconfigured's-postinst> `abort-deconfigure' `in-favour'
+#          <failed-install-package> <version> `removing'
+#          <conflicting-package> <version>
+# for details, see http://www.debian.org/doc/debian-policy/ or
+# the debian-policy package
+
+case "$1" in
+    configure)
+        # loading debconf
+        . /usr/share/debconf/confmodule
+
+        # try to get host from jitsi-videobridge
+        db_get jitsi-videobridge/jvb-hostname
+        if [ -z "$RET" ] ; then
+            # server hostname
+            db_set jitsi-videobridge/jvb-hostname "localhost"
+            db_input critical jitsi-videobridge/jvb-hostname || true
+            db_go
+        fi
+        JVB_HOSTNAME=$(echo "$RET" | xargs echo -n)
+
+        TURN_CONFIG="/etc/turnserver.conf"
+        JITSI_MEET_CONFIG="/etc/jitsi/meet/$JVB_HOSTNAME-config.js"
+
+        # if there was a turn config backup it so we can configure
+        # we cannot recognize at the moment is this a user config or default config when installing coturn
+        if [[ -f $TURN_CONFIG ]] && ! grep -q "jitsi-meet coturn config" "$TURN_CONFIG" ; then
+            mv $TURN_CONFIG $TURN_CONFIG.bak
+        fi
+
+        # detect dpkg-reconfigure, just delete old links
+        db_get jitsi-meet-turnserver/jvb-hostname
+        JVB_HOSTNAME_OLD=$(echo "$RET" | xargs echo -n)
+        if [ -n "$RET" ] && [ ! "$JVB_HOSTNAME_OLD" = "$JVB_HOSTNAME" ] ; then
+            if [[ -f $TURN_CONFIG ]] && grep -q "jitsi-meet coturn config" "$TURN_CONFIG" ; then
+                rm -f $TURN_CONFIG
+            fi
+        fi
+
+        if [[ -f $TURN_CONFIG ]] ; then
+            echo "------------------------------------------------"
+            echo ""
+            echo "turnserver is already configured on this machine."
+            echo ""
+            echo "------------------------------------------------"
+
+            if grep -q "jitsi-meet coturn config" "$TURN_CONFIG" && ! grep -q "jitsi-meet coturn relay disable config" "$TURN_CONFIG" ; then
+                echo "Updating coturn config"
+                echo "# jitsi-meet coturn relay disable config. Do not modify this line
+no-multicast-peers
+no-cli
+no-loopback-peers
+no-tcp-relay
+denied-peer-ip=0.0.0.0-0.255.255.255
+denied-peer-ip=10.0.0.0-10.255.255.255
+denied-peer-ip=100.64.0.0-100.127.255.255
+denied-peer-ip=127.0.0.0-127.255.255.255
+denied-peer-ip=169.254.0.0-169.254.255.255
+denied-peer-ip=127.0.0.0-127.255.255.255
+denied-peer-ip=172.16.0.0-172.31.255.255
+denied-peer-ip=192.0.0.0-192.0.0.255
+denied-peer-ip=192.0.2.0-192.0.2.255
+denied-peer-ip=192.88.99.0-192.88.99.255
+denied-peer-ip=192.168.0.0-192.168.255.255
+denied-peer-ip=198.18.0.0-198.19.255.255
+denied-peer-ip=198.51.100.0-198.51.100.255
+denied-peer-ip=203.0.113.0-203.0.113.255
+denied-peer-ip=240.0.0.0-255.255.255.255" >> $TURN_CONFIG
+
+                invoke-rc.d coturn restart || true
+            fi
+
+            db_stop
+            exit 0
+        fi
+
+        # stores the hostname so we will reuse it later, like in purge
+        db_set jitsi-meet-turnserver/jvb-hostname "$JVB_HOSTNAME"
+
+        # try to get turnserver password
+        db_get jitsi-meet-prosody/turn-secret
+        if [ -z "$RET" ] ; then
+            db_input critical jitsi-meet-prosody/turn-secret || true
+            db_go
+        fi
+        TURN_SECRET="$RET"
+
+        # no turn config exists, lt's copy template and fill it in
+        cp /usr/share/jitsi-meet-turnserver/turnserver.conf $TURN_CONFIG
+        sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $TURN_CONFIG
+        sed -i "s/__turnSecret__/$TURN_SECRET/g" $TURN_CONFIG
+
+        # SSL settings
+        db_get jitsi-meet/cert-choice
+        CERT_CHOICE="$RET"
+
+        UPLOADED_CERT_CHOICE="I want to use my own certificate"
+        LE_CERT_CHOICE="Let's Encrypt certificates"
+        if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ]; then
+            db_get jitsi-meet/cert-path-key
+            CERT_KEY="$RET"
+            db_get jitsi-meet/cert-path-crt
+            CERT_CRT="$RET"
+
+            # replace self-signed certificate paths with user provided ones
+            CERT_KEY_ESC=$(echo $CERT_KEY | sed 's/\./\\\./g')
+            CERT_KEY_ESC=$(echo $CERT_KEY_ESC | sed 's/\//\\\//g')
+            sed -i "s/pkey=\/etc\/jitsi\/meet\/.*key/pkey=$CERT_KEY_ESC/g" $TURN_CONFIG
+            CERT_CRT_ESC=$(echo $CERT_CRT | sed 's/\./\\\./g')
+            CERT_CRT_ESC=$(echo $CERT_CRT_ESC | sed 's/\//\\\//g')
+            sed -i "s/cert=\/etc\/jitsi\/meet\/.*crt/cert=$CERT_CRT_ESC/g" $TURN_CONFIG
+        elif [ "$CERT_CHOICE" = "$LE_CERT_CHOICE" ]; then
+            /usr/share/jitsi-meet/scripts/coturn-le-update.sh ${JVB_HOSTNAME}
+        fi
+
+        sed -i "s/#TURNSERVER_ENABLED/TURNSERVER_ENABLED/g" /etc/default/coturn
+        invoke-rc.d coturn restart || true
+
+        # and we're done with debconf
+        db_stop
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+# dh_installdeb will replace this with shell code automatically
+# generated by other debhelper scripts.
+
+#DEBHELPER#
+
+exit 0

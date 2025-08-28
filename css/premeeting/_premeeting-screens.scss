@@ -1,0 +1,133 @@
+.premeeting-screen {
+    .action-btn {
+        border-radius: 6px;
+        box-sizing: border-box;
+        color: #fff;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 0.875rem;
+        font-weight: 600;
+        line-height: 1.5rem;
+        margin-bottom: 16px;
+        padding: 7px 16px;
+        position: relative;
+        text-align: center;
+        width: 100%;
+
+        &.primary {
+            background: #0376DA;
+            border: 1px solid #0376DA;
+        }
+
+        &.secondary {
+            background: #3D3D3D;
+            border: 1px solid transparent;
+        }
+
+        &.text {
+            width: auto;
+            font-size: 0.75rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        &.disabled {
+            background: #5E6D7A;
+            border: 1px solid #5E6D7A;
+            color: #AFB6BC;
+            cursor: initial;
+
+            .icon {
+                & > svg {
+                    fill: #AFB6BC;
+                }
+            }
+        }
+
+        .options {
+            border-radius: 3px;
+            align-items: center;
+            display: flex;
+            height: 100%;
+            justify-content: center;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 36px;
+
+            &:hover {
+                background-color: #0262B6;
+            }
+
+            svg {
+                pointer-events: none;
+            }
+        }
+    }
+
+    #new-toolbox {
+        bottom: 0;
+        position: relative;
+        transition: none;
+
+        .toolbox-content {
+            margin-bottom: 4px;
+        }
+
+        .toolbox-content-items {
+            @include ltr;
+            background: transparent;
+            box-shadow: none;
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+
+        .toolbox-content,
+        .toolbox-content-wrapper,
+        .toolbox-content-items {
+            box-sizing: border-box;
+            width: auto;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .device-status-error {
+            border-radius: 0;
+            margin: 0 -16px;
+        }
+
+        .action-btn {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            padding: 11px 16px;
+        }
+    }
+}
+
+#preview {
+    background: #040404;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+
+    .avatar {
+        text {
+            fill: white;
+        }
+    }
+
+    video {
+        height: 100%;
+        object-fit: cover;
+        width: 100%;
+    }
+}
+
+@mixin flex-centered() {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}

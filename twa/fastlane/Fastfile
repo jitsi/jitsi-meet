@@ -1,0 +1,25 @@
+ENV["FASTLANE_SKIP_UPDATE_CHECK"] = "1"
+opt_out_usage
+
+default_platform(:android)
+
+platform :android do
+    desc "Make a new build"
+    lane :build do
+        # Cleanup
+        gradle(task: "clean")
+
+        # Build and sign the app
+        gradle(
+            task: "assemble",
+            build_type: "Release",
+            print_command: false,
+            properties: {
+                "android.injected.signing.store.file" => ENV["JITSI_KEYSTORE"],
+                "android.injected.signing.store.password" => ENV["JITSI_KEYSTORE_PASSWORD"],
+                "android.injected.signing.key.alias" => ENV["JITSI_KEY_ALIAS"],
+                "android.injected.signing.key.password" => ENV["JITSI_KEY_PASSWORD"],
+            }
+        )
+    end
+end

@@ -1,0 +1,13 @@
+Jitsi Meet
+
+====
+
+A WebRTC-powered multi-user videochat. For a live demo, check out either
+https://meet.estos.de/ or https://meet.jit.si/.
+
+Built using colibri.js[0] and strophe.jingle[1], powered by the jitsi-videobridge[2]
+
+
+[0] https://github.com/ESTOS/colibri.js
+[1] https://github.com/ESTOS/strophe.jingle
+[3] https://github.com/jitsi/jitsi-videobridge

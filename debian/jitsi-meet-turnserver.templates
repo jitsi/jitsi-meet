@@ -1,0 +1,9 @@
+Template: jitsi-meet-turnserver/jvb-hostname
+Type: string
+_Description: The domain of the current installation (e.g. meet.jitsi.com):
+ The value of the domain that is set in the Jitsi Videobridge installation.
+
+Template: jitsi-videobridge/jvb-hostname
+Type: string
+_Description: The domain of the current installation (e.g. meet.jitsi.com):
+ The value of the domain that is set in the Jitsi Videobridge installation.

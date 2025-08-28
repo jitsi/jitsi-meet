@@ -1,0 +1,15 @@
+.policy {
+    &__logo {
+        display: block;
+        width: 200px;
+        height: 50px;
+        margin: 30px auto 0;
+    }
+
+    &__text {
+        text-align: center;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        font-weight: 300;
+    }
+}

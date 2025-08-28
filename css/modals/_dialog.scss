@@ -1,0 +1,26 @@
+.modal-dialog-form {
+    margin-top: 5px !important;
+
+    .input-control {
+        background: #fafbfc;
+        border: 1px solid #f4f5f7;
+        color: inherit;
+    }
+
+    &-error {
+        margin-bottom: 8px;
+    }
+}
+
+/**
+ * Styling shared video dialog errors.
+ */
+.shared-video-dialog-error {
+    color: #E04757;
+    margin-top: 2px;
+    display: block;
+}
+
+.dialog-bottom-margin {
+    margin-bottom: 5px;
+}

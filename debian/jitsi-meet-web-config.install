@@ -1,0 +1,6 @@
+doc/debian/jitsi-meet/jitsi-meet.example        /usr/share/jitsi-meet-web-config/
+doc/debian/jitsi-meet/jitsi-meet.example-apache /usr/share/jitsi-meet-web-config/
+config.js                                       /usr/share/jitsi-meet-web-config/
+doc/jaas/nginx-jaas.conf                        /usr/share/jitsi-meet-web-config/
+doc/jaas/index-jaas.html                        /usr/share/jitsi-meet-web-config/
+doc/jaas/8x8.vc-config.js                        /usr/share/jitsi-meet-web-config/

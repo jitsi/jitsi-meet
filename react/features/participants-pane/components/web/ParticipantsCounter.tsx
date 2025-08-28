@@ -1,0 +1,33 @@
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
+
+import { getParticipantCountForDisplay } from '../../../base/participants/functions';
+
+const useStyles = makeStyles()(theme => {
+    return {
+        badge: {
+            backgroundColor: theme.palette.ui03,
+            borderRadius: '100%',
+            height: '16px',
+            minWidth: '16px',
+            color: theme.palette.text01,
+            ...theme.typography.labelBold,
+            pointerEvents: 'none',
+            position: 'absolute',
+            right: '-4px',
+            top: '-3px',
+            textAlign: 'center',
+            padding: '1px'
+        }
+    };
+});
+
+const ParticipantsCounter = () => {
+    const { classes } = useStyles();
+    const participantsCount = useSelector(getParticipantCountForDisplay);
+
+    return <span className = { classes.badge }>{participantsCount}</span>;
+};
+
+export default ParticipantsCounter;

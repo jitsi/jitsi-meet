@@ -1,0 +1,177 @@
+.vertical-filmstrip, .stage-filmstrip {
+    span:not(.tile-view) .filmstrip {
+        &.hide-videos {
+            .remote-videos {
+                & > div {
+                    opacity: 0;
+                    pointer-events: none;
+                }
+            }
+        }
+
+        /*
+         * Firefox sets flex items to min-height: auto and min-width: auto,
+         * preventing flex children from shrinking like they do on other browsers.
+         * Setting min-height and min-width 0 is a workaround for the issue so
+         * Firefox behaves like other browsers.
+         * https://bugzilla.mozilla.org/show_bug.cgi?id=1043520
+         */
+        @mixin minHWAutoFix() {
+            min-height: 0;
+            min-width: 0;
+        }
+
+        @extend %align-right;
+        align-items: flex-end;
+        bottom: 0;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column-reverse;
+        height: 100%;
+        width: 100%;
+        padding: 0;
+        /**
+         * fixed positioning is necessary for remote menus and tooltips to pop
+         * out of the scrolling filmstrip. AtlasKit dialogs and tooltips use
+         * a library called popper which will position its elements fixed if
+         * any parent is also fixed.
+         */
+        position: fixed;
+        top: 0;
+        right: 0;
+        z-index: $filmstripVideosZ;
+
+        &.no-vertical-padding {
+            padding: 0;
+        }
+
+        /**
+         * Hide videos by making them slight to the right.
+         */
+        .filmstrip__videos {
+            @extend %align-right;
+            bottom: 0;
+            padding: 0;
+            position:relative;
+            right: 0;
+            width: auto;
+
+            /**
+             * An id selector is used to match id specificity with existing
+             * filmstrip styles.
+             */
+            &#remoteVideos {
+                border: $thumbnailsBorder solid transparent;
+                padding-left: 0;
+                border-left: 0;
+                width: 100%;
+                height: 100%;
+                justify-content: center;
+            }
+        }
+
+        /**
+         * Re-styles the local Video to better fit vertical filmstrip layout.
+         */
+        #filmstripLocalVideo {
+            align-self: initial;
+            margin-bottom: 5px;
+            display: flex;
+            flex-direction: column-reverse;
+            height: auto;
+            justify-content: flex-start;
+            width: 100%;
+
+            #filmstripLocalVideoThumbnail {
+                width: calc(100% - 15px);
+
+                .videocontainer {
+                    height: 0px;
+                    width: 100%;
+                }
+            }
+        }
+
+        #filmstripLocalScreenShare {
+            align-self: initial;
+            margin-bottom: 5px;
+            display: flex;
+            flex-direction: column-reverse;
+            height: auto;
+            justify-content: flex-start;
+            width: 100%;
+
+            #filmstripLocalScreenShareThumbnail {
+                width: calc(100% - 15px);
+
+                .videocontainer {
+                    height: 0px;
+                    width: 100%;
+                }
+            }
+        }
+
+        /**
+         * Remove unnecessary padding that is normally used to prevent horizontal
+         * filmstrip from overlapping the left edge of the screen.
+         */
+        #filmstripLocalVideo,
+        #filmstripLocalScreenShare,
+        .remote-videos {
+            padding: 0;
+        }
+
+        #remoteVideos {
+            @include minHWAutoFix();
+
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .resizable-filmstrip #remoteVideos .videocontainer {
+            border-left: 0;
+            margin: 0;
+        }
+
+        &.reduce-height {
+            height: calc(100% - calc(#{$newToolbarSizeWithPadding} + #{$scrollHeight}));
+        }
+
+        .filmstrip__videos.vertical-view-grid#remoteVideos {
+            align-items: 'center';
+            border: 0px;
+            padding-right: 7px;
+
+            &.has-scroll {
+                padding-right: 0px;
+            }
+
+            .remote-videos > div {
+                left: 0px; // fixes an issue on FF - the div is aligned to the right by default for some reason
+            }
+
+            .videocontainer {
+                border: 0px;
+                margin: 2px;
+            }
+        }
+
+        .remote-videos {
+            display: flex;
+            overscroll-behavior: contain;
+
+            &.height-transition {
+                transition: height .3s ease-in;
+            }
+
+            & > div {
+                position: absolute;
+                transition: opacity 1s;
+            }
+
+            &.is-not-overflowing > div {
+                bottom: 0px;
+            }
+        }
+    }
+}

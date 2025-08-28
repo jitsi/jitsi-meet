@@ -1,0 +1,161 @@
+/**
+ * Style variables
+ */
+$baseFontFamily: -apple-system, BlinkMacSystemFont, 'open_sanslight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+/**
+ * Size variables.
+ */
+
+// Video layout.
+$thumbnailsBorder: 2px;
+
+/**
+ * Toolbar
+ */
+$newToolbarBackgroundColor: #131519;
+$newToolbarSize: 48px;
+$newToolbarSizeMobile: 60px;
+$newToolbarSizeWithPadding: calc(#{$newToolbarSize} + 24px);
+
+/**
+ * Chat
+ */
+$chatBackgroundColor: #131519;
+
+/**
+ * Misc.
+ */
+$borderRadius: 4px;
+$scrollHeight: 7px;
+
+/**
+ * Z-indexes. TODO: Replace this by a function.
+ */
+$zindex0: 0;
+$zindex1: 1;
+$zindex2: 2;
+$zindex3: 3;
+$toolbarZ: 250;
+$watermarkZ: 253;
+
+// Place filmstrip videos over toolbar in order
+// to make connection info visible.
+$filmstripVideosZ: $toolbarZ + 1;
+
+/**
+ * Unsupported browser
+ */
+$primaryUnsupportedBrowserButtonBgColor: #0052CC;
+$unsupportedBrowserButtonBgColor: rgba(9, 30, 66, 0.04);
+$unsupportedBrowserTextColor: #4a4a4a;
+$unsupportedBrowserTextSmallFontSize: 1rem;
+$unsupportedBrowserTitleColor: #fff;
+$unsupportedBrowserTitleFontSize: 1.5rem;
+$unsupportedDesktopBrowserTextColor: rgba(255, 255, 255, 0.7);
+$unsupportedDesktopBrowserTextFontSize: 1.25rem;
+
+/**
+ * The size of the default watermark.
+ */
+$watermarkWidth: 71px;
+$watermarkHeight: 32px;
+
+$welcomePageWatermarkWidth: 71px;
+$welcomePageWatermarkHeight: 32px;
+
+/**
+ * Welcome page variables.
+ */
+$welcomePageDescriptionColor: #fff;
+$welcomePageFontFamily: inherit;
+$welcomePageBackground: none;
+$welcomePageTitleColor: #fff;
+
+$welcomePageHeaderBackground: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../images/welcome-background.png');
+$welcomePageHeaderBackgroundPosition: center;
+$welcomePageHeaderBackgroundRepeat: none;
+$welcomePageHeaderBackgroundSize: cover;
+$welcomePageHeaderPadding: 1rem;
+$welcomePageHeaderTitleMaxWidth: initial;
+$welcomePageHeaderTextAlign: center;
+$welcomePageButtonBg: #0074E0;
+$welcomePageButtonHoverBg: #4687ED;
+$welcomePageButtonFocusOutline: #00225A;
+
+$welcomePageHeaderContainerMarginTop: 104px;
+$welcomePageHeaderContainerDisplay: flex;
+$welcomePageHeaderContainerMargin: $welcomePageHeaderContainerMarginTop auto 0;
+
+$welcomePageHeaderTextTitleMarginBottom: 0;
+$welcomePageHeaderTextTitleFontSize: 2.625rem;
+$welcomePageHeaderTextTitleFontWeight: normal;
+$welcomePageHeaderTextTitleLineHeight: 3.125rem;
+$welcomePageHeaderTextTitleOpacity: 1;
+
+$welcomePageEnterRoomDisplay: flex;
+$welcomePageEnterRoomWidth: calc(100% - 32px);
+$welcomePageEnterRoomPadding: 4px;
+$welcomePageEnterRoomMargin: 0 auto;
+
+$welcomePageTabContainerDisplay: flex;
+$welcomePageTabContentDisplay: inherit;
+$welcomePageTabButtonsDisplay: flex;
+$welcomePageTabDisplay: block;
+
+/**
+ * Deep-linking page variables.
+ */
+$deepLinkingMobileLogoHeight: 40px;
+
+$deepLinkingMobileHeaderBackground: #f1f2f5;
+
+$deepLinkingMobileLinkColor: inherit;
+$deepLinkingMobileTextFontSize: inherit;
+$deepLinkingMobileTextLineHeight: inherit;
+
+$deepLinkingDialInConferenceIdMargin: 10px 0 10px 0;
+$deepLinkingDialInConferenceIdPadding: inherit;
+$deepLinkingDialInConferenceIdBackgroundColor: inherit;
+$deepLinkingDialInConferenceIdBorderRadius: inherit;
+
+$deepLinkingDialInConferenceDescriptionFontSize: 0.8em;
+$deepLinkingDialInConferenceDescriptionLineHeight: inherit;
+$deepLinkingDialInConferenceDescriptionMarginBottom: none;
+
+$deepLinkingDialInConferencePinFontSize: inherit;
+$deepLinkingDialInConferencePinLineHeight: inherit;
+
+$depLinkingMobileHrefLineHeight: 2.2857142857142856em;
+$deepLinkingMobileHrefFontWeight: bolder;
+$deepLinkingMobileHrefFontSize: inherit;
+
+$deepLinkingMobileButtonHeight: 2.2857142857142856em;
+$deepLinkingMobileButtonLineHeight: 2.2857142857142856em;
+$deepLinkingMobileButtonMargin: 18px auto 10px;
+$deepLinkingMobileButtonWidth: auto;
+$deepLinkingMobileButtonFontWeight: bold;
+$deepLinkingMobileButtonFontSize: inherit;
+
+$primaryDeepLinkingMobileButtonBorderRadius: inherit;
+
+/**
+* Chrome extension banner variables.
+*/
+$chromeExtensionBannerDontShowAgainDisplay: flex;
+$chromeExtensionBannerHeight: 128px;
+$chromeExtensionBannerTop: 80px;
+$chromeExtensionBannerRight: 16px;
+$chromeExtensionBannerTopInMeeting: 10px;
+$chromeExtensionBannerRightInMeeeting: 10px;
+
+/**
+* media type thresholds
+*/
+$verySmallScreen: 500px;
+
+/**
+* Prejoin / premeeting screen
+*/
+
+$prejoinDefaultContentWidth: 336px;

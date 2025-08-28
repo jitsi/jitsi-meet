@@ -1,0 +1,15 @@
+.error_page {
+    width: 60%;
+    margin: 20% auto;
+    text-align: center;
+
+    h2 {
+        font-size: 3rem;
+        color : #f2f2f2;
+    }
+
+    &__message {
+        font-size: 1.5rem;
+        margin-top: 20px;
+    }
+}

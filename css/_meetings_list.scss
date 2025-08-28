@@ -1,0 +1,185 @@
+.meetings-list {
+    font-size: 0.875rem;
+    color: #253858;
+    line-height: 1.25rem;
+    text-align: left;
+    text-overflow: ellipsis;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow-y: auto;
+    flex-grow: 1;
+
+    .meetings-list-empty {
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+        flex-grow: 1;
+        flex-direction: column;
+
+        .description {
+            color: #2f3237;
+            font-size: 0.875rem;
+            line-height: 1.125rem;
+            margin-bottom: 16px;
+            max-width: 436px;
+        }
+    }
+
+    .meetings-list-empty-image {
+        text-align: center;
+        margin: 24px 0 20px 0;
+    }
+
+    .meetings-list-empty-button {
+        align-items: center;
+        color: #0163FF;
+        cursor: pointer;
+        display: flex;
+        font-size: 0.875rem;
+        line-height: 1.125rem;
+        margin: 24px 0 32px 0;
+    }
+
+    .meetings-list-empty-icon {
+        display: inline-block;
+        margin-right: 8px;
+    }
+
+    .button {
+        background: #0074E0;
+        border-radius: 4px;
+        color: #FFFFFF;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 8px;
+        cursor: pointer;
+    }
+
+    .calendar-action-buttons {
+        .button {
+            margin: 0px 10px;
+        }
+    }
+
+    .item {
+        background: #fff;
+        box-sizing: border-box;
+        border-radius: 4px;
+        display: inline-flex;
+        margin: 4px 4px 0 4px;
+        min-height: 60px;
+        width: calc(100% - 8px);
+        word-break: break-word;
+        display: flex;
+        flex-direction: row;
+        text-align: left;
+
+        &:first-child {
+            margin-top: 0px;
+        }
+
+        .left-column {
+            order: -1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 0;
+            padding-left: 16px;
+            padding-top: 13px;
+        }
+
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            flex-grow: 1;
+            padding-left: 16px;
+            padding-top: 13px;
+            position: relative;
+        }
+
+        .title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            color: #5E6D7A;
+            font-weight: normal;
+            font-size: 0.75rem;
+            line-height: 1rem;
+        }
+
+
+        .actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 0;
+            margin-right: 16px;
+        }
+
+        &.with-click-handler {
+            cursor: pointer;
+        }
+
+        &.with-click-handler:hover,
+        &.with-click-handler:focus {
+            background-color: #c7ddff;
+        }
+
+        .add-button {
+            width: 30px;
+            height: 30px;
+            padding: 0px;
+        }
+
+        i {
+            cursor: inherit;
+        }
+
+        .join-button {
+            display: none;
+        }
+
+        &:hover .join-button {
+            display: block
+        }
+    }
+
+    .delete-meeting {
+        display: none;
+        margin-right: 16px;
+        position: absolute;
+
+        &>svg {
+            fill: #0074e0;
+        }
+    }
+
+    .item:hover,
+    .item:focus,
+    .item:focus-within {
+        .delete-meeting {
+            display: block;
+        }
+
+        .delete-meeting:hover {
+            &>svg {
+                fill: #4687ED;
+            }
+        }
+    }
+
+    @media (max-width: 1024px) {  /* Targets iPads and smaller devices */
+        .item {
+            .delete-meeting {
+                display: block !important;
+            }
+        }
+    }
+}

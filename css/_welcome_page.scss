@@ -1,0 +1,354 @@
+body.welcome-page {
+    background: inherit;
+    overflow: auto;
+}
+
+.welcome {
+    background-image: $welcomePageBackground;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    font-family: $welcomePageFontFamily;
+    justify-content: space-between;
+    min-height: 100dvh;
+    position: relative;
+
+    .header {
+        background-image: $welcomePageHeaderBackground;
+        background-position: $welcomePageHeaderBackgroundPosition;
+        background-repeat: $welcomePageHeaderBackgroundRepeat;
+        background-size: $welcomePageHeaderBackgroundSize;
+        padding: $welcomePageHeaderPadding;
+        background-color: #131519;
+        overflow: hidden;
+        position: relative;
+
+        .header-container {
+            display: $welcomePageHeaderContainerDisplay;
+            flex-direction: column;
+            margin: $welcomePageHeaderContainerMargin;
+            z-index: $zindex2;
+            align-items: center;
+            position: relative;
+            max-width: 688px;
+        }
+
+        .header-watermark-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            margin-top: calc(20px - #{$welcomePageHeaderContainerMarginTop});
+        }
+
+        .header-text-title {
+            color: $welcomePageTitleColor;
+            font-size: $welcomePageHeaderTextTitleFontSize;
+            font-weight: $welcomePageHeaderTextTitleFontWeight;
+            line-height: $welcomePageHeaderTextTitleLineHeight;
+            margin-bottom: $welcomePageHeaderTextTitleMarginBottom;
+            max-width: $welcomePageHeaderTitleMaxWidth;
+            opacity: $welcomePageHeaderTextTitleOpacity;
+            text-align: $welcomePageHeaderTextAlign;
+        }
+
+        .header-text-subtitle {
+            color: #fff;
+            font-size: 1.25rem;
+            font-weight: 600;
+            line-height: 1.625rem;
+            margin: 16px 0 32px 0;
+            text-align: $welcomePageHeaderTextAlign;
+
+        }
+
+        .not-allow-title-character-div {
+            color: #f03e3e;
+            background-color: #fff;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin: 10px 0px 5px 0px;
+            text-align: $welcomePageHeaderTextAlign;
+            border-radius: 5px;
+            padding: 5px;
+            .not-allow-title-character-text {
+                float: right;
+                line-height: 1.9;
+            };
+            .jitsi-icon {
+                margin-right: 9px;
+                float: left;
+
+
+                svg {
+                    fill:#f03e3e;
+
+                    & > *:first-child {
+                        fill: none !important;
+                    }
+                }
+            }
+
+        }
+
+        .insecure-room-name-warning {
+            align-items: center;
+            color: rgb(215, 121, 118);
+            font-weight: 600;
+            display: flex;
+            flex-direction: row;
+            margin-top: 15px;
+            max-width: 480px;
+            width: $welcomePageEnterRoomWidth;
+
+            .jitsi-icon {
+                margin-right: 15px;
+
+                svg {
+                    fill: rgb(215, 121, 118);
+
+                    & > *:first-child {
+                        fill: none !important;
+                    }
+                }
+            }
+        }
+
+        ::placeholder {
+            color: #253858;
+        }
+
+        #enter_room {
+            display: $welcomePageEnterRoomDisplay;
+            align-items: center;
+            max-width: 480px;
+            width: $welcomePageEnterRoomWidth;
+            z-index: $zindex2;
+            height: fit-content;
+
+            .join-meeting-container {
+                margin: $welcomePageEnterRoomMargin;
+                padding: $welcomePageEnterRoomPadding;
+                border-radius: 4px;
+                background-color: #fff;
+                display: flex;
+                width: 100%;
+                text-align: left;
+                color: #253858;
+            }
+
+            .enter-room-input-container {
+                flex-grow: 1;
+                padding-right: 4px;
+
+                .enter-room-input {
+                    border-radius: 4px;
+                    border: 0;
+                    background: #fff;
+                    display: inline-block;
+                    height: 50px;
+                    width: 100%;
+                    font-size: 0.875rem;
+                    padding-left: 10px;
+
+                    &.focus-visible {
+                        outline: auto 2px #005fcc;
+                    }
+                }
+            }
+
+        }
+
+        #moderated-meetings {
+            max-width: calc(100% - 40px);
+            padding: 16px 0 0;
+            width: $welcomePageEnterRoomWidth;
+            text-align: center;
+
+            a {
+                color: inherit;
+                font-weight: 600;
+            }
+        }
+    }
+
+    .tab-container {
+        font-size: 1rem;
+        position: relative;
+        text-align: left;
+        display: $welcomePageTabContainerDisplay;
+        flex-direction: column;
+
+        .tab-content{
+            display: $welcomePageTabContentDisplay;
+            height: 250px;
+            margin: 5px 0px;
+            overflow: hidden;
+            flex-grow: 1;
+            position: relative;
+        }
+
+        .tab-buttons {
+            background-color: #c7ddff;
+            border-radius: 6px;
+            color: #0163FF;
+            font-size: 0.875rem;
+            line-height: 1.125rem;
+            margin: 4px;
+            display: $welcomePageTabButtonsDisplay;
+
+            [role="tab"] {
+                background-color: #c7ddff;
+                border-radius: 7px;
+                cursor: pointer;
+                display: $welcomePageTabDisplay;
+                flex-grow: 1;
+                margin: 2px;
+                padding: 7px 0;
+                text-align: center;
+                color: inherit;
+                border: 0;
+
+                &[aria-selected="true"] {
+                    background-color: #FFF;
+                }
+            }
+
+        }
+    }
+
+    .welcome-page-button {
+        border: 0;
+        font-size: 0.875rem;
+        background: $welcomePageButtonBg;
+        border-radius: 3px;
+        color: #FFFFFF;
+        cursor: pointer;
+        padding: 16px 20px;
+        transition: all 0.2s;
+        &:focus-within {
+            outline: auto 2px $welcomePageButtonFocusOutline;
+        }
+
+        &:hover {
+            background-color: $welcomePageButtonHoverBg;
+        }
+    }
+
+    .welcome-page-settings {
+        background: rgba(255, 255, 255, 0.38);
+        border-radius: 3px;
+        color: $welcomePageDescriptionColor;
+        padding: 4px;
+        position: absolute;
+        top: calc(35px - #{$welcomePageHeaderContainerMarginTop});
+        right: 0;
+        z-index: $zindex2;
+
+        * {
+            cursor: pointer;
+            font-size: 2rem;
+        }
+
+        .toolbox-icon {
+            height: 24px;
+            width: 24px;
+        }
+    }
+
+    .welcome-watermark {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+
+        .watermark.leftwatermark {
+            width: $welcomePageWatermarkWidth;
+            height: $welcomePageWatermarkHeight;
+        }
+    }
+
+    &.without-content {
+        .welcome-card {
+            max-width: 100dvw;
+        }
+    }
+
+    &.without-footer {
+        justify-content: start;
+    }
+
+    .welcome-cards-container {
+        color:#131519;
+        padding-top: 40px;
+    }
+
+    .welcome-card-column {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        max-width: 688px;
+        margin: auto;
+
+        > div {
+            margin-bottom: 16px;
+        }
+    }
+
+    .welcome-card-text {
+        padding: 32px;
+    }
+
+    .welcome-card {
+        width: 100%;
+        border-radius: 8px;
+
+        &--dark {
+            background: #444447;
+            color: #fff;
+        }
+
+        &--blue {
+            background: #D5E5FF;
+        }
+
+        &--grey {
+            background: #F2F3F4;
+        }
+    }
+
+    .welcome-footer {
+        background: #131519;
+        color: #fff;
+        margin-top: 40px;
+        position: relative;
+    }
+
+    .welcome-footer-centered {
+        max-width: 688px;
+        margin: 0 auto;
+    }
+
+    .welcome-footer-padded {
+        padding: 0px 16px;
+    }
+
+    .welcome-footer-row-block {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #424447;
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    .welcome-footer--row-1 {
+        padding: 40px 0 24px 0;
+    }
+
+    .welcome-footer-row-1-text {
+        max-width: 200px;
+        text-align: center;
+    }
+}

@@ -1,0 +1,7 @@
+Prosody configuration for Jitsi Meet for Debian
+----------------------------
+
+Jitsi Meet is a WebRTC video conferencing application. This package contains 
+configuration of prosody which are needed for Jitsi Meet to work.
+
+ -- Yasen Pramatarov <yasen@bluejimp.com>  Mon, 30 Jun 2014 23:05:18 +0100

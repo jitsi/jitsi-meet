@@ -1,0 +1,39 @@
+.unsupported-desktop-browser {
+    @include absoluteAligning();
+
+    display: block;
+    text-align: center;
+
+    &__title {
+        color: $unsupportedBrowserTitleColor;
+        font-weight: 300;
+        font-size: $unsupportedBrowserTitleFontSize;
+        letter-spacing: 1px;
+    }
+
+    &__description {
+        color: $unsupportedDesktopBrowserTextColor;
+        font-size: $unsupportedDesktopBrowserTextFontSize;
+        font-weight: 300;
+        letter-spacing: 1px;
+        margin-top: 16px;
+
+        &_small {
+            @extend .unsupported-desktop-browser__description;
+            font-size: $unsupportedBrowserTextSmallFontSize;
+        }
+    }
+
+    &__link {
+        color: #489afe;
+        @include transition(color .1s ease-out);
+
+        &:hover {
+            color: #287ade;
+            cursor: pointer;
+            text-decoration: none;
+
+            @include transition(color .1s ease-in);
+        }
+    }
+}

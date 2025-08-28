@@ -1,0 +1,89 @@
+%align-right {
+    @include flex();
+    flex-direction: row-reverse;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
+
+.horizontal-filmstrip .filmstrip {
+    padding: 10px 5px;
+    @extend %align-right;
+    z-index: $filmstripVideosZ;
+    box-sizing: border-box;
+    width: 100%;
+    position: fixed;
+
+    /*
+     * Firefox sets flex items to min-height: auto and min-width: auto,
+     * preventing flex children from shrinking like they do on other browsers.
+     * Setting min-height and min-width 0 is a workaround for the issue so
+     * Firefox behaves like other browsers.
+     * https://bugzilla.mozilla.org/show_bug.cgi?id=1043520
+     */
+     @mixin minHWAutoFix() {
+        min-height: 0;
+        min-width: 0;
+    }
+
+    &.reduce-height {
+        bottom: calc(#{$newToolbarSizeWithPadding} + #{$scrollHeight});
+    }
+
+    &__videos {
+        position:relative;
+        padding: 0;
+        /* The filmstrip should not be covered by the left toolbar. */
+        bottom: 0;
+        width:auto;
+
+        &#remoteVideos {
+            border: $thumbnailsBorder solid transparent;
+            transition: bottom 2s;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: row-reverse;
+            @include minHWAutoFix()
+        }
+
+        /**
+         * The local video identifier.
+         */
+        &#filmstripLocalVideo,
+        &#filmstripLocalScreenShare {
+            align-self: flex-end;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        &.hidden {
+            bottom: calc(-196px - #{$newToolbarSizeWithPadding} + 50px);
+        }
+    }
+
+    .remote-videos {
+        overscroll-behavior: contain;
+
+        & > div {
+            transition: opacity 1s;
+            position: absolute;
+        }
+
+        &.is-not-overflowing > div {
+            right: 2px;
+        }
+    }
+
+    &.hide-videos {
+        .remote-videos  {
+            & > div {
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+    }
+
+    .videocontainer {
+        margin-bottom: 10px;
+    }
+}
+

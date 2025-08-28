@@ -1,0 +1,153 @@
+{
+   "spacing": [ 0, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128 ],
+   "breakpoints": {
+      "values": {
+         "0": 0,
+         "320": 320,
+         "400": 400,
+         "480": 480
+      }
+   },
+   "palette": {
+      "uiBackground": "#040404",
+      "ui01": "#141414",
+      "ui02": "#292929",
+      "ui03": "#3D3D3D",
+      "ui04": "#525252",
+      "ui05": "#666",
+      "action01": "#0056E0",
+      "action01Hover": "#246FE5",
+      "action01Active": "#0045B3",
+      "disabled01": "#00225A",
+      "action02": "#3D3D3D",
+      "action02Hover": "#525252",
+      "action02Active": "#292929",
+      "action03": "transparent",
+      "action03Hover": "#525252",
+      "action03Active": "#292929",
+      "actionDanger": "#CB2233",
+      "actionDangerHover": "#E04757",
+      "actionDangerActive": "#A21B29",
+      "bottomSheet": "#111111",
+      "text01": "#FFF",
+      "text02": "#C2C2C2",
+      "text03": "#858585",
+      "text04": "#AAAAAA",
+      "textError": "#E04757",
+      "icon01": "#FFF",
+      "icon02": "#C2C2C2",
+      "icon03": "#858585",
+      "iconError": "#E04757",
+      "field01": "#040404",
+      "link01": "#669AEC",
+      "link01Hover": "#99BBF3",
+      "link01Active": "#246FE5",
+      "success01": "#1EC26A",
+      "success02": "#1EC26A",
+      "warning01": "#F8AE1A",
+      "warning02": "#ED9E1B",
+      "support01": "#FF9B42",
+      "support02": "#F96E57",
+      "support03": "#DF486F",
+      "support04": "#B23683",
+      "support05": "#73348C",
+      "support06": "#6A50D3",
+      "support07": "#4380E2",
+      "support08": "#00A8B3",
+      "support09": "#2AA076"
+   },
+   "typography": {
+      "font": {
+         "weightRegular": "400",
+         "weightSemiBold": "600"
+      },
+      "labelRegular": {
+         "fontSize": "0.75rem",
+         "lineHeight": "1rem",
+         "fontWeight": "400",
+         "letterSpacing": 0.16
+      },
+      "labelBold": {
+         "fontSize": "0.75rem",
+         "lineHeight": "1rem",
+         "fontWeight": "600",
+         "letterSpacing": 0.16
+      },
+      "bodyShortRegular": {
+         "fontSize": "0.875rem",
+         "lineHeight": "1.125rem",
+         "fontWeight": "400",
+         "letterSpacing": 0
+      },
+      "bodyShortBold": {
+         "fontSize": "0.875rem",
+         "lineHeight": "1.125rem",
+         "fontWeight": "600",
+         "letterSpacing": 0
+      },
+      "bodyShortRegularLarge": {
+         "fontSize": "1rem",
+         "lineHeight": "1.5rem",
+         "fontWeight": "400",
+         "letterSpacing": 0
+      },
+      "bodyShortBoldLarge": {
+         "fontSize": "1rem",
+         "lineHeight": "1.5rem",
+         "fontWeight": "600",
+         "letterSpacing": 0
+      },
+      "bodyLongRegular": {
+         "fontSize": "0.875rem",
+         "lineHeight": "1.5rem",
+         "fontWeight": "400",
+         "letterSpacing": 0
+      },
+      "bodyLongBold": {
+         "fontSize": "0.875rem",
+         "lineHeight": "1.5rem",
+         "fontWeight": "600",
+         "letterSpacing": 0
+      },
+      "heading1": {
+         "fontSize": "3.375rem",
+         "lineHeight": "4rem",
+         "fontWeight": "600",
+         "letterSpacing": 0
+      },
+      "heading2": {
+         "fontSize": "2.625rem",
+         "lineHeight": "3.125rem",
+         "fontWeight": "600",
+         "letterSpacing": 0
+      },
+      "heading3": {
+         "fontSize": "2rem",
+         "lineHeight": "2.5rem",
+         "fontWeight": "600",
+         "letterSpacing": 0
+      },
+      "heading4": {
+         "fontSize": "1.75rem",
+         "lineHeight": "2.25rem",
+         "fontWeight": "600",
+         "letterSpacing": 0
+      },
+      "heading5": {
+         "fontSize": "1.25rem",
+         "lineHeight": "1.75rem",
+         "fontWeight": "600",
+         "letterSpacing": 0
+      },
+      "heading6": {
+         "fontSize": "1rem",
+         "lineHeight": "1.625rem",
+         "fontWeight": "600",
+         "letterSpacing": 0
+      }
+   },
+   "shape": {
+      "borderRadius": 6,
+      "boxShadow": "inset 0px -1px 0px rgba(255, 255, 255, 0.15)"
+   }
+}

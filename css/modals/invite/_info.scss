@@ -1,0 +1,137 @@
+.info-dialog {
+    cursor: default;
+    display: flex;
+    font-size: 0.875rem;
+
+    .info-dialog-column {
+        margin-right: 10px;
+        overflow: hidden;
+
+        a,
+        a:active,
+        a:focus,
+        a:hover {
+            text-decoration: none;
+        }
+    }
+
+    .info-dialog-password,
+    .info-password,
+    .info-password-form {
+        align-items: baseline;
+        display: flex;
+    }
+
+    .info-label {
+        font-weight: bold;
+    }
+
+    .info-password-field {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-right: 5px;
+    }
+
+    .info-password-none,
+    .info-password-remote {
+        color: #fff;
+    }
+
+    .info-password-local {
+        user-select: text;
+    }
+}
+
+.dial-in-number {
+    display: flex;
+    justify-content: space-between;
+    padding-right: 8px;
+}
+
+.dial-in-numbers-list {
+    max-width: 334px;
+    width: 100%;
+    margin-top: 20px;
+    font-size: 0.75rem;
+    line-height: 1.5rem;
+    border-collapse: collapse;
+
+    * {
+        user-select: text;
+    }
+
+    thead {
+        text-align: left;
+    }
+
+    .flag-cell {
+        vertical-align: top;
+        width: 30px;
+    }
+    .flag {
+        display: block;
+        margin: 5px 5px 0px 5px;
+    }
+
+    .country {
+        font-weight: bold;
+        vertical-align: top;
+        padding: 0 20px 0 0;
+    }
+
+    ul {
+        padding: 0px 0px 0px 0px;
+    }
+
+    .numbers-list {
+        list-style: none;
+        padding: 0 20px 0 0;
+    }
+
+    .toll-free-list {
+        font-weight: bold;
+        list-style: none;
+        vertical-align: top;
+        text-align: right;
+    }
+
+    li.toll-free:empty:before {
+        content: '.';
+        visibility: hidden;
+    }
+}
+
+.dial-in-page {
+    align-items: center;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    font-size: 0.75rem;
+    max-height: 100%;
+    overflow: auto;
+    padding: 15pt;
+    position: absolute;
+    transform: translateY(-50%);
+    top: 50%;
+    width: 100%;
+
+    .dial-in-conference-id {
+        text-align: center;
+        min-width: 200px;
+        margin-top: 40px;
+    }
+
+    .dial-in-conference-description {
+        margin: 12px;
+    }
+}
+
+.info-dialog,
+.dial-in-page {
+    * {
+        user-select: text;
+        -moz-user-select: text;
+        -webkit-user-select: text;
+    }
+}

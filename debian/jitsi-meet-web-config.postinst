@@ -1,0 +1,318 @@
+#!/bin/bash
+# postinst script for jitsi-meet-web-config
+#
+# see: dh_installdeb(1)
+
+set -e
+
+# summary of how this script can be called:
+#        * <postinst> `configure' <most-recently-configured-version>
+#        * <old-postinst> `abort-upgrade' <new version>
+#        * <conflictor's-postinst> `abort-remove' `in-favour' <package>
+#          <new-version>
+#        * <postinst> `abort-remove'
+#        * <deconfigured's-postinst> `abort-deconfigure' `in-favour'
+#          <failed-install-package> <version> `removing'
+#          <conflicting-package> <version>
+# for details, see http://www.debian.org/doc/debian-policy/ or
+# the debian-policy package
+
+case "$1" in
+    configure)
+
+        # loading debconf
+        . /usr/share/debconf/confmodule
+
+        # try to get host from jitsi-videobridge
+        db_get jitsi-videobridge/jvb-hostname
+        if [ -z "$RET" ] ; then
+            # server hostname
+            db_set jitsi-videobridge/jvb-hostname "localhost"
+            db_input critical jitsi-videobridge/jvb-hostname || true
+            db_go
+            db_get jitsi-videobridge/jvb-hostname
+        fi
+        JVB_HOSTNAME=$(echo "$RET" | xargs echo -n)
+
+        # detect dpkg-reconfigure
+        RECONFIGURING="false"
+        db_get jitsi-meet/jvb-hostname
+        JVB_HOSTNAME_OLD=$(echo "$RET" | xargs echo -n)
+        if [ -n "$RET" ] && [ ! "$JVB_HOSTNAME_OLD" = "$JVB_HOSTNAME" ] ; then
+            RECONFIGURING="true"
+            rm -f /etc/jitsi/meet/$JVB_HOSTNAME_OLD-config.js
+        fi
+
+        # stores the hostname so we will reuse it later, like in purge
+        db_set jitsi-meet/jvb-hostname $JVB_HOSTNAME
+
+        NGINX_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'nginx' 2>/dev/null | awk '{print $3}' || true)"
+        NGINX_FULL_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'nginx-full' 2>/dev/null | awk '{print $3}' || true)"
+        NGINX_EXTRAS_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'nginx-extras' 2>/dev/null | awk '{print $3}' || true)"
+        if [ "$NGINX_INSTALL_CHECK" = "installed" ] \
+           || [ "$NGINX_INSTALL_CHECK" = "unpacked" ] \
+           || [ "$NGINX_FULL_INSTALL_CHECK" = "installed" ] \
+           || [ "$NGINX_FULL_INSTALL_CHECK" = "unpacked" ] \
+           || [ "$NGINX_EXTRAS_INSTALL_CHECK" = "installed" ] \
+           || [ "$NGINX_EXTRAS_INSTALL_CHECK" = "unpacked" ] ; then
+            FORCE_NGINX="true"
+        fi
+        OPENRESTY_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'openresty' 2>/dev/null | awk '{print $3}' || true)"
+        if [ "$OPENRESTY_INSTALL_CHECK" = "installed" ] || [ "$OPENRESTY_INSTALL_CHECK" = "unpacked" ] ; then
+            FORCE_OPENRESTY="true"
+        fi
+        APACHE_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'apache2' 2>/dev/null | awk '{print $3}' || true)"
+        if [ "$APACHE_INSTALL_CHECK" = "installed" ] || [ "$APACHE_INSTALL_CHECK" = "unpacked" ] ; then
+            FORCE_APACHE="true"
+        fi
+        # In case user enforces apache and if apache is available, unset nginx.
+        RET=""
+        db_get jitsi-meet/enforce_apache || RET="false"
+        if [ "$RET" = "true" ] && [ "$FORCE_APACHE" = "true" ]; then
+            FORCE_NGINX="false"
+        fi
+
+        UPLOADED_CERT_CHOICE="I want to use my own certificate"
+        LE_CERT_CHOICE="Let's Encrypt certificates"
+        # if first time config ask for certs, or if we are reconfiguring
+        if [ -z "$JVB_HOSTNAME_OLD" ] || [ "$RECONFIGURING" = "true" ] ; then
+            RET=""
+            # ask the question only if there is nothing stored, option to pre-set it on install in automations
+            db_get jitsi-meet/cert-choice
+            CERT_CHOICE="$RET"
+            if [ -z "$CERT_CHOICE" ] ; then
+                db_input critical jitsi-meet/cert-choice || true
+                db_go
+                db_get jitsi-meet/cert-choice
+                CERT_CHOICE="$RET"
+            fi
+
+            if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ]; then
+                RET=""
+                db_get jitsi-meet/cert-path-key
+                if [ -z "$RET" ] ; then
+                    db_set jitsi-meet/cert-path-key "/etc/ssl/$JVB_HOSTNAME.key"
+                    db_input critical jitsi-meet/cert-path-key || true
+                    db_go
+                    db_get jitsi-meet/cert-path-key
+                fi
+                CERT_KEY="$RET"
+                RET=""
+                db_get jitsi-meet/cert-path-crt
+                if [ -z "$RET" ] ; then
+                    db_set jitsi-meet/cert-path-crt "/etc/ssl/$JVB_HOSTNAME.crt"
+                    db_input critical jitsi-meet/cert-path-crt || true
+                    db_go
+                    db_get jitsi-meet/cert-path-crt
+                fi
+                CERT_CRT="$RET"
+            else
+                # create self-signed certs (we also need them for the case of LE so we can start nginx)
+                CERT_KEY="/etc/jitsi/meet/$JVB_HOSTNAME.key"
+                CERT_CRT="/etc/jitsi/meet/$JVB_HOSTNAME.crt"
+                HOST="$( (hostname -s; echo localhost) | head -n 1)"
+                DOMAIN="$( (hostname -d; echo localdomain) | head -n 1)"
+                openssl req -new -newkey rsa:4096 -days 3650 -nodes -x509 -subj \
+                    "/O=$DOMAIN/OU=$HOST/CN=$JVB_HOSTNAME/emailAddress=webmaster@$HOST.$DOMAIN" \
+                    -keyout $CERT_KEY \
+                    -out $CERT_CRT \
+                    -reqexts SAN \
+                    -extensions SAN \
+                    -config <(cat /etc/ssl/openssl.cnf \
+                        <(printf "[SAN]\nsubjectAltName=DNS:localhost,DNS:$JVB_HOSTNAME"))
+
+                if [ "$CERT_CHOICE" = "$LE_CERT_CHOICE" ]; then
+                    db_subst jitsi-meet/email domain "${JVB_HOSTNAME}"
+                    db_input critical jitsi-meet/email || true
+                    db_go
+                    db_get jitsi-meet/email
+                    EMAIL="$RET"
+                    if [ ! -z "$EMAIL" ] ; then
+                        ISSUE_LE_CERT="true"
+                    fi
+                fi
+            fi
+        fi
+
+        # jitsi meet
+        JITSI_MEET_CONFIG="/etc/jitsi/meet/$JVB_HOSTNAME-config.js"
+        if [ ! -f $JITSI_MEET_CONFIG ] ; then
+            cp /usr/share/jitsi-meet-web-config/config.js $JITSI_MEET_CONFIG
+            # replaces needed config for multidomain as it works only with nginx
+            if [[ "$FORCE_NGINX" = "true" ]] ; then
+                sed -i "s/conference.jitsi-meet.example.com/conference.<\!--# echo var=\"subdomain\" default=\"\" -->jitsi-meet.example.com/g" $JITSI_MEET_CONFIG
+            fi
+            sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $JITSI_MEET_CONFIG
+        fi
+
+        if [ "$CERT_CHOICE" = "$LE_CERT_CHOICE" ] || [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ]; then
+            # Make sure jaas-choice is not answered already
+            db_get jitsi-meet/jaas-choice
+            JAAS_INPUT="$RET"
+            if [ -z "$JAAS_INPUT" ] ; then
+                db_subst jitsi-meet/jaas-choice domain "${JVB_HOSTNAME}"
+                db_set jitsi-meet/jaas-choice false
+                db_input critical jitsi-meet/jaas-choice || true
+                db_go
+                db_get jitsi-meet/jaas-choice
+                JAAS_INPUT="$RET"
+            fi
+        fi
+
+        if [ "${JAAS_INPUT}" = "true" ] && ! grep -q "^var enableJaaS = true;$" $JITSI_MEET_CONFIG;  then
+            if grep -q "^var enableJaaS = false;$" $JITSI_MEET_CONFIG; then
+                sed -i "s/^var enableJaaS = false;$/var enableJaaS = true;/g" $JITSI_MEET_CONFIG
+            else
+                # old config, let's add the lines at the end. Adding var enableJaaS to avoid adding it on update again
+                echo "var enableJaaS = true;" >> $JITSI_MEET_CONFIG
+                echo "config.dialInNumbersUrl = 'https://conference-mapper.jitsi.net/v1/access/dids';" >> $JITSI_MEET_CONFIG
+                echo "config.dialInConfCodeUrl = 'https://conference-mapper.jitsi.net/v1/access';" >> $JITSI_MEET_CONFIG
+
+                # Sets roomPasswordNumberOfDigits only if there was not already set
+                if ! cat $JITSI_MEET_CONFIG | grep roomPasswordNumberOfDigits | grep -qv //; then
+                    echo "config.roomPasswordNumberOfDigits = 10; // skip re-adding it (do not remove comment)" >> $JITSI_MEET_CONFIG
+                fi
+            fi
+        fi
+
+        if [[ "$FORCE_OPENRESTY" = "true" ]]; then
+            NGX_COMMON_CONF_PATH="/usr/local/openresty/nginx/conf/$JVB_HOSTNAME.conf"
+            NGX_SVC_NAME=openresty
+            OPENRESTY_NGX_CONF="/usr/local/openresty/nginx/conf/nginx.conf"
+        else
+            NGX_COMMON_CONF_PATH="/etc/nginx/sites-available/$JVB_HOSTNAME.conf"
+            NGX_SVC_NAME=nginx
+        fi
+
+        if [[ ( "$FORCE_NGINX" = "true" || "$FORCE_OPENRESTY" = "true" ) && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
+
+            # this is a reconfigure, lets just delete old links
+            if [ "$RECONFIGURING" = "true" ] ; then
+                rm -f /etc/nginx/sites-enabled/$JVB_HOSTNAME_OLD.conf
+                rm -f /etc/jitsi/meet/$JVB_HOSTNAME_OLD-config.js
+                if [[ "$FORCE_OPENRESTY" = "true" ]]; then
+                    sed -i "/include.*$JVB_HOSTNAME_OLD/d" "$OPENRESTY_NGX_CONF"
+                fi
+            fi
+
+            # nginx conf
+            if [ ! -f "$NGX_COMMON_CONF_PATH" ] ; then
+                cp /usr/share/jitsi-meet-web-config/jitsi-meet.example "$NGX_COMMON_CONF_PATH"
+                if [ ! -f /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf ] && ! [[ "$FORCE_OPENRESTY" = "true" ]] ; then
+                    ln -s "$NGX_COMMON_CONF_PATH" /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf
+                fi
+                sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" "$NGX_COMMON_CONF_PATH"
+
+                if [[ "$FORCE_OPENRESTY" = "true" ]]; then
+                    OPENRESTY_NGX_CONF_MD5_ORIG=$(dpkg-query -s openresty | sed -n '/\/nginx\.conf /{s@.* @@;p}')
+                    OPENRESTY_NGX_CONF_MD5_USERS=$(md5sum "$OPENRESTY_NGX_CONF" | sed 's@ .*@@')
+                    if [[ "$OPENRESTY_NGX_CONF_MD5_USERS" = "$OPENRESTY_NGX_CONF_MD5_ORIG" ]]; then
+                       sed -i "/^http \x7b/,/^\x7d/s@^\x7d@\tinclude $NGX_COMMON_CONF_PATH;\n\x7d@" "$OPENRESTY_NGX_CONF"
+                    fi
+                fi
+            fi
+
+            if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then
+                # replace self-signed certificate paths with user provided ones
+                CERT_KEY_ESC=$(echo $CERT_KEY | sed 's/\./\\\./g')
+                CERT_KEY_ESC=$(echo $CERT_KEY_ESC | sed 's/\//\\\//g')
+                sed -i "s/ssl_certificate_key\ \/etc\/jitsi\/meet\/.*key/ssl_certificate_key\ $CERT_KEY_ESC/g" \
+                    "$NGX_COMMON_CONF_PATH"
+                CERT_CRT_ESC=$(echo $CERT_CRT | sed 's/\./\\\./g')
+                CERT_CRT_ESC=$(echo $CERT_CRT_ESC | sed 's/\//\\\//g')
+                sed -i "s/ssl_certificate\ \/etc\/jitsi\/meet\/.*crt/ssl_certificate\ $CERT_CRT_ESC/g" \
+                    "$NGX_COMMON_CONF_PATH"
+            fi
+
+            invoke-rc.d $NGX_SVC_NAME reload || true
+        elif [[ "$FORCE_APACHE" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
+
+            # this is a reconfigure, lets just delete old links
+            if [ "$RECONFIGURING" = "true" ] ; then
+                a2dissite $JVB_HOSTNAME_OLD.conf
+                rm -f /etc/jitsi/meet/$JVB_HOSTNAME_OLD-config.js
+            fi
+
+            # apache2 config
+            if [ ! -f /etc/apache2/sites-available/$JVB_HOSTNAME.conf ] ; then
+                # when creating new config, make sure all needed modules are enabled
+                a2enmod rewrite ssl headers proxy_http proxy_wstunnel include
+                cp /usr/share/jitsi-meet-web-config/jitsi-meet.example-apache /etc/apache2/sites-available/$JVB_HOSTNAME.conf
+                a2ensite $JVB_HOSTNAME.conf
+                sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" /etc/apache2/sites-available/$JVB_HOSTNAME.conf
+            fi
+
+            if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then
+                # replace self-signed certificate paths with user provided ones
+                CERT_KEY_ESC=$(echo $CERT_KEY | sed 's/\./\\\./g')
+                CERT_KEY_ESC=$(echo $CERT_KEY_ESC | sed 's/\//\\\//g')
+                sed -i "s/SSLCertificateKeyFile\ \/etc\/jitsi\/meet\/.*key/SSLCertificateKeyFile\ $CERT_KEY_ESC/g" \
+                    /etc/apache2/sites-available/$JVB_HOSTNAME.conf
+                CERT_CRT_ESC=$(echo $CERT_CRT | sed 's/\./\\\./g')
+                CERT_CRT_ESC=$(echo $CERT_CRT_ESC | sed 's/\//\\\//g')
+                sed -i "s/SSLCertificateFile\ \/etc\/jitsi\/meet\/.*crt/SSLCertificateFile\ $CERT_CRT_ESC/g" \
+                    /etc/apache2/sites-available/$JVB_HOSTNAME.conf
+            fi
+
+            invoke-rc.d apache2 reload || true
+        fi
+
+        # If scripts fail they will print suggestions for next steps, do not fail install
+        # those can be re-run later
+        # run the scripts only on new install or when re-configuring
+        if [[ "$ISSUE_LE_CERT" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
+            /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh $EMAIL $JVB_HOSTNAME || true
+        fi
+        JAAS_REG_ERROR=0
+        if [[ "${JAAS_INPUT}" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
+            /usr/share/jitsi-meet/scripts/register-jaas-account.sh $EMAIL $JVB_HOSTNAME || JAAS_REG_ERROR=$?
+        fi
+
+        echo ""
+        echo ""
+        echo "       ;dOocd;"
+        echo "     .dNMM0dKO."
+        echo "     lNMMMKd0K,"
+        echo "    .xMMMMNxkNc"
+        echo "     dMMMMMkxXc"
+        echo "     cNMMMNl.."
+        if [ "${JAAS_INPUT}" != "true" ] || [ ${JAAS_REG_ERROR} -ne 0 ]; then
+            echo "     .kMMMX;             Interested in adding telephony to your Jitsi meetings?"
+            echo "      ;XMMMO'"
+            echo "       lNMMWO'           Sign up on https://jaas.8x8.vc/components?host=${JVB_HOSTNAME}"
+            echo "        lNMMM0,                        and follow the guide in the dev console."
+        else
+            echo "     .kMMMX;"
+            echo "      ;XMMMO'            Congratulations! Now you can use telephony in your Jitsi meetings!"
+            echo "       lNMMWO'             We have created a free JaaS (Jitsi as a Service) account for you. "
+            echo "        lNMMM0,              You can login to https://jaas.8x8.vc/components to check our developer console and your account details."
+        fi
+        echo "         lXMMMK:."
+        echo "          ;KMMMNKd.  'oo,"
+        echo "           'xNMMMMXkkkkOKOl'"
+        echo "             :0WMMMMMMNOkk0Kk,"
+        echo "              .cdOWMMMMMWXOkOl"
+        echo "                 .;dKWMMMMMXc."
+        echo "                    .,:cll:'"
+        echo ""
+        echo ""
+
+        # and we're done with debconf
+        db_stop
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+# dh_installdeb will replace this with shell code automatically
+# generated by other debhelper scripts.
+
+#DEBHELPER#
+
+exit 0

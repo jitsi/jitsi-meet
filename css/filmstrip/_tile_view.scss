@@ -1,0 +1,93 @@
+/**
+ * CSS styles that are specific to the filmstrip that shows the thumbnail tiles.
+ */
+.tile-view {
+    .remote-videos {
+        align-items: center;
+        box-sizing: border-box;
+        overscroll-behavior: contain;
+    }
+
+    .filmstrip__videos .videocontainer {
+        &:not(.active-speaker),
+        &:hover:not(.active-speaker) {
+            border: none;
+            box-shadow: none;
+        }
+    }
+
+    #remoteVideos {
+        /**
+         * Height is modified with an inline style in horizontal filmstrip mode
+         * so !important is used to override that.
+         */
+        height: 100% !important;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: margin-bottom .3s ease-in;
+    }
+
+    .filmstrip {
+        align-items: center;
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+
+        &.collapse {
+            #remoteVideos {
+                height: calc(100% - #{$newToolbarSizeMobile}) !important;
+                margin-bottom: $newToolbarSizeMobile;
+            }
+
+            .remote-videos {
+                // !important is needed here as overflow is set via element.style in a FixedSizeGrid.
+                overflow: hidden auto !important;
+            }
+        }
+    }
+
+    /**
+     * Regardless of the user setting, do not let the filmstrip be in a hidden
+     * state.
+     */
+    .filmstrip__videos.hidden {
+        display: block;
+    }
+
+    .filmstrip__videos.has-scroll {
+        padding-left: 7px;
+    }
+
+    .remote-videos {
+        box-sizing: border-box;
+
+
+        /**
+        * The size of the thumbnails should be set with javascript, based on
+        * desired column count and window width. The rows are created using flex
+        * and allowing the thumbnails to wrap.
+        */
+        & > div {
+            align-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            display: flex;
+            margin-top: auto;
+            margin-bottom: auto;
+            justify-content: center;
+
+            .videocontainer {
+                border: 0;
+                box-sizing: border-box;
+                display: block;
+                margin: 2px;
+            }
+        }
+    }
+}

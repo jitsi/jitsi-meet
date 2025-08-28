@@ -1,0 +1,293 @@
+#!/bin/bash
+# postinst script for jitsi-meet-prosody
+#
+# see: dh_installdeb(1)
+
+set -e
+
+# summary of how this script can be called:
+#        * <postinst> `configure' <most-recently-configured-version>
+#        * <old-postinst> `abort-upgrade' <new version>
+#        * <conflictor's-postinst> `abort-remove' `in-favour' <package>
+#          <new-version>
+#        * <postinst> `abort-remove'
+#        * <deconfigured's-postinst> `abort-deconfigure' `in-favour'
+#          <failed-install-package> <version> `removing'
+#          <conflicting-package> <version>
+# for details, see http://www.debian.org/doc/debian-policy/ or
+# the debian-policy package
+
+function generateRandomPassword() {
+    cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c 16
+}
+
+case "$1" in
+    configure)
+
+        # loading debconf
+        . /usr/share/debconf/confmodule
+
+        # try to get host from jitsi-videobridge
+        db_get jitsi-videobridge/jvb-hostname
+        if [ -z "$RET" ] ; then
+            # server hostname
+            db_set jitsi-videobridge/jvb-hostname "localhost"
+            db_input critical jitsi-videobridge/jvb-hostname || true
+            db_go
+        fi
+        JVB_HOSTNAME=$(echo "$RET" | xargs echo -n)
+
+        db_get jitsi-videobridge/jvbsecret
+        if [ -z "$RET" ] ; then
+            db_input critical jitsi-videobridge/jvbsecret || true
+            db_go
+        fi
+        JVB_SECRET="$RET"
+
+        JICOFO_AUTH_USER="focus"
+
+        db_get jicofo/jicofo-authpassword
+        if [ -z "$RET" ] ; then
+            # if password is missing generate it, and store it
+            JICOFO_AUTH_PASSWORD=`generateRandomPassword`
+            db_set jicofo/jicofo-authpassword "$JICOFO_AUTH_PASSWORD"
+        else
+            JICOFO_AUTH_PASSWORD="$RET"
+        fi
+
+        JICOFO_AUTH_DOMAIN="auth.$JVB_HOSTNAME"
+
+        # detect dpkg-reconfigure, just delete old links
+        db_get jitsi-meet-prosody/jvb-hostname
+        JVB_HOSTNAME_OLD=$(echo "$RET" | xargs echo -n)
+        if [ -n "$RET" ] && [ ! "$JVB_HOSTNAME_OLD" = "$JVB_HOSTNAME" ] ; then
+            rm -f /etc/prosody/conf.d/$JVB_HOSTNAME_OLD.cfg.lua
+            rm -f /etc/prosody/certs/$JVB_HOSTNAME_OLD.key
+            rm -f /etc/prosody/certs/$JVB_HOSTNAME_OLD.crt
+        fi
+
+        # stores the hostname so we will reuse it later, like in purge
+        db_set jitsi-meet-prosody/jvb-hostname "$JVB_HOSTNAME"
+
+        db_get jitsi-meet-prosody/turn-secret
+        if [ -z "$RET" ] ; then
+            # 8-chars random secret used for the turnserver
+            TURN_SECRET=`generateRandomPassword`
+            db_set jitsi-meet-prosody/turn-secret "$TURN_SECRET"
+        else
+            TURN_SECRET="$RET"
+        fi
+
+        SELF_SIGNED_CHOICE="Generate a new self-signed certificate"
+        # In the case of updating from an older version the configure of -prosody package may happen before the -config
+        # one, so if JAAS_INPUT is empty (the question is not asked), let's ask it now.
+        # If db_get returns an error (workaround for strange Debian failure) continue without stopping the config
+        db_get jitsi-meet/cert-choice || CERT_CHOICE=$SELF_SIGNED_CHOICE
+        CERT_CHOICE="$RET"
+        if [ -z "$CERT_CHOICE" ] ; then
+            db_input critical jitsi-meet/cert-choice || true
+            db_go
+            db_get jitsi-meet/cert-choice
+            CERT_CHOICE="$RET"
+        fi
+        if [ "$CERT_CHOICE" != "$SELF_SIGNED_CHOICE" ]; then
+            db_get jitsi-meet/jaas-choice
+            JAAS_INPUT="$RET"
+            if [ -z "$JAAS_INPUT" ] ; then
+                db_subst jitsi-meet/jaas-choice domain "${JVB_HOSTNAME}"
+                db_set jitsi-meet/jaas-choice false
+                db_input critical jitsi-meet/jaas-choice || true
+                db_go
+                db_get jitsi-meet/jaas-choice
+                JAAS_INPUT="$RET"
+            fi
+        fi
+
+        # and we're done with debconf
+        db_stop
+
+        PROSODY_CONFIG_PRESENT="true"
+        PROSODY_CREATE_JICOFO_USER="false"
+        PROSODY_HOST_CONFIG="/etc/prosody/conf.avail/$JVB_HOSTNAME.cfg.lua"
+        PROSODY_CONFIG_OLD="/etc/prosody/prosody.cfg.lua"
+        # if there is no prosody config extract our template
+        # check for config in conf.avail or check whether it wasn't already configured in main config
+        if [ ! -f $PROSODY_HOST_CONFIG ] && ! grep -q "VirtualHost \"$JVB_HOSTNAME\"" $PROSODY_CONFIG_OLD; then
+            PROSODY_CONFIG_PRESENT="false"
+            mkdir -p /etc/prosody/conf.avail/
+            mkdir -p /etc/prosody/conf.d/
+            cp /usr/share/jitsi-meet-prosody/prosody.cfg.lua-jvb.example $PROSODY_HOST_CONFIG
+            sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" $PROSODY_HOST_CONFIG
+            sed -i "s/focusUser/$JICOFO_AUTH_USER/g" $PROSODY_HOST_CONFIG
+            sed -i "s/__turnSecret__/$TURN_SECRET/g" $PROSODY_HOST_CONFIG
+            if [ ! -f /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua ]; then
+                ln -s $PROSODY_HOST_CONFIG /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua
+            fi
+            PROSODY_CREATE_JICOFO_USER="true"
+            # on some distributions main prosody config doesn't include configs
+            # from conf.d folder enable it as this where we put our config by default
+            if ! grep -q "Include \"conf\.d\/\*\.cfg.lua\"" $PROSODY_CONFIG_OLD; then
+                echo -e "\nInclude \"conf.d/*.cfg.lua\"" >> $PROSODY_CONFIG_OLD
+            fi
+        fi
+
+        # Check whether prosody config has the internal muc, if not add it,
+        # as we are migrating configs
+        if [ -f $PROSODY_HOST_CONFIG ] && ! grep -q "internal.$JICOFO_AUTH_DOMAIN" $PROSODY_HOST_CONFIG; then
+            echo -e "\nComponent \"internal.$JICOFO_AUTH_DOMAIN\" \"muc\"" >> $PROSODY_HOST_CONFIG
+            echo -e "    storage = \"memory\"" >> $PROSODY_HOST_CONFIG
+            echo -e "    modules_enabled = { \"ping\"; }" >> $PROSODY_HOST_CONFIG
+            echo -e "    admins = { \"$JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN\", \"jvb@$JICOFO_AUTH_DOMAIN\" }" >> $PROSODY_HOST_CONFIG
+            echo -e "    muc_room_locking = false" >> $PROSODY_HOST_CONFIG
+            echo -e "    muc_room_default_public_jids = true" >> $PROSODY_HOST_CONFIG
+        fi
+
+        # Convert the old focus component config to the new one.
+        # Old:
+        # Component "focus.jitmeet.example.com"
+        #     component_secret = "focusSecret"
+        # New:
+        # Component "focus.jitmeet.example.com" "client_proxy"
+        #    target_address = "focus@auth.jitmeet.example.com"
+        if grep -q "Component \"focus.$JVB_HOSTNAME\"" $PROSODY_HOST_CONFIG && ! grep -q "Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"" $PROSODY_HOST_CONFIG ;then
+            sed -i "s/Component \"focus.$JVB_HOSTNAME\"/Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"\n    target_address = \"$JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN\"/g" $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        # Old versions of jitsi-meet-prosody come with the extra plugin path commented out (https://github.com/jitsi/jitsi-meet/commit/e11d4d3101e5228bf956a69a9e8da73d0aee7949)
+        # Make sure it is uncommented, as it contains required modules.
+        if grep -q -- '--plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }' $PROSODY_HOST_CONFIG ;then
+            sed -i 's#--plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }#plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }#g' $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        # Updates main muc component
+        MAIN_MUC_PATTERN="Component \"conference.$JVB_HOSTNAME\" \"muc\""
+        if ! grep -A 2 -- "${MAIN_MUC_PATTERN}" $PROSODY_HOST_CONFIG | grep -q "restrict_room_creation" ;then
+            sed -i "s/${MAIN_MUC_PATTERN}/${MAIN_MUC_PATTERN}\n    restrict_room_creation = true/g" $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        if ! grep -q -- 'unlimited_jids' $PROSODY_HOST_CONFIG ;then
+            sed -i "1s/^/unlimited_jids = { \"$JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN\", \"jvb@$JICOFO_AUTH_DOMAIN\" }\n/" $PROSODY_HOST_CONFIG
+            sed -i "s/VirtualHost \"$JICOFO_AUTH_DOMAIN\"/VirtualHost \"$JICOFO_AUTH_DOMAIN\"\n    modules_enabled = { \"limits_exception\"; }/g" $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        # Since prosody 13 admins are not automatically room owners and we expect that for jicofo
+        if ! grep -q -- 'component_admins_as_room_owners = ' $PROSODY_HOST_CONFIG ;then
+            sed -i "1s/^/component_admins_as_room_owners = true\n/" $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        JAAS_HOST_CONFIG="/etc/prosody/conf.avail/jaas.cfg.lua"
+        if [ "${JAAS_INPUT}" = "true" ] && [ ! -f $JAAS_HOST_CONFIG ]; then
+            sed -i "s/enabled = false -- Jitsi meet components/enabled = true -- Jitsi meet components/g" $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        # For those deployments that don't have the config in the jitsi-meet prosody config add the new jaas file
+        if [ ! -f $JAAS_HOST_CONFIG ] && ! grep -q "VirtualHost \"jigasi.meet.jitsi\"" $PROSODY_HOST_CONFIG; then
+            PROSODY_CONFIG_PRESENT="false"
+            cp /usr/share/jitsi-meet-prosody/jaas.cfg.lua $JAAS_HOST_CONFIG
+            sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" $JAAS_HOST_CONFIG
+        fi
+
+        if [ "${JAAS_INPUT}" = "true" ]; then
+            JAAS_HOST_CONFIG_ENABLED="/etc/prosody/conf.d/jaas.cfg.lua "
+            if [ ! -f $JAAS_HOST_CONFIG_ENABLED ] && ! grep -q "VirtualHost \"jigasi.meet.jitsi\"" $PROSODY_HOST_CONFIG; then
+                if [ -f $JAAS_HOST_CONFIG ]; then
+                    ln -s $JAAS_HOST_CONFIG $JAAS_HOST_CONFIG_ENABLED
+                    PROSODY_CONFIG_PRESENT="false"
+                fi
+            fi
+        fi
+
+        if [ ! -f /var/lib/prosody/$JVB_HOSTNAME.crt ]; then
+            # prosodyctl takes care for the permissions
+            # echo for using all default values
+            echo | prosodyctl cert generate $JVB_HOSTNAME
+
+            ln -sf /var/lib/prosody/$JVB_HOSTNAME.key /etc/prosody/certs/$JVB_HOSTNAME.key
+            ln -sf /var/lib/prosody/$JVB_HOSTNAME.crt /etc/prosody/certs/$JVB_HOSTNAME.crt
+        fi
+
+        CERT_ADDED_TO_TRUST="false"
+
+        if [ ! -f /var/lib/prosody/$JICOFO_AUTH_DOMAIN.crt ]; then
+            # prosodyctl takes care for the permissions
+            # echo for using all default values
+            echo | prosodyctl cert generate $JICOFO_AUTH_DOMAIN
+
+            AUTH_KEY_FILE="/etc/prosody/certs/$JICOFO_AUTH_DOMAIN.key"
+            AUTH_CRT_FILE="/etc/prosody/certs/$JICOFO_AUTH_DOMAIN.crt"
+
+            ln -sf /var/lib/prosody/$JICOFO_AUTH_DOMAIN.key $AUTH_KEY_FILE
+            ln -sf /var/lib/prosody/$JICOFO_AUTH_DOMAIN.crt $AUTH_CRT_FILE
+            ln -sf /var/lib/prosody/$JICOFO_AUTH_DOMAIN.crt /usr/local/share/ca-certificates/$JICOFO_AUTH_DOMAIN.crt
+
+            # we need to force updating certificates, in some cases java trust
+            # store not get re-generated with latest changes
+            update-ca-certificates -f
+
+            CERT_ADDED_TO_TRUST="true"
+
+            # don't fail on systems with custom config ($PROSODY_HOST_CONFIG is missing)
+            if [ -f $PROSODY_HOST_CONFIG ]; then
+                # now let's add the ssl cert for the auth. domain (we use # as a sed delimiter cause filepaths are confused with default / delimiter)
+                sed -i "s#VirtualHost \"$JICOFO_AUTH_DOMAIN\"#VirtualHost \"$JICOFO_AUTH_DOMAIN\"\n    ssl = {\n        key = \"$AUTH_KEY_FILE\";\n        certificate = \"$AUTH_CRT_FILE\";\n    \}#g" $PROSODY_HOST_CONFIG
+            fi
+
+            # trigger a restart
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        if [ "$PROSODY_CONFIG_PRESENT" = "false" ]; then
+            invoke-rc.d prosody restart || true
+
+            # give it some time to warm up
+            sleep 10
+
+            if [ "$PROSODY_CREATE_JICOFO_USER" = "true" ]; then
+                # create 'focus@auth.domain' prosody user
+                echo -e "$JICOFO_AUTH_PASSWORD\n$JICOFO_AUTH_PASSWORD" | prosodyctl adduser $JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN > /dev/null || true
+
+                # trigger a restart
+                PROSODY_CONFIG_PRESENT="false"
+            fi
+
+            # creates the user if it does not exist
+            echo -e "$JVB_SECRET\n$JVB_SECRET" | prosodyctl adduser jvb@$JICOFO_AUTH_DOMAIN > /dev/null || true
+
+            # Make sure the focus@auth user's roster includes the proxy component (this is idempotent)
+            prosodyctl mod_roster_command subscribe focus.$JVB_HOSTNAME $JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN
+
+            # To make sure the roster command is loaded
+            # Once we have https://issues.prosody.im/1908 we can start using prosodyctl shell roster subscribe
+            # and drop the wait and the prosody restart
+            sleep 1
+            invoke-rc.d prosody restart || true
+
+            # In case we had updated the certificates and restarted prosody, let's restart and the bridge and jicofo if possible
+            if [ -d /run/systemd/system ] && [ "$CERT_ADDED_TO_TRUST" = "true" ]; then
+                systemctl restart jitsi-videobridge2.service >/dev/null || true
+                systemctl restart jicofo.service >/dev/null || true
+            fi
+        fi
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+# dh_installdeb will replace this with shell code automatically
+# generated by other debhelper scripts.
+
+#DEBHELPER#
+
+exit 0

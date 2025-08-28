@@ -1,0 +1,24 @@
+Template: jitsi-meet-prosody/jvb-hostname
+Type: string
+_Description: The domain of the current installation (e.g. meet.jitsi.com):
+ The value of the domain that is set in the Jitsi Videobridge installation.
+
+Template: jitsi-videobridge/jvb-hostname
+Type: string
+_Description: The domain of the current installation (e.g. meet.jitsi.com):
+ The value of the domain that is set in the Jitsi Videobridge installation.
+
+Template: jitsi-videobridge/jvbsecret
+Type: password
+_Description: Jitsi Videobridge Component secret:
+ The secret used by Jitsi Videobridge to connect to xmpp server as component.
+
+Template: jicofo/jicofo-authpassword
+Type: password
+_Description: Jicofo user password:
+ The secret used to connect to xmpp server as jicofo user.
+
+Template: jitsi-meet-prosody/turn-secret
+Type: string
+_Description: The turn server secret
+ The secret used to connect to turnserver server.

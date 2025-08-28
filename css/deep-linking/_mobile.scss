@@ -1,0 +1,160 @@
+.deep-linking-mobile {
+    background-color: #fff;
+    height: 100dvh;
+    overflow: auto;
+    position: relative;
+    width: 100vw;
+
+    .header {
+        width: 100%;
+        height: 70px;
+        background-color: $deepLinkingMobileHeaderBackground;
+        text-align: center;
+        .logo {
+            margin-top: 15px;
+            margin-left: auto;
+            margin-right: auto;
+            height: $deepLinkingMobileLogoHeight;
+        }
+    }
+
+    a {
+        text-decoration: none;
+        color: $deepLinkingMobileLinkColor;
+    }
+
+    &__body {
+        color: $unsupportedBrowserTextColor;
+        margin: auto;
+        max-width: 40em;
+        padding: 35px 0 40px 0;
+        text-align: center;
+        width: 90%;
+
+        a:active {
+            text-decoration: none;
+        }
+
+        .image {
+            max-width: 80%;
+        }
+    }
+
+    &__text {
+        font-weight: bolder;
+        font-size: $deepLinkingMobileTextFontSize;
+        line-height: $deepLinkingMobileTextLineHeight;
+        padding: 10px 10px 0px 10px;
+    }
+
+    &__text,
+    .deep-linking-dial-in  {
+        font-size: 1em;
+        line-height: em(29px, 21px);
+        margin-bottom: 0.65em;
+
+        &_small {
+            font-size: 1.5em;
+            margin-bottom: 1em;
+            margin-top: em(21, 18);
+
+            strong {
+                font-size: em(21, 18);
+            }
+        }
+
+        table {
+            font-size: 1em;
+        }
+
+
+        .dial-in-conference-id {
+            text-align: center;
+            min-width: 200px;
+            margin-top: 40px;
+        }
+
+        .dial-in-conference-id {
+            margin: $deepLinkingDialInConferenceIdMargin;
+            padding: $deepLinkingDialInConferenceIdPadding;
+            background-color: $deepLinkingDialInConferenceIdBackgroundColor;
+            border-radius: $deepLinkingDialInConferenceIdBorderRadius;
+        }
+
+        .dial-in-conference-description {
+            font-size: $deepLinkingDialInConferenceDescriptionFontSize;
+            line-height: $deepLinkingDialInConferenceDescriptionLineHeight;
+            margin-bottom: $deepLinkingDialInConferenceDescriptionMarginBottom;
+        }
+
+        .toll-free-list {
+            min-width: 80px;
+        }
+
+        .numbers-list {
+            min-width: 150px;
+        }
+
+        li.toll-free:empty:before {
+            content: '.';
+            visibility: hidden;
+        }
+    }
+
+    &__href {
+        height: 2.2857142857142856em;
+        line-height: $depLinkingMobileHrefLineHeight;
+        margin: 18px auto 20px;
+        max-width: 300px;
+        width: auto;
+        font-weight: $deepLinkingMobileHrefFontWeight;
+        font-size: $deepLinkingMobileHrefFontSize;
+    }
+
+    &__button {
+        border: 0;
+        height: $deepLinkingMobileButtonHeight;
+        line-height: $deepLinkingMobileButtonLineHeight;
+        margin: $deepLinkingMobileButtonMargin;
+        padding: 0px 10px 0px 10px;
+        max-width: 300px;
+        width: $deepLinkingMobileButtonWidth;
+        @include border-radius(3px);
+        background-color: $unsupportedBrowserButtonBgColor;
+        color: #505F79;
+        font-weight: $deepLinkingMobileButtonFontWeight;
+        font-size: $deepLinkingMobileButtonFontSize;
+
+        &:active {
+            background-color: $unsupportedBrowserButtonBgColor;
+        }
+
+        &_primary {
+            background-color: $primaryUnsupportedBrowserButtonBgColor;
+            color: #FFFFFF;
+            border-radius: $primaryDeepLinkingMobileButtonBorderRadius;
+            &:active {
+                background-color: $primaryUnsupportedBrowserButtonBgColor;
+            }
+        }
+    }
+
+    .deep-linking-dial-in {
+        display: none;
+
+        &.has-numbers {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dial-in-numbers-list {
+            color: $unsupportedBrowserTextColor;
+            padding-left: 20px;
+        }
+
+        .dial-in-numbers-body {
+            vertical-align: top;
+        }
+    }
+}

@@ -1,0 +1,220 @@
+@use './variables';
+
+#chat-conversation-container {
+    // extract message input height
+    box-sizing: border-box;
+    height: calc(100% - 64px);
+    overflow: hidden;
+    position: relative;
+}
+
+#chatconversation {
+    box-sizing: border-box;
+    flex: 1;
+    font-size: 0.75rem;
+    height: calc(100% - 10px);
+    line-height: 1.25rem;
+    overflow: auto;
+    padding: 16px;
+    text-align: left;
+    word-wrap: break-word;
+
+    display: flex;
+    flex-direction: column;
+
+    &.focus-visible {
+        outline: 0;
+        margin: 4px;
+        border-radius: 0 0 variables.$borderRadius variables.$borderRadius;
+        box-shadow: 0px 0px 0px 2px #4687ed; // focus01/primary07
+    }
+
+    & > :first-child {
+        margin-top: auto;
+    }
+
+    a {
+        display: block;
+    }
+
+    a:link {
+        color: rgb(184, 184, 184);
+    }
+
+    a:visited {
+        color: white;
+    }
+
+    a:hover {
+        color: rgb(213, 213, 213);
+    }
+
+    a:active {
+        color: black;
+    }
+}
+
+.chat-input-container {
+    padding: 0 16px 24px;
+}
+
+#chat-input {
+    display: flex;
+    align-items: flex-end;
+    position: relative;
+}
+
+.chat-input {
+    flex: 1;
+    margin-right: 8px;
+}
+
+#nickname {
+    text-align: center;
+    color: #9d9d9d;
+    font-size: 1rem;
+    margin: auto 0;
+    padding: 0 16px;
+
+    label[for="nickinput"] {
+        > div > span {
+            color: #B8C7E0;
+        }
+    }
+    input {
+        height: 40px;
+    }
+
+    label {
+        line-height: 1.5rem;
+    }
+}
+
+.mobile-browser {
+    #nickname {
+        input {
+            height: 48px;
+        }
+    }
+
+    .chatmessage .usermessage {
+        font-size: 1rem;
+    }
+}
+
+.chatmessage {
+    &.error {
+        border-radius: 0px;
+
+        .timestamp,
+        .display-name {
+            display: none;
+        }
+
+        .usermessage {
+            color: #ffffff;
+            padding: 0;
+        }
+    }
+
+    .messagecontent {
+        max-width: 100%;
+        overflow: hidden;
+    }
+}
+
+#smileys {
+    font-size: 1.625rem;
+    margin: auto;
+    cursor: pointer;
+}
+
+#smileys img {
+    width: 22px;
+    padding: 2px;
+}
+
+.smiley-input {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#smileysContainer .smiley {
+    font-size: 1.625rem;
+}
+
+.smileyContainer {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    text-align: center;
+}
+
+.smileyContainer:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.chat-message-group {
+    &.local {
+        align-items: flex-end;
+
+        .display-name {
+            display: none;
+        }
+
+        .timestamp {
+            text-align: right;
+        }
+    }
+
+    &.error {
+        .display-name {
+            display: none;
+        }
+    }
+}
+
+.chat-dialog {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-top: -5px; // Margin set by atlaskit.
+
+    &-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 16px;
+        width: calc(100% - 32px);
+        box-sizing: border-box;
+        color: #fff;
+        font-weight: 600;
+        font-size: 1.5rem;
+        line-height: 2rem;
+
+        .jitsi-icon {
+            cursor: pointer;
+        }
+    }
+
+    #chatconversation {
+        width: 100%;
+    }
+}
+
+
+/**
+ * Make header close button more easily tappable on mobile.
+ */
+.mobile-browser .chat-dialog-header .jitsi-icon {
+    display: grid;
+    place-items: center;
+    height: 48px;
+    width: 48px;
+    background: #36383C;
+    border-radius: 3px;
+}

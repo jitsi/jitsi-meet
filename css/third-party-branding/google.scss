@@ -1,0 +1,32 @@
+/**
+ * The Google sign in button must follow Google's design guidelines.
+ * See: https://developers.google.com/identity/branding-guidelines
+ */
+.google-sign-in {
+    background-color: #4285f4;
+    border-radius: 2px;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: Roboto, arial, sans-serif;
+    font-size: 0.875rem;
+    padding: 1px;
+
+    .google-cta {
+        color: white;
+        display: inline-block;
+        /**
+         * Hack the line height for vertical centering of text.
+         */
+        line-height: 2rem;
+        margin: 0 15px;
+    }
+
+    .google-logo {
+        background-color: white;
+        border-radius: 2px;
+        display: inline-block;
+        padding: 8px;
+        height: 18px;
+        width: 18px;
+    }
+}

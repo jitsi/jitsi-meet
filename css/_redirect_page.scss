@@ -1,0 +1,40 @@
+.redirectPageMessage {
+    width: 30%;
+    margin: 20% auto;
+    text-align: center;
+    font-size: 1.5rem;
+
+    .thanks-msg {
+        border-bottom: 1px solid #FFFFFF;
+        padding-left: 30px;
+        padding-right: 30px;
+        p {
+            margin: 30px auto;
+            font-size: 1.5rem;
+            line-height: 1.5rem;
+        }
+    }
+    .hint-msg {
+        p {
+            margin: 26px auto;
+            font-weight: 600;
+            font-size: 1rem;
+            line-height: 1.125rem;
+            .hint-msg__holder{
+                font-weight: 200;
+            }
+        }
+        .happy-software{
+            width: 120px;
+            height: 86px;
+            margin: 0 auto;
+            background: transparent;
+        }
+    }
+    .forbidden-msg {
+        p {
+            font-size: 1rem;
+            margin-top: 15px;
+        }
+    }
+}

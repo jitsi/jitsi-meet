@@ -1,0 +1,38 @@
+/**
+ * Various overrides outside of the filmstrip to style the app to support a
+ * tiled thumbnail experience.
+ */
+.tile-view,
+.whiteboard-container,
+.stage-filmstrip {
+    /**
+     * Let the avatar grow with the tile.
+     */
+    .avatar-container {
+        max-height: initial;
+        max-width: initial;
+    }
+
+    /**
+     * Hide various features that should not be displayed while in tile view.
+     */
+    #dominantSpeaker,
+    #largeVideoElementsContainer,
+    #sharedVideo {
+        display: none;
+    }
+
+    /**
+     * The follow styling uses !important to override inline styles set with
+     * javascript.
+     *
+     * TODO: These overrides should be more easy to remove and should be removed
+     * when the components are in react so their rendering done declaratively,
+     * making conditional styling easier to apply.
+     */
+    #largeVideoElementsContainer,
+    #remoteConnectionMessage,
+    #remotePresenceMessage {
+        display: none !important;
+    }
+}

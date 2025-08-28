@@ -1,0 +1,24 @@
+.filmstrip__videos .videocontainer {
+    display: inline-block;
+    position: relative;
+    background-size: contain;
+    border: 2px solid transparent;
+    border-radius: $borderRadius;
+    margin: 0 2px;
+
+    &:hover {
+        cursor: hand;
+    }
+
+    & > video {
+        cursor: hand;
+        border-radius: $borderRadius;
+        object-fit: cover;
+        overflow: hidden;
+    }
+
+    .presence-label {
+        position: absolute;
+        z-index: $zindex3;
+    }
+}

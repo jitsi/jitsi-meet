@@ -1,0 +1,187 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+// Crashlytics integration is done as part of Firebase now, so it gets
+// automagically activated with google-services.json
+if (googleServicesEnabled) {
+    apply plugin: 'com.google.firebase.crashlytics'
+}
+
+// Use the number of seconds/10 since Jan 1 2019 as the versionCode.
+// This lets us upload a new build at most every 10 seconds for the
+// next ~680 years.
+// https://stackoverflow.com/a/38643838
+def vcode = (int) (((new Date().getTime() / 1000) - 1546297200) / 10)
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        applicationId 'org.jitsi.meet'
+        versionCode vcode
+        versionName project.appVersion
+
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+        }
+
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON", "-DANDROID_STL=c++_shared"
+                cppFlags "-std=c++17"
+                cFlags "-DANDROID_PLATFORM=android-26"
+            }
+        }
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${googleServicesEnabled}"
+            buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
+            applicationIdSuffix ".debug"
+        }
+        release {
+            // Uncomment the following line for signing a test release build.
+            // signingConfig signingConfigs.debug
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-release.pro'
+            buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${googleServicesEnabled}"
+            buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
+        }
+    }
+
+    sourceSets {
+        main {
+            java {
+                if (rootProject.ext.libreBuild) {
+                    srcDir "src"
+                    exclude "**/GoogleServicesHelper.java"
+                }
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility rootProject.ext.javaVersion
+        targetCompatibility rootProject.ext.javaVersion
+    }
+
+    kotlinOptions {
+        jvmTarget = rootProject.ext.jvmTargetVersion
+    }
+
+    kotlin {
+        jvmToolchain(rootProject.ext.jvmToolchainVersion)
+    }
+
+    namespace 'org.jitsi.meet'
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.13'
+
+    if (!rootProject.ext.libreBuild) {
+        // Sync with react-native-google-signin
+        implementation 'com.google.android.gms:play-services-auth:20.5.0'
+
+        // Firebase
+        //  - Crashlytics
+        implementation 'com.google.firebase:firebase-analytics:21.3.0'
+        implementation 'com.google.firebase:firebase-crashlytics:18.4.3'
+    }
+
+    implementation project(':sdk')
+}
+
+gradle.projectsEvaluated {
+    // Dropbox integration
+    def dropboxAppKey
+    if (project.file('dropbox.key').exists()) {
+        dropboxAppKey = project.file('dropbox.key').text.trim() - 'db-'
+    }
+
+    if (dropboxAppKey) {
+        android.defaultConfig.resValue('string', 'dropbox_app_key', "${dropboxAppKey}")
+
+        def dropboxActivity = """
+          <activity
+              android:configChanges="keyboard|orientation"
+              android:exported="true"
+              android:launchMode="singleTask"
+              android:name="com.dropbox.core.android.AuthActivity">
+            <intent-filter>
+              <action android:name="android.intent.action.VIEW" />
+              <category android:name="android.intent.category.BROWSABLE" />
+              <category android:name="android.intent.category.DEFAULT" />
+              <data android:scheme="db-${dropboxAppKey}" />
+            </intent-filter>
+          </activity>"""
+
+        android.applicationVariants.all { variant ->
+            variant.outputs.each { output ->
+                output.getProcessManifestProvider().get().doLast {
+                    def outputDir = multiApkManifestOutputDirectory.get().asFile
+                    def manifestPath = new File(outputDir, 'AndroidManifest.xml')
+                    def charset = 'UTF-8'
+                    def text
+                    text = manifestPath.getText(charset)
+                    text = text.replace('</application>', "${dropboxActivity}</application>")
+                    manifestPath.write(text, charset)
+                }
+            }
+        }
+    }
+
+    // Run React packager
+    android.applicationVariants.all { variant ->
+        def targetName = variant.name.capitalize()
+
+        def currentRunPackagerTask = tasks.create(
+            name: "run${targetName}ReactPackager",
+            type: Exec) {
+            group = "react"
+            description = "Run the React packager."
+
+            doFirst {
+                println "Starting the React packager..."
+
+                def androidRoot = file("${projectDir}/../")
+
+                // Set up the call to the script
+                workingDir androidRoot
+
+                // Run the packager
+                commandLine("scripts/run-packager.sh")
+            }
+
+            // Set up dev mode
+            def devEnabled = !targetName.toLowerCase().contains("release")
+
+            // Only enable for dev builds
+            enabled devEnabled
+        }
+
+        def packageTask = variant.packageApplicationProvider.get()
+
+        packageTask.dependsOn(currentRunPackagerTask)
+    }
+}
+
+if (googleServicesEnabled) {
+    apply plugin: 'com.google.gms.google-services'
+}

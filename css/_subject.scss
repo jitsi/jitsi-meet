@@ -1,0 +1,64 @@
+.subject {
+    color: #fff;
+    transition: opacity .6s ease-in-out;
+    z-index: $toolbarZ + 2;
+    margin-top: 20px;
+    opacity: 0;
+
+    &.visible {
+        opacity: 1;
+    }
+
+    &#autoHide.with-always-on {
+        overflow: hidden;
+        animation: hideSubject forwards .6s ease-out;
+
+        & > .subject-info-container {
+            justify-content: flex-start;
+        }
+
+        &.visible {
+            animation: showSubject forwards .6s ease-out;
+        }
+    }
+}
+
+.subject-info-container {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    height: 28px;
+
+    @media (max-width: 500px) {
+        flex-wrap: wrap;
+    }
+}
+
+.details-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    height: 48px;
+}
+
+@keyframes hideSubject {
+    0% {
+        max-width: 100%;
+    }
+
+    100% {
+        max-width: 0;
+    }
+}
+
+@keyframes showSubject {
+    0% {
+        max-width: 0%;
+    }
+
+    100% {
+        max-width: 100%;
+    }
+}

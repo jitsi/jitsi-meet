@@ -1,0 +1,113 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the jitsi-meet-web package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: jitsi-meet-web\n"
+"Report-Msgid-Bugs-To: jitsi-meet-web@packages.debian.org\n"
+"POT-Creation-Date: 2016-11-15 22:39+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: select
+#. Choices
+#: ../jitsi-meet-web-config.templates:1001
+msgid "Generate a new self-signed certificate"
+msgstr ""
+
+#. Type: select
+#. Choices
+#: ../jitsi-meet-web-config.templates:1001
+msgid "I want to use my own certificate"
+msgstr ""
+
+#. Type: select
+#. Description
+#: ../jitsi-meet-web-config.templates:1002
+msgid "SSL certificate for the Jitsi Meet instance"
+msgstr ""
+
+#. Type: select
+#. Description
+#: ../jitsi-meet-web-config.templates:1002
+msgid ""
+"Jitsi Meet is best to be set up with an SSL certificate. Having no "
+"certificate, a self-signed one will be generated. Having a certificate "
+"signed by a recognised CA, it can be uploaded on the server and point its "
+"location. The default filenames will be /etc/ssl/--domain.name--.key for the "
+"key and /etc/ssl/--domain.name--.crt for the certificate."
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../jitsi-meet-web-config.templates:2001
+msgid "Full local server path to the SSL key file:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../jitsi-meet-web-config.templates:2001
+msgid ""
+"The full path to the SSL key file on the server. If it has not been "
+"uploaded, now is a good time to do so."
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../jitsi-meet-web-config.templates:3001
+msgid "Full local server path to the SSL certificate file:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../jitsi-meet-web-config.templates:3001
+msgid ""
+"The full path to the SSL certificate file on the server. If you haven't "
+"uploaded it, now is a good time to upload it in another console."
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../jitsi-meet-web-config.templates:4001
+msgid "The hostname of the current installation:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../jitsi-meet-web-config.templates:4001
+msgid ""
+"The value of the domain that is set in the Jitsi Videobridge installation."
+msgstr ""
+
+#. Type: boolean
+#. Description
+#: ../jitsi-meet-web-config.templates:5001
+msgid "for internal use"
+msgstr ""
+
+#. Type: boolean
+#. Description
+#: ../jitsi-meet-web-config.templates:5001
+msgid "for internal use."
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../jitsi-meet-web-config.templates:6001
+msgid "Hostname:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../jitsi-meet-web-config.templates:6001
+msgid ""
+"The Jitsi Meet web config package needs the DNS hostname of your instance."
+msgstr ""

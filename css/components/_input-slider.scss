@@ -1,0 +1,43 @@
+$rangeInputThumbSize: 14;
+
+/**
+ * Disable the default webkit styles for range inputs (sliders).
+ */
+input[type=range]{
+    -webkit-appearance: none;
+    background: none;
+}
+
+/**
+ * Show focus for keyboard accessibility.
+ */
+input[type=range]:focus {
+    outline: 1px solid white !important;
+}
+
+/**
+ * Include the mixin for a range input style.
+ */
+@include slider {
+    background: #474747;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    height: 6px;
+    width: 100%;
+}
+
+/**
+ * Include the mixin for a range input thumb style.
+ */
+@include slider-thumb {
+    -webkit-appearance: none;
+    background: white;
+    border: 1px solid #3572b0;
+    border-radius: 50%;
+    box-shadow: 0px 0px 1px #3572b0;
+    cursor: pointer;
+    height: 14px;
+    margin-top: -4px;
+    width: 14px;
+}

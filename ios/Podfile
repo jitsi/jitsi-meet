@@ -1,0 +1,107 @@
+# Resolve react_native_pods.rb with node to allow for hoisting.
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
+
+platform :ios, '15.1'
+workspace 'jitsi-meet'
+
+install! 'cocoapods', :deterministic_uuids => false
+
+def cocoa_utilities
+    pod 'CocoaLumberjack', '3.7.4'
+end
+
+target 'JitsiMeet' do
+  project 'app/app.xcodeproj'
+
+  pod 'Firebase/Analytics', '~> 8.0'
+  pod 'Firebase/Crashlytics', '~> 8.0'
+end
+
+target 'JitsiMeetSDK' do
+  project 'sdk/sdk.xcodeproj'
+
+  # React Native and its dependencies
+  #
+
+  config = use_native_modules!
+  flags = get_default_flags()
+  use_react_native!(
+    :path => config[:reactNativePath],
+    :hermes_enabled => true,
+    :fabric_enabled => false,
+    :new_arch_enabled => false,
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  # We use auto linking, but some dependencies are excluded from the lite build
+  # (see react-native.config.js) so we add them here.
+
+  pod 'giphy-react-native-sdk', :path => '../node_modules/@giphy/react-native-sdk'
+  pod 'RNCalendarEvents', :path => '../node_modules/react-native-calendar-events'
+  pod 'RNGoogleSignin', :path => '../node_modules/@react-native-google-signin/google-signin'
+  pod 'RNWatch', :path => '../node_modules/react-native-watch-connectivity'
+
+  # Native pod dependencies
+  #
+
+  cocoa_utilities
+  pod 'ObjectiveDropboxOfficial', '6.2.3'
+end
+
+target 'JitsiMeetSDKLite' do
+    project 'sdk/sdk.xcodeproj'
+
+    # This is a more lightweight target, which removes some functionality.
+    # Check the react-native.config.js for the list of excluded packages.
+
+    # React Native and its dependencies
+    #
+
+    config = use_native_modules!
+    use_react_native!(
+      :path => config[:reactNativePath],
+      :hermes_enabled => true,
+      :fabric_enabled => false,
+      :new_arch_enabled => false,
+      # An absolute path to your application root.
+      :app_path => "#{Pod::Config.instance.installation_root}/.."
+    )
+
+    # Native pod dependencies
+    #
+
+    cocoa_utilities
+end
+
+post_install do |installer|
+
+  react_native_post_install(
+    installer,
+    use_native_modules![:reactNativePath],
+    :mac_catalyst_enabled => false,
+    # :ccache_enabled => true
+  )
+  installer.pods_project.targets.each do |target|
+    # https://github.com/CocoaPods/CocoaPods/issues/11402
+    if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.bundle"
+      target.build_configurations.each do |config|
+        config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+      end
+    end
+
+    target.build_configurations.each do |config|
+      config.build_settings['SUPPORTS_MACCATALYST'] = 'NO'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
+      config.build_settings['OTHER_SWIFT_FLAGS'] = '$(inherited) -no-verify-emitted-module-interface'
+    end
+  end
+
+  # Patch SocketRocket to support TLS 1.3
+  %x(patch Pods/SocketRocket/SocketRocket/SRSecurityPolicy.m -N < patches/ws-tls13.diff)
+
+end

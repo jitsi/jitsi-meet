@@ -1,0 +1,19 @@
+/**
+* Initialize
+**/
+
+.popupmenu__contents {
+    .popupmenu__volume-slider {
+            &::-webkit-slider-runnable-track {
+                background-color: #246FE5;
+            }
+
+            &::-moz-range-track {
+                background-color: #246FE5;
+            }
+
+            &::-ms-fill-lower {
+                background-color: #246FE5;
+            }
+        }
+}

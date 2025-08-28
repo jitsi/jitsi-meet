@@ -1,0 +1,58 @@
+Source: jitsi-meet-web
+Section: net
+Priority: extra
+Maintainer: Jitsi Team <dev@jitsi.org>
+Uploaders: Emil Ivov <emcho@jitsi.org>, Damian Minkov <damencho@jitsi.org>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.6
+Homepage: https://jitsi.org/meet
+
+Package: jitsi-meet-web
+Replaces: jitsi-meet (<= 1.0.1525-1)
+Architecture: all
+Depends: ${misc:Depends}
+Description: WebRTC JavaScript video conferences
+ Jitsi Meet is a WebRTC JavaScript application that uses Jitsi
+ Videobridge to provide high quality, scalable video conferences.
+ .
+ It is a web interface to Jitsi Videobridge for audio and video
+ forwarding and relaying.
+
+Package: jitsi-meet-web-config
+Architecture: all
+Pre-Depends: nginx | nginx-full | nginx-extras | openresty | apache2
+Depends: openssl, curl
+Description: Configuration for web serving of Jitsi Meet
+ Jitsi Meet is a WebRTC JavaScript application that uses Jitsi
+ Videobridge to provide high quality, scalable video conferences.
+ .
+ It is a web interface to Jitsi Videobridge for audio and video
+ forwarding and relaying, using a webserver Nginx or Apache2.
+ .
+ This package contains configuration for Nginx to be used with
+ Jitsi Meet.
+
+Package: jitsi-meet-prosody
+Architecture: all
+Depends: openssl, prosody (>= 0.12.0) | prosody-trunk | prosody-0.12 | prosody-13.0, lua-sec, lua-basexx, lua-luaossl, lua-cjson, lua-inspect
+Replaces: jitsi-meet-tokens
+Description: Prosody configuration for Jitsi Meet
+ Jitsi Meet is a WebRTC JavaScript application that uses Jitsi
+ Videobridge to provide high quality, scalable video conferences.
+ .
+ It is a web interface to Jitsi Videobridge for audio and video
+ forwarding and relaying.
+ .
+ This package contains configuration for Prosody to be used with
+ Jitsi Meet.
+
+Package: jitsi-meet-tokens
+Architecture: all
+Depends: ${misc:Depends}, prosody-trunk | prosody-0.12 | prosody-13.0 | prosody (>= 0.12.0), jitsi-meet-prosody
+Description: Prosody token authentication plugin for Jitsi Meet
+
+Package: jitsi-meet-turnserver
+Architecture: all
+Pre-Depends: jitsi-meet-web-config
+Depends: ${misc:Depends}, jitsi-meet-prosody, coturn, dnsutils
+Description: Configures coturn to be used with Jitsi Meet

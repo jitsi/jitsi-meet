@@ -1,0 +1,177 @@
+swagger: "2.0"
+info:
+  description: "Documents the REST calls used by Jitsi Meet to integrate with other services"
+  version: "1.0.0"
+  title: "Swagger Video"
+  termsOfService: "https://jitsi.org/CloudAPITOS/"
+  contact:
+    email: "team@jitsi.org"
+host: "jitsi-api.jitsi.org"
+basePath: "/"
+tags:
+- name: "conferenceMapper"
+  description: "Conference to ID Mapper"
+  externalDocs:
+    description: "Conference API Details"
+    url: "https://jitsi.org/CloudAPI"
+- name: "phoneNumberList"
+  description: "List of dial-in numbers"
+schemes:
+  - "https"
+paths:
+  /conferenceMapper:
+    get:
+      tags:
+      - "conferenceMapper"
+      summary: "Create or retrieve conference ID mapping"
+      description: "When called with a conference, creates a new ID and both stores and returns the result.  When called with an ID, returns the mapping if previously created."
+      operationId: "GETconferenceMapper"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "query"
+        name: "conference"
+        type: "string"
+        format: "JID"
+        description: "Full JID (room@conference.server.domain) for the conference to create or return existing conference mapping.  Used preferentially over all other input parameters (search by conference)"
+      - in: "query"
+        name: "id"
+        type: "number"
+        description: "ID to search for existing conference mapping.  Only used when provided alone (search by ID)"
+      responses:
+        200:
+          description: "mapping search performed"
+          schema:
+            $ref: "#/definitions/ConferenceMapperDetails"
+        405:
+          description: "Invalid input"
+    post:
+      tags:
+      - "conferenceMapper"
+      summary: "Create or retrieve conference ID mapping"
+      description: "When called with a conference, creates a new ID and both stores and returns the result.  When called with an ID, returns the mapping if previously created."
+      operationId: "POSTconferenceMapper"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Conference Mapper Request"
+        required: true
+        schema:
+          $ref: "#/definitions/ConferenceMapperRequest"
+      responses:
+        200:
+          description: "mapping search performed"
+          schema:
+            $ref: "#/definitions/ConferenceMapperDetails"
+        405:
+          description: "Invalid input"
+
+  /phoneNumberList:
+    get:
+      tags:
+      - "phoneNumberList"
+      summary: "Returns a list phone numbers by country"
+      description: "Used to populate the Share The Link section of jitsi-meet"
+      operationId: "phoneNumberList"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/PhoneNumberListAnswer"
+  /waiting-queue/golive:
+    post:
+      tags:
+      - waitingQueueGoLive
+      summary: Post a go live request
+      description: Mark the conference as live, notify all visitors waiting.
+      operationId: goLive
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Go Live Request"
+        required: true
+        schema:
+          "$ref": "#/definitions/GoLiveRequest"
+      responses:
+        '200':
+          description: Successful operation
+        '404':
+          description: Missing conference
+        '500':
+          description: Failed operation
+securityDefinitions:
+  token:
+    type: "apiKey"
+    name: "token"
+    in: "query"
+  Bearer:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+definitions:
+
+  ConferenceMapperRequest:
+    description: "Request to create or find a conference mapping"
+    type: "object"
+    properties:
+      id:
+        type: "number"
+        description: "ID to search for existing conference mapping.  Only used when provided alone (search by ID)"
+      conference:
+        type: "string"
+        format: "JID"
+        description: "Full JID (room@conference.server.domain) for the conference to create or return existing conference mapping.  Used preferentially over all other input parameters (search by conference)"
+      room:
+        type: "string"
+        description: "Room part of the conference.  Required if 'conference' is not provided.  Used to generate a 'conference' value (search by conference)"
+      domain:
+        type: "string"
+        description: "Domain part of the conference.  Used if 'conference' is not provided.  Defaults to domain of the API endpoint.   Used to generate a 'conference' value (search by conference)"
+
+  ConferenceMapperDetails:
+    description: "Conference mapping between conference JID and numeric ID"
+    type: "object"
+    properties:
+      id:
+        type: "number"
+        description: "Unique ID mapped to conference"
+      conference:
+        type: "string"
+        format: "JID"
+        description: "Full JID for the conference OR boolean false if no conference was found (search by ID)"
+
+  PhoneNumberListAnswer:
+    description: "Answer with Phone number list and additional information"
+    type: "object"
+    properties:
+      countryCode:
+        type: string
+      formattedNumber:
+        type: string
+      tollFree:
+        type: boolean
+    example:
+      - {"countryCode":"US","tollFree":false,"formattedNumber":"+1 123-456-7890"}
+      - {"countryCode":"UK","tollFree":true,"formattedNumber":"+44 123 456 7890"}
+
+  GoLiveRequest:
+      type: object
+      properties:
+        conference:
+          type: string
+externalDocs:
+  description: "Find out more about the Jitsi Cloud API"
+  url: "https://jitsi.org/CloudAPI"
+  

@@ -1,0 +1,24 @@
+# The build artifacts of the jitsi-meet project.
+build/*
+
+doc/*
+
+# Third-party source code which we (1) do not want to modify or (2) try to
+# modify as little as possible.
+libs/*
+resources/*
+react/features/stream-effects/virtual-background/vendor/*
+react/features/face-landmarks/resources/*
+
+# ESLint will by default ignore its own configuration file. However, there does
+# not seem to be a reason why we will want to risk being inconsistent with our
+# remaining JavaScript source code.
+!.eslintrc.js
+
+# Not worth it.
+actionTypes.ts
+
+# It's not complete until all files are copied at build time.
+react-native-sdk/
+
+*.d.ts

@@ -1,0 +1,1048 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0B412F181EDEC65D00B1A0A6 /* JitsiMeetView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B412F161EDEC65D00B1A0A6 /* JitsiMeetView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0B412F191EDEC65D00B1A0A6 /* JitsiMeetView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B412F171EDEC65D00B1A0A6 /* JitsiMeetView.m */; };
+		0B412F221EDEF6EA00B1A0A6 /* JitsiMeetViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B412F1B1EDEC80100B1A0A6 /* JitsiMeetViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0B93EF7E1EC9DDCD0030D24D /* RCTBridgeWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B93EF7C1EC9DDCD0030D24D /* RCTBridgeWrapper.h */; };
+		0B93EF7F1EC9DDCD0030D24D /* RCTBridgeWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B93EF7D1EC9DDCD0030D24D /* RCTBridgeWrapper.m */; };
+		0BA13D311EE83FF8007BEF7F /* ExternalAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BA13D301EE83FF8007BEF7F /* ExternalAPI.m */; };
+		0BB9AD771F5EC6CE001C08DB /* CallKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BB9AD761F5EC6CE001C08DB /* CallKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		0BB9AD791F5EC6D7001C08DB /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BB9AD781F5EC6D7001C08DB /* Intents.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		0BB9AD7B1F5EC8F4001C08DB /* CallKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BB9AD7A1F5EC8F4001C08DB /* CallKit.m */; };
+		0BB9AD7D1F60356D001C08DB /* AppInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BB9AD7C1F60356D001C08DB /* AppInfo.m */; };
+		0BC4B8691F8C03A700CE8B21 /* CallKitIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BC4B8681F8C01E100CE8B21 /* CallKitIcon.png */; };
+		0BCA495F1EC4B6C600B793EE /* AudioMode.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BCA495C1EC4B6C600B793EE /* AudioMode.m */; };
+		0BCA49601EC4B6C600B793EE /* POSIX.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BCA495D1EC4B6C600B793EE /* POSIX.m */; };
+		0BCA49611EC4B6C600B793EE /* Proximity.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BCA495E1EC4B6C600B793EE /* Proximity.m */; };
+		0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BD906E81EC0C00300C8C18E /* JitsiMeet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3453F4A32680898C4A40E821 /* libPods-JitsiMeetSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 927ED7DF018DE5E12C4C3404 /* libPods-JitsiMeetSDK.a */; };
+		4E0EF63028CA2FB3005D1B03 /* JMCallKitEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E0EF62E28CA2FB3005D1B03 /* JMCallKitEmitter.h */; };
+		4E0EF63128CA2FB3005D1B03 /* JMCallKitEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E0EF62E28CA2FB3005D1B03 /* JMCallKitEmitter.h */; };
+		4E0EF63228CA2FB3005D1B03 /* JMCallKitEmitter.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E0EF62F28CA2FB3005D1B03 /* JMCallKitEmitter.m */; };
+		4E0EF63328CA2FB3005D1B03 /* JMCallKitEmitter.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E0EF62F28CA2FB3005D1B03 /* JMCallKitEmitter.m */; };
+		4E0EF63528CA317E005D1B03 /* JMCallKitListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E0EF63428CA317E005D1B03 /* JMCallKitListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4E0EF63628CA317E005D1B03 /* JMCallKitListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E0EF63428CA317E005D1B03 /* JMCallKitListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4E0EF63928CA4069005D1B03 /* JMCallKitProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E0EF63728CA4069005D1B03 /* JMCallKitProxy.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4E0EF63A28CA4069005D1B03 /* JMCallKitProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E0EF63728CA4069005D1B03 /* JMCallKitProxy.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4E0EF63B28CA4069005D1B03 /* JMCallKitProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E0EF63828CA4069005D1B03 /* JMCallKitProxy.m */; };
+		4E0EF63C28CA4069005D1B03 /* JMCallKitProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E0EF63828CA4069005D1B03 /* JMCallKitProxy.m */; };
+		4E51B76425E5345E0038575A /* ScheenshareEventEmiter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E51B76225E5345E0038575A /* ScheenshareEventEmiter.h */; };
+		4E51B76525E5345E0038575A /* ScheenshareEventEmiter.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E51B76325E5345E0038575A /* ScheenshareEventEmiter.m */; };
+		4E812F3328F9A4290087ACC9 /* JitsiMeetView+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E812F3228F9A4290087ACC9 /* JitsiMeetView+Private.h */; };
+		4E812F3428F9A4290087ACC9 /* JitsiMeetView+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E812F3228F9A4290087ACC9 /* JitsiMeetView+Private.h */; };
+		4E812F3928F9A4ED0087ACC9 /* JitsiMeetView+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E812F3628F9A4ED0087ACC9 /* JitsiMeetView+Private.m */; };
+		4E812F3A28F9A4ED0087ACC9 /* JitsiMeetView+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E812F3628F9A4ED0087ACC9 /* JitsiMeetView+Private.m */; };
+		4ED4FFF32721B9B90074E620 /* JitsiAudioSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 4ED4FFF12721B9B90074E620 /* JitsiAudioSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4ED4FFF42721B9B90074E620 /* JitsiAudioSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 4ED4FFF22721B9B90074E620 /* JitsiAudioSession.m */; };
+		6F08DF7D4458EE3CF3F36F6D /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		9A8EE79C77C17743BB66E8BD /* libPods-JitsiMeetSDKLite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B46497DE9A95BDF5E312AF48 /* libPods-JitsiMeetSDKLite.a */; };
+		A4A934E9212F3ADB001E9388 /* Dropbox.m in Sources */ = {isa = PBXBuildFile; fileRef = A4A934E8212F3ADB001E9388 /* Dropbox.m */; };
+		C6245F5D2053091D0040BE68 /* image-resize@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5B2053091D0040BE68 /* image-resize@2x.png */; };
+		C6245F5E2053091D0040BE68 /* image-resize@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5C2053091D0040BE68 /* image-resize@3x.png */; };
+		C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425E204EF76800E062DD /* DragGestureController.swift */; };
+		C6CC49AF207412CF000DFA42 /* PiPViewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */; };
+		C81E9AB925AC5AD800B134D9 /* ExternalAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = C81E9AB825AC5AD800B134D9 /* ExternalAPI.h */; };
+		C8AFD27F2462C613000293D2 /* InfoPlistUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = C8AFD27D2462C613000293D2 /* InfoPlistUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C8AFD2802462C613000293D2 /* InfoPlistUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = C8AFD27E2462C613000293D2 /* InfoPlistUtil.m */; };
+		DE438CDA2350934700DD541D /* JavaScriptSandbox.m in Sources */ = {isa = PBXBuildFile; fileRef = DE438CD82350934700DD541D /* JavaScriptSandbox.m */; };
+		DE65AACA2317FFCD00290BEC /* LogUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = DE65AAC92317FFCD00290BEC /* LogUtils.h */; };
+		DE65AACC2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = DE65AACB2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h */; };
+		DE762DB422AFDE76000DEBD6 /* JitsiMeetUserInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = DE762DB322AFDE76000DEBD6 /* JitsiMeetUserInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DE762DB622AFDE8D000DEBD6 /* JitsiMeetUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = DE762DB522AFDE8D000DEBD6 /* JitsiMeetUserInfo.m */; };
+		DE81A2D42316AC4D00AE1940 /* JitsiMeetLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = DE81A2D22316AC4D00AE1940 /* JitsiMeetLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DE81A2D52316AC4D00AE1940 /* JitsiMeetLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = DE81A2D32316AC4D00AE1940 /* JitsiMeetLogger.m */; };
+		DE81A2D92316AC7600AE1940 /* LogBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = DE81A2D72316AC7600AE1940 /* LogBridge.m */; };
+		DE81A2DE2317ED5400AE1940 /* JitsiMeetBaseLogHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = DE81A2DC2317ED5400AE1940 /* JitsiMeetBaseLogHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DE81A2DF2317ED5400AE1940 /* JitsiMeetBaseLogHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = DE81A2DD2317ED5400AE1940 /* JitsiMeetBaseLogHandler.m */; };
+		DE9A0130289A9A9A00E41CBB /* JitsiMeetUserInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = DE762DB322AFDE76000DEBD6 /* JitsiMeetUserInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DE9A0131289A9A9A00E41CBB /* JitsiMeetView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B412F161EDEC65D00B1A0A6 /* JitsiMeetView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DE9A0132289A9A9A00E41CBB /* RCTBridgeWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B93EF7C1EC9DDCD0030D24D /* RCTBridgeWrapper.h */; };
+		DE9A0133289A9A9A00E41CBB /* JitsiMeetBaseLogHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = DE81A2DC2317ED5400AE1940 /* JitsiMeetBaseLogHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DE9A0134289A9A9A00E41CBB /* JitsiMeetSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = DEA9F283258A5D9900D4CD74 /* JitsiMeetSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DE9A0135289A9A9A00E41CBB /* ScheenshareEventEmiter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E51B76225E5345E0038575A /* ScheenshareEventEmiter.h */; };
+		DE9A0136289A9A9A00E41CBB /* JitsiMeetBaseLogHandler+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = DE65AACB2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h */; };
+		DE9A0138289A9A9A00E41CBB /* JitsiMeetViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B412F1B1EDEC80100B1A0A6 /* JitsiMeetViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DE9A0139289A9A9A00E41CBB /* JitsiAudioSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 4ED4FFF12721B9B90074E620 /* JitsiAudioSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DE9A013B289A9A9A00E41CBB /* JitsiMeet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BD906E81EC0C00300C8C18E /* JitsiMeet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DE9A013C289A9A9A00E41CBB /* JitsiMeetLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = DE81A2D22316AC4D00AE1940 /* JitsiMeetLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DE9A013D289A9A9A00E41CBB /* LogUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = DE65AAC92317FFCD00290BEC /* LogUtils.h */; };
+		DE9A013F289A9A9A00E41CBB /* JitsiMeetConferenceOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = DEAD3224220C497000E93636 /* JitsiMeetConferenceOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DE9A0140289A9A9A00E41CBB /* ExternalAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = C81E9AB825AC5AD800B134D9 /* ExternalAPI.h */; };
+		DE9A0141289A9A9A00E41CBB /* InfoPlistUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = C8AFD27D2462C613000293D2 /* InfoPlistUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DE9A0143289A9A9A00E41CBB /* CallKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BB9AD7A1F5EC8F4001C08DB /* CallKit.m */; };
+		DE9A0144289A9A9A00E41CBB /* JitsiMeetBaseLogHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = DE81A2DD2317ED5400AE1940 /* JitsiMeetBaseLogHandler.m */; };
+		DE9A0146289A9A9A00E41CBB /* JitsiAudioSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 4ED4FFF22721B9B90074E620 /* JitsiAudioSession.m */; };
+		DE9A0147289A9A9A00E41CBB /* AppInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BB9AD7C1F60356D001C08DB /* AppInfo.m */; };
+		DE9A0148289A9A9A00E41CBB /* LogBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = DE81A2D72316AC7600AE1940 /* LogBridge.m */; };
+		DE9A0149289A9A9A00E41CBB /* RNRootView.m in Sources */ = {isa = PBXBuildFile; fileRef = DEAFA778229EAD520033A7FA /* RNRootView.m */; };
+		DE9A014A289A9A9A00E41CBB /* JitsiMeetUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = DE762DB522AFDE8D000DEBD6 /* JitsiMeetUserInfo.m */; };
+		DE9A014B289A9A9A00E41CBB /* JitsiMeetConferenceOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = DEAD3225220C497000E93636 /* JitsiMeetConferenceOptions.m */; };
+		DE9A014C289A9A9A00E41CBB /* RCTBridgeWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B93EF7D1EC9DDCD0030D24D /* RCTBridgeWrapper.m */; };
+		DE9A014D289A9A9A00E41CBB /* ExternalAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BA13D301EE83FF8007BEF7F /* ExternalAPI.m */; };
+		DE9A014E289A9A9A00E41CBB /* POSIX.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BCA495D1EC4B6C600B793EE /* POSIX.m */; };
+		DE9A014F289A9A9A00E41CBB /* InfoPlistUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = C8AFD27E2462C613000293D2 /* InfoPlistUtil.m */; };
+		DE9A0150289A9A9A00E41CBB /* PiPViewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */; };
+		DE9A0151289A9A9A00E41CBB /* LocaleDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = DEFC743D21B178FA00E4DD96 /* LocaleDetector.m */; };
+		DE9A0152289A9A9A00E41CBB /* AudioMode.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BCA495C1EC4B6C600B793EE /* AudioMode.m */; };
+		DE9A0153289A9A9A00E41CBB /* Proximity.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BCA495E1EC4B6C600B793EE /* Proximity.m */; };
+		DE9A0155289A9A9A00E41CBB /* ReactUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = DEFE535521FB2E8300011A3A /* ReactUtils.m */; };
+		DE9A0157289A9A9A00E41CBB /* DragGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425E204EF76800E062DD /* DragGestureController.swift */; };
+		DE9A0158289A9A9A00E41CBB /* ScheenshareEventEmiter.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E51B76325E5345E0038575A /* ScheenshareEventEmiter.m */; };
+		DE9A015C289A9A9A00E41CBB /* JitsiMeetLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = DE81A2D32316AC4D00AE1940 /* JitsiMeetLogger.m */; };
+		DE9A015E289A9A9A00E41CBB /* JitsiMeetView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B412F171EDEC65D00B1A0A6 /* JitsiMeetView.m */; };
+		DE9A015F289A9A9A00E41CBB /* JitsiMeet.m in Sources */ = {isa = PBXBuildFile; fileRef = DEFE535321FB1BF800011A3A /* JitsiMeet.m */; };
+		DE9A0160289A9A9A00E41CBB /* JavaScriptSandbox.m in Sources */ = {isa = PBXBuildFile; fileRef = DE438CD82350934700DD541D /* JavaScriptSandbox.m */; };
+		DE9A0162289A9A9A00E41CBB /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BB9AD781F5EC6D7001C08DB /* Intents.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		DE9A0163289A9A9A00E41CBB /* CallKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BB9AD761F5EC6CE001C08DB /* CallKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		DE9A0166289A9A9A00E41CBB /* CallKitIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BC4B8681F8C01E100CE8B21 /* CallKitIcon.png */; };
+		DE9A0167289A9A9A00E41CBB /* image-resize@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5B2053091D0040BE68 /* image-resize@2x.png */; };
+		DE9A0168289A9A9A00E41CBB /* image-resize@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5C2053091D0040BE68 /* image-resize@3x.png */; };
+		DEA9F284258A5D9900D4CD74 /* JitsiMeetSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = DEA9F283258A5D9900D4CD74 /* JitsiMeetSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DEAD3226220C497000E93636 /* JitsiMeetConferenceOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = DEAD3224220C497000E93636 /* JitsiMeetConferenceOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DEAD3227220C497000E93636 /* JitsiMeetConferenceOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = DEAD3225220C497000E93636 /* JitsiMeetConferenceOptions.m */; };
+		DEAFA779229EAD520033A7FA /* RNRootView.m in Sources */ = {isa = PBXBuildFile; fileRef = DEAFA778229EAD520033A7FA /* RNRootView.m */; };
+		DEFC743F21B178FA00E4DD96 /* LocaleDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = DEFC743D21B178FA00E4DD96 /* LocaleDetector.m */; };
+		DEFE535421FB1BF800011A3A /* JitsiMeet.m in Sources */ = {isa = PBXBuildFile; fileRef = DEFE535321FB1BF800011A3A /* JitsiMeet.m */; };
+		DEFE535621FB2E8300011A3A /* ReactUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = DEFE535521FB2E8300011A3A /* ReactUtils.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		09A78016288AF50ACD28A10D /* Pods-JitsiMeetSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeetSDK.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeetSDK/Pods-JitsiMeetSDK.debug.xcconfig"; sourceTree = "<group>"; };
+		0B412F161EDEC65D00B1A0A6 /* JitsiMeetView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JitsiMeetView.h; sourceTree = "<group>"; };
+		0B412F171EDEC65D00B1A0A6 /* JitsiMeetView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JitsiMeetView.m; sourceTree = "<group>"; };
+		0B412F1B1EDEC80100B1A0A6 /* JitsiMeetViewDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetViewDelegate.h; sourceTree = "<group>"; };
+		0B93EF7A1EC608550030D24D /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		0B93EF7C1EC9DDCD0030D24D /* RCTBridgeWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTBridgeWrapper.h; sourceTree = "<group>"; };
+		0B93EF7D1EC9DDCD0030D24D /* RCTBridgeWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTBridgeWrapper.m; sourceTree = "<group>"; };
+		0BA13D301EE83FF8007BEF7F /* ExternalAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExternalAPI.m; sourceTree = "<group>"; };
+		0BB9AD761F5EC6CE001C08DB /* CallKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CallKit.framework; path = System/Library/Frameworks/CallKit.framework; sourceTree = SDKROOT; };
+		0BB9AD781F5EC6D7001C08DB /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
+		0BB9AD7A1F5EC8F4001C08DB /* CallKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CallKit.m; sourceTree = "<group>"; };
+		0BB9AD7C1F60356D001C08DB /* AppInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppInfo.m; sourceTree = "<group>"; };
+		0BC4B8681F8C01E100CE8B21 /* CallKitIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = CallKitIcon.png; path = "../../react/features/mobile/call-integration/CallKitIcon.png"; sourceTree = "<group>"; };
+		0BCA495C1EC4B6C600B793EE /* AudioMode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioMode.m; sourceTree = "<group>"; };
+		0BCA495D1EC4B6C600B793EE /* POSIX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POSIX.m; sourceTree = "<group>"; };
+		0BCA495E1EC4B6C600B793EE /* Proximity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Proximity.m; sourceTree = "<group>"; };
+		0BD906E51EC0C00300C8C18E /* JitsiMeetSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JitsiMeetSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0BD906E81EC0C00300C8C18E /* JitsiMeet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeet.h; sourceTree = "<group>"; };
+		0BD906E91EC0C00300C8C18E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4E0EF62E28CA2FB3005D1B03 /* JMCallKitEmitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMCallKitEmitter.h; sourceTree = "<group>"; };
+		4E0EF62F28CA2FB3005D1B03 /* JMCallKitEmitter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMCallKitEmitter.m; sourceTree = "<group>"; };
+		4E0EF63428CA317E005D1B03 /* JMCallKitListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMCallKitListener.h; sourceTree = "<group>"; };
+		4E0EF63728CA4069005D1B03 /* JMCallKitProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMCallKitProxy.h; sourceTree = "<group>"; };
+		4E0EF63828CA4069005D1B03 /* JMCallKitProxy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMCallKitProxy.m; sourceTree = "<group>"; };
+		4E51B76225E5345E0038575A /* ScheenshareEventEmiter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScheenshareEventEmiter.h; sourceTree = "<group>"; };
+		4E51B76325E5345E0038575A /* ScheenshareEventEmiter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScheenshareEventEmiter.m; sourceTree = "<group>"; };
+		4E812F3228F9A4290087ACC9 /* JitsiMeetView+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetView+Private.h"; sourceTree = "<group>"; };
+		4E812F3628F9A4ED0087ACC9 /* JitsiMeetView+Private.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "JitsiMeetView+Private.m"; sourceTree = "<group>"; };
+		4ED4FFF12721B9B90074E620 /* JitsiAudioSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiAudioSession.h; sourceTree = "<group>"; };
+		4ED4FFF22721B9B90074E620 /* JitsiAudioSession.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiAudioSession.m; sourceTree = "<group>"; };
+		4ED4FFF52721BAE10074E620 /* JitsiAudioSession+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiAudioSession+Private.h"; sourceTree = "<group>"; };
+		86389F55993FAAF6AEB3FA3E /* Pods-JitsiMeetSDKLite.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeetSDKLite.release.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeetSDKLite/Pods-JitsiMeetSDKLite.release.xcconfig"; sourceTree = "<group>"; };
+		891FE43DAD30BC8976683100 /* Pods-JitsiMeetSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeetSDK.release.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeetSDK/Pods-JitsiMeetSDK.release.xcconfig"; sourceTree = "<group>"; };
+		8F48C340DE0D91D1012976C5 /* Pods-JitsiMeetSDKLite.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeetSDKLite.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeetSDKLite/Pods-JitsiMeetSDKLite.debug.xcconfig"; sourceTree = "<group>"; };
+		927ED7DF018DE5E12C4C3404 /* libPods-JitsiMeetSDK.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JitsiMeetSDK.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		98E09B5C73D9036B4ED252FC /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
+		9C77CA3CC919B081F1A52982 /* Pods-JitsiMeet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.release.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.release.xcconfig"; sourceTree = "<group>"; };
+		A4A934E8212F3ADB001E9388 /* Dropbox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Dropbox.m; sourceTree = "<group>"; };
+		A4A934EB21349A06001E9388 /* Dropbox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Dropbox.h; sourceTree = "<group>"; };
+		B46497DE9A95BDF5E312AF48 /* libPods-JitsiMeetSDKLite.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JitsiMeetSDKLite.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6245F5B2053091D0040BE68 /* image-resize@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "image-resize@2x.png"; path = "src/picture-in-picture/image-resize@2x.png"; sourceTree = "<group>"; };
+		C6245F5C2053091D0040BE68 /* image-resize@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "image-resize@3x.png"; path = "src/picture-in-picture/image-resize@3x.png"; sourceTree = "<group>"; };
+		C6A3425E204EF76800E062DD /* DragGestureController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragGestureController.swift; sourceTree = "<group>"; };
+		C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiPViewCoordinator.swift; sourceTree = "<group>"; };
+		C81E9AB825AC5AD800B134D9 /* ExternalAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalAPI.h; sourceTree = "<group>"; };
+		C8AFD27D2462C613000293D2 /* InfoPlistUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InfoPlistUtil.h; sourceTree = "<group>"; };
+		C8AFD27E2462C613000293D2 /* InfoPlistUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InfoPlistUtil.m; sourceTree = "<group>"; };
+		DE438CD82350934700DD541D /* JavaScriptSandbox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JavaScriptSandbox.m; sourceTree = "<group>"; };
+		DE65AAC92317FFCD00290BEC /* LogUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LogUtils.h; sourceTree = "<group>"; };
+		DE65AACB2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetBaseLogHandler+Private.h"; sourceTree = "<group>"; };
+		DE762DB322AFDE76000DEBD6 /* JitsiMeetUserInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetUserInfo.h; sourceTree = "<group>"; };
+		DE762DB522AFDE8D000DEBD6 /* JitsiMeetUserInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiMeetUserInfo.m; sourceTree = "<group>"; };
+		DE762DB722AFE166000DEBD6 /* JitsiMeetUserInfo+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetUserInfo+Private.h"; sourceTree = "<group>"; };
+		DE81A2D22316AC4D00AE1940 /* JitsiMeetLogger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetLogger.h; sourceTree = "<group>"; };
+		DE81A2D32316AC4D00AE1940 /* JitsiMeetLogger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiMeetLogger.m; sourceTree = "<group>"; };
+		DE81A2D72316AC7600AE1940 /* LogBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LogBridge.m; sourceTree = "<group>"; };
+		DE81A2DC2317ED5400AE1940 /* JitsiMeetBaseLogHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetBaseLogHandler.h; sourceTree = "<group>"; };
+		DE81A2DD2317ED5400AE1940 /* JitsiMeetBaseLogHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiMeetBaseLogHandler.m; sourceTree = "<group>"; };
+		DE9A016F289A9A9A00E41CBB /* JitsiMeetSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JitsiMeetSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DE9A0170289A9A9A00E41CBB /* Lite-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Lite-Info.plist"; path = "/Users/saghul/work/jitsi/jitsi-meet-prs/ios/sdk/src/Lite-Info.plist"; sourceTree = "<absolute>"; };
+		DEA9F283258A5D9900D4CD74 /* JitsiMeetSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetSDK.h; sourceTree = "<group>"; };
+		DEAD3224220C497000E93636 /* JitsiMeetConferenceOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetConferenceOptions.h; sourceTree = "<group>"; };
+		DEAD3225220C497000E93636 /* JitsiMeetConferenceOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiMeetConferenceOptions.m; sourceTree = "<group>"; };
+		DEAD3228220C734300E93636 /* JitsiMeetConferenceOptions+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetConferenceOptions+Private.h"; sourceTree = "<group>"; };
+		DEAFA777229EAD3B0033A7FA /* RNRootView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNRootView.h; sourceTree = "<group>"; };
+		DEAFA778229EAD520033A7FA /* RNRootView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNRootView.m; sourceTree = "<group>"; };
+		DEFC743D21B178FA00E4DD96 /* LocaleDetector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocaleDetector.m; sourceTree = "<group>"; };
+		DEFE535321FB1BF800011A3A /* JitsiMeet.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiMeet.m; sourceTree = "<group>"; };
+		DEFE535521FB2E8300011A3A /* ReactUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReactUtils.m; sourceTree = "<group>"; };
+		DEFE535721FB2E9E00011A3A /* ReactUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReactUtils.h; sourceTree = "<group>"; };
+		DEFE535821FB311F00011A3A /* JitsiMeet+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiMeet+Private.h"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0BD906E11EC0C00300C8C18E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0BB9AD791F5EC6D7001C08DB /* Intents.framework in Frameworks */,
+				0BB9AD771F5EC6CE001C08DB /* CallKit.framework in Frameworks */,
+				6F08DF7D4458EE3CF3F36F6D /* BuildFile in Frameworks */,
+				3453F4A32680898C4A40E821 /* libPods-JitsiMeetSDK.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DE9A0161289A9A9A00E41CBB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DE9A0162289A9A9A00E41CBB /* Intents.framework in Frameworks */,
+				DE9A0163289A9A9A00E41CBB /* CallKit.framework in Frameworks */,
+				9A8EE79C77C17743BB66E8BD /* libPods-JitsiMeetSDKLite.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0BCA49681EC4BBE500B793EE /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				0BC4B8681F8C01E100CE8B21 /* CallKitIcon.png */,
+				C6245F5B2053091D0040BE68 /* image-resize@2x.png */,
+				C6245F5C2053091D0040BE68 /* image-resize@3x.png */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		0BD906DB1EC0C00300C8C18E = {
+			isa = PBXGroup;
+			children = (
+				9C3C6FA2341729836589B856 /* Frameworks */,
+				C5E72ADFC30ED96F9B35F076 /* Pods */,
+				0BD906E61EC0C00300C8C18E /* Products */,
+				0BCA49681EC4BBE500B793EE /* Resources */,
+				0BD906E71EC0C00300C8C18E /* src */,
+			);
+			sourceTree = "<group>";
+		};
+		0BD906E61EC0C00300C8C18E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0BD906E51EC0C00300C8C18E /* JitsiMeetSDK.framework */,
+				DE9A016F289A9A9A00E41CBB /* JitsiMeetSDK.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0BD906E71EC0C00300C8C18E /* src */ = {
+			isa = PBXGroup;
+			children = (
+				0BB9AD7C1F60356D001C08DB /* AppInfo.m */,
+				0BCA495C1EC4B6C600B793EE /* AudioMode.m */,
+				C69EFA02209A0EFD0027712B /* callkit */,
+				A4A934E7212F3AB8001E9388 /* dropbox */,
+				0BD906E91EC0C00300C8C18E /* Info.plist */,
+				DE438CD82350934700DD541D /* JavaScriptSandbox.m */,
+				0BD906E81EC0C00300C8C18E /* JitsiMeet.h */,
+				DEFE535821FB311F00011A3A /* JitsiMeet+Private.h */,
+				DEA9F283258A5D9900D4CD74 /* JitsiMeetSDK.h */,
+				DEFE535321FB1BF800011A3A /* JitsiMeet.m */,
+				4ED4FFF12721B9B90074E620 /* JitsiAudioSession.h */,
+				4ED4FFF52721BAE10074E620 /* JitsiAudioSession+Private.h */,
+				4ED4FFF22721B9B90074E620 /* JitsiAudioSession.m */,
+				DEAD3224220C497000E93636 /* JitsiMeetConferenceOptions.h */,
+				DEAD3228220C734300E93636 /* JitsiMeetConferenceOptions+Private.h */,
+				DEAD3225220C497000E93636 /* JitsiMeetConferenceOptions.m */,
+				DE762DB322AFDE76000DEBD6 /* JitsiMeetUserInfo.h */,
+				DE762DB722AFE166000DEBD6 /* JitsiMeetUserInfo+Private.h */,
+				DE762DB522AFDE8D000DEBD6 /* JitsiMeetUserInfo.m */,
+				DE81A2D22316AC4D00AE1940 /* JitsiMeetLogger.h */,
+				DE81A2D32316AC4D00AE1940 /* JitsiMeetLogger.m */,
+				DE81A2DC2317ED5400AE1940 /* JitsiMeetBaseLogHandler.h */,
+				DE65AACB2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h */,
+				DE81A2DD2317ED5400AE1940 /* JitsiMeetBaseLogHandler.m */,
+				4E812F3228F9A4290087ACC9 /* JitsiMeetView+Private.h */,
+				4E812F3628F9A4ED0087ACC9 /* JitsiMeetView+Private.m */,
+				0B412F161EDEC65D00B1A0A6 /* JitsiMeetView.h */,
+				0B412F171EDEC65D00B1A0A6 /* JitsiMeetView.m */,
+				DE81A2D72316AC7600AE1940 /* LogBridge.m */,
+				DE65AAC92317FFCD00290BEC /* LogUtils.h */,
+				DEAFA777229EAD3B0033A7FA /* RNRootView.h */,
+				DEAFA778229EAD520033A7FA /* RNRootView.m */,
+				0B412F1B1EDEC80100B1A0A6 /* JitsiMeetViewDelegate.h */,
+				DEFC743D21B178FA00E4DD96 /* LocaleDetector.m */,
+				C6A3426B204F127900E062DD /* picture-in-picture */,
+				0BCA495D1EC4B6C600B793EE /* POSIX.m */,
+				0BCA495E1EC4B6C600B793EE /* Proximity.m */,
+				DEFE535721FB2E9E00011A3A /* ReactUtils.h */,
+				DEFE535521FB2E8300011A3A /* ReactUtils.m */,
+				0B93EF7C1EC9DDCD0030D24D /* RCTBridgeWrapper.h */,
+				0B93EF7D1EC9DDCD0030D24D /* RCTBridgeWrapper.m */,
+				C8AFD27D2462C613000293D2 /* InfoPlistUtil.h */,
+				C8AFD27E2462C613000293D2 /* InfoPlistUtil.m */,
+				C81E9AB825AC5AD800B134D9 /* ExternalAPI.h */,
+				0BA13D301EE83FF8007BEF7F /* ExternalAPI.m */,
+				4E51B76225E5345E0038575A /* ScheenshareEventEmiter.h */,
+				4E51B76325E5345E0038575A /* ScheenshareEventEmiter.m */,
+				DE9A0170289A9A9A00E41CBB /* Lite-Info.plist */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		9C3C6FA2341729836589B856 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0BB9AD761F5EC6CE001C08DB /* CallKit.framework */,
+				0B93EF7A1EC608550030D24D /* CoreText.framework */,
+				0BB9AD781F5EC6D7001C08DB /* Intents.framework */,
+				B46497DE9A95BDF5E312AF48 /* libPods-JitsiMeetSDKLite.a */,
+				927ED7DF018DE5E12C4C3404 /* libPods-JitsiMeetSDK.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A4A934E7212F3AB8001E9388 /* dropbox */ = {
+			isa = PBXGroup;
+			children = (
+				A4A934EB21349A06001E9388 /* Dropbox.h */,
+				A4A934E8212F3ADB001E9388 /* Dropbox.m */,
+			);
+			path = dropbox;
+			sourceTree = "<group>";
+		};
+		C5E72ADFC30ED96F9B35F076 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				98E09B5C73D9036B4ED252FC /* Pods-JitsiMeet.debug.xcconfig */,
+				9C77CA3CC919B081F1A52982 /* Pods-JitsiMeet.release.xcconfig */,
+				09A78016288AF50ACD28A10D /* Pods-JitsiMeetSDK.debug.xcconfig */,
+				891FE43DAD30BC8976683100 /* Pods-JitsiMeetSDK.release.xcconfig */,
+				8F48C340DE0D91D1012976C5 /* Pods-JitsiMeetSDKLite.debug.xcconfig */,
+				86389F55993FAAF6AEB3FA3E /* Pods-JitsiMeetSDKLite.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		C69EFA02209A0EFD0027712B /* callkit */ = {
+			isa = PBXGroup;
+			children = (
+				0BB9AD7A1F5EC8F4001C08DB /* CallKit.m */,
+				4E0EF62E28CA2FB3005D1B03 /* JMCallKitEmitter.h */,
+				4E0EF62F28CA2FB3005D1B03 /* JMCallKitEmitter.m */,
+				4E0EF63428CA317E005D1B03 /* JMCallKitListener.h */,
+				4E0EF63728CA4069005D1B03 /* JMCallKitProxy.h */,
+				4E0EF63828CA4069005D1B03 /* JMCallKitProxy.m */,
+			);
+			path = callkit;
+			sourceTree = "<group>";
+		};
+		C6A3426B204F127900E062DD /* picture-in-picture */ = {
+			isa = PBXGroup;
+			children = (
+				C6A3425E204EF76800E062DD /* DragGestureController.swift */,
+				C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */,
+			);
+			path = "picture-in-picture";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		0BD906E21EC0C00300C8C18E /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DE762DB422AFDE76000DEBD6 /* JitsiMeetUserInfo.h in Headers */,
+				0B412F181EDEC65D00B1A0A6 /* JitsiMeetView.h in Headers */,
+				0B93EF7E1EC9DDCD0030D24D /* RCTBridgeWrapper.h in Headers */,
+				DE81A2DE2317ED5400AE1940 /* JitsiMeetBaseLogHandler.h in Headers */,
+				DEA9F284258A5D9900D4CD74 /* JitsiMeetSDK.h in Headers */,
+				4E51B76425E5345E0038575A /* ScheenshareEventEmiter.h in Headers */,
+				DE65AACC2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h in Headers */,
+				0B412F221EDEF6EA00B1A0A6 /* JitsiMeetViewDelegate.h in Headers */,
+				4E0EF63528CA317E005D1B03 /* JMCallKitListener.h in Headers */,
+				4E0EF63028CA2FB3005D1B03 /* JMCallKitEmitter.h in Headers */,
+				4ED4FFF32721B9B90074E620 /* JitsiAudioSession.h in Headers */,
+				4E0EF63928CA4069005D1B03 /* JMCallKitProxy.h in Headers */,
+				0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */,
+				DE81A2D42316AC4D00AE1940 /* JitsiMeetLogger.h in Headers */,
+				DE65AACA2317FFCD00290BEC /* LogUtils.h in Headers */,
+				DEAD3226220C497000E93636 /* JitsiMeetConferenceOptions.h in Headers */,
+				C81E9AB925AC5AD800B134D9 /* ExternalAPI.h in Headers */,
+				C8AFD27F2462C613000293D2 /* InfoPlistUtil.h in Headers */,
+				4E812F3328F9A4290087ACC9 /* JitsiMeetView+Private.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DE9A012F289A9A9A00E41CBB /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DE9A0130289A9A9A00E41CBB /* JitsiMeetUserInfo.h in Headers */,
+				DE9A0131289A9A9A00E41CBB /* JitsiMeetView.h in Headers */,
+				DE9A0132289A9A9A00E41CBB /* RCTBridgeWrapper.h in Headers */,
+				DE9A0133289A9A9A00E41CBB /* JitsiMeetBaseLogHandler.h in Headers */,
+				DE9A0134289A9A9A00E41CBB /* JitsiMeetSDK.h in Headers */,
+				DE9A0135289A9A9A00E41CBB /* ScheenshareEventEmiter.h in Headers */,
+				DE9A0136289A9A9A00E41CBB /* JitsiMeetBaseLogHandler+Private.h in Headers */,
+				DE9A0138289A9A9A00E41CBB /* JitsiMeetViewDelegate.h in Headers */,
+				4E0EF63628CA317E005D1B03 /* JMCallKitListener.h in Headers */,
+				4E0EF63128CA2FB3005D1B03 /* JMCallKitEmitter.h in Headers */,
+				DE9A0139289A9A9A00E41CBB /* JitsiAudioSession.h in Headers */,
+				4E0EF63A28CA4069005D1B03 /* JMCallKitProxy.h in Headers */,
+				DE9A013B289A9A9A00E41CBB /* JitsiMeet.h in Headers */,
+				DE9A013C289A9A9A00E41CBB /* JitsiMeetLogger.h in Headers */,
+				DE9A013D289A9A9A00E41CBB /* LogUtils.h in Headers */,
+				DE9A013F289A9A9A00E41CBB /* JitsiMeetConferenceOptions.h in Headers */,
+				DE9A0140289A9A9A00E41CBB /* ExternalAPI.h in Headers */,
+				DE9A0141289A9A9A00E41CBB /* InfoPlistUtil.h in Headers */,
+				4E812F3428F9A4290087ACC9 /* JitsiMeetView+Private.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		0BD906E41EC0C00300C8C18E /* JitsiMeetSDK */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0BD906ED1EC0C00300C8C18E /* Build configuration list for PBXNativeTarget "JitsiMeetSDK" */;
+			buildPhases = (
+				26796D8589142D80C8AFDA51 /* [CP] Check Pods Manifest.lock */,
+				0BD906E21EC0C00300C8C18E /* Headers */,
+				0BD906E01EC0C00300C8C18E /* Sources */,
+				0BD906E11EC0C00300C8C18E /* Frameworks */,
+				0BD906E31EC0C00300C8C18E /* Resources */,
+				DE17D0D426E0B86300F77E2E /* Copy sounds */,
+				0BCA49651EC4B77500B793EE /* Package React bundle */,
+				C7BC10B338C94EEB98048E64 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = JitsiMeetSDK;
+			productName = "Jitsi Meet SDK";
+			productReference = 0BD906E51EC0C00300C8C18E /* JitsiMeetSDK.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		DE9A012D289A9A9A00E41CBB /* JitsiMeetSDKLite */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DE9A016C289A9A9A00E41CBB /* Build configuration list for PBXNativeTarget "JitsiMeetSDKLite" */;
+			buildPhases = (
+				DE9A012E289A9A9A00E41CBB /* [CP] Check Pods Manifest.lock */,
+				DE9A012F289A9A9A00E41CBB /* Headers */,
+				DE9A0142289A9A9A00E41CBB /* Sources */,
+				DE9A0161289A9A9A00E41CBB /* Frameworks */,
+				DE9A0165289A9A9A00E41CBB /* Resources */,
+				DE9A0169289A9A9A00E41CBB /* Copy sounds */,
+				DE9A016A289A9A9A00E41CBB /* Package React bundle */,
+				DE9A016B289A9A9A00E41CBB /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = JitsiMeetSDKLite;
+			productName = "Jitsi Meet SDK";
+			productReference = DE9A016F289A9A9A00E41CBB /* JitsiMeetSDK.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0BD906DC1EC0C00300C8C18E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1020;
+				ORGANIZATIONNAME = Jitsi;
+				TargetAttributes = {
+					0BD906E41EC0C00300C8C18E = {
+						CreatedOnToolsVersion = 8.3.2;
+						LastSwiftMigration = 1010;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 0BD906DF1EC0C00300C8C18E /* Build configuration list for PBXProject "sdk" */;
+			compatibilityVersion = "Xcode 12.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 0BD906DB1EC0C00300C8C18E;
+			productRefGroup = 0BD906E61EC0C00300C8C18E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0BD906E41EC0C00300C8C18E /* JitsiMeetSDK */,
+				DE9A012D289A9A9A00E41CBB /* JitsiMeetSDKLite */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0BD906E31EC0C00300C8C18E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0BC4B8691F8C03A700CE8B21 /* CallKitIcon.png in Resources */,
+				C6245F5D2053091D0040BE68 /* image-resize@2x.png in Resources */,
+				C6245F5E2053091D0040BE68 /* image-resize@3x.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DE9A0165289A9A9A00E41CBB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DE9A0166289A9A9A00E41CBB /* CallKitIcon.png in Resources */,
+				DE9A0167289A9A9A00E41CBB /* image-resize@2x.png in Resources */,
+				DE9A0168289A9A9A00E41CBB /* image-resize@3x.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0BCA49651EC4B77500B793EE /* Package React bundle */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Package React bundle";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "WITH_ENVIRONMENT=\"../../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
+		};
+		26796D8589142D80C8AFDA51 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-JitsiMeetSDK-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C7BC10B338C94EEB98048E64 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JitsiMeetSDK/Pods-JitsiMeetSDK-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JitsiMeetSDK/Pods-JitsiMeetSDK-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JitsiMeetSDK/Pods-JitsiMeetSDK-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DE17D0D426E0B86300F77E2E /* Copy sounds */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy sounds";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "SOUNDS_DIR=\"${PROJECT_DIR}/../../sounds\"\n\ncp $SOUNDS_DIR/* ${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\n";
+		};
+		DE9A012E289A9A9A00E41CBB /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-JitsiMeetSDKLite-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DE9A0169289A9A9A00E41CBB /* Copy sounds */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy sounds";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "SOUNDS_DIR=\"${PROJECT_DIR}/../../sounds\"\n\ncp $SOUNDS_DIR/* ${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\n";
+		};
+		DE9A016A289A9A9A00E41CBB /* Package React bundle */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Package React bundle";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "WITH_ENVIRONMENT=\"../../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
+		};
+		DE9A016B289A9A9A00E41CBB /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JitsiMeetSDKLite/Pods-JitsiMeetSDKLite-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JitsiMeetSDKLite/Pods-JitsiMeetSDKLite-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JitsiMeetSDKLite/Pods-JitsiMeetSDKLite-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0BD906E01EC0C00300C8C18E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0BB9AD7B1F5EC8F4001C08DB /* CallKit.m in Sources */,
+				DE81A2DF2317ED5400AE1940 /* JitsiMeetBaseLogHandler.m in Sources */,
+				4E0EF63B28CA4069005D1B03 /* JMCallKitProxy.m in Sources */,
+				4ED4FFF42721B9B90074E620 /* JitsiAudioSession.m in Sources */,
+				4E812F3928F9A4ED0087ACC9 /* JitsiMeetView+Private.m in Sources */,
+				0BB9AD7D1F60356D001C08DB /* AppInfo.m in Sources */,
+				DE81A2D92316AC7600AE1940 /* LogBridge.m in Sources */,
+				DEAFA779229EAD520033A7FA /* RNRootView.m in Sources */,
+				DE762DB622AFDE8D000DEBD6 /* JitsiMeetUserInfo.m in Sources */,
+				DEAD3227220C497000E93636 /* JitsiMeetConferenceOptions.m in Sources */,
+				0B93EF7F1EC9DDCD0030D24D /* RCTBridgeWrapper.m in Sources */,
+				0BA13D311EE83FF8007BEF7F /* ExternalAPI.m in Sources */,
+				0BCA49601EC4B6C600B793EE /* POSIX.m in Sources */,
+				C8AFD2802462C613000293D2 /* InfoPlistUtil.m in Sources */,
+				C6CC49AF207412CF000DFA42 /* PiPViewCoordinator.swift in Sources */,
+				DEFC743F21B178FA00E4DD96 /* LocaleDetector.m in Sources */,
+				0BCA495F1EC4B6C600B793EE /* AudioMode.m in Sources */,
+				0BCA49611EC4B6C600B793EE /* Proximity.m in Sources */,
+				4E0EF63228CA2FB3005D1B03 /* JMCallKitEmitter.m in Sources */,
+				DEFE535621FB2E8300011A3A /* ReactUtils.m in Sources */,
+				C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */,
+				4E51B76525E5345E0038575A /* ScheenshareEventEmiter.m in Sources */,
+				A4A934E9212F3ADB001E9388 /* Dropbox.m in Sources */,
+				DE81A2D52316AC4D00AE1940 /* JitsiMeetLogger.m in Sources */,
+				0B412F191EDEC65D00B1A0A6 /* JitsiMeetView.m in Sources */,
+				DEFE535421FB1BF800011A3A /* JitsiMeet.m in Sources */,
+				DE438CDA2350934700DD541D /* JavaScriptSandbox.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DE9A0142289A9A9A00E41CBB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DE9A0143289A9A9A00E41CBB /* CallKit.m in Sources */,
+				DE9A0144289A9A9A00E41CBB /* JitsiMeetBaseLogHandler.m in Sources */,
+				DE9A0146289A9A9A00E41CBB /* JitsiAudioSession.m in Sources */,
+				4E0EF63C28CA4069005D1B03 /* JMCallKitProxy.m in Sources */,
+				DE9A0147289A9A9A00E41CBB /* AppInfo.m in Sources */,
+				DE9A0148289A9A9A00E41CBB /* LogBridge.m in Sources */,
+				DE9A0149289A9A9A00E41CBB /* RNRootView.m in Sources */,
+				DE9A014A289A9A9A00E41CBB /* JitsiMeetUserInfo.m in Sources */,
+				DE9A014B289A9A9A00E41CBB /* JitsiMeetConferenceOptions.m in Sources */,
+				DE9A014C289A9A9A00E41CBB /* RCTBridgeWrapper.m in Sources */,
+				DE9A014D289A9A9A00E41CBB /* ExternalAPI.m in Sources */,
+				DE9A014E289A9A9A00E41CBB /* POSIX.m in Sources */,
+				DE9A014F289A9A9A00E41CBB /* InfoPlistUtil.m in Sources */,
+				DE9A0150289A9A9A00E41CBB /* PiPViewCoordinator.swift in Sources */,
+				DE9A0151289A9A9A00E41CBB /* LocaleDetector.m in Sources */,
+				DE9A0152289A9A9A00E41CBB /* AudioMode.m in Sources */,
+				DE9A0153289A9A9A00E41CBB /* Proximity.m in Sources */,
+				4E812F3A28F9A4ED0087ACC9 /* JitsiMeetView+Private.m in Sources */,
+				DE9A0155289A9A9A00E41CBB /* ReactUtils.m in Sources */,
+				DE9A0157289A9A9A00E41CBB /* DragGestureController.swift in Sources */,
+				DE9A0158289A9A9A00E41CBB /* ScheenshareEventEmiter.m in Sources */,
+				DE9A015C289A9A9A00E41CBB /* JitsiMeetLogger.m in Sources */,
+				4E0EF63328CA2FB3005D1B03 /* JMCallKitEmitter.m in Sources */,
+				DE9A015E289A9A9A00E41CBB /* JitsiMeetView.m in Sources */,
+				DE9A015F289A9A9A00E41CBB /* JitsiMeet.m in Sources */,
+				DE9A0160289A9A9A00E41CBB /* JavaScriptSandbox.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0BD906EB1EC0C00300C8C18E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CC = "";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				CXX = "";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION,
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD = "";
+				LDPLUSPLUS = "";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				USE_HERMES = true;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		0BD906EC1EC0C00300C8C18E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CC = "";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				CXX = "";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION,
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD = "";
+				LDPLUSPLUS = "";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				USE_HERMES = true;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		0BD906EE1EC0C00300C8C18E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 09A78016288AF50ACD28A10D /* Pods-JitsiMeetSDK.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				INFOPLIST_FILE = src/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.JitsiMeetSDK.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0BD906EF1EC0C00300C8C18E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 891FE43DAD30BC8976683100 /* Pods-JitsiMeetSDK.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				INFOPLIST_FILE = src/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.JitsiMeetSDK.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		DE9A016D289A9A9A00E41CBB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8F48C340DE0D91D1012976C5 /* Pods-JitsiMeetSDKLite.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					"JITSI_MEET_SDK_LITE=1",
+				);
+				INFOPLIST_FILE = "src/Lite-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.JitsiMeetSDK.ios;
+				PRODUCT_NAME = JitsiMeetSDK;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DE9A016E289A9A9A00E41CBB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 86389F55993FAAF6AEB3FA3E /* Pods-JitsiMeetSDKLite.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					JITSI_MEET_SDK_LITE,
+				);
+				INFOPLIST_FILE = "src/Lite-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.JitsiMeetSDK.ios;
+				PRODUCT_NAME = JitsiMeetSDK;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0BD906DF1EC0C00300C8C18E /* Build configuration list for PBXProject "sdk" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0BD906EB1EC0C00300C8C18E /* Debug */,
+				0BD906EC1EC0C00300C8C18E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0BD906ED1EC0C00300C8C18E /* Build configuration list for PBXNativeTarget "JitsiMeetSDK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0BD906EE1EC0C00300C8C18E /* Debug */,
+				0BD906EF1EC0C00300C8C18E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DE9A016C289A9A9A00E41CBB /* Build configuration list for PBXNativeTarget "JitsiMeetSDKLite" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DE9A016D289A9A9A00E41CBB /* Debug */,
+				DE9A016E289A9A9A00E41CBB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0BD906DC1EC0C00300C8C18E /* Project object */;
+}

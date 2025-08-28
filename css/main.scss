@@ -1,0 +1,80 @@
+/* Functions BEGIN */
+
+@import 'functions';
+
+/* Functions END */
+
+/* Variables BEGIN */
+
+@import 'variables';
+
+/* Variables END */
+
+/* Mixins BEGIN */
+
+@import "mixins";
+
+/* Mixins END */
+
+/* Animations END */
+
+/* Flags BEGIN */
+$flagsImagePath: "../images/";
+@import "../node_modules/bc-css-flags/dist/css/bc-css-flags.scss";
+/* Flags END */
+
+/* Modules BEGIN */
+@import 'reset';
+@import 'base';
+@import 'utils';
+@import 'overlay/overlay';
+@import 'inlay';
+@import 'reload_overlay/reload_overlay';
+@import 'mini_toolbox';
+@import 'modals/desktop-picker/desktop-picker';
+@import 'modals/dialog';
+@import 'modals/invite/info';
+@import 'modals/screen-share/share-audio';
+@import 'modals/screen-share/share-screen-warning';
+@import 'modals/whiteboard';
+@import 'videolayout_default';
+@import 'subject';
+@import 'popup_menu';
+@import 'recording';
+@import 'login_menu';
+@import 'chat';
+@import 'ringing/ringing';
+@import 'welcome_page';
+@import 'welcome_page_content';
+@import 'welcome_page_settings_toolbar';
+@import 'toolbars';
+@import 'redirect_page';
+@import 'components/input-slider';
+@import '404';
+@import 'policy';
+@import 'popover';
+@import 'filmstrip/horizontal_filmstrip';
+@import 'filmstrip/small_video';
+@import 'filmstrip/tile_view';
+@import 'filmstrip/tile_view_overrides';
+@import 'filmstrip/vertical_filmstrip';
+@import 'filmstrip/vertical_filmstrip_overrides';
+@import 'unsupported-browser/main';
+@import 'deep-linking/main';
+@import '_meetings_list.scss';
+@import 'navigate_section_list';
+@import 'third-party-branding/google';
+@import 'third-party-branding/microsoft';
+@import 'promotional-footer';
+@import 'chrome-extension-banner';
+@import 'settings-button';
+@import 'meter';
+@import 'premeeting/main';
+@import 'modals/invite/invite_more';
+@import 'modals/security/security';
+@import 'responsive';
+@import 'participants-pane';
+@import 'reactions-menu';
+@import 'plan-limit';
+
+/* Modules END */

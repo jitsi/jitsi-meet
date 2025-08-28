@@ -1,0 +1,28 @@
+{
+    "include": ["react/features/**/*.ts", "react/features/**/*.tsx", "./custom.d.ts", "./globals.d.ts"],
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "module": "es2020",
+        "target": "es2024",
+        "jsx": "react",
+        "lib": [ "ES2024", "DOM" ],
+        "skipLibCheck": true,
+        "moduleResolution": "Node",
+        "strict": true,
+        "noImplicitAny": true,
+        "noImplicitOverride": true,
+        "strictPropertyInitialization": false,
+        "resolveJsonModule": true,
+        "moduleSuffixes": [".web", ""]
+    },
+    "exclude": [
+        "node_modules",
+        "react/features/share-room",
+        "**/mobile/*",
+        "**/native/*",
+        "**/*.native.ts",
+        "**/*.native.tsx",
+        "**/*.ios.ts",
+        "**/*.android.ts"
+    ]
+}

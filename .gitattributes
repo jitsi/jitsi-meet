@@ -1,0 +1,3 @@
+*.bundle.js -text -diff
+*.pbxproj -text
+lib-jitsi-meet.js -text -diff

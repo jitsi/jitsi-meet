@@ -1,0 +1,57 @@
+
+<VirtualHost *:80>
+    ServerName jitsi-meet.example.com
+    Redirect permanent / https://jitsi-meet.example.com/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName jitsi-meet.example.com
+
+    # enable HTTP/2, if available
+    Protocols h2 http/1.1
+
+    SSLEngine on
+    SSLProxyEngine on
+    SSLCertificateFile /etc/jitsi/meet/jitsi-meet.example.com.crt
+    SSLCertificateKeyFile /etc/jitsi/meet/jitsi-meet.example.com.key
+
+    Header always set Strict-Transport-Security "max-age=63072000"
+
+    DocumentRoot "/usr/share/jitsi-meet"
+    <Directory "/usr/share/jitsi-meet">
+        Options Indexes MultiViews Includes FollowSymLinks
+        AddOutputFilter Includes html
+        AllowOverride All
+        Order allow,deny
+        Allow from all
+    </Directory>
+
+    ErrorDocument 404 /static/404.html
+
+    Alias "/config.js" "/etc/jitsi/meet/jitsi-meet.example.com-config.js"
+    <Location /config.js>
+        Require all granted
+    </Location>
+
+    Alias "/external_api.js" "/usr/share/jitsi-meet/libs/external_api.min.js"
+    <Location /external_api.js>
+        Require all granted
+    </Location>
+
+    ProxyPreserveHost on
+    ProxyPass /http-bind http://localhost:5280/http-bind
+    ProxyPassReverse /http-bind http://localhost:5280/http-bind
+    ProxyPass /xmpp-websocket ws://localhost:5280/xmpp-websocket
+    ProxyPassReverse /xmpp-websocket ws://localhost:5280/xmpp-websocket
+    ProxyPass /colibri-ws/default-id ws://localhost:9090/colibri-ws/default-id
+    ProxyPassReverse /colibri-ws/default-id ws://localhost:9090/colibri-ws/default-id
+
+    RewriteEngine on
+    RewriteRule ^/([a-zA-Z0-9]+)$ /index.html
+</VirtualHost>
+
+# Mozilla Guideline v5.4, Apache 2.4.41, OpenSSL 1.1.1d, intermediate configuration, no OCSP
+SSLProtocol         all -SSLv3 -TLSv1 -TLSv1.1
+SSLCipherSuite      ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+SSLHonorCipherOrder off
+SSLSessionTickets   off
