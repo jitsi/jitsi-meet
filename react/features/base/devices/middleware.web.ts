@@ -1,18 +1,16 @@
-import { AnyAction } from 'redux';
-
 import { IStore } from '../../app/types';
-import { processExternalDeviceRequest } from '../../device-selection/functions';
+import { processExternalDeviceRequest } from '../../device-selection/functions.web';
 import { showNotification, showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
-import { replaceAudioTrackById, replaceVideoTrackById, setDeviceStatusWarning } from '../../prejoin/actions';
-import { isPrejoinPageVisible } from '../../prejoin/functions';
+import { replaceAudioTrackById, replaceVideoTrackById, setDeviceStatusWarning } from '../../prejoin/actions.web';
+import { isPrejoinPageVisible } from '../../prejoin/functions.web';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app/actionTypes';
 import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS, { JitsiMediaDevicesEvents, JitsiTrackErrors } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media/constants';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { updateSettings } from '../settings/actions';
-import { getLocalTrack } from '../tracks/functions';
+import { getLocalTrack } from '../tracks/functions.web';
 
 import {
     CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
@@ -27,13 +25,13 @@ import {
     removePendingDeviceRequests,
     setAudioInputDevice,
     setVideoInputDevice
-} from './actions';
+} from './actions.web';
 import {
     areDeviceLabelsInitialized,
     formatDeviceLabel,
     logDevices,
     setAudioOutputDeviceId
-} from './functions';
+} from './functions.web';
 import logger from './logger';
 
 const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
@@ -176,12 +174,16 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
-    case UPDATE_DEVICE_LIST:
+    case UPDATE_DEVICE_LIST: {
+        const result = next(action);
+
         logDevices(action.devices, 'Device list updated');
         if (areDeviceLabelsInitialized(store.getState())) {
-            return _processPendingRequests(store, next, action);
+            _processPendingRequests(store);
         }
-        break;
+
+        return result;
+    }
     case CHECK_AND_NOTIFY_FOR_NEW_DEVICE:
         _checkAndNotifyForNewDevice(store, action.newDevices, action.oldDevices);
         break;
@@ -196,20 +198,15 @@ MiddlewareRegistry.register(store => next => action => {
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
- * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
- * specified {@code action} to the specified {@code store}.
- * @param {Action} action - The redux action {@code CONFERENCE_JOINED} which is
- * being dispatched in the specified {@code store}.
  * @private
- * @returns {Object} The value returned by {@code next(action)}.
+ * @returns {void}
  */
-function _processPendingRequests({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
-    const result = next(action);
+function _processPendingRequests({ dispatch, getState }: IStore) {
     const state = getState();
     const { pendingRequests } = state['features/base/devices'];
 
     if (!pendingRequests || pendingRequests.length === 0) {
-        return result;
+        return;
     }
 
     pendingRequests.forEach((request: any) => {
@@ -220,8 +217,6 @@ function _processPendingRequests({ dispatch, getState }: IStore, next: Function,
             request.responseCallback);
     });
     dispatch(removePendingDeviceRequests());
-
-    return result;
 }
 
 /**
