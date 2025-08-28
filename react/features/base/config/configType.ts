@@ -191,6 +191,7 @@ export interface IConfig {
     appId?: string;
     audioLevelsInterval?: number;
     audioQuality?: {
+        enableAdvancedAudioSettings?: boolean;
         opusMaxAverageBitrate?: number | null;
         stereo?: boolean;
     };

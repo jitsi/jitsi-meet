@@ -1,5 +1,6 @@
 import { IStore } from '../../app/types';
 import { IStateful } from '../app/types';
+import { isAdvancedAudioSettingsEnabled } from '../config/functions.any';
 import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { gumPending, setAudioMuted } from '../media/actions';
@@ -228,6 +229,12 @@ export async function applyAudioConstraints(stateful: IStateful, settings: IAudi
 
     if (!track) {
         logger.debug('No local audio track found');
+
+        return;
+    }
+
+    if (!isAdvancedAudioSettingsEnabled(state)) {
+        logger.debug('Advanced audio settings disabled');
 
         return;
     }
