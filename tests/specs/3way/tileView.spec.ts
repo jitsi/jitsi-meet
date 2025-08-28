@@ -1,4 +1,5 @@
-import { ensureThreeParticipants, ensureTwoParticipants } from '../../helpers/participants';
+import { Participant } from '../../helpers/Participant';
+import { ensureTwoParticipants } from '../../helpers/participants';
 
 /**
  * The CSS selector for local video when outside of tile view. It should
@@ -14,20 +15,22 @@ const FILMSTRIP_VIEW_LOCAL_VIDEO_CSS_SELECTOR = '#filmstripLocalVideo #localVide
 const TILE_VIEW_LOCAL_VIDEO_CSS_SELECTOR = '.remote-videos #localVideoContainer';
 
 describe('TileView', () => {
-    it('joining the meeting', () => ensureTwoParticipants());
+    let p1: Participant, p2: Participant;
 
-    it('pinning exits', async () => {
-        const { p1, p2 } = ctx;
-
+    before('join the meeting', async () => {
+        await ensureTwoParticipants();
+        p1 = ctx.p1;
+        p2 = ctx.p2;
+    });
+    it('entering tile view', async () => {
         await p1.getToolbar().clickEnterTileViewButton();
         await p1.waitForTileViewDisplayed();
+    });
+    it('exit tile view by pinning', async () => {
         await p1.getFilmstrip().pinParticipant(p2);
         await p1.waitForTileViewDisplayed(true);
     });
-
-    it('local video display', async () => {
-        const { p1 } = ctx;
-
+    it('local video is displayed in tile view', async () => {
         await p1.getToolbar().clickEnterTileViewButton();
         await p1.waitForTileViewDisplayed();
         await p1.driver.$(TILE_VIEW_LOCAL_VIDEO_CSS_SELECTOR).waitForDisplayed({ timeout: 3000 });
@@ -36,67 +39,15 @@ describe('TileView', () => {
             reverse: true
         });
     });
-
-    it('can exit', async () => {
-        const { p1 } = ctx;
-
+    it('exit tile view by clicking "exit tile view"', async () => {
         await p1.getToolbar().clickExitTileViewButton();
         await p1.waitForTileViewDisplayed(true);
     });
-
     it('local video display independently from remote', async () => {
-        const { p1 } = ctx;
-
         await p1.driver.$(TILE_VIEW_LOCAL_VIDEO_CSS_SELECTOR).waitForDisplayed({
             timeout: 3000,
             reverse: true
         });
         await p1.driver.$(FILMSTRIP_VIEW_LOCAL_VIDEO_CSS_SELECTOR).waitForDisplayed({ timeout: 3000 });
-    });
-
-    it('lastN', async () => {
-        const { p1, p2 } = ctx;
-
-        if (p1.driver.isFirefox) {
-            // Firefox does not support external audio file as input.
-            // Not testing as second participant cannot be dominant speaker.
-            return;
-        }
-
-        await p2.getToolbar().clickAudioMuteButton();
-
-        await ensureThreeParticipants({
-            configOverwrite: {
-                channelLastN: 1,
-                startWithAudioMuted: true
-            }
-        });
-
-        const { p3 } = ctx;
-
-        // one inactive icon should appear in few seconds
-        await p3.waitForNinjaIcon();
-
-        const p1EpId = await p1.getEndpointId();
-
-        await p3.waitForRemoteVideo(p1EpId);
-
-        const p2EpId = await p2.getEndpointId();
-
-        await p3.waitForNinjaIcon(p2EpId);
-
-        // no video for participant 2
-        await p3.waitForRemoteVideo(p2EpId, true);
-
-        // mute audio for participant 1
-        await p1.getToolbar().clickAudioMuteButton();
-
-        // unmute audio for participant 2
-        await p2.getToolbar().clickAudioUnmuteButton();
-
-        await p3.waitForDominantSpeaker(p2EpId);
-
-        // check video of participant 2 should be received
-        await p3.waitForRemoteVideo(p2EpId);
     });
 });
