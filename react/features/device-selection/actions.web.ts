@@ -6,8 +6,8 @@ import { IStore } from '../app/types';
 import {
     setAudioInputDevice,
     setVideoInputDevice
-} from '../base/devices/actions.web';
-import { getDeviceLabelById, setAudioOutputDeviceId } from '../base/devices/functions.web';
+} from '../base/devices/actions';
+import { getDeviceLabelById, setAudioOutputDeviceId } from '../base/devices/functions';
 import { updateSettings } from '../base/settings/actions';
 import { toggleUpdateAudioSettings } from '../base/tracks/actions.web';
 import { getLocalJitsiAudioTrack } from '../base/tracks/functions.any';
@@ -16,7 +16,7 @@ import { setScreenshareFramerate } from '../screen-share/actions.web';
 import { setAudioSettings } from '../settings/actions.web';
 import { disposePreviewAudioTrack } from '../settings/functions.web';
 
-import { getAudioDeviceSelectionDialogProps, getVideoDeviceSelectionDialogProps } from './functions.web';
+import { getAudioDeviceSelectionDialogProps, getVideoDeviceSelectionDialogProps } from './functions';
 import logger from './logger';
 
 /**
