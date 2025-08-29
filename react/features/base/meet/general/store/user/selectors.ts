@@ -49,7 +49,7 @@ export function isAuthenticated(state: IReduxState): boolean {
  * @returns The user ID or null
  */
 export function getUserId(state: IReduxState): string | null {
-    return state[USER_REDUCER].user?.userId || null;
+    return state[USER_REDUCER].user?.uuid || null;
 }
 
 /**
@@ -75,42 +75,3 @@ export function getUserFullName(state: IReduxState): string | null {
     return `${user.name} ${user.lastname}`.trim() || null;
 }
 
-/**
- * Selector to check if user has completed registration
- *
- * @param state - The Redux state
- * @returns Whether registration is completed
- */
-export function hasCompletedRegistration(state: IReduxState): boolean {
-    return !!state[USER_REDUCER].user?.registerCompleted;
-}
-
-/**
- * Selector to check if user has teams feature
- *
- * @param state - The Redux state
- * @returns Whether user has teams feature
- */
-export function hasTeamsFeature(state: IReduxState): boolean {
-    return !!state[USER_REDUCER].user?.teams;
-}
-
-/**
- * Selector to get user's root folder ID
- *
- * @param state - The Redux state
- * @returns The root folder ID or null
- */
-export function getRootFolderId(state: IReduxState): string | null {
-    return state[USER_REDUCER].user?.rootFolderId || null;
-}
-
-/**
- * Selector to get user's root folder UUID
- *
- * @param state - The Redux state
- * @returns The root folder UUID or null
- */
-export function getRootFolderUuid(state: IReduxState): string | null {
-    return state[USER_REDUCER].user?.rootFolderUuid || null;
-}
