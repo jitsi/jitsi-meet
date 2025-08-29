@@ -305,58 +305,55 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
                             <>
                                 <Tooltip
                                     containerClassName = { classes.checkbox }
-                                    content = { 'Tooltip' }
+                                    content = { t('toolbar.advancedAudioSettings.aec.tooltip') }
                                     position = { 'right' }>
                                     <Checkbox
                                         checked = { audioSettings.echoCancellation }
                                         disabled = { noiseSuppressionEnabled }
-                                        label = { t('toolbar.audioSettingsCheckboxes.AEC') }
+                                        label = { t('toolbar.advancedAudioSettings.aec.label') }
                                         name = { 'echoCancellation' }
                                         onChange = { this._onToggleAudioSettings } />
                                 </Tooltip>
 
                                 <Tooltip
                                     containerClassName = { classes.checkbox }
-                                    content = { 'Tooltip' }
+                                    content = { t('toolbar.advancedAudioSettings.agc.tooltip') }
                                     position = { 'right' }>
                                     <Checkbox
                                         checked = { audioSettings.autoGainControl }
                                         disabled = { noiseSuppressionEnabled }
-                                        label = { t('toolbar.audioSettingsCheckboxes.AGC') }
+                                        label = { t('toolbar.advancedAudioSettings.agc.label') }
                                         name = { 'autoGainControl' }
                                         onChange = { this._onToggleAudioSettings } />
                                 </Tooltip>
 
                                 <Tooltip
                                     containerClassName = { classes.checkbox }
-                                    content = { 'Tooltip' }
+                                    content = { t('toolbar.advancedAudioSettings.ns.tooltip') }
                                     position = { 'right' }>
                                     <Checkbox
                                         checked = { audioSettings.noiseSuppression }
                                         disabled = { noiseSuppressionEnabled }
-                                        label = { t('toolbar.audioSettingsCheckboxes.NS') }
+                                        label = { t('toolbar.advancedAudioSettings.ns.label') }
                                         name = { 'noiseSuppression' }
                                         onChange = { this._onToggleAudioSettings } />
                                 </Tooltip>
 
                                 <Tooltip
                                     containerClassName = { classes.checkbox }
-                                    content = { 'Tooltip' }
+                                    content = { t('toolbar.advancedAudioSettings.stereo.tooltip') }
                                     position = { 'right' }>
                                     <Checkbox
                                         checked = { audioSettings.channelCount === 2 }
                                         disabled = { noiseSuppressionEnabled }
-                                        label = { t('toolbar.audioSettingsCheckboxes.stereo') }
+                                        label = { t('toolbar.advancedAudioSettings.stereo.label') }
                                         name = { 'channelCount' }
                                         onChange = { this._onToggleAudioSettings } />
                                 </Tooltip>
                             </>
                         )}
 
-                        <Tooltip
-                            containerClassName = { classes.checkbox }
-                            content = { 'Tooltip' }
-                            position = { 'right' }>
+                        <div className = { classes.checkbox }>
                             <Checkbox
                                 checked = { noiseSuppressionEnabled }
                                 disabled = { isAdvancedAudioSettingsConfigEnabled && (isAudioSettingsEnabled && !noiseSuppressionEnabled) }
@@ -365,7 +362,7 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
                                 onChange = { () => super._onChange({
                                     noiseSuppressionEnabled: !noiseSuppressionEnabled
                                 }) } />
-                        </Tooltip>
+                        </div>
                     </fieldset>
                 )}
                 <div
