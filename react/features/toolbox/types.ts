@@ -21,6 +21,7 @@ export type ToolbarButton = 'camera' |
     'closedcaptions' |
     'desktop' |
     'download' |
+    'downloaddata' |
     'embedmeeting' |
     'etherpad' |
     'feedback' |
