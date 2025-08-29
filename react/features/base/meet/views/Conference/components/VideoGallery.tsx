@@ -30,7 +30,7 @@ const VideoGallery = ({ participants, flipX, translate }: VideoGalleryProps) => 
         let heightClass = "";
 
         if (hasOneParticipant) {
-            return "relative aspect-square sm:aspect-video max-w-full";
+            return "relative aspect-square sm:aspect-video h-full max-w-full";
         } else if (participantsNumber === 2) {
             widthClass = "w-[calc(50%-5px)]";
             heightClass = "sm:max-h-[75%]";
