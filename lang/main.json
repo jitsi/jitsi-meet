@@ -1381,7 +1381,25 @@
         "audioOnlyOff": "Disable low bandwidth mode",
         "audioOnlyOn": "Enable low bandwidth mode",
         "audioRoute": "Select the sound device",
-        "audioSettings": "Audio settings",
+        "audioSettings": "Audio settings",        
+        "advancedAudioSettings": {
+            "aec": {
+                "label": "AEC",
+                "tooltip": "Acoustic echo cancellation"
+            },
+            "agc": {
+                "label": "AGC",
+                "tooltip": "Automatic gain control"
+            },
+            "ns": {
+                "label": "NS",
+                "tooltip": "Noise suppression"
+            },
+            "stereo": {
+                "label": "Stereo",
+                "tooltip": "Stereo audio"
+            }
+        },
         "authenticate": "Authenticate",
         "boo": "Boo",
         "callQuality": "Manage video quality",
