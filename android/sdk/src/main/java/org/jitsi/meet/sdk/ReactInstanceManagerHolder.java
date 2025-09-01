@@ -17,7 +17,6 @@
 package org.jitsi.meet.sdk;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Application;
 
 import androidx.annotation.Nullable;
@@ -65,7 +64,6 @@ class ReactInstanceManagerHolder {
                 new AudioModeModule(reactContext),
                 new DropboxModule(reactContext),
                 new ExternalAPIModule(reactContext),
-                new JavaScriptSandboxModule(reactContext),
                 new LocaleDetector(reactContext),
                 new LogBridgeModule(reactContext),
                 new PictureInPictureModule(reactContext),
