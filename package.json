@@ -110,6 +110,7 @@
     "react-native-watch-connectivity": "1.1.0",
     "react-native-webrtc": "124.0.4",
     "react-native-webview": "13.13.5",
+    "react-native-worklets-core": "1.6.2",
     "react-native-youtube-iframe": "2.3.0",
     "react-redux": "7.2.9",
     "react-textarea-autosize": "8.3.0",
