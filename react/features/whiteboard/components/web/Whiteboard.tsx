@@ -1,4 +1,4 @@
-import { ExcalidrawApp , EditorJotaiProvider , editorJotaiStore , Excalidraw } from '@jitsi/excalidraw';
+import { ExcalidrawApp } from '@jitsi/excalidraw';
 import clsx from 'clsx';
 import i18next from 'i18next';
 import React, { useCallback, useEffect, useRef } from 'react';
@@ -148,16 +148,9 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
                             excalidraw = {{
                                 isCollaborating: true,
                                 langCode: i18next.language,
-
-                                // @ts-ignore
-                                // ref: excalidrawRef,
                                 theme: 'light',
                                 UIOptions: {
-                                    ...WHITEBOARD_UI_OPTIONS,
-                                    canvasActions: {
-                                        ...WHITEBOARD_UI_OPTIONS.canvasActions,
-                                        export: false
-                                    }
+                                    ...WHITEBOARD_UI_OPTIONS
                                 }
                             }}
                             getCollabAPI = { getCollabAPI }
