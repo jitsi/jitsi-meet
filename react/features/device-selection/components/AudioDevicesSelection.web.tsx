@@ -1,4 +1,5 @@
 import { Theme } from '@mui/material';
+import clsx from 'clsx';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -138,6 +139,13 @@ interface IProps extends AbstractDialogTabProps, WithTranslation {
 
 const styles = (theme: Theme) => {
     return {
+        checkboxGrid: {
+            display: 'grid',
+            gridTemplateColumns: 'auto auto',
+            gap: theme.spacing(3),
+            margin: `${theme.spacing(3)} 0`
+        },
+
         container: {
             display: 'flex',
             flexDirection: 'column' as const,
@@ -145,31 +153,30 @@ const styles = (theme: Theme) => {
             width: '100%'
         },
 
+        hidden: {
+            display: 'none'
+        },
+
         inputContainer: {
             marginBottom: theme.spacing(3)
         },
 
         outputContainer: {
-            margin: `${theme.spacing(5)} 0`,
             display: 'flex',
-            alignItems: 'flex-end'
+            alignItems: 'flex-end',
+            margin: `${theme.spacing(5)} 0`
         },
 
         outputButton: {
             marginLeft: theme.spacing(3)
         },
 
-        noiseSuppressionContainer: {
-            marginBottom: theme.spacing(5)
-        },
-
-        checkbox: {
-            marginTop: theme.spacing(3),
-            marginBottom: theme.spacing(1),
-            width: 'fit-content',
+        tooltipCheckbox: {
+            width: 'max-content'
         },
     };
 };
+
 
 /**
  * React {@code Component} for previewing audio and video input/output devices.
@@ -286,6 +293,11 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
 
         const isAudioSettingsEnabled = Boolean(audioSettings?.autoGainControl || audioSettings?.channelCount === 2 || audioSettings?.echoCancellation || audioSettings?.noiseSuppression);
 
+        const shouldDisplayNoiseSuppressionCheckbox = !hideNoiseSuppression && !iAmVisitor;
+        const shouldDisplayAdvancedAudioSettingsCheckboxes = !hideNoiseSuppression && !iAmVisitor && isAdvancedAudioSettingsConfigEnabled && Boolean(audioSettings);
+
+        const shouldDisabledNoiseSupressionCheckbox = shouldDisplayAdvancedAudioSettingsCheckboxes && (isAudioSettingsEnabled && !noiseSuppressionEnabled);
+
         return (
             <div className = { classes.container }>
                 {!iAmVisitor && <div
@@ -298,73 +310,75 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
                                     && <AudioInputPreview
                                         track = { this.props.previewAudioTrack } />}
 
-
-                {!hideNoiseSuppression && !iAmVisitor && (
-                    <fieldset className = { classes.container }>
-                        {isAdvancedAudioSettingsConfigEnabled && audioSettings && (
-                            <>
-                                <Tooltip
-                                    containerClassName = { classes.checkbox }
-                                    content = { t('toolbar.advancedAudioSettings.aec.tooltip') }
-                                    position = { 'right' }>
-                                    <Checkbox
-                                        checked = { audioSettings.echoCancellation }
-                                        disabled = { noiseSuppressionEnabled }
-                                        label = { t('toolbar.advancedAudioSettings.aec.label') }
-                                        name = { 'echoCancellation' }
-                                        onChange = { this._onToggleAudioSettings } />
-                                </Tooltip>
-
-                                <Tooltip
-                                    containerClassName = { classes.checkbox }
-                                    content = { t('toolbar.advancedAudioSettings.agc.tooltip') }
-                                    position = { 'right' }>
-                                    <Checkbox
-                                        checked = { audioSettings.autoGainControl }
-                                        disabled = { noiseSuppressionEnabled }
-                                        label = { t('toolbar.advancedAudioSettings.agc.label') }
-                                        name = { 'autoGainControl' }
-                                        onChange = { this._onToggleAudioSettings } />
-                                </Tooltip>
-
-                                <Tooltip
-                                    containerClassName = { classes.checkbox }
-                                    content = { t('toolbar.advancedAudioSettings.ns.tooltip') }
-                                    position = { 'right' }>
-                                    <Checkbox
-                                        checked = { audioSettings.noiseSuppression }
-                                        disabled = { noiseSuppressionEnabled }
-                                        label = { t('toolbar.advancedAudioSettings.ns.label') }
-                                        name = { 'noiseSuppression' }
-                                        onChange = { this._onToggleAudioSettings } />
-                                </Tooltip>
-
-                                <Tooltip
-                                    containerClassName = { classes.checkbox }
-                                    content = { t('toolbar.advancedAudioSettings.stereo.tooltip') }
-                                    position = { 'right' }>
-                                    <Checkbox
-                                        checked = { audioSettings.channelCount === 2 }
-                                        disabled = { noiseSuppressionEnabled }
-                                        label = { t('toolbar.advancedAudioSettings.stereo.label') }
-                                        name = { 'channelCount' }
-                                        onChange = { this._onToggleAudioSettings } />
-                                </Tooltip>
-                            </>
-                        )}
-
-                        <div className = { classes.checkbox }>
-                            <Checkbox
-                                checked = { noiseSuppressionEnabled }
-                                disabled = { isAdvancedAudioSettingsConfigEnabled && (isAudioSettingsEnabled && !noiseSuppressionEnabled) }
-                                label = { t('toolbar.enableNoiseSuppression') }
-                                // eslint-disable-next-line react/jsx-no-bind
-                                onChange = { () => super._onChange({
-                                    noiseSuppressionEnabled: !noiseSuppressionEnabled
-                                }) } />
-                        </div>
-                    </fieldset>
-                )}
+                <fieldset className = { classes.checkboxGrid }>
+                    <Tooltip
+                        containerClassName = { clsx(classes.tooltipCheckbox, {
+                            [classes.hidden]: !shouldDisplayAdvancedAudioSettingsCheckboxes,
+                        }) }
+                        content = { t('toolbar.advancedAudioSettings.aec.tooltip') }
+                        position = { 'right' }>
+                        <Checkbox
+                            checked = { Boolean(audioSettings?.echoCancellation) }
+                            disabled = { noiseSuppressionEnabled }
+                            label = { t('toolbar.advancedAudioSettings.aec.label') }
+                            name = { 'echoCancellation' }
+                            onChange = { this._onToggleAudioSettings } />
+                    </Tooltip>
+                    <Tooltip
+                        containerClassName = { clsx(classes.tooltipCheckbox, {
+                            [classes.hidden]: !shouldDisplayAdvancedAudioSettingsCheckboxes,
+                        }) }
+                        content = { t('toolbar.advancedAudioSettings.stereo.tooltip') }
+                        position = { 'right' }>
+                        <Checkbox
+                            checked = { Boolean(audioSettings?.channelCount === 2) }
+                            disabled = { noiseSuppressionEnabled }
+                            label = { t('toolbar.advancedAudioSettings.stereo.label') }
+                            name = { 'channelCount' }
+                            onChange = { this._onToggleAudioSettings } />
+                    </Tooltip>
+                    <Tooltip
+                        containerClassName = { clsx(classes.tooltipCheckbox, {
+                            [classes.hidden]: !shouldDisplayAdvancedAudioSettingsCheckboxes,
+                        }) }
+                        content = { t('toolbar.advancedAudioSettings.agc.tooltip') }
+                        position = { 'right' }>
+                        <Checkbox
+                            checked = { Boolean(audioSettings?.autoGainControl) }
+                            disabled = { noiseSuppressionEnabled }
+                            label = { t('toolbar.advancedAudioSettings.agc.label') }
+                            name = { 'autoGainControl' }
+                            onChange = { this._onToggleAudioSettings } />
+                    </Tooltip>
+                    <Tooltip
+                        containerClassName = { clsx(classes.tooltipCheckbox, {
+                            [classes.hidden]: !shouldDisplayAdvancedAudioSettingsCheckboxes,
+                        }) }
+                        content = { t('toolbar.advancedAudioSettings.ns.tooltip') }
+                        position = { 'right' }>
+                        <Checkbox
+                            checked = { Boolean(audioSettings?.noiseSuppression) }
+                            disabled = { noiseSuppressionEnabled }
+                            label = { t('toolbar.advancedAudioSettings.ns.label') }
+                            name = { 'noiseSuppression' }
+                            onChange = { this._onToggleAudioSettings } />
+                    </Tooltip>
+                    <Tooltip
+                        containerClassName = { clsx(classes.tooltipCheckbox, {
+                            [classes.hidden]: !shouldDisplayNoiseSuppressionCheckbox,
+                        }) }
+                        content = { 'RNNoise' }
+                        position = { 'right' }>
+                        <Checkbox
+                            checked = { noiseSuppressionEnabled }
+                            disabled = { shouldDisabledNoiseSupressionCheckbox }
+                            label = { t('toolbar.enableNoiseSuppression') }
+                            // eslint-disable-next-line react/jsx-no-bind
+                            onChange = { () => super._onChange({
+                                noiseSuppressionEnabled: !noiseSuppressionEnabled
+                            }) } />
+                    </Tooltip>
+                </fieldset>
                 <div
                     aria-live = 'polite'
                     className = { classes.outputContainer }>
