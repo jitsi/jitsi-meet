@@ -46,13 +46,13 @@ jobs:
       - name: Configure environment
         run: |
           touch .env
-          echo DRIVE_NEW_API_URL="https://gateway.internxt.com/drive" >> .env
-          echo PAYMENTS_API_URL="https://gateway.internxt.com/payments" >> .env
-          echo MEET_API_URL="https://gateway.internxt.com/meet" >> .env
-          echo CRYPTO_SECRET="6KYQBP847D4ATSFA" >> .env
-          echo MAGIC_IV="d139cb9a2cd17092e79e1861cf9d7023" >> .env
-          echo MAGIC_SALT="38dce0391b49efba88dbc8c39ebf868f0267eb110bb0012ab27dc52a528d61b1d1ed9d76f400ff58e3240028442b1eab9bb84e111d9dadd997982dbde9dbd25e" >> .env
-          echo JITSI_APP_ID="vpaas-magic-cookie-04a19c25aaab448c9cf74516ffb5ebf2" >> .env
+          echo DRIVE_NEW_API_URL="${{ secrets.DRIVE_NEW_API_URL }}" >> .env
+          echo PAYMENTS_API_URL="${{ secrets.PAYMENTS_API_URL }}" >> .env
+          echo MEET_API_URL="${{ secrets.MEET_API_URL }}" >> .env
+          echo CRYPTO_SECRET="${{ secrets.CRYPTO_SECRET }}" >> .env
+          echo MAGIC_IV="${{ secrets.MAGIC_IV }}" >> .env
+          echo MAGIC_SALT="${{ secrets.MAGIC_SALT }}" >> .env
+          echo JITSI_APP_ID="${{ secrets.JITSI_APP_ID }}" >> .env
 
       - name: Build application
         run: make compile deploy
@@ -61,6 +61,6 @@ jobs:
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: 157168a1684d7105399ec2339cf1281b
-          projectName: meet-web
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
           directory: .
