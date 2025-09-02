@@ -1,7 +1,7 @@
 import { Participant } from '../../helpers/Participant';
 import { config } from '../../helpers/TestsConfig';
 import { IToken, ITokenOptions, generateToken } from '../../helpers/token';
-import { IParticipantJoinOptions } from '../../helpers/types';
+import { IParticipantJoinOptions, IParticipantOptions } from '../../helpers/types';
 
 export function generateJaasToken(options: ITokenOptions): IToken {
     if (!config.jaas.enabled) {
@@ -21,24 +21,22 @@ export function generateJaasToken(options: ITokenOptions): IToken {
  * environment variables (see env.example and TestsConfig.ts). If no room name is specified, the default room name
  * from the context is used.
  *
- * @param instanceId This is the "name" passed to the Participant, I think it's used to match against one of the
- * pre-configured browser instances in wdio? It must be one of 'p1', 'p2', 'p3', or 'p4'. TODO: figure out how this
- * should be used.
- * @param token the token to use, if any.
+ * @param participantOptions
  * @param joinOptions options to use when joining the MUC.
  * @returns {Promise<Participant>} The Participant that has joined the MUC.
  */
 export async function joinMuc(
-        instanceId: 'p1' | 'p2' | 'p3' | 'p4',
-        token?: IToken,
+        participantOptions?: Partial<IParticipantOptions>,
         joinOptions?: Partial<IParticipantJoinOptions>): Promise<Participant> {
+
+    const name = participantOptions?.name || 'p1';
 
     if (!config.jaas.enabled) {
         throw new Error('JaaS is not configured.');
     }
 
     // @ts-ignore
-    const p = ctx[instanceId] as Participant;
+    const p = ctx[name] as Participant;
 
     if (p) {
         // Load a blank page to make sure the page is reloaded (in case the new participant uses the same URL). Using
@@ -47,16 +45,17 @@ export async function joinMuc(
     }
 
     const newParticipant = new Participant({
-        name: instanceId,
-        token
+        iFrameApi: participantOptions?.iFrameApi || false,
+        name,
+        token: participantOptions?.token
     });
 
     // @ts-ignore
-    ctx[instanceId] = newParticipant;
+    ctx[name] = newParticipant;
 
     return await newParticipant.joinConference({
         ...joinOptions,
-        forceTenant: config.jaas.tenant,
+        tenant: joinOptions?.tenant || config.jaas.tenant,
         roomName: joinOptions?.roomName || ctx.roomName,
     });
 }

@@ -21,7 +21,7 @@ describe('URL Normalisation', () => {
         }
 
         await ensureTwoParticipants({
-            forceTenant: 'tenant@example.com',
+            tenant: 'tenant@example.com',
             roomName: `${ctx.roomName}@example.com`
         });
     });

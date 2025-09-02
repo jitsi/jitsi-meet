@@ -209,16 +209,16 @@ async function joinParticipant( // eslint-disable-line max-params
     // @ts-ignore
     ctx[participantOptions.name] = newParticipant;
 
-    let forceTenant = options?.forceTenant;
+    let tenant = options?.tenant;
 
     if (options?.preferGenerateToken && !ctx.testProperties.useIFrameApi
         && config.iframe.usesJaas && config.iframe.tenant) {
-        forceTenant = config.iframe.tenant;
+        tenant = config.iframe.tenant;
     }
 
     return await newParticipant.joinConference({
         ...options,
-        forceTenant,
+        tenant: tenant,
         roomName: options?.roomName || ctx.roomName,
     });
 }

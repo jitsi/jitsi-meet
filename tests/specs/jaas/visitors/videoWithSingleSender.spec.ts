@@ -23,21 +23,20 @@ describe('Visitor receiving video from a single remote participant', () => {
                 enabled: false
             }
         };
-        const sender = await joinMuc(
-            'p1',
-            t({ room: ctx.roomName, displayName: 'Sender', moderator: true }), {
-                configOverwrite
-            }
-        );
+        const sender = await joinMuc({
+            token: t({ room: ctx.roomName, displayName: 'Sender', moderator: true })
+        }, {
+            configOverwrite
+        });
         const senderEndpointId = await sender.getEndpointId();
 
         const testVisitor = async function(instanceId: 'p1' | 'p2' | 'p3' | 'p4') {
-            const visitor = await joinMuc(
-                instanceId,
-                t({ room: ctx.roomName, displayName: 'Visitor', visitor: true }), {
-                    configOverwrite
-                }
-            );
+            const visitor = await joinMuc({
+                name: instanceId,
+                token: t({ room: ctx.roomName, displayName: 'Visitor', visitor: true })
+            }, {
+                configOverwrite
+            });
 
             await visitor.waitForIceConnected();
 

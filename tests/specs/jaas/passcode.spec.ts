@@ -31,7 +31,7 @@ describe('Setting passcode through settings provisioning', () => {
  */
 async function joinWithPassword(instanceId: string, token: IToken) {
     // @ts-ignore
-    const p = await joinMuc(instanceId, token, ctx.roomName);
+    const p = await joinMuc({ name: instanceId, token }, { roomName: ctx.roomName });
 
     await p.waitForMucJoinedOrError();
     expect(await p.isInMuc()).toBe(false);
