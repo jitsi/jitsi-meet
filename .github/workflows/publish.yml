@@ -46,10 +46,9 @@ jobs:
       - name: Configure environment
         run: |
           touch .env
-          echo DRIVE_API_URL="https://drive.internxt.com/api" >> .env
-          echo DRIVE_NEW_API_URL="https://api.internxt.com/drive" >> .env
-          echo PAYMENTS_API_URL="https://api.internxt.com/payments" >> .env
-          echo MEET_API_URL="https://api.internxt.com/meet" >> .env
+          echo DRIVE_NEW_API_URL="https://gateway.internxt.com/drive" >> .env
+          echo PAYMENTS_API_URL="https://gateway.internxt.com/payments" >> .env
+          echo MEET_API_URL="https://gateway.internxt.com/meet" >> .env
           echo CRYPTO_SECRET="6KYQBP847D4ATSFA" >> .env
           echo MAGIC_IV="d139cb9a2cd17092e79e1861cf9d7023" >> .env
           echo MAGIC_SALT="38dce0391b49efba88dbc8c39ebf868f0267eb110bb0012ab27dc52a528d61b1d1ed9d76f400ff58e3240028442b1eab9bb84e111d9dadd997982dbde9dbd25e" >> .env
