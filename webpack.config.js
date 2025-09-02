@@ -236,13 +236,7 @@ function getConfig(options = {}) {
                 fs: false,
                 path: false,
                 process: false
-            },
-            extensionAlias: {
-                '.js': ['.js', '.ts']
-            },
-            modules: [
-                'node_modules'
-            ]
+            }
         }
     };
 }
