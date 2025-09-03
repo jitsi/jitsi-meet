@@ -117,7 +117,6 @@
     "react-youtube": "10.1.0",
     "redux": "4.0.4",
     "redux-thunk": "2.4.1",
-    "roughjs": "^4.6.4",
     "seamless-scroll-polyfill": "2.1.8",
     "semver": "7.5.4",
     "text-encoding": "0.7.0",
