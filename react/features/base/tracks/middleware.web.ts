@@ -9,7 +9,6 @@ import { SET_AUDIO_MUTED } from '../media/actionTypes';
 import { gumPending, setScreenshareMuted } from '../media/actions';
 import {
     MEDIA_TYPE,
-    MediaType,
     VIDEO_TYPE
 } from '../media/constants';
 import { IGUMPendingState } from '../media/types';
@@ -32,10 +31,10 @@ import {
 } from './actions.web';
 import {
     getLocalJitsiAudioTrackSettings,
+    getLocalTrack,
     getTrackByJitsiTrack, isUserInteractionRequiredForUnmute, logTracksForParticipant,
     setTrackMuted
 } from './functions.web';
-import { _getLocalTrack } from './middleware.any';
 import { ITrack, ITrackOptions } from './types';
 
 
@@ -152,7 +151,7 @@ MiddlewareRegistry.register(store => next => action => {
             return;
         }
 
-        _setMuted(store, action, MEDIA_TYPE.AUDIO);
+        _setMuted(store, action);
         break;
     }
     }
@@ -230,16 +229,14 @@ function _removeNoDataFromSourceNotification({ getState, dispatch }: IStore, tra
  * @param {Store} store - The redux store in which the specified action is
  * dispatched.
  * @param {Action} action - The redux action dispatched in the specified store.
- * @param {MEDIA_TYPE} mediaType - The {@link MEDIA_TYPE} of the local track
- * which is being muted or unmuted.
  * @private
  * @returns {void}
  */
 function _setMuted(store: IStore, { ensureTrack, muted }: {
-    ensureTrack: boolean; muted: boolean; }, mediaType: MediaType) {
+    ensureTrack: boolean; muted: boolean; }) {
     const { dispatch, getState } = store;
-    const localTrack = _getLocalTrack(store, mediaType, /* includePending */ true);
     const state = getState();
+    const localTrack = getLocalTrack(state['features/base/tracks'], MEDIA_TYPE.AUDIO, /* includePending */ true);
 
     if (localTrack) {
         // The `jitsiTrack` property will have a value only for a localTrack for which `getUserMedia` has already
@@ -255,30 +252,20 @@ function _setMuted(store: IStore, { ensureTrack, muted }: {
         }
     } else if (!muted && ensureTrack) {
         // TODO(saghul): reconcile these 2 types.
-        const createMediaType = mediaType === MEDIA_TYPE.SCREENSHARE ? 'desktop' : mediaType;
-
-        typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.PENDING_UNMUTE));
+        dispatch(gumPending([ MEDIA_TYPE.AUDIO ], IGUMPendingState.PENDING_UNMUTE));
 
         const createTrackOptions: ITrackOptions = {
-            devices: [ createMediaType ],
+            devices: [ MEDIA_TYPE.AUDIO ],
+            constraints: {
+                audio: state['features/settings'].audioSettings ?? getLocalJitsiAudioTrackSettings(state)
+            }
         };
 
-        const isAudioTrack = mediaType === MEDIA_TYPE.AUDIO;
-
-        if (isAudioTrack) {
-            createTrackOptions.constraints = {
-                audio: state['features/settings'].audioSettings ?? getLocalJitsiAudioTrackSettings(state)
-            };
-        }
-
         dispatch(createLocalTracksA(createTrackOptions)).then(() => {
-            typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.NONE));
+            dispatch(gumPending([ MEDIA_TYPE.AUDIO ], IGUMPendingState.NONE));
+            const updatedSettings = getLocalJitsiAudioTrackSettings(getState());
 
-            if (isAudioTrack) {
-                const updatedSettings = getLocalJitsiAudioTrackSettings(getState());
-
-                dispatch(setAudioSettings(updatedSettings));
-            }
+            dispatch(setAudioSettings(updatedSettings));
         });
     }
 }
