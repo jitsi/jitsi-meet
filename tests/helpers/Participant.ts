@@ -27,7 +27,6 @@ import Toolbar from '../pageobjects/Toolbar';
 import VideoQualityDialog from '../pageobjects/VideoQualityDialog';
 import Visitors from '../pageobjects/Visitors';
 
-import { config as testsConfig } from './TestsConfig';
 import { LOG_PREFIX, logInfo } from './browserLogger';
 import { IToken } from './token';
 import { IParticipantJoinOptions, IParticipantOptions } from './types';
@@ -219,8 +218,8 @@ export class Participant {
             // @ts-ignore
             url = `${this.driver.iframePageBase}${url}&domain="${baseUrl.host}"&room="${options.roomName}"`;
 
-            if (testsConfig.iframe.tenant) {
-                url = `${url}&tenant="${testsConfig.iframe.tenant}"`;
+            if (options.tenant) {
+                url = `${url}&tenant="${options.tenant}"`;
             } else if (baseUrl.pathname.length > 1) {
                 // remove leading slash
                 url = `${url}&tenant="${baseUrl.pathname.substring(1)}"`;
@@ -235,8 +234,9 @@ export class Participant {
         // drop the leading '/' so we can use the tenant if any
         url = url.startsWith('/') ? url.substring(1) : url;
 
-        if (options.forceTenant) {
-            url = `/${options.forceTenant}/${url}`;
+        if (options.tenant && !this._iFrameApi) {
+            // For the iFrame API the tenant is passed in a different way.
+            url = `/${options.tenant}/${url}`;
         }
 
         await this.driver.url(url);
@@ -244,9 +244,7 @@ export class Participant {
         await this.waitForPageToLoad();
 
         if (this._iFrameApi) {
-            const mainFrame = this.driver.$('iframe');
-
-            await this.driver.switchFrame(mainFrame);
+            await this.switchToIFrame();
         }
 
         if (!options.skipWaitToJoin) {
@@ -319,7 +317,7 @@ export class Participant {
     /**
      * Waits for the tile view to display.
      */
-    async waitForTileViewDisplay(reverse = false) {
+    async waitForTileViewDisplayed(reverse = false) {
         await this.driver.$('//div[@id="videoconference_page" and contains(@class, "tile-view")]').waitForDisplayed({
             reverse,
             timeout: 10_000,
@@ -626,19 +624,23 @@ export class Participant {
 
 
     /**
-     * Switches to the iframe API context
+     * Switches to the main frame context (outside the iFrame; where the Jitsi Meet iFrame API is available).
+     *
+     * If this Participant was initialized with iFrameApi=false this has no effect, as there aren't any other contexts.
      */
-    async switchToAPI() {
+    async switchToMainFrame() {
         await this.driver.switchFrame(null);
     }
 
     /**
-     * Switches to the meeting page context.
+     * Switches to the iFrame context (inside the iFrame; where the Jitsi Meet application runs).
+     *
+     * If this Participant was initialized with iFrameApi=false this will result in an error.
      */
-    switchInPage() {
-        const mainFrame = this.driver.$('iframe');
+    async switchToIFrame() {
+        const iframe = this.driver.$('iframe');
 
-        return this.driver.switchFrame(mainFrame);
+        await this.driver.switchFrame(iframe);
     }
 
     /**

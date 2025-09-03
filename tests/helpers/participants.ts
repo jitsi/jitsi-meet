@@ -187,7 +187,7 @@ async function joinParticipant( // eslint-disable-line max-params
 
     if (p) {
         if (ctx.testProperties.useIFrameApi) {
-            await p.switchInPage();
+            await p.switchToIFrame();
         }
 
         if (await p.isInMuc()) {
@@ -196,7 +196,7 @@ async function joinParticipant( // eslint-disable-line max-params
 
         if (ctx.testProperties.useIFrameApi) {
             // when loading url make sure we are on the top page context or strange errors may occur
-            await p.switchToAPI();
+            await p.switchToMainFrame();
         }
 
         // Change the page so we can reload same url if we need to, base.html is supposed to be empty or close to empty
@@ -209,16 +209,16 @@ async function joinParticipant( // eslint-disable-line max-params
     // @ts-ignore
     ctx[participantOptions.name] = newParticipant;
 
-    let forceTenant = options?.forceTenant;
+    let tenant = options?.tenant;
 
     if (options?.preferGenerateToken && !ctx.testProperties.useIFrameApi
         && config.iframe.usesJaas && config.iframe.tenant) {
-        forceTenant = config.iframe.tenant;
+        tenant = config.iframe.tenant;
     }
 
     return await newParticipant.joinConference({
         ...options,
-        forceTenant,
+        tenant: tenant,
         roomName: options?.roomName || ctx.roomName,
     });
 }

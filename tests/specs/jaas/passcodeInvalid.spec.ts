@@ -14,7 +14,7 @@ describe('Setting passcode through settings provisioning', () => {
             passcode: 'passcode-must-be-digits-only'
         };
 
-        const p = await joinMuc('p1', t({ room: ctx.roomName }), ctx.roomName);
+        const p = await joinMuc({ token: t({ room: ctx.roomName }) }, { roomName: ctx.roomName });
 
         // The settings provisioning contains an invalid passcode, the expected result is that the room is not
         // configured to require a passcode.

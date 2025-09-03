@@ -53,11 +53,6 @@ export type IParticipantJoinOptions = {
      */
     configOverwrite?: IConfig;
 
-    /**
-     * An optional tenant to use. If provided the URL is prepended with /$forceTenant
-     */
-    forceTenant?: string;
-
     /** The name of the room to join */
     roomName: string;
 
@@ -71,6 +66,11 @@ export type IParticipantJoinOptions = {
      * based on the logic of the test.
      */
     skipWaitToJoin?: boolean;
+
+    /**
+     * An optional tenant to use. If provided it overrides the default.
+     */
+    tenant?: string;
 };
 
 export type IJoinOptions = {
@@ -79,11 +79,6 @@ export type IJoinOptions = {
      * Config overwrites to pass to IParticipantJoinOptions.
      */
     configOverwrite?: IConfig;
-
-    /**
-     * An optional tenant to use. If provided the URL is prepended with /$forceTenant
-     */
-    forceTenant?: string;
 
     /**
      * When joining the first participant and jwt singing material is available and a provided token
@@ -115,6 +110,11 @@ export type IJoinOptions = {
      * The skip waiting for the participant to join the room setting to pass to IParticipantJoinOptions.
      */
     skipWaitToJoin?: boolean;
+
+    /**
+     * An optional tenant to use. If provided the default tenant is changed to it.
+     */
+    tenant?: string;
 
     /**
      * Options used when generating a token.

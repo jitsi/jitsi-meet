@@ -24,7 +24,7 @@ describe('Transcriptions', () => {
             return;
         }
 
-        await p1.switchToAPI();
+        await p1.switchToMainFrame();
 
         await ensureTwoParticipants({
             configOverwrite: {
@@ -40,8 +40,8 @@ describe('Transcriptions', () => {
             p2.getEndpointId()
         ]);
 
-        await p1.switchToAPI();
-        await p2.switchToAPI();
+        await p1.switchToMainFrame();
+        await p2.switchToMainFrame();
 
         expect(await p1.getIframeAPI().getEventResult('isModerator')).toBe(true);
         expect(await p1.getIframeAPI().getEventResult('videoConferenceJoined')).toBeDefined();

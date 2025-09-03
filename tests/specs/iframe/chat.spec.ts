@@ -34,8 +34,8 @@ describe('Chat', () => {
     it('send message', async () => {
         const { p1, p2 } = ctx;
 
-        await p1.switchToAPI();
-        await p2.switchToAPI();
+        await p1.switchToMainFrame();
+        await p2.switchToMainFrame();
 
         await p2.getIframeAPI().addEventListener('chatUpdated');
         await p2.getIframeAPI().addEventListener('incomingMessage');

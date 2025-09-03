@@ -72,11 +72,11 @@ describe('Invite iframeAPI', () => {
 
         const { p1 } = ctx;
 
-        await p1.switchToAPI();
+        await p1.switchToMainFrame();
 
         await p1.getIframeAPI().invitePhone(process.env.DIAL_OUT_URL);
 
-        await p1.switchInPage();
+        await p1.switchToIFrame();
 
         await p1.waitForParticipants(1);
 
@@ -92,11 +92,11 @@ describe('Invite iframeAPI', () => {
 
         const { p1 } = ctx;
 
-        await p1.switchToAPI();
+        await p1.switchToMainFrame();
 
         await p1.getIframeAPI().inviteSIP(process.env.SIP_JIBRI_DIAL_OUT_URL);
 
-        await p1.switchInPage();
+        await p1.switchToIFrame();
 
         await p1.waitForParticipants(1);
 

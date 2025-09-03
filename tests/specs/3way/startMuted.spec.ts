@@ -40,10 +40,7 @@ describe('StartMuted', () => {
         await p1.getFilmstrip().assertAudioMuteIconIsDisplayed(p1, true);
         await p1.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1, true);
 
-        await joinSecondParticipant({
-            ...options,
-            skipInMeetingChecks: true
-        });
+        await joinSecondParticipant(options);
 
         // Enable screenshare on p1.
         p1.getToolbar().clickDesktopSharingButton();
@@ -80,10 +77,7 @@ describe('StartMuted', () => {
         await p1.waitForRemoteVideo(p2EndpointId, false);
 
         // Add a third participant and check p3 is able to receive audio and video from p2.
-        await joinThirdParticipant({
-            ...options,
-            skipInMeetingChecks: true
-        });
+        await joinThirdParticipant(options);
 
         const { p3 } = ctx;
 
@@ -110,20 +104,14 @@ describe('StartMuted', () => {
         };
 
         await ensureOneParticipant(options);
-        await joinSecondParticipant({
-            ...options,
-            skipInMeetingChecks: true
-        });
+        await joinSecondParticipant(options);
 
         const { p2 } = ctx;
 
         await p2.waitForIceConnected();
         await p2.waitForReceiveMedia();
 
-        await joinThirdParticipant({
-            ...options,
-            skipInMeetingChecks: true
-        });
+        await joinThirdParticipant(options);
 
         const { p3 } = ctx;
 
@@ -233,8 +221,7 @@ describe('StartMuted', () => {
                 p2p: {
                     enabled: true
                 }
-            },
-            skipInMeetingChecks: true
+            }
         });
 
         const { p1, p2 } = ctx;
