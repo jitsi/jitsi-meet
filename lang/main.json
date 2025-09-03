@@ -829,6 +829,7 @@
             "nameRequired": "A name is required",
             "newMeeting": "New Meeting",
             "participants": "Participants",
+            "participant": "Participant",
             "upToParticipants": "Up to {{num}} participants",
             "upgrade": "Upgrade"
         },

@@ -2,7 +2,6 @@ import { Avatar } from "@internxt/ui";
 import React from "react";
 import { ParticipantData } from "../types";
 
-
 const ParticipantsList = ({
     participants,
     translate,
@@ -17,7 +16,10 @@ const ParticipantsList = ({
                 <span className="text-xl font-semibold text-white">{translate("meet.internxtMeet")}</span>
 
                 <span className="text-base font-normal text-white/75">
-                    {participantsNumber} {translate("meet.preMeeting.participants")}
+                    {participantsNumber}{" "}
+                    {participantsNumber === 1
+                        ? translate("meet.preMeeting.participant")
+                        : translate("meet.preMeeting.participants")}
                 </span>
             </div>
             <div className="flex items-center">
