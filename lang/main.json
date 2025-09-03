@@ -1450,6 +1450,7 @@
         "reactionHeart": "Send heart reaction",
         "reactionLaugh": "Send laugh reaction",
         "reactionLike": "Send thumbs up reaction",
+        "reactionLove": "Send love reaction",
         "reactionSilence": "Send silence reaction",
         "reactionSurprised": "Send surprised reaction",
         "reactions": "Reactions",
