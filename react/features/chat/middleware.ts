@@ -51,8 +51,9 @@ import {
     clearMessages,
     closeChat,
     notifyPrivateRecipientsChanged,
+    openChat,
     setPrivateMessageRecipient
-} from './actions.any';
+} from './actions';
 import { ChatPrivacyDialog } from './components';
 import {
     ChatTabs,
@@ -633,7 +634,9 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
     if (shouldShowNotification) {
         dispatch(showMessageNotification({
             title: notificationDisplayName,
-            description: message
+            description: message,
+            customActionNameKey: [ 'notify.openChat' ],
+            customActionHandler: [ () => dispatch(openChat()) ]
         }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
     }
 

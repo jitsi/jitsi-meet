@@ -1,6 +1,5 @@
 import { IParticipant } from '../base/participants/types';
-import { navigate }
-    from '../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { navigate } from '../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../mobile/navigation/routes';
 
 import { OPEN_CHAT } from './actionTypes';
@@ -18,7 +17,7 @@ export * from './actions.any';
  *     type: OPEN_CHAT
  * }}
  */
-export function openChat(participant: IParticipant | undefined | Object, disablePolls?: boolean) {
+export function openChat(participant?: IParticipant | undefined | Object, disablePolls?: boolean) {
     if (disablePolls) {
         navigate(screen.conference.chat);
     }
