@@ -1,5 +1,6 @@
-import { Participant } from '../../helpers/Participant';
-import { ensureTwoParticipants } from '../../helpers/participants';
+import { Participant } from '../helpers/Participant';
+import { setTestProperties } from '../helpers/TestProperties';
+import { joinMuc } from '../helpers/joinMuc';
 
 /**
  * The CSS selector for local video when outside of tile view. It should
@@ -14,13 +15,16 @@ const FILMSTRIP_VIEW_LOCAL_VIDEO_CSS_SELECTOR = '#filmstripLocalVideo #localVide
  */
 const TILE_VIEW_LOCAL_VIDEO_CSS_SELECTOR = '.remote-videos #localVideoContainer';
 
+setTestProperties(__filename, {
+    usesBrowsers: [ 'p1', 'p2' ]
+});
+
 describe('TileView', () => {
     let p1: Participant, p2: Participant;
 
     before('join the meeting', async () => {
-        await ensureTwoParticipants();
-        p1 = ctx.p1;
-        p2 = ctx.p2;
+        p1 = await joinMuc({ name: 'p1' });
+        p2 = await joinMuc({ name: 'p2' });
     });
     it('entering tile view', async () => {
         await p1.getToolbar().clickEnterTileViewButton();
