@@ -244,9 +244,7 @@ export class Participant {
         await this.waitForPageToLoad();
 
         if (this._iFrameApi) {
-            const mainFrame = this.driver.$('iframe');
-
-            await this.driver.switchFrame(mainFrame);
+            await this.switchToIFrame();
         }
 
         if (!options.skipWaitToJoin) {
@@ -626,19 +624,23 @@ export class Participant {
 
 
     /**
-     * Switches to the iframe API context
+     * Switches to the main frame context (outside the iFrame; where the Jitsi Meet iFrame API is available).
+     *
+     * If this Participant was initialized with iFrameApi=false this has no effect, as there aren't any other contexts.
      */
-    async switchToAPI() {
+    async switchToMainFrame() {
         await this.driver.switchFrame(null);
     }
 
     /**
-     * Switches to the meeting page context.
+     * Switches to the iFrame context (inside the iFrame; where the Jitsi Meet application runs).
+     *
+     * If this Participant was initialized with iFrameApi=false this will result in an error.
      */
-    switchInPage() {
-        const mainFrame = this.driver.$('iframe');
+    async switchToIFrame() {
+        const iframe = this.driver.$('iframe');
 
-        return this.driver.switchFrame(mainFrame);
+        await this.driver.switchFrame(iframe);
     }
 
     /**

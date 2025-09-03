@@ -34,7 +34,7 @@ describe('Visitors', () => {
         await p1.driver.waitUntil(() => p1.execute(() => APP.conference._room.isVisitorsSupported()), {
             timeout: 2000
         }).then(async () => {
-            await p1.switchToAPI();
+            await p1.switchToMainFrame();
         }).catch(() => {
             ctx.skipSuiteTests = true;
         });

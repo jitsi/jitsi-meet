@@ -32,7 +32,7 @@ describe('Visitors', () => {
         await p1.driver.waitUntil(() => p1.execute(() => APP.conference._room.isVisitorsSupported()), {
             timeout: 2000
         }).then(async () => {
-            await p1.switchToAPI();
+            await p1.switchToMainFrame();
         }).catch(() => {
             ctx.skipSuiteTests = true;
         });
@@ -91,7 +91,7 @@ describe('Visitors', () => {
             expect(event.data.role).toBe('visitor');
             expect(event.customerId).toBe(testsConfig.iframe.customerId);
 
-            await p2.switchToAPI();
+            await p2.switchToMainFrame();
             await p2.getIframeAPI().executeCommand('hangup');
 
             // PARTICIPANT_LEFT webhook

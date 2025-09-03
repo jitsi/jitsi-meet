@@ -73,8 +73,8 @@ describe('Participants presence', () => {
             p2.getEndpointId()
         ]);
 
-        await p1.switchToAPI();
-        await p2.switchToAPI();
+        await p1.switchToMainFrame();
+        await p2.switchToMainFrame();
 
         expect(await p1.getIframeAPI().getEventResult('isModerator')).toBe(true);
         expect(await p2.getIframeAPI().getEventResult('isModerator')).toBe(false);
@@ -148,7 +148,7 @@ describe('Participants presence', () => {
     it('participants pane', async () => {
         const { p1 } = ctx;
 
-        await p1.switchToAPI();
+        await p1.switchToMainFrame();
 
         expect(await p1.getIframeAPI().isParticipantsPaneOpen()).toBe(false);
 
@@ -226,7 +226,7 @@ describe('Participants presence', () => {
     it('kick participant', async () => {
         // we want to join second participant with token, so we can check info in webhook
         await ctx.p2.getIframeAPI().addEventListener('videoConferenceLeft');
-        await ctx.p2.switchToAPI();
+        await ctx.p2.switchToMainFrame();
         await ctx.p2.getIframeAPI().executeCommand('hangup');
         await ctx.p2.driver.waitUntil(() =>
             ctx.p2.getIframeAPI().getEventResult('videoConferenceLeft'), {
@@ -248,8 +248,8 @@ describe('Participants presence', () => {
         const p1DisplayName = await p1.getLocalDisplayName();
         const p2DisplayName = await p2.getLocalDisplayName();
 
-        await p1.switchToAPI();
-        await p2.switchToAPI();
+        await p1.switchToMainFrame();
+        await p2.switchToMainFrame();
 
         const roomsInfo = (await p1.getIframeAPI().getRoomsInfo()).rooms[0];
 
@@ -347,7 +347,7 @@ describe('Participants presence', () => {
             expect(event.data.name).toBe(p2.name);
         }
 
-        await p1.switchToAPI();
+        await p1.switchToMainFrame();
 
         const event = await p1.driver.waitUntil(() => p1.getIframeAPI().getEventResult('participantJoined'), {
             timeout: 2000,
@@ -381,7 +381,7 @@ describe('Participants presence', () => {
 
         await p1.getIframeAPI().executeCommand('overwriteNames', newNames);
 
-        await p1.switchInPage();
+        await p1.switchToIFrame();
 
         expect(await p1.getLocalDisplayName()).toBe(newP1Name);
 
@@ -392,8 +392,8 @@ describe('Participants presence', () => {
     it('hangup', async () => {
         const { p1, p2, roomName } = ctx;
 
-        await p1.switchToAPI();
-        await p2.switchToAPI();
+        await p1.switchToMainFrame();
+        await p2.switchToMainFrame();
 
         await p2.getIframeAPI().clearEventResults('videoConferenceLeft');
         await p2.getIframeAPI().addEventListener('videoConferenceLeft');
@@ -423,7 +423,7 @@ describe('Participants presence', () => {
     it('dispose conference', async () => {
         const { p1, roomName, webhooksProxy } = ctx;
 
-        await p1.switchToAPI();
+        await p1.switchToMainFrame();
 
         await p1.getIframeAPI().clearEventResults('videoConferenceLeft');
         await p1.getIframeAPI().addEventListener('videoConferenceLeft');

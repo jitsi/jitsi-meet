@@ -45,7 +45,7 @@ describe('Recording and Live Streaming', () => {
         liveStreamingDisabled = Boolean(!await p.execute(() => config.liveStreaming?.enabled))
             || !process.env.YTUBE_TEST_STREAM_KEY;
 
-        await p.switchToAPI();
+        await p.switchToMainFrame();
     });
 
     /**
