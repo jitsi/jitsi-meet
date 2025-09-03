@@ -1,5 +1,5 @@
 import { setTestProperties } from '../../../helpers/TestProperties';
-import { joinMuc, generateJaasToken as t } from '../../../helpers/jaas';
+import { joinJaasMuc, generateJaasToken as t } from '../../../helpers/jaas';
 
 setTestProperties(__filename, {
     useJaas: true,
@@ -13,7 +13,7 @@ describe('Visitors triggered by visitor tokens', () => {
             visitorsEnabled: true
         };
 
-        const m = await joinMuc({
+        const m = await joinJaasMuc({
             token: t({ room: ctx.roomName, displayName: 'Mo de Rator', moderator: true })
         });
 
@@ -23,7 +23,7 @@ describe('Visitors triggered by visitor tokens', () => {
         console.log('Moderator joined');
 
         // Joining with a participant token before any visitors
-        const p = await joinMuc({
+        const p = await joinJaasMuc({
             name: 'p2',
             token: t({ room: ctx.roomName, displayName: 'Parti Cipant' })
         });
@@ -34,7 +34,7 @@ describe('Visitors triggered by visitor tokens', () => {
         console.log('Participant joined');
 
         // Joining with a visitor token
-        const v = await joinMuc({
+        const v = await joinJaasMuc({
             name: 'p3',
             token: t({ room: ctx.roomName, displayName: 'Visi Tor', visitor: true })
         });
@@ -45,7 +45,7 @@ describe('Visitors triggered by visitor tokens', () => {
         console.log('Visitor joined');
 
         // Joining with a participant token after visitors...:mindblown:
-        const v2 = await joinMuc({
+        const v2 = await joinJaasMuc({
             name: 'p2',
             token: t({ room: ctx.roomName, displayName: 'Visi Tor 2' })
         });

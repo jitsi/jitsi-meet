@@ -1,6 +1,6 @@
 import { Participant } from './Participant';
 import { config } from './TestsConfig';
-import { joinMuc as joinMuc0 } from './joinMuc';
+import { joinMuc } from './joinMuc';
 import { IToken, ITokenOptions, generateToken } from './token';
 import { IParticipantJoinOptions, IParticipantOptions } from './types';
 
@@ -26,7 +26,7 @@ export function generateJaasToken(options: ITokenOptions): IToken {
  * @param joinOptions options to use when joining the MUC.
  * @returns {Promise<Participant>} The Participant that has joined the MUC.
  */
-export async function joinMuc(
+export async function joinJaasMuc(
         participantOptions?: Partial<IParticipantOptions>,
         joinOptions?: Partial<IParticipantJoinOptions>): Promise<Participant> {
 
@@ -34,7 +34,7 @@ export async function joinMuc(
         throw new Error('JaaS is not configured.');
     }
 
-    return await joinMuc0(participantOptions, {
+    return await joinMuc(participantOptions, {
         ...joinOptions,
         tenant: joinOptions?.tenant || config.jaas.tenant
     });
