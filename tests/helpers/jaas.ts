@@ -1,5 +1,6 @@
 import { Participant } from './Participant';
 import { config } from './TestsConfig';
+import { joinMuc as joinMuc0 } from './joinMuc';
 import { IToken, ITokenOptions, generateToken } from './token';
 import { IParticipantJoinOptions, IParticipantOptions } from './types';
 
@@ -29,33 +30,12 @@ export async function joinMuc(
         participantOptions?: Partial<IParticipantOptions>,
         joinOptions?: Partial<IParticipantJoinOptions>): Promise<Participant> {
 
-    const name = participantOptions?.name || 'p1';
-
     if (!config.jaas.enabled) {
         throw new Error('JaaS is not configured.');
     }
 
-    // @ts-ignore
-    const p = ctx[name] as Participant;
-
-    if (p) {
-        // Load a blank page to make sure the page is reloaded (in case the new participant uses the same URL). Using
-        // 'about:blank' was causing problems in the past, if we notice any issues we can change to "base.html".
-        await p.driver.url('about:blank');
-    }
-
-    const newParticipant = new Participant({
-        iFrameApi: participantOptions?.iFrameApi || false,
-        name,
-        token: participantOptions?.token
-    });
-
-    // @ts-ignore
-    ctx[name] = newParticipant;
-
-    return await newParticipant.joinConference({
+    return await joinMuc0(participantOptions, {
         ...joinOptions,
-        tenant: joinOptions?.tenant || config.jaas.tenant,
-        roomName: joinOptions?.roomName || ctx.roomName,
+        tenant: joinOptions?.tenant || config.jaas.tenant
     });
 }
