@@ -1379,10 +1379,6 @@
             "videounmute": "Start camera"
         },
         "addPeople": "Add people to your call",
-        "audioOnlyOff": "Disable low bandwidth mode",
-        "audioOnlyOn": "Enable low bandwidth mode",
-        "audioRoute": "Select the sound device",
-        "audioSettings": "Audio settings",        
         "advancedAudioSettings": {
             "aec": {
                 "label": "AEC",
@@ -1401,6 +1397,10 @@
                 "tooltip": "Stereo audio"
             }
         },
+        "audioOnlyOff": "Disable low bandwidth mode",
+        "audioOnlyOn": "Enable low bandwidth mode",
+        "audioRoute": "Select the sound device",
+        "audioSettings": "Audio settings",
         "authenticate": "Authenticate",
         "boo": "Boo",
         "callQuality": "Manage video quality",
