@@ -37,8 +37,8 @@ export type IContext = {
 export type IParticipantOptions = {
     /** Whether it should use the iFrame API. */
     iFrameApi?: boolean;
-    /** Must be 'p1', 'p2', 'p3', or 'p4'. */
-    name: string;
+    /** Determines the browser instance to use. */
+    name: 'p1' | 'p2' | 'p3' | 'p4';
     /** An optional token to use. */
     token?: IToken;
 };
