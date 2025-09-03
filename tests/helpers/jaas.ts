@@ -1,7 +1,7 @@
-import { Participant } from '../../helpers/Participant';
-import { config } from '../../helpers/TestsConfig';
-import { IToken, ITokenOptions, generateToken } from '../../helpers/token';
-import { IParticipantJoinOptions, IParticipantOptions } from '../../helpers/types';
+import { Participant } from './Participant';
+import { config } from './TestsConfig';
+import { IToken, ITokenOptions, generateToken } from './token';
+import { IParticipantJoinOptions, IParticipantOptions } from './types';
 
 export function generateJaasToken(options: ITokenOptions): IToken {
     if (!config.jaas.enabled) {

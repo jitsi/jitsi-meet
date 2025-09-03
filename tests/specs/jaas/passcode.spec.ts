@@ -1,6 +1,6 @@
 import { setTestProperties } from '../../helpers/TestProperties';
+import { joinMuc, generateJaasToken as t } from '../../helpers/jaas';
 import { IToken } from '../../helpers/token';
-import { joinMuc, generateJaasToken as t } from '../helpers/jaas';
 
 setTestProperties(__filename, {
     useJaas: true,

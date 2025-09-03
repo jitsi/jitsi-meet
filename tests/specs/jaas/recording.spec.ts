@@ -2,7 +2,7 @@ import { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import { config as testsConfig } from '../../helpers/TestsConfig';
 import WebhookProxy from '../../helpers/WebhookProxy';
-import { joinMuc, generateJaasToken as t } from '../helpers/jaas';
+import { joinMuc, generateJaasToken as t } from '../../helpers/jaas';
 
 setTestProperties(__filename, {
     useJaas: true,

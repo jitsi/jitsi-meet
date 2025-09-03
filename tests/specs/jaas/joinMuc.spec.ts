@@ -1,6 +1,6 @@
 import { setTestProperties } from '../../helpers/TestProperties';
+import { joinMuc, generateJaasToken as t } from '../../helpers/jaas';
 import { TOKEN_AUTH_FAILED_TEST_ID, TOKEN_AUTH_FAILED_TITLE_TEST_ID } from '../../pageobjects/Notifications';
-import { joinMuc, generateJaasToken as t } from '../helpers/jaas';
 
 setTestProperties(__filename, {
     useJaas: true
