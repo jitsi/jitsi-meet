@@ -36,13 +36,19 @@ describe("MeetingService", () => {
         console.error = originalConsoleError;
     });
 
-    describe("getInstance", () => {
-        it("When getting multiple instances, then they should be the same singleton instance", () => {
-            const instance1 = MeetingService.getInstance();
-            const instance2 = MeetingService.getInstance();
+    describe("instance", () => {
+        it("When accessing multiple times, then they should be the same singleton instance", () => {
+            const instance1 = MeetingService.instance;
+            const instance2 = MeetingService.instance;
 
             expect(instance1).toBeDefined();
             expect(instance1).toBe(instance2);
+        });
+
+        it("When accessing instance, then it should be an instance of MeetingService", () => {
+            const instance = MeetingService.instance;
+
+            expect(instance).toBeInstanceOf(MeetingService);
         });
     });
 
@@ -60,8 +66,7 @@ describe("MeetingService", () => {
 
             mockedGetMeet.mockReturnValue(mockMeetClient);
 
-            const meetingService = MeetingService.getInstance();
-            const result = await meetingService.createCall();
+            const result = await MeetingService.instance.createCall();
 
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
@@ -80,9 +85,7 @@ describe("MeetingService", () => {
 
             mockedGetMeet.mockReturnValue(mockMeetClient);
 
-            const meetingService = MeetingService.getInstance();
-
-            await expect(meetingService.createCall()).rejects.toThrow(mockError);
+            await expect(MeetingService.instance.createCall()).rejects.toThrow(mockError);
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
             expect(mockMeetClient.createCall).toHaveBeenCalledTimes(1);
@@ -112,8 +115,7 @@ describe("MeetingService", () => {
 
             mockedGetMeet.mockReturnValue(mockMeetClient);
 
-            const meetingService = MeetingService.getInstance();
-            const result = await meetingService.joinCall(mockCallId, mockPayload);
+            const result = await MeetingService.instance.joinCall(mockCallId, mockPayload);
 
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
@@ -141,9 +143,7 @@ describe("MeetingService", () => {
 
             mockedGetMeet.mockReturnValue(mockMeetClient);
 
-            const meetingService = MeetingService.getInstance();
-
-            await expect(meetingService.joinCall(mockCallId, mockPayload)).rejects.toThrow(mockError);
+            await expect(MeetingService.instance.joinCall(mockCallId, mockPayload)).rejects.toThrow(mockError);
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
             expect(mockMeetClient.joinCall).toHaveBeenCalledTimes(1);
@@ -169,15 +169,55 @@ describe("MeetingService", () => {
 
             mockedGetMeet.mockReturnValue(mockMeetClient);
 
-            const meetingService = MeetingService.getInstance();
-
-            await expect(meetingService.joinCall(mockCallId, mockPayload)).rejects.toThrow(mockError);
+            await expect(MeetingService.instance.joinCall(mockCallId, mockPayload)).rejects.toThrow(mockError);
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
             expect(mockMeetClient.joinCall).toHaveBeenCalledTimes(1);
             expect(mockMeetClient.joinCall).toHaveBeenCalledWith(mockCallId, mockPayload);
             expect(mockMeetClient.joinCall.mock.calls[0].length).toBe(2);
             expect(mockMeetClient.joinCall.mock.calls[0][0]).toBe("");
+        });
+    });
+
+    describe("leaveCall", () => {
+        it("When leaving a call with valid ID, then the operation completes successfully", async () => {
+            const mockCallId = "call-123";
+            const mockLeaveCallResponse = { success: true };
+
+            const mockMeetClient = {
+                leaveCall: vi.fn().mockResolvedValue(mockLeaveCallResponse),
+            };
+
+            mockedGetMeet.mockReturnValue(mockMeetClient);
+
+            const result = await MeetingService.instance.leaveCall(mockCallId);
+
+            expect(mockedGetMeet).toHaveBeenCalledTimes(1);
+            expect(mockedGetMeet).toHaveBeenCalledWith();
+            expect(mockMeetClient.leaveCall).toHaveBeenCalledTimes(1);
+            expect(mockMeetClient.leaveCall).toHaveBeenCalledWith(mockCallId);
+            expect(mockMeetClient.leaveCall.mock.calls[0].length).toBe(1);
+            expect(mockMeetClient.leaveCall.mock.calls[0][0]).toBe(mockCallId);
+            expect(result).toEqual(mockLeaveCallResponse);
+        });
+
+        it("When leaving a call fails, then an error is thrown", async () => {
+            const mockCallId = "call-123";
+            const mockError = new Error("Failed to leave call");
+
+            const mockMeetClient = {
+                leaveCall: vi.fn().mockRejectedValue(mockError),
+            };
+
+            mockedGetMeet.mockReturnValue(mockMeetClient);
+
+            await expect(MeetingService.instance.leaveCall(mockCallId)).rejects.toThrow(mockError);
+            expect(mockedGetMeet).toHaveBeenCalledTimes(1);
+            expect(mockedGetMeet).toHaveBeenCalledWith();
+            expect(mockMeetClient.leaveCall).toHaveBeenCalledTimes(1);
+            expect(mockMeetClient.leaveCall).toHaveBeenCalledWith(mockCallId);
+            expect(mockMeetClient.leaveCall.mock.calls[0].length).toBe(1);
+            expect(mockMeetClient.leaveCall.mock.calls[0][0]).toBe(mockCallId);
         });
     });
 
@@ -207,8 +247,7 @@ describe("MeetingService", () => {
 
             mockedGetMeet.mockReturnValue(mockMeetClient);
 
-            const meetingService = MeetingService.getInstance();
-            const result = await meetingService.getCurrentUsersInCall(mockCallId);
+            const result = await MeetingService.instance.getCurrentUsersInCall(mockCallId);
 
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
@@ -229,8 +268,7 @@ describe("MeetingService", () => {
 
             mockedGetMeet.mockReturnValue(mockMeetClient);
 
-            const meetingService = MeetingService.getInstance();
-            const result = await meetingService.getCurrentUsersInCall(mockCallId);
+            const result = await MeetingService.instance.getCurrentUsersInCall(mockCallId);
 
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
@@ -252,9 +290,7 @@ describe("MeetingService", () => {
 
             mockedGetMeet.mockReturnValue(mockMeetClient);
 
-            const meetingService = MeetingService.getInstance();
-
-            await expect(meetingService.getCurrentUsersInCall(mockCallId)).rejects.toThrow(mockError);
+            await expect(MeetingService.instance.getCurrentUsersInCall(mockCallId)).rejects.toThrow(mockError);
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
             expect(mockMeetClient.getCurrentUsersInCall).toHaveBeenCalledTimes(1);

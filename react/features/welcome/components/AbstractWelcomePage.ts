@@ -209,7 +209,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      */
     async _onJoin() {
         this.setState({ joining: true });
-        const meetingData = await MeetingService.getInstance().createCall();
+        const meetingData = await MeetingService.instance.createCall();
         this.props.dispatch(setRoomID(meetingData.room));
 
         if (meetingData?.room) {

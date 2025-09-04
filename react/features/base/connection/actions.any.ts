@@ -116,11 +116,11 @@ export function connectionFailed(
 export function constructOptions(state: IReduxState) {
     // Deep clone the options to make sure we don't modify the object in the
     // redux store.
-    const options: IOptions = _.cloneDeep(state['features/base/config']);
+    const options: IOptions = _.cloneDeep(state["features/base/config"]);
 
-    const { locationURL, preferVisitor } = state['features/base/connection'];
-    const params = parseURLParams(locationURL || '');
-    const iceServersOverride = params['iceServers.replace'];
+    const { locationURL, preferVisitor } = state["features/base/connection"];
+    const params = parseURLParams(locationURL || "");
+    const iceServersOverride = params["iceServers.replace"];
 
     if (iceServersOverride) {
         options.iceServersOverride = iceServersOverride;
@@ -130,8 +130,8 @@ export function constructOptions(state: IReduxState) {
     let { websocket } = options;
 
     // TESTING: Only enable WebSocket for some percentage of users.
-    if (websocket && navigator.product === 'ReactNative') {
-        if ((Math.random() * 100) >= (options?.testing?.mobileXmppWsThreshold ?? 0)) {
+    if (websocket && navigator.product === "ReactNative") {
+        if (Math.random() * 100 >= (options?.testing?.mobileXmppWsThreshold ?? 0)) {
             websocket = undefined;
         }
     }
@@ -146,18 +146,18 @@ export function constructOptions(state: IReduxState) {
     logger.log(`Using service URL ${serviceUrl}`);
 
     // Append room to the URL's search.
-    const { room } = state['features/base/conference'];
+    const { room } = state["features/base/conference"];
 
     if (serviceUrl && room) {
         const roomName = getBackendSafeRoomName(room);
 
-        options.serviceUrl = appendURLParam(serviceUrl, 'room', roomName ?? '');
+        options.serviceUrl = appendURLParam(serviceUrl, "room", roomName ?? "");
 
         if (options.websocketKeepAliveUrl) {
-            options.websocketKeepAliveUrl = appendURLParam(options.websocketKeepAliveUrl, 'room', roomName ?? '');
+            options.websocketKeepAliveUrl = appendURLParam(options.websocketKeepAliveUrl, "room", roomName ?? "");
         }
         if (options.conferenceRequestUrl) {
-            options.conferenceRequestUrl = appendURLParam(options.conferenceRequestUrl, 'room', roomName ?? '');
+            options.conferenceRequestUrl = appendURLParam(options.conferenceRequestUrl, "room", roomName ?? "");
         }
     }
 
@@ -166,12 +166,12 @@ export function constructOptions(state: IReduxState) {
     }
 
     // Enable ssrc-rewriting by default.
-    if (typeof flags?.ssrcRewritingEnabled === 'undefined') {
+    if (typeof flags?.ssrcRewritingEnabled === "undefined") {
         const { ...otherFlags } = flags ?? {};
 
         options.flags = {
             ...otherFlags,
-            ssrcRewritingEnabled: true
+            ssrcRewritingEnabled: true,
         };
     }
 
@@ -191,7 +191,7 @@ export function constructOptions(state: IReduxState) {
 export function setLocationURL(locationURL?: URL) {
     return {
         type: SET_LOCATION_URL,
-        locationURL
+        locationURL,
     };
 }
 
@@ -207,7 +207,7 @@ export function setLocationURL(locationURL?: URL) {
 export function setPreferVisitor(preferVisitor: boolean) {
     return {
         type: SET_PREFER_VISITOR,
-        preferVisitor
+        preferVisitor,
     };
 }
 
@@ -238,7 +238,7 @@ export function _connectInternal({
         const { displayName } = state["features/base/settings"];
         const room = state["features/base/conference"].room || "";
         try {
-            const { token: jwt } = await MeetingService.getInstance().joinCall(room, {
+            const { token: jwt } = await MeetingService.instance.joinCall(room, {
                 name: displayName ?? name ?? "",
                 lastname: lastname ?? "",
                 anonymous: !!isAnonymous,
