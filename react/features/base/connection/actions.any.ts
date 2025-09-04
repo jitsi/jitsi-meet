@@ -24,7 +24,7 @@ import {
 } from './actionTypes';
 import { JITSI_CONNECTION_URL_KEY } from './constants';
 import logger from './logger';
-import { get8x8AppId, get8x8Options } from "./options8x8";
+import { get8x8Options } from "./options8x8";
 import { ConnectionFailedError, IIceServers } from "./types";
 
 /**
@@ -49,7 +49,7 @@ export interface IOptions extends IConfigState {
 export function connectionDisconnected(connection?: Object) {
     return {
         type: CONNECTION_DISCONNECTED,
-        connection
+        connection,
     };
 }
 
@@ -67,12 +67,11 @@ export function connectionDisconnected(connection?: Object) {
  *     timeEstablished: number
  * }}
  */
-export function connectionEstablished(
-        connection: Object, timeEstablished: number) {
+export function connectionEstablished(connection: Object, timeEstablished: number) {
     return {
         type: CONNECTION_ESTABLISHED,
         connection,
-        timeEstablished
+        timeEstablished,
     };
 }
 
@@ -89,9 +88,7 @@ export function connectionEstablished(
  *     error: ConnectionFailedError
  * }}
  */
-export function connectionFailed(
-        connection: Object,
-        error: ConnectionFailedError) {
+export function connectionFailed(connection: Object, error: ConnectionFailedError) {
     const { credentials } = error;
 
     if (credentials && !Object.keys(credentials).length) {
@@ -101,7 +98,7 @@ export function connectionFailed(
     return {
         type: CONNECTION_FAILED,
         connection,
-        error
+        error,
     };
 }
 
@@ -116,11 +113,11 @@ export function connectionFailed(
 export function constructOptions(state: IReduxState) {
     // Deep clone the options to make sure we don't modify the object in the
     // redux store.
-    const options: IOptions = _.cloneDeep(state['features/base/config']);
+    const options: IOptions = _.cloneDeep(state["features/base/config"]);
 
-    const { locationURL, preferVisitor } = state['features/base/connection'];
-    const params = parseURLParams(locationURL || '');
-    const iceServersOverride = params['iceServers.replace'];
+    const { locationURL, preferVisitor } = state["features/base/connection"];
+    const params = parseURLParams(locationURL || "");
+    const iceServersOverride = params["iceServers.replace"];
 
     if (iceServersOverride) {
         options.iceServersOverride = iceServersOverride;
@@ -130,8 +127,8 @@ export function constructOptions(state: IReduxState) {
     let { websocket } = options;
 
     // TESTING: Only enable WebSocket for some percentage of users.
-    if (websocket && navigator.product === 'ReactNative') {
-        if ((Math.random() * 100) >= (options?.testing?.mobileXmppWsThreshold ?? 0)) {
+    if (websocket && navigator.product === "ReactNative") {
+        if (Math.random() * 100 >= (options?.testing?.mobileXmppWsThreshold ?? 0)) {
             websocket = undefined;
         }
     }
@@ -146,18 +143,18 @@ export function constructOptions(state: IReduxState) {
     logger.log(`Using service URL ${serviceUrl}`);
 
     // Append room to the URL's search.
-    const { room } = state['features/base/conference'];
+    const { room } = state["features/base/conference"];
 
     if (serviceUrl && room) {
         const roomName = getBackendSafeRoomName(room);
 
-        options.serviceUrl = appendURLParam(serviceUrl, 'room', roomName ?? '');
+        options.serviceUrl = appendURLParam(serviceUrl, "room", roomName ?? "");
 
         if (options.websocketKeepAliveUrl) {
-            options.websocketKeepAliveUrl = appendURLParam(options.websocketKeepAliveUrl, 'room', roomName ?? '');
+            options.websocketKeepAliveUrl = appendURLParam(options.websocketKeepAliveUrl, "room", roomName ?? "");
         }
         if (options.conferenceRequestUrl) {
-            options.conferenceRequestUrl = appendURLParam(options.conferenceRequestUrl, 'room', roomName ?? '');
+            options.conferenceRequestUrl = appendURLParam(options.conferenceRequestUrl, "room", roomName ?? "");
         }
     }
 
@@ -166,12 +163,12 @@ export function constructOptions(state: IReduxState) {
     }
 
     // Enable ssrc-rewriting by default.
-    if (typeof flags?.ssrcRewritingEnabled === 'undefined') {
+    if (typeof flags?.ssrcRewritingEnabled === "undefined") {
         const { ...otherFlags } = flags ?? {};
 
         options.flags = {
             ...otherFlags,
-            ssrcRewritingEnabled: true
+            ssrcRewritingEnabled: true,
         };
     }
 
@@ -191,7 +188,7 @@ export function constructOptions(state: IReduxState) {
 export function setLocationURL(locationURL?: URL) {
     return {
         type: SET_LOCATION_URL,
-        locationURL
+        locationURL,
     };
 }
 
@@ -207,7 +204,7 @@ export function setLocationURL(locationURL?: URL) {
 export function setPreferVisitor(preferVisitor: boolean) {
     return {
         type: SET_PREFER_VISITOR,
-        preferVisitor
+        preferVisitor,
     };
 }
 
@@ -238,13 +235,12 @@ export function _connectInternal({
         const { displayName } = state["features/base/settings"];
         const room = state["features/base/conference"].room || "";
         try {
-            const { token: jwt } = await MeetingService.getInstance().joinCall(room, {
+            const { token: jwt, appId } = await MeetingService.getInstance().joinCall(room, {
                 name: displayName ?? name ?? "",
                 lastname: lastname ?? "",
                 anonymous: !!isAnonymous,
             });
 
-            const appId = get8x8AppId();
             const newOptions = get8x8Options(options, appId, room);
 
             const connection = new JitsiMeetJS.JitsiConnection(options.appId, jwt, newOptions);
