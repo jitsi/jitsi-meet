@@ -1,4 +1,4 @@
-import { IStore } from '../app/types';
+import { IStore } from '../../app/types';
 import { SET_AUDIO_MUTED } from '../media/actionTypes';
 import {
     MEDIA_TYPE,
@@ -49,8 +49,7 @@ MiddlewareRegistry.register(store => next => action => {
 /**
  * Mutes or unmutes a local track with a specific media type.
  *
- * @param {Store} store - The redux store in which the specified action is
- * dispatched.
+ * @param {Store} store - The redux store in which the specified action is dispatched.
  * @param {Action} action - The redux action dispatched in the specified store.
  * @private
  * @returns {void}
