@@ -1,4 +1,4 @@
-import { IStore } from '../../app/types';
+import { IStore } from '../app/types';
 import { SET_AUDIO_MUTED } from '../media/actionTypes';
 import {
     MEDIA_TYPE,
@@ -15,6 +15,8 @@ import {
     trackMuteUnmuteFailed
 } from './actions.native';
 import { getLocalTrack, setTrackMuted } from './functions.any';
+
+import './middleware.any';
 
 /**
  * Middleware that captures LIB_DID_DISPOSE and LIB_DID_INIT actions and,
