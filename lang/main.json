@@ -1381,20 +1381,16 @@
         "addPeople": "Add people to your call",
         "advancedAudioSettings": {
             "aec": {
-                "label": "AEC",
-                "tooltip": "Acoustic echo cancellation"
+                "label": "Acoustic echo cancellation"
             },
             "agc": {
-                "label": "AGC",
-                "tooltip": "Automatic gain control"
+                "label": "Automatic gain control"
             },
             "ns": {
-                "label": "NS",
-                "tooltip": "Noise suppression"
+                "label": "Noise suppression"
             },
             "stereo": {
-                "label": "Stereo",
-                "tooltip": "Stereo audio"
+                "label": "Stereo"
             }
         },
         "audioOnlyOff": "Disable low bandwidth mode",
