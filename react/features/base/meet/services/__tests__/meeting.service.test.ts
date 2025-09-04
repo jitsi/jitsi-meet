@@ -52,6 +52,7 @@ describe("MeetingService", () => {
                 token: "token-123",
                 room: "room-123",
                 paxPerCall: 10,
+                appId: "jitsi-app-id",
             };
 
             const mockMeetClient = {
@@ -104,6 +105,7 @@ describe("MeetingService", () => {
                 token: "join-token-789",
                 room: "room-123",
                 userId: "user-456",
+                appId: "jitsi-app-id",
             };
 
             const mockMeetClient = {
