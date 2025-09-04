@@ -4,21 +4,23 @@ import { assign } from '../base/redux/functions';
 
 import {
     CANCEL_LOGIN,
+    DISABLE_MODERATOR_LOGIN,
+    ENABLE_MODERATOR_LOGIN,
     SET_TOKEN_AUTH_URL_SUCCESS,
-    STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
     UPGRADE_ROLE_STARTED,
-    WAIT_FOR_OWNER
+    WAIT_FOR_MODERATOR
 } from './actionTypes';
 
 export interface IAuthenticationState {
     error?: Object | undefined;
     progress?: number | undefined;
+    showModeratorLogin?: boolean;
     thenableWithCancel?: {
         cancel: Function;
     };
     tokenAuthUrlSuccessful?: boolean;
-    waitForOwnerTimeoutID?: number;
+    waitForModeratorTimeoutID?: number;
 }
 
 /**
@@ -45,15 +47,21 @@ ReducerRegistry.register<IAuthenticationState>('features/authentication',
             progress: undefined,
             thenableWithCancel: undefined
         });
+    case ENABLE_MODERATOR_LOGIN:
+        return assign(state, {
+            showModeratorLogin: true
+        });
+
     case SET_TOKEN_AUTH_URL_SUCCESS:
         return assign(state, {
             tokenAuthUrlSuccessful: action.value
         });
 
-    case STOP_WAIT_FOR_OWNER:
+    case DISABLE_MODERATOR_LOGIN:
         return assign(state, {
             error: undefined,
-            waitForOwnerTimeoutID: undefined
+            showModeratorLogin: false,
+            waitForModeratorTimeoutID: undefined
         });
 
     case UPGRADE_ROLE_FINISHED: {
@@ -86,9 +94,9 @@ ReducerRegistry.register<IAuthenticationState>('features/authentication',
             thenableWithCancel: action.thenableWithCancel
         });
 
-    case WAIT_FOR_OWNER:
+    case WAIT_FOR_MODERATOR:
         return assign(state, {
-            waitForOwnerTimeoutID: action.waitForOwnerTimeoutID
+            waitForModeratorTimeoutID: action.waitForModeratorTimeoutID
         });
     }
 

@@ -37,14 +37,13 @@ export const LOGOUT = 'LOGOUT';
 export const SET_TOKEN_AUTH_URL_SUCCESS = 'SET_TOKEN_AUTH_URL_SUCCESS';
 
 /**
- * The type of (redux) action which signals that the cyclic operation of waiting
- * for conference owner has been aborted.
+ * The type of (redux) action which disables moderator login.
  *
  * {
- *     type: STOP_WAIT_FOR_OWNER
+ *     type: DISABLE_MODERATOR_LOGIN
  * }
  */
-export const STOP_WAIT_FOR_OWNER = 'STOP_WAIT_FOR_OWNER';
+export const DISABLE_MODERATOR_LOGIN = 'DISABLE_MODERATOR_LOGIN';
 
 /**
  * The type of (redux) action which informs that the authentication and role
@@ -75,14 +74,23 @@ export const UPGRADE_ROLE_FINISHED = 'UPGRADE_ROLE_FINISHED';
 export const UPGRADE_ROLE_STARTED = 'UPGRADE_ROLE_STARTED';
 
 /**
+ * The type of (redux) action which enables moderator login.
+ *
+ * {
+ *     type: ENABLE_MODERATOR_LOGIN
+ * }
+ */
+export const ENABLE_MODERATOR_LOGIN = 'ENABLE_MODERATOR_LOGIN';
+
+/**
  * The type of (redux) action that sets delayed handler which will check if
  * the conference has been created and it's now possible to join from anonymous
  * connection.
  *
  * {
- *     type: WAIT_FOR_OWNER,
+ *     type: WAIT_FOR_MODERATOR,
  *     handler: Function,
  *     timeoutMs: number
  * }
  */
-export const WAIT_FOR_OWNER = 'WAIT_FOR_OWNER';
+export const WAIT_FOR_MODERATOR = 'WAIT_FOR_MODERATOR';

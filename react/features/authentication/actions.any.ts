@@ -4,14 +4,16 @@ import { IJitsiConference } from '../base/conference/reducer';
 import { hideDialog, openDialog } from '../base/dialog/actions';
 
 import {
+    DISABLE_MODERATOR_LOGIN,
+    ENABLE_MODERATOR_LOGIN,
     LOGIN,
     LOGOUT,
     SET_TOKEN_AUTH_URL_SUCCESS,
-    STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
-    UPGRADE_ROLE_STARTED, WAIT_FOR_OWNER
+    UPGRADE_ROLE_STARTED,
+    WAIT_FOR_MODERATOR
 } from './actionTypes';
-import { LoginDialog, WaitForOwnerDialog } from './components';
+import { LoginDialog } from './components';
 import logger from './logger';
 
 /**
@@ -166,39 +168,29 @@ export function logout() {
 }
 
 /**
- * Opens {@link WaitForOnwerDialog}.
- *
- * @protected
- * @returns {Action}
- */
-export function openWaitForOwnerDialog() {
-    return openDialog(WaitForOwnerDialog);
-}
-
-/**
- * Stops waiting for the conference owner.
+ * Disables moderator login.
  *
  * @returns {{
- *     type: STOP_WAIT_FOR_OWNER
+ *     type: DISABLE_MODERATOR_LOGIN
  * }}
  */
-export function stopWaitForOwner() {
+export function disableModeratorLogin() {
     return {
-        type: STOP_WAIT_FOR_OWNER
+        type: DISABLE_MODERATOR_LOGIN
     };
 }
 
 /**
  * Called when Jicofo rejects to create the room for anonymous user. Will
- * start the process of "waiting for the owner" by periodically trying to join
+ * start the process of "waiting for the moderator" by periodically trying to join
  * the room every five seconds.
  *
  * @returns {Function}
  */
-export function waitForOwner() {
+export function waitForModerator() {
     return (dispatch: IStore['dispatch']) =>
         dispatch({
-            type: WAIT_FOR_OWNER,
+            type: WAIT_FOR_MODERATOR,
             handler: () => dispatch(checkIfCanJoin()),
             timeoutMs: 5000
         });
@@ -213,6 +205,17 @@ export function waitForOwner() {
  */
 export function openLoginDialog() {
     return openDialog(LoginDialog);
+}
+
+/**
+ * Enables moderator login.
+ *
+ * @returns {Object}
+ */
+export function enableModeratorLogin() {
+    return {
+        type: ENABLE_MODERATOR_LOGIN
+    };
 }
 
 /**

@@ -16,12 +16,14 @@ import { setPermanentProperty } from '../../../analytics/actions';
 import { appNavigate } from '../../../app/actions.native';
 import { IReduxState } from '../../../app/types';
 import { setAudioOnly } from '../../../base/audio-only/actions';
+import { leaveConference } from '../../../base/conference/actions';
 import { getConferenceName } from '../../../base/conference/functions';
 import { isNameReadOnly } from '../../../base/config/functions.any';
 import { connect } from '../../../base/connection/actions.native';
 import { PREJOIN_PAGE_HIDE_DISPLAY_NAME } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
-import { IconCloseLarge } from '../../../base/icons/svg';
+import Icon from '../../../base/icons/components/Icon';
+import { IconCloseLarge, IconHangup } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { getFieldValue } from '../../../base/react/functions';
@@ -33,6 +35,7 @@ import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { openDisplayNamePrompt } from '../../../display-name/actions';
 import BrandingImageBackground from '../../../dynamic-branding/components/native/BrandingImageBackground';
 import LargeVideo from '../../../large-video/components/LargeVideo.native';
+import { getLobbyConfig } from '../../../lobby/functions';
 import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
 import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
@@ -59,6 +62,8 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const isDisplayNameReadonly = useSelector(isNameReadOnly);
     const roomName = useSelector((state: IReduxState) => getConferenceName(state));
     const roomNameEnabled = useSelector((state: IReduxState) => isRoomNameEnabled(state));
+    const { showHangUp } = useSelector((state: IReduxState) => getLobbyConfig(state));
+    const { knocking } = useSelector((state: IReduxState) => state['features/lobby']);
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
@@ -98,6 +103,10 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const onJoinLowBandwidth = useCallback(() => {
         dispatch(setAudioOnly(true));
         maybeJoin();
+    }, [ dispatch ]);
+
+    const onHangup = useCallback(() => {
+        dispatch(leaveConference());
     }, [ dispatch ]);
 
     const goBack = useCallback(() => {
@@ -185,6 +194,13 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                         styles = { styles.buttonStylesBorderless } />
                     <VideoMuteButton
                         styles = { styles.buttonStylesBorderless } />
+                    {showHangUp && knocking
+                        && <Icon
+                            ariaLabel = { t('toolbar.hangup') }
+                            onClick = { onHangup }
+                            src = { IconHangup }
+                            style = { styles.buttonStylesBorderless } />
+                    }
                 </View>
                 {
                     showDisplayNameInput && <Input
