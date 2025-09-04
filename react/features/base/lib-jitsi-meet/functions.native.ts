@@ -16,22 +16,19 @@ export * from './functions.any';
 export async function loadConfig(url: string): Promise<Object> {
     const configContext = Worklets.createContext('ConfigParser');
 
-    let global;
-
     try {
         const configTxt = await loadScript(url, 10 * 1000, true);
 
-        global.config = undefined;
+        globalThis.config = undefined;
 
         const parseConfig = (config: string) => {
             'worklet';
-
             eval(config);
 
-            return JSON.stringify(global.config);
+            return JSON.stringify(globalThis.config);
         };
 
-        const configJson = await configContext.runAsync(() => parseConfig(configTxt));
+        const config = await configContext.runAsync(() => parseConfig(configTxt));
 
         if (typeof config !== 'object') {
             throw new Error('config is not an object');
@@ -39,7 +36,7 @@ export async function loadConfig(url: string): Promise<Object> {
 
         logger.info(`Config loaded from ${url}`);
 
-        return configJson;
+        return config;
     } catch (err) {
         logger.error(`Failed to load config from ${url}`, err);
 

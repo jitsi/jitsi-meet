@@ -129,7 +129,6 @@ dependencies {
   implementation 'com.dropbox.core:dropbox-core-sdk:4.0.1'
   implementation 'com.jakewharton.timber:timber:4.7.1'
   // From node_modules
-  implementation project(':react-native-worklets-core')
 }
 
 if (isNewArchitectureEnabled()) {
