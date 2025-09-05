@@ -26,7 +26,7 @@ class CreateConference extends AbstractConference<IProps, any> {
     _onCreateConference = async () => {
         this.props.dispatch({ type: SET_PREJOIN_PAGE_VISIBILITY, value: false });
 
-        const meetingData = await MeetingService.getInstance().createCall();
+        const meetingData = await MeetingService.instance.createCall();
 
         if (meetingData?.room) {
             this.props.dispatch(appNavigate(meetingData.room));

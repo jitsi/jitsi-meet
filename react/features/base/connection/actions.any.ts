@@ -235,7 +235,7 @@ export function _connectInternal({
         const { displayName } = state["features/base/settings"];
         const room = state["features/base/conference"].room || "";
         try {
-            const { token: jwt, appId } = await MeetingService.getInstance().joinCall(room, {
+            const { token: jwt, appId } = await MeetingService.instance.joinCall(room, {
                 name: displayName ?? name ?? "",
                 lastname: lastname ?? "",
                 anonymous: !!isAnonymous,

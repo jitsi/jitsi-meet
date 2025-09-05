@@ -105,7 +105,7 @@ export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?:
         if (!roomId) {
             return Promise.reject(new Error("No roomId provided to hangup"));
         }
-        MeetingService.getInstance().leaveCall(roomId);
+        MeetingService.instance.leaveCall(roomId);
 
         return APP.conference.hangup(requestFeedback, feedbackTitle);
     };
