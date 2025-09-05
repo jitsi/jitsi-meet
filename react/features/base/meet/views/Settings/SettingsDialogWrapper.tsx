@@ -51,6 +51,7 @@ const SettingsDialogWrapper: React.FC<IProps> = ({ generalTabs, defaultTab, disp
             title={t("settings.title")}
             defaultTab={defaultTab}
             onClose={onCloseHandler}
+            dispatch={dispatch}
         />
     );
 };
