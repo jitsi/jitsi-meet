@@ -257,9 +257,6 @@ function _setMuted(store: IStore, { ensureTrack, muted }: {
 
         const createTrackOptions: ITrackOptions = {
             devices: [ MEDIA_TYPE.AUDIO ],
-            constraints: {
-                audio: state['features/settings'].audioSettings ?? getLocalJitsiAudioTrackSettings(state)
-            }
         };
 
         dispatch(createLocalTracksA(createTrackOptions)).then(() => {

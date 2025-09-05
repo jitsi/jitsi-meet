@@ -15,7 +15,7 @@ import {
 import { IAudioSettings } from '../settings/reducer';
 import { getJitsiMeetGlobalNSConnectionTimes } from '../util/helpers';
 
-import { getCameraFacingMode, getLocalJitsiAudioTrack } from './functions.any';
+import { getCameraFacingMode, getLocalJitsiAudioTrack, getLocalJitsiAudioTrackSettings } from './functions.any';
 import loadEffects from './loadEffects';
 import logger from './logger';
 import { ITrackOptions } from './types';
@@ -64,7 +64,13 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore, 
         desktopSharingFrameRate,
         resolution
     } = state['features/base/config'];
-    const constraints = options.constraints ?? state['features/base/config'].constraints;
+
+    const constraints = options.constraints ?? state['features/base/config'].constraints ?? {};
+
+    if (isAdvancedAudioSettingsEnabled(state) && typeof APP !== 'undefined') {
+        constraints.audio = state['features/settings'].audioSettings ?? getLocalJitsiAudioTrackSettings(state);
+    }
+
 
     return (
         loadEffects(store).then((effectsArray: Object[]) => {
