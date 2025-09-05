@@ -1497,6 +1497,27 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - react-native-worklets-core (1.6.2):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - React-nativeconfig (0.77.2)
   - React-NativeModulesApple (0.77.2):
     - glog
@@ -1932,6 +1953,7 @@ DEPENDENCIES:
   - react-native-video (from `../node_modules/react-native-video`)
   - react-native-webrtc (from `../node_modules/react-native-webrtc`)
   - react-native-webview (from `../node_modules/react-native-webview`)
+  - react-native-worklets-core (from `../node_modules/react-native-worklets-core`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -2101,6 +2123,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-webrtc"
   react-native-webview:
     :path: "../node_modules/react-native-webview"
+  react-native-worklets-core:
+    :path: "../node_modules/react-native-worklets-core"
   React-nativeconfig:
     :path: "../node_modules/react-native/ReactCommon"
   React-NativeModulesApple:
@@ -2257,6 +2281,7 @@ SPEC CHECKSUMS:
   react-native-video: eb861d67a71dfef1bbf6086a811af5f338b13781
   react-native-webrtc: 2261a482150195092246fe70b3aff976f2e11ec5
   react-native-webview: 079eca50edf657503318b66687dadfb903731aa8
+  react-native-worklets-core: b59cf88762c8fb6132d8796babd4cec15217d6f0
   React-nativeconfig: ecf4dc92c40b97e2b3f0c619938f78bfd6507b08
   React-NativeModulesApple: f457bbfb30fb3bc41979b1a87b99d292d7340d39
   React-perflogger: 1111b5feb064c4cc83df88fb403efda54b387951
