@@ -1380,6 +1380,20 @@
             "videounmute": "Start camera"
         },
         "addPeople": "Add people to your call",
+        "advancedAudioSettings": {
+            "aec": {
+                "label": "Acoustic echo cancellation"
+            },
+            "agc": {
+                "label": "Automatic gain control"
+            },
+            "ns": {
+                "label": "Noise suppression"
+            },
+            "stereo": {
+                "label": "Stereo"
+            }
+        },
         "audioOnlyOff": "Disable low bandwidth mode",
         "audioOnlyOn": "Enable low bandwidth mode",
         "audioRoute": "Select the sound device",

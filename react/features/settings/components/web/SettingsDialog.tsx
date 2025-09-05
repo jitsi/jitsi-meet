@@ -17,8 +17,8 @@ import {
 import DialogWithTabs, { IDialogTab } from '../../../base/ui/components/web/DialogWithTabs';
 import { isCalendarEnabled } from '../../../calendar-sync/functions.web';
 import { submitAudioDeviceSelectionTab, submitVideoDeviceSelectionTab } from '../../../device-selection/actions.web';
-import AudioDevicesSelection from '../../../device-selection/components/AudioDevicesSelection';
-import VideoDeviceSelection from '../../../device-selection/components/VideoDeviceSelection';
+import AudioDevicesSelection from '../../../device-selection/components/AudioDevicesSelection.web';
+import VideoDeviceSelection from '../../../device-selection/components/VideoDeviceSelection.web';
 import {
     getAudioDeviceSelectionDialogProps,
     getVideoDeviceSelectionDialogProps
@@ -160,6 +160,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
                 return {
                     ...newProps,
+                    audioSettings: tabState.audioSettings,
                     noiseSuppressionEnabled: tabState.noiseSuppressionEnabled,
                     selectedAudioInputId: tabState.selectedAudioInputId,
                     selectedAudioOutputId: tabState.selectedAudioOutputId

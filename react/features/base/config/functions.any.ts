@@ -6,6 +6,7 @@ import { safeJsonParse } from '@jitsi/js-utils/json';
 import { isEmpty, mergeWith, pick } from 'lodash-es';
 
 import { IReduxState } from '../../app/types';
+import { browser } from '../lib-jitsi-meet';
 import { getLocalParticipant } from '../participants/functions';
 import { isEmbedded } from '../util/embedUtils';
 import { parseURLParams } from '../util/parseURLParams';
@@ -254,6 +255,17 @@ export function hasBeenNotified(state: IReduxState): boolean {
  */
 export function isDisplayNameVisible(state: IReduxState): boolean {
     return !state['features/base/config'].hideDisplayName;
+}
+
+/**
+ * Selector for determining if the advanced audio settings are enabled.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function isAdvancedAudioSettingsEnabled(state: IReduxState): boolean {
+
+    return !browser.isWebKitBased() && Boolean(state['features/base/config']?.audioQuality?.enableAdvancedAudioSettings);
 }
 
 /**
