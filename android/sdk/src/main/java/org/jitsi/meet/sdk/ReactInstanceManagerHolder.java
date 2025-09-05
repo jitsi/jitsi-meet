@@ -108,6 +108,7 @@ class ReactInstanceManagerHolder {
             new com.horcrux.svg.SvgPackage(),
             new org.wonday.orientation.OrientationPackage(),
             new com.splashview.SplashViewPackage(),
+            new com.worklets.WorkletsCorePackage(),
             new ReactPackageAdapter() {
                 @Override
                 public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
