@@ -98,7 +98,7 @@ function send_metadata(occupant, room, json_msg)
             metadata_to_send.participants = participants;
             metadata_to_send.moderators = moderators;
 
-            module:log('info', 'Sending metadata to jicofo room=%s,meeting_id=%s', room.jid, room._data.meeting_id);
+            module:log('info', 'Sending metadata to jicofo room=%s,meeting_id=%s', room.jid, room._data.meetingId);
         end
 
         json_msg = getMetadataJSON(room, metadata_to_send);
@@ -193,7 +193,7 @@ function on_message(event)
     if not table_equals(old_value, jsonData.data) then
         room.jitsiMetadata[jsonData.key] = jsonData.data;
 
-        module:log('info', 'Мetadata key "%s" updated by %s in room:%s,meeting_id:%s', jsonData.key, from, room.jid, room._data.meeting_id);
+        module:log('info', 'Мetadata key "%s" updated by %s in room:%s,meeting_id:%s', jsonData.key, from, room.jid, room._data.meetingId);
         broadcastMetadata(room, getMetadataJSON(room));
 
         -- fire and event for the change
@@ -222,7 +222,7 @@ function process_main_muc_loaded(main_muc, host_module)
         local room = event.room;
         local json_msg = getMetadataJSON(room);
 
-        module:log('info', 'Metadata changed internally in room:%s,meeting_id:%s - broadcasting data:%s', room.jid, room._data.meeting_id, json_msg);
+        module:log('info', 'Metadata changed internally in room:%s,meeting_id:%s - broadcasting data:%s', room.jid, room._data.meetingId, json_msg);
         broadcastMetadata(room, json_msg);
     end);
 
