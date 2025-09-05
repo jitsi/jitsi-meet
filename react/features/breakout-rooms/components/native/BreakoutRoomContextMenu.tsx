@@ -17,6 +17,7 @@ import { BREAKOUT_CONTEXT_MENU_ACTIONS as ACTIONS } from '../../../participants-
 import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../actions';
 import { getBreakoutRoomsConfig } from '../../functions';
 import { IRoom } from '../../types';
+import { Participants } from '../../utils';
 
 import BreakoutRoomNamePrompt from './BreakoutRoomNamePrompt';
 
@@ -99,7 +100,7 @@ const BreakoutRoomContextMenu = ({ room, actions = ALL_ACTIONS }: IProps) => {
             }
             {
                 !room?.isMainRoom && isLocalModerator && actions.includes(ACTIONS.REMOVE)
-                && (room?.participants && Object.keys(room.participants).length > 0
+                && (room?.participants && !Participants.isEmpty(room)
                     ? <TouchableOpacity
                         onPress = { onCloseBreakoutRoom }
                         style = { styles.contextMenuItem as ViewStyle }>
