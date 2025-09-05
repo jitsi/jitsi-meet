@@ -23,8 +23,6 @@ interface IProps {
     generalTabs: TabConfig[];
     defaultTab: string;
     dispatch: IStore["dispatch"];
-    isOpen: boolean;
-    onClose: () => void;
 }
 const EXTERNAL_ACCOUNT_URL = "https://drive.internxt.com/?preferences=open&section=account&subsection=account";
 
