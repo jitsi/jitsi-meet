@@ -23,8 +23,6 @@ interface IProps {
     generalTabs: TabConfig[];
     defaultTab: string;
     dispatch: IStore["dispatch"];
-    isOpen: boolean;
-    onClose: () => void;
 }
 const EXTERNAL_ACCOUNT_URL = "https://drive.internxt.com/?preferences=open&section=account&subsection=account";
 
@@ -51,6 +49,7 @@ const SettingsDialogWrapper: React.FC<IProps> = ({ generalTabs, defaultTab, disp
             title={t("settings.title")}
             defaultTab={defaultTab}
             onClose={onCloseHandler}
+            dispatch={dispatch}
         />
     );
 };

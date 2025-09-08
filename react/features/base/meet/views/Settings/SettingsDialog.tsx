@@ -20,6 +20,9 @@ export interface SettingsDialogProps {
     title: string;
     defaultTab?: string;
     onClose: () => void;
+    submit?: (tabStates: Record<string, any>) => void;
+    cancel?: () => void;
+    dispatch?: any;
 }
 
 const SettingsDialog: React.FC<SettingsDialogProps> = ({
@@ -28,6 +31,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
     title,
     defaultTab,
     onClose,
+    dispatch,
 }) => {
     const allTabs = [...generalTabs, ...accountTabs];
     const [activeTab, setActiveTab] = useState(defaultTab ?? generalTabs[0]?.id);
@@ -75,7 +79,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
     );
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+        <div className="fixed inset-0 z-[301] flex items-center justify-center bg-black/60">
             {/* Backdrop */}
             <div className="absolute inset-0" onClick={onClose} />
 
@@ -183,6 +187,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
                                 {...getTabProps(currentTab)}
                                 onTabStateChange={(tabId: number, newState: any) => {
                                     handleTabStateChange(currentTab.id, newState);
+                                    dispatch(currentTab?.submit?.(newState));
                                 }}
                                 tabId={allTabs.findIndex((tab) => tab.id === currentTab.id)}
                             />
