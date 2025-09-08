@@ -33,7 +33,7 @@ export async function loadConfig(url: string): Promise<Object> {
                     return 'Worklet_Error: config is undefined after eval()';
                 }
 
-                if (typeof configObj !== 'object' || configObj === null) {
+                if (typeof configObj !== 'object') {
                     return 'Worklet_Error: config is not an object';
                 }
 
