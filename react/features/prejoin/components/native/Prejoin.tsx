@@ -40,7 +40,7 @@ import { screen } from '../../../mobile/navigation/routes';
 import HangupButton from '../../../toolbox/components/HangupButton';
 import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
 import VideoMuteButton from '../../../toolbox/components/native/VideoMuteButton';
-import { isDisplayNameRequired, isRoomNameEnabled } from '../../functions';
+import { isDisplayNameRequired, isRoomNameEnabled } from '../../functions.native';
 import { IPrejoinProps } from '../../types';
 import { hasDisplayName } from '../../utils';
 
@@ -189,7 +189,8 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                         styles = { styles.buttonStylesBorderless } />
                     <VideoMuteButton
                         styles = { styles.buttonStylesBorderless } />
-                    {showHangUp && knocking
+                    {
+                        showHangUp && knocking
                         && <HangupButton
                             styles = { styles.buttonStylesBorderless } />
                     }
