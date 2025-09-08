@@ -16,14 +16,12 @@ import { setPermanentProperty } from '../../../analytics/actions';
 import { appNavigate } from '../../../app/actions.native';
 import { IReduxState } from '../../../app/types';
 import { setAudioOnly } from '../../../base/audio-only/actions';
-import { leaveConference } from '../../../base/conference/actions';
 import { getConferenceName } from '../../../base/conference/functions';
 import { isNameReadOnly } from '../../../base/config/functions.any';
 import { connect } from '../../../base/connection/actions.native';
 import { PREJOIN_PAGE_HIDE_DISPLAY_NAME } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
-import Icon from '../../../base/icons/components/Icon';
-import { IconCloseLarge, IconHangup } from '../../../base/icons/svg';
+import { IconCloseLarge } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { getFieldValue } from '../../../base/react/functions';
@@ -39,6 +37,7 @@ import { getLobbyConfig } from '../../../lobby/functions';
 import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
 import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
+import HangupButton from '../../../toolbox/components/HangupButton';
 import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
 import VideoMuteButton from '../../../toolbox/components/native/VideoMuteButton';
 import { isDisplayNameRequired, isRoomNameEnabled } from '../../functions';
@@ -103,10 +102,6 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const onJoinLowBandwidth = useCallback(() => {
         dispatch(setAudioOnly(true));
         maybeJoin();
-    }, [ dispatch ]);
-
-    const onHangup = useCallback(() => {
-        dispatch(leaveConference());
     }, [ dispatch ]);
 
     const goBack = useCallback(() => {
@@ -195,11 +190,8 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                     <VideoMuteButton
                         styles = { styles.buttonStylesBorderless } />
                     {showHangUp && knocking
-                        && <Icon
-                            ariaLabel = { t('toolbar.hangup') }
-                            onClick = { onHangup }
-                            src = { IconHangup }
-                            style = { styles.buttonStylesBorderless } />
+                        && <HangupButton
+                            styles = { styles.buttonStylesBorderless } />
                     }
                 </View>
                 {
