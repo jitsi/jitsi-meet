@@ -29,7 +29,7 @@ export async function loadConfig(url: string): Promise<Object> {
                     + '\n; return (typeof config !== "undefined" ? config : globalThis.config); })()'
                 );
 
-                if (typeof configObj === 'undefined') {
+                if (configObj == void 0) {
                     return 'Worklet_Error: config is undefined after eval()';
                 }
 
