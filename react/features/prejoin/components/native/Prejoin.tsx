@@ -62,7 +62,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const isDisplayNameReadonly = useSelector(isNameReadOnly);
     const roomName = useSelector((state: IReduxState) => getConferenceName(state));
     const roomNameEnabled = useSelector((state: IReduxState) => isRoomNameEnabled(state));
-    const { showHangUp } = useSelector((state: IReduxState) => getLobbyConfig(state));
+    const { showHangUp = true } = useSelector((state: IReduxState) => getLobbyConfig(state));
     const { knocking } = useSelector((state: IReduxState) => state['features/lobby']);
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]

@@ -284,7 +284,7 @@ const PreMeetingScreen = ({
 function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { hiddenPremeetingButtons } = state['features/base/config'];
     const { toolbarButtons } = state['features/toolbox'];
-    const { showHangUp } = getLobbyConfig(state);
+    const { showHangUp = true } = getLobbyConfig(state);
     const { knocking } = state['features/lobby'];
     const premeetingButtons = (ownProps.thirdParty
         ? THIRD_PARTY_PREJOIN_BUTTONS

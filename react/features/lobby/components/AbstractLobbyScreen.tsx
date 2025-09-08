@@ -456,7 +456,7 @@ export function _mapStateToProps(state: IReduxState) {
     const { disableLobbyPassword } = getSecurityUiConfig(state);
     const showCopyUrlButton = inviteEnabledFlag || !disableInviteFunctions;
     const deviceStatusVisible = isDeviceStatusVisible(state);
-    const { showHangUp } = getLobbyConfig(state);
+    const { showHangUp = true } = getLobbyConfig(state);
     const { membersOnly, lobbyWaitingForHost } = state['features/base/conference'];
     const { isLobbyChatActive, lobbyMessageRecipient, messages } = state['features/chat'];
     const { showModeratorLogin } = state['features/authentication'];
