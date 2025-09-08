@@ -22,7 +22,6 @@ export async function loadConfig(url: string): Promise<Object> {
         const parseConfigAsync = configContext.createRunAsync(function parseConfig(configText: string): string {
             'worklet';
             try {
-
                 // Used IIFE wrapper to capture config object from config.js
                 const configObj = eval(
                     '(function(){\n'
@@ -40,7 +39,7 @@ export async function loadConfig(url: string): Promise<Object> {
 
                 return JSON.stringify(configObj);
             } catch (err) {
-                return 'Worklet_Error:' + (err?.message ?? String(err));
+                return 'Worklet_Error:' + ((err as Error)?.message ?? String(err));
             }
         });
 
