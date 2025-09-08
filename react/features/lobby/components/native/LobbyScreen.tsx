@@ -4,11 +4,8 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { login } from '../../../authentication/actions.any';
-import { leaveConference } from '../../../base/conference/actions';
 import { getConferenceName } from '../../../base/conference/functions';
 import { translate } from '../../../base/i18n/functions';
-import Icon from '../../../base/icons/components/Icon';
-import { IconHangup } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
@@ -22,6 +19,7 @@ import { navigate }
     from '../../../mobile/navigation/components/lobby/LobbyNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { preJoinStyles } from '../../../prejoin/components/native/styles';
+import HangupButton from '../../../toolbox/components/HangupButton';
 import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
 import VideoMuteButton from '../../../toolbox/components/native/VideoMuteButton';
 import AbstractLobbyScreen, {
@@ -56,7 +54,6 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
     constructor(props: IProps) {
         super(props);
 
-        this._onHangup = this._onHangup.bind(this);
         this._onLogin = this._onLogin.bind(this);
     }
 
@@ -214,7 +211,7 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
      * @inheritdoc
      */
     _renderToolbarButtons() {
-        const { _hangUp, t } = this.props;
+        const { _hangUp } = this.props;
 
         return (
             <View style = { preJoinStyles.toolboxContainer as ViewStyle }>
@@ -224,11 +221,8 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
                     styles = { preJoinStyles.buttonStylesBorderless } />
                 {
                     _hangUp
-                    && <Icon
-                        ariaLabel = { t('toolbar.hangup') }
-                        onClick = { this._onHangup }
-                        src = { IconHangup }
-                        style = { preJoinStyles.buttonStylesBorderless } />
+                    && <HangupButton
+                        styles = { preJoinStyles.buttonStylesBorderless } />
                 }
             </View>
         );
@@ -294,16 +288,6 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
      */
     _onLogin() {
         this.props.dispatch(login());
-    }
-
-    /**
-     * Handles hangup button click.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onHangup() {
-        this.props.dispatch(leaveConference());
     }
 }
 
