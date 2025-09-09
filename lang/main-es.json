@@ -776,6 +776,7 @@
             "nameRequired": "Se requiere un nombre",
             "newMeeting": "Nueva reunión",
             "participants": "Participantes",
+            "participant": "Participante",
             "upToParticipants": "Hasta {{num}} participantes",
             "upgrade": "Actualizar"
         },
