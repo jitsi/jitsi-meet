@@ -517,6 +517,7 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
             or is_sip_jibri_join(stanza)
             or table_find(room._data.moderators, session.jitsi_meet_context_user and session.jitsi_meet_context_user.id)
             or (room._data.moderator_id and room._data.moderator_id == (session.jitsi_meet_context_user and session.jitsi_meet_context_user.id))
+            or (room._data.moderator_id and room._data.moderator_id == session.jitsi_meet_context_group)
             or table_find(room._data.participants, session.jitsi_meet_context_user and session.jitsi_meet_context_user.id) then
             if DEBUG then
                 module:log('debug', 'Auto-allowing visitor %s in room %s', stanza.attr.from, room.jid);
