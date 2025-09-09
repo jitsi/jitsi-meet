@@ -85,7 +85,8 @@
         "react-native-video": "0.0.0",
         "react-native-watch-connectivity": "0.0.0",
         "react-native-webrtc": "0.0.0",
-        "react-native-webview": "0.0.0"
+        "react-native-webview": "0.0.0",
+        "react-native-worklets-core": "0.0.0"
     },
     "scripts": {
         "postinstall": "node sdk_instructions.js",
