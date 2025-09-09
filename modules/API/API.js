@@ -138,7 +138,7 @@ import {
     ENDPOINT_TEXT_MESSAGE_NAME
 } from './constants';
 
-const logger = Logger.getLogger(__filename);
+const logger = Logger.getLogger('api:core');
 
 /**
  * List of the available commands.

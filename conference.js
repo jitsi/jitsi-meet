@@ -166,7 +166,7 @@ import { handleToggleVideoMuted } from './react/features/toolbox/actions.any';
 import { transcriberJoined, transcriberLeft } from './react/features/transcribing/actions';
 import { muteLocal } from './react/features/video-menu/actions.any';
 
-const logger = Logger.getLogger(__filename);
+const logger = Logger.getLogger('app:conference-web');
 let room;
 
 /*

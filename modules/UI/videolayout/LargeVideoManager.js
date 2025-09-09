@@ -45,7 +45,7 @@ import AudioLevels from '../audio_levels/AudioLevels';
 
 import { VIDEO_CONTAINER_TYPE, VideoContainer } from './VideoContainer';
 
-const logger = Logger.getLogger(__filename);
+const logger = Logger.getLogger('ui:videolayout');
 
 const DESKTOP_CONTAINER_TYPE = 'desktop';
 

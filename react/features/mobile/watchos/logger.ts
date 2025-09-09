@@ -1,3 +1,3 @@
 import { getLogger } from '../../base/logging/functions';
 
-export default getLogger('features/mobile/watchos');
+export default getLogger('mobile-app:watchos');
