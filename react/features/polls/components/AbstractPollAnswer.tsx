@@ -8,7 +8,6 @@ import { IReduxState } from '../../app/types';
 import { getParticipantDisplayName } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
 import { registerVote, removePoll, setVoteChanging } from '../actions';
-import { COMMAND_ANSWER_POLL, COMMAND_NEW_POLL } from '../constants';
 import { getPoll } from '../functions';
 import { IPoll } from '../types';
 
@@ -76,11 +75,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
     const dispatch = useDispatch();
 
     const submitAnswer = useCallback(() => {
-        conference?.sendMessage({
-            type: COMMAND_ANSWER_POLL,
-            pollId,
-            answers: checkBoxStates
-        });
+        conference?.getPolls().answerPoll(pollId, checkBoxStates);
 
         sendAnalytics(createPollEvent('vote.sent'));
         dispatch(registerVote(pollId, checkBoxStates));
@@ -89,12 +84,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
     }, [ pollId, checkBoxStates, conference ]);
 
     const sendPoll = useCallback(() => {
-        conference?.sendMessage({
-            type: COMMAND_NEW_POLL,
-            pollId,
-            question,
-            answers: answers.map(answer => answer.name)
-        });
+        conference?.getPolls().createPoll(pollId, question, answers);
 
         dispatch(removePoll(pollId, poll));
     }, [ conference, question, answers ]);

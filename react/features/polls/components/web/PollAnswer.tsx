@@ -77,7 +77,9 @@ const PollAnswer = ({
     const { classes } = useStyles();
 
     return (
-        <div className = { classes.container }>
+        <div
+            className = { classes.container }
+            id = { `poll-${pollId}` }>
             {
                 pollSaved && <Icon
                     ariaLabel = { t('polls.closeButton') }
@@ -104,6 +106,7 @@ const PollAnswer = ({
                             <Checkbox
                                 checked = { checkBoxStates[index] }
                                 disabled = { poll.saved }
+                                id = { `poll-answer-checkbox-${pollId}-${index}` }
                                 key = { index }
                                 label = { answer.name }
                                 onChange = { ev => setCheckbox(index, ev.target.checked) } />
@@ -124,7 +127,7 @@ const PollAnswer = ({
                             } }
                             type = { BUTTON_TYPES.SECONDARY } />
                         <Button
-                            accessibilityLabel = { t('polls.answer.send') }
+                            accessibilityLabel = { t('polls.create.accessibilityLabel.send') }
                             labelKey = { 'polls.answer.send' }
                             onClick = { sendPoll } />
                     </> : <>

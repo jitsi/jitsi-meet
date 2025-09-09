@@ -235,6 +235,7 @@ const PollCreate = ({
                         { answers.length > 2
                         && <button
                             className = { classes.removeOption }
+                            data-testid = { `remove-polls-answer-input-${i}` }
                             onClick = { () => removeAnswer(i) }
                             type = 'button'>
                             { t('polls.create.removeOption') }
