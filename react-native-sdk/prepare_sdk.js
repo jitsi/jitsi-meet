@@ -101,10 +101,6 @@ fs.copyFileSync(
     `${iosDestPath}/InfoPlistUtil.h`
 );
 fs.copyFileSync(
-    `${iosSrcPath}/JavaScriptSandbox.m`,
-    `${iosDestPath}/JavaScriptSandbox.m`
-);
-fs.copyFileSync(
     `${iosSrcPath}/JitsiAudioSession.m`,
     `${iosDestPath}/JitsiAudioSession.m`
 );
@@ -183,10 +179,6 @@ fs.copyFileSync(
 fs.copyFileSync(
     `${androidSourcePath}/ConnectionService.java`,
     `${androidTargetPath}/ConnectionService.java`
-);
-fs.copyFileSync(
-    `${androidSourcePath}/JavaScriptSandboxModule.java`,
-    `${androidTargetPath}/JavaScriptSandboxModule.java`
 );
 fs.copyFileSync(
     `${androidSourcePath}/LocaleDetector.java`,
