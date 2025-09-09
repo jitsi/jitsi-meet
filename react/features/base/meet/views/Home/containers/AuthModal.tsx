@@ -1,17 +1,18 @@
 import { Modal } from "@internxt/ui";
 import { X } from "@phosphor-icons/react";
 import React, { useEffect, useState } from "react";
+import { LoginCredentials } from "../../../services/types/command.types";
 import { LoginForm } from "../components/auth/LoginForm";
 import { SignupForm } from "../components/auth/SignUpForm";
 import { Divider } from "../components/Divider";
 import { useLoginModal } from "../hooks/useLoginModal";
-import { OnSignUpPayload, useSignup } from "../hooks/useSignUp";
+import { useSignup } from "../hooks/useSignUp";
 
 interface AuthModalProps {
     isOpen: boolean;
     onClose: () => void;
     onLogin?: (token: string) => void;
-    onSignup?: (signupData: OnSignUpPayload) => void;
+    onSignup?: (signupData: LoginCredentials) => void;
     translate: (key: string) => string;
     openLogin?: boolean;
 }
