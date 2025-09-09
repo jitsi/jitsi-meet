@@ -225,6 +225,7 @@ describe('Participants presence', () => {
 
     it('kick participant', async () => {
         // we want to join second participant with token, so we can check info in webhook
+        await ctx.p2.getIframeAPI().clearEventResults('videoConferenceLeft');
         await ctx.p2.getIframeAPI().addEventListener('videoConferenceLeft');
         await ctx.p2.switchToMainFrame();
         await ctx.p2.getIframeAPI().executeCommand('hangup');
