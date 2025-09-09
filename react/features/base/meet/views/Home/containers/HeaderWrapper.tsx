@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { redirectToStaticPage } from "../../../../../app/actions.any";
-import { appNavigate } from "../../../../../app/actions.web";
 import { openSettingsDialog } from "../../../../../settings/actions.web";
 import MeetingButton from "../../../general/containers/MeetingButton";
 import { useLocalStorage } from "../../../LocalStorageManager";
@@ -43,7 +42,7 @@ const HeaderWrapper = ({ onNewMeeting, onLogin, onSignUp, translate }: HeaderWra
     };
 
     const navigateToHomePage = () => {
-        dispatch(appNavigate("/"));
+        dispatch(redirectToStaticPage("/"));
     };
 
     return (

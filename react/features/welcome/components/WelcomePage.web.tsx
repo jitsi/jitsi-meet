@@ -305,7 +305,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         const locationURL = window.location;
         const baseUrl = `${locationURL.protocol}//${locationURL.host}`;
         const newUrl = `${baseUrl}/new-meeting`;
-        window.history.replaceState({}, document.title, newUrl);
+        window.history.pushState({}, document.title, newUrl);
         this.props.dispatch(appNavigate(newUrl));
     }
 

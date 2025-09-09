@@ -18,7 +18,7 @@ import {
     redirectWithStoredParams,
     reloadWithStoredParams,
 } from "./actions.any";
-import { getDefaultURL, getName } from "./functions.web";
+import { getDefaultURL } from "./functions.web";
 import logger from "./logger";
 import { IStore } from "./types";
 
@@ -60,10 +60,18 @@ export function appNavigate(uri?: string) {
                 // FIXME Turn location's host, hostname, and port properties into
                 // setters in order to reduce the risks of inconsistent state.
                 location.hostname = defaultLocation.hostname;
-                location.pathname =
-                    defaultLocation.pathname === "/new-meeting"
-                        ? "/" + location.pathname.substr(1)
-                        : defaultLocation.pathname + location.pathname.substr(1);
+
+                if (location.pathname === "/") {
+                    const defaultLocation = parseURIString(getDefaultURL(getState));
+                    console.log("Default location:", defaultLocation);
+                    defaultLocation.pathname = "/";
+                    window.history.pushState({}, document.title, defaultLocation.pathname);
+                } else {
+                    location.pathname =
+                        defaultLocation.pathname === "/new-meeting"
+                            ? "/" + location.pathname.substr(1)
+                            : defaultLocation.pathname + location.pathname.substr(1);
+                }
                 location.port = defaultLocation.port;
                 location.protocol = defaultLocation.protocol;
             } else {
