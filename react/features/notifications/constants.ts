@@ -120,6 +120,13 @@ export const VISITORS_PROMOTION_NOTIFICATION_ID = 'VISITORS_PROMOTION_NOTIFICATI
 export const VISITORS_NOT_LIVE_NOTIFICATION_ID = 'VISITORS_NOT_LIVE_NOTIFICATION_ID';
 
 /**
+ * The identifier of the visitors notification indicating the request for promotion.
+ *
+ * @type {string}
+ */
+export const VISITOR_ASKED_TO_JOIN_NOTIFICATION_ID = 'VISITOR_ASKED_TO_JOIN_NOTIFICATION_ID';
+
+/**
  * Amount of participants beyond which no join notification will be emitted.
  */
 export const SILENT_JOIN_THRESHOLD = 30;
