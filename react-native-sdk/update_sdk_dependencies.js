@@ -26,6 +26,13 @@ function mergeDependencyVersions() {
             SDKPackageJSON.peerDependencies[key] = packageJSON.dependencies[key];
         }
     }
+    
+    // Updates SDK dev dependencies(used by react-native-worklets-core lib. babel plugin)
+    for (const key in packageJSON.devDependencies) {
+        if (SDKPackageJSON.devDependencies.hasOwnProperty(key)) {
+            SDKPackageJSON.devDependencies[key] = packageJSON.devDependencies[key];
+        }
+    }
 
     // Set RN peer dependency.
     const rnVersion = semver.parse(packageJSON.dependencies['react-native']);
