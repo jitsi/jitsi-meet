@@ -10,6 +10,7 @@ local muc = module:depends("muc");
 
 local NS_NICK = 'http://jabber.org/protocol/nick';
 local is_healthcheck_room = util.is_healthcheck_room;
+local room_jid_match_rewrite = util.room_jid_match_rewrite;
 
 local POLLS_LIMIT = 128;
 local POLL_PAYLOAD_LIMIT = 1024;
@@ -53,9 +54,26 @@ local function get_occupant_details(occupant)
     return { ["occupant_id"] = occupant_id, ["occupant_name"] = occupant_name }
 end
 
+local function send_polls_message(room, data_str, to)
+    local stanza = st.message({
+        from = module.host,
+        to = to
+    })
+    :tag("json-message", { xmlns = "http://jitsi.org/jitmeet" })
+    :text(data_str)
+    :up();
+    room:route_stanza(stanza);
+end
+
+local function send_polls_message_to_all(room, data_str)
+    for _, room_occupant in room:each_occupant() do
+        send_polls_message(room, data_str, room_occupant.jid);
+    end
+end
+
 process_host_module(muc_domain_prefix..'.'..main_virtual_host, function(host_module, host)
     -- Sets up poll data in new rooms.
-    module:hook("muc-room-created", function(event)
+    host_module:hook("muc-room-created", function(event)
         local room = event.room;
         if is_healthcheck_room(room.jid) then return end
         module:log("debug", "setting up polls in room %s", room.jid);
@@ -70,17 +88,47 @@ process_host_module(muc_domain_prefix..'.'..main_virtual_host, function(host_mod
     -- by listening to "new-poll" and "answer-poll" messages,
     -- and updating the room poll data accordingly.
     -- This mirrors the client-side poll update logic.
-    module:hook('jitsi-endpoint-message-received', function(event)
-        local data, error, occupant, room, origin, stanza
-            = event.message, event.error, event.occupant, event.room, event.origin, event.stanza;
+    module:hook('message/host', function(event)
+        local stanza = event.stanza;
 
-        if not data or (data.type ~= "new-poll" and data.type ~= "answer-poll") then
+        -- we are interested in all messages without a body that are not groupchat
+        if stanza.attr.type == 'groupchat' or stanza:get_child('body') then
             return;
         end
 
-        if string.len(event.raw_message) >= POLL_PAYLOAD_LIMIT then
+        local json_message = stanza:get_child('json-message', 'http://jitsi.org/jitmeet')
+            or stanza:get_child('json-message');
+        if not json_message or not json_message.attr.roomJid then
+            return;
+        end
+
+        local room = get_room_from_jid(room_jid_match_rewrite(json_message.attr.roomJid));
+        if not room then
+            module:log('warn', 'No room found found for %s', json_message.attr.roomJid);
+            return;
+        end
+
+        local occupant_jid = stanza.attr.from;
+        local occupant = room:get_occupant_by_real_jid(occupant_jid);
+        if not occupant then
+            module:log("error", "Occupant sending msg %s was not found in room %s", occupant_jid, room.jid)
+            return;
+        end
+
+        local json_message_text = json_message:get_text();
+        if string.len(json_message_text) >= POLL_PAYLOAD_LIMIT then
             module:log('error', 'Poll payload too large, discarding. Sender: %s to:%s', stanza.attr.from, stanza.attr.to);
             return true;
+        end
+
+        local data, error = json.decode(json_message_text);
+        if error then
+            module:log('error', 'Error decoding data error:%s Sender: %s to:%s', error, stanza.attr.from, stanza.attr.to);
+            return true;
+        end
+
+        if not data or (data.type ~= "new-poll" and data.type ~= "answer-poll") then
+            return;
         end
 
         if data.type == "new-poll" then
@@ -118,7 +166,7 @@ process_host_module(muc_domain_prefix..'.'..main_virtual_host, function(host_mod
             end
 
             local poll = {
-                id = data.pollId,
+                pollId = data.pollId,
                 sender_id = poll_creator.occupant_id,
                 sender_name = poll_creator.occupant_name,
                 question = data.question,
@@ -140,7 +188,16 @@ process_host_module(muc_domain_prefix..'.'..main_virtual_host, function(host_mod
                     answers = compact_answers
                 }
             }
-            module:fire_event("poll-created", pollData);
+
+            host_module:fire_event("poll-created", pollData);
+
+            -- now send message to all participants
+            data.senderId = poll_creator.occupant_id;
+            local json_msg_str, error = json.encode(data);
+            if not json_msg_str then
+                module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
+            end
+            send_polls_message_to_all(room, json_msg_str);
         elseif data.type == "answer-poll" then
             if check_polls(room) then return end
 
@@ -168,17 +225,26 @@ process_host_module(muc_domain_prefix..'.'..main_virtual_host, function(host_mod
             local answerData = {
                 event = event,
                 room = room,
-                pollId = poll.id,
+                pollId = poll.pollId,
                 voterName = voter.occupant_name,
                 voterId = voter.occupant_id,
                 answers = answers
             }
-            module:fire_event("answer-poll",  answerData);
+            host_module:fire_event("answer-poll",  answerData);
+
+            data.senderId = voter.occupant_id;
+            local json_msg_str, error = json.encode(data);
+            if not json_msg_str then
+                module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
+            end
+            send_polls_message_to_all(room, json_msg_str);
         end
+
+        return true;
     end);
 
     -- Sends the current poll state to new occupants after joining a room.
-    module:hook("muc-occupant-joined", function(event)
+    host_module:hook("muc-occupant-joined", function(event)
         local room = event.room;
         if is_healthcheck_room(room.jid) then return end
         if room.polls == nil or #room.polls.order == 0 then
@@ -191,7 +257,7 @@ process_host_module(muc_domain_prefix..'.'..main_virtual_host, function(host_mod
         };
         for i, poll in ipairs(room.polls.order) do
             data.polls[i] = {
-                id = poll.id,
+                pollId = poll.pollId,
                 senderId = poll.sender_id,
                 senderName = poll.sender_name,
                 question = poll.question,
@@ -203,15 +269,7 @@ process_host_module(muc_domain_prefix..'.'..main_virtual_host, function(host_mod
         if not json_msg_str then
             module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
         end
-
-        local stanza = st.message({
-            from = room.jid,
-            to = event.occupant.jid
-        })
-        :tag("json-message", { xmlns = "http://jitsi.org/jitmeet" })
-        :text(json_msg_str)
-        :up();
-        room:route_stanza(stanza);
+        send_polls_message(room, json_msg_str, event.occupant.jid);
     end);
 end);
 
