@@ -114,6 +114,9 @@
         "error": "Errore: il tuo messaggio non è stato inviato. Motivo: {{error}}",
         "everyone": "Tutti",
         "fieldPlaceHolder": "Scrivi qui il tuo messaggio",
+        "fileAccessibleTitle": "{{user}} ha caricato un file",
+        "fileAccessibleTitleMe": "ho caricato un file",
+        "fileDeleted": "Un file è stato eliminato",
         "guestsChatIndicator": "(ospite)",
         "lobbyChatMessageTo": "Messaggio a {{recipient}} in sala d'attesa",
         "message": "Messaggio",
@@ -280,7 +283,6 @@
         "Submit": "Invia",
         "Understand": "Accetto, mantieni microfono e videocamera disattivati per ora",
         "UnderstandAndUnmute": "Accetto, riattiva microfono e videocamera",
-        "WaitForHostMsg": "La riunione non è ancora iniziata. Se sei l'organizzatore, per favore autenticati. Altrimenti, attendi l'arrivo dell'organizzatore.",
         "WaitForHostNoAuthMsg": "La riunione non è ancora iniziata perché nessun organizzatore si è ancora collegato. Si prega di attendere.",
         "WaitingForHostButton": "Attendi l'organizzatore",
         "WaitingForHostTitle": "In attesa dell'organizzatore…",
@@ -523,6 +525,7 @@
         "tokenAuthFailedWithReasons": "Non sei autorizzato a partecipare a questa chiamata. Possibile motivo: {{reason}}",
         "tokenAuthUnsupported": "Il token URL non è supportato.",
         "transcribing": "Trascrizione in corso",
+        "unauthenticatedAccessDisabled": "Questa chiamata richiede l'autenticazione. Si prega di accedere per procedere.",
         "unlockRoom": "Rimuovi la $t(lockRoomPassword) alla riunione",
         "user": "Utente",
         "userIdentifier": "Identificatore utente",
@@ -570,10 +573,12 @@
         "downloadStarted": "Download del file iniziato",
         "dragAndDrop": "Trascina e rilascia i file qui o da qualsiasi altra parte nella schermata",
         "fileAlreadyUploaded": "Questo file è già stato caricato nella riunione.",
+        "fileRemovedByOther": "Il tuo file '{{ fileName }}' è stato rimosso",
         "fileTooLargeDescription": "Assicurati che il file non superi {{ maxFileSize }}.",
         "fileTooLargeTitle": "Il file selezionato è troppo grande",
         "fileUploadProgress": "Caricamento del file in corso",
         "fileUploadedSuccessfully": "Il file è stato caricato con successo",
+        "newFileNotification": "{{ participantName }} ha condiviso '{{ fileName }}'",
         "removeFile": "Rimuovi",
         "removeFileSuccess": "File rimosso con successo",
         "uploadFailedDescription": "Si prega di riprovare.",
@@ -748,7 +753,8 @@
         "notificationTitle": "Sala d'attesa",
         "passwordJoinButton": "Entra",
         "title": "Sala d'attesa",
-        "toggleLabel": "Attiva sala d'attesa"
+        "toggleLabel": "Attiva sala d'attesa",
+        "waitForModerator": "La riunione non è ancora iniziata, perché non è arrivato alcun organizzatore. Se vuoi diventarlo autenticati, altrimenti attendi."
     },
     "localRecording": {
         "clientState": {
@@ -964,6 +970,9 @@
         "by": "Da {{ name }}",
         "closeButton": "Chiudi sondaggio",
         "create": {
+            "accessibilityLabel": {
+                "send": "Invia sondaggio"
+            },
             "addOption": "Aggiungi opzione",
             "answerPlaceholder": "Opzione {{index}}",
             "cancel": "Annulla",
@@ -972,8 +981,7 @@
             "pollQuestion": "Domanda del sondaggio",
             "questionPlaceholder": "Fai una domanda",
             "removeOption": "Elimina opzione",
-            "save": "Salva",
-            "send": "Invia"
+            "save": "Salva"
         },
         "errors": {
             "notUniqueOption": "Le opzioni devono essere uniche"
@@ -1617,6 +1625,8 @@
             "noMainParticipantsTitle": "La riunione non è ancora iniziata.",
             "noVisitorLobby": "Non puoi partecipare se la sala d'attesa è attiva per la riunione.",
             "notAllowedPromotion": "Un partecipante deve autorizzare la tua richiesta prima.",
+            "requestToJoin": "Mano alzata",
+            "requestToJoinDescription": "La tua richiesta è stata inviata ai relatori. Tieni duro!",
             "title": "Sei uno spettatore nella riunione"
         },
         "waitingMessage": "Ti unirai alla riunione quando inizierà!"
