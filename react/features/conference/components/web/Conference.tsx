@@ -403,8 +403,7 @@ function _mapStateToProps(state: IReduxState) {
     const { backgroundAlpha, mouseMoveCallbackInterval } = state["features/base/config"];
     const { viewMode } = state["features/filmstrip"];
     const { overflowDrawer } = state["features/toolbox"];
-    const { room } = state["features/base/conference"];
-
+    const room = state["features/base/conference"].room;
     return {
         ...abstractMapStateToProps(state),
         _backgroundAlpha: backgroundAlpha,

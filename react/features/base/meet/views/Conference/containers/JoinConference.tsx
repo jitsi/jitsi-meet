@@ -35,6 +35,7 @@ import { setConferenceViewMode } from "../../../../../filmstrip/actions.web";
 import { ViewMode } from "../../../../../filmstrip/reducer";
 import { DEFAULT_STATE } from "../../../../known-domains/reducer";
 import PersistenceRegistry from "../../../../redux/PersistenceRegistry";
+import { setCreateRoomError, setJoinRoomError } from "../../../general/store/errors/actions";
 import ConferenceControlsWrapper from "./ConferenceControlsWrapper";
 import VideoGalleryWrapper from "./VideoGalleryWrapper";
 
@@ -101,7 +102,7 @@ class Conference extends AbstractConference<IProps, any> {
     _originalOnShowToolbar: Function;
 
     _onSetVideoModeClicked = (newMode: Mode) => {
-        this.props.dispatch(setConferenceViewMode(newMode))
+        this.props.dispatch(setConferenceViewMode(newMode));
     };
     /**
      * Initializes a new Conference instance.
@@ -143,6 +144,8 @@ class Conference extends AbstractConference<IProps, any> {
             },
             DEFAULT_STATE
         );
+        this.props.dispatch(setCreateRoomError(false));
+        this.props.dispatch(setJoinRoomError(false));
     }
 
     /**
