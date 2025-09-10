@@ -21,12 +21,10 @@ import { openLogoutDialog } from '../settings/actions';
 
 import {
     CANCEL_LOGIN,
-    DISABLE_MODERATOR_LOGIN,
     LOGIN,
     LOGOUT,
     STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
-    WAIT_FOR_MODERATOR,
     WAIT_FOR_OWNER
 } from './actionTypes';
 import {
@@ -39,7 +37,6 @@ import {
     redirectToDefaultLocation,
     setTokenAuthUrlSuccess,
     stopWaitForOwner,
-    waitForModerator,
     waitForOwner
 } from './actions';
 import { LoginDialog, WaitForOwnerDialog } from './components';
@@ -113,7 +110,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (error.name === JitsiConferenceErrors.MEMBERS_ONLY_ERROR && lobbyWaitingForHost) {
             if (recoverable) {
-                store.dispatch(waitForModerator());
+                store.dispatch(enableModeratorLogin());
             } else {
                 store.dispatch(disableModeratorLogin());
             }
@@ -210,9 +207,6 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case DISABLE_MODERATOR_LOGIN:
-        _clearExistingWaitForModeratorTimeout(store);
-        break;
     case STOP_WAIT_FOR_OWNER:
         _clearExistingWaitForOwnerTimeout(store);
         store.dispatch(hideDialog(WaitForOwnerDialog));
@@ -227,20 +221,6 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case WAIT_FOR_MODERATOR: {
-        _clearExistingWaitForModeratorTimeout(store);
-
-        const { handler, timeoutMs }: { handler: () => void; timeoutMs: number; } = action;
-
-        action.waitForModeratorTimeoutID = setTimeout(handler, timeoutMs);
-
-        // The WAIT_FOR_MODERATOR action is cyclic, and we don't want to hide the
-        // login dialog every few seconds.
-        if (!isDialogOpen(store, LoginDialog)) {
-            store.dispatch(enableModeratorLogin());
-        }
-        break;
-    }
     case WAIT_FOR_OWNER: {
         _clearExistingWaitForOwnerTimeout(store);
 
@@ -273,19 +253,6 @@ function _clearExistingWaitForOwnerTimeout({ getState }: IStore) {
 }
 
 /**
- * Will clear the wait for moderator timeout handler if any is currently
- * set.
- *
- * @param {Object} store - The redux store.
- * @returns {void}
- */
-function _clearExistingWaitForModeratorTimeout({ getState }: IStore) {
-    const { waitForModeratorTimeoutID } = getState()['features/authentication'];
-
-    waitForModeratorTimeoutID && clearTimeout(waitForModeratorTimeoutID);
-}
-
-/**
  * Checks if the cyclic "wait for conference owner" task is currently scheduled.
  *
  * @param {Object} store - The redux store.
@@ -302,7 +269,7 @@ function _isWaitingForOwner({ getState }: IStore) {
  * @returns {boolean}
  */
 function _isWaitingForModerator({ getState }: IStore) {
-    return Boolean(getState()['features/authentication'].waitForModeratorTimeoutID);
+    return getState()['features/authentication'].showModeratorLogin;
 }
 
 /**

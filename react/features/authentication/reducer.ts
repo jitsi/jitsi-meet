@@ -10,8 +10,7 @@ import {
     STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
     UPGRADE_ROLE_STARTED,
-    WAIT_FOR_OWNER,
-    WAIT_FOR_MODERATOR
+    WAIT_FOR_OWNER
 } from './actionTypes';
 
 export interface IAuthenticationState {
@@ -22,7 +21,6 @@ export interface IAuthenticationState {
         cancel: Function;
     };
     tokenAuthUrlSuccessful?: boolean;
-    waitForModeratorTimeoutID?: number;
     waitForOwnerTimeoutID?: number;
 }
 
@@ -69,8 +67,7 @@ ReducerRegistry.register<IAuthenticationState>('features/authentication',
     case DISABLE_MODERATOR_LOGIN:
         return assign(state, {
             error: undefined,
-            showModeratorLogin: false,
-            waitForModeratorTimeoutID: undefined
+            showModeratorLogin: false
         });
 
     case UPGRADE_ROLE_FINISHED: {
@@ -101,11 +98,6 @@ ReducerRegistry.register<IAuthenticationState>('features/authentication',
             error: undefined,
             progress: undefined,
             thenableWithCancel: action.thenableWithCancel
-        });
-
-    case WAIT_FOR_MODERATOR:
-        return assign(state, {
-            waitForModeratorTimeoutID: action.waitForModeratorTimeoutID
         });
 
     case WAIT_FOR_OWNER:

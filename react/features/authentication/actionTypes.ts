@@ -98,19 +98,6 @@ export const ENABLE_MODERATOR_LOGIN = 'ENABLE_MODERATOR_LOGIN';
  * connection.
  *
  * {
- *     type: WAIT_FOR_MODERATOR,
- *     handler: Function,
- *     timeoutMs: number
- * }
- */
-export const WAIT_FOR_MODERATOR = 'WAIT_FOR_MODERATOR';
-
-/**
- * The type of (redux) action that sets delayed handler which will check if
- * the conference has been created and it's now possible to join from anonymous
- * connection.
- *
- * {
  *     type: WAIT_FOR_OWNER,
  *     handler: Function,
  *     timeoutMs: number

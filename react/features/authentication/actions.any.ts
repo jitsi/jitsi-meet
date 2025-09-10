@@ -12,7 +12,6 @@ import {
     STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
     UPGRADE_ROLE_STARTED,
-    WAIT_FOR_MODERATOR,
     WAIT_FOR_OWNER
 } from './actionTypes';
 import { LoginDialog, WaitForOwnerDialog } from './components';
@@ -180,22 +179,6 @@ export function disableModeratorLogin() {
     return {
         type: DISABLE_MODERATOR_LOGIN
     };
-}
-
-/**
- * Called when Jicofo rejects to create the room for anonymous user. Will
- * start the process of "waiting for the moderator" by periodically trying to join
- * the room every five seconds.
- *
- * @returns {Function}
- */
-export function waitForModerator() {
-    return (dispatch: IStore['dispatch']) =>
-        dispatch({
-            type: WAIT_FOR_MODERATOR,
-            handler: () => dispatch(checkIfCanJoin()),
-            timeoutMs: 5000
-        });
 }
 
 /**

@@ -7,7 +7,7 @@ import { connectionFailed } from '../base/connection/actions.native';
 import { set } from '../base/redux/functions';
 
 import { CANCEL_LOGIN } from './actionTypes';
-import { disableModeratorLogin, stopWaitForOwner } from './actions.any';
+import { stopWaitForOwner } from './actions.any';
 
 export * from './actions.any';
 
