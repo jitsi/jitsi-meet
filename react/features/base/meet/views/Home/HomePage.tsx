@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { appNavigate } from "../../../../app/actions.web";
 import { useLocalStorage } from "../../LocalStorageManager";
 import MeetingButton from "../../general/containers/MeetingButton";
+import { loginSuccess } from "../../general/store/auth/actions";
 import { setRoomID } from "../../general/store/errors/actions";
 import MeetingService from "../../services/meeting.service";
 import { useUserData } from "../PreMeeting/hooks/useUserData";
@@ -139,6 +140,7 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
                 openLogin={openLogin}
                 onClose={() => setIsAuthModalOpen(false)}
                 onLogin={handleSuccessfulLogin}
+                onSignup={(credentials) => dispatch(loginSuccess(credentials))}
                 translate={translate}
             />
             <ScheduleMeetingModal

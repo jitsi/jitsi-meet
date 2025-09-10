@@ -106,7 +106,7 @@ describe("useSignup", () => {
         expect(result.current.signupError).toBe("");
     });
 
-    it("should reset signup state when resetSignupState is called", () => {
+    it("should reset signup state when resetSignupState is called", async () => {
         const { result } = renderHook(() =>
             useSignup({
                 onClose: mockOnClose,
@@ -115,7 +115,7 @@ describe("useSignup", () => {
             })
         );
 
-        act(async () => {
+        await act(async () => {
             mockAuthClient.register.mockRejectedValueOnce(new Error("Test error"));
             await result.current.handleSignup({
                 ...mockFormValues,
@@ -198,10 +198,8 @@ describe("useSignup", () => {
                     id: "direct-id",
                     email: "direct@example.com",
                     uuid: "direct-uuid",
-                    mnemonic: "test-mnemonic",
                 },
             });
-
             const { result } = renderHook(() =>
                 useSignup({
                     onClose: mockOnClose,
@@ -217,13 +215,13 @@ describe("useSignup", () => {
 
             expect(mockOnSignup).toHaveBeenCalled();
             expect(capturedSignupData).toEqual({
+                mnemonic: "test-mnemonic",
                 token: "direct-token",
                 newToken: "direct-new-token",
-                userData: {
+                user: {
                     id: "direct-id",
                     email: "direct@example.com",
                     uuid: "direct-uuid",
-                    mnemonic: "test-mnemonic",
                 },
             });
         });
