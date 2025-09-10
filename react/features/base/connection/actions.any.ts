@@ -24,7 +24,7 @@ import {
 } from './actionTypes';
 import { JITSI_CONNECTION_URL_KEY } from './constants';
 import logger from './logger';
-import { get8x8AppId, get8x8Options } from "./options8x8";
+import { get8x8Options } from "./options8x8";
 import { ConnectionFailedError, IIceServers } from "./types";
 
 /**
@@ -49,7 +49,7 @@ export interface IOptions extends IConfigState {
 export function connectionDisconnected(connection?: Object) {
     return {
         type: CONNECTION_DISCONNECTED,
-        connection
+        connection,
     };
 }
 
@@ -67,12 +67,11 @@ export function connectionDisconnected(connection?: Object) {
  *     timeEstablished: number
  * }}
  */
-export function connectionEstablished(
-        connection: Object, timeEstablished: number) {
+export function connectionEstablished(connection: Object, timeEstablished: number) {
     return {
         type: CONNECTION_ESTABLISHED,
         connection,
-        timeEstablished
+        timeEstablished,
     };
 }
 
@@ -89,9 +88,7 @@ export function connectionEstablished(
  *     error: ConnectionFailedError
  * }}
  */
-export function connectionFailed(
-        connection: Object,
-        error: ConnectionFailedError) {
+export function connectionFailed(connection: Object, error: ConnectionFailedError) {
     const { credentials } = error;
 
     if (credentials && !Object.keys(credentials).length) {
@@ -101,7 +98,7 @@ export function connectionFailed(
     return {
         type: CONNECTION_FAILED,
         connection,
-        error
+        error,
     };
 }
 
@@ -241,13 +238,12 @@ export function _connectInternal({
 
         if (room !== NEW_MEETING_URL)
             try {
-                const { token: jwt } = await MeetingService.instance.joinCall(room, {
+                const { token: jwt, appId } = await MeetingService.instance.joinCall(room, {
                     name: displayName ?? name ?? "",
                     lastname: lastname ?? "",
                     anonymous: !!isAnonymous,
                 });
 
-                const appId = get8x8AppId();
                 const newOptions = get8x8Options(options, appId, room);
 
                 const connection = new JitsiMeetJS.JitsiConnection(options.appId, jwt, newOptions);

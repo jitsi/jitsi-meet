@@ -160,8 +160,8 @@ class Conference extends AbstractConference<IProps, any> {
 
         FULL_SCREEN_EVENTS.forEach((name) => document.removeEventListener(name, this._onFullScreenChange));
 
-        // window.removeEventListener("beforeunload", this._handleBeforeUnload);
-        console.log("room", this.props.roomdId);
+        window.removeEventListener("beforeunload", this._handleBeforeUnload);
+
         APP.conference.isJoined() && this.props.dispatch(hangup(true, this.props.roomdId));
     }
 
