@@ -162,7 +162,7 @@ export default function Icon(props: IProps) {
         ...restStyle
     } = styleTypeToObject(style ?? {});
 
-    const calculatedColor = theme.palette.icon01 || 'white';
+    const calculatedColor = color || theme.palette.icon01 || 'white';
     const calculatedSize = size ?? styleSize ?? DEFAULT_SIZE;
 
     const onKeyPressHandler = useCallback(e => {
