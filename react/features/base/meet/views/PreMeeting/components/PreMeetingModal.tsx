@@ -1,11 +1,13 @@
-import { Button, TransparentModal } from "@internxt/ui";
 import React from "react";
+import { Button, TransparentModal } from "@internxt/ui";
+import { useTranslation } from "react-i18next";
+import { MAX_SIZE_PARTICIPANTS } from "../../../constants";
+import { ErrorMessage } from "../../../general/components/ErrorMessage";
 import MediaControlsWrapper from "../../../general/containers/MediaControlsWrapper";
+import { MeetingUser } from "../../../services/types/meeting.types";
 import NameInputSection from "./NameInputSection";
 import ParticipantsList from "./ParticipantsList";
 import VideoPreviewSection from "./VideoPreviewSection";
-import { MAX_SIZE_PARTICIPANTS } from "../../../constants";
-import { useTranslation } from "react-i18next";
 
 interface PreMeetingModalProps {
     /**
@@ -46,7 +48,7 @@ interface PreMeetingModalProps {
     /**
      * List of participants
      */
-    participants: any[];
+    participants: MeetingUser[];
 
     /**
      * Join conference handler
@@ -67,6 +69,11 @@ interface PreMeetingModalProps {
      * Flag to indicate if conference is creating.
      */
     isCreatingConference?: boolean;
+
+    /**
+     * Error message to display
+     */
+    errorMessage?: string;
 }
 
 /**
@@ -85,6 +92,7 @@ const PreMeetingModal = ({
     disableJoinButton,
     flipX,
     isCreatingConference,
+    errorMessage,
 }: PreMeetingModalProps) => {
     const num = MAX_SIZE_PARTICIPANTS;
     const { t } = useTranslation();
@@ -123,6 +131,11 @@ const PreMeetingModal = ({
                     </div>
                 ) : (
                     <ParticipantsList participants={participants} translate={t} />
+                )}
+                {!!errorMessage && (
+                    <div className="max-w-[264px]">
+                        <ErrorMessage message={errorMessage} />
+                    </div>
                 )}
                 <Button
                     onClick={joinConference}
