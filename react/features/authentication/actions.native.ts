@@ -7,7 +7,7 @@ import { connectionFailed } from '../base/connection/actions.native';
 import { set } from '../base/redux/functions';
 
 import { CANCEL_LOGIN } from './actionTypes';
-import { disableModeratorLogin } from './actions.any';
+import { disableModeratorLogin, stopWaitForOwner } from './actions.any';
 
 export * from './actions.any';
 
@@ -41,13 +41,13 @@ export function cancelLogin() {
 }
 
 /**
- * Cancels waiting for moderator and cleans up login state. Will navigate back to the welcome page.
+ * Cancels {@link WaitForOwnerDialog}. Will navigate back to the welcome page.
  *
  * @returns {Function}
  */
-export function cancelWaitForModerator() {
+export function cancelWaitForOwner() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        dispatch(disableModeratorLogin());
+        dispatch(stopWaitForOwner());
 
         // XXX The error associated with CONFERENCE_FAILED was marked as
         // recoverable by the feature room-lock and, consequently,
@@ -60,7 +60,7 @@ export function cancelWaitForModerator() {
         if (authRequired) {
             dispatch(conferenceLeft(authRequired));
 
-            // in case we are showing lobby and on top of it wait for moderator
+            // in case we are showing lobby and on top of it wait for owner
             // we do not want to navigate away from the conference
             dispatch(appNavigate(undefined));
         }

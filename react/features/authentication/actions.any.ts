@@ -9,11 +9,13 @@ import {
     LOGIN,
     LOGOUT,
     SET_TOKEN_AUTH_URL_SUCCESS,
+    STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
     UPGRADE_ROLE_STARTED,
-    WAIT_FOR_MODERATOR
+    WAIT_FOR_MODERATOR,
+    WAIT_FOR_OWNER
 } from './actionTypes';
-import { LoginDialog } from './components';
+import { LoginDialog, WaitForOwnerDialog } from './components';
 import logger from './logger';
 
 /**
@@ -197,17 +199,6 @@ export function waitForModerator() {
 }
 
 /**
- * Opens {@link LoginDialog} which will ask to enter username and password
- * for the current conference.
- *
- * @protected
- * @returns {Action}
- */
-export function openLoginDialog() {
-    return openDialog(LoginDialog);
-}
-
-/**
  * Enables moderator login.
  *
  * @returns {Object}
@@ -216,6 +207,57 @@ export function enableModeratorLogin() {
     return {
         type: ENABLE_MODERATOR_LOGIN
     };
+}
+
+/**
+ * Opens {@link WaitForOnwerDialog}.
+ *
+ * @protected
+ * @returns {Action}
+ */
+export function openWaitForOwnerDialog() {
+    return openDialog(WaitForOwnerDialog);
+}
+
+
+/**
+ * Stops waiting for the conference owner.
+ *
+ * @returns {{
+ *     type: STOP_WAIT_FOR_OWNER
+ * }}
+ */
+export function stopWaitForOwner() {
+    return {
+        type: STOP_WAIT_FOR_OWNER
+    };
+}
+
+/**
+ * Called when Jicofo rejects to create the room for anonymous user. Will
+ * start the process of "waiting for the owner" by periodically trying to join
+ * the room every five seconds.
+ *
+ * @returns {Function}
+ */
+export function waitForOwner() {
+    return (dispatch: IStore['dispatch']) =>
+        dispatch({
+            type: WAIT_FOR_OWNER,
+            handler: () => dispatch(checkIfCanJoin()),
+            timeoutMs: 5000
+        });
+}
+
+/**
+ * Opens {@link LoginDialog} which will ask to enter username and password
+ * for the current conference.
+ *
+ * @protected
+ * @returns {Action}
+ */
+export function openLoginDialog() {
+    return openDialog(LoginDialog);
 }
 
 /**

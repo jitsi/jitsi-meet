@@ -7,6 +7,7 @@ import {
 } from '../base/conference/actionTypes';
 import { isRoomValid } from '../base/conference/functions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection/actionTypes';
+import { hideDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
 import {
     JitsiConferenceErrors,
@@ -23,8 +24,10 @@ import {
     DISABLE_MODERATOR_LOGIN,
     LOGIN,
     LOGOUT,
+    STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
-    WAIT_FOR_MODERATOR
+    WAIT_FOR_MODERATOR,
+    WAIT_FOR_OWNER
 } from './actionTypes';
 import {
     disableModeratorLogin,
@@ -32,11 +35,14 @@ import {
     hideLoginDialog,
     openLoginDialog,
     openTokenAuthUrl,
+    openWaitForOwnerDialog,
     redirectToDefaultLocation,
     setTokenAuthUrlSuccess,
-    waitForModerator
+    stopWaitForOwner,
+    waitForModerator,
+    waitForOwner
 } from './actions';
-import { LoginDialog } from './components';
+import { LoginDialog, WaitForOwnerDialog } from './components';
 import { getTokenAuthUrl, isTokenAuthEnabled } from './functions';
 import logger from './logger';
 
@@ -59,25 +65,30 @@ MiddlewareRegistry.register(store => next => action => {
 
         thenableWithCancel?.cancel();
 
-        if (_isWaitingForModerator(store)) {
-            // Instead of hiding show the new one.
-            const result = next(action);
+        // The LoginDialog can be opened on top of "wait for owner". The app
+        // should navigate only if LoginDialog was open without the
+        // WaitForOwnerDialog.
+        if (!isDialogOpen(store, WaitForOwnerDialog)) {
+            if (_isWaitingForOwner(store)) {
+                // Instead of hiding show the new one.
+                const result = next(action);
 
-            dispatch(enableModeratorLogin());
+                dispatch(openWaitForOwnerDialog());
 
-            return result;
-        }
+                return result;
+            }
 
-        dispatch(hideLoginDialog());
+            dispatch(hideLoginDialog());
 
-        const { authRequired, conference } = state['features/base/conference'];
-        const { passwordRequired } = state['features/base/connection'];
+            const { authRequired, conference } = state['features/base/conference'];
+            const { passwordRequired } = state['features/base/connection'];
 
-        // Only end the meeting if we are not already inside and trying to upgrade.
-        // NOTE: Despite it's confusing name, `passwordRequired` implies an XMPP
-        // connection auth error.
-        if ((passwordRequired || authRequired) && !conference) {
-            dispatch(redirectToDefaultLocation());
+            // Only end the meeting if we are not already inside and trying to upgrade.
+            // NOTE: Despite it's confusing name, `passwordRequired` implies an XMPP
+            // connection auth error.
+            if ((passwordRequired || authRequired) && !conference) {
+                dispatch(redirectToDefaultLocation());
+            }
         }
         break;
     }
@@ -99,11 +110,21 @@ MiddlewareRegistry.register(store => next => action => {
             }
             recoverable = error.recoverable;
         }
-        if (recoverable) {
-            store.dispatch(waitForModerator());
-        } else {
-            store.dispatch(disableModeratorLogin());
+
+        if (error.name === JitsiConferenceErrors.MEMBERS_ONLY_ERROR && lobbyWaitingForHost) {
+            if (recoverable) {
+                store.dispatch(waitForModerator());
+            } else {
+                store.dispatch(disableModeratorLogin());
+            }
+        } else if (error.name === JitsiConferenceErrors.AUTHENTICATION_REQUIRED) {
+            if (recoverable) {
+                store.dispatch(waitForOwner());
+            } else {
+                store.dispatch(stopWaitForOwner());
+            }
         }
+
         break;
     }
 
@@ -123,12 +144,16 @@ MiddlewareRegistry.register(store => next => action => {
         if (_isWaitingForModerator(store)) {
             store.dispatch(disableModeratorLogin());
         }
+        if (_isWaitingForOwner(store)) {
+            store.dispatch(stopWaitForOwner());
+        }
         store.dispatch(hideLoginDialog());
         break;
     }
 
     case CONFERENCE_LEFT:
         store.dispatch(disableModeratorLogin());
+        store.dispatch(stopWaitForOwner());
         break;
 
     case CONNECTION_ESTABLISHED:
@@ -188,6 +213,10 @@ MiddlewareRegistry.register(store => next => action => {
     case DISABLE_MODERATOR_LOGIN:
         _clearExistingWaitForModeratorTimeout(store);
         break;
+    case STOP_WAIT_FOR_OWNER:
+        _clearExistingWaitForOwnerTimeout(store);
+        store.dispatch(hideDialog(WaitForOwnerDialog));
+        break;
 
     case UPGRADE_ROLE_FINISHED: {
         const { error, progress } = action;
@@ -212,10 +241,36 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
+    case WAIT_FOR_OWNER: {
+        _clearExistingWaitForOwnerTimeout(store);
+
+        const { handler, timeoutMs }: { handler: () => void; timeoutMs: number; } = action;
+
+        action.waitForOwnerTimeoutID = setTimeout(handler, timeoutMs);
+
+        // The WAIT_FOR_OWNER action is cyclic, and we don't want to hide the
+        // login dialog every few seconds.
+        isDialogOpen(store, LoginDialog)
+            || store.dispatch(openWaitForOwnerDialog());
+        break;
+    }
     }
 
     return next(action);
 });
+
+/**
+ * Will clear the wait for conference owner timeout handler if any is currently
+ * set.
+ *
+ * @param {Object} store - The redux store.
+ * @returns {void}
+ */
+function _clearExistingWaitForOwnerTimeout({ getState }: IStore) {
+    const { waitForOwnerTimeoutID } = getState()['features/authentication'];
+
+    waitForOwnerTimeoutID && clearTimeout(waitForOwnerTimeoutID);
+}
 
 /**
  * Will clear the wait for moderator timeout handler if any is currently
@@ -230,6 +285,15 @@ function _clearExistingWaitForModeratorTimeout({ getState }: IStore) {
     waitForModeratorTimeoutID && clearTimeout(waitForModeratorTimeoutID);
 }
 
+/**
+ * Checks if the cyclic "wait for conference owner" task is currently scheduled.
+ *
+ * @param {Object} store - The redux store.
+ * @returns {boolean}
+ */
+function _isWaitingForOwner({ getState }: IStore) {
+    return Boolean(getState()['features/authentication'].waitForOwnerTimeoutID);
+}
 
 /**
  * Checks if the cyclic "wait for moderator" task is currently scheduled.

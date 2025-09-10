@@ -280,6 +280,9 @@
         "Submit": "Submit",
         "Understand": "I understand, keep me muted for now",
         "UnderstandAndUnmute": "I understand, please unmute me",
+        "WaitForHostNoAuthMsg": "The conference has not yet started because no moderators have yet arrived. Please wait.",
+        "WaitingForHostButton": "Wait for moderator",
+        "WaitingForHostTitle": "Waiting for a moderator…",
         "Yes": "Yes",
         "accessibilityLabel": {
             "Cancel": "Cancel (leave dialog)",

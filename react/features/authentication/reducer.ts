@@ -7,8 +7,10 @@ import {
     DISABLE_MODERATOR_LOGIN,
     ENABLE_MODERATOR_LOGIN,
     SET_TOKEN_AUTH_URL_SUCCESS,
+    STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
     UPGRADE_ROLE_STARTED,
+    WAIT_FOR_OWNER,
     WAIT_FOR_MODERATOR
 } from './actionTypes';
 
@@ -21,6 +23,7 @@ export interface IAuthenticationState {
     };
     tokenAuthUrlSuccessful?: boolean;
     waitForModeratorTimeoutID?: number;
+    waitForOwnerTimeoutID?: number;
 }
 
 /**
@@ -55,6 +58,12 @@ ReducerRegistry.register<IAuthenticationState>('features/authentication',
     case SET_TOKEN_AUTH_URL_SUCCESS:
         return assign(state, {
             tokenAuthUrlSuccessful: action.value
+        });
+
+    case STOP_WAIT_FOR_OWNER:
+        return assign(state, {
+            error: undefined,
+            waitForOwnerTimeoutID: undefined
         });
 
     case DISABLE_MODERATOR_LOGIN:
@@ -97,6 +106,11 @@ ReducerRegistry.register<IAuthenticationState>('features/authentication',
     case WAIT_FOR_MODERATOR:
         return assign(state, {
             waitForModeratorTimeoutID: action.waitForModeratorTimeoutID
+        });
+
+    case WAIT_FOR_OWNER:
+        return assign(state, {
+            waitForOwnerTimeoutID: action.waitForOwnerTimeoutID
         });
     }
 
