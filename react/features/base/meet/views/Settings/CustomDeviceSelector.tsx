@@ -1,4 +1,4 @@
-import { CaretUp, Check } from "@phosphor-icons/react";
+import { CaretDown, Check } from "@phosphor-icons/react";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -94,7 +94,7 @@ const DeviceSelector = ({ devices, hasPermission, id, isDisabled, label, onSelec
                     aria-expanded={isOpen}
                 >
                     <span className="block truncate">{triggerText}</span>
-                    <CaretUp
+                    <CaretDown
                         className={`h-6 w-6 text-gray-400 transition-transform duration-200 flex-shrink-0 ml-2 ${
                             isOpen ? "rotate-180" : ""
                         }`}

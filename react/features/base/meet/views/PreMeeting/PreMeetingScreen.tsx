@@ -234,7 +234,7 @@ const PreMeetingScreen = ({
 
     const getUsersInMeeting = async () => {
         if (!isInNewMeeting) {
-            const meetingUsers = await MeetingService.getInstance().getCurrentUsersInCall(room);
+            const meetingUsers = await MeetingService.instance.getCurrentUsersInCall(room);
             setMeetingUsersData(meetingUsers);
         }
     };

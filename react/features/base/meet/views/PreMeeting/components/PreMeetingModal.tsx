@@ -118,6 +118,7 @@ const PreMeetingModal = ({
                     translate={t}
                 />
                 <MediaControlsWrapper />
+                <div className="border border-b border-white/15"/>
                 {isCreatingConference ? (
                     <div className="flex flex-col items-center justify-center space-y-5">
                         <div className="flex flex-col items-center justify-center">

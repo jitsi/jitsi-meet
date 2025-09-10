@@ -241,7 +241,7 @@ export function _connectInternal({
 
         if (room !== NEW_MEETING_URL)
             try {
-                const { token: jwt } = await MeetingService.getInstance().joinCall(room, {
+                const { token: jwt } = await MeetingService.instance.joinCall(room, {
                     name: displayName ?? name ?? "",
                     lastname: lastname ?? "",
                     anonymous: !!isAnonymous,
