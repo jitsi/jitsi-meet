@@ -8,10 +8,6 @@ export function useAppNavigation() {
 
     useEffect(() => {
         const handlePopState = () => {
-            console.log("=== PopState Event ===");
-            console.log("Path:", window.location.pathname);
-            console.log("State:", window.history.state);
-
             dispatch(appNavigate(window.location.pathname + window.location.search));
         };
 

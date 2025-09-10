@@ -63,7 +63,6 @@ export function appNavigate(uri?: string) {
 
                 if (location.pathname === "/") {
                     const defaultLocation = parseURIString(getDefaultURL(getState));
-                    console.log("Default location:", defaultLocation);
                     defaultLocation.pathname = "/";
                     window.history.pushState({}, document.title, defaultLocation.pathname);
                 } else {
