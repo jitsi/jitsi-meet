@@ -39,7 +39,7 @@ const GalleryVideoWrapper = ({ videoMode, t, isE2EESupported, room }: GalleryVid
             if (!room) return;
 
             try {
-                const meetingParticipantsData = await MeetingService.getInstance().getCurrentUsersInCall(room);
+                const meetingParticipantsData = await MeetingService.instance.getCurrentUsersInCall(room);
                 setMeetingParticipants(meetingParticipantsData);
             } catch (error) {
                 console.error("Error fetching meeting participants:", error);
