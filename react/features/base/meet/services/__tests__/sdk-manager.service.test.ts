@@ -119,7 +119,6 @@ describe("SdkManager", () => {
         beforeEach(() => {
             vi.spyOn(ConfigService.instance, "get").mockImplementation((key: string) => {
                 const config: Record<string, string> = {
-                    DRIVE_API_URL: "https://test-drive-api.com",
                     DRIVE_NEW_API_URL: "https://test-drive-new-api.com",
                     PAYMENTS_API_URL: "https://test-payments-api.com",
                     MEET_API_URL: "https://test-meet-api.com",

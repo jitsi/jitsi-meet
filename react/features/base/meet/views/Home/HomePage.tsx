@@ -30,7 +30,7 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
     const [meetingLink, setMeetingLink] = useState<string | null>(null);
     const [meetingLinkErrorMessage, setMeetingLinkErrorMessage] = useState<string | null>(null);
     const [openLogin, setOpenLogin] = useState<boolean>(true);
-    const meetingService = MeetingService.getInstance();
+    const meetingService = MeetingService.instance;
     const storageManager = useLocalStorage();
 
     const dispatch = useDispatch();

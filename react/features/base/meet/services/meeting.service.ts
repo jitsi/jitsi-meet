@@ -7,15 +7,9 @@ import {
 import { SdkManager } from "./sdk-manager.service";
 
 class MeetingService {
-    private static instance: MeetingService;
-    private constructor() {}
+    public static readonly instance = new MeetingService();
 
-    public static getInstance(): MeetingService {
-        if (!MeetingService.instance) {
-            MeetingService.instance = new MeetingService();
-        }
-        return MeetingService.instance;
-    }
+    private constructor() {}
 
     /**
      * Creates a new call and returns its details
@@ -39,7 +33,7 @@ class MeetingService {
         return await meetClient.joinCall(callId, payload);
     };
 
-    public leaveCall = async (callId: string): Promise<any> => {
+    public leaveCall = async (callId: string): Promise<void> => {
         const meetClient = SdkManager.instance.getMeet();
         return await meetClient.leaveCall(callId);
     };
