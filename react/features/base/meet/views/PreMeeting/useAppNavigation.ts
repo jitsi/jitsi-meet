@@ -11,8 +11,7 @@ export function useAppNavigation() {
             console.log("=== PopState Event ===");
             console.log("Path:", window.location.pathname);
             console.log("State:", window.history.state);
-            // Importante: NO llamar preventDefault
-            // event.preventDefault();
+
             dispatch(appNavigate(window.location.pathname + window.location.search));
         };
 
