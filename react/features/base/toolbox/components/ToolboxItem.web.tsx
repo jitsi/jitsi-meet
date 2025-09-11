@@ -114,7 +114,7 @@ export default class ToolboxItem extends AbstractToolboxItem<IProps> {
                     text = { this.label } />
             );
         }
-        let children = (
+        const children = (
             <Fragment>
                 { this._renderIcon() }
                 { showLabel && <span>
@@ -125,13 +125,15 @@ export default class ToolboxItem extends AbstractToolboxItem<IProps> {
         );
 
         if (useTooltip) {
-            children = (
+            const tooltip = (
                 <Tooltip
                     content = { this.tooltip ?? '' }
                     position = { tooltipPosition }>
-                    { children }
+                    { React.createElement(elementType, props, children) }
                 </Tooltip>
             );
+
+            return tooltip;
         }
 
         return React.createElement(elementType, props, children);
