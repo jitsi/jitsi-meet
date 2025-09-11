@@ -60,16 +60,7 @@ This is now set on your end.`
             );
         }
     }
-
-    packageJSON.overrides = packageJSON.overrides || {};
-
-    for (const key in RNSDKpackageJSON.overrides) {
-        if (!packageJSON.overrides.hasOwnProperty(key)) {
-            packageJSON.overrides[key] = RNSDKpackageJSON.overrides[key];
-            updated = true;
-        }
-    }
-
+    
     packageJSON.devDependencies = packageJSON.devDependencies || {};
 
     for (const key in RNSDKpackageJSON.devDependencies) {
