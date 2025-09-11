@@ -466,6 +466,7 @@ export interface IConfig {
         enableChat?: boolean;
     };
     localRecording?: {
+        autoDownloadMeetingData?: boolean;
         disable?: boolean;
         disableSelfRecording?: boolean;
         notifyAllParticipants?: boolean;
