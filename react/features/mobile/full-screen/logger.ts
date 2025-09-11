@@ -1,3 +1,3 @@
 import { getLogger } from '../../base/logging/functions';
 
-export default getLogger('features/full-screen');
+export default getLogger('mobile-app:full-screen');

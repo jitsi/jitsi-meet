@@ -1,3 +1,3 @@
 import { getLogger } from '../base/logging/functions';
 
-export default getLogger('features/room-lock');
+export default getLogger('app:room-lock');

@@ -1,3 +1,3 @@
 import { getLogger } from '../base/logging/functions';
 
-export default getLogger('features/face-landmarks');
+export default getLogger('app:face-landmarks');

@@ -1,3 +1,3 @@
 import { getLogger } from '../base/logging/functions';
 
-export default getLogger('features/noise-suppression');
+export default getLogger('app:noise-suppression');

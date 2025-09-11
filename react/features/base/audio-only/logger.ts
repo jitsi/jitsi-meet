@@ -1,3 +1,3 @@
 import { getLogger } from '../logging/functions';
 
-export default getLogger('features/base/audio-only');
+export default getLogger('app:audio-only');

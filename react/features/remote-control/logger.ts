@@ -1,3 +1,3 @@
 import { getLogger } from '../base/logging/functions';
 
-export default getLogger('features/remote-control');
+export default getLogger('app:remote-control');

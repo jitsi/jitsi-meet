@@ -1,3 +1,3 @@
 import { getLogger } from '../base/logging/functions';
 
-export default getLogger('features/video-quality');
+export default getLogger('app:video-quality');

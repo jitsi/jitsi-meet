@@ -1,6 +1,6 @@
 import Logger from '@jitsi/logger';
 
-const logger = Logger.getLogger(__filename);
+const logger = Logger.getLogger('api:external');
 
 /**
  * Returns Promise that resolves with result an list of available devices.

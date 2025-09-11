@@ -1,3 +1,3 @@
 import { getLogger } from '../base/logging/functions';
 
-export default getLogger('features/device-selection');
+export default getLogger('app:device-selection');

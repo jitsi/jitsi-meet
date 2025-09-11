@@ -1,3 +1,3 @@
 import { getLogger } from '../base/logging/functions';
 
-export default getLogger('features/file-sharing');
+export default getLogger('app:file-sharing');

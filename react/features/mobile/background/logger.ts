@@ -1,3 +1,3 @@
 import { getLogger } from '../../base/logging/functions';
 
-export default getLogger('features/mobile/background');
+export default getLogger('mobile-app:background');
