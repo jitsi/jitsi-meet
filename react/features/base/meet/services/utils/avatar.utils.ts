@@ -18,12 +18,12 @@ const PROVIDER_CONFIGS: Record<string, ExpirationConfig> = {
     },
 };
 
-function detectProvider(url: string): string | null {
+const detectProvider = (url: string): string | null => {
     if (url.includes(PREFIX_PROVIDERS["AWS"])) return "AWS";
     return null;
-}
+};
 
-function getAvatarExpiration(url: string): Date | null {
+const getAvatarExpiration = (url: string): Date | null => {
     const provider = detectProvider(url);
     if (!provider || !PROVIDER_CONFIGS[provider]) return null;
 
@@ -44,12 +44,12 @@ function getAvatarExpiration(url: string): Date | null {
     if (isNaN(issuedDate.getTime())) return null;
 
     return new Date(issuedDate.getTime() + expiresIn * 1000);
-}
+};
 
-function isAvatarExpired(url: string): boolean {
+const isAvatarExpired = (url: string): boolean => {
     const expirationDate = getAvatarExpiration(url);
     if (!expirationDate) return true;
     return new Date().toISOString() > expirationDate.toISOString();
-}
+};
 
 export { isAvatarExpired };
