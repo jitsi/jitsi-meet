@@ -127,11 +127,11 @@ process_host_module(muc_domain_prefix..'.'..main_virtual_host, function(host_mod
             return true;
         end
 
-        if not data or (data.type ~= "new-poll" and data.type ~= "answer-poll") then
+        if not data or (data.command ~= "new-poll" and data.command ~= "answer-poll") then
             return;
         end
 
-        if data.type == "new-poll" then
+        if data.command == "new-poll" then
             if check_polls(room) then return end
 
             local poll_creator = get_occupant_details(occupant)
@@ -193,12 +193,13 @@ process_host_module(muc_domain_prefix..'.'..main_virtual_host, function(host_mod
 
             -- now send message to all participants
             data.senderId = poll_creator.occupant_id;
+            data.type = 'polls';
             local json_msg_str, error = json.encode(data);
             if not json_msg_str then
                 module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
             end
             send_polls_message_to_all(room, json_msg_str);
-        elseif data.type == "answer-poll" then
+        elseif data.command == "answer-poll" then
             if check_polls(room) then return end
 
             local poll = room.polls.by_id[data.pollId];
@@ -233,6 +234,7 @@ process_host_module(muc_domain_prefix..'.'..main_virtual_host, function(host_mod
             host_module:fire_event("answer-poll",  answerData);
 
             data.senderId = voter.occupant_id;
+            data.type = 'polls';
             local json_msg_str, error = json.encode(data);
             if not json_msg_str then
                 module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
@@ -252,8 +254,9 @@ process_host_module(muc_domain_prefix..'.'..main_virtual_host, function(host_mod
         end
 
         local data = {
-            type = "old-polls",
+            command = "old-polls",
             polls = {},
+            type = 'polls'
         };
         for i, poll in ipairs(room.polls.order) do
             data.polls[i] = {
