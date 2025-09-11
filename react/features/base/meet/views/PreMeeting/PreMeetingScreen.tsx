@@ -20,6 +20,7 @@ import { updateSettings } from "../../../settings/actions";
 import { getDisplayName } from "../../../settings/functions.web";
 import { withPixelLineHeight } from "../../../styles/functions.web";
 import MeetingButton from "../../general/containers/MeetingButton";
+import { logout } from "../../general/store/auth/actions";
 import { setCreateRoomError } from "../../general/store/errors/actions";
 import { useLocalStorage } from "../../LocalStorageManager";
 import MeetingService from "../../services/meeting.service";
@@ -302,7 +303,7 @@ const PreMeetingScreen = ({
     // TODO: EXTRACT ONLGOUT AND HEADER, CHECK HeaderWrapper.tsx
     const localStorageManager = useLocalStorage();
     const onLogout = () => {
-        localStorageManager.clearCredentials();
+        dispatch(logout());
         dispatch(redirectToStaticPage("/"));
     };
 

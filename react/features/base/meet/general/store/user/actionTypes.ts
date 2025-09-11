@@ -20,18 +20,17 @@ export const CLEAR_USER = "CLEAR_USER";
 /**
  * Action type definitions
  */
-interface SetUserAction {
+export interface SetUserAction {
     type: typeof SET_USER;
-    payload: User
-    ;
+    payload: User;
 }
 
-interface UpdateUserAction {
+export interface UpdateUserAction {
     type: typeof UPDATE_USER;
     payload: Partial<User>;
 }
 
-interface ClearUserAction {
+export interface ClearUserAction {
     type: typeof CLEAR_USER;
 }
 
