@@ -18,7 +18,8 @@ import {
     SET_FOCUSED_TAB,
     SET_LOBBY_CHAT_ACTIVE_STATE,
     SET_LOBBY_CHAT_RECIPIENT,
-    SET_PRIVATE_MESSAGE_RECIPIENT
+    SET_PRIVATE_MESSAGE_RECIPIENT,
+    SET_REPLY_DRAFT
 } from './actionTypes';
 import { ChatTabs } from './constants';
 
@@ -168,6 +169,22 @@ export function setPrivateMessageRecipient(participant?: Object) {
     return {
         participant,
         type: SET_PRIVATE_MESSAGE_RECIPIENT
+    };
+}
+
+/**
+ * Sets or clears the current reply draft target message.
+ *
+ * @param {Object|undefined} replyingTo - Info about the message being replied to or undefined to clear.
+ * @param {string} replyingTo.messageId - The id of the original message.
+ * @param {string} replyingTo.displayName - The display name of original sender.
+ * @param {string} replyingTo.snippet - A short snippet of the original message.
+ * @returns {{ type: string, replyingTo: Object|undefined }}
+ */
+export function setReplyDraft(replyingTo?: { messageId: string; displayName: string; snippet: string; }) {
+    return {
+        type: SET_REPLY_DRAFT,
+        replyingTo
     };
 }
 
@@ -342,13 +359,15 @@ export function handleLobbyChatInitialized(participantId: string) {
             return;
         }
 
-        const payload = { type: LOBBY_CHAT_INITIALIZED,
+        const payload = {
+            type: LOBBY_CHAT_INITIALIZED,
             moderator: {
                 ...me,
                 name: 'Moderator',
                 id: lobbyLocalId
             },
-            attendee };
+            attendee
+        };
 
         // notify attendee privately.
         conference?.sendLobbyMessage(payload, attendee.id);

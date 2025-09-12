@@ -1,22 +1,21 @@
-import React, { Component } from 'react';
-import { WithTranslation } from 'react-i18next';
-import { Platform, TextStyle, View, ViewStyle } from 'react-native';
-import { Text } from 'react-native-paper';
-import { connect } from 'react-redux';
+import React, { Component } from "react";
+import { WithTranslation } from "react-i18next";
+import { Platform, TextStyle, View, ViewStyle } from "react-native";
+import { Text } from "react-native-paper";
+import { connect } from "react-redux";
 
-import { IReduxState } from '../../../app/types';
-import { translate } from '../../../base/i18n/functions';
-import { IconSend } from '../../../base/icons/svg';
-import { ASPECT_RATIO_WIDE } from '../../../base/responsive-ui/constants';
-import IconButton from '../../../base/ui/components/native/IconButton';
-import Input from '../../../base/ui/components/native/Input';
-import { BUTTON_TYPES } from '../../../base/ui/constants.native';
-import { isSendGroupChatDisabled } from '../../functions';
+import { IReduxState } from "../../../app/types";
+import { translate } from "../../../base/i18n/functions";
+import { IconSend } from "../../../base/icons/svg";
+import { ASPECT_RATIO_WIDE } from "../../../base/responsive-ui/constants";
+import IconButton from "../../../base/ui/components/native/IconButton";
+import Input from "../../../base/ui/components/native/Input";
+import { BUTTON_TYPES } from "../../../base/ui/constants.native";
+import { isSendGroupChatDisabled } from "../../functions";
 
-import styles from './styles';
+import styles from "./styles";
 
 interface IProps extends WithTranslation {
-
     /**
      * Whether sending group chat messages is disabled.
      */
@@ -39,7 +38,6 @@ interface IProps extends WithTranslation {
 }
 
 interface IState {
-
     /**
      * Boolean to show if an extra padding needs to be added to the bar.
      */
@@ -70,8 +68,8 @@ class ChatInputBar extends Component<IProps, IState> {
 
         this.state = {
             addPadding: false,
-            message: '',
-            showSend: false
+            message: "",
+            showSend: false,
         };
 
         this._onChangeText = this._onChangeText.bind(this);
@@ -95,41 +93,37 @@ class ChatInputBar extends Component<IProps, IState> {
 
         if (this.props._isSendGroupChatDisabled && !this.props._privateMessageRecipientId) {
             return (
-                <View
-                    id = 'no-messages-message'
-                    style = { styles.disabledSendWrapper as ViewStyle }>
-                    <Text style = { styles.emptyComponentText as TextStyle }>
-                        { this.props.t('chat.disabled') }
-                    </Text>
+                <View id="no-messages-message" style={styles.disabledSendWrapper as ViewStyle}>
+                    <Text style={styles.emptyComponentText as TextStyle}>{this.props.t("chat.disabled")}</Text>
                 </View>
             );
         }
 
         return (
             <View
-                id = 'chat-input'
-                style = { [
-                    inputBarStyles,
-                    this.state.addPadding ? styles.extraBarPadding : null
-                ] as ViewStyle[] }>
+                id="chat-input"
+                style={[inputBarStyles, this.state.addPadding ? styles.extraBarPadding : null] as ViewStyle[]}
+            >
                 <Input
-                    blurOnSubmit = { false }
-                    customStyles = {{ container: styles.customInputContainer }}
-                    id = 'chat-input-messagebox'
-                    multiline = { false }
-                    onBlur = { this._onFocused(false) }
-                    onChange = { this._onChangeText }
-                    onFocus = { this._onFocused(true) }
-                    onSubmitEditing = { this._onSubmit }
-                    placeholder = { this.props.t('chat.fieldPlaceHolder') }
-                    returnKeyType = 'send'
-                    value = { this.state.message } />
+                    blurOnSubmit={false}
+                    customStyles={{ container: styles.customInputContainer }}
+                    id="chat-input-messagebox"
+                    multiline={false}
+                    onBlur={this._onFocused(false)}
+                    onChange={this._onChangeText}
+                    onFocus={this._onFocused(true)}
+                    onSubmitEditing={this._onSubmit}
+                    placeholder={this.props.t("chat.fieldPlaceHolder")}
+                    returnKeyType="send"
+                    value={this.state.message}
+                />
                 <IconButton
-                    disabled = { !this.state.message }
-                    id = { this.props.t('chat.sendButton') }
-                    onPress = { this._onSubmit }
-                    src = { IconSend }
-                    type = { BUTTON_TYPES.PRIMARY } />
+                    disabled={!this.state.message}
+                    id={this.props.t("chat.sendButton")}
+                    onPress={this._onSubmit}
+                    src={IconSend}
+                    type={BUTTON_TYPES.PRIMARY}
+                />
             </View>
         );
     }
@@ -143,7 +137,7 @@ class ChatInputBar extends Component<IProps, IState> {
     _onChangeText(text: string) {
         this.setState({
             message: text,
-            showSend: Boolean(text)
+            showSend: Boolean(text),
         });
     }
 
@@ -155,9 +149,10 @@ class ChatInputBar extends Component<IProps, IState> {
      */
     _onFocused(focused: boolean) {
         return () => {
-            Platform.OS === 'android' && this.setState({
-                addPadding: focused
-            });
+            Platform.OS === "android" &&
+                this.setState({
+                    addPadding: focused,
+                });
         };
     }
 
@@ -167,11 +162,7 @@ class ChatInputBar extends Component<IProps, IState> {
      * @returns {void}
      */
     _onSubmit() {
-        const {
-            _isSendGroupChatDisabled,
-            _privateMessageRecipientId,
-            onSend
-        } = this.props;
+        const { _isSendGroupChatDisabled, _privateMessageRecipientId, onSend } = this.props;
 
         if (_isSendGroupChatDisabled && !_privateMessageRecipientId) {
             return;
@@ -181,8 +172,8 @@ class ChatInputBar extends Component<IProps, IState> {
 
         message && onSend(message);
         this.setState({
-            message: '',
-            showSend: false
+            message: "",
+            showSend: false,
         });
     }
 }
@@ -195,14 +186,14 @@ class ChatInputBar extends Component<IProps, IState> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
-    const { aspectRatio } = state['features/base/responsive-ui'];
-    const { privateMessageRecipient } = state['features/chat'];
+    const { aspectRatio } = state["features/base/responsive-ui"];
+    const { privateMessageRecipient } = state["features/chat"];
     const isGroupChatDisabled = isSendGroupChatDisabled(state);
 
     return {
         _isSendGroupChatDisabled: isGroupChatDisabled,
         _privateMessageRecipientId: privateMessageRecipient?.id,
-        aspectRatio
+        aspectRatio,
     };
 }
 

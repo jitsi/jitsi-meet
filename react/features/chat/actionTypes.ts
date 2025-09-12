@@ -73,6 +73,10 @@ export const OPEN_CHAT = 'OPEN_CHAT';
  * }
  */
 export const SEND_MESSAGE = 'SEND_MESSAGE';
+/**
+ * Sets or clears the current reply draft (the message the user is replying to).
+ */
+export const SET_REPLY_DRAFT = 'SET_REPLY_DRAFT';
 
 /**
  * The type of the action which signals a reaction to a message.
@@ -171,4 +175,4 @@ export const SET_CHAT_IS_RESIZING = 'SET_CHAT_IS_RESIZING';
   *     type: NOTIFY_PRIVATE_RECIPIENTS_CHANGED
   * }
   */
- export const NOTIFY_PRIVATE_RECIPIENTS_CHANGED = 'NOTIFY_PRIVATE_RECIPIENTS_CHANGED';
+export const NOTIFY_PRIVATE_RECIPIENTS_CHANGED = 'NOTIFY_PRIVATE_RECIPIENTS_CHANGED';

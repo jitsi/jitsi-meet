@@ -1,27 +1,26 @@
-import React, { Component } from 'react';
-import { Text, View, ViewStyle } from 'react-native';
-import { connect } from 'react-redux';
+import React, { Component } from "react";
+import { Text, View, ViewStyle } from "react-native";
+import { connect } from "react-redux";
 
-import { IReduxState } from '../../../app/types';
-import Avatar from '../../../base/avatar/components/Avatar';
-import { translate } from '../../../base/i18n/functions';
-import Linkify from '../../../base/react/components/native/Linkify';
-import { isGifEnabled, isGifMessage } from '../../../gifs/functions.native';
-import { CHAR_LIMIT, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../../constants';
+import { IReduxState } from "../../../app/types";
+import Avatar from "../../../base/avatar/components/Avatar";
+import { translate } from "../../../base/i18n/functions";
+import Linkify from "../../../base/react/components/native/Linkify";
+import { isGifEnabled, isGifMessage } from "../../../gifs/functions.native";
+import { CHAR_LIMIT, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from "../../constants";
 import {
     getCanReplyToMessage,
     getDisplayNameSuffix,
     getFormattedTimestamp,
     getMessageText,
     getPrivateNoticeMessage,
-    replaceNonUnicodeEmojis
-} from '../../functions';
-import { IChatMessageProps } from '../../types';
+    replaceNonUnicodeEmojis,
+} from "../../functions";
+import { IChatMessageProps } from "../../types";
 
-import GifMessage from './GifMessage';
-import PrivateMessageButton from './PrivateMessageButton';
-import styles from './styles';
-
+import GifMessage from "./GifMessage";
+import PrivateMessageButton from "./PrivateMessageButton";
+import styles from "./styles";
 
 /**
  * Renders a single chat message.
@@ -39,12 +38,8 @@ class ChatMessage extends Component<IChatMessageProps> {
 
         // Style arrays that need to be updated in various scenarios, such as
         // error messages or others.
-        const detailsWrapperStyle: ViewStyle[] = [
-            styles.detailsWrapper as ViewStyle
-        ];
-        const messageBubbleStyle: ViewStyle[] = [
-            styles.messageBubble as ViewStyle
-        ];
+        const detailsWrapperStyle: ViewStyle[] = [styles.detailsWrapper as ViewStyle];
+        const messageBubbleStyle: ViewStyle[] = [styles.messageBubble as ViewStyle];
 
         if (localMessage) {
             // This is a message sent by the local participant.
@@ -77,22 +72,41 @@ class ChatMessage extends Component<IChatMessageProps> {
         const messageText = getMessageText(this.props.message);
 
         return (
-            <View
-                id = { message.messageId }
-                style = { styles.messageWrapper as ViewStyle } >
-                { this._renderAvatar() }
-                <View style = { detailsWrapperStyle }>
-                    <View style = { messageBubbleStyle }>
-                        <View style = { styles.textWrapper as ViewStyle } >
-                            { this._renderDisplayName() }
-                            { gifEnabled && isGifMessage(messageText)
-                                ? <GifMessage message = { messageText } />
-                                : this._renderMessageTextComponent(messageText) }
-                            { this._renderPrivateNotice() }
+            <View id={message.messageId} style={styles.messageWrapper as ViewStyle}>
+                {this._renderAvatar()}
+                <View style={detailsWrapperStyle}>
+                    <View style={messageBubbleStyle}>
+                        <View style={styles.textWrapper as ViewStyle}>
+                            {this._renderDisplayName()}
+                            {message.replyTo && (
+                                <View
+                                    style={{
+                                        borderLeftWidth: 3,
+                                        borderLeftColor: "#5E6D7C",
+                                        paddingLeft: 6,
+                                        marginBottom: 4,
+                                        opacity: 0.85,
+                                        maxWidth: "100%",
+                                    }}
+                                >
+                                    <Text numberOfLines={1} style={{ fontSize: 11, color: "#A4B8D1" }}>
+                                        {message.replyTo.displayName}
+                                    </Text>
+                                    <Text numberOfLines={1} style={{ fontSize: 12, color: "#D5D9DE" }}>
+                                        {message.replyTo.snippet}
+                                    </Text>
+                                </View>
+                            )}
+                            {gifEnabled && isGifMessage(messageText) ? (
+                                <GifMessage message={messageText} />
+                            ) : (
+                                this._renderMessageTextComponent(messageText)
+                            )}
+                            {this._renderPrivateNotice()}
                         </View>
-                        { this._renderPrivateReplyButton() }
+                        {this._renderPrivateReplyButton()}
                     </View>
-                    { this._renderTimestamp() }
+                    {this._renderTimestamp()}
                 </View>
             </View>
         );
@@ -107,12 +121,14 @@ class ChatMessage extends Component<IChatMessageProps> {
         const { message } = this.props;
 
         return (
-            <View style = { styles.avatarWrapper }>
-                { this.props.showAvatar && <Avatar
-                    displayName = { message.displayName }
-                    participantId = { message.participantId }
-                    size = { styles.avatarWrapper.width } />
-                }
+            <View style={styles.avatarWrapper}>
+                {this.props.showAvatar && (
+                    <Avatar
+                        displayName={message.displayName}
+                        participantId={message.participantId}
+                        size={styles.avatarWrapper.width}
+                    />
+                )}
             </View>
         );
     }
@@ -131,11 +147,7 @@ class ChatMessage extends Component<IChatMessageProps> {
 
         const { displayName } = message;
 
-        return (
-            <Text style = { styles.senderDisplayName }>
-                { `${displayName}${getDisplayNameSuffix(message)}` }
-            </Text>
-        );
+        return <Text style={styles.senderDisplayName}>{`${displayName}${getDisplayNameSuffix(message)}`}</Text>;
     }
 
     /**
@@ -145,22 +157,17 @@ class ChatMessage extends Component<IChatMessageProps> {
      * @returns {React.ReactElement<*>}
      */
     _renderMessageTextComponent(messageText: string) {
-
         if (messageText.length >= CHAR_LIMIT) {
             return (
-                <Text
-                    selectable = { true }
-                    style = { styles.chatMessage }>
-                    { messageText }
+                <Text selectable={true} style={styles.chatMessage}>
+                    {messageText}
                 </Text>
             );
         }
 
         return (
-            <Linkify
-                linkStyle = { styles.chatLink }
-                style = { styles.chatMessage }>
-                { replaceNonUnicodeEmojis(messageText) }
+            <Linkify linkStyle={styles.chatLink} style={styles.chatMessage}>
+                {replaceNonUnicodeEmojis(messageText)}
             </Linkify>
         );
     }
@@ -178,8 +185,8 @@ class ChatMessage extends Component<IChatMessageProps> {
         }
 
         return (
-            <Text style = { message.lobbyChat ? styles.lobbyMsgNotice : styles.privateNotice }>
-                { getPrivateNoticeMessage(this.props.message) }
+            <Text style={message.lobbyChat ? styles.lobbyMsgNotice : styles.privateNotice}>
+                {getPrivateNoticeMessage(this.props.message)}
             </Text>
         );
     }
@@ -198,13 +205,14 @@ class ChatMessage extends Component<IChatMessageProps> {
         }
 
         return (
-            <View style = { styles.replyContainer as ViewStyle }>
+            <View style={styles.replyContainer as ViewStyle}>
                 <PrivateMessageButton
-                    isLobbyMessage = { lobbyChat }
-                    participantID = { message.participantId }
-                    reply = { true }
-                    showLabel = { false }
-                    toggledStyles = { styles.replyStyles } />
+                    isLobbyMessage={lobbyChat}
+                    participantID={message.participantId}
+                    reply={true}
+                    showLabel={false}
+                    toggledStyles={styles.replyStyles}
+                />
             </View>
         );
     }
@@ -219,11 +227,7 @@ class ChatMessage extends Component<IChatMessageProps> {
             return null;
         }
 
-        return (
-            <Text style = { styles.timeText }>
-                { getFormattedTimestamp(this.props.message) }
-            </Text>
-        );
+        return <Text style={styles.timeText}>{getFormattedTimestamp(this.props.message)}</Text>;
     }
 }
 
@@ -238,7 +242,7 @@ function _mapStateToProps(state: IReduxState, { message }: IChatMessageProps) {
     return {
         canReply: getCanReplyToMessage(state, message),
         gifEnabled: isGifEnabled(state),
-        knocking: state['features/lobby'].knocking
+        knocking: state["features/lobby"].knocking,
     };
 }
 

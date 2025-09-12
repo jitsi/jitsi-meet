@@ -18,6 +18,14 @@ export interface IMessage {
     recipient: string;
     sentToVisitor?: boolean;
     timestamp: number;
+    /**
+     * Optional metadata about the message this one is replying to.
+     */
+    replyTo?: {
+        messageId: string;
+        displayName: string;
+        snippet: string;
+    };
 }
 
 /**
