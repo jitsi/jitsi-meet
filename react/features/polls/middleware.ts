@@ -11,8 +11,7 @@ import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/c
 
 import { RECEIVE_POLL } from './actionTypes';
 import { clearPolls, receiveAnswer, receivePoll } from './actions';
-import logger from './logger';
-import { IAnswer, IPoll, IPollData } from './types';
+import { IAnswer } from './types';
 
 /**
  * The maximum number of answers a poll can have.
@@ -41,33 +40,6 @@ StateListenerRegistry.register(
             }
         }
     });
-
-const parsePollData = (pollData: Partial<IPollData>): IPoll | null => {
-    if (typeof pollData !== 'object' || pollData === null) {
-        return null;
-    }
-    const { id, senderId, question, answers } = pollData;
-
-    if (typeof id !== 'string' || typeof senderId !== 'string'
-            || typeof question !== 'string' || !(answers instanceof Array)) {
-        logger.error('Malformed poll data received:', pollData);
-
-        return null;
-    }
-
-    // TODO: Validate answers serverside.
-
-    return {
-        changingVote: false,
-        senderId,
-        question,
-        showResults: true,
-        lastVote: null,
-        answers,
-        saved: false,
-        editing: false
-    };
-};
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const result = next(action);
@@ -110,20 +82,6 @@ function _handleReceivedPollsData(data: any, dispatch: IStore['dispatch'], getSt
     }
 
     const { pollId, answers, senderId, question, history } = data;
-    const tmp = {
-        id: pollId,
-        answers,
-        question,
-        senderId
-    };
-
-    // Check integrity of the poll data.
-    // TODO(saghul): we should move this to the server side, likely by storing the
-    // poll data in the room metadata.
-    if (parsePollData(tmp) === null) {
-        return;
-    }
-
     const poll = {
         changingVote: false,
         senderId,
@@ -154,7 +112,7 @@ function _handleReceivedPollsData(data: any, dispatch: IStore['dispatch'], getSt
 }
 
 /**
- * Handles receiving of new or history polls to load.
+ * Handles receiving of pools answers.
  *
  * @param {Object} data - The json data carried by the polls message.
  * @param {Function} dispatch - The dispatch function.

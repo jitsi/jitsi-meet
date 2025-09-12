@@ -32,10 +32,48 @@ local function check_polls(room)
     return false;
 end
 
+local function validate_polls(data)
+    if type(data) ~= 'table' then
+        return false;
+    end
+    if data.type ~= 'polls' or type(data.pollId) ~= 'string'
+        or type(data.roomJid) ~= 'string' then
+        return false;
+    end
+    if data.command ~= 'new-poll' and data.command ~= 'answer-poll' then
+        return false;
+    end
+    if type(data.answers) ~= 'table' then
+        return false;
+    end
+
+    if data.command == "new-poll" then
+        if type(data.question) ~= 'string' then
+            return false;
+        end
+
+        for _, answer in ipairs(data.answers) do
+            if type(answer) ~= "table" or type(answer.name) ~= "string" then
+                return false;
+            end
+        end
+
+        return true;
+    elseif data.command == "answer-poll" then
+        for _, answer in ipairs(data.answers) do
+            if type(answer) ~= "boolean" then
+                return false;
+            end
+        end
+
+        return true;
+    end
+
+    return false;
+end
+
 --- Returns a table having occupant id and occupant name.
---- If the id cannot be extracted from nick a nil value is returned
---- if the occupant name cannot be extracted from presence the Fellow Jitster
---- name is used
+--- If the id cannot be extracted from nick a nil value is returned same and for name
 local function get_occupant_details(occupant)
     if not occupant then
         return nil
@@ -44,8 +82,6 @@ local function get_occupant_details(occupant)
     local occupant_name;
     if presence then
         occupant_name = presence:get_child("nick", NS_NICK) and presence:get_child("nick", NS_NICK):get_text() or 'Fellow Jitster';
-    else
-        occupant_name = 'Fellow Jitster'
     end
     local _, _, occupant_id = jid.split(occupant.nick)
     if not occupant_id then
@@ -131,6 +167,11 @@ process_host_module(muc_domain_prefix..'.'..main_virtual_host, function(host_mod
             return;
         end
 
+        if not validate_polls(data) then
+            module:log('error', 'Invalid poll data. Sender: %s (%s)', stanza.attr.from, json_message_text);
+            return true;
+        end
+
         if data.command == "new-poll" then
             if check_polls(room) then return end
 
@@ -160,9 +201,9 @@ process_host_module(muc_domain_prefix..'.'..main_virtual_host, function(host_mod
 
             local answers = {}
             local compact_answers = {}
-            for i, name in ipairs(data.answers) do
-                table.insert(answers, { name = name, voters = {} });
-                table.insert(compact_answers, { key = i, name = name});
+            for i, a in ipairs(data.answers) do
+                table.insert(answers, { name = a.name, voters = {} });
+                table.insert(compact_answers, { key = i, name = a.name});
             end
 
             local poll = {

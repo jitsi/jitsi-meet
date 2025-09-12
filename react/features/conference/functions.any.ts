@@ -32,7 +32,7 @@ export function arePollsDisabled(stateful: IStateful) {
 
     const { conference } = state['features/base/conference'];
 
-    if (conference && !conference.getPolls().isSupported()) {
+    if (conference && !conference.getPolls()?.isSupported()) {
         return true;
     }
 
