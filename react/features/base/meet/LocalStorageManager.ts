@@ -1,5 +1,14 @@
 import { UserSubscription } from "@internxt/sdk/dist/drive/payments/types/types";
-import { UserSettings } from "@internxt/sdk/dist/shared/types/userSettings";
+import { User } from "./general/store/user/types";
+
+/**
+ * Public keys for localStorage management
+ */
+export const STORAGE_KEYS = {
+    LAST_CONFIG_CHECK: "lastMeetingConfigCheck",
+    CACHED_MEETING_CONFIG: "cachedMeetingConfig",
+    LAST_USER_REFRESH: "lastUserRefresh",
+};
 
 export class LocalStorageManager {
     private static _instance: LocalStorageManager;
@@ -187,7 +196,7 @@ export class LocalStorageManager {
         token: string,
         newToken: string,
         mnemonic: string,
-        user: UserSettings,
+        user: User,
         subscription?: UserSubscription
     ): void {
         this.setToken(token);
@@ -209,6 +218,12 @@ export class LocalStorageManager {
         this.remove(LocalStorageManager.KEYS.MNEMONIC);
         this.remove(LocalStorageManager.KEYS.USER);
         this.remove(LocalStorageManager.KEYS.SUBSCRIPTION);
+    }
+
+    public clearStorage(): void {
+        Object.values(STORAGE_KEYS).forEach((key) => {
+            this.remove(key);
+        });
     }
 }
 
