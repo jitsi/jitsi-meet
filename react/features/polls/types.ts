@@ -21,6 +21,9 @@ export interface IAnswer {
     voterName?: string;
 }
 
+/**
+ * TODO: move parts of the type to ljm and use it from there.
+ */
 export interface IPoll {
 
     /**
@@ -66,10 +69,9 @@ export interface IPoll {
     showResults: boolean;
 }
 
-export interface IPollData extends IPoll {
-    id: string;
-}
-
+/**
+ * TODO: move to ljm and use it from there.
+ */
 export interface IAnswerData {
 
     /**
