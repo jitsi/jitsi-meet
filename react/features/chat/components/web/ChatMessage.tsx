@@ -1,19 +1,23 @@
-import { Theme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
-import { connect } from 'react-redux';
-import { makeStyles } from 'tss-react/mui';
+import { Theme } from "@mui/material";
+import React, { useCallback, useMemo, useState } from "react";
+import { connect } from "react-redux";
+import { makeStyles } from "tss-react/mui";
 
-import { IReduxState } from '../../../app/types';
-import { translate } from '../../../base/i18n/functions';
-import { getParticipantById, getParticipantDisplayName, isPrivateChatEnabled } from '../../../base/participants/functions';
-import Popover from '../../../base/popover/components/Popover.web';
-import Message from '../../../base/react/components/web/Message';
-import { MESSAGE_TYPE_LOCAL } from '../../constants';
-import { getDisplayNameSuffix, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
-import { IChatMessageProps } from '../../types';
+import { IReduxState } from "../../../app/types";
+import { translate } from "../../../base/i18n/functions";
+import {
+    getParticipantById,
+    getParticipantDisplayName,
+    isPrivateChatEnabled,
+} from "../../../base/participants/functions";
+import Popover from "../../../base/popover/components/Popover.web";
+import Message from "../../../base/react/components/web/Message";
+import { MESSAGE_TYPE_LOCAL } from "../../constants";
+import { getDisplayNameSuffix, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from "../../functions";
+import { IChatMessageProps } from "../../types";
 
-import MessageMenu from './MessageMenu';
-import ReactButton from './ReactButton';
+import MessageMenu from "./MessageMenu";
+import ReactButton from "./ReactButton";
 
 interface IProps extends IChatMessageProps {
     className?: string;
@@ -25,184 +29,184 @@ interface IProps extends IChatMessageProps {
 const useStyles = makeStyles()((theme: Theme) => {
     return {
         chatMessageFooter: {
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginTop: theme.spacing(1)
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: theme.spacing(1),
         },
         chatMessageFooterLeft: {
-            display: 'flex',
+            display: "flex",
             flexGrow: 1,
-            overflow: 'hidden'
+            overflow: "hidden",
         },
         chatMessageWrapper: {
-            maxWidth: '100%'
+            maxWidth: "100%",
         },
         chatMessage: {
-            display: 'inline-flex',
-            padding: '12px',
+            display: "inline-flex",
+            padding: "12px",
             backgroundColor: theme.palette.ui02,
-            borderRadius: '4px 12px 12px 12px',
-            maxWidth: '100%',
-            marginTop: '4px',
-            boxSizing: 'border-box' as const,
+            borderRadius: "4px 12px 12px 12px",
+            maxWidth: "100%",
+            marginTop: "4px",
+            boxSizing: "border-box" as const,
 
-            '&.privatemessage': {
-                backgroundColor: theme.palette.support05
+            "&.privatemessage": {
+                backgroundColor: theme.palette.support05,
             },
-            '&.local': {
+            "&.local": {
                 backgroundColor: theme.palette.ui04,
-                borderRadius: '12px 4px 12px 12px',
+                borderRadius: "12px 4px 12px 12px",
 
-                '&.privatemessage': {
-                    backgroundColor: theme.palette.support05
+                "&.privatemessage": {
+                    backgroundColor: theme.palette.support05,
                 },
-                '&.local': {
+                "&.local": {
                     backgroundColor: theme.palette.ui04,
-                    borderRadius: '12px 4px 12px 12px',
+                    borderRadius: "12px 4px 12px 12px",
 
-                    '&.privatemessage': {
-                        backgroundColor: theme.palette.support05
-                    }
+                    "&.privatemessage": {
+                        backgroundColor: theme.palette.support05,
+                    },
                 },
 
-                '&.error': {
+                "&.error": {
                     backgroundColor: theme.palette.actionDanger,
                     borderRadius: 0,
-                    fontWeight: 100
+                    fontWeight: 100,
                 },
 
-                '&.lobbymessage': {
-                    backgroundColor: theme.palette.support05
-                }
+                "&.lobbymessage": {
+                    backgroundColor: theme.palette.support05,
+                },
             },
-            '&.error': {
+            "&.error": {
                 backgroundColor: theme.palette.actionDanger,
                 borderRadius: 0,
-                fontWeight: 100
+                fontWeight: 100,
             },
-            '&.lobbymessage': {
-                backgroundColor: theme.palette.support05
-            }
+            "&.lobbymessage": {
+                backgroundColor: theme.palette.support05,
+            },
         },
         sideBySideContainer: {
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'left',
-            alignItems: 'center',
-            marginLeft: theme.spacing(1)
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "left",
+            alignItems: "center",
+            marginLeft: theme.spacing(1),
         },
         reactionBox: {
-            display: 'flex',
-            alignItems: 'center',
+            display: "flex",
+            alignItems: "center",
             gap: theme.spacing(1),
             backgroundColor: theme.palette.grey[800],
             borderRadius: theme.shape.borderRadius,
             padding: theme.spacing(0, 1),
-            cursor: 'pointer'
+            cursor: "pointer",
         },
         reactionCount: {
-            fontSize: '0.8rem',
-            color: theme.palette.grey[400]
+            fontSize: "0.8rem",
+            color: theme.palette.grey[400],
         },
         replyButton: {
-            padding: '2px'
+            padding: "2px",
         },
         replyWrapper: {
-            display: 'flex',
-            flexDirection: 'row' as const,
-            alignItems: 'center',
-            maxWidth: '100%'
+            display: "flex",
+            flexDirection: "row" as const,
+            alignItems: "center",
+            maxWidth: "100%",
         },
         messageContent: {
-            maxWidth: '100%',
-            overflow: 'hidden',
-            flex: 1
+            maxWidth: "100%",
+            overflow: "hidden",
+            flex: 1,
         },
         optionsButtonContainer: {
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
             gap: theme.spacing(1),
-            minWidth: '32px',
-            minHeight: '32px'
+            minWidth: "32px",
+            minHeight: "32px",
         },
         displayName: {
             ...theme.typography.labelBold,
             color: theme.palette.text02,
-            whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis',
-            overflow: 'hidden',
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+            overflow: "hidden",
             marginBottom: theme.spacing(1),
-            maxWidth: '130px'
+            maxWidth: "130px",
         },
         userMessage: {
             ...theme.typography.bodyShortRegular,
             color: theme.palette.text01,
-            whiteSpace: 'pre-wrap',
-            wordBreak: 'break-word'
+            whiteSpace: "pre-wrap",
+            wordBreak: "break-word",
         },
         privateMessageNotice: {
             ...theme.typography.labelRegular,
             color: theme.palette.text02,
-            marginTop: theme.spacing(1)
+            marginTop: theme.spacing(1),
         },
         timestamp: {
             ...theme.typography.labelRegular,
             color: theme.palette.text03,
             marginTop: theme.spacing(1),
             marginLeft: theme.spacing(1),
-            whiteSpace: 'nowrap',
-            flexShrink: 0
+            whiteSpace: "nowrap",
+            flexShrink: 0,
         },
         reactionsPopover: {
             padding: theme.spacing(2),
             backgroundColor: theme.palette.ui03,
             borderRadius: theme.shape.borderRadius,
-            maxWidth: '150px',
-            maxHeight: '400px',
-            overflowY: 'auto',
-            color: theme.palette.text01
+            maxWidth: "150px",
+            maxHeight: "400px",
+            overflowY: "auto",
+            color: theme.palette.text01,
         },
         reactionItem: {
-            display: 'flex',
-            alignItems: 'center',
+            display: "flex",
+            alignItems: "center",
             marginBottom: theme.spacing(1),
             gap: theme.spacing(1),
             borderBottom: `1px solid ${theme.palette.common.white}`,
             paddingBottom: theme.spacing(1),
-            '&:last-child': {
-                borderBottom: 'none',
-                paddingBottom: 0
-            }
+            "&:last-child": {
+                borderBottom: "none",
+                paddingBottom: 0,
+            },
         },
         participantList: {
             marginLeft: theme.spacing(1),
-            fontSize: '0.8rem',
-            maxWidth: '120px'
+            fontSize: "0.8rem",
+            maxWidth: "120px",
         },
         participant: {
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap'
-        }
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+        },
     };
 });
 
 const ChatMessage = ({
-    className = '',
+    className = "",
     message,
     state,
     showDisplayName,
     shouldDisplayMenuOnRight,
     enablePrivateChat,
     knocking,
-    t
+    t,
 }: IProps) => {
     const { classes, cx } = useStyles();
-    const [ isHovered, setIsHovered ] = useState(false);
-    const [ isReactionsOpen, setIsReactionsOpen ] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
+    const [isReactionsOpen, setIsReactionsOpen] = useState(false);
 
     const handleMouseEnter = useCallback(() => {
         setIsHovered(true);
@@ -229,9 +233,7 @@ const ChatMessage = ({
         const { displayName } = message;
 
         return (
-            <div
-                aria-hidden = { true }
-                className = { cx('display-name', classes.displayName) }>
+            <div aria-hidden={true} className={cx("display-name", classes.displayName)}>
                 {`${displayName}${getDisplayNameSuffix(message)}`}
             </div>
         );
@@ -243,11 +245,7 @@ const ChatMessage = ({
      * @returns {React$Element<*>}
      */
     function _renderPrivateNotice() {
-        return (
-            <div className = { classes.privateMessageNotice }>
-                {getPrivateNoticeMessage(message)}
-            </div>
-        );
+        return <div className={classes.privateMessageNotice}>{getPrivateNoticeMessage(message)}</div>;
     }
 
     /**
@@ -257,10 +255,8 @@ const ChatMessage = ({
      */
     function _renderTimestamp() {
         return (
-            <div className = { cx('timestamp', classes.timestamp) }>
-                <p>
-                    {getFormattedTimestamp(message)}
-                </p>
+            <div className={cx("timestamp", classes.timestamp)}>
+                <p>{getFormattedTimestamp(message)}</p>
             </div>
         );
     }
@@ -276,9 +272,8 @@ const ChatMessage = ({
         }
 
         const reactionsArray = Array.from(message.reactions.entries())
-            .map(([ reaction, participants ]) => {
-                return { reaction,
-                    participants };
+            .map(([reaction, participants]) => {
+                return { reaction, participants };
             })
             .sort((a, b) => b.participants.size - a.participants.size);
 
@@ -286,20 +281,16 @@ const ChatMessage = ({
         const numReactionsDisplayed = 3;
 
         const reactionsContent = (
-            <div className = { classes.reactionsPopover }>
+            <div className={classes.reactionsPopover}>
                 {reactionsArray.map(({ reaction, participants }) => (
-                    <div
-                        className = { classes.reactionItem }
-                        key = { reaction }>
+                    <div className={classes.reactionItem} key={reaction}>
                         <p>
                             <span>{reaction}</span>
                             <span>{participants.size}</span>
                         </p>
-                        <div className = { classes.participantList }>
-                            {Array.from(participants).map(participantId => (
-                                <p
-                                    className = { classes.participant }
-                                    key = { participantId }>
+                        <div className={classes.participantList}>
+                            {Array.from(participants).map((participantId) => (
+                                <p className={classes.participant} key={participantId}>
                                     {state && getParticipantDisplayName(state, participantId)}
                                 </p>
                             ))}
@@ -311,73 +302,104 @@ const ChatMessage = ({
 
         return (
             <Popover
-                content = { reactionsContent }
-                onPopoverClose = { handleReactionsClose }
-                onPopoverOpen = { handleReactionsOpen }
-                position = 'top'
-                trigger = 'hover'
-                visible = { isReactionsOpen }>
-                <div className = { classes.reactionBox }>
-                    {reactionsArray.slice(0, numReactionsDisplayed).map(({ reaction }, index) =>
-                        <p key = { index }>{reaction}</p>
-                    )}
+                content={reactionsContent}
+                onPopoverClose={handleReactionsClose}
+                onPopoverOpen={handleReactionsOpen}
+                position="top"
+                trigger="hover"
+                visible={isReactionsOpen}
+            >
+                <div className={classes.reactionBox}>
+                    {reactionsArray.slice(0, numReactionsDisplayed).map(({ reaction }, index) => (
+                        <p key={index}>{reaction}</p>
+                    ))}
                     {reactionsArray.length > numReactionsDisplayed && (
-                        <p className = { classes.reactionCount }>
-                            +{totalReactions - numReactionsDisplayed}
-                        </p>
+                        <p className={classes.reactionCount}>+{totalReactions - numReactionsDisplayed}</p>
                     )}
                 </div>
             </Popover>
         );
-    }, [ message?.reactions, isHovered, isReactionsOpen ]);
+    }, [message?.reactions, isHovered, isReactionsOpen]);
 
     return (
         <div
-            className = { cx(classes.chatMessageWrapper, className) }
-            id = { message.messageId }
-            onMouseEnter = { handleMouseEnter }
-            onMouseLeave = { handleMouseLeave }
-            tabIndex = { -1 }>
-            <div className = { classes.sideBySideContainer }>
+            className={cx(classes.chatMessageWrapper, className)}
+            id={message.messageId}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            tabIndex={-1}
+        >
+            <div className={classes.sideBySideContainer}>
                 {!shouldDisplayMenuOnRight && (
-                    <div className = { classes.optionsButtonContainer }>
-                        {isHovered && <MessageMenu
-                            displayName = { message.displayName }
-                            enablePrivateChat = { Boolean(enablePrivateChat) }
-                            isFromVisitor = { message.isFromVisitor }
-                            isLobbyMessage = { message.lobbyChat }
-                            message = { message.message }
-                            participantId = { message.participantId } />}
+                    <div className={classes.optionsButtonContainer}>
+                        {isHovered && (
+                            <MessageMenu
+                                displayName={message.displayName}
+                                enablePrivateChat={Boolean(enablePrivateChat)}
+                                isFromVisitor={message.isFromVisitor}
+                                isLobbyMessage={message.lobbyChat}
+                                message={message.message}
+                                participantId={message.participantId}
+                            />
+                        )}
                     </div>
                 )}
                 <div
-                    className = { cx(
-                        'chatmessage',
+                    className={cx(
+                        "chatmessage",
                         classes.chatMessage,
                         className,
-                        message.privateMessage && 'privatemessage',
-                        message.lobbyChat && !knocking && 'lobbymessage'
-                    ) }>
-                    <div className = { classes.replyWrapper }>
-                        <div className = { cx('messagecontent', classes.messageContent) }>
+                        message.privateMessage && "privatemessage",
+                        message.lobbyChat && !knocking && "lobbymessage"
+                    )}
+                >
+                    <div className={classes.replyWrapper}>
+                        <div className={cx("messagecontent", classes.messageContent)}>
                             {showDisplayName && _renderDisplayName()}
-                            <div className = { cx('usermessage', classes.userMessage) }>
+                            {message.replyTo && (
+                                <div
+                                    className="reply-reference"
+                                    style={{
+                                        borderLeft: "3px solid #5E6D7C",
+                                        paddingLeft: 8,
+                                        marginBottom: 4,
+                                        opacity: 0.85,
+                                        cursor: "pointer",
+                                    }}
+                                    onClick={() => {
+                                        const el = document.getElementById(message.replyTo?.messageId || "");
+                                        el && el.scrollIntoView({ behavior: "smooth", block: "center" });
+                                    }}
+                                >
+                                    <div style={{ fontSize: 11 }}>{message.replyTo.displayName}</div>
+                                    <div
+                                        style={{
+                                            fontSize: 12,
+                                            whiteSpace: "nowrap",
+                                            overflow: "hidden",
+                                            textOverflow: "ellipsis",
+                                            maxWidth: "260px",
+                                        }}
+                                    >
+                                        {message.replyTo.snippet}
+                                    </div>
+                                </div>
+                            )}
+                            <div className={cx("usermessage", classes.userMessage)}>
                                 <Message
-                                    screenReaderHelpText = { message.displayName === message.recipient
-                                        ? t<string>('chat.messageAccessibleTitleMe')
-                                        : t<string>('chat.messageAccessibleTitle', {
-                                            user: message.displayName
-                                        }) }
-                                    text = { getMessageText(message) } />
-                                {(message.privateMessage || (message.lobbyChat && !knocking))
-                                    && _renderPrivateNotice()}
-                                <div className = { classes.chatMessageFooter }>
-                                    <div className = { classes.chatMessageFooterLeft }>
-                                        {message.reactions && message.reactions.size > 0 && (
-                                            <>
-                                                {renderReactions}
-                                            </>
-                                        )}
+                                    screenReaderHelpText={
+                                        message.displayName === message.recipient
+                                            ? t<string>("chat.messageAccessibleTitleMe")
+                                            : t<string>("chat.messageAccessibleTitle", {
+                                                  user: message.displayName,
+                                              })
+                                    }
+                                    text={getMessageText(message)}
+                                />
+                                {(message.privateMessage || (message.lobbyChat && !knocking)) && _renderPrivateNotice()}
+                                <div className={classes.chatMessageFooter}>
+                                    <div className={classes.chatMessageFooterLeft}>
+                                        {message.reactions && message.reactions.size > 0 && <>{renderReactions}</>}
                                     </div>
                                     {_renderTimestamp()}
                                 </div>
@@ -386,23 +408,26 @@ const ChatMessage = ({
                     </div>
                 </div>
                 {shouldDisplayMenuOnRight && (
-                    <div className = { classes.sideBySideContainer }>
-                        {!message.privateMessage && !message.lobbyChat && <div>
-                            <div className = { classes.optionsButtonContainer }>
-                                {isHovered && <ReactButton
-                                    messageId = { message.messageId }
-                                    receiverId = { '' } />}
+                    <div className={classes.sideBySideContainer}>
+                        {!message.privateMessage && !message.lobbyChat && (
+                            <div>
+                                <div className={classes.optionsButtonContainer}>
+                                    {isHovered && <ReactButton messageId={message.messageId} receiverId={""} />}
+                                </div>
                             </div>
-                        </div>}
+                        )}
                         <div>
-                            <div className = { classes.optionsButtonContainer }>
-                                {isHovered && <MessageMenu
-                                    displayName = { message.displayName }
-                                    enablePrivateChat = { Boolean(enablePrivateChat) }
-                                    isFromVisitor = { message.isFromVisitor }
-                                    isLobbyMessage = { message.lobbyChat }
-                                    message = { message.message }
-                                    participantId = { message.participantId } />}
+                            <div className={classes.optionsButtonContainer}>
+                                {isHovered && (
+                                    <MessageMenu
+                                        displayName={message.displayName}
+                                        enablePrivateChat={Boolean(enablePrivateChat)}
+                                        isFromVisitor={message.isFromVisitor}
+                                        isLobbyMessage={message.lobbyChat}
+                                        message={message.message}
+                                        participantId={message.participantId}
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>
@@ -419,7 +444,7 @@ const ChatMessage = ({
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState, { message }: IProps) {
-    const { knocking } = state['features/lobby'];
+    const { knocking } = state["features/lobby"];
 
     const participant = getParticipantById(state, message.participantId);
 
@@ -429,8 +454,8 @@ function _mapStateToProps(state: IReduxState, { message }: IProps) {
         ? { id: message.participantId, name: message.displayName, isVisitor: true as const }
         : participant;
 
-    const enablePrivateChat = (!message.isFromVisitor || message.privateMessage)
-        && isPrivateChatEnabled(participantForCheck, state);
+    const enablePrivateChat =
+        (!message.isFromVisitor || message.privateMessage) && isPrivateChatEnabled(participantForCheck, state);
 
     // Only the local messages appear on the right side of the chat therefore only for them the menu has to be on the
     // left side.
@@ -440,7 +465,7 @@ function _mapStateToProps(state: IReduxState, { message }: IProps) {
         shouldDisplayMenuOnRight,
         enablePrivateChat,
         knocking,
-        state
+        state,
     };
 }
 

@@ -43,7 +43,8 @@ import {
     OPEN_CHAT,
     SEND_MESSAGE,
     SEND_REACTION,
-    SET_FOCUSED_TAB
+    SET_FOCUSED_TAB,
+    SET_REPLY_DRAFT
 } from './actionTypes';
 import {
     addMessage,
@@ -93,209 +94,229 @@ MiddlewareRegistry.register(store => next => action => {
     let isOpen, unreadCount;
 
     switch (action.type) {
-    case ADD_MESSAGE:
-        unreadCount = getUnreadCount(getState());
-        if (action.isReaction) {
-            action.hasRead = false;
-        } else {
-            unreadCount = action.hasRead ? 0 : unreadCount + 1;
-        }
-        isOpen = getState()['features/chat'].isOpen;
-
-        if (typeof APP !== 'undefined') {
-            APP.API.notifyChatUpdated(unreadCount, isOpen);
-        }
-        break;
-
-    case APP_WILL_MOUNT:
-        dispatch(
-                registerSound(INCOMING_MSG_SOUND_ID, INCOMING_MSG_SOUND_FILE));
-        break;
-
-    case APP_WILL_UNMOUNT:
-        dispatch(unregisterSound(INCOMING_MSG_SOUND_ID));
-        break;
-
-    case CONFERENCE_JOINED:
-        _addChatMsgListener(action.conference, store);
-        break;
-
-    case CLOSE_CHAT: {
-        const { focusedTab } = getState()['features/chat'];
-
-        if (focusedTab === ChatTabs.CHAT) {
-            unreadCount = 0;
-
-            if (typeof APP !== 'undefined') {
-                APP.API.notifyChatUpdated(unreadCount, false);
-            }
-        } else if (focusedTab === ChatTabs.POLLS) {
-            dispatch(resetNbUnreadPollsMessages());
-        }
-        break;
-    }
-
-    case ENDPOINT_MESSAGE_RECEIVED: {
-        const state = store.getState();
-
-        if (!isReactionsEnabled(state)) {
-            return next(action);
-        }
-
-        const { participant, data } = action;
-
-        if (data?.name === ENDPOINT_REACTION_NAME) {
-            // Skip duplicates, keep just 3.
-            const reactions = Array.from(new Set(data.reactions)).slice(0, 3) as string[];
-
-            store.dispatch(pushReactions(reactions));
-
-            _handleReceivedMessage(store, {
-                participantId: participant.getId(),
-                message: getReactionMessageFromBuffer(reactions),
-                privateMessage: false,
-                lobbyChat: false,
-                timestamp: data.timestamp
-            }, false, true);
-        }
-
-        break;
-    }
-
-    case NON_PARTICIPANT_MESSAGE_RECEIVED: {
-        const { participantId, json: data } = action;
-
-        if (data?.type === MESSAGE_TYPE_SYSTEM && data.message) {
-            _handleReceivedMessage(store, {
-                displayName: data.displayName ?? i18next.t('chat.systemDisplayName'),
-                participantId,
-                lobbyChat: false,
-                message: data.message,
-                privateMessage: true,
-                timestamp: Date.now()
-            });
-        }
-
-        break;
-    }
-
-    case SET_FOCUSED_TAB:
-    case OPEN_CHAT: {
-        const focusedTab = action.tabId || getState()['features/chat'].focusedTab;
-
-        if (focusedTab === ChatTabs.CHAT) {
-            unreadCount = 0;
-
-            if (typeof APP !== 'undefined') {
-                APP.API.notifyChatUpdated(unreadCount, true);
-            }
-
-            const { privateMessageRecipient } = store.getState()['features/chat'];
-
-            if (
-                isSendGroupChatDisabled(store.getState())
-                && privateMessageRecipient
-                && !action.participant
-            ) {
-                const participant = getParticipantById(store.getState(), privateMessageRecipient.id);
-
-                if (participant) {
-                    action.participant = participant;
-                } else if (isVisitorChatParticipant(privateMessageRecipient)) {
-                    // Handle visitor participants that don't exist in the main participant list
-                    action.participant = privateMessageRecipient;
-                }
-            }
-        } else if (focusedTab === ChatTabs.POLLS) {
-            dispatch(resetNbUnreadPollsMessages());
-        }
-
-        break;
-    }
-
-    case PARTICIPANT_JOINED:
-    case PARTICIPANT_LEFT:
-    case PARTICIPANT_UPDATED: {
-        if (_shouldNotifyPrivateRecipientsChanged(store, action)) {
-            const result = next(action);
-
-            dispatch(notifyPrivateRecipientsChanged());
-
-            return result;
-        }
-        break;
-    }
-
-    case SEND_MESSAGE: {
-        const state = store.getState();
-        const conference = getCurrentConference(state);
-
-        if (conference) {
-            // There may be cases when we intend to send a private message but we forget to set the
-            // recipient. This logic tries to mitigate this risk.
-            const shouldSendPrivateMessageTo = _shouldSendPrivateMessageTo(state, action);
-
-            if (shouldSendPrivateMessageTo) {
-                const participantExists = getParticipantById(state, shouldSendPrivateMessageTo.id);
-
-                if (participantExists || shouldSendPrivateMessageTo.isFromVisitor) {
-                    dispatch(openDialog(ChatPrivacyDialog, {
-                        message: action.message,
-                        participantID: shouldSendPrivateMessageTo.id,
-                        isFromVisitor: shouldSendPrivateMessageTo.isFromVisitor,
-                        displayName: shouldSendPrivateMessageTo.name
-                    }));
-                }
+        case ADD_MESSAGE:
+            unreadCount = getUnreadCount(getState());
+            if (action.isReaction) {
+                action.hasRead = false;
             } else {
-                // Sending the message if privacy notice doesn't need to be shown.
+                unreadCount = action.hasRead ? 0 : unreadCount + 1;
+            }
+            isOpen = getState()['features/chat'].isOpen;
 
-                const { privateMessageRecipient, isLobbyChatActive, lobbyMessageRecipient }
-                    = state['features/chat'];
+            if (typeof APP !== 'undefined') {
+                APP.API.notifyChatUpdated(unreadCount, isOpen);
+            }
+            break;
+
+        case APP_WILL_MOUNT:
+            dispatch(
+                registerSound(INCOMING_MSG_SOUND_ID, INCOMING_MSG_SOUND_FILE));
+            break;
+
+        case APP_WILL_UNMOUNT:
+            dispatch(unregisterSound(INCOMING_MSG_SOUND_ID));
+            break;
+
+        case CONFERENCE_JOINED:
+            _addChatMsgListener(action.conference, store);
+            break;
+
+        case CLOSE_CHAT: {
+            const { focusedTab } = getState()['features/chat'];
+
+            if (focusedTab === ChatTabs.CHAT) {
+                unreadCount = 0;
 
                 if (typeof APP !== 'undefined') {
-                    APP.API.notifySendingChatMessage(action.message, Boolean(privateMessageRecipient));
+                    APP.API.notifyChatUpdated(unreadCount, false);
+                }
+            } else if (focusedTab === ChatTabs.POLLS) {
+                dispatch(resetNbUnreadPollsMessages());
+            }
+            break;
+        }
+
+        case ENDPOINT_MESSAGE_RECEIVED: {
+            const state = store.getState();
+
+            if (!isReactionsEnabled(state)) {
+                return next(action);
+            }
+
+            const { participant, data } = action;
+
+            if (data?.name === ENDPOINT_REACTION_NAME) {
+                // Skip duplicates, keep just 3.
+                const reactions = Array.from(new Set(data.reactions)).slice(0, 3) as string[];
+
+                store.dispatch(pushReactions(reactions));
+
+                _handleReceivedMessage(store, {
+                    participantId: participant.getId(),
+                    message: getReactionMessageFromBuffer(reactions),
+                    privateMessage: false,
+                    lobbyChat: false,
+                    timestamp: data.timestamp
+                }, false, true);
+            }
+
+            break;
+        }
+
+        case NON_PARTICIPANT_MESSAGE_RECEIVED: {
+            const { participantId, json: data } = action;
+
+            if (data?.type === MESSAGE_TYPE_SYSTEM && data.message) {
+                _handleReceivedMessage(store, {
+                    displayName: data.displayName ?? i18next.t('chat.systemDisplayName'),
+                    participantId,
+                    lobbyChat: false,
+                    message: data.message,
+                    privateMessage: true,
+                    timestamp: Date.now()
+                });
+            }
+
+            break;
+        }
+
+        case SET_FOCUSED_TAB:
+        case OPEN_CHAT: {
+            const focusedTab = action.tabId || getState()['features/chat'].focusedTab;
+
+            if (focusedTab === ChatTabs.CHAT) {
+                unreadCount = 0;
+
+                if (typeof APP !== 'undefined') {
+                    APP.API.notifyChatUpdated(unreadCount, true);
                 }
 
-                if (isLobbyChatActive && lobbyMessageRecipient) {
-                    conference.sendLobbyMessage({
-                        type: LOBBY_CHAT_MESSAGE,
-                        message: action.message
-                    }, lobbyMessageRecipient.id);
-                    _persistSentPrivateMessage(store, lobbyMessageRecipient, action.message, true);
-                } else if (privateMessageRecipient) {
-                    conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message, 'body', isVisitorChatParticipant(privateMessageRecipient));
-                    _persistSentPrivateMessage(store, privateMessageRecipient, action.message);
+                const { privateMessageRecipient } = store.getState()['features/chat'];
+
+                if (
+                    isSendGroupChatDisabled(store.getState())
+                    && privateMessageRecipient
+                    && !action.participant
+                ) {
+                    const participant = getParticipantById(store.getState(), privateMessageRecipient.id);
+
+                    if (participant) {
+                        action.participant = participant;
+                    } else if (isVisitorChatParticipant(privateMessageRecipient)) {
+                        // Handle visitor participants that don't exist in the main participant list
+                        action.participant = privateMessageRecipient;
+                    }
+                }
+            } else if (focusedTab === ChatTabs.POLLS) {
+                dispatch(resetNbUnreadPollsMessages());
+            }
+
+            break;
+        }
+
+        case PARTICIPANT_JOINED:
+        case PARTICIPANT_LEFT:
+        case PARTICIPANT_UPDATED: {
+            if (_shouldNotifyPrivateRecipientsChanged(store, action)) {
+                const result = next(action);
+
+                dispatch(notifyPrivateRecipientsChanged());
+
+                return result;
+            }
+            break;
+        }
+
+        case SEND_MESSAGE: {
+            const state = store.getState();
+            const conference = getCurrentConference(state);
+            const { replyingTo } = state['features/chat'];
+
+            if (conference) {
+                // Potentially wrap message with reply envelope.
+                let outgoingMessage = action.message;
+                if (replyingTo) {
+                    try {
+                        const envelope = {
+                            v: 1,
+                            reply: {
+                                id: replyingTo.messageId,
+                                name: replyingTo.displayName,
+                                snippet: replyingTo.snippet
+                            },
+                            body: action.message
+                        };
+                        outgoingMessage = `__JITSI_REPLY__${JSON.stringify(envelope)}`;
+                    } catch (e) {
+                        outgoingMessage = `↪ ${replyingTo.displayName}: ${replyingTo.snippet}\n${action.message}`;
+                    }
+                }
+
+                const shouldSendPrivateMessageTo = _shouldSendPrivateMessageTo(state, action);
+
+                if (shouldSendPrivateMessageTo) {
+                    const participantExists = getParticipantById(state, shouldSendPrivateMessageTo.id);
+
+                    if (participantExists || shouldSendPrivateMessageTo.isFromVisitor) {
+                        dispatch(openDialog(ChatPrivacyDialog, {
+                            message: outgoingMessage,
+                            participantID: shouldSendPrivateMessageTo.id,
+                            isFromVisitor: shouldSendPrivateMessageTo.isFromVisitor,
+                            displayName: shouldSendPrivateMessageTo.name
+                        }));
+                    }
                 } else {
-                    conference.sendTextMessage(action.message);
+                    const { privateMessageRecipient, isLobbyChatActive, lobbyMessageRecipient }
+                        = state['features/chat'];
+
+                    if (typeof APP !== 'undefined') {
+                        APP.API.notifySendingChatMessage(outgoingMessage, Boolean(privateMessageRecipient));
+                    }
+
+                    if (isLobbyChatActive && lobbyMessageRecipient) {
+                        conference.sendLobbyMessage({
+                            type: LOBBY_CHAT_MESSAGE,
+                            message: outgoingMessage
+                        }, lobbyMessageRecipient.id);
+                        _persistSentPrivateMessage(store, lobbyMessageRecipient, action.message, true, replyingTo);
+                    } else if (privateMessageRecipient) {
+                        conference.sendPrivateTextMessage(privateMessageRecipient.id, outgoingMessage, 'body', isVisitorChatParticipant(privateMessageRecipient));
+                        _persistSentPrivateMessage(store, privateMessageRecipient, action.message, false, replyingTo);
+                    } else {
+                        conference.sendTextMessage(outgoingMessage);
+                    }
+                }
+
+                if (replyingTo) {
+                    dispatch({ type: SET_REPLY_DRAFT, replyingTo: undefined });
                 }
             }
+            break;
         }
-        break;
-    }
 
-    case SEND_REACTION: {
-        const state = store.getState();
-        const conference = getCurrentConference(state);
+        case SEND_REACTION: {
+            const state = store.getState();
+            const conference = getCurrentConference(state);
 
-        if (conference) {
-            const { reaction, messageId, receiverId } = action;
+            if (conference) {
+                const { reaction, messageId, receiverId } = action;
 
-            conference.sendReaction(reaction, messageId, receiverId);
+                conference.sendReaction(reaction, messageId, receiverId);
+            }
+            break;
         }
-        break;
-    }
 
-    case ADD_REACTION_MESSAGE: {
-        if (localParticipant?.id) {
-            _handleReceivedMessage(store, {
-                participantId: localParticipant.id,
-                message: action.message,
-                privateMessage: false,
-                timestamp: Date.now(),
-                lobbyChat: false
-            }, false, true);
+        case ADD_REACTION_MESSAGE: {
+            if (localParticipant?.id) {
+                _handleReceivedMessage(store, {
+                    participantId: localParticipant.id,
+                    message: action.message,
+                    privateMessage: false,
+                    timestamp: Date.now(),
+                    lobbyChat: false
+                }, false, true);
+            }
         }
-    }
     }
 
     return next(action);
@@ -339,11 +360,11 @@ StateListenerRegistry.register(
  * @returns {boolean}
  */
 function _shouldNotifyPrivateRecipientsChanged(
-        store: IStore, action: { participant: IParticipant; type: string; }
+    store: IStore, action: { participant: IParticipant; type: string; }
 ) {
     const { type, participant } = action;
 
-    if ([ PARTICIPANT_LEFT, PARTICIPANT_JOINED ].includes(type)) {
+    if ([PARTICIPANT_LEFT, PARTICIPANT_JOINED].includes(type)) {
         return true;
     }
 
@@ -372,8 +393,8 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
         JitsiConferenceEvents.MESSAGE_RECEIVED,
         /* eslint-disable max-params */
         (participantId: string, message: string, timestamp: number,
-                displayName: string, isFromVisitor: boolean, messageId: string, source: string) => {
-        /* eslint-enable max-params */
+            displayName: string, isFromVisitor: boolean, messageId: string, source: string) => {
+            /* eslint-enable max-params */
             _onConferenceMessageReceived(store, {
                 // in case of messages coming from visitors we can have unknown id
                 participantId: participantId || displayName,
@@ -434,15 +455,30 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
  * @returns {void}
  */
 function _onConferenceMessageReceived(store: IStore,
-        { displayName, isFromVisitor, message, messageId, participantId, privateMessage, timestamp, source }: {
-            displayName?: string; isFromVisitor?: boolean; message: string; messageId?: string;
-            participantId: string; privateMessage: boolean; source?: string; timestamp: number; }
+    { displayName, isFromVisitor, message, messageId, participantId, privateMessage, timestamp, source }: {
+        displayName?: string; isFromVisitor?: boolean; message: string; messageId?: string;
+        participantId: string; privateMessage: boolean; source?: string; timestamp: number;
+    }
 ) {
+    // Attempt to decode reply envelope
+    let replyMeta: { id: string; name: string; snippet: string; } | undefined;
+    let body = message;
+    if (typeof message === 'string' && message.startsWith('__JITSI_REPLY__')) {
+        try {
+            const parsed = JSON.parse(message.substring('__JITSI_REPLY__'.length));
+            if (parsed?.reply?.id && parsed?.body) {
+                replyMeta = parsed.reply;
+                body = parsed.body;
+            }
+        } catch (_) {
+            // ignore parsing errors
+        }
+    }
 
-    const isGif = isGifEnabled(store.getState()) && isGifMessage(message);
+    const isGif = isGifEnabled(store.getState()) && isGifMessage(body);
 
     if (isGif) {
-        _handleGifMessageReceived(store, participantId, message);
+        _handleGifMessageReceived(store, participantId, body);
         if (getGifDisplayMode(store.getState()) === 'tile') {
             return;
         }
@@ -451,12 +487,17 @@ function _onConferenceMessageReceived(store: IStore,
         displayName,
         isFromVisitor,
         participantId,
-        message,
+        message: body,
         privateMessage,
         lobbyChat: false,
         timestamp,
         messageId,
-        source
+        source,
+        replyTo: replyMeta && {
+            messageId: replyMeta.id,
+            displayName: replyMeta.name,
+            snippet: replyMeta.snippet
+        }
     }, true, isGif);
 }
 
@@ -470,7 +511,8 @@ function _onConferenceMessageReceived(store: IStore,
  * @returns {void}
  */
 function _onReactionReceived(store: IStore, { participantId, reactionList, messageId }: {
-    messageId: string; participantId: string; reactionList: string[]; }) {
+    messageId: string; participantId: string; reactionList: string[];
+}) {
 
     const reactionPayload = {
         participantId,
@@ -521,12 +563,16 @@ function _handleChatError({ dispatch }: IStore, error: Error) {
  */
 export function handleLobbyMessageReceived(message: string, participantId: string) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        _handleReceivedMessage({ dispatch,
-            getState }, { participantId,
+        _handleReceivedMessage({
+            dispatch,
+            getState
+        }, {
+            participantId,
             message,
             privateMessage: false,
             lobbyChat: true,
-            timestamp: Date.now() });
+            timestamp: Date.now()
+        });
     };
 }
 
@@ -565,11 +611,12 @@ function getLobbyChatDisplayName(state: IReduxState, participantId: string) {
  * @returns {void}
  */
 function _handleReceivedMessage({ dispatch, getState }: IStore,
-        { displayName, isFromVisitor, lobbyChat, message, messageId, participantId, privateMessage, source, timestamp }: {
-            displayName?: string; isFromVisitor?: boolean; lobbyChat: boolean; message: string;
-            messageId?: string; participantId: string; privateMessage: boolean; source?: string; timestamp: number; },
-        shouldPlaySound = true,
-        isReaction = false
+    { displayName, isFromVisitor, lobbyChat, message, messageId, participantId, privateMessage, source, timestamp, replyTo }: {
+        displayName?: string; isFromVisitor?: boolean; lobbyChat: boolean; message: string;
+        messageId?: string; participantId: string; privateMessage: boolean; source?: string; timestamp: number; replyTo?: { messageId: string; displayName: string; snippet: string; };
+    },
+    shouldPlaySound = true,
+    isReaction = false
 ) {
     // Logic for all platforms:
     const state = getState();
@@ -615,7 +662,8 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
         messageId,
         isReaction,
         isFromVisitor,
-        isFromGuest: source === 'guest'
+        isFromGuest: source === 'guest',
+        replyTo
     };
 
     dispatch(addMessage(newMessage));
@@ -635,8 +683,8 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
         dispatch(showMessageNotification({
             title: notificationDisplayName,
             description: message,
-            customActionNameKey: [ 'notify.openChat' ],
-            customActionHandler: [ () => dispatch(openChat()) ]
+            customActionNameKey: ['notify.openChat'],
+            customActionHandler: [() => dispatch(openChat())]
         }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
     }
 
@@ -676,7 +724,7 @@ interface IRecipient {
  * @returns {void}
  */
 function _persistSentPrivateMessage({ dispatch, getState }: IStore, recipient: IRecipient,
-        message: string, isLobbyPrivateMessage = false) {
+    message: string, isLobbyPrivateMessage = false, replyTo?: { messageId: string; displayName: string; snippet: string; }) {
     const state = getState();
     const localParticipant = getLocalParticipant(state);
 
@@ -703,7 +751,8 @@ function _persistSentPrivateMessage({ dispatch, getState }: IStore, recipient: I
         lobbyChat: isLobbyPrivateMessage,
         recipient: recipientName,
         sentToVisitor: recipient.isVisitor,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        replyTo
     }));
 }
 

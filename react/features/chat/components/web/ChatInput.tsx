@@ -1,47 +1,121 @@
-import { Theme } from '@mui/material';
-import React, { Component, RefObject } from 'react';
-import { WithTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
-import { withStyles } from 'tss-react/mui';
+import { Theme } from "@mui/material";
+import React, { Component, RefObject } from "react";
+import { WithTranslation } from "react-i18next";
+import { connect } from "react-redux";
+import { withStyles } from "tss-react/mui";
 
-import { IReduxState, IStore } from '../../../app/types';
-import { isMobileBrowser } from '../../../base/environment/utils';
-import { translate } from '../../../base/i18n/functions';
-import { IconFaceSmile, IconSend } from '../../../base/icons/svg';
-import Button from '../../../base/ui/components/web/Button';
-import Input from '../../../base/ui/components/web/Input';
-import { CHAT_SIZE } from '../../constants';
-import { areSmileysDisabled, isSendGroupChatDisabled } from '../../functions';
+import { IReduxState, IStore } from "../../../app/types";
+import { isMobileBrowser } from "../../../base/environment/utils";
+import { translate } from "../../../base/i18n/functions";
+import { IconFaceSmile, IconSend } from "../../../base/icons/svg";
+import Button from "../../../base/ui/components/web/Button";
+import Input from "../../../base/ui/components/web/Input";
+import { CHAT_SIZE } from "../../constants";
+import { areSmileysDisabled, isSendGroupChatDisabled } from "../../functions";
+import { setReplyDraft } from "../../actions.web";
 
-import SmileysPanel from './SmileysPanel';
-
+import SmileysPanel from "./SmileysPanel";
 
 const styles = (_theme: Theme, { _chatWidth }: IProps) => {
     return {
         smileysPanel: {
-            bottom: '100%',
-            boxSizing: 'border-box' as const,
-            backgroundColor: 'rgba(0, 0, 0, .6) !important',
-            height: 'auto',
-            display: 'flex' as const,
-            overflow: 'hidden',
-            position: 'absolute' as const,
+            bottom: "100%",
+            boxSizing: "border-box" as const,
+            backgroundColor: "rgba(0, 0, 0, .6) !important",
+            height: "auto",
+            display: "flex" as const,
+            overflow: "hidden",
+            position: "absolute" as const,
             width: `${_chatWidth - 32}px`,
-            marginBottom: '5px',
-            marginLeft: '-5px',
-            transition: 'max-height 0.3s',
+            marginBottom: "5px",
+            marginLeft: "-5px",
+            transition: "max-height 0.3s",
 
-            '& #smileysContainer': {
-                backgroundColor: '#131519',
-                borderTop: '1px solid #A4B8D1'
-            }
+            "& #smileysContainer": {
+                backgroundColor: "#131519",
+                borderTop: "1px solid #A4B8D1",
+            },
         },
         chatDisabled: {
             borderTop: `1px solid ${_theme.palette.ui02}`,
-            boxSizing: 'border-box' as const,
+            boxSizing: "border-box" as const,
             padding: _theme.spacing(4),
-            textAlign: 'center' as const,
-        }
+            textAlign: "center" as const,
+        },
+        replyDraftBanner: {
+            background: _theme.palette.ui01,
+            borderLeft: `3px solid ${_theme.palette.ui05}`,
+            padding: _theme.spacing(0.5, 1),
+            marginBottom: _theme.spacing(1.5), // Increased spacing below reply banner
+            display: "flex",
+            alignItems: "center",
+            gap: _theme.spacing(1),
+            maxWidth: "100%",
+            borderRadius: _theme.spacing(0.5),
+        },
+        replyContent: {
+            flex: 1,
+            overflow: "hidden",
+        },
+        replyLabel: {
+            fontSize: 11,
+            opacity: 0.8,
+            color: _theme.palette.text03,
+        },
+        replySnippet: {
+            fontSize: 12,
+            whiteSpace: "nowrap" as const,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            color: _theme.palette.text02,
+        },
+        chatInputSection: {
+            display: "flex",
+            alignItems: "flex-end",
+            gap: _theme.spacing(1), 
+            width: "100%",
+        },
+        chatInputWrapper: {
+            flex: 1,
+            width: "100%",
+            maxWidth: "100%",
+            overflow: "hidden",
+            boxSizing: "border-box" as const,
+        },
+        chatInputField: {
+            width: "100%",
+            maxWidth: "100%",
+            minWidth: 0,
+            // Fix white corner fragments and focus issues
+            "& .MuiInputBase-root": {
+                borderRadius: "8px !important",
+                overflow: "hidden",
+                backgroundColor: "transparent",
+            },
+            "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                    borderRadius: "8px !important",
+                },
+                "&:hover fieldset": {
+                    borderRadius: "8px !important",
+                },
+                "&.Mui-focused fieldset": {
+                    borderRadius: "8px !important",
+                    boxShadow: "none !important",
+                },
+            },
+            "& input, & textarea": {
+                width: "100%",
+                maxWidth: "100%",
+                textOverflow: "ellipsis",
+                borderRadius: "8px !important",
+                outline: "none !important",
+                "&:focus": {
+                    outline: "none !important",
+                    boxShadow: "none !important",
+                },
+            },
+        },
     };
 };
 
@@ -49,12 +123,10 @@ const styles = (_theme: Theme, { _chatWidth }: IProps) => {
  * The type of the React {@code Component} props of {@link ChatInput}.
  */
 interface IProps extends WithTranslation {
-
     /**
      * Whether chat emoticons are disabled.
      */
     _areSmileysDisabled: boolean;
-
 
     _chatWidth: number;
 
@@ -76,19 +148,27 @@ interface IProps extends WithTranslation {
     /**
      * Invoked to send chat messages.
      */
-    dispatch: IStore['dispatch'];
+    dispatch: IStore["dispatch"];
 
     /**
      * Callback to invoke on message send.
      */
     onSend: Function;
+
+    /**
+     * The current reply draft metadata (if replying to a message).
+     */
+    _replyingTo?: {
+        messageId: string;
+        displayName: string;
+        snippet: string;
+    };
 }
 
 /**
  * The type of the React {@code Component} state of {@link ChatInput}.
  */
 interface IState {
-
     /**
      * User provided nickname when the input text is provided in the view.
      */
@@ -109,8 +189,8 @@ class ChatInput extends Component<IProps, IState> {
     _textArea?: RefObject<HTMLTextAreaElement>;
 
     override state = {
-        message: '',
-        showSmileysPanel: false
+        message: "",
+        showSmileysPanel: false,
     };
 
     /**
@@ -168,44 +248,61 @@ class ChatInput extends Component<IProps, IState> {
         const hideInput = this.props._isSendGroupChatDisabled && !this.props._privateMessageRecipientId;
 
         if (hideInput) {
-            return (
-                <div className = { classes.chatDisabled }>
-                    {this.props.t('chat.disabled')}
-                </div>
-            );
+            return <div className={classes.chatDisabled}>{this.props.t("chat.disabled")}</div>;
         }
 
         return (
-            <div className = { `chat-input-container${this.state.message.trim().length ? ' populated' : ''}` }>
-                <div id = 'chat-input' >
+            <div className={`chat-input-container${this.state.message.trim().length ? " populated" : ""}`}>
+                {this.props._replyingTo && (
+                    <div className={classes.replyDraftBanner}>
+                        <div className={classes.replyContent}>
+                            <div className={classes.replyLabel}>
+                                {this.props.t("chat.replyingTo", "Replying to")} {this.props._replyingTo.displayName}
+                            </div>
+                            <div className={classes.replySnippet}>{this.props._replyingTo.snippet}</div>
+                        </div>
+                        <Button
+                            accessibilityLabel={this.props.t("chat.cancelReply", "Cancel reply")}
+                            onClick={() => this.props.dispatch(setReplyDraft(undefined))}
+                            size="small"
+                            type="tertiary"
+                        >
+                            ×
+                        </Button>
+                    </div>
+                )}
+                <div id="chat-input">
                     {!this.props._areSmileysDisabled && this.state.showSmileysPanel && (
-                        <div
-                            className = 'smiley-input'>
-                            <div
-                                className = { classes.smileysPanel } >
-                                <SmileysPanel
-                                    onSmileySelect = { this._onSmileySelect } />
+                        <div className="smiley-input">
+                            <div className={classes.smileysPanel}>
+                                <SmileysPanel onSmileySelect={this._onSmileySelect} />
                             </div>
                         </div>
                     )}
-                    <Input
-                        className = 'chat-input'
-                        icon = { this.props._areSmileysDisabled ? undefined : IconFaceSmile }
-                        iconClick = { this._toggleSmileysPanel }
-                        id = 'chat-input-messagebox'
-                        maxRows = { 5 }
-                        onChange = { this._onMessageChange }
-                        onKeyPress = { this._onDetectSubmit }
-                        placeholder = { this.props.t('chat.messagebox') }
-                        ref = { this._textArea }
-                        textarea = { true }
-                        value = { this.state.message } />
-                    <Button
-                        accessibilityLabel = { this.props.t('chat.sendButton') }
-                        disabled = { !this.state.message.trim() }
-                        icon = { IconSend }
-                        onClick = { this._onSubmitMessage }
-                        size = { isMobileBrowser() ? 'large' : 'medium' } />
+                    <div className={classes.chatInputSection}>
+                        <div className={classes.chatInputWrapper}>
+                            <Input
+                                className={`chat-input ${classes.chatInputField}`}
+                                icon={this.props._areSmileysDisabled ? undefined : IconFaceSmile}
+                                iconClick={this._toggleSmileysPanel}
+                                id="chat-input-messagebox"
+                                maxRows={5}
+                                onChange={this._onMessageChange}
+                                onKeyPress={this._onDetectSubmit}
+                                placeholder={this.props.t("chat.messagebox")}
+                                ref={this._textArea}
+                                textarea={true}
+                                value={this.state.message}
+                            />
+                        </div>
+                        <Button
+                            accessibilityLabel={this.props.t("chat.sendButton")}
+                            disabled={!this.state.message.trim()}
+                            icon={IconSend}
+                            onClick={this._onSubmitMessage}
+                            size={isMobileBrowser() ? "large" : "medium"}
+                        />
+                    </div>
                 </div>
             </div>
         );
@@ -227,11 +324,7 @@ class ChatInput extends Component<IProps, IState> {
      * @returns {void}
      */
     _onSubmitMessage() {
-        const {
-            _isSendGroupChatDisabled,
-            _privateMessageRecipientId,
-            onSend
-        } = this.props;
+        const { _isSendGroupChatDisabled, _privateMessageRecipientId, onSend } = this.props;
 
         if (_isSendGroupChatDisabled && !_privateMessageRecipientId) {
             return;
@@ -242,7 +335,7 @@ class ChatInput extends Component<IProps, IState> {
         if (trimmed) {
             onSend(trimmed);
 
-            this.setState({ message: '' });
+            this.setState({ message: "" });
 
             // Keep the textarea in focus when sending messages via submit button.
             this._focus();
@@ -250,7 +343,6 @@ class ChatInput extends Component<IProps, IState> {
             // Hide the Emojis box after submitting the message
             this.setState({ showSmileysPanel: false });
         }
-
     }
 
     /**
@@ -274,9 +366,7 @@ class ChatInput extends Component<IProps, IState> {
             return;
         }
 
-        if (event.key === 'Enter'
-            && event.shiftKey === false
-            && event.ctrlKey === false) {
+        if (event.key === "Enter" && event.shiftKey === false && event.ctrlKey === false) {
             event.preventDefault();
             event.stopPropagation();
 
@@ -307,11 +397,11 @@ class ChatInput extends Component<IProps, IState> {
         if (smileyText) {
             this.setState({
                 message: `${this.state.message} ${smileyText}`,
-                showSmileysPanel: false
+                showSmileysPanel: false,
             });
         } else {
             this.setState({
-                showSmileysPanel: false
+                showSmileysPanel: false,
             });
         }
 
@@ -342,7 +432,8 @@ class ChatInput extends Component<IProps, IState> {
  * }}
  */
 const mapStateToProps = (state: IReduxState) => {
-    const { privateMessageRecipient, width } = state['features/chat'];
+    const { privateMessageRecipient, width } = state["features/chat"];
+    const { replyingTo } = state["features/chat"];
     const isGroupChatDisabled = isSendGroupChatDisabled(state);
 
     return {
@@ -350,6 +441,7 @@ const mapStateToProps = (state: IReduxState) => {
         _privateMessageRecipientId: privateMessageRecipient?.id,
         _isSendGroupChatDisabled: isGroupChatDisabled,
         _chatWidth: width.current ?? CHAT_SIZE,
+        _replyingTo: replyingTo,
     };
 };
 
