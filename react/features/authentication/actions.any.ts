@@ -4,12 +4,15 @@ import { IJitsiConference } from '../base/conference/reducer';
 import { hideDialog, openDialog } from '../base/dialog/actions';
 
 import {
+    DISABLE_MODERATOR_LOGIN,
+    ENABLE_MODERATOR_LOGIN,
     LOGIN,
     LOGOUT,
     SET_TOKEN_AUTH_URL_SUCCESS,
     STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
-    UPGRADE_ROLE_STARTED, WAIT_FOR_OWNER
+    UPGRADE_ROLE_STARTED,
+    WAIT_FOR_OWNER
 } from './actionTypes';
 import { LoginDialog, WaitForOwnerDialog } from './components';
 import logger from './logger';
@@ -166,6 +169,30 @@ export function logout() {
 }
 
 /**
+ * Disables moderator login.
+ *
+ * @returns {{
+ *     type: DISABLE_MODERATOR_LOGIN
+ * }}
+ */
+export function disableModeratorLogin() {
+    return {
+        type: DISABLE_MODERATOR_LOGIN
+    };
+}
+
+/**
+ * Enables moderator login.
+ *
+ * @returns {Object}
+ */
+export function enableModeratorLogin() {
+    return {
+        type: ENABLE_MODERATOR_LOGIN
+    };
+}
+
+/**
  * Opens {@link WaitForOnwerDialog}.
  *
  * @protected
@@ -174,6 +201,7 @@ export function logout() {
 export function openWaitForOwnerDialog() {
     return openDialog(WaitForOwnerDialog);
 }
+
 
 /**
  * Stops waiting for the conference owner.

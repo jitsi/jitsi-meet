@@ -13,6 +13,7 @@ import { updateSettings } from '../../base/settings/actions';
 import { IMessage } from '../../chat/types';
 import { isDeviceStatusVisible } from '../../prejoin/functions';
 import { cancelKnocking, joinWithPassword, onSendMessage, setPasswordJoinFailed, startKnocking } from '../actions';
+import { getLobbyConfig } from '../functions';
 
 export const SCREEN_STATES = {
     EDIT: 1,
@@ -26,6 +27,11 @@ export interface IProps {
      * Indicates whether the device status should be visible.
      */
     _deviceStatusVisible: boolean;
+
+    /**
+     * Whether to show the hangup button.
+     */
+    _hangUp?: boolean;
 
     /**
      * Indicates whether the message that display name is required is shown.
@@ -51,6 +57,11 @@ export interface IProps {
      * Name of the lobby chat recipient.
      */
     _lobbyMessageRecipient?: string;
+
+    /**
+     * Whether to hide the login button.
+     */
+    _login?: boolean;
 
     /**
      * The name of the meeting we're about to join.
@@ -445,8 +456,10 @@ export function _mapStateToProps(state: IReduxState) {
     const { disableLobbyPassword } = getSecurityUiConfig(state);
     const showCopyUrlButton = inviteEnabledFlag || !disableInviteFunctions;
     const deviceStatusVisible = isDeviceStatusVisible(state);
+    const { showHangUp = true } = getLobbyConfig(state);
     const { membersOnly, lobbyWaitingForHost } = state['features/base/conference'];
     const { isLobbyChatActive, lobbyMessageRecipient, messages } = state['features/chat'];
+    const { showModeratorLogin } = state['features/authentication'];
 
     return {
         _deviceStatusVisible: deviceStatusVisible,
@@ -454,6 +467,8 @@ export function _mapStateToProps(state: IReduxState) {
         _knocking: knocking,
         _lobbyChatMessages: messages,
         _lobbyMessageRecipient: lobbyMessageRecipient?.name,
+        _login: showModeratorLogin,
+        _hangUp: showHangUp,
         _isLobbyChatActive: isLobbyChatActive,
         _meetingName: getConferenceName(state),
         _membersOnlyConference: membersOnly,

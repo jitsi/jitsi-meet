@@ -74,8 +74,8 @@ export const preJoinStyles = {
         height: 60,
         justifyContent: 'space-between',
         marginBottom: BaseTheme.spacing[3],
-        paddingHorizontal: BaseTheme.spacing[2],
-        width: 148
+        padding: BaseTheme.spacing[2],
+        width: 'auto'
     },
 
     customInput: {
