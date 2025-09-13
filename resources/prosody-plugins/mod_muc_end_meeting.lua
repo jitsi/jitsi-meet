@@ -94,7 +94,7 @@ function module.add_host(host_module)
 
         token_util = module:require "token/util".new(host_module);
 
-        if asapKeyServer then
+        if asapKeyServer ~= "" then
             -- init token util with our asap keyserver
             token_util:set_asap_key_server(asapKeyServer)
         end
