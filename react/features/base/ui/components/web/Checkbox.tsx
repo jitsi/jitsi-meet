@@ -23,6 +23,11 @@ interface ICheckboxProps {
     disabled?: boolean;
 
     /**
+     * The id of the input.
+     */
+    id?: string;
+
+    /**
      * The label of the input.
      */
     label: string;
@@ -147,6 +152,7 @@ const Checkbox = ({
     checked,
     className,
     disabled,
+    id,
     label,
     name,
     onChange
@@ -160,6 +166,7 @@ const Checkbox = ({
                 <input
                     checked = { checked }
                     disabled = { disabled }
+                    id = { id }
                     name = { name }
                     onChange = { onChange }
                     type = 'checkbox' />

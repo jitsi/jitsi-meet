@@ -38,6 +38,7 @@ export type AbstractProps = {
     changeVote: (e?: React.MouseEvent<HTMLButtonElement> | GestureResponderEvent) => void;
     creatorName: string;
     haveVoted: boolean;
+    pollId: string;
     question: string;
     showDetails: boolean;
     t: Function;
@@ -115,6 +116,7 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
             changeVote = { changeVote }
             creatorName = { participant ? participant.name : '' }
             haveVoted = { poll.lastVote !== null }
+            pollId = { pollId }
             question = { poll.question }
             showDetails = { showDetails }
             t = { t }
