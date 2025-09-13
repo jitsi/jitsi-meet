@@ -154,12 +154,12 @@ case "$1" in
             PROSODY_CONFIG_PRESENT="false"
         fi
 
-        -- Start using the polls component
+        # Start using the polls component
         if ! grep -q "Component \"polls.$JVB_HOSTNAME\"" $PROSODY_HOST_CONFIG ;then
             echo -e "\nComponent \"polls.$JVB_HOSTNAME\" \"polls_component\"" >> $PROSODY_HOST_CONFIG
             PROSODY_CONFIG_PRESENT="false"
         fi
-        if ! grep -q "--\"polls\";" $PROSODY_HOST_CONFIG ;then
+        if ! grep -q -- '--"polls";' $PROSODY_HOST_CONFIG ;then
             sed -i "s/\"polls\";/--\"polls\";/g" $PROSODY_HOST_CONFIG
             PROSODY_CONFIG_PRESENT="false"
         fi
