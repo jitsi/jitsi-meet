@@ -26,7 +26,10 @@
         "sipAddresses": "indiritzos sip",
         "telephone": "Telèfonu: {{number}}",
         "title": "Invita gente a custa riunione",
-        "yahooEmail": "Posta de Yahoo"
+        "yahooEmail": "Posta de Yahoo",
+        "accessibilityLabel": {
+            "meetingLink": "Ligòngiu a sa riunione: {{url}}"
+        }
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
@@ -48,15 +51,22 @@
             "leaveBreakoutRoom": "Lassa s'aposentu separadu",
             "more": "Àteru",
             "remove": "Boga",
-            "sendToBreakoutRoom": "Imbia su partetzipante a:"
+            "sendToBreakoutRoom": "Imbia su partetzipante a:",
+            "rename": "Torra a nominare",
+            "renameBreakoutRoom": "Torra a nominare s'aposentu separadu"
         },
         "defaultName": "Aposentu separadu #{{index}}",
         "mainRoom": "Aposentu printzipale",
         "notifications": {
-            "joined": "Intrende a s'aposentu separadu\"{{name}}",
+            "joined": "Intrende a s'aposentu separadu\"{{name}}\"",
             "joinedMainRoom": "Intrende a s'aposentu printzipale",
             "joinedTitle": "Aposentos separados"
-        }
+        },
+        "buttonLabel": "Aposentos separados",
+        "hideParticipantList": "Cua sa lista de partetzipantes",
+        "showParticipantList": "Ammustra sa lista de partetzipantes",
+        "breakoutList": "Lista de aposentos separados",
+        "title": "Aposentos separados"
     },
     "calendarSync": {
         "addMeetingURL": "Agiunghe unu ligòngiu a s'addòbiu",
@@ -100,7 +110,10 @@
         "nickname": {
             "popover": "Sèbera unu nòmine",
             "title": "Inserta su nòmine pro impreare sa tzarrada",
-            "titleWithPolls": "Inserta su nòmine pro impreare sa tzarrada e is sondàgios"
+            "titleWithPolls": "Inserta su nòmine pro impreare sa tzarrada e is sondàgios",
+            "titleWithPollsAndCC": "Inserta unu nòmine pro impreare is tzarradas, is sondàgios e is sutatìtulos",
+            "titleWithCC": "Inserta unu nòmine pro impreare is tzarradas e is sutatìtulos",
+            "titleWithPollsAndCCAndFileSharing": "Inserta unu nòmine pro impreare is tzarradas, is sondàgios, is sutatìtulos e is archìvios"
         },
         "noMessagesMessage": "Nissunu messàgiu ancora in sa riunione. Cumintza una tzarrada inoghe!",
         "privateNotice": "Messàgiu privadu a {{recipient}}",
@@ -108,11 +121,18 @@
         "smileysPanel": "Pannellu de emoji",
         "tabs": {
             "chat": "Tzarrada",
-            "polls": "Sondàgios"
+            "polls": "Sondàgios",
+            "closedCaptions": "Sutatìtulos",
+            "fileSharing": "Archìvios"
         },
         "title": "Tzarrada",
-        "titleWithPolls": "Tzarradas e sondàgios",
-        "you": "tue"
+        "titleWithPolls": "Sondàgios",
+        "you": "tue",
+        "disabled": "S'imbiu de messàgios de tzarrada est disativadu.",
+        "systemDisplayName": "Sistema",
+        "titleWithCC": "Sutatìtulos",
+        "titleWithFeatures": "Tzarrada e",
+        "titleWithFileSharing": "Archìvios"
     },
     "chromeExtensionBanner": {
         "buttonText": "Installa s'estensione de Google",
@@ -173,7 +193,10 @@
         "status": "Connessione:",
         "transport": "Trasportu:",
         "transport_plural": "Trasportos:",
-        "video_ssrc": "Vìdeu SSRC:"
+        "video_ssrc": "Vìdeu SSRC:",
+        "e2eeVerified": "Verificadu cun E2EE:",
+        "no": "nono",
+        "yes": "eja"
     },
     "dateUtils": {
         "earlier": "Prus antigu",
@@ -191,7 +214,17 @@
         "launchWebButton": "Avia in sa web",
         "title": "Aviende sa reunione in {{app}}…",
         "tryAgainButton": "Torra a proare in s'aplicatzione de iscrivania",
-        "unsupportedBrowser": "Paret chi ses impreende unu navigadore non cumpatìbile."
+        "unsupportedBrowser": "Paret chi ses impreende unu navigadore non cumpatìbile.",
+        "descriptionNew": "No est sutzèdidu nudda? Amus proadu a aviare s'addòbiu tuo in s'{{app}}aplicatzione de iscrivania. <br /><br />Podes torrare a proare o dd'aviare in su web.",
+        "launchMeetingLabel": "Comente boles aderire a custu addòbiu?",
+        "termsAndConditions": "Si sighis a in antis, atzetas is <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'> tèrmines e cunditziones</a> nostros.",
+        "downloadMobileApp": "Iscàrriga·dda dae sa butega de aplicatziones",
+        "joinInAppNew": "Aderi dae s'aplicatzione",
+        "joinInBrowser": "Aderi dae su navigadore",
+        "noDesktopApp": "Non tenes s'aplicatzione?",
+        "noMobileApp": "Non tenes s'aplicatzione?",
+        "or": "O PURU",
+        "titleNew": "Aviende s'addòbiu tuo…"
     },
     "defaultLink": "p. es. {{url}}",
     "defaultNickname": "es. Rosa Pink",
@@ -205,7 +238,13 @@
         "noPermission": "No as cuntzèdidu permissos",
         "previewUnavailable": "Sa pre-visualizatzione no est a disponimentu",
         "selectADevice": "Sèbera unu dispositivu",
-        "testAudio": "Riprodue unu sonu de proa"
+        "testAudio": "Riprodue unu sonu de proa",
+        "hid": {
+            "deleteDevice": "Cantzella su dispositivu",
+            "pairDevice": "Assòtzia unu dispositivu",
+            "connectedDevices": "Dispositivos connètidos:",
+            "callControl": "Controllu de mutidas"
+        }
     },
     "dialIn": {
         "screenTitle": "Resumu de nùmeros"
@@ -214,7 +253,7 @@
         "statusMessage": "est immoe {{status}}"
     },
     "dialog": {
-        "Back": "In segus",
+        "Back": "A coa",
         "Cancel": "Annulla",
         "IamHost": "So mere",
         "Ok": "AB",
@@ -225,7 +264,11 @@
         "WaitingForHostTitle": "Isetende mere…",
         "Yes": "Eja",
         "accessibilityLabel": {
-            "liveStreaming": "Trasmissione in direta"
+            "liveStreaming": "Trasmissione in direta",
+            "Ok": "AB (sarva e lassa su diàlogu)",
+            "Cancel": "Annulla (lassa su diàlogu)",
+            "close": "Serra su diàlogu",
+            "sharingTabs": "Optziones de cumpartzidura"
         },
         "add": "Annanghe",
         "addMeetingNote": "Agiunghe una nota in pitzus de custa riunione",
@@ -303,7 +346,7 @@
         "micTimeoutError": "Impossìbile aviare s'àudio. Lìmite de tempus lòmpidu.",
         "micUnknownError": "Non si podet impreare su micròfonu (resone disconnota).",
         "moderationAudioLabel": "Permite chi is partetzipantes ativent su micròfonu",
-        "moderationVideoLabel": "Permite chi is partetzipantes ativent su vìdeu",
+        "moderationVideoLabel": "Permite chi profilos chi non sunt de moderatzione ativent su vìdeu",
         "muteEveryoneDialog": "Is partetzipantes podent ativare su micròfonu semper.",
         "muteEveryoneDialogModerationOn": "Is partetzipantes podent preguntare de chistionare semper.",
         "muteEveryoneElseDialog": "Una borta chi as postu calicunu a sa muda, no as a pòdere torrare a aviare s'àudio suo, però isse ddu at a pòdere fàghere in cale si siat momentu.",
@@ -356,7 +399,7 @@
         "reservationErrorMsg": "Còdighe de faddina: {{code}}, messàgiu: {{msg}}",
         "retry": "Torra a proare",
         "screenSharingAudio": "Cumpartzi s'àudio",
-        "screenSharingFailed": "Ohia Est istadu impossìbile a aviare sa cumpartzidura de ischermu.",
+        "screenSharingFailed": "Ohia! Est istadu impossìbile a aviare sa cumpartzidura de ischermu.",
         "screenSharingFailedTitle": "Faddina in sa cumpartzidura de ischermu.",
         "screenSharingPermissionDeniedError": "Ohia Faddina in is permissos de cumpartzidura de ischermu. Torra a carrigare e torra a proare.",
         "searchInSalesforce": "Chirca in Salesforce",
@@ -383,11 +426,11 @@
         "shareScreenWarningD2": "depes firmare sa cumpartzidura de àudio, aviare sa cumpartzidura de ischermu e ativare s'optzione \"cumpartzi s'àudio\".",
         "shareScreenWarningH1": "Si boles cumpartzire s'ischermu isceti:",
         "shareScreenWarningTitle": "Depes firmare sa cumpartzidura de àudio prima de cumpartzire s'ischermu",
-        "shareVideoLinkError": "Fruni unu ligòngiu de vìdeu curretu.",
+        "shareVideoLinkError": "Ohia, custu vìdeu non si podet riproduire.",
         "shareVideoTitle": "Cumpartzi vìdeu",
         "shareYourScreen": "Cumpartzi s'ischermu",
         "shareYourScreenDisabled": "Cumpartzidura de ischermu disativada.",
-        "sharedVideoDialogError": "Faddina: URL non vàlidu",
+        "sharedVideoDialogError": "Faddina: URL non vàlidu o proibidu",
         "sharedVideoLinkPlaceholder": "ligòngiu de YouTube o ligòngiu de vìdeu diretu",
         "show": "Ammustra",
         "start": "Avia ",
@@ -412,7 +455,75 @@
         "viewUpgradeOptions": "Ammustra is optziones premium",
         "viewUpgradeOptionsContent": "Pro otènnere atzessu illimitadu a is funtzionalidades premium comente sa registratzione, sa trascritzione, trasmissione RTMP e àteru, depes passare a unu contu prus artu.",
         "viewUpgradeOptionsTitle": "As iscobertu una funtzionalidade premium.",
-        "yourEntireScreen": "S'ischermu intreu"
+        "yourEntireScreen": "S'ischermu intreu",
+        "renameBreakoutRoomLabel": "Nòmine de s'aposentu",
+        "UnderstandAndUnmute": "Apo cumprèndidu. Ativa·mi s'àudio",
+        "confirmBack": "A coa",
+        "moderationDesktopLabel": "Permite chi is profilos chi no sunt de moderatzione potzant cumpartzire s'ischermu",
+        "muteEveryoneElsesDesktopDialog": "Cando si firmat sa cumpartzidura, non dda podes torrare a ativare, però is àteras persones ddu podent fàghere cando bolent.",
+        "muteEveryonesDesktopDialogModerationOn": "Is partetzipantes podent imbiare una rechesta pro cumpartzire s'ischermu in cale si siat momentu.",
+        "Understand": "Apo cumprèndidu. Mantene·mi a sa muda pro immoe",
+        "WaitForHostNoAuthMsg": "Sa cunferèntzia no at ancora cumintzadu ca nissunu profilu de moderatzione est arribadu. Abeta.",
+        "WaitingForHostButton": "Abeta sa moderatzione",
+        "allowToggleCameraTitle": "Permitis su càmbiu de càmera?",
+        "cameraCaptureDialog": {
+            "description": "Faghe una fotografia cun sa càmera e imbia·dda",
+            "ok": "Aberi sa càmera",
+            "reject": "Immoe nono",
+            "title": "Faghe una fotografia"
+        },
+        "errorRoomCreationRestriction": "As chircadu de aderire tropu a sa lestra, torra a pustis.",
+        "demoteParticipantTitle": "Cunverte a pùblicu (visualizatzione ebbia)",
+        "kickSystemTitle": "Ohia, t'ant bogadu dae s'addòbiu",
+        "learnMore": "àteras informatziones",
+        "loginQuestion": "Seguru chi ti boles identificare e lassare sa cunferèntzia?",
+        "muteEveryoneElsesDesktopTitle": "Boles firmare sa cumpartzidura de ischermu de totu is partetzipantes, francu cussa de {{whom}}?",
+        "muteEveryonesDesktopDialog": "Is partetzipantes podent cumpartzire s'ischermu in cale si siat momentu.",
+        "muteEveryonesDesktopTitle": "Boles firmare sa cumpartzidura de ischermu de totu is partetzipantes?",
+        "muteParticipantsDesktopBody": "No as a pòdere ativare sa cumpartzidura issoro, però ddu podent fàghere in cale si siat momentu.",
+        "muteParticipantsDesktopButton": "Firma sa cumpartzidura de ischermu",
+        "muteParticipantsDesktopDialog": "Seguru chi boles disativare sa cumpartzidura de ischermu de custa persone? No dd'as a pòdere torrare a aviare, però issa ddu podet fàghere in cale si siat momentu.",
+        "muteParticipantsDesktopTitle": "Boles disativare sa cumpartzidura de ischermu de custa persone?",
+        "recordingInProgressDescriptionFirstHalf": "Est in cursu sa registratzione e s'anàlisi de custu addòbiu cun IA",
+        "recordingInProgressTitle": "Registratzione in cursu",
+        "renameBreakoutRoomTitle": "Torra a nominare s'aposentu separadu",
+        "sessTerminatedReason": "Addòbiu acabbadu",
+        "shareAudioAltText": "pro cumpartzire su cuntenutu disigiadu, nàviga a \"Ischeda de su navigadore\", seletziona su cuntenutu, ativa sa casella \"cumpartzi s'àudio\" e incarca su butone \"cumpartzi\"",
+        "shareVideoConfirmPlay": "Ses chirchende de abèrrere unu situ esternu. Boles sighire?",
+        "shareVideoConfirmPlayTitle": "{{name}} at cumpartzidu unu vìdeu cun tegus.",
+        "shareVideoLinkStopped": "Su vìdeu de {{name}} est istadu firmadu.",
+        "tokenAuthFailedReason": {
+            "audInvalid": "Valore `aud` non vàlidu. Diat dèpere èssere `jitsi`.",
+            "expInvalid": "Valore `exp` non vàlidu.",
+            "featureInvalid": "Funtzionalidade non vàlida: {{feature}}. Est probàbile chi non siat istada ancora implementada.",
+            "featureValueInvalid": "Valore non vàlidu pro sa funtzionalidade {{feature}}.",
+            "featuresNotFound": "Ammancat s'ogetu `features` dae su payload.",
+            "headerNotFound": "Ammancat s'intestatzione.",
+            "kidMismatch": "S'ID de sa crae (kid) non currispondet a sub.",
+            "kidNotFound": "Ammancat s'ID de sa crae (kid).",
+            "nbfFuture": "Su valore `nbf` est in su benidore.",
+            "nbfInvalid": "Valore `nbf` non vàlidu.",
+            "payloadNotFound": "Ammancat su payload.",
+            "tokenExpired": "Su token est iscadidu.",
+            "issInvalid": "Valore `iss` non vàlidu. Diat dèpere èssere `chat`.",
+            "contextNotFound": "Ammancat s'ogetu `context` de su payload."
+        },
+        "tokenAuthUnsupported": "S'URL de su token no est cumpatìbile.",
+        "verifyParticipantConfirm": "Currispondent",
+        "verifyParticipantDismiss": "Non currispondent",
+        "verifyParticipantTitle": "Verìfica de utente",
+        "whiteboardLimitContent": "Barigadu su nùmeru màssimu de utentes de sa pitzarra.",
+        "whiteboardLimitReference": "Pro àteras informatziones, bìsita",
+        "whiteboardLimitReferenceUrl": "su situ web nostru",
+        "whiteboardLimitTitle": "Impreu de sa pitzarra limitadu",
+        "muteParticipantsDesktopBodyModerationOn": "No as a pòdere aviare sa cumpartzidura de ischermu issoro, e nemmancu dd'ant a pòdere fàghere issos.",
+        "muteParticipantsDesktopDialogModerationOn": "Seguru chi boles disativare sa cumpartzidura de ischermu de custa persone? No dd'as a pòdere torrare a aviare e nemmancu issa.",
+        "recordingInProgressDescription": "Est in cursu sa registratzione e s'anàlisi de custu addòbiu cun IA{{learnMore}}. S'àudio e su vìdeu tuos sunt disativados. Si ddos ativas, atzetas chi siant registrados.",
+        "tokenAuthFailedWithReasons": "Non tenes permissu pro aderire a custa mutida. Resones possìbiles: {{reason}}",
+        "recordingInProgressDescriptionSecondHalf": ". S'àudio e su vìdeu tuos sunt disativados. Si ddos ativas, atzetas chi siant registrados.",
+        "demoteParticipantDialog": "Seguru chi boles mòvere custa persone a su pùblicu (visualizatzione ebbia)?",
+        "verifyParticipantQuestion": "ISPERIMENTALE: Pregunta a {{participantName}} si bident su pròpiu cuntenutu in su pròpiu òrdine.",
+        "allowToggleCameraDialog": "Permitis chi {{initiatorName}} cuncàmbiet sa modalidade de orientamentu de sa càmera tua?"
     },
     "documentSharing": {
         "title": "Documentu cumpartzidu"
@@ -431,7 +542,10 @@
         "rateExperience": "Vota s'esperièntzia tua in custa riunione",
         "star": "Pone un'isteddu",
         "veryBad": "Mala meda",
-        "veryGood": "Bona meda"
+        "veryGood": "Bona meda",
+        "accessibilityLabel": {
+            "yourChoice": "Su sèberu tuo: {{rating}}"
+        }
     },
     "giphy": {
         "noResults": "Nissunu resurtadu :(",
@@ -484,7 +598,10 @@
         "sip": "Indiritzu SIP",
         "title": "Cumpartzi",
         "tooltip": "Imbia su ligòngiu e is nùmeros de telèfonu de custa riunione",
-        "upgradeOptions": "Controlla is optziones premium in"
+        "upgradeOptions": "Controlla is optziones premium in",
+        "sipAudioOnly": "Indiritzu SIP de àudio ebbia",
+        "whiteboardError": "Faddina in sa càrriga de sa pitzarra. Torra·nche a proare a pustis.",
+        "noWhiteboard": "Impossìbile carrigare sa pitzarra."
     },
     "inlineDialogFailure": {
         "msg": "Nci amus postu unu pagu.",
@@ -534,10 +651,10 @@
         "errorAPI": "Faddina in s'atzessu a is trasmissiones tuas de Youtube. Torra a proare.",
         "errorLiveStreamNotEnabled": "Sa trasmissione in direta no est ativa in {{email}}. Ativa sa trasmissione in direta o autèntica·ti in unu contu chi tèngiat ativa sa trasmissione in direta.",
         "expandedOff": "Trasmissione in direta firmada",
-        "expandedOn": "Custa riunione est trasmìtida in direta in YouTube.",
+        "expandedOn": "Custu addòbiu est trasmìtidu in direta",
         "expandedPending": "Trasmissione in direta aviada…",
         "failedToStart": "Faddina in s'aviu de sa trasmissione in direta",
-        "getStreamKeyManually": "No amus pòdidu retzire nissuna trasmissione in direta. Chirca de otènnere sa crae de YouTube tua pro is trasmissiones in idreta.",
+        "getStreamKeyManually": "No amus pòdidu retzire nissuna trasmissione in direta. Chirca de otènnere sa crae de YouTube tua pro is trasmissiones in direta.",
         "googlePrivacyPolicy": "Polìtica de riservadesa de Google",
         "inProgress": "Registratzione o trasmissione in direta in cursu",
         "invalidStreamKey": "Sa crae pro is trasmissiones in direta podet èssere iscurreta.",
@@ -558,7 +675,8 @@
         "streamIdHelp": "It'est custu?",
         "title": "Trasmissione in direta",
         "unavailableTitle": "Sa trasmissione in direta no est a disponimentu",
-        "youtubeTerms": "Cunditziones de servìtziu de YouTube"
+        "youtubeTerms": "Cunditziones de servìtziu de YouTube",
+        "policyError": "As chircadu de aviare una trasmissione in direta tropu a sa lestra. Torra·nche a proare a pustis."
     },
     "lobby": {
         "allow": "Permite",
@@ -596,7 +714,8 @@
         "passwordField": "Inserta sa crae de sa riunione",
         "passwordJoinButton": "Aderi",
         "title": "Aposentu de abetu",
-        "toggleLabel": "Ativa s'aposentu de abetu"
+        "toggleLabel": "Ativa s'aposentu de abetu",
+        "lobbyClosed": "S'aposentu de abetu est istadu serradu."
     },
     "localRecording": {
         "clientState": {
@@ -626,7 +745,9 @@
         "sessionToken": "Còdighe de sessione",
         "start": "Avia sa registratzione",
         "stop": "Firma sa registratzione",
-        "yes": "Eja"
+        "yes": "Eja",
+        "stopping": "Firmende sa registratzione",
+        "wait": "Abeta su sarvamentu de sa registratzione"
     },
     "lockRoomPassword": "crae",
     "lockRoomPasswordUppercase": "Crae",
@@ -645,15 +766,15 @@
         "connectedOneMember": "{{name}} at aderidu a sa riunione",
         "connectedThreePlusMembers": "{{name}} e meda àtera gente at aderidu a sa riunione",
         "connectedTwoMembers": "{{first}} e {{second}} ant aderidu a sa riunione",
-        "dataChannelClosed": "Calidade de vìdeu bàscia",
-        "dataChannelClosedDescription": "Su canale ponte est istadu disconnètidu e pro custu sa calidade de vìdeu est limitada a su valore prus bàsciu.",
+        "dataChannelClosed": "Podet èssere chi sa calidade de vìdeu siat bàscia",
+        "dataChannelClosedDescription": "Su canale ponte est rutu e pro custu sa calidade de vìdeu podet èssere limitada a su valore prus bàsciu.",
         "disconnected": "disconnètidu",
         "displayNotifications": "Ammustra is notìficas pro",
         "focus": "Focus de sa cunferèntzia",
         "focusFail": "{{component}} no est a disponimentu - torra a proare in {{ms}} seg",
         "gifsMenu": "GIPHY",
         "groupTitle": "Notìficas",
-        "hostAskedUnmute": "Sa moderatzione bolet chi chistiones",
+        "hostAskedUnmute": "Sa moderatzione bolet chi partètzipes.",
         "invitedOneMember": "Invitu imbiadu a {{name}}",
         "invitedThreePlusMembers": "Invitu imbiadu a {{name}} e àteras {{count}} persones",
         "invitedTwoMembers": "Invitu imbiadu a {{first}} e {{second}}",
@@ -689,10 +810,10 @@
         "newDeviceAction": "Imprea",
         "newDeviceAudioTitle": "Dispositivu de àudio nou rilevadu",
         "newDeviceCameraTitle": "Càmera noa rilevada",
-        "noiseSuppressionDesktopAudioDescription": "Impossìbile ativare sa limpiadura de abbolotu in su mentras chi ses cumpartzende s'àudio de iscrivania. Disativa·dda e torra a proare.",
-        "noiseSuppressionFailedTitle": "Faddina in s'ativatzione de sa limpiadura de abbolotu",
+        "noiseSuppressionDesktopAudioDescription": "Impossìbile ativare sa limpiadura additzionale de abbolotu in su mentras chi ses cumpartzende s'àudio de iscrivania. Disativa·dda e torra a proare.",
+        "noiseSuppressionFailedTitle": "Faddina in s'ativatzione de sa limpiadura additzionale de abbolotu",
         "noiseSuppressionNoTrackDescription": "Ativa prima su telèfonu tuo.",
-        "noiseSuppressionStereoDescription": "Sa limpiadura de abbolotu de àudio stereo no est suportada.",
+        "noiseSuppressionStereoDescription": "Sa limpiadura additzionale de abbolotu no est cumpatìbile cun s'àudio stereo.",
         "oldElectronClientDescription1": "Paret chi ses impreende una versione betza de su cliente de Jitsi Meet, chi tenet vulnerabilidades de seguresa connotas. Assegura·ti chi atualizas a ",
         "oldElectronClientDescription2": "s'ùrtima versione",
         "oldElectronClientDescription3": " immoe.",
@@ -701,7 +822,7 @@
         "passwordRemovedRemotely": "Un'utente at bogadu $t(lockRoomPasswordUppercase)",
         "passwordSetRemotely": "Un'utente at cunfiguradu $t(lockRoomPasswordUppercase)",
         "raiseHandAction": "Àrtzia sa manu",
-        "raisedHand": "Bolet chistionare.",
+        "raisedHand": "Bolet partetzipare.",
         "raisedHands": "{{participantName}} e {{raisedHands}} àteras persones",
         "reactionSounds": "Disativa sonos",
         "reactionSoundsForAll": "Disativa sonos pro totus",
@@ -713,24 +834,54 @@
         "startSilentTitle": "Ses intradu sena àudio.",
         "suboptimalBrowserWarning": "Timimus chi s'esperièntzia tua de custa riunione no at a èssere bona meda. Semus chirchende maneras de megiorare custu. In su mentras, proa un'àteru de is <a href='{{recommendedBrowserPageLink}}' target='_blank'>navigadores cumpatìbiles</a>.",
         "suboptimalExperienceTitle": "Avisu subra de su navigadore",
-        "unmute": "Ativa su sonu",
+        "unmute": "Ativa s'àudio",
         "videoMutedRemotelyDescription": "Ddu podes semper torrare a ativare.",
         "videoMutedRemotelyTitle": "{{participantDisplayName}} at istudadu su vìdeu tuo",
         "videoUnmuteBlockedDescription": "Ativatzione de sa càmera e cumpartzidura de ischermu blocadas in manera temporànea a càusa de limitatziones de su sistema.",
         "videoUnmuteBlockedTitle": "Ativatzione de sa càmera e cumpartzidura de ischermu blocadas.",
         "viewLobby": "Ammustra s'aposentu de abetu",
-        "waitingParticipants": "{{waitingParticipants}} persones"
+        "waitingParticipants": "{{waitingParticipants}} persones",
+        "dataChannelClosedWithAudio": "Podet èssere chi nche siant problemas cun sa calidade de s'àudio e de su vìdeu",
+        "disabledIframe": "S'integratzione serbit isceti a propòsitos de dimustratzione. Custa mutida s'at a disconnètere de immoe a {{timeout}} minutos.",
+        "allowAll": "Permite totu",
+        "allowAudio": "Permite s'àudio",
+        "allowDesktop": "Permite sa cumpartzidura de ischermu",
+        "allowVideo": "Permite su vìdeu",
+        "connectionFailed": "Faddina in sa connessione. Torra·nche a proare a pustis.",
+        "dataChannelClosedDescriptionWithAudio": "Su canale ponte est rutu e podet èssere chi nche siant problemas cun s'àudio e su vìdeu.",
+        "desktopMutedRemotelyTitle": "{{participantDisplayName}} at firmadu sa cumpartzidura de ischermu",
+        "dontRemindMe": "Non mi ddu regordes prus",
+        "invalidTenant": "Arrendatàriu non vàlidu",
+        "invalidTenantHyphenDescription": "S'arrendatàriu chi ses impreende no est vàlidu (cumintzat o acabbat cun '-').",
+        "invalidTenantLengthDescription": "S'arrendatàriu chi ses impreende est tropu longu.",
+        "screenSharingAudioOnlyTitle": "Modalidade \"Rendimentu mègius\"",
+        "suggestRecordingAction": "Avia",
+        "suggestRecordingTitle": "Registra custu addòbiu",
+        "unmuteScreen": "Avia sa cumpartzidura de ischermu",
+        "unmuteVideo": "Ativa su vìdeu",
+        "viewParticipants": "Ammustra is partetzipantes",
+        "viewVisitors": "Ammustra su pùblicu",
+        "waitingVisitorsTitle": "Sa trasmissione de s'addòbiu no est ancora cumintzada.",
+        "whiteboardLimitTitle": "Impreu de sa pitzarra",
+        "disabledIframeSecondaryNative": "S'integratzione de {{domain}} serbit isceti a propòsitos de dimustratzione. Custa mutida s'at a disconnètere de immoe a {{timeout}} minutos.",
+        "suggestRecordingDescription": "Boles aviare sa registratzione?",
+        "nextToSpeak": "Ti tocat a chistionare a pustis",
+        "screenSharingAudioOnlyDescription": "Tene contu chi sa cumpartzidura de ischermu tenet cunsighèntzias in sa modalidade \"Rendimentu mègius\" e as a impreare prus àmpiu de banda.",
+        "disabledIframeSecondaryWeb": "S'integratzione de {{domain}} serbit isceti a propòsitos de dimustratzione. Custa mutida s'at a disconnètere de immoe a {{timeout}} minutos. Imprea <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> pro s'integratzione in produtzione.",
+        "waitingVisitors": "Persones de su pùblicu abetende: {{waitingVisitors}}",
+        "whiteboardLimitDescription": "Sarva su progressu tuo, dae chi su lìmite de utentes at a èssere barigadu de immoe a pagu e sa pitzarra s'at a serrare.",
+        "joinMeeting": "Aderi"
     },
     "participantsPane": {
         "actions": {
             "admit": "Ammite",
             "admitAll": "Ammite totu",
-            "allow": "Permite a is partetzipantes:",
+            "allow": "Permite a is partetzipantes sena profilu de moderatzione:",
             "allowVideo": "Permite vìdeu",
             "askUnmute": "Pedi de ativare su micròfonu",
             "audioModeration": "Ativare su pròpiu micròfonu",
             "blockEveryoneMicCamera": "Blocare su micròfonu e sa càmera de totu is partetzipantes",
-            "invite": "Invitare una persone",
+            "invite": "Invita a una persone",
             "moreModerationActions": "Àteras optziones de moderatzione",
             "moreModerationControls": "Àteros controllos de moderatzione",
             "moreParticipantOptions": "Àteras optziones de partetzipantes",
@@ -741,16 +892,31 @@
             "stopEveryonesVideo": "Istuda su vìdeu de totu is partetzipantes",
             "stopVideo": "Firma su vìdeu",
             "unblockEveryoneMicCamera": "Isbloca su micròfonu e sa càmera de totu is partetzipantes",
-            "videoModeration": "Avia su vìdeu issoro"
+            "videoModeration": "Avia su vìdeu issoro",
+            "allowDesktop": "Permite sa cumpartzidura de ischermu",
+            "askDesktop": "Pregunta·ddi de cumpartzire s'ischermu",
+            "desktopModeration": "Avia sa cumpartzidura de ischermu",
+            "goLive": "Trasmite in direta",
+            "lowerAllHands": "Abbassa totu is manos",
+            "lowerHand": "Abbassa sa manu",
+            "stopEveryonesDesktop": "Firma totu is cumpartziduras de ischermu",
+            "stopDesktop": "Firma sa cumpartzidura de ischermu",
+            "breakoutRooms": "Aposentos separados"
         },
         "close": "Serra",
         "headings": {
             "lobby": "Aposentu de abetu ({{count}})",
             "participantsList": "Partetzipantes de sa riunione ({{count}})",
-            "waitingLobby": "Abetende in s'aposentu de abetu ({{count}})"
+            "waitingLobby": "Abetende in s'aposentu de abetu ({{count}})",
+            "viewerRequests": "Rechestas de su pùblicu: {{count}}",
+            "visitorInQueue": " ({{count}} abetende)",
+            "visitorRequests": " ({{count}} rechestas)",
+            "visitorsList": "Persones de su pùblicu ({{count}})",
+            "visitors": "Persones de su pùblicu: {{count}}"
         },
         "search": "Chirca partetzipantes",
-        "title": "Partetzipantes"
+        "title": "Partetzipantes",
+        "searchDescription": "Cumintza a iscrìere pro filtrare partetzipantes"
     },
     "passwordDigitsOnly": "Finas a {{number}} tzifras",
     "passwordSetRemotely": "Cunfiguradu dae un'àteru partetzipante",
@@ -758,7 +924,9 @@
     "polls": {
         "answer": {
             "skip": "Brinca",
-            "submit": "Imbia"
+            "submit": "Imbia",
+            "edit": "Modifica",
+            "send": "Imbia"
         },
         "by": "Dae {{name}}",
         "create": {
@@ -770,7 +938,8 @@
             "pollQuestion": "Dimanda de sondàgiu",
             "questionPlaceholder": "Faghe una pregonta",
             "removeOption": "Boga s'optzione",
-            "send": "Imbia"
+            "send": "Imbia",
+            "save": "Sarva"
         },
         "errors": {
             "notUniqueOption": "Sas optziones depent èssere ùnicas"
@@ -781,11 +950,12 @@
         },
         "results": {
             "changeVote": "Càmbia su votu",
-            "empty": "Nissunu sondàgiu in custa riunione. Crea unu sondàgiu inoghe.",
+            "empty": "Nissunu sondàgiu in custu addòbiu.",
             "hideDetailedResults": "Cua is detàllios",
             "showDetailedResults": "Ammustra detàllios",
             "vote": "Vota"
-        }
+        },
+        "closeButton": "Serra su sondàgiu"
     },
     "poweredby": "de",
     "prejoin": {
@@ -801,7 +971,9 @@
         "connection": {
             "good": "Sa connessione internet tua paret bona.",
             "nonOptimal": "Sa connessione internet no est òtima",
-            "poor": "Sa connessione internet tua est pòbera"
+            "poor": "Sa connessione internet tua est pòbera",
+            "failed": "Faddina in su test de connessione.",
+            "running": "Test de connessione in cursu…"
         },
         "connectionDetails": {
             "audioClipping": "Est probàbile chi s'àudio tuo tèngiat interrutziones.",
@@ -815,7 +987,8 @@
             "videoFreezing": "Est probàbile chi su vìdeu tuo s'at a cungelare, at a torrare nieddu o at a bènnere pixeladu. ",
             "videoHighQuality": "Est probàbile chi su vìdeu tuo tèngiat una calidade bona.",
             "videoLowQuality": "Est probàbile chi su vìdeu tuo tèngiat una calidade bàscia in contu de lestresa de fotogrammas e risolutzione.",
-            "videoTearing": "Est probàbile chi su vìdeu tuo bèngiat pixeladu o tèngiat difetos visuales."
+            "videoTearing": "Est probàbile chi su vìdeu tuo bèngiat pixeladu o tèngiat difetos visuales.",
+            "testFailed": "Su test de connessione at agatadu problemas imprevistos, ma forsis no ant a tènnere cunsighèntzias in sa sessione tua."
         },
         "copyAndShare": "Còpia e cumpartzi su ligòngiu de sa riunione",
         "dialInMeeting": "Intra a sa riunione cun unu nùmeru telefònicu",
@@ -838,14 +1011,17 @@
         "joinWithoutAudio": "Intra sena àudio",
         "keyboardShortcuts": "Ativa incurtzaduras de tecladu",
         "linkCopied": "Ligòngiu copiadu in punta de billete",
-        "lookGood": "Su micròfonu tuo est funtzionende",
+        "lookGood": "Is dispositivos tuos sunt funtzionende",
         "or": "opuru",
         "premeeting": "Pre-riunione",
         "screenSharingError": "Faddina in sa cumpartzidura de s'ischermu",
         "startWithPhone": "Avia imperende s'àudio de su telèfonu",
         "videoOnlyError": "Faddina de vìdeu:",
         "videoTrackError": "Impossìbile creare una rasta de vìdeu.",
-        "viewAllNumbers": "Ammustra totu is nùmeros"
+        "viewAllNumbers": "Ammustra totu is nùmeros",
+        "proceedAnyway": "Sighi su pròpiu",
+        "unsafeRoomConsent": "Cumprendo is arriscos e bògio aderire a s'addòbiu",
+        "recordingWarning": "Podet èssere chi àteras persones siant registrende custa mutida"
     },
     "presenceStatus": {
         "busy": "No a disponimentu",
@@ -895,7 +1071,7 @@
         "error": "Faddina in sa registratzione. Torra a proare.",
         "errorFetchingLink": "Faddina in su recùperu su ligòngiu de sa registratzione.",
         "expandedOff": "Registratzione firmada",
-        "expandedOn": "Registrende sa riunione.",
+        "expandedOn": "Registrende sa riunione",
         "expandedPending": "Aviende sa registratzione…",
         "failedToStart": "Faddina in s'aviu de sa registratzione",
         "fileSharingdescription": "Cumpartzi su ligòngiu de sa registratzione cun is partetzipantes a sa riunione",
@@ -923,7 +1099,7 @@
         "on": "Registratzione aviada",
         "onBy": "{{name}} at aviadu sa registratzione",
         "onlyRecordSelf": "Registra isceti is flussos mios de àudio e de vìdeu",
-        "pending": "Preparende pro registrare sa riunione",
+        "pending": "Preparende sa registratzione de sa riunione…",
         "rec": "REG",
         "saveLocalRecording": "Sarva s'archìviu de registratzione in locale (Beta)",
         "serviceDescription": "Sa registratzione at a èssere sarvada dae su servìtziu de registratzione",
@@ -937,7 +1113,12 @@
         "title": "Registrende",
         "unavailable": "Ohia {{serviceName}} no est a disponimentu. Semus traballende pro acontzare su problema. Torra a proare a pustis.",
         "unavailableTitle": "Sa registratzione no est a disponimentu",
-        "uploadToCloud": "Càrriga in sa nue"
+        "uploadToCloud": "Càrriga in sa nue",
+        "policyError": "As chircadu de aviare sa registratzione tropu a sa lestra. Torra·nche a proare a pustis.",
+        "recordAudioAndVideo": "Registra s'àudio e su vìdeu",
+        "recordTranscription": "Registra sa trascritzione",
+        "noMicPermission": "Est istadu possìbile a creare una rasta pro su micròfonu. Dona permissu pro impreare su micròfonu.",
+        "showAdvancedOptions": "Optziones avantzadas"
     },
     "screenshareDisplayName": "Ischermu de {{name}}",
     "sectionList": {
@@ -947,7 +1128,14 @@
         "about": "Podes agiùnghere una $t(lockRoomPassword) a sa riunione. Is partetzipantes ant a dèpere frunire sa $t(lockRoomPassword) prima de èssere ammìtidos a sa riunione.",
         "aboutReadOnly": "Is partetzipantes moderadores podent agiùnghere una $t(lockRoomPassword) a sa riunione. Is partetzipantes ant a dèpere frunire sa $t(lockRoomPassword) prima de èssere ammìtidos a sa riunione.",
         "insecureRoomNameWarning": "Su nòmine de custu aposentu no est seguru. Podet èssere chi lompant partetzipantes chi no as invitadu a sa cunferèntzia. Proa a crèschere sa seguresa de sa riunione cun su butone de seguresa.",
-        "title": "Optziones de seguresa"
+        "title": "Optziones de seguresa",
+        "unsafeRoomActions": {
+            "meeting": "Piga in cunsideru de amparare s'addòbiu tuo impreende su butone de seguresa.",
+            "welcome": "Piga in cunsideru unu nòmine prus ispetzìficu pro s'addòbiu, o sèbera unu de custos cussìgios.",
+            "prejoin": "Piga in cunsideru s'impreu de unu nòmine prus ispetzìficu pro s'addòbiu."
+        },
+        "insecureRoomNameWarningWeb": "Su nòmine de custu aposentu no est seguru. Podet èssere chi aderint a s'addòbiu persones chi non boles. {{recommendAction}} Àteras informatziones in pitzus de sa seguresa de is addòbios <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">inoghe</a>.",
+        "insecureRoomNameWarningNative": "Su nòmine de custu aposentu no est seguru. Podet èssere chi aderint a s'addòbiu persones chi non boles. {{recommendAction}} Àteras informatziones in pitzus de sa seguresa de is addòbios "
     },
     "settings": {
         "buttonLabel": "Cunfiguratzione",
@@ -989,7 +1177,15 @@
         "startReactionsMuted": "Pone is sonos de reatzione a sa muda pro totus",
         "startVideoMuted": "Totus cumintzant a sa cua",
         "talkWhileMuted": "Chistiona cando a sa muda",
-        "title": "Cunfiguratzione"
+        "title": "Cunfiguratzione",
+        "audio": "Àudio",
+        "chatWithPermissions": "Serbit su permissu pro impreare sa tzarrada",
+        "followMeRecorder": "Sa persone chi est registrende mi sighit",
+        "moderatorOptions": "Optziones de moderatzione",
+        "notifications": "Notìficas",
+        "video": "Vìdeu",
+        "shortcuts": "Incurtzaduras",
+        "showSubtitlesOnStage": "Ammustra sutatìtulos in su palcu"
     },
     "settingsView": {
         "advanced": "Avantzadas",
@@ -1019,7 +1215,10 @@
         "startWithAudioMuted": "Cumintza cun s'àudio a sa muda",
         "startWithVideoMuted": "Cumintza cun su vìdeu disativadu",
         "terms": "Cunditziones",
-        "version": "Versione"
+        "version": "Versione",
+        "apply": "Àplica",
+        "sdkVersion": "Versione SDK",
+        "gavatarMessage": "Si s'indiritzu de posta eletrònica tuo est assotziadu cun unu contu de Gravatar, dd'amus a impreare pro ammustrare sa fotografia de profilu tua."
     },
     "share": {
         "dialInfoText": "\n\nBoles isceti ascurtare sa cunferèntzia dae su telèfonu?\n\n{{defaultDialInNumber}}Incarca custu ligòngiu pro bìdere is nùmeros de telèfonu de custa riunione{{dialInfoPageUrl}}",
@@ -1042,11 +1241,13 @@
         "seconds": "{count} seg",
         "speakerStats": "Istatìsticas de partetzipante",
         "speakerTime": "Tempus de partetzipante",
-        "surprised": "Ispantadu"
+        "surprised": "Ispantadu",
+        "searchDescription": "Cumintza a iscrìere pro filtrare partetzipantes",
+        "labelTooltip": "Nùmeru de partetzipantes: {{count}}"
     },
     "startupoverlay": {
         "genericTitle": "Sa riunione tenet bisòngiu de impreare sa càmera e su micròfonu tuos.",
-        "policyText": "",
+        "policyText": " ",
         "title": "{{app}} tenet bisòngiu de impreare sa càmera e su micròfonu tuos."
     },
     "suspendedoverlay": {
@@ -1061,7 +1262,7 @@
     "toolbar": {
         "Settings": "Cunfiguratzione",
         "accessibilityLabel": {
-            "Settings": "Càmbia sa cunfiguratzione",
+            "Settings": "Aberi is cunfiguratziones",
             "audioOnly": "Càmbia àudio isceti",
             "audioRoute": "Sèbera su dispositivu de àudio",
             "boo": "Boo",
@@ -1096,13 +1297,13 @@
             "moreActions": "Àteras atziones",
             "moreActionsMenu": "Menù de atziones additzionales",
             "moreOptions": "Ammustra àteras optziones",
-            "mute": "Ativa o disativa s'àudio",
+            "mute": "Pone su micròfonu a sa muda",
             "muteEveryone": "Pone totus a sa muda",
             "muteEveryoneElse": "Pone totus a sa muda",
             "muteEveryoneElsesVideoStream": "Istuda su vìdeu de totu is àteros partetzipantes",
             "muteEveryonesVideoStream": "Istuda su vìdeu de totu is partetzipantes",
-            "noiseSuppression": "Limpiadura de abbolotu",
-            "participants": "Partetzipantes",
+            "noiseSuppression": "Limpiadura additzionale de abbolotu (BETA)",
+            "participants": "Aberi su pannellu de partetzipantes. {{participantsCount}} partetzipantes",
             "pip": "Ativa o disativa sa modalidade immàgine in immàgine",
             "privateMessage": "Imbia messàgiu de testu privadu",
             "profile": "Modìfica su profilu",
@@ -1129,7 +1330,32 @@
             "undock": "Boga e pone in una ventana separada",
             "videoblur": "Ativa o disativa isfocadu",
             "videomute": "Avia o firma sa càmera",
-            "whiteboard": "Ammustra o cua sa pitzarra"
+            "whiteboard": "Ammustra o cua sa pitzarra",
+            "closeMoreActions": "Serra su menù de àteras optziones",
+            "closeParticipantsPane": "Serra su pannellu de partetzipantes",
+            "closedCaptions": "Sutatìtulos",
+            "documentClose": "Serra su documentu cumpartzidu",
+            "documentOpen": "Aberi su documentu cumpartzidu",
+            "heading": "Barra de ainas",
+            "hideWhiteboard": "Cua sa pitzarra",
+            "love": "Coro",
+            "reactions": "Reatziones",
+            "stopScreenSharing": "Firma sa cumpartzidura de ischermu tua",
+            "stopSharedVideo": "Firma su vìdeu",
+            "unmute": "Ativa su micròfonu",
+            "videomuteGUMPending": "Connessione a sa càmera tua in cursu",
+            "videounmute": "Avia sa càmera",
+            "muteGUMPending": "Connetende su micròfonu tuo",
+            "react": "Reatziones a su messàgiu",
+            "breakoutRooms": "Aposentos separados",
+            "enterTileView": "Intra in visualizatzione in mosàicu",
+            "exitFullScreen": "Essi de ischermu in mannària prena",
+            "exitTileView": "Essi de sa visualizatzione in mosàicu",
+            "lowerHand": "Abbassa sa manu",
+            "openChat": "Aberi sa tzarrada",
+            "showWhiteboard": "Ammustra sa pitzarra",
+            "enterFullScreen": "Ammustra in mannària prena",
+            "closeChat": "Serra sa tzarrada"
         },
         "addPeople": "Agiunghe gente a sa mutida",
         "audioOnlyOff": "Disativa modalidade de àmpiu de banda bàsciu",
@@ -1143,7 +1369,7 @@
         "clap": "Aplàusu",
         "closeChat": "Serra sa tzarrada",
         "closeReactionsMenu": "Serra su menù de reatziones",
-        "disableNoiseSuppression": "Disativa sa limpiadura de abbolotu",
+        "disableNoiseSuppression": "Disativa sa limpiadura additzionale de abbolotu (BETA)",
         "disableReactionSounds": "Podes disativare is sonos de reatzione pro custa riunione",
         "dock": "Apica a sa ventana printzipale",
         "documentClose": "Serra su documentu cumpartzidu",
@@ -1175,7 +1401,7 @@
         "lowerYourHand": "Abbassa sa manu",
         "moreActions": "Àteras atziones",
         "moreOptions": "Àteras optziones",
-        "mute": "Ativa o disativa s'àudio",
+        "mute": "Pone su micròfonu a sa muda",
         "muteEveryone": "Pone totus a sa muda",
         "muteEveryonesVideo": "Istuda sa càmera de totus",
         "noAudioSignalDesc": "Si no dd'as postu a sa muda dae sa cunfiguratzione de sistema o dae su dispositivu, forsis depes cambiare dispositivu.",
@@ -1183,7 +1409,7 @@
         "noAudioSignalDialInDesc": "Podes fintzas intrare cun una mutida:",
         "noAudioSignalDialInLinkDesc": "Nùmeros de mutida",
         "noAudioSignalTitle": "Nissunu sinnale dae su micròfonu tuo.",
-        "noiseSuppression": "Limpiadura de abbolotu",
+        "noiseSuppression": "Limpiadura additzionale de abbolotu (BETA)",
         "noisyAudioInputDesc": "Su micròfonu tuo faghet remore, forsis ti depes pònnere a sa muda o depes cambiare dispositivu.",
         "noisyAudioInputTitle": "Su micròfonu tuo faghet remore.",
         "openChat": "Aberi sa tzarrada",
@@ -1221,7 +1447,17 @@
         "toggleCamera": "Càmbia càmera",
         "undock": "Boga e pone in una ventana separada",
         "videoSettings": "Impostatziones de sos vìdeos",
-        "videomute": "Avia o firma sa càmera"
+        "videomute": "Avia o firma sa càmera",
+        "closeParticipantsPane": "Serra su pannellu de is partetzipantes",
+        "closedCaptions": "Sutatìtulos",
+        "enableNoiseSuppression": "Ativa sa limpiadura additzionale de abbolotu (BETA)",
+        "love": "Coro",
+        "muteGUMPending": "Connessione a su micròfonu tuo in cursu",
+        "reactionHeart": "Imbia unu coro comente reatzione",
+        "reactions": "Reatziones",
+        "videounmute": "Avia sa càmera",
+        "unmute": "Ativa su micròfonu",
+        "videomuteGUMPending": "Connessione a sa càmera tua in cursu"
     },
     "transcribing": {
         "ccButtonTooltip": "Avia o firma sutatìtulos",
@@ -1237,7 +1473,13 @@
         "stop": "No ammustres prus sutatìtluos",
         "subtitles": "Sutatìtulos",
         "subtitlesOff": "Disativada",
-        "tr": "TR"
+        "tr": "TR",
+        "failed": "Faddina in sa trascritzione",
+        "labelTooltip": "Trascritzione de s'addòbiu in cursu.",
+        "openClosedCaptions": "Aberi is sutatìtulos",
+        "original": "Originale",
+        "translateTo": "Tradue a",
+        "labelTooltipExtra": "In prus, sa trascritzione at a èssere a disponimentu a pustis."
     },
     "userMedia": {
         "grantPermissions": "Cuntzede permissos pro atzèdere a sa càmera e a su micròfonu tuos."
@@ -1270,7 +1512,9 @@
         "performanceSettings": "Impostatziones de rendimentu",
         "sd": "SD",
         "sdTooltip": "Vìdeu in definitzione istandard (SD)",
-        "standardDefinition": "Definitzione istàndard (SD)"
+        "standardDefinition": "Definitzione istàndard (SD)",
+        "recording": "Registratzione de s'addòbiu in cursu.",
+        "streaming": "Trasmissione in cursu"
     },
     "videothumbnail": {
         "connectionInfo": "Informatzione de sa connessione",
@@ -1292,7 +1536,12 @@
         "showSelfView": "Ammustra sa visualizatzione pròpia",
         "unpinFromStage": "Boga dae pitzu",
         "videoMuted": "Càmera disativada",
-        "videomute": "Custa persone at firmadu sa càmera"
+        "videomute": "Custa persone at firmadu sa càmera",
+        "demote": "Cunverte a pùblicu (visualizatzione ebbia)",
+        "domuteDesktopOfOthers": "Firma sa cumpartzidura de ischermu de totu is àteras persones",
+        "mirrorVideo": "Riprodui su vìdeu meu",
+        "verify": "Verifica su partetzipante",
+        "domuteDesktop": "Firma sa cumpartzidura de s'ischermu"
     },
     "virtualBackground": {
         "addBackground": "Agiunghe un'isfundu",
@@ -1316,7 +1565,11 @@
         "title": "Isfundos virtuales",
         "uploadedImage": "Immàgine carrigada {{index}}",
         "webAssemblyWarning": "WebAssembly non cumpatìbile",
-        "webAssemblyWarningDescription": "WebAssembly est disativadu o incumpatìbile cun custu navigadore"
+        "webAssemblyWarningDescription": "WebAssembly est disativadu o incumpatìbile cun custu navigadore",
+        "accessibilityLabel": {
+            "selectBackground": "Seletziona un'isfundu",
+            "currentBackground": "Isfundu atuale: {{background}}"
+        }
     },
     "volumeSlider": "Barra de volùmene",
     "welcomepage": {
@@ -1366,6 +1619,70 @@
         "settings": "Cunfiguratzione",
         "startMeeting": "Avia sa riunione",
         "terms": "Cunditziones",
-        "title": "Vìdeu-cunferèntzia segura, prena de funtzionalidades, lìbera e de badas"
+        "title": "Vìdeu-cunferèntzia segura, prena de funtzionalidades, lìbera e de badas",
+        "recentMeetings": "Is addòbios reghentes tuos",
+        "upcomingMeetings": "Is addòbios imbenientes tuos",
+        "meetingsAccessibilityLabel": "Addòbios"
+    },
+    "bandwidthSettings": {
+        "leaveEmpty": "lassa·ddu bòidu",
+        "leaveEmptyEffect": "pro permìtere previsiones aprossimativas",
+        "possibleValues": "Valores possìbiles",
+        "title": "Cunfiguratziones de àmpiu de banda",
+        "zeroEffect": "pro disativare su vìdeu",
+        "setAssumedBandwidthBps": "Àmpiu de banda ipotèticu (bps)",
+        "assumedBandwidthBps": "pro es. 10.000.000 pro 10 Mbps",
+        "assumedBandwidthBpsWarning": "Is valores prus artos podent provocare problemas de rete.",
+        "customValueEffect": "pro cunfigurare su valore atuale de bps",
+        "customValue": "valore personalizadu"
+    },
+    "closedCaptionsTab": {
+        "emptyState": "Is sutatìtulos ant a èssere a disponimentu cando sa moderatzione ddos at a aviare",
+        "startClosedCaptionsButton": "Avia is sutatìtulos"
+    },
+    "fileSharing": {
+        "downloadFailedTitle": "Faddina in s'iscarrigamentu",
+        "downloadFile": "Iscarrigamentu",
+        "dragAndDrop": "Trìsina e lassa inoghe o in cale si siat àteru logu de s'ischermu is archìvios",
+        "fileTooLargeDescription": "Assegura·ti chi s'archìviu non siat prus mannu de {{ maxFileSize }}.",
+        "fileTooLargeTitle": "S'archìviu seletzionadu est tropu mannu",
+        "removeFile": "Cantzella",
+        "uploadFailedDescription": "Torra·nche a proare.",
+        "uploadFailedTitle": "Faddina in sa càrriga",
+        "uploadFile": "Cumpartzi un'archìviu",
+        "downloadFailedDescription": "Torra·nche a proare.",
+        "fileAlreadyUploaded": "Custu archìviu est istadu giai carrigadu a custu addòbiu."
+    },
+    "filmstrip": {
+        "accessibilityLabel": {
+            "heading": "Miniaturas de vìdeu"
+        }
+    },
+    "pinParticipant": "{{participantName}} - Apica",
+    "unpinParticipant": "{{participantName}} - Boga dae pitzus",
+    "visitors": {
+        "joinMeeting": {
+            "title": "Aderende a s'addòbiu",
+            "wishToSpeak": "Si boles chistionare, àrtzia sa manu cun s'icona in bàsciu e abeta su permissu de sa moderatzione.",
+            "description": "Ses parte de su pùblicu de custa cunferèntzia.",
+            "raiseHand": "Àrtzia sa manu"
+        },
+        "labelTooltip": "Persones in su pùblicu: {{count}}",
+        "notification": {
+            "noMainParticipantsDescription": "S'addòbiu depet èssere aviadu dae una persone. Torra·nche a proare a pustis.",
+            "noMainParticipantsTitle": "Custu addòbiu no at ancora cumintzadu.",
+            "noVisitorLobby": "Non podes aderire cun un'aposentu de abetu ativu pro s'addòbiu.",
+            "title": "Ses parte de su pùblicu de s'addòbiu",
+            "demoteDescription": "Imbiadu inoghe dae {{actor}}, àrtzia sa manu pro partetzipare",
+            "notAllowedPromotion": "Sa rechesta tua depet èssere aprovada in antis dae calicuna persone."
+        },
+        "waitingMessage": "As a aderire a s'addòbiu comente s'at a aviare sa trasmissione.",
+        "chatIndicator": "(in su pùblicu)"
+    },
+    "whiteboard": {
+        "accessibilityLabel": {
+            "heading": "Pitzarra"
+        },
+        "screenTitle": "Pitzarra"
     }
 }
