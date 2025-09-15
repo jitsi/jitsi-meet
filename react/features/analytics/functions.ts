@@ -19,7 +19,6 @@ import { parseURLParams } from '../base/util/parseURLParams';
 import { parseURIString } from '../base/util/uri';
 import { isPrejoinPageVisible } from '../prejoin/functions';
 
-import AmplitudeHandler from './handlers/AmplitudeHandler';
 import MatomoHandler from './handlers/MatomoHandler';
 import logger from './logger';
 
@@ -109,6 +108,7 @@ export async function createHandlers({ getState }: IStore) {
 
     if (amplitudeAPPKey) {
         try {
+            const { default: AmplitudeHandler } = await import('./handlers/AmplitudeHandler');
             const amplitude = new AmplitudeHandler(handlerConstructorOptions);
 
             analytics.amplitudeIdentityProps = amplitude.getIdentityProps();
