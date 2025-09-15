@@ -237,8 +237,23 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
     _onRoomChange(value: string) {
         this.setState({
             room: value,
-            insecureRoomName: Boolean(this.props._enableInsecureRoomNameWarning && value && isInsecureRoomName(value))
         });
+
+        // Check if we need to validate the room name
+        if (this.props._enableInsecureRoomNameWarning && value) {
+            isInsecureRoomName(value).then(isInsecure => {
+                // Only update state if component is still mounted and value hasn't changed
+                if (this._mounted && this.state.room === value) {
+                    this.setState({
+                        insecureRoomName: isInsecure
+                    });
+                }
+            });
+        } else {
+            this.setState({
+                insecureRoomName: false
+            });
+        }
     }
 
     /**
