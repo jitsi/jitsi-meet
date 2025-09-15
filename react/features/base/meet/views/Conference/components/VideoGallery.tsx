@@ -18,9 +18,6 @@ const VideoGallery = ({ participants, flipX, translate }: VideoGalleryProps) => 
         // Local user first
         if (a.local) return -1;
         if (b.local) return 1;
-        // dominantSpeaker next
-        if (a.dominantSpeaker) return -1;
-        if (b.dominantSpeaker) return 1;
         // alfabetical order
         return a.name.localeCompare(b.name);
     });
