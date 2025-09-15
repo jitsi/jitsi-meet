@@ -1,4 +1,3 @@
-import { ExcalidrawApp } from '@jitsi/excalidraw';
 import clsx from 'clsx';
 import i18next from 'i18next';
 import React, { useCallback, useEffect, useRef } from 'react';
@@ -20,6 +19,7 @@ import {
     isWhiteboardOpen,
     isWhiteboardVisible
 } from '../../functions';
+import { useExcalidrawApp } from '../../hooks/useExcalidraw';
 
 /**
  * Space taken by meeting elements like the subject and the watermark.
@@ -46,6 +46,7 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
     const excalidrawAPIRef = useRef<any>(null);
     const collabAPIRef = useRef<any>(null);
 
+    const { ExcalidrawApp, isLoading, error, loadExcalidrawApp } = useExcalidrawApp();
     const isOpen = useSelector(isWhiteboardOpen);
     const isVisible = useSelector(isWhiteboardVisible);
     const isInTileView = useSelector(shouldDisplayTileView);
@@ -66,6 +67,15 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
 
         collabAPIRef.current.setUsername(localParticipantName);
     }, [ localParticipantName ]);
+
+    // Load ExcalidrawApp when whiteboard is opened
+    useEffect(() => {
+        if (isOpen && !ExcalidrawApp && !isLoading && !error) {
+            loadExcalidrawApp().catch(() => {
+                // Error is handled by the hook
+            });
+        }
+    }, [ isOpen, ExcalidrawApp, isLoading, error, loadExcalidrawApp ]);
 
     /**
     * Computes the width and the height of the component.
@@ -141,20 +151,32 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
                                 { props.t('whiteboard.accessibilityLabel.heading') }
                             </span>
                         }
-                        <ExcalidrawApp
-                            collabDetails = { collabDetails }
-                            collabServerUrl = { collabServerUrl }
-                            excalidraw = {{
-                                isCollaborating: true,
-                                langCode: i18next.language,
+                        {isLoading && (
+                            <div className = 'whiteboard-loading'>
+                                { props.t('whiteboard.loading') }
+                            </div>
+                        )}
+                        {error && (
+                            <div className = 'whiteboard-error'>
+                                { props.t('whiteboard.error') }
+                            </div>
+                        )}
+                        {ExcalidrawApp && (
+                            <ExcalidrawApp
+                                collabDetails = { collabDetails }
+                                collabServerUrl = { collabServerUrl }
+                                excalidraw = {{
+                                    isCollaborating: true,
+                                    langCode: i18next.language,
 
-                                // @ts-ignore
-                                ref: excalidrawRef,
-                                theme: 'light',
-                                UIOptions: WHITEBOARD_UI_OPTIONS
-                            }}
-                            getCollabAPI = { getCollabAPI }
-                            getExcalidrawAPI = { getExcalidrawAPI } />
+                                    // @ts-ignore
+                                    ref: excalidrawRef,
+                                    theme: 'light',
+                                    UIOptions: WHITEBOARD_UI_OPTIONS
+                                }}
+                                getCollabAPI = { getCollabAPI }
+                                getExcalidrawAPI = { getExcalidrawAPI } />
+                        )}
                     </div>
                 )
             }
