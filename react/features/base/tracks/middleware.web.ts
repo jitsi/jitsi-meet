@@ -58,6 +58,20 @@ MiddlewareRegistry.register(store => next => action => {
             logTracksForParticipant(store.getState()['features/base/tracks'], participantId, 'Track added');
         }
 
+        // Apply speaker mute state to new remote audio tracks
+        if (!local && action.track?.jitsiTrack && action.track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO) {
+            const state = store.getState();
+            const speakerMuted = state['features/toolbox']?.speakerMuted;
+
+            if (speakerMuted) {
+                try {
+                    action.track.jitsiTrack.mute();
+                } catch (error) {
+                    console.warn('Failed to apply speaker mute to new audio track:', error);
+                }
+            }
+        }
+
         return result;
     }
     case TRACK_NO_DATA_FROM_SOURCE: {
