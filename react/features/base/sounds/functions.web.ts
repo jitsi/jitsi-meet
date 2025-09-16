@@ -17,11 +17,10 @@ export function getSoundsPath() {
  * @returns {Function}
  */
 export function setNewAudioOutputDevice(deviceId: string) {
-    return function(_dispatch: IStore['dispatch'], getState: IStore['getState']) {
-        const sounds = getState()['features/base/sounds'];
-
-        for (const [ , sound ] of sounds) {
-            sound.audioElement?.setSinkId?.(deviceId);
-        }
+    return function(_dispatch: IStore['dispatch'], _getState: IStore['getState']) {
+        // Route through SoundManager to apply sink to managed pool
+        import('./SoundManager.web').then(({ default: SoundManager }) => {
+            SoundManager.setSinkId(deviceId);
+        });
     };
 }
