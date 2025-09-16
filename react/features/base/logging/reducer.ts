@@ -57,6 +57,7 @@ export interface ILoggingState {
     config: ILoggingConfig;
     logCollector?: {
         flush: () => void;
+        maxEntryLength?: number;
         start: () => void;
         stop: () => void;
     };
