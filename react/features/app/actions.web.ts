@@ -60,17 +60,10 @@ export function appNavigate(uri?: string) {
                 // FIXME Turn location's host, hostname, and port properties into
                 // setters in order to reduce the risks of inconsistent state.
                 location.hostname = defaultLocation.hostname;
-
-                if (location.pathname === "/") {
-                    const defaultLocation = parseURIString(getDefaultURL(getState));
-                    defaultLocation.pathname = "/";
-                    window.history.pushState({}, document.title, defaultLocation.pathname);
-                } else {
-                    location.pathname =
-                        defaultLocation.pathname === "/new-meeting"
-                            ? "/" + location.pathname.substr(1)
-                            : defaultLocation.pathname + location.pathname.substr(1);
-                }
+                location.pathname =
+                    defaultLocation.pathname === "/new-meeting"
+                        ? "/" + location.pathname.substr(1)
+                        : defaultLocation.pathname + location.pathname.substr(1);
                 location.port = defaultLocation.port;
                 location.protocol = defaultLocation.protocol;
             } else {
