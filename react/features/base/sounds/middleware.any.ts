@@ -42,15 +42,94 @@ function _playSound({ getState }: IStore, soundId: string) {
     const sounds = getState()['features/base/sounds'];
     const sound = sounds.get(soundId);
 
+    // Debug logging for recording sounds
+    if (soundId.includes('RECORDING') || soundId.includes('STREAMING')) {
+        logger.info('_playSound debug:', {
+            soundId,
+            soundExists: !!sound,
+            hasAudioElement: !!sound?.audioElement,
+            soundsSize: sounds.size,
+            allSoundIds: Array.from(sounds.keys())
+        });
+    }
+
     if (sound) {
         if (sound.audioElement) {
             sound.audioElement.play();
         } else {
             logger.warn(`PLAY_SOUND: sound not loaded yet for id: ${soundId}`);
+
+            // For recording sounds, keep retrying until audio element is loaded
+            if (soundId.includes('RECORDING') || soundId.includes('STREAMING')) {
+                _retryPlaySound(getState, soundId, 1);
+            }
         }
     } else {
         logger.warn(`PLAY_SOUND: no sound found for id: ${soundId}`);
+        // For recording sounds, retry until found and loaded
+        if (soundId.includes('RECORDING') || soundId.includes('STREAMING')) {
+            setTimeout(() => {
+                const retrySounds = getState()['features/base/sounds'];
+                const retrySound = retrySounds.get(soundId);
+
+                logger.info('_playSound retry debug (not found):', {
+                    soundId,
+                    retrySoundExists: !!retrySound,
+                    hasAudioElement: !!retrySound?.audioElement
+                });
+                if (retrySound?.audioElement) {
+                    retrySound.audioElement.play();
+                } else {
+                    // Try one more time with an even longer delay
+                    setTimeout(() => {
+                        const finalRetrySounds = getState()['features/base/sounds'];
+                        const finalRetrySound = finalRetrySounds.get(soundId);
+
+                        if (finalRetrySound?.audioElement) {
+                            finalRetrySound.audioElement.play();
+                        }
+                    }, 3000);
+                }
+            }, 2000); // Even longer delay for sounds that weren't found
+        }
     }
+}
+
+/**
+ * Retries playing a sound with exponential backoff until it's loaded.
+ *
+ * @param {Function} getState - Redux getState function.
+ * @param {string} soundId - The sound ID to retry.
+ * @param {number} attempt - Current attempt number.
+ * @private
+ * @returns {void}
+ */
+function _retryPlaySound(getState: IStore['getState'], soundId: string, attempt: number) {
+    const maxAttempts = 10; // Maximum 10 attempts
+    const baseDelay = 500; // Start with 500ms
+    const delay = Math.min(baseDelay * Math.pow(2, attempt - 1), 5000); // Exponential backoff, max 5s
+
+    setTimeout(() => {
+        const sounds = getState()['features/base/sounds'];
+        const sound = sounds.get(soundId);
+
+        logger.info(`_playSound retry attempt ${attempt}:`, {
+            soundId,
+            soundExists: !!sound,
+            hasAudioElement: !!sound?.audioElement,
+            delay
+        });
+
+        if (sound?.audioElement) {
+            // Success! Audio element is loaded
+            sound.audioElement.play();
+        } else if (attempt < maxAttempts) {
+            // Try again
+            _retryPlaySound(getState, soundId, attempt + 1);
+        } else {
+            logger.warn(`Failed to load audio element for ${soundId} after ${maxAttempts} attempts`);
+        }
+    }, delay);
 }
 
 /**
