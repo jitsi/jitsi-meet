@@ -262,7 +262,7 @@ const PreMeetingScreen = ({
             const locationURL = window.location;
             const baseUrl = `${locationURL.protocol}//${locationURL.host}`;
             const newUrl = `${baseUrl}/new-meeting`;
-            window.history.replaceState({}, document.title, newUrl);
+            window.history.pushState({}, document.title, newUrl);
             dispatch(appNavigate(newUrl));
         } catch (error: Error | any) {
             dispatch(setCreateRoomError(true, error.message));

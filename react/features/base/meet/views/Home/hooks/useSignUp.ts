@@ -6,17 +6,12 @@ import { useLocalStorage } from "../../../LocalStorageManager";
 import { CryptoService } from "../../../services/crypto.service";
 import { KeysService } from "../../../services/keys.service";
 import { SdkManager } from "../../../services/sdk-manager.service";
+import { LoginCredentials } from "../../../services/types/command.types";
 import { IFormValues } from "../types";
-
-export interface OnSignUpPayload {
-    token: string;
-    newToken: string;
-    userData: UserSettings;
-}
 
 interface useSignupProps {
     onClose: () => void;
-    onSignup?: (signupData: OnSignUpPayload) => void;
+    onSignup?: (signupData: LoginCredentials) => void;
     translate: (key: string) => string;
     referrer?: string;
 }
@@ -44,9 +39,10 @@ export const useSignup = ({ onClose, onSignup, translate, referrer }: useSignupP
         storageManager.saveCredentials(token, newToken, mnemonic, user);
 
         onSignup?.({
+            mnemonic,
             token,
             newToken,
-            userData: user,
+            user,
         });
     };
 

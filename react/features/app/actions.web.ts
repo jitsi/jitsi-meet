@@ -18,7 +18,7 @@ import {
     redirectWithStoredParams,
     reloadWithStoredParams,
 } from "./actions.any";
-import { getDefaultURL, getName } from "./functions.web";
+import { getDefaultURL } from "./functions.web";
 import logger from "./logger";
 import { IStore } from "./types";
 
