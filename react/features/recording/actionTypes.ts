@@ -102,3 +102,13 @@ export const STOP_LOCAL_RECORDING = 'STOP_LOCAL_RECORDING';
  * }
  */
 export const SET_START_RECORDING_NOTIFICATION_SHOWN = 'SET_START_RECORDING_NOTIFICATION_SHOWN';
+
+/**
+ * The type of the action which sets the automatic meeting data download preference.
+ *
+ * {
+ *     type: SET_AUTO_DOWNLOAD_MEETING_DATA,
+ *     enabled: boolean
+ * }
+ */
+export const SET_AUTO_DOWNLOAD_MEETING_DATA = 'SET_AUTO_DOWNLOAD_MEETING_DATA';

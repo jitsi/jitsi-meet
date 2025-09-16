@@ -448,6 +448,9 @@ var config = {
 
     //     // Whether to disable the self recording feature (only local participant streams).
     //     disableSelfRecording: false,
+
+    //     // Whether to automatically download the recorded meeting data when the recording ends.
+    //     autoDownloadMeetingData: false
     // },
 
     // Customize the Live Streaming dialog. Can be modified for a non-YouTube provider.
@@ -857,6 +860,7 @@ var config = {
     //    'closedcaptions',
     //    'desktop',
     //    'download',
+    //    'downloaddata,
     //    'embedmeeting',
     //    'etherpad',
     //    'feedback',
