@@ -79,32 +79,6 @@ interface IProps extends AbstractProps {
     _nbUnreadPolls: number;
 
     /**
-     * Function to send a text message.
-     *
-     * @protected
-     */
-    _onSendMessage: Function;
-
-    /**
-     * Function to toggle the chat window.
-     */
-    _onToggleChat: Function;
-
-    /**
-     * Function to display the chat tab.
-     *
-     * @protected
-     */
-    _onToggleChatTab: Function;
-
-    /**
-     * Function to display the polls tab.
-     *
-     * @protected
-     */
-    _onTogglePollsTab: Function;
-
-    /**
      * Whether or not to block chat access with a nickname input form.
      */
     _showNamePrompt: boolean;
@@ -244,10 +218,6 @@ const Chat = ({
     _messages,
     _nbUnreadMessages,
     _nbUnreadPolls,
-    _onSendMessage,
-    _onToggleChat,
-    _onToggleChatTab,
-    _onTogglePollsTab,
     _showNamePrompt,
     _width,
     dispatch,
