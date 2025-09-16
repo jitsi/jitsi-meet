@@ -107,7 +107,173 @@ local function send_polls_message_to_all(room, data_str)
     end
 end
 
-process_host_module(muc_domain_prefix..'.'..main_virtual_host, function(host_module, host)
+-- Keeps track of the current state of the polls in each room,
+-- by listening to "new-poll" and "answer-poll" messages,
+-- and updating the room poll data accordingly.
+-- This mirrors the client-side poll update logic.
+module:hook('message/host', function(event)
+    local stanza = event.stanza;
+
+    -- we are interested in all messages without a body that are not groupchat
+    if stanza.attr.type == 'groupchat' or stanza:get_child('body') then
+        return;
+    end
+
+    local json_message = stanza:get_child('json-message', 'http://jitsi.org/jitmeet')
+        or stanza:get_child('json-message');
+    if not json_message or not json_message.attr.roomJid then
+        return;
+    end
+
+    local room = get_room_from_jid(room_jid_match_rewrite(json_message.attr.roomJid));
+    if not room then
+        module:log('warn', 'No room found found for %s', json_message.attr.roomJid);
+        return;
+    end
+
+    local occupant_jid = stanza.attr.from;
+    local occupant = room:get_occupant_by_real_jid(occupant_jid);
+    if not occupant then
+        module:log("error", "Occupant sending msg %s was not found in room %s", occupant_jid, room.jid)
+        return;
+    end
+
+    local json_message_text = json_message:get_text();
+    if string.len(json_message_text) >= POLL_PAYLOAD_LIMIT then
+        module:log('error', 'Poll payload too large, discarding. Sender: %s to:%s', stanza.attr.from, stanza.attr.to);
+        return true;
+    end
+
+    local data, error = json.decode(json_message_text);
+    if error then
+        module:log('error', 'Error decoding data error:%s Sender: %s to:%s', error, stanza.attr.from, stanza.attr.to);
+        return true;
+    end
+
+    if not data or (data.command ~= "new-poll" and data.command ~= "answer-poll") then
+        return;
+    end
+
+    if not validate_polls(data) then
+        module:log('error', 'Invalid poll data. Sender: %s (%s)', stanza.attr.from, json_message_text);
+        return true;
+    end
+
+    if data.command == "new-poll" then
+        if check_polls(room) then return end
+
+        local poll_creator = get_occupant_details(occupant)
+        if not poll_creator then
+            module:log("error", "Cannot retrieve poll creator id and name for %s from %s", occupant.jid, room.jid)
+            return
+        end
+
+        if room.polls.count >= POLLS_LIMIT then
+            module:log("error", "Too many polls created in %s", room.jid)
+            return true;
+        end
+
+        if room.polls.by_id[data.pollId] ~= nil then
+            module:log("error", "Poll already exists: %s", data.pollId);
+            origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Poll already exists'));
+            return true;
+        end
+
+        if room.jitsiMetadata and room.jitsiMetadata.permissions
+            and room.jitsiMetadata.permissions.pollCreationRestricted
+            and not is_feature_allowed('create-polls', origin.jitsi_meet_context_features) then
+                origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Creation of polls not allowed for user'));
+                return true;
+        end
+
+        local answers = {}
+        local compact_answers = {}
+        for i, a in ipairs(data.answers) do
+            table.insert(answers, { name = a.name, voters = {} });
+            table.insert(compact_answers, { key = i, name = a.name});
+        end
+
+        local poll = {
+            pollId = data.pollId,
+            sender_id = poll_creator.occupant_id,
+            sender_name = poll_creator.occupant_name,
+            question = data.question,
+            answers = answers
+        };
+
+        room.polls.by_id[data.pollId] = poll
+        table.insert(room.polls.order, poll)
+        room.polls.count = room.polls.count + 1;
+
+        local pollData = {
+            event = event,
+            room = room,
+            poll = {
+                pollId = data.pollId,
+                senderId = poll_creator.occupant_id,
+                senderName = poll_creator.occupant_name,
+                question = data.question,
+                answers = compact_answers
+            }
+        }
+
+        module:context(jid.host(room.jid)):fire_event('poll-created', pollData);
+
+        -- now send message to all participants
+        data.senderId = poll_creator.occupant_id;
+        data.type = 'polls';
+        local json_msg_str, error = json.encode(data);
+        if not json_msg_str then
+            module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
+        end
+        send_polls_message_to_all(room, json_msg_str);
+    elseif data.command == "answer-poll" then
+        if check_polls(room) then return end
+
+        local poll = room.polls.by_id[data.pollId];
+        if poll == nil then
+            module:log("warn", "answering inexistent poll");
+            return;
+        end
+
+        local voter = get_occupant_details(occupant)
+        if not voter then
+            module:log("error", "Cannot retrieve voter id and name for %s from %s", occupant.jid, room.jid)
+            return
+        end
+
+        local answers = {};
+        for vote_option_idx, vote_flag in ipairs(data.answers) do
+            table.insert(answers, {
+                key = vote_option_idx,
+                value = vote_flag,
+                name = poll.answers[vote_option_idx].name,
+            });
+            poll.answers[vote_option_idx].voters[voter.occupant_id] = vote_flag and voter.occupant_name or nil;
+        end
+        local answerData = {
+            event = event,
+            room = room,
+            pollId = poll.pollId,
+            voterName = voter.occupant_name,
+            voterId = voter.occupant_id,
+            answers = answers
+        }
+        module:context(jid.host(room.jid)):fire_event("answer-poll",  answerData);
+
+        data.senderId = voter.occupant_id;
+        data.type = 'polls';
+        local json_msg_str, error = json.encode(data);
+        if not json_msg_str then
+            module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
+        end
+        send_polls_message_to_all(room, json_msg_str);
+    end
+
+    return true;
+end);
+
+local setup_muc_component = function(host_module, host)
     -- Sets up poll data in new rooms.
     host_module:hook("muc-room-created", function(event)
         local room = event.room;
@@ -118,172 +284,6 @@ process_host_module(muc_domain_prefix..'.'..main_virtual_host, function(host_mod
             order = {};
             count = 0;
         };
-    end);
-
-    -- Keeps track of the current state of the polls in each room,
-    -- by listening to "new-poll" and "answer-poll" messages,
-    -- and updating the room poll data accordingly.
-    -- This mirrors the client-side poll update logic.
-    module:hook('message/host', function(event)
-        local stanza = event.stanza;
-
-        -- we are interested in all messages without a body that are not groupchat
-        if stanza.attr.type == 'groupchat' or stanza:get_child('body') then
-            return;
-        end
-
-        local json_message = stanza:get_child('json-message', 'http://jitsi.org/jitmeet')
-            or stanza:get_child('json-message');
-        if not json_message or not json_message.attr.roomJid then
-            return;
-        end
-
-        local room = get_room_from_jid(room_jid_match_rewrite(json_message.attr.roomJid));
-        if not room then
-            module:log('warn', 'No room found found for %s', json_message.attr.roomJid);
-            return;
-        end
-
-        local occupant_jid = stanza.attr.from;
-        local occupant = room:get_occupant_by_real_jid(occupant_jid);
-        if not occupant then
-            module:log("error", "Occupant sending msg %s was not found in room %s", occupant_jid, room.jid)
-            return;
-        end
-
-        local json_message_text = json_message:get_text();
-        if string.len(json_message_text) >= POLL_PAYLOAD_LIMIT then
-            module:log('error', 'Poll payload too large, discarding. Sender: %s to:%s', stanza.attr.from, stanza.attr.to);
-            return true;
-        end
-
-        local data, error = json.decode(json_message_text);
-        if error then
-            module:log('error', 'Error decoding data error:%s Sender: %s to:%s', error, stanza.attr.from, stanza.attr.to);
-            return true;
-        end
-
-        if not data or (data.command ~= "new-poll" and data.command ~= "answer-poll") then
-            return;
-        end
-
-        if not validate_polls(data) then
-            module:log('error', 'Invalid poll data. Sender: %s (%s)', stanza.attr.from, json_message_text);
-            return true;
-        end
-
-        if data.command == "new-poll" then
-            if check_polls(room) then return end
-
-            local poll_creator = get_occupant_details(occupant)
-            if not poll_creator then
-                module:log("error", "Cannot retrieve poll creator id and name for %s from %s", occupant.jid, room.jid)
-                return
-            end
-
-            if room.polls.count >= POLLS_LIMIT then
-                module:log("error", "Too many polls created in %s", room.jid)
-                return true;
-            end
-
-            if room.polls.by_id[data.pollId] ~= nil then
-                module:log("error", "Poll already exists: %s", data.pollId);
-                origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Poll already exists'));
-                return true;
-            end
-
-            if room.jitsiMetadata and room.jitsiMetadata.permissions
-                and room.jitsiMetadata.permissions.pollCreationRestricted
-                and not is_feature_allowed('create-polls', origin.jitsi_meet_context_features) then
-                    origin.send(st.error_reply(stanza, 'cancel', 'not-allowed', 'Creation of polls not allowed for user'));
-                    return true;
-            end
-
-            local answers = {}
-            local compact_answers = {}
-            for i, a in ipairs(data.answers) do
-                table.insert(answers, { name = a.name, voters = {} });
-                table.insert(compact_answers, { key = i, name = a.name});
-            end
-
-            local poll = {
-                pollId = data.pollId,
-                sender_id = poll_creator.occupant_id,
-                sender_name = poll_creator.occupant_name,
-                question = data.question,
-                answers = answers
-            };
-
-            room.polls.by_id[data.pollId] = poll
-            table.insert(room.polls.order, poll)
-            room.polls.count = room.polls.count + 1;
-
-            local pollData = {
-                event = event,
-                room = room,
-                poll = {
-                    pollId = data.pollId,
-                    senderId = poll_creator.occupant_id,
-                    senderName = poll_creator.occupant_name,
-                    question = data.question,
-                    answers = compact_answers
-                }
-            }
-
-            host_module:fire_event("poll-created", pollData);
-
-            -- now send message to all participants
-            data.senderId = poll_creator.occupant_id;
-            data.type = 'polls';
-            local json_msg_str, error = json.encode(data);
-            if not json_msg_str then
-                module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
-            end
-            send_polls_message_to_all(room, json_msg_str);
-        elseif data.command == "answer-poll" then
-            if check_polls(room) then return end
-
-            local poll = room.polls.by_id[data.pollId];
-            if poll == nil then
-                module:log("warn", "answering inexistent poll");
-                return;
-            end
-
-            local voter = get_occupant_details(occupant)
-            if not voter then
-                module:log("error", "Cannot retrieve voter id and name for %s from %s", occupant.jid, room.jid)
-                return
-            end
-
-            local answers = {};
-            for vote_option_idx, vote_flag in ipairs(data.answers) do
-                table.insert(answers, {
-                    key = vote_option_idx,
-                    value = vote_flag,
-                    name = poll.answers[vote_option_idx].name,
-                });
-                poll.answers[vote_option_idx].voters[voter.occupant_id] = vote_flag and voter.occupant_name or nil;
-            end
-            local answerData = {
-                event = event,
-                room = room,
-                pollId = poll.pollId,
-                voterName = voter.occupant_name,
-                voterId = voter.occupant_id,
-                answers = answers
-            }
-            host_module:fire_event("answer-poll",  answerData);
-
-            data.senderId = voter.occupant_id;
-            data.type = 'polls';
-            local json_msg_str, error = json.encode(data);
-            if not json_msg_str then
-                module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
-            end
-            send_polls_message_to_all(room, json_msg_str);
-        end
-
-        return true;
     end);
 
     -- Sends the current poll state to new occupants after joining a room.
@@ -315,7 +315,10 @@ process_host_module(muc_domain_prefix..'.'..main_virtual_host, function(host_mod
         end
         send_polls_message(room, json_msg_str, event.occupant.jid);
     end);
-end);
+end
+
+process_host_module(muc_domain_prefix..'.'..main_virtual_host, setup_muc_component);
+process_host_module('breakout.' .. main_virtual_host, setup_muc_component);
 
 process_host_module(main_virtual_host, function(host_module)
     module:context(host_module.host):fire_event('jitsi-add-identity', {
