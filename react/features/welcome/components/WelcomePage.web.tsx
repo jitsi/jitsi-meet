@@ -12,7 +12,7 @@ import RecentList from "../../recent-list/components/RecentList.web";
 import HomePage from "../../base/meet/views/Home/HomePage";
 import { AbstractWelcomePage, IProps, _mapStateToProps } from "./AbstractWelcomePage";
 
-import { appNavigate } from "../../app/actions.web";
+import { redirectToStaticPage } from "../../app/actions.web";
 import { initializeAuth } from "../../base/meet/general/store/auth/actions";
 import Tabs from "./Tabs";
 
@@ -302,11 +302,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
     }*/
 
     _onFormSubmit() {
-        const locationURL = window.location;
-        const baseUrl = `${locationURL.protocol}//${locationURL.host}`;
-        const newUrl = `${baseUrl}/new-meeting`;
-        window.history.replaceState({}, document.title, newUrl);
-        this.props.dispatch(appNavigate(newUrl));
+        this.props.dispatch(redirectToStaticPage("/new-meeting"));
     }
 
     /**

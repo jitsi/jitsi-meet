@@ -7,6 +7,7 @@ import { loginSuccess } from "../../general/store/auth/actions";
 import { setRoomID } from "../../general/store/errors/actions";
 import MeetingService from "../../services/meeting.service";
 import { useUserData } from "../PreMeeting/hooks/useUserData";
+import { useAppNavigation } from "../PreMeeting/useAppNavigation";
 import AuthModal from "./containers/AuthModal";
 import HeaderWrapper from "./containers/HeaderWrapper";
 import ScheduleMeetingModal from "./containers/ScheduleModal";
@@ -34,6 +35,7 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
     const meetingService = MeetingService.getInstance();
     const storageManager = useLocalStorage();
 
+    useAppNavigation();
     const dispatch = useDispatch();
     const userData = useUserData();
     const isLogged = !!userData;
@@ -41,7 +43,6 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
     const isLargeScreen = windowWidth >= 1024;
     const imageWidth = isLargeScreen ? (windowWidth * 0.4) / 0.6 : "100%";
     const imageHeight = windowHeight * 0.7;
-
     useEffect(() => {
         if (roomID) {
             setMeetingLink(`${MEETING_BASE_URL}${roomID}`);

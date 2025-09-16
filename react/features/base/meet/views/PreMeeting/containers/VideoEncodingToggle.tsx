@@ -47,7 +47,7 @@ const VideoEncodingToggle = () => {
 export const useVideoEncoding = () => {
     const localStorage = useLocalStorage();
     const [isEncodingEnabled, setIsEncodingEnabled] = useState(false);
-    console.log({isEncodingEnabled})
+
     useEffect(() => {
         const savedState = localStorage.get<boolean | string>(ENCODING_KEY, false);
         setIsEncodingEnabled(savedState === true || savedState === "true");

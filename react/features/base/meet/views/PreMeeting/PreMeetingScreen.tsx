@@ -237,7 +237,7 @@ const PreMeetingScreen = ({
             const locationURL = window.location;
             const baseUrl = `${locationURL.protocol}//${locationURL.host}`;
             const newUrl = `${baseUrl}/new-meeting`;
-            window.history.replaceState({}, document.title, newUrl);
+            window.history.pushState({}, document.title, newUrl);
             dispatch(appNavigate(newUrl));
         } catch (error) {
             console.error("Error creating new meeting:", error);
@@ -294,7 +294,7 @@ const PreMeetingScreen = ({
     };
 
     const navigateToHomePage = () => {
-        dispatch(appNavigate("/"));
+        dispatch(redirectToStaticPage("/"));
     };
 
     return (
