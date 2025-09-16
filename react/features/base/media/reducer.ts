@@ -16,7 +16,8 @@ import {
     SET_VIDEO_MUTED,
     SET_VIDEO_UNMUTE_PERMISSIONS,
     STORE_VIDEO_TRANSFORM,
-    TOGGLE_CAMERA_FACING_MODE
+    TOGGLE_CAMERA_FACING_MODE,
+    SET_DEAFENED
 } from './actionTypes';
 import { CAMERA_FACING_MODE, MEDIA_TYPE, SCREENSHARE_MUTISM_AUTHORITY } from './constants';
 import { IGUMPendingState } from './types';
@@ -81,6 +82,37 @@ function _audio(state: IAudioState = _AUDIO_INITIAL_MEDIA_STATE, action: AnyActi
         return {
             ...state,
             unmuteBlocked: action.blocked
+        };
+
+    default:
+        return state;
+    }
+}
+
+/**
+ * Initial state for deafen.
+ *
+ * @type {IDeafenState}
+ */
+const _DEAFEN_INITIAL_STATE = {
+    deafened: false
+};
+
+/**
+ * Reducer for deafen state.
+ *
+ * @param {IDeafenState} state - Deafen state.
+ * @param {Object} action - Action object.
+ * @param {string} action.type - Type of action.
+ * @private
+ * @returns {IDeafenState}
+ */
+function _deafen(state: IDeafenState = _DEAFEN_INITIAL_STATE, action: AnyAction) {
+    switch (action.type) {
+    case SET_DEAFENED:
+        return {
+            ...state,
+            deafened: action.deafened
         };
 
     default:
@@ -272,6 +304,10 @@ interface IAudioState {
     unmuteBlocked: boolean;
 }
 
+interface IDeafenState {
+    deafened: boolean;
+}
+
 interface IInitialGUMPromiseResult {
     errors?: any;
     tracks: Array<any>;
@@ -294,6 +330,7 @@ interface IVideoState {
 
 export interface IMediaState {
     audio: IAudioState;
+    deafen: IDeafenState;
     initialGUMPromise: PromiseWithResolvers<IInitialGUMPromiseResult> | null;
     screenshare: IScreenshareState;
     video: IVideoState;
@@ -311,6 +348,7 @@ export interface IMediaState {
  */
 ReducerRegistry.register<IMediaState>('features/base/media', combineReducers({
     audio: _audio,
+    deafen: _deafen,
     initialGUMPromise: _initialGUMPromise,
     screenshare: _screenshare,
     video: _video
