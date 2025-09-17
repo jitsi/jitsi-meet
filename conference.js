@@ -3,7 +3,6 @@
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import Logger from '@jitsi/logger';
 import EventEmitter from 'events';
-
 import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';
 import { AUDIO_ONLY_SCREEN_SHARE_NO_TRACK } from './modules/UI/UIErrors';
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
@@ -135,6 +134,7 @@ import { downloadJSON } from "./react/features/base/util/downloadJSON";
 import { openLeaveReasonDialog } from "./react/features/conference/actions.web";
 import { showDesktopPicker } from "./react/features/desktop-picker/actions";
 import { appendSuffix } from "./react/features/display-name/functions";
+import { toggleE2EE } from "./react/features/e2ee/actions.ts";
 import { maybeOpenFeedbackDialog, submitFeedback } from "./react/features/feedback/actions";
 import { initKeyboardShortcuts } from "./react/features/keyboard-shortcuts/actions";
 import { maybeSetLobbyChatMessageListener } from "./react/features/lobby/actions.any";
@@ -2156,8 +2156,11 @@ export default {
 
         dispatch(initKeyboardShortcuts());
         dispatch(conferenceJoined(room));
-
-        const jwt = APP.store.getState()['features/base/jwt'];
+        const participantCount = room?.getParticipants()?.length;
+        if (participantCount === 0) {
+            dispatch(toggleE2EE(true));
+        }
+        const jwt = APP.store.getState()["features/base/jwt"];
 
         if (jwt?.user?.hiddenFromRecorder) {
             dispatch(muteLocal(true, MEDIA_TYPE.AUDIO));
