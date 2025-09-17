@@ -288,38 +288,36 @@ export function setSpeakerMuted(speakerMuted: boolean) {
             speakerMuted
         });
 
-        // Control audio output by muting/unmuting all remote audio tracks
-        const state = getState();
-        const { conference } = state['features/base/conference'];
-
-        if (conference) {
-            // Get all remote participants and mute/unmute their audio
-            const participants = conference.getParticipants();
-
-            participants.forEach((participant: any) => {
-                const tracks = participant.getTracksByMediaType('audio');
-                tracks.forEach((track: any) => {
-                    try {
-                        if (speakerMuted) {
-                            // Mute the audio track
-                            track.mute();
-                        } else {
-                            // Unmute the audio track
-                            track.unmute();
-                        }
-                    } catch (error) {
-                        console.warn('Failed to mute/unmute track:', error);
-                    }
-                });
-            });
-        }
-
-        // Alternative approach: Control HTML audio elements directly
-        if (typeof document !== 'undefined') {
-            const audioElements = document.querySelectorAll('audio');
-            audioElements.forEach((audio: HTMLAudioElement) => {
-                audio.muted = speakerMuted;
-            });
-        }
+        // Apply speaker mute state immediately to all existing audio elements
+        _applySpeakerMuteToAudioElements(speakerMuted);
     };
+}
+
+/**
+ * Applies speaker mute state to all HTML audio elements.
+ * This function can be called from multiple places to ensure consistency.
+ *
+ * @param {boolean} speakerMuted - Whether speaker should be muted or not.
+ * @private
+ */
+function _applySpeakerMuteToAudioElements(speakerMuted: boolean) {
+    if (typeof document !== 'undefined') {
+        const audioElements = document.querySelectorAll('audio');
+        audioElements.forEach((audio: HTMLAudioElement) => {
+            audio.muted = speakerMuted;
+        });
+    }
+}
+
+/**
+ * Applies speaker mute state to a specific audio element.
+ * Used when new audio elements are created.
+ *
+ * @param {HTMLAudioElement} audioElement - The audio element to apply mute state to.
+ * @param {boolean} speakerMuted - Whether speaker should be muted or not.
+ */
+export function applySpeakerMuteToElement(audioElement: HTMLAudioElement, speakerMuted: boolean) {
+    if (audioElement) {
+        audioElement.muted = speakerMuted;
+    }
 }

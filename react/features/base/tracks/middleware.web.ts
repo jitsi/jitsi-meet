@@ -58,17 +58,27 @@ MiddlewareRegistry.register(store => next => action => {
             logTracksForParticipant(store.getState()['features/base/tracks'], participantId, 'Track added');
         }
 
-        // Apply speaker mute state to new remote audio tracks
+        // Apply speaker mute state to new remote audio tracks via DOM elements
         if (!local && action.track?.jitsiTrack && action.track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO) {
             const state = store.getState();
             const speakerMuted = state['features/toolbox']?.speakerMuted;
 
+            console.log('[SPEAKER_MUTE] New remote audio track added:', {
+                participantId: action.track.participantId,
+                speakerMuted,
+                trackId: action.track.jitsiTrack.getId()
+            });
+
             if (speakerMuted) {
-                try {
-                    action.track.jitsiTrack.mute();
-                } catch (error) {
-                    console.warn('Failed to apply speaker mute to new audio track:', error);
-                }
+                // Use a short delay to ensure the audio element is created
+                setTimeout(() => {
+                    try {
+                        _applySpeakerMuteToAllAudioElements(speakerMuted);
+                        console.log('[SPEAKER_MUTE] Applied mute to new audio track after delay');
+                    } catch (error) {
+                        console.error('[SPEAKER_MUTE] Failed to apply speaker mute to new audio track:', error);
+                    }
+                }, 100);
             }
         }
 
@@ -145,6 +155,25 @@ MiddlewareRegistry.register(store => next => action => {
         } else if (local) {
             APP.conference.updateAudioIconEnabled();
         }
+        // Apply speaker mute state to remote audio tracks that become unmuted
+        if (!local && !isVideoTrack && action.track?.muted === false) {
+            const speakerMuted = state['features/toolbox']?.speakerMuted;
+
+            console.log('[SPEAKER_MUTE] Remote audio track unmuted:', {
+                participantID,
+                speakerMuted,
+                trackId: jitsiTrack.getId()
+            });
+
+            if (speakerMuted) {
+                // Use a short delay to ensure the audio element is updated
+                setTimeout(() => {
+                    _applySpeakerMuteToAllAudioElements(speakerMuted);
+                    console.log('[SPEAKER_MUTE] Applied mute to unmuted audio track after delay');
+                }, 100);
+            }
+        }
+
 
         if (typeof action.track?.muted !== 'undefined' && participantID && !local) {
             logTracksForParticipant(store.getState()['features/base/tracks'], participantID, 'Track updated');
@@ -219,5 +248,34 @@ function _removeNoDataFromSourceNotification({ getState, dispatch }: IStore, tra
     if (noDataFromSourceNotificationInfo?.uid) {
         dispatch(hideNotification(noDataFromSourceNotificationInfo.uid));
         dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, undefined));
+    }
+}
+
+/**
+ * Applies the speaker mute state to all audio elements in the DOM.
+ *
+ * @param {boolean} muted - Indicates whether the speaker is muted.
+ * @returns {void}
+ */
+function _applySpeakerMuteToAllAudioElements(muted: boolean) {
+    console.log('[SPEAKER_MUTE] _applySpeakerMuteToAllAudioElements called with muted:', muted);
+
+    if (typeof document !== 'undefined') {
+        const audioElements = document.querySelectorAll('audio');
+        console.log('[SPEAKER_MUTE] Found audio elements:', audioElements.length);
+
+        audioElements.forEach((audioElement: HTMLAudioElement, index) => {
+            const wasAlreadyMuted = audioElement.muted;
+            audioElement.muted = muted;
+            console.log(`[SPEAKER_MUTE] Audio element ${index}:`, {
+                src: audioElement.src || 'no src',
+                wasAlreadyMuted,
+                nowMuted: audioElement.muted,
+                volume: audioElement.volume,
+                paused: audioElement.paused
+            });
+        });
+    } else {
+        console.log('[SPEAKER_MUTE] Document not available');
     }
 }

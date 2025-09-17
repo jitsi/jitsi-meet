@@ -472,7 +472,13 @@ export default {
                 sendAnalytics(
                     createTrackMutedEvent(mediaType, 'initial mute'));
                 logger.log(`${mediaType} mute: initially muted.`);
-                track.mute();
+
+                // Check if track has mute method before calling it
+                if (typeof track.mute === 'function') {
+                    track.mute();
+                } else {
+                    console.warn(`[SPEAKER_MUTE] Track ${track.getId()} does not have mute method`, track);
+                }
             }
         });
 

@@ -1907,3 +1907,4 @@ if (enableJaaS) {
     config.roomPasswordNumberOfDigits = 10; // skip re-adding it (do not remove comment)
 }
 
+

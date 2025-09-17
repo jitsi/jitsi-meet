@@ -1,11 +1,11 @@
 name: Deploy Jitsi Meet to EC2
 
-on:
-    push:
-        branches:
-            - main
-            - master
-    workflow_dispatch:
+#on:
+#    push:
+#        branches:
+#            - main
+#            - master
+#    workflow_dispatch:
 
 jobs:
     deploy:
