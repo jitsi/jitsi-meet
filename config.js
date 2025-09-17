@@ -111,7 +111,7 @@ var config = {
 
         // Disables the auto-play behavior of *all* newly created video element.
         // This is useful when the client runs on a host with limited resources.
-        noAutoPlayVideo: !isProd,
+        // noAutoPlayVideo: false,
 
         // Experiment: Whether to skip interim transcriptions.
         // skipInterimTranscriptions: false,

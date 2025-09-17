@@ -21,6 +21,7 @@ import ScreenShareIndicator from './ScreenShareIndicator';
  * The type of the React {@code Component} props of {@link StatusIndicators}.
  */
 interface IProps {
+
     /**
      * Indicates if the audio muted indicator should be visible or not.
      */
@@ -112,16 +113,14 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     if (participant?.local) {
         isAudioMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
         isParticipantHost = isLocalParticipantHost(state);
-    } else if (!participant?.local) {
-        isParticipantHost = isRemoteParticipantHost(participant);
     } else if (!participant?.fakeParticipant || isScreenShareParticipantById(state, participantID)) {
         // remote participants excluding shared video
         const track = getVideoTrackByParticipant(state, participant);
 
         isScreenSharing = track?.videoType === 'desktop';
         isAudioMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, participantID);
+        isParticipantHost = isRemoteParticipantHost(participant);
     }
-
 
     const { disableModeratorIndicator } = state['features/base/config'];
 
