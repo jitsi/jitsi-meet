@@ -44,7 +44,7 @@ export function connect(id?: string, password?: string) {
                             password,
                             name: user?.name,
                             lastname: user?.lastname,
-                            isAnonymous: !!user,
+                            isAnonymous: !user,
                         })
                     )
                 );
@@ -67,7 +67,7 @@ export function connect(id?: string, password?: string) {
                 password,
                 name: user?.name,
                 lastname: user?.lastname,
-                isAnonymous: !!user,
+                isAnonymous: !user,
             })
         );
     };

@@ -1,4 +1,5 @@
 import { UserSubscription } from "@internxt/sdk/dist/drive/payments/types/types";
+import { v4 } from "uuid";
 import { User } from "./general/store/user/types";
 
 /**
@@ -19,6 +20,7 @@ export class LocalStorageManager {
         MNEMONIC: "xMnemonic",
         USER: "xUser",
         SUBSCRIPTION: "xSubscription",
+        ANONYMOUS_USER_UUID: "xAnonymousUserUUID",
     };
 
     private constructor() {}
@@ -185,6 +187,42 @@ export class LocalStorageManager {
     }
 
     /**
+     * Generates and stores a UUID for anonymous users
+     * @returns The generated or existing UUID
+     */
+    public getOrCreateAnonymousUUID(): string {
+        let uuid = this.get<string>(LocalStorageManager.KEYS.ANONYMOUS_USER_UUID);
+
+        if (!uuid) {
+            uuid = v4();
+            this.set(LocalStorageManager.KEYS.ANONYMOUS_USER_UUID, uuid);
+        }
+
+        return uuid;
+    }
+
+    /**
+     * Gets the anonymous user UUID
+     */
+    public getAnonymousUUID(): string | null | undefined {
+        return this.get<string>(LocalStorageManager.KEYS.ANONYMOUS_USER_UUID);
+    }
+
+    /**
+     * Sets the anonymous user UUID
+     */
+    public setAnonymousUUID(uuid: string): void {
+        this.set(LocalStorageManager.KEYS.ANONYMOUS_USER_UUID, uuid);
+    }
+
+    /**
+     * Removes the anonymous user UUID
+     */
+    public removeAnonymousUUID(): void {
+        this.remove(LocalStorageManager.KEYS.ANONYMOUS_USER_UUID);
+    }
+
+    /**
      * Saves the session credentials
      * @param token Token
      * @param newToken New token
@@ -218,6 +256,7 @@ export class LocalStorageManager {
         this.remove(LocalStorageManager.KEYS.MNEMONIC);
         this.remove(LocalStorageManager.KEYS.USER);
         this.remove(LocalStorageManager.KEYS.SUBSCRIPTION);
+        this.remove(LocalStorageManager.KEYS.ANONYMOUS_USER_UUID);
     }
 
     public clearStorage(): void {

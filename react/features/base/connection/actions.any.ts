@@ -12,6 +12,7 @@ import {
 } from '../util/uri';
 
 import { setJoinRoomError } from "../meet/general/store/errors/actions";
+import { LocalStorageManager } from "../meet/LocalStorageManager";
 import MeetingService from "../meet/services/meeting.service";
 import {
     CONNECTION_DISCONNECTED,
@@ -238,10 +239,16 @@ export function _connectInternal({
 
         if (room !== NEW_MEETING_URL)
             try {
+                let userUUID: string | undefined;
+
+                if (isAnonymous) {
+                    userUUID = LocalStorageManager.instance.getOrCreateAnonymousUUID();
+                }
                 const { token: jwt, appId } = await MeetingService.instance.joinCall(room, {
                     name: displayName ?? name ?? "",
                     lastname: lastname ?? "",
                     anonymous: !!isAnonymous,
+                    anonymousId: userUUID,
                 });
 
                 const newOptions = get8x8Options(options, appId, room);
