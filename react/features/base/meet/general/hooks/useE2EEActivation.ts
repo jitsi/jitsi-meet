@@ -30,9 +30,7 @@ export const useE2EEActivation = (isE2EESupported?: boolean) => {
         const wasPrejoinOrLobbyVisible = prevShowStateRef.current.showPrejoin || prevShowStateRef.current.showLobby;
         const isConferenceDisplayed = !_showPrejoin && !_showLobby;
 
-        const shouldActivateE2EE =
-            (isConferenceDisplayed && isModerator) ||
-            (wasPrejoinOrLobbyVisible && isConferenceDisplayed && isModerator);
+        const shouldActivateE2EE = isConferenceDisplayed || (wasPrejoinOrLobbyVisible && isConferenceDisplayed);
 
         if (shouldActivateE2EE) {
             dispatch(toggleE2EE(true));
