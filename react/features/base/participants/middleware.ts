@@ -690,12 +690,6 @@ function _participantJoinedOrUpdated(store: IStore, next: Function, action: AnyA
             const participantId = !id && local ? getLocalParticipant(getState())?.id : id;
             const updatedParticipant = getParticipantById(getState(), participantId);
 
-            // Added to block Avatar update after enter in a meeting, interferes with useParticipantAvatar update
-            console.log("updatedParticipant", updatedParticipant);
-            if (updatedParticipant?.loadableAvatarUrl) {
-                return result;
-            }
-
             getFirstLoadableAvatarUrl(updatedParticipant ?? { id: '' }, store)
                 .then((urlData?: { isUsingCORS: boolean; src: string; }) => {
                     dispatch(setLoadableAvatarUrl(participantId, urlData?.src ?? '', Boolean(urlData?.isUsingCORS)));
