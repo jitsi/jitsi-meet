@@ -33,12 +33,14 @@ import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { openDisplayNamePrompt } from '../../../display-name/actions';
 import BrandingImageBackground from '../../../dynamic-branding/components/native/BrandingImageBackground';
 import LargeVideo from '../../../large-video/components/LargeVideo.native';
+import { getLobbyConfig } from '../../../lobby/functions';
 import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
 import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
+import HangupButton from '../../../toolbox/components/HangupButton';
 import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
 import VideoMuteButton from '../../../toolbox/components/native/VideoMuteButton';
-import { isDisplayNameRequired, isRoomNameEnabled } from '../../functions';
+import { isDisplayNameRequired, isRoomNameEnabled } from '../../functions.native';
 import { IPrejoinProps } from '../../types';
 import { hasDisplayName } from '../../utils';
 
@@ -59,6 +61,8 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const isDisplayNameReadonly = useSelector(isNameReadOnly);
     const roomName = useSelector((state: IReduxState) => getConferenceName(state));
     const roomNameEnabled = useSelector((state: IReduxState) => isRoomNameEnabled(state));
+    const { showHangUp = true } = useSelector((state: IReduxState) => getLobbyConfig(state));
+    const { knocking } = useSelector((state: IReduxState) => state['features/lobby']);
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
@@ -185,6 +189,11 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                         styles = { styles.buttonStylesBorderless } />
                     <VideoMuteButton
                         styles = { styles.buttonStylesBorderless } />
+                    {
+                        showHangUp && knocking
+                        && <HangupButton
+                            styles = { styles.buttonStylesBorderless } />
+                    }
                 </View>
                 {
                     showDisplayNameInput && <Input
