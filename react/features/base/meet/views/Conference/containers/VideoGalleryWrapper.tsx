@@ -32,7 +32,7 @@ const GalleryVideoWrapper = ({ videoMode, t, isE2EESupported, room }: GalleryVid
     const flipX = useSelector((state: IReduxState) => state["features/base/settings"].localFlipX);
 
     const contStyle = videoMode === "gallery" ? containerStyle : {};
-    console.log("participants", participants);
+
     return (
         <div className="h-full w-full bg-gray-950" style={contStyle}>
             <AudioTracksContainer />
