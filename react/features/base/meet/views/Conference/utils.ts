@@ -38,7 +38,7 @@ export const getParticipantsWithTracks = (state: IReduxState) => {
                 hidden: false,
                 dominantSpeaker: participant.dominantSpeaker || false,
                 raisedHand: hasRaisedHand(participant),
-                avatarSource: participant.loadableAvatarUrl,
+                avatarSource: !!participant.loadableAvatarUrl ? participant.loadableAvatarUrl : participant.avatarURL,
             };
         })
         .filter((participant) => !participant.hidden);
