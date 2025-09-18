@@ -154,8 +154,8 @@ export class LocalStorageManager {
     /**
      * Gets the user information
      */
-    public getUser<T = any>(): T | null | undefined {
-        return this.get<T>(LocalStorageManager.KEYS.USER);
+    public getUser(): User | null | undefined {
+        return this.get(LocalStorageManager.KEYS.USER);
     }
 
     /**
