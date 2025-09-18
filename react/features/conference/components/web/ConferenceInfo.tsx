@@ -56,14 +56,14 @@ const COMPONENTS: Array<{
     //     Component: ConferenceTimer,
     //     id: 'conference-timer'
     // },
-    {
-        Component: SpeakerStatsLabel,
-        id: "participants-count",
-    },
-    {
-        Component: E2EELabel,
-        id: "e2ee",
-    },
+    // {
+    //     Component: SpeakerStatsLabel,
+    //     id: "participants-count",
+    // },
+    // {
+    //     Component: E2EELabel,
+    //     id: "e2ee",
+    // },
     {
         Component: () => (
             <>

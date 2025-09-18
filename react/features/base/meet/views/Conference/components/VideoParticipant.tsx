@@ -1,11 +1,12 @@
 import { Avatar } from "@internxt/ui";
 import { Hand, MicrophoneSlash } from "@phosphor-icons/react";
-import React from "react";
+import clsx from "clsx";
+import React, { useMemo } from "react";
 import ConnectionIndicator from "../../../../../connection-indicator/components/web/ConnectionIndicator";
 import Video from "../../../../media/components/web/Video";
-import { VideoParticipantType } from "../types";
-import clsx from "clsx";
+import { ConfigService } from "../../../services/config.service";
 import { useVideoEncoding } from "../../PreMeeting/containers/VideoEncodingToggle";
+import { VideoParticipantType } from "../types";
 
 export type VideoParticipantProps = {
     participant: VideoParticipantType;
@@ -18,8 +19,11 @@ const VideoParticipant = ({ participant, className = "", flipX, translate }: Vid
     const { id, name, videoEnabled, audioMuted, videoTrack, local, dominantSpeaker, raisedHand, avatarSource } =
         participant;
 
-    const { isEncodingEnabled } = useVideoEncoding()
-    
+    const { isEncodingEnabled } = useVideoEncoding();
+    const encodeVideo = useMemo(() => {
+        return ConfigService.instance.isDevelopment() ? isEncodingEnabled : true;
+    }, [isEncodingEnabled]);
+
     return (
         <div
             className={`flex aspect-square min-w-40 items-center justify-center rounded-[20px] overflow-hidden bg-gray-90 sm:aspect-video ${className}
@@ -31,7 +35,7 @@ const VideoParticipant = ({ participant, className = "", flipX, translate }: Vid
                     videoTrack={{ jitsiTrack: videoTrack }}
                     className={clsx("w-full h-full object-cover", flipX && local && "scale-x-[-1]")}
                     key={`video-${id}`}
-                    encodeVideo={isEncodingEnabled}
+                    encodeVideo={encodeVideo}
                 />
             ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gray-800">

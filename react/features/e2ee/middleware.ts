@@ -4,6 +4,7 @@ import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import { openDialog } from '../base/dialog/actions';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
+import { ConfigService } from "../base/meet/services/config.service";
 import ParticipantVerificationSASDialog from '../base/meet/views/Conference/components/ParticipantVerificationSASDialog';
 
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../base/participants/actionTypes';
@@ -153,7 +154,9 @@ StateListenerRegistry.register(
 
         if (conference) {
              conference.on(JitsiConferenceEvents.E2EE_SAS_AVAILABLE, (sas: object) => {
-                 dispatch(openDialog(ParticipantVerificationSASDialog, { sas }));
+               if (ConfigService.instance.isDevelopment()) {
+                   dispatch(openDialog(ParticipantVerificationSASDialog, { sas }));
+               }
              });
         }
     }
