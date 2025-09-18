@@ -15,7 +15,9 @@ export const useParticipantAvatar = () => {
         if (localParticipant?.id && !initialized) {
             const user = localStorage.getUser();
 
+            console.log("user avatar", user?.avatar);
             if (user?.avatar) {
+                console.log("setLoadableAvatarUrl", user.avatar);
                 dispatch(setLoadableAvatarUrl(localParticipant.id, user.avatar, true));
             }
 
