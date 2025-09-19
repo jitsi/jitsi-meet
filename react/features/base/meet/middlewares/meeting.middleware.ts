@@ -6,6 +6,7 @@ import { MEETING_REDUCER } from "../general/store/meeting/reducer";
 import { updateUser } from "../general/store/user/actions";
 import { LocalStorageManager, STORAGE_KEYS } from "../LocalStorageManager";
 import { AuthService } from "../services/auth.service";
+import { PaymentsService } from "../services/payments.service";
 import { isAvatarExpired } from "../services/utils/avatar.utils";
 
 /**
@@ -96,15 +97,11 @@ export const updateUserMeetingConfig = async (dispatch: Dispatch<AnyAction>, for
 
         if (force || hasExpiredVerificationInterval) {
             try {
-                // TODO: BYPASS UNTIL checkMeetAvailability works fine
-                // const meetingConfig = await PaymentsService.instance.checkMeetAvailability();
-                // const { enabled, paxPerCall } = meetingConfig;
-                // dispatch(updateMeetingConfig({ enabled, paxPerCall }));
-                dispatch(updateMeetingConfig({ enabled: true, paxPerCall: 10 }));
+                const meetingConfig = await PaymentsService.instance.checkMeetAvailability();
+                const { enabled, paxPerCall } = meetingConfig;
+                dispatch(updateMeetingConfig({ enabled, paxPerCall }));
 
                 LocalStorageManager.instance.set(STORAGE_KEYS.LAST_CONFIG_CHECK, now);
-                // TODO: BYPASS UNTIL checkMeetAvailability works fine
-                LocalStorageManager.instance.set(STORAGE_KEYS.CACHED_MEETING_CONFIG, { enabled: true, paxPerCall: 10 });
 
                 console.info("Meeting configuration updated successfully");
             } catch (error) {

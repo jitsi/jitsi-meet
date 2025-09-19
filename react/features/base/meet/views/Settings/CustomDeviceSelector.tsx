@@ -66,9 +66,11 @@ const DeviceSelector = ({ devices, hasPermission, id, isDisabled, label, onSelec
 
         if (options.isDisabled || !options.items?.length) {
             return (
-                <div className="flex flex-col bg-gray-800 rounded-lg px-4 py-3 text-gray-400 text-sm">
-                    <label className="block text-xs font-medium text-gray-300 mb-1">{t(label)}</label>
-                    <div className="text-gray-400">{triggerText}</div>
+                <div className="flex flex-grow flex-col bg-gray-800 rounded-lg text-gray-400 text-sm">
+                    <label className="block text-lg font-medium text-gray-300 mb-4">{t(label)}</label>
+                    <div className="text-gray-400 h-10 flex items-center text-lg px-2">
+                        <p>{triggerText}</p>
+                    </div>
                 </div>
             );
         }

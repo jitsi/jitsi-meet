@@ -165,7 +165,7 @@ interface IProps {
     zoomEnabled?: boolean;
 
     /**
-     * Flag to determine if se debe codificar el video
+     * Flag to determine if video has to be encoded
      */
     encodeVideo?: boolean;
 }
@@ -190,7 +190,7 @@ class Video extends Component<IProps> {
         autoPlay: true,
         id: "",
         playsinline: true,
-        encodeVideo: false,
+        encodeVideo: true,
     };
 
     /**

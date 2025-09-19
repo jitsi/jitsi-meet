@@ -726,6 +726,14 @@
     "me": "me",
     "meet": {
         "internxtMeet": "Internxt Meet",
+        "mobile": {
+            "title": "We're not ready for mobile (yet!)",
+            "description": {
+                "first": "Internxt Meet works on desktop web browser for now.",
+                "second": "Open this link on your computer to join the meeting 🚀"
+            },
+            "imageAlt": "Meeting"
+        },
         "login": {
             "login": "Log in",
             "signUp": "Sign up"
@@ -859,6 +867,9 @@
             "video": {
                 "videoInput": "Video input"
             }
+        },
+        "errors": {
+            "noAvailableOptions": "No hay dispositivos disponibles"
         }
     },
     "notify": {

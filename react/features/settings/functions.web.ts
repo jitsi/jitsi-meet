@@ -30,7 +30,8 @@ export function createLocalVideoTracks(ids: string[], timeout?: number) {
                         return {
                             jitsiTrack: null,
                             deviceId,
-                            error: 'deviceSelection.previewUnavailable'
+                            // THIS BREAKS SELECTOR ON SAFARI AND FIREFOX
+                            // error: 'deviceSelection.previewUnavailable'
                         };
                     })));
 }

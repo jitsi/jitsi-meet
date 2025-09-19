@@ -23,6 +23,7 @@ import MeetingButton from "../../general/containers/MeetingButton";
 import { loginSuccess, logout } from "../../general/store/auth/actions";
 import { setCreateRoomError } from "../../general/store/errors/actions";
 import { useLocalStorage } from "../../LocalStorageManager";
+import { ConfigService } from "../../services/config.service";
 import MeetingService from "../../services/meeting.service";
 import { MeetingUser } from "../../services/types/meeting.types";
 import AuthModal from "../Home/containers/AuthModal";
@@ -366,7 +367,7 @@ const PreMeetingScreen = ({
                 />
                 ;<div className="flex absolute bottom-7 right-7"><SecureMeetingMessage /></div>
                 <div className={classes.videoEncodingToggleContainer}>
-                    <VideoEncodingToggle />
+                    {ConfigService.instance.isDevelopment() && <VideoEncodingToggle />}
                 </div>
                 {/* UNCOMMENT IN DEV MODE TO SEE OLD IMPLEMENTATION  */}
                 {/* <div className="flex flex-row">
