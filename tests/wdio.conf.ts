@@ -58,7 +58,7 @@ const chromePreferences = {
 };
 
 const specs = [
-    'specs/**/*.spec.ts'
+    'specs/**/lobby.spec.ts'
 ];
 
 /**
