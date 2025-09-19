@@ -8,6 +8,7 @@ import ContextMenuItem from '../../../../base/ui/components/web/ContextMenuItem'
 import { TEXT_OVERFLOW_TYPES } from '../../../../base/ui/constants.any';
 
 import Meter from './Meter';
+import { useTranslation } from 'react-i18next';
 
 const JitsiTrackEvents = JitsiMeetJS.events.track;
 
@@ -114,6 +115,8 @@ const MicrophoneEntry = ({
     onClick: propsClick
 }: IProps) => {
     const [ level, setLevel ] = useState(-1);
+    const { t } = useTranslation();
+    
     const activeTrackRef = useRef(jitsiTrack);
     const { classes, cx } = useStyles();
 
@@ -186,6 +189,15 @@ const MicrophoneEntry = ({
         startListening();
         activeTrackRef.current = jitsiTrack;
     }, [ jitsiTrack ]);
+
+    if (hasError) {
+        return (
+            <div className="flex flex-row space-x-2 px-4 py-2.5">
+                <Icon className={classes.icon} style={{ marginLeft: "0px" }} size={20} src={IconExclamationSolid} />
+                <p className="px-3.5">{t("meet.errors.noAvailableOptions")}</p>
+            </div>
+        );
+    }
 
     return (
         <li

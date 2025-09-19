@@ -322,7 +322,7 @@ class Video extends Component<IProps> {
      */
     render() {
         const { autoPlay, className, id, muted, playsinline, style, eventHandlers, encodeVideo } = this.props;
-        console.log("encodeVideo", encodeVideo);
+
         return (
             <video
                 autoPlay={autoPlay}
