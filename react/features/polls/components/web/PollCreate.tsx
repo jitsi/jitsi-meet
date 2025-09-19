@@ -224,7 +224,7 @@ const PollCreate = ({
                             maxLength = { CHAR_LIMIT }
                             onChange = { name => setAnswer(i, {
                                 name,
-                                voters: []
+                                voters: {}
                             }) }
                             onKeyPress = { ev => onAnswerKeyDown(i, ev) }
                             placeholder = { t('polls.create.answerPlaceholder', { index: i + 1 }) }
@@ -235,6 +235,7 @@ const PollCreate = ({
                         { answers.length > 2
                         && <button
                             className = { classes.removeOption }
+                            data-testid = { `remove-polls-answer-input-${i}` }
                             onClick = { () => removeAnswer(i) }
                             type = 'button'>
                             { t('polls.create.removeOption') }

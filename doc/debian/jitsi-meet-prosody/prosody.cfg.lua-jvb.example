@@ -83,7 +83,6 @@ Component "conference.jitmeet.example.com" "muc"
         "muc_hide_all";
         "muc_meeting_id";
         "muc_domain_mapper";
-        "polls";
         --"token_verification";
         "muc_rate_limit";
         "muc_password_whitelist";
@@ -159,9 +158,10 @@ Component "lobby.jitmeet.example.com" "muc"
     modules_enabled = {
         "muc_hide_all";
         "muc_rate_limit";
-        "polls";
     }
 
 Component "metadata.jitmeet.example.com" "room_metadata_component"
     muc_component = "conference.jitmeet.example.com"
     breakout_rooms_component = "breakout.jitmeet.example.com"
+
+Component "polls.jitmeet.example.com" "polls_component"
