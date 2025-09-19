@@ -246,8 +246,15 @@ export const config: WebdriverIO.MultiremoteConfig = {
         // and connect to it.
         if (testProperties.useWebhookProxy && testsConfig.webhooksProxy.enabled && !globalAny.ctx.webhooksProxy) {
             let tenant = testsConfig.jaas.tenant;
+
             if (!testProperties.useJaas) {
                 tenant = testsConfig.iframe.tenant;
+            }
+            if (!tenant) {
+                console.log(`Can not configure WebhookProxy, missing tenant in config. Skipping ${testName}.`);
+                globalAny.ctx.skipSuiteTests = true;
+
+                return;
             }
 
             globalAny.ctx.webhooksProxy = new WebhookProxy(
