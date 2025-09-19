@@ -1,81 +1,74 @@
 import { expect } from '@wdio/globals';
 
+import { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
-import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
+import { joinMuc, generateJaasToken as t } from '../helpers/jaas';
 
 setTestProperties(__filename, {
-    useIFrameApi: true,
+    useJaas: true,
     useWebhookProxy: true,
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
 describe('Visitors', () => {
-    it('joining the meeting', async () => {
-        const { webhooksProxy } = ctx;
+    let visitor: Participant, moderator: Participant;
 
-        if (webhooksProxy) {
-            webhooksProxy.defaultMeetingSettings = {
-                visitorsEnabled: true,
-                visitorsLive: false
-            };
-        }
+    it('setup', async () => {
+        ctx.webhooksProxy.defaultMeetingSettings = {
+            visitorsEnabled: true,
+            visitorsLive: false
+        };
 
-        await ensureOneParticipant();
+        moderator = await joinMuc({
+            name: 'p1',
+            token: t({ room: ctx.roomName, displayName: 'Mo de Rator', moderator: true })
+        });
 
-        const { p1 } = ctx;
-
-        if (await p1.execute(() => config.disableIframeAPI)) {
-            // skip the test if iframeAPI is disabled or visitors are not supported
-            ctx.skipSuiteTests = true;
-
-            return;
-        }
-
-        await p1.driver.waitUntil(() => p1.execute(() => APP.conference._room.isVisitorsSupported()), {
+        // TODO: Remove this in favor of configurable test expectations
+        await moderator.driver.waitUntil(() => moderator.execute(() => APP.conference._room.isVisitorsSupported()), {
             timeout: 2000
-        }).then(async () => {
-            await p1.switchToMainFrame();
-        }).catch(() => {
+        }).catch(e => {
+            console.log(`Skipping test due to error: ${e}`);
             ctx.skipSuiteTests = true;
+        });
+
+        visitor = await joinMuc({
+            name: 'p2',
+            token: t({ room: ctx.roomName, displayName: 'Visi Tor', visitor: true })
+        }, {
+            skipWaitToJoin: true
         });
     });
 
 
     it('go live', async () => {
-        await ensureTwoParticipants({
-            preferGenerateToken: true,
-            tokenOptions: { visitor: true },
-            skipWaitToJoin: true,
-            skipInMeetingChecks: true
-        });
 
-        const { p1, p2 } = ctx;
-        const p2Visitors = p2.getVisitors();
-        const p1Visitors = p1.getVisitors();
+        const vVisitors = visitor.getVisitors();
+        const mVisitors = moderator.getVisitors();
 
-        await p2.driver.waitUntil(async () => p2Visitors.isVisitorsQueueUIShown(), {
+        await visitor.driver.waitUntil(async () => vVisitors.isVisitorsQueueUIShown(), {
             timeout: 5000,
             timeoutMsg: 'Missing visitors queue UI'
         });
 
-        await p1.driver.waitUntil(async () => await p1Visitors.getWaitingVisitorsInQueue()
+        await moderator.driver.waitUntil(async () => await mVisitors.getWaitingVisitorsInQueue()
                 === 'Viewers waiting in queue: 1', {
             timeout: 15000,
             timeoutMsg: 'Missing visitors queue count in UI'
         });
 
-        await p1Visitors.goLive();
+        await mVisitors.goLive();
 
-        await p2.waitToJoinMUC();
-        await p2.waitForReceiveMedia(15000, 'Visitor is not receiving media');
-        await p2.waitForRemoteStreams(1);
+        await visitor.waitToJoinMUC();
+        await visitor.waitForReceiveMedia(15000, 'Visitor is not receiving media');
+        await visitor.waitForRemoteStreams(1);
 
-        await p2.driver.waitUntil(() => p2Visitors.hasVisitorsDialog(), {
+        await visitor.driver.waitUntil(() => vVisitors.hasVisitorsDialog(), {
             timeout: 5000,
             timeoutMsg: 'Missing visitors dialog'
         });
 
-        expect((await p1Visitors.getVisitorsCount()).trim()).toBe('1');
-        expect((await p1Visitors.getVisitorsHeaderFromParticipantsPane()).trim()).toBe('Viewers 1');
+        expect((await mVisitors.getVisitorsCount()).trim()).toBe('1');
+        expect((await mVisitors.getVisitorsHeaderFromParticipantsPane()).trim()).toBe('Viewers 1');
     });
 });
