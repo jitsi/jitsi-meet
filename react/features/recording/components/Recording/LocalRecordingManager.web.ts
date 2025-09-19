@@ -213,15 +213,16 @@ const LocalRecordingManager: ILocalRecordingManager = {
             });
 
             const gdmVideoTrack = gdmStream.getVideoTracks()[0];
-            const isBrowser = gdmVideoTrack.getSettings().displaySurface === 'browser';
-            const matchesHandle = (supportsCaptureHandle // @ts-ignore
-                && gdmVideoTrack.getCaptureHandle()?.handle === `JitsiMeet-${tabId}`);
+            if (supportsCaptureHandle) {
+                const isBrowser = gdmVideoTrack.getSettings().displaySurface === 'browser';
+                const matchesHandle = (supportsCaptureHandle // @ts-ignore
+                    && gdmVideoTrack.getCaptureHandle()?.handle === `JitsiMeet-${tabId}`);
 
-            if (!isBrowser || !matchesHandle) {
-                gdmStream.getTracks().forEach((track: MediaStreamTrack) => track.stop());
-                throw new Error('WrongSurfaceSelected');
+                if (!isBrowser || !matchesHandle) {
+                    gdmStream.getTracks().forEach((track: MediaStreamTrack) => track.stop());
+                    throw new Error('WrongSurfaceSelected');
+                }
             }
-
             this.initializeAudioMixer();
 
             const gdmAudioTrack = gdmStream.getAudioTracks()[0];
