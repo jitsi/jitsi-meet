@@ -1,3 +1,4 @@
+import { UserSettings } from "@internxt/sdk/dist/shared/types/userSettings";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { LocalStorageManager } from "../../../../LocalStorageManager";
 import { AUTH_ACTIONS } from "../../../../middlewares";
@@ -17,7 +18,6 @@ vi.mock("../../../../LocalStorageManager", () => {
         },
     };
 });
-
 
 describe("Authentication Actions", () => {
     const dispatchMock = vi.fn();
@@ -79,7 +79,7 @@ describe("Authentication Actions", () => {
                 token: "old-token",
                 newToken: "new-token-123",
                 mnemonic: "mock-mnemonic",
-                user: { id: "user123", name: "Test User" },
+                user: { id: "user123", name: "Test User" } as unknown as UserSettings,
             };
 
             const result = loginSuccess(mockCredentials);

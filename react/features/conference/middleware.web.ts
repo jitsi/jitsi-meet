@@ -24,13 +24,15 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case KICKED_OUT: {
-        const { dispatch } = store;
+        const { dispatch, getState } = store;
         const { participant } = action;
+        const { room } = getState()["features/base/conference"];
 
         const participantDisplayName
                 = getParticipantDisplayName(store.getState, participant.getId());
+            const roomId = room ?? "";
 
-        dispatch(hangup(true, i18next.t('dialog.kickTitle', { participantDisplayName })));
+        dispatch(hangup(true, roomId, i18next.t("dialog.kickTitle", { participantDisplayName })));
 
         break;
     }

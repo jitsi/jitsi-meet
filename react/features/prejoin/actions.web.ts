@@ -25,9 +25,9 @@ import {
     SET_DIALOUT_NUMBER,
     SET_DIALOUT_STATUS,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
+    SET_NEW_MEETING_PAGE_VISIBILITY,
     SET_PREJOIN_DEVICE_ERRORS,
     SET_PREJOIN_PAGE_VISIBILITY,
-    SET_NEW_MEETING_PAGE_VISIBILITY,
     SET_SKIP_PREJOIN_RELOAD,
 } from "./actionTypes";
 import {
@@ -272,6 +272,7 @@ export function joinConference(options?: Object, ignoreJoiningInProgress = false
                 APP.conference.startConference(jitsiTracks).catch(logger.error);
             })
             .catch(() => {
+                dispatch(setJoiningInProgress(false));
                 // There is nothing to do here. This is handled and dispatched in base/connection/actions.
             });
     };

@@ -11,6 +11,9 @@ import {
     getBackendSafeRoomName
 } from '../util/uri';
 
+import { setJoinRoomError } from "../meet/general/store/errors/actions";
+import { LocalStorageManager } from "../meet/LocalStorageManager";
+import MeetingService from "../meet/services/meeting.service";
 import {
     CONNECTION_DISCONNECTED,
     CONNECTION_ESTABLISHED,
@@ -22,8 +25,8 @@ import {
 } from './actionTypes';
 import { JITSI_CONNECTION_URL_KEY } from './constants';
 import logger from './logger';
-import { ConnectionFailedError, IIceServers } from './types';
-import { get8x8AppId, get8x8Options, get8x8JWT } from './options8x8';
+import { get8x8Options } from "./options8x8";
+import { ConnectionFailedError, IIceServers } from "./types";
 
 /**
  * The options that will be passed to the JitsiConnection instance.
@@ -47,7 +50,7 @@ export interface IOptions extends IConfigState {
 export function connectionDisconnected(connection?: Object) {
     return {
         type: CONNECTION_DISCONNECTED,
-        connection
+        connection,
     };
 }
 
@@ -65,12 +68,11 @@ export function connectionDisconnected(connection?: Object) {
  *     timeEstablished: number
  * }}
  */
-export function connectionEstablished(
-        connection: Object, timeEstablished: number) {
+export function connectionEstablished(connection: Object, timeEstablished: number) {
     return {
         type: CONNECTION_ESTABLISHED,
         connection,
-        timeEstablished
+        timeEstablished,
     };
 }
 
@@ -87,9 +89,7 @@ export function connectionEstablished(
  *     error: ConnectionFailedError
  * }}
  */
-export function connectionFailed(
-        connection: Object,
-        error: ConnectionFailedError) {
+export function connectionFailed(connection: Object, error: ConnectionFailedError) {
     const { credentials } = error;
 
     if (credentials && !Object.keys(credentials).length) {
@@ -99,7 +99,7 @@ export function connectionFailed(
     return {
         type: CONNECTION_FAILED,
         connection,
-        error
+        error,
     };
 }
 
@@ -114,11 +114,11 @@ export function connectionFailed(
 export function constructOptions(state: IReduxState) {
     // Deep clone the options to make sure we don't modify the object in the
     // redux store.
-    const options: IOptions = _.cloneDeep(state['features/base/config']);
+    const options: IOptions = _.cloneDeep(state["features/base/config"]);
 
-    const { locationURL, preferVisitor } = state['features/base/connection'];
-    const params = parseURLParams(locationURL || '');
-    const iceServersOverride = params['iceServers.replace'];
+    const { locationURL, preferVisitor } = state["features/base/connection"];
+    const params = parseURLParams(locationURL || "");
+    const iceServersOverride = params["iceServers.replace"];
 
     if (iceServersOverride) {
         options.iceServersOverride = iceServersOverride;
@@ -128,8 +128,8 @@ export function constructOptions(state: IReduxState) {
     let { websocket } = options;
 
     // TESTING: Only enable WebSocket for some percentage of users.
-    if (websocket && navigator.product === 'ReactNative') {
-        if ((Math.random() * 100) >= (options?.testing?.mobileXmppWsThreshold ?? 0)) {
+    if (websocket && navigator.product === "ReactNative") {
+        if (Math.random() * 100 >= (options?.testing?.mobileXmppWsThreshold ?? 0)) {
             websocket = undefined;
         }
     }
@@ -144,18 +144,18 @@ export function constructOptions(state: IReduxState) {
     logger.log(`Using service URL ${serviceUrl}`);
 
     // Append room to the URL's search.
-    const { room } = state['features/base/conference'];
+    const { room } = state["features/base/conference"];
 
     if (serviceUrl && room) {
         const roomName = getBackendSafeRoomName(room);
 
-        options.serviceUrl = appendURLParam(serviceUrl, 'room', roomName ?? '');
+        options.serviceUrl = appendURLParam(serviceUrl, "room", roomName ?? "");
 
         if (options.websocketKeepAliveUrl) {
-            options.websocketKeepAliveUrl = appendURLParam(options.websocketKeepAliveUrl, 'room', roomName ?? '');
+            options.websocketKeepAliveUrl = appendURLParam(options.websocketKeepAliveUrl, "room", roomName ?? "");
         }
         if (options.conferenceRequestUrl) {
-            options.conferenceRequestUrl = appendURLParam(options.conferenceRequestUrl, 'room', roomName ?? '');
+            options.conferenceRequestUrl = appendURLParam(options.conferenceRequestUrl, "room", roomName ?? "");
         }
     }
 
@@ -164,12 +164,12 @@ export function constructOptions(state: IReduxState) {
     }
 
     // Enable ssrc-rewriting by default.
-    if (typeof flags?.ssrcRewritingEnabled === 'undefined') {
+    if (typeof flags?.ssrcRewritingEnabled === "undefined") {
         const { ...otherFlags } = flags ?? {};
 
         options.flags = {
             ...otherFlags,
-            ssrcRewritingEnabled: true
+            ssrcRewritingEnabled: true,
         };
     }
 
@@ -189,7 +189,7 @@ export function constructOptions(state: IReduxState) {
 export function setLocationURL(locationURL?: URL) {
     return {
         type: SET_LOCATION_URL,
-        locationURL
+        locationURL,
     };
 }
 
@@ -205,7 +205,7 @@ export function setLocationURL(locationURL?: URL) {
 export function setPreferVisitor(preferVisitor: boolean) {
     return {
         type: SET_PREFER_VISITOR,
-        preferVisitor
+        preferVisitor,
     };
 }
 
@@ -216,143 +216,175 @@ export function setPreferVisitor(preferVisitor: boolean) {
  * @param {string} [password] - The XMPP user's password.
  * @returns {Function}
  */
-export function _connectInternal(id?: string, password?: string) {
-    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+export function _connectInternal({
+    id,
+    password,
+    name,
+    lastname,
+    isAnonymous,
+}: {
+    id?: string;
+    password?: string;
+    name?: string;
+    lastname?: string;
+    isAnonymous?: boolean;
+}) {
+    return async (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
         const options = constructOptions(state);
-        const { locationURL } = state['features/base/connection'];
+        const { locationURL } = state["features/base/connection"];
+        const { displayName } = state["features/base/settings"];
+        const room = state["features/base/conference"].room ?? "";
+        const NEW_MEETING_URL = "new-meeting";
 
-        const room = state['features/base/conference'].room || '';
-        const jwt = await get8x8JWT(room);
-        const appId = get8x8AppId();
-        const newOptions = get8x8Options(options, appId, room);
+        if (room !== NEW_MEETING_URL)
+            try {
+                let userUUID: string | undefined;
 
-        const connection = new JitsiMeetJS.JitsiConnection(options.appId, jwt, newOptions);
+                if (isAnonymous) {
+                    userUUID = LocalStorageManager.instance.getOrCreateAnonymousUUID();
+                }
+                const { token: jwt, appId } = await MeetingService.instance.joinCall(room, {
+                    name: displayName ?? name ?? "",
+                    lastname: lastname ?? "",
+                    anonymous: !!isAnonymous,
+                    anonymousId: userUUID,
+                });
 
-        connection[JITSI_CONNECTION_URL_KEY] = locationURL;
+                const newOptions = get8x8Options(options, appId, room);
 
-        dispatch(_connectionWillConnect(connection));
+                const connection = new JitsiMeetJS.JitsiConnection(options.appId, jwt, newOptions);
 
-        return new Promise((resolve, reject) => {
-            connection.addEventListener(
-                JitsiConnectionEvents.CONNECTION_DISCONNECTED,
-                _onConnectionDisconnected);
-            connection.addEventListener(
-                JitsiConnectionEvents.CONNECTION_ESTABLISHED,
-                _onConnectionEstablished);
-            connection.addEventListener(
-                JitsiConnectionEvents.CONNECTION_FAILED,
-                _onConnectionFailed);
-            connection.addEventListener(
-                JitsiConnectionEvents.CONNECTION_REDIRECTED,
-                _onConnectionRedirected);
-            connection.addEventListener(
-                JitsiConnectionEvents.PROPERTIES_UPDATED,
-                _onPropertiesUpdate);
+                connection[JITSI_CONNECTION_URL_KEY] = locationURL;
 
-            /**
-             * Unsubscribe the connection instance from
-             * {@code CONNECTION_DISCONNECTED} and {@code CONNECTION_FAILED} events.
-             *
-             * @returns {void}
-             */
-            function unsubscribe() {
-                connection.removeEventListener(
-                    JitsiConnectionEvents.CONNECTION_DISCONNECTED, _onConnectionDisconnected);
-                connection.removeEventListener(JitsiConnectionEvents.CONNECTION_FAILED, _onConnectionFailed);
-                connection.removeEventListener(JitsiConnectionEvents.PROPERTIES_UPDATED, _onPropertiesUpdate);
+                dispatch(_connectionWillConnect(connection));
+
+                return new Promise((resolve, reject) => {
+                    connection.addEventListener(
+                        JitsiConnectionEvents.CONNECTION_DISCONNECTED,
+                        _onConnectionDisconnected
+                    );
+                    connection.addEventListener(JitsiConnectionEvents.CONNECTION_ESTABLISHED, _onConnectionEstablished);
+                    connection.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED, _onConnectionFailed);
+                    connection.addEventListener(JitsiConnectionEvents.CONNECTION_REDIRECTED, _onConnectionRedirected);
+                    connection.addEventListener(JitsiConnectionEvents.PROPERTIES_UPDATED, _onPropertiesUpdate);
+
+                    /**
+                     * Unsubscribe the connection instance from
+                     * {@code CONNECTION_DISCONNECTED} and {@code CONNECTION_FAILED} events.
+                     *
+                     * @returns {void}
+                     */
+                    function unsubscribe() {
+                        connection.removeEventListener(
+                            JitsiConnectionEvents.CONNECTION_DISCONNECTED,
+                            _onConnectionDisconnected
+                        );
+                        connection.removeEventListener(JitsiConnectionEvents.CONNECTION_FAILED, _onConnectionFailed);
+                        connection.removeEventListener(JitsiConnectionEvents.PROPERTIES_UPDATED, _onPropertiesUpdate);
+                    }
+
+                    /**
+                     * Dispatches {@code CONNECTION_DISCONNECTED} action when connection is
+                     * disconnected.
+                     *
+                     * @private
+                     * @returns {void}
+                     */
+                    function _onConnectionDisconnected() {
+                        unsubscribe();
+                        dispatch(connectionDisconnected(connection));
+                        resolve(connection);
+                    }
+
+                    /**
+                     * Rejects external promise when connection fails.
+                     *
+                     * @param {JitsiConnectionErrors} err - Connection error.
+                     * @param {string} [message] - Error message supplied by lib-jitsi-meet.
+                     * @param {Object} [credentials] - The invalid credentials that were
+                     * used to authenticate and the authentication failed.
+                     * @param {string} [credentials.jid] - The XMPP user's ID.
+                     * @param {string} [credentials.password] - The XMPP user's password.
+                     * @param {Object} details - Additional information about the error.
+                     * @private
+                     * @returns {void}
+                     */
+                    function _onConnectionFailed(err: string, message: string, credentials: any, details: Object) {
+                        // eslint-disable-line max-params
+                        unsubscribe();
+
+                        dispatch(
+                            connectionFailed(connection, {
+                                credentials,
+                                details,
+                                name: err,
+                                message,
+                            })
+                        );
+
+                        reject(err);
+                    }
+
+                    /**
+                     * Resolves external promise when connection is established.
+                     *
+                     * @private
+                     * @returns {void}
+                     */
+                    function _onConnectionEstablished() {
+                        connection.removeEventListener(
+                            JitsiConnectionEvents.CONNECTION_ESTABLISHED,
+                            _onConnectionEstablished
+                        );
+                        dispatch(connectionEstablished(connection, Date.now()));
+                        resolve(connection);
+                    }
+
+                    /**
+                     * Connection was redirected.
+                     *
+                     * @param {string|undefined} vnode - The vnode to connect to.
+                     * @param {string} focusJid - The focus jid to use.
+                     * @param {string|undefined} username - The username to use when joining. This is after promotion from
+                     * visitor to main participant.
+                     * @private
+                     * @returns {void}
+                     */
+                    function _onConnectionRedirected(vnode: string, focusJid: string, username: string) {
+                        connection.removeEventListener(
+                            JitsiConnectionEvents.CONNECTION_REDIRECTED,
+                            _onConnectionRedirected
+                        );
+                        dispatch(redirect(vnode, focusJid, username));
+                    }
+
+                    /**
+                     * Connection properties were updated.
+                     *
+                     * @param {Object} properties - The properties which were updated.
+                     * @private
+                     * @returns {void}
+                     */
+                    function _onPropertiesUpdate(properties: object) {
+                        dispatch(_propertiesUpdate(properties));
+                    }
+
+                    // in case of configured http url for conference request we need the room name
+                    const name = getBackendSafeRoomName(state["features/base/conference"].room);
+
+                    connection.connect({
+                        id,
+                        password,
+                        name,
+                    });
+                });
+            } catch (error: Error | any) {
+                // DISPLAY ERROR MESSAGE - NOW NOT DISPLAY WHICH ERROR
+                // TODO - https://inxt.atlassian.net/browse/PB-4295
+                dispatch(setJoinRoomError(true, error.message));
+                return Promise.reject(error);
             }
-
-            /**
-             * Dispatches {@code CONNECTION_DISCONNECTED} action when connection is
-             * disconnected.
-             *
-             * @private
-             * @returns {void}
-             */
-            function _onConnectionDisconnected() {
-                unsubscribe();
-                dispatch(connectionDisconnected(connection));
-                resolve(connection);
-            }
-
-            /**
-             * Rejects external promise when connection fails.
-             *
-             * @param {JitsiConnectionErrors} err - Connection error.
-             * @param {string} [message] - Error message supplied by lib-jitsi-meet.
-             * @param {Object} [credentials] - The invalid credentials that were
-             * used to authenticate and the authentication failed.
-             * @param {string} [credentials.jid] - The XMPP user's ID.
-             * @param {string} [credentials.password] - The XMPP user's password.
-             * @param {Object} details - Additional information about the error.
-             * @private
-             * @returns {void}
-             */
-            function _onConnectionFailed( // eslint-disable-line max-params
-                    err: string,
-                    message: string,
-                    credentials: any,
-                    details: Object) {
-                unsubscribe();
-
-                dispatch(connectionFailed(connection, {
-                    credentials,
-                    details,
-                    name: err,
-                    message
-                }));
-
-                reject(err);
-            }
-
-            /**
-             * Resolves external promise when connection is established.
-             *
-             * @private
-             * @returns {void}
-             */
-            function _onConnectionEstablished() {
-                connection.removeEventListener(JitsiConnectionEvents.CONNECTION_ESTABLISHED, _onConnectionEstablished);
-                dispatch(connectionEstablished(connection, Date.now()));
-                resolve(connection);
-            }
-
-            /**
-             * Connection was redirected.
-             *
-             * @param {string|undefined} vnode - The vnode to connect to.
-             * @param {string} focusJid - The focus jid to use.
-             * @param {string|undefined} username - The username to use when joining. This is after promotion from
-             * visitor to main participant.
-             * @private
-             * @returns {void}
-             */
-            function _onConnectionRedirected(vnode: string, focusJid: string, username: string) {
-                connection.removeEventListener(JitsiConnectionEvents.CONNECTION_REDIRECTED, _onConnectionRedirected);
-                dispatch(redirect(vnode, focusJid, username));
-            }
-
-            /**
-             * Connection properties were updated.
-             *
-             * @param {Object} properties - The properties which were updated.
-             * @private
-             * @returns {void}
-             */
-            function _onPropertiesUpdate(properties: object) {
-                dispatch(_propertiesUpdate(properties));
-            }
-
-            // in case of configured http url for conference request we need the room name
-            const name = getBackendSafeRoomName(state['features/base/conference'].room);
-
-            connection.connect({
-                id,
-                password,
-                name
-            });
-        });
     };
 }
 

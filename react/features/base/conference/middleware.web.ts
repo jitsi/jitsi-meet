@@ -90,6 +90,7 @@ function onWakeLockReleased() {
 MiddlewareRegistry.register(store => next => action => {
     const { dispatch, getState } = store;
     const { enableForcedReload } = getState()['features/base/config'];
+    const { room } = getState()["features/base/conference"];
 
     switch (action.type) {
     case CONFERENCE_JOIN_IN_PROGRESS: {
@@ -118,8 +119,8 @@ MiddlewareRegistry.register(store => next => action => {
             const titlekey = Object.keys(TRIGGER_READY_TO_CLOSE_REASONS)[
                 Object.values(TRIGGER_READY_TO_CLOSE_REASONS).indexOf(reason)
             ];
-
-            dispatch(hangup(true, i18next.t(titlekey) || reason));
+            const roomId = room ?? "";
+            dispatch(hangup(true, roomId, i18next.t(titlekey) || reason));
         }
 
         releaseScreenLock();

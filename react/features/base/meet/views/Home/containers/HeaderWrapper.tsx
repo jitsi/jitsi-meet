@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { redirectToStaticPage } from "../../../../../app/actions.any";
 import { openSettingsDialog } from "../../../../../settings/actions.web";
 import MeetingButton from "../../../general/containers/MeetingButton";
+import { logout } from "../../../general/store/auth/actions";
 import { useLocalStorage } from "../../../LocalStorageManager";
 import Header from "../../PreMeeting/components/Header";
 import { useUserData } from "../../PreMeeting/hooks/useUserData";
@@ -37,7 +38,7 @@ const HeaderWrapper = ({ onNewMeeting, onLogin, onSignUp, translate }: HeaderWra
     };
 
     const onLogout = () => {
-        localStorageManager.clearCredentials();
+        dispatch(logout());
         dispatch(redirectToStaticPage("/"));
     };
 

@@ -6,6 +6,7 @@ import AudioTracksContainer from "../../../../../filmstrip/components/web/AudioT
 import { getCurrentConference } from "../../../../conference/functions";
 import { translate } from "../../../../i18n/functions";
 import { useAspectRatio } from "../../../general/hooks/useAspectRatio";
+import { useParticipantAvatar } from "../../PreMeeting/hooks/useParticipantAvatar";
 import VideoGallery from "../components/VideoGallery";
 import VideoSpeaker from "../components/VideoSpeaker";
 import { getParticipantsWithTracks } from "../utils";
@@ -16,6 +17,7 @@ interface OwnProps {
 
 interface MappedStateProps {
     isE2EESupported: boolean;
+    room?: string;
 }
 
 interface GalleryVideoWrapperProps extends WithTranslation, OwnProps, MappedStateProps {}
@@ -23,7 +25,8 @@ interface GalleryVideoWrapperProps extends WithTranslation, OwnProps, MappedStat
 const GalleryVideoWrapper = ({ videoMode, t }: GalleryVideoWrapperProps) => {
     const { containerStyle } = useAspectRatio();
 
-    const participants = useSelector((state: IReduxState) => getParticipantsWithTracks(state));
+    useParticipantAvatar();
+    const participants = useSelector(getParticipantsWithTracks);
     const flipX = useSelector((state: IReduxState) => state["features/base/settings"].localFlipX);
 
     const contStyle = videoMode === "gallery" ? containerStyle : {};
@@ -32,10 +35,10 @@ const GalleryVideoWrapper = ({ videoMode, t }: GalleryVideoWrapperProps) => {
         <div className="h-full w-full bg-gray-950" style={contStyle}>
             <AudioTracksContainer />
             <div className={videoMode === "gallery" ? "block" : "hidden"}>
-                <VideoGallery participants={participants ?? []} translate={t} flipX={flipX} />
+                <VideoGallery participants={participants} translate={t} flipX={flipX} />
             </div>
             <div className={videoMode === "speaker" ? "block" : "hidden"}>
-                <VideoSpeaker participants={participants ?? []} translate={t} flipX={flipX} />
+                <VideoSpeaker participants={participants} translate={t} flipX={flipX} />
             </div>
         </div>
     );
@@ -44,9 +47,12 @@ const GalleryVideoWrapper = ({ videoMode, t }: GalleryVideoWrapperProps) => {
 function mapStateToProps(state: IReduxState, ownProps: OwnProps): MappedStateProps & OwnProps {
     const conference = getCurrentConference(state);
     const isE2EESupported = conference?.isE2EESupported() ?? false;
+    const room = state["features/base/conference"].room ?? "";
+
     return {
         ...ownProps,
         isE2EESupported,
+        room,
     };
 }
 

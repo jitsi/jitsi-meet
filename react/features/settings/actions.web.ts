@@ -47,6 +47,7 @@ export function openLogoutDialog() {
 
         const { conference } = state["features/base/conference"];
         const { jwt } = state["features/base/jwt"];
+        const _room = state["features/base/conference"].room ?? "";
 
         dispatch(
             openDialog(LogoutDialog, {
@@ -60,15 +61,15 @@ export function openLogoutDialog() {
                         const url = appendURLHashParam(logoutUrl, "electron", "true");
 
                         window.open(url, "_blank");
-                        dispatch(hangup(true));
+
+                        if (_room) dispatch(hangup(true, _room));
                     } else {
                         if (logoutUrl) {
                             window.location.href = logoutUrl;
 
                             return;
                         }
-
-                        conference?.room.xmpp.moderator.logout(() => dispatch(hangup(true)));
+                        if (_room) conference?.room.xmpp.moderator.logout(() => dispatch(hangup(true, _room)));
                     }
                 },
             })

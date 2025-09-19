@@ -2,9 +2,9 @@ import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
-import { get8x8BetaJWT } from "../../../../connection/options8x8";
 import { loginSuccess } from "../../../general/store/auth/actions";
 import { setRoomID } from "../../../general/store/errors/actions";
+import { setUser } from "../../../general/store/user/actions";
 import { useLocalStorage } from "../../../LocalStorageManager";
 import { AuthService } from "../../../services/auth.service";
 import { PaymentsService } from "../../../services/payments.service";
@@ -70,17 +70,6 @@ export function useLoginModal({ onClose, onLogin, translate }: UseAuthModalProps
         [translate]
     );
 
-    const createMeetToken = useCallback(
-        async (token: string) => {
-            try {
-                return await get8x8BetaJWT(token);
-            } catch (err) {
-                throw new Error(translate("meet.auth.modal.error.cannotCreateMeetings"));
-            }
-        },
-        [translate]
-    );
-
     const getUserSubscription = useCallback(async () => {
         try {
             return await PaymentsService.instance.getUserSubscription();
@@ -107,6 +96,7 @@ export function useLoginModal({ onClose, onLogin, translate }: UseAuthModalProps
                 }
 
                 dispatch(loginSuccess(credentials));
+                dispatch(setUser(credentials.user));
                 onLogin?.(credentials.newToken);
             } catch (err) {
                 storageManager.saveCredentials(

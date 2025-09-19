@@ -10,17 +10,18 @@ import { getInviteURL } from "../../../../connection/functions";
 import { translate } from "../../../../i18n/functions";
 import MediaControlsWrapper from "../../../general/containers/MediaControlsWrapper";
 
+import InviteUserModal from "../components/InviteUserModal";
 import { VideoParticipantType } from "../types";
 import { getParticipantsWithTracks } from "../utils";
-import InviteUserModal from "../components/InviteUserModal";
 
 interface ConferenceControlsProps extends WithTranslation {
     dispatch: any;
     participants?: VideoParticipantType[];
     _inviteUrl: string;
+    roomID: string;
 }
 
-const ConferenceControls = ({ dispatch, participants, _inviteUrl, t }: ConferenceControlsProps) => {
+const ConferenceControls = ({ dispatch, participants, _inviteUrl, t, roomID }: ConferenceControlsProps) => {
     const [isOpenInviteUser, setIsOpenInviteUser] = useState(false);
 
     const handleInviteUser = () => {
@@ -46,7 +47,7 @@ const ConferenceControls = ({ dispatch, participants, _inviteUrl, t }: Conferenc
                     <CircleButton variant="default" onClick={handleInviteUser} active={isOpenInviteUser}>
                         <UserPlus size={22} color={isOpenInviteUser ? "black" : "white"} />
                     </CircleButton>
-                    <CircleButton variant="cancel" onClick={() => dispatch(leaveConference())}>
+                    <CircleButton variant="cancel" onClick={() => dispatch(leaveConference(roomID))}>
                         <X size={22} color="white" />
                     </CircleButton>
                     <CircleButton variant="default" onClick={() => dispatch(toggleSecurityDialog())}>
@@ -64,6 +65,7 @@ function mapStateToProps(state: IReduxState) {
     return {
         participants: participantsWithTracks,
         _inviteUrl: getInviteURL(state),
+        roomID: state["features/base/conference"].room ?? "",
     };
 }
 

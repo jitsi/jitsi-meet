@@ -31,12 +31,13 @@ import ConferenceInfo from "../../../../../conference/components/web/ConferenceI
 import { default as Notice } from "../../../../../conference/components/web/Notice";
 import Header, { Mode } from "../components/Header";
 
-import ConferenceControlsWrapper from "../containers/ConferenceControlsWrapper";
-import VideoGalleryWrapper from "../containers/VideoGalleryWrapper";
-import { DEFAULT_STATE } from "../../../../known-domains/reducer";
-import PersistenceRegistry from "../../../../redux/PersistenceRegistry";
 import { setConferenceViewMode } from "../../../../../filmstrip/actions.web";
 import { ViewMode } from "../../../../../filmstrip/reducer";
+import { DEFAULT_STATE } from "../../../../known-domains/reducer";
+import PersistenceRegistry from "../../../../redux/PersistenceRegistry";
+import { setCreateRoomError, setJoinRoomError } from "../../../general/store/errors/actions";
+import ConferenceControlsWrapper from "./ConferenceControlsWrapper";
+import VideoGalleryWrapper from "./VideoGalleryWrapper";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -101,7 +102,7 @@ class Conference extends AbstractConference<IProps, any> {
     _originalOnShowToolbar: Function;
 
     _onSetVideoModeClicked = (newMode: Mode) => {
-        this.props.dispatch(setConferenceViewMode(newMode))
+        this.props.dispatch(setConferenceViewMode(newMode));
     };
     /**
      * Initializes a new Conference instance.
@@ -143,6 +144,8 @@ class Conference extends AbstractConference<IProps, any> {
             },
             DEFAULT_STATE
         );
+        this.props.dispatch(setCreateRoomError(false));
+        this.props.dispatch(setJoinRoomError(false));
     }
 
     /**

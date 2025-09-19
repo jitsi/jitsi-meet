@@ -13,7 +13,6 @@ import { HangupContextMenuItem } from './HangupContextMenuItem';
  * The type of the React {@code Component} props of {@link LeaveConferenceButton}.
  */
 interface IProps {
-
     /**
      * Key to use for toolbarButtonClicked event.
      */
@@ -24,6 +23,11 @@ interface IProps {
      * whether to only notify or to also prevent button click routine.
      */
     notifyMode?: string;
+
+    /**
+     * The meeting room id.
+     */
+    roomId?: string;
 }
 
 
@@ -39,7 +43,7 @@ export const LeaveConferenceButton = (props: IProps) => {
 
     const onLeaveConference = useCallback(() => {
         sendAnalytics(createToolbarEvent('hangup'));
-        dispatch(leaveConference());
+        dispatch(leaveConference(props.roomId));
     }, [ dispatch ]);
 
     return (

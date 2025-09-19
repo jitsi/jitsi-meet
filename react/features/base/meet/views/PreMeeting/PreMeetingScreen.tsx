@@ -20,14 +20,16 @@ import { updateSettings } from "../../../settings/actions";
 import { getDisplayName } from "../../../settings/functions.web";
 import { withPixelLineHeight } from "../../../styles/functions.web";
 import MeetingButton from "../../general/containers/MeetingButton";
+import { loginSuccess, logout } from "../../general/store/auth/actions";
 import { setCreateRoomError } from "../../general/store/errors/actions";
 import { useLocalStorage } from "../../LocalStorageManager";
-import { ErrorModals, ErrorType } from "./components/ErrorModals";
+import MeetingService from "../../services/meeting.service";
+import { MeetingUser } from "../../services/types/meeting.types";
+import AuthModal from "../Home/containers/AuthModal";
 import Header from "./components/Header";
 import PreMeetingModal from "./components/PreMeetingModal";
 import SecureMeetingMessage from "./components/SecureMeetingMessage";
 import VideoEncodingToggle from "./containers/VideoEncodingToggle";
-import { useParticipants } from "./hooks/useParticipants";
 import { useUserData } from "./hooks/useUserData";
 
 interface IProps extends WithTranslation {
@@ -152,9 +154,17 @@ interface IProps extends WithTranslation {
     flipX?: boolean;
 
     /**
-     * Flag to indicate if conference is creating.
+     * Function to create Meeting.
      */
     createConference?: Function;
+
+    room: string;
+
+    /**
+     * The error messages to display.
+     */
+    joinRoomErrorMessage?: string;
+    createRoomErrorMessage?: string;
 
     /**
      * Flag to indicate if supports end to end encryption.
@@ -183,13 +193,20 @@ const PreMeetingScreen = ({
     createRoomError,
     flipX,
     createConference,
+    room,
+    joinRoomErrorMessage,
+    createRoomErrorMessage,
     isE2EESupported,
 }: IProps) => {
     const { classes } = useStyles();
     const [isNameInputFocused, setIsNameInputFocused] = useState(false);
     const [isCreatingMeeting, setIsCreatingMeeting] = useState(false);
+    const [meetingUsersData, setMeetingUsersData] = useState<MeetingUser[]>([]);
     const userData = useUserData();
-    const { allParticipants } = useParticipants();
+    const [openLogin, setOpenLogin] = useState<boolean>(true);
+
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+
     const storageManager = useLocalStorage();
     const dispatch = useDispatch();
 
@@ -197,6 +214,7 @@ const PreMeetingScreen = ({
 
     const isInNewMeeting = window.location.href.includes("new-meeting");
     const showNameError = userName.length === 0 && !isNameInputFocused;
+    const errorMessage = createRoomError ? createRoomErrorMessage : joinRoomErrorMessage;
 
     const toolbarSection = useMemo(
         () => (
@@ -219,7 +237,18 @@ const PreMeetingScreen = ({
         [showUnsafeRoomWarning, showDeviceStatus, showRecordingWarning]
     );
 
+    const getUsersInMeeting = async () => {
+        if (!isInNewMeeting) {
+            const meetingUsers = await MeetingService.instance.getCurrentUsersInCall(room);
+            setMeetingUsersData(meetingUsers);
+        }
+    };
+
     useEffect(() => {
+        if (meetingUsersData.length === 0) {
+            getUsersInMeeting();
+        }
+
         if (userData?.name) {
             dispatchUpdateSettings({
                 displayName: userData.name,
@@ -239,17 +268,11 @@ const PreMeetingScreen = ({
             const newUrl = `${baseUrl}/new-meeting`;
             window.history.pushState({}, document.title, newUrl);
             dispatch(appNavigate(newUrl));
-        } catch (error) {
-            console.error("Error creating new meeting:", error);
-            dispatch(setCreateRoomError(true));
+        } catch (error: Error | any) {
+            dispatch(setCreateRoomError(true, error.message));
         } finally {
             setIsCreatingMeeting(false);
         }
-    };
-
-    const handleRedirectToSignUp = () => {
-        // HARDCODED, MODIFY WHEN SIGN UP PAGE IS READY
-        window.location.href = "https://drive.internxt.com/new";
     };
 
     const updateNameInStorage = (name: string) => {
@@ -276,20 +299,10 @@ const PreMeetingScreen = ({
         updateNameInStorage(displayName);
     };
 
-    const handleGoHome = () => {
-        window.location.href = "/";
-    };
-
-    const getErrorType = (): ErrorType | undefined => {
-        if (createRoomError) return "createRoom";
-        if (joinRoomError) return "joinRoom";
-        return undefined;
-    };
-
     // TODO: EXTRACT ONLGOUT AND HEADER, CHECK HeaderWrapper.tsx
     const localStorageManager = useLocalStorage();
     const onLogout = () => {
-        localStorageManager.clearCredentials();
+        dispatch(logout());
         dispatch(redirectToStaticPage("/"));
     };
 
@@ -304,9 +317,15 @@ const PreMeetingScreen = ({
                     userData={userData}
                     subscription={subscription}
                     translate={t}
-                    onLogin={handleRedirectToLogin}
+                    onLogin={() => {
+                        setOpenLogin(true);
+                        setIsAuthModalOpen(true);
+                    }}
+                    onSignUp={() => {
+                        setOpenLogin(false);
+                        setIsAuthModalOpen(true);
+                    }}
                     onLogout={onLogout}
-                    onSignUp={handleRedirectToSignUp}
                     meetingButton={
                         isInNewMeeting ? (
                             <MeetingButton
@@ -320,40 +339,35 @@ const PreMeetingScreen = ({
                     navigateToHomePage={navigateToHomePage}
                     onOpenSettings={() => dispatch(openSettingsDialog(undefined, true))}
                 />
-                <ErrorModals
-                    errorType={getErrorType()}
-                    translate={t}
-                    onGoHome={handleGoHome}
-                    onRetry={() => {
-                        dispatch(setCreateRoomError(false));
-                        handleNewMeeting();
+                <PreMeetingModal
+                    videoTrack={videoTrack}
+                    videoMuted={!!videoMuted}
+                    audioTrack={audioTrack}
+                    userName={userName}
+                    showNameError={showNameError}
+                    setUserName={setName}
+                    setIsNameInputFocused={setIsNameInputFocused}
+                    participants={meetingUsersData}
+                    joinConference={async () => {
+                        createConference && (await createConference());
+                        joinConference && joinConference();
                     }}
+                    disableJoinButton={disableJoinButton}
+                    flipX={flipX}
+                    isCreatingConference={!!createConference}
+                    errorMessage={errorMessage}
                 />
-
-                {!getErrorType() && (
-                    <PreMeetingModal
-                        videoTrack={videoTrack}
-                        videoMuted={!!videoMuted}
-                        audioTrack={audioTrack}
-                        userName={userName}
-                        showNameError={showNameError}
-                        setUserName={setName}
-                        setIsNameInputFocused={setIsNameInputFocused}
-                        participants={allParticipants}
-                        joinConference={async () => {
-                            createConference && (await createConference());
-                            joinConference && joinConference();
-                        }}
-                        disableJoinButton={disableJoinButton}
-                        flipX={flipX}
-                        isCreatingConference={!!createConference}
-                    />
-                )}
-                <div className="flex absolute bottom-7 right-7">{isE2EESupported && <SecureMeetingMessage />}</div>
+                <AuthModal
+                    isOpen={isAuthModalOpen}
+                    openLogin={openLogin}
+                    onClose={() => setIsAuthModalOpen(false)}
+                    onSignup={(credentials) => dispatch(loginSuccess(credentials))}
+                    translate={t}
+                />
+                ;<div className="flex absolute bottom-7 right-7"><SecureMeetingMessage /></div>
                 <div className={classes.videoEncodingToggleContainer}>
                     <VideoEncodingToggle />
                 </div>
-
                 {/* UNCOMMENT IN DEV MODE TO SEE OLD IMPLEMENTATION  */}
                 {/* <div className="flex flex-row">
                     <div>
@@ -390,6 +404,9 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const userName = getDisplayName(state);
     const { localFlipX } = state["features/base/settings"];
 
+    const joinRoomErrorMessage = state["features/meet-room"]?.joinRoomErrorMessage;
+    const createRoomErrorMessage = state["features/meet-room"]?.createRoomErrorMessage;
+    const room = state["features/base/conference"].room ?? "";
     const joinRoomError = state["features/meet-room"]?.joinRoomError ?? false;
     const createRoomError = state["features/meet-room"]?.createRoomError ?? false;
 
@@ -411,6 +428,9 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         joinRoomError,
         createRoomError,
         flipX: localFlipX,
+        room,
+        joinRoomErrorMessage,
+        createRoomErrorMessage,
         isE2EESupported,
     };
 }
