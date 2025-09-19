@@ -8,66 +8,9 @@ import 'promise.withresolvers/auto'; // Promise.withResolvers.
 import 'react-native-url-polyfill/auto'; // Complete URL polyfill.
 
 import Storage from './Storage';
+import { querySelector, querySelectorAll } from './querySelectorPolyfill';
 
 const { AppInfo } = NativeModules;
-
-/**
- * Implements an absolute minimum of the common logic of
- * {@code Document.querySelector} and {@code Element.querySelector}. Implements
- * the most simple of selectors necessary to satisfy the call sites at the time
- * of this writing (i.e. Select by tagName).
- *
- * @param {Node} node - The Node which is the root of the tree to query.
- * @param {string} selectors - The group of CSS selectors to match on.
- * @returns {Element} - The first Element which is a descendant of the specified
- * node and matches the specified group of selectors.
- */
-function _querySelector(node, selectors) {
-    let element = null;
-
-    node && _visitNode(node, n => {
-        if (n.nodeType === 1 /* ELEMENT_NODE */
-                && n.nodeName === selectors) {
-            element = n;
-
-            return true;
-        }
-
-        return false;
-    });
-
-    return element;
-}
-
-/**
- * Visits each Node in the tree of a specific root Node (using depth-first
- * traversal) and invokes a specific callback until the callback returns true.
- *
- * @param {Node} node - The root Node which represents the tree of Nodes to
- * visit.
- * @param {Function} callback - The callback to invoke with each visited Node.
- * @returns {boolean} - True if the specified callback returned true for a Node
- * (at which point the visiting stopped); otherwise, false.
- */
-function _visitNode(node, callback) {
-    if (callback(node)) {
-        return true;
-    }
-
-    /* eslint-disable no-param-reassign, no-extra-parens */
-
-    if ((node = node.firstChild)) {
-        do {
-            if (_visitNode(node, callback)) {
-                return true;
-            }
-        } while ((node = node.nextSibling));
-    }
-
-    /* eslint-enable no-param-reassign, no-extra-parens */
-
-    return false;
-}
 
 (global => {
     // DOMParser
@@ -97,7 +40,6 @@ function _visitNode(node, callback) {
     // document
     //
     // Required by:
-    // - jQuery
     // - Strophe
     if (typeof global.document === 'undefined') {
         const document
@@ -156,7 +98,17 @@ function _visitNode(node, callback) {
         if (elementPrototype) {
             if (typeof elementPrototype.querySelector === 'undefined') {
                 elementPrototype.querySelector = function(selectors) {
-                    return _querySelector(this, selectors);
+                    return querySelector(this, selectors);
+                };
+            }
+
+            // Element.querySelectorAll
+            //
+            // Required by:
+            // - lib-jitsi-meet XMLUtils
+            if (typeof elementPrototype.querySelectorAll === 'undefined') {
+                elementPrototype.querySelectorAll = function(selectors) {
+                    return querySelectorAll(this, selectors);
                 };
             }
 
@@ -232,6 +184,51 @@ function _visitNode(node, callback) {
                         return children;
                     }
                 });
+            }
+        }
+
+        // Document.querySelector
+        //
+        // Required by:
+        // - lib-jitsi-meet -> XMLUtils.ts -> parseXML
+        if (typeof document.querySelector === 'undefined') {
+            document.querySelector = function(selectors) {
+                return this.documentElement ? querySelector(this.documentElement, selectors) : null;
+            };
+        }
+
+        // Document.querySelectorAll
+        //
+        // Required by:
+        // - lib-jitsi-meet -> XMLUtils.ts -> parseXML
+        if (typeof document.querySelectorAll === 'undefined') {
+            document.querySelectorAll = function(selectors) {
+                return this.documentElement ? querySelectorAll(this.documentElement, selectors) : [];
+            };
+        }
+
+        // Also add querySelector methods to Document.prototype for DOMParser-created documents
+        const documentPrototype = Object.getPrototypeOf(document);
+
+        if (documentPrototype) {
+            // Document.querySelector
+            //
+            // Required by:
+            // - lib-jitsi-meet -> XMLUtils.ts -> parseXML
+            if (typeof documentPrototype.querySelector === 'undefined') {
+                documentPrototype.querySelector = function(selectors) {
+                    return this.documentElement ? querySelector(this.documentElement, selectors) : null;
+                };
+            }
+
+            // Document.querySelectorAll
+            //
+            // Required by:
+            // - lib-jitsi-meet -> XMLUtils.ts -> parseXML
+            if (typeof documentPrototype.querySelectorAll === 'undefined') {
+                documentPrototype.querySelectorAll = function(selectors) {
+                    return this.documentElement ? querySelectorAll(this.documentElement, selectors) : [];
+                };
             }
         }
 
