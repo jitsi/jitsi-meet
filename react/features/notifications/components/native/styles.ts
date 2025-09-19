@@ -49,6 +49,12 @@ export default {
         paddingTop: BaseTheme.spacing[1]
     },
 
+    contentTextDescription: {
+        color: BaseTheme.palette.text04,
+        paddingLeft: BaseTheme.spacing[4],
+        paddingTop: BaseTheme.spacing[2]
+    },
+
     contentTextTitleDescription: {
         color: BaseTheme.palette.text04,
         fontWeight: 'bold',
