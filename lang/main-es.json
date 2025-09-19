@@ -677,6 +677,14 @@
             "login": "Iniciar sesión",
             "signUp": "Registrarse"
         },
+        "mobile": {
+            "title": "¡Aún no estamos listos para móvil!",
+            "description": {
+                "first": "Internxt Meet solo funciona en navegador web de escritorio por ahora",
+                "second": "Abre este enlace en tu ordenador para unirte a la reunión 🚀"
+            },
+            "imageAlt": "Reunión"
+        },
         "landing": {
             "title": {
                 "line1": "Videollamadas privadas",
