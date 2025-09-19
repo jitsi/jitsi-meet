@@ -10,7 +10,6 @@ import { Styles } from './AbstractToolboxItem';
 import ToolboxItem from './ToolboxItem';
 
 export interface IProps extends WithTranslation {
-
     /**
      * Function to be called after the click handler has been processed.
      */
@@ -46,7 +45,7 @@ export interface IProps extends WithTranslation {
     /**
      * Redux dispatch function.
      */
-    dispatch: IStore['dispatch'];
+    dispatch: IStore["dispatch"];
 
     /**
      * External handler for click action.
@@ -88,6 +87,11 @@ export interface IProps extends WithTranslation {
      * Whether this button is visible or not.
      */
     visible?: boolean;
+
+    /**
+     * The meeting room id.
+     */
+    roomId?: string;
 }
 
 /**

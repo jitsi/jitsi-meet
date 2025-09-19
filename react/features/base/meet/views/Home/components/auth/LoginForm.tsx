@@ -2,7 +2,8 @@ import { Button } from "@internxt/ui";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { AuthFormValues } from "../../types";
-import { ErrorMessage } from "./ErrorMessage";
+
+import { ErrorMessage } from "../../../../general/components/ErrorMessage";
 import PasswordInput from "./PasswordInput";
 import TextInput from "./TextInput";
 

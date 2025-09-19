@@ -3,6 +3,7 @@ import { ThunkAction } from "redux-thunk";
 import { IReduxState } from "../../../../../app/types";
 import { LocalStorageManager } from "../../../LocalStorageManager";
 import { AUTH_ACTIONS } from "../../../middlewares";
+import { User } from "../user/types";
 
 /**
  * Action to initialise the authentication status at application startup.
@@ -36,7 +37,7 @@ export const initializeAuth = (): ThunkAction<void, IReduxState, unknown, AnyAct
  * @param {object} credentials.user - User's information
  * @returns {object} Action object
  */
-export const loginSuccess = (credentials: { token: string; newToken: string; mnemonic: string; user: any }) => {
+export const loginSuccess = (credentials: { token: string; newToken: string; mnemonic: string; user: User }) => {
     return {
         type: AUTH_ACTIONS.LOGIN_SUCCESS,
         payload: {

@@ -41,6 +41,7 @@ import { IFaceLandmarksState } from "../face-landmarks/reducer";
 import { IFeedbackState } from "../feedback/reducer";
 
 import { MeetingState } from "../base/meet/general/store/meeting/types";
+import { UserReducerState } from "../base/meet/general/store/user/types";
 import { IFilmstripState } from "../filmstrip/reducer";
 import { IFollowMeState } from "../follow-me/reducer";
 import { IGifsState } from "../gifs/reducer";
@@ -179,6 +180,7 @@ export interface IReduxState {
     "features/whiteboard": IWhiteboardState;
     "features/meet-room": IJoinRoomErrorState;
     "features/meeting": MeetingState;
+    "features/user": UserReducerState;
 }
 
 export interface IReloadNowOptions {

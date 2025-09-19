@@ -17,8 +17,8 @@ import { translate } from "../../../i18n/functions";
 import { setColorAlpha } from "../../../util/helpers";
 import { Mode } from "./components/Header";
 
-import CreateConference from "./components/CreateConference";
-import JoinConference from "./components/JoinConference";
+import CreateConference from "./containers/CreateConference";
+import JoinConference from "./containers/JoinConference";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -75,10 +75,9 @@ interface IProps extends AbstractProps, WithTranslation {
      * If prejoin page is visible or not.
      */
     _showPrejoin: boolean;
-
     dispatch: any;
-
     _showNewMeeting: boolean;
+    roomdId: string;
 }
 
 /**
@@ -163,7 +162,7 @@ class Conference extends AbstractConference<IProps, any> {
 
         window.removeEventListener("beforeunload", this._handleBeforeUnload);
 
-        APP.conference.isJoined() && this.props.dispatch(hangup());
+        APP.conference.isJoined() && this.props.dispatch(hangup(true, this.props.roomdId));
     }
 
     /**
@@ -190,7 +189,7 @@ class Conference extends AbstractConference<IProps, any> {
      * @returns {void}
      */
     _leaveMeeting(): void {
-        this.props.dispatch(hangup());
+        this.props.dispatch(hangup(true, this.props.roomdId));
     }
 
     /**
@@ -342,11 +341,13 @@ class Conference extends AbstractConference<IProps, any> {
 function _mapStateToProps(state: IReduxState) {
     const { backgroundAlpha } = state["features/base/config"];
     const { showCreatingMeeting } = state["features/prejoin"];
+    const _room = state["features/base/conference"].room;
 
     return {
         ...abstractMapStateToProps(state),
         _backgroundAlpha: backgroundAlpha,
         _showNewMeeting: showCreatingMeeting,
+        roomId: _room,
     };
 }
 

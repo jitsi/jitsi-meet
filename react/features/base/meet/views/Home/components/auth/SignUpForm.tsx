@@ -4,7 +4,8 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { usePasswordStrength } from "../../hooks/usePasswordStrength";
 import { IFormValues } from "../../types";
-import { ErrorMessage } from "./ErrorMessage";
+
+import { ErrorMessage } from "../../../../general/components/ErrorMessage";
 import PasswordStrengthIndicator from "./PasswordIndicator";
 import PasswordInput from "./PasswordInput";
 import TextInput from "./TextInput";

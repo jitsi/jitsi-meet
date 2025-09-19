@@ -1,10 +1,13 @@
-import { JoinCallPayload } from "@internxt/sdk/dist/meet/types";
+import {
+    CreateCallResponse,
+    JoinCallPayload,
+    JoinCallResponse,
+    UsersInCallResponse,
+} from "@internxt/sdk/dist/meet/types";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { get8x8BetaJWT } from "../../../connection/options8x8";
 import MeetingService from "../meeting.service";
 import { SdkManager } from "../sdk-manager.service";
 
-type MockedGet8x8BetaJWT = ReturnType<typeof vi.fn> & typeof get8x8BetaJWT;
 type MockedGetMeet = ReturnType<typeof vi.fn> & typeof SdkManager.instance.getMeet;
 
 vi.mock("../../../connection/options8x8", () => ({
@@ -22,7 +25,6 @@ vi.mock("../sdk-manager.service", () => ({
 describe("MeetingService", () => {
     const originalConsoleError = console.error;
 
-    const mockedGet8x8BetaJWT = get8x8BetaJWT as MockedGet8x8BetaJWT;
     const mockedGetMeet = SdkManager.instance.getMeet as MockedGetMeet;
 
     beforeEach(() => {
@@ -34,93 +36,29 @@ describe("MeetingService", () => {
         console.error = originalConsoleError;
     });
 
-    describe("getInstance", () => {
-        it("When getting multiple instances, then they should be the same singleton instance", () => {
-            const instance1 = MeetingService.getInstance();
-            const instance2 = MeetingService.getInstance();
+    describe("instance", () => {
+        it("When accessing multiple times, then they should be the same singleton instance", () => {
+            const instance1 = MeetingService.instance;
+            const instance2 = MeetingService.instance;
 
             expect(instance1).toBeDefined();
             expect(instance1).toBe(instance2);
         });
-    });
 
-    describe("generateMeetingRoom", () => {
-        it("When generating a meeting room with valid token, then the room ID is returned", async () => {
-            const mockToken = "valid-jwt-token";
-            const mockMeetData = {
-                token: "meeting-token",
-                room: "meeting-room-123",
-            };
+        it("When accessing instance, then it should be an instance of MeetingService", () => {
+            const instance = MeetingService.instance;
 
-            mockedGet8x8BetaJWT.mockResolvedValue(mockMeetData);
-
-            const meetingService = MeetingService.getInstance();
-
-            const result = await meetingService.generateMeetingRoom(mockToken);
-
-            expect(mockedGet8x8BetaJWT).toHaveBeenCalledTimes(1);
-            expect(mockedGet8x8BetaJWT).toHaveBeenCalledWith(mockToken);
-            expect(mockedGet8x8BetaJWT.mock.calls[0].length).toBe(1);
-            expect(mockedGet8x8BetaJWT.mock.calls[0][0]).toBe(mockToken);
-            expect(result).toBe("meeting-room-123");
-        });
-
-        it("When generating a meeting room with invalid token, then an error is thrown", async () => {
-            const mockToken = "invalid-jwt-token";
-            const mockError = new Error("Failed to generate meeting");
-
-            mockedGet8x8BetaJWT.mockRejectedValue(mockError);
-
-            const meetingService = MeetingService.getInstance();
-
-            await expect(meetingService.generateMeetingRoom(mockToken)).rejects.toThrow(mockError);
-            expect(mockedGet8x8BetaJWT).toHaveBeenCalledTimes(1);
-            expect(mockedGet8x8BetaJWT).toHaveBeenCalledWith(mockToken);
-            expect(mockedGet8x8BetaJWT.mock.calls[0].length).toBe(1);
-            expect(mockedGet8x8BetaJWT.mock.calls[0][0]).toBe(mockToken);
-        });
-
-        it("When meeting data is missing room property, then falsy value is returned", async () => {
-            const mockToken = "valid-jwt-token";
-            const mockMeetData = {
-                token: "meeting-token",
-            };
-
-            mockedGet8x8BetaJWT.mockResolvedValue(mockMeetData);
-
-            const meetingService = MeetingService.getInstance();
-
-            const result = await meetingService.generateMeetingRoom(mockToken);
-
-            expect(mockedGet8x8BetaJWT).toHaveBeenCalledTimes(1);
-            expect(mockedGet8x8BetaJWT).toHaveBeenCalledWith(mockToken);
-            expect(mockedGet8x8BetaJWT.mock.calls[0].length).toBe(1);
-            expect(mockedGet8x8BetaJWT.mock.calls[0][0]).toBe(mockToken);
-            expect(result).toBeFalsy();
-        });
-
-        it("When token is empty string, then an error is thrown", async () => {
-            const mockToken = "";
-            const mockError = new Error("Invalid token");
-
-            mockedGet8x8BetaJWT.mockRejectedValue(mockError);
-
-            const meetingService = MeetingService.getInstance();
-
-            await expect(meetingService.generateMeetingRoom(mockToken)).rejects.toThrow(mockError);
-            expect(mockedGet8x8BetaJWT).toHaveBeenCalledTimes(1);
-            expect(mockedGet8x8BetaJWT).toHaveBeenCalledWith("");
-            expect(mockedGet8x8BetaJWT.mock.calls[0].length).toBe(1);
-            expect(mockedGet8x8BetaJWT.mock.calls[0][0]).toBe("");
+            expect(instance).toBeInstanceOf(MeetingService);
         });
     });
 
     describe("createCall", () => {
         it("When creating a call, then the call details are returned", async () => {
-            const mockCreateCallResponse = {
-                id: "call-123",
-                createdAt: new Date().toISOString(),
-                status: "created",
+            const mockCreateCallResponse: CreateCallResponse = {
+                token: "token-123",
+                room: "room-123",
+                paxPerCall: 10,
+                appId: "jitsi-app-id",
             };
 
             const mockMeetClient = {
@@ -129,8 +67,7 @@ describe("MeetingService", () => {
 
             mockedGetMeet.mockReturnValue(mockMeetClient);
 
-            const meetingService = MeetingService.getInstance();
-            const result = await meetingService.createCall();
+            const result = await MeetingService.instance.createCall();
 
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
@@ -149,9 +86,7 @@ describe("MeetingService", () => {
 
             mockedGetMeet.mockReturnValue(mockMeetClient);
 
-            const meetingService = MeetingService.getInstance();
-
-            await expect(meetingService.createCall()).rejects.toThrow(mockError);
+            await expect(MeetingService.instance.createCall()).rejects.toThrow(mockError);
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
             expect(mockMeetClient.createCall).toHaveBeenCalledTimes(1);
@@ -169,9 +104,11 @@ describe("MeetingService", () => {
                 anonymous: false,
             };
 
-            const mockJoinCallResponse = {
-                sessionId: "session-456",
+            const mockJoinCallResponse: JoinCallResponse = {
                 token: "join-token-789",
+                room: "room-123",
+                userId: "user-456",
+                appId: "jitsi-app-id",
             };
 
             const mockMeetClient = {
@@ -180,8 +117,7 @@ describe("MeetingService", () => {
 
             mockedGetMeet.mockReturnValue(mockMeetClient);
 
-            const meetingService = MeetingService.getInstance();
-            const result = await meetingService.joinCall(mockCallId, mockPayload);
+            const result = await MeetingService.instance.joinCall(mockCallId, mockPayload);
 
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
@@ -209,9 +145,7 @@ describe("MeetingService", () => {
 
             mockedGetMeet.mockReturnValue(mockMeetClient);
 
-            const meetingService = MeetingService.getInstance();
-
-            await expect(meetingService.joinCall(mockCallId, mockPayload)).rejects.toThrow(mockError);
+            await expect(MeetingService.instance.joinCall(mockCallId, mockPayload)).rejects.toThrow(mockError);
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
             expect(mockMeetClient.joinCall).toHaveBeenCalledTimes(1);
@@ -237,9 +171,7 @@ describe("MeetingService", () => {
 
             mockedGetMeet.mockReturnValue(mockMeetClient);
 
-            const meetingService = MeetingService.getInstance();
-
-            await expect(meetingService.joinCall(mockCallId, mockPayload)).rejects.toThrow(mockError);
+            await expect(MeetingService.instance.joinCall(mockCallId, mockPayload)).rejects.toThrow(mockError);
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
             expect(mockMeetClient.joinCall).toHaveBeenCalledTimes(1);
@@ -249,12 +181,66 @@ describe("MeetingService", () => {
         });
     });
 
+    describe("leaveCall", () => {
+        it("When leaving a call with valid ID, then the operation completes successfully", async () => {
+            const mockCallId = "call-123";
+            const mockLeaveCallResponse = { success: true };
+
+            const mockMeetClient = {
+                leaveCall: vi.fn().mockResolvedValue(mockLeaveCallResponse),
+            };
+
+            mockedGetMeet.mockReturnValue(mockMeetClient);
+
+            const result = await MeetingService.instance.leaveCall(mockCallId);
+
+            expect(mockedGetMeet).toHaveBeenCalledTimes(1);
+            expect(mockedGetMeet).toHaveBeenCalledWith();
+            expect(mockMeetClient.leaveCall).toHaveBeenCalledTimes(1);
+            expect(mockMeetClient.leaveCall).toHaveBeenCalledWith(mockCallId);
+            expect(mockMeetClient.leaveCall.mock.calls[0].length).toBe(1);
+            expect(mockMeetClient.leaveCall.mock.calls[0][0]).toBe(mockCallId);
+            expect(result).toEqual(mockLeaveCallResponse);
+        });
+
+        it("When leaving a call fails, then an error is thrown", async () => {
+            const mockCallId = "call-123";
+            const mockError = new Error("Failed to leave call");
+
+            const mockMeetClient = {
+                leaveCall: vi.fn().mockRejectedValue(mockError),
+            };
+
+            mockedGetMeet.mockReturnValue(mockMeetClient);
+
+            await expect(MeetingService.instance.leaveCall(mockCallId)).rejects.toThrow(mockError);
+            expect(mockedGetMeet).toHaveBeenCalledTimes(1);
+            expect(mockedGetMeet).toHaveBeenCalledWith();
+            expect(mockMeetClient.leaveCall).toHaveBeenCalledTimes(1);
+            expect(mockMeetClient.leaveCall).toHaveBeenCalledWith(mockCallId);
+            expect(mockMeetClient.leaveCall.mock.calls[0].length).toBe(1);
+            expect(mockMeetClient.leaveCall.mock.calls[0][0]).toBe(mockCallId);
+        });
+    });
+
     describe("getCurrentUsersInCall", () => {
         it("When getting users in a call with participants, then an array of users is returned", async () => {
             const mockCallId = "call-123";
-            const mockUsersResponse = [
-                { id: "user-1", name: "John", lastname: "Doe", joinedAt: new Date().toISOString() },
-                { id: "user-2", name: "Jane", lastname: "Smith", joinedAt: new Date().toISOString() },
+            const mockUsersResponse: UsersInCallResponse[] = [
+                {
+                    userId: "user-1",
+                    name: "John",
+                    lastname: "Doe",
+                    anonymous: false,
+                    avatar: "avatar-url-1",
+                },
+                {
+                    userId: "user-2",
+                    name: "Jane",
+                    lastname: "Smith",
+                    anonymous: false,
+                    avatar: "avatar-url-2",
+                },
             ];
 
             const mockMeetClient = {
@@ -263,8 +249,7 @@ describe("MeetingService", () => {
 
             mockedGetMeet.mockReturnValue(mockMeetClient);
 
-            const meetingService = MeetingService.getInstance();
-            const result = await meetingService.getCurrentUsersInCall(mockCallId);
+            const result = await MeetingService.instance.getCurrentUsersInCall(mockCallId);
 
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
@@ -277,7 +262,7 @@ describe("MeetingService", () => {
 
         it("When getting users in an empty call, then an empty array is returned", async () => {
             const mockCallId = "empty-call-123";
-            const mockUsersResponse: any[] = [];
+            const mockUsersResponse: UsersInCallResponse[] = [];
 
             const mockMeetClient = {
                 getCurrentUsersInCall: vi.fn().mockResolvedValue(mockUsersResponse),
@@ -285,8 +270,7 @@ describe("MeetingService", () => {
 
             mockedGetMeet.mockReturnValue(mockMeetClient);
 
-            const meetingService = MeetingService.getInstance();
-            const result = await meetingService.getCurrentUsersInCall(mockCallId);
+            const result = await MeetingService.instance.getCurrentUsersInCall(mockCallId);
 
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
@@ -308,9 +292,7 @@ describe("MeetingService", () => {
 
             mockedGetMeet.mockReturnValue(mockMeetClient);
 
-            const meetingService = MeetingService.getInstance();
-
-            await expect(meetingService.getCurrentUsersInCall(mockCallId)).rejects.toThrow(mockError);
+            await expect(MeetingService.instance.getCurrentUsersInCall(mockCallId)).rejects.toThrow(mockError);
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
             expect(mockMeetClient.getCurrentUsersInCall).toHaveBeenCalledTimes(1);
