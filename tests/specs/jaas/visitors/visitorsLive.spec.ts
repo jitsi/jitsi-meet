@@ -1,8 +1,8 @@
 import { expect } from '@wdio/globals';
 
-import { Participant } from '../../helpers/Participant';
-import { setTestProperties } from '../../helpers/TestProperties';
-import { joinMuc, generateJaasToken as t } from '../helpers/jaas';
+import { Participant } from '../../../helpers/Participant';
+import { setTestProperties } from '../../../helpers/TestProperties';
+import { joinMuc, generateJaasToken as t } from '../../helpers/jaas';
 
 setTestProperties(__filename, {
     useJaas: true,
