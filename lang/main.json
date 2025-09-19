@@ -859,6 +859,9 @@
             "video": {
                 "videoInput": "Video input"
             }
+        },
+        "errors": {
+            "noAvailableOptions": "No hay dispositivos disponibles"
         }
     },
     "notify": {

@@ -806,6 +806,9 @@
             "video": {
                 "videoInput": "Entrada de vídeo"
             }
+        },
+        "errors": {
+            "noAvailableOptions": "No devices available"
         }
     },
     "notify": {
