@@ -23,6 +23,7 @@ import MeetingButton from "../../general/containers/MeetingButton";
 import { logout } from "../../general/store/auth/actions";
 import { setCreateRoomError } from "../../general/store/errors/actions";
 import { useLocalStorage } from "../../LocalStorageManager";
+import { ConfigService } from "../../services/config.service";
 import MeetingService from "../../services/meeting.service";
 import { MeetingUser } from "../../services/types/meeting.types";
 import Header from "./components/Header";
@@ -355,7 +356,7 @@ const PreMeetingScreen = ({
 
                 <div className="flex absolute bottom-7 right-7">{isE2EESupported && <SecureMeetingMessage />}</div>
                 <div className={classes.videoEncodingToggleContainer}>
-                    <VideoEncodingToggle />
+                    {ConfigService.instance.isDevelopment() && <VideoEncodingToggle />}
                 </div>
 
                 {/* UNCOMMENT IN DEV MODE TO SEE OLD IMPLEMENTATION  */}

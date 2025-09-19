@@ -10,6 +10,7 @@ import { getInviteURL } from "../../../../connection/functions";
 import { translate } from "../../../../i18n/functions";
 import MediaControlsWrapper from "../../../general/containers/MediaControlsWrapper";
 
+import { ConfigService } from "../../../services/config.service";
 import InviteUserModal from "../components/InviteUserModal";
 import { VideoParticipantType } from "../types";
 import { getParticipantsWithTracks } from "../utils";
@@ -50,9 +51,11 @@ const ConferenceControls = ({ dispatch, participants, _inviteUrl, t, roomID }: C
                     <CircleButton variant="cancel" onClick={() => dispatch(leaveConference(roomID))}>
                         <X size={22} color="white" />
                     </CircleButton>
-                    <CircleButton variant="default" onClick={() => dispatch(toggleSecurityDialog())}>
-                        <Shield size={22} color={"white"} weight="fill" />
-                    </CircleButton>
+                    {ConfigService.instance.isDevelopment() && (
+                        <CircleButton variant="default" onClick={() => dispatch(toggleSecurityDialog())}>
+                            <Shield size={22} color={"white"} weight="fill" />
+                        </CircleButton>
+                    )}
                 </div>
             </div>
         </>
