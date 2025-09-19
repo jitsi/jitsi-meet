@@ -34,7 +34,8 @@ export function selectParticipantInLargeVideo(participant?: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
 
-        if (isStageFilmstripAvailable(state, 2)) {
+        const { viewMode } = state["features/filmstrip"];
+        if (isStageFilmstripAvailable(state, 2) && viewMode !== "speaker") {
             return;
         }
 
