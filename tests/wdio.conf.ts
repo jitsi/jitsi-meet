@@ -245,8 +245,10 @@ export const config: WebdriverIO.MultiremoteConfig = {
         // If we are running the iFrameApi tests, we need to mark it as such and if needed to create the proxy
         // and connect to it.
         if (testProperties.useWebhookProxy && testsConfig.webhooksProxy.enabled && !globalAny.ctx.webhooksProxy) {
-            // Note this prevents iframe and jaas test from running together.
-            const tenant = testsConfig.jaas.enabled ? testsConfig.jaas.tenant : testsConfig.iframe.tenant;
+            let tenant = testsConfig.jaas.tenant;
+            if (!testProperties.useJaas) {
+                tenant = testsConfig.iframe.tenant;
+            }
 
             globalAny.ctx.webhooksProxy = new WebhookProxy(
                 `${testsConfig.webhooksProxy.url}?tenant=${tenant}&room=${globalAny.ctx.roomName}`,
