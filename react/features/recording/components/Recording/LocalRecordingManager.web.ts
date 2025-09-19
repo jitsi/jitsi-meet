@@ -213,6 +213,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
             });
 
             const gdmVideoTrack = gdmStream.getVideoTracks()[0];
+
             if (supportsCaptureHandle) {
                 const isBrowser = gdmVideoTrack.getSettings().displaySurface === 'browser';
                 const matchesHandle = (supportsCaptureHandle // @ts-ignore
@@ -223,6 +224,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
                     throw new Error('WrongSurfaceSelected');
                 }
             }
+
             this.initializeAudioMixer();
 
             const gdmAudioTrack = gdmStream.getAudioTracks()[0];
