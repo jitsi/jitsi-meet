@@ -153,8 +153,8 @@ const PollResults = ({
                         </div>
                         {showDetails && voters && voterCount > 0
                         && <ul className = { classes.voters }>
-                            {voters.map(voter =>
-                                <li key = { voter?.id }>{voter?.name}</li>
+                            { Object.entries(voters).map(([ id, voterName ]) =>
+                                <li key = { id }>{ voterName }</li>
                             )}
                         </ul>}
                     </li>)

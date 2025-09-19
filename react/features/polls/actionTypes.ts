@@ -35,7 +35,6 @@ export const EDIT_POLL = 'EDIT_POLL';
  * {
  *     type: RECEIVE_POLL,
  *     poll: Poll,
- *     pollId: string,
  *     notify: boolean
  * }
  *
@@ -47,8 +46,7 @@ export const RECEIVE_POLL = 'RECEIVE_POLL';
  *
  * {
  *     type: RECEIVE_ANSWER,
- *     answer: Answer,
- *     pollId: string,
+ *     answer: IIncomingAnswerData
  * }
  */
 export const RECEIVE_ANSWER = 'RECEIVE_ANSWER';
@@ -89,9 +87,7 @@ export const RESET_NB_UNREAD_POLLS = 'RESET_NB_UNREAD_POLLS';
  *
  * {
  *     type: SAVE_POLL,
- *     poll: Poll,
- *     pollId: string,
- *     saved: boolean
+ *     poll: IPollData
  * }
  */
 export const SAVE_POLL = 'SAVE_POLL';

@@ -10,7 +10,7 @@ import { getParticipantById, getParticipantDisplayName } from '../../base/partic
 import { useBoundSelector } from '../../base/util/hooks';
 import { setVoteChanging } from '../actions';
 import { getPoll } from '../functions';
-import { IPoll } from '../types';
+import { IAnswerData, IPollData } from '../types';
 
 /**
  * The type of the React {@code Component} props of inheriting component.
@@ -23,11 +23,9 @@ type InputProps = {
     pollId: string;
 };
 
-export type AnswerInfo = {
-    name: string;
+export type AnswerInfo = IAnswerData & {
     percentage: number;
     voterCount: number;
-    voters?: Array<{ id: string; name: string; } | undefined>;
 };
 
 /**
@@ -55,7 +53,7 @@ export type AbstractProps = {
 const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props: InputProps) => {
     const { pollId } = props;
 
-    const poll: IPoll = useSelector(getPoll(pollId));
+    const poll: IPollData = useSelector(getPoll(pollId));
     const participant = useBoundSelector(getParticipantById, poll.senderId);
     const reduxState = useSelector((state: IReduxState) => state);
 
@@ -70,33 +68,24 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
 
         // Getting every voters ID that participates to the poll
         for (const answer of poll.answers) {
-            // checking if the voters is an array for supporting old structure model
-            const voters: string[] = answer.voters.length ? answer.voters : Object.keys(answer.voters);
-
-            voters.forEach((voter: string) => allVoters.add(voter));
+            Object.keys(answer.voters).forEach(k => allVoters.add(k));
         }
 
         return poll.answers.map(answer => {
             const nrOfVotersPerAnswer = answer.voters ? Object.keys(answer.voters).length : 0;
             const percentage = allVoters.size > 0 ? Math.round(nrOfVotersPerAnswer / allVoters.size * 100) : 0;
 
-            let voters;
+            const voters = Object.entries(answer.voters).reduce((acc, [ key, value ]) => {
+                acc[key] = getParticipantById(reduxState, key)
+                    ? getParticipantDisplayName(reduxState, key) : value;
 
-            if (showDetails && answer.voters) {
-                const answerVoters = answer.voters?.length ? [ ...answer.voters ] : Object.keys({ ...answer.voters });
-
-                voters = answerVoters.map(id => {
-                    return {
-                        id,
-                        name: getParticipantDisplayName(reduxState, id)
-                    };
-                });
-            }
+                return acc;
+            }, {} as { [key: string]: string; });
 
             return {
                 name: answer.name,
                 percentage,
-                voters,
+                voters: voters,
                 voterCount: nrOfVotersPerAnswer
             };
         });

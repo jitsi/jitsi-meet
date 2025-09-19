@@ -9,7 +9,7 @@ import {
     RESET_NB_UNREAD_POLLS,
     SAVE_POLL
 } from './actionTypes';
-import { IAnswer, IPoll } from './types';
+import { IIncomingAnswerData, IPoll, IPollData } from './types';
 
 /**
  * Action to signal that existing polls needs to be cleared from state.
@@ -47,7 +47,6 @@ export const setVoteChanging = (pollId: string, value: boolean) => {
 /**
  * Action to signal that a new poll was received.
  *
- * @param {string} pollId - The id of the incoming poll.
  * @param {IPoll} poll - The incoming Poll object.
  * @param {boolean} notify - Whether to send or not a notification.
  * @returns {{
@@ -57,10 +56,9 @@ export const setVoteChanging = (pollId: string, value: boolean) => {
  *     notify: boolean
  * }}
  */
-export const receivePoll = (pollId: string, poll: IPoll, notify: boolean) => {
+export const receivePoll = (poll: IPoll, notify: boolean) => {
     return {
         type: RECEIVE_POLL,
-        pollId,
         poll,
         notify
     };
@@ -69,18 +67,15 @@ export const receivePoll = (pollId: string, poll: IPoll, notify: boolean) => {
 /**
  * Action to signal that a new answer was received.
  *
- * @param {string} pollId - The id of the incoming poll.
- * @param {IAnswer} answer - The incoming Answer object.
+ * @param {IIncomingAnswerData} answer - The incoming Answer object.
  * @returns {{
  *     type: RECEIVE_ANSWER,
- *     pollId: string,
- *     answer: IAnswer
+ *     answer: IIncomingAnswerData
  * }}
  */
-export const receiveAnswer = (pollId: string, answer: IAnswer) => {
+export const receiveAnswer = (answer: IIncomingAnswerData) => {
     return {
         type: RECEIVE_ANSWER,
-        pollId,
         answer
     };
 };
@@ -120,19 +115,15 @@ export function resetNbUnreadPollsMessages() {
 /**
  * Action to signal saving a poll.
  *
- * @param {string} pollId - The id of the poll that gets to be saved.
- * @param {IPoll} poll - The Poll object that gets to be saved.
+ * @param {IPollData} poll - The Poll object that gets to be saved.
  * @returns {{
  *     type: SAVE_POLL,
- *     meetingId: string,
- *     pollId: string,
- *     poll: IPoll
+ *     poll: IPollData
  * }}
  */
-export function savePoll(pollId: string, poll: IPoll) {
+export function savePoll(poll: IPollData) {
     return {
         type: SAVE_POLL,
-        pollId,
         poll
     };
 }
@@ -159,18 +150,15 @@ export function editPoll(pollId: string, editing: boolean) {
 /**
  * Action to signal that existing polls needs to be removed.
  *
- * @param {string} pollId - The id of the poll that gets to be removed.
  * @param {IPoll} poll - The incoming Poll object.
  * @returns {{
  *     type: REMOVE_POLL,
- *     pollId: string,
  *     poll: IPoll
  * }}
  */
-export const removePoll = (pollId: string, poll: IPoll) => {
+export const removePoll = (poll: IPoll) => {
     return {
         type: REMOVE_POLL,
-        pollId,
         poll
     };
 };
