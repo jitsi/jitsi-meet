@@ -6,7 +6,6 @@ import AudioTracksContainer from "../../../../../filmstrip/components/web/AudioT
 import { getCurrentConference } from "../../../../conference/functions";
 import { translate } from "../../../../i18n/functions";
 import { useAspectRatio } from "../../../general/hooks/useAspectRatio";
-import { useE2EEActivation } from "../../../general/hooks/useE2EEActivation";
 import { useParticipantAvatar } from "../../PreMeeting/hooks/useParticipantAvatar";
 import VideoGallery from "../components/VideoGallery";
 import VideoSpeaker from "../components/VideoSpeaker";
@@ -23,9 +22,8 @@ interface MappedStateProps {
 
 interface GalleryVideoWrapperProps extends WithTranslation, OwnProps, MappedStateProps {}
 
-const GalleryVideoWrapper = ({ videoMode, t, isE2EESupported, room }: GalleryVideoWrapperProps) => {
+const GalleryVideoWrapper = ({ videoMode, t }: GalleryVideoWrapperProps) => {
     const { containerStyle } = useAspectRatio();
-    useE2EEActivation(isE2EESupported);
 
     useParticipantAvatar();
     const participants = useSelector(getParticipantsWithTracks);
