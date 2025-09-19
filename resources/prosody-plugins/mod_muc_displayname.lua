@@ -72,7 +72,7 @@ function filter_stanza_in(stanza, session)
 
     local nick_element = stanza:get_child('nick', NICK_NS);
 
-    if nick_element:get_text() ~= session.jitsi_meet_context_user.name then
+    if nick_element and nick_element:get_text() ~= session.jitsi_meet_context_user.name then
         stanza:remove_children('nick', NICK_NS);
         stanza:tag('nick', { xmlns = NICK_NS }):text(session.jitsi_meet_context_user.name):up();
     end
