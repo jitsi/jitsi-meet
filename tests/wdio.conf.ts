@@ -58,7 +58,7 @@ const chromePreferences = {
 };
 
 const specs = [
-    'specs/**/lobby.spec.ts'
+    'specs/**/chat.spec.ts'
 ];
 
 /**
