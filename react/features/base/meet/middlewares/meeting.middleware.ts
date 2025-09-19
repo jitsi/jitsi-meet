@@ -1,4 +1,3 @@
-import { UserSettings } from "@internxt/sdk/dist/shared/types/userSettings";
 import { AnyAction, Dispatch, Middleware } from "redux";
 
 import MiddlewareRegistry from "../../redux/MiddlewareRegistry";
@@ -131,7 +130,7 @@ export const refreshUserData = async (dispatch: Dispatch<AnyAction>, force: bool
         const now = Date.now();
         const lastRefreshTime = LocalStorageManager.instance.get<number>(STORAGE_KEYS.LAST_USER_REFRESH, 0) ?? 0;
         const hasExpiredRefreshInterval = now - lastRefreshTime > USER_REFRESH_INTERVAL;
-        const currentUser = LocalStorageManager.instance.getUser<UserSettings>();
+        const currentUser = LocalStorageManager.instance.getUser();
         const tokenNeedsRefresh = shouldRefreshToken();
 
         if (!currentUser) {
@@ -193,7 +192,7 @@ const shouldRefreshToken = (): boolean => {
  */
 export const refreshUserAvatar = async (dispatch: Dispatch<AnyAction>): Promise<void> => {
     try {
-        const currentUser = LocalStorageManager.instance.getUser<UserSettings>();
+        const currentUser = LocalStorageManager.instance.getUser();
         if (!currentUser?.avatar) {
             return;
         }
