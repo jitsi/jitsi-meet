@@ -60,7 +60,7 @@ export function clearUser(): {
 export const initializeUser = (): ThunkAction<void, IReduxState, unknown, AnyAction> => {
     return (dispatch) => {
         const localStorageManager = LocalStorageManager.instance;
-        const user = localStorageManager.getUser<User>();
+        const user = localStorageManager.getUser();
 
         if (user) {
             dispatch(setUser(user));

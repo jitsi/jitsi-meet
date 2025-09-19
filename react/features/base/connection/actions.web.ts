@@ -10,6 +10,7 @@ import { stopLocalVideoRecording } from '../../recording/actions.any';
 import LocalRecordingManager from '../../recording/components/Recording/LocalRecordingManager.web';
 import { setJWT } from '../jwt/actions';
 
+import { LocalStorageManager } from "../meet/LocalStorageManager";
 import MeetingService from "../meet/services/meeting.service";
 import { _connectInternal } from "./actions.any";
 
@@ -27,8 +28,9 @@ export function connect(id?: string, password?: string) {
         const state = getState();
         const { jwt } = state["features/base/jwt"];
         const { iAmRecorder, iAmSipGateway } = state["features/base/config"];
-        const { user } = state["features/user"];
-
+        // TODO: CHECK WHY USER REDUCER IS NULL IN THIS POINT, initializers are not executing as expected
+        // const { user } = state["features/user"];
+        const user = LocalStorageManager.instance.getUser();
         if (!iAmRecorder && !iAmSipGateway && isVpaasMeeting(state)) {
             return dispatch(getCustomerDetails())
                 .then(() => {
@@ -44,7 +46,7 @@ export function connect(id?: string, password?: string) {
                             password,
                             name: user?.name,
                             lastname: user?.lastname,
-                            isAnonymous: !!user,
+                            isAnonymous: !user,
                         })
                     )
                 );
@@ -67,7 +69,7 @@ export function connect(id?: string, password?: string) {
                 password,
                 name: user?.name,
                 lastname: user?.lastname,
-                isAnonymous: !!user,
+                isAnonymous: !user,
             })
         );
     };

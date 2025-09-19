@@ -20,11 +20,12 @@ import { updateSettings } from "../../../settings/actions";
 import { getDisplayName } from "../../../settings/functions.web";
 import { withPixelLineHeight } from "../../../styles/functions.web";
 import MeetingButton from "../../general/containers/MeetingButton";
-import { logout } from "../../general/store/auth/actions";
+import { loginSuccess, logout } from "../../general/store/auth/actions";
 import { setCreateRoomError } from "../../general/store/errors/actions";
 import { useLocalStorage } from "../../LocalStorageManager";
 import MeetingService from "../../services/meeting.service";
 import { MeetingUser } from "../../services/types/meeting.types";
+import AuthModal from "../Home/containers/AuthModal";
 import Header from "./components/Header";
 import PreMeetingModal from "./components/PreMeetingModal";
 import SecureMeetingMessage from "./components/SecureMeetingMessage";
@@ -202,6 +203,9 @@ const PreMeetingScreen = ({
     const [isCreatingMeeting, setIsCreatingMeeting] = useState(false);
     const [meetingUsersData, setMeetingUsersData] = useState<MeetingUser[]>([]);
     const userData = useUserData();
+    const [openLogin, setOpenLogin] = useState<boolean>(true);
+
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
 
     const storageManager = useLocalStorage();
     const dispatch = useDispatch();
@@ -271,11 +275,6 @@ const PreMeetingScreen = ({
         }
     };
 
-    const handleRedirectToSignUp = () => {
-        // HARDCODED, MODIFY WHEN SIGN UP PAGE IS READY
-        window.location.href = "https://drive.internxt.com/new";
-    };
-
     const updateNameInStorage = (name: string) => {
         try {
             const user = storageManager.getUser();
@@ -318,9 +317,15 @@ const PreMeetingScreen = ({
                     userData={userData}
                     subscription={subscription}
                     translate={t}
-                    onLogin={handleRedirectToLogin}
+                    onLogin={() => {
+                        setOpenLogin(true);
+                        setIsAuthModalOpen(true);
+                    }}
+                    onSignUp={() => {
+                        setOpenLogin(false);
+                        setIsAuthModalOpen(true);
+                    }}
                     onLogout={onLogout}
-                    onSignUp={handleRedirectToSignUp}
                     meetingButton={
                         isInNewMeeting ? (
                             <MeetingButton
@@ -352,12 +357,17 @@ const PreMeetingScreen = ({
                     isCreatingConference={!!createConference}
                     errorMessage={errorMessage}
                 />
-
-                <div className="flex absolute bottom-7 right-7">{isE2EESupported && <SecureMeetingMessage />}</div>
+                <AuthModal
+                    isOpen={isAuthModalOpen}
+                    openLogin={openLogin}
+                    onClose={() => setIsAuthModalOpen(false)}
+                    onSignup={(credentials) => dispatch(loginSuccess(credentials))}
+                    translate={t}
+                />
+                ;<div className="flex absolute bottom-7 right-7"><SecureMeetingMessage /></div>
                 <div className={classes.videoEncodingToggleContainer}>
                     <VideoEncodingToggle />
                 </div>
-
                 {/* UNCOMMENT IN DEV MODE TO SEE OLD IMPLEMENTATION  */}
                 {/* <div className="flex flex-row">
                     <div>
