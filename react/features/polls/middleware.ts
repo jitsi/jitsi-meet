@@ -1,6 +1,7 @@
 import { IStore } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
+import { getParticipantDisplayName } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound } from '../base/sounds/actions';
@@ -11,7 +12,7 @@ import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/c
 
 import { RECEIVE_POLL } from './actionTypes';
 import { clearPolls, receiveAnswer, receivePoll } from './actions';
-import { IAnswer } from './types';
+import { IIncomingAnswerData } from './types';
 
 /**
  * The maximum number of answers a poll can have.
@@ -88,19 +89,13 @@ function _handleReceivedPollsData(data: any, dispatch: IStore['dispatch'], getSt
         showResults: false,
         lastVote: null,
         question,
-        answers: answers.map((answer: string | { name: string; voters: Object; }) => {
-            const isAnswerString = typeof answer === 'string'; // these are non history polls (new polls)
-
-            return {
-                name: isAnswerString ? answer : answer?.name,
-                voters: isAnswerString ? [] : Object.keys(answer.voters)
-            };
-        }).slice(0, MAX_ANSWERS),
+        answers: answers.slice(0, MAX_ANSWERS),
         saved: false,
-        editing: false
+        editing: false,
+        pollId
     };
 
-    dispatch(receivePoll(pollId, poll, !history));
+    dispatch(receivePoll(poll, !history));
 
     if (!history) {
         dispatch(showNotification({
@@ -125,13 +120,14 @@ function _handleReceivedPollsAnswer(data: any, dispatch: IStore['dispatch'], get
         return;
     }
 
-    const { pollId, answers, senderId: voterId } = data;
+    const { pollId, answers, senderId } = data;
 
-    const receivedAnswer: IAnswer = {
-        voterId,
+    const receivedAnswer: IIncomingAnswerData = {
+        answers: answers.slice(0, MAX_ANSWERS).map(Boolean),
         pollId,
-        answers: answers.slice(0, MAX_ANSWERS).map(Boolean)
+        senderId,
+        voterName: getParticipantDisplayName(getState(), senderId)
     };
 
-    dispatch(receiveAnswer(pollId, receivedAnswer));
+    dispatch(receiveAnswer(receivedAnswer));
 }

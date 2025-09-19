@@ -9,7 +9,7 @@ import { getParticipantDisplayName } from '../../base/participants/functions';
 import { useBoundSelector } from '../../base/util/hooks';
 import { registerVote, removePoll, setVoteChanging } from '../actions';
 import { getPoll } from '../functions';
-import { IPoll } from '../types';
+import { IPollData } from '../types';
 
 /**
  * The type of the React {@code Component} props of inheriting component.
@@ -26,8 +26,7 @@ type InputProps = {
 export type AbstractProps = {
     checkBoxStates: boolean[];
     creatorName: string;
-    poll: IPoll;
-    pollId: string;
+    poll: IPollData;
     sendPoll: () => void;
     setCheckbox: Function;
     setCreateMode: (mode: boolean) => void;
@@ -50,7 +49,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
 
     const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
 
-    const poll: IPoll = useSelector(getPoll(pollId));
+    const poll: IPollData = useSelector(getPoll(pollId));
 
     const { answers, lastVote, question, senderId } = poll;
 
@@ -86,7 +85,7 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
     const sendPoll = useCallback(() => {
         conference?.getPolls().createPoll(pollId, question, answers);
 
-        dispatch(removePoll(pollId, poll));
+        dispatch(removePoll(poll));
     }, [ conference, question, answers ]);
 
     const skipAnswer = useCallback(() => {
@@ -104,7 +103,6 @@ const AbstractPollAnswer = (Component: ComponentType<AbstractProps>) => (props: 
         checkBoxStates = { checkBoxStates }
         creatorName = { participantName }
         poll = { poll }
-        pollId = { pollId }
         sendPoll = { sendPoll }
         setCheckbox = { setCheckbox }
         setCreateMode = { setCreateMode }

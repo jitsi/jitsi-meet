@@ -123,7 +123,7 @@ const PollCreate = (props: AbstractProps) => {
                     onChange = { name => setAnswer(index,
                         {
                             name,
-                            voters: []
+                            voters: {}
                         }) }
                     onKeyPress = { ev => onAnswerKeyDown(index, ev) }
                     placeholder = { t('polls.create.answerPlaceholder', { index: index + 1 }) }

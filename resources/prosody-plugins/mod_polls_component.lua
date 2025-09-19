@@ -195,8 +195,8 @@ module:hook('message/host', function(event)
 
         local poll = {
             pollId = data.pollId,
-            sender_id = poll_creator.occupant_id,
-            sender_name = poll_creator.occupant_name,
+            senderId = poll_creator.occupant_id,
+            senderName = poll_creator.occupant_name,
             question = data.question,
             answers = answers
         };
@@ -302,8 +302,8 @@ local setup_muc_component = function(host_module, host)
         for i, poll in ipairs(room.polls.order) do
             data.polls[i] = {
                 pollId = poll.pollId,
-                senderId = poll.sender_id,
-                senderName = poll.sender_name,
+                senderId = poll.senderId,
+                senderName = poll.senderName,
                 question = poll.question,
                 answers = poll.answers
             };

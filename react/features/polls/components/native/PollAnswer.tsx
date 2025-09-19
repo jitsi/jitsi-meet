@@ -20,7 +20,6 @@ const PollAnswer = (props: AbstractProps) => {
     const {
         checkBoxStates,
         poll,
-        pollId,
         sendPoll,
         setCheckbox,
         setCreateMode,
@@ -46,7 +45,7 @@ const PollAnswer = (props: AbstractProps) => {
                 </View>
                 {
                     pollSaved && <IconButton
-                        onPress = { () => dispatch(removePoll(pollId, poll)) }
+                        onPress = { () => dispatch(removePoll(poll)) }
                         src = { IconCloseLarge } />
                 }
             </View>
@@ -79,7 +78,7 @@ const PollAnswer = (props: AbstractProps) => {
                             labelKey = 'polls.answer.edit'
                             onClick = { () => {
                                 setCreateMode(true);
-                                dispatch(editPoll(pollId, true));
+                                dispatch(editPoll(poll.pollId, true));
                             } }
                             style = { pollsStyles.pollCreateButton }
                             type = { SECONDARY } />
