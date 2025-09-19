@@ -216,6 +216,10 @@ async function joinParticipant( // eslint-disable-line max-params
         tenant = config.iframe.tenant;
     }
 
+    if (!tenant && ctx.testProperties.useIFrameApi) {
+        tenant = config.iframe.tenant;
+    }
+
     return await newParticipant.joinConference({
         ...options,
         tenant: tenant,
