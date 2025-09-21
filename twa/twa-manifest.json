@@ -1,6 +1,6 @@
 {
-  "packageId": "org.jitsi.meet",
-  "host": "meet.jit.si",
+  "packageId": "org.hey.meet",
+  "host": "meet.heyjoe.io",
   "name": "Hey Joe",
   "launcherName": "Hey Joe",
   "display": "standalone",

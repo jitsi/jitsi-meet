@@ -1,9 +1,9 @@
 {
-  "android_package_name": "org.jitsi.meet",
+  "android_package_name": "org.hey.meet",
   "prefer_related_applications": true,
   "related_applications": [
     {
-      "id": "org.jitsi.meet",
+      "id": "org.hey.meet",
       "platform": "chromeos_play"
     }
   ],
@@ -33,4 +33,3 @@
   "scope": "/",
   "theme_color": "#17A0DB"
  }
- 
