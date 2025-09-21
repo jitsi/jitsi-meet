@@ -166,7 +166,7 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
             <div className = { styles.contentPane }>
                 {!hideLogo && (<img
                     alt = { t('welcomepage.logo.logoDeepLinking') }
-                    src = 'images/logo-deep-linking-mobile.png' />
+                    src = 'images/heyjoe-logo.png' />
                 )}
 
                 <div className = { styles.launchingMeetingLabel }>{ t(`${_TNS}.launchMeetingLabel`) }</div>
