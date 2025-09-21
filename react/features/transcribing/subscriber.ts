@@ -3,12 +3,12 @@ import { batch } from 'react-redux';
 import { IStore } from '../app/types';
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-import { playSound } from '../base/sounds/actions';
+import SoundService from '../base/sounds/components/SoundService';
 import { showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { INotificationProps } from '../notifications/types';
-import { RECORDING_OFF_SOUND_ID, RECORDING_ON_SOUND_ID } from '../recording/constants';
 import { isLiveStreamingRunning, isRecordingRunning } from '../recording/functions';
+import { RECORDING_OFF_SOUND, RECORDING_ON_SOUND } from '../recording/sounds';
 
 import { isRecorderTranscriptionsRunning, isTranscribing } from './functions';
 
@@ -49,6 +49,7 @@ StateListenerRegistry.register(
 function maybeEmitRecordingNotification(dispatch: IStore['dispatch'], getState: IStore['getState'], on: boolean) {
     const state = getState();
     const { sessionDatas } = state['features/recording'];
+    const { conference } = state['features/base/conference'];
     const { mode: modeConstants, status: statusConstants } = JitsiRecordingConstants;
 
     if (sessionDatas.some(sd => sd.mode === modeConstants.FILE && sd.status === statusConstants.ON)) {
@@ -63,7 +64,9 @@ function maybeEmitRecordingNotification(dispatch: IStore['dispatch'], getState: 
 
     batch(() => {
         dispatch(showNotification(notifyProps, NOTIFICATION_TIMEOUT_TYPE.SHORT));
-        dispatch(playSound(on ? RECORDING_ON_SOUND_ID : RECORDING_OFF_SOUND_ID));
+        if (conference) {
+            SoundService.play(on ? RECORDING_ON_SOUND.id : RECORDING_OFF_SOUND.id, state, true);
+        }
     });
 }
 

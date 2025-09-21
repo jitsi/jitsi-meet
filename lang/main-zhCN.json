@@ -1265,6 +1265,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "新消息提醒",
+        "KNOCKING_PARTICIPANT_SOUND": "参会者已进入等候室",
+        "PARTICIPANT_JOINED_SOUND": "参会者已加入",
+        "PARTICIPANT_LEFT_SOUND": "参会者已离开",
+        "TALK_WHILE_MUTED_SOUND": "静音时说话提醒",
         "audio": "音频",
         "buttonLabel": "设置",
         "calendar": {
@@ -1282,7 +1287,6 @@
         "followMe": "全员视角跟随我",
         "followMeRecorder": "录制画面跟随我",
         "framesPerSecond": "帧率（FPS）",
-        "incomingMessage": "新消息提醒",
         "language": "语言",
         "loggedIn": "已登录：{{name}}",
         "maxStageParticipants": "可以固定的最大参会者人数",
@@ -1293,9 +1297,6 @@
         "name": "名称",
         "noDevice": "无",
         "notifications": "通知",
-        "participantJoined": "参会者已加入",
-        "participantKnocking": "参会者已进入等候室",
-        "participantLeft": "参会者已离开",
         "playSounds": "播放提示音",
         "reactions": "会议互动表情",
         "sameAsSystem": "与系统一致（{{label}}）",
@@ -1309,7 +1310,6 @@
         "startAudioMuted": "所有人加入时静音",
         "startReactionsMuted": "关闭所有人互动音效",
         "startVideoMuted": "所有人加入时隐藏视频",
-        "talkWhileMuted": "静音时说话提醒",
         "title": "设置",
         "video": "视频"
     },

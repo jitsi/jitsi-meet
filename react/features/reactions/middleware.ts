@@ -15,7 +15,7 @@ import {
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { SETTINGS_UPDATED } from '../base/settings/actionTypes';
 import { updateSettings } from '../base/settings/actions';
-import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
+import SoundService from '../base/sounds/components/SoundService';
 import { getDisabledSounds } from '../base/sounds/functions.any';
 import { showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
@@ -68,15 +68,14 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         batch(() => {
             Object.keys(REACTIONS).forEach(key => {
                 for (let i = 0; i < SOUNDS_THRESHOLDS.length; i++) {
-                    dispatch(registerSound(
+                    SoundService.register(
                         `${REACTIONS[key].soundId}${SOUNDS_THRESHOLDS[i]}`,
                         REACTIONS[key].soundFiles[i]
-                    )
                     );
                 }
             }
             );
-            dispatch(registerSound(RAISE_HAND_SOUND_ID, RAISE_HAND_SOUND_FILE));
+            SoundService.register(RAISE_HAND_SOUND_ID, RAISE_HAND_SOUND_FILE);
         });
         break;
 
@@ -84,10 +83,10 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         batch(() => {
             Object.keys(REACTIONS).forEach(key => {
                 for (let i = 0; i < SOUNDS_THRESHOLDS.length; i++) {
-                    dispatch(unregisterSound(`${REACTIONS[key].soundId}${SOUNDS_THRESHOLDS[i]}`));
+                    SoundService.play(`${REACTIONS[key].soundId}${SOUNDS_THRESHOLDS[i]}`, getState());
                 }
             });
-            dispatch(unregisterSound(RAISE_HAND_SOUND_ID));
+            SoundService.play(RAISE_HAND_SOUND_ID, getState());
         });
         break;
 
@@ -147,7 +146,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
                 const reactionSoundsThresholds = getReactionsSoundsThresholds(reactions);
 
                 reactionSoundsThresholds.forEach(reaction =>
-                    dispatch(playSound(`${REACTIONS[reaction.reaction].soundId}${reaction.threshold}`))
+                    SoundService.play(`${REACTIONS[reaction.reaction].soundId}${reaction.threshold}`, state)
                 );
             }
             dispatch(setReactionQueue([ ...queue, ...getReactionsWithId(reactions) ]));

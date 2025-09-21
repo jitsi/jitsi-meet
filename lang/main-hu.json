@@ -888,6 +888,11 @@
         "insecureRoomNameWarning": "The room name is unsafe. Unwanted participants may join your conference. Consider securing your meeting using the security button."
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Bejövő üzenet",
+        "KNOCKING_PARTICIPANT_SOUND": "Résztvevő belépett a lobby-ba",
+        "PARTICIPANT_JOINED_SOUND": "Résztvevő csatlakozott",
+        "PARTICIPANT_LEFT_SOUND": "Résztvevő kilépett",
+        "TALK_WHILE_MUTED_SOUND": "Lenémított beszéd",
         "calendar": {
             "about": "A {{appName}} naptárintegráció a naptár biztonságos elérésére szolgál, így olvasni tudja a soron következő eseményeket.",
             "disconnect": "Szétkapcsolás",
@@ -901,7 +906,6 @@
         "devices": "Eszközök",
         "followMe": "Mindenki engem kövessen",
         "framesPerSecond": "képkocka / másodperc",
-        "incomingMessage": "Bejövő üzenet",
         "language": "Nyelv",
         "loggedIn": "Belépve mint {{name}}",
         "microphones": "Mikrofonok",
@@ -909,9 +913,6 @@
         "more": "Továbbiak",
         "name": "Név",
         "noDevice": "Nincs",
-        "participantJoined": "Résztvevő csatlakozott",
-        "participantKnocking": "Résztvevő belépett a lobby-ba",
-        "participantLeft": "Résztvevő kilépett",
         "playSounds": "Hangok lejátszása a következőkhöz:",
         "reactions": "Meeting reakciók",
         "sameAsSystem": "Rendszerhang ({{label}})",
@@ -924,7 +925,6 @@
         "startAudioMuted": "Mindenki elnémítva kezd",
         "startReactionsMuted": "Reakció hangok némítása mindenki számára",
         "startVideoMuted": "Mindenki videó nélkül kezd",
-        "talkWhileMuted": "Lenémított beszéd",
         "title": "Beállítások"
     },
     "settingsView": {

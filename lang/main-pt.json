@@ -1213,6 +1213,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Receber uma mensagem",
+        "KNOCKING_PARTICIPANT_SOUND": "Entrar um participante na sala de espera",
+        "PARTICIPANT_JOINED_SOUND": "Entrar um participante",
+        "PARTICIPANT_LEFT_SOUND": "Sair um participante",
+        "TALK_WHILE_MUTED_SOUND": "Falar com o microfone desligado",
         "audio": "Áudio",
         "buttonLabel": "Definições",
         "calendar": {
@@ -1228,7 +1233,6 @@
         "devices": "Dispositivos",
         "followMe": "Todos me seguem",
         "framesPerSecond": "fotogramas-por-segundo",
-        "incomingMessage": "Receber uma mensagem",
         "language": "Idioma",
         "loggedIn": "Sessão iniciada como {{name}}",
         "maxStageParticipants": "Número máximo de participantes que podem ser afixados",
@@ -1239,9 +1243,6 @@
         "name": "Nome",
         "noDevice": "Nenhum",
         "notifications": "Notificações",
-        "participantJoined": "Entrar um participante",
-        "participantKnocking": "Entrar um participante na sala de espera",
-        "participantLeft": "Sair um participante",
         "playSounds": "Reproduzir som quando",
         "reactions": "Existir uma reação na reunião",
         "sameAsSystem": "O mesmo que o sistema ({{label}})",
@@ -1254,7 +1255,6 @@
         "startAudioMuted": "Todos começam com microfone desligado",
         "startReactionsMuted": "Todos começam com os sons de reação desativados",
         "startVideoMuted": "Todos começam com câmara desligada",
-        "talkWhileMuted": "Falar com o microfone desligado",
         "title": "Definições",
         "video": "Vídeo"
     },

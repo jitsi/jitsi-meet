@@ -1100,6 +1100,11 @@
         "title": "Επιλογές Ασφάλειας"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Εισερχόμενο μήνυμα",
+        "KNOCKING_PARTICIPANT_SOUND": "Μπήκε στην υποδοχή ένας / μία συμμετέχων",
+        "PARTICIPANT_JOINED_SOUND": "Συνδέεται Ένας Συμμετέχων",
+        "PARTICIPANT_LEFT_SOUND": "Έφυγε Συμμετέχων",
+        "TALK_WHILE_MUTED_SOUND": "Μιλάτε ενώ είστε σε σίγηση",
         "audio": "Ήχος",
         "buttonLabel": "Ρυθμίσεις",
         "calendar": {
@@ -1115,7 +1120,6 @@
         "devices": "Συσκευές",
         "followMe": "Όλοι να με ακολουθούν",
         "framesPerSecond": "καρέ-ανά-δευτερόλεπτο",
-        "incomingMessage": "Εισερχόμενο μήνυμα",
         "language": "Γλώσσα",
         "loggedIn": "Συνδέθηκε ως {{name}}",
         "maxStageParticipants": "Μέγιστος αριθμός συμμετεχόντων που μπορούν να διατηρηθούν στην κύρια σκηνή",
@@ -1126,9 +1130,6 @@
         "name": "Όνομα",
         "noDevice": "Κανένα",
         "notifications": "Ειδοποιήσεις",
-        "participantJoined": "Συνδέεται Ένας Συμμετέχων",
-        "participantKnocking": "Μπήκε στην υποδοχή ένας / μία συμμετέχων",
-        "participantLeft": "Έφυγε Συμμετέχων",
         "playSounds": "Παίξε ήχο όταν",
         "reactions": "Αντιδράσεις σύσκεψης",
         "sameAsSystem": "Ίδιο όπως το σύστημα {{label}}",
@@ -1141,7 +1142,6 @@
         "startAudioMuted": "Όλοι ξεκινούν σε σίγηση",
         "startReactionsMuted": "Σίγηση ήχων αντιδράσεων για όλους",
         "startVideoMuted": "Όλοι ξεκινούν σε απόκρυψη",
-        "talkWhileMuted": "Μιλάτε ενώ είστε σε σίγηση",
         "title": "Ρυθμίσεις",
         "video": "Βίντεο"
     },

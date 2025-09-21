@@ -1225,6 +1225,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "수신 메시지",
+        "KNOCKING_PARTICIPANT_SOUND": "참가자가 로비에 입장",
+        "PARTICIPANT_JOINED_SOUND": "참가자 입장",
+        "PARTICIPANT_LEFT_SOUND": "참가자 퇴장",
+        "TALK_WHILE_MUTED_SOUND": "음소거 상태에서 말하기",
         "audio": "오디오",
         "buttonLabel": "설정",
         "calendar": {
@@ -1241,7 +1246,6 @@
         "followMe": "모두 나와 같은 설정 상태로",
         "followMeRecorder": "녹화도 나를 따릅니다",
         "framesPerSecond": "초당 프레임 수",
-        "incomingMessage": "수신 메시지",
         "language": "언어",
         "loggedIn": "{{name}}으로 로그인",
         "maxStageParticipants": "메인 스테이지에 고정할 수 있는 최대 참가자 수",
@@ -1252,9 +1256,6 @@
         "name": "이름",
         "noDevice": "없음",
         "notifications": "알림",
-        "participantJoined": "참가자 입장",
-        "participantKnocking": "참가자가 로비에 입장",
-        "participantLeft": "참가자 퇴장",
         "playSounds": "소리 켜기",
         "reactions": "반응",
         "sameAsSystem": "시스템과 동일 ({{label}})",
@@ -1267,7 +1268,6 @@
         "startAudioMuted": "모두 음소거 상태로 시작",
         "startReactionsMuted": "모든 사람의 반응 소리 음소거",
         "startVideoMuted": "모두 비디오 비활성화 상태로 시작",
-        "talkWhileMuted": "음소거 상태에서 말하기",
         "title": "설정",
         "video": "비디오"
     },

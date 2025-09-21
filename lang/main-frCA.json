@@ -1193,6 +1193,11 @@
         "pullToRefresh": "Tirer pour rafraîchir"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "un message arrive",
+        "KNOCKING_PARTICIPANT_SOUND": "un participant en salle d’attente",
+        "PARTICIPANT_JOINED_SOUND": "un participant arrive",
+        "PARTICIPANT_LEFT_SOUND": "un participant quitte",
+        "TALK_WHILE_MUTED_SOUND": "vous parlez en étant muet",
         "audio": "Audio",
         "buttonLabel": "Paramètres",
         "calendar": {
@@ -1208,7 +1213,6 @@
         "devices": "Dispositifs",
         "followMe": "Tous les participants me suivent",
         "framesPerSecond": "images par seconde",
-        "incomingMessage": "un message arrive",
         "language": "Langue",
         "loggedIn": "Connecté en tant que {{name}}",
         "maxStageParticipants": "Nombre maximum de participants pouvant être épinglé sur l’affichage principal",
@@ -1219,9 +1223,6 @@
         "name": "Nom",
         "noDevice": "Aucun",
         "notifications": "Notifications",
-        "participantJoined": "un participant arrive",
-        "participantKnocking": "un participant en salle d’attente",
-        "participantLeft": "un participant quitte",
         "playSounds": "Jouer un son quand",
         "reactions": "Il y a une réaction à la réunion",
         "sameAsSystem": "Identique au système ({{label}})",
@@ -1234,7 +1235,6 @@
         "startAudioMuted": "Tous les participants débutent en sourdine",
         "startReactionsMuted": "Tout le monde commence avec les réactions sonores bloquées",
         "startVideoMuted": "Tous les participants débutent masqués",
-        "talkWhileMuted": "vous parlez en étant muet",
         "title": "Paramètres",
         "video": "Vidéo"
     },

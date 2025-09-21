@@ -22,7 +22,7 @@ import {
 } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
+import SoundService from '../base/sounds/components/SoundService';
 import { addGif } from '../gifs/actions';
 import { extractGifURL, getGifDisplayMode, isGifEnabled, isGifMessage } from '../gifs/function.any';
 import { showMessageNotification } from '../notifications/actions';
@@ -48,7 +48,6 @@ import { addMessage, addMessageReaction, clearMessages, closeChat, setPrivateMes
 import { ChatPrivacyDialog } from './components';
 import {
     ChatTabs,
-    INCOMING_MSG_SOUND_ID,
     LOBBY_CHAT_MESSAGE,
     MESSAGE_TYPE_ERROR,
     MESSAGE_TYPE_LOCAL,
@@ -56,7 +55,7 @@ import {
     MESSAGE_TYPE_SYSTEM
 } from './constants';
 import { getUnreadCount, isSendGroupChatDisabled } from './functions';
-import { INCOMING_MSG_SOUND_FILE } from './sounds';
+import { INCOMING_MSG_SOUND } from './sounds';
 
 /**
  * Timeout for when to show the privacy notice after a private message was received.
@@ -93,12 +92,11 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case APP_WILL_MOUNT:
-        dispatch(
-                registerSound(INCOMING_MSG_SOUND_ID, INCOMING_MSG_SOUND_FILE));
+        SoundService.register(INCOMING_MSG_SOUND.id, INCOMING_MSG_SOUND.file, INCOMING_MSG_SOUND.options, INCOMING_MSG_SOUND.optional);
         break;
 
     case APP_WILL_UNMOUNT:
-        dispatch(unregisterSound(INCOMING_MSG_SOUND_ID));
+        SoundService.unregister(INCOMING_MSG_SOUND.id);
         break;
 
     case CONFERENCE_JOINED:
@@ -517,7 +515,7 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
     const { soundsIncomingMessage: soundEnabled, userSelectedNotifications } = state['features/base/settings'];
 
     if (soundEnabled && shouldPlaySound && !isChatOpen) {
-        dispatch(playSound(INCOMING_MSG_SOUND_ID));
+        SoundService.play(INCOMING_MSG_SOUND.id, getState());
     }
 
     // Provide a default for the case when a message is being

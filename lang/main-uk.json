@@ -1111,6 +1111,11 @@
         "title": "Параметри безпеки"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Вхідне повідомлення",
+        "KNOCKING_PARTICIPANT_SOUND": "Учасник зайшов у приймальну",
+        "PARTICIPANT_JOINED_SOUND": "Учасник приєднався до зустрічі",
+        "PARTICIPANT_LEFT_SOUND": "Учасник покинув зустріч",
+        "TALK_WHILE_MUTED_SOUND": "Спроба говорити, коли мікрофон вимкнено",
         "audio": "Аудіо",
         "buttonLabel": "Налаштування",
         "calendar": {
@@ -1126,7 +1131,6 @@
         "devices": "Пристрої",
         "followMe": "Усі дивляться на мене",
         "framesPerSecond": "кадрів за секунду",
-        "incomingMessage": "Вхідне повідомлення",
         "language": "Мова",
         "loggedIn": "Увійшли як {{name}}",
         "maxStageParticipants": "Максимальна кількість учасників, яку можна закріпити на головній сцені",
@@ -1137,9 +1141,6 @@
         "name": "Ім'я",
         "noDevice": "Немає",
         "notifications": "Сповіщення",
-        "participantJoined": "Учасник приєднався до зустрічі",
-        "participantKnocking": "Учасник зайшов у приймальну",
-        "participantLeft": "Учасник покинув зустріч",
         "playSounds": "Увімкнути звукові сповіщення:",
         "reactions": "Емоційна реакція",
         "sameAsSystem": "Системний пристрій ({{label}})",
@@ -1152,7 +1153,6 @@
         "startAudioMuted": "Усі починають з вимкненим мікрофоном",
         "startReactionsMuted": "Вимкнути звуки реакції для всіх",
         "startVideoMuted": "Усі починають з вимкненим відео",
-        "talkWhileMuted": "Спроба говорити, коли мікрофон вимкнено",
         "title": "Налаштування",
         "video": "Відео"
     },

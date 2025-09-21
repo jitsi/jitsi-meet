@@ -1078,6 +1078,11 @@
         "title": "خيارات الأمان"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "رسالة واردة",
+        "KNOCKING_PARTICIPANT_SOUND": "دخل المشارك في الردهة",
+        "PARTICIPANT_JOINED_SOUND": "انضم مشارك",
+        "PARTICIPANT_LEFT_SOUND": "غادر المشارك",
+        "TALK_WHILE_MUTED_SOUND": "تحدث أثناء كتم الصوت",
         "audio": "الصوت",
         "buttonLabel": "إعدادات",
         "calendar": {
@@ -1093,7 +1098,6 @@
         "devices": "الأجهزة",
         "followMe": "كل من يتابعني",
         "framesPerSecond": "إطار في الثانية",
-        "incomingMessage": "رسالة واردة",
         "language": "اللغة",
         "loggedIn": "الدخول باسم {{name}}",
         "maxStageParticipants": "الحد الأقصى لعدد المشاركين الذين يمكن تثبيتهم في المرحلة الرئيسية",
@@ -1103,9 +1107,6 @@
         "name": "الاسم",
         "noDevice": "لا يوجد",
         "notifications": "الإشعارات",
-        "participantJoined": "انضم مشارك",
-        "participantKnocking": "دخل المشارك في الردهة",
-        "participantLeft": "غادر المشارك",
         "playSounds": "تشغيل الصوت عند:",
         "reactions": "ردود فعل المُلتقى",
         "sameAsSystem": "مثل النظام ({{label}})",
@@ -1119,7 +1120,6 @@
         "startAudioMuted": "بدء الجميع مكتومي الصوت",
         "startReactionsMuted": "كتم رد فعل الصوت للجميع",
         "startVideoMuted": "بدء الجميع دون فيديو",
-        "talkWhileMuted": "تحدث أثناء كتم الصوت",
         "title": "الإعدادات",
         "video": "الفيديو"
     },

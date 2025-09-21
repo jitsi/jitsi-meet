@@ -1142,6 +1142,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "پیام ورودی",
+        "KNOCKING_PARTICIPANT_SOUND": "شرکت‌کننده به اتاق انتظار وارد شد",
+        "PARTICIPANT_JOINED_SOUND": "شرکت‌کننده پیوست",
+        "PARTICIPANT_LEFT_SOUND": "شرکت‌کننده ترک کرد",
+        "TALK_WHILE_MUTED_SOUND": "صحبت‌کردن در حالت بی‌صدا",
         "audio": "صدا",
         "buttonLabel": "تنظیمات",
         "calendar": {
@@ -1157,7 +1162,6 @@
         "devices": "دستگاه‌ها",
         "followMe": "هرکسی من را دنبال می‌کند",
         "framesPerSecond": "نرخ بازسازی تصویر در ثانیه",
-        "incomingMessage": "پیام ورودی",
         "language": "زبان",
         "loggedIn": "واردشده به عنوان {{name}}",
         "maxStageParticipants": "بیشینه تعداد شرکت‌کنندگانی که می‌توانند به صحنه اصلی سنجاق شوند",
@@ -1168,9 +1172,6 @@
         "name": "نام",
         "noDevice": "هیچ‌یک",
         "notifications": "آگهی‌ها",
-        "participantJoined": "شرکت‌کننده پیوست",
-        "participantKnocking": "شرکت‌کننده به اتاق انتظار وارد شد",
-        "participantLeft": "شرکت‌کننده ترک کرد",
         "playSounds": "پخش صدا روشن",
         "reactions": "واکنش‌های جلسه",
         "sameAsSystem": "همانند سیستم ({{label}})",
@@ -1183,7 +1184,6 @@
         "startAudioMuted": "همه بی‌صدا شروع می‌کنند",
         "startReactionsMuted": "بی‌صداکردن صداهای واکنش‌ها برای همه",
         "startVideoMuted": "همه به‌صورت مخفی شروع می‌کنند",
-        "talkWhileMuted": "صحبت‌کردن در حالت بی‌صدا",
         "title": "تنظیمات",
         "video": "ویدیو"
     },

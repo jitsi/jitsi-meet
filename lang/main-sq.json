@@ -1225,6 +1225,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Mesazh ardhës",
+        "KNOCKING_PARTICIPANT_SOUND": "Pjesëmarrës hyri në holl",
+        "PARTICIPANT_JOINED_SOUND": "Hyri Pjesëmarrës",
+        "PARTICIPANT_LEFT_SOUND": "Doli Pjesëmarrës",
+        "TALK_WHILE_MUTED_SOUND": "Flisni, teksa jeni i heshtuar",
         "audio": "Audio",
         "buttonLabel": "Rregullime",
         "calendar": {
@@ -1241,7 +1246,6 @@
         "followMe": "Më ndjek gjithkush",
         "followMeRecorder": "Më ndjek regjistruesi",
         "framesPerSecond": "kuadro-për-sekondë",
-        "incomingMessage": "Mesazh ardhës",
         "language": "Gjuhë",
         "loggedIn": "I futur si {{name}}",
         "maxStageParticipants": "Numër maksimum pjesëmarrësish që mund të fiksohen te skena kryesore",
@@ -1252,9 +1256,6 @@
         "name": "Emër",
         "noDevice": "Asnjë",
         "notifications": "Njoftime",
-        "participantJoined": "Hyri Pjesëmarrës",
-        "participantKnocking": "Pjesëmarrës hyri në holl",
-        "participantLeft": "Doli Pjesëmarrës",
         "playSounds": "Luaj tingull kur",
         "reactions": "Reagime takimi",
         "sameAsSystem": "Njësoj me sistemin ({{label}})",
@@ -1267,7 +1268,6 @@
         "startAudioMuted": "Gjithkush fillon i heshtuar",
         "startReactionsMuted": "Heshto tinguj reagimesh për këdo",
         "startVideoMuted": "Gjithkush fillon i fshehur",
-        "talkWhileMuted": "Flisni, teksa jeni i heshtuar",
         "title": "Rregullime",
         "video": "Video"
     },

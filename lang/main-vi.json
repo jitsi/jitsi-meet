@@ -1197,6 +1197,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Tin nhắn đang gửi",
+        "KNOCKING_PARTICIPANT_SOUND": "Người tham gia đã vào phòng chờ",
+        "PARTICIPANT_JOINED_SOUND": "Người tham gia đã tham gia",
+        "PARTICIPANT_LEFT_SOUND": "Người tham gia đã rời đi",
+        "TALK_WHILE_MUTED_SOUND": "Nói chuyện trong khi tắt tiếng",
         "audio": "Âm thanh",
         "buttonLabel": "Cài đặt",
         "calendar": {
@@ -1212,7 +1217,6 @@
         "devices": "Thiết bị",
         "followMe": "Tất cả mọi người theo dõi tôi",
         "framesPerSecond": "Khung hình mỗi giây",
-        "incomingMessage": "Tin nhắn đang gửi",
         "language": "Ngôn ngữ",
         "loggedIn": "Đã đăng nhập dưới tên {{name}}",
         "maxStageParticipants": "Số lượng người tham gia tối đa có thể được ghim vào sân khấu chính",
@@ -1223,9 +1227,6 @@
         "name": "Tên",
         "noDevice": "Không",
         "notifications": "Thông báo",
-        "participantJoined": "Người tham gia đã tham gia",
-        "participantKnocking": "Người tham gia đã vào phòng chờ",
-        "participantLeft": "Người tham gia đã rời đi",
         "playSounds": "Phát âm thanh trên",
         "reactions": "Phản ứng trong cuộc họp",
         "sameAsSystem": "Giống hệ thống ({{label}})",
@@ -1238,7 +1239,6 @@
         "startAudioMuted": "Mọi người bắt đầu đều bị tắt tiếng",
         "startReactionsMuted": "Tắt âm thanh phản ứng cho mọi người",
         "startVideoMuted": "Mọi người bắt đầu đều bị ẩn",
-        "talkWhileMuted": "Nói chuyện trong khi tắt tiếng",
         "title": "Cài đặt",
         "video": "Hình ảnh"
     },

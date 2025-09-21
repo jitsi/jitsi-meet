@@ -1248,6 +1248,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Ienākošā ziņa",
+        "KNOCKING_PARTICIPANT_SOUND": "Dalībnieks ienāca vestibilā",
+        "PARTICIPANT_JOINED_SOUND": "Dalībnieks pievienojās",
+        "PARTICIPANT_LEFT_SOUND": "Dalībnieks izgāja",
+        "TALK_WHILE_MUTED_SOUND": "Runā, kad izslēgta skaņa",
         "audio": "Audio",
         "buttonLabel": "Iestatījumi",
         "calendar": {
@@ -1265,7 +1270,6 @@
         "followMe": "Visi seko man",
         "followMeRecorder": "Ierakstītājs seko man",
         "framesPerSecond": "kadri sekundē",
-        "incomingMessage": "Ienākošā ziņa",
         "language": "Valoda",
         "loggedIn": "Ierakstījies kā {{name}}",
         "maxStageParticipants": "Maksimālais dalībnieku skaits, kurus var piespraust galvenajai skatuvei",
@@ -1276,9 +1280,6 @@
         "name": "Vārds",
         "noDevice": "Ierīču nav",
         "notifications": "Paziņojumi",
-        "participantJoined": "Dalībnieks pievienojās",
-        "participantKnocking": "Dalībnieks ienāca vestibilā",
-        "participantLeft": "Dalībnieks izgāja",
         "playSounds": "Atskaņot skaņu",
         "reactions": "Sapulces reakcijas",
         "sameAsSystem": "Tāds pats kā sistēmā ({{label}})",
@@ -1292,7 +1293,6 @@
         "startAudioMuted": "Dalībnieki pievienojas ar izslēgtu mikrofonu",
         "startReactionsMuted": "Izslēgt reakcijas skaņas visiem",
         "startVideoMuted": "Dalībnieki pievienojas ar izslēgtu kameru",
-        "talkWhileMuted": "Runā, kad izslēgta skaņa",
         "title": "Iestatījumi",
         "video": "Video"
     },

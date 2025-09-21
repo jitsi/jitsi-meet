@@ -1085,6 +1085,11 @@
         "title": "Optziones de seguresa"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Messàgiu in intrada",
+        "KNOCKING_PARTICIPANT_SOUND": "Unu partetzipante est intradu a s'aposentu de abetu",
+        "PARTICIPANT_JOINED_SOUND": "Partetzipante aderidu",
+        "PARTICIPANT_LEFT_SOUND": "Unu partetzipante est essidu",
+        "TALK_WHILE_MUTED_SOUND": "Chistiona cando a sa muda",
         "buttonLabel": "Cunfiguratzione",
         "calendar": {
             "about": "S'integratzione cun su calendàriu {{appName}} est impreada pro atzèdere in manera segura a su calendàriu tuo pro chi potzat lèghere is eventos imbenientes.",
@@ -1099,7 +1104,6 @@
         "devices": "Dispositivos",
         "followMe": "Totus mi sighint",
         "framesPerSecond": "fotogrammas a su segundu",
-        "incomingMessage": "Messàgiu in intrada",
         "language": "Limba",
         "loggedIn": "Autenticatzione: {{name}}",
         "maxStageParticipants": "Nùmeru màssimu de partetzipantes chi podent èssere apicados a s'iscena printzipale",
@@ -1108,9 +1112,6 @@
         "more": "Àteru",
         "name": "Nòmine",
         "noDevice": "Nissunu",
-        "participantJoined": "Partetzipante aderidu",
-        "participantKnocking": "Unu partetzipante est intradu a s'aposentu de abetu",
-        "participantLeft": "Unu partetzipante est essidu",
         "playSounds": "Sonos ativados",
         "reactions": "Reatziones de riunione",
         "sameAsSystem": "Su pròpiu de s'elaboradore ({{label}})",
@@ -1123,7 +1124,6 @@
         "startAudioMuted": "Totus cumintzant a sa muda",
         "startReactionsMuted": "Pone is sonos de reatzione a sa muda pro totus",
         "startVideoMuted": "Totus cumintzant a sa cua",
-        "talkWhileMuted": "Chistiona cando a sa muda",
         "title": "Cunfiguratzione"
     },
     "settingsView": {

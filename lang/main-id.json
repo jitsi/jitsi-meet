@@ -1204,6 +1204,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Pesan masuk",
+        "KNOCKING_PARTICIPANT_SOUND": "Peserta masuk ke lobi",
+        "PARTICIPANT_JOINED_SOUND": "Peserta Bergabung",
+        "PARTICIPANT_LEFT_SOUND": "Peserta Meninggalkan",
+        "TALK_WHILE_MUTED_SOUND": "Bicara saat dibisukan",
         "audio": "Audio",
         "buttonLabel": "Pengaturan",
         "calendar": {
@@ -1219,7 +1224,6 @@
         "devices": "Perangkat",
         "followMe": "Semua mengikuti saya",
         "framesPerSecond": "frame per detik",
-        "incomingMessage": "Pesan masuk",
         "language": "Bahasa",
         "loggedIn": "Masuk sebagai {{name}}",
         "maxStageParticipants": "Jumlah maksimum peserta yang dapat ditampilkan di panggung utama",
@@ -1230,9 +1234,6 @@
         "name": "Nama",
         "noDevice": "Tidak ada",
         "notifications": "Notifikasi",
-        "participantJoined": "Peserta Bergabung",
-        "participantKnocking": "Peserta masuk ke lobi",
-        "participantLeft": "Peserta Meninggalkan",
         "playSounds": "Mainkan suara pada",
         "reactions": "Reaksi pertemuan",
         "sameAsSystem": "Sama dengan sistem ({{label}})",
@@ -1245,7 +1246,6 @@
         "startAudioMuted": "Semua dimulai dalam keadaan dibisukan",
         "startReactionsMuted": "Bisukan suara reaksi untuk semua orang",
         "startVideoMuted": "Semua dimulai tersembunyi",
-        "talkWhileMuted": "Bicara saat dibisukan",
         "title": "Pengaturan",
         "video": "Video"
     },

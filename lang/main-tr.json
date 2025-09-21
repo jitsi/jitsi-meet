@@ -1219,6 +1219,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Gelen mesaj",
+        "KNOCKING_PARTICIPANT_SOUND": "Katılımcı lobiye girdi",
+        "PARTICIPANT_JOINED_SOUND": "Katılımcı katıldı",
+        "PARTICIPANT_LEFT_SOUND": "Katılımcı ayrıldı",
+        "TALK_WHILE_MUTED_SOUND": "Sesi kapalıyken konuş",
         "audio": "Ses",
         "buttonLabel": "Ayarlar",
         "calendar": {
@@ -1235,7 +1240,6 @@
         "followMe": "Beni takip edenler",
         "followMeRecorder": "Kaydedici beni takip etsin",
         "framesPerSecond": "kare/saniye",
-        "incomingMessage": "Gelen mesaj",
         "language": "Dil",
         "loggedIn": "{{name}} olarak giriş yapıldı",
         "maxStageParticipants": "Ana ekrana sabitlenecek maksimum katılımcı sayısı",
@@ -1246,9 +1250,6 @@
         "name": "Ad",
         "noDevice": "Yok",
         "notifications": "Bildirimler",
-        "participantJoined": "Katılımcı katıldı",
-        "participantKnocking": "Katılımcı lobiye girdi",
-        "participantLeft": "Katılımcı ayrıldı",
         "playSounds": "Sesi çal",
         "reactions": "Toplantı reaksiyonları",
         "sameAsSystem": "Sistemle aynı ({{label}})",
@@ -1261,7 +1262,6 @@
         "startAudioMuted": "Herkes ses kapalı başlasın",
         "startReactionsMuted": "Reaksiyon seslerini herkes için kapat",
         "startVideoMuted": "Herkes görüntü kapalı başlasın",
-        "talkWhileMuted": "Sesi kapalıyken konuş",
         "title": "Ayarlar",
         "video": "Video"
     },

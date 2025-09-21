@@ -1295,6 +1295,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Incoming message",
+        "KNOCKING_PARTICIPANT_SOUND": "Participant entered lobby",
+        "PARTICIPANT_JOINED_SOUND": "Participant Joined",
+        "PARTICIPANT_LEFT_SOUND": "Participant Left",
+        "TALK_WHILE_MUTED_SOUND": "Talk while muted",
         "audio": "Audio",
         "buttonLabel": "Settings",
         "calendar": {
@@ -1312,7 +1317,6 @@
         "followMe": "Everyone follows me",
         "followMeRecorder": "Recorder follows me",
         "framesPerSecond": "frames-per-second",
-        "incomingMessage": "Incoming message",
         "language": "Language",
         "loggedIn": "Logged in as {{name}}",
         "maxStageParticipants": "Maximum number of participants who can be pinned to the main stage",
@@ -1323,9 +1327,6 @@
         "name": "Name",
         "noDevice": "None",
         "notifications": "Notifications",
-        "participantJoined": "Participant Joined",
-        "participantKnocking": "Participant entered lobby",
-        "participantLeft": "Participant Left",
         "playSounds": "Play sound on",
         "reactions": "Meeting reactions",
         "sameAsSystem": "Same as system ({{label}})",
@@ -1339,7 +1340,6 @@
         "startAudioMuted": "Everyone starts muted",
         "startReactionsMuted": "Mute reaction sounds for everyone",
         "startVideoMuted": "Everyone starts hidden",
-        "talkWhileMuted": "Talk while muted",
         "title": "Settings",
         "video": "Video"
     },

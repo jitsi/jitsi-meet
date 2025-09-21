@@ -317,6 +317,11 @@ function getDevServerConfig() {
                     return next();
                 }
 
+                // Skip sound files
+                if (urlPath.includes('sound')) {
+                    return next();
+                }
+
                 // Handle /meet/libs/ paths properly
                 if (urlPath.startsWith('/meet/libs/')) {
                     const mappedPath = urlPath.replace('/meet/libs/', '/libs/');

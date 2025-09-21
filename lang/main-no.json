@@ -1226,6 +1226,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Innkommende melding",
+        "KNOCKING_PARTICIPANT_SOUND": "Deltaker kom inn i lobbyen",
+        "PARTICIPANT_JOINED_SOUND": "Deltaker ble med",
+        "PARTICIPANT_LEFT_SOUND": "Deltaker forlot møtet",
+        "TALK_WHILE_MUTED_SOUND": "Snakk mens du er dempet",
         "audio": "Lyd",
         "buttonLabel": "Innstillinger",
         "calendar": {
@@ -1242,7 +1247,6 @@
         "followMe": "Alle følger meg",
         "followMeRecorder": "Opptaker følger meg",
         "framesPerSecond": "bilder per sekund",
-        "incomingMessage": "Innkommende melding",
         "language": "Språk",
         "loggedIn": "Logget inn som {{name}}",
         "maxStageParticipants": "Maksimalt antall deltakere som kan festes til hovedscenen",
@@ -1253,9 +1257,6 @@
         "name": "Navn",
         "noDevice": "Ingen",
         "notifications": "Varsler",
-        "participantJoined": "Deltaker ble med",
-        "participantKnocking": "Deltaker kom inn i lobbyen",
-        "participantLeft": "Deltaker forlot møtet",
         "playSounds": "Spill av lyd ved",
         "reactions": "Møtereaksjoner",
         "sameAsSystem": "Samme som systemet ({{label}})",
@@ -1268,7 +1269,6 @@
         "startAudioMuted": "Alle starter dempet",
         "startReactionsMuted": "Demp reaksjonslyder for alle",
         "startVideoMuted": "Alle starter skjult",
-        "talkWhileMuted": "Snakk mens du er dempet",
         "title": "Innstillinger",
         "video": "Video"
     },

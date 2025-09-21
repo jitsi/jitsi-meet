@@ -1246,6 +1246,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Eingehende Nachricht",
+        "KNOCKING_PARTICIPANT_SOUND": "Person hat Lobby betreten",
+        "PARTICIPANT_JOINED_SOUND": "Neue Person nimmt teil",
+        "PARTICIPANT_LEFT_SOUND": "Person verlässt die Konferenz",
+        "TALK_WHILE_MUTED_SOUND": "Wenn bei Stummschaltung gesprochen wird",
         "audio": "Audio",
         "buttonLabel": "Einstellungen",
         "calendar": {
@@ -1263,7 +1268,6 @@
         "followMe": "Follow-me für alle Personen",
         "followMeRecorder": "Aufnahme folgt mir",
         "framesPerSecond": "FPS",
-        "incomingMessage": "Eingehende Nachricht",
         "language": "Sprache",
         "loggedIn": "Als {{name}} angemeldet",
         "maxStageParticipants": "Maximale Anzahl an Personen, die zur Hauptansicht angeheftet werden können",
@@ -1274,9 +1278,6 @@
         "name": "Name",
         "noDevice": "Kein",
         "notifications": "Benachrichtigungen",
-        "participantJoined": "Neue Person nimmt teil",
-        "participantKnocking": "Person hat Lobby betreten",
-        "participantLeft": "Person verlässt die Konferenz",
         "playSounds": "Hinweistöne aktiviert",
         "reactions": "Interaktionen",
         "sameAsSystem": "Wie System ({{label}})",
@@ -1290,7 +1291,6 @@
         "startAudioMuted": "Alle Personen treten stummgeschaltet bei",
         "startReactionsMuted": "Interaktionstöne für alle deaktivieren",
         "startVideoMuted": "Alle Personen treten ohne Video bei",
-        "talkWhileMuted": "Wenn bei Stummschaltung gesprochen wird",
         "title": "Einstellungen",
         "video": "Kamera"
     },

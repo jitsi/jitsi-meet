@@ -1265,6 +1265,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "新訊息",
+        "KNOCKING_PARTICIPANT_SOUND": "與會者已進入大廳",
+        "PARTICIPANT_JOINED_SOUND": "與會者已加入",
+        "PARTICIPANT_LEFT_SOUND": "與會者已離開",
+        "TALK_WHILE_MUTED_SOUND": "通話時靜音",
         "audio": "音訊",
         "buttonLabel": "設定",
         "calendar": {
@@ -1282,7 +1287,6 @@
         "followMe": "全部人跟隨我",
         "followMeRecorder": "錄影將跟隨我的視角",
         "framesPerSecond": "fps",
-        "incomingMessage": "新訊息",
         "language": "語言",
         "loggedIn": "以{{name}}登入",
         "maxStageParticipants": "可被釘選的最大與會者人數",
@@ -1293,9 +1297,6 @@
         "name": "名稱",
         "noDevice": "無",
         "notifications": "通知",
-        "participantJoined": "與會者已加入",
-        "participantKnocking": "與會者已進入大廳",
-        "participantLeft": "與會者已離開",
         "playSounds": "播放音效",
         "reactions": "會議反應",
         "sameAsSystem": "與系統相同（{{label}}）",
@@ -1309,7 +1310,6 @@
         "startAudioMuted": "所有人啟動時處於靜音",
         "startReactionsMuted": "關閉所有人反應音效",
         "startVideoMuted": "所有人啟動時隱藏視訊",
-        "talkWhileMuted": "通話時靜音",
         "title": "設定",
         "video": "影片"
     },

@@ -1186,6 +1186,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Envena mesaĝo",
+        "KNOCKING_PARTICIPANT_SOUND": "Partoprenanto eniris atendejon",
+        "PARTICIPANT_JOINED_SOUND": "Partoprenanto aliĝis",
+        "PARTICIPANT_LEFT_SOUND": "Partoprenanto foriris",
+        "TALK_WHILE_MUTED_SOUND": "Parolu dum silentigita",
         "audio": "Aŭdio",
         "buttonLabel": "Agordoj",
         "calendar": {
@@ -1201,7 +1206,6 @@
         "devices": "Aparatoj",
         "followMe": "Ĉiuj sekvas min",
         "framesPerSecond": "kadroj sekunde",
-        "incomingMessage": "Envena mesaĝo",
         "language": "Lingvo",
         "loggedIn": "Ensalutinta kiels {{name}}",
         "maxStageParticipants": "Maksimuma nombro da partoprenantoj, kiuj povas esti alpinglitaj al la ĉefa scenejo",
@@ -1212,9 +1216,6 @@
         "name": "Nomo",
         "noDevice": "Neniu",
         "notifications": "Sciigoj",
-        "participantJoined": "Partoprenanto aliĝis",
-        "participantKnocking": "Partoprenanto eniris atendejon",
-        "participantLeft": "Partoprenanto foriris",
         "playSounds": "Ludu sonon",
         "reactions": "Renkontiĝaj reagoj",
         "sameAsSystem": "Same kiel sistemo ({{label}})",
@@ -1227,7 +1228,6 @@
         "startAudioMuted": "Ĉiuj komenciĝas silentaj",
         "startReactionsMuted": "Silentigu la reagajn sonojn por ĉiujn",
         "startVideoMuted": "Ĉiuj komenciĝas kaŝitaj",
-        "talkWhileMuted": "Parolu dum silentigita",
         "title": "Agordoj",
         "video": "Video"
     },

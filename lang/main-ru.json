@@ -1199,6 +1199,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Входящее сообщение",
+        "KNOCKING_PARTICIPANT_SOUND": "Участник вошел в лобби",
+        "PARTICIPANT_JOINED_SOUND": "Участник присоединился",
+        "PARTICIPANT_LEFT_SOUND": "Участник вышел",
+        "TALK_WHILE_MUTED_SOUND": "Говорите без звука",
         "audio": "Звук",
         "buttonLabel": "Настройки",
         "calendar": {
@@ -1214,7 +1219,6 @@
         "devices": "Устройства",
         "followMe": "Все следуют за мной",
         "framesPerSecond": "кадров в секунду",
-        "incomingMessage": "Входящее сообщение",
         "language": "Язык",
         "loggedIn": "Вошел как {{name}}",
         "maxStageParticipants": "Максимальное количество участников, которых можно закрепить на главной сцене",
@@ -1225,9 +1229,6 @@
         "name": "Имя",
         "noDevice": "нет",
         "notifications": "Оповещения",
-        "participantJoined": "Участник присоединился",
-        "participantKnocking": "Участник вошел в лобби",
-        "participantLeft": "Участник вышел",
         "playSounds": "Включить звук",
         "reactions": "Реакции на встречи",
         "sameAsSystem": "То же, что и система ({{label}})",
@@ -1240,7 +1241,6 @@
         "startAudioMuted": "Все начинают с выключенным звуком",
         "startReactionsMuted": "Отключение звука реакции для всех",
         "startVideoMuted": "Все начинают в скрытом режиме",
-        "talkWhileMuted": "Говорите без звука",
         "title": "Настройки",
         "video": "Видео"
     },

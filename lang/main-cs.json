@@ -1223,6 +1223,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Příchozí zpráva",
+        "KNOCKING_PARTICIPANT_SOUND": "Účastník vstoupil do lobby",
+        "PARTICIPANT_JOINED_SOUND": "Účastník se připojil",
+        "PARTICIPANT_LEFT_SOUND": "Účastník odešel",
+        "TALK_WHILE_MUTED_SOUND": "Mluvte při ztlumení",
         "audio": "Zvuk",
         "buttonLabel": "Nastavení",
         "calendar": {
@@ -1239,7 +1244,6 @@
         "followMe": "Všichni sledují mě",
         "followMeRecorder": "Rekordér mě následuje",
         "framesPerSecond": "snímků za sekundu",
-        "incomingMessage": "Příchozí zpráva",
         "language": "Jazyk",
         "loggedIn": "Přihlášen/a jako {{name}}",
         "maxStageParticipants": "Maximální počet účastníků, které lze připnout na hlavní pódium",
@@ -1250,9 +1254,6 @@
         "name": "Jméno",
         "noDevice": "Žádné zařízení",
         "notifications": "Oznámení",
-        "participantJoined": "Účastník se připojil",
-        "participantKnocking": "Účastník vstoupil do lobby",
-        "participantLeft": "Účastník odešel",
         "playSounds": "Přehrávání zvuku na",
         "reactions": "Reakce na setkání",
         "sameAsSystem": "Stejné jako systém ({{label}})",
@@ -1265,7 +1266,6 @@
         "startAudioMuted": "Při připojení všem ztlumit zvuk",
         "startReactionsMuted": "Ztlumit zvuky reakcí pro všechny",
         "startVideoMuted": "Při připojení všem vypnout kameru",
-        "talkWhileMuted": "Mluvte při ztlumení",
         "title": "Nastavení",
         "video": "Video"
     },

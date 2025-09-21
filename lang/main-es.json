@@ -1134,6 +1134,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Mensaje entrante",
+        "KNOCKING_PARTICIPANT_SOUND": "Un participante ha ingresado al lobby",
+        "PARTICIPANT_JOINED_SOUND": "Un participante se ha unido",
+        "PARTICIPANT_LEFT_SOUND": "Un participante se ha ido",
+        "TALK_WHILE_MUTED_SOUND": "Hablar en silencio",
         "audio": "Audio",
         "buttonLabel": "Ajustes",
         "calendar": {
@@ -1149,7 +1154,6 @@
         "devices": "Dispositivos",
         "followMe": "Todos me siguen",
         "framesPerSecond": "fotogramas por segundo",
-        "incomingMessage": "Mensaje entrante",
         "language": "Idioma",
         "loggedIn": "Sesión iniciada como {{name}}",
         "maxStageParticipants": "",
@@ -1160,9 +1164,6 @@
         "name": "Nombre",
         "noDevice": "Ninguno",
         "notifications": "Notificaciones",
-        "participantJoined": "Un participante se ha unido",
-        "participantKnocking": "Un participante ha ingresado al lobby",
-        "participantLeft": "Un participante se ha ido",
         "playSounds": "Reproducir sonido",
         "reactions": "Reacciones de la reunión",
         "sameAsSystem": "Igual que el sistema ({{label}})",
@@ -1175,7 +1176,6 @@
         "startAudioMuted": "Todos inician silenciados",
         "startReactionsMuted": "Silenciar sonidos de reacción para todos",
         "startVideoMuted": "Todos inician con cámara desactivada",
-        "talkWhileMuted": "Hablar en silencio",
         "title": "Ajustes",
         "video": "Video"
     },

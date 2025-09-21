@@ -1226,6 +1226,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Messatge dintrant",
+        "KNOCKING_PARTICIPANT_SOUND": "Lo participant es dintrat dins la sala d'espèra",
+        "PARTICIPANT_JOINED_SOUND": "Lo participant a rejonch",
+        "PARTICIPANT_LEFT_SOUND": "Lo participant es partit",
+        "TALK_WHILE_MUTED_SOUND": "Parlar en mut",
         "audio": "Àudio",
         "buttonLabel": "Paramètres",
         "calendar": {
@@ -1242,7 +1247,6 @@
         "followMe": "Tot lo mond me sèc",
         "followMeRecorder": "L'enregistrador me seguís",
         "framesPerSecond": "frames-per-second",
-        "incomingMessage": "Messatge dintrant",
         "language": "Lenga",
         "loggedIn": "Session a {{name}}",
         "maxStageParticipants": "Nombre maximal de participants que se pòt penjar a la scèna principala",
@@ -1253,9 +1257,6 @@
         "name": "Escais",
         "noDevice": "Pas cap",
         "notifications": "Notificacions",
-        "participantJoined": "Lo participant a rejonch",
-        "participantKnocking": "Lo participant es dintrat dins la sala d'espèra",
-        "participantLeft": "Lo participant es partit",
         "playSounds": "Lectura dels sons activa",
         "reactions": "Reaccions de la reünion",
         "sameAsSystem": "Coma pel sistèma ({{label}})",
@@ -1268,7 +1269,6 @@
         "startAudioMuted": "Començan totes sens son",
         "startReactionsMuted": "Començan totes amb las reaccions sonòras amudidas",
         "startVideoMuted": "Començan totes sens vidèo",
-        "talkWhileMuted": "Parlar en mut",
         "title": "Paramètres",
         "video": "Vidèo"
     },

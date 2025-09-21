@@ -966,6 +966,10 @@
         "securityOptions": "Opciones de seguridad"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Mensaje entrante",
+        "PARTICIPANT_JOINED_SOUND": "Un articipante incorporado",
+        "PARTICIPANT_LEFT_SOUND": "Un participante se ha ido",
+        "TALK_WHILE_MUTED_SOUND": "Hablar en silencio",
         "calendar": {
             "about": "La integración del calendario de {{appName}} se usa para acceder al calendario de manera segura para que puedas estar al tanto de los próximos eventos.",
             "disconnect": "Desconectar",
@@ -979,7 +983,6 @@
         "devices": "Dispositivos",
         "followMe": "Todos me siguen",
         "framesPerSecond": "fotogramas-por-segundo",
-        "incomingMessage": "Mensaje entrante",
         "language": "Idioma",
         "loggedIn": "Sesión iniciada como {{name}}",
         "microphones": "Micrófono",
@@ -987,8 +990,6 @@
         "more": "Más",
         "name": "Nombre",
         "noDevice": "Ninguno",
-        "participantJoined": "Un articipante incorporado",
-        "participantLeft": "Un participante se ha ido",
         "playSounds": "Reproducir sonido",
         "reactions": "Reacciones de la reunión",
         "sameAsSystem": "Igual que el sistema ({{label}})",
@@ -999,7 +1000,6 @@
         "speakers": "Bocinas",
         "startAudioMuted": "Todos inician silenciados",
         "startVideoMuted": "Todos inician con cámara desactivada",
-        "talkWhileMuted": "Hablar en silencio",
         "title": "Ajustes"
     },
     "settingsView": {

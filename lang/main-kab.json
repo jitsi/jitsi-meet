@@ -943,6 +943,10 @@
         "securityOptions": "Tixtiṛiyin n tɣellist"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Iteddu-d yizen",
+        "PARTICIPANT_JOINED_SOUND": "Yerna-d yimttekki",
+        "PARTICIPANT_LEFT_SOUND": "Imttekki azelmaḍ",
+        "TALK_WHILE_MUTED_SOUND": "Mmeslay ma yettwakkes ṣṣut",
         "calendar": {
             "about": "Amsidef n uwitay {{appName}} yettuseqdac i unekcum aɣelsan ɣer uwitay-inek·inem i wakken ad d-iɣer ineḍruyen i d-iteddun.",
             "disconnect": "Yeffeɣ",
@@ -956,7 +960,6 @@
         "devices": "Ibenkan",
         "followMe": "Yal amdan iy-ṭṭafaren",
         "framesPerSecond": "tugniwin s tasint",
-        "incomingMessage": "Iteddu-d yizen",
         "language": "Tutlayt",
         "loggedIn": "Tkecmeḍ s yisem {{name}}",
         "microphones": "Isawaḍen",
@@ -964,8 +967,6 @@
         "more": "Ugar",
         "name": "ISem",
         "noDevice": "Ula d yiwen",
-        "participantJoined": "Yerna-d yimttekki",
-        "participantLeft": "Imttekki azelmaḍ",
         "playSounds": "Rmed ṣṣut",
         "reactions": "Tisedmirin n temlilit",
         "sameAsSystem": "Kifkif akked unagraw ({{label}})",
@@ -976,7 +977,6 @@
         "speakers": "Imsiwilen",
         "startAudioMuted": "Yettwagugem waddad n yal yiwen",
         "startVideoMuted": "Yeffer waddad n yal yiwen",
-        "talkWhileMuted": "Mmeslay ma yettwakkes ṣṣut",
         "title": "Iɣewwaren"
     },
     "settingsView": {

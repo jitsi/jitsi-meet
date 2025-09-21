@@ -1185,6 +1185,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Móttekin skilaboð",
+        "KNOCKING_PARTICIPANT_SOUND": "Þátttakandi kom inn á biðsvæði",
+        "PARTICIPANT_JOINED_SOUND": "Þátttakandi tók þátt",
+        "PARTICIPANT_LEFT_SOUND": "Þátttakandi fór",
+        "TALK_WHILE_MUTED_SOUND": "Tala á meðan er þaggað niður",
         "audio": "Hljóð",
         "buttonLabel": "Stillingar",
         "calendar": {
@@ -1200,7 +1205,6 @@
         "devices": "Tæki",
         "followMe": "Allir fylgjast með mér",
         "framesPerSecond": "rammar-á-sekúndu",
-        "incomingMessage": "Móttekin skilaboð",
         "language": "Tungumál",
         "loggedIn": "Skráð inn sem {{name}}",
         "maxStageParticipants": "Hámarksfjöldi þátttakenda sem hægt er að festa á aðalgluggann",
@@ -1211,9 +1215,6 @@
         "name": "Nafn",
         "noDevice": "Ekkert",
         "notifications": "Tilkynningar",
-        "participantJoined": "Þátttakandi tók þátt",
-        "participantKnocking": "Þátttakandi kom inn á biðsvæði",
-        "participantLeft": "Þátttakandi fór",
         "playSounds": "Spila hljóð við",
         "reactions": "Viðbrögð á fundi",
         "sameAsSystem": "Sama og kerfisins ({{label}})",
@@ -1226,7 +1227,6 @@
         "startAudioMuted": "Allir byrja hljóðlaust",
         "startReactionsMuted": "Þagga niður í viðbragðshljóðum fyrir alla",
         "startVideoMuted": "Allir byrja faldir",
-        "talkWhileMuted": "Tala á meðan er þaggað niður",
         "title": "Stillingar",
         "video": "Myndmerki"
     },

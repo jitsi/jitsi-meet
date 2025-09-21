@@ -1113,6 +1113,11 @@
         "title": "Аюулгүй байдлын тохиргоо"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Ирсэн мессэж",
+        "KNOCKING_PARTICIPANT_SOUND": "Оролцогчийн орсон лобби",
+        "PARTICIPANT_JOINED_SOUND": "Оролцогч нэгдсэн",
+        "PARTICIPANT_LEFT_SOUND": "Оролцогч гарсан",
+        "TALK_WHILE_MUTED_SOUND": "Нэг нь ярихад бусдын дууг хаах",
         "audio": "Дуу",
         "buttonLabel": "Тохиргоо",
         "calendar": {
@@ -1128,7 +1133,6 @@
         "devices": "Төхөөрөмжүүд",
         "followMe": "Бүгд намайг дагаж байна",
         "framesPerSecond": "fps",
-        "incomingMessage": "Ирсэн мессэж",
         "language": "Хэл",
         "loggedIn": "{{name}} нэвтэрсэн",
         "maxStageParticipants": "Үндсэн тайз руу гарах оролцогчийн хамгийн их тоо",
@@ -1139,9 +1143,6 @@
         "name": "Нэр",
         "noDevice": "Байхгүй",
         "notifications": "Тэмдэглэл",
-        "participantJoined": "Оролцогч нэгдсэн",
-        "participantKnocking": "Оролцогчийн орсон лобби",
-        "participantLeft": "Оролцогч гарсан",
         "playSounds": "Дууг нээх",
         "reactions": "Уулзалтын реакциуд",
         "sameAsSystem": "Системтэй адил({{label}})",
@@ -1154,7 +1155,6 @@
         "startAudioMuted": "Бүгд дуугүй эхлэх",
         "startReactionsMuted": "Бүх хүн рүү Чимээгүй эмоцийг илгээх",
         "startVideoMuted": "Бүгдийн дүрс хаах",
-        "talkWhileMuted": "Нэг нь ярихад бусдын дууг хаах",
         "title": "Тохиргоо",
         "video": "Видео"
     },

@@ -362,7 +362,7 @@ export function setAudioOutputDeviceId(
 
     return JitsiMeetJS.mediaDevices.setAudioOutputDevice(newId)
         .then(() => {
-            dispatch(setNewAudioOutputDevice(newId));
+            setNewAudioOutputDevice();
             const newSettings: Partial<ISettingsState> = {
                 audioOutputDeviceId: newId,
                 userSelectedAudioOutputDeviceId: undefined,

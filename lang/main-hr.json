@@ -1083,6 +1083,11 @@
         "title": "Sigurnosne opcije"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Dolazna poruka",
+        "KNOCKING_PARTICIPANT_SOUND": "Sudionik je ušao u predvorje",
+        "PARTICIPANT_JOINED_SOUND": "Sudionik se pridružio",
+        "PARTICIPANT_LEFT_SOUND": "Sudionik se odjavio",
+        "TALK_WHILE_MUTED_SOUND": "Govori s isključenim zvukom",
         "buttonLabel": "Postavke",
         "calendar": {
             "about": "Integracija {{appName}} kalendara koristi se za siguran pristup tvom kalendaru kako bi mogao čitati nadolazeće događaje.",
@@ -1097,7 +1102,6 @@
         "devices": "Uređaji",
         "followMe": "Svatko me prati",
         "framesPerSecond": "sličica u sekundi",
-        "incomingMessage": "Dolazna poruka",
         "language": "Jezik",
         "loggedIn": "Prijavljen/a kao {{name}}",
         "maxStageParticipants": "Maksimalni broj sudionika koji se mogu prikvačiti na glavnu pozornicu",
@@ -1106,9 +1110,6 @@
         "more": "Više",
         "name": "Ime",
         "noDevice": "Nijedan",
-        "participantJoined": "Sudionik se pridružio",
-        "participantKnocking": "Sudionik je ušao u predvorje",
-        "participantLeft": "Sudionik se odjavio",
         "playSounds": "Sviranje zvuka uključeno",
         "reactions": "Reakcije sastanka",
         "sameAsSystem": "Isto kao sustav ({{label}})",
@@ -1121,7 +1122,6 @@
         "startAudioMuted": "Svi počinju s isključenim zvukom",
         "startReactionsMuted": "Isključi zvukove reakcija za sve",
         "startVideoMuted": "Svi počinju skriveni",
-        "talkWhileMuted": "Govori s isključenim zvukom",
         "title": "Postavke"
     },
     "settingsView": {

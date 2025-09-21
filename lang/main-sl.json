@@ -944,6 +944,10 @@
         "securityOptions": "Nastavitve varnosti"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Prihajajoče sporočilo",
+        "PARTICIPANT_JOINED_SOUND": "Udeleženec se je pridružil",
+        "PARTICIPANT_LEFT_SOUND": "Udeleženec je odšel",
+        "TALK_WHILE_MUTED_SOUND": "Govorenje ob izklopljenem mikrofonu",
         "calendar": {
             "about": "Integracija koledarja {{appName}} se uporablja za varen dostop do vašega koledarja, tako da lahko bere prihajajoče dogodke.",
             "disconnect": "Prekini povezavo",
@@ -957,7 +961,6 @@
         "devices": "Naprave",
         "followMe": "Vsi sledijo meni",
         "framesPerSecond": "sličic na sekundo",
-        "incomingMessage": "Prihajajoče sporočilo",
         "language": "Jezik",
         "loggedIn": "Prijavljen kot {{name}}",
         "microphones": "Microphones",
@@ -965,8 +968,6 @@
         "more": "Več",
         "name": "Ime",
         "noDevice": "brez",
-        "participantJoined": "Udeleženec se je pridružil",
-        "participantLeft": "Udeleženec je odšel",
         "playSounds": "Predvajaj zvok",
         "reactions": "Reakcije sestanka",
         "sameAsSystem": "Enako kot v sistemu ({{label}})",
@@ -977,7 +978,6 @@
         "speakers": "Speakers",
         "startAudioMuted": "Vsi začnejo z utišanim mikrofonom",
         "startVideoMuted": "Vsi začnejo z izključeno kamero",
-        "talkWhileMuted": "Govorenje ob izklopljenem mikrofonu",
         "title": "Nastavitve"
     },
     "settingsView": {

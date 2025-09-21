@@ -1,91 +1,11 @@
-import { IStore } from '../../app/types';
-import { getConferenceState } from '../conference/functions';
-import { Sounds } from '../config/configType';
-import { AudioElement } from '../media/components/AbstractAudio';
-
 import {
-    PLAY_SOUND,
+    MUTE_SOUND,
     REGISTER_SOUND,
-    STOP_SOUND,
     UNREGISTER_SOUND,
     _ADD_AUDIO_ELEMENT,
     _REMOVE_AUDIO_ELEMENT
 } from './actionTypes';
 import { getSoundsPath } from './functions';
-import { getDisabledSounds } from './functions.any';
-
-/**
- * Adds {@link AudioElement} instance to the base/sounds feature state for the
- * {@link Sound} instance identified by the given id. After this action the
- * sound can be played by dispatching the {@link PLAY_SOUND} action.
- *
- * @param {string} soundId - The sound identifier for which the audio element
- * will be stored.
- * @param {AudioElement} audioElement - The audio element which implements the
- * audio playback functionality and which is backed by the sound resource
- * corresponding to the {@link Sound} with the given id.
- * @protected
- * @returns {{
- *     type: PLAY_SOUND,
- *     audioElement: AudioElement,
- *     soundId: string
- * }}
- */
-export function _addAudioElement(soundId: string, audioElement: AudioElement) {
-    return {
-        type: _ADD_AUDIO_ELEMENT,
-        audioElement,
-        soundId
-    };
-}
-
-/**
- * The opposite of {@link _addAudioElement} which removes {@link AudioElement}
- * for given sound from base/sounds state. It means that the audio resource has
- * been disposed and the sound can no longer be played.
- *
- * @param {string} soundId - The {@link Sound} instance identifier for which the
- * audio element is being removed.
- * @protected
- * @returns {{
- *     type: _REMOVE_AUDIO_ELEMENT,
- *     soundId: string
- * }}
- */
-export function _removeAudioElement(soundId: string) {
-    return {
-        type: _REMOVE_AUDIO_ELEMENT,
-        soundId
-    };
-}
-
-/**
- * Starts playback of the sound identified by the given sound id. The action
- * will have effect only if the audio resource has been loaded already.
- *
- * @param {string} soundId - The id of the sound to be played (the same one
- * which was used in {@link registerSound} to register the sound).
- * @returns {Function}
- */
-export function playSound(soundId: string) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const state = getState();
-        const disabledSounds = getDisabledSounds(state);
-        const { leaving } = getConferenceState(state);
-
-        // Skip playing sounds when leaving, to avoid hearing that recording has stopped and so on.
-        if (leaving) {
-            return;
-        }
-
-        if (!disabledSounds.includes(soundId as Sounds) && !disabledSounds.find(id => soundId.startsWith(id))) {
-            dispatch({
-                type: PLAY_SOUND,
-                soundId
-            });
-        }
-    };
-}
 
 /**
  * Registers a new sound for given id and a source object which can be either a
@@ -99,6 +19,8 @@ export function playSound(soundId: string) {
  * associated with the given {@code soundId}.
  * @param {Object} options - Optional parameters.
  * @param {boolean} options.loop - True in order to loop the sound.
+ * @param {boolean} optional - Whether this sound is optional and should be shown in notifications/settings.
+ * @param {boolean} languages - Whether this sound has multiple language versions.
  * @returns {{
  *     type: REGISTER_SOUND,
  *     soundId: string,
@@ -109,29 +31,14 @@ export function playSound(soundId: string) {
  * }}
  */
 export function registerSound(
-        soundId: string, soundName: string, options: Object = {}) {
+        soundId: string, soundName: string, options: Object = {}, optional: boolean = false, languages: boolean = false) {
     return {
         type: REGISTER_SOUND,
         soundId,
         src: `${getSoundsPath()}/${soundName}`,
-        options
-    };
-}
-
-/**
- * Stops playback of the sound identified by the given sound id.
- *
- * @param {string} soundId - The id of the sound to be stopped (the same one
- * which was used in {@link registerSound} to register the sound).
- * @returns {{
- *     type: STOP_SOUND,
- *     soundId: string
- * }}
- */
-export function stopSound(soundId: string) {
-    return {
-        type: STOP_SOUND,
-        soundId
+        options,
+        optional,
+        languages
     };
 }
 
@@ -151,5 +58,20 @@ export function unregisterSound(soundId: string) {
     return {
         type: UNREGISTER_SOUND,
         soundId
+    };
+}
+
+/**
+ * Mutes or unmutes a sound by soundId.
+ *
+ * @param {string} soundId - The id of the sound to mute/unmute.
+ * @param {boolean} isMuted - Whether to mute (true) or unmute (false) the sound.
+ * @returns {{ type: MUTE_SOUND, soundId: string, isMuted: boolean }}
+ */
+export function muteSound(soundId: string, isMuted: boolean) {
+    return {
+        type: MUTE_SOUND,
+        soundId,
+        isMuted
     };
 }

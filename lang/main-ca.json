@@ -1085,6 +1085,11 @@
         "title": "Opcions de seguretat"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Missatge entrant",
+        "KNOCKING_PARTICIPANT_SOUND": "El participant ha entrat a la sala d'espera",
+        "PARTICIPANT_JOINED_SOUND": "S'ha unit un participant",
+        "PARTICIPANT_LEFT_SOUND": "Un participant ha sortit de la reunió",
+        "TALK_WHILE_MUTED_SOUND": "Parla mentre està silenciat",
         "buttonLabel": "Paràmetres",
         "calendar": {
             "about": "La integració de l'agenda {{appName}} s'usa per a accedir de forma segura a la vostra agenda perquè pugui llegir els esdeveniments pròxims.",
@@ -1099,7 +1104,6 @@
         "devices": "Aparells",
         "followMe": "Tothom que em segueix",
         "framesPerSecond": "fotogrames per segon",
-        "incomingMessage": "Missatge entrant",
         "language": "Llengua",
         "loggedIn": "Sessió iniciada com a {{name}}",
         "maxStageParticipants": "El nombre màxim de participants que es poden fixar en la escena principal",
@@ -1108,9 +1112,6 @@
         "more": "Més",
         "name": "Nom",
         "noDevice": "Cap",
-        "participantJoined": "S'ha unit un participant",
-        "participantKnocking": "El participant ha entrat a la sala d'espera",
-        "participantLeft": "Un participant ha sortit de la reunió",
         "playSounds": "Reprodueix el so",
         "reactions": "Reaccions de la reunió",
         "sameAsSystem": "Igual que del sistema ({{label}}) ",
@@ -1123,7 +1124,6 @@
         "startAudioMuted": "Tothom comença silenciat",
         "startReactionsMuted": "Silencia els sons de reaccions per a tothom",
         "startVideoMuted": "Tothom comença amagat",
-        "talkWhileMuted": "Parla mentre està silenciat",
         "title": "Configuració"
     },
     "settingsView": {

@@ -41,6 +41,13 @@ export const ENDPOINT_REACTION_NAME = 'endpoint-reaction';
 export const MUTE_REACTIONS_COMMAND = 'mute-reactions';
 
 /**
+ * The command name for muting a sound globally.
+ *
+ * @type {string}
+ */
+export const MUTE_SOUNDS_COMMAND = 'mute-sounds';
+
+/**
  * The prefix for all reaction sound IDs. Also the ID used in config to disable reaction sounds.
  */
 export const REACTION_SOUND = 'REACTION_SOUND';

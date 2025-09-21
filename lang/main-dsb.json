@@ -1086,6 +1086,11 @@
         "title": "wěstosćowe opcije"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "pśiźeca powěsć",
+        "KNOCKING_PARTICIPANT_SOUND": "wobźělnik jo stupił do lobbyja",
+        "PARTICIPANT_JOINED_SOUND": "nowy wobźělnik jo pśistupił",
+        "PARTICIPANT_LEFT_SOUND": "wobźělnik jo spušćił konferencu",
+        "TALK_WHILE_MUTED_SOUND": "gaž se pśi wuśišenju powěda",
         "buttonLabel": "",
         "calendar": {
             "about": "Aplikacija {{appName}} wužywa se za integraciju kalendarja, aby se zmóžnił wěsty pśistup k Wašomu kalendarju a k pśiducym terminam.",
@@ -1100,7 +1105,6 @@
         "devices": "rědy",
         "followMe": "follow-me za wšykne wobźělniki",
         "framesPerSecond": "FPS",
-        "incomingMessage": "pśiźeca powěsć",
         "language": "rěc",
         "loggedIn": "ako {{name}} zalogowany/-a",
         "maxStageParticipants": "maksimalna licba wobźělnikow, kótarež mógu byś pśipěte ku głownemu naglědoju",
@@ -1109,9 +1113,6 @@
         "more": "wěcej",
         "name": "mě",
         "noDevice": "žeden",
-        "participantJoined": "nowy wobźělnik jo pśistupił",
-        "participantKnocking": "wobźělnik jo stupił do lobbyja",
-        "participantLeft": "wobźělnik jo spušćił konferencu",
         "playSounds": "zuki za pokazki aktiwěrowaś",
         "reactions": "interakcije",
         "sameAsSystem": "kaž system ({{label}})",
@@ -1124,7 +1125,6 @@
         "startAudioMuted": "wšykne wobźělniki pśistupiju wuśišone",
         "startReactionsMuted": "zuki za interakciju pla wšyknych deaktiwěrowaś",
         "startVideoMuted": "wšykne wobźělniki pśistupiju mimo wideo",
-        "talkWhileMuted": "gaž se pśi wuśišenju powěda",
         "title": "nastajenja"
     },
     "settingsView": {

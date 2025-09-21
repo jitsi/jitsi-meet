@@ -928,6 +928,7 @@
         "title": "Beveiligingsopties"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Binnenkomend bericht",
         "calendar": {
             "about": "De agenda-integratie van {{appName}} wordt gebruikt voor een veilige toegang tot uw agenda, zodat het aankomende afspraken kan uitlezen.",
             "disconnect": "Verbinding verbreken",
@@ -941,7 +942,6 @@
         "devices": "Apparaten",
         "followMe": "Iedereen volgt mij",
         "framesPerSecond": "beelden per seconde",
-        "incomingMessage": "Binnenkomend bericht",
         "language": "Taal",
         "loggedIn": "Aangemeld als {{name}}",
         "microphones": "Microfoons",

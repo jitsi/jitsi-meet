@@ -1226,6 +1226,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Inkommande meddelande",
+        "KNOCKING_PARTICIPANT_SOUND": "Deltagare har anslutit till lobbyn",
+        "PARTICIPANT_JOINED_SOUND": "Deltagare ansluten",
+        "PARTICIPANT_LEFT_SOUND": "Deltagare lämnat mötet",
+        "TALK_WHILE_MUTED_SOUND": "Prata medan din ljud är inaktiverad",
         "audio": "Ljud",
         "buttonLabel": "Inställningar",
         "calendar": {
@@ -1242,7 +1247,6 @@
         "followMe": "Alla följer mig",
         "followMeRecorder": "Den som spelar in följer mig",
         "framesPerSecond": "bildrutor per sekund",
-        "incomingMessage": "Inkommande meddelande",
         "language": "Språk",
         "loggedIn": "Inloggad som {{name}}",
         "maxStageParticipants": "Maximalt antal deltagare som kan fästas på huvudscenen",
@@ -1253,9 +1257,6 @@
         "name": "Namn",
         "noDevice": "Inga enheter",
         "notifications": "Notifikationer",
-        "participantJoined": "Deltagare ansluten",
-        "participantKnocking": "Deltagare har anslutit till lobbyn",
-        "participantLeft": "Deltagare lämnat mötet",
         "playSounds": "Spelljud på",
         "reactions": "Reaktioner",
         "sameAsSystem": "Samma som system ({{label}})",
@@ -1268,7 +1269,6 @@
         "startAudioMuted": "Alla börjar tystade",
         "startReactionsMuted": "Stäng av reaktionsljud för alla",
         "startVideoMuted": "Alla börjar osynliga",
-        "talkWhileMuted": "Prata medan din ljud är inaktiverad",
         "title": "Inställningar",
         "video": "Video"
     },

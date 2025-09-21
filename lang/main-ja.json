@@ -1013,6 +1013,10 @@
         "title": "セキュリティオプション"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "メッセージの到着",
+        "PARTICIPANT_JOINED_SOUND": "参加者の参加",
+        "PARTICIPANT_LEFT_SOUND": "参加者の退出",
+        "TALK_WHILE_MUTED_SOUND": "ミュート中の発話",
         "calendar": {
             "about": "{{appName}} カレンダーとの統合機能は、今後のイベントを読み取ることができるようカレンダーに安全にアクセスするために使用されます。",
             "disconnect": "切断",
@@ -1026,7 +1030,6 @@
         "devices": "デバイス",
         "followMe": "全員があなたをフォロー",
         "framesPerSecond": "フレーム/秒",
-        "incomingMessage": "メッセージの到着",
         "language": "言語",
         "loggedIn": "{{name}} としてログイン",
         "microphones": "マイク",
@@ -1034,8 +1037,6 @@
         "more": "その他",
         "name": "名前",
         "noDevice": "なし",
-        "participantJoined": "参加者の参加",
-        "participantLeft": "参加者の退出",
         "playSounds": "次の時にサウンドを再生",
         "reactions": "ミーティングリアクション",
         "sameAsSystem": "システムと同じ ({{label}})",
@@ -1048,7 +1049,6 @@
         "startAudioMuted": "全員がミュートで開始",
         "startReactionsMuted": "全員のリアクションサウンドをミュート",
         "startVideoMuted": "全員がビデオオフで開始",
-        "talkWhileMuted": "ミュート中の発話",
         "title": "設定"
     },
     "settingsView": {

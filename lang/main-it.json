@@ -1266,6 +1266,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Messaggio in arrivo",
+        "KNOCKING_PARTICIPANT_SOUND": "Partecipante in sala d'attesa",
+        "PARTICIPANT_JOINED_SOUND": "Partecipante entrato",
+        "PARTICIPANT_LEFT_SOUND": "Partecipante uscito",
+        "TALK_WHILE_MUTED_SOUND": "Parli a microfono spento",
         "audio": "Audio",
         "buttonLabel": "Impostazioni",
         "calendar": {
@@ -1283,7 +1288,6 @@
         "followMe": "Tutti seguono te",
         "followMeRecorder": "Il registratore segue te",
         "framesPerSecond": "fotogrammi al secondo",
-        "incomingMessage": "Messaggio in arrivo",
         "language": "Lingua",
         "loggedIn": "Connesso come {{name}}",
         "maxStageParticipants": "Numero massimo di partecipanti che possono essere messi in evidenza nella schermata principale",
@@ -1294,9 +1298,6 @@
         "name": "Nome",
         "noDevice": "Nessuno",
         "notifications": "Notifiche",
-        "participantJoined": "Partecipante entrato",
-        "participantKnocking": "Partecipante in sala d'attesa",
-        "participantLeft": "Partecipante uscito",
         "playSounds": "Suoni attivati",
         "reactions": "Reazioni riunione",
         "sameAsSystem": "Stesso del sistema ({{label}})",
@@ -1310,7 +1311,6 @@
         "startAudioMuted": "Tutti iniziano a microfono spento",
         "startReactionsMuted": "Spegni i suoni delle reazioni a tutti",
         "startVideoMuted": "Tutti iniziano a videocamera disattivata",
-        "talkWhileMuted": "Parli a microfono spento",
         "title": "Impostazioni",
         "video": "Video"
     },

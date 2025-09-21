@@ -7,14 +7,13 @@ import { setAudioMuted } from '../base/media/actions';
 import { raiseHand } from '../base/participants/actions';
 import { getLocalParticipant } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
+import SoundService from '../base/sounds/components/SoundService';
 import { hideNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { isAudioMuteButtonDisabled } from '../toolbox/functions.any';
 
 import { setCurrentNotificationUid } from './actions';
-import { TALK_WHILE_MUTED_SOUND_ID } from './constants';
-import { TALK_WHILE_MUTED_SOUND_FILE } from './sounds';
+import { TALK_WHILE_MUTED_SOUND } from './sounds';
 
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
@@ -23,10 +22,10 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case APP_WILL_MOUNT:
-        dispatch(registerSound(TALK_WHILE_MUTED_SOUND_ID, TALK_WHILE_MUTED_SOUND_FILE));
+        SoundService.register(TALK_WHILE_MUTED_SOUND.id, TALK_WHILE_MUTED_SOUND.file, TALK_WHILE_MUTED_SOUND.options, TALK_WHILE_MUTED_SOUND.optional);
         break;
     case APP_WILL_UNMOUNT:
-        dispatch(unregisterSound(TALK_WHILE_MUTED_SOUND_ID));
+        SoundService.unregister(TALK_WHILE_MUTED_SOUND.id);
         break;
 
     case CONFERENCE_JOINED: {
@@ -57,7 +56,7 @@ MiddlewareRegistry.register(store => next => action => {
                     const { soundsTalkWhileMuted } = getState()['features/base/settings'];
 
                     if (soundsTalkWhileMuted) {
-                        dispatch(playSound(TALK_WHILE_MUTED_SOUND_ID));
+                        SoundService.play(TALK_WHILE_MUTED_SOUND.id, state);
                     }
 
                     if (notification) {
