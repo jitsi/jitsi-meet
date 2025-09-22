@@ -2,10 +2,8 @@ import JitsiMeetJS, { RTCStatsEvents } from '../base/lib-jitsi-meet';
 
 import logger from './logger';
 import {
-    DominantSpeakerData,
     E2ERTTData,
-    FaceLandmarksData,
-    VideoTypeData
+    FaceLandmarksData
 } from './types';
 
 // TODO(saghul): expose these in libn-jitsi-meet?
@@ -47,16 +45,6 @@ class RTCStats {
     }
 
     /**
-     * Send dominant speaker data, the data will be processed by rtcstats-server and saved in the dump file.
-     *
-     * @param {Object} dominantSpeakerData - Dominant speaker data to be saved in the rtcstats dump.
-     * @returns {void}
-     */
-    sendDominantSpeakerData(dominantSpeakerData: DominantSpeakerData) {
-        JitsiMeetJS.rtcstats.sendStatsEntry('dominantSpeaker', dominantSpeakerData);
-    }
-
-    /**
      * Send e2e rtt data, the data will be processed by rtcstats-server and saved in the dump file.
      *
      * @param {Object} e2eRttData - The object that holds the e2e data.
@@ -85,16 +73,6 @@ class RTCStats {
      */
     sendConferenceTimestamp(timestamp: number) {
         JitsiMeetJS.rtcstats.sendStatsEntry('conferenceStartTimestamp', timestamp);
-    }
-
-    /**
-     * Send videoType data, the data will be processed by rtcstats-server and saved in the dump file.
-     *
-     * @param {Object} videoTypeData - The object that holds the videoType data.
-     * @returns {void}
-     */
-    sendVideoTypeData(videoTypeData: VideoTypeData) {
-        JitsiMeetJS.rtcstats.sendStatsEntry('setVideoType', videoTypeData);
     }
 
     /**
