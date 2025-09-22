@@ -201,7 +201,7 @@ function getConfig(options = {}) {
                     vendor: {
                         test: /[\\/]node_modules[\\/]/,
                         name: 'vendor',
-                        chunks: 'initial', // Only bundle initial chunks, not async chunks
+                        chunks: 'all',
                         priority: 10,
                         enforce: true
                     },
