@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,7 +95,9 @@ public class JitsiMeetActivity extends AppCompatActivity
     }
 
     public static void addTopBottomInsets(@NonNull Window w, @NonNull View v) {
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.VANILLA_ICE_CREAM) return;
+
+        // Only apply if edge-to-edge is supported (API 30+) or enforced (API 35+)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return;
 
         View decorView = w.getDecorView();
 
