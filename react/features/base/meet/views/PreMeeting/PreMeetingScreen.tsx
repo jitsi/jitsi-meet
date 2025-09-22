@@ -365,7 +365,7 @@ const PreMeetingScreen = ({
                     onSignup={(credentials) => dispatch(loginSuccess(credentials))}
                     translate={t}
                 />
-                ;<div className="flex absolute bottom-7 right-7"><SecureMeetingMessage /></div>
+                <div className="flex absolute bottom-7 right-7"><SecureMeetingMessage /></div>
                 <div className={classes.videoEncodingToggleContainer}>
                     {ConfigService.instance.isDevelopment() && <VideoEncodingToggle />}
                 </div>
