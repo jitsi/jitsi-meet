@@ -67,7 +67,7 @@ class WaitForOwnerDialog extends Component<IProps> {
             <ConfirmDialog
                 cancelLabel = { this.props._alternativeCancelText ? 'dialog.WaitingForHostButton' : 'dialog.Cancel' }
                 confirmLabel = 'dialog.IamHost'
-                descriptionKey = 'dialog.WaitForHostMsg'
+                descriptionKey = 'lobby.waitForModerator'
                 isConfirmHidden = { _isConfirmHidden }
                 onCancel = { this._onCancel }
                 onSubmit = { this._onLogin } />

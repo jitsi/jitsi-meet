@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../../app/types';
+import { getLobbyConfig } from '../../../../lobby/functions';
 import DeviceStatus from '../../../../prejoin/components/web/preview/DeviceStatus';
 import { isRoomNameEnabled } from '../../../../prejoin/functions.web';
 import Toolbox from '../../../../toolbox/components/web/Toolbox';
@@ -121,10 +122,9 @@ const useStyles = makeStyles()(theme => {
             alignItems: 'center',
             flexShrink: 0,
             boxSizing: 'border-box',
-            margin: '0 48px',
             padding: '24px 0 16px',
             position: 'relative',
-            width: '300px',
+            width: '400px',
             height: '100%',
             zIndex: 252,
 
@@ -146,9 +146,20 @@ const useStyles = makeStyles()(theme => {
         contentControls: {
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
+            alignItems: 'stretch',
             margin: 'auto',
             width: '100%'
+        },
+        paddedContent: {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            padding: '0 50px',
+
+            '& > *': {
+                width: '100%',
+                boxSizing: 'border-box'
+            }
         },
         title: {
             ...theme.typography.heading4,
@@ -220,34 +231,38 @@ const PreMeetingScreen = ({
                     {_isPreCallTestEnabled && <ConnectionStatus />}
 
                     <div className = { classes.contentControls }>
-                        <h1 className = { classes.title }>
-                            {title}
-                        </h1>
-                        {_roomName && (
-                            <span className = { classes.roomNameContainer }>
-                                {isOverflowing ? (
-                                    <Tooltip content = { _roomName }>
+                        <div className = { classes.paddedContent }>
+                            <h1 className = { classes.title }>
+                                {title}
+                            </h1>
+                            {_roomName && (
+                                <span className = { classes.roomNameContainer }>
+                                    {isOverflowing ? (
+                                        <Tooltip content = { _roomName }>
+                                            <span
+                                                className = { classes.roomName }
+                                                ref = { roomNameRef }>
+                                                {_roomName}
+                                            </span>
+                                        </Tooltip>
+                                    ) : (
                                         <span
                                             className = { classes.roomName }
                                             ref = { roomNameRef }>
                                             {_roomName}
                                         </span>
-                                    </Tooltip>
-                                ) : (
-                                    <span
-                                        className = { classes.roomName }
-                                        ref = { roomNameRef }>
-                                        {_roomName}
-                                    </span>
-                                )}
-                            </span>
-                        )}
-                        {children}
+                                    )}
+                                </span>
+                            )}
+                            {children}
+                        </div>
                         {_buttons.length && <Toolbox toolbarButtons = { _buttons } />}
-                        {skipPrejoinButton}
-                        {showUnsafeRoomWarning && <UnsafeRoomWarning />}
-                        {showDeviceStatus && <DeviceStatus />}
-                        {showRecordingWarning && <RecordingWarning />}
+                        <div className = { classes.paddedContent }>
+                            {skipPrejoinButton}
+                            {showUnsafeRoomWarning && <UnsafeRoomWarning />}
+                            {showDeviceStatus && <DeviceStatus />}
+                            {showRecordingWarning && <RecordingWarning />}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -269,9 +284,15 @@ const PreMeetingScreen = ({
 function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { hiddenPremeetingButtons } = state['features/base/config'];
     const { toolbarButtons } = state['features/toolbox'];
+    const { showHangUp = true } = getLobbyConfig(state);
+    const { knocking } = state['features/lobby'];
     const premeetingButtons = (ownProps.thirdParty
         ? THIRD_PARTY_PREJOIN_BUTTONS
         : PREMEETING_BUTTONS).filter((b: any) => !(hiddenPremeetingButtons || []).includes(b));
+
+    if (showHangUp && knocking && !premeetingButtons.includes('hangup')) {
+        premeetingButtons.push('hangup');
+    }
 
     const { premeetingBackground } = state['features/dynamic-branding'];
 

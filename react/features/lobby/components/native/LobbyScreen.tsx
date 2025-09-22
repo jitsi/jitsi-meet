@@ -3,6 +3,7 @@ import { Text, TextStyle, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
+import { login } from '../../../authentication/actions.any';
 import { getConferenceName } from '../../../base/conference/functions';
 import { translate } from '../../../base/i18n/functions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
@@ -18,6 +19,7 @@ import { navigate }
     from '../../../mobile/navigation/components/lobby/LobbyNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { preJoinStyles } from '../../../prejoin/components/native/styles';
+import HangupButton from '../../../toolbox/components/HangupButton';
 import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
 import VideoMuteButton from '../../../toolbox/components/native/VideoMuteButton';
 import AbstractLobbyScreen, {
@@ -43,6 +45,18 @@ interface IProps extends AbstractProps {
  * Implements a waiting screen that represents the participant being in the lobby.
  */
 class LobbyScreen extends AbstractLobbyScreen<IProps> {
+    /**
+     * Initializes a new LobbyScreen instance.
+     *
+     * @param {IProps} props - The read-only properties with which the new
+     * instance is to be initialized.
+     */
+    constructor(props: IProps) {
+        super(props);
+
+        this._onLogin = this._onLogin.bind(this);
+    }
+
     /**
      * Implements {@code PureComponent#render}.
      *
@@ -197,12 +211,19 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
      * @inheritdoc
      */
     _renderToolbarButtons() {
+        const { _hangUp } = this.props;
+
         return (
             <View style = { preJoinStyles.toolboxContainer as ViewStyle }>
                 <AudioMuteButton
                     styles = { preJoinStyles.buttonStylesBorderless } />
                 <VideoMuteButton
                     styles = { preJoinStyles.buttonStylesBorderless } />
+                {
+                    _hangUp
+                    && <HangupButton
+                        styles = { preJoinStyles.buttonStylesBorderless } />
+                }
             </View>
         );
     }
@@ -213,7 +234,7 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
      * @inheritdoc
      */
     _renderStandardButtons() {
-        const { _knocking, _renderPassword, _isLobbyChatActive } = this.props;
+        const { _knocking, _renderPassword, _isLobbyChatActive, _login } = this.props;
         const { displayName } = this.state;
 
         return (
@@ -246,8 +267,27 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
                         style = { preJoinStyles.joinButton }
                         type = { BUTTON_TYPES.PRIMARY } />
                 }
+                {
+                    _login
+                    && <Button
+                        accessibilityLabel = 'dialog.IamHost'
+                        labelKey = 'dialog.IamHost'
+                        onClick = { this._onLogin }
+                        style = { preJoinStyles.joinButton }
+                        type = { BUTTON_TYPES.PRIMARY } />
+                }
             </View>
         );
+    }
+
+    /**
+     * Handles login button click.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onLogin() {
+        this.props.dispatch(login());
     }
 }
 
