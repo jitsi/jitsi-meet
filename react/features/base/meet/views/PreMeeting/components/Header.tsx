@@ -2,8 +2,10 @@ import { UserSubscription } from "@internxt/sdk/dist/drive/payments/types/types"
 import { Avatar, Button, Header as IntxHeader } from "@internxt/ui";
 import { ArrowSquareOut } from "@phosphor-icons/react";
 import React, { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import PlanBadge from "../../../general/components/PlanBadge";
 import TextButton from "../../../general/components/TextButton";
+import { isMeetingEnabled } from "../../../general/store/meeting/selectors";
 import { getPlanName } from "../../../services/utils/payments.utils";
 
 const Divider = () => (
@@ -34,7 +36,6 @@ const LeftContent = React.memo(
         </button>
     )
 );
-
 
 /**
  * Props for the RightContent component
@@ -94,6 +95,11 @@ interface RightContentProps {
      * Handler for the settings button
      */
     onOpenSettings?: () => void;
+
+    /**
+     * Whether the Meet feature is enabled
+     */
+    isMeetEnabled: boolean;
 }
 
 /**
@@ -114,6 +120,7 @@ const RightContent = React.memo(
         onSignUp,
         onLogout,
         onOpenSettings,
+        isMeetEnabled,
     }: RightContentProps): JSX.Element => {
         const [showMenu, setShowMenu] = useState(false);
 
@@ -143,7 +150,7 @@ const RightContent = React.memo(
         };
 
         const planName = getPlanName(subscription);
-        const showUpgrade = !subscription || subscription.type === "free";
+        const showUpgrade = isMeetEnabled;
 
         return isLogged ? (
             <div className="flex space-x-2 flex-row">
@@ -351,26 +358,30 @@ const Header = ({
     onOpenSettings,
     className = "z-50 py-3",
     navigateToHomePage,
-}: HeaderProps) => (
-    <IntxHeader
-        leftContent={<LeftContent onClick={navigateToHomePage} />}
-        rightContent={
-            <RightContent
-                isLogged={!!userData}
-                avatar={userData?.avatar ?? null}
-                fullName={userData ? `${userData.name} ${userData.lastname}` : ""}
-                email={userData?.email ?? ""}
-                subscription={subscription}
-                translate={translate}
-                meetingButton={meetingButton}
-                onLogin={onLogin}
-                onSignUp={onSignUp}
-                onLogout={onLogout}
-                onOpenSettings={onOpenSettings}
-            />
-        }
-        className={className}
-    />
-);
+}: HeaderProps) => {
+    const isMeetEnabled = useSelector(isMeetingEnabled);
+    return (
+        <IntxHeader
+            leftContent={<LeftContent onClick={navigateToHomePage} />}
+            rightContent={
+                <RightContent
+                    isLogged={!!userData}
+                    avatar={userData?.avatar ?? null}
+                    fullName={userData ? `${userData.name} ${userData.lastname}` : ""}
+                    email={userData?.email ?? ""}
+                    subscription={subscription}
+                    translate={translate}
+                    meetingButton={meetingButton}
+                    onLogin={onLogin}
+                    onSignUp={onSignUp}
+                    onLogout={onLogout}
+                    onOpenSettings={onOpenSettings}
+                    isMeetEnabled={isMeetEnabled}
+                />
+            }
+            className={className}
+        />
+    );
+};
 
 export default Header;

@@ -7,6 +7,7 @@ import Video from "../../../../media/components/web/Video";
 import { ConfigService } from "../../../services/config.service";
 import { useVideoEncoding } from "../../PreMeeting/containers/VideoEncodingToggle";
 import { VideoParticipantType } from "../types";
+import { isSafari } from "../../../general/utils/safariDetector";
 
 export type VideoParticipantProps = {
     participant: VideoParticipantType;
@@ -20,9 +21,13 @@ const VideoParticipant = ({ participant, className = "", flipX, translate }: Vid
         participant;
 
     const { isEncodingEnabled } = useVideoEncoding();
-    const encodeVideo = useMemo(() => {
-        return ConfigService.instance.isDevelopment() ? isEncodingEnabled : true;
-    }, [isEncodingEnabled]);
+     const encodeVideo = useMemo(() => {
+         if (isSafari()) {
+             return false;
+         }
+
+         return ConfigService.instance.isDevelopment() ? isEncodingEnabled : true;
+     }, [isEncodingEnabled]);
 
     return (
         <div
