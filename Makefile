@@ -72,7 +72,6 @@ deploy-appbundle:
 deploy-lib-jitsi-meet:
 	cp \
 		$(LIBJITSIMEET_DIR)/dist/umd/lib-jitsi-meet.* \
-		$(LIBJITSIMEET_DIR)/dist/umd/pqc-kem-kyber512.wasm \
 		$(LIBJITSIMEET_DIR)/dist/umd/vodozemac.wasm \
 		$(DEPLOY_DIR)
 
