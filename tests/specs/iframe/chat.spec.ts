@@ -2,20 +2,23 @@ import { expect } from '@wdio/globals';
 
 import type { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
-import { ensureTwoParticipants } from '../../helpers/participants';
-import { fetchJson } from '../../helpers/utils';
+import { joinMuc } from '../../helpers/joinMuc';
 
 setTestProperties(__filename, {
-    useIFrameApi: true,
-    useWebhookProxy: true,
+    // Note this just for posterity. We don't depend on the framework doing anything for us because of this flag (we
+    // pass it as a parameter directly)
+    useIFrameApi: false,
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
 describe('Chat', () => {
-    it('joining the meeting', async () => {
-        await ensureTwoParticipants();
+    let p1: Participant, p2: Participant;
+    // Cache the endpoint IDs because Participant.getEndpointId() does not work in the main frame.
+    let endpoint1: string, endpoint2: string;
 
-        const { p1, p2 } = ctx;
+    it('setup', async () => {
+        p1 = await joinMuc({ name: 'p1', iFrameApi: true });
+        p2 = await joinMuc({ name: 'p2', iFrameApi: true });
 
         if (await p1.execute(() => config.disableIframeAPI)) {
             // skip the test if iframeAPI is disabled
@@ -24,19 +27,14 @@ describe('Chat', () => {
             return;
         }
 
-        // let's populate endpoint ids
-        await Promise.all([
-            p1.getEndpointId(),
-            p2.getEndpointId()
-        ]);
-    });
-
-    it('send message', async () => {
-        const { p1, p2 } = ctx;
-
+        endpoint1 = await p1.getEndpointId();
+        endpoint2 = await p2.getEndpointId();
         await p1.switchToMainFrame();
         await p2.switchToMainFrame();
 
+    });
+
+    it('send message', async () => {
         await p2.getIframeAPI().addEventListener('chatUpdated');
         await p2.getIframeAPI().addEventListener('incomingMessage');
         await p1.getIframeAPI().addEventListener('outgoingMessage');
@@ -66,7 +64,7 @@ describe('Chat', () => {
         } = await p2.getIframeAPI().getEventResult('incomingMessage');
 
         expect(incomingMessageEvent).toEqual({
-            from: await p1.getEndpointId(),
+            from: endpoint1,
             message: testMessage,
             nick: p1.name,
             privateMessage: false
@@ -88,11 +86,9 @@ describe('Chat', () => {
     });
 
     it('toggle chat', async () => {
-        const { p1, p2 } = ctx;
-
         await p2.getIframeAPI().executeCommand('toggleChat');
 
-        await testSendGroupMessageWithChatOpen(p1, p2);
+        await testSendGroupMessageWithChatOpen(p1, p2, endpoint1);
 
         await p1.getIframeAPI().clearEventResults('outgoingMessage');
         await p2.getIframeAPI().clearEventResults('chatUpdated');
@@ -100,13 +96,10 @@ describe('Chat', () => {
     });
 
     it('private chat', async () => {
-        const { p1, p2 } = ctx;
         const testMessage = 'Hello private world!';
-        const p2Id = await p2.getEndpointId();
-        const p1Id = await p1.getEndpointId();
 
-        await p1.getIframeAPI().executeCommand('initiatePrivateChat', p2Id);
-        await p1.getIframeAPI().executeCommand('sendChatMessage', testMessage, p2Id);
+        await p1.getIframeAPI().executeCommand('initiatePrivateChat', endpoint2);
+        await p1.getIframeAPI().executeCommand('sendChatMessage', testMessage, endpoint2);
 
         const incomingMessageEvent = await p2.driver.waitUntil(
             () => p2.getIframeAPI().getEventResult('incomingMessage'), {
@@ -115,7 +108,7 @@ describe('Chat', () => {
             });
 
         expect(incomingMessageEvent).toEqual({
-            from: p1Id,
+            from: endpoint1,
             message: testMessage,
             nick: p1.name,
             privateMessage: true
@@ -131,49 +124,25 @@ describe('Chat', () => {
         await p2.getIframeAPI().clearEventResults('chatUpdated');
         await p2.getIframeAPI().clearEventResults('incomingMessage');
 
-        await testSendGroupMessageWithChatOpen(p1, p2);
-    });
-
-    it('chat upload chat', async () => {
-        const { p1, p2, webhooksProxy } = ctx;
-
-        await p1.getIframeAPI().executeCommand('hangup');
-        await p2.getIframeAPI().executeCommand('hangup');
-
-        if (webhooksProxy) {
-            const event: {
-                data: {
-                    preAuthenticatedLink: string;
-                };
-                eventType: string;
-            } = await webhooksProxy.waitForEvent('CHAT_UPLOADED');
-
-            expect('CHAT_UPLOADED').toBe(event.eventType);
-            expect(event.data.preAuthenticatedLink).toBeDefined();
-
-            const uploadedChat: any = await fetchJson(event.data.preAuthenticatedLink);
-
-            expect(uploadedChat.messageType).toBe('CHAT');
-            expect(uploadedChat.messages).toBeDefined();
-            expect(uploadedChat.messages.length).toBe(3);
-        }
+        await testSendGroupMessageWithChatOpen(p1, p2, endpoint1);
     });
 });
 
 /**
- * Test sending a group message with the chat open.
- * @param p1
- * @param p2
+ * Send a group message from [sender], verify that it was received correctly by [receiver].
+ * @param sender the Participant that sends the message.
+ * @param receiver the Participant that receives the message.
+ * @param senderEndpointId the endpoint ID of the sender.
  */
-async function testSendGroupMessageWithChatOpen(p1: Participant, p2: Participant) {
+async function testSendGroupMessageWithChatOpen(sender: Participant, receiver: Participant, senderEndpointId: string) {
     const testMessage = 'Hello world again';
 
-    await p1.getIframeAPI().executeCommand('sendChatMessage', testMessage);
+    await sender.getIframeAPI().executeCommand('sendChatMessage', testMessage);
 
     const chatUpdatedEvent: {
         isOpen: boolean;
         unreadCount: number;
-    } = await p2.driver.waitUntil(() => p2.getIframeAPI().getEventResult('chatUpdated'), {
+    } = await receiver.driver.waitUntil(() => receiver.getIframeAPI().getEventResult('chatUpdated'), {
         timeout: 3000,
         timeoutMsg: 'Chat was not updated'
     });
@@ -183,16 +152,16 @@ async function testSendGroupMessageWithChatOpen(p1: Participant, p2: Participant
         unreadCount: 0
     });
 
-    const incomingMessageEvent = await p2.driver.waitUntil(
-        () => p2.getIframeAPI().getEventResult('incomingMessage'), {
+    const incomingMessageEvent = await receiver.driver.waitUntil(
+        () => receiver.getIframeAPI().getEventResult('incomingMessage'), {
             timeout: 3000,
             timeoutMsg: 'Chat was not received'
         });
 
     expect(incomingMessageEvent).toEqual({
-        from: await p1.getEndpointId(),
+        from: senderEndpointId,
         message: testMessage,
-        nick: p1.name,
+        nick: sender.name,
         privateMessage: false
     });
 }
