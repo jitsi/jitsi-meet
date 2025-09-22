@@ -4,10 +4,10 @@ import clsx from "clsx";
 import React, { useMemo } from "react";
 import ConnectionIndicator from "../../../../../connection-indicator/components/web/ConnectionIndicator";
 import Video from "../../../../media/components/web/Video";
+import { isSafari } from "../../../general/utils/safariDetector";
 import { ConfigService } from "../../../services/config.service";
 import { useVideoEncoding } from "../../PreMeeting/containers/VideoEncodingToggle";
 import { VideoParticipantType } from "../types";
-import { isSafari } from "../../../general/utils/safariDetector";
 
 export type VideoParticipantProps = {
     participant: VideoParticipantType;
@@ -21,13 +21,14 @@ const VideoParticipant = ({ participant, className = "", flipX, translate }: Vid
         participant;
 
     const { isEncodingEnabled } = useVideoEncoding();
-     const encodeVideo = useMemo(() => {
-         if (isSafari()) {
-             return false;
-         }
+    // Encoding will not be used for now, it has decoding problems and video lag. We will leave it set to false.
+    const encodeVideo = useMemo(() => {
+        if (isSafari()) {
+            return false;
+        }
 
-         return ConfigService.instance.isDevelopment() ? isEncodingEnabled : true;
-     }, [isEncodingEnabled]);
+        return ConfigService.instance.isDevelopment() ? isEncodingEnabled : true;
+    }, [isEncodingEnabled]);
 
     return (
         <div
@@ -40,7 +41,8 @@ const VideoParticipant = ({ participant, className = "", flipX, translate }: Vid
                     videoTrack={{ jitsiTrack: videoTrack }}
                     className={clsx("w-full h-full object-cover", flipX && local && "scale-x-[-1]")}
                     key={`video-${id}`}
-                    encodeVideo={encodeVideo}
+                    // Set to false due to decoding issues and video lag
+                    encodeVideo={false}
                 />
             ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gray-800">
