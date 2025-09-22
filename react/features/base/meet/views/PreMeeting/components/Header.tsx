@@ -150,7 +150,7 @@ const RightContent = React.memo(
         };
 
         const planName = getPlanName(subscription);
-        const showUpgrade = isMeetEnabled;
+        const showUpgrade = !isMeetEnabled;
 
         return isLogged ? (
             <div className="flex space-x-2 flex-row">
