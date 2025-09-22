@@ -21,6 +21,7 @@ const VideoParticipant = ({ participant, className = "", flipX, translate }: Vid
         participant;
 
     const { isEncodingEnabled } = useVideoEncoding();
+    // Encoding will not be used for now, it has decoding problems and video lag. We will leave it set to false.
     const encodeVideo = useMemo(() => {
         if (isSafari()) {
             return false;
@@ -40,6 +41,7 @@ const VideoParticipant = ({ participant, className = "", flipX, translate }: Vid
                     videoTrack={{ jitsiTrack: videoTrack }}
                     className={clsx("w-full h-full object-cover", flipX && local && "scale-x-[-1]")}
                     key={`video-${id}`}
+                    // Set to false due to decoding issues and video lag
                     encodeVideo={false}
                 />
             ) : (
