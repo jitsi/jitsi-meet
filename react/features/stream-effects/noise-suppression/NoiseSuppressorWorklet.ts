@@ -67,6 +67,8 @@ class NoiseSuppressorWorklet extends AudioWorkletProcessor {
 
     /**
      * Initialize the rnnoise processor asynchronously.
+     *
+     * @returns {Promise<void>} Promise that resolves when initialization is complete.
      */
     private async _initializeProcessor() {
         try {

@@ -17,8 +17,10 @@ interface IProps {
 
 /**
  * Renders a label indicating that we are in a room with an insecure name.
+ *
+ * @returns {JSX.Element|null} The insecure room name label component or null if not insecure.
  */
-function InsecureRoomNameLabel({ room, unsafeRoomWarningEnabled, t }: IProps) {
+function InsecureRoomNameLabel({ room, unsafeRoomWarningEnabled, t: _t }: IProps) {
     const isInsecure = useInsecureRoomName(room || '', unsafeRoomWarningEnabled);
 
     if (!isInsecure) {
