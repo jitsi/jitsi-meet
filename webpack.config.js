@@ -186,7 +186,32 @@ function getConfig(options = {}) {
         },
         optimization: {
             concatenateModules: isProduction,
-            minimize: isProduction
+            minimize: isProduction,
+            splitChunks: {
+                chunks: 'all',
+                cacheGroups: {
+                    // React chunk for React and React-DOM (higher priority)
+                    react: {
+                        test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+                        name: 'react',
+                        chunks: 'all',
+                        priority: 20,
+                        enforce: true
+                    },
+                    vendor: {
+                        test: /[\\/]node_modules[\\/]/,
+                        name: 'vendor',
+                        chunks: 'initial', // Only bundle initial chunks, not async chunks
+                        priority: 10,
+                        enforce: true
+                    },
+                    default: {
+                        minChunks: 2,
+                        priority: -20,
+                        reuseExistingChunk: true
+                    }
+                }
+            }
         },
         output: {
             filename: `[name]${isProduction ? '.min' : ''}.js`,

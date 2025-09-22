@@ -15,7 +15,7 @@ let rnnoiseModule: Promise<any> | undefined;
  */
 export function createRnnoiseProcessor() {
     if (!rnnoiseModule) {
-        rnnoiseModule = import('@jitsi/rnnoise-wasm' as any).then(m => {
+        rnnoiseModule = import(/* webpackChunkName: "rnnoise" */ '@jitsi/rnnoise-wasm' as any).then(m => {
             const { createRNNWasmModule } = m;
 
             return createRNNWasmModule();

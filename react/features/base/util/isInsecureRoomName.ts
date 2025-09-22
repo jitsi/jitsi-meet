@@ -32,7 +32,7 @@ function isValidUUID(str: string) {
  */
 function _getZxcvbn() {
     if (!_zxcvbnPromise) {
-        _zxcvbnPromise = import('zxcvbn').then(module => module.default);
+        _zxcvbnPromise = import(/* webpackChunkName: "zxcvbn" */ 'zxcvbn').then(module => module.default);
     }
 
     return _zxcvbnPromise;

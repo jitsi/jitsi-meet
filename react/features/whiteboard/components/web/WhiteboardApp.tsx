@@ -33,7 +33,7 @@ export default class WhiteboardApp extends BaseApp<any> {
         if (!roomId && !roomKey) {
             try {
                 // Dynamically import generateCollaborationLinkData
-                const excalidrawModule = await import('@jitsi/excalidraw');
+                const excalidrawModule = await import(/* webpackChunkName: "excalidraw" */ '@jitsi/excalidraw');
                 const collabDetails = await excalidrawModule.generateCollaborationLinkData();
 
                 roomId = collabDetails.roomId;

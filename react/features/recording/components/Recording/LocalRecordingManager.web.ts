@@ -347,7 +347,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
  */
 async function fixDuration(data: Blob, duration: number): Promise<Blob> {
     // Dynamically import ts-ebml library
-    const ebml = await import('ts-ebml/dist/EBML.min.js' as any);
+    const ebml = await import(/* webpackChunkName: "ts-ebml" */ 'ts-ebml/dist/EBML.min.js' as any);
 
     const decoder = new ebml.Decoder();
     const reader = new ebml.Reader();

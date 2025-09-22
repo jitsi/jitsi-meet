@@ -143,7 +143,7 @@ async function setNewWhiteboardOpen(store: IStore) {
     const { dispatch, getState } = store;
 
     // Dynamically import generateCollaborationLinkData
-    const excalidrawModule = await import('@jitsi/excalidraw');
+    const excalidrawModule = await import(/* webpackChunkName: "excalidraw" */ '@jitsi/excalidraw');
     const collabLinkData = await excalidrawModule.generateCollaborationLinkData();
     const state = getState();
     const conference = getCurrentConference(state);

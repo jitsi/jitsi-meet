@@ -9,7 +9,7 @@ let _excalidrawPromise: Promise<any> | null = null;
  */
 function _getExcalidraw() {
     if (!_excalidrawPromise) {
-        _excalidrawPromise = import('@jitsi/excalidraw');
+        _excalidrawPromise = import(/* webpackChunkName: "excalidraw" */ '@jitsi/excalidraw');
     }
 
     return _excalidrawPromise;

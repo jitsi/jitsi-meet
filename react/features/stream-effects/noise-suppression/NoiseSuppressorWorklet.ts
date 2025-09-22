@@ -71,7 +71,7 @@ class NoiseSuppressorWorklet extends AudioWorkletProcessor {
     private async _initializeProcessor() {
         try {
             // Dynamically import the rnnoise module
-            const rnnoiseModule = await import('@jitsi/rnnoise-wasm' as any);
+            const rnnoiseModule = await import(/* webpackChunkName: "rnnoise" */ '@jitsi/rnnoise-wasm' as any);
             const { createRNNWasmModuleSync } = rnnoiseModule;
 
             this._denoiseProcessor = new RnnoiseProcessor(createRNNWasmModuleSync());
