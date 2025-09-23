@@ -33,7 +33,7 @@ clean:
 	rm -fr $(BUILD_DIR)
 
 .NOTPARALLEL:
-deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-excalidraw deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-tf-wasm deploy-css deploy-local deploy-face-landmarks
+deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-excalidraw deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-tf-wasm deploy-css deploy-static deploy-local deploy-face-landmarks
 
 deploy-init:
 	rm -fr $(DEPLOY_DIR)
@@ -118,11 +118,17 @@ deploy-css:
 	$(CLEANCSS) --skip-rebase $(STYLES_BUNDLE) > $(STYLES_DESTINATION) && \
 	rm $(STYLES_BUNDLE)
 
+deploy-static:
+	cp -r images $(OUTPUT_DIR)/
+	cp -r static $(OUTPUT_DIR)/ || true
+	cp -r sounds $(OUTPUT_DIR)/ || true
+	cp -r fonts $(OUTPUT_DIR)/ || true
+
 deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 .NOTPARALLEL:
-dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-tf-wasm  deploy-excalidraw-dev deploy-face-landmarks
+dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-tf-wasm deploy-excalidraw-dev deploy-static deploy-face-landmarks
 	$(WEBPACK_DEV_SERVER)
 
 source-package:
