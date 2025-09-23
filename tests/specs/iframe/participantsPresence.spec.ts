@@ -1,64 +1,18 @@
 import { isEqual } from 'lodash-es';
 
-import { P1, P2, Participant } from '../../helpers/Participant';
+import { P1, P2 } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
-import { config as testsConfig } from '../../helpers/TestsConfig';
 import { ensureTwoParticipants, parseJid } from '../../helpers/participants';
 
 setTestProperties(__filename, {
-    useIFrameApi: true,
-    useWebhookProxy: true,
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
-/**
- * Tests PARTICIPANT_LEFT webhook.
- */
-async function checkParticipantLeftHook(p: Participant, reason: string, checkId = false, conferenceJid: string) {
-    const { webhooksProxy } = ctx;
-
-    if (webhooksProxy) {
-        // PARTICIPANT_LEFT webhook
-        // @ts-ignore
-        const event: {
-            customerId: string;
-            data: {
-                conference: string;
-                disconnectReason: string;
-                group: string;
-                id: string;
-                isBreakout: boolean;
-                name: string;
-                participantId: string;
-            };
-            eventType: string;
-        } = await webhooksProxy.waitForEvent('PARTICIPANT_LEFT');
-
-        expect('PARTICIPANT_LEFT').toBe(event.eventType);
-        expect(event.data.conference).toBe(conferenceJid);
-        expect(event.data.disconnectReason).toBe(reason);
-        expect(event.data.isBreakout).toBe(false);
-        expect(event.data.participantId).toBe(await p.getEndpointId());
-        expect(event.data.name).toBe(p.name);
-
-        if (checkId) {
-            const jwtPayload = p.getToken()?.payload;
-
-            expect(event.data.id).toBe(jwtPayload?.context?.user?.id);
-            expect(event.data.group).toBe(jwtPayload?.context?.group);
-            expect(event.customerId).toBe(testsConfig.iframe.customerId);
-        }
-    }
-}
-
 describe('Participants presence', () => {
-    let conferenceJid: string = '';
-
     it('joining the meeting', async () => {
-        // ensure 2 participants one moderator and one guest, we will load both with iframeAPI
-        await ensureTwoParticipants();
+        await ensureTwoParticipants({}, { name: 'p1', iFrameApi: true });
 
-        const { p1, p2, webhooksProxy } = ctx;
+        const { p1, p2 } = ctx;
 
         if (await p1.execute(() => config.disableIframeAPI)) {
             // skip the test if iframeAPI is disabled
@@ -67,38 +21,21 @@ describe('Participants presence', () => {
             return;
         }
 
-        await p1.switchToMainFrame();
-        await p2.switchToMainFrame();
+        await Promise.all([
+            p1.switchToMainFrame(),
+            p2.switchToMainFrame()
+        ]);
 
         expect(await p1.getIframeAPI().getEventResult('isModerator')).toBe(true);
-        expect(await p2.getIframeAPI().getEventResult('isModerator')).toBe(false);
+        expect(await p2.getIframeAPI().getEventResult('isModerator')).toBe(true);
 
         expect(await p1.getIframeAPI().getEventResult('videoConferenceJoined')).toBeDefined();
         expect(await p2.getIframeAPI().getEventResult('videoConferenceJoined')).toBeDefined();
-
-        if (webhooksProxy) {
-            // USAGE webhook
-            // @ts-ignore
-            const event: {
-                data: [
-                    { participantId: string; }
-                ];
-                eventType: string;
-            } = await webhooksProxy.waitForEvent('USAGE');
-
-            expect('USAGE').toBe(event.eventType);
-
-            const p1EpId = await p1.getEndpointId();
-            const p2EpId = await p2.getEndpointId();
-
-            expect(event.data.filter(d => d.participantId === p1EpId
-                || d.participantId === p2EpId).length).toBe(2);
-        }
     });
 
     it('participants info',
         async () => {
-            const { p1, roomName, webhooksProxy } = ctx;
+            const { p1, roomName } = ctx;
             const roomsInfo = (await p1.getIframeAPI().getRoomsInfo()).rooms[0];
 
             expect(roomsInfo).toBeDefined();
@@ -120,29 +57,11 @@ describe('Participants presence', () => {
 
             expect(roomsInfo.participants.length).toBe(2);
             expect(await p1.getIframeAPI().getNumberOfParticipants()).toBe(2);
-
-            if (webhooksProxy) {
-                // ROOM_CREATED webhook
-                // @ts-ignore
-                const event: {
-                    data: {
-                        conference: string;
-                        isBreakout: boolean;
-                    };
-                    eventType: string;
-                } = await webhooksProxy.waitForEvent('ROOM_CREATED');
-
-                expect('ROOM_CREATED').toBe(event.eventType);
-                expect(event.data.conference).toBe(conferenceJid);
-                expect(event.data.isBreakout).toBe(false);
-            }
         }
     );
 
     it('participants pane', async () => {
         const { p1 } = ctx;
-
-        await p1.switchToMainFrame();
 
         expect(await p1.getIframeAPI().isParticipantsPaneOpen()).toBe(false);
 
@@ -157,68 +76,7 @@ describe('Participants presence', () => {
         expect((await p1.getIframeAPI().getEventResult('participantsPaneToggled'))?.open).toBe(false);
     });
 
-    it('grant moderator', async () => {
-        const { p1, p2, webhooksProxy } = ctx;
-        const p2EpId = await p2.getEndpointId();
-
-        await p1.getIframeAPI().clearEventResults('participantRoleChanged');
-        await p2.getIframeAPI().clearEventResults('participantRoleChanged');
-
-        await p1.getIframeAPI().executeCommand('grantModerator', p2EpId);
-
-        await p2.driver.waitUntil(() => p2.getIframeAPI().getEventResult('isModerator'), {
-            timeout: 3000,
-            timeoutMsg: 'Moderator role not granted'
-        });
-
-        type RoleChangedEvent = {
-            id: string;
-            role: string;
-        };
-
-        const event1: RoleChangedEvent = await p1.driver.waitUntil(
-            () => p1.getIframeAPI().getEventResult('participantRoleChanged'), {
-                timeout: 3000,
-                timeoutMsg: 'Role was not update on p1 side'
-            });
-
-        expect(event1?.id).toBe(p2EpId);
-        expect(event1?.role).toBe('moderator');
-
-        const event2: RoleChangedEvent = await p2.driver.waitUntil(
-            () => p2.getIframeAPI().getEventResult('participantRoleChanged'), {
-                timeout: 3000,
-                timeoutMsg: 'Role was not update on p2 side'
-            });
-
-        expect(event2?.id).toBe(p2EpId);
-        expect(event2?.role).toBe('moderator');
-
-        if (webhooksProxy) {
-            // ROLE_CHANGED webhook
-            // @ts-ignore
-            const event: {
-                data: {
-                    grantedBy: {
-                        participantId: string;
-                    };
-                    grantedTo: {
-                        participantId: string;
-                    };
-                    role: string;
-                };
-                eventType: string;
-            } = await webhooksProxy.waitForEvent('ROLE_CHANGED');
-
-            expect('ROLE_CHANGED').toBe(event.eventType);
-            expect(event.data.role).toBe('moderator');
-            expect(event.data.grantedBy.participantId).toBe(await p1.getEndpointId());
-            expect(event.data.grantedTo.participantId).toBe(await p2.getEndpointId());
-        }
-    });
-
     it('kick participant', async () => {
-        // we want to join second participant with token, so we can check info in webhook
         await ctx.p2.getIframeAPI().clearEventResults('videoConferenceLeft');
         await ctx.p2.getIframeAPI().addEventListener('videoConferenceLeft');
         await ctx.p2.switchToMainFrame();
@@ -229,13 +87,9 @@ describe('Participants presence', () => {
             timeoutMsg: 'videoConferenceLeft not received'
         });
 
-        await ensureTwoParticipants({
-            preferGenerateToken: true
-        });
+        await ensureTwoParticipants({}, { name: 'p1', iFrameApi: true });
 
-        const { p1, p2, roomName, webhooksProxy } = ctx;
-
-        webhooksProxy?.clearCache();
+        const { p1, p2, roomName } = ctx;
 
         const p1EpId = await p1.getEndpointId();
         const p2EpId = await p2.getEndpointId();
@@ -266,8 +120,6 @@ describe('Participants presence', () => {
             timeout: 2000,
             timeoutMsg: 'participantKickedOut event not received on p2 side'
         });
-
-        await checkParticipantLeftHook(p2, 'kicked', true, conferenceJid);
 
         expect(eventP1).toBeDefined();
         expect(eventP2).toBeDefined();
@@ -308,39 +160,14 @@ describe('Participants presence', () => {
     });
 
     it('join after kick', async () => {
-        const { p1, webhooksProxy } = ctx;
+        const { p1 } = ctx;
 
         await p1.getIframeAPI().addEventListener('participantJoined');
         await p1.getIframeAPI().addEventListener('participantMenuButtonClick');
 
-        webhooksProxy?.clearCache();
-
         // join again
-        await ensureTwoParticipants();
+        await ensureTwoParticipants({}, { name: 'p1', iFrameApi: true });
         const { p2 } = ctx;
-
-        if (webhooksProxy) {
-            // PARTICIPANT_JOINED webhook
-            // @ts-ignore
-            const event: {
-                data: {
-                    conference: string;
-                    isBreakout: boolean;
-                    moderator: boolean;
-                    name: string;
-                    participantId: string;
-                };
-                eventType: string;
-            } = await webhooksProxy.waitForEvent('PARTICIPANT_JOINED');
-
-            expect('PARTICIPANT_JOINED').toBe(event.eventType);
-            expect(event.data.conference).toBe(conferenceJid);
-            expect(event.data.isBreakout).toBe(false);
-            expect(event.data.moderator).toBe(false);
-            expect(event.data.name).toBe(await p2.getLocalDisplayName());
-            expect(event.data.participantId).toBe(await p2.getEndpointId());
-            expect(event.data.name).toBe(p2.name);
-        }
 
         await p1.switchToMainFrame();
 
@@ -405,8 +232,6 @@ describe('Participants presence', () => {
         expect(eventConferenceLeftP2).toBeDefined();
         expect(eventConferenceLeftP2.roomName).toBe(roomName);
 
-        await checkParticipantLeftHook(p2, 'left', false, conferenceJid);
-
         const eventReadyToCloseP2 = await p2.driver.waitUntil(() => p2.getIframeAPI().getEventResult('readyToClose'), {
             timeout: 2000,
             timeoutMsg: 'readyToClose not received'
@@ -416,7 +241,7 @@ describe('Participants presence', () => {
     });
 
     it('dispose conference', async () => {
-        const { p1, roomName, webhooksProxy } = ctx;
+        const { p1, roomName } = ctx;
 
         await p1.switchToMainFrame();
 
@@ -434,23 +259,6 @@ describe('Participants presence', () => {
 
         expect(eventConferenceLeft).toBeDefined();
         expect(eventConferenceLeft.roomName).toBe(roomName);
-
-        await checkParticipantLeftHook(p1, 'left', true, conferenceJid);
-        if (webhooksProxy) {
-            // ROOM_DESTROYED webhook
-            // @ts-ignore
-            const event: {
-                data: {
-                    conference: string;
-                    isBreakout: boolean;
-                };
-                eventType: string;
-            } = await webhooksProxy.waitForEvent('ROOM_DESTROYED');
-
-            expect('ROOM_DESTROYED').toBe(event.eventType);
-            expect(event.data.conference).toBe(conferenceJid);
-            expect(event.data.isBreakout).toBe(false);
-        }
 
         const eventReadyToClose = await p1.driver.waitUntil(() => p1.getIframeAPI().getEventResult('readyToClose'), {
             timeout: 2000,

@@ -6,9 +6,6 @@ import { joinJaasMuc, generateJaasToken as t } from '../../helpers/jaas';
 
 setTestProperties(__filename, {
     useJaas: true,
-    // Note this just for posterity. We don't depend on the framework doing anything for us because of this flag (we
-    // pass it as a parameter directly)
-    useIFrameApi: true,
     useWebhookProxy: true
 });
 

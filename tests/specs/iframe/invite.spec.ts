@@ -10,7 +10,6 @@ import {
 } from '../helpers/DialIn';
 
 setTestProperties(__filename, {
-    useIFrameApi: true,
     useWebhookProxy: true
 });
 
@@ -22,7 +21,7 @@ describe('Invite iframeAPI', () => {
     let sipJibriDisabled: boolean;
 
     it('join participant', async () => {
-        await ensureOneParticipant();
+        await ensureOneParticipant({}, { name: 'p1', iFrameApi: true });
 
         const { p1 } = ctx;
 

@@ -5,9 +5,6 @@ import { setTestProperties } from '../../helpers/TestProperties';
 import { joinMuc } from '../../helpers/joinMuc';
 
 setTestProperties(__filename, {
-    // Note this just for posterity. We don't depend on the framework doing anything for us because of this flag (we
-    // pass it as a parameter directly)
-    useIFrameApi: false,
     usesBrowsers: [ 'p1', 'p2' ]
 });
 

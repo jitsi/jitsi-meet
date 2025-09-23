@@ -10,10 +10,15 @@ const SUBJECT_XPATH = '//div[starts-with(@class, "subject-text")]';
  * Ensure that the first participant is moderator if there is such an option.
  *
  * @param {IJoinOptions} options - The options to use when joining the participant.
+ * @param participantOptions
  * @returns {Promise<void>}
  */
-export async function ensureOneParticipant(options?: IJoinOptions): Promise<void> {
-    const participantOps = { name: P1 } as IParticipantOptions;
+export async function ensureOneParticipant(
+        options?: IJoinOptions, participantOptions?: IParticipantOptions): Promise<void> {
+    if (!participantOptions) {
+        participantOptions = { name: P1 };
+    }
+    participantOptions.name = P1;
 
     if (!options?.skipFirstModerator) {
         const jwtPrivateKeyPath = config.jwt.privateKeyPath;
@@ -21,20 +26,19 @@ export async function ensureOneParticipant(options?: IJoinOptions): Promise<void
         // we prioritize the access token when iframe is not used and private key is set,
         // otherwise if private key is not specified we use the access token if set
         if (config.jwt.preconfiguredToken
-            && ((jwtPrivateKeyPath && !ctx.testProperties.useIFrameApi && !options?.preferGenerateToken)
-                || !jwtPrivateKeyPath)) {
-            participantOps.token = { jwt: config.jwt.preconfiguredToken };
+            && ((jwtPrivateKeyPath && !options?.preferGenerateToken) || !jwtPrivateKeyPath)) {
+            participantOptions.token = { jwt: config.jwt.preconfiguredToken };
         } else if (jwtPrivateKeyPath) {
-            participantOps.token = generateToken({
+            participantOptions.token = generateToken({
                 ...options?.tokenOptions,
-                displayName: participantOps.name,
+                displayName: participantOptions.name,
                 moderator: true
             });
         }
     }
 
     // make sure the first participant is moderator, if supported by deployment
-    await joinParticipant(participantOps, options);
+    await joinParticipant(participantOptions, options);
 }
 
 /**
@@ -136,11 +140,16 @@ export async function ensureFourParticipants(options?: IJoinOptions): Promise<vo
  * Ensure that there are two participants.
  *
  * @param {IJoinOptions} options - The options to join.
+ * @param participantOptions
  */
-export async function ensureTwoParticipants(options?: IJoinOptions): Promise<void> {
-    await ensureOneParticipant(options);
+export async function ensureTwoParticipants(
+        options?: IJoinOptions, participantOptions?: IParticipantOptions): Promise<void> {
+    await ensureOneParticipant(options, participantOptions);
 
-    const participantOptions = { name: P2 } as IParticipantOptions;
+    if (!participantOptions) {
+        participantOptions = { name: P2 };
+    }
+    participantOptions.name = P2;
 
     if (options?.preferGenerateToken) {
         participantOptions.token = generateToken({
@@ -168,8 +177,7 @@ export async function ensureTwoParticipants(options?: IJoinOptions): Promise<voi
 /**
  * Creates a new participant instance, or returns an existing one if it is already joined.
  * @param participantOptions - The participant options, with required name set.
- * @param {boolean} options - Join options.
- * @param reuse whether to reuse an existing participant instance if one is available.
+ * @param options - Join options.
  * @returns {Promise<Participant>} - The participant instance.
  */
 async function joinParticipant( // eslint-disable-line max-params
@@ -177,13 +185,11 @@ async function joinParticipant( // eslint-disable-line max-params
         options?: IJoinOptions
 ): Promise<Participant> {
 
-    participantOptions.iFrameApi = ctx.testProperties.useIFrameApi;
-
     // @ts-ignore
     const p = ctx[participantOptions.name] as Participant;
 
     if (p) {
-        if (ctx.testProperties.useIFrameApi) {
+        if (participantOptions.iFrameApi) {
             await p.switchToIFrame();
         }
 
@@ -191,7 +197,7 @@ async function joinParticipant( // eslint-disable-line max-params
             return p;
         }
 
-        if (ctx.testProperties.useIFrameApi) {
+        if (participantOptions.iFrameApi) {
             // when loading url make sure we are on the top page context or strange errors may occur
             await p.switchToMainFrame();
         }
@@ -206,20 +212,8 @@ async function joinParticipant( // eslint-disable-line max-params
     // @ts-ignore
     ctx[participantOptions.name] = newParticipant;
 
-    let tenant = options?.tenant;
-
-    if (options?.preferGenerateToken && !ctx.testProperties.useIFrameApi
-        && config.iframe.usesJaas && config.iframe.tenant) {
-        tenant = config.iframe.tenant;
-    }
-
-    if (!tenant && ctx.testProperties.useIFrameApi) {
-        tenant = config.iframe.tenant;
-    }
-
     return await newParticipant.joinConference({
         ...options,
-        tenant: tenant,
         roomName: options?.roomName || ctx.roomName,
     });
 }
