@@ -41,12 +41,6 @@ describe('Transcriptions', () => {
             }
         });
 
-        // Cache endpoint IDs because getEndpointId doesn't work from outside the iframe.
-        await Promise.all([
-            p1.getEndpointId(),
-            p2.getEndpointId()
-        ]);
-
         await Promise.all([
             p1.switchToMainFrame(),
             p2.switchToMainFrame(),

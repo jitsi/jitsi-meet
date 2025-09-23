@@ -13,8 +13,6 @@ setTestProperties(__filename, {
 
 describe('Chat', () => {
     let p1: Participant, p2: Participant;
-    // Cache the endpoint IDs because Participant.getEndpointId() does not work in the main frame.
-    let endpoint1: string, endpoint2: string;
 
     it('setup', async () => {
         p1 = await joinMuc({ name: 'p1', iFrameApi: true });
@@ -27,8 +25,6 @@ describe('Chat', () => {
             return;
         }
 
-        endpoint1 = await p1.getEndpointId();
-        endpoint2 = await p2.getEndpointId();
         await p1.switchToMainFrame();
         await p2.switchToMainFrame();
 
@@ -64,7 +60,7 @@ describe('Chat', () => {
         } = await p2.getIframeAPI().getEventResult('incomingMessage');
 
         expect(incomingMessageEvent).toEqual({
-            from: endpoint1,
+            from: p1.getEndpointId(),
             message: testMessage,
             nick: p1.name,
             privateMessage: false
@@ -88,7 +84,7 @@ describe('Chat', () => {
     it('toggle chat', async () => {
         await p2.getIframeAPI().executeCommand('toggleChat');
 
-        await testSendGroupMessageWithChatOpen(p1, p2, endpoint1);
+        await testSendGroupMessageWithChatOpen(p1, p2);
 
         await p1.getIframeAPI().clearEventResults('outgoingMessage');
         await p2.getIframeAPI().clearEventResults('chatUpdated');
@@ -98,8 +94,8 @@ describe('Chat', () => {
     it('private chat', async () => {
         const testMessage = 'Hello private world!';
 
-        await p1.getIframeAPI().executeCommand('initiatePrivateChat', endpoint2);
-        await p1.getIframeAPI().executeCommand('sendChatMessage', testMessage, endpoint2);
+        await p1.getIframeAPI().executeCommand('initiatePrivateChat', p2.getEndpointId());
+        await p1.getIframeAPI().executeCommand('sendChatMessage', testMessage, p2.getEndpointId());
 
         const incomingMessageEvent = await p2.driver.waitUntil(
             () => p2.getIframeAPI().getEventResult('incomingMessage'), {
@@ -108,7 +104,7 @@ describe('Chat', () => {
             });
 
         expect(incomingMessageEvent).toEqual({
-            from: endpoint1,
+            from: p1.getEndpointId(),
             message: testMessage,
             nick: p1.name,
             privateMessage: true
@@ -124,7 +120,7 @@ describe('Chat', () => {
         await p2.getIframeAPI().clearEventResults('chatUpdated');
         await p2.getIframeAPI().clearEventResults('incomingMessage');
 
-        await testSendGroupMessageWithChatOpen(p1, p2, endpoint1);
+        await testSendGroupMessageWithChatOpen(p1, p2);
     });
 });
 
@@ -132,9 +128,8 @@ describe('Chat', () => {
  * Send a group message from [sender], verify that it was received correctly by [receiver].
  * @param sender the Participant that sends the message.
  * @param receiver the Participant that receives the message.
- * @param senderEndpointId the endpoint ID of the sender.
  */
-async function testSendGroupMessageWithChatOpen(sender: Participant, receiver: Participant, senderEndpointId: string) {
+async function testSendGroupMessageWithChatOpen(sender: Participant, receiver: Participant) {
     const testMessage = 'Hello world again';
 
     await sender.getIframeAPI().executeCommand('sendChatMessage', testMessage);
@@ -159,7 +154,7 @@ async function testSendGroupMessageWithChatOpen(sender: Participant, receiver: P
         });
 
     expect(incomingMessageEvent).toEqual({
-        from: senderEndpointId,
+        from: sender.getEndpointId(),
         message: testMessage,
         nick: sender.name,
         privateMessage: false

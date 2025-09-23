@@ -67,12 +67,6 @@ describe('Participants presence', () => {
             return;
         }
 
-        // let's populate endpoint ids
-        await Promise.all([
-            p1.getEndpointId(),
-            p2.getEndpointId()
-        ]);
-
         await p1.switchToMainFrame();
         await p2.switchToMainFrame();
 
