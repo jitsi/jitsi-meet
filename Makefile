@@ -119,10 +119,14 @@ deploy-css:
 	rm $(STYLES_BUNDLE)
 
 deploy-static:
-	cp -r images $(OUTPUT_DIR)/
-	cp -r static $(OUTPUT_DIR)/ || true
-	cp -r sounds $(OUTPUT_DIR)/ || true
-	cp -r fonts $(OUTPUT_DIR)/ || true
+	@if [ "$(OUTPUT_DIR)" != "." ]; then \
+		cp -r images $(OUTPUT_DIR)/ || true; \
+		cp -r static $(OUTPUT_DIR)/ || true; \
+		cp -r sounds $(OUTPUT_DIR)/ || true; \
+		cp -r fonts $(OUTPUT_DIR)/ || true; \
+	else \
+		echo "Skipping static files copy - already in output directory"; \
+	fi
 
 deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
