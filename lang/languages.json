@@ -12,13 +12,13 @@
     "en": "English",
     "eo": "Esperanto",
     "es": "Español",
-    "esUS": "Español (Latinoamérica)",
+    "es-US": "Español (Latinoamérica)",
     "et": "Eesti",
     "eu": "Euskara",
     "fa": "فارسی",
     "fi": "Suomi",
     "fr": "Français",
-    "frCA": "Français (Canada)",
+    "fr-CA": "Français (Canada)",
     "gl": "Galego",
     "he": "עברית",
     "hi": "हिन्दी",
@@ -43,7 +43,7 @@
     "oc": "Occitan",
     "pl": "Polski",
     "pt": "Português",
-    "ptBR": "Português (Brasil)",
+    "pt-BR": "Português (Brasil)",
     "ro": "Română",
     "ru": "Русский",
     "sc": "Sardu",
@@ -56,6 +56,6 @@
     "tr": "Türkçe",
     "uk": "Українська",
     "vi": "Tiếng Việt",
-    "zhCN": "中文（简体）",
-    "zhTW": "中文（繁體）"
+    "zh-CN": "中文（简体）",
+    "zh-TW": "中文（繁體）"
 }
