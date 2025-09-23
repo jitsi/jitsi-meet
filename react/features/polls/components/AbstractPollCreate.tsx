@@ -71,12 +71,10 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
             ? editingPoll[1].answers
             : [
                 {
-                    name: '',
-                    voters: {}
+                    name: ''
                 },
                 {
-                    name: '',
-                    voters: {}
+                    name: ''
                 } ];
     }, [ editingPoll ]);
 
@@ -104,8 +102,7 @@ const AbstractPollCreate = (Component: ComponentType<AbstractProps>) => (props: 
         sendAnalytics(createPollEvent('option.added'));
         newAnswers.splice(typeof i === 'number'
             ? i : answers.length, 0, {
-            name: '',
-            voters: {}
+            name: ''
         });
         setAnswers(newAnswers);
     }, [ answers ]);

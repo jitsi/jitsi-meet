@@ -90,6 +90,21 @@ export interface IPollData extends IPoll {
 /**
  * TODO: move to ljm and use it from there.
  */
+export interface IVoterData {
+    /**
+     * The id of the voter.
+     */
+    id: string;
+
+    /**
+     * Voter name if voter is not in the meeting.
+     */
+    name: string;
+}
+
+/**
+ * TODO: move to ljm and use it from there.
+ */
 export interface IAnswerData {
 
     /**
@@ -98,9 +113,7 @@ export interface IAnswerData {
     name: string;
 
     /**
-     * A map of voters.
+     * An array of voters.
      */
-    voters: {
-        [key: string]: string;
-    };
+    voters?: Array<IVoterData>;
 }

@@ -10,7 +10,7 @@ import { getParticipantById, getParticipantDisplayName } from '../../base/partic
 import { useBoundSelector } from '../../base/util/hooks';
 import { setVoteChanging } from '../actions';
 import { getPoll } from '../functions';
-import { IAnswerData, IPollData } from '../types';
+import { IAnswerData, IPollData, IVoterData } from '../types';
 
 /**
  * The type of the React {@code Component} props of inheriting component.
@@ -54,7 +54,7 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
     const { pollId } = props;
 
     const poll: IPollData = useSelector(getPoll(pollId));
-    const participant = useBoundSelector(getParticipantById, poll.senderId);
+    const creatorName = useBoundSelector(getParticipantDisplayName, poll.senderId);
     const reduxState = useSelector((state: IReduxState) => state);
 
     const [ showDetails, setShowDetails ] = useState(false);
@@ -68,19 +68,22 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
 
         // Getting every voters ID that participates to the poll
         for (const answer of poll.answers) {
-            Object.keys(answer.voters).forEach(k => allVoters.add(k));
+            answer.voters?.forEach(k => allVoters.add(k.id));
         }
 
         return poll.answers.map(answer => {
-            const nrOfVotersPerAnswer = answer.voters ? Object.keys(answer.voters).length : 0;
+            const nrOfVotersPerAnswer = answer.voters?.length || 0;
             const percentage = allVoters.size > 0 ? Math.round(nrOfVotersPerAnswer / allVoters.size * 100) : 0;
 
-            const voters = Object.entries(answer.voters).reduce((acc, [ key, value ]) => {
-                acc[key] = getParticipantById(reduxState, key)
-                    ? getParticipantDisplayName(reduxState, key) : value;
+            const voters = answer.voters?.reduce((acc, v) => {
+                acc.push({
+                    id: v.id,
+                    name: getParticipantById(reduxState, v.id)
+                        ? getParticipantDisplayName(reduxState, v.id) : v.name
+                });
 
                 return acc;
-            }, {} as { [key: string]: string; });
+            }, [] as Array<IVoterData>);
 
             return {
                 name: answer.name,
@@ -103,7 +106,7 @@ const AbstractPollResults = (Component: ComponentType<AbstractProps>) => (props:
         <Component
             answers = { answers }
             changeVote = { changeVote }
-            creatorName = { participant ? participant.name : '' }
+            creatorName = { creatorName }
             haveVoted = { poll.lastVote !== null }
             pollId = { pollId }
             question = { poll.question }

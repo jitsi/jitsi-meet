@@ -1,7 +1,7 @@
 import { IStore } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
-import { getParticipantDisplayName } from '../base/participants/functions';
+import { getParticipantById, getParticipantDisplayName } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound } from '../base/sounds/actions';
@@ -120,13 +120,14 @@ function _handleReceivedPollsAnswer(data: any, dispatch: IStore['dispatch'], get
         return;
     }
 
-    const { pollId, answers, senderId } = data;
+    const { pollId, answers, senderId, senderName } = data;
 
     const receivedAnswer: IIncomingAnswerData = {
         answers: answers.slice(0, MAX_ANSWERS).map(Boolean),
         pollId,
         senderId,
-        voterName: getParticipantDisplayName(getState(), senderId)
+        voterName: getParticipantById(getState(), senderId)
+            ? getParticipantDisplayName(getState(), senderId) : senderName
     };
 
     dispatch(receiveAnswer(receivedAnswer));

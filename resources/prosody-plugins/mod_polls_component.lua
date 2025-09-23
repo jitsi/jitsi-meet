@@ -81,7 +81,7 @@ local function get_occupant_details(occupant)
     local presence = occupant:get_presence();
     local occupant_name;
     if presence then
-        occupant_name = presence:get_child("nick", NS_NICK) and presence:get_child("nick", NS_NICK):get_text() or 'Fellow Jitster';
+        occupant_name = presence:get_child_text('nick', NS_NICK);
     end
     local _, _, occupant_id = jid.split(occupant.nick)
     if not occupant_id then
@@ -189,7 +189,7 @@ module:hook('message/host', function(event)
         local answers = {}
         local compact_answers = {}
         for i, a in ipairs(data.answers) do
-            table.insert(answers, { name = a.name, voters = {} });
+            table.insert(answers, { name = a.name });
             table.insert(compact_answers, { key = i, name = a.name});
         end
 
@@ -244,13 +244,28 @@ module:hook('message/host', function(event)
 
         local answers = {};
         for vote_option_idx, vote_flag in ipairs(data.answers) do
+            local answer = poll.answers[vote_option_idx]
+
             table.insert(answers, {
                 key = vote_option_idx,
                 value = vote_flag,
-                name = poll.answers[vote_option_idx].name,
+                name = answer.name,
             });
-            poll.answers[vote_option_idx].voters[voter.occupant_id] = vote_flag and voter.occupant_name or nil;
+
+            if vote_flag then
+                local voters = answer.voters;
+                if not voters then
+                    answer.voters = {};
+                    voters = answer.voters;
+                end
+
+                table.insert(voters, {
+                    id = voter.occupant_id;
+                    name = vote_flag and voter.occupant_name or nil;
+                });
+            end
         end
+
         local answerData = {
             event = event,
             room = room,
@@ -278,7 +293,6 @@ local setup_muc_component = function(host_module, host)
     host_module:hook("muc-room-created", function(event)
         local room = event.room;
         if is_healthcheck_room(room.jid) then return end
-        module:log("debug", "setting up polls in room %s", room.jid);
         room.polls = {
             by_id = {};
             order = {};
