@@ -124,6 +124,8 @@ deploy-static:
 		cp -r static $(OUTPUT_DIR)/ || true; \
 		cp -r sounds $(OUTPUT_DIR)/ || true; \
 		cp -r fonts $(OUTPUT_DIR)/ || true; \
+		cp favicon.ico $(OUTPUT_DIR)/ || true; \
+		cp favicon.svg $(OUTPUT_DIR)/ || true; \
 	else \
 		echo "Skipping static files copy - already in output directory"; \
 	fi
