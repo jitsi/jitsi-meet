@@ -1,11 +1,12 @@
 import { Button } from "@internxt/ui";
 import React, { useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { appNavigate } from "../../../../app/actions.web";
 import { useLocalStorage } from "../../LocalStorageManager";
 import MeetingButton from "../../general/containers/MeetingButton";
 import { loginSuccess } from "../../general/store/auth/actions";
 import { setRoomID } from "../../general/store/errors/actions";
+import { isMeetingEnabled } from "../../general/store/meeting/selectors";
 import MeetingService from "../../services/meeting.service";
 import { useUserData } from "../PreMeeting/hooks/useUserData";
 import { useAppNavigation } from "../PreMeeting/useAppNavigation";
@@ -35,6 +36,7 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
     const [openLogin, setOpenLogin] = useState<boolean>(true);
     const meetingService = MeetingService.instance;
     const storageManager = useLocalStorage();
+    const isMeetEnabled = useSelector(isMeetingEnabled);
 
     useAppNavigation();
     const dispatch = useDispatch();
@@ -174,15 +176,17 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
                                     loading={isStartingMeeting}
                                     className="w-full sm:w-auto"
                                 />
-                                <Button
-                                    variant={"tertiary"}
-                                    onClick={handleStartMeeting}
-                                    disabled={isStartingMeeting}
-                                    loading={isStartingMeeting}
-                                    className="w-full sm:w-auto"
-                                >
-                                    {translate("meet.landing.scheduleMeeting")}
-                                </Button>
+                                {isMeetEnabled && isLogged && (
+                                    <Button
+                                        variant={"tertiary"}
+                                        onClick={handleStartMeeting}
+                                        disabled={isStartingMeeting}
+                                        loading={isStartingMeeting}
+                                        className="w-full sm:w-auto"
+                                    >
+                                        {translate("meet.landing.scheduleMeeting")}
+                                    </Button>
+                                )}
                             </div>
                         </div>
                     </div>
