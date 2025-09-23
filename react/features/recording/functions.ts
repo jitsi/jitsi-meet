@@ -13,6 +13,7 @@ import { isInBreakoutRoom as isInBreakoutRoomF } from '../breakout-rooms/functio
 import { isEnabled as isDropboxEnabled } from '../dropbox/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 import { canAddTranscriber, isRecorderTranscriptionsRunning } from '../transcribing/functions';
+import { iAmVisitor } from '../visitors/functions';
 
 import LocalRecordingManager from './components/Recording/LocalRecordingManager';
 import {
@@ -444,10 +445,11 @@ export function shouldRequireRecordingConsent(recorderSession: any, state: IRedu
         = state['features/dynamic-branding'] || {};
     const { conference } = state['features/base/conference'] || {};
     const { requireConsent, skipConsentInMeeting } = state['features/base/config'].recordings || {};
+    const _iAmVisitor = iAmVisitor(state);
     const { iAmRecorder, testing: { showSpotConsentDialog = false } = {} } = state['features/base/config'];
     const { consentRequested } = state['features/recording'];
 
-    if (iAmRecorder) {
+    if (iAmRecorder || _iAmVisitor) {
         return false;
     }
 
