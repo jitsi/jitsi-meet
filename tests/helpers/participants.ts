@@ -149,10 +149,7 @@ export async function ensureTwoParticipants(options?: IJoinOptions): Promise<voi
         });
     }
 
-    await joinParticipant({
-        ...participantOptions,
-        name: P2
-    }, options);
+    await joinParticipant(participantOptions, options);
 
     if (options?.skipInMeetingChecks) {
         return Promise.resolve();
