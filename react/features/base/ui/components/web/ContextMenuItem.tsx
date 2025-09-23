@@ -116,9 +116,8 @@ const useStyles = makeStyles()((theme) => {
             minHeight: "40px",
             padding: "10px 16px",
             boxSizing: "border-box",
-
             "& > *:not(:last-child)": {
-                marginRight: theme.spacing(3),
+                marginRight: "8px",
             },
 
             "&:hover": {
@@ -156,6 +155,7 @@ const useStyles = makeStyles()((theme) => {
         },
 
         contextMenuItemIconDisabled: {
+            marginRight: "8px",
             "& svg": {
                 fill: `${theme.palette.text03} !important`,
             },
@@ -187,6 +187,7 @@ const useStyles = makeStyles()((theme) => {
             "& svg": {
                 fill: "black",
             },
+            marginRight: "8px",
         },
 
         text: {

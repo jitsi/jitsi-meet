@@ -66,7 +66,7 @@ const useStyles = makeStyles()(() => {
             maxWidth: '238px',
 
             '&.left-margin': {
-                marginLeft: '36px'
+                marginLeft: '28px'
             }
         },
 

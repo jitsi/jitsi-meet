@@ -63,7 +63,7 @@ const useStyles = makeStyles()(theme => {
             width: '24px',
             height: '24px',
             backgroundColor: 'transparent',
-            marginRight: '15px',
+            marginRight: '8px',
             position: 'relative',
             cursor: 'pointer',
 
