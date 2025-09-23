@@ -8,7 +8,7 @@ interface MeetingButtonProps {
     /**
      * Handler for the new meeting button
      */
-    onNewMeeting: (e: unknown) => Promise<void>;
+    onNewMeeting: () => void;
 
     /**
      * Translation function

@@ -1,3 +1,4 @@
+import { Button } from "@internxt/ui";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { appNavigate } from "../../../../app/actions.web";
@@ -135,7 +136,6 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
                     setIsAuthModalOpen(true);
                 }}
                 translate={translate}
-                onNewMeeting={startMeeting}
             />
             <AuthModal
                 isOpen={isAuthModalOpen}
@@ -167,13 +167,22 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
                         </p>
                         <p className="text-lg text-gray-300 mb-8 ">{translate("meet.landing.subtitle")}</p>
                         <div className="flex flex-col sm:flex-row pt-9 gap-4 border-t border-white/25 items-end">
-                            <div className="relative inline-block">
+                            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                                 <MeetingButton
-                                    onNewMeeting={handleStartMeeting}
+                                    onNewMeeting={startMeeting}
                                     translate={translate}
                                     loading={isStartingMeeting}
                                     className="w-full sm:w-auto"
                                 />
+                                <Button
+                                    variant={"tertiary"}
+                                    onClick={handleStartMeeting}
+                                    disabled={isStartingMeeting}
+                                    loading={isStartingMeeting}
+                                    className="w-full sm:w-auto"
+                                >
+                                    {translate("meet.landing.scheduleMeeting")}
+                                </Button>
                             </div>
                         </div>
                     </div>
