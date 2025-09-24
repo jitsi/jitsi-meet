@@ -174,7 +174,7 @@ const RightContent = React.memo(
 
                     <div
                         ref={menuRef}
-                        className={`absolute dark right-0 mt-2 w-56 rounded-md shadow-lg z-50 overflow-hidden transition-all duration-200 ease-in-out transform origin-top-right
+                        className={`absolute dark right-0 mt-2 min-w-56 w-max max-w-80 rounded-md shadow-lg z-50 overflow-hidden transition-all duration-200 ease-in-out transform origin-top-right
                             ${
                                 showMenu
                                     ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"

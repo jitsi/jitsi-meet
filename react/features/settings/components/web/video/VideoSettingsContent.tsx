@@ -3,8 +3,9 @@ import { useTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { makeStyles } from "tss-react/mui";
 
+import { VideoCamera } from "@phosphor-icons/react";
 import { IReduxState, IStore } from "../../../../app/types";
-import { IconImage, IconVideo } from "../../../../base/icons/svg";
+import { IconImage } from "../../../../base/icons/svg";
 import { Video } from "../../../../base/media/components/index.web";
 import { equals } from "../../../../base/redux/functions";
 import { updateSettings } from "../../../../base/settings/actions";
@@ -13,13 +14,12 @@ import Checkbox from "../../../../base/ui/components/web/Checkbox";
 import ContextMenu from "../../../../base/ui/components/web/ContextMenu";
 import ContextMenuItem from "../../../../base/ui/components/web/ContextMenuItem";
 import ContextMenuItemGroup from "../../../../base/ui/components/web/ContextMenuItemGroup";
+import { TEXT_OVERFLOW_TYPES } from "../../../../base/ui/constants.any";
 import { checkBlurSupport, checkVirtualBackgroundEnabled } from "../../../../virtual-background/functions";
+import { openSettingsDialog } from "../../../actions.web";
 import { SETTINGS_TABS } from "../../../constants";
 import { createLocalVideoTracks } from "../../../functions.web";
 import VideoLabelEntry from "./VideoLabelEntry";
-import { TEXT_OVERFLOW_TYPES } from "../../../../base/ui/constants.any";
-import { openSettingsDialog } from "../../../actions.web";
-import { Camera, Check, VideoCamera } from "@phosphor-icons/react";
 
 /**
  * The type of the React {@code Component} props of {@link VideoSettingsContent}.
@@ -74,6 +74,7 @@ const useStyles = makeStyles()((theme) => {
             margin: 0,
             marginBottom: theme.spacing(1),
             position: "relative",
+            borderRadius: "12px",
             right: "auto",
         },
 
@@ -87,9 +88,6 @@ const useStyles = makeStyles()((theme) => {
 
             "&:last-child": {
                 marginBottom: 0,
-            },
-            "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.15)",
             },
         },
 

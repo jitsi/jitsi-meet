@@ -1,7 +1,7 @@
-import React, { useState } from "react";
 import { Button, TransparentModal } from "@internxt/ui";
+import { Check, Link, X } from "@phosphor-icons/react";
+import React, { useState } from "react";
 import { getDecodedURI } from "../../../../util/uri";
-import { Link, Check } from "@phosphor-icons/react";
 import { MAX_SIZE_PARTICIPANTS } from "../../../constants";
 
 interface InviteUserModalProps {
@@ -32,6 +32,13 @@ const InviteUserModal = ({ isOpen, onClose, translate, participantsCount, invite
             onClose={onClose}
         >
             <div className="flex flex-col h-full w-[264px] text-white space-y-4">
+                <button
+                    onClick={onClose}
+                    className="absolute right-5 top-4 hover:bg-gray-700 rounded-lg transition-colors text-gray-400 hover:text-white"
+                    aria-label="Close dialog"
+                >
+                    <X className="w-5 h-5" />
+                </button>
                 <div className="flex flex-col items-center justify-center">
                     <span className="text-xl font-semibold text-white "> {translate("meet.invite.invitePeople")}</span>
 
@@ -56,10 +63,7 @@ const InviteUserModal = ({ isOpen, onClose, translate, participantsCount, invite
                             className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-lg border border-gray-600 focus:outline-none select-all"
                         />
                     </div>
-                    <Button
-                        className={`w-full ${copied ? 'bg-green-600' : ''}`}
-                        onClick={handleCopy}
-                    >
+                    <Button className={`w-full ${copied ? "bg-green-600" : ""}`} onClick={handleCopy}>
                         {copied ? (
                             <div className="flex items-center justify-center">
                                 <Check size={18} className="mr-1" />

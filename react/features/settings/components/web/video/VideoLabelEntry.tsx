@@ -84,7 +84,7 @@ const useStyles = makeStyles()((theme) => {
             },
 
             "&.left-margin": {
-                marginLeft: "36px",
+                marginLeft: "28px",
             },
         },
 

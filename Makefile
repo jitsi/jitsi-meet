@@ -72,7 +72,6 @@ deploy-appbundle:
 deploy-lib-jitsi-meet:
 	cp \
 		$(LIBJITSIMEET_DIR)/dist/umd/lib-jitsi-meet.* \
-		$(LIBJITSIMEET_DIR)/dist/umd/pqc-kem-kyber512.wasm \
 		$(LIBJITSIMEET_DIR)/dist/umd/vodozemac.wasm \
 		$(DEPLOY_DIR)
 
@@ -123,7 +122,7 @@ deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 .NOTPARALLEL:
-dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-tf-wasm  deploy-excalidraw-dev deploy-face-landmarks
+dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-tf-wasm deploy-excalidraw-dev deploy-face-landmarks
 	$(WEBPACK_DEV_SERVER)
 
 source-package:
