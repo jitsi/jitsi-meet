@@ -100,14 +100,14 @@ module:hook('muc-add-history', function(event)
         local session = sessions[occupant.jid];
         if session and session.jitsi_meet_context_user then
             if ignore_jwt_name then
-                name = occupant:get_presence():get_child('nick', NICK_NS):get_text();
+                name = occupant:get_presence():get_child_text('nick', NICK_NS);
             else
                 name = session.jitsi_meet_context_user.name;
             end
 
             source = 'token';
         else
-            name = occupant:get_presence():get_child('nick', NICK_NS):get_text();
+            name = occupant:get_presence():get_child_text('nick', NICK_NS);
             source = 'guest';
         end
     else
