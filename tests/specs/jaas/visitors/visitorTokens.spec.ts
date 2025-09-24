@@ -40,7 +40,7 @@ describe('Visitors triggered by visitor tokens', () => {
             expect(event.data.participantJid.indexOf('meet.jitsi') != -1).toBe(true);
             expect(event.data.role).toBe('visitor');
         }
-        expect(event.customerId).toBe(testsConfig.iframe.customerId);
+        expect(event.customerId).toBe(testsConfig.jaas.customerId);
     }
 
     async function verifyLeftWebhook(participant: Participant) {
@@ -69,7 +69,7 @@ describe('Visitors triggered by visitor tokens', () => {
             expect(eventLeft.data.participantJid.indexOf('meet.jitsi') != -1).toBe(true);
             expect(eventLeft.data.role).toBe('visitor');
         }
-        expect(eventLeft.customerId).toBe(testsConfig.iframe.customerId);
+        expect(eventLeft.customerId).toBe(testsConfig.jaas.customerId);
     }
 
     it('setup', async () => {

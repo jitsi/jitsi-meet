@@ -52,17 +52,10 @@ export async function isDialInEnabled(participant: Participant) {
 
 /**
  * Sends a request to the REST API to dial in the participant using the provided pin.
- * @param participant
+ * @param pin the pin to use when dialing in
  */
-export async function dialIn(participant: Participant) {
-    if (!await participant.isInMuc()) {
-        // local participant did not join abort
-        return;
-    }
-
-    const dialInPin = await participant.getDialInPin();
-
-    const restUrl = process.env.DIAL_IN_REST_URL?.replace('{0}', dialInPin);
+export async function dialIn(pin: string) {
+    const restUrl = process.env.DIAL_IN_REST_URL?.replace('{0}', pin);
 
     // we have already checked in the first test that DIAL_IN_REST_URL exist so restUrl cannot be ''
     const responseData: string = await new Promise((resolve, reject) => {

@@ -11,6 +11,7 @@ export const config = {
         usesJaas: Boolean(process.env.JWT_PRIVATE_KEY_PATH && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-')),
     },
     jaas: {
+        customerId: process.env.JAAS_TENANT?.trim()?.replace('vpaas-magic-cookie-', ''),
         /** Whether the configuration for JaaS specific tests is enabled. */
         enabled: Boolean(process.env.JAAS_TENANT && process.env.JAAS_PRIVATE_KEY_PATH && process.env.JAAS_KID),
         /** The JaaS key ID, used to sign the tokens. */
