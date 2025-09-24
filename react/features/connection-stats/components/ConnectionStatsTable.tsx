@@ -6,6 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { isMobileBrowser } from '../../base/environment/utils';
 import Icon from '../../base/icons/components/Icon';
 import { IconGear } from '../../base/icons/svg';
+import { ConfigService } from '../../base/meet/services/config.service';
 import ContextMenu from '../../base/ui/components/web/ContextMenu';
 
 type DownloadUpload = {
@@ -774,7 +775,7 @@ const ConnectionStatsTable = ({
                 {_renderStatistics()}
                 <div className = { classes.actions }>
                     {isLocalVideo && enableSaveLogs ? _renderSaveLogs() : null}
-                    {!disableShowMoreStats && _renderShowMoreLink()}
+                    {!disableShowMoreStats && ConfigService.instance.isDevelopment() && _renderShowMoreLink()}
                 </div>
                 {shouldShowMore ? _renderAdditionalStats() : null}
             </div>
