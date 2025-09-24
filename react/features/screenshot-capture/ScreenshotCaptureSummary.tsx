@@ -5,7 +5,6 @@ import { sendAnalytics } from '../analytics/functions';
 import { IReduxState } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
 import { getLocalParticipant, getRemoteParticipants } from '../base/participants/functions';
-import { getBaseUrl } from '../base/util/helpers';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
 import {
@@ -43,16 +42,14 @@ export default class ScreenshotCaptureSummary {
 
         // Bind handlers such that they access the same instance.
         this._handleWorkerAction = this._handleWorkerAction.bind(this);
-        const baseUrl = `${getBaseUrl()}libs/`;
 
-        let workerUrl = `${baseUrl}screenshot-capture-worker.min.js`;
-
-        // @ts-ignore
-        const workerBlob = new Blob([ `importScripts("${workerUrl}");` ], { type: 'application/javascript' });
-
-        // @ts-ignore
-        workerUrl = window.URL.createObjectURL(workerBlob);
-        this._streamWorker = new Worker(workerUrl, { name: 'Screenshot capture worker' });
+        this._streamWorker = new Worker(
+            new URL('./worker.ts', import.meta.url),
+            { 
+                name: 'Screenshot capture worker',
+                type: 'module'
+            }
+        );
         this._streamWorker.onmessage = this._handleWorkerAction;
 
         this._initializedRegion = false;
