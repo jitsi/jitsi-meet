@@ -1,7 +1,5 @@
 import { IStateful } from '../base/app/types';
 import { toState } from '../base/redux/functions';
-import { iAmVisitor } from '../visitors/functions';
-
 
 /**
  * Tells whether or not the notifications should be displayed within
@@ -36,5 +34,5 @@ export function arePollsDisabled(stateful: IStateful) {
         return true;
     }
 
-    return state['features/base/config']?.disablePolls || iAmVisitor(state);
+    return state['features/base/config']?.disablePolls;
 }

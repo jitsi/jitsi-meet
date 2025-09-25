@@ -94,6 +94,31 @@ local function send_visitors_iq(conference_service, room, type)
             end
             visitors_iq:up();
         end
+
+        if room.polls and room.polls.count > 0 then
+            -- polls created in the room that we want to send to the visitor nodes
+            local data = {
+                command = "old-polls",
+                polls = {},
+                type = 'polls'
+            };
+            for i, poll in ipairs(room.polls.order) do
+                data.polls[i] = {
+                    pollId = poll.pollId,
+                    senderId = poll.senderId,
+                    senderName = poll.senderName,
+                    question = poll.question,
+                    answers = poll.answers
+                };
+            end
+
+            local json_msg_str, error = json.encode(data);
+            if not json_msg_str then
+                module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
+            end
+
+            visitors_iq:tag('polls'):text(json_msg_str):up();
+        end
     end
 
     visitors_iq:up();
@@ -472,6 +497,38 @@ process_host_module(main_muc_component_config, function(host_module, host)
             end
         end
     end, -2);
+
+    host_module:hook('poll-created', function (event)
+        local room = event.room;
+
+        if not visitors_nodes[room.jid] then
+            return;
+        end
+
+        -- we need to update all vnodes
+        local vnodes = visitors_nodes[room.jid].nodes;
+        for conference_service in pairs(vnodes) do
+            send_visitors_iq(conference_service, room, 'update');
+        end
+    end);
+    host_module:hook('answer-poll', function (event)
+        local room, stanza = event.room, event.event.stanza;
+
+        if not visitors_nodes[room.jid] then
+            return;
+        end
+
+        local from = stanza.attr.from;
+
+        -- we need to update all vnodes
+        local vnodes = visitors_nodes[room.jid].nodes;
+        for conference_service in pairs(vnodes) do
+            -- skip sending the answer to the node from where it originates
+            if conference_service ~= from then
+                send_visitors_iq(conference_service, room, 'update');
+            end
+        end
+    end);
 end);
 
 local function update_vnodes_for_room(event)
