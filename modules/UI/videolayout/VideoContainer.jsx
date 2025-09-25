@@ -24,7 +24,7 @@ export const VIDEO_CONTAINER_TYPE = 'camera';
 // Corresponds to animation duration from the animatedFadeIn and animatedFadeOut CSS classes.
 const FADE_DURATION_MS = 300;
 
-const logger = Logger.getLogger('ui:VideoContainer');
+const logger = Logger.getLogger(new URL(import.meta.url).pathname);
 
 /**
  * List of container events that we are going to process for the large video.
