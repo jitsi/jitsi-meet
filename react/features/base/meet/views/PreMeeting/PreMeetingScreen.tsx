@@ -197,7 +197,6 @@ const PreMeetingScreen = ({
     room,
     joinRoomErrorMessage,
     createRoomErrorMessage,
-    isE2EESupported,
 }: IProps) => {
     const { classes } = useStyles();
     const [isNameInputFocused, setIsNameInputFocused] = useState(false);
@@ -257,9 +256,11 @@ const PreMeetingScreen = ({
         }
     }, []);
 
-    const handleRedirectToLogin = () => {
-        dispatch(redirectToStaticPage("/"));
-    };
+    useEffect(() => {
+        if (createRoomError)
+        setIsCreatingMeeting(false);
+    }, [createRoomError]);
+
 
     const handleNewMeeting = async () => {
         setIsCreatingMeeting(true);
@@ -300,8 +301,6 @@ const PreMeetingScreen = ({
         updateNameInStorage(displayName);
     };
 
-    // TODO: EXTRACT ONLGOUT AND HEADER, CHECK HeaderWrapper.tsx
-    const localStorageManager = useLocalStorage();
     const onLogout = () => {
         dispatch(logout());
         dispatch(redirectToStaticPage("/"));
@@ -350,10 +349,14 @@ const PreMeetingScreen = ({
                     setIsNameInputFocused={setIsNameInputFocused}
                     participants={meetingUsersData}
                     joinConference={async () => {
-                        createConference && (await createConference());
-                        joinConference && joinConference();
+                        if (createConference) {
+                            setIsCreatingMeeting(true);
+                            await createConference();
+                        } else if (joinConference) {
+                            joinConference();
+                        }
                     }}
-                    disableJoinButton={disableJoinButton}
+                    disableJoinButton={disableJoinButton || isCreatingMeeting}
                     flipX={flipX}
                     isCreatingConference={!!createConference}
                     errorMessage={errorMessage}
@@ -365,7 +368,9 @@ const PreMeetingScreen = ({
                     onSignup={(credentials) => dispatch(loginSuccess(credentials))}
                     translate={t}
                 />
-                <div className="flex absolute bottom-7 right-7"><SecureMeetingMessage /></div>
+                <div className="flex absolute bottom-7 right-7">
+                    <SecureMeetingMessage />
+                </div>
                 <div className={classes.videoEncodingToggleContainer}>
                     {ConfigService.instance.isDevelopment() && <VideoEncodingToggle />}
                 </div>
@@ -410,6 +415,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const room = state["features/base/conference"].room ?? "";
     const joinRoomError = state["features/meet-room"]?.joinRoomError ?? false;
     const createRoomError = state["features/meet-room"]?.createRoomError ?? false;
+    const { joiningInProgress } = state["features/prejoin"];
 
     const conference = getCurrentConference(state);
     const isE2EESupported = conference?.isE2EESupported() ?? false;
@@ -433,6 +439,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         joinRoomErrorMessage,
         createRoomErrorMessage,
         isE2EESupported,
+        joiningInProgress,
     };
 }
 

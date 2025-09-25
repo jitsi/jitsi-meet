@@ -26,7 +26,7 @@ interface IProps extends AbstractProps, WithTranslation {
 class CreateConference extends AbstractConference<IProps, any> {
     _onCreateConference = async () => {
         this.props.dispatch({ type: SET_PREJOIN_PAGE_VISIBILITY, value: false });
-
+        this.props.dispatch(setCreateRoomError(false, ""));
         try {
             const meetingData = await MeetingService.instance.createCall();
 
