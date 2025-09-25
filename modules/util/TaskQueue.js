@@ -1,4 +1,6 @@
-const logger = require('@jitsi/logger').getLogger('app:utils');
+import Logger from '@jitsi/logger';
+
+const logger = Logger.getLogger(new URL(import.meta.url).pathname);
 
 /**
  * Manages a queue of functions where the current function in progress will

@@ -28,7 +28,7 @@ import EtherpadManager from './etherpad/Etherpad';
 import UIUtil from './util/UIUtil';
 import VideoLayout from './videolayout/VideoLayout';
 
-const logger = Logger.getLogger('ui:core');
+const logger = Logger.getLogger(new URL(import.meta.url).pathname);
 
 let etherpadManager;
 
