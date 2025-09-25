@@ -4,22 +4,52 @@
 export const config = {
     /** Enable debug logging. Note this includes private information from .env */
     debug: Boolean(process.env.JITSI_DEBUG?.trim()),
-    iframe: {
-        customerId: process.env.IFRAME_TENANT?.trim()?.replace('vpaas-magic-cookie-', ''),
-        tenant: process.env.IFRAME_TENANT?.trim(),
-        /** Whether the configuration specifies a JaaS account for the iFrame API tests. */
-        usesJaas: Boolean(process.env.JWT_PRIVATE_KEY_PATH && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-')),
-    },
+    /** Whether to expect the environment to automatically elect a new moderator when the existing moderator leaves. */
+    autoModerator: (() => {
+        if (typeof process.env.AUTO_MODERATOR !== 'undefined') {
+            return Boolean(process.env.AUTO_MODERATOR?.trim() === 'true');
+        }
+
+        // If not explicitly configured, fallback to recognizing whether we're running against one of the JaaS
+        // environments which are known to have the setting disabled.
+        return !Boolean(
+            process.env.JWT_PRIVATE_KEY_PATH && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-')
+        );
+    })(),
     jaas: {
-        customerId: process.env.JAAS_TENANT?.trim()?.replace('vpaas-magic-cookie-', ''),
+        customerId: (() => {
+            if (typeof process.env.JAAS_TENANT !== 'undefined') {
+                return process.env.JAAS_TENANT?.trim()?.replace('vpaas-magic-cookie-', '');
+            }
+
+            return process.env.IFRAME_TENANT?.trim()?.replace('vpaas-magic-cookie-', '');
+        })(),
         /** Whether the configuration for JaaS specific tests is enabled. */
         enabled: Boolean(process.env.JAAS_TENANT && process.env.JAAS_PRIVATE_KEY_PATH && process.env.JAAS_KID),
         /** The JaaS key ID, used to sign the tokens. */
-        kid: process.env.JAAS_KID?.trim(),
+        kid: (() => {
+            if (typeof process.env.JAAS_KID !== 'undefined') {
+                return process.env.JAAS_KID?.trim();
+            }
+
+            return process.env.JWT_KID?.trim();
+        })(),
         /** The path to the JaaS private key, used to sign JaaS tokens. */
-        privateKeyPath: process.env.JAAS_PRIVATE_KEY_PATH?.trim(),
+        privateKeyPath: (() => {
+            if (typeof process.env.JAAS_PRIVATE_KEY_PATH != 'undefined') {
+                return process.env.JAAS_PRIVATE_KEY_PATH?.trim();
+            }
+
+            return process.env.JWT_PRIVATE_KEY_PATH?.trim();
+        })(),
         /** The JaaS tenant (vpaas-magic-cookie-<ID>) . */
-        tenant: process.env.JAAS_TENANT?.trim(),
+        tenant: (() => {
+            if (typeof process.env.JAAS_TENANT !== 'undefined') {
+                return process.env.JAAS_TENANT?.trim();
+            }
+
+            return process.env.IFRAME_TENANT?.trim();
+        })()
     },
     jwt: {
         kid: process.env.JWT_KID?.trim(),
