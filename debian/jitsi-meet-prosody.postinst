@@ -154,6 +154,16 @@ case "$1" in
             PROSODY_CONFIG_PRESENT="false"
         fi
 
+        # Start using the polls component
+        if ! grep -q "Component \"polls.$JVB_HOSTNAME\"" $PROSODY_HOST_CONFIG ;then
+            echo -e "\nComponent \"polls.$JVB_HOSTNAME\" \"polls_component\"" >> $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+        if ! grep -q -- '--"polls";' $PROSODY_HOST_CONFIG ;then
+            sed -i "s/\"polls\";/--\"polls\";/g" $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
         # Old versions of jitsi-meet-prosody come with the extra plugin path commented out (https://github.com/jitsi/jitsi-meet/commit/e11d4d3101e5228bf956a69a9e8da73d0aee7949)
         # Make sure it is uncommented, as it contains required modules.
         if grep -q -- '--plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }' $PROSODY_HOST_CONFIG ;then

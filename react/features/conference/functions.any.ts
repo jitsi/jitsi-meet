@@ -30,5 +30,11 @@ export function shouldDisplayNotifications(stateful: IStateful) {
 export function arePollsDisabled(stateful: IStateful) {
     const state = toState(stateful);
 
+    const { conference } = state['features/base/conference'];
+
+    if (!conference?.getPolls()?.isSupported()) {
+        return true;
+    }
+
     return state['features/base/config']?.disablePolls || iAmVisitor(state);
 }
