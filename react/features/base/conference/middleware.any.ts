@@ -13,6 +13,7 @@ import {
 import { sendAnalytics } from '../../analytics/functions';
 import { reloadNow } from '../../app/actions';
 import { IStore } from '../../app/types';
+import { login } from '../../authentication/actions.any';
 import { removeLobbyChatParticipant } from '../../chat/actions.any';
 import { openDisplayNamePrompt } from '../../display-name/actions';
 import { isVpaasMeeting } from '../../jaas/functions';
@@ -251,7 +252,7 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
     case JitsiConferenceErrors.NOT_ALLOWED_ERROR: {
         const [ type, msg ] = error.params;
 
-        let descriptionKey;
+        let descriptionKey, customActionNameKey, customActionHandler;
         let titleKey = 'dialog.tokenAuthFailed';
 
         if (type === JitsiConferenceErrors.AUTH_ERROR_TYPES.NO_MAIN_PARTICIPANTS) {
@@ -263,9 +264,14 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
             descriptionKey = 'visitors.notification.notAllowedPromotion';
         } else if (type === JitsiConferenceErrors.AUTH_ERROR_TYPES.ROOM_CREATION_RESTRICTION) {
             descriptionKey = 'dialog.errorRoomCreationRestriction';
+        } else if (type === JitsiConferenceErrors.AUTH_ERROR_TYPES.ROOM_UNAUTHENTICATED_ACCESS_DISABLED) {
+            customActionNameKey = [ 'toolbar.login' ];
+            customActionHandler = [ () => dispatch(login()) ];
         }
 
         dispatch(showErrorNotification({
+            customActionNameKey,
+            customActionHandler,
             descriptionKey,
             hideErrorSupportLink: true,
             titleKey
