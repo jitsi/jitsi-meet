@@ -213,6 +213,9 @@ end
 local function disconnect_vnode_received(room, vnode)
     module:context(muc_domain_base):fire_event('jitsi-disconnect-vnode', { room = room; vnode = vnode; });
 
+    if not room._connected_vnodes then
+        return;
+    end
     room._connected_vnodes:set(vnode..'.meet.jitsi', nil);
 
     if room._connected_vnodes:count() == 0 then

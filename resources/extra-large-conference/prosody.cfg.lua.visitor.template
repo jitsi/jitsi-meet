@@ -38,12 +38,14 @@ s2s_whitelist = {
     'conference.jitmeet.example.com', -- needed for visitors to send messages to main room
     'visitors.jitmeet.example.com'; -- needed for sending promotion request to visitors.jitmeet.example.com component
     'jitmeet.example.com'; -- unavailable presences back to main room
+    'polls.jitmeet.example.com'; -- polls component
 };
 
 s2sout_override = {
     ["conference.jitmeet.example.com"] = "tcp://127.0.0.1:5269"; -- needed for visitors to send messages to main room
     ["jitmeet.example.com"] = "tcp://127.0.0.1:5269"; -- needed for the main room when connecting in to send main participants
     ["visitors.jitmeet.example.com"] = "tcp://127.0.0.1:5269"; -- needed for sending promotion request to visitors.jitmeet.example.com component
+    ['polls.jitmeet.example.com'] = "tcp://127.0.0.1:5269"; -- polls component
 }
 
 external_service_secret = '__turnSecret__';
@@ -106,6 +108,7 @@ VirtualHost 'vX.meet.jitsi'
       'smacks';
       'jiconop';
       'conference_duration';
+      'features_identity';
     }
     main_muc = 'conference.vX.meet.jitsi';
 
@@ -138,3 +141,5 @@ Component 'conference.vX.meet.jitsi' 'muc'
     };
     muc_room_locking = false
     muc_room_default_public_jids = true
+
+Component 'polls.vX.meet.jitsi' 'polls_component'

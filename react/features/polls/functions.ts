@@ -1,6 +1,7 @@
 import { IReduxState } from '../app/types';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
+import { iAmVisitor } from '../visitors/functions';
 
 import { IAnswerData } from './types';
 
@@ -72,6 +73,10 @@ export function hasIdenticalAnswers(currentAnswers: Array<IAnswerData>): boolean
  * @returns {boolean} - Returns true if the participant is not allowed to create polls.
  */
 export function isCreatePollDisabled(state: IReduxState) {
+    if (iAmVisitor(state)) {
+        return true;
+    }
+
     const { pollCreationRequiresPermission } = state['features/dynamic-branding'];
 
     if (!pollCreationRequiresPermission) {
