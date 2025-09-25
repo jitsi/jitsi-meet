@@ -9,6 +9,7 @@ local util = module:require("util");
 local muc = module:depends("muc");
 
 local NS_NICK = 'http://jabber.org/protocol/nick';
+local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local is_healthcheck_room = util.is_healthcheck_room;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 
@@ -36,8 +37,7 @@ local function validate_polls(data)
     if type(data) ~= 'table' then
         return false;
     end
-    if data.type ~= 'polls' or type(data.pollId) ~= 'string'
-        or type(data.roomJid) ~= 'string' then
+    if data.type ~= 'polls' or type(data.pollId) ~= 'string' then
         return false;
     end
     if data.command ~= 'new-poll' and data.command ~= 'answer-poll' then
@@ -112,7 +112,7 @@ end
 -- and updating the room poll data accordingly.
 -- This mirrors the client-side poll update logic.
 module:hook('message/host', function(event)
-    local stanza = event.stanza;
+    local session, stanza = event.origin, event.stanza;
 
     -- we are interested in all messages without a body that are not groupchat
     if stanza.attr.type == 'groupchat' or stanza:get_child('body') then
@@ -121,13 +121,13 @@ module:hook('message/host', function(event)
 
     local json_message = stanza:get_child('json-message', 'http://jitsi.org/jitmeet')
         or stanza:get_child('json-message');
-    if not json_message or not json_message.attr.roomJid then
+    if not json_message then
         return;
     end
 
-    local room = get_room_from_jid(room_jid_match_rewrite(json_message.attr.roomJid));
+    local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
     if not room then
-        module:log('warn', 'No room found found for %s', json_message.attr.roomJid);
+        module:log('warn', 'No room found found for %s %s', session.jitsi_web_query_room, session.jitsi_web_query_prefix);
         return;
     end
 
