@@ -1,37 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import { redirectToStaticPage } from "../../../../../app/actions.any";
 import { openSettingsDialog } from "../../../../../settings/actions.web";
-import MeetingButton from "../../../general/containers/MeetingButton";
 import { logout } from "../../../general/store/auth/actions";
 import { useLocalStorage } from "../../../LocalStorageManager";
 import Header from "../../PreMeeting/components/Header";
 import { useUserData } from "../../PreMeeting/hooks/useUserData";
 
 interface HeaderWrapperProps {
-    onNewMeeting?: () => void;
     onLogin: () => void;
     onSignUp?: () => void;
     translate: (key: string) => string;
 }
 
-const HeaderWrapper = ({ onNewMeeting, onLogin, onSignUp, translate }: HeaderWrapperProps) => {
-    const [isCreatingMeeting, setIsCreatingMeeting] = useState(false);
+const HeaderWrapper = ({ onLogin, onSignUp, translate }: HeaderWrapperProps) => {
     const userData = useUserData();
     const dispatch = useDispatch();
     const localStorageManager = useLocalStorage();
     const subscription = localStorageManager.getSubscription();
-
-    const handleNewMeeting = async () => {
-        setIsCreatingMeeting(true);
-        try {
-            onNewMeeting?.();
-        } catch (error) {
-            console.error("Error creating new meeting:", error);
-        } finally {
-            setIsCreatingMeeting(false);
-        }
-    };
 
     const handleSignUp = () => {
         onSignUp?.();
@@ -52,15 +38,6 @@ const HeaderWrapper = ({ onNewMeeting, onLogin, onSignUp, translate }: HeaderWra
                 userData={userData}
                 subscription={subscription}
                 translate={translate}
-                meetingButton={
-                    userData ? (
-                        <MeetingButton
-                            onNewMeeting={handleNewMeeting}
-                            translate={translate}
-                            loading={isCreatingMeeting}
-                        />
-                    ) : null
-                }
                 onLogin={onLogin}
                 onLogout={onLogout}
                 onSignUp={handleSignUp}

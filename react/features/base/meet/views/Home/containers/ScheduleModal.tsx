@@ -1,5 +1,5 @@
 import { Button, Input, Modal } from "@internxt/ui";
-import { X } from "@phosphor-icons/react";
+import { Copy, X } from "@phosphor-icons/react";
 import React, { useState } from "react";
 
 interface ScheduleMeetingModalProps {
@@ -44,13 +44,22 @@ const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                     </label>
                 </div>
 
-                <div className="flex flex-col space-y-3 mb-4">
+                <div className="flex flex-col space-y-3 mb-4 relative">
                     <Input
                         value={meetingLink}
                         message={inputErrorMessage}
                         accent={inputAccent}
                         className="select-all"
+                        inputClassName="pr-11"
                     />
+                    <button onClick={handleCopy} className="absolute right-3 -top-0.5">
+                        <Copy size={20} className="text-primary" color="#0066FF" />
+                    </button>
+                    {copied && (
+                        <div className="absolute -top-10 right-0 bg-black/70 text-white px-3 py-1 rounded-md text-sm font-medium shadow-lg animate-fade-in">
+                            {translate("meet.modals.schedule.copiedButton")}
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex justify-end space-x-3 mt-4">
@@ -58,16 +67,9 @@ const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                         {translate("meet.modals.schedule.cancelButton")}
                     </Button>
                     {!inputErrorMessage && (
-                        <>
-                            <Button onClick={handleCopy} className="px-6 py-3">
-                                {copied
-                                    ? translate("meet.modals.schedule.copiedButton")
-                                    : translate("meet.modals.schedule.copyButton")}
-                            </Button>
-                            <Button onClick={onJoinNow} variant="primary" className="px-6 py-3">
-                                {translate("meet.modals.schedule.joinNow")}
-                            </Button>
-                        </>
+                        <Button onClick={onJoinNow} variant="primary" className="px-6 py-3">
+                            {translate("meet.modals.schedule.joinNow")}
+                        </Button>
                     )}
                 </div>
             </div>
