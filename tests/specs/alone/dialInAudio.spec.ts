@@ -14,6 +14,8 @@ describe('Dial-In', () => {
 
         await ensureOneParticipant({ preferGenerateToken: true });
 
+        expect(await ctx.p1.isInMuc()).toBe(true);
+
         // check dial-in is enabled
         if (!await isDialInEnabled(ctx.p1)) {
             ctx.skipSuiteTests = true;
@@ -41,7 +43,7 @@ describe('Dial-In', () => {
     });
 
     it('invite dial-in participant', async () => {
-        await dialIn(ctx.p1);
+        await dialIn(await ctx.p1.getDialInPin());
     });
 
     it('wait for audio from dial-in participant', async () => {

@@ -1,5 +1,5 @@
 import { setTestProperties } from '../../../helpers/TestProperties';
-import { joinMuc, generateJaasToken as t } from '../../helpers/jaas';
+import { joinJaasMuc, generateJaasToken as t } from '../../../helpers/jaas';
 
 setTestProperties(__filename, {
     useJaas: true,
@@ -15,7 +15,7 @@ describe('Visitors triggered by reaching participantsSoftLimit', () => {
         };
 
         /// XXX the "name" of the participant MUST match one of the "capabilities" defined in wdio. It's not a "participant", it's an instance configuration!
-        const m = await joinMuc({
+        const m = await joinJaasMuc({
             token: t({ room: ctx.roomName, displayName: 'Mo de Rator', moderator: true })
         });
 
@@ -25,7 +25,7 @@ describe('Visitors triggered by reaching participantsSoftLimit', () => {
         console.log('Moderator joined');
 
         // Joining with a participant token before participantSoftLimit has been reached
-        const p = await joinMuc({
+        const p = await joinJaasMuc({
             name: 'p2',
             token: t({ room: ctx.roomName, displayName: 'Parti Cipant' })
         });
@@ -36,7 +36,7 @@ describe('Visitors triggered by reaching participantsSoftLimit', () => {
         console.log('Participant joined');
 
         // Joining with a participant token after participantSoftLimit has been reached
-        const v = await joinMuc({
+        const v = await joinJaasMuc({
             name: 'p3',
             token: t({ room: ctx.roomName, displayName: 'Visi Tor' })
         });

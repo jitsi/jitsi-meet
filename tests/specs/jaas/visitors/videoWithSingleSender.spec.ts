@@ -1,5 +1,5 @@
 import { setTestProperties } from '../../../helpers/TestProperties';
-import { joinMuc, generateJaasToken as t } from '../../helpers/jaas';
+import { joinJaasMuc, generateJaasToken as t } from '../../../helpers/jaas';
 
 setTestProperties(__filename, {
     useJaas: true,
@@ -23,7 +23,7 @@ describe('Visitor receiving video from a single remote participant', () => {
                 enabled: false
             }
         };
-        const sender = await joinMuc({
+        const sender = await joinJaasMuc({
             token: t({ room: ctx.roomName, displayName: 'Sender', moderator: true })
         }, {
             configOverwrite
@@ -31,7 +31,7 @@ describe('Visitor receiving video from a single remote participant', () => {
         const senderEndpointId = await sender.getEndpointId();
 
         const testVisitor = async function(instanceId: 'p1' | 'p2' | 'p3' | 'p4') {
-            const visitor = await joinMuc({
+            const visitor = await joinJaasMuc({
                 name: instanceId,
                 token: t({ room: ctx.roomName, displayName: 'Visitor', visitor: true })
             }, {

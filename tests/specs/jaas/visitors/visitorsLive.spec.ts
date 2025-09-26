@@ -2,7 +2,7 @@ import { expect } from '@wdio/globals';
 
 import { Participant } from '../../../helpers/Participant';
 import { setTestProperties } from '../../../helpers/TestProperties';
-import { joinMuc, generateJaasToken as t } from '../../helpers/jaas';
+import { joinJaasMuc, generateJaasToken as t } from '../../../helpers/jaas';
 
 setTestProperties(__filename, {
     useJaas: true,
@@ -19,7 +19,7 @@ describe('Visitors', () => {
             visitorsLive: false
         };
 
-        moderator = await joinMuc({
+        moderator = await joinJaasMuc({
             name: 'p1',
             token: t({ room: ctx.roomName, displayName: 'Mo de Rator', moderator: true })
         });
@@ -32,7 +32,7 @@ describe('Visitors', () => {
             ctx.skipSuiteTests = true;
         });
 
-        visitor = await joinMuc({
+        visitor = await joinJaasMuc({
             name: 'p2',
             token: t({ room: ctx.roomName, displayName: 'Visi Tor', visitor: true })
         }, {

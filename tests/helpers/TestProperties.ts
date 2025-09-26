@@ -2,8 +2,6 @@
  * An interface that tests can export (as a TEST_PROPERTIES property) to define what they require.
  */
 export type ITestProperties = {
-    /** The test uses the iFrame API. */
-    useIFrameApi: boolean;
     /** The test requires jaas, it should be skipped when the jaas configuration is not enabled. */
     useJaas: boolean;
     /** The test requires the webhook proxy. */
@@ -12,7 +10,6 @@ export type ITestProperties = {
 };
 
 const defaultProperties: ITestProperties = {
-    useIFrameApi: false,
     useWebhookProxy: false,
     useJaas: false,
     usesBrowsers: [ 'p1', 'p2', 'p3', 'p4' ]

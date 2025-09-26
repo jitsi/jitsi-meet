@@ -20,6 +20,20 @@ export default class ChatPanel extends BasePageObject {
         await this.participant.driver.keys([ 'c' ]);
     }
 
+    async sendMessage(message: string) {
+        if (!await this.isOpen()) {
+            await this.pressShortcut();
+        }
+        if (!await this.isOpen()) {
+            throw new Error('Chat panel failed to open');
+        }
+
+        const inputField = this.participant.driver.$('#chat-input');
+
+        await inputField.click();
+        await this.participant.driver.keys(`${message}\n`);
+    }
+
     /**
      * Opens the polls tab in the chat panel.
      */
