@@ -953,7 +953,7 @@
     "passwordDigitsOnly": "До {{number}} цифри",
     "passwordSetRemotely": "зададена от друг участник",
     "pinParticipant": "{{participantName}} - Закачи",
-    "pinnedParticipant": "Участникът е закачен",
+    "pinnedParticipant": "Участникът е на фокус",
     "polls": {
         "answer": {
             "edit": "Редактирай",
