@@ -47,9 +47,6 @@ describe('Participants presence', () => {
             expect(roomNode).toBe(roomName);
 
             const { node, resource } = parseJid(roomsInfo.jid);
-
-            conferenceJid = roomsInfo.jid.substring(0, roomsInfo.jid.indexOf('/'));
-
             const p1EpId = await p1.getEndpointId();
 
             expect(node).toBe(roomName);
@@ -99,10 +96,6 @@ describe('Participants presence', () => {
 
         await p1.switchToMainFrame();
         await p2.switchToMainFrame();
-
-        const roomsInfo = (await p1.getIframeAPI().getRoomsInfo()).rooms[0];
-
-        conferenceJid = roomsInfo.jid.substring(0, roomsInfo.jid.indexOf('/'));
 
         await p1.getIframeAPI().addEventListener('participantKickedOut');
         await p2.getIframeAPI().addEventListener('participantKickedOut');
