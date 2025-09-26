@@ -265,6 +265,7 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
         } else if (type === JitsiConferenceErrors.AUTH_ERROR_TYPES.ROOM_CREATION_RESTRICTION) {
             descriptionKey = 'dialog.errorRoomCreationRestriction';
         } else if (type === JitsiConferenceErrors.AUTH_ERROR_TYPES.ROOM_UNAUTHENTICATED_ACCESS_DISABLED) {
+            titleKey = 'dialog.unauthenticatedAccessDisabled';
             customActionNameKey = [ 'toolbar.login' ];
             customActionHandler = [ () => dispatch(login()) ];
         }
