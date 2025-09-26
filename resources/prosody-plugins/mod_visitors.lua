@@ -71,7 +71,7 @@ local function send_visitors_iq(conference_service, room, type)
         lobby = room._data.lobbyroom and 'true' or 'false',
         meetingId = room._data.meetingId,
         createdTimestamp = room.created_timestamp and tostring(room.created_timestamp) or nil,
-        allowUnauthenticatedAccess = tostring(room._data.allowUnauthenticatedAccess)
+        allowUnauthenticatedAccess = room._data.allowUnauthenticatedAccess ~= nil and tostring(room._data.allowUnauthenticatedAccess) or nil
       });
 
     if type == 'update' then
