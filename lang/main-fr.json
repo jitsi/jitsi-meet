@@ -109,9 +109,12 @@
         }
     },
     "chat": {
+        "disabled": "L'envoi de messages de chat est désactivé.",
         "enter": "Entrez dans le salon",
         "error": "Erreur : votre message n'a pas été envoyé. Raison : {{error}}",
+        "everyone": "Tout le monde",
         "fieldPlaceHolder": "Tapez votre message ici",
+        "guestsChatIndicator": "(invité)",
         "lobbyChatMessageTo": "Message de salle d'attente à {{recipient}}",
         "message": "Message",
         "messageAccessibleTitle": "{{user}} dit: ",
@@ -122,7 +125,10 @@
         "nickname": {
             "popover": "Choisissez un pseudonyme",
             "title": "Entrez un pseudonyme pour utiliser le chat",
-            "titleWithPolls": "Entrez un pseudonyme pour utiliser le chat et les sondages"
+            "titleWithCC": "Entrez un pseudonyme pour utiliser le chat et les sous-titres",
+            "titleWithPolls": "Entrez un pseudonyme pour utiliser le chat et les sondages",
+            "titleWithPollsAndCC": "Entrez un pseudonyme pour utiliser le chat, les sondages et les sous-titres",
+            "titleWithPollsAndCCAndFileSharing": "Entrez un pseudonyme pour utiliser le chat, les sondages, les sous-titres et les fichiers"
         },
         "noMessagesMessage": "Il n'y a pas encore de messages dans cette réunion. Démarrez une conversation ici !",
         "privateNotice": "Message privé à {{recipient}}",
@@ -131,9 +137,14 @@
         "systemDisplayName": "Système",
         "tabs": {
             "chat": "Chat",
+            "closedCaptions": "ST",
+            "fileSharing": "Fichiers",
             "polls": "Sondages"
         },
         "title": "Chat",
+        "titleWithCC": "ST",
+        "titleWithFeatures": "Chat et",
+        "titleWithFileSharing": "Fichiers",
         "titleWithPolls": "Chat et Sondages",
         "you": "vous"
     },
@@ -143,6 +154,10 @@
         "close": "Fermer",
         "dontShowAgain": "Ne plus m'afficher ceci",
         "installExtensionText": "Installer l'extension pour l'intégration de Google Calendar et Office 365"
+    },
+    "closedCaptionsTab": {
+        "emptyState": "Le contenu des sous-titres sera disponible une fois qu'un modérateur l'aura démarré",
+        "startClosedCaptionsButton": "Démarrer les sous-titres"
     },
     "connectingOverlay": {
         "joiningRoom": "Connexion à la réunion…"
@@ -263,7 +278,8 @@
         "Remove": "Supprimer",
         "Share": "Partager",
         "Submit": "Soumettre",
-        "WaitForHostMsg": "La conférence n'a pas encore commencé. Si vous en êtes l'hôte, veuillez vous authentifier. Sinon, veuillez attendre son arrivée.",
+        "Understand": "Je comprends, gardez-moi en sourdine pour l'instant",
+        "UnderstandAndUnmute": "Je comprends, veuillez me réactiver s'il vous plaît",
         "WaitForHostNoAuthMsg": "La conférence n'a pas encore commencé car aucun modérateur n'est encore arrivé. Veuillez patienter.",
         "WaitingForHostButton": "Attendre l'hôte",
         "WaitingForHostTitle": "En attente de l'hôte…",
@@ -285,6 +301,12 @@
         "alreadySharedVideoTitle": "Une seule vidéo partagée est autorisée à la fois",
         "applicationWindow": "Fenêtre d'application",
         "authenticationRequired": "Authentification requise",
+        "cameraCaptureDialog": {
+            "description": "Prendre et envoyer une photo en utilisant votre caméra mobile",
+            "ok": "Ouvrir la caméra",
+            "reject": "Pas maintenant",
+            "title": "Prendre une photo"
+        },
         "cameraConstraintFailedError": "Votre caméra ne satisfait pas certaines des contraintes nécessaires.",
         "cameraNotFoundError": "La caméra n'a pas été trouvée.",
         "cameraNotSendingData": "Impossible d'accéder à votre caméra. Veuillez sélectionner un autre périphérique dans les paramètres ou rafraîchir la page.",
@@ -299,6 +321,7 @@
         "conferenceReloadMsg": "On essaie d'arranger ça. Reconnexion dans {{seconds}} secondes…",
         "conferenceReloadTitle": "Malheureusement, un problème est survenu",
         "confirm": "Confirmer",
+        "confirmBack": "Retour",
         "confirmNo": "Non",
         "confirmYes": "Oui",
         "connectError": "Oups ! Un problème est survenu et la connexion à la conférence est impossible.",
@@ -336,6 +359,7 @@
         "kickParticipantTitle": "Expulser ce participant ?",
         "kickSystemTitle": "Oups ! Vous avez été expulsé de la réunion",
         "kickTitle": "Oups ! vous avez été expulsé(e) par {{participantDisplayName}}",
+        "learnMore": "en savoir plus",
         "linkMeeting": "Relier la conférence",
         "linkMeetingTitle": "Relier la conférence à Salesforce",
         "liveStreaming": "Direct",
@@ -358,22 +382,34 @@
         "micTimeoutError": "Impossible de démarrer la source audio. Délai dépassé!",
         "micUnknownError": "Vous ne pouvez pas utiliser le microphone pour une raison inconnue.",
         "moderationAudioLabel": "Autoriser les participants à réactiver leur micro",
+        "moderationDesktopLabel": "Autoriser les non-modérateurs à partager leur écran",
         "moderationVideoLabel": "Autoriser les participants à démarrer leur vidéo",
         "muteEveryoneDialog": "Êtes-vous sûr de vouloir couper les micros de tout le monde ? Vous ne pourrez plus réactiver leur micro, mais ils pourront l'activer par eux-mêmes à tout moment.",
         "muteEveryoneDialogModerationOn": "Les participants peuvent demander à parler n'importe quand",
         "muteEveryoneElseDialog": "Une fois leur micro coupé, vous ne pourrez plus le réactiver, mais ils pourront l'activer par eux-mêmes à tout moment.",
         "muteEveryoneElseTitle": "Couper le micro de tout le monde sauf de {{whom}} ?",
+        "muteEveryoneElsesDesktopDialog": "Une fois le partage arrêté, vous ne pourrez pas le redémarrer, mais ils peuvent le faire à tout moment.",
+        "muteEveryoneElsesDesktopTitle": "Arrêter le partage d'écran de tout le monde sauf {{whom}} ?",
         "muteEveryoneElsesVideoDialog": "Une fois la caméra coupée, vous ne pourrez plus la rallumer, mais ils peuvent la rallumer à tout moment.",
         "muteEveryoneElsesVideoTitle": "Couper la vidéo de tout le monde sauf {{whom}}?",
         "muteEveryoneSelf": "vous",
         "muteEveryoneStartMuted": "Tout le monde démarre avec le micro coupé",
         "muteEveryoneTitle": "Couper le micro de tout le monde ?",
+        "muteEveryonesDesktopDialog": "Les participants peuvent partager leur écran à tout moment.",
+        "muteEveryonesDesktopDialogModerationOn": "Les participants peuvent envoyer une demande pour partager leur écran à tout moment.",
+        "muteEveryonesDesktopTitle": "Arrêter le partage d'écran de tout le monde ?",
         "muteEveryonesVideoDialog": "Êtes-vous sûr de vouloir couper la caméra de tout le monde? Vous ne pourrez pas la réactiver, mais ils peuvent la remettre à tout moment.",
         "muteEveryonesVideoDialogModerationOn": "Les participants peuvent demander à activer leur caméra n'importe quand.",
         "muteEveryonesVideoDialogOk": "Désactiver",
         "muteEveryonesVideoTitle": "Couper la caméra de tout le monde?",
         "muteParticipantBody": "Vous ne pourrez plus réactiver son micro, mais il pourra l'activer par lui-même à tout moment.",
         "muteParticipantButton": "Couper le micro",
+        "muteParticipantsDesktopBody": "Vous ne pourrez pas démarrer leur partage d'écran, mais ils peuvent le faire à tout moment.",
+        "muteParticipantsDesktopBodyModerationOn": "Vous ne pourrez pas démarrer leur partage d'écran et eux non plus.",
+        "muteParticipantsDesktopButton": "Arrêter le partage d'écran",
+        "muteParticipantsDesktopDialog": "Êtes-vous sûr de vouloir désactiver le partage d'écran de ce participant ? Vous ne pourrez pas le redémarrer, mais ils peuvent le faire à tout moment.",
+        "muteParticipantsDesktopDialogModerationOn": "Êtes-vous sûr de vouloir désactiver le partage d'écran de ce participant ? Vous ne pourrez pas réactiver l'écran et eux non plus.",
+        "muteParticipantsDesktopTitle": "Désactiver le partage d'écran de ce participant ?",
         "muteParticipantsVideoBody": "Vous ne pourrez pas rallumer la caméra, mais ils peuvent la rallumer à tout moment.",
         "muteParticipantsVideoBodyModerationOn": "Ni vous ni le participant ne pourront rallumer la caméra.",
         "muteParticipantsVideoButton": "Couper la caméra",
@@ -393,6 +429,10 @@
         "recentlyUsedObjects": "Vos objets récemment utilisés",
         "recording": "Enregistrement",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Impossible durant le direct",
+        "recordingInProgressDescription": "Cette réunion est en cours d'enregistrement et d'analyse par IA{{learnMore}}. Votre audio et vidéo ont été coupés. Si vous choisissez de vous réactiver, vous consentez à être enregistré.",
+        "recordingInProgressDescriptionFirstHalf": "Cette réunion est en cours d'enregistrement et d'analyse par IA",
+        "recordingInProgressDescriptionSecondHalf": ". Votre audio et vidéo ont été coupés. Si vous choisissez de vous réactiver, vous consentez à être enregistré.",
+        "recordingInProgressTitle": "Enregistrement en cours",
         "rejoinNow": "Rejoindre maintenant",
         "remoteControlAllowedMessage": "{{user}} a accepté votre demande de prise en main à distance !",
         "remoteControlDeniedMessage": "{{user}} a refusé votre demande de prise en main à distance !",
@@ -521,6 +561,23 @@
         "star": "Étoile",
         "veryBad": "Très mauvais",
         "veryGood": "Très bon"
+    },
+    "fileSharing": {
+        "downloadFailedDescription": "Veuillez réessayer.",
+        "downloadFailedTitle": "Échec du téléchargement",
+        "downloadFile": "Télécharger",
+        "downloadStarted": "Téléchargement de fichier démarré",
+        "dragAndDrop": "Glissez et déposez des fichiers ici ou n'importe où sur l'écran",
+        "fileAlreadyUploaded": "Le fichier a déjà été téléchargé vers cette réunion.",
+        "fileTooLargeDescription": "Veuillez vous assurer que le fichier ne dépasse pas {{ maxFileSize }}.",
+        "fileTooLargeTitle": "Le fichier sélectionné est trop volumineux",
+        "fileUploadProgress": "Progression du téléchargement de fichier",
+        "fileUploadedSuccessfully": "Fichier téléchargé avec succès",
+        "removeFile": "Supprimer",
+        "removeFileSuccess": "Fichier supprimé avec succès",
+        "uploadFailedDescription": "Veuillez réessayer.",
+        "uploadFailedTitle": "Échec du téléchargement",
+        "uploadFile": "Partager un fichier"
     },
     "filmstrip": {
         "accessibilityLabel": {
@@ -690,7 +747,8 @@
         "notificationTitle": "Salle d'attente",
         "passwordJoinButton": "Rejoindre",
         "title": "Salle d'attente",
-        "toggleLabel": "Activer la salle d'attente"
+        "toggleLabel": "Activer la salle d'attente",
+        "waitForModerator": "La conférence n'a pas encore commencé car aucun modérateur n'est encore arrivé. Si vous souhaitez devenir modérateur, veuillez vous connecter. Sinon, veuillez attendre."
     },
     "localRecording": {
         "clientState": {
@@ -733,7 +791,10 @@
     "me": "moi",
     "notify": {
         "OldElectronAPPTitle": "Faille de sécurité !",
-        "allowAction": "Permettre",
+        "allowAll": "Tout autoriser",
+        "allowAudio": "Autoriser l'audio",
+        "allowDesktop": "Autoriser le partage d'écran",
+        "allowVideo": "Autoriser la vidéo",
         "allowedUnmute": "Vous pouvez réactiver votre écran, votre caméra ou partager votre écran.",
         "audioUnmuteBlockedDescription": "Le rétablissement du son a été bloqué temporairement en raison de limites système.",
         "audioUnmuteBlockedTitle": "Rétablissement du son bloqué !",
@@ -746,8 +807,10 @@
         "dataChannelClosedDescription": "Le canal de communication avec le Bridge a été interrompu, la qualité vidéo se trouve limitée à sa valeur la plus faible.",
         "dataChannelClosedDescriptionWithAudio": "Le canal de pont est fermé, ce qui peut entraîner des perturbations de l'audio et de la vidéo.",
         "dataChannelClosedWithAudio": "La qualité de l'audio et de la vidéo peut être altérée",
+        "desktopMutedRemotelyTitle": "Votre partage d'écran a été arrêté par {{participantDisplayName}}",
         "disabledIframe": "L'intégration Iframe est uniquement destinée à des démos, cet appel se terminera dans {{timeout}} minutes.",
-        "disabledIframeSecondary": "L'intégration Iframe de {{domaine}} est uniquement destinée à des démos, cet appel se terminera dans {{timeout}} minutes.",
+        "disabledIframeSecondaryNative": "L'intégration de {{domain}} est uniquement destinée aux fins de démonstration, cet appel se terminera dans {{timeout}} minutes.",
+        "disabledIframeSecondaryWeb": "L'intégration de {{domain}} est uniquement destinée aux fins de démonstration, cet appel se terminera dans {{timeout}} minutes. Veuillez utiliser <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> pour l'intégration en production !",
         "disconnected": "déconnecté",
         "displayNotifications": "Afficher les notifications pour",
         "dontRemindMe": "Ne pas me le rappeler",
@@ -802,6 +865,7 @@
         "oldElectronClientDescription1": "Vous semblez utiliser une ancienne version du client Jitsi Meet qui présente des failles de sécurité connues. Veuillez vous assurer de mettre à jour vers notre ",
         "oldElectronClientDescription2": "dernière build",
         "oldElectronClientDescription3": " rapidement !",
+        "openChat": "Ouvrir le chat",
         "participantWantsToJoin": "souhaite rejoindre la réunion",
         "participantsWantToJoin": "souhaitent rejoindre la réunion",
         "passwordRemovedRemotely": "Le $t(lockRoomPassword) a été supprimé par un autre participant",
@@ -825,6 +889,8 @@
         "suggestRecordingDescription": "Souhaitez-vous démarrer un enregistrement ?",
         "suggestRecordingTitle": "Enregistrer cette réunion",
         "unmute": "Rétablir le son",
+        "unmuteScreen": "Démarrer le partage d'écran",
+        "unmuteVideo": "Réactiver la vidéo",
         "videoMutedRemotelyDescription": "Vous pouvez toujours la réactiver.",
         "videoMutedRemotelyTitle": "Votre caméra a été coupée par {{participantDisplayName}}!",
         "videoUnmuteBlockedDescription": "Le rétablissement de la vidéo a été bloqué temporairement en raison de limites système.",
@@ -843,11 +909,14 @@
             "admit": "Accepter",
             "admitAll": "Tout accepter",
             "allow": "Autoriser les participants à:",
+            "allowDesktop": "Autoriser le partage d'écran",
             "allowVideo": "permettre la vidéo",
+            "askDesktop": "Demander de partager l'écran",
             "askUnmute": "Demander de réactiver le micro",
             "audioModeration": "Rouvrir leur micro",
             "blockEveryoneMicCamera": "Bloquer tous les micros et caméras",
             "breakoutRooms": "Salles annexes",
+            "desktopModeration": "Démarrer le partage d'écran",
             "goLive": "Passer en direct",
             "invite": "Inviter quelqu'un",
             "lowerAllHands": "Abaisser toutes les mains",
@@ -859,6 +928,8 @@
             "muteAll": "Couper le micro de tout le monde",
             "muteEveryoneElse": "Couper le micro de tous les autres",
             "reject": "Refuser",
+            "stopDesktop": "Arrêter le partage d'écran",
+            "stopEveryonesDesktop": "Arrêter le partage d'écran de tout le monde",
             "stopEveryonesVideo": "Couper toutes les caméras",
             "stopVideo": "Couper la vidéo",
             "unblockEveryoneMicCamera": "Débloquer tous les micros et caméras",
@@ -868,12 +939,15 @@
         "headings": {
             "lobby": "Salle d'attente ({{count}})",
             "participantsList": "Participants de la réunion ({{count}})",
+            "viewerRequests": "Demandes des spectateurs {{count}}",
             "visitorInQueue": " (en attente {{count}})",
             "visitorRequests": "(Demande {{count}} )",
             "visitors": "Visiteurs {{count}}",
+            "visitorsList": "Spectateurs ({{count}})",
             "waitingLobby": "Dans la salle d'attente ({{count}})"
         },
         "search": "Rechercher des participants",
+        "searchDescription": "Commencez à taper pour filtrer les participants",
         "title": "Participants"
     },
     "passwordDigitsOnly": "Jusqu'à {{number}} chiffres",
@@ -1100,6 +1174,7 @@
             "signedIn": "Accès aux événements du calendrier {{email}}. Cliquez sur le bouton se déconnecter ci-dessous pour arrêter l'accès aux événements du calendrier.",
             "title": "Calendrier"
         },
+        "chatWithPermissions": "Le chat nécessite une autorisation",
         "desktopShareFramerate": "Images par seconde pour le Partage d'écran",
         "desktopShareHighFpsWarning": "Augmenter le nombre d'images par seconde pour le partage d'écran peut impacter votre bande passante. Vous devez repartager l'écran pour que ces paramètres soient utilisés.",
         "desktopShareWarning": "Vous devez repartager l'écran pour que ces paramètres soient utilisés.",
@@ -1129,6 +1204,7 @@
         "selectMic": "Microphone",
         "selfView": "Affichage de votre propre vidéo",
         "shortcuts": "Raccourcis",
+        "showSubtitlesOnStage": "Afficher les sous-titres sur l'écran",
         "speakers": "Haut-parleurs",
         "startAudioMuted": "Tout le monde commence en muet",
         "startReactionsMuted": "Tout le monde commence avec les réactions sonores bloquées",
@@ -1182,11 +1258,13 @@
         "fearful": "Effrayé",
         "happy": "Content",
         "hours": "{{count}}h",
+        "labelTooltip": "Nombre de participants : {{count}}",
         "minutes": "{{count}}m",
         "name": "Nom",
         "neutral": "Indifférent",
         "sad": "Triste",
         "search": "Recherche",
+        "searchDescription": "Commencez à taper pour filtrer les participants",
         "searchHint": "Recherche des participants",
         "seconds": "{{count}}s",
         "speakerStats": "Statistiques de l'interlocuteur",
@@ -1223,6 +1301,7 @@
             "closeChat": "Fermer la discussion instantanée",
             "closeMoreActions": "Fermer le menu plus d'actions",
             "closeParticipantsPane": "Fermer le panneau des participants",
+            "closedCaptions": "Sous-titres",
             "collapse": "Plier",
             "document": "Activer / Désactiver le document partagé",
             "documentClose": "Fermer le document partagé",
@@ -1301,6 +1380,20 @@
             "videounmute": "Activer votre vidéo"
         },
         "addPeople": "Ajouter des personnes à votre appel",
+        "advancedAudioSettings": {
+            "aec": {
+                "label": "Suppression d'écho acoustique"
+            },
+            "agc": {
+                "label": "Contrôle automatique du gain"
+            },
+            "ns": {
+                "label": "Suppression de bruit"
+            },
+            "stereo": {
+                "label": "Stéréo"
+            }
+        },
         "audioOnlyOff": "Désactiver le mode bande passante réduite",
         "audioOnlyOn": "Activer le mode bande passante réduite",
         "audioRoute": "Sélectionner la source audio",
@@ -1313,6 +1406,7 @@
         "closeChat": "Fermer le chat",
         "closeParticipantsPane": "Fermer le panneau des participants",
         "closeReactionsMenu": "Fermer le menu réactions",
+        "closedCaptions": "Sous-titres",
         "disableNoiseSuppression": "Arrêter la suppression du bruit",
         "disableReactionSounds": "Vous pouvez interdire les réactions sonores à cette réunion",
         "documentClose": "Fermer le document partagé",
@@ -1371,6 +1465,7 @@
         "reactionHeart": "Envoyer une réaction en forme de cœur",
         "reactionLaugh": "Envoyer réaction rire",
         "reactionLike": "Envoyer réaction approuver",
+        "reactionLove": "Envoyer une réaction d'amour",
         "reactionSilence": "Envoyer réaction silence",
         "reactionSurprised": "Envoyer réaction surprise",
         "reactions": "Reactions",
@@ -1403,14 +1498,18 @@
         "ccButtonTooltip": "Activer / Désactiver les sous-titres",
         "expandedLabel": "La transcription est actuellement activée",
         "failed": "La transcription a échoué",
-        "labelToolTip": "La transcription de la réunion est en cours",
+        "labelTooltip": "La transcription de la réunion est en cours",
+        "labelTooltipExtra": "Une transcription sera disponible plus tard.",
+        "openClosedCaptions": "Ouvrir les sous-titres",
+        "original": "Original",
         "sourceLanguageDesc": "Actuellement, la langue de la réunion est sélectionnée à <b>{{sourceLanguage}}</b>. <br/> Vous pouvez la changer à partir de ",
         "sourceLanguageHere": "ici",
         "start": "Activer les sous-titres",
         "stop": "Désactiver les sous-titres",
         "subtitles": "sous-titres",
         "subtitlesOff": "off",
-        "tr": "TR"
+        "tr": "TR",
+        "translateTo": "Traduire vers"
     },
     "unpinParticipant": "Désépingler - {{participantName}}",
     "userMedia": {
@@ -1452,6 +1551,8 @@
         "connectionInfo": "Informations de la connexion",
         "demote": "Déplacer en visiteur",
         "domute": "Couper le micro",
+        "domuteDesktop": "Arrêter le partage d'écran",
+        "domuteDesktopOfOthers": "Arrêter le partage d'écran de tous les autres",
         "domuteOthers": "Couper le micro de tous les autres",
         "domuteVideo": "Couper la caméra",
         "domuteVideoOfOthers": "Couper la caméra des autres",
@@ -1516,6 +1617,8 @@
             "noMainParticipantsTitle": "Cette réunion n'a pas encore commencé.",
             "noVisitorLobby": "Vous ne pouvez pas rejoindre tant qu'une salle d'attente est activée pour la réunion.",
             "notAllowedPromotion": "Un participant doit d'abord autoriser votre demande.",
+            "requestToJoin": "Main levée",
+            "requestToJoinDescription": "Votre demande a été envoyée aux modérateurs.",
             "title": "Vous êtes visiteur dans cette réunion"
         },
         "waitingMessage": "Vous rejoindrez la réunion dès qu'elle sera en direct !"
