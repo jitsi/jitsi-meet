@@ -508,7 +508,7 @@
             "expInvalid": "Невалидна стойност на `exp`.",
             "featureInvalid": "Невалидна функция: {{feature}}, най-вероятно все още не е внедрена.",
             "featureValueInvalid": "Невалидна стойност за функция: {{feature}}.",
-            "featuresNotFound": "Обектът `features` липсва в полезния товар.",
+            "featuresNotFound": "Обектът `features` липсва.",
             "headerNotFound": "Липсва заглавката.",
             "issInvalid": "Невалидна стойност на `iss`. Трябва да бъде `chat`.",
             "kidMismatch": "Key ID (kid) не съвпада с sub.",
