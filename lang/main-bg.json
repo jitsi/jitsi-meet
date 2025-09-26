@@ -504,7 +504,7 @@
         "tokenAuthFailed": "Съжаляваме, но не можете да се присъедините към този разговор.",
         "tokenAuthFailedReason": {
             "audInvalid": "Невалидна стойност на `aud`. Трябва да бъде `jitsi`.",
-            "contextNotFound": "Обектът `context` липсва в полезния товар.",
+            "contextNotFound": "Обектът `context` липсва.",
             "expInvalid": "Невалидна стойност на `exp`.",
             "featureInvalid": "Невалидна функция: {{feature}}, най-вероятно все още не е внедрена.",
             "featureValueInvalid": "Невалидна стойност за функция: {{feature}}.",
