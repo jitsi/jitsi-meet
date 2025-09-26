@@ -6,6 +6,8 @@ import { openDialog } from '../base/dialog/actions';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { ConfigService } from "../base/meet/services/config.service";
 import ParticipantVerificationSASDialog from '../base/meet/views/Conference/components/ParticipantVerificationSASDialog';
+import { showNotification, showWarningNotification } from '../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../base/participants/actionTypes';
 import { participantUpdated } from '../base/participants/actions';
@@ -157,6 +159,20 @@ StateListenerRegistry.register(
                if (ConfigService.instance.isDevelopment()) {
                    dispatch(openDialog(ParticipantVerificationSASDialog, { sas }));
                }
+             });
+
+             conference.on(JitsiConferenceEvents.E2EE_KEY_SYNC_FAILED, () => {
+                 dispatch(showWarningNotification({
+                     titleKey: 'notify.encryptionKeySyncFailedTitle',
+                     descriptionKey: 'notify.encryptionKeySyncFailed'
+                 }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+             });
+
+             conference.on(JitsiConferenceEvents.E2EE_KEY_SYNC_AFTER_TIMEOUT, () => {
+                 dispatch(showNotification({
+                     titleKey: 'notify.encryptionKeySyncRestoredTitle',
+                     descriptionKey: 'notify.encryptionKeySyncRestored'
+                 }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
              });
         }
     }
