@@ -379,7 +379,7 @@ function Util:verify_room(session, room_address)
     local room,_,_ = jid.split(room_address);
     if room == nil then
         module:log('error', 'Unable to get name of the MUC room ? to: %s', room_address);
-        return false, 'room-address-wrong', 'Room address is wrong';
+        return false, 'invalid-room-address', 'Room address is invalid';
     end
     local room_instance = get_room_from_jid(jid.join(room, self.muc_domain));
     if not room_instance then
