@@ -810,7 +810,7 @@
         "desktopMutedRemotelyTitle": "Споделянето на екрана ви беше спряно от {{participantDisplayName}}",
         "disabledIframe": "Вграждането е предназначено само за демонстрационни цели, така че този разговор ще се прекрати след {{timeout}} минути.",
         "disabledIframeSecondaryNative": "Вграждането на {{domain}} е предназначено само за демонстрационни цели, затова този разговор ще се прекрати след {{timeout}} минути.",
-        "disabledIframeSecondaryWeb": "Вграждането на {{domain}} е предназначено само за демонстрационни цели, затова този разговор ще се прекрати след {{timeout}} минути. Моля, използвайте <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> за производствено вграждане!",
+        "disabledIframeSecondaryWeb": "Вграждането на {{domain}} е предназначено само за демонстрационни цели, затова този разговор ще се прекрати след {{timeout}} минути. Моля, използвайте <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> за комерсиално вграждане!",
         "disconnected": "Напусна срещата",
         "displayNotifications": "Показване на уведомления за",
         "dontRemindMe": "Не ме напомняй",
