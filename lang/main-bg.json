@@ -515,7 +515,7 @@
             "kidNotFound": "Липсва Key ID (kid).",
             "nbfFuture": "Стойността `nbf` е в бъдещето.",
             "nbfInvalid": "Невалидна стойност на `nbf`.",
-            "payloadNotFound": "Липсва полезния товар.",
+            "payloadNotFound": "Липсва съдържание.",
             "tokenExpired": "Токенът е изтекъл."
         },
         "tokenAuthFailedTitle": "Неуспешна идентификация",
