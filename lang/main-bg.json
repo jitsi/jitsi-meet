@@ -414,7 +414,7 @@
         "muteParticipantsVideoBodyModerationOn": "Нито Вие, нито участниците ще можете да включите камерите си отново.",
         "muteParticipantsVideoButton": "Спри видеото",
         "muteParticipantsVideoDialog": "Сигурни ли сте, че искате да изключите камерата на този участник? Няма да можете да я включите отново, но той може да я включи по всяко време.",
-        "muteParticipantsVideoDialogModerationOn": "Сигурни ли сте, че искате да изключите камерата на този участник? Няма да можете да я включите отново и нито той няма да може.",
+        "muteParticipantsVideoDialogModerationOn": "Сигурни ли сте, че искате да изключите камерата на този участник? Нито Вие, нито участника ще можете да я включите отново",
         "muteParticipantsVideoTitle": "Деактивирай камерата на този участник?",
         "noDropboxToken": "Няма валиден Dropbox токен",
         "password": "Парола",
