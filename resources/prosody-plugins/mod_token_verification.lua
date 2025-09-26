@@ -76,12 +76,21 @@ local function verify_user(session, stanza)
     end
 
     if DEBUG then module:log("debug", "Will verify token for user: %s, room: %s ", user_jid, stanza.attr.to); end
-    if not token_util:verify_room(session, stanza.attr.to) then
-        module:log("error", "Token %s not allowed to join: %s",
-            tostring(session.auth_token), tostring(stanza.attr.to));
-        session.send(
-            st.error_reply(
-                stanza, "cancel", "not-allowed", "Room and token mismatched"));
+    local res, err, reason = token_util:verify_room(session, stanza.attr.to);
+    if not res then
+        if not err and not reason then
+            reason = 'Room and token mismatched';
+        end
+
+        module:log('error', 'Token %s not allowed to join: %s err: %s reason: %s',
+                        tostring(session.auth_token), tostring(stanza.attr.to), err, reason);
+
+        local response = st.error_reply(stanza, 'cancel', 'not-allowed', reason);
+        if err then
+            response:tag(err, { xmlns = 'http://jitsi.org/jitmeet' });
+        end
+
+        session.send(response);
         return false; -- we need to just return non nil
     end
     if DEBUG then module:log("debug", "allowed: %s to enter/create room: %s", user_jid, stanza.attr.to); end

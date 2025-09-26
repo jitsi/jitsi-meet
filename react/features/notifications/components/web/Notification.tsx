@@ -244,6 +244,27 @@ const Notification = ({
         window.open(supportUrl, '_blank', 'noopener');
     }, [ supportUrl ]);
 
+    const processCustomActions
+        = (key?: string[], handler?: Function[], type?: string[]): {
+            content: string; onClick: () => void; testId?: string; type?: string; }[] => {
+            if (key?.length && handler?.length) {
+                return key.map((customAction: string, customActionIndex: number) => {
+                    return {
+                        content: t(customAction),
+                        onClick: () => {
+                            if (handler?.[customActionIndex]()) {
+                                onDismiss();
+                            }
+                        },
+                        type: type?.[customActionIndex],
+                        testId: customAction
+                    };
+                });
+            }
+
+            return [];
+        };
+
     const mapAppearanceToButtons = useCallback((): {
         content: string; onClick: () => void; testId?: string; type?: string; }[] => {
         switch (appearance) {
@@ -262,7 +283,7 @@ const Notification = ({
                 });
             }
 
-            return buttons;
+            return processCustomActions(customActionNameKey, customActionHandler, customActionType).concat(buttons);
         }
         case NOTIFICATION_TYPE.WARNING:
             return [
@@ -273,22 +294,7 @@ const Notification = ({
             ];
 
         default:
-            if (customActionNameKey?.length && customActionHandler?.length) {
-                return customActionNameKey.map((customAction: string, customActionIndex: number) => {
-                    return {
-                        content: t(customAction),
-                        onClick: () => {
-                            if (customActionHandler?.[customActionIndex]()) {
-                                onDismiss();
-                            }
-                        },
-                        type: customActionType?.[customActionIndex],
-                        testId: customAction
-                    };
-                });
-            }
-
-            return [];
+            return processCustomActions(customActionNameKey, customActionHandler, customActionType);
         }
     }, [ appearance, onDismiss, customActionHandler, customActionNameKey, hideErrorSupportLink, supportUrl ]);
 

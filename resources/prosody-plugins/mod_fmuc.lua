@@ -698,6 +698,10 @@ local function iq_from_main_handler(event)
     local createdTimestamp = node.attr.createdTimestamp;
     room.created_timestamp = createdTimestamp and tonumber(createdTimestamp) or nil;
 
+    if node.attr.allowUnauthenticatedAccess then
+        room._data.allowUnauthenticatedAccess = node.attr.allowUnauthenticatedAccess == 'true';
+    end
+
     if node.attr.lobby == 'true' then
         room._main_room_lobby_enabled = true;
     elseif node.attr.lobby == 'false' then

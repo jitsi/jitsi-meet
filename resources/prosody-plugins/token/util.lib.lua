@@ -15,6 +15,7 @@ local http_get_with_retry = main_util.http_get_with_retry;
 local extract_subdomain = main_util.extract_subdomain;
 local starts_with = main_util.starts_with;
 local table_shallow_copy = main_util.table_shallow_copy;
+local get_room_from_jid = main_util.get_room_from_jid;
 local cjson_safe  = require 'cjson.safe'
 local timer = require "util.timer";
 local async = require "util.async";
@@ -374,16 +375,23 @@ end
 --         it and returns false in case verification was processed
 --         and was not successful
 function Util:verify_room(session, room_address)
-    if self.allowEmptyToken and session.auth_token == nil then
-        --module:log("debug", "Skipped room token verification - empty tokens are allowed");
-        return true;
-    end
-
     -- extract room name using all chars, except the not allowed ones
     local room,_,_ = jid.split(room_address);
     if room == nil then
         log("error",
             "Unable to get name of the MUC room ? to: %s", room_address);
+        return true;
+    end
+    local room_instance = get_room_from_jid(jid.join(room, self.muc_domain));
+    if not room_instance then
+        module:log('info', 'Room does not exists:%s %s', room, debug.traceback());
+        return false;
+    end
+
+    if self.allowEmptyToken and session.auth_token == nil then
+        if room_instance._data.allowUnauthenticatedAccess == false then
+            return false, 'authentication-required', 'Authentication required';
+        end
         return true;
     end
 
@@ -453,11 +461,16 @@ function Util:verify_room(session, room_address)
 
     if session.jitsi_meet_str_tenant
         and string.lower(session.jitsi_meet_str_tenant) ~= session.jitsi_web_query_prefix then
+        session.jitsi_meet_tenant_mismatch = true;
+
+        if room_instance._data.allowUnauthenticatedAccess == false then
+            return false;
+        end
+
         module:log('warn', 'Tenant differs for user:%s group:%s url_tenant:%s token_tenant:%s',
             session.jitsi_meet_context_user and session.jitsi_meet_context_user.id or '',
             session.jitsi_meet_context_group,
             session.jitsi_web_query_prefix, session.jitsi_meet_str_tenant);
-        session.jitsi_meet_tenant_mismatch = true;
     end
 
     local auth_domain = string.lower(session.jitsi_meet_domain);
