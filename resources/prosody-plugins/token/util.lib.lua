@@ -389,7 +389,7 @@ function Util:verify_room(session, room_address)
     end
 
     if self.allowEmptyToken and session.auth_token == nil then
-        if room_instance and room_instance._data.allowUnauthenticatedAccess == false then
+        if room_instance._data.allowUnauthenticatedAccess == false then
             return false, 'unauthenticated-access-disabled', 'All users need to authenticate';
         end
         return true;
