@@ -63,7 +63,11 @@ const InviteUserModal = ({ isOpen, onClose, translate, participantsCount, invite
                             className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-lg border border-gray-600 focus:outline-none select-all"
                         />
                     </div>
-                    <Button className={`w-full ${copied ? "bg-green-600" : ""}`} onClick={handleCopy}>
+                    <Button
+                        className={`w-full ${copied ? "bg-green-600" : ""}`}
+                        onClick={handleCopy}
+                        disabled={participantsCount === MAX_SIZE_PARTICIPANTS}
+                    >
                         {copied ? (
                             <div className="flex items-center justify-center">
                                 <Check size={18} className="mr-1" />

@@ -899,6 +899,7 @@
         "invitedTwoMembers": "{{first}} and {{second}} have been invited",
         "joinMeeting": "Join",
         "kickParticipant": "{{kicked}} was kicked by {{kicker}}",
+        "kickParticipant2": "{{kicked}} was kicked",
         "leftOneMember": "{{name}} left the meeting",
         "leftThreePlusMembers": "{{name}} and many others left the meeting",
         "leftTwoMembers": "{{first}} and {{second}} left the meeting",
