@@ -1449,7 +1449,7 @@
         "noAudioSignalDialInDesc": "Може да влезнете чрез обаждане на:",
         "noAudioSignalDialInLinkDesc": "Номера за обаждане",
         "noAudioSignalTitle": "Няма сигнал, идващ от микрофона!",
-        "noiseSuppression": "Допълнително потискане на шум (БЕТА)",
+        "noiseSuppression": "Допълнително заглушаване на шум (БЕТА)",
         "noisyAudioInputDesc": "Изглежда доста шум идва от микрофона Ви, заглушете го или сменете устройството.",
         "noisyAudioInputTitle": "Изглежда е шумно около Вас!",
         "openChat": "Отвори съобщенията",
