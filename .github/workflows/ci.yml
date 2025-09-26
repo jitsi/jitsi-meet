@@ -139,6 +139,12 @@ jobs:
         xcode-select -p
         sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
         xcodebuild -version
+    - name: clean Xcode
+      run: |
+        rm -rf ios/sdk/out
+        xcodebuild clean \
+          -workspace ios/jitsi-meet.xcworkspace \
+          -scheme JitsiMeetSDK
     - name: setup-cocoapods
       uses: ruby/setup-ruby@v1
       with:
@@ -149,9 +155,6 @@ jobs:
       working-directory: ./ios
       run: bundle exec pod install --repo-update --deployment
     - run: |
-        xcodebuild clean \
-          -workspace ios/jitsi-meet.xcworkspace \
-          -scheme JitsiMeetSDK
         xcodebuild -downloadPlatform iOS -buildVersion 18.2
         xcodebuild archive \
           -workspace ios/jitsi-meet.xcworkspace \
