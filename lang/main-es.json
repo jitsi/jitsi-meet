@@ -909,7 +909,11 @@
         "videoUnmuteBlockedDescription": "Las operaciones de desactivar la cámara y compartir pantalla hansido bloqueadas temporalmente debido a límites del sistema.",
         "videoUnmuteBlockedTitle": "¡Desactivar cámara y compartir pantalla bloqueados!",
         "viewLobby": "Ver lobby",
-        "waitingParticipants": "{{waitingParticipants}} personas"
+        "waitingParticipants": "{{waitingParticipants}} personas",
+        "encryptionKeySyncFailed": "La sincronización de la clave de cifrado ha fallado. Se recomienda salir de la reunión y vuelva a unirse para restaurar la comunicación segura.",
+        "encryptionKeySyncFailedTitle": "Error de Sincronización de Cifrado",
+        "encryptionKeySyncRestored": "La sincronización de claves para el cifrado se ha restaurado con éxito. Su comunicación segura está ahora activa.",
+        "encryptionKeySyncRestoredTitle": "Cifrado Restaurado"
     },
     "participantsPane": {
         "actions": {

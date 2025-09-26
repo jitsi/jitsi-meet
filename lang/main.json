@@ -968,7 +968,11 @@
         "viewVisitors": "View visitors",
         "waitingParticipants": "{{waitingParticipants}} people",
         "whiteboardLimitDescription": "Please save your progress, as the user limit will soon be reached and the whiteboard will close.",
-        "whiteboardLimitTitle": "Whiteboard usage"
+        "whiteboardLimitTitle": "Whiteboard usage",
+        "encryptionKeySyncFailed": "The encryption key synchronization has failed. It is recommended that you leave the meeting and rejoin to restore secure communication.",
+        "encryptionKeySyncFailedTitle": "Encryption Sync Failed",
+        "encryptionKeySyncRestored": "The encryption key synchronization has been successfully restored. Your secure communication is now active.",
+        "encryptionKeySyncRestoredTitle": "Encryption Restored"
     },
     "participantsPane": {
         "actions": {
