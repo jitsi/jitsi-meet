@@ -11,6 +11,7 @@ import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox/actions';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { canAddTranscriber } from '../../../transcribing/functions';
+import { setAutoDownloadMeetingData } from '../../actions.web';
 import { RECORDING_TYPES } from '../../constants';
 import { supportsLocalRecording } from '../../functions';
 
@@ -19,6 +20,11 @@ import { supportsLocalRecording } from '../../functions';
  * {@link AbstractStartRecordingDialogContent}.
  */
 export interface IProps extends WithTranslation {
+
+    /**
+     * The redux state property for the auto download feature.
+     */
+    _autoDownloadMeetingData?: boolean;
 
     /**
      * Whether the local participant can start transcribing.
@@ -34,6 +40,11 @@ export interface IProps extends WithTranslation {
      * Whether to hide the storage warning or not.
      */
     _hideStorageWarning: boolean;
+
+    /**
+     * Whether to auto-download meeting data when the recording ends.
+     */
+    _localRecordingAutoDownload: boolean;
 
     /**
      * Whether local recording is available or not.
@@ -195,10 +206,15 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
         this._onTranscriptionSwitchChange = this._onTranscriptionSwitchChange.bind(this);
         this._onRecordAudioAndVideoSwitchChange = this._onRecordAudioAndVideoSwitchChange.bind(this);
         this._onToggleShowOptions = this._onToggleShowOptions.bind(this);
+        this._onAutoDownloadSwitchChange = this._onAutoDownloadSwitchChange.bind(this);
 
         this.state = {
             showAdvancedOptions: true
         };
+
+        if (typeof props._autoDownloadMeetingData === 'undefined') {
+            props.dispatch(setAutoDownloadMeetingData(props._localRecordingAutoDownload));
+        }
     }
 
     /**
@@ -225,6 +241,16 @@ class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
                 && this.props.selectedRecordingService !== RECORDING_TYPES.DROPBOX && this.props.isTokenValid) {
             this._onSignOut();
         }
+    }
+
+    /**
+     * Handles the checkbox change for the auto-download feature.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onAutoDownloadSwitchChange() {
+        this.props.dispatch(setAutoDownloadMeetingData(!this.props._autoDownloadMeetingData));
     }
 
     /**
@@ -424,6 +450,8 @@ export function mapStateToProps(state: IReduxState) {
         _localRecordingAvailable,
         _localRecordingEnabled: !localRecording?.disable,
         _localRecordingSelfEnabled: !localRecording?.disableSelfRecording,
+        _localRecordingAutoDownload: Boolean(localRecording?.autoDownloadMeetingData),
+        _autoDownloadMeetingData: state['features/recording'].autoDownloadMeetingData,
         _localRecordingNoNotification: !localRecording?.notifyAllParticipants,
         _styles: ColorSchemeRegistry.get(state, 'StartRecordingDialogContent')
     };

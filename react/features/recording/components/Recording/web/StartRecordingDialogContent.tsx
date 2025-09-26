@@ -467,6 +467,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                                 </Container>
                             </Container>
                         )}
+                        { this._renderAutoDownloadSwitch() }
                         <Text className = 'local-recording-warning text'>
                             {t('recording.localRecordingWarning')}
                         </Text>
@@ -479,6 +480,42 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                 )}
             </>
 
+        );
+    }
+
+    /**
+     * Renders the switch for enabling the auto-download of meeting data.
+     *
+     * @returns {React$Component|null}
+     */
+    _renderAutoDownloadSwitch() {
+        const { t, _autoDownloadMeetingData } = this.props;
+
+        return (
+            <>
+                <Container>
+                    <Container
+                        className = 'recording-header recording-header-line auto-download-switch'>
+                        <Container
+                            className = 'recording-icon-container'>
+                            <Image
+                                alt = ''
+                                className = 'recording-icon'
+                                src = { ICON_USERS } />
+                        </Container>
+                        <label
+                            className = 'recording-title'
+                            htmlFor = 'auto-download-data-switch'>
+                            { t('recording.autoDownloadDataLabel') }
+                        </label>
+                        <Switch
+                            checked = { _autoDownloadMeetingData || false }
+                            className = 'recording-switch'
+                            id = 'auto-download-data-switch'
+                            onChange = { this._onAutoDownloadSwitchChange } />
+                    </Container>
+                </Container>
+            </>
         );
     }
 }
