@@ -137,7 +137,7 @@
         "systemDisplayName": "Система",
         "tabs": {
             "chat": "Чат",
-            "closedCaptions": "CC",
+            "closedCaptions": "Субтитри",
             "fileSharing": "Файлове",
             "polls": "Анкети"
         },
