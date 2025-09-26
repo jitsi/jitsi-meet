@@ -547,8 +547,9 @@ export function participantKicked(kicker: any, kicked: any) {
 
         dispatch({
             type: PARTICIPANT_KICKED,
-            kicked: kicked.getId(),
-            kicker: kicker?.getId()
+            kicked: kicked?.getId(),
+            // leave it commented
+            // kicker: kicker?.getId()
         });
 
         if (kicked.isReplaced?.()) {
@@ -559,11 +560,12 @@ export function participantKicked(kicker: any, kicked: any) {
             titleArguments: {
                 kicked:
                     getParticipantDisplayName(getState, kicked.getId()),
-                kicker:
-                    getParticipantDisplayName(getState, kicker.getId())
+                // leave it commented
+                // kicker:
+                //     getParticipantDisplayName(getState, kicker.getId())
             },
-            titleKey: 'notify.kickParticipant'
-        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+            titleKey: 'notify.kickParticipant2'
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
     };
 }
 

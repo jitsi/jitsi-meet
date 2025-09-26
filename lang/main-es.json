@@ -845,6 +845,7 @@
         "invitedTwoMembers": "{{first}} y {{second}} han sido invitados",
         "joinMeeting": "Unirse",
         "kickParticipant": "{{kicker}} sacó a {{kicked}}",
+        "kickParticipant2": "{{kicked}} ha sido expulsado",
         "leftOneMember": "{{name}} abandonó la reunión",
         "leftThreePlusMembers": "{{name}} y muchos otros abandonaron la reunión",
         "leftTwoMembers": "{{first}} y {{second}} abandonaron la reunión",
