@@ -804,7 +804,7 @@
         "connectedTwoMembers": "{{first}} и {{second}} влязоха в срещата",
         "connectionFailed": "Връзката се провали. Моля, опитайте отново по-късно!",
         "dataChannelClosed": "Качеството на видеото може да бъде нарушено",
-        "dataChannelClosedDescription": "Каналът на bridge е недостъпен и затова качеството на видеото може да бъде ограничено до най-ниската настройка.",
+        "dataChannelClosedDescription": "Каналът на видео-моста е недостъпен и затова качеството на видеото може да бъде ограничено до най-ниската настройка.",
         "dataChannelClosedDescriptionWithAudio": "Каналът на bridge е недостъпен и затова могат да възникнат прекъсвания в аудиото и видеото.",
         "dataChannelClosedWithAudio": "Качеството на аудиото и видеото може да бъде нарушено",
         "desktopMutedRemotelyTitle": "Споделянето на екрана ви беше спряно от {{participantDisplayName}}",
