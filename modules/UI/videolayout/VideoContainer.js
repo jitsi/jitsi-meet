@@ -4,7 +4,7 @@
 import Logger from '@jitsi/logger';
 import $ from 'jquery';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import { browser } from '../../../react/features/base/lib-jitsi-meet';
 import { FILMSTRIP_BREAKPOINT } from '../../../react/features/filmstrip/constants';
@@ -659,18 +659,33 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
-        ReactDOM.render(
-            <LargeVideoBackground
-                hidden = { this._hideBackground || this._isHidden }
-                mirror = {
-                    this.stream
-                    && this.stream.isLocal()
-                    && this.localFlipX
+        try {
+            if (!this._backgroundRoot) {
+                const container = document.getElementById('largeVideoBackgroundContainer');
+
+                if (container) {
+                    this._backgroundRoot = createRoot(container);
                 }
-                orientationFit = { this._backgroundOrientation }
-                videoElement = { this.video }
-                videoTrack = { this.stream } />,
-            document.getElementById('largeVideoBackgroundContainer')
-        );
+            }
+
+            // Only render if we have a valid root
+            if (this._backgroundRoot) {
+                this._backgroundRoot.render(
+                    <LargeVideoBackground
+                        hidden = { this._hideBackground || this._isHidden }
+                        mirror = {
+                            this.stream
+                            && this.stream.isLocal()
+                            && this.localFlipX
+                        }
+                        orientationFit = { this._backgroundOrientation }
+                        videoElement = { this.video }
+                        videoTrack = { this.stream }
+                    />
+                );
+            }
+        } catch (error) {
+            logger.error('Error rendering large video background:', error);
+        }
     }
 }
