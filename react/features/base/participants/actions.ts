@@ -544,7 +544,7 @@ export function createVirtualScreenshareParticipant(sourceName: string, local: b
  */
 export function participantKicked(kicker: any, kicked: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        console.log('participantKicked', kicker, kicked);
+
         dispatch({
             type: PARTICIPANT_KICKED,
             kicked: kicked?.getId(),
