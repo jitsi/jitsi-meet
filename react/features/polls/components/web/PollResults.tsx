@@ -113,6 +113,7 @@ const PollResults = ({
     changeVote,
     creatorName,
     haveVoted,
+    pollId,
     showDetails,
     question,
     t,
@@ -121,7 +122,9 @@ const PollResults = ({
     const { classes } = useStyles();
 
     return (
-        <div className = { classes.container }>
+        <div
+            className = { classes.container }
+            id = { `poll-${pollId}` }>
             <div className = { classes.header }>
                 <div className = { classes.question }>
                     {question}
@@ -136,7 +139,9 @@ const PollResults = ({
                         <div className = { classes.answerName }>
                             {name}
                         </div>
-                        <div className = { classes.answerResultContainer }>
+                        <div
+                            className = { classes.answerResultContainer }
+                            id = { `poll-result-${pollId}-${index}` }>
                             <span className = { classes.barContainer }>
                                 <div
                                     className = { classes.bar }
@@ -148,8 +153,8 @@ const PollResults = ({
                         </div>
                         {showDetails && voters && voterCount > 0
                         && <ul className = { classes.voters }>
-                            {voters.map(voter =>
-                                <li key = { voter?.id }>{voter?.name}</li>
+                            { voters.map(voter =>
+                                <li key = { voter.id }>{ voter.name }</li>
                             )}
                         </ul>}
                     </li>)

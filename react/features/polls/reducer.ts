@@ -11,7 +11,7 @@ import {
     RESET_NB_UNREAD_POLLS,
     SAVE_POLL
 } from './actionTypes';
-import { IAnswer, IPoll } from './types';
+import { IIncomingAnswerData, IPollData } from './types';
 
 const INITIAL_STATE = {
     polls: {},
@@ -23,7 +23,7 @@ const INITIAL_STATE = {
 export interface IPollsState {
     nbUnreadPolls: number;
     polls: {
-        [pollId: string]: IPoll;
+        [pollId: string]: IPollData;
     };
 }
 
@@ -61,7 +61,7 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
             ...state,
             polls: {
                 ...state.polls,
-                [action.pollId]: action.poll
+                [action.poll.pollId]: action.poll
             },
             nbUnreadPolls: state.nbUnreadPolls + 1
         };
@@ -72,7 +72,7 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
             ...state,
             polls: {
                 ...state.polls,
-                [action.pollId]: action.poll
+                [action.poll.pollId]: action.poll
             }
         };
     }
@@ -81,7 +81,9 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
     // The answer is added  to an existing poll
     case RECEIVE_ANSWER: {
 
-        const { pollId, answer }: { answer: IAnswer; pollId: string; } = action;
+        const { answer }: { answer: IIncomingAnswerData; } = action;
+        const pollId = answer.pollId;
+        const poll = state.polls[pollId];
 
         // if the poll doesn't exist
         if (!(pollId in state.polls)) {
@@ -91,33 +93,22 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
         }
 
         // if the poll exists, we update it with the incoming answer
-        const newAnswers = state.polls[pollId].answers
-            .map(_answer => {
-                // checking if the voters is an array for supporting old structure model
-                const answerVoters = _answer.voters
-                    ? _answer.voters.length
-                        ? [ ..._answer.voters ] : Object.keys(_answer.voters) : [];
-
-                return {
-                    name: _answer.name,
-                    voters: answerVoters
-                };
-            });
-
-
-        for (let i = 0; i < newAnswers.length; i++) {
+        for (let i = 0; i < poll.answers.length; i++) {
             // if the answer was chosen, we add the senderId to the array of voters of this answer
-            const voters = newAnswers[i].voters as any;
+            let voters = poll.answers[i].voters || [];
 
-            const index = voters.indexOf(answer.voterId);
-
-            if (answer.answers[i]) {
-                if (index === -1) {
-                    voters.push(answer.voterId);
+            if (voters.find(user => user.id === answer.senderId)) {
+                if (!answer.answers[i]) {
+                    voters = voters.filter(user => user.id !== answer.senderId);
                 }
-            } else if (index > -1) {
-                voters.splice(index, 1);
+            } else if (answer.answers[i]) {
+                voters.push({
+                    id: answer.senderId,
+                    name: answer.voterName
+                });
             }
+
+            poll.answers[i].voters = voters?.length ? voters : undefined;
         }
 
         // finally we update the state by returning the updated poll
@@ -126,8 +117,8 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
             polls: {
                 ...state.polls,
                 [pollId]: {
-                    ...state.polls[pollId],
-                    answers: newAnswers
+                    ...poll,
+                    answers: [ ...poll.answers ]
                 }
             }
         };
@@ -179,7 +170,7 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { [action.pollId]: _removedPoll, ...newState } = state.polls;
+        const { [action.poll.pollId]: _removedPoll, ...newState } = state.polls;
 
         return {
             ...state,

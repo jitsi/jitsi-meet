@@ -749,6 +749,13 @@ local function iq_from_main_handler(event)
         end
     end
 
+    local pollsEl = node:get_child('polls');
+    if pollsEl then
+        local polls = json.decode(pollsEl:get_text());
+        -- let's find is there a new poll
+        module:fire_event('jitsi-polls-update', { room = room; polls = polls; });
+    end
+
     if fire_jicofo_unlock then
         -- everything is connected allow participants to join
         module:fire_event('jicofo-unlock-room', { room = room; fmuc_fired = true; });
@@ -813,6 +820,36 @@ function route_s2s_stanza(event)
         return;
      end
 end
+
+module:hook('answer-poll', function(answerData)
+    local room = answerData.room;
+    local room_jid = room_jid_match_rewrite(jid.join(jid.node(room.jid), muc_domain_prefix..'.'..main_domain));
+
+    -- now send it to the main prosody
+    local data = {
+        answers = answerData.data.answers;
+        command = 'answer-poll';
+        pollId = answerData.pollId;
+        roomJid = room_jid,
+        senderId = answerData.voterId;
+        senderName = answerData.voterName;
+        type = 'polls';
+    };
+
+    local data_str, error = json.encode(data);
+    if not data_str then
+        module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
+    end
+
+    local stanza = st.message({
+        from = module.host,
+        to = 'polls.'..main_domain
+    })
+    :tag("json-message", { xmlns = "http://jitsi.org/jitmeet"; roomJid = room_jid; })
+    :text(data_str)
+    :up();
+    room:route_stanza(stanza);
+end);
 
 -- routing to sessions in mod_s2s is -1 and -10, we want to hook before that to make sure to is correct
 -- or if we want to filter that stanza
