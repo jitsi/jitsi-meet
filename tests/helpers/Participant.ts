@@ -253,6 +253,7 @@ export class Participant {
             url = `/${options.tenant}/${url}`;
         }
 
+        console.log(`${new Date().toISOString()} ${LOG_PREFIX} url: ${url}`);
         await this.driver.url(url);
 
         await this.waitForPageToLoad();

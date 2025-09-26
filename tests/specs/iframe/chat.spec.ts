@@ -8,7 +8,7 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
-describe('Chat', () => {
+describe('iFrame API for Chat', () => {
     let p1: Participant, p2: Participant;
 
     it('setup', async () => {
@@ -24,7 +24,6 @@ describe('Chat', () => {
 
         await p1.switchToMainFrame();
         await p2.switchToMainFrame();
-
     });
 
     it('send message', async () => {
@@ -57,7 +56,7 @@ describe('Chat', () => {
         } = await p2.getIframeAPI().getEventResult('incomingMessage');
 
         expect(incomingMessageEvent).toEqual({
-            from: p1.getEndpointId(),
+            from: await p1.getEndpointId(),
             message: testMessage,
             nick: p1.name,
             privateMessage: false
@@ -91,8 +90,8 @@ describe('Chat', () => {
     it('private chat', async () => {
         const testMessage = 'Hello private world!';
 
-        await p1.getIframeAPI().executeCommand('initiatePrivateChat', p2.getEndpointId());
-        await p1.getIframeAPI().executeCommand('sendChatMessage', testMessage, p2.getEndpointId());
+        await p1.getIframeAPI().executeCommand('initiatePrivateChat', await p2.getEndpointId());
+        await p1.getIframeAPI().executeCommand('sendChatMessage', testMessage, await p2.getEndpointId());
 
         const incomingMessageEvent = await p2.driver.waitUntil(
             () => p2.getIframeAPI().getEventResult('incomingMessage'), {
@@ -101,7 +100,7 @@ describe('Chat', () => {
             });
 
         expect(incomingMessageEvent).toEqual({
-            from: p1.getEndpointId(),
+            from: await p1.getEndpointId(),
             message: testMessage,
             nick: p1.name,
             privateMessage: true
@@ -151,7 +150,7 @@ async function testSendGroupMessageWithChatOpen(sender: Participant, receiver: P
         });
 
     expect(incomingMessageEvent).toEqual({
-        from: sender.getEndpointId(),
+        from: await sender.getEndpointId(),
         message: testMessage,
         nick: sender.name,
         privateMessage: false

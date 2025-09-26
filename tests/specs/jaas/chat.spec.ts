@@ -13,7 +13,7 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
-describe('Chat', () => {
+describe('JaaS CHAT_UPLOADED webhook.', () => {
     const tenant = testsConfig.jaas.tenant;
     const customerId = tenant?.replace('vpaas-magic-cookie-', '');
     let p1: Participant, p2: Participant;
