@@ -567,7 +567,7 @@
         "downloadFailedTitle": "Изтеглянето е неуспешно",
         "downloadFile": "Изтегли",
         "downloadStarted": "Изтеглянето на файла започна",
-        "dragAndDrop": "Плъзнете и пуснете файлове тук или където и да е на екрана",
+        "dragAndDrop": "Пуснете файлове тук или където и да е на екрана",
         "fileAlreadyUploaded": "Файлът вече е качен в тази среща.",
         "fileTooLargeDescription": "Моля, уверете се, че файлът не превишава {{ maxFileSize }}.",
         "fileTooLargeTitle": "Избраният файл е твърде голям",
