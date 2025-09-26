@@ -1342,7 +1342,7 @@
             "muteEveryoneElsesVideoStream": "Спри видеото на всички останали",
             "muteEveryonesVideoStream": "Спри видеото на всички",
             "muteGUMPending": "Свързване на микрофона ви",
-            "noiseSuppression": "Допълнително потискане на шум (БЕТА)",
+            "noiseSuppression": "Допълнително заглушаване на шум (БЕТА)",
             "openChat": "Отвори чата",
             "participants": "Отвори панела с участници. {{participantsCount}} участници",
             "pip": "Пускане на Картина-в-Картина",
