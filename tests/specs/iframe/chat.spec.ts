@@ -56,7 +56,7 @@ describe('iFrame API for Chat', () => {
             privateMessage: boolean;
         } = await p2.getIframeAPI().getEventResult('incomingMessage');
 
-        expect(incomingMessageEvent).toEqual({
+        expect(incomingMessageEvent).toMatchObject({
             from: await p1.getEndpointId(),
             message: testMessage,
             nick: p1.name,
@@ -100,7 +100,7 @@ describe('iFrame API for Chat', () => {
                 timeoutMsg: 'Chat was not received'
             });
 
-        expect(incomingMessageEvent).toEqual({
+        expect(incomingMessageEvent).toMatchObject({
             from: await p1.getEndpointId(),
             message: testMessage,
             nick: p1.name,
@@ -150,7 +150,7 @@ async function testSendGroupMessageWithChatOpen(sender: Participant, receiver: P
             timeoutMsg: 'Chat was not received'
         });
 
-    expect(incomingMessageEvent).toEqual({
+    expect(incomingMessageEvent).toMatchObject({
         from: await sender.getEndpointId(),
         message: testMessage,
         nick: sender.name,

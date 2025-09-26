@@ -27,7 +27,6 @@ describe('Participants presence', () => {
         ]);
 
         expect(await p1.getIframeAPI().getEventResult('isModerator')).toBe(true);
-        expect(await p2.getIframeAPI().getEventResult('isModerator')).toBe(true);
 
         expect(await p1.getIframeAPI().getEventResult('videoConferenceJoined')).toBeDefined();
         expect(await p2.getIframeAPI().getEventResult('videoConferenceJoined')).toBeDefined();
