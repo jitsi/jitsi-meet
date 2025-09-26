@@ -1,5 +1,6 @@
 import { Participant } from '../helpers/Participant';
 import { setTestProperties } from '../helpers/TestProperties';
+import { config as testsConfig } from '../helpers/TestsConfig';
 import { joinMuc } from '../helpers/joinMuc';
 
 /**
@@ -23,7 +24,7 @@ describe('TileView', () => {
     let p1: Participant, p2: Participant;
 
     before('join the meeting', async () => {
-        p1 = await joinMuc({ name: 'p1' });
+        p1 = await joinMuc({ name: 'p1', token: testsConfig.jwt.preconfiguredToken });
         p2 = await joinMuc({ name: 'p2' });
     });
     it('entering tile view', async () => {

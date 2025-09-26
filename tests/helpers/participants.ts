@@ -27,7 +27,7 @@ export async function ensureOneParticipant(
         // otherwise if private key is not specified we use the access token if set
         if (config.jwt.preconfiguredToken
             && ((jwtPrivateKeyPath && !options?.preferGenerateToken) || !jwtPrivateKeyPath)) {
-            participantOptions.token = { jwt: config.jwt.preconfiguredToken };
+            participantOptions.token = config.jwt.preconfiguredToken;
         } else if (jwtPrivateKeyPath) {
             participantOptions.token = generateToken({
                 ...options?.tokenOptions,

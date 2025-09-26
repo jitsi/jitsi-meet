@@ -54,7 +54,14 @@ export const config = {
     jwt: {
         kid: process.env.JWT_KID?.trim(),
         /** A pre-configured token used by some tests. */
-        preconfiguredToken: process.env.JWT_ACCESS_TOKEN?.trim(),
+        preconfiguredJwt: process.env.JWT_ACCESS_TOKEN?.trim(),
+        preconfiguredToken: (() => {
+            if (process.env.JWT_ACCESS_TOKEN) {
+                return { jwt: process.env.JWT_ACCESS_TOKEN?.trim() };
+            }
+
+            return undefined;
+        })(),
         privateKeyPath: process.env.JWT_PRIVATE_KEY_PATH?.trim()
     },
     roomName: {
