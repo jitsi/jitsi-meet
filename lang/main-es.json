@@ -786,7 +786,8 @@
             "participants": "Participantes",
             "participant": "Participante",
             "upToParticipants": "Hasta {{num}} participantes",
-            "upgrade": "Actualizar"
+            "upgrade": "Actualizar",
+            "upgradeMessage": "Meet no está disponible con tu plan. \nActualiza ahora para empezar a realizar reuniones privadas."
         },
         "joinRoomErrorDialog": {
             "joinRoomError": "No se pudo unir a la reunión",

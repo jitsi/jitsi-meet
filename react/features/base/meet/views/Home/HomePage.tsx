@@ -175,6 +175,7 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
                                     translate={translate}
                                     loading={isStartingMeeting}
                                     className="w-full sm:w-auto"
+                                    displayUpgradeButton={true}
                                 />
                                 {isMeetEnabled && isLogged && (
                                     <Button
