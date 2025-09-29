@@ -31,7 +31,6 @@ const LeftContent = React.memo(
                 <span className="text-lg font-semibold text-white" style={{ fontWeight: 600 }}>
                     Meet
                 </span>
-                <img src={"images/beta.png"} alt="logo" className="h-6" style={{ margin: "0px" }} />
             </div>
         </button>
     )
