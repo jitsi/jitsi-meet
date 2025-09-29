@@ -17,6 +17,7 @@ local filters = require 'util.filters';
 local array = require 'util.array';
 local set = require 'util.set';
 local json = require 'cjson.safe';
+local datetime = require 'util.datetime';
 
 local util = module:require 'util';
 local is_admin = util.is_admin;
@@ -475,6 +476,46 @@ local function message_handler(event)
         stanza.attr.from = stanza.attr.from:sub(1, -(main_domain:len() + 1))..local_domain;
     end
 end
+
+-- Receives history messages from the main prosody and adds them to the local history
+-- this happens before the first participant joins and that participant gets the history using the standard flow on join
+local function history_message_handler(event)
+    local origin, stanza = event.origin, event.stanza;
+
+    local delay_elem = stanza:get_child('delay', 'urn:xmpp:delay');
+    if not delay_elem then
+        return;
+    end
+
+    -- now let's add it history, we do not use the event as we want to keep
+    -- the delay element
+    local room = get_room_from_jid(room_jid_match_rewrite(
+        jid.bare(stanza.attr.from):sub(1, -(main_domain:len() + 1))..local_domain));
+
+    if not room then
+        return;
+    end
+
+    if room:get_historylength() == 0 then
+        return;
+    end
+
+    local history = room._history;
+    if not history then history = {}; room._history = history; end
+
+    local history_stanza = st.clone(stanza);
+    history_stanza.attr.to = '';
+
+    local node, host, resource = jid.split(room_jid_match_rewrite(history_stanza.attr.from));
+    history_stanza.attr.from = jid.join(node, local_muc_domain, resource);
+    -- the from in the delay extension is still the main prosody jid, not used for now
+    local entry = { stanza = history_stanza, timestamp = datetime.parse(delay_elem.attr.stamp) };
+    table.insert(history, entry);
+    while #history > room:get_historylength() do table.remove(history, 1) end
+
+    return false;
+end
+module:hook('message/host', history_message_handler);
 
 process_host_module(local_domain, function(host_module, host)
     host_module:hook('iq/host', stanza_handler, 10);

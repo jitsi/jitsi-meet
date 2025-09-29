@@ -17,6 +17,7 @@ local is_admin = util.is_admin;
 local presence_check_status = util.presence_check_status;
 local process_host_module = util.process_host_module;
 local is_transcriber_jigasi = util.is_transcriber_jigasi;
+local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local json = require 'cjson.safe';
 
 -- Debug flag
@@ -166,6 +167,20 @@ local function connect_vnode(event)
 
     -- send update initially so we can report the moderators that will join
     send_visitors_iq(conference_service, room, 'update');
+
+    -- let's send message history
+    local event = {
+        room = room;
+        to = conference_service;
+        next_stanza = function() end; -- muc-get-history should define this iterator
+    };
+    module:context(main_muc_component_config):fire_event("muc-get-history", event);
+    for msg in event.next_stanza, event do
+        -- the messages stored in history has been stored before domain_mapper and
+        -- contain the virtual jid for a from
+        msg.attr.from = room_jid_match_rewrite(msg.attr.from);
+        room:route_stanza(msg);
+    end
 
     for _, o in room:each_occupant() do
         if not is_admin(o.bare_jid) then
