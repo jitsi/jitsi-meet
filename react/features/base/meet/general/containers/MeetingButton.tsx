@@ -35,7 +35,7 @@ interface MeetingButtonProps {
      * Whether to display the upgrade button
      * @default false
      * */
-    displayUpgradeButton: boolean;
+    displayUpgradeButton?: boolean;
 }
 
 /**
