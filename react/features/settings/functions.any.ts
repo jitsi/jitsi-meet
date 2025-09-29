@@ -151,12 +151,11 @@ export function getModeratorTabProps(stateful: IStateful) {
     const state = toState(stateful);
     const {
         conference,
-        followMeEnabled,
-        followMeRecorderEnabled,
         startAudioMutedPolicy,
         startVideoMutedPolicy,
         startReactionsMuted
     } = state['features/base/conference'];
+    const { followMeEnabled, followMeRecorderEnabled } = state['features/follow-me'];
     const { groupChatWithPermissions } = state['features/chat'];
     const { disableReactionsModeration } = state['features/base/config'];
     const followMeActive = isFollowMeActive(state);

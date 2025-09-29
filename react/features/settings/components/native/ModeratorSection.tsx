@@ -3,13 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import {
-    setFollowMe,
-    setFollowMeRecorder,
     setStartMutedPolicy,
     setStartReactionsMuted
 } from '../../../base/conference/actions';
 import { updateSettings } from '../../../base/settings/actions';
 import Switch from '../../../base/ui/components/native/Switch';
+import { setFollowMe, setFollowMeRecorder } from '../../../follow-me/actions';
 import { getModeratorTabProps } from '../../functions.native';
 
 import FormRow from './FormRow';
