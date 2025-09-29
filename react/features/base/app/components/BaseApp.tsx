@@ -8,6 +8,7 @@ import { compose, createStore } from 'redux';
 import Thunk from 'redux-thunk';
 
 import { IStore } from '../../../app/types';
+import { registerRecordingAudioFiles } from '../../../recording/functions';
 import i18next from '../../i18n/i18next';
 import MiddlewareRegistry from '../../redux/MiddlewareRegistry';
 import PersistenceRegistry from '../../redux/PersistenceRegistry';
@@ -143,7 +144,17 @@ export default class BaseApp<P> extends Component<P, IState> {
      *
      * @returns {void}
      */
-    _extraInit() {
+    async _extraInit() {
+        // Register sounds early to prevent timing issues
+        if (this.state.store) {
+            console.log('BaseApp._extraInit: Registering recording sounds early');
+            registerRecordingAudioFiles(this.state.store.dispatch);
+
+            // Give Redux a chance to process the registration actions
+            await new Promise(resolve => setTimeout(resolve, 10));
+        } else {
+            console.log('BaseApp._extraInit: Store not available yet');
+        }
         // To be implemented by subclass.
     }
 
