@@ -378,14 +378,13 @@ function Util:verify_room(session, room_address)
     -- extract room name using all chars, except the not allowed ones
     local room,_,_ = jid.split(room_address);
     if room == nil then
-        log("error",
-            "Unable to get name of the MUC room ? to: %s", room_address);
-        return true;
+        module:log('error', 'Unable to get name of the MUC room ? to: %s', room_address);
+        return false, 'invalid-room-address', 'Room address is invalid';
     end
     local room_instance = get_room_from_jid(jid.join(room, self.muc_domain));
     if not room_instance then
         module:log('info', 'Room does not exists:%s %s', room, debug.traceback());
-        return false;
+        return false, 'room-does-not-exist', 'Room does not exist';
     end
 
     if self.allowEmptyToken and session.auth_token == nil then
@@ -403,11 +402,11 @@ function Util:verify_room(session, room_address)
             module:log('warn', 'session.jitsi_meet_room not string: %s', inspect(auth_room));
         end
     end
+
     if not self.enableDomainVerification then
-        -- if auth_room is missing, this means user is anonymous (no token for
-        -- its domain) we let it through, jicofo is verifying creation domain
+        -- if auth_room is missing, this means user is anonymous (no token for its domain) we let it through
         if auth_room and (room ~= auth_room and not ends_with(room, ']'..auth_room)) and auth_room ~= '*' then
-            return false;
+            return false, 'room-mismatch', 'Room does not match the room from token';
         end
 
         return true;
@@ -447,7 +446,7 @@ function Util:verify_room(session, room_address)
             -- not a regex
             room_to_check = auth_room;
         end
-        -- module:log("debug", "room to check: %s", room_to_check)
+
         if not room_to_check then
             if not self.requireRoomClaim then
                 -- if we do not require to have the room claim, and it is missing
@@ -455,7 +454,7 @@ function Util:verify_room(session, room_address)
                 return true;
             end
 
-            return false;
+            return false, 'room-name-does-not-match', 'Room name cannot be matched to the one from token.';
         end
     end
 
@@ -487,7 +486,7 @@ function Util:verify_room(session, room_address)
         -- deny access if option is missing
         if not self.muc_domain_base then
             module:log("warn", "No 'muc_domain_base' option set, denying access!");
-            return false;
+            return false, 'server-missing-config', 'Misconfiguration of server';
         end
 
         return room_address_to_verify == jid.join(
