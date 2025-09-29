@@ -206,7 +206,7 @@ const RightContent = React.memo(
                                 <PlanBadge planName={planName} />
                                 {showUpgrade && (
                                     <TextButton
-                                        onClick={() => window.open("https://internxt.com/es/pricing", "_blank")}
+                                        onClick={() => window.open("https://internxt.com/pricing", "_blank")}
                                         text={translate("meet.preMeeting.upgrade")}
                                         icon={ArrowSquareOut}
                                     />

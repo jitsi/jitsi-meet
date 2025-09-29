@@ -69,7 +69,7 @@ const MeetingButton: React.FC<MeetingButtonProps> = ({
             <div className="flex flex-row items-center space-x-3">
                 <Button
                     variant={variant}
-                    onClick={() => window.open("https://internxt.com/es/pricing", "_blank")}
+                    onClick={() => window.open("https://internxt.com/pricing", "_blank")}
                     disabled={loading}
                     loading={loading}
                     className={className}
