@@ -2,7 +2,7 @@ name: Auto-translate Bulgarian
 
 on:
   push:
-    branches: [master]
+    branches: [master, gh-action-auto-translate-bg]
     paths:
       - 'lang/main.json'
 
