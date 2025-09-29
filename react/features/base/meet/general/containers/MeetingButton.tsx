@@ -1,4 +1,5 @@
 import { Button } from "@internxt/ui";
+import { ArrowSquareOut } from "@phosphor-icons/react";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useUserData } from "../../views/PreMeeting/hooks/useUserData";
@@ -56,7 +57,21 @@ const MeetingButton: React.FC<MeetingButtonProps> = ({
             </Button>
         );
     } else {
-        return null;
+        return (
+            <Button
+                variant={variant}
+                onClick={() => window.open("https://internxt.com/es/pricing", "_blank")}
+                disabled={loading}
+                loading={loading}
+                className={className}
+            >
+                {translate("meet.preMeeting.upgrade")}
+                <ArrowSquareOut
+                    size={20}
+                    className="ml-2 text-white"
+                />
+            </Button>
+        );
     }
 };
 
