@@ -233,7 +233,8 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
                                 onChange={() => super._onChange({ localFlipX: !localFlipX })}
                             />
                         </div>
-                        {this._renderFramerateSelect()}
+                        {/* The frame rate selector is currently hidden as we have not enabled screen sharing in Meet. */}
+                        {/* {this._renderFramerateSelect()} */}
                     </>
                 )}
             </div>
