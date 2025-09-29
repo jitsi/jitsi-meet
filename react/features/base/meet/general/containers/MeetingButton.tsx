@@ -30,6 +30,12 @@ interface MeetingButtonProps {
      * Button variant
      */
     variant?: "primary" | "secondary" | "tertiary";
+
+    /**
+     * Whether to display the upgrade button
+     * @default false
+     * */
+    displayUpgradeButton: boolean;
 }
 
 /**
@@ -42,6 +48,7 @@ const MeetingButton: React.FC<MeetingButtonProps> = ({
     loading = false,
     className = "",
     variant = "primary",
+    displayUpgradeButton = false,
 }) => {
     const isMeetEnabled = useSelector(isMeetingEnabled);
     const isLogged = !!useUserData();
@@ -58,7 +65,7 @@ const MeetingButton: React.FC<MeetingButtonProps> = ({
             </Button>
         );
     } else {
-        return (
+        return displayUpgradeButton ? (
             <div className="flex flex-row items-center space-x-3">
                 <Button
                     variant={variant}
@@ -69,6 +76,7 @@ const MeetingButton: React.FC<MeetingButtonProps> = ({
                 >
                     {translate("meet.preMeeting.upgrade")}
                 </Button>
+
                 <div
                     className="relative flex items-center"
                     onMouseEnter={() => setShowTooltip(true)}
@@ -88,7 +96,7 @@ const MeetingButton: React.FC<MeetingButtonProps> = ({
                     )}
                 </div>
             </div>
-        );
+        ) : null;
     }
 };
 
