@@ -19,8 +19,6 @@ import {
     endConference,
     sendTones,
     setAssumedBandwidthBps,
-    setFollowMe,
-    setFollowMeRecorder,
     setLocalSubject,
     setPassword,
     setSubject
@@ -91,6 +89,7 @@ import {
     togglePinStageParticipant
 } from '../../react/features/filmstrip/actions.web';
 import { getPinnedActiveParticipants, isStageFilmstripAvailable } from '../../react/features/filmstrip/functions.web';
+import { setFollowMe, setFollowMeRecorder } from '../../react/features/follow-me/actions';
 import { invite } from '../../react/features/invite/actions.any';
 import {
     selectParticipantInLargeVideo
