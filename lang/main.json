@@ -839,7 +839,8 @@
             "participants": "Participants",
             "participant": "Participant",
             "upToParticipants": "Up to {{num}} participants",
-            "upgrade": "Upgrade"
+            "upgrade": "Upgrade",
+            "upgradeMessage": "Meet is not available with your plan. \nUpgrade now to start private meetings."
         },
         "joinRoomErrorDialog": {
             "joinRoomError": "Unable to join meeting",
