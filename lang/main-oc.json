@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Ajustar un ligam de reünion",
-        "confirmAddLink": "Volètz ajustar un ligam Jitsi cap a aqueste eveniment ?",
+        "confirmAddLink": "Volètz ajustar un ligam Sonacove cap a aqueste eveniment ?",
         "error": {
             "appConfiguration": "L’integracion del calendièr es pas corrèctament configurada.",
             "generic": "Una error s’es producha. Verificatz vòstres paramètres de calendièr o ensajatz de l’actualizar.",
@@ -535,7 +535,7 @@
         "answer": "Uèi",
         "audioCallTitle": "Sonada entranta",
         "decline": "Regetar",
-        "productLabel": "de Jitsi Meet estant",
+        "productLabel": "de Sonacove Meets estant",
         "videoCallTitle": "Sonada vidèo entranta"
     },
     "info": {
@@ -747,7 +747,7 @@
         "dataChannelClosedDescriptionWithAudio": "Lo canal pont es indisponible, alara de perturbacion de l'àudio e de la vidèo pòdon arribar.",
         "dataChannelClosedWithAudio": "La qualitat de l'àudio e de la vidèo pòt èsser deteriorada",
         "disabledIframe": "L'integracion d'iframe es sonque destinada a las demonstracion, aquesta sonada s'acabarà d'aquí {{timeout}} minutas.",
-        "disabledIframeSecondary": "L'integracion d'iframe de {{domain}} es sonque destinada a las demonstracion, aquesta sonada s'acabarà d'aquí {{timeout}} minutas. Mercés d'utilizar <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi coma servici</a> per una integracion en produccion.",
+        "disabledIframeSecondary": "L'integracion d'iframe de {{domain}} es sonque destinada a las demonstracion, aquesta sonada s'acabarà d'aquí {{timeout}} minutas. Mercés d'utilizar <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Sonacove coma servici</a> per una integracion en produccion.",
         "disconnected": "desconnectat",
         "displayNotifications": "Afichar las notificacions per",
         "dontRemindMe": "Lo me rapelar pas",
@@ -799,7 +799,7 @@
         "noiseSuppressionDesktopAudioDescription": "La supression del bruch se pòt pas activat a l'encòp que lo partiment de l'àudio del sistèma, volgatz lo desactivar e tornar ensajar.",
         "noiseSuppressionFailedTitle": "Fracàs de l'aviada de la supression del bruch",
         "noiseSuppressionStereoDescription": "La supression del bruch d'una font estereo es pas encara suportada.",
-        "oldElectronClientDescription1": "Sembla qu’utilizatz una version anciana del client Jitsi Meet qu’es conegut per conténer de problèmas de seguretat. Mercés de vos assegurar de metre a jorn ",
+        "oldElectronClientDescription1": "Sembla qu’utilizatz una version anciana del client Sonacove Meets qu’es conegut per conténer de problèmas de seguretat. Mercés de vos assegurar de metre a jorn ",
         "oldElectronClientDescription2": "darrièra compilacion",
         "oldElectronClientDescription3": " ara !",
         "participantWantsToJoin": "Vòl rejónher la reünion",
@@ -972,6 +972,141 @@
         "linkCopied": "Ligam copiat al quichapapièrs",
         "lookGood": "Sembla que lo microfòn fonciona pas coma cal",
         "or": "o",
+        "permissionsGuide": {
+            "close": "Tampar",
+            "detected": "Detectat :",
+            "deviceHelp": {
+                "Android": [
+                    "Dobrir los paramètres del telefòn.",
+                    "Tocar sus «Aplicacions» > vòstre navegador (per exemple Chrome o Brave).",
+                    "Tocar sus «Permissiús».",
+                    "Permetre l'accès a la camèra e al microfòn.",
+                    "Reeniciar lo navegador e tornar ensajar."
+                ],
+                "iOS": [
+                    "Dobrir los paramètres iOS.",
+                    "Desplaçar a la basa e seleccionar vòstre navegador (per exemple Safari o Chrome).",
+                    "Tocar sus «Camèra» e «Microfòn».",
+                    "Ajustar los dos sus «Permetre».",
+                    "Tornar al navegador e recargar la pagina."
+                ]
+            },
+            "howToAllow": "Cossí autorizar l'accès :",
+            "needHelp": "Besonh d'ajuda ?",
+            "steps": {
+                "Brave_Android": [
+                    "Clickatz sul simbòl <0>Tune</0> al costat de l'URL.",
+                    "Tocatz 'Permissions'.",
+                    "Autorizar la camèra e lo micròfon.",
+                    "Recarregatz la pagina."
+                ],
+                "Brave_Linux": [
+                    "Clickatz sul simbòl <0>Tune</0> dins la barra d'adreça.",
+                    "Autorizar la camèra e lo micròfon dins la lista de permissions.",
+                    "Recarregatz la pagina."
+                ],
+                "Brave_Windows": [
+                    "Clickatz sul simbòl <0>Tune</0> dins la barra d'adreça.",
+                    "Activatz micròfon e camèra.",
+                    "Recarregatz la pagina."
+                ],
+                "Brave_iOS": [
+                    "Dubrir los paramètres iOS > Brave.",
+                    "Tocatz 'Camèra' e 'Micròfon'.",
+                    "Metètz los a 'Autorizar'.",
+                    "Tornatz a Brave e rechargatz la pagina."
+                ],
+                "Brave_macOS": [
+                    "Clickatz sul simbòl <0>Tune</0> dins la barra d'adreça.",
+                    "Activatz camèra e micròfon dins los paramètres de permissions.",
+                    "Recarregatz la pagina."
+                ],
+                "Chrome_Android": [
+                    "Clickatz sul simbòl <0>Tune</0> dins la barra d'adreça.",
+                    "Seleccionatz 'Permissions'.",
+                    "Metètz 'Camèra' e 'Micròfon' a 'Autorizar'."
+                ],
+                "Chrome_Linux": [
+                    "Clickatz sus l'icòna de cadeat al costat de l'URL dins la barra d'adreça.",
+                    "Clickatz sus 'Paramètres del siti web'.",
+                    "Autorizar la camèra e lo micròfon.",
+                    "Recarregatz la pagina."
+                ],
+                "Chrome_Windows": [
+                    "Clickatz sul simbòl <0>Tune</0> dins la barra d'adreça.",
+                    "Clickatz sus 'Paramètres del siti web'.",
+                    "Autorizar la camèra e lo micròfon dins 'Permissions'."
+                ],
+                "Chrome_iOS": [
+                    "Dubrir los paramètres d’iOS > Chrome.",
+                    "Tocatz 'Camèra' e 'Micròfon'.",
+                    "Metètz los a 'Autorizar'.",
+                    "Tornatz a Chrome e rechargatz la pagina."
+                ],
+                "Chrome_macOS": [
+                    "Clickatz sul simbòl <0>Tune</0> dins la barra d'adreça.",
+                    "Clickatz sus 'Paramètres del siti web'.",
+                    "Autorizar la camèra e lo micròfon dins 'Permissions'."
+                ],
+                "Edge_Windows": [
+                    "Clickatz sus l'icòna de cadeat al costat de l'URL.",
+                    "Autorizar la camèra e lo micròfon.",
+                    "Recarregatz la pagina."
+                ],
+                "Edge_macOS": [
+                    "Clickatz sul simbòl <0>Tune</0> dins la barra d'adreça.",
+                    "Metètz camèra e micròfon a 'Autorizar'."
+                ],
+                "Firefox_Android": [
+                    "Tocatz l'icòna de cadeat al costat de la barra d'URL.",
+                    "Tocatz 'Modificar los paramètres de la pagina'.",
+                    "Autorizar la camèra e lo micròfon.",
+                    "Recarregatz la pagina."
+                ],
+                "Firefox_Linux": [
+                    "Clickatz sus l'icòna de cadeat al costat de la barra d'adreça.",
+                    "Clickatz sus 'Mai d'informacions'.",
+                    "Autorizar la camèra e lo micròfon dins las permissions.",
+                    "Recarregatz la pagina."
+                ],
+                "Firefox_Windows": [
+                    "Clickatz sul simbòl <0>Tune</0> al costat de l'URL.",
+                    "Activatz micròfon e camèra.",
+                    "Recarregatz la pagina."
+                ],
+                "Firefox_iOS": [
+                    "Dubrir los paramètres iOS > Firefox.",
+                    "Activatz camèra e micròfon.",
+                    "Tornatz a Firefox e rechargatz la pagina."
+                ],
+                "Firefox_macOS": [
+                    "Clickatz sul simbòl <0>Tune</0> al costat de l'URL.",
+                    "Clickatz sus la frecha > 'Mai d'informacions'.",
+                    "Anatz dins l'onglet 'Permissions'.",
+                    "Autorizar la camèra e lo micròfon.",
+                    "Recarregatz la pagina."
+                ],
+                "Safari_iOS": [
+                    "Anatz dins los paramètres iOS > Safari.",
+                    "Tocatz 'Camèra' e 'Micròfon'.",
+                    "Metètz los a 'Autorizar'.",
+                    "Tornatz a Safari e rechargatz la pagina."
+                ],
+                "Safari_macOS": [
+                    "Clickatz sus 'Safari' dins la barra de menús > 'Paramètres per aqueste siti web'.",
+                    "Metètz camèra e micròfon a 'Autorizar'.",
+                    "Recarregatz la pagina."
+                ],
+                "default": [
+                    "Dubrir los paramètres del navegador.",
+                    "Cercatz la seccion 'Confidencialitat' o 'Permissions'.",
+                    "Activatz camèra e micròfon per aquel siti.",
+                    "Recarregatz la pagina."
+                ]
+            },
+            "stillNotWorking": "Fonciona pas encara ?",
+            "title": "Activar lo micròfon e la camèra"
+        },
         "premeeting": "Prereünion",
         "proceedAnyway": "Contunhar malgrat tot",
         "recordingWarning": "D'autres participants pòdon enregistrar aquesta sonada",
@@ -1091,6 +1226,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Messatge dintrant",
+        "KNOCKING_PARTICIPANT_SOUND": "Lo participant es dintrat dins la sala d'espèra",
+        "PARTICIPANT_JOINED_SOUND": "Lo participant a rejonch",
+        "PARTICIPANT_LEFT_SOUND": "Lo participant es partit",
+        "TALK_WHILE_MUTED_SOUND": "Parlar en mut",
         "audio": "Àudio",
         "buttonLabel": "Paramètres",
         "calendar": {
@@ -1107,7 +1247,6 @@
         "followMe": "Tot lo mond me sèc",
         "followMeRecorder": "L'enregistrador me seguís",
         "framesPerSecond": "frames-per-second",
-        "incomingMessage": "Messatge dintrant",
         "language": "Lenga",
         "loggedIn": "Session a {{name}}",
         "maxStageParticipants": "Nombre maximal de participants que se pòt penjar a la scèna principala",
@@ -1118,9 +1257,6 @@
         "name": "Escais",
         "noDevice": "Pas cap",
         "notifications": "Notificacions",
-        "participantJoined": "Lo participant a rejonch",
-        "participantKnocking": "Lo participant es dintrat dins la sala d'espèra",
-        "participantLeft": "Lo participant es partit",
         "playSounds": "Lectura dels sons activa",
         "reactions": "Reaccions de la reünion",
         "sameAsSystem": "Coma pel sistèma ({{label}})",
@@ -1133,7 +1269,6 @@
         "startAudioMuted": "Començan totes sens son",
         "startReactionsMuted": "Començan totes amb las reaccions sonòras amudidas",
         "startVideoMuted": "Començan totes sens vidèo",
-        "talkWhileMuted": "Parlar en mut",
         "title": "Paramètres",
         "video": "Vidèo"
     },
@@ -1540,15 +1675,15 @@
         "go": "Crear",
         "goSmall": "Crear",
         "headerSubtitle": "Reünions securizadas e de aauta qualitat",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Infor",
-        "jitsiOnMobile": "Jitsi sus mobil – telecargatz nòstra aplicacion e començatz de reünions de pertot",
+        "jitsiOnMobile": "Sonacove sus mobil – telecargatz nòstra aplicacion e començatz de reünions de pertot",
         "join": "CREAR / REJÓNHER",
         "logo": {
             "calendar": "Logotipe Calendar",
             "desktopPreviewThumbnail": "Vinheta d'apercebut del burèu",
             "googleLogo": "Logotipe Google",
-            "logoDeepLinking": "Logotipe Jitsi meet",
+            "logoDeepLinking": "Logotipe Sonacove Meets",
             "microsoftLogo": "Logotipe Microsoft",
             "policyLogo": "Logotipe de la politica"
         },

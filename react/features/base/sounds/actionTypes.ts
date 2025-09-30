@@ -1,4 +1,14 @@
 /**
+ * The type of (redux) action to mute or unmute a sound.
+ *
+ * {
+ *     type: MUTE_SOUND,
+ *     soundId: string,
+ *     isMuted: boolean
+ * }
+ */
+export const MUTE_SOUND = 'MUTE_SOUND';
+/**
  * The type of a feature/internal/protected (redux) action to add an audio
  * element to the sounds collection state.
  *

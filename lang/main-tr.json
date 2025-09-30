@@ -534,7 +534,7 @@
         "answer": "Cevapla",
         "audioCallTitle": "Gelen sesli arama",
         "decline": "Reddet",
-        "productLabel": "Jitsi Meet'den",
+        "productLabel": "Sonacove Meets'den",
         "videoCallTitle": "Gelen görüntülü arama"
     },
     "info": {
@@ -744,7 +744,7 @@
         "dataChannelClosedDescriptionWithAudio": "Köprü kanalı kapalı olduğu için ses ve video kesintileri yaşanabilir.",
         "dataChannelClosedWithAudio": "Ses ve video kalitesi etkilenebilir.",
         "disabledIframe": "Yerleştirme yalnızca demo amaçlı olduğundan bu çağrının bağlantısı {{timeout}} dakika içinde kesilecek.",
-        "disabledIframeSecondary": "{{domain}} alanının yerleştirilmesi yalnızca demo amaçlı olduğundan bu çağrının bağlantısı {{timeout}} dakika içinde kesilecektir. Üretim yerleştirme için lütfen <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Hizmet olarak Jitsi</a>'yi kullanın!",
+        "disabledIframeSecondary": "{{domain}} alanının yerleştirilmesi yalnızca demo amaçlı olduğundan bu çağrının bağlantısı {{timeout}} dakika içinde kesilecektir. Üretim yerleştirme için lütfen <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Hizmet olarak Sonacove</a>'yi kullanın!",
         "disconnected": "Bağlantı kesildi",
         "displayNotifications": "Bildirimleri görüntüle",
         "dontRemindMe": "Bana hatırlatma",
@@ -793,7 +793,7 @@
         "noiseSuppressionDesktopAudioDescription": "Masaüstü sesi paylaşılırken gürültü bastırma etkinleştirilemez, lütfen devre dışı bırakın ve tekrar deneyin.",
         "noiseSuppressionFailedTitle": "Gürültü bastırma başlatılamadı",
         "noiseSuppressionStereoDescription": "Stereo ses gürültü bastırma şu anda desteklenmemektedir.",
-        "oldElectronClientDescription1": "Güvenlik açıkları bilinen Jitsi Meet istemcisinin eski bir sürümünü kullanıyor görünüyorsunuz. Lütfen güncellediğinizden emin olun.",
+        "oldElectronClientDescription1": "Güvenlik açıkları bilinen Sonacove Meets istemcisinin eski bir sürümünü kullanıyor görünüyorsunuz. Lütfen güncellediğinizden emin olun.",
         "oldElectronClientDescription2": "Son yapı",
         "oldElectronClientDescription3": " Şimdi!",
         "participantWantsToJoin": "toplantıya katılmak istiyor",
@@ -966,6 +966,141 @@
         "linkCopied": "Bağlantı panoya kopyalandı",
         "lookGood": "Mikrofonunuz düzgün çalışıyor gibi görünüyor",
         "or": "veya",
+        "permissionsGuide": {
+            "close": "Kapat",
+            "detected": "Algılandı:",
+            "deviceHelp": {
+                "Android": [
+                    "Telefonunuzun Ayarlarını açın.",
+                    "\"Uygulamalar\" > tarayıcınız (örneğin Chrome veya Brave) seçeneğine dokunun.",
+                    "\"İzinler\"e dokunun.",
+                    "Kamera ve Mikrofon erişimine izin verin.",
+                    "Tarayıcıyı yeniden başlatın ve tekrar deneyin."
+                ],
+                "iOS": [
+                    "iOS Ayarlarını açın.",
+                    "Aşağı kaydırarak tarayıcınızı seçin (örneğin Safari veya Chrome).",
+                    "\"Kamera\" ve \"Mikrofon\"a dokunun.",
+                    "İkisini de \"İzin Ver\" olarak ayarlayın.",
+                    "Tarayıcıya geri dönün ve sayfayı yenileyin."
+                ]
+            },
+            "howToAllow": "Erişime izin vermek için:",
+            "needHelp": "Yardıma mı ihtiyacınız var?",
+            "steps": {
+                "Brave_Android": [
+                    "URL'nin yanındaki <0>Tune</0> simgesine tıklayın.",
+                    "'İzinler'e dokunun.",
+                    "Kamera ve mikrofonu etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Brave_Linux": [
+                    "Adres çubuğundaki <0>Tune</0> simgesine tıklayın.",
+                    "İzin listesinden kamera ve mikrofonu etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Brave_Windows": [
+                    "Adres çubuğundaki <0>Tune</0> simgesine tıklayın.",
+                    "Mikrofon ve kamerayı etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Brave_iOS": [
+                    "iOS Ayarları > Brave'i açın.",
+                    "'Kamera' ve 'Mikrofon'a dokunun.",
+                    "'İzin Ver' olarak ayarlayın.",
+                    "Brave'e geri dönün ve sayfayı yenileyin."
+                ],
+                "Brave_macOS": [
+                    "Adres çubuğundaki <0>Tune</0> simgesine tıklayın.",
+                    "İzin ayarlarında kamera ve mikrofonu etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Chrome_Android": [
+                    "Adres çubuğundaki <0>Tune</0> simgesine tıklayın.",
+                    "'İzinler'i seçin.",
+                    "'Kamera' ve 'Mikrofon'u 'İzin Ver' olarak ayarlayın."
+                ],
+                "Chrome_Linux": [
+                    "URL'nin yanındaki kilit simgesine tıklayın.",
+                    "'Site Ayarları'na tıklayın.",
+                    "Kamera ve mikrofonu etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Chrome_Windows": [
+                    "Adres çubuğundaki <0>Tune</0> simgesine tıklayın.",
+                    "'Site Ayarları'na tıklayın.",
+                    "'İzinler' altında kamera ve mikrofonu etkinleştirin."
+                ],
+                "Chrome_iOS": [
+                    "iOS Ayarları > Chrome'u açın.",
+                    "'Kamera' ve 'Mikrofon'a dokunun.",
+                    "'İzin Ver' olarak ayarlayın.",
+                    "Chrome'a geri dönün ve sayfayı yenileyin."
+                ],
+                "Chrome_macOS": [
+                    "Adres çubuğundaki <0>Tune</0> simgesine tıklayın.",
+                    "'Site Ayarları'na tıklayın.",
+                    "'İzinler' altında kamera ve mikrofonu etkinleştirin."
+                ],
+                "Edge_Windows": [
+                    "URL'nin yanındaki kilit simgesine tıklayın.",
+                    "Kamera ve mikrofonu etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Edge_macOS": [
+                    "Adres çubuğundaki <0>Tune</0> simgesine tıklayın.",
+                    "Kamera ve mikrofonu 'İzin Ver' olarak ayarlayın."
+                ],
+                "Firefox_Android": [
+                    "URL çubuğundaki kilit simgesine dokunun.",
+                    "'Site Ayarlarını Düzenle'ye dokunun.",
+                    "Kamera ve mikrofonu etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Firefox_Linux": [
+                    "Adres çubuğundaki kilit simgesine tıklayın.",
+                    "'Daha Fazla Bilgi'ye tıklayın.",
+                    "'İzinler' altında kamera ve mikrofonu etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Firefox_Windows": [
+                    "URL'nin yanındaki <0>Tune</0> simgesine tıklayın.",
+                    "Mikrofon ve kamerayı etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Firefox_iOS": [
+                    "iOS Ayarları > Firefox'u açın.",
+                    "Kamera ve mikrofonu etkinleştirin.",
+                    "Firefox'a geri dönün ve sayfayı yenileyin."
+                ],
+                "Firefox_macOS": [
+                    "URL'nin yanındaki <0>Tune</0> simgesine tıklayın.",
+                    "Açılır oka ve 'Daha Fazla Bilgi'ye tıklayın.",
+                    "'İzinler' sekmesine gidin.",
+                    "Kamera ve mikrofonu etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ],
+                "Safari_iOS": [
+                    "iOS Ayarları > Safari'ye gidin.",
+                    "'Kamera' ve 'Mikrofon'a dokunun.",
+                    "'İzin Ver' olarak ayarlayın.",
+                    "Safari'ye geri dönün ve sayfayı yenileyin."
+                ],
+                "Safari_macOS": [
+                    "'Safari' menüsünde 'Bu Web Sitesi Ayarları'nı tıklayın.",
+                    "Kamera ve mikrofonu 'İzin Ver' olarak ayarlayın.",
+                    "Sayfayı yenileyin."
+                ],
+                "default": [
+                    "Tarayıcı ayarlarını açın.",
+                    "'Gizlilik' veya 'İzinler' bölümünü bulun.",
+                    "Bu site için kamera ve mikrofonu etkinleştirin.",
+                    "Sayfayı yenileyin."
+                ]
+            },
+            "stillNotWorking": "Hala çalışmıyor mu?",
+            "title": "Mikrofon ve Kamerayı Açın"
+        },
         "premeeting": "Toplantı öncesi",
         "proceedAnyway": "Yine de devam et",
         "recordingWarning": "Diğer katılımcılar bu çağrıyı kaydediyor olabilir",
@@ -1084,6 +1219,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Gelen mesaj",
+        "KNOCKING_PARTICIPANT_SOUND": "Katılımcı lobiye girdi",
+        "PARTICIPANT_JOINED_SOUND": "Katılımcı katıldı",
+        "PARTICIPANT_LEFT_SOUND": "Katılımcı ayrıldı",
+        "TALK_WHILE_MUTED_SOUND": "Sesi kapalıyken konuş",
         "audio": "Ses",
         "buttonLabel": "Ayarlar",
         "calendar": {
@@ -1100,7 +1240,6 @@
         "followMe": "Beni takip edenler",
         "followMeRecorder": "Kaydedici beni takip etsin",
         "framesPerSecond": "kare/saniye",
-        "incomingMessage": "Gelen mesaj",
         "language": "Dil",
         "loggedIn": "{{name}} olarak giriş yapıldı",
         "maxStageParticipants": "Ana ekrana sabitlenecek maksimum katılımcı sayısı",
@@ -1111,9 +1250,6 @@
         "name": "Ad",
         "noDevice": "Yok",
         "notifications": "Bildirimler",
-        "participantJoined": "Katılımcı katıldı",
-        "participantKnocking": "Katılımcı lobiye girdi",
-        "participantLeft": "Katılımcı ayrıldı",
         "playSounds": "Sesi çal",
         "reactions": "Toplantı reaksiyonları",
         "sameAsSystem": "Sistemle aynı ({{label}})",
@@ -1126,7 +1262,6 @@
         "startAudioMuted": "Herkes ses kapalı başlasın",
         "startReactionsMuted": "Reaksiyon seslerini herkes için kapat",
         "startVideoMuted": "Herkes görüntü kapalı başlasın",
-        "talkWhileMuted": "Sesi kapalıyken konuş",
         "title": "Ayarlar",
         "video": "Video"
     },
@@ -1530,15 +1665,15 @@
         "go": "GİT",
         "goSmall": "GİT",
         "headerSubtitle": "Güvenli ve yüksek kaliteli toplantılar",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Bilgi",
-        "jitsiOnMobile": "Mobil'de Jitsi – uygulamalarımızı indirin ve her yerden bir toplantı başlatın",
+        "jitsiOnMobile": "Mobil'de Sonacove – uygulamalarımızı indirin ve her yerden bir toplantı başlatın",
         "join": "KATIL",
         "logo": {
             "calendar": "Takvim logo",
             "desktopPreviewThumbnail": "Masaüstü önizleme küçük resmi",
             "googleLogo": "Google Logo",
-            "logoDeepLinking": "Jitsi meet logo",
+            "logoDeepLinking": "Sonacove Meets logo",
             "microsoftLogo": "Microsoft logo",
             "policyLogo": "Politika logo"
         },

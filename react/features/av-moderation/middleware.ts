@@ -20,7 +20,7 @@ import {
 } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
+import SoundService from '../base/sounds/components/SoundService';
 import { hideNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { muteLocal } from '../video-menu/actions.any';
@@ -73,11 +73,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     switch (type) {
     case APP_WILL_MOUNT: {
-        dispatch(registerSound(ASKED_TO_UNMUTE_SOUND_ID, ASKED_TO_UNMUTE_FILE));
+        SoundService.register(ASKED_TO_UNMUTE_SOUND_ID, ASKED_TO_UNMUTE_FILE);
         break;
     }
     case APP_WILL_UNMOUNT: {
-        dispatch(unregisterSound(ASKED_TO_UNMUTE_SOUND_ID));
+        SoundService.unregister(ASKED_TO_UNMUTE_SOUND_ID);
         break;
     }
     case LOCAL_PARTICIPANT_MODERATION_NOTIFICATION: {
@@ -277,7 +277,7 @@ StateListenerRegistry.register(
                     uid: ASKED_TO_UNMUTE_NOTIFICATION_ID
                 }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 
-                dispatch(playSound(ASKED_TO_UNMUTE_SOUND_ID));
+                SoundService.play(ASKED_TO_UNMUTE_SOUND_ID, getState());
             });
 
             conference.on(JitsiConferenceEvents.AV_MODERATION_REJECTED, ({ mediaType }: { mediaType: MediaType; }) => {

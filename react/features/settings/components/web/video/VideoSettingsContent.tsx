@@ -125,7 +125,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         label: {
-            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            backgroundColor: theme.palette.ui04,
             borderRadius: '4px',
             padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
             color: theme.palette.text01,

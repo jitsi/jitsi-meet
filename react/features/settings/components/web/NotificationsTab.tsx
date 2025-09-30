@@ -1,11 +1,15 @@
 import { Theme } from '@mui/material';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import { withStyles } from 'tss-react/mui';
 
+import { IStore } from '../../../app/types';
 import AbstractDialogTab, {
     IProps as AbstractDialogTabProps } from '../../../base/dialog/components/web/AbstractDialogTab';
 import { translate } from '../../../base/i18n/functions';
+import { muteSound } from '../../../base/sounds/actions';
+import { ISoundsState } from '../../../base/sounds/reducer';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 
 /**
@@ -22,6 +26,11 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
      * Array of disabled sounds ids.
      */
     disabledSounds: string[];
+
+    /**
+     * Invoked to save changed settings.
+     */
+    dispatch: IStore['dispatch'];
 
     /**
      * Whether or not the reactions feature is enabled.
@@ -47,6 +56,11 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
      * Whether sound settings should be displayed or not.
      */
     showSoundsSettings: boolean;
+
+    /**
+     * The sounds from the Redux store.
+     */
+    sounds: ISoundsState;
 
     /**
      * Whether or not the sound for the incoming message should play.
@@ -133,6 +147,21 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
         super(props);
 
         this._onEnabledNotificationsChanged = this._onEnabledNotificationsChanged.bind(this);
+        this._onSoundMuteChange = this._onSoundMuteChange.bind(this);
+    }
+
+    /**
+     * Creates a handler for muting/unmuting a sound.
+     *
+     * @param {string} soundId - The ID of the sound to mute/unmute.
+     * @returns {Function}
+     */
+    _onSoundMuteChange(soundId: string) {
+        return ({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) => {
+            // We also need to update the local state to make the checkbox update visually.
+            super._onChange({ [soundId]: checked });
+            this.props.dispatch(muteSound(soundId, !checked));
+        };
     }
 
     /**
@@ -176,14 +205,10 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
             enabledNotifications,
             showNotificationsSettings,
             showSoundsSettings,
-            soundsIncomingMessage,
-            soundsParticipantJoined,
-            soundsParticipantKnocking,
-            soundsParticipantLeft,
-            soundsTalkWhileMuted,
             soundsReactions,
             enableReactions,
             moderatorMutedSoundsReactions,
+            sounds,
             t
         } = this.props;
         const classes = withStyles.getClasses(this.props);
@@ -206,43 +231,18 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
                             name = 'soundsReactions'
                             onChange = { this._onChange } />
                         }
-                        <Checkbox
-                            checked = { soundsIncomingMessage && !disabledSounds.includes('INCOMING_MSG_SOUND') }
-                            className = { classes.checkbox }
-                            disabled = { disabledSounds.includes('INCOMING_MSG_SOUND') }
-                            label = { t('settings.incomingMessage') }
-                            name = 'soundsIncomingMessage'
-                            onChange = { this._onChange } />
-                        <Checkbox
-                            checked = { soundsParticipantJoined
-                                && !disabledSounds.includes('PARTICIPANT_JOINED_SOUND') }
-                            className = { classes.checkbox }
-                            disabled = { disabledSounds.includes('PARTICIPANT_JOINED_SOUND') }
-                            label = { t('settings.participantJoined') }
-                            name = 'soundsParticipantJoined'
-                            onChange = { this._onChange } />
-                        <Checkbox
-                            checked = { soundsParticipantLeft && !disabledSounds.includes('PARTICIPANT_LEFT_SOUND') }
-                            className = { classes.checkbox }
-                            disabled = { disabledSounds.includes('PARTICIPANT_LEFT_SOUND') }
-                            label = { t('settings.participantLeft') }
-                            name = 'soundsParticipantLeft'
-                            onChange = { this._onChange } />
-                        <Checkbox
-                            checked = { soundsTalkWhileMuted && !disabledSounds.includes('TALK_WHILE_MUTED_SOUND') }
-                            className = { classes.checkbox }
-                            disabled = { disabledSounds.includes('TALK_WHILE_MUTED_SOUND') }
-                            label = { t('settings.talkWhileMuted') }
-                            name = 'soundsTalkWhileMuted'
-                            onChange = { this._onChange } />
-                        <Checkbox
-                            checked = { soundsParticipantKnocking
-                                && !disabledSounds.includes('KNOCKING_PARTICIPANT_SOUND') }
-                            className = { classes.checkbox }
-                            disabled = { disabledSounds.includes('KNOCKING_PARTICIPANT_SOUND') }
-                            label = { t('settings.participantKnocking') }
-                            name = 'soundsParticipantKnocking'
-                            onChange = { this._onChange } />
+                        {Array.from(sounds.entries()).map(([ soundId, { options, isMuted } ]) =>
+                            options?.optional && (
+                                <Checkbox
+                                    checked = { !isMuted }
+                                    className = { classes.checkbox }
+                                    disabled = { false }
+                                    key = { soundId }
+                                    label = { t(`settings.${soundId}`) }
+                                    name = { soundId }
+                                    onChange = { this._onSoundMuteChange(soundId) } />
+                            )
+                        )}
                     </fieldset>
                 )}
                 {showNotificationsSettings && (
@@ -270,4 +270,8 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
     }
 }
 
-export default withStyles(translate(NotificationsTab), styles);
+const mapStateToProps = (state: any) => ({
+    sounds: state['features/base/sounds']
+});
+
+export default connect(mapStateToProps)(withStyles(translate(NotificationsTab), styles));

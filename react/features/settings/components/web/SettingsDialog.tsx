@@ -93,21 +93,25 @@ const useStyles = makeStyles()(() => {
 const SettingsDialog = ({ _tabs, defaultTab, dispatch }: IProps) => {
     const { classes } = useStyles();
 
-    const correctDefaultTab = _tabs.find(tab => tab.name === defaultTab)?.name;
-    const tabs = _tabs.map(tab => {
+    const tabsWithDispatch = _tabs.map(tab => {
         return {
             ...tab,
+            props: {
+                ...tab.props,
+                dispatch
+            },
             className: `settings-pane ${classes.settingsDialog}`,
-            submit: (...args: any) => tab.submit
-                && dispatch(tab.submit(...args))
+            submit: (...args: any) => tab.submit && dispatch(tab.submit(...args))
         };
     });
+
+    const correctDefaultTab = tabsWithDispatch.find(tab => tab.name === defaultTab)?.name;
 
     return (
         <DialogWithTabs
             className = 'settings-dialog'
             defaultTab = { correctDefaultTab }
-            tabs = { tabs }
+            tabs = { tabsWithDispatch }
             titleKey = 'settings.title' />
     );
 };
@@ -236,7 +240,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                     soundsTalkWhileMuted: tabState?.soundsTalkWhileMuted
                 };
             },
-            props: getNotificationsTabProps(state, showSoundsSettings),
+            props: { ...getNotificationsTabProps(state, showSoundsSettings) },
             submit: submitNotificationsTab,
             icon: IconBell
         });

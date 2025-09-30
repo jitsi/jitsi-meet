@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { IReduxState } from '../app/types';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
+import { isLocalParticipantModerator } from '../base/participants/functions';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 
 import { getLiveStreaming } from './components/LiveStream/functions';
@@ -31,8 +32,9 @@ const livestreaming = {
 export function useRecordingButton() {
     const recordingProps = useSelector(getRecordButtonProps);
     const toolbarButtons = useSelector((state: IReduxState) => state['features/toolbox'].toolbarButtons);
+    const isModerator = useSelector((state: IReduxState) => isLocalParticipantModerator(state));
 
-    if (toolbarButtons?.includes('recording') && recordingProps.visible) {
+    if (toolbarButtons?.includes('recording') && recordingProps.visible && isModerator) {
         return recording;
     }
 

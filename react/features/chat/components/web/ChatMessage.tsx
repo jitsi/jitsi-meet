@@ -5,9 +5,11 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { getParticipantById, getParticipantDisplayName, isPrivateChatEnabled } from '../../../base/participants/functions';
+import { getParticipantById, getParticipantDisplayName, isPrivateChatEnabled, isRemoteParticipantHost } from '../../../base/participants/functions';
 import Popover from '../../../base/popover/components/Popover.web';
 import Message from '../../../base/react/components/web/Message';
+import HostIndicator from '../../../filmstrip/components/web/HostIndicator';
+import ModeratorIndicator from '../../../filmstrip/components/web/ModeratorIndicator';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
 import { getDisplayNameSuffix, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
@@ -16,8 +18,10 @@ import MessageMenu from './MessageMenu';
 import ReactButton from './ReactButton';
 
 interface IProps extends IChatMessageProps {
+    _isRemostParticipantHost?: boolean;
     className?: string;
     enablePrivateChat?: boolean;
+    isModerator: boolean;
     shouldDisplayMenuOnRight?: boolean;
     state?: IReduxState;
 }
@@ -135,7 +139,11 @@ const useStyles = makeStyles()((theme: Theme) => {
             textOverflow: 'ellipsis',
             overflow: 'hidden',
             marginBottom: theme.spacing(1),
-            maxWidth: '130px'
+            width: '100%',
+            display: 'flex',
+            gap: '6px',
+            alignItems: 'center',
+            justifyContent: 'space-between'
         },
         userMessage: {
             ...theme.typography.bodyShortRegular,
@@ -198,6 +206,8 @@ const ChatMessage = ({
     shouldDisplayMenuOnRight,
     enablePrivateChat,
     knocking,
+    isModerator,
+    _isRemostParticipantHost,
     t
 }: IProps) => {
     const { classes, cx } = useStyles();
@@ -221,6 +231,32 @@ const ChatMessage = ({
     }, []);
 
     /**
+     * Renders role indicators (Moderator and Host) based on the participant's role.
+     *
+     * @returns {React$Element<*>}
+     */
+    function _renderRoleIndicators() {
+        if (_isRemostParticipantHost) {
+            return (
+                <HostIndicator
+                    key = { message.messageId }
+                    tooltipPosition = 'top' />
+            );
+        }
+
+        if (isModerator === true) {
+            return (
+                <ModeratorIndicator
+                    key = { message.messageId }
+                    tooltipPosition = 'top' />
+            );
+        }
+
+        return null;
+    }
+
+
+    /**
      * Renders the display name of the sender.
      *
      * @returns {React$Element<*>}
@@ -233,6 +269,7 @@ const ChatMessage = ({
                 aria-hidden = { true }
                 className = { cx('display-name', classes.displayName) }>
                 {`${displayName}${getDisplayNameSuffix(message)}`}
+                {_renderRoleIndicators()}
             </div>
         );
     }
@@ -437,9 +474,12 @@ function _mapStateToProps(state: IReduxState, { message }: IProps) {
     // left side.
     const shouldDisplayMenuOnRight = message.messageType !== MESSAGE_TYPE_LOCAL;
 
+    const _isRemostParticipantHost = isRemoteParticipantHost(participant);
+
     return {
         shouldDisplayMenuOnRight,
         enablePrivateChat,
+        _isRemostParticipantHost,
         knocking,
         state
     };

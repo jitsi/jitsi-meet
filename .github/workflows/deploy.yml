@@ -1,0 +1,86 @@
+name: Deploy
+
+on:
+    push:
+        branches: [sonacove]
+    pull_request:
+        branches: [sonacove]
+
+jobs:
+    deploy:
+        name: Cloudflare
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  submodules: true # Required for lib-jitsi-meet submodule
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: ".nvmrc"
+                  cache: "npm"
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Build and prepare files
+              run: node config/deploy-cf.mjs --skip-deps
+
+            - name: Deploy to Production
+              if: github.ref == 'refs/heads/sonacove' && github.event_name == 'push'
+              uses: cloudflare/wrangler-action@v3
+              with:
+                  apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+                  command: deploy -c config/wrangler.jsonc
+                  workingDirectory: "."
+                  wranglerVersion: "3"
+
+            - name: Deploy Preview Version
+              if: github.event_name == 'pull_request'
+              uses: cloudflare/wrangler-action@v3
+              with:
+                  apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+                  command: versions upload -c config/wrangler.jsonc
+                  workingDirectory: "."
+                  wranglerVersion: "3"
+              id: preview-deploy
+
+            - name: Add deployment summary
+              if: always()
+              run: |
+                  if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/sonacove" ]]; then
+                      echo "**Deployment Type:** Production Deploy" >> $GITHUB_STEP_SUMMARY
+                      echo "**Status:** ✅ Deployed to production" >> $GITHUB_STEP_SUMMARY
+                      echo "::notice title=Production Deployment::🚀 Deployed to production successfully"
+                  elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+                      # Extract preview URL from wrangler output and add /meet subpath
+                      PREVIEW_URL="${{ steps.preview-deploy.outputs.deployment-url }}"
+                      if [[ -n "$PREVIEW_URL" ]]; then
+                          PREVIEW_URL_WITH_MEET="${PREVIEW_URL}/meet/testmeeting1"
+                          echo "**Preview URL:** [$PREVIEW_URL_WITH_MEET]($PREVIEW_URL_WITH_MEET)" >> $GITHUB_STEP_SUMMARY
+                          echo "::notice title=Preview Deployment::🚀 Preview deployed: $PREVIEW_URL_WITH_MEET"
+                      else
+                          echo "**Preview URL:** Preview deployment created" >> $GITHUB_STEP_SUMMARY
+                          echo "::notice title=Preview Deployment::🚀 Preview deployment created successfully"
+                      fi
+                      echo "**Deployment Type:** Version Upload" >> $GITHUB_STEP_SUMMARY
+                  fi
+
+            - name: Update PR comment with preview
+              if: github.event_name == 'pull_request'
+              uses: marocchino/sticky-pull-request-comment@v2
+              with:
+                  header: preview-deployment
+                  message: |
+                      ## 🚀 Preview Deployment
+
+                      **Status:** ✅ Successfully deployed
+                      **Deployment Type:** Version Upload
+                      **Preview URL:** ${{ steps.preview-deploy.outputs.deployment-url && format('[{0}/meet/testmeeting1]({0}/meet/testmeeting1)', steps.preview-deploy.outputs.deployment-url) || 'Preview deployment created successfully' }}
+
+                      ---
+                      *This comment will be automatically updated when new commits are pushed.*

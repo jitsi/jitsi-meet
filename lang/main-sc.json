@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Agiunghe unu ligòngiu a s'addòbiu",
-        "confirmAddLink": "Boles agiùnghere unu ligòngiu de Jitsi a custu addòbiu?",
+        "confirmAddLink": "Boles agiùnghere unu ligòngiu de Sonacove a custu addòbiu?",
         "error": {
             "appConfiguration": "S'integratzione de su calendàriu no est cunfigurada bene.",
             "generic": "Faddina. Controlla sa cunfiguratzione de calendàriu o proa de atualizare su calendàriu.",
@@ -593,7 +593,7 @@
         "answer": "Risponde",
         "audioCallTitle": "Mutida in intrada",
         "decline": "Iscarta",
-        "productLabel": "dae Jitsi Meet",
+        "productLabel": "dae Sonacove Meets",
         "videoCallTitle": "Mutida de vìdeu in intrada"
     },
     "info": {
@@ -861,6 +861,7 @@
         "nextToSpeak": "Ti tocat a chistionare a pustis",
         "noiseSuppressionDesktopAudioDescription": "Impossìbile ativare sa limpiadura additzionale de abbolotu in su mentras chi ses cumpartzende s'àudio de iscrivania. Disativa·dda e torra a proare.",
         "noiseSuppressionFailedTitle": "Faddina in s'ativatzione de sa limpiadura additzionale de abbolotu",
+        "noiseSuppressionNoTrackDescription": "Ativa prima su telèfonu tuo.",
         "noiseSuppressionStereoDescription": "Sa limpiadura additzionale de abbolotu no est cumpatìbile cun s'àudio stereo.",
         "oldElectronClientDescription1": "Paret chi ses impreende una versione betza de su cliente de Jitsi Meet, chi tenet vulnerabilidades de seguresa connotas. Assegura·ti chi atualizas a ",
         "oldElectronClientDescription2": "s'ùrtima versione",
@@ -1046,6 +1047,141 @@
         "linkCopied": "Ligòngiu copiadu in punta de billete",
         "lookGood": "Is dispositivos tuos sunt funtzionende",
         "or": "opuru",
+        "permissionsGuide": {
+            "close": "Serra",
+            "detected": "Detetadu:",
+            "deviceHelp": {
+                "Android": [
+                    "Aberti is impostatziones de su telefonu.",
+                    "Toca \"Aplicatziones\" > su navegador tui (per esempiu Chrome o Brave).",
+                    "Toca \"Permessus\".",
+                    "Permetti s'accèssu a sa càmera e su microfonu.",
+                    "Rigistra su navegador e torra a provare."
+                ],
+                "iOS": [
+                    "Aberti is impostatziones de iOS.",
+                    "Scorridi a bàsciu e seleziona su navegador tui (per esempiu Safari o Chrome).",
+                    "Toca \"Càmera\" e \"Microfonu\".",
+                    "Imposta ambos a \"Permettiri\".",
+                    "Torra a su navegador e rigarga sa pàgina."
+                ]
+            },
+            "howToAllow": "Cumenti permittere su acceso:",
+            "needHelp": "Bisònghidu d’ajudu?",
+            "steps": {
+                "Brave_Android": [
+                    "Clica in su simbulu <0>Tune</0> a pustis de sa URL.",
+                    "Tappa in «Permissos».",
+                    "Permetti càmera e microfono.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Brave_Linux": [
+                    "Clica in su simbulu <0>Tune</0> in sa barra de indirìtzios.",
+                    "Permetti càmera e microfono in sa lista de permissos.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Brave_Windows": [
+                    "Clica in su simbulu <0>Tune</0> in sa barra de indirìtzios.",
+                    "Attiva microfono e càmera.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Brave_iOS": [
+                    "Apri is impostatziones de iOS > Brave.",
+                    "Tappa in «Càmera» e «Microfono».",
+                    "Appunta is permìssos a «Permetti».",
+                    "Torna a Brave e aggiorna sa pàgina."
+                ],
+                "Brave_macOS": [
+                    "Clica in su simbulu <0>Tune</0> in sa barra de indirìtzios.",
+                    "Attiva càmera e microfono in is impostatziones de permissos.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Chrome_Android": [
+                    "Clica in su simbulu <0>Tune</0> in sa barra de indirìtzios.",
+                    "Seleziona «Permissos».",
+                    "Appunta càmera e microfono a «Permetti»."
+                ],
+                "Chrome_Linux": [
+                    "Clica in su simbulu de s’ochju inoghe de sa URL in sa barra de indirìtzios.",
+                    "Clica in «Impostatziones de su situ».",
+                    "Permetti càmera e microfono.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Chrome_Windows": [
+                    "Clica in su simbulu <0>Tune</0> in sa barra de indirìtzios.",
+                    "Clica in «Impostatziones de su situ».",
+                    "Permetti càmera e microfono in sa sesione «Permissos»."
+                ],
+                "Chrome_iOS": [
+                    "Apri is impostatziones de iOS > Chrome.",
+                    "Clica in «Càmera» e «Microfono».",
+                    "Appunta is permìssos a «Permetti».",
+                    "Torna a Chrome e aggiorna sa pàgina."
+                ],
+                "Chrome_macOS": [
+                    "Clica in su simbulu <0>Tune</0> in sa barra de indirìtzios.",
+                    "Clica in «Impostatziones de su situ».",
+                    "Permetti càmera e microfono in sa sesione «Permissos»."
+                ],
+                "Edge_Windows": [
+                    "Clica in su simbulu de s’ochju a pustis de sa URL.",
+                    "Permetti càmera e microfono.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Edge_macOS": [
+                    "Clica in su simbulu <0>Tune</0> in sa barra de indirìtzios.",
+                    "Appunta càmera e microfono a «Permetti»."
+                ],
+                "Firefox_Android": [
+                    "Tappa su simbulu de s’ochju a pustis de sa barra de indirìtzios URL.",
+                    "Tappa in «Modifica impostatziones de su situ».",
+                    "Permetti càmera e microfono.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Firefox_Linux": [
+                    "Clica in su simbulu de s’ochju a pustis de sa barra de indirìtzios.",
+                    "Clica in «Più informatziones».",
+                    "Permetti càmera e microfono in is permissos.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Firefox_Windows": [
+                    "Clica in su simbulu <0>Tune</0> a pustis de sa URL.",
+                    "Attiva su microfono e sa càmera.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Firefox_iOS": [
+                    "Apri is impostatziones de iOS > Firefox.",
+                    "Attiva càmera e microfono.",
+                    "Torna a Firefox e aggiorna sa pàgina."
+                ],
+                "Firefox_macOS": [
+                    "Clica in su simbulu <0>Tune</0> a pustis de sa URL.",
+                    "Clica sa freccia > «Più informatziones».",
+                    "Andai a sa tab «Permissos».",
+                    "Permetti càmera e microfono.",
+                    "Aggiorna sa pàgina."
+                ],
+                "Safari_iOS": [
+                    "Vai in is impostatziones de iOS > Safari.",
+                    "Tappa in «Càmera» e «Microfono».",
+                    "Appunta is permìssos a «Permetti».",
+                    "Torna a Safari e aggiorna sa pàgina."
+                ],
+                "Safari_macOS": [
+                    "Clica in «Safari» in sa barra de menu > «Impostatziones pro custu situ».",
+                    "Appunta càmera e microfono a «Permetti».",
+                    "Aggiorna sa pàgina."
+                ],
+                "default": [
+                    "Apri is impostatziones de su browser.",
+                    "Circa sa partizione «Privacy» o «Permissos».",
+                    "Attiva càmera e microfono pro custu situ.",
+                    "Aggiorna sa pàgina."
+                ]
+            },
+            "stillNotWorking": "Non funzionat ancora?",
+            "title": "Ativa su microfono e sa càmera"
+        },
         "premeeting": "Pre-riunione",
         "proceedAnyway": "Sighi su pròpiu",
         "recordingWarning": "Podet èssere chi àteras persones siant registrende custa mutida",
@@ -1166,6 +1302,11 @@
     },
     "settings": {
         "audio": "Àudio",
+        "INCOMING_MSG_SOUND": "Messàgiu in intrada",
+        "KNOCKING_PARTICIPANT_SOUND": "Unu partetzipante est intradu a s'aposentu de abetu",
+        "PARTICIPANT_JOINED_SOUND": "Partetzipante aderidu",
+        "PARTICIPANT_LEFT_SOUND": "Unu partetzipante est essidu",
+        "TALK_WHILE_MUTED_SOUND": "Chistiona cando a sa muda",
         "buttonLabel": "Cunfiguratzione",
         "calendar": {
             "about": "S'integratzione cun su calendàriu {{appName}} est impreada pro atzèdere in manera segura a su calendàriu tuo pro chi potzat lèghere is eventos imbenientes.",
@@ -1182,7 +1323,6 @@
         "followMe": "Totus mi sighint",
         "followMeRecorder": "Sa persone chi est registrende mi sighit",
         "framesPerSecond": "fotogrammas a su segundu",
-        "incomingMessage": "Messàgiu in intrada",
         "language": "Limba",
         "loggedIn": "Autenticatzione: {{name}}",
         "maxStageParticipants": "Nùmeru màssimu de partetzipantes chi podent èssere apicados a s'iscena printzipale",
@@ -1643,15 +1783,15 @@
         "go": "BAE",
         "goSmall": "BAE",
         "headerSubtitle": "Riunione seguras e de arta calidade",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Informatzione pro sa mutida",
-        "jitsiOnMobile": "Jitsi pro mòbiles - iscàrriga is aplicatziones nostras e avia una riunione dae ònnia logu",
+        "jitsiOnMobile": "Sonacove pro mòbiles - iscàrriga is aplicatziones nostras e avia una riunione dae ònnia logu",
         "join": "CREA / INTRA",
         "logo": {
             "calendar": "Icona de calendàriu",
             "desktopPreviewThumbnail": "Miniadura de previsualizatzione de iscrivania",
             "googleLogo": "Icona de Google",
-            "logoDeepLinking": "Icona de Jitsi meet",
+            "logoDeepLinking": "Icona de Sonacove Meets",
             "microsoftLogo": "Icona de Microsoft",
             "policyLogo": "Polìtica de iconas"
         },

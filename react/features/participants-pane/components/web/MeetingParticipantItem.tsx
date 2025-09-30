@@ -9,7 +9,9 @@ import {
     getParticipantByIdOrUndefined,
     getParticipantDisplayName,
     hasRaisedHand,
-    isParticipantModerator
+    isLocalParticipantHost,
+    isParticipantModerator,
+    isRemoteParticipantHost
 } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
 import {
@@ -57,6 +59,11 @@ interface IProps {
      * Whether or not moderation is supported.
      */
     _isModerationSupported: boolean;
+
+    /**
+     * True if this participant is the host.
+     */
+    _isParticipantHost: boolean;
 
     /**
      * True if the participant is the local participant.
@@ -173,6 +180,7 @@ function MeetingParticipantItem({
     _audioTrack,
     _disableModeratorIndicator,
     _displayName,
+    _isParticipantHost,
     _local,
     _localVideoOwner,
     _matchesSearch,
@@ -239,6 +247,7 @@ function MeetingParticipantItem({
             disableModeratorIndicator = { _disableModeratorIndicator }
             displayName = { _displayName }
             isHighlighted = { isHighlighted }
+            isHost = { _isParticipantHost }
             isModerator = { isParticipantModerator(_participant) }
             local = { _local }
             onLeave = { onLeave }
@@ -299,11 +308,14 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
     const { disableModeratorIndicator } = state['features/base/config'];
 
+    const _isParticipantHost = participant?.local ? isLocalParticipantHost(state) : isRemoteParticipantHost(participant);
+
     return {
         _audioMediaState,
         _audioTrack,
         _disableModeratorIndicator: Boolean(disableModeratorIndicator),
         _displayName,
+        _isParticipantHost,
         _local: Boolean(participant?.local),
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _matchesSearch,

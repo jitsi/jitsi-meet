@@ -48,7 +48,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Értekezlet hivatkozásának hozzáadása",
-        "confirmAddLink": "Hozzáadható egy Jitsi hivatkozás az eseményhez?",
+        "confirmAddLink": "Hozzáadható egy Sonacove hivatkozás az eseményhez?",
         "error": {
             "appConfiguration": "A naptárintegráció nincs helyesen konfigurálva.",
             "generic": "Hiba történt. Ellenőrizze a naptár beállításait vagy próbálja frissíteni a naptárat.",
@@ -360,7 +360,7 @@
         "answer": "Válasz",
         "audioCallTitle": "Bejövő hívás",
         "decline": "Elutasítás",
-        "productLabel": "a Jitsi Meettől",
+        "productLabel": "a Sonacove Meetstől",
         "videoCallTitle": "Bejövő videohívás"
     },
     "info": {
@@ -681,6 +681,141 @@
         "linkCopied": "A link a vágólapra másolva",
         "lookGood": "A mikrofon megfelelően működik",
         "or": "vagy",
+        "permissionsGuide": {
+            "close": "Bezárás",
+            "detected": "Észlelve:",
+            "deviceHelp": {
+                "Android": [
+                    "Nyisd meg a telefon Beállításait.",
+                    "Koppints az „Alkalmazások” menüpontra, majd válaszd ki a böngésződet (például Chrome vagy Brave).",
+                    "Koppints az „Engedélyek” menüpontra.",
+                    "Engedélyezd a hozzáférést a kamerához és a mikrofonhoz.",
+                    "Indítsd újra a böngészőt, majd próbáld újra."
+                ],
+                "iOS": [
+                    "Nyisd meg az iOS beállításait.",
+                    "Görgess le, és válaszd ki a böngésződet (például Safari vagy Chrome).",
+                    "Koppints a „Kamera” és a „Mikrofon” menüpontokra.",
+                    "Állítsd mindkettőt „Engedélyezés” állapotra.",
+                    "Térj vissza a böngészőhöz, és töltsd újra az oldalt."
+                ]
+            },
+            "howToAllow": "Így engedélyezheti a hozzáférést:",
+            "needHelp": "Segítségre van szüksége?",
+            "steps": {
+                "Brave_Android": [
+                    "Kattintson a címsor melletti <0>Tune</0> ikonra.",
+                    "Koppintson az 'Engedélyek' lehetőségre.",
+                    "Engedélyezze a kamerát és a mikrofont.",
+                    "Frissítse az oldalt."
+                ],
+                "Brave_Linux": [
+                    "Kattintson a címsorban lévő <0>Tune</0> ikonra.",
+                    "Engedélyezze a kamerát és a mikrofont az engedélylistán.",
+                    "Frissítse az oldalt."
+                ],
+                "Brave_Windows": [
+                    "Kattintson a címsorban lévő <0>Tune</0> ikonra.",
+                    "Engedélyezze a mikrofont és a kamerát.",
+                    "Frissítse az oldalt."
+                ],
+                "Brave_iOS": [
+                    "Nyissa meg az iOS Beállításokat > Brave.",
+                    "Koppintson a 'Kamera' és 'Mikrofon' lehetőségekre.",
+                    "Állítsa őket engedélyezett állapotra.",
+                    "Térjen vissza a Brave-hez és frissítse az oldalt."
+                ],
+                "Brave_macOS": [
+                    "Kattintson a címsorban lévő <0>Tune</0> ikonra.",
+                    "Engedélyezze a kamerát és a mikrofont az engedélyek között.",
+                    "Frissítse az oldalt."
+                ],
+                "Chrome_Android": [
+                    "Kattintson a címsorban lévő <0>Tune</0> ikonra.",
+                    "Válassza az 'Engedélyek' lehetőséget.",
+                    "Állítsa a 'Kamera' és 'Mikrofon' engedélyezésre."
+                ],
+                "Chrome_Linux": [
+                    "Kattintson a címsor melletti lakat ikonra.",
+                    "Kattintson a 'Webhelybeállítások' elemre.",
+                    "Engedélyezze a kamerát és a mikrofont.",
+                    "Frissítse az oldalt."
+                ],
+                "Chrome_Windows": [
+                    "Kattintson a címsorban lévő <0>Tune</0> ikonra.",
+                    "Kattintson a 'Webhelybeállítások' elemre.",
+                    "Engedélyezze a kamerát és a mikrofont az 'Engedélyek' alatt."
+                ],
+                "Chrome_iOS": [
+                    "Nyissa meg az iOS Beállításokat > Chrome.",
+                    "Koppintson a 'Kamera' és 'Mikrofon' lehetőségekre.",
+                    "Állítsa őket engedélyezett állapotra.",
+                    "Térjen vissza a Chrome-hoz és frissítse az oldalt."
+                ],
+                "Chrome_macOS": [
+                    "Kattintson a címsorban lévő <0>Tune</0> ikonra.",
+                    "Kattintson a 'Webhelybeállítások' elemre.",
+                    "Engedélyezze a kamerát és a mikrofont az 'Engedélyek' alatt."
+                ],
+                "Edge_Windows": [
+                    "Kattintson a címsor melletti lakat ikonra.",
+                    "Engedélyezze a kamerát és a mikrofont.",
+                    "Frissítse az oldalt."
+                ],
+                "Edge_macOS": [
+                    "Kattintson a címsorban lévő <0>Tune</0> ikonra.",
+                    "Állítsa a kamerát és a mikrofont engedélyezett állapotra."
+                ],
+                "Firefox_Android": [
+                    "Koppintson a címsor melletti lakat ikonra.",
+                    "Koppintson a 'Oldalbeállítások szerkesztése' lehetőségre.",
+                    "Engedélyezze a kamerát és a mikrofont.",
+                    "Frissítse az oldalt."
+                ],
+                "Firefox_Linux": [
+                    "Kattintson a címsor melletti lakat ikonra.",
+                    "Kattintson a 'További információk' elemre.",
+                    "Engedélyezze a kamerát és a mikrofont az engedélyek között.",
+                    "Frissítse az oldalt."
+                ],
+                "Firefox_Windows": [
+                    "Kattintson a címsor melletti <0>Tune</0> ikonra.",
+                    "Engedélyezze a mikrofont és a kamerát.",
+                    "Frissítse az oldalt."
+                ],
+                "Firefox_iOS": [
+                    "Nyissa meg az iOS Beállításokat > Firefox.",
+                    "Engedélyezze a kamerát és a mikrofont.",
+                    "Térjen vissza a Firefoxhoz és frissítse az oldalt."
+                ],
+                "Firefox_macOS": [
+                    "Kattintson a címsor melletti <0>Tune</0> ikonra.",
+                    "Kattintson a nyílra > 'További információk'.",
+                    "Lépjen az 'Engedélyek' fülre.",
+                    "Engedélyezze a kamerát és a mikrofont.",
+                    "Frissítse az oldalt."
+                ],
+                "Safari_iOS": [
+                    "Lépjen az iOS Beállítások > Safari menüpontra.",
+                    "Koppintson a 'Kamera' és 'Mikrofon' lehetőségekre.",
+                    "Állítsa őket engedélyezett állapotra.",
+                    "Térjen vissza a Safarihoz és frissítse az oldalt."
+                ],
+                "Safari_macOS": [
+                    "Kattintson a menüsorban a 'Safari' > 'Az oldal beállításai' lehetőségre.",
+                    "Állítsa a kamerát és a mikrofont engedélyezett állapotra.",
+                    "Frissítse az oldalt."
+                ],
+                "default": [
+                    "Nyissa meg a böngésző beállításait.",
+                    "Keresse meg az 'Adatvédelem' vagy 'Engedélyek' részt.",
+                    "Engedélyezze a kamerát és a mikrofont erre az oldalra.",
+                    "Frissítse az oldalt."
+                ]
+            },
+            "stillNotWorking": "Még mindig nem működik?",
+            "title": "Engedélyezze a mikrofont és a kamerát"
+        },
         "premeeting": "Csatlakozás előtt",
         "screenSharingError": "Képernyő megosztás hiba:",
         "startWithPhone": "Kezdés telefonhanggal",
@@ -753,6 +888,11 @@
         "insecureRoomNameWarning": "The room name is unsafe. Unwanted participants may join your conference. Consider securing your meeting using the security button."
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Bejövő üzenet",
+        "KNOCKING_PARTICIPANT_SOUND": "Résztvevő belépett a lobby-ba",
+        "PARTICIPANT_JOINED_SOUND": "Résztvevő csatlakozott",
+        "PARTICIPANT_LEFT_SOUND": "Résztvevő kilépett",
+        "TALK_WHILE_MUTED_SOUND": "Lenémított beszéd",
         "calendar": {
             "about": "A {{appName}} naptárintegráció a naptár biztonságos elérésére szolgál, így olvasni tudja a soron következő eseményeket.",
             "disconnect": "Szétkapcsolás",
@@ -766,7 +906,6 @@
         "devices": "Eszközök",
         "followMe": "Mindenki engem kövessen",
         "framesPerSecond": "képkocka / másodperc",
-        "incomingMessage": "Bejövő üzenet",
         "language": "Nyelv",
         "loggedIn": "Belépve mint {{name}}",
         "microphones": "Mikrofonok",
@@ -774,9 +913,6 @@
         "more": "Továbbiak",
         "name": "Név",
         "noDevice": "Nincs",
-        "participantJoined": "Résztvevő csatlakozott",
-        "participantKnocking": "Résztvevő belépett a lobby-ba",
-        "participantLeft": "Résztvevő kilépett",
         "playSounds": "Hangok lejátszása a következőkhöz:",
         "reactions": "Meeting reakciók",
         "sameAsSystem": "Rendszerhang ({{label}})",
@@ -789,7 +925,6 @@
         "startAudioMuted": "Mindenki elnémítva kezd",
         "startReactionsMuted": "Reakció hangok némítása mindenki számára",
         "startVideoMuted": "Mindenki videó nélkül kezd",
-        "talkWhileMuted": "Lenémított beszéd",
         "title": "Beállítások"
     },
     "settingsView": {
@@ -1080,7 +1215,7 @@
         "goSmall": "Indítás",
         "headerSubtitle": "Biztonságos és magas színvonalú konferenciák",
         "info": "Információ",
-        "jitsiOnMobile": "Jitsi Mobil – töltse le az app-ot, és indítson megbeszélést bárhonnan",
+        "jitsiOnMobile": "Sonacove Mobil – töltse le az app-ot, és indítson megbeszélést bárhonnan",
         "join": "LÉTREHOZ /HOZZÁAD",
         "privacy": "Adatvédelem",
         "recentList": "Legutóbbi",

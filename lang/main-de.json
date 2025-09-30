@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Konferenzlink hinzufügen",
-        "confirmAddLink": "Möchten Sie einen Jitsi-Link zu diesem Termin hinzufügen?",
+        "confirmAddLink": "Möchten Sie einen Sonacove-Link zu diesem Termin hinzufügen?",
         "error": {
             "appConfiguration": "Kalenderintegration ist nicht richtig konfiguriert.",
             "generic": "Ein Fehler ist aufgetreten. Prüfen Sie Ihre Kalendereinstellungen oder versuchen Sie, den Kalender zu aktualisieren.",
@@ -552,7 +552,7 @@
         "answer": "Antworten",
         "audioCallTitle": "Eingehender Anruf",
         "decline": "OK",
-        "productLabel": "von Jitsi Meet",
+        "productLabel": "von Sonacove Meets",
         "videoCallTitle": "Eingehender Videoanruf"
     },
     "info": {
@@ -767,7 +767,7 @@
         "dataChannelClosedWithAudio": "Ton- und Videoqualität können beeinträchtigt sein",
         "disabledIframe": "Die Einbettung ist nur für Demo-Zwecke vorgesehen. Diese Konferenz wird in {{timeout}} Minuten beendet.",
         "disabledIframeSecondaryNative": "Die Einbettung von {{domain}} ist nur für Demo-Zwecke vorgesehen. Diese Konferenz wird in {{timeout}} Minuten beendet.",
-        "disabledIframeSecondaryWeb": "Die Einbettung von {{domain}} ist nur für Demo-Zwecke vorgesehen. Diese Konferenz wird in {{timeout}} Minuten beendet. Bitte nutzen Sie <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> für produktive Zwecke!",
+        "disabledIframeSecondaryWeb": "Die Einbettung von {{domain}} ist nur für Demo-Zwecke vorgesehen. Diese Konferenz wird in {{timeout}} Minuten beendet. Bitte nutzen Sie <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Sonacove as a Service</a> für produktive Zwecke!",
         "disconnected": "getrennt",
         "displayNotifications": "Benachrichtigungen anzeigen für",
         "dontRemindMe": "Nicht erinnern",
@@ -819,7 +819,7 @@
         "noiseSuppressionDesktopAudioDescription": "Die Rauschunterdrückung kann nicht genutzt werden, wenn der Computersound geteilt wird, bitte zuerst deaktivieren und dann nochmals versuchen.",
         "noiseSuppressionFailedTitle": "Rauschunterdrückung konnte nicht gestartet werden",
         "noiseSuppressionStereoDescription": "Rauschunterdrückung unterstützt aktuell keinen Stereoton.",
-        "oldElectronClientDescription1": "Sie scheinen eine alte Version des Jitsi-Meet-Clients zu nutzen. Diese hat bekannte Schwachstellen. Bitte aktualisieren Sie auf unsere ",
+        "oldElectronClientDescription1": "Sie scheinen eine alte Version des Sonacove-Meet-Clients zu nutzen. Diese hat bekannte Schwachstellen. Bitte aktualisieren Sie auf unsere ",
         "oldElectronClientDescription2": "aktuelle Version",
         "oldElectronClientDescription3": "!",
         "participantWantsToJoin": "Möchte an der Konferenz teilnehmen",
@@ -950,11 +950,9 @@
         "configuringDevices": "Geräte werden eingerichtet …",
         "connectedWithAudioQ": "Sie sind mit Audio verbunden?",
         "connection": {
-            "failed": "Verbindungstest fehlgeschlagen!",
-            "good": "Ihre Internetverbindung sieht gut aus!",
-            "nonOptimal": "Ihre Internetverbindung ist nicht optimal.",
-            "poor": "Sie haben eine schlechte Internetverbindung.",
-            "running": "Verbindung wird getestet…"
+            "good": "Ihre Internetverbindung scheint gut zu sein!",
+            "nonOptimal": "Ihre Internetverbindung ist nicht optimal",
+            "poor": "Sie haben eine schlechte Internetverbindung"
         },
         "connectionDetails": {
             "audioClipping": "Ihr Ton wird wahrscheinlich abgehackt sein.",
@@ -994,6 +992,141 @@
         "linkCopied": "Link in die Zwischenablage kopiert",
         "lookGood": "Alles scheint zu funktionieren.",
         "or": "oder",
+        "permissionsGuide": {
+            "close": "Schließen",
+            "detected": "Erkannt:",
+            "deviceHelp": {
+                "Android": [
+                    "Öffne die Einstellungen deines Telefons.",
+                    "Tippe auf \"Apps\" > deinen Browser (z. B. Chrome oder Brave).",
+                    "Tippe auf \"Berechtigungen\".",
+                    "Erlaube den Zugriff auf Kamera und Mikrofon.",
+                    "Starte den Browser neu und versuche es erneut."
+                ],
+                "iOS": [
+                    "Öffne die iOS-Einstellungen.",
+                    "Scrolle nach unten und wähle deinen Browser aus (z. B. Safari oder Chrome).",
+                    "Tippe auf \"Kamera\" und \"Mikrofon\".",
+                    "Setze beide auf \"Zulassen\".",
+                    "Wechsle zurück zum Browser und lade die Seite neu."
+                ]
+            },
+            "howToAllow": "So erlauben Sie den Zugriff:",
+            "needHelp": "Brauchst du Hilfe?",
+            "steps": {
+                "Brave_Android": [
+                    "Klicke auf das <0>Tune</0>-Symbol neben der URL.",
+                    "Tippe auf 'Berechtigungen'.",
+                    "Erlaube Kamera und Mikrofon.",
+                    "Lade die Seite neu."
+                ],
+                "Brave_Linux": [
+                    "Klicke auf das <0>Tune</0>-Symbol in der Adressleiste.",
+                    "Erlaube Kamera und Mikrofon in der Berechtigungsliste.",
+                    "Lade die Seite neu."
+                ],
+                "Brave_Windows": [
+                    "Klicke auf das <0>Tune</0>-Symbol in der Adressleiste.",
+                    "Aktiviere Mikrofon und Kamera.",
+                    "Lade die Seite neu."
+                ],
+                "Brave_iOS": [
+                    "Öffne iOS Einstellungen > Brave.",
+                    "Tippe auf 'Kamera' und 'Mikrofon'.",
+                    "Setze sie auf 'Erlauben'.",
+                    "Wechsle zurück zu Brave und lade die Seite neu."
+                ],
+                "Brave_macOS": [
+                    "Klicke auf das <0>Tune</0>-Symbol in der Adressleiste.",
+                    "Aktiviere Kamera und Mikrofon in den Berechtigungseinstellungen.",
+                    "Lade die Seite neu."
+                ],
+                "Chrome_Android": [
+                    "Klicke auf das <0>Tune</0>-Symbol in der Adressleiste.",
+                    "Wähle 'Berechtigungen'.",
+                    "Setze 'Kamera' und 'Mikrofon' auf 'Erlauben'."
+                ],
+                "Chrome_Linux": [
+                    "Klicke auf das Vorhängeschloss-Symbol neben der URL in der Adressleiste.",
+                    "Klicke auf 'Website-Einstellungen'.",
+                    "Erlaube Kamera und Mikrofon.",
+                    "Aktualisiere die Seite."
+                ],
+                "Chrome_Windows": [
+                    "Klicke auf das <0>Tune</0>-Symbol in der Adressleiste.",
+                    "Klicke auf 'Website-Einstellungen'.",
+                    "Erlaube Kamera und Mikrofon unter 'Berechtigungen'."
+                ],
+                "Chrome_iOS": [
+                    "Öffne iOS Einstellungen > Chrome.",
+                    "Tippe auf 'Kamera' und 'Mikrofon'.",
+                    "Setze sie auf 'Erlauben'.",
+                    "Wechsle zurück zu Chrome und lade die Seite neu."
+                ],
+                "Chrome_macOS": [
+                    "Klicke auf das <0>Tune</0>-Symbol in der Adressleiste.",
+                    "Klicke auf 'Website-Einstellungen'.",
+                    "Erlaube Kamera und Mikrofon unter 'Berechtigungen'."
+                ],
+                "Edge_Windows": [
+                    "Klicke auf das Vorhängeschloss-Symbol neben der URL.",
+                    "Erlaube Kamera und Mikrofon.",
+                    "Lade die Seite neu."
+                ],
+                "Edge_macOS": [
+                    "Klicke auf das <0>Tune</0>-Symbol in der Adressleiste.",
+                    "Setze Kamera und Mikrofon auf 'Erlauben'."
+                ],
+                "Firefox_Android": [
+                    "Tippe auf das Vorhängeschloss-Symbol neben der URL-Leiste.",
+                    "Tippe auf 'Seiteneinstellungen bearbeiten'.",
+                    "Erlaube Kamera und Mikrofon.",
+                    "Lade die Seite neu."
+                ],
+                "Firefox_Linux": [
+                    "Klicke auf das Vorhängeschloss-Symbol neben der Adressleiste.",
+                    "Klicke auf 'Weitere Informationen'.",
+                    "Erlaube Kamera und Mikrofon unter Berechtigungen.",
+                    "Lade die Seite neu."
+                ],
+                "Firefox_Windows": [
+                    "Klicke auf das <0>Tune</0>-Symbol neben der URL.",
+                    "Aktiviere Mikrofon und Kamera.",
+                    "Lade die Seite neu."
+                ],
+                "Firefox_iOS": [
+                    "Öffne iOS Einstellungen > Firefox.",
+                    "Aktiviere Kamera und Mikrofon.",
+                    "Wechsle zurück zu Firefox und lade die Seite neu."
+                ],
+                "Firefox_macOS": [
+                    "Klicke auf das <0>Tune</0>-Symbol neben der URL.",
+                    "Klicke auf den Pfeil > 'Weitere Informationen'.",
+                    "Gehe zum Reiter 'Berechtigungen'.",
+                    "Erlaube Kamera und Mikrofon.",
+                    "Lade die Seite neu."
+                ],
+                "Safari_iOS": [
+                    "Gehe zu iOS Einstellungen > Safari.",
+                    "Tippe auf 'Kamera' und 'Mikrofon'.",
+                    "Setze sie auf 'Erlauben'.",
+                    "Wechsle zurück zu Safari und lade die Seite neu."
+                ],
+                "Safari_macOS": [
+                    "Klicke in der Menüleiste auf 'Safari' > 'Einstellungen für diese Webseite'.",
+                    "Setze Kamera und Mikrofon auf 'Erlauben'.",
+                    "Lade die Seite neu."
+                ],
+                "default": [
+                    "Öffne die Browsereinstellungen.",
+                    "Suche den Bereich 'Datenschutz' oder 'Berechtigungen'.",
+                    "Aktiviere Kamera und Mikrofon für diese Seite.",
+                    "Lade die Seite neu."
+                ]
+            },
+            "stillNotWorking": "Funktioniert es immer noch nicht?",
+            "title": "Aktiviere Mikrofon und Kamera"
+        },
         "premeeting": "Vorschau",
         "proceedAnyway": "Trotzdem fortsetzen",
         "recordingWarning": "Diese Konferenz wird möglicherweise von anderen Personen aufgezeichnet",
@@ -1113,6 +1246,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Eingehende Nachricht",
+        "KNOCKING_PARTICIPANT_SOUND": "Person hat Lobby betreten",
+        "PARTICIPANT_JOINED_SOUND": "Neue Person nimmt teil",
+        "PARTICIPANT_LEFT_SOUND": "Person verlässt die Konferenz",
+        "TALK_WHILE_MUTED_SOUND": "Wenn bei Stummschaltung gesprochen wird",
         "audio": "Audio",
         "buttonLabel": "Einstellungen",
         "calendar": {
@@ -1130,7 +1268,6 @@
         "followMe": "Follow-me für alle Personen",
         "followMeRecorder": "Aufnahme folgt mir",
         "framesPerSecond": "FPS",
-        "incomingMessage": "Eingehende Nachricht",
         "language": "Sprache",
         "loggedIn": "Als {{name}} angemeldet",
         "maxStageParticipants": "Maximale Anzahl an Personen, die zur Hauptansicht angeheftet werden können",
@@ -1141,9 +1278,6 @@
         "name": "Name",
         "noDevice": "Kein",
         "notifications": "Benachrichtigungen",
-        "participantJoined": "Neue Person nimmt teil",
-        "participantKnocking": "Person hat Lobby betreten",
-        "participantLeft": "Person verlässt die Konferenz",
         "playSounds": "Hinweistöne aktiviert",
         "reactions": "Interaktionen",
         "sameAsSystem": "Wie System ({{label}})",
@@ -1157,7 +1291,6 @@
         "startAudioMuted": "Alle Personen treten stummgeschaltet bei",
         "startReactionsMuted": "Interaktionstöne für alle deaktivieren",
         "startVideoMuted": "Alle Personen treten ohne Video bei",
-        "talkWhileMuted": "Wenn bei Stummschaltung gesprochen wird",
         "title": "Einstellungen",
         "video": "Kamera"
     },
@@ -1572,15 +1705,15 @@
         "go": "Los",
         "goSmall": "Los",
         "headerSubtitle": "Sichere und hochqualitative Konferenzen",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Einwahlinformationen",
-        "jitsiOnMobile": "Jitsi unterwegs – einfach unsere Apps herunterladen und Konferenzen von überall starten",
+        "jitsiOnMobile": "Sonacove unterwegs – einfach unsere Apps herunterladen und Konferenzen von überall starten",
         "join": "ERSTELLEN / BEITRETEN",
         "logo": {
             "calendar": "Kalender Logo",
             "desktopPreviewThumbnail": "Desktop-Vorschau Thumbnail",
             "googleLogo": "Google Logo",
-            "logoDeepLinking": "Jitsi Meet Logo",
+            "logoDeepLinking": "Sonacove Meets Logo",
             "microsoftLogo": "Microsoft Logo",
             "policyLogo": "Richtlinienlogo"
         },

@@ -2,7 +2,7 @@
 import { Theme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { createDeepLinkingPageEvent } from '../../analytics/AnalyticsEvents';
@@ -14,7 +14,6 @@ import { translate } from '../../base/i18n/functions';
 import Platform from '../../base/react/Platform.web';
 import Button from '../../base/ui/components/web/Button';
 import DialInSummary from '../../invite/components/dial-in-summary/web/DialInSummary';
-import { openWebApp } from '../actions';
 import { _TNS } from '../constants';
 import { generateDeepLinkingURL } from '../functions';
 
@@ -101,8 +100,8 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
     const deepLinkingUrl: string = useSelector(generateDeepLinkingURL);
     const room = useSelector((state: IReduxState) => decodeURIComponent(state['features/base/conference'].room || ''));
     const url = useSelector((state: IReduxState) => state['features/base/connection'] || {});
-    const dispatch = useDispatch();
     const { classes: styles } = useStyles();
+    const hideMobileApp = true;
 
     const generateDownloadURL = useCallback(() => {
         const { downloadLink }
@@ -121,7 +120,15 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
         sendAnalytics(
             createDeepLinkingPageEvent(
                 'clicked', 'launchWebButton', { isMobileBrowser: true }));
-        dispatch(openWebApp());
+
+        // Use a full navigation with a extra search param to force update
+        // the history state. This is a hack to avoid an edge case on mobile
+        // browsers when the site is opened through a deep link and then user
+        // presses the system back button, unexpectedly exiting the meeting.
+        const newUrl = new URL(window.location.href);
+
+        newUrl.searchParams.set('skipDeepLink', 'true');
+        window.location.href = newUrl.href;
     }, []);
 
     const onOpenApp = useCallback(() => {
@@ -170,28 +177,30 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
 
                 <div className = { styles.launchingMeetingLabel }>{ t(`${_TNS}.launchMeetingLabel`) }</div>
                 <div className = ''>{room}</div>
-                <a
-                    { ...onOpenLinkProperties }
-                    className = { styles.joinMeetWrapper }
-                    href = { deepLinkingUrl }
-                    onClick = { onOpenApp }
-                    target = '_top'>
-                    <Button
-                        fullWidth = { true }
-                        label = { t(`${_TNS}.joinInAppNew`) } />
-                </a>
-                <div className = { styles.labelDescription }>{ t(`${_TNS}.noMobileApp`) }</div>
-                <a
-                    { ...onOpenLinkProperties }
-                    className = { styles.linkWrapper }
-                    href = { generateDownloadURL() }
-                    onClick = { onDownloadApp }
-                    target = '_top'>
-                    <div className = { styles.linkLabel }>{ t(`${_TNS}.downloadMobileApp`) }</div>
-                </a>
+                {!hideMobileApp && (<>
+                    <a
+                        { ...onOpenLinkProperties }
+                        className = { styles.joinMeetWrapper }
+                        href = { deepLinkingUrl }
+                        onClick = { onOpenApp }
+                        target = '_top'>
+                        <Button
+                            fullWidth = { true }
+                            label = { t(`${_TNS}.joinInAppNew`) } />
+                    </a>
+                    <div className = { styles.labelDescription }>{ t(`${_TNS}.noMobileApp`) }</div>
+                    <a
+                        { ...onOpenLinkProperties }
+                        className = { styles.linkWrapper }
+                        href = { generateDownloadURL() }
+                        onClick = { onDownloadApp }
+                        target = '_top'>
+                        <div className = { styles.linkLabel }>{ t(`${_TNS}.downloadMobileApp`) }</div>
+                    </a>
+                </>)}
                 {isSupportedMobileBrowser() ? (
                     <div className = { styles.supportedBrowserContent }>
-                        <div className = { styles.labelOr }>{ t(`${_TNS}.or`) }</div>
+                        {!hideMobileApp && (<div className = { styles.labelOr }>{ t(`${_TNS}.or`) }</div>)}
                         <a
                             className = { styles.linkWrapper }
                             onClick = { onLaunchWeb }

@@ -63,7 +63,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "ミーティングのリンクを追加する",
-        "confirmAddLink": "このイベントに Jitsi のリンクを追加しますか?",
+        "confirmAddLink": "このイベントに Sonacove のリンクを追加しますか?",
         "error": {
             "appConfiguration": "カレンダー統合が正しく設定されていません。",
             "generic": "エラーが発生しました。カレンダーの設定を確認するか、カレンダーを更新してください。",
@@ -415,7 +415,7 @@
         "answer": "応答",
         "audioCallTitle": "音声通話着信",
         "decline": "拒否",
-        "productLabel": "Jitsi Meet からの",
+        "productLabel": "Sonacove Meets からの",
         "videoCallTitle": "ビデオ通話着信"
     },
     "info": {
@@ -637,7 +637,7 @@
         "newDeviceAction": "使用する",
         "newDeviceAudioTitle": "新しいオーディオデバイスを検出しました",
         "newDeviceCameraTitle": "新しいカメラを検出しました",
-        "oldElectronClientDescription1": "あなたは既知のセキュリティ上の脆弱性がある、旧バージョンの Jitsi Meet クライアントを使用しているようです。今すぐ",
+        "oldElectronClientDescription1": "あなたは既知のセキュリティ上の脆弱性がある、旧バージョンの Sonacove Meets クライアントを使用しているようです。今すぐ",
         "oldElectronClientDescription2": "最新ビルド",
         "oldElectronClientDescription3": "に更新してください!",
         "participantWantsToJoin": "ミーティングへの参加を希望しています",
@@ -782,6 +782,141 @@
         "linkCopied": "リンクをクリップボードにコピーしました",
         "lookGood": "マイクは正常に動作しています",
         "or": "または",
+        "permissionsGuide": {
+            "close": "閉じる",
+            "detected": "検出されました：",
+            "deviceHelp": {
+                "Android": [
+                    "スマートフォンの設定を開きます。",
+                    "\"アプリ\" をタップし、ブラウザ（例: Chrome、Brave）を選択します。",
+                    "\"権限\" をタップします。",
+                    "カメラとマイクのアクセスを許可します。",
+                    "ブラウザを再起動して、もう一度試してください。"
+                ],
+                "iOS": [
+                    "iOSの設定を開きます。",
+                    "下にスクロールしてブラウザ（例: Safari、Chrome）を選択します。",
+                    "\"カメラ\" と \"マイク\" をタップします。",
+                    "両方とも「許可」に設定します。",
+                    "ブラウザに戻り、ページを再読み込みします。"
+                ]
+            },
+            "howToAllow": "アクセスを許可する方法：",
+            "needHelp": "助けが必要ですか？",
+            "steps": {
+                "Brave_Android": [
+                    "URL横の<0>Tune</0>アイコンをタップします。",
+                    "「許可」をタップします。",
+                    "カメラとマイクを許可します。",
+                    "ページを更新します。"
+                ],
+                "Brave_Linux": [
+                    "アドレスバーの<0>Tune</0>アイコンをクリックします。",
+                    "許可リストでカメラとマイクを許可します。",
+                    "ページを更新します。"
+                ],
+                "Brave_Windows": [
+                    "アドレスバーの<0>Tune</0>アイコンをクリックします。",
+                    "マイクとカメラを有効にします。",
+                    "ページを更新します。"
+                ],
+                "Brave_iOS": [
+                    "iOSの設定 > Brave を開きます。",
+                    "「カメラ」と「マイク」をタップします。",
+                    "許可に設定します。",
+                    "Braveに戻り、ページを更新します。"
+                ],
+                "Brave_macOS": [
+                    "アドレスバーの<0>Tune</0>アイコンをクリックします。",
+                    "許可設定でカメラとマイクを有効にします。",
+                    "ページを更新します。"
+                ],
+                "Chrome_Android": [
+                    "アドレスバーの<0>Tune</0>アイコンをタップします。",
+                    "「許可」を選択します。",
+                    "「カメラ」と「マイク」を「許可」に設定します。"
+                ],
+                "Chrome_Linux": [
+                    "アドレスバーのURL横にある鍵アイコンをクリックします。",
+                    "「サイトの設定」をクリックします。",
+                    "カメラとマイクを許可します。",
+                    "ページを更新します。"
+                ],
+                "Chrome_Windows": [
+                    "アドレスバーの<0>Tune</0>アイコンをクリックします。",
+                    "「サイトの設定」をクリックします。",
+                    "「許可」でカメラとマイクを許可します。"
+                ],
+                "Chrome_iOS": [
+                    "iOSの設定 > Chrome を開きます。",
+                    "「カメラ」と「マイク」をタップします。",
+                    "許可に設定します。",
+                    "Chromeに戻り、ページを再読み込みします。"
+                ],
+                "Chrome_macOS": [
+                    "アドレスバーの<0>Tune</0>アイコンをクリックします。",
+                    "「サイトの設定」をクリックします。",
+                    "「許可」でカメラとマイクを許可します。"
+                ],
+                "Edge_Windows": [
+                    "URL横の鍵アイコンをクリックします。",
+                    "カメラとマイクを許可します。",
+                    "ページを更新します。"
+                ],
+                "Edge_macOS": [
+                    "アドレスバーの<0>Tune</0>アイコンをクリックします。",
+                    "カメラとマイクを「許可」に設定します。"
+                ],
+                "Firefox_Android": [
+                    "URLバー横の鍵アイコンをタップします。",
+                    "「サイト設定を編集」をタップします。",
+                    "カメラとマイクを許可します。",
+                    "ページを更新します。"
+                ],
+                "Firefox_Linux": [
+                    "アドレスバー横の鍵アイコンをクリックします。",
+                    "「詳細情報」をクリックします。",
+                    "許可でカメラとマイクを許可します。",
+                    "ページを更新します。"
+                ],
+                "Firefox_Windows": [
+                    "URLの横にある<0>Tune</0>アイコンをクリックします。",
+                    "マイクとカメラを有効にします。",
+                    "ページを更新します。"
+                ],
+                "Firefox_iOS": [
+                    "iOSの設定 > Firefox を開きます。",
+                    "カメラとマイクを有効にします。",
+                    "Firefoxに戻り、ページを更新します。"
+                ],
+                "Firefox_macOS": [
+                    "URL横の<0>Tune</0>アイコンをクリックします。",
+                    "矢印 > 「詳細情報」をクリックします。",
+                    "「許可」タブに移動します。",
+                    "カメラとマイクを許可します。",
+                    "ページを更新します。"
+                ],
+                "Safari_iOS": [
+                    "iOSの設定 > Safari を開きます。",
+                    "「カメラ」と「マイク」をタップします。",
+                    "許可に設定します。",
+                    "Safariに戻り、ページを更新します。"
+                ],
+                "Safari_macOS": [
+                    "メニューバーの「Safari」>「このWebサイトの設定」をクリックします。",
+                    "カメラとマイクを「許可」に設定します。",
+                    "ページを更新します。"
+                ],
+                "default": [
+                    "ブラウザの設定を開きます。",
+                    "「プライバシー」または「許可」の項目を探します。",
+                    "このサイトでカメラとマイクを有効にします。",
+                    "ページを更新します。"
+                ]
+            },
+            "stillNotWorking": "まだ動作しませんか？",
+            "title": "マイクとカメラを有効にする"
+        },
         "premeeting": "プレミーティング",
         "screenSharingError": "画面共有のエラー:",
         "startWithPhone": "音声通話を開始",
@@ -878,6 +1013,10 @@
         "title": "セキュリティオプション"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "メッセージの到着",
+        "PARTICIPANT_JOINED_SOUND": "参加者の参加",
+        "PARTICIPANT_LEFT_SOUND": "参加者の退出",
+        "TALK_WHILE_MUTED_SOUND": "ミュート中の発話",
         "calendar": {
             "about": "{{appName}} カレンダーとの統合機能は、今後のイベントを読み取ることができるようカレンダーに安全にアクセスするために使用されます。",
             "disconnect": "切断",
@@ -891,7 +1030,6 @@
         "devices": "デバイス",
         "followMe": "全員があなたをフォロー",
         "framesPerSecond": "フレーム/秒",
-        "incomingMessage": "メッセージの到着",
         "language": "言語",
         "loggedIn": "{{name}} としてログイン",
         "microphones": "マイク",
@@ -899,8 +1037,6 @@
         "more": "その他",
         "name": "名前",
         "noDevice": "なし",
-        "participantJoined": "参加者の参加",
-        "participantLeft": "参加者の退出",
         "playSounds": "次の時にサウンドを再生",
         "reactions": "ミーティングリアクション",
         "sameAsSystem": "システムと同じ ({{label}})",
@@ -913,7 +1049,6 @@
         "startAudioMuted": "全員がミュートで開始",
         "startReactionsMuted": "全員のリアクションサウンドをミュート",
         "startVideoMuted": "全員がビデオオフで開始",
-        "talkWhileMuted": "ミュート中の発話",
         "title": "設定"
     },
     "settingsView": {
@@ -1226,15 +1361,15 @@
         "go": "GO",
         "goSmall": "GO",
         "headerSubtitle": "安全で高品質なミーティング",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "ダイヤルイン情報",
-        "jitsiOnMobile": "モバイル版 Jitsi - アプリをダウンロードして、どこからでもミーティングを開始できます",
+        "jitsiOnMobile": "モバイル版 Sonacove - アプリをダウンロードして、どこからでもミーティングを開始できます",
         "join": "作成 / 参加",
         "logo": {
             "calendar": "カレンダーロゴ",
             "desktopPreviewThumbnail": "デスクトッププレビューサムネイル",
             "googleLogo": "Google ロゴ",
-            "logoDeepLinking": "Jitsi meet ロゴ",
+            "logoDeepLinking": "Sonacove Meets ロゴ",
             "microsoftLogo": "Microsoft ロゴ",
             "policyLogo": "ポリシーロゴ"
         },

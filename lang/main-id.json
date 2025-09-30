@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Tambahkan tautan rapat",
-        "confirmAddLink": "Apakah Anda ingin menambahkan tautan Jitsi ke acara ini?",
+        "confirmAddLink": "Apakah Anda ingin menambahkan tautan Sonacove ke acara ini?",
         "error": {
             "appConfiguration": "Integrasi kalender tidak dikonfigurasi dengan benar.",
             "generic": "Terjadi kesalahan. Harap periksa pengaturan kalender Anda atau coba perbarui kalender.",
@@ -531,7 +531,7 @@
         "answer": "Jawab",
         "audioCallTitle": "Panggilan Masuk",
         "decline": "Tolak",
-        "productLabel": "dari Jitsi Meet",
+        "productLabel": "dari Sonacove Meets",
         "videoCallTitle": "Panggilan Video Masuk"
     },
     "info": {
@@ -741,7 +741,7 @@
         "dataChannelClosedDescriptionWithAudio": "Saluran jembatan tidak aktif dan karenanya gangguan audio dan video mungkin terjadi.",
         "dataChannelClosedWithAudio": "Kualitas audio dan video mungkin terganggu",
         "disabledIframe": "Embedding hanya ditujukan untuk tujuan demonstrasi, jadi panggilan ini akan terputus dalam {{timeout}} menit.",
-        "disabledIframeSecondary": "Embedding {{domain}} hanya ditujukan untuk tujuan demonstrasi, jadi panggilan ini akan terputus dalam {{timeout}} menit. Harap gunakan <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> untuk embedding produksi!",
+        "disabledIframeSecondary": "Embedding {{domain}} hanya ditujukan untuk tujuan demonstrasi, jadi panggilan ini akan terputus dalam {{timeout}} menit. Harap gunakan <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Sonacove as a Service</a> untuk embedding produksi!",
         "disconnected": "terputus",
         "displayNotifications": "Tampilkan notifikasi untuk",
         "dontRemindMe": "Jangan ingatkan saya",
@@ -789,7 +789,7 @@
         "noiseSuppressionDesktopAudioDescription": "Pengurangan kebisingan tidak dapat diaktifkan saat berbagi audio desktop, harap nonaktifkan dan coba lagi.",
         "noiseSuppressionFailedTitle": "Gagal memulai pengurangan kebisingan",
         "noiseSuppressionStereoDescription": "Pengurangan kebisingan audio stereo saat ini tidak didukung.",
-        "oldElectronClientDescription1": "Anda sepertinya menggunakan versi lama dari klien Jitsi Meet yang memiliki kerentanan keamanan yang diketahui. Pastikan Anda memperbarui ke ",
+        "oldElectronClientDescription1": "Anda sepertinya menggunakan versi lama dari klien Sonacove Meets yang memiliki kerentanan keamanan yang diketahui. Pastikan Anda memperbarui ke ",
         "oldElectronClientDescription2": "build terbaru",
         "oldElectronClientDescription3": " sekarang!",
         "participantWantsToJoin": "Ingin bergabung dengan pertemuan",
@@ -951,6 +951,141 @@
         "linkCopied": "Tautan disalin ke papan klip",
         "lookGood": "Semuanya berfungsi dengan baik",
         "or": "atau",
+        "permissionsGuide": {
+            "close": "Tutup",
+            "detected": "Terdeteksi:",
+            "deviceHelp": {
+                "Android": [
+                    "Buka Pengaturan ponsel Anda.",
+                    "Ketuk \"Aplikasi\" > browser Anda (misalnya Chrome atau Brave).",
+                    "Ketuk \"Izin\".",
+                    "Izinkan akses ke Kamera dan Mikrofon.",
+                    "Mulai ulang browser dan coba lagi."
+                ],
+                "iOS": [
+                    "Buka Pengaturan iOS.",
+                    "Gulir ke bawah dan pilih browser Anda (misalnya Safari atau Chrome).",
+                    "Ketuk \"Kamera\" dan \"Mikrofon\".",
+                    "Atur keduanya ke \"Izinkan\".",
+                    "Kembali ke browser dan muat ulang halaman."
+                ]
+            },
+            "howToAllow": "Cara mengizinkan akses:",
+            "needHelp": "Butuh bantuan?",
+            "steps": {
+                "Brave_Android": [
+                    "Klik ikon <0>Tune</0> di samping URL.",
+                    "Ketuk 'Izin'.",
+                    "Izinkan kamera dan mikrofon.",
+                    "Muat ulang halaman."
+                ],
+                "Brave_Linux": [
+                    "Klik ikon <0>Tune</0> di bilah alamat.",
+                    "Izinkan kamera dan mikrofon di daftar izin.",
+                    "Muat ulang halaman."
+                ],
+                "Brave_Windows": [
+                    "Klik ikon <0>Tune</0> di bilah alamat.",
+                    "Aktifkan mikrofon dan kamera.",
+                    "Muat ulang halaman."
+                ],
+                "Brave_iOS": [
+                    "Buka Pengaturan iOS > Brave.",
+                    "Ketuk 'Kamera' dan 'Mikrofon'.",
+                    "Setel keduanya ke 'Izinkan'.",
+                    "Kembali ke Brave dan muat ulang halaman."
+                ],
+                "Brave_macOS": [
+                    "Klik ikon <0>Tune</0> di bilah alamat.",
+                    "Aktifkan kamera dan mikrofon di pengaturan izin.",
+                    "Muat ulang halaman."
+                ],
+                "Chrome_Android": [
+                    "Klik ikon <0>Tune</0> di bilah alamat.",
+                    "Pilih 'Izin'.",
+                    "Setel 'Kamera' dan 'Mikrofon' ke 'Izinkan'."
+                ],
+                "Chrome_Linux": [
+                    "Klik ikon gembok di samping URL di bilah alamat.",
+                    "Klik 'Pengaturan Situs'.",
+                    "Izinkan kamera dan mikrofon.",
+                    "Muat ulang halaman."
+                ],
+                "Chrome_Windows": [
+                    "Klik ikon <0>Tune</0> di bilah alamat.",
+                    "Klik 'Pengaturan Situs'.",
+                    "Izinkan kamera dan mikrofon di bawah 'Izin'."
+                ],
+                "Chrome_iOS": [
+                    "Buka Pengaturan iOS > Chrome.",
+                    "Ketuk 'Kamera' dan 'Mikrofon'.",
+                    "Setel keduanya ke 'Izinkan'.",
+                    "Kembali ke Chrome dan muat ulang halaman."
+                ],
+                "Chrome_macOS": [
+                    "Klik ikon <0>Tune</0> di bilah alamat.",
+                    "Klik 'Pengaturan Situs'.",
+                    "Izinkan kamera dan mikrofon di bawah 'Izin'."
+                ],
+                "Edge_Windows": [
+                    "Klik ikon gembok di samping URL.",
+                    "Izinkan kamera dan mikrofon.",
+                    "Muat ulang halaman."
+                ],
+                "Edge_macOS": [
+                    "Klik ikon <0>Tune</0> di bilah alamat.",
+                    "Setel kamera dan mikrofon ke 'Izinkan'."
+                ],
+                "Firefox_Android": [
+                    "Ketuk ikon gembok di samping bilah URL.",
+                    "Ketuk 'Edit pengaturan situs'.",
+                    "Izinkan kamera dan mikrofon.",
+                    "Muat ulang halaman."
+                ],
+                "Firefox_Linux": [
+                    "Klik ikon gembok di samping bilah alamat.",
+                    "Klik 'Informasi lebih lanjut'.",
+                    "Izinkan kamera dan mikrofon di bawah izin.",
+                    "Muat ulang halaman."
+                ],
+                "Firefox_Windows": [
+                    "Klik ikon <0>Tune</0> di samping URL.",
+                    "Aktifkan mikrofon dan kamera.",
+                    "Muat ulang halaman."
+                ],
+                "Firefox_iOS": [
+                    "Buka Pengaturan iOS > Firefox.",
+                    "Aktifkan kamera dan mikrofon.",
+                    "Kembali ke Firefox dan muat ulang halaman."
+                ],
+                "Firefox_macOS": [
+                    "Klik ikon <0>Tune</0> di samping URL.",
+                    "Klik panah > 'Informasi lebih lanjut'.",
+                    "Buka tab 'Izin'.",
+                    "Izinkan kamera dan mikrofon.",
+                    "Muat ulang halaman."
+                ],
+                "Safari_iOS": [
+                    "Buka Pengaturan iOS > Safari.",
+                    "Ketuk 'Kamera' dan 'Mikrofon'.",
+                    "Setel keduanya ke 'Izinkan'.",
+                    "Kembali ke Safari dan muat ulang halaman."
+                ],
+                "Safari_macOS": [
+                    "Klik 'Safari' > 'Pengaturan untuk Situs Web Ini' di bilah menu.",
+                    "Setel kamera dan mikrofon ke 'Izinkan'.",
+                    "Muat ulang halaman."
+                ],
+                "default": [
+                    "Buka pengaturan browser.",
+                    "Cari bagian 'Privasi' atau 'Izin'.",
+                    "Aktifkan kamera dan mikrofon untuk situs ini.",
+                    "Muat ulang halaman."
+                ]
+            },
+            "stillNotWorking": "Masih tidak berfungsi?",
+            "title": "Aktifkan mikrofon dan kamera"
+        },
         "premeeting": "Pra-pertemuan",
         "proceedAnyway": "Lanjutkan saja",
         "recordingWarning": "Peserta lain mungkin sedang merekam panggilan ini",
@@ -1069,6 +1204,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Pesan masuk",
+        "KNOCKING_PARTICIPANT_SOUND": "Peserta masuk ke lobi",
+        "PARTICIPANT_JOINED_SOUND": "Peserta Bergabung",
+        "PARTICIPANT_LEFT_SOUND": "Peserta Meninggalkan",
+        "TALK_WHILE_MUTED_SOUND": "Bicara saat dibisukan",
         "audio": "Audio",
         "buttonLabel": "Pengaturan",
         "calendar": {
@@ -1084,7 +1224,6 @@
         "devices": "Perangkat",
         "followMe": "Semua mengikuti saya",
         "framesPerSecond": "frame per detik",
-        "incomingMessage": "Pesan masuk",
         "language": "Bahasa",
         "loggedIn": "Masuk sebagai {{name}}",
         "maxStageParticipants": "Jumlah maksimum peserta yang dapat ditampilkan di panggung utama",
@@ -1095,9 +1234,6 @@
         "name": "Nama",
         "noDevice": "Tidak ada",
         "notifications": "Notifikasi",
-        "participantJoined": "Peserta Bergabung",
-        "participantKnocking": "Peserta masuk ke lobi",
-        "participantLeft": "Peserta Meninggalkan",
         "playSounds": "Mainkan suara pada",
         "reactions": "Reaksi pertemuan",
         "sameAsSystem": "Sama dengan sistem ({{label}})",
@@ -1110,7 +1246,6 @@
         "startAudioMuted": "Semua dimulai dalam keadaan dibisukan",
         "startReactionsMuted": "Bisukan suara reaksi untuk semua orang",
         "startVideoMuted": "Semua dimulai tersembunyi",
-        "talkWhileMuted": "Bicara saat dibisukan",
         "title": "Pengaturan",
         "video": "Video"
     },
@@ -1507,15 +1642,15 @@
         "go": "LANJUT",
         "goSmall": "LANJUT",
         "headerSubtitle": "Pertemuan yang aman dan berkualitas tinggi",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Info panggilan",
-        "jitsiOnMobile": "Jitsi di ponsel - unduh aplikasi kami dan mulai pertemuan dari mana saja",
+        "jitsiOnMobile": "Sonacove di ponsel - unduh aplikasi kami dan mulai pertemuan dari mana saja",
         "join": "BUAT / BERGABUNG",
         "logo": {
             "calendar": "Logo kalender",
             "desktopPreviewThumbnail": "Thumbnail pratinjau desktop",
             "googleLogo": "Logo Google",
-            "logoDeepLinking": "Logo Jitsi meet",
+            "logoDeepLinking": "Logo Sonacove Meets",
             "microsoftLogo": "Logo Microsoft",
             "policyLogo": "Logo Kebijakan"
         },

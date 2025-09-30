@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Lägg till en möteslänk",
-        "confirmAddLink": "Vill du lägga till en Jitsi-länk i händelsen?",
+        "confirmAddLink": "Vill du lägga till en Sonacove-länk i händelsen?",
         "error": {
             "appConfiguration": "Kalenderintegrationen är inte rätt inställd.",
             "generic": "Ett fel har inträffat. Kontrollera dina kalenderinställningar eller uppdatera kalendern.",
@@ -535,7 +535,7 @@
         "answer": "Svara",
         "audioCallTitle": "Inkommande samtal",
         "decline": "Avvisa",
-        "productLabel": "från Jitsi Meet",
+        "productLabel": "från Sonacove Meets",
         "videoCallTitle": "Inkommande videosamtal"
     },
     "info": {
@@ -747,7 +747,7 @@
         "dataChannelClosedDescriptionWithAudio": "Bryggkanalen har kopplats bort och därmed kan abvrott i ljud och bild uppstå.",
         "dataChannelClosedWithAudio": "Ljud och bild kvalite kan vara försämrad.",
         "disabledIframe": "Inbäddning är endast avsedd för demonstrationsändamål, så det här samtalet kommer att kopplas ner om {{timeout}} minuter.",
-        "disabledIframeSecondary": "Bädda in {{domain}} är bara till för demo, så detta samtal kommer att kopplas bort inom {{timeout}} minuter. Var god använd <a href='{{jaasDomain}}' rel='nooper noreferrer' target='_blank'>Jitsi som tjänst</a> för att bädda in i produktion.",
+        "disabledIframeSecondary": "Bädda in {{domain}} är bara till för demo, så detta samtal kommer att kopplas bort inom {{timeout}} minuter. Var god använd <a href='{{jaasDomain}}' rel='nooper noreferrer' target='_blank'>Sonacove som tjänst</a> för att bädda in i produktion.",
         "disconnected": "frånkopplad",
         "displayNotifications": "Visa aviseringar för",
         "dontRemindMe": "Påminn mig inte",
@@ -799,7 +799,7 @@
         "noiseSuppressionDesktopAudioDescription": "Brusreducering kan inte aktiveras när du delar skrivbordsljud, vänligen inaktivera det och försök igen.",
         "noiseSuppressionFailedTitle": "Det gick inte att starta brusreducering",
         "noiseSuppressionStereoDescription": "Brusreducering i stereoljud stöds för närvarande inte.",
-        "oldElectronClientDescription1": "Den version av Jitsi meet som används är gammal och har säkerhetsluckor. Var god uppdatera till den senaste versionen.",
+        "oldElectronClientDescription1": "Den version av Sonacove Meets som används är gammal och har säkerhetsluckor. Var god uppdatera till den senaste versionen.",
         "oldElectronClientDescription2": "senast build",
         "oldElectronClientDescription3": "nu!",
         "participantWantsToJoin": "Vill vara med på mötet",
@@ -972,6 +972,141 @@
         "linkCopied": "Länken kopierades till urklipp",
         "lookGood": "Din mikrofon fungerar som den ska",
         "or": "eller",
+        "permissionsGuide": {
+            "close": "Stäng",
+            "detected": "Upptäckt:",
+            "deviceHelp": {
+                "Android": [
+                    "Öppna telefonens inställningar.",
+                    "Tryck på \"Appar\" > din webbläsare (t.ex. Chrome eller Brave).",
+                    "Tryck på \"Behörigheter\".",
+                    "Tillåt åtkomst till kamera och mikrofon.",
+                    "Starta om webbläsaren och försök igen."
+                ],
+                "iOS": [
+                    "Öppna iOS-inställningarna.",
+                    "Bläddra ner och välj din webbläsare (t.ex. Safari eller Chrome).",
+                    "Tryck på \"Kamera\" och \"Mikrofon\".",
+                    "Ställ in båda till \"Tillåt\".",
+                    "Gå tillbaka till webbläsaren och ladda om sidan."
+                ]
+            },
+            "howToAllow": "Så här tillåter du åtkomst:",
+            "needHelp": "Behöver du hjälp?",
+            "steps": {
+                "Brave_Android": [
+                    "Klicka på <0>Tune</0>-ikonen bredvid URL:en.",
+                    "Tryck på 'Behörigheter'.",
+                    "Tillåt kamera och mikrofon.",
+                    "Ladda om sidan."
+                ],
+                "Brave_Linux": [
+                    "Klicka på <0>Tune</0>-ikonen i adressfältet.",
+                    "Tillåt kamera och mikrofon i behörighetslistan.",
+                    "Ladda om sidan."
+                ],
+                "Brave_Windows": [
+                    "Klicka på <0>Tune</0>-ikonen i adressfältet.",
+                    "Aktivera mikrofon och kamera.",
+                    "Ladda om sidan."
+                ],
+                "Brave_iOS": [
+                    "Öppna iOS-inställningar > Brave.",
+                    "Tryck på 'Kamera' och 'Mikrofon'.",
+                    "Ställ in dem på 'Tillåt'.",
+                    "Gå tillbaka till Brave och ladda om sidan."
+                ],
+                "Brave_macOS": [
+                    "Klicka på <0>Tune</0>-ikonen i adressfältet.",
+                    "Aktivera kamera och mikrofon i behörighetsinställningarna.",
+                    "Ladda om sidan."
+                ],
+                "Chrome_Android": [
+                    "Klicka på <0>Tune</0>-ikonen i adressfältet.",
+                    "Välj 'Behörigheter'.",
+                    "Ställ in 'Kamera' och 'Mikrofon' till 'Tillåt'."
+                ],
+                "Chrome_Linux": [
+                    "Klicka på hänglåset bredvid URL:en i adressfältet.",
+                    "Klicka på 'Webbplatsinställningar'.",
+                    "Tillåt kamera och mikrofon.",
+                    "Ladda om sidan."
+                ],
+                "Chrome_Windows": [
+                    "Klicka på <0>Tune</0>-ikonen i adressfältet.",
+                    "Klicka på 'Webbplatsinställningar'.",
+                    "Tillåt kamera och mikrofon under 'Behörigheter'."
+                ],
+                "Chrome_iOS": [
+                    "Öppna iOS-inställningar > Chrome.",
+                    "Tryck på 'Kamera' och 'Mikrofon'.",
+                    "Ställ in dem på 'Tillåt'.",
+                    "Gå tillbaka till Chrome och ladda om sidan."
+                ],
+                "Chrome_macOS": [
+                    "Klicka på <0>Tune</0>-ikonen i adressfältet.",
+                    "Klicka på 'Webbplatsinställningar'.",
+                    "Tillåt kamera och mikrofon under 'Behörigheter'."
+                ],
+                "Edge_Windows": [
+                    "Klicka på hänglåset bredvid URL:en.",
+                    "Tillåt kamera och mikrofon.",
+                    "Ladda om sidan."
+                ],
+                "Edge_macOS": [
+                    "Klicka på <0>Tune</0>-ikonen i adressfältet.",
+                    "Ställ in kamera och mikrofon till 'Tillåt'."
+                ],
+                "Firefox_Android": [
+                    "Tryck på hänglåset bredvid URL-fältet.",
+                    "Tryck på 'Redigera sidinställningar'.",
+                    "Tillåt kamera och mikrofon.",
+                    "Ladda om sidan."
+                ],
+                "Firefox_Linux": [
+                    "Klicka på hänglåset bredvid adressfältet.",
+                    "Klicka på 'Mer information'.",
+                    "Tillåt kamera och mikrofon under behörigheter.",
+                    "Ladda om sidan."
+                ],
+                "Firefox_Windows": [
+                    "Klicka på <0>Tune</0>-ikonen bredvid URL:en.",
+                    "Aktivera mikrofon och kamera.",
+                    "Ladda om sidan."
+                ],
+                "Firefox_iOS": [
+                    "Öppna iOS-inställningar > Firefox.",
+                    "Aktivera kamera och mikrofon.",
+                    "Gå tillbaka till Firefox och ladda om sidan."
+                ],
+                "Firefox_macOS": [
+                    "Klicka på <0>Tune</0>-ikonen bredvid URL:en.",
+                    "Klicka på pilen > 'Mer information'.",
+                    "Gå till fliken 'Behörigheter'.",
+                    "Tillåt kamera och mikrofon.",
+                    "Ladda om sidan."
+                ],
+                "Safari_iOS": [
+                    "Gå till iOS-inställningar > Safari.",
+                    "Tryck på 'Kamera' och 'Mikrofon'.",
+                    "Ställ in dem på 'Tillåt'.",
+                    "Gå tillbaka till Safari och ladda om sidan."
+                ],
+                "Safari_macOS": [
+                    "Klicka på 'Safari' i menyraden > 'Inställningar för den här webbplatsen'.",
+                    "Ställ in kamera och mikrofon på 'Tillåt'.",
+                    "Ladda om sidan."
+                ],
+                "default": [
+                    "Öppna webbläsarens inställningar.",
+                    "Sök efter 'Sekretess' eller 'Behörigheter'.",
+                    "Aktivera kamera och mikrofon för denna sida.",
+                    "Ladda om sidan."
+                ]
+            },
+            "stillNotWorking": "Fungerar det fortfarande inte?",
+            "title": "Aktivera mikrofon och kamera"
+        },
         "premeeting": "Förmöte",
         "proceedAnyway": "Fortsätt ändå",
         "recordingWarning": "",
@@ -1091,6 +1226,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Inkommande meddelande",
+        "KNOCKING_PARTICIPANT_SOUND": "Deltagare har anslutit till lobbyn",
+        "PARTICIPANT_JOINED_SOUND": "Deltagare ansluten",
+        "PARTICIPANT_LEFT_SOUND": "Deltagare lämnat mötet",
+        "TALK_WHILE_MUTED_SOUND": "Prata medan din ljud är inaktiverad",
         "audio": "Ljud",
         "buttonLabel": "Inställningar",
         "calendar": {
@@ -1107,7 +1247,6 @@
         "followMe": "Alla följer mig",
         "followMeRecorder": "Den som spelar in följer mig",
         "framesPerSecond": "bildrutor per sekund",
-        "incomingMessage": "Inkommande meddelande",
         "language": "Språk",
         "loggedIn": "Inloggad som {{name}}",
         "maxStageParticipants": "Maximalt antal deltagare som kan fästas på huvudscenen",
@@ -1118,9 +1257,6 @@
         "name": "Namn",
         "noDevice": "Inga enheter",
         "notifications": "Notifikationer",
-        "participantJoined": "Deltagare ansluten",
-        "participantKnocking": "Deltagare har anslutit till lobbyn",
-        "participantLeft": "Deltagare lämnat mötet",
         "playSounds": "Spelljud på",
         "reactions": "Reaktioner",
         "sameAsSystem": "Samma som system ({{label}})",
@@ -1133,7 +1269,6 @@
         "startAudioMuted": "Alla börjar tystade",
         "startReactionsMuted": "Stäng av reaktionsljud för alla",
         "startVideoMuted": "Alla börjar osynliga",
-        "talkWhileMuted": "Prata medan din ljud är inaktiverad",
         "title": "Inställningar",
         "video": "Video"
     },
@@ -1541,15 +1676,15 @@
         "go": "KÖR",
         "goSmall": "BÖRJA",
         "headerSubtitle": "Säkra möten med hög kvalitet",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Info",
-        "jitsiOnMobile": "Jitsi på mobilen - ladda ner våra appar och starta ett möte var som helst",
+        "jitsiOnMobile": "Sonacove på mobilen - ladda ner våra appar och starta ett möte var som helst",
         "join": "Gå med",
         "logo": {
             "calendar": "Kalender logotyp",
             "desktopPreviewThumbnail": "Miniatyrbild av skrivbordsförhandsgranskning",
             "googleLogo": "Google logotyp",
-            "logoDeepLinking": "Jitsi logotyp",
+            "logoDeepLinking": "Sonacove logotyp",
             "microsoftLogo": "Microsoft logotyp",
             "policyLogo": "Policy-logotyp"
         },

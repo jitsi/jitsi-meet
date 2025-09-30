@@ -155,6 +155,7 @@ import {
 } from './react/features/notifications/constants';
 import { suspendDetected } from './react/features/power-monitor/actions';
 import { initPrejoin, isPrejoinPageVisible } from './react/features/prejoin/functions';
+import { MUTE_SOUNDS_COMMAND } from './react/features/reactions/constants';
 import { disableReceiver, stopReceiver } from './react/features/remote-control/actions';
 import { setScreenAudioShareState } from './react/features/screen-share/actions.web';
 import { isScreenAudioShared } from './react/features/screen-share/functions';
@@ -1670,6 +1671,17 @@ export default {
                         }));
                 }
             });
+
+        room.addCommandListener(MUTE_SOUNDS_COMMAND, data => {
+            const { soundId, isMuted } = data.attributes;
+            const isMutedBool = isMuted === 'true';
+
+            APP.store.dispatch({
+                type: 'MUTE_SOUND',
+                soundId,
+                isMuted: isMutedBool
+            });
+        });
 
         room.on(
             JitsiConferenceEvents.START_MUTED_POLICY_CHANGED,

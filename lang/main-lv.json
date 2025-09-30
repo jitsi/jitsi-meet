@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Pievienot sapulces saiti",
-        "confirmAddLink": "Vai vēlaties šim kalendāra notikumam pievienot Jitsi saiti?",
+        "confirmAddLink": "Vai vēlaties šim kalendāra notikumam pievienot Sonacove saiti?",
         "error": {
             "appConfiguration": "Nepareizi iestatīta kalendāra integrācija.",
             "generic": "Radās kļūda. Lūdzu, pārbaudiet kalendāra iestatījumus vai mēģiniet atsvaidzināt kalendāru.",
@@ -593,7 +593,7 @@
         "answer": "Atbildēt",
         "audioCallTitle": "Ienākošs audio zvans",
         "decline": "Noraidīt",
-        "productLabel": "no Jitsi Meet",
+        "productLabel": "no Sonacove Meets",
         "videoCallTitle": "Ienākošs video zvans"
     },
     "info": {
@@ -810,7 +810,7 @@
         "desktopMutedRemotelyTitle": "",
         "disabledIframe": "Iegulšana ir paredzēta tikai demonstrācijas nolūkiem, tāpēc šis zvans tiks atvienots pēc {{timeout}} minūtēm.",
         "disabledIframeSecondaryNative": "Domēna {{domain}} iegulšana ir paredzēta tikai demonstrācijas nolūkiem, tāpēc šis zvans tiks pārtraukts pēc {{timeout}} minūtēm.",
-        "disabledIframeSecondaryWeb": "Domēna {{domain}} iegulšana ir paredzēta tikai demonstrācijas nolūkiem, tāpēc šis zvans tiks pārtraukts pēc {{timeout}} minūtēm. Lūdzu, produkcijas videi izmantojiet <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a>!",
+        "disabledIframeSecondaryWeb": "Domēna {{domain}} iegulšana ir paredzēta tikai demonstrācijas nolūkiem, tāpēc šis zvans tiks pārtraukts pēc {{timeout}} minūtēm. Lūdzu, produkcijas videi izmantojiet <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Sonacove as a Service</a>!",
         "disconnected": "savienojums pārtraukts",
         "displayNotifications": "Rādīt paziņojumus",
         "dontRemindMe": "Neatgādināt man",
@@ -862,7 +862,7 @@
         "noiseSuppressionDesktopAudioDescription": "Darbvirsmas audio koplietošanas laikā nevar iespējot trokšņu slāpēšanu. Lūdzu, atspējojiet to un mēģiniet vēlreiz.",
         "noiseSuppressionFailedTitle": "Neizdevās sākt trokšņu slāpēšanu",
         "noiseSuppressionStereoDescription": "Stereo audio trokšņu slāpēšana pašlaik netiek atbalstīta.",
-        "oldElectronClientDescription1": "Izskatās, ka jūs izmantojat vecu Jitsi Meet klienta versiju, kurai ir zināmas drošības ievainojamības. Lūdzu, atjauniniet uz ",
+        "oldElectronClientDescription1": "Izskatās, ka jūs izmantojat vecu Sonacove Meets klienta versiju, kurai ir zināmas drošības ievainojamības. Lūdzu, atjauniniet uz ",
         "oldElectronClientDescription2": "jaunākā versija",
         "oldElectronClientDescription3": "tagad!",
         "participantWantsToJoin": "Vēlas pievienoties sapulcei",
@@ -1045,6 +1045,141 @@
         "linkCopied": "Saite ir kopēta starpliktuvē",
         "lookGood": "Jūsu mikrofons darbojas pareizi",
         "or": "vai",
+        "permissionsGuide": {
+            "close": "Aizvērt",
+            "detected": "Atklāts:",
+            "deviceHelp": {
+                "Android": [
+                    "Atveriet tālruņa iestatījumus.",
+                    "Pieskarieties “Lietotnes” > savam pārlūkam (piemēram, Chrome vai Brave).",
+                    "Pieskarieties “Atļaujas”.",
+                    "Atļaujiet piekļuvi kamerai un mikrofonam.",
+                    "Restartējiet pārlūku un mēģiniet vēlreiz."
+                ],
+                "iOS": [
+                    "Atveriet iOS iestatījumus.",
+                    "Ritiniet lejup un izvēlieties savu pārlūku (piemēram, Safari vai Chrome).",
+                    "Pieskarieties “Kamera” un “Mikrofons”.",
+                    "Iestatiet abus uz “Atļaut”.",
+                    "Atgriezieties pārlūkprogrammā un pārslādējiet lapu."
+                ]
+            },
+            "howToAllow": "Kā atļaut piekļuvi:",
+            "needHelp": "Vai nepieciešama palīdzība?",
+            "steps": {
+                "Brave_Android": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas blakus URL.",
+                    "Pieskarieties 'Atļaujas'.",
+                    "Atļaujiet kameru un mikrofonu.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Brave_Linux": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Atļaujiet kameru un mikrofonu atļauju sarakstā.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Brave_Windows": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Ieslēdziet mikrofonu un kameru.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Brave_iOS": [
+                    "Atveriet iOS iestatījumus > Brave.",
+                    "Pieskarieties 'Kamera' un 'Mikrofons'.",
+                    "Iestatiet tos uz 'Atļaut'.",
+                    "Atgriezieties pie Brave un atsvaidziniet lapu."
+                ],
+                "Brave_macOS": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Ieslēdziet kameru un mikrofonu atļauju iestatījumos.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Chrome_Android": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Izvēlieties 'Atļaujas'.",
+                    "Iestatiet 'Kamera' un 'Mikrofons' uz 'Atļaut'."
+                ],
+                "Chrome_Linux": [
+                    "Noklikšķiniet uz slēdzenes ikonas blakus URL adreses joslai.",
+                    "Noklikšķiniet uz 'Tīmekļa vietnes iestatījumi'.",
+                    "Atļaujiet kameru un mikrofonu.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Chrome_Windows": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Noklikšķiniet uz 'Tīmekļa vietnes iestatījumi'.",
+                    "Atļaujiet kameru un mikrofonu sadaļā 'Atļaujas'."
+                ],
+                "Chrome_iOS": [
+                    "Atveriet iOS iestatījumus > Chrome.",
+                    "Pieskarieties 'Kamera' un 'Mikrofons'.",
+                    "Iestatiet tos uz 'Atļaut'.",
+                    "Atgriezieties pie Chrome un atsvaidziniet lapu."
+                ],
+                "Chrome_macOS": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Noklikšķiniet uz 'Tīmekļa vietnes iestatījumi'.",
+                    "Atļaujiet kameru un mikrofonu sadaļā 'Atļaujas'."
+                ],
+                "Edge_Windows": [
+                    "Noklikšķiniet uz slēdzenes ikonas blakus URL.",
+                    "Atļaujiet kameru un mikrofonu.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Edge_macOS": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Iestatiet kameru un mikrofonu uz 'Atļaut'."
+                ],
+                "Firefox_Android": [
+                    "Pieskarieties slēdzenes ikonai blakus URL joslai.",
+                    "Pieskarieties 'Rediģēt lapas iestatījumus'.",
+                    "Atļaujiet kameru un mikrofonu.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Firefox_Linux": [
+                    "Noklikšķiniet uz slēdzenes ikonas blakus adreses joslai.",
+                    "Noklikšķiniet uz 'Vairāk informācijas'.",
+                    "Atļaujiet kameru un mikrofonu sadaļā 'Atļaujas'.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Firefox_Windows": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas blakus URL.",
+                    "Ieslēdziet mikrofonu un kameru.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Firefox_iOS": [
+                    "Atveriet iOS iestatījumus > Firefox.",
+                    "Ieslēdziet kameru un mikrofonu.",
+                    "Atgriezieties pie Firefox un atsvaidziniet lapu."
+                ],
+                "Firefox_macOS": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas blakus URL.",
+                    "Noklikšķiniet uz bultiņas > 'Vairāk informācijas'.",
+                    "Atveriet cilni 'Atļaujas'.",
+                    "Atļaujiet kameru un mikrofonu.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Safari_iOS": [
+                    "Atveriet iOS iestatījumus > Safari.",
+                    "Pieskarieties 'Kamera' un 'Mikrofons'.",
+                    "Iestatiet tos uz 'Atļaut'.",
+                    "Atgriezieties pie Safari un atsvaidziniet lapu."
+                ],
+                "Safari_macOS": [
+                    "Noklikšķiniet uz 'Safari' izvēlnes joslā > 'Šīs vietnes iestatījumi'.",
+                    "Iestatiet kameru un mikrofonu uz 'Atļaut'.",
+                    "Atsvaidziniet lapu."
+                ],
+                "default": [
+                    "Atveriet pārlūkprogrammas iestatījumus.",
+                    "Meklējiet sadaļu 'Privātums' vai 'Atļaujas'.",
+                    "Ieslēdziet kameru un mikrofonu šai vietnei.",
+                    "Atsvaidziniet lapu."
+                ]
+            },
+            "stillNotWorking": "Joprojām nedarbojas?",
+            "title": "Ieslēgt mikrofonu un kameru"
+        },
         "premeeting": "Pirms sapulces",
         "proceedAnyway": "Tik un tā turpināt",
         "recordingWarning": "Citi dalībnieki var ierakstīt šo zvanu",
@@ -1164,6 +1299,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Ienākošā ziņa",
+        "KNOCKING_PARTICIPANT_SOUND": "Dalībnieks ienāca vestibilā",
+        "PARTICIPANT_JOINED_SOUND": "Dalībnieks pievienojās",
+        "PARTICIPANT_LEFT_SOUND": "Dalībnieks izgāja",
+        "TALK_WHILE_MUTED_SOUND": "Runā, kad izslēgta skaņa",
         "audio": "Audio",
         "buttonLabel": "Iestatījumi",
         "calendar": {
@@ -1181,7 +1321,6 @@
         "followMe": "Visi seko man",
         "followMeRecorder": "Ierakstītājs seko man",
         "framesPerSecond": "kadri sekundē",
-        "incomingMessage": "Ienākošā ziņa",
         "language": "Valoda",
         "loggedIn": "Ierakstījies kā {{name}}",
         "maxStageParticipants": "Maksimālais dalībnieku skaits, kurus var piespraust galvenajai skatuvei",
@@ -1192,9 +1331,6 @@
         "name": "Vārds",
         "noDevice": "Ierīču nav",
         "notifications": "Paziņojumi",
-        "participantJoined": "Dalībnieks pievienojās",
-        "participantKnocking": "Dalībnieks ienāca vestibilā",
-        "participantLeft": "Dalībnieks izgāja",
         "playSounds": "Atskaņot skaņu",
         "reactions": "Sapulces reakcijas",
         "sameAsSystem": "Tāds pats kā sistēmā ({{label}})",
@@ -1208,7 +1344,6 @@
         "startAudioMuted": "Dalībnieki pievienojas ar izslēgtu mikrofonu",
         "startReactionsMuted": "Izslēgt reakcijas skaņas visiem",
         "startVideoMuted": "Dalībnieki pievienojas ar izslēgtu kameru",
-        "talkWhileMuted": "Runā, kad izslēgta skaņa",
         "title": "Iestatījumi",
         "video": "Video"
     },
@@ -1625,15 +1760,15 @@
         "go": "Aiziet",
         "goSmall": "Aiziet",
         "headerSubtitle": "Drošas un kvalitatīvas sapulces",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Iezvanes informācija",
-        "jitsiOnMobile": "Jitsi mobilajā ierīcē — lejupielādējiet mūsu lietotnes un sāciet sapulci no jebkuras vietas",
+        "jitsiOnMobile": "Sonacove mobilajā ierīcē — lejupielādējiet mūsu lietotnes un sāciet sapulci no jebkuras vietas",
         "join": "IZVEIDOT / PIEVIENOTIES",
         "logo": {
             "calendar": "Kalendāra logotips",
             "desktopPreviewThumbnail": "Darbvirsmas priekšskatījuma sīktēls",
             "googleLogo": "Google logotips",
-            "logoDeepLinking": "Jitsi meet logotips",
+            "logoDeepLinking": "Sonacove Meets logotips",
             "microsoftLogo": "Microsoft logotips",
             "policyLogo": "Politikas logotips"
         },

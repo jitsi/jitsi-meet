@@ -797,6 +797,52 @@ export function getCountryFromDialCodeText(text: string) {
 }
 
 /**
+ * Detects the user's browser and device based on the user agent and platform.
+ *
+ * @returns {Object}
+ */
+export async function detectBrowserAndDevice() {
+    const userAgent = navigator.userAgent;
+    const platform = navigator.platform || 'unknown';
+
+    let browser = 'Unknown';
+    let device = 'Unknown';
+
+    const isBrave
+        = 'brave' in navigator
+        && typeof (navigator as any).brave?.isBrave === 'function'
+        && await (navigator as any).brave.isBrave();
+
+    if (isBrave) {
+        browser = 'Brave';
+    } else if (/edg/i.test(userAgent)) {
+        browser = 'Edge';
+    } else if (/opr\//i.test(userAgent)) {
+        browser = 'Opera';
+    } else if (/chrome|crios/i.test(userAgent) && !/edge|opr/i.test(userAgent)) {
+        browser = 'Chrome';
+    } else if (/firefox|fxios/i.test(userAgent)) {
+        browser = 'Firefox';
+    } else if (/safari/i.test(userAgent) && !/chrome|crios|android/i.test(userAgent)) {
+        browser = 'Safari';
+    }
+
+    if (/android/i.test(userAgent)) {
+        device = 'Android';
+    } else if (/iPad|iPhone|iPod/.test(userAgent) || /iOS/.test(platform)) {
+        device = 'iOS';
+    } else if (/Win/i.test(platform)) {
+        device = 'Windows';
+    } else if (/Mac/i.test(platform)) {
+        device = 'macOS';
+    } else if (/Linux/i.test(platform)) {
+        device = 'Linux';
+    }
+
+    return { browser, device };
+}
+
+/**
  * Returns whether the display name is present.
  *
  * @param {string} value - The display name.

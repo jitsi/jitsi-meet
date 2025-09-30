@@ -192,6 +192,27 @@ export default class ParticipantsPane extends BasePageObject {
     }
 
     /**
+     * Get the displayed title for a given participant.
+     */
+    async getParticipantTitle(participant: Participant) {
+        const participantId = await participant.getEndpointId();
+        const participantItem = this.participant.driver.$(`#participant-item-${participantId}`);
+
+        await participantItem.waitForExist();
+        await participantItem.waitForStable();
+        await participantItem.waitForDisplayed();
+
+        const titleElement = participantItem.$('[class*="moderatorLabel"]');
+
+        if (await titleElement.isExisting()) {
+            return await titleElement.getText();
+        }
+
+        // If no title is found, return empty string
+        return '';
+    }
+
+    /**
      * Open context menu for given participant.
      */
     async openParticipantContextMenu(participant: Participant) {

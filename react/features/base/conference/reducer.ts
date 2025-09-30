@@ -202,6 +202,7 @@ export interface IConferenceState {
 }
 
 export interface IJitsiConferenceRoom {
+    isHost: Function;
     locked: boolean;
     myroomjid: string;
     roomjid: string;

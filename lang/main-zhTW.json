@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "增加會議連結",
-        "confirmAddLink": "您要為此活動加入 Jitsi 連結嗎？",
+        "confirmAddLink": "您要為此活動加入 Sonacove 連結嗎？",
         "error": {
             "appConfiguration": "行事曆整合尚未正確設定。",
             "generic": "發生錯誤，請檢查行事曆設定，或是重新整理行事曆。",
@@ -569,7 +569,7 @@
         "answer": "接通",
         "audioCallTitle": "來電",
         "decline": "拒接",
-        "productLabel": "來自 Jitsi Meet",
+        "productLabel": "來自 Sonacove Meets",
         "videoCallTitle": "視訊來電"
     },
     "info": {
@@ -784,7 +784,7 @@
         "dataChannelClosedWithAudio": "音訊和視訊品質可能會降低。",
         "disabledIframe": "嵌入僅供示範使用，此通話將於 {{timeout}} 分鐘後中斷連線。",
         "disabledIframeSecondaryNative": "嵌入 {{domain}} 僅供示範，此通話將於 {{timeout}} 分鐘後中斷。",
-        "disabledIframeSecondaryWeb": "嵌入 {{domain}} 僅供示範，此通話將於 {{timeout}} 分鐘後中斷，請使用 <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi 服務</a> 來進行正式嵌入！",
+        "disabledIframeSecondaryWeb": "嵌入 {{domain}} 僅供示範，此通話將於 {{timeout}} 分鐘後中斷，請使用 <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Sonacove 服務</a> 來進行正式嵌入！",
         "disconnected": "已經中斷連接",
         "displayNotifications": "顯示通知給",
         "dontRemindMe": "不要再提醒我",
@@ -836,7 +836,7 @@
         "noiseSuppressionDesktopAudioDescription": "分享電腦音訊時無法啟用雜訊抑制，請停用後重試。",
         "noiseSuppressionFailedTitle": "啟用雜訊抑制失敗",
         "noiseSuppressionStereoDescription": "目前不支援立體聲降噪功能。",
-        "oldElectronClientDescription1": "您似乎正在使用存在已知安全漏洞的過時 Jitsi Meet 用戶端，請盡快更新至我們的",
+        "oldElectronClientDescription1": "您似乎正在使用存在已知安全漏洞的過時 Sonacove Meets 用戶端，請盡快更新至我們的",
         "oldElectronClientDescription2": "最新版本",
         "oldElectronClientDescription3": "！",
         "participantWantsToJoin": "希望加入會議",
@@ -1011,6 +1011,141 @@
         "linkCopied": "連結已複製到剪貼簿",
         "lookGood": "聽起來您的麥克風能夠正常運作",
         "or": "或",
+        "permissionsGuide": {
+            "close": "關閉",
+            "detected": "偵測到：",
+            "deviceHelp": {
+                "Android": [
+                    "打開手機設定。",
+                    "點選「應用程式」＞你的瀏覽器（例如 Chrome 或 Brave）。",
+                    "點選「權限」。",
+                    "允許存取相機和麥克風。",
+                    "重新啟動瀏覽器並再次嘗試。"
+                ],
+                "iOS": [
+                    "打開 iOS 設定。",
+                    "向下捲動並選擇你的瀏覽器（例如 Safari 或 Chrome）。",
+                    "點選「相機」和「麥克風」。",
+                    "將兩者設定為「允許」。",
+                    "返回瀏覽器並重新整理頁面。"
+                ]
+            },
+            "howToAllow": "允許存取的方法：",
+            "needHelp": "需要幫助？",
+            "steps": {
+                "Brave_Android": [
+                    "點擊網址旁的<0>Tune</0>圖示。",
+                    "選擇「權限」。",
+                    "允許攝影機和麥克風。",
+                    "重新整理頁面。"
+                ],
+                "Brave_Linux": [
+                    "點擊網址列的<0>Tune</0>圖示。",
+                    "在權限清單中允許攝影機和麥克風。",
+                    "重新整理頁面。"
+                ],
+                "Brave_Windows": [
+                    "點擊網址列的<0>Tune</0>圖示。",
+                    "啟用麥克風和攝影機。",
+                    "重新整理頁面。"
+                ],
+                "Brave_iOS": [
+                    "開啟 iOS 設定 > Brave。",
+                    "點選「攝影機」和「麥克風」。",
+                    "設為「允許」。",
+                    "返回 Brave 並重新整理頁面。"
+                ],
+                "Brave_macOS": [
+                    "點擊網址列的<0>Tune</0>圖示。",
+                    "在權限設定中啟用攝影機和麥克風。",
+                    "重新整理頁面。"
+                ],
+                "Chrome_Android": [
+                    "點擊網址列的<0>Tune</0>圖示。",
+                    "選擇「權限」。",
+                    "將「攝影機」和「麥克風」設為「允許」。"
+                ],
+                "Chrome_Linux": [
+                    "點擊網址列旁的鎖頭圖示。",
+                    "選擇「網站設定」。",
+                    "允許攝影機和麥克風。",
+                    "重新整理頁面。"
+                ],
+                "Chrome_Windows": [
+                    "點擊位於網址列的<0>Tune</0>圖示。",
+                    "選擇「網站設定」。",
+                    "在「權限」中允許攝影機和麥克風。"
+                ],
+                "Chrome_iOS": [
+                    "開啟 iOS 設定 > Chrome。",
+                    "點選「攝影機」和「麥克風」。",
+                    "設為「允許」。",
+                    "返回 Chrome 並重新整理頁面。"
+                ],
+                "Chrome_macOS": [
+                    "點擊位於網址列的<0>Tune</0>圖示。",
+                    "選擇「網站設定」。",
+                    "在「權限」中允許攝影機和麥克風。"
+                ],
+                "Edge_Windows": [
+                    "點擊網址列旁的鎖頭圖示。",
+                    "允許攝影機和麥克風。",
+                    "重新整理頁面。"
+                ],
+                "Edge_macOS": [
+                    "點擊網址列的<0>Tune</0>圖示。",
+                    "將攝影機和麥克風設為「允許」。"
+                ],
+                "Firefox_Android": [
+                    "點擊網址列旁的鎖頭圖示。",
+                    "點選「編輯網站設定」。",
+                    "允許攝影機和麥克風。",
+                    "重新整理頁面。"
+                ],
+                "Firefox_Linux": [
+                    "點擊網址列旁的鎖頭圖示。",
+                    "點選「更多資訊」。",
+                    "在權限中允許攝影機和麥克風。",
+                    "重新整理頁面。"
+                ],
+                "Firefox_Windows": [
+                    "點擊網址旁的<0>Tune</0>圖示。",
+                    "啟用麥克風和攝影機。",
+                    "重新整理頁面。"
+                ],
+                "Firefox_iOS": [
+                    "開啟 iOS 設定 > Firefox。",
+                    "啟用攝影機和麥克風。",
+                    "返回 Firefox 並重新整理頁面。"
+                ],
+                "Firefox_macOS": [
+                    "點擊網址旁的<0>Tune</0>圖示。",
+                    "點選箭頭 >「更多資訊」。",
+                    "前往「權限」標籤。",
+                    "允許攝影機和麥克風。",
+                    "重新整理頁面。"
+                ],
+                "Safari_iOS": [
+                    "前往 iOS 設定 > Safari。",
+                    "點選「攝影機」和「麥克風」。",
+                    "設為「允許」。",
+                    "返回 Safari 並重新整理頁面。"
+                ],
+                "Safari_macOS": [
+                    "在選單列點選「Safari」>「此網站設定」。",
+                    "將攝影機和麥克風設為「允許」。",
+                    "重新整理頁面。"
+                ],
+                "default": [
+                    "開啟瀏覽器設定。",
+                    "尋找「隱私」或「權限」部分。",
+                    "為此頁面啟用攝影機和麥克風。",
+                    "重新整理頁面。"
+                ]
+            },
+            "stillNotWorking": "仍然無法使用？",
+            "title": "啟用麥克風和攝影機"
+        },
         "premeeting": "會議前",
         "proceedAnyway": "仍然繼續",
         "recordingWarning": "其他與會者可能正在錄製此通話",
@@ -1130,6 +1265,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "新訊息",
+        "KNOCKING_PARTICIPANT_SOUND": "與會者已進入大廳",
+        "PARTICIPANT_JOINED_SOUND": "與會者已加入",
+        "PARTICIPANT_LEFT_SOUND": "與會者已離開",
+        "TALK_WHILE_MUTED_SOUND": "通話時靜音",
         "audio": "音訊",
         "buttonLabel": "設定",
         "calendar": {
@@ -1147,7 +1287,6 @@
         "followMe": "全部人跟隨我",
         "followMeRecorder": "錄影將跟隨我的視角",
         "framesPerSecond": "fps",
-        "incomingMessage": "新訊息",
         "language": "語言",
         "loggedIn": "以{{name}}登入",
         "maxStageParticipants": "可被釘選的最大與會者人數",
@@ -1158,9 +1297,6 @@
         "name": "名稱",
         "noDevice": "無",
         "notifications": "通知",
-        "participantJoined": "與會者已加入",
-        "participantKnocking": "與會者已進入大廳",
-        "participantLeft": "與會者已離開",
         "playSounds": "播放音效",
         "reactions": "會議反應",
         "sameAsSystem": "與系統相同（{{label}}）",
@@ -1174,7 +1310,6 @@
         "startAudioMuted": "所有人啟動時處於靜音",
         "startReactionsMuted": "關閉所有人反應音效",
         "startVideoMuted": "所有人啟動時隱藏視訊",
-        "talkWhileMuted": "通話時靜音",
         "title": "設定",
         "video": "影片"
     },
@@ -1589,15 +1724,15 @@
         "go": "開始",
         "goSmall": "開始",
         "headerSubtitle": "安全且高品質的視訊會議",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "資訊",
-        "jitsiOnMobile": "Jitsi 手機應用程式 – 下載應用程式，不論何時何地都能發起會議",
+        "jitsiOnMobile": "Sonacove 手機應用程式 – 下載應用程式，不論何時何地都能發起會議",
         "join": "建立/加入",
         "logo": {
             "calendar": "行事曆圖示",
             "desktopPreviewThumbnail": "桌面預覽縮圖",
             "googleLogo": "Google 圖示",
-            "logoDeepLinking": "Jitsi Meet 圖示",
+            "logoDeepLinking": "Sonacove Meets 圖示",
             "microsoftLogo": "Microsoft 圖示",
             "policyLogo": "政策圖示"
         },

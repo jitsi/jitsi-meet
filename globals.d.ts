@@ -24,6 +24,9 @@ declare global {
         // selenium tests handler
         _sharedVideoPlayer: any;
         alwaysOnTop: { api: any };
+        AuthService?: {
+            getAuthService: () => any;
+        };
     }
 
     interface Document {

@@ -87,6 +87,7 @@ export interface IJitsiParticipant {
     getRole: () => string;
     getSources: () => Map<string, Map<string, ISourceInfo>>;
     isHidden: () => boolean;
+    isHost: () => boolean;
 }
 
 export type ParticipantFeaturesKey = keyof IParticipantFeatures;

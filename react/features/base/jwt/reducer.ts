@@ -71,3 +71,12 @@ ReducerRegistry.register<IJwtState>(
 
         return state;
     });
+
+PersistenceRegistry.register('features/base/jwt', {
+    user: true,
+    tenant: true,
+    server: true,
+    group: true,
+    callee: true,
+    jwt: true,
+});

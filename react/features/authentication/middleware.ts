@@ -1,5 +1,5 @@
 import { IStore } from '../app/types';
-import { APP_WILL_NAVIGATE } from '../base/app/actionTypes';
+import { APP_WILL_MOUNT, APP_WILL_NAVIGATE } from '../base/app/actionTypes';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -9,6 +9,7 @@ import { isRoomValid } from '../base/conference/functions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection/actionTypes';
 import { hideDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
+import { setJWT } from '../base/jwt/actions';
 import {
     JitsiConferenceErrors,
     JitsiConnectionErrors
@@ -51,8 +52,35 @@ import logger from './logger';
  * @param {Store} store - Redux store.
  * @returns {Function}
  */
+
+function initAuth(store: IStore) {
+    const { dispatch } = store;
+    const authService = window.AuthService!.getAuthService();
+    const currentUser = authService.getUser();
+
+    // First, get the current state immediately
+    dispatch(setJWT(currentUser?.access_token));
+
+    // Then subscribe to future state changes
+    authService.subscribe(({ user }: { user: any | null; }) => {
+        dispatch(setJWT(user?.access_token));
+    });
+}
+
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case APP_WILL_MOUNT:
+        // Initialize AuthService subscription when app mounts
+        if (window.AuthService) {
+            initAuth(store);
+        } else {
+            // If AuthService is not ready, wait for the event
+            window.addEventListener('authServiceReady', () => {
+                initAuth(store);
+            }, { once: true });
+        }
+        break;
+
     case CANCEL_LOGIN: {
         const { dispatch, getState } = store;
         const state = getState();
@@ -270,6 +298,14 @@ function _handleLogin({ dispatch, getState }: IStore) {
         return;
     }
 
+    if (window.AuthService) {
+        window.AuthService.getAuthService().login({ state: locationURL.href });
+    } else {
+        logger.error('AuthService not available for login');
+    }
+
+    return;
+
     if (!isTokenAuthEnabled(config)) {
         dispatch(openLoginDialog());
 
@@ -314,6 +350,14 @@ function _handleLogout({ dispatch, getState }: IStore) {
     if (!conference) {
         return;
     }
+
+    if (window.AuthService) {
+        window.AuthService.getAuthService().logout();
+    } else {
+        logger.error('AuthService not available for logout');
+    }
+
+    return;
 
     dispatch(openLogoutDialog());
 }

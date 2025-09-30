@@ -6,7 +6,7 @@ interface ILocation extends URL {
     assign(url: string);
     replace(url: string);
     reload();
-};
+}
 
 interface IWindow {
     JITSI_MEET_LITE_SDK: boolean;
@@ -36,6 +36,10 @@ interface IWindow {
     clearImmediate: typeof clearImmediate;
     addEventListener: Function;
     removeEventListener: Function;
+
+    // Browser APIs that may not be defined in all environments
+    history: History;
+    atob: (data: string) => string;
 }
 
 interface INavigator {
@@ -49,4 +53,13 @@ declare global {
     const interfaceConfig: any;
     const navigator: INavigator;
     const window: IWindow;
+
+    // Browser event types that may not be defined in all environments
+    type PageTransitionEvent = Event & {
+        persisted: boolean;
+    };
+    type BeforeUnloadEvent = Event & {
+        returnValue: boolean;
+        preventDefault(): void;
+    };
 }

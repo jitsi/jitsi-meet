@@ -3,7 +3,7 @@ import { ENDPOINT_MESSAGE_RECEIVED, NON_PARTICIPANT_MESSAGE_RECEIVED } from '../
 import { getCurrentConference } from '../base/conference/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-import { playSound } from '../base/sounds/actions';
+import SoundService from '../base/sounds/components/SoundService';
 import { ChatTabs, INCOMING_MSG_SOUND_ID } from '../chat/constants';
 import { arePollsDisabled } from '../conference/functions.any';
 import { showNotification } from '../notifications/actions';
@@ -110,7 +110,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         // Finally, we notify user they received a new poll if their pane is not opened
         if (action.notify && (!isChatOpen || !isPollsTabFocused)) {
-            dispatch(playSound(INCOMING_MSG_SOUND_ID));
+            SoundService.play(INCOMING_MSG_SOUND_ID, state);
         }
         break;
     }

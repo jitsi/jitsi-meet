@@ -61,7 +61,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "link za konferencu přidać",
-        "confirmAddLink": "Chceće Jitsi-link k tutomu terminej přidać?",
+        "confirmAddLink": "Chceće Sonacove-link k tutomu terminej přidać?",
         "error": {
             "appConfiguration": "Integracija protyki njeje prawje konfigurěrowana.",
             "generic": "Zmylk. Pruwujće nastajenje protyki abo spytajće protyku aktualizować.",
@@ -440,7 +440,7 @@
         "answer": "wotmołwić",
         "audioCallTitle": "telefonat",
         "decline": "ok",
-        "productLabel": "wot Jitsi Meet",
+        "productLabel": "wot Sonacove Meets",
         "videoCallTitle": "widejo - telefonat"
     },
     "info": {
@@ -676,7 +676,7 @@
         "newDeviceAction": "wužiwać",
         "newDeviceAudioTitle": "nowy awdijowy nastroj spóznaty",
         "newDeviceCameraTitle": "nowa kamera spóznata",
-        "oldElectronClientDescription1": "Wužiwaće staru wersiju Jitsi-Meet-klienta. Tuta ma znate słabosće. Prošu aktualizujće na našu.",
+        "oldElectronClientDescription1": "Wužiwaće staru wersiju Sonacove-Meet-klienta. Tuta ma znate słabosće. Prošu aktualizujće na našu.",
         "oldElectronClientDescription2": "aktualnu wersiju",
         "oldElectronClientDescription3": "!",
         "participantWantsToJoin": "chce so na konferency wobdźělić",
@@ -822,6 +822,141 @@
         "linkCopied": "link kopěrowany",
         "lookGood": "Waš mikrofon pozdaću funguje.",
         "or": "abo",
+        "permissionsGuide": {
+            "close": "Zamknjź",
+            "detected": "Zjewjene:",
+            "deviceHelp": {
+                "Android": [
+                    "Wotwórće nastajenja swojeho telefona.",
+                    "Klikńće na „Aplikacije“ > swój wobhladowak (na přikład Chrome abo Brave).",
+                    "Klikńće na „Pšawa“.",
+                    "Dowólće přistup k kamerje a mikrofonu.",
+                    "Restartujće wobhladowak a pokušajće hišće raz."
+                ],
+                "iOS": [
+                    "Wotwórće iOS-nastajenja.",
+                    "Zjězdźće dole a wobjerće swój wobhladowak (na přikład Safari abo Chrome).",
+                    "Klikńće na „Kamera“ a „Mikrofon“.",
+                    "Nastajće oba na „Dowólić“.",
+                    "Wróćće so do wobhladowaka a zacyńće stronku znowa."
+                ]
+            },
+            "howToAllow": "Kak přistup dowolić:",
+            "needHelp": "Potšbuješ pomoc?",
+            "steps": {
+                "Brave_Android": [
+                    "Klikń na <0>Tune</0>-symbolek pśi URL.",
+                    "Klikń na 'Přistupy'.",
+                    "Dowoli kameru a mikrofon.",
+                    "Znów naładowaś stronu."
+                ],
+                "Brave_Linux": [
+                    "Klikń na <0>Tune</0>-symbolek w adresowym lisćinje.",
+                    "Dowoli kameru a mikrofon na lisćinje přistupow.",
+                    "Znów naładowaś stronu."
+                ],
+                "Brave_Windows": [
+                    "Klikń na <0>Tune</0>-symbolek w adresowym lisćinje.",
+                    "Aktywěruj mikrofon a kameru.",
+                    "Znów naładowaś stronu."
+                ],
+                "Brave_iOS": [
+                    "Zočinj iOS-nastajenja > Brave.",
+                    "Klikń na 'Kamera' a 'Mikrofon'.",
+                    "Postaw jich na 'Dowoli'.",
+                    "Wróć k Brave a znów naładowaś stronu."
+                ],
+                "Brave_macOS": [
+                    "Klikń na <0>Tune</0>-symbolek w adresowym lisćinje.",
+                    "Aktywěruj kameru a mikrofon w nastajenjach přistupow.",
+                    "Znów naładowaś stronu."
+                ],
+                "Chrome_Android": [
+                    "Klikń na <0>Tune</0>-symbolek w adresowym lisćinje.",
+                    "Wyber 'Přistupy'.",
+                    "Postaw 'Kamera' a 'Mikrofon' na 'Dowoli'."
+                ],
+                "Chrome_Linux": [
+                    "Klikń na zamkowy simbol pśi URL w adresowym lisćinje.",
+                    "Klikń na 'Nastajenja za webstronu'.",
+                    "Dowoli kameru a mikrofon.",
+                    "Znów naładowaś stronu."
+                ],
+                "Chrome_Windows": [
+                    "Klikń na <0>Tune</0>-symbolek w adresowym lisćinje.",
+                    "Klikń na 'Nastajenja za webstronu'.",
+                    "Dowoli kameru a mikrofon w 'Přistupach'."
+                ],
+                "Chrome_iOS": [
+                    "Zočinj iOS-nastajenja > Chrome.",
+                    "Klikń na 'Kamera' a 'Mikrofon'.",
+                    "Postaw jich na 'Dowoli'.",
+                    "Wróć k Chrome a znów naładowaś stronu."
+                ],
+                "Chrome_macOS": [
+                    "Klikń na <0>Tune</0>-symbolek w adresowym lisćinje.",
+                    "Klikń na 'Nastajenja za webstronu'.",
+                    "Dowoli kameru a mikrofon w 'Přistupach'."
+                ],
+                "Edge_Windows": [
+                    "Klikń na zamkowy simbol pśi URL.",
+                    "Dowoli kameru a mikrofon.",
+                    "Znów naładowaś stronu."
+                ],
+                "Edge_macOS": [
+                    "Klikń na <0>Tune</0>-symbolek w adresowym lisćinje.",
+                    "Postaw kameru a mikrofon na 'Dowoli'."
+                ],
+                "Firefox_Android": [
+                    "Klikń na zamkowy simbol pśi URL-lisce.",
+                    "Klikń na 'Edituj nastajenja strony'.",
+                    "Dowoli kameru a mikrofon.",
+                    "Znów naładowaś stronu."
+                ],
+                "Firefox_Linux": [
+                    "Klikń na zamkowy simbol pśi adresowym lisćinje.",
+                    "Klikń na 'Dalšne informacije'.",
+                    "Dowoli kameru a mikrofon w přistupach.",
+                    "Znów naładowaś stronu."
+                ],
+                "Firefox_Windows": [
+                    "Klikń na <0>Tune</0>-symbolek pśi URL.",
+                    "Aktywěruj mikrofon a kameru.",
+                    "Znów naładowaś stronu."
+                ],
+                "Firefox_iOS": [
+                    "Zočinj iOS-nastajenja > Firefox.",
+                    "Aktywěruj kameru a mikrofon.",
+                    "Wróć k Firefox a znów naładowaś stronu."
+                ],
+                "Firefox_macOS": [
+                    "Klikń na <0>Tune</0>-symbolek pśi URL.",
+                    "Klikń na šipku > 'Dalšne informacije'.",
+                    "Pśećiń do zakładki 'Přistupy'.",
+                    "Dowoli kameru a mikrofon.",
+                    "Znów naładowaś stronu."
+                ],
+                "Safari_iOS": [
+                    "Přechodź do iOS-nastajenjow > Safari.",
+                    "Klikń na 'Kamera' a 'Mikrofon'.",
+                    "Postaw jich na 'Dowoli'.",
+                    "Wróć k Safari a znów naładowaś stronu."
+                ],
+                "Safari_macOS": [
+                    "W menu klikń 'Safari' > 'Nastajenja za tutu webstronu'.",
+                    "Postaw kameru a mikrofon na 'Dowoli'.",
+                    "Znów naładowaś stronu."
+                ],
+                "default": [
+                    "Zočinj nastajenja swójego pśeglědarki.",
+                    "Najźy dalšnost 'Pśiwatnosć' abo 'Přistupy'.",
+                    "Aktywěruj kameru a mikrofon za tutu stronu.",
+                    "Znów naładowaś stronu."
+                ]
+            },
+            "stillNotWorking": "Hišće njefungěrujo?",
+            "title": "Aktywěruj mikrofon a kameru"
+        },
         "premeeting": "předstwa",
         "screenSharingError": "zmylk při dopušćenju wužiwanja monitora:",
         "startWithPhone": "z telefoniskim awdijom startować",
@@ -924,6 +1059,10 @@
         "title": "opcije wěstoty"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "powěsć",
+        "PARTICIPANT_JOINED_SOUND": "nowy wobdźělnik",
+        "PARTICIPANT_LEFT_SOUND": "Wobdźělnik je konferencu wopušćił.",
+        "TALK_WHILE_MUTED_SOUND": "hdyž so při němje šaltowanju rěči",
         "calendar": {
             "about": "Integracija protyki {{appName}} so wužiwa, zo by wěsty přistup k Wašej protyce a wučitanje terminow móžne było. ",
             "disconnect": "přetorhnjene",
@@ -937,7 +1076,6 @@
         "devices": "nastroje",
         "followMe": "follow-me za wšitkich wobdźělnikow",
         "framesPerSecond": "fps",
-        "incomingMessage": "powěsć",
         "language": "rěč",
         "loggedIn": "jako {{name}} přizjewjeny",
         "maxStageParticipants": "maksimalna ličba wobdźělnikow, kotraž móže so k hłownej wobrazowce přitynknyć",
@@ -946,8 +1084,6 @@
         "more": "wjace",
         "name": "mjeno",
         "noDevice": "žadyn",
-        "participantJoined": "nowy wobdźělnik",
-        "participantLeft": "Wobdźělnik je konferencu wopušćił.",
         "playSounds": "zwuk za pokazki aktiwěrowany",
         "reactions": "interakcije",
         "sameAsSystem": "kaž system ({{label}})",
@@ -960,7 +1096,6 @@
         "startAudioMuted": "wšitcy wobdźělnicy němi přistupja",
         "startReactionsMuted": "zwuk za pokazki za wšěch deaktiwěrować",
         "startVideoMuted": " wšitcy wobdźělnicy přistupja bjez wideja",
-        "talkWhileMuted": "hdyž so při němje šaltowanju rěči",
         "title": "nastajenja"
     },
     "settingsView": {
@@ -1285,15 +1420,15 @@
         "go": "startuj",
         "goSmall": "startuj",
         "headerSubtitle": "Wěste konferency we wysokej kwaliće",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "informacije za zawolenje",
-        "jitsiOnMobile": "Jitsi po puću - cyle jednorje našu app downloadować a konferency wšudźe po puću startować",
+        "jitsiOnMobile": "Sonacove po puću - cyle jednorje našu app downloadować a konferency wšudźe po puću startować",
         "join": "KREĚROWAĆ / PŘISTUPIĆ",
         "logo": {
             "calendar": "protyka",
             "desktopPreviewThumbnail": "předpokazka za desktop thumbnail",
             "googleLogo": "Google logo",
-            "logoDeepLinking": "Jitsi Meet logo",
+            "logoDeepLinking": "Sonacove Meets logo",
             "microsoftLogo": "Microsoft logo",
             "policyLogo": "logo za směrnicy"
         },

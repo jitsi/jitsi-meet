@@ -124,11 +124,15 @@ function _overwriteLocalParticipant(
  */
 function _setConfigOrLocationURL({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
-
     const { locationURL } = getState()['features/base/connection'];
 
-    dispatch(
-        setJWT(locationURL ? parseJWTFromURLParams(locationURL) : undefined));
+    if (locationURL) {
+        const jwt = parseJWTFromURLParams(locationURL);
+
+        if (jwt) {
+            dispatch(setJWT(jwt));
+        }
+    }
 
     return result;
 }

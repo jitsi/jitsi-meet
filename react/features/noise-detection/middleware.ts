@@ -2,7 +2,7 @@ import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
+import SoundService from '../base/sounds/components/SoundService';
 import { hideNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
@@ -15,10 +15,10 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case APP_WILL_MOUNT:
-        store.dispatch(registerSound(NOISY_AUDIO_INPUT_SOUND_ID, NOISY_AUDIO_INPUT_SOUND_FILE));
+        SoundService.register(NOISY_AUDIO_INPUT_SOUND_ID, NOISY_AUDIO_INPUT_SOUND_FILE);
         break;
     case APP_WILL_UNMOUNT:
-        store.dispatch(unregisterSound(NOISY_AUDIO_INPUT_SOUND_ID));
+        SoundService.unregister(NOISY_AUDIO_INPUT_SOUND_ID);
         break;
     case CONFERENCE_JOINED: {
         const { dispatch, getState } = store;
@@ -42,7 +42,7 @@ MiddlewareRegistry.register(store => next => action => {
                     descriptionKey: 'toolbar.noisyAudioInputDesc'
                 }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
-                dispatch(playSound(NOISY_AUDIO_INPUT_SOUND_ID));
+                SoundService.play(NOISY_AUDIO_INPUT_SOUND_ID, getState());
 
                 if (notification) {
                     // we store the last notification id so we can hide it if the mic is muted

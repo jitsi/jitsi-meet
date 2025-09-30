@@ -73,6 +73,7 @@ const ThumbnailBottomIndicators = ({
         {
             showStatusIndicators && <StatusIndicators
                 audio = { !isVirtualScreenshareParticipant }
+                host = { true }
                 moderator = { true }
                 participantID = { participantId }
                 screenshare = { isVirtualScreenshareParticipant }

@@ -41,7 +41,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Rnu aseɣwen n temlilit",
-        "confirmAddLink": "Tebɣiḍ ad ternuḍ aseɣwen n Jitsi i uneḍru-a?",
+        "confirmAddLink": "Tebɣiḍ ad ternuḍ aseɣwen n Sonacove i uneḍru-a?",
         "error": {
             "appConfiguration": "Amsidef n uwitay ur yettuswel ara akken iwata.",
             "generic": "Tella-d tuccḍa. Ttxil-k·m senqed iɣewwaren n uwitay-inek·inem neɣ ɛreḍ asnirem n uwitay.",
@@ -391,7 +391,7 @@
         "answer": "Tiririt",
         "audioCallTitle": "Asiwel i ikcem-d",
         "decline": "Agwi",
-        "productLabel": "seg Jitsi Meet",
+        "productLabel": "seg Sonacove Meets",
         "videoCallTitle": "Asiwel s tvidyut ikcem-d"
     },
     "info": {
@@ -603,7 +603,7 @@
         "newDeviceAction": "Seqdec",
         "newDeviceAudioTitle": "Ibenk amaynut n umeslaw yettwaf-d",
         "newDeviceCameraTitle": "Tettwaf-d tkamiṛat tamaynut",
-        "oldElectronClientDescription1": "Akka i nettwali tesseqdaceḍ lqem aqbur n umsaɣ Jitsi Meet i yesɛan uguren n tɣellist yettwassnen. Ma ulac aɣilif ḍmen ad tleqqmeḍ ",
+        "oldElectronClientDescription1": "Akka i nettwali tesseqdaceḍ lqem aqbur n umsaɣ Sonacove Meets i yesɛan uguren n tɣellist yettwassnen. Ma ulac aɣilif ḍmen ad tleqqmeḍ ",
         "oldElectronClientDescription2": "lqem akk aneggaru",
         "oldElectronClientDescription3": " tura!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) yettwakkes sɣur yimttekki-nniḍen",
@@ -734,6 +734,141 @@
         "linkCopied": "Aseɣwen yettwanɣel 'ɣef wafus'",
         "lookGood": "Asawaḍ-inek·inem akka i d-yettban, iteddu akken ilaq",
         "or": "neɣ",
+        "permissionsGuide": {
+            "close": "Selleḍ",
+            "detected": "Yeǧǧa-d:",
+            "deviceHelp": {
+                "Android": [
+                    "Sefṛeḍ d iselmed n umḍiq.",
+                    "Sɛeḍ \"Ttwasin\" > awiḍ n umezruy-inek (aṭas Chrome neɣ Brave).",
+                    "Sɛeḍ \"Ttreḥt\".",
+                    "Sellek ad teɛdil awal di tikkelt d umikrifun.",
+                    "Sekcem aṭas utezruy, ḥeṛṛeb seg wakken ad tefruḥ."
+                ],
+                "iOS": [
+                    "Sefṛeḍ iselmed n iOS.",
+                    "Sdeṛḥ adlis d asenfel akken teǧǧaḍ umezruy-inek (aṭas Safari neɣ Chrome).",
+                    "Sɛeḍ \"Tikkelt\" d \"Umikrifun\".",
+                    "Settaɣ-d s wumi \"Sekcem\".",
+                    "Æewwleɣ ɣef umezruy-inek u sniḍ afus."
+                ]
+            },
+            "howToAllow": "Amek ad teḥelleḍ ṭṭufɣa:",
+            "needHelp": "Tzemreḍ-ik sɣur-ik?",
+            "steps": {
+                "Brave_Android": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Šuṛ-iyi 'Imedyazen'.",
+                    "Rnu takkamart d mikrofon.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Brave_Linux": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Rnu takkamart d mikrofon deg tazwara n imedyazen.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Brave_Windows": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Rnu mikrofon d takkamart.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Brave_iOS": [
+                    "Fuq iṭṭunef iOS > Brave.",
+                    "Šuṛ-iyi 'Takkamart' d 'Mikrofon'.",
+                    "Settaw-dent i 'Rnu'.",
+                    "Rṛeḥ ɣer Brave, d zrezzeḍ asebter."
+                ],
+                "Brave_macOS": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Rnu takkamart d mikrofon deg tazwara n imedyazen.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Chrome_Android": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Fru 'Imedyazen'.",
+                    "Settaw 'Takkamart' d 'Mikrofon' i 'Rnu'."
+                ],
+                "Chrome_Linux": [
+                    "Šuṛ-iyi amḍakṛ n uɣal-agi seg yiwen n uselkim n tmeddurt.",
+                    "Šuṛ-iyi 'Tazwara n imedyazen'.",
+                    "Rnu i takkamart d mikrofon.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Chrome_Windows": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Šuṛ-iyi 'Tazwara n imedyazen'.",
+                    "Rnu i takkamart d mikrofon deg 'Imedyazen'."
+                ],
+                "Chrome_iOS": [
+                    "Fuq iṭṭunef iOS > Chrome.",
+                    "Šuṛ-iyi 'Takkamart' d 'Mikrofon'.",
+                    "Settaw-dent i 'Rnu'.",
+                    "Rṛeḥ ɣer Chrome, d zrezzeḍ asebter."
+                ],
+                "Chrome_macOS": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Šuṛ-iyi 'Tazwara n imedyazen'.",
+                    "Rnu i takkamart d mikrofon deg 'Imedyazen'."
+                ],
+                "Edge_Windows": [
+                    "Šuṛ-iyi amḍakṛ n uɣal seg usselkim n tmeddurt.",
+                    "Rnu takkamart d mikrofon.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Edge_macOS": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Settaw takkamart d mikrofon i 'Rnu'."
+                ],
+                "Firefox_Android": [
+                    "Šuṛ-iyi amḍakṛ n uɣal deg usselkim n tmeddurt.",
+                    "Šuṛ-iyi 'Ssutru n idammen n tayri'.",
+                    "Rnu takkamart d mikrofon.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Firefox_Linux": [
+                    "Šuṛ-iyi amḍakṛ n uɣal seg usselkim n tmeddurt.",
+                    "Šuṛ-iyi 'Asefruḍ n tmurt'.",
+                    "Rnu takkamart d mikrofon deg imedyazen.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Firefox_Windows": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Rnu mikrofon d takkamart.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Firefox_iOS": [
+                    "Fuq iṭṭunef iOS > Firefox.",
+                    "Rnu takkamart d mikrofon.",
+                    "Rṛeḥ ɣer Firefox, d zrezzeḍ asebter."
+                ],
+                "Firefox_macOS": [
+                    "Šuṛ-iyi <0>Tune</0> deg usselkim n tmeddurt.",
+                    "Šuṛ-iyi azelmad > 'Asefruḍ n tmurt'.",
+                    "Fuq taburt 'Imedyazen'.",
+                    "Rnu takkamart d mikrofon.",
+                    "Zrezzeḍ asebter."
+                ],
+                "Safari_iOS": [
+                    "Fuq iṭṭunef iOS > Safari.",
+                    "Šuṛ-iyi 'Takkamart' d 'Mikrofon'.",
+                    "Settaw-dent i 'Rnu'.",
+                    "Rṛeḥ ɣer Safari, d zrezzeḍ asebter."
+                ],
+                "Safari_macOS": [
+                    "Šuṛ-iyi 'Safari' > 'Tazwara n yiwet n wennaḍ'.",
+                    "Settaw takkamart d mikrofon i 'Rnu'.",
+                    "Zrezzeḍ asebter."
+                ],
+                "default": [
+                    "Fuq iṭṭunef n amzruy.",
+                    "Fuq agdud n ‘Aserḥel’ neɣ ‘Imedyazen’.",
+                    "Rnu takkamart d mikrofon i yiwen n uselkim.",
+                    "Zrezzeḍ asebter."
+                ]
+            },
+            "stillNotWorking": "Ur yettwaḥden ara?",
+            "title": "Sɣuṛ i mikrofon d takkamart"
+        },
         "premeeting": "Timlilit tuzwirt",
         "screenSharingError": "Tuccḍa deg beṭṭu n ugdil:",
         "startWithPhone": "Bdu s umeslaw n tiliɣri",
@@ -808,6 +943,10 @@
         "securityOptions": "Tixtiṛiyin n tɣellist"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Iteddu-d yizen",
+        "PARTICIPANT_JOINED_SOUND": "Yerna-d yimttekki",
+        "PARTICIPANT_LEFT_SOUND": "Imttekki azelmaḍ",
+        "TALK_WHILE_MUTED_SOUND": "Mmeslay ma yettwakkes ṣṣut",
         "calendar": {
             "about": "Amsidef n uwitay {{appName}} yettuseqdac i unekcum aɣelsan ɣer uwitay-inek·inem i wakken ad d-iɣer ineḍruyen i d-iteddun.",
             "disconnect": "Yeffeɣ",
@@ -821,7 +960,6 @@
         "devices": "Ibenkan",
         "followMe": "Yal amdan iy-ṭṭafaren",
         "framesPerSecond": "tugniwin s tasint",
-        "incomingMessage": "Iteddu-d yizen",
         "language": "Tutlayt",
         "loggedIn": "Tkecmeḍ s yisem {{name}}",
         "microphones": "Isawaḍen",
@@ -829,8 +967,6 @@
         "more": "Ugar",
         "name": "ISem",
         "noDevice": "Ula d yiwen",
-        "participantJoined": "Yerna-d yimttekki",
-        "participantLeft": "Imttekki azelmaḍ",
         "playSounds": "Rmed ṣṣut",
         "reactions": "Tisedmirin n temlilit",
         "sameAsSystem": "Kifkif akked unagraw ({{label}})",
@@ -841,7 +977,6 @@
         "speakers": "Imsiwilen",
         "startAudioMuted": "Yettwagugem waddad n yal yiwen",
         "startVideoMuted": "Yeffer waddad n yal yiwen",
-        "talkWhileMuted": "Mmeslay ma yettwakkes ṣṣut",
         "title": "Iɣewwaren"
     },
     "settingsView": {
@@ -1134,15 +1269,15 @@
         "go": "DDU",
         "goSmall": "Ddu",
         "headerSubtitle": "Timliliyin n tɣellist d tɣara meqqren",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Talɣut",
-        "jitsiOnMobile": "Jitsi ɣef uziraz - sader isnasen-nneɣ syen tebduḍ timlilit seg wanda i tebɣiḍ",
+        "jitsiOnMobile": "Sonacove ɣef uziraz - sader isnasen-nneɣ syen tebduḍ timlilit seg wanda i tebɣiḍ",
         "join": "SNULFU-D / KCEM",
         "logo": {
             "calendar": "Alugu n umitay",
             "desktopPreviewThumbnail": "Tanfult n teskant n tnarit",
             "googleLogo": "Alugu n Google",
-            "logoDeepLinking": "Alugu Jitsi Meet",
+            "logoDeepLinking": "Alugu Sonacove Meets",
             "microsoftLogo": "Alugu n Microsoft",
             "policyLogo": "Alugu n tsertit"
         },

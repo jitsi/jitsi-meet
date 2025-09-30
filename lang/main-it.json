@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Aggiungi un collegamento alla riunione",
-        "confirmAddLink": "Vuoi aggiungere un collegamento Jitsi a questo evento?",
+        "confirmAddLink": "Vuoi aggiungere un collegamento Sonacove a questo evento?",
         "error": {
             "appConfiguration": "L'integrazione del calendario non è configurata correttamente.",
             "generic": "Si è verificato un errore. Controlla le impostazioni del calendario o ricarica la pagina.",
@@ -593,7 +593,7 @@
         "answer": "Rispondi",
         "audioCallTitle": "Chiamata in arrivo",
         "decline": "Respingi",
-        "productLabel": "da Jitsi Meet",
+        "productLabel": "da Sonacove Meets",
         "videoCallTitle": "Videochiamata in arrivo"
     },
     "info": {
@@ -810,7 +810,7 @@
         "desktopMutedRemotelyTitle": "La tua condivisione dello schermo è stata interrotta da {{participantDisplayName}}",
         "disabledIframe": "L'incorporamento serve solo come dimostrazione, quindi questa chiamata si disconnetterà tra {{timeout}} minuti.",
         "disabledIframeSecondaryNative": "L'incorporamento {{domain}} serve solo come dimostrazione, quindi questa chiamata si disconnetterà tra {{timeout}} minuti.",
-        "disabledIframeSecondaryWeb": "L'incorporamento {{domain}} serve solo come dimostrazione, quindi questa chiamata si disconnetterà tra {{timeout}} minuti. Si prega di usare <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> per la produzione di riunioni incorporate!",
+        "disabledIframeSecondaryWeb": "L'incorporamento {{domain}} serve solo come dimostrazione, quindi questa chiamata si disconnetterà tra {{timeout}} minuti. Si prega di usare <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Sonacove as a Service</a> per la produzione di riunioni incorporate!",
         "disconnected": "disconnesso",
         "displayNotifications": "Mostra le notifiche per",
         "dontRemindMe": "Non chiederlo più",
@@ -862,7 +862,7 @@
         "noiseSuppressionDesktopAudioDescription": "La cancellazione del rumore non può essere attivata durante la condivisione dell'audio del desktop, disabilitala e riprova.",
         "noiseSuppressionFailedTitle": "Avvio della cancellazione del rumore non riuscito",
         "noiseSuppressionStereoDescription": "La cancellazione del rumore con l'audio stereo non è attualmente supportata.",
-        "oldElectronClientDescription1": "Sembra che tu stia usando una versione obsoleta del client Jitsi Meet, che ha vulnerabilità note. Assicurati di aggiornarlo alla nostra ",
+        "oldElectronClientDescription1": "Sembra che tu stia usando una versione obsoleta del client Sonacove Meets, che ha vulnerabilità note. Assicurati di aggiornarlo alla nostra ",
         "oldElectronClientDescription2": "ultima versione",
         "oldElectronClientDescription3": " ora!",
         "openChat": "Apri chat",
@@ -1046,6 +1046,141 @@
         "linkCopied": "Collegamento copiato negli appunti",
         "lookGood": "I tuoi dispositivi funzionano correttamente",
         "or": "o",
+        "permissionsGuide": {
+            "close": "Chiudi",
+            "detected": "Rilevato:",
+            "deviceHelp": {
+                "Android": [
+                    "Apri le impostazioni del telefono.",
+                    "Tocca \"App\" > il tuo browser (ad esempio Chrome o Brave).",
+                    "Tocca \"Autorizzazioni\".",
+                    "Consenti l'accesso alla fotocamera e al microfono.",
+                    "Riavvia il browser e riprova."
+                ],
+                "iOS": [
+                    "Apri le impostazioni di iOS.",
+                    "Scorri verso il basso e seleziona il tuo browser (ad esempio Safari o Chrome).",
+                    "Tocca \"Fotocamera\" e \"Microfono\".",
+                    "Imposta entrambi su \"Consenti\".",
+                    "Torna al browser e ricarica la pagina."
+                ]
+            },
+            "howToAllow": "Come consentire l'accesso:",
+            "needHelp": "Hai bisogno di aiuto?",
+            "steps": {
+                "Brave_Android": [
+                    "Fai clic sull'icona <0>Tune</0> accanto all'URL.",
+                    "Tocca 'Autorizzazioni'.",
+                    "Consenti videocamera e microfono.",
+                    "Aggiorna la pagina."
+                ],
+                "Brave_Linux": [
+                    "Fai clic sull'icona <0>Tune</0> nella barra degli indirizzi.",
+                    "Consenti videocamera e microfono nell'elenco delle autorizzazioni.",
+                    "Aggiorna la pagina."
+                ],
+                "Brave_Windows": [
+                    "Fai clic sull'icona <0>Tune</0> nella barra degli indirizzi.",
+                    "Abilita microfono e videocamera.",
+                    "Aggiorna la pagina."
+                ],
+                "Brave_iOS": [
+                    "Apri Impostazioni iOS > Brave.",
+                    "Tocca 'Fotocamera' e 'Microfono'.",
+                    "Impostali su 'Consenti'.",
+                    "Torna a Brave e aggiorna la pagina."
+                ],
+                "Brave_macOS": [
+                    "Fai clic sull'icona <0>Tune</0> nella barra degli indirizzi.",
+                    "Abilita videocamera e microfono nelle impostazioni delle autorizzazioni.",
+                    "Aggiorna la pagina."
+                ],
+                "Chrome_Android": [
+                    "Fai clic sull'icona <0>Tune</0> nella barra degli indirizzi.",
+                    "Seleziona 'Autorizzazioni'.",
+                    "Imposta 'Fotocamera' e 'Microfono' su 'Consenti'."
+                ],
+                "Chrome_Linux": [
+                    "Fai clic sull'icona del lucchetto accanto all'URL nella barra degli indirizzi.",
+                    "Fai clic su 'Impostazioni sito'.",
+                    "Consenti videocamera e microfono.",
+                    "Aggiorna la pagina."
+                ],
+                "Chrome_Windows": [
+                    "Fai clic sull'icona <0>Tune</0> nella barra degli indirizzi.",
+                    "Fai clic su 'Impostazioni sito'.",
+                    "Consenti videocamera e microfono nelle 'Autorizzazioni'."
+                ],
+                "Chrome_iOS": [
+                    "Apri Impostazioni iOS > Chrome.",
+                    "Tocca 'Fotocamera' e 'Microfono'.",
+                    "Impostali su 'Consenti'.",
+                    "Torna a Chrome e aggiorna la pagina."
+                ],
+                "Chrome_macOS": [
+                    "Fai clic sull'icona <0>Tune</0> nella barra degli indirizzi.",
+                    "Fai clic su 'Impostazioni sito'.",
+                    "Consenti videocamera e microfono nelle 'Autorizzazioni'."
+                ],
+                "Edge_Windows": [
+                    "Fai clic sull'icona del lucchetto accanto all'URL.",
+                    "Consenti videocamera e microfono.",
+                    "Aggiorna la pagina."
+                ],
+                "Edge_macOS": [
+                    "Fai clic sull'icona <0>Tune</0> nella barra degli indirizzi.",
+                    "Imposta videocamera e microfono su 'Consenti'."
+                ],
+                "Firefox_Android": [
+                    "Tocca l'icona del lucchetto accanto alla barra degli URL.",
+                    "Tocca 'Modifica impostazioni sito'.",
+                    "Consenti videocamera e microfono.",
+                    "Aggiorna la pagina."
+                ],
+                "Firefox_Linux": [
+                    "Fai clic sull'icona del lucchetto accanto alla barra degli indirizzi.",
+                    "Fai clic su 'Ulteriori informazioni'.",
+                    "Consenti videocamera e microfono nelle autorizzazioni.",
+                    "Aggiorna la pagina."
+                ],
+                "Firefox_Windows": [
+                    "Fai clic sull'icona <0>Tune</0> accanto all'URL.",
+                    "Abilita microfono e videocamera.",
+                    "Aggiorna la pagina."
+                ],
+                "Firefox_iOS": [
+                    "Apri Impostazioni iOS > Firefox.",
+                    "Abilita videocamera e microfono.",
+                    "Torna a Firefox e aggiorna la pagina."
+                ],
+                "Firefox_macOS": [
+                    "Fai clic sull'icona <0>Tune</0> accanto all'URL.",
+                    "Fai clic sulla freccia > 'Ulteriori informazioni'.",
+                    "Vai alla scheda 'Autorizzazioni'.",
+                    "Consenti videocamera e microfono.",
+                    "Aggiorna la pagina."
+                ],
+                "Safari_iOS": [
+                    "Vai a Impostazioni iOS > Safari.",
+                    "Tocca 'Fotocamera' e 'Microfono'.",
+                    "Impostali su 'Consenti'.",
+                    "Torna a Safari e aggiorna la pagina."
+                ],
+                "Safari_macOS": [
+                    "Fai clic su 'Safari' > 'Impostazioni per questo sito' nella barra del menu.",
+                    "Imposta videocamera e microfono su 'Consenti'.",
+                    "Aggiorna la pagina."
+                ],
+                "default": [
+                    "Apri le impostazioni del browser.",
+                    "Cerca la sezione 'Privacy' o 'Autorizzazioni'.",
+                    "Abilita videocamera e microfono per questo sito.",
+                    "Aggiorna la pagina."
+                ]
+            },
+            "stillNotWorking": "Non funziona ancora?",
+            "title": "Attiva microfono e videocamera"
+        },
         "premeeting": "Pre-riunione",
         "proceedAnyway": "Procedi comunque",
         "recordingWarning": "Gli altri partecipanti potrebbero registrare la riunione",
@@ -1165,6 +1300,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Messaggio in arrivo",
+        "KNOCKING_PARTICIPANT_SOUND": "Partecipante in sala d'attesa",
+        "PARTICIPANT_JOINED_SOUND": "Partecipante entrato",
+        "PARTICIPANT_LEFT_SOUND": "Partecipante uscito",
+        "TALK_WHILE_MUTED_SOUND": "Parli a microfono spento",
         "audio": "Audio",
         "buttonLabel": "Impostazioni",
         "calendar": {
@@ -1182,7 +1322,6 @@
         "followMe": "Tutti seguono te",
         "followMeRecorder": "Il registratore segue te",
         "framesPerSecond": "fotogrammi al secondo",
-        "incomingMessage": "Messaggio in arrivo",
         "language": "Lingua",
         "loggedIn": "Connesso come {{name}}",
         "maxStageParticipants": "Numero massimo di partecipanti che possono essere messi in evidenza nella schermata principale",
@@ -1193,9 +1332,6 @@
         "name": "Nome",
         "noDevice": "Nessuno",
         "notifications": "Notifiche",
-        "participantJoined": "Partecipante entrato",
-        "participantKnocking": "Partecipante in sala d'attesa",
-        "participantLeft": "Partecipante uscito",
         "playSounds": "Suoni attivati",
         "reactions": "Reazioni riunione",
         "sameAsSystem": "Stesso del sistema ({{label}})",
@@ -1209,7 +1345,6 @@
         "startAudioMuted": "Tutti iniziano a microfono spento",
         "startReactionsMuted": "Spegni i suoni delle reazioni a tutti",
         "startVideoMuted": "Tutti iniziano a videocamera disattivata",
-        "talkWhileMuted": "Parli a microfono spento",
         "title": "Impostazioni",
         "video": "Video"
     },
@@ -1641,15 +1776,15 @@
         "go": "VAI",
         "goSmall": "VAI",
         "headerSubtitle": "Riunioni sicure e di alta qualità",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Informazioni chiamata",
-        "jitsiOnMobile": "Jitsi su mobile – scarica le nostre applicazioni e dai inizio ad una riunione dovunque tu sia",
+        "jitsiOnMobile": "Sonacove su mobile – scarica le nostre applicazioni e dai inizio ad una riunione dovunque tu sia",
         "join": "CREA/UNISCITI",
         "logo": {
             "calendar": "Logo calendario",
             "desktopPreviewThumbnail": "Miniatura anteprima del desktop",
             "googleLogo": "Logo Google",
-            "logoDeepLinking": "Logo Jitsi meet",
+            "logoDeepLinking": "Logo Sonacove Meets",
             "microsoftLogo": "Logo Microsoft",
             "policyLogo": "Logo politica"
         },

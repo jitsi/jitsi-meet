@@ -28,7 +28,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Lisää kokouslinkki",
-        "confirmAddLink": "Haluatko lisätä tapahtumaan Jitsi-linkin?",
+        "confirmAddLink": "Haluatko lisätä tapahtumaan Sonacove-linkin?",
         "error": {
             "appConfiguration": "Kalenterin integrointia ei ole määritetty asianmukaisesti.",
             "generic": "Tapahtui virhe. Tarkista kalenterin määritykset tai päivitä kalenterinäkymä.",
@@ -276,7 +276,7 @@
         "answer": "Vastaus",
         "audioCallTitle": "Saapuva puhelu",
         "decline": "Hylkää",
-        "productLabel": "Jitsi Meetistä",
+        "productLabel": "Sonacove Meetsistä",
         "videoCallTitle": "Saapuva videopuhelu"
     },
     "info": {

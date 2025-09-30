@@ -1,0 +1,63 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Processing...</title>
+    <script src="/meet/static/auth-service.js"></script>
+  </head>
+  <body>
+    <div style="display: none;">
+      Processing authentication...
+    </div>
+    <script>
+      async function handleCallback() {
+        try {
+          // Wait for AuthService to be ready
+          if (!window.AuthService) {
+            await new Promise(resolve => {
+              window.addEventListener('authServiceReady', resolve, { once: true });
+            });
+          }
+
+          const userManager = window.AuthService.getUserManager();
+          
+          // Use the unified signinCallback - it automatically handles redirect, popup, and silent callbacks
+          const user = await userManager.signinCallback();
+          
+          if (user) {
+            console.log('Signin callback successful, user:', user);
+            
+            // Parse the state if it's a JSON string, otherwise use as URL
+            let redirectUrl = '/meet';
+            if (user.state) {
+              try {
+                const parsedState = JSON.parse(user.state);
+                redirectUrl = parsedState.url || '/meet';
+                console.log('Parsed state redirect URL:', redirectUrl);
+              } catch {
+                // If not JSON, treat as plain URL
+                redirectUrl = user.state;
+                console.log('Using state as direct URL:', redirectUrl);
+              }
+            }
+
+            console.log('Redirecting to:', redirectUrl);
+            window.location.href = redirectUrl;
+          } else {
+            // This was likely a silent callback (returns undefined)
+            console.log('Silent callback completed successfully');
+            // For silent callbacks, we don't redirect - the parent window handles it
+          }
+        } catch (error) {
+          console.error('Callback error:', error);
+          
+          // Only redirect to error page if this isn't a silent callback
+          if (!window.parent || window.parent === window) {
+            window.location.href = '/meet?error=login_failed';
+          }
+        }
+      }
+
+      handleCallback();
+    </script>
+  </body>
+</html>

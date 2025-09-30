@@ -1,0 +1,14 @@
+/meet/*.js /meet/:splat.js 200
+/meet/*.json /meet/:splat.json 200
+/meet/*.mp3 /meet/:splat.mp3 200
+/meet/*.png /meet/:splat.png 200
+/meet/*.svg /meet/:splat.svg 200
+/meet/*.map /meet/:splat.map 200
+/meet/*.wasm /meet/:splat.wasm 200
+/meet/*.css /meet/:splat.css 200
+
+# Redirect everything else
+/meet/:room/ /meet/:room 307
+/meet/:room /meet/ 200
+
+/meet/ /meet 307

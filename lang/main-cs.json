@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Přidejte odkaz na setkání",
-        "confirmAddLink": "Chcete k této události přidat odkaz Jitsi?",
+        "confirmAddLink": "Chcete k této události přidat odkaz Sonacove?",
         "error": {
             "appConfiguration": "Integrace kalendáře není správně nastavena.",
             "generic": "Došlo k chybě. Zkontrolujte nastavení kalendáře nebo zkuste obnovit kalendář.",
@@ -535,7 +535,7 @@
         "answer": "Odpovědět",
         "audioCallTitle": "Příchozí hovor",
         "decline": "OK",
-        "productLabel": "od Jitsi Meet",
+        "productLabel": "od Sonacove Meets",
         "videoCallTitle": "Příchozí videohovor"
     },
     "info": {
@@ -747,7 +747,7 @@
         "dataChannelClosedDescriptionWithAudio": "Přemosťovací kanál je vypnutý, a proto může dojít k přerušení zvuku a obrazu.",
         "dataChannelClosedWithAudio": "Kvalita zvuku a videa může být snížena",
         "disabledIframe": "Vkládání je určeno pouze pro demo účely, takže tento hovor bude za {{timeout}} minut odpojen.",
-        "disabledIframeSecondary": "Vložení domény {{domain}} je určeno pouze pro demo účely, takže tento hovor bude za {{timeout}} minut odpojen. Pro produkční vkládání použijte prosím <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a service</a>!",
+        "disabledIframeSecondary": "Vložení domény {{domain}} je určeno pouze pro demo účely, takže tento hovor bude za {{timeout}} minut odpojen. Pro produkční vkládání použijte prosím <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Sonacove as a service</a>!",
         "disconnected": "odpojeno",
         "displayNotifications": "Zobrazit upozornění pro",
         "dontRemindMe": "Nepřipomínej mi to",
@@ -799,7 +799,7 @@
         "noiseSuppressionDesktopAudioDescription": "Extra potlačení šumu nelze povolit při sdílení zvuku na ploše. Vypněte jej a zkuste to znovu.",
         "noiseSuppressionFailedTitle": "Nepodařilo se spustit dodatečné potlačení hluku",
         "noiseSuppressionStereoDescription": "Extra potlačení šumu není aktuálně podporováno u stereo zvuku.",
-        "oldElectronClientDescription1": "Zdá se, že používáte zastaralou verzi klienta Jitsi Meet, který má známé bezpečnostní zranitelnosti. Aktualizujte prosím na ",
+        "oldElectronClientDescription1": "Zdá se, že používáte zastaralou verzi klienta Sonacove Meets, který má známé bezpečnostní zranitelnosti. Aktualizujte prosím na ",
         "oldElectronClientDescription2": "nejnovější sestavení",
         "oldElectronClientDescription3": " ihned!",
         "participantWantsToJoin": "Chce se připojit k setkání",
@@ -931,8 +931,7 @@
             "failed": "Test připojení se nezdařil!",
             "good": "Vaše internetové připojení vypadá dobře!",
             "nonOptimal": "Vaše internetové připojení není optimální",
-            "poor": "Máte slabé internetové připojení",
-            "running": "Probíhá test připojení…"
+            "poor": "Máte špatné internetové připojení"
         },
         "connectionDetails": {
             "audioClipping": "Váš zvuk bude pravděpodobně osekaný.",
@@ -969,13 +968,146 @@
         "joinMeetingInLowBandwidthMode": "Připojte se v režimu nízké šířky pásma",
         "joinWithoutAudio": "Vstoupit bez zvuku",
         "keyboardShortcuts": "Povolit klávesové zkratky",
-        "linkCopied": "Odkaz se zkopíroval do schránky",
-        "lookGood": "Váš mikrofon zní, jako že funguje správně",
+        "linkCopied": "Odkaz byl zkopírován do schránky",
+        "lookGood": "Mikrofon funguje správně",
         "or": "nebo",
+        "permissionsGuide": {
+            "close": "Zavřít",
+            "detected": "Detekováno:",
+            "deviceHelp": {
+                "Android": [
+                    "Otevřete nastavení telefonu.",
+                    "Klepněte na \"Aplikace\" > váš prohlížeč (např. Chrome nebo Brave).",
+                    "Klepněte na \"Oprávnění\".",
+                    "Povolte přístup ke kameře a mikrofonu.",
+                    "Restartujte prohlížeč a zkuste to znovu."
+                ],
+                "iOS": [
+                    "Otevřete nastavení iOS.",
+                    "Sjeďte dolů a vyberte svůj prohlížeč (např. Safari nebo Chrome).",
+                    "Klepněte na \"Kamera\" a \"Mikrofon\".",
+                    "Nastavte obě na \"Povolit\".",
+                    "Vraťte se do prohlížeče a znovu načtěte stránku."
+                ]
+            },
+            "howToAllow": "Jak povolit přístup:",
+            "needHelp": "Potřebujete pomoc?",
+            "steps": {
+                "Brave_Android": [
+                    "Klikněte na ikonu <0>Tune</0> vedle URL.",
+                    "Klepněte na 'Oprávnění'.",
+                    "Povolte kameru a mikrofon.",
+                    "Obnovte stránku."
+                ],
+                "Brave_Linux": [
+                    "Klikněte na ikonu <0>Tune</0> na liště adresy.",
+                    "Povolte kameru a mikrofon v seznamu oprávnění.",
+                    "Obnovte stránku."
+                ],
+                "Brave_Windows": [
+                    "Klikněte na ikonu <0>Tune</0> na liště adresy.",
+                    "Povolte mikrofon a kameru.",
+                    "Obnovte stránku."
+                ],
+                "Brave_iOS": [
+                    "Otevřete Nastavení iOS > Brave.",
+                    "Klepněte na 'Kamera' a 'Mikrofon'.",
+                    "Nastavte je na 'Povolit'.",
+                    "Vraťte se do Brave a obnovte stránku."
+                ],
+                "Brave_macOS": [
+                    "Klikněte na ikonu <0>Tune</0> na liště adresy.",
+                    "Povolte kameru a mikrofon v nastavení oprávnění.",
+                    "Obnovte stránku."
+                ],
+                "Chrome_Android": [
+                    "Klikněte na ikonu <0>Tune</0> na liště adresy.",
+                    "Vyberte 'Oprávnění'.",
+                    "Nastavte 'Kamera' a 'Mikrofon' na 'Povolit'."
+                ],
+                "Chrome_Linux": [
+                    "Klikněte na ikonu zámku vedle URL na liště adresy.",
+                    "Klikněte na 'Nastavení webu'.",
+                    "Povolte kameru a mikrofon.",
+                    "Obnovte stránku."
+                ],
+                "Chrome_Windows": [
+                    "Klikněte na ikonu <0>Tune</0> na liště adresy.",
+                    "Klikněte na 'Nastavení webu'.",
+                    "Povolte kameru a mikrofon v 'Oprávnění'."
+                ],
+                "Chrome_iOS": [
+                    "Otevřete Nastavení iOS > Chrome.",
+                    "Klepněte na 'Kamera' a 'Mikrofon'.",
+                    "Nastavte je na 'Povolit'.",
+                    "Vraťte se do Chrome a obnovte stránku."
+                ],
+                "Chrome_macOS": [
+                    "Klikněte na ikonu <0>Tune</0> na liště adresy.",
+                    "Klikněte na 'Nastavení webu'.",
+                    "Povolte kameru a mikrofon v 'Oprávnění'."
+                ],
+                "Edge_Windows": [
+                    "Klikněte na ikonu zámku vedle URL.",
+                    "Povolte kameru a mikrofon.",
+                    "Obnovte stránku."
+                ],
+                "Edge_macOS": [
+                    "Klikněte na ikonu <0>Tune</0> na liště adresy.",
+                    "Nastavte kameru a mikrofon na 'Povolit'."
+                ],
+                "Firefox_Android": [
+                    "Klepněte na ikonu zámku vedle lišty URL.",
+                    "Klepněte na 'Upravit nastavení webu'.",
+                    "Povolte kameru a mikrofon.",
+                    "Obnovte stránku."
+                ],
+                "Firefox_Linux": [
+                    "Klikněte na ikonu zámku vedle lišty adresy.",
+                    "Klikněte na 'Více informací'.",
+                    "V oprávněních povolte kameru a mikrofon.",
+                    "Obnovte stránku."
+                ],
+                "Firefox_Windows": [
+                    "Klikněte na ikonu <0>Tune</0> vedle URL.",
+                    "Povolte mikrofon a kameru.",
+                    "Obnovte stránku."
+                ],
+                "Firefox_iOS": [
+                    "Otevřete Nastavení iOS > Firefox.",
+                    "Povolte kameru a mikrofon.",
+                    "Vraťte se do Firefoxu a obnovte stránku."
+                ],
+                "Firefox_macOS": [
+                    "Klikněte na ikonu <0>Tune</0> vedle URL.",
+                    "Klikněte na šipku > 'Více informací'.",
+                    "Přejděte na záložku 'Oprávnění'.",
+                    "Povolte kameru a mikrofon.",
+                    "Obnovte stránku."
+                ],
+                "Safari_iOS": [
+                    "Přejděte do Nastavení iOS > Safari.",
+                    "Klepněte na 'Kamera' a 'Mikrofon'.",
+                    "Nastavte je na 'Povolit'.",
+                    "Vraťte se do Safari a obnovte stránku."
+                ],
+                "Safari_macOS": [
+                    "Klikněte na 'Safari' v liště nabídek > 'Nastavení pro tento web'.",
+                    "Nastavte kameru a mikrofon na 'Povolit'.",
+                    "Obnovte stránku."
+                ],
+                "default": [
+                    "Otevřete nastavení prohlížeče.",
+                    "Vyhledejte sekci 'Soukromí' nebo 'Oprávnění'.",
+                    "Povolte kameru a mikrofon pro tento web.",
+                    "Obnovte stránku."
+                ]
+            },
+            "stillNotWorking": "Stále nefunguje?",
+            "title": "Povolte mikrofon a kameru"
+        },
         "premeeting": "Před setkáním",
         "proceedAnyway": "Přesto pokračujte",
-        "recordingWarning": "Ostatní účastníci mohou tento hovor nahrávat",
-        "screenSharingError": "Chyba sdílení obrazovky:",
         "startWithPhone": "Začít se zvukem přes telefon",
         "unsafeRoomConsent": "Chápu rizika, chci se připojit k setkání",
         "videoOnlyError": "Chyba videa:",
@@ -1091,6 +1223,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Příchozí zpráva",
+        "KNOCKING_PARTICIPANT_SOUND": "Účastník vstoupil do lobby",
+        "PARTICIPANT_JOINED_SOUND": "Účastník se připojil",
+        "PARTICIPANT_LEFT_SOUND": "Účastník odešel",
+        "TALK_WHILE_MUTED_SOUND": "Mluvte při ztlumení",
         "audio": "Zvuk",
         "buttonLabel": "Nastavení",
         "calendar": {
@@ -1107,7 +1244,6 @@
         "followMe": "Všichni sledují mě",
         "followMeRecorder": "Rekordér mě následuje",
         "framesPerSecond": "snímků za sekundu",
-        "incomingMessage": "Příchozí zpráva",
         "language": "Jazyk",
         "loggedIn": "Přihlášen/a jako {{name}}",
         "maxStageParticipants": "Maximální počet účastníků, které lze připnout na hlavní pódium",
@@ -1118,9 +1254,6 @@
         "name": "Jméno",
         "noDevice": "Žádné zařízení",
         "notifications": "Oznámení",
-        "participantJoined": "Účastník se připojil",
-        "participantKnocking": "Účastník vstoupil do lobby",
-        "participantLeft": "Účastník odešel",
         "playSounds": "Přehrávání zvuku na",
         "reactions": "Reakce na setkání",
         "sameAsSystem": "Stejné jako systém ({{label}})",
@@ -1133,7 +1266,6 @@
         "startAudioMuted": "Při připojení všem ztlumit zvuk",
         "startReactionsMuted": "Ztlumit zvuky reakcí pro všechny",
         "startVideoMuted": "Při připojení všem vypnout kameru",
-        "talkWhileMuted": "Mluvte při ztlumení",
         "title": "Nastavení",
         "video": "Video"
     },
@@ -1540,15 +1672,15 @@
         "go": "ZAČÍT",
         "goSmall": "ZAČÍT",
         "headerSubtitle": "Bezpečné a kvalitní setkávání",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Informace o vytáčení",
-        "jitsiOnMobile": "Jitsi na mobilu – stáhněte si naše aplikace a spusťte hovor odkudkoliv",
+        "jitsiOnMobile": "Sonacove na mobilu – stáhněte si naše aplikace a spusťte hovor odkudkoliv",
         "join": "VYTVOŘIT / PŘIPOJIT",
         "logo": {
             "calendar": "Logo kalendáře",
             "desktopPreviewThumbnail": "Náhled zobrazení plochy",
             "googleLogo": "Google Logo",
-            "logoDeepLinking": "Jitsi meet logo",
+            "logoDeepLinking": "Sonacove Meets logo",
             "microsoftLogo": "Microsoft logo",
             "policyLogo": "Policy logo"
         },

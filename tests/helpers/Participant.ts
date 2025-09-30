@@ -292,6 +292,21 @@ export class Participant {
             }
         }, this._name, driver.sessionId, LOG_PREFIX));
 
+        // Handle invite dialog dismissal using the page object
+        parallel.push(
+            (async () => {
+                try {
+                    const inviteDialog = this.getInviteDialog();
+
+                    await inviteDialog.waitTillOpen();
+                    await inviteDialog.clickCloseButton();
+                    await inviteDialog.waitTillOpen(true);
+                } catch (e) {
+                    // pass
+                }
+            })()
+        );
+
         await Promise.all(parallel);
     }
 

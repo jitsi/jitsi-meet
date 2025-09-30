@@ -1,9 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { IStore } from '../app/types';
+import { LOGIN } from '../authentication/actionTypes';
 import { updateConfig } from '../base/config/actions';
 import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
 import { connect } from '../base/connection/actions';
+import { JWT_VALIDATION_ERRORS } from '../base/jwt/constants';
+import { validateJwt } from '../base/jwt/functions';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
 import { isVideoMutedByUser } from '../base/media/functions';
 import { updateSettings } from '../base/settings/actions';
@@ -195,8 +198,18 @@ export function dialOut(onSuccess: Function, onFail: Function) {
 export function joinConference(options?: Object, ignoreJoiningInProgress = false,
         jid?: string, password?: string) {
     return function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
+        const state = getState();
+        const { jwt } = state['features/base/jwt'];
+
+        // Check if the jwt is expired. If so, get a new one.
+        if (jwt && validateJwt(jwt).some(e =>
+            (e as any).key === JWT_VALIDATION_ERRORS.TOKEN_EXPIRED)) {
+            dispatch({ type: LOGIN });
+
+            return;
+        }
+
         if (!ignoreJoiningInProgress) {
-            const state = getState();
             const { joiningInProgress } = state['features/prejoin'];
 
             if (joiningInProgress) {

@@ -57,6 +57,11 @@ export function getDeepLinkingPage(state: IReduxState) {
     const { launchInWeb } = state['features/deep-linking'];
     const deeplinking = state['features/base/config'].deeplinking || {};
 
+    // Show only if there is no history
+    if (window.history.length < 2 && isMobileBrowser()) {
+        return Promise.resolve(DeepLinkingMobilePage);
+    } else return Promise.resolve();
+
     // @ts-ignore
     const { appScheme } = deeplinking?.[Platform.OS as keyof typeof deeplinking] || {};
 

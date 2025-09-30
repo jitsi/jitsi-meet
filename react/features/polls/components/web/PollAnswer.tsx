@@ -9,6 +9,8 @@ import { IconCloseLarge } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
+import HostIndicator from '../../../filmstrip/components/web/HostIndicator';
+import ModeratorIndicator from '../../../filmstrip/components/web/ModeratorIndicator';
 import { editPoll, removePoll } from '../../actions';
 import { isSubmitAnswerDisabled } from '../../functions';
 import AbstractPollAnswer, { AbstractProps } from '../AbstractPollAnswer';
@@ -35,6 +37,8 @@ const useStyles = makeStyles()(theme => {
             marginBottom: '8px'
         },
         creator: {
+            display: 'flex',
+            gap: theme.spacing(1),
             ...theme.typography.bodyShortRegular,
             color: theme.palette.text02
         },
@@ -61,6 +65,8 @@ const useStyles = makeStyles()(theme => {
 const PollAnswer = ({
     creatorName,
     checkBoxStates,
+    isParticipantModerator,
+    isParticipantHost,
     poll,
     pollId,
     setCheckbox,
@@ -75,6 +81,29 @@ const PollAnswer = ({
     const dispatch = useDispatch();
 
     const { classes } = useStyles();
+
+    /**
+     * Renders role indicators (Moderator and Host) based on the participant's role.
+     *
+     * @returns {React$Element<*>}
+     */
+    function _renderRoleIndicators() {
+        if (isParticipantHost) {
+            return (
+                <HostIndicator
+                    tooltipPosition = 'right' />
+            );
+        }
+
+        if (isParticipantModerator) {
+            return (
+                <ModeratorIndicator
+                    tooltipPosition = 'right' />
+            );
+        }
+
+        return null;
+    }
 
     return (
         <div className = { classes.container }>
@@ -92,7 +121,7 @@ const PollAnswer = ({
                     { poll.question }
                 </div>
                 <div className = { classes.creator }>
-                    { t('polls.by', { name: creatorName }) }
+                    { t('polls.by', { name: creatorName }) } { _renderRoleIndicators() }
                 </div>
             </div>
             <ul className = { classes.answerList }>

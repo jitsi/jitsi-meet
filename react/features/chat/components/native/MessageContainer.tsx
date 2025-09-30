@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, Text, TextStyle, View, ViewStyle } from 'react-native';
-import { connect } from 'react-redux';
+import { ReactReduxContext, connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
 import { IMessageGroup, groupMessagesBySender } from '../../../base/util/messageGrouping';
@@ -18,6 +18,7 @@ interface IProps {
  * Implements a container to render all the chat messages in a conference.
  */
 class MessageContainer extends Component<IProps, any> {
+    static override contextType = ReactReduxContext;
 
     static defaultProps = {
         messages: [] as IMessage[]
@@ -110,7 +111,11 @@ class MessageContainer extends Component<IProps, any> {
      * @returns {Array<Array<Object>>}
      */
     _getMessagesGroupedBySender() {
-        return groupMessagesBySender(this.props.messages);
+        const store = this.context?.store;
+        const state = store.getState();
+        const { disableReactionsInChat } = state['features/base/config'];
+
+        return groupMessagesBySender(this.props.messages, disableReactionsInChat);
     }
 }
 

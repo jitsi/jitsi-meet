@@ -9,7 +9,7 @@ const useStyles = makeStyles()(theme => {
             ...theme.typography.labelRegular,
             color: theme.palette.text01,
             padding: '6px 8px',
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
             boxSizing: 'border-box',
             height: '28px',
             borderRadius: `0 ${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0`,

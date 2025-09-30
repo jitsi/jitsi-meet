@@ -33,6 +33,7 @@ export interface IMessageGroup<T extends IGroupableMessage> {
  *
  * @template T - The type of messages to group, must extend IGroupableMessage.
  * @param {T[]} messages - The array of messages to group.
+ * @param {boolean} [disableReactionsInChat=false] - Whether to exclude reaction messages from the groups.
  * @returns {IMessageGroup<T>[]} - An array of message groups, where each group contains messages from the same sender.
  * @example
  * const messages = [
@@ -53,8 +54,9 @@ export interface IMessageGroup<T extends IGroupableMessage> {
  * //   { senderId: "user2", messages: [{ participantId: "user2", timestamp: 3000 }] }
  * // ]
  */
-export function groupMessagesBySender<T extends IGroupableMessage>(
-        messages: T[]
+export function groupMessagesBySender<T extends IGroupableMessage & { isReaction?: boolean; }>(
+        messages: T[],
+        disableReactionsInChat: boolean = false
 ): IMessageGroup<T>[] {
     if (!messages?.length) {
         return [];
@@ -64,6 +66,10 @@ export function groupMessagesBySender<T extends IGroupableMessage>(
     let currentGroup: IMessageGroup<T> | null = null;
 
     for (const message of messages) {
+        if (disableReactionsInChat && message.isReaction) {
+            continue;
+        }
+
         if (!currentGroup || currentGroup.senderId !== message.participantId) {
             currentGroup = {
                 messages: [ message ],

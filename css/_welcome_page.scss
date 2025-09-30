@@ -352,3 +352,11 @@ body.welcome-page {
         text-align: center;
     }
 }
+
+@media (max-width: 700px) {
+    .welcome-cards-container {
+        margin-top: 16px;
+        margin-left: 16px;
+        margin-right: 16px;
+    }
+}

@@ -28,7 +28,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Додајтe вeзу састанка",
-        "confirmAddLink": "Жeлитe ли додати Jitsi вeзу у овај догађај?",
+        "confirmAddLink": "Жeлитe ли додати Sonacove вeзу у овај догађај?",
         "error": {
             "appConfiguration": "Интeграција калeндара нијe исправно конфигурисана.",
             "generic": "Дошло јe до грeшкe. Провјeритe подешавања калeндара или покушајтe освјeжити калeндар.",
@@ -463,6 +463,22 @@
         "configuringDevices": "Подешавамо уређаје…",
         "connectedWithAudioQ": "Да ли сте укључили звук?",
         "copyAndShare": "Копирати и подјелити везу за састанак",
+        "deviceHelp": {
+            "Android": [
+                "Otvorite podešavanja telefona.",
+                "Dodirnite „Aplikacije“ > vaš pregledač (npr. Chrome ili Brave).",
+                "Dodirnite „Dozvole“.",
+                "Dozvolite pristup kameri i mikrofonu.",
+                "Restartujte pregledač i pokušajte ponovo."
+            ],
+            "iOS": [
+                "Otvorite iOS podešavanja.",
+                "Skrolujte dole i izaberite vaš pregledač (npr. Safari ili Chrome).",
+                "Dodirnite „Kamera“ i „Mikrofon“.",
+                "Podesite oba na „Dozvoli“.",
+                "Vratite se u pregledač i osvežite stranicu."
+            ]
+        },
         "dialInMeeting": "Позвонити у састанак",
         "dialInPin": "Позвонити у састанак и унијети ПИН код:",
         "dialing": "Позив",
@@ -484,6 +500,117 @@
         "premeeting": "Пред придруживањем",
         "screenSharingError": "Грешка дијељења екрана:",
         "startWithPhone": "Започети са телефонском везом.",
+        "steps": {
+            "Brave_Android": [
+                "Kliknite na ikonu <0>Tune</0> pored URL-a.",
+                "Dodirnite „Dozvole“.",
+                "Dozvolite kameru i mikrofon.",
+                "Osvežite stranicu."
+            ],
+            "Brave_Linux": [
+                "Kliknite na ikonu <0>Tune</0> u adresnoj traci.",
+                "Dozvolite kameru i mikrofon na listi dozvola.",
+                "Osvežite stranicu."
+            ],
+            "Brave_Windows": [
+                "Kliknite na ikonu <0>Tune</0> u adresnoj traci.",
+                "Dozvolite mikrofon i kameru.",
+                "Osvežite stranicu."
+            ],
+            "Brave_iOS": [
+                "Otvorite iOS podešavanja > Brave.",
+                "Dodirnite „Kamera“ i „Mikrofon“.",
+                "Podesite dozvole na „Dozvoli“.",
+                "Vratite se u Brave i osvežite stranicu."
+            ],
+            "Brave_macOS": [
+                "Kliknite na ikonu <0>Tune</0> u adresnoj traci.",
+                "Dozvolite kameru i mikrofon u podešavanjima dozvola.",
+                "Osvežite stranicu."
+            ],
+            "Chrome_Android": [
+                "Kliknite na ikonu <0>Tune</0> u adresnoj traci.",
+                "Izaberite „Dozvole“.",
+                "Podesite kameru i mikrofon na „Dozvoli“."
+            ],
+            "Chrome_Linux": [
+                "Kliknite na ikonu oka pored URL-a u adresnoj traci.",
+                "Kliknite na „Podešavanja lokacije“.",
+                "Dozvolite pristup kameri i mikrofonu.",
+                "Osvežite stranicu."
+            ],
+            "Chrome_Windows": [
+                "Kliknite na ikonu <0>Tune</0> u adresnoj traci.",
+                "Kliknite na „Podešavanja lokacije“.",
+                "Dozvolite pristup kameri i mikrofonu u odeljku „Dozvole“."
+            ],
+            "Chrome_iOS": [
+                "Otvorite iOS podešavanja > Chrome.",
+                "Kliknite na „Kamera“ i „Mikrofon“.",
+                "Podesite dozvole na „Dozvoli“.",
+                "Vratite se u Chrome i osvežite stranicu."
+            ],
+            "Chrome_macOS": [
+                "Kliknite na ikonu <0>Tune</0> u adresnoj traci.",
+                "Kliknite na „Podešavanja lokacije“.",
+                "Dozvolite pristup kameri i mikrofonu u odeljku „Dozvole“."
+            ],
+            "Edge_Windows": [
+                "Kliknite na ikonu oka pored URL-a.",
+                "Dozvolite kameru i mikrofon.",
+                "Osvežite stranicu."
+            ],
+            "Edge_macOS": [
+                "Kliknite na ikonu <0>Tune</0> u adresnoj traci.",
+                "Podesite kameru i mikrofon na „Dozvoli“."
+            ],
+            "Firefox_Android": [
+                "Dodirnite ikonu oka pored URL adresne trake.",
+                "Dodirnite „Uredi podešavanja lokacije“.",
+                "Dozvolite kameru i mikrofon.",
+                "Osvežite stranicu."
+            ],
+            "Firefox_Linux": [
+                "Kliknite na ikonu oka pored adresne trake.",
+                "Kliknite na „Više informacija“.",
+                "Dozvolite kameru i mikrofon u podešavanjima dozvola.",
+                "Osvežite stranicu."
+            ],
+            "Firefox_Windows": [
+                "Kliknite na ikonu <0>Tune</0> pored URL-a.",
+                "Dozvolite mikrofon i kameru.",
+                "Osvežite stranicu."
+            ],
+            "Firefox_iOS": [
+                "Otvorite iOS podešavanja > Firefox.",
+                "Dozvolite kameru i mikrofon.",
+                "Vratite se u Firefox i osvežite stranicu."
+            ],
+            "Firefox_macOS": [
+                "Kliknite na ikonu <0>Tune</0> pored URL-a.",
+                "Kliknite na strelicu > „Više informacija“.",
+                "Idite na karticu „Dozvole“.",
+                "Dozvolite kameru i mikrofon.",
+                "Osvežite stranicu."
+            ],
+            "Safari_iOS": [
+                "Idite u iOS podešavanja > Safari.",
+                "Dodirnite „Kamera“ i „Mikrofon“.",
+                "Podesite dozvole na „Dozvoli“.",
+                "Vratite se u Safari i osvežite stranicu."
+            ],
+            "Safari_macOS": [
+                "Kliknite na „Safari“ u meniju > „Podešavanja za ovu lokaciju“.",
+                "Podesite kameru i mikrofon na „Dozvoli“.",
+                "Osvežite stranicu."
+            ],
+            "default": [
+                "Otvorite podešavanja pregledača.",
+                "Pronađite odeljak „Privatnost“ ili „Dozvole“.",
+                "Dozvolite pristup kameri i mikrofonu za ovu lokaciju.",
+                "Osvežite stranicu."
+            ]
+        },
         "videoOnlyError": "Грешка видеа:",
         "videoTrackError": "Креирање видео траке није успјело.",
         "viewAllNumbers": "преглед свих учесника"

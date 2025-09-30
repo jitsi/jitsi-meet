@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../../app/types';
 import Avatar from '../../../avatar/components/Avatar';
@@ -36,6 +37,14 @@ export interface IProps {
     videoTrack?: Object;
 }
 
+const useStyles = makeStyles()(theme => {
+    return {
+        preview: {
+            backgroundColor: `${theme.palette.uiBackground} !important`
+        }
+    };
+});
+
 /**
  * Component showing the video preview and device status.
  *
@@ -45,6 +54,7 @@ export interface IProps {
 function Preview(props: IProps) {
     const { _participantId, flipVideo, name, videoMuted, videoTrack } = props;
     const className = flipVideo ? 'flipVideoX' : '';
+    const { classes, cx } = useStyles();
 
     useEffect(() => {
         APP.API.notifyPrejoinVideoVisibilityChanged(Boolean(!videoMuted && videoTrack));
@@ -57,7 +67,9 @@ function Preview(props: IProps) {
     }, []);
 
     return (
-        <div id = 'preview'>
+        <div
+            className = { cx(classes.preview) }
+            id = 'preview'>
             {!videoMuted && videoTrack
                 ? (
                     <Video

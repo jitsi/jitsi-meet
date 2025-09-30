@@ -1,0 +1,30 @@
+{
+    "name": "sona-app",
+    "compatibility_date": "2025-05-07",
+    // "main": "functions/index.ts",
+    "assets": {
+        "directory": "../dist",
+        "not_found_handling": "404-page"
+        // "html_handling": "drop-trailing-slash"
+    },
+    "routes": [
+        {
+            "pattern": "sonacove.com/meet/*",
+            // "zone_name": "sonacove.com"
+            "zone_id": "ee3054ac4b0bf9e4d05f6038ccf73964"
+        },
+        {
+            "pattern": "www.sonacove.com/meet/*",
+            "zone_id": "ee3054ac4b0bf9e4d05f6038ccf73964"
+        }
+    ],
+    "workers_dev": true,
+    "preview_urls": true,
+    "send_metrics": false,
+    "upload_source_maps": true,
+    "minify": true,
+    "observability": {
+        "enabled": true,
+        "head_sampling_rate": 1
+    }
+}

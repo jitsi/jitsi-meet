@@ -6,7 +6,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
-import { isNameReadOnly } from '../../../base/config/functions.web';
 import { IconArrowDown, IconArrowUp, IconPhoneRinging, IconVolumeOff } from '../../../base/icons/svg';
 import { isVideoMutedByUser } from '../../../base/media/functions';
 import { getLocalParticipant } from '../../../base/participants/functions';
@@ -32,6 +31,7 @@ import {
     isDisplayNameRequired,
     isJoinByPhoneButtonVisible,
     isJoinByPhoneDialogVisible,
+    isNameReadOnly,
     isPrejoinDisplayNameVisible
 } from '../../functions';
 import logger from '../../logger';
