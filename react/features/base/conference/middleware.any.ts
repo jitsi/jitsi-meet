@@ -210,7 +210,7 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
     case JitsiConferenceErrors.CONFERENCE_MAX_USERS: {
         let retryAsVisitor = false;
 
-        if (error.params?.length && error.params[0]?.visitorsSupported) {
+        if (error.params?.length && error.params[0]?.visitorsSupported === 'true') {
             // visitors are supported, so let's try joining that way
             retryAsVisitor = true;
         }
