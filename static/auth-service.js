@@ -31,7 +31,7 @@
             }
 
             const isServer = typeof window === 'undefined';
-            const siteUrl = isServer ? 'http://localhost:4321' : window.location.origin;
+            const siteUrl = isServer ? 'http://localhost:4321' : `${window.location.origin}/meet`;
             const userStore = isServer
                 ? new WebStorageStateStore({ store: new InMemoryWebStorage() })
                 : new WebStorageStateStore({ store: window.localStorage });
