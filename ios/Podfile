@@ -32,7 +32,7 @@ target 'JitsiMeetSDK' do
   use_react_native!(
     :path => config[:reactNativePath],
     :hermes_enabled => true,
-    :fabric_enabled => true,
+    :fabric_enabled => false,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
@@ -65,7 +65,7 @@ target 'JitsiMeetSDKLite' do
     use_react_native!(
       :path => config[:reactNativePath],
       :hermes_enabled => true,
-      :fabric_enabled => true,
+      :fabric_enabled => false,
       # An absolute path to your application root.
       :app_path => "#{Pod::Config.instance.installation_root}/.."
     )
