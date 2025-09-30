@@ -95,14 +95,14 @@ export async function assertUrlDisplayed(p: Participant) {
     await inviteDialog.waitTillOpen(true);
 }
 
-export async function assertDialInDisplayed(p: Participant) {
+export async function assertDialInDisplayed(p: Participant, displayed: boolean = false) {
     const inviteDialog = p.getInviteDialog();
 
     await inviteDialog.open();
     await inviteDialog.waitTillOpen();
 
-    expect((await inviteDialog.getDialInNumber()).length > 0).toBe(true);
-    expect((await inviteDialog.getPinNumber()).length > 0).toBe(true);
+    expect((await inviteDialog.getDialInNumber()).length > 0).toBe(displayed);
+    expect((await inviteDialog.getPinNumber()).length > 0).toBe(displayed);
 }
 
 export async function verifyMoreNumbersPage(p: Participant) {

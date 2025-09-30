@@ -4,6 +4,15 @@ import { merge } from 'lodash-es';
 import { config } from './TestsConfig';
 
 const defaultExpectations = {
+    dialIn: {
+        /*
+         * The dial-in functionality is enabled.
+         * true -> assert the config is enabled, the UI elements are displayed, and the feature works.
+         * false -> assert the config is disabled and the UI elements are not displayed.
+         * null -> if the config is enabled, assert the UI elements are displayed and the feature works.
+         */
+        enabled: null,
+    },
     moderation: {
         // Everyone is a moderator.
         allModerators: false,

@@ -1,5 +1,6 @@
 import process from 'node:process';
 
+import { expectations } from '../../helpers/Expectations';
 import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
 import { cleanup, isDialInEnabled, waitForAudioFromDialInParticipant } from '../helpers/DialIn';
 
@@ -16,8 +17,15 @@ describe('Fake Dial-In', () => {
 
         await ensureOneParticipant();
 
+        const configEnabled = await isDialInEnabled(ctx.p1);
+
+        if (expectations.dialIn.enabled !== null) {
+            expect(configEnabled).toBe(expectations.dialIn.enabled);
+        }
+
         // check dial-in is enabled, so skip
-        if (await isDialInEnabled(ctx.p1)) {
+        if (configEnabled) {
+            console.log('Dial in config is enabled, skipping fake dial in');
             ctx.skipSuiteTests = true;
         }
     });

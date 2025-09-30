@@ -1,5 +1,6 @@
 import process from 'node:process';
 
+import { expectations } from '../../helpers/Expectations';
 import { config as testsConfig } from '../../helpers/TestsConfig';
 import { ensureOneParticipant } from '../../helpers/participants';
 import { cleanup, dialIn, isDialInEnabled, waitForAudioFromDialInParticipant } from '../helpers/DialIn';
@@ -25,7 +26,14 @@ describe('Dial-In', () => {
 
         expect(await ctx.p1.isInMuc()).toBe(true);
 
-        if (!await isDialInEnabled(ctx.p1)) {
+        const configEnabled = await isDialInEnabled(ctx.p1);
+
+        if (expectations.dialIn.enabled !== null) {
+            expect(configEnabled).toBe(expectations.dialIn.enabled);
+        }
+
+        if (!configEnabled) {
+            console.log('Dial in config is disabled, skipping dial-in tests');
             ctx.skipSuiteTests = true;
         }
     });
