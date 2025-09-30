@@ -141,4 +141,6 @@ export async function verifyMoreNumbersPage(p: Participant) {
         async el => (await el.getText()).trim() === displayedNumber);
 
     expect(nums.length).toBe(1);
+
+    await p.driver.switchWindow(meetingWindow);
 }
