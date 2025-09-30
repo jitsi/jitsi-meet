@@ -20,14 +20,16 @@ export async function ensureOneParticipant(
     }
     participantOptions.name = P1;
 
-    if (config.jwt.privateKeyPath && options?.preferGenerateToken) {
-        participantOptions.token = generateToken({
-            ...options?.tokenOptions,
-            displayName: participantOptions.name,
-            moderator: true
-        });
-    } else {
-        participantOptions.token = config.jwt.preconfiguredToken;
+    if (!participantOptions.token) {
+        if (config.jwt.privateKeyPath && options?.preferGenerateToken) {
+            participantOptions.token = generateToken({
+                ...options?.tokenOptions,
+                displayName: participantOptions.name,
+                moderator: true
+            });
+        } else {
+            participantOptions.token = config.jwt.preconfiguredToken;
+        }
     }
 
     // make sure the first participant is moderator, if supported by deployment
