@@ -24,10 +24,3 @@
 #import <JitsiMeetSDK/InfoPlistUtil.h>
 #import <JitsiMeetSDK/JMCallKitListener.h>
 #import <JitsiMeetSDK/JMCallKitProxy.h>
-
-// New Architecture modules
-#import <React-RCTAppDelegate/RCTAppDelegate.h>
-#import <ReactAppDependencyProvider/RCTAppDependencyProvider.h>
-
-// React Native Core modules
-#import <React/RCTBundleURLProvider.h>
