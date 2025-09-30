@@ -1,6 +1,5 @@
 import { P1, P2, P3, P4, Participant } from './Participant';
 import { config } from './TestsConfig';
-import { generateToken } from './token';
 import { IJoinOptions, IParticipantOptions } from './types';
 
 const SUBJECT_XPATH = '//div[starts-with(@class, "subject-text")]';
@@ -21,15 +20,7 @@ export async function ensureOneParticipant(
     participantOptions.name = P1;
 
     if (!participantOptions.token) {
-        if (config.jwt.privateKeyPath && options?.preferGenerateToken) {
-            participantOptions.token = generateToken({
-                ...options?.tokenOptions,
-                displayName: participantOptions.name,
-                moderator: true
-            });
-        } else {
-            participantOptions.token = config.jwt.preconfiguredToken;
-        }
+        participantOptions.token = config.jwt.preconfiguredToken;
     }
 
     // make sure the first participant is moderator, if supported by deployment
@@ -145,13 +136,6 @@ export async function ensureTwoParticipants(
         participantOptions = { name: P2 };
     }
     participantOptions.name = P2;
-
-    if (options?.preferGenerateToken) {
-        participantOptions.token = generateToken({
-            ...options?.tokenOptions,
-            displayName: participantOptions.name,
-        });
-    }
 
     await joinParticipant(participantOptions, options);
 

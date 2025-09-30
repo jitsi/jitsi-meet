@@ -81,12 +81,6 @@ export type IJoinOptions = {
     configOverwrite?: IConfig;
 
     /**
-     * When joining the first participant and jwt singing material is available and a provided token
-     * is available, prefer generating a new token for the first participant.
-     */
-    preferGenerateToken?: boolean;
-
-    /**
      * To be able to override the ctx generated room name. If missing the one from the context will be used.
      */
     roomName?: string;
