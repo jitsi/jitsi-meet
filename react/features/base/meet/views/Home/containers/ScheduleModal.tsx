@@ -22,6 +22,7 @@ const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
     const [copied, setCopied] = useState(false);
     const inputAccent = errorMessage ? "error" : undefined;
     const inputErrorMessage = errorMessage ?? undefined;
+
     const handleCopy = () => {
         navigator.clipboard.writeText(meetingLink);
         setCopied(true);
@@ -44,7 +45,7 @@ const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                     </label>
                 </div>
 
-                <div className="flex flex-col space-y-3 mb-4 relative">
+                <div className="flex flex-col mb-4 relative">
                     <Input
                         value={meetingLink}
                         message={inputErrorMessage}
@@ -52,7 +53,10 @@ const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                         className="select-all text-lg font-normal"
                         inputClassName="pr-11"
                     />
-                    <button onClick={handleCopy} className="absolute right-3 -top-0.5">
+                    <button
+                        onClick={handleCopy}
+                        className="absolute right-1.5 top-1 h-8 w-8 rounded-full items-center justify-center flex hover:bg-[#0066FF1A] active:bg-[#0066FF40] transition-colors duration-200"
+                    >
                         <Copy size={20} className="text-primary" color="#0066FF" />
                     </button>
                     {copied && (
