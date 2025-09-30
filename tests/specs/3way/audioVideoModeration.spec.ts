@@ -3,10 +3,9 @@ import { config } from '../../helpers/TestsConfig';
 import {
     ensureOneParticipant,
     ensureThreeParticipants, ensureTwoParticipants,
-    hangupAllParticipants,
-    unmuteAudioAndCheck,
-    unmuteVideoAndCheck
+    hangupAllParticipants
 } from '../../helpers/participants';
+import { unmuteAudioAndCheck, unmuteVideoAndCheck } from '../helpers/mute';
 
 describe('AVModeration', () => {
 
