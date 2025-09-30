@@ -60,7 +60,7 @@ jobs:
                       # Extract preview URL from wrangler output and add /meet subpath
                       PREVIEW_URL="${{ steps.preview-deploy.outputs.deployment-url }}"
                       if [[ -n "$PREVIEW_URL" ]]; then
-                          PREVIEW_URL_WITH_MEET="${PREVIEW_URL}/meet"
+                          PREVIEW_URL_WITH_MEET="${PREVIEW_URL}/meet/testmeeting1"
                           echo "**Preview URL:** [$PREVIEW_URL_WITH_MEET]($PREVIEW_URL_WITH_MEET)" >> $GITHUB_STEP_SUMMARY
                           echo "::notice title=Preview Deployment::🚀 Preview deployed: $PREVIEW_URL_WITH_MEET"
                       else
@@ -80,7 +80,7 @@ jobs:
 
                       **Status:** ✅ Successfully deployed
                       **Deployment Type:** Version Upload
-                      **Preview URL:** ${{ steps.preview-deploy.outputs.deployment-url && format('[{0}/meet]({0}/meet)', steps.preview-deploy.outputs.deployment-url) || 'Preview deployment created successfully' }}
+                      **Preview URL:** ${{ steps.preview-deploy.outputs.deployment-url && format('[{0}/meet/testmeeting1]({0}/meet/testmeeting1)', steps.preview-deploy.outputs.deployment-url) || 'Preview deployment created successfully' }}
 
                       ---
                       *This comment will be automatically updated when new commits are pushed.*

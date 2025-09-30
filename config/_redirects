@@ -10,3 +10,5 @@
 # Redirect everything else
 /meet/:room/ /meet/:room 307
 /meet/:room /meet/ 200
+
+/meet/ /meet 307

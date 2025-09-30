@@ -731,7 +731,7 @@ var config = {
         disabled: false,
 
         // If set, landing page will redirect to this URL.
-        customUrl: undefined,
+        customUrl: '/meets',
     },
 
     // Configs for the lobby screen.
@@ -1628,11 +1628,11 @@ var config = {
     // You can use external service for authentication that will redirect back passing a jwt token
     // You can use tokenAuthUrl config to point to a URL of such service.
     // The URL for the service supports few params which will be filled in by the code.
-    tokenAuthUrl:
-        'https://' + authdomain + '/realms/jitsi/protocol/openid-connect/auth'
-        + '?client_id=jitsi-web'
-        + '&redirect_uri=https%3A%2F%2F' + domain + '%2Fmeet%2F{room}%23{state}'
-        + '&response_type=token',
+    // tokenAuthUrl:
+    //     'https://' + authdomain + '/realms/jitsi/protocol/openid-connect/auth'
+    //     + '?client_id=jitsi-web'
+    //     + '&redirect_uri=https%3A%2F%2F' + domain + '%2Fmeet%2F{room}%23{state}'
+    //     + '&response_type=token',
 
     // Supported parameters in tokenAuthUrl:
     //      {room} - will be replaced with the room name
@@ -1649,14 +1649,14 @@ var config = {
     //          - android=true (in case android mobile app is used)
     //          - electron=true (when web is loaded in electron app)
     // If there is a logout service you can specify its URL with:
-    tokenLogoutUrl:
-        'https://' + authdomain + '/realms/jitsi/protocol/openid-connect/logout'
-        + '?post_logout_redirect_uri=https%3A%2F%2F' + domain + '%2Fmeet%2F%23loggedOut%3Dtrue'
-        + '&client_id=jitsi-web',
+    // tokenLogoutUrl:
+    //     'https://' + authdomain + '/realms/jitsi/protocol/openid-connect/logout'
+    //     + '?post_logout_redirect_uri=https%3A%2F%2F' + domain + '%2Fmeet%2F%23loggedOut%3Dtrue'
+    //     + '&client_id=jitsi-web',
 
     // You can enable tokenAuthUrlAutoRedirect which will detect that you have logged in successfully before
     // and will automatically redirect to the token service to get the token for the meeting.
-    tokenAuthUrlAutoRedirect: true,
+    // tokenAuthUrlAutoRedirect: true,
 
     // An option to respect the context.tenant jwt field compared to the current tenant from the url
     // tokenRespectTenant: false,

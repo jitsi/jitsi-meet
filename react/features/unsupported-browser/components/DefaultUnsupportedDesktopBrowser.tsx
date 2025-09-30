@@ -13,7 +13,7 @@ class DefaultUnsupportedDesktopBrowser extends Component {
      * @returns {void}
      */
     override componentDidMount() {
-        window.location.pathname = 'static/recommendedBrowsers.html';
+        window.location.pathname = '/static/recommendedBrowsers.html';
     }
 
     /**
