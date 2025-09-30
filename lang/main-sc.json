@@ -1301,12 +1301,12 @@
         }
     },
     "settings": {
-        "audio": "Àudio",
         "INCOMING_MSG_SOUND": "Messàgiu in intrada",
         "KNOCKING_PARTICIPANT_SOUND": "Unu partetzipante est intradu a s'aposentu de abetu",
         "PARTICIPANT_JOINED_SOUND": "Partetzipante aderidu",
         "PARTICIPANT_LEFT_SOUND": "Unu partetzipante est essidu",
         "TALK_WHILE_MUTED_SOUND": "Chistiona cando a sa muda",
+        "audio": "Àudio",
         "buttonLabel": "Cunfiguratzione",
         "calendar": {
             "about": "S'integratzione cun su calendàriu {{appName}} est impreada pro atzèdere in manera segura a su calendàriu tuo pro chi potzat lèghere is eventos imbenientes.",

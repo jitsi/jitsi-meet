@@ -30,8 +30,8 @@ import {
 import { open as openParticipantsPane } from '../../participants-pane/actions';
 import { CALLING, INVITED } from '../../presence-status/constants';
 import { RAISE_HAND_SOUND_ID } from '../../reactions/constants';
-import { iAmVisitor } from '../../visitors/functions';
 import { RECORDING_OFF_SOUND, RECORDING_ON_SOUND } from '../../recording/sounds';
+import { iAmVisitor } from '../../visitors/functions';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app/actionTypes';
 import { CONFERENCE_JOINED, CONFERENCE_WILL_JOIN } from '../conference/actionTypes';
 import { forEachConference, getCurrentConference } from '../conference/functions';
