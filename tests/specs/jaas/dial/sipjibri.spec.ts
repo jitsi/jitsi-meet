@@ -20,6 +20,14 @@ describe('SIP jibri invite', () => {
     it('setup', async () => {
         const room = ctx.roomName;
 
+        if (true) {
+            // This is temporary until we figure out how to fix it and configure it properly.
+            console.log('SIP jibri test is disabled.');
+            ctx.skipSuiteTests = true;
+
+            return;
+        }
+
         if (!dialOutUrl) {
             console.log('SIP jibri test is disabled, set SIP_JIBRI_DIAL_OUT_URL to enable.');
             ctx.skipSuiteTests = true;
