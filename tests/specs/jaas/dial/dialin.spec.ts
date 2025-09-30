@@ -4,8 +4,9 @@ import { config as testsConfig } from '../../../helpers/TestsConfig';
 import WebhookProxy from '../../../helpers/WebhookProxy';
 import { joinJaasMuc, generateJaasToken as t } from '../../../helpers/jaas';
 import {
+    assertDialInDisplayed, assertUrlDisplayed,
     dialIn,
-    isDialInEnabled,
+    isDialInEnabled, verifyMoreNumbersPage,
 } from '../../helpers/DialIn';
 
 import { verifyEndedWebhook, verifyStartedWebhooks, waitForMedia } from './util';
@@ -35,6 +36,12 @@ describe('Dial-in', () => {
         expect(await p1.isInMuc()).toBe(true);
         expect(await isDialInEnabled(p1)).toBe(true);
         expect(customerId).toBeDefined();
+    });
+
+    it ('Invite UI', async () => {
+        await assertUrlDisplayed(p1);
+        await assertDialInDisplayed(p1);
+        await verifyMoreNumbersPage(p1);
     });
 
     it('dial-in', async () => {
