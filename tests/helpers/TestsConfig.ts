@@ -7,7 +7,7 @@ export const config = {
     /** Whether to expect the environment to automatically elect a new moderator when the existing moderator leaves. */
     autoModerator: (() => {
         if (typeof process.env.AUTO_MODERATOR !== 'undefined') {
-            return Boolean(process.env.AUTO_MODERATOR?.trim() === 'true');
+            return process.env.AUTO_MODERATOR?.trim() === 'true';
         }
 
         // If not explicitly configured, fallback to recognizing whether we're running against one of the JaaS
