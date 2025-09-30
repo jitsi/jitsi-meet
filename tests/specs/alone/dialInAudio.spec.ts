@@ -12,11 +12,10 @@ describe('Dial-In', () => {
             return;
         }
 
-        await ensureOneParticipant({ preferGenerateToken: true });
+        await ensureOneParticipant();
 
         expect(await ctx.p1.isInMuc()).toBe(true);
 
-        // check dial-in is enabled
         if (!await isDialInEnabled(ctx.p1)) {
             ctx.skipSuiteTests = true;
         }
