@@ -22,6 +22,7 @@ const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
     const [copied, setCopied] = useState(false);
     const inputAccent = errorMessage ? "error" : undefined;
     const inputErrorMessage = errorMessage ?? undefined;
+
     const handleCopy = () => {
         navigator.clipboard.writeText(meetingLink);
         setCopied(true);
@@ -29,30 +30,33 @@ const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} className="p-0">
+        <Modal isOpen={isOpen} onClose={onClose} className="p-0 w-[384px]" width="w-[384px]">
             <button onClick={onClose} className="absolute right-5 top-5 text-gray-100 hover:text-gray-700">
                 <X size={24} />
             </button>
             <div className="p-5">
-                <h1 className="text-3xl font-medium text-gray-100 mb-2">{translate("meet.modals.schedule.title")}</h1>
+                <h1 className="text-2xl font-medium text-gray-100 mb-2">{translate("meet.modals.schedule.title")}</h1>
                 <p className="text-lg text-gray-80 mb-6">{translate("meet.modals.schedule.subtitle")}</p>
-                <p className="text-base text-gray-80 mb-4">{translate("meet.modals.schedule.description")}</p>
+                <p className="text-lg text-gray-80 mb-4">{translate("meet.modals.schedule.description")}</p>
 
                 <div className="mb-2">
-                    <label className="text-sm font-medium text-gray-80">
+                    <label className="text-sm font-normal text-gray-80">
                         {translate("meet.modals.schedule.linkLabel")}
                     </label>
                 </div>
 
-                <div className="flex flex-col space-y-3 mb-4 relative">
+                <div className="flex flex-col mb-4 relative">
                     <Input
                         value={meetingLink}
                         message={inputErrorMessage}
                         accent={inputAccent}
-                        className="select-all"
+                        className="select-all text-lg font-normal"
                         inputClassName="pr-11"
                     />
-                    <button onClick={handleCopy} className="absolute right-3 -top-0.5">
+                    <button
+                        onClick={handleCopy}
+                        className="absolute right-1.5 top-1 h-8 w-8 rounded-full items-center justify-center flex hover:bg-[#0066FF1A] active:bg-[#0066FF40] transition-colors duration-200"
+                    >
                         <Copy size={20} className="text-primary" color="#0066FF" />
                     </button>
                     {copied && (

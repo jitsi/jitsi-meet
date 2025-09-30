@@ -175,6 +175,13 @@ function getConfig(options = {}) {
                         transpileOnly: !isProduction, // Skip type checking for dev builds.,
                     },
                 },
+                {
+                    test: /\.(woff|woff2|eot|ttf|otf)$/i,
+                    type: 'asset/resource',
+                    generator: {
+                        publicPath: '/build/',
+                    }
+                },
             ],
         },
         node: {

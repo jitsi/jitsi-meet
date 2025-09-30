@@ -36,6 +36,12 @@ interface MeetingButtonProps {
      * @default false
      * */
     displayUpgradeButton?: boolean;
+
+    /**
+     * Whether to always display the new meeting button
+     * @default false
+     * */
+    displayNewMeetingButtonAlways?: boolean;
 }
 
 /**
@@ -49,13 +55,28 @@ const MeetingButton: React.FC<MeetingButtonProps> = ({
     className = "",
     variant = "primary",
     displayUpgradeButton = false,
+    displayNewMeetingButtonAlways = false,
 }) => {
     const isMeetEnabled = useSelector(isMeetingEnabled);
     const isLogged = !!useUserData();
     const [showTooltip, setShowTooltip] = useState(false);
 
     if (!isLogged) {
-        return null;
+        if (displayNewMeetingButtonAlways) {
+            return (
+                <Button
+                    variant={variant}
+                    onClick={onNewMeeting}
+                    disabled={loading}
+                    loading={loading}
+                    className={className}
+                >
+                    {translate("meet.preMeeting.newMeeting")}
+                </Button>
+            );
+        } else {
+            return null;
+        }
     }
 
     if (isMeetEnabled) {
