@@ -210,6 +210,7 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
                         style={{
                             width: isLargeScreen ? imageWidth : "90%",
                             right: isLargeScreen ? "-40%" : "auto",
+                            filter: "drop-shadow(0px 25px 50px rgba(0, 0, 0, 0.15)) drop-shadow(0px 8px 10px rgba(0, 0, 0, 0.1))",
                         }}
                     >
                         <img
