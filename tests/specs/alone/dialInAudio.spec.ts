@@ -2,6 +2,7 @@ import process from 'node:process';
 
 import { ensureOneParticipant } from '../../helpers/participants';
 import { cleanup, dialIn, isDialInEnabled, waitForAudioFromDialInParticipant } from '../helpers/DialIn';
+import { config as testsConfig } from '../../helpers/TestsConfig';
 
 describe('Dial-In', () => {
     it('join participant', async () => {
@@ -9,6 +10,13 @@ describe('Dial-In', () => {
         if (!process.env.DIAL_IN_REST_URL) {
             ctx.skipSuiteTests = true;
 
+            return;
+        }
+
+        // This is a temporary hack to avoid failing when running against a jaas env. The same cases are covered in
+        // jaas/dial/dialin.spec.ts.
+        if (testsConfig.jaas.enabled) {
+            ctx.skipSuiteTests = true;
             return;
         }
 
