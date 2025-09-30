@@ -29,7 +29,7 @@ const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} className="p-0 w-[384px]">
+        <Modal isOpen={isOpen} onClose={onClose} className="p-0 w-[384px]" width="w-[384px]">
             <button onClick={onClose} className="absolute right-5 top-5 text-gray-100 hover:text-gray-700">
                 <X size={24} />
             </button>
