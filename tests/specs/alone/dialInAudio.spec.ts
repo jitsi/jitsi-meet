@@ -1,8 +1,8 @@
 import process from 'node:process';
 
+import { config as testsConfig } from '../../helpers/TestsConfig';
 import { ensureOneParticipant } from '../../helpers/participants';
 import { cleanup, dialIn, isDialInEnabled, waitForAudioFromDialInParticipant } from '../helpers/DialIn';
-import { config as testsConfig } from '../../helpers/TestsConfig';
 
 describe('Dial-In', () => {
     it('join participant', async () => {
@@ -17,6 +17,7 @@ describe('Dial-In', () => {
         // jaas/dial/dialin.spec.ts.
         if (testsConfig.jaas.enabled) {
             ctx.skipSuiteTests = true;
+
             return;
         }
 

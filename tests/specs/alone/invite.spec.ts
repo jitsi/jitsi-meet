@@ -1,5 +1,5 @@
 import { Participant } from '../../helpers/Participant';
-import { config as testsConfig} from '../../helpers/TestsConfig';
+import { config as testsConfig } from '../../helpers/TestsConfig';
 import { ensureOneParticipant } from '../../helpers/participants';
 import { assertDialInDisplayed, assertUrlDisplayed, isDialInEnabled, verifyMoreNumbersPage } from '../helpers/DialIn';
 
@@ -12,6 +12,7 @@ describe('Invite', () => {
         // jaas/dial/dialin.spec.ts.
         if (testsConfig.jaas.enabled) {
             ctx.skipSuiteTests = true;
+
             return;
         }
 

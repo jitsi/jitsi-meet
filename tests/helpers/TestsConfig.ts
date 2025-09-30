@@ -26,9 +26,9 @@ export const config = {
         })(),
         /** Whether the configuration for JaaS specific tests is enabled. */
         enabled: Boolean(
-            (process.env.JAAS_TENANT || process.env.IFRAME_TENANT) &&
-            (process.env.JAAS_PRIVATE_KEY_PATH || process.env.JWT_PRIVATE_KEY_PATH) &&
-            (process.env.JAAS_KID || process.env.JWT_KID)),
+            (process.env.JAAS_TENANT || process.env.IFRAME_TENANT)
+            && (process.env.JAAS_PRIVATE_KEY_PATH || process.env.JWT_PRIVATE_KEY_PATH)
+            && (process.env.JAAS_KID || process.env.JWT_KID)),
         /** The JaaS key ID, used to sign the tokens. */
         kid: (() => {
             if (typeof process.env.JAAS_KID !== 'undefined') {
