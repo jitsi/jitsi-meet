@@ -51,7 +51,7 @@ const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                         message={inputErrorMessage}
                         accent={inputAccent}
                         className="select-all text-lg font-normal"
-                        inputClassName="pr-11"
+                        inputClassName="pr-11 pl-3"
                     />
                     <button
                         onClick={handleCopy}
