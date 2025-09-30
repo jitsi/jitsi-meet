@@ -1,5 +1,5 @@
+import { expectations } from '../../helpers/Expectations';
 import { Participant } from '../../helpers/Participant';
-import { config } from '../../helpers/TestsConfig';
 import {
     ensureOneParticipant,
     ensureThreeParticipants, ensureTwoParticipants,
@@ -79,7 +79,7 @@ describe('AVModeration', () => {
     it('hangup and change moderator', async () => {
         // The test below is only correct when the environment is configured to automatically elect a new moderator
         // when the moderator leaves. For environments where this is not the case, the test is skipped.
-        if (!config.autoModerator) {
+        if (!expectations.autoModerator) {
             return;
         }
 

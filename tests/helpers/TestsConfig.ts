@@ -4,18 +4,7 @@
 export const config = {
     /** Enable debug logging. Note this includes private information from .env */
     debug: Boolean(process.env.JITSI_DEBUG?.trim()),
-    /** Whether to expect the environment to automatically elect a new moderator when the existing moderator leaves. */
-    autoModerator: (() => {
-        if (typeof process.env.AUTO_MODERATOR !== 'undefined') {
-            return process.env.AUTO_MODERATOR?.trim() === 'true';
-        }
-
-        // If not explicitly configured, fallback to recognizing whether we're running against one of the JaaS
-        // environments which are known to have the setting disabled.
-        return !Boolean(
-            process.env.JWT_PRIVATE_KEY_PATH && process.env.JWT_KID?.startsWith('vpaas-magic-cookie-')
-        );
-    })(),
+    expectationsFile: process.env.EXPECTATIONS?.trim(),
     jaas: {
         customerId: (() => {
             if (typeof process.env.JAAS_TENANT !== 'undefined') {

@@ -1,5 +1,5 @@
+import { expectations } from '../../helpers/Expectations';
 import { P1, P3, Participant } from '../../helpers/Participant';
-import { config } from '../../helpers/TestsConfig';
 import {
     ensureOneParticipant,
     ensureThreeParticipants,
@@ -198,7 +198,7 @@ describe('Lobby', () => {
     it('change of moderators in lobby', async () => {
         // The test below is only correct when the environment is configured to automatically elect a new moderator
         // when the moderator leaves. For environments where this is not the case, the test is skipped.
-        if (!config.autoModerator) {
+        if (!expectations.autoModerator) {
             return;
         }
         await hangupAllParticipants();
@@ -291,7 +291,7 @@ describe('Lobby', () => {
     it('moderator leaves while lobby enabled', async () => {
         // The test below is only correct when the environment is configured to automatically elect a new moderator
         // when the moderator leaves. For environments where this is not the case, the test is skipped.
-        if (!config.autoModerator) {
+        if (!expectations.autoModerator) {
             return;
         }
         const { p1, p2, p3 } = ctx;
