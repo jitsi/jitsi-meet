@@ -21,19 +21,14 @@ export async function ensureOneParticipant(
     participantOptions.name = P1;
 
     if (!options?.skipFirstModerator) {
-        const jwtPrivateKeyPath = config.jwt.privateKeyPath;
-
-        // we prioritize the access token when iframe is not used and private key is set,
-        // otherwise if private key is not specified we use the access token if set
-        if (config.jwt.preconfiguredToken
-            && ((jwtPrivateKeyPath && !options?.preferGenerateToken) || !jwtPrivateKeyPath)) {
-            participantOptions.token = config.jwt.preconfiguredToken;
-        } else if (jwtPrivateKeyPath) {
+        if (config.jwt.privateKeyPath && options?.preferGenerateToken) {
             participantOptions.token = generateToken({
                 ...options?.tokenOptions,
                 displayName: participantOptions.name,
                 moderator: true
             });
+        } else {
+            participantOptions.token = config.jwt.preconfiguredToken;
         }
     }
 
