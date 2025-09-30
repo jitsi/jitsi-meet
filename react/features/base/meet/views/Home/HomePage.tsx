@@ -171,13 +171,21 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
                         <div className="flex flex-col sm:flex-row pt-9 gap-4 border-t border-white/25 items-end">
                             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                                 <MeetingButton
-                                    onNewMeeting={startMeeting}
+                                    onNewMeeting={
+                                        isLogged
+                                            ? startMeeting
+                                            : () => {
+                                                  setOpenLogin(true);
+                                                  setIsAuthModalOpen(true);
+                                              }
+                                    }
                                     translate={translate}
                                     loading={isStartingMeeting}
                                     className="w-full sm:w-auto"
-                                    displayUpgradeButton={true}
+                                    displayUpgradeButton
+                                    displayNewMeetingButtonAlways
                                 />
-                                {isMeetEnabled && isLogged && (
+                                {(!isLogged || (isLogged && isMeetEnabled)) && (
                                     <Button
                                         variant={"tertiary"}
                                         onClick={handleStartMeeting}
