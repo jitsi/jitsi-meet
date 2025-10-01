@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
+import { getUnreadFilesCount } from '../../../file-sharing/functions.any';
 import { getUnreadPollCount } from '../../../polls/functions';
 import { getUnreadCount } from '../../functions';
 
@@ -65,7 +66,7 @@ function _mapStateToProps(state: IReduxState) {
 
     return {
 
-        _count: getUnreadCount(state) + getUnreadPollCount(state),
+        _count: getUnreadCount(state) + getUnreadPollCount(state) + getUnreadFilesCount(state),
         _isOpen: isOpen
 
     };

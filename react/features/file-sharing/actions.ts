@@ -1,5 +1,6 @@
 import {
     ADD_FILE,
+    CLEAR_UNREAD_FILES_COUNT,
     DOWNLOAD_FILE,
     REMOVE_FILE,
     UPDATE_FILE_UPLOAD_PROGRESS,
@@ -71,5 +72,16 @@ export function downloadFile(fileId: string) {
     return {
         type: DOWNLOAD_FILE,
         fileId
+    };
+}
+
+/**
+ * Clear the unread files count.
+ *
+ * @returns {Object}
+ */
+export function clearUnreadFilesCount() {
+    return {
+        type: CLEAR_UNREAD_FILES_COUNT
     };
 }

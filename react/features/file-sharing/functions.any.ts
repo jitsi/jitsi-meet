@@ -155,3 +155,13 @@ export function isFileUploadingEnabled(state: IReduxState): boolean {
         && isJwtFeatureEnabled(state, MEET_FEATURES.FILE_UPLOAD, false)
         && isFileSharingEnabled(state);
 }
+
+/**
+ * Gets the unread files count.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {number} The number of unread files.
+ */
+export function getUnreadFilesCount(state: IReduxState): number {
+    return state['features/file-sharing']?.nbUnreadFiles || 0;
+}
