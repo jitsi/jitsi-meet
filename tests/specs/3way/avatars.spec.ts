@@ -1,8 +1,5 @@
-import {
-    ensureThreeParticipants,
-    ensureTwoParticipants,
-    unmuteVideoAndCheck
-} from '../../helpers/participants';
+import { ensureThreeParticipants, ensureTwoParticipants } from '../../helpers/participants';
+import { unmuteVideoAndCheck } from '../helpers/mute';
 
 const EMAIL = 'support@jitsi.org';
 const HASH = '38f014e4b7dde0f64f8157d26a8c812e';

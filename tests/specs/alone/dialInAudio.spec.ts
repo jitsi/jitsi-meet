@@ -1,5 +1,6 @@
 import process from 'node:process';
 
+import { config as testsConfig } from '../../helpers/TestsConfig';
 import { ensureOneParticipant } from '../../helpers/participants';
 import { cleanup, dialIn, isDialInEnabled, waitForAudioFromDialInParticipant } from '../helpers/DialIn';
 
@@ -12,9 +13,18 @@ describe('Dial-In', () => {
             return;
         }
 
-        await ensureOneParticipant({ preferGenerateToken: true });
+        // This is a temporary hack to avoid failing when running against a jaas env. The same cases are covered in
+        // jaas/dial/dialin.spec.ts.
+        if (testsConfig.jaas.enabled) {
+            ctx.skipSuiteTests = true;
 
-        // check dial-in is enabled
+            return;
+        }
+
+        await ensureOneParticipant();
+
+        expect(await ctx.p1.isInMuc()).toBe(true);
+
         if (!await isDialInEnabled(ctx.p1)) {
             ctx.skipSuiteTests = true;
         }
@@ -41,7 +51,7 @@ describe('Dial-In', () => {
     });
 
     it('invite dial-in participant', async () => {
-        await dialIn(ctx.p1);
+        await dialIn(await ctx.p1.getDialInPin());
     });
 
     it('wait for audio from dial-in participant', async () => {

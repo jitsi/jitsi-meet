@@ -52,17 +52,10 @@ export async function isDialInEnabled(participant: Participant) {
 
 /**
  * Sends a request to the REST API to dial in the participant using the provided pin.
- * @param participant
+ * @param pin the pin to use when dialing in
  */
-export async function dialIn(participant: Participant) {
-    if (!await participant.isInMuc()) {
-        // local participant did not join abort
-        return;
-    }
-
-    const dialInPin = await participant.getDialInPin();
-
-    const restUrl = process.env.DIAL_IN_REST_URL?.replace('{0}', dialInPin);
+export async function dialIn(pin: string) {
+    const restUrl = process.env.DIAL_IN_REST_URL?.replace('{0}', pin);
 
     // we have already checked in the first test that DIAL_IN_REST_URL exist so restUrl cannot be ''
     const responseData: string = await new Promise((resolve, reject) => {
@@ -87,4 +80,67 @@ export async function dialIn(participant: Participant) {
 
     console.log(`dial-in.test.call_session_history_id:${JSON.parse(responseData).call_session_history_id}`);
     console.log(`API response:${responseData}`);
+}
+
+export async function assertUrlDisplayed(p: Participant) {
+    const inviteDialog = p.getInviteDialog();
+
+    await inviteDialog.open();
+    await inviteDialog.waitTillOpen();
+
+    const driverUrl = await p.driver.getUrl();
+
+    expect(driverUrl.includes(await inviteDialog.getMeetingURL())).toBe(true);
+    await inviteDialog.clickCloseButton();
+    await inviteDialog.waitTillOpen(true);
+}
+
+export async function assertDialInDisplayed(p: Participant) {
+    const inviteDialog = p.getInviteDialog();
+
+    await inviteDialog.open();
+    await inviteDialog.waitTillOpen();
+
+    expect((await inviteDialog.getDialInNumber()).length > 0).toBe(true);
+    expect((await inviteDialog.getPinNumber()).length > 0).toBe(true);
+}
+
+export async function verifyMoreNumbersPage(p: Participant) {
+    const inviteDialog = p.getInviteDialog();
+
+    await inviteDialog.open();
+    await inviteDialog.waitTillOpen();
+
+    const windows = await p.driver.getWindowHandles();
+
+    expect(windows.length).toBe(1);
+
+    const meetingWindow = windows[0];
+
+    const displayedNumber = await inviteDialog.getDialInNumber();
+    const displayedPin = await inviteDialog.getPinNumber();
+
+    await inviteDialog.openDialInNumbersPage();
+
+    const newWindow = (await p.driver.getWindowHandles()).filter(w => w !== meetingWindow);
+
+    expect(newWindow.length).toBe(1);
+
+    const moreNumbersWindow = newWindow[0];
+
+    await p.driver.switchWindow(moreNumbersWindow);
+    await browser.pause(10000);
+    await p.driver.$('.dial-in-numbers-list').waitForExist();
+
+    const conferenceIdMessage = p.driver.$('//div[contains(@class, "pinLabel")]');
+
+    expect((await conferenceIdMessage.getText()).replace(/ /g, '').includes(displayedPin)).toBe(true);
+
+    const numbers = p.driver.$$('.dial-in-number');
+    const nums = await numbers.filter(
+        async el => (await el.getText()).trim() === displayedNumber);
+
+    expect(nums.length).toBe(1);
+
+    await p.driver.switchWindow(meetingWindow);
 }

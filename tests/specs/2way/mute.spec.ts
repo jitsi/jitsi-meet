@@ -4,10 +4,12 @@ import {
     ensureOneParticipant,
     ensureTwoParticipants,
     joinSecondParticipant,
+} from '../../helpers/participants';
+import {
     muteAudioAndCheck,
     unmuteAudioAndCheck,
     unmuteVideoAndCheck
-} from '../../helpers/participants';
+} from '../helpers/mute';
 
 describe('Mute', () => {
     it('joining the meeting', () => ensureTwoParticipants());

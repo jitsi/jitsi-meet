@@ -1,4 +1,5 @@
-import { ensureTwoParticipants, muteVideoAndCheck, unmuteVideoAndCheck } from '../../helpers/participants';
+import { ensureTwoParticipants } from '../../helpers/participants';
+import { muteVideoAndCheck, unmuteVideoAndCheck } from '../helpers/mute';
 
 describe('Stop video', () => {
     it('joining the meeting', () => ensureTwoParticipants());

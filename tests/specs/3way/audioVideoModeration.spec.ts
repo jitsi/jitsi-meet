@@ -3,10 +3,9 @@ import { config } from '../../helpers/TestsConfig';
 import {
     ensureOneParticipant,
     ensureThreeParticipants, ensureTwoParticipants,
-    hangupAllParticipants,
-    unmuteAudioAndCheck,
-    unmuteVideoAndCheck
+    hangupAllParticipants
 } from '../../helpers/participants';
+import { unmuteAudioAndCheck, unmuteVideoAndCheck } from '../helpers/mute';
 
 describe('AVModeration', () => {
 
@@ -78,8 +77,9 @@ describe('AVModeration', () => {
     });
 
     it('hangup and change moderator', async () => {
-        // no moderator switching if jaas is available.
-        if (config.iframe.usesJaas) {
+        // The test below is only correct when the environment is configured to automatically elect a new moderator
+        // when the moderator leaves. For environments where this is not the case, the test is skipped.
+        if (!config.autoModerator) {
             return;
         }
 

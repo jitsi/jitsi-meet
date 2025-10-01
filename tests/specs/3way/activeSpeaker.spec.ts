@@ -1,5 +1,6 @@
 import type { Participant } from '../../helpers/Participant';
-import { ensureThreeParticipants, muteAudioAndCheck } from '../../helpers/participants';
+import { ensureThreeParticipants } from '../../helpers/participants';
+import { muteAudioAndCheck } from '../helpers/mute';
 
 describe('ActiveSpeaker', () => {
     it('testActiveSpeaker', async () => {

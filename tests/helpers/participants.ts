@@ -1,6 +1,5 @@
 import { P1, P2, P3, P4, Participant } from './Participant';
 import { config } from './TestsConfig';
-import { generateToken } from './token';
 import { IJoinOptions, IParticipantOptions } from './types';
 
 const SUBJECT_XPATH = '//div[starts-with(@class, "subject-text")]';
@@ -10,31 +9,22 @@ const SUBJECT_XPATH = '//div[starts-with(@class, "subject-text")]';
  * Ensure that the first participant is moderator if there is such an option.
  *
  * @param {IJoinOptions} options - The options to use when joining the participant.
+ * @param participantOptions
  * @returns {Promise<void>}
  */
-export async function ensureOneParticipant(options?: IJoinOptions): Promise<void> {
-    const participantOps = { name: P1 } as IParticipantOptions;
+export async function ensureOneParticipant(
+        options?: IJoinOptions, participantOptions?: IParticipantOptions): Promise<void> {
+    if (!participantOptions) {
+        participantOptions = { name: P1 };
+    }
+    participantOptions.name = P1;
 
-    if (!options?.skipFirstModerator) {
-        const jwtPrivateKeyPath = config.jwt.privateKeyPath;
-
-        // we prioritize the access token when iframe is not used and private key is set,
-        // otherwise if private key is not specified we use the access token if set
-        if (config.jwt.preconfiguredToken
-            && ((jwtPrivateKeyPath && !ctx.testProperties.useIFrameApi && !options?.preferGenerateToken)
-                || !jwtPrivateKeyPath)) {
-            participantOps.token = { jwt: config.jwt.preconfiguredToken };
-        } else if (jwtPrivateKeyPath) {
-            participantOps.token = generateToken({
-                ...options?.tokenOptions,
-                displayName: participantOps.name,
-                moderator: true
-            });
-        }
+    if (!participantOptions.token) {
+        participantOptions.token = config.jwt.preconfiguredToken;
     }
 
     // make sure the first participant is moderator, if supported by deployment
-    await joinParticipant(participantOps, options);
+    await joinParticipant(participantOptions, options);
 }
 
 /**
@@ -136,23 +126,18 @@ export async function ensureFourParticipants(options?: IJoinOptions): Promise<vo
  * Ensure that there are two participants.
  *
  * @param {IJoinOptions} options - The options to join.
+ * @param participantOptions
  */
-export async function ensureTwoParticipants(options?: IJoinOptions): Promise<void> {
-    await ensureOneParticipant(options);
+export async function ensureTwoParticipants(
+        options?: IJoinOptions, participantOptions?: IParticipantOptions): Promise<void> {
+    await ensureOneParticipant(options, participantOptions);
 
-    const participantOptions = { name: P2 } as IParticipantOptions;
-
-    if (options?.preferGenerateToken) {
-        participantOptions.token = generateToken({
-            ...options?.tokenOptions,
-            displayName: participantOptions.name,
-        });
+    if (!participantOptions) {
+        participantOptions = { name: P2 };
     }
+    participantOptions.name = P2;
 
-    await joinParticipant({
-        ...participantOptions,
-        name: P2
-    }, options);
+    await joinParticipant(participantOptions, options);
 
     if (options?.skipInMeetingChecks) {
         return Promise.resolve();
@@ -171,8 +156,7 @@ export async function ensureTwoParticipants(options?: IJoinOptions): Promise<voi
 /**
  * Creates a new participant instance, or returns an existing one if it is already joined.
  * @param participantOptions - The participant options, with required name set.
- * @param {boolean} options - Join options.
- * @param reuse whether to reuse an existing participant instance if one is available.
+ * @param options - Join options.
  * @returns {Promise<Participant>} - The participant instance.
  */
 async function joinParticipant( // eslint-disable-line max-params
@@ -180,13 +164,11 @@ async function joinParticipant( // eslint-disable-line max-params
         options?: IJoinOptions
 ): Promise<Participant> {
 
-    participantOptions.iFrameApi = ctx.testProperties.useIFrameApi;
-
     // @ts-ignore
     const p = ctx[participantOptions.name] as Participant;
 
     if (p) {
-        if (ctx.testProperties.useIFrameApi) {
+        if (participantOptions.iFrameApi) {
             await p.switchToIFrame();
         }
 
@@ -194,7 +176,7 @@ async function joinParticipant( // eslint-disable-line max-params
             return p;
         }
 
-        if (ctx.testProperties.useIFrameApi) {
+        if (participantOptions.iFrameApi) {
             // when loading url make sure we are on the top page context or strange errors may occur
             await p.switchToMainFrame();
         }
@@ -209,85 +191,10 @@ async function joinParticipant( // eslint-disable-line max-params
     // @ts-ignore
     ctx[participantOptions.name] = newParticipant;
 
-    let tenant = options?.tenant;
-
-    if (options?.preferGenerateToken && !ctx.testProperties.useIFrameApi
-        && config.iframe.usesJaas && config.iframe.tenant) {
-        tenant = config.iframe.tenant;
-    }
-
-    if (!tenant && ctx.testProperties.useIFrameApi) {
-        tenant = config.iframe.tenant;
-    }
-
     return await newParticipant.joinConference({
         ...options,
-        tenant: tenant,
         roomName: options?.roomName || ctx.roomName,
     });
-}
-
-/**
- * Toggles the mute state of a specific Meet conference participant and verifies that a specific other Meet
- * conference participants sees a specific mute state for the former.
- *
- * @param {Participant} testee - The {@code Participant} which represents the Meet conference participant whose
- * mute state is to be toggled.
- * @param {Participant} observer - The {@code Participant} which represents the Meet conference participant to verify
- * the mute state of {@code testee}.
- * @returns {Promise<void>}
- */
-export async function muteAudioAndCheck(testee: Participant, observer: Participant): Promise<void> {
-    await testee.getToolbar().clickAudioMuteButton();
-
-    await observer.getFilmstrip().assertAudioMuteIconIsDisplayed(testee);
-    await testee.getFilmstrip().assertAudioMuteIconIsDisplayed(testee);
-
-    await observer.getParticipantsPane().assertAudioMuteIconIsDisplayed(testee);
-    await testee.getParticipantsPane().assertAudioMuteIconIsDisplayed(testee);
-
-}
-
-/**
- * Unmute audio, checks if the local UI has been updated accordingly and then does the verification from
- * the other observer participant perspective.
- * @param testee
- * @param observer
- */
-export async function unmuteAudioAndCheck(testee: Participant, observer: Participant) {
-    await testee.getNotifications().closeAskToUnmuteNotification(true);
-    await testee.getNotifications().closeAVModerationMutedNotification(true);
-    await testee.getToolbar().clickAudioUnmuteButton();
-
-    await testee.getFilmstrip().assertAudioMuteIconIsDisplayed(testee, true);
-    await observer.getFilmstrip().assertAudioMuteIconIsDisplayed(testee, true);
-
-    await testee.getParticipantsPane().assertAudioMuteIconIsDisplayed(testee, true);
-    await observer.getParticipantsPane().assertAudioMuteIconIsDisplayed(testee, true);
-}
-
-/**
- * Stop the video on testee and check on observer.
- * @param testee
- * @param observer
- */
-export async function unmuteVideoAndCheck(testee: Participant, observer: Participant): Promise<void> {
-    await testee.getToolbar().clickVideoUnmuteButton();
-
-    await testee.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee, true);
-    await observer.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee, true);
-}
-
-/**
- * Starts the video on testee and check on observer.
- * @param testee
- * @param observer
- */
-export async function muteVideoAndCheck(testee: Participant, observer: Participant): Promise<void> {
-    await testee.getToolbar().clickVideoMuteButton();
-
-    await testee.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee);
-    await observer.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee);
 }
 
 /**

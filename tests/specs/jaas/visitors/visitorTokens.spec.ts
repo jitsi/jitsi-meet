@@ -1,5 +1,8 @@
+import { Participant } from '../../../helpers/Participant';
 import { setTestProperties } from '../../../helpers/TestProperties';
-import { joinMuc, generateJaasToken as t } from '../../helpers/jaas';
+import { config as testsConfig } from '../../../helpers/TestsConfig';
+import WebhookProxy from '../../../helpers/WebhookProxy';
+import { joinJaasMuc, generateJaasToken as t } from '../../../helpers/jaas';
 
 setTestProperties(__filename, {
     useJaas: true,
@@ -8,51 +11,122 @@ setTestProperties(__filename, {
 });
 
 describe('Visitors triggered by visitor tokens', () => {
-    it('test visitor tokens', async () => {
-        ctx.webhooksProxy.defaultMeetingSettings = {
+    let webhooksProxy: WebhookProxy;
+    let room: string;
+
+    async function verifyJoinedWebhook(participant: Participant) {
+        const context = participant.getToken()?.payload.context;
+        const event: {
+            customerId: string;
+            data: {
+                avatar: string;
+                email: string;
+                group: string;
+                id: string;
+                name: string;
+                participantJid: string;
+                role: string;
+            };
+            eventType: string;
+        } = await webhooksProxy.waitForEvent('PARTICIPANT_JOINED');
+
+        expect('PARTICIPANT_JOINED').toBe(event.eventType);
+        expect(event.data.avatar).toBe(context.user.avatar);
+        expect(event.data.email).toBe(context.user.email);
+        expect(event.data.id).toBe(context.user.id);
+        expect(event.data.group).toBe(context.group);
+        expect(event.data.name).toBe(context.user.name);
+        if (context.user.visitor) {
+            expect(event.data.participantJid.indexOf('meet.jitsi') != -1).toBe(true);
+            expect(event.data.role).toBe('visitor');
+        }
+        expect(event.customerId).toBe(testsConfig.jaas.customerId);
+    }
+
+    async function verifyLeftWebhook(participant: Participant) {
+        const context = participant.getToken()?.payload.context;
+        const eventLeft: {
+            customerId: string;
+            data: {
+                avatar: string;
+                email: string;
+                group: string;
+                id: string;
+                name: string;
+                participantJid: string;
+                role: string;
+            };
+            eventType: string;
+        } = await webhooksProxy.waitForEvent('PARTICIPANT_LEFT');
+
+        expect('PARTICIPANT_LEFT').toBe(eventLeft.eventType);
+        expect(eventLeft.data.avatar).toBe(context.user.avatar);
+        expect(eventLeft.data.email).toBe(context.user.email);
+        expect(eventLeft.data.id).toBe(context.user.id);
+        expect(eventLeft.data.group).toBe(context.group);
+        expect(eventLeft.data.name).toBe(context.user.name);
+        if (context.user.visitor) {
+            expect(eventLeft.data.participantJid.indexOf('meet.jitsi') != -1).toBe(true);
+            expect(eventLeft.data.role).toBe('visitor');
+        }
+        expect(eventLeft.customerId).toBe(testsConfig.jaas.customerId);
+    }
+
+    it('setup', async () => {
+        webhooksProxy = ctx.webhooksProxy;
+        webhooksProxy.defaultMeetingSettings = {
             visitorsEnabled: true
         };
+        room = ctx.roomName;
+    });
 
-        const m = await joinMuc({
-            token: t({ room: ctx.roomName, displayName: 'Mo de Rator', moderator: true })
-        });
+    it('test visitor tokens', async () => {
 
-        expect(await m.isInMuc()).toBe(true);
-        expect(await m.isModerator()).toBe(true);
-        expect(await m.isVisitor()).toBe(false);
-        console.log('Moderator joined');
+        const moderatorToken = t({ room, displayName: 'Mo de Rator', moderator: true });
+        const moderator = await joinJaasMuc({ name: 'p1', token: moderatorToken });
+
+        expect(await moderator.isInMuc()).toBe(true);
+        expect(await moderator.isModerator()).toBe(true);
+        expect(await moderator.isVisitor()).toBe(false);
+        await verifyJoinedWebhook(moderator);
 
         // Joining with a participant token before any visitors
-        const p = await joinMuc({
-            name: 'p2',
-            token: t({ room: ctx.roomName, displayName: 'Parti Cipant' })
-        });
+        const participantToken = t({ room, displayName: 'Parti Cipant' });
+        const participant = await joinJaasMuc({ name: 'p2', token: participantToken });
 
-        expect(await p.isInMuc()).toBe(true);
-        expect(await p.isModerator()).toBe(false);
-        expect(await p.isVisitor()).toBe(false);
-        console.log('Participant joined');
+        expect(await participant.isInMuc()).toBe(true);
+        expect(await participant.isModerator()).toBe(false);
+        expect(await participant.isVisitor()).toBe(false);
+        await verifyJoinedWebhook(participant);
 
         // Joining with a visitor token
-        const v = await joinMuc({
-            name: 'p3',
-            token: t({ room: ctx.roomName, displayName: 'Visi Tor', visitor: true })
-        });
+        const visitorToken = t({ room, displayName: 'Visi Tor', visitor: true });
+        const visitor = await joinJaasMuc({ name: 'p3', token: visitorToken });
 
-        expect(await v.isInMuc()).toBe(true);
-        expect(await v.isModerator()).toBe(false);
-        expect(await v.isVisitor()).toBe(true);
-        console.log('Visitor joined');
+        expect(await visitor.isInMuc()).toBe(true);
+        expect(await visitor.isModerator()).toBe(false);
+        expect(await visitor.isVisitor()).toBe(true);
+        await verifyJoinedWebhook(visitor);
 
-        // Joining with a participant token after visitors...:mindblown:
-        const v2 = await joinMuc({
-            name: 'p2',
-            token: t({ room: ctx.roomName, displayName: 'Visi Tor 2' })
-        });
+        await participant.hangup();
+        await verifyLeftWebhook(participant);
 
-        expect(await v2.isInMuc()).toBe(true);
-        expect(await v2.isModerator()).toBe(false);
-        expect(await v2.isVisitor()).toBe(true);
-        console.log('Visitor2 joined');
+        // Joining with a participant token after visitors -> visitor
+        const participantToken2 = t({ room, displayName: 'Visi Tor 2' });
+        const visitor2 = await joinJaasMuc({ name: 'p2', token: participantToken2 });
+
+        expect(await visitor2.isInMuc()).toBe(true);
+        expect(await visitor2.isModerator()).toBe(false);
+        expect(await visitor2.isVisitor()).toBe(true);
+        await verifyJoinedWebhook(visitor2);
+
+        await visitor.hangup();
+        await verifyLeftWebhook(visitor);
+
+        await visitor2.hangup();
+        await verifyLeftWebhook(visitor2);
+
+        await moderator.hangup();
+        await verifyLeftWebhook(moderator);
     });
 });

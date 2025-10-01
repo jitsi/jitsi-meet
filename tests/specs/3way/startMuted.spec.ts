@@ -4,9 +4,9 @@ import {
     ensureTwoParticipants,
     hangupAllParticipants,
     joinSecondParticipant,
-    joinThirdParticipant,
-    unmuteVideoAndCheck
+    joinThirdParticipant
 } from '../../helpers/participants';
+import { unmuteVideoAndCheck } from '../helpers/mute';
 
 describe('StartMuted', () => {
     it('checkboxes test', async () => {

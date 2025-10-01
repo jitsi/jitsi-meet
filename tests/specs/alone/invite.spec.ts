@@ -1,85 +1,41 @@
+import { Participant } from '../../helpers/Participant';
+import { config as testsConfig } from '../../helpers/TestsConfig';
 import { ensureOneParticipant } from '../../helpers/participants';
-import { isDialInEnabled } from '../helpers/DialIn';
+import { assertDialInDisplayed, assertUrlDisplayed, isDialInEnabled, verifyMoreNumbersPage } from '../helpers/DialIn';
 
 describe('Invite', () => {
-    it('join participant', () => ensureOneParticipant({ preferGenerateToken: true }));
+    let p1: Participant;
+    let dialInEnabled: boolean;
 
-    it('url displayed', async () => {
-        const { p1 } = ctx;
-        const inviteDialog = p1.getInviteDialog();
+    it('setup', async () => {
+        // This is a temporary hack to avoid failing when running against a jaas env. The same cases are covered in
+        // jaas/dial/dialin.spec.ts.
+        if (testsConfig.jaas.enabled) {
+            ctx.skipSuiteTests = true;
 
-        await inviteDialog.open();
-        await inviteDialog.waitTillOpen();
+            return;
+        }
 
-        const driverUrl = await p1.driver.getUrl();
+        await ensureOneParticipant();
 
-        expect(driverUrl.includes(await inviteDialog.getMeetingURL())).toBe(true);
-
-        await inviteDialog.clickCloseButton();
-
-        await inviteDialog.waitTillOpen(true);
+        p1 = ctx.p1;
+        dialInEnabled = await isDialInEnabled(p1);
     });
+
+    it('url displayed', () => assertUrlDisplayed(p1));
 
     it('dial-in displayed', async () => {
-        const { p1 } = ctx;
-
-        if (!await isDialInEnabled(p1)) {
+        if (!dialInEnabled) {
             return;
         }
-
-        const inviteDialog = p1.getInviteDialog();
-
-        await inviteDialog.open();
-        await inviteDialog.waitTillOpen();
-
-        expect((await inviteDialog.getDialInNumber()).length > 0).toBe(true);
-        expect((await inviteDialog.getPinNumber()).length > 0).toBe(true);
+        await assertDialInDisplayed(p1);
     });
 
-    it('view more numbers', async () => {
-        const { p1 } = ctx;
-
-        if (!await isDialInEnabled(p1)) {
+    it('view more numbers page', async () => {
+        if (!dialInEnabled) {
             return;
         }
 
-        const inviteDialog = p1.getInviteDialog();
-
-        await inviteDialog.open();
-        await inviteDialog.waitTillOpen();
-
-        const windows = await p1.driver.getWindowHandles();
-
-        expect(windows.length).toBe(1);
-
-        const meetingWindow = windows[0];
-
-        const displayedNumber = await inviteDialog.getDialInNumber();
-        const displayedPin = await inviteDialog.getPinNumber();
-
-        await inviteDialog.openDialInNumbersPage();
-
-        const newWindow = (await p1.driver.getWindowHandles()).filter(w => w !== meetingWindow);
-
-        expect(newWindow.length).toBe(1);
-
-        const moreNumbersWindow = newWindow[0];
-
-        await p1.driver.switchWindow(moreNumbersWindow);
-
-        await browser.pause(10000);
-
-        await p1.driver.$('.dial-in-numbers-list').waitForExist();
-
-        const conferenceIdMessage = p1.driver.$('//div[contains(@class, "pinLabel")]');
-
-        expect((await conferenceIdMessage.getText()).replace(/ /g, '').includes(displayedPin)).toBe(true);
-
-        const numbers = p1.driver.$$('.dial-in-number');
-
-        const nums = await numbers.filter(
-            async el => (await el.getText()).trim() === displayedNumber);
-
-        expect(nums.length).toBe(1);
+        await verifyMoreNumbersPage(p1);
     });
 });

@@ -3,19 +3,27 @@ import { expect } from '@wdio/globals';
 import type { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import type WebhookProxy from '../../helpers/WebhookProxy';
-import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
+import { joinJaasMuc, generateJaasToken as t } from '../../helpers/jaas';
 
 setTestProperties(__filename, {
-    useIFrameApi: true,
+    useJaas: true,
     useWebhookProxy: true,
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
 describe('Transcriptions', () => {
-    it('joining the meeting', async () => {
-        await ensureOneParticipant();
+    let p1: Participant, p2: Participant;
+    let webhooksProxy: WebhookProxy;
 
-        const { p1 } = ctx;
+    it('setup', async () => {
+        const room = ctx.roomName;
+
+        webhooksProxy = ctx.webhooksProxy;
+
+        p1 = await joinJaasMuc({
+            name: 'p1',
+            token: t({ room, moderator: true }),
+            iFrameApi: true });
 
         if (await p1.execute(() => config.disableIframeAPI || !config.transcription?.enabled)) {
             // skip the test if iframeAPI or transcriptions are disabled
@@ -24,32 +32,25 @@ describe('Transcriptions', () => {
             return;
         }
 
-        await p1.switchToMainFrame();
-
-        await ensureTwoParticipants({
+        p2 = await joinJaasMuc({
+            name: 'p2',
+            token: t({ room }),
+            iFrameApi: true }, {
             configOverwrite: {
                 startWithAudioMuted: true
             }
         });
 
-        const { p2 } = ctx;
-
-        // let's populate endpoint ids
         await Promise.all([
-            p1.getEndpointId(),
-            p2.getEndpointId()
+            p1.switchToMainFrame(),
+            p2.switchToMainFrame(),
         ]);
-
-        await p1.switchToMainFrame();
-        await p2.switchToMainFrame();
 
         expect(await p1.getIframeAPI().getEventResult('isModerator')).toBe(true);
         expect(await p1.getIframeAPI().getEventResult('videoConferenceJoined')).toBeDefined();
     });
 
     it('toggle subtitles', async () => {
-        const { p1, p2, webhooksProxy } = ctx;
-
         await p1.getIframeAPI().addEventListener('transcriptionChunkReceived');
         await p2.getIframeAPI().addEventListener('transcriptionChunkReceived');
         await p1.getIframeAPI().executeCommand('toggleSubtitles');
@@ -63,9 +64,7 @@ describe('Transcriptions', () => {
     });
 
     it('set subtitles on and off', async () => {
-        const { p1, p2, webhooksProxy } = ctx;
-
-        // we need to clear results or the last one will be used, form the previous time subtitles were on
+        // we need to clear results or the last one will be used, from the previous time subtitles were on
         await p1.getIframeAPI().clearEventResults('transcriptionChunkReceived');
         await p2.getIframeAPI().clearEventResults('transcriptionChunkReceived');
 
@@ -80,9 +79,7 @@ describe('Transcriptions', () => {
     });
 
     it('start/stop transcriptions via recording', async () => {
-        const { p1, p2, webhooksProxy } = ctx;
-
-        // we need to clear results or the last one will be used, form the previous time subtitles were on
+        // we need to clear results or the last one will be used, from the previous time subtitles were on
         await p1.getIframeAPI().clearEventResults('transcriptionChunkReceived');
         await p2.getIframeAPI().clearEventResults('transcriptionChunkReceived');
 
@@ -96,12 +93,12 @@ describe('Transcriptions', () => {
         allTranscriptionStatusChanged.push(await p1.driver.waitUntil(() => p1.getIframeAPI()
                 .getEventResult('transcribingStatusChanged'), {
             timeout: 10000,
-            timeoutMsg: 'transcribingStatusChanged event not received on p1 side'
+            timeoutMsg: 'transcribingStatusChanged event not received on p1'
         }));
         allTranscriptionStatusChanged.push(await p2.driver.waitUntil(() => p2.getIframeAPI()
                 .getEventResult('transcribingStatusChanged'), {
             timeout: 10000,
-            timeoutMsg: 'transcribingStatusChanged event not received on p2 side'
+            timeoutMsg: 'transcribingStatusChanged event not received on p2'
         }));
 
         let result = await Promise.allSettled(allTranscriptionStatusChanged);
@@ -125,12 +122,12 @@ describe('Transcriptions', () => {
         allTranscriptionStatusChanged.push(await p1.driver.waitUntil(() => p1.getIframeAPI()
             .getEventResult('transcribingStatusChanged'), {
             timeout: 10000,
-            timeoutMsg: 'transcribingStatusChanged event not received on p1 side'
+            timeoutMsg: 'transcribingStatusChanged event not received on p1'
         }));
         allTranscriptionStatusChanged.push(await p2.driver.waitUntil(() => p2.getIframeAPI()
             .getEventResult('transcribingStatusChanged'), {
             timeout: 10000,
-            timeoutMsg: 'transcribingStatusChanged event not received on p2 side'
+            timeoutMsg: 'transcribingStatusChanged event not received on p2'
         }));
 
         result = await Promise.allSettled(allTranscriptionStatusChanged);
@@ -149,17 +146,15 @@ describe('Transcriptions', () => {
         // let's wait for destroy event before waiting for those that depends on it
         await webhooksProxy.waitForEvent('ROOM_DESTROYED');
 
-        if (webhooksProxy) {
-            const event: {
-                data: {
-                    preAuthenticatedLink: string;
-                };
-                eventType: string;
-            } = await webhooksProxy.waitForEvent('TRANSCRIPTION_UPLOADED');
+        const event: {
+            data: {
+                preAuthenticatedLink: string;
+            };
+            eventType: string;
+        } = await webhooksProxy.waitForEvent('TRANSCRIPTION_UPLOADED');
 
-            expect('TRANSCRIPTION_UPLOADED').toBe(event.eventType);
-            expect(event.data.preAuthenticatedLink).toBeDefined();
-        }
+        expect('TRANSCRIPTION_UPLOADED').toBe(event.eventType);
+        expect(event.data.preAuthenticatedLink).toBeDefined();
     });
 });
 
@@ -178,30 +173,28 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
         timeoutMsg: 'transcriptionChunkReceived event not received on p2 side'
     }));
 
-    if (webhooksProxy) {
-        // TRANSCRIPTION_CHUNK_RECEIVED webhook
-        allTranscripts.push((async () => {
-            const event: {
-                data: {
-                    final: string;
-                    language: string;
-                    messageID: string;
-                    participant: {
-                        id: string;
-                        name: string;
-                    };
-                    stable: string;
+    // TRANSCRIPTION_CHUNK_RECEIVED webhook
+    allTranscripts.push((async () => {
+        const event: {
+            data: {
+                final: string;
+                language: string;
+                messageID: string;
+                participant: {
+                    id: string;
+                    name: string;
                 };
-                eventType: string;
-            } = await webhooksProxy.waitForEvent('TRANSCRIPTION_CHUNK_RECEIVED');
+                stable: string;
+            };
+            eventType: string;
+        } = await webhooksProxy.waitForEvent('TRANSCRIPTION_CHUNK_RECEIVED');
 
-            expect('TRANSCRIPTION_CHUNK_RECEIVED').toBe(event.eventType);
+        expect('TRANSCRIPTION_CHUNK_RECEIVED').toBe(event.eventType);
 
-            event.data.stable = event.data.final;
+        event.data.stable = event.data.final;
 
-            return event;
-        })());
-    }
+        return event;
+    })());
 
     const result = await Promise.allSettled(allTranscripts);
 

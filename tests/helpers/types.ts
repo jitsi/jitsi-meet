@@ -37,8 +37,8 @@ export type IContext = {
 export type IParticipantOptions = {
     /** Whether it should use the iFrame API. */
     iFrameApi?: boolean;
-    /** Must be 'p1', 'p2', 'p3', or 'p4'. */
-    name: string;
+    /** Determines the browser instance to use. */
+    name: 'p1' | 'p2' | 'p3' | 'p4';
     /** An optional token to use. */
     token?: IToken;
 };
@@ -81,12 +81,6 @@ export type IJoinOptions = {
     configOverwrite?: IConfig;
 
     /**
-     * When joining the first participant and jwt singing material is available and a provided token
-     * is available, prefer generating a new token for the first participant.
-     */
-    preferGenerateToken?: boolean;
-
-    /**
      * To be able to override the ctx generated room name. If missing the one from the context will be used.
      */
     roomName?: string;
@@ -95,11 +89,6 @@ export type IJoinOptions = {
      *The skip display name setting to pass to IParticipantJoinOptions.
      */
     skipDisplayName?: boolean;
-
-    /**
-     * Whether to skip setting the moderator role for the first participant (whether to use jwt for it).
-     */
-    skipFirstModerator?: boolean;
 
     /**
      * Whether to skip in meeting checks like ice connected and send receive data. For single in meeting participant.
