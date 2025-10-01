@@ -23,6 +23,10 @@
 		0BCA49611EC4B6C600B793EE /* Proximity.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BCA495E1EC4B6C600B793EE /* Proximity.m */; };
 		0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BD906E81EC0C00300C8C18E /* JitsiMeet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3453F4A32680898C4A40E821 /* libPods-JitsiMeetSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 927ED7DF018DE5E12C4C3404 /* libPods-JitsiMeetSDK.a */; };
+		43AA676C2E8D217100D203D9 /* RCTAppDelegateWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 43AA676A2E8D217100D203D9 /* RCTAppDelegateWrapper.h */; };
+		43AA676D2E8D217100D203D9 /* RCTAppDelegateWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 43AA676B2E8D217100D203D9 /* RCTAppDelegateWrapper.m */; };
+		43AA676E2E8D217100D203D9 /* RCTAppDelegateWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 43AA676B2E8D217100D203D9 /* RCTAppDelegateWrapper.m */; };
+		43AA676F2E8D217100D203D9 /* RCTAppDelegateWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 43AA676A2E8D217100D203D9 /* RCTAppDelegateWrapper.h */; };
 		4E0EF63028CA2FB3005D1B03 /* JMCallKitEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E0EF62E28CA2FB3005D1B03 /* JMCallKitEmitter.h */; };
 		4E0EF63128CA2FB3005D1B03 /* JMCallKitEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E0EF62E28CA2FB3005D1B03 /* JMCallKitEmitter.h */; };
 		4E0EF63228CA2FB3005D1B03 /* JMCallKitEmitter.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E0EF62F28CA2FB3005D1B03 /* JMCallKitEmitter.m */; };
@@ -131,6 +135,10 @@
 		0BD906E51EC0C00300C8C18E /* JitsiMeetSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JitsiMeetSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BD906E81EC0C00300C8C18E /* JitsiMeet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeet.h; sourceTree = "<group>"; };
 		0BD906E91EC0C00300C8C18E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		43AA676A2E8D217100D203D9 /* RCTAppDelegateWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTAppDelegateWrapper.h; sourceTree = "<group>"; };
+		43AA676B2E8D217100D203D9 /* RCTAppDelegateWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCTAppDelegateWrapper.m; sourceTree = "<group>"; };
+		43AA67702E8D220D00D203D9 /* RCTAppDelegateWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RCTAppDelegateWrapper.h; path = src/RCTAppDelegateWrapper.h; sourceTree = "<group>"; };
+		43AA67712E8D220E00D203D9 /* RCTAppDelegateWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RCTAppDelegateWrapper.m; path = src/RCTAppDelegateWrapper.m; sourceTree = "<group>"; };
 		4E0EF62E28CA2FB3005D1B03 /* JMCallKitEmitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMCallKitEmitter.h; sourceTree = "<group>"; };
 		4E0EF62F28CA2FB3005D1B03 /* JMCallKitEmitter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMCallKitEmitter.m; sourceTree = "<group>"; };
 		4E0EF63428CA317E005D1B03 /* JMCallKitListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMCallKitListener.h; sourceTree = "<group>"; };
@@ -222,6 +230,8 @@
 		0BD906DB1EC0C00300C8C18E = {
 			isa = PBXGroup;
 			children = (
+				43AA67702E8D220D00D203D9 /* RCTAppDelegateWrapper.h */,
+				43AA67712E8D220E00D203D9 /* RCTAppDelegateWrapper.m */,
 				9C3C6FA2341729836589B856 /* Frameworks */,
 				C5E72ADFC30ED96F9B35F076 /* Pods */,
 				0BD906E61EC0C00300C8C18E /* Products */,
@@ -242,6 +252,8 @@
 		0BD906E71EC0C00300C8C18E /* src */ = {
 			isa = PBXGroup;
 			children = (
+				43AA676A2E8D217100D203D9 /* RCTAppDelegateWrapper.h */,
+				43AA676B2E8D217100D203D9 /* RCTAppDelegateWrapper.m */,
 				0BB9AD7C1F60356D001C08DB /* AppInfo.m */,
 				0BCA495C1EC4B6C600B793EE /* AudioMode.m */,
 				C69EFA02209A0EFD0027712B /* callkit */,
@@ -367,6 +379,7 @@
 				4E0EF63528CA317E005D1B03 /* JMCallKitListener.h in Headers */,
 				4E0EF63028CA2FB3005D1B03 /* JMCallKitEmitter.h in Headers */,
 				4ED4FFF32721B9B90074E620 /* JitsiAudioSession.h in Headers */,
+				43AA676F2E8D217100D203D9 /* RCTAppDelegateWrapper.h in Headers */,
 				4E0EF63928CA4069005D1B03 /* JMCallKitProxy.h in Headers */,
 				0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */,
 				DE81A2D42316AC4D00AE1940 /* JitsiMeetLogger.h in Headers */,
@@ -393,6 +406,7 @@
 				4E0EF63628CA317E005D1B03 /* JMCallKitListener.h in Headers */,
 				4E0EF63128CA2FB3005D1B03 /* JMCallKitEmitter.h in Headers */,
 				DE9A0139289A9A9A00E41CBB /* JitsiAudioSession.h in Headers */,
+				43AA676C2E8D217100D203D9 /* RCTAppDelegateWrapper.h in Headers */,
 				4E0EF63A28CA4069005D1B03 /* JMCallKitProxy.h in Headers */,
 				DE9A013B289A9A9A00E41CBB /* JitsiMeet.h in Headers */,
 				DE9A013C289A9A9A00E41CBB /* JitsiMeetLogger.h in Headers */,
@@ -651,6 +665,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43AA676E2E8D217100D203D9 /* RCTAppDelegateWrapper.m in Sources */,
 				0BB9AD7B1F5EC8F4001C08DB /* CallKit.m in Sources */,
 				DE81A2DF2317ED5400AE1940 /* JitsiMeetBaseLogHandler.m in Sources */,
 				4E0EF63B28CA4069005D1B03 /* JMCallKitProxy.m in Sources */,
@@ -706,6 +721,7 @@
 				DE9A0157289A9A9A00E41CBB /* DragGestureController.swift in Sources */,
 				DE9A0158289A9A9A00E41CBB /* ScheenshareEventEmiter.m in Sources */,
 				DE9A015C289A9A9A00E41CBB /* JitsiMeetLogger.m in Sources */,
+				43AA676D2E8D217100D203D9 /* RCTAppDelegateWrapper.m in Sources */,
 				4E0EF63328CA2FB3005D1B03 /* JMCallKitEmitter.m in Sources */,
 				DE9A015E289A9A9A00E41CBB /* JitsiMeetView.m in Sources */,
 				DE9A015F289A9A9A00E41CBB /* JitsiMeet.m in Sources */,
