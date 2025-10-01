@@ -24,8 +24,6 @@
 #import "RCTBridgeWrapper.h"
 #import "ReactUtils.h"
 #import "ScheenshareEventEmiter.h"
-#import <React-RCTAppDelegate/RCTAppDelegate.h>
-#import <ReactAppDependencyProvider/RCTAppDependencyProvider.h>
 
 #import <react-native-webrtc/WebRTCModuleOptions.h>
 
@@ -83,24 +81,12 @@
     [Dropbox setAppKey];
 #endif
 
-    // Convert UIApplication to RCTAppDelegate for enabling new arch
-    if ([application isKindOfClass:[RCTAppDelegate class]]) {
-        RCTAppDelegate *rctAppDelegate = (RCTAppDelegate *)application;
-        rctAppDelegate.dependencyProvider = [[RCTAppDependencyProvider alloc] init];
-        rctAppDelegate.initialProps = @{};
-    }
-
     return YES;
 }
 
 - (BOOL)application:(UIApplication *)application
   continueUserActivity:(NSUserActivity *)userActivity
     restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *))restorationHandler {
-
-    // Use RCTAppDelegate for new arch processing
-    if ([application isKindOfClass:[RCTAppDelegate class]]) {
-        RCTAppDelegate *rctAppDelegate = (RCTAppDelegate *)application;
-    }
 
     JitsiMeetConferenceOptions *options = [self optionsFromUserActivity:userActivity];
     if (options) {
