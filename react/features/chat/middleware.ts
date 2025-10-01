@@ -744,6 +744,11 @@ function _shouldSendPrivateMessageTo(state: IReduxState, action: AnyAction) {
     }
 
     if (lastMessage.privateMessage) {
+        if (!lastMessage.participantId) {
+            // this is a system message we can ignore
+            return undefined;
+        }
+
         // We show the notice if the last received message was private.
         return {
             id: lastMessage.participantId,
