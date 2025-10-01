@@ -2,7 +2,7 @@ import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/parti
 
 describe('Grant moderator', () => {
     it('joining the meeting', async () => {
-        await ensureOneParticipant(ctx);
+        await ensureOneParticipant();
 
         if (await ctx.p1.execute(() => typeof APP.conference._room.grantOwner !== 'function')) {
             ctx.skipSuiteTests = true;
@@ -10,7 +10,7 @@ describe('Grant moderator', () => {
             return;
         }
 
-        await ensureTwoParticipants(ctx);
+        await ensureTwoParticipants();
     });
 
     it('grant moderator and validate', async () => {

@@ -26,7 +26,7 @@ import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEff
 import { iAmVisitor } from '../../visitors/functions';
 import { overwriteConfig } from '../config/actions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, CONNECTION_WILL_CONNECT } from '../connection/actionTypes';
-import { connectionDisconnected, disconnect } from '../connection/actions';
+import { connect, connectionDisconnected, disconnect, setPreferVisitor } from '../connection/actions';
 import { validateJwt } from '../jwt/functions';
 import { JitsiConferenceErrors, JitsiConferenceEvents, JitsiConnectionErrors } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media/constants';
@@ -82,6 +82,11 @@ let pageHideHandler: ((_e: PageTransitionEvent) => void) | undefined;
  * Handler for before unload event.
  */
 let beforeUnloadHandler: ((e: BeforeUnloadEvent) => boolean) | undefined;
+
+/**
+ * A simple flag to avoid retrying more than once to join as a visitor when hitting max occupants reached.
+ */
+let retryAsVisitorOnMaxError = true;
 
 /**
  * Implements the middleware of the feature base/conference.
@@ -207,11 +212,20 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
         break;
     }
     case JitsiConferenceErrors.CONFERENCE_MAX_USERS: {
-        dispatch(showErrorNotification({
-            hideErrorSupportLink: true,
-            descriptionKey: 'dialog.maxUsersLimitReached',
-            titleKey: 'dialog.maxUsersLimitReachedTitle'
-        }));
+        let retryAsVisitor = false;
+
+        if (error.params?.length && error.params[0]?.visitorsSupported) {
+            // visitors are supported, so let's try joining that way
+            retryAsVisitor = true;
+        }
+
+        if (!retryAsVisitor) {
+            dispatch(showErrorNotification({
+                hideErrorSupportLink: true,
+                descriptionKey: 'dialog.maxUsersLimitReached',
+                titleKey: 'dialog.maxUsersLimitReachedTitle'
+            }));
+        }
 
         // In case of max users(it can be from a visitor node), let's restore
         // oldConfig if any as we will be back to the main prosody.
@@ -223,6 +237,18 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
 
             conference.leave()
                 .then(() => dispatch(disconnect()));
+        }
+
+        if (retryAsVisitor && !newConfig && retryAsVisitorOnMaxError) {
+            retryAsVisitorOnMaxError = false;
+
+            logger.info('On max user reached will retry joining as a visitor');
+
+            dispatch(disconnect(true)).then(() => {
+                dispatch(setPreferVisitor(true));
+
+                return dispatch(connect());
+            });
         }
 
         break;
@@ -301,6 +327,8 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
     const { conference } = action;
     const { pendingSubjectChange } = getState()['features/base/conference'];
     const { requireDisplayName } = getState()['features/base/config'];
+
+    retryAsVisitorOnMaxError = true;
 
     dispatch(removeLobbyChatParticipant(true));
 

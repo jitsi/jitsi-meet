@@ -247,6 +247,8 @@ function destroy_lobby_room(room, newjid, message)
             lobby_room_obj:destroy(newjid, message);
         end
         room._data.lobbyroom = nil;
+        room._data.lobby_extra_reason = nil;
+        room._data.lobby_skip_display_name_check = nil;
     end
 end
 

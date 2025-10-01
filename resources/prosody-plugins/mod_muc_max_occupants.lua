@@ -43,7 +43,7 @@ local function check_for_max_occupants(event)
 
 		-- If there is no whitelist, just check the count.
 		if not whitelist and count >= slots then
-			module:log("info", "Attempt to enter a maxed out MUC");
+			module:log("info", "Attempt to enter a maxed out room: %s", room.jid);
 			origin.send(st.error_reply(stanza, "cancel", "service-unavailable"));
 			return true;
 		end
@@ -60,7 +60,7 @@ local function check_for_max_occupants(event)
 
 		-- If the room is full (<0 slots left), error out.
 		if slots <= 0 then
-			module:log("info", "Attempt to enter a maxed out MUC");
+			module:log("info", "Attempt to enter a maxed out room:%s", room.jid);
 			origin.send(st.error_reply(stanza, "cancel", "service-unavailable"));
 			return true;
 		end

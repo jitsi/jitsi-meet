@@ -102,18 +102,15 @@ local function send_visitors_iq(conference_service, room, type)
 end
 
 -- Filter out identity information (nick name, email, etc) from a presence stanza,
--- if the hideDisplayNameForGuests option for the room is set (note that the
--- hideDisplayNameForAll option is implemented in a diffrent way and does not
--- require filtering here)
--- This is applied to presence of main room participants before it is sent out to
--- vnodes.
+-- if the hideDisplayNameForGuests option for the room is set.
+-- This is applied to presence of main room participants before it is sent out to vnodes.
 local function filter_stanza_nick_if_needed(stanza, room)
     if not stanza or stanza.name ~= 'presence' or stanza.attr.type == 'error' or stanza.attr.type == 'unavailable' then
         return stanza;
     end
 
     -- if hideDisplayNameForGuests we want to drop any display name from the presence stanza
-    if room and (room._data.hideDisplayNameForGuests or room._data.hideDisplayNameForAll) then
+    if room and room._data.hideDisplayNameForGuests then
         return filter_identity_from_presence(stanza);
     end
 
@@ -379,6 +376,73 @@ process_host_module(main_muc_component_config, function(host_module, host)
 
         return true;
     end, 55); -- prosody check for unknown participant chat is prio 50, we want to override it
+
+    -- Handle private messages from visitor nodes to main participants
+    -- This routes forwarded private messages through the proper MUC system
+    host_module:hook('message/full', function(event)
+        local stanza = event.stanza;
+
+        -- Only handle chat messages (private messages)
+        if stanza.attr.type ~= 'chat' then
+            return; -- Let other handlers process non-chat messages
+        end
+
+        local to = stanza.attr.to;
+
+        -- Early return if this is not targeted at our MUC component
+        if jid.host(to) ~= main_muc_component_config then
+            return; -- Not for our MUC component, let other handlers process
+        end
+
+        local from = stanza.attr.from;
+        local from_host = jid.host(from);
+        local to_node = jid.node(to);
+        local to_resource = jid.resource(to);
+
+        -- Check if this is a private message from a known visitor node
+        local target_room_jid = jid.bare(to);
+
+        -- Early return if we don't have any visitor nodes for this room
+        if not (visitors_nodes[target_room_jid] and visitors_nodes[target_room_jid].nodes) then
+            return; -- No visitor nodes for this room, let default MUC handle it
+        end
+
+        -- Early return if the from_host is not a known visitor node
+        if not visitors_nodes[target_room_jid].nodes[from_host] then
+            -- This could be a main->visitor message, let it go through s2s
+            return; -- Not from a known visitor node, let default MUC handle it
+        end
+
+        -- At this point we know it's a visitor message, handle it
+        local room = prosody.hosts[main_muc_component_config].modules.muc.get_room_from_jid(target_room_jid);
+        if room then
+            -- Find the occupant
+            local occupant = room:get_occupant_by_nick(to);
+            if occupant then
+                -- Add addresses element (XEP-0033) to store original visitor JID for reply functionality
+                stanza:tag('addresses', { xmlns = 'http://jabber.org/protocol/address' })
+                  :tag('address', { type = 'ofrom', jid = stanza.attr.from }):up()
+                  :up();
+
+                -- Change from to be the main domain equivalent for proper client recognition
+                -- Use bare JID without resource
+                stanza.attr.from = jid.join(to_node, main_muc_component_config);
+
+                room:route_to_occupant(occupant, stanza);
+
+                return true;
+            else
+                module:log('warn', 'VISITOR PRIVATE MESSAGE: Occupant not found for %s', to);
+            end
+        else
+            module:log('warn', 'VISITOR PRIVATE MESSAGE: Room not found for %s', to);
+        end
+
+        return false;
+    end, 10); -- Normal priority since we're in the right place now
+
+    -- Main->visitor private messages work via s2s routing automatically
+    -- No special handling needed!
 
     host_module:hook('muc-config-submitted/muc#roomconfig_roomsecret', function(event)
         if event.status_codes['104'] then

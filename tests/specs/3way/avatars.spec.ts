@@ -9,7 +9,7 @@ const HASH = '38f014e4b7dde0f64f8157d26a8c812e';
 
 describe('Avatar', () => {
     it('setup the meeting', () =>
-        ensureTwoParticipants(ctx, {
+        ensureTwoParticipants({
             skipDisplayName: true
         })
     );
@@ -81,7 +81,7 @@ describe('Avatar', () => {
         expect(p1ThumbSrc).toBe(p1LargeSrc);
 
         // Join p2
-        await ensureTwoParticipants(ctx, {
+        await ensureTwoParticipants({
             skipDisplayName: true
         });
         const { p2 } = ctx;
@@ -119,7 +119,7 @@ describe('Avatar', () => {
         await p1.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2);
 
         // Start the third participant
-        await ensureThreeParticipants(ctx, {
+        await ensureThreeParticipants({
             skipInMeetingChecks: true
         });
 
@@ -200,7 +200,7 @@ describe('Avatar', () => {
 
         await p1.hangup();
 
-        await ensureTwoParticipants(ctx, {
+        await ensureTwoParticipants({
             skipDisplayName: true
         });
         p1 = ctx.p1;

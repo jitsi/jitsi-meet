@@ -353,6 +353,7 @@ function Util:process_and_verify_token(session)
         session.jitsi_meet_room = claims["room"];
         -- Binds domain name to the session
         session.jitsi_meet_domain = claims["sub"];
+        session.jitsi_meet_auth_issuer = claims["iss"];
 
         -- Binds the user details to the session if available
         if claims["context"] ~= nil then

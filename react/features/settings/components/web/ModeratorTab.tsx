@@ -10,7 +10,6 @@ import AbstractDialogTab, {
 import { translate } from '../../../base/i18n/functions';
 import { setMuteSoundGlobal } from '../../../base/sounds/functions.web';
 import { ISoundsState } from '../../../base/sounds/reducer';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 
 /**
@@ -109,7 +108,7 @@ const styles = (theme: Theme) => {
         },
 
         title: {
-            ...withPixelLineHeight(theme.typography.heading6),
+            ...theme.typography.heading6,
             color: `${theme.palette.text01} !important`,
             marginBottom: theme.spacing(3)
         },

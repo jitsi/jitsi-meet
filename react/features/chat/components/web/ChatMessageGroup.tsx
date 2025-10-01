@@ -101,13 +101,12 @@ const ChatMessageGroup = ({ className = '', messages, participants }: IProps) =>
             <div className = { `${classes.messageGroup} chat-message-group ${className}` }>
                 {messagesWithSender.map((message, i) => (
                     <ChatMessage
+                        className = { className }
                         isModerator = { message.participantRole === 'moderator' }
                         key = { i }
                         message = { message }
-                        shouldDisplayChatMessageMenu = { false }
                         showDisplayName = { i === 0 }
-                        showTimestamp = { i === messages.length - 1 }
-                        type = { className } />
+                        showTimestamp = { i === messages.length - 1 } />
                 ))}
             </div>
         </div>

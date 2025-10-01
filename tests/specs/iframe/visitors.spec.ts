@@ -1,4 +1,12 @@
+import { setTestProperties } from '../../helpers/TestProperties';
+import { config as testsConfig } from '../../helpers/TestsConfig';
 import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
+
+setTestProperties(__filename, {
+    useIFrameApi: true,
+    useWebhookProxy: true,
+    usesBrowsers: [ 'p1', 'p2' ]
+});
 
 describe('Visitors', () => {
     it('joining the meeting', async () => {
@@ -10,7 +18,7 @@ describe('Visitors', () => {
             };
         }
 
-        await ensureOneParticipant(ctx);
+        await ensureOneParticipant();
 
         const { p1 } = ctx;
 
@@ -24,25 +32,23 @@ describe('Visitors', () => {
         await p1.driver.waitUntil(() => p1.execute(() => APP.conference._room.isVisitorsSupported()), {
             timeout: 2000
         }).then(async () => {
-            await p1.switchToAPI();
+            await p1.switchToMainFrame();
         }).catch(() => {
             ctx.skipSuiteTests = true;
         });
     });
 
     it('visitor joins', async () => {
-        await ensureTwoParticipants(ctx, {
+        await ensureTwoParticipants({
             preferGenerateToken: true,
-            visitor: true,
+            tokenOptions: { visitor: true },
             skipInMeetingChecks: true
         });
 
         const { p1, p2, webhooksProxy } = ctx;
 
-        await p2.waitForSendReceiveData({
-            checkSend: false,
-            msg: 'Visitor is not receiving media'
-        }).then(() => p2.waitForRemoteStreams(1));
+        await p2.waitForReceiveMedia(15_000, 'Visitor is not receiving media');
+        await p2.waitForRemoteStreams(1);
 
         const p2Visitors = p2.getVisitors();
         const p1Visitors = p1.getVisitors();
@@ -72,7 +78,7 @@ describe('Visitors', () => {
                 eventType: string;
             } = await webhooksProxy.waitForEvent('PARTICIPANT_JOINED');
 
-            const jwtPayload = ctx.data[`${p2.name}-jwt-payload`];
+            const jwtPayload = p2.getToken()?.payload;
 
             expect('PARTICIPANT_JOINED').toBe(event.eventType);
             expect(event.data.avatar).toBe(jwtPayload.context.user.avatar);
@@ -83,9 +89,9 @@ describe('Visitors', () => {
             expect(event.data.participantJid.indexOf('meet.jitsi') != -1).toBe(true);
             expect(event.data.name).toBe(p2.name);
             expect(event.data.role).toBe('visitor');
-            expect(event.customerId).toBe(process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', ''));
+            expect(event.customerId).toBe(testsConfig.iframe.customerId);
 
-            await p2.switchToAPI();
+            await p2.switchToMainFrame();
             await p2.getIframeAPI().executeCommand('hangup');
 
             // PARTICIPANT_LEFT webhook
@@ -113,7 +119,7 @@ describe('Visitors', () => {
             expect(eventLeft.data.participantJid.indexOf('meet.jitsi') != -1).toBe(true);
             expect(eventLeft.data.name).toBe(p2.name);
             expect(eventLeft.data.role).toBe('visitor');
-            expect(eventLeft.customerId).toBe(process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', ''));
+            expect(eventLeft.customerId).toBe(testsConfig.iframe.customerId);
         }
     });
 });

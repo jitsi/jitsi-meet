@@ -1,12 +1,19 @@
 import { expect } from '@wdio/globals';
 
 import type { Participant } from '../../helpers/Participant';
+import { setTestProperties } from '../../helpers/TestProperties';
 import type WebhookProxy from '../../helpers/WebhookProxy';
 import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
 
+setTestProperties(__filename, {
+    useIFrameApi: true,
+    useWebhookProxy: true,
+    usesBrowsers: [ 'p1', 'p2' ]
+});
+
 describe('Transcriptions', () => {
     it('joining the meeting', async () => {
-        await ensureOneParticipant(ctx);
+        await ensureOneParticipant();
 
         const { p1 } = ctx;
 
@@ -17,9 +24,9 @@ describe('Transcriptions', () => {
             return;
         }
 
-        await p1.switchToAPI();
+        await p1.switchToMainFrame();
 
-        await ensureTwoParticipants(ctx, {
+        await ensureTwoParticipants({
             configOverwrite: {
                 startWithAudioMuted: true
             }
@@ -33,8 +40,8 @@ describe('Transcriptions', () => {
             p2.getEndpointId()
         ]);
 
-        await p1.switchToAPI();
-        await p2.switchToAPI();
+        await p1.switchToMainFrame();
+        await p2.switchToMainFrame();
 
         expect(await p1.getIframeAPI().getEventResult('isModerator')).toBe(true);
         expect(await p1.getIframeAPI().getEventResult('videoConferenceJoined')).toBeDefined();
@@ -140,7 +147,7 @@ describe('Transcriptions', () => {
 
         // sometimes events are not immediately received,
         // let's wait for destroy event before waiting for those that depends on it
-        await webhooksProxy.waitForEvent('ROOM_DESTROYED', 10000);
+        await webhooksProxy.waitForEvent('ROOM_DESTROYED');
 
         if (webhooksProxy) {
             const event: {
@@ -148,7 +155,7 @@ describe('Transcriptions', () => {
                     preAuthenticatedLink: string;
                 };
                 eventType: string;
-            } = await webhooksProxy.waitForEvent('TRANSCRIPTION_UPLOADED', 20000);
+            } = await webhooksProxy.waitForEvent('TRANSCRIPTION_UPLOADED');
 
             expect('TRANSCRIPTION_UPLOADED').toBe(event.eventType);
             expect(event.data.preAuthenticatedLink).toBeDefined();
@@ -186,7 +193,7 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
                     stable: string;
                 };
                 eventType: string;
-            } = await webhooksProxy.waitForEvent('TRANSCRIPTION_CHUNK_RECEIVED', 60000);
+            } = await webhooksProxy.waitForEvent('TRANSCRIPTION_CHUNK_RECEIVED');
 
             expect('TRANSCRIPTION_CHUNK_RECEIVED').toBe(event.eventType);
 

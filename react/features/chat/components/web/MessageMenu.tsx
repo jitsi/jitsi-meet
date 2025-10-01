@@ -15,10 +15,12 @@ import { handleLobbyChatInitialized, openChat } from '../../actions.web';
 
 export interface IProps {
     className?: string;
+    displayName?: string;
+    enablePrivateChat: boolean;
+    isFromVisitor?: boolean;
     isLobbyMessage: boolean;
     message: string;
     participantId: string;
-    shouldDisplayChatMessageMenu: boolean;
 }
 
 const useStyles = makeStyles()(theme => {
@@ -46,7 +48,7 @@ const useStyles = makeStyles()(theme => {
             color: 'white',
             padding: '4px 8px',
             borderRadius: '4px',
-            fontSize: '12px',
+            fontSize: '0.75rem',
             zIndex: 1000,
             opacity: 0,
             transition: 'opacity 0.3s ease-in-out',
@@ -58,7 +60,7 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const MessageMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChatMessageMenu }: IProps) => {
+const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, enablePrivateChat, displayName }: IProps) => {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
@@ -82,10 +84,23 @@ const MessageMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChat
         if (isLobbyMessage) {
             dispatch(handleLobbyChatInitialized(participantId));
         } else {
-            dispatch(openChat(participant));
+            // For visitor messages, participant will be undefined but we can still open chat
+            // using the participantId which contains the visitor's original JID
+            if (isFromVisitor) {
+                // Handle visitor participant that doesn't exist in main participant list
+                const visitorParticipant = {
+                    id: participantId,
+                    name: displayName,
+                    isVisitor: true
+                };
+
+                dispatch(openChat(visitorParticipant));
+            } else {
+                dispatch(openChat(participant));
+            }
         }
         handleClose();
-    }, [ dispatch, isLobbyMessage, participant, participantId ]);
+    }, [ dispatch, isLobbyMessage, participant, participantId, displayName ]);
 
     const handleCopyClick = useCallback(() => {
         copyText(message)
@@ -115,7 +130,7 @@ const MessageMenu = ({ message, participantId, isLobbyMessage, shouldDisplayChat
 
     const popoverContent = (
         <div className = { classes.menuPanel }>
-            {shouldDisplayChatMessageMenu && (
+            {enablePrivateChat && (
                 <div
                     className = { classes.menuItem }
                     onClick = { handlePrivateClick }>

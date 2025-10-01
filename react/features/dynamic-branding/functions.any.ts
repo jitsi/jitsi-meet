@@ -2,6 +2,7 @@ import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
 import { toState } from '../base/redux/functions';
 
+import { cleanSvg } from './functions';
 import logger from './logger';
 
 /**
@@ -82,7 +83,7 @@ export const fetchCustomIcons = async (customIcons: Record<string, string>) => {
             if (response.ok) {
                 const svgXml = await response.text();
 
-                localCustomIcons[key] = svgXml;
+                localCustomIcons[key] = cleanSvg(svgXml);
             } else {
                 logger.error(`Failed to fetch ${url}. Status: ${response.status}`);
             }

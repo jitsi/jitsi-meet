@@ -4,7 +4,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import { showOverflowDrawer } from '../../../../toolbox/functions.web';
 import Icon from '../../../icons/components/Icon';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 import { TEXT_OVERFLOW_TYPES } from '../../constants.any';
 
 import TextWithOverflow from './TextWithOverflow';
@@ -14,7 +13,7 @@ export interface IProps {
     /**
      * Label used for accessibility.
      */
-    accessibilityLabel: string;
+    accessibilityLabel?: string;
 
     /**
      * The context menu item background color.
@@ -174,12 +173,12 @@ const useStyles = makeStyles()(theme => {
         },
 
         text: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: theme.palette.text01
         },
 
         drawerText: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
+            ...theme.typography.bodyShortRegularLarge
         }
     };
 });
@@ -232,7 +231,7 @@ const ContextMenuItem = ({
         <div
             aria-controls = { controls }
             aria-disabled = { disabled }
-            aria-label = { accessibilityLabel }
+            aria-label = { accessibilityLabel || undefined }
             aria-selected = { role === 'tab' ? selected : undefined }
             className = { cx(styles.contextMenuItem,
                     _overflowDrawer && styles.contextMenuItemDrawer,

@@ -134,6 +134,7 @@ import {
     isLocalTrackMuted,
     isUserInteractionRequiredForUnmute
 } from './react/features/base/tracks/functions';
+import { getLocalJitsiAudioTrackSettings } from './react/features/base/tracks/functions.web';
 import { downloadJSON } from './react/features/base/util/downloadJSON';
 import { getJitsiMeetGlobalNSConnectionTimes } from './react/features/base/util/helpers';
 import { openLeaveReasonDialog } from './react/features/conference/actions.web';
@@ -159,13 +160,14 @@ import { disableReceiver, stopReceiver } from './react/features/remote-control/a
 import { setScreenAudioShareState } from './react/features/screen-share/actions.web';
 import { isScreenAudioShared } from './react/features/screen-share/functions';
 import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture/actions';
+import { setAudioSettings } from './react/features/settings/actions.web';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
 import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise';
 import { handleToggleVideoMuted } from './react/features/toolbox/actions.any';
 import { transcriberJoined, transcriberLeft } from './react/features/transcribing/actions';
 import { muteLocal } from './react/features/video-menu/actions.any';
 
-const logger = Logger.getLogger(__filename);
+const logger = Logger.getLogger('app:conference-web');
 let room;
 
 /*
@@ -567,7 +569,15 @@ export default {
                 if (browser.isWebKitBased()) {
                     this.muteAudio(true, true);
                 } else {
-                    localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.AUDIO);
+                    localTracks = localTracks.filter(track => {
+                        if (track.getType() === MEDIA_TYPE.AUDIO) {
+                            track.stopStream();
+
+                            return false;
+                        }
+
+                        return true;
+                    });
                 }
             }
 
@@ -1775,7 +1785,11 @@ export default {
             return this.useAudioStream(stream);
         })
         .then(() => {
-            const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
+            const state = APP.store.getState();
+            const localAudio = getLocalJitsiAudioTrack(state);
+            const settings = getLocalJitsiAudioTrackSettings(state);
+
+            APP.store.dispatch(setAudioSettings(settings));
 
             if (localAudio && isDefaultMicSelected) {
                 // workaround for the default device to be shown as selected in the

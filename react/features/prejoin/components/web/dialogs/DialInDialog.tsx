@@ -59,8 +59,8 @@ const useStyles = makeStyles()(theme => {
                 background: '#3e474f',
                 borderRadius: '4px',
                 display: 'inline-block',
-                fontSize: '15px',
-                lineHeight: '24px',
+                fontSize: '1rem',
+                lineHeight: '1.5rem',
                 margin: theme.spacing(1),
                 padding: theme.spacing(2),
                 userSelect: 'text',
@@ -79,8 +79,8 @@ const useStyles = makeStyles()(theme => {
                 color: '#6FB1EA',
                 cursor: 'pointer',
                 display: 'inline-block',
-                fontSize: '13px',
-                lineHeight: '20px',
+                fontSize: '0.875rem',
+                lineHeight: '1.5rem',
                 marginBottom: theme.spacing(4)
             },
             '& .prejoin-dialog-dialin-spaced-label': {

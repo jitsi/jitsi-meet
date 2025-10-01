@@ -4,6 +4,7 @@ import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, getRemoteParticipants } from '../base/participants/functions';
 import SoundService from '../base/sounds/components/SoundService';
+import { isEmbedded } from '../base/util/embedUtils';
 import { isSpotTV } from '../base/util/spot';
 import { isInBreakoutRoom as isInBreakoutRoomF } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox/functions';
@@ -144,7 +145,7 @@ export function getSessionStatusToShow(state: IReduxState, mode: string): string
  * @returns {boolean} - Whether local recording is supported or not.
  */
 export function supportsLocalRecording() {
-    return LocalRecordingManager.isSupported();
+    return LocalRecordingManager.isSupported() && !isEmbedded();
 }
 
 /**

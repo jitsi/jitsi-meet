@@ -51,7 +51,6 @@
 		C81E9AB925AC5AD800B134D9 /* ExternalAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = C81E9AB825AC5AD800B134D9 /* ExternalAPI.h */; };
 		C8AFD27F2462C613000293D2 /* InfoPlistUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = C8AFD27D2462C613000293D2 /* InfoPlistUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C8AFD2802462C613000293D2 /* InfoPlistUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = C8AFD27E2462C613000293D2 /* InfoPlistUtil.m */; };
-		DE438CDA2350934700DD541D /* JavaScriptSandbox.m in Sources */ = {isa = PBXBuildFile; fileRef = DE438CD82350934700DD541D /* JavaScriptSandbox.m */; };
 		DE65AACA2317FFCD00290BEC /* LogUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = DE65AAC92317FFCD00290BEC /* LogUtils.h */; };
 		DE65AACC2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = DE65AACB2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h */; };
 		DE762DB422AFDE76000DEBD6 /* JitsiMeetUserInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = DE762DB322AFDE76000DEBD6 /* JitsiMeetUserInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -98,7 +97,6 @@
 		DE9A015C289A9A9A00E41CBB /* JitsiMeetLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = DE81A2D32316AC4D00AE1940 /* JitsiMeetLogger.m */; };
 		DE9A015E289A9A9A00E41CBB /* JitsiMeetView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B412F171EDEC65D00B1A0A6 /* JitsiMeetView.m */; };
 		DE9A015F289A9A9A00E41CBB /* JitsiMeet.m in Sources */ = {isa = PBXBuildFile; fileRef = DEFE535321FB1BF800011A3A /* JitsiMeet.m */; };
-		DE9A0160289A9A9A00E41CBB /* JavaScriptSandbox.m in Sources */ = {isa = PBXBuildFile; fileRef = DE438CD82350934700DD541D /* JavaScriptSandbox.m */; };
 		DE9A0162289A9A9A00E41CBB /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BB9AD781F5EC6D7001C08DB /* Intents.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		DE9A0163289A9A9A00E41CBB /* CallKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BB9AD761F5EC6CE001C08DB /* CallKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		DE9A0166289A9A9A00E41CBB /* CallKitIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BC4B8681F8C01E100CE8B21 /* CallKitIcon.png */; };
@@ -161,7 +159,6 @@
 		C81E9AB825AC5AD800B134D9 /* ExternalAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalAPI.h; sourceTree = "<group>"; };
 		C8AFD27D2462C613000293D2 /* InfoPlistUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InfoPlistUtil.h; sourceTree = "<group>"; };
 		C8AFD27E2462C613000293D2 /* InfoPlistUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InfoPlistUtil.m; sourceTree = "<group>"; };
-		DE438CD82350934700DD541D /* JavaScriptSandbox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JavaScriptSandbox.m; sourceTree = "<group>"; };
 		DE65AAC92317FFCD00290BEC /* LogUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LogUtils.h; sourceTree = "<group>"; };
 		DE65AACB2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetBaseLogHandler+Private.h"; sourceTree = "<group>"; };
 		DE762DB322AFDE76000DEBD6 /* JitsiMeetUserInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetUserInfo.h; sourceTree = "<group>"; };
@@ -250,7 +247,6 @@
 				C69EFA02209A0EFD0027712B /* callkit */,
 				A4A934E7212F3AB8001E9388 /* dropbox */,
 				0BD906E91EC0C00300C8C18E /* Info.plist */,
-				DE438CD82350934700DD541D /* JavaScriptSandbox.m */,
 				0BD906E81EC0C00300C8C18E /* JitsiMeet.h */,
 				DEFE535821FB311F00011A3A /* JitsiMeet+Private.h */,
 				DEA9F283258A5D9900D4CD74 /* JitsiMeetSDK.h */,
@@ -681,7 +677,6 @@
 				DE81A2D52316AC4D00AE1940 /* JitsiMeetLogger.m in Sources */,
 				0B412F191EDEC65D00B1A0A6 /* JitsiMeetView.m in Sources */,
 				DEFE535421FB1BF800011A3A /* JitsiMeet.m in Sources */,
-				DE438CDA2350934700DD541D /* JavaScriptSandbox.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -714,7 +709,6 @@
 				4E0EF63328CA2FB3005D1B03 /* JMCallKitEmitter.m in Sources */,
 				DE9A015E289A9A9A00E41CBB /* JitsiMeetView.m in Sources */,
 				DE9A015F289A9A9A00E41CBB /* JitsiMeet.m in Sources */,
-				DE9A0160289A9A9A00E41CBB /* JavaScriptSandbox.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

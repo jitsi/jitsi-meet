@@ -14,7 +14,7 @@ describe('Fake Dial-In', () => {
             return;
         }
 
-        await ensureOneParticipant(ctx);
+        await ensureOneParticipant();
 
         // check dial-in is enabled, so skip
         if (await isDialInEnabled(ctx.p1)) {
@@ -34,7 +34,7 @@ describe('Fake Dial-In', () => {
             return;
         }
 
-        await ensureTwoParticipants(ctx);
+        await ensureTwoParticipants();
     });
 
     it('wait for audio from second participant', async () => {

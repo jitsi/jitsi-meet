@@ -1,3 +1,3 @@
 import { getLogger } from '../base/logging/functions';
 
-export default getLogger('features/share-video');
+export default getLogger('app:shared-video');

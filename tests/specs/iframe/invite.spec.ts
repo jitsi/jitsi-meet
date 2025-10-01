@@ -1,16 +1,28 @@
 import type { Participant } from '../../helpers/Participant';
+import { setTestProperties } from '../../helpers/TestProperties';
+import { config as testsConfig } from '../../helpers/TestsConfig';
 import { ensureOneParticipant } from '../../helpers/participants';
 import {
     cleanup,
     dialIn,
     isDialInEnabled,
-    retrievePin,
     waitForAudioFromDialInParticipant
 } from '../helpers/DialIn';
 
+setTestProperties(__filename, {
+    useIFrameApi: true,
+    useWebhookProxy: true
+});
+
+const customerId = testsConfig.iframe.customerId;
+
 describe('Invite iframeAPI', () => {
+    let dialInDisabled: boolean;
+    let dialOutDisabled: boolean;
+    let sipJibriDisabled: boolean;
+
     it('join participant', async () => {
-        await ensureOneParticipant(ctx);
+        await ensureOneParticipant();
 
         const { p1 } = ctx;
 
@@ -22,25 +34,24 @@ describe('Invite iframeAPI', () => {
             return;
         }
 
-        ctx.data.dialOutDisabled = Boolean(!await p1.execute(() => config.dialOutAuthUrl));
-        ctx.data.sipJibriDisabled = Boolean(!await p1.execute(() => config.inviteServiceUrl));
+        dialOutDisabled = Boolean(!await p1.execute(() => config.dialOutAuthUrl));
+        sipJibriDisabled = Boolean(!await p1.execute(() => config.inviteServiceUrl));
 
         // check dial-in is enabled
         if (!await isDialInEnabled(ctx.p1) || !process.env.DIAL_IN_REST_URL) {
-            ctx.data.dialInDisabled = true;
+            dialInDisabled = true;
         }
     });
 
     it('dial-in', async () => {
-        if (ctx.data.dialInDisabled) {
+        if (dialInDisabled) {
             return;
         }
 
         const { p1 } = ctx;
+        const dialInPin = await p1.getDialInPin();
 
-        await retrievePin(p1);
-
-        expect(ctx.data.dialInPin.length >= 8).toBe(true);
+        expect(dialInPin.length >= 8).toBe(true);
 
         await dialIn(p1);
 
@@ -55,17 +66,17 @@ describe('Invite iframeAPI', () => {
     });
 
     it('dial-out', async () => {
-        if (ctx.data.dialOutDisabled || !process.env.DIAL_OUT_URL) {
+        if (dialOutDisabled || !process.env.DIAL_OUT_URL) {
             return;
         }
 
         const { p1 } = ctx;
 
-        await p1.switchToAPI();
+        await p1.switchToMainFrame();
 
         await p1.getIframeAPI().invitePhone(process.env.DIAL_OUT_URL);
 
-        await p1.switchInPage();
+        await p1.switchToIFrame();
 
         await p1.waitForParticipants(1);
 
@@ -75,17 +86,17 @@ describe('Invite iframeAPI', () => {
     });
 
     it('sip jibri', async () => {
-        if (ctx.data.sipJibriDisabled || !process.env.SIP_JIBRI_DIAL_OUT_URL) {
+        if (sipJibriDisabled || !process.env.SIP_JIBRI_DIAL_OUT_URL) {
             return;
         }
 
         const { p1 } = ctx;
 
-        await p1.switchToAPI();
+        await p1.switchToMainFrame();
 
         await p1.getIframeAPI().inviteSIP(process.env.SIP_JIBRI_DIAL_OUT_URL);
 
-        await p1.switchInPage();
+        await p1.switchToIFrame();
 
         await p1.waitForParticipants(1);
 
@@ -94,7 +105,6 @@ describe('Invite iframeAPI', () => {
         const { webhooksProxy } = ctx;
 
         if (webhooksProxy) {
-            const customerId = process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', '');
             const sipCallOutStartedEvent: {
                 customerId: string;
                 data: {
@@ -149,7 +159,6 @@ async function checkDialEvents(participant: Participant, direction: string, star
     const { webhooksProxy } = ctx;
 
     if (webhooksProxy) {
-        const customerId = process.env.IFRAME_TENANT?.replace('vpaas-magic-cookie-', '');
         const dialInStartedEvent: {
             customerId: string;
             data: {

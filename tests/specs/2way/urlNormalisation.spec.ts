@@ -1,12 +1,13 @@
 import { multiremotebrowser } from '@wdio/globals';
 
+import { config } from '../../helpers/TestsConfig';
 import { ensureTwoParticipants } from '../../helpers/participants';
 
 describe('URL Normalisation', () => {
     it('joining the meeting', async () => {
 
         // if we are running with token this becomes ugly to match the URL
-        if (process.env.JWT_ACCESS_TOKEN) {
+        if (config.jwt.preconfiguredToken) {
             ctx.skipSuiteTests = true;
 
             return;
@@ -19,15 +20,9 @@ describe('URL Normalisation', () => {
             throw new Error('baseUrl is not set');
         }
 
-        // we want to extract the host and use a custom tenant
-        const host = new URL(baseUrl).origin;
-
-        // @ts-ignore
-        ctx.oldRoomName = ctx.roomName;
-        ctx.roomName = `${ctx.roomName}@example.com`;
-
-        await ensureTwoParticipants(ctx, {
-            baseUrl: `${host}/tenant@example.com/`
+        await ensureTwoParticipants({
+            tenant: 'tenant@example.com',
+            roomName: `${ctx.roomName}@example.com`
         });
     });
 
@@ -41,6 +36,6 @@ describe('URL Normalisation', () => {
         expect(parts[1]).toBe('tenantexample.com');
 
         // @ts-ignore
-        expect(parts[2]).toBe(`${ctx.oldRoomName}example.com`);
+        expect(parts[2]).toBe(`${ctx.roomName}example.com`);
     });
 });

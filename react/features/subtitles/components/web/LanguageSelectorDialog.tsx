@@ -17,7 +17,7 @@ import LanguageList from './LanguageList';
 const useStyles = makeStyles()(theme => {
     return {
         paragraphWrapper: {
-            fontSize: 14,
+            fontSize: '0.875rem',
             margin: '10px 0px',
             color: theme.palette.text01
         },

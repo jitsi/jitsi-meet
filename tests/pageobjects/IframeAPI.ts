@@ -41,6 +41,10 @@ export default class IframeAPI extends BasePageObject {
     addEventListener(eventName: string) {
         return this.participant.execute(
             (event, prefix) => {
+                // we want to add it once as we use static .test[event] to store the last event
+                if (window.jitsiAPI.listenerCount(event) > 0) {
+                    return;
+                }
                 console.log(`${new Date().toISOString()} ${prefix}iframeAPI - Adding listener for event: ${event}`);
                 window.jitsiAPI.addListener(event, evt => {
                     console.log(

@@ -95,6 +95,7 @@
                 if (event.role === "moderator" && event.id === window.jitsiAPI.test.myEndpointId) {
                     window.jitsiAPI.test.isModerator = true;
                 }
+                window.jitsiAPI.test['participantRoleChanged'] = event;
             });
             window.jitsiAPI.addEventListener('audioAvailabilityChanged', function(event) {
                 log(`audioAvailabilityChanged: ${JSON.stringify(event)}`);

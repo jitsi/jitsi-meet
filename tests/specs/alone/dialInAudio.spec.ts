@@ -1,7 +1,7 @@
 import process from 'node:process';
 
 import { ensureOneParticipant } from '../../helpers/participants';
-import { cleanup, dialIn, isDialInEnabled, retrievePin, waitForAudioFromDialInParticipant } from '../helpers/DialIn';
+import { cleanup, dialIn, isDialInEnabled, waitForAudioFromDialInParticipant } from '../helpers/DialIn';
 
 describe('Dial-In', () => {
     it('join participant', async () => {
@@ -12,7 +12,7 @@ describe('Dial-In', () => {
             return;
         }
 
-        await ensureOneParticipant(ctx, { preferGenerateToken: true });
+        await ensureOneParticipant({ preferGenerateToken: true });
 
         // check dial-in is enabled
         if (!await isDialInEnabled(ctx.p1)) {
@@ -21,21 +21,23 @@ describe('Dial-In', () => {
     });
 
     it('retrieve pin', async () => {
+        let dialInPin: string;
+
         try {
-            await retrievePin(ctx.p1);
+            dialInPin = await ctx.p1.getDialInPin();
         } catch (e) {
             console.error('dial-in.test.no-pin');
             ctx.skipSuiteTests = true;
             throw e;
         }
 
-        if (ctx.data.dialInPin === 0) {
+        if (dialInPin.length === 0) {
             console.error('dial-in.test.no-pin');
             ctx.skipSuiteTests = true;
             throw new Error('no pin');
         }
 
-        expect(ctx.data.dialInPin.length >= 8).toBe(true);
+        expect(dialInPin.length >= 8).toBe(true);
     });
 
     it('invite dial-in participant', async () => {

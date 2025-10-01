@@ -1,13 +1,19 @@
 import { expect } from '@wdio/globals';
 
 import type { Participant } from '../../helpers/Participant';
+import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureTwoParticipants } from '../../helpers/participants';
 import { fetchJson } from '../../helpers/utils';
 
+setTestProperties(__filename, {
+    useIFrameApi: true,
+    useWebhookProxy: true,
+    usesBrowsers: [ 'p1', 'p2' ]
+});
 
 describe('Chat', () => {
     it('joining the meeting', async () => {
-        await ensureTwoParticipants(ctx);
+        await ensureTwoParticipants();
 
         const { p1, p2 } = ctx;
 
@@ -28,8 +34,8 @@ describe('Chat', () => {
     it('send message', async () => {
         const { p1, p2 } = ctx;
 
-        await p1.switchToAPI();
-        await p2.switchToAPI();
+        await p1.switchToMainFrame();
+        await p2.switchToMainFrame();
 
         await p2.getIframeAPI().addEventListener('chatUpdated');
         await p2.getIframeAPI().addEventListener('incomingMessage');
@@ -140,7 +146,7 @@ describe('Chat', () => {
                     preAuthenticatedLink: string;
                 };
                 eventType: string;
-            } = await webhooksProxy.waitForEvent('CHAT_UPLOADED', 20000);
+            } = await webhooksProxy.waitForEvent('CHAT_UPLOADED');
 
             expect('CHAT_UPLOADED').toBe(event.eventType);
             expect(event.data.preAuthenticatedLink).toBeDefined();

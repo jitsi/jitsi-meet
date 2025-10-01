@@ -164,6 +164,7 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
                 = createLocalTracksF(
                     {
                         cameraDeviceId: options.cameraDeviceId,
+                        constraints: options?.constraints,
                         devices: [ device ],
                         facingMode:
                             options.facingMode || getCameraFacingMode(state),

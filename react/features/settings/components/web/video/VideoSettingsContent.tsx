@@ -8,7 +8,6 @@ import { IconImage } from '../../../../base/icons/svg';
 import { Video } from '../../../../base/media/components/index';
 import { equals } from '../../../../base/redux/functions';
 import { updateSettings } from '../../../../base/settings/actions';
-import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import Checkbox from '../../../../base/ui/components/web/Checkbox';
 import ContextMenu from '../../../../base/ui/components/web/ContextMenu';
 import ContextMenuItem from '../../../../base/ui/components/web/ContextMenuItem';
@@ -130,7 +129,7 @@ const useStyles = makeStyles()(theme => {
             borderRadius: '4px',
             padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
             color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.labelBold),
+            ...theme.typography.labelBold,
             width: 'fit-content',
             maxwidth: `calc(100% - ${theme.spacing(2)} - ${theme.spacing(2)})`,
             overflow: 'hidden',

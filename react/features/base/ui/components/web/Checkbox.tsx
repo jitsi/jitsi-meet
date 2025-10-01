@@ -4,7 +4,6 @@ import { makeStyles } from 'tss-react/mui';
 import { isMobileBrowser } from '../../../environment/utils';
 import Icon from '../../../icons/components/Icon';
 import { IconCheck } from '../../../icons/svg';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 
 interface ICheckboxProps {
 
@@ -42,13 +41,13 @@ interface ICheckboxProps {
 const useStyles = makeStyles()(theme => {
     return {
         formControl: {
-            ...withPixelLineHeight(theme.typography.bodyLongRegular),
+            ...theme.typography.bodyLongRegular,
             color: theme.palette.text01,
             display: 'inline-flex',
             alignItems: 'center',
 
             '&.is-mobile': {
-                ...withPixelLineHeight(theme.typography.bodyLongRegularLarge)
+                ...theme.typography.bodyLongRegularLarge
 
             }
         },

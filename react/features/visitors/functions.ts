@@ -139,3 +139,15 @@ export function shouldDisplayCurrentVisitorsList(stateful: IStateful): boolean {
 
     return isVisitorsListEnabled(state) && getVisitorsCount(state) > 0;
 }
+
+/**
+ * Returns display name, falling back to the default remote display name
+ * from config, or 'Fellow Jitster' if neither is available.
+ *
+ * @param {IReduxState} state - The Redux state.
+ * @param {string} [displayName] - Optional display name to use if available.
+ * @returns {string} - The display name.
+ */
+export function getDisplayName(state: IReduxState, displayName?: string): string {
+    return displayName || state['features/base/config'].defaultRemoteDisplayName || 'Fellow Jitster';
+}

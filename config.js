@@ -374,10 +374,11 @@ var config = {
     // Desktop sharing
 
     // Optional desktop sharing frame rate options. Default value: min:5, max:5.
-    desktopSharingFrameRate: {
-        min: 5,
-        max: 5
-    },
+    // Setting higher min/max values will affect the resolution, it makes it worse.
+    // desktopSharingFrameRate: {
+    //     min: 5,
+    //     max: 5,
+    // },
 
     // Optional screenshare settings that give more control over screen capture in the browser.
     screenShareSettings: {
@@ -781,7 +782,7 @@ var config = {
     hideDominantSpeakerBadge: false,
 
     // Default language for the user interface. Cannot be overwritten.
-    // DEPRECATED! Use the `lang` iframe option directly instead.
+    // For iframe integrations, use the `lang` option directly instead.
     // defaultLanguage: 'en',
 
     // Disables profile and the edit of all fields from the profile settings (display name and email)
@@ -809,25 +810,21 @@ var config = {
     // googleApiApplicationClientID: '<client_id>',
 
     // Configs for prejoin page.
-    prejoinConfig: {
-        // When 'true', it shows an intermediate page before joining, where the user can configure their devices.
-        // This replaces `prejoinPageEnabled`. Defaults to true.
-        enabled: true,
-
-        // Hides the participant name editing field in the prejoin screen.
-        // If requireDisplayName is also set as true, a name should still be provided through
-        // either the jwt or the userInfo from the iframe api init object in order for this to have an effect.
-        hideDisplayName: false,
-
-        // List of buttons to hide from the extra join options dropdown.
-        hideExtraJoinButtons: [ 'no-audio', 'by-phone' ],
-
-        // Configuration for pre-call test
-        // By setting preCallTestEnabled, you enable the pre-call test in the prejoin page.
-        // ICE server credentials need to be provided over the preCallTestICEUrl
-        preCallTestEnabled: false,
-        preCallTestICEUrl: '',
-    },
+    // prejoinConfig: {
+    //     // When 'true', it shows an intermediate page before joining, where the user can configure their devices.
+    //     enabled: true,
+    //     // Hides the participant name editing field in the prejoin screen.
+    //     // If requireDisplayName is also set as true, a name should still be provided through
+    //     // either the jwt or the userInfo from the iframe api init object in order for this to have an effect.
+    //     hideDisplayName: false,
+    //     // List of buttons to hide from the extra join options dropdown.
+    //     hideExtraJoinButtons: ['no-audio', 'by-phone'],
+    //     // Configuration for pre-call test
+    //     // By setting preCallTestEnabled, you enable the pre-call test in the prejoin page.
+    //     // ICE server credentials need to be provided over the preCallTestICEUrl
+    //     preCallTestEnabled: false,
+    //     preCallTestICEUrl: ''
+    // },
 
     // When 'true', the user cannot edit the display name.
     // (Mainly useful when used in conjunction with the JWT so the JWT name becomes read only.)
@@ -1413,7 +1410,9 @@ var config = {
 
         // If set to 'all' the 'Private chat' button will be disabled for all participants.
         // If set to 'allow-moderator-chat' the 'Private chat' button will be available for chats with moderators.
-        disablePrivateChat: false,
+        // If set to 'disable-visitor-chat' the 'Private chat' button will be disabled for visitor-main participant
+        // conversations.
+        disablePrivateChat: 'disable-visitor-chat',
     },
 
 

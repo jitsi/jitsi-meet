@@ -3,7 +3,13 @@ export interface IPromotionRequest {
     nick: string;
 }
 
-export interface IVisitor {
+export interface IVisitorListParticipant {
     id: string;
+    name: string;
+}
+
+export interface IVisitorChatParticipant {
+    id: string;
+    isVisitor: true;
     name: string;
 }

@@ -1,8 +1,10 @@
 import { MediaType } from '../media/constants';
+import { IAudioSettings } from '../settings/reducer';
 
 export interface ITrackOptions {
     cameraDeviceId?: string | null;
     constraints?: {
+        audio?: IAudioSettings;
         video?: {
             height?: {
                 ideal?: number;

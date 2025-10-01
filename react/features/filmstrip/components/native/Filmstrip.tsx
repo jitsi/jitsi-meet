@@ -253,9 +253,13 @@ class Filmstrip extends PureComponent<IProps> {
         const filmstripStyle = isNarrowAspectRatio ? styles.filmstripNarrow : styles.filmstripWide;
         const { height, width } = this._getDimensions();
         const { height: thumbnailHeight, width: thumbnailWidth, margin } = styles.thumbnail;
-        const initialNumToRender = Math.ceil(isNarrowAspectRatio
-            ? width / (thumbnailWidth + (2 * margin))
-            : height / (thumbnailHeight + (2 * margin))
+        const initialNumToRender = Math.max(
+            0,
+            Math.ceil(
+                isNarrowAspectRatio
+                    ? width / (thumbnailWidth + (2 * margin))
+                    : height / (thumbnailHeight + (2 * margin))
+            )
         );
         let participants;
 
