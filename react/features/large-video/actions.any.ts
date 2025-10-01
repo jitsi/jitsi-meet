@@ -11,7 +11,6 @@ import {
     getVirtualScreenshareParticipantByOwnerId
 } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
-import { isStageFilmstripAvailable } from '../filmstrip/functions';
 import { getAutoPinSetting } from '../video-layout/functions';
 
 import {
@@ -19,6 +18,7 @@ import {
     SET_LARGE_VIDEO_DIMENSIONS,
     UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION
 } from './actionTypes';
+import { shouldHideLargeVideo } from './functions';
 
 /**
  * Action to select the participant to be displayed in LargeVideo based on the
@@ -34,12 +34,8 @@ export function selectParticipantInLargeVideo(participant?: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
 
-        if (isStageFilmstripAvailable(state, 2)) {
-            return;
-        }
-
-        // Keep Etherpad open.
-        if (state['features/etherpad'].editing) {
+        // Skip large video updates when the large video container is hidden.
+        if (shouldHideLargeVideo(state)) {
             return;
         }
 
