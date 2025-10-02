@@ -599,9 +599,8 @@ const Chat = ({
  * }}
  */
 function _mapStateToProps(state: IReduxState, _ownProps: any) {
-    const { isOpen, focusedTab, messages, nbUnreadMessages, width, isResizing } = state['features/chat'];
+    const { isOpen, focusedTab, messages, nbUnreadMessages, nbUnreadFiles, width, isResizing } = state['features/chat'];
     const { nbUnreadPolls } = state['features/polls'];
-    const { nbUnreadFiles } = state['features/file-sharing'];
     const _localParticipant = getLocalParticipant(state);
 
     return {

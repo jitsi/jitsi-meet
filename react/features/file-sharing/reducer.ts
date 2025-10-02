@@ -2,8 +2,6 @@ import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     ADD_FILE,
-    CLEAR_UNREAD_FILES_COUNT,
-    INCREMENT_UNREAD_FILES_COUNT,
     UPDATE_FILE_UPLOAD_PROGRESS,
     _FILE_LIST_RECEIVED,
     _FILE_REMOVED
@@ -12,12 +10,10 @@ import { IFileMetadata } from './types';
 
 export interface IFileSharingState {
     files: Map<string, IFileMetadata>;
-    nbUnreadFiles: number;
 }
 
 const DEFAULT_STATE = {
-    files: new Map<string, IFileMetadata>(),
-    nbUnreadFiles: 0
+    files: new Map<string, IFileMetadata>()
 };
 
 ReducerRegistry.register<IFileSharingState>('features/file-sharing',
@@ -29,8 +25,8 @@ ReducerRegistry.register<IFileSharingState>('features/file-sharing',
         newFiles.set(action.file.fileId, action.file);
 
         return {
-            files: newFiles,
-            nbUnreadFiles: state.nbUnreadFiles
+            ...state,
+            files: newFiles
         };
     }
 
@@ -40,8 +36,8 @@ ReducerRegistry.register<IFileSharingState>('features/file-sharing',
         newFiles.delete(action.fileId);
 
         return {
-            files: newFiles,
-            nbUnreadFiles: state.nbUnreadFiles
+            ...state,
+            files: newFiles
         };
     }
 
@@ -54,29 +50,15 @@ ReducerRegistry.register<IFileSharingState>('features/file-sharing',
         }
 
         return {
-            files: newFiles,
-            nbUnreadFiles: state.nbUnreadFiles
+            ...state,
+            files: newFiles
         };
     }
 
     case _FILE_LIST_RECEIVED: {
         return {
-            files: new Map(Object.entries(action.files)),
-            nbUnreadFiles: action.remoteFilesCount || 0
-        };
-    }
-
-    case CLEAR_UNREAD_FILES_COUNT: {
-        return {
-            files: state.files,
-            nbUnreadFiles: 0
-        };
-    }
-
-    case INCREMENT_UNREAD_FILES_COUNT: {
-        return {
-            files: state.files,
-            nbUnreadFiles: state.nbUnreadFiles + 1
+            ...state,
+            files: new Map(Object.entries(action.files))
         };
     }
 

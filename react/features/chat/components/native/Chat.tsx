@@ -6,10 +6,10 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
-import { getUnreadFilesCount } from '../../../file-sharing/functions.any';
 import { TabBarLabelCounter } from '../../../mobile/navigation/components/TabBarLabelCounter';
 import { getUnreadPollCount } from '../../../polls/functions';
 import { closeChat, sendMessage } from '../../actions.native';
+import { getUnreadFilesCount } from '../../functions';
 import { IChatProps as AbstractProps } from '../../types';
 
 import ChatInputBar from './ChatInputBar';

@@ -68,21 +68,3 @@ export const REMOVE_FILE = 'REMOVE_FILE';
  * }
  */
 export const DOWNLOAD_FILE = 'DOWNLOAD_FILE';
-
-/**
- * The type of redux action to clear the unread file count.
- *
- * {
- *     type: CLEAR_UNREAD_FILES_COUNT
- * }
- */
-export const CLEAR_UNREAD_FILES_COUNT = 'CLEAR_UNREAD_FILES_COUNT';
-
-/**
- * The type of redux action to increment the unread file count.
- *
- * {
- *     type: INCREMENT_UNREAD_FILES_COUNT
- * }
- */
-export const INCREMENT_UNREAD_FILES_COUNT = 'INCREMENT_UNREAD_FILES_COUNT';

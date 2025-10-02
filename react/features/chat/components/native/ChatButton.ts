@@ -7,11 +7,10 @@ import { translate } from '../../../base/i18n/functions';
 import { IconChatUnread, IconMessage } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { arePollsDisabled } from '../../../conference/functions.any';
-import { getUnreadFilesCount } from '../../../file-sharing/functions.any';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { getUnreadPollCount } from '../../../polls/functions';
-import { getUnreadCount } from '../../functions';
+import { getUnreadCount, getUnreadFilesCount } from '../../functions';
 
 interface IProps extends AbstractButtonProps {
 
@@ -71,8 +70,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
     return {
         _isPollsDisabled: arePollsDisabled(state),
-
-        // The toggled icon should also be available for new polls
         _unreadMessageCount: getUnreadCount(state) || getUnreadPollCount(state) || getUnreadFilesCount(state),
         visible
     };

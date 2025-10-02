@@ -1,6 +1,5 @@
 import {
     ADD_FILE,
-    CLEAR_UNREAD_FILES_COUNT,
     DOWNLOAD_FILE,
     REMOVE_FILE,
     UPDATE_FILE_UPLOAD_PROGRESS,
@@ -40,12 +39,14 @@ export function updateFileProgress(fileId: string, progress: number) {
  * Add a file.
  *
  * @param {IFileMetadata} file - The file to add to the state.
+ * @param {boolean} shouldIncrementUnread - Whether to increment the unread count.
  * @returns {Object}
  */
-export function addFile(file: IFileMetadata) {
+export function addFile(file: IFileMetadata, shouldIncrementUnread = false) {
     return {
         type: ADD_FILE,
-        file
+        file,
+        shouldIncrementUnread
     };
 }
 
@@ -72,16 +73,5 @@ export function downloadFile(fileId: string) {
     return {
         type: DOWNLOAD_FILE,
         fileId
-    };
-}
-
-/**
- * Clear the unread files count.
- *
- * @returns {Object}
- */
-export function clearUnreadFilesCount() {
-    return {
-        type: CLEAR_UNREAD_FILES_COUNT
     };
 }

@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { getUnreadFilesCount } from '../../../file-sharing/functions.any';
 import { getUnreadPollCount } from '../../../polls/functions';
-import { getUnreadCount } from '../../functions';
+import { getUnreadCount, getUnreadFilesCount } from '../../functions';
 
 /**
  * The type of the React {@code Component} props of {@link ChatCounter}.
