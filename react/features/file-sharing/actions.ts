@@ -39,12 +39,14 @@ export function updateFileProgress(fileId: string, progress: number) {
  * Add a file.
  *
  * @param {IFileMetadata} file - The file to add to the state.
+ * @param {boolean} shouldIncrementUnread - Whether to increment the unread count.
  * @returns {Object}
  */
-export function addFile(file: IFileMetadata) {
+export function addFile(file: IFileMetadata, shouldIncrementUnread = false) {
     return {
         type: ADD_FILE,
-        file
+        file,
+        shouldIncrementUnread
     };
 }
 

@@ -1,6 +1,11 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
-import { ADD_FILE, UPDATE_FILE_UPLOAD_PROGRESS, _FILE_LIST_RECEIVED, _FILE_REMOVED } from './actionTypes';
+import {
+    ADD_FILE,
+    UPDATE_FILE_UPLOAD_PROGRESS,
+    _FILE_LIST_RECEIVED,
+    _FILE_REMOVED
+} from './actionTypes';
 import { IFileMetadata } from './types';
 
 export interface IFileSharingState {
@@ -20,6 +25,7 @@ ReducerRegistry.register<IFileSharingState>('features/file-sharing',
         newFiles.set(action.file.fileId, action.file);
 
         return {
+            ...state,
             files: newFiles
         };
     }
@@ -30,6 +36,7 @@ ReducerRegistry.register<IFileSharingState>('features/file-sharing',
         newFiles.delete(action.fileId);
 
         return {
+            ...state,
             files: newFiles
         };
     }
@@ -43,12 +50,14 @@ ReducerRegistry.register<IFileSharingState>('features/file-sharing',
         }
 
         return {
+            ...state,
             files: newFiles
         };
     }
 
     case _FILE_LIST_RECEIVED: {
         return {
+            ...state,
             files: new Map(Object.entries(action.files))
         };
     }

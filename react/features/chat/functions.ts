@@ -132,6 +132,16 @@ export function getUnreadCount(state: IReduxState) {
 }
 
 /**
+ * Gets the unread files count.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {number} The number of unread files.
+ */
+export function getUnreadFilesCount(state: IReduxState): number {
+    return state['features/chat']?.nbUnreadFiles || 0;
+}
+
+/**
  * Get whether the chat smileys are disabled or not.
  *
  * @param {IReduxState} state - The redux state.
