@@ -1,6 +1,6 @@
-import { expectations } from '../../helpers/Expectations';
 import { Participant } from '../../helpers/Participant';
 import { config as testsConfig } from '../../helpers/TestsConfig';
+import { expectations } from '../../helpers/expectations';
 import { ensureOneParticipant } from '../../helpers/participants';
 import { assertDialInDisplayed, assertUrlDisplayed, isDialInEnabled, verifyMoreNumbersPage } from '../helpers/DialIn';
 

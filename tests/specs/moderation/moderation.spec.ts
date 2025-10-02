@@ -1,6 +1,6 @@
-import { expectations } from '../../helpers/Expectations';
 import { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
+import { expectations } from '../../helpers/expectations';
 import { joinMuc } from '../../helpers/joinMuc';
 
 setTestProperties(__filename, {

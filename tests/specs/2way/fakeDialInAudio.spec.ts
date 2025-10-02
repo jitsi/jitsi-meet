@@ -1,6 +1,6 @@
 import process from 'node:process';
 
-import { expectations } from '../../helpers/Expectations';
+import { expectations } from '../../helpers/expectations';
 import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
 import { cleanup, isDialInEnabled, waitForAudioFromDialInParticipant } from '../helpers/DialIn';
 

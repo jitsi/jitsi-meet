@@ -1,8 +1,8 @@
-import { expectations } from '../../../helpers/Expectations';
 import type { Participant } from '../../../helpers/Participant';
 import { setTestProperties } from '../../../helpers/TestProperties';
 import { config as testsConfig } from '../../../helpers/TestsConfig';
 import WebhookProxy from '../../../helpers/WebhookProxy';
+import { expectations } from '../../../helpers/expectations';
 import { joinJaasMuc, generateJaasToken as t } from '../../../helpers/jaas';
 import {
     assertDialInDisplayed, assertUrlDisplayed,

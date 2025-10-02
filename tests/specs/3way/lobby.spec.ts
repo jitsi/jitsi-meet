@@ -1,5 +1,5 @@
-import { expectations } from '../../helpers/Expectations';
 import { P1, P3, Participant } from '../../helpers/Participant';
+import { expectations } from '../../helpers/expectations';
 import {
     ensureOneParticipant,
     ensureThreeParticipants,
