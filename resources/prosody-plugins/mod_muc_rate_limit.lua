@@ -108,7 +108,13 @@ module:hook("muc-occupant-pre-join", function (event)
 
         if not room.join_rate_queue_timer then
             timer.add_task(1, function ()
-                local status, result = pcall(timer_process_queue_elements,
+                if room.destroying then
+                    -- if room was destroyed in the mean time, ignore
+                    return;
+                end
+
+                local status, result = pcall(
+                    timer_process_queue_elements,
                     join_rate_per_conference,
                     room.join_rate_presence_queue,
                     function(ev)
