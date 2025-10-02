@@ -33,7 +33,10 @@ let overrides: any = {};
 
 if (config.expectationsFile) {
     try {
-        overrides = JSON.parse(fs.readFileSync(config.expectationsFile, 'utf8'));
+        const str = fs.readFileSync(config.expectationsFile, 'utf8');
+
+        // Remove comments and multiline comments.
+        overrides = JSON.parse(str.replace(/\/\/.*|\/\*[\s\S]*?\*\//g, ''));
     } catch (e) {
         console.error('Error reading expectations file', e);
     }
