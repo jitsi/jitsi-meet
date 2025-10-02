@@ -318,6 +318,13 @@ export const config: WebdriverIO.MultiremoteConfig = {
             return;
         }
 
+        // Use the directory under 'tests/specs' as the parent suite
+        const match = test.file.match(/.*\/tests\/specs\/([^\/]+)\//);
+        const dir = match ? match[1] : false;
+
+        if (dir) {
+            AllureReporter.addParentSuite('jaas');
+        }
         multiremotebrowser.instances.forEach((instance: string) => {
             logInfo(multiremotebrowser.getInstance(instance), `---=== Start test ${test.title} ===---`);
         });
