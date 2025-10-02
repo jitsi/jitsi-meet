@@ -4,6 +4,8 @@ local queue = require "util.queue";
 local new_throttle = require "util.throttle".create;
 local timer = require "util.timer";
 local st = require "util.stanza";
+local util = module:require 'util';
+local get_room_from_jid = util.get_room_from_jid;
 
 -- we max to 500 participants per meeting so this should be enough, we are not suppose to handle all
 -- participants in one meeting
@@ -114,7 +116,12 @@ module:hook("muc-occupant-pre-join", function (event)
                     function(ev)
                         -- we mark what we pass here so we can skip it on the next muc-occupant-pre-join event
                         ev.stanza.delayed_join_skip = true;
-                        room:handle_normal_presence(ev.origin, ev.stanza);
+                        local room = get_room_from_jid(ev.room.jid);
+                        if room then
+                            room:handle_normal_presence(ev.origin, ev.stanza);
+                        else
+                            module:log('error', 'Something is terribly wrong, room is missing at this point %s', ev.room.jid);
+                        end
                     end,
                     function() -- empty callback
                         room.join_rate_queue_timer = false;
