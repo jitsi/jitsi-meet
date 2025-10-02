@@ -132,12 +132,7 @@ module:hook('muc-occupant-pre-join', function (event)
 end, 8); -- just after the rate limit
 
 function handle_jicofo_unlock(event)
-    local room = get_room_from_jid(event.room.jid);
-
-    if not room then
-        module:log('error', 'Something is terribly wrong, room is missing at this point %s', event.room.jid);
-        return;
-    end
+    local room = event.room;
 
     room._data.jicofo_lock = false;
     if not room.pre_join_queue then
