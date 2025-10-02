@@ -7,15 +7,14 @@ on:
   workflow_dispatch:
 
 permissions:
-  pull-requests: read
-
+  pull-requests: write
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       deployments: write
-
+      pull-requests: write
     name: Publish to Cloudflare Pages
     steps:
       - name: Checkout
@@ -58,9 +57,25 @@ jobs:
         run: make compile deploy
 
       - name: Publish to Cloudflare Pages
+        id: cloudflare
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
           directory: .
+      - name: Comment Preview Link on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const deploymentUrl = '${{ steps.cloudflare.outputs.url }}';
+            const previewUrl = deploymentUrl.replace('***', 'meet-web');
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 **Preview Link**: ${previewUrl}`
+            })
