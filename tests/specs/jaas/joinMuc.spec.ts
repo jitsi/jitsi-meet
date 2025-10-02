@@ -1,4 +1,5 @@
 import { setTestProperties } from '../../helpers/TestProperties';
+import { expectations } from '../../helpers/expectations';
 import { joinJaasMuc, generateJaasToken as t } from '../../helpers/jaas';
 import { TOKEN_AUTH_FAILED_TEST_ID, TOKEN_AUTH_FAILED_TITLE_TEST_ID } from '../../pageobjects/Notifications';
 
@@ -86,11 +87,15 @@ describe('XMPP login and MUC join test', () => {
         console.log('Joining a MUC without a token');
         const p = await joinJaasMuc();
 
-        expect(Boolean(await p.isInMuc())).toBe(false);
+        if (expectations.jaas.unauthenticatedJoins) {
+            expect(Boolean(await p.isInMuc())).toBe(true);
+        } else {
+            expect(Boolean(await p.isInMuc())).toBe(false);
 
-        const errorText = await p.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TEST_ID);
+            const errorText = await p.getNotifications().getNotificationText(TOKEN_AUTH_FAILED_TEST_ID);
 
-        expect(errorText).toContain('not allowed to join');
+            expect(errorText).toContain('not allowed to join');
+        }
     });
 
     // it('without sending a conference-request', async () => {

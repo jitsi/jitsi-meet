@@ -1,11 +1,11 @@
 import { Participant } from '../../helpers/Participant';
 import { config as testsConfig } from '../../helpers/TestsConfig';
+import { expectations } from '../../helpers/expectations';
 import { ensureOneParticipant } from '../../helpers/participants';
 import { assertDialInDisplayed, assertUrlDisplayed, isDialInEnabled, verifyMoreNumbersPage } from '../helpers/DialIn';
 
 describe('Invite', () => {
     let p1: Participant;
-    let dialInEnabled: boolean;
 
     it('setup', async () => {
         // This is a temporary hack to avoid failing when running against a jaas env. The same cases are covered in
@@ -19,23 +19,30 @@ describe('Invite', () => {
         await ensureOneParticipant();
 
         p1 = ctx.p1;
-        dialInEnabled = await isDialInEnabled(p1);
+
     });
 
+    // The URL should always be displayed.
     it('url displayed', () => assertUrlDisplayed(p1));
 
-    it('dial-in displayed', async () => {
-        if (!dialInEnabled) {
-            return;
+    it('config values', async () => {
+        const dialInEnabled = await isDialInEnabled(p1);
+
+        if (expectations.dialIn.enabled !== null) {
+            expect(dialInEnabled).toBe(expectations.dialIn.enabled);
         }
-        await assertDialInDisplayed(p1);
+    });
+
+    it('dial-in displayed', async () => {
+        if (expectations.dialIn.enabled !== null) {
+            await assertDialInDisplayed(p1, expectations.dialIn.enabled);
+        }
     });
 
     it('view more numbers page', async () => {
-        if (!dialInEnabled) {
-            return;
+        if (expectations.dialIn.enabled === true) {
+            // TODO: assert the page is NOT shown when the expectation is false.
+            await verifyMoreNumbersPage(p1);
         }
-
-        await verifyMoreNumbersPage(p1);
     });
 });
