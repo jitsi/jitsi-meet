@@ -323,7 +323,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
         const dir = match ? match[1] : false;
 
         if (dir) {
-            AllureReporter.addParentSuite('jaas');
+            AllureReporter.addParentSuite(dir);
         }
         multiremotebrowser.instances.forEach((instance: string) => {
             logInfo(multiremotebrowser.getInstance(instance), `---=== Start test ${test.title} ===---`);
