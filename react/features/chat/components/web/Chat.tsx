@@ -74,6 +74,11 @@ interface IProps extends AbstractProps {
     _isResizing: boolean;
 
     /**
+     * Number of unread file sharing messages.
+     */
+    _nbUnreadFiles: number;
+
+    /**
      * Number of unread poll messages.
      */
     _nbUnreadPolls: number;
@@ -218,6 +223,7 @@ const Chat = ({
     _messages,
     _nbUnreadMessages,
     _nbUnreadPolls,
+    _nbUnreadFiles,
     _showNamePrompt,
     _width,
     dispatch,
@@ -512,7 +518,7 @@ const Chat = ({
         if (_isFileSharingTabEnabled) {
             tabs.push({
                 accessibilityLabel: t('chat.tabs.fileSharing'),
-                countBadge: undefined,
+                countBadge: _focusedTab !== ChatTabs.FILE_SHARING && _nbUnreadFiles > 0 ? _nbUnreadFiles : undefined,
                 id: ChatTabs.FILE_SHARING,
                 controlsId: `${ChatTabs.FILE_SHARING}-panel`,
                 icon: IconShareDoc,
@@ -586,13 +592,14 @@ const Chat = ({
  *     _messages: Array<Object>,
  *     _nbUnreadMessages: number,
  *     _nbUnreadPolls: number,
+ *     _nbUnreadFiles: number,
  *     _showNamePrompt: boolean,
  *     _width: number,
  *     _isResizing: boolean
  * }}
  */
 function _mapStateToProps(state: IReduxState, _ownProps: any) {
-    const { isOpen, focusedTab, messages, nbUnreadMessages, width, isResizing } = state['features/chat'];
+    const { isOpen, focusedTab, messages, nbUnreadMessages, nbUnreadFiles, width, isResizing } = state['features/chat'];
     const { nbUnreadPolls } = state['features/polls'];
     const _localParticipant = getLocalParticipant(state);
 
@@ -606,6 +613,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _messages: messages,
         _nbUnreadMessages: nbUnreadMessages,
         _nbUnreadPolls: nbUnreadPolls,
+        _nbUnreadFiles: nbUnreadFiles,
         _showNamePrompt: !_localParticipant?.name,
         _width: width?.current || CHAT_SIZE,
         _isResizing: isResizing
