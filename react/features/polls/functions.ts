@@ -36,9 +36,9 @@ export function getPoll(pollId: string) {
  * @returns {number} The number of unread messages.
  */
 export function getUnreadPollCount(state: IReduxState) {
-    const { nbUnreadPolls } = state['features/polls'];
+    const { unreadPollsCount } = state['features/polls'];
 
-    return nbUnreadPolls;
+    return unreadPollsCount;
 }
 
 /**

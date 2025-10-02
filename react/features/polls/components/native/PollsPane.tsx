@@ -24,10 +24,10 @@ const PollsPane = (props: AbstractProps) => {
     const { createMode, isCreatePollsDisabled, onCreate, setCreateMode, t } = props;
     const navigation = useNavigation();
     const isPollsTabFocused = useSelector((state: IReduxState) => state['features/chat'].focusedTab === ChatTabs.POLLS);
-    const { nbUnreadPolls } = useSelector((state: IReduxState) => state['features/polls']);
+    const { unreadPollsCount } = useSelector((state: IReduxState) => state['features/polls']);
 
     useEffect(() => {
-        const activeUnreadPollsNr = !isPollsTabFocused && nbUnreadPolls > 0;
+        const activeUnreadPollsNr = !isPollsTabFocused && unreadPollsCount > 0;
 
         navigation.setOptions({
             // eslint-disable-next-line react/no-multi-comp
@@ -36,11 +36,11 @@ const PollsPane = (props: AbstractProps) => {
                     activeUnreadNr = { activeUnreadPollsNr }
                     isFocused = { isPollsTabFocused }
                     label = { t('chat.tabs.polls') }
-                    nbUnread = { nbUnreadPolls } />
+                    unreadCount = { unreadPollsCount } />
             )
         });
 
-    }, [ isPollsTabFocused, nbUnreadPolls ]);
+    }, [ isPollsTabFocused, unreadPollsCount ]);
 
     const createPollButtonStyles = Platform.OS === 'android'
         ? pollsStyles.createPollButtonAndroid : pollsStyles.createPollButtonIos;

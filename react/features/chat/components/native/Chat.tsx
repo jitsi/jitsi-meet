@@ -22,17 +22,17 @@ interface IProps extends AbstractProps {
     /**
      * The number of unread file messages.
      */
-    _nbUnreadFiles: number;
+    _unreadFilesCount: number;
 
     /**
      * The number of unread messages.
      */
-    _nbUnreadMessages: number;
+    _unreadMessagesCount: number;
 
     /**
      * The number of unread polls.
      */
-    _nbUnreadPolls: number;
+    _unreadPollsCount: number;
 
     /**
      * Default prop for navigating between screen components(React Navigation).
@@ -113,25 +113,25 @@ class Chat extends Component<IProps> {
  * @private
  * @returns {{
  *     _messages: Array<Object>,
- *     _nbUnreadMessages: number,
- *     _nbUnreadPolls: number,
- *     _nbUnreadFiles: number
+ *     _unreadMessagesCount: number,
+ *     _unreadPollsCount: number,
+ *     _unreadFilesCount: number
  * }}
  */
 function _mapStateToProps(state: IReduxState, _ownProps: any) {
-    const { messages, nbUnreadMessages } = state['features/chat'];
+    const { messages, unreadMessagesCount } = state['features/chat'];
 
     return {
         _messages: messages,
-        _nbUnreadMessages: nbUnreadMessages,
-        _nbUnreadPolls: getUnreadPollCount(state),
-        _nbUnreadFiles: getUnreadFilesCount(state)
+        _unreadMessagesCount: unreadMessagesCount,
+        _unreadPollsCount: getUnreadPollCount(state),
+        _unreadFilesCount: getUnreadFilesCount(state)
     };
 }
 
 export default translate(connect(_mapStateToProps)((props: IProps) => {
-    const { _nbUnreadMessages, _nbUnreadPolls, _nbUnreadFiles, dispatch, navigation, t } = props;
-    const totalUnread = _nbUnreadMessages + _nbUnreadPolls + _nbUnreadFiles;
+    const { _unreadMessagesCount, _unreadPollsCount, _unreadFilesCount, dispatch, navigation, t } = props;
+    const totalUnread = _unreadMessagesCount + _unreadPollsCount + _unreadFilesCount;
     const unreadMessagesNr = totalUnread > 0;
 
     const isFocused = useIsFocused();
@@ -143,14 +143,14 @@ export default translate(connect(_mapStateToProps)((props: IProps) => {
                     activeUnreadNr = { unreadMessagesNr }
                     isFocused = { isFocused }
                     label = { t('chat.tabs.chat') }
-                    nbUnread = { totalUnread } />
+                    unreadCount = { totalUnread } />
             )
         });
 
         return () => {
             isFocused && dispatch(closeChat());
         };
-    }, [ isFocused, _nbUnreadMessages, _nbUnreadPolls, _nbUnreadFiles ]);
+    }, [ isFocused, _unreadMessagesCount, _unreadPollsCount, _unreadFilesCount ]);
 
     return (
         <Chat { ...props } />

@@ -33,7 +33,7 @@ export interface IChatProps extends WithTranslation {
     /**
      * Number of unread chat messages.
      */
-    _nbUnreadMessages: number;
+    _unreadMessagesCount: number;
 
     /**
      * The Redux dispatch function.

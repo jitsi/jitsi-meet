@@ -77,10 +77,10 @@ export const REMOVE_POLL = 'REMOVE_POLL';
  * The type of the action triggered when the poll tab in chat pane is closed
  *
  * {
- *     type: RESET_NB_UNREAD_POLLS,
+ *     type: RESET_UNREAD_POLLS_COUNT,
  * }
  */
-export const RESET_NB_UNREAD_POLLS = 'RESET_NB_UNREAD_POLLS';
+export const RESET_UNREAD_POLLS_COUNT = 'RESET_UNREAD_POLLS_COUNT';
 
 /**
  * The type of the action triggered when the poll is saved.

@@ -6,7 +6,7 @@ import {
     RECEIVE_POLL,
     REGISTER_VOTE,
     REMOVE_POLL,
-    RESET_NB_UNREAD_POLLS,
+    RESET_UNREAD_POLLS_COUNT,
     SAVE_POLL
 } from './actionTypes';
 import { IIncomingAnswerData, IPoll, IPollData } from './types';
@@ -103,12 +103,12 @@ export const registerVote = (pollId: string, answers: Array<boolean> | null) => 
  * Action to signal the number reset of unread polls.
  *
  * @returns {{
- *     type: RESET_NB_UNREAD_POLLS
+ *     type: RESET_UNREAD_POLLS_COUNT
  * }}
  */
-export function resetNbUnreadPollsMessages() {
+export function resetUnreadPollsCount() {
     return {
-        type: RESET_NB_UNREAD_POLLS
+        type: RESET_UNREAD_POLLS_COUNT
     };
 }
 
