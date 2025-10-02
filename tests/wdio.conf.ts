@@ -312,12 +312,6 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @param {Object} context - The context object.
      */
     beforeTest(test, context) {
-        if (ctx.skipSuiteTests) {
-            context.skip();
-
-            return;
-        }
-
         // Use the directory under 'tests/specs' as the parent suite
         const match = test.file.match(/.*\/tests\/specs\/([^\/]+)\//);
         const dir = match ? match[1] : false;
@@ -325,6 +319,13 @@ export const config: WebdriverIO.MultiremoteConfig = {
         if (dir) {
             AllureReporter.addParentSuite(dir);
         }
+
+        if (ctx.skipSuiteTests) {
+            context.skip();
+
+            return;
+        }
+
         multiremotebrowser.instances.forEach((instance: string) => {
             logInfo(multiremotebrowser.getInstance(instance), `---=== Start test ${test.title} ===---`);
         });
