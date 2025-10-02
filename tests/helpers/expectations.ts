@@ -25,7 +25,9 @@ const defaultExpectations = {
         // When a moderator leaves, another one is elected.
         autoModerator: true,
         // The first to join is a moderator.
-        firstModerator: true
+        firstModerator: true,
+        // The grantOwner function is available.
+        grantModerator: true
     }
 };
 
