@@ -1,5 +1,6 @@
 import { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
+import { expectations } from '../../helpers/expectations';
 import { ensureTwoParticipants } from '../../helpers/participants';
 
 setTestProperties(__filename, {
@@ -39,6 +40,22 @@ describe('Kick', () => {
 
     it('kick (p2p enabled)', async () => {
         await kickAndCheck(p1, p2);
+    });
+
+    it('non-moderator cannot kick', async () => {
+        if (!expectations.moderation.allModerators) {
+            await ensureTwoParticipants();
+            p2 = ctx.p2;
+            expect(await p2.isModerator()).toBe(false);
+
+            await p2.execute(
+                epId => APP.conference._room.kickParticipant(epId, 'for funzies'),
+                await p1.getEndpointId()
+            );
+
+            await p1.driver.pause(3000);
+            expect(await p1.isInMuc()).toBe(true);
+        }
     });
 });
 
