@@ -120,7 +120,7 @@
         "messageAccessibleTitle": "{{user}} dit: ",
         "messageAccessibleTitleMe": "Je dis: ",
         "messageTo": "Message privé à {{recipient}}",
-        "messagebox": "Saisissez un message",
+        "messagebox": "Envoyer un message",
         "newMessages": "Nouveaux messages",
         "nickname": {
             "popover": "Choisissez un pseudonyme",
