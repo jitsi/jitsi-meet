@@ -4,6 +4,7 @@ import i18next from 'i18next';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import "@jitsi/excalidraw/index.css";
 
 // @ts-expect-error
 import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
@@ -147,11 +148,10 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
                             excalidraw = {{
                                 isCollaborating: true,
                                 langCode: i18next.language,
-
-                                // @ts-ignore
-                                ref: excalidrawRef,
                                 theme: 'light',
-                                UIOptions: WHITEBOARD_UI_OPTIONS
+                                UIOptions: {
+                                    ...WHITEBOARD_UI_OPTIONS
+                                }
                             }}
                             getCollabAPI = { getCollabAPI }
                             getExcalidrawAPI = { getExcalidrawAPI } />
