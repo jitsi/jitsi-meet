@@ -22,6 +22,7 @@
 #import "JitsiMeetConferenceOptions+Private.h"
 #import "JitsiMeetView+Private.h"
 #import "RCTBridgeWrapper.h"
+#import "RCTAppDelegateWrapper.h"
 #import "ReactUtils.h"
 #import "ScheenshareEventEmiter.h"
 
@@ -34,6 +35,7 @@
 
 @implementation JitsiMeet {
     RCTBridgeWrapper *_bridgeWrapper;
+    RCTAppDelegateWrapper *_appDelegateWrapper;
     NSDictionary *_launchOptions;
     ScheenshareEventEmiter *_screenshareEventEmiter;
 }
@@ -53,6 +55,12 @@
 
 - (instancetype)init {
     if (self = [super init]) {
+
+        // Initialize RTCAppDelegate for new architecture
+        _appDelegateWrapper = [[RCTAppDelegateWrapper alloc] init];
+        [_appDelegateWrapper configureNewArchitecture];
+        NSLog(@"✅ React Native new architecture configured");
+
         // Initialize WebRTC options.
         self.rtcAudioDevice = nil;
         self.webRtcLoggingSeverity = WebRTCLoggingSeverityNone;
@@ -72,7 +80,7 @@
 
 #pragma mark - Methods that the App delegate must call
 
--             (BOOL)application:(UIApplication *)application
+- (BOOL)application:(UIApplication *)application
   didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     _launchOptions = [launchOptions copy];
@@ -84,7 +92,7 @@
     return YES;
 }
 
--    (BOOL)application:(UIApplication *)application
+- (BOOL)application:(UIApplication *)application
   continueUserActivity:(NSUserActivity *)userActivity
     restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *))restorationHandler {
 
