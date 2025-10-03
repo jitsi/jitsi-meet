@@ -7,6 +7,8 @@ import { showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { determineTranscriptionLanguage } from '../../transcribing/functions';
 import { IStateful } from '../app/types';
+import { connect } from '../connection/actions';
+import { disconnect } from '../connection/actions.any';
 import { JitsiTrackErrors } from '../lib-jitsi-meet';
 import { setAudioMuted, setVideoMuted } from '../media/actions';
 import { VIDEO_MUTISM_AUTHORITY } from '../media/constants';
@@ -22,7 +24,7 @@ import {
     safeDecodeURIComponent
 } from '../util/uri';
 
-import { setObfuscatedRoom } from './actions';
+import { conferenceWillInit, setObfuscatedRoom } from './actions';
 import {
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
@@ -617,4 +619,35 @@ export function updateTrackMuteState(stateful: IStateful, dispatch: IStore['disp
             uid: START_MUTED_NOTIFICATION_ID // use the same id, to make sure we show one notification
         }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
     }
+}
+
+/**
+ * Processes the "destroyed" event of a conference and if the destroyed conference is the current one,
+ * it silently reconnects to the same room.
+ *
+ * @param {Object|Function} stateful - Either the whole Redux state object or the Redux store's {@code getState} method.
+ * @param {Function} dispatch - Redux dispatch function.
+ * @param {Array} params - The parameters for the destroy event.
+ *
+ * @returns {boolean} - True if the destroyed conference was the current one, and we are reconnecting, false otherwise.
+ */
+export function processDestroyConferenceEvent(stateful: IStateful, dispatch: IStore['dispatch'], params: Array<any>) {
+    const [ jid ] = params;
+    const conference = getCurrentConference(stateful);
+
+    // if the jid of the room is the same as the current conference, we are being
+    // notified that the current conference has been destroyed, and we need to reconnect
+    if (conference?.room?.roomjid === jid) {
+        dispatch(disconnect(true, false))
+            .then(() => {
+                dispatch(conferenceWillInit());
+                logger.info('Dispatching silent re-connect.');
+
+                return dispatch(connect());
+            });
+
+        return true;
+    }
+
+    return false;
 }

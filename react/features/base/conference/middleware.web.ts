@@ -24,8 +24,8 @@ import {
     KICKED_OUT
 } from './actionTypes';
 import { TRIGGER_READY_TO_CLOSE_REASONS } from './constants';
+import { processDestroyConferenceEvent } from './functions';
 import logger from './logger';
-
 import './middleware.any';
 
 let screenLock: WakeLockSentinel | undefined;
@@ -127,6 +127,11 @@ MiddlewareRegistry.register(store => next => action => {
             const state = getState();
             const { notifyOnConferenceDestruction = true } = state['features/base/config'];
             const [ reason ] = action.error.params;
+
+            if (processDestroyConferenceEvent(state, dispatch, action.error.params)) {
+                break;
+            }
+
             const titlekey = Object.keys(TRIGGER_READY_TO_CLOSE_REASONS)[
                 Object.values(TRIGGER_READY_TO_CLOSE_REASONS).indexOf(reason)
             ];

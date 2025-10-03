@@ -6,8 +6,8 @@ import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { CONFERENCE_FAILED } from './actionTypes';
 import { conferenceLeft } from './actions.native';
 import { TRIGGER_READY_TO_CLOSE_REASONS } from './constants';
-
 import './middleware.any';
+import { processDestroyConferenceEvent } from './functions';
 
 MiddlewareRegistry.register(store => next => action => {
     const { dispatch } = store;
@@ -20,6 +20,10 @@ MiddlewareRegistry.register(store => next => action => {
         const { notifyOnConferenceDestruction = true } = state['features/base/config'];
 
         if (error?.name !== JitsiConferenceErrors.CONFERENCE_DESTROYED) {
+            break;
+        }
+
+        if (processDestroyConferenceEvent(state, dispatch, error.params)) {
             break;
         }
 
