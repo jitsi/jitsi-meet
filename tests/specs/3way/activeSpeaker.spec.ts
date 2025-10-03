@@ -61,10 +61,10 @@ async function testActiveSpeaker(
     const otherParticipant1Driver = otherParticipant1.driver;
 
     await otherParticipant1Driver.waitUntil(
-        async () => await otherParticipant1.getLargeVideo().getResource() === speakerEndpoint,
+        async () => await otherParticipant1.getFilmstrip().isDominantSpeaker(speakerEndpoint),
         {
             timeout: 30_000, // 30 seconds
-            timeoutMsg: 'Active speaker not displayed on large video.'
+            timeoutMsg: `${activeSpeaker.name} is not selected as active speaker.`
         });
 
     // just a debug print to go in logs
