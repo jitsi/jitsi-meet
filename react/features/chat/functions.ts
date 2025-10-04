@@ -138,7 +138,7 @@ export function getUnreadCount(state: IReduxState) {
  * @returns {number} The number of unread files.
  */
 export function getUnreadFilesCount(state: IReduxState): number {
-    return state['features/chat']?.nbUnreadFiles || 0;
+    return state['features/chat']?.unreadFilesCount || 0;
 }
 
 /**

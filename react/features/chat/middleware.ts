@@ -29,7 +29,7 @@ import { addGif } from '../gifs/actions';
 import { extractGifURL, getGifDisplayMode, isGifEnabled, isGifMessage } from '../gifs/function.any';
 import { showMessageNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
-import { resetNbUnreadPollsMessages } from '../polls/actions';
+import { resetUnreadPollsCount } from '../polls/actions';
 import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
 import { pushReactions } from '../reactions/actions.any';
 import { ENDPOINT_REACTION_NAME } from '../reactions/constants';
@@ -130,7 +130,7 @@ MiddlewareRegistry.register(store => next => action => {
                 APP.API.notifyChatUpdated(unreadCount, false);
             }
         } else if (focusedTab === ChatTabs.POLLS) {
-            dispatch(resetNbUnreadPollsMessages());
+            dispatch(resetUnreadPollsCount());
         }
         break;
     }
@@ -207,7 +207,7 @@ MiddlewareRegistry.register(store => next => action => {
                 }
             }
         } else if (focusedTab === ChatTabs.POLLS) {
-            dispatch(resetNbUnreadPollsMessages());
+            dispatch(resetUnreadPollsCount());
         }
 
         break;

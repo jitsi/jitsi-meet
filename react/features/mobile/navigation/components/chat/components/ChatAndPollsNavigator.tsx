@@ -12,7 +12,7 @@ import {
 import { setFocusedTab } from '../../../../../chat/actions.any';
 import Chat from '../../../../../chat/components/native/Chat';
 import { ChatTabs } from '../../../../../chat/constants';
-import { resetNbUnreadPollsMessages } from '../../../../../polls/actions';
+import { resetUnreadPollsCount } from '../../../../../polls/actions';
 import PollsPane from '../../../../../polls/components/native/PollsPane';
 import { screen } from '../../../routes';
 import { chatTabBarOptions } from '../../../screenOptions';
@@ -51,7 +51,7 @@ const ChatAndPolls = () => {
                 listeners = {{
                     tabPress: () => {
                         dispatch(setFocusedTab(ChatTabs.POLLS));
-                        dispatch(resetNbUnreadPollsMessages);
+                        dispatch(resetUnreadPollsCount);
                     }
                 }}
                 name = { screen.conference.chatandpolls.tab.polls } />
