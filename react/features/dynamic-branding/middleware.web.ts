@@ -28,6 +28,7 @@ MiddlewareRegistry.register((store: IStore) => next => action => {
             store.dispatch(setDynamicBrandingData(selectedThemeContent));
         } else {
             // No saved theme, run Jitsi's default branding logic.
+            store.dispatch(setDynamicBrandingData({}));
             store.dispatch(fetchCustomBrandingData());
         }
         break;

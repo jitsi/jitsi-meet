@@ -267,14 +267,6 @@ ReducerRegistry.register<IDynamicBrandingState>(STORE_NAME, (state = DEFAULT_STA
             selectedThemeContent: action.selectedThemeContent ?? state.selectedThemeContent
         };
     }
-    case SET_DYNAMIC_BRANDING_DATA:
-        return {
-            ...state,
-            ...action.value,
-            customizationFailed: false,
-            customizationReady: true,
-            useDynamicBrandingData: true
-        };
     case SET_DYNAMIC_BRANDING_READY:
         return {
             ...state,
