@@ -96,9 +96,6 @@ public class JitsiMeetActivity extends AppCompatActivity
 
     public static void addTopBottomInsets(@NonNull Window w, @NonNull View v) {
 
-        // Only apply if edge-to-edge is supported (API 30+) or enforced (API 35+)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return;
-
         View decorView = w.getDecorView();
 
         decorView.post(() -> {
