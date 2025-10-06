@@ -15,6 +15,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <React/RCTBridgeDelegate.h>
 #import <React-RCTAppDelegate/RCTAppDelegate.h>
 
 /**
@@ -25,12 +26,13 @@
  * Similar to RCTBridgeWrapper, this provides new architecture
  * configuration in a modular way.
  */
-@interface RCTAppDelegateWrapper : NSObject
+@interface RCTAppDelegateWrapper : NSObject<RCTBridgeDelegate>
 
 @property (nonatomic, readonly, strong) RCTAppDelegate *appDelegate;
 
 - (instancetype)init;
 - (void)configureNewArchitecture;
+- (RCTBridge *)getBridge;
 
 @end
 

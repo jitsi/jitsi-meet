@@ -16,24 +16,56 @@
 
 #import "RCTAppDelegateWrapper.h"
 #import <ReactAppDependencyProvider/RCTAppDependencyProvider.h>
+#import <React/RCTBridge.h>
+#import <React/RCTBundleURLProvider.h>
 
-@implementation RCTAppDelegateWrapper
+@implementation RCTAppDelegateWrapper {
+    RCTBridge *_bridge;
+}
 
 - (instancetype)init {
     self = [super init];
     if (self) {
+        NSLog(@"🏗️ JitsiMeet: Creating RCTAppDelegateWrapper");
         _appDelegate = [[RCTAppDelegate alloc] init];
+        NSLog(@"✅ JitsiMeet: RCTAppDelegate created: %@", _appDelegate);
     }
     return self;
 }
 
 - (void)configureNewArchitecture {
     @try {
+        NSLog(@"⚙️ JitsiMeet: Configuring new architecture");
         _appDelegate.dependencyProvider = [[RCTAppDependencyProvider alloc] init];
         _appDelegate.initialProps = @{};
+        
+        // Create bridge with ourselves as delegate
+        _bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:nil];
+        NSLog(@"✅ JitsiMeet: New architecture bridge created: %@", _bridge);
     } @catch (NSException *exception) {
-        NSLog(@"⚠️ React Native configuration failed: %@", exception.reason);
+        NSLog(@"⚠️ JitsiMeet: Configuration failed: %@", exception.reason);
     }
+}
+
+- (RCTBridge *)getBridge {
+    NSLog(@"🔍 RCTAppDelegateWrapper: getBridge called");
+    NSLog(@"🔍 RCTAppDelegateWrapper: Bridge: %@", _bridge);
+    NSLog(@"✅ RCTAppDelegateWrapper: Returning NEW ARCHITECTURE bridge");
+    return _bridge;
+}
+
+#pragma mark - RCTBridgeDelegate
+
+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge {
+    NSURL *url;
+#if DEBUG
+    url = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
+    NSLog(@"🔍 RCTAppDelegateWrapper bundleURL (DEBUG): %@", url);
+#else
+    url = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+    NSLog(@"🔍 RCTAppDelegateWrapper bundleURL (RELEASE): %@", url);
+#endif
+    return url;
 }
 
 @end
