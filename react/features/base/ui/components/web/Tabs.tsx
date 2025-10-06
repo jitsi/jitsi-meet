@@ -71,11 +71,16 @@ const useStyles = makeStyles()(theme => {
 
         badge: {
             ...theme.typography.labelBold,
-            color: theme.palette.text04,
-            padding: `0 ${theme.spacing(1)}`,
-            borderRadius: '100%',
+            alignItems: 'center',
             backgroundColor: theme.palette.warning01,
-            marginLeft: theme.spacing(2)
+            borderRadius: theme.spacing(2),
+            color: theme.palette.text04,
+            display: 'inline-flex',
+            height: theme.spacing(3),
+            justifyContent: 'center',
+            marginLeft: theme.spacing(2),
+            minWidth: theme.spacing(2),
+            padding: `0 ${theme.spacing(1)}`
         },
 
         icon: {
