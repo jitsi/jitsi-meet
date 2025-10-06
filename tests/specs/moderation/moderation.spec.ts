@@ -1,5 +1,6 @@
 import { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
+import { config as testsConfig } from '../../helpers/TestsConfig';
 import { expectations } from '../../helpers/expectations';
 import { joinMuc } from '../../helpers/joinMuc';
 
@@ -12,8 +13,8 @@ describe('Moderation', () => {
     let p1: Participant, p2: Participant;
 
     it('setup', async () => {
-        p1 = await joinMuc({ name: 'p1' });
-        p2 = await joinMuc({ name: 'p2' });
+        p1 = await joinMuc({ name: 'p1', token: testsConfig.jwt.preconfiguredToken });
+        p2 = await joinMuc({ name: 'p2', token: testsConfig.jwt.preconfiguredToken });
     });
     it('first moderator', async () => {
         if (expectations.moderation.firstModerator) {
