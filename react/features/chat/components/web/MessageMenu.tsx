@@ -17,6 +17,7 @@ export interface IProps {
     className?: string;
     displayName?: string;
     enablePrivateChat: boolean;
+    isFileMessage?: boolean;
     isFromVisitor?: boolean;
     isLobbyMessage: boolean;
     message: string;
@@ -60,7 +61,7 @@ const useStyles = makeStyles()(theme => {
     };
 });
 
-const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, enablePrivateChat, displayName }: IProps) => {
+const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, enablePrivateChat, displayName, isFileMessage }: IProps) => {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
@@ -71,6 +72,11 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
     const buttonRef = useRef<HTMLDivElement>(null);
 
     const participant = useSelector((state: IReduxState) => getParticipantById(state, participantId));
+
+    // If no menu items will be shown, don't render the menu button.
+    if (!enablePrivateChat && isFileMessage) {
+        return null;
+    }
 
     const handleMenuClick = useCallback(() => {
         setIsPopoverOpen(true);
@@ -137,11 +143,13 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
                     {t('Private Message')}
                 </div>
             )}
-            <div
-                className = { classes.menuItem }
-                onClick = { handleCopyClick }>
-                {t('Copy')}
-            </div>
+            {!isFileMessage && (
+                <div
+                    className = { classes.menuItem }
+                    onClick = { handleCopyClick }>
+                    {t('Copy')}
+                </div>
+            )}
         </div>
     );
 
