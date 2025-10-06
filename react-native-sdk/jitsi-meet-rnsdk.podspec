@@ -25,6 +25,7 @@ Pod::Spec.new do |s|
 
   s.script_phase = {
       :name => 'Copy Sound Files',
+      :execution_position => :after_compile,
       :script => '
           SOURCE_PATH="${PODS_TARGET_SRCROOT}/sounds/"
           TARGET_PATH=$(dirname "${CONFIGURATION_BUILD_DIR}")
