@@ -2,6 +2,10 @@
  * An interface that tests can export (as a TEST_PROPERTIES property) to define what they require.
  */
 export type ITestProperties = {
+    /**
+     * A more detailed description of what the test does, to be included in the Allure report.
+     */
+    description?: string;
     /** The test requires jaas, it should be skipped when the jaas configuration is not enabled. */
     useJaas: boolean;
     /** The test requires the webhook proxy. */

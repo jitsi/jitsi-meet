@@ -313,14 +313,30 @@ export const config: WebdriverIO.MultiremoteConfig = {
      */
     beforeTest(test, context) {
         // Use the directory under 'tests/specs' as the parent suite
-        const match = test.file.match(/.*\/tests\/specs\/([^\/]+)\//);
-        const dir = match ? match[1] : false;
+        const dirMatch = test.file.match(/.*\/tests\/specs\/([^\/]+)\//);
+        const dir = dirMatch ? dirMatch[1] : false;
+        const fileMatch = test.file.match(/.*\/tests\/specs\/(.*)/);
+        const file = fileMatch ? fileMatch[1] : false;
+
+        if (ctx.testProperties.description) {
+            AllureReporter.addDescription(ctx.testProperties.description, 'text');
+        }
+
+        if (file) {
+            AllureReporter.addLink(`https://github.com/jitsi/jitsi-meet/blob/master/tests/specs/${file}`, 'Code');
+        }
 
         if (dir) {
             AllureReporter.addParentSuite(dir);
         }
 
         if (ctx.skipSuiteTests) {
+            if ((typeof ctx.skipSuiteTests) === 'string') {
+                AllureReporter.addDescription((ctx.testProperties.description || '')
+                    + '\n\nSkipped because: ' + ctx.skipSuiteTests, 'text');
+            }
+            console.log(`Skipping because: ${ctx.skipSuiteTests}`);
+
             context.skip();
 
             return;
