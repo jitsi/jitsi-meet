@@ -29,7 +29,7 @@ Pod::Spec.new do |s|
           SOURCE_PATH="${PODS_TARGET_SRCROOT}/sounds/"
           TARGET_PATH=$(dirname "${CONFIGURATION_BUILD_DIR}")
           PROJECT_NAME=$(basename $(dirname $(dirname "${PROJECT_DIR}"))).app
-          cp -R "${SOURCE_PATH}" "${TARGET_PATH}/${PROJECT_NAME}"
+          ditto "${SOURCE_PATH}" "${TARGET_PATH}/${PROJECT_NAME}/sounds"
       ',
   }
 end
