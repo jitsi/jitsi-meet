@@ -155,9 +155,11 @@ public class MainActivity extends JitsiMeetActivity {
         // Set default options
         JitsiMeetConferenceOptions defaultOptions
             = new JitsiMeetConferenceOptions.Builder()
-            .setServerURL(buildURL(defaultURL))
+            .setServerURL(buildURL("https://8x8.vc"))
+            .setRoom("test0988test")
             .setFeatureFlag("welcomepage.enabled", true)
             .setFeatureFlag("server-url-change.enabled", !configurationByRestrictions)
+            .setConfigOverride("startAudioOnly", true)
             .build();
         JitsiMeet.setDefaultConferenceOptions(defaultOptions);
     }
