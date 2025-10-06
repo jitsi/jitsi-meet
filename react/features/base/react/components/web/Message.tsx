@@ -57,7 +57,7 @@ class Message extends Component<IProps> {
         const content: any[] = [];
         const { gifEnabled } = this.props;
 
-        // check if the message is a GIF
+        // Check if the message is a GIF
         if (gifEnabled && isGifMessage(text)) {
             const url = extractGifURL(text);
 
