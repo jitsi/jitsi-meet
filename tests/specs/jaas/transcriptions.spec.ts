@@ -27,7 +27,7 @@ describe('Transcriptions', () => {
 
         if (await p1.execute(() => config.disableIframeAPI || !config.transcription?.enabled)) {
             // skip the test if iframeAPI or transcriptions are disabled
-            ctx.skipSuiteTests = true;
+            ctx.skipSuiteTests = 'The environment has the iFrame API or transcriptions disabled.';
 
             return;
         }

@@ -31,8 +31,7 @@ describe('Recording and Live Streaming', () => {
 
         // TODO: what should we do in this case? Add a config for this?
         if (await p.execute(() => config.disableIframeAPI)) {
-            // skip the test if iframeAPI is disabled
-            ctx.skipSuiteTests = true;
+            ctx.skipSuiteTests = 'The environment has the iFrame API disabled.';
 
             return;
         }

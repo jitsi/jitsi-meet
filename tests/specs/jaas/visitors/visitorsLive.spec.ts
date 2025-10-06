@@ -28,8 +28,7 @@ describe('Visitors', () => {
         await moderator.driver.waitUntil(() => moderator.execute(() => APP.conference._room.isVisitorsSupported()), {
             timeout: 2000
         }).catch(e => {
-            console.log(`Skipping test due to error: ${e}`);
-            ctx.skipSuiteTests = true;
+            ctx.skipSuiteTests = `Because isVisitorsSupported() returned an error: ${e}.`;
         });
 
         visitor = await joinJaasMuc({

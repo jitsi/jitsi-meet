@@ -15,8 +15,7 @@ describe('Participants presence', () => {
         const { p1, p2 } = ctx;
 
         if (await p1.execute(() => config.disableIframeAPI)) {
-            // skip the test if iframeAPI is disabled
-            ctx.skipSuiteTests = true;
+            ctx.skipSuiteTests = 'The environment has the iFrame API disabled.';
 
             return;
         }

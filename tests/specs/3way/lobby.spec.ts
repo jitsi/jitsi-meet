@@ -14,7 +14,7 @@ describe('Lobby', () => {
         await ensureOneParticipant();
 
         if (!await ctx.p1.execute(() => APP.conference._room.isLobbySupported())) {
-            ctx.skipSuiteTests = true;
+            ctx.skipSuiteTests = 'The environment does not support lobby.';
         }
     });
 

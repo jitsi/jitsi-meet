@@ -8,7 +8,8 @@ describe('URL Normalisation', () => {
 
         // if we are running with token this becomes ugly to match the URL
         if (config.jwt.preconfiguredToken) {
-            ctx.skipSuiteTests = true;
+            // TODO: just don't use the token...
+            ctx.skipSuiteTests = 'This test does not support running with a preconfigured token';
 
             return;
         }

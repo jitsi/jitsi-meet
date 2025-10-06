@@ -20,8 +20,7 @@ describe('Dial-out', () => {
         const room = ctx.roomName;
 
         if (!dialOutUrl) {
-            console.log('Dial-out test is disabled, set DIAL_OUT_URL to enable.');
-            ctx.skipSuiteTests = true;
+            ctx.skipSuiteTests = 'DIAL_OUT_URL is not set.';
 
             return;
         }

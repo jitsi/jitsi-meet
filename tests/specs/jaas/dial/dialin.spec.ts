@@ -25,8 +25,7 @@ describe('Dial-in', () => {
         const room = ctx.roomName;
 
         if (!process.env.DIAL_IN_REST_URL) {
-            console.log('Dial-in test is disabled, set DIAL_IN_REST_URL to enable.');
-            ctx.skipSuiteTests = true;
+            ctx.skipSuiteTests = 'DIAL_IN_REST_URL is not set.';
 
             return;
         }

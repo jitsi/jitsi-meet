@@ -212,8 +212,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
         globalAny.ctx.testProperties = testProperties;
 
         if (testProperties.useJaas && !testsConfig.jaas.enabled) {
-            console.warn(`JaaS is not configured, skipping ${testName}.`);
-            globalAny.ctx.skipSuiteTests = true;
+            globalAny.ctx.skipSuiteTests = 'JaaS is not configured';
 
             return;
         }
@@ -250,7 +249,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
             }
             if (!tenant) {
                 console.log(`Can not configure WebhookProxy, missing tenant in config. Skipping ${testName}.`);
-                globalAny.ctx.skipSuiteTests = true;
+                globalAny.ctx.skipSuiteTests = 'WebHookProxy is required but not configured (missing tenant)';
 
                 return;
             }
@@ -264,7 +263,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         if (testProperties.useWebhookProxy && !globalAny.ctx.webhooksProxy) {
             console.warn(`WebhookProxy is not available, skipping ${testName}`);
-            globalAny.ctx.skipSuiteTests = true;
+            globalAny.ctx.skipSuiteTests = 'WebhooksProxy is not required but not available';
         }
     },
 

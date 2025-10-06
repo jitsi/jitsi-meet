@@ -17,8 +17,7 @@ describe('iFrame API for Chat', () => {
         p2 = await joinMuc({ name: 'p2', iFrameApi: true });
 
         if (await p1.execute(() => config.disableIframeAPI)) {
-            // skip the test if iframeAPI is disabled
-            ctx.skipSuiteTests = true;
+            ctx.skipSuiteTests = 'The environment has the iFrame API disabled.';
 
             return;
         }

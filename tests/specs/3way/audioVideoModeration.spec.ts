@@ -17,7 +17,8 @@ describe('AVModeration', () => {
 
         if (!await p1.isModerator()
             || (await p1.isModerator() && await p2.isModerator() && await p3.isModerator())) {
-            ctx.skipSuiteTests = true;
+            ctx.skipSuiteTests = `Unsupported moderator configuration: p1=${await p1.isModerator()},\
+             p2=${await p2.isModerator()}, p3=${await p3.isModerator()}`;
         }
     });
 
