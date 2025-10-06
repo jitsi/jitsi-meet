@@ -76,12 +76,12 @@ const DEFAULT_STATE = {
     numberOfParticipantsNotSupportingE2EE: 0,
     overwrittenNameList: {},
     pinnedParticipant: undefined,
+    previousSpeakers: new Map(),
     raisedHandsQueue: [],
     remote: new Map(),
     remoteVideoSources: new Set<string>(),
     sortedRemoteVirtualScreenshareParticipants: new Map(),
-    sortedRemoteParticipants: new Map(),
-    speakersList: new Map()
+    sortedRemoteParticipants: new Map()
 };
 
 export interface IParticipantsState {
@@ -94,12 +94,12 @@ export interface IParticipantsState {
     numberOfParticipantsNotSupportingE2EE: number;
     overwrittenNameList: { [id: string]: string; };
     pinnedParticipant?: string;
+    previousSpeakers: Map<string, string>;
     raisedHandsQueue: Array<{ hasBeenNotified?: boolean; id: string; raisedHandTimestamp: number; }>;
     remote: Map<string, IParticipant>;
     remoteVideoSources: Set<string>;
     sortedRemoteParticipants: Map<string, string>;
     sortedRemoteVirtualScreenshareParticipants: Map<string, string>;
-    speakersList: Map<string, string>;
 }
 
 /**
@@ -156,22 +156,18 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         const { participant } = action;
         const { id, previousSpeakers = [] } = participant;
         const { dominantSpeaker, local } = state;
-        const newSpeakers = [ id, ...previousSpeakers ];
-        const sortedSpeakersList: Array<Array<string>> = [];
+        const previousSpeakersMap: Map<string, string> = new Map();
 
-        for (const speaker of newSpeakers) {
+        // Build chronologically ordered Map of remote speakers (excluding local)
+        for (const speaker of previousSpeakers) {
             if (speaker !== local?.id) {
                 const remoteParticipant = state.remote.get(speaker);
 
-                remoteParticipant
-                && sortedSpeakersList.push(
-                    [ speaker, _getDisplayName(state, remoteParticipant?.name) ]
-                );
+                if (remoteParticipant) {
+                    previousSpeakersMap.set(speaker, _getDisplayName(state, remoteParticipant?.name));
+                }
             }
         }
-
-        // Keep the remote speaker list sorted alphabetically.
-        sortedSpeakersList.sort((a, b) => a[1].localeCompare(b[1]));
 
         // Only one dominant speaker is allowed.
         if (dominantSpeaker) {
@@ -181,8 +177,8 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         if (_updateParticipantProperty(state, id, 'dominantSpeaker', true)) {
             return {
                 ...state,
-                dominantSpeaker: id, // @ts-ignore
-                speakersList: new Map(sortedSpeakersList)
+                dominantSpeaker: id,
+                previousSpeakers: previousSpeakersMap
             };
         }
 
@@ -435,7 +431,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         }
 
         // Remove the participant from the list of speakers.
-        state.speakersList.has(id) && state.speakersList.delete(id);
+        state.previousSpeakers.has(id) && state.previousSpeakers.delete(id);
 
         if (pinnedParticipant === id) {
             state.pinnedParticipant = undefined;

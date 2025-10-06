@@ -7,8 +7,7 @@ import {
     getLocalScreenShareParticipant,
     getParticipantById,
     getPinnedParticipant,
-    getRemoteParticipants,
-    getVirtualScreenshareParticipantByOwnerId
+    getRemoteParticipants
 } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { getAutoPinSetting } from '../video-layout/functions';
@@ -161,18 +160,17 @@ function _electParticipantInLargeVideo(state: IReduxState) {
         }
     }
 
-    // Next, pick the dominant speaker (other than self).
+    // Next, pick the dominant speaker or the last active speaker if the dominant speaker is local.
     participant = getDominantSpeakerParticipant(state);
-    if (participant && !participant.local) {
-        // Return the screensharing participant id associated with this endpoint if multi-stream is enabled and
-        // auto_pin_latest_screen_share setting is disabled.
-        const screenshareParticipant = getVirtualScreenshareParticipantByOwnerId(state, participant.id);
+    if (participant?.local) {
+        const { previousSpeakers } = state['features/base/participants'];
 
-        return screenshareParticipant?.id ?? participant.id;
+        if (previousSpeakers?.size) {
+            return previousSpeakers.keys().next().value;
+        }
+    } else if (participant) {
+        return participant.id;
     }
-
-    // In case this is the local participant.
-    participant = undefined;
 
     // Next, pick the most recent participant with video.
     const lastVisibleRemoteParticipant = _electLastVisibleRemoteParticipant(state);
