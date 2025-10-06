@@ -7,6 +7,7 @@ export interface IFileMetadata {
     fileName: string;
     fileSize: number;
     fileType: string;
+    isDeleted?: boolean;
     progress?: number;
     timestamp: number;
 }
