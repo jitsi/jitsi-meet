@@ -1,4 +1,5 @@
 import { P1, P3, Participant } from '../../helpers/Participant';
+import { setTestProperties } from '../../helpers/TestProperties';
 import { expectations } from '../../helpers/expectations';
 import {
     ensureOneParticipant,
@@ -8,6 +9,10 @@ import {
 } from '../../helpers/participants';
 import type { IJoinOptions } from '../../helpers/types';
 import type PreMeetingScreen from '../../pageobjects/PreMeetingScreen';
+
+setTestProperties(__filename, {
+    usesBrowsers: [ 'p1', 'p2', 'p3' ]
+});
 
 describe('Lobby', () => {
     it('joining the meeting', async () => {
