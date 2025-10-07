@@ -1,9 +1,14 @@
+import { setTestProperties } from '../../helpers/TestProperties';
 import {
     ensureOneParticipant,
     ensureThreeParticipants,
     ensureTwoParticipants,
     hangupAllParticipants
 } from '../../helpers/participants';
+
+setTestProperties(__filename, {
+    usesBrowsers: [ 'p1', 'p2', 'p3' ]
+});
 
 describe('Codec selection', () => {
     it('asymmetric codecs', async () => {
