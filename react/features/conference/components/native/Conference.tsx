@@ -3,9 +3,7 @@ import React, { useCallback } from 'react';
 import {
     BackHandler,
     NativeModules,
-    Platform,
     SafeAreaView,
-    StatusBar,
     View,
     ViewStyle
 } from 'react-native';
@@ -279,10 +277,6 @@ class Conference extends AbstractConference<IProps, State> {
                     _brandingStyles
                 ] }>
                 <BrandingImageBackground />
-                {
-                    Platform.OS === 'android'
-                    && <StatusBar translucent = { true } />
-                }
                 { this._renderContent() }
             </Container>
         );
