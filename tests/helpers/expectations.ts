@@ -27,7 +27,10 @@ const defaultExpectations = {
         // The first to join is a moderator.
         firstModerator: true,
         // The grantOwner function is available.
-        grantModerator: true
+        grantModerator: true,
+        // Whether the ability to set a password is available (there's a backend options which makes moderators unable
+        // to set a room password unless they also happen to have a token (any valid token?))
+        setPasswordAvailable: true
     }
 };
 

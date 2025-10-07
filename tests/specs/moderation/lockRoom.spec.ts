@@ -1,5 +1,6 @@
 import { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
+import { expectations } from '../../helpers/expectations';
 import { ensureOneParticipant, ensureTwoParticipants, joinSecondParticipant } from '../../helpers/participants';
 import type SecurityDialog from '../../pageobjects/SecurityDialog';
 
@@ -19,6 +20,12 @@ describe('Lock Room', () => {
     let roomKey: string;
 
     it('setup', async () => {
+        if (!expectations.moderation.setPasswordAvailable) {
+            ctx.skipSuiteTests = 'setPasswordAvailable is not expected to be available';
+
+            return;
+        }
+
         await ensureOneParticipant();
         p1 = ctx.p1;
 

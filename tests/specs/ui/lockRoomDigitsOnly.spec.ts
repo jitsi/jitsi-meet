@@ -1,6 +1,7 @@
 import { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import { config as testsConfig } from '../../helpers/TestsConfig';
+import { expectations } from '../../helpers/expectations';
 import { joinMuc } from '../../helpers/joinMuc';
 
 setTestProperties(__filename, {
@@ -11,6 +12,12 @@ describe('Lock Room with Digits only', () => {
     let p: Participant;
 
     it('setup', async () => {
+        if (!expectations.moderation.setPasswordAvailable) {
+            ctx.skipSuiteTests = 'setPasswordAvailable is not expected to be available';
+
+            return;
+        }
+
         p = await joinMuc({
             name: 'p1',
             token: testsConfig.jwt.preconfiguredToken
