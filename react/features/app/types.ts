@@ -52,7 +52,6 @@ import { IMobileAudioModeState } from '../mobile/audio-mode/reducer';
 import { IMobileBackgroundState } from '../mobile/background/reducer';
 import { ICallIntegrationState } from '../mobile/call-integration/reducer';
 import { IMobileExternalApiState } from '../mobile/external-api/reducer';
-import { IFullScreenState } from '../mobile/full-screen/reducer';
 import { IMobileWatchOSState } from '../mobile/watchos/reducer';
 import { INoAudioSignalState } from '../no-audio-signal/reducer';
 import { INoiseDetectionState } from '../noise-detection/reducer';
@@ -132,7 +131,6 @@ export interface IReduxState {
     'features/file-sharing': IFileSharingState;
     'features/filmstrip': IFilmstripState;
     'features/follow-me': IFollowMeState;
-    'features/full-screen': IFullScreenState;
     'features/gifs': IGifsState;
     'features/google-api': IGoogleApiState;
     'features/invite': IInviteState;

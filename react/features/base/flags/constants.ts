@@ -79,12 +79,6 @@ export const CHAT_ENABLED = 'chat.enabled';
 export const FILMSTRIP_ENABLED = 'filmstrip.enabled';
 
 /**
- * Flag indicating if fullscreen (immersive) mode should be enabled.
- * Default: enabled (true).
- */
-export const FULLSCREEN_ENABLED = 'fullscreen.enabled';
-
-/**
  * Flag indicating if the Help button should be enabled.
  * Default: enabled (true).
  */

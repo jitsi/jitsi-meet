@@ -3,9 +3,7 @@ import React, { useCallback } from 'react';
 import {
     BackHandler,
     NativeModules,
-    Platform,
     SafeAreaView,
-    StatusBar,
     View,
     ViewStyle
 } from 'react-native';
@@ -16,8 +14,6 @@ import { appNavigate } from '../../../app/actions.native';
 import { IReduxState, IStore } from '../../../app/types';
 import { CONFERENCE_BLURRED, CONFERENCE_FOCUSED } from '../../../base/conference/actionTypes';
 import { isDisplayNameVisible } from '../../../base/config/functions.native';
-import { FULLSCREEN_ENABLED } from '../../../base/flags/constants';
-import { getFeatureFlag } from '../../../base/flags/functions';
 import Container from '../../../base/react/components/native/Container';
 import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
 import TintedView from '../../../base/react/components/native/TintedView';
@@ -95,11 +91,6 @@ interface IProps extends AbstractProps {
      * Set to {@code true} when the filmstrip is currently visible.
      */
     _filmstripVisible: boolean;
-
-    /**
-     * The indicator which determines whether fullscreen (immersive) mode is enabled.
-     */
-    _fullscreenEnabled: boolean;
 
     /**
      * The indicator which determines if the display name is visible.
@@ -277,7 +268,6 @@ class Conference extends AbstractConference<IProps, State> {
     override render() {
         const {
             _brandingStyles,
-            _fullscreenEnabled
         } = this.props;
 
         return (
@@ -287,13 +277,6 @@ class Conference extends AbstractConference<IProps, State> {
                     _brandingStyles
                 ] }>
                 <BrandingImageBackground />
-                {
-                    Platform.OS === 'android'
-                    && <StatusBar
-                        barStyle = 'light-content'
-                        hidden = { _fullscreenEnabled }
-                        translucent = { _fullscreenEnabled } />
-                }
                 { this._renderContent() }
             </Container>
         );
@@ -590,7 +573,6 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _calendarEnabled: isCalendarEnabled(state),
         _connecting: isConnecting(state),
         _filmstripVisible: isFilmstripVisible(state),
-        _fullscreenEnabled: getFeatureFlag(state, FULLSCREEN_ENABLED, true),
         _isDisplayNameVisible: isDisplayNameVisible(state),
         _isParticipantsPaneOpen: isOpen,
         _largeVideoParticipantId: state['features/large-video'].participantId,
