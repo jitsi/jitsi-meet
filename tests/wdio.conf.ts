@@ -212,8 +212,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
         globalAny.ctx.testProperties = testProperties;
 
         if (testProperties.useJaas && !testsConfig.jaas.enabled) {
-            console.warn(`JaaS is not configured, skipping ${testName}.`);
-            globalAny.ctx.skipSuiteTests = true;
+            globalAny.ctx.skipSuiteTests = 'JaaS is not configured';
 
             return;
         }
@@ -250,7 +249,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
             }
             if (!tenant) {
                 console.log(`Can not configure WebhookProxy, missing tenant in config. Skipping ${testName}.`);
-                globalAny.ctx.skipSuiteTests = true;
+                globalAny.ctx.skipSuiteTests = 'WebHookProxy is required but not configured (missing tenant)';
 
                 return;
             }
@@ -264,7 +263,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
         if (testProperties.useWebhookProxy && !globalAny.ctx.webhooksProxy) {
             console.warn(`WebhookProxy is not available, skipping ${testName}`);
-            globalAny.ctx.skipSuiteTests = true;
+            globalAny.ctx.skipSuiteTests = 'WebhooksProxy is not required but not available';
         }
     },
 
@@ -313,14 +312,30 @@ export const config: WebdriverIO.MultiremoteConfig = {
      */
     beforeTest(test, context) {
         // Use the directory under 'tests/specs' as the parent suite
-        const match = test.file.match(/.*\/tests\/specs\/([^\/]+)\//);
-        const dir = match ? match[1] : false;
+        const dirMatch = test.file.match(/.*\/tests\/specs\/([^\/]+)\//);
+        const dir = dirMatch ? dirMatch[1] : false;
+        const fileMatch = test.file.match(/.*\/tests\/specs\/(.*)/);
+        const file = fileMatch ? fileMatch[1] : false;
+
+        if (ctx.testProperties.description) {
+            AllureReporter.addDescription(ctx.testProperties.description, 'text');
+        }
+
+        if (file) {
+            AllureReporter.addLink(`https://github.com/jitsi/jitsi-meet/blob/master/tests/specs/${file}`, 'Code');
+        }
 
         if (dir) {
             AllureReporter.addParentSuite(dir);
         }
 
         if (ctx.skipSuiteTests) {
+            if ((typeof ctx.skipSuiteTests) === 'string') {
+                AllureReporter.addDescription((ctx.testProperties.description || '')
+                    + '\n\nSkipped because: ' + ctx.skipSuiteTests, 'text');
+            }
+            console.log(`Skipping because: ${ctx.skipSuiteTests}`);
+
             context.skip();
 
             return;

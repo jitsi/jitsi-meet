@@ -4,6 +4,8 @@ import { expectations } from '../../helpers/expectations';
 import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
 
 setTestProperties(__filename, {
+    description: 'This test checks the ability of a moderator to grant the "moderator" role to another participant. The\
+     test is skipped when the "allModerators" expectation is set.',
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
@@ -12,8 +14,7 @@ describe('Grant moderator', () => {
 
     it('setup', async () => {
         if (expectations.moderation.allModerators) {
-            ctx.skipSuiteTests = true;
-            console.log('Skipping because allModerators is expected.');
+            ctx.skipSuiteTests = 'allModerators is expected';
 
             return;
         }
@@ -28,8 +29,7 @@ describe('Grant moderator', () => {
             expect(functionAvailable).toBe(true);
         } else {
             if (!functionAvailable) {
-                ctx.skipSuiteTests = true;
-                console.log('Skipping because the grant moderator function is not available and not expected.');
+                ctx.skipSuiteTests = 'grantModerator is not available and not expected';
 
                 return;
             }

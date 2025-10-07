@@ -17,7 +17,7 @@ describe('BreakoutRooms', () => {
         await ensureTwoParticipants();
 
         if (!await ctx.p1.isBreakoutRoomsSupported()) {
-            ctx.skipSuiteTests = true;
+            ctx.skipSuiteTests = 'The environment does not support breakout rooms.';
         }
     });
 

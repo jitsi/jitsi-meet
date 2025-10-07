@@ -17,7 +17,7 @@ describe('Kick', () => {
 
         // We verify elsewhere (moderation.spec.ts) that the first participant is a moderator.
         if (!await p1.isModerator()) {
-            ctx.skipSuiteTests = true;
+            ctx.skipSuiteTests = 'the first participant is not a moderator';
         }
     });
 

@@ -11,7 +11,7 @@ describe('Invite', () => {
         // This is a temporary hack to avoid failing when running against a jaas env. The same cases are covered in
         // jaas/dial/dialin.spec.ts.
         if (testsConfig.jaas.enabled) {
-            ctx.skipSuiteTests = true;
+            ctx.skipSuiteTests = 'JaaS is configured.';
 
             return;
         }

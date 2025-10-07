@@ -22,15 +22,13 @@ describe('SIP jibri invite', () => {
 
         if (true) {
             // This is temporary until we figure out how to fix it and configure it properly.
-            console.log('SIP jibri test is disabled.');
-            ctx.skipSuiteTests = true;
+            ctx.skipSuiteTests = 'This test is disabled as the code doesn\'t work anymore.';
 
             return;
         }
 
         if (!dialOutUrl) {
-            console.log('SIP jibri test is disabled, set SIP_JIBRI_DIAL_OUT_URL to enable.');
-            ctx.skipSuiteTests = true;
+            ctx.skipSuiteTests = 'SIP_JIBRI_DIAL_OUT_URL is not set.';
 
             return;
         }

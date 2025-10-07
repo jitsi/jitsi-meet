@@ -18,8 +18,9 @@ export type IContext = {
     roomName: string;
     /**
      * A flag that tests can set, which signals to the framework that the (rest of the) test suite should be skipped.
+     * A string value indicates the reason for the skipped (to be included in the Allure report).
      */
-    skipSuiteTests: boolean;
+    skipSuiteTests: boolean | string;
     /**
      * Test properties provided by the test file via TestProperties.setTestProperties. Used by the framework to
      * set up the context appropriately.

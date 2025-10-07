@@ -10,7 +10,7 @@ describe('Fake Dial-In', () => {
 
         // check rest url is not configured
         if (process.env.DIAL_IN_REST_URL) {
-            ctx.skipSuiteTests = true;
+            ctx.skipSuiteTests = 'DIAL_IN_REST_URL is not set';
 
             return;
         }
@@ -25,8 +25,7 @@ describe('Fake Dial-In', () => {
 
         // check dial-in is enabled, so skip
         if (configEnabled) {
-            console.log('Dial in config is enabled, skipping fake dial in');
-            ctx.skipSuiteTests = true;
+            ctx.skipSuiteTests = 'DIAL_IN_REST_URL is not set.';
         }
     });
 

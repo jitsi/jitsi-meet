@@ -5,6 +5,8 @@ import { expectations } from '../../helpers/expectations';
 import { joinMuc } from '../../helpers/joinMuc';
 
 setTestProperties(__filename, {
+    description: 'This test asserts that participants have the expected role ("moderator" or not). Failures here\
+        most likely indicate that the environment or test framework is misconfigured.',
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
