@@ -93,7 +93,6 @@
     "react-native-dialog": "https://github.com/jitsi/react-native-dialog/releases/download/v9.2.2-jitsi.1/react-native-dialog-9.2.2.tgz",
     "react-native-gesture-handler": "2.24.0",
     "react-native-get-random-values": "1.11.0",
-    "react-native-immersive-mode": "https://github.com/jitsi/react-native-immersive-mode.git#38cc9001db24618bc0c61800f81e889bcfb6ff2c",
     "react-native-orientation-locker": "https://github.com/jitsi/react-native-orientation-locker.git#fe095651d819cf134624f786b61fc8667862178a",
     "react-native-pager-view": "6.8.1",
     "react-native-paper": "5.10.3",
