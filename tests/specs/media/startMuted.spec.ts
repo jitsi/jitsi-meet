@@ -1,3 +1,4 @@
+import { setTestProperties } from '../../helpers/TestProperties';
 import {
     checkForScreensharingTile,
     ensureOneParticipant,
@@ -7,6 +8,10 @@ import {
     joinThirdParticipant
 } from '../../helpers/participants';
 import { unmuteVideoAndCheck } from '../helpers/mute';
+
+setTestProperties(__filename, {
+    usesBrowsers: [ 'p1', 'p2', 'p3' ]
+});
 
 describe('StartMuted', () => {
     it('checkboxes test', async () => {

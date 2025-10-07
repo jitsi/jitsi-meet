@@ -25,7 +25,7 @@ const mergedConfig = merge(defaultConfig, {
 
         // FF does not support setting a file as mic input, no dominant speaker events
         'specs/media/activeSpeaker.spec.ts',
-        'specs/3way/startMuted.spec.ts', // bad audio levels
+        'specs/media/startMuted.spec.ts', // bad audio levels
         'specs/media/desktopSharing.spec.ts',
         'specs/media/lastN.spec.ts',
 
