@@ -1,5 +1,10 @@
+import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureTwoParticipants } from '../../helpers/participants';
 import { muteVideoAndCheck, unmuteVideoAndCheck } from '../helpers/mute';
+
+setTestProperties(__filename, {
+    usesBrowsers: [ 'p1', 'p2' ]
+});
 
 describe('Stop video', () => {
     it('joining the meeting', () => ensureTwoParticipants());
