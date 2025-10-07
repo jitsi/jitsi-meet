@@ -1,6 +1,11 @@
 import type { Participant } from '../../helpers/Participant';
+import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureThreeParticipants } from '../../helpers/participants';
 import { muteAudioAndCheck } from '../helpers/mute';
+
+setTestProperties(__filename, {
+    usesBrowsers: [ 'p1', 'p2', 'p3' ]
+});
 
 describe('ActiveSpeaker', () => {
     it('testActiveSpeaker', async () => {

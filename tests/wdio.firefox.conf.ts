@@ -24,7 +24,7 @@ const mergedConfig = merge(defaultConfig, {
         'specs/iframe/*.spec.ts', // FF does not support uploading files (uploadFile)
 
         // FF does not support setting a file as mic input, no dominant speaker events
-        'specs/3way/activeSpeaker.spec.ts',
+        'specs/media/activeSpeaker.spec.ts',
         'specs/3way/startMuted.spec.ts', // bad audio levels
         'specs/media/desktopSharing.spec.ts',
         'specs/media/lastN.spec.ts',
