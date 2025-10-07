@@ -1,3 +1,4 @@
+import { VIDEO_CODEC } from '../../../react/features/video-quality/constants';
 import { setTestProperties } from '../../helpers/TestProperties';
 import {
     ensureOneParticipant,
@@ -5,6 +6,7 @@ import {
     ensureTwoParticipants,
     hangupAllParticipants
 } from '../../helpers/participants';
+const { VP8, VP9, AV1 } = VIDEO_CODEC;
 
 setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2', 'p3' ]
@@ -35,13 +37,10 @@ describe('Codec selection', () => {
 
         // Check if p1 is sending VP9 and p2 is sending VP8 as per their codec preferences.
         // Except on Firefox because it doesn't support VP9 encode.
-        if (p1.driver.isFirefox) {
-            expect(await p1.execute(() => JitsiMeetJS.app.testing.isLocalCameraEncodingVp8())).toBe(true);
-        } else {
-            expect(await p1.execute(() => JitsiMeetJS.app.testing.isLocalCameraEncodingVp9())).toBe(true);
-        }
+        const p1ExpectedCodec = p1.driver.isFirefox ? VP8 : VP9;
 
-        expect(await p2.execute(() => JitsiMeetJS.app.testing.isLocalCameraEncodingVp8())).toBe(true);
+        expect(await p1.execute(() => JitsiMeetJS.app.testing.getLocalCameraEncoding())).toBe(p1ExpectedCodec);
+        expect(await p2.execute(() => JitsiMeetJS.app.testing.getLocalCameraEncoding())).toBe(VP8);
     });
 
     it('asymmetric codecs with AV1', async () => {
@@ -62,19 +61,16 @@ describe('Codec selection', () => {
 
         // Check if p1 is encoding in VP9, p2 in VP8 and p3 in AV1 as per their codec preferences.
         // Except on Firefox because it doesn't support VP9 encode.
-        if (p1.driver.isFirefox) {
-            expect(await p1.execute(() => JitsiMeetJS.app.testing.isLocalCameraEncodingVp8())).toBe(true);
-        } else {
-            expect(await p1.execute(() => JitsiMeetJS.app.testing.isLocalCameraEncodingVp9())).toBe(true);
-        }
+        const p1ExpectedCodec = p1.driver.isFirefox ? VP8 : VP9;
 
-        expect(await p2.execute(() => JitsiMeetJS.app.testing.isLocalCameraEncodingVp8())).toBe(true);
+        expect(await p1.execute(() => JitsiMeetJS.app.testing.getLocalCameraEncoding())).toBe(p1ExpectedCodec);
+        expect(await p2.execute(() => JitsiMeetJS.app.testing.getLocalCameraEncoding())).toBe(VP8);
 
         // If there is a Firefox ep in the call, all other eps will switch to VP9.
         if (p1.driver.isFirefox && majorVersion < 136) {
-            expect(await p3.execute(() => JitsiMeetJS.app.testing.isLocalCameraEncodingVp9())).toBe(true);
+            expect(await p3.execute(() => JitsiMeetJS.app.testing.getLocalCameraEncoding())).toBe(VP9);
         } else {
-            expect(await p3.execute(() => JitsiMeetJS.app.testing.isLocalCameraEncodingAv1())).toBe(true);
+            expect(await p3.execute(() => JitsiMeetJS.app.testing.getLocalCameraEncoding())).toBe(AV1);
         }
     });
 
@@ -96,8 +92,8 @@ describe('Codec selection', () => {
         }
 
         // Check if p1 and p2 are encoding in VP9 which is the default codec.
-        expect(await p1.execute(() => JitsiMeetJS.app.testing.isLocalCameraEncodingVp9())).toBe(true);
-        expect(await p2.execute(() => JitsiMeetJS.app.testing.isLocalCameraEncodingVp9())).toBe(true);
+        expect(await p1.execute(() => JitsiMeetJS.app.testing.getLocalCameraEncoding())).toBe(VP9);
+        expect(await p2.execute(() => JitsiMeetJS.app.testing.getLocalCameraEncoding())).toBe(VP9);
 
         await ensureThreeParticipants({
             configOverwrite: {
@@ -110,25 +106,25 @@ describe('Codec selection', () => {
         const { p3 } = ctx;
 
         // Check if all three participants are encoding in VP8 now.
-        expect(await p1.execute(() => JitsiMeetJS.app.testing.isLocalCameraEncodingVp8())).toBe(true);
-        expect(await p2.execute(() => JitsiMeetJS.app.testing.isLocalCameraEncodingVp8())).toBe(true);
-        expect(await p3.execute(() => JitsiMeetJS.app.testing.isLocalCameraEncodingVp8())).toBe(true);
+        expect(await p1.execute(() => JitsiMeetJS.app.testing.getLocalCameraEncoding())).toBe(VP8);
+        expect(await p2.execute(() => JitsiMeetJS.app.testing.getLocalCameraEncoding())).toBe(VP8);
+        expect(await p3.execute(() => JitsiMeetJS.app.testing.getLocalCameraEncoding())).toBe(VP8);
 
         await p3.hangup();
 
         // Check of p1 and p2 have switched to VP9.
         await p1.driver.waitUntil(
-            () => p1.execute(() => JitsiMeetJS.app.testing.isLocalCameraEncodingVp9()),
+            () => p1.execute(() => JitsiMeetJS.app.testing.getLocalCameraEncoding() === VP9),
             {
                 timeout: 10000,
                 timeoutMsg: 'p1 did not switch back to VP9'
             }
         );
         await p2.driver.waitUntil(
-            () => p2.execute(() => JitsiMeetJS.app.testing.isLocalCameraEncodingVp9()),
+            () => p2.execute(() => JitsiMeetJS.app.testing.getLocalCameraEncoding() === VP9),
             {
                 timeout: 10000,
-                timeoutMsg: 'p1 did not switch back to VP9'
+                timeoutMsg: 'p2 did not switch back to VP9'
             }
         );
     });
