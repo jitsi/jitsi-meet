@@ -1,4 +1,9 @@
+import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureFourParticipants, ensureThreeParticipants, ensureTwoParticipants } from '../../helpers/participants';
+
+setTestProperties(__filename, {
+    usesBrowsers: [ 'p1', 'p2', 'p3', 'p4' ]
+});
 
 describe('lastN', () => {
     it('joining the meeting', async () => {

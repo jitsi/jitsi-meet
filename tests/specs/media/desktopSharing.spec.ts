@@ -1,4 +1,5 @@
 import { SET_AUDIO_ONLY } from '../../../react/features/base/audio-only/actionTypes';
+import { setTestProperties } from '../../helpers/TestProperties';
 import {
     checkForScreensharingTile,
     ensureFourParticipants,
@@ -7,6 +8,10 @@ import {
     ensureTwoParticipants,
     hangupAllParticipants
 } from '../../helpers/participants';
+
+setTestProperties(__filename, {
+    usesBrowsers: [ 'p1', 'p2', 'p3', 'p4' ]
+});
 
 describe('Desktop sharing', () => {
     it('start', async () => {

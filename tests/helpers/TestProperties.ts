@@ -37,9 +37,6 @@ function getDefaultBrowsers(filename: string): string[] {
     if (filename.includes('/3way/')) {
         return [ 'p1', 'p2', 'p3' ];
     }
-    if (filename.includes('/4way/')) {
-        return [ 'p1', 'p2', 'p3', 'p4' ];
-    }
 
     // Tests outside /alone/, /2way/, /3way/, /4way/ will default to p1 only.
     return [ 'p1' ];

@@ -26,8 +26,8 @@ const mergedConfig = merge(defaultConfig, {
         // FF does not support setting a file as mic input, no dominant speaker events
         'specs/3way/activeSpeaker.spec.ts',
         'specs/3way/startMuted.spec.ts', // bad audio levels
-        'specs/4way/desktopSharing.spec.ts',
-        'specs/4way/lastN.spec.ts',
+        'specs/media/desktopSharing.spec.ts',
+        'specs/media/lastN.spec.ts',
 
         // when unmuting a participant, we see the presence in debug logs immediately,
         // but for 15 seconds it is not received/processed by the client
