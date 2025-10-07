@@ -1,4 +1,5 @@
 import type { Participant } from '../../helpers/Participant';
+import { setTestProperties } from '../../helpers/TestProperties';
 import {
     checkForScreensharingTile,
     ensureOneParticipant,
@@ -10,6 +11,10 @@ import {
     unmuteAudioAndCheck,
     unmuteVideoAndCheck
 } from '../helpers/mute';
+
+setTestProperties(__filename, {
+    usesBrowsers: [ 'p1', 'p2' ]
+});
 
 describe('Mute', () => {
     it('joining the meeting', () => ensureTwoParticipants());
