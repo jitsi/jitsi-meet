@@ -1,18 +1,19 @@
+import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureOneParticipant, ensureTwoParticipants, joinSecondParticipant } from '../../helpers/participants';
 import type SecurityDialog from '../../pageobjects/SecurityDialog';
 
+setTestProperties(__filename, {
+    description: '1. Set a room password (assert the image changes to locked). \
+         2. Join with a second participant. \
+         3. Assert password is required (and padlock is locked). \
+         4. Assert wrong password fails. \
+         5. Unlock the room (assert the padlock is unlocked) \
+         6. Assert room is unlocked and the padlock is unlocked.',
+    usesBrowsers: [ 'p1', 'p2' ]
+});
+
 let roomKey: string;
 
-/**
- * 1. Lock the room (make sure the image changes to locked)
- * 2. Join with a second browser/tab
- * 3. Make sure we are required to enter a password.
- * (Also make sure the padlock is locked)
- * 4. Enter wrong password, make sure we are not joined in the room
- * 5. Unlock the room (Make sure the padlock is unlocked)
- * 6. Join again and make sure we are not asked for a password and that
- * the padlock is unlocked.
- */
 describe('Lock Room', () => {
     it('joining the meeting', () => ensureOneParticipant());
 
