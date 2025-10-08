@@ -1,7 +1,7 @@
-import { Participant } from '../helpers/Participant';
-import { setTestProperties } from '../helpers/TestProperties';
-import { config as testsConfig } from '../helpers/TestsConfig';
-import { joinMuc } from '../helpers/joinMuc';
+import { Participant } from '../../helpers/Participant';
+import { setTestProperties } from '../../helpers/TestProperties';
+import { config as testsConfig } from '../../helpers/TestsConfig';
+import { joinMuc } from '../../helpers/joinMuc';
 
 /**
  * The CSS selector for local video when outside of tile view. It should
