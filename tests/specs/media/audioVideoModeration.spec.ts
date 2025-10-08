@@ -1,4 +1,5 @@
 import { Participant } from '../../helpers/Participant';
+import { setTestProperties } from '../../helpers/TestProperties';
 import { expectations } from '../../helpers/expectations';
 import {
     ensureOneParticipant,
@@ -7,14 +8,18 @@ import {
 } from '../../helpers/participants';
 import { unmuteAudioAndCheck, unmuteVideoAndCheck } from '../helpers/mute';
 
+setTestProperties(__filename, {
+    usesBrowsers: [ 'p1', 'p2', 'p3' ]
+});
+
 describe('AVModeration', () => {
 
-    it('check for moderators', async () => {
-        // if all 3 participants are moderators, skip this test
+    it('setup', async () => {
         await ensureThreeParticipants();
 
         const { p1, p2, p3 } = ctx;
 
+        // if all 3 participants are moderators, skip this test
         if (!await p1.isModerator()
             || (await p1.isModerator() && await p2.isModerator() && await p3.isModerator())) {
             ctx.skipSuiteTests = `Unsupported moderator configuration: p1=${await p1.isModerator()},\
