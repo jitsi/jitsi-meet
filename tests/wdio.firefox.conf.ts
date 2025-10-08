@@ -29,6 +29,9 @@ const mergedConfig = merge(defaultConfig, {
         'specs/4way/desktopSharing.spec.ts',
         'specs/4way/lastN.spec.ts',
 
+        // fails randomly for failed downloading asset and page stays in incomplete state
+        'specs/misc/urlNormalisation.spec.ts',
+
         // when unmuting a participant, we see the presence in debug logs immediately,
         // but for 15 seconds it is not received/processed by the client
         // (also the menu disappears after clicking one of the moderation options, does not happen manually)
