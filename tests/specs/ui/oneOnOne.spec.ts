@@ -19,7 +19,7 @@ const ONE_ON_ONE_CONFIG_OVERRIDES = {
     }
 };
 
-describe('OneOnOne', () => {
+describe('One-on-one (1on1) mode', () => {
     it('filmstrip hidden in 1on1', async () => {
         await ensureTwoParticipants(ONE_ON_ONE_CONFIG_OVERRIDES);
 

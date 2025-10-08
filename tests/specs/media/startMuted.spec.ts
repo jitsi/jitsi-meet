@@ -13,7 +13,7 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2', 'p3' ]
 });
 
-describe('StartMuted', () => {
+describe('Start muted', () => {
     it('checkboxes test', async () => {
         const options = {
             configOverwrite: {

@@ -9,7 +9,7 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
-describe('iFrame API for Chat', () => {
+describe('Chat', () => {
     let p1: Participant, p2: Participant;
 
     it('setup', async () => {

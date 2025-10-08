@@ -8,7 +8,7 @@ setTestProperties(__filename, {
 
 // This test is separate from passcode.spec.ts, because it needs to use a different room name, and webhooksProxy is only
 // setup for the default room name.
-describe('Setting passcode through settings provisioning', () => {
+describe('Setting invalid passcode through settings provisioning', () => {
     it('With an invalid passcode', async () => {
         ctx.webhooksProxy.defaultMeetingSettings = {
             passcode: 'passcode-must-be-digits-only'

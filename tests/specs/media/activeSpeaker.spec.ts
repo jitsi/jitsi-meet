@@ -7,7 +7,7 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2', 'p3' ]
 });
 
-describe('ActiveSpeaker', () => {
+describe('Active speaker', () => {
     it('testActiveSpeaker', async () => {
         await ensureThreeParticipants();
 

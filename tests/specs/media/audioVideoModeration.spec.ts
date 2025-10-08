@@ -12,7 +12,7 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2', 'p3' ]
 });
 
-describe('AVModeration', () => {
+describe('Audio/video moderation', () => {
 
     it('setup', async () => {
         await ensureThreeParticipants();

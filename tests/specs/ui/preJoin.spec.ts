@@ -5,7 +5,7 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
-describe('PreJoin', () => {
+describe('Pre-join screen', () => {
     it('display name required', async () => {
         await joinFirstParticipant({
             configOverwrite: {

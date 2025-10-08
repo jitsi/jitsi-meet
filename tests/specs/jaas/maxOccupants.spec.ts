@@ -7,7 +7,7 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2', 'p3' ]
 });
 
-describe('MaxOccupants limit enforcement', () => {
+describe('MaxOccupants', () => {
     it('test maxOccupants limit', async () => {
         ctx.webhooksProxy.defaultMeetingSettings = {
             maxOccupants: 2

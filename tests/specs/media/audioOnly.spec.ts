@@ -5,7 +5,7 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
-describe('Audio only', () => {
+describe('Audio-only mode', () => {
     it('joining the meeting', () => ensureTwoParticipants());
 
     /**

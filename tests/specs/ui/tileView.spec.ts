@@ -20,7 +20,7 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
-describe('TileView', () => {
+describe('Tile view', () => {
     let p1: Participant, p2: Participant;
 
     before('join the meeting', async () => {

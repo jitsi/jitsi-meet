@@ -8,7 +8,7 @@ setTestProperties(__filename, {
     description: ' Tests that the digits only password feature works. When the roomPasswordNumberOfDigits config \
     option is set, the UI should only allow setting the password to a string of digits (with the given length).'
 });
-describe('Lock Room with Digits only', () => {
+describe('Lock room with digits only', () => {
     let p: Participant;
 
     it('setup', async () => {

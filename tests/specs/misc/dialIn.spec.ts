@@ -26,7 +26,7 @@ setTestProperties(__filename, {
  * 2. The DIAL_IN_REST_URL environment variable. If this is set and the environment supports dial-in, we invite a
  * dial-in participant via this URL and assert that it joins the conference and sends media.
  */
-describe('Dial-In', () => {
+describe('Dial-in', () => {
     it('join participant', async () => {
         // The same cases are covered for JaaS in jaas/dial/dialin.spec.ts.
         if (testsConfig.jaas.enabled) {

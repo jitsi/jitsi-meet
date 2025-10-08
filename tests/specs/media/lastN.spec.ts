@@ -5,7 +5,7 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2', 'p3', 'p4' ]
 });
 
-describe('lastN', () => {
+describe('LastN', () => {
     it('joining the meeting', async () => {
         await ensureTwoParticipants({
             configOverwrite: {

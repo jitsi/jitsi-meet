@@ -5,7 +5,7 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
-describe('End Conference', () => {
+describe('Hangup', () => {
     it('joining the meeting', () => ensureTwoParticipants());
 
     it('hangup call and check', async () => {

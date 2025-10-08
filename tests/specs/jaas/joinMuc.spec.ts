@@ -7,7 +7,7 @@ setTestProperties(__filename, {
     useJaas: true
 });
 
-describe('XMPP login and MUC join test', () => {
+describe('XMPP login and MUC join', () => {
     it('with a valid token (wildcard room)', async () => {
         console.log('Joining a MUC with a valid token (wildcard room)');
         const p = await joinJaasMuc({ token: t({ room: '*' }) });

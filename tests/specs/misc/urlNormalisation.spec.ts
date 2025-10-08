@@ -7,7 +7,7 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1' ]
 });
 
-describe('URL Normalisation', () => {
+describe('URL normalisation', () => {
     // If we're not able to create conferences with a custom tenant, we'll only test the room name.
     const useTenant = expectations.useTenant;
 

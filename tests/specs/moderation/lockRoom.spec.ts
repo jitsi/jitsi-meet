@@ -15,7 +15,7 @@ setTestProperties(__filename, {
 });
 
 
-describe('Lock Room', () => {
+describe('Lock room', () => {
     let p1: Participant, p2: Participant;
     let roomKey: string;
 

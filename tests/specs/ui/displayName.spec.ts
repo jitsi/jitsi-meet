@@ -5,7 +5,7 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
-describe('DisplayName', () => {
+describe('Display name', () => {
     it('joining the meeting', () => ensureTwoParticipants({ skipDisplayName: true }));
 
     it('check change', async () => {

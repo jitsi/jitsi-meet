@@ -1,6 +1,6 @@
 import { ensureOneParticipant } from '../../helpers/participants';
 
-describe('Video Layout', () => {
+describe('Video layout', () => {
     it('join participant', () => ensureOneParticipant());
 
     it('check', async () => {

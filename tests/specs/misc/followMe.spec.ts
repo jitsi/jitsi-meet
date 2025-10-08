@@ -5,7 +5,7 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2', 'p3' ]
 });
 
-describe('Follow Me', () => {
+describe('Follow me', () => {
     it('joining the meeting', async () => {
         await ensureTwoParticipants();
 
