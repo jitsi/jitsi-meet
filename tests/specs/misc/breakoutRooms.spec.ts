@@ -1,12 +1,17 @@
 import type { ChainablePromiseElement } from 'webdriverio';
 
 import type { Participant } from '../../helpers/Participant';
+import { setTestProperties } from '../../helpers/TestProperties';
 import {
     checkSubject,
     ensureThreeParticipants,
     ensureTwoParticipants,
     hangupAllParticipants
 } from '../../helpers/participants';
+
+setTestProperties(__filename, {
+    usesBrowsers: [ 'p1', 'p2', 'p3' ]
+});
 
 const MAIN_ROOM_NAME = 'Main room';
 const BREAKOUT_ROOMS_LIST_ID = 'breakout-rooms-list';
