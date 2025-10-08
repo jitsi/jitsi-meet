@@ -54,13 +54,18 @@ function generateToken(session, audience, room, occupant)
     local exp = t + options.ttl_seconds;
     local presence = occupant:get_presence(session.full_jid);
     local _, _, id = extract_subdomain(jid.node(room.jid));
+    local sub = module.host;
+
+    if session.jitsi_web_query_prefix and session.jitsi_web_query_prefix ~= '' then
+        sub = session.jitsi_web_query_prefix;
+    end
 
     local payload = {
         iss = options.issuer,
         aud = audience,
         nbf = t,
         exp = exp,
-        sub = session.jitsi_web_query_prefix or module.host,
+        sub = sub,
         context = {
             group = session.jitsi_meet_context_group or session.granted_jitsi_meet_context_group_id,
             user = session.jitsi_meet_context_user or {
