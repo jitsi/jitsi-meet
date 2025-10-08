@@ -1,6 +1,11 @@
+import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureTwoParticipants } from '../../helpers/participants';
 
-describe('SwitchVideo', () => {
+setTestProperties(__filename, {
+    usesBrowsers: [ 'p1', 'p2' ]
+});
+
+describe('Pinning', () => {
     it('joining the meeting', () => ensureTwoParticipants());
 
     it('p1 click on local', () => ctx.p1.getFilmstrip().pinParticipant(ctx.p1));
