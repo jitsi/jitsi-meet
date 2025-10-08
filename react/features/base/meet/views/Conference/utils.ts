@@ -17,7 +17,7 @@ export const getParticipantsWithTracks = (state: IReduxState) => {
     const remoteParticipantsMap = getRemoteParticipants(state);
     const remoteParticipants = Array.from(remoteParticipantsMap.values());
     const allParticipants = localParticipant ? [localParticipant, ...remoteParticipants] : remoteParticipants;
-
+    console.log("allParticipants", allParticipants);
     return allParticipants
         .filter((participant) => !isScreenShareParticipant(participant))
         .map((participant) => {
@@ -38,6 +38,34 @@ export const getParticipantsWithTracks = (state: IReduxState) => {
                 hidden: false,
                 dominantSpeaker: participant.dominantSpeaker || false,
                 raisedHand: hasRaisedHand(participant),
+                avatarSource: !!participant.loadableAvatarUrl ? participant.loadableAvatarUrl : participant.avatarURL,
+            };
+        })
+        .filter((participant) => !participant.hidden);
+};
+
+export const getScreenShareParticipants = (state: IReduxState) => {
+    const localParticipant = getLocalParticipant(state);
+    const remoteParticipantsMap = getRemoteParticipants(state);
+    const remoteParticipants = Array.from(remoteParticipantsMap.values());
+    const allParticipants = localParticipant ? [localParticipant, ...remoteParticipants] : remoteParticipants;
+
+    return allParticipants
+        .filter((participant) => isScreenShareParticipant(participant))
+        .map((participant) => {
+            const videoTrack = getVideoTrackByParticipant(state, participant);
+            const displayName = getParticipantDisplayName(state, participant.id);
+
+            return {
+                id: participant.id,
+                name: displayName,
+                videoEnabled: videoTrack !== undefined,
+                audioMuted: true,
+                videoTrack: videoTrack,
+                local: participant.local || false,
+                hidden: false,
+                dominantSpeaker: false,
+                raisedHand: false,
                 avatarSource: !!participant.loadableAvatarUrl ? participant.loadableAvatarUrl : participant.avatarURL,
             };
         })

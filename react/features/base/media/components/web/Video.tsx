@@ -359,7 +359,12 @@ class Video extends Component<IProps> {
         }
 
         try {
-            return videoTrack.jitsiTrack.attach(this._videoElement, encodeVideo).catch((error: Error) => {
+            return videoTrack.jitsiTrack.attach(this._videoElement, encodeVideo).then(() => {
+                // Force set srcObject if not set (fallback for screen sharing)
+                if (!this._videoElement?.srcObject && videoTrack.jitsiTrack.stream) {
+                    this._videoElement.srcObject = videoTrack.jitsiTrack.stream;
+                }
+            }).catch((error: Error) => {
                 logger.error(
                     `Attaching the remote track ${videoTrack.jitsiTrack} to video with id ${id} has failed with `,
                     error

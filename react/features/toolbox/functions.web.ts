@@ -231,10 +231,10 @@ export function getAllToolboxButtons(_customToolbarButtons?: {
     };
 
     const desktop = {
-        key: 'desktop',
+        key: "desktop",
         Content: ShareDesktopButton,
         group: 2,
-        display: false,
+        display: true,
     };
 
     // In Narrow layout and mobile web we are using drawer for popups and that is why it is better to include
