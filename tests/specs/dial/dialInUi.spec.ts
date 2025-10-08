@@ -1,15 +1,19 @@
 import { Participant } from '../../helpers/Participant';
+import { setTestProperties } from '../../helpers/TestProperties';
 import { config as testsConfig } from '../../helpers/TestsConfig';
 import { expectations } from '../../helpers/expectations';
 import { ensureOneParticipant } from '../../helpers/participants';
 import { assertDialInDisplayed, assertUrlDisplayed, isDialInEnabled, verifyMoreNumbersPage } from '../helpers/DialIn';
 
-describe('Invite', () => {
+setTestProperties(__filename, {
+    description: 'This tests verifies that the user interface for dial-in is displayed correctly (number, pin, \
+        "more numbers" page).'
+});
+
+describe('Dial-in UI', () => {
     let p1: Participant;
 
     it('setup', async () => {
-        // This is a temporary hack to avoid failing when running against a jaas env. The same cases are covered in
-        // jaas/dial/dialin.spec.ts.
         if (testsConfig.jaas.enabled) {
             ctx.skipSuiteTests = 'JaaS is configured.';
 
