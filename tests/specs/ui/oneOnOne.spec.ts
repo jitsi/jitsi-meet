@@ -1,8 +1,13 @@
 import type { Participant } from '../../helpers/Participant';
+import { setTestProperties } from '../../helpers/TestProperties';
 import {
     ensureThreeParticipants,
     ensureTwoParticipants
 } from '../../helpers/participants';
+
+setTestProperties(__filename, {
+    usesBrowsers: [ 'p1', 'p2', 'p3' ]
+});
 
 const ONE_ON_ONE_CONFIG_OVERRIDES = {
     configOverwrite: {
