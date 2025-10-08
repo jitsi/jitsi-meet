@@ -1,8 +1,13 @@
 import process from 'node:process';
 
+import { setTestProperties } from '../../helpers/TestProperties';
 import { expectations } from '../../helpers/expectations';
 import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
 import { cleanup, isDialInEnabled, waitForAudioFromDialInParticipant } from '../helpers/DialIn';
+
+setTestProperties(__filename, {
+    usesBrowsers: [ 'p1', 'p2' ]
+});
 
 describe('Fake Dial-In', () => {
     it('join participant', async () => {
