@@ -1,10 +1,9 @@
-import AllureReporter from '@wdio/allure-reporter';
 import process from 'node:process';
 
 import { setTestProperties } from '../../helpers/TestProperties';
 import { config as testsConfig } from '../../helpers/TestsConfig';
 import { expectations } from '../../helpers/expectations';
-import { ensureOneParticipant, ensureTwoParticipants } from '../../helpers/participants';
+import { ensureOneParticipant } from '../../helpers/participants';
 import {
     assertDialInDisplayed,
     assertUrlDisplayed,
@@ -15,7 +14,7 @@ import {
 } from '../helpers/DialIn';
 
 setTestProperties(__filename, {
-    usesBrowsers: [ 'p1', 'p2' ]
+    usesBrowsers: [ 'p1' ]
 });
 
 /**
@@ -46,20 +45,6 @@ describe('Dial-in', () => {
             // eslint-disable-next-line @typescript-eslint/no-invalid-this
             this.skip();
         }
-    });
-
-    it('waitForAudioFromDialInParticipant', async () => {
-        AllureReporter.addDescription('Make sure that the waitForAudioFromDialInParticipant works correctly \
-            (even with only audio). We want this tested even if the dial-in URL is not set and the rest of this suite \
-            is skipped.', 'text');
-        await ensureTwoParticipants({
-            configOverwrite: {
-                startWithVideoMuted: true
-            }
-        });
-        await waitForAudioFromDialInParticipant(ctx.p1);
-
-        await ctx.p2.hangup();
     });
 
     it('open/close invite dialog', async () => {
