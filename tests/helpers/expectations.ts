@@ -52,4 +52,6 @@ if (config.expectationsFile) {
 
 export const expectations = merge(defaultExpectations, overrides);
 
-console.log('Expectations:', expectations);
+if (!process.env.WDIO_WORKER_ID) {
+    console.log('Expectations:', expectations);
+}
