@@ -1,4 +1,9 @@
+import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureOneParticipant, joinFirstParticipant, joinSecondParticipant } from '../../helpers/participants';
+
+setTestProperties(__filename, {
+    usesBrowsers: [ 'p1', 'p2' ]
+});
 
 describe('PreJoin', () => {
     it('display name required', async () => {
