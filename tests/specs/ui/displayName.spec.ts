@@ -1,4 +1,9 @@
+import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureTwoParticipants } from '../../helpers/participants';
+
+setTestProperties(__filename, {
+    usesBrowsers: [ 'p1', 'p2' ]
+});
 
 describe('DisplayName', () => {
     it('joining the meeting', () => ensureTwoParticipants({ skipDisplayName: true }));
