@@ -60,7 +60,7 @@ export function isLargeVideoReceived({ getState }: IStore): boolean {
  *
  * @returns {string?} The local video track's codec.
  */
-export function getLocalCameraEncoding({ getState }: IStore): string {
+export function getLocalCameraEncoding({ getState }: IStore): string | undefined {
     return getLocalVideoTrack(getState()['features/base/tracks'])?.codec?.toLowerCase();
 }
 
