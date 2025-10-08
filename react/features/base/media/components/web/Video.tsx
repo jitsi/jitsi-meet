@@ -361,7 +361,7 @@ class Video extends Component<IProps> {
         try {
             return videoTrack.jitsiTrack.attach(this._videoElement, encodeVideo).then(() => {
                 // Force set srcObject if not set (fallback for screen sharing)
-                if (!this._videoElement?.srcObject && videoTrack.jitsiTrack.stream) {
+                if (this._videoElement && !this._videoElement.srcObject && videoTrack.jitsiTrack.stream) {
                     this._videoElement.srcObject = videoTrack.jitsiTrack.stream;
                 }
             }).catch((error: Error) => {
