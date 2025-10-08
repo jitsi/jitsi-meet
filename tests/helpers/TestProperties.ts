@@ -10,37 +10,15 @@ export type ITestProperties = {
     useJaas: boolean;
     /** The test requires the webhook proxy. */
     useWebhookProxy: boolean;
-    usesBrowsers?: string[];
+    usesBrowsers: string[];
 };
 
 const defaultProperties: ITestProperties = {
     useWebhookProxy: false,
     useJaas: false,
-    usesBrowsers: [ 'p1', 'p2', 'p3', 'p4' ]
+    usesBrowsers: [ 'p1' ]
 };
 
-function getDefaultProperties(filename: string): ITestProperties {
-    const properties = { ...defaultProperties };
-
-    properties.usesBrowsers = getDefaultBrowsers(filename);
-
-    return properties;
-}
-
-function getDefaultBrowsers(filename: string): string[] {
-    if (filename.includes('/alone/')) {
-        return [ 'p1' ];
-    }
-    if (filename.includes('/2way/')) {
-        return [ 'p1', 'p2' ];
-    }
-    if (filename.includes('/3way/')) {
-        return [ 'p1', 'p2', 'p3' ];
-    }
-
-    // Tests outside /alone/, /2way/, /3way/, /4way/ will default to p1 only.
-    return [ 'p1' ];
-}
 
 /**
  * Maps a test filename to its registered properties.
@@ -60,7 +38,7 @@ export function setTestProperties(filename: string, properties: Partial<ITestPro
         console.warn(`Test properties for ${filename} are already set. Overwriting.`);
     }
 
-    testProperties[filename] = { ...getDefaultProperties(filename), ...properties };
+    testProperties[filename] = { ...defaultProperties, ...properties };
 }
 
 let testFilesLoaded = false;
@@ -98,7 +76,7 @@ export function loadTestFiles(files: string[]): void {
                 require(file);
                 if (!testProperties[file]) {
                     // If no properties were set, apply defaults
-                    setTestProperties(file, getDefaultProperties(file));
+                    setTestProperties(file, { ...defaultProperties });
                 }
             } catch (error) {
                 console.warn(`Warning: Could not analyze ${file}:`, (error as Error).message);
@@ -127,5 +105,5 @@ export function loadTestFiles(files: string[]): void {
  * @returns Promise<ITestProperties> - The test properties with defaults applied
  */
 export async function getTestProperties(testFilePath: string): Promise<ITestProperties> {
-    return testProperties[testFilePath] || getDefaultProperties(testFilePath);
+    return testProperties[testFilePath] || { ...defaultProperties };
 }

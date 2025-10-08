@@ -32,7 +32,7 @@ const mergedConfig = merge(defaultConfig, {
         // when unmuting a participant, we see the presence in debug logs immediately,
         // but for 15 seconds it is not received/processed by the client
         // (also the menu disappears after clicking one of the moderation options, does not happen manually)
-        'specs/3way/audioVideoModeration.spec.ts'
+        'specs/media/audioVideoModeration.spec.ts'
     ],
     capabilities: {
         p1: {
