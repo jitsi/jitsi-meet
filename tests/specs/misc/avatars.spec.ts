@@ -1,5 +1,10 @@
+import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureThreeParticipants, ensureTwoParticipants } from '../../helpers/participants';
 import { unmuteVideoAndCheck } from '../helpers/mute';
+
+setTestProperties(__filename, {
+    usesBrowsers: [ 'p1', 'p2', 'p3' ]
+});
 
 const EMAIL = 'support@jitsi.org';
 const HASH = '38f014e4b7dde0f64f8157d26a8c812e';
