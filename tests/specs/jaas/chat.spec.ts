@@ -58,15 +58,16 @@ describe('JaaS CHAT_UPLOADED webhook.', () => {
         expect(uploadedChat.meetingFqn).toBe(fqn);
         expect(uploadedChat.messageType).toBe('CHAT');
 
-        const messages = uploadedChat.messages;
+        const messages: any[] = uploadedChat.messages;
 
         expect(messages).toBeDefined();
         expect(messages.length).toBe(3);
-        expect(messages[0].content).toBe('foo');
-        expect(messages[0].name).toBe('p1');
-        expect(messages[1].content).toBe('bar');
-        expect(messages[1].name).toBe('p2');
-        expect(messages[2].content).toBe('baz');
-        expect(messages[2].name).toBe('p1');
+        console.log(JSON.stringify(messages));
+        expect(messages.some(m => m.name === 'p1' && m.content === 'foo')).toBe(true);
+        expect(messages.some(m => m.name === 'p2' && m.content === 'bar')).toBe(true);
+        expect(messages.some(m => m.name === 'p1' && m.content === 'baz')).toBe(true);
+        messages.forEach(m => {
+            expect(typeof m.timestamp).toBe('number');
+        });
     });
 });

@@ -38,3 +38,13 @@ export async function joinMuc(
         roomName: joinOptions?.roomName || ctx.roomName,
     });
 }
+
+/**
+ * Wait until all participants have ICE connected and have sent and received data (their PC stats are ready).
+ * @param participants
+ */
+export async function waitForMedia(participants: Participant[]) {
+    await Promise.all(participants.map(p =>
+        p.waitForIceConnected().then(() => p.waitForSendReceiveData())
+    ));
+}

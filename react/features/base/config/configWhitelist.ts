@@ -99,6 +99,7 @@ export default [
     'disabledNotifications',
     'disabledSounds',
     'disableFilmstripAutohiding',
+    'disableFocus',
     'disableInitialGUM',
     'disableInviteFunctions',
     'disableIncomingMessageSound',

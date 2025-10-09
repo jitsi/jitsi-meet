@@ -1,6 +1,5 @@
 import { IReduxState, IStore } from '../../app/types';
 import { isTrackStreamingStatusActive } from '../../connection-indicator/functions';
-import { VIDEO_CODEC } from '../../video-quality/constants';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../media/constants';
 import { getParticipantById, isScreenShareParticipant } from '../participants/functions';
 import {
@@ -57,75 +56,12 @@ export function isLargeVideoReceived({ getState }: IStore): boolean {
 }
 
 /**
- * Returns whether the local video track is encoded in AV1.
+ * Returns the local video track's codec.
  *
- * @param {IStore} store - The redux store.
- * @returns {boolean}
+ * @returns {string?} The local video track's codec.
  */
-export function isLocalCameraEncodingAv1({ getState }: IStore): boolean {
-    const state = getState();
-    const tracks = state['features/base/tracks'];
-    const localtrack = getLocalVideoTrack(tracks);
-
-    if (localtrack?.codec?.toLowerCase() === VIDEO_CODEC.AV1) {
-        return true;
-    }
-
-    return false;
-}
-
-/**
- * Returns whether the local video track is encoded in H.264.
- *
- * @param {IStore} store - The redux store.
- * @returns {boolean}
- */
-export function isLocalCameraEncodingH264({ getState }: IStore): boolean {
-    const state = getState();
-    const tracks = state['features/base/tracks'];
-    const localtrack = getLocalVideoTrack(tracks);
-
-    if (localtrack?.codec?.toLowerCase() === VIDEO_CODEC.H264) {
-        return true;
-    }
-
-    return false;
-}
-
-/**
- * Returns whether the local video track is encoded in VP8.
- *
- * @param {IStore} store - The redux store.
- * @returns {boolean}
- */
-export function isLocalCameraEncodingVp8({ getState }: IStore): boolean {
-    const state = getState();
-    const tracks = state['features/base/tracks'];
-    const localtrack = getLocalVideoTrack(tracks);
-
-    if (localtrack?.codec?.toLowerCase() === VIDEO_CODEC.VP8) {
-        return true;
-    }
-
-    return false;
-}
-
-/**
- * Returns whether the local video track is encoded in VP9.
- *
- * @param {IStore} store - The redux store.
- * @returns {boolean}
- */
-export function isLocalCameraEncodingVp9({ getState }: IStore): boolean {
-    const state = getState();
-    const tracks = state['features/base/tracks'];
-    const localtrack = getLocalVideoTrack(tracks);
-
-    if (localtrack?.codec?.toLowerCase() === VIDEO_CODEC.VP9) {
-        return true;
-    }
-
-    return false;
+export function getLocalCameraEncoding({ getState }: IStore): string | undefined {
+    return getLocalVideoTrack(getState()['features/base/tracks'])?.codec?.toLowerCase();
 }
 
 /**

@@ -10,7 +10,7 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
-describe('Visitors', () => {
+describe('Visitors live', () => {
     let visitor: Participant, moderator: Participant;
 
     it('setup', async () => {

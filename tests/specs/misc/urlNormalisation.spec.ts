@@ -1,12 +1,16 @@
 import { setTestProperties } from '../../helpers/TestProperties';
 import { config as testsConfig } from '../../helpers/TestsConfig';
+import { expectations } from '../../helpers/expectations';
 import { joinMuc } from '../../helpers/joinMuc';
 
 setTestProperties(__filename, {
     usesBrowsers: [ 'p1' ]
 });
 
-describe('URL Normalisation', () => {
+describe('URL normalisation', () => {
+    // If we're not able to create conferences with a custom tenant, we'll only test the room name.
+    const useTenant = expectations.useTenant;
+
     const tests = [
         {
             hint: '@ sign and .',
@@ -47,12 +51,13 @@ describe('URL Normalisation', () => {
         it(test.hint, async () => {
             const fullRoom = `${test.room}${ctx.roomName}`;
             const fullRoomUrl = `${test.roomUrl}${ctx.roomName}`;
+            const tenant = useTenant ? test.tenant : undefined;
 
             const p = await joinMuc({
                 name: 'p1',
                 token: testsConfig.jwt.preconfiguredToken,
             }, {
-                tenant: test.tenant,
+                tenant: tenant,
                 roomName: fullRoom
             });
 
@@ -61,7 +66,9 @@ describe('URL Normalisation', () => {
             const path = currentUrl.pathname;
             const parts = path.split('/');
 
-            expect(parts[1]).toBe(test.tenantUrl);
+            if (useTenant) {
+                expect(parts[1]).toBe(test.tenantUrl);
+            }
             expect(parts[2]).toBe(fullRoomUrl);
 
             const mucJid = (await p.execute(() => APP.conference._room.room.roomjid)).split('@');
@@ -69,7 +76,9 @@ describe('URL Normalisation', () => {
             const domain = mucJid[1];
 
             expect(roomJid).toBe(`${test.roomJid}${ctx.roomName}`);
-            expect(domain.startsWith(`conference.${test.tenantJid}.`)).toBe(true);
+            if (useTenant) {
+                expect(domain.startsWith(`conference.${test.tenantJid}.`)).toBe(true);
+            }
         });
     }
 });

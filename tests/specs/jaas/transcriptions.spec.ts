@@ -11,7 +11,7 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
-describe('Transcriptions', () => {
+describe('Transcription', () => {
     let p1: Participant, p2: Participant;
     let webhooksProxy: WebhookProxy;
 

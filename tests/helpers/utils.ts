@@ -3,8 +3,7 @@ import { config as testsConfig } from './TestsConfig';
 const https = require('https');
 
 export function generateRoomName(testName: string) {
-    // XXX why chose between 1 and 40 and then always pad with an extra 0?
-    const rand = (Math.floor(Math.random() * 40) + 1).toString().padStart(3, '0');
+    const rand = (Math.floor(Math.random() * 400) + 1).toString();
     let roomName = `${testName}-${rand}`;
 
     if (testsConfig.roomName.prefix) {
