@@ -21,7 +21,7 @@
 #import "JitsiMeet+Private.h"
 #import "JitsiMeetConferenceOptions+Private.h"
 #import "JitsiMeetView+Private.h"
-#import "RCTBridgeWrapper.h"
+#import "RCTAppDelegateWrapper.h"
 #import "ReactUtils.h"
 #import "ScheenshareEventEmiter.h"
 
@@ -33,7 +33,7 @@
 #endif
 
 @implementation JitsiMeet {
-    RCTBridgeWrapper *_bridgeWrapper;
+    RCTAppDelegateWrapper *_appDelegateWrapper;
     NSDictionary *_launchOptions;
     ScheenshareEventEmiter *_screenshareEventEmiter;
 }
@@ -53,6 +53,8 @@
 
 - (instancetype)init {
     if (self = [super init]) {
+        NSLog(@"🚀 JitsiMeet: Initializing SDK");
+
         // Initialize WebRTC options.
         self.rtcAudioDevice = nil;
         self.webRtcLoggingSeverity = WebRTCLoggingSeverityNone;
@@ -72,7 +74,7 @@
 
 #pragma mark - Methods that the App delegate must call
 
--             (BOOL)application:(UIApplication *)application
+- (BOOL)application:(UIApplication *)application
   didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     _launchOptions = [launchOptions copy];
@@ -84,7 +86,7 @@
     return YES;
 }
 
--    (BOOL)application:(UIApplication *)application
+- (BOOL)application:(UIApplication *)application
   continueUserActivity:(NSUserActivity *)userActivity
     restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *))restorationHandler {
 
@@ -132,22 +134,29 @@
 #pragma mark - Utility methods
 
 - (void)instantiateReactNativeBridge {
-    if (_bridgeWrapper != nil) {
+    if (_appDelegateWrapper != nil) {
+        NSLog(@"🔄 JitsiMeet: Bridge already exists, skipping initialization");
         return;
     };
 
+    NSLog(@"🔧 JitsiMeet: Instantiating React Native bridge");
+    
+    // Initialize new architecture
+    NSLog(@"🏗️ JitsiMeet: Initializing new architecture");
+    _appDelegateWrapper = [[RCTAppDelegateWrapper alloc] init];
+    
     // Initialize WebRTC options.
     WebRTCModuleOptions *options = [WebRTCModuleOptions sharedInstance];
     options.audioDevice = _rtcAudioDevice;
     options.loggingSeverity = (RTCLoggingSeverity)_webRtcLoggingSeverity;
-
-    // Initialize the one and only bridge for interfacing with React Native.
-    _bridgeWrapper = [[RCTBridgeWrapper alloc] init];
+    
+    [_appDelegateWrapper configureNewArchitecture];
+    NSLog(@"✅ JitsiMeet: New architecture configured, using bridge directly");
 }
 
 - (void)destroyReactNativeBridge {
-    [_bridgeWrapper invalidate];
-    _bridgeWrapper = nil;
+    [[_appDelegateWrapper getBridge] invalidate];
+    _appDelegateWrapper = nil;
 }
 
 - (JitsiMeetConferenceOptions *)getInitialConferenceOptions {
@@ -260,11 +269,15 @@
 - (RCTBridge *)getReactBridge {
     // Initialize bridge lazily.
     [self instantiateReactNativeBridge];
-    return _bridgeWrapper.bridge;
+    RCTBridge *bridge = [_appDelegateWrapper getBridge];
+    NSLog(@"🔗 JitsiMeet: getReactBridge returning new architecture bridge: %@", bridge);
+    return bridge;
 }
 
 - (ExternalAPI *)getExternalAPI {
-    return [_bridgeWrapper.bridge moduleForClass:ExternalAPI.class];
+    RCTBridge *bridge = [_appDelegateWrapper getBridge];
+    NSLog(@"🔌 JitsiMeet: getExternalAPI using new architecture bridge: %@", bridge);
+    return [bridge moduleForClass:ExternalAPI.class];
 }
 
 @end
