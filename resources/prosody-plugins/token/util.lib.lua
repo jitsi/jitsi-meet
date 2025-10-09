@@ -383,7 +383,7 @@ function Util:verify_room(session, room_address)
     end
     local room_instance = get_room_from_jid(jid.join(room, self.muc_domain));
     if not room_instance then
-        module:log('info', 'Room does not exists:%s %s', room, debug.traceback());
+        module:log('info', 'Room does not exists:%s', room);
         return false, 'room-does-not-exist', 'Room does not exist';
     end
 
