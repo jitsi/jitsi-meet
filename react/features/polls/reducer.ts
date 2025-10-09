@@ -8,7 +8,7 @@ import {
     RECEIVE_POLL,
     REGISTER_VOTE,
     REMOVE_POLL,
-    RESET_NB_UNREAD_POLLS,
+    RESET_UNREAD_POLLS_COUNT,
     SAVE_POLL
 } from './actionTypes';
 import { IIncomingAnswerData, IPollData } from './types';
@@ -17,14 +17,14 @@ const INITIAL_STATE = {
     polls: {},
 
     // Number of not read message
-    nbUnreadPolls: 0
+    unreadPollsCount: 0
 };
 
 export interface IPollsState {
-    nbUnreadPolls: number;
     polls: {
         [pollId: string]: IPollData;
     };
+    unreadPollsCount: number;
 }
 
 const STORE_NAME = 'features/polls';
@@ -63,7 +63,7 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
                 ...state.polls,
                 [action.poll.pollId]: action.poll
             },
-            nbUnreadPolls: state.nbUnreadPolls + 1
+            unreadPollsCount: state.unreadPollsCount + 1
         };
     }
 
@@ -141,10 +141,10 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
         };
     }
 
-    case RESET_NB_UNREAD_POLLS: {
+    case RESET_UNREAD_POLLS_COUNT: {
         return {
             ...state,
-            nbUnreadPolls: 0
+            unreadPollsCount: 0
         };
     }
 
