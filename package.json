@@ -106,7 +106,7 @@
     "react-native-tab-view": "3.5.2",
     "react-native-url-polyfill": "2.0.0",
     "react-native-video": "6.13.0",
-    "react-native-webrtc": "124.0.4",
+    "react-native-webrtc": "124.0.7",
     "react-native-webview": "13.13.5",
     "react-native-worklets-core": "https://github.com/jitsi/react-native-worklets-core.git#8c5dfab2a5907305da8971696a781b60f0f9cb18",
     "react-native-youtube-iframe": "2.3.0",
