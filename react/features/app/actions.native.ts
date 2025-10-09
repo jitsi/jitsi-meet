@@ -164,7 +164,7 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
         dispatch(clearNotifications());
 
         if (!options.hidePrejoin && isPrejoinPageEnabled(getState())) {
-            if (isUnsafeRoomWarningEnabled(getState()) && isInsecureRoomName(room)) {
+            if (isUnsafeRoomWarningEnabled(getState()) && await isInsecureRoomName(room)) {
                 navigateRoot(screen.unsafeRoomWarning);
             } else {
                 navigateRoot(screen.preJoin);

@@ -7,28 +7,48 @@ import Label from '../../../base/label/components/web/Label';
 import { COLORS } from '../../../base/label/constants';
 import Tooltip from '../../../base/tooltip/components/Tooltip';
 import getUnsafeRoomText from '../../../base/util/getUnsafeRoomText.web';
-import AbstractInsecureRoomNameLabel, { _mapStateToProps } from '../AbstractInsecureRoomNameLabel';
+import useInsecureRoomName from '../../../base/util/useInsecureRoomName';
+import { isUnsafeRoomWarningEnabled } from '../../../prejoin/functions.web';
+
+interface IProps {
+    room: string | undefined;
+    t: Function;
+    unsafeRoomWarningEnabled: boolean;
+}
 
 /**
  * Renders a label indicating that we are in a room with an insecure name.
+ *
+ * @returns {JSX.Element|null} The insecure room name label component or null if not insecure.
  */
-class InsecureRoomNameLabel extends AbstractInsecureRoomNameLabel {
-    /**
-     * Renders the platform dependent content.
-     *
-     * @inheritdoc
-     */
-    override _render() {
-        return (
-            <Tooltip
-                content = { getUnsafeRoomText(this.props.t, 'meeting') }
-                position = 'bottom'>
-                <Label
-                    color = { COLORS.red }
-                    icon = { IconExclamationTriangle } />
-            </Tooltip>
-        );
+function InsecureRoomNameLabel({ room, unsafeRoomWarningEnabled, t }: IProps) {
+    const isInsecure = useInsecureRoomName(room || '', unsafeRoomWarningEnabled);
+
+    if (!isInsecure) {
+        return null;
     }
+
+    return (
+        <Tooltip
+            content = { getUnsafeRoomText(t, 'meeting') }
+            position = 'bottom'>
+            <Label
+                color = { COLORS.red }
+                icon = { IconExclamationTriangle } />
+        </Tooltip>
+    );
 }
 
-export default translate(connect(_mapStateToProps)(InsecureRoomNameLabel));
+function mapStateToProps(state: any) {
+    const { locked, room } = state['features/base/conference'];
+    const { lobbyEnabled } = state['features/lobby'];
+
+    return {
+        room,
+        unsafeRoomWarningEnabled: Boolean(isUnsafeRoomWarningEnabled(state)
+            && room
+            && !(lobbyEnabled || Boolean(locked)))
+    };
+}
+
+export default translate(connect(mapStateToProps)(InsecureRoomNameLabel));
