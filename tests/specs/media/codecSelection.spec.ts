@@ -114,14 +114,14 @@ describe('Codec selection', () => {
 
         // Check of p1 and p2 have switched to VP9.
         await p1.driver.waitUntil(
-            () => p1.execute(() => JitsiMeetJS.app.testing.getLocalCameraEncoding() === VP9),
+            () => p1.execute(c => JitsiMeetJS.app.testing.getLocalCameraEncoding() === c, VP9),
             {
                 timeout: 10000,
                 timeoutMsg: 'p1 did not switch back to VP9'
             }
         );
         await p2.driver.waitUntil(
-            () => p2.execute(() => JitsiMeetJS.app.testing.getLocalCameraEncoding() === VP9),
+            () => p2.execute(c => JitsiMeetJS.app.testing.getLocalCameraEncoding() === c, VP9),
             {
                 timeout: 10000,
                 timeoutMsg: 'p2 did not switch back to VP9'
