@@ -1,5 +1,6 @@
 import i18next from 'i18next';
 import { chunk, filter, shuffle } from 'lodash-es';
+import { Participants } from './utils';
 
 import { createBreakoutRoomsEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
@@ -70,7 +71,7 @@ export function closeBreakoutRoom(roomId: string) {
         sendAnalytics(createBreakoutRoomsEvent('close'));
 
         if (room && mainRoom) {
-            Object.values(room.participants).forEach(p => {
+            Participants.values(room).forEach(p => {
                 dispatch(sendParticipantToRoom(p.jid, mainRoom.id));
             });
         }
@@ -113,7 +114,7 @@ export function removeBreakoutRoom(breakoutRoomJid: string) {
             return;
         }
 
-        if (Object.keys(room.participants).length > 0) {
+        if (!Participants.isEmpty(room)) {
             dispatch(closeBreakoutRoom(room.id));
         }
         getCurrentConference(getState)?.getBreakoutRooms()
@@ -307,9 +308,8 @@ function _findParticipantJid(getState: IStore['getState'], participantId: string
         const rooms = getBreakoutRooms(getState);
 
         for (const room of Object.values(rooms)) {
-            const participants = room.participants || {};
-            const p = participants[_participantId]
-                || Object.values(participants).find(item => item.jid === _participantId);
+            const p = room.participants?.get(_participantId)
+                || Participants.values(room).find(item => item.jid === _participantId);
 
             if (p) {
                 participantJid = p.jid;
