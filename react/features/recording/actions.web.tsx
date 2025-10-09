@@ -14,6 +14,7 @@ import { VIDEO_MUTISM_AUTHORITY } from '../base/media/constants';
 import { showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
+import { SET_AUTO_DOWNLOAD_MEETING_DATA } from './actionTypes';
 import { showStartRecordingNotificationWithCallback } from './actions.any';
 import { StartRecordingDialog } from './components/Recording';
 import RecordingLimitNotificationDescription from './components/web/RecordingLimitNotificationDescription';
@@ -79,5 +80,18 @@ export function showStartRecordingNotification() {
         const openDialogCallback = () => dispatch(openDialog(StartRecordingDialog));
 
         dispatch(showStartRecordingNotificationWithCallback(openDialogCallback));
+    };
+}
+
+/**
+ * Sets the preference for automatically downloading meeting data when recording stops.
+ *
+ * @param {boolean} enabled - Whether to enable or disable the automatic download.
+ * @returns {Object}
+ */
+export function setAutoDownloadMeetingData(enabled: boolean) {
+    return {
+        type: SET_AUTO_DOWNLOAD_MEETING_DATA,
+        enabled
     };
 }
