@@ -9,7 +9,6 @@ import '../mobile/permissions/middleware';
 import '../mobile/proximity/middleware';
 import '../mobile/wake-lock/middleware';
 import '../mobile/react-native-sdk/middleware';
-import '../mobile/watchos/middleware';
 import '../share-room/middleware';
 import '../shared-video/middleware';
 import '../toolbox/middleware.native';

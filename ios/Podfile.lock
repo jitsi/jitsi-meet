@@ -1870,8 +1870,6 @@ PODS:
     - React-Core
   - RNSVG (15.11.2):
     - React-Core
-  - RNWatch (1.1.0):
-    - React
   - SocketRocket (0.7.1)
   - SplashView (0.0.18):
     - DoubleConversion
@@ -1993,7 +1991,6 @@ DEPENDENCIES:
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSound (from `../node_modules/react-native-sound`)
   - RNSVG (from `../node_modules/react-native-svg`)
-  - RNWatch (from `../node_modules/react-native-watch-connectivity`)
   - SplashView (from `../node_modules/react-native-splash-view`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -2203,8 +2200,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-sound"
   RNSVG:
     :path: "../node_modules/react-native-svg"
-  RNWatch:
-    :path: "../node_modules/react-native-watch-connectivity"
   SplashView:
     :path: "../node_modules/react-native-splash-view"
   Yoga:
@@ -2321,11 +2316,10 @@ SPEC CHECKSUMS:
   RNScreens: 9ef996b6041d0960a4794a845f7d0808b171b4ef
   RNSound: 314cc5226453ef4a3314a196c65e8a65e5106a7b
   RNSVG: 67de7abef81f367387b708ba6d2acefe7d4f5895
-  RNWatch: 28fe1f5e0c6410d45fd20925f4796fce05522e3f
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   SplashView: ed71a114c3ffe60dc3a9e5aa2cefb352c3794a70
   Yoga: 31a098f74c16780569aebd614a0f37a907de0189
 
-PODFILE CHECKSUM: eac4bba07b2f30174fc20bccbaf64f86676d9b1f
+PODFILE CHECKSUM: 7c37a89916893e11159576c8b308b7b5c25246c9
 
 COCOAPODS: 1.16.2

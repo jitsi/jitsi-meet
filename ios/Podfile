@@ -44,7 +44,6 @@ target 'JitsiMeetSDK' do
   pod 'giphy-react-native-sdk', :path => '../node_modules/@giphy/react-native-sdk'
   pod 'RNCalendarEvents', :path => '../node_modules/react-native-calendar-events'
   pod 'RNGoogleSignin', :path => '../node_modules/@react-native-google-signin/google-signin'
-  pod 'RNWatch', :path => '../node_modules/react-native-watch-connectivity'
 
   # Native pod dependencies
   #
