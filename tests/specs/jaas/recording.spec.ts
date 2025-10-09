@@ -15,7 +15,7 @@ setTestProperties(__filename, {
  * TODO: read flags from config.
  * TODO: also assert "this meeting is being recorder" notificaitons are show/played?
  */
-describe('Recording and Live Streaming', () => {
+describe('Recording and live-streaming', () => {
     const tenant = testsConfig.jaas.tenant;
     const customerId = tenant?.replace('vpaas-magic-cookie-', '');
     // TODO: read from config
