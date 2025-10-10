@@ -1,6 +1,6 @@
 {
     "name": "@jitsi/react-native-sdk",
-    "version": "11.6.0",
+    "version": "11.6.1",
     "description": "React Native SDK for Jitsi Meet.",
     "main": "index.tsx",
     "license": "Apache-2.0",
@@ -31,7 +31,7 @@
         "i18next-http-backend": "2.2.1",
         "js-sha512": "0.8.0",
         "jwt-decode": "2.2.0",
-        "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v2100.0.0+0d2e5fef/lib-jitsi-meet.tgz",
+        "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v2101.0.0+8061f52a/lib-jitsi-meet.tgz",
         "lodash-es": "4.17.21",
         "optional-require": "1.0.3",
         "promise.withresolvers": "1.0.3",
@@ -81,7 +81,7 @@
         "react-native-svg": "15.11.2",
         "react-native-video": "6.13.0",
         "react-native-watch-connectivity": "1.1.0",
-        "react-native-webrtc": "124.0.4",
+        "react-native-webrtc": "124.0.7",
         "react-native-webview": "13.13.5",
         "react-native-worklets-core": "https://github.com/jitsi/react-native-worklets-core.git#8c5dfab2a5907305da8971696a781b60f0f9cb18"
     },
