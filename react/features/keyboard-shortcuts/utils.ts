@@ -17,6 +17,56 @@ const _elementsBlacklist = [
     '[role=log]'
 ];
 
+const codeMap = new Map<string, string>([
+    [ 'Backquote', 'Backquote' ],
+    [ 'Digit1', '1' ],
+    [ 'Digit2', '2' ],
+    [ 'Digit3', '3' ],
+    [ 'Digit4', '4' ],
+    [ 'Digit5', '5' ],
+    [ 'Digit6', '6' ],
+    [ 'Digit7', '7' ],
+    [ 'Digit8', '8' ],
+    [ 'Digit9', '9' ],
+    [ 'Digit0', '0' ],
+    [ 'Minus', 'Minus' ],
+    [ 'Equal', 'Equal' ],
+    [ 'KeyQ', 'Q' ],
+    [ 'KeyW', 'W' ],
+    [ 'KeyE', 'E' ],
+    [ 'KeyR', 'R' ],
+    [ 'KeyT', 'T' ],
+    [ 'KeyY', 'Y' ],
+    [ 'KeyU', 'U' ],
+    [ 'KeyI', 'I' ],
+    [ 'KeyO', 'O' ],
+    [ 'KeyP', 'P' ],
+    [ 'BracketLeft', 'BracketLeft' ],
+    [ 'BracketRight', 'BracketRight' ],
+    [ 'Backslash', 'Backslash' ],
+    [ 'KeyA', 'A' ],
+    [ 'KeyS', 'S' ],
+    [ 'KeyD', 'D' ],
+    [ 'KeyF', 'F' ],
+    [ 'KeyG', 'G' ],
+    [ 'KeyH', 'H' ],
+    [ 'KeyJ', 'J' ],
+    [ 'KeyK', 'K' ],
+    [ 'KeyL', 'L' ],
+    [ 'Semicolon', 'Semicolon' ],
+    [ 'Quote', 'Quote' ],
+    [ 'KeyZ', 'Z' ],
+    [ 'KeyX', 'X' ],
+    [ 'KeyC', 'C' ],
+    [ 'KeyV', 'V' ],
+    [ 'KeyB', 'B' ],
+    [ 'KeyN', 'N' ],
+    [ 'KeyM', 'M' ],
+    [ 'Comma', 'Comma' ],
+    [ 'Period', 'Period' ],
+    [ 'Slash', 'Slash' ]
+]);
+
 /**
 * Returns the currently focused element if it is not blacklisted.
 *
@@ -35,13 +85,12 @@ export const getKeyboardKey = (e: KeyboardEvent): string => {
     // @ts-ignore
     const { altKey, code, key, shiftKey, type, which, ctrlKey } = e;
 
-    // If alt is pressed a different char can be returned so this takes
-    // the char from the code. It also prefixes with a colon to differentiate
-    // alt combo from simple keypress.
-    if (altKey) {
-        const replacedKey = code.replace('Key', '');
+    // In the codeMap, all characters that may vary depending on the keyboard layout
+    // or the Alt key press are listed. Therefore, the key is identified by its code.
+    const realKey = codeMap.get(code);
 
-        return `:${replacedKey}`;
+    if (realKey != undefined) {
+        return altKey ? `:${realKey}` : realKey;
     }
 
     // If e.key is a string, then it is assumed it already plainly states
