@@ -1,4 +1,4 @@
-import amplitude from '@amplitude/analytics-react-native';
+import * as amplitude from '@amplitude/analytics-react-native';
 
 export default amplitude;
 
