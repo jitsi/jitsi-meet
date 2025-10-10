@@ -9,9 +9,10 @@ import { getParticipantById, getParticipantDisplayName, isPrivateChatEnabled } f
 import Popover from '../../../base/popover/components/Popover.web';
 import Message from '../../../base/react/components/web/Message';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
-import { getDisplayNameSuffix, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage } from '../../functions';
+import { getDisplayNameSuffix, getFormattedTimestamp, getMessageText, getPrivateNoticeMessage, isFileMessage } from '../../functions';
 import { IChatMessageProps } from '../../types';
 
+import FileMessage from './FileMessage';
 import MessageMenu from './MessageMenu';
 import ReactButton from './ReactButton';
 
@@ -47,6 +48,22 @@ const useStyles = makeStyles()((theme: Theme) => {
             maxWidth: '100%',
             marginTop: '4px',
             boxSizing: 'border-box' as const,
+
+            '&.file': {
+                display: 'flex',
+                maxWidth: '100%',
+                minWidth: 0,
+
+                '& $replyWrapper': {
+                    width: '100%',
+                    minWidth: 0
+                },
+
+                '& $messageContent': {
+                    width: '100%',
+                    minWidth: 0
+                }
+            },
 
             '&.privatemessage': {
                 backgroundColor: theme.palette.support05
@@ -117,8 +134,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
         messageContent: {
             maxWidth: '100%',
-            overflow: 'hidden',
-            flex: 1
+            overflow: 'hidden'
         },
         optionsButtonContainer: {
             display: 'flex',
@@ -344,6 +360,7 @@ const ChatMessage = ({
                         {isHovered && <MessageMenu
                             displayName = { message.displayName }
                             enablePrivateChat = { Boolean(enablePrivateChat) }
+                            isFileMessage = { isFileMessage(message) }
                             isFromVisitor = { message.isFromVisitor }
                             isLobbyMessage = { message.lobbyChat }
                             message = { message.message }
@@ -356,19 +373,31 @@ const ChatMessage = ({
                         classes.chatMessage,
                         className,
                         message.privateMessage && 'privatemessage',
-                        message.lobbyChat && !knocking && 'lobbymessage'
+                        message.lobbyChat && !knocking && 'lobbymessage',
+                        isFileMessage(message) && 'file'
                     ) }>
                     <div className = { classes.replyWrapper }>
                         <div className = { cx('messagecontent', classes.messageContent) }>
                             {showDisplayName && _renderDisplayName()}
                             <div className = { cx('usermessage', classes.userMessage) }>
-                                <Message
-                                    screenReaderHelpText = { message.displayName === message.recipient
-                                        ? t<string>('chat.messageAccessibleTitleMe')
-                                        : t<string>('chat.messageAccessibleTitle', {
-                                            user: message.displayName
-                                        }) }
-                                    text = { getMessageText(message) } />
+                                {isFileMessage(message) ? (
+                                    <FileMessage
+                                        message = { message }
+                                        screenReaderHelpText = { message.messageType === MESSAGE_TYPE_LOCAL
+                                            ? t<string>('chat.fileAccessibleTitleMe')
+                                            : t<string>('chat.fileAccessibleTitle', {
+                                                user: message.displayName
+                                            })
+                                        } />
+                                ) : (
+                                    <Message
+                                        screenReaderHelpText = { message.messageType === MESSAGE_TYPE_LOCAL
+                                            ? t<string>('chat.messageAccessibleTitleMe')
+                                            : t<string>('chat.messageAccessibleTitle', {
+                                                user: message.displayName
+                                            }) }
+                                        text = { getMessageText(message) } />
+                                )}
                                 {(message.privateMessage || (message.lobbyChat && !knocking))
                                     && _renderPrivateNotice()}
                                 <div className = { classes.chatMessageFooter }>
@@ -400,6 +429,7 @@ const ChatMessage = ({
                                 {isHovered && <MessageMenu
                                     displayName = { message.displayName }
                                     enablePrivateChat = { Boolean(enablePrivateChat) }
+                                    isFileMessage = { isFileMessage(message) }
                                     isFromVisitor = { message.isFromVisitor }
                                     isLobbyMessage = { message.lobbyChat }
                                     message = { message.message }

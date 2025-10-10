@@ -27,7 +27,7 @@ const useStyles = makeStyles()(theme => {
             flexDirection: 'column',
             maxWidth: '100%',
 
-            '&.remote': {
+            '&.remote, &.file': {
                 maxWidth: 'calc(100% - 40px)' // 100% - avatar and margin
             }
         },
