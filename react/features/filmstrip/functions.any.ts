@@ -1,8 +1,5 @@
 import { IReduxState, IStore } from '../app/types';
-import {
-    getActiveSpeakersToBeDisplayed,
-    getVirtualScreenshareParticipantOwnerId
-} from '../base/participants/functions';
+import { getParticipantById, getVirtualScreenshareParticipantOwnerId } from '../base/participants/functions';
 
 import { setRemoteParticipants } from './actions';
 import { isFilmstripScrollVisible } from './functions';
@@ -33,14 +30,24 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
     }
 
     const {
+        dominantSpeaker,
         fakeParticipants,
+        previousSpeakers,
         sortedRemoteParticipants
     } = state['features/base/participants'];
+    const { visibleRemoteParticipants } = state['features/filmstrip'];
     const remoteParticipants = new Map(sortedRemoteParticipants);
     const screenShareParticipants = sortedRemoteVirtualScreenshareParticipants
         ? [ ...sortedRemoteVirtualScreenshareParticipants.keys() ] : [];
     const sharedVideos = fakeParticipants ? Array.from(fakeParticipants.keys()) : [];
-    const speakers = getActiveSpeakersToBeDisplayed(state);
+    const speakers = new Map();
+    const dominant = dominantSpeaker ? getParticipantById(state, dominantSpeaker) : undefined;
+
+    // Generate the remote active speakers list.
+    if (dominant && !dominant.local) {
+        speakers.set(dominant.id, dominant.name);
+    }
+    previousSpeakers.forEach((name, id) => speakers.set(id, name));
 
     for (const screenshare of screenShareParticipants) {
         const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
@@ -57,7 +64,16 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
         remoteParticipants.delete(speaker);
     }
 
-    // Always update the order of the thubmnails.
+    // Calculate the number of slots available for active speakers and sort them alphabetically to ensure consistent order.
+    const numberOfActiveSpeakerSlots = visibleRemoteParticipants.size - (screenShareParticipants.length * 2) - sharedVideos.length;
+    const activeSpeakersDisplayed = Array.from(speakers).slice(0, numberOfActiveSpeakerSlots)
+        .sort((a: any, b: any) => a[1].localeCompare(b[1]))
+        .reduce((acc, val) => {
+            acc.push(val[0]);
+
+            return acc;
+        }, [] as string[]);
+
     const participantsWithScreenShare = screenShareParticipants.reduce<string[]>((acc, screenshare) => {
         const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
 
@@ -67,10 +83,11 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
         return acc;
     }, []);
 
+    // Always update the order of the thumbnails.
     reorderedParticipants = [
         ...participantsWithScreenShare,
         ...sharedVideos,
-        ...Array.from(speakers.keys()),
+        ...activeSpeakersDisplayed,
         ...Array.from(remoteParticipants.keys())
     ];
 
