@@ -282,15 +282,18 @@ const PreMeetingScreen = ({
  * @returns {Object}
  */
 function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
-    const { hiddenPremeetingButtons } = state['features/base/config'];
+    const { hiddenPremeetingButtons, prejoinConfig } = state['features/base/config'];
     const { toolbarButtons } = state['features/toolbox'];
-    const { showHangUp = true } = getLobbyConfig(state);
     const { knocking } = state['features/lobby'];
+    const { showHangUp: showHangUpLobby = true } = getLobbyConfig(state);
+    const { showHangUp: showHangUpPrejoin = true } = prejoinConfig || {};
     const premeetingButtons = (ownProps.thirdParty
         ? THIRD_PARTY_PREJOIN_BUTTONS
         : PREMEETING_BUTTONS).filter((b: any) => !(hiddenPremeetingButtons || []).includes(b));
 
-    if (showHangUp && knocking && !premeetingButtons.includes('hangup')) {
+    const shouldShowHangUp = knocking ? showHangUpLobby : showHangUpPrejoin;
+
+    if (shouldShowHangUp && !premeetingButtons.includes('hangup')) {
         premeetingButtons.push('hangup');
     }
 
