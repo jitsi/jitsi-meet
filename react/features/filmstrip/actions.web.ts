@@ -106,7 +106,7 @@ export function setTileViewDimensions() {
                 disableTileEnlargement,
                 maxColumns,
                 numberOfParticipants,
-                desiredNumberOfVisibleTiles: Math.min(numberOfVisibleTiles, 6)
+                desiredNumberOfVisibleTiles: numberOfVisibleTiles
             });
         const thumbnailsTotalHeight = (rows ?? 1) * (TILE_VERTICAL_MARGIN + (height ?? 0));
         const availableHeight = clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN;
@@ -181,7 +181,7 @@ export function setVerticalViewDimensions() {
                 maxColumns,
                 noHorizontalContainerMargin: true,
                 numberOfParticipants,
-                desiredNumberOfVisibleTiles: Math.min(numberOfVisibleTiles, 6)
+                desiredNumberOfVisibleTiles: numberOfVisibleTiles
             });
             const thumbnailsTotalHeight = (rows ?? 1) * (TILE_VERTICAL_MARGIN + (height ?? 0));
 
