@@ -136,17 +136,17 @@ class ThumbnailWrapper extends Component<IProps> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState, ownProps: { columnIndex: number;
-    data: { filmstripType: string; }; index?: number; rowIndex: number; }) {
+    data: { filmstripType: string; remoteParticipants?: Array<string>; includeLocal?: boolean; iAmRecorder?: boolean; }; index?: number; rowIndex: number; }) {
     const _currentLayout = getCurrentLayout(state);
-    const { remoteParticipants: remote } = state['features/filmstrip'];
-    const activeParticipants = getActiveParticipantsIds(state);
     const disableSelfView = getHideSelfView(state);
     const _verticalViewGrid = showGridInVerticalView(state);
     const filmstripType = ownProps.data?.filmstripType;
     const stageFilmstrip = filmstripType === FILMSTRIP_TYPE.STAGE;
-    const sortedActiveParticipants = activeParticipants.sort();
-    const remoteParticipants = stageFilmstrip ? sortedActiveParticipants : remote;
+    const providedRemotes = ownProps.data?.remoteParticipants ?? [];
+    const remoteParticipants = providedRemotes;
     const remoteParticipantsLength = remoteParticipants.length;
+    const includeLocal = Boolean(ownProps.data?.includeLocal);
+    const iAmRecorderFromData = Boolean(ownProps.data?.iAmRecorder);
     const localId = getLocalParticipant(state)?.id;
 
     if (_currentLayout === LAYOUTS.TILE_VIEW || _verticalViewGrid || stageFilmstrip) {
@@ -166,24 +166,21 @@ function _mapStateToProps(state: IReduxState, ownProps: { columnIndex: number;
         const { columns = 1, rows = 1 } = gridDimensions ?? {};
         const index = (rowIndex * columns) + columnIndex;
         let horizontalOffset, thumbnailWidth;
-        const { iAmRecorder, disableTileEnlargement } = state['features/base/config'];
+        const { iAmRecorder: iAmRecorderCfg, disableTileEnlargement } = state['features/base/config'];
         const { localScreenShare } = state['features/base/participants'];
-        const localParticipantsLength = localScreenShare ? 2 : 1;
+        const iAmRecorder = iAmRecorderFromData || Boolean(iAmRecorderCfg);
+        const localParticipantsLength = (includeLocal ? 1 : 0) + (localScreenShare ? 1 : 0);
 
         let participantsLength;
 
         if (stageFilmstrip) {
-            // We use the length of activeParticipants in stage filmstrip which includes local participants.
+            // We use the length of provided remote participants for stage filmstrip.
             participantsLength = remoteParticipantsLength;
         } else {
-            // We need to include the local screenshare participant in tile view.
+            // Include local camera (if allowed) and local screen share tiles.
             participantsLength = remoteParticipantsLength
-
-            // Add local camera and screen share to total participant count when self view is not disabled.
-            + (disableSelfView ? 0 : localParticipantsLength)
-
-            // Removes iAmRecorder from the total participants count.
-            - (iAmRecorder ? 1 : 0);
+                + localParticipantsLength
+                - (iAmRecorder ? 1 : 0);
         }
 
         if (rowIndex === rows - 1) { // center the last row
@@ -225,16 +222,16 @@ function _mapStateToProps(state: IReduxState, ownProps: { columnIndex: number;
             };
         }
 
-        // When the thumbnails are reordered, local participant is inserted at index 0.
-        const localIndex = disableSelfView ? remoteParticipantsLength : 0;
+        // When the thumbnails are reordered, local participant is inserted at index 0 if included.
+        const localIndex = includeLocal ? 0 : remoteParticipantsLength;
 
-        // Local screen share is inserted at index 1 after the local camera.
-        const localScreenShareIndex = disableSelfView ? remoteParticipantsLength : 1;
-        const remoteIndex = !iAmRecorder && !disableSelfView
+        // Local screen share is inserted after the local camera if both are included, otherwise at index 0.
+        const localScreenShareIndex = includeLocal ? 1 : 0;
+        const remoteIndex = !iAmRecorder
             ? index - localParticipantsLength
             : index;
 
-        if (!iAmRecorder && index === localIndex) {
+        if (!iAmRecorder && includeLocal && index === localIndex) {
             return {
                 _disableSelfView: disableSelfView,
                 _filmstripType: filmstripType,
