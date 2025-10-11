@@ -16,13 +16,11 @@ import Icon from '../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../base/icons/svg';
 import { isNarrowScreenWithChatOpen } from '../../../base/responsive-ui/functions';
 import { getHideSelfView } from '../../../base/settings/functions.any';
-import { getLocalParticipant } from '../../../base/participants/functions';
 import { registerShortcut, unregisterShortcut } from '../../../keyboard-shortcuts/actions';
 import { showToolbox } from '../../../toolbox/actions.web';
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
 import { LAYOUTS } from '../../../video-layout/constants';
 import { getCurrentLayout } from '../../../video-layout/functions.web';
-import { isVideoPlayable } from '../../functions.web';
 import {
     setFilmstripVisible,
     setTopPanelVisible,
@@ -314,11 +312,6 @@ export interface IProps extends WithTranslation {
     * Whether or not the toolbox is displayed.
     */
     _isToolboxVisible: Boolean;
-
-    /**
-     * Whether the local camera video is playable; used to hide local tile when camera off.
-     */
-    _isLocalVideoPlayable?: boolean;
 
     /**
      * Whether or not the current layout is vertical filmstrip.
@@ -618,7 +611,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
                         className = 'filmstrip__videos'
                         id = 'filmstripLocalVideo'>
                         {
-                            !tileViewActive && filmstripType === FILMSTRIP_TYPE.MAIN && this.props._isLocalVideoPlayable
+                            !tileViewActive && filmstripType === FILMSTRIP_TYPE.MAIN
                             && <div id = 'filmstripLocalVideoThumbnail'>
                                 <Thumbnail
                                     filmstripType = { FILMSTRIP_TYPE.MAIN }
@@ -1128,9 +1121,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const _isVerticalFilmstrip = _currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW
         || (filmstripType === FILMSTRIP_TYPE.MAIN && _currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW);
 
-    const localId = getLocalParticipant(state)?.id;
-    const _isLocalVideoPlayable = localId ? isVideoPlayable(state, localId) : false;
-
     return {
         _className: className,
         _chatOpen: state['features/chat'].isOpen,
@@ -1142,7 +1132,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
         _isNarrowScreenWithChatOpen: isNarrowScreenWithChatOpen(state),
         _isToolboxVisible: isToolboxVisible(state),
-        _isLocalVideoPlayable,
         _isVerticalFilmstrip,
         _localScreenShareId: localScreenShare?.id,
         _mainFilmstripVisible: notDisabled,
