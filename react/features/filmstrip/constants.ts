@@ -51,7 +51,7 @@ export const TILE_PORTRAIT_ASPECT_RATIO = 1 / 1.3;
 /**
  * The default number of visible tiles for tile view.
  */
-export const TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES = 25;
+export const TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES = 6;
 
 /**
  * The default number of columns for tile view.
