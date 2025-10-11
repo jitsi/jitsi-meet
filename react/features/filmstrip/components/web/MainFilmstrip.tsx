@@ -3,8 +3,10 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
+import { getParticipantById } from '../../../base/participants/functions';
 import { LAYOUTS } from '../../../video-layout/constants';
 import { getCurrentLayout } from '../../../video-layout/functions.web';
+import { isVideoPlayable } from '../../functions.web';
 import {
     ASPECT_RATIO_BREAKPOINT,
     FILMSTRIP_BREAKPOINT,
@@ -190,12 +192,28 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     }
     }
 
+    // Filter out participants who do not have a playable camera video, but keep fake/shared-video
+    // and screenshare participants visible.
+    const _remoteParticipants = (remoteParticipants || []).filter((id: string) => {
+        const p = getParticipantById(state, id);
+
+        if (!p) {
+            return false;
+        }
+
+        if (p.fakeParticipant) {
+            return true;
+        }
+
+        return isVideoPlayable(state, id);
+    });
+
     return {
         _columns: gridDimensions.columns ?? 1,
         _filmstripHeight: remoteFilmstripHeight,
         _filmstripWidth: remoteFilmstripWidth,
         _hasScroll,
-        _remoteParticipants: remoteParticipants,
+        _remoteParticipants,
         _resizableFilmstrip,
         _rows: gridDimensions.rows ?? 1,
         _thumbnailWidth: _thumbnailSize?.width,

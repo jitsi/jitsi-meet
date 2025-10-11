@@ -3,8 +3,10 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
+import { getParticipantById } from '../../../base/participants/functions';
 import { LAYOUTS, LAYOUT_CLASSNAMES } from '../../../video-layout/constants';
 import { getCurrentLayout } from '../../../video-layout/functions.web';
+import { isVideoPlayable } from '../../functions.web';
 import {
     ASPECT_RATIO_BREAKPOINT,
     FILMSTRIP_TYPE,
@@ -141,12 +143,27 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         collapseTileView && filmstripPadding > 0 ? filmstripPadding : 0);
     const _topPanelFilmstrip = isStageFilmstripTopPanel(state);
 
+    // Filter active participants to only those with playable camera video or fake/shared videos.
+    const _remoteParticipants = (activeParticipants || []).filter((id: string) => {
+        const p = getParticipantById(state, id);
+
+        if (!p) {
+            return false;
+        }
+
+        if (p.fakeParticipant) {
+            return true;
+        }
+
+        return isVideoPlayable(state, id);
+    });
+
     return {
         _columns: gridDimensions.columns ?? 1,
         _currentLayout: getCurrentLayout(state),
         _filmstripHeight: remoteFilmstripHeight,
         _filmstripWidth: filmstripWidth,
-        _remoteParticipants: activeParticipants,
+        _remoteParticipants,
         _resizableFilmstrip: isFilmstripResizable(state) && _topPanelFilmstrip,
         _rows: gridDimensions.rows ?? 1,
         _thumbnailWidth: thumbnailSize?.width,
