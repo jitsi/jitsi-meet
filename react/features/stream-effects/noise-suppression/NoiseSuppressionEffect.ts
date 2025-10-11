@@ -1,6 +1,8 @@
 import { INoiseSuppressionConfig } from '../../base/config/configType';
 import { getBaseUrl } from '../../base/util/helpers';
 
+import workletUrl from "./NoiseSuppressorWorklet?worker&url";
+
 import logger from './logger';
 
 interface IKrispState {
@@ -179,7 +181,7 @@ async function _initializeKrisp(
 
     if (!krispState.sdk) {
         const baseUrl = `${getBaseUrl()}libs/krisp`;
-        const { default: KrispSDK } = await import(/* webpackIgnore: true */ `${baseUrl}/krispsdk.mjs`);
+        const { default: KrispSDK } = await import(/* webpackIgnore: true */ /* @vite-ignore */ `${baseUrl}/krispsdk.mjs`);
 
         const ncParams = {
             krisp: {
@@ -259,9 +261,6 @@ async function _initializeKrisp(
  */
 async function _initializeKRnnoise(): Promise<AudioWorkletNode | undefined> {
     await audioContext.resume();
-
-    const baseUrl = `${getBaseUrl()}libs/`;
-    const workletUrl = `${baseUrl}noise-suppressor-worklet.min.js`;
 
     try {
         await audioContext.audioWorklet.addModule(workletUrl);
