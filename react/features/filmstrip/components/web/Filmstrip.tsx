@@ -919,7 +919,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
                     height = { _filmstripHeight }
                     initialScrollLeft = { 0 }
                     initialScrollTop = { 0 }
-                    itemData = {{ filmstripType, remoteParticipants: this.props._remoteParticipants, includeLocal: !this.props._disableSelfView && Boolean(this.props._isLocalVideoPlayable), iAmRecorder: this.props._iAmRecorder }}
+                    itemData = {{ filmstripType }}
                     itemKey = { this._gridItemKey }
                     onItemsRendered = { this._onGridItemsRendered }
                     overscanRowCount = { 1 }

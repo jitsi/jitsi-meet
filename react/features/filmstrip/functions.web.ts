@@ -219,30 +219,11 @@ export function getTileDefaultAspectRatio(disableResponsiveTiles: boolean,
 export function getNumberOfPartipantsForTileView(state: IReduxState) {
     const { iAmRecorder } = state['features/base/config'];
     const disableSelfView = getHideSelfView(state);
-    const { localScreenShare, sortedRemoteParticipants, sortedRemoteVirtualScreenshareParticipants, fakeParticipants } = state['features/base/participants'];
-
-    // Remote camera tiles: only those with playable video
-    const remoteCameraIds = Array.from(sortedRemoteParticipants?.keys?.() ?? []);
-    const remotePlayableCount = remoteCameraIds.reduce((acc, id) => acc + (isVideoPlayable(state, id) ? 1 : 0), 0);
-
-    // Remote screenshares are always shown
-    const remoteScreenshareCount = sortedRemoteVirtualScreenshareParticipants?.size ?? 0;
-
-    // Shared videos / fake participants are always shown
-    const sharedVideosCount = fakeParticipants ? fakeParticipants.size : 0;
-
-    // Local tiles: include camera only if self-view enabled and playable; include local screenshare if present
-    const localId = getLocalParticipant(state)?.id;
-    const includeLocalCamera = !disableSelfView && (localId ? isVideoPlayable(state, localId) : false);
-    const localCameraCount = includeLocalCamera ? 1 : 0;
-    const localScreenshareCount = localScreenShare ? 1 : 0;
-
-    const numberOfParticipants = remotePlayableCount
-        + remoteScreenshareCount
-        + sharedVideosCount
-        + localCameraCount
-        + localScreenshareCount
-        - (iAmRecorder ? 1 : 0);
+    const { localScreenShare } = state['features/base/participants'];
+    const localParticipantsCount = localScreenShare ? 2 : 1;
+    const numberOfParticipants = getParticipantCountWithFake(state)
+        - (iAmRecorder ? 1 : 0)
+        - (disableSelfView ? localParticipantsCount : 0);
 
     return numberOfParticipants;
 }
