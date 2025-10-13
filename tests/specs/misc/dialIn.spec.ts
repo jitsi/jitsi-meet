@@ -50,6 +50,7 @@ describe('Dial-in', () => {
     it('open/close invite dialog', async () => {
         await ctx.p1.getInviteDialog().open();
         await ctx.p1.getInviteDialog().clickCloseButton();
+        await ctx.p1.getInviteDialog().waitTillOpen(true);
     });
 
     it('dial-in displayed', async function() {
