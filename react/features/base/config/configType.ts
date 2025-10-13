@@ -524,6 +524,7 @@ export interface IConfig {
         hideExtraJoinButtons?: Array<string>;
         preCallTestEnabled?: boolean;
         preCallTestICEUrl?: string;
+        showHangUp?: boolean;
     };
     raisedHands?: {
         disableLowerHandByModerator?: boolean;
