@@ -654,6 +654,7 @@ export interface IConfig {
             video?: boolean;
         };
         queueService: string;
+        showJoinMeetingDialog?: boolean;
     };
     watchRTCConfigParams?: IWatchRTCConfiguration;
     webhookProxyUrl?: string;
