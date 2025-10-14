@@ -98,9 +98,16 @@ describe('XMPP login and MUC join', () => {
         }
     });
 
-    // it('without sending a conference-request', async () => {
-    //     console.log('Joining a MUC without sending a conference-request');
-    //     // TODO verify failure
-    //     //expect(await joinMuc(ctx.roomName, 'p1', token)).toBe(true);
-    // });
+    it('without sending a conference-request', async () => {
+        console.log('Joining a MUC without sending a conference-request');
+        const p = await joinJaasMuc({
+            token: t({ room: `${ctx.roomName}-no-cf` })
+        }, {
+            configOverwrite: {
+                disableFocus: true // this effectively disables the sending of a conference-request
+            }
+        });
+
+        expect(Boolean(await p.isInMuc())).toBe(false);
+    });
 });
