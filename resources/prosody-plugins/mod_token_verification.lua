@@ -69,8 +69,18 @@ local function verify_user(session, stanza)
     local user_bare_jid = jid_bare(user_jid);
     local _, user_domain = jid_split(user_jid);
 
-    -- allowlist for participants
-    if allowlist:contains(user_domain) or allowlist:contains(user_bare_jid) then
+    -- allowlist for participants, jigasi (sip & transcriber), jibri (recorder & sip)
+    if allowlist:contains(user_domain)
+        or allowlist:contains(user_bare_jid)
+        -- Let Jigasi or transcriber pass throw
+        or util.is_sip_jigasi(stanza)
+        or util.is_transcriber_jigasi(stanza)
+
+        -- is jibri
+        or util.is_jibri(user_jid)
+
+        -- Let Sip Jibri pass through
+        or util.is_sip_jibri_join(stanza) then
         if DEBUG then module:log("debug", "Token not required from user in allow list: %s", user_jid); end
         return true;
     end
