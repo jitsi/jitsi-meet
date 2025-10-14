@@ -656,6 +656,7 @@ export interface IConfig {
         };
         hideVisitorCountForVisitors?: boolean;
         queueService: string;
+        showJoinMeetingDialog?: boolean;
     };
     watchRTCConfigParams?: IWatchRTCConfiguration;
     webhookProxyUrl?: string;
