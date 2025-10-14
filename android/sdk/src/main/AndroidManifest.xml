@@ -62,7 +62,8 @@
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
-            android:exported="false">
+            android:exported="false"
+            tools:node="merge">
             <meta-data  android:name="org.jitsi.meet.sdk.JitsiInitializer"
                 android:value="androidx.startup" />
         </provider>
