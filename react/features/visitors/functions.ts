@@ -45,7 +45,15 @@ export function iAmVisitor(stateful: IStateful) {
  * @returns {number} - The number of visitors.
  */
 export function getVisitorsCount(stateful: IStateful) {
-    return toState(stateful)['features/visitors'].count ?? 0;
+    const state = toState(stateful);
+    const { hideVisitorCountForVisitors } = state['features/base/config'].visitors || {};
+    const isVisitor = state['features/visitors'].iAmVisitor;
+
+    if (isVisitor && hideVisitorCountForVisitors) {
+        return 0;
+    }
+
+    return state['features/visitors'].count ?? 0;
 }
 
 /**

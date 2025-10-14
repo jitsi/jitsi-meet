@@ -654,6 +654,7 @@ export interface IConfig {
             audio?: boolean;
             video?: boolean;
         };
+        hideVisitorCountForVisitors?: boolean;
         queueService: string;
     };
     watchRTCConfigParams?: IWatchRTCConfiguration;
