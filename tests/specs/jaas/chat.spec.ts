@@ -65,7 +65,7 @@ describe('JaaS CHAT_UPLOADED webhook.', () => {
         console.log(JSON.stringify(messages));
         expect(messages.some(m => m.name === 'p1' && m.content === 'foo')).toBe(true);
         expect(messages.some(m => m.name === 'p2' && m.content === 'bar')).toBe(true);
-        expect(messages.some(m => m.name === 'p3' && m.content === 'baz')).toBe(true);
+        expect(messages.some(m => m.name === 'p1' && m.content === 'baz')).toBe(true);
         messages.forEach(m => {
             expect(typeof m.timestamp).toBe('number');
         });
