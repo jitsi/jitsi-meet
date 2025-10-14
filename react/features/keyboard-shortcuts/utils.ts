@@ -38,9 +38,10 @@ export const getKeyboardKey = (e: KeyboardEvent): string => {
     // If alt is pressed a different char can be returned so this takes
     // the char from the code. It also prefixes with a colon to differentiate
     // alt combo from simple keypress.
-    if (altKey) {
-        const replacedKey = code.replace('Key', '');
 
+    const replacedKey = code.replace('Key', '');
+
+    if (altKey) {
         return `:${replacedKey}`;
     }
 
@@ -52,6 +53,10 @@ export const getKeyboardKey = (e: KeyboardEvent): string => {
     if (typeof key === 'string' && key !== 'Unidentified') {
         if (ctrlKey) {
             return `-${key}`;
+        }
+
+        if (code.startsWith('Key')) {
+            return replacedKey;
         }
 
         return key;
