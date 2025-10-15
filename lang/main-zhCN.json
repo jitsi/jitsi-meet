@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "添加会议链接",
-        "confirmAddLink": "是否在此事件中添加Jitsi链接",
+        "confirmAddLink": "是否在此事件中添加Sonacove链接",
         "error": {
             "appConfiguration": "日历整合没有正确配置。",
             "generic": "发生错误，请检查日历设置或尝试刷新日历。",
@@ -569,7 +569,7 @@
         "answer": "接听",
         "audioCallTitle": "呼入通话",
         "decline": "拒听",
-        "productLabel": "来自 Jitsi Meet",
+        "productLabel": "来自 Sonacove Meets",
         "videoCallTitle": "呼入视频通话"
     },
     "info": {
@@ -836,7 +836,7 @@
         "noiseSuppressionDesktopAudioDescription": "在共享桌面音频时无法开启降噪功能，请禁用并重试。",
         "noiseSuppressionFailedTitle": "无法启动降噪功能",
         "noiseSuppressionStereoDescription": "暂不支持立体声音频降噪。",
-        "oldElectronClientDescription1": "你似乎正在使用存在已知安全漏洞的旧版Jitsi Meet客户端，请确保您更新到我们的",
+        "oldElectronClientDescription1": "你似乎正在使用存在已知安全漏洞的旧版Sonacove Meets客户端，请确保您更新到我们的",
         "oldElectronClientDescription2": "最新版本",
         "oldElectronClientDescription3": "！",
         "participantWantsToJoin": "想要加入会议",
@@ -1011,6 +1011,141 @@
         "linkCopied": "链接已复制到剪贴板",
         "lookGood": "设备一切正常",
         "or": "或",
+        "permissionsGuide": {
+            "close": "关闭",
+            "detected": "检测到：",
+            "deviceHelp": {
+                "Android": [
+                    "打开手机设置。",
+                    "点击“应用” > 你的浏览器（例如 Chrome 或 Brave）。",
+                    "点击“权限”。",
+                    "允许访问摄像头和麦克风。",
+                    "重启浏览器并重试。"
+                ],
+                "iOS": [
+                    "打开 iOS 设置。",
+                    "向下滚动并选择你的浏览器（例如 Safari 或 Chrome）。",
+                    "点击“摄像头”和“麦克风”。",
+                    "将两者设置为“允许”。",
+                    "返回浏览器并刷新页面。"
+                ]
+            },
+            "howToAllow": "允许访问的方法：",
+            "needHelp": "需要帮助？",
+            "steps": {
+                "Brave_Android": [
+                    "点击 URL 旁的<0>Tune</0>图标。",
+                    "选择“权限”。",
+                    "允许摄像头和麦克风。",
+                    "刷新页面。"
+                ],
+                "Brave_Linux": [
+                    "点击地址栏中的<0>Tune</0>图标。",
+                    "在权限列表中允许摄像头和麦克风。",
+                    "刷新页面。"
+                ],
+                "Brave_Windows": [
+                    "点击地址栏中的<0>Tune</0>图标。",
+                    "启用麦克风和摄像头。",
+                    "刷新页面。"
+                ],
+                "Brave_iOS": [
+                    "打开 iOS 设置 > Brave。",
+                    "点击“摄像头”和“麦克风”。",
+                    "设置为“允许”。",
+                    "返回 Brave 并刷新页面。"
+                ],
+                "Brave_macOS": [
+                    "点击地址栏中的<0>Tune</0>图标。",
+                    "在权限设置中启用摄像头和麦克风。",
+                    "刷新页面。"
+                ],
+                "Chrome_Android": [
+                    "点击地址栏中的<0>Tune</0>图标。",
+                    "选择“权限”。",
+                    "将“摄像头”和“麦克风”设置为“允许”。"
+                ],
+                "Chrome_Linux": [
+                    "点击地址栏旁的锁形图标。",
+                    "选择“网站设置”。",
+                    "允许摄像头和麦克风。",
+                    "刷新页面。"
+                ],
+                "Chrome_Windows": [
+                    "点击地址栏中的<0>Tune</0>图标。",
+                    "选择“网站设置”。",
+                    "在“权限”中允许摄像头和麦克风。"
+                ],
+                "Chrome_iOS": [
+                    "打开 iOS 设置 > Chrome。",
+                    "点击“摄像头”和“麦克风”。",
+                    "设置为“允许”。",
+                    "返回 Chrome 并刷新页面。"
+                ],
+                "Chrome_macOS": [
+                    "点击地址栏中的<0>Tune</0>图标。",
+                    "选择“网站设置”。",
+                    "在“权限”中允许摄像头和麦克风。"
+                ],
+                "Edge_Windows": [
+                    "点击地址栏旁的锁形图标。",
+                    "允许摄像头和麦克风。",
+                    "刷新页面。"
+                ],
+                "Edge_macOS": [
+                    "点击地址栏中的<0>Tune</0>图标。",
+                    "将摄像头和麦克风设置为“允许”。"
+                ],
+                "Firefox_Android": [
+                    "点击 URL 栏旁的锁形图标。",
+                    "点击“编辑网站设置”。",
+                    "允许摄像头和麦克风。",
+                    "刷新页面。"
+                ],
+                "Firefox_Linux": [
+                    "点击地址栏旁的锁形图标。",
+                    "点击“更多信息”。",
+                    "在权限中允许摄像头和麦克风。",
+                    "刷新页面。"
+                ],
+                "Firefox_Windows": [
+                    "点击 URL 旁的<0>Tune</0>图标。",
+                    "启用麦克风和摄像头。",
+                    "刷新页面。"
+                ],
+                "Firefox_iOS": [
+                    "打开 iOS 设置 > Firefox。",
+                    "启用摄像头和麦克风。",
+                    "返回 Firefox 并刷新页面。"
+                ],
+                "Firefox_macOS": [
+                    "点击 URL 旁的<0>Tune</0>图标。",
+                    "点击箭头 > “更多信息”。",
+                    "进入“权限”标签。",
+                    "允许摄像头和麦克风。",
+                    "刷新页面。"
+                ],
+                "Safari_iOS": [
+                    "进入 iOS 设置 > Safari。",
+                    "点击“摄像头”和“麦克风”。",
+                    "设置为“允许”。",
+                    "返回 Safari 并刷新页面。"
+                ],
+                "Safari_macOS": [
+                    "在菜单栏中点击“Safari” > “本网页设置”。",
+                    "将摄像头和麦克风设置为“允许”。",
+                    "刷新页面。"
+                ],
+                "default": [
+                    "打开浏览器设置。",
+                    "查找“隐私”或“权限”部分。",
+                    "为此页面启用摄像头和麦克风。",
+                    "刷新页面。"
+                ]
+            },
+            "stillNotWorking": "仍然无法使用？",
+            "title": "启用麦克风和摄像头"
+        },
         "premeeting": "会前设置",
         "proceedAnyway": "仍然继续",
         "recordingWarning": "其他参会者可能正在录制本次会议",
@@ -1130,6 +1265,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "新消息提醒",
+        "KNOCKING_PARTICIPANT_SOUND": "参会者已进入等候室",
+        "PARTICIPANT_JOINED_SOUND": "参会者已加入",
+        "PARTICIPANT_LEFT_SOUND": "参会者已离开",
+        "TALK_WHILE_MUTED_SOUND": "静音时说话提醒",
         "audio": "音频",
         "buttonLabel": "设置",
         "calendar": {
@@ -1147,7 +1287,6 @@
         "followMe": "全员视角跟随我",
         "followMeRecorder": "录制画面跟随我",
         "framesPerSecond": "帧率（FPS）",
-        "incomingMessage": "新消息提醒",
         "language": "语言",
         "loggedIn": "已登录：{{name}}",
         "maxStageParticipants": "可以固定的最大参会者人数",
@@ -1158,9 +1297,6 @@
         "name": "名称",
         "noDevice": "无",
         "notifications": "通知",
-        "participantJoined": "参会者已加入",
-        "participantKnocking": "参会者已进入等候室",
-        "participantLeft": "参会者已离开",
         "playSounds": "播放提示音",
         "reactions": "会议互动表情",
         "sameAsSystem": "与系统一致（{{label}}）",
@@ -1174,7 +1310,6 @@
         "startAudioMuted": "所有人加入时静音",
         "startReactionsMuted": "关闭所有人互动音效",
         "startVideoMuted": "所有人加入时隐藏视频",
-        "talkWhileMuted": "静音时说话提醒",
         "title": "设置",
         "video": "视频"
     },
@@ -1589,15 +1724,15 @@
         "go": "开始",
         "goSmall": "开始",
         "headerSubtitle": "安全且高品质的会议",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "拨入信息",
-        "jitsiOnMobile": "手机版Jitsi – 下载我们的APP，随时随地开始会议",
+        "jitsiOnMobile": "手机版Sonacove – 下载我们的APP，随时随地开始会议",
         "join": "创建/加入",
         "logo": {
             "calendar": "日历图标",
             "desktopPreviewThumbnail": "桌面预览缩略图",
             "googleLogo": "谷歌图标",
-            "logoDeepLinking": "Jitsi Meet图标",
+            "logoDeepLinking": "Sonacove Meets图标",
             "microsoftLogo": "微软图标",
             "policyLogo": "政策图标"
         },

@@ -4,6 +4,7 @@ import {
     CLEAR_RECORDING_SESSIONS,
     MARK_CONSENT_REQUESTED,
     RECORDING_SESSION_UPDATED,
+    SET_AUTO_DOWNLOAD_MEETING_DATA,
     SET_MEETING_HIGHLIGHT_BUTTON_STATE,
     SET_PENDING_RECORDING_NOTIFICATION_UID,
     SET_SELECTED_RECORDING_SERVICE,
@@ -31,6 +32,7 @@ export interface ISessionData {
 }
 
 export interface IRecordingState {
+    autoDownloadMeetingData?: boolean;
     consentRequested: Set<any>;
     disableHighlightMeetingMoment: boolean;
     pendingNotificationUids: {
@@ -74,6 +76,12 @@ ReducerRegistry.register<IRecordingState>(STORE_NAME,
                 ...state,
                 sessionDatas:
                     _updateSessionDatas(state.sessionDatas, action.sessionData)
+            };
+
+        case SET_AUTO_DOWNLOAD_MEETING_DATA:
+            return {
+                ...state,
+                autoDownloadMeetingData: action.enabled
             };
 
         case SET_PENDING_RECORDING_NOTIFICATION_UID: {

@@ -1,38 +1,55 @@
-import fs from 'fs';
-import jwt from 'jsonwebtoken';
-import process from 'node:process';
-import { v4 as uuidv4 } from 'uuid';
-
 import { P1, P2, P3, P4, Participant } from './Participant';
-import { IContext, IJoinOptions } from './types';
+import { config } from './TestsConfig';
+import { generateToken } from './token';
+import { IJoinOptions, IParticipantOptions } from './types';
 
 const SUBJECT_XPATH = '//div[starts-with(@class, "subject-text")]';
 
 /**
  * Ensure that there is on participant.
+ * Ensure that the first participant is moderator if there is such an option.
  *
- * @param {IContext} ctx - The context.
  * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<void>}
  */
-export async function ensureOneParticipant(ctx: IContext, options?: IJoinOptions): Promise<void> {
-    await joinTheModeratorAsP1(ctx, options);
+export async function ensureOneParticipant(options?: IJoinOptions): Promise<void> {
+    const participantOps = { name: P1 } as IParticipantOptions;
+
+    if (!options?.skipFirstModerator) {
+        const jwtPrivateKeyPath = config.jwt.privateKeyPath;
+
+        // we prioritize the access token when iframe is not used and private key is set,
+        // otherwise if private key is not specified we use the access token if set
+        if (config.jwt.preconfiguredToken
+            && ((jwtPrivateKeyPath && !ctx.testProperties.useIFrameApi && !options?.preferGenerateToken)
+                || !jwtPrivateKeyPath)) {
+            participantOps.token = { jwt: config.jwt.preconfiguredToken };
+        } else if (jwtPrivateKeyPath) {
+            participantOps.token = generateToken({
+                ...options?.tokenOptions,
+                displayName: participantOps.name,
+                moderator: true
+            });
+        }
+    }
+
+    // make sure the first participant is moderator, if supported by deployment
+    await joinParticipant(participantOps, options);
 }
 
 /**
  * Ensure that there are three participants.
  *
- * @param {Object} ctx - The context.
  * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<void>}
  */
-export async function ensureThreeParticipants(ctx: IContext, options?: IJoinOptions): Promise<void> {
-    await joinTheModeratorAsP1(ctx, options);
+export async function ensureThreeParticipants(options?: IJoinOptions): Promise<void> {
+    await ensureOneParticipant(options);
 
     // these need to be all, so we get the error when one fails
     await Promise.all([
-        _joinParticipant(P2, ctx, options),
-        _joinParticipant(P3, ctx, options)
+        joinParticipant({ name: P2 }, options),
+        joinParticipant({ name: P3 }, options)
     ]);
 
     if (options?.skipInMeetingChecks) {
@@ -54,51 +71,47 @@ export async function ensureThreeParticipants(ctx: IContext, options?: IJoinOpti
 /**
  * Creates the first participant instance or prepares one for re-joining.
  *
- * @param {Object} ctx - The context.
  * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<void>}
  */
-export function joinFirstParticipant(ctx: IContext, options: IJoinOptions = {}): Promise<void> {
-    return joinTheModeratorAsP1(ctx, options);
+export function joinFirstParticipant(options: IJoinOptions = { }): Promise<void> {
+    return ensureOneParticipant(options);
 }
 
 /**
  * Creates the second participant instance or prepares one for re-joining.
  *
- * @param {Object} ctx - The context.
  * @param {IJoinOptions} options - The options to use when joining the participant.
- * @returns {Promise<void>}
+ * @returns {Promise<Participant>}
  */
-export function joinSecondParticipant(ctx: IContext, options?: IJoinOptions): Promise<void> {
-    return _joinParticipant(P2, ctx, options);
+export function joinSecondParticipant(options?: IJoinOptions): Promise<Participant> {
+    return joinParticipant({ name: P2 }, options);
 }
 
 /**
  * Creates the third participant instance or prepares one for re-joining.
  *
- * @param {Object} ctx - The context.
  * @param {IJoinOptions} options - The options to use when joining the participant.
- * @returns {Promise<void>}
+ * @returns {Promise<Participant>}
  */
-export function joinThirdParticipant(ctx: IContext, options?: IJoinOptions): Promise<void> {
-    return _joinParticipant(P3, ctx, options);
+export function joinThirdParticipant(options?: IJoinOptions): Promise<Participant> {
+    return joinParticipant({ name: P3 }, options);
 }
 
 /**
  * Ensure that there are four participants.
  *
- * @param {Object} ctx - The context.
  * @param {IJoinOptions} options - The options to use when joining the participant.
  * @returns {Promise<void>}
  */
-export async function ensureFourParticipants(ctx: IContext, options?: IJoinOptions): Promise<void> {
-    await joinTheModeratorAsP1(ctx, options);
+export async function ensureFourParticipants(options?: IJoinOptions): Promise<void> {
+    await ensureOneParticipant(options);
 
     // these need to be all, so we get the error when one fails
     await Promise.all([
-        _joinParticipant(P2, ctx, options),
-        _joinParticipant(P3, ctx, options),
-        _joinParticipant(P4, ctx, options)
+        joinParticipant({ name: P2 }, options),
+        joinParticipant({ name: P3 }, options),
+        joinParticipant({ name: P4 }, options)
     ]);
 
     if (options?.skipInMeetingChecks) {
@@ -120,27 +133,26 @@ export async function ensureFourParticipants(ctx: IContext, options?: IJoinOptio
 }
 
 /**
- * Ensure that the first participant is moderator.
- *
- * @param {Object} ctx - The context.
- * @param {IJoinOptions} options - The options to join.
- * @returns {Promise<void>}
- */
-async function joinTheModeratorAsP1(ctx: IContext, options?: IJoinOptions) {
-    // make sure the first participant is moderator, if supported by deployment
-    await _joinParticipant(P1, ctx, options);
-}
-
-/**
  * Ensure that there are two participants.
  *
- * @param {Object} ctx - The context.
  * @param {IJoinOptions} options - The options to join.
  */
-export async function ensureTwoParticipants(ctx: IContext, options?: IJoinOptions): Promise<void> {
-    await joinTheModeratorAsP1(ctx, options);
+export async function ensureTwoParticipants(options?: IJoinOptions): Promise<void> {
+    await ensureOneParticipant(options);
 
-    await _joinParticipant(P2, ctx, options);
+    const participantOptions = { name: P2 } as IParticipantOptions;
+
+    if (options?.preferGenerateToken) {
+        participantOptions.token = generateToken({
+            ...options?.tokenOptions,
+            displayName: participantOptions.name,
+        });
+    }
+
+    await joinParticipant({
+        ...participantOptions,
+        name: P2
+    }, options);
 
     if (options?.skipInMeetingChecks) {
         return Promise.resolve();
@@ -157,66 +169,61 @@ export async function ensureTwoParticipants(ctx: IContext, options?: IJoinOption
 }
 
 /**
- * Creates a participant instance or prepares one for re-joining.
- * @param name - The name of the participant.
- * @param {IContext} ctx - The context.
+ * Creates a new participant instance, or returns an existing one if it is already joined.
+ * @param participantOptions - The participant options, with required name set.
  * @param {boolean} options - Join options.
+ * @param reuse whether to reuse an existing participant instance if one is available.
+ * @returns {Promise<Participant>} - The participant instance.
  */
-async function _joinParticipant( // eslint-disable-line max-params
-        name: string,
-        ctx: IContext,
-        options?: IJoinOptions) {
+async function joinParticipant( // eslint-disable-line max-params
+        participantOptions: IParticipantOptions,
+        options?: IJoinOptions
+): Promise<Participant> {
+
+    participantOptions.iFrameApi = ctx.testProperties.useIFrameApi;
 
     // @ts-ignore
-    const p = ctx[name] as Participant;
+    const p = ctx[participantOptions.name] as Participant;
 
     if (p) {
-        if (ctx.iframeAPI) {
-            await p.switchInPage();
+        if (ctx.testProperties.useIFrameApi) {
+            await p.switchToIFrame();
         }
 
         if (await p.isInMuc()) {
-            return;
+            return p;
         }
 
-        if (ctx.iframeAPI) {
+        if (ctx.testProperties.useIFrameApi) {
             // when loading url make sure we are on the top page context or strange errors may occur
-            await p.switchToAPI();
+            await p.switchToMainFrame();
         }
 
         // Change the page so we can reload same url if we need to, base.html is supposed to be empty or close to empty
         await p.driver.url('/base.html');
-
-        // we want the participant instance re-recreated so we clear any kept state, like endpoint ID
     }
 
-    let jwtToken;
-
-    if (name === P1) {
-        if (!options?.skipFirstModerator) {
-            // we prioritize the access token when iframe is not used and private key is set,
-            // otherwise if private key is not specified we use the access token if set
-            if (process.env.JWT_ACCESS_TOKEN
-                && ((ctx.jwtPrivateKeyPath && !ctx.iframeAPI && !options?.preferGenerateToken)
-                    || !ctx.jwtPrivateKeyPath)) {
-                jwtToken = process.env.JWT_ACCESS_TOKEN;
-            } else if (ctx.jwtPrivateKeyPath) {
-                jwtToken = getToken(ctx, name, options);
-            }
-        }
-    } else if (name === P2) {
-        jwtToken = options?.preferGenerateToken ? getToken(ctx, P2, options) : undefined;
-    }
-
-    const newParticipant = new Participant(name, jwtToken);
+    const newParticipant = new Participant(participantOptions);
 
     // set the new participant instance
     // @ts-ignore
-    ctx[name] = newParticipant;
+    ctx[participantOptions.name] = newParticipant;
 
-    await newParticipant.joinConference(ctx, {
-        displayName: name,
-        ...options
+    let tenant = options?.tenant;
+
+    if (options?.preferGenerateToken && !ctx.testProperties.useIFrameApi
+        && config.iframe.usesJaas && config.iframe.tenant) {
+        tenant = config.iframe.tenant;
+    }
+
+    if (!tenant && ctx.testProperties.useIFrameApi) {
+        tenant = config.iframe.tenant;
+    }
+
+    return await newParticipant.joinConference({
+        ...options,
+        tenant: tenant,
+        roomName: options?.roomName || ctx.roomName,
     });
 }
 
@@ -281,64 +288,6 @@ export async function muteVideoAndCheck(testee: Participant, observer: Participa
 
     await testee.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee);
     await observer.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee);
-}
-
-/**
- * Get a JWT token for a moderator.
- */
-function getToken(ctx: IContext, displayName: string, options?: IJoinOptions) {
-    const keyid = process.env.JWT_KID;
-    const headers = {
-        algorithm: 'RS256',
-        noTimestamp: true,
-        expiresIn: '24h',
-        keyid
-    };
-
-    if (!keyid) {
-        console.error('JWT_KID is not set');
-
-        return;
-    }
-
-    const key = fs.readFileSync(ctx.jwtPrivateKeyPath);
-
-    const payload = {
-        'aud': 'jitsi',
-        'iss': 'chat',
-        'sub': keyid.substring(0, keyid.indexOf('/')),
-        'context': {
-            'user': {
-                'name': displayName,
-                'id': uuidv4(),
-                'avatar': 'https://avatars0.githubusercontent.com/u/3671647',
-                'email': 'john.doe@jitsi.org'
-            },
-            'group': uuidv4(),
-            'features': {
-                'outbound-call': 'true',
-                'transcription': 'true',
-                'recording': 'true',
-                'sip-outbound-call': true,
-                'livestreaming': true
-            },
-        },
-        'room': '*'
-    };
-
-    // if the moderator is set, or options are missing, we assume moderator
-    if (options?.moderator || !options) {
-        // @ts-ignore
-        payload.context.user.moderator = true;
-    } else if (options.visitor) {
-        // @ts-ignore
-        payload.context.user.role = 'visitor';
-    }
-
-    ctx.data[`${displayName}-jwt-payload`] = payload;
-
-    // @ts-ignore
-    return jwt.sign(payload, key, headers);
 }
 
 /**

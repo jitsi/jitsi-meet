@@ -48,6 +48,7 @@ import { default as IconHangup } from './hangup.svg';
 import { default as IconDeviceHeadphone } from './headset.svg';
 import { default as IconHelp } from './help.svg';
 import { default as IconHighlight } from './highlight.svg';
+import { default as IconHost } from './host.svg';
 import { default as IconRingGroup } from './icon-ring-group.svg';
 import { default as IconImage } from './image.svg';
 import { default as IconInfoCircle } from './info-circle.svg';
@@ -161,6 +162,7 @@ export const DEFAULT_ICON: Record<string, any> = {
     IconHangup,
     IconHelp,
     IconHighlight,
+    IconHost,
     IconImage,
     IconInfo,
     IconInfoCircle,

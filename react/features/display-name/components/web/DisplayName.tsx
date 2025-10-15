@@ -9,7 +9,6 @@ import {
     getParticipantDisplayName
 } from '../../../base/participants/functions';
 import { updateSettings } from '../../../base/settings/actions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Tooltip from '../../../base/tooltip/components/Tooltip';
 import { getIndicatorsTooltipPosition } from '../../../filmstrip/functions.web';
 import { appendSuffix } from '../../functions';
@@ -49,7 +48,7 @@ interface IProps {
 const useStyles = makeStyles()(theme => {
     return {
         displayName: {
-            ...withPixelLineHeight(theme.typography.labelBold),
+            ...theme.typography.labelBold,
             color: theme.palette.text01,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -62,7 +61,7 @@ const useStyles = makeStyles()(theme => {
             background: 'none',
             boxShadow: 'none',
             padding: 0,
-            ...withPixelLineHeight(theme.typography.labelBold),
+            ...theme.typography.labelBold,
             color: theme.palette.text01
         }
     };

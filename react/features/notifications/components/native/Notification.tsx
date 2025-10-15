@@ -149,12 +149,12 @@ const Notification = ({
         const titleText = title || (titleKey && t(titleKey, titleArguments));
         const descriptionArray = _getDescription();
 
-        if (descriptionArray?.length) {
+        if (descriptionArray?.length && titleText) {
             return (
                 <>
                     <Text
                         numberOfLines = { 1 }
-                        style = { styles.contentTextTitle as TextStyle }>
+                        style = { styles.contentTextTitleDescription as TextStyle }>
                         { titleText }
                     </Text>
                     {
@@ -168,15 +168,29 @@ const Notification = ({
                     }
                 </>
             );
+        } else if (descriptionArray?.length && !titleText) {
+            return (
+                <>
+                    {
+                        descriptionArray.map((line, index) => (
+                            <Text
+                                key = { index }
+                                style = { styles.contentTextDescription }>
+                                { line.length >= CHAR_LIMIT ? line : replaceNonUnicodeEmojis(line) }
+                            </Text>
+                        ))
+                    }
+                </>
+            );
+        } else {
+            return (
+                <Text
+                    numberOfLines = { 1 }
+                    style = { styles.contentTextTitle as TextStyle }>
+                    { titleText }
+                </Text>
+            );
         }
-
-        return (
-            <Text
-                numberOfLines = { 1 }
-                style = { styles.contentTextTitle as TextStyle }>
-                { titleText }
-            </Text>
-        );
     };
 
     return (

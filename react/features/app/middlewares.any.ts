@@ -15,7 +15,6 @@ import '../base/participants/middleware';
 import '../base/responsive-ui/middleware';
 import '../base/redux/middleware';
 import '../base/settings/middleware';
-import '../base/sounds/middleware';
 import '../base/testing/middleware';
 import '../base/tracks/middleware';
 import '../base/user-interaction/middleware';

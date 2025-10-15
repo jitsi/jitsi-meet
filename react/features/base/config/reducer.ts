@@ -405,13 +405,6 @@ function _translateLegacyConfig(oldValue: IConfig) {
         newValue.welcomePage.disabled = !oldValue.enableWelcomePage;
     }
 
-    newValue.prejoinConfig = oldValue.prejoinConfig || {};
-    if (oldValue.hasOwnProperty('prejoinPageEnabled')
-        && !newValue.prejoinConfig.hasOwnProperty('enabled')
-    ) {
-        newValue.prejoinConfig.enabled = oldValue.prejoinPageEnabled;
-    }
-
     newValue.disabledSounds = newValue.disabledSounds || [];
 
     if (oldValue.disableJoinLeaveSounds) {

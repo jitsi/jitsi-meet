@@ -6,7 +6,9 @@ import { safeJsonParse } from '@jitsi/js-utils/json';
 import { isEmpty, mergeWith, pick } from 'lodash-es';
 
 import { IReduxState } from '../../app/types';
+import { browser } from '../lib-jitsi-meet';
 import { getLocalParticipant } from '../participants/functions';
+import { isEmbedded } from '../util/embedUtils';
 import { parseURLParams } from '../util/parseURLParams';
 
 import { IConfig } from './configType';
@@ -256,6 +258,17 @@ export function isDisplayNameVisible(state: IReduxState): boolean {
 }
 
 /**
+ * Selector for determining if the advanced audio settings are enabled.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function isAdvancedAudioSettingsEnabled(state: IReduxState): boolean {
+
+    return !browser.isWebKitBased() && Boolean(state['features/base/config']?.audioQuality?.enableAdvancedAudioSettings);
+}
+
+/**
  * Restores a Jitsi Meet config.js from {@code localStorage} if it was
  * previously downloaded from a specific {@code baseURL} and stored with
  * {@link storeConfig}.
@@ -335,7 +348,7 @@ export function setConfigFromURLParams(
 
     overrideConfigJSON(config, interfaceConfig, json);
 
-    // Print warning about depricated URL params
+    // Print warning about deprecated URL params
     if ('interfaceConfig.SUPPORT_URL' in params) {
         logger.warn('Using SUPPORT_URL interfaceConfig URL overwrite is deprecated.'
             + ' Please use supportUrl from advanced branding!');
@@ -370,6 +383,13 @@ export function setConfigFromURLParams(
             )) {
         logger.warn('Using liveStreaming config URL overwrite and/or LIVE_STREAMING_HELP_LINK interfaceConfig URL'
             + ' overwrite is deprecated. Please use liveStreaming from advanced branding!');
+    }
+
+    // When not in an iframe, start without media if the pre-join page is not enabled.
+    if (!isEmbedded()
+            && 'config.prejoinConfig.enabled' in params && config.prejoinConfig?.enabled === false) {
+        logger.warn('Using prejoinConfig.enabled config URL overwrite implies starting without media.');
+        config.disableInitialGUM = true;
     }
 }
 

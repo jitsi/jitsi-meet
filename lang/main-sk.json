@@ -44,7 +44,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Pridať odkaz na konferenciu",
-        "confirmAddLink": "Chcete pridal Jitsi odkaz do tejto udalosti?",
+        "confirmAddLink": "Chcete pridal Sonacove odkaz do tejto udalosti?",
         "error": {
             "appConfiguration": "Integrácia s kalendárom nie je správne nastavená.",
             "generic": "Stala sa chyba. Skontrolujte nastavenia kalendára a skúste obnoviť kalendár.",
@@ -527,7 +527,7 @@
         "newDeviceAction": "Použiť",
         "newDeviceAudioTitle": "Bolo zistené nové audio zariadenie",
         "newDeviceCameraTitle": "Bola zistená nová kamera",
-        "oldElectronClientDescription1": "Používate starú verziu klienta Jitsi Meet, ktorá má známe zraniteľnosti. Aktualizujte na ",
+        "oldElectronClientDescription1": "Používate starú verziu klienta Sonacove Meets, ktorá má známe zraniteľnosti. Aktualizujte na ",
         "oldElectronClientDescription2": "najnovšiu verziu",
         "oldElectronClientDescription3": " teraz!",
         "passwordRemovedRemotely": "Iný účastník odstránil $t(lockRoomPassword)",
@@ -563,6 +563,22 @@
         "configuringDevices": "Konfigurácia zariedení…",
         "connectedWithAudioQ": "Ste pripojení so zvukom?",
         "copyAndShare": "Kopírovať a zdieľať odkaz",
+        "deviceHelp": {
+            "Android": [
+                "Otvorte nastavenia telefónu.",
+                "Ťuknite na „Aplikácie“ > svoj prehliadač (napr. Chrome alebo Brave).",
+                "Ťuknite na „Povolenia“.",
+                "Povoľte prístup ku kamere a mikrofónu.",
+                "Reštartujte prehliadač a skúste to znova."
+            ],
+            "iOS": [
+                "Otvorte nastavenia iOS.",
+                "Posuňte sa nadol a vyberte svoj prehliadač (napr. Safari alebo Chrome).",
+                "Ťuknite na „Kamera“ a „Mikrofón“.",
+                "Nastavte oba na „Povoliť“.",
+                "Vráťte sa do prehliadača a obnovte stránku."
+            ]
+        },
         "dialInMeeting": "Volanie dnu do konferencie",
         "dialInPin": "Volajte dnu do konferencie a zadajte PIN kód:",
         "dialing": "Vytáčanie",
@@ -583,6 +599,117 @@
         "or": "alebo",
         "screenSharingError": "Chyba pri zdieľaní obrazovky:",
         "startWithPhone": "Začať so zvukom cez telefón",
+        "steps": {
+            "Brave_Android": [
+                "Kliknite na ikonu <0>Tune</0> vedľa URL.",
+                "Ťuknite na „Povolenia“.",
+                "Povoľte kameru a mikrofón.",
+                "Obnovte stránku."
+            ],
+            "Brave_Linux": [
+                "Kliknite na ikonu <0>Tune</0> v paneli s adresou.",
+                "Povoľte kameru a mikrofón v zozname povolení.",
+                "Obnovte stránku."
+            ],
+            "Brave_Windows": [
+                "Kliknite na ikonu <0>Tune</0> v paneli s adresou.",
+                "Povoľte mikrofón a kameru.",
+                "Obnovte stránku."
+            ],
+            "Brave_iOS": [
+                "Otvorte nastavenia iOS > Brave.",
+                "Ťuknite na „Kamera“ a „Mikrofón“.",
+                "Nastavte povolenia na „Povoliť“.",
+                "Vráťte sa do Brave a obnovte stránku."
+            ],
+            "Brave_macOS": [
+                "Kliknite na ikonu <0>Tune</0> v paneli s adresou.",
+                "Povoľte kameru a mikrofón v nastaveniach povolení.",
+                "Obnovte stránku."
+            ],
+            "Chrome_Android": [
+                "Kliknite na ikonu <0>Tune</0> v paneli s adresou.",
+                "Vyberte „Povolenia“.",
+                "Nastavte kameru a mikrofón na „Povoliť“."
+            ],
+            "Chrome_Linux": [
+                "Kliknite na ikonu oka vedľa URL v paneli s adresou.",
+                "Kliknite na „Nastavenia lokality“.",
+                "Povoľte prístup ku kamere a mikrofónu.",
+                "Obnovte stránku."
+            ],
+            "Chrome_Windows": [
+                "Kliknite na ikonu <0>Tune</0> v paneli s adresou.",
+                "Kliknite na „Nastavenia lokality“.",
+                "Povoľte prístup ku kamere a mikrofónu v sekcii „Povolenia“."
+            ],
+            "Chrome_iOS": [
+                "Otvorte nastavenia iOS > Chrome.",
+                "Kliknite na „Kamera“ a „Mikrofón“.",
+                "Nastavte povolenia na „Povoliť“.",
+                "Vráťte sa do Chrome a obnovte stránku."
+            ],
+            "Chrome_macOS": [
+                "Kliknite na ikonu <0>Tune</0> v paneli s adresou.",
+                "Kliknite na „Nastavenia lokality“.",
+                "Povoľte prístup ku kamere a mikrofónu v sekcii „Povolenia“."
+            ],
+            "Edge_Windows": [
+                "Kliknite na ikonu oka vedľa URL.",
+                "Povoľte kameru a mikrofón.",
+                "Obnovte stránku."
+            ],
+            "Edge_macOS": [
+                "Kliknite na ikonu <0>Tune</0> v paneli s adresou.",
+                "Nastavte kameru a mikrofón na „Povoliť“."
+            ],
+            "Firefox_Android": [
+                "Ťuknite na ikonu oka vedľa URL panela s adresou.",
+                "Ťuknite na „Upraviť nastavenia lokality“.",
+                "Povoľte kameru a mikrofón.",
+                "Obnovte stránku."
+            ],
+            "Firefox_Linux": [
+                "Kliknite na ikonu oka vedľa panela s adresou.",
+                "Kliknite na „Viac informácií“.",
+                "Povoľte kameru a mikrofón v povoleniach.",
+                "Obnovte stránku."
+            ],
+            "Firefox_Windows": [
+                "Kliknite na ikonu <0>Tune</0> vedľa URL.",
+                "Povoľte mikrofón a kameru.",
+                "Obnovte stránku."
+            ],
+            "Firefox_iOS": [
+                "Otvorte nastavenia iOS > Firefox.",
+                "Povoľte kameru a mikrofón.",
+                "Vráťte sa do Firefoxu a obnovte stránku."
+            ],
+            "Firefox_macOS": [
+                "Kliknite na ikonu <0>Tune</0> vedľa URL.",
+                "Kliknite na šípku > „Viac informácií“.",
+                "Prejdite na kartu „Povolenia“.",
+                "Povoľte kameru a mikrofón.",
+                "Obnovte stránku."
+            ],
+            "Safari_iOS": [
+                "Prejdite do nastavení iOS > Safari.",
+                "Ťuknite na „Kamera“ a „Mikrofón“.",
+                "Nastavte povolenia na „Povoliť“.",
+                "Vráťte sa do Safari a obnovte stránku."
+            ],
+            "Safari_macOS": [
+                "Kliknite na „Safari“ v paneli menu > „Nastavenia pre túto lokalitu“.",
+                "Nastavte kameru a mikrofón na „Povoliť“.",
+                "Obnovte stránku."
+            ],
+            "default": [
+                "Otvorte nastavenia prehliadača.",
+                "Vyhľadajte sekciu „Súkromie“ alebo „Povolenia“.",
+                "Povoľte kameru a mikrofón pre túto lokalitu.",
+                "Obnovte stránku."
+            ]
+        },
         "videoOnlyError": "Chyba videa:",
         "videoTrackError": "Nemôžem vytvoriť video stopu.",
         "viewAllNumbers": "zobraziť všetky čísla"

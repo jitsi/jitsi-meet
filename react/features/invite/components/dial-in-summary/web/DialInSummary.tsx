@@ -5,7 +5,6 @@ import { WithTranslation } from 'react-i18next';
 import { withStyles } from 'tss-react/mui';
 
 import { translate } from '../../../../base/i18n/functions';
-import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import { getDialInConferenceID, getDialInNumbers } from '../../../_utils';
 
 import ConferenceID from './ConferenceID';
@@ -103,7 +102,7 @@ const styles = (theme: Theme) => {
         },
         roomName: {
             margin: '40px auto 8px',
-            ...withPixelLineHeight(theme.typography.heading5)
+            ...theme.typography.heading5
         }
     };
 };

@@ -1,10 +1,11 @@
+import PersistenceRegistry from '../base/redux/PersistenceRegistry';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 import { type Image } from '../virtual-background/constants';
 
 import {
     SET_DYNAMIC_BRANDING_DATA,
-    SET_DYNAMIC_BRANDING_FAILED,
     SET_DYNAMIC_BRANDING_READY,
+    SET_SELECTED_THEME,
     UNSET_DYNAMIC_BRANDING
 } from './actionTypes';
 
@@ -14,6 +15,11 @@ import {
  * state of the feature {@code dynamic-branding}.
  */
 const STORE_NAME = 'features/dynamic-branding';
+
+PersistenceRegistry.register(STORE_NAME, {
+    selectedThemeUrl: true,
+    selectedThemeContent: true,
+});
 
 const DEFAULT_STATE = {
 
@@ -156,7 +162,23 @@ const DEFAULT_STATE = {
      * @public
      * @type {Array<Object>}
      */
-    virtualBackgrounds: []
+    virtualBackgrounds: [],
+
+    /**
+     * The URL of the user's currently selected custom theme.
+     *
+     * @public
+     * @type {string|null}
+     */
+    selectedThemeUrl: null,
+
+    /**
+     * The complete JSON object content of the user's selected theme.
+     *
+     * @public
+     * @type {Object|null}
+     */
+    selectedThemeContent: null
 };
 
 export interface IDynamicBrandingState {
@@ -178,6 +200,8 @@ export interface IDynamicBrandingState {
     pollCreationRequiresPermission: boolean;
     premeetingBackground: string;
     requireRecordingConsent?: boolean;
+    selectedThemeContent: Object | null;
+    selectedThemeUrl: string | null;
     sharedVideoAllowedURLDomains?: Array<string>;
     showGiphyIntegration?: boolean;
     skipRecordingConsentInMeeting?: boolean;
@@ -238,15 +262,9 @@ ReducerRegistry.register<IDynamicBrandingState>(STORE_NAME, (state = DEFAULT_STA
             customizationFailed: false,
             customizationReady: true,
             useDynamicBrandingData: true,
-            virtualBackgrounds: formatImages(virtualBackgrounds || [])
-        };
-    }
-    case SET_DYNAMIC_BRANDING_FAILED: {
-        return {
-            ...state,
-            customizationReady: true,
-            customizationFailed: true,
-            useDynamicBrandingData: true
+            virtualBackgrounds: formatImages(virtualBackgrounds || []),
+            selectedThemeUrl: action.selectedThemeUrl ?? state.selectedThemeUrl,
+            selectedThemeContent: action.selectedThemeContent ?? state.selectedThemeContent
         };
     }
     case SET_DYNAMIC_BRANDING_READY:
@@ -257,6 +275,13 @@ ReducerRegistry.register<IDynamicBrandingState>(STORE_NAME, (state = DEFAULT_STA
 
     case UNSET_DYNAMIC_BRANDING:
         return DEFAULT_STATE;
+
+    case SET_SELECTED_THEME:
+        return {
+            ...state,
+            selectedThemeUrl: action.payload.url,
+            selectedThemeContent: action.payload.content
+        };
     }
 
     return state;

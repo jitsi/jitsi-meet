@@ -1,7 +1,8 @@
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import HostIndicator from '../../../filmstrip/components/web/HostIndicator';
+import ModeratorIndicator from '../../../filmstrip/components/web/ModeratorIndicator';
 import AbstractPollResults, { AbstractProps } from '../AbstractPollResults';
 
 const useStyles = makeStyles()(theme => {
@@ -17,12 +18,14 @@ const useStyles = makeStyles()(theme => {
             marginBottom: '16px'
         },
         question: {
-            ...withPixelLineHeight(theme.typography.heading6),
+            ...theme.typography.heading6,
             color: theme.palette.text01,
             marginBottom: '8px'
         },
         creator: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            display: 'flex',
+            gap: theme.spacing(1),
+            ...theme.typography.bodyShortRegular,
             color: theme.palette.text02
         },
         resultList: {
@@ -38,7 +41,7 @@ const useStyles = makeStyles()(theme => {
             display: 'flex',
             flexShrink: 1,
             overflowWrap: 'anywhere',
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: theme.palette.text01,
             marginBottom: '4px'
         },
@@ -65,7 +68,7 @@ const useStyles = makeStyles()(theme => {
         voteCount: {
             flex: 1,
             textAlign: 'right',
-            ...withPixelLineHeight(theme.typography.bodyShortBold),
+            ...theme.typography.bodyShortBold,
             color: theme.palette.text01
         },
         voters: {
@@ -79,7 +82,7 @@ const useStyles = makeStyles()(theme => {
             padding: '8px 16px',
 
             '& li': {
-                ...withPixelLineHeight(theme.typography.bodyShortRegular),
+                ...theme.typography.bodyShortRegular,
                 color: theme.palette.text01,
                 margin: 0,
                 marginBottom: '2px',
@@ -96,7 +99,7 @@ const useStyles = makeStyles()(theme => {
             '& button': {
                 border: 0,
                 backgroundColor: 'transparent',
-                ...withPixelLineHeight(theme.typography.bodyShortRegular),
+                ...theme.typography.bodyShortRegular,
                 color: theme.palette.link01
             }
         }
@@ -114,12 +117,37 @@ const PollResults = ({
     changeVote,
     creatorName,
     haveVoted,
+    isParticipantModerator,
+    isParticipantHost,
     showDetails,
     question,
     t,
     toggleIsDetailed
 }: AbstractProps) => {
     const { classes } = useStyles();
+
+    /**
+     * Renders role indicators (Moderator and Host) based on the participant's role.
+     *
+     * @returns {React$Element<*>}
+     */
+    function _renderRoleIndicators() {
+        if (isParticipantHost) {
+            return (
+                <HostIndicator
+                    tooltipPosition = 'right' />
+            );
+        }
+
+        if (isParticipantModerator) {
+            return (
+                <ModeratorIndicator
+                    tooltipPosition = 'right' />
+            );
+        }
+
+        return null;
+    }
 
     return (
         <div className = { classes.container }>
@@ -128,7 +156,7 @@ const PollResults = ({
                     {question}
                 </div>
                 <div className = { classes.creator }>
-                    {t('polls.by', { name: creatorName })}
+                    {t('polls.by', { name: creatorName })} { _renderRoleIndicators() }
                 </div>
             </div>
             <ul className = { classes.resultList }>

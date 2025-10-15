@@ -14,6 +14,7 @@ local presence_check_status = util.presence_check_status;
 local MUC_NS = 'http://jabber.org/protocol/muc';
 
 local disable_revoke_owners;
+local allowner_issuers = module:get_option_set('allowner_issuers');
 
 local function load_config()
     disable_revoke_owners = module:get_option_boolean("allowners_disable_revoke_owners", false);
@@ -78,6 +79,21 @@ module:hook("muc-occupant-joined", function (event)
         room:set_affiliation(true, occupant.bare_jid, "owner");
     end
 end, 2);
+
+module:hook('room_has_host', function(event)
+    local room, session = event.room, event.session;
+    local moderated, _, tenant = is_moderated(room.jid);
+
+    if not moderated then
+        return nil;
+    end
+
+    if not tenant and allowner_issuers and not allowner_issuers:contains(session.jitsi_meet_auth_issuer) then
+        -- this will stop listeners execution and will return false, if we require a specific issuer for
+        -- a moderated room without a tenant and the issuer is not correct
+        return false;
+    end
+end, 1); -- we want it executed before the one in wait_for_host module
 
 module:hook_global('config-reloaded', load_config);
 

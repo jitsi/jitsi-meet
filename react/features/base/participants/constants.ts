@@ -1,5 +1,7 @@
 import { IconPhoneRinging, IconWhiteboard } from '../icons/svg';
 
+import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
+
 /**
  * The relative path to the default/stock avatar (image) file used on both
  * Web/React and mobile/React Native (for the purposes of consistency).
@@ -51,12 +53,37 @@ export const MAX_DISPLAY_NAME_LENGTH = 50;
 export const PARTICIPANT_JOINED_SOUND_ID = 'PARTICIPANT_JOINED_SOUND';
 
 /**
+ * The identifier of the sound to be played when new remote participant joins
+ * the room.
+ *
+ * @type {ISoundDefinition}
+ */
+export const PARTICIPANT_JOINED_SOUND = {
+    id: 'PARTICIPANT_JOINED_SOUND',
+    file: PARTICIPANT_JOINED_FILE,
+    options: {
+        moderation: true,
+        optional: true
+    },
+    optional: true
+};
+
+/**
  * The identifier of the sound to be played when remote participant leaves
  * the room.
  *
- * @type {string}
+ * @type {object}
  */
-export const PARTICIPANT_LEFT_SOUND_ID = 'PARTICIPANT_LEFT_SOUND';
+
+export const PARTICIPANT_LEFT_SOUND = {
+    id: 'PARTICIPANT_LEFT_SOUND',
+    file: PARTICIPANT_LEFT_FILE,
+    options: {
+        moderation: true,
+        optional: true
+    },
+    optional: true
+};
 
 /**
  * The set of possible XMPP MUC roles for conference participants.

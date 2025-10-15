@@ -134,7 +134,7 @@ export function maybeRedirectToWelcomePage(options: { feedbackSubmitted?: boolea
                 path = 'close2.html';
             }
 
-            dispatch(redirectToStaticPage(`static/${path}`, hashParam));
+            dispatch(redirectToStaticPage(`/static/${path}`, hashParam));
 
             return;
         }

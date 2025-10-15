@@ -118,3 +118,10 @@ react-native-sdk/sounds
 tests/.env
 test-results
 
+
+# Local Files
+/prosody-plugins
+/robots.txt
+/scripts/
+dist/
+scratch/

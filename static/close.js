@@ -62,6 +62,14 @@ function onLoad() {
     }
 
     insertTextMsg('hintMessage', getHint());
+
+    const element = document.getElementById('homeButton');
+
+    if (window.sessionStorage.getItem('guest') === 'true') {
+        element.href = '/';
+    } else {
+        element.href = '/meet/';
+    }
 }
 
 window.onload = onLoad;

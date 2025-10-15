@@ -5,7 +5,7 @@ const MY_TEST_SUBJECT = 'My Test Subject';
 const SUBJECT_XPATH = '//div[starts-with(@class, "subject-text")]';
 
 describe('Subject', () => {
-    it('joining the meeting', () => ensureTwoParticipants(ctx, {
+    it('joining the meeting', () => ensureTwoParticipants({
         configOverwrite: {
             subject: MY_TEST_SUBJECT
         }

@@ -1,15 +1,15 @@
 import { AnyAction } from 'redux';
 
-import { AudioElement } from '../media/components/AbstractAudio';
 import ReducerRegistry from '../redux/ReducerRegistry';
-import { assign } from '../redux/functions';
 
 import {
+    MUTE_SOUND,
     REGISTER_SOUND,
     UNREGISTER_SOUND,
     _ADD_AUDIO_ELEMENT,
     _REMOVE_AUDIO_ELEMENT
 } from './actionTypes';
+import SoundService from './components/SoundService';
 
 /**
  * The structure use by this reducer to describe a sound.
@@ -17,17 +17,22 @@ import {
 export type Sound = {
 
     /**
-     * The HTMLAudioElement which implements the audio playback functionality.
-     * Becomes available once the sound resource gets loaded and the sound can
-     * not be played until that happens.
+     * Whether this sound is muted (isMuted).
      */
-    audioElement?: AudioElement;
+    isMuted?: boolean;
+
+    /**
+     * Whether this sound has multiple language versions.
+     */
+    languages?: boolean;
 
     /**
      * This field is container for all optional parameters related to the sound.
      */
     options?: {
         loop: boolean;
+        moderation?: boolean;
+        optional?: boolean;
     };
 
     /**
@@ -35,7 +40,7 @@ export type Sound = {
      * can be either a path to the file or an object depending on the platform
      * (native vs web).
      */
-    src?: Object | string;
+    src?: string;
 };
 
 /**
@@ -55,53 +60,20 @@ ReducerRegistry.register<ISoundsState>(
     'features/base/sounds',
     (state = DEFAULT_STATE, action): ISoundsState => {
         switch (action.type) {
-        case _ADD_AUDIO_ELEMENT:
-        case _REMOVE_AUDIO_ELEMENT:
-            return _addOrRemoveAudioElement(state, action);
-
         case REGISTER_SOUND:
             return _registerSound(state, action);
 
         case UNREGISTER_SOUND:
             return _unregisterSound(state, action);
 
+        case MUTE_SOUND:
+            return _muteSound(state, action);
+
         default:
             return state;
         }
     });
 
-/**
- * Adds or removes {@link AudioElement} associated with a {@link Sound}.
- *
- * @param {Map<string, Sound>} state - The current Redux state of this feature.
- * @param {_ADD_AUDIO_ELEMENT | _REMOVE_AUDIO_ELEMENT} action - The action to be
- * handled.
- * @private
- * @returns {Map<string, Sound>}
- */
-function _addOrRemoveAudioElement(state: ISoundsState, action: AnyAction) {
-    const isAddAction = action.type === _ADD_AUDIO_ELEMENT;
-    const nextState = new Map(state);
-    const { soundId } = action;
-
-    const sound = nextState.get(soundId);
-
-    if (sound) {
-        if (isAddAction) {
-            nextState.set(soundId,
-                assign(sound, {
-                    audioElement: action.audioElement
-                }));
-        } else {
-            nextState.set(soundId,
-                assign(sound, {
-                    audioElement: undefined
-                }));
-        }
-    }
-
-    return nextState;
-}
 
 /**
  * Registers a new {@link Sound} for given id and source. It will make
@@ -119,7 +91,9 @@ function _registerSound(state: ISoundsState, action: AnyAction) {
 
     nextState.set(action.soundId, {
         src: action.src,
-        options: action.options
+        options: action.options,
+        isMuted: action?.isMuted ?? false,
+        languages: action.languages ?? false
     });
 
     return nextState;
@@ -139,6 +113,29 @@ function _unregisterSound(state: ISoundsState, action: AnyAction) {
     const nextState = new Map(state);
 
     nextState.delete(action.soundId);
+
+    return nextState;
+}
+
+/**
+ * Mutes or unmutes a sound by soundId.
+ *
+ * @param {Map<string, Sound>} state - The current Redux state of the sounds feature.
+ * @param {MUTE_SOUND} action - The mute sound action.
+ * @private
+ * @returns {Map<string, Sound>}
+ */
+function _muteSound(state: ISoundsState, action: AnyAction) {
+    const nextState = new Map(state);
+    const sound = nextState.get(action.soundId);
+
+    if (sound) {
+        SoundService.muteSound(action.soundId, action.isMuted);
+        nextState.set(action.soundId, {
+            ...sound,
+            isMuted: action.isMuted
+        });
+    }
 
     return nextState;
 }

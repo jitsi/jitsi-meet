@@ -102,18 +102,15 @@ local function send_visitors_iq(conference_service, room, type)
 end
 
 -- Filter out identity information (nick name, email, etc) from a presence stanza,
--- if the hideDisplayNameForGuests option for the room is set (note that the
--- hideDisplayNameForAll option is implemented in a diffrent way and does not
--- require filtering here)
--- This is applied to presence of main room participants before it is sent out to
--- vnodes.
+-- if the hideDisplayNameForGuests option for the room is set.
+-- This is applied to presence of main room participants before it is sent out to vnodes.
 local function filter_stanza_nick_if_needed(stanza, room)
     if not stanza or stanza.name ~= 'presence' or stanza.attr.type == 'error' or stanza.attr.type == 'unavailable' then
         return stanza;
     end
 
     -- if hideDisplayNameForGuests we want to drop any display name from the presence stanza
-    if room and (room._data.hideDisplayNameForGuests or room._data.hideDisplayNameForAll) then
+    if room and room._data.hideDisplayNameForGuests then
         return filter_identity_from_presence(stanza);
     end
 

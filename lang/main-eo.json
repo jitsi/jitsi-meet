@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Aldoni ligilon al la kunveno",
-        "confirmAddLink": "Ĉu vi volas aldoni Jitsi-ligilon al ĉi-tiu evento?",
+        "confirmAddLink": "Ĉu vi volas aldoni Sonacove-ligilon al ĉi-tiu evento?",
         "error": {
             "appConfiguration": "Kalendara integrigo ne estas ĝuste agordita.",
             "generic": "Okazis eraro. Bonvolu kontroli viajn kalendarajn agordojn aŭ provu aktualigi la kalendaron.",
@@ -523,7 +523,7 @@
         "answer": "Respondi",
         "audioCallTitle": "Alvenanta voko",
         "decline": "Formeti",
-        "productLabel": "el Jitsi Meet",
+        "productLabel": "el Sonacove Meets",
         "videoCallTitle": "Alvenanta vida voko"
     },
     "info": {
@@ -777,7 +777,7 @@
         "noiseSuppressionDesktopAudioDescription": "Neeblas aktivi la nuligon de bruo dum dividado de labortabla audio. Bonvolu malŝalti ĝin kaj provi denove. ",
         "noiseSuppressionFailedTitle": "Malsukcesis startigi la nuligon de bruo",
         "noiseSuppressionStereoDescription": "Forigo de bruo por stereosono ankoraŭ ne estas subtenata.",
-        "oldElectronClientDescription1": "Ŝajnas, ke vi uzas malnovan version de la kliento de Jitsi Meet, kiu havas konatajn sekurec-vundeblojn. Bonvolu ĝisdatigi al nia ",
+        "oldElectronClientDescription1": "Ŝajnas, ke vi uzas malnovan version de la kliento de Sonacove Meets, kiu havas konatajn sekurec-vundeblojn. Bonvolu ĝisdatigi al nia ",
         "oldElectronClientDescription2": "plej nova versio",
         "oldElectronClientDescription3": " nun!",
         "participantWantsToJoin": "Volas aliĝi al la kunveno",
@@ -932,6 +932,141 @@
         "linkCopied": "Ligilo kopiita al tondujo",
         "lookGood": "Via mikrofono funkcias ĝuste",
         "or": "Aŭ",
+        "permissionsGuide": {
+            "close": "Fermi",
+            "detected": "Detektita:",
+            "deviceHelp": {
+                "Android": [
+                    "Malfermu la agordojn de la telefono.",
+                    "Frapetu \"Aplikoj\" > vian retumilon (ekz. Chrome aŭ Brave).",
+                    "Frapetu \"Permesoj\".",
+                    "Permesu aliron al la fotilo kaj mikrofono.",
+                    "Restartigu la retumilon kaj provu denove."
+                ],
+                "iOS": [
+                    "Malfermu la iOS-agordojn.",
+                    "Rulumu malsupren kaj elektu vian retumilon (ekz. Safari aŭ Chrome).",
+                    "Frapetu \"Fotilo\" kaj \"Mikrofono\".",
+                    "Agordu ambaŭ al \"Permesi\".",
+                    "Reiru al la retumilo kaj reŝarĝu la paĝon."
+                ]
+            },
+            "howToAllow": "Kiel permesi aliron:",
+            "needHelp": "Ĉu vi bezonas helpon?",
+            "steps": {
+                "Brave_Android": [
+                    "Alklaku la ikonon <0>Tune</0> apud la URL.",
+                    "Premu 'Permesoj'.",
+                    "Permesu kameron kaj mikrofonon.",
+                    "Refreŝigu la paĝon."
+                ],
+                "Brave_Linux": [
+                    "Alklaku la ikonon <0>Tune</0> en la adresa linio.",
+                    "Permesu kameron kaj mikrofonon en la permeslista.",
+                    "Refreŝigu la paĝon."
+                ],
+                "Brave_Windows": [
+                    "Alklaku la ikonon <0>Tune</0> en la adresa linio.",
+                    "Ŝaltu mikrofonon kaj kameron.",
+                    "Refreŝigu la paĝon."
+                ],
+                "Brave_iOS": [
+                    "Malfermu iOS-agordojn > Brave.",
+                    "Premu 'Kamerao' kaj 'Mikrofono'.",
+                    "Agordu ilin al 'Permesi'.",
+                    "Revenu al Brave kaj refreŝigu la paĝon."
+                ],
+                "Brave_macOS": [
+                    "Alklaku la ikonon <0>Tune</0> en la adresa linio.",
+                    "Ŝaltu kameron kaj mikrofonon en la permesaj agordoj.",
+                    "Refreŝigu la paĝon."
+                ],
+                "Chrome_Android": [
+                    "Alklaku la ikonon <0>Tune</0> en la adresa linio.",
+                    "Elektu 'Permesoj'.",
+                    "Agordu 'Kamerao' kaj 'Mikrofono' al 'Permesi'."
+                ],
+                "Chrome_Linux": [
+                    "Alklaku la ŝlosilan ikonon apud la URL en la adresa linio.",
+                    "Alklaku 'Retpaĝaj Agordoj'.",
+                    "Permesu kameron kaj mikrofonon.",
+                    "Refreŝigu la paĝon."
+                ],
+                "Chrome_Windows": [
+                    "Alklaku la ikonon <0>Tune</0> en la adresa linio.",
+                    "Alklaku 'Retpaĝaj Agordoj'.",
+                    "Permesu kameron kaj mikrofonon sub 'Permesoj'."
+                ],
+                "Chrome_iOS": [
+                    "Malfermu iOS-agordojn > Chrome.",
+                    "Premu 'Kamerao' kaj 'Mikrofono'.",
+                    "Agordu ilin al 'Permesi'.",
+                    "Revenu al Chrome kaj refreŝigu la paĝon."
+                ],
+                "Chrome_macOS": [
+                    "Alklaku la ikonon <0>Tune</0> en la adresa linio.",
+                    "Alklaku 'Retpaĝaj Agordoj'.",
+                    "Permesu kameron kaj mikrofonon sub 'Permesoj'."
+                ],
+                "Edge_Windows": [
+                    "Alklaku la ŝlosilan ikonon apud la URL.",
+                    "Permesu kameron kaj mikrofonon.",
+                    "Refreŝigu la paĝon."
+                ],
+                "Edge_macOS": [
+                    "Alklaku la ikonon <0>Tune</0> en la adresa linio.",
+                    "Agordu kameron kaj mikrofonon al 'Permesi'."
+                ],
+                "Firefox_Android": [
+                    "Premu la ŝlosilan ikonon apud la URL-linio.",
+                    "Premu 'Redakti paĝajn agordojn'.",
+                    "Permesu kameron kaj mikrofonon.",
+                    "Refreŝigu la paĝon."
+                ],
+                "Firefox_Linux": [
+                    "Alklaku la ŝlosilan ikonon apud la adresa linio.",
+                    "Alklaku 'Pliaj informoj'.",
+                    "Permesu kameron kaj mikrofonon sub permesoj.",
+                    "Refreŝigu la paĝon."
+                ],
+                "Firefox_Windows": [
+                    "Alklaku la ikonon <0>Tune</0> apud la URL.",
+                    "Ŝaltu mikrofonon kaj kameron.",
+                    "Refreŝigu la paĝon."
+                ],
+                "Firefox_iOS": [
+                    "Malfermu iOS-agordojn > Firefox.",
+                    "Ŝaltu kameron kaj mikrofonon.",
+                    "Revenu al Firefox kaj refreŝigu la paĝon."
+                ],
+                "Firefox_macOS": [
+                    "Alklaku la ikonon <0>Tune</0> apud la URL.",
+                    "Alklaku la sageton > 'Pliaj informoj'.",
+                    "Iru al la langeto 'Permesoj'.",
+                    "Permesu kameron kaj mikrofonon.",
+                    "Refreŝigu la paĝon."
+                ],
+                "Safari_iOS": [
+                    "Iru al iOS-agordoj > Safari.",
+                    "Premu 'Kamerao' kaj 'Mikrofono'.",
+                    "Agordu ilin al 'Permesi'.",
+                    "Revenu al Safari kaj refreŝigu la paĝon."
+                ],
+                "Safari_macOS": [
+                    "En la menuobreto alklaku 'Safari' > 'Agordoj por ĉi tiu retejo'.",
+                    "Agordu kameron kaj mikrofonon al 'Permesi'.",
+                    "Refreŝigu la paĝon."
+                ],
+                "default": [
+                    "Malfermu la agordojn de la retumilo.",
+                    "Serĉu la sekcion 'Privateco' aŭ 'Permesoj'.",
+                    "Ŝaltu kameron kaj mikrofonon por ĉi tiu retejo.",
+                    "Refreŝigu la paĝon."
+                ]
+            },
+            "stillNotWorking": "Ĉu ĝi ankoraŭ ne funkcias?",
+            "title": "Ŝalti mikrofonon kaj kameron"
+        },
         "premeeting": "Antaŭkunveno",
         "proceedAnyway": "Daŭrigi",
         "screenSharingError": "Eraro kun la ekrandividado:",
@@ -1051,6 +1186,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Envena mesaĝo",
+        "KNOCKING_PARTICIPANT_SOUND": "Partoprenanto eniris atendejon",
+        "PARTICIPANT_JOINED_SOUND": "Partoprenanto aliĝis",
+        "PARTICIPANT_LEFT_SOUND": "Partoprenanto foriris",
+        "TALK_WHILE_MUTED_SOUND": "Parolu dum silentigita",
         "audio": "Aŭdio",
         "buttonLabel": "Agordoj",
         "calendar": {
@@ -1066,7 +1206,6 @@
         "devices": "Aparatoj",
         "followMe": "Ĉiuj sekvas min",
         "framesPerSecond": "kadroj sekunde",
-        "incomingMessage": "Envena mesaĝo",
         "language": "Lingvo",
         "loggedIn": "Ensalutinta kiels {{name}}",
         "maxStageParticipants": "Maksimuma nombro da partoprenantoj, kiuj povas esti alpinglitaj al la ĉefa scenejo",
@@ -1077,9 +1216,6 @@
         "name": "Nomo",
         "noDevice": "Neniu",
         "notifications": "Sciigoj",
-        "participantJoined": "Partoprenanto aliĝis",
-        "participantKnocking": "Partoprenanto eniris atendejon",
-        "participantLeft": "Partoprenanto foriris",
         "playSounds": "Ludu sonon",
         "reactions": "Renkontiĝaj reagoj",
         "sameAsSystem": "Same kiel sistemo ({{label}})",
@@ -1092,7 +1228,6 @@
         "startAudioMuted": "Ĉiuj komenciĝas silentaj",
         "startReactionsMuted": "Silentigu la reagajn sonojn por ĉiujn",
         "startVideoMuted": "Ĉiuj komenciĝas kaŝitaj",
-        "talkWhileMuted": "Parolu dum silentigita",
         "title": "Agordoj",
         "video": "Video"
     },
@@ -1486,15 +1621,15 @@
         "go": "EK",
         "goSmall": "EK",
         "headerSubtitle": "Sekuraj kaj altkvalitaj renkontiĝoj",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Informoj",
-        "jitsiOnMobile": "Jitsi ĉe poŝtelefono - elŝutu niajn apojn kaj komencu renkontiĝon de ie ajn",
+        "jitsiOnMobile": "Sonacove ĉe poŝtelefono - elŝutu niajn apojn kaj komencu renkontiĝon de ie ajn",
         "join": "KREI / ALIĜI",
         "logo": {
             "calendar": "Kalendara",
             "desktopPreviewThumbnail": "Miniaturo de kundividado de ekrano",
             "googleLogo": "Logotipo de Google",
-            "logoDeepLinking": "Logotipo de Jitsi Meet",
+            "logoDeepLinking": "Logotipo de Sonacove Meets",
             "microsoftLogo": "Logotipo de Microsoft",
             "policyLogo": "Logotipo de regularo"
         },

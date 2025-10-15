@@ -17,12 +17,7 @@ import {
     getRemoteParticipants
 } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import {
-    playSound,
-    registerSound,
-    stopSound,
-    unregisterSound
-} from '../base/sounds/actions';
+import SoundService from '../base/sounds/components/SoundService';
 import {
     CALLING,
     CONNECTED_USER,
@@ -95,13 +90,13 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_WILL_MOUNT:
         for (const [ soundId, sound ] of sounds.entries()) {
-            dispatch(registerSound(soundId, sound.file, sound.options));
+            SoundService.register(soundId, sound.file, sound.options);
         }
         break;
 
     case APP_WILL_UNMOUNT:
         for (const soundId of sounds.keys()) {
-            dispatch(unregisterSound(soundId));
+            SoundService.unregister(soundId);
         }
         break;
 
@@ -134,11 +129,11 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         if (oldSoundId) {
-            dispatch(stopSound(oldSoundId));
+            SoundService.stop(oldSoundId);
         }
 
         if (newSoundId) {
-            dispatch(playSound(newSoundId));
+            SoundService.play(newSoundId, getState());
         }
 
         break;

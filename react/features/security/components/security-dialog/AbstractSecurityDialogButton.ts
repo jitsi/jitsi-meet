@@ -5,7 +5,7 @@ import { getSecurityUiConfig } from '../../../base/config/functions.any';
 import { LOBBY_MODE_ENABLED, MEETING_PASSWORD_ENABLED, SECURITY_OPTIONS_ENABLED } from '../../../base/flags/constants';
 import { getFeatureFlag } from '../../../base/flags/functions';
 import { IconSecurityOff, IconSecurityOn } from '../../../base/icons/svg';
-import { isLocalParticipantModerator } from '../../../base/participants/functions';
+import { isLocalParticipantHost } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { isSecurityDialogButtonVisible } from '../../functions';
 
@@ -83,7 +83,7 @@ export function _mapStateToProps(state: IReduxState) {
         visible: isSecurityDialogButtonVisible({
             conference,
             securityUIConfig: getSecurityUiConfig(state),
-            isModerator: isLocalParticipantModerator(state),
+            isHost: isLocalParticipantHost(state),
             enabledLobbyModeFlag,
             enabledMeetingPassFlag,
             enabledSecurityOptionsFlag

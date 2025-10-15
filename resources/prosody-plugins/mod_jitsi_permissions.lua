@@ -70,7 +70,7 @@ function process_set_affiliation(event)
         return;
     end
 
-    if previous_affiliation == 'none' and affiliation == 'owner' then
+    if (previous_affiliation == 'none' or previous_affiliation == 'member') and affiliation == 'owner' then
         occupant_session.jitsi_meet_context_features = actor_session.jitsi_meet_context_features;
         if actor_session.jitsi_meet_context_user then
             occupant_session.granted_jitsi_meet_context_user_id = actor_session.jitsi_meet_context_user['id']

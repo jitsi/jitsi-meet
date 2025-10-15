@@ -41,7 +41,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Bileraren esteka gehitu",
-        "confirmAddLink": "Jitsi esteka gertaera honetara gehitu nahi duzu?",
+        "confirmAddLink": "Sonacove esteka gertaera honetara gehitu nahi duzu?",
         "error": {
             "appConfiguration": "Egutegiaren integrazioa ez dago ondo konfiguratuta.",
             "generic": "Errore bat gertatu da. Egiaztatu zure egutegiaren ezarpenak edo saiatu egutegia eguneratzen.",
@@ -360,7 +360,7 @@
         "answer": "Erantzun",
         "audioCallTitle": "Sarrerako deia",
         "decline": "Baztertu",
-        "productLabel": "Jitsi Meet-etik",
+        "productLabel": "Sonacove Meets-etik",
         "videoCallTitle": "Bideo-deia sartzen"
     },
     "info": {
@@ -554,7 +554,7 @@
         "newDeviceAction": "Erabilera",
         "newDeviceAudioTitle": "Audio-gailu berria hauteman da",
         "newDeviceCameraTitle": "Kamera berria hauteman da",
-        "oldElectronClientDescription1": "Segurtasun arazoak dituen Jitsi Meet aplikazioa erabiltzen arai zara. Eguneratu ezazu",
+        "oldElectronClientDescription1": "Segurtasun arazoak dituen Sonacove Meets aplikazioa erabiltzen arai zara. Eguneratu ezazu",
         "oldElectronClientDescription2": "bertsio berriagora",
         "oldElectronClientDescription3": "ORAIN!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) beste erabiltzaile batek kendu du",
@@ -644,6 +644,141 @@
         "linkCopied": "Lotura ondo kopiatu da",
         "lookGood": "Zure mikrofonoa ondo dabil",
         "or": "edo",
+        "permissionsGuide": {
+            "close": "Itxi",
+            "detected": "Detektatua:",
+            "deviceHelp": {
+                "Android": [
+                    "Ireki telefonoaren ezarpenak.",
+                    "Sakatu \"Aplikazioak\" > zure nabigatzailea (adibidez, Chrome edo Brave).",
+                    "Sakatu \"Baimenak\".",
+                    "Onartu Kamera eta Mikrofonoaren sarbidea.",
+                    "Berrabiarazi nabigatzailea eta saiatu berriro."
+                ],
+                "iOS": [
+                    "Ireki iOS ezarpenak.",
+                    "Jeitsi behera eta hautatu zure nabigatzailea (adibidez, Safari edo Chrome).",
+                    "Sakatu \"Kamera\" eta \"Mikrofono\".",
+                    "Ezarri biak \"Onartu\" moduan.",
+                    "Itzuli nabigatzailera eta berriro kargatu orria."
+                ]
+            },
+            "howToAllow": "Nola onartu baimena:",
+            "needHelp": "Laguntza behar duzu?",
+            "steps": {
+                "Brave_Android": [
+                    "Egin klik URLaren ondoan dagoen <0>Tune</0> ikonoan.",
+                    "Sakatu 'Baimenak'.",
+                    "Onartu kamera eta mikrofonoa.",
+                    "Eguneratu orria."
+                ],
+                "Brave_Linux": [
+                    "Egin klik helbide-barreko <0>Tune</0> ikonoan.",
+                    "Onartu kamera eta mikrofonoa baimen zerrendan.",
+                    "Eguneratu orria."
+                ],
+                "Brave_Windows": [
+                    "Egin klik helbide-barreko <0>Tune</0> ikonoan.",
+                    "Gaitu mikrofonoa eta kamera.",
+                    "Eguneratu orria."
+                ],
+                "Brave_iOS": [
+                    "Ireki iOSeko Ezarpenak > Brave.",
+                    "Sakatu 'Kamera' eta 'Mikrofonoa'.",
+                    "Ezarri 'Onartu' moduan.",
+                    "Itzuli Brave-ra eta eguneratu orria."
+                ],
+                "Brave_macOS": [
+                    "Egin klik helbide-barreko <0>Tune</0> ikonoan.",
+                    "Gaitu kamera eta mikrofonoa baimenetako ezarpenetan.",
+                    "Eguneratu orria."
+                ],
+                "Chrome_Android": [
+                    "Egin klik helbide-barreko <0>Tune</0> ikonoan.",
+                    "Hautatu 'Baimenak'.",
+                    "'Kamera' eta 'Mikrofonoa' 'Onartu' moduan jarri."
+                ],
+                "Chrome_Linux": [
+                    "Egin klik URLaren ondoan dagoen giltza-ikonoan helbide-barrean.",
+                    "Egin klik 'Gunearen ezarpenetan'.",
+                    "Onartu kamera eta mikrofonoa.",
+                    "Eguneratu orria."
+                ],
+                "Chrome_Windows": [
+                    "Egin klik helbide-barreko <0>Tune</0> ikonoan.",
+                    "Egin klik 'Gunearen ezarpenetan'.",
+                    "Onartu kamera eta mikrofonoa 'Baimenen' azpian."
+                ],
+                "Chrome_iOS": [
+                    "Ireki iOSeko Ezarpenak > Chrome.",
+                    "Sakatu 'Kamera' eta 'Mikrofonoa'.",
+                    "Ezarri 'Onartu' moduan.",
+                    "Itzuli Chrome-ra eta eguneratu orria."
+                ],
+                "Chrome_macOS": [
+                    "Egin klik helbide-barreko <0>Tune</0> ikonoan.",
+                    "Egin klik 'Gunearen ezarpenetan'.",
+                    "Onartu kamera eta mikrofonoa 'Baimenen' azpian."
+                ],
+                "Edge_Windows": [
+                    "Egin klik URLaren ondoan dagoen giltza-ikonoan.",
+                    "Onartu kamera eta mikrofonoa.",
+                    "Eguneratu orria."
+                ],
+                "Edge_macOS": [
+                    "Egin klik helbide-barreko <0>Tune</0> ikonoan.",
+                    "Ezarri kamera eta mikrofonoa 'Onartu' moduan."
+                ],
+                "Firefox_Android": [
+                    "Sakatu URL-barrean dagoen giltza-ikonoan.",
+                    "Sakatu 'Gune ezarpenak editatu'.",
+                    "Onartu kamera eta mikrofonoa.",
+                    "Eguneratu orria."
+                ],
+                "Firefox_Linux": [
+                    "Egin klik giltza-ikonoan helbide-barrean.",
+                    "Egin klik 'Informazio gehiago'.",
+                    "Onartu kamera eta mikrofonoa baimenetan.",
+                    "Eguneratu orria."
+                ],
+                "Firefox_Windows": [
+                    "Egin klik URLaren ondoan dagoen <0>Tune</0> ikonoan.",
+                    "Gaitu mikrofonoa eta kamera.",
+                    "Eguneratu orria."
+                ],
+                "Firefox_iOS": [
+                    "Ireki iOSeko Ezarpenak > Firefox.",
+                    "Gaitu kamera eta mikrofonoa.",
+                    "Itzuli Firefox-era eta eguneratu orria."
+                ],
+                "Firefox_macOS": [
+                    "Egin klik URLaren ondoan dagoen <0>Tune</0> ikonoan.",
+                    "Egin klik gezian > 'Informazio gehiago'.",
+                    "Joan 'Baimenak' fitxara.",
+                    "Onartu kamera eta mikrofonoa.",
+                    "Eguneratu orria."
+                ],
+                "Safari_iOS": [
+                    "Joan iOSeko Ezarpenak > Safari.",
+                    "Sakatu 'Kamera' eta 'Mikrofonoa'.",
+                    "Ezarri 'Onartu' moduan.",
+                    "Itzuli Safari-ra eta eguneratu orria."
+                ],
+                "Safari_macOS": [
+                    "Menu-barran egin klik 'Safari' > 'Webgune honen ezarpenak'.",
+                    "Ezarri kamera eta mikrofonoa 'Onartu' moduan.",
+                    "Eguneratu orria."
+                ],
+                "default": [
+                    "Ireki arakatzailearen ezarpenak.",
+                    "Bilatu 'Pribatutasuna' edo 'Baimenak' ataletan.",
+                    "Gaitu kamera eta mikrofonoa gune honetarako.",
+                    "Eguneratu orria."
+                ]
+            },
+            "stillNotWorking": "Oraindik ez badabil?",
+            "title": "Aktibatu mikrofonoa eta kamera"
+        },
         "premeeting": "Aurre-bilera",
         "screenSharingError": "Errorea pantaila partekatzean:",
         "startWithPhone": "Telefono diearen audioarekin hasi",
@@ -1005,15 +1140,15 @@
         "go": "JOAN",
         "goSmall": "JOAN",
         "headerSubtitle": "Secure and high quality meetings",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Informazioa",
-        "jitsiOnMobile": "Jitsi eramangarrian – deskargatu gure aplikazioak eta hasi bilerak edonondik",
+        "jitsiOnMobile": "Sonacove eramangarrian – deskargatu gure aplikazioak eta hasi bilerak edonondik",
         "join": "SORTU / SARTU",
         "logo": {
             "calendar": "Egutegiaren logoa",
             "desktopPreviewThumbnail": "Aurrebistaren iruditxoa",
             "googleLogo": "Googleren logoa",
-            "logoDeepLinking": "Jitsi meeten logo",
+            "logoDeepLinking": "Sonacove Meetsen logo",
             "microsoftLogo": "Microsoften logo",
             "policyLogo": "Politikaren logoa"
         },

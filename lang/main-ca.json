@@ -60,7 +60,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Afegeix un enllaç de reunió",
-        "confirmAddLink": "Voleu afegir un enllaç al Jitsi en aquest esdeveniment?",
+        "confirmAddLink": "Voleu afegir un enllaç al Sonacove en aquest esdeveniment?",
         "error": {
             "appConfiguration": "La integració de l'agenda no està configurada correctament.",
             "generic": "S'ha produït un error. Comproveu la configuració de l'agenda o intenteu d'actualitzar-la.",
@@ -444,7 +444,7 @@
         "answer": "Resposta",
         "audioCallTitle": "Trucada entrant",
         "decline": "Rebutja",
-        "productLabel": "de Jitsi Meet",
+        "productLabel": "de Sonacove Meets",
         "videoCallTitle": "Videotrucada entrant"
     },
     "info": {
@@ -693,7 +693,7 @@
         "noiseSuppressionFailedTitle": "No s'ha pogut iniciar la supressió de soroll",
         "noiseSuppressionNoTrackDescription": "Abans, activeu el vostre micròfon.",
         "noiseSuppressionStereoDescription": "Ara per ara, no és possible la supressió de soroll d'àudio en estèreo",
-        "oldElectronClientDescription1": "Sembla que useu una versió antiga del client Jitsi Meet, que té vulnerabilitats de seguretat conegudes. Assegureu-vos d'actualitzar-lo",
+        "oldElectronClientDescription1": "Sembla que useu una versió antiga del client Sonacove Meets, que té vulnerabilitats de seguretat conegudes. Assegureu-vos d'actualitzar-lo",
         "oldElectronClientDescription2": "última construcció",
         "oldElectronClientDescription3": "ara!",
         "participantWantsToJoin": "Vol unir-se a la reunió",
@@ -840,6 +840,141 @@
         "linkCopied": "L'enllaç s'ha copiat al porta-retalls",
         "lookGood": "El micròfon funciona correctament",
         "or": "o",
+        "permissionsGuide": {
+            "close": "Tancar",
+            "detected": "Detectat:",
+            "deviceHelp": {
+                "Android": [
+                    "Obre la configuració del telèfon.",
+                    "Toca \"Aplicacions\" > el teu navegador (per exemple, Chrome o Brave).",
+                    "Toca \"Permisos\".",
+                    "Permet l'accés a la càmera i el micròfon.",
+                    "Reinicia el navegador i torna-ho a provar."
+                ],
+                "iOS": [
+                    "Obre la configuració d’iOS.",
+                    "Desplaça’t cap avall i selecciona el teu navegador (per exemple, Safari o Chrome).",
+                    "Toca \"Càmera\" i \"Micròfon\".",
+                    "Estableix ambdós a \"Permetre\".",
+                    "Torna al navegador i recarrega la pàgina."
+                ]
+            },
+            "howToAllow": "Com permetre l'accés:",
+            "needHelp": "Necessites ajuda?",
+            "steps": {
+                "Brave_Android": [
+                    "Fes clic a la icona <0>Tune</0> al costat de l’URL.",
+                    "Toca 'Permisos'.",
+                    "Permet la càmera i el micròfon.",
+                    "Refresca la pàgina."
+                ],
+                "Brave_Linux": [
+                    "Fes clic a la icona <0>Tune</0> a la barra d’adreces.",
+                    "Permet la càmera i el micròfon a la llista de permisos.",
+                    "Refresca la pàgina."
+                ],
+                "Brave_Windows": [
+                    "Fes clic a la icona <0>Tune</0> a la barra d’adreces.",
+                    "Activa el micròfon i la càmera.",
+                    "Refresca la pàgina."
+                ],
+                "Brave_iOS": [
+                    "Obre Configuració d’iOS > Brave.",
+                    "Toca 'Càmera' i 'Micròfon'.",
+                    "Configura'ls a 'Permetre'.",
+                    "Torna a Brave i refresca la pàgina."
+                ],
+                "Brave_macOS": [
+                    "Fes clic a la icona <0>Tune</0> a la barra d’adreces.",
+                    "Activa la càmera i el micròfon a la configuració de permisos.",
+                    "Refresca la pàgina."
+                ],
+                "Chrome_Android": [
+                    "Fes clic a la icona <0>Tune</0> a la barra d'adreces.",
+                    "Selecciona 'Permisos'.",
+                    "Configura 'Càmera' i 'Micròfon' a 'Permetre'."
+                ],
+                "Chrome_Linux": [
+                    "Fes clic a la icona de cadenat al costat de l'URL a la barra d'adreces.",
+                    "Fes clic a 'Configuració del lloc'.",
+                    "Permet la càmera i el micròfon.",
+                    "Refresca la pàgina."
+                ],
+                "Chrome_Windows": [
+                    "Fes clic a la icona <0>Tune</0> a la barra d'adreces.",
+                    "Fes clic a 'Configuració del lloc'.",
+                    "Permet la càmera i el micròfon a 'Permisos'."
+                ],
+                "Chrome_iOS": [
+                    "Obre Configuració d’iOS > Chrome.",
+                    "Toca 'Càmera' i 'Micròfon'.",
+                    "Configura'ls a 'Permetre'.",
+                    "Torna a Chrome i refresca la pàgina."
+                ],
+                "Chrome_macOS": [
+                    "Fes clic a la icona <0>Tune</0> a la barra d'adreces.",
+                    "Fes clic a 'Configuració del lloc'.",
+                    "Permet la càmera i el micròfon a 'Permisos'."
+                ],
+                "Edge_Windows": [
+                    "Fes clic a la icona de cadenat al costat de l’URL.",
+                    "Permet la càmera i el micròfon.",
+                    "Refresca la pàgina."
+                ],
+                "Edge_macOS": [
+                    "Fes clic a la icona <0>Tune</0> a la barra d’adreces.",
+                    "Configura la càmera i el micròfon a 'Permetre'."
+                ],
+                "Firefox_Android": [
+                    "Toca la icona de cadenat al costat de la barra d’URL.",
+                    "Toca 'Edita la configuració del lloc'.",
+                    "Permet la càmera i el micròfon.",
+                    "Refresca la pàgina."
+                ],
+                "Firefox_Linux": [
+                    "Fes clic a la icona de cadenat prop de la barra d’adreces.",
+                    "Fes clic a 'Més informació'.",
+                    "A Permisos, permet la càmera i el micròfon.",
+                    "Refresca la pàgina."
+                ],
+                "Firefox_Windows": [
+                    "Fes clic a la icona <0>Tune</0> al costat de l’URL.",
+                    "Activa el micròfon i la càmera.",
+                    "Refresca la pàgina."
+                ],
+                "Firefox_iOS": [
+                    "Obre Configuració d’iOS > Firefox.",
+                    "Activa la càmera i el micròfon.",
+                    "Torna a Firefox i refresca la pàgina."
+                ],
+                "Firefox_macOS": [
+                    "Fes clic a la icona <0>Tune</0> al costat de l’URL.",
+                    "Fes clic a la fletxa > 'Més informació'.",
+                    "Ves a la pestanya 'Permisos'.",
+                    "Permet la càmera i el micròfon.",
+                    "Refresca la pàgina."
+                ],
+                "Safari_iOS": [
+                    "Ves a Configuració d’iOS > Safari.",
+                    "Toca 'Càmera' i 'Micròfon'.",
+                    "Configura'ls a 'Permetre'.",
+                    "Torna a Safari i refresca la pàgina."
+                ],
+                "Safari_macOS": [
+                    "Fes clic a 'Safari' a la barra de menú > 'Configuració per a aquest lloc web'.",
+                    "Configura la càmera i el micròfon a 'Permetre'.",
+                    "Refresca la pàgina."
+                ],
+                "default": [
+                    "Obre la configuració del navegador.",
+                    "Busca la secció 'Privacitat' o 'Permisos'.",
+                    "Activa la càmera i el micròfon per a aquest lloc.",
+                    "Refresca la pàgina."
+                ]
+            },
+            "stillNotWorking": "Encara no funciona?",
+            "title": "Activa el micròfon i la càmera"
+        },
         "premeeting": "Prereunió",
         "screenSharingError": "Error en compartir la pantalla:",
         "startWithPhone": "Comença amb àudio de telèfon",
@@ -950,6 +1085,11 @@
         "title": "Opcions de seguretat"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Missatge entrant",
+        "KNOCKING_PARTICIPANT_SOUND": "El participant ha entrat a la sala d'espera",
+        "PARTICIPANT_JOINED_SOUND": "S'ha unit un participant",
+        "PARTICIPANT_LEFT_SOUND": "Un participant ha sortit de la reunió",
+        "TALK_WHILE_MUTED_SOUND": "Parla mentre està silenciat",
         "buttonLabel": "Paràmetres",
         "calendar": {
             "about": "La integració de l'agenda {{appName}} s'usa per a accedir de forma segura a la vostra agenda perquè pugui llegir els esdeveniments pròxims.",
@@ -964,7 +1104,6 @@
         "devices": "Aparells",
         "followMe": "Tothom que em segueix",
         "framesPerSecond": "fotogrames per segon",
-        "incomingMessage": "Missatge entrant",
         "language": "Llengua",
         "loggedIn": "Sessió iniciada com a {{name}}",
         "maxStageParticipants": "El nombre màxim de participants que es poden fixar en la escena principal",
@@ -973,9 +1112,6 @@
         "more": "Més",
         "name": "Nom",
         "noDevice": "Cap",
-        "participantJoined": "S'ha unit un participant",
-        "participantKnocking": "El participant ha entrat a la sala d'espera",
-        "participantLeft": "Un participant ha sortit de la reunió",
         "playSounds": "Reprodueix el so",
         "reactions": "Reaccions de la reunió",
         "sameAsSystem": "Igual que del sistema ({{label}}) ",
@@ -988,7 +1124,6 @@
         "startAudioMuted": "Tothom comença silenciat",
         "startReactionsMuted": "Silencia els sons de reaccions per a tothom",
         "startVideoMuted": "Tothom comença amagat",
-        "talkWhileMuted": "Parla mentre està silenciat",
         "title": "Configuració"
     },
     "settingsView": {
@@ -1334,15 +1469,15 @@
         "go": "SOM-HI",
         "goSmall": "SOM-HI",
         "headerSubtitle": "Reunions d'alta qualitat i segures",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Informació de marcatge",
-        "jitsiOnMobile": "Jitsi al mòbil – baixeu les nostres aplicacions i comenceu una reunió des de qualsevol lloc",
+        "jitsiOnMobile": "Sonacove al mòbil – baixeu les nostres aplicacions i comenceu una reunió des de qualsevol lloc",
         "join": "CREA / ENTRA",
         "logo": {
             "calendar": "Logotip del Calendari",
             "desktopPreviewThumbnail": "Miniatura de visualització prèvia de l'escriptori",
             "googleLogo": "Logotip de Google",
-            "logoDeepLinking": "Logotip de Jitsi Meet",
+            "logoDeepLinking": "Logotip de Sonacove Meets",
             "microsoftLogo": "Logotip de Microsoft",
             "policyLogo": "Logotip de la política"
         },

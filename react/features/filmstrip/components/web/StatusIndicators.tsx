@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
-import { getParticipantByIdOrUndefined, isScreenShareParticipantById } from '../../../base/participants/functions';
+import { getParticipantByIdOrUndefined, isLocalParticipantHost, isRemoteParticipantHost, isScreenShareParticipantById } from '../../../base/participants/functions';
 import {
     getVideoTrackByParticipant,
     isLocalTrackMuted,
@@ -13,6 +13,7 @@ import {
 import { getIndicatorsTooltipPosition } from '../../functions.web';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
+import HostIndicator from './HostIndicator';
 import ModeratorIndicator from './ModeratorIndicator';
 import ScreenShareIndicator from './ScreenShareIndicator';
 
@@ -25,6 +26,11 @@ interface IProps {
      * Indicates if the audio muted indicator should be visible or not.
      */
     _showAudioMutedIndicator: Boolean;
+
+    /**
+     * Indicates if the host indicator should be visible or not.
+     */
+    _showHostIndicator: Boolean;
 
     /**
      * Indicates if the moderator indicator should be visible or not.
@@ -62,6 +68,7 @@ class StatusIndicators extends Component<IProps> {
     override render() {
         const {
             _showAudioMutedIndicator,
+            _showHostIndicator,
             _showModeratorIndicator,
             _showScreenShareIndicator,
             thumbnailType
@@ -71,6 +78,7 @@ class StatusIndicators extends Component<IProps> {
         return (
             <>
                 { _showAudioMutedIndicator && <AudioMutedIndicator tooltipPosition = { tooltipPosition } /> }
+                { _showHostIndicator && <HostIndicator tooltipPosition = { tooltipPosition } /> }
                 { _showModeratorIndicator && <ModeratorIndicator tooltipPosition = { tooltipPosition } />}
                 { _showScreenShareIndicator && <ScreenShareIndicator tooltipPosition = { tooltipPosition } /> }
             </>
@@ -86,12 +94,13 @@ class StatusIndicators extends Component<IProps> {
  * @private
  * @returns {{
  *     _showAudioMutedIndicator: boolean,
+ *      _showHostIndicator: boolean,
  *     _showModeratorIndicator: boolean,
  *     _showScreenShareIndicator: boolean
  * }}
 */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
-    const { participantID, audio, moderator, screenshare } = ownProps;
+    const { participantID, audio, host, moderator, screenshare } = ownProps;
 
     // Only the local participant won't have id for the time when the conference is not yet joined.
     const participant = getParticipantByIdOrUndefined(state, participantID);
@@ -99,23 +108,27 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
     let isAudioMuted = true;
     let isScreenSharing = false;
+    let isParticipantHost;
 
     if (participant?.local) {
         isAudioMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
+        isParticipantHost = isLocalParticipantHost(state);
     } else if (!participant?.fakeParticipant || isScreenShareParticipantById(state, participantID)) {
         // remote participants excluding shared video
         const track = getVideoTrackByParticipant(state, participant);
 
         isScreenSharing = track?.videoType === 'desktop';
         isAudioMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, participantID);
+        isParticipantHost = isRemoteParticipantHost(participant);
     }
 
     const { disableModeratorIndicator } = state['features/base/config'];
 
     return {
         _showAudioMutedIndicator: isAudioMuted && audio,
+        _showHostIndicator: isParticipantHost && host,
         _showModeratorIndicator:
-            !disableModeratorIndicator && participant && participant.role === PARTICIPANT_ROLE.MODERATOR && moderator,
+            !disableModeratorIndicator && participant && participant.role === PARTICIPANT_ROLE.MODERATOR && moderator && !isParticipantHost,
         _showScreenShareIndicator: isScreenSharing && screenshare
     };
 }

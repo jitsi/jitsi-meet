@@ -60,7 +60,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Dodaj odnośnik do spotkania",
-        "confirmAddLink": "Czy chcesz dodać odnośnik Jitsi do tego wydarzenia?",
+        "confirmAddLink": "Czy chcesz dodać odnośnik Sonacove do tego wydarzenia?",
         "error": {
             "appConfiguration": "Integracja z kalendarzem nie jest skonfigurowana poprawnie.",
             "generic": "Wystąpił problem. Sprawdź ustawienia kalendarza lub spróbuj odświeżyć kalendarz.",
@@ -469,7 +469,7 @@
         "answer": "Odbierz",
         "audioCallTitle": "Przychodzące połączenie",
         "decline": "Odrzuć",
-        "productLabel": "z Jitsi Meet",
+        "productLabel": "z Sonacove Meets",
         "videoCallTitle": "Przychodzące połączenie wideo"
     },
     "info": {
@@ -720,7 +720,7 @@
         "noiseSuppressionFailedTitle": "Nie udało się uruchomić tłumienia szumów",
         "noiseSuppressionNoTrackDescription": "Najpierw wyłącz wyciszenie mikrofonu.",
         "noiseSuppressionStereoDescription": "Tłumienie szumów dźwięku stereo nie jest obecnie obsługiwane.",
-        "oldElectronClientDescription1": "Najprawdopodobniej używasz starej wersji klienta Jitsi Meet, który jest podatny na luki bezpieczeństwa. Proszę zaktualizować do ",
+        "oldElectronClientDescription1": "Najprawdopodobniej używasz starej wersji klienta Sonacove Meets, który jest podatny na luki bezpieczeństwa. Proszę zaktualizować do ",
         "oldElectronClientDescription2": "najnowszej wersji",
         "oldElectronClientDescription3": " teraz!",
         "participantWantsToJoin": "Chce dołączyć do spotkania",
@@ -871,6 +871,141 @@
         "linkCopied": "Link skopiowany do schowka",
         "lookGood": "Wygląda na to, że Twój mikrofon działa poprawnie",
         "or": "lub",
+        "permissionsGuide": {
+            "close": "Zamknij",
+            "detected": "Wykryto:",
+            "deviceHelp": {
+                "Android": [
+                    "Otwórz ustawienia telefonu.",
+                    "Stuknij „Aplikacje” > swoją przeglądarkę (np. Chrome lub Brave).",
+                    "Stuknij „Uprawnienia”.",
+                    "Zezwól na dostęp do aparatu i mikrofonu.",
+                    "Uruchom ponownie przeglądarkę i spróbuj ponownie."
+                ],
+                "iOS": [
+                    "Otwórz ustawienia iOS.",
+                    "Przewiń w dół i wybierz swoją przeglądarkę (np. Safari lub Chrome).",
+                    "Stuknij „Aparat” i „Mikrofon”.",
+                    "Ustaw oba na „Zezwól”.",
+                    "Wróć do przeglądarki i odśwież stronę."
+                ]
+            },
+            "howToAllow": "Jak zezwolić na dostęp:",
+            "needHelp": "Potrzebujesz pomocy?",
+            "steps": {
+                "Brave_Android": [
+                    "Kliknij ikonę <0>Tune</0> obok adresu URL.",
+                    "Stuknij 'Uprawnienia'.",
+                    "Zezwól na kamerę i mikrofon.",
+                    "Odśwież stronę."
+                ],
+                "Brave_Linux": [
+                    "Kliknij ikonę <0>Tune</0> na pasku adresu.",
+                    "Zezwól na kamerę i mikrofon na liście uprawnień.",
+                    "Odśwież stronę."
+                ],
+                "Brave_Windows": [
+                    "Kliknij ikonę <0>Tune</0> na pasku adresu.",
+                    "Włącz mikrofon i kamerę.",
+                    "Odśwież stronę."
+                ],
+                "Brave_iOS": [
+                    "Otwórz Ustawienia iOS > Brave.",
+                    "Stuknij 'Kamera' i 'Mikrofon'.",
+                    "Ustaw je na 'Zezwól'.",
+                    "Wróć do Brave i odśwież stronę."
+                ],
+                "Brave_macOS": [
+                    "Kliknij ikonę <0>Tune</0> na pasku adresu.",
+                    "Włącz kamerę i mikrofon w ustawieniach uprawnień.",
+                    "Odśwież stronę."
+                ],
+                "Chrome_Android": [
+                    "Kliknij ikonę <0>Tune</0> na pasku adresu.",
+                    "Wybierz 'Uprawnienia'.",
+                    "Ustaw 'Kamera' i 'Mikrofon' na 'Zezwól'."
+                ],
+                "Chrome_Linux": [
+                    "Kliknij ikonę kłódki obok adresu URL na pasku adresu.",
+                    "Kliknij 'Ustawienia witryny'.",
+                    "Zezwól na kamerę i mikrofon.",
+                    "Odśwież stronę."
+                ],
+                "Chrome_Windows": [
+                    "Kliknij ikonę <0>Tune</0> na pasku adresu.",
+                    "Kliknij 'Ustawienia witryny'.",
+                    "Zezwól na kamerę i mikrofon w sekcji 'Uprawnienia'."
+                ],
+                "Chrome_iOS": [
+                    "Otwórz Ustawienia iOS > Chrome.",
+                    "Stuknij 'Kamera' i 'Mikrofon'.",
+                    "Ustaw je na 'Zezwól'.",
+                    "Wróć do Chrome i odśwież stronę."
+                ],
+                "Chrome_macOS": [
+                    "Kliknij ikonę <0>Tune</0> na pasku adresu.",
+                    "Kliknij 'Ustawienia witryny'.",
+                    "Zezwól na kamerę i mikrofon w sekcji 'Uprawnienia'."
+                ],
+                "Edge_Windows": [
+                    "Kliknij ikonę kłódki obok adresu URL.",
+                    "Zezwól na kamerę i mikrofon.",
+                    "Odśwież stronę."
+                ],
+                "Edge_macOS": [
+                    "Kliknij ikonę <0>Tune</0> na pasku adresu.",
+                    "Ustaw kamerę i mikrofon na 'Zezwól'."
+                ],
+                "Firefox_Android": [
+                    "Stuknij ikonę kłódki obok paska adresu URL.",
+                    "Stuknij 'Edytuj ustawienia strony'.",
+                    "Zezwól na kamerę i mikrofon.",
+                    "Odśwież stronę."
+                ],
+                "Firefox_Linux": [
+                    "Kliknij ikonę kłódki obok paska adresu.",
+                    "Kliknij 'Więcej informacji'.",
+                    "Zezwól na kamerę i mikrofon w uprawnieniach.",
+                    "Odśwież stronę."
+                ],
+                "Firefox_Windows": [
+                    "Kliknij ikonę <0>Tune</0> obok adresu URL.",
+                    "Włącz mikrofon i kamerę.",
+                    "Odśwież stronę."
+                ],
+                "Firefox_iOS": [
+                    "Otwórz Ustawienia iOS > Firefox.",
+                    "Włącz kamerę i mikrofon.",
+                    "Wróć do Firefox i odśwież stronę."
+                ],
+                "Firefox_macOS": [
+                    "Kliknij ikonę <0>Tune</0> obok adresu URL.",
+                    "Kliknij strzałkę > 'Więcej informacji'.",
+                    "Przejdź do zakładki 'Uprawnienia'.",
+                    "Zezwól na kamerę i mikrofon.",
+                    "Odśwież stronę."
+                ],
+                "Safari_iOS": [
+                    "Przejdź do Ustawień iOS > Safari.",
+                    "Stuknij 'Kamera' i 'Mikrofon'.",
+                    "Ustaw je na 'Zezwól'.",
+                    "Wróć do Safari i odśwież stronę."
+                ],
+                "Safari_macOS": [
+                    "Kliknij 'Safari' w pasku menu > 'Ustawienia dla tej witryny'.",
+                    "Ustaw kamerę i mikrofon na 'Zezwól'.",
+                    "Odśwież stronę."
+                ],
+                "default": [
+                    "Otwórz ustawienia przeglądarki.",
+                    "Znajdź sekcję 'Prywatność' lub 'Uprawnienia'.",
+                    "Włącz kamerę i mikrofon dla tej strony.",
+                    "Odśwież stronę."
+                ]
+            },
+            "stillNotWorking": "Nadal nie działa?",
+            "title": "Włącz mikrofon i kamerę"
+        },
         "premeeting": "Przed spotkaniem",
         "proceedAnyway": "Kontynuuj mimo to",
         "screenSharingError": "Błąd udostępniania ekranu:",
@@ -987,6 +1122,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Przychodząca wiadomość",
+        "KNOCKING_PARTICIPANT_SOUND": "Uczestnik wszedł do poczekalni",
+        "PARTICIPANT_JOINED_SOUND": "Dołączył nowy uczestnik",
+        "PARTICIPANT_LEFT_SOUND": "Uczestnik opuścił spotkanie",
+        "TALK_WHILE_MUTED_SOUND": "Jesteś wyciszony",
         "audio": "Audio",
         "buttonLabel": "Ustawienia",
         "calendar": {
@@ -1002,7 +1142,6 @@
         "devices": "Urządzenia",
         "followMe": "Wszyscy widzą mnie",
         "framesPerSecond": "klatek na sekundę",
-        "incomingMessage": "Przychodząca wiadomość",
         "language": "Język",
         "loggedIn": "Zalogowano jako {{name}}",
         "maxStageParticipants": "Maksymalna liczba uczestników, których można przypiąć do sceny głównej",
@@ -1013,9 +1152,6 @@
         "name": "Nazwa",
         "noDevice": "Brak",
         "notifications": "Powiadomienia",
-        "participantJoined": "Dołączył nowy uczestnik",
-        "participantKnocking": "Uczestnik wszedł do poczekalni",
-        "participantLeft": "Uczestnik opuścił spotkanie",
         "playSounds": "Włącz powiadomienia dźwiękowe dla:",
         "reactions": "Reakcje",
         "sameAsSystem": "Jak system ({{label}})",
@@ -1028,7 +1164,6 @@
         "startAudioMuted": "Wycisz wszystkich dołączających",
         "startReactionsMuted": "Wycisz dźwięki reakcji dla wszystkich",
         "startVideoMuted": "Wyłącz kamery wszystkich dołączających",
-        "talkWhileMuted": "Jesteś wyciszony",
         "title": "Ustawienia",
         "video": "Wideo"
     },
@@ -1415,15 +1550,15 @@
         "go": "Dalej",
         "goSmall": "Dalej",
         "headerSubtitle": "Bezpieczne i wysokiej jakości spotkania",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Informacje",
-        "jitsiOnMobile": "Jitsi mobile – pobierz appkę i rozpocznij spotkanie z dowolnego miejsca",
+        "jitsiOnMobile": "Sonacove mobile – pobierz appkę i rozpocznij spotkanie z dowolnego miejsca",
         "join": "Utwórz / Dołącz",
         "logo": {
             "calendar": "Logo kalendarza",
             "desktopPreviewThumbnail": "Miniatura podglądu pulpitu",
             "googleLogo": "Logo Google",
-            "logoDeepLinking": "Logo Jitsi meet",
+            "logoDeepLinking": "Logo Sonacove Meets",
             "microsoftLogo": "Logo Microsoftu",
             "policyLogo": "Logo polityki"
         },

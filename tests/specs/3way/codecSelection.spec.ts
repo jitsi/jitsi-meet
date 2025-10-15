@@ -7,7 +7,7 @@ import {
 
 describe('Codec selection', () => {
     it('asymmetric codecs', async () => {
-        await ensureOneParticipant(ctx, {
+        await ensureOneParticipant({
             configOverwrite: {
                 videoQuality: {
                     codecPreferenceOrder: [ 'VP9', 'VP8', 'AV1' ]
@@ -15,7 +15,7 @@ describe('Codec selection', () => {
             }
         });
 
-        await ensureTwoParticipants(ctx, {
+        await ensureTwoParticipants({
             configOverwrite: {
                 videoQuality: {
                     codecPreferenceOrder: [ 'VP8', 'VP9', 'AV1' ]
@@ -40,7 +40,7 @@ describe('Codec selection', () => {
     });
 
     it('asymmetric codecs with AV1', async () => {
-        await ensureThreeParticipants(ctx, {
+        await ensureThreeParticipants({
             configOverwrite: {
                 videoQuality: {
                     codecPreferenceOrder: [ 'AV1', 'VP9', 'VP8' ]
@@ -75,7 +75,7 @@ describe('Codec selection', () => {
     it('codec switch over', async () => {
         await hangupAllParticipants();
 
-        await ensureTwoParticipants(ctx, {
+        await ensureTwoParticipants({
             configOverwrite: {
                 videoQuality: {
                     codecPreferenceOrder: [ 'VP9', 'VP8', 'AV1' ]
@@ -93,7 +93,7 @@ describe('Codec selection', () => {
         expect(await p1.execute(() => JitsiMeetJS.app.testing.isLocalCameraEncodingVp9())).toBe(true);
         expect(await p2.execute(() => JitsiMeetJS.app.testing.isLocalCameraEncodingVp9())).toBe(true);
 
-        await ensureThreeParticipants(ctx, {
+        await ensureThreeParticipants({
             configOverwrite: {
                 videoQuality: {
                     codecPreferenceOrder: [ 'VP8' ]

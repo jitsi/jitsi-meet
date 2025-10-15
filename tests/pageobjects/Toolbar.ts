@@ -203,12 +203,46 @@ export default class Toolbar extends BasePageObject {
     }
 
     /**
-     * Clicks on the hangup button that ends the conference.
+     * Clicks on the hangup button. For non-host users, this immediately leaves the meeting.
+     * For host users, this opens a context menu and then clicks "Leave meeting".
      */
-    clickHangupButton(): Promise<void> {
+    async clickHangupButton(): Promise<void> {
         this.participant.log('Clicking on: Hangup Button');
 
-        return this.getButton(HANGUP).click();
+        // Click the hangup button
+        await this.getButton(HANGUP).click();
+
+        // Check if a context menu appeared (host scenario)
+        const leaveMeetingButton = this.participant.driver.$('aria/Leave meeting');
+        const contextMenuExists = await leaveMeetingButton.isExisting();
+
+        if (contextMenuExists) {
+            await leaveMeetingButton.waitForDisplayed();
+            await leaveMeetingButton.click();
+        }
+    }
+
+    /**
+     * Clicks on the hangup button to end the meeting for all participants.
+     * This only works for host users and will throw an error if the context menu option isn't available.
+     */
+    async clickHangupForAll(): Promise<void> {
+        this.participant.log('Clicking on: Hangup Button to end meeting for all');
+
+        // Click the hangup button to open the context menu
+        await this.getButton(HANGUP).click();
+
+        // Check if the "End meeting for all" option is available
+        const endMeetingForAllButton = this.participant.driver.$('aria/End meeting for all');
+        const optionExists = await endMeetingForAllButton.isExisting();
+
+        if (!optionExists) {
+            throw new Error('\'End meeting for all\' option not found.');
+        }
+
+        // Wait for the context menu to appear and click "End meeting for all"
+        await endMeetingForAllButton.waitForDisplayed();
+        await endMeetingForAllButton.click();
     }
 
     /**

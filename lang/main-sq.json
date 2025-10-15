@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Shtoni një lidhje takimi",
-        "confirmAddLink": "Doni të shtohet një lidhje Jitsi te kjo veprimtari?",
+        "confirmAddLink": "Doni të shtohet një lidhje Sonacove te kjo veprimtari?",
         "error": {
             "appConfiguration": "Integrimi i kalendarëve s’është formësuar si duhet.",
             "generic": "Ndodhi një gabim. Ju lutemi, kontrolloni rregullimet për kalendarin tuaj, ose provoni të rifreskoni kalendarin.",
@@ -534,7 +534,7 @@
         "answer": "Përgjigjuni",
         "audioCallTitle": "Thirrje ardhëse",
         "decline": "Hidhe tej",
-        "productLabel": "nga Jitsi Meet",
+        "productLabel": "nga Sonacove Meets",
         "videoCallTitle": "Thirrje ardhëse me video"
     },
     "info": {
@@ -746,7 +746,7 @@
         "dataChannelClosedDescriptionWithAudio": "Kanali urë është jashtë funksionimi, prandaj mund të ndodhin shkëputje te audioja dhe videoja.",
         "dataChannelClosedWithAudio": "Cilësia e audios dhe videos mund të jetë dëmtuar",
         "disabledIframe": "Trupëzimi është menduar vetëm për qëllime demonstrimi, ndaj kjo thirrje do të ndërpritet pas {{timeout}} minutash.",
-        "disabledIframeSecondary": "Trupëzimi i {{domain}} është menduar vetëm për qëllime demonstrimi, ndaj kjo thirrje do të ndërpritet pas {{timeout}} minutash. Ju lutemi, për trupëzime të njëmendta përdorni <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a>!",
+        "disabledIframeSecondary": "Trupëzimi i {{domain}} është menduar vetëm për qëllime demonstrimi, ndaj kjo thirrje do të ndërpritet pas {{timeout}} minutash. Ju lutemi, për trupëzime të njëmendta përdorni <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Sonacove as a Service</a>!",
         "disconnected": "u shkëput",
         "displayNotifications": "Shfaq njoftime për",
         "dontRemindMe": "Mos ma kujto",
@@ -798,7 +798,7 @@
         "noiseSuppressionDesktopAudioDescription": "Mbytja e zhurmave s’mund të aktivizohet teksa ndahet me të tjerët audioja e desktopit, ju lutemi, çaktivizojeni dhe riprovoni.",
         "noiseSuppressionFailedTitle": "S’u arrit të nisej mbytja e zhurmave",
         "noiseSuppressionStereoDescription": "Aktualisht nuk mbulohet mbytje zhurmash audioje stereo.",
-        "oldElectronClientDescription1": "Duket se përdorni një version të vjetër të klientit Jitsi Meet, i cili ka cenueshmëri të ditura sigurie. Ju lutemi, siguroni përditësimin me ",
+        "oldElectronClientDescription1": "Duket se përdorni një version të vjetër të klientit Sonacove Meets, i cili ka cenueshmëri të ditura sigurie. Ju lutemi, siguroni përditësimin me ",
         "oldElectronClientDescription2": "montimin tonë më të ri",
         "oldElectronClientDescription3": " që tani!",
         "participantWantsToJoin": "Dëshiron të hyjë në takim",
@@ -971,6 +971,141 @@
         "linkCopied": "Lidhja u kopjua në të papastër",
         "lookGood": "Gjithçka po punon si duhet",
         "or": "ose",
+        "permissionsGuide": {
+            "close": "Mbyll",
+            "detected": "I zbuluar:",
+            "deviceHelp": {
+                "Android": [
+                    "Hapni Cilësimet e telefonit tuaj.",
+                    "Trokitni mbi \"Aplikacionet\" > shfletuesin tuaj (p.sh., Chrome ose Brave).",
+                    "Trokitni mbi \"Lejet\".",
+                    "Lejoni aksesin në kamerë dhe mikrofon.",
+                    "Rinisni shfletuesin dhe provoni përsëri."
+                ],
+                "iOS": [
+                    "Hapni Cilësimet e iOS-it.",
+                    "Lëvizni poshtë dhe zgjidhni shfletuesin tuaj (p.sh., Safari ose Chrome).",
+                    "Trokitni mbi \"Kamera\" dhe \"Mikrofon\".",
+                    "Vendosni të dy në \"Lejo\".",
+                    "Kthehuni te shfletuesi dhe rifreskoni faqen."
+                ]
+            },
+            "howToAllow": "Si të lejoni qasjen:",
+            "needHelp": "Ke nevojë për ndihmë?",
+            "steps": {
+                "Brave_Android": [
+                    "Kliko ikonën <0>Tune</0> pranë URL-së.",
+                    "Trokit mbi 'Lejet'.",
+                    "Lejo kamerën dhe mikrofonin.",
+                    "Rifresko faqen."
+                ],
+                "Brave_Linux": [
+                    "Kliko ikonën <0>Tune</0> në shiritin e adresës.",
+                    "Lejo kamerën dhe mikrofonin në listën e lejeve.",
+                    "Rifresko faqen."
+                ],
+                "Brave_Windows": [
+                    "Kliko ikonën <0>Tune</0> në shiritin e adresës.",
+                    "Aktivizo mikrofonin dhe kamerën.",
+                    "Rifresko faqen."
+                ],
+                "Brave_iOS": [
+                    "Hap Cilësimet e iOS > Brave.",
+                    "Trokit mbi 'Kamera' dhe 'Mikrofoni'.",
+                    "Vendos ato në 'Lejo'.",
+                    "Kthehu në Brave dhe rifresko faqen."
+                ],
+                "Brave_macOS": [
+                    "Kliko ikonën <0>Tune</0> në shiritin e adresës.",
+                    "Aktivizo kamerën dhe mikrofonin në cilësimet e lejeve.",
+                    "Rifresko faqen."
+                ],
+                "Chrome_Android": [
+                    "Kliko ikonën <0>Tune</0> në shiritin e adresës.",
+                    "Zgjidh 'Lejet'.",
+                    "Vendos 'Kamera' dhe 'Mikrofoni' në 'Lejo'."
+                ],
+                "Chrome_Linux": [
+                    "Kliko ikonën e drynit pranë URL-së në shiritin e adresës.",
+                    "Kliko 'Cilësimet e faqes'.",
+                    "Lejo kamerën dhe mikrofonin.",
+                    "Rifresko faqen."
+                ],
+                "Chrome_Windows": [
+                    "Kliko ikonën <0>Tune</0> në shiritin e adresës.",
+                    "Kliko 'Cilësimet e faqes'.",
+                    "Lejo kamerën dhe mikrofonin në 'Lejet'."
+                ],
+                "Chrome_iOS": [
+                    "Hap Cilësimet e iOS > Chrome.",
+                    "Trokit mbi 'Kamera' dhe 'Mikrofoni'.",
+                    "Vendos ato në 'Lejo'.",
+                    "Kthehu në Chrome dhe rifresko faqen."
+                ],
+                "Chrome_macOS": [
+                    "Kliko ikonën <0>Tune</0> në shiritin e adresës.",
+                    "Kliko 'Cilësimet e faqes'.",
+                    "Lejo kamerën dhe mikrofonin në 'Lejet'."
+                ],
+                "Edge_Windows": [
+                    "Kliko ikonën e drynit pranë URL-së.",
+                    "Lejo kamerën dhe mikrofonin.",
+                    "Rifresko faqen."
+                ],
+                "Edge_macOS": [
+                    "Kliko ikonën <0>Tune</0> në shiritin e adresës.",
+                    "Vendos kamerën dhe mikrofonin në 'Lejo'."
+                ],
+                "Firefox_Android": [
+                    "Trokit mbi ikonën e drynit pranë shiritit të URL-së.",
+                    "Trokit mbi 'Ndrysho cilësimet e faqes'.",
+                    "Lejo kamerën dhe mikrofonin.",
+                    "Rifresko faqen."
+                ],
+                "Firefox_Linux": [
+                    "Kliko ikonën e drynit pranë shiritit të adresës.",
+                    "Kliko 'Më shumë informacione'.",
+                    "Lejo kamerën dhe mikrofonin në leje.",
+                    "Rifresko faqen."
+                ],
+                "Firefox_Windows": [
+                    "Kliko ikonën <0>Tune</0> pranë URL-së.",
+                    "Aktivizo mikrofonin dhe kamerën.",
+                    "Rifresko faqen."
+                ],
+                "Firefox_iOS": [
+                    "Hap Cilësimet e iOS > Firefox.",
+                    "Aktivizo kamerën dhe mikrofonin.",
+                    "Kthehu në Firefox dhe rifresko faqen."
+                ],
+                "Firefox_macOS": [
+                    "Kliko ikonën <0>Tune</0> pranë URL-së.",
+                    "Kliko shigjetën > 'Më shumë informacione'.",
+                    "Hyr në skedën 'Lejet'.",
+                    "Lejo kamerën dhe mikrofonin.",
+                    "Rifresko faqen."
+                ],
+                "Safari_iOS": [
+                    "Shko te Cilësimet e iOS > Safari.",
+                    "Trokit mbi 'Kamera' dhe 'Mikrofoni'.",
+                    "Vendos ato në 'Lejo'.",
+                    "Kthehu në Safari dhe rifresko faqen."
+                ],
+                "Safari_macOS": [
+                    "Kliko 'Safari' në shiritin e menusë > 'Cilësimet për këtë faqe'.",
+                    "Vendos kamerën dhe mikrofonin në 'Lejo'.",
+                    "Rifresko faqen."
+                ],
+                "default": [
+                    "Hap cilësimet e shfletuesit.",
+                    "Kërko seksionin 'Privatësia' ose 'Lejet'.",
+                    "Aktivizo kamerën dhe mikrofonin për këtë faqe.",
+                    "Rifresko faqen."
+                ]
+            },
+            "stillNotWorking": "Ende nuk funksionon?",
+            "title": "Aktivizo mikrofonin dhe kamerën"
+        },
         "premeeting": "Para takimit",
         "proceedAnyway": "Vazhdo, sido qoftë",
         "recordingWarning": "Këtë thirrje pjesëmarrës të tjerë mund ta regjistrojnë",
@@ -1090,6 +1225,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Mesazh ardhës",
+        "KNOCKING_PARTICIPANT_SOUND": "Pjesëmarrës hyri në holl",
+        "PARTICIPANT_JOINED_SOUND": "Hyri Pjesëmarrës",
+        "PARTICIPANT_LEFT_SOUND": "Doli Pjesëmarrës",
+        "TALK_WHILE_MUTED_SOUND": "Flisni, teksa jeni i heshtuar",
         "audio": "Audio",
         "buttonLabel": "Rregullime",
         "calendar": {
@@ -1106,7 +1246,6 @@
         "followMe": "Më ndjek gjithkush",
         "followMeRecorder": "Më ndjek regjistruesi",
         "framesPerSecond": "kuadro-për-sekondë",
-        "incomingMessage": "Mesazh ardhës",
         "language": "Gjuhë",
         "loggedIn": "I futur si {{name}}",
         "maxStageParticipants": "Numër maksimum pjesëmarrësish që mund të fiksohen te skena kryesore",
@@ -1117,9 +1256,6 @@
         "name": "Emër",
         "noDevice": "Asnjë",
         "notifications": "Njoftime",
-        "participantJoined": "Hyri Pjesëmarrës",
-        "participantKnocking": "Pjesëmarrës hyri në holl",
-        "participantLeft": "Doli Pjesëmarrës",
         "playSounds": "Luaj tingull kur",
         "reactions": "Reagime takimi",
         "sameAsSystem": "Njësoj me sistemin ({{label}})",
@@ -1132,7 +1268,6 @@
         "startAudioMuted": "Gjithkush fillon i heshtuar",
         "startReactionsMuted": "Heshto tinguj reagimesh për këdo",
         "startVideoMuted": "Gjithkush fillon i fshehur",
-        "talkWhileMuted": "Flisni, teksa jeni i heshtuar",
         "title": "Rregullime",
         "video": "Video"
     },
@@ -1539,15 +1674,15 @@
         "go": "SHKO",
         "goSmall": "SHKO",
         "headerSubtitle": "Takime me siguri dhe me cilësi të lartë",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Hollësi për t’i rënë numrit",
-        "jitsiOnMobile": "Jitsi në celular – Shkarkoni aplikacionet tona dhe nisni një takim prej ngado",
+        "jitsiOnMobile": "Sonacove në celular – Shkarkoni aplikacionet tona dhe nisni një takim prej ngado",
         "join": "KRIJONI / MERRNI PJESË",
         "logo": {
             "calendar": "Stemë kalendari",
             "desktopPreviewThumbnail": "Miniaturë paraparjeje desktopi",
             "googleLogo": "Stemë Google-i",
-            "logoDeepLinking": "Stemë “Jitsi meet”",
+            "logoDeepLinking": "Stemë “Sonacove Meets”",
             "microsoftLogo": "Stemë Microsoft-i",
             "policyLogo": "Stemë Rregullash"
         },

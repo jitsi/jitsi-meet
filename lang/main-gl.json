@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Engadir unha ligazón de reunión",
-        "confirmAddLink": "Quere engadir unha ligazón de Jitsi a esta reunión?",
+        "confirmAddLink": "Quere engadir unha ligazón de Sonacove a esta reunión?",
         "error": {
             "appConfiguration": "A integración do calendario está configurada apropiadamente.",
             "generic": "Produciuse un erro. Comprobe a configuración do seu calendario ou tente cunha recarga.",
@@ -294,7 +294,7 @@
         "answer": "Resposta",
         "audioCallTitle": "Chamada entrante",
         "decline": "Rexeitar",
-        "productLabel": "de Jitsi Meet",
+        "productLabel": "de Sonacove Meets",
         "videoCallTitle": "Chamada de vídeo entrante"
     },
     "info": {

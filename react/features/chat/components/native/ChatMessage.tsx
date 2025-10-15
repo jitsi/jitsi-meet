@@ -10,6 +10,7 @@ import { isGifEnabled, isGifMessage } from '../../../gifs/functions.native';
 import { CHAR_LIMIT, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../../constants';
 import {
     getCanReplyToMessage,
+    getDisplayNameSuffix,
     getFormattedTimestamp,
     getMessageText,
     getPrivateNoticeMessage,
@@ -122,17 +123,17 @@ class ChatMessage extends Component<IChatMessageProps> {
      * @returns {React.ReactElement<*> | null}
      */
     _renderDisplayName() {
-        const { message, showDisplayName, t } = this.props;
+        const { message, showDisplayName } = this.props;
 
         if (!showDisplayName) {
             return null;
         }
 
-        const { displayName, isFromVisitor } = message;
+        const { displayName } = message;
 
         return (
             <Text style = { styles.senderDisplayName }>
-                { `${displayName}${isFromVisitor ? ` ${t('visitors.chatIndicator')}` : ''}` }
+                { `${displayName}${getDisplayNameSuffix(message)}` }
             </Text>
         );
     }

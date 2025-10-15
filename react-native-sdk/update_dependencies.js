@@ -60,12 +60,12 @@ This is now set on your end.`
             );
         }
     }
+    
+    packageJSON.devDependencies = packageJSON.devDependencies || {};
 
-    packageJSON.overrides = packageJSON.overrides || {};
-
-    for (const key in RNSDKpackageJSON.overrides) {
-        if (!packageJSON.overrides.hasOwnProperty(key)) {
-            packageJSON.overrides[key] = RNSDKpackageJSON.overrides[key];
+    for (const key in RNSDKpackageJSON.devDependencies) {
+        if (!packageJSON.devDependencies.hasOwnProperty(key)) {
+            packageJSON.devDependencies[key] = RNSDKpackageJSON.devDependencies[key];
             updated = true;
         }
     }
@@ -91,6 +91,14 @@ This is now set on your end.`
 
             return item;
         }, {});
+        
+    packageJSON.devDependencies = Object.keys(packageJSON.devDependencies)
+    .sort()
+    .reduce((item, itemKey) => {
+        item[itemKey] = packageJSON.devDependencies[itemKey];
+
+        return item;
+    }, {});
 
     fs.writeFileSync(pathToPackageJSON, JSON.stringify(packageJSON, null, 2));
 

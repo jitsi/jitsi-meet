@@ -24,12 +24,14 @@ import { hideNotification, showNotification } from '../../notifications/actions'
 import {
     LOCAL_RECORDING_NOTIFICATION_ID,
     NOTIFICATION_TIMEOUT_TYPE,
-    RAISE_HAND_NOTIFICATION_ID
+    RAISE_HAND_NOTIFICATION_ID,
+    VISITOR_ASKED_TO_JOIN_NOTIFICATION_ID
 } from '../../notifications/constants';
 import { open as openParticipantsPane } from '../../participants-pane/actions';
 import { CALLING, INVITED } from '../../presence-status/constants';
 import { RAISE_HAND_SOUND_ID } from '../../reactions/constants';
-import { RECORDING_OFF_SOUND_ID, RECORDING_ON_SOUND_ID } from '../../recording/constants';
+import { RECORDING_OFF_SOUND, RECORDING_ON_SOUND } from '../../recording/sounds';
+import { iAmVisitor } from '../../visitors/functions';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app/actionTypes';
 import { CONFERENCE_JOINED, CONFERENCE_WILL_JOIN } from '../conference/actionTypes';
 import { forEachConference, getCurrentConference } from '../conference/functions';
@@ -40,7 +42,7 @@ import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { VIDEO_TYPE } from '../media/constants';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
-import { playSound, registerSound, unregisterSound } from '../sounds/actions';
+import SoundService from '../sounds/components/SoundService';
 import { isImageDataURL } from '../util/uri';
 
 import {
@@ -73,8 +75,8 @@ import {
 import {
     LOCAL_PARTICIPANT_DEFAULT_ID,
     LOWER_HAND_AUDIO_LEVEL,
-    PARTICIPANT_JOINED_SOUND_ID,
-    PARTICIPANT_LEFT_SOUND_ID
+    PARTICIPANT_JOINED_SOUND,
+    PARTICIPANT_LEFT_SOUND,
 } from './constants';
 import {
     getDominantSpeakerParticipant,
@@ -91,7 +93,6 @@ import {
     isWhiteboardParticipant
 } from './functions';
 import logger from './logger';
-import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 import { IJitsiParticipant } from './types';
 
 import './subscriber';
@@ -106,12 +107,12 @@ import './subscriber';
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_WILL_MOUNT:
-        _registerSounds(store);
+        _registerSounds();
 
         return _localParticipantJoined(store, next, action);
 
     case APP_WILL_UNMOUNT:
-        _unregisterSounds(store);
+        _unregisterSounds();
 
         return _localParticipantLeft(store, next, action);
 
@@ -167,7 +168,10 @@ MiddlewareRegistry.register(store => next => action => {
 
     case LOCAL_PARTICIPANT_RAISE_HAND: {
         const { raisedHandTimestamp } = action;
-        const localId = getLocalParticipant(store.getState())?.id;
+        const localParticipant = getLocalParticipant(store.getState());
+        const localId = localParticipant?.id;
+        const _iAmVisitor = iAmVisitor(store.getState());
+        const isHandRaised = hasRaisedHand(localParticipant);
 
         store.dispatch(participantUpdated({
             // XXX Only the local participant is allowed to update without
@@ -185,6 +189,18 @@ MiddlewareRegistry.register(store => next => action => {
             id: localId ?? '',
             raisedHandTimestamp
         }));
+
+        if (_iAmVisitor) {
+            const notifyAction = isHandRaised
+                ? hideNotification(VISITOR_ASKED_TO_JOIN_NOTIFICATION_ID)
+                : showNotification({
+                    titleKey: 'visitors.notification.requestToJoin',
+                    descriptionKey: 'visitors.notification.requestToJoinDescription',
+                    uid: VISITOR_ASKED_TO_JOIN_NOTIFICATION_ID
+                }, NOTIFICATION_TIMEOUT_TYPE.STICKY);
+
+            store.dispatch(notifyAction);
+        }
 
         if (typeof APP !== 'undefined') {
             APP.API.notifyRaiseHandUpdated(localId, raisedHandTimestamp);
@@ -629,7 +645,7 @@ function _localParticipantLeft({ dispatch }: IStore, next: Function, action: Any
  * @private
  * @returns {void}
  */
-function _maybePlaySounds({ getState, dispatch }: IStore, action: AnyAction) {
+function _maybePlaySounds({ getState }: IStore, action: AnyAction) {
     const state = getState();
     const { startAudioMuted } = state['features/base/config'];
     const { soundsParticipantJoined: joinSound, soundsParticipantLeft: leftSound } = state['features/base/settings'];
@@ -651,10 +667,10 @@ function _maybePlaySounds({ getState, dispatch }: IStore, action: AnyAction) {
 
             // The sounds for the poltergeist are handled by features/invite.
             if (presence !== INVITED && presence !== CALLING && !isReplacing) {
-                dispatch(playSound(PARTICIPANT_JOINED_SOUND_ID));
+                SoundService.play(PARTICIPANT_JOINED_SOUND.id, getState());
             }
         } else if (action.type === PARTICIPANT_LEFT && !isReplaced && leftSound) {
-            dispatch(playSound(PARTICIPANT_LEFT_SOUND_ID));
+            SoundService.play(PARTICIPANT_LEFT_SOUND.id, getState());
         }
     }
 }
@@ -778,7 +794,7 @@ function _localRecordingUpdated({ dispatch, getState }: IStore, conference: IJit
         descriptionKey: newValue ? 'notify.localRecordingStarted' : 'notify.localRecordingStopped',
         uid: LOCAL_RECORDING_NOTIFICATION_ID
     }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
-    dispatch(playSound(newValue ? RECORDING_ON_SOUND_ID : RECORDING_OFF_SOUND_ID));
+    SoundService.play(newValue ? RECORDING_ON_SOUND.id : RECORDING_OFF_SOUND.id, state, true);
 }
 
 
@@ -939,31 +955,28 @@ function _raiseHandUpdated({ dispatch, getState }: IStore, conference: IJitsiCon
         }, NOTIFICATION_TIMEOUT_TYPE.LONG));
     }
 
-    dispatch(playSound(RAISE_HAND_SOUND_ID));
+    SoundService.play(RAISE_HAND_SOUND_ID, getState());
 
 }
 
 /**
  * Registers sounds related with the participants feature.
  *
- * @param {Store} store - The redux store.
  * @private
  * @returns {void}
  */
-function _registerSounds({ dispatch }: IStore) {
-    dispatch(
-        registerSound(PARTICIPANT_JOINED_SOUND_ID, PARTICIPANT_JOINED_FILE));
-    dispatch(registerSound(PARTICIPANT_LEFT_SOUND_ID, PARTICIPANT_LEFT_FILE));
+function _registerSounds() {
+    SoundService.register(PARTICIPANT_JOINED_SOUND.id, PARTICIPANT_JOINED_SOUND.file, PARTICIPANT_JOINED_SOUND.options, PARTICIPANT_JOINED_SOUND.optional);
+    SoundService.register(PARTICIPANT_LEFT_SOUND.id, PARTICIPANT_LEFT_SOUND.file, PARTICIPANT_LEFT_SOUND.options, PARTICIPANT_LEFT_SOUND.optional);
 }
 
 /**
  * Unregisters sounds related with the participants feature.
  *
- * @param {Store} store - The redux store.
  * @private
  * @returns {void}
  */
-function _unregisterSounds({ dispatch }: IStore) {
-    dispatch(unregisterSound(PARTICIPANT_JOINED_SOUND_ID));
-    dispatch(unregisterSound(PARTICIPANT_LEFT_SOUND_ID));
+function _unregisterSounds() {
+    SoundService.unregister(PARTICIPANT_JOINED_SOUND.id);
+    SoundService.unregister(PARTICIPANT_LEFT_SOUND.id);
 }

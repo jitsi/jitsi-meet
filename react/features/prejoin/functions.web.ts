@@ -1,6 +1,6 @@
 import { batch } from 'react-redux';
 
-import { IStore } from '../app/types';
+import { IReduxState, IStore } from '../app/types';
 import { trackAdded } from '../base/tracks/actions.any';
 
 import { PREJOIN_INITIALIZED } from './actionTypes';
@@ -29,4 +29,10 @@ export function initPrejoin(tracks: Object[], errors: Object, dispatch?: IStore[
 
         tracks.forEach(track => dispatch(trackAdded(track)));
     });
+}
+
+export function isNameReadOnly(state: IReduxState): boolean {
+    return Boolean(state['features/base/config'].disableProfile
+        || state['features/base/config'].readOnlyName)
+        || state['features/base/jwt'].jwt !== undefined;
 }

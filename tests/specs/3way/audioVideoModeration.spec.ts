@@ -1,4 +1,5 @@
 import { Participant } from '../../helpers/Participant';
+import { config } from '../../helpers/TestsConfig';
 import {
     ensureOneParticipant,
     ensureThreeParticipants, ensureTwoParticipants,
@@ -11,7 +12,7 @@ describe('AVModeration', () => {
 
     it('check for moderators', async () => {
         // if all 3 participants are moderators, skip this test
-        await ensureThreeParticipants(ctx);
+        await ensureThreeParticipants();
 
         const { p1, p2, p3 } = ctx;
 
@@ -77,14 +78,14 @@ describe('AVModeration', () => {
     });
 
     it('hangup and change moderator', async () => {
-        // no moderator switching if jaas is available
-        if (ctx.isJaasAvailable()) {
+        // no moderator switching if jaas is available.
+        if (config.iframe.usesJaas) {
             return;
         }
 
         await Promise.all([ ctx.p2.hangup(), ctx.p3.hangup() ]);
 
-        await ensureThreeParticipants(ctx);
+        await ensureThreeParticipants();
         const { p1, p2, p3 } = ctx;
 
         await p2.getToolbar().clickAudioMuteButton();
@@ -103,7 +104,7 @@ describe('AVModeration', () => {
 
         // we don't use ensureThreeParticipants to avoid all meeting join checks
         // all participants are muted and checks for media will fail
-        await ensureOneParticipant(ctx);
+        await ensureOneParticipant();
 
         // After p1 re-joins either p2 or p3 is promoted to moderator. They should still be muted.
         const isP2Moderator = await p2.isModerator();
@@ -130,7 +131,7 @@ describe('AVModeration', () => {
     it('grant moderator', async () => {
         await hangupAllParticipants();
 
-        await ensureThreeParticipants(ctx);
+        await ensureThreeParticipants();
 
         const { p1, p2, p3 } = ctx;
 
@@ -153,7 +154,7 @@ describe('AVModeration', () => {
     it('ask to unmute', async () => {
         await hangupAllParticipants();
 
-        await ensureTwoParticipants(ctx);
+        await ensureTwoParticipants();
 
         const { p1, p2 } = ctx;
 
@@ -191,7 +192,7 @@ describe('AVModeration', () => {
     it('join moderated', async () => {
         await hangupAllParticipants();
 
-        await ensureOneParticipant(ctx);
+        await ensureOneParticipant();
 
         const p1ParticipantsPane = ctx.p1.getParticipantsPane();
 
@@ -201,7 +202,7 @@ describe('AVModeration', () => {
         await p1ParticipantsPane.close();
 
         // join with second participant and check
-        await ensureTwoParticipants(ctx, {
+        await ensureTwoParticipants({
             skipInMeetingChecks: true
         });
         const { p1, p2 } = ctx;

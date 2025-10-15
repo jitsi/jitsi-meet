@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Add a meeting link",
-        "confirmAddLink": "Do you want to add a Jitsi link to this event?",
+        "confirmAddLink": "Do you want to add a Sonacove link to this event?",
         "error": {
             "appConfiguration": "Calendar integration is not properly configured.",
             "generic": "An error has occurred. Please check your calendar settings or try refreshing the calendar.",
@@ -112,7 +112,9 @@
         "disabled": "Sending chat messages is disabled.",
         "enter": "Enter room",
         "error": "Error: your message was not sent. Reason: {{error}}",
+        "everyone": "Everyone",
         "fieldPlaceHolder": "Aa",
+        "guestsChatIndicator": "(guest)",
         "lobbyChatMessageTo": "Lobby chat message to {{recipient}}",
         "message": "Message",
         "messageAccessibleTitle": "{{user}} says:",
@@ -230,8 +232,8 @@
         "ifHaveApp": "If you already have the app:",
         "joinInApp": "Join this meeting using the app",
         "joinInAppNew": "Join in app",
-        "joinInBrowser": "Join in browser",
-        "launchMeetingLabel": "How do you want to join this meeting?",
+        "joinInBrowser": "Continue to join",
+        "launchMeetingLabel": "Do you want to join this meeting?",
         "launchWebButton": "Launch in web",
         "noDesktopApp": "You don't have the app?",
         "noMobileApp": "You don't have the app?",
@@ -243,7 +245,7 @@
         "unsupportedBrowser": "It looks like you're using a browser we don't support."
     },
     "defaultLink": "e.g. {{url}}",
-    "defaultNickname": "ex. Jane Pink",
+    "defaultNickname": "ex. Umar AbdulAziz",
     "deviceError": {
         "cameraError": "Failed to access your camera",
         "cameraPermission": "Error obtaining camera permission",
@@ -332,9 +334,9 @@
         "demoteParticipantDialog": "Are you sure you want to move this participant to viewer?",
         "demoteParticipantTitle": "Move to viewer",
         "dismiss": "Dismiss",
-        "displayNameRequired": "Hi! What's your name?",
+        "displayNameRequired": "Merhaba! What’s your name?",
         "done": "Done",
-        "e2eeDescription": "End-to-End Encryption is currently EXPERIMENTAL. Please keep in mind that turning on end-to-end encryption will effectively disable server-side provided services such as: phone participation. Also keep in mind that the meeting will only work for people joining from browsers with support for insertable streams.",
+        "e2eeDescription": "End-to-End Encryption is currently EXPERIMENTAL. This mode is not available for meetings with a very large number of participants.",
         "e2eeDisabledDueToMaxModeDescription": "Cannot enable End-to-End Encryption due to large number of participants in the conference.",
         "e2eeLabel": "Enable End-to-End Encryption",
         "e2eeWarning": "WARNING: Not all participants in this meeting seem to have support for End-to-End encryption. If you enable it they won't be able to see nor hear you.",
@@ -353,11 +355,11 @@
         "internalError": "Oops! Something went wrong. The following error occurred: {{error}}",
         "internalErrorTitle": "Internal error",
         "kickMessage": "You can contact {{participantDisplayName}} for more details.",
-        "kickParticipantButton": "Kick",
-        "kickParticipantDialog": "Are you sure you want to kick this participant?",
-        "kickParticipantTitle": "Kick this participant?",
-        "kickSystemTitle": "Ouch! You were kicked out of the meeting",
-        "kickTitle": "Ouch! {{participantDisplayName}} kicked you out of the meeting",
+        "kickParticipantButton": "Remove",
+        "kickParticipantDialog": "Are you sure you want to remove this participant?",
+        "kickParticipantTitle": "Remove this participant?",
+        "kickSystemTitle": "You were removed from the meeting",
+        "kickTitle": "{{participantDisplayName}} removed you from the meeting",
         "learnMore": "learn more",
         "linkMeeting": "Link meeting",
         "linkMeetingTitle": "Link meeting to Salesforce",
@@ -380,7 +382,7 @@
         "micPermissionDeniedError": "You have not granted permission to use your microphone. You can still join the conference but others won't hear you. Use the camera button in the address bar to fix this.",
         "micTimeoutError": "Could not start audio source. Timeout occurred!",
         "micUnknownError": "Cannot use microphone for an unknown reason.",
-        "moderationAudioLabel": "Allow attendees to unmute themselves",
+        "moderationAudioLabel": "Allow non-moderators to unmute themselves",
         "moderationDesktopLabel": "Allow non-moderators to share their screen",
         "moderationVideoLabel": "Allow non-moderators to start their video",
         "muteEveryoneDialog": "The participants can unmute themselves at any time.",
@@ -459,8 +461,8 @@
         "searchResultsError": "Something went wrong while retrieving data.",
         "searchResultsNotFound": "No search results found.",
         "searchResultsTryAgain": "Try using alternative keywords.",
-        "sendPrivateMessage": "You recently received a private message. Did you intend to reply to that privately, or you want to send your message to the group?",
-        "sendPrivateMessageCancel": "Send to the group",
+        "sendPrivateMessage": "You recently received a private message. Did you intend to reply to that privately, or send your message to everyone?",
+        "sendPrivateMessageCancel": "Send to everyone",
         "sendPrivateMessageOk": "Send privately",
         "sendPrivateMessageTitle": "Send privately?",
         "serviceUnavailable": "Service unavailable",
@@ -565,11 +567,15 @@
         "downloadFailedDescription": "Please try again.",
         "downloadFailedTitle": "Download failed",
         "downloadFile": "Download",
+        "downloadStarted": "File download started",
         "dragAndDrop": "Drag and drop files here or anywhere on screen",
         "fileAlreadyUploaded": "File has already been uploaded to this meeting.",
         "fileTooLargeDescription": "Please make sure the file does not exceed {{ maxFileSize }}.",
         "fileTooLargeTitle": "The selected file is too large",
+        "fileUploadProgress": "File upload progress",
+        "fileUploadedSuccessfully": "File uploaded successfully",
         "removeFile": "Remove",
+        "removeFileSuccess": "File removed successfully",
         "uploadFailedDescription": "Please try again.",
         "uploadFailedTitle": "Upload failed",
         "uploadFile": "Share file"
@@ -583,11 +589,12 @@
         "noResults": "No results found :(",
         "search": "Search GIPHY"
     },
+    "host": "Host",
     "incomingCall": {
         "answer": "Answer",
         "audioCallTitle": "Incoming call",
         "decline": "Dismiss",
-        "productLabel": "from Jitsi Meet",
+        "productLabel": "from Sonacove Meets",
         "videoCallTitle": "Incoming video call"
     },
     "info": {
@@ -646,7 +653,7 @@
         "searchPlaceholder": "Participant or phone number",
         "send": "Send"
     },
-    "jitsiHome": "{{logo}} Logo, links to  Homepage",
+    "jitsiHome": "{{logo}} Logo, links to Sonacove Meets Homepage",
     "keyboardShortcuts": {
         "focusLocal": "Focus on your video",
         "focusRemote": "Focus on another person's video",
@@ -804,7 +811,7 @@
         "desktopMutedRemotelyTitle": "Your screen sharing has been stopped by {{participantDisplayName}}",
         "disabledIframe": "Embedding is only meant for demo purposes, so this call will disconnect in {{timeout}} minutes.",
         "disabledIframeSecondaryNative": "Embedding {{domain}} is only meant for demo purposes, so this call will disconnect in {{timeout}} minutes.",
-        "disabledIframeSecondaryWeb": "Embedding {{domain}} is only meant for demo purposes, so this call will disconnect in {{timeout}} minutes. Please use <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a> for production embedding!",
+        "disabledIframeSecondaryWeb": "Embedding {{domain}} is only meant for demo purposes, so this call will disconnect in {{timeout}} minutes. Please use <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Sonacove as a Service</a> for production embedding!",
         "disconnected": "disconnected",
         "displayNotifications": "Display notifications for",
         "dontRemindMe": "Do not remind me",
@@ -820,7 +827,7 @@
         "invitedThreePlusMembers": "{{name}} and {{count}} others have been invited",
         "invitedTwoMembers": "{{first}} and {{second}} have been invited",
         "joinMeeting": "Join",
-        "kickParticipant": "{{kicked}} was kicked by {{kicker}}",
+        "kickParticipant": "{{kicked}} was removed by {{kicker}}",
         "leftOneMember": "{{name}} left the meeting",
         "leftThreePlusMembers": "{{name}} and many others left the meeting",
         "leftTwoMembers": "{{first}} and {{second}} left the meeting",
@@ -856,9 +863,10 @@
         "noiseSuppressionDesktopAudioDescription": "Extra noise suppression can't be enabled while sharing desktop audio, please disable it and try again.",
         "noiseSuppressionFailedTitle": "Failed to start extra noise suppression",
         "noiseSuppressionStereoDescription": "Extra noise suppression is not currently supported with stereo audio.",
-        "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
+        "oldElectronClientDescription1": "You appear to be using an old version of the Sonacove Meets client which has known security vulnerabilities. Please make sure you update to our ",
         "oldElectronClientDescription2": "latest build",
         "oldElectronClientDescription3": " now!",
+        "openChat": "Open chat",
         "participantWantsToJoin": "Wants to join the meeting",
         "participantsWantToJoin": "Want to join the meeting",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) removed by another participant",
@@ -1039,6 +1047,141 @@
         "linkCopied": "Link copied to clipboard",
         "lookGood": "Your devices are working properly",
         "or": "or",
+        "permissionsGuide": {
+            "close": "Close",
+            "detected": "Detected:",
+            "deviceHelp": {
+                "Android": [
+                    "Open your phone’s Settings.",
+                    "Tap \"Apps\" > your browser (e.g. Chrome, Brave).",
+                    "Tap \"Permissions\".",
+                    "Allow access to Camera and Microphone.",
+                    "Restart the browser and try again."
+                ],
+                "iOS": [
+                    "Open iOS Settings.",
+                    "Scroll down and select your browser (e.g. Safari, Chrome).",
+                    "Tap \"Camera\" and \"Microphone\".",
+                    "Set both to \"Allow\".",
+                    "Return to the browser and reload the page."
+                ]
+            },
+            "howToAllow": "How to allow access:",
+            "needHelp": "Need help?",
+            "steps": {
+                "Brave_Android": [
+                    "Click the Tune icon <0>Tune</0> next to the URL.",
+                    "Tap 'Permissions'.",
+                    "Allow Camera and Microphone.",
+                    "Refresh the page."
+                ],
+                "Brave_Linux": [
+                    "Click the Tune icon <0>Tune</0> in the address bar.",
+                    "Allow Camera and Microphone in the permissions list.",
+                    "Refresh the page."
+                ],
+                "Brave_Windows": [
+                    "Click the Tune icon <0>Tune</0> in the address bar.",
+                    "Enable Mic and Camera.",
+                    "Refresh the page."
+                ],
+                "Brave_iOS": [
+                    "Open iOS Settings > Brave.",
+                    "Tap 'Camera' and 'Microphone'.",
+                    "Set both to 'Allow'.",
+                    "Return to Brave and refresh."
+                ],
+                "Brave_macOS": [
+                    "Click the Tune icon <0>Tune</0> in the address bar.",
+                    "Enable Camera and Microphone in the permissions menu.",
+                    "Reload the page."
+                ],
+                "Chrome_Android": [
+                    "Click the Tune icon <0>Tune</0> in the address bar.",
+                    "Select 'Permissions'.",
+                    "Set 'Camera' and 'Microphone' to 'Allow'."
+                ],
+                "Chrome_Linux": [
+                    "Click the lock icon next to the URL in the address bar.",
+                    "Click 'Site settings'.",
+                    "Allow Camera and Microphone.",
+                    "Reload the page."
+                ],
+                "Chrome_Windows": [
+                    "Click the Tune icon <0>Tune</0> in the address bar.",
+                    "Click 'Site settings'.",
+                    "Allow Camera and Microphone under Permissions."
+                ],
+                "Chrome_iOS": [
+                    "Open iOS Settings > Chrome.",
+                    "Tap 'Camera' and 'Microphone'.",
+                    "Set both to 'Allow'.",
+                    "Return to Chrome and reload the page."
+                ],
+                "Chrome_macOS": [
+                    "Click the Tune icon <0>Tune</0> in the address bar.",
+                    "Click 'Site settings'.",
+                    "Allow Camera and Microphone under Permissions."
+                ],
+                "Edge_Windows": [
+                    "Click the lock icon next to the site URL.",
+                    "Allow Camera and Microphone.",
+                    "Refresh the page."
+                ],
+                "Edge_macOS": [
+                    "Click the Tune icon <0>Tune</0> in the address bar.",
+                    "Set Camera and Microphone to 'Allow'."
+                ],
+                "Firefox_Android": [
+                    "Tap the lock icon next to the URL bar.",
+                    "Tap 'Edit site settings'.",
+                    "Allow Camera and Microphone.",
+                    "Reload the page."
+                ],
+                "Firefox_Linux": [
+                    "Click the lock icon near the address bar.",
+                    "Click 'More information'.",
+                    "In Permissions, allow Camera and Microphone.",
+                    "Refresh the page."
+                ],
+                "Firefox_Windows": [
+                    "Click the Tune icon <0>Tune</0> next to the URL.",
+                    "Enable Mic and Camera.",
+                    "Refresh the page."
+                ],
+                "Firefox_iOS": [
+                    "Open iOS Settings > Firefox.",
+                    "Enable Camera and Microphone.",
+                    "Return to Firefox and refresh the page."
+                ],
+                "Firefox_macOS": [
+                    "Click the Tune icon <0>Tune</0> next to the URL.",
+                    "Click the arrow > 'More information'.",
+                    "Go to the 'Permissions' tab.",
+                    "Allow Camera and Microphone.",
+                    "Reload the page."
+                ],
+                "Safari_iOS": [
+                    "Go to iOS Settings > Safari.",
+                    "Tap 'Camera' and 'Microphone'.",
+                    "Set both to 'Allow'.",
+                    "Return to Safari and refresh."
+                ],
+                "Safari_macOS": [
+                    "Click 'Safari' in the menu bar > 'Settings for This Website'.",
+                    "Set Camera and Microphone to 'Allow'.",
+                    "Reload the page."
+                ],
+                "default": [
+                    "Open your browser settings.",
+                    "Find 'Privacy' or 'Permissions' section.",
+                    "Enable Camera and Microphone for this site.",
+                    "Reload the page."
+                ]
+            },
+            "stillNotWorking": "Still not working?",
+            "title": "Enable Mic and Camera"
+        },
         "premeeting": "Pre meeting",
         "proceedAnyway": "Proceed anyway",
         "recordingWarning": "Other participants may be recording this call",
@@ -1086,6 +1229,7 @@
     },
     "recording": {
         "authDropboxText": "Upload to Dropbox",
+        "autoDownloadDataLabel": "Automatically download meeting content when recording ends",
         "availableSpace": "Available space: {{spaceLeft}} MB (approximately {{duration}} minutes of recording)",
         "beta": "BETA",
         "busy": "We're working on freeing recording resources. Please try again in a few minutes.",
@@ -1158,6 +1302,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Incoming message",
+        "KNOCKING_PARTICIPANT_SOUND": "Participant entered lobby",
+        "PARTICIPANT_JOINED_SOUND": "Participant Joined",
+        "PARTICIPANT_LEFT_SOUND": "Participant Left",
+        "TALK_WHILE_MUTED_SOUND": "Talk while muted",
         "audio": "Audio",
         "buttonLabel": "Settings",
         "calendar": {
@@ -1175,7 +1324,6 @@
         "followMe": "Everyone follows me",
         "followMeRecorder": "Recorder follows me",
         "framesPerSecond": "frames-per-second",
-        "incomingMessage": "Incoming message",
         "language": "Language",
         "loggedIn": "Logged in as {{name}}",
         "maxStageParticipants": "Maximum number of participants who can be pinned to the main stage",
@@ -1186,9 +1334,6 @@
         "name": "Name",
         "noDevice": "None",
         "notifications": "Notifications",
-        "participantJoined": "Participant Joined",
-        "participantKnocking": "Participant entered lobby",
-        "participantLeft": "Participant Left",
         "playSounds": "Play sound on",
         "reactions": "Meeting reactions",
         "sameAsSystem": "Same as system ({{label}})",
@@ -1202,7 +1347,6 @@
         "startAudioMuted": "Everyone starts muted",
         "startReactionsMuted": "Mute reaction sounds for everyone",
         "startVideoMuted": "Everyone starts hidden",
-        "talkWhileMuted": "Talk while muted",
         "title": "Settings",
         "video": "Video"
     },
@@ -1220,7 +1364,7 @@
         "disableCrashReportingWarning": "Are you sure you want to disable crash reporting? The setting will be applied after you restart the app.",
         "disableP2P": "Disable Peer-To-Peer mode",
         "displayName": "Display name",
-        "displayNamePlaceholderText": "Eg: John Doe",
+        "displayNamePlaceholderText": "Eg: Umar AbdulAziz",
         "email": "Email",
         "emailPlaceholderText": "email@example.com",
         "gavatarMessage": "If your email is associated with a Gravatar account, we will use it to display your profile picture.",
@@ -1300,6 +1444,8 @@
             "documentClose": "Close shared document",
             "documentOpen": "Open shared document",
             "download": "Download our apps",
+            "downloadData": "Download meeting content",
+            "downloadDataTooltip": "Download chat, polls and attendance",
             "embedMeeting": "Embed meeting",
             "endConference": "End meeting for all",
             "enterFullScreen": "View full screen",
@@ -1373,6 +1519,20 @@
             "videounmute": "Start camera"
         },
         "addPeople": "Add people to your call",
+        "advancedAudioSettings": {
+            "aec": {
+                "label": "Acoustic echo cancellation"
+            },
+            "agc": {
+                "label": "Automatic gain control"
+            },
+            "ns": {
+                "label": "Noise suppression"
+            },
+            "stereo": {
+                "label": "Stereo"
+            }
+        },
         "audioOnlyOff": "Disable low bandwidth mode",
         "audioOnlyOn": "Enable low bandwidth mode",
         "audioRoute": "Select the sound device",
@@ -1444,6 +1604,7 @@
         "reactionHeart": "Send heart reaction",
         "reactionLaugh": "Send laugh reaction",
         "reactionLike": "Send thumbs up reaction",
+        "reactionLove": "Send love reaction",
         "reactionSilence": "Send silence reaction",
         "reactionSurprised": "Send surprised reaction",
         "reactions": "Reactions",
@@ -1537,7 +1698,8 @@
         "flip": "Flip",
         "grantModerator": "Grant Moderator Rights",
         "hideSelfView": "Hide self view",
-        "kick": "Kick out",
+        "host": "Host",
+        "kick": "Remove from meeting",
         "mirrorVideo": "Mirror my video",
         "moderator": "Moderator",
         "mute": "Participant is muted",
@@ -1595,6 +1757,8 @@
             "noMainParticipantsTitle": "This meeting hasn't started yet.",
             "noVisitorLobby": "You cannot join while there is a lobby enabled for the meeting.",
             "notAllowedPromotion": "A participant needs to allow your request first.",
+            "requestToJoin": "Hand Raised",
+            "requestToJoinDescription": "Your request was sent to the moderators. Hang tight!",
             "title": "You are a viewer in the meeting"
         },
         "waitingMessage": "You'll join the meeting as soon as it is live!"
@@ -1606,7 +1770,7 @@
             "roomname": "Enter room name"
         },
         "addMeetingName": "Add Meeting name",
-        "appDescription": "Go ahead, video chat with the whole team. In fact, invite everyone you know. {{app}} is a fully encrypted, 100% open source video conferencing solution that you can use all day, every day, for free — with no account needed.",
+        "appDescription": "Go ahead, video chat with the whole team. In fact, invite everyone you know. {{app}} is a fully encrypted, 100% open source video conferencing solution that you can use all day, every day — huddle up your way.",
         "audioVideoSwitch": {
             "audio": "Voice",
             "video": "Video"
@@ -1619,15 +1783,15 @@
         "go": "GO",
         "goSmall": "GO",
         "headerSubtitle": "Secure and high quality meetings",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Dial-in info",
-        "jitsiOnMobile": "Jitsi on mobile – download our apps and start a meeting from anywhere",
+        "jitsiOnMobile": "Sonacove on mobile – download our apps and start a meeting from anywhere",
         "join": "CREATE / JOIN",
         "logo": {
             "calendar": "Calendar logo",
             "desktopPreviewThumbnail": "Desktop preview thumbnail",
             "googleLogo": "Google Logo",
-            "logoDeepLinking": "Jitsi meet logo",
+            "logoDeepLinking": "Sonacove Meets logo",
             "microsoftLogo": "Microsoft logo",
             "policyLogo": "Policy logo"
         },
@@ -1649,7 +1813,7 @@
         "settings": "Settings",
         "startMeeting": "Start meeting",
         "terms": "Terms",
-        "title": "Secure, fully featured, and completely free video conferencing",
+        "title": "Secure, fully featured, and customizable video conferencing",
         "upcomingMeetings": "Your upcoming meetings"
     },
     "whiteboard": {

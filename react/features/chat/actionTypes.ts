@@ -163,3 +163,12 @@ export const SET_USER_CHAT_WIDTH = 'SET_USER_CHAT_WIDTH';
  * }
  */
 export const SET_CHAT_IS_RESIZING = 'SET_CHAT_IS_RESIZING';
+
+/**
+  * The type of action sets the timestamp of the last private chat recipients list changed.
+  *
+  * {
+  *     type: NOTIFY_PRIVATE_RECIPIENTS_CHANGED
+  * }
+  */
+ export const NOTIFY_PRIVATE_RECIPIENTS_CHANGED = 'NOTIFY_PRIVATE_RECIPIENTS_CHANGED';

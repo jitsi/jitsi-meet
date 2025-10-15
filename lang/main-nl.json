@@ -61,7 +61,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Een link naar een vergadering toevoegen",
-        "confirmAddLink": "Wilt u een Jitsi-link aan deze afspraak toevoegen?",
+        "confirmAddLink": "Wilt u een Sonacove-link aan deze afspraak toevoegen?",
         "error": {
             "appConfiguration": "De agenda-integratie is niet juist ingesteld.",
             "generic": "Er is een fout opgetreden. Controleer uw agenda-instellingen of vernieuw de agenda.",
@@ -382,7 +382,7 @@
         "answer": "Beantwoorden",
         "audioCallTitle": "Inkomende oproep",
         "decline": "Negeren",
-        "productLabel": "vanuit Jitsi Meet",
+        "productLabel": "vanuit Sonacove Meets",
         "videoCallTitle": "Inkomende video-oproep"
     },
     "info": {
@@ -595,7 +595,7 @@
         "newDeviceAction": "Gebruik",
         "newDeviceAudioTitle": "Nieuw audioapparaat gedetecteerd",
         "newDeviceCameraTitle": "Nieuwe camera gedetecteerd",
-        "oldElectronClientDescription1": "Het lijkt erop dat u een oude versie van Jitsi Meet gebruikt, waarvan beveiligingskwetsbaarheden bekend zijn. Zorg ervoor dat u nu bijwerkt naar de ",
+        "oldElectronClientDescription1": "Het lijkt erop dat u een oude versie van Sonacove Meets gebruikt, waarvan beveiligingskwetsbaarheden bekend zijn. Zorg ervoor dat u nu bijwerkt naar de ",
         "oldElectronClientDescription2": "nieuwste versie",
         "oldElectronClientDescription3": "!",
         "participantWantsToJoin": "Wil deelnemen aan de vergadering",
@@ -721,6 +721,141 @@
         "linkCopied": "Link gekopieerd naar klembord",
         "lookGood": "Het klinkt alsof uw microfoon naar behoren werkt",
         "or": "of",
+        "permissionsGuide": {
+            "close": "Sluiten",
+            "detected": "Gedetecteerd:",
+            "deviceHelp": {
+                "Android": [
+                    "Open de instellingen van je telefoon.",
+                    "Tik op \"Apps\" > je browser (bijv. Chrome of Brave).",
+                    "Tik op \"Machtigingen\".",
+                    "Sta toegang tot de camera en microfoon toe.",
+                    "Start de browser opnieuw en probeer het opnieuw."
+                ],
+                "iOS": [
+                    "Open de iOS-instellingen.",
+                    "Scroll naar beneden en selecteer je browser (bijv. Safari of Chrome).",
+                    "Tik op \"Camera\" en \"Microfoon\".",
+                    "Zet beide op \"Toestaan\".",
+                    "Ga terug naar de browser en laad de pagina opnieuw."
+                ]
+            },
+            "howToAllow": "Zo geef je toestemming:",
+            "needHelp": "Heb je hulp nodig?",
+            "steps": {
+                "Brave_Android": [
+                    "Klik op het <0>Tune</0>-icoon naast de URL.",
+                    "Tik op 'Machtigingen'.",
+                    "Sta camera en microfoon toe.",
+                    "Ververs de pagina."
+                ],
+                "Brave_Linux": [
+                    "Klik op het <0>Tune</0>-icoon in de adresbalk.",
+                    "Sta camera en microfoon toe in de machtigingslijst.",
+                    "Ververs de pagina."
+                ],
+                "Brave_Windows": [
+                    "Klik op het <0>Tune</0>-icoon in de adresbalk.",
+                    "Schakel microfoon en camera in.",
+                    "Ververs de pagina."
+                ],
+                "Brave_iOS": [
+                    "Open iOS-instellingen > Brave.",
+                    "Tik op 'Camera' en 'Microfoon'.",
+                    "Zet deze op 'Toestaan'.",
+                    "Ga terug naar Brave en vernieuw de pagina."
+                ],
+                "Brave_macOS": [
+                    "Klik op het <0>Tune</0>-icoon in de adresbalk.",
+                    "Schakel camera en microfoon in de machtigingsinstellingen in.",
+                    "Ververs de pagina."
+                ],
+                "Chrome_Android": [
+                    "Klik op het <0>Tune</0>-icoon in de adresbalk.",
+                    "Kies 'Machtigingen'.",
+                    "Zet 'Camera' en 'Microfoon' op 'Toestaan'."
+                ],
+                "Chrome_Linux": [
+                    "Klik op het hangslot-icoon naast de URL in de adresbalk.",
+                    "Klik op 'Website-instellingen'.",
+                    "Sta camera en microfoon toe.",
+                    "Ververs de pagina."
+                ],
+                "Chrome_Windows": [
+                    "Klik op het <0>Tune</0>-icoon in de adresbalk.",
+                    "Klik op 'Website-instellingen'.",
+                    "Sta camera en microfoon toe onder 'Machtigingen'."
+                ],
+                "Chrome_iOS": [
+                    "Open iOS-instellingen > Chrome.",
+                    "Tik op 'Camera' en 'Microfoon'.",
+                    "Zet deze op 'Toestaan'.",
+                    "Ga terug naar Chrome en vernieuw de pagina."
+                ],
+                "Chrome_macOS": [
+                    "Klik op het <0>Tune</0>-icoon in de adresbalk.",
+                    "Klik op 'Website-instellingen'.",
+                    "Sta camera en microfoon toe onder 'Machtigingen'."
+                ],
+                "Edge_Windows": [
+                    "Klik op het hangslot-icoon naast de URL.",
+                    "Sta camera en microfoon toe.",
+                    "Ververs de pagina."
+                ],
+                "Edge_macOS": [
+                    "Klik op het <0>Tune</0>-icoon in de adresbalk.",
+                    "Zet camera en microfoon op 'Toestaan'."
+                ],
+                "Firefox_Android": [
+                    "Tik op het hangslot-icoon naast de URL-balk.",
+                    "Tik op 'Pagina-instellingen bewerken'.",
+                    "Sta camera en microfoon toe.",
+                    "Ververs de pagina."
+                ],
+                "Firefox_Linux": [
+                    "Klik op het hangslot-icoon naast de adresbalk.",
+                    "Klik op 'Meer informatie'.",
+                    "Sta camera en microfoon toe onder machtigingen.",
+                    "Ververs de pagina."
+                ],
+                "Firefox_Windows": [
+                    "Klik op het <0>Tune</0>-icoon naast de URL.",
+                    "Schakel microfoon en camera in.",
+                    "Ververs de pagina."
+                ],
+                "Firefox_iOS": [
+                    "Open iOS-instellingen > Firefox.",
+                    "Schakel camera en microfoon in.",
+                    "Ga terug naar Firefox en vernieuw de pagina."
+                ],
+                "Firefox_macOS": [
+                    "Klik op het <0>Tune</0>-icoon naast de URL.",
+                    "Klik op de pijl > 'Meer informatie'.",
+                    "Ga naar het tabblad 'Machtigingen'.",
+                    "Sta camera en microfoon toe.",
+                    "Ververs de pagina."
+                ],
+                "Safari_iOS": [
+                    "Ga naar iOS-instellingen > Safari.",
+                    "Tik op 'Camera' en 'Microfoon'.",
+                    "Zet deze op 'Toestaan'.",
+                    "Ga terug naar Safari en vernieuw de pagina."
+                ],
+                "Safari_macOS": [
+                    "Klik in de menubalk op 'Safari' > 'Instellingen voor deze website'.",
+                    "Zet camera en microfoon op 'Toestaan'.",
+                    "Ververs de pagina."
+                ],
+                "default": [
+                    "Open de browserinstellingen.",
+                    "Zoek de sectie 'Privacy' of 'Machtigingen'.",
+                    "Schakel camera en microfoon in voor deze website.",
+                    "Ververs de pagina."
+                ]
+            },
+            "stillNotWorking": "Werkt het nog steeds niet?",
+            "title": "Activeer microfoon en camera"
+        },
         "premeeting": "Voorbeeldscherm",
         "screenSharingError": "Fout bij schermdeling:",
         "startWithPhone": "Starten met telefoonaudio",
@@ -793,6 +928,7 @@
         "title": "Beveiligingsopties"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Binnenkomend bericht",
         "calendar": {
             "about": "De agenda-integratie van {{appName}} wordt gebruikt voor een veilige toegang tot uw agenda, zodat het aankomende afspraken kan uitlezen.",
             "disconnect": "Verbinding verbreken",
@@ -806,7 +942,6 @@
         "devices": "Apparaten",
         "followMe": "Iedereen volgt mij",
         "framesPerSecond": "beelden per seconde",
-        "incomingMessage": "Binnenkomend bericht",
         "language": "Taal",
         "loggedIn": "Aangemeld als {{name}}",
         "microphones": "Microfoons",
@@ -1090,9 +1225,9 @@
         "go": "GAAN",
         "goSmall": "GAAN",
         "headerSubtitle": "Veilige vergaderingen van hoge kwaliteit",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Informatie",
-        "jitsiOnMobile": "Jitsi op de mobiele telefoon - download onze apps en start overal een vergadering",
+        "jitsiOnMobile": "Sonacove op de mobiele telefoon - download onze apps en start overal een vergadering",
         "join": "AANMAKEN / DEELNEMEN",
         "moderatedMessage": "Of <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">boek een vergadering URL</a> van tevoren waar u de enige moderator bent.",
         "privacy": "Privacy",

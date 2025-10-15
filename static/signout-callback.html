@@ -1,0 +1,40 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Signing out...</title>
+    <script src="/meet/static/auth-service.js"></script>
+  </head>
+  <body>
+    <div style="display: none;">
+      Signing out...
+    </div>
+    <script>
+      async function handleSignoutCallback() {
+        try {
+          // Wait for AuthService to be ready
+          if (!window.AuthService) {
+            await new Promise(resolve => {
+              window.addEventListener('authServiceReady', resolve, { once: true });
+            });
+          }
+
+          const userManager = window.AuthService.getUserManager();
+          
+          // Process the signout callback
+          await userManager.signoutCallback();
+          
+          console.log('Signout callback completed successfully');
+          
+          // Redirect to home page after successful signout
+          window.location.href = '/meet';
+        } catch (error) {
+          console.error('Signout callback error:', error);
+          // Still redirect to home even if there was an error
+          window.location.href = '/meet';
+        }
+      }
+
+      handleSignoutCallback();
+    </script>
+  </body>
+</html>

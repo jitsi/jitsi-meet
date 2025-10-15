@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "회의 링크 추가",
-        "confirmAddLink": "이 이벤트에 Jitsi 링크를 추가 하시겠습니까?",
+        "confirmAddLink": "이 이벤트에 Sonacove 링크를 추가 하시겠습니까?",
         "error": {
             "appConfiguration": "캘린더가 제대로 구성되지 않았습니다.",
             "generic": "오류가 발생했습니다. 캘린더 설정을 확인하거나 캘린더를 새로 고침 해보세요.",
@@ -534,7 +534,7 @@
         "answer": "응답",
         "audioCallTitle": "수신 전화",
         "decline": "거절",
-        "productLabel": "Jitsi Meet에서",
+        "productLabel": "Sonacove Meets에서",
         "videoCallTitle": "수신 화상 전화"
     },
     "info": {
@@ -746,7 +746,7 @@
         "dataChannelClosedDescriptionWithAudio": "브리지 채널이 다운되어 오디오 및 비디오에 장애가 발생할 수 있습니다.",
         "dataChannelClosedWithAudio": "오디오 및 비디오 품질이 저하될 수 있습니다",
         "disabledIframe": "임베딩은 데모 목적에만 사용되므로 이 통화는 {{timeout}}분 후에 연결이 끊어집니다.",
-        "disabledIframeSecondary": "{{domain}} 임베딩은 데모 목적에만 사용되므로 이 통화는 {{timeout}}분 후에 연결이 끊어집니다. 프로덕션 임베딩을 위해 <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a>를 사용하세요!",
+        "disabledIframeSecondary": "{{domain}} 임베딩은 데모 목적에만 사용되므로 이 통화는 {{timeout}}분 후에 연결이 끊어집니다. 프로덕션 임베딩을 위해 <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Sonacove as a Service</a>를 사용하세요!",
         "disconnected": "연결이 끊김",
         "displayNotifications": "다음에 대한 알림 표시",
         "dontRemindMe": "다시 알리지 않기",
@@ -798,7 +798,7 @@
         "noiseSuppressionDesktopAudioDescription": "추가 노이즈 억제는 데스크톱 오디오 공유 중에는 활성화할 수 없습니다. 비활성화하고 다시 시도하십시오.",
         "noiseSuppressionFailedTitle": "추가 노이즈 억제를 시작하지 못했습니다",
         "noiseSuppressionStereoDescription": "추가 노이즈 억제는 현재 스테레오 오디오와 함께 지원되지 않습니다.",
-        "oldElectronClientDescription1": "보안 취약성이 있는 오래된 Jitsi Meet 클라이언트를 사용하고 있는 것 같습니다. 최신 빌드로 업데이트하세요",
+        "oldElectronClientDescription1": "보안 취약성이 있는 오래된 Sonacove Meets 클라이언트를 사용하고 있는 것 같습니다. 최신 빌드로 업데이트하세요",
         "oldElectronClientDescription2": "최신 빌드",
         "oldElectronClientDescription3": "지금!",
         "participantWantsToJoin": "회의에 참여하려고 합니다",
@@ -971,6 +971,141 @@
         "linkCopied": "클립보드에 링크가 복사되었습니다",
         "lookGood": "장치가 제대로 작동하고 있습니다",
         "or": "또는",
+        "permissionsGuide": {
+            "close": "닫기",
+            "detected": "감지됨:",
+            "deviceHelp": {
+                "Android": [
+                    "휴대폰 설정을 엽니다.",
+                    "\"앱\" > 사용 중인 브라우저(예: Chrome 또는 Brave)를 탭하세요.",
+                    "\"권한\"을 탭하세요.",
+                    "카메라 및 마이크 접근을 허용하세요.",
+                    "브라우저를 다시 시작한 후 다시 시도하세요."
+                ],
+                "iOS": [
+                    "iOS 설정을 엽니다.",
+                    "아래로 스크롤하여 사용 중인 브라우저(예: Safari 또는 Chrome)를 선택하세요.",
+                    "\"카메라\"와 \"마이크\"를 탭하세요.",
+                    "둘 다 \"허용\"으로 설정하세요.",
+                    "브라우저로 돌아가 페이지를 새로고침하세요."
+                ]
+            },
+            "howToAllow": "접근 권한 허용 방법:",
+            "needHelp": "도움이 필요하신가요?",
+            "steps": {
+                "Brave_Android": [
+                    "주소 옆의 <0>Tune</0> 아이콘을 클릭하세요.",
+                    "'권한'을 탭하세요.",
+                    "카메라와 마이크를 허용하세요.",
+                    "페이지를 새로고침하세요."
+                ],
+                "Brave_Linux": [
+                    "주소창의 <0>Tune</0> 아이콘을 클릭하세요.",
+                    "권한 목록에서 카메라와 마이크를 허용하세요.",
+                    "페이지를 새로고침하세요."
+                ],
+                "Brave_Windows": [
+                    "주소창의 <0>Tune</0> 아이콘을 클릭하세요.",
+                    "마이크와 카메라를 활성화하세요.",
+                    "페이지를 새로고침하세요."
+                ],
+                "Brave_iOS": [
+                    "iOS 설정 > Brave를 엽니다.",
+                    "'카메라'와 '마이크'를 탭하세요.",
+                    "'허용'으로 설정하세요.",
+                    "Brave로 돌아가서 페이지를 새로고침하세요."
+                ],
+                "Brave_macOS": [
+                    "주소창의 <0>Tune</0> 아이콘을 클릭하세요.",
+                    "권한 설정에서 카메라와 마이크를 활성화하세요.",
+                    "페이지를 새로고침하세요."
+                ],
+                "Chrome_Android": [
+                    "주소창의 <0>Tune</0> 아이콘을 클릭하세요.",
+                    "'권한'을 선택하세요.",
+                    "'카메라'와 '마이크'를 허용으로 설정하세요."
+                ],
+                "Chrome_Linux": [
+                    "주소창 옆의 자물쇠 아이콘을 클릭하세요.",
+                    "'사이트 설정'을 클릭하세요.",
+                    "카메라와 마이크를 허용하세요.",
+                    "페이지를 새로고침하세요."
+                ],
+                "Chrome_Windows": [
+                    "주소창의 <0>Tune</0> 아이콘을 클릭하세요.",
+                    "'사이트 설정'을 클릭하세요.",
+                    "'권한'에서 카메라와 마이크를 허용하세요."
+                ],
+                "Chrome_iOS": [
+                    "iOS 설정 > Chrome을 엽니다.",
+                    "'카메라'와 '마이크'를 탭하세요.",
+                    "'허용'으로 설정하세요.",
+                    "Chrome으로 돌아가서 페이지를 새로고침하세요."
+                ],
+                "Chrome_macOS": [
+                    "주소창의 <0>Tune</0> 아이콘을 클릭하세요.",
+                    "'사이트 설정'을 클릭하세요.",
+                    "'권한'에서 카메라와 마이크를 허용하세요."
+                ],
+                "Edge_Windows": [
+                    "주소창 옆의 자물쇠 아이콘을 클릭하세요.",
+                    "카메라와 마이크를 허용하세요.",
+                    "페이지를 새로고침하세요."
+                ],
+                "Edge_macOS": [
+                    "주소창의 <0>Tune</0> 아이콘을 클릭하세요.",
+                    "카메라와 마이크를 '허용'으로 설정하세요."
+                ],
+                "Firefox_Android": [
+                    "주소창 옆의 자물쇠 아이콘을 탭하세요.",
+                    "'사이트 설정 편집'을 탭하세요.",
+                    "카메라와 마이크를 허용하세요.",
+                    "페이지를 새로고침하세요."
+                ],
+                "Firefox_Linux": [
+                    "주소창 옆의 자물쇠 아이콘을 클릭하세요.",
+                    "'추가 정보'를 클릭하세요.",
+                    "'권한'에서 카메라와 마이크를 허용하세요.",
+                    "페이지를 새로고침하세요."
+                ],
+                "Firefox_Windows": [
+                    "주소 옆의 <0>Tune</0> 아이콘을 클릭하세요.",
+                    "마이크와 카메라를 활성화하세요.",
+                    "페이지를 새로고침하세요."
+                ],
+                "Firefox_iOS": [
+                    "iOS 설정 > Firefox를 엽니다.",
+                    "카메라와 마이크를 활성화하세요.",
+                    "Firefox로 돌아가서 페이지를 새로고침하세요."
+                ],
+                "Firefox_macOS": [
+                    "주소 옆의 <0>Tune</0> 아이콘을 클릭하세요.",
+                    "화살표 > '추가 정보'를 클릭하세요.",
+                    "'권한' 탭으로 이동하세요.",
+                    "카메라와 마이크를 허용하세요.",
+                    "페이지를 새로고침하세요."
+                ],
+                "Safari_iOS": [
+                    "iOS 설정 > Safari로 이동하세요.",
+                    "'카메라'와 '마이크'를 탭하세요.",
+                    "'허용'으로 설정하세요.",
+                    "Safari로 돌아가서 페이지를 새로고침하세요."
+                ],
+                "Safari_macOS": [
+                    "메뉴 바에서 'Safari' > '이 웹사이트 설정'을 클릭하세요.",
+                    "카메라와 마이크를 '허용'으로 설정하세요.",
+                    "페이지를 새로고침하세요."
+                ],
+                "default": [
+                    "브라우저 설정을 엽니다.",
+                    "'개인정보' 또는 '권한' 섹션을 찾으세요.",
+                    "이 사이트에 대해 카메라와 마이크를 활성화하세요.",
+                    "페이지를 새로고침하세요."
+                ]
+            },
+            "stillNotWorking": "아직 작동하지 않나요?",
+            "title": "마이크와 카메라 활성화하기"
+        },
         "premeeting": "회의 전",
         "proceedAnyway": "그래도 진행",
         "recordingWarning": "다른 참가자가 이 통화를 녹화하고 있을 수 있습니다",
@@ -1090,6 +1225,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "수신 메시지",
+        "KNOCKING_PARTICIPANT_SOUND": "참가자가 로비에 입장",
+        "PARTICIPANT_JOINED_SOUND": "참가자 입장",
+        "PARTICIPANT_LEFT_SOUND": "참가자 퇴장",
+        "TALK_WHILE_MUTED_SOUND": "음소거 상태에서 말하기",
         "audio": "오디오",
         "buttonLabel": "설정",
         "calendar": {
@@ -1106,7 +1246,6 @@
         "followMe": "모두 나와 같은 설정 상태로",
         "followMeRecorder": "녹화도 나를 따릅니다",
         "framesPerSecond": "초당 프레임 수",
-        "incomingMessage": "수신 메시지",
         "language": "언어",
         "loggedIn": "{{name}}으로 로그인",
         "maxStageParticipants": "메인 스테이지에 고정할 수 있는 최대 참가자 수",
@@ -1117,9 +1256,6 @@
         "name": "이름",
         "noDevice": "없음",
         "notifications": "알림",
-        "participantJoined": "참가자 입장",
-        "participantKnocking": "참가자가 로비에 입장",
-        "participantLeft": "참가자 퇴장",
         "playSounds": "소리 켜기",
         "reactions": "반응",
         "sameAsSystem": "시스템과 동일 ({{label}})",
@@ -1132,7 +1268,6 @@
         "startAudioMuted": "모두 음소거 상태로 시작",
         "startReactionsMuted": "모든 사람의 반응 소리 음소거",
         "startVideoMuted": "모두 비디오 비활성화 상태로 시작",
-        "talkWhileMuted": "음소거 상태에서 말하기",
         "title": "설정",
         "video": "비디오"
     },
@@ -1539,15 +1674,15 @@
         "go": "계속",
         "goSmall": "계속",
         "headerSubtitle": "안전하고 고품질의 회의",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "정보",
-        "jitsiOnMobile": "모바일에서 Jitsi – 앱을 다운로드하고 어디서나 회의를 시작하세요",
+        "jitsiOnMobile": "모바일에서 Sonacove – 앱을 다운로드하고 어디서나 회의를 시작하세요",
         "join": "가입",
         "logo": {
             "calendar": "캘린더 로고",
             "desktopPreviewThumbnail": "데스크톱 미리보기 썸네일",
             "googleLogo": "구글 로고",
-            "logoDeepLinking": "Jitsi meet 로고",
+            "logoDeepLinking": "Sonacove Meets 로고",
             "microsoftLogo": "마이크로소프트 로고",
             "policyLogo": "정책 로고"
         },

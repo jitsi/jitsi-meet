@@ -131,18 +131,39 @@ interface IProps {
     dispatch: IStore['dispatch'];
 }
 
-/** .
+/**
+ * The type of the React {@code Component} state of {@link LargeVideo}.
+ */
+interface IState {
+    pan: {
+        x: number;
+        y: number;
+    };
+    scale: number;
+}
+
+/**
+
+/**
  * Implements a React {@link Component} which represents the large video (a.k.a.
  * The conference participant who is on the local stage) on Web/React.
  *
  * @augments Component
  */
-class LargeVideo extends Component<IProps> {
+class LargeVideo extends Component<IProps, IState> {
     _tappedTimeout: number | undefined;
 
     _containerRef: React.RefObject<HTMLDivElement>;
 
     _wrapperRef: React.RefObject<HTMLDivElement>;
+
+    _panStart: { x: number; y: number; } = { x: 0, y: 0 };
+    _initialPinchDistance = 0;
+
+    _isPinching = false;
+    _isPanning = false;
+    _gestureStartPan = { x: 0, y: 0 };
+
 
     /**
      * Constructor of the component.
@@ -152,12 +173,34 @@ class LargeVideo extends Component<IProps> {
     constructor(props: IProps) {
         super(props);
 
+        this.state = {
+            scale: 1,
+            pan: { x: 0,
+                y: 0 }
+        };
+
         this._containerRef = React.createRef<HTMLDivElement>();
         this._wrapperRef = React.createRef<HTMLDivElement>();
 
         this._clearTapTimeout = this._clearTapTimeout.bind(this);
-        this._onDoubleTap = this._onDoubleTap.bind(this);
         this._updateLayout = this._updateLayout.bind(this);
+
+        this._onTouchStart = this._onTouchStart.bind(this);
+        this._onTouchMove = this._onTouchMove.bind(this);
+        this._onTouchEnd = this._onTouchEnd.bind(this);
+
+        this._onWheel = this._onWheel.bind(this);
+        this._onMouseDown = this._onMouseDown.bind(this);
+        this._onMouseMove = this._onMouseMove.bind(this);
+        this._onMouseUp = this._onMouseUp.bind(this);
+    }
+
+    override componentDidMount() {
+        this._containerRef.current?.addEventListener('wheel', this._onWheel, { passive: false });
+    }
+
+    override componentWillUnmount() {
+        this._containerRef.current?.removeEventListener('wheel', this._onWheel);
     }
 
     /**
@@ -190,6 +233,14 @@ class LargeVideo extends Component<IProps> {
             && prevProps._hideSelfView !== _hideSelfView) {
             VideoLayout.updateLargeVideo(_largeVideoParticipantId, true, false);
         }
+
+        if (prevProps._largeVideoParticipantId !== _largeVideoParticipantId) {
+            this.setState({
+                scale: 1,
+                pan: { x: 0,
+                    y: 0 }
+            });
+        }
     }
 
     /**
@@ -201,13 +252,18 @@ class LargeVideo extends Component<IProps> {
     override render() {
         const {
             _displayScreenSharingPlaceholder,
-            _isChatOpen,
             _isDisplayNameVisible,
             _noAutoPlayVideo,
             _showDominantSpeakerBadge,
             _whiteboardEnabled,
             _showSubtitles
         } = this.props;
+
+        const { scale, pan } = this.state;
+        const largeVideoWrapperStyle = {
+            transform: `scale(${scale}) translate(${pan.x}px, ${pan.y}px)`
+        };
+
         const style = this._getCustomStyles();
         const className = 'videocontainer';
 
@@ -215,6 +271,13 @@ class LargeVideo extends Component<IProps> {
             <div
                 className = { className }
                 id = 'largeVideoContainer'
+                onMouseDown = { this._onMouseDown }
+                onMouseLeave = { this._onMouseUp }
+                onMouseMove = { this._onMouseMove }
+                onMouseUp = { this._onMouseUp }
+                onTouchEnd = { this._onTouchEnd }
+                onTouchMove = { this._onTouchMove }
+                onTouchStart = { this._onTouchStart }
                 ref = { this._containerRef }
                 style = { style }>
                 <SharedVideo />
@@ -224,8 +287,7 @@ class LargeVideo extends Component<IProps> {
                 <Watermarks />
 
                 <div
-                    id = 'dominantSpeaker'
-                    onTouchEnd = { this._onDoubleTap }>
+                    id = 'dominantSpeaker'>
                     <div className = 'dynamic-shadow' />
                     <div id = 'dominantSpeakerAvatarContainer' />
                 </div>
@@ -244,9 +306,9 @@ class LargeVideo extends Component<IProps> {
                     { _displayScreenSharingPlaceholder ? <ScreenSharePlaceholder /> : <></>}
                     <div
                         id = 'largeVideoWrapper'
-                        onTouchEnd = { this._onDoubleTap }
                         ref = { this._wrapperRef }
-                        role = 'figure' >
+                        role = 'figure'
+                        style = { largeVideoWrapperStyle }>
                         <video
                             autoPlay = { !_noAutoPlayVideo }
                             id = 'largeVideo'
@@ -317,12 +379,12 @@ class LargeVideo extends Component<IProps> {
             _visibleFilmstrip
         } = this.props;
 
-        styles.backgroundColor = _customBackgroundColor || interfaceConfig.DEFAULT_BACKGROUND;
+        styles.background = _customBackgroundColor || interfaceConfig.DEFAULT_BACKGROUND;
 
         if (this.props._backgroundAlpha !== undefined) {
             const alphaColor = setColorAlpha(styles.backgroundColor, this.props._backgroundAlpha);
 
-            styles.backgroundColor = alphaColor;
+            styles.background = alphaColor;
         }
 
         if (_customBackgroundImageUrl) {
@@ -338,25 +400,285 @@ class LargeVideo extends Component<IProps> {
     }
 
     /**
-     * Sets view to tile view on double tap.
+     * Helper function to calculate distance between two touch points.
      *
-     * @param {Object} e - The event.
+     * @param {TouchList} touches - The touches list.
+     * @private
+     * @returns {number}
+     */
+    _getPinchDistance(touches: React.TouchEvent['touches']) {
+        return Math.sqrt(
+            ((touches[0].clientX - touches[1].clientX) ** 2)
+            + ((touches[0].clientY - touches[1].clientY) ** 2)
+        );
+    }
+
+    /**
+     * Helper function to calculate the midpoint between two touch points.
+     *
+     * @param {TouchList} touches - The touches list.
+     * @private
+     * @returns {{ x: number, y: number; }}
+     */
+    _getPinchMidpoint(touches: React.TouchEvent['touches']) {
+        return {
+            x: (touches[0].clientX + touches[1].clientX) / 2,
+            y: (touches[0].clientY + touches[1].clientY) / 2
+        };
+    }
+
+    /**
+     * Handles the start of a touch gesture.
+     *
+     * @param {React.TouchEvent} e - The touch event.
      * @private
      * @returns {void}
      */
-    _onDoubleTap(e: React.TouchEvent) {
-        e.stopPropagation();
-        e.preventDefault();
+    _onTouchStart(e: React.TouchEvent) {
+        const { scale } = this.state;
 
-        if (this._tappedTimeout) {
-            this._clearTapTimeout();
-            this.props.dispatch(setTileView(true));
-        } else {
-            this._tappedTimeout = window.setTimeout(this._clearTapTimeout, 300);
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            this._isPinching = true;
+            this._isPanning = false;
+            this._initialPinchDistance = this._getPinchDistance(e.touches);
+            this._panStart = this._getPinchMidpoint(e.touches);
+            this._gestureStartPan = { ...this.state.pan };
+        } else if (e.touches.length === 1 && scale > 1) {
+            e.preventDefault();
+            this._isPanning = true;
+            this._isPinching = false;
+            this._panStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            this._gestureStartPan = { ...this.state.pan };
         }
     }
-}
 
+    /**
+     * Handles movement during a touch gesture for zoom and pan.
+     *
+     * @param {React.TouchEvent} e - The touch event.
+     * @private
+     * @returns {void}
+     */
+    _onTouchMove(e: React.TouchEvent) {
+
+        if (this._isPinching && e.touches.length === 2) {
+            e.preventDefault();
+
+            const newPinchDistance = this._getPinchDistance(e.touches);
+            let newScale = this.state.scale * (newPinchDistance / this._initialPinchDistance);
+
+            newScale = Math.max(1, Math.min(newScale, 5)); // Clamp scale
+
+            const newMidpoint = this._getPinchMidpoint(e.touches);
+            const panX = this._gestureStartPan.x + (newMidpoint.x - this._panStart.x);
+            const panY = this._gestureStartPan.y + (newMidpoint.y - this._panStart.y);
+
+            if (this._wrapperRef.current) {
+                this._wrapperRef.current.style.transform = `scale(${newScale}) translate(${panX}px, ${panY}px)`;
+            }
+
+        } else if (this._isPanning && e.touches.length === 1) {
+            e.preventDefault();
+
+            const currentPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            const panX = this._gestureStartPan.x + (currentPos.x - this._panStart.x);
+            const panY = this._gestureStartPan.y + (currentPos.y - this._panStart.y);
+
+            if (this._wrapperRef.current) {
+                this._wrapperRef.current.style.transform = `scale(${this.state.scale}) translate(${panX}px, ${panY}px)`;
+            }
+        }
+    }
+
+    /**
+ * Handles the end of a touch gesture.
+ *
+ * @param {React.TouchEvent} e - The touch event.
+ * @private
+ * @returns {void}
+ */
+    _onTouchEnd(e: React.TouchEvent) {
+        const wasGesture = this._isPinching || this._isPanning;
+
+        this._isPinching = false;
+        this._isPanning = false;
+
+        if (wasGesture) {
+            const wrapper = this._wrapperRef.current;
+            const container = this._containerRef.current;
+
+            if (!wrapper || !container) {
+                return;
+            }
+
+            const transform = wrapper.style.transform;
+            const scaleMatch = transform.match(/scale\(([^)]+)\)/);
+            const translateMatch = transform.match(/translate\(([^)]+)\)/);
+
+            if (!scaleMatch || !translateMatch) {
+                return;
+            }
+
+            let finalScale = parseFloat(scaleMatch[1]);
+            const [ finalPanX, finalPanY ] = translateMatch[1].replace(/px/g, '').split(', ').map(p => parseFloat(p));
+            let finalPan = { x: finalPanX, y: finalPanY };
+
+            finalScale = Math.max(1, Math.min(finalScale, 5));
+
+            if (finalScale <= 1) {
+                finalPan = { x: 0, y: 0 };
+            } else {
+                const { clientWidth, clientHeight } = container;
+                const maxPanX = (clientWidth * finalScale - clientWidth) / 2;
+                const maxPanY = (clientHeight * finalScale - clientHeight) / 2;
+
+                finalPan = {
+                    x: Math.max(-maxPanX, Math.min(finalPan.x, maxPanX)),
+                    y: Math.max(-maxPanY, Math.min(finalPan.y, maxPanY))
+                };
+            }
+
+            this.setState({
+                scale: finalScale,
+                pan: finalPan
+            });
+
+            return;
+        }
+
+        if (e.changedTouches.length === 1) {
+            e.stopPropagation();
+            e.preventDefault();
+
+            if (this._tappedTimeout) {
+                this._clearTapTimeout();
+                this.props.dispatch(setTileView(true));
+            } else {
+                this._tappedTimeout = window.setTimeout(this._clearTapTimeout, 300);
+            }
+        }
+    }
+
+    /**
+ * Handles the mouse wheel event for zooming on desktop.
+ *
+ * @param {WheelEvent} e - The wheel event.
+ * @private
+ * @returns {void}
+ */
+    _onWheel(e: WheelEvent) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const scaleChange = e.deltaY * -0.01;
+        let newScale = this.state.scale + scaleChange;
+
+        newScale = Math.max(1, Math.min(newScale, 5));
+
+        let newPan = this.state.pan;
+
+        if (newScale <= 1) {
+            newPan = { x: 0, y: 0 };
+        }
+
+        this.setState({
+            scale: newScale,
+            pan: newPan
+        });
+    }
+
+    /**
+ * Handles the mouse down event to initiate panning when zoomed in.
+ *
+ * @param {React.MouseEvent} e - The mouse event.
+ * @private
+ * @returns {void}
+ */
+    _onMouseDown(e: React.MouseEvent) {
+        if (e.button !== 0 || this.state.scale <= 1) {
+            return;
+        }
+
+        e.preventDefault();
+        this._isPanning = true;
+        this._panStart = { x: e.clientX, y: e.clientY };
+        this._gestureStartPan = { ...this.state.pan };
+    }
+
+    /**
+ * Handles the mouse move event to pan the video.
+ *
+ * @param {React.MouseEvent} e - The mouse event.
+ * @private
+ * @returns {void}
+ */
+    _onMouseMove(e: React.MouseEvent) {
+        if (!this._isPanning) {
+            return;
+        }
+
+        e.preventDefault();
+        const panX = this._gestureStartPan.x + (e.clientX - this._panStart.x);
+        const panY = this._gestureStartPan.y + (e.clientY - this._panStart.y);
+
+        if (this._wrapperRef.current) {
+            this._wrapperRef.current.style.transform = `scale(${this.state.scale}) translate(${panX}px, ${panY}px)`;
+        }
+    }
+
+    /**
+ * Handles the mouse up or leave event to end panning.
+ *
+ * @param {React.MouseEvent} e - The mouse event.
+ * @private
+ * @returns {void}
+ */
+    _onMouseUp() {
+        if (!this._isPanning) {
+            return;
+        }
+
+        this._isPanning = false;
+
+        const wrapper = this._wrapperRef.current;
+        const container = this._containerRef.current;
+
+        if (!wrapper || !container) {
+            return;
+        }
+
+        const transform = wrapper.style.transform;
+        const scaleMatch = transform.match(/scale\(([^)]+)\)/);
+        const translateMatch = transform.match(/translate\(([^)]+)\)/);
+
+        if (!scaleMatch || !translateMatch) {
+            return;
+        }
+
+        const finalScale = parseFloat(scaleMatch[1]);
+        const [ finalPanX, finalPanY ] = translateMatch[1].replace(/px/g, '').split(', ').map(p => parseFloat(p));
+        let finalPan = { x: finalPanX, y: finalPanY };
+
+        if (finalScale <= 1) {
+            finalPan = { x: 0, y: 0 };
+        } else {
+            const { clientWidth, clientHeight } = container;
+            const maxPanX = (clientWidth * finalScale - clientWidth) / 2;
+            const maxPanY = (clientHeight * finalScale - clientHeight) / 2;
+
+            finalPan = {
+                x: Math.max(-maxPanX, Math.min(finalPan.x, maxPanX)),
+                y: Math.max(-maxPanY, Math.min(finalPan.y, maxPanY))
+            };
+        }
+
+        this.setState({
+            scale: finalScale,
+            pan: finalPan
+        });
+    }
+}
 
 /**
  * Maps (parts of) the Redux state to the associated LargeVideo props.

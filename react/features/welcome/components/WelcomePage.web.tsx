@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
-import { isMobileBrowser } from '../../base/environment/utils';
 import { translate, translateToHTML } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconWarning } from '../../base/icons/svg';
@@ -13,6 +13,7 @@ import SettingsButton from '../../settings/components/web/SettingsButton';
 import { SETTINGS_TABS } from '../../settings/constants';
 
 import { AbstractWelcomePage, IProps, _mapStateToProps } from './AbstractWelcomePage';
+import AuthCard from './AuthCard';
 import Tabs from './Tabs';
 
 /**
@@ -23,11 +24,33 @@ import Tabs from './Tabs';
 export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
 
 /**
+ * CSS styles for the WelcomePage component.
+ *
+ * @param {any} theme - The theme object.
+ * @returns {Object}
+ */
+const styles = (theme: any) => ({
+    settingsContainer: {
+        backgroundColor: `${theme.palette.ui03} !important `,
+        opacity: 0.75
+    }
+});
+
+/**
+ * The type of the React {@code Component} props of {@link WelcomePage}.
+ * Combines the base properties {@code IProps} with the {@code classes}
+ * object injected by the {@code withStyles} HOC.
+ */
+type Props = IProps & {
+    classes: { [key in keyof ReturnType<typeof styles>]: string };
+};
+
+/**
  * The Web container rendering the welcome page.
  *
  * @augments AbstractWelcomePage
  */
-class WelcomePage extends AbstractWelcomePage<IProps> {
+class WelcomePage extends AbstractWelcomePage<Props> {
     _additionalContentRef: HTMLDivElement | null;
     _additionalToolbarContentRef: HTMLDivElement | null;
     _additionalCardRef: HTMLDivElement | null;
@@ -52,7 +75,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: IProps) {
+    constructor(props: Props) {
         super(props);
 
         this.state = {
@@ -188,7 +211,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      * @returns {ReactElement|null}
      */
     override render() {
-        const { _moderatedRoomServiceUrl, t } = this.props;
+        const { _moderatedRoomServiceUrl, classes, t } = this.props;
         const { DEFAULT_WELCOME_PAGE_LOGO_URL, DISPLAY_WELCOME_FOOTER } = interfaceConfig;
         const showAdditionalCard = this._shouldShowAdditionalCard();
         const showAdditionalContent = this._shouldShowAdditionalContent();
@@ -210,7 +233,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                     noMargins = { true } />
                             </div>
                         </div>
-                        <div className = 'welcome-page-settings'>
+                        <div className = { `welcome-page-settings ${classes.settingsContainer}` }>
                             <SettingsButton
                                 defaultTab = { SETTINGS_TABS.CALENDAR }
                                 isDisplayedOnWelcomePage = { true } />
@@ -290,6 +313,9 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                 className = 'welcome-card welcome-card--dark'
                                 ref = { this._setAdditionalCardRef } />
                             : null}
+                        <div className = 'welcome-card'>
+                            <AuthCard />
+                        </div>
                     </div>
 
                     {showAdditionalContent
@@ -420,10 +446,6 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      * @returns {ReactElement|null}
      */
     _renderTabs() {
-        if (isMobileBrowser()) {
-            return null;
-        }
-
         const { _calendarEnabled, _recentListEnabled, t } = this.props;
 
         const tabs = [];
@@ -545,4 +567,4 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
     }
 }
 
-export default translate(connect(_mapStateToProps)(WelcomePage));
+export default translate(connect(_mapStateToProps)(withStyles(WelcomePage, styles)));

@@ -1,0 +1,38 @@
+{
+    "backgroundColor": "#FDF6E3",
+    "customTheme": {
+        "palette": {
+            "uiBackground": "#FDF6E3",
+            "ui01": "#F5EED8",
+            "ui02": "#EEE8D5",
+            "ui03": "#DAD2C1",
+            "ui04": "#BBAF9A",
+            "text01": "#0A1929",
+            "text02": "#657B83",
+            "text03": "#839496",
+            "text04": "#93A1A1",
+            "action01": "#268BD2",
+            "action01Hover": "#3A96D8",
+            "action01Active": "#1E6A9E",
+            "action03": "transparent",
+            "action03Hover": "#DAD2C1",
+            "action03Active": "#BBAF9A",
+            "actionDanger": "#DC322F",
+            "actionDangerHover": "#E85C5A",
+            "actionDangerActive": "#B32926",
+            "icon01": "#586E75",
+            "icon02": "#657B83",
+            "link01": "#268BD2",
+            "link01Hover": "#3A96D8",
+            "success01": "#859900",
+            "warning01": "#E5A620",
+            "support01": "#CB4B16",
+            "support02": "#D33682",
+            "support03": "#6C71C4",
+            "support04": "#2AA198"
+        },
+        "shape": {
+            "borderRadius": 4
+        }
+    }
+}

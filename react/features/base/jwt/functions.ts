@@ -19,13 +19,21 @@ import logger from './logger';
  * @returns {string} The JSON Web Token (JWT), if any, defined by the specified
  * {@code url}; otherwise, {@code undefined}.
  */
-export function parseJWTFromURLParams(url: URL | typeof window.location = window.location) {
-    // @ts-ignore
-    const jwt = parseURLParams(url, false, 'hash').jwt;
+export function parseJWTFromURLParams(url: URL | typeof window.location) {
+    // Need this on web to convert Location to URL
+    // @ts-ignore This throws an error on native
+    const urlObj = url instanceof URL ? url : url?.href && new URL(url.href);
+    const jwt = parseURLParams(urlObj, false, 'hash').jwt;
 
     // TODO: eventually remove the search param and only pull from the hash
-    // @ts-ignore
-    return jwt ? jwt : parseURLParams(url, true, 'search').jwt;
+    const jwt1 = jwt ? jwt : parseURLParams(urlObj, true, 'search').jwt;
+    const jwt2 = jwt1 ? jwt1 : parseURLParams(urlObj, true, 'hash').access_token;
+
+    if (jwt2) {
+        logger.info('found jwt in url params.');
+    }
+
+    return jwt2;
 }
 
 /**

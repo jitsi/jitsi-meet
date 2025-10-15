@@ -137,6 +137,7 @@ const ThumbnailTopIndicators = ({
             {thumbnailType !== THUMBNAIL_TYPE.TILE && (
                 <div className = { cx(indicatorsClassName, 'top-indicators') }>
                     <StatusIndicators
+                        host = { false }
                         participantID = { participantId }
                         screenshare = { false } />
                 </div>

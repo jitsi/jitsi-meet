@@ -208,6 +208,9 @@ function onClick(event: React.MouseEvent) {
 
 const useStyles = makeStyles()(theme => {
     return {
+        table: {
+            color: theme.palette.text01
+        },
         actions: {
             margin: '10px auto',
             textAlign: 'center'
@@ -222,7 +225,7 @@ const useStyles = makeStyles()(theme => {
         },
         connectionStatsTable: {
             '&, & > table': {
-                fontSize: '12px',
+                fontSize: '0.75rem',
                 fontWeight: 400,
 
                 '& td': {
@@ -614,7 +617,7 @@ const ConnectionStatsTable = ({
     };
 
     const _renderAdditionalStats = () => (
-        <table>
+        <table className = { classes.table }>
             <tbody>
                 {isLocalVideo ? _renderBandwidth() : null}
                 {isLocalVideo ? _renderTransport() : null}
@@ -746,7 +749,7 @@ const ConnectionStatsTable = ({
     };
 
     const _renderStatistics = () => (
-        <table>
+        <table className = { classes.table }>
             <tbody>
                 {_renderConnectionSummary()}
                 {_renderBitrate()}

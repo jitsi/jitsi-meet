@@ -1,23 +1,76 @@
 <html>
-<head>
-    <!--#include virtual="/base.html" -->
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!--#include virtual="/base.html" -->
     <link rel="stylesheet" href="css/all.css"/>
-    <!--#include virtual="/title.html" -->
+        <!--#include virtual="/title.html" -->
     <script><!--#include virtual="/interface_config.js" --></script>
-    <script src="static/close.js"></script>
-</head>
-<body>
-    <div class="redirectPageMessage">
-        <div class="thanks-msg">
-            <p id="thanksMessage"></p>
+        <!--#include virtual="/plugin.head.html" -->
+        <script src="static/close.js"></script>
+        <style>
+            body {
+                margin: 0;
+                display: flex;
+                justify-content: center;
+                min-height: 100vh;
+                background-color: #000;
+            }
+
+            .redirectPageMessage {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                width: 100%;
+                margin: 0 auto;
+            }
+
+            .home-button-container {
+                margin-top: 32px;
+                display: flex;
+                justify-content: center;
+                width: 100%;
+            }
+
+            #homeButton {
+                background-color: #0376da;
+                border: none;
+                border-radius: 6px;
+                color: white;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 600;
+                padding: 12px 24px;
+                transition: background-color 0.2s ease;
+            }
+
+            #homeButton:hover {
+                background-color: #0256a2;
+            }
+
+            #homeButton:active {
+                background-color: #01417c;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="redirectPageMessage">
+            <div class="thanks-msg">
+                <p id="thanksMessage"></p>
+            </div>
+            <div class="hint-msg">
+                <p>
+                    <span id="hintQuestion">Did you know?</span>
+                    <span class="hint-msg__holder" id="hintMessage"></span>
+                </p>
+                <div class="happy-software"></div>
+            </div>
+            <div class="home-button-container">
+                <a id="homeButton" href="/">Go to Home Page</a>
+            </div>
         </div>
-        <div class="hint-msg">
-            <p>
-                <span id="hintQuestion">Did you know?</span>
-                <span class="hint-msg__holder" id="hintMessage"></span>
-            </p>
-            <div class="happy-software"></div>
-        </div>
-    </div>
-</body>
+    </body>
 </html>

@@ -3,7 +3,7 @@
     <!--#include virtual="head.html" -->
     <meta charset="utf-8">
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <meta name="theme-color" content="#2A3A4B">
     <!--#include virtual="base.html" -->
 
@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="css/all.css">
     <!--#include virtual="fonts.html"-->
     <link rel="manifest" id="manifest-placeholder">
+
+    <!-- AuthService for authentication -->
+    <script src="static/auth-service.js"></script>
 
     <script>
         function contextRoot(pathname) {
@@ -64,7 +67,7 @@
         // redirected to a page that is known to have no newer js syntax.
         if (window.navigator.userAgent.match(/(MSIE|Trident)/)) {
             var roomName = encodeURIComponent(window.location.pathname);
-            window.location.pathname = 'static/recommendedBrowsers.html';
+            window.location.pathname = '/static/recommendedBrowsers.html';
         }
 
         window.indexLoadedTime = window.performance.now();
@@ -197,8 +200,8 @@
     </script>
     <script><!--#include virtual="/config.js" --></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
     <script><!--#include virtual="/interface_config.js" --></script>
-    <script src="libs/lib-jitsi-meet.min.js?v=139"></script>
-    <script src="libs/app.bundle.min.js?v=139"></script>
+    <script src="libs/lib-jitsi-meet.min.js?v=s3"></script>
+    <script src="libs/app.bundle.min.js?v=s3"></script>
     <!--#include virtual="title.html" -->
     <!--#include virtual="plugin.head.html" -->
     <!--#include virtual="static/welcomePageAdditionalContent.html" -->

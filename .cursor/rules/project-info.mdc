@@ -1,0 +1,11 @@
+---
+alwaysApply: true
+---
+
+This repo is a fork of jitsi-meets frontend repo. The project is called Sonacove Meets.
+
+We are building mainly for the web, so we never need to focus on native or electron related aspects of the codebase. We have left them as-is in order to stay as close to upstream as possible.
+
+We continue to merge in improvements from upstream, so try to avoid any major refactors if possible. Obviously as we work on custom changes there will be some unavoidable incompatible differences introduced.
+
+We want the site to work on all browsers and devices. The site is hosted on a subpath - sonacove.com/meet/*

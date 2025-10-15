@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Pievienot sapulces saiti",
-        "confirmAddLink": "Vai vēlaties šim kalendāra notikumam pievienot Jitsi saiti?",
+        "confirmAddLink": "Vai vēlaties šim kalendāra notikumam pievienot Sonacove saiti?",
         "error": {
             "appConfiguration": "Nepareizi iestatīta kalendāra integrācija.",
             "generic": "Radās kļūda. Lūdzu, pārbaudiet kalendāra iestatījumus vai mēģiniet atsvaidzināt kalendāru.",
@@ -109,9 +109,12 @@
         }
     },
     "chat": {
+        "disabled": "Tērzēšanas ziņojumu sūtīšana ir atspējota.",
         "enter": "Ienākt istabā",
         "error": "Kļūda: Jūsu ziņa netika nosūtīta. Cēlonis: {{error}}",
+        "everyone": "Visi",
         "fieldPlaceHolder": "Rakstiet ziņu šeit",
+        "guestsChatIndicator": "(viesis)",
         "lobbyChatMessageTo": "Vestibila tērzēšanas ziņa adresātam {{recipient}}",
         "message": "Ziņa",
         "messageAccessibleTitle": "{{user}} saka:",
@@ -124,7 +127,8 @@
             "title": "Ierakstiet vārdu, lai izmantotu tērzēšanā",
             "titleWithCC": "Ievadiet segvārdu, lai izmantotu tērzēšanā un slēptos subtitros",
             "titleWithPolls": "Ierakstiet segvārdu, lai izmantotu tērzēšanā un aptaujās",
-            "titleWithPollsAndCC": "Ievadiet segvārdu, lai izmantotu tērzēšanā, aptaujās un slēptos subtitros"
+            "titleWithPollsAndCC": "Ievadiet segvārdu, lai izmantotu tērzēšanā, aptaujās un slēptos subtitros",
+            "titleWithPollsAndCCAndFileSharing": "Ievadiet segvārdu, lai izmantotu tērzēšanā, aptaujās, slēptos subtitros un failos"
         },
         "noMessagesMessage": "Sapulcē pagaidām nav nevienas ziņas. Uzsāciet saraksti!",
         "privateNotice": "Privāta ziņa adresātam {{recipient}}",
@@ -134,12 +138,14 @@
         "tabs": {
             "chat": "Tērzēšana",
             "closedCaptions": "Slēptie subtitri",
+            "fileSharing": "Faili",
             "polls": "Aptaujas"
         },
         "title": "Tērzēšana",
-        "titleWithCC": "Tērzēšana un slēptie subtitri",
+        "titleWithCC": "Tērzēšana un Slēptie subtitri",
+        "titleWithFeatures": "Tērzēšana un",
+        "titleWithFileSharing": "Faili",
         "titleWithPolls": "Tērzēšana un Aptaujas",
-        "titleWithPollsAndCC": "Tērzēšana, Aptaujas un Slēptie subtitri",
         "you": "jūs"
     },
     "chromeExtensionBanner": {
@@ -296,6 +302,12 @@
         "alreadySharedVideoTitle": "Atļauts tikai viens kopīgots videoklips",
         "applicationWindow": "Lietotnes logs",
         "authenticationRequired": "Nepieciešama autentifikācija",
+        "cameraCaptureDialog": {
+            "description": "Uzņemt un nosūtīt attēlu, izmantojot mobilā tālruņa kameru",
+            "ok": "Atvērt kameru",
+            "reject": "Ne tagad",
+            "title": "Uzņemt attēlu"
+        },
         "cameraConstraintFailedError": "Kamera neatbilst noteiktajām prasībām.",
         "cameraNotFoundError": "Kamera nav atrasta.",
         "cameraNotSendingData": "Nevar piekļūt jūsu kamerai. Lūdzu, pārbaudiet, vai šo ierīci neizmanto cita programma, iestatījumu izvēlnē atlasiet citu ierīci vai mēģiniet atkārtoti ielādēt programmu.",
@@ -371,22 +383,34 @@
         "micTimeoutError": "Nevarēja palaist audio avotu. Iestājās noildze!",
         "micUnknownError": "Nevar izmantot mikrofonu nezināma iemesla dēļ.",
         "moderationAudioLabel": "Atļaut dalībniekiem ieslēgt savu mikrofonu",
+        "moderationDesktopLabel": "Atļaut lietotājiem, kas nav moderatori, kopīgot savu ekrānu",
         "moderationVideoLabel": "Atļaut dalībniekiem ieslēgt savu kameru",
         "muteEveryoneDialog": "Dalībnieki paši var ieslēgt savu mikrofonu.",
         "muteEveryoneDialogModerationOn": "Dalībnieki var nosūtīt pieprasījumu ieslēgt savu mikrofonu.",
         "muteEveryoneElseDialog": "Kad skaņa būs izslēgta, jūs nevarēsiet to ieslēgt atpakaļ, taču dalībnieki to varēs izdarīt paši.",
         "muteEveryoneElseTitle": "Vai izslēgt skaņu visiem, izņemot {{whom}}?",
+        "muteEveryoneElsesDesktopDialog": "Kad kopīgošana būs apturēta, jūs vairs nevarēsiet to ieslēgt atpakaļ, bet viņi to varēs izdarīt jebkurā laikā.",
+        "muteEveryoneElsesDesktopTitle": "Apturēt ekrāna kopīgošanu visiem, izņemot {{kam}}?",
         "muteEveryoneElsesVideoDialog": "Kad video būs izslēgts, jūs nevarēsiet to ieslēgt atpakaļ, taču dalībnieki to varēs izdarīt paši.",
         "muteEveryoneElsesVideoTitle": "Vai izslēgt video visiem, izņemot {{whom}}?",
         "muteEveryoneSelf": "jūs",
         "muteEveryoneStartMuted": "No šī brīža visi jauni dalībnieki pieslēdzas ar izslēgt skaņu",
         "muteEveryoneTitle": "Vai izslēgt skaņu visiem?",
+        "muteEveryonesDesktopDialog": "Dalībnieki var kopīgot savu ekrānu jebkurā laikā.",
+        "muteEveryonesDesktopDialogModerationOn": "Dalībnieki jebkurā laikā var nosūtīt pieprasījumu kopīgot savu ekrānu.",
+        "muteEveryonesDesktopTitle": "Vai pārtraukt ekrāna kopīgošanu visiem?",
         "muteEveryonesVideoDialog": "Dalībnieki var ieslēgt savu video.",
         "muteEveryonesVideoDialogModerationOn": "Dalībnieki var nosūtīt pieprasījumu ieslēgt viņu video.",
         "muteEveryonesVideoDialogOk": "Atspējot",
         "muteEveryonesVideoTitle": "Vai apturēt ikviena video?",
         "muteParticipantBody": "Jūs nevariet viņiem ieslēgt skaņu, bet viņi paši to var izdarīt jebkurā laikā.",
         "muteParticipantButton": "Izslēgt skaņu",
+        "muteParticipantsDesktopBody": "Jūs nevarēsiet sākt viņu ekrāna kopīgošanu, bet viņi to varēs izdarīt jebkurā laikā.",
+        "muteParticipantsDesktopBodyModerationOn": "Jūs nevarēsiet sākt viņu ekrāna kopīgošanu, un arī viņi to nevarēs izdarīt.",
+        "muteParticipantsDesktopButton": "Pārtraukt ekrāna kopīgošanu",
+        "muteParticipantsDesktopDialog": "Vai tiešām vēlaties izslēgt šī dalībnieka ekrāna kopīgošanu? Jūs vairs nevarēsiet ieslēgt to atpakaļ, bet viņš to varēs izdarīt jebkurā laikā.",
+        "muteParticipantsDesktopDialogModerationOn": "Vai tiešām vēlaties izslēgt šī dalībnieka ekrāna kopīgošanu? Jūs vairs nevarēsiet ieslēgt to atpakaļ, un arī viņš to nevarēs izdarīt.",
+        "muteParticipantsDesktopTitle": "Atspējot ekrāna kopīgošanu šim dalībniekam?",
         "muteParticipantsVideoBody": "Jūs nevarēsiet kameru ieslēgt atpakaļ, taču viņi paši to varēs izdarīt jebkurā laikā.",
         "muteParticipantsVideoBodyModerationOn": "Ne Jūs, ne dalībnieki nevarēsiet ieslēgt kameru atpakaļ.",
         "muteParticipantsVideoButton": "Pārtraukt video",
@@ -539,6 +563,23 @@
         "veryBad": "Ļoti Slikta",
         "veryGood": "Ļoti Laba"
     },
+    "fileSharing": {
+        "downloadFailedDescription": "Lūdzu, mēģiniet vēlreiz.",
+        "downloadFailedTitle": "Lejuplādes kļūda",
+        "downloadFile": "Lejuplādēt",
+        "downloadStarted": "Sākta faila lejuplāde",
+        "dragAndDrop": "Velciet un palaidiet failus šeit, vai jebkurā ekrāna vietā",
+        "fileAlreadyUploaded": "Fails jau ir augšuplādēts šajā sanāksmē.",
+        "fileTooLargeDescription": "Lūdzu, pārliecinieties, vai faila lielums nepārsniedz {{ maxFileSize }}.",
+        "fileTooLargeTitle": "Izvēlētais fails ir pārāk liels",
+        "fileUploadProgress": "Faila augšuplādes gaita",
+        "fileUploadedSuccessfully": "Fails veiksmīgi augšuplādēts",
+        "removeFile": "Noņemt",
+        "removeFileSuccess": "Fails veiksmīgi noņemts",
+        "uploadFailedDescription": "Lūdzu, mēģiniet vēlreiz.",
+        "uploadFailedTitle": "Augšuplādes kļūda",
+        "uploadFile": "Kopīgot failu"
+    },
     "filmstrip": {
         "accessibilityLabel": {
             "heading": "Video sīktēli"
@@ -552,7 +593,7 @@
         "answer": "Atbildēt",
         "audioCallTitle": "Ienākošs audio zvans",
         "decline": "Noraidīt",
-        "productLabel": "no Jitsi Meet",
+        "productLabel": "no Sonacove Meets",
         "videoCallTitle": "Ienākošs video zvans"
     },
     "info": {
@@ -750,8 +791,9 @@
     "me": "es",
     "notify": {
         "OldElectronAPPTitle": "Drošības ievainojamība!",
+        "allowAll": "Atļaut visu",
         "allowAudio": "Atļaut audio",
-        "allowBoth": "Abus",
+        "allowDesktop": "Atļaut ekrāna kopīgošanu",
         "allowVideo": "Atļaut video",
         "allowedUnmute": "Varat ieslēgt mikrofona skaņu, ieslēgt kameru vai kopīgot ekrānu.",
         "audioUnmuteBlockedDescription": "Mikrofona ieslēgšanas darbība ir īslaicīgi bloķēta sistēmas ierobežojumu dēļ.",
@@ -765,9 +807,10 @@
         "dataChannelClosedDescription": "Savienojuma kanāls nedarbojas, tāpēc video kvalitāte var būt ierobežota līdz zemākajam iestatījumam.",
         "dataChannelClosedDescriptionWithAudio": "Savienojuma kanāls nedarbojas, tāpēc var rasties audio un video traucējumi.",
         "dataChannelClosedWithAudio": "Audio un video kvalitāte var būt traucēta",
+        "desktopMutedRemotelyTitle": "",
         "disabledIframe": "Iegulšana ir paredzēta tikai demonstrācijas nolūkiem, tāpēc šis zvans tiks atvienots pēc {{timeout}} minūtēm.",
         "disabledIframeSecondaryNative": "Domēna {{domain}} iegulšana ir paredzēta tikai demonstrācijas nolūkiem, tāpēc šis zvans tiks pārtraukts pēc {{timeout}} minūtēm.",
-        "disabledIframeSecondaryWeb": "Domēna {{domain}} iegulšana ir paredzēta tikai demonstrācijas nolūkiem, tāpēc šis zvans tiks pārtraukts pēc {{timeout}} minūtēm. Lūdzu, produkcijas videi izmantojiet <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi as a Service</a>!",
+        "disabledIframeSecondaryWeb": "Domēna {{domain}} iegulšana ir paredzēta tikai demonstrācijas nolūkiem, tāpēc šis zvans tiks pārtraukts pēc {{timeout}} minūtēm. Lūdzu, produkcijas videi izmantojiet <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Sonacove as a Service</a>!",
         "disconnected": "savienojums pārtraukts",
         "displayNotifications": "Rādīt paziņojumus",
         "dontRemindMe": "Neatgādināt man",
@@ -819,7 +862,7 @@
         "noiseSuppressionDesktopAudioDescription": "Darbvirsmas audio koplietošanas laikā nevar iespējot trokšņu slāpēšanu. Lūdzu, atspējojiet to un mēģiniet vēlreiz.",
         "noiseSuppressionFailedTitle": "Neizdevās sākt trokšņu slāpēšanu",
         "noiseSuppressionStereoDescription": "Stereo audio trokšņu slāpēšana pašlaik netiek atbalstīta.",
-        "oldElectronClientDescription1": "Izskatās, ka jūs izmantojat vecu Jitsi Meet klienta versiju, kurai ir zināmas drošības ievainojamības. Lūdzu, atjauniniet uz ",
+        "oldElectronClientDescription1": "Izskatās, ka jūs izmantojat vecu Sonacove Meets klienta versiju, kurai ir zināmas drošības ievainojamības. Lūdzu, atjauniniet uz ",
         "oldElectronClientDescription2": "jaunākā versija",
         "oldElectronClientDescription3": "tagad!",
         "participantWantsToJoin": "Vēlas pievienoties sapulcei",
@@ -845,6 +888,7 @@
         "suggestRecordingDescription": "Vai vēlaties sākt ierakstīšanu?",
         "suggestRecordingTitle": "Ierakstīt sanāksmi",
         "unmute": "Ieslēgt mikrofonu",
+        "unmuteScreen": "",
         "unmuteVideo": "Ieslēgt video",
         "videoMutedRemotelyDescription": "Jūs vienmēr varat to atkal ieslēgt.",
         "videoMutedRemotelyTitle": "{{participantDisplayName}} izslēdza jūsu video",
@@ -864,11 +908,14 @@
             "admit": "Apstiprināt",
             "admitAll": "Apstiprināt visus",
             "allow": "Atļaut dalībniekiem:",
+            "allowDesktop": "Atļaut ekrāna kopīgošanu",
             "allowVideo": "Atļaut video",
+            "askDesktop": "Lūgt kopīgot ekrānu",
             "askUnmute": "Lūgt ieslēgt skaņu",
             "audioModeration": "Ieslēgt savu skaņu",
             "blockEveryoneMicCamera": "Bloķēt visiem mikrofonu un kameru",
             "breakoutRooms": "Grupu istabas",
+            "desktopModeration": "Sākt ekrāna kopīgošanu",
             "goLive": "Sākt",
             "invite": "Uzaicināt",
             "lowerAllHands": "Nolaist visas paceltās rokas",
@@ -880,6 +927,8 @@
             "muteAll": "Apklusināt visus",
             "muteEveryoneElse": "Apklusināt pārējos",
             "reject": "Noraidīt",
+            "stopDesktop": "Pārtraukt ekrāna kopīgošanu",
+            "stopEveryonesDesktop": "Pārtraukt visiem ekrāna kopīgošanu",
             "stopEveryonesVideo": "Izslēgt visiem video",
             "stopVideo": "Izslēgt video",
             "unblockEveryoneMicCamera": "Atbloķēt visiem mikrofonu un kameru",
@@ -889,9 +938,11 @@
         "headings": {
             "lobby": "Vestibils ({{count}})",
             "participantsList": "Sapulces dalībnieki ({{count}})",
+            "viewerRequests": "Apmeklētāju pieprasījumi {{count}}",
             "visitorInQueue": " (gaida {{count}})",
             "visitorRequests": " (pieprasījumi {{count}})",
-            "visitors": "Apmeklētāji ({{count}})",
+            "visitors": "Apmeklētāji {{count}}",
+            "visitorsList": "Apmeklētāji ({{count}})",
             "waitingLobby": "Gaida vestibilā ({{count}})"
         },
         "search": "Meklēt dalībniekus",
@@ -994,6 +1045,141 @@
         "linkCopied": "Saite ir kopēta starpliktuvē",
         "lookGood": "Jūsu mikrofons darbojas pareizi",
         "or": "vai",
+        "permissionsGuide": {
+            "close": "Aizvērt",
+            "detected": "Atklāts:",
+            "deviceHelp": {
+                "Android": [
+                    "Atveriet tālruņa iestatījumus.",
+                    "Pieskarieties “Lietotnes” > savam pārlūkam (piemēram, Chrome vai Brave).",
+                    "Pieskarieties “Atļaujas”.",
+                    "Atļaujiet piekļuvi kamerai un mikrofonam.",
+                    "Restartējiet pārlūku un mēģiniet vēlreiz."
+                ],
+                "iOS": [
+                    "Atveriet iOS iestatījumus.",
+                    "Ritiniet lejup un izvēlieties savu pārlūku (piemēram, Safari vai Chrome).",
+                    "Pieskarieties “Kamera” un “Mikrofons”.",
+                    "Iestatiet abus uz “Atļaut”.",
+                    "Atgriezieties pārlūkprogrammā un pārslādējiet lapu."
+                ]
+            },
+            "howToAllow": "Kā atļaut piekļuvi:",
+            "needHelp": "Vai nepieciešama palīdzība?",
+            "steps": {
+                "Brave_Android": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas blakus URL.",
+                    "Pieskarieties 'Atļaujas'.",
+                    "Atļaujiet kameru un mikrofonu.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Brave_Linux": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Atļaujiet kameru un mikrofonu atļauju sarakstā.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Brave_Windows": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Ieslēdziet mikrofonu un kameru.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Brave_iOS": [
+                    "Atveriet iOS iestatījumus > Brave.",
+                    "Pieskarieties 'Kamera' un 'Mikrofons'.",
+                    "Iestatiet tos uz 'Atļaut'.",
+                    "Atgriezieties pie Brave un atsvaidziniet lapu."
+                ],
+                "Brave_macOS": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Ieslēdziet kameru un mikrofonu atļauju iestatījumos.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Chrome_Android": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Izvēlieties 'Atļaujas'.",
+                    "Iestatiet 'Kamera' un 'Mikrofons' uz 'Atļaut'."
+                ],
+                "Chrome_Linux": [
+                    "Noklikšķiniet uz slēdzenes ikonas blakus URL adreses joslai.",
+                    "Noklikšķiniet uz 'Tīmekļa vietnes iestatījumi'.",
+                    "Atļaujiet kameru un mikrofonu.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Chrome_Windows": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Noklikšķiniet uz 'Tīmekļa vietnes iestatījumi'.",
+                    "Atļaujiet kameru un mikrofonu sadaļā 'Atļaujas'."
+                ],
+                "Chrome_iOS": [
+                    "Atveriet iOS iestatījumus > Chrome.",
+                    "Pieskarieties 'Kamera' un 'Mikrofons'.",
+                    "Iestatiet tos uz 'Atļaut'.",
+                    "Atgriezieties pie Chrome un atsvaidziniet lapu."
+                ],
+                "Chrome_macOS": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Noklikšķiniet uz 'Tīmekļa vietnes iestatījumi'.",
+                    "Atļaujiet kameru un mikrofonu sadaļā 'Atļaujas'."
+                ],
+                "Edge_Windows": [
+                    "Noklikšķiniet uz slēdzenes ikonas blakus URL.",
+                    "Atļaujiet kameru un mikrofonu.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Edge_macOS": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas adreses joslā.",
+                    "Iestatiet kameru un mikrofonu uz 'Atļaut'."
+                ],
+                "Firefox_Android": [
+                    "Pieskarieties slēdzenes ikonai blakus URL joslai.",
+                    "Pieskarieties 'Rediģēt lapas iestatījumus'.",
+                    "Atļaujiet kameru un mikrofonu.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Firefox_Linux": [
+                    "Noklikšķiniet uz slēdzenes ikonas blakus adreses joslai.",
+                    "Noklikšķiniet uz 'Vairāk informācijas'.",
+                    "Atļaujiet kameru un mikrofonu sadaļā 'Atļaujas'.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Firefox_Windows": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas blakus URL.",
+                    "Ieslēdziet mikrofonu un kameru.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Firefox_iOS": [
+                    "Atveriet iOS iestatījumus > Firefox.",
+                    "Ieslēdziet kameru un mikrofonu.",
+                    "Atgriezieties pie Firefox un atsvaidziniet lapu."
+                ],
+                "Firefox_macOS": [
+                    "Noklikšķiniet uz <0>Tune</0> ikonas blakus URL.",
+                    "Noklikšķiniet uz bultiņas > 'Vairāk informācijas'.",
+                    "Atveriet cilni 'Atļaujas'.",
+                    "Atļaujiet kameru un mikrofonu.",
+                    "Atsvaidziniet lapu."
+                ],
+                "Safari_iOS": [
+                    "Atveriet iOS iestatījumus > Safari.",
+                    "Pieskarieties 'Kamera' un 'Mikrofons'.",
+                    "Iestatiet tos uz 'Atļaut'.",
+                    "Atgriezieties pie Safari un atsvaidziniet lapu."
+                ],
+                "Safari_macOS": [
+                    "Noklikšķiniet uz 'Safari' izvēlnes joslā > 'Šīs vietnes iestatījumi'.",
+                    "Iestatiet kameru un mikrofonu uz 'Atļaut'.",
+                    "Atsvaidziniet lapu."
+                ],
+                "default": [
+                    "Atveriet pārlūkprogrammas iestatījumus.",
+                    "Meklējiet sadaļu 'Privātums' vai 'Atļaujas'.",
+                    "Ieslēdziet kameru un mikrofonu šai vietnei.",
+                    "Atsvaidziniet lapu."
+                ]
+            },
+            "stillNotWorking": "Joprojām nedarbojas?",
+            "title": "Ieslēgt mikrofonu un kameru"
+        },
         "premeeting": "Pirms sapulces",
         "proceedAnyway": "Tik un tā turpināt",
         "recordingWarning": "Citi dalībnieki var ierakstīt šo zvanu",
@@ -1113,6 +1299,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Ienākošā ziņa",
+        "KNOCKING_PARTICIPANT_SOUND": "Dalībnieks ienāca vestibilā",
+        "PARTICIPANT_JOINED_SOUND": "Dalībnieks pievienojās",
+        "PARTICIPANT_LEFT_SOUND": "Dalībnieks izgāja",
+        "TALK_WHILE_MUTED_SOUND": "Runā, kad izslēgta skaņa",
         "audio": "Audio",
         "buttonLabel": "Iestatījumi",
         "calendar": {
@@ -1130,7 +1321,6 @@
         "followMe": "Visi seko man",
         "followMeRecorder": "Ierakstītājs seko man",
         "framesPerSecond": "kadri sekundē",
-        "incomingMessage": "Ienākošā ziņa",
         "language": "Valoda",
         "loggedIn": "Ierakstījies kā {{name}}",
         "maxStageParticipants": "Maksimālais dalībnieku skaits, kurus var piespraust galvenajai skatuvei",
@@ -1141,9 +1331,6 @@
         "name": "Vārds",
         "noDevice": "Ierīču nav",
         "notifications": "Paziņojumi",
-        "participantJoined": "Dalībnieks pievienojās",
-        "participantKnocking": "Dalībnieks ienāca vestibilā",
-        "participantLeft": "Dalībnieks izgāja",
         "playSounds": "Atskaņot skaņu",
         "reactions": "Sapulces reakcijas",
         "sameAsSystem": "Tāds pats kā sistēmā ({{label}})",
@@ -1157,7 +1344,6 @@
         "startAudioMuted": "Dalībnieki pievienojas ar izslēgtu mikrofonu",
         "startReactionsMuted": "Izslēgt reakcijas skaņas visiem",
         "startVideoMuted": "Dalībnieki pievienojas ar izslēgtu kameru",
-        "talkWhileMuted": "Runā, kad izslēgta skaņa",
         "title": "Iestatījumi",
         "video": "Video"
     },
@@ -1484,6 +1670,8 @@
         "connectionInfo": "Informācija par savienojumu",
         "demote": "Pārveidot par apmeklētāju",
         "domute": "Izlsēgt skaņu",
+        "domuteDesktop": "Pārtraukt ekrāna kopīgošanu",
+        "domuteDesktopOfOthers": "Pārtraukt ekrāna kopīgošanu visiem pārējiem",
         "domuteOthers": "Izslēgt skaņu visiem pārējiem",
         "domuteVideo": "Izslēgt kameru",
         "domuteVideoOfOthers": "Izslēgt video visiem pārējiem",
@@ -1572,15 +1760,15 @@
         "go": "Aiziet",
         "goSmall": "Aiziet",
         "headerSubtitle": "Drošas un kvalitatīvas sapulces",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Iezvanes informācija",
-        "jitsiOnMobile": "Jitsi mobilajā ierīcē — lejupielādējiet mūsu lietotnes un sāciet sapulci no jebkuras vietas",
+        "jitsiOnMobile": "Sonacove mobilajā ierīcē — lejupielādējiet mūsu lietotnes un sāciet sapulci no jebkuras vietas",
         "join": "IZVEIDOT / PIEVIENOTIES",
         "logo": {
             "calendar": "Kalendāra logotips",
             "desktopPreviewThumbnail": "Darbvirsmas priekšskatījuma sīktēls",
             "googleLogo": "Google logotips",
-            "logoDeepLinking": "Jitsi meet logotips",
+            "logoDeepLinking": "Sonacove Meets logotips",
             "microsoftLogo": "Microsoft logotips",
             "policyLogo": "Politikas logotips"
         },

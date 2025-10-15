@@ -1,7 +1,7 @@
 BUILD_DIR = build
 CLEANCSS = ./node_modules/.bin/cleancss
 DEPLOY_DIR = libs
-LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet
+LIBJITSIMEET_DIR = lib-jitsi-meet
 OLM_DIR = node_modules/@matrix-org/olm
 TF_WASM_DIR = node_modules/@tensorflow/tfjs-backend-wasm/dist/
 RNNOISE_WASM_DIR = node_modules/@jitsi/rnnoise-wasm/dist
@@ -24,7 +24,7 @@ else
 	WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack serve --mode development --progress
 endif
 
-all: compile deploy
+all: build-lib-jitsi-meet compile deploy
 
 compile: clean
 	NODE_OPTIONS=--max-old-space-size=8192 \
@@ -59,6 +59,9 @@ deploy-appbundle:
 		$(BUILD_DIR)/close3.min.js \
 		$(BUILD_DIR)/close3.min.js.map \
 		$(DEPLOY_DIR) || true
+
+build-lib-jitsi-meet:
+	cd $(LIBJITSIMEET_DIR) && npm ci && npm run build
 
 deploy-lib-jitsi-meet:
 	cp \
@@ -117,7 +120,7 @@ deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 .NOTPARALLEL:
-dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm deploy-excalidraw-dev deploy-face-landmarks
+dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models build-lib-jitsi-meet deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm deploy-excalidraw-dev deploy-face-landmarks
 	$(WEBPACK_DEV_SERVER)
 
 source-package: compile deploy

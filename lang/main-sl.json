@@ -41,7 +41,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Dodaj povezavo na srečanje",
-        "confirmAddLink": "Ali želite dodati Jitsi povezavo za ta dogodek?",
+        "confirmAddLink": "Ali želite dodati Sonacove povezavo za ta dogodek?",
         "error": {
             "appConfiguration": "Integracija koledarja ni pravilno nastavljena.",
             "generic": "Prišlo je do napake. Prosimo preverite nastavitve svojega koledarja ali poskusite koledar osvežiti.",
@@ -391,7 +391,7 @@
         "answer": "Odgovori",
         "audioCallTitle": "Dohodni klic",
         "decline": "Zavrni",
-        "productLabel": "iz Jitsi Meet",
+        "productLabel": "iz Sonacove Meets",
         "videoCallTitle": "Dohodni video klic"
     },
     "info": {
@@ -604,7 +604,7 @@
         "newDeviceAction": "Uporabi",
         "newDeviceAudioTitle": "Zaznana je bila nova zvočna naprava",
         "newDeviceCameraTitle": "Zaznana je bila nova kamera",
-        "oldElectronClientDescription1": "Uporabljate staro verzijo aplikacije Jitsi Meet, ki ima varnostne ranljivosti. Prosimo, naložite si ",
+        "oldElectronClientDescription1": "Uporabljate staro verzijo aplikacije Sonacove Meets, ki ima varnostne ranljivosti. Prosimo, naložite si ",
         "oldElectronClientDescription2": "zadnjo verzijo.",
         "oldElectronClientDescription3": " zdaj!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) je odstranil drug udeleženec srečanja",
@@ -735,6 +735,141 @@
         "linkCopied": "Povezava je bila kopirana",
         "lookGood": "Vaš mikrofon deluje pravilno",
         "or": "ali",
+        "permissionsGuide": {
+            "close": "Zapri",
+            "detected": "Zaznano:",
+            "deviceHelp": {
+                "Android": [
+                    "Odprite nastavitve telefona.",
+                    "Dotaknite se \"Aplikacije\" > vašega brskalnika (npr. Chrome ali Brave).",
+                    "Dotaknite se \"Dovoljenja\".",
+                    "Dovolite dostop do kamere in mikrofona.",
+                    "Znova zaženite brskalnik in poskusite znova."
+                ],
+                "iOS": [
+                    "Odprite nastavitve iOS.",
+                    "Pomaknite se navzdol in izberite svoj brskalnik (npr. Safari ali Chrome).",
+                    "Dotaknite se \"Kamera\" in \"Mikrofon\".",
+                    "Nastavite oba na \"Dovoli\".",
+                    "Vrnete se v brskalnik in osvežite stran."
+                ]
+            },
+            "howToAllow": "Kako omogočiti dostop:",
+            "needHelp": "Potrebujete pomoč?",
+            "steps": {
+                "Brave_Android": [
+                    "Kliknite na ikono <0>Tune</0> zraven URL-ja.",
+                    "Tapnite 'Dovoljenja'.",
+                    "Dovolite kamero in mikrofon.",
+                    "Osvežite stran."
+                ],
+                "Brave_Linux": [
+                    "Kliknite na ikono <0>Tune</0> v naslovni vrstici.",
+                    "Dovolite kamero in mikrofon na seznamu dovoljenj.",
+                    "Osvežite stran."
+                ],
+                "Brave_Windows": [
+                    "Kliknite na ikono <0>Tune</0> v naslovni vrstici.",
+                    "Omogočite mikrofon in kamero.",
+                    "Osvežite stran."
+                ],
+                "Brave_iOS": [
+                    "Odprite nastavitve iOS > Brave.",
+                    "Tapnite 'Kamera' in 'Mikrofon'.",
+                    "Nastavite ju na 'Dovoli'.",
+                    "Vrnite se v Brave in osvežite stran."
+                ],
+                "Brave_macOS": [
+                    "Kliknite na ikono <0>Tune</0> v naslovni vrstici.",
+                    "Omogočite kamero in mikrofon v nastavitvah dovoljenj.",
+                    "Osvežite stran."
+                ],
+                "Chrome_Android": [
+                    "Kliknite na ikono <0>Tune</0> v naslovni vrstici.",
+                    "Izberite 'Dovoljenja'.",
+                    "Nastavite 'Kamera' in 'Mikrofon' na 'Dovoli'."
+                ],
+                "Chrome_Linux": [
+                    "Kliknite na ikono ključavnice zraven URL v naslovni vrstici.",
+                    "Kliknite 'Nastavitve spletnega mesta'.",
+                    "Dovolite kamero in mikrofon.",
+                    "Osvežite stran."
+                ],
+                "Chrome_Windows": [
+                    "Kliknite na ikono <0>Tune</0> v naslovni vrstici.",
+                    "Kliknite 'Nastavitve spletnega mesta'.",
+                    "Dovolite kamero in mikrofon v razdelku 'Dovoljenja'."
+                ],
+                "Chrome_iOS": [
+                    "Odprite nastavitve iOS > Chrome.",
+                    "Tapnite 'Kamera' in 'Mikrofon'.",
+                    "Nastavite ju na 'Dovoli'.",
+                    "Vrnite se v Chrome in osvežite stran."
+                ],
+                "Chrome_macOS": [
+                    "Kliknite na ikono <0>Tune</0> v naslovni vrstici.",
+                    "Kliknite 'Nastavitve spletnega mesta'.",
+                    "Dovolite kamero in mikrofon v razdelku 'Dovoljenja'."
+                ],
+                "Edge_Windows": [
+                    "Kliknite na ikono ključavnice zraven URL-ja.",
+                    "Dovolite kamero in mikrofon.",
+                    "Osvežite stran."
+                ],
+                "Edge_macOS": [
+                    "Kliknite na ikono <0>Tune</0> v naslovni vrstici.",
+                    "Nastavite kamero in mikrofon na 'Dovoli'."
+                ],
+                "Firefox_Android": [
+                    "Tapnite ikono ključavnice zraven URL vrstice.",
+                    "Tapnite 'Uredi nastavitve spletne strani'.",
+                    "Dovolite kamero in mikrofon.",
+                    "Osvežite stran."
+                ],
+                "Firefox_Linux": [
+                    "Kliknite na ikono ključavnice zraven naslovne vrstice.",
+                    "Kliknite 'Več informacij'.",
+                    "Dovolite kamero in mikrofon v dovoljenjih.",
+                    "Osvežite stran."
+                ],
+                "Firefox_Windows": [
+                    "Kliknite na ikono <0>Tune</0> poleg URL-ja.",
+                    "Omogočite mikrofon in kamero.",
+                    "Osvežite stran."
+                ],
+                "Firefox_iOS": [
+                    "Odprite nastavitve iOS > Firefox.",
+                    "Omogočite kamero in mikrofon.",
+                    "Vrnite se v Firefox in osvežite stran."
+                ],
+                "Firefox_macOS": [
+                    "Kliknite na ikono <0>Tune</0> poleg URL-ja.",
+                    "Kliknite puščico > 'Več informacij'.",
+                    "Pojdite na zavihek 'Dovoljenja'.",
+                    "Dovolite kamero in mikrofon.",
+                    "Osvežite stran."
+                ],
+                "Safari_iOS": [
+                    "Pojdite v nastavitve iOS > Safari.",
+                    "Tapnite 'Kamera' in 'Mikrofon'.",
+                    "Nastavite ju na 'Dovoli'.",
+                    "Vrnite se v Safari in osvežite stran."
+                ],
+                "Safari_macOS": [
+                    "Kliknite 'Safari' v menijski vrstici > 'Nastavitve za to spletno mesto'.",
+                    "Nastavite kamero in mikrofon na 'Dovoli'.",
+                    "Osvežite stran."
+                ],
+                "default": [
+                    "Odprite nastavitve brskalnika.",
+                    "Iščite razdelek 'Zasebnost' ali 'Dovoljenja'.",
+                    "Omogočite kamero in mikrofon za to stran.",
+                    "Osvežite stran."
+                ]
+            },
+            "stillNotWorking": "Še vedno ne deluje?",
+            "title": "Omogočite mikrofon in kamero"
+        },
         "premeeting": "Pred sestanek",
         "screenSharingError": "Napaka deljenja zaslona:",
         "startWithPhone": "Začni z zvokom telefona",
@@ -809,6 +944,10 @@
         "securityOptions": "Nastavitve varnosti"
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Prihajajoče sporočilo",
+        "PARTICIPANT_JOINED_SOUND": "Udeleženec se je pridružil",
+        "PARTICIPANT_LEFT_SOUND": "Udeleženec je odšel",
+        "TALK_WHILE_MUTED_SOUND": "Govorenje ob izklopljenem mikrofonu",
         "calendar": {
             "about": "Integracija koledarja {{appName}} se uporablja za varen dostop do vašega koledarja, tako da lahko bere prihajajoče dogodke.",
             "disconnect": "Prekini povezavo",
@@ -822,7 +961,6 @@
         "devices": "Naprave",
         "followMe": "Vsi sledijo meni",
         "framesPerSecond": "sličic na sekundo",
-        "incomingMessage": "Prihajajoče sporočilo",
         "language": "Jezik",
         "loggedIn": "Prijavljen kot {{name}}",
         "microphones": "Microphones",
@@ -830,8 +968,6 @@
         "more": "Več",
         "name": "Ime",
         "noDevice": "brez",
-        "participantJoined": "Udeleženec se je pridružil",
-        "participantLeft": "Udeleženec je odšel",
         "playSounds": "Predvajaj zvok",
         "reactions": "Reakcije sestanka",
         "sameAsSystem": "Enako kot v sistemu ({{label}})",
@@ -842,7 +978,6 @@
         "speakers": "Speakers",
         "startAudioMuted": "Vsi začnejo z utišanim mikrofonom",
         "startVideoMuted": "Vsi začnejo z izključeno kamero",
-        "talkWhileMuted": "Govorenje ob izklopljenem mikrofonu",
         "title": "Nastavitve"
     },
     "settingsView": {
@@ -1135,15 +1270,15 @@
         "go": "POJDI",
         "goSmall": "POJDI",
         "headerSubtitle": "Varni in kvalitetni sestanki",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Informacije",
-        "jitsiOnMobile": "Jitsi na telefonih – prenesi aplikacijo in začni sestanek od kjerkoli",
+        "jitsiOnMobile": "Sonacove na telefonih – prenesi aplikacijo in začni sestanek od kjerkoli",
         "join": "PRIDRUŽI SE",
         "logo": {
             "calendar": "Logo koledarja",
             "desktopPreviewThumbnail": "Sličica deljenja zaslona",
             "googleLogo": "Google Logo",
-            "logoDeepLinking": "Jitsi meet logo",
+            "logoDeepLinking": "Sonacove Meets logo",
             "microsoftLogo": "Microsoft logo",
             "policyLogo": "Logo politike"
         },

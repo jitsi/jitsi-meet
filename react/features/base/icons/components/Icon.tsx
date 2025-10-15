@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import { Container } from '../../react/components/index';
 import { StyleType, styleTypeToObject } from '../../styles/functions';
@@ -153,12 +154,15 @@ export default function Icon(props: IProps) {
         ...rest
     }: IProps = props;
 
+    const { theme } = makeStyles()(({}))();
+
     const {
         color: styleColor,
         fontSize: styleSize,
         ...restStyle
     } = styleTypeToObject(style ?? {});
-    const calculatedColor = color ?? styleColor ?? DEFAULT_COLOR;
+
+    const calculatedColor = color || theme.palette.icon01 || 'white';
     const calculatedSize = size ?? styleSize ?? DEFAULT_SIZE;
 
     const onKeyPressHandler = useCallback(e => {

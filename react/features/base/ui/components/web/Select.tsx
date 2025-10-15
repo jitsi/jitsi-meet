@@ -4,7 +4,6 @@ import { makeStyles } from 'tss-react/mui';
 import { isMobileBrowser } from '../../../environment/utils';
 import Icon from '../../../icons/components/Icon';
 import { IconArrowDown } from '../../../icons/svg';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 
 interface ISelectProps {
 
@@ -17,6 +16,11 @@ interface ISelectProps {
      * Class name for additional styles.
      */
     className?: string;
+
+    /**
+     * Class name for additional styles for container.
+     */
+    containerClassName?: string;
 
     /**
      * Whether or not the select is disabled.
@@ -67,11 +71,11 @@ const useStyles = makeStyles()(theme => {
 
         label: {
             color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             marginBottom: theme.spacing(2),
 
             '&.is-mobile': {
-                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
+                ...theme.typography.bodyShortRegularLarge
             }
         },
 
@@ -83,7 +87,7 @@ const useStyles = makeStyles()(theme => {
             backgroundColor: theme.palette.ui03,
             borderRadius: `${theme.shape.borderRadius}px`,
             width: '100%',
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: theme.palette.text01,
             padding: '10px 16px',
             paddingRight: '42px',
@@ -103,7 +107,7 @@ const useStyles = makeStyles()(theme => {
             },
 
             '&.is-mobile': {
-                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+                ...theme.typography.bodyShortRegularLarge,
                 padding: '12px 16px',
                 paddingRight: '46px'
             },
@@ -127,11 +131,11 @@ const useStyles = makeStyles()(theme => {
 
         bottomLabel: {
             marginTop: theme.spacing(2),
-            ...withPixelLineHeight(theme.typography.labelRegular),
+            ...theme.typography.labelRegular,
             color: theme.palette.text02,
 
             '&.is-mobile': {
-                ...withPixelLineHeight(theme.typography.bodyShortRegular)
+                ...theme.typography.bodyShortRegular
             },
 
             '&.error': {
@@ -143,6 +147,7 @@ const useStyles = makeStyles()(theme => {
 
 const Select = ({
     bottomLabel,
+    containerClassName,
     className,
     disabled,
     error,
@@ -155,7 +160,7 @@ const Select = ({
     const isMobile = isMobileBrowser();
 
     return (
-        <div className = { classes.container }>
+        <div className = { cx(classes.container, containerClassName) }>
             {label && <label
                 className = { cx(classes.label, isMobile && 'is-mobile') }
                 htmlFor = { id } >

@@ -1,5 +1,6 @@
 import { ToolbarButton } from '../../toolbox/types';
 import { ILoggingConfig } from '../logging/types';
+import { IAudioSettings } from '../settings/reducer';
 import { DesktopSharingSourceType } from '../tracks/types';
 
 type ButtonsWithNotifyClick = 'camera' |
@@ -191,11 +192,13 @@ export interface IConfig {
     appId?: string;
     audioLevelsInterval?: number;
     audioQuality?: {
+        enableAdvancedAudioSettings?: boolean;
         opusMaxAverageBitrate?: number | null;
         stereo?: boolean;
     };
     autoCaptionOnRecord?: boolean;
     autoKnockLobby?: boolean;
+    availableThemes?: Array<{ file: string; name: string; }>;
     backgroundAlpha?: number;
     bosh?: string;
     brandingDataUrl?: string;
@@ -237,6 +240,7 @@ export interface IConfig {
         inactiveDisabled?: boolean;
     };
     constraints?: {
+        audio?: IAudioSettings;
         video?: {
             height?: {
                 ideal?: number;
@@ -463,6 +467,7 @@ export interface IConfig {
         enableChat?: boolean;
     };
     localRecording?: {
+        autoDownloadMeetingData?: boolean;
         disable?: boolean;
         disableSelfRecording?: boolean;
         notifyAllParticipants?: boolean;
@@ -521,7 +526,6 @@ export interface IConfig {
         preCallTestEnabled?: boolean;
         preCallTestICEUrl?: string;
     };
-    prejoinPageEnabled?: boolean;
     raisedHands?: {
         disableLowerHandByModerator?: boolean;
         disableLowerHandNotification?: boolean;

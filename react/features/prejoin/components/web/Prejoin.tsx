@@ -6,7 +6,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
-import { isNameReadOnly } from '../../../base/config/functions.web';
 import { IconArrowDown, IconArrowUp, IconPhoneRinging, IconVolumeOff } from '../../../base/icons/svg';
 import { isVideoMutedByUser } from '../../../base/media/functions';
 import { getLocalParticipant } from '../../../base/participants/functions';
@@ -15,7 +14,6 @@ import ActionButton from '../../../base/premeeting/components/web/ActionButton';
 import PreMeetingScreen from '../../../base/premeeting/components/web/PreMeetingScreen';
 import { updateSettings } from '../../../base/settings/actions';
 import { getDisplayName } from '../../../base/settings/functions.web';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { getLocalJitsiVideoTrack } from '../../../base/tracks/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
@@ -33,6 +31,7 @@ import {
     isDisplayNameRequired,
     isJoinByPhoneButtonVisible,
     isJoinByPhoneDialogVisible,
+    isNameReadOnly,
     isPrejoinDisplayNameVisible
 } from '../../functions';
 import logger from '../../logger';
@@ -164,7 +163,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         avatarName: {
-            ...withPixelLineHeight(theme.typography.bodyShortBoldLarge),
+            ...theme.typography.bodyShortBoldLarge,
             color: theme.palette.text01,
             marginBottom: theme.spacing(5),
             textAlign: 'center'
@@ -175,7 +174,7 @@ const useStyles = makeStyles()(theme => {
             color: theme.palette.text01,
             borderRadius: theme.shape.borderRadius,
             width: '100%',
-            ...withPixelLineHeight(theme.typography.labelRegular),
+            ...theme.typography.labelRegular,
             boxSizing: 'border-box',
             padding: theme.spacing(1),
             textAlign: 'center',

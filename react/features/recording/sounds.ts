@@ -1,27 +1,53 @@
-/**
- * The name of the bundled audio file which will be played for when live streaming is stopped.
- *
- * @type {string}
- */
-export const LIVE_STREAMING_OFF_SOUND_FILE = 'liveStreamingOff.mp3';
+import { LIVE_STREAMING_OFF_SOUND_ID, LIVE_STREAMING_ON_SOUND_ID, RECORDING_OFF_SOUND_ID, RECORDING_ON_SOUND_ID } from './constants';
 
 /**
- * The name of the bundled audio file which will be played for when a live streaming is started.
+ * The sound definition for when live streaming is stopped.
  *
- * @type {string}
+ * @type {Object<id: string, file: string, options: object, optional: boolean, languages: boolean>}
  */
-export const LIVE_STREAMING_ON_SOUND_FILE = 'liveStreamingOn.mp3';
+export const LIVE_STREAMING_OFF_SOUND = {
+    id: LIVE_STREAMING_OFF_SOUND_ID,
+    file: 'liveStreamingOff.mp3',
+    options: {},
+    optional: false,
+    languages: true
+};
 
 /**
- * The name of the bundled audio file which will be played for when a recording is stopped.
+ * The sound definition for when live streaming is started.
  *
- * @type {string}
+ * @type {Object<id: string, file: string, options: object, optional: boolean, languages: boolean>}
  */
-export const RECORDING_OFF_SOUND_FILE = 'recordingOff.mp3';
+export const LIVE_STREAMING_ON_SOUND = {
+    id: LIVE_STREAMING_ON_SOUND_ID,
+    file: 'liveStreamingOn.mp3',
+    options: {},
+    optional: false,
+    languages: true
+};
 
 /**
- * The name of the bundled audio file which will be played for when a recording is started.
+ * The sound definition for when a recording is stopped.
  *
- * @type {string}
+ * @type {Object<id: string, file: string, options: object, optional: boolean, languages: boolean>}
  */
-export const RECORDING_ON_SOUND_FILE = 'recordingOn.mp3';
+export const RECORDING_OFF_SOUND = {
+    id: RECORDING_OFF_SOUND_ID,
+    file: 'recordingOff.mp3',
+    options: {},
+    optional: false,
+    languages: true
+};
+
+/**
+ * The sound definition for when a recording is started.
+ *
+ * @type {Object<id: string, file: string, options: object, optional: boolean, languages: boolean>}
+ */
+export const RECORDING_ON_SOUND = {
+    id: RECORDING_ON_SOUND_ID,
+    file: 'recordingOn.mp3',
+    options: {},
+    optional: false,
+    languages: true
+};

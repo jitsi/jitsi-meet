@@ -4,7 +4,7 @@ import { IReduxState } from '../app/types';
 import { getSecurityUiConfig } from '../base/config/functions.any';
 import { LOBBY_MODE_ENABLED, MEETING_PASSWORD_ENABLED, SECURITY_OPTIONS_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
-import { isLocalParticipantModerator } from '../base/participants/functions';
+import { isLocalParticipantHost } from '../base/participants/functions';
 
 import SecurityDialogButton from './components/security-dialog/web/SecurityDialogButton';
 import { isSecurityDialogButtonVisible } from './functions';
@@ -24,7 +24,7 @@ const security = {
 export function useSecurityDialogButton() {
     const conference = useSelector((state: IReduxState) => state['features/base/conference'].conference);
     const securityUIConfig = useSelector(getSecurityUiConfig);
-    const isModerator = useSelector(isLocalParticipantModerator);
+    const isHost = useSelector(isLocalParticipantHost);
     const enabledLobbyModeFlag
         = useSelector((state: IReduxState) => getFeatureFlag(state, LOBBY_MODE_ENABLED, true));
     const enabledSecurityOptionsFlag
@@ -35,7 +35,7 @@ export function useSecurityDialogButton() {
     if (isSecurityDialogButtonVisible({
         conference,
         securityUIConfig,
-        isModerator,
+        isHost,
         enabledLobbyModeFlag,
         enabledSecurityOptionsFlag,
         enabledMeetingPassFlag

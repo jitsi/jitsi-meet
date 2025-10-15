@@ -1,16 +1,15 @@
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { IDisplayProps } from '../ConferenceTimer';
 
 const useStyles = makeStyles()(theme => {
     return {
         timer: {
-            ...withPixelLineHeight(theme.typography.labelRegular),
+            ...theme.typography.labelRegular,
             color: theme.palette.text01,
             padding: '6px 8px',
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
             boxSizing: 'border-box',
             height: '28px',
             borderRadius: `0 ${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0`,

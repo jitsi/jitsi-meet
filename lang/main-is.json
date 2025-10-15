@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Bæta við fundartengli",
-        "confirmAddLink": "Viltu bæta við Jitsi-tengli í þennan atburð?",
+        "confirmAddLink": "Viltu bæta við Sonacove-tengli í þennan atburð?",
         "error": {
             "appConfiguration": "Samþætting dagatals er ekki rétt uppsett.",
             "generic": "Villa kom upp. Athugaðu stillingar dagatalsins eða prófaðu að endurlesa það.",
@@ -524,7 +524,7 @@
         "answer": "Svara",
         "audioCallTitle": "Innhringing",
         "decline": "Hunsa",
-        "productLabel": "frá Jitsi Meet",
+        "productLabel": "frá Sonacove Meets",
         "videoCallTitle": "Innhringing myndsamtals"
     },
     "info": {
@@ -730,7 +730,7 @@
         "dataChannelClosed": "Gæðum myndmerkis er ábótavant",
         "dataChannelClosedDescription": "Brúarrásin hefur verið aftengd og eru því gæði myndmerkis takmörkuð við lægstu stillinguna.",
         "disabledIframe": "Ívafning (embedding) er aðeins ætluð sem sýnidæmi, þannig að þetta mun aftengjast eftir {{timeout}} mínútur.",
-        "disabledIframeSecondary": "Ívafning (embedding) {{domain}} er aðeins ætluð sem sýnidæmi, þannig að þetta mun aftengjast eftir {{timeout}} mínútur. Notaðu <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Jitsi sem þjónustu</a> fyrir ívafningu í vinnuumhverfi!",
+        "disabledIframeSecondary": "Ívafning (embedding) {{domain}} er aðeins ætluð sem sýnidæmi, þannig að þetta mun aftengjast eftir {{timeout}} mínútur. Notaðu <a href='{{jaasDomain}}' rel='noopener noreferrer' target='_blank'>Sonacove sem þjónustu</a> fyrir ívafningu í vinnuumhverfi!",
         "disconnected": "aftengt",
         "displayNotifications": "Birta tilkynningar frá",
         "dontRemindMe": "Ekki minna mig á",
@@ -778,7 +778,7 @@
         "noiseSuppressionDesktopAudioDescription": "Ekki var hægt að gera truflanasíun virka á meðan deiling fór fram á hljóði, gerðu deilinguna óvirka og reyndu síðan aftur.",
         "noiseSuppressionFailedTitle": "Mistókst að ræsa truflanasíun",
         "noiseSuppressionStereoDescription": "Truflanasíun í víðómi er ekki studd ennþá.",
-        "oldElectronClientDescription1": "Þú virðist vera að nota gamla útgáfu af Jitsi Meet forritinu sem vitað er að sé með öryggisveilur. Gakktu úr skugga um að þú uppfærir í ",
+        "oldElectronClientDescription1": "Þú virðist vera að nota gamla útgáfu af Sonacove Meets forritinu sem vitað er að sé með öryggisveilur. Gakktu úr skugga um að þú uppfærir í ",
         "oldElectronClientDescription2": "nýjustu byggingarútgáfuna okkar",
         "oldElectronClientDescription3": " núna!",
         "participantWantsToJoin": "Vill taka þátt í fundinum",
@@ -933,6 +933,141 @@
         "linkCopied": "Tengill afritaður á klippispjald",
         "lookGood": "Allt virkar eins og á að sér",
         "or": "eða",
+        "permissionsGuide": {
+            "close": "Loka",
+            "detected": "Uppgötvað:",
+            "deviceHelp": {
+                "Android": [
+                    "Opnaðu stillingar síma þíns.",
+                    "Kíktu á „Forrit“ > vafra þinn (t.d. Chrome eða Brave).",
+                    "Kíktu á „Leyfi“.",
+                    "Leyfðu aðgang að myndavél og hljóðnema.",
+                    "Endurræstu vafrann og reyndu aftur."
+                ],
+                "iOS": [
+                    "Opnaðu iOS-stillingar.",
+                    "Flettu niður og veldu vafra þinn (t.d. Safari eða Chrome).",
+                    "Kíktu á „Myndavél“ og „Hljóðnemi“.",
+                    "Stilltu bæði á „Leyfa“.",
+                    "Farðu aftur í vafrann og endurhlaðaðu síðuna."
+                ]
+            },
+            "howToAllow": "Hvernig á að leyfa aðgang:",
+            "needHelp": "Þarftu hjálp?",
+            "steps": {
+                "Brave_Android": [
+                    "Smelltu á <0>Tune</0> táknið við hliðina á slóðinni.",
+                    "Bankaðu á 'Leyfi'.",
+                    "Leyfðu myndavél og hljóðnema.",
+                    "Endurhleððu síðuna."
+                ],
+                "Brave_Linux": [
+                    "Smelltu á <0>Tune</0> táknið í vefslóðastikunni.",
+                    "Leyfðu myndavél og hljóðnema í leyfisskránni.",
+                    "Endurhleððu síðuna."
+                ],
+                "Brave_Windows": [
+                    "Smelltu á <0>Tune</0> táknið í vefslóðastikunni.",
+                    "Kveiktu á hljóðnema og myndavél.",
+                    "Endurhleððu síðuna."
+                ],
+                "Brave_iOS": [
+                    "Opnaðu iOS Stillingar > Brave.",
+                    "Bankaðu á 'Myndavél' og 'Hljóðnemi'.",
+                    "Stilltu á 'Leyfa'.",
+                    "Farðu aftur í Brave og endurhleððu síðuna."
+                ],
+                "Brave_macOS": [
+                    "Smelltu á <0>Tune</0> táknið í vefslóðastikunni.",
+                    "Kveiktu á myndavél og hljóðnema í leyfisstillingum.",
+                    "Endurhleððu síðuna."
+                ],
+                "Chrome_Android": [
+                    "Smelltu á <0>Tune</0> táknið í vefslóðastikunni.",
+                    "Veldu 'Leyfi'.",
+                    "Stilltu 'Myndavél' og 'Hljóðnemi' á 'Leyfa'."
+                ],
+                "Chrome_Linux": [
+                    "Smelltu á lásatáknið við hliðina á slóðinni í vefslóðastikunni.",
+                    "Smelltu á 'Stillingar vefsíðu'.",
+                    "Leyfðu myndavél og hljóðnema.",
+                    "Endurhleððu síðuna."
+                ],
+                "Chrome_Windows": [
+                    "Smelltu á <0>Tune</0> táknið í vefslóðastikunni.",
+                    "Smelltu á 'Stillingar vefsíðu'.",
+                    "Leyfðu myndavél og hljóðnema undir 'Leyfi'."
+                ],
+                "Chrome_iOS": [
+                    "Opnaðu iOS Stillingar > Chrome.",
+                    "Bankaðu á 'Myndavél' og 'Hljóðnemi'.",
+                    "Stilltu á 'Leyfa'.",
+                    "Farðu aftur í Chrome og endurhleððu síðuna."
+                ],
+                "Chrome_macOS": [
+                    "Smelltu á <0>Tune</0> táknið í vefslóðastikunni.",
+                    "Smelltu á 'Stillingar vefsíðu'.",
+                    "Leyfðu myndavél og hljóðnema undir 'Leyfi'."
+                ],
+                "Edge_Windows": [
+                    "Smelltu á lásatáknið við hliðina á slóðinni.",
+                    "Leyfðu myndavél og hljóðnema.",
+                    "Endurhleððu síðuna."
+                ],
+                "Edge_macOS": [
+                    "Smelltu á <0>Tune</0> táknið í vefslóðastikunni.",
+                    "Stilltu myndavél og hljóðnema á 'Leyfa'."
+                ],
+                "Firefox_Android": [
+                    "Bankaðu á lásatáknið við hliðina á slóðastikunni.",
+                    "Bankaðu á 'Breyta síðustillingum'.",
+                    "Leyfðu myndavél og hljóðnema.",
+                    "Endurhleððu síðuna."
+                ],
+                "Firefox_Linux": [
+                    "Smelltu á lásatáknið við hliðina á vefslóðastikunni.",
+                    "Smelltu á 'Frekari upplýsingar'.",
+                    "Leyfðu myndavél og hljóðnema undir leyfum.",
+                    "Endurhleððu síðuna."
+                ],
+                "Firefox_Windows": [
+                    "Smelltu á <0>Tune</0> táknið við hliðina á slóðinni.",
+                    "Kveiktu á hljóðnema og myndavél.",
+                    "Endurhleððu síðuna."
+                ],
+                "Firefox_iOS": [
+                    "Opnaðu iOS Stillingar > Firefox.",
+                    "Kveiktu á myndavél og hljóðnema.",
+                    "Farðu aftur í Firefox og endurhleððu síðuna."
+                ],
+                "Firefox_macOS": [
+                    "Smelltu á <0>Tune</0> táknið við hliðina á slóðinni.",
+                    "Smelltu á örina > 'Frekari upplýsingar'.",
+                    "Fara í flipann 'Leyfi'.",
+                    "Leyfðu myndavél og hljóðnema.",
+                    "Endurhleððu síðuna."
+                ],
+                "Safari_iOS": [
+                    "Opnaðu iOS Stillingar > Safari.",
+                    "Bankaðu á 'Myndavél' og 'Hljóðnemi'.",
+                    "Stilltu á 'Leyfa'.",
+                    "Farðu aftur í Safari og endurhleððu síðuna."
+                ],
+                "Safari_macOS": [
+                    "Smelltu á 'Safari' > 'Stillingar fyrir þessa vefsíðu' í valmyndastikunni.",
+                    "Stilltu myndavél og hljóðnema á 'Leyfa'.",
+                    "Endurhleððu síðuna."
+                ],
+                "default": [
+                    "Opnaðu vafra stillingar.",
+                    "Leitaðu að kafla 'Persónuvernd' eða 'Leyfi'.",
+                    "Kveiktu á myndavél og hljóðnema fyrir þessa síðu.",
+                    "Endurhleððu síðuna."
+                ]
+            },
+            "stillNotWorking": "Virkar það enn ekki?",
+            "title": "Virkja hljóðnema og myndavél"
+        },
         "premeeting": "Á undan fundi",
         "proceedAnyway": "Halda samt áfram",
         "screenSharingError": "Villa í skjádeilingu:",
@@ -1050,6 +1185,11 @@
         }
     },
     "settings": {
+        "INCOMING_MSG_SOUND": "Móttekin skilaboð",
+        "KNOCKING_PARTICIPANT_SOUND": "Þátttakandi kom inn á biðsvæði",
+        "PARTICIPANT_JOINED_SOUND": "Þátttakandi tók þátt",
+        "PARTICIPANT_LEFT_SOUND": "Þátttakandi fór",
+        "TALK_WHILE_MUTED_SOUND": "Tala á meðan er þaggað niður",
         "audio": "Hljóð",
         "buttonLabel": "Stillingar",
         "calendar": {
@@ -1065,7 +1205,6 @@
         "devices": "Tæki",
         "followMe": "Allir fylgjast með mér",
         "framesPerSecond": "rammar-á-sekúndu",
-        "incomingMessage": "Móttekin skilaboð",
         "language": "Tungumál",
         "loggedIn": "Skráð inn sem {{name}}",
         "maxStageParticipants": "Hámarksfjöldi þátttakenda sem hægt er að festa á aðalgluggann",
@@ -1076,9 +1215,6 @@
         "name": "Nafn",
         "noDevice": "Ekkert",
         "notifications": "Tilkynningar",
-        "participantJoined": "Þátttakandi tók þátt",
-        "participantKnocking": "Þátttakandi kom inn á biðsvæði",
-        "participantLeft": "Þátttakandi fór",
         "playSounds": "Spila hljóð við",
         "reactions": "Viðbrögð á fundi",
         "sameAsSystem": "Sama og kerfisins ({{label}})",
@@ -1091,7 +1227,6 @@
         "startAudioMuted": "Allir byrja hljóðlaust",
         "startReactionsMuted": "Þagga niður í viðbragðshljóðum fyrir alla",
         "startVideoMuted": "Allir byrja faldir",
-        "talkWhileMuted": "Tala á meðan er þaggað niður",
         "title": "Stillingar",
         "video": "Myndmerki"
     },
@@ -1486,15 +1621,15 @@
         "go": "Af stað",
         "goSmall": "Af stað",
         "headerSubtitle": "Öruggir hágæða myndfundir",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sonacove Meets",
         "info": "Innhringingarupplýsingar",
-        "jitsiOnMobile": "Jitsi á snjallsímum – sæktu forritin okkar og byrjaðu fundi hvar sem er",
+        "jitsiOnMobile": "Sonacove á snjallsímum – sæktu forritin okkar og byrjaðu fundi hvar sem er",
         "join": "BÚA TIL / TAKA ÞÁTT",
         "logo": {
             "calendar": "Táknmerki dagatals",
             "desktopPreviewThumbnail": "Smámynd forskoðunar á skjáborði",
             "googleLogo": "Táknmerki Google",
-            "logoDeepLinking": "Táknmerki Jitsi Meet",
+            "logoDeepLinking": "Táknmerki Sonacove Meets",
             "microsoftLogo": "Táknmerki Microsoft",
             "policyLogo": "Táknmerki stefnu"
         },

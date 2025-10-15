@@ -5,7 +5,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../icons/components/Icon';
 import { IconArrowDown, IconCloseCircle, IconWifi1Bar, IconWifi2Bars, IconWifi3Bars } from '../../../icons/svg';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 import { PREJOIN_DEFAULT_CONTENT_WIDTH } from '../../../ui/components/variables';
 import Spinner from '../../../ui/components/web/Spinner';
 import { runPreCallTest } from '../../actions.web';
@@ -15,8 +14,8 @@ import { getConnectionData } from '../../functions';
 const useStyles = makeStyles()(theme => {
     return {
         connectionStatus: {
-            color: '#fff',
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            color: theme.palette.text01,
+            ...theme.typography.bodyShortRegular,
             position: 'absolute',
             width: '100%',
 
@@ -38,7 +37,7 @@ const useStyles = makeStyles()(theme => {
             },
 
             '& .con-status-header': {
-                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                backgroundColor: theme.palette.ui04,
                 alignItems: 'center',
                 display: 'flex',
                 padding: '12px 16px',
@@ -90,7 +89,7 @@ const useStyles = makeStyles()(theme => {
             },
 
             '& .con-status-details': {
-                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                backgroundColor: theme.palette.ui04,
                 borderTop: '1px solid #5E6D7A',
                 padding: theme.spacing(3),
                 transition: 'opacity 0.16s ease-out'

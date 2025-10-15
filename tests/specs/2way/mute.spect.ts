@@ -10,7 +10,7 @@ import {
 } from '../../helpers/participants';
 
 describe('Mute', () => {
-    it('joining the meeting', () => ensureTwoParticipants(ctx));
+    it('joining the meeting', () => ensureTwoParticipants());
 
     it('mute p1 and check', () => toggleMuteAndCheck(ctx.p1, ctx.p2, true));
 
@@ -46,7 +46,7 @@ describe('Mute', () => {
 
         await p1.getToolbar().clickAudioMuteButton();
 
-        await ensureTwoParticipants(ctx);
+        await ensureTwoParticipants();
 
         const { p2 } = ctx;
 
@@ -88,7 +88,7 @@ async function toggleMuteAndCheck(
 async function muteP1BeforeP2JoinsAndScreenshare(p2p: boolean) {
     await Promise.all([ ctx.p1?.hangup(), ctx.p2?.hangup() ]);
 
-    await ensureOneParticipant(ctx, {
+    await ensureOneParticipant({
         configOverwrite: {
             p2p: {
                 enabled: p2p
@@ -100,7 +100,7 @@ async function muteP1BeforeP2JoinsAndScreenshare(p2p: boolean) {
 
     await p1.getToolbar().clickVideoMuteButton();
 
-    await joinSecondParticipant(ctx, {
+    await joinSecondParticipant({
         configOverwrite: {
             p2p: {
                 enabled: p2p
@@ -116,7 +116,7 @@ async function muteP1BeforeP2JoinsAndScreenshare(p2p: boolean) {
         await p2.waitForIceConnected();
     }
 
-    await p2.waitForSendReceiveData({ checkReceive: false });
+    await p2.waitForSendMedia();
 
     // Check if p1 appears video muted on p2.
     await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1);

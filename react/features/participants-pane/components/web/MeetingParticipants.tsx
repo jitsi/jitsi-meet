@@ -6,7 +6,6 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
 import { getParticipantById, isScreenShareParticipant } from '../../../base/participants/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Input from '../../../base/ui/components/web/Input';
 import useContextMenu from '../../../base/ui/hooks/useContextMenu.web';
 import { normalizeAccents } from '../../../base/util/strings.web';
@@ -28,11 +27,11 @@ const useStyles = makeStyles()(theme => {
         },
         heading: {
             color: theme.palette.text02,
-            ...withPixelLineHeight(theme.typography.bodyShortBold),
+            ...theme.typography.bodyShortBold,
             marginBottom: theme.spacing(3),
 
             [`@media(max-width: ${participantsPaneTheme.MD_BREAKPOINT})`]: {
-                ...withPixelLineHeight(theme.typography.bodyShortBoldLarge)
+                ...theme.typography.bodyShortBoldLarge
             }
         },
 

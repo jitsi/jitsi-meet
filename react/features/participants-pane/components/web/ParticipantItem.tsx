@@ -4,7 +4,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import Avatar from '../../../base/avatar/components/Avatar';
 import { translate } from '../../../base/i18n/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import ListItem from '../../../base/ui/components/web/ListItem';
 import {
     ACTION_TRIGGER,
@@ -48,6 +47,11 @@ interface IProps extends WithTranslation {
      * Is this item highlighted/raised.
      */
     isHighlighted?: boolean;
+
+    /**
+     * Whether or not the participant is the host.
+     */
+    isHost?: boolean;
 
     /**
      * Whether or not the participant is a moderator.
@@ -110,7 +114,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         moderatorLabel: {
-            ...withPixelLineHeight(theme.typography.labelBold),
+            ...theme.typography.labelBold,
             color: theme.palette.text03
         },
 
@@ -134,6 +138,7 @@ function ParticipantItem({
     displayName,
     isHighlighted,
     isModerator,
+    isHost,
     local,
     onLeave,
     openDrawerForParticipant,
@@ -168,9 +173,16 @@ function ParticipantItem({
                 </div>
                 {local ? <span>&nbsp;({youText})</span> : null}
             </div>
-            {isModerator && !disableModeratorIndicator && <div className = { classes.moderatorLabel }>
-                {t('videothumbnail.moderator')}
-            </div>}
+            {!disableModeratorIndicator && (
+                <>
+                    {isHost && <div className = { classes.moderatorLabel }>
+                        {t('host')}
+                    </div>}
+                    {!isHost && isModerator && <div className = { classes.moderatorLabel }>
+                        {t('videothumbnail.moderator')}
+                    </div>}
+                </>
+            )}
         </>
     );
 

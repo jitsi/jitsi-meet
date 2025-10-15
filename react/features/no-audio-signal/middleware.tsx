@@ -9,7 +9,7 @@ import { formatDeviceLabel } from '../base/devices/functions';
 import JitsiMeetJS, { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { updateSettings } from '../base/settings/actions';
-import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
+import SoundService from '../base/sounds/components/SoundService';
 import { hideNotification, showNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
@@ -20,14 +20,13 @@ import { NO_AUDIO_SIGNAL_SOUND_FILE } from './sounds';
 
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
-    const { dispatch } = store;
 
     switch (action.type) {
     case APP_WILL_MOUNT:
-        dispatch(registerSound(NO_AUDIO_SIGNAL_SOUND_ID, NO_AUDIO_SIGNAL_SOUND_FILE));
+        SoundService.register(NO_AUDIO_SIGNAL_SOUND_ID, NO_AUDIO_SIGNAL_SOUND_FILE);
         break;
     case APP_WILL_UNMOUNT:
-        dispatch(unregisterSound(NO_AUDIO_SIGNAL_SOUND_ID));
+        SoundService.unregister(NO_AUDIO_SIGNAL_SOUND_ID);
         break;
     case CONFERENCE_JOINED:
         _handleNoAudioSignalNotification(store, action);
@@ -115,7 +114,7 @@ async function _handleNoAudioSignalNotification({ dispatch, getState }: IStore, 
             customActionHandler
         }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
-        dispatch(playSound(NO_AUDIO_SIGNAL_SOUND_ID));
+        SoundService.play(NO_AUDIO_SIGNAL_SOUND_ID, getState());
 
         if (notification) {
             // Store the current notification uid so we can check for this state and hide it in case

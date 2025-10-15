@@ -1,5 +1,6 @@
 import { IStore } from '../../app/types';
 import { IStateful } from '../app/types';
+import { isAdvancedAudioSettingsEnabled } from '../config/functions.any';
 import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { gumPending, setAudioMuted } from '../media/actions';
@@ -11,9 +12,10 @@ import {
     getUserSelectedCameraDeviceId,
     getUserSelectedMicDeviceId
 } from '../settings/functions.web';
+import { IAudioSettings } from '../settings/reducer';
 import { getJitsiMeetGlobalNSConnectionTimes } from '../util/helpers';
 
-import { getCameraFacingMode } from './functions.any';
+import { getCameraFacingMode, getLocalJitsiAudioTrack, getLocalJitsiAudioTrackSettings } from './functions.any';
 import loadEffects from './loadEffects';
 import logger from './logger';
 import { ITrackOptions } from './types';
@@ -62,7 +64,13 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore, 
         desktopSharingFrameRate,
         resolution
     } = state['features/base/config'];
-    const constraints = options.constraints ?? state['features/base/config'].constraints;
+
+    const constraints = options.constraints ?? state['features/base/config'].constraints ?? {};
+
+    if (isAdvancedAudioSettingsEnabled(state) && typeof APP !== 'undefined') {
+        constraints.audio = state['features/settings'].audioSettings ?? getLocalJitsiAudioTrackSettings(state);
+    }
+
 
     return (
         loadEffects(store).then((effectsArray: Object[]) => {
@@ -213,4 +221,33 @@ export function isToggleCameraEnabled(stateful: IStateful) {
     const { videoInput } = state['features/base/devices'].availableDevices;
 
     return isMobileBrowser() && Number(videoInput?.length) > 1;
+}
+/**
+ * Applies audio constraints to the local Jitsi audio track.
+ *
+ * @param {Function|Object} stateful - The redux store or {@code getState} function.
+ * @param {IAudioSettings} settings - The audio settings to apply.
+ * @returns {Promise<void>}
+ */
+export async function applyAudioConstraints(stateful: IStateful, settings: IAudioSettings) {
+    const state = toState(stateful);
+    const track = getLocalJitsiAudioTrack(state);
+
+    if (!track) {
+        logger.debug('No local audio track found');
+
+        return;
+    }
+
+    if (!isAdvancedAudioSettingsEnabled(state)) {
+        logger.debug('Advanced audio settings disabled');
+
+        return;
+    }
+
+    try {
+        await track.applyConstraints(settings);
+    } catch (error) {
+        logger.error('Failed to apply audio constraints ', error);
+    }
 }

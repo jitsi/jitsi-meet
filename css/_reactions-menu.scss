@@ -36,6 +36,16 @@
 			display: flex;
 			flex-direction: row;
 			justify-content: space-around;
+			overflow-x: hidden; // hide initially
+			-webkit-overflow-scrolling: touch;
+			padding-bottom: 8px;
+			transition: overflow 0.2s ease;
+
+			&:hover,
+			&:focus-within {
+				overflow-x: auto;
+			}
+
 
 			.toolbox-button {
 				margin-right: 0;

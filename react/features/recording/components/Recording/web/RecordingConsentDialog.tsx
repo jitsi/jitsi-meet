@@ -18,7 +18,9 @@ export default function RecordingConsentDialog() {
     const dispatch = useDispatch();
     const { recordings } = useSelector((state: IReduxState) => state['features/base/config']);
     const { consentLearnMoreLink } = recordings ?? {};
-    const learnMore = ` (<a href="${consentLearnMoreLink}" target="_blank" rel="noopener noreferrer">${t('dialog.learnMore')}</a>)`;
+    const learnMore = consentLearnMoreLink
+        ? ` (<a href="${consentLearnMoreLink}" target="_blank" rel="noopener noreferrer">${t('dialog.learnMore')}</a>)`
+        : '';
 
     useEffect(() => {
         APP.API.notifyRecordingConsentDialogOpen(true);

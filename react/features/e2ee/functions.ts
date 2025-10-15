@@ -1,21 +1,16 @@
-import i18next from 'i18next';
-
-import { IReduxState, IStore } from '../app/types';
+import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
-import { getSoundFileSrc } from '../base/media/functions';
 import { getParticipantById, getParticipantCount, getParticipantCountWithFake } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
-import { registerSound, unregisterSound } from '../base/sounds/actions';
+import SoundService from '../base/sounds/components/SoundService';
 
 import {
-    E2EE_OFF_SOUND_ID,
-    E2EE_ON_SOUND_ID,
     MAX_MODE_LIMIT,
     MAX_MODE_THRESHOLD
 } from './constants';
 import {
-    E2EE_OFF_SOUND_FILE,
-    E2EE_ON_SOUND_FILE
+    E2EE_OFF_SOUND,
+    E2EE_ON_SOUND
 } from './sounds';
 
 
@@ -90,31 +85,33 @@ export function displayVerification(state: IReduxState, pId: string) {
 /**
  * Unregisters the audio files based on locale.
  *
- * @param {Dispatch<any>} dispatch - The redux dispatch function.
  * @returns {void}
  */
-export function unregisterE2eeAudioFiles(dispatch: IStore['dispatch']) {
-    dispatch(unregisterSound(E2EE_OFF_SOUND_ID));
-    dispatch(unregisterSound(E2EE_ON_SOUND_ID));
+export function unregisterE2eeAudioFiles() {
+    SoundService.unregister(E2EE_OFF_SOUND.id);
+    SoundService.unregister(E2EE_ON_SOUND.id);
 }
 
 /**
  * Registers the audio files based on locale.
  *
- * @param {Dispatch<any>} dispatch - The redux dispatch function.
  * @param {boolean|undefined} shouldUnregister - Whether the sounds should be unregistered.
  * @returns {void}
  */
-export function registerE2eeAudioFiles(dispatch: IStore['dispatch'], shouldUnregister?: boolean) {
-    const language = i18next.language;
+export function registerE2eeAudioFiles(shouldUnregister?: boolean) {
+    shouldUnregister && unregisterE2eeAudioFiles();
 
-    shouldUnregister && unregisterE2eeAudioFiles(dispatch);
+    SoundService.register(
+        E2EE_OFF_SOUND.id,
+        E2EE_OFF_SOUND.file,
+        E2EE_OFF_SOUND.options,
+        E2EE_OFF_SOUND.optional,
+        E2EE_OFF_SOUND.languages);
 
-    dispatch(registerSound(
-        E2EE_OFF_SOUND_ID,
-        getSoundFileSrc(E2EE_OFF_SOUND_FILE, language)));
-
-    dispatch(registerSound(
-        E2EE_ON_SOUND_ID,
-        getSoundFileSrc(E2EE_ON_SOUND_FILE, language)));
+    SoundService.register(
+        E2EE_ON_SOUND.id,
+        E2EE_ON_SOUND.file,
+        E2EE_ON_SOUND.options,
+        E2EE_ON_SOUND.optional,
+        E2EE_ON_SOUND.languages);
 }

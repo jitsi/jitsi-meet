@@ -303,6 +303,7 @@ export const SET_FOLLOW_ME_RECORDER = 'SET_FOLLOW_ME_RECORDER';
  */
 export const SET_START_REACTIONS_MUTED = 'SET_START_REACTIONS_MUTED';
 
+
 /**
  * The type of (redux) action which sets the password to join or lock a specific
  * {@code JitsiConference}.

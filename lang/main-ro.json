@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Inserați un link de apel video",
-        "confirmAddLink": "Doriți să adaugați un link Jitsi la acest apel video?",
+        "confirmAddLink": "Doriți să adaugați un link Sonacove la acest apel video?",
         "error": {
             "appConfiguration": "Integrarea calendarului nu este configurată corespunzător.",
             "generic": "A apărut o eroare. Vă rugăm să verificați setările calendarului și apoi reîncărcați calendarul.",
@@ -308,7 +308,7 @@
         "answer": "Răspuns",
         "audioCallTitle": "Apel intrare",
         "decline": "Respins",
-        "productLabel": "de la Jitsi Meet",
+        "productLabel": "de la Sonacove Meets",
         "videoCallTitle": "Intrare apel video"
     },
     "info": {
