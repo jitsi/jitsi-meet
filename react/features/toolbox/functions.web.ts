@@ -3,8 +3,7 @@ import { hasAvailableDevices } from '../base/devices/functions.web';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { IGUMPendingState } from '../base/media/types';
-import { getLocalParticipant, getRemoteParticipants } from '../base/participants/functions';
-import { IParticipant } from '../base/participants/types';
+import { isLocalParticipantHost, isParticipantModerator, isRemoteParticipantHost } from '../base/participants/functions';
 import { isScreenMediaShared } from '../screen-share/functions';
 import { isWhiteboardVisible } from '../whiteboard/functions';
 
@@ -253,54 +252,154 @@ export function toCSSTransitionValue(object: ICSSTransitionObject) {
 }
 
 /**
- * Gathers and formats meeting data into a string.
+ * Gathers and formats meeting data into a string with role-based attendance.
  *
  * @param {IReduxState} state - The Redux state.
  * @returns {string} - The formatted meeting data.
  */
 export function getMeetingDataAsString(state: IReduxState): string {
     const {
-        'features/base/conference': { room },
+        'features/base/conference': { room, conference, conferenceTimestamp },
         'features/chat': { messages },
         'features/polls': { polls }
     } = state;
 
-    const localParticipant = getLocalParticipant(state);
-    const remoteParticipants = getRemoteParticipants(state);
-    const allParticipants: IParticipant[] = [];
+    // Part 1: Get complete participant data
+    const speakerStats = conference?.getSpeakerStats();
+    const participantNameMap = new Map<string, string>();
+    const localParticipant = state['features/base/participants'].local;
 
-    if (localParticipant) {
-        allParticipants.push(localParticipant);
+    // Build a map of clean names for use in Chat and Polls sections
+    if (speakerStats && localParticipant) {
+        for (const userId in speakerStats) {
+            const statsModel = speakerStats[userId];
+            const cleanName = statsModel.isLocalStats()
+                ? localParticipant.name
+                : statsModel.getDisplayName() || state['features/base/participants'].remote.get(userId)?.name;
+
+            if (cleanName) {
+                participantNameMap.set(userId, cleanName);
+            }
+        }
     }
-    allParticipants.push(...Array.from(remoteParticipants.values()));
 
-    const participantNameMap = new Map(allParticipants.map(p => [ p.id, p.name ]));
 
-    let dataString = `Meeting Data for: ${room}\n`;
+    // Part 2: Format Timestamps, Duration, and Header
+    const downloadTime = Date.now();
+    const meetingStartTime = Number(conferenceTimestamp) || downloadTime;
+    const durationMs = downloadTime - meetingStartTime;
+    const durationMinutes = Math.floor(durationMs / 60000);
 
-    dataString += `Date: ${new Date().toLocaleString()}\n\n`;
+    let durationString: string;
 
-    // 1. Format Attendance List
+    if (durationMinutes < 1) {
+        durationString = 'Less than a minute';
+    } else if (durationMinutes === 1) {
+        durationString = '1 minute';
+    } else {
+        durationString = `${durationMinutes} minutes`;
+    }
+
+    const offsetMinutes = new Date().getTimezoneOffset();
+    const offsetSign = offsetMinutes > 0 ? '-' : '+';
+    const offsetHours = Math.floor(Math.abs(offsetMinutes) / 60);
+    const offsetMins = Math.abs(offsetMinutes) % 60;
+    const paddedMins = String(offsetMins).padStart(2, '0');
+    const timeZone = `GMT${offsetSign}${offsetHours}:${paddedMins}`;
+
+    let dataString = `Room Name: ${room}\n`;
+
+    dataString += `Timezone: ${timeZone}\n\n`;
+    dataString += `Start Time: ${new Date(meetingStartTime).toLocaleString()}\n`;
+    dataString += `End Time (at download): ${new Date(downloadTime).toLocaleString()}\n`;
+    dataString += `Duration: ${durationString}\n\n`;
+
+
+    // --- Part 3: Format Complete Attendance List with (H) and (M) roles (CORRECTED) ---
     dataString += '--- Attendance ---\n';
-    allParticipants.forEach(p => {
-        const isLocal = p.id === localParticipant?.id;
 
-        dataString += `${p.name}${isLocal ? ' (Me)' : ''}\n`;
-    });
+    // This map will store the FINAL status of each participant, preventing duplicates.
+    const finalAttendance = new Map<string, { displayName: string; role: string; status: string; }>();
+
+    if (speakerStats && Object.keys(speakerStats).length > 0) {
+        // Step 1: Process speakerStats to determine the final state of each user.
+        for (const userId in speakerStats) {
+            const statsModel = speakerStats[userId];
+            const displayName = participantNameMap.get(userId) || 'Unknown User';
+            const isPresent = !statsModel.hasLeft();
+            const existingEntry = finalAttendance.get(userId);
+
+            // We only update or add an entry if:
+            // 1. The user is currently present (this status overrides any previous 'left' status).
+            // 2. There is no existing entry for this user yet.
+            if (isPresent || !existingEntry) {
+                let roleString = '';
+
+                if (statsModel.isLocalStats()) {
+                    if (localParticipant) {
+                        if (isLocalParticipantHost(state)) {
+                            roleString = '(H)';
+                        } else if (isParticipantModerator(localParticipant)) {
+                            roleString = '(M)';
+                        }
+                    }
+                } else {
+                    const remoteParticipant = state['features/base/participants'].remote.get(userId);
+
+                    if (remoteParticipant) {
+                        if (isRemoteParticipantHost(remoteParticipant)) {
+                            roleString = '(H)';
+                        } else if (isParticipantModerator(remoteParticipant)) {
+                            roleString = '(M)';
+                        }
+                    }
+                }
+
+                finalAttendance.set(userId, {
+                    displayName,
+                    role: roleString,
+                    status: isPresent ? '' : ''
+                });
+            }
+        }
+
+        // Step 2: Build the string from the de-duplicated final attendance list.
+        if (finalAttendance.size > 0) {
+            finalAttendance.forEach(p => {
+                const line = `${p.displayName} ${p.role}${p.status}`.replace('  ', ' ').trimEnd();
+
+                dataString += `${line}\n`;
+            });
+        } else {
+            dataString += 'No attendance data was available.\n';
+        }
+
+    } else {
+        dataString += 'No attendance data was available.\n';
+    }
     dataString += '\n';
 
-    // 2. Format Chat History
+
+    // Part 4: Format Chat History
     dataString += '--- Chat History ---\n';
-    messages.forEach(msg => {
-        if (msg.isReaction || msg.privateMessage) return;
-        const displayName = participantNameMap.get((msg as any).participantId) || 'Unknown User';
-        const timestamp = new Date(msg.timestamp).toLocaleTimeString();
 
-        dataString += `[${timestamp}] ${displayName}: ${msg.message}\n`;
-    });
+    const containsNonSystemMessages = messages.every(msg => !msg.messageId);
+
+    if (messages.length > 0 && !containsNonSystemMessages) {
+        messages.forEach(msg => {
+            if (msg.isReaction || msg.privateMessage || msg.messageType === 'system') return;
+            const chatDisplayName = participantNameMap.get((msg as any).participantId) || 'Unknown User';
+            const timestamp = new Date(msg.timestamp).toLocaleTimeString();
+
+            dataString += `[${timestamp}] ${chatDisplayName}: ${msg.message}\n`;
+        });
+    } else {
+        dataString += 'No chat messages were sent.\n';
+    }
     dataString += '\n';
 
-    // 3. Format Poll Results
+
+    // Part 5: Format Poll Results
     dataString += '--- Polls ---\n';
     if (Object.keys(polls ?? {}).length > 0) {
         Object.values(polls ?? {}).forEach((poll, index) => {
