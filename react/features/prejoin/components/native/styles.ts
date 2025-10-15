@@ -1,15 +1,5 @@
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
-const contentContainer = {
-    alignItems: 'center',
-    backgroundColor: BaseTheme.palette.uiBackground,
-    display: 'flex',
-    justifyContent: 'center',
-    position: 'absolute',
-    width: '100%',
-    zIndex: 1
-};
-
 export const preJoinStyles = {
 
     joinButton: {
@@ -49,9 +39,15 @@ export const preJoinStyles = {
     },
 
     contentContainer: {
-        ...contentContainer,
+        alignItems: 'center',
+        backgroundColor: BaseTheme.palette.uiBackground,
         bottom: BaseTheme.spacing[0],
-        height: '50%'
+        display: 'flex',
+        height: '50%',
+        justifyContent: 'center',
+        position: 'absolute',
+        width: '100%',
+        zIndex: 1
     },
 
     contentContainerWide: {
