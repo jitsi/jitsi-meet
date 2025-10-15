@@ -135,7 +135,11 @@ public class JitsiMeetActivity extends AppCompatActivity
         JitsiMeetActivityDelegate.onHostResume(this);
 
         setContentView(R.layout.activity_jitsi_meet);
-        addTopBottomInsets(getWindow(),findViewById(android.R.id.content));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            addTopBottomInsets(getWindow(), findViewById(android.R.id.content));
+        }
+
         this.jitsiView = findViewById(R.id.jitsiView);
 
         registerForBroadcastMessages();
