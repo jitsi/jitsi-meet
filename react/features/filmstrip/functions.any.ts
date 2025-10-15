@@ -13,7 +13,7 @@ import { isFilmstripScrollVisible } from './functions';
  * @returns {void}
  * @private
  */
-export function updateRemoteParticipants(store: IStore, force?: boolean, participantId?: string) {
+export function updateRemoteParticipants(store: IStore, force?: boolean, participantId?: string): void {
     const state = store.getState();
     let reorderedParticipants = [];
     const { sortedRemoteVirtualScreenshareParticipants } = state['features/base/participants'];
@@ -40,21 +40,16 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
     const screenShareParticipants = sortedRemoteVirtualScreenshareParticipants
         ? [ ...sortedRemoteVirtualScreenshareParticipants.keys() ] : [];
     const sharedVideos = fakeParticipants ? Array.from(fakeParticipants.keys()) : [];
-    const speakers = new Map();
+    const speakers: Set<string> = new Set();
     const dominant = dominantSpeaker ? getParticipantById(state, dominantSpeaker) : undefined;
     const config = state['features/base/config'];
     const defaultRemoteDisplayName = config?.defaultRemoteDisplayName ?? 'Fellow Jitster';
 
     // Generate the remote active speakers list.
     if (dominant && !dominant.local) {
-        speakers.set(dominant.id, dominant.name);
+        speakers.add(dominant.id);
     }
-    previousSpeakers.forEach(id => {
-        const participant = getParticipantById(state, id);
-        const displayName = participant?.name ?? defaultRemoteDisplayName;
-
-        speakers.set(id, displayName);
-    });
+    previousSpeakers.forEach(id => speakers.add(id));
 
     for (const screenshare of screenShareParticipants) {
         const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
@@ -76,12 +71,10 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
     const numberOfActiveSpeakerSlots
         = visibleRemoteParticipants.size - (screenShareParticipants.length * 2) - sharedVideos.length;
     const activeSpeakersDisplayed = Array.from(speakers).slice(0, numberOfActiveSpeakerSlots)
-        .sort((a: any, b: any) => a[1].localeCompare(b[1]))
-        .reduce((acc, val) => {
-            acc.push(val[0]);
-
-            return acc;
-        }, [] as string[]);
+        .sort((a: string, b: string) => {
+            return (getParticipantById(state, a)?.name ?? defaultRemoteDisplayName)
+                .localeCompare(getParticipantById(state, b)?.name ?? defaultRemoteDisplayName);
+        });
 
     const participantsWithScreenShare = screenShareParticipants.reduce<string[]>((acc, screenshare) => {
         const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
