@@ -10,14 +10,14 @@ export const preJoinStyles = {
     buttonStylesBorderless: {
         iconStyle: {
             color: BaseTheme.palette.icon01,
-            fontSize: BaseTheme.spacing[5]
+            fontSize: BaseTheme.spacing[4]
         },
         style: {
             flexDirection: 'row',
             justifyContent: 'center',
             margin: BaseTheme.spacing[3],
-            height: BaseTheme.spacing[5],
-            width: BaseTheme.spacing[5]
+            height: BaseTheme.spacing[4],
+            width: BaseTheme.spacing[4]
         },
         underlayColor: 'transparent'
     },
@@ -110,6 +110,7 @@ export const preJoinStyles = {
         maxWidth: 273,
         zIndex: 1
     },
+
     displayRoomNameBackdrop: {
         backgroundColor: BaseTheme.palette.uiBackground,
         borderRadius: BaseTheme.shape.borderRadius,
@@ -117,6 +118,7 @@ export const preJoinStyles = {
         paddingHorizontal: BaseTheme.spacing[3],
         paddingVertical: BaseTheme.spacing[1]
     },
+
     recordingWarning: {
         display: 'flex',
         justifyContent: 'center',
@@ -125,9 +127,11 @@ export const preJoinStyles = {
         marginTop: BaseTheme.spacing[1],
         width: 'auto'
     },
+
     recordingWarningText: {
         color: BaseTheme.palette.text03
     },
+
     unsafeRoomWarningContainer: {
         height: '100%',
         width: '100%',
@@ -137,6 +141,7 @@ export const preJoinStyles = {
         justifyContent: 'center',
         color: 'white'
     },
+
     unsafeRoomContentContainer: {
         justifySelf: 'center',
         height: '100%',
@@ -162,6 +167,7 @@ export const preJoinStyles = {
         textAlign: 'center',
         marginBottom: BaseTheme.spacing[4]
     },
+
     warningIconWrapper: {
         backgroundColor: BaseTheme.palette.warning01,
         borderRadius: BaseTheme.shape.circleRadius,
@@ -170,6 +176,7 @@ export const preJoinStyles = {
         zIndex: 0
 
     },
+
     warningIcon: {
         color: BaseTheme.palette.ui01,
         fontSize: BaseTheme.spacing[7]
