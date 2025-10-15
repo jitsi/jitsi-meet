@@ -8,7 +8,7 @@ import { getConferenceName } from '../../../base/conference/functions';
 import { translate } from '../../../base/i18n/functions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
-import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
+import { ASPECT_RATIO_WIDE } from '../../../base/responsive-ui/constants';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
@@ -34,6 +34,16 @@ interface IProps extends AbstractProps {
      * The current aspect ratio of the screen.
      */
     _aspectRatio: Symbol;
+
+    /**
+     * The current height of the screen.
+     */
+    _clientHeight: number;
+
+    /**
+     * The current width of the screen.
+     */
+    _clientWidth: number;
 
     /**
      * The room name.
@@ -63,33 +73,33 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
      * @inheritdoc
      */
     override render() {
-        const { _aspectRatio, _roomName } = this.props;
-        let contentWrapperStyles;
-        let contentContainerStyles;
-        let largeVideoContainerStyles;
+        const { _aspectRatio, _clientHeight, _clientWidth, _roomName } = this.props;
+        const isTablet = Math.min(_clientWidth, _clientHeight) >= 768;
 
-        if (_aspectRatio === ASPECT_RATIO_NARROW) {
-            contentWrapperStyles = preJoinStyles.contentWrapper;
-            largeVideoContainerStyles = preJoinStyles.largeVideoContainer;
-            contentContainerStyles = styles.contentContainer;
-        } else {
-            contentWrapperStyles = preJoinStyles.contentWrapperWide;
-            largeVideoContainerStyles = preJoinStyles.largeVideoContainerWide;
+        let contentContainerStyles = preJoinStyles.contentContainer;
+        let largeVideoContainerStyles = preJoinStyles.largeVideoContainer;
+
+        if (isTablet && _aspectRatio === ASPECT_RATIO_WIDE) {
+            // @ts-ignore
             contentContainerStyles = preJoinStyles.contentContainerWide;
+            largeVideoContainerStyles = preJoinStyles.largeVideoContainerWide;
         }
 
         return (
             <JitsiScreen
+                addBottomPadding = { false }
                 safeAreaInsets = { [ 'right' ] }
-                style = { contentWrapperStyles }>
+                style = { preJoinStyles.contentWrapper }>
                 <BrandingImageBackground />
                 <View style = { largeVideoContainerStyles as ViewStyle }>
-                    <View style = { preJoinStyles.displayRoomNameBackdrop as ViewStyle }>
-                        <Text
-                            numberOfLines = { 1 }
-                            style = { preJoinStyles.preJoinRoomName }>
-                            { _roomName }
-                        </Text>
+                    <View style = { preJoinStyles.conferenceInfo as ViewStyle }>
+                        <View style = { preJoinStyles.displayRoomNameBackdrop }>
+                            <Text
+                                numberOfLines = { 1 }
+                                style = { preJoinStyles.preJoinRoomName }>
+                                { _roomName }
+                            </Text>
+                        </View>
                     </View>
                     <LargeVideo />
                 </View>
@@ -304,6 +314,8 @@ function _mapStateToProps(state: IReduxState) {
     return {
         ...abstractMapStateToProps(state),
         _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
+        _clientHeight: state['features/base/responsive-ui'].clientHeight,
+        _clientWidth: state['features/base/responsive-ui'].clientWidth,
         _roomName: getConferenceName(state)
     };
 }
