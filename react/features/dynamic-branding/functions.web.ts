@@ -1,6 +1,6 @@
 import { Theme } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
-import DOMPurify from "dompurify";
+import DOMPurify from 'dompurify';
 
 import { breakpoints, colorMap, font, shape, spacing, typography } from '../base/ui/Tokens';
 import { createColorTokens } from '../base/ui/utils';
