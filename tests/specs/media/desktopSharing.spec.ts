@@ -53,7 +53,13 @@ describe('Desktop sharing', () => {
     it('p2p to jvb switch', async () => {
         await ctx.p2.getToolbar().clickDesktopSharingButton();
 
-        await ensureThreeParticipants();
+        await ensureThreeParticipants({
+            configOverwrite: {
+                p2p: {
+                    enabled: true
+                }
+            }
+        });
         const { p1, p2, p3 } = ctx;
 
         // Check if a remote screen share tile is created on all participants.
@@ -86,7 +92,13 @@ describe('Desktop sharing', () => {
         await checkForScreensharingTile(p1, p1);
         await checkForScreensharingTile(p1, p2);
 
-        await ensureThreeParticipants();
+        await ensureThreeParticipants({
+            configOverwrite: {
+                p2p: {
+                    enabled: true
+                }
+            }
+        });
 
         await checkForScreensharingTile(p1, p3);
         await checkForScreensharingTile(p2, p3);
@@ -117,7 +129,13 @@ describe('Desktop sharing', () => {
         await checkForScreensharingTile(p2, p1);
 
         // Add p3 back to the conference and check if p1 and p2's shares are visible on p3.
-        await ensureThreeParticipants();
+        await ensureThreeParticipants({
+            configOverwrite: {
+                p2p: {
+                    enabled: true
+                }
+            }
+        });
 
         await checkForScreensharingTile(p1, p3);
         await checkForScreensharingTile(p2, p3);
@@ -151,7 +169,13 @@ describe('Desktop sharing', () => {
         await p1.getToolbar().clickStopDesktopSharingButton();
 
         // Call switches to jvb.
-        await ensureThreeParticipants();
+        await ensureThreeParticipants({
+            configOverwrite: {
+                p2p: {
+                    enabled: true
+                }
+            }
+        });
         const { p2, p3 } = ctx;
 
         // p1 starts share again when call switches to jvb.
