@@ -8,13 +8,13 @@ export default {
     },
 
     passwordJoinButtons: {
-        top: 40
+        top: BaseTheme.spacing[7]
     },
 
     contentContainer: {
         alignItems: 'center',
         backgroundColor: BaseTheme.palette.uiBackground,
-        bottom: 0,
+        bottom: BaseTheme.spacing[0],
         display: 'flex',
         height: 388,
         justifyContent: 'center',
@@ -43,46 +43,6 @@ export default {
 
     loadingIndicator: {
         marginBottom: BaseTheme.spacing[3]
-    },
-
-    // KnockingParticipantList
-
-    knockingParticipantList: {
-        backgroundColor: BaseTheme.palette.ui01
-    },
-
-
-    knockingParticipantListDetails: {
-        flex: 1,
-        marginLeft: BaseTheme.spacing[2]
-    },
-
-    knockingParticipantListEntry: {
-        alignItems: 'center',
-        backgroundColor: BaseTheme.palette.ui01,
-        flexDirection: 'row'
-    },
-
-    knockingParticipantListText: {
-        color: 'white'
-    },
-
-    lobbyButtonAdmit: {
-        position: 'absolute',
-        right: 184,
-        top: 6
-    },
-
-    lobbyButtonChat: {
-        position: 'absolute',
-        right: 104,
-        top: 6
-    },
-
-    lobbyButtonReject: {
-        position: 'absolute',
-        right: 16,
-        top: 6
     },
 
     lobbyTitle: {
