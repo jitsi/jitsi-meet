@@ -42,12 +42,19 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
     const sharedVideos = fakeParticipants ? Array.from(fakeParticipants.keys()) : [];
     const speakers = new Map();
     const dominant = dominantSpeaker ? getParticipantById(state, dominantSpeaker) : undefined;
+    const config = state['features/base/config'];
+    const defaultRemoteDisplayName = config?.defaultRemoteDisplayName ?? 'Fellow Jitster';
 
     // Generate the remote active speakers list.
     if (dominant && !dominant.local) {
         speakers.set(dominant.id, dominant.name);
     }
-    previousSpeakers.forEach((name, id) => speakers.set(id, name));
+    previousSpeakers.forEach(id => {
+        const participant = getParticipantById(state, id);
+        const displayName = participant?.name ?? defaultRemoteDisplayName;
+
+        speakers.set(id, displayName);
+    });
 
     for (const screenshare of screenShareParticipants) {
         const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
@@ -64,8 +71,10 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
         remoteParticipants.delete(speaker);
     }
 
-    // Calculate the number of slots available for active speakers and sort them alphabetically to ensure consistent order.
-    const numberOfActiveSpeakerSlots = visibleRemoteParticipants.size - (screenShareParticipants.length * 2) - sharedVideos.length;
+    // Calculate the number of slots available for active speakers and then sort them alphabetically to ensure
+    // consistent order.
+    const numberOfActiveSpeakerSlots
+        = visibleRemoteParticipants.size - (screenShareParticipants.length * 2) - sharedVideos.length;
     const activeSpeakersDisplayed = Array.from(speakers).slice(0, numberOfActiveSpeakerSlots)
         .sort((a: any, b: any) => a[1].localeCompare(b[1]))
         .reduce((acc, val) => {

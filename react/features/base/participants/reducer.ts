@@ -76,7 +76,7 @@ const DEFAULT_STATE = {
     numberOfParticipantsNotSupportingE2EE: 0,
     overwrittenNameList: {},
     pinnedParticipant: undefined,
-    previousSpeakers: new Map(),
+    previousSpeakers: new Set<string>(),
     raisedHandsQueue: [],
     remote: new Map(),
     remoteVideoSources: new Set<string>(),
@@ -94,7 +94,7 @@ export interface IParticipantsState {
     numberOfParticipantsNotSupportingE2EE: number;
     overwrittenNameList: { [id: string]: string; };
     pinnedParticipant?: string;
-    previousSpeakers: Map<string, string>;
+    previousSpeakers: Set<string>;
     raisedHandsQueue: Array<{ hasBeenNotified?: boolean; id: string; raisedHandTimestamp: number; }>;
     remote: Map<string, IParticipant>;
     remoteVideoSources: Set<string>;
@@ -156,18 +156,10 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         const { participant } = action;
         const { id, previousSpeakers = [] } = participant;
         const { dominantSpeaker, local } = state;
-        const previousSpeakersMap: Map<string, string> = new Map();
 
-        // Build chronologically ordered Map of remote speakers (excluding local)
-        for (const speaker of previousSpeakers) {
-            if (speaker !== local?.id) {
-                const remoteParticipant = state.remote.get(speaker);
-
-                if (remoteParticipant) {
-                    previousSpeakersMap.set(speaker, _getDisplayName(state, remoteParticipant?.name));
-                }
-            }
-        }
+        // Build chronologically ordered Set of remote speakers (excluding local)
+        const previousSpeakersSet: Set<string>
+            = new Set(previousSpeakers.filter((speaker: string) => speaker !== local?.id));
 
         // Only one dominant speaker is allowed.
         if (dominantSpeaker) {
@@ -178,7 +170,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             return {
                 ...state,
                 dominantSpeaker: id,
-                previousSpeakers: previousSpeakersMap
+                previousSpeakers: previousSpeakersSet
             };
         }
 
@@ -431,7 +423,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         }
 
         // Remove the participant from the list of speakers.
-        state.previousSpeakers.has(id) && state.previousSpeakers.delete(id);
+        state.previousSpeakers.delete(id);
 
         if (pinnedParticipant === id) {
             state.pinnedParticipant = undefined;
