@@ -1,5 +1,15 @@
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
+const contentContainer = {
+    alignItems: 'center',
+    backgroundColor: BaseTheme.palette.uiBackground,
+    display: 'flex',
+    justifyContent: 'center',
+    position: 'absolute',
+    width: '100%',
+    zIndex: 1
+};
+
 export const preJoinStyles = {
 
     joinButton: {
@@ -10,14 +20,14 @@ export const preJoinStyles = {
     buttonStylesBorderless: {
         iconStyle: {
             color: BaseTheme.palette.icon01,
-            fontSize: 24
+            fontSize: BaseTheme.spacing[5]
         },
         style: {
             flexDirection: 'row',
             justifyContent: 'center',
             margin: BaseTheme.spacing[3],
-            height: 24,
-            width: 24
+            height: BaseTheme.spacing[5],
+            width: BaseTheme.spacing[5]
         },
         underlayColor: 'transparent'
     },
@@ -27,13 +37,8 @@ export const preJoinStyles = {
         flexDirection: 'row'
     },
 
-    contentWrapperWide: {
-        flex: 1,
-        flexDirection: 'row'
-    },
-
     largeVideoContainer: {
-        height: '60%'
+        height: '50%'
     },
 
     largeVideoContainerWide: {
@@ -44,15 +49,9 @@ export const preJoinStyles = {
     },
 
     contentContainer: {
-        alignItems: 'center',
-        backgroundColor: BaseTheme.palette.uiBackground,
-        bottom: 0,
-        display: 'flex',
-        height: 280,
-        justifyContent: 'center',
-        position: 'absolute',
-        width: '100%',
-        zIndex: 1
+        ...contentContainer,
+        bottom: BaseTheme.spacing[0],
+        height: '50%'
     },
 
     contentContainerWide: {
@@ -177,6 +176,6 @@ export const preJoinStyles = {
     },
     warningIcon: {
         color: BaseTheme.palette.ui01,
-        fontSize: 40
+        fontSize: BaseTheme.spacing[7]
     }
 };
