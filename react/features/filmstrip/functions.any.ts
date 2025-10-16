@@ -5,6 +5,25 @@ import { setRemoteParticipants } from './actions';
 import { isFilmstripScrollVisible } from './functions';
 
 /**
+ * Returns an array containing the first `count` items from a set.
+ *
+ * @param {Set<T>} set - The set from which to take items.
+ * @param {number} count - The number of items to take.
+ * @returns {T[]} An array containing the taken items.
+ * @private
+ */
+function _takeFirstN<T>(set: Set<T>, count: number): T[] {
+    const result: T[] = [];
+
+    for (const item of set) {
+        if (result.length >= count) break;
+        result.push(item);
+    }
+
+    return result;
+}
+
+/**
  * Computes the reorderd list of the remote participants.
  *
  * @param {*} store - The redux store.
@@ -70,7 +89,7 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
     // consistent order.
     const numberOfActiveSpeakerSlots
         = visibleRemoteParticipants.size - (screenShareParticipants.length * 2) - sharedVideos.length;
-    const activeSpeakersDisplayed = Array.from(speakers).slice(0, numberOfActiveSpeakerSlots)
+    const activeSpeakersDisplayed = _takeFirstN(speakers, numberOfActiveSpeakerSlots)
         .sort((a: string, b: string) => {
             return (getParticipantById(state, a)?.name ?? defaultRemoteDisplayName)
                 .localeCompare(getParticipantById(state, b)?.name ?? defaultRemoteDisplayName);
