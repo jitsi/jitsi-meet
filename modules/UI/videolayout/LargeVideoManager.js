@@ -535,14 +535,12 @@ export default class LargeVideoManager {
             }
 
             this._dominantSpeakerRoot.render(
-                    <I18nextProvider i18n = { i18next }>
                         <Provider store = { APP.store }>
                             <Avatar
                                 id = "dominantSpeakerAvatar"
                                 participantId = { this.id }
                                 size = { 200 } />
                         </Provider>
-                    </I18nextProvider>
             );
         } catch (error) {
             logger.error('Error rendering dominant speaker avatar:', error);
