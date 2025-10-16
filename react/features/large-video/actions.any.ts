@@ -161,18 +161,26 @@ function _electParticipantInLargeVideo(state: IReduxState) {
         }
     }
 
-    // Next, pick the dominant speaker (other than self).
+    // Next, pick the dominant speaker or the last active speaker if the dominant speaker is local.
     participant = getDominantSpeakerParticipant(state);
-    if (participant && !participant.local) {
-        // Return the screensharing participant id associated with this endpoint if multi-stream is enabled and
-        // auto_pin_latest_screen_share setting is disabled.
-        const screenshareParticipant = getVirtualScreenshareParticipantByOwnerId(state, participant.id);
+    let speakerId: string | undefined;
 
-        return screenshareParticipant?.id ?? participant.id;
+    if (participant?.local) {
+        const { previousSpeakers } = state['features/base/participants'];
+
+        if (previousSpeakers?.size) {
+            speakerId = previousSpeakers.keys().next().value;
+        }
+    } else if (participant) {
+        speakerId = participant.id;
     }
 
-    // In case this is the local participant.
-    participant = undefined;
+    // Return the screensharing participant id associated with this endpoint.
+    if (speakerId) {
+        const screenshareParticipant = getVirtualScreenshareParticipantByOwnerId(state, speakerId);
+
+        return screenshareParticipant?.id ?? speakerId;
+    }
 
     // Next, pick the most recent participant with video.
     const lastVisibleRemoteParticipant = _electLastVisibleRemoteParticipant(state);
