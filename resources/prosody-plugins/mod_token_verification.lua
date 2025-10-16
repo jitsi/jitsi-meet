@@ -72,6 +72,10 @@ local function verify_user(session, stanza)
     -- allowlist for participants, jigasi (sip & transcriber), jibri (recorder & sip)
     if allowlist:contains(user_domain)
         or allowlist:contains(user_bare_jid)
+
+        -- allow main participants in visitor mode
+        or session.type == 's2sin'
+
         -- Let Jigasi or transcriber pass throw
         or util.is_sip_jigasi(stanza)
         or util.is_transcriber_jigasi(stanza)
