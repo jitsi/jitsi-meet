@@ -66,6 +66,7 @@ describe('Dial-in', () => {
         await p1.getFilmstrip().kickParticipant(endpointId);
 
         await verifyEndedWebhook(webhooksProxy, 'DIAL_IN_ENDED', customerId, startedPayload);
+
+        await p1.hangup();
     });
 });
-
