@@ -857,3 +857,32 @@ export function isPrivateChatEnabled(participant: IParticipant | IVisitorChatPar
 
     return !disablePrivateChat;
 }
+
+/**
+ * Checks if private chat is enabled for the local participant (can they send private messages).
+ *
+ * @param {IReduxState} state - The Redux state.
+ * @returns {boolean} - True if the local participant can send private messages, false otherwise.
+ */
+export function isPrivateChatEnabledSelf(state: IReduxState): boolean {
+    const { remoteVideoMenu = {} } = state['features/base/config'];
+    const { disablePrivateChat } = remoteVideoMenu;
+
+    // Check if private chat is disabled globally
+    if (disablePrivateChat === 'all') {
+        return false;
+    }
+
+    // Check if visitor chat is disabled and local user is a visitor
+    if (disablePrivateChat === 'disable-visitor-chat' && iAmVisitor(state)) {
+        return false;
+    }
+
+    // Check if only moderator chat is allowed and local user is not a moderator
+    if (disablePrivateChat === 'allow-moderator-chat' && !isLocalParticipantModerator(state)) {
+        return false;
+    }
+
+    // Private chat is enabled
+    return !disablePrivateChat;
+}
