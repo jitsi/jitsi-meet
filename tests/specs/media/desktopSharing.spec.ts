@@ -18,12 +18,14 @@ describe('Desktop sharing', () => {
         await ensureTwoParticipants({
             configOverwrite: {
                 p2p: {
+                    backToP2PDelay: 1,
                     enabled: true
                 }
             }
         });
         const { p1, p2 } = ctx;
 
+        await p1.waitForP2PIceConnected();
         await p2.getToolbar().clickDesktopSharingButton();
 
         // Check if a remote screen share tile is created on p1.
@@ -78,6 +80,10 @@ describe('Desktop sharing', () => {
 
         await p3.hangup();
 
+        // Wait for p1 and p2 to switch back to p2p.
+        await p1.waitForP2PIceConnected();
+        await p2.waitForP2PIceConnected();
+
         // Check if a remote screen share tile is created on p1 and p2 after switching back to p2p.
         await checkForScreensharingTile(p2, p1);
         await checkForScreensharingTile(p2, p2);
@@ -95,6 +101,7 @@ describe('Desktop sharing', () => {
         await ensureThreeParticipants({
             configOverwrite: {
                 p2p: {
+                    backToP2PDelay: 1,
                     enabled: true
                 }
             }
@@ -120,6 +127,10 @@ describe('Desktop sharing', () => {
 
         await p3.hangup();
 
+        // Wait for p1 and p2 to switch back to p2p.
+        await p1.waitForP2PIceConnected();
+        await p2.waitForP2PIceConnected();
+
         // Start share on both p1 and p2.
         await p1.getToolbar().clickDesktopSharingButton();
         await p2.getToolbar().clickDesktopSharingButton();
@@ -132,6 +143,7 @@ describe('Desktop sharing', () => {
         await ensureThreeParticipants({
             configOverwrite: {
                 p2p: {
+                    backToP2PDelay: 1,
                     enabled: true
                 }
             }
@@ -155,6 +167,7 @@ describe('Desktop sharing', () => {
         await ensureOneParticipant({
             configOverwrite: {
                 p2p: {
+                    backToP2PDelay: 1,
                     enabled: true
                 }
             }
@@ -172,6 +185,7 @@ describe('Desktop sharing', () => {
         await ensureThreeParticipants({
             configOverwrite: {
                 p2p: {
+                    backToP2PDelay: 1,
                     enabled: true
                 }
             }
@@ -190,6 +204,10 @@ describe('Desktop sharing', () => {
 
         // p3 leaves the call.
         await p3.hangup();
+
+        // Wait for p1 and p2 to switch back to p2p.
+        await p1.waitForP2PIceConnected();
+        await p2.waitForP2PIceConnected();
 
         // Make sure p2 see's p1's share after the call switches back to p2p.
         await checkForScreensharingTile(p1, p2);
