@@ -359,6 +359,16 @@ export const config: WebdriverIO.MultiremoteConfig = {
             logInfo(multiremotebrowser.getInstance(instance), `---=== End test ${test.title} ===---`));
 
         if (error) {
+
+            // skip all remaining tests in the suite
+            ctx.skipSuiteTests = `Test "${test.title}" has failed.`;
+
+            // make sure all browsers are at the main app in iframe (if used), so we collect debug info
+            await Promise.all(multiremotebrowser.instances.map(async (instance: string) => {
+                // @ts-ignore
+                await ctx[instance].switchToIFrame();
+            }));
+
             const allProcessing: Promise<any>[] = [];
 
             multiremotebrowser.instances.forEach((instance: string) => {
