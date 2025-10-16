@@ -82,6 +82,7 @@ describe('Visitors triggered by visitor tokens', () => {
 
     it('test visitor tokens', async () => {
 
+        webhooksProxy.clearCache();
         const moderatorToken = t({ room, displayName: 'Mo de Rator', moderator: true });
         const moderator = await joinJaasMuc({ name: 'p1', token: moderatorToken });
 
@@ -90,6 +91,7 @@ describe('Visitors triggered by visitor tokens', () => {
         expect(await moderator.isVisitor()).toBe(false);
         await verifyJoinedWebhook(moderator);
 
+        webhooksProxy.clearCache();
         // Joining with a participant token before any visitors
         const participantToken = t({ room, displayName: 'Parti Cipant' });
         const participant = await joinJaasMuc({ name: 'p2', token: participantToken });
@@ -99,6 +101,7 @@ describe('Visitors triggered by visitor tokens', () => {
         expect(await participant.isVisitor()).toBe(false);
         await verifyJoinedWebhook(participant);
 
+        webhooksProxy.clearCache();
         // Joining with a visitor token
         const visitorToken = t({ room, displayName: 'Visi Tor', visitor: true });
         const visitor = await joinJaasMuc({ name: 'p3', token: visitorToken });
@@ -108,9 +111,11 @@ describe('Visitors triggered by visitor tokens', () => {
         expect(await visitor.isVisitor()).toBe(true);
         await verifyJoinedWebhook(visitor);
 
+        webhooksProxy.clearCache();
         await participant.hangup();
         await verifyLeftWebhook(participant);
 
+        webhooksProxy.clearCache();
         // Joining with a participant token after visitors -> visitor
         const participantToken2 = t({ room, displayName: 'Visi Tor 2' });
         const visitor2 = await joinJaasMuc({ name: 'p2', token: participantToken2 });
@@ -120,12 +125,15 @@ describe('Visitors triggered by visitor tokens', () => {
         expect(await visitor2.isVisitor()).toBe(true);
         await verifyJoinedWebhook(visitor2);
 
+        webhooksProxy.clearCache();
         await visitor.hangup();
         await verifyLeftWebhook(visitor);
 
+        webhooksProxy.clearCache();
         await visitor2.hangup();
         await verifyLeftWebhook(visitor2);
 
+        webhooksProxy.clearCache();
         await moderator.hangup();
         await verifyLeftWebhook(moderator);
     });
