@@ -45,13 +45,11 @@ export function getLogs(driver: WebdriverIO.Browser) {
 }
 
 /**
- * Logs a message in the logfile.
- *
- * @param {WebdriverIO.Browser} driver - The participant in which log file to write.
- * @param {string} message - The message to add.
- * @returns {void}
+ * Appends value to the log file.
+ * @param {WebdriverIO.Browser} driver - The driver which log file is requested.
+ * @param {string} value - The content to add to the file.
  */
-export function logInfo(driver: WebdriverIO.Browser, message: string) {
+export function saveLogs(driver: WebdriverIO.Browser, value: string) {
     // @ts-ignore
     if (!driver.logFile) {
         return;
@@ -59,9 +57,27 @@ export function logInfo(driver: WebdriverIO.Browser, message: string) {
 
     try {
         // @ts-ignore
-        fs.appendFileSync(driver.logFile, `${new Date().toISOString()} ${LOG_PREFIX} ${message}\n`);
+        fs.appendFileSync(driver.logFile, value);
     } catch (err) {
         console.error(err);
     }
+}
+
+/**
+ * Logs a message in the logfile.
+ *
+ * @param {WebdriverIO.Browser} driver - The participant in which log file to write.
+ * @param {string} message - The message to add.
+ * @returns {void}
+ */
+export async function logInfo(driver: WebdriverIO.Browser, message: string) {
+    // @ts-ignore
+    if (!driver.logFile) {
+        return;
+    }
+
+    return driver.execute((prefix, msg) =>
+        console.log(`${new Date().toISOString()} ${prefix} ${msg}\n`),
+        LOG_PREFIX, message);
 }
 

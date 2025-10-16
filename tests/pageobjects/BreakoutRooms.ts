@@ -119,7 +119,7 @@ class BreakoutRoom extends BasePageObject {
 
         await listItem.click();
 
-        const button = listItem.$(`aria/${MORE_LABEL}`);
+        const button = listItem.$(`button[title="${MORE_LABEL}"]`);
 
         await button.waitForClickable();
         await button.click();
@@ -153,7 +153,7 @@ export default class BreakoutRooms extends BasePageObject {
             await participantsPane.open();
         }
 
-        const addBreakoutButton = this.participant.driver.$(`aria/${ADD_BREAKOUT_ROOM}`);
+        const addBreakoutButton = this.participant.driver.$(`button=${ADD_BREAKOUT_ROOM}`);
 
         await addBreakoutButton.waitForDisplayed();
         await addBreakoutButton.click();
@@ -179,7 +179,7 @@ export default class BreakoutRooms extends BasePageObject {
             await participantsPane.open();
         }
 
-        const leaveButton = this.participant.driver.$(`aria/${LEAVE_ROOM_LABEL}`);
+        const leaveButton = this.participant.driver.$(`button=${LEAVE_ROOM_LABEL}`);
 
         await leaveButton.isClickable();
         await leaveButton.click();
@@ -189,7 +189,7 @@ export default class BreakoutRooms extends BasePageObject {
      * Auto assign participants to breakout rooms.
      */
     async autoAssignToBreakoutRooms() {
-        const button = this.participant.driver.$(`aria/${AUTO_ASSIGN_LABEL}`);
+        const button = this.participant.driver.$(`button=${AUTO_ASSIGN_LABEL}`);
 
         await button.waitForClickable();
         await button.click();
@@ -204,8 +204,9 @@ export default class BreakoutRooms extends BasePageObject {
         await participantsPane.selectParticipant(participant);
         await participantsPane.openParticipantContextMenu(participant);
 
-        const sendButton = this.participant.driver.$(`aria/${roomName}`);
+        const sendButton = this.participant.driver.$(`div=${roomName}`);
 
+        await sendButton.scrollIntoView();
         await sendButton.waitForClickable();
         await sendButton.click();
     }

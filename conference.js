@@ -1375,7 +1375,7 @@ export default {
             }
 
             APP.store.dispatch(updateRemoteParticipantFeatures(user));
-            logger.log(`USER ${id} connected:`, user);
+            logger.log(`USER ${id} connected`);
             APP.UI.addUser(user);
         });
 

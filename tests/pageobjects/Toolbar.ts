@@ -33,7 +33,7 @@ export default class Toolbar extends BasePageObject {
      * @private
      */
     private getButton(accessibilityCSSSelector: string) {
-        return this.participant.driver.$(`aria/${accessibilityCSSSelector}`);
+        return this.participant.driver.$(`[aria-label="${accessibilityCSSSelector}"]`);
     }
 
     /**
@@ -55,8 +55,8 @@ export default class Toolbar extends BasePageObject {
      *
      * @returns {Promise<void>}
      */
-    clickAudioMuteButton(): Promise<void> {
-        this.participant.log('Clicking on: Audio Mute Button');
+    async clickAudioMuteButton(): Promise<void> {
+        await this.participant.log('Clicking on: Audio Mute Button');
 
         return this.audioMuteBtn.click();
     }
@@ -66,8 +66,8 @@ export default class Toolbar extends BasePageObject {
      *
      * @returns {Promise<void>}
      */
-    clickAudioUnmuteButton(): Promise<void> {
-        this.participant.log('Clicking on: Audio Unmute Button');
+    async clickAudioUnmuteButton(): Promise<void> {
+        await this.participant.log('Clicking on: Audio Unmute Button');
 
         return this.audioUnMuteBtn.click();
     }
@@ -91,8 +91,8 @@ export default class Toolbar extends BasePageObject {
      *
      * @returns {Promise<void>}
      */
-    clickVideoMuteButton(): Promise<void> {
-        this.participant.log('Clicking on: Video Mute Button');
+    async clickVideoMuteButton(): Promise<void> {
+        await this.participant.log('Clicking on: Video Mute Button');
 
         return this.videoMuteBtn.click();
     }
@@ -102,8 +102,8 @@ export default class Toolbar extends BasePageObject {
      *
      * @returns {Promise<void>}
      */
-    clickVideoUnmuteButton(): Promise<void> {
-        this.participant.log('Clicking on: Video Unmute Button');
+    async clickVideoUnmuteButton(): Promise<void> {
+        await this.participant.log('Clicking on: Video Unmute Button');
 
         return this.videoUnMuteBtn.click();
     }
@@ -113,8 +113,8 @@ export default class Toolbar extends BasePageObject {
      *
      * @returns {Promise<void>}
      */
-    clickCloseParticipantsPaneButton(): Promise<void> {
-        this.participant.log('Clicking on: Close Participants pane Button');
+    async clickCloseParticipantsPaneButton(): Promise<void> {
+        await this.participant.log('Clicking on: Close Participants pane Button');
 
         return this.getButton(CLOSE_PARTICIPANTS_PANE).click();
     }
@@ -124,8 +124,8 @@ export default class Toolbar extends BasePageObject {
      *
      * @returns {Promise<void>}
      */
-    clickParticipantsPaneButton(): Promise<void> {
-        this.participant.log('Clicking on: Participants pane Button');
+    async clickParticipantsPaneButton(): Promise<void> {
+        await this.participant.log('Clicking on: Participants pane Button');
 
         // Special case for participants pane button, as it contains the number of participants and its label
         // is changing
@@ -150,8 +150,8 @@ export default class Toolbar extends BasePageObject {
     /**
      * Clicks on the raise hand button that enables participants will to speak.
      */
-    clickRaiseHandButton(): Promise<void> {
-        this.participant.log('Clicking on: Raise hand Button');
+    async clickRaiseHandButton(): Promise<void> {
+        await this.participant.log('Clicking on: Raise hand Button');
 
         return this.getButton(RAISE_HAND).click();
     }
@@ -159,8 +159,8 @@ export default class Toolbar extends BasePageObject {
     /**
      * Clicks on the chat button that opens chat panel.
      */
-    clickChatButton(): Promise<void> {
-        this.participant.log('Clicking on: Chat Button');
+    async clickChatButton(): Promise<void> {
+        await this.participant.log('Clicking on: Chat Button');
 
         return this.getButton(CHAT).click();
     }
@@ -168,8 +168,8 @@ export default class Toolbar extends BasePageObject {
     /**
      * Clicks on the chat button that closes chat panel.
      */
-    clickCloseChatButton(): Promise<void> {
-        this.participant.log('Clicking on: Close Chat Button');
+    async clickCloseChatButton(): Promise<void> {
+        await this.participant.log('Clicking on: Close Chat Button');
 
         return this.getButton(CLOSE_CHAT).click();
     }
@@ -205,8 +205,8 @@ export default class Toolbar extends BasePageObject {
     /**
      * Clicks on the hangup button that ends the conference.
      */
-    clickHangupButton(): Promise<void> {
-        this.participant.log('Clicking on: Hangup Button');
+    async clickHangupButton(): Promise<void> {
+        await this.participant.log('Clicking on: Hangup Button');
 
         return this.getButton(HANGUP).click();
     }
@@ -237,7 +237,7 @@ export default class Toolbar extends BasePageObject {
         // so let's move focus away before clicking the button
         await this.participant.driver.$('#overflow-context-menu').moveTo();
 
-        this.participant.log(`Clicking on: ${accessibilityLabel}`);
+        await this.participant.log(`Clicking on: ${accessibilityLabel}`);
         await this.getButton(accessibilityLabel).click();
 
         await this.closeOverflowMenu();
@@ -248,7 +248,7 @@ export default class Toolbar extends BasePageObject {
      * @private
      */
     private async isOverflowMenuOpen() {
-        return await this.participant.driver.$$(`aria/${OVERFLOW_MENU}`).length > 0;
+        return await this.participant.driver.$$(`[aria-label="${OVERFLOW_MENU}"]`).length > 0;
     }
 
     /**

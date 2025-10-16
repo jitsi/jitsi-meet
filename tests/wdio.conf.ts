@@ -9,7 +9,7 @@ import pretty from 'pretty';
 import { getTestProperties, loadTestFiles } from './helpers/TestProperties';
 import { config as testsConfig } from './helpers/TestsConfig';
 import WebhookProxy from './helpers/WebhookProxy';
-import { getLogs, initLogger, logInfo } from './helpers/browserLogger';
+import { getLogs, initLogger, logInfo, saveLogs } from './helpers/browserLogger';
 import { IContext } from './helpers/types';
 import { generateRoomName } from './helpers/utils';
 
@@ -161,6 +161,18 @@ export const config: WebdriverIO.MultiremoteConfig = {
     logLevels: {
         webdriver: 'info'
     },
+
+    // Can be used to debug chromedriver, depends on chromedriver and wdio-chromedriver-service
+    // services: [
+    //     [ 'chromedriver', {
+    //         // Pass the --verbose flag to Chromedriver
+    //         args: [ '--verbose' ],
+    //         // Optionally, define a file to store the logs instead of stdout
+    //         logFileName: 'wdio-chromedriver.log',
+    //         // Optionally, define a directory for the log file
+    //         outputDir: 'test-results',
+    //     } ]
+    // ],
 
     // Set directory to store all logs into
     outputDir: TEST_RESULTS_DIR,
@@ -359,6 +371,16 @@ export const config: WebdriverIO.MultiremoteConfig = {
             logInfo(multiremotebrowser.getInstance(instance), `---=== End test ${test.title} ===---`));
 
         if (error) {
+
+            // skip all remaining tests in the suite
+            ctx.skipSuiteTests = `Test "${test.title}" has failed.`;
+
+            // make sure all browsers are at the main app in iframe (if used), so we collect debug info
+            await Promise.all(multiremotebrowser.instances.map(async (instance: string) => {
+                // @ts-ignore
+                await ctx[instance]?.switchToIFrame();
+            }));
+
             const allProcessing: Promise<any>[] = [];
 
             multiremotebrowser.instances.forEach((instance: string) => {
@@ -380,7 +402,14 @@ export const config: WebdriverIO.MultiremoteConfig = {
                             'text/plain'))
                     .catch(e => console.error('Failed grabbing debug logs', e)));
 
-                AllureReporter.addAttachment(`console-logs-${instance}`, getLogs(bInstance) || '', 'text/plain');
+                allProcessing.push(
+                    bInstance.execute(() => window.APP?.debugLogs?.logs?.join('\n')).then(res => {
+                        if (res) {
+                            saveLogs(bInstance, res);
+                        }
+
+                        AllureReporter.addAttachment(`console-logs-${instance}`, getLogs(bInstance) || '', 'text/plain');
+                    }));
 
                 allProcessing.push(bInstance.getPageSource().then(source => {
                     AllureReporter.addAttachment(`html-source-${instance}`, pretty(source), 'text/plain');

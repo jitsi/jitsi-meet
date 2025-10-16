@@ -214,7 +214,7 @@ export default class ParticipantsPane extends BasePageObject {
             await this.open();
         }
 
-        const inviteButton = this.participant.driver.$(`aria/${INVITE}`);
+        const inviteButton = this.participant.driver.$(`button=${INVITE}`);
 
         await inviteButton.waitForDisplayed();
         await inviteButton.click();
@@ -262,7 +262,7 @@ export default class ParticipantsPane extends BasePageObject {
             .substring('participant-item-'.length);
 
         const moreOptionsButton
-            = this.participant.driver.$(`aria/More moderation options ${participantNameToReject}`);
+            = this.participant.driver.$(`button[title="More moderation options ${participantNameToReject}"]`);
 
         await moreOptionsButton.click();
 

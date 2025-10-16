@@ -49,7 +49,7 @@ export default class ChatPanel extends BasePageObject {
     }
 
     async clickCreatePollButton() {
-        await this.participant.driver.$('aria/Create a poll').click();
+        await this.participant.driver.$('button=Create a poll').click();
     }
 
     /**
@@ -95,7 +95,7 @@ export default class ChatPanel extends BasePageObject {
      * Clicks the "Add option" button.
      */
     async clickAddOptionButton() {
-        await this.participant.driver.$('aria/Add option').click();
+        await this.participant.driver.$('button=Add option').click();
     }
 
     /**
@@ -141,35 +141,35 @@ export default class ChatPanel extends BasePageObject {
      * Clicks the "Save" button.
      */
     async clickSavePollButton() {
-        await this.participant.driver.$('aria/Save').click();
+        await this.participant.driver.$('button=Save').click();
     }
 
     /**
      * Clicks the "Edit" button.
      */
     async clickEditPollButton() {
-        await this.participant.driver.$('aria/Edit').click();
+        await this.participant.driver.$('button=Edit').click();
     }
 
     /**
      * Clicks the "Skip" button.
      */
     async clickSkipPollButton() {
-        await this.participant.driver.$('aria/Skip').click();
+        await this.participant.driver.$('button=Skip').click();
     }
 
     /**
      * Clicks the "Send" button.
      */
     async clickSendPollButton() {
-        await this.participant.driver.$('aria/Send poll').click();
+        await this.participant.driver.$('button=Send').click();
     }
 
     /**
      * Waits for the "Send" button to be visible.
      */
     async waitForSendButton() {
-        await this.participant.driver.$('aria/Send poll').waitForExist({
+        await this.participant.driver.$('button=Send').waitForExist({
             timeout: 1000,
             timeoutMsg: 'Send button not visible'
         });
@@ -185,7 +185,7 @@ export default class ChatPanel extends BasePageObject {
             (id, ix) => document.getElementById(`poll-answer-checkbox-${id}-${ix}`)?.click(),
             pollId, index);
 
-        await this.participant.driver.$('aria/Submit').click();
+        await this.participant.driver.$('button=Submit').click();
     }
 
     /**
