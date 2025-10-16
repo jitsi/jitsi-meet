@@ -136,7 +136,8 @@ public class JitsiMeetActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_jitsi_meet);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM
+            && getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             addTopBottomInsets(getWindow(), findViewById(android.R.id.content));
         }
 
