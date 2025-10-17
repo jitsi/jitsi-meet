@@ -2,7 +2,6 @@ import 'image-capture';
 import { IStore } from '../app/types';
 import { isMobileBrowser } from '../base/environment/utils';
 import { getLocalVideoTrack } from '../base/tracks/functions';
-import { getBaseUrl } from '../base/util/helpers';
 
 import {
     addFaceLandmarks,
@@ -94,17 +93,16 @@ class FaceLandmarksDetector {
             return;
         }
 
-        const baseUrl = `${getBaseUrl()}libs/`;
-        let workerUrl = `${baseUrl}face-landmarks-worker.min.js`;
-
-        // @ts-ignore
-        const workerBlob = new Blob([ `importScripts("${workerUrl}");` ], { type: 'application/javascript' });
         const state = getState();
         const addToBuffer = Boolean(state['features/base/config'].webhookProxyUrl);
 
-        // @ts-ignore
-        workerUrl = window.URL.createObjectURL(workerBlob);
-        this.worker = new Worker(workerUrl, { name: 'Face Landmarks Worker' });
+        this.worker = new Worker(
+            new URL('./faceLandmarksWorker.ts', import.meta.url),
+            { 
+                name: 'Face Landmarks Worker',
+                type: 'module'
+            }
+        );
         this.worker.onmessage = ({ data }: MessageEvent<any>) => {
             const { faceExpression, faceBox, faceCount } = data;
             const messageTimestamp = Date.now();
@@ -159,7 +157,7 @@ class FaceLandmarksDetector {
 
         this.worker.postMessage({
             type: INIT_WORKER,
-            baseUrl,
+            baseUrl: '', // Vite mode - baseUrl not needed
             detectionTypes
         });
         this.initialized = true;

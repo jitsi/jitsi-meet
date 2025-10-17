@@ -13,10 +13,10 @@ import {
     getVideoTrackByParticipant
 } from '../../../react/features/base/tracks/functions.any';
 
-import LargeVideoManager from './LargeVideoManager';
-import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
+import LargeVideoManager from './LargeVideoManager.jsx';
+import { VIDEO_CONTAINER_TYPE } from './VideoContainer.jsx';
 
-const logger = Logger.getLogger('ui:VideoLayout');
+const logger = Logger.getLogger(new URL(import.meta.url).pathname);
 let largeVideo;
 
 const VideoLayout = {
