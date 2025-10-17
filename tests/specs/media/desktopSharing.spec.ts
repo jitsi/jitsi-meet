@@ -18,7 +18,7 @@ describe('Desktop sharing', () => {
         await ensureTwoParticipants({
             configOverwrite: {
                 p2p: {
-                    backToP2PDelay: 1,
+                    backToP2PDelay: 3,
                     enabled: true
                 }
             }
@@ -101,7 +101,7 @@ describe('Desktop sharing', () => {
         await ensureThreeParticipants({
             configOverwrite: {
                 p2p: {
-                    backToP2PDelay: 1,
+                    backToP2PDelay: 3,
                     enabled: true
                 }
             }
@@ -143,7 +143,7 @@ describe('Desktop sharing', () => {
         await ensureThreeParticipants({
             configOverwrite: {
                 p2p: {
-                    backToP2PDelay: 1,
+                    backToP2PDelay: 3,
                     enabled: true
                 }
             }
@@ -167,7 +167,7 @@ describe('Desktop sharing', () => {
         await ensureOneParticipant({
             configOverwrite: {
                 p2p: {
-                    backToP2PDelay: 1,
+                    backToP2PDelay: 3,
                     enabled: true
                 }
             }
@@ -185,7 +185,7 @@ describe('Desktop sharing', () => {
         await ensureThreeParticipants({
             configOverwrite: {
                 p2p: {
-                    backToP2PDelay: 1,
+                    backToP2PDelay: 3,
                     enabled: true
                 }
             }
