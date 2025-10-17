@@ -11,6 +11,7 @@ import ContextMenu from '../../../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../../../base/ui/components/web/ContextMenuItemGroup';
 import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../../../../breakout-rooms/actions';
 import { IRoom } from '../../../../../breakout-rooms/types';
+import { Participants } from '../../../../../breakout-rooms/utils';
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
 import { isBreakoutRoomRenameAllowed } from '../../../../functions';
 
@@ -78,7 +79,7 @@ export const RoomContextMenu = ({
         dispatch(closeBreakoutRoom(room?.id ?? ''));
     }, [ dispatch, room ]);
 
-    const isRoomEmpty = !(room?.participants && Object.keys(room.participants).length > 0);
+    const isRoomEmpty = !(room?.participants && !Participants.isEmpty(room));
 
     const actions = [
         _overflowDrawer ? {

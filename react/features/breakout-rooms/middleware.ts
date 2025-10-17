@@ -9,6 +9,7 @@ import { UPDATE_BREAKOUT_ROOMS } from './actionTypes';
 import { moveToRoom } from './actions';
 import logger from './logger';
 import { IRooms } from './types';
+import { Participants } from './utils';
 
 /**
  * Registers a change handler for state['features/base/conference'].conference to
@@ -52,20 +53,20 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 const newRooms: IRooms = {};
 
                 Object.entries(action.rooms as IRooms).forEach(([ key, r ]) => {
-                    let participants = r?.participants || {};
+                    let participants = r?.participants || new Map();
                     let jid;
 
                     for (const id of Object.keys(overwrittenNameList)) {
-                        jid = Object.keys(participants).find(p => p.slice(p.indexOf('/') + 1) === id);
+                        jid = Participants.findById(r, id)?.jid;
 
                         if (jid) {
-                            participants = {
-                                ...participants,
-                                [jid]: {
-                                    ...participants[jid],
+                            const participant = participants.get(jid);
+                            if (participant) {
+                                participants.set(jid, {
+                                    ...participant,
                                     displayName: overwrittenNameList[id as keyof typeof overwrittenNameList]
-                                }
-                            };
+                                });
+                            }
                         }
                     }
 
@@ -87,11 +88,10 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 const rooms: IRooms = action.rooms;
 
                 for (const room of Object.values(rooms)) {
-                    const participants = room.participants || {};
-                    const matchedJid = Object.keys(participants).find(jid => jid.endsWith(m.participantId));
+                    const participant = Participants.findByPartialJid(room, m.participantId);
 
-                    if (matchedJid) {
-                        m.displayName = participants[matchedJid].displayName;
+                    if (participant) {
+                        m.displayName = participant.displayName;
 
                         dispatch(editMessage(m));
                     }
