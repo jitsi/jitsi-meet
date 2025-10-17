@@ -16,7 +16,7 @@ import {
     showToolbox
 } from '../../actions.web';
 import { NOT_APPLICABLE, THRESHOLDS } from '../../constants';
-import { getAllToolboxButtons, getJwtDisabledButtons, isButtonEnabled } from "../../functions.web";
+import { getAllToolboxButtons, getJwtDisabledButtons, isButtonEnabled, isToolboxVisible } from "../../functions.web";
 import { useKeyboardShortcuts } from '../../hooks.web';
 import { IToolboxButton, NOTIFY_CLICK_MODE } from '../../types';
 import HangupButton from '../HangupButton';
@@ -522,7 +522,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _shiftUp: state["features/toolbox"].shiftUp,
         _shouldDisplayReactionsButtons: shouldDisplayReactionsButtons(state),
         _toolbarButtons: toolbarButtons,
-        _visible: true, //isToolboxVisible(state),
+        _visible: isToolboxVisible(state),
         roomId: room,
     };
 }

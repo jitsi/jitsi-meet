@@ -1,6 +1,7 @@
 import { IReduxState } from "../../../../app/types";
 import {
     getLocalParticipant,
+    getLocalScreenShareParticipant,
     getParticipantDisplayName,
     getRemoteParticipants,
     hasRaisedHand,
@@ -17,7 +18,7 @@ export const getParticipantsWithTracks = (state: IReduxState) => {
     const remoteParticipantsMap = getRemoteParticipants(state);
     const remoteParticipants = Array.from(remoteParticipantsMap.values());
     const allParticipants = localParticipant ? [localParticipant, ...remoteParticipants] : remoteParticipants;
-    console.log("allParticipants", allParticipants);
+
     return allParticipants
         .filter((participant) => !isScreenShareParticipant(participant))
         .map((participant) => {
@@ -45,10 +46,11 @@ export const getParticipantsWithTracks = (state: IReduxState) => {
 };
 
 export const getScreenShareParticipants = (state: IReduxState) => {
-    const localParticipant = getLocalParticipant(state);
+    const localScreenShare = getLocalScreenShareParticipant(state);
+
     const remoteParticipantsMap = getRemoteParticipants(state);
     const remoteParticipants = Array.from(remoteParticipantsMap.values());
-    const allParticipants = localParticipant ? [localParticipant, ...remoteParticipants] : remoteParticipants;
+    const allParticipants = localScreenShare ? [localScreenShare, ...remoteParticipants] : remoteParticipants;
 
     return allParticipants
         .filter((participant) => isScreenShareParticipant(participant))

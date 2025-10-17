@@ -201,7 +201,7 @@ class Conference extends AbstractConference<IProps, any> {
                             <span aria-level={1} className="sr-only" role="heading">
                                 {t("toolbar.accessibilityLabel.heading") as string}
                             </span>
-                            <Toolbox />
+                            {/* <Toolbox /> */}
                         </>
                     )}
                     {/* CONFERENCE MEDIA CONTROLS */}

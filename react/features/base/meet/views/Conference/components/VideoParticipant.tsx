@@ -14,9 +14,16 @@ export type VideoParticipantProps = {
     flipX?: boolean;
     className?: string;
     translate: (key: string) => string;
+    isScreenShare?: boolean;
 };
 
-const VideoParticipant = ({ participant, className = "", flipX, translate }: VideoParticipantProps) => {
+const VideoParticipant = ({
+    participant,
+    className = "",
+    flipX,
+    translate,
+    isScreenShare = false,
+}: VideoParticipantProps) => {
     const { id, name, videoEnabled, audioMuted, videoTrack, local, dominantSpeaker, raisedHand, avatarSource } =
         participant;
 
@@ -32,14 +39,20 @@ const VideoParticipant = ({ participant, className = "", flipX, translate }: Vid
 
     return (
         <div
-            className={`flex aspect-square min-w-40 items-center justify-center rounded-[20px] overflow-hidden bg-gray-90 sm:aspect-video ${className}
+            className={`relative flex ${
+                isScreenShare ? "" : "aspect-square sm:aspect-video"
+            } min-w-40 items-center justify-center rounded-[20px] overflow-hidden bg-gray-90 ${className}
             ${dominantSpeaker ? "ring-4 ring-white" : ""}`}
             data-testid={`participant-${id}`}
         >
             {videoEnabled ? (
                 <Video
-                    videoTrack={{ jitsiTrack: videoTrack }}
-                    className={clsx("w-full h-full object-cover", flipX && local && "scale-x-[-1]")}
+                    videoTrack={isScreenShare ? videoTrack : { jitsiTrack: videoTrack }}
+                    className={clsx(
+                        "w-full h-full",
+                        isScreenShare ? "object-contain" : "object-cover",
+                        flipX && local && !isScreenShare && "scale-x-[-1]"
+                    )}
                     key={`video-${id}`}
                     // Set to false due to decoding issues and video lag
                     encodeVideo={false}
@@ -51,8 +64,8 @@ const VideoParticipant = ({ participant, className = "", flipX, translate }: Vid
             )}
 
             {/* status items */}
-            <div className="absolute bottom-2 left-2 px-3 py-2 bg-black/50 flex justify-bedtween items-center space-x-2 rounded-[20px]">
-                <div className="text-white truncate max-w-full">
+            <div className="absolute bottom-2 left-2 px-3 py-2 bg-black/70 backdrop-blur-sm flex justify-between items-center space-x-2 rounded-[20px]">
+                <div className="text-white text-sm font-medium truncate max-w-full">
                     {name} {local ? ` (${translate("meet.meeting.videoParticipants.you")})` : ""}
                 </div>
                 <div className="flex space-x-2 justify-center items-center">

@@ -39,32 +39,21 @@ const GalleryVideoWrapper = ({ videoMode, t }: GalleryVideoWrapperProps) => {
         <div className="h-full w-full bg-gray-950" style={contStyle}>
             <AudioTracksContainer />
             {hasScreenShare && (
-                <div className="absolute inset-0 z-[99] flex bg-gray-950 gap-4 p-4">
-                    <div className="flex-1 flex items-center justify-center bg-gray-900 rounded-lg overflow-hidden">
+                <div className="absolute h-full items-center inset-0 z-[99] flex bg-gray-950 gap-4 p-4">
+                    <div className="flex-1 flex h-full items-center justify-center">
                         {screenShareParticipants.map((participant) => (
-                            <div key={participant.id} className="relative w-full h-full">
-                                {participant.videoEnabled && participant.videoTrack ? (
-                                    <Video
-                                        videoTrack={participant.videoTrack}
-                                        className="w-full h-full object-contain"
-                                        encodeVideo={false}
-                                        id={`screenshare-${participant.id}`}
-                                    />
-                                ) : (
-                                    <div className="flex items-center justify-center w-full h-full">
-                                        <div className="text-gray-400 text-lg">
-                                            {t("meet.meeting.screenShare.loading")}
-                                        </div>
-                                    </div>
-                                )}
-                                <div className="absolute bottom-4 left-4 px-3 py-2 bg-black/70 text-white text-sm rounded-lg backdrop-blur-sm">
-                                    {participant.name}
-                                </div>
-                            </div>
+                            <VideoParticipant
+                                key={participant.id}
+                                participant={participant}
+                                className="w-full h-5/6 bg-black"
+                                translate={t}
+                                flipX={false}
+                                isScreenShare={true}
+                            />
                         ))}
                     </div>
 
-                    <div className="w-80 flex flex-col gap-3 overflow-y-auto">
+                    <div className="w-80 h-5/6 flex flex-col gap-3 overflow-y-auto">
                         {participants.map((participant) => (
                             <div key={participant.id} className="flex-shrink-0">
                                 <VideoParticipant
