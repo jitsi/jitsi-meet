@@ -906,6 +906,11 @@ function initCommands() {
                 backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
                 virtualSource: backgroundImage
             }, jitsiTrack));
+        },
+        'set-participant-property': (key, value) => {
+            const conference = getCurrentConference(APP.store.getState());
+
+            conference.setLocalParticipantProperty(key, value);
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -1107,6 +1112,15 @@ function initCommands() {
 
             dispatch(showDesktopPicker(options, onSourceChoose));
 
+            break;
+        }
+        case 'get-participant-property': {
+            const { participantId, key } = request;
+
+            const conference = getCurrentConference(APP.store.getState());
+            const participant = conference?.getParticipantById(participantId);
+
+            callback(participant?.getProperty(key) || '');
             break;
         }
         default:
