@@ -59,6 +59,20 @@ deploy-appbundle:
 		$(BUILD_DIR)/close3.min.js \
 		$(BUILD_DIR)/close3.min.js.map \
 		$(DEPLOY_DIR) || true
+	cp \
+		$(BUILD_DIR)/excalidraw.min.js \
+		$(BUILD_DIR)/excalidraw.min.js.map \
+		$(BUILD_DIR)/rnnoise.min.js \
+		$(BUILD_DIR)/rnnoise.min.js.map \
+		$(BUILD_DIR)/ts-ebml.min.js \
+		$(BUILD_DIR)/ts-ebml.min.js.map \
+		$(BUILD_DIR)/zxcvbn.min.js \
+		$(BUILD_DIR)/zxcvbn.min.js.map \
+		$(BUILD_DIR)/vendor.min.js \
+		$(BUILD_DIR)/vendor.min.js.map \
+		$(BUILD_DIR)/react.min.js \
+		$(BUILD_DIR)/react.min.js.map \
+		$(DEPLOY_DIR) || true
 
 deploy-lib-jitsi-meet:
 	cp \
