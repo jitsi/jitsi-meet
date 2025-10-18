@@ -6,7 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconInfo, IconMessage, IconShareDoc, IconSubtitles } from '../../../base/icons/svg';
-import { getLocalParticipant, getRemoteParticipants } from '../../../base/participants/functions';
+import { getLocalParticipant, getRemoteParticipants, isPrivateChatEnabledSelf } from '../../../base/participants/functions';
 import Select from '../../../base/ui/components/web/Select';
 import Tabs from '../../../base/ui/components/web/Tabs';
 import { arePollsDisabled } from '../../../conference/functions.any';
@@ -242,6 +242,7 @@ const Chat = ({
     } = useSelector((state: IReduxState) => state['features/base/config']);
     const privateMessageRecipient = useSelector((state: IReduxState) => state['features/chat'].privateMessageRecipient);
     const participants = useSelector(getRemoteParticipants);
+    const isPrivateChatAllowed = useSelector((state: IReduxState) => isPrivateChatEnabledSelf(state));
 
     const options = useMemo(() => {
         const o = Array.from(participants?.values() || [])
@@ -431,12 +432,14 @@ const Chat = ({
                     <MessageContainer
                         messages = { _messages } />
                     <MessageRecipient />
-                    <Select
-                        containerClassName = { cx(classes.privateMessageRecipientsList) }
-                        id = 'select-chat-recipient'
-                        onChange = { onSelectedRecipientChange }
-                        options = { options }
-                        value = { privateMessageRecipient?.id || OPTION_GROUPCHAT } />
+                    {isPrivateChatAllowed && (
+                        <Select
+                            containerClassName = { cx(classes.privateMessageRecipientsList) }
+                            id = 'select-chat-recipient'
+                            onChange = { onSelectedRecipientChange }
+                            options = { options }
+                            value = { privateMessageRecipient?.id || OPTION_GROUPCHAT } />
+                    )}
                     <ChatInput
                         onSend = { onSendMessage } />
                 </div>
