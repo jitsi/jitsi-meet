@@ -1,3 +1,4 @@
+import { querySelector, querySelectorAll } from '@jitsi/js-utils/polyfills/querySelectorPolyfill';
 import { DOMParser } from '@xmldom/xmldom';
 import { atob, btoa } from 'abab';
 import { NativeModules, Platform } from 'react-native';
@@ -8,7 +9,6 @@ import 'promise.withresolvers/auto'; // Promise.withResolvers.
 import 'react-native-url-polyfill/auto'; // Complete URL polyfill.
 
 import Storage from './Storage';
-import { querySelector, querySelectorAll } from './querySelectorPolyfill';
 
 const { AppInfo } = NativeModules;
 
@@ -193,7 +193,7 @@ const { AppInfo } = NativeModules;
         // - lib-jitsi-meet -> XMLUtils.ts -> parseXML
         if (typeof document.querySelector === 'undefined') {
             document.querySelector = function(selectors) {
-                return this.documentElement ? querySelector(this.documentElement, selectors) : null;
+                return querySelector(this, selectors);
             };
         }
 
@@ -203,7 +203,7 @@ const { AppInfo } = NativeModules;
         // - lib-jitsi-meet -> XMLUtils.ts -> parseXML
         if (typeof document.querySelectorAll === 'undefined') {
             document.querySelectorAll = function(selectors) {
-                return this.documentElement ? querySelectorAll(this.documentElement, selectors) : [];
+                return querySelectorAll(this, selectors);
             };
         }
 
@@ -217,7 +217,7 @@ const { AppInfo } = NativeModules;
             // - lib-jitsi-meet -> XMLUtils.ts -> parseXML
             if (typeof documentPrototype.querySelector === 'undefined') {
                 documentPrototype.querySelector = function(selectors) {
-                    return this.documentElement ? querySelector(this.documentElement, selectors) : null;
+                    return querySelector(this, selectors);
                 };
             }
 
@@ -227,7 +227,7 @@ const { AppInfo } = NativeModules;
             // - lib-jitsi-meet -> XMLUtils.ts -> parseXML
             if (typeof documentPrototype.querySelectorAll === 'undefined') {
                 documentPrototype.querySelectorAll = function(selectors) {
-                    return this.documentElement ? querySelectorAll(this.documentElement, selectors) : [];
+                    return querySelectorAll(this, selectors);
                 };
             }
         }
