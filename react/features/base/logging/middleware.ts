@@ -71,10 +71,12 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
-function _appWillMount({ getState }: IStore, next: Function, action: AnyAction) {
-    const { config } = getState()['features/base/logging'];
+function _appWillMount(store: IStore, next: Function, action: AnyAction) {
+    const { config } = store.getState()['features/base/logging'];
 
     _setLogLevels(Logger, config);
+
+    _initEarlyLogging(store);
 
     // FIXME Until the logic of conference.js is rewritten into the React
     // app we, JitsiMeetJS.init is to not be used for the React app.
@@ -83,6 +85,32 @@ function _appWillMount({ getState }: IStore, next: Function, action: AnyAction) 
     typeof APP === 'undefined' || _setLogLevels(JitsiMeetJS, config);
 
     return next(action);
+}
+
+/**
+ * Create the LogCollector and register it as the global log transport. It
+ * is done early to capture as much logs as possible. Captured logs will be
+ * cached, before the JitsiMeetLogStorage gets ready (RTCStats trace is
+ * available).
+ *
+ * @param {Store} store - The Redux store in which context the early logging is to be
+ * initialized.
+ * @private
+ * @returns {void}
+ */
+function _initEarlyLogging({ dispatch, getState }: IStore) {
+    const { logCollector } = getState()['features/base/logging'];
+
+    if (!logCollector) {
+        // Create the LogCollector with minimal configuration
+        // Use default values since config is not available yet
+        const _logCollector = new Logger.LogCollector(new JitsiMeetLogStorage(getState), {});
+
+        Logger.addGlobalTransport(_logCollector as any);
+        _logCollector.start();
+
+        dispatch(setLogCollector(_logCollector));
+    }
 }
 
 /**
@@ -143,56 +171,107 @@ function _conferenceJoined({ getState }: IStore, next: Function, action: AnyActi
  */
 function _initLogging({ dispatch, getState }: IStore,
         loggingConfig: any, isTestingEnabled: boolean) {
-    const { logCollector } = getState()['features/base/logging'];
+    const state = getState();
+    const { analytics: { rtcstatsLogFlushSizeBytes } = {}, apiLogLevels } = state['features/base/config'];
+    const { logCollector } = state['features/base/logging'];
+    const { disableLogCollector } = loggingConfig;
 
-    // Create the LogCollector and register it as the global log transport. It
-    // is done early to capture as much logs as possible. Captured logs will be
-    // cached, before the JitsiMeetLogStorage gets ready (RTCStats trace is
-    // available).
-    if (!logCollector && !loggingConfig.disableLogCollector) {
-        const { apiLogLevels, analytics: { rtcstatsLogFlushSizeBytes } = {} } = getState()['features/base/config'];
+    if (disableLogCollector) {
+        _disableLogCollector(logCollector, dispatch);
 
-        // The smaller the flush size the smaller the chance of losing logs, but
-        // the more often the logs will be sent to the server, by default the LogCollector
-        // will set once the logs reach 10KB or 30 seconds have passed since the last flush,
-        // this means if something happens between that interval and the logs don't get flushed
-        // they will be lost, for instance the meeting tab is closed, the browser crashes,
-        // an uncaught exception happens, etc.
-        // If undefined is passed the default values will be used,
-        const _logCollector = new Logger.LogCollector(new JitsiMeetLogStorage(getState), {
-            maxEntryLength: rtcstatsLogFlushSizeBytes
-        });
-
-        if (apiLogLevels && Array.isArray(apiLogLevels) && typeof APP === 'object') {
-            const transport = buildExternalApiLogTransport(apiLogLevels);
-
-            Logger.addGlobalTransport(transport);
-            JitsiMeetJS.addGlobalLogTransport(transport);
-        }
-
-        Logger.addGlobalTransport(_logCollector);
-
-        _logCollector.start();
-
-        dispatch(setLogCollector(_logCollector));
-
-        // The JitsiMeetInMemoryLogStorage can not be accessed on mobile through
-        // the 'executeScript' method like it's done in torture tests for WEB.
-        if (isTestingEnabled && typeof APP === 'object') {
-            APP.debugLogs = new JitsiMeetInMemoryLogStorage();
-            const debugLogCollector = new Logger.LogCollector(
-                APP.debugLogs, { storeInterval: 1000 });
-
-            Logger.addGlobalTransport(debugLogCollector);
-            JitsiMeetJS.addGlobalLogTransport(debugLogCollector);
-            debugLogCollector.start();
-        }
-    } else if (logCollector && loggingConfig.disableLogCollector) {
-        Logger.removeGlobalTransport(logCollector);
-        JitsiMeetJS.removeGlobalLogTransport(logCollector);
-        logCollector.stop();
-        dispatch(setLogCollector(undefined));
+        return;
     }
+
+    _setupExternalApiTransport(apiLogLevels);
+    _setupDebugLogging(isTestingEnabled);
+    _configureLogCollector(logCollector, rtcstatsLogFlushSizeBytes);
+}
+
+/**
+ * Sets up external API log transport if configured.
+ *
+ * @param {Array} apiLogLevels - The API log levels configuration.
+ * @private
+ * @returns {void}
+ */
+function _setupExternalApiTransport(apiLogLevels: any) {
+    if (apiLogLevels && Array.isArray(apiLogLevels) && typeof APP === 'object') {
+        const transport = buildExternalApiLogTransport(apiLogLevels);
+
+        Logger.addGlobalTransport(transport);
+        JitsiMeetJS.addGlobalLogTransport(transport);
+    }
+}
+
+/**
+ * Sets up debug logging for testing mode.
+ *
+ * @param {boolean} isTestingEnabled - Whether testing mode is enabled.
+ * @private
+ * @returns {void}
+ */
+function _setupDebugLogging(isTestingEnabled: boolean) {
+    // The JitsiMeetInMemoryLogStorage cannot be accessed on mobile through
+    // the 'executeScript' method like it's done in torture tests for WEB.
+    if (!isTestingEnabled || typeof APP !== 'object') {
+        return;
+    }
+
+    APP.debugLogs = new JitsiMeetInMemoryLogStorage();
+    const debugLogCollector = new Logger.LogCollector(
+        APP.debugLogs, 
+        { storeInterval: 1000 }
+    );
+
+    Logger.addGlobalTransport(debugLogCollector);
+    JitsiMeetJS.addGlobalLogTransport(debugLogCollector);
+    debugLogCollector.start();
+}
+
+/**
+ * Configures the existing log collector with flush size settings.
+ *
+ * @param {Object} logCollector - The log collector instance.
+ * @param {number|undefined} rtcstatsLogFlushSizeBytes - The flush size in bytes.
+ * @private
+ * @returns {void}
+ */
+function _configureLogCollector(logCollector: any, rtcstatsLogFlushSizeBytes: number | undefined) {
+
+    // Log collector should be available at this point, as we initialize it early at appMount in
+    // order for it to capture and cache as many logs as possible with it's default behavior.
+    // We then update it's settings here after the config is in it's final form.
+    // Data will only be sent to the server once the RTCStats trace is available, if it's available.
+    if (!logCollector) {
+        return;
+    }
+
+    // The smaller the flush size, the smaller the chance of losing logs, but
+    // the more often the logs will be sent to the server. By default, the LogCollector
+    // will flush once the logs reach 10KB or 30 seconds have passed since the last flush.
+    // This means if something happens between that interval and the logs don't get flushed,
+    // they will be lost (e.g., meeting tab is closed, browser crashes, uncaught exception).
+    // If undefined is passed, the default values will be used.
+    logCollector.maxEntryLength = rtcstatsLogFlushSizeBytes;
+}
+
+/**
+ * Disables and cleans up the log collector.
+ *
+ * @param {Object} logCollector - The log collector instance.
+ * @param {Function} dispatch - The Redux dispatch function.
+ * @private
+ * @returns {void}
+ */
+function _disableLogCollector(logCollector: any, dispatch: Function) {
+    if (!logCollector) {
+        return;
+    }
+
+    Logger.removeGlobalTransport(logCollector);
+    JitsiMeetJS.removeGlobalLogTransport(logCollector);
+    logCollector.stop();
+    dispatch(setLogCollector(undefined));
 }
 
 /**
