@@ -73,10 +73,18 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
     for (const screenshare of screenShareParticipants) {
         const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
 
-        remoteParticipants.delete(ownerId);
-        remoteParticipants.delete(screenshare);
         speakers.delete(ownerId);
     }
+
+    // Calculate the number of slots available for active speakers and then sort them alphabetically to ensure
+    // consistent order.
+    const numberOfActiveSpeakerSlots
+        = visibleRemoteParticipants.size - screenShareParticipants.length - sharedVideos.length;
+    const activeSpeakersDisplayed = _takeFirstN(speakers, numberOfActiveSpeakerSlots)
+        .sort((a: string, b: string) => {
+            return (getParticipantById(state, a)?.name ?? defaultRemoteDisplayName)
+                .localeCompare(getParticipantById(state, b)?.name ?? defaultRemoteDisplayName);
+        });
 
     for (const sharedVideo of sharedVideos) {
         remoteParticipants.delete(sharedVideo);
@@ -84,22 +92,13 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
     for (const speaker of speakers.keys()) {
         remoteParticipants.delete(speaker);
     }
-
-    // Calculate the number of slots available for active speakers and then sort them alphabetically to ensure
-    // consistent order.
-    const numberOfActiveSpeakerSlots
-        = visibleRemoteParticipants.size - (screenShareParticipants.length * 2) - sharedVideos.length;
-    const activeSpeakersDisplayed = _takeFirstN(speakers, numberOfActiveSpeakerSlots)
-        .sort((a: string, b: string) => {
-            return (getParticipantById(state, a)?.name ?? defaultRemoteDisplayName)
-                .localeCompare(getParticipantById(state, b)?.name ?? defaultRemoteDisplayName);
-        });
-
     const participantsWithScreenShare = screenShareParticipants.reduce<string[]>((acc, screenshare) => {
         const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
 
         acc.push(ownerId);
         acc.push(screenshare);
+        remoteParticipants.delete(ownerId);
+        remoteParticipants.delete(screenshare);
 
         return acc;
     }, []);
