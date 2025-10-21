@@ -45,10 +45,11 @@ const GalleryVideoWrapper = ({ videoMode, t }: GalleryVideoWrapperProps) => {
                             <VideoParticipant
                                 key={participant.id}
                                 participant={participant}
-                                className="w-full h-5/6 bg-black"
+                                className="w-full h-5/6"
                                 translate={t}
                                 flipX={false}
                                 isScreenShare={true}
+                                backgroundColor="bg-black"
                             />
                         ))}
                     </div>
