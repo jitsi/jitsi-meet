@@ -366,7 +366,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
             // make sure all browsers are at the main app in iframe (if used), so we collect debug info
             await Promise.all(multiremotebrowser.instances.map(async (instance: string) => {
                 // @ts-ignore
-                await ctx[instance].switchToIFrame();
+                await ctx[instance]?.switchToIFrame();
             }));
 
             const allProcessing: Promise<any>[] = [];

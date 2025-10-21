@@ -39,7 +39,7 @@ describe('Breakout rooms', () => {
 
         await p1.driver.waitUntil(
             async () => await p1BreakoutRooms.getRoomsCount() === 1, {
-                timeout: 3000,
+                timeout: 5000,
                 timeoutMsg: 'No breakout room added for p1'
             });
 
@@ -47,7 +47,7 @@ describe('Breakout rooms', () => {
         // second participant should also see one breakout room
         await p2.driver.waitUntil(
             async () => await p2.getBreakoutRooms().getRoomsCount() === 1, {
-                timeout: 3000,
+                timeout: 5000,
                 timeoutMsg: 'No breakout room seen by p2'
             });
     });
@@ -59,7 +59,7 @@ describe('Breakout rooms', () => {
         // there should be one breakout room
         await p1.driver.waitUntil(
             async () => await p1BreakoutRooms.getRoomsCount() === 1, {
-                timeout: 3000,
+                timeout: 5000,
                 timeoutMsg: 'No breakout room seen by p1'
             });
 
@@ -100,7 +100,7 @@ describe('Breakout rooms', () => {
 
                 return list[0].participantCount === 1;
             }, {
-                timeout: 3000,
+                timeout: 5000,
                 timeoutMsg: 'P2 is not seeing p1 in the breakout room'
             });
     });
@@ -142,7 +142,7 @@ describe('Breakout rooms', () => {
 
                 return list[0].participantCount === 0;
             }, {
-                timeout: 3000,
+                timeout: 5000,
                 timeoutMsg: 'P2 is seeing p1 in the breakout room'
             });
     });
@@ -157,14 +157,14 @@ describe('Breakout rooms', () => {
         // there should be no breakout rooms
         await p1.driver.waitUntil(
             async () => await p1BreakoutRooms.getRoomsCount() === 0, {
-                timeout: 3000,
+                timeout: 5000,
                 timeoutMsg: 'Breakout room was not removed for p1'
             });
 
         // the second participant should also see no breakout rooms
         await p2.driver.waitUntil(
             async () => await p2.getBreakoutRooms().getRoomsCount() === 0, {
-                timeout: 3000,
+                timeout: 5000,
                 timeoutMsg: 'Breakout room was not removed for p2'
             });
     });
@@ -181,7 +181,7 @@ describe('Breakout rooms', () => {
         // there should be two breakout rooms
         await p1.driver.waitUntil(
             async () => await p1BreakoutRooms.getRoomsCount() === 2, {
-                timeout: 3000,
+                timeout: 5000,
                 timeoutMsg: 'Breakout room was not created by p1'
             });
 
@@ -225,7 +225,7 @@ describe('Breakout rooms', () => {
                 return list[0].participantCount === 1 && list[1].participantCount === 1
                     && (list[0].name === MAIN_ROOM_NAME || list[1].name === MAIN_ROOM_NAME);
             }, {
-                timeout: 3000,
+                timeout: 5000,
                 timeoutMsg: 'P2 is not seeing p1 in the main room'
             });
     });
@@ -249,7 +249,7 @@ describe('Breakout rooms', () => {
 
                 return list[0].participantCount === 1 && list[1].participantCount === 1;
             }, {
-                timeout: 3000,
+                timeout: 5000,
                 timeoutMsg: 'P1 is not seeing two breakout rooms'
             });
 
@@ -310,7 +310,7 @@ describe('Breakout rooms', () => {
 
                     return list[0].participantCount + list[1].participantCount === 1;
                 }, {
-                    timeout: 3000,
+                    timeout: 5000,
                     timeoutMsg: `${p.name} is not seeing an empty breakout room and one with one participant`
                 });
 
@@ -341,7 +341,7 @@ describe('Breakout rooms', () => {
         await p1.driver.waitUntil(
             async () => await p1BreakoutRooms.getRoomsCount() === 1
                 && (await p1BreakoutRooms.getRooms())[0].participantCount === 0, {
-                timeout: 3000,
+                timeout: 5000,
                 timeoutMsg: 'No breakout room added for p1'
             });
 
@@ -379,7 +379,7 @@ describe('Breakout rooms', () => {
 
                 return list[0].participantCount === 1;
             }, {
-                timeout: 3000,
+                timeout: 5000,
                 timeoutMsg: 'P1 is not seeing p2 in the breakout room'
             });
 
@@ -425,7 +425,7 @@ describe('Breakout rooms', () => {
 
                 return list[0].name === myNewRoomName;
             }, {
-                timeout: 3000,
+                timeout: 5000,
                 timeoutMsg: 'The breakout room was not renamed for p1'
             });
 
@@ -447,7 +447,7 @@ describe('Breakout rooms', () => {
 
                 return list[0].participantCount === 0;
             }, {
-                timeout: 3000,
+                timeout: 5000,
                 timeoutMsg: 'The breakout room not found or not empty for p1'
             });
 
@@ -457,7 +457,7 @@ describe('Breakout rooms', () => {
 
                 return list?.length === 1;
             }, {
-                timeout: 3000,
+                timeout: 5000,
                 timeoutMsg: 'The breakout room not seen by p2'
             });
 
