@@ -67,7 +67,21 @@ describe('Desktop sharing', () => {
         // Check if a remote screen share tile is created on all participants.
         await checkForScreensharingTile(p2, p1);
         await checkForScreensharingTile(p2, p2);
-        await checkForScreensharingTile(p2, p2);
+        await checkForScreensharingTile(p2, p3);
+
+        // Verify that all participant camera tiles remain visible in filmstrip
+        const p2EndpointId = await p2.getEndpointId();
+        const p3EndpointId = await p3.getEndpointId();
+
+        // Check from p1's perspective that camera tiles are visible
+        await p1.driver.$(`//span[@id='participant_${p2EndpointId}']`).waitForDisplayed({
+            timeout: 3_000,
+            timeoutMsg: 'P2 camera tile should be visible on P1 during screenshare'
+        });
+        await p1.driver.$(`//span[@id='participant_${p3EndpointId}']`).waitForDisplayed({
+            timeout: 3_000,
+            timeoutMsg: 'P3 camera tile should be visible on P1 during P2 screenshare'
+        });
 
         expect(await p3.execute(() => JitsiMeetJS.app.testing.isLargeVideoReceived())).toBe(true);
     });

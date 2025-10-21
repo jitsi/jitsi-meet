@@ -84,16 +84,23 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
     for (const speaker of speakers.keys()) {
         remoteParticipants.delete(speaker);
     }
+    let activeSpeakersDisplayed: string[] = [];
 
-    // Calculate the number of slots available for active speakers and then sort them alphabetically to ensure
-    // consistent order.
-    const numberOfActiveSpeakerSlots
-        = visibleRemoteParticipants.size - (screenShareParticipants.length * 2) - sharedVideos.length;
-    const activeSpeakersDisplayed = _takeFirstN(speakers, numberOfActiveSpeakerSlots)
-        .sort((a: string, b: string) => {
-            return (getParticipantById(state, a)?.name ?? defaultRemoteDisplayName)
-                .localeCompare(getParticipantById(state, b)?.name ?? defaultRemoteDisplayName);
-        });
+    // Do not re-sort the active speakers if dominant speaker is currently visible.
+    if (dominant?.local || (dominantSpeaker && visibleRemoteParticipants.has(dominantSpeaker))) {
+        activeSpeakersDisplayed = Array.from(speakers);
+    } else {
+        // Calculate the number of slots available for active speakers and then sort them alphabetically to ensure
+        // consistent order.
+        const numberOfActiveSpeakerSlots
+            = visibleRemoteParticipants.size - (screenShareParticipants.length * 2) - sharedVideos.length;
+
+        activeSpeakersDisplayed = _takeFirstN(speakers, numberOfActiveSpeakerSlots)
+            .sort((a: string, b: string) => {
+                return (getParticipantById(state, a)?.name ?? defaultRemoteDisplayName)
+                    .localeCompare(getParticipantById(state, b)?.name ?? defaultRemoteDisplayName);
+            });
+    }
 
     const participantsWithScreenShare = screenShareParticipants.reduce<string[]>((acc, screenshare) => {
         const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
