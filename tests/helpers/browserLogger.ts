@@ -45,6 +45,25 @@ export function getLogs(driver: WebdriverIO.Browser) {
 }
 
 /**
+ * Appends value to the log file.
+ * @param {WebdriverIO.Browser} driver - The driver which log file is requested.
+ * @param {string} value - The content to add to the file.
+ */
+export function saveLogs(driver: WebdriverIO.Browser, value: string) {
+    // @ts-ignore
+    if (!driver.logFile) {
+        return;
+    }
+
+    try {
+        // @ts-ignore
+        fs.appendFileSync(driver.logFile, value);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+/**
  * Logs a message in the logfile.
  *
  * @param {WebdriverIO.Browser} driver - The participant in which log file to write.
