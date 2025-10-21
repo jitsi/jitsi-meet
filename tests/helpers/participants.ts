@@ -34,11 +34,11 @@ export async function ensureOneParticipant(
  * @returns {Promise<void>}
  */
 export async function ensureThreeParticipants(options?: IJoinOptions): Promise<void> {
-    await ensureOneParticipant(options);
+    // await ensureOneParticipant(options);
 
     // these need to be all, so we get the error when one fails
     await Promise.all([
-        joinParticipant({ name: P2 }, options),
+        // joinParticipant({ name: P2 }, options),
         joinParticipant({ name: P3 }, options)
     ]);
 
@@ -46,16 +46,16 @@ export async function ensureThreeParticipants(options?: IJoinOptions): Promise<v
         return Promise.resolve();
     }
 
-    await Promise.all([
-        ctx.p1.waitForIceConnected(),
-        ctx.p2.waitForIceConnected(),
-        ctx.p3.waitForIceConnected()
-    ]);
-    await Promise.all([
-        ctx.p1.waitForSendReceiveData().then(() => ctx.p1.waitForRemoteStreams(1)),
-        ctx.p2.waitForSendReceiveData().then(() => ctx.p2.waitForRemoteStreams(1)),
-        ctx.p3.waitForSendReceiveData().then(() => ctx.p3.waitForRemoteStreams(1)),
-    ]);
+    // await Promise.all([
+    //     ctx.p1.waitForIceConnected(),
+    //     ctx.p2.waitForIceConnected(),
+    //     ctx.p3.waitForIceConnected()
+    // ]);
+    // await Promise.all([
+    //     ctx.p1.waitForSendReceiveData().then(() => ctx.p1.waitForRemoteStreams(1)),
+    //     ctx.p2.waitForSendReceiveData().then(() => ctx.p2.waitForRemoteStreams(1)),
+    //     ctx.p3.waitForSendReceiveData().then(() => ctx.p3.waitForRemoteStreams(1)),
+    // ]);
 }
 
 /**
@@ -173,6 +173,9 @@ async function joinParticipant( // eslint-disable-line max-params
         }
 
         if (await p.isInMuc()) {
+
+            console.log('return because it is in muc', p.name);
+
             return p;
         }
 

@@ -119,7 +119,7 @@ class BreakoutRoom extends BasePageObject {
 
         await listItem.click();
 
-        const button = listItem.$(`aria/${MORE_LABEL}`);
+        const button = listItem.$(`button[title="${MORE_LABEL}"]`);
 
         await button.waitForClickable();
         await button.click();
@@ -140,7 +140,36 @@ export default class BreakoutRooms extends BasePageObject {
             await participantsPane.open();
         }
 
-        return await this.participant.driver.$$(`.${BREAKOUT_ROOMS_CLASS}`).length;
+        // 2025-10-21T16:28:20.737Z INFO webdriver: BIDI RESULT {"id":48,"result":{"nodes":[{"sharedId":"f.CC595D3B0EA529D11DA54EA54EC8E1A9.d.AC4B929B2F37714F6A7D1AFFBDAC2B04.e.103","type":"node","value":{"attributes":{"class":"css-169oaf-participantsPane","id":"participants-pane"},"childNodeCount":3,"localName":"div","namespaceURI":"http://www.w3.org/1999/xhtml","nodeType":1,"shadowRoot":null}}]},"type":"success"}
+        //
+        //
+        //
+        // start query 2025-10-21T16:28:28.875Z
+        // end query 2025-10-21T16:28:28.875Z
+        // 2025-10-21T16:28:20.738Z INFO webdriver: BIDI COMMAND script.callFunction {"functionDeclaration":"<Function1111[function anonymous(\n) {\nreturn (/* __wdio script__ */function anonymous(\n) {\nconsole.log(\"start query\", new Date().toISOString()); const res = document.querySelectorAll(`#participants-pane .breakout-room-container`).length; console.log(\"end query\",new Date().toISOString()); return res;\n}/* __wdio script end__ */).apply(this, arguments);\n} bytes] anonymous>","awaitPromise":true,"arguments":[],"target":{"context":"CC595D3B0EA529D11DA54EA54EC8E1A9"}}
+        // 2025-10-21T16:28:29.080Z INFO webdriver: BIDI RESULT {"id":49,"result":{"realm":"4934028136633545550.-854534272777004590","result":{"type":"number","value":2},"type":"success"},"type":"success"}
+        //
+        //
+        //
+        //
+        // 2025-10-21T16:28:29.086Z INFO webdriver: BIDI COMMAND browsingContext.locateNodes {"locator":{"type":"css","value":"#participants-pane .breakout-room-container"},"context":"CC595D3B0EA529D11DA54EA54EC8E1A9"}
+
+
+// [8546:62532126:1021/140916.958361:INFO:CONSOLE:12] "start query 2025-10-21T19:09:16.958Z", source:  (12)
+// [8546:62532126:1021/140916.958526:INFO:CONSOLE:12] "end query 2025-10-21T19:09:16.958Z", source:  (12)
+
+
+
+        const st = Date.now();
+
+        console.log(`${new Date().toISOString()} took: start query`);
+        // const b = await this.participant.driver.$$(`#participants-pane .${BREAKOUT_ROOMS_CLASS}`).length;
+        const b = await this.participant.driver.execute(
+            'console.log("start query", new Date().toISOString()); const res = document.querySelectorAll(`#participants-pane .breakout-room-container`).length; console.log("end query",new Date().toISOString()); return res;');
+
+        console.log(`${new Date().toISOString()} took: `, Date.now() - st, 'ms to get breakout rooms count: ', b, this.participant.name, this.participant.driver.sessionId);
+
+        return b;
     }
 
     /**
@@ -153,7 +182,7 @@ export default class BreakoutRooms extends BasePageObject {
             await participantsPane.open();
         }
 
-        const addBreakoutButton = this.participant.driver.$(`aria/${ADD_BREAKOUT_ROOM}`);
+        const addBreakoutButton = this.participant.driver.$(`button=${ADD_BREAKOUT_ROOM}`);
 
         await addBreakoutButton.waitForDisplayed();
         await addBreakoutButton.click();
@@ -163,7 +192,10 @@ export default class BreakoutRooms extends BasePageObject {
      * Returns all breakout rooms.
      */
     async getRooms(): Promise<BreakoutRoom[]> {
-        const rooms = this.participant.driver.$$(`.${BREAKOUT_ROOMS_CLASS}`);
+        const st = Date.now();
+        const rooms = this.participant.driver.$$(`#participants-pane .${BREAKOUT_ROOMS_CLASS}`);
+
+        console.log('took: ', Date.now() - st, 'ms to get breakout rooms');
 
         return rooms.map(async room => new BreakoutRoom(
                 this.participant, await room.$('span').getText(), await room.getAttribute('data-testid')));
@@ -179,7 +211,7 @@ export default class BreakoutRooms extends BasePageObject {
             await participantsPane.open();
         }
 
-        const leaveButton = this.participant.driver.$(`aria/${LEAVE_ROOM_LABEL}`);
+        const leaveButton = this.participant.driver.$(`button=${LEAVE_ROOM_LABEL}`);
 
         await leaveButton.isClickable();
         await leaveButton.click();
@@ -189,7 +221,7 @@ export default class BreakoutRooms extends BasePageObject {
      * Auto assign participants to breakout rooms.
      */
     async autoAssignToBreakoutRooms() {
-        const button = this.participant.driver.$(`aria/${AUTO_ASSIGN_LABEL}`);
+        const button = this.participant.driver.$(`button=${AUTO_ASSIGN_LABEL}`);
 
         await button.waitForClickable();
         await button.click();
@@ -204,7 +236,7 @@ export default class BreakoutRooms extends BasePageObject {
         await participantsPane.selectParticipant(participant);
         await participantsPane.openParticipantContextMenu(participant);
 
-        const sendButton = this.participant.driver.$(`aria/${roomName}`);
+        const sendButton = this.participant.driver.$(`button=${roomName}`);
 
         await sendButton.waitForClickable();
         await sendButton.click();

@@ -53,6 +53,9 @@ if (process.env.VIDEO_CAPTURE_FILE) {
     chromeArgs.push(`--use-file-for-fake-video-capture=${process.env.VIDEO_CAPTURE_FILE}`);
 }
 
+// chromeArgs.push('--enable-logging');
+// chromeArgs.push('--v=99');
+
 const chromePreferences = {
     'intl.accept_languages': 'en-US'
 };
@@ -224,9 +227,9 @@ export const config: WebdriverIO.MultiremoteConfig = {
             initLogger(bInstance, `${instance}-${cid}-${testName}`, TEST_RESULTS_DIR);
 
             // setup keepalive
-            keepAlive.push(setInterval(async () => {
-                await bInstance.execute(() => console.log(`${new Date().toISOString()} keep-alive`));
-            }, 20_000));
+            // keepAlive.push(setInterval(async () => {
+            //     await bInstance.execute(() => console.log(`${new Date().toISOString()} keep-alive`));
+            // }, 20_000));
 
             if (bInstance.isFirefox) {
                 return;
@@ -341,6 +344,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
             return;
         }
 
+        console.log(`${new Date().toISOString()} ---=== Start test ${test.title} ===---`);
         multiremotebrowser.instances.forEach((instance: string) => {
             logInfo(multiremotebrowser.getInstance(instance), `---=== Start test ${test.title} ===---`);
         });
@@ -355,6 +359,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
      * @returns {Promise<void>}
      */
     async afterTest(test, context, { error }) {
+        console.log(`${new Date().toISOString()}---=== End test ${test.title} ===---`);
         multiremotebrowser.instances.forEach((instance: string) =>
             logInfo(multiremotebrowser.getInstance(instance), `---=== End test ${test.title} ===---`));
 

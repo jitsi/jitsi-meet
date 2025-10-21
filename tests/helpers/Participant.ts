@@ -261,9 +261,9 @@ export class Participant {
             await this.switchToIFrame();
         }
 
-        if (!options.skipWaitToJoin) {
-            await this.waitForMucJoinedOrError();
-        }
+        // if (!options.skipWaitToJoin) {
+        //     await this.waitForMucJoinedOrError();
+        // }
 
         await this.postLoadProcess();
 
@@ -306,7 +306,7 @@ export class Participant {
             }
         }, this._name, driver.sessionId, LOG_PREFIX));
 
-        await Promise.all(parallel);
+        // await Promise.all(parallel);
     }
 
     /**
