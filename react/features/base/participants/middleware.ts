@@ -59,7 +59,8 @@ import {
     PARTICIPANT_MUTED_US,
     PARTICIPANT_UPDATED,
     RAISE_HAND_UPDATED,
-    SET_LOCAL_PARTICIPANT_RECORDING_STATUS
+    SET_LOCAL_PARTICIPANT_RECORDING_STATUS,
+    UNMUTE_REMOTE_PARTICIPANT
 } from './actionTypes';
 import {
     localParticipantIdChanged,
@@ -281,6 +282,28 @@ MiddlewareRegistry.register(store => next => action => {
         const { conference } = store.getState()['features/base/conference'];
 
         conference?.muteParticipant(action.id, action.mediaType);
+
+        // Dispatch event to external API
+        if (typeof APP !== 'undefined' && APP.API) {
+            const isAudio = action.mediaType === 'audio';
+
+            APP.API.notifyParticipantStatusChanged(action.id, isAudio, true);
+        }
+        break;
+    }
+
+    case UNMUTE_REMOTE_PARTICIPANT: {
+        const { conference } = store.getState()['features/base/conference'];
+
+        // Unmute by calling muteParticipant with false
+        conference?.muteParticipant(action.id, action.mediaType, false);
+
+        // Dispatch event to external API
+        if (typeof APP !== 'undefined' && APP.API) {
+            const isAudio = action.mediaType === 'audio';
+
+            APP.API.notifyParticipantStatusChanged(action.id, isAudio, false);
+        }
         break;
     }
 

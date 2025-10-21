@@ -125,7 +125,7 @@ import { extractYoutubeIdOrURL } from '../../react/features/shared-video/functio
 import { setRequestingSubtitles, toggleRequestingSubtitles } from '../../react/features/subtitles/actions';
 import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/functions';
 import { setTileView, toggleTileView } from '../../react/features/video-layout/actions.any';
-import { muteAllParticipants } from '../../react/features/video-menu/actions';
+import { muteAllParticipants, muteRemote, unmuteRemote } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality/actions';
 import { toggleBackgroundEffect, toggleBlurredBackgroundEffect } from '../../react/features/virtual-background/actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../react/features/virtual-background/constants';
@@ -237,6 +237,46 @@ function initCommands() {
             }
 
             APP.store.dispatch(muteAllParticipants(exclude, muteMediaType));
+        },
+        'mute-participant-audio': participantId => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                logger.error('Missing moderator rights to mute participant audio');
+
+                return;
+            }
+
+            sendAnalytics(createApiEvent('muted-participant-audio'));
+            APP.store.dispatch(muteRemote(participantId, MEDIA_TYPE.AUDIO));
+        },
+        'mute-participant-video': participantId => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                logger.error('Missing moderator rights to mute participant video');
+
+                return;
+            }
+
+            sendAnalytics(createApiEvent('muted-participant-video'));
+            APP.store.dispatch(muteRemote(participantId, MEDIA_TYPE.VIDEO));
+        },
+        'unmute-participant-audio': participantId => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                logger.error('Missing moderator rights to unmute participant audio');
+
+                return;
+            }
+
+            sendAnalytics(createApiEvent('unmuted-participant-audio'));
+            APP.store.dispatch(unmuteRemote(participantId, MEDIA_TYPE.AUDIO));
+        },
+        'unmute-participant-video': participantId => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                logger.error('Missing moderator rights to unmute participant video');
+
+                return;
+            }
+
+            sendAnalytics(createApiEvent('unmuted-participant-video'));
+            APP.store.dispatch(unmuteRemote(participantId, MEDIA_TYPE.VIDEO));
         },
         'toggle-lobby': isLobbyEnabled => {
             APP.store.dispatch(toggleLobbyMode(isLobbyEnabled));
@@ -2333,6 +2373,24 @@ class API {
         this._sendEvent({
             name: 'audio-only-changed',
             enabled
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that participant audio/video status changed.
+     *
+     * @param {string} participantId - The ID of the participant.
+     * @param {boolean} isAudio - Whether the status change is for audio.
+     * @param {boolean} isMuted - Whether the participant is muted.
+     * @returns {void}
+     */
+    notifyParticipantStatusChanged(participantId, isAudio, isMuted) {
+        const eventName = isAudio ? 'participant-audio-status-changed' : 'participant-video-status-changed';
+
+        this._sendEvent({
+            name: eventName,
+            participantId,
+            isMuted
         });
     }
 

@@ -26,7 +26,8 @@ import {
     RAISE_HAND_UPDATED,
     SCREENSHARE_PARTICIPANT_NAME_CHANGED,
     SET_LOADABLE_AVATAR_URL,
-    SET_LOCAL_PARTICIPANT_RECORDING_STATUS
+    SET_LOCAL_PARTICIPANT_RECORDING_STATUS,
+    UNMUTE_REMOTE_PARTICIPANT
 } from './actionTypes';
 import {
     DISCO_REMOTE_CONTROL_FEATURE
@@ -204,6 +205,25 @@ export function localParticipantRoleChanged(role: string) {
 export function muteRemoteParticipant(id: string, mediaType: string) {
     return {
         type: MUTE_REMOTE_PARTICIPANT,
+        id,
+        mediaType
+    };
+}
+
+/**
+ * Create an action for unmuting another participant in the conference.
+ *
+ * @param {string} id - Participant's ID.
+ * @param {MEDIA_TYPE} mediaType - The media to unmute.
+ * @returns {{
+ *     type: UNMUTE_REMOTE_PARTICIPANT,
+ *     id: string,
+ *     mediaType: MEDIA_TYPE
+ * }}
+ */
+export function unmuteRemoteParticipant(id: string, mediaType: string) {
+    return {
+        type: UNMUTE_REMOTE_PARTICIPANT,
         id,
         mediaType
     };

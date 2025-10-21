@@ -19,7 +19,7 @@ import {
     SCREENSHARE_MUTISM_AUTHORITY,
     VIDEO_MUTISM_AUTHORITY
 } from '../base/media/constants';
-import { muteRemoteParticipant } from '../base/participants/actions';
+import { muteRemoteParticipant, unmuteRemoteParticipant } from '../base/participants/actions';
 import { getRemoteParticipants } from '../base/participants/functions';
 
 import logger from './logger';
@@ -73,6 +73,24 @@ export function muteRemote(participantId: string, mediaType: MediaType) {
         const muteMediaType = mediaType === MEDIA_TYPE.SCREENSHARE ? 'desktop' : mediaType;
 
         dispatch(muteRemoteParticipant(participantId, muteMediaType));
+    };
+}
+
+/**
+ * Unmutes the remote participant with the given ID.
+ *
+ * @param {string} participantId - ID of the participant to unmute.
+ * @param {MEDIA_TYPE} mediaType - The type of the media channel to unmute.
+ * @returns {Function}
+ */
+export function unmuteRemote(participantId: string, mediaType: MediaType) {
+    return (dispatch: IStore['dispatch']) => {
+        sendAnalytics(createRemoteMuteConfirmedEvent(participantId, mediaType));
+
+        // TODO(saghul): reconcile these 2 types.
+        const unmuteMediaType = mediaType === MEDIA_TYPE.SCREENSHARE ? 'desktop' : mediaType;
+
+        dispatch(unmuteRemoteParticipant(participantId, unmuteMediaType));
     };
 }
 

@@ -1,6 +1,11 @@
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 import EventEmitter from 'events';
 
+import { MEDIA_TYPE } from '../../../react/features/base/media/constants';
+import {
+    getMutedStateByParticipantAndMediaType,
+    getParticipantById
+} from '../../../react/features/base/participants/functions';
 import { urlObjectToString } from '../../../react/features/base/util/uri';
 import {
     PostMessageTransportBackend,
@@ -46,6 +51,10 @@ const commands = {
     localSubject: 'local-subject',
     kickParticipant: 'kick-participant',
     muteEveryone: 'mute-everyone',
+    muteParticipantAudio: 'mute-participant-audio',
+    muteParticipantVideo: 'mute-participant-video',
+    unmuteParticipantAudio: 'unmute-participant-audio',
+    unmuteParticipantVideo: 'unmute-participant-video',
     overwriteConfig: 'overwrite-config',
     overwriteNames: 'overwrite-names',
     password: 'password',
@@ -145,6 +154,8 @@ const events = {
     'participant-kicked-out': 'participantKickedOut',
     'participant-left': 'participantLeft',
     'participant-role-changed': 'participantRoleChanged',
+    'participant-audio-status-changed': 'participantAudioStatusChanged',
+    'participant-video-status-changed': 'participantVideoStatusChanged',
     'participants-pane-toggled': 'participantsPaneToggled',
     'password-required': 'passwordRequired',
     'peer-connection-failure': 'peerConnectionFailure',
@@ -969,6 +980,31 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
         participantsInfo.forEach((participant, idx) => {
             participant.participantId = participantIds[idx];
+
+            // Add audio/video status information
+            // eslint-disable-next-line no-undef
+            if (typeof APP !== 'undefined' && APP.store) {
+                // eslint-disable-next-line no-undef
+                const state = APP.store.getState();
+                const participantId = participantIds[idx];
+                const participantData = getParticipantById(state, participantId);
+
+                if (participantData) {
+                    // Get mute status for audio and video
+                    participant.isAudioMuted = getMutedStateByParticipantAndMediaType(
+                        state, participantData, MEDIA_TYPE.AUDIO);
+                    participant.isVideoMuted = getMutedStateByParticipantAndMediaType(
+                        state, participantData, MEDIA_TYPE.VIDEO);
+                } else {
+                    // Default values if participant not found
+                    participant.isAudioMuted = true;
+                    participant.isVideoMuted = true;
+                }
+            } else {
+                // Default values if APP is not available
+                participant.isAudioMuted = true;
+                participant.isVideoMuted = true;
+            }
         });
 
         return participantsInfo;
@@ -1503,6 +1539,23 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     _openDesktopPicker() {
         return this._transport.sendRequest({
             name: 'open-desktop-picker'
+        });
+    }
+
+    /**
+     * Notifies about participant audio/video status changes.
+     *
+     * @param {string} participantId - The ID of the participant.
+     * @param {boolean} isAudio - Whether the status change is for audio.
+     * @param {boolean} isMuted - Whether the participant is muted.
+     * @returns {void}
+     */
+    notifyParticipantStatusChanged(participantId, isAudio, isMuted) {
+        const eventName = isAudio ? 'participant-audio-status-changed' : 'participant-video-status-changed';
+
+        this.emit(eventName, {
+            participantId,
+            isMuted
         });
     }
 }

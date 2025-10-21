@@ -53,6 +53,16 @@ export const KICK_PARTICIPANT = 'KICK_PARTICIPANT';
 export const MUTE_REMOTE_PARTICIPANT = 'MUTE_REMOTE_PARTICIPANT';
 
 /**
+ * Create an action for unmuting a remote participant.
+ *
+ * {
+ *     type: UNMUTE_REMOTE_PARTICIPANT,
+ *     id: string
+ * }
+ */
+export const UNMUTE_REMOTE_PARTICIPANT = 'UNMUTE_REMOTE_PARTICIPANT';
+
+/**
  * Action to signal that ID of participant has changed. This happens when
  * local participant joins a new conference or quits one.
  *
