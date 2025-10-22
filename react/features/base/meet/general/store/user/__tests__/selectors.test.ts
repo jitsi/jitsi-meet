@@ -127,7 +127,7 @@ describe("User Selectors", () => {
             const userId = "user-123";
             const mockState = createMockState({
                 user: {
-                    userId,
+                    uuid: userId,
                     email: "test@example.com",
                 } as unknown as User,
                 lastUpdated: 1620000000000,
