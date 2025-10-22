@@ -88,6 +88,7 @@ const GalleryVideoWrapper = ({ videoMode, t }: GalleryVideoWrapperProps) => {
                             flipX={false}
                             isScreenShare={true}
                             backgroundColor="bg-black"
+                            relativePositioning
                         />
                     </div>
 
@@ -118,6 +119,7 @@ const GalleryVideoWrapper = ({ videoMode, t }: GalleryVideoWrapperProps) => {
                                         className="w-full aspect-video"
                                         translate={t}
                                         flipX={flipX}
+                                        relativePositioning
                                     />
                                 </div>
                             ))}

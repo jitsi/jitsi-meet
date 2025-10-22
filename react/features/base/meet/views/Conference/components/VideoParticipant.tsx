@@ -16,6 +16,7 @@ export type VideoParticipantProps = {
     translate: (key: string) => string;
     isScreenShare?: boolean;
     backgroundColor?: string;
+    relativePositioning?: boolean;
 };
 
 const VideoParticipant = ({
@@ -25,6 +26,7 @@ const VideoParticipant = ({
     translate,
     isScreenShare = false,
     backgroundColor = "",
+    relativePositioning,
 }: VideoParticipantProps) => {
     const { id, name, videoEnabled, audioMuted, videoTrack, local, dominantSpeaker, raisedHand, avatarSource } =
         participant;
@@ -41,7 +43,7 @@ const VideoParticipant = ({
 
     return (
         <div
-            className={`relative flex ${
+            className={`${relativePositioning ? "relative" : ""} flex ${
                 isScreenShare ? "" : "aspect-square sm:aspect-video"
             } min-w-40 ${className} items-center justify-center rounded-[20px] overflow-hidden ${
                 !!backgroundColor ? backgroundColor : "bg-gray-90"
