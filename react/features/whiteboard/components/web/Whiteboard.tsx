@@ -59,7 +59,7 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
     const collabServerUrl = useSelector(getCollabServerUrl);
     const { defaultRemoteDisplayName } = useSelector((state: IReduxState) => state['features/base/config']);
     const localParticipantName = useSelector(getLocalParticipant)?.name || defaultRemoteDisplayName || 'Fellow Jitster';
-
+    
     useEffect(() => {
         if (!collabAPIRef.current) {
             return;
@@ -149,9 +149,7 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
                                 isCollaborating: true,
                                 langCode: i18next.language,
                                 theme: 'light',
-                                UIOptions: {
-                                    ...WHITEBOARD_UI_OPTIONS
-                                }
+                                UIOptions: WHITEBOARD_UI_OPTIONS
                             }}
                             getCollabAPI = { getCollabAPI }
                             getExcalidrawAPI = { getExcalidrawAPI } />
