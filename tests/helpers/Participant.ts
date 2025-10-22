@@ -722,32 +722,24 @@ export class Participant {
      * Hangups the participant by leaving the page. base.html is an empty page on all deployments.
      */
     async hangup() {
-        const current = await this.driver.getUrl();
+        console.log('Hanging up');
+        if ((await this.driver.getUrl()).endsWith('/base.html')) {
+            console.log('Already hung up');
 
-        // already hangup
-        if (current.endsWith('/base.html')) {
             return;
         }
 
-        // do a hangup, to make sure unavailable presence is sent
-        await this.execute(() => typeof APP !== 'undefined' && APP.conference?.hangup());
+        await this.execute(() => APP?.conference?.hangup());
 
-        // let's give it some time to leave the muc, we redirect after hangup so we should wait for the
-        // change of url
+        // Wait until _room is unset, which is one of the last things hangup() does.
         await this.driver.waitUntil(
-            async () => {
-                const u = await this.driver.getUrl();
-
-                // trying to debug some failures of reporting not leaving, where we see the close page in screenshot
-                console.log(`initialUrl: ${current} currentUrl: ${u}`);
-
-                return current !== u;
-            },
+            () => this.execute(() => APP?.conference?._room === undefined),
             {
                 timeout: 8000,
-                timeoutMsg: `${this.name} did not leave the muc in 8s initialUrl: ${current}`
+                timeoutMsg: `${this.name} failed to hang up`
             }
         );
+        console.log('Hung up');
 
         await this.driver.url('/base.html')
 
