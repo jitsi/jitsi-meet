@@ -46,7 +46,7 @@ const VideoParticipant = ({
             } min-w-40 ${className} items-center justify-center rounded-[20px] overflow-hidden ${
                 !!backgroundColor ? backgroundColor : "bg-gray-90"
             }
-            ${dominantSpeaker ? "ring-4 ring-white" : ""}`}
+            ${dominantSpeaker && !isScreenShare ? "ring-4 ring-white" : ""}`}
             data-testid={`participant-${id}`}
         >
             {videoEnabled ? (

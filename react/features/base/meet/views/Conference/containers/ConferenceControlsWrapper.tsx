@@ -16,7 +16,7 @@ import MediaControlsWrapper from "../../../general/containers/MediaControlsWrapp
 import { ConfigService } from "../../../services/config.service";
 import InviteUserModal from "../components/InviteUserModal";
 import { VideoParticipantType } from "../types";
-import { getParticipantsWithTracks } from "../utils";
+import { getParticipantsWithTracks, getScreenShareParticipants } from "../utils";
 
 interface ConferenceControlsProps extends WithTranslation {
     dispatch: any;
@@ -25,9 +25,10 @@ interface ConferenceControlsProps extends WithTranslation {
     roomID: string;
     _desktopSharingEnabled: boolean;
     _screensharing: boolean;
+    _screenShareActive: boolean;
 }
 
-const ConferenceControls = ({ dispatch, participants, _inviteUrl, t, roomID, _desktopSharingEnabled, _screensharing }: ConferenceControlsProps) => {
+const ConferenceControls = ({ dispatch, participants, _inviteUrl, t, roomID, _desktopSharingEnabled, _screensharing, _screenShareActive }: ConferenceControlsProps) => {
     const [isOpenInviteUser, setIsOpenInviteUser] = useState(false);
 
     const handleInviteUser = () => {
@@ -39,7 +40,7 @@ const ConferenceControls = ({ dispatch, participants, _inviteUrl, t, roomID, _de
     };
 
     const handleScreenShare = () => {
-        if (!_desktopSharingEnabled) {
+        if (!_desktopSharingEnabled || (_screenShareActive && !_screensharing)) {
             return;
         }
         dispatch(startScreenShareFlow(!_screensharing));
@@ -57,9 +58,11 @@ const ConferenceControls = ({ dispatch, participants, _inviteUrl, t, roomID, _de
             <div className="flex absolute bottom-5 left-2/4 -translate-x-2/4 z-[100]">
                 <div className="flex flex-row space-x-3 p-3 justify-center items-center bg-black/50 border border-white/10 rounded-full">
                     <MediaControlsWrapper />
-                    <CircleButton variant="default" onClick={handleScreenShare} active={_screensharing}>
-                        <MonitorArrowUp size={22} weight="fill" color={_screensharing ? "black" : "white"} />
-                    </CircleButton>
+                    <div className={_screenShareActive && !_screensharing ? "opacity-50 pointer-events-none" : ""}>
+                        <CircleButton variant="default" onClick={handleScreenShare} active={_screensharing}>
+                            <MonitorArrowUp size={22} weight="fill" color={_screensharing ? "black" : "white"} />
+                        </CircleButton>
+                    </div>
                     <CircleButton variant="default" onClick={handleInviteUser} active={isOpenInviteUser}>
                         <UserPlus size={22} color={isOpenInviteUser ? "black" : "white"} />
                     </CircleButton>
@@ -79,6 +82,7 @@ const ConferenceControls = ({ dispatch, participants, _inviteUrl, t, roomID, _de
 
 function mapStateToProps(state: IReduxState) {
     const participantsWithTracks = getParticipantsWithTracks(state);
+    const screenShareParticipants = getScreenShareParticipants(state);
     const desktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled();
 
     return {
@@ -87,6 +91,7 @@ function mapStateToProps(state: IReduxState) {
         roomID: state["features/base/conference"].room ?? "",
         _desktopSharingEnabled: desktopSharingEnabled,
         _screensharing: isScreenVideoShared(state),
+        _screenShareActive: screenShareParticipants.length > 0,
     };
 }
 
