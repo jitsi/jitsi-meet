@@ -8,7 +8,7 @@ export default class Visitors extends BasePageObject {
      * Returns the visitors dialog element if any.
      */
     hasVisitorsDialog() {
-        return this.participant.driver.$('aria/Joining meeting');
+        return this.participant.driver.$('div=Joining meeting');
     }
 
     /**

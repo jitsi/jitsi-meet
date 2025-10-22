@@ -106,16 +106,11 @@ export default class Notifications extends BasePageObject {
      * @private
      */
     private async closeNotification(testId: string, skipNonExisting = false) {
-        const notification = this.participant.driver.$(`[data-testid="${testId}"]`);
+        const closeButton = this.participant.driver.$('[data-testid="${testId}"] #close-notification');
 
-        if (skipNonExisting && !await notification.isExisting()) {
+        if (skipNonExisting && !await closeButton.isExisting()) {
             return Promise.resolve();
         }
-
-        await notification.waitForExist();
-        await notification.waitForStable();
-
-        const closeButton = notification.$('#close-notification');
 
         await closeButton.moveTo();
         await closeButton.click();
