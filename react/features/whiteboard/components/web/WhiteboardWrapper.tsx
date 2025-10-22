@@ -53,9 +53,7 @@ const WhiteboardWrapper = ({
                         isCollaborating: true,
                         langCode: i18next.language,
                         theme: 'light',
-                        UIOptions: {
-                            ...WHITEBOARD_UI_OPTIONS
-                        }
+                        UIOptions: WHITEBOARD_UI_OPTIONS
                     }}
                     getCollabAPI = { getCollabAPI }
                     getExcalidrawAPI = { getExcalidrawAPI } />
