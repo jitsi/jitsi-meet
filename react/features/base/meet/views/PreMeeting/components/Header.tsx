@@ -347,7 +347,7 @@ interface HeaderProps {
     navigateToHomePage: () => void;
 
     /**
-     * Optional plan name from Tier label (overrides subscription-based name)
+     * Optional plan name
      */
     planName?: string | null;
 }

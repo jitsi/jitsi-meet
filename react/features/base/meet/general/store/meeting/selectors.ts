@@ -91,6 +91,5 @@ export const getPlanName = (state: IReduxState): string | null => {
         return null;
     }
 
-    // Return the mapped friendly name, or format the technical name if not in the map
     return PLAN_NAME_MAP[planName] ?? formatPlanName(planName);
 };
