@@ -733,7 +733,15 @@ export class Participant {
 
         // Wait until _room is unset, which is one of the last things hangup() does.
         await this.driver.waitUntil(
-            () => this.execute(() => APP?.conference?._room === undefined),
+            async () => {
+                try {
+                    return await this.driver.execute(() => APP?.conference?._room === undefined);
+                } catch (e) {
+                    // There seems to be a race condition with hangup() causing the page to change, and execute()
+                    // might fail with a Bidi error. Retry.
+                    return false;
+                }
+            },
             {
                 timeout: 8000,
                 timeoutMsg: `${this.name} failed to hang up`
