@@ -22,6 +22,7 @@ import { withPixelLineHeight } from "../../../styles/functions.web";
 import MeetingButton from "../../general/containers/MeetingButton";
 import { loginSuccess, logout } from "../../general/store/auth/actions";
 import { setCreateRoomError } from "../../general/store/errors/actions";
+import { getPlanName as getPlanNameSelector } from "../../general/store/meeting/selectors";
 import { useLocalStorage } from "../../LocalStorageManager";
 import { ConfigService } from "../../services/config.service";
 import MeetingService from "../../services/meeting.service";
@@ -171,6 +172,11 @@ interface IProps extends WithTranslation {
      * Flag to indicate if supports end to end encryption.
      */
     isE2EESupported?: Function;
+
+    /**
+     * The user's plan name from Redux
+     */
+    planName?: string | null;
 }
 
 const PreMeetingScreen = ({
@@ -197,6 +203,7 @@ const PreMeetingScreen = ({
     room,
     joinRoomErrorMessage,
     createRoomErrorMessage,
+    planName,
 }: IProps) => {
     const { classes } = useStyles();
     const [isNameInputFocused, setIsNameInputFocused] = useState(false);
@@ -257,10 +264,8 @@ const PreMeetingScreen = ({
     }, []);
 
     useEffect(() => {
-        if (createRoomError)
-        setIsCreatingMeeting(false);
+        if (createRoomError) setIsCreatingMeeting(false);
     }, [createRoomError]);
-
 
     const handleNewMeeting = async () => {
         setIsCreatingMeeting(true);
@@ -338,6 +343,7 @@ const PreMeetingScreen = ({
                     }
                     navigateToHomePage={navigateToHomePage}
                     onOpenSettings={() => dispatch(openSettingsDialog(undefined, true))}
+                    planName={planName}
                 />
                 <PreMeetingModal
                     videoTrack={videoTrack}
@@ -419,6 +425,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
 
     const conference = getCurrentConference(state);
     const isE2EESupported = conference?.isE2EESupported() ?? false;
+    const planName = getPlanNameSelector(state);
 
     return {
         // For keeping backwards compat.: if we pass an empty hiddenPremeetingButtons
@@ -440,6 +447,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         createRoomErrorMessage,
         isE2EESupported,
         joiningInProgress,
+        planName,
     };
 }
 

@@ -16,4 +16,9 @@ export interface MeetingState {
      * Current active room ID (if any)
      */
     currentRoomId: string | null;
+
+    /**
+     * The name of the user's plan
+     */
+    planName: string | null;
 }

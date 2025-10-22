@@ -1,8 +1,9 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { redirectToStaticPage } from "../../../../../app/actions.any";
 import { openSettingsDialog } from "../../../../../settings/actions.web";
 import { logout } from "../../../general/store/auth/actions";
+import { getPlanName } from "../../../general/store/meeting/selectors";
 import { useLocalStorage } from "../../../LocalStorageManager";
 import Header from "../../PreMeeting/components/Header";
 import { useUserData } from "../../PreMeeting/hooks/useUserData";
@@ -15,6 +16,7 @@ interface HeaderWrapperProps {
 
 const HeaderWrapper = ({ onLogin, onSignUp, translate }: HeaderWrapperProps) => {
     const userData = useUserData();
+    const planName = useSelector(getPlanName);
     const dispatch = useDispatch();
     const localStorageManager = useLocalStorage();
     const subscription = localStorageManager.getSubscription();
@@ -44,6 +46,7 @@ const HeaderWrapper = ({ onLogin, onSignUp, translate }: HeaderWrapperProps) => 
                 onOpenSettings={() => dispatch(openSettingsDialog(undefined, true))}
                 className="z-50 py-3 flex-grow"
                 navigateToHomePage={navigateToHomePage}
+                planName={planName}
             />
         </div>
     );
