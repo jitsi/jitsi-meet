@@ -21,19 +21,40 @@
 #import "JitsiMeet+Private.h"
 #import "JitsiMeetConferenceOptions+Private.h"
 #import "JitsiMeetView+Private.h"
-#import "RCTBridgeWrapper.h"
 #import "ReactUtils.h"
 #import "ScheenshareEventEmiter.h"
 
 #import <react-native-webrtc/WebRTCModuleOptions.h>
+#import <RCTReactNativeFactory.h>
+#import <RCTDefaultReactNativeFactoryDelegate.h>
+#import <ReactAppDependencyProvider/RCTAppDependencyProvider.h>
+#import <React/RCTBundleURLProvider.h>
 
 #if !defined(JITSI_MEET_SDK_LITE)
 #import <RNGoogleSignin/RNGoogleSignin.h>
 #import "Dropbox.h"
 #endif
 
+@interface JMReactNativeFactoryDelegate : RCTDefaultReactNativeFactoryDelegate
+@end
+
+@implementation JMReactNativeFactoryDelegate
+
+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge {
+    return [self bundleURL];
+}
+
+- (NSURL *_Nullable)bundleURL {
+#if DEBUG
+    return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
+#else
+    return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+#endif
+}
+
+@end
+
 @implementation JitsiMeet {
-    RCTBridgeWrapper *_bridgeWrapper;
     NSDictionary *_launchOptions;
     ScheenshareEventEmiter *_screenshareEventEmiter;
 }
@@ -56,6 +77,11 @@
         // Initialize WebRTC options.
         self.rtcAudioDevice = nil;
         self.webRtcLoggingSeverity = WebRTCLoggingSeverityNone;
+        
+        JMReactNativeFactoryDelegate *delegate = [[JMReactNativeFactoryDelegate alloc] init];
+        delegate.dependencyProvider = [[RCTAppDependencyProvider alloc] init];
+        self.reactNativeFactory = [[RCTReactNativeFactory alloc] initWithDelegate:delegate];
+        self.dependencyProvider = delegate.dependencyProvider;
 
         // Initialize the listener for handling start/stop screensharing notifications.
         _screenshareEventEmiter = [[ScheenshareEventEmiter alloc] init];
@@ -73,9 +99,17 @@
 #pragma mark - Methods that the App delegate must call
 
 -             (BOOL)application:(UIApplication *)application
-  didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+  didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+                     moduleName:(NSString *)moduleName
+                       inWindow:(UIWindow *)window {
 
     _launchOptions = [launchOptions copy];
+    
+    // Start React Native with new architecture
+    [self.reactNativeFactory startReactNativeWithModuleName:moduleName
+                                                   inWindow:window
+                                          initialProperties:nil
+                                              launchOptions:launchOptions];
 
 #if !defined(JITSI_MEET_SDK_LITE)
     [Dropbox setAppKey];
@@ -132,22 +166,17 @@
 #pragma mark - Utility methods
 
 - (void)instantiateReactNativeBridge {
-    if (_bridgeWrapper != nil) {
-        return;
-    };
-
     // Initialize WebRTC options.
     WebRTCModuleOptions *options = [WebRTCModuleOptions sharedInstance];
     options.audioDevice = _rtcAudioDevice;
     options.loggingSeverity = (RTCLoggingSeverity)_webRtcLoggingSeverity;
 
-    // Initialize the one and only bridge for interfacing with React Native.
-    _bridgeWrapper = [[RCTBridgeWrapper alloc] init];
+
 }
 
 - (void)destroyReactNativeBridge {
-    [_bridgeWrapper invalidate];
-    _bridgeWrapper = nil;
+    [self.reactNativeFactory.bridge invalidate];
+    self.reactNativeFactory = nil;
 }
 
 - (JitsiMeetConferenceOptions *)getInitialConferenceOptions {
@@ -260,11 +289,14 @@
 - (RCTBridge *)getReactBridge {
     // Initialize bridge lazily.
     [self instantiateReactNativeBridge];
-    return _bridgeWrapper.bridge;
+    
+    // Get bridge from the new architecture factory
+    return self.reactNativeFactory.bridge;
 }
 
 - (ExternalAPI *)getExternalAPI {
-    return [_bridgeWrapper.bridge moduleForClass:ExternalAPI.class];
+    RCTBridge *bridge = [self getReactBridge];
+    return [bridge moduleForClass:ExternalAPI.class];
 }
 
 @end

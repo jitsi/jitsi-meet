@@ -27,7 +27,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             builder.setFeatureFlag("ios.recording.enabled", withBoolean: true)
         }
 
-        jitsiMeet.application(application, didFinishLaunchingWithOptions: launchOptions ?? [:])
+        let vc = ViewController()
+        self.window?.rootViewController = vc
+        
+        jitsiMeet.application(application,
+                            didFinishLaunchingWithOptions: launchOptions ?? [:],
+                            moduleName: "App",
+                              in: self.window!)
 
         if self.appContainsRealServiceInfoPlist() {
             print("Enabling Firebase")
@@ -35,8 +41,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(!jitsiMeet.isCrashReportingDisabled())
         }
 
-        let vc = ViewController()
-        self.window?.rootViewController = vc
         jitsiMeet.showSplashScreen()
 
         self.window?.makeKeyAndVisible()
