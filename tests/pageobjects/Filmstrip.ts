@@ -5,7 +5,7 @@ import BasePageObject from './BasePageObject';
 
 const LOCAL_VIDEO_XPATH = '//span[@id="localVideoContainer"]';
 const LOCAL_VIDEO_MENU_TRIGGER = '#local-video-menu-trigger';
-const LOCAL_USER_CONTROLS = 'aria/Local user controls';
+const LOCAL_USER_CONTROLS = 'button[title="Local user controls"]';
 const HIDE_SELF_VIEW_BUTTON_XPATH = '//div[contains(@class, "popover")]//div[@id="hideselfviewButton"]';
 
 /**

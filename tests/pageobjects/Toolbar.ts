@@ -33,7 +33,7 @@ export default class Toolbar extends BasePageObject {
      * @private
      */
     private getButton(accessibilityCSSSelector: string) {
-        return this.participant.driver.$(`aria/${accessibilityCSSSelector}`);
+        return this.participant.driver.$(`[aria-label="${accessibilityCSSSelector}"]`);
     }
 
     /**
@@ -248,7 +248,7 @@ export default class Toolbar extends BasePageObject {
      * @private
      */
     private async isOverflowMenuOpen() {
-        return await this.participant.driver.$$(`aria/${OVERFLOW_MENU}`).length > 0;
+        return await this.participant.driver.$$(`[aria-label="${OVERFLOW_MENU}"]`).length > 0;
     }
 
     /**
