@@ -70,17 +70,14 @@ export function saveLogs(driver: WebdriverIO.Browser, value: string) {
  * @param {string} message - The message to add.
  * @returns {void}
  */
-export function logInfo(driver: WebdriverIO.Browser, message: string) {
+export async function logInfo(driver: WebdriverIO.Browser, message: string) {
     // @ts-ignore
     if (!driver.logFile) {
         return;
     }
 
-    try {
-        // @ts-ignore
-        fs.appendFileSync(driver.logFile, `${new Date().toISOString()} ${LOG_PREFIX} ${message}\n`);
-    } catch (err) {
-        console.error(err);
-    }
+    return driver.execute((prefix, msg) =>
+        console.log(`${new Date().toISOString()} ${prefix} ${msg}\n`),
+        LOG_PREFIX, message);
 }
 

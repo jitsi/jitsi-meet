@@ -191,8 +191,8 @@ export class Participant {
      * @param {string} message - The message to log.
      * @returns {void}
      */
-    log(message: string): void {
-        logInfo(this.driver, message);
+    async log(message: string): Promise<void> {
+        await logInfo(this.driver, message);
     }
 
     /**

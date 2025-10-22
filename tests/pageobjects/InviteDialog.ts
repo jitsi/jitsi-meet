@@ -51,7 +51,7 @@ export default class InviteDialog extends BaseDialog {
 
         const fullText = await elem.getText();
 
-        this.participant.log(`Extracted text in invite dialog: ${fullText}`);
+        await this.participant.log(`Extracted text in invite dialog: ${fullText}`);
 
         return fullText.split(':')[1].trim();
     }

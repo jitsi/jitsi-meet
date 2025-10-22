@@ -272,19 +272,19 @@ describe('Active speaker', () => {
  */
 async function testActiveSpeaker(
         activeSpeaker: Participant, otherParticipant1: Participant, otherParticipant2: Participant) {
-    activeSpeaker.log(`Start testActiveSpeaker for participant: ${activeSpeaker.name}`);
+    await activeSpeaker.log(`Start testActiveSpeaker for participant: ${activeSpeaker.name}`);
 
     const speakerEndpoint = await activeSpeaker.getEndpointId();
 
     // just a debug print to go in logs
-    activeSpeaker.log('Unmuting in testActiveSpeaker');
+    await activeSpeaker.log('Unmuting in testActiveSpeaker');
 
     // Unmute
     await activeSpeaker.getToolbar().clickAudioUnmuteButton();
 
     // just a debug print to go in logs
-    otherParticipant1.log(`Participant unmuted in testActiveSpeaker ${speakerEndpoint}`);
-    otherParticipant2.log(`Participant unmuted in testActiveSpeaker ${speakerEndpoint}`);
+    await otherParticipant1.log(`Participant unmuted in testActiveSpeaker ${speakerEndpoint}`);
+    await otherParticipant2.log(`Participant unmuted in testActiveSpeaker ${speakerEndpoint}`);
 
     await activeSpeaker.getFilmstrip().assertAudioMuteIconIsDisplayed(activeSpeaker, true);
 
@@ -297,14 +297,14 @@ async function testActiveSpeaker(
         30_000); // 30 seconds
 
     // just a debug print to go in logs
-    activeSpeaker.log('Muting in testActiveSpeaker');
+    await activeSpeaker.log('Muting in testActiveSpeaker');
 
     // Mute back again
     await activeSpeaker.getToolbar().clickAudioMuteButton();
 
     // just a debug print to go in logs
-    otherParticipant1.log(`Participant muted in testActiveSpeaker ${speakerEndpoint}`);
-    otherParticipant2.log(`Participant muted in testActiveSpeaker ${speakerEndpoint}`);
+    await otherParticipant1.log(`Participant muted in testActiveSpeaker ${speakerEndpoint}`);
+    await otherParticipant2.log(`Participant muted in testActiveSpeaker ${speakerEndpoint}`);
 
     await otherParticipant1.getFilmstrip().assertAudioMuteIconIsDisplayed(activeSpeaker);
 }
