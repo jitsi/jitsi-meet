@@ -823,6 +823,11 @@
             },
             "videoParticipants": {
                 "you": "You"
+            },
+            "screenShare": {
+                "youAreSharing": "You are now sharing screen",
+                "viewing": "You are viewing {{name}} Screen",
+                "stopSharing": "Stop sharing"
             }
         },
         "permissionsModal": {

@@ -60,7 +60,11 @@ const ConferenceControls = ({ dispatch, participants, _inviteUrl, t, roomID, _de
                     <MediaControlsWrapper />
                     <div className={_screenShareActive && !_screensharing ? "opacity-50 pointer-events-none" : ""}>
                         <CircleButton variant="default" onClick={handleScreenShare} active={_screensharing}>
-                            <MonitorArrowUp size={22} weight="fill" color={_screensharing ? "black" : "white"} />
+                            <MonitorArrowUp
+                                size={22}
+                                weight={_screensharing ? "fill" : "regular"}
+                                color={_screensharing ? "black" : "white"}
+                            />
                         </CircleButton>
                     </div>
                     <CircleButton variant="default" onClick={handleInviteUser} active={isOpenInviteUser}>

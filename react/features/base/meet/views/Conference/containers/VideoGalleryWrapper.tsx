@@ -1,9 +1,11 @@
-import { CaretDown, CaretUp } from "@phosphor-icons/react";
+import { CaretDown, CaretUp, CheckCircle, MonitorArrowUp } from "@phosphor-icons/react";
 import React, { useRef, useState } from "react";
 import { WithTranslation } from "react-i18next";
 import { connect, useSelector } from "react-redux";
 import { IReduxState } from "../../../../../app/types";
 import AudioTracksContainer from "../../../../../filmstrip/components/web/AudioTracksContainer";
+import { startScreenShareFlow } from "../../../../../screen-share/actions.web";
+import { isScreenVideoShared } from "../../../../../screen-share/functions";
 import { getCurrentConference } from "../../../../conference/functions";
 import { translate } from "../../../../i18n/functions";
 import { useAspectRatio } from "../../../general/hooks/useAspectRatio";
@@ -22,9 +24,11 @@ interface MappedStateProps {
     room?: string;
 }
 
-interface GalleryVideoWrapperProps extends WithTranslation, OwnProps, MappedStateProps {}
+interface GalleryVideoWrapperProps extends WithTranslation, OwnProps, MappedStateProps {
+    dispatch: any;
+}
 
-const GalleryVideoWrapper = ({ videoMode, t }: GalleryVideoWrapperProps) => {
+const GalleryVideoWrapper = ({ videoMode, t, dispatch }: GalleryVideoWrapperProps) => {
     const { containerStyle } = useAspectRatio();
     const participantsScrollRef = useRef<HTMLDivElement>(null);
     const [canScrollUp, setCanScrollUp] = useState(false);
@@ -35,9 +39,15 @@ const GalleryVideoWrapper = ({ videoMode, t }: GalleryVideoWrapperProps) => {
     const participants = useSelector(getParticipantsWithTracks);
     const screenShareParticipants = useSelector(getScreenShareParticipants);
     const flipX = useSelector((state: IReduxState) => state["features/base/settings"].localFlipX);
+    const isLocalSharing = useSelector((state: IReduxState) => isScreenVideoShared(state));
 
     const contStyle = videoMode === "gallery" ? containerStyle : {};
     const hasScreenShare = screenShareParticipants.length > 0;
+    const sharingParticipant = screenShareParticipants[0];
+
+    const handleStopSharing = () => {
+        dispatch(startScreenShareFlow(false));
+    };
 
     const checkScrollButtons = () => {
         if (participantsScrollRef.current) {
@@ -77,8 +87,34 @@ const GalleryVideoWrapper = ({ videoMode, t }: GalleryVideoWrapperProps) => {
     return (
         <div className="h-full w-full bg-gray-950" style={contStyle}>
             <AudioTracksContainer />
+
+            {/* Screen Sharing Notification */}
             {hasScreenShare && (
-                <div className="absolute h-full items-center inset-0 z-[99] flex bg-gray-950 gap-4 p-4">
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[200]">
+                    <div className="flex items-center gap-2 px-4 py-2 bg-[#EAF9EE] border border-[#F9F9FC] text-white rounded-lg shadow-lg">
+                        {isLocalSharing ? (
+                            <MonitorArrowUp size={20} weight="fill" color="#32C356" />
+                        ) : (
+                            <CheckCircle size={20} weight="fill" color="#32C356" />
+                        )}
+                        <span className="text-base text-[#1C1C1C] font-normal">
+                            {isLocalSharing
+                                ? t("meet.meeting.screenShare.youAreSharing")
+                                : t("meet.meeting.screenShare.viewing", { name: sharingParticipant?.name })}
+                        </span>
+                        {isLocalSharing && (
+                            <button
+                                onClick={handleStopSharing}
+                                className="ml-2 text-base text-[#E50B00] font-medium hover:underline"
+                            >
+                                {t("meet.meeting.screenShare.stopSharing")}
+                            </button>
+                        )}
+                    </div>
+                </div>
+            )}
+            {hasScreenShare && (
+                <div className="absolute h-full items-center inset-0 z-50 flex bg-gray-950 gap-4 p-4">
                     <div className="flex-1 flex h-full items-center justify-center">
                         <VideoParticipant
                             key={screenShareParticipants[0].id}

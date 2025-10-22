@@ -88,10 +88,18 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore) 
                 micDeviceId,
                 resolution,
                 timeout,
-            }).catch((err: Error) => {
-                store?.dispatch({
-                    type: "SHOW_PERMISSIONS_MODAL",
-                });
+            }).catch((err: any) => {
+                // Don't show permission modal if user cancelled screen share selection
+                const isScreenShare = options.devices?.includes('desktop');
+                const isCancellation = err.name === JitsiTrackErrors.SCREENSHARING_USER_CANCELED
+                    || err.name === 'NotAllowedError'
+                    || err.message?.toLowerCase().includes('cancel');
+
+                if (!isScreenShare || !isCancellation) {
+                    store?.dispatch({
+                        type: "SHOW_PERMISSIONS_MODAL",
+                    });
+                }
                 return Promise.reject(err);
             });
         }));
