@@ -770,6 +770,11 @@
             },
             "videoParticipants": {
                 "you": "Tú"
+            },
+            "screenShare": {
+                "youAreSharing": "Estás compartiendo pantalla",
+                "viewing": "Estás viendo la pantalla de {{name}}",
+                "stopSharing": "Dejar de compartir"
             }
         },
         "permissionsModal": {

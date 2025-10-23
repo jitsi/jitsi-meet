@@ -33,11 +33,13 @@ import Header, { Mode } from "../components/Header";
 
 import { setConferenceViewMode } from "../../../../../filmstrip/actions.web";
 import { ViewMode } from "../../../../../filmstrip/reducer";
+import Toolbox from "../../../../../toolbox/components/web/Toolbox";
 import { DEFAULT_STATE } from "../../../../known-domains/reducer";
 import PersistenceRegistry from "../../../../redux/PersistenceRegistry";
 import { setCreateRoomError, setJoinRoomError } from "../../../general/store/errors/actions";
 import ConferenceControlsWrapper from "./ConferenceControlsWrapper";
 import VideoGalleryWrapper from "./VideoGalleryWrapper";
+
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need

@@ -27,7 +27,7 @@ const InviteUserModal = ({ isOpen, onClose, translate, participantsCount, invite
 
     return (
         <TransparentModal
-            className={"flex p-7 bg-black/50 border border-white/15 rounded-[20px]"}
+            className={"flex p-7 bg-black/50 border border-white/15 rounded-[20px] z-[9999]"}
             isOpen={isOpen}
             onClose={onClose}
         >
