@@ -403,7 +403,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
                     .catch(e => console.error('Failed grabbing debug logs', e)));
 
                 allProcessing.push(
-                    bInstance.execute(() => APP?.debugLogs?.logs?.join('\n')).then(res => {
+                    bInstance.execute(() => window.APP?.debugLogs?.logs?.join('\n')).then(res => {
                         if (res) {
                             saveLogs(bInstance, res);
                         }
