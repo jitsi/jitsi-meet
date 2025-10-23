@@ -96,6 +96,11 @@ function normalizeCurrentLanguage(language: string) {
         return;
     }
 
+    // First check if the language code exists as-is (e.g., 'zh-CN', 'fr-CA')
+    if (LANGUAGES.includes(language)) {
+        return language;
+    }
+
     const [ country, lang ] = language.split('-');
     const jitsiNormalized = `${country}${lang ?? ''}`;
 
