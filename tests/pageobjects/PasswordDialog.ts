@@ -40,7 +40,7 @@ export default class PasswordDialog extends BaseDialog {
         const passwordInput = this.participant.driver.$(INPUT_KEY_XPATH);
 
         await passwordInput.waitForExist();
-        await passwordInput.waitForClickable();
+        await passwordInput.waitForClickable({ timeout: 2000 });
         await passwordInput.click();
         await passwordInput.clearValue();
 
