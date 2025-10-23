@@ -700,6 +700,13 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
                 return;
             end
 
+            if always_visitors_enabled then
+                if not room.jitsiMetadata then
+                    room.jitsiMetadata = {};
+                end
+                room.jitsiMetadata.visitorsEnabled = true;
+            end
+
             go_live(room);
         end);
     end
