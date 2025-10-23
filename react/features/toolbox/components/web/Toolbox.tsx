@@ -41,6 +41,11 @@ interface IProps {
      * Explicitly passed array with the buttons which this Toolbox should display.
      */
     toolbarButtons?: Array<string>;
+    
+    /**
+     * Optional toolbar background color passed as a prop.
+     */
+    toolbarBackgroundColor?: string;
 }
 
 const useStyles = makeStyles()(() => {
@@ -65,7 +70,8 @@ const useStyles = makeStyles()(() => {
  * @returns {ReactElement}
  */
 export default function Toolbox({
-    toolbarButtons
+    toolbarButtons,
+    toolbarBackgroundColor: toolbarBackgroundColorProp
 }: IProps) {
     const { classes, cx } = useStyles();
     const { t } = useTranslation();
@@ -92,7 +98,10 @@ export default function Toolbox({
     const localParticipant = useSelector(getLocalParticipant);
     const transcribing = useSelector(isTranscribing);
     const _isCCTabEnabled = useSelector(isCCTabEnabled);
-
+    // Read toolbar background color from config (if provided) or from props.
+    const toolbarBackgroundColorFromConfig = useSelector((state: IReduxState) =>
+        state['features/base/config'].toolbarConfig?.backgroundColor);
+    const toolbarBackgroundColor = toolbarBackgroundColorProp || toolbarBackgroundColorFromConfig;
     // Do not convert to selector, it returns new array and will cause re-rendering of toolbox on every action.
     const jwtDisabledButtons = getJwtDisabledButtons(transcribing, _isCCTabEnabled, localParticipant?.features);
 
@@ -141,7 +150,6 @@ export default function Toolbox({
         dispatch(setOverflowMenuVisible(visible));
         dispatch(setToolbarHovered(visible));
     }, [ dispatch ]);
-
     useEffect(() => {
 
         // On mobile web we want to keep both toolbox and hang up menu visible
@@ -242,7 +250,8 @@ export default function Toolbox({
     return (
         <div
             className = { cx(rootClassNames, shiftUp && 'shift-up') }
-            id = 'new-toolbox'>
+            id = 'new-toolbox'
+            style = { toolbarBackgroundColor ? { backgroundColor: toolbarBackgroundColor } : undefined }>
             <div className = { containerClassName }>
                 <div
                     className = 'toolbox-content-wrapper'
