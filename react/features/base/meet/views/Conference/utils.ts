@@ -61,6 +61,7 @@ export const getScreenShareParticipants = (state: IReduxState) => {
             return {
                 id: participant.id,
                 name: displayName,
+                rawName: participant?.name ?? "",
                 videoEnabled: videoTrack !== undefined,
                 audioMuted: true,
                 videoTrack: videoTrack,

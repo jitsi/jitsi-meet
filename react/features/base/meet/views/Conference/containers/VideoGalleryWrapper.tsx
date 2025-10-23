@@ -100,7 +100,7 @@ const GalleryVideoWrapper = ({ videoMode, t, dispatch }: GalleryVideoWrapperProp
                         <span className="text-base text-[#1C1C1C] font-normal">
                             {isLocalSharing
                                 ? t("meet.meeting.screenShare.youAreSharing")
-                                : t("meet.meeting.screenShare.viewing", { name: sharingParticipant?.name })}
+                                : t("meet.meeting.screenShare.viewing", { name: sharingParticipant?.rawName })}
                         </span>
                         {isLocalSharing && (
                             <button
