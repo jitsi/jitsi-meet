@@ -193,7 +193,7 @@ function on_message(event)
     if not table_equals(old_value, jsonData.data) then
         room.jitsiMetadata[jsonData.key] = jsonData.data;
 
-        module:log('info', 'Мetadata key "%s" updated by %s in room:%s,meeting_id:%s', jsonData.key, from, room.jid, room._data.meetingId);
+        module:log('info', 'Metadata key "%s" updated by %s in room:%s,meeting_id:%s', jsonData.key, from, room.jid, room._data.meetingId);
         broadcastMetadata(room, getMetadataJSON(room));
 
         -- fire and event for the change
