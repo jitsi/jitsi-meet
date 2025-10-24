@@ -95,8 +95,6 @@ const commands = {
     toggleVirtualBackgroundDialog: 'toggle-virtual-background',
     toggleVideo: 'toggle-video',
     toggleWhiteboard: 'toggle-whiteboard'
-    ,
-    setToolbarBackgroundColor: 'set-toolbar-background-color'
 };
 
 /**

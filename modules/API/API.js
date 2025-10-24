@@ -340,15 +340,7 @@ function initCommands() {
 
             APP.store.dispatch(setAssumedBandwidthBps(value));
         },
-        'set-toolbar-background-color': color => {
-            try {
-                const state = APP.store.getState();
-                const currentToolbarConfig = state['features/base/config'].toolbarConfig || {};
-                APP.store.dispatch(overwriteConfig({ toolbarConfig: { ...currentToolbarConfig, backgroundColor: color } }));
-            } catch (e) {
-                logger.error('Failed to set toolbar background color via API', e);
-            }
-        },
+        
         'set-blurred-background': blurType => {
             const tracks = APP.store.getState()['features/base/tracks'];
             const videoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
