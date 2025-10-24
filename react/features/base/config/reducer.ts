@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { merge, union } from 'lodash-es';
 
 import { CONFERENCE_INFO } from '../../conference/components/constants';
 import { TOOLBAR_BUTTONS } from '../../toolbox/constants';
@@ -18,8 +18,7 @@ import {
     IConfig,
     IDeeplinkingConfig,
     IDeeplinkingDesktopConfig,
-    IDeeplinkingMobileConfig,
-    IMobileDynamicLink
+    IDeeplinkingMobileConfig
 } from './configType';
 import { _cleanupConfig, _setDeeplinkingDefaults } from './functions';
 
@@ -63,7 +62,6 @@ export interface IConfigState extends IConfig {
     analysis?: {
         obfuscateRoomName?: boolean;
     };
-    disableRemoteControl?: boolean;
     error?: Error;
     oldConfig?: {
         bosh?: string;
@@ -74,12 +72,6 @@ export interface IConfigState extends IConfig {
         };
         p2p?: object;
         websocket?: string;
-    };
-    visitors?: {
-        enableMediaOnPromote?: {
-            audio?: boolean;
-            video?: boolean;
-        };
     };
 }
 
@@ -193,7 +185,16 @@ function _setConfig(state: IConfig, { config }: { config: IConfig; }) {
         });
     }
 
-    const newState = _.merge(
+    const { alwaysShowResizeBar, disableResizable } = config.filmstrip || {};
+
+    if (alwaysShowResizeBar && disableResizable) {
+        config.filmstrip = {
+            ...config.filmstrip,
+            alwaysShowResizeBar: false
+        };
+    }
+
+    const newState = merge(
         {},
         config,
         hdAudioOptions,
@@ -328,15 +329,6 @@ function _translateInterfaceConfig(oldValue: IConfig) {
         };
 
         if (typeof interfaceConfig === 'object') {
-            const mobileDynamicLink = interfaceConfig.MOBILE_DYNAMIC_LINK;
-            const dynamicLink: IMobileDynamicLink | undefined = mobileDynamicLink ? {
-                apn: mobileDynamicLink.APN,
-                appCode: mobileDynamicLink.APP_CODE,
-                ibi: mobileDynamicLink.IBI,
-                isi: mobileDynamicLink.ISI,
-                customDomain: mobileDynamicLink.CUSTOM_DOMAIN
-            } : undefined;
-
             if (deeplinking.desktop) {
                 deeplinking.desktop.appName = interfaceConfig.NATIVE_APP_NAME;
             }
@@ -347,14 +339,12 @@ function _translateInterfaceConfig(oldValue: IConfig) {
                 appScheme: interfaceConfig.APP_SCHEME,
                 downloadLink: interfaceConfig.MOBILE_DOWNLOAD_LINK_ANDROID,
                 appPackage: interfaceConfig.ANDROID_APP_PACKAGE,
-                fDroidUrl: interfaceConfig.MOBILE_DOWNLOAD_LINK_F_DROID,
-                dynamicLink
+                fDroidUrl: interfaceConfig.MOBILE_DOWNLOAD_LINK_F_DROID
             };
             deeplinking.ios = {
                 appName: interfaceConfig.NATIVE_APP_NAME,
                 appScheme: interfaceConfig.APP_SCHEME,
-                downloadLink: interfaceConfig.MOBILE_DOWNLOAD_LINK_IOS,
-                dynamicLink
+                downloadLink: interfaceConfig.MOBILE_DOWNLOAD_LINK_IOS
             };
         }
         newValue.deeplinking = deeplinking;
@@ -396,7 +386,7 @@ function _translateLegacyConfig(oldValue: IConfig) {
                     = (newValue.conferenceInfo?.alwaysVisible ?? [])
                     .filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
                 newValue.conferenceInfo.autoHide
-                    = _.union(newValue.conferenceInfo.autoHide, CONFERENCE_HEADER_MAPPING[key]);
+                    = union(newValue.conferenceInfo.autoHide, CONFERENCE_HEADER_MAPPING[key]);
             } else {
                 newValue.conferenceInfo.alwaysVisible
                     = (newValue.conferenceInfo.alwaysVisible ?? [])
@@ -413,13 +403,6 @@ function _translateLegacyConfig(oldValue: IConfig) {
         && !newValue.welcomePage.hasOwnProperty('disabled')
     ) {
         newValue.welcomePage.disabled = !oldValue.enableWelcomePage;
-    }
-
-    newValue.prejoinConfig = oldValue.prejoinConfig || {};
-    if (oldValue.hasOwnProperty('prejoinPageEnabled')
-        && !newValue.prejoinConfig.hasOwnProperty('enabled')
-    ) {
-        newValue.prejoinConfig.enabled = oldValue.prejoinPageEnabled;
     }
 
     newValue.disabledSounds = newValue.disabledSounds || [];
@@ -439,6 +422,12 @@ function _translateLegacyConfig(oldValue: IConfig) {
 
     if (oldValue.disableIncomingMessageSound) {
         newValue.disabledSounds.unshift('INCOMING_MSG_SOUND');
+    }
+
+    newValue.raisedHands = newValue.raisedHands || {};
+
+    if (oldValue.disableRemoveRaisedHandOnFocus) {
+        newValue.raisedHands.disableRemoveRaisedHandOnFocus = oldValue.disableRemoveRaisedHandOnFocus;
     }
 
     if (oldValue.stereo || oldValue.opusMaxAverageBitrate) {
@@ -573,9 +562,12 @@ function _translateLegacyConfig(oldValue: IConfig) {
         };
     }
 
-    if (oldValue.disableProfile) {
-        newValue.toolbarButtons = (newValue.toolbarButtons || TOOLBAR_BUTTONS)
-            .filter((button: ToolbarButton) => button !== 'profile');
+    // Profile button is not available on mobile
+    if (navigator.product !== 'ReactNative') {
+        if (oldValue.disableProfile) {
+            newValue.toolbarButtons = (newValue.toolbarButtons || TOOLBAR_BUTTONS)
+                .filter((button: ToolbarButton) => button !== 'profile');
+        }
     }
 
     _setDeeplinkingDefaults(newValue.deeplinking as IDeeplinkingConfig);
@@ -592,7 +584,7 @@ function _translateLegacyConfig(oldValue: IConfig) {
  * @returns {Object} The new state after the reduction of the specified action.
  */
 function _updateConfig(state: IConfig, { config }: { config: IConfig; }) {
-    const newState = _.merge({}, state, config);
+    const newState = merge({}, state, config);
 
     _cleanupConfig(newState);
 

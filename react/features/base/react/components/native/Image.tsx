@@ -29,7 +29,7 @@ export default class ImageImpl extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <Image
                 source = { this.props.src }

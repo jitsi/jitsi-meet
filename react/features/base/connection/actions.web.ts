@@ -13,6 +13,7 @@ import { setJWT } from '../jwt/actions';
 import { LocalStorageManager } from "../meet/LocalStorageManager";
 import MeetingService from "../meet/services/meeting.service";
 import { _connectInternal } from "./actions.any";
+import logger from './logger';
 
 export * from "./actions.any";
 
@@ -49,7 +50,16 @@ export function connect(id?: string, password?: string) {
                             isAnonymous: !user,
                         })
                     )
-                );
+                )
+                // latest jitsi changes, test if not works current ones
+                // .then(j => {
+                //     j && dispatch(setJWT(j));
+
+                //     return dispatch(_connectInternal(id, password));
+                // })
+                .catch(e => {
+                    logger.error('Connection error', e);
+                });
         }
 
         // used by jibri
@@ -81,10 +91,12 @@ export function connect(id?: string, password?: string) {
  * @param {boolean} [requestFeedback] - Whether to attempt showing a
  * request for call feedback.
  * @param {string} [feedbackTitle] - The feedback title.
+ * @param {boolean} [notifyOnConferenceTermination] - Whether to notify
+ * the user on conference termination.
  * @returns {Function}
  */
-export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?: string) {
-    // XXX For web based version we use conference hanging up logic from the old app.
+export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?: string, notifyOnConferenceTermination?: boolean) {
+     // XXX For web based version we use conference hanging up logic from the old app.
     return async (dispatch: IStore["dispatch"]) => {
         if (LocalRecordingManager.isRecordingLocally()) {
             dispatch(stopLocalVideoRecording());
@@ -109,6 +121,6 @@ export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?:
         }
         MeetingService.instance.leaveCall(roomId);
 
-        return APP.conference.hangup(requestFeedback, feedbackTitle);
+        return APP.conference.hangup(requestFeedback, feedbackTitle, notifyOnConferenceTermination);
     };
 }

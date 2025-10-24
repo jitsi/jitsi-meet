@@ -95,7 +95,7 @@ class NavigateSectionList extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const {
             renderListEmptyComponent = this._renderListEmptyComponent(),
             sections

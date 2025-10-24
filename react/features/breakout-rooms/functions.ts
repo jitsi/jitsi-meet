@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { find } from 'lodash-es';
 
 import { IStateful } from '../base/app/types';
 import { getCurrentConference } from '../base/conference/functions';
@@ -33,7 +33,7 @@ export const getBreakoutRooms = (stateful: IStateful): IRooms => toState(statefu
 export const getMainRoom = (stateful: IStateful) => {
     const rooms = getBreakoutRooms(stateful);
 
-    return _.find(rooms, room => Boolean(room.isMainRoom));
+    return find(rooms, room => Boolean(room.isMainRoom));
 };
 
 /**
@@ -135,7 +135,7 @@ export const getRoomsInfo = (stateful: IStateful) => {
 export const getRoomByJid = (stateful: IStateful, roomJid: string) => {
     const rooms = getBreakoutRooms(stateful);
 
-    return _.find(rooms, (room: IRoom) => room.jid === roomJid);
+    return find(rooms, (room: IRoom) => room.jid === roomJid);
 };
 
 /**
@@ -161,7 +161,16 @@ export const getCurrentRoomId = (stateful: IStateful) => {
 export const isInBreakoutRoom = (stateful: IStateful) => {
     const conference = getCurrentConference(stateful);
 
-    return conference?.getBreakoutRooms()?.isBreakoutRoom();
+    if (!conference || typeof conference.getBreakoutRooms !== 'function') {
+        return false;
+    }
+
+    try {
+        return conference.getBreakoutRooms()?.isBreakoutRoom();
+    } catch (error) {
+        console.warn('Error checking if in breakout room:', error);
+        return false;
+    }
 };
 
 /**
@@ -188,7 +197,15 @@ export const isAddBreakoutRoomButtonVisible = (stateful: IStateful) => {
     const state = toState(stateful);
     const isLocalModerator = isLocalParticipantModerator(state);
     const { conference } = state['features/base/conference'];
-    const isBreakoutRoomsSupported = conference?.getBreakoutRooms()?.isSupported();
+    
+    let isBreakoutRoomsSupported = false;
+    if (conference && typeof conference.getBreakoutRooms === 'function') {
+        try {
+            isBreakoutRoomsSupported = conference.getBreakoutRooms()?.isSupported() ?? false;
+        } catch (error) {
+            console.warn('Error checking breakout rooms support:', error);
+        }
+    }
     const { hideAddRoomButton } = getBreakoutRoomsConfig(state);
 
     return isLocalModerator && isBreakoutRoomsSupported && !hideAddRoomButton;

@@ -2,8 +2,8 @@ import i18next from 'i18next';
 
 import { IReduxState } from '../app/types';
 import { IConfig } from '../base/config/configType';
+import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
-import { isLocalParticipantModerator } from '../base/participants/functions';
 
 import JITSI_TO_BCP47_MAP from './jitsi-bcp47-map.json';
 import logger from './logger';
@@ -77,15 +77,7 @@ export function isRecorderTranscriptionsRunning(state: IReduxState) {
  */
 export function canAddTranscriber(state: IReduxState) {
     const { transcription } = state['features/base/config'];
-    const isJwtTranscribingEnabled = isJwtFeatureEnabled(state, 'transcription', isLocalParticipantModerator(state));
+    const isTranscribingAllowed = isJwtFeatureEnabled(state, MEET_FEATURES.TRANSCRIPTION, false);
 
-    if (!transcription?.enabled) {
-        return false;
-    }
-
-    if (isJwtTranscribingEnabled) {
-        return true;
-    }
-
-    return false;
+    return Boolean(transcription?.enabled) && isTranscribingAllowed;
 }

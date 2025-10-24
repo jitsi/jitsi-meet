@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { sortBy } from 'lodash-es';
 import React, { Component } from 'react';
 import { NativeModules, Text, TextStyle, TouchableHighlight, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
@@ -149,7 +149,7 @@ const deviceInfoMap = {
  * is required to join a conference.
  */
 class AudioRoutePickerDialog extends Component<IProps, IState> {
-    state = {
+    override state = {
         /**
          * Available audio devices, it will be set in
          * {@link #getDerivedStateFromProps()}.
@@ -176,7 +176,6 @@ class AudioRoutePickerDialog extends Component<IProps, IState> {
 
             // Skip devices with unknown type.
             if (!infoMap) {
-                // eslint-disable-next-line no-continue
                 continue;
             }
 
@@ -201,7 +200,7 @@ class AudioRoutePickerDialog extends Component<IProps, IState> {
 
         // Make sure devices is alphabetically sorted.
         return {
-            devices: _.sortBy(audioDevices, 'text')
+            devices: sortBy(audioDevices, 'text')
         };
     }
 
@@ -297,7 +296,7 @@ class AudioRoutePickerDialog extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { devices } = this.state;
         let content;
 

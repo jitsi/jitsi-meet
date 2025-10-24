@@ -4,6 +4,8 @@ import { assign } from '../base/redux/functions';
 
 import {
     CANCEL_LOGIN,
+    DISABLE_MODERATOR_LOGIN,
+    ENABLE_MODERATOR_LOGIN,
     SET_TOKEN_AUTH_URL_SUCCESS,
     STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
@@ -14,6 +16,7 @@ import {
 export interface IAuthenticationState {
     error?: Object | undefined;
     progress?: number | undefined;
+    showModeratorLogin?: boolean;
     thenableWithCancel?: {
         cancel: Function;
     };
@@ -45,6 +48,11 @@ ReducerRegistry.register<IAuthenticationState>('features/authentication',
             progress: undefined,
             thenableWithCancel: undefined
         });
+    case ENABLE_MODERATOR_LOGIN:
+        return assign(state, {
+            showModeratorLogin: true
+        });
+
     case SET_TOKEN_AUTH_URL_SUCCESS:
         return assign(state, {
             tokenAuthUrlSuccessful: action.value
@@ -54,6 +62,12 @@ ReducerRegistry.register<IAuthenticationState>('features/authentication',
         return assign(state, {
             error: undefined,
             waitForOwnerTimeoutID: undefined
+        });
+
+    case DISABLE_MODERATOR_LOGIN:
+        return assign(state, {
+            error: undefined,
+            showModeratorLogin: false
         });
 
     case UPGRADE_ROLE_FINISHED: {

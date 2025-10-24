@@ -46,10 +46,20 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     desktopShareFramerates: Array<number>;
 
     /**
+     * True if desktop share settings should be hidden (mobile browsers).
+     */
+    disableDesktopShareSettings: boolean;
+
+    /**
      * True if device changing is configured to be disallowed. Selectors
      * will display as disabled.
      */
     disableDeviceChange: boolean;
+
+    /**
+     * Whether the local video can be flipped or not.
+     */
+    disableLocalVideoFlip: boolean | undefined;
 
     /**
      * Whether video input dropdown should be enabled or not.
@@ -160,7 +170,7 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         this._unMounted = false;
         Promise.all([
             this._createVideoInputTrack(this.props.selectedVideoInputId)
@@ -178,7 +188,7 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
      * @param {Object} prevProps - Previous props this component received.
      * @returns {void}
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
 
         if (prevProps.selectedVideoInputId
             !== this.props.selectedVideoInputId) {
@@ -191,7 +201,7 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this._unMounted = true;
         this._disposeVideoInputPreview();
     }
@@ -201,8 +211,10 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const {
+            disableDesktopShareSettings,
+            disableLocalVideoFlip,
             hideAdditionalSettings,
             hideVideoInputPreview,
             localFlipX,
@@ -234,7 +246,7 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
                             />
                         </div>
                         {/* The frame rate selector is currently hidden as we have not enabled screen sharing in Meet. */}
-                        {/* {this._renderFramerateSelect()} */}
+                        {/*{!disableDesktopShareSettings && this._renderFramerateSelect()} */}
                     </>
                 )}
             </div>

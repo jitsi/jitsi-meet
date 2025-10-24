@@ -21,7 +21,7 @@ class StopRecordingDialog extends AbstractStopRecordingDialog<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         return (
             <ConfirmDialog
                 descriptionKey = 'dialog.stopRecordingWarning'

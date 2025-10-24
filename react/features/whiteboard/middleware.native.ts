@@ -30,7 +30,7 @@ import './middleware.any';
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register((store: IStore) => (next: Function) => async (action: AnyAction) => {
+MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyAction) => {
     const { dispatch, getState } = store;
     const state = getState();
 

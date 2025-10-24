@@ -2,10 +2,19 @@ import { ComponentType } from 'react';
 
 export interface IToolboxButton {
     Content: ComponentType<any>;
-    alias?: string;
     group: number;
     key: string;
     display: boolean;
+}
+
+export interface IToolboxNativeButton {
+    Content: ComponentType<any>;
+    backgroundColor?: string;
+    group: number;
+    icon?: string;
+    id?: string;
+    key: string;
+    text?: string;
 }
 
 export type ToolbarButton = 'camera' |
@@ -28,6 +37,7 @@ export type ToolbarButton = 'camera' |
     'mute-everyone' |
     'mute-video-everyone' |
     'noisesuppression' |
+    'overflowmenu' |
     'participants-pane' |
     'profile' |
     'raisehand' |
@@ -49,4 +59,50 @@ export type ToolbarButton = 'camera' |
 export enum NOTIFY_CLICK_MODE {
     ONLY_NOTIFY = 'ONLY_NOTIFY',
     PREVENT_AND_NOTIFY = 'PREVENT_AND_NOTIFY'
+}
+
+export type IMainToolbarButtonThresholds = Array<{
+    order: Array<ToolbarButton | NativeToolbarButton | string>;
+    width: number;
+}>;
+
+export type IMainToolbarButtonThresholdsUnfiltered = Array<{
+    order: Array<ToolbarButton | NativeToolbarButton | string> | Symbol;
+    width: number;
+}>;
+
+export interface ICustomToolbarButton {
+    Content?: ComponentType<any>;
+    backgroundColor?: string;
+    group?: number;
+    icon: string;
+    id: string;
+    key?: string;
+    text: string;
+}
+
+export type NativeToolbarButton = 'camera' |
+    'chat' |
+    'microphone' |
+    'raisehand' |
+    'desktop' |
+    'tileview' |
+    'overflowmenu' |
+    'hangup';
+
+export interface IGetVisibleNativeButtonsParams {
+    allButtons: { [key: string]: IToolboxNativeButton; };
+    clientWidth: number;
+    iAmVisitor: boolean;
+    mainToolbarButtonsThresholds: IMainToolbarButtonThresholds;
+    toolbarButtons: string[];
+}
+
+export interface IGetVisibleButtonsParams {
+    allButtons: { [key: string]: IToolboxButton; };
+    buttonsWithNotifyClick: Map<string, NOTIFY_CLICK_MODE>;
+    clientWidth: number;
+    jwtDisabledButtons: string[];
+    mainToolbarButtonsThresholds: IMainToolbarButtonThresholds;
+    toolbarButtons: string[];
 }

@@ -8,8 +8,8 @@ import AbstractButton, { IProps } from './AbstractButton';
 export default class BaseVideoMuteButton<P extends IProps, S=any>
     extends AbstractButton<P, S> {
 
-    icon = IconVideo;
-    toggledIcon = IconVideoOff;
+    override icon = IconVideo;
+    override toggledIcon = IconVideoOff;
 
     /**
      * Handles clicking / pressing the button, and toggles the video mute state
@@ -18,7 +18,7 @@ export default class BaseVideoMuteButton<P extends IProps, S=any>
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         this._setVideoMuted(!this._isVideoMuted());
     }
 
@@ -29,7 +29,7 @@ export default class BaseVideoMuteButton<P extends IProps, S=any>
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this._isVideoMuted();
     }
 

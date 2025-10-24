@@ -98,8 +98,8 @@ const useStyles = makeStyles<IProps>()((theme, props: IProps) => {
                         'span.emoji': {
                             width: '24px',
                             height: '24px',
-                            lineHeight: '24px',
-                            fontSize: '16px'
+                            lineHeight: '1.5rem',
+                            fontSize: '1rem'
                         }
                     }
                 },

@@ -17,6 +17,7 @@
 package org.jitsi.meet.sdk;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.AttributeSet;
@@ -33,10 +34,9 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 public class JitsiMeetView extends FrameLayout {
 
     /**
-     * Background color used by {@code BaseReactView} and the React Native root
-     * view.
+     * Background color. Should match the background color set in JS.
      */
-    private static final int BACKGROUND_COLOR = 0xFF111111;
+    public static final int BACKGROUND_COLOR = 0xFF040404;
 
     /**
      * React Native root view.
@@ -197,8 +197,6 @@ public class JitsiMeetView extends FrameLayout {
         }
 
         setBackgroundColor(BACKGROUND_COLOR);
-
-        ReactInstanceManagerHolder.initReactInstanceManager((Activity) context);
     }
 
     /**

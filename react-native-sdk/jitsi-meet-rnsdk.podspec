@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.source         = { :git => package['repository']['url'], :tag => s.version }
 
   s.requires_arc   = true
-  s.platform       = :ios, '12.4'
+  s.platform       = :ios, '15.1'
 
   s.preserve_paths = 'ios/**/*'
   s.source_files   =  'ios/**/*.{h,m}'
@@ -29,7 +29,7 @@ Pod::Spec.new do |s|
           SOURCE_PATH="${PODS_TARGET_SRCROOT}/sounds/"
           TARGET_PATH=$(dirname "${CONFIGURATION_BUILD_DIR}")
           PROJECT_NAME=$(basename $(dirname $(dirname "${PROJECT_DIR}"))).app
-          cp -R "${SOURCE_PATH}" "${TARGET_PATH}/${PROJECT_NAME}"
+          ditto "${SOURCE_PATH}" "${TARGET_PATH}/${PROJECT_NAME}/sounds"
       ',
   }
 end

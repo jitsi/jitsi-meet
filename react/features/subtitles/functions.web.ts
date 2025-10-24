@@ -1,5 +1,7 @@
 /* eslint-disable max-params, max-len */
 
+import { MIN_SUBTITLES_FONT_SIZE } from './constants';
+
 /**
  * Logs when about the received transcription chunk.
  *
@@ -17,3 +19,17 @@ export const notifyTranscriptionChunkReceived = (transcriptMessageID: string, la
         participant,
         ...text
     });
+
+/**
+ * Calculates the font size for the subtitles.
+ *
+ * @param {number} clientHeight - The height of the visible area of the window.
+ * @returns {number}
+ */
+export function calculateSubtitlesFontSize(clientHeight?: number) {
+    if (typeof clientHeight === 'undefined') {
+        return MIN_SUBTITLES_FONT_SIZE;
+    }
+
+    return Math.max(Math.floor(clientHeight * 0.04), MIN_SUBTITLES_FONT_SIZE);
+}

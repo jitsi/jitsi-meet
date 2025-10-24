@@ -36,10 +36,12 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @protected
      * @returns {React$Component}
      */
-    render() {
+    override render() {
+        const _renderRecording = this.props._renderRecording;
+
         return (
             <Container className = 'recording-dialog'>
-                { this.props._isModerator && (
+                { _renderRecording && (
                     <>
                         { this._renderNoIntegrationsContent() }
                         { this._renderFileSharingContent() }
@@ -48,7 +50,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                     </>
                 )}
                 { this._renderLocalRecordingContent() }
-                { this._renderAdvancedOptions() }
+                { _renderRecording && <> { this._renderAdvancedOptions() } </> }
             </Container>
         );
     }

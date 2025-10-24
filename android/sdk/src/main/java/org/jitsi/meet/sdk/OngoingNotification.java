@@ -29,8 +29,6 @@ import android.content.Intent;
 import androidx.annotation.StringRes;
 import androidx.core.app.NotificationCompat;
 
-import android.os.Build;
-
 
 /**
  * Helper class for creating the ongoing notification which is used with
@@ -45,10 +43,6 @@ class OngoingNotification {
     static final String ONGOING_CONFERENCE_CHANNEL_ID = "JitsiOngoingConferenceChannel";
 
     static void createNotificationChannel(Activity context) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            return;
-        }
-
         if (context == null) {
             JitsiMeetLogger.w(TAG + " Cannot create notification channel: no current context");
             return;
@@ -73,14 +67,13 @@ class OngoingNotification {
         notificationManager.createNotificationChannel(channel);
     }
 
-    static Notification buildOngoingConferenceNotification(Boolean isMuted, Context context) {
-
+    static Notification buildOngoingConferenceNotification(Boolean isMuted, Context context, Class tapBackActivity) {
         if (context == null) {
             JitsiMeetLogger.w(TAG + " Cannot create notification: no current context");
             return null;
         }
 
-        Intent notificationIntent = new Intent(context, context.getClass());
+        Intent notificationIntent = new Intent(context, tapBackActivity == null ? context.getClass() : tapBackActivity);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, ONGOING_CONFERENCE_CHANNEL_ID);

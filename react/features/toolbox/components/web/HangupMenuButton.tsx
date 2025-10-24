@@ -82,7 +82,7 @@ class HangupMenuButton extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { children, isOpen, t } = this.props;
 
         return (

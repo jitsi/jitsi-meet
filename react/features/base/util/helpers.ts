@@ -23,22 +23,6 @@ export function assignIfDefined(target: Object, source: Object) {
 }
 
 
-/**
- * Creates a deferred object.
- *
- * @returns {{promise, resolve, reject}}
- */
-export function createDeferred() {
-    const deferred: any = {};
-
-    deferred.promise = new Promise((resolve, reject) => {
-        deferred.resolve = resolve;
-        deferred.reject = reject;
-    });
-
-    return deferred;
-}
-
 const MATCH_OPERATOR_REGEXP = /[|\\{}()[\]^$+*?.-]/g;
 
 /**
@@ -93,6 +77,21 @@ export function getJitsiMeetGlobalNS() {
     }
 
     return window.JitsiMeetJS.app;
+}
+
+/**
+ * Returns the object that stores the connection times.
+ *
+ * @returns {Object} - The object that stores the connection times.
+ */
+export function getJitsiMeetGlobalNSConnectionTimes() {
+    const globalNS = getJitsiMeetGlobalNS();
+
+    if (!globalNS.connectionTimes) {
+        globalNS.connectionTimes = {};
+    }
+
+    return globalNS.connectionTimes;
 }
 
 /**

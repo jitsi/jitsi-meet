@@ -200,8 +200,14 @@ end
 
 -- Managing breakout rooms
 
-function create_breakout_room(room_jid, subject)
-    local main_room, main_room_jid = get_main_room(room_jid);
+function create_breakout_room(orig_room, subject)
+    local main_room, main_room_jid = get_main_room(orig_room.jid);
+
+    if orig_room ~= main_room then
+        module:log('warn', 'Invalid create breakout room request for %s', orig_room.jid);
+        return;
+    end
+
     local breakout_room_jid = uuid_gen() .. '@' .. breakout_rooms_muc_component_config;
 
     if not main_room._data.breakout_rooms then
@@ -219,10 +225,15 @@ function create_breakout_room(room_jid, subject)
     broadcast_breakout_rooms(main_room_jid);
 end
 
-function destroy_breakout_room(room_jid, message)
+function destroy_breakout_room(orig_room, room_jid, message)
     local main_room, main_room_jid = get_main_room(room_jid);
 
     if room_jid == main_room_jid then
+        return;
+    end
+
+    if orig_room ~= main_room then
+        module:log('warn', 'Invalid destroy breakout room request for %s', orig_room.jid);
         return;
     end
 
@@ -244,10 +255,15 @@ function destroy_breakout_room(room_jid, message)
 end
 
 
-function rename_breakout_room(room_jid, name)
+function rename_breakout_room(orig_room, room_jid, name)
     local main_room, main_room_jid = get_main_room(room_jid);
 
     if room_jid == main_room_jid then
+        return;
+    end
+
+    if orig_room ~= main_room then
+        module:log('warn', 'Invalid rename breakout room request for %s', orig_room.jid);
         return;
     end
 
@@ -322,17 +338,24 @@ function on_message(event)
     end
 
     if message.attr.type == JSON_TYPE_ADD_BREAKOUT_ROOM then
-        create_breakout_room(room.jid, message.attr.subject);
+        create_breakout_room(room, message.attr.subject);
         return true;
     elseif message.attr.type == JSON_TYPE_REMOVE_BREAKOUT_ROOM then
-        destroy_breakout_room(message.attr.breakoutRoomJid);
+        destroy_breakout_room(room, message.attr.breakoutRoomJid);
         return true;
     elseif message.attr.type == JSON_TYPE_RENAME_BREAKOUT_ROOM then
-        rename_breakout_room(message.attr.breakoutRoomJid, message.attr.subject);
+        rename_breakout_room(room, message.attr.breakoutRoomJid, message.attr.subject);
         return true;
     elseif message.attr.type == JSON_TYPE_MOVE_TO_ROOM_REQUEST then
         local participant_jid = message.attr.participantJid;
         local target_room_jid = message.attr.roomJid;
+
+        if not room._data.breakout_rooms or not (
+            room._data.breakout_rooms[target_room_jid] or target_room_jid == internal_room_jid_match_rewrite(room.jid))
+        then
+            module:log('warn', 'Invalid breakout room %s for %s', target_room_jid, room.jid);
+            return false
+        end
 
         local json_msg, error = json.encode({
             type = BREAKOUT_ROOMS_IDENTITY_TYPE,
@@ -342,6 +365,7 @@ function on_message(event)
 
         if not json_msg then
             module:log('error', 'skip sending request room:%s error:%s', room.jid, error);
+            return false
         end
 
         send_json_msg(participant_jid, json_msg)
@@ -416,6 +440,16 @@ function exist_occupants_in_rooms(main_room)
     return false;
 end
 
+function on_occupant_pre_leave(event)
+    local room, occupant, session, stanza = event.room, event.occupant, event.origin, event.stanza;
+
+    local main_room = get_main_room(room.jid);
+
+    prosody.events.fire_event('jitsi-breakout-occupant-leaving', {
+        room = room; main_room = main_room; occupant = occupant; stanza = stanza; session = session;
+    });
+end
+
 function on_occupant_left(event)
     local room_jid = event.room.jid;
 
@@ -481,7 +515,7 @@ function on_main_room_destroyed(event)
     end
 
     for breakout_room_jid in pairs(main_room._data.breakout_rooms or {}) do
-        destroy_breakout_room(breakout_room_jid, event.reason)
+        destroy_breakout_room(main_room, breakout_room_jid, event.reason)
     end
 end
 
@@ -510,6 +544,7 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
     host_module:hook('muc-occupant-joined', on_occupant_joined);
     host_module:hook('muc-occupant-left', on_occupant_left);
     host_module:hook('muc-room-pre-create', on_breakout_room_pre_create);
+    host_module:hook('muc-occupant-pre-leave', on_occupant_pre_leave);
 
     host_module:hook('muc-disco#info', function (event)
         local room = event.room;
@@ -526,7 +561,7 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
             name = 'muc#roominfo_breakout_main_room';
             label = 'The main room associated with this breakout room';
         });
-        event.formdata['muc#roominfo_breakout_main_room'] = main_room_jid;
+        event.formdata['muc#roominfo_breakout_main_room'] = internal_room_jid_match_rewrite(main_room_jid);
 
         -- If the main room has a lobby, make it so this breakout room also uses it.
         if (main_room and main_room._data.lobbyroom and main_room:get_members_only()) then
@@ -553,7 +588,7 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
         table.insert(event.form, {
             name = 'muc#roominfo_breakout_main_room';
             label = 'The main room associated with this breakout room';
-            value = main_room_jid;
+            value = internal_room_jid_match_rewrite(main_room_jid);
         });
     end);
 

@@ -268,7 +268,7 @@ const LocalVideoMenuTriggerButton = ({
 function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { thumbnailType } = ownProps;
     const localParticipant = getLocalParticipant(state);
-    const { disableLocalVideoFlip, disableSelfViewSettings } = state['features/base/config'];
+    const { disableLocalVideoFlip, disableSelfDemote, disableSelfViewSettings } = state['features/base/config'];
     const videoTrack = getLocalVideoTrack(state['features/base/tracks']);
     const { overflowDrawer } = state['features/toolbox'];
     const { showConnectionInfo } = state['features/base/connection'];
@@ -292,7 +292,7 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
 
     return {
         _menuPosition,
-        _showDemote: getParticipantCount(state) > 1,
+        _showDemote: !disableSelfDemote && getParticipantCount(state) > 1,
         _showLocalVideoFlipButton: !disableLocalVideoFlip && videoTrack?.videoType !== 'desktop',
         _showHideSelfViewButton: showHideSelfViewButton,
         _overflowDrawer: overflowDrawer,

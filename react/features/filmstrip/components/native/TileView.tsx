@@ -181,7 +181,7 @@ class TileView extends PureComponent<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { _columns, _height, _thumbnailHeight, _width, onClick } = this.props;
         const participants = this._getSortedParticipants();
         const initialRowsToRender = Math.ceil(_height / (Number(_thumbnailHeight) + (2 * styles.thumbnail.margin)));

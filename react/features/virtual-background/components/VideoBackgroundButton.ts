@@ -24,10 +24,10 @@ interface IProps extends AbstractButtonProps {
  * An abstract implementation of a button that toggles the video background dialog.
  */
 class VideoBackgroundButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.selectBackground';
-    icon = IconImage;
-    label = 'toolbar.selectBackground';
-    tooltip = 'toolbar.selectBackground';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.selectBackground';
+    override icon = IconImage;
+    override label = 'toolbar.selectBackground';
+    override tooltip = 'toolbar.selectBackground';
 
     /**
      * Handles clicking / pressing the button, and toggles the virtual background dialog
@@ -36,7 +36,7 @@ class VideoBackgroundButton extends AbstractButton<IProps> {
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch } = this.props;
 
         dispatch(openSettingsDialog(SETTINGS_TABS.VIRTUAL_BACKGROUND));
@@ -49,7 +49,7 @@ class VideoBackgroundButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._isBackgroundEnabled;
     }
 }

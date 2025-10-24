@@ -75,8 +75,18 @@ select {
  * TYPOGRAPHY - 14px base font size, agnostic font stack
  */
 body {
-    font-size: 14px;
-    line-height: 1.42857142857143;
+//   color: #333;
+//   font-family: Arial, sans-serif;
+//   font-size: 14px;
+  font-size: 0.875rem;
+  line-height: 1.42857142857143;
+}
+/* International Font Stacks*/
+// [lang|=en] {
+//   font-family: Arial, sans-serif;
+// }
+[lang|=ja] {
+  font-family: "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro W3", "メイリオ", Meiryo, "ＭＳ Ｐゴシック", Verdana, Arial, sans-serif;
 }
 
 /* Default margins */
@@ -111,51 +121,51 @@ pre:first-child {
 }
 /* Headings: desired line height in px / font size = unitless line height */
 h1 {
-    color: #333;
-    font-size: 32px;
-    font-weight: normal;
-    line-height: 1.25;
-    text-transform: none;
-    margin: 30px 0 0 0;
+  color: #333;
+  font-size: 2rem;
+  font-weight: normal;
+  line-height: 1.25;
+  text-transform: none;
+  margin: 30px 0 0 0;
 }
 h2 {
-    color: #333;
-    font-size: 24px;
-    font-weight: normal;
-    line-height: 1.25;
-    text-transform: none;
-    margin: 30px 0 0 0;
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: normal;
+  line-height: 1.25;
+  text-transform: none;
+  margin: 30px 0 0 0;
 }
 h3 {
-    color: #333;
-    font-size: 20px;
-    font-weight: normal;
-    line-height: 1.5;
-    text-transform: none;
-    margin: 30px 0 0 0;
+  color: #333;
+  font-size: 1.25rem;
+  font-weight: normal;
+  line-height: 1.5;
+  text-transform: none;
+  margin: 30px 0 0 0;
 }
 h4 {
-    font-size: 16px;
-    font-weight: bold;
-    line-height: 1.25;
-    text-transform: none;
-    margin: 20px 0 0 0;
+  font-size: 1rem;
+  font-weight: bold;
+  line-height: 1.25;
+  text-transform: none;
+  margin: 20px 0 0 0;
 }
 h5 {
-    color: #333;
-    font-size: 14px;
-    font-weight: bold;
-    line-height: 1.42857143;
-    text-transform: none;
-    margin: 20px 0 0 0;
+  color: #333;
+  font-size: 0.875rem;
+  font-weight: bold;
+  line-height: 1.42857143;
+  text-transform: none;
+  margin: 20px 0 0 0;
 }
 h6 {
-    color: #707070;
-    font-size: 12px;
-    font-weight: bold;
-    line-height: 1.66666667;
-    text-transform: uppercase;
-    margin: 20px 0 0 0;
+  color: #707070;
+  font-size: 0.75rem;
+  font-weight: bold;
+  line-height: 1.66666667;
+  text-transform: uppercase;
+  margin: 20px 0 0 0;
 }
 h1:first-child,
 h2:first-child,
@@ -176,9 +186,9 @@ h5 + h6 {
 
 /* Other typographical elements */
 small {
-    color: #707070;
-    font-size: 12px;
-    line-height: 1.33333333333333;
+  color: #707070;
+  font-size: 0.75rem;
+  line-height: 1.33333333333333;
 }
 code,
 kbd {

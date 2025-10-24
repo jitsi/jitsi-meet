@@ -1,4 +1,4 @@
-import { GiphyFetch, TrendingOptions, setServerUrl } from '@giphy/js-fetch-api';
+import { GiphyFetch, TrendingOptions } from '@giphy/js-fetch-api';
 import { Grid } from '@giphy/react-components';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,8 +20,7 @@ import {
     formatGifUrlMessage,
     getGifAPIKey,
     getGifRating,
-    getGifUrl,
-    getGiphyProxyUrl
+    getGifUrl
 } from '../../function.any';
 
 const OVERFLOW_DRAWER_PADDING = 16;
@@ -102,9 +101,8 @@ function GifsMenu({ columns = 2, parent }: IProps) {
     const { t } = useTranslation();
     const isInOverflowMenu
         = parent === IReactionsMenuParent.OverflowDrawer || parent === IReactionsMenuParent.OverflowMenu;
-    const { clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
+    const { videoSpaceWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
     const rating = useSelector(getGifRating);
-    const proxyUrl = useSelector(getGiphyProxyUrl);
 
     const fetchGifs = useCallback(async (offset = 0) => {
         const options: TrendingOptions = {
@@ -126,7 +124,7 @@ function GifsMenu({ columns = 2, parent }: IProps) {
 
     const handleGifClick = useCallback((gif, e) => {
         e?.stopPropagation();
-        const url = getGifUrl(gif, proxyUrl);
+        const url = getGifUrl(gif);
 
         sendAnalytics(createGifSentEvent());
         batch(() => {
@@ -189,12 +187,6 @@ function GifsMenu({ columns = 2, parent }: IProps) {
     // This fixes that.
     useEffect(() => setSearchKey(''), []);
 
-    useEffect(() => {
-        if (proxyUrl) {
-            setServerUrl(proxyUrl);
-        }
-    }, []);
-
     const onInputKeyPress = useCallback((e: React.KeyboardEvent) => {
         e.stopPropagation();
     }, []);
@@ -233,7 +225,7 @@ function GifsMenu({ columns = 2, parent }: IProps) {
                     onGifClick = { handleGifClick }
                     onGifKeyPress = { handleGifKeyPress }
                     width = { parent === IReactionsMenuParent.OverflowDrawer
-                        ? clientWidth - (2 * OVERFLOW_DRAWER_PADDING) - SCROLL_SIZE
+                        ? videoSpaceWidth - (2 * OVERFLOW_DRAWER_PADDING) - SCROLL_SIZE
                         : parent === IReactionsMenuParent.OverflowMenu ? 201 : 320
                     } />
             </div>

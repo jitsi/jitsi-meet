@@ -1,6 +1,7 @@
 import {
     BOO_SOUND_FILES,
     CLAP_SOUND_FILES,
+    HEART_SOUND_FILES,
     LAUGH_SOUND_FILES,
     LIKE_SOUND_FILES,
     SILENCE_SOUND_FILES,
@@ -98,6 +99,14 @@ export const SILENCE_SOUND_ID = `${REACTION_SOUND}_SILENCE_`;
  *
  * @type {string}
  */
+export const HEART_SOUND_ID = `${REACTION_SOUND}_HEART_`;
+
+/**
+ * The audio ID of the audio element for which the {@link playAudio} action is
+ * triggered when a new raise hand event is received.
+ *
+ * @type {string}
+ */
 export const RAISE_HAND_SOUND_ID = 'RAISE_HAND_SOUND';
 
 export interface IReactionEmojiProps {
@@ -167,6 +176,13 @@ export const REACTIONS: IReactions = {
         shortcutChar: 'S',
         soundId: SILENCE_SOUND_ID,
         soundFiles: SILENCE_SOUND_FILES
+    },
+    love: {
+        message: ':heart:',
+        emoji: '💖',
+        shortcutChar: 'H',
+        soundId: HEART_SOUND_ID,
+        soundFiles: HEART_SOUND_FILES
     }
 };
 

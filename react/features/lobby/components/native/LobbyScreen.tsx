@@ -3,11 +3,12 @@ import { Text, TextStyle, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
+import { login } from '../../../authentication/actions.any';
 import { getConferenceName } from '../../../base/conference/functions';
 import { translate } from '../../../base/i18n/functions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
-import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
+import { ASPECT_RATIO_WIDE } from '../../../base/responsive-ui/constants';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
@@ -18,6 +19,7 @@ import { navigate }
     from '../../../mobile/navigation/components/lobby/LobbyNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { preJoinStyles } from '../../../prejoin/components/native/styles';
+import HangupButton from '../../../toolbox/components/HangupButton';
 import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
 import VideoMuteButton from '../../../toolbox/components/native/VideoMuteButton';
 import AbstractLobbyScreen, {
@@ -34,6 +36,16 @@ interface IProps extends AbstractProps {
     _aspectRatio: Symbol;
 
     /**
+     * The current height of the screen.
+     */
+    _clientHeight: number;
+
+    /**
+     * The current width of the screen.
+     */
+    _clientWidth: number;
+
+    /**
      * The room name.
      */
     _roomName: string;
@@ -44,38 +56,50 @@ interface IProps extends AbstractProps {
  */
 class LobbyScreen extends AbstractLobbyScreen<IProps> {
     /**
+     * Initializes a new LobbyScreen instance.
+     *
+     * @param {IProps} props - The read-only properties with which the new
+     * instance is to be initialized.
+     */
+    constructor(props: IProps) {
+        super(props);
+
+        this._onLogin = this._onLogin.bind(this);
+    }
+
+    /**
      * Implements {@code PureComponent#render}.
      *
      * @inheritdoc
      */
-    render() {
-        const { _aspectRatio, _roomName } = this.props;
-        let contentWrapperStyles;
-        let contentContainerStyles;
-        let largeVideoContainerStyles;
+    override render() {
+        const { _aspectRatio, _clientHeight, _clientWidth, _roomName } = this.props;
+        const isTablet = Math.min(_clientWidth, _clientHeight) >= 768;
 
-        if (_aspectRatio === ASPECT_RATIO_NARROW) {
-            contentWrapperStyles = preJoinStyles.contentWrapper;
-            largeVideoContainerStyles = preJoinStyles.largeVideoContainer;
-            contentContainerStyles = styles.contentContainer;
-        } else {
-            contentWrapperStyles = preJoinStyles.contentWrapperWide;
-            largeVideoContainerStyles = preJoinStyles.largeVideoContainerWide;
+        let contentContainerStyles = preJoinStyles.contentContainer;
+        let largeVideoContainerStyles = preJoinStyles.largeVideoContainer;
+
+        if (isTablet && _aspectRatio === ASPECT_RATIO_WIDE) {
+            // @ts-ignore
             contentContainerStyles = preJoinStyles.contentContainerWide;
+            largeVideoContainerStyles = preJoinStyles.largeVideoContainerWide;
         }
 
         return (
             <JitsiScreen
+                addBottomPadding = { false }
                 safeAreaInsets = { [ 'right' ] }
-                style = { contentWrapperStyles }>
+                style = { preJoinStyles.contentWrapper }>
                 <BrandingImageBackground />
                 <View style = { largeVideoContainerStyles as ViewStyle }>
-                    <View style = { preJoinStyles.displayRoomNameBackdrop as ViewStyle }>
-                        <Text
-                            numberOfLines = { 1 }
-                            style = { preJoinStyles.preJoinRoomName }>
-                            { _roomName }
-                        </Text>
+                    <View style = { preJoinStyles.conferenceInfo as ViewStyle }>
+                        <View style = { preJoinStyles.displayRoomNameBackdrop }>
+                            <Text
+                                numberOfLines = { 1 }
+                                style = { preJoinStyles.preJoinRoomName }>
+                                { _roomName }
+                            </Text>
+                        </View>
                     </View>
                     <LargeVideo />
                 </View>
@@ -197,12 +221,19 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
      * @inheritdoc
      */
     _renderToolbarButtons() {
+        const { _hangUp } = this.props;
+
         return (
             <View style = { preJoinStyles.toolboxContainer as ViewStyle }>
                 <AudioMuteButton
                     styles = { preJoinStyles.buttonStylesBorderless } />
                 <VideoMuteButton
                     styles = { preJoinStyles.buttonStylesBorderless } />
+                {
+                    _hangUp
+                    && <HangupButton
+                        styles = { preJoinStyles.buttonStylesBorderless } />
+                }
             </View>
         );
     }
@@ -213,7 +244,7 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
      * @inheritdoc
      */
     _renderStandardButtons() {
-        const { _knocking, _renderPassword, _isLobbyChatActive } = this.props;
+        const { _knocking, _renderPassword, _isLobbyChatActive, _login } = this.props;
         const { displayName } = this.state;
 
         return (
@@ -246,8 +277,27 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
                         style = { preJoinStyles.joinButton }
                         type = { BUTTON_TYPES.PRIMARY } />
                 }
+                {
+                    _login
+                    && <Button
+                        accessibilityLabel = 'dialog.IamHost'
+                        labelKey = 'dialog.IamHost'
+                        onClick = { this._onLogin }
+                        style = { preJoinStyles.joinButton }
+                        type = { BUTTON_TYPES.PRIMARY } />
+                }
             </View>
         );
+    }
+
+    /**
+     * Handles login button click.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onLogin() {
+        this.props.dispatch(login());
     }
 }
 
@@ -264,6 +314,8 @@ function _mapStateToProps(state: IReduxState) {
     return {
         ...abstractMapStateToProps(state),
         _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
+        _clientHeight: state['features/base/responsive-ui'].clientHeight,
+        _clientWidth: state['features/base/responsive-ui'].clientWidth,
         _roomName: getConferenceName(state)
     };
 }

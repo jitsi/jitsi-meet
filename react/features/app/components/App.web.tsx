@@ -37,7 +37,7 @@ export class App extends AbstractApp {
      * @protected
      * @returns {ReactElement}
      */
-    _createExtraElement() {
+    override _createExtraElement() {
         return (
             <JitsiThemeProvider>
                 <OverlayContainer />
@@ -51,7 +51,7 @@ export class App extends AbstractApp {
      *
      * @override
      */
-    _createMainElement(component: React.ComponentType, props?: Object) {
+    override _createMainElement(component: React.ComponentType, props?: Object) {
         const isMobile = this._isMobileDevice();
         if (isMobile) {
             return (
@@ -76,7 +76,7 @@ export class App extends AbstractApp {
      *
      * @returns {React$Element}
      */
-    _renderDialogContainer() {
+    override _renderDialogContainer() {
         return (
             <JitsiThemeProvider>
                 <DialogContainer />

@@ -52,7 +52,7 @@ export default class Link extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <Text
                 onPress = { this._onPress }

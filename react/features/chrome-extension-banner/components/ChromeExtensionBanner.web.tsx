@@ -17,6 +17,7 @@ import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconCloseLarge } from '../../base/icons/svg';
 import { browser } from '../../base/lib-jitsi-meet';
+import { isNarrowScreenWithChatOpen } from '../../base/responsive-ui/functions';
 import { isVpaasMeeting } from '../../jaas/functions';
 import logger from '../logger';
 
@@ -57,6 +58,11 @@ interface IProps extends WithTranslation {
      * Whether it's a vpaas meeting or not.
      */
     isVpaas: boolean;
+
+    /**
+     * Whether the screen is too small to show the banner or not.
+     */
+    notEnoughAvailableWidth: boolean;
 }
 
 /**
@@ -118,7 +124,7 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
      *
      * @inheritdoc
      */
-    async componentDidUpdate(prevProps: IProps) {
+    override async componentDidUpdate(prevProps: IProps) {
         if (!this._isSupportedEnvironment()) {
             return;
         }
@@ -245,7 +251,7 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render(): React.ReactNode {
+    override render(): React.ReactNode {
         if (this._shouldNotRender()) {
             if (this.state.dontShowAgainChecked) {
                 jitsiLocalStorage.setItem(DONT_SHOW_AGAIN_CHECKED, 'true');
@@ -253,6 +259,11 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
 
             return null;
         }
+
+        if (!this.props.notEnoughAvailableWidth) {
+            return null;
+        }
+
         const { bannerCfg, t } = this.props;
         const mainClassNames = this.props.conference
             ? 'chrome-extension-banner chrome-extension-banner__pos_in_meeting'
@@ -333,7 +344,8 @@ const _mapStateToProps = (state: IReduxState) => {
         bannerCfg: state['features/base/config'].chromeExtensionBanner || emptyObject,
         conference: getCurrentConference(state),
         iAmRecorder: Boolean(state['features/base/config'].iAmRecorder),
-        isVpaas: isVpaasMeeting(state)
+        isVpaas: isVpaasMeeting(state),
+        notEnoughAvailableWidth: isNarrowScreenWithChatOpen(state)
     };
 };
 

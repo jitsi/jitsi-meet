@@ -5,8 +5,9 @@ import { makeStyles } from 'tss-react/mui';
 import { isMobileBrowser } from '../../../environment/utils';
 import Icon from '../../../icons/components/Icon';
 import { IconCloseCircle } from '../../../icons/svg';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 import { IInputProps } from '../types';
+
+import { HiddenDescription } from './HiddenDescription';
 
 interface IProps extends IInputProps {
     accessibilityLabel?: string;
@@ -14,6 +15,7 @@ interface IProps extends IInputProps {
     autoFocus?: boolean;
     bottomLabel?: string;
     className?: string;
+    hiddenDescription?: string; // Text that will be announced by screen readers but not displayed visually.
     iconClick?: () => void;
 
     /**
@@ -48,11 +50,11 @@ const useStyles = makeStyles()(theme => {
 
         label: {
             color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             marginBottom: theme.spacing(2),
 
             '&.is-mobile': {
-                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
+                ...theme.typography.bodyShortRegularLarge
             }
         },
 
@@ -65,7 +67,7 @@ const useStyles = makeStyles()(theme => {
             backgroundColor: theme.palette.ui03,
             background: theme.palette.ui03,
             color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             padding: '10px 16px',
             borderRadius: theme.shape.borderRadius,
             border: 0,
@@ -89,7 +91,7 @@ const useStyles = makeStyles()(theme => {
             '&.is-mobile': {
                 height: '48px',
                 padding: '13px 16px',
-                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge)
+                ...theme.typography.bodyShortRegularLarge
             },
 
             '&.icon-input': {
@@ -98,6 +100,9 @@ const useStyles = makeStyles()(theme => {
 
             '&.error': {
                 boxShadow: `0px 0px 0px 2px ${theme.palette.textError}`
+            },
+            '&.clearable-input': {
+                paddingRight: '46px'
             }
         },
 
@@ -121,10 +126,6 @@ const useStyles = makeStyles()(theme => {
             cursor: 'pointer'
         },
 
-        clearableInput: {
-            paddingRight: '46px'
-        },
-
         clearButton: {
             position: 'absolute',
             right: '16px',
@@ -137,11 +138,11 @@ const useStyles = makeStyles()(theme => {
 
         bottomLabel: {
             marginTop: theme.spacing(2),
-            ...withPixelLineHeight(theme.typography.labelRegular),
+            ...theme.typography.labelRegular,
             color: theme.palette.text02,
 
             '&.is-mobile': {
-                ...withPixelLineHeight(theme.typography.bodyShortRegular)
+                ...theme.typography.bodyShortRegular
             },
 
             '&.error': {
@@ -153,13 +154,14 @@ const useStyles = makeStyles()(theme => {
 
 const Input = React.forwardRef<any, IProps>(({
     accessibilityLabel,
-    autoComplete,
+    autoComplete = 'off',
     autoFocus,
     bottomLabel,
     className,
     clearable = false,
     disabled,
     error,
+    hiddenDescription,
     icon,
     iconClick,
     id,
@@ -185,11 +187,23 @@ const Input = React.forwardRef<any, IProps>(({
 }: IProps, ref) => {
     const { classes: styles, cx } = useStyles();
     const isMobile = isMobileBrowser();
+    const showClearIcon = clearable && value !== '' && !disabled;
+    const inputAutoCompleteOff = autoComplete === 'off' ? { 'data-1p-ignore': '' } : {};
 
     const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
         onChange?.(e.target.value), []);
 
     const clearInput = useCallback(() => onChange?.(''), []);
+    const hiddenDescriptionId = `${id}-hidden-description`;
+    let ariaDescribedById: string | undefined;
+
+    if (bottomLabel) {
+        ariaDescribedById = `${id}-description`;
+    } else if (hiddenDescription) {
+        ariaDescribedById = hiddenDescriptionId;
+    } else {
+        ariaDescribedById = undefined;
+    }
 
     return (
         <div className = { cx(styles.inputContainer, className) }>
@@ -207,11 +221,12 @@ const Input = React.forwardRef<any, IProps>(({
                     src = { icon } />}
                 {textarea ? (
                     <TextareaAutosize
+                        aria-describedby = { ariaDescribedById }
                         aria-label = { accessibilityLabel }
                         autoComplete = { autoComplete }
                         autoFocus = { autoFocus }
                         className = { cx(styles.input, isMobile && 'is-mobile',
-                            error && 'error', clearable && styles.clearableInput, icon && 'icon-input') }
+                            error && 'error', showClearIcon && 'clearable-input', icon && 'icon-input') }
                         disabled = { disabled }
                         id = { id }
                         maxLength = { maxLength }
@@ -227,15 +242,16 @@ const Input = React.forwardRef<any, IProps>(({
                         value = { value } />
                 ) : (
                     <input
-                        aria-describedby = { bottomLabel ? `${id}-description` : undefined }
+                        aria-describedby = { ariaDescribedById }
                         aria-label = { accessibilityLabel }
                         autoComplete = { autoComplete }
                         autoFocus = { autoFocus }
                         className = { cx(styles.input, isMobile && 'is-mobile',
-                            error && 'error', clearable && styles.clearableInput, icon && 'icon-input') }
+                            error && 'error', showClearIcon && 'clearable-input', icon && 'icon-input') }
                         data-testid = { testId }
                         disabled = { disabled }
                         id = { id }
+                        { ...inputAutoCompleteOff }
                         { ...(mode ? { inputmode: mode } : {}) }
                         { ...(type === 'number' ? { max: maxValue } : {}) }
                         maxLength = { maxLength }
@@ -252,7 +268,7 @@ const Input = React.forwardRef<any, IProps>(({
                         type = { type }
                         value = { value } />
                 )}
-                {clearable && !disabled && value !== '' && <button className = { styles.clearButton }>
+                {showClearIcon && <button className = { styles.clearButton }>
                     <Icon
                         onClick = { clearInput }
                         size = { 20 }
@@ -266,6 +282,7 @@ const Input = React.forwardRef<any, IProps>(({
                     {bottomLabel}
                 </span>
             )}
+            {!bottomLabel && hiddenDescription && <HiddenDescription id = { hiddenDescriptionId }>{ hiddenDescription }</HiddenDescription>}
         </div>
     );
 });

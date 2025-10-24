@@ -47,6 +47,15 @@ export const SET_TOKEN_AUTH_URL_SUCCESS = 'SET_TOKEN_AUTH_URL_SUCCESS';
 export const STOP_WAIT_FOR_OWNER = 'STOP_WAIT_FOR_OWNER';
 
 /**
+ * The type of (redux) action which disables moderator login.
+ *
+ * {
+ *     type: DISABLE_MODERATOR_LOGIN
+ * }
+ */
+export const DISABLE_MODERATOR_LOGIN = 'DISABLE_MODERATOR_LOGIN';
+
+/**
  * The type of (redux) action which informs that the authentication and role
  * upgrade process has finished either with success or with a specific error.
  * If {@code error} is {@code undefined}, then the process succeeded;
@@ -73,6 +82,15 @@ export const UPGRADE_ROLE_FINISHED = 'UPGRADE_ROLE_FINISHED';
  * }
  */
 export const UPGRADE_ROLE_STARTED = 'UPGRADE_ROLE_STARTED';
+
+/**
+ * The type of (redux) action which enables moderator login.
+ *
+ * {
+ *     type: ENABLE_MODERATOR_LOGIN
+ * }
+ */
+export const ENABLE_MODERATOR_LOGIN = 'ENABLE_MODERATOR_LOGIN';
 
 /**
  * The type of (redux) action that sets delayed handler which will check if

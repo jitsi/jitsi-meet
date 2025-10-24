@@ -40,6 +40,14 @@ const _URI_AUTHORITY_PATTERN = '(//[^/?#]+)';
 const _URI_PATH_PATTERN = '([^?#]*)';
 
 /**
+ * The {@link RegExp} pattern of the image data scheme.
+ *
+ * @private
+ * @type {RegExp}
+ */
+const IMG_DATA_URL: RegExp = /^data:image\/[a-z0-9\-.+]+;base64,/i;
+
+/**
  * The {@link RegExp} pattern of the protocol of a URI.
  *
  * FIXME: The URL class exposed by JavaScript will not include the colon in
@@ -537,6 +545,7 @@ export function urlObjectToString(o: { [key: string]: any; }): string | undefine
 
     const search = new URLSearchParams(url.search);
 
+    // TODO: once all available versions are updated to support the jwt in the hash, remove this
     if (jwt) {
         search.set('jwt', jwt);
     }
@@ -560,6 +569,14 @@ export function urlObjectToString(o: { [key: string]: any; }): string | undefine
     // fragment/hash
 
     let { hash } = url;
+
+    if (jwt) {
+        if (hash.length) {
+            hash = `${hash}&jwt=${JSON.stringify(jwt)}`;
+        } else {
+            hash = `#jwt=${JSON.stringify(jwt)}`;
+        }
+    }
 
     for (const urlPrefix of [ 'config', 'iceServers', 'interfaceConfig', 'devices', 'userInfo', 'appData' ]) {
         const urlParamsArray
@@ -680,4 +697,14 @@ export function sanitizeUrl(url?: string | URL): URL | null {
     }
 
     return new URL(result);
+}
+
+/**
+ * Check whether the given url is a valid image data url.
+ *
+ * @param {string} url - The url to check.
+ * @returns {boolean} True if the url is a valid image data url, false otherwise.
+ */
+export function isImageDataURL(url: string): boolean {
+    return IMG_DATA_URL.test(url);
 }

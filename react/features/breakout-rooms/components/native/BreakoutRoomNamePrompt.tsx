@@ -18,7 +18,7 @@ export default function BreakoutRoomNamePrompt({ breakoutRoomJid, initialRoomNam
         const formattedRoomName = roomName?.trim();
 
         if (formattedRoomName) {
-            dispatch(renameBreakoutRoom(formattedRoomName, roomName));
+            dispatch(renameBreakoutRoom(breakoutRoomJid, formattedRoomName));
 
             return true;
         }

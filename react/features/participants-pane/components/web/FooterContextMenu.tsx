@@ -6,10 +6,13 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import {
     requestDisableAudioModeration,
+    requestDisableDesktopModeration,
     requestDisableVideoModeration,
     requestEnableAudioModeration,
+    requestEnableDesktopModeration,
     requestEnableVideoModeration
 } from '../../../av-moderation/actions';
+import { MEDIA_TYPE } from '../../../av-moderation/constants';
 import {
     isEnabled as isAvModerationEnabled,
     isSupported as isAvModerationSupported
@@ -17,21 +20,20 @@ import {
 import { openDialog } from '../../../base/dialog/actions';
 import {
     IconCheck,
+    IconCloseLarge,
     IconDotsHorizontal,
+    IconScreenshare,
     IconVideoOff
 } from '../../../base/icons/svg';
-import { MEDIA_TYPE } from '../../../base/media/constants';
-import {
-    getParticipantCount,
-    isEveryoneModerator
-} from '../../../base/participants/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import { getRaiseHandsQueue } from '../../../base/participants/functions';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { openSettingsDialog } from '../../../settings/actions.web';
 import { SETTINGS_TABS } from '../../../settings/constants';
 import { shouldShowModeratorSettings } from '../../../settings/functions.web';
+import LowerHandButton from '../../../video-menu/components/web/LowerHandButton';
+import MuteEveryonesDesktopDialog from '../../../video-menu/components/web/MuteEveryonesDesktopDialog';
 import MuteEveryonesVideoDialog from '../../../video-menu/components/web/MuteEveryonesVideoDialog';
 
 const useStyles = makeStyles()(theme => {
@@ -42,11 +44,18 @@ const useStyles = makeStyles()(theme => {
             right: 0,
             top: '-8px',
             transform: 'translateY(-100%)',
-            width: '283px'
+            width: '283px',
+
+            // Allow text in menu items to wrap to multiple lines.
+            '& [role="button"] > div > span, & [role="menuitem"] > div > span': {
+                whiteSpace: 'normal',
+                wordBreak: 'break-word',
+                overflowWrap: 'break-word'
+            }
         },
 
         text: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: theme.palette.text02,
             padding: '10px 16px',
             height: '40px',
@@ -85,27 +94,28 @@ interface IProps {
 export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProps) => {
     const dispatch = useDispatch();
     const isModerationSupported = useSelector((state: IReduxState) => isAvModerationSupported()(state));
-    const allModerators = useSelector(isEveryoneModerator);
+    const raisedHandsQueue = useSelector(getRaiseHandsQueue);
     const isModeratorSettingsTabEnabled = useSelector(shouldShowModeratorSettings);
-    const participantCount = useSelector(getParticipantCount);
     const isAudioModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.AUDIO));
+    const isDesktopModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.DESKTOP));
     const isVideoModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.VIDEO));
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
-
     const { t } = useTranslation();
 
     const disableAudioModeration = useCallback(() => dispatch(requestDisableAudioModeration()), [ dispatch ]);
-
+    const disableDesktopModeration = useCallback(() => dispatch(requestDisableDesktopModeration()), [ dispatch ]);
     const disableVideoModeration = useCallback(() => dispatch(requestDisableVideoModeration()), [ dispatch ]);
-
     const enableAudioModeration = useCallback(() => dispatch(requestEnableAudioModeration()), [ dispatch ]);
-
+    const enableDesktopModeration = useCallback(() => dispatch(requestEnableDesktopModeration()), [ dispatch ]);
     const enableVideoModeration = useCallback(() => dispatch(requestEnableVideoModeration()), [ dispatch ]);
 
     const { classes } = useStyles();
 
     const muteAllVideo = useCallback(
         () => dispatch(openDialog(MuteEveryonesVideoDialog)), [ dispatch ]);
+
+    const muteAllDesktop = useCallback(
+        () => dispatch(openDialog(MuteEveryonesDesktopDialog)), [ dispatch ]);
 
     const openModeratorSettings = () => dispatch(openSettingsDialog(SETTINGS_TABS.MODERATOR));
 
@@ -116,7 +126,7 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
             id: isAudioModerationEnabled
                 ? 'participants-pane-context-menu-stop-audio-moderation'
                 : 'participants-pane-context-menu-start-audio-moderation',
-            icon: !isAudioModerationEnabled && IconCheck,
+            icon: isAudioModerationEnabled ? IconCloseLarge : IconCheck,
             onClick: isAudioModerationEnabled ? disableAudioModeration : enableAudioModeration,
             text: t('participantsPane.actions.audioModeration')
         }, {
@@ -125,9 +135,18 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
             id: isVideoModerationEnabled
                 ? 'participants-pane-context-menu-stop-video-moderation'
                 : 'participants-pane-context-menu-start-video-moderation',
-            icon: !isVideoModerationEnabled && IconCheck,
+            icon: isVideoModerationEnabled ? IconCloseLarge : IconCheck,
             onClick: isVideoModerationEnabled ? disableVideoModeration : enableVideoModeration,
             text: t('participantsPane.actions.videoModeration')
+        }, {
+            accessibilityLabel: t('participantsPane.actions.desktopModeration'),
+            className: isDesktopModerationEnabled ? classes.indentedLabel : '',
+            id: isDesktopModerationEnabled
+                ? 'participants-pane-context-menu-stop-desktop-moderation'
+                : 'participants-pane-context-menu-start-desktop-moderation',
+            icon: isDesktopModerationEnabled ? IconCloseLarge : IconCheck,
+            onClick: isDesktopModerationEnabled ? disableDesktopModeration : enableDesktopModeration,
+            text: t('participantsPane.actions.desktopModeration')
         }
     ];
 
@@ -140,14 +159,24 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
             onDrawerClose = { onDrawerClose }
             onMouseLeave = { onMouseLeave }>
             <ContextMenuItemGroup
-                actions = { [ {
-                    accessibilityLabel: t('participantsPane.actions.stopEveryonesVideo'),
-                    id: 'participants-pane-context-menu-stop-video',
-                    icon: IconVideoOff,
-                    onClick: muteAllVideo,
-                    text: t('participantsPane.actions.stopEveryonesVideo')
-                } ] } />
-            {!isBreakoutRoom && isModerationSupported && (participantCount === 1 || !allModerators) && (
+                actions = { [
+                    {
+                        accessibilityLabel: t('participantsPane.actions.stopEveryonesVideo'),
+                        id: 'participants-pane-context-menu-stop-video',
+                        icon: IconVideoOff,
+                        onClick: muteAllVideo,
+                        text: t('participantsPane.actions.stopEveryonesVideo')
+                    },
+                    {
+                        accessibilityLabel: t('participantsPane.actions.stopEveryonesDesktop'),
+                        id: 'participants-pane-context-menu-stop-desktop',
+                        icon: IconScreenshare,
+                        onClick: muteAllDesktop,
+                        text: t('participantsPane.actions.stopEveryonesDesktop')
+                    }
+                ] } />
+            {raisedHandsQueue.length !== 0 && <LowerHandButton />}
+            {!isBreakoutRoom && isModerationSupported && (
                 <ContextMenuItemGroup actions = { actions }>
                     <div className = { classes.text }>
                         <span>{t('participantsPane.actions.allow')}</span>

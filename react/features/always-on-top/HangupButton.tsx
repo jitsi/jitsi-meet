@@ -48,7 +48,7 @@ export default class HangupButton extends Component<Props> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <ToolbarButton
                 accessibilityLabel = { this.accessibilityLabel }

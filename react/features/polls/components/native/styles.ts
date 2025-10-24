@@ -4,6 +4,12 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export const dialogStyles = createStyleSheet({
 
+    headerContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+
     customContainer: {
         marginBottom: BaseTheme.spacing[3],
         marginHorizontal: BaseTheme.spacing[3],
@@ -30,7 +36,6 @@ export const dialogStyles = createStyleSheet({
     },
 
     optionRemoveButton: {
-        marginTop: BaseTheme.spacing[2],
         width: 128
     },
 
@@ -110,7 +115,7 @@ export const resultsStyles = createStyleSheet({
     }
 });
 
-export const chatStyles = createStyleSheet({
+export const pollsStyles = createStyleSheet({
 
     noPollContent: {
         alignItems: 'center',
@@ -159,13 +164,11 @@ export const chatStyles = createStyleSheet({
     },
 
     pollSendLabel: {
-        color: BaseTheme.palette.text01,
-        textTransform: 'capitalize'
+        color: BaseTheme.palette.text01
     },
 
     pollSendDisabledLabel: {
-        color: BaseTheme.palette.text03,
-        textTransform: 'capitalize'
+        color: BaseTheme.palette.text03
     },
 
     buttonRow: {
@@ -195,7 +198,6 @@ export const chatStyles = createStyleSheet({
 
     pollCreateButton: {
         marginHorizontal: BaseTheme.spacing[1],
-        maxWidth: 160,
         flex: 1
     },
 
@@ -209,7 +211,8 @@ export const chatStyles = createStyleSheet({
     },
 
     createPollButtonAndroid: {
-        marginHorizontal: 20
+        marginHorizontal: 20,
+        marginVertical: BaseTheme.spacing[5]
     },
 
     pollPane: {
@@ -228,26 +231,9 @@ export const chatStyles = createStyleSheet({
         marginHorizontal: BaseTheme.spacing[1]
     },
 
-    unreadPollsCounterContainer: {
-        display: 'flex',
-        flexDirection: 'row'
-    },
-
-    unreadPollsCounterDescription: {
-        color: BaseTheme.palette.text01
-    },
-
-    unreadPollsCounterCircle: {
-        backgroundColor: BaseTheme.palette.warning01,
-        borderRadius: BaseTheme.spacing[3] / 2,
-        height: BaseTheme.spacing[3],
-        justifyContent: 'center',
-        marginLeft: BaseTheme.spacing[2],
-        width: BaseTheme.spacing[3]
-    },
-
-    unreadPollsCounter: {
-        alignSelf: 'center',
-        color: BaseTheme.palette.text04
+    fieldSeparator: {
+        borderBottomWidth: 1,
+        borderColor: BaseTheme.palette.ui05,
+        marginTop: BaseTheme.spacing[3]
     }
 });

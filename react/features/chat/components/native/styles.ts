@@ -38,6 +38,11 @@ export default {
         flex: 1
     },
 
+    chatDisabled: {
+        padding: BaseTheme.spacing[2],
+        textAlign: 'center'
+    },
+
     emptyComponentText: {
         color: BaseTheme.palette.text03,
         textAlign: 'center'
@@ -111,6 +116,15 @@ export default {
         alignSelf: 'center',
         flex: 1,
         padding: BoxModel.padding,
+        paddingTop: '8%',
+        maxWidth: '80%'
+    },
+
+    disabledSendWrapper: {
+        alignSelf: 'center',
+        flex: 0,
+        padding: BoxModel.padding,
+        paddingBottom: '8%',
         paddingTop: '8%',
         maxWidth: '80%'
     },

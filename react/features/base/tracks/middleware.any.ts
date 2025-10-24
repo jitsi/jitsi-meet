@@ -2,10 +2,8 @@ import { batch } from 'react-redux';
 
 import { IStore } from '../../app/types';
 import { _RESET_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
-import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { getCurrentConference } from '../conference/functions';
 import {
-    SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,
     SET_SCREENSHARE_MUTED,
     SET_VIDEO_MUTED,
@@ -47,15 +45,6 @@ import './subscriber';
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case SET_AUDIO_MUTED:
-        if (!action.muted
-                && isUserInteractionRequiredForUnmute(store.getState())) {
-            return;
-        }
-
-        _setMuted(store, action, MEDIA_TYPE.AUDIO);
-        break;
-
     case SET_CAMERA_FACING_MODE: {
         // XXX The camera facing mode of a MediaStreamTrack can be specified
         // only at initialization time and then it can only be toggled. So in
@@ -183,15 +172,11 @@ function _getLocalTrack(
  * @private
  * @returns {void}
  */
-async function _setMuted(store: IStore, { ensureTrack, muted }: {
+function _setMuted(store: IStore, { ensureTrack, muted }: {
     ensureTrack: boolean; muted: boolean; }, mediaType: MediaType) {
     const { dispatch, getState } = store;
     const localTrack = _getLocalTrack(store, mediaType, /* includePending */ true);
     const state = getState();
-
-    if (mediaType === MEDIA_TYPE.SCREENSHARE && !muted) {
-        return;
-    }
 
     if (localTrack) {
         // The `jitsiTrack` property will have a value only for a localTrack for which `getUserMedia` has already
@@ -203,12 +188,12 @@ async function _setMuted(store: IStore, { ensureTrack, muted }: {
             setTrackMuted(jitsiTrack, muted, state, dispatch)
                 .catch(() => dispatch(trackMuteUnmuteFailed(localTrack, muted)));
         }
-    } else if (!muted && ensureTrack && (typeof APP === 'undefined' || isPrejoinPageVisible(state))) {
-        typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.PENDING_UNMUTE));
+    } else if (!muted && ensureTrack) {
+        // TODO(saghul): reconcile these 2 types.
+        const createMediaType = mediaType === MEDIA_TYPE.SCREENSHARE ? 'desktop' : mediaType;
 
-        // FIXME: This only runs on mobile now because web has its own way of
-        // creating local tracks. Adjust the check once they are unified.
-        dispatch(createLocalTracksA({ devices: [ mediaType ] })).then(() => {
+        typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.PENDING_UNMUTE));
+        dispatch(createLocalTracksA({ devices: [ createMediaType ] })).then(() => {
             typeof APP !== 'undefined' && dispatch(gumPending([ mediaType ], IGUMPendingState.NONE));
         });
     }

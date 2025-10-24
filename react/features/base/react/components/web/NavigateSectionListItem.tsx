@@ -36,7 +36,7 @@ export default class NavigateSectionListItem<P extends IProps>
      *
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { elementAfter, lines, title } = this.props.item;
         const { onPress } = this.props;
 

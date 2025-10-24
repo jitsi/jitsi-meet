@@ -144,9 +144,8 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case UPDATE_DIAL_IN_NUMBERS_FAILED:
-        logger.error(
-            'Error encountered while fetching dial-in numbers:',
-            action.error);
+        logger.error('Error encountered while fetching dial-in numbers:', action.error,
+            action.error?.message, action.error?.name, action.error?.stack);
         break;
     }
 

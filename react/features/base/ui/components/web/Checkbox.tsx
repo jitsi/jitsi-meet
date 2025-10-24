@@ -4,7 +4,6 @@ import { makeStyles } from 'tss-react/mui';
 import { isMobileBrowser } from '../../../environment/utils';
 import Icon from '../../../icons/components/Icon';
 import { IconCheck } from '../../../icons/svg';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 
 interface ICheckboxProps {
 
@@ -22,6 +21,11 @@ interface ICheckboxProps {
      * Whether the input is disabled or not.
      */
     disabled?: boolean;
+
+    /**
+     * The id of the input.
+     */
+    id?: string;
 
     /**
      * The label of the input.
@@ -42,13 +46,13 @@ interface ICheckboxProps {
 const useStyles = makeStyles()(theme => {
     return {
         formControl: {
-            ...withPixelLineHeight(theme.typography.bodyLongRegular),
+            ...theme.typography.bodyLongRegular,
             color: theme.palette.text01,
             display: 'inline-flex',
             alignItems: 'center',
 
             '&.is-mobile': {
-                ...withPixelLineHeight(theme.typography.bodyLongRegularLarge)
+                ...theme.typography.bodyLongRegularLarge
 
             }
         },
@@ -148,6 +152,7 @@ const Checkbox = ({
     checked,
     className,
     disabled,
+    id,
     label,
     name,
     onChange
@@ -161,6 +166,7 @@ const Checkbox = ({
                 <input
                     checked = { checked }
                     disabled = { disabled }
+                    id = { id }
                     name = { name }
                     onChange = { onChange }
                     type = 'checkbox' />

@@ -1,13 +1,4 @@
-export type VideoTypeData = {
-    ssrc: number;
-    videoType: string;
-};
-
-export type DominantSpeakerData = {
-    dominantSpeakerEndpoint: string;
-    previousSpeakers: string[];
-};
-
+// Types for RTC stats entries.
 export type E2ERTTData = {
     remoteEndpointId: string;
     remoteRegion: string;

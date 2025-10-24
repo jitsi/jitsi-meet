@@ -96,51 +96,53 @@ export function overwriteConfig(config: Object) {
  *
  * @param {Object} config - The configuration to be represented by the feature
  * base/config.
- * @param {URL} locationURL - The URL of the location which necessitated the
- * loading of a configuration.
  * @returns {Function}
  */
-export function setConfig(config: IConfig = {}, locationURL: URL | undefined) {
-    // Now that the loading of the config was successful override the values
-    // with the parameters passed in the hash part of the location URI.
-    // TODO We're still in the middle ground between old Web with config,
-    // and interfaceConfig used via global variables and new
-    // Web and mobile reading the respective values from the redux store.
-    // Only the config will be overridden on React Native, as the other
-    // globals will be undefined here. It's intentional - we do not care to
-    // override those configs yet.
-    locationURL
-        && setConfigFromURLParams(
+export function setConfig(config: IConfig = {}) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const { locationURL } = getState()['features/base/connection'];
 
-            // On Web the config also comes from the window.config global,
-            // but it is resolved in the loadConfig procedure.
-            config,
-            window.interfaceConfig,
-            locationURL);
+        // Now that the loading of the config was successful override the values
+        // with the parameters passed in the hash part of the location URI.
+        // TODO We're still in the middle ground between old Web with config,
+        // and interfaceConfig used via global variables and new
+        // Web and mobile reading the respective values from the redux store.
+        // Only the config will be overridden on React Native, as the other
+        // globals will be undefined here. It's intentional - we do not care to
+        // override those configs yet.
+        locationURL
+            && setConfigFromURLParams(
 
-    let { bosh } = config;
+                // On Web the config also comes from the window.config global,
+                // but it is resolved in the loadConfig procedure.
+                config,
+                window.interfaceConfig,
+                locationURL);
 
-    if (bosh) {
-        // Normalize the BOSH URL.
-        if (bosh.startsWith('//')) {
-            // By default our config.js doesn't include the protocol.
-            bosh = `${locationURL?.protocol}${bosh}`;
-        } else if (bosh.startsWith('/')) {
-            // Handle relative URLs, which won't work on mobile.
-            const {
-                protocol,
-                host,
-                contextRoot
-            } = parseURIString(locationURL?.href);
+        let { bosh } = config;
 
-            bosh = `${protocol}//${host}${contextRoot || '/'}${bosh.substr(1)}`;
+        if (bosh) {
+            // Normalize the BOSH URL.
+            if (bosh.startsWith('//')) {
+                // By default our config.js doesn't include the protocol.
+                bosh = `${locationURL?.protocol}${bosh}`;
+            } else if (bosh.startsWith('/')) {
+                // Handle relative URLs, which won't work on mobile.
+                const {
+                    protocol,
+                    host,
+                    contextRoot
+                } = parseURIString(locationURL?.href);
+
+                bosh = `${protocol}//${host}${contextRoot || '/'}${bosh.substr(1)}`;
+            }
+            config.bosh = bosh;
         }
-        config.bosh = bosh;
-    }
 
-    return {
-        type: SET_CONFIG,
-        config
+        dispatch({
+            type: SET_CONFIG,
+            config
+        });
     };
 }
 

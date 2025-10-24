@@ -1,5 +1,6 @@
 import { IStore } from '../../app/types';
 import { showModeratedNotification } from '../../av-moderation/actions';
+import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../../av-moderation/constants';
 import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { isModerationNotificationDisplayed } from '../../notifications/functions';
 
@@ -9,6 +10,7 @@ import {
     SET_AUDIO_MUTED,
     SET_AUDIO_UNMUTE_PERMISSIONS,
     SET_CAMERA_FACING_MODE,
+    SET_INITIAL_GUM_PROMISE,
     SET_SCREENSHARE_MUTED,
     SET_VIDEO_AVAILABLE,
     SET_VIDEO_MUTED,
@@ -17,7 +19,6 @@ import {
     TOGGLE_CAMERA_FACING_MODE
 } from './actionTypes';
 import {
-    MEDIA_TYPE,
     MediaType,
     SCREENSHARE_MUTISM_AUTHORITY,
     VIDEO_MUTISM_AUTHORITY
@@ -55,10 +56,23 @@ export function setAudioAvailable(available: boolean) {
  * }}
  */
 export function setAudioMuted(muted: boolean, ensureTrack = false) {
-    return {
-        type: SET_AUDIO_MUTED,
-        ensureTrack,
-        muted
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+
+        // check for A/V Moderation when trying to unmute
+        if (!muted && shouldShowModeratedNotification(AVM_MEDIA_TYPE.AUDIO, state)) {
+            if (!isModerationNotificationDisplayed(AVM_MEDIA_TYPE.AUDIO, state)) {
+                ensureTrack && dispatch(showModeratedNotification(AVM_MEDIA_TYPE.AUDIO));
+            }
+
+            return;
+        }
+
+        dispatch({
+            type: SET_AUDIO_MUTED,
+            ensureTrack,
+            muted
+        });
     };
 }
 
@@ -94,6 +108,22 @@ export function setCameraFacingMode(cameraFacingMode: string) {
 }
 
 /**
+ * Sets the initial GUM promise.
+ *
+ * @param {Promise<Array<Object>> | undefined} promise - The promise.
+ * @returns {{
+ *     type: SET_INITIAL_GUM_PROMISE,
+ *     promise: Promise
+ * }}
+ */
+export function setInitialGUMPromise(promise: Promise<{ errors: any; tracks: Array<any>; }> | null = null) {
+    return {
+        type: SET_INITIAL_GUM_PROMISE,
+        promise
+    };
+}
+
+/**
  * Action to set the muted state of the local screenshare.
  *
  * @param {boolean} muted - True if the local screenshare is to be enabled or false otherwise.
@@ -109,9 +139,9 @@ export function setScreenshareMuted(
         const state = getState();
 
         // check for A/V Moderation when trying to unmute
-        if (!muted && shouldShowModeratedNotification(MEDIA_TYPE.SCREENSHARE, state)) {
-            if (!isModerationNotificationDisplayed(MEDIA_TYPE.SCREENSHARE, state)) {
-                ensureTrack && dispatch(showModeratedNotification(MEDIA_TYPE.SCREENSHARE));
+        if (!muted && shouldShowModeratedNotification(AVM_MEDIA_TYPE.DESKTOP, state)) {
+            if (!isModerationNotificationDisplayed(AVM_MEDIA_TYPE.DESKTOP, state)) {
+                ensureTrack && dispatch(showModeratedNotification(AVM_MEDIA_TYPE.DESKTOP));
             }
 
             return;
@@ -122,7 +152,7 @@ export function setScreenshareMuted(
         // eslint-disable-next-line no-bitwise
         const newValue = muted ? oldValue | authority : oldValue & ~authority;
 
-        return dispatch({
+        dispatch({
             type: SET_SCREENSHARE_MUTED,
             authority,
             ensureTrack,
@@ -167,9 +197,9 @@ export function setVideoMuted(
         const state = getState();
 
         // check for A/V Moderation when trying to unmute
-        if (!muted && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, state)) {
-            if (!isModerationNotificationDisplayed(MEDIA_TYPE.VIDEO, state)) {
-                ensureTrack && dispatch(showModeratedNotification(MEDIA_TYPE.VIDEO));
+        if (!muted && shouldShowModeratedNotification(AVM_MEDIA_TYPE.VIDEO, state)) {
+            if (!isModerationNotificationDisplayed(AVM_MEDIA_TYPE.VIDEO, state)) {
+                ensureTrack && dispatch(showModeratedNotification(AVM_MEDIA_TYPE.VIDEO));
             }
 
             return;
@@ -180,7 +210,7 @@ export function setVideoMuted(
         // eslint-disable-next-line no-bitwise
         const newValue = muted ? oldValue | authority : oldValue & ~authority;
 
-        return dispatch({
+        dispatch({
             type: SET_VIDEO_MUTED,
             authority,
             ensureTrack,

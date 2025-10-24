@@ -24,7 +24,7 @@ export const VIDEO_CONTAINER_TYPE = 'camera';
 // Corresponds to animation duration from the animatedFadeIn and animatedFadeOut CSS classes.
 const FADE_DURATION_MS = 300;
 
-const logger = Logger.getLogger(__filename);
+const logger = Logger.getLogger('ui:VideoContainer');
 
 /**
  * List of container events that we are going to process for the large video.
@@ -501,8 +501,7 @@ export class VideoContainer extends LargeContainer {
      * @param {string} videoType video type
      */
     setStream(userID, stream, videoType) {
-        this.userId = userID;
-        if (this.stream === stream && !stream?.forceStreamToReattach) {
+        if (this.userId === userID && this.stream === stream && !stream?.forceStreamToReattach) {
             logger.debug(`SetStream on the large video for user ${userID} ignored: the stream is not changed!`);
 
             // Handles the use case for the remote participants when the
@@ -515,6 +514,8 @@ export class VideoContainer extends LargeContainer {
 
             return;
         }
+
+        this.userId = userID;
 
         if (stream?.forceStreamToReattach) {
             delete stream.forceStreamToReattach;
@@ -540,9 +541,8 @@ export class VideoContainer extends LargeContainer {
                 logger.error(`Attaching the remote track ${stream} to large video has failed with `, error);
             });
 
-            // Ensure large video gets play() called on it when a new stream is attached to it. This is necessary in the
-            // case of Safari as autoplay doesn't kick-in automatically on Safari 15 and newer versions.
-            browser.isWebKitBased() && this._play();
+            // Ensure large video gets play() called on it when a new stream is attached to it.
+            this._play();
 
             const flipX = stream.isLocal() && this.localFlipX && !this.isScreenSharing();
 

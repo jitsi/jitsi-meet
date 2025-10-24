@@ -12,7 +12,7 @@ export default class Container<P extends IProps> extends AbstractContainer<P> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { visible = true } = this.props;
 
         return visible ? super._render('div') : null;

@@ -21,7 +21,7 @@ class PageReloadOverlay extends AbstractPageReloadOverlay<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { isNetworkFailure, t } = this.props;
         const { message, timeLeft, title } = this.state;
 
@@ -33,6 +33,7 @@ class PageReloadOverlay extends AbstractPageReloadOverlay<IProps> {
                     className = 'inlay'
                     role = 'dialog'>
                     <span
+                        aria-level = { 1 }
                         className = 'reload_overlay_title'
                         id = 'reload_overlay_title'
                         role = 'heading'>

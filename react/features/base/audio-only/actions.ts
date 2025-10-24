@@ -1,5 +1,3 @@
-// @ts-expect-error
-import UIEvents from '../../../../service/UI/UIEvents';
 import { createAudioOnlyChangedEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IStore } from '../../app/types';
@@ -33,7 +31,7 @@ export function setAudioOnly(audioOnly: boolean) {
             if (typeof APP !== 'undefined') {
                 // TODO This should be a temporary solution that lasts only until video
                 // tracks and all ui is moved into react/redux on the web.
-                APP.UI.emitEvent(UIEvents.TOGGLE_AUDIO_ONLY, audioOnly);
+                APP.conference.onToggleAudioOnly();
             }
         }
     };
@@ -48,6 +46,6 @@ export function toggleAudioOnly() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const { enabled } = getState()['features/base/audio-only'];
 
-        return dispatch(setAudioOnly(!enabled));
+        dispatch(setAudioOnly(!enabled));
     };
 }

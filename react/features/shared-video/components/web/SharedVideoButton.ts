@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconPlay } from '../../../base/icons/svg';
+import { getLocalParticipant } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
-import { toggleSharedVideo } from '../../actions.any';
+import { toggleSharedVideo } from '../../actions';
 import { isSharingStatus } from '../../functions';
 
 interface IProps extends AbstractButtonProps {
@@ -24,13 +25,13 @@ interface IProps extends AbstractButtonProps {
  * Implements an {@link AbstractButton} to open the user documentation in a new window.
  */
 class SharedVideoButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.sharedvideo';
-    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.stopSharedVideo';
-    icon = IconPlay;
-    label = 'toolbar.sharedvideo';
-    toggledLabel = 'toolbar.stopSharedVideo';
-    tooltip = 'toolbar.sharedvideo';
-    toggledTooltip = 'toolbar.stopSharedVideo';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.sharedvideo';
+    override toggledAccessibilityLabel = 'toolbar.accessibilityLabel.stopSharedVideo';
+    override icon = IconPlay;
+    override label = 'toolbar.sharedvideo';
+    override toggledLabel = 'toolbar.stopSharedVideo';
+    override tooltip = 'toolbar.sharedvideo';
+    override toggledTooltip = 'toolbar.stopSharedVideo';
 
     /**
      * Handles clicking / pressing the button, and opens a new dialog.
@@ -38,7 +39,7 @@ class SharedVideoButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         this._doToggleSharedVideo();
     }
 
@@ -49,7 +50,7 @@ class SharedVideoButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._sharingVideo;
     }
 
@@ -60,7 +61,7 @@ class SharedVideoButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isDisabled() {
+    override _isDisabled() {
         return this.props._isDisabled;
     }
 
@@ -83,16 +84,14 @@ class SharedVideoButton extends AbstractButton<IProps> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
-    const {
-        disabled: sharedVideoBtnDisabled,
-        status: sharedVideoStatus
-    } = state['features/shared-video'];
+    const { ownerId, status: sharedVideoStatus } = state['features/shared-video'];
+    const localParticipantId = getLocalParticipant(state)?.id;
+    const isSharing = isSharingStatus(sharedVideoStatus ?? '');
 
     return {
-        _isDisabled: Boolean(sharedVideoBtnDisabled),
-        _sharingVideo: isSharingStatus(sharedVideoStatus ?? '')
+        _isDisabled: isSharing && ownerId !== localParticipantId,
+        _sharingVideo: isSharing
     };
 }
-
 
 export default translate(connect(_mapStateToProps)(SharedVideoButton));

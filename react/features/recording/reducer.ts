@@ -2,6 +2,7 @@ import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
     CLEAR_RECORDING_SESSIONS,
+    MARK_CONSENT_REQUESTED,
     RECORDING_SESSION_UPDATED,
     SET_MEETING_HIGHLIGHT_BUTTON_STATE,
     SET_PENDING_RECORDING_NOTIFICATION_UID,
@@ -11,6 +12,7 @@ import {
 } from './actionTypes';
 
 const DEFAULT_STATE = {
+    consentRequested: new Set(),
     disableHighlightMeetingMoment: false,
     pendingNotificationUids: {},
     selectedRecordingService: '',
@@ -29,6 +31,7 @@ export interface ISessionData {
 }
 
 export interface IRecordingState {
+    consentRequested: Set<any>;
     disableHighlightMeetingMoment: boolean;
     pendingNotificationUids: {
         [key: string]: string | undefined;
@@ -55,6 +58,15 @@ ReducerRegistry.register<IRecordingState>(STORE_NAME,
             return {
                 ...state,
                 sessionDatas: []
+            };
+
+        case MARK_CONSENT_REQUESTED:
+            return {
+                ...state,
+                consentRequested: new Set([
+                    ...state.consentRequested,
+                    action.sessionId
+                ])
             };
 
         case RECORDING_SESSION_UPDATED:
@@ -113,7 +125,7 @@ ReducerRegistry.register<IRecordingState>(STORE_NAME,
  * @param {Array} sessionDatas - The current sessions in the redux store.
  * @param {Object} newSessionData - The updated session data.
  * @private
- * @returns {Array} The session datas with the updated session data added.
+ * @returns {Array} The session data with the updated session data added.
  */
 function _updateSessionDatas(sessionDatas: ISessionData[], newSessionData: ISessionData) {
     const hasExistingSessionData = sessionDatas.find(
@@ -133,7 +145,7 @@ function _updateSessionDatas(sessionDatas: ISessionData[], newSessionData: ISess
         });
     } else {
         // If the session data is not present, then there is nothing to update
-        // and instead it needs to be added to the known session datas.
+        // and instead it needs to be added to the known session data.
         newSessionDatas = [
             ...sessionDatas,
             { ...newSessionData }

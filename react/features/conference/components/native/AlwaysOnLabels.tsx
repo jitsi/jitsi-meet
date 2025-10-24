@@ -2,12 +2,11 @@ import React, { useCallback } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { IReduxState } from '../../../app/types';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { openHighlightDialog } from '../../../recording/actions.native';
 import HighlightButton from '../../../recording/components/Recording/native/HighlightButton';
 import RecordingLabel from '../../../recording/components/native/RecordingLabel';
-import { getActiveSession } from '../../../recording/functions';
+import { isLiveStreamingRunning } from '../../../recording/functions';
 import VisitorsCountLabel from '../../../visitors/components/native/VisitorsCountLabel';
 
 import RaisedHandsCountLabel from './RaisedHandsCountLabel';
@@ -30,8 +29,7 @@ interface IProps {
 
 const AlwaysOnLabels = ({ createOnPress }: IProps) => {
     const dispatch = useDispatch();
-    const isStreaming = useSelector((state: IReduxState) =>
-        Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM)));
+    const isStreaming = useSelector(isLiveStreamingRunning);
     const openHighlightDialogCallback = useCallback(() =>
         dispatch(openHighlightDialog()), [ dispatch ]);
 

@@ -1,6 +1,6 @@
 import { appNavigate } from '../app/actions.native';
 import { KICKED_OUT } from '../base/conference/actionTypes';
-import { conferenceLeft } from '../base/conference/actions';
+import { conferenceLeft } from '../base/conference/actions.native';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 
 import { notifyKickedOut } from './actions.native';

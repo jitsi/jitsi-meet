@@ -61,3 +61,13 @@ StateListenerRegistry.register(
         APP.API.notifyOnStageParticipantChanged(participantId);
     }
 );
+
+/**
+ * Updates the on audio only value.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/base/audio-only'].enabled,
+    /* listener */ enabled => {
+        APP.API.notifyAudioOnlyChanged(enabled);
+    }
+);

@@ -1,11 +1,15 @@
 import { DEFAULT_LANGUAGE } from '../base/i18n/i18next';
 
 import {
+    REMOVE_CACHED_TRANSCRIPT_MESSAGE,
     REMOVE_TRANSCRIPT_MESSAGE,
     SET_REQUESTING_SUBTITLES,
+    SET_SUBTITLES_ERROR,
+    STORE_SUBTITLE,
     TOGGLE_REQUESTING_SUBTITLES,
     UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
+import { ISubtitle } from './types';
 
 /**
  * Signals that a transcript has to be removed from the state.
@@ -19,6 +23,22 @@ import {
 export function removeTranscriptMessage(transcriptMessageID: string) {
     return {
         type: REMOVE_TRANSCRIPT_MESSAGE,
+        transcriptMessageID
+    };
+}
+
+/**
+ * Signals that a cached transcript has to be removed from the state.
+ *
+ * @param {string} transcriptMessageID - The message_id to be removed.
+ * @returns {{
+*      type: REMOVE_CACHED_TRANSCRIPT_MESSAGE,
+*      transcriptMessageID: string,
+* }}
+*/
+export function removeCachedTranscriptMessage(transcriptMessageID: string) {
+    return {
+        type: REMOVE_CACHED_TRANSCRIPT_MESSAGE,
         transcriptMessageID
     };
 }
@@ -63,8 +83,10 @@ export function toggleRequestingSubtitles() {
  * @param {boolean} enabled - The new state of the subtitles.
  * @param {boolean} displaySubtitles - Whether to display subtitles or not.
  * @param {string} language - The language of the subtitles.
+ * @param {boolean} backendRecordingOn - Whether backend recording is on.
  * @returns {{
  *    type: SET_REQUESTING_SUBTITLES,
+ *    backendRecordingOn: boolean,
  *    enabled: boolean,
  *    displaySubtitles: boolean,
  *    language: string
@@ -73,11 +95,45 @@ export function toggleRequestingSubtitles() {
 export function setRequestingSubtitles(
         enabled: boolean,
         displaySubtitles = true,
-        language: string | null = `translation-languages:${DEFAULT_LANGUAGE}`) {
+        language: string | null = `translation-languages:${DEFAULT_LANGUAGE}`,
+        backendRecordingOn = false) {
     return {
         type: SET_REQUESTING_SUBTITLES,
+        backendRecordingOn,
         displaySubtitles,
         enabled,
         language
+    };
+}
+
+/**
+ * Stores a received subtitle in the history.
+ *
+ * @param {ISubtitle} subtitle - The subtitle to store.
+ * @returns {{
+ *     type: STORE_SUBTITLE,
+ *     subtitle: ISubtitle
+ * }}
+ */
+export function storeSubtitle(subtitle: ISubtitle) {
+    return {
+        type: STORE_SUBTITLE,
+        subtitle
+    };
+}
+
+/**
+ * Signals that an error occurred while starting subtitles.
+ *
+ * @param {boolean} hasError - Whether an error occurred or not.
+ * @returns {{
+ *    type: SET_SUBTITLES_ERROR,
+ *    hasError: boolean
+ * }}
+ */
+export function setSubtitlesError(hasError: boolean) {
+    return {
+        type: SET_SUBTITLES_ERROR,
+        hasError
     };
 }

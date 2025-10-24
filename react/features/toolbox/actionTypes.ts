@@ -8,6 +8,17 @@
 export const CLEAR_TOOLBOX_TIMEOUT = 'CLEAR_TOOLBOX_TIMEOUT';
 
 /**
+ * The type of (redux) action which signals that a custom button was pressed.
+ *
+ * @returns {{
+ *      type: CUSTOM_BUTTON_PRESSED,
+ *      id: string,
+ *      text: string
+ * }}
+ */
+export const CUSTOM_BUTTON_PRESSED = 'CUSTOM_BUTTON_PRESSED';
+
+/**
  * The type of (redux) action which updates whether the conference is or is not
  * currently in full screen view.
  *
@@ -58,6 +69,16 @@ export const SET_FULL_SCREEN = 'SET_FULL_SCREEN';
  * }
  */
 export const SET_HANGUP_MENU_VISIBLE = 'SET_HANGUP_MENU_VISIBLE';
+
+/**
+ * The type of the (redux) action which sets the main toolbar thresholds.
+ *
+ * {
+ *     type: SET_MAIN_TOOLBAR_BUTTONS_THRESHOLDS,
+ *     mainToolbarButtonsThresholds: IMainToolbarButtonThresholds
+ * }
+ */
+export const SET_MAIN_TOOLBAR_BUTTONS_THRESHOLDS = 'SET_MAIN_TOOLBAR_BUTTONS_THRESHOLDS';
 
 /**
  * The type of the redux action that toggles whether the overflow menu(s) should be shown as drawers.

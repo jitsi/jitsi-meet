@@ -5,8 +5,10 @@ import AbstractButton, { IProps } from './AbstractButton';
 /**
  * An abstract implementation of a button for disconnecting a conference.
  */
-export default class AbstractHangupButton<P extends IProps, S = any> extends AbstractButton<P, S> {
-    icon = IconHangup;
+export default class AbstractHangupButton<P extends IProps, S=any>
+    extends AbstractButton<P, S> {
+
+    override icon = IconHangup;
 
     /**
      * Handles clicking / pressing the button, and disconnects the conference.
@@ -14,7 +16,7 @@ export default class AbstractHangupButton<P extends IProps, S = any> extends Abs
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         this._doHangup();
     }
 

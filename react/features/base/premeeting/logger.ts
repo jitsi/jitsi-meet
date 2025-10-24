@@ -1,3 +1,3 @@
 import { getLogger } from '../logging/functions';
 
-export default getLogger('features/base/premeeting');
+export default getLogger('app:premeeting');

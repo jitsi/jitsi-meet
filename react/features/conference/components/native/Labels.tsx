@@ -26,7 +26,7 @@ class Labels extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         return (
             <View pointerEvents = 'box-none'>
                 <View

@@ -131,18 +131,6 @@ case "$1" in
             fi
         fi
 
-        if [ "$PROSODY_CREATE_JICOFO_USER" = "true" ]; then
-            # create 'focus@auth.domain' prosody user
-            prosodyctl register $JICOFO_AUTH_USER $JICOFO_AUTH_DOMAIN $JICOFO_AUTH_PASSWORD
-            # trigger a restart
-            PROSODY_CONFIG_PRESENT="false"
-        fi
-
-        USER_EXISTS_CHECK=`prosodyctl adduser jvb@$JICOFO_AUTH_DOMAIN < /dev/null || true`
-        if [ ! "$USER_EXISTS_CHECK" = "That user already exists" ]; then
-            prosodyctl register jvb $JICOFO_AUTH_DOMAIN $JVB_SECRET || true
-        fi
-
         # Check whether prosody config has the internal muc, if not add it,
         # as we are migrating configs
         if [ -f $PROSODY_HOST_CONFIG ] && ! grep -q "internal.$JICOFO_AUTH_DOMAIN" $PROSODY_HOST_CONFIG; then
@@ -166,6 +154,16 @@ case "$1" in
             PROSODY_CONFIG_PRESENT="false"
         fi
 
+        # Start using the polls component
+        if ! grep -q "Component \"polls.$JVB_HOSTNAME\"" $PROSODY_HOST_CONFIG ;then
+            echo -e "\nComponent \"polls.$JVB_HOSTNAME\" \"polls_component\"" >> $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+        if ! grep -q -- '--"polls";' $PROSODY_HOST_CONFIG ;then
+            sed -i "s/\"polls\";/--\"polls\";/g" $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
         # Old versions of jitsi-meet-prosody come with the extra plugin path commented out (https://github.com/jitsi/jitsi-meet/commit/e11d4d3101e5228bf956a69a9e8da73d0aee7949)
         # Make sure it is uncommented, as it contains required modules.
         if grep -q -- '--plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }' $PROSODY_HOST_CONFIG ;then
@@ -183,6 +181,12 @@ case "$1" in
         if ! grep -q -- 'unlimited_jids' $PROSODY_HOST_CONFIG ;then
             sed -i "1s/^/unlimited_jids = { \"$JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN\", \"jvb@$JICOFO_AUTH_DOMAIN\" }\n/" $PROSODY_HOST_CONFIG
             sed -i "s/VirtualHost \"$JICOFO_AUTH_DOMAIN\"/VirtualHost \"$JICOFO_AUTH_DOMAIN\"\n    modules_enabled = { \"limits_exception\"; }/g" $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        # Since prosody 13 admins are not automatically room owners and we expect that for jicofo
+        if ! grep -q -- 'component_admins_as_room_owners = ' $PROSODY_HOST_CONFIG ;then
+            sed -i "1s/^/component_admins_as_room_owners = true\n/" $PROSODY_HOST_CONFIG
             PROSODY_CONFIG_PRESENT="false"
         fi
 
@@ -208,9 +212,6 @@ case "$1" in
                 fi
             fi
         fi
-
-        # Make sure the focus@auth user's roster includes the proxy component (this is idempotent)
-        prosodyctl mod_roster_command subscribe focus.$JVB_HOSTNAME $JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN
 
         if [ ! -f /var/lib/prosody/$JVB_HOSTNAME.crt ]; then
             # prosodyctl takes care for the permissions
@@ -254,9 +255,33 @@ case "$1" in
         if [ "$PROSODY_CONFIG_PRESENT" = "false" ]; then
             invoke-rc.d prosody restart || true
 
-            # In case we had updated the certificates and restarted prosody, let's restart and the bridge if possible
+            # give it some time to warm up
+            sleep 10
+
+            if [ "$PROSODY_CREATE_JICOFO_USER" = "true" ]; then
+                # create 'focus@auth.domain' prosody user
+                echo -e "$JICOFO_AUTH_PASSWORD\n$JICOFO_AUTH_PASSWORD" | prosodyctl adduser $JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN > /dev/null || true
+
+                # trigger a restart
+                PROSODY_CONFIG_PRESENT="false"
+            fi
+
+            # creates the user if it does not exist
+            echo -e "$JVB_SECRET\n$JVB_SECRET" | prosodyctl adduser jvb@$JICOFO_AUTH_DOMAIN > /dev/null || true
+
+            # Make sure the focus@auth user's roster includes the proxy component (this is idempotent)
+            prosodyctl mod_roster_command subscribe focus.$JVB_HOSTNAME $JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN
+
+            # To make sure the roster command is loaded
+            # Once we have https://issues.prosody.im/1908 we can start using prosodyctl shell roster subscribe
+            # and drop the wait and the prosody restart
+            sleep 1
+            invoke-rc.d prosody restart || true
+
+            # In case we had updated the certificates and restarted prosody, let's restart and the bridge and jicofo if possible
             if [ -d /run/systemd/system ] && [ "$CERT_ADDED_TO_TRUST" = "true" ]; then
                 systemctl restart jitsi-videobridge2.service >/dev/null || true
+                systemctl restart jicofo.service >/dev/null || true
             fi
         fi
     ;;

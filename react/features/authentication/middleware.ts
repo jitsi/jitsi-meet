@@ -28,6 +28,8 @@ import {
     WAIT_FOR_OWNER
 } from './actionTypes';
 import {
+    disableModeratorLogin,
+    enableModeratorLogin,
     hideLoginDialog,
     openLoginDialog,
     openTokenAuthUrl,
@@ -44,7 +46,7 @@ import logger from './logger';
 
 /**
  * Middleware that captures connection or conference failed errors and controls
- * {@link WaitForOwnerDialog} and {@link LoginDialog}.
+ * moderator login availability and {@link LoginDialog}.
  *
  * FIXME Some of the complexity was introduced by the lack of dialog stacking.
  *
@@ -105,11 +107,21 @@ MiddlewareRegistry.register(store => next => action => {
             }
             recoverable = error.recoverable;
         }
-        if (recoverable) {
-            store.dispatch(waitForOwner());
-        } else {
-            store.dispatch(stopWaitForOwner());
+
+        if (error.name === JitsiConferenceErrors.MEMBERS_ONLY_ERROR && lobbyWaitingForHost) {
+            if (recoverable) {
+                store.dispatch(enableModeratorLogin());
+            } else {
+                store.dispatch(disableModeratorLogin());
+            }
+        } else if (error.name === JitsiConferenceErrors.AUTHENTICATION_REQUIRED) {
+            if (recoverable) {
+                store.dispatch(waitForOwner());
+            } else {
+                store.dispatch(stopWaitForOwner());
+            }
         }
+
         break;
     }
 
@@ -121,11 +133,14 @@ MiddlewareRegistry.register(store => next => action => {
         if (isTokenAuthEnabled(config)
             && config.tokenAuthUrlAutoRedirect
             && state['features/base/jwt'].jwt) {
-            // auto redirect is turned on and we have succesfully logged in
+            // auto redirect is turned on and we have successfully logged in
             // let's mark that
             dispatch(setTokenAuthUrlSuccess(true));
         }
 
+        if (_isWaitingForModerator(store)) {
+            store.dispatch(disableModeratorLogin());
+        }
         if (_isWaitingForOwner(store)) {
             store.dispatch(stopWaitForOwner());
         }
@@ -134,6 +149,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case CONFERENCE_LEFT:
+        store.dispatch(disableModeratorLogin());
         store.dispatch(stopWaitForOwner());
         break;
 
@@ -143,7 +159,8 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONNECTION_FAILED: {
         const { error } = action;
-        const state = store.getState();
+        const { getState } = store;
+        const state = getState();
         const { jwt } = state['features/base/jwt'];
 
         if (error
@@ -235,7 +252,6 @@ function _clearExistingWaitForOwnerTimeout({ getState }: IStore) {
     waitForOwnerTimeoutID && clearTimeout(waitForOwnerTimeoutID);
 }
 
-
 /**
  * Checks if the cyclic "wait for conference owner" task is currently scheduled.
  *
@@ -244,6 +260,16 @@ function _clearExistingWaitForOwnerTimeout({ getState }: IStore) {
  */
 function _isWaitingForOwner({ getState }: IStore) {
     return Boolean(getState()['features/authentication'].waitForOwnerTimeoutID);
+}
+
+/**
+ * Checks if the cyclic "wait for moderator" task is currently scheduled.
+ *
+ * @param {Object} store - The redux store.
+ * @returns {boolean}
+ */
+function _isWaitingForModerator({ getState }: IStore) {
+    return getState()['features/authentication'].showModeratorLogin;
 }
 
 /**

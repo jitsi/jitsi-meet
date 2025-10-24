@@ -1,71 +1,16 @@
+import { querySelector, querySelectorAll } from '@jitsi/js-utils/polyfills/querySelectorPolyfill';
 import { DOMParser } from '@xmldom/xmldom';
 import { atob, btoa } from 'abab';
-import { Platform } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 import { TextDecoder, TextEncoder } from 'text-encoding';
 
-import 'promise.allsettled/auto'; // Promise.allSettled.
+import 'promise.withresolvers/auto'; // Promise.withResolvers.
 import 'react-native-url-polyfill/auto'; // Complete URL polyfill.
 
 import Storage from './Storage';
 
-/**
- * Implements an absolute minimum of the common logic of
- * {@code Document.querySelector} and {@code Element.querySelector}. Implements
- * the most simple of selectors necessary to satisfy the call sites at the time
- * of this writing (i.e. Select by tagName).
- *
- * @param {Node} node - The Node which is the root of the tree to query.
- * @param {string} selectors - The group of CSS selectors to match on.
- * @returns {Element} - The first Element which is a descendant of the specified
- * node and matches the specified group of selectors.
- */
-function _querySelector(node, selectors) {
-    let element = null;
-
-    node && _visitNode(node, n => {
-        if (n.nodeType === 1 /* ELEMENT_NODE */
-                && n.nodeName === selectors) {
-            element = n;
-
-            return true;
-        }
-
-        return false;
-    });
-
-    return element;
-}
-
-/**
- * Visits each Node in the tree of a specific root Node (using depth-first
- * traversal) and invokes a specific callback until the callback returns true.
- *
- * @param {Node} node - The root Node which represents the tree of Nodes to
- * visit.
- * @param {Function} callback - The callback to invoke with each visited Node.
- * @returns {boolean} - True if the specified callback returned true for a Node
- * (at which point the visiting stopped); otherwise, false.
- */
-function _visitNode(node, callback) {
-    if (callback(node)) {
-        return true;
-    }
-
-    /* eslint-disable no-param-reassign, no-extra-parens */
-
-    if ((node = node.firstChild)) {
-        do {
-            if (_visitNode(node, callback)) {
-                return true;
-            }
-        } while ((node = node.nextSibling));
-    }
-
-    /* eslint-enable no-param-reassign, no-extra-parens */
-
-    return false;
-}
+const { AppInfo } = NativeModules;
 
 (global => {
     // DOMParser
@@ -95,7 +40,6 @@ function _visitNode(node, callback) {
     // document
     //
     // Required by:
-    // - jQuery
     // - Strophe
     if (typeof global.document === 'undefined') {
         const document
@@ -154,7 +98,17 @@ function _visitNode(node, callback) {
         if (elementPrototype) {
             if (typeof elementPrototype.querySelector === 'undefined') {
                 elementPrototype.querySelector = function(selectors) {
-                    return _querySelector(this, selectors);
+                    return querySelector(this, selectors);
+                };
+            }
+
+            // Element.querySelectorAll
+            //
+            // Required by:
+            // - lib-jitsi-meet XMLUtils
+            if (typeof elementPrototype.querySelectorAll === 'undefined') {
+                elementPrototype.querySelectorAll = function(selectors) {
+                    return querySelectorAll(this, selectors);
                 };
             }
 
@@ -233,6 +187,51 @@ function _visitNode(node, callback) {
             }
         }
 
+        // Document.querySelector
+        //
+        // Required by:
+        // - lib-jitsi-meet -> XMLUtils.ts -> parseXML
+        if (typeof document.querySelector === 'undefined') {
+            document.querySelector = function(selectors) {
+                return querySelector(this, selectors);
+            };
+        }
+
+        // Document.querySelectorAll
+        //
+        // Required by:
+        // - lib-jitsi-meet -> XMLUtils.ts -> parseXML
+        if (typeof document.querySelectorAll === 'undefined') {
+            document.querySelectorAll = function(selectors) {
+                return querySelectorAll(this, selectors);
+            };
+        }
+
+        // Also add querySelector methods to Document.prototype for DOMParser-created documents
+        const documentPrototype = Object.getPrototypeOf(document);
+
+        if (documentPrototype) {
+            // Document.querySelector
+            //
+            // Required by:
+            // - lib-jitsi-meet -> XMLUtils.ts -> parseXML
+            if (typeof documentPrototype.querySelector === 'undefined') {
+                documentPrototype.querySelector = function(selectors) {
+                    return querySelector(this, selectors);
+                };
+            }
+
+            // Document.querySelectorAll
+            //
+            // Required by:
+            // - lib-jitsi-meet -> XMLUtils.ts -> parseXML
+            if (typeof documentPrototype.querySelectorAll === 'undefined') {
+                documentPrototype.querySelectorAll = function(selectors) {
+                    return querySelectorAll(this, selectors);
+                };
+            }
+        }
+
         global.document = document;
     }
 
@@ -254,25 +253,27 @@ function _visitNode(node, callback) {
         //
         // Required by:
         // - lib-jitsi-meet/modules/browser/BrowserDetection.js
-        let userAgent = navigator.userAgent || '';
 
-        // react-native/version
-        const { name, version } = require('react-native/package.json');
-        let rn = name || 'react-native';
-
-        version && (rn += `/${version}`);
-        if (userAgent.indexOf(rn) === -1) {
-            userAgent = userAgent ? `${rn} ${userAgent}` : rn;
-        }
+        // React Native version
+        const { reactNativeVersion } = Platform.constants;
+        const rnVersion
+            = `react-native/${reactNativeVersion.major}.${reactNativeVersion.minor}.${reactNativeVersion.patch}`;
 
         // (OS version)
-        const os = `(${Platform.OS} ${Platform.Version})`;
+        const os = `${Platform.OS.toLowerCase()}/${Platform.Version}`;
 
-        if (userAgent.indexOf(os) === -1) {
-            userAgent = userAgent ? `${userAgent} ${os}` : os;
-        }
+        // SDK
+        const liteTxt = AppInfo.isLiteSDK ? '-lite' : '';
+        const sdkVersion = `JitsiMeetSDK/${AppInfo.sdkVersion}${liteTxt}`;
 
-        navigator.userAgent = userAgent;
+        const parts = [
+            navigator.userAgent ?? '',
+            sdkVersion,
+            os,
+            rnVersion
+        ];
+
+        navigator.userAgent = parts.filter(Boolean).join(' ');
     }
 
     // WebRTC

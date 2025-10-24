@@ -1,3 +1,3 @@
 import { getLogger } from '../base/logging/functions';
 
-export default getLogger('features/follow-me');
+export default getLogger('app:follow-me');

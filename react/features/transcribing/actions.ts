@@ -1,7 +1,6 @@
 import {
-    _POTENTIAL_TRANSCRIBER_JOINED,
-    _TRANSCRIBER_JOINED,
-    _TRANSCRIBER_LEFT
+    TRANSCRIBER_JOINED,
+    TRANSCRIBER_LEFT
 } from './actionTypes';
 
 /**
@@ -9,13 +8,13 @@ import {
  *
  * @param {string} participantId - The participant id of the transcriber.
  * @returns {{
- *     type: _TRANSCRIBER_JOINED,
+ *     type: TRANSCRIBER_JOINED,
  *     participantId: string
  * }}
  */
 export function transcriberJoined(participantId: string) {
     return {
-        type: _TRANSCRIBER_JOINED,
+        type: TRANSCRIBER_JOINED,
         transcriberJID: participantId
     };
 }
@@ -24,30 +23,18 @@ export function transcriberJoined(participantId: string) {
  * Notify that the transcriber, with a unique ID, has left.
  *
  * @param {string} participantId - The participant id of the transcriber.
+ * @param {boolean} abruptly - The transcriber did not exit the conference gracefully with switching off first.
+ * It maybe there was some backend problem, like network.
  * @returns {{
- *     type: _TRANSCRIBER_LEFT,
- *     participantId: string
+ *     type: TRANSCRIBER_LEFT,
+ *     participantId: string,
+ *     abruptly: boolean
  * }}
  */
-export function transcriberLeft(participantId: string) {
+export function transcriberLeft(participantId: string, abruptly: boolean) {
     return {
-        type: _TRANSCRIBER_LEFT,
-        transcriberJID: participantId
-    };
-}
-
-/**
- * Notify that a potential transcriber, with a unique ID, has joined.
- *
- * @param {string} participantId - The participant id of the transcriber.
- * @returns {{
- *     type: _POTENTIAL_TRANSCRIBER_JOINED,
- *     participantId: string
- * }}
- */
-export function potentialTranscriberJoined(participantId: string) {
-    return {
-        type: _POTENTIAL_TRANSCRIBER_JOINED,
-        transcriberJID: participantId
+        type: TRANSCRIBER_LEFT,
+        transcriberJID: participantId,
+        abruptly
     };
 }

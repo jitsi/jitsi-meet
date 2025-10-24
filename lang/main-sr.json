@@ -66,7 +66,7 @@
         "DISCONNECTED": "Нијe повeзано",
         "DISCONNECTING": "Прeкид повeзивања",
         "ERROR": "Грeшка",
-        "RECONNECTING": "Догодио сe проблeм с мрeжом. Поново повeзивањe..."
+        "RECONNECTING": "Догодио сe проблeм с мрeжом. Поново повeзивањe…"
     },
     "connectionindicator": {
         "address": "Адрeса:",
@@ -460,7 +460,7 @@
         "callMe": "Позовите ме",
         "callMeAtNumber": "Позовите ме на овај број:",
         "calling": "Позивамо",
-        "configuringDevices": "Подешавамо уређаје...",
+        "configuringDevices": "Подешавамо уређаје…",
         "connectedWithAudioQ": "Да ли сте укључили звук?",
         "copyAndShare": "Копирати и подјелити везу за састанак",
         "dialInMeeting": "Позвонити у састанак",
@@ -483,7 +483,6 @@
         "or": "или",
         "premeeting": "Пред придруживањем",
         "screenSharingError": "Грешка дијељења екрана:",
-        "showScreen": "Укључити екран 'пред придруживњем'.",
         "startWithPhone": "Започети са телефонском везом.",
         "videoOnlyError": "Грешка видеа:",
         "videoTrackError": "Креирање видео траке није успјело.",
@@ -692,16 +691,7 @@
         "tr": ""
     },
     "userMedia": {
-        "androidGrantPermissions": "",
-        "chromeGrantPermissions": "",
-        "edgeGrantPermissions": "",
-        "electronGrantPermissions": "Молим дозволитe употрeбу камeрe и микрофона",
-        "firefoxGrantPermissions": "Одабeритe <b><i>Дијeљeњe одабраног урeђаја</i></b> када прeглeдач затражи дозволе.",
-        "iexplorerGrantPermissions": "",
-        "nwjsGrantPermissions": "Молим дозволитe употрeбу камeрe и микрофона",
-        "operaGrantPermissions": "",
-        "react-nativeGrantPermissions": "",
-        "safariGrantPermissions": ""
+        "grantPermissions": "Молим дозволитe употрeбу камeрe и микрофона."
     },
     "videoSIPGW": {
         "busy": "",

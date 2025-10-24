@@ -31,7 +31,7 @@ class AlertDialog extends AbstractDialog<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { contentKey, t } = this.props;
         const content
             = typeof contentKey === 'string'

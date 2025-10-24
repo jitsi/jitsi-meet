@@ -12,7 +12,7 @@ export const tabBarOptions = {
     tabBarActiveTintColor: ACTIVE_TAB_COLOR,
     tabBarInactiveTintColor: INACTIVE_TAB_COLOR,
     tabBarLabelStyle: {
-        fontSize: 12
+        fontSize: 12,
     },
     tabBarStyle: {
         backgroundColor: BaseTheme.palette.ui01

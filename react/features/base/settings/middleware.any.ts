@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { escape } from 'lodash-es';
 import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
@@ -100,8 +100,8 @@ function _updateLocalParticipantFromUrl({ dispatch, getState }: IStore) {
     const localParticipant = getLocalParticipant(getState());
 
     if (localParticipant) {
-        const displayName = _.escape(urlDisplayName);
-        const email = _.escape(urlEmail);
+        const displayName = escape(urlDisplayName);
+        const email = escape(urlEmail);
 
         dispatch(participantUpdated({
             ...localParticipant,

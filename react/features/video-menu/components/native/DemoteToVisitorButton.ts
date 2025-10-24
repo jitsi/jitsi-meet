@@ -20,9 +20,9 @@ interface IProps extends AbstractButtonProps {
  * Implements a React {@link Component} which displays a button for demoting a participant to visitor.
  */
 class DemoteToVisitorButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'videothumbnail.demote';
-    icon = IconUsers;
-    label = 'videothumbnail.demote';
+    override accessibilityLabel = 'videothumbnail.demote';
+    override icon = IconUsers;
+    override label = 'videothumbnail.demote';
 
     /**
      * Handles clicking / pressing the button, and demoting the participant.
@@ -30,7 +30,7 @@ class DemoteToVisitorButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch, participantID } = this.props;
 
         dispatch(openDialog(DemoteToVisitorDialog, { participantID }));

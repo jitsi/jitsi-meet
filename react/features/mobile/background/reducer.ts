@@ -4,7 +4,7 @@ import ReducerRegistry from '../../base/redux/ReducerRegistry';
 
 import { APP_STATE_CHANGED, _SET_APP_STATE_SUBSCRIPTION } from './actionTypes';
 
-export interface IBackgroundState {
+export interface IMobileBackgroundState {
     appState: string;
     subscription?: NativeEventSubscription;
 }
@@ -13,10 +13,11 @@ export interface IBackgroundState {
  * The default/initial redux state of the feature background.
  */
 const DEFAULT_STATE = {
-    appState: 'active'
+    appState: ''
 };
 
-ReducerRegistry.register<IBackgroundState>('features/background', (state = DEFAULT_STATE, action): IBackgroundState => {
+// eslint-disable-next-line max-len
+ReducerRegistry.register<IMobileBackgroundState>('features/mobile/background', (state = DEFAULT_STATE, action): IMobileBackgroundState => {
     switch (action.type) {
 
     case _SET_APP_STATE_SUBSCRIPTION:

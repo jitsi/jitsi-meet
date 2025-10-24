@@ -1,18 +1,24 @@
 import { WithTranslation } from 'react-i18next';
 
 import { IStore } from '../app/types';
+import { IFileMetadata } from '../file-sharing/types';
 
 export interface IMessage {
     displayName: string;
     error?: Object;
-    id: string;
+    fileMetadata?: IFileMetadata;
+    isFromGuest?: boolean;
+    isFromVisitor?: boolean;
     isReaction: boolean;
     lobbyChat: boolean;
     message: string;
     messageId: string;
     messageType: string;
+    participantId: string;
     privateMessage: boolean;
+    reactions: Map<string, Set<string>>;
     recipient: string;
+    sentToVisitor?: boolean;
     timestamp: number;
 }
 
@@ -29,7 +35,7 @@ export interface IChatProps extends WithTranslation {
     /**
      * Number of unread chat messages.
      */
-    _nbUnreadMessages: number;
+    _unreadMessagesCount: number;
 
     /**
      * The Redux dispatch function.
@@ -43,6 +49,11 @@ export interface IChatMessageProps extends WithTranslation {
      * Whether the message can be replied to.
      */
     canReply?: boolean;
+
+    /**
+     * Whether gifs are enabled or not.
+     */
+    gifEnabled?: boolean;
 
     /**
      * Whether current participant is currently knocking in the lobby room.

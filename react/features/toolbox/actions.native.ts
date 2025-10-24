@@ -1,3 +1,5 @@
+import { CUSTOM_BUTTON_PRESSED } from './actionTypes';
+
 export * from './actions.any';
 
 /**
@@ -21,4 +23,23 @@ export function showToolbox(_timeout?: number): any {
  */
 export function setOverflowMenuVisible(_visible: boolean): any {
     return {};
+}
+
+/**
+ * Creates a (redux) action which that a custom button was pressed.
+ *
+ * @param {string} id - The id for the custom button.
+ * @param {string} text - The label for the custom button.
+ * @returns {{
+ *     type: CUSTOM_BUTTON_PRESSED,
+ *     id: string,
+ *     text: string
+ * }}
+ */
+export function customButtonPressed(id: string, text: string | undefined) {
+    return {
+        type: CUSTOM_BUTTON_PRESSED,
+        id,
+        text
+    };
 }

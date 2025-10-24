@@ -40,7 +40,7 @@ class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         return (
             <ConfirmDialog
                 confirmLabel = 'dialog.muteParticipantButton'

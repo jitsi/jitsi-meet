@@ -5,8 +5,22 @@
  * @param {string} filename - The filename to give to the downloaded file.
  * @returns {void}
  */
-export function downloadJSON(json: Object, filename: string) {
-    const data = encodeURIComponent(JSON.stringify(json, null, '  '));
+export function downloadJSON(json: Object, filename: string): void {
+    const replacer = () => {
+        const seen = new WeakSet();
+
+        return (_: any, value: any) => {
+            if (typeof value === 'object' && value !== null) {
+                if (seen.has(value)) {
+                    return '[circular ref]';
+                }
+                seen.add(value);
+            }
+
+            return value;
+        };
+    };
+    const data = encodeURIComponent(JSON.stringify(json, replacer(), '  '));
 
     const elem = document.createElement('a');
 

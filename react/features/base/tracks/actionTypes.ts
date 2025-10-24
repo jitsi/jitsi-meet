@@ -67,16 +67,6 @@ export const TRACK_MUTE_UNMUTE_FAILED = 'TRACK_MUTE_UNMUTE_FAILED';
 export const TRACK_NO_DATA_FROM_SOURCE = 'TRACK_NO_DATA_FROM_SOURCE';
 
 /**
- * The type of redux action dispatched when the owner of a track changes due to ssrc remapping.
- *
- * {
- *     type: TRACK_OWNER_CHANGED,
- *     track: Track
- * }
- */
-export const TRACK_OWNER_CHANGED = 'TRACK_OWNER_CHANGED';
-
-/**
  * The type of redux action dispatched when a track has been (locally or
  * remotely) removed from the conference.
  *

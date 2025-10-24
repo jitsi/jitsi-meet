@@ -44,6 +44,7 @@ export const screen = {
         profile: 'Profile'
     },
     unsafeRoomWarning: 'Unsafe Room Warning',
+    visitorsQueue: 'Visitors Queue',
     welcome: {
         main: 'Welcome',
         tabs: {

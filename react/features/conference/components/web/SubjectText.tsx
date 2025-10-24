@@ -4,13 +4,12 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { getConferenceName } from '../../../base/conference/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Tooltip from '../../../base/tooltip/components/Tooltip';
 
 const useStyles = makeStyles()(theme => {
     return {
         container: {
-            ...withPixelLineHeight(theme.typography.bodyLongRegular),
+            ...theme.typography.bodyLongRegular,
             color: theme.palette.text01,
             padding: '2px 16px',
             backgroundColor: 'rgba(0, 0, 0, 0.6)',

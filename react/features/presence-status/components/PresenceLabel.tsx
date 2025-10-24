@@ -64,7 +64,7 @@ class PresenceLabel extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const text = this._getPresenceText();
 
         if (text === null) {

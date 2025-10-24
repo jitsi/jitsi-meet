@@ -28,13 +28,19 @@ static NSString * const sendChatMessageAction = @"org.jitsi.meet.SEND_CHAT_MESSA
 static NSString * const setVideoMutedAction = @"org.jitsi.meet.SET_VIDEO_MUTED";
 static NSString * const setClosedCaptionsEnabledAction = @"org.jitsi.meet.SET_CLOSED_CAPTIONS_ENABLED";
 static NSString * const toggleCameraAction = @"org.jitsi.meet.TOGGLE_CAMERA";
+static NSString * const showNotificationAction = @"org.jitsi.meet.SHOW_NOTIFICATION";
+static NSString * const hideNotificationAction = @"org.jitsi.meet.HIDE_NOTIFICATION";
+static NSString * const startRecordingAction = @"org.jitsi.meet.START_RECORDING";
+static NSString * const stopRecordingAction = @"org.jitsi.meet.STOP_RECORDING";
+static NSString * const overwriteConfigAction = @"org.jitsi.meet.OVERWRITE_CONFIG";
+static NSString * const sendCameraFacingModeMessageAction = @"org.jitsi.meet.SEND_CAMERA_FACING_MODE_MESSAGE";
 
 @implementation ExternalAPI
 
 static NSMapTable<NSString*, void (^)(NSArray* participantsInfo)> *participantInfoCompletionHandlers;
 
 __attribute__((constructor))
-static void initializeViewsMap() {
+static void initializeViewsMap(void) {
     participantInfoCompletionHandlers = [NSMapTable strongToStrongObjectsMapTable];
 }
 
@@ -52,7 +58,13 @@ RCT_EXPORT_MODULE();
         @"SEND_CHAT_MESSAGE": sendChatMessageAction,
         @"SET_VIDEO_MUTED" : setVideoMutedAction,
         @"SET_CLOSED_CAPTIONS_ENABLED": setClosedCaptionsEnabledAction,
-        @"TOGGLE_CAMERA": toggleCameraAction
+        @"TOGGLE_CAMERA": toggleCameraAction,
+        @"SHOW_NOTIFICATION": showNotificationAction,
+        @"HIDE_NOTIFICATION": hideNotificationAction,
+        @"START_RECORDING": startRecordingAction,
+        @"STOP_RECORDING": stopRecordingAction,
+        @"OVERWRITE_CONFIG": overwriteConfigAction,
+        @"SEND_CAMERA_FACING_MODE_MESSAGE": sendCameraFacingModeMessageAction
     };
 };
 
@@ -78,7 +90,13 @@ RCT_EXPORT_MODULE();
               sendChatMessageAction,
               setVideoMutedAction,
               setClosedCaptionsEnabledAction,
-              toggleCameraAction
+              toggleCameraAction,
+              showNotificationAction,
+              hideNotificationAction,
+              startRecordingAction,
+              stopRecordingAction,
+              overwriteConfigAction,
+              sendCameraFacingModeMessageAction
     ];
 }
 
@@ -180,4 +198,63 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     [self sendEventWithName:toggleCameraAction body:nil];
 }
 
+- (void)showNotification:(NSString*)appearance :(NSString*)description :(NSString*)timeout :(NSString*)title :(NSString*)uid {
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+    data[@"appearance"] = appearance;
+    data[@"description"] = description;
+    data[@"timeout"] = timeout;
+    data[@"title"] = title;
+    data[@"uid"] = uid;
+    
+    [self sendEventWithName:showNotificationAction body:data];
+}
+
+- (void)hideNotification:(NSString*)uid {
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+    data[@"uid"] = uid;
+    
+    [self sendEventWithName:hideNotificationAction body:data];
+}
+
+- (void)startRecording:(NSString*)mode :(NSString*)dropboxToken :(BOOL)shouldShare :(NSString*)rtmpStreamKey :(NSString*)rtmpBroadcastID :(NSString*)youtubeStreamKey :(NSString*)youtubeBroadcastID :(NSDictionary*)extraMetadata :(BOOL)transcription {
+    NSDictionary *data = @{
+        @"mode": mode,
+        @"dropboxToken": dropboxToken,
+        @"shouldShare": @(shouldShare),
+        @"rtmpStreamKey": rtmpStreamKey,
+        @"rtmpBroadcastID": rtmpBroadcastID,
+        @"youtubeStreamKey": youtubeStreamKey,
+        @"youtubeBroadcastID": youtubeBroadcastID,
+        @"extraMetadata": extraMetadata,
+        @"transcription": @(transcription)
+    };
+    
+    [self sendEventWithName:startRecordingAction body:data];
+}
+
+- (void)stopRecording:(NSString*)mode :(BOOL)transcription {
+    NSDictionary *data = @{
+        @"mode": mode,
+        @"transcription": @(transcription)
+    };
+    
+    [self sendEventWithName:stopRecordingAction body:data];
+}
+
+- (void)overwriteConfig:(NSDictionary*)config {
+    NSDictionary *data = @{
+        @"config": config
+    };
+
+    [self sendEventWithName:overwriteConfigAction body:data];
+}
+
+- (void)sendCameraFacingModeMessage:(NSString*)to :(NSString*)facingMode {
+    NSDictionary *data = @{
+        @"to": to,
+        @"facingMode": facingMode
+    };
+    
+    [self sendEventWithName:sendCameraFacingModeMessageAction body:data];
+}
 @end

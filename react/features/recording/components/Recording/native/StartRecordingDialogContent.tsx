@@ -31,7 +31,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @protected
      * @returns {React$Component}
      */
-    render() {
+    override render() {
         const { _styles: styles } = this.props;
 
         return (

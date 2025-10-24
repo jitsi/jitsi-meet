@@ -11,6 +11,11 @@ import { extractYoutubeIdOrURL } from '../functions';
 export interface IProps extends WithTranslation {
 
     /**
+     * The allowed URL domains for shared video.
+     */
+    _allowedUrlDomains: Array<string>;
+
+    /**
      * Invoked to update the shared video link.
      */
     dispatch: IStore['dispatch'];

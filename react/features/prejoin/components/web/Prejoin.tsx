@@ -22,23 +22,18 @@ import Input from "../../../base/ui/components/web/Input";
 import { BUTTON_TYPES } from "../../../base/ui/constants.any";
 import isInsecureRoomName from "../../../base/util/isInsecureRoomName";
 import { openDisplayNamePrompt } from "../../../display-name/actions";
-import { isUnsafeRoomWarningEnabled } from "../../../prejoin/functions";
+
 import {
     joinConference as joinConferenceAction,
     joinConferenceWithoutAudio as joinConferenceWithoutAudioAction,
     setJoinByPhoneDialogVisiblity as setJoinByPhoneDialogVisiblityAction,
 } from "../../actions.web";
-import {
-    isDeviceStatusVisible,
-    isDisplayNameRequired,
-    isJoinByPhoneButtonVisible,
-    isJoinByPhoneDialogVisible,
-    isPrejoinDisplayNameVisible,
-} from "../../functions";
+
+import logger from '../../logger';
 import { hasDisplayName } from "../../utils";
 
+import { isDeviceStatusVisible, isDisplayNameRequired, isJoinByPhoneButtonVisible, isJoinByPhoneDialogVisible, isPrejoinDisplayNameVisible, isUnsafeRoomWarningEnabled } from "../../functions.any";
 import JoinByPhoneDialog from "./dialogs/JoinByPhoneDialog";
-import { SET_PREJOIN_PAGE_VISIBILITY } from "../../actionTypes";
 
 interface IProps {
     /**
@@ -170,7 +165,7 @@ const useStyles = makeStyles()((theme) => {
         },
 
         avatarName: {
-            ...withPixelLineHeight(theme.typography.bodyShortBoldLarge),
+            ...theme.typography.bodyShortBoldLarge,
             color: theme.palette.text01,
             marginBottom: theme.spacing(5),
             textAlign: "center",
@@ -182,6 +177,7 @@ const useStyles = makeStyles()((theme) => {
             borderRadius: theme.shape.borderRadius,
             width: "100%",
             ...withPixelLineHeight(theme.typography.labelRegular),
+            // ...theme.typography.labelRegular,
             boxSizing: "border-box",
             padding: theme.spacing(1),
             textAlign: "center",
@@ -269,6 +265,9 @@ const Prejoin = ({
 
             return;
         }
+
+        logger.info('Prejoin join button clicked.');
+
         joinConference();
     };
 
@@ -348,6 +347,7 @@ const Prejoin = ({
     const onJoinConferenceWithoutAudioKeyPress = (e: React.KeyboardEvent) => {
         if (joinConferenceWithoutAudio && (e.key === " " || e.key === "Enter")) {
             e.preventDefault();
+            logger.info('Prejoin joinConferenceWithoutAudio dispatched on a key pressed.');
             joinConferenceWithoutAudio();
         }
     };
@@ -362,9 +362,12 @@ const Prejoin = ({
             key: "no-audio",
             testId: "prejoin.joinWithoutAudio",
             icon: IconVolumeOff,
-            label: t("prejoin.joinWithoutAudio"),
-            onClick: joinConferenceWithoutAudio,
-            onKeyPress: onJoinConferenceWithoutAudioKeyPress,
+            label: t('prejoin.joinWithoutAudio'),
+            onClick: () => {
+                logger.info('Prejoin join conference without audio pressed.');
+                joinConferenceWithoutAudio();
+            },
+            onKeyPress: onJoinConferenceWithoutAudioKeyPress
         };
 
         const byPhone = {
@@ -389,7 +392,8 @@ const Prejoin = ({
      * @returns {void}
      */
     const onInputKeyPress = (e: React.KeyboardEvent) => {
-        if (e.key === "Enter") {
+        if (e.key === 'Enter') {
+            logger.info('Dispatching join conference on Enter key press from the prejoin screen.');
             joinConference();
         }
     };

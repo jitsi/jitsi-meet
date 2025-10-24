@@ -1,17 +1,20 @@
 import React from 'react';
-import { Image } from 'react-native';
+import { Image, View, ViewStyle } from 'react-native';
+import { SvgCssUri } from 'react-native-svg/css';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n/functions';
-import AbstractButton, { IProps as AbstractButtonProps }
-    from '../../../base/toolbox/components/AbstractButton';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 import styles from './styles';
 
 
-interface IProps extends AbstractButtonProps {
+export interface ICustomOptionButton extends AbstractButtonProps {
+    backgroundColor?: string;
     icon: any;
     id?: string;
+    isToolboxButton?: boolean;
     text: string;
 }
 
@@ -20,7 +23,8 @@ interface IProps extends AbstractButtonProps {
  *
  * @returns {Component}
  */
-class CustomOptionButton extends AbstractButton<IProps> {
+class CustomOptionButton extends AbstractButton<ICustomOptionButton> {
+    backgroundColor = this.props.backgroundColor;
     iconSrc = this.props.icon;
     id = this.props.id;
     text = this.props.text;
@@ -30,13 +34,42 @@ class CustomOptionButton extends AbstractButton<IProps> {
      *
      * @returns {React.Component}
      */
-    icon = () => (
-        <Image
-            source = {{ uri: this.iconSrc }}
-            style = { styles.iconImageStyles } />
-    );
+    icon = () => {
+        let iconComponent;
 
-    label = this.text;
+        if (!this.iconSrc) {
+            return null;
+        }
+
+        if (this.iconSrc?.includes('svg')) {
+            iconComponent = (
+                <SvgCssUri
+                    // @ts-ignore
+                    height = { BaseTheme.spacing[4] }
+                    uri = { this.iconSrc }
+                    width = { BaseTheme.spacing[4] } />
+            );
+        } else {
+            iconComponent = (
+                <Image
+                    height = { BaseTheme.spacing[4] }
+                    resizeMode = { 'contain' }
+                    source = {{ uri: this.iconSrc }}
+                    width = { BaseTheme.spacing[4] } />
+            );
+        }
+
+        return (
+            <View
+                style = { this.props.isToolboxButton && [
+                    styles.toolboxButtonIconContainer,
+                    { backgroundColor: this.backgroundColor } ] as ViewStyle[] }>
+                { iconComponent }
+            </View>
+        );
+    };
+
+    label = this.text || '';
 }
 
 export default translate(connect()(CustomOptionButton));

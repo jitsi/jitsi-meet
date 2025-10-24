@@ -57,7 +57,7 @@ class PrivateMessageMenuButton extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { _hidden, t } = this.props;
 
         if (_hidden) {

@@ -7,8 +7,6 @@ import { set } from '../redux/functions';
 import {
     DOMINANT_SPEAKER_CHANGED,
     GRANT_MODERATOR,
-    HIDDEN_PARTICIPANT_JOINED,
-    HIDDEN_PARTICIPANT_LEFT,
     KICK_PARTICIPANT,
     LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
     LOCAL_PARTICIPANT_RAISE_HAND,
@@ -19,6 +17,8 @@ import {
     PARTICIPANT_JOINED,
     PARTICIPANT_KICKED,
     PARTICIPANT_LEFT,
+    PARTICIPANT_MUTED_US,
+    PARTICIPANT_ROLE_CHANGED,
     PARTICIPANT_SOURCES_UPDATED,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
@@ -241,7 +241,7 @@ export function participantJoined(participant: IParticipant) {
         // conference. The following check is really necessary because a
         // JitsiConference may have moved into leaving but may still manage to
         // sneak a PARTICIPANT_JOINED in if its leave is delayed for any purpose
-        // (which is not outragous given that leaving involves network
+        // (which is not outrageous given that leaving involves network
         // requests.)
         const stateFeaturesBaseConference
             = getState()['features/base/conference'];
@@ -332,42 +332,6 @@ export function updateRemoteParticipantFeatures(jitsiParticipant: any) {
 }
 
 /**
- * Action to signal that a hidden participant has joined the conference.
- *
- * @param {string} id - The id of the participant.
- * @param {string} displayName - The display name, or undefined when
- * unknown.
- * @returns {{
- *     type: HIDDEN_PARTICIPANT_JOINED,
- *     displayName: string,
- *     id: string
- * }}
- */
-export function hiddenParticipantJoined(id: string, displayName: string) {
-    return {
-        type: HIDDEN_PARTICIPANT_JOINED,
-        id,
-        displayName
-    };
-}
-
-/**
- * Action to signal that a hidden participant has left the conference.
- *
- * @param {string} id - The id of the participant.
- * @returns {{
- *     type: HIDDEN_PARTICIPANT_LEFT,
- *     id: string
- * }}
- */
-export function hiddenParticipantLeft(id: string) {
-    return {
-        type: HIDDEN_PARTICIPANT_LEFT,
-        id
-    };
-}
-
-/**
  * Action to signal that a participant has left.
  *
  * @param {string} id - Participant's ID.
@@ -427,19 +391,27 @@ export function participantPresenceChanged(id: string, presence: string) {
  *
  * @param {string} id - Participant's ID.
  * @param {PARTICIPANT_ROLE} role - Participant's new role.
- * @returns {{
- *     type: PARTICIPANT_UPDATED,
- *     participant: {
- *         id: string,
- *         role: PARTICIPANT_ROLE
- *     }
- * }}
+ * @returns {Promise}
  */
 export function participantRoleChanged(id: string, role: string) {
-    return participantUpdated({
-        id,
-        role
-    });
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const oldParticipantRole = getParticipantById(getState(), id)?.role;
+
+        dispatch(participantUpdated({
+            id,
+            role
+        }));
+
+        if (oldParticipantRole !== role) {
+            dispatch({
+                type: PARTICIPANT_ROLE_CHANGED,
+                participant: {
+                    id,
+                    role
+                }
+            });
+        }
+    };
 }
 
 /**
@@ -496,19 +468,10 @@ export function participantUpdated(participant: IParticipant = { id: '' }) {
  * @returns {Promise}
  */
 export function participantMutedUs(participant: any, track: any) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        if (!participant) {
-            return;
-        }
-
-        const isAudio = track.isAudioTrack();
-
-        dispatch(showNotification({
-            titleKey: isAudio ? 'notify.mutedRemotelyTitle' : 'notify.videoMutedRemotelyTitle',
-            titleArguments: {
-                participantDisplayName: getParticipantDisplayName(getState, participant.getId())
-            }
-        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+    return {
+        type: PARTICIPANT_MUTED_US,
+        participant,
+        track
     };
 }
 
@@ -544,25 +507,29 @@ export function createVirtualScreenshareParticipant(sourceName: string, local: b
  */
 export function participantKicked(kicker: any, kicked: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+        const localParticipant = getLocalParticipant(state);
+        const kickedId = kicked?.getId();
+        const kickerId = kicker?.getId();
 
         dispatch({
             type: PARTICIPANT_KICKED,
-            kicked: kicked?.getId(),
-            // leave it commented
-            // kicker: kicker?.getId()
+            kicked: kickedId,
+             // leave it commented
+            // kicker: kickerId
         });
 
-        if (kicked.isReplaced?.()) {
+        if (kicked.isReplaced?.() || !kickerId || kickerId === localParticipant?.id) {
             return;
         }
 
         dispatch(showNotification({
             titleArguments: {
                 kicked:
-                    getParticipantDisplayName(getState, kicked.getId()),
-                // leave it commented
+                    getParticipantDisplayName(state, kickedId),
+                    // leave it commented
                 // kicker:
-                //     getParticipantDisplayName(getState, kicker.getId())
+                //     getParticipantDisplayName(state, kickerId)
             },
             titleKey: 'notify.kickParticipant2'
         }, NOTIFICATION_TIMEOUT_TYPE.LONG));

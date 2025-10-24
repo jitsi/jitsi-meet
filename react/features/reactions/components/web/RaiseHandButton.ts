@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 
 import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconRaiseHand } from '../../../base/icons/svg';
 import { raiseHand } from '../../../base/participants/actions';
@@ -16,6 +16,16 @@ import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/too
 interface IProps extends AbstractButtonProps {
 
     /**
+     * Whether or not the click is disabled.
+     */
+    disableClick?: boolean;
+
+    /**
+     * Redux dispatch function.
+     */
+    dispatch: IStore['dispatch'];
+
+    /**
      * Whether or not the hand is raised.
      */
     raisedHand: boolean;
@@ -25,13 +35,13 @@ interface IProps extends AbstractButtonProps {
  * Implementation of a button for raising hand.
  */
 class RaiseHandButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.raiseHand';
-    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.lowerHand';
-    icon = IconRaiseHand;
-    label = 'toolbar.raiseHand';
-    toggledLabel = 'toolbar.lowerYourHand';
-    tooltip = 'toolbar.raiseHand';
-    toggledTooltip = 'toolbar.lowerYourHand';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.raiseHand';
+    override toggledAccessibilityLabel = 'toolbar.accessibilityLabel.lowerHand';
+    override icon = IconRaiseHand;
+    override label = 'toolbar.raiseHand';
+    override toggledLabel = 'toolbar.lowerYourHand';
+    override tooltip = 'toolbar.raiseHand';
+    override toggledTooltip = 'toolbar.lowerYourHand';
 
     /**
      * Indicates whether this button is in toggled state or not.
@@ -40,7 +50,7 @@ class RaiseHandButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props.raisedHand;
     }
 
@@ -50,8 +60,12 @@ class RaiseHandButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
-        const { dispatch, raisedHand } = this.props;
+    override _handleClick() {
+        const { disableClick, dispatch, raisedHand } = this.props;
+
+        if (disableClick) {
+            return;
+        }
 
         sendAnalytics(createToolbarEvent(
             'raise.hand',
@@ -75,5 +89,7 @@ const mapStateToProps = (state: IReduxState) => {
         raisedHand: hasRaisedHand(localParticipant)
     };
 };
+
+export { RaiseHandButton };
 
 export default translate(connect(mapStateToProps)(RaiseHandButton));

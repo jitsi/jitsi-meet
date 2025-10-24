@@ -32,7 +32,7 @@ export default class OverlayFrame extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement|null}
      */
-    render() {
+    override render() {
         return (
             <div
                 className = { this.props.isLightOverlay ? 'overlay__container-light' : 'overlay__container' }

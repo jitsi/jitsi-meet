@@ -13,7 +13,7 @@ export interface IProps {
     /**
      * Label used for accessibility.
      */
-    accessibilityLabel: string;
+    accessibilityLabel?: string;
 
     /**
      * The context menu item background color.
@@ -192,6 +192,7 @@ const useStyles = makeStyles()((theme) => {
 
         text: {
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            // color: theme.palette.text01,
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -200,6 +201,7 @@ const useStyles = makeStyles()((theme) => {
         },
         textSelected: {
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            // color: theme.palette.text01,
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -209,6 +211,7 @@ const useStyles = makeStyles()((theme) => {
 
         drawerText: {
             ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+            // ...theme.typography.bodyShortRegularLarge
         },
     };
 });
@@ -257,7 +260,7 @@ const ContextMenuItem = ({
         tabIndex = selected ? 0 : -1;
     }
 
-    if (role === "button" && !disabled) {
+    if ((role === 'button' || role === 'menuitem') && !disabled) {
         tabIndex = 0;
     }
 

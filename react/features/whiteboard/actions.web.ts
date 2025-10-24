@@ -14,7 +14,7 @@ export * from './actions.any';
  * @returns {Function}
  */
 export function toggleWhiteboard() {
-    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const isAllowed = isWhiteboardAllowed(state);
         const isOpen = isWhiteboardOpen(state);

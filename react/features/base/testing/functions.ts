@@ -2,7 +2,11 @@ import { IReduxState, IStore } from '../../app/types';
 import { isTrackStreamingStatusActive } from '../../connection-indicator/functions';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../media/constants';
 import { getParticipantById, isScreenShareParticipant } from '../participants/functions';
-import { getTrackByMediaTypeAndParticipant, getVideoTrackByParticipant } from '../tracks/functions';
+import {
+    getLocalVideoTrack,
+    getTrackByMediaTypeAndParticipant,
+    getVideoTrackByParticipant
+} from '../tracks/functions';
 
 /**
  * Indicates whether the test mode is enabled. When it's enabled
@@ -49,6 +53,15 @@ export function isLargeVideoReceived({ getState }: IStore): boolean {
     const videoTrack = getVideoTrackByParticipant(state, largeVideoParticipant);
 
     return Boolean(videoTrack && !videoTrack.muted && isTrackStreamingStatusActive(videoTrack));
+}
+
+/**
+ * Returns the local video track's codec.
+ *
+ * @returns {string?} The local video track's codec.
+ */
+export function getLocalCameraEncoding({ getState }: IStore): string | undefined {
+    return getLocalVideoTrack(getState()['features/base/tracks'])?.codec?.toLowerCase();
 }
 
 /**

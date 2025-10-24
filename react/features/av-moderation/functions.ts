@@ -1,10 +1,14 @@
 import { IReduxState } from '../app/types';
-import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
-import { isLocalParticipantModerator } from '../base/participants/functions';
+import { isLocalParticipantModerator, isParticipantModerator } from '../base/participants/functions';
 import { IParticipant } from '../base/participants/types';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 
-import { MEDIA_TYPE_TO_PENDING_STORE_KEY, MEDIA_TYPE_TO_WHITELIST_STORE_KEY } from './constants';
+import {
+    MEDIA_TYPE,
+    MEDIA_TYPE_TO_PENDING_STORE_KEY,
+    MEDIA_TYPE_TO_WHITELIST_STORE_KEY,
+    MediaType
+} from './constants';
 
 /**
  * Returns this feature's root state.
@@ -29,10 +33,18 @@ const EMPTY_ARRAY: any[] = [];
  * @param {IReduxState} state - Global state.
  * @returns {boolean}
  */
-export const isEnabledFromState = (mediaType: MediaType, state: IReduxState) =>
-    (mediaType === MEDIA_TYPE.AUDIO
-        ? getState(state)?.audioModerationEnabled
-        : getState(state)?.videoModerationEnabled) === true;
+export const isEnabledFromState = (mediaType: MediaType, state: IReduxState) => {
+    switch (mediaType) {
+    case MEDIA_TYPE.AUDIO:
+        return getState(state)?.audioModerationEnabled === true;
+    case MEDIA_TYPE.DESKTOP:
+        return getState(state)?.desktopModerationEnabled === true;
+    case MEDIA_TYPE.VIDEO:
+        return getState(state)?.videoModerationEnabled === true;
+    default:
+        throw new Error(`Unknown media type: ${mediaType}`);
+    }
+};
 
 /**
  * Returns whether moderation is enabled per media type.
@@ -61,11 +73,20 @@ export const isSupported = () => (state: IReduxState) => {
  * @returns {boolean}
  */
 export const isLocalParticipantApprovedFromState = (mediaType: MediaType, state: IReduxState) => {
-    const approved = (mediaType === MEDIA_TYPE.AUDIO
-        ? getState(state).audioUnmuteApproved
-        : getState(state).videoUnmuteApproved) === true;
+    if (isLocalParticipantModerator(state)) {
+        return true;
+    }
 
-    return approved || isLocalParticipantModerator(state);
+    switch (mediaType) {
+    case MEDIA_TYPE.AUDIO:
+        return getState(state).audioUnmuteApproved === true;
+    case MEDIA_TYPE.DESKTOP:
+        return getState(state).desktopUnmuteApproved === true;
+    case MEDIA_TYPE.VIDEO:
+        return getState(state).videoUnmuteApproved === true;
+    default:
+        throw new Error(`Unknown media type: ${mediaType}`);
+    }
 };
 
 /**
@@ -134,3 +155,28 @@ export const getParticipantsAskingToAudioUnmute = (state: IReduxState) => {
 export const shouldShowModeratedNotification = (mediaType: MediaType, state: IReduxState) =>
     isEnabledFromState(mediaType, state)
     && !isLocalParticipantApprovedFromState(mediaType, state);
+
+/**
+ * Checks if a participant is force muted.
+ *
+ * @param {IParticipant|undefined} participant - The participant.
+ * @param {MediaType} mediaType - The media type.
+ * @param {IReduxState} state - The redux state.
+ * @returns {MediaState}
+ */
+export function isForceMuted(participant: IParticipant | undefined, mediaType: MediaType, state: IReduxState) {
+    if (isEnabledFromState(mediaType, state)) {
+        if (participant?.local) {
+            return !isLocalParticipantApprovedFromState(mediaType, state);
+        }
+
+        // moderators cannot be force muted
+        if (isParticipantModerator(participant)) {
+            return false;
+        }
+
+        return !isParticipantApproved(participant?.id ?? '', mediaType)(state);
+    }
+
+    return false;
+}

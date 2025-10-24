@@ -35,4 +35,4 @@ for (const path of paths) {
 
 const data = JSON.stringify(result, undefined, 4);
 
-fs.writeFileSync(`./${targetLangFile}`, data);
+fs.writeFileSync(`./${targetLangFile}`, data + "\n");

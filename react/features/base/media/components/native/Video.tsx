@@ -64,7 +64,7 @@ export default class Video extends Component<IProps> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         // RTCView currently does not support media events, so just fire
         // onPlaying callback when <RTCView> is rendered.
         const { onPlaying } = this.props;
@@ -78,7 +78,7 @@ export default class Video extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement|null}
      */
-    render() {
+    override render() {
         const { onPress, stream, zoomEnabled } = this.props;
 
         if (stream) {

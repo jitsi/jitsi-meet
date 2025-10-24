@@ -16,7 +16,7 @@ class KickRemoteParticipantDialog extends AbstractKickRemoteParticipantDialog {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <ConfirmDialog
                 cancelLabel = 'dialog.Cancel'

@@ -1,12 +1,14 @@
+-- This module is enabled under the main virtual host
 local new_throttle = require "util.throttle".create;
 local st = require "util.stanza";
+local jid = require "util.jid";
 
-local token_util = module:require "token/util".new(module);
 local util = module:require 'util';
+local is_admin = util.is_admin;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local is_feature_allowed = util.is_feature_allowed;
+local is_sip_jigasi = util.is_sip_jigasi;
 local get_room_from_jid = util.get_room_from_jid;
-local is_healthcheck_room = util.is_healthcheck_room;
 local process_host_module = util.process_host_module;
 local jid_bare = require "util.jid".bare;
 
@@ -21,15 +23,28 @@ if main_muc_component_host == nil then
 end
 local main_muc_service;
 
+
+-- this is the main virtual host of the main prosody that this vnode serves
+local main_domain = module:get_option_string('main_domain');
+-- only the visitor prosody has main_domain setting
+local is_visitor_prosody = main_domain ~= nil;
+
+-- this is the main virtual host of this vnode
+local local_domain = module:get_option_string('muc_mapper_domain_base');
+
+local parentCtx = module:context(local_domain);
+if parentCtx == nil then
+    log("error",
+        "Failed to start - unable to get parent context for host: %s",
+        tostring(local_domain));
+    return;
+end
+local token_util = module:require "token/util".new(parentCtx);
+
 -- no token configuration but required
 if token_util == nil then
     module:log("error", "no token configuration but it is required");
     return;
-end
-
-local um_is_admin = require 'core.usermanager'.is_admin;
-local function is_admin(jid)
-    return um_is_admin(jid, module.host);
 end
 
 -- The maximum number of simultaneous calls,
@@ -43,6 +58,8 @@ load_config();
 -- Header names to use to push extra data extracted from token, if any
 local OUT_INITIATOR_USER_ATTR_NAME = "X-outbound-call-initiator-user";
 local OUT_INITIATOR_GROUP_ATTR_NAME = "X-outbound-call-initiator-group";
+local OUT_ROOM_NAME_ATTR_NAME = "JvbRoomName";
+
 local OUTGOING_CALLS_THROTTLE_INTERVAL = 60; -- if max_number_outgoing_calls is enabled it will be
                                              -- the max number of outgoing calls a user can try for a minute
 
@@ -58,30 +75,44 @@ module:hook("pre-iq/full", function(event)
             local token = session.auth_token;
 
             -- find header with attr name 'JvbRoomName' and extract its value
-            local headerName = 'JvbRoomName';
             local roomName;
-            for _, child in ipairs(dial.tags) do
-                if (child.name == 'header'
-                        and child.attr.name == headerName) then
-                    roomName = child.attr.value;
-                    break;
+            -- Remove any 'header' element if it already exists, so it cannot be spoofed by a client
+            dial:maptags(function(tag)
+                if tag.name == "header"
+                        and (tag.attr.name == OUT_INITIATOR_USER_ATTR_NAME
+                                or tag.attr.name == OUT_INITIATOR_GROUP_ATTR_NAME) then
+                    return nil
+                elseif tag.name == "header" and tag.attr.name == OUT_ROOM_NAME_ATTR_NAME then
+                    roomName = tag.attr.value;
+                    -- we will remove it as we will add it later, modified
+                    if is_visitor_prosody then
+                        return nil;
+                    end
                 end
+                return tag
+            end);
+
+            local room_jid = jid.bare(stanza.attr.to);
+            local room_real_jid = room_jid_match_rewrite(room_jid);
+            local room = main_muc_service.get_room_from_jid(room_real_jid);
+            local is_sender_in_room = room:get_occupant_jid(stanza.attr.from) ~= nil;
+
+            if not room or not is_sender_in_room then
+                module:log("warn", "Filtering stanza dial, stanza:%s", tostring(stanza));
+                session.send(st.error_reply(stanza, "auth", "forbidden"));
+                return true;
             end
 
             local feature = dial.attr.to == 'jitsi_meet_transcribe' and 'transcription' or 'outbound-call';
-            local is_session_allowed = is_feature_allowed(session.jitsi_meet_context_features, feature);
+            local is_session_allowed = is_feature_allowed(
+                feature,
+                session.jitsi_meet_context_features,
+                room:get_affiliation(stanza.attr.from) == 'owner');
 
-            -- if current user is not allowed, but was granted moderation by a user
-            -- that is allowed by its features we want to allow it
-            local is_granting_session_allowed = false;
-            if (session.granted_jitsi_meet_context_features) then
-                is_granting_session_allowed = is_feature_allowed(session.granted_jitsi_meet_context_features, feature);
-            end
-
-            if (token == nil
-                or roomName == nil
-                or not token_util:verify_room(session, room_jid_match_rewrite(roomName))
-                or not (is_session_allowed or is_granting_session_allowed))
+            if roomName == nil
+                or roomName ~= room_jid
+                or (token ~= nil and not token_util:verify_room(session, room_real_jid))
+                or not is_session_allowed
             then
                 module:log("warn", "Filtering stanza dial, stanza:%s", tostring(stanza));
                 session.send(st.error_reply(stanza, "auth", "forbidden"));
@@ -98,8 +129,8 @@ module:hook("pre-iq/full", function(event)
                 group_id = session.granted_jitsi_meet_context_group_id;
             end
 
-            -- now lets check any limits if configured
-            if limit_outgoing_calls > 0 then
+            -- now lets check any limits for outgoing calls if configured
+            if feature == 'outbound-call' and limit_outgoing_calls > 0 then
                 if not session.dial_out_throttle then
                     -- module:log("debug", "Enabling dial-out throttle session=%s.", session);
                     session.dial_out_throttle = new_throttle(limit_outgoing_calls, OUTGOING_CALLS_THROTTLE_INTERVAL);
@@ -118,25 +149,11 @@ module:hook("pre-iq/full", function(event)
 
             -- now lets insert token information if any
             if session and user_id then
-                -- First remove any 'header' element if it already
-                -- exists, so it cannot be spoofed by a client
-                stanza:maptags(
-                    function(tag)
-                        if tag.name == "header"
-                                and (tag.attr.name == OUT_INITIATOR_USER_ATTR_NAME
-                                        or tag.attr.name == OUT_INITIATOR_GROUP_ATTR_NAME) then
-                            return nil
-                        end
-                        return tag
-                    end
-                )
-
-                local dial = stanza:get_child('dial', 'urn:xmpp:rayo:1');
                 -- adds initiator user id from token
                 dial:tag("header", {
                     xmlns = "urn:xmpp:rayo:1",
                     name = OUT_INITIATOR_USER_ATTR_NAME,
-                    value = user_id });
+                    value = tostring(user_id)});
                 dial:up();
 
                 -- Add the initiator group information if it is present
@@ -144,13 +161,22 @@ module:hook("pre-iq/full", function(event)
                     dial:tag("header", {
                         xmlns = "urn:xmpp:rayo:1",
                         name = OUT_INITIATOR_GROUP_ATTR_NAME,
-                        value = session.jitsi_meet_context_group });
+                        value = tostring(session.jitsi_meet_context_group) });
                     dial:up();
                 end
             end
+
+            -- we want to instruct jigasi to enter the main room, so send the correct main room jid
+            if is_visitor_prosody then
+                dial:tag("header", {
+                    xmlns = "urn:xmpp:rayo:1",
+                    name = OUT_ROOM_NAME_ATTR_NAME,
+                    value = string.gsub(roomName, local_domain, main_domain) });
+                dial:up();
+            end
         end
     end
-end);
+end, 1); -- make sure we run before domain mapper
 
 --- Finds and returns the number of concurrent outgoing calls for a user
 -- @param context_user the user id extracted from the token
@@ -166,7 +192,7 @@ function get_concurrent_outgoing_count(context_user, context_group)
         for _, occupant in room:each_occupant() do
             for _, presence in occupant:each_session() do
 
-                local initiator = presence:get_child('initiator', 'http://jitsi.org/protocol/jigasi');
+                local initiator = is_sip_jigasi(presence);
 
                 local found_user = false;
                 local found_group = false;
@@ -199,49 +225,10 @@ end
 
 module:hook_global('config-reloaded', load_config);
 
-function process_set_affiliation(event)
-    local actor, affiliation, jid, previous_affiliation, room
-        = event.actor, event.affiliation, event.jid, event.previous_affiliation, event.room;
-    local actor_session = sessions[actor];
-
-    if is_admin(jid) or is_healthcheck_room(room.jid) or not actor or not previous_affiliation
-        or not actor_session or not actor_session.jitsi_meet_context_features then
-        return;
-    end
-
-    local occupant;
-    for _, o in room:each_occupant() do
-        if o.bare_jid == jid then
-            occupant = o;
-        end
-    end
-
-    if not occupant then
-        return;
-    end
-
-    local occupant_session = sessions[occupant.jid];
-    if not occupant_session then
-        return;
-    end
-
-    if previous_affiliation == 'none' and affiliation == 'owner' then
-        occupant_session.granted_jitsi_meet_context_features = actor_session.jitsi_meet_context_features;
-        occupant_session.granted_jitsi_meet_context_user_id = actor_session.jitsi_meet_context_user["id"];
-        occupant_session.granted_jitsi_meet_context_group_id = actor_session.jitsi_meet_context_group;
-    elseif previous_affiliation == 'owner' and ( affiliation == 'member' or affiliation == 'none' ) then
-        occupant_session.granted_jitsi_meet_context_features = nil;
-        occupant_session.granted_jitsi_meet_context_user_id = nil;
-        occupant_session.granted_jitsi_meet_context_group_id = nil;
-    end
-end
-
 function process_main_muc_loaded(main_muc, host_module)
     module:log('debug', 'Main muc loaded');
 
     main_muc_service = main_muc;
-    module:log("info", "Hook to muc events on %s", main_muc_component_host);
-    host_module:hook("muc-pre-set-affiliation", process_set_affiliation);
 end
 
 process_host_module(main_muc_component_host, function(host_module, host)
@@ -258,3 +245,34 @@ process_host_module(main_muc_component_host, function(host_module, host)
         end);
     end
 end);
+
+-- when recording participants may enable and backend transcriptions
+-- it is possible that participant is not moderator, but has the features enabled for
+-- transcribing, we need to allow that operation
+module:hook('jitsi-metadata-allow-moderation', function (event)
+    local data, key, occupant, session = event.data, event.key, event.actor, event.session;
+
+    if key == 'recording' and data and data.isTranscribingEnabled ~= nil then
+        -- if it is recording we want to allow setting in metadata if not moderator but features
+        -- are present
+        if session.jitsi_meet_context_features
+            and occupant.role ~= 'moderator'
+            and is_feature_allowed('transcription', session.jitsi_meet_context_features)
+            and is_feature_allowed('recording', session.jitsi_meet_context_features) then
+                local res = {};
+                res.isTranscribingEnabled = data.isTranscribingEnabled;
+                return res;
+        elseif not session.jitsi_meet_context_features and occupant.role == 'moderator' then
+            return data;
+        else
+            return nil;
+        end
+    end
+
+    if occupant.role == 'moderator' then
+        return data;
+    end
+
+    return nil;
+end);
+

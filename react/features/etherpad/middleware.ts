@@ -1,5 +1,3 @@
-// @ts-expect-error
-import UIEvents from '../../../service/UI/UIEvents';
 import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
@@ -31,7 +29,18 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 const etherpadBaseUrl = sanitizeUrl(etherpadBase);
 
                 if (etherpadBaseUrl) {
-                    url = new URL(value, etherpadBaseUrl.toString()).toString();
+                    const urlObj = new URL(value, etherpadBaseUrl.toString());
+
+                    // Merge query string parameters on top of internal ones
+                    if (etherpadBaseUrl.search) {
+                        const searchParams = new URLSearchParams(urlObj.search);
+
+                        for (const [ key, val ] of new URLSearchParams(etherpadBaseUrl.search)) {
+                            searchParams.set(key, val);
+                        }
+                        urlObj.search = searchParams.toString();
+                    }
+                    url = urlObj.toString();
                 }
 
                 dispatch(setDocumentUrl(url));
@@ -41,7 +50,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
     case TOGGLE_DOCUMENT_EDITING: {
         if (typeof APP !== 'undefined') {
-            APP.UI.emitEvent(UIEvents.ETHERPAD_CLICKED);
+            APP.UI.onEtherpadClicked();
         }
         break;
     }

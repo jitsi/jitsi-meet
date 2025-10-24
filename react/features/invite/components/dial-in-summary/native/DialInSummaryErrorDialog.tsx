@@ -15,7 +15,7 @@ class DialInSummaryErrorDialog extends Component<WithTranslation> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <AlertDialog
                 contentKey = 'info.dialInSummaryError' />

@@ -122,11 +122,6 @@ interface IProps {
     isInBreakoutRoom: boolean;
 
     /**
-     * Callback used to open a confirmation dialog for audio muting.
-     */
-    muteAudio: Function;
-
-    /**
      * The translated text for the mute participant button.
      */
     muteParticipantButtonText: string;
@@ -151,7 +146,6 @@ interface IProps {
      */
     overflowDrawer: boolean;
 
-
     /**
      * The aria-label for the ellipsis action.
      */
@@ -161,11 +155,6 @@ interface IProps {
      * The ID of the participant.
      */
     participantID?: string;
-
-    /**
-     * Callback used to stop a participant's video.
-    */
-    stopVideo: Function;
 
     /**
      * The translated "you" text.
@@ -194,13 +183,11 @@ function MeetingParticipantItem({
     _videoMediaState,
     isHighlighted,
     isInBreakoutRoom,
-    muteAudio,
     onContextMenu,
     onLeave,
     openDrawerForParticipant,
     overflowDrawer,
     participantActionEllipsisLabel,
-    stopVideo,
     youText
 }: IProps) {
 
@@ -266,10 +253,8 @@ function MeetingParticipantItem({
                     {!isInBreakoutRoom && (
                         <ParticipantQuickAction
                             buttonType = { _quickActionButtonType }
-                            muteAudio = { muteAudio }
                             participantID = { _participantID }
-                            participantName = { _displayName }
-                            stopVideo = { stopVideo } />
+                            participantName = { _displayName } />
                     )}
                     <ParticipantActionEllipsis
                         accessibilityLabel = { participantActionEllipsisLabel }
@@ -278,7 +263,7 @@ function MeetingParticipantItem({
                 </>
             }
 
-            {!overflowDrawer && (_localVideoOwner || _participant?.fakeParticipant) && (
+            {!overflowDrawer && (_localVideoOwner && _participant?.fakeParticipant) && (
                 <ParticipantActionEllipsis
                     accessibilityLabel = { participantActionEllipsisLabel }
                     onClick = { onContextMenu } />
@@ -299,18 +284,14 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantID, searchString } = ownProps;
     const { ownerId } = state['features/shared-video'];
     const localParticipantId = getLocalParticipant(state)?.id;
-
     const participant = getParticipantByIdOrUndefined(state, participantID);
-
     const _displayName = getParticipantDisplayName(state, participant?.id ?? '');
-
     const _matchesSearch = participantMatchesSearch(participant, searchString);
-
-    const _isAudioMuted = Boolean(participant && isParticipantAudioMuted(participant, state));
+    const _isAudioMuted = isParticipantAudioMuted(participant, state);
     const _isVideoMuted = isParticipantVideoMuted(participant, state);
     const _audioMediaState = getParticipantAudioMediaState(participant, _isAudioMuted, state);
     const _videoMediaState = getParticipantVideoMediaState(participant, _isVideoMuted, state);
-    const _quickActionButtonType = getQuickActionButtonType(participant, _isAudioMuted, _isVideoMuted, state);
+    const _quickActionButtonType = getQuickActionButtonType(participant, state);
 
     const tracks = state['features/base/tracks'];
     const _audioTrack = participantID === localParticipantId

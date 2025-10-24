@@ -12,7 +12,7 @@
         .recording-title {
             display: inline-flex;
             align-items: center;
-            font-size: 14px;
+            font-size: 0.875rem;
             margin-left: 16px;
             max-width: 70%;
 
@@ -35,8 +35,8 @@
     .local-recording-warning {
         margin-top: 8px;
         display: block;
-        font-size: 14px;
-        line-height: 20px;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
         padding: 8px 16px;
 
         &.text {
@@ -126,7 +126,7 @@
 
     .recording-info-title {
         display: inline-flex;
-        font-size: 14px;
+        font-size: 0.875rem;
         width: 290px
     }
 
@@ -150,7 +150,7 @@
     /**
      * Set font-size to be consistent with Atlaskit FieldText.
      */
-    font-size: 14px;
+    font-size: 0.875rem;
 
     .broadcast-dropdown {
         text-align: left;
@@ -194,6 +194,6 @@
 
     .warning-text {
         color:#FFD740;
-        font-size: 12px;
+        font-size: 0.75rem;
     }
 }
