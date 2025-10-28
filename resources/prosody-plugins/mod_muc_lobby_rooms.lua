@@ -482,17 +482,34 @@ process_host_module(main_muc_component_config, function(host_module, host)
             return;
         end
         local members_only = event.fields['muc#roomconfig_membersonly'] and true or nil;
+        local room_metadata_changed = false;
         if members_only then
             local lobby_created = attach_lobby_room(room, actor);
             if lobby_created then
                 module:fire_event('jitsi-lobby-enabled', { room = room; });
                 event.status_codes['104'] = true;
                 notify_lobby_enabled(room, actor, true);
+
+                -- let's set it in the metadata and fire the event
+                if not room.jitsiMetadata then
+                    room.jitsiMetadata = {};
+                end
+                room.jitsiMetadata.lobbyEnabled = true;
+                room_metadata_changed = true;
             end
         elseif room._data.lobbyroom then
             destroy_lobby_room(room, room.jid);
             module:fire_event('jitsi-lobby-disabled', { room = room; });
             notify_lobby_enabled(room, actor, false);
+
+            if room.jitsiMetadata then
+                room.jitsiMetadata.lobbyEnabled = false;
+                room_metadata_changed = true;
+            end
+        end
+
+        if room_metadata_changed then
+            host_module:fire_event('room-metadata-changed', { room = room; });
         end
     end);
     host_module:hook('muc-room-destroyed',function(event)
@@ -648,6 +665,13 @@ function handle_create_lobby(event)
     room:set_members_only(true);
     room._data.lobby_extra_reason = event.reason;
     room._data.lobby_skip_display_name_check = event.skip_display_name_check;
+
+    -- set in metadata without firing room-metadata-changed,
+    -- as this is a backend call and the caller will take care of that
+    if not room.jitsiMetadata then
+        room.jitsiMetadata = {};
+    end
+    room.jitsiMetadata.lobbyEnabled = true;
 
     -- Trigger a presence with 104 so existing participants retrieves new muc#roomconfig
     room:broadcast_message(
