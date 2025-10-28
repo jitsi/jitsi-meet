@@ -17,6 +17,7 @@ import ChatButton from '../chat/components/web/ChatButton';
 import { useEmbedButton } from '../embed-meeting/hooks';
 import { useEtherpadButton } from '../etherpad/hooks';
 import { useFeedbackButton } from '../feedback/hooks.web';
+import { useFileSharingButton } from '../file-sharing/hooks.web';
 import { setGifMenuVisibility } from '../gifs/actions';
 import { isGifEnabled } from '../gifs/function.any';
 import InviteButton from '../invite/components/add-people-dialog/web/InviteButton';
@@ -32,6 +33,7 @@ import {
     isParticipantsPaneEnabled
 } from '../participants-pane/functions';
 import { useParticipantPaneButton } from '../participants-pane/hooks.web';
+import { usePollsButton } from '../polls/hooks.web';
 import { addReactionToBuffer } from '../reactions/actions.any';
 import { toggleReactionsMenuVisibility } from '../reactions/actions.web';
 import RaiseHandContainerButton from '../reactions/components/web/RaiseHandContainerButtons';
@@ -278,6 +280,8 @@ export function useToolboxButtons(
     const participants = useParticipantPaneButton();
     const tileview = useTileViewButton();
     const cc = useClosedCaptionButton();
+    const polls = usePollsButton();
+    const filesharing = useFileSharingButton();
     const recording = useRecordingButton();
     const liveStreaming = useLiveStreamingButton();
     const linktosalesforce = useLinkToSalesforceButton();
@@ -309,6 +313,8 @@ export function useToolboxButtons(
         fullscreen: _fullscreen,
         security,
         closedcaptions: cc,
+        polls,
+        filesharing,
         recording,
         livestreaming: liveStreaming,
         linktosalesforce,
