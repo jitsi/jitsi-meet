@@ -259,6 +259,29 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
 
         const newValue = name === 'channelCount' ? (checked ? 2 : 1) : checked;
 
+        if (name === 'channelCount' && newValue === 2) {
+            super._onChange({
+                audioSettings: {
+                    autoGainControl: false,
+                    channelCount: 2,
+                    echoCancellation: false,
+                    noiseSuppression: false
+                }
+            });
+
+            return;
+        } else if (name !== 'channelCount' && newValue === true) {
+            super._onChange({
+                audioSettings: {
+                    ...audioSettings,
+                    [name]: newValue,
+                    channelCount: 1
+                }
+            });
+
+            return;
+        }
+
         super._onChange({
             audioSettings: {
                 ...audioSettings,
