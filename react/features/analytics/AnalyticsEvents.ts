@@ -601,31 +601,6 @@ export function createRemoteVideoMenuButtonEvent(buttonName: string, attributes 
 }
 
 /**
- * The rtcstats websocket onclose event. We send this to amplitude in order
- * to detect trace ws prematurely closing.
- *
- * @param {Object} closeEvent - The event with which the websocket closed.
- * @returns {Object} The event in a format suitable for sending via
- * sendAnalytics.
- */
-export function createRTCStatsTraceCloseEvent(closeEvent: { code: string; reason: string; }) {
-    const event: {
-        action: string;
-        code?: string;
-        reason?: string;
-        source: string;
-    } = {
-        action: 'trace.onclose',
-        source: 'rtcstats'
-    };
-
-    event.code = closeEvent.code;
-    event.reason = closeEvent.reason;
-
-    return event;
-}
-
-/**
  * Creates an event indicating that an action related to screen sharing
  * occurred (e.g. It was started or stopped).
  *
