@@ -905,7 +905,7 @@ var config = {
     //     // Indicates whether the toolbar should still autohide when chat is open
     //     autoHideWhileChatIsOpen: false,
     //     // Default background color for the main toolbar. Accepts any valid CSS color.
-    //     // backgroundColor: '#ffffff'
+    //     // backgroundColor: '#ffffff',
     // },
 
     // Overrides the buttons displayed in the main toolbar. Depending on the screen size the number of displayed
