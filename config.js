@@ -892,22 +892,21 @@ var config = {
     // ],
 
     // Holds values related to toolbar visibility control.
-    // Holds values related to toolbar visibility control.
-    toolbarConfig: {
-        // Moved from interfaceConfig.INITIAL_TOOLBAR_TIMEOUT
-        // The initial number of milliseconds for the toolbar buttons to be visible on screen.
-        initialTimeout: 20000,
-        // Moved from interfaceConfig.TOOLBAR_TIMEOUT
-        // Number of milliseconds for the toolbar buttons to be visible on screen.
-        timeout: 4000,
-        // Moved from interfaceConfig.TOOLBAR_ALWAYS_VISIBLE
-        // Whether toolbar should be always visible or should hide after x milliseconds.
-        alwaysVisible: false,
-        // Indicates whether the toolbar should still autohide when chat is open
-        autoHideWhileChatIsOpen: false,
-        // Default background color for the main toolbar. Accepts any valid CSS color.
-        backgroundColor: '#ffffff'
-    },
+    // toolbarConfig: {
+    //     // Moved from interfaceConfig.INITIAL_TOOLBAR_TIMEOUT
+    //     // The initial number of milliseconds for the toolbar buttons to be visible on screen.
+    //     initialTimeout: 20000,
+    //     // Moved from interfaceConfig.TOOLBAR_TIMEOUT
+    //     // Number of milliseconds for the toolbar buttons to be visible on screen.
+    //     timeout: 4000,
+    //     // Moved from interfaceConfig.TOOLBAR_ALWAYS_VISIBLE
+    //     // Whether toolbar should be always visible or should hide after x milliseconds.
+    //     alwaysVisible: false,
+    //     // Indicates whether the toolbar should still autohide when chat is open
+    //     autoHideWhileChatIsOpen: false,
+    //     // Default background color for the main toolbar. Accepts any valid CSS color.
+    //     // backgroundColor: '#ffffff'
+    // },
 
     // Overrides the buttons displayed in the main toolbar. Depending on the screen size the number of displayed
     // buttons varies from 2 buttons to 8 buttons. Every array in the mainToolbarButtons array will replace the
