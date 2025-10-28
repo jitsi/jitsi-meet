@@ -56,6 +56,28 @@ function getFirstGraphemeUpper(word: string) {
 }
 
 /**
+ * Strips bracketed annotations from a display name. Handles multiple bracket types like (),
+ * [], and {}.
+ *
+ * @param {string} name - The display name to clean.
+ * @returns {string} The cleaned display name without bracketed annotations.
+ */
+function stripBracketedAnnotations(name: string): string {
+    // Match content within any of the bracket types at the end of the string
+    // This regex matches: (...) or [...] or {...} at the end
+    const bracketRegex = /\s*[([{][^)\]}]*[)\]}]$/;
+
+    let cleaned = name;
+
+    // Remove all trailing bracketed annotations (handle multiple occurrences)
+    while (bracketRegex.test(cleaned)) {
+        cleaned = cleaned.replace(bracketRegex, '');
+    }
+
+    return cleaned.trim();
+}
+
+/**
  * Generates initials for a simple string.
  *
  * @param {string?} s - The string to generate initials for.
@@ -64,7 +86,15 @@ function getFirstGraphemeUpper(word: string) {
 export function getInitials(s?: string) {
     // We don't want to use the domain part of an email address, if it is one
     const initialsBasis = split(s, '@')[0];
-    const [ firstWord, ...remainingWords ] = initialsBasis.split(wordSplitRegex).filter(Boolean);
+
+    // Strip bracketed annotations (e.g., "(Department)", "[Team]", "{Org}")
+    // to prevent them from being considered as name parts
+    const cleanedName = stripBracketedAnnotations(initialsBasis);
+
+    // Fallback to original if cleaned name is empty
+    const nameForInitials = cleanedName || initialsBasis;
+
+    const [ firstWord, ...remainingWords ] = nameForInitials.split(wordSplitRegex).filter(Boolean);
 
     return getFirstGraphemeUpper(firstWord) + getFirstGraphemeUpper(remainingWords.pop() || '');
 }
