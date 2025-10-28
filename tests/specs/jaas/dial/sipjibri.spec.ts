@@ -7,8 +7,8 @@ import { joinJaasMuc, generateJaasToken as t } from '../../../helpers/jaas';
 import { waitForMedia } from './util';
 
 setTestProperties(__filename, {
+    requireWebhookProxy: true,
     useJaas: true,
-    useWebhookProxy: true
 });
 
 

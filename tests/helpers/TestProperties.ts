@@ -6,15 +6,18 @@ export type ITestProperties = {
      * A more detailed description of what the test does, to be included in the Allure report.
      */
     description?: string;
+    /** The test requires the webhook proxy to be available. */
+    requireWebhookProxy: boolean;
     /** The test requires jaas, it should be skipped when the jaas configuration is not enabled. */
     useJaas: boolean;
-    /** The test requires the webhook proxy. */
+    /** The test uses the webhook proxy if available. */
     useWebhookProxy: boolean;
     usesBrowsers: string[];
 };
 
 const defaultProperties: ITestProperties = {
     useWebhookProxy: false,
+    requireWebhookProxy: false,
     useJaas: false,
     usesBrowsers: [ 'p1' ]
 };
@@ -105,5 +108,11 @@ export function loadTestFiles(files: string[]): void {
  * @returns Promise<ITestProperties> - The test properties with defaults applied
  */
 export async function getTestProperties(testFilePath: string): Promise<ITestProperties> {
-    return testProperties[testFilePath] || { ...defaultProperties };
+    const properties = testProperties[testFilePath] || { ...defaultProperties };
+
+    if (properties.requireWebhookProxy && !properties.useWebhookProxy) {
+        properties.useWebhookProxy = true;
+    }
+
+    return properties;
 }

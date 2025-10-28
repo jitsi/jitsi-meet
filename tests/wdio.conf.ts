@@ -273,9 +273,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
             globalAny.ctx.webhooksProxy.connect();
         }
 
-        if (testProperties.useWebhookProxy && !globalAny.ctx.webhooksProxy) {
-            console.warn(`WebhookProxy is not available, skipping ${testName}`);
-            globalAny.ctx.skipSuiteTests = 'WebhooksProxy is not required but not available';
+        if (testProperties.requireWebhookProxy && !globalAny.ctx.webhooksProxy) {
+            throw new Error('The test requires WebhookProxy, but it is not available.');
         }
     },
 
