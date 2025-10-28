@@ -13,8 +13,8 @@ import {
 import { verifyEndedWebhook, verifyStartedWebhooks, waitForMedia } from './util';
 
 setTestProperties(__filename, {
-    useJaas: true,
-    useWebhookProxy: true
+    requireWebhookProxy: true,
+    useJaas: true
 });
 
 describe('Dial-in', () => {
