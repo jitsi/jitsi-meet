@@ -211,18 +211,21 @@ export function getLocalJitsiAudioTrackSettings(state: IReduxState) {
     const jitsiTrack = getLocalJitsiAudioTrack(state);
 
     if (!jitsiTrack) {
-        const config = state['features/base/config'];
-        const disableAP = Boolean(config?.disableAP);
-        const disableAGC = Boolean(config?.disableAGC);
-        const disableAEC = Boolean(config?.disableAEC);
-        const disableNS = Boolean(config?.disableNS);
-        const stereo = Boolean(config?.audioQuality?.stereo);
+        const {
+            audioQuality,
+            disableAEC = false,
+            disableAGC = false,
+            disableAP = false,
+            disableNS = false
+        } = state['features/base/config'] || {};
+
+        const enableStereo = Boolean(audioQuality?.stereo);
 
         return {
-            autoGainControl: !disableAP && !disableAGC,
-            channelCount: stereo ? 2 : 1,
-            echoCancellation: !disableAP && !disableAEC,
-            noiseSuppression: !disableAP && !disableNS
+            autoGainControl: enableStereo ? false : !disableAP && !disableAGC,
+            channelCount: enableStereo ? 2 : 1,
+            echoCancellation: enableStereo ? false : !disableAP && !disableAEC,
+            noiseSuppression: enableStereo ? false : !disableAP && !disableNS
         };
     }
 
