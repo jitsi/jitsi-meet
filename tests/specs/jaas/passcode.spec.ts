@@ -3,8 +3,8 @@ import { joinJaasMuc, generateJaasToken as t } from '../../helpers/jaas';
 import { IToken } from '../../helpers/token';
 
 setTestProperties(__filename, {
+    requireWebhookProxy: true,
     useJaas: true,
-    useWebhookProxy: true,
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
