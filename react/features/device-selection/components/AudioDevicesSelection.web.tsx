@@ -262,7 +262,6 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
         if (name === 'channelCount' && newValue === 2) {
             super._onChange({
                 audioSettings: {
-                    ...audioSettings,
                     autoGainControl: false,
                     channelCount: 2,
                     echoCancellation: false,
