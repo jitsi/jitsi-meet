@@ -95,14 +95,9 @@ export default class Filmstrip extends BasePageObject {
             await this.participant.driver.$(`//span[@id="participant_${epId}"]`).click();
         }
 
-        await this.participant.driver.waitUntil(
-            async () => await this.participant.getLargeVideo().getId() === videoIdToSwitchTo,
-            {
-                timeout: 3_000,
-                timeoutMsg: `${this.participant.name} did not switch the large video to ${
-                    participant.name}`
-            }
-        );
+        const endpointID = await participant.getEndpointId();
+
+        await this.participant.waitForParticipantOnLargeVideo(endpointID);
     }
 
     /**
