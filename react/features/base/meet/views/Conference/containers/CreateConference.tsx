@@ -31,6 +31,9 @@ class CreateConference extends AbstractConference<IProps, any> {
             const meetingData = await MeetingService.instance.createCall();
 
             if (meetingData?.room) {
+                // Set flag to indicate we just created a meeting and should auto-connect
+                window.sessionStorage.setItem('justCreatedMeeting', 'true');
+
                 this.props.dispatch(appNavigate(meetingData.room));
             }
         } catch (error: Error | any) {

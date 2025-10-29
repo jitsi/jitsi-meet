@@ -290,21 +290,21 @@ const AudioSettingsContent = ({
 
     return (
         <ContextMenu
-            activateFocusTrap = { true }
-            aria-labelledby = 'audio-settings-button'
-            className = { classes.contextMenu }
-            hidden = { false }
-            id = 'audio-settings-dialog'
-            role = 'menu'
+            activateFocusTrap={true}
+            aria-labelledby='audio-settings-button'
+            className={classes.contextMenu}
+            hidden={false}
+            id='audio-settings-dialog'
+            role='menu'
             tabIndex={-1}>
             {outputDevices.length > 0 && (
                 <ContextMenuItemGroup
-                    aria-labelledby = { speakerHeaderId }
-                    role = 'group'>
+                    aria-labelledby={speakerHeaderId}
+                    role='group'>
                     <ContextMenuItem
                         accessibilityLabel={t("settings.speakers")}
                         className={classes.header}
-                        icon={() => <SpeakerSimpleHigh size={20} color="black" weight="fill"  />}
+                        icon={() => <SpeakerSimpleHigh size={20} color="black" weight="fill" />}
                         id={speakerHeaderId}
                         text={t("settings.speakers")}
                     />
@@ -320,7 +320,7 @@ const AudioSettingsContent = ({
                 <ContextMenuItem
                     accessibilityLabel={t("settings.microphones")}
                     className={classes.header}
-                    icon={() => <Microphone size={20} color="black" weight="fill"  />}
+                    icon={() => <Microphone size={20} color="black" weight="fill" />}
                     id={microphoneHeaderId}
                     text={t("settings.microphones")}
                 />

@@ -202,7 +202,7 @@ export function dialOut(onSuccess: Function, onFail: Function) {
 export function initPrejoin(tracks: Object[], errors: Object) {
     return async function (dispatch: IStore["dispatch"]) {
         dispatch(setPrejoinDeviceErrors(errors));
-        dispatch(prejoinInitialized());
+        // dispatch(prejoinInitialized());
 
         tracks.forEach((track) => dispatch(trackAdded(track)));
     };
@@ -217,12 +217,11 @@ export function initPrejoin(tracks: Object[], errors: Object) {
  * @param {string?} password - The XMPP user's password.
  * @returns {Function}
  */
-export function joinConference(options?: Object, ignoreJoiningInProgress = false,
-        jid?: string, password?: string) {
-    return function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
+export function joinConference(options?: Object, ignoreJoiningInProgress = false, jid?: string, password?: string) {
+    return function (dispatch: IStore["dispatch"], getState: IStore["getState"]) {
         if (!ignoreJoiningInProgress) {
             const state = getState();
-            const { joiningInProgress } = state['features/prejoin'];
+            const { joiningInProgress } = state["features/prejoin"];
 
             if (joiningInProgress) {
                 return;
@@ -233,9 +232,9 @@ export function joinConference(options?: Object, ignoreJoiningInProgress = false
 
         options && dispatch(updateConfig(options));
 
-        logger.info('Dispatching connect from joinConference.');
-        dispatch(connect(jid, password))
-        .catch(() => {
+        logger.info("Dispatching connect from joinConference.");
+
+        dispatch(connect(jid, password)).catch(() => {
             // There is nothing to do here. This is handled and dispatched in base/connection/actions.
         });
     };

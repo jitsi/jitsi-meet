@@ -409,6 +409,7 @@ class Conference extends AbstractConference<IProps, any> {
 
         // if we will be showing prejoin we don't want to call connect from init.
         // Connect will be dispatched from prejoin screen.
+        // REVISAR ESTO!! ---- SOBRETODO EL CODIGO COMENTADO ABAJO ----
         dispatch(init(!shouldShowPrejoin(this.props)));
 
         maybeShowSuboptimalExperienceNotification(dispatch, t);

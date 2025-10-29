@@ -148,6 +148,19 @@ class Conference extends AbstractConference<IProps, any> {
         this.props.dispatch(setJoinRoomError(false));
     }
 
+    componentDidUpdate(prevProps: IProps) {
+        const isComingFromNewMeetingFlow = window.sessionStorage.getItem("justCreatedMeeting") === "true";
+        const hasRoomChanged = prevProps._roomName !== this.props._roomName;
+        const hasValidRoom = this.props._roomName && this.props._roomName !== "new-meeting";
+
+        const shouldAutoConnect = isComingFromNewMeetingFlow && hasRoomChanged && hasValidRoom;
+
+        if (shouldAutoConnect) {
+            window.sessionStorage.removeItem("justCreatedMeeting");
+            this.props.dispatch(init(true));
+        }
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -165,7 +178,6 @@ class Conference extends AbstractConference<IProps, any> {
             viewMode,
             t,
         } = this.props;
-
         return (
             <>
                 <Chat />
@@ -306,7 +318,7 @@ class Conference extends AbstractConference<IProps, any> {
 
         const { dispatch, t } = this.props;
 
-        dispatch(init());
+        dispatch(init(true));
 
         maybeShowSuboptimalExperienceNotification(dispatch, t);
     }
