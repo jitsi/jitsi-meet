@@ -275,4 +275,111 @@ export default class Filmstrip extends BasePageObject {
             reverse: !isDisplayed,
         });
     }
+
+    /**
+     * Checks for visible gaps in the filmstrip thumbnails.
+     * This detects if there are any missing thumbnails or excessive spacing between consecutive visible thumbnails.
+     *
+     * @returns Returns true if gaps are detected, false otherwise.
+     */
+    async hasGapsInFilmstrip(): Promise<boolean> {
+        return await this.participant.execute(() => {
+            // Get all visible thumbnail containers in the filmstrip
+            const thumbnails = Array.from(
+                document.querySelectorAll('#remoteVideos span.videocontainer')
+            ).filter((thumb: any) => {
+                const style = window.getComputedStyle(thumb);
+                const rect = thumb.getBoundingClientRect();
+
+                // Check if element is visible and has dimensions
+                return style.display !== 'none'
+                    && style.visibility !== 'hidden'
+                    && rect.width > 0
+                    && rect.height > 0;
+            });
+
+            if (thumbnails.length < 2) {
+                // Can't have gaps with less than 2 thumbnails
+                return false;
+            }
+
+            // Get positions and calculated margins of all visible thumbnails
+            const positions = thumbnails.map((thumb: any) => {
+                const rect = thumb.getBoundingClientRect();
+                const style = window.getComputedStyle(thumb);
+
+                return {
+                    left: rect.left,
+                    right: rect.right,
+                    top: rect.top,
+                    bottom: rect.bottom,
+                    width: rect.width,
+                    height: rect.height,
+                    marginTop: parseFloat(style.marginTop) || 0,
+                    marginBottom: parseFloat(style.marginBottom) || 0,
+                    marginLeft: parseFloat(style.marginLeft) || 0,
+                    marginRight: parseFloat(style.marginRight) || 0
+                };
+            });
+
+            // Calculate expected spacing between thumbnails based on first two
+            const firstGap = positions.length >= 2
+                ? Math.abs(positions[1].top - positions[0].top) !== 0
+                    ? positions[1].top - positions[0].bottom // vertical
+                    : positions[1].left - positions[0].right // horizontal
+                : 0;
+
+            // Check if filmstrip is vertical or horizontal
+            const isVertical = Math.abs(positions[1].top - positions[0].top) > Math.abs(positions[1].left - positions[0].left);
+
+            if (isVertical) {
+                // For vertical filmstrip, check vertical spacing consistency
+                for (let i = 0; i < positions.length - 1; i++) {
+                    const current = positions[i];
+                    const next = positions[i + 1];
+                    const gap = next.top - current.bottom;
+
+                    // Compare against the first gap with some tolerance
+                    // Flag if gap is more than 2x the expected spacing
+                    if (gap > Math.max(firstGap * 2, current.height * 0.3)) {
+                        return true;
+                    }
+                }
+            } else {
+                // For horizontal filmstrip, check horizontal spacing consistency
+                for (let i = 0; i < positions.length - 1; i++) {
+                    const current = positions[i];
+                    const next = positions[i + 1];
+                    const gap = next.left - current.right;
+
+                    // Compare against the first gap with some tolerance
+                    // Flag if gap is more than 2x the expected spacing
+                    if (gap > Math.max(firstGap * 2, current.width * 0.3)) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        });
+    }
+
+    /**
+     * Asserts that there are no gaps in the filmstrip.
+     * This is useful for detecting layout issues where thumbnails might be missing or mispositioned.
+     *
+     * @param reverse - If true, asserts that gaps should exist. Default false.
+     */
+    async assertNoGapsInFilmstrip(reverse = false): Promise<void> {
+        const hasGaps = await this.hasGapsInFilmstrip();
+        const expectedResult = reverse ? true : false;
+
+        if (hasGaps !== expectedResult) {
+            throw new Error(
+                `Expected filmstrip to ${reverse ? 'have' : 'not have'} gaps, but ${
+                    hasGaps ? 'gaps were detected' : 'no gaps were found'
+                }`
+            );
+        }
+    }
 }

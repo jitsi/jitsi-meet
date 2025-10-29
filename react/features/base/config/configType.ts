@@ -393,6 +393,7 @@ export interface IConfig {
         disabled?: boolean;
         initialWidth?: number;
         minParticipantCountForTopPanel?: number;
+        stageFilmstripParticipants?: number;
     };
     flags?: {
         ssrcRewritingEnabled: boolean;

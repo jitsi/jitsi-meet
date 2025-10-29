@@ -323,7 +323,7 @@ describe('Lobby', () => {
         await ensureTwoParticipants();
         await enableLobby();
 
-        const { p1 } = ctx;
+        const { p1, p2 } = ctx;
 
         const knockingParticipant = await enterLobby(p1, true, true);
 
@@ -368,6 +368,11 @@ describe('Lobby', () => {
         await p3.waitForRemoteStreams(2);
 
         expect(await p3.getFilmstrip().countVisibleThumbnails()).toBe(3);
+
+        // Check that there are no gaps in the filmstrip after joining from lobby
+        await p1.getFilmstrip().assertNoGapsInFilmstrip();
+        await p2.getFilmstrip().assertNoGapsInFilmstrip();
+        await p3.getFilmstrip().assertNoGapsInFilmstrip();
     });
 });
 
