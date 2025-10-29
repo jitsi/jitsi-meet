@@ -80,29 +80,17 @@ export default class Filmstrip extends BasePageObject {
      * @param participant The participant.
      */
     async pinParticipant(participant: Participant) {
-        let videoIdToSwitchTo;
-
         if (participant === this.participant) {
-            videoIdToSwitchTo = await this.getLocalVideoId();
-
             // when looking up the element and clicking it, it doesn't work if we do it twice in a row (oneOnOne.spec)
             await this.participant.execute(() => document?.getElementById('localVideoContainer')?.click());
         } else {
             const epId = await participant.getEndpointId();
 
-            videoIdToSwitchTo = await this.getRemoteVideoId(epId);
-
             await this.participant.driver.$(`//span[@id="participant_${epId}"]`).click();
         }
+        const endpointID = await participant.getEndpointId();
 
-        await this.participant.driver.waitUntil(
-            async () => await this.participant.getLargeVideo().getId() === videoIdToSwitchTo,
-            {
-                timeout: 3_000,
-                timeoutMsg: `${this.participant.name} did not switch the large video to ${
-                    participant.name}`
-            }
-        );
+        await this.participant.waitForParticipantOnLargeVideo(endpointID);
     }
 
     /**
