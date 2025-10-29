@@ -9,6 +9,7 @@ import { IconMessage } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { closeOverflowMenuIfOpen } from '../../../toolbox/actions.web';
 import { toggleChat } from '../../actions.web';
+import { isChatDisabled } from '../../functions';
 
 import ChatCounter from './ChatCounter';
 
@@ -91,7 +92,8 @@ class ChatButton extends AbstractButton<IProps> {
  */
 const mapStateToProps = (state: IReduxState) => {
     return {
-        _chatOpen: state['features/chat'].isOpen
+        _chatOpen: state['features/chat'].isOpen,
+        visible: !isChatDisabled(state)
     };
 };
 
