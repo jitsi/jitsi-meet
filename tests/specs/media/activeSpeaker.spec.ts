@@ -76,6 +76,10 @@ describe('Active speaker', () => {
             timeoutMsg: 'P3 tile should remain visible in filmstrip during screenshare'
         });
 
+        // Check that there are no gaps in the filmstrip during local screenshare
+        await p2.getFilmstrip().assertNoGapsInFilmstrip();
+        await p3.getFilmstrip().assertNoGapsInFilmstrip();
+
         await p1.getToolbar().clickAudioMuteButton();
         await p1.getToolbar().clickStopDesktopSharingButton();
     });
@@ -216,6 +220,10 @@ describe('Active speaker', () => {
             timeout: 3_000,
             timeoutMsg: 'P3 tile should remain visible in filmstrip during P2 screenshare'
         });
+
+        // Check that there are no gaps in the filmstrip when remote starts screensharing
+        await p1.getFilmstrip().assertNoGapsInFilmstrip();
+        await p3.getFilmstrip().assertNoGapsInFilmstrip();
     });
 
     it('testFilmstripTilesWithMultipleScreenshares', async () => {
@@ -256,6 +264,9 @@ describe('Active speaker', () => {
         // Verify screenshare tiles are present
         await checkForScreensharingTile(p1, p3);
         await checkForScreensharingTile(p2, p3);
+
+        // Check that there are no gaps in the filmstrip with multiple screenshares
+        await p3.getFilmstrip().assertNoGapsInFilmstrip();
     });
 });
 
