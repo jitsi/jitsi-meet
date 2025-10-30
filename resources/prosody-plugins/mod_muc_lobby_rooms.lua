@@ -243,7 +243,7 @@ function attach_lobby_room(room, actor)
 end
 
 -- destroys lobby room for the supplied main room
-function destroy_lobby_room(room, newjid, message)
+function destroy_lobby_room(room, newjid, message, skip_metadata_event)
     if not message then
         message = 'Lobby room closed.';
     end
@@ -258,6 +258,13 @@ function destroy_lobby_room(room, newjid, message)
         room._data.lobbyroom = nil;
         room._data.lobby_extra_reason = nil;
         room._data.lobby_skip_display_name_check = nil;
+
+        if room.jitsiMetadata then
+            room.jitsiMetadata.lobbyEnabled = false;
+            if not skip_metadata_event then
+                module:context(main_muc_component_config):fire_event('room-metadata-changed', { room = room; });
+            end
+        end
     end
 end
 
@@ -498,14 +505,9 @@ process_host_module(main_muc_component_config, function(host_module, host)
                 room_metadata_changed = true;
             end
         elseif room._data.lobbyroom then
-            destroy_lobby_room(room, room.jid);
+            destroy_lobby_room(room, room.jid, nil, room_metadata_changed);
             module:fire_event('jitsi-lobby-disabled', { room = room; });
             notify_lobby_enabled(room, actor, false);
-
-            if room.jitsiMetadata then
-                room.jitsiMetadata.lobbyEnabled = false;
-                room_metadata_changed = true;
-            end
         end
 
         if room_metadata_changed then
