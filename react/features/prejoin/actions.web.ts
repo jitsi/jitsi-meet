@@ -202,7 +202,6 @@ export function dialOut(onSuccess: Function, onFail: Function) {
 export function initPrejoin(tracks: Object[], errors: Object) {
     return async function (dispatch: IStore["dispatch"]) {
         dispatch(setPrejoinDeviceErrors(errors));
-        // dispatch(prejoinInitialized());
 
         tracks.forEach((track) => dispatch(trackAdded(track)));
     };

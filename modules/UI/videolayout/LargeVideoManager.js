@@ -135,7 +135,6 @@ export default class LargeVideoManager {
             this.container.addEventListener('mouseleave', e => this.onHoverOut(e));
         } else {
             logger.warn('Large video container element not found in DOM');
-            // Retry after a short delay
             setTimeout(() => {
                 this.container = document.getElementById('largeVideoContainer');
                 if (this.container) {

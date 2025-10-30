@@ -149,14 +149,14 @@ class Conference extends AbstractConference<IProps, any> {
     }
 
     override componentDidUpdate(prevProps: IProps) {
-        const isComingFromNewMeetingFlow = window.sessionStorage.getItem("justCreatedMeeting") === "true";
+        const isComingFromNewMeetingFlow = window.sessionStorage.getItem("isNewMeetingFlow") === "true";
         const hasRoomChanged = prevProps._roomName !== this.props._roomName;
         const hasValidRoom = this.props._roomName && this.props._roomName !== "new-meeting";
 
         const shouldAutoConnect = isComingFromNewMeetingFlow && hasRoomChanged && hasValidRoom;
 
         if (shouldAutoConnect) {
-            window.sessionStorage.removeItem("justCreatedMeeting");
+            window.sessionStorage.removeItem("isNewMeetingFlow");
             this.props.dispatch(init(true));
         }
     }
