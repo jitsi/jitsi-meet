@@ -254,6 +254,11 @@ function destroy_lobby_room(room, newjid, message)
             lobby_room_obj:destroy(newjid, message);
 
             module:log('info', 'Lobby room destroyed %s', lobby_room_obj.jid)
+
+            if room.jitsiMetadata then
+                room.jitsiMetadata.lobbyEnabled = false;
+                module:context(main_muc_component_config):fire_event('room-metadata-changed', { room = room; });
+            end
         end
         room._data.lobbyroom = nil;
         room._data.lobby_extra_reason = nil;
@@ -482,7 +487,6 @@ process_host_module(main_muc_component_config, function(host_module, host)
             return;
         end
         local members_only = event.fields['muc#roomconfig_membersonly'] and true or nil;
-        local room_metadata_changed = false;
         if members_only then
             local lobby_created = attach_lobby_room(room, actor);
             if lobby_created then
@@ -495,21 +499,12 @@ process_host_module(main_muc_component_config, function(host_module, host)
                     room.jitsiMetadata = {};
                 end
                 room.jitsiMetadata.lobbyEnabled = true;
-                room_metadata_changed = true;
+                host_module:fire_event('room-metadata-changed', { room = room; });
             end
         elseif room._data.lobbyroom then
-            destroy_lobby_room(room, room.jid);
+            destroy_lobby_room(room, room.jid, nil);
             module:fire_event('jitsi-lobby-disabled', { room = room; });
             notify_lobby_enabled(room, actor, false);
-
-            if room.jitsiMetadata then
-                room.jitsiMetadata.lobbyEnabled = false;
-                room_metadata_changed = true;
-            end
-        end
-
-        if room_metadata_changed then
-            host_module:fire_event('room-metadata-changed', { room = room; });
         end
     end);
     host_module:hook('muc-room-destroyed',function(event)
