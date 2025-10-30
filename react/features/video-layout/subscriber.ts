@@ -4,6 +4,7 @@ import { isFollowMeActive } from '../follow-me/functions';
 
 import { virtualScreenshareParticipantsUpdated } from './actions';
 import { getAutoPinSetting, updateAutoPinnedParticipant } from './functions';
+import logger from './logger';
 
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/participants'].sortedRemoteVirtualScreenshareParticipants,
@@ -22,14 +23,18 @@ StateListenerRegistry.register(
         knownSharingParticipantIds.forEach(participantId => {
             if (!newScreenSharesOrder.includes(participantId)) {
                 newScreenSharesOrder.push(participantId);
+                logger.debug('Adding new screenshare to list', participantId);
             }
         });
 
         if (!equals(oldScreenSharesOrder, newScreenSharesOrder)) {
+            logger.debug('Screenshare order changed, dispatching update');
             store.dispatch(virtualScreenshareParticipantsUpdated(newScreenSharesOrder));
 
             if (getAutoPinSetting() && !isFollowMeActive(store)) {
-                updateAutoPinnedParticipant(oldScreenSharesOrder, store);
+                updateAutoPinnedParticipant(oldScreenSharesOrder, newScreenSharesOrder, store);
+            } else {
+                logger.debug('Auto pinning is disabled or Follow Me is active, skipping auto pinning of screenshare.');
             }
         }
     });
