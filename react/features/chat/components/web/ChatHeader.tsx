@@ -2,12 +2,12 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { IReduxState } from '../../../app/types';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCloseLarge } from '../../../base/icons/svg';
 import { isFileSharingEnabled } from '../../../file-sharing/functions.any';
 import { toggleChat } from '../../actions.web';
 import { ChatTabs } from '../../constants';
+import { getFocusedTab, isChatDisabled } from '../../functions';
 
 interface IProps {
 
@@ -40,7 +40,8 @@ interface IProps {
 function ChatHeader({ className, isCCTabEnabled, isPollsEnabled }: IProps) {
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const { focusedTab } = useSelector((state: IReduxState) => state['features/chat']);
+    const _isChatDisabled = useSelector(isChatDisabled);
+    const focusedTab = useSelector(getFocusedTab);
     const fileSharingTabEnabled = useSelector(isFileSharingEnabled);
 
     const onCancel = useCallback(() => {
@@ -56,7 +57,7 @@ function ChatHeader({ className, isCCTabEnabled, isPollsEnabled }: IProps) {
 
     let title = 'chat.title';
 
-    if (focusedTab === ChatTabs.CHAT) {
+    if (!_isChatDisabled && focusedTab === ChatTabs.CHAT) {
         title = 'chat.tabs.chat';
     } else if (isPollsEnabled && focusedTab === ChatTabs.POLLS) {
         title = 'chat.tabs.polls';
@@ -64,6 +65,11 @@ function ChatHeader({ className, isCCTabEnabled, isPollsEnabled }: IProps) {
         title = 'chat.tabs.closedCaptions';
     } else if (fileSharingTabEnabled && focusedTab === ChatTabs.FILE_SHARING) {
         title = 'chat.tabs.fileSharing';
+    } else {
+        // If the focused tab is not enabled, don't render the header.
+        // This should not happen in normal circumstances since Chat.tsx already checks
+        // if any tabs are available before rendering.
+        return null;
     }
 
     return (

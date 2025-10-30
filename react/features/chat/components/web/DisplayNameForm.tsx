@@ -26,6 +26,16 @@ interface IProps extends WithTranslation {
     isCCTabEnabled: boolean;
 
     /**
+     * Whether chat is disabled.
+     */
+    isChatDisabled: boolean;
+
+    /**
+     * Whether file sharing is enabled.
+     */
+    isFileSharingEnabled: boolean;
+
+    /**
      * Whether the polls feature is enabled or not.
      */
     isPollsEnabled: boolean;
@@ -74,17 +84,30 @@ class DisplayNameForm extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     override render() {
-        const { isCCTabEnabled, isPollsEnabled, t } = this.props;
+        const { isCCTabEnabled, isChatDisabled, isFileSharingEnabled, isPollsEnabled, t } = this.props;
 
-        let title = 'chat.nickname.title';
+        // Build array of enabled feature names (translated).
+        const features = [
+            !isChatDisabled ? t('chat.nickname.featureChat') : '',
+            isPollsEnabled ? t('chat.nickname.featurePolls') : '',
+            isFileSharingEnabled ? t('chat.nickname.featureFileSharing') : '',
+            isCCTabEnabled ? t('chat.nickname.featureClosedCaptions') : ''
+        ].filter(Boolean);
 
-        if (isCCTabEnabled && isPollsEnabled) {
-            title = 'chat.nickname.titleWithPollsAndCC';
-        } else if (isCCTabEnabled) {
-            title = 'chat.nickname.titleWithCC';
-        } else if (isPollsEnabled) {
-            title = 'chat.nickname.titleWithPolls';
+        // Return null if no features available - component won't render.
+        if (features.length === 0) {
+            return null;
         }
+
+        // Build translation arguments dynamically: { feature1: "chat", feature2: "polls", ... }
+        const translationArgs = features.reduce((acc, feature, index) => {
+            acc[`feature${index + 1}`] = feature;
+
+            return acc;
+        }, {} as Record<string, string>);
+
+        // Use dynamic translation key: "titleWith1Features", "titleWith2Features", etc.
+        const title = t(`chat.nickname.titleWith${features.length}Features`, translationArgs);
 
         return (
             <div id = 'nickname'>

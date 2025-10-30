@@ -8,12 +8,13 @@ import {
     SET_CHAT_WIDTH,
     SET_USER_CHAT_WIDTH
 } from './actionTypes';
-import { closeChat } from './actions.any';
+import { closeChat, setFocusedTab } from './actions.any';
+import { ChatTabs } from './constants';
 
 export * from './actions.any';
 
 /**
- * Displays the chat panel.
+ * Displays the chat panel with the CHAT tab active.
  *
  * @param {Object} participant - The recipient for the private chat.
  * @param {Object} _disablePolls - Used on native.
@@ -24,6 +25,7 @@ export * from './actions.any';
  */
 export function openChat(participant?: Object, _disablePolls?: boolean) {
     return function(dispatch: IStore['dispatch']) {
+        dispatch(setFocusedTab(ChatTabs.CHAT));
         dispatch({
             participant,
             type: OPEN_CHAT

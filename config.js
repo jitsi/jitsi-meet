@@ -139,6 +139,9 @@ var config = {
     // Disables polls feature.
     // disablePolls: false,
 
+    // Disables chat feature entirely including notifications, sounds, and private messages.
+    // disableChat: false,
+
     // Disables demote button from self-view
     // disableSelfDemote: false,
 
