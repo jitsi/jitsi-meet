@@ -1,8 +1,8 @@
 import React from "react";
 import { WithTranslation } from "react-i18next";
 
-// @ts-ignore
 import { throttle } from "lodash-es";
+// @ts-ignore
 import VideoLayout from "../../../../../modules/UI/videolayout/VideoLayout";
 import { IReduxState } from "../../../app/types";
 import { getConferenceNameForTitle } from "../../../base/conference/functions";
@@ -28,7 +28,6 @@ import { maybeShowSuboptimalExperienceNotification } from "../../functions.web";
 import type { AbstractProps } from "../AbstractConference";
 import { AbstractConference, abstractMapStateToProps } from "../AbstractConference";
 
-// @ts-expect-error
 import { IStore } from "../../../app/types";
 
 import Header, { Mode } from "../../../base/meet/views/Conference/components/Header";
@@ -130,7 +129,7 @@ function shouldShowPrejoin({ _showLobby, _showPrejoin, _showVisitorsQueue }: IPr
 class Conference extends AbstractConference<IProps, any> {
     _originalOnMouseMove: Function;
     _originalOnShowToolbar: Function;
-    state = {
+    override state = {
         videoMode: "gallery" as Mode,
     };
 
@@ -248,7 +247,7 @@ class Conference extends AbstractConference<IProps, any> {
                 >
                     <ConferenceInfo />
                     <Notice />
-                    <div onTouchStart={this._onVidespaceTouchStart}>
+                    <div onTouchStart={this._onVideospaceTouchStart}>
                         <Header mode={viewMode} translate={t} onSetModeClicked={this._onSetVideoModeClicked} />
                         <div className="flex">
                             {/* <LargeVideoWeb /> */}

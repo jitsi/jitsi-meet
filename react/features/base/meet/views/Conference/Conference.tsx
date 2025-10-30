@@ -133,7 +133,7 @@ class Conference extends AbstractConference<IProps, any> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         document.title = `${interfaceConfig.APP_NAME}`;
         this._start();
 
@@ -146,7 +146,7 @@ class Conference extends AbstractConference<IProps, any> {
      * @inheritdoc
      * returns {void}
      */
-    componentDidUpdate() {
+    override componentDidUpdate() {
         // TODO: For now VideoLayout is being called as LargeVideo and Filmstrip
         // sizing logic is still handled outside of React. Once all components
         // are in react they should calculate size on their own as much as
@@ -165,7 +165,7 @@ class Conference extends AbstractConference<IProps, any> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         APP.UI.unbindEvents();
 
         FULL_SCREEN_EVENTS.forEach((name) => document.removeEventListener(name, this._onFullScreenChange));
@@ -208,7 +208,7 @@ class Conference extends AbstractConference<IProps, any> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { _showNewMeeting } = this.props;
         return (
             <div

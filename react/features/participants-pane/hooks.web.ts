@@ -15,7 +15,8 @@ interface IDrawerParticipant {
 const participants = {
     key: 'participants-pane',
     Content: ParticipantsPaneButton,
-    group: 2
+    group: 2,
+    display: true
 };
 
 /**

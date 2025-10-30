@@ -8,7 +8,8 @@ import { areKeyboardShortcutsEnabled } from './functions';
 const shortcuts = {
     key: 'shortcuts',
     Content: KeyboardShortcutsButton,
-    group: 4
+    group: 4,
+    display: true
 };
 
 /**

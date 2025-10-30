@@ -14,13 +14,15 @@ import { getRecordButtonProps, isLiveStreamingButtonVisible } from './functions'
 const recording = {
     key: 'recording',
     Content: RecordButton,
-    group: 2
+    group: 2,
+    display: true
 };
 
 const livestreaming = {
     key: 'livestreaming',
     Content: LiveStreamButton,
-    group: 2
+    group: 2,
+    display: true
 };
 
 /**

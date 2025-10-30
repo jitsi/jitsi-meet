@@ -6,7 +6,8 @@ import { isReactionsButtonEnabled } from './functions';
 const reactions = {
     key: 'reactions',
     Content: ReactionsMenuButton,
-    group: 2
+    group: 2,
+    display: true
 };
 
 /**

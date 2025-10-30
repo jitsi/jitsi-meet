@@ -135,7 +135,7 @@ class Conference extends AbstractConference<IProps, any> {
         this._onVidespaceTouchStart = this._onVidespaceTouchStart.bind(this);
     }
 
-    componentDidMount() {
+    override componentDidMount() {
         PersistenceRegistry.register(
             "features/prejoin",
             {
@@ -148,7 +148,7 @@ class Conference extends AbstractConference<IProps, any> {
         this.props.dispatch(setJoinRoomError(false));
     }
 
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         const isComingFromNewMeetingFlow = window.sessionStorage.getItem("justCreatedMeeting") === "true";
         const hasRoomChanged = prevProps._roomName !== this.props._roomName;
         const hasValidRoom = this.props._roomName && this.props._roomName !== "new-meeting";
@@ -167,7 +167,7 @@ class Conference extends AbstractConference<IProps, any> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _isAnyOverlayVisible,
             _layoutClassName,

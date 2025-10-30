@@ -8,7 +8,8 @@ import { areClosedCaptionsEnabled, canStartSubtitles } from './functions.any';
 const cc = {
     key: 'closedcaptions',
     Content: ClosedCaptionButton,
-    group: 2
+    group: 2,
+    display: true
 };
 
 /**

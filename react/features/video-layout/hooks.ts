@@ -9,7 +9,8 @@ import TileViewButton from './components/TileViewButton';
 const tileview = {
     key: 'tileview',
     Content: TileViewButton,
-    group: 2
+    group: 2,
+    display: true
 };
 
 /**

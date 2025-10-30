@@ -6,7 +6,8 @@ import { isSpeakerStatsDisabled } from './functions';
 const speakerStats = {
     key: 'stats',
     Content: SpeakerStatsButton,
-    group: 3
+    group: 3,
+    display: true
 };
 
 /**

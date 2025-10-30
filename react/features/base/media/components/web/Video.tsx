@@ -271,7 +271,7 @@ class Video extends Component<IProps> {
      * @returns {boolean} - False is always returned to blackbox this component
      * from React.
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         if (prevProps.encodeVideo !== this.props.encodeVideo && this.props.videoTrack?.jitsiTrack) {
             console.log("Encoding configuration changed, reattaching track with encoding:", this.props.encodeVideo);
             this._encodingChanged = true;
@@ -324,7 +324,7 @@ class Video extends Component<IProps> {
      * @override
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { autoPlay, className, id, muted, playsinline, style, eventHandlers, encodeVideo } = this.props;
 
         return (

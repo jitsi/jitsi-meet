@@ -47,7 +47,7 @@ class CreateConference extends AbstractConference<IProps, any> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return <Prejoin createConference={this._onCreateConference} />;
     }
 }

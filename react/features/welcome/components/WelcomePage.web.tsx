@@ -135,7 +135,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         this._renderFooter = this._renderFooter.bind(this);
     }
 
-    componentWillMount(): void {
+    override componentWillMount(): void {
         const inxtToken = localStorage.getItem("xNewToken") || undefined;
         this.setState({ inxtToken });
         this.props.dispatch(initializeAuth());
