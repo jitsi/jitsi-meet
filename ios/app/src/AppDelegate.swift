@@ -30,10 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let vc = ViewController()
         self.window?.rootViewController = vc
         
-        jitsiMeet.application(application,
-                            didFinishLaunchingWithOptions: launchOptions ?? [:],
-                            moduleName: "App",
-                              in: self.window!)
+        jitsiMeet.application(application, didFinishLaunchingWithOptions: launchOptions ?? [:])
 
         if self.appContainsRealServiceInfoPlist() {
             print("Enabling Firebase")

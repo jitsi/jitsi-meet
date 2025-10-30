@@ -19,9 +19,6 @@
 
 #import <JitsiMeetSDK/JitsiMeetConferenceOptions.h>
 
-@class RCTReactNativeFactory;
-@protocol RCTDependencyProvider;
-
 // Matches RTCLoggingSeverity from RTCLogging.h
 typedef NS_ENUM(NSInteger, WebRTCLoggingSeverity) {
   WebRTCLoggingSeverityVerbose,
@@ -67,16 +64,6 @@ typedef NS_ENUM(NSInteger, WebRTCLoggingSeverity) {
  */
 @property (nonatomic, assign) WebRTCLoggingSeverity webRtcLoggingSeverity;
 
-/**
- * React Native factory instance for managing React Native lifecycle.
- */
-@property (nonatomic, strong, nullable) RCTReactNativeFactory *reactNativeFactory;
-
-/**
- * Dependency provider for React Native modules and components.
- */
-@property (nonatomic, strong, nullable) id<RCTDependencyProvider> dependencyProvider;
-
 #pragma mark - This class is a singleton
 
 + (instancetype _Nonnull)sharedInstance;
@@ -84,9 +71,7 @@ typedef NS_ENUM(NSInteger, WebRTCLoggingSeverity) {
 #pragma mark - Methods that the App delegate must call
 
 -             (BOOL)application:(UIApplication *_Nonnull)application
-  didFinishLaunchingWithOptions:(NSDictionary *_Nonnull)launchOptions
-                     moduleName:(NSString *_Nonnull)moduleName
-                       inWindow:(UIWindow *_Nonnull)window;
+  didFinishLaunchingWithOptions:(NSDictionary *_Nonnull)launchOptions;
 
 -    (BOOL)application:(UIApplication *_Nonnull)application
   continueUserActivity:(NSUserActivity *_Nonnull)userActivity

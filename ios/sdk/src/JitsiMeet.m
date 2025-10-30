@@ -42,24 +42,11 @@
 
 @implementation JMReactNativeFactoryDelegate
 
-@synthesize dependencyProvider = _dependencyProvider;
-
 - (instancetype)init {
     if (self = [super init]) {
         NSLog(@"🔵 JMReactNativeFactoryDelegate init called");
     }
     return self;
-}
-
-- (void)setDependencyProvider:(id<RCTDependencyProvider>)dependencyProvider {
-    _dependencyProvider = dependencyProvider;
-    NSLog(@"🔵 dependencyProvider set: %@", dependencyProvider);
-    NSLog(@"🔵 dependencyProvider class: %@", [dependencyProvider class]);
-}
-
-- (id<RCTDependencyProvider>)dependencyProvider {
-    NSLog(@"🔵 dependencyProvider getter called, returning: %@", _dependencyProvider);
-    return _dependencyProvider;
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge {
@@ -76,7 +63,7 @@
 
 - (BOOL)fabricEnabled {
     NSLog(@"🔵 fabricEnabled called, returning NO");
-    return NO;
+    return YES;
 }
 
 - (BOOL)turboModuleEnabled {
@@ -94,6 +81,7 @@
 @implementation JitsiMeet {
     NSDictionary *_launchOptions;
     ScheenshareEventEmiter *_screenshareEventEmiter;
+    RCTReactNativeFactory *_reactNativeFactory;
 }
 
 #pragma mak - This class is a singleton
@@ -128,11 +116,8 @@
         delegate.dependencyProvider = provider;
         
         NSLog(@"🔵 Creating RCTReactNativeFactory with delegate");
-        self.reactNativeFactory = [[RCTReactNativeFactory alloc] initWithDelegate:delegate];
-        NSLog(@"🔵 RCTReactNativeFactory created: %@", self.reactNativeFactory);
-        
-        self.dependencyProvider = delegate.dependencyProvider;
-        NSLog(@"🔵 JitsiMeet.dependencyProvider set to: %@", self.dependencyProvider);
+        _reactNativeFactory = [[RCTReactNativeFactory alloc] initWithDelegate:delegate];
+        NSLog(@"🔵 RCTReactNativeFactory created: %@", _reactNativeFactory);
 
         // Initialize the listener for handling start/stop screensharing notifications.
         _screenshareEventEmiter = [[ScheenshareEventEmiter alloc] init];
@@ -150,18 +135,10 @@
 #pragma mark - Methods that the App delegate must call
 
 -             (BOOL)application:(UIApplication *)application
-  didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-                     moduleName:(NSString *)moduleName
-                       inWindow:(UIWindow *)window {
+  didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     _launchOptions = [launchOptions copy];
     
-    // Start React Native with new architecture
-    [self.reactNativeFactory startReactNativeWithModuleName:moduleName
-                                                   inWindow:window
-                                          initialProperties:nil
-                                              launchOptions:launchOptions];
-
 #if !defined(JITSI_MEET_SDK_LITE)
     [Dropbox setAppKey];
 #endif
@@ -226,8 +203,8 @@
 }
 
 - (void)destroyReactNativeBridge {
-    [self.reactNativeFactory.bridge invalidate];
-    self.reactNativeFactory = nil;
+    [_reactNativeFactory.bridge invalidate];
+    _reactNativeFactory = nil;
 }
 
 - (JitsiMeetConferenceOptions *)getInitialConferenceOptions {
@@ -342,11 +319,11 @@
     [self instantiateReactNativeBridge];
     
     NSLog(@"🔵 getReactBridge called");
-    NSLog(@"🔵 reactNativeFactory: %@", self.reactNativeFactory);
-    NSLog(@"🔵 reactNativeFactory.bridge: %@", self.reactNativeFactory.bridge);
+    NSLog(@"🔵 reactNativeFactory: %@", _reactNativeFactory);
+    NSLog(@"🔵 reactNativeFactory.bridge: %@", _reactNativeFactory.bridge);
     
     // Get bridge from the new architecture factory
-    return self.reactNativeFactory.bridge;
+    return _reactNativeFactory.bridge;
 }
 
 - (ExternalAPI *)getExternalAPI {
