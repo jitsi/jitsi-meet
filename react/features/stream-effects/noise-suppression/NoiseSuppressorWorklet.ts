@@ -1,5 +1,3 @@
-// @ts-expect-error
-import { createRNNWasmModuleSync } from '@jitsi/rnnoise-wasm';
 
 import { leastCommonMultiple } from '../../base/util/math';
 import RnnoiseProcessor from '../rnnoise/RnnoiseProcessor';
@@ -12,7 +10,7 @@ class NoiseSuppressorWorklet extends AudioWorkletProcessor {
     /**
      * RnnoiseProcessor instance.
      */
-    private _denoiseProcessor: RnnoiseProcessor;
+    private _denoiseProcessor: RnnoiseProcessor | null = null;
 
     /**
      * Audio worklets work with a predefined sample rate of 128.
@@ -20,16 +18,21 @@ class NoiseSuppressorWorklet extends AudioWorkletProcessor {
     private _procNodeSampleRate = 128;
 
     /**
+     * Flag to track if the processor is initialized.
+     */
+    private _isInitialized = false;
+
+    /**
      * PCM Sample size expected by the denoise processor.
      */
-    private _denoiseSampleSize: number;
+    private _denoiseSampleSize: number = 0;
 
     /**
      * Circular buffer data used for efficient memory operations.
      */
-    private _circularBufferLength: number;
+    private _circularBufferLength: number = 0;
 
-    private _circularBuffer: Float32Array;
+    private _circularBuffer: Float32Array = new Float32Array(0);
 
     /**
      * The circular buffer uses a couple of indexes to track data segments. Input data from the stream is
@@ -58,31 +61,42 @@ class NoiseSuppressorWorklet extends AudioWorkletProcessor {
     constructor() {
         super();
 
-        /**
-         * The wasm module needs to be compiled to load synchronously as the audio worklet `addModule()`
-         * initialization process does not wait for the resolution of promises in the AudioWorkletGlobalScope.
-         */
-        this._denoiseProcessor = new RnnoiseProcessor(createRNNWasmModuleSync());
+        // Initialize the processor asynchronously
+        this._initializeProcessor();
+    }
 
-        /**
-         * PCM Sample size expected by the denoise processor.
-         */
-        this._denoiseSampleSize = this._denoiseProcessor.getSampleLength();
+    /**
+     * Initialize the rnnoise processor asynchronously.
+     *
+     * @returns {Promise<void>} Promise that resolves when initialization is complete.
+     */
+    private async _initializeProcessor() {
+        try {
+            // Dynamically import the rnnoise module
+            const rnnoiseModule = await import(/* webpackChunkName: "rnnoise" */ '@jitsi/rnnoise-wasm' as any);
+            const { createRNNWasmModuleSync } = rnnoiseModule;
 
-        /**
-         * In order to avoid unnecessary memory related operations a circular buffer was used.
-         * Because the audio worklet input array does not match the sample size required by rnnoise two cases can occur
-         * 1. There is not enough data in which case we buffer it.
-         * 2. There is enough data but some residue remains after the call to `processAudioFrame`, so its buffered
-         * for the next call.
-         * A problem arises when the circular buffer reaches the end and a rollover is required, namely
-         * the residue could potentially be split between the end of buffer and the beginning and would
-         * require some complicated logic to handle. Using the lcm as the size of the buffer will
-         * guarantee that by the time the buffer reaches the end the residue will be a multiple of the
-         * `procNodeSampleRate` and the residue won't be split.
-         */
-        this._circularBufferLength = leastCommonMultiple(this._procNodeSampleRate, this._denoiseSampleSize);
-        this._circularBuffer = new Float32Array(this._circularBufferLength);
+            this._denoiseProcessor = new RnnoiseProcessor(createRNNWasmModuleSync());
+            this._denoiseSampleSize = this._denoiseProcessor.getSampleLength();
+
+            /**
+             * In order to avoid unnecessary memory related operations a circular buffer was used.
+             * Because the audio worklet input array does not match the sample size required by rnnoise two cases can occur
+             * 1. There is not enough data in which case we buffer it.
+             * 2. There is enough data but some residue remains after the call to `processAudioFrame`, so its buffered
+             * for the next call.
+             * A problem arises when the circular buffer reaches the end and a rollover is required, namely
+             * the residue could potentially be split between the end of buffer and the beginning and would
+             * require some complicated logic to handle. Using the lcm as the size of the buffer will
+             * guarantee that by the time the buffer reaches the end the residue will be a multiple of the
+             * `procNodeSampleRate` and the residue won't be split.
+             */
+            this._circularBufferLength = leastCommonMultiple(this._procNodeSampleRate, this._denoiseSampleSize);
+            this._circularBuffer = new Float32Array(this._circularBufferLength);
+            this._isInitialized = true;
+        } catch (error) {
+            console.error('Failed to initialize rnnoise processor:', error);
+        }
     }
 
     /**
@@ -109,6 +123,13 @@ class NoiseSuppressorWorklet extends AudioWorkletProcessor {
         // Exit out early if there is no input data (input node not connected/disconnected)
         // as rest of worklet will crash otherwise
         if (!inData) {
+            return true;
+        }
+
+        // If the processor is not yet initialized, just pass through the audio without processing
+        if (!this._isInitialized || !this._denoiseProcessor) {
+            outData.set(inData, 0);
+
             return true;
         }
 
