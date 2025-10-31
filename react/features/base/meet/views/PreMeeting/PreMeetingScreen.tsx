@@ -256,12 +256,6 @@ const PreMeetingScreen = ({
         }
     }, []);
 
-    useEffect(() => {
-        if (createRoomError)
-        setIsCreatingMeeting(false);
-    }, [createRoomError]);
-
-
     const handleNewMeeting = async () => {
         setIsCreatingMeeting(true);
         try {
@@ -351,7 +345,11 @@ const PreMeetingScreen = ({
                     joinConference={async () => {
                         if (createConference) {
                             setIsCreatingMeeting(true);
-                            await createConference();
+                            try {
+                                await createConference();
+                            } finally {
+                                setIsCreatingMeeting(false);
+                            }
                         } else if (joinConference) {
                             joinConference();
                         }

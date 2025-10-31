@@ -299,6 +299,7 @@
         "embedMeeting": "Incrustar reunión",
         "enterDisplayName": "Por favor ingresa tu nombre aquí",
         "error": "Error",
+        "errorJoiningMeeting": "Error al unirse a la reunión",
         "gracefulShutdown": "Nuestro servicio se encuentra en mantenimiento. Por favor, intente más tarde.",
         "grantModeratorDialog": "¿Estás seguro de que quieres convertir a este participante en moderador?",
         "grantModeratorTitle": "Convertir en moderador",

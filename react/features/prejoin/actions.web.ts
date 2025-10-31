@@ -233,8 +233,9 @@ export function joinConference(options?: Object, ignoreJoiningInProgress = false
 
         logger.info("Dispatching connect from joinConference.");
 
-        dispatch(connect(jid, password)).catch(() => {
-            // There is nothing to do here. This is handled and dispatched in base/connection/actions.
+        dispatch(connect(jid, password)).catch((error) => {
+            dispatch(setJoiningInProgress(false));
+            logger.error("Connection failed in joinConference:", error);
         });
     };
 }
