@@ -43,9 +43,9 @@ import { shouldDisplayTileView } from '../../../react/features/video-layout/func
 import { createDeferred } from '../../util/helpers';
 import AudioLevels from '../audio_levels/AudioLevels';
 
-import { VIDEO_CONTAINER_TYPE, VideoContainer } from './VideoContainer';
+import { VIDEO_CONTAINER_TYPE, VideoContainer } from './VideoContainer.jsx';
 
-const logger = Logger.getLogger('ui:videolayout');
+const logger = Logger.getLogger(new URL(import.meta.url).pathname);
 
 const DESKTOP_CONTAINER_TYPE = 'desktop';
 

@@ -128,10 +128,10 @@ i18next.addResourceBundle(
     /* overwrite */ true);
 
 // Add builtin languages.
-// XXX: Note we are using require here, because we want the side-effects of the
-// import, but imports can only be placed at the top, and it would be too early,
-// since i18next is not yet initialized at that point.
-require('./BuiltinLanguages');
+// XXX: Note we are importing here, because we want the side-effects of the
+// import, but at the top it would be too early since i18next is not yet 
+// initialized at that point.
+import('./BuiltinLanguages');
 
 // Label change through dynamic branding is available only for web
 if (typeof APP !== 'undefined') {
