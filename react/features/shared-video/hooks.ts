@@ -6,7 +6,8 @@ import { isSharedVideoEnabled } from './functions';
 const shareVideo = {
     key: 'sharedvideo',
     Content: SharedVideoButton,
-    group: 3
+    group: 3,
+    display: true
 };
 
 /**

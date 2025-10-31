@@ -117,7 +117,7 @@ export function constructOptions(state: IReduxState) {
     // redux store.
     // old change, maintain for reference in case of issues
     // const options: IOptions = _.cloneDeep(state["features/base/config"]);
-    const options: IOptions = cloneDeep(state['features/base/config']);
+    const options: IOptions = cloneDeep(state["features/base/config"]);
 
     const { locationURL, preferVisitor } = state["features/base/connection"];
     const params = parseURLParams(locationURL || "");
@@ -250,7 +250,7 @@ export function _connectInternal({
 
                 const newOptions = get8x8Options(options, appId, room);
 
-                const connection = new JitsiMeetJS.JitsiConnection(options.appId, jwt, newOptions);
+                const connection = new JitsiMeetJS.JitsiConnection(appId, jwt, newOptions);
 
                 connection[JITSI_CONNECTION_URL_KEY] = locationURL;
 

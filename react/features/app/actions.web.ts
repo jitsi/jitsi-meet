@@ -47,6 +47,9 @@ export function appNavigate(uri?: string) {
 
         if (location?.pathname === "/new-meeting") {
             dispatch({ type: SET_NEW_MEETING_PAGE_VISIBILITY, value: true });
+        } else {
+            // If navigating away from /new-meeting, hide the create meeting view
+            dispatch({ type: SET_NEW_MEETING_PAGE_VISIBILITY, value: false });
         }
 
         // If the specified location (URI) does not identify a host, use the app's

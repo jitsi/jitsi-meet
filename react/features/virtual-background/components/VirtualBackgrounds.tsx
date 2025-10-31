@@ -1,3 +1,4 @@
+import React from 'react';
 // @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 // eslint-disable-next-line lines-around-comment
@@ -18,7 +19,6 @@ import { BACKGROUNDS_LIMIT, IMAGES, type Image, VIRTUAL_BACKGROUND_TYPE } from '
 import { toDataURL } from '../functions';
 import logger from '../logger';
 import { IVirtualBackground } from '../reducer';
-
 import { withPixelLineHeight } from '../../base/styles/functions.web';
 import UploadImageButton from './UploadImageButton';
 import VirtualBackgroundPreview from './VirtualBackgroundPreview';

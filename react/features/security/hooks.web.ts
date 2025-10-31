@@ -13,7 +13,8 @@ const security = {
     key: 'security',
     alias: 'info',
     Content: SecurityDialogButton,
-    group: 2
+    group: 2,
+    display: true
 };
 
 /**

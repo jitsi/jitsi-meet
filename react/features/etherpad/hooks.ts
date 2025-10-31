@@ -7,7 +7,8 @@ import SharedDocumentButtonWeb from './components/SharedDocumentButton';
 const etherpad = {
     key: 'etherpad',
     Content: SharedDocumentButtonWeb,
-    group: 3
+    group: 3,
+    display: true
 };
 
 /**

@@ -8,7 +8,8 @@ import EmbedMeetingButton from './components/EmbedMeetingButton';
 const embed = {
     key: 'embedmeeting',
     Content: EmbedMeetingButton,
-    group: 4
+    group: 4,
+    display: true
 };
 
 /**

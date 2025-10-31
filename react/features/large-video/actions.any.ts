@@ -12,7 +12,7 @@ import {
 } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
 import { isStageFilmstripAvailable } from '../filmstrip/functions.web';
-import { getAutoPinSetting } from '../video-layout/functions';
+import { getAutoPinSetting } from '../video-layout/functions.any';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,

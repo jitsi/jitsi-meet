@@ -31,6 +31,8 @@ class CreateConference extends AbstractConference<IProps, any> {
             const meetingData = await MeetingService.instance.createCall();
 
             if (meetingData?.room) {
+                window.sessionStorage.setItem("isNewMeetingFlow", "true");
+
                 this.props.dispatch(appNavigate(meetingData.room));
             }
         } catch (error: Error | any) {
@@ -44,7 +46,7 @@ class CreateConference extends AbstractConference<IProps, any> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return <Prejoin createConference={this._onCreateConference} />;
     }
 }

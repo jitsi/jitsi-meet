@@ -90,9 +90,22 @@ function _getWebConferenceRoute(state: IReduxState) {
     const { locationURL } = state["features/base/connection"];
 
     if (window.location.href !== locationURL?.href) {
-        route.href = locationURL?.href;
+        // FIX FOR CUSTOM NEW-MEETING FLOW
+        // Only force a full page reload if the origin (protocol + host + port) changed.
+        // If only the pathname changed (e.g., /new-meeting -> /roomId), we don't need to reload
+        // because the config is already loaded for this domain.
+        const currentURL = new URL(window.location.href);
+        const targetURL = locationURL ? new URL(locationURL.href) : null;
 
-        return Promise.resolve(route);
+        if (targetURL && currentURL.origin !== targetURL.origin) {
+            route.href = locationURL?.href;
+            return Promise.resolve(route);
+        }
+
+        // If only pathname changed, update browser URL without reloading
+        if (targetURL && currentURL.pathname !== targetURL.pathname) {
+            window.history.pushState({}, "", targetURL.href);
+        }
     }
 
     return getDeepLinkingPage(state).then((deepLinkComponent) => {

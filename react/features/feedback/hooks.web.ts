@@ -6,7 +6,8 @@ import { shouldSendJaaSFeedbackMetadata } from './functions.web';
 const feedback = {
     key: 'feedback',
     Content: FeedbackButtonWeb,
-    group: 4
+    group: 4,
+    display: true
 };
 
 /**
