@@ -36,6 +36,7 @@ import { ViewMode } from "../../../../../filmstrip/reducer";
 import { DEFAULT_STATE } from "../../../../known-domains/reducer";
 import PersistenceRegistry from "../../../../redux/PersistenceRegistry";
 import { setCreateRoomError, setJoinRoomError } from "../../../general/store/errors/actions";
+import { isNewMeetingFlow } from "../../../services/sessionStorage.service";
 import ConferenceControlsWrapper from "./ConferenceControlsWrapper";
 import VideoGalleryWrapper from "./VideoGalleryWrapper";
 
@@ -149,14 +150,14 @@ class Conference extends AbstractConference<IProps, any> {
     }
 
     override componentDidUpdate(prevProps: IProps) {
-        const isComingFromNewMeetingFlow = window.sessionStorage.getItem("isNewMeetingFlow") === "true";
+        const isComingFromNewMeetingFlow = isNewMeetingFlow();
         const hasRoomChanged = prevProps._roomName !== this.props._roomName;
         const hasValidRoom = this.props._roomName && this.props._roomName !== "new-meeting";
 
         const shouldAutoConnect = isComingFromNewMeetingFlow && hasRoomChanged && hasValidRoom;
 
         if (shouldAutoConnect) {
-            window.sessionStorage.removeItem("isNewMeetingFlow");
+            // Don't remove flag yet - let the connection success/failure handle it
             this.props.dispatch(init(true));
         }
     }

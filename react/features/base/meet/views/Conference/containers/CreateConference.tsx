@@ -12,6 +12,7 @@ import Prejoin from "../../../../../prejoin/components/web/Prejoin";
 import { translate } from "../../../../i18n/functions";
 import { setCreateRoomError } from "../../../general/store/errors/actions";
 import MeetingService from "../../../services/meeting.service";
+import { setNewMeetingFlowSession } from "../../../services/sessionStorage.service";
 
 /**
  * The type of the React {@code Component} props of {@link CreateConference}.
@@ -31,7 +32,7 @@ class CreateConference extends AbstractConference<IProps, any> {
             const meetingData = await MeetingService.instance.createCall();
 
             if (meetingData?.room) {
-                window.sessionStorage.setItem("isNewMeetingFlow", "true");
+                setNewMeetingFlowSession(true);
 
                 this.props.dispatch(appNavigate(meetingData.room));
             }

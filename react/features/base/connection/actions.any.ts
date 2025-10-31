@@ -1,6 +1,8 @@
 import { cloneDeep } from 'lodash-es';
 
 import { IReduxState, IStore } from '../../app/types';
+import { showErrorNotification } from "../../notifications/actions";
+import { NOTIFICATION_TIMEOUT_TYPE } from "../../notifications/constants";
 import { conferenceLeft, conferenceWillLeave, redirect } from '../conference/actions';
 import { getCurrentConference } from '../conference/functions';
 import { IConfigState } from '../config/reducer';
@@ -15,6 +17,7 @@ import {
 import { setJoinRoomError } from "../meet/general/store/errors/actions";
 import { LocalStorageManager } from "../meet/LocalStorageManager";
 import MeetingService from "../meet/services/meeting.service";
+import { clearNewMeetingFlowSession, isNewMeetingFlow } from "../meet/services/sessionStorage.service";
 import {
     CONNECTION_DISCONNECTED,
     CONNECTION_ESTABLISHED,
@@ -22,10 +25,10 @@ import {
     CONNECTION_PROPERTIES_UPDATED,
     CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL,
-    SET_PREFER_VISITOR
-} from './actionTypes';
-import { JITSI_CONNECTION_URL_KEY } from './constants';
-import logger from './logger';
+    SET_PREFER_VISITOR,
+} from "./actionTypes";
+import { JITSI_CONNECTION_URL_KEY } from "./constants";
+import logger from "./logger";
 import { get8x8Options } from "./options8x8";
 import { ConnectionFailedError, IIceServers } from "./types";
 
@@ -334,6 +337,9 @@ export function _connectInternal({
                             JitsiConnectionEvents.CONNECTION_ESTABLISHED,
                             _onConnectionEstablished
                         );
+
+                        clearNewMeetingFlowSession();
+
                         dispatch(connectionEstablished(connection, Date.now()));
                         resolve(connection);
                     }
@@ -377,9 +383,30 @@ export function _connectInternal({
                     });
                 });
             } catch (error: Error | any) {
-                // DISPLAY ERROR MESSAGE - NOW NOT DISPLAY WHICH ERROR
-                // TODO - https://inxt.atlassian.net/browse/PB-4295
-                dispatch(setJoinRoomError(true, error.message));
+                const errorMessage = error?.message || "Failed to join the meeting";
+
+                dispatch(setJoinRoomError(true, errorMessage));
+                dispatch(
+                    showErrorNotification(
+                        {
+                            titleKey: "dialog.errorJoiningMeeting",
+                            descriptionKey: errorMessage,
+                            hideErrorSupportLink: true,
+                        },
+                        NOTIFICATION_TIMEOUT_TYPE.LONG
+                    )
+                );
+
+                if (isNewMeetingFlow()) {
+                    clearNewMeetingFlowSession();
+
+                    const locationURL = window.location;
+                    const baseUrl = `${locationURL.protocol}//${locationURL.host}`;
+                    const roomUrl = `${baseUrl}/${room}`;
+                    window.history.replaceState({}, document.title, roomUrl);
+                    window.location.reload();
+                }
+
                 return Promise.reject(error);
             }
     };
