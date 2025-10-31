@@ -1,5 +1,5 @@
-import "../../__tests__/setup";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import "../../__tests__/setup";
 import {
     clearNewMeetingFlowSession,
     clearSessionStorage,
@@ -102,11 +102,9 @@ describe("sessionStorage.service", () => {
 
     describe("clearNewMeetingFlowSession", () => {
         it("When flag is set, then removes the flag from sessionStorage", () => {
-            // First set the flag
             setNewMeetingFlowSession(true);
             expect(isNewMeetingFlow()).toBe(true);
 
-            // Then clear it
             clearNewMeetingFlowSession();
             expect(mockStorage.removeItem).toHaveBeenCalledWith("isNewMeetingFlow");
             expect(isNewMeetingFlow()).toBe(false);
