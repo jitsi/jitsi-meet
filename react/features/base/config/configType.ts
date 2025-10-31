@@ -468,6 +468,7 @@ export interface IConfig {
         showHangUp?: boolean;
     };
     localRecording?: {
+        autoDownloadMeetingData?: boolean;
         disable?: boolean;
         disableSelfRecording?: boolean;
         notifyAllParticipants?: boolean;
