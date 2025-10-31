@@ -27,6 +27,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             builder.setFeatureFlag("ios.recording.enabled", withBoolean: true)
         }
 
+        let vc = ViewController()
+        self.window?.rootViewController = vc
+        
         jitsiMeet.application(application, didFinishLaunchingWithOptions: launchOptions ?? [:])
 
         if self.appContainsRealServiceInfoPlist() {
@@ -35,8 +38,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(!jitsiMeet.isCrashReportingDisabled())
         }
 
-        let vc = ViewController()
-        self.window?.rootViewController = vc
         jitsiMeet.showSplashScreen()
 
         self.window?.makeKeyAndVisible()
