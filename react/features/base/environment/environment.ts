@@ -2,7 +2,6 @@ import JitsiMeetJS from '../lib-jitsi-meet';
 import Platform from '../react/Platform';
 
 import { isMobileBrowser } from './utils';
-import { isWebRTCAvailable } from './webrtc.support';
 
 const { browser } = JitsiMeetJS.util;
 
@@ -88,11 +87,6 @@ export function isSupportedBrowser() {
     if (!isMobileBrowser() && _isCurrentBrowserInList(
         interfaceConfig.UNSUPPORTED_BROWSERS || DEFAULT_UNSUPPORTED_BROWSERS
     )) {
-        return false;
-    }
-
-    // Check WebRTC availability first to provide clear warning before lib-jitsi-meet check
-    if (!isMobileBrowser() && !isWebRTCAvailable()) {
         return false;
     }
 
