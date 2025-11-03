@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import JitsiMeetJS from '../../base/lib-jitsi-meet';
+
 /**
  * React component representing unsupported browser page.
  *
@@ -8,12 +10,17 @@ import React, { Component } from 'react';
 class DefaultUnsupportedDesktopBrowser extends Component {
 
     /**
-     * Redirects to the static recommended browsers page that is also used for IE.
+     * Redirects to the static recommended browsers page or the WebRTC unsupported page.
+     * IE and other browsers without WebRTC support will show the WebRTC unsupported page.
      *
      * @returns {void}
      */
     override componentDidMount() {
-        window.location.pathname = 'static/recommendedBrowsers.html';
+        if (!JitsiMeetJS.isWebRtcSupported()) {
+            window.location.pathname = 'static/webrtcUnsupported.html';
+        } else {
+            window.location.pathname = 'static/recommendedBrowsers.html';
+        }
     }
 
     /**
