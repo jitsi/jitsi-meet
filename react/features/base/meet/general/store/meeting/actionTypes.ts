@@ -9,6 +9,11 @@ export const UPDATE_MEETING_CONFIG = "UPDATE_MEETING_CONFIG";
 export const SET_CURRENT_ROOM = "SET_CURRENT_ROOM";
 
 /**
+ * Sets the user's plan name
+ */
+export const SET_PLAN_NAME = "SET_PLAN_NAME";
+
+/**
  * Action type definitions
  */
 interface UpdateMeetingConfigAction {
@@ -26,4 +31,11 @@ interface SetCurrentRoomAction {
     };
 }
 
-export type MeetingActionTypes = UpdateMeetingConfigAction | SetCurrentRoomAction;
+interface SetPlanNameAction {
+    type: typeof SET_PLAN_NAME;
+    payload: {
+        planName: string | null;
+    };
+}
+
+export type MeetingActionTypes = UpdateMeetingConfigAction | SetCurrentRoomAction | SetPlanNameAction;

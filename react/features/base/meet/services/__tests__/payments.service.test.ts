@@ -33,17 +33,24 @@ describe("PaymentsService", () => {
         });
     });
 
-    describe("checkMeetAvailability", () => {
-        it("When checking meet availability with meet features, then meet object is returned", async () => {
-            const mockMeetObject = {
-                allowed: true,
-                maxHours: 10,
-                maxParticipants: 5,
-            };
-
+    describe("getUserTier", () => {
+        it("When getting user tier with complete data, then tier object is returned", async () => {
             const mockUserTier = {
+                id: "tier-123",
+                label: "Premium Plan",
+                productId: "product-456",
+                billingType: "subscription" as const,
                 featuresPerService: {
-                    meet: mockMeetObject,
+                    meet: {
+                        enabled: true,
+                        paxPerCall: 10,
+                    },
+                    drive: {},
+                    backups: {},
+                    antivirus: {},
+                    mail: {},
+                    vpn: {},
+                    cleaner: {},
                 },
             };
 
@@ -54,7 +61,7 @@ describe("PaymentsService", () => {
             const getPaymentsMock = SdkManager.instance.getPayments as unknown as MockInstance;
             getPaymentsMock.mockReturnValue(mockPaymentsClient);
 
-            const result = await PaymentsService.instance.checkMeetAvailability();
+            const result = await PaymentsService.instance.getUserTier();
 
             expect(getPaymentsMock).toHaveBeenCalledTimes(1);
             expect(getPaymentsMock).toHaveBeenCalledWith();
@@ -64,13 +71,29 @@ describe("PaymentsService", () => {
             expect(mockPaymentsClient.getUserTier).toHaveBeenCalledWith();
             expect(mockPaymentsClient.getUserTier.mock.calls[0].length).toBe(0);
 
-            expect(result).toEqual(mockMeetObject);
+            expect(result).toEqual(mockUserTier);
+            expect(result.label).toBe("Premium Plan");
+            expect(result.featuresPerService.meet.enabled).toBe(true);
+            expect(result.featuresPerService.meet.paxPerCall).toBe(10);
         });
 
-        it("When checking meet availability without meet features, then undefined is returned", async () => {
+        it("When getting user tier for free plan, then correct tier is returned", async () => {
             const mockUserTier = {
+                id: "tier-free",
+                label: "Free",
+                productId: "product-free",
+                billingType: "subscription" as const,
                 featuresPerService: {
-                    drive: { allowed: true },
+                    meet: {
+                        enabled: false,
+                        paxPerCall: 0,
+                    },
+                    drive: {},
+                    backups: {},
+                    antivirus: {},
+                    mail: {},
+                    vpn: {},
+                    cleaner: {},
                 },
             };
 
@@ -81,42 +104,10 @@ describe("PaymentsService", () => {
             const getPaymentsMock = SdkManager.instance.getPayments as unknown as MockInstance;
             getPaymentsMock.mockReturnValue(mockPaymentsClient);
 
-            const result = await PaymentsService.instance.checkMeetAvailability();
+            const result = await PaymentsService.instance.getUserTier();
 
-            expect(getPaymentsMock).toHaveBeenCalledTimes(1);
-            expect(getPaymentsMock).toHaveBeenCalledWith();
-            expect(getPaymentsMock.mock.calls[0].length).toBe(0);
-
-            expect(mockPaymentsClient.getUserTier).toHaveBeenCalledTimes(1);
-            expect(mockPaymentsClient.getUserTier).toHaveBeenCalledWith();
-            expect(mockPaymentsClient.getUserTier.mock.calls[0].length).toBe(0);
-
-            expect(result).toBeUndefined();
-        });
-
-        it("When checking meet availability with empty featuresPerService, then undefined is returned", async () => {
-            const mockUserTier = {
-                featuresPerService: {},
-            };
-
-            const mockPaymentsClient = {
-                getUserTier: vi.fn().mockResolvedValue(mockUserTier),
-            };
-
-            const getPaymentsMock = SdkManager.instance.getPayments as unknown as MockInstance;
-            getPaymentsMock.mockReturnValue(mockPaymentsClient);
-
-            const result = await PaymentsService.instance.checkMeetAvailability();
-
-            expect(getPaymentsMock).toHaveBeenCalledTimes(1);
-            expect(getPaymentsMock).toHaveBeenCalledWith();
-            expect(getPaymentsMock.mock.calls[0].length).toBe(0);
-
-            expect(mockPaymentsClient.getUserTier).toHaveBeenCalledTimes(1);
-            expect(mockPaymentsClient.getUserTier).toHaveBeenCalledWith();
-            expect(mockPaymentsClient.getUserTier.mock.calls[0].length).toBe(0);
-
-            expect(result).toBeUndefined();
+            expect(result.label).toBe("Free");
+            expect(result.featuresPerService.meet.enabled).toBe(false);
         });
 
         it("When getUserTier throws an error, then the error is propagated", async () => {
@@ -129,15 +120,10 @@ describe("PaymentsService", () => {
             const getPaymentsMock = SdkManager.instance.getPayments as unknown as MockInstance;
             getPaymentsMock.mockReturnValue(mockPaymentsClient);
 
-            await expect(PaymentsService.instance.checkMeetAvailability()).rejects.toThrow(mockError);
+            await expect(PaymentsService.instance.getUserTier()).rejects.toThrow(mockError);
 
             expect(getPaymentsMock).toHaveBeenCalledTimes(1);
-            expect(getPaymentsMock).toHaveBeenCalledWith();
-            expect(getPaymentsMock.mock.calls[0].length).toBe(0);
-
             expect(mockPaymentsClient.getUserTier).toHaveBeenCalledTimes(1);
-            expect(mockPaymentsClient.getUserTier).toHaveBeenCalledWith();
-            expect(mockPaymentsClient.getUserTier.mock.calls[0].length).toBe(0);
         });
 
         it("When getPayments throws an error, then the error is propagated", async () => {
@@ -148,11 +134,9 @@ describe("PaymentsService", () => {
                 throw mockError;
             });
 
-            await expect(PaymentsService.instance.checkMeetAvailability()).rejects.toThrow(mockError);
+            await expect(PaymentsService.instance.getUserTier()).rejects.toThrow(mockError);
 
             expect(getPaymentsMock).toHaveBeenCalledTimes(1);
-            expect(getPaymentsMock).toHaveBeenCalledWith();
-            expect(getPaymentsMock.mock.calls[0].length).toBe(0);
         });
     });
 });
