@@ -1,8 +1,8 @@
 import { cloneDeep } from 'lodash-es';
 
 import { IReduxState, IStore } from '../../app/types';
-import { showErrorNotification } from "../../notifications/actions";
-import { NOTIFICATION_TIMEOUT_TYPE } from "../../notifications/constants";
+import { showErrorNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { conferenceLeft, conferenceWillLeave, redirect } from '../conference/actions';
 import { getCurrentConference } from '../conference/functions';
 import { IConfigState } from '../config/reducer';
@@ -396,16 +396,6 @@ export function _connectInternal({
                         NOTIFICATION_TIMEOUT_TYPE.LONG
                     )
                 );
-
-                if (isNewMeetingFlow()) {
-                    clearNewMeetingFlowSession();
-
-                    const locationURL = window.location;
-                    const baseUrl = `${locationURL.protocol}//${locationURL.host}`;
-                    const roomUrl = `${baseUrl}/${room}`;
-                    window.history.replaceState({}, document.title, roomUrl);
-                    window.location.reload();
-                }
 
                 return Promise.reject(error);
             }

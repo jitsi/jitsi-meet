@@ -421,14 +421,14 @@ export default {
 
         // Always get a handle on the audio input device so that we have statistics (such as "No audio input" or
         // "Are you trying to speak?" ) even if the user joins the conference muted.
-        const initialDevices = config.startSilent || config.disableInitialGUM ? [] : [ MEDIA_TYPE.AUDIO ];
+        const initialDevices = config.startSilent || config.disableInitialGUM ? [] : [MEDIA_TYPE.AUDIO];
         const requestedAudio = !config.disableInitialGUM;
         let requestedVideo = false;
 
         if (!config.disableInitialGUM
-                && !options.startWithVideoMuted
-                && !options.startAudioOnly
-                && !options.startScreenSharing) {
+            && !options.startWithVideoMuted
+            && !options.startAudioOnly
+            && !options.startScreenSharing) {
             initialDevices.push(MEDIA_TYPE.VIDEO);
             requestedVideo = true;
         }
@@ -440,7 +440,7 @@ export default {
         // probably never resolve.
         const timeout = browser.isElectron() ? 15000 : 60000;
         const audioOptions = {
-            devices: [ MEDIA_TYPE.AUDIO ],
+            devices: [MEDIA_TYPE.AUDIO],
             timeout
         };
 
@@ -448,18 +448,18 @@ export default {
         // screenshare and calls getUserMedia instead of getDisplayMedia for capturing the media.
         if (options.startScreenSharing && config._desktopSharingSourceDevice) {
             tryCreateLocalTracks = this._createDesktopTrack()
-                .then(([ desktopStream ]) => {
+                .then(([desktopStream]) => {
                     if (!requestedAudio) {
-                        return [ desktopStream ];
+                        return [desktopStream];
                     }
 
                     return createLocalTracksF(audioOptions)
-                        .then(([ audioStream ]) =>
-                            [ desktopStream, audioStream ])
+                        .then(([audioStream]) =>
+                            [desktopStream, audioStream])
                         .catch(error => {
                             errors.audioOnlyError = error;
 
-                            return [ desktopStream ];
+                            return [desktopStream];
                         });
                 })
                 .catch(error => {
@@ -617,9 +617,10 @@ export default {
 
             const { initialGUMPromise } = getState()['features/base/media'];
 
-            if (isPrejoinPageVisible(getState())) {
-                dispatch(gumPending([ MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO ], IGUMPendingState.NONE));
+            // Always clear the GUM pending state first, this fixes new-meeting flow GUMPending sticked state
+            dispatch(gumPending([MEDIA_TYPE.AUDIO, MEDIA_TYPE.VIDEO], IGUMPendingState.NONE));
 
+            if (isPrejoinPageVisible(getState())) {
                 // Since the conference is not yet created in redux this function will execute synchronous
                 // which will guarantee us that the local tracks are added to redux before we proceed.
                 initPrejoin(tracks, errors, dispatch);
@@ -763,7 +764,7 @@ export default {
         const state = APP.store.getState();
 
         if (!mute
-                && isUserInteractionRequiredForUnmute(state)) {
+            && isUserInteractionRequiredForUnmute(state)) {
             logger.error('Unmuting video requires user interaction');
 
             return;
@@ -1246,8 +1247,8 @@ export default {
             this._mixerEffect = undefined;
             this._desktopAudioStream = undefined;
 
-        // In case there was no local audio when screen sharing was started the fact that we set the audio stream to
-        // null will take care of the desktop audio stream cleanup.
+            // In case there was no local audio when screen sharing was started the fact that we set the audio stream to
+            // null will take care of the desktop audio stream cleanup.
         } else if (this._desktopAudioStream) {
             await room.replaceTrack(this._desktopAudioStream, null);
             this._desktopAudioStream.dispose();
@@ -1258,8 +1259,8 @@ export default {
         let promise;
 
         if (didHaveVideo && !ignoreDidHaveVideo) {
-            promise = createLocalTracksF({ devices: [ 'video' ] })
-                .then(([ stream ]) => {
+            promise = createLocalTracksF({ devices: ['video'] })
+                .then(([stream]) => {
                     logger.debug(`_turnScreenSharingOff using ${stream} for useVideoStream`);
 
                     return this.useVideoStream(stream);
@@ -1304,7 +1305,7 @@ export default {
 
         const getDesktopStreamPromise = createLocalTracksF({
             desktopSharingSourceDevice: config._desktopSharingSourceDevice,
-            devices: [ 'desktop' ]
+            devices: ['desktop']
         });
 
         return getDesktopStreamPromise.then(desktopStreams => {
@@ -1539,7 +1540,7 @@ export default {
                     formattedDisplayName:
                         appendSuffix(
                             formattedDisplayName
-                                || defaultRemoteDisplayName)
+                            || defaultRemoteDisplayName)
                 });
             }
         );
@@ -1769,42 +1770,42 @@ export default {
         logger.info(`Switching audio input device to ${selectedDeviceId}`);
         sendAnalytics(createDeviceChangedEvent('audio', 'input'));
         createLocalTracksF({
-            devices: [ 'audio' ],
+            devices: ['audio'],
             micDeviceId: selectedDeviceId
         })
-        .then(([ stream ]) => {
-            // if audio was muted before changing the device, mute
-            // with the new device
-            if (audioWasMuted) {
-                return stream.mute()
-                    .then(() => stream);
-            }
+            .then(([stream]) => {
+                // if audio was muted before changing the device, mute
+                // with the new device
+                if (audioWasMuted) {
+                    return stream.mute()
+                        .then(() => stream);
+                }
 
-            return stream;
-        })
-        .then(async stream => {
-            await this._maybeApplyAudioMixerEffect(stream);
+                return stream;
+            })
+            .then(async stream => {
+                await this._maybeApplyAudioMixerEffect(stream);
 
-            return this.useAudioStream(stream);
-        })
-        .then(() => {
-            const state = APP.store.getState();
-            const localAudio = getLocalJitsiAudioTrack(state);
-            const settings = getLocalJitsiAudioTrackSettings(state);
+                return this.useAudioStream(stream);
+            })
+            .then(() => {
+                const state = APP.store.getState();
+                const localAudio = getLocalJitsiAudioTrack(state);
+                const settings = getLocalJitsiAudioTrackSettings(state);
 
-            APP.store.dispatch(setAudioSettings(settings));
+                APP.store.dispatch(setAudioSettings(settings));
 
-            if (localAudio && isDefaultMicSelected) {
-                // workaround for the default device to be shown as selected in the
-                // settings even when the real device id was passed to gUM because of the
-                // above mentioned chrome bug.
-                localAudio._realDeviceId = localAudio.deviceId = 'default';
-            }
-        })
-        .catch(err => {
-            logger.error(`Failed to switch to selected audio input device ${selectedDeviceId}, error=${err}`);
-            APP.store.dispatch(notifyMicError(err));
-        });
+                if (localAudio && isDefaultMicSelected) {
+                    // workaround for the default device to be shown as selected in the
+                    // settings even when the real device id was passed to gUM because of the
+                    // above mentioned chrome bug.
+                    localAudio._realDeviceId = localAudio.deviceId = 'default';
+                }
+            })
+            .catch(err => {
+                logger.error(`Failed to switch to selected audio input device ${selectedDeviceId}, error=${err}`);
+                APP.store.dispatch(notifyMicError(err));
+            });
     },
 
     /**
@@ -1824,29 +1825,29 @@ export default {
         sendAnalytics(createDeviceChangedEvent('video', 'input'));
 
         createLocalTracksF({
-            devices: [ 'video' ],
+            devices: ['video'],
             cameraDeviceId
         })
-        .then(([ stream ]) => {
-            // if we are in audio only mode or video was muted before
-            // changing device, then mute
-            if (this.isAudioOnly() || videoWasMuted) {
-                return stream.mute()
-                    .then(() => stream);
-            }
+            .then(([stream]) => {
+                // if we are in audio only mode or video was muted before
+                // changing device, then mute
+                if (this.isAudioOnly() || videoWasMuted) {
+                    return stream.mute()
+                        .then(() => stream);
+                }
 
-            return stream;
-        })
-        .then(stream => {
-            logger.info(`Switching the local video device to ${cameraDeviceId}.`);
+                return stream;
+            })
+            .then(stream => {
+                logger.info(`Switching the local video device to ${cameraDeviceId}.`);
 
-            return this.useVideoStream(stream);
-        })
-        .catch(error => {
-            logger.error(`Failed to switch to selected camera:${cameraDeviceId}, error:${error}`);
+                return this.useVideoStream(stream);
+            })
+            .catch(error => {
+                logger.error(`Failed to switch to selected camera:${cameraDeviceId}, error:${error}`);
 
-            return APP.store.dispatch(notifyCameraError(error));
-        });
+                return APP.store.dispatch(notifyCameraError(error));
+            });
     },
 
     /**
@@ -2177,7 +2178,7 @@ export default {
 
         const leavePromise = this.leaveRoom().catch(() => Promise.resolve());
 
-        Promise.allSettled([ feedbackResultPromise, leavePromise ]).then(([ feedback, _ ]) => {
+        Promise.allSettled([feedbackResultPromise, leavePromise]).then(([feedback, _]) => {
             this._room = undefined;
             room = undefined;
 
@@ -2214,11 +2215,11 @@ export default {
 
         if (room && room.isJoined()) {
             return room.leave(reason).then(() => maybeDisconnect())
-            .catch(e => {
-                logger.error(e);
+                .catch(e => {
+                    logger.error(e);
 
-                return maybeDisconnect();
-            });
+                    return maybeDisconnect();
+                });
         }
 
         return maybeDisconnect();
