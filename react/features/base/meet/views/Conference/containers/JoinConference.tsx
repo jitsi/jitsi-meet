@@ -157,7 +157,6 @@ class Conference extends AbstractConference<IProps, any> {
         const shouldAutoConnect = isComingFromNewMeetingFlow && hasRoomChanged && hasValidRoom;
 
         if (shouldAutoConnect) {
-            // Don't remove flag yet - let the connection success/failure handle it
             this.props.dispatch(init(true));
         }
     }
