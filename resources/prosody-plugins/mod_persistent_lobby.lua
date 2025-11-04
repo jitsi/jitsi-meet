@@ -111,7 +111,8 @@ run_when_component_loaded(main_muc_component_host, function(host_module, host_na
             -- Check if room should be destroyed when someone leaves the main room
 
             local main_room = event.room;
-            if is_healthcheck_room(main_room.jid) or not has_persistent_lobby(main_room) then
+            if is_healthcheck_room(main_room.jid) or not has_persistent_lobby(main_room)
+                or main_room.destroying then
                 return;
             end
 
