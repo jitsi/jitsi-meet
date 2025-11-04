@@ -154,31 +154,36 @@ describe('Lobby', () => {
         await p1.getNotifications().waitForHideOfKnockingParticipants();
     });
 
-    it('conference ended in lobby', async () => {
-        // in the environments where automoderator is not set
-        // we do not destroy the lobby when the last person leaves the main room
-        if (!expectations.autoModerator) {
-            return;
-        }
+    it('lobby persistence', async () => {
+        // The lobby is persistent when mod_persistent_lobby is loaded. Environments with autoModerator don't need to
+        // persist the lobby, so the module is not loaded.
+        const persistentLobby = !expectations.moderation.autoModerator;
 
         const { p1, p2 } = ctx;
 
         await enterLobby(p1, false);
 
+        const { p3 } = ctx;
+
+        expect(await p3.getLobbyScreen().isLobbyRoomJoined()).toBe(true);
+
         await p1.hangup();
         await p2.hangup();
 
-        const { p3 } = ctx;
-
         await p3.driver.$('.dialog.leaveReason').isExisting();
 
-        await p3.driver.waitUntil(
-            async () => !await p3.getLobbyScreen().isLobbyRoomJoined(),
-            {
-                timeout: 2000,
-                timeoutMsg: 'p3 did not leave lobby'
-            }
-        );
+        if (persistentLobby) {
+            await p3.driver.pause(2000);
+            expect(await p3.getLobbyScreen().isLobbyRoomJoined()).toBe(true);
+        } else {
+            await p3.driver.waitUntil(
+                async () => !await p3.getLobbyScreen().isLobbyRoomJoined(),
+                {
+                    timeout: 2000,
+                    timeoutMsg: 'p3 did not leave lobby'
+                }
+            );
+        }
 
         await p3.hangup();
     });
