@@ -63,11 +63,12 @@ describe('Desktop sharing', () => {
             }
         });
         const { p1, p2, p3 } = ctx;
+        const p2EndpointId = await p2.getEndpointId();
 
         // Check if a remote screen share tile is created on all participants.
         await checkForScreensharingTile(p2, p1);
         await checkForScreensharingTile(p2, p2);
-        await checkForScreensharingTile(p2, p2);
+        await checkForScreensharingTile(p2, p3);
 
         await p1.getFilmstrip().assertNoGapsInFilmstrip();
         await p3.getFilmstrip().assertNoGapsInFilmstrip();
