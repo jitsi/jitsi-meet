@@ -155,6 +155,12 @@ describe('Lobby', () => {
     });
 
     it('conference ended in lobby', async () => {
+        // in the environments where automoderator is not set
+        // we do not destroy the lobby when the last person leaves the main room
+        if (!expectations.autoModerator) {
+            return;
+        }
+
         const { p1, p2 } = ctx;
 
         await enterLobby(p1, false);
@@ -170,7 +176,7 @@ describe('Lobby', () => {
             async () => !await p3.getLobbyScreen().isLobbyRoomJoined(),
             {
                 timeout: 2000,
-                timeoutMsg: 'p2 did not leave lobby'
+                timeoutMsg: 'p3 did not leave lobby'
             }
         );
 
