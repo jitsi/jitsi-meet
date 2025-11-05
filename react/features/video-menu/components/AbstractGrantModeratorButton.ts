@@ -32,7 +32,7 @@ export default class AbstractGrantModeratorButton extends AbstractButton<IProps>
     override _handleClick() {
         const { dispatch, participantID } = this.props;
 
-        dispatch(openDialog(GrantModeratorDialog, { participantID }));
+        dispatch(openDialog('GrantModeratorDialog', GrantModeratorDialog, { participantID }));
     }
 }
 

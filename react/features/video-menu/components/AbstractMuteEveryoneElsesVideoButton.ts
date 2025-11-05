@@ -32,6 +32,6 @@ export default class AbstractMuteEveryoneElsesVideoButton extends AbstractButton
         const { dispatch, participantID } = this.props;
 
         sendAnalytics(createToolbarEvent('mute.everyoneelsesvideo.pressed'));
-        dispatch(openDialog(MuteEveryonesVideoDialog, { exclude: [ participantID ] }));
+        dispatch(openDialog('MuteEveryonesVideoDialog', MuteEveryonesVideoDialog, { exclude: [ participantID ] }));
     }
 }

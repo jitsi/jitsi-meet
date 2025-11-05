@@ -32,7 +32,7 @@ import styles from './styles';
 export const ContextMenuMore = () => {
     const dispatch = useDispatch();
     const muteAllVideo = useCallback(() => {
-        dispatch(openDialog(MuteEveryonesVideoDialog));
+        dispatch(openDialog('MuteEveryonesVideoDialog', MuteEveryonesVideoDialog));
         dispatch(hideSheet());
     }, [ dispatch ]);
     const conference = useSelector(getCurrentConference);

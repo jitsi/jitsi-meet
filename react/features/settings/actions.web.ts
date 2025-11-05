@@ -53,7 +53,7 @@ export function openLogoutDialog() {
         const { conference } = state['features/base/conference'];
         const { jwt } = state['features/base/jwt'];
 
-        dispatch(openDialog(LogoutDialog, {
+        dispatch(openDialog('LogoutDialog', LogoutDialog, {
             onLogout() {
                 if (isTokenAuthEnabled(config) && config.tokenAuthUrlAutoRedirect && jwt) {
 
@@ -90,7 +90,7 @@ export function openLogoutDialog() {
  * @returns {Function}
  */
 export function openSettingsDialog(defaultTab?: string, isDisplayedOnWelcomePage?: boolean) {
-    return openDialog(SettingsDialog, {
+    return openDialog('SettingsDialog', SettingsDialog, {
         defaultTab,
         isDisplayedOnWelcomePage
     });

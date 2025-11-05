@@ -109,7 +109,7 @@ export function maybeOpenFeedbackDialog(conference: IJitsiConference, title?: st
  * @returns {Object}
  */
 export function openFeedbackDialog(conference?: IJitsiConference, title?: string, onClose?: Function) {
-    return openDialog(FeedbackDialog, {
+    return openDialog('FeedbackDialog', FeedbackDialog, {
         conference,
         onClose,
         title

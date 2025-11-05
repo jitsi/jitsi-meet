@@ -138,7 +138,7 @@ export class HighlightButton extends AbstractHighlightButton<IProps, IState> {
         const dialogShown = dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
 
         if (!dialogShown) {
-            dispatch(openDialog(StartRecordingDialog));
+            dispatch(openDialog('StartRecordingDialog', StartRecordingDialog));
         }
     }
 

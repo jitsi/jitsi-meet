@@ -32,6 +32,6 @@ export default class AbstractMuteEveryoneElseButton extends AbstractButton<IProp
         const { dispatch, participantID } = this.props;
 
         sendAnalytics(createToolbarEvent('mute.everyoneelse.pressed'));
-        dispatch(openDialog(MuteEveryoneDialog, { exclude: [ participantID ] }));
+        dispatch(openDialog('MuteEveryoneDialog', MuteEveryoneDialog, { exclude: [ participantID ] }));
     }
 }

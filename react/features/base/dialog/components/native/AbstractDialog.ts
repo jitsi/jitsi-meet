@@ -73,7 +73,7 @@ export default class AbstractDialog<P extends IProps, S extends IState = IState>
      * @returns {*} The return value of {@link hideDialog}.
      */
     _hide() {
-        return this.props.dispatch(hideDialog());
+        return this.props.dispatch(hideDialog(''));
     }
 
     _onBack() {

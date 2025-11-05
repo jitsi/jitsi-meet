@@ -181,7 +181,7 @@ const ParticipantsPane = () => {
     }, []);
 
     const onMuteAll = useCallback(() => {
-        dispatch(openDialog(MuteEveryoneDialog));
+        dispatch(openDialog('MuteEveryoneDialog', MuteEveryoneDialog));
     }, []);
 
     const onToggleContext = useCallback(() => {

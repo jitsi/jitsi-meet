@@ -139,7 +139,7 @@ function _upgradeRoleStarted(thenableWithCancel: Object) {
  * @returns {Function}
  */
 export function hideLoginDialog() {
-    return hideDialog(LoginDialog);
+    return hideDialog('LoginDialog', LoginDialog);
 }
 
 /**
@@ -199,7 +199,7 @@ export function enableModeratorLogin() {
  * @returns {Action}
  */
 export function openWaitForOwnerDialog() {
-    return openDialog(WaitForOwnerDialog);
+    return openDialog('WaitForOwnerDialog', WaitForOwnerDialog);
 }
 
 
@@ -240,7 +240,7 @@ export function waitForOwner() {
  * @returns {Action}
  */
 export function openLoginDialog() {
-    return openDialog(LoginDialog);
+    return openDialog('LoginDialog', LoginDialog);
 }
 
 /**
