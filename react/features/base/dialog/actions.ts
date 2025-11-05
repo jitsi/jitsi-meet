@@ -119,8 +119,16 @@ function getComponentDisplayName(component?: ComponentType<any>) {
         return '';
     }
 
-    const name = component.displayName ?? component.name ?? 'Component';
+    // Try to unwrap HOCs to get the actual component
+    let unwrapped: any = component;
 
-    return name.replace('withI18nextTranslation(Connect(', '') // dialogs with translations
-        .replace('))', ''); // dialogs with translations suffix
+    // Redux connect() stores the wrapped component in WrappedComponent
+    while (unwrapped.WrappedComponent) {
+        unwrapped = unwrapped.WrappedComponent;
+    }
+
+    // Get the name from the unwrapped component
+    const name = unwrapped.displayName ?? unwrapped.name ?? 'Component';
+
+    return name;
 }
