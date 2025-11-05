@@ -29,4 +29,3 @@ export function isIpadMobileBrowser() {
     // @ts-ignore
     return isIosMobileBrowser() && Platform.isPad;
 }
-
