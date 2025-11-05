@@ -1,12 +1,18 @@
 import { throttle } from 'lodash-es';
-import React, { RefObject } from 'react';
+import React, { Component, RefObject } from 'react';
 import { scrollIntoView } from 'seamless-scroll-polyfill';
 
+import { groupMessagesBySender } from '../../../base/util/messageGrouping';
 import { MESSAGE_TYPE_LOCAL, MESSAGE_TYPE_REMOTE } from '../../constants';
-import AbstractMessageContainer, { IProps } from '../AbstractMessageContainer';
+import { IMessage } from '../../types';
+
 
 import ChatMessageGroup from './ChatMessageGroup';
 import NewMessagesButton from './NewMessagesButton';
+
+interface IProps {
+    messages: IMessage[];
+}
 
 interface IState {
 
@@ -23,20 +29,20 @@ interface IState {
     /**
      * The id of the last read message.
      */
-    lastReadMessageId: string;
+    lastReadMessageId: string | null;
 }
 
 /**
  * Displays all received chat messages, grouped by sender.
  *
- * @augments AbstractMessageContainer
+ * @augments Component
  */
-export default class MessageContainer extends AbstractMessageContainer<IProps, IState> {
+export default class MessageContainer extends Component<IProps, IState> {
     /**
      * Component state used to decide when the hasNewMessages button to appear
      * and where to scroll when click on hasNewMessages button.
      */
-    state: IState = {
+    override state: IState = {
         hasNewMessages: false,
         isScrolledToBottom: true,
         lastReadMessageId: ''
@@ -58,6 +64,10 @@ export default class MessageContainer extends AbstractMessageContainer<IProps, I
      * Intersection observer used to detect intersections of messages with the bottom of the message container.
      */
     _bottomListObserver: IntersectionObserver;
+
+    static defaultProps = {
+        messages: [] as IMessage[]
+    };
 
     /**
      * Initializes a new {@code MessageContainer} instance.
@@ -84,16 +94,17 @@ export default class MessageContainer extends AbstractMessageContainer<IProps, I
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const groupedMessages = this._getMessagesGroupedBySender();
-        const messages = groupedMessages.map((group, index) => {
-            const messageType = group[0]?.messageType;
+        const content = groupedMessages.map((group, index) => {
+            const { messages } = group;
+            const messageType = messages[0]?.messageType;
 
             return (
                 <ChatMessageGroup
                     className = { messageType || MESSAGE_TYPE_REMOTE }
                     key = { index }
-                    messages = { group } />
+                    messages = { messages } />
             );
         });
 
@@ -106,7 +117,7 @@ export default class MessageContainer extends AbstractMessageContainer<IProps, I
                     ref = { this._messageListRef }
                     role = 'log'
                     tabIndex = { 0 }>
-                    { messages }
+                    { content }
 
                     { !this.state.isScrolledToBottom && this.state.hasNewMessages
                         && <NewMessagesButton
@@ -127,7 +138,7 @@ export default class MessageContainer extends AbstractMessageContainer<IProps, I
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         this.scrollToElement(false, null);
         this._createBottomListObserver();
     }
@@ -141,7 +152,7 @@ export default class MessageContainer extends AbstractMessageContainer<IProps, I
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         const newMessages = this.props.messages.filter(message => !prevProps.messages.includes(message));
         const hasLocalMessage = newMessages.map(message => message.messageType).includes(MESSAGE_TYPE_LOCAL);
 
@@ -161,7 +172,7 @@ export default class MessageContainer extends AbstractMessageContainer<IProps, I
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         const target = document.querySelector('#messagesListEnd');
 
         this._bottomListObserver.unobserve(target as Element);
@@ -312,5 +323,15 @@ export default class MessageContainer extends AbstractMessageContainer<IProps, I
         }
 
         return false;
+    }
+
+    /**
+     * Returns an array of message groups, where each group is an array of messages
+     * grouped by the sender.
+     *
+     * @returns {Array<Array<Object>>}
+     */
+    _getMessagesGroupedBySender() {
+        return groupMessagesBySender(this.props.messages);
     }
 }

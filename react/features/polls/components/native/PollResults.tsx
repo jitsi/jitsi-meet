@@ -3,8 +3,11 @@ import { FlatList, Text, TextStyle, View, ViewStyle } from 'react-native';
 
 import Button from '../../../base/ui/components/native/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
-import AbstractPollResults from '../AbstractPollResults';
-import type { AbstractProps, AnswerInfo } from '../AbstractPollResults';
+import {
+    default as AbstractPollResults,
+    type AbstractProps,
+    type AnswerInfo
+} from '../AbstractPollResults';
 
 import { dialogStyles, pollsStyles, resultsStyles } from './styles';
 
@@ -62,11 +65,11 @@ const PollResults = (props: AbstractProps) => {
                     { voters && voterCount > 0
                         && <View style = { resultsStyles.voters as ViewStyle }>
                             {/* @ts-ignore */}
-                            {voters.map(({ id, name: voterName }) =>
+                            {voters.map(voter =>
                                 (<Text
-                                    key = { id }
+                                    key = { voter.id }
                                     style = { resultsStyles.voter as TextStyle }>
-                                    { voterName }
+                                    { voter.name }
                                 </Text>)
                             )}
                         </View>}

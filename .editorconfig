@@ -14,3 +14,12 @@ trim_trailing_whitespace = false
 
 [Makefile]
 indent_style = tab
+
+[*.{java,kt}]
+indent_size = 4
+
+[*.xml]
+indent_size = 2
+
+[*.{swift,m,mm,h}]
+indent_size = 4

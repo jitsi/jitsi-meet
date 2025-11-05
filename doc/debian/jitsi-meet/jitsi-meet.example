@@ -150,6 +150,12 @@ server {
     #    alias /usr/share/jitsi-meet/load-test/libs/$1;
     #}
 
+    location = /_unlock {
+        add_header 'Access-Control-Allow-Origin' '*';
+        add_header Strict-Transport-Security 'max-age=63072000; includeSubDomains';
+        add_header "Cache-Control" "no-cache, no-store";
+    }
+
     location ~ ^/conference-request/v1(\/.*)?$ {
         proxy_pass http://127.0.0.1:8888/conference-request/v1$1;
         add_header "Cache-Control" "no-cache, no-store";

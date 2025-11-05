@@ -1,8 +1,10 @@
 import { MediaType } from '../media/constants';
+import { IAudioSettings } from '../settings/reducer';
 
 export interface ITrackOptions {
     cameraDeviceId?: string | null;
     constraints?: {
+        audio?: IAudioSettings;
         video?: {
             height?: {
                 ideal?: number;
@@ -12,10 +14,9 @@ export interface ITrackOptions {
         };
     };
     desktopSharingSourceDevice?: string;
-    desktopSharingSources?: string[];
+    desktopSharingSources?: Array<DesktopSharingSourceType>;
     devices?: string[];
     facingMode?: string;
-    firePermissionPromptIsShownEvent?: boolean;
     micDeviceId?: string | null;
     timeout?: number;
 }
@@ -68,15 +69,16 @@ export interface IToggleScreenSharingOptions {
     shareOptions: IShareOptions;
 }
 
+export type DesktopSharingSourceType = 'screen' | 'window';
+
 export interface IShareOptions {
     desktopSharingSourceDevice?: string;
-    desktopSharingSources?: string[];
+    desktopSharingSources?: Array<DesktopSharingSourceType>;
     desktopStream?: any;
 }
 
 export interface ICreateInitialTracksOptions {
     devices: Array<MediaType>;
-    firePermissionPromptIsShownEvent?: boolean;
     timeout?: number;
 }
 

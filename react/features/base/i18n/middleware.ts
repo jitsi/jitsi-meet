@@ -1,4 +1,5 @@
 import { SET_DYNAMIC_BRANDING_DATA } from '../../dynamic-branding/actionTypes';
+import { getConferenceState } from '../conference/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import { I18NEXT_INITIALIZED, LANGUAGE_CHANGED } from './actionTypes';
@@ -22,12 +23,24 @@ MiddlewareRegistry.register(store => next => action => {
             ? action.value
             : store.getState()['features/dynamic-branding'];
 
-        if (language && labels && labels[language]) {
+        if (language && labels?.[language]) {
             changeLanguageBundle(language, labels[language])
             .catch(err => {
                 logger.log('Error setting dynamic language bundle', err);
             });
         }
+
+        // Update transcription language, if applicable.
+        if (action.type === SET_DYNAMIC_BRANDING_DATA) {
+            const { defaultTranscriptionLanguage } = action.value;
+
+            if (typeof defaultTranscriptionLanguage !== 'undefined') {
+                const { conference } = getConferenceState(store.getState());
+
+                conference?.setTranscriptionLanguage(defaultTranscriptionLanguage);
+            }
+        }
+
         break;
     }
     }

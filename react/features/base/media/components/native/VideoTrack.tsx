@@ -18,7 +18,7 @@ class VideoTrack extends AbstractVideoTrack<IProps> {
      * @override
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <View style = { styles.video } >
                 { super.render() }

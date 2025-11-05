@@ -17,7 +17,7 @@ export default class VideoQualityDialog extends Component {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <Dialog
                 cancel = {{ hidden: true }}

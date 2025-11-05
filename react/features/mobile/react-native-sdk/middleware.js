@@ -1,3 +1,5 @@
+import { NativeModules } from 'react-native';
+
 import { getAppProp } from '../../base/app/functions';
 import {
     CONFERENCE_BLURRED,
@@ -10,6 +12,7 @@ import {
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants/actionTypes';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
+import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
 import { READY_TO_CLOSE } from '../external-api/actionTypes';
 import { participantToParticipantInfo } from '../external-api/functions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture/actionTypes';
@@ -17,6 +20,7 @@ import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture/actionTypes';
 import { isExternalAPIAvailable } from './functions';
 
 const externalAPIEnabled = isExternalAPIAvailable();
+const { JMOngoingConference } = NativeModules;
 
 
 /**
@@ -84,3 +88,21 @@ const externalAPIEnabled = isExternalAPIAvailable();
 
     return result;
 });
+
+/**
+ * Before enabling media projection service control on Android,
+ * we need to check if native modules are being used or not.
+ */
+JMOngoingConference && !externalAPIEnabled && StateListenerRegistry.register(
+    state => state['features/base/conference'].conference,
+    (conference, previousConference) => {
+        if (!conference) {
+            JMOngoingConference.abort();
+        } else if (conference && !previousConference) {
+            JMOngoingConference.launch();
+        } else if (conference !== previousConference) {
+            JMOngoingConference.abort();
+            JMOngoingConference.launch();
+        }
+    }
+);

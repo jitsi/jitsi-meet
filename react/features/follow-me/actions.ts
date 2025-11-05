@@ -1,5 +1,7 @@
 import {
+    SET_FOLLOW_ME,
     SET_FOLLOW_ME_MODERATOR,
+    SET_FOLLOW_ME_RECORDER,
     SET_FOLLOW_ME_STATE
 } from './actionTypes';
 
@@ -35,5 +37,37 @@ export function setFollowMeState(state?: Object) {
     return {
         type: SET_FOLLOW_ME_STATE,
         state
+    };
+}
+
+/**
+ * Enables or disables the Follow Me feature.
+ *
+ * @param {boolean} enabled - Whether or not Follow Me should be enabled.
+ * @returns {{
+ *     type: SET_FOLLOW_ME,
+ *     enabled: boolean
+ * }}
+ */
+export function setFollowMe(enabled: boolean) {
+    return {
+        type: SET_FOLLOW_ME,
+        enabled
+    };
+}
+
+/**
+ * Enables or disables the Follow Me feature used only for the recorder.
+ *
+ * @param {boolean} enabled - Whether Follow Me should be enabled and used only by the recorder.
+ * @returns {{
+ *     type: SET_FOLLOW_ME_RECORDER,
+ *     enabled: boolean
+ * }}
+ */
+export function setFollowMeRecorder(enabled: boolean) {
+    return {
+        type: SET_FOLLOW_ME_RECORDER,
+        enabled
     };
 }

@@ -21,6 +21,7 @@ import {
     getRemoteScreensharesBasedOnPresence,
     getVirtualScreenshareParticipantOwnerId
 } from './functions';
+import logger from './logger';
 import { FakeParticipant } from './types';
 
 StateListenerRegistry.register(
@@ -52,7 +53,7 @@ StateListenerRegistry.register(
 
 /**
  * Compares the old and new screenshare lists provided and creates/removes the virtual screenshare participant
- * tiles accodingly.
+ * tiles accordingly.
  *
  * @param {Array<string>} oldScreenshareSourceNames - List of old screenshare source names.
  * @param {Array<string>} newScreenshareSourceNames - Current list of screenshare source names.
@@ -69,14 +70,19 @@ function _createOrRemoveVirtualParticipants(
     const addedScreenshareSourceNames = difference(newScreenshareSourceNames, oldScreenshareSourceNames);
 
     if (removedScreenshareSourceNames.length) {
-        removedScreenshareSourceNames.forEach(id => dispatch(participantLeft(id, conference, {
-            fakeParticipant: FakeParticipant.RemoteScreenShare
-        })));
+        removedScreenshareSourceNames.forEach(id => {
+            logger.debug('Dispatching participantLeft for virtual screenshare', id);
+            dispatch(participantLeft(id, conference, {
+                fakeParticipant: FakeParticipant.RemoteScreenShare
+            }));
+        });
     }
 
     if (addedScreenshareSourceNames.length) {
-        addedScreenshareSourceNames.forEach(id => dispatch(
-            createVirtualScreenshareParticipant(id, false, conference)));
+        addedScreenshareSourceNames.forEach(id => {
+            logger.debug('Creating virtual screenshare participant', id);
+            dispatch(createVirtualScreenshareParticipant(id, false, conference));
+        });
     }
 }
 

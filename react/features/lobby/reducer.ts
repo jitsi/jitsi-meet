@@ -58,12 +58,14 @@ ReducerRegistry.register<ILobbyState>('features/lobby', (state = DEFAULT_STATE, 
                 ...state,
                 isDisplayNameRequiredError: true
             };
+        } else if (action.error.name === JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED) {
+            return {
+                ...state,
+                knocking: false
+            };
         }
 
-        return {
-            ...state,
-            knocking: false
-        };
+        return state;
     }
     case CONFERENCE_JOINED:
     case CONFERENCE_LEFT:

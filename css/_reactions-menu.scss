@@ -55,7 +55,7 @@
 		span.emoji {
 			width: 40px;
 			height: 40px;
-			font-size: 22px;
+			font-size: 1.375rem;
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -63,7 +63,7 @@
 
 			@for $i from 1 through 12 {
 				&.increase-#{$i}{
-					font-size: calc(20px + #{$i}px);
+					font-size: calc(1.25rem + #{$i}px);
 				}
 			}
 		}
@@ -96,8 +96,8 @@
 			span.text {
 				font-style: normal;
 				font-weight: 600;
-				font-size: 14px;
-				line-height: 24px;
+				font-size: 0.875rem;
+				line-height: 1.5rem;
 				margin-left: 8px;
 			}
 		}
@@ -132,8 +132,8 @@ $reactionCount: 20;
 
 .reaction-emoji {
 	position: absolute;
-	font-size: 24px;
-	line-height: 32px;
+	font-size: 1.5rem;
+	line-height: 2rem;
 	width: 32px;
 	height: 32px;
 	top: 0;

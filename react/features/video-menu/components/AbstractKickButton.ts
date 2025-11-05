@@ -16,9 +16,9 @@ export interface IProps extends AbstractButtonProps {
  * An abstract remote video menu button which kicks the remote participant.
  */
 export default class AbstractKickButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.kick';
-    icon = IconUserDeleted;
-    label = 'videothumbnail.kick';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.kick';
+    override icon = IconUserDeleted;
+    override label = 'videothumbnail.kick';
 
     /**
      * Handles clicking / pressing the button, and kicks the participant.
@@ -26,7 +26,7 @@ export default class AbstractKickButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch, participantID } = this.props;
 
         dispatch(openDialog(KickRemoteParticipantDialog, { participantID }));

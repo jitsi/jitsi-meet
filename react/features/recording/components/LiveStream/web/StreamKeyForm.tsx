@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { withStyles } from 'tss-react/mui';
 
 import { translate } from '../../../../base/i18n/functions';
-import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import Input from '../../../../base/ui/components/web/Input';
 import AbstractStreamKeyForm, {
     IProps as AbstractProps,
@@ -26,7 +25,7 @@ const styles = (theme: Theme) => {
             cursor: 'pointer',
             color: theme.palette.link01,
             transition: 'color .2s ease',
-            ...withPixelLineHeight(theme.typography.labelBold),
+            ...theme.typography.labelBold,
             marginLeft: 'auto',
             marginTop: theme.spacing(1),
 
@@ -55,7 +54,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { t, value } = this.props;
         const classes = withStyles.getClasses(this.props);
 

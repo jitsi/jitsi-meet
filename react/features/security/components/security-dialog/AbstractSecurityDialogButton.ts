@@ -23,11 +23,11 @@ export interface IProps extends AbstractButtonProps {
  */
 export default class AbstractSecurityDialogButton<P extends IProps, S>
     extends AbstractButton<P, S> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.security';
-    icon = IconSecurityOff;
-    label = 'toolbar.security';
-    toggledIcon = IconSecurityOn;
-    tooltip = 'toolbar.security';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.security';
+    override icon = IconSecurityOff;
+    override label = 'toolbar.security';
+    override toggledIcon = IconSecurityOn;
+    override tooltip = 'toolbar.security';
 
     /**
      * Helper function to be implemented by subclasses, which should be used
@@ -46,7 +46,7 @@ export default class AbstractSecurityDialogButton<P extends IProps, S>
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { _locked } = this.props;
 
         sendAnalytics(createToolbarEvent('toggle.security', { enable: !_locked }));
@@ -59,7 +59,7 @@ export default class AbstractSecurityDialogButton<P extends IProps, S>
      * @override
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._locked;
     }
 }

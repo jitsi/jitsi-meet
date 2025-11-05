@@ -3,7 +3,7 @@
  *
  * @enum {string}
  */
-export const CAMERA_FACING_MODE = {
+export const CAMERA_FACING_MODE: Record<string, string> = {
     ENVIRONMENT: 'environment',
     USER: 'user'
 };
@@ -19,11 +19,11 @@ export const MEDIA_TYPE: {
     AUDIO: MediaType;
     SCREENSHARE: MediaType;
     VIDEO: MediaType;
-    } = {
-        AUDIO: 'audio',
-        SCREENSHARE: 'screenshare',
-        VIDEO: 'video'
-    };
+} = {
+    AUDIO: 'audio',
+    SCREENSHARE: 'screenshare',
+    VIDEO: 'video'
+};
 
 
 /* eslint-disable no-bitwise */

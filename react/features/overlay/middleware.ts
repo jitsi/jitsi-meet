@@ -35,6 +35,7 @@ type ErrorType = {
  */
 const RN_NO_RELOAD_DIALOG_ERRORS = [
     JitsiConnectionErrors.NOT_LIVE_ERROR,
+    JitsiConnectionErrors.SHARD_CHANGED_ERROR,
     JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED,
     JitsiConferenceErrors.CONFERENCE_DESTROYED,
     JitsiConferenceErrors.CONNECTION_ERROR,

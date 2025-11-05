@@ -1,6 +1,6 @@
-local speakerstats_component
-    = module:get_option_string("speakerstats_component", "speakerstats."..module.host);
+-- TODO: Remove this file after several stable releases when people update their configs
+module:log('warn', 'mod_speakerstats is deprecated and will be removed in a future release. '
+    .. 'Please update your config by removing this module from the list of loaded modules.');
 
--- Advertise speaker stats so client can pick up the address and start sending
--- dominant speaker events
-module:add_identity("component", "speakerstats", speakerstats_component);
+module:depends('jitsi_session');
+module:depends('features_identity');

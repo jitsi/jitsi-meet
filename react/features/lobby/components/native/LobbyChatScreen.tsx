@@ -25,7 +25,7 @@ class LobbyChatScreen extends
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { _lobbyChatMessages } = this.props;
 
         return (
@@ -39,8 +39,6 @@ class LobbyChatScreen extends
             </JitsiScreen>
         );
     }
-
-    _onSendMessage: () => void;
 }
 
 export default translate(connect(abstractMapStateToProps)(LobbyChatScreen));

@@ -68,7 +68,7 @@ class RecentList extends AbstractRecentList<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         if (!isRecentListEnabled()) {
             return null;
         }

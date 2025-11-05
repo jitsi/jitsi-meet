@@ -80,7 +80,7 @@ const options: i18next.InitOptions = {
     interpolation: {
         escapeValue: false // not needed for react as it escapes by default
     },
-    load: 'languageOnly',
+    load: 'all',
     ns: [ 'main', 'languages', 'countries', 'translation-languages' ],
     react: {
         // re-render when a new resource bundle is added

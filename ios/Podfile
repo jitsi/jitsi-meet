@@ -19,7 +19,6 @@ target 'JitsiMeet' do
 
   pod 'Firebase/Analytics', '~> 8.0'
   pod 'Firebase/Crashlytics', '~> 8.0'
-  pod 'Firebase/DynamicLinks', '~> 8.0'
 end
 
 target 'JitsiMeetSDK' do
@@ -32,8 +31,9 @@ target 'JitsiMeetSDK' do
   flags = get_default_flags()
   use_react_native!(
     :path => config[:reactNativePath],
-    :hermes_enabled => false,
+    :hermes_enabled => true,
     :fabric_enabled => false,
+    :new_arch_enabled => false,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
@@ -44,7 +44,6 @@ target 'JitsiMeetSDK' do
   pod 'giphy-react-native-sdk', :path => '../node_modules/@giphy/react-native-sdk'
   pod 'RNCalendarEvents', :path => '../node_modules/react-native-calendar-events'
   pod 'RNGoogleSignin', :path => '../node_modules/@react-native-google-signin/google-signin'
-  pod 'RNWatch', :path => '../node_modules/react-native-watch-connectivity'
 
   # Native pod dependencies
   #
@@ -65,8 +64,9 @@ target 'JitsiMeetSDKLite' do
     config = use_native_modules!
     use_react_native!(
       :path => config[:reactNativePath],
-      :hermes_enabled => false,
+      :hermes_enabled => true,
       :fabric_enabled => false,
+      :new_arch_enabled => false,
       # An absolute path to your application root.
       :app_path => "#{Pod::Config.instance.installation_root}/.."
     )
@@ -78,10 +78,12 @@ target 'JitsiMeetSDKLite' do
 end
 
 post_install do |installer|
+
   react_native_post_install(
     installer,
     use_native_modules![:reactNativePath],
-    :mac_catalyst_enabled => false
+    :mac_catalyst_enabled => false,
+    # :ccache_enabled => true
   )
   installer.pods_project.targets.each do |target|
     # https://github.com/CocoaPods/CocoaPods/issues/11402
@@ -90,10 +92,15 @@ post_install do |installer|
         config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
       end
     end
+
     target.build_configurations.each do |config|
       config.build_settings['SUPPORTS_MACCATALYST'] = 'NO'
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
       config.build_settings['OTHER_SWIFT_FLAGS'] = '$(inherited) -no-verify-emitted-module-interface'
     end
   end
+
+  # Patch SocketRocket to support TLS 1.3
+  %x(patch Pods/SocketRocket/SocketRocket/SRSecurityPolicy.m -N < patches/ws-tls13.diff)
+
 end

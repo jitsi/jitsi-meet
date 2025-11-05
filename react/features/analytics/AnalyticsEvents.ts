@@ -64,6 +64,11 @@ export const ACTION_SHORTCUT_TRIGGERED = 'triggered';
 export const AUDIO_MUTE = 'audio.mute';
 
 /**
+ * The name of the keyboard shortcut or toolbar button for muting desktop sharing.
+ */
+export const DESKTOP_MUTE = 'desktop.mute';
+
+/**
  * The name of the keyboard shortcut or toolbar button for muting video.
  */
 export const VIDEO_MUTE = 'video.mute';
@@ -311,7 +316,7 @@ export function createInviteDialogEvent(
  * @returns {Object}
  */
 export function createNetworkInfoEvent({ isOnline, networkType, details }:
-    { details?: Object; isOnline: boolean; networkType?: string; }) {
+{ details?: Object; isOnline: boolean; networkType?: string; }) {
     const attributes: {
         details?: Object;
         isOnline: boolean;
@@ -593,31 +598,6 @@ export function createRemoteVideoMenuButtonEvent(buttonName: string, attributes 
         source: 'remote.video.menu',
         type: TYPE_UI
     };
-}
-
-/**
- * The rtcstats websocket onclose event. We send this to amplitude in order
- * to detect trace ws prematurely closing.
- *
- * @param {Object} closeEvent - The event with which the websocket closed.
- * @returns {Object} The event in a format suitable for sending via
- * sendAnalytics.
- */
-export function createRTCStatsTraceCloseEvent(closeEvent: { code: string; reason: string; }) {
-    const event: {
-        action: string;
-        code?: string;
-        reason?: string;
-        source: string;
-    } = {
-        action: 'trace.onclose',
-        source: 'rtcstats'
-    };
-
-    event.code = closeEvent.code;
-    event.reason = closeEvent.reason;
-
-    return event;
 }
 
 /**

@@ -35,7 +35,7 @@ class GoogleSignInButton extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { t } = this.props;
 
         return (

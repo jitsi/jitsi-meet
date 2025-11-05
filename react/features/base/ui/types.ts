@@ -1,8 +1,8 @@
 interface ITypographyType {
-    fontSize: number;
-    fontWeight: string;
+    fontSize: string;
+    fontWeight: 'normal' | 'bold' | 'bolder' | 'lighter' | number;
     letterSpacing: number;
-    lineHeight: number;
+    lineHeight: string;
 }
 
 export interface IPalette {

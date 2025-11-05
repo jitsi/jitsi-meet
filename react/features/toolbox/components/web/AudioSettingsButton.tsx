@@ -118,7 +118,7 @@ class AudioSettingsButton extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { gumPending, hasPermissions, isDisabled, visible, isOpen, buttonKey, notifyMode, t } = this.props;
         const settingsDisabled = !hasPermissions
             || isDisabled

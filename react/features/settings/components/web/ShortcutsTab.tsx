@@ -6,7 +6,6 @@ import { withStyles } from 'tss-react/mui';
 import AbstractDialogTab, {
     IProps as AbstractDialogTabProps } from '../../../base/dialog/components/web/AbstractDialogTab';
 import { translate } from '../../../base/i18n/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 
 /**
@@ -25,7 +24,7 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     displayShortcuts: boolean;
 
     /**
-     * Wether the keyboard shortcuts are enabled or not.
+     * Whether the keyboard shortcuts are enabled or not.
      */
     keyboardShortcutsEnabled: boolean;
 
@@ -59,13 +58,13 @@ const styles = (theme: Theme) => {
             justifyContent: 'space-between',
             alignItems: 'center',
             padding: `${theme.spacing(1)} 0`,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: theme.palette.text01
         },
 
         listItemKey: {
             backgroundColor: theme.palette.ui04,
-            ...withPixelLineHeight(theme.typography.labelBold),
+            ...theme.typography.labelBold,
             padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
             borderRadius: `${Number(theme.shape.borderRadius) / 2}px`
         }
@@ -145,7 +144,7 @@ class ShortcutsTab extends AbstractDialogTab<IProps, any> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             displayShortcuts,
             keyboardShortcutsHelpDescriptions,

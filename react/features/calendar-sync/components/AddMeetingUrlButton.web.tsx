@@ -56,7 +56,7 @@ class AddMeetingUrlButton extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         return (
             <Tooltip content = { this.props.t('calendarSync.addMeetingURL') }>
                 <div

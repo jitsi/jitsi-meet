@@ -22,7 +22,7 @@ class StopRecordingDialog extends AbstractStopRecordingDialog<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { t, localRecordingVideoStop } = this.props;
 
         return (
@@ -35,14 +35,12 @@ class StopRecordingDialog extends AbstractStopRecordingDialog<IProps> {
         );
     }
 
-    _onSubmit: () => boolean;
-
     /**
      * Toggles screenshot capture.
      *
      * @returns {void}
      */
-    _toggleScreenshotCapture() {
+    override _toggleScreenshotCapture() {
         this.props.dispatch(toggleScreenshotCaptureSummary(false));
     }
 }

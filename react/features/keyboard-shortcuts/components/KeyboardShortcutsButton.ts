@@ -15,10 +15,10 @@ import { areKeyboardShortcutsEnabled } from '../functions';
  * Implementation of a button for opening keyboard shortcuts dialog.
  */
 class KeyboardShortcutsButton extends AbstractButton<AbstractButtonProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.shortcuts';
-    icon = IconShortcuts;
-    label = 'toolbar.shortcuts';
-    tooltip = 'toolbar.shortcuts';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.shortcuts';
+    override icon = IconShortcuts;
+    override label = 'toolbar.shortcuts';
+    override tooltip = 'toolbar.shortcuts';
 
     /**
      * Handles clicking / pressing the button, and opens the appropriate dialog.
@@ -26,7 +26,7 @@ class KeyboardShortcutsButton extends AbstractButton<AbstractButtonProps> {
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('shortcuts'));

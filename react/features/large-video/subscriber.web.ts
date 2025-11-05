@@ -4,6 +4,7 @@ import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { getVideoTrackByParticipant } from '../base/tracks/functions.web';
 
 import { getLargeVideoParticipant } from './functions';
+import './subscriber.any';
 
 /**
  * Updates the on stage participant video.

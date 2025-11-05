@@ -45,7 +45,7 @@ import AudioLevels from '../audio_levels/AudioLevels';
 
 import { VIDEO_CONTAINER_TYPE, VideoContainer } from './VideoContainer';
 
-const logger = Logger.getLogger(__filename);
+const logger = Logger.getLogger('ui:videolayout');
 
 const DESKTOP_CONTAINER_TYPE = 'desktop';
 
@@ -478,9 +478,11 @@ export default class LargeVideoManager {
         if (isOpen && window.innerWidth > 580) {
             /**
              * If chat state is open, we re-compute the container width
-             * by subtracting the default width of the chat.
+             * by subtracting the chat width, which may be resized by the user.
              */
-            widthToUse -= CHAT_SIZE;
+            const chatWidth = state['features/chat'].width?.current ?? CHAT_SIZE;
+
+            widthToUse -= chatWidth;
         }
 
         if (resizableFilmstrip && visible && filmstripWidth.current >= FILMSTRIP_BREAKPOINT) {

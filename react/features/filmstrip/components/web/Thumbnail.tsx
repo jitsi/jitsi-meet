@@ -450,7 +450,7 @@ class Thumbnail extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         this._onDisplayModeChanged();
 
 
@@ -473,7 +473,7 @@ class Thumbnail extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {void}
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         // TODO: after converting this component to a react function component,
         // use a custom hook to update local track streaming status.
         const { _videoTrack, dispatch } = this.props;
@@ -493,7 +493,7 @@ class Thumbnail extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate(prevProps: IProps, prevState: IState) {
+    override componentDidUpdate(prevProps: IProps, prevState: IState) {
         if (prevState.displayMode !== this.state.displayMode) {
             this._onDisplayModeChanged();
         }
@@ -1166,7 +1166,7 @@ class Thumbnail extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _isVirtualScreenshareParticipant,
             _participant,
@@ -1363,6 +1363,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
 
         // skip showing tint for owner participants that are screensharing.
         && !screenshareParticipantIds.includes(id);
+    const disableTintForeground = state['features/base/config'].disableCameraTintForeground ?? false;
 
     return {
         _audioTrack,
@@ -1384,7 +1385,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         _raisedHand: hasRaisedHand(participant),
         _stageFilmstripLayout: isStageFilmstripAvailable(state),
         _stageParticipantsVisible: _currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW,
-        _shouldDisplayTintBackground: shouldDisplayTintBackground,
+        _shouldDisplayTintBackground: !disableTintForeground && shouldDisplayTintBackground,
         _thumbnailType: tileType,
         _videoObjectPosition: getVideoObjectPosition(state, participant?.id),
         _videoTrack,

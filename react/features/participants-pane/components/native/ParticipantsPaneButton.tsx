@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconUsers } from '../../../base/icons/svg';
-import { getParticipantCount } from '../../../base/participants/functions';
+import { getParticipantCountForDisplay } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { navigate }
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
@@ -30,8 +30,8 @@ interface IProps extends AbstractButtonProps {
  * Implements an {@link AbstractButton} to open the participants panel.
  */
 class ParticipantsPaneButton extends AbstractButton<IProps> {
-    icon = IconUsers;
-    label = 'toolbar.participants';
+    override icon = IconUsers;
+    override label = 'toolbar.participants';
 
     /**
      * Handles clicking / pressing the button, and opens the participants panel.
@@ -39,7 +39,7 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         return navigate(screen.conference.participants);
     }
 
@@ -65,7 +65,7 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
      * @protected
      * @returns {React.ReactElement}
      */
-    render() {
+    override render() {
         return (
             <View style = { styles.participantsButtonBadge as ViewStyle }>
                 { super.render() }
@@ -83,7 +83,7 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
  */
 function mapStateToProps(state: IReduxState) {
     return {
-        _participantsCount: getParticipantCount(state)
+        _participantsCount: getParticipantCountForDisplay(state)
     };
 }
 

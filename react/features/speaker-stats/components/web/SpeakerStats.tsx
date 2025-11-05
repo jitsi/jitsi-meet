@@ -199,9 +199,9 @@ const EMOTIONS_LEGEND = [
 const SpeakerStats = () => {
     const { faceLandmarks } = useSelector((state: IReduxState) => state['features/base/config']);
     const { showFaceExpressions } = useSelector((state: IReduxState) => state['features/speaker-stats']);
-    const { clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
-    const displaySwitch = faceLandmarks?.enableDisplayFaceExpressions && clientWidth > DISPLAY_SWITCH_BREAKPOINT;
-    const displayLabels = clientWidth > MOBILE_BREAKPOINT;
+    const { videoSpaceWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
+    const displaySwitch = faceLandmarks?.enableDisplayFaceExpressions && videoSpaceWidth > DISPLAY_SWITCH_BREAKPOINT;
+    const displayLabels = videoSpaceWidth > MOBILE_BREAKPOINT;
     const dispatch = useDispatch();
     const { classes } = useStyles();
     const { t } = useTranslation();
@@ -217,7 +217,7 @@ const SpeakerStats = () => {
 
     useEffect(() => {
         showFaceExpressions && !displaySwitch && dispatch(toggleFaceExpressions());
-    }, [ clientWidth ]);
+    }, [ videoSpaceWidth ]);
 
     useEffect(() => () => {
         dispatch(resetSearchCriteria());

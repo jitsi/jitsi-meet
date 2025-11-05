@@ -1,5 +1,6 @@
 import { IStore } from '../../app/types';
 import { IStateful } from '../app/types';
+import { isAdvancedAudioSettingsEnabled } from '../config/functions.any';
 import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { gumPending, setAudioMuted } from '../media/actions';
@@ -11,9 +12,10 @@ import {
     getUserSelectedCameraDeviceId,
     getUserSelectedMicDeviceId
 } from '../settings/functions.web';
+import { IAudioSettings } from '../settings/reducer';
 import { getJitsiMeetGlobalNSConnectionTimes } from '../util/helpers';
 
-import { getCameraFacingMode } from './functions.any';
+import { getCameraFacingMode, getLocalJitsiAudioTrack, getLocalJitsiAudioTrackSettings } from './functions.any';
 import loadEffects from './loadEffects';
 import logger from './logger';
 import { ITrackOptions } from './types';
@@ -31,10 +33,7 @@ export * from './functions.any';
  * and/or 'video'.
  * @param {string|null} [options.micDeviceId] - Microphone device id or
  * {@code undefined} to use app's settings.
- * @param {number|undefined} [oprions.timeout] - A timeout for JitsiMeetJS.createLocalTracks used to create the tracks.
- * @param {boolean} [options.firePermissionPromptIsShownEvent] - Whether lib-jitsi-meet
- * should check for a {@code getUserMedia} permission prompt and fire a
- * corresponding event.
+ * @param {number|undefined} [options.timeout] - A timeout for JitsiMeetJS.createLocalTracks used to create the tracks.
  * @param {IStore} store - The redux store in the context of which the function
  * is to execute and from which state such as {@code config} is to be retrieved.
  * @param {boolean} recordTimeMetrics - If true time metrics will be recorded.
@@ -45,7 +44,6 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore, 
     const {
         desktopSharingSourceDevice,
         desktopSharingSources,
-        firePermissionPromptIsShownEvent,
         timeout
     } = options;
 
@@ -64,10 +62,15 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore, 
 
     const {
         desktopSharingFrameRate,
-        firefox_fake_device, // eslint-disable-line camelcase
         resolution
     } = state['features/base/config'];
-    const constraints = options.constraints ?? state['features/base/config'].constraints;
+
+    const constraints = options.constraints ?? state['features/base/config'].constraints ?? {};
+
+    if (isAdvancedAudioSettingsEnabled(state) && typeof APP !== 'undefined') {
+        constraints.audio = state['features/settings'].audioSettings ?? getLocalJitsiAudioTrackSettings(state);
+    }
+
 
     return (
         loadEffects(store).then((effectsArray: Object[]) => {
@@ -90,8 +93,6 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore, 
                     devices: options.devices?.slice(0),
                     effects,
                     facingMode: options.facingMode || getCameraFacingMode(state),
-                    firefox_fake_device, // eslint-disable-line camelcase
-                    firePermissionPromptIsShownEvent,
                     micDeviceId,
                     resolution,
                     timeout
@@ -146,7 +147,6 @@ export function createPrejoinTracks() {
     if (requestedAudio || requestedVideo) {
         tryCreateLocalTracks = createLocalTracksF({
             devices: initialDevices,
-            firePermissionPromptIsShownEvent: true,
             timeout
         }, APP.store)
         .catch(async (err: Error) => {
@@ -163,7 +163,6 @@ export function createPrejoinTracks() {
             if (requestedAudio) {
                 gUMPromises.push(createLocalTracksF({
                     devices: [ MEDIA_TYPE.AUDIO ],
-                    firePermissionPromptIsShownEvent: true,
                     timeout
                 }));
             }
@@ -171,7 +170,6 @@ export function createPrejoinTracks() {
             if (requestedVideo) {
                 gUMPromises.push(createLocalTracksF({
                     devices: [ MEDIA_TYPE.VIDEO ],
-                    firePermissionPromptIsShownEvent: true,
                     timeout
                 }));
             }
@@ -223,4 +221,33 @@ export function isToggleCameraEnabled(stateful: IStateful) {
     const { videoInput } = state['features/base/devices'].availableDevices;
 
     return isMobileBrowser() && Number(videoInput?.length) > 1;
+}
+/**
+ * Applies audio constraints to the local Jitsi audio track.
+ *
+ * @param {Function|Object} stateful - The redux store or {@code getState} function.
+ * @param {IAudioSettings} settings - The audio settings to apply.
+ * @returns {Promise<void>}
+ */
+export async function applyAudioConstraints(stateful: IStateful, settings: IAudioSettings) {
+    const state = toState(stateful);
+    const track = getLocalJitsiAudioTrack(state);
+
+    if (!track) {
+        logger.debug('No local audio track found');
+
+        return;
+    }
+
+    if (!isAdvancedAudioSettingsEnabled(state)) {
+        logger.debug('Advanced audio settings disabled');
+
+        return;
+    }
+
+    try {
+        await track.applyConstraints(settings);
+    } catch (error) {
+        logger.error('Failed to apply audio constraints ', error);
+    }
 }

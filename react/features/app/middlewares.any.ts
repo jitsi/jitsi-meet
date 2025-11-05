@@ -24,7 +24,6 @@ import '../calendar-sync/middleware';
 import '../chat/middleware';
 import '../conference/middleware';
 import '../connection-indicator/middleware';
-import '../deep-linking/middleware';
 import '../device-selection/middleware';
 import '../display-name/middleware';
 import '../dynamic-branding/middleware';

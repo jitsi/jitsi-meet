@@ -38,10 +38,9 @@ module:hook("pre-iq/full", function(event)
             local is_allowed = is_feature_allowed(
                 feature,
                 session.jitsi_meet_context_features,
-                session.granted_jitsi_meet_context_features,
                 occupant.role == 'moderator');
 
-            if jibri.attr.action == 'start' then
+            if jibri.attr.action == 'start' or jibri.attr.action == 'stop' then
                 if not is_allowed then
                     module:log('info', 'Filtering jibri start recording, stanza:%s', tostring(stanza));
                     session.send(st.error_reply(stanza, 'auth', 'forbidden'));

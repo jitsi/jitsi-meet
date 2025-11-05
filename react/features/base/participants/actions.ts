@@ -17,6 +17,8 @@ import {
     PARTICIPANT_JOINED,
     PARTICIPANT_KICKED,
     PARTICIPANT_LEFT,
+    PARTICIPANT_MUTED_US,
+    PARTICIPANT_ROLE_CHANGED,
     PARTICIPANT_SOURCES_UPDATED,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
@@ -239,7 +241,7 @@ export function participantJoined(participant: IParticipant) {
         // conference. The following check is really necessary because a
         // JitsiConference may have moved into leaving but may still manage to
         // sneak a PARTICIPANT_JOINED in if its leave is delayed for any purpose
-        // (which is not outragous given that leaving involves network
+        // (which is not outrageous given that leaving involves network
         // requests.)
         const stateFeaturesBaseConference
             = getState()['features/base/conference'];
@@ -389,19 +391,27 @@ export function participantPresenceChanged(id: string, presence: string) {
  *
  * @param {string} id - Participant's ID.
  * @param {PARTICIPANT_ROLE} role - Participant's new role.
- * @returns {{
- *     type: PARTICIPANT_UPDATED,
- *     participant: {
- *         id: string,
- *         role: PARTICIPANT_ROLE
- *     }
- * }}
+ * @returns {Promise}
  */
 export function participantRoleChanged(id: string, role: string) {
-    return participantUpdated({
-        id,
-        role
-    });
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const oldParticipantRole = getParticipantById(getState(), id)?.role;
+
+        dispatch(participantUpdated({
+            id,
+            role
+        }));
+
+        if (oldParticipantRole !== role) {
+            dispatch({
+                type: PARTICIPANT_ROLE_CHANGED,
+                participant: {
+                    id,
+                    role
+                }
+            });
+        }
+    };
 }
 
 /**
@@ -458,19 +468,10 @@ export function participantUpdated(participant: IParticipant = { id: '' }) {
  * @returns {Promise}
  */
 export function participantMutedUs(participant: any, track: any) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        if (!participant) {
-            return;
-        }
-
-        const isAudio = track.isAudioTrack();
-
-        dispatch(showNotification({
-            titleKey: isAudio ? 'notify.mutedRemotelyTitle' : 'notify.videoMutedRemotelyTitle',
-            titleArguments: {
-                participantDisplayName: getParticipantDisplayName(getState, participant.getId())
-            }
-        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+    return {
+        type: PARTICIPANT_MUTED_US,
+        participant,
+        track
     };
 }
 

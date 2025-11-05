@@ -1,5 +1,4 @@
-import { debounce } from 'lodash-es';
-import type { DebouncedFunc } from 'lodash-es';
+import { type DebouncedFunc, debounce } from 'lodash-es';
 import { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
@@ -100,7 +99,7 @@ export default class AbstractStreamKeyForm<P extends IProps>
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: P) {
+    override componentDidUpdate(prevProps: P) {
         if (this.props.value !== prevProps.value) {
             this._debouncedUpdateValidationErrorVisibility();
         }
@@ -111,7 +110,7 @@ export default class AbstractStreamKeyForm<P extends IProps>
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this._debouncedUpdateValidationErrorVisibility.cancel();
     }
 

@@ -5,9 +5,8 @@ import {
     CONFERENCE_JOINED,
     E2E_RTT_CHANGED
 } from '../base/conference/actionTypes';
-import { DOMINANT_SPEAKER_CHANGED } from '../base/participants/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import { TRACK_ADDED, TRACK_UPDATED } from '../base/tracks/actionTypes';
+import { TRACK_UPDATED } from '../base/tracks/actionTypes';
 import { ADD_FACE_LANDMARKS } from '../face-landmarks/actionTypes';
 import { FaceLandmarks } from '../face-landmarks/types';
 import { sendGetCustomerIdRequest } from '../jaas/functions';
@@ -47,25 +46,10 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         }
         break;
     }
-    case TRACK_ADDED: {
-        if (isRTCStatsEnabled(state)) {
-            const jitsiTrack = action?.track?.jitsiTrack;
-            const { ssrc, videoType } = jitsiTrack || { };
-
-            // Remote tracks store their ssrc in the jitsiTrack object. Local tracks don't. See getSsrcByTrack.
-            if (videoType && ssrc && !jitsiTrack.isLocal() && !jitsiTrack.isAudioTrack()) {
-                RTCStats.sendVideoTypeData({
-                    ssrc,
-                    videoType
-                });
-            }
-        }
-        break;
-    }
     case TRACK_UPDATED: {
         if (isRTCStatsEnabled(state)) {
-            const { videoType, jitsiTrack, muted } = action?.track || { };
-            const { ssrc, isLocal, videoType: trackVideoType, conference } = jitsiTrack || { };
+            const { jitsiTrack, muted } = action?.track || { };
+            const { isLocal, videoType: trackVideoType, conference } = jitsiTrack || { };
 
             if (trackVideoType === 'camera' && conference && isLocal()) {
                 RTCStats.sendFaceLandmarksData({
@@ -74,27 +58,6 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
                     timestamp: Date.now()
                 });
             }
-
-            // if the videoType of the remote track has changed we expect to find it in track.videoType. grep for
-            // trackVideoTypeChanged.
-            if (videoType && ssrc && !jitsiTrack.isLocal() && !jitsiTrack.isAudioTrack()) {
-
-                RTCStats.sendVideoTypeData({
-                    ssrc,
-                    videoType
-                });
-            }
-        }
-        break;
-    }
-    case DOMINANT_SPEAKER_CHANGED: {
-        if (isRTCStatsEnabled(state)) {
-            const { id, previousSpeakers, silence } = action.participant;
-
-            RTCStats.sendDominantSpeakerData({
-                dominantSpeakerEndpoint: silence ? null : id,
-                previousSpeakers
-            });
         }
         break;
     }

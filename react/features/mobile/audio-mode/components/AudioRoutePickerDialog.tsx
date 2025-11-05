@@ -149,7 +149,7 @@ const deviceInfoMap = {
  * is required to join a conference.
  */
 class AudioRoutePickerDialog extends Component<IProps, IState> {
-    state = {
+    override state = {
         /**
          * Available audio devices, it will be set in
          * {@link #getDerivedStateFromProps()}.
@@ -176,7 +176,6 @@ class AudioRoutePickerDialog extends Component<IProps, IState> {
 
             // Skip devices with unknown type.
             if (!infoMap) {
-                // eslint-disable-next-line no-continue
                 continue;
             }
 
@@ -297,7 +296,7 @@ class AudioRoutePickerDialog extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { devices } = this.state;
         let content;
 

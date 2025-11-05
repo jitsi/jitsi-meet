@@ -1,5 +1,4 @@
 import 'image-capture';
-import './createImageBitmap';
 
 import { createScreensharingCaptureTakenEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';

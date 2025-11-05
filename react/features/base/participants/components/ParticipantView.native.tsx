@@ -168,7 +168,7 @@ class ParticipantView extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _isConnectionInactive,
             _isSharedVideoParticipant,

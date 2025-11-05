@@ -9,7 +9,6 @@ import {
     IconUsers,
     IconWarning
 } from '../../../base/icons/svg';
-import { colors } from '../../../base/ui/Tokens';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import Button from '../../../base/ui/components/native/Button';
 import IconButton from '../../../base/ui/components/native/IconButton';
@@ -30,10 +29,10 @@ import styles from './styles';
  */
 
 const ICON_COLOR = {
-    error: colors.error06,
-    normal: colors.primary06,
-    success: colors.success05,
-    warning: colors.warning05
+    error: BaseTheme.palette.iconError,
+    normal: BaseTheme.palette.iconNormal,
+    success: BaseTheme.palette.iconSuccess,
+    warning: BaseTheme.palette.iconWarning
 };
 
 
@@ -150,19 +149,18 @@ const Notification = ({
         const titleText = title || (titleKey && t(titleKey, titleArguments));
         const descriptionArray = _getDescription();
 
-        if (descriptionArray?.length) {
+        if (descriptionArray?.length && titleText) {
             return (
                 <>
                     <Text
                         numberOfLines = { 1 }
-                        style = { styles.contentTextTitle as TextStyle }>
+                        style = { styles.contentTextTitleDescription as TextStyle }>
                         { titleText }
                     </Text>
                     {
                         descriptionArray.map((line, index) => (
                             <Text
                                 key = { index }
-                                numberOfLines = { 3 }
                                 style = { styles.contentText }>
                                 { line.length >= CHAR_LIMIT ? line : replaceNonUnicodeEmojis(line) }
                             </Text>
@@ -170,15 +168,29 @@ const Notification = ({
                     }
                 </>
             );
+        } else if (descriptionArray?.length && !titleText) {
+            return (
+                <>
+                    {
+                        descriptionArray.map((line, index) => (
+                            <Text
+                                key = { index }
+                                style = { styles.contentTextDescription }>
+                                { line.length >= CHAR_LIMIT ? line : replaceNonUnicodeEmojis(line) }
+                            </Text>
+                        ))
+                    }
+                </>
+            );
+        } else {
+            return (
+                <Text
+                    numberOfLines = { 1 }
+                    style = { styles.contentTextTitle as TextStyle }>
+                    { titleText }
+                </Text>
+            );
         }
-
-        return (
-            <Text
-                numberOfLines = { 1 }
-                style = { styles.contentTextTitle as TextStyle }>
-                { titleText }
-            </Text>
-        );
     };
 
     return (

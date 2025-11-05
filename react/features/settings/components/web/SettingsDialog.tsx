@@ -17,8 +17,8 @@ import {
 import DialogWithTabs, { IDialogTab } from '../../../base/ui/components/web/DialogWithTabs';
 import { isCalendarEnabled } from '../../../calendar-sync/functions.web';
 import { submitAudioDeviceSelectionTab, submitVideoDeviceSelectionTab } from '../../../device-selection/actions.web';
-import AudioDevicesSelection from '../../../device-selection/components/AudioDevicesSelection';
-import VideoDeviceSelection from '../../../device-selection/components/VideoDeviceSelection';
+import AudioDevicesSelection from '../../../device-selection/components/AudioDevicesSelection.web';
+import VideoDeviceSelection from '../../../device-selection/components/VideoDeviceSelection.web';
 import {
     getAudioDeviceSelectionDialogProps,
     getVideoDeviceSelectionDialogProps
@@ -160,6 +160,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
                 return {
                     ...newProps,
+                    audioSettings: tabState.audioSettings,
                     noiseSuppressionEnabled: tabState.noiseSuppressionEnabled,
                     selectedAudioInputId: tabState.selectedAudioInputId,
                     selectedAudioOutputId: tabState.selectedAudioOutputId
@@ -252,6 +253,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
                 return {
                     ...newProps,
+                    chatWithPermissionsEnabled: tabState?.chatWithPermissionsEnabled,
                     followMeEnabled: tabState?.followMeEnabled,
                     followMeRecorderEnabled: tabState?.followMeRecorderEnabled,
                     startAudioMuted: tabState?.startAudioMuted,
@@ -314,7 +316,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                     ...newProps,
                     currentLanguage: tabState?.currentLanguage,
                     hideSelfView: tabState?.hideSelfView,
-                    showPrejoinPage: tabState?.showPrejoinPage,
+                    showSubtitlesOnStage: tabState?.showSubtitlesOnStage,
                     maxStageParticipants: tabState?.maxStageParticipants
                 };
             },

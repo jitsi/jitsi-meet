@@ -114,6 +114,7 @@ const ProfileView = ({ isInWelcomePage }: {
     return (
         <JitsiScreen
             disableForcedKeyboardDismiss = { true }
+            hasBottomTextInput = { true }
 
             // @ts-ignore
             safeAreaInsets = { [ !isInWelcomePage && 'bottom', 'left', 'right' ].filter(Boolean) as Edge[] }

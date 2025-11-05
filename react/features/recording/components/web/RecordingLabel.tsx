@@ -49,7 +49,7 @@ class RecordingLabel extends AbstractRecordingLabel<IProps> {
      *
      * @inheritdoc
      */
-    _renderLabel() {
+    override _renderLabel() {
         const { _isTranscribing, _status, mode, t } = this.props;
         const classes = withStyles.getClasses(this.props);
         const isRecording = mode === JitsiRecordingConstants.mode.FILE;
@@ -60,12 +60,12 @@ class RecordingLabel extends AbstractRecordingLabel<IProps> {
             content = t(isRecording ? 'videoStatus.recording' : 'videoStatus.streaming');
 
             if (_isTranscribing) {
-                content += ` \u00B7 ${t('transcribing.labelToolTip')}`;
+                content += ` ${t('transcribing.labelTooltipExtra')}`;
             }
         } else if (mode === JitsiRecordingConstants.mode.STREAM) {
             return null;
         } else if (_isTranscribing) {
-            content = t('transcribing.labelToolTip');
+            content = t('transcribing.labelTooltip');
         } else {
             return null;
         }

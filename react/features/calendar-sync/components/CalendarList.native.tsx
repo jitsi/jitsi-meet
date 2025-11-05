@@ -18,7 +18,7 @@ import CalendarListContent from './CalendarListContent.native';
 import styles from './styles';
 
 /**
- * The tyoe of the React {@code Component} props of {@link CalendarList}.
+ * The type of the React {@code Component} props of {@link CalendarList}.
  */
 interface IProps extends WithTranslation {
 
@@ -70,7 +70,7 @@ class CalendarList extends AbstractPage<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { disabled } = this.props;
 
         return (

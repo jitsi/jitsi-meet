@@ -15,7 +15,6 @@ import ActionButton from '../../../base/premeeting/components/web/ActionButton';
 import PreMeetingScreen from '../../../base/premeeting/components/web/PreMeetingScreen';
 import { updateSettings } from '../../../base/settings/actions';
 import { getDisplayName } from '../../../base/settings/functions.web';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { getLocalJitsiVideoTrack } from '../../../base/tracks/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
@@ -164,7 +163,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         avatarName: {
-            ...withPixelLineHeight(theme.typography.bodyShortBoldLarge),
+            ...theme.typography.bodyShortBoldLarge,
             color: theme.palette.text01,
             marginBottom: theme.spacing(5),
             textAlign: 'center'
@@ -175,7 +174,7 @@ const useStyles = makeStyles()(theme => {
             color: theme.palette.text01,
             borderRadius: theme.shape.borderRadius,
             width: '100%',
-            ...withPixelLineHeight(theme.typography.labelRegular),
+            ...theme.typography.labelRegular,
             boxSizing: 'border-box',
             padding: theme.spacing(1),
             textAlign: 'center',
@@ -438,7 +437,11 @@ const Prejoin = ({
 
                 {showErrorOnField && <div
                     className = { classes.error }
-                    data-testid = 'prejoin.errorMessage'>{t('prejoin.errorMissingName')}</div>}
+                    data-testid = 'prejoin.errorMessage'>
+                    <p aria-live = 'polite' >
+                        {t('prejoin.errorMissingName')}
+                    </p>
+                </div>}
 
                 <div className = { classes.dropdownContainer }>
                     <Popover

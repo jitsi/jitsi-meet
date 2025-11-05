@@ -31,7 +31,7 @@ export default class PrejoinApp extends BaseApp<Props> {
      *
      * @returns {void}
      */
-    async componentDidMount() {
+    override async componentDidMount() {
         await super.componentDidMount();
 
         const { store } = this.state;
@@ -72,7 +72,7 @@ export default class PrejoinApp extends BaseApp<Props> {
      *
      * @override
      */
-    _createMainElement(component: ComponentType<any>, props: Object) {
+    override _createMainElement(component: ComponentType<any>, props: Object) {
         return (
             <JitsiThemeProvider>
                 <GlobalStyles />
@@ -86,7 +86,7 @@ export default class PrejoinApp extends BaseApp<Props> {
      *
      * @returns {React$Element}
      */
-    _renderDialogContainer() {
+    override _renderDialogContainer() {
         return (
             <JitsiThemeProvider>
                 <DialogContainer />

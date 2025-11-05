@@ -35,10 +35,10 @@ interface IProps extends AbstractButtonProps {
  * @augments Component
  */
 class VideoQualityButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.callQuality';
-    label = 'videoStatus.performanceSettings';
-    tooltip = 'videoStatus.performanceSettings';
-    icon = IconPerformance;
+    override accessibilityLabel = 'toolbar.accessibilityLabel.callQuality';
+    override label = 'videoStatus.performanceSettings';
+    override tooltip = 'videoStatus.performanceSettings';
+    override icon = IconPerformance;
 
     /**
     * Handles clicking the button, and opens the video quality dialog.
@@ -46,7 +46,7 @@ class VideoQualityButton extends AbstractButton<IProps> {
     * @private
     * @returns {void}
     */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('video.quality'));

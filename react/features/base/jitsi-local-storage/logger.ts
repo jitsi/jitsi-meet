@@ -1,3 +1,3 @@
 import { getLogger } from '../logging/functions';
 
-export default getLogger('features/base/jitsi-local-storage');
+export default getLogger('app:jitsi-local-storage');

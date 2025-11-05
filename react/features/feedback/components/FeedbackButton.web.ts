@@ -26,10 +26,10 @@ interface IProps extends AbstractButtonProps {
  * Implementation of a button for opening feedback dialog.
  */
 class FeedbackButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.feedback';
-    icon = IconFeedback;
-    label = 'toolbar.feedback';
-    tooltip = 'toolbar.feedback';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.feedback';
+    override icon = IconFeedback;
+    override label = 'toolbar.feedback';
+    override tooltip = 'toolbar.feedback';
 
     /**
      * Handles clicking / pressing the button, and opens the appropriate dialog.
@@ -37,7 +37,7 @@ class FeedbackButton extends AbstractButton<IProps> {
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { _conference, dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('feedback'));

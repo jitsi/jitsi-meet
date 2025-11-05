@@ -26,8 +26,6 @@ import {
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SET_ASSUMED_BANDWIDTH_BPS,
-    SET_FOLLOW_ME,
-    SET_FOLLOW_ME_RECORDER,
     SET_OBFUSCATED_ROOM,
     SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
@@ -54,6 +52,19 @@ const DEFAULT_STATE = {
 };
 
 export interface IConferenceMetadata {
+    files: {
+        [fileId: string]: {
+            authorParticipantJid: string;
+            authorParticipantName: string;
+            conferenceFullName: string;
+            fileId: string;
+            fileName: string;
+            fileSize: number;
+            fileType: string;
+            progress?: number;
+            timestamp: number;
+        };
+    };
     recording?: {
         isTranscribingEnabled: boolean;
     };
@@ -85,6 +96,7 @@ export interface IJitsiConference {
     end: Function;
     getBreakoutRooms: Function;
     getConnection: Function;
+    getFileSharing: Function;
     getLocalParticipantProperty: Function;
     getLocalTracks: Function;
     getMeetingUniqueId: Function;
@@ -93,7 +105,9 @@ export interface IJitsiConference {
     getParticipantById: Function;
     getParticipantCount: Function;
     getParticipants: Function;
+    getPolls: Function;
     getRole: Function;
+    getShortTermCredentials: Function;
     getSpeakerStats: () => ISpeakerStats;
     getSsrcByTrack: Function;
     getTranscriptionStatus: Function;
@@ -105,8 +119,6 @@ export interface IJitsiConference {
     isLobbySupported: Function;
     isP2PActive: Function;
     isSIPCallingSupported: Function;
-    isStartAudioMuted: Function;
-    isStartVideoMuted: Function;
     join: Function;
     joinLobby: Function;
     kickParticipant: Function;
@@ -164,8 +176,6 @@ export interface IConferenceState {
     dataChannelOpen?: boolean;
     e2eeSupported?: boolean;
     error?: Error;
-    followMeEnabled?: boolean;
-    followMeRecorderEnabled?: boolean;
     joining?: IJitsiConference;
     leaving?: IJitsiConference;
     lobbyError?: boolean;
@@ -260,14 +270,6 @@ ReducerRegistry.register<IConferenceState>('features/base/conference',
 
             return set(state, 'assumedBandwidthBps', assumedBandwidthBps);
         }
-        case SET_FOLLOW_ME:
-            return set(state, 'followMeEnabled', action.enabled);
-
-        case SET_FOLLOW_ME_RECORDER:
-            return { ...state,
-                followMeRecorderEnabled: action.enabled,
-                followMeEnabled: action.enabled
-            };
 
         case SET_START_REACTIONS_MUTED:
             return set(state, 'startReactionsMuted', action.muted);
@@ -495,7 +497,7 @@ function _conferenceJoined(state: IConferenceState, { conference }: { conference
  * reduction of the specified action.
  */
 function _conferenceLeftOrWillLeave(state: IConferenceState, { conference, type }:
-    { conference: IJitsiConference; type: string; }) {
+{ conference: IJitsiConference; type: string; }) {
     const nextState = { ...state };
 
     // The redux action CONFERENCE_LEFT is the last time that we should be

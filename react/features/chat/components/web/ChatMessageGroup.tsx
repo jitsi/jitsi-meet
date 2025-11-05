@@ -27,7 +27,7 @@ const useStyles = makeStyles()(theme => {
             flexDirection: 'column',
             maxWidth: '100%',
 
-            '&.remote': {
+            '&.remote, &.file': {
                 maxWidth: 'calc(100% - 40px)' // 100% - avatar and margin
             }
         },
@@ -71,12 +71,11 @@ const ChatMessageGroup = ({ className = '', messages }: IProps) => {
             <div className = { `${classes.messageGroup} chat-message-group ${className}` }>
                 {messages.map((message, i) => (
                     <ChatMessage
+                        className = { className }
                         key = { i }
                         message = { message }
-                        shouldDisplayChatMessageMenu = { false }
                         showDisplayName = { i === 0 }
-                        showTimestamp = { i === messages.length - 1 }
-                        type = { className } />
+                        showTimestamp = { i === messages.length - 1 } />
                 ))}
             </div>
         </div>

@@ -10,7 +10,7 @@ import { arePollsDisabled } from '../../../conference/functions.any';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { getUnreadPollCount } from '../../../polls/functions';
-import { getUnreadCount } from '../../functions';
+import { getUnreadCount, getUnreadFilesCount, isChatDisabled } from '../../functions';
 
 interface IProps extends AbstractButtonProps {
 
@@ -29,10 +29,10 @@ interface IProps extends AbstractButtonProps {
  * Implements an {@link AbstractButton} to open the chat screen on mobile.
  */
 class ChatButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.chat';
-    icon = IconMessage;
-    label = 'toolbar.chat';
-    toggledIcon = IconChatUnread;
+    override accessibilityLabel = 'toolbar.accessibilityLabel.chat';
+    override icon = IconMessage;
+    override label = 'toolbar.chat';
+    override toggledIcon = IconChatUnread;
 
     /**
      * Handles clicking / pressing the button, and opens the appropriate dialog.
@@ -40,7 +40,7 @@ class ChatButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         this.props._isPollsDisabled
             ? navigate(screen.conference.chat)
             : navigate(screen.conference.chatandpolls.main);
@@ -52,7 +52,7 @@ class ChatButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return Boolean(this.props._unreadMessageCount);
     }
 }
@@ -65,14 +65,12 @@ class ChatButton extends AbstractButton<IProps> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
-    const enabled = getFeatureFlag(state, CHAT_ENABLED, true);
+    const enabled = getFeatureFlag(state, CHAT_ENABLED, true) && !isChatDisabled(state);
     const { visible = enabled } = ownProps;
 
     return {
         _isPollsDisabled: arePollsDisabled(state),
-
-        // The toggled icon should also be available for new polls
-        _unreadMessageCount: getUnreadCount(state) || getUnreadPollCount(state),
+        _unreadMessageCount: getUnreadCount(state) || getUnreadPollCount(state) || getUnreadFilesCount(state),
         visible
     };
 }

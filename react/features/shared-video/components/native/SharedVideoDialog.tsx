@@ -50,7 +50,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { t } = this.props;
         const { error } = this.state;
 

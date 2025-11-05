@@ -2,7 +2,6 @@ import { IReduxState } from '../../../app/types';
 import { IconSites } from '../../../base/icons/svg';
 import { MEET_FEATURES } from '../../../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../../../base/jwt/functions';
-import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
@@ -38,11 +37,11 @@ export interface IProps extends AbstractButtonProps {
  * An abstract class of a button for starting and stopping live streaming.
  */
 export default class AbstractLiveStreamButton<P extends IProps> extends AbstractButton<P> {
-    accessibilityLabel = 'dialog.startLiveStreaming';
-    toggledAccessibilityLabel = 'dialog.stopLiveStreaming';
-    icon = IconSites;
-    label = 'dialog.startLiveStreaming';
-    toggledLabel = 'dialog.stopLiveStreaming';
+    override accessibilityLabel = 'dialog.startLiveStreaming';
+    override toggledAccessibilityLabel = 'dialog.stopLiveStreaming';
+    override icon = IconSites;
+    override label = 'dialog.startLiveStreaming';
+    override toggledLabel = 'dialog.stopLiveStreaming';
 
     /**
      * Returns the tooltip that should be displayed when the button is disabled.
@@ -50,7 +49,7 @@ export default class AbstractLiveStreamButton<P extends IProps> extends Abstract
      * @private
      * @returns {string}
      */
-    _getTooltip() {
+    override _getTooltip() {
         return this.props._tooltip ?? '';
     }
 
@@ -72,7 +71,7 @@ export default class AbstractLiveStreamButton<P extends IProps> extends Abstract
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch } = this.props;
 
         const dialogShown = dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
@@ -88,7 +87,7 @@ export default class AbstractLiveStreamButton<P extends IProps> extends Abstract
      * @protected
      * @returns {boolean}
      */
-    _isDisabled() {
+    override _isDisabled() {
         return this.props._disabled;
     }
 
@@ -99,7 +98,7 @@ export default class AbstractLiveStreamButton<P extends IProps> extends Abstract
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._isLiveStreamRunning;
     }
 }
@@ -129,11 +128,10 @@ export function _mapStateToProps(state: IReduxState, ownProps: IProps) {
         // If the containing component provides the visible prop, that is one
         // above all, but if not, the button should be autonomous and decide on
         // its own to be visible or not.
-        const isModerator = isLocalParticipantModerator(state);
         const liveStreaming = getLiveStreaming(state);
 
         visible = isLiveStreamingButtonVisible({
-            liveStreamingAllowed: isJwtFeatureEnabled(state, 'livestreaming', isModerator, false),
+            liveStreamingAllowed: isJwtFeatureEnabled(state, MEET_FEATURES.LIVESTREAMING, false),
             liveStreamingEnabled: liveStreaming?.enabled,
             isInBreakoutRoom: isInBreakoutRoom(state)
         });

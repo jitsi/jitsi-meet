@@ -16,7 +16,6 @@ import {
 import { openURLInBrowser } from '../base/util/openURLInBrowser';
 import { executeDialOutRequest, executeDialOutStatusRequest, getDialInfoPageURL } from '../invite/functions';
 import { showErrorNotification } from '../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 import { INotificationProps } from '../notifications/types';
 
 import {
@@ -108,7 +107,7 @@ function pollForStatus(
             case DIAL_OUT_STATUS.DISCONNECTED: {
                 dispatch(showErrorNotification({
                     titleKey: 'prejoin.errorDialOutDisconnected'
-                }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+                }));
 
                 return onFail();
             }
@@ -116,7 +115,7 @@ function pollForStatus(
             case DIAL_OUT_STATUS.FAILED: {
                 dispatch(showErrorNotification({
                     titleKey: 'prejoin.errorDialOutFailed'
-                }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+                }));
 
                 return onFail();
             }
@@ -124,7 +123,7 @@ function pollForStatus(
         } catch (err) {
             dispatch(showErrorNotification({
                 titleKey: 'prejoin.errorDialOutStatus'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+            }));
             logger.error('Error getting dial out status', err);
             onFail();
         }
@@ -177,7 +176,7 @@ export function dialOut(onSuccess: Function, onFail: Function) {
                 }
             }
 
-            dispatch(showErrorNotification(notification, NOTIFICATION_TIMEOUT_TYPE.LONG));
+            dispatch(showErrorNotification(notification));
             logger.error('Error dialing out', err);
             onFail();
         }

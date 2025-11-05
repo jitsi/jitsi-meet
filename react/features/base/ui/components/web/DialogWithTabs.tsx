@@ -6,7 +6,6 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../../app/types';
 import { hideDialog } from '../../../dialog/actions';
 import { IconArrowBack, IconCloseLarge } from '../../../icons/svg';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 
 import BaseDialog, { IProps as IBaseProps } from './BaseDialog';
 import Button from './Button';
@@ -70,7 +69,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         title: {
-            ...withPixelLineHeight(theme.typography.heading5),
+            ...theme.typography.heading5,
             color: `${theme.palette.text01} !important`,
             margin: 0,
             padding: 0
@@ -141,7 +140,7 @@ const useStyles = makeStyles()(theme => {
 });
 
 interface IObject {
-    [key: string]: string | string[] | boolean | number | number[] | {} | undefined;
+    [key: string]: unknown;
 }
 
 export interface IDialogTab<P> {
@@ -173,16 +172,16 @@ const DialogWithTabs = ({
     const [ selectedTab, setSelectedTab ] = useState<string | undefined>(defaultTab ?? tabs[0].name);
     const [ userSelected, setUserSelected ] = useState(false);
     const [ tabStates, setTabStates ] = useState(tabs.map(tab => tab.props));
-    const clientWidth = useSelector((state: IReduxState) => state['features/base/responsive-ui'].clientWidth);
+    const videoSpaceWidth = useSelector((state: IReduxState) => state['features/base/responsive-ui'].videoSpaceWidth);
     const [ isMobile, setIsMobile ] = useState(false);
 
     useEffect(() => {
-        if (clientWidth <= MOBILE_BREAKPOINT) {
+        if (videoSpaceWidth <= MOBILE_BREAKPOINT) {
             !isMobile && setIsMobile(true);
         } else {
             isMobile && setIsMobile(false);
         }
-    }, [ clientWidth, isMobile ]);
+    }, [ videoSpaceWidth, isMobile ]);
 
     useEffect(() => {
         if (isMobile) {

@@ -6,7 +6,6 @@ import { withStyles } from 'tss-react/mui';
 import AbstractDialogTab, {
     IProps as AbstractDialogTabProps } from '../../../base/dialog/components/web/AbstractDialogTab';
 import { translate } from '../../../base/i18n/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 
 /**
@@ -107,7 +106,7 @@ const styles = (theme: Theme) => {
         },
 
         title: {
-            ...withPixelLineHeight(theme.typography.heading6),
+            ...theme.typography.heading6,
             color: `${theme.palette.text01} !important`,
             marginBottom: theme.spacing(3)
         },
@@ -133,8 +132,6 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
     constructor(props: IProps) {
         super(props);
 
-        // Bind event handlers so they are only bound once for every instance.
-        this._onChange = this._onChange.bind(this);
         this._onEnabledNotificationsChanged = this._onEnabledNotificationsChanged.bind(this);
     }
 
@@ -145,7 +142,7 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
      *
      * @returns {void}
      */
-    _onChange({ target }: React.ChangeEvent<HTMLInputElement>) {
+    override _onChange({ target }: React.ChangeEvent<HTMLInputElement>) {
         super._onChange({ [target.name]: target.checked });
     }
 
@@ -173,7 +170,7 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             disabledSounds,
             enabledNotifications,
@@ -192,14 +189,14 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
         const classes = withStyles.getClasses(this.props);
 
         return (
-            <div
+            <form
                 className = { classes.container }
                 key = 'sounds'>
                 {showSoundsSettings && (
-                    <div className = { classes.column }>
-                        <h2 className = { classes.title }>
+                    <fieldset className = { classes.column }>
+                        <legend className = { classes.title }>
                             {t('settings.playSounds')}
-                        </h2>
+                        </legend>
                         {enableReactions && <Checkbox
                             checked = { soundsReactions && !disabledSounds.includes('REACTION_SOUND') }
                             className = { classes.checkbox }
@@ -246,13 +243,13 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
                             label = { t('settings.participantKnocking') }
                             name = 'soundsParticipantKnocking'
                             onChange = { this._onChange } />
-                    </div>
+                    </fieldset>
                 )}
                 {showNotificationsSettings && (
-                    <div className = { classes.column }>
-                        <h2 className = { classes.title }>
+                    <fieldset className = { classes.column }>
+                        <legend className = { classes.title }>
                             {t('notify.displayNotifications')}
-                        </h2>
+                        </legend>
                         {
                             Object.keys(enabledNotifications).map(key => (
                                 <Checkbox
@@ -266,9 +263,9 @@ class NotificationsTab extends AbstractDialogTab<IProps, any> {
                                     onChange = { e => this._onEnabledNotificationsChanged(e, key) } />
                             ))
                         }
-                    </div>
+                    </fieldset>
                 )}
-            </div>
+            </form>
         );
     }
 }

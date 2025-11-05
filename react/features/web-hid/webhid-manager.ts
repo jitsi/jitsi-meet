@@ -110,7 +110,7 @@ export default class WebHidManager extends EventTarget {
             return null;
         }
 
-        if (this.deviceInfo?.device && this.deviceInfo.device.opened) {
+        if (this.deviceInfo?.device?.opened) {
             await this.close();
         }
 
@@ -506,7 +506,7 @@ export default class WebHidManager extends EventTarget {
      * @returns {void} -.
      */
     resetDeviceState() {
-        if (!this.deviceInfo?.device || !this.deviceInfo?.device?.opened) {
+        if (!this.deviceInfo?.device?.opened) {
             return;
         }
 
@@ -695,8 +695,7 @@ export default class WebHidManager extends EventTarget {
      * @returns {void} -.
      */
     async sendDeviceReport(data: { command: string; }) {
-        if (!data?.command || !this.deviceInfo
-            || !this.deviceInfo.device || !this.deviceInfo.device.opened || !this.isParseDescriptorsSuccess) {
+        if (!data?.command || !this.deviceInfo?.device?.opened || !this.isParseDescriptorsSuccess) {
             logger.warn('There are currently non-compliant conditions');
 
             return;
@@ -939,7 +938,7 @@ export default class WebHidManager extends EventTarget {
         const reportId = this.retriveInputReportId(inputReportId);
 
 
-        if (!this.deviceInfo?.device || !this.deviceInfo?.device?.opened) {
+        if (!this.deviceInfo?.device?.opened) {
             logger.warn('[sendReplyReport] device is not opened or does not exist');
 
             return;

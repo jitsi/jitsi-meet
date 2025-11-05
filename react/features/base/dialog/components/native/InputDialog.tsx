@@ -91,7 +91,7 @@ class InputDialog extends AbstractDialog<IProps, IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const {
             descriptionKey,
             messageKey,

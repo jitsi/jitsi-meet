@@ -191,7 +191,7 @@ class YoutubeVideoManager extends AbstractVideoManager<IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         return (
             <Video
                 ref = { this.playerRef }

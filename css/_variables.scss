@@ -22,7 +22,6 @@ $newToolbarSizeWithPadding: calc(#{$newToolbarSize} + 24px);
  * Chat
  */
 $chatBackgroundColor: #131519;
-$sidebarWidth: 315px;
 
 /**
  * Misc.
@@ -38,6 +37,8 @@ $zindex1: 1;
 $zindex2: 2;
 $zindex3: 3;
 $toolbarZ: 250;
+$watermarkZ: 253;
+
 // Place filmstrip videos over toolbar in order
 // to make connection info visible.
 $filmstripVideosZ: $toolbarZ + 1;
@@ -48,11 +49,11 @@ $filmstripVideosZ: $toolbarZ + 1;
 $primaryUnsupportedBrowserButtonBgColor: #0052CC;
 $unsupportedBrowserButtonBgColor: rgba(9, 30, 66, 0.04);
 $unsupportedBrowserTextColor: #4a4a4a;
-$unsupportedBrowserTextSmallFontSize: 17px;
+$unsupportedBrowserTextSmallFontSize: 1rem;
 $unsupportedBrowserTitleColor: #fff;
-$unsupportedBrowserTitleFontSize: 24px;
+$unsupportedBrowserTitleFontSize: 1.5rem;
 $unsupportedDesktopBrowserTextColor: rgba(255, 255, 255, 0.7);
-$unsupportedDesktopBrowserTextFontSize: 21px;
+$unsupportedDesktopBrowserTextFontSize: 1.25rem;
 
 /**
  * The size of the default watermark.
@@ -75,18 +76,21 @@ $welcomePageHeaderBackground: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 
 $welcomePageHeaderBackgroundPosition: center;
 $welcomePageHeaderBackgroundRepeat: none;
 $welcomePageHeaderBackgroundSize: cover;
-$welcomePageHeaderPaddingBottom: 15px;
+$welcomePageHeaderPadding: 1rem;
 $welcomePageHeaderTitleMaxWidth: initial;
 $welcomePageHeaderTextAlign: center;
+$welcomePageButtonBg: #0074E0;
+$welcomePageButtonHoverBg: #4687ED;
+$welcomePageButtonFocusOutline: #00225A;
 
 $welcomePageHeaderContainerMarginTop: 104px;
 $welcomePageHeaderContainerDisplay: flex;
 $welcomePageHeaderContainerMargin: $welcomePageHeaderContainerMarginTop auto 0;
 
 $welcomePageHeaderTextTitleMarginBottom: 0;
-$welcomePageHeaderTextTitleFontSize: 42px;
+$welcomePageHeaderTextTitleFontSize: 2.625rem;
 $welcomePageHeaderTextTitleFontWeight: normal;
-$welcomePageHeaderTextTitleLineHeight: 50px;
+$welcomePageHeaderTextTitleLineHeight: 3.125rem;
 $welcomePageHeaderTextTitleOpacity: 1;
 
 $welcomePageEnterRoomDisplay: flex;

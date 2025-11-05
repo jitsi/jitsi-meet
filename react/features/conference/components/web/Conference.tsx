@@ -1,7 +1,7 @@
 import { throttle } from 'lodash-es';
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { connect as reactReduxConnect } from 'react-redux';
+import { connect as reactReduxConnect, useDispatch, useSelector, useStore } from 'react-redux';
 
 // @ts-expect-error
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
@@ -11,7 +11,10 @@ import { hangup } from '../../../base/connection/actions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { setColorAlpha } from '../../../base/util/helpers';
+import { openChat, setFocusedTab } from '../../../chat/actions.web';
 import Chat from '../../../chat/components/web/Chat';
+import { ChatTabs } from '../../../chat/constants';
+import { isFileUploadingEnabled, processFiles } from '../../../file-sharing/functions.any';
 import MainFilmstrip from '../../../filmstrip/components/web/MainFilmstrip';
 import ScreenshareFilmstrip from '../../../filmstrip/components/web/ScreenshareFilmstrip';
 import StageFilmstrip from '../../../filmstrip/components/web/StageFilmstrip';
@@ -22,7 +25,7 @@ import { getIsLobbyVisible } from '../../../lobby/functions';
 import { getOverlayToRender } from '../../../overlay/functions.web';
 import ParticipantsPane from '../../../participants-pane/components/web/ParticipantsPane';
 import Prejoin from '../../../prejoin/components/web/Prejoin';
-import { isPrejoinPageVisible } from '../../../prejoin/functions';
+import { isPrejoinPageVisible } from '../../../prejoin/functions.web';
 import ReactionAnimations from '../../../reactions/components/web/ReactionsAnimations';
 import { toggleToolboxVisible } from '../../../toolbox/actions.any';
 import { fullScreenChanged, showToolbox } from '../../../toolbox/actions.web';
@@ -36,9 +39,9 @@ import { init } from '../../actions.web';
 import { maybeShowSuboptimalExperienceNotification } from '../../functions.web';
 import {
     AbstractConference,
+    type AbstractProps,
     abstractMapStateToProps
 } from '../AbstractConference';
-import type { AbstractProps } from '../AbstractConference';
 
 import ConferenceInfo from './ConferenceInfo';
 import { default as Notice } from './Notice';
@@ -118,8 +121,8 @@ interface IProps extends AbstractProps, WithTranslation {
  * @param {IProps} props - The props object.
  * @returns {boolean} - True if the prejoin screen should be displayed and false otherwise.
  */
-function shouldShowPrejoin({ _showPrejoin, _showVisitorsQueue }: IProps) {
-    return _showPrejoin && !_showVisitorsQueue;
+function shouldShowPrejoin({ _showLobby, _showPrejoin, _showVisitorsQueue }: IProps) {
+    return _showPrejoin && !_showVisitorsQueue && !_showLobby;
 }
 
 /**
@@ -163,7 +166,7 @@ class Conference extends AbstractConference<IProps, any> {
 
         // Bind event handler so it is only bound once for every instance.
         this._onFullScreenChange = this._onFullScreenChange.bind(this);
-        this._onVidespaceTouchStart = this._onVidespaceTouchStart.bind(this);
+        this._onVideospaceTouchStart = this._onVideospaceTouchStart.bind(this);
         this._setBackground = this._setBackground.bind(this);
     }
 
@@ -172,7 +175,7 @@ class Conference extends AbstractConference<IProps, any> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         document.title = `${this.props._roomName} | ${interfaceConfig.APP_NAME}`;
         this._start();
     }
@@ -183,7 +186,7 @@ class Conference extends AbstractConference<IProps, any> {
      * @inheritdoc
      * returns {void}
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         if (this.props._shouldDisplayTileView
             === prevProps._shouldDisplayTileView) {
             return;
@@ -202,7 +205,7 @@ class Conference extends AbstractConference<IProps, any> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         APP.UI.unbindEvents();
 
         FULL_SCREEN_EVENTS.forEach(name =>
@@ -217,7 +220,7 @@ class Conference extends AbstractConference<IProps, any> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _isAnyOverlayVisible,
             _layoutClassName,
@@ -241,11 +244,11 @@ class Conference extends AbstractConference<IProps, any> {
                     className = { _layoutClassName }
                     id = 'videoconference_page'
                     onMouseMove = { isMobileBrowser() ? undefined : this._onShowToolbar }>
-                    <ConferenceInfo />
+                    { _showPrejoin || _showLobby || <ConferenceInfo /> }
                     <Notice />
                     <div
                         id = 'videospace'
-                        onTouchStart = { this._onVidespaceTouchStart }>
+                        onTouchStart = { this._onVideospaceTouchStart }>
                         <LargeVideo />
                         {
                             _showPrejoin || _showLobby || (<>
@@ -322,7 +325,7 @@ class Conference extends AbstractConference<IProps, any> {
      * @private
      * @returns {void}
      */
-    _onVidespaceTouchStart() {
+    _onVideospaceTouchStart() {
         this.props.dispatch(toggleToolboxVisible());
     }
 
@@ -430,4 +433,65 @@ function _mapStateToProps(state: IReduxState) {
     };
 }
 
-export default reactReduxConnect(_mapStateToProps)(translate(Conference));
+export default reactReduxConnect(_mapStateToProps)(translate(props => {
+    const dispatch = useDispatch();
+    const store = useStore();
+
+    const [ isDragging, setIsDragging ] = useState(false);
+
+    const { isOpen: isChatOpen } = useSelector((state: IReduxState) => state['features/chat']);
+    const isFileUploadEnabled = useSelector(isFileUploadingEnabled);
+
+    const handleDragEnter = useCallback((e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(true);
+    }, []);
+
+    const handleDragLeave = useCallback((e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+    }, []);
+
+    const handleDragOver = useCallback((e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!isFileUploadEnabled) {
+            return;
+        }
+
+        if (isDragging) {
+            if (!isChatOpen) {
+                dispatch(openChat());
+            }
+            dispatch(setFocusedTab(ChatTabs.FILE_SHARING));
+        }
+    }, [ isChatOpen, isDragging, isFileUploadEnabled ]);
+
+    const handleDrop = useCallback((e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+
+        if (!isFileUploadEnabled) {
+            return;
+        }
+
+        if (e.dataTransfer.files?.length > 0) {
+            processFiles(e.dataTransfer.files, store);
+        }
+    }, [ isFileUploadEnabled, processFiles ]);
+
+    return (
+        <div
+            onDragEnter = { handleDragEnter }
+            onDragLeave = { handleDragLeave }
+            onDragOver = { handleDragOver }
+            onDrop = { handleDrop }>
+            {/* @ts-ignore */}
+            <Conference { ...props } />
+        </div>
+    );
+}));

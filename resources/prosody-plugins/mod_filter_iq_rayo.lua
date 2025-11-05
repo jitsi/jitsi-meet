@@ -3,13 +3,12 @@ local new_throttle = require "util.throttle".create;
 local st = require "util.stanza";
 local jid = require "util.jid";
 
-local token_util = module:require "token/util".new(module);
 local util = module:require 'util';
+local is_admin = util.is_admin;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local is_feature_allowed = util.is_feature_allowed;
 local is_sip_jigasi = util.is_sip_jigasi;
 local get_room_from_jid = util.get_room_from_jid;
-local is_healthcheck_room = util.is_healthcheck_room;
 local process_host_module = util.process_host_module;
 local jid_bare = require "util.jid".bare;
 
@@ -24,11 +23,6 @@ if main_muc_component_host == nil then
 end
 local main_muc_service;
 
--- no token configuration but required
-if token_util == nil then
-    module:log("error", "no token configuration but it is required");
-    return;
-end
 
 -- this is the main virtual host of the main prosody that this vnode serves
 local main_domain = module:get_option_string('main_domain');
@@ -38,9 +32,19 @@ local is_visitor_prosody = main_domain ~= nil;
 -- this is the main virtual host of this vnode
 local local_domain = module:get_option_string('muc_mapper_domain_base');
 
-local um_is_admin = require 'core.usermanager'.is_admin;
-local function is_admin(jid)
-    return um_is_admin(jid, module.host);
+local parentCtx = module:context(local_domain);
+if parentCtx == nil then
+    log("error",
+        "Failed to start - unable to get parent context for host: %s",
+        tostring(local_domain));
+    return;
+end
+local token_util = module:require "token/util".new(parentCtx);
+
+-- no token configuration but required
+if token_util == nil then
+    module:log("error", "no token configuration but it is required");
+    return;
 end
 
 -- The maximum number of simultaneous calls,
@@ -103,7 +107,6 @@ module:hook("pre-iq/full", function(event)
             local is_session_allowed = is_feature_allowed(
                 feature,
                 session.jitsi_meet_context_features,
-                session.granted_jitsi_meet_context_features,
                 room:get_affiliation(stanza.attr.from) == 'owner');
 
             if roomName == nil
@@ -150,7 +153,7 @@ module:hook("pre-iq/full", function(event)
                 dial:tag("header", {
                     xmlns = "urn:xmpp:rayo:1",
                     name = OUT_INITIATOR_USER_ATTR_NAME,
-                    value = user_id });
+                    value = tostring(user_id)});
                 dial:up();
 
                 -- Add the initiator group information if it is present
@@ -158,7 +161,7 @@ module:hook("pre-iq/full", function(event)
                     dial:tag("header", {
                         xmlns = "urn:xmpp:rayo:1",
                         name = OUT_INITIATOR_GROUP_ATTR_NAME,
-                        value = session.jitsi_meet_context_group });
+                        value = tostring(session.jitsi_meet_context_group) });
                     dial:up();
                 end
             end
@@ -222,49 +225,10 @@ end
 
 module:hook_global('config-reloaded', load_config);
 
-function process_set_affiliation(event)
-    local actor, affiliation, jid, previous_affiliation, room
-        = event.actor, event.affiliation, event.jid, event.previous_affiliation, event.room;
-    local actor_session = sessions[actor];
-
-    if is_admin(jid) or is_healthcheck_room(room.jid) or not actor or not previous_affiliation
-        or not actor_session or not actor_session.jitsi_meet_context_features then
-        return;
-    end
-
-    local occupant;
-    for _, o in room:each_occupant() do
-        if o.bare_jid == jid then
-            occupant = o;
-        end
-    end
-
-    if not occupant then
-        return;
-    end
-
-    local occupant_session = sessions[occupant.jid];
-    if not occupant_session then
-        return;
-    end
-
-    if previous_affiliation == 'none' and affiliation == 'owner' then
-        occupant_session.granted_jitsi_meet_context_features = actor_session.jitsi_meet_context_features;
-        occupant_session.granted_jitsi_meet_context_user_id = actor_session.jitsi_meet_context_user["id"];
-        occupant_session.granted_jitsi_meet_context_group_id = actor_session.jitsi_meet_context_group;
-    elseif previous_affiliation == 'owner' and ( affiliation == 'member' or affiliation == 'none' ) then
-        occupant_session.granted_jitsi_meet_context_features = nil;
-        occupant_session.granted_jitsi_meet_context_user_id = nil;
-        occupant_session.granted_jitsi_meet_context_group_id = nil;
-    end
-end
-
 function process_main_muc_loaded(main_muc, host_module)
     module:log('debug', 'Main muc loaded');
 
     main_muc_service = main_muc;
-    module:log("info", "Hook to muc events on %s", main_muc_component_host);
-    host_module:hook("muc-pre-set-affiliation", process_set_affiliation);
 end
 
 process_host_module(main_muc_component_host, function(host_module, host)

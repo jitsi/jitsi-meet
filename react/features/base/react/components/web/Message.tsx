@@ -16,6 +16,11 @@ interface IProps {
     gifEnabled: boolean;
 
     /**
+     * Message decoration for screen reader.
+     */
+    screenReaderHelpText?: string;
+
+    /**
      * The body of the message.
      */
     text: string;
@@ -49,10 +54,10 @@ class Message extends Component<IProps> {
 
         // Tokenize the text in order to avoid emoji substitution for URLs
         const tokens = text ? text.split(' ') : [];
-        const content = [];
+        const content: any[] = [];
         const { gifEnabled } = this.props;
 
-        // check if the message is a GIF
+        // Check if the message is a GIF
         if (gifEnabled && isGifMessage(text)) {
             const url = extractGifURL(text);
 
@@ -67,7 +72,11 @@ class Message extends Component<IProps> {
                     // Bypass the emojification when urls or matrix ids are involved
                     content.push(token);
                 } else {
-                    content.push(...toArray(token, { className: 'smiley' }));
+                    const emojified = [ ...toArray(token, { className: 'smiley' }) ];
+
+                    content.push(
+                        ...emojified.some(item => typeof item === 'string') ? [ token ] : emojified
+                    );
                 }
 
                 content.push(' ');
@@ -90,11 +99,19 @@ class Message extends Component<IProps> {
      *
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
+        const { screenReaderHelpText } = this.props;
+
         return (
-            <>
+            <p>
+                { screenReaderHelpText && (
+                    <span className = 'sr-only'>
+                        {screenReaderHelpText}
+                    </span>
+                ) }
+
                 { this._processMessage() }
-            </>
+            </p>
         );
     }
 }

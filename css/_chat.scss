@@ -11,9 +11,9 @@
 #chatconversation {
     box-sizing: border-box;
     flex: 1;
-    font-size: 10pt;
+    font-size: 0.75rem;
     height: calc(100% - 10px);
-    line-height: 20px;
+    line-height: 1.25rem;
     overflow: auto;
     padding: 16px;
     text-align: left;
@@ -72,7 +72,7 @@
 #nickname {
     text-align: center;
     color: #9d9d9d;
-    font-size: 16px;
+    font-size: 1rem;
     margin: auto 0;
     padding: 0 16px;
 
@@ -86,7 +86,7 @@
     }
 
     label {
-        line-height: 24px;
+        line-height: 1.5rem;
     }
 }
 
@@ -98,7 +98,7 @@
     }
 
     .chatmessage .usermessage {
-        font-size: 16px;
+        font-size: 1rem;
     }
 }
 
@@ -124,7 +124,7 @@
 }
 
 #smileys {
-    font-size: 20pt;
+    font-size: 1.625rem;
     margin: auto;
     cursor: pointer;
 }
@@ -141,34 +141,8 @@
     left: 0;
 }
 
-.smileys-panel {
-    bottom: 100%;
-    box-sizing: border-box;
-    background-color: rgba(0, 0, 0, .6) !important;
-    height: auto;
-    display: flex;
-    overflow: hidden;
-    position: absolute;
-    width: calc(#{$sidebarWidth} - 32px);
-    margin-bottom: 5px;
-    margin-left: -5px;
-
-    /**
-     * CSS transitions do not apply for auto dimensions. So to produce the css
-     * accordion effect for showing and hiding the smiley-panel, while allowing
-     * for variable panel, height, use a very large max-height and animate off
-     * of that.
-     */
-    transition: max-height 0.3s;
-
-    #smileysContainer {
-        background-color: $chatBackgroundColor;
-        border-top: 1px solid #A4B8D1;
-    }
-}
-
 #smileysContainer .smiley {
-    font-size: 20pt;
+    font-size: 1.625rem;
 }
 
 .smileyContainer {
@@ -219,8 +193,8 @@
         box-sizing: border-box;
         color: #fff;
         font-weight: 600;
-        font-size: 24px;
-        line-height: 32px;
+        font-size: 1.5rem;
+        line-height: 2rem;
 
         .jitsi-icon {
             cursor: pointer;

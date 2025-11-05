@@ -57,8 +57,11 @@ export interface ILocalParticipant extends IParticipant {
 export interface IParticipantFeatures {
     'branding'?: boolean | string;
     'calendar'?: boolean | string;
+    'create-polls'?: boolean | string;
+    'file-upload'?: boolean | string;
     'flip'?: boolean | string;
     'inbound-call'?: boolean | string;
+    'list-visitors'?: boolean | string;
     'livestreaming'?: boolean | string;
     'lobby'?: boolean | string;
     'moderation'?: boolean | string;
@@ -66,6 +69,7 @@ export interface IParticipantFeatures {
     'recording'?: boolean | string;
     'room'?: boolean | string;
     'screen-sharing'?: boolean | string;
+    'send-groupchat'?: boolean | string;
     'sip-inbound-call'?: boolean | string;
     'sip-outbound-call'?: boolean | string;
     'transcription'?: boolean | string;
@@ -84,3 +88,5 @@ export interface IJitsiParticipant {
     getSources: () => Map<string, Map<string, ISourceInfo>>;
     isHidden: () => boolean;
 }
+
+export type ParticipantFeaturesKey = keyof IParticipantFeatures;

@@ -17,8 +17,8 @@ export interface IProps extends AbstractButtonProps {
  * A remote video menu button which shows the connection statistics.
  */
 class ConnectionStatusButton extends AbstractButton<IProps> {
-    icon = IconInfoCircle;
-    label = 'videothumbnail.connectionInfo';
+    override icon = IconInfoCircle;
+    override label = 'videothumbnail.connectionInfo';
 
     /**
      * Handles clicking / pressing the button, and kicks the participant.
@@ -26,7 +26,7 @@ class ConnectionStatusButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch, participantID } = this.props;
 
         dispatch(showConnectionStatus(participantID));

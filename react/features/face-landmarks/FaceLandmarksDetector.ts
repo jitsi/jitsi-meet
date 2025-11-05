@@ -1,5 +1,4 @@
 import 'image-capture';
-import './createImageBitmap';
 import { IStore } from '../app/types';
 import { isMobileBrowser } from '../base/environment/utils';
 import { getLocalVideoTrack } from '../base/tracks/functions';

@@ -133,7 +133,7 @@ class RaiseHandButton extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { _enabled } = this.props;
 
         if (!_enabled) {

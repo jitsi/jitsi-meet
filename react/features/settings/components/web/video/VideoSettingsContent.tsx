@@ -8,7 +8,6 @@ import { IconImage } from '../../../../base/icons/svg';
 import { Video } from '../../../../base/media/components/index';
 import { equals } from '../../../../base/redux/functions';
 import { updateSettings } from '../../../../base/settings/actions';
-import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import Checkbox from '../../../../base/ui/components/web/Checkbox';
 import ContextMenu from '../../../../base/ui/components/web/ContextMenu';
 import ContextMenuItem from '../../../../base/ui/components/web/ContextMenuItem';
@@ -130,7 +129,7 @@ const useStyles = makeStyles()(theme => {
             borderRadius: '4px',
             padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
             color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.labelBold),
+            ...theme.typography.labelBold,
             width: 'fit-content',
             maxwidth: `calc(100% - ${theme.spacing(2)} - ${theme.spacing(2)})`,
             overflow: 'hidden',
@@ -257,6 +256,7 @@ const VideoSettingsContent = ({
             previewProps['aria-checked'] = true;
             previewProps.className = cx(classes.previewEntry, classes.selectedEntry);
         } else {
+            previewProps['aria-checked'] = false;
             previewProps.onClick = _onEntryClick(deviceId);
             previewProps.onKeyPress = (e: React.KeyboardEvent) => {
                 if (e.key === ' ' || e.key === 'Enter') {
@@ -269,7 +269,7 @@ const VideoSettingsContent = ({
         return (
             <div
                 { ...previewProps }
-                role = 'radio'>
+                role = 'menuitemradio'>
                 <div className = { classes.labelContainer }>
                     {label && <div className = { classes.label }>
                         <span>{label}</span>
@@ -303,25 +303,24 @@ const VideoSettingsContent = ({
     return (
         <ContextMenu
             activateFocusTrap = { true }
-            aria-labelledby = 'video-settings-button'
             className = { classes.container }
             hidden = { false }
-            id = 'video-settings-dialog'
-            role = 'radiogroup'
-            tabIndex = { -1 }>
-            <ContextMenuItemGroup>
+            id = 'video-settings-dialog'>
+            <ContextMenuItemGroup role = 'group'>
                 {trackData.map((data, i) => _renderPreviewEntry(data, i))}
             </ContextMenuItemGroup>
-            <ContextMenuItemGroup>
+            <ContextMenuItemGroup role = 'group'>
                 { visibleVirtualBackground && <ContextMenuItem
                     accessibilityLabel = { t('virtualBackground.title') }
                     icon = { IconImage }
                     onClick = { selectBackground }
+                    role = 'menuitem'
                     text = { t('virtualBackground.title') } /> }
                 {!disableLocalVideoFlip && (
                     <div
                         className = { classes.checkboxContainer }
-                        onClick = { stopPropagation }>
+                        onClick = { stopPropagation }
+                        role = 'menuitem'>
                         <Checkbox
                             checked = { localFlipX }
                             label = { t('videothumbnail.mirrorVideo') }

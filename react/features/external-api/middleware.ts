@@ -29,6 +29,7 @@ import { getBaseUrl } from '../base/util/helpers';
 import { appendSuffix } from '../display-name/functions';
 import { SUBMIT_FEEDBACK_ERROR, SUBMIT_FEEDBACK_SUCCESS } from '../feedback/actionTypes';
 import { SET_FILMSTRIP_VISIBLE } from '../filmstrip/actionTypes';
+import { iAmVisitor } from '../visitors/functions';
 
 import './subscriber';
 
@@ -120,7 +121,8 @@ MiddlewareRegistry.register(store => next => action => {
                 ),
                 avatarURL: loadableAvatarUrl,
                 breakoutRoom,
-                email
+                email,
+                visitor: iAmVisitor(state)
             }
         );
         break;
@@ -142,7 +144,7 @@ MiddlewareRegistry.register(store => next => action => {
             break;
         }
 
-        const pId = action.participant.getId();
+        const actor = action.participant;
 
         APP.API.notifyKickedOut(
             {
@@ -151,8 +153,8 @@ MiddlewareRegistry.register(store => next => action => {
                 local: true
             },
             {
-                id: pId,
-                name: getParticipantDisplayName(state, pId)
+                id: actor?.getId(),
+                name: actor?.getDisplayName()
             }
         );
         break;

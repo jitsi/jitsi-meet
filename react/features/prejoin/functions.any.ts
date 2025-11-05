@@ -182,10 +182,9 @@ export function isPrejoinPageVisible(state: IReduxState): boolean {
  */
 export function shouldAutoKnock(state: IReduxState): boolean {
     const { iAmRecorder, iAmSipGateway } = state['features/base/config'];
-    const { userSelectedSkipPrejoin } = state['features/base/settings'];
     const { autoKnock } = getLobbyConfig(state);
 
-    return Boolean(((isPrejoinEnabledInConfig(state) && !userSelectedSkipPrejoin)
+    return Boolean(((isPrejoinEnabledInConfig(state))
             || autoKnock || (iAmRecorder && iAmSipGateway))
         && !state['features/lobby'].knocking);
 }

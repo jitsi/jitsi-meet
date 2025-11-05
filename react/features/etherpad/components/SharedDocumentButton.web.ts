@@ -21,13 +21,13 @@ interface IProps extends AbstractButtonProps {
  * Implements an {@link AbstractButton} to open the chat screen on mobile.
  */
 class SharedDocumentButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.documentOpen';
-    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.documentClose';
-    icon = IconShareDoc;
-    label = 'toolbar.documentOpen';
-    toggledLabel = 'toolbar.documentClose';
-    tooltip = 'toolbar.documentOpen';
-    toggledTooltip = 'toolbar.documentClose';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.documentOpen';
+    override toggledAccessibilityLabel = 'toolbar.accessibilityLabel.documentClose';
+    override icon = IconShareDoc;
+    override label = 'toolbar.documentOpen';
+    override toggledLabel = 'toolbar.documentClose';
+    override tooltip = 'toolbar.documentOpen';
+    override toggledTooltip = 'toolbar.documentClose';
 
     /**
      * Handles clicking / pressing the button, and opens / closes the appropriate dialog.
@@ -35,7 +35,7 @@ class SharedDocumentButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { _editing, dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent(
@@ -55,7 +55,7 @@ class SharedDocumentButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._editing;
     }
 }

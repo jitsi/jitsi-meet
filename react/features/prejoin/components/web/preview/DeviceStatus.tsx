@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { ColorPalette } from '../../../../base/styles/components/styles/ColorPalette';
-import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import {
     getDeviceStatusText,
     getDeviceStatusType
@@ -16,7 +15,7 @@ const useStyles = makeStyles<{ deviceStatusType?: string; }>()((theme, { deviceS
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: '#fff',
             marginTop: theme.spacing(4),
 
@@ -67,7 +66,9 @@ function DeviceStatus() {
             role = 'alert'
             tabIndex = { -1 }>
             {!hasError && <div className = { classes.indicator } />}
-            <span role = 'heading'>
+            <span
+                aria-level = { 3 }
+                role = 'heading'>
                 {hasError ? t('prejoin.errorNoPermissions') : t(deviceStatusText ?? '')}
             </span>
         </div>

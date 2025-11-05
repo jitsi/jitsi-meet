@@ -15,7 +15,7 @@ export default class Text extends Component<React.HTMLProps<HTMLSpanElement>> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         // eslint-disable-next-line react/prop-types
         const _style = getFixedPlatformStyle(this.props.style as StyleType);
 

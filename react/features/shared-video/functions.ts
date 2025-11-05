@@ -112,16 +112,6 @@ export function isSharedVideoEnabled(stateful: IStateful) {
 }
 
 /**
- * Checks if you youtube URLs should be allowed for shared videos.
- *
- * @param {Array<string>} allowedUrlDomains - The allowed URL domains for shared video.
- * @returns {boolean}
- */
-export function areYoutubeURLsAllowedForSharedVideo(allowedUrlDomains?: Array<string>) {
-    return Boolean(allowedUrlDomains?.includes(YOUTUBE_URL_DOMAIN));
-}
-
-/**
  * Returns true if the passed url is allowed to be used for shared video or not.
  *
  * @param {string} url - The URL.

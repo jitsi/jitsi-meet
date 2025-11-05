@@ -11,6 +11,7 @@
 module:depends('room_destroy');
 
 local util = module:require "util";
+local get_room_from_jid = util.get_room_from_jid;
 local is_healthcheck_room = util.is_healthcheck_room;
 local main_muc_component_host = module:get_option_string('main_muc');
 local lobby_muc_component_host = module:get_option_string('lobby_muc');
@@ -110,7 +111,8 @@ run_when_component_loaded(main_muc_component_host, function(host_module, host_na
             -- Check if room should be destroyed when someone leaves the main room
 
             local main_room = event.room;
-            if is_healthcheck_room(main_room.jid) or not has_persistent_lobby(main_room) then
+            if is_healthcheck_room(main_room.jid) or not has_persistent_lobby(main_room)
+                or main_room.destroying then
                 return;
             end
 
@@ -144,9 +146,13 @@ run_when_component_loaded(lobby_muc_component_host, function(host_module, host_n
 
         lobby_module:hook("muc-occupant-left", function(event)
             -- Check if room should be destroyed when someone leaves the lobby
-
             local lobby_room = event.room;
-            local main_room = lobby_room.main_room;
+
+            if not lobby_room.main_room_jid then
+                return;
+            end
+
+            local main_room = get_room_from_jid(lobby_room.main_room_jid);
 
             if not main_room or is_healthcheck_room(main_room.jid) or not has_persistent_lobby(main_room) then
                 return;

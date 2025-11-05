@@ -1,6 +1,11 @@
 import { openDialog } from '../base/dialog/actions';
+import { DesktopSharingSourceType } from '../base/tracks/types';
 
 import DesktopPicker from './components/DesktopPicker';
+
+type Options = {
+    desktopSharingSources?: Array<DesktopSharingSourceType>;
+};
 
 /**
  * Signals to open a dialog with the DesktopPicker component.
@@ -10,7 +15,7 @@ import DesktopPicker from './components/DesktopPicker';
  * a DesktopCapturerSource has been chosen.
  * @returns {Object}
  */
-export function showDesktopPicker(options: { desktopSharingSources?: any; } = {}, onSourceChoose: Function) {
+export function showDesktopPicker(options: Options = {}, onSourceChoose: Function) {
     const { desktopSharingSources } = options;
 
     return openDialog(DesktopPicker, {

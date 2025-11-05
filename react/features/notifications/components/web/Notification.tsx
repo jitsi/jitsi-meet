@@ -1,6 +1,7 @@
 import { Theme } from '@mui/material';
-import React, { isValidElement, useCallback, useContext } from 'react';
+import React, { isValidElement, useCallback, useContext, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { keyframes } from 'tss-react';
 import { makeStyles } from 'tss-react/mui';
 
@@ -15,7 +16,7 @@ import {
     IconWarningCircle
 } from '../../../base/icons/svg';
 import Message from '../../../base/react/components/web/Message';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import { getSupportUrl } from '../../../base/react/functions';
 import { NOTIFICATION_ICON, NOTIFICATION_TYPE } from '../../constants';
 import { INotificationProps } from '../../types';
 import { NotificationsTransitionContext } from '../NotificationsTransition';
@@ -122,11 +123,11 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
 
         title: {
-            ...withPixelLineHeight(theme.typography.bodyShortBold)
+            ...theme.typography.bodyShortBold
         },
 
         description: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             overflow: 'auto',
             overflowWrap: 'break-word',
             userSelect: 'all',
@@ -150,7 +151,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             outline: 0,
             backgroundColor: 'transparent',
             color: theme.palette.action01,
-            ...withPixelLineHeight(theme.typography.bodyShortBold),
+            ...theme.typography.bodyShortBold,
             marginRight: theme.spacing(3),
             padding: 0,
             cursor: 'pointer',
@@ -161,6 +162,11 @@ const useStyles = makeStyles()((theme: Theme) => {
 
             '&.destructive': {
                 color: theme.palette.textError
+            },
+
+            '&:focus-visible': {
+                outline: `2px solid ${theme.palette.action01}`,
+                outlineOffset: 2
             }
         },
 
@@ -190,6 +196,11 @@ const Notification = ({
     const { classes, cx, theme } = useStyles();
     const { t } = useTranslation();
     const { unmounting } = useContext(NotificationsTransitionContext);
+    const supportUrl = useSelector(getSupportUrl);
+    const isErrorOrWarning = useMemo(
+        () => appearance === NOTIFICATION_TYPE.ERROR || appearance === NOTIFICATION_TYPE.WARNING,
+        [ appearance ]
+    );
 
     const ICON_COLOR = {
         error: theme.palette.iconError,
@@ -229,9 +240,30 @@ const Notification = ({
         );
     }, [ description, descriptionArguments, descriptionKey, classes ]);
 
-    const _onOpenSupportLink = () => {
-        window.open(interfaceConfig.SUPPORT_URL, '_blank', 'noopener');
-    };
+    const _onOpenSupportLink = useCallback(() => {
+        window.open(supportUrl, '_blank', 'noopener');
+    }, [ supportUrl ]);
+
+    const processCustomActions
+        = (key?: string[], handler?: Function[], type?: string[]): {
+            content: string; onClick: () => void; testId?: string; type?: string; }[] => {
+            if (key?.length && handler?.length) {
+                return key.map((customAction: string, customActionIndex: number) => {
+                    return {
+                        content: t(customAction),
+                        onClick: () => {
+                            if (handler?.[customActionIndex]()) {
+                                onDismiss();
+                            }
+                        },
+                        type: type?.[customActionIndex],
+                        testId: customAction
+                    };
+                });
+            }
+
+            return [];
+        };
 
     const mapAppearanceToButtons = useCallback((): {
         content: string; onClick: () => void; testId?: string; type?: string; }[] => {
@@ -244,14 +276,14 @@ const Notification = ({
                 }
             ];
 
-            if (!hideErrorSupportLink && interfaceConfig.SUPPORT_URL) {
+            if (!hideErrorSupportLink && supportUrl) {
                 buttons.push({
                     content: t('dialog.contactSupport'),
                     onClick: _onOpenSupportLink
                 });
             }
 
-            return buttons;
+            return processCustomActions(customActionNameKey, customActionHandler, customActionType).concat(buttons);
         }
         case NOTIFICATION_TYPE.WARNING:
             return [
@@ -262,24 +294,9 @@ const Notification = ({
             ];
 
         default:
-            if (customActionNameKey?.length && customActionHandler?.length) {
-                return customActionNameKey.map((customAction: string, customActionIndex: number) => {
-                    return {
-                        content: t(customAction),
-                        onClick: () => {
-                            if (customActionHandler?.[customActionIndex]()) {
-                                onDismiss();
-                            }
-                        },
-                        type: customActionType?.[customActionIndex],
-                        testId: customAction
-                    };
-                });
-            }
-
-            return [];
+            return processCustomActions(customActionNameKey, customActionHandler, customActionType);
         }
-    }, [ appearance, onDismiss, customActionHandler, customActionNameKey, hideErrorSupportLink ]);
+    }, [ appearance, onDismiss, customActionHandler, customActionNameKey, hideErrorSupportLink, supportUrl ]);
 
     const getIcon = useCallback(() => {
         let iconToDisplay;
@@ -311,11 +328,12 @@ const Notification = ({
 
     return (
         <div
-            aria-atomic = 'false'
-            aria-live = 'polite'
-            className = { cx(classes.container, unmounting.get(uid ?? '') && 'unmount') }
+            aria-atomic = { true }
+            aria-live = { isErrorOrWarning ? 'assertive' : 'polite' }
+            className = { cx(classes.container, (unmounting.get(uid ?? '') && 'unmount') as string | undefined) }
             data-testid = { titleKey || descriptionKey }
-            id = { uid }>
+            id = { uid }
+            role = { isErrorOrWarning ? 'alert' : 'status' }>
             <div className = { cx(classes.ribbon, appearance) } />
             <div className = { classes.content }>
                 <div className = { icon }>
@@ -330,10 +348,12 @@ const Notification = ({
                     <div className = { classes.actionsContainer }>
                         {mapAppearanceToButtons().map(({ content, onClick, type, testId }) => (
                             <button
+                                aria-label = { content }
                                 className = { cx(classes.action, type) }
                                 data-testid = { testId }
                                 key = { content }
-                                onClick = { onClick }>
+                                onClick = { onClick }
+                                type = 'button'>
                                 {content}
                             </button>
                         ))}
@@ -347,6 +367,7 @@ const Notification = ({
                         onClick = { onDismiss }
                         size = { 20 }
                         src = { IconCloseLarge }
+                        tabIndex = { 0 }
                         testId = { `${titleKey || descriptionKey}-dismiss` } />
                 )}
             </div>

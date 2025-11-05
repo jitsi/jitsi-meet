@@ -8,15 +8,15 @@
 export const CLEAR_TOOLBOX_TIMEOUT = 'CLEAR_TOOLBOX_TIMEOUT';
 
 /**
- * The type of (redux) action which signals that a custom button from the overflow menu was pressed.
+ * The type of (redux) action which signals that a custom button was pressed.
  *
  * @returns {{
- *      type: CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED,
+ *      type: CUSTOM_BUTTON_PRESSED,
  *      id: string,
  *      text: string
  * }}
  */
-export const CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED = 'CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED';
+export const CUSTOM_BUTTON_PRESSED = 'CUSTOM_BUTTON_PRESSED';
 
 /**
  * The type of (redux) action which updates whether the conference is or is not

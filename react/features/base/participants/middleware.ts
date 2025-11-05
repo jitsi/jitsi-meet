@@ -3,22 +3,35 @@ import { batch } from 'react-redux';
 import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
-import { approveParticipant } from '../../av-moderation/actions';
+import {
+    approveParticipant,
+    approveParticipantAudio,
+    approveParticipantDesktop,
+    approveParticipantVideo
+} from '../../av-moderation/actions';
+import {
+    AUDIO_RAISED_HAND_NOTIFICATION_ID,
+    DESKTOP_RAISED_HAND_NOTIFICATION_ID,
+    MEDIA_TYPE,
+    VIDEO_RAISED_HAND_NOTIFICATION_ID
+} from '../../av-moderation/constants';
+import { isForceMuted } from '../../av-moderation/functions';
 import { UPDATE_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
 import { getBreakoutRooms } from '../../breakout-rooms/functions';
 import { toggleE2EE } from '../../e2ee/actions';
 import { MAX_MODE } from '../../e2ee/constants';
-import { showNotification } from '../../notifications/actions';
+import { hideNotification, showNotification } from '../../notifications/actions';
 import {
     LOCAL_RECORDING_NOTIFICATION_ID,
     NOTIFICATION_TIMEOUT_TYPE,
-    RAISE_HAND_NOTIFICATION_ID
+    RAISE_HAND_NOTIFICATION_ID,
+    VISITOR_ASKED_TO_JOIN_NOTIFICATION_ID
 } from '../../notifications/constants';
 import { open as openParticipantsPane } from '../../participants-pane/actions';
-import { isForceMuted } from '../../participants-pane/functions';
 import { CALLING, INVITED } from '../../presence-status/constants';
 import { RAISE_HAND_SOUND_ID } from '../../reactions/constants';
 import { RECORDING_OFF_SOUND_ID, RECORDING_ON_SOUND_ID } from '../../recording/constants';
+import { iAmVisitor } from '../../visitors/functions';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app/actionTypes';
 import { CONFERENCE_JOINED, CONFERENCE_WILL_JOIN } from '../conference/actionTypes';
 import { forEachConference, getCurrentConference } from '../conference/functions';
@@ -26,10 +39,11 @@ import { IJitsiConference } from '../conference/reducer';
 import { SET_CONFIG } from '../config/actionTypes';
 import { getDisableRemoveRaisedHandOnFocus } from '../config/functions.any';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
-import { MEDIA_TYPE } from '../media/constants';
+import { VIDEO_TYPE } from '../media/constants';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 import { playSound, registerSound, unregisterSound } from '../sounds/actions';
+import { isImageDataURL } from '../util/uri';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -42,6 +56,7 @@ import {
     OVERWRITE_PARTICIPANT_NAME,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
+    PARTICIPANT_MUTED_US,
     PARTICIPANT_UPDATED,
     RAISE_HAND_UPDATED,
     SET_LOCAL_PARTICIPANT_RECORDING_STATUS
@@ -154,7 +169,10 @@ MiddlewareRegistry.register(store => next => action => {
 
     case LOCAL_PARTICIPANT_RAISE_HAND: {
         const { raisedHandTimestamp } = action;
-        const localId = getLocalParticipant(store.getState())?.id;
+        const localParticipant = getLocalParticipant(store.getState());
+        const localId = localParticipant?.id;
+        const _iAmVisitor = iAmVisitor(store.getState());
+        const isHandRaised = hasRaisedHand(localParticipant);
 
         store.dispatch(participantUpdated({
             // XXX Only the local participant is allowed to update without
@@ -172,6 +190,18 @@ MiddlewareRegistry.register(store => next => action => {
             id: localId ?? '',
             raisedHandTimestamp
         }));
+
+        if (_iAmVisitor) {
+            const notifyAction = isHandRaised
+                ? hideNotification(VISITOR_ASKED_TO_JOIN_NOTIFICATION_ID)
+                : showNotification({
+                    titleKey: 'visitors.notification.requestToJoin',
+                    descriptionKey: 'visitors.notification.requestToJoinDescription',
+                    uid: VISITOR_ASKED_TO_JOIN_NOTIFICATION_ID
+                }, NOTIFICATION_TIMEOUT_TYPE.STICKY);
+
+            store.dispatch(notifyAction);
+        }
 
         if (typeof APP !== 'undefined') {
             APP.API.notifyRaiseHandUpdated(localId, raisedHandTimestamp);
@@ -287,6 +317,31 @@ MiddlewareRegistry.register(store => next => action => {
         (!isScreenShareParticipant(action.participant)
             && !isWhiteboardParticipant(action.participant)
         ) && _maybePlaySounds(store, action);
+
+        break;
+    }
+
+    case PARTICIPANT_MUTED_US: {
+        const { dispatch, getState } = store;
+        const { participant, track } = action;
+        let titleKey;
+
+        if (track.isAudioTrack()) {
+            titleKey = 'notify.mutedRemotelyTitle';
+        } else if (track.isVideoTrack()) {
+            if (track.getVideoType() === VIDEO_TYPE.DESKTOP) {
+                titleKey = 'notify.desktopMutedRemotelyTitle';
+            } else {
+                titleKey = 'notify.videoMutedRemotelyTitle';
+            }
+        }
+
+        dispatch(showNotification({
+            titleKey,
+            titleArguments: {
+                participantDisplayName: getParticipantDisplayName(getState, participant.getId())
+            }
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
         break;
     }
@@ -689,15 +744,20 @@ function _participantJoinedOrUpdated(store: IStore, next: Function, action: AnyA
     // even if disableThirdPartyRequests is set to true in config
     if (getState()['features/base/config']?.hosts) {
         const { disableThirdPartyRequests } = getState()['features/base/config'];
+        const participantId = !id && local ? getLocalParticipant(getState())?.id : id;
 
-        if (!disableThirdPartyRequests && (avatarURL || email || id || name)) {
-            const participantId = !id && local ? getLocalParticipant(getState())?.id : id;
-            const updatedParticipant = getParticipantById(getState(), participantId);
+        if (avatarURL || email || id || name) {
+            if (!disableThirdPartyRequests) {
+                const updatedParticipant = getParticipantById(getState(), participantId);
 
-            getFirstLoadableAvatarUrl(updatedParticipant ?? { id: '' }, store)
-                .then((urlData?: { isUsingCORS: boolean; src: string; }) => {
-                    dispatch(setLoadableAvatarUrl(participantId, urlData?.src ?? '', Boolean(urlData?.isUsingCORS)));
-                });
+                getFirstLoadableAvatarUrl(updatedParticipant ?? { id: '' }, store)
+                    .then((urlData?: { isUsingCORS: boolean; src: string; }) => {
+                        dispatch(setLoadableAvatarUrl(
+                            participantId, urlData?.src ?? '', Boolean(urlData?.isUsingCORS)));
+                    });
+            } else if (isImageDataURL(avatarURL)) {
+                dispatch(setLoadableAvatarUrl(participantId, avatarURL, false));
+            }
         }
     }
 
@@ -780,54 +840,124 @@ function _raiseHandUpdated({ dispatch, getState }: IStore, conference: IJitsiCon
         APP.API.notifyRaiseHandUpdated(participantId, raisedHandTimestamp);
     }
 
+    if (!raisedHandTimestamp) {
+        return;
+    }
+
+    // Display notifications about raised hands.
+
     const isModerator = isLocalParticipantModerator(state);
     const participant = getParticipantById(state, participantId);
-    let shouldDisplayAllowAction = false;
+    const participantName = getParticipantDisplayName(state, participantId);
+
+    let shouldDisplayAllowAudio = false;
+    let shouldDisplayAllowVideo = false;
+    let shouldDisplayAllowDesktop = false;
 
     if (isModerator) {
-        shouldDisplayAllowAction = isForceMuted(participant, MEDIA_TYPE.AUDIO, state)
-            || isForceMuted(participant, MEDIA_TYPE.VIDEO, state);
+        shouldDisplayAllowAudio = isForceMuted(participant, MEDIA_TYPE.AUDIO, state);
+        shouldDisplayAllowVideo = isForceMuted(participant, MEDIA_TYPE.VIDEO, state);
+        shouldDisplayAllowDesktop = isForceMuted(participant, MEDIA_TYPE.DESKTOP, state);
     }
 
-    let action;
-
-    if (shouldDisplayAllowAction) {
-        action = {
-            customActionNameKey: [ 'notify.allowAction' ],
-            customActionHandler: [ () => dispatch(approveParticipant(participantId)) ]
+    if (shouldDisplayAllowAudio || shouldDisplayAllowVideo || shouldDisplayAllowDesktop) {
+        const action: {
+            customActionHandler: Array<() => void>;
+            customActionNameKey: string[];
+        } = {
+            customActionHandler: [],
+            customActionNameKey: [],
         };
+
+        // Always add a "allow all" at the end of the list.
+        action.customActionNameKey.push('notify.allowAll');
+        action.customActionHandler.push(() => {
+            dispatch(approveParticipant(participantId));
+            dispatch(hideNotification(AUDIO_RAISED_HAND_NOTIFICATION_ID));
+            dispatch(hideNotification(DESKTOP_RAISED_HAND_NOTIFICATION_ID));
+            dispatch(hideNotification(VIDEO_RAISED_HAND_NOTIFICATION_ID));
+        });
+
+        if (shouldDisplayAllowAudio) {
+            const customActionNameKey = action.customActionNameKey.slice();
+            const customActionHandler = action.customActionHandler.slice();
+
+            customActionNameKey.unshift('notify.allowAudio');
+            customActionHandler.unshift(() => {
+                dispatch(approveParticipantAudio(participantId));
+                dispatch(hideNotification(AUDIO_RAISED_HAND_NOTIFICATION_ID));
+            });
+
+            dispatch(showNotification({
+                title: participantName,
+                descriptionKey: 'notify.raisedHand',
+                uid: AUDIO_RAISED_HAND_NOTIFICATION_ID,
+                customActionNameKey,
+                customActionHandler,
+            }, NOTIFICATION_TIMEOUT_TYPE.EXTRA_LONG));
+        }
+        if (shouldDisplayAllowVideo) {
+            const customActionNameKey = action.customActionNameKey.slice();
+            const customActionHandler = action.customActionHandler.slice();
+
+            customActionNameKey.unshift('notify.allowVideo');
+            customActionHandler.unshift(() => {
+                dispatch(approveParticipantVideo(participantId));
+                dispatch(hideNotification(VIDEO_RAISED_HAND_NOTIFICATION_ID));
+            });
+
+            dispatch(showNotification({
+                title: participantName,
+                descriptionKey: 'notify.raisedHand',
+                uid: VIDEO_RAISED_HAND_NOTIFICATION_ID,
+                customActionNameKey,
+                customActionHandler,
+            }, NOTIFICATION_TIMEOUT_TYPE.EXTRA_LONG));
+        }
+        if (shouldDisplayAllowDesktop) {
+            const customActionNameKey = action.customActionNameKey.slice();
+            const customActionHandler = action.customActionHandler.slice();
+
+            customActionNameKey.unshift('notify.allowDesktop');
+            customActionHandler.unshift(() => {
+                dispatch(approveParticipantDesktop(participantId));
+                dispatch(hideNotification(DESKTOP_RAISED_HAND_NOTIFICATION_ID));
+            });
+
+            dispatch(showNotification({
+                title: participantName,
+                descriptionKey: 'notify.raisedHand',
+                uid: DESKTOP_RAISED_HAND_NOTIFICATION_ID,
+                customActionNameKey,
+                customActionHandler
+            }, NOTIFICATION_TIMEOUT_TYPE.EXTRA_LONG));
+        }
     } else {
-        action = {
-            customActionNameKey: [ 'notify.viewParticipants' ],
-            customActionHandler: [ () => dispatch(openParticipantsPane()) ]
-        };
-    }
-
-    if (raisedHandTimestamp) {
         let notificationTitle;
-        const participantName = getParticipantDisplayName(state, participantId);
         const { raisedHandsQueue } = state['features/base/participants'];
 
         if (raisedHandsQueue.length > 1) {
-            const raisedHands = raisedHandsQueue.length - 1;
-
             notificationTitle = i18n.t('notify.raisedHands', {
                 participantName,
-                raisedHands
+                raisedHands: raisedHandsQueue.length - 1
             });
         } else {
             notificationTitle = participantName;
         }
+
         dispatch(showNotification({
             titleKey: 'notify.somebody',
             title: notificationTitle,
             descriptionKey: 'notify.raisedHand',
             concatText: true,
             uid: RAISE_HAND_NOTIFICATION_ID,
-            ...action
-        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
-        dispatch(playSound(RAISE_HAND_SOUND_ID));
+            customActionNameKey: [ 'notify.viewParticipants' ],
+            customActionHandler: [ () => dispatch(openParticipantsPane()) ]
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
     }
+
+    dispatch(playSound(RAISE_HAND_SOUND_ID));
+
 }
 
 /**

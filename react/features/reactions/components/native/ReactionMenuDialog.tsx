@@ -79,7 +79,7 @@ class ReactionMenuDialog extends PureComponent<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { _styles, _width, _height, _participantCount } = this.props;
 
         return (

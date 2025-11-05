@@ -45,7 +45,9 @@ const PollCreate = (props: AbstractProps) => {
 
     useEffect(() => {
         answerInputs.current = answerInputs.current.slice(0, answers.length);
-
+        setTimeout(() => {
+            answerListRef.current?.scrollToEnd({ animated: true });
+        }, 1000);
     }, [ answers ]);
 
     /*
@@ -120,8 +122,7 @@ const PollCreate = (props: AbstractProps) => {
                     maxLength = { CHAR_LIMIT }
                     onChange = { name => setAnswer(index,
                         {
-                            name,
-                            voters: []
+                            name
                         }) }
                     onKeyPress = { ev => onAnswerKeyDown(index, ev) }
                     placeholder = { t('polls.create.answerPlaceholder', { index: index + 1 }) }

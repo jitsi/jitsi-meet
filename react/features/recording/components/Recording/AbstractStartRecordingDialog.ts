@@ -9,7 +9,6 @@ import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { updateDropboxToken } from '../../../dropbox/actions';
 import { getDropboxData, getNewAccessToken, isEnabled as isDropboxEnabled } from '../../../dropbox/functions.any';
 import { showErrorNotification } from '../../../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../../../notifications/constants';
 import { setRequestingSubtitles } from '../../../subtitles/actions.any';
 import { setSelectedRecordingService, startLocalVideoRecording } from '../../actions';
 import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../constants';
@@ -206,7 +205,7 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         if (typeof this.props._token !== 'undefined') {
             this._onTokenUpdated();
         }
@@ -218,7 +217,7 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         if (this.props._token !== prevProps._token) {
             this._onTokenUpdated();
         }
@@ -381,7 +380,7 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
                 } else {
                     dispatch(showErrorNotification({
                         titleKey: 'dialog.noDropboxToken'
-                    }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+                    }));
 
                     return;
                 }
@@ -416,7 +415,7 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
 
         if (this.state.selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE
                 && this.state.shouldRecordTranscription) {
-            dispatch(setRequestingSubtitles(true, _displaySubtitles, _subtitlesLanguage));
+            dispatch(setRequestingSubtitles(true, _displaySubtitles, _subtitlesLanguage, true));
         }
 
         _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {

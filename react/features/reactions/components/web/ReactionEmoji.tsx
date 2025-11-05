@@ -62,7 +62,7 @@ class ReactionEmoji extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         setTimeout(() => this.props.reactionRemove(this.props.uid), 5000);
     }
 
@@ -71,7 +71,7 @@ class ReactionEmoji extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { reaction, uid } = this.props;
         const { index } = this.state;
 

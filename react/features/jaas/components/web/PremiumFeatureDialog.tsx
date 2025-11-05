@@ -38,7 +38,7 @@ class PremiumFeatureDialog extends PureComponent<any> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { t } = this.props;
 
         return (

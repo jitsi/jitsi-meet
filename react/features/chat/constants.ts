@@ -4,7 +4,7 @@
 export const CHAR_LIMIT = 500;
 
 /**
- * The size of the chat. Equal to $sidebarWidth SCSS variable.
+ * The initial size of the chat.
  */
 export const CHAT_SIZE = 315;
 
@@ -39,10 +39,12 @@ export const SMALL_WIDTH_THRESHOLD = 580;
  */
 export const LOBBY_CHAT_MESSAGE = 'LOBBY_CHAT_MESSAGE';
 
-export const CHAT_TABS = {
-    POLLS: 'polls-tab',
-    CHAT: 'chat-tab'
-};
+export enum ChatTabs {
+    CHAT = 'chat-tab',
+    CLOSED_CAPTIONS = 'cc-tab',
+    FILE_SHARING = 'file_sharing-tab',
+    POLLS = 'polls-tab'
+}
 
 /**
  * Formatter string to display the message timestamp.
@@ -53,3 +55,5 @@ export const TIMESTAMP_FORMAT = 'H:mm';
  * The namespace for system messages.
  */
 export const MESSAGE_TYPE_SYSTEM = 'system_chat_message';
+
+export const OPTION_GROUPCHAT = 'groupchat';

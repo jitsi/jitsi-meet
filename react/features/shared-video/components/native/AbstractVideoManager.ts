@@ -5,7 +5,7 @@ import { IReduxState, IStore } from '../../../app/types';
 import { getCurrentConference } from '../../../base/conference/functions';
 import { IJitsiConference } from '../../../base/conference/reducer';
 import { getLocalParticipant } from '../../../base/participants/functions';
-import { setSharedVideoStatus } from '../../actions.any';
+import { setSharedVideoStatus } from '../../actions';
 import { PLAYBACK_STATUSES } from '../../constants';
 
 /**
@@ -102,7 +102,7 @@ abstract class AbstractVideoManager<S=void> extends PureComponent<IProps, S> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         this.processUpdatedProps();
     }
 
@@ -111,7 +111,7 @@ abstract class AbstractVideoManager<S=void> extends PureComponent<IProps, S> {
      *
      * @inheritdoc
      */
-    componentDidUpdate() {
+    override componentDidUpdate() {
         this.processUpdatedProps();
     }
 
@@ -120,7 +120,7 @@ abstract class AbstractVideoManager<S=void> extends PureComponent<IProps, S> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         if (this.dispose) {
             this.dispose();
         }

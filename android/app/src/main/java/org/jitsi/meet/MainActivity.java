@@ -30,9 +30,12 @@ import android.view.KeyEvent;
 
 import androidx.annotation.Nullable;
 
+import com.oney.WebRTCModule.WebRTCModuleOptions;
+
 import org.jitsi.meet.sdk.JitsiMeet;
 import org.jitsi.meet.sdk.JitsiMeetActivity;
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
+import org.webrtc.Logging;
 
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -79,6 +82,10 @@ public class MainActivity extends JitsiMeetActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         JitsiMeet.showSplashScreen(this);
+
+        WebRTCModuleOptions options = WebRTCModuleOptions.getInstance();
+        options.loggingSeverity = Logging.Severity.LS_ERROR;
+
         super.onCreate(null);
     }
 

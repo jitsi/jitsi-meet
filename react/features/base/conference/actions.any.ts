@@ -1,6 +1,5 @@
-import { createStartMutedConfigurationEvent } from '../../analytics/AnalyticsEvents';
-import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState, IStore } from '../../app/types';
+import { readyToClose } from '../../mobile/external-api/actions';
 import { transcriberJoined, transcriberLeft } from '../../transcribing/actions';
 import { setIAmVisitor } from '../../visitors/actions';
 import { iAmVisitor } from '../../visitors/functions';
@@ -11,9 +10,7 @@ import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection/constants';
 import { hasAvailableDevices } from '../devices/functions.any';
 import JitsiMeetJS, { JitsiConferenceEvents, JitsiE2ePingEvents } from '../lib-jitsi-meet';
 import {
-    setAudioMuted,
     setAudioUnmutePermissions,
-    setVideoMuted,
     setVideoUnmutePermissions
 } from '../media/actions';
 import { MEDIA_TYPE, MediaType } from '../media/constants';
@@ -26,12 +23,11 @@ import {
     participantSourcesUpdated,
     participantUpdated
 } from '../participants/actions';
-import { getNormalizedDisplayName, getParticipantByIdOrUndefined } from '../participants/functions';
+import { getLocalParticipant, getNormalizedDisplayName, getParticipantByIdOrUndefined } from '../participants/functions';
 import { IJitsiParticipant } from '../participants/types';
 import { toState } from '../redux/functions';
 import {
     destroyLocalTracks,
-    replaceLocalTrack,
     trackAdded,
     trackRemoved
 } from '../tracks/actions.any';
@@ -62,8 +58,6 @@ import {
     P2P_STATUS_CHANGED,
     SEND_TONES,
     SET_ASSUMED_BANDWIDTH_BPS,
-    SET_FOLLOW_ME,
-    SET_FOLLOW_ME_RECORDER,
     SET_OBFUSCATED_ROOM,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
@@ -87,7 +81,8 @@ import {
     getConferenceState,
     getCurrentConference,
     getVisitorOptions,
-    sendLocalParticipant
+    sendLocalParticipant,
+    updateTrackMuteState
 } from './functions';
 import logger from './logger';
 import { IConferenceMetadata, IJitsiConference } from './reducer';
@@ -143,7 +138,24 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
 
     conference.on(
         JitsiConferenceEvents.KICKED,
-        (participant: any) => dispatch(kickedOut(conference, participant)));
+        (participant: any, reason: any, isReplaced: boolean) => {
+
+            if (isReplaced) {
+                const localParticipant = getLocalParticipant(state);
+
+                dispatch(participantUpdated({
+                    conference,
+
+                    // @ts-ignore
+                    id: localParticipant.id,
+                    isReplaced
+                }));
+
+                dispatch(readyToClose());
+            } else {
+                dispatch(kickedOut(conference, participant));
+            }
+        });
 
     conference.on(
         JitsiConferenceEvents.PARTICIPANT_KICKED,
@@ -164,39 +176,6 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
     // Dispatches into features/base/media follow:
 
     conference.on(
-        JitsiConferenceEvents.STARTED_MUTED,
-        () => {
-            const audioMuted = Boolean(conference.isStartAudioMuted());
-            const videoMuted = Boolean(conference.isStartVideoMuted());
-            const localTracks = getLocalTracks(state['features/base/tracks']);
-
-            sendAnalytics(createStartMutedConfigurationEvent('remote', audioMuted, videoMuted));
-            logger.log(`Start muted: ${audioMuted ? 'audio, ' : ''}${videoMuted ? 'video' : ''}`);
-
-            // XXX Jicofo tells lib-jitsi-meet to start with audio and/or video
-            // muted i.e. Jicofo expresses an intent. Lib-jitsi-meet has turned
-            // Jicofo's intent into reality by actually muting the respective
-            // tracks. The reality is expressed in base/tracks already so what
-            // is left is to express Jicofo's intent in base/media.
-            // TODO Maybe the app needs to learn about Jicofo's intent and
-            // transfer that intent to lib-jitsi-meet instead of lib-jitsi-meet
-            // acting on Jicofo's intent without the app's knowledge.
-            dispatch(setAudioMuted(audioMuted));
-            dispatch(setVideoMuted(videoMuted));
-
-            // Remove the tracks from peerconnection as well.
-            for (const track of localTracks) {
-                const trackType = track.jitsiTrack.getType();
-
-                // Do not remove the audio track on RN. Starting with iOS 15 it will fail to unmute otherwise.
-                if ((audioMuted && trackType === MEDIA_TYPE.AUDIO && navigator.product !== 'ReactNative')
-                        || (videoMuted && trackType === MEDIA_TYPE.VIDEO)) {
-                    dispatch(replaceLocalTrack(track.jitsiTrack, null, conference));
-                }
-            }
-        });
-
-    conference.on(
         JitsiConferenceEvents.AUDIO_UNMUTE_PERMISSIONS_CHANGED,
         (disableAudioMuteChange: boolean) => {
             dispatch(setAudioUnmutePermissions(disableAudioMuteChange));
@@ -206,6 +185,15 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
         (disableVideoMuteChange: boolean) => {
             dispatch(setVideoUnmutePermissions(disableVideoMuteChange));
         });
+    conference.on(
+        JitsiConferenceEvents.START_MUTED_POLICY_CHANGED,
+        ({ audio, video }: { audio: boolean; video: boolean; }) => {
+            dispatch(onStartMutedPolicyChanged(audio, video));
+
+            updateTrackMuteState(state, dispatch, true);
+            updateTrackMuteState(state, dispatch, false);
+        }
+    );
 
     // Dispatches into features/base/tracks follow:
 
@@ -808,10 +796,8 @@ export function nonParticipantMessageReceived(id: string, json: Object) {
 /**
  * Updates the known state of start muted policies.
  *
- * @param {boolean} audioMuted - Whether or not members will join the conference
- * as audio muted.
- * @param {boolean} videoMuted - Whether or not members will join the conference
- * as video muted.
+ * @param {boolean} audioMuted - Whether or not members will join the conference as audio muted.
+ * @param {boolean} videoMuted - Whether or not members will join the conference as video muted.
  * @returns {{
  *     type: SET_START_MUTED_POLICY,
  *     startAudioMutedPolicy: boolean,
@@ -862,38 +848,6 @@ export function sendTones(tones: string, duration: number, pause: number) {
         tones,
         duration,
         pause
-    };
-}
-
-/**
- * Enables or disables the Follow Me feature.
- *
- * @param {boolean} enabled - Whether or not Follow Me should be enabled.
- * @returns {{
- *     type: SET_FOLLOW_ME,
- *     enabled: boolean
- * }}
- */
-export function setFollowMe(enabled: boolean) {
-    return {
-        type: SET_FOLLOW_ME,
-        enabled
-    };
-}
-
-/**
- * Enables or disables the Follow Me feature used only for the recorder.
- *
- * @param {boolean} enabled - Whether Follow Me should be enabled and used only by the recorder.
- * @returns {{
- *     type: SET_FOLLOW_ME_RECORDER,
- *     enabled: boolean
- * }}
- */
-export function setFollowMeRecorder(enabled: boolean) {
-    return {
-        type: SET_FOLLOW_ME_RECORDER,
-        enabled
     };
 }
 
@@ -1022,10 +976,8 @@ export function setRoom(room?: string) {
 /**
  * Sets whether or not members should join audio and/or video muted.
  *
- * @param {boolean} startAudioMuted - Whether or not members will join the
- * conference as audio muted.
- * @param {boolean} startVideoMuted - Whether or not members will join the
- * conference as video muted.
+ * @param {boolean} startAudioMuted - Whether or not members will join the conference as audio muted.
+ * @param {boolean} startVideoMuted - Whether or not members will join the conference as video muted.
  * @returns {Function}
  */
 export function setStartMutedPolicy(
@@ -1038,8 +990,7 @@ export function setStartMutedPolicy(
             video: startVideoMuted
         });
 
-        dispatch(
-            onStartMutedPolicyChanged(startAudioMuted, startVideoMuted));
+        dispatch(onStartMutedPolicyChanged(startAudioMuted, startVideoMuted));
     };
 }
 

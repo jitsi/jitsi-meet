@@ -486,7 +486,7 @@ function _syncTrackState({ getState }: IStore, next: Function, action: AnyAction
     const state = getState();
     const conference = getCurrentConference(state);
 
-    if (jitsiTrack.isLocal() && conference && conference.callUUID) {
+    if (jitsiTrack.isLocal() && conference?.callUUID) {
         switch (jitsiTrack.getType()) {
         case 'audio': {
             _updateCallIntegrationMuted(conference, state);

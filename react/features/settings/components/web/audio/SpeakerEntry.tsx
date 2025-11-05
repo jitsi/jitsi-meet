@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
 import { IconCheck } from '../../../../base/icons/svg';
@@ -25,7 +26,8 @@ interface IProps {
     deviceId: string;
 
     /**
-     * Flag controlling the selection state of the entry.
+     * Index of the device item used to generate this entry.
+     * Indexes are 0 based.
      */
     index: number;
 
@@ -90,6 +92,7 @@ const useStyles = makeStyles()(() => {
 const SpeakerEntry = (props: IProps) => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const { classes, cx } = useStyles();
+    const { t } = useTranslation();
 
     /**
      * Click handler for the entry.
@@ -134,36 +137,37 @@ const SpeakerEntry = (props: IProps) => {
     }
 
     const { children, isSelected, index, length } = props;
+    const testLabel = t('deviceSelection.testAudio');
 
     /* eslint-disable react/jsx-no-bind */
     return (
         <li
             aria-checked = { isSelected }
-            aria-posinset = { index }
+            aria-label = { children }
+            aria-posinset = { index + 1 } // Add one to offset the 0 based index.
             aria-setsize = { length }
             className = { classes.container }
             onClick = { _onClick }
             onKeyPress = { _onKeyPress }
-            role = 'radio'
+            role = 'menuitemradio'
             tabIndex = { 0 }>
             <ContextMenuItem
-                accessibilityLabel = { children }
                 icon = { isSelected ? IconCheck : undefined }
                 overflowType = { TEXT_OVERFLOW_TYPES.SCROLL_ON_HOVER }
                 selected = { isSelected }
                 text = { children }
-                textClassName = { cx(classes.entryText, 'entryText', !isSelected && 'left-margin') }>
-                <Button
-                    className = { cx(classes.testButton, 'testButton') }
-                    label = 'Test'
-                    onClick = { _onTestButtonClick }
-                    onKeyPress = { _onTestButtonClick }
-                    type = { BUTTON_TYPES.SECONDARY } />
-            </ContextMenuItem>
+                textClassName = { cx(classes.entryText, 'entryText', !isSelected && 'left-margin') } />
             <audio
                 preload = 'auto'
                 ref = { audioRef }
                 src = { TEST_SOUND_PATH } />
+            <Button
+                accessibilityLabel = { `${testLabel} ${children}` }
+                className = { cx(classes.testButton, 'testButton') }
+                label = { testLabel }
+                onClick = { _onTestButtonClick }
+                onKeyPress = { _onTestButtonClick }
+                type = { BUTTON_TYPES.SECONDARY } />
         </li>
     );
 };

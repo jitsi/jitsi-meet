@@ -6,7 +6,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../base/icons/components/Icon';
 import { IconCloseLarge } from '../../../base/icons/svg';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import Checkbox from '../../../base/ui/components/web/Checkbox';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
@@ -31,12 +30,12 @@ const useStyles = makeStyles()(theme => {
             marginBottom: '24px'
         },
         question: {
-            ...withPixelLineHeight(theme.typography.heading6),
+            ...theme.typography.heading6,
             color: theme.palette.text01,
             marginBottom: '8px'
         },
         creator: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: theme.palette.text02
         },
         answerList: {
@@ -63,7 +62,6 @@ const PollAnswer = ({
     creatorName,
     checkBoxStates,
     poll,
-    pollId,
     setCheckbox,
     setCreateMode,
     skipAnswer,
@@ -78,12 +76,14 @@ const PollAnswer = ({
     const { classes } = useStyles();
 
     return (
-        <div className = { classes.container }>
+        <div
+            className = { classes.container }
+            id = { `poll-${poll.pollId}` }>
             {
                 pollSaved && <Icon
                     ariaLabel = { t('polls.closeButton') }
                     className = { classes.closeBtn }
-                    onClick = { () => dispatch(removePoll(pollId, poll)) }
+                    onClick = { () => dispatch(removePoll(poll)) }
                     role = 'button'
                     src = { IconCloseLarge }
                     tabIndex = { 0 } />
@@ -105,6 +105,7 @@ const PollAnswer = ({
                             <Checkbox
                                 checked = { checkBoxStates[index] }
                                 disabled = { poll.saved }
+                                id = { `poll-answer-checkbox-${poll.pollId}-${index}` }
                                 key = { index }
                                 label = { answer.name }
                                 onChange = { ev => setCheckbox(index, ev.target.checked) } />
@@ -121,11 +122,11 @@ const PollAnswer = ({
                             labelKey = { 'polls.answer.edit' }
                             onClick = { () => {
                                 setCreateMode(true);
-                                dispatch(editPoll(pollId, true));
+                                dispatch(editPoll(poll.pollId, true));
                             } }
                             type = { BUTTON_TYPES.SECONDARY } />
                         <Button
-                            accessibilityLabel = { t('polls.answer.send') }
+                            accessibilityLabel = { t('polls.create.accessibilityLabel.send') }
                             labelKey = { 'polls.answer.send' }
                             onClick = { sendPoll } />
                     </> : <>

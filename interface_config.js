@@ -42,14 +42,6 @@ var interfaceConfig = {
     DISABLE_PRESENCE_STATUS: false,
 
     /**
-     * Whether the ringing sound in the call/ring overlay is disabled. If
-     * {@code undefined}, defaults to {@code false}.
-     *
-     * @type {boolean}
-     */
-    DISABLE_RINGING: false,
-
-    /**
      * Whether the speech to text transcription subtitles panel is disabled.
      * If {@code undefined}, defaults to {@code false}.
      *
@@ -69,9 +61,6 @@ var interfaceConfig = {
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
 
     ENABLE_DIAL_OUT: true,
-
-    // DEPRECATED. Animation no longer supported.
-    // ENABLE_FEEDBACK_ANIMATION: false,
 
     FILM_STRIP_MAX_HEIGHT: 120,
 
@@ -204,17 +193,6 @@ var interfaceConfig = {
     // NATIVE_APP_NAME: 'Jitsi Meet',
 
     /**
-     * Specify Firebase dynamic link properties for the mobile apps.
-     */
-    // MOBILE_DYNAMIC_LINK: {
-    //    APN: 'org.jitsi.meet',
-    //    APP_CODE: 'w2atb',
-    //    CUSTOM_DOMAIN: undefined,
-    //    IBI: 'com.atlassian.JitsiMeet.ios',
-    //    ISI: '1165103905'
-    // },
-
-    /**
      * Hide the logo on the deep linking pages.
      */
     // HIDE_DEEP_LINKING_LOGO: false,
@@ -227,7 +205,7 @@ var interfaceConfig = {
     /**
      * Specify custom URL for downloading f droid app.
      */
-    // MOBILE_DOWNLOAD_LINK_F_DROID: 'https://f-droid.org/en/packages/org.jitsi.meet/',
+    // MOBILE_DOWNLOAD_LINK_F_DROID: 'https://f-droid.org/packages/org.jitsi.meet/',
 
     // Connection indicators (
     // CONNECTION_INDICATOR_AUTO_HIDE_ENABLED,

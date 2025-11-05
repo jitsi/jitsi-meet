@@ -15,24 +15,30 @@ import {
     JitsiConferenceErrors,
     JitsiConferenceEvents
 } from '../base/lib-jitsi-meet';
+import { PARTICIPANT_JOINED, PARTICIPANT_LEFT, PARTICIPANT_UPDATED } from '../base/participants/actionTypes';
 import {
     getLocalParticipant,
     getParticipantById,
     getParticipantDisplayName
 } from '../base/participants/functions';
+import { IParticipant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
+import { arePollsDisabled } from '../conference/functions.any';
+import { isFileSharingEnabled } from '../file-sharing/functions.any';
 import { addGif } from '../gifs/actions';
 import { extractGifURL, getGifDisplayMode, isGifEnabled, isGifMessage } from '../gifs/function.any';
 import { showMessageNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
-import { resetNbUnreadPollsMessages } from '../polls/actions';
+import { resetUnreadPollsCount } from '../polls/actions';
 import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
 import { pushReactions } from '../reactions/actions.any';
 import { ENDPOINT_REACTION_NAME } from '../reactions/constants';
 import { getReactionMessageFromBuffer, isReactionsEnabled } from '../reactions/functions.any';
+import { isCCTabEnabled } from '../subtitles/functions.any';
 import { showToolbox } from '../toolbox/actions';
+import { getDisplayName } from '../visitors/functions';
 
 import {
     ADD_MESSAGE,
@@ -40,11 +46,20 @@ import {
     OPEN_CHAT,
     SEND_MESSAGE,
     SEND_REACTION,
-    SET_IS_POLL_TAB_FOCUSED
+    SET_FOCUSED_TAB
 } from './actionTypes';
-import { addMessage, addMessageReaction, clearMessages, closeChat } from './actions.any';
+import {
+    addMessage,
+    addMessageReaction,
+    clearMessages,
+    closeChat,
+    notifyPrivateRecipientsChanged,
+    openChat,
+    setPrivateMessageRecipient
+} from './actions';
 import { ChatPrivacyDialog } from './components';
 import {
+    ChatTabs,
     INCOMING_MSG_SOUND_ID,
     LOBBY_CHAT_MESSAGE,
     MESSAGE_TYPE_ERROR,
@@ -52,8 +67,16 @@ import {
     MESSAGE_TYPE_REMOTE,
     MESSAGE_TYPE_SYSTEM
 } from './constants';
-import { getUnreadCount } from './functions';
+import {
+    getDisplayNameSuffix,
+    getFocusedTab,
+    getUnreadCount,
+    isChatDisabled,
+    isSendGroupChatDisabled,
+    isVisitorChatParticipant
+} from './functions';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
+import './subscriber';
 
 /**
  * Timeout for when to show the privacy notice after a private message was received.
@@ -103,16 +126,16 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case CLOSE_CHAT: {
-        const isPollTabOpen = getState()['features/chat'].isPollsTabFocused;
+        const { focusedTab } = getState()['features/chat'];
 
-        unreadCount = 0;
+        if (focusedTab === ChatTabs.CHAT) {
+            unreadCount = 0;
 
-        if (typeof APP !== 'undefined') {
-            APP.API.notifyChatUpdated(unreadCount, false);
-        }
-
-        if (isPollTabOpen) {
-            dispatch(resetNbUnreadPollsMessages());
+            if (typeof APP !== 'undefined') {
+                APP.API.notifyChatUpdated(unreadCount, false);
+            }
+        } else if (focusedTab === ChatTabs.POLLS) {
+            dispatch(resetUnreadPollsCount());
         }
         break;
     }
@@ -161,16 +184,69 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case OPEN_CHAT:
-        unreadCount = 0;
+    case SET_FOCUSED_TAB:
+    case OPEN_CHAT: {
+        const state = store.getState();
+        const focusedTab = action.tabId || getFocusedTab(state);
 
-        if (typeof APP !== 'undefined') {
-            APP.API.notifyChatUpdated(unreadCount, true);
+        if (focusedTab === ChatTabs.CHAT) {
+            // Don't allow opening chat if it's disabled AND user is trying to open the CHAT tab.
+            if (isChatDisabled(state)) {
+                return next(action);
+            }
+            unreadCount = 0;
+
+            if (typeof APP !== 'undefined') {
+                APP.API.notifyChatUpdated(unreadCount, true);
+            }
+
+            const { privateMessageRecipient } = state['features/chat'];
+
+            if (
+                isSendGroupChatDisabled(state)
+                && privateMessageRecipient
+                && !action.participant
+            ) {
+                const participant = getParticipantById(state, privateMessageRecipient.id);
+
+                if (participant) {
+                    action.participant = participant;
+                } else if (isVisitorChatParticipant(privateMessageRecipient)) {
+                    // Handle visitor participants that don't exist in the main participant list
+                    action.participant = privateMessageRecipient;
+                }
+            }
+        } else if (focusedTab === ChatTabs.POLLS) {
+            // Don't allow opening chat panel if polls are disabled AND user is trying to open the POLLS tab.
+            if (arePollsDisabled(state)) {
+                return next(action);
+            }
+            dispatch(resetUnreadPollsCount());
+
+        // Don't allow opening chat panel if file sharing is disabled AND user is trying to open the
+        // FILE_SHARING tab.
+        } else if (focusedTab === ChatTabs.FILE_SHARING && !isFileSharingEnabled(state)) {
+            return next(action);
+
+        // Don't allow opening chat panel if closed captions are disabled AND user is trying to open the
+        // CLOSED_CAPTIONS tab.
+        } else if (focusedTab === ChatTabs.CLOSED_CAPTIONS && !isCCTabEnabled(state)) {
+            return next(action);
         }
-        break;
 
-    case SET_IS_POLL_TAB_FOCUSED: {
-        dispatch(resetNbUnreadPollsMessages());
+        break;
+    }
+
+    case PARTICIPANT_JOINED:
+    case PARTICIPANT_LEFT:
+    case PARTICIPANT_UPDATED: {
+        if (_shouldNotifyPrivateRecipientsChanged(store, action)) {
+            const result = next(action);
+
+            dispatch(notifyPrivateRecipientsChanged());
+
+            return result;
+        }
         break;
     }
 
@@ -183,14 +259,17 @@ MiddlewareRegistry.register(store => next => action => {
             // recipient. This logic tries to mitigate this risk.
             const shouldSendPrivateMessageTo = _shouldSendPrivateMessageTo(state, action);
 
-            const participantExists = shouldSendPrivateMessageTo
-                && getParticipantById(state, shouldSendPrivateMessageTo);
+            if (shouldSendPrivateMessageTo) {
+                const participantExists = getParticipantById(state, shouldSendPrivateMessageTo.id);
 
-            if (shouldSendPrivateMessageTo && participantExists) {
-                dispatch(openDialog(ChatPrivacyDialog, {
-                    message: action.message,
-                    participantID: shouldSendPrivateMessageTo
-                }));
+                if (participantExists || shouldSendPrivateMessageTo.isFromVisitor) {
+                    dispatch(openDialog(ChatPrivacyDialog, {
+                        message: action.message,
+                        participantID: shouldSendPrivateMessageTo.id,
+                        isFromVisitor: shouldSendPrivateMessageTo.isFromVisitor,
+                        displayName: shouldSendPrivateMessageTo.name
+                    }));
+                }
             } else {
                 // Sending the message if privacy notice doesn't need to be shown.
 
@@ -206,10 +285,10 @@ MiddlewareRegistry.register(store => next => action => {
                         type: LOBBY_CHAT_MESSAGE,
                         message: action.message
                     }, lobbyMessageRecipient.id);
-                    _persistSentPrivateMessage(store, lobbyMessageRecipient.id, action.message, true);
+                    _persistSentPrivateMessage(store, lobbyMessageRecipient, action.message, true);
                 } else if (privateMessageRecipient) {
-                    conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message);
-                    _persistSentPrivateMessage(store, privateMessageRecipient.id, action.message);
+                    conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message, 'body', isVisitorChatParticipant(privateMessageRecipient));
+                    _persistSentPrivateMessage(store, privateMessageRecipient, action.message);
                 } else {
                     conference.sendTextMessage(action.message);
                 }
@@ -277,6 +356,27 @@ StateListenerRegistry.register(
 );
 
 /**
+ * Checks whether a notification for private chat recipients is needed.
+ *
+ * @param {IStore} store - The redux store.
+ * @param {{ participant: IParticipant, type: string }} action - The action.
+ * @returns {boolean}
+ */
+function _shouldNotifyPrivateRecipientsChanged(
+        store: IStore, action: { participant: IParticipant; type: string; }
+) {
+    const { type, participant } = action;
+
+    if ([ PARTICIPANT_LEFT, PARTICIPANT_JOINED ].includes(type)) {
+        return true;
+    }
+
+    const { id, name } = participant;
+
+    return name !== getParticipantDisplayName(store, id);
+}
+
+/**
  * Registers listener for {@link JitsiConferenceEvents.MESSAGE_RECEIVED} that
  * will perform various chat related activities.
  *
@@ -296,7 +396,7 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
         JitsiConferenceEvents.MESSAGE_RECEIVED,
         /* eslint-disable max-params */
         (participantId: string, message: string, timestamp: number,
-                displayName: string, isGuest: boolean, messageId: string) => {
+                displayName: string, isFromVisitor: boolean, messageId: string, source: string) => {
         /* eslint-enable max-params */
             _onConferenceMessageReceived(store, {
                 // in case of messages coming from visitors we can have unknown id
@@ -304,9 +404,17 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
                 message,
                 timestamp,
                 displayName,
-                isGuest,
+                isFromVisitor,
                 messageId,
-                privateMessage: false });
+                source,
+                privateMessage: false
+            });
+
+            if (isSendGroupChatDisabled(store.getState()) && participantId) {
+                const participant = getParticipantById(store, participantId);
+
+                store.dispatch(setPrivateMessageRecipient(participant));
+            }
         }
     );
 
@@ -323,13 +431,15 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
 
     conference.on(
         JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED,
-        (participantId: string, message: string, timestamp: number, messageId: string) => {
+        (participantId: string, message: string, timestamp: number, messageId: string, displayName?: string, isFromVisitor?: boolean) => {
             _onConferenceMessageReceived(store, {
                 participantId,
                 message,
                 timestamp,
+                displayName,
                 messageId,
-                privateMessage: true
+                privateMessage: true,
+                isFromVisitor
             });
         }
     );
@@ -348,9 +458,9 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
  * @returns {void}
  */
 function _onConferenceMessageReceived(store: IStore,
-        { displayName, isGuest, message, messageId, participantId, privateMessage, timestamp }: {
-        displayName?: string; isGuest?: boolean; message: string; messageId?: string;
-        participantId: string; privateMessage: boolean; timestamp: number; }
+        { displayName, isFromVisitor, message, messageId, participantId, privateMessage, timestamp, source }: {
+            displayName?: string; isFromVisitor?: boolean; message: string; messageId?: string;
+            participantId: string; privateMessage: boolean; source?: string; timestamp: number; }
 ) {
 
     const isGif = isGifEnabled(store.getState()) && isGifMessage(message);
@@ -363,13 +473,14 @@ function _onConferenceMessageReceived(store: IStore,
     }
     _handleReceivedMessage(store, {
         displayName,
-        isGuest,
+        isFromVisitor,
         participantId,
         message,
         privateMessage,
         lobbyChat: false,
         timestamp,
-        messageId
+        messageId,
+        source
     }, true, isGif);
 }
 
@@ -478,9 +589,9 @@ function getLobbyChatDisplayName(state: IReduxState, participantId: string) {
  * @returns {void}
  */
 function _handleReceivedMessage({ dispatch, getState }: IStore,
-        { displayName, isGuest, lobbyChat, message, messageId, participantId, privateMessage, timestamp }: {
-        displayName?: string; isGuest?: boolean; lobbyChat: boolean; message: string;
-        messageId?: string; participantId: string; privateMessage: boolean; timestamp: number; },
+        { displayName, isFromVisitor, lobbyChat, message, messageId, participantId, privateMessage, source, timestamp }: {
+            displayName?: string; isFromVisitor?: boolean; lobbyChat: boolean; message: string;
+            messageId?: string; participantId: string; privateMessage: boolean; source?: string; timestamp: number; },
         shouldPlaySound = true,
         isReaction = false
 ) {
@@ -489,48 +600,72 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
     const { isOpen: isChatOpen } = state['features/chat'];
     const { soundsIncomingMessage: soundEnabled, userSelectedNotifications } = state['features/base/settings'];
 
+    // Don't play sound or show notifications if chat is disabled.
+    if (isChatDisabled(state)) {
+        return;
+    }
+
     if (soundEnabled && shouldPlaySound && !isChatOpen) {
         dispatch(playSound(INCOMING_MSG_SOUND_ID));
     }
 
-    // Provide a default for the case when a message is being
-    // backfilled for a participant that has left the conference.
-    const participant = getParticipantById(state, participantId) || { local: undefined };
+    const participant = getParticipantById(state, participantId);
 
     const localParticipant = getLocalParticipant(getState);
-    let displayNameToShow = lobbyChat
-        ? getLobbyChatDisplayName(state, participantId)
-        : displayName || getParticipantDisplayName(state, participantId);
-    const hasRead = participant.local || isChatOpen;
+    let _displayName;
+
+    if (lobbyChat) {
+        _displayName = getLobbyChatDisplayName(state, participantId);
+    } else if (isFromVisitor) {
+        _displayName = getDisplayName(state, displayName);
+    } else if (!participant) {
+        _displayName = getDisplayName(state, displayName);
+    } else {
+        _displayName = getParticipantDisplayName(state, participantId);
+    }
+
+    const hasRead = participant?.local || isChatOpen;
     const timestampToDate = timestamp ? new Date(timestamp) : new Date();
     const millisecondsTimestamp = timestampToDate.getTime();
 
     // skip message notifications on join (the messages having timestamp - coming from the history)
     const shouldShowNotification = userSelectedNotifications?.['notify.chatMessages']
-        && !hasRead && !isReaction && !timestamp;
-
-    if (isGuest) {
-        displayNameToShow = `${displayNameToShow} ${i18next.t('visitors.chatIndicator')}`;
-    }
-
-    dispatch(addMessage({
-        displayName: displayNameToShow,
+        && !hasRead && !isReaction && (!timestamp || lobbyChat);
+    const newMessage = {
+        displayName: _displayName,
         hasRead,
         participantId,
-        messageType: participant.local ? MESSAGE_TYPE_LOCAL : MESSAGE_TYPE_REMOTE,
+        messageType: participant?.local ? MESSAGE_TYPE_LOCAL : MESSAGE_TYPE_REMOTE,
         message,
         privateMessage,
         lobbyChat,
         recipient: getParticipantDisplayName(state, localParticipant?.id ?? ''),
         timestamp: millisecondsTimestamp,
         messageId,
-        isReaction
-    }));
+        isReaction,
+        isFromVisitor,
+        isFromGuest: source === 'guest'
+    };
+
+    dispatch(addMessage(newMessage));
+
+    let notificationDisplayName = _displayName;
+
+    // source can be 'token' or 'guest'. When it is 'guest', we append a guest indicator
+    // to the display name to notify users that this message can be anything, while the token one is coming
+    // from a trusted source (the jwt token, the name can be locked from the backend if the
+    // token has the feature 'name-readonly')
+    if (isFromVisitor || (!participant && source === 'guest')) {
+        // @ts-ignore
+        notificationDisplayName = `${_displayName} ${getDisplayNameSuffix(newMessage)}`;
+    }
 
     if (shouldShowNotification) {
         dispatch(showMessageNotification({
-            title: displayNameToShow,
-            description: message
+            title: notificationDisplayName,
+            description: message,
+            customActionNameKey: [ 'notify.openChat' ],
+            customActionHandler: [ () => dispatch(openChat()) ]
         }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
     }
 
@@ -540,11 +675,20 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
         APP.API.notifyReceivedChatMessage({
             body: message,
             from: participantId,
-            nick: displayNameToShow,
+            nick: notificationDisplayName,
             privateMessage,
             ts: timestamp
         });
     }
+}
+
+/**
+ * Interface for recipient objects used in private messaging.
+ */
+interface IRecipient {
+    id: string;
+    isVisitor?: boolean;
+    name?: string;
 }
 
 /**
@@ -555,12 +699,12 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
  * But those messages should be in the store as well, otherwise they don't appear in the chat window.
  *
  * @param {Store} store - The Redux store.
- * @param {string} recipientID - The ID of the recipient the private message was sent to.
+ * @param {IRecipient} recipient - The recipient the private message was sent to.
  * @param {string} message - The sent message.
  * @param {boolean} isLobbyPrivateMessage - Is a lobby message.
  * @returns {void}
  */
-function _persistSentPrivateMessage({ dispatch, getState }: IStore, recipientID: string,
+function _persistSentPrivateMessage({ dispatch, getState }: IStore, recipient: IRecipient,
         message: string, isLobbyPrivateMessage = false) {
     const state = getState();
     const localParticipant = getLocalParticipant(state);
@@ -571,6 +715,13 @@ function _persistSentPrivateMessage({ dispatch, getState }: IStore, recipientID:
     const displayName = getParticipantDisplayName(state, localParticipant.id);
     const { lobbyMessageRecipient } = state['features/chat'];
 
+    const recipientName
+        = recipient.isVisitor
+            ? getDisplayName(state, recipient.name)
+            : (isLobbyPrivateMessage
+                ? lobbyMessageRecipient?.name
+                : getParticipantDisplayName(getState, recipient?.id));
+
     dispatch(addMessage({
         displayName,
         hasRead: true,
@@ -579,20 +730,19 @@ function _persistSentPrivateMessage({ dispatch, getState }: IStore, recipientID:
         message,
         privateMessage: !isLobbyPrivateMessage,
         lobbyChat: isLobbyPrivateMessage,
-        recipient: isLobbyPrivateMessage
-            ? lobbyMessageRecipient?.name
-            : getParticipantDisplayName(getState, recipientID),
+        recipient: recipientName,
+        sentToVisitor: recipient.isVisitor,
         timestamp: Date.now()
     }));
 }
 
 /**
- * Returns the ID of the participant who we may have wanted to send the message
+ * Returns the participant info for who we may have wanted to send the message
  * that we're about to send.
  *
  * @param {Object} state - The Redux state.
  * @param {Object} action - The action being dispatched now.
- * @returns {string?}
+ * @returns {IRecipient?} - The recipient info or undefined if no notice should be shown.
  */
 function _shouldSendPrivateMessageTo(state: IReduxState, action: AnyAction) {
     if (action.ignorePrivacy) {
@@ -623,8 +773,17 @@ function _shouldSendPrivateMessageTo(state: IReduxState, action: AnyAction) {
     }
 
     if (lastMessage.privateMessage) {
+        if (!lastMessage.participantId) {
+            // this is a system message we can ignore
+            return undefined;
+        }
+
         // We show the notice if the last received message was private.
-        return lastMessage.participantId;
+        return {
+            id: lastMessage.participantId,
+            isFromVisitor: Boolean(lastMessage.isFromVisitor),
+            name: lastMessage.displayName
+        };
     }
 
     // But messages may come rapidly, we want to protect our users from mis-sending a message
@@ -639,7 +798,11 @@ function _shouldSendPrivateMessageTo(state: IReduxState, action: AnyAction) {
         ? recentPrivateMessages[0] : recentPrivateMessages[recentPrivateMessages.length - 1];
 
     if (recentPrivateMessage) {
-        return recentPrivateMessage.participantId;
+        return {
+            id: recentPrivateMessage.participantId,
+            isFromVisitor: Boolean(recentPrivateMessage.isFromVisitor),
+            name: recentPrivateMessage.displayName
+        };
     }
 
     return undefined;

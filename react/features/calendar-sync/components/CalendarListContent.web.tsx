@@ -69,7 +69,7 @@ class CalendarListContent extends Component<IProps> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         sendAnalytics(createCalendarSelectedEvent());
     }
 
@@ -78,7 +78,7 @@ class CalendarListContent extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { disabled, listEmptyComponent } = this.props;
         const { _eventList = [] } = this.props;
         const meetings = _eventList.map(this._toDisplayableItem);

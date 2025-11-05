@@ -1,13 +1,22 @@
+import { batch } from 'react-redux';
+
 import { createRecordingEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app/actionTypes';
 import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
+import { openDialog } from '../base/dialog/actions';
 import JitsiMeetJS, {
     JitsiConferenceEvents,
     JitsiRecordingConstants
 } from '../base/lib-jitsi-meet';
+import {
+    setAudioMuted,
+    setAudioUnmutePermissions,
+    setVideoMuted,
+    setVideoUnmutePermissions
+} from '../base/media/actions';
 import { MEDIA_TYPE } from '../base/media/constants';
 import { PARTICIPANT_UPDATED } from '../base/participants/actionTypes';
 import { updateLocalRecordingStatus } from '../base/participants/actions';
@@ -28,6 +37,7 @@ import { RECORDING_SESSION_UPDATED, START_LOCAL_RECORDING, STOP_LOCAL_RECORDING 
 import {
     clearRecordingSessions,
     hidePendingRecordingNotification,
+    markConsentRequested,
     showPendingRecordingNotification,
     showRecordingError,
     showRecordingLimitNotification,
@@ -37,6 +47,7 @@ import {
     showStoppedRecordingNotification,
     updateRecordingSessionData
 } from './actions';
+import { RecordingConsentDialog } from './components/Recording';
 import LocalRecordingManager from './components/Recording/LocalRecordingManager';
 import {
     LIVE_STREAMING_OFF_SOUND_ID,
@@ -49,6 +60,7 @@ import {
     getResourceId,
     getSessionById,
     registerRecordingAudioFiles,
+    shouldRequireRecordingConsent,
     unregisterRecordingAudioFiles
 } from './functions';
 import logger from './logger';
@@ -101,7 +113,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             (recorderSession: any) => {
                 if (recorderSession) {
                     recorderSession.getID() && dispatch(updateRecordingSessionData(recorderSession));
-                    recorderSession.getError() && _showRecordingErrorNotification(recorderSession, dispatch, getState);
+                    if (recorderSession.getError()) {
+                        _showRecordingErrorNotification(recorderSession, dispatch, getState);
+                    } else {
+                        _showExplicitConsentDialog(recorderSession, dispatch, getState);
+                    }
                 }
 
                 return;
@@ -162,7 +178,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                     false, 'local', err.message, isRecorderTranscriptionsRunning(getState()));
             }
 
-            dispatch(showErrorNotification(props, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+            dispatch(showErrorNotification(props));
         });
         break;
     }
@@ -204,10 +220,14 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             = getSessionById(state, action.sessionData.id);
         const { initiator, mode = '', terminator } = updatedSessionData ?? {};
         const { PENDING, OFF, ON } = JitsiRecordingConstants.status;
+        const isRecordingStarting = updatedSessionData?.status === PENDING && oldSessionData?.status !== PENDING;
 
-        if (updatedSessionData?.status === PENDING && oldSessionData?.status !== PENDING) {
-            dispatch(showPendingRecordingNotification(mode));
+        if (isRecordingStarting || updatedSessionData?.status === ON) {
             dispatch(hideNotification(START_RECORDING_NOTIFICATION_ID));
+        }
+
+        if (isRecordingStarting) {
+            dispatch(showPendingRecordingNotification(mode));
             break;
         }
 
@@ -216,11 +236,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         if (updatedSessionData?.status === ON) {
 
             // We receive 2 updates of the session status ON. The first one is from jibri when it joins.
-            // The second one is from jicofo which will deliever the initiator value. Since the start
+            // The second one is from jicofo which will deliver the initiator value. Since the start
             // recording notification uses the initiator value we skip the jibri update and show the
             // notification on the update from jicofo.
-            // FIXE: simplify checks when the backend start sending only one status ON update containing the
-            // initiator.
+            // FIXME: simplify checks when the backend start sending only one status ON update containing
+            // the initiator.
             if (initiator && !oldSessionData?.initiator) {
                 if (typeof recordingLimit === 'object') {
                     dispatch(showRecordingLimitNotification(mode));
@@ -288,7 +308,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case TRACK_ADDED: {
         const { track } = action;
 
-        if (LocalRecordingManager.isRecordingLocally() && track.mediaType === MEDIA_TYPE.AUDIO) {
+        if (LocalRecordingManager.isRecordingLocally()
+                && track.mediaType === MEDIA_TYPE.AUDIO && track.local) {
             const audioTrack = track.jitsiTrack.track;
 
             LocalRecordingManager.addAudioTrackToLocalRecording(audioTrack);
@@ -385,4 +406,27 @@ function _showRecordingErrorNotification(session: any, dispatch: IStore['dispatc
     if (typeof APP !== 'undefined') {
         APP.API.notifyRecordingStatusChanged(false, mode, error, isRecorderTranscriptionsRunning(getState()));
     }
+}
+
+/**
+ * Mutes audio and video and displays the RecordingConsentDialog when the conditions are met.
+ *
+ * @param {any} recorderSession - The recording session.
+ * @param {Function} dispatch - The Redux dispatch function.
+ * @param {Function} getState - The Redux getState function.
+ * @returns {void}
+ */
+function _showExplicitConsentDialog(recorderSession: any, dispatch: IStore['dispatch'], getState: IStore['getState']) {
+    if (!shouldRequireRecordingConsent(recorderSession, getState())) {
+        return;
+    }
+
+    batch(() => {
+        dispatch(markConsentRequested(recorderSession.getID()));
+        dispatch(setAudioUnmutePermissions(true, true));
+        dispatch(setVideoUnmutePermissions(true, true));
+        dispatch(setAudioMuted(true));
+        dispatch(setVideoMuted(true));
+        dispatch(openDialog(RecordingConsentDialog));
+    });
 }

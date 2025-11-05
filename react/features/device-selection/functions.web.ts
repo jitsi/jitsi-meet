@@ -22,6 +22,7 @@ import {
     getUserSelectedMicDeviceId,
     getUserSelectedOutputDeviceId
 } from '../base/settings/functions.web';
+import { getLocalJitsiAudioTrackSettings } from '../base/tracks/functions.any';
 import { isNoiseSuppressionEnabled } from '../noise-suppression/functions';
 import { isPrejoinPageVisible } from '../prejoin/functions';
 import { SS_DEFAULT_FRAME_RATE, SS_SUPPORTED_FRAMERATES } from '../settings/constants';
@@ -50,6 +51,7 @@ export function getAudioDeviceSelectionDialogProps(stateful: IStateful, isDispla
     const deviceHidSupported = isDeviceHidSupported() && getWebHIDFeatureConfig(state);
     const noiseSuppressionEnabled = isNoiseSuppressionEnabled(state);
     const hideNoiseSuppression = isPrejoinPageVisible(state) || isDisplayedOnWelcomePage;
+    const audioSettings = state['features/settings'].audioSettings ?? getLocalJitsiAudioTrackSettings(state);
 
     // When the previews are disabled we don't need multiple audio input support in order to change the mic. This is the
     // case for Safari on iOS.
@@ -71,6 +73,7 @@ export function getAudioDeviceSelectionDialogProps(stateful: IStateful, isDispla
     // we fill the device selection dialog with the devices that are currently
     // used or if none are currently used with what we have in settings(user selected)
     return {
+        audioSettings,
         disableAudioInputChange,
         disableDeviceChange: !JitsiMeetJS.mediaDevices.isDeviceChangeAvailable(),
         hasAudioPermission: permissions.audio,
@@ -126,6 +129,7 @@ export function getVideoDeviceSelectionDialogProps(stateful: IStateful, isDispla
     return {
         currentFramerate: framerate,
         desktopShareFramerates: SS_SUPPORTED_FRAMERATES,
+        disableDesktopShareSettings: isMobileBrowser(),
         disableDeviceChange: !JitsiMeetJS.mediaDevices.isDeviceChangeAvailable(),
         disableVideoInputSelect,
         disableLocalVideoFlip,
@@ -162,7 +166,8 @@ export function processExternalDeviceRequest( // eslint-disable-line max-params
 
     switch (request.name) {
     case 'isDeviceListAvailable':
-        responseCallback(JitsiMeetJS.mediaDevices.isDeviceListAvailable());
+        // TODO(saghul): remove this, eventually.
+        responseCallback(true);
         break;
     case 'isDeviceChangeAvailable':
         responseCallback(

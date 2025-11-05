@@ -28,7 +28,7 @@ import EtherpadManager from './etherpad/Etherpad';
 import UIUtil from './util/UIUtil';
 import VideoLayout from './videolayout/VideoLayout';
 
-const logger = Logger.getLogger(__filename);
+const logger = Logger.getLogger('ui:core');
 
 let etherpadManager;
 
@@ -120,7 +120,9 @@ UI.unbindEvents = () => {
  * @param {string} name etherpad id
  */
 UI.initEtherpad = name => {
-    const etherpadBaseUrl = sanitizeUrl(config.etherpad_base);
+    const { getState, dispatch } = APP.store;
+    const configState = getState()['features/base/config'];
+    const etherpadBaseUrl = sanitizeUrl(configState.etherpad_base);
 
     if (etherpadManager || !etherpadBaseUrl || !name) {
         return;
@@ -131,9 +133,9 @@ UI.initEtherpad = name => {
 
     const url = new URL(name, etherpadBaseUrl);
 
-    APP.store.dispatch(setDocumentUrl(url.toString()));
+    dispatch(setDocumentUrl(url.toString()));
 
-    if (config.openSharedDocumentOnJoin) {
+    if (configState.openSharedDocumentOnJoin) {
         etherpadManager.toggleEtherpad();
     }
 };

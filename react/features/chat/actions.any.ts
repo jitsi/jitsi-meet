@@ -1,6 +1,6 @@
 import { IStore } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
-import { getLocalParticipant } from '../base/participants/functions';
+import { getLocalParticipant, getParticipantById } from '../base/participants/functions';
 import { IParticipant } from '../base/participants/types';
 import { LOBBY_CHAT_INITIALIZED } from '../lobby/constants';
 
@@ -10,14 +10,17 @@ import {
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     EDIT_MESSAGE,
+    NOTIFY_PRIVATE_RECIPIENTS_CHANGED,
+    OPEN_CHAT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     SEND_MESSAGE,
     SEND_REACTION,
-    SET_IS_POLL_TAB_FOCUSED,
+    SET_FOCUSED_TAB,
     SET_LOBBY_CHAT_ACTIVE_STATE,
     SET_LOBBY_CHAT_RECIPIENT,
     SET_PRIVATE_MESSAGE_RECIPIENT
 } from './actionTypes';
+import { ChatTabs } from './constants';
 
 /**
  * Adds a chat message to the collection of messages.
@@ -169,17 +172,82 @@ export function setPrivateMessageRecipient(participant?: Object) {
 }
 
 /**
- * Set the value of _isPollsTabFocused.
+ * Initiates the sending of a private message to the supplied participantId.
  *
- * @param {boolean} isPollsTabFocused - The new value for _isPollsTabFocused.
- * @returns {Function}
- */
-export function setIsPollsTabFocused(isPollsTabFocused: boolean) {
-    return {
-        isPollsTabFocused,
-        type: SET_IS_POLL_TAB_FOCUSED
+ * @param {string} participantId - The participant id to set the recipient to.
+ * @returns {{
+*     participant: IParticipant,
+*     type: SET_PRIVATE_MESSAGE_RECIPIENT
+* }}
+*/
+export function setPrivateMessageRecipientById(participantId: string) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const participant = getParticipantById(getState(), participantId);
+
+        if (participant) {
+            dispatch(setPrivateMessageRecipient(participant));
+        }
     };
 }
+
+/**
+ * Set the value of the currently focused tab.
+ *
+ * @param {string} tabId - The id of the currently focused tab.
+ * @returns {{
+ *    type: SET_FOCUSED_TAB,
+ *    tabId: string
+ * }}
+ */
+export function setFocusedTab(tabId: ChatTabs) {
+    return {
+        type: SET_FOCUSED_TAB,
+        tabId
+    };
+}
+
+/**
+ * Opens the chat panel with CC tab active.
+ *
+ * @returns {Object} The redux action.
+ */
+export function openCCPanel() {
+    return async (dispatch: IStore['dispatch']) => {
+        dispatch(setFocusedTab(ChatTabs.CLOSED_CAPTIONS));
+        dispatch({
+            type: OPEN_CHAT
+        });
+    };
+}
+
+/**
+ * Opens the chat panel with polls tab active.
+ *
+ * @returns {Object} The redux action.
+ */
+export function openPollsPanel() {
+    return async (dispatch: IStore['dispatch']) => {
+        dispatch(setFocusedTab(ChatTabs.POLLS));
+        dispatch({
+            type: OPEN_CHAT
+        });
+    };
+}
+
+/**
+ * Opens the chat panel with file sharing tab active.
+ *
+ * @returns {Object} The redux action.
+ */
+export function openFileSharingPanel() {
+    return async (dispatch: IStore['dispatch']) => {
+        dispatch(setFocusedTab(ChatTabs.FILE_SHARING));
+        dispatch({
+            type: OPEN_CHAT
+        });
+    };
+}
+
 
 /**
  * Initiates the sending of messages between a moderator and a lobby attendee.
@@ -229,6 +297,22 @@ export function setLobbyChatActiveState(value: boolean) {
     return {
         type: SET_LOBBY_CHAT_ACTIVE_STATE,
         payload: value
+    };
+}
+
+/**
+ * Notifies the private chat recipients list changed.
+ *
+ * @returns {Object}
+ */
+export function notifyPrivateRecipientsChanged() {
+    return (dispatch: IStore['dispatch']) => {
+        const timestamp = Date.now();
+
+        return dispatch({
+            type: NOTIFY_PRIVATE_RECIPIENTS_CHANGED,
+            payload: timestamp
+        });
     };
 }
 

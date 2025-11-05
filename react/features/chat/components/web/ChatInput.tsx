@@ -1,6 +1,8 @@
+import { Theme } from '@mui/material';
 import React, { Component, RefObject } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
@@ -8,9 +10,40 @@ import { translate } from '../../../base/i18n/functions';
 import { IconFaceSmile, IconSend } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
-import { areSmileysDisabled } from '../../functions';
+import { CHAT_SIZE } from '../../constants';
+import { areSmileysDisabled, isSendGroupChatDisabled } from '../../functions';
 
 import SmileysPanel from './SmileysPanel';
+
+
+const styles = (_theme: Theme, { _chatWidth }: IProps) => {
+    return {
+        smileysPanel: {
+            bottom: '100%',
+            boxSizing: 'border-box' as const,
+            backgroundColor: 'rgba(0, 0, 0, .6) !important',
+            height: 'auto',
+            display: 'flex' as const,
+            overflow: 'hidden',
+            position: 'absolute' as const,
+            width: `${_chatWidth - 32}px`,
+            marginBottom: '5px',
+            marginLeft: '-5px',
+            transition: 'max-height 0.3s',
+
+            '& #smileysContainer': {
+                backgroundColor: '#131519',
+                borderTop: '1px solid #A4B8D1'
+            }
+        },
+        chatDisabled: {
+            borderTop: `1px solid ${_theme.palette.ui02}`,
+            boxSizing: 'border-box' as const,
+            padding: _theme.spacing(4),
+            textAlign: 'center' as const,
+        }
+    };
+};
 
 /**
  * The type of the React {@code Component} props of {@link ChatInput}.
@@ -22,10 +55,23 @@ interface IProps extends WithTranslation {
      */
     _areSmileysDisabled: boolean;
 
+
+    _chatWidth: number;
+
+    /**
+     * Whether sending group chat messages is disabled.
+     */
+    _isSendGroupChatDisabled: boolean;
+
     /**
      * The id of the message recipient, if any.
      */
     _privateMessageRecipientId?: string;
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * Invoked to send chat messages.
@@ -62,7 +108,7 @@ interface IState {
 class ChatInput extends Component<IProps, IState> {
     _textArea?: RefObject<HTMLTextAreaElement>;
 
-    state = {
+    override state = {
         message: '',
         showSmileysPanel: false
     };
@@ -91,7 +137,7 @@ class ChatInput extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         if (isMobileBrowser()) {
             // Ensure textarea is not focused when opening chat on mobile browser.
             this._textArea?.current && this._textArea.current.blur();
@@ -105,7 +151,7 @@ class ChatInput extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: Readonly<IProps>) {
+    override componentDidUpdate(prevProps: Readonly<IProps>) {
         if (prevProps._privateMessageRecipientId !== this.props._privateMessageRecipientId) {
             this._textArea?.current?.focus();
         }
@@ -117,7 +163,18 @@ class ChatInput extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
+        const classes = withStyles.getClasses(this.props);
+        const hideInput = this.props._isSendGroupChatDisabled && !this.props._privateMessageRecipientId;
+
+        if (hideInput) {
+            return (
+                <div className = { classes.chatDisabled }>
+                    {this.props.t('chat.disabled')}
+                </div>
+            );
+        }
+
         return (
             <div className = { `chat-input-container${this.state.message.trim().length ? ' populated' : ''}` }>
                 <div id = 'chat-input' >
@@ -125,7 +182,7 @@ class ChatInput extends Component<IProps, IState> {
                         <div
                             className = 'smiley-input'>
                             <div
-                                className = 'smileys-panel' >
+                                className = { classes.smileysPanel } >
                                 <SmileysPanel
                                     onSmileySelect = { this._onSmileySelect } />
                             </div>
@@ -170,15 +227,28 @@ class ChatInput extends Component<IProps, IState> {
      * @returns {void}
      */
     _onSubmitMessage() {
+        const {
+            _isSendGroupChatDisabled,
+            _privateMessageRecipientId,
+            onSend
+        } = this.props;
+
+        if (_isSendGroupChatDisabled && !_privateMessageRecipientId) {
+            return;
+        }
+
         const trimmed = this.state.message.trim();
 
         if (trimmed) {
-            this.props.onSend(trimmed);
+            onSend(trimmed);
 
             this.setState({ message: '' });
 
             // Keep the textarea in focus when sending messages via submit button.
             this._focus();
+
+            // Hide the Emojis box after submitting the message
+            this.setState({ showSmileysPanel: false });
         }
 
     }
@@ -272,12 +342,15 @@ class ChatInput extends Component<IProps, IState> {
  * }}
  */
 const mapStateToProps = (state: IReduxState) => {
-    const { privateMessageRecipient } = state['features/chat'];
+    const { privateMessageRecipient, width } = state['features/chat'];
+    const isGroupChatDisabled = isSendGroupChatDisabled(state);
 
     return {
         _areSmileysDisabled: areSmileysDisabled(state),
-        _privateMessageRecipientId: privateMessageRecipient?.id
+        _privateMessageRecipientId: privateMessageRecipient?.id,
+        _isSendGroupChatDisabled: isGroupChatDisabled,
+        _chatWidth: width.current ?? CHAT_SIZE,
     };
 };
 
-export default translate(connect(mapStateToProps)(ChatInput));
+export default translate(connect(mapStateToProps)(withStyles(ChatInput, styles)));

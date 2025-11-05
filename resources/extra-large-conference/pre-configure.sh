@@ -14,7 +14,7 @@ echo "Will configure $NUMBER_OF_INSTANCES number of visitor prosodies"
 set -e
 set -x
 
-. /etc/jitsi/jicofo/config
+JICOFO_HOSTNAME=$(echo get jitsi-videobridge/jvb-hostname | sudo debconf-communicate jicofo | cut -d' ' -f2-)
 
 # Configure prosody instances
 for (( i=1 ; i<=${NUMBER_OF_INSTANCES} ; i++ ));

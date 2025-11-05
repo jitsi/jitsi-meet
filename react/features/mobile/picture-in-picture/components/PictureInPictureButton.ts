@@ -1,12 +1,9 @@
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { PIP_WHILE_SCREEN_SHARING_ENABLED } from '../../../base/flags/constants';
-import { getFeatureFlag } from '../../../base/flags/functions';
 import { translate } from '../../../base/i18n/functions';
 import { IconArrowDown } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
-import { isLocalVideoTrackDesktop } from '../../../base/tracks/functions.native';
 import { enterPictureInPicture } from '../actions';
 import { isPipEnabled } from '../functions';
 
@@ -22,9 +19,9 @@ interface IProps extends AbstractButtonProps {
  * An implementation of a button for entering Picture-in-Picture mode.
  */
 class PictureInPictureButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.pip';
-    icon = IconArrowDown;
-    label = 'toolbar.pip';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.pip';
+    override icon = IconArrowDown;
+    override label = 'toolbar.pip';
 
     /**
      * Handles clicking / pressing the button.
@@ -32,7 +29,7 @@ class PictureInPictureButton extends AbstractButton<IProps> {
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         this.props.dispatch(enterPictureInPicture());
     }
 
@@ -42,7 +39,7 @@ class PictureInPictureButton extends AbstractButton<IProps> {
      * @inheritdoc
      * @returns {React$Node}
      */
-    render() {
+    override render() {
         return this.props._enabled ? super.render() : null;
     }
 }
@@ -58,9 +55,7 @@ class PictureInPictureButton extends AbstractButton<IProps> {
  * }}
  */
 function _mapStateToProps(state: IReduxState) {
-    const pipEnabled = isPipEnabled(state);
-    const pipWhileScreenSharingEnabled = getFeatureFlag(state, PIP_WHILE_SCREEN_SHARING_ENABLED, false);
-    const enabled = pipEnabled && (!isLocalVideoTrackDesktop(state) || pipWhileScreenSharingEnabled);
+    const enabled = isPipEnabled(state);
 
     return {
         _enabled: enabled

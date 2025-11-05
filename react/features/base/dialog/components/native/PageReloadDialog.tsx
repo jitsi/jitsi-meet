@@ -71,7 +71,7 @@ class PageReloadDialog extends Component<IProps, IPageReloadDialogState> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         const { timeLeft } = this.state;
 
         logger.info(
@@ -88,7 +88,7 @@ class PageReloadDialog extends Component<IProps, IPageReloadDialogState> {
      * @inheritdoc
      * @returns {void}
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         if (this._interval) {
             clearInterval(this._interval);
             this._interval = undefined;
@@ -157,7 +157,7 @@ class PageReloadDialog extends Component<IProps, IPageReloadDialogState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { isNetworkFailure, t } = this.props;
         const { timeLeft } = this.state;
 

@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ix = href.indexOf(DIAL_IN_INFO_PAGE_PATH_NAME);
     const url = (ix > 0 ? href.substring(0, ix) : href) + room;
 
+    /* eslint-disable-next-line react/no-deprecated */
     ReactDOM.render(
         <I18nextProvider i18n = { i18next }>
             { room
@@ -34,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 });
 
-window.addEventListener('beforeunload', () => { // @ts-ignore
-    ReactDOM.unmountComponentAtNode(document.getElementById('react'));
+window.addEventListener('beforeunload', () => {
+    /* eslint-disable-next-line react/no-deprecated */
+    ReactDOM.unmountComponentAtNode(document.getElementById('react')!);
 });

@@ -69,7 +69,7 @@ class RoomParticipantMenu extends PureComponent<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { _rooms, participantJid, room, t } = this.props;
         const buttonProps = {
             afterClick: this._onCancel,

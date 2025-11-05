@@ -38,7 +38,7 @@ class DialogContainer extends AbstractDialogContainer {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <Fragment>
                 {this._renderReactions()}

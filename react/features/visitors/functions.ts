@@ -1,17 +1,19 @@
 import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
+import { MEET_FEATURES } from '../base/jwt/constants';
+import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import { toState } from '../base/redux/functions';
 
 /**
  * A short string to represent the number of visitors.
- * Over 100 we show numbers like 0.2 K or 9.5 K.
+ * Over 1000 we show numbers like 1.0 K or 9.5 K.
  *
  * @param {number} visitorsCount - The number of visitors to shorten.
  *
  * @returns {string} Short string representing the number of visitors.
  */
 export function getVisitorsShortText(visitorsCount: number) {
-    return visitorsCount > 100 ? `${Math.round(visitorsCount / 100) / 10} K` : String(visitorsCount);
+    return visitorsCount >= 1000 ? `${Math.round(visitorsCount / 100) / 10} K` : String(visitorsCount);
 }
 
 /**
@@ -43,7 +45,15 @@ export function iAmVisitor(stateful: IStateful) {
  * @returns {number} - The number of visitors.
  */
 export function getVisitorsCount(stateful: IStateful) {
-    return toState(stateful)['features/visitors'].count ?? 0;
+    const state = toState(stateful);
+    const { hideVisitorCountForVisitors } = state['features/base/config'].visitors || {};
+    const isVisitor = state['features/visitors'].iAmVisitor;
+
+    if (isVisitor && hideVisitorCountForVisitors) {
+        return 0;
+    }
+
+    return state['features/visitors'].count ?? 0;
 }
 
 /**
@@ -69,6 +79,26 @@ export function isVisitorsSupported(stateful: IStateful) {
 }
 
 /**
+ * Returns the current visitor list.
+ *
+ * @param {IStateful} stateful - The redux store or {@code getState} function.
+ * @returns {Array<Object>}
+ */
+export function getVisitorsList(stateful: IStateful) {
+    return toState(stateful)['features/visitors'].visitors ?? [];
+}
+
+/**
+ * Whether the visitors list websocket subscription has been requested.
+ *
+ * @param {IStateful} stateful - The redux store or {@code getState} function.
+ * @returns {boolean}
+ */
+export function isVisitorsListSubscribed(stateful: IStateful) {
+    return toState(stateful)['features/visitors'].visitorsListSubscribed;
+}
+
+/**
  * Whether visitor mode is live.
  *
  * @param {Function|Object} stateful - The redux store or {@code getState}
@@ -88,4 +118,44 @@ export function isVisitorsLive(stateful: IStateful) {
  */
 export function showVisitorsQueue(stateful: IStateful) {
     return toState(stateful)['features/visitors'].inQueue;
+}
+
+/**
+ * Checks if the visitors list feature is enabled based on JWT and config.js.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean} Whether the feature is allowed.
+ */
+export function isVisitorsListEnabled(state: IReduxState): boolean {
+    const { visitors: visitorsConfig } = state['features/base/config'];
+
+    if (!visitorsConfig?.queueService) { // if the queue service is not configured, we can't retrieve the visitors list
+        return false;
+    }
+
+    return isJwtFeatureEnabled(state, MEET_FEATURES.LIST_VISITORS, false);
+}
+
+/**
+ * Determines whether the current visitors list should be displayed.
+ *
+ * @param {IStateful} stateful - The redux store or {@code getState} function.
+ * @returns {boolean} Whether the visitors list should be shown.
+ */
+export function shouldDisplayCurrentVisitorsList(stateful: IStateful): boolean {
+    const state = toState(stateful);
+
+    return isVisitorsListEnabled(state) && getVisitorsCount(state) > 0;
+}
+
+/**
+ * Returns display name, falling back to the default remote display name
+ * from config, or 'Fellow Jitster' if neither is available.
+ *
+ * @param {IReduxState} state - The Redux state.
+ * @param {string} [displayName] - Optional display name to use if available.
+ * @returns {string} - The display name.
+ */
+export function getDisplayName(state: IReduxState, displayName?: string): string {
+    return displayName || state['features/base/config'].defaultRemoteDisplayName || 'Fellow Jitster';
 }
