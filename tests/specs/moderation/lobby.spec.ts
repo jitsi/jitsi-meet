@@ -155,10 +155,6 @@ describe('Lobby', () => {
     });
 
     it('lobby persistence', async () => {
-        // The lobby is persistent when mod_persistent_lobby is loaded. Environments with autoModerator don't need to
-        // persist the lobby, so the module is not loaded.
-        const persistentLobby = !expectations.moderation.autoModerator;
-
         const { p1, p2 } = ctx;
 
         await enterLobby(p1, false);
@@ -172,18 +168,13 @@ describe('Lobby', () => {
 
         await p3.driver.$('.dialog.leaveReason').isExisting();
 
-        if (persistentLobby) {
-            await p3.driver.pause(2000);
-            expect(await p3.getLobbyScreen().isLobbyRoomJoined()).toBe(true);
-        } else {
-            await p3.driver.waitUntil(
-                async () => !await p3.getLobbyScreen().isLobbyRoomJoined(),
-                {
-                    timeout: 2000,
-                    timeoutMsg: 'p3 did not leave lobby'
-                }
-            );
-        }
+        await p3.driver.waitUntil(
+            async () => !await p3.getLobbyScreen().isLobbyRoomJoined(),
+            {
+                timeout: 2000,
+                timeoutMsg: 'p3 did not leave lobby'
+            }
+        );
 
         await p3.hangup();
     });
