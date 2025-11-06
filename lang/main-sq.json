@@ -137,7 +137,7 @@
             "titleWith3Features": "Që të përdorni {{feature1}}, {{feature2}} dhe {{feature3}}, jepni një nofkë",
             "titleWith4Features": "Që të përdorni {{feature1}}, {{feature2}}, {{feature3}} dhe {{feature4}}, jepni një nofkë",
             "titleWithCC": "Që të përdorni fjalosjen dhe titujt e mbyllur, jepni një nofkë",
-            "titleWithPolls": "Që të përdorni fjalosjen dhe pyetësorë, jepni një nofkë"
+            "titleWithPolls": "Që të përdorni fjalosjen dhe pyetësorë, jepni një nofkë",
             "titleWithPollsAndCC": "Që të përdorni fjalosjen, pyetësorë dhe titujt e mbyllur, jepni një nofkë",
             "titleWithPollsAndCCAndFileSharing": "Që të përdorni fjalosjen, pyetësorë, tituj të mbyllur dhe kartela, jepni një nofkë"
         },
