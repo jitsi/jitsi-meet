@@ -968,6 +968,7 @@
         "connectedTitle": "Connected",
         "connectedMessage": "Connection restored successfully",
         "reconnecting": "Attempting to reconnect...",
+        "deviceSuspended": "Device suspended, reconnecting...",
         "poorConnection": "Poor connection detected",
         "poorConnectionDescription": "Your connection may be unstable. Video and audio quality may be affected.",
         "dataChannelClosed": "Video quality may be impaired",

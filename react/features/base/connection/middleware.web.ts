@@ -1,6 +1,4 @@
 import { redirectToStaticPage } from '../../app/actions.any';
-import { showNotification } from "../../notifications/actions";
-import { NOTIFICATION_TIMEOUT_TYPE } from "../../notifications/constants";
 import { CONFERENCE_WILL_LEAVE } from "../conference/actionTypes";
 import MiddlewareRegistry from "../redux/MiddlewareRegistry";
 
@@ -44,14 +42,6 @@ MiddlewareRegistry.register(({ getState, dispatch }) => (next) => (action) => {
             if (isLeaveConferenceManually) {
                 console.log("Connection disconnected - redirecting to home (manual hangup)");
                 isLeaveConferenceManually = false;
-                dispatch(
-                    showNotification(
-                        {
-                            titleKey: "dialog.conferenceDisconnectTitle",
-                        },
-                        NOTIFICATION_TIMEOUT_TYPE.LONG
-                    )
-                );
 
                 setTimeout(() => {
                     dispatch(redirectToStaticPage("/"));

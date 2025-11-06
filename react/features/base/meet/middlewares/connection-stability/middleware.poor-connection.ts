@@ -2,7 +2,7 @@ import { AnyAction } from 'redux';
 import { IStore } from '../../../../app/types';
 import { showNotification, hideNotification } from '../../../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../../../notifications/constants';
-import { CONFERENCE_JOINED } from '../../../conference/actionTypes';
+import { CONFERENCE_JOINED, CONFERENCE_WILL_LEAVE } from '../../../conference/actionTypes';
 import { getLocalParticipant } from '../../../participants/functions';
 import MiddlewareRegistry from '../../../redux/MiddlewareRegistry';
 import statsEmitter from '../../../../connection-indicator/statsEmitter';
@@ -104,6 +104,15 @@ MiddlewareRegistry.register((store: IStore) => (next) => (action: AnyAction) => 
                 isSubscribedToStats = true;
             }
 
+            break;
+        }
+
+        case CONFERENCE_WILL_LEAVE: {
+            // User manually hung up - hide notification and reset state
+            hidePoorConnectionWarning(store);
+            conferenceJoinTime = null;
+            lastWarningTime = null;
+            isNotificationCurrentlyShown = false;
             break;
         }
     }
