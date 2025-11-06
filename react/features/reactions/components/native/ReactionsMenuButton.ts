@@ -47,7 +47,7 @@ class ReactionsMenuButton extends AbstractButton<IProps> {
      * @returns {void}
      */
     override _handleClick() {
-        this.props.dispatch(openDialog(ReactionMenuDialog));
+        this.props.dispatch(openDialog('ReactionMenuDialog', ReactionMenuDialog));
     }
 
     /**

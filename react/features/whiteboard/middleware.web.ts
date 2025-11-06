@@ -73,8 +73,8 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
 
         if (enforceUserLimit) {
             dispatch(restrictWhiteboard(false));
-            dispatch(openDialog(WhiteboardLimitDialog));
-            iAmRecorder && setTimeout(() => dispatch(hideDialog(WhiteboardLimitDialog)), 3000);
+            dispatch(openDialog('WhiteboardLimitDialog', WhiteboardLimitDialog));
+            iAmRecorder && setTimeout(() => dispatch(hideDialog('WhiteboardLimitDialog', WhiteboardLimitDialog)), 3000);
 
             return next(action);
         }
@@ -97,7 +97,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
             }
 
             if (isDialogOpen(state, WhiteboardLimitDialog)) {
-                dispatch(hideDialog(WhiteboardLimitDialog));
+                dispatch(hideDialog('WhiteboardLimitDialog', WhiteboardLimitDialog));
             }
 
             focusWhiteboard(store);

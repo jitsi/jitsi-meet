@@ -33,7 +33,7 @@ const MuteEveryoneElseButton = ({
             return;
         }
         sendAnalytics(createToolbarEvent('mute.everyoneelse.pressed'));
-        dispatch(openDialog(MuteEveryoneDialog, { exclude: [ participantID ] }));
+        dispatch(openDialog('MuteEveryoneDialog', MuteEveryoneDialog, { exclude: [ participantID ] }));
     }, [ dispatch, notifyMode, notifyClick, participantID, sendAnalytics ]);
 
     return (

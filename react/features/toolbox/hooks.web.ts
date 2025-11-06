@@ -434,7 +434,7 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
     function onToggleVideoQuality() {
         sendAnalytics(createShortcutEvent('video.quality'));
 
-        dispatch(toggleDialog(VideoQualityDialog));
+        dispatch(toggleDialog('VideoQualityDialog', VideoQualityDialog));
     }
 
     /**
@@ -523,7 +523,7 @@ export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
             'speaker.stats'
         ));
 
-        dispatch(toggleDialog(SpeakerStats, {
+        dispatch(toggleDialog('SpeakerStats', SpeakerStats, {
             conference: APP.conference
         }));
     }

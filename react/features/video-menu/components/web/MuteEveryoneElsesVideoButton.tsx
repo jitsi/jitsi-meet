@@ -33,7 +33,7 @@ const MuteEveryoneElsesVideoButton = ({
             return;
         }
         sendAnalytics(createToolbarEvent('mute.everyoneelsesvideo.pressed'));
-        dispatch(openDialog(MuteEveryonesVideoDialog, { exclude: [ participantID ] }));
+        dispatch(openDialog('MuteEveryonesVideoDialog', MuteEveryonesVideoDialog, { exclude: [ participantID ] }));
     }, [ notifyClick, notifyMode, participantID ]);
 
     return (

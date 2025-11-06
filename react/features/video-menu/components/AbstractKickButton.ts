@@ -29,6 +29,6 @@ export default class AbstractKickButton extends AbstractButton<IProps> {
     override _handleClick() {
         const { dispatch, participantID } = this.props;
 
-        dispatch(openDialog(KickRemoteParticipantDialog, { participantID }));
+        dispatch(openDialog('KickRemoteParticipantDialog', KickRemoteParticipantDialog, { participantID }));
     }
 }

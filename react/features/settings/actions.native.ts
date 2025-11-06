@@ -21,7 +21,7 @@ export function openLogoutDialog() {
         const config = state['features/base/config'];
         const logoutUrl = config.tokenLogoutUrl;
 
-        dispatch(openDialog(LogoutDialog, {
+        dispatch(openDialog('LogoutDialog', LogoutDialog, {
             onLogout() {
                 if (isTokenAuthEnabled(config)) {
                     if (logoutUrl) {

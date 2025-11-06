@@ -34,7 +34,7 @@ export default function RenameButton({ breakoutRoomJid, name }: IProps) {
     const dispatch = useDispatch();
     const { classes, cx } = useStyles();
     const onRename = useCallback(() => {
-        dispatch(openDialog(BreakoutRoomNamePrompt, {
+        dispatch(openDialog('BreakoutRoomNamePrompt', BreakoutRoomNamePrompt, {
             breakoutRoomJid,
             initialRoomName: name
         }));

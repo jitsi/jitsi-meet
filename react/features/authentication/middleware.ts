@@ -209,7 +209,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     case STOP_WAIT_FOR_OWNER:
         _clearExistingWaitForOwnerTimeout(store);
-        store.dispatch(hideDialog(WaitForOwnerDialog));
+        store.dispatch(hideDialog('WaitForOwnerDialog', WaitForOwnerDialog));
         break;
 
     case UPGRADE_ROLE_FINISHED: {

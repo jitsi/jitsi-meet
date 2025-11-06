@@ -26,7 +26,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
     case SET_VIDEO_MUTED: {
         if (LocalRecordingManager.isRecordingLocally() && LocalRecordingManager.selfRecording.on) {
             if (action.muted && LocalRecordingManager.selfRecording.withVideo) {
-                dispatch(openDialog(StopRecordingDialog, { localRecordingVideoStop: true }));
+                dispatch(openDialog('StopRecordingDialog', StopRecordingDialog, { localRecordingVideoStop: true }));
 
                 return;
             } else if (!action.muted && !LocalRecordingManager.selfRecording.withVideo) {

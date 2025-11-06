@@ -76,7 +76,7 @@ export function showRecordingLimitNotification(streamType: string) {
  */
 export function showStartRecordingNotification() {
     return (dispatch: IStore['dispatch']) => {
-        const openDialogCallback = () => dispatch(openDialog(StartRecordingDialog));
+        const openDialogCallback = () => dispatch(openDialog('StartRecordingDialog', StartRecordingDialog));
 
         dispatch(showStartRecordingNotificationWithCallback(openDialogCallback));
     };

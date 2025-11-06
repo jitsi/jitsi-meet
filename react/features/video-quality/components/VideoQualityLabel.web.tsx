@@ -43,7 +43,7 @@ const VideoQualityLabel = () => {
         tooltipKey = 'videoStatus.performanceSettings';
     }
 
-    const onClick = () => dispatch(openDialog(VideoQualityDialog));
+    const onClick = () => dispatch(openDialog('VideoQualityDialog', VideoQualityDialog));
 
     return (
         <Tooltip

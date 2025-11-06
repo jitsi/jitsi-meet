@@ -263,7 +263,7 @@ MiddlewareRegistry.register(store => next => action => {
                 const participantExists = getParticipantById(state, shouldSendPrivateMessageTo.id);
 
                 if (participantExists || shouldSendPrivateMessageTo.isFromVisitor) {
-                    dispatch(openDialog(ChatPrivacyDialog, {
+                    dispatch(openDialog('ChatPrivacyDialog', ChatPrivacyDialog, {
                         message: action.message,
                         participantID: shouldSendPrivateMessageTo.id,
                         isFromVisitor: shouldSendPrivateMessageTo.isFromVisitor,
