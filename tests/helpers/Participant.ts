@@ -678,9 +678,9 @@ export class Participant {
      * Hangups the participant by leaving the page. base.html is an empty page on all deployments.
      */
     async hangup() {
-        console.log('Hanging up');
+        console.log(`Hanging up (${this.name})`);
         if ((await this.driver.getUrl()).endsWith('/base.html')) {
-            console.log('Already hung up');
+            console.log(`Already hung up (${this.name})`);
 
             return;
         }
@@ -705,7 +705,7 @@ export class Participant {
                 timeoutMsg: `${this.name} failed to hang up`
             }
         );
-        console.log('Hung up');
+        console.log(`Hung up (${this.name})`);
 
         await this.driver.url('/base.html')
 
