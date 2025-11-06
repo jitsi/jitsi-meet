@@ -841,6 +841,8 @@
         "connectedTitle": "Conectado",
         "connectedMessage": "Conexión restaurada exitosamente",
         "reconnecting": "Intentando reconectar...",
+        "poorConnection": "Conexión pobre detectada",
+        "poorConnectionDescription": "Tu conexión puede ser inestable. La calidad de video y audio puede verse afectada.",
         "dataChannelClosed": "La calidad de vídeo puede verse afectada",
         "dataChannelClosedDescription": "El canal del puente está caído y por lo tanto la calidad de vídeo puede limitarse a su configuración más baja.",
         "disabledIframe": "",
