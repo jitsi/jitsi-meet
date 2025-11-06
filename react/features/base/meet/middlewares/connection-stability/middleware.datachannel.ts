@@ -1,4 +1,5 @@
 import { AnyAction } from 'redux';
+import { IStore } from '../../../../app/types';
 import { hideNotification, showNotification } from '../../../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../../../notifications/constants';
 import { DATA_CHANNEL_CLOSED, DATA_CHANNEL_OPENED } from '../../../conference/actionTypes';
@@ -44,7 +45,7 @@ const resetDataChannelState = () => {
 /**
  * Shows the initial data channel closed notification.
  */
-const showDataChannelClosedNotification = (store: any) => {
+const showDataChannelClosedNotification = (store: IStore) => {
     store.dispatch(
         showNotification(
             {
@@ -60,7 +61,7 @@ const showDataChannelClosedNotification = (store: any) => {
 /**
  * Shows the reconnection failed notification after timeout.
  */
-const showReconnectionFailedNotification = (store: any) => {
+const showReconnectionFailedNotification = (store: IStore) => {
     store.dispatch(hideNotification(DATACHANNEL_RECONNECTION_NOTIFICATION_ID));
     store.dispatch(
         showNotification(
@@ -77,7 +78,7 @@ const showReconnectionFailedNotification = (store: any) => {
 /**
  * Shows the persistent issue notification when channel closes multiple times.
  */
-const showPersistentIssueNotification = (store: any) => {
+const showPersistentIssueNotification = (store: IStore) => {
     store.dispatch(hideNotification(DATACHANNEL_RECONNECTION_NOTIFICATION_ID));
     store.dispatch(
         showNotification(
@@ -94,7 +95,7 @@ const showPersistentIssueNotification = (store: any) => {
 /**
  * Hides all data channel notifications.
  */
-const hideAllNotifications = (store: any) => {
+const hideAllNotifications = (store: IStore) => {
     store.dispatch(hideNotification(DATACHANNEL_RECONNECTION_NOTIFICATION_ID));
     store.dispatch(hideNotification(DATACHANNEL_FAILED_NOTIFICATION_ID));
 };
@@ -102,7 +103,7 @@ const hideAllNotifications = (store: any) => {
 /**
  * Schedules a timeout to detect reconnection failure.
  */
-const scheduleReconnectionTimeout = (store: any) => {
+const scheduleReconnectionTimeout = (store: IStore) => {
     if (reconnectionTimeoutTimer) {
         clearTimeout(reconnectionTimeoutTimer);
     }

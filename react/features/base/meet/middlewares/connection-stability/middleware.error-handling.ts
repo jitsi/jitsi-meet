@@ -8,8 +8,8 @@ import MiddlewareRegistry from '../../../redux/MiddlewareRegistry';
 MiddlewareRegistry.register(() => next => (action: AnyAction) => {
     try {
         return next(action);
-    } catch (error: any) {
-        const errorMessage = error?.message || error?.toString() || 'Unknown error';
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
         console.error('Middleware error:', errorMessage, 'for action:', action.type);
         return undefined;
     }
