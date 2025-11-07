@@ -367,7 +367,7 @@
         "kickMessage": "Për më tepër hollësi, mund të lidheni me {{participantDisplayName}}.",
         "kickParticipantButton": "Përzëre",
         "kickParticipantDialog": "Jeni i sigurt se doni të përzihet ky pjesëmarrës?",
-        "kickParticipantTitle": "Të përzihet ky pjesëmarrës?"
+        "kickParticipantTitle": "Të përzihet ky pjesëmarrës?",
         "kickSystemTitle": "Oh! U përzutë nga nga takimi",
         "kickTitle": "Oh! {{participantDisplayName}} ju përzuri nga takimi",
         "learnMore": "mësoni më tepër",
