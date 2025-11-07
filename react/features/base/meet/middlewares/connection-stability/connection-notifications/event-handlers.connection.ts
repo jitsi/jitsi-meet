@@ -1,16 +1,14 @@
 import { IStore } from '../../../../../app/types';
-import { ConnectionState } from './types';
-import {
-    showConnectionLostNotification,
-    showConnectionFailedNotification,
-} from './notification-helpers';
+import { isAutoReconnecting } from "../middleware.auto-reconnect";
+import { showConnectionFailedNotification, showConnectionLostNotification } from "./notification-helpers";
+import { ConnectionState } from "./types";
 
 /**
  * Handles when XMPP connection is established
  * This is the signaling connection, not media
  */
 export const handleXMPPConnected = () => {
-    console.log('[CONNECTION_NOTIFICATIONS] XMPP connection established');
+    console.log("[CONNECTION_NOTIFICATIONS] XMPP connection established");
 };
 
 /**
@@ -21,17 +19,11 @@ export const handleXMPPConnected = () => {
  * @param message - Disconnect message from lib-jitsi-meet
  * @param state - Connection state to check if manual disconnect
  */
-export const handleXMPPDisconnected = (
-    dispatch: IStore['dispatch'],
-    message: string,
-    state: ConnectionState
-) => {
-    console.log('[CONNECTION_NOTIFICATIONS] XMPP disconnected:', message);
+export const handleXMPPDisconnected = (dispatch: IStore["dispatch"], message: string, state: ConnectionState) => {
+    console.log("[CONNECTION_NOTIFICATIONS] XMPP disconnected:", message);
 
-    if (state.isManualDisconnect) {
-        console.log('[CONNECTION_NOTIFICATIONS] Manual disconnect, skipping notification');
-        return;
-    }
+    if (state.isManualDisconnect) return;
+    if (isAutoReconnecting()) return;
 
     showConnectionLostNotification(dispatch);
 };
@@ -44,11 +36,9 @@ export const handleXMPPDisconnected = (
  * @param error - Error object from lib-jitsi-meet
  * @param message - Error message
  */
-export const handleXMPPConnectionFailed = (
-    dispatch: IStore['dispatch'],
-    error: any,
-    message: string
-) => {
-    console.error('[CONNECTION_NOTIFICATIONS] XMPP connection failed:', error, message);
+export const handleXMPPConnectionFailed = (dispatch: IStore["dispatch"], error: any, message: string) => {
+    console.error("[CONNECTION_NOTIFICATIONS] XMPP connection failed:", error, message);
+    if (isAutoReconnecting()) return;
+
     showConnectionFailedNotification(dispatch, message);
 };
