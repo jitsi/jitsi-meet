@@ -278,7 +278,23 @@ CAPTURE_NETWORK=true npm run test-dev-single -- tests/specs/2way/audioOnlyTest.s
 
 #### Grid Testing Configuration
 
-When running tests on a Selenium/WebDriver grid with remote nodes, you need to tell NetworkCapture how to reach the remote Chrome instances.
+**✨ Automatic Discovery (Recommended)**
+
+For Selenium Grid 4 or Grid 3, node addresses are **automatically discovered**:
+
+```bash
+# Just set GRID_HOST_URL - nodes are discovered automatically!
+CAPTURE_NETWORK=true GRID_HOST_URL=http://your-grid-hub:4444 npm run test-grid
+```
+
+The system will:
+- Query Grid 4 GraphQL API (`/graphql`) to get node URI
+- Fall back to Grid 3 REST API (`/grid/api/testsession`) if Grid 4 not available
+- Extract hostname from node URI automatically
+
+**Manual Configuration (Fallback)**
+
+If automatic discovery fails or you want manual control:
 
 **Option 1: Environment Variable (Simple - Single Node)**
 
@@ -288,9 +304,9 @@ Use when all tests run on the same grid node:
 CAPTURE_NETWORK=true GRID_NODE_HOSTNAME=node-1.your-grid.com npm run test-grid-single -- tests/specs/2way/audioOnlyTest.spec.ts
 ```
 
-**Option 2: Custom Capability (Advanced - Multiple Nodes)**
+**Option 2: Custom Capability (Advanced - Per-Browser)**
 
-Use when tests run on different nodes and you need per-browser hostname:
+Use when you want to manually specify hostname per browser:
 
 ```javascript
 // In your grid configuration or wdio.conf.ts:
@@ -304,9 +320,10 @@ capabilities: {
 ```
 
 **Priority Order:**
-1. Custom capability `'custom:nodeHostname'` (highest priority)
-2. Environment variable `GRID_NODE_HOSTNAME`
-3. Default: `localhost` (local testing)
+1. Custom capability `'custom:nodeHostname'` (highest priority - manual override)
+2. **Automatic discovery via `GRID_HOST_URL`** (NEW - zero config for Grid 4/3)
+3. Environment variable `GRID_NODE_HOSTNAME` (fallback)
+4. Default: `localhost` (local testing)
 
 #### Grid Node Requirements
 
@@ -355,10 +372,18 @@ Check the console output when tests start:
 ✓ Local testing:
   NetworkCapture: Using local debugger address: localhost:65243
 
+✓ Grid with automatic discovery (Grid 4):
+  p1: Discovered running on grid node node-1.your-grid.com
+  NetworkCapture: Using grid node hostname from capability: node-1.your-grid.com:65243
+
+✓ Grid with automatic discovery (Grid 3):
+  p1: Discovered running on grid node 172.18.0.3
+  NetworkCapture: Using grid node hostname from capability: 172.18.0.3:65243
+
 ✓ Grid with env variable:
   NetworkCapture: Using grid node hostname from env: node-1.your-grid.com:65243
 
-✓ Grid with capability:
+✓ Grid with custom capability:
   NetworkCapture: Using grid node hostname from capability: node-1.your-grid.com:65243
 ```
 

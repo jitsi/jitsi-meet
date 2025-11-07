@@ -21,6 +21,151 @@ const allure = require('allure-commandline');
 // we need it to be able to reuse jitsi-meet code in tests
 require.extensions['.web.ts'] = require.extensions['.ts'];
 
+/**
+ * Discovers which Selenium Grid node a browser session is running on.
+ * Supports both Grid 4 (GraphQL) and Grid 3 (REST API).
+ * Retries with exponential backoff if session not found (timing issue).
+ *
+ * @param {string} sessionId - WebDriver session ID.
+ * @param {string} gridUrl - Grid hub URL (e.g., "http://grid-hub:4444").
+ * @returns {Promise<string | null>} Node hostname/IP or null if discovery fails.
+ */
+async function discoverGridNode(sessionId: string, gridUrl: string): Promise<string | null> {
+    // Retry up to 3 times with delays (session might not be registered immediately)
+    const maxRetries = 3;
+    const retryDelays = [ 500, 1000, 2000 ]; // ms
+
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+        if (attempt > 0) {
+            console.log(`Discovery retry attempt ${attempt + 1}/${maxRetries} after ${retryDelays[attempt - 1]}ms delay`);
+            await new Promise(resolve => setTimeout(resolve, retryDelays[attempt - 1]));
+        }
+
+        // Try Grid 4 GraphQL API first
+        const grid4Node = await discoverGridNodeGraphQL(sessionId, gridUrl);
+
+        if (grid4Node) {
+            return grid4Node;
+        }
+
+        // Fall back to Grid 3 REST API
+        const grid3Node = await discoverGridNodeREST(sessionId, gridUrl);
+
+        if (grid3Node) {
+            return grid3Node;
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Gets base grid URL by stripping /wd/hub suffix if present.
+ * GraphQL and Grid 3 REST APIs are at root level, not under /wd/hub.
+ *
+ * @param {string} gridUrl - Grid URL (may include /wd/hub).
+ * @returns {string} Base URL without /wd/hub.
+ */
+function getBaseGridUrl(gridUrl: string): string {
+    return gridUrl.replace(/\/wd\/hub\/?$/, '');
+}
+
+/**
+ * Discovers grid node using Selenium Grid 4 GraphQL API.
+ *
+ * @param {string} sessionId - WebDriver session ID.
+ * @param {string} gridUrl - Grid hub URL.
+ * @returns {Promise<string | null>} Node hostname or null.
+ */
+async function discoverGridNodeGraphQL(sessionId: string, gridUrl: string): Promise<string | null> {
+    try {
+        const baseUrl = getBaseGridUrl(gridUrl);
+        const graphqlUrl = `${baseUrl}/graphql`;
+
+        console.log(`Attempting Grid 4 discovery: ${graphqlUrl} with session ${sessionId}`);
+
+        const response = await fetch(graphqlUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                query: `{ session(id: "${sessionId}") { nodeUri } }`
+            })
+        });
+
+        console.log(`GraphQL response status: ${response.status} ${response.statusText}`);
+
+        if (!response.ok) {
+            return null;
+        }
+
+        const data = await response.json();
+
+        console.log('GraphQL response data:', JSON.stringify(data, null, 2));
+
+        const nodeUri = data?.data?.session?.nodeUri;
+
+        if (nodeUri) {
+            // Extract hostname from URI: "http://172.18.0.3:5555" -> "172.18.0.3"
+            const url = new URL(nodeUri);
+
+            console.log(`Discovered grid node via GraphQL (Grid 4): ${url.hostname}`);
+
+            return url.hostname;
+        }
+
+        return null;
+    } catch (error) {
+        console.log('GraphQL discovery error:', error);
+
+        return null;
+    }
+}
+
+/**
+ * Discovers grid node using Selenium Grid 3 REST API.
+ *
+ * @param {string} sessionId - WebDriver session ID.
+ * @param {string} gridUrl - Grid hub URL.
+ * @returns {Promise<string | null>} Node hostname or null.
+ */
+async function discoverGridNodeREST(sessionId: string, gridUrl: string): Promise<string | null> {
+    try {
+        const baseUrl = getBaseGridUrl(gridUrl);
+        const restUrl = `${baseUrl}/grid/api/testsession?session=${sessionId}`;
+
+        console.log(`Attempting Grid 3 discovery: ${restUrl}`);
+
+        const response = await fetch(restUrl);
+
+        console.log(`REST API response status: ${response.status} ${response.statusText}`);
+
+        if (!response.ok) {
+            return null;
+        }
+
+        const data = await response.json();
+
+        console.log('REST API response data:', JSON.stringify(data, null, 2));
+
+        const proxyId = data?.proxyId;
+
+        if (proxyId && data.success) {
+            // proxyId format: "http://192.168.1.100:5555"
+            const url = new URL(proxyId);
+
+            console.log(`Discovered grid node via REST API (Grid 3): ${url.hostname}`);
+
+            return url.hostname;
+        }
+
+        return null;
+    } catch (error) {
+        console.log('REST API discovery error:', error);
+
+        return null;
+    }
+}
+
 const chromeArgs = [
     '--allow-insecure-localhost',
     '--use-fake-ui-for-media-stream',
@@ -41,7 +186,7 @@ const chromeArgs = [
 
     // Enable remote debugging for CDP access via Puppeteer (required for NetworkCapture)
     // Port 0 means Chrome will choose an available port automatically
-    '--remote-debugging-port=0'
+    '--remote-debugging-port=35699'
 ];
 
 if (process.env.RESOLVER_RULES) {
@@ -247,6 +392,24 @@ export const config: WebdriverIO.MultiremoteConfig = {
             keepAlive.push(setInterval(async () => {
                 await bInstance.execute(() => console.log(`${new Date().toISOString()} keep-alive`));
             }, 20_000));
+
+            // Discover grid node if running on Selenium Grid
+            // This enables automatic network capture support for grid deployments
+            if (process.env.GRID_HOST_URL && !bInstance.isFirefox) {
+                try {
+                    const nodeHostname = await discoverGridNode(bInstance.sessionId, process.env.GRID_HOST_URL);
+
+                    if (nodeHostname) {
+                        // Store discovered hostname in capabilities for NetworkCapture and other uses
+                        (bInstance.capabilities as any)['custom:nodeHostname'] = nodeHostname;
+                        console.log(`${instance}: Discovered running on grid node ${nodeHostname}`);
+                    } else {
+                        console.warn(`${instance}: Failed to discover grid node, will use fallback methods`);
+                    }
+                } catch (error) {
+                    console.error(`${instance}: Error during grid node discovery:`, error);
+                }
+            }
 
             // Setup network capture if enabled
             if (process.env.CAPTURE_NETWORK === 'true' && !bInstance.isFirefox) {
