@@ -99,6 +99,11 @@ interface RightContentProps {
      * Whether the Meet feature is enabled
      */
     isMeetEnabled: boolean;
+
+    /**
+     * Optional plan name
+     */
+    planName?: string | null;
 }
 
 /**
@@ -120,6 +125,7 @@ const RightContent = React.memo(
         onLogout,
         onOpenSettings,
         isMeetEnabled,
+        planName: planNameProp,
     }: RightContentProps): JSX.Element => {
         const [showMenu, setShowMenu] = useState(false);
 
@@ -148,7 +154,7 @@ const RightContent = React.memo(
             setShowMenu(!showMenu);
         };
 
-        const planName = getPlanName(subscription);
+        const planName = planNameProp ?? getPlanName(subscription);
         const showUpgrade = !isMeetEnabled;
 
         return isLogged ? (
@@ -339,6 +345,11 @@ interface HeaderProps {
      * Handler for navigate to home page
      */
     navigateToHomePage: () => void;
+
+    /**
+     * Optional plan name
+     */
+    planName?: string | null;
 }
 
 /**
@@ -357,6 +368,7 @@ const Header = ({
     onOpenSettings,
     className = "z-50 py-3",
     navigateToHomePage,
+    planName,
 }: HeaderProps) => {
     const isMeetEnabled = useSelector(isMeetingEnabled);
     return (
@@ -376,6 +388,7 @@ const Header = ({
                     onLogout={onLogout}
                     onOpenSettings={onOpenSettings}
                     isMeetEnabled={isMeetEnabled}
+                    planName={planName}
                 />
             }
             className={className}

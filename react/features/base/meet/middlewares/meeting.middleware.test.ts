@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import MiddlewareRegistry from "../../redux/MiddlewareRegistry";
-import { updateMeetingConfig } from "../general/store/meeting/actions";
+import { setPlanName, updateMeetingConfig } from "../general/store/meeting/actions";
 import { MEETING_REDUCER } from "../general/store/meeting/reducer";
 import { LocalStorageManager } from "../LocalStorageManager";
 import { PaymentsService } from "../services/payments.service";
@@ -17,22 +17,36 @@ vi.mock("../general/store/meeting/actions", () => ({
         type: "UPDATE_MEETING_CONFIG",
         payload: config,
     })),
+    setPlanName: vi.fn((planName) => ({
+        type: "SET_PLAN_NAME",
+        payload: { planName },
+    })),
 }));
 
-vi.mock("../LocalStorageManager", () => ({
-    LocalStorageManager: {
-        instance: {
-            get: vi.fn(),
-            set: vi.fn(),
-            remove: vi.fn(),
-            clearCredentials: vi.fn(),
+vi.mock("../LocalStorageManager", () => {
+    const mockInstance = {
+        get: vi.fn(),
+        set: vi.fn(),
+        clearStorage: vi.fn(),
+        clearCredentials: vi.fn(),
+        getUser: vi.fn(),
+        getToken: vi.fn(),
+    };
+    return {
+        default: mockInstance,
+        LocalStorageManager: { instance: mockInstance },
+        STORAGE_KEYS: {
+            LAST_CONFIG_CHECK: "lastMeetingConfigCheck",
+            CACHED_MEETING_CONFIG: "cachedMeetingConfig",
+            LAST_USER_REFRESH: "lastUserRefresh",
         },
-    },
-}));
+    };
+});
 
 vi.mock("../services/payments.service", () => ({
     PaymentsService: {
         instance: {
+            getUserTier: vi.fn(),
             checkMeetAvailability: vi.fn(),
         },
     },
@@ -51,9 +65,23 @@ describe("meetingConfigMiddleware", () => {
         getState: getStateMock,
     };
 
-    const sampleMeetingConfig = {
-        enabled: true,
-        paxPerCall: 10,
+    const sampleUserTier = {
+        id: "tier-123",
+        label: "premium",
+        productId: "product-456",
+        billingType: "subscription" as const,
+        featuresPerService: {
+            meet: {
+                enabled: true,
+                paxPerCall: 10,
+            },
+            drive: {},
+            backups: {},
+            antivirus: {},
+            mail: {},
+            vpn: {},
+            cleaner: {},
+        },
     };
 
     beforeEach(() => {
@@ -66,9 +94,7 @@ describe("meetingConfigMiddleware", () => {
 
         (LocalStorageManager.instance.get as ReturnType<typeof vi.fn>).mockReturnValue(0);
 
-        // (PaymentsService.instance.checkMeetAvailability as ReturnType<typeof vi.fn>).mockResolvedValue(
-        //     sampleMeetingConfig
-        // );
+        (PaymentsService.instance.getUserTier as ReturnType<typeof vi.fn>).mockResolvedValue(sampleUserTier);
 
         getStateMock.mockReturnValue({
             [MEETING_REDUCER]: {
@@ -99,22 +125,22 @@ describe("meetingConfigMiddleware", () => {
     });
 
     describe("LOGIN_SUCCESS Action", () => {
-        it("When LOGIN_SUCCESS action is dispatched, then it should update meeting config", async () => {
+        it("When LOGIN_SUCCESS action is dispatched, then it should update meeting config and plan name", async () => {
             const action = { type: AUTH_ACTIONS.LOGIN_SUCCESS };
             const middleware = meetingConfigMiddleware(storeMock)(nextMock);
             middleware(action);
 
-            // await vi.waitFor(() => {
-            //     expect(PaymentsService.instance.checkMeetAvailability).toHaveBeenCalled();
-            // });
-
-            expect(dispatchMock).toHaveBeenCalled();
-            expect(updateMeetingConfig).toHaveBeenCalledWith({
-                enabled: sampleMeetingConfig.enabled,
-                paxPerCall: sampleMeetingConfig.paxPerCall,
+            await vi.waitFor(() => {
+                expect(PaymentsService.instance.getUserTier).toHaveBeenCalled();
             });
+
+            expect(PaymentsService.instance.getUserTier).toHaveBeenCalledTimes(1);
+            expect(updateMeetingConfig).toHaveBeenCalledWith({
+                enabled: true,
+                paxPerCall: 10,
+            });
+            expect(setPlanName).toHaveBeenCalledWith("premium");
             expect(LocalStorageManager.instance.set).toHaveBeenCalledWith("lastMeetingConfigCheck", expect.any(Number));
-            expect(LocalStorageManager.instance.set).toHaveBeenCalledWith("cachedMeetingConfig", sampleMeetingConfig);
         });
 
         it("When LOGIN_SUCCESS action is dispatched and last check was recent, then it should still force update", async () => {
@@ -126,11 +152,11 @@ describe("meetingConfigMiddleware", () => {
 
             middleware(action);
 
-            // await vi.waitFor(() => {
-            //     expect(PaymentsService.instance.checkMeetAvailability).toHaveBeenCalled();
-            // });
+            await vi.waitFor(() => {
+                expect(PaymentsService.instance.getUserTier).toHaveBeenCalled();
+            });
 
-            // expect(PaymentsService.instance.checkMeetAvailability).toHaveBeenCalled();
+            expect(PaymentsService.instance.getUserTier).toHaveBeenCalled();
         });
     });
 
@@ -144,11 +170,12 @@ describe("meetingConfigMiddleware", () => {
 
             middleware(action);
 
-            // await vi.waitFor(() => {
-            //     expect(PaymentsService.instance.checkMeetAvailability).toHaveBeenCalled();
-            // });
+            await vi.waitFor(() => {
+                expect(PaymentsService.instance.getUserTier).toHaveBeenCalled();
+            });
 
             expect(updateMeetingConfig).toHaveBeenCalled();
+            expect(setPlanName).toHaveBeenCalled();
         });
 
         it("When REFRESH_TOKEN_SUCCESS action is dispatched and interval has not expired, then it should not update meeting config", async () => {
@@ -162,7 +189,7 @@ describe("meetingConfigMiddleware", () => {
 
             await vi.waitFor(() => {}, { timeout: 100 });
 
-            expect(PaymentsService.instance.checkMeetAvailability).not.toHaveBeenCalled();
+            expect(PaymentsService.instance.getUserTier).not.toHaveBeenCalled();
         });
     });
 
@@ -182,11 +209,12 @@ describe("meetingConfigMiddleware", () => {
             const middleware = meetingConfigMiddleware(storeMock)(nextMock);
             middleware(action);
 
-            // await vi.waitFor(() => {
-            //     expect(PaymentsService.instance.checkMeetAvailability).toHaveBeenCalled();
-            // });
+            await vi.waitFor(() => {
+                expect(PaymentsService.instance.getUserTier).toHaveBeenCalled();
+            });
 
             expect(updateMeetingConfig).toHaveBeenCalled();
+            expect(setPlanName).toHaveBeenCalled();
         });
 
         it("When INITIALIZE_AUTH action is dispatched with authenticated user, meeting enabled, and interval not expired, then it should not update", async () => {
@@ -210,7 +238,7 @@ describe("meetingConfigMiddleware", () => {
 
             await vi.waitFor(() => {}, { timeout: 100 });
 
-            expect(PaymentsService.instance.checkMeetAvailability).not.toHaveBeenCalled();
+            expect(PaymentsService.instance.getUserTier).not.toHaveBeenCalled();
         });
 
         it("When INITIALIZE_AUTH action is dispatched with non-authenticated user, then it should not update meeting config", async () => {
@@ -224,33 +252,31 @@ describe("meetingConfigMiddleware", () => {
 
             await vi.waitFor(() => {}, { timeout: 100 });
 
-            expect(PaymentsService.instance.checkMeetAvailability).not.toHaveBeenCalled();
+            expect(PaymentsService.instance.getUserTier).not.toHaveBeenCalled();
         });
     });
 
     describe("LOGOUT Action", () => {
-        it("When LOGOUT action is dispatched, then it should clear localStorage values and credentials", () => {
+        it("When LOGOUT action is dispatched, then it should clear storage and credentials", () => {
             const action = { type: AUTH_ACTIONS.LOGOUT };
             const middleware = meetingConfigMiddleware(storeMock)(nextMock);
             middleware(action);
 
-            expect(LocalStorageManager.instance.remove).toHaveBeenCalledWith("lastMeetingConfigCheck");
-            expect(LocalStorageManager.instance.remove).toHaveBeenCalledWith("cachedMeetingConfig");
             expect(LocalStorageManager.instance.clearCredentials).toHaveBeenCalledTimes(1);
         });
 
-        it("When LOGOUT action is dispatched and localStorage removal fails, then it should handle the error", () => {
+        it("When LOGOUT action is dispatched and clearStorage fails, then it should handle the error", () => {
             const action = { type: AUTH_ACTIONS.LOGOUT };
             const middleware = meetingConfigMiddleware(storeMock)(nextMock);
 
-            (LocalStorageManager.instance.remove as ReturnType<typeof vi.fn>).mockImplementation(() => {
+            vi.spyOn(LocalStorageManager.instance, 'clearStorage' as any).mockImplementation(() => {
                 throw new Error("localStorage error");
             });
 
             middleware(action);
 
             expect(console.error).toHaveBeenCalledWith(
-                "Error clearing meeting config from localStorage",
+                "Error clearing cached data from localStorage",
                 expect.any(Error)
             );
         });
@@ -261,18 +287,17 @@ describe("meetingConfigMiddleware", () => {
             const action = { type: AUTH_ACTIONS.LOGIN_SUCCESS };
             const middleware = meetingConfigMiddleware(storeMock)(nextMock);
 
-            (PaymentsService.instance.checkMeetAvailability as ReturnType<typeof vi.fn>).mockRejectedValue(
+            (PaymentsService.instance.getUserTier as ReturnType<typeof vi.fn>).mockRejectedValue(
                 new Error("API error")
             );
 
             middleware(action);
 
-            // await vi.waitFor(() => {
-            //     expect(console.error).toHaveBeenCalled();
-            // });
+            await vi.waitFor(() => {
+                expect(console.error).toHaveBeenCalled();
+            });
 
-            // expect(console.error).toHaveBeenCalledWith("Error checking meeting configuation", expect.any(Error));
-            // expect(dispatchMock).not.toHaveBeenCalled();
+            expect(console.error).toHaveBeenCalledWith("Error checking meeting configuration", expect.any(Error));
         });
     });
 });
