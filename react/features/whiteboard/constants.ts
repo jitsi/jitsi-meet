@@ -14,13 +14,13 @@ export const WHITEBOARD_ID = 'whiteboard';
 export const WHITEBOARD_UI_OPTIONS = {
     canvasActions: {
         allowedShapes: [
-            'arrow', 'diamond', 'ellipse', 'freedraw', 'line', 'rectangle', 'selection', 'text', 'eraser'
+            'arrow', 'diamond', 'ellipse', 'freedraw', 'line', 'rectangle', 'selection', 'text', 'eraser', 'image'
         ],
         allowedShortcuts: [
             'cut', 'deleteSelectedElements', 'redo', 'selectAll', 'undo'
         ],
         disableAlignItems: true,
-        disableFileDrop: true,
+        disableFileDrop: false,
         disableGrouping: true,
         disableHints: true,
         disableLink: true,

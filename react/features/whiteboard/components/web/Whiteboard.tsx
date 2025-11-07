@@ -18,6 +18,7 @@ import { WHITEBOARD_UI_OPTIONS } from '../../constants';
 import {
     getCollabDetails,
     getCollabServerUrl,
+    getStorageBackendUrl,
     isWhiteboardOpen,
     isWhiteboardVisible
 } from '../../functions';
@@ -57,9 +58,12 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
     const filmstripWidth: number = useSelector(getVerticalViewMaxWidth);
     const collabDetails = useSelector(getCollabDetails);
     const collabServerUrl = useSelector(getCollabServerUrl);
+    const storageBackendUrl = useSelector(getStorageBackendUrl);
     const { defaultRemoteDisplayName } = useSelector((state: IReduxState) => state['features/base/config']);
     const localParticipantName = useSelector(getLocalParticipant)?.name || defaultRemoteDisplayName || 'Fellow Jitster';
     
+    const jwt = useSelector((state: IReduxState) => state['features/base/jwt']).jwt || '';
+
     useEffect(() => {
         if (!collabAPIRef.current) {
             return;
@@ -152,7 +156,9 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
                                 UIOptions: WHITEBOARD_UI_OPTIONS
                             }}
                             getCollabAPI = { getCollabAPI }
-                            getExcalidrawAPI = { getExcalidrawAPI } />
+                            getExcalidrawAPI = { getExcalidrawAPI }
+                            jwt = { jwt }
+                            storageBackendUrl = { storageBackendUrl } />
                     </div>
                 )
             }
