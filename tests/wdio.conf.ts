@@ -6,6 +6,7 @@ import path from 'node:path';
 import process from 'node:process';
 import pretty from 'pretty';
 
+import { NetworkCapture } from './helpers/NetworkCapture';
 import { getTestProperties, loadTestFiles } from './helpers/TestProperties';
 import { config as testsConfig } from './helpers/TestsConfig';
 import WebhookProxy from './helpers/WebhookProxy';
@@ -36,7 +37,11 @@ const chromeArgs = [
     // Avoids - "You are checking for animations on an inactive tab, animations do not run for inactive tabs"
     // when executing waitForStable()
     '--disable-renderer-backgrounding',
-    '--use-file-for-fake-audio-capture=tests/resources/fakeAudioStream.wav'
+    '--use-file-for-fake-audio-capture=tests/resources/fakeAudioStream.wav',
+
+    // Enable remote debugging for CDP access via Puppeteer (required for NetworkCapture)
+    // Port 0 means Chrome will choose an available port automatically
+    '--remote-debugging-port=0'
 ];
 
 if (process.env.RESOLVER_RULES) {
@@ -126,6 +131,9 @@ const capabilities = generateCapabilitiesFromSpecs();
 const TEST_RESULTS_DIR = 'test-results';
 
 const keepAlive: Array<any> = [];
+
+/** Network capture instances for each browser (when CAPTURE_NETWORK is enabled). */
+const networkCaptures: Map<string, NetworkCapture> = new Map();
 
 export const config: WebdriverIO.MultiremoteConfig = {
 
@@ -240,6 +248,19 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 await bInstance.execute(() => console.log(`${new Date().toISOString()} keep-alive`));
             }, 20_000));
 
+            // Setup network capture if enabled
+            if (process.env.CAPTURE_NETWORK === 'true' && !bInstance.isFirefox) {
+                try {
+                    const capture = new NetworkCapture(bInstance);
+
+                    await capture.start();
+                    networkCaptures.set(`${instance}-${cid}-${testName}`, capture);
+                    console.log(`Network capture started for ${instance}`);
+                } catch (error) {
+                    console.error(`Failed to start network capture for ${instance}:`, error);
+                }
+            }
+
             if (bInstance.isFirefox) {
                 return;
             }
@@ -278,11 +299,35 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }
     },
 
-    after() {
+    async after() {
         const { ctx }: any = global;
 
         ctx?.webhooksProxy?.disconnect();
         keepAlive.forEach(clearInterval);
+
+        // Stop network capture and export data
+        if (networkCaptures.size > 0) {
+            await Promise.all(Array.from(networkCaptures.entries()).map(async ([ key, capture ]) => {
+                try {
+                    await capture.stop();
+                    const outputPath = path.join(TEST_RESULTS_DIR, `network-${key}.json`);
+
+                    capture.exportToJSON(outputPath);
+
+                    const stats = capture.getStats();
+
+                    console.log(`\nNetwork Capture Summary for ${key}:`);
+                    console.log(`  Total requests: ${stats.total}`);
+                    console.log(`  Succeeded: ${stats.succeeded}`);
+                    console.log(`  Failed: ${stats.failed}`);
+                    console.log(`  Cached: ${stats.cachedRequests}`);
+                } catch (error) {
+                    console.error(`Failed to stop/export network capture for ${key}:`, error);
+                }
+            }));
+
+            networkCaptures.clear();
+        }
     },
 
     beforeSession(c, capabilities_, specs_, cid) {

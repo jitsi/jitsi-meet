@@ -187,6 +187,7 @@
     "patch-package": "6.4.7",
     "pretty": "2.0.0",
     "process": "0.11.10",
+    "puppeteer-core": "24.29.1",
     "sass": "1.26.8",
     "style-loader": "3.3.1",
     "traverse": "0.6.6",
@@ -225,7 +226,12 @@
     "test-grid": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.grid.conf.ts",
     "test-grid-single": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.grid.conf.ts --spec",
     "test-grid-ff": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.grid.firefox.conf.ts",
-    "test-grid-ff-single": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.grid.firefox.conf.ts --spec"
+    "test-grid-ff-single": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.grid.firefox.conf.ts --spec",
+    "test-network": "CAPTURE_NETWORK=true DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.conf.ts",
+    "test-network-single": "CAPTURE_NETWORK=true DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.conf.ts --spec",
+    "test-network-dev": "CAPTURE_NETWORK=true DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.dev.conf.ts",
+    "test-network-dev-single": "CAPTURE_NETWORK=true DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.dev.conf.ts --spec",
+    "analyze-network": "npx tsx tests/helpers/networkAnalysis.ts"
   },
   "resolutions": {
     "@types/react": "17.0.14",
