@@ -1283,7 +1283,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      *
      * TODO: should be removed after we make sure that all Electron clients use only versions
      * after with the legacy SS support was removed from the electron SDK. If we remove it now the SS for Electron
-     * clients with older versions wont work.
+     * clients with older versions won't work.
      */
     _isNewElectronScreensharingSupported() {
         return this._transport.sendRequest({

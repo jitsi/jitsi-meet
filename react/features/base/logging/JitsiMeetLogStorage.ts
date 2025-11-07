@@ -47,7 +47,7 @@ export default class JitsiMeetLogStorage {
         const config = this.getState()['features/base/config'];
 
         // RTCStats can run without sending app logs to the server.
-        // Be mindful that there exists another LogStorage instance withing lib-jitsi-meet,
+        // Be mindful that there exists another LogStorage instance within lib-jitsi-meet,
         // that is used to send logs generated there.
         return config?.analytics?.rtcstatsStoreLogs && isRTCStatsEnabled(this.getState());
     }

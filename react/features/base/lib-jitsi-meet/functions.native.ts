@@ -11,7 +11,7 @@ export * from './functions.any';
 
 
 /**
- * Worklet context usefull for running small tasks off the JS thread.
+ * Worklet context useful for running small tasks off the JS thread.
  */
 export const workletContext = Worklets.createContext('ConfigParser');
 
