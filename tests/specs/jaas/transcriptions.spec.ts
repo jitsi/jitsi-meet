@@ -57,10 +57,16 @@ describe('Transcription', () => {
 
         await checkReceivingChunks(p1, p2, webhooksProxy);
 
+        await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
+        await p1.getIframeAPI().addEventListener('transcribingStatusChanged');
+
         await p1.getIframeAPI().executeCommand('toggleSubtitles');
 
-        // give it some time to process
-        await p1.driver.pause(5000);
+        await p1.driver.waitUntil(() => p1.getIframeAPI()
+            .getEventResult('transcribingStatusChanged'), {
+            timeout: 15000,
+            timeoutMsg: 'transcribingStatusChanged event not received by p1'
+        });
     });
 
     it('set subtitles on and off', async () => {
@@ -72,18 +78,23 @@ describe('Transcription', () => {
 
         await checkReceivingChunks(p1, p2, webhooksProxy);
 
+        await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
+
         await p1.getIframeAPI().executeCommand('setSubtitles', false);
 
-        // give it some time to process
-        await p1.driver.pause(5000);
+        await p1.driver.waitUntil(() => p1.getIframeAPI()
+            .getEventResult('transcribingStatusChanged'), {
+            timeout: 15000,
+            timeoutMsg: 'transcribingStatusChanged event not received by p1'
+        });
     });
 
     it('start/stop transcriptions via recording', async () => {
         // we need to clear results or the last one will be used, from the previous time subtitles were on
+        await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
         await p1.getIframeAPI().clearEventResults('transcriptionChunkReceived');
         await p2.getIframeAPI().clearEventResults('transcriptionChunkReceived');
 
-        await p1.getIframeAPI().addEventListener('transcribingStatusChanged');
         await p2.getIframeAPI().addEventListener('transcribingStatusChanged');
 
         await p1.getIframeAPI().executeCommand('startRecording', { transcription: true });
