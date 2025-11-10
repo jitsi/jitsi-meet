@@ -98,6 +98,10 @@
         "refresh": "Refresh calendar",
         "today": "Today"
     },
+    "loader": {
+        "reconnecting": "Reconnecting...",
+        "reloading": "Reloading page..."
+    },
     "carmode": {
         "actions": {
             "selectSoundDevice": "Select sound device"

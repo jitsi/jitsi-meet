@@ -88,6 +88,10 @@
         "refresh": "Actualizar calendario",
         "today": "Hoy"
     },
+    "loader": {
+        "reconnecting": "Reconectando...",
+        "reloading": "Recargando página..."
+    },
     "carmode": {
         "actions": {
             "selectSoundDevice": "Elija un dispositivo de sonido"
