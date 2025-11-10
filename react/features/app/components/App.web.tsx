@@ -8,6 +8,7 @@ import { AbstractApp } from "./AbstractApp";
 
 // Register middlewares and reducers.
 import MobileView from "../../base/meet/views/mobile/MobileView";
+import GlobalLoader from "../../base/meet/loader/components/GlobalLoader";
 import "../middlewares";
 import "../reducers";
 
@@ -41,6 +42,7 @@ export class App extends AbstractApp {
         return (
             <JitsiThemeProvider>
                 <OverlayContainer />
+                <GlobalLoader />
             </JitsiThemeProvider>
         );
     }

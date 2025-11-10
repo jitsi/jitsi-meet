@@ -1,18 +1,20 @@
-import { AnyAction } from 'redux';
-import { IStore } from '../../../../app/types';
-import { hideNotification, showWarningNotification } from "../../../../notifications/actions";
-import { NOTIFICATION_TIMEOUT_TYPE } from "../../../../notifications/constants";
+import { batch } from "react-redux";
+import { AnyAction } from "redux";
+import { IStore } from "../../../../app/types";
+import { hideNotification } from "../../../../notifications/actions";
 import { CONFERENCE_WILL_LEAVE } from "../../../conference/actionTypes";
 import { CONNECTION_DISCONNECTED, CONNECTION_ESTABLISHED, CONNECTION_FAILED } from "../../../connection/actionTypes";
 import { connect } from "../../../connection/actions.web";
 import { setJWT } from "../../../jwt/actions";
 import MiddlewareRegistry from "../../../redux/MiddlewareRegistry";
+import { trackRemoved } from "../../../tracks/actions.any";
+import { hideLoader, showLoader } from "../../loader";
 
 const RECONNECTION_NOTIFICATION_ID = "connection.reconnecting";
+const RECONNECTION_LOADER_ID = "auto-reconnect";
 const RECONNECTION_WAIT_TIME_MS = 15000;
 const MAX_RECONNECTION_ATTEMPTS = 2;
 const RECONNECTION_DELAY_MS = 3000;
-//TODO: Need to check this is always be the same for this case
 const JWT_EXPIRED_ERROR = "connection.passwordRequired";
 
 let isManualDisconnect = false;
@@ -22,25 +24,18 @@ let reconnectionAttempts = 0;
 
 export const isAutoReconnecting = () => isReconnecting;
 
-const showReconnectionNotification = (store: IStore, attempt: number) => {
-    const descriptionKey =
-        attempt <= MAX_RECONNECTION_ATTEMPTS ? "notify.reconnectingAttempt" : "notify.reconnectionFailedReloading";
-
-    store.dispatch(
-        showWarningNotification(
-            {
-                titleKey: "notify.reconnecting",
-                descriptionKey,
-                descriptionArguments: { attempt, max: MAX_RECONNECTION_ATTEMPTS },
-                uid: RECONNECTION_NOTIFICATION_ID,
-            },
-            NOTIFICATION_TIMEOUT_TYPE.STICKY
-        )
-    );
-};
-
 const hideReconnectionNotification = (store: IStore) => {
     store.dispatch(hideNotification(RECONNECTION_NOTIFICATION_ID));
+};
+
+const showReconnectionLoader = (store: IStore, attempt: number) => {
+    const textKey = attempt <= MAX_RECONNECTION_ATTEMPTS ? "loader.reconnecting" : "loader.reloading";
+
+    store.dispatch(showLoader(undefined, textKey, RECONNECTION_LOADER_ID));
+};
+
+const hideReconnectionLoader = (store: IStore) => {
+    store.dispatch(hideLoader(RECONNECTION_LOADER_ID));
 };
 
 const reloadPage = () => {
@@ -49,6 +44,17 @@ const reloadPage = () => {
 
 const clearExpiredJWT = (store: IStore) => {
     store.dispatch(setJWT(undefined));
+};
+
+const clearRemoteTracks = (store: IStore) => {
+    const state = store.getState();
+    const remoteTracks = state["features/base/tracks"].filter((t) => !t.local);
+
+    batch(() => {
+        for (const track of remoteTracks) {
+            store.dispatch(trackRemoved(track.jitsiTrack));
+        }
+    });
 };
 
 const triggerReconnection = (store: IStore) => {
@@ -65,7 +71,7 @@ const scheduleRetry = (store: IStore) => {
 
 const handleMaxAttemptsReached = (store: IStore) => {
     isReconnecting = true;
-    showReconnectionNotification(store, reconnectionAttempts + 1);
+    showReconnectionLoader(store, reconnectionAttempts + 1);
     reconnectionTimer = window.setTimeout(reloadPage, 2000);
 };
 
@@ -83,9 +89,10 @@ const attemptReconnection = async (store: IStore) => {
 
     reconnectionAttempts++;
     isReconnecting = true;
-    showReconnectionNotification(store, reconnectionAttempts);
+    showReconnectionLoader(store, reconnectionAttempts);
 
     try {
+        clearRemoteTracks(store);
         clearExpiredJWT(store);
         await new Promise((resolve) => setTimeout(resolve, 100));
         triggerReconnection(store);
@@ -120,6 +127,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
             isManualDisconnect = true;
             resetReconnectionState();
             hideReconnectionNotification(store);
+            hideReconnectionLoader(store);
             break;
         }
 
@@ -142,6 +150,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         case CONNECTION_ESTABLISHED: {
             if (isReconnecting) {
                 hideReconnectionNotification(store);
+                hideReconnectionLoader(store);
             }
 
             resetReconnectionState();
