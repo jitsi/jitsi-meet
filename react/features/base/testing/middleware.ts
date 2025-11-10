@@ -8,11 +8,15 @@ import { getJitsiMeetGlobalNS } from '../util/helpers';
 
 import { setConnectionState } from './actions';
 import {
+    audioMute,
+    audioUnmute,
     getLocalCameraEncoding,
     getRemoteVideoType,
     isLargeVideoReceived,
     isRemoteVideoReceived,
-    isTestModeEnabled
+    isTestModeEnabled,
+    videoMute,
+    videoUnmute
 } from './functions';
 import logger from './logger';
 
@@ -85,10 +89,14 @@ function _bindTortureHelpers(store: IStore) {
 
     // All torture helper methods go in here
     getJitsiMeetGlobalNS().testing = {
+        audioMute: audioMute.bind(null, store),
+        audioUnmute: audioUnmute.bind(null, store),
         getRemoteVideoType: getRemoteVideoType.bind(null, store),
         isLargeVideoReceived: isLargeVideoReceived.bind(null, store),
         getLocalCameraEncoding: getLocalCameraEncoding.bind(null, store),
-        isRemoteVideoReceived: isRemoteVideoReceived.bind(null, store)
+        isRemoteVideoReceived: isRemoteVideoReceived.bind(null, store),
+        videoMute: videoMute.bind(null, store),
+        videoUnmute: videoUnmute.bind(null, store),
     };
 }
 
