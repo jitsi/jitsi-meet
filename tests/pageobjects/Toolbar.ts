@@ -62,6 +62,7 @@ export default class Toolbar extends BasePageObject {
             timeout: 2000, timeoutMsg: 'Audio mute button not found'
         });
 
+        // not directly clicking the button to avoid issues of UI notifications preventing it
         return this.participant.execute(() => JitsiMeetJS.app.testing.audioMute());
     }
 
@@ -77,6 +78,7 @@ export default class Toolbar extends BasePageObject {
             timeout: 2000, timeoutMsg: 'Audio unmute button not found'
         });
 
+        // not directly clicking the button to avoid issues of UI notifications preventing it
         return this.participant.execute(() => JitsiMeetJS.app.testing.audioUnmute());
     }
 
@@ -106,6 +108,7 @@ export default class Toolbar extends BasePageObject {
             timeout: 2000, timeoutMsg: 'Video mute button not found'
         });
 
+        // not directly clicking the button to avoid issues of UI notifications preventing it
         return this.participant.execute(() => JitsiMeetJS.app.testing.videoMute());
     }
 
@@ -121,6 +124,7 @@ export default class Toolbar extends BasePageObject {
             timeout: 2000, timeoutMsg: 'Video unmute button not found'
         });
 
+        // not directly clicking the button to avoid issues of UI notifications preventing it
         return this.participant.execute(() => JitsiMeetJS.app.testing.videoUnmute());
     }
 
