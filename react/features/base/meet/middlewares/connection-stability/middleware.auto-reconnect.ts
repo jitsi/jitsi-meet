@@ -7,7 +7,7 @@ import { CONNECTION_DISCONNECTED, CONNECTION_ESTABLISHED, CONNECTION_FAILED } fr
 import { connect } from "../../../connection/actions.web";
 import { setJWT } from "../../../jwt/actions";
 import MiddlewareRegistry from "../../../redux/MiddlewareRegistry";
-import { destroyLocalTracks, trackRemoved } from "../../../tracks/actions.any";
+import { trackRemoved } from "../../../tracks/actions.any";
 import { hideLoader, showLoader } from "../../loader";
 
 const RECONNECTION_NOTIFICATION_ID = "connection.reconnecting";
@@ -46,12 +46,11 @@ const clearExpiredJWT = (store: IStore) => {
     store.dispatch(setJWT(undefined));
 };
 
-const clearAllTracks = (store: IStore) => {
+const clearRemoteTracks = (store: IStore) => {
     const state = store.getState();
     const remoteTracks = state["features/base/tracks"].filter((t) => !t.local);
 
     batch(() => {
-        store.dispatch(destroyLocalTracks());
         for (const track of remoteTracks) {
             store.dispatch(trackRemoved(track.jitsiTrack));
         }
@@ -93,7 +92,7 @@ const attemptReconnection = async (store: IStore) => {
     showReconnectionLoader(store, reconnectionAttempts);
 
     try {
-        clearAllTracks(store);
+        clearRemoteTracks(store);
         clearExpiredJWT(store);
         await new Promise((resolve) => setTimeout(resolve, 100));
         triggerReconnection(store);
