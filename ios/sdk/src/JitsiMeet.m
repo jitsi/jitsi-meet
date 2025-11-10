@@ -26,79 +26,15 @@
 
 #import <react-native-webrtc/WebRTCModuleOptions.h>
 #import <RCTReactNativeFactory.h>
-#import <RCTDefaultReactNativeFactoryDelegate.h>
 #import <ReactAppDependencyProvider/RCTAppDependencyProvider.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import "RCTFactoryDelegateWrapper.h"
 
 #if !defined(JITSI_MEET_SDK_LITE)
 #import <RNGoogleSignin/RNGoogleSignin.h>
 #import "Dropbox.h"
 #endif
-
-@interface JMReactNativeFactoryDelegate : RCTDefaultReactNativeFactoryDelegate
-@property (nonatomic, strong) id<RCTDependencyProvider> dependencyProvider;
-@end
-
-@implementation JMReactNativeFactoryDelegate
-
-- (instancetype)init {
-    if (self = [super init]) {
-        NSLog(@"🔵 JMReactNativeFactoryDelegate init called");
-    }
-    return self;
-}
-
-- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge {
-    return [self bundleURL];
-}
-
-- (NSURL *_Nullable)bundleURL {
-#if DEBUG
-    NSURL *bundleURL = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackExtension:@"jsbundle"];
-#else
-    NSURL *bundleURL = nil;
-#endif
-
-    if (bundleURL == nil) {
-        bundleURL = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-        if (bundleURL != nil) {
-            NSLog(@"🔵 Using embedded bundle: main.jsbundle in app resources");
-        }
-    }
-
-    if (bundleURL == nil) {
-        NSBundle *sdkBundle = [NSBundle bundleForClass:[JitsiMeet class]];
-        bundleURL = [sdkBundle URLForResource:@"main" withExtension:@"jsbundle"];
-        if (bundleURL != nil) {
-            NSLog(@"🔵 Using embedded bundle: main.jsbundle in JitsiMeetSDK.framework");
-        }
-    }
-
-    return bundleURL;
-}
-
-- (BOOL)fabricEnabled {
-    NSLog(@"🔵 fabricEnabled called, returning NO");
-    return NO;
-}
-
-- (BOOL)newArchEnabled {
-    NSLog(@"🔵 newArchEnabled called, returning NO");
-    return NO;
-}
-
-- (BOOL)turboModuleEnabled {
-    NSLog(@"🔵 turboModuleEnabled called, returning NO");
-    return NO;
-}
-
-- (BOOL)bridgelessEnabled {
-    NSLog(@"🔵 bridgelessEnabled called, returning NO");
-    return NO;
-}
-
-@end
 
 @implementation JitsiMeet {
     NSDictionary *_launchOptions;
@@ -126,20 +62,8 @@
         // Initialize WebRTC options.
         self.rtcAudioDevice = nil;
         self.webRtcLoggingSeverity = WebRTCLoggingSeverityNone;
-        
-        NSLog(@"🔵 Creating JMReactNativeFactoryDelegate");
-        JMReactNativeFactoryDelegate *delegate = [[JMReactNativeFactoryDelegate alloc] init];
-        
-        NSLog(@"🔵 Creating RCTAppDependencyProvider");
-        id<RCTDependencyProvider> provider = [[RCTAppDependencyProvider alloc] init];
-        NSLog(@"🔵 RCTAppDependencyProvider created: %@", provider);
-        
-        NSLog(@"🔵 Setting dependencyProvider on delegate");
-        delegate.dependencyProvider = provider;
-        
-        NSLog(@"🔵 Creating RCTReactNativeFactory with delegate");
-        _reactNativeFactory = [[RCTReactNativeFactory alloc] initWithDelegate:delegate];
-        NSLog(@"🔵 RCTReactNativeFactory created: %@", _reactNativeFactory);
+
+        [self createReactNativeFactory];
 
         // Initialize the listener for handling start/stop screensharing notifications.
         _screenshareEventEmiter = [[ScheenshareEventEmiter alloc] init];
@@ -215,13 +139,34 @@
 
 #pragma mark - Utility methods
 
+- (void)createReactNativeFactory {
+    NSLog(@"🔵 Creating RCTFactoryDelegateWrapper");
+    RCTFactoryDelegateWrapper *delegate = [[RCTFactoryDelegateWrapper alloc] init];
+
+    NSLog(@"🔵 Creating RCTAppDependencyProvider");
+    id<RCTDependencyProvider> provider = [[RCTAppDependencyProvider alloc] init];
+    NSLog(@"🔵 RCTAppDependencyProvider created: %@", provider);
+
+    NSLog(@"🔵 Setting dependencyProvider on delegate");
+    delegate.dependencyProvider = provider;
+
+    NSLog(@"🔵 Creating RCTReactNativeFactory with delegate");
+    _reactNativeFactory = [[RCTReactNativeFactory alloc] initWithDelegate:delegate];
+    NSLog(@"🔵 RCTReactNativeFactory created: %@", _reactNativeFactory);
+}
+
 - (void)instantiateReactNativeBridge {
+    if (_reactNativeFactory == nil) {
+        [self createReactNativeFactory];
+    }
+    
     // Initialize WebRTC options.
     WebRTCModuleOptions *options = [WebRTCModuleOptions sharedInstance];
     options.audioDevice = _rtcAudioDevice;
     options.loggingSeverity = (RTCLoggingSeverity)_webRtcLoggingSeverity;
 
-
+    // Accessing bridge forces lazy initialization.
+    [_reactNativeFactory bridge];
 }
 
 - (void)destroyReactNativeBridge {
