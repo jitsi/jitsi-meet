@@ -38,14 +38,14 @@ import Separator from './Separator';
 interface IProps {
 
     /**
-     * Explicitly passed array with the buttons which this Toolbox should display.
-     */
-    toolbarButtons?: Array<string>;
-    
-    /**
      * Optional toolbar background color passed as a prop.
      */
     toolbarBackgroundColor?: string;
+
+    /**
+     * Explicitly passed array with the buttons which this Toolbox should display.
+     */
+    toolbarButtons?: Array<string>;
 }
 
 const useStyles = makeStyles()(() => {
@@ -150,6 +150,7 @@ export default function Toolbox({
         dispatch(setOverflowMenuVisible(visible));
         dispatch(setToolbarHovered(visible));
     }, [ dispatch ]);
+
     useEffect(() => {
 
         // On mobile web we want to keep both toolbox and hang up menu visible
