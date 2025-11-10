@@ -58,7 +58,9 @@ export default class Toolbar extends BasePageObject {
     async clickAudioMuteButton(): Promise<void> {
         await this.participant.log('Clicking on: Audio Mute Button');
 
-        expect(this.audioMuteBtn.isExisting()).toBe(true);
+        await this.audioMuteBtn.waitForExist({
+            timeout: 2000, timeoutMsg: 'Audio mute button not found'
+        });
 
         return this.participant.execute(() => JitsiMeetJS.app.testing.audioMute());
     }
@@ -71,7 +73,9 @@ export default class Toolbar extends BasePageObject {
     async clickAudioUnmuteButton(): Promise<void> {
         await this.participant.log('Clicking on: Audio Unmute Button');
 
-        expect(this.audioUnMuteBtn.isExisting()).toBe(true);
+        await this.audioUnMuteBtn.waitForExist({
+            timeout: 2000, timeoutMsg: 'Audio unmute button not found'
+        });
 
         return this.participant.execute(() => JitsiMeetJS.app.testing.audioUnmute());
     }
@@ -98,7 +102,9 @@ export default class Toolbar extends BasePageObject {
     async clickVideoMuteButton(): Promise<void> {
         await this.participant.log('Clicking on: Video Mute Button');
 
-        expect(this.videoMuteBtn.isExisting()).toBe(true);
+        await this.videoMuteBtn.waitForExist({
+            timeout: 2000, timeoutMsg: 'Video mute button not found'
+        });
 
         return this.participant.execute(() => JitsiMeetJS.app.testing.videoMute());
     }
@@ -111,7 +117,9 @@ export default class Toolbar extends BasePageObject {
     async clickVideoUnmuteButton(): Promise<void> {
         await this.participant.log('Clicking on: Video Unmute Button');
 
-        expect(this.videoUnMuteBtn.isExisting()).toBe(true);
+        await this.videoUnMuteBtn.waitForExist({
+            timeout: 2000, timeoutMsg: 'Video unmute button not found'
+        });
 
         return this.participant.execute(() => JitsiMeetJS.app.testing.videoUnmute());
     }
