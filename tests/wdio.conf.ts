@@ -1,6 +1,7 @@
 import AllureReporter from '@wdio/allure-reporter';
 import { multiremotebrowser } from '@wdio/globals';
 import { Buffer } from 'buffer';
+import fs from 'fs';
 import { glob } from 'glob';
 import path from 'node:path';
 import process from 'node:process';
@@ -460,6 +461,15 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 }
 
                 console.log('Allure report successfully generated');
+
+                // An ugly hack to sort by test order by default in the allure report.
+                const content = fs.readFileSync(`${TEST_RESULTS_DIR}/allure-report/index.html`, 'utf8');
+                const modifiedContent = content.replace('<body>',
+                    '<body><script>localStorage.setItem("ALLURE_REPORT_SETTINGS_SUITES", \'{"treeSorting":{"sorter":"sorter.order","ascending":true}}\')</script>'
+                );
+
+                fs.writeFileSync(`${TEST_RESULTS_DIR}/allure-report/index.html`, modifiedContent);
+
                 resolve();
             });
         });
