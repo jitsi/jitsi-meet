@@ -57,7 +57,6 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        NSLog(@"🔵 JitsiMeet init started");
         
         // Initialize WebRTC options.
         self.rtcAudioDevice = nil;
@@ -140,19 +139,19 @@
 #pragma mark - Utility methods
 
 - (void)createReactNativeFactory {
-    NSLog(@"🔵 Creating RCTFactoryDelegateWrapper");
+    NSLog(@"Creating RCTFactoryDelegateWrapper");
     RCTFactoryDelegateWrapper *delegate = [[RCTFactoryDelegateWrapper alloc] init];
 
-    NSLog(@"🔵 Creating RCTAppDependencyProvider");
+    NSLog(@"Creating RCTAppDependencyProvider");
     id<RCTDependencyProvider> provider = [[RCTAppDependencyProvider alloc] init];
-    NSLog(@"🔵 RCTAppDependencyProvider created: %@", provider);
+    NSLog(@"RCTAppDependencyProvider created: %@", provider);
 
-    NSLog(@"🔵 Setting dependencyProvider on delegate");
+    NSLog(@"Setting dependencyProvider on delegate");
     delegate.dependencyProvider = provider;
 
-    NSLog(@"🔵 Creating RCTReactNativeFactory with delegate");
+    NSLog(@"Creating RCTReactNativeFactory with delegate");
     _reactNativeFactory = [[RCTReactNativeFactory alloc] initWithDelegate:delegate];
-    NSLog(@"🔵 RCTReactNativeFactory created: %@", _reactNativeFactory);
+    NSLog(@"RCTReactNativeFactory created: %@", _reactNativeFactory);
 }
 
 - (void)instantiateReactNativeBridge {
@@ -250,10 +249,10 @@
         id splashInstance = [splashClass performSelector:@selector(sharedInstance)];
         if (splashInstance && [splashInstance respondsToSelector:@selector(showSplash)]) {
             [splashInstance performSelector:@selector(showSplash)];
-            NSLog(@"✅ Splash Screen Shown Successfully");
+            NSLog(@"Splash Screen Shown Successfully");
         }
     } else {
-        NSLog(@"⚠️ SplashView module not found");
+        NSLog(@"SplashView module not found");
     }
 }
 
@@ -285,9 +284,9 @@
     // Initialize bridge lazily.
     [self instantiateReactNativeBridge];
     
-    NSLog(@"🔵 getReactBridge called");
-    NSLog(@"🔵 reactNativeFactory: %@", _reactNativeFactory);
-    NSLog(@"🔵 reactNativeFactory.bridge: %@", _reactNativeFactory.bridge);
+    NSLog(@"getReactBridge called");
+    NSLog(@"reactNativeFactory: %@", _reactNativeFactory);
+    NSLog(@"reactNativeFactory.bridge: %@", _reactNativeFactory.bridge);
     
     // Get bridge from the new architecture factory
     return _reactNativeFactory.bridge;
