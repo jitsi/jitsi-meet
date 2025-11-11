@@ -158,11 +158,10 @@ const VideoLayout = {
 
             return;
         }
-
-        const state = APP.store.getState();
         const currentContainer = largeVideo.getCurrentContainer();
         const currentContainerType = largeVideo.getCurrentContainerType();
         const isOnLarge = this.isCurrentlyOnLarge(id);
+        const state = APP.store.getState();
         const participant = getParticipantById(state, id);
         const videoTrack = getVideoTrackByParticipant(state, participant);
         const videoStream = videoTrack?.jitsiTrack;
