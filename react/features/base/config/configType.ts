@@ -618,6 +618,10 @@ export interface IConfig {
     toolbarConfig?: {
         alwaysVisible?: boolean;
         autoHideWhileChatIsOpen?: boolean;
+        /**
+         * Background color for the main toolbar. Accepts any valid CSS color.
+         */
+        backgroundColor?: string;
         initialTimeout?: number;
         timeout?: number;
     };

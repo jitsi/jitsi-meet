@@ -340,6 +340,7 @@ function initCommands() {
 
             APP.store.dispatch(setAssumedBandwidthBps(value));
         },
+
         'set-blurred-background': blurType => {
             const tracks = APP.store.getState()['features/base/tracks'];
             const videoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
