@@ -49,7 +49,6 @@ describe('Codec selection', () => {
     it('asymmetric codecs with AV1', async () => {
         await ensureThreeParticipants({
             configOverwrite: {
-                disableTileView: true,
                 videoQuality: {
                     codecPreferenceOrder: [ 'AV1', 'VP9', 'VP8' ]
                 }
@@ -99,7 +98,6 @@ describe('Codec selection', () => {
 
         await ensureThreeParticipants({
             configOverwrite: {
-                disableTileView: true,
                 videoQuality: {
                     codecPreferenceOrder: [ 'VP8' ]
                 }
