@@ -3,12 +3,6 @@
  */
 export interface ConnectionState {
     /**
-     * True when user manually clicked hangup button
-     * Prevents showing reconnection notifications during intentional disconnect
-     */
-    isManualDisconnect: boolean;
-
-    /**
      * True when conference media listeners (ICE/Media events) have been attached
      * Prevents duplicate event listener registration
      */

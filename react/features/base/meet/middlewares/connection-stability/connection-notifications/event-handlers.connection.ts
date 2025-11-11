@@ -1,7 +1,7 @@
 import { IStore } from '../../../../../app/types';
+import { isLeavingConferenceManually } from "../../../../conference/conferenceState";
 import { isAutoReconnecting } from "../middleware.auto-reconnect";
 import { showConnectionFailedNotification, showConnectionLostNotification } from "./notification-helpers";
-import { ConnectionState } from "./types";
 
 /**
  * Handles when XMPP connection is established
@@ -17,12 +17,11 @@ export const handleXMPPConnected = () => {
  *
  * @param dispatch - Redux dispatch function
  * @param message - Disconnect message from lib-jitsi-meet
- * @param state - Connection state to check if manual disconnect
  */
-export const handleXMPPDisconnected = (dispatch: IStore["dispatch"], message: string, state: ConnectionState) => {
+export const handleXMPPDisconnected = (dispatch: IStore["dispatch"], message: string) => {
     console.log("[CONNECTION_NOTIFICATIONS] XMPP disconnected:", message);
 
-    if (state.isManualDisconnect) return;
+    if (isLeavingConferenceManually()) return;
     if (isAutoReconnecting()) return;
 
     showConnectionLostNotification(dispatch);
