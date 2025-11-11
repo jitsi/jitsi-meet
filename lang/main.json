@@ -902,7 +902,7 @@
             },
             "screenShare": {
                 "youAreSharing": "You are now sharing screen",
-                "viewing": "You are viewing {{name}} Screen",
+                "viewing": "You are viewing {{name}}'s screen",
                 "stopSharing": "Stop sharing"
             }
         },

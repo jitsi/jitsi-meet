@@ -1,7 +1,24 @@
 import { vi } from 'vitest';
 
-// Mock OpenPGP
-vi.mock('openpgp', () => ({
+vi.mock("@openpgp/web-stream-tools", () => ({
+    concatUint8Array: vi.fn((arr) => arr),
+    concat: vi.fn(async (streams) => new Uint8Array()),
+    stream: {
+        transform: vi.fn((data, fn) => data),
+        readToEnd: vi.fn(async () => new Uint8Array()),
+        slice: vi.fn((stream, begin, end) => stream),
+    },
+    Reader: vi.fn(),
+    Writer: vi.fn(),
+}));
+
+
+vi.mock('openpgp/dist/openpgp.js', () => ({
+    default: {},
+}));
+
+
+vi.mock("openpgp", () => ({
     default: {
         readKey: vi.fn(),
         readPrivateKey: vi.fn(),
@@ -11,20 +28,18 @@ vi.mock('openpgp', () => ({
         generateKey: vi.fn(),
         Key: {
             fromPublic: vi.fn(),
-            fromPrivate: vi.fn()
-        }
-    }
+            fromPrivate: vi.fn(),
+        },
+    },
+    readKey: vi.fn(),
+    readPrivateKey: vi.fn(),
+    readMessage: vi.fn(),
+    encrypt: vi.fn(),
+    decrypt: vi.fn(),
+    generateKey: vi.fn(),
 }));
 
-// Mock Web Stream Tools
-vi.mock('@openpgp/web-stream-tools', () => ({
-    concatUint8Array: vi.fn(),
-    stream: {
-        transform: vi.fn()
-    }
-}));
 
-// Mock Web Crypto API
 vi.stubGlobal('crypto', {
     getRandomValues: vi.fn(),
     subtle: {

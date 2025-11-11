@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import ReducerRegistry from "../../../../../redux/ReducerRegistry";
-import { MeetingActionTypes, SET_CURRENT_ROOM, UPDATE_MEETING_CONFIG } from "../actionTypes";
+import { MeetingActionTypes, SET_CURRENT_ROOM, SET_PLAN_NAME, UPDATE_MEETING_CONFIG } from "../actionTypes";
 import { MEETING_REDUCER, meetingReducer } from "../reducer";
 
 vi.mock("../../../../../redux/ReducerRegistry", () => ({
@@ -14,6 +14,7 @@ describe("Meeting Reducer", () => {
         enabled: false,
         paxPerCall: 0,
         currentRoomId: null,
+        planName: null,
     };
 
     describe("Registration", () => {
@@ -98,6 +99,60 @@ describe("Meeting Reducer", () => {
             expect(result).toEqual({
                 ...previousState,
                 currentRoomId: null,
+            });
+        });
+    });
+
+    describe("SET_PLAN_NAME", () => {
+        it("When SET_PLAN_NAME action is dispatched with plan name, then it should update plan name", () => {
+            const action = {
+                type: SET_PLAN_NAME,
+                payload: {
+                    planName: "Premium Plan",
+                },
+            } as MeetingActionTypes;
+
+            const result = meetingReducer(initialState, action);
+
+            expect(result).toEqual({
+                ...initialState,
+                planName: "Premium Plan",
+            });
+        });
+
+        it("When SET_PLAN_NAME action is dispatched with null, then it should set plan name to null", () => {
+            const previousState = {
+                ...initialState,
+                planName: "Premium Plan",
+            };
+
+            const action = {
+                type: SET_PLAN_NAME,
+                payload: {
+                    planName: null,
+                },
+            } as MeetingActionTypes;
+
+            const result = meetingReducer(previousState, action);
+
+            expect(result).toEqual({
+                ...previousState,
+                planName: null,
+            });
+        });
+
+        it("When SET_PLAN_NAME action is dispatched with different plan names, then it should update correctly", () => {
+            const testCases = ["Free", "Individual", "Lifetime", "Business"];
+
+            testCases.forEach((planName) => {
+                const action = {
+                    type: SET_PLAN_NAME,
+                    payload: { planName },
+                } as MeetingActionTypes;
+
+                const result = meetingReducer(initialState, action);
+
+                expect(result.planName).toBe(planName);
             });
         });
     });

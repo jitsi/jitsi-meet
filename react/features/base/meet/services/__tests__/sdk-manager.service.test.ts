@@ -144,8 +144,14 @@ describe("SdkManager", () => {
             expect(usersClient).toBeDefined();
             expect(Drive.Users.client).toHaveBeenCalledWith(
                 "https://test-drive-new-api.com",
-                expect.any(Object),
-                mockApiSecurity
+                expect.objectContaining({
+                    clientName: "internxt-meet",
+                    clientVersion: expect.any(String),
+                }),
+                expect.objectContaining({
+                    token: "mock-new-token",
+                    unauthorizedCallback: expect.any(Function),
+                })
             );
         });
 
@@ -183,15 +189,29 @@ describe("SdkManager", () => {
             );
         });
 
-        it("When getting clients without api security, then they are created with undefined security", () => {
+        it("When getting clients without api security, then Auth uses undefined and Users uses newToken security", () => {
             SdkManager.instance.getNewAuth();
             SdkManager.instance.getUsers();
 
-            expect(Auth.client).toHaveBeenCalledWith("https://test-drive-new-api.com", expect.any(Object), undefined);
+            expect(Auth.client).toHaveBeenCalledWith(
+                "https://test-drive-new-api.com",
+                expect.objectContaining({
+                    clientName: "internxt-meet",
+                    clientVersion: expect.any(String),
+                }),
+                undefined
+            );
+
             expect(Drive.Users.client).toHaveBeenCalledWith(
                 "https://test-drive-new-api.com",
-                expect.any(Object),
-                undefined
+                expect.objectContaining({
+                    clientName: "internxt-meet",
+                    clientVersion: expect.any(String),
+                }),
+                expect.objectContaining({
+                    token: "mock-new-token",
+                    unauthorizedCallback: expect.any(Function),
+                })
             );
         });
 
