@@ -1,6 +1,6 @@
 import { IReduxState, IStore } from '../app/types';
 import { CONFERENCE_WILL_LEAVE } from "../base/conference/actionTypes";
-import { isLeavingConferenceManually, setLeaveConferenceManually } from "../base/conference/conferenceState";
+import { isLeavingConferenceManually, setLeaveConferenceManually } from "../base/meet/general/utils/conferenceState";
 import { getCurrentConference } from '../base/conference/functions';
 import {
     PARTICIPANT_JOINED,

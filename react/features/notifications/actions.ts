@@ -270,7 +270,6 @@ let leftParticipantsNames: string[] = [];
  */
 const _throttledNotifyParticipantLeft = throttle((dispatch: IStore['dispatch'], getState: IStore['getState']) => {
     const participantCount = getParticipantCount(getState());
-    console.log("[DEBUG_LOG]: Participant count for left notification: ", participantCount);
     // Skip left notifications altogether for large meetings.
     if (participantCount > SILENT_LEFT_THRESHOLD) {
         leftParticipantsNames = [];

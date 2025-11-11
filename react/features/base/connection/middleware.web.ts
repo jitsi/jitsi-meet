@@ -1,6 +1,6 @@
 import { redirectToStaticPage } from '../../app/actions.any';
 import { CONFERENCE_WILL_LEAVE } from "../conference/actionTypes";
-import { isLeavingConferenceManually, setLeaveConferenceManually } from "../conference/conferenceState";
+import { isLeavingConferenceManually, setLeaveConferenceManually } from "../meet/general/utils/conferenceState";
 import MiddlewareRegistry from "../redux/MiddlewareRegistry";
 
 import { CONNECTION_DISCONNECTED, CONNECTION_WILL_CONNECT } from "./actionTypes";

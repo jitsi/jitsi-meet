@@ -6,7 +6,7 @@ let isLeaveConferenceManually = false;
 /**
  * Sets the manual leave conference state
  *
- * @param isLeaving
+ * @param isLeaving - Whether the user is manually leaving the conference
  */
 export const setLeaveConferenceManually = (isLeaving: boolean): void => {
     isLeaveConferenceManually = isLeaving;

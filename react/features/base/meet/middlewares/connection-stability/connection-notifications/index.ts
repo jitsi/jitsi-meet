@@ -1,7 +1,7 @@
 import { AnyAction } from 'redux';
 import { IStore } from '../../../../../app/types';
 import { CONFERENCE_JOINED, CONFERENCE_WILL_LEAVE } from '../../../../conference/actionTypes';
-import { setLeaveConferenceManually } from '../../../../conference/conferenceState';
+import { setLeaveConferenceManually } from '../../../general/utils/conferenceState';
 import { CONNECTION_WILL_CONNECT } from '../../../../connection/actionTypes';
 import MiddlewareRegistry from '../../../../redux/MiddlewareRegistry';
 import { setupConferenceMediaListeners, setupXMPPConnectionListeners } from './listener-setup';
