@@ -343,7 +343,7 @@ export class Participant {
      * Checks if the participant is in the meeting.
      */
     isInMuc() {
-        return this.execute(() => typeof APP !== 'undefined' && APP.conference?.isJoined());
+        return this.execute(() => window?.APP?.conference?.isJoined());
     }
 
     /**
