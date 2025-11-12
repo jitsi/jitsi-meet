@@ -240,7 +240,8 @@
     "webpack-dev-server": "5.1.0"
   },
   "overrides": {
-    "@xmldom/xmldom": "0.8.7"
+    "@xmldom/xmldom": "0.8.7",
+    "glob": "11.0.3"
   },
   "engines": {
     "node": ">=22.0.0",
