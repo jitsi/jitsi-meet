@@ -113,7 +113,6 @@ describe('Kick participants', () => {
         const { p1 } = ctx;
 
         await p1.getIframeAPI().addEventListener('participantJoined');
-        await p1.getIframeAPI().addEventListener('participantMenuButtonClick');
 
         // join again
         await ensureTwoParticipants({}, { name: 'p1', iFrameApi: true });
