@@ -833,6 +833,9 @@
                 "passwordPlaceholder": "Password",
                 "twoFactorCodePlaceholder": "Two Factor Authentication Code",
                 "loginButton": "Log in",
+                "continueWithBrowser": "Continue with browser",
+                "signupWithBrowser": "Sign up with browser",
+                "orContinueWith": "Or continue with",
                 "forgotPassword": "I forgot my password",
                 "noAccount": "Don't have an account?",
                 "createAccount": "Create account",
@@ -844,7 +847,10 @@
                     "twoFactorCodeInvalid": "Enter a valid 6-digit code",
                     "invalidCredentials": "Invalid credentials. Please try again.",
                     "cannotCreateMeetings": "User cannot create meetings",
-                    "genericError": "Unable to log in. Please try again or contact support if the problem persists."
+                    "genericError": "Unable to log in. Please try again or contact support if the problem persists.",
+                    "popupBlocked": "The popup window was blocked. Please allow popups for Internxt Meet.",
+                    "authCancelled": "Authentication cancelled by user.",
+                    "authTimeout": "Authentication timeout. Please try again."
                 },
                 "signup": {
                     "title": "Sign up",
