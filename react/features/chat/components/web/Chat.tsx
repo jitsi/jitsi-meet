@@ -298,8 +298,6 @@ const Chat = ({
 
         // Disable text selection during resize
         document.body.style.userSelect = 'none';
-
-        console.log('Chat resize: Mouse down', { clientX: e.clientX, initialWidth: _width });
     }, [ _width, dispatch ]);
 
     /**
@@ -315,8 +313,6 @@ const Chat = ({
             // Restore cursor and text selection
             document.body.style.cursor = '';
             document.body.style.userSelect = '';
-
-            console.log('Chat resize: Mouse up');
         }
     }, [ isMouseDown, dispatch ]);
 
@@ -327,7 +323,6 @@ const Chat = ({
      * @returns {void}
      */
     const onChatResize = useCallback(throttle((e: MouseEvent) => {
-        // console.log('Chat resize: Mouse move', { clientX: e.clientX, isMouseDown, mousePosition, _width });
         if (isMouseDown && mousePosition !== null && dragChatWidth !== null) {
             // For chat panel resizing on the left edge:
             // - Dragging left (decreasing X coordinate) should make the panel wider
