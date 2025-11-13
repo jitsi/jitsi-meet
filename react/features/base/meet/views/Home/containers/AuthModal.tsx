@@ -31,7 +31,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, transla
         if (!isOpen) {
             resetWebAuthState();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen]);
 
     const switchToLogin = () => {
