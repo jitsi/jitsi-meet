@@ -16,22 +16,34 @@
     right: 16px !important;
     z-index: 1000;
     cursor: pointer;
-    
+
     display: grid;
     place-items: center;
     height: 40px;
     width: 40px;
-    background: rgba(0, 0, 0, 0.6);
-    border-radius: 4px;
-    transition: background 0.2s ease;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.whiteboard-container .jitsi-icon.whiteboard-close-button svg {
+    fill: #1a1a1a !important;
 }
 
 .whiteboard-container .jitsi-icon.whiteboard-close-button:hover {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+}
+
+.whiteboard-container .jitsi-icon.whiteboard-close-button:active {
+    transform: scale(0.95);
+    transition: all 0.1s ease;
 }
 
 .whiteboard-container .jitsi-icon.whiteboard-close-button:focus {
-    outline: 2px solid #fff;
+    outline: 3px solid #44a5ff;
     outline-offset: 2px;
 }
 
