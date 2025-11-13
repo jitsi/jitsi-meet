@@ -5,6 +5,7 @@ local basexx = require "basexx";
 local have_async, async = pcall(require, "util.async");
 local hex = require "util.hex";
 local jwt = module:require "luajwtjitsi";
+local jwk_to_pem = module:require "token/jwk".jwk_to_pem;
 local jid = require "util.jid";
 local json_safe = require "cjson.safe";
 local path = require "util.paths";
@@ -148,7 +149,18 @@ function Util.new(module)
                 local keys_to_delete = table_shallow_copy(self.cachedKeys);
                 -- Let's convert any certificate to public key
                 for k, v in pairs(cjson_safe.decode(content)) do
-                    if starts_with(v, '-----BEGIN CERTIFICATE-----') then
+                    -- JWKS format
+                    if k == "keys" and type(v) == "table" then
+                        for _, key in ipairs(v) do
+                            if key.kid then
+                                self.cachedKeys[key.kid] = jwk_to_pem(key);
+
+                                -- do not clean this key if it already exists
+                                keys_to_delete[key.kid] = nil;
+                            end
+                        end
+                    -- direct PEM mapping (Firebase)
+                    elseif starts_with(v, '-----BEGIN CERTIFICATE-----') then
                         self.cachedKeys[k] = ssl.loadcertificate(v):pubkey();
                         -- do not clean this key if it already exists
                         keys_to_delete[k] = nil;
