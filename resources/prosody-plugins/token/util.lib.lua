@@ -112,14 +112,14 @@ function Util.new(module)
         return nil;
     end
 
-    if self.appSecret == nil and self.asapKeyServer == nil then
-        module:log("error", "'app_secret' or 'asap_key_server' must be specified");
+    if self.appSecret == nil and self.asapKeyServer == nil and self.cacheKeysUrl == nil then
+        module:log("error", "'app_secret', 'asap_key_server or 'cacheKeysUrl' must be specified");
         return nil;
     end
 
     -- Set defaults for signature algorithm
     if self.signatureAlgorithm == nil then
-        if self.asapKeyServer ~= nil then
+        if self.asapKeyServer ~= nil or self.cacheKeysUrl then
             self.signatureAlgorithm = "RS256"
         elseif self.appSecret ~= nil then
             self.signatureAlgorithm = "HS256"
@@ -134,7 +134,7 @@ function Util.new(module)
 
     self.requireRoomClaim = module:get_option_boolean('asap_require_room_claim', true);
 
-    if self.asapKeyServer and not have_async then
+    if (self.asapKeyServer or self.cacheKeysUrl) and not have_async then
         module:log("error", "requires a version of Prosody with util.async");
         return nil;
     end
@@ -275,7 +275,7 @@ function Util:process_and_verify_token(session)
         -- We're using an public key stored in the session
         -- module:log("debug","Public key was found on the session");
         key = session.public_key;
-    elseif self.asapKeyServer and session.auth_token ~= nil then
+    elseif (self.asapKeyServer or self.cacheKeysUrl) and session.auth_token ~= nil then
         -- We're fetching an public key from an ASAP server
         local dotFirst = session.auth_token:find("%.");
         if not dotFirst then return false, "not-allowed", "Invalid token" end
