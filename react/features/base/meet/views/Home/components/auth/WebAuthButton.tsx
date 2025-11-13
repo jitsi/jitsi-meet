@@ -22,7 +22,7 @@ export const WebAuthButton: React.FC<WebAuthButtonProps> = ({ onClick, isLoading
                 disabled={isLoading}
             >
                 {type === "login"
-                    ? translate("meet.auth.modal.continueWithBrowser")
+                    ? translate("meet.auth.modal.signinWithInternxt")
                     : translate("meet.auth.modal.signupWithBrowser")}
             </Button>
             {error && <ErrorMessage message={error} />}
