@@ -5,3 +5,37 @@
         width: 100vw;
     }
 }
+
+.whiteboard-container {
+    position: relative;
+}
+
+.whiteboard-container .jitsi-icon.whiteboard-close-button {
+    position: absolute !important;
+    top: 16px !important;
+    right: 16px !important;
+    z-index: 1000;
+    cursor: pointer;
+    
+    display: grid;
+    place-items: center;
+    height: 40px;
+    width: 40px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 4px;
+    transition: background 0.2s ease;
+}
+
+.whiteboard-container .jitsi-icon.whiteboard-close-button:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.whiteboard-container .jitsi-icon.whiteboard-close-button:focus {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+.mobile-browser .whiteboard-container .jitsi-icon.whiteboard-close-button {
+    height: 48px;
+    width: 48px;
+}
