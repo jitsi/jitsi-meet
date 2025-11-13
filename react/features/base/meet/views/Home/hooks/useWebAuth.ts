@@ -21,39 +21,22 @@ export function useWebAuth({ onClose, onLogin, translate }: UseWebAuthProps) {
     const storageManager = useLocalStorage();
     const dispatch = useDispatch();
 
-    const getUserSubscription = useCallback(async () => {
-        try {
-            return await PaymentsService.instance.getUserSubscription();
-        } catch (err) {
-            console.error('Error getting user subscription:', err);
-            return { type: 'free' as const };
-        }
-    }, []);
-
     const saveUserSession = useCallback(
         async (credentials: LoginCredentials) => {
+            storageManager.saveCredentials(credentials.newToken, credentials.mnemonic, credentials.user);
+
             try {
-                storageManager.saveCredentials(credentials.newToken, credentials.mnemonic, credentials.user);
-
-                const subscription = await getUserSubscription();
-
-                if (subscription) {
-                    storageManager.setSubscription(subscription);
-                }
-
-                dispatch(loginSuccess(credentials));
-                dispatch(setUser(credentials.user));
-                onLogin?.(credentials.newToken);
+                const subscription = await PaymentsService.instance.getUserSubscription();
+                storageManager.setSubscription(subscription);
             } catch (err) {
-                // Fallback: save credentials even if subscription fetch fails
-                storageManager.saveCredentials(credentials.newToken, credentials.mnemonic, credentials.user);
-
-                dispatch(loginSuccess(credentials));
-                dispatch(setUser(credentials.user));
-                onLogin?.(credentials.newToken);
+                console.error("Error getting user subscription:", err);
             }
+
+            dispatch(loginSuccess(credentials));
+            dispatch(setUser(credentials.user));
+            onLogin?.(credentials.newToken);
         },
-        [storageManager, onLogin, dispatch, getUserSubscription]
+        [storageManager, onLogin, dispatch]
     );
 
     /**
