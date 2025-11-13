@@ -1,6 +1,5 @@
 export interface WebAuthParams {
     mnemonic: string;
-    token: string;
     newToken: string;
 }
 
@@ -27,8 +26,7 @@ export const WEB_AUTH_MESSAGE_TYPES = {
 } as const;
 
 export const WEB_AUTH_STORAGE_KEYS = {
-    TOKEN: 'xToken',
-    NEW_TOKEN: 'xNewToken',
+    NEW_TOKEN: "xNewToken",
 } as const;
 
 export const WEB_AUTH_CONFIG: WebAuthConfig = {

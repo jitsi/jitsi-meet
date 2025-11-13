@@ -14,7 +14,7 @@ import { User } from "../user/types";
 export const initializeAuth = (): ThunkAction<void, IReduxState, unknown, AnyAction> => {
     return (dispatch) => {
         const localStorageManager = LocalStorageManager.instance;
-        const token = localStorageManager.getToken();
+        const token = localStorageManager.getNewToken();
         const isUserAuthenticated = !!token;
 
         dispatch({

@@ -13,8 +13,8 @@ export class WebAuthService {
     public static readonly instance: WebAuthService = new WebAuthService();
 
     private readonly WEB_CLIENT_URL = ConfigService.instance.isDevelopment()
-        ? 'http://localhost:3000'
-        : 'https://drive.internxt.com';
+        ? "http://localhost:3000"
+        : "https://drive.internxt.com";
 
     private authPopup: Window | null = null;
     private messageListener: ((event: MessageEvent) => void) | null = null;
@@ -49,11 +49,11 @@ export class WebAuthService {
             `height=${WEB_AUTH_CONFIG.popupHeight}`,
             `left=${left}`,
             `top=${top}`,
-            'toolbar=no',
-            'menubar=no',
-            'location=no',
-            'status=no',
-        ].join(',');
+            "toolbar=no",
+            "menubar=no",
+            "location=no",
+            "status=no",
+        ].join(",");
     }
 
     /**
@@ -74,14 +74,14 @@ export class WebAuthService {
      * Validate origin of postMessage event
      */
     private isValidOrigin(origin: string): boolean {
-        return origin.includes('internxt.com') || origin.includes('localhost');
+        return origin.includes("internxt.com") || origin.includes("localhost");
     }
 
     /**
      * Validate authentication parameters
      */
     private validateAuthParams(params: Partial<WebAuthParams>): params is WebAuthParams {
-        return !!(params.mnemonic && params.token && params.newToken);
+        return !!(params.mnemonic && params.newToken);
     }
 
     /**
@@ -99,7 +99,7 @@ export class WebAuthService {
         const { payload } = data;
 
         if (!payload || !this.validateAuthParams(payload)) {
-            reject(new Error('Missing authentication parameters'));
+            reject(new Error("Missing authentication parameters"));
             return;
         }
 
@@ -112,7 +112,7 @@ export class WebAuthService {
     private handleAuthError(data: WebAuthMessage, reject: (reason: Error) => void, timeout: NodeJS.Timeout) {
         clearTimeout(timeout);
         this.cleanup();
-        reject(new Error(data.error || 'Authentication failed'));
+        reject(new Error(data.error || "Authentication failed"));
     }
 
     /**
@@ -128,7 +128,7 @@ export class WebAuthService {
                 clearInterval(this.popupCheckInterval!);
                 clearTimeout(timeout);
                 this.cleanup();
-                reject(new Error('Authentication cancelled by user'));
+                reject(new Error("Authentication cancelled by user"));
             }
         }, WEB_AUTH_CONFIG.popupCheckIntervalMs);
     }
@@ -142,12 +142,12 @@ export class WebAuthService {
         return new Promise((resolve, reject) => {
             const timeout = setTimeout(() => {
                 this.cleanup();
-                reject(new Error('Authentication timeout'));
+                reject(new Error("Authentication timeout"));
             }, WEB_AUTH_CONFIG.authTimeoutMs);
 
             this.messageListener = (event: MessageEvent<WebAuthMessage>) => {
                 if (!this.isValidOrigin(event.origin)) {
-                    console.warn('Invalid origin for auth message:', event.origin);
+                    console.warn("Invalid origin for auth message:", event.origin);
                     return;
                 }
 
@@ -162,7 +162,7 @@ export class WebAuthService {
                 }
             };
 
-            window.addEventListener('message', this.messageListener);
+            window.addEventListener("message", this.messageListener);
 
             this.popupCheckInterval = this.setupPopupClosedChecker(popup, reject, timeout);
         });
@@ -178,7 +178,7 @@ export class WebAuthService {
         this.authPopup = null;
 
         if (this.messageListener) {
-            window.removeEventListener('message', this.messageListener);
+            window.removeEventListener("message", this.messageListener);
             this.messageListener = null;
         }
 
@@ -192,14 +192,13 @@ export class WebAuthService {
      * Decode base64 parameter
      */
     private decodeBase64Param(param: string): string {
-        return Buffer.from(param, 'base64').toString('utf-8');
+        return Buffer.from(param, "base64").toString("utf-8");
     }
 
     /**
      * Store tokens in localStorage
      */
-    private storeTokens(token: string, newToken: string): void {
-        localStorage.setItem(WEB_AUTH_STORAGE_KEYS.TOKEN, token);
+    private storeTokens(newToken: string): void {
         localStorage.setItem(WEB_AUTH_STORAGE_KEYS.NEW_TOKEN, newToken);
     }
 
@@ -214,18 +213,13 @@ export class WebAuthService {
     /**
      * Build login credentials response
      */
-    private buildLoginCredentials(
-        user: any,
-        mnemonic: string,
-        token: string,
-        newToken: string
-    ): LoginCredentials {
+    private buildLoginCredentials(user: any, mnemonic: string, newToken: string): LoginCredentials {
         return {
             user: {
                 ...user,
                 mnemonic,
-            } as unknown as LoginCredentials['user'],
-            token,
+            } as unknown as LoginCredentials["user"],
+            token: "", // Token is not used in web auth flow, remove when remove all old token references
             newToken,
             mnemonic,
         };
@@ -240,14 +234,13 @@ export class WebAuthService {
         try {
             const mnemonic = this.decodeBase64Param(params.mnemonic);
             const newToken = this.decodeBase64Param(params.newToken);
-            const token = this.decodeBase64Param(params.token);
-            this.storeTokens(token, newToken);
+            this.storeTokens(newToken);
 
             const user = await this.fetchUserData();
-            return this.buildLoginCredentials(user, mnemonic, token, newToken);
+            return this.buildLoginCredentials(user, mnemonic, newToken);
         } catch (error) {
             throw new Error(
-                `Web authentication processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+                `Web authentication processing failed: ${error instanceof Error ? error.message : "Unknown error"}`
             );
         }
     }
@@ -260,7 +253,7 @@ export class WebAuthService {
             this.authPopup = this.openAuthPopup(url);
 
             if (!this.authPopup) {
-                throw new Error('Failed to open authentication popup. Please check your popup blocker settings.');
+                throw new Error("Failed to open authentication popup. Please check your popup blocker settings.");
             }
 
             const authParams = await this.waitForAuthResponse(this.authPopup);

@@ -224,20 +224,12 @@ export class LocalStorageManager {
 
     /**
      * Saves the session credentials
-     * @param token Token
      * @param newToken New token
      * @param mnemonic Mnemonic
      * @param user User information
      * @param subscription User subscription (optional)
      */
-    public saveCredentials(
-        token: string,
-        newToken: string,
-        mnemonic: string,
-        user: User,
-        subscription?: UserSubscription
-    ): void {
-        this.setToken(token);
+    public saveCredentials(newToken: string, mnemonic: string, user: User, subscription?: UserSubscription): void {
         this.setNewToken(newToken);
         this.setMnemonic(mnemonic);
         this.setUser(user);

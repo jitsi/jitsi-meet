@@ -33,12 +33,7 @@ export function useWebAuth({ onClose, onLogin, translate }: UseWebAuthProps) {
     const saveUserSession = useCallback(
         async (credentials: LoginCredentials) => {
             try {
-                storageManager.saveCredentials(
-                    credentials.token,
-                    credentials.newToken,
-                    credentials.mnemonic,
-                    credentials.user
-                );
+                storageManager.saveCredentials(credentials.newToken, credentials.mnemonic, credentials.user);
 
                 const subscription = await getUserSubscription();
 
@@ -51,12 +46,7 @@ export function useWebAuth({ onClose, onLogin, translate }: UseWebAuthProps) {
                 onLogin?.(credentials.newToken);
             } catch (err) {
                 // Fallback: save credentials even if subscription fetch fails
-                storageManager.saveCredentials(
-                    credentials.token,
-                    credentials.newToken,
-                    credentials.mnemonic,
-                    credentials.user
-                );
+                storageManager.saveCredentials(credentials.newToken, credentials.mnemonic, credentials.user);
 
                 dispatch(loginSuccess(credentials));
                 dispatch(setUser(credentials.user));
