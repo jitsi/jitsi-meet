@@ -331,7 +331,7 @@ function process_main_muc_loaded(main_muc, host_module)
     host_module:hook("muc-room-created", room_created, -1);
     host_module:hook("muc-occupant-joined", occupant_joined, -1);
     host_module:hook("muc-occupant-pre-leave", occupant_leaving, -1);
-    host_module:hook("muc-room-destroyed", room_destroyed, -1);
+    host_module:hook("muc-room-destroyed", room_destroyed, 1); -- prosody handles it at 0
 end
 
 function process_breakout_muc_loaded(breakout_muc, host_module)
@@ -340,7 +340,7 @@ function process_breakout_muc_loaded(breakout_muc, host_module)
     host_module:hook("muc-room-created", breakout_room_created, -1);
     host_module:hook("muc-occupant-joined", occupant_joined, -1);
     host_module:hook("muc-occupant-pre-leave", occupant_leaving, -1);
-    host_module:hook("muc-room-destroyed", room_destroyed, -1);
+    host_module:hook("muc-room-destroyed", room_destroyed, 1); -- prosody handles it at 0
 end
 
 -- process or waits to process the conference muc component

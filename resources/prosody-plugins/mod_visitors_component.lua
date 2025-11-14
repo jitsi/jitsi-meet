@@ -582,7 +582,7 @@ process_host_module(muc_domain_prefix..'.'..muc_domain_base, function(host_modul
     host_module:hook('muc-room-destroyed', function (event)
         visitors_promotion_map[event.room.jid] = nil;
         visitors_promotion_requests[event.room.jid] = nil;
-    end);
+    end, 1); -- prosody handles it at 0
 
     host_module:hook('muc-occupant-joined', function (event)
         local room, occupant = event.room, event.occupant;
@@ -754,7 +754,7 @@ function handle_occupant_leaving_breakout(event)
     local main_room, occupant, stanza = event.main_room, event.occupant, event.stanza;
     local presence_status = stanza:get_child_text('status');
 
-    if presence_status ~= 'switch_room' or not visitors_promotion_map[main_room.jid] then
+    if presence_status ~= 'switch_room' or not main_room or not visitors_promotion_map[main_room.jid] then
         return;
     end
 

@@ -54,5 +54,4 @@ module:hook('muc-room-destroyed', function (event)
         room.empty_destroy_timer:stop();
         room.empty_destroy_timer = nil;
     end
-end);
-
+end, 1); -- prosody handles it at 0
