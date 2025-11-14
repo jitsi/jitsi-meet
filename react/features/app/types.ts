@@ -19,6 +19,7 @@ import { ILibJitsiMeetState } from '../base/lib-jitsi-meet/reducer';
 import { ILoggingState } from '../base/logging/reducer';
 import { IMediaState } from '../base/media/reducer';
 import { IJoinRoomErrorState } from "../base/meet/general/store/errors/reducer";
+import { ILoaderState } from '../base/meet/loader/types';
 import { INetInfoState } from '../base/net-info/reducer';
 import { IParticipantsState } from '../base/participants/reducer';
 import { IPreMeetingState } from '../base/premeeting/types';
@@ -110,6 +111,7 @@ export interface IReduxState {
     'features/base/lib-jitsi-meet': ILibJitsiMeetState;
     'features/base/logging': ILoggingState;
     'features/base/media': IMediaState;
+    'features/base/meet/loader': ILoaderState;
     'features/base/net-info': INetInfoState;
     'features/base/no-src-data': INoSrcDataState;
     'features/base/participants': IParticipantsState;

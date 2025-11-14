@@ -98,6 +98,10 @@
         "refresh": "Refresh calendar",
         "today": "Today"
     },
+    "loader": {
+        "reconnecting": "Reconnecting...",
+        "reloading": "Reloading page..."
+    },
     "carmode": {
         "actions": {
             "selectSoundDevice": "Select sound device"
@@ -964,6 +968,16 @@
         "connectedThreePlusMembers": "{{name}} and many others joined the meeting",
         "connectedTwoMembers": "{{first}} and {{second}} joined the meeting",
         "connectionFailed": "Connection failed. Please try again later!",
+        "connectionLost": "Connection lost",
+        "connectedTitle": "Connected",
+        "connectedMessage": "Connection restored successfully",
+        "reconnecting": "Attempting to reconnect...",
+        "reconnectingAttempt": "Reconnection attempt {{attempt}} of {{max}}",
+        "reconnectionFailed": "Unable to reconnect",
+        "reconnectionFailedReloading": "Reloading page to restore connection...",
+        "deviceSuspended": "Device suspended, reconnecting...",
+        "poorConnection": "Poor connection detected",
+        "poorConnectionDescription": "Your connection may be unstable. Video and audio quality may be affected.",
         "dataChannelClosed": "Video quality may be impaired",
         "dataChannelClosedDescription": "The bridge channel is down and thus video quality may be limited to its lowest setting.",
         "dataChannelClosedDescriptionWithAudio": "The bridge channel is down and thus disruptions to audio and video may occur.",

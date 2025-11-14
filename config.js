@@ -49,12 +49,18 @@ var config = {
     bosh: "https://jitsi-meet.example.com/" + subdir + "http-bind",
 
     // Websocket URL (XMPP)
-    websocket: 'wss://jitsi-meet.example.com/' + subdir + 'xmpp-websocket',
+    websocket: "wss://jitsi-meet.example.com/" + subdir + "xmpp-websocket",
 
     // websocketKeepAliveUrl: 'https://jitsi-meet.example.com/' + subdir + '_unlock',
 
     // Whether BOSH should be preferred over WebSocket if both are configured.
     // preferBosh: false,
+
+    // WebSocket keep-alive to prevent connection drops
+    websocketKeepAlive: true,
+    // websocketKeepAliveUrl will be set dynamically based on room
+    _peerConnStatusOutOfLastNTimeout: 30000,
+    _peerConnStatusRtcMuteTimeout: 15000,
 
     // The real JID of focus participant - can be overridden here
     // Do not change username - FIXME: Make focus username configurable
@@ -75,7 +81,7 @@ var config = {
         // Prefer SCTP (WebRTC data channels over the media path) over a colibri websocket.
         // If SCTP is available in the backend it will be used instead of a WS. Defaults to
         // false (SCTP is used only if available and no WS are available).
-        // preferSctp: false
+        preferSctp: true,
     },
 
     // Testing / experimental features.
@@ -91,16 +97,12 @@ var config = {
         // enableAv1Support: false,
         // Enables XMPP WebSocket (as opposed to BOSH) for the given amount of users.
         // mobileXmppWsThreshold: 10, // enable XMPP WebSockets on mobile for 10% of the users
-
         // Enables use of getDisplayMedia in electron
         // electronUseGetDisplayMedia: false,
-
         // Enables AV1 codec for FF. Note: By default it is disabled.
         // enableAV1ForFF: false,
-
         // Enables the use of the codec selection API supported by the browsers .
         // enableCodecSelectionAPI: false,
-
         // P2P test mode disables automatic switching to P2P when there are 2
         // participants in the conference.
         // p2pTestMode: false,
@@ -113,13 +115,10 @@ var config = {
         // skipInterimTranscriptions: false,
         // Dump transcripts to a <transcript> element for debugging.
         // dumpTranscript: false,
-
         // Log the audio levels.
         // debugAudioLevels: true,
-
         // Will replace ice candidates IPs with invalid ones in order to fail ice.
         // failICE: true,
-
         // When running on Spot TV, this controls whether to show the recording consent dialog.
         // If false (default), Spot instances will not show the recording consent dialog.
         // If true, Spot instances will show the recording consent dialog like regular clients.
@@ -528,13 +527,13 @@ var config = {
     // Default value for the channel "last N" attribute. -1 for unlimited.
     channelLastN: -1,
 
-    // Connection indicators
     // connectionIndicators: {
-    //     autoHide: true,
-    //     autoHideTimeout: 5000,
+    //     autoHide: false,
+    //     autoHideTimeout: 10000,
     //     disabled: false,
     //     disableDetails: false,
-    //     inactiveDisabled: false
+    //     inactiveDisabled: false,
+    // },
     // },
 
     // Provides a way for the lastN value to be controlled through the UI.
@@ -626,12 +625,12 @@ var config = {
     //    mobileCodecPreferenceOrder: [ 'VP8', 'VP9', 'H264', 'AV1' ],
     // },
 
-    // Notification timeouts
+    // Notification timeouts - Longer timeouts for connection issues
     // notificationTimeouts: {
-    //     short: 2500,
-    //     medium: 5000,
-    //     long: 10000,
-    //     extraLong: 60000,
+    //     short: 5000,
+    //     medium: 10000,
+    //     long: 15000,
+    //     extraLong: 30000,
     //     sticky: 0,
     // },
 
@@ -664,7 +663,7 @@ var config = {
 
     // Enables forced reload of the client when the call is migrated as a result of
     // the bridge going down.
-    // enableForcedReload: true,
+    enableForcedReload: true,
 
     // Use TURN/UDP servers for the jitsi-videobridge connection (by default
     // we filter out TURN/UDP because it is usually not needed since the
@@ -1367,7 +1366,6 @@ var config = {
     //     disablePrivateChat: 'all' | 'allow-moderator-chat' | 'disable-visitor-chat',
     // },
 
-
     // If set to true all muting operations of remote participants will be disabled.
     // disableRemoteMute: true,
 
@@ -1593,7 +1591,6 @@ var config = {
 
     // For external entities (e. g. email), the localStorage key holding the token value for directory authentication
     // peopleSearchTokenLocation: "mytoken",
-
 
     // Options related to visitors.
     // visitors: {
