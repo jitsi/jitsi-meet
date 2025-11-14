@@ -15,7 +15,6 @@
 --     muc_room_locking = false
 --     muc_room_default_public_jids = true
 --
-
 module:depends('room_destroy');
 
 -- we use async to detect Prosody 0.10 and earlier
@@ -650,7 +649,7 @@ function process_main_muc_loaded(main_muc, host_module)
     module:log("info", "Hook to muc events on %s", main_muc_component_config);
     host_module:hook('muc-occupant-joined', on_occupant_joined);
     host_module:hook('muc-occupant-left', on_occupant_left);
-    host_module:hook('muc-room-destroyed', on_main_room_destroyed);
+    host_module:hook('muc-room-destroyed', on_main_room_destroyed, 1);  -- prosody handles it at 0
 end
 
 -- process or waits to process the main muc component

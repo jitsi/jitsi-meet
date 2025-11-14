@@ -512,7 +512,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
         if room._data.lobbyroom then
             destroy_lobby_room(room, nil);
         end
-    end);
+    end, 1); -- prosody handles it at 0
     host_module:hook('muc-disco#info', function (event)
         local room = event.room;
         if (room._data.lobbyroom and room:get_members_only()) then

@@ -329,7 +329,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
 
             visitors_nodes[room.jid] = nil;
         end
-    end);
+    end, 1); -- prosody handles it at 0
 
     -- detects new participants joining main room and sending them to the visitor nodes
     host_module:hook('muc-occupant-joined', function (event)
