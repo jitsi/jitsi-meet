@@ -16,11 +16,12 @@ set -x
 
 JICOFO_HOSTNAME=$(echo get jitsi-videobridge/jvb-hostname | sudo debconf-communicate jicofo | cut -d' ' -f2-)
 
+# Install SystemD template unit (once, outside loop)
+cp prosody-v@.service /lib/systemd/system/prosody-v@.service
+
 # Configure prosody instances
 for (( i=1 ; i<=${NUMBER_OF_INSTANCES} ; i++ ));
 do
-    cp prosody-v.service.template /lib/systemd/system/prosody-v${i}.service
-    sed -i "s/vX/v${i}/g" /lib/systemd/system/prosody-v${i}.service
     mkdir /etc/prosody-v${i}
     ln -s /etc/prosody/certs /etc/prosody-v${i}/certs
     cp prosody.cfg.lua.visitor.template /etc/prosody-v${i}/prosody.cfg.lua
@@ -56,6 +57,6 @@ done
 
 for (( i=1 ; i<=${NUMBER_OF_INSTANCES} ; i++ ));
 do
-  service prosody-v${i} restart
+  systemctl restart prosody-v@${i}.service
 done
-service jicofo restart
+systemctl restart jicofo.service
