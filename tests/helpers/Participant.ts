@@ -295,7 +295,7 @@ export class Participant {
 
             document.title = `${name}`;
 
-            console.log(`${new Date().toISOString()} ${prefix} sessionId: ${sessionId}`);
+            //console.log(`${new Date().toISOString()} ${prefix} sessionId: ${sessionId}`);
 
             // disable the blur effect in firefox as it has some performance issues
             const blur = document.querySelector('.video_blurred_container');
@@ -317,7 +317,7 @@ export class Participant {
     async waitForPageToLoad(): Promise<boolean> {
         return this.driver.waitUntil(
             () => this.execute(() => {
-                console.log(`${new Date().toISOString()} document.readyState: ${document.readyState}`);
+                //console.log(`${new Date().toISOString()} document.readyState: ${document.readyState}`);
 
                 return document.readyState === 'complete';
             }),
@@ -678,9 +678,9 @@ export class Participant {
      * Hangups the participant by leaving the page. base.html is an empty page on all deployments.
      */
     async hangup() {
-        console.log(`Hanging up (${this.name})`);
+        //console.log(`Hanging up (${this.name})`);
         if ((await this.driver.getUrl()).endsWith('/base.html')) {
-            console.log(`Already hung up (${this.name})`);
+            //console.log(`Already hung up (${this.name})`);
 
             return;
         }
@@ -705,7 +705,7 @@ export class Participant {
                 timeoutMsg: `${this.name} failed to hang up`
             }
         );
-        console.log(`Hung up (${this.name})`);
+        //console.log(`Hung up (${this.name})`);
 
         await this.driver.url('/base.html')
 
@@ -871,7 +871,7 @@ export class Participant {
 
                 if (muted) {
                     if (audioLevel !== null && audioLevel > 0.1) {
-                        console.log(`muted exiting on: ${audioLevel}`);
+                        //console.log(`muted exiting on: ${audioLevel}`);
 
                         return true;
                     }
@@ -881,7 +881,7 @@ export class Participant {
 
                 // When testing for unmuted we wait for first sound
                 if (audioLevel !== null && audioLevel > 0.1) {
-                    console.log(`unmuted exiting on: ${audioLevel}`);
+                    //console.log(`unmuted exiting on: ${audioLevel}`);
 
                     return true;
                 }

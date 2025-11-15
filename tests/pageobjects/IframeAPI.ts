@@ -45,9 +45,9 @@ export default class IframeAPI extends BasePageObject {
                 if (window.jitsiAPI.listenerCount(event) > 0) {
                     return;
                 }
-                console.log(`${new Date().toISOString()} ${prefix}iframeAPI - Adding listener for event: ${event}`);
+                //console.log(`${new Date().toISOString()} ${prefix}iframeAPI - Adding listener for event: ${event}`);
                 window.jitsiAPI.addListener(event, evt => {
-                    console.log(
+                    //console.log(
                         `${new Date().toISOString()} ${prefix}iframeAPI - Received ${event} event: ${JSON.stringify(evt)}`);
                     window.jitsiAPI.test[event] = evt;
                 });

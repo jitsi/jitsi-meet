@@ -77,7 +77,7 @@ export async function logInfo(driver: WebdriverIO.Browser, message: string) {
     }
 
     return driver.execute((prefix, msg) =>
-        console.log(`${new Date().toISOString()} ${prefix} ${msg}\n`),
+        //console.log(`${new Date().toISOString()} ${prefix} ${msg}\n`),
         LOG_PREFIX, message);
 }
 

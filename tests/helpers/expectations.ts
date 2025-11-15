@@ -47,11 +47,11 @@ if (config.expectationsFile) {
     } catch (e) {
         console.error('Error reading expectations file', e);
     }
-    console.log('Loaded expectations from', config.expectationsFile);
+    //console.log('Loaded expectations from', config.expectationsFile);
 }
 
 export const expectations = merge(defaultExpectations, overrides);
 
 if (!process.env.WDIO_WORKER_ID) {
-    console.log('Expectations:', expectations);
+    //console.log('Expectations:', expectations);
 }

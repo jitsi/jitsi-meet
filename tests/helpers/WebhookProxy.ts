@@ -39,7 +39,7 @@ export default class WebhookProxy {
         this.ws.on('error', console.error);
 
         this.ws.on('open', function open() {
-            console.log('WebhookProxy connected');
+            //console.log('WebhookProxy connected');
         });
 
         this.ws.on('message', (data: any) => {
@@ -150,7 +150,7 @@ export default class WebhookProxy {
     disconnect() {
         if (this.ws) {
             this.ws.close();
-            console.log('WebhookProxy disconnected');
+            //console.log('WebhookProxy disconnected');
             this.ws = undefined;
             this.logInfo('disconnected');
         }

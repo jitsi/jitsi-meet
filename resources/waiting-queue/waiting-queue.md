@@ -16,7 +16,7 @@ headers = {
 
     stompClient.onConnect = (frame) => {
         setConnected(true);
-        console.log('Connected: ' + frame);
+        ////console.logog('Connected: ' + frame);
 
         stompClient.subscribe('/secured/conference/visitor/topic.' + conference, (message) => {
             showMessage(message.body);

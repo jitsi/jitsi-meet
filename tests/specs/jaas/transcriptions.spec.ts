@@ -229,7 +229,7 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
         const checkTranscripts = stable.includes(tr.stable || tr.final) || (tr.stable || tr.final).includes(stable);
 
         if (!checkTranscripts) {
-            console.log('received events', JSON.stringify(result));
+            //console.log('received events', JSON.stringify(result));
         }
 
         expect(checkTranscripts).toBe(true);

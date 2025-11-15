@@ -51,10 +51,10 @@
                 navigator.serviceWorker
                     .register(window.location.origin + contextRoot(window.location.pathname) + 'pwa-worker.js')
                     .then(reg => {
-                        console.log('Service worker registered.', reg);
+                        //console.log('Service worker registered.', reg);
                     })
                     .catch(err => {
-                        console.log(err);
+                        //console.log(err);
                     });
             }
         });
@@ -68,10 +68,10 @@
         }
 
         window.indexLoadedTime = window.performance.now();
-        console.log("(TIME) index.html loaded:\t", indexLoadedTime);
+        //console.log("(TIME) index.html loaded:\t", indexLoadedTime);
         window.addEventListener('load', function() {
             window.loadedEventTime = window.performance.now();
-            console.log("(TIME) window loaded event:\t", loadedEventTime);
+            //console.log("(TIME) window loaded event:\t", loadedEventTime);
         });
 
         // XXX the code below listeners for errors and displays an error message

@@ -9,7 +9,7 @@ setTestProperties(__filename, {
 
 describe('XMPP login and MUC join', () => {
     it('with a valid token (wildcard room)', async () => {
-        console.log('Joining a MUC with a valid token (wildcard room)');
+        //console.log('Joining a MUC with a valid token (wildcard room)');
         const p = await joinJaasMuc({ token: t({ room: '*' }) });
 
         expect(await p.isInMuc()).toBe(true);
@@ -17,7 +17,7 @@ describe('XMPP login and MUC join', () => {
     });
 
     it('with a valid token (specific room)', async () => {
-        console.log('Joining a MUC with a valid token (specific room)');
+        //console.log('Joining a MUC with a valid token (specific room)');
         const p = await joinJaasMuc({ token: t({ room: ctx.roomName }) });
 
         expect(await p.isInMuc()).toBe(true);
@@ -25,7 +25,7 @@ describe('XMPP login and MUC join', () => {
     });
 
     it('with a token with bad signature', async () => {
-        console.log('Joining a MUC with a token with bad signature');
+        //console.log('Joining a MUC with a token with bad signature');
         const token = t({ room: ctx.roomName });
 
         token.jwt = token.jwt + 'badSignature';
@@ -41,7 +41,7 @@ describe('XMPP login and MUC join', () => {
     });
 
     it('with an expired token', async () => {
-        console.log('Joining a MUC with an expired token');
+        //console.log('Joining a MUC with an expired token');
         const p = await joinJaasMuc({ token: t({ exp: '-1m' }) });
 
         expect(Boolean(await p.isInMuc())).toBe(false);
@@ -52,7 +52,7 @@ describe('XMPP login and MUC join', () => {
     });
 
     it('with a token using the wrong key ID', async () => {
-        console.log('Joining a MUC with a token using the wrong key ID');
+        //console.log('Joining a MUC with a token using the wrong key ID');
         const p = await joinJaasMuc({ token: t({ keyId: 'invalid-key-id' }) });
 
         expect(Boolean(await p.isInMuc())).toBe(false);
@@ -63,7 +63,7 @@ describe('XMPP login and MUC join', () => {
     });
 
     it('with a token for a different room', async () => {
-        console.log('Joining a MUC with a token for a different room');
+        //console.log('Joining a MUC with a token for a different room');
         const p = await joinJaasMuc({ token: t({ room: ctx.roomName + 'different' }) });
 
         expect(Boolean(await p.isInMuc())).toBe(false);
@@ -74,7 +74,7 @@ describe('XMPP login and MUC join', () => {
     });
 
     it('with a moderator token', async () => {
-        console.log('Joining a MUC with a moderator token');
+        //console.log('Joining a MUC with a moderator token');
         const p = await joinJaasMuc({ token: t({ moderator: true }) });
 
         expect(await p.isInMuc()).toBe(true);
@@ -84,7 +84,7 @@ describe('XMPP login and MUC join', () => {
     // This is dependent on jaas account configuration. All tests under jaas/ expect that "unauthenticated access" is
     // disabled.
     it('without a token', async () => {
-        console.log('Joining a MUC without a token');
+        //console.log('Joining a MUC without a token');
         const p = await joinJaasMuc();
 
         if (expectations.jaas.unauthenticatedJoins) {
@@ -99,7 +99,7 @@ describe('XMPP login and MUC join', () => {
     });
 
     it('without sending a conference-request', async () => {
-        console.log('Joining a MUC without sending a conference-request');
+        //console.log('Joining a MUC without sending a conference-request');
         const p = await joinJaasMuc({
             token: t({ room: `${ctx.roomName}-no-cf` })
         }, {
