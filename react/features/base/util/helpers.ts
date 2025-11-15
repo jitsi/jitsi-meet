@@ -1,3 +1,5 @@
+import logger from './logger';
+
 /**
  * A helper function that behaves similar to Object.assign, but only reassigns a
  * property in target if it's defined in source.
@@ -102,7 +104,7 @@ export function getJitsiMeetGlobalNSConnectionTimes() {
  * @returns {void}
  */
 export function reportError(e: Error, msg = '') {
-    console.error(msg, e);
+    logger.error(msg, e);
     window.onerror?.(msg, undefined, undefined, undefined, e);
 }
 

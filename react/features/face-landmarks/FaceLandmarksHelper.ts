@@ -2,6 +2,7 @@ import { setWasmPaths } from '@tensorflow/tfjs-backend-wasm';
 import { Config, FaceResult, Human } from '@vladmandic/human';
 
 import { DETECTION_TYPES, FACE_DETECTION_SCORE_THRESHOLD, FACE_EXPRESSIONS_NAMING_MAPPING } from './constants';
+import logger from './logger';
 import { DetectInput, DetectOutput, FaceBox, FaceExpression, InitInput } from './types';
 
 export interface IFaceLandmarksHelper {
@@ -102,7 +103,7 @@ export class HumanHelper implements IFaceLandmarksHelper {
             try {
                 await initialHuman.load();
             } catch (err) {
-                console.error(err);
+                logger.error('Failed to load Human library', err);
             }
 
             this.human = initialHuman;
