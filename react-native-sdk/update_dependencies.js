@@ -30,7 +30,7 @@ function updateDependencies() {
             packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
             updated = true;
 
-            //console.log(`
+            console.log(`
 ⚠️We changed ${key} version number from ${packageJSON.dependencies[key]} to ${RNSDKpackageJSON.peerDependencies[key]}`
             );
 
@@ -45,7 +45,7 @@ function updateDependencies() {
             packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
             updated = true;
 
-            //console.log(`${key} is now set to ${RNSDKpackageJSON.peerDependencies[key]}`);
+            console.log(`${key} is now set to ${RNSDKpackageJSON.peerDependencies[key]}`);
         }
 
         if (!semver.valid(RNSDKpackageJSON.peerDependencies[key])
@@ -54,7 +54,7 @@ function updateDependencies() {
             packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
             updated = true;
 
-            //console.log(
+            console.log(
 `A fix for ${key} is available on ${RNSDKpackageJSON.peerDependencies[key]}.
 This is now set on your end.`
             );
@@ -71,12 +71,12 @@ This is now set on your end.`
     }
 
     if (!updated) {
-        //console.log('All your dependencies are up to date!');
+        console.log('All your dependencies are up to date!');
 
         return;
     }
 
-    //console.log(`
+    console.log(`
 =========================
 🚀 Your project was updated!
 🛠 Make sure you run npm install
@@ -102,7 +102,7 @@ This is now set on your end.`
 
     fs.writeFileSync(pathToPackageJSON, JSON.stringify(packageJSON, null, 2));
 
-    //console.log(
+    console.log(
         'All needed dependencies have been updated. \nPlease run npm install.'
     );
 }

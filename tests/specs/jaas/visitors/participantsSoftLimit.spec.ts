@@ -22,7 +22,7 @@ describe('Visitors triggered by reaching participantsSoftLimit', () => {
         expect(await m.isInMuc()).toBe(true);
         expect(await m.isModerator()).toBe(true);
         expect(await m.isVisitor()).toBe(false);
-        //console.log('Moderator joined');
+        console.log('Moderator joined');
 
         // Joining with a participant token before participantSoftLimit has been reached
         const p = await joinJaasMuc({
@@ -33,7 +33,7 @@ describe('Visitors triggered by reaching participantsSoftLimit', () => {
         expect(await p.isInMuc()).toBe(true);
         expect(await p.isModerator()).toBe(false);
         expect(await p.isVisitor()).toBe(false);
-        //console.log('Participant joined');
+        console.log('Participant joined');
 
         // Joining with a participant token after participantSoftLimit has been reached
         const v = await joinJaasMuc({
@@ -44,6 +44,6 @@ describe('Visitors triggered by reaching participantsSoftLimit', () => {
         expect(await v.isInMuc()).toBe(true);
         expect(await v.isModerator()).toBe(false);
         expect(await v.isVisitor()).toBe(true);
-        //console.log('Visitor joined');
+        console.log('Visitor joined');
     });
 });

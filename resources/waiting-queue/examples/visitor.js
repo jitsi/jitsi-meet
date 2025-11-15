@@ -26,7 +26,7 @@ function setConnected(connected) {
 }
 
 function connect(conference) {
-    //console.log("Connecting to conference " + conference);
+    console.log("Connecting to conference " + conference);
 
     headers = {
         Authorization: 'Bearer ' + token
@@ -36,7 +36,7 @@ function connect(conference) {
 
     stompClient.onConnect = (frame) => {
         setConnected(true);
-        //console.log('Connected: ' + frame);
+        console.log('Connected: ' + frame);
 
         stompClient.subscribe('/secured/conference/visitor/topic.' + conference, (message) => {
             showMessage(message.body);
@@ -49,7 +49,7 @@ function connect(conference) {
 function disconnect() {
     stompClient.deactivate();
     setConnected(false);
-    //console.log("Disconnected");
+    console.log("Disconnected");
 }
 
 function showMessage(message) {

@@ -62,7 +62,7 @@ describe('JaaS CHAT_UPLOADED webhook.', () => {
 
         expect(messages).toBeDefined();
         expect(messages.length).toBe(3);
-        //console.logog(JSON.stringify(messages));
+        console.logog(JSON.stringify(messages));
         expect(messages.some(m => m.name === 'p1' && m.content === 'foo')).toBe(true);
         expect(messages.some(m => m.name === 'p2' && m.content === 'bar')).toBe(true);
         expect(messages.some(m => m.name === 'p1' && m.content === 'baz')).toBe(true);

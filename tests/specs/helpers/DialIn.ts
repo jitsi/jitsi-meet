@@ -19,13 +19,13 @@ export async function waitForAudioFromDialInParticipant(participant: Participant
 
     const joinedTS = performance.now();
 
-    //console.log(`dial-in.test.jigasi.participant.join.after:${joinedTS - ctx.times.restAPIExecutionTS}`);
+    console.log(`dial-in.test.jigasi.participant.join.after:${joinedTS - ctx.times.restAPIExecutionTS}`);
 
     await participant.waitForIceConnected();
     await participant.waitForRemoteStreams(1);
 
     await participant.waitForSendReceiveData(20_000, 'dial-in.test.jigasi.participant.no.audio.after.join');
-    //console.log(`dial-in.test.jigasi.participant.received.audio.after.join:${performance.now() - joinedTS} ms.`);
+    console.log(`dial-in.test.jigasi.participant.received.audio.after.join:${performance.now() - joinedTS} ms.`);
 }
 
 /**
@@ -78,8 +78,8 @@ export async function dialIn(pin: string) {
         });
     });
 
-    //console.log(`dial-in.test.call_session_history_id:${JSON.parse(responseData).call_session_history_id}`);
-    //console.log(`API response:${responseData}`);
+    console.log(`dial-in.test.call_session_history_id:${JSON.parse(responseData).call_session_history_id}`);
+    console.log(`API response:${responseData}`);
 }
 
 export async function assertUrlDisplayed(p: Participant) {

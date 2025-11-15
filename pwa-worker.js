@@ -70,7 +70,7 @@ self.addEventListener('fetch', event => {
                 // due to a network error.
                 // If fetch() returns a valid HTTP response with a response code in
                 // the 4xx or 5xx range, the catch() will NOT be called.
-                //console.log('Fetch failed; returning offline page instead.', error);
+                console.log('Fetch failed; returning offline page instead.', error);
 
                 const cache = await caches.open(CACHE_NAME);
                 const cachedResponse = await cache.match(OFFLINE_URL);

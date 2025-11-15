@@ -70,5 +70,5 @@ export const config = {
 };
 
 if (config.debug) {
-    //console.log('TestsConfig:', JSON.stringify(config, null, 2));
+    console.log('TestsConfig:', JSON.stringify(config, null, 2));
 }

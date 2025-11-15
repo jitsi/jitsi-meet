@@ -50,7 +50,7 @@ describe('Visitor receiving video from a single remote participant', () => {
 
             const duration = performance.now() - iceConnected;
 
-            //console.log(`Video displayed after ${duration} ms after ICE connected (${instanceId})`);
+            console.log(`Video displayed after ${duration} ms after ICE connected (${instanceId})`);
         };
 
         await testVisitor('p2');

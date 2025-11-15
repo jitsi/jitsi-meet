@@ -215,7 +215,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
             .replace(/\//g, '-');
         const testProperties = await getTestProperties(testFilePath);
 
-        //console.log(`Running test: ${testName} via worker: ${cid}`);
+        console.log(`Running test: ${testName} via worker: ${cid}`);
 
         const globalAny: any = global;
 
@@ -238,7 +238,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
 
             // setup keepalive
             keepAlive.push(setInterval(async () => {
-                await bInstance.execute(() => //console.log(`${new Date().toISOString()} keep-alive`));
+                await bInstance.execute(() => console.log(`${new Date().toISOString()} keep-alive`));
             }, 20_000));
 
             if (bInstance.isFirefox) {
@@ -252,7 +252,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
         }));
 
         globalAny.ctx.roomName = generateRoomName(testName);
-        //console.log(`Using room name: ${globalAny.ctx.roomName}`);
+        console.log(`Using room name: ${globalAny.ctx.roomName}`);
 
         if (testProperties.useWebhookProxy && testsConfig.webhooksProxy.enabled && !globalAny.ctx.webhooksProxy) {
             const tenant = testsConfig.jaas.tenant;
@@ -261,7 +261,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 throw new Error('The test tries to use WebhookProxy without JaaS.');
             }
             if (!tenant) {
-                //console.log(`Can not configure WebhookProxy, missing tenant in config. Skipping ${testName}.`);
+                console.log(`Can not configure WebhookProxy, missing tenant in config. Skipping ${testName}.`);
                 globalAny.ctx.skipSuiteTests = 'WebHookProxy is required but not configured (missing tenant)';
 
                 return;
@@ -346,7 +346,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 AllureReporter.addDescription((ctx.testProperties.description || '')
                     + '\n\nSkipped because: ' + ctx.skipSuiteTests, 'text');
             }
-            //console.log(`Skipping because: ${ctx.skipSuiteTests}`);
+            console.log(`Skipping because: ${ctx.skipSuiteTests}`);
 
             context.skip();
 
@@ -460,7 +460,7 @@ export const config: WebdriverIO.MultiremoteConfig = {
                     return reject(reportError);
                 }
 
-                //console.log('Allure report successfully generated');
+                console.log('Allure report successfully generated');
 
                 // An ugly hack to sort by test order by default in the allure report.
                 const content = fs.readFileSync(`${TEST_RESULTS_DIR}/allure-report/index.html`, 'utf8');
