@@ -1,5 +1,6 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
-
+import Logger from '@jitsi/Logger';
+const logger = Logger.getLogger('PollsReducer');
 import {
     CHANGE_VOTE,
     CLEAR_POLLS,
@@ -87,7 +88,7 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
 
         // if the poll doesn't exist
         if (!(pollId in state.polls)) {
-            console.warn('requested poll does not exist: pollId ', pollId);
+            logger.warn('requested poll does not exist: pollId ', pollId);
 
             return state;
         }

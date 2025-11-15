@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-
+import Logger from '@jisti/Logger';
+const logger = Logger.getLogger('AlwaysOnTop');
 // We need to reference these files directly to avoid loading things that are not available
 // in this environment (e.g. JitsiMeetJS or interfaceConfig)
 import StatelessAvatar from '../base/avatar/components/web/StatelessAvatar';
@@ -222,7 +223,9 @@ export default class AlwaysOnTop extends Component<any, IState> {
                 this.setState({
                     customAvatarBackgrounds: res.avatarBackgrounds || []
                 }))
-            .catch(console.error);
+                .catch(error => {
+                logger.error('There is following error :- ', error);
+                });
     }
 
     /**
