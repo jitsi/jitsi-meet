@@ -468,6 +468,31 @@ export function invitePeopleAndChatRooms(
 }
 
 /**
+ * Fetch list of meeting users from your local backend.
+ * @returns {Promise<Array>} List of users
+ */
+export function fetchMeetUsers() {
+    const url = 'http://localhost:3000/meetusers';
+
+    return new Promise((resolve, reject) =>
+        fetch(url)
+            .then(res => {
+                if (!res.ok) {
+                    reject(new Error(`Request failed with status ${res.status}`));
+                }
+
+                return res.json();
+            })
+            .then(data => resolve(data))
+            .catch(err => {
+                console.error('❌ Error fetching meet users:', err);
+                reject(err);
+            })
+    );
+}
+
+
+/**
  * Determines if adding people is currently enabled.
  *
  * @param {IReduxState} state - Current state.

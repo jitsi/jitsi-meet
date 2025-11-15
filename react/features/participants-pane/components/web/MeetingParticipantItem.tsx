@@ -193,6 +193,7 @@ function MeetingParticipantItem({
 
     const [ hasAudioLevels, setHasAudioLevel ] = useState(false);
     const [ registeredEvent, setRegisteredEvent ] = useState(false);
+    // console.log("_participant", _participant);
 
     const _updateAudioLevel = useCallback(level => {
         const audioLevel = typeof level === 'number' && !isNaN(level)

@@ -177,11 +177,11 @@ export default class AbstractAddPeopleDialog<P extends IProps, S extends IState>
 
                 // If any invites are left that means something failed to send
                 // so treat it as an error.
-                if (invitesLeftToSend.length) {
+                if (invitesLeftToSend?.length) {
                     const erroredInviteTypeCounts
                         = getInviteTypeCounts(invitesLeftToSend);
 
-                    logger.error(`${invitesLeftToSend.length} invites failed`,
+                    logger.error(`${invitesLeftToSend?.length} invites failed`,
                         erroredInviteTypeCounts);
 
                     sendAnalytics(createInviteDialogEvent(
@@ -192,7 +192,7 @@ export default class AbstractAddPeopleDialog<P extends IProps, S extends IState>
                         titleKey: 'addPeople.failedToAdd'
                     }));
                 } else if (!_callFlowsEnabled) {
-                    const invitedCount = invitees.length;
+                    const invitedCount = invitees?.length;
                     let notificationProps: INotificationProps | undefined;
 
                     if (invitedCount >= 3) {
@@ -238,7 +238,7 @@ export default class AbstractAddPeopleDialog<P extends IProps, S extends IState>
      * be disabled, false otherwise.
      */
     _isAddDisabled() {
-        return !this.state.inviteItems.length
+        return !this.state.inviteItems?.length
             || this.state.addToCallInProgress;
     }
 

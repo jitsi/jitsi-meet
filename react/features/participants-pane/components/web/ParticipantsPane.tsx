@@ -30,6 +30,7 @@ import { FooterContextMenu } from './FooterContextMenu';
 import LobbyParticipants from './LobbyParticipants';
 import MeetingParticipants from './MeetingParticipants';
 import VisitorsList from './VisitorsList';
+import AbsentParticipants from './AbsentParticipants';
 
 /**
  * Interface representing the properties used for styles.
@@ -210,6 +211,7 @@ const ParticipantsPane = () => {
                 <MeetingParticipants
                     searchString = { searchString }
                     setSearchString = { setSearchString } />
+                    <AbsentParticipants />
                 {isBreakoutRoomsSupported && <RoomList searchString = { searchString } />}
                 {showAddRoomButton && <AddBreakoutRoomButton />}
                 {showCurrentVisitorsList && <CurrentVisitorsList searchString = { searchString } />}

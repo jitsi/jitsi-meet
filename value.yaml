@@ -1,0 +1,3154 @@
+# Default values for jitsi-meet.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+    # Set your cluster's DNS domain here.
+    # "cluster.local" should work for most environments.
+    # Set to "" to disable the use of FQDNs (default in older chart versions).
+    clusterDomain: cluster.local
+    podLabels: {}
+    podAnnotations: {}
+    releaseSecretsOverride:
+        enabled: false
+        #Support environment variables from pre-created secrets, such as 1Password operator
+        #extraEnvFrom:
+        #  - secretRef:
+        #      name: '{{ include "prosody.fullname" . }}-overrides'
+        #      optional: true
+
+imagePullSecrets:
+    - name: regcred
+nameOverride: ""
+fullnameOverride: ""
+
+enableAuth: true
+enableGuests: true
+# Where Jitsi Web UI is made available
+# such as jitsi.example.com
+publicURL: "https://meet.nxworkplace.com"
+tz: Asia/Tehran
+
+image:
+    pullPolicy: IfNotPresent
+
+## WebSocket configuration:
+#
+#  Both Colibri and XMPP WebSockets are disabled by default,
+#  since some LoadBalancer / Reverse Proxy setups can't pass
+#  WebSocket connections properly, which might result in breakage
+#  for some clients.
+#
+#  Enable both Colibri and XMPP WebSockets to replicate the current
+#  upstream `meet.jit.si` setup. Keep both disabled to replicate
+#  older setups which might be more compatible in some cases.
+websockets:
+    ## Colibri (JVB signalling):
+    colibri:
+        enabled: true
+    ## XMPP (Prosody signalling):
+    xmpp:
+        enabled: true
+
+web:
+    replicaCount: 1
+    image:
+        repository: jitsi/web
+
+    ## Override the image-provided configuration files:
+    #  See https://github.com/jitsi/docker-jitsi-meet/tree/master/web/rootfs
+    custom:
+        contInit:
+            _10_config: ""
+        defaults:
+            _default: ""
+            _ffdhe2048_txt: ""
+            _interface_config_js: |
+                var interfaceConfig = {
+                    APP_NAME: 'Nexus Meet',
+                    AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
+                    AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.2)',
+                    AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only',
+                    BRAND_WATERMARK_LINK: 'https://meet.nxworkplace.com',
+                    CLOSE_PAGE_GUEST_HINT: false, // A html text to be shown to guests on the close page, false disables it
+                    DEFAULT_BACKGROUND: '#040404',
+                    DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark.svg',
+                    DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
+                    DISABLE_JOIN_LEAVE_NOTIFICATIONS: false,
+                    DISABLE_PRESENCE_STATUS: false,
+                    DISABLE_TRANSCRIPTION_SUBTITLES: false,
+                    DISABLE_VIDEO_BACKGROUND: false,
+
+                    DISPLAY_WELCOME_FOOTER: true,
+                    DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD: false,
+                    DISPLAY_WELCOME_PAGE_CONTENT: false,
+                    DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
+
+                    ENABLE_DIAL_OUT: true,
+                    FILM_STRIP_MAX_HEIGHT: 120,
+                    GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
+                    HIDE_INVITE_MORE_HEADER: false,
+                    JITSI_WATERMARK_LINK: 'https://meet.nxworkplace.com',
+                    LANG_DETECTION: false, // Allow i18n to detect the system language
+                    LOCAL_THUMBNAIL_RATIO: 16 / 9, // 16:9
+                    MAXIMUM_ZOOMING_COEFFICIENT: 1.3,
+
+                    MOBILE_APP_PROMO: true,
+                    OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'electron', 'safari', 'webkit' ],
+                    POLICY_LOGO: null,
+                    PROVIDER_NAME: 'TodayHCM',
+
+                    RECENT_LIST_ENABLED: true,
+                    REMOTE_THUMBNAIL_RATIO: 1, // 1:1
+                    SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar', 'sounds', 'more' ],
+
+                    SHOW_BRAND_WATERMARK: false,
+
+                    SHOW_CHROME_EXTENSION_BANNER: false,
+
+                    SHOW_JITSI_WATERMARK: true,
+                    SHOW_POWERED_BY: false,
+                    SHOW_PROMOTIONAL_CLOSE_PAGE: false,
+
+                    SUPPORT_URL: '',
+
+                    UNSUPPORTED_BROWSERS: [],
+
+                    VERTICAL_FILMSTRIP: true,
+
+                    VIDEO_LAYOUT_FIT: 'both',
+
+                    VIDEO_QUALITY_LABEL_DISABLED: false,
+                    makeJsonParserHappy: 'even if last key had a trailing comma'
+                };
+
+            _meet_conf: ""
+            _nginx_conf: ""
+            _settings_config_js: |
+                {{ $ENABLE_ADAPTIVE_MODE := .Env.ENABLE_ADAPTIVE_MODE | default "true" | toBool -}}
+                {{ $ENABLE_AUDIO_PROCESSING := .Env.ENABLE_AUDIO_PROCESSING | default "true" | toBool -}}
+                {{ $ENABLE_AUTOMATIC_GAIN_CONTROL := .Env.ENABLE_AUTOMATIC_GAIN_CONTROL | default "true" | toBool -}}
+                {{ $ENABLE_BREAKOUT_ROOMS := .Env.ENABLE_BREAKOUT_ROOMS | default "true" | toBool -}}
+                {{ $ENABLE_CALENDAR := .Env.ENABLE_CALENDAR | default "false" | toBool -}}
+                {{ $ENABLE_FILE_RECORDING_SHARING := .Env.ENABLE_FILE_RECORDING_SHARING | default "false" | toBool -}}
+                {{ $ENABLE_NO_AUDIO_DETECTION := .Env.ENABLE_NO_AUDIO_DETECTION | default "true" | toBool -}}
+                {{ $ENABLE_P2P := .Env.ENABLE_P2P | default "true" | toBool -}}
+                {{ $ENABLE_PREJOIN_PAGE := .Env.ENABLE_PREJOIN_PAGE | default "true" | toBool -}}
+                {{ $ENABLE_WELCOME_PAGE := .Env.ENABLE_WELCOME_PAGE | default "true" | toBool -}}
+                {{ $ENABLE_CLOSE_PAGE := .Env.ENABLE_CLOSE_PAGE | default "false" | toBool -}}
+                {{ $ENABLE_RECORDING := .Env.ENABLE_RECORDING | default "false" | toBool -}}
+                {{ $ENABLE_SERVICE_RECORDING := .Env.ENABLE_SERVICE_RECORDING | default ($ENABLE_RECORDING | printf "%t") | toBool -}}
+                {{ $ENABLE_LIVESTREAMING := .Env.ENABLE_LIVESTREAMING | default "false" | toBool -}}
+                {{ $ENABLE_LIVESTREAMING_DATA_PRIVACY_LINK := .Env.ENABLE_LIVESTREAMING_DATA_PRIVACY_LINK | default "https://policies.google.com/privacy" -}}
+                {{ $ENABLE_LIVESTREAMING_HELP_LINK := .Env.ENABLE_LIVESTREAMING_HELP_LINK | default "https://jitsi.org/live" -}}
+                {{ $ENABLE_LIVESTREAMING_TERMS_LINK := .Env.ENABLE_LIVESTREAMING_TERMS_LINK | default "https://www.youtube.com/t/terms" -}}
+                {{ $ENABLE_LIVESTREAMING_VALIDATOR_REGEXP_STRING := .Env.ENABLE_LIVESTREAMING_VALIDATOR_REGEXP_STRING | default "^(?:[a-zA-Z0-9]{4}(?:-(?!$)|$)){4}" -}}
+                {{ $ENABLE_REMB := .Env.ENABLE_REMB | default "true" | toBool -}}
+                {{ $ENABLE_REQUIRE_DISPLAY_NAME := .Env.ENABLE_REQUIRE_DISPLAY_NAME | default "false" | toBool -}}
+                {{ $ENABLE_SIMULCAST := .Env.ENABLE_SIMULCAST | default "true" | toBool -}}
+                {{ $ENABLE_STEREO := .Env.ENABLE_STEREO | default "false" | toBool -}}
+                {{ $ENABLE_OPUS_RED := .Env.ENABLE_OPUS_RED | default "false" | toBool -}}
+                {{ $ENABLE_TALK_WHILE_MUTED := .Env.ENABLE_TALK_WHILE_MUTED | default "false" | toBool -}}
+                {{ $ENABLE_TCC := .Env.ENABLE_TCC | default "true" | toBool -}}
+                {{ $ENABLE_TRANSCRIPTIONS := .Env.ENABLE_TRANSCRIPTIONS | default "false" | toBool -}}
+                {{ $TRANSLATION_LANGUAGES := .Env.TRANSLATION_LANGUAGES | default "['en']" -}}
+                {{ $TRANSLATION_LANGUAGES_HEAD := .Env.TRANSLATION_LANGUAGES_HEAD | default "['en']" -}}
+                {{ $USE_APP_LANGUAGE := .Env.USE_APP_LANGUAGE | default "true" | toBool -}}
+                {{ $PREFERRED_LANGUAGE := .Env.PREFERRED_LANGUAGE | default "en-US" -}}
+
+
+                {{ $DISABLE_START_FOR_ALL := .Env.DISABLE_START_FOR_ALL | default "false" | toBool -}}
+                {{ $AUTO_CAPTION_ON_RECORD := .Env.AUTO_CAPTION_ON_RECORD | default "false" | toBool -}}
+                {{ $ENABLE_JAAS_COMPONENTS := .Env.ENABLE_JAAS_COMPONENTS | default "0" | toBool }}
+                {{ $HIDE_PREJOIN_DISPLAY_NAME := .Env.HIDE_PREJOIN_DISPLAY_NAME | default "false" | toBool -}}
+                {{ $PUBLIC_URL := .Env.PUBLIC_URL | default "https://localhost:8443" -}}
+                {{ $RESOLUTION := .Env.RESOLUTION | default "720" -}}
+                {{ $RESOLUTION_MIN := .Env.RESOLUTION_MIN | default "180" -}}
+                {{ $RESOLUTION_WIDTH := .Env.RESOLUTION_WIDTH | default "1280" -}}
+                {{ $RESOLUTION_WIDTH_MIN := .Env.RESOLUTION_WIDTH_MIN | default "320" -}}
+                {{ $START_AUDIO_ONLY := .Env.START_AUDIO_ONLY | default "false" | toBool -}}
+                {{ $START_AUDIO_MUTED := .Env.START_AUDIO_MUTED | default 10 -}}
+                {{ $START_WITH_AUDIO_MUTED := .Env.START_WITH_AUDIO_MUTED | default "false" | toBool -}}
+                {{ $START_SILENT := .Env.START_SILENT | default "false" | toBool -}}
+                {{ $DISABLE_AUDIO_LEVELS := .Env.DISABLE_AUDIO_LEVELS | default "false" | toBool -}}
+                {{ $ENABLE_NOISY_MIC_DETECTION := .Env.ENABLE_NOISY_MIC_DETECTION | default "true" | toBool -}}
+                {{ $START_VIDEO_MUTED := .Env.START_VIDEO_MUTED | default 10 -}}
+                {{ $START_WITH_VIDEO_MUTED := .Env.START_WITH_VIDEO_MUTED | default "false" | toBool -}}
+                {{ $DESKTOP_SHARING_FRAMERATE_AUTO := .Env.DESKTOP_SHARING_FRAMERATE_AUTO | default "true" | toBool -}}
+                {{ $DESKTOP_SHARING_FRAMERATE_MIN := .Env.DESKTOP_SHARING_FRAMERATE_MIN | default 5 -}}
+                {{ $DESKTOP_SHARING_FRAMERATE_MAX := .Env.DESKTOP_SHARING_FRAMERATE_MAX | default 5 -}}
+                {{ $XMPP_DOMAIN := .Env.XMPP_DOMAIN | default "meet.jitsi" -}}
+                {{ $XMPP_HIDDEN_DOMAIN := .Env.XMPP_HIDDEN_DOMAIN | default "hidden.meet.jitsi" -}}
+                {{ $DISABLE_DEEP_LINKING  := .Env.DISABLE_DEEP_LINKING | default "false" | toBool -}}
+                {{ $DISABLE_POLLS := .Env.DISABLE_POLLS | default "false" | toBool -}}
+                {{ $DISABLE_REACTIONS := .Env.DISABLE_REACTIONS | default "false" | toBool -}}
+                {{ $DISABLE_REMOTE_VIDEO_MENU := .Env.DISABLE_REMOTE_VIDEO_MENU | default "false" | toBool -}}
+                {{ $DISABLE_PRIVATE_CHAT:= .Env.DISABLE_PRIVATE_CHAT | default "false" | toBool -}}
+                {{ $DISABLE_KICKOUT := .Env.DISABLE_KICKOUT | default "false" | toBool -}}
+                {{ $DISABLE_GRANT_MODERATOR := .Env.DISABLE_GRANT_MODERATOR | default "false" | toBool -}}
+                {{ $ENABLE_E2EPING := .Env.ENABLE_E2EPING | default "false" | toBool -}}
+                {{ $DISABLE_LOCAL_RECORDING := .Env.DISABLE_LOCAL_RECORDING | default "false" | toBool -}}
+                {{ $ENABLE_LOCAL_RECORDING_NOTIFY_ALL_PARTICIPANT := .Env.ENABLE_LOCAL_RECORDING_NOTIFY_ALL_PARTICIPANT | default "false" | toBool -}}
+                {{ $ENABLE_LOCAL_RECORDING_SELF_START := .Env.ENABLE_LOCAL_RECORDING_SELF_START | default "false" | toBool -}}
+                {{ $DISABLE_PROFILE := .Env.DISABLE_PROFILE | default "false" | toBool -}}
+                {{ $ROOM_PASSWORD_DIGITS := .Env.ROOM_PASSWORD_DIGITS | default "false" -}}
+                {{ $WHITEBOARD_ENABLED := or (.Env.WHITEBOARD_COLLAB_SERVER_PUBLIC_URL | default "" | toBool) (.Env.WHITEBOARD_COLLAB_SERVER_URL_BASE | default "" | toBool) }}
+                {{ $CODEC_ORDER_JVB := .Env.CODEC_ORDER_JVB | default "[\"AV1\", \"VP9\", \"VP8\", \"H264\"]" -}}
+                {{ $CODEC_ORDER_JVB_MOBILE := .Env.CODEC_ORDER_JVB_MOBILE | default "[\"VP8\", \"VP9\", \"H264\", \"AV1\"]" -}}
+                {{ $CODEC_ORDER_P2P := .Env.CODEC_ORDER_JVB | default "[\"AV1\", \"VP9\", \"VP8\", \"H264\"]" -}}
+                {{ $CODEC_ORDER_P2P_MOBILE := .Env.CODEC_ORDER_JVB_MOBILE | default "[\"VP8\", \"VP9\", \"H264\", \"AV1\"]" -}}
+
+                // Video configuration.
+                //
+                config.disabledSounds = [
+                    'ASKED_TO_UNMUTE_SOUND'
+                    ,'E2EE_OFF_SOUND'
+                    ,'E2EE_ON_SOUND'
+                    ,'INCOMING_MSG_SOUND'
+                    ,'KNOCKING_PARTICIPANT_SOUND'
+                    ,'LIVE_STREAMING_OFF_SOUND'
+                    ,'LIVE_STREAMING_ON_SOUND'
+                    ,'NO_AUDIO_SIGNAL_SOUND'
+                    ,'NOISY_AUDIO_INPUT_SOUND'
+                    ,'OUTGOING_CALL_EXPIRED_SOUND'
+                    ,'OUTGOING_CALL_REJECTED_SOUND'
+                    ,'OUTGOING_CALL_RINGING_SOUND'
+                    ,'OUTGOING_CALL_START_SOUND'
+                    ,'PARTICIPANT_JOINED_SOUND'
+                    ,'PARTICIPANT_LEFT_SOUND'
+                    ,'RAISE_HAND_SOUND'
+                    ,'REACTION_SOUND'
+                    ,'RECORDING_OFF_SOUND'
+                    ,'RECORDING_ON_SOUND'
+                    ,'TALK_WHILE_MUTED_SOUND'
+                ];
+
+                // notifications
+                config.disabledNotifications = [
+                  'notify.leftOneMember',
+                  'notify.leftThreePlusMembers',
+                  'notify.leftTwoMembers',
+                  'notify.connectedOneMember', 
+                  'notify.connectedThreePlusMembers', 
+                  'notify.connectedTwoMembers',     
+                ];
+
+                config.toolbarButtons = [
+                  'camera',
+                  'chat',
+                  'desktop',
+                  'hangup',
+                  'invite',
+                  'microphone',
+                  'videoquality',
+                  'whiteboard',
+                  'participants-pane',
+                  'closedcaptions',
+                  'profile',
+                  'raisehand',
+                  'tileview',
+                  'sharedvideo',
+                  'settings',
+                  'recording', 
+                  'noisesuppression',
+                  'toggle-camera',
+                  'select-background',
+                  'stats'
+                ];
+
+                config.mainToolbarButtons = [
+                   [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants-pane', 'tileview', 'settings' ],
+                   [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants-pane', 'tileview' ],
+                   [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants-pane' ],
+                   [ 'microphone', 'camera', 'desktop', 'chat', 'participants-pane' ],
+                   [ 'microphone', 'camera', 'chat', 'participants-pane' ],
+                   [ 'microphone', 'camera', 'chat' ],
+                   [ 'microphone', 'camera' ]
+                ];
+
+                // Hides the conference subject
+                config.hideConferenceSubject = true;
+
+                config.videoQuality = {
+
+                  enableAdaptiveMode: true,
+                      codecPreferenceOrder: [ 'AV1', 'VP9', 'VP8', 'H264' ],
+                      mobileCodecPreferenceOrder: [ 'VP8', 'H264', 'VP9' ],
+                      av1: {
+                          scalabilityModeEnabled: true,
+                          useSimulcast: false,
+                          useKSVC: true
+                      },
+                      h264: {
+                          scalabilityModeEnabled: true
+                      },
+                      vp8: {
+                          scalabilityModeEnabled: false
+                      },
+                      vp9: {
+                          scalabilityModeEnabled: true,
+                          useSimulcast: false,
+                          useKSVC: true
+                      }
+                };    
+
+
+                config.resolution = {{ $RESOLUTION }};
+                config.constraints = {
+                    video: {
+                        height: { ideal: {{ $RESOLUTION }}, max: {{ $RESOLUTION }}, min: {{ $RESOLUTION_MIN }} },
+                        width: { ideal: {{ $RESOLUTION_WIDTH }}, max: {{ $RESOLUTION_WIDTH }}, min: {{ $RESOLUTION_WIDTH_MIN }}},
+                    }
+                };
+
+                {{ if not $ENABLE_SIMULCAST -}}
+                config.disableSimulcast = true;
+                {{ end -}}
+                config.startVideoMuted = {{ $START_VIDEO_MUTED }};
+                config.startWithVideoMuted = {{ $START_WITH_VIDEO_MUTED }};
+
+                config.flags = {
+                    sourceNameSignaling: true,
+                    sendMultipleVideoStreams: true,
+                    receiveMultipleVideoStreams: true
+                };
+
+                // ScreenShare Configuration.
+                //
+
+                {{ if not $DESKTOP_SHARING_FRAMERATE_AUTO -}}
+                config.desktopSharingFrameRate = {
+                    min: {{ $DESKTOP_SHARING_FRAMERATE_MIN }},
+                    max: {{ $DESKTOP_SHARING_FRAMERATE_MAX }}
+                };
+                {{ end -}}
+
+                // Audio configuration.
+                //
+
+                config.enableNoAudioDetection = {{ $ENABLE_NO_AUDIO_DETECTION }};
+                config.enableTalkWhileMuted = {{ $ENABLE_TALK_WHILE_MUTED }};
+                config.disableAP = {{ not $ENABLE_AUDIO_PROCESSING }};
+                config.disableAGC = {{ not $ENABLE_AUTOMATIC_GAIN_CONTROL }};
+
+                config.audioQuality = {
+                    stereo: {{ $ENABLE_STEREO }}
+                };
+
+                {{ if .Env.AUDIO_QUALITY_OPUS_BITRATE -}}
+                config.audioQuality.opusMaxAverageBitrate = '{{ .Env.AUDIO_QUALITY_OPUS_BITRATE }}';
+                {{ end -}}
+
+                config.startAudioOnly = {{ $START_AUDIO_ONLY }};
+                config.startAudioMuted = {{ $START_AUDIO_MUTED }}; 
+                config.startWithAudioMuted = {{ $START_WITH_AUDIO_MUTED }};
+                config.startSilent = {{ $START_SILENT }};
+                config.enableOpusRed = {{ $ENABLE_OPUS_RED }};
+                config.disableAudioLevels = {{ $DISABLE_AUDIO_LEVELS }};
+                config.enableNoisyMicDetection = {{ $ENABLE_NOISY_MIC_DETECTION }};
+
+
+                // Peer-to-Peer options.
+                //
+
+                config.p2p = {
+                    enabled: {{ $ENABLE_P2P }},
+                    codecPreferenceOrder: {{ $CODEC_ORDER_P2P }},
+                    mobileCodecPreferenceOrder: {{ $CODEC_ORDER_P2P_MOBILE }}
+                };
+
+                {{ if .Env.P2P_STUN_SERVERS -}}
+                config.p2p.stunServers = '{{ .Env.P2P_STUN_SERVERS }}'.split(',').map(function (url) { return { urls: 'stun:' + url }; } );
+
+                {{ end -}}
+
+                // Breakout Rooms
+                //
+
+                config.hideAddRoomButton = {{ $ENABLE_BREAKOUT_ROOMS | not }};
+
+
+                // Etherpad
+                //
+
+                {{ if .Env.ETHERPAD_PUBLIC_URL -}}
+                config.etherpad_base = '{{ .Env.ETHERPAD_PUBLIC_URL }}';
+                {{ else if .Env.ETHERPAD_URL_BASE -}}
+                config.etherpad_base = '{{ $PUBLIC_URL }}/etherpad/p/';
+                {{ end -}}
+
+
+                // Recording.
+                //
+
+                {{ if or $ENABLE_RECORDING $ENABLE_TRANSCRIPTIONS  -}}
+
+                config.hiddenDomain = '{{ $XMPP_HIDDEN_DOMAIN }}';
+                {{ end -}}
+
+                {{ if $ENABLE_RECORDING -}}
+
+                config.recordingService = {
+                    // Whether to enable file recording or not using the "service" defined by the finalizer in Jibri
+                    enabled: {{ $ENABLE_SERVICE_RECORDING }},
+
+                    // Whether to show the possibility to share file recording with other people
+                    // (e.g. meeting participants), based on the actual implementation
+                    // on the backend.
+                    sharingEnabled: {{ $ENABLE_FILE_RECORDING_SHARING }}
+                };
+
+                // Live streaming configuration.
+                config.liveStreaming = {
+                    enabled: {{ $ENABLE_LIVESTREAMING }},
+                    dataPrivacyLink: '{{ $ENABLE_LIVESTREAMING_DATA_PRIVACY_LINK }}',
+                    helpLink: '{{ $ENABLE_LIVESTREAMING_HELP_LINK }}',
+                    termsLink: '{{ $ENABLE_LIVESTREAMING_TERMS_LINK }}',
+                    validatorRegExpString: '{{ $ENABLE_LIVESTREAMING_VALIDATOR_REGEXP_STRING }}'
+                };
+
+
+                {{ if .Env.DROPBOX_APPKEY -}}
+                // Enable the dropbox integration.
+                config.dropbox = {
+                    appKey: '{{ .Env.DROPBOX_APPKEY }}'
+                };
+
+                {{ if .Env.DROPBOX_REDIRECT_URI -}}
+                // A URL to redirect the user to, after authenticating
+                // by default uses:
+                // 'https://jitsi-meet.example.com/static/oauth.html'
+                config.dropbox.redirectURI = '{{ .Env.DROPBOX_REDIRECT_URI }}';
+                {{ end -}}
+                {{ end -}}
+
+                {{ end -}}
+
+                // Local recording configuration.
+                config.localRecording = {
+                    disable: {{ $DISABLE_LOCAL_RECORDING }},
+                    notifyAllParticipants: {{ $ENABLE_LOCAL_RECORDING_NOTIFY_ALL_PARTICIPANT }},
+                    disableSelfRecording: {{ $ENABLE_LOCAL_RECORDING_SELF_START }}
+                };
+
+
+                // Analytics.
+                //
+
+                config.analytics = {};
+
+                {{ if .Env.AMPLITUDE_ID -}}
+                // The Amplitude APP Key:
+                config.analytics.amplitudeAPPKey = '{{ .Env.AMPLITUDE_ID }}';
+                {{ end -}}
+
+                {{ if .Env.GOOGLE_ANALYTICS_ID -}}
+                // The Google Analytics Tracking ID:
+                config.analytics.googleAnalyticsTrackingId = '{{ .Env.GOOGLE_ANALYTICS_ID }}';
+                {{ end -}}
+
+                {{ if .Env.MATOMO_ENDPOINT -}}
+                // Matomo endpoint:
+                config.analytics.matomoEndpoint = '{{ .Env.MATOMO_ENDPOINT }}';
+                {{ end -}}
+
+                {{ if .Env.MATOMO_SITE_ID -}}
+                // Matomo site ID:
+                config.analytics.matomoSiteID = '{{ .Env.MATOMO_SITE_ID }}';
+                {{ end -}}
+
+                {{ if .Env.ANALYTICS_SCRIPT_URLS -}}
+                // Array of script URLs to load as lib-jitsi-meet "analytics handlers".
+                config.analytics.scriptURLs = [ '{{ join "','" (splitList "," .Env.ANALYTICS_SCRIPT_URLS | compact) }}' ];
+                {{ end -}}
+
+                {{ if .Env.ANALYTICS_WHITELISTED_EVENTS -}}
+                config.analytics.whiteListedEvents = [ '{{ join "','" (splitList "," .Env.ANALYTICS_WHITELISTED_EVENTS | compact) }}' ];
+                {{ end -}}
+
+
+                // Dial in/out services.
+                //
+
+                {{ if $ENABLE_JAAS_COMPONENTS }}
+                config.dialInConfCodeUrl = 'https://conference-mapper.jitsi.net/v1/access';
+                config.dialInNumbersUrl = 'https://conference-mapper.jitsi.net/v1/access/dids';
+                {{ else }}
+                {{ if .Env.CONFCODE_URL -}}
+                config.dialInConfCodeUrl = '{{ .Env.CONFCODE_URL }}';
+                {{ end -}}
+                {{ if .Env.DIALIN_NUMBERS_URL -}}
+                config.dialInNumbersUrl = '{{ .Env.DIALIN_NUMBERS_URL }}';
+                {{ end -}}
+                {{ end -}}
+
+                {{ if .Env.DIALOUT_AUTH_URL -}}
+                config.dialOutAuthUrl = '{{ .Env.DIALOUT_AUTH_URL }}';
+                {{ end -}}
+
+                {{ if .Env.DIALOUT_CODES_URL -}}
+                config.dialOutCodesUrl = '{{ .Env.DIALOUT_CODES_URL }}';
+                {{ end -}}
+
+
+                // Calendar service integration.
+                //
+
+                config.enableCalendarIntegration = {{ $ENABLE_CALENDAR }};
+
+                {{ if .Env.GOOGLE_API_APP_CLIENT_ID -}}
+                config.googleApiApplicationClientID = '{{ .Env.GOOGLE_API_APP_CLIENT_ID }}';
+                {{ end -}}
+
+                {{ if .Env.MICROSOFT_API_APP_CLIENT_ID -}}
+                config.microsoftApiApplicationClientID = '{{ .Env.MICROSOFT_API_APP_CLIENT_ID }}';
+                {{ end -}}
+
+
+                // Invitation service.
+                //
+
+                {{ if .Env.INVITE_SERVICE_URL -}}
+                config.inviteServiceUrl = '{{ .Env.INVITE_SERVICE_URL }}';
+                {{ end -}}
+
+                {{ if .Env.PEOPLE_SEARCH_URL -}}
+                config.peopleSearchUrl = '{{ .Env.PEOPLE_SEARCH_URL }}';
+                config.peopleSearchQueryTypes = ['user','conferenceRooms'];
+                {{ end -}}
+
+
+                // Miscellaneous.
+                //
+
+                // Prejoin page.
+                config.prejoinConfig = {
+                    enabled: {{ $ENABLE_PREJOIN_PAGE }},
+
+                    // Hides the participant name editing field in the prejoin screen.
+                    hideDisplayName: {{ $HIDE_PREJOIN_DISPLAY_NAME }}
+                };
+
+                // List of buttons to hide from the extra join options dropdown on prejoin screen.
+                {{ if .Env.HIDE_PREJOIN_EXTRA_BUTTONS -}}
+                config.prejoinConfig.hideExtraJoinButtons = [ '{{ join "','" (splitList "," .Env.HIDE_PREJOIN_EXTRA_BUTTONS | compact) }}' ];
+                {{ end -}}
+
+                // Welcome page.
+                {{ if .Env.WELCOME_PAGE_CUSTOM_URL -}}
+                config.welcomePage = {
+                    disabled: {{ not $ENABLE_WELCOME_PAGE }},
+                    customUrl: '{{ .Env.WELCOME_PAGE_CUSTOM_URL}}',
+                },      
+                {{ else -}}  
+                config.welcomePage = {
+                    disabled: {{ not $ENABLE_WELCOME_PAGE }},
+                },
+                {{ end -}}  
+
+                // Close page.
+                config.enableClosePage = {{ $ENABLE_CLOSE_PAGE }};
+
+                // Default language.
+                {{ if .Env.DEFAULT_LANGUAGE -}}
+                config.defaultLanguage = '{{ .Env.DEFAULT_LANGUAGE }}';
+                {{ end -}}
+
+                // Require users to always specify a display name.
+                config.requireDisplayName = {{ $ENABLE_REQUIRE_DISPLAY_NAME }};
+
+                // Chrome extension banner.
+                {{ if .Env.CHROME_EXTENSION_BANNER_JSON -}}
+                config.chromeExtensionBanner = {{ .Env.CHROME_EXTENSION_BANNER_JSON }};
+                {{ end -}}
+
+                // Disables profile and the edit of all fields from the profile settings (display name and email)
+                config.disableProfile = {{ $DISABLE_PROFILE }};
+
+                // Room password (false for anything, number for max digits)
+                {{ if $ENABLE_JAAS_COMPONENTS -}}
+                config.roomPasswordNumberOfDigits = 10;
+                {{ else -}}
+                config.roomPasswordNumberOfDigits = {{ $ROOM_PASSWORD_DIGITS }};
+                {{ end -}}
+
+                // Advanced.
+                //
+
+                {{ if not $ENABLE_REMB -}}
+                config.enableRemb = false;
+                {{ end -}}
+                {{ if not $ENABLE_TCC -}}
+                config.enableTcc = false;
+                {{ end -}}
+
+
+                // Transcriptions (subtitles and buttons can be configured in interface_config)
+                config.transcription = {
+                    enabled: {{ $ENABLE_TRANSCRIPTIONS }},
+                    translationLanguages: {{ $TRANSLATION_LANGUAGES }},
+                    translationLanguagesHead: {{ $TRANSLATION_LANGUAGES_HEAD }},
+                    useAppLanguage: {{ $USE_APP_LANGUAGE }},
+                    preferredLanguage: '{{ $PREFERRED_LANGUAGE }}',
+                    disableStartForAll: {{ $DISABLE_START_FOR_ALL }},
+                    autoCaptionOnRecord: {{ $AUTO_CAPTION_ON_RECORD }},
+                };
+
+                // Dynamic branding
+                {{ if .Env.DYNAMIC_BRANDING_URL -}}
+                // External API url used to receive branding specific information.
+                config.dynamicBrandingUrl = '{{ .Env.DYNAMIC_BRANDING_URL }}';
+                {{ else if .Env.BRANDING_DATA_URL  -}}
+                config.brandingDataUrl = '{{ .Env.BRANDING_DATA_URL }}';
+                {{ end -}}
+
+                {{ if .Env.TOKEN_AUTH_URL -}}
+                // Authenticate using external service
+                config.tokenAuthUrl = '{{ .Env.TOKEN_AUTH_URL }}';
+                {{ end -}}
+
+
+                // Deployment information.
+                //
+
+                config.deploymentInfo = {};
+
+                {{ if .Env.DEPLOYMENTINFO_ENVIRONMENT -}}
+                config.deploymentInfo.environment = '{{ .Env.DEPLOYMENTINFO_ENVIRONMENT }}';
+                {{ end -}}
+
+                {{ if .Env.DEPLOYMENTINFO_SHARD -}}
+                config.deploymentInfo.shard = '{{ .Env.DEPLOYMENTINFO_SHARD }}';
+                {{ end -}}
+
+                {{ if .Env.DEPLOYMENTINFO_ENVIRONMENT_TYPE -}}
+                config.deploymentInfo.envType = '{{ .Env.DEPLOYMENTINFO_ENVIRONMENT_TYPE }}';
+                {{ end -}}
+
+                {{ if .Env.DEPLOYMENTINFO_REGION -}}
+                config.deploymentInfo.region = '{{ .Env.DEPLOYMENTINFO_REGION }}';
+                {{ end -}}
+
+                // Deep Linking
+                config.disableDeepLinking = {{ $DISABLE_DEEP_LINKING }};
+
+                // P2P preferred codec
+                {{ if .Env.P2P_PREFERRED_CODEC -}}
+                config.p2p.preferredCodec = '{{ .Env.P2P_PREFERRED_CODEC }}';
+                {{ end -}}
+
+                // Video quality settings.
+                //
+
+                config.videoQuality.codecPreferenceOrder = {{ $CODEC_ORDER_JVB }};
+                config.videoQuality.mobileCodecPreferenceOrder = {{ $CODEC_ORDER_JVB_MOBILE }};
+                config.videoQuality.enableAdaptiveMode = {{ $ENABLE_ADAPTIVE_MODE }};
+
+                {{ if .Env.VIDEOQUALITY_PREFERRED_CODEC -}}
+                config.videoQuality.preferredCodec = '{{ .Env.VIDEOQUALITY_PREFERRED_CODEC }}';
+                {{ end -}}
+
+                config.videoQuality.av1 = {};
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_AV1_LOW }}
+                config.videoQuality.av1.low = {{ .Env.VIDEOQUALITY_BITRATE_AV1_LOW }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_AV1_STANDARD }}
+                config.videoQuality.av1.standard = {{ .Env.VIDEOQUALITY_BITRATE_AV1_STANDARD }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_AV1_HIGH }}
+                config.videoQuality.av1.high = {{ .Env.VIDEOQUALITY_BITRATE_AV1_HIGH }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_AV1_FULL }}
+                config.videoQuality.av1.fullHd = {{ .Env.VIDEOQUALITY_BITRATE_AV1_FULL }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_AV1_ULTRA }}
+                config.videoQuality.av1.ultraHd = {{ .Env.VIDEOQUALITY_BITRATE_AV1_ULTRA }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_AV1_SS_HIGH }}
+                config.videoQuality.av1.ssHigh = {{ .Env.VIDEOQUALITY_BITRATE_AV1_SS_HIGH }};
+                {{ end -}}
+
+                config.videoQuality.h264 = {};
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_H264_LOW }}
+                config.videoQuality.h264.low = {{ .Env.VIDEOQUALITY_BITRATE_H264_LOW }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_H264_STANDARD }}
+                config.videoQuality.h264.standard = {{ .Env.VIDEOQUALITY_BITRATE_H264_STANDARD }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_H264_HIGH }}
+                config.videoQuality.h264.high = {{ .Env.VIDEOQUALITY_BITRATE_H264_HIGH }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_H264_FULL }}
+                config.videoQuality.h264.fullHd = {{ .Env.VIDEOQUALITY_BITRATE_H264_FULL }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_H264_ULTRA }}
+                config.videoQuality.h264.ultraHd = {{ .Env.VIDEOQUALITY_BITRATE_H264_ULTRA }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_H264_SS_HIGH }}
+                config.videoQuality.h264.ssHigh = {{ .Env.VIDEOQUALITY_BITRATE_H264_SS_HIGH }};
+                {{ end -}}
+
+                config.videoQuality.vp8 = {};
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_VP8_LOW }}
+                config.videoQuality.vp8.low = {{ .Env.VIDEOQUALITY_BITRATE_VP8_LOW }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_VP8_STANDARD }}
+                config.videoQuality.vp8.standard = {{ .Env.VIDEOQUALITY_BITRATE_VP8_STANDARD }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_VP8_HIGH }}
+                config.videoQuality.vp8.high = {{ .Env.VIDEOQUALITY_BITRATE_VP8_HIGH }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_VP8_FULL }}
+                config.videoQuality.vp8.fullHd = {{ .Env.VIDEOQUALITY_BITRATE_VP8_FULL }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_VP8_ULTRA }}
+                config.videoQuality.vp8.ultraHd = {{ .Env.VIDEOQUALITY_BITRATE_VP8_ULTRA }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_VP8_SS_HIGH }}
+                config.videoQuality.vp8.ssHigh = {{ .Env.VIDEOQUALITY_BITRATE_VP8_SS_HIGH }};
+                {{ end -}}
+
+                config.videoQuality.vp9 = {};
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_VP9_LOW }}
+                config.videoQuality.vp9.low = {{ .Env.VIDEOQUALITY_BITRATE_VP9_LOW }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_VP9_STANDARD }}
+                config.videoQuality.vp9.standard = {{ .Env.VIDEOQUALITY_BITRATE_VP9_STANDARD }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_VP9_HIGH }}
+                config.videoQuality.vp9.high = {{ .Env.VIDEOQUALITY_BITRATE_VP9_HIGH }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_VP9_FULL }}
+                config.videoQuality.vp9.fullHd = {{ .Env.VIDEOQUALITY_BITRATE_VP9_FULL }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_VP9_ULTRA }}
+                config.videoQuality.vp9.ultraHd = {{ .Env.VIDEOQUALITY_BITRATE_VP9_ULTRA }};
+                {{ end -}}
+
+                {{ if .Env.VIDEOQUALITY_BITRATE_VP9_SS_HIGH }}
+                config.videoQuality.vp9.ssHigh = {{ .Env.VIDEOQUALITY_BITRATE_VP9_SS_HIGH }};
+                {{ end -}}
+
+                // Reactions
+                config.disableReactions = {{ $DISABLE_REACTIONS }};
+
+                // Polls
+                config.disablePolls = {{ $DISABLE_POLLS }};
+
+                // Configure toolbar buttons
+                {{ if .Env.TOOLBAR_BUTTONS -}}
+                config.toolbarButtons = [ '{{ join "','" (splitList "," .Env.TOOLBAR_BUTTONS | compact) }}' ];
+                {{ end -}}
+
+                // Hides the buttons at pre-join screen
+                {{ if .Env.HIDE_PREMEETING_BUTTONS -}}
+                config.hiddenPremeetingButtons = [ '{{ join "','" (splitList "," .Env.HIDE_PREMEETING_BUTTONS | compact) }}' ];
+                {{ end -}}
+
+                // Configure remote participant video menu
+                config.remoteVideoMenu = {
+                    disabled: {{ $DISABLE_REMOTE_VIDEO_MENU }},
+                    disableKick: {{ $DISABLE_KICKOUT }},
+                    disableGrantModerator: {{ $DISABLE_GRANT_MODERATOR }},
+                    disablePrivateChat: {{ $DISABLE_PRIVATE_CHAT }}
+                };
+
+                // Configure e2eping
+                config.e2eping = {
+                    enabled: {{ $ENABLE_E2EPING }}
+                };
+
+                {{ if .Env.E2EPING_NUM_REQUESTS -}}
+                config.e2eping.numRequests = {{ .Env.E2EPING_NUM_REQUESTS }};
+                {{ end -}}
+                {{ if .Env.E2EPING_MAX_CONFERENCE_SIZE -}}
+                config.e2eping.maxConferenceSize = {{ .Env.E2EPING_MAX_CONFERENCE_SIZE }};
+                {{ end -}}
+                {{ if .Env.E2EPING_MAX_MESSAGE_PER_SECOND -}}
+                config.e2eping.maxMessagePerSecond = {{ .Env.E2EPING_MAX_MESSAGE_PER_SECOND }};
+                {{ end }}
+
+                // Settings for the Excalidraw whiteboard integration.
+                config.whiteboard = {
+                    enabled: {{ $WHITEBOARD_ENABLED }},
+                {{ if .Env.WHITEBOARD_COLLAB_SERVER_PUBLIC_URL -}}
+                    collabServerBaseUrl: '{{ .Env.WHITEBOARD_COLLAB_SERVER_PUBLIC_URL }}'
+                {{ else if .Env.WHITEBOARD_COLLAB_SERVER_URL_BASE -}}
+                    collabServerBaseUrl: '{{ $PUBLIC_URL }}'
+                {{ end -}}
+                };
+
+                // JaaS support: pre-configure image if JAAS_APP_ID was set.
+                {{ if .Env.JAAS_APP_ID -}}
+                {{ $JAAS_USE_STAGING := .Env.JAAS_USE_STAGING | default "false" | toBool -}}
+                {{ $JAAS_DOMAIN := $JAAS_USE_STAGING | ternary "stage.8x8.vc" "8x8.vc" -}}
+
+                config.hosts.domain = '{{ $JAAS_DOMAIN }}';
+                config.hosts.muc = 'conference.{{ .Env.JAAS_APP_ID }}.{{ $JAAS_DOMAIN }}';
+                config.hosts.focus = 'focus.{{ $JAAS_DOMAIN }}';
+
+                config.analytics.rtcstatsEnabled = true;
+                config.analytics.rtcstatsStoreLogs = true;
+                config.analytics.rtcstatsUseLegacy = false;
+                config.analytics.rtcstatsEndpoint = 'wss://rtcstats-server-8x8.jitsi.net/';
+                config.analytics.rtcstatsPollInterval = 10000;
+                config.analytics.rtcstatsSendSdp = true;
+
+                config.bosh = 'https://{{ $JAAS_DOMAIN }}/{{ .Env.JAAS_APP_ID }}/http-bind';
+                config.websocket = 'wss://{{ $JAAS_DOMAIN }}/{{ .Env.JAAS_APP_ID }}/xmpp-websocket';
+                config.websocketKeepAliveUrl = 'https://{{ $JAAS_DOMAIN }}/{{ .Env.JAAS_APP_ID }}/_unlock';
+                config.conferenceRequestUrl = 'https://{{ $JAAS_DOMAIN }}/{{ .Env.JAAS_APP_ID }}/conference-request/v1';
+
+                config.hiddenDomain = 'recorder.{{ $JAAS_DOMAIN }}';
+                config.hiddenFromRecorderFeatureEnabled = true;
+                config.enableEmailInStats = true;
+
+                config.jaasActuatorUrl = 'https://{{ $JAAS_DOMAIN }}/v1/_jaas/jaas-actuator';
+                config.jaasTokenUrl = 'https://{{ $JAAS_DOMAIN }}/v1/_jaas/token-mapping';
+                config.jaasConferenceCreatorUrl = 'https://{{ $JAAS_DOMAIN }}/v1/_jaas/vmms-conference-mapper/v1/access/conference-creator';
+                config.webhookProxyUrl = 'https://{{ $JAAS_DOMAIN }}/v1/_jaas/webhook-proxy';
+                config.billingCounterUrl = 'https://{{ $JAAS_DOMAIN }}/v1/_jaas/billing-counter/v1/connection';
+                config.brandingDataUrl = 'https://{{ $JAAS_DOMAIN }}/v1/_jaas/branding/public/v1/conferences';
+                config.dialInNumbersUrl = 'https://{{ $JAAS_DOMAIN }}/v1/_jaas/vmms-conference-mapper/access/v1/dids';
+                config.dialInConfCodeUrl = 'https://{{ $JAAS_DOMAIN }}/v1/_jaas/vmms-conference-mapper/v1/access';
+                config.dialOutAuthUrl = 'https://{{ $JAAS_DOMAIN }}/v1/_jaas/phone-authorize';
+                config.dialOutRegionUrl = 'https://{{ $JAAS_DOMAIN }}/v1/_jaas/customer-configs/v1/outbound-destination';
+                config.peopleSearchUrl = 'https://{{ $JAAS_DOMAIN }}/v1/_jaas/v1/directory/search';
+                config.inviteServiceUrl = 'https://{{ $JAAS_DOMAIN }}/v1/_jaas/v1/meeting/invite';
+                config.recordingSharingUrl = 'https://{{ $JAAS_DOMAIN }}/v1/_jaas/jaas-recordings/link';
+                config.peopleSearchQueryTypes = ['user','conferenceRooms'];
+                config.sipInviteUrl = 'https://{{ $JAAS_DOMAIN }}/v1/_jaas/sip-jibri-gateway/jibris/invite';
+                config.jaasFeedbackMetadataURL = 'https://{{ $JAAS_DOMAIN }}/v1/_jaas/webhook-proxy/feedback';
+
+                {{ if $JAAS_USE_STAGING -}}
+                config.whiteboard.collabServerBaseUrl = 'https://eght-excalidraw-backend-pilot.cloudflare.jitsi.net';
+                {{ else -}}
+                config.whiteboard.collabServerBaseUrl = 'https://eght-excalidraw-backend.cloudflare.jitsi.net';
+                {{ end -}}
+                config.whiteboard.userLimit = 25;
+                {{ end -}}
+
+                // Testing
+                config.testing = {
+                    enableCodecSelectionAPI: true
+                };
+
+            _ssl_conf: ""
+            _system_config_js: ""
+            _fa_json: |
+                {
+                    "addPeople": {
+                        "accessibilityLabel": {
+                            "meetingLink": "لینک جلسه: {{url}}"
+                        },
+                        "add": "دعوت‌کردن",
+                        "addContacts": "دعوت از مخاطبین شما",
+                        "contacts": "مخاطبین",
+                        "copyInvite": "کپی دعوت‌نامه جلسه",
+                        "copyLink": "کپی لینک جلسه",
+                        "copyStream": "کپی لینک پخش زنده",
+                        "countryNotSupported": "این مقصد را هنوز پشتیبانی نمی‌کنیم.",
+                        "countryReminder": "می‌خواهید با خارج از کشور تماس بگیرید؟ لطفاً مطمئن شوید که ابتدا پیش‌شماره را وارد می‌کنید!",
+                        "defaultEmail": "رایانامهٔ دیفالت شما",
+                        "disabled": "شما نمی‌توانید کسی را دعوت کنید.",
+                        "failedToAdd": "اضافه کردن شرکت‌کنندگان با خطا مواجه شد",
+                        "googleEmail": "رایانامهٔ گوگل",
+                        "inviteMoreHeader": "شما تنها فرد حاضر در این جلسه هستید",
+                        "inviteMoreMailSubject": "به جلسهٔ {{appName}} بپیوندد",
+                        "inviteMorePrompt": "دعوت افراد جدید",
+                        "linkCopied": "لینک در کلیپ بورد کپی شد",
+                        "noResults": "هیچ نتیجه‌ای مطابق با جستجو یافت نشد",
+                        "outlookEmail": "رایانامهٔ اوت‌لوک",
+                        "phoneNumbers": "شماره تلفن‌ها",
+                        "searching": "در حال جستجو...",
+                        "shareInvite": "اشتراک‌گذاری دعوت‌نامهٔ جلسه",
+                        "shareLink": "اشتراک‌گذاری لینک جلسه برای دعوت دیگران",
+                        "shareStream": "اشتراک‌گذاری لینک پخش زنده",
+                        "sipAddresses": "نشانی‌های sip",
+                        "telephone": "تلفن: {{number}}",
+                        "title": "دعوت افراد به این جلسه",
+                        "yahooEmail": "رایانامهٔ یاهو"
+                    },
+                    "audioDevices": {
+                        "bluetooth": "بلوتوث",
+                        "car": "صدای خودرو",
+                        "headphones": "هدفون",
+                        "none": "هیچ دستگاه صوتی‌ای در دسترس نیست",
+                        "phone": "تلفن",
+                        "speaker": "بلندگو"
+                    },
+                    "audioOnly": {
+                        "audioOnly": "پهنای باند کم"
+                    },
+                    "bandwidthSettings": {
+                        "assumedBandwidthBps": "برای مثال ۱۰۰۰۰۰۰۰ برای ۱۰ مگابایت",
+                        "assumedBandwidthBpsWarning": "مقدارهای بالاتر ممکن است باعث مشکلات شبکه شوند.",
+                        "customValue": "مقدار سفارشی",
+                        "customValueEffect": "برای تنظیم مقدار واقعی bps",
+                        "leaveEmpty": "خالی بگذارید",
+                        "leaveEmptyEffect": "تا امکان انجام تخمین‌ها فراهم شود",
+                        "possibleValues": "مقدارهای ممکن",
+                        "setAssumedBandwidthBps": "پهنای باند فرض‌شده (bps)",
+                        "title": "تنظیمات پهنای باند",
+                        "zeroEffect": "برای غیرفعال‌کردن ویدیو"
+                    },
+                    "breakoutRooms": {
+                        "actions": {
+                            "add": "اضافه کردن اتاق جانبی",
+                            "autoAssign": "اختصاص خودکار به اتاق‌های جانبی",
+                            "close": "ببند",
+                            "join": "پیوستن",
+                            "leaveBreakoutRoom": "اتاق جانبی را ترک کنید",
+                            "more": "بیش‌تر",
+                            "remove": "حذف‌کردن",
+                            "sendToBreakoutRoom": "ارسال شرکت‌کننده به:"
+                        },
+                        "defaultName": "اتاق جانبی #{{index}}",
+                        "mainRoom": "اتاق اصلی",
+                        "notifications": {
+                            "joined": "درحال پیوستن به اتاق جانبی «{{name}}»",
+                            "joinedMainRoom": "درحال پیوستن به اتاق اصلی",
+                            "joinedTitle": "اتاق‌های جانبی"
+                        }
+                    },
+                    "calendarSync": {
+                        "addMeetingURL": "اضافه کردن یک لینک جلسه",
+                        "confirmAddLink": "آیا می‌خواهید لینک جلسه به این رویداد اضافه شود؟",
+                        "error": {
+                            "appConfiguration": "اتصال تقویم به‌درستی پیکربندی نشده‌است.",
+                            "generic": "خطایی رخ‌داده‌است. لطفاً تنظیمات تقویم خود را بررسی کنید یا تازه‌سازی تقویم را امتحان کنید.",
+                            "notSignedIn": "هنگام احراز هویت برای دیدن رویدادهای تقویم خطایی رخ‌داده‌است. لطفاً تنظیمات تقویم خود را بررسی کنید و دوباره لاگین کنید."
+                        },
+                        "join": "پیوستن",
+                        "joinTooltip": "پیوستن به جلسه",
+                        "nextMeeting": "جلسهٔ بعدی",
+                        "noEvents": "هیچ رویدادی برای آینده برنامه‌ریزی نشده است.",
+                        "ongoingMeeting": "جلسهٔ درحال برگزاری",
+                        "permissionButton": "بازکردن تنظیمات",
+                        "permissionMessage": "اجازه تقویم برای دیدن جلسات شما در برنامه لازم است.",
+                        "refresh": "بازخوانی تقویم",
+                        "today": "امروز"
+                    },
+                    "carmode": {
+                        "actions": {
+                            "selectSoundDevice": "انتخاب دستگاه صوتی"
+                        },
+                        "labels": {
+                            "buttonLabel": "حالت خودرو",
+                            "title": "حالت خودرو",
+                            "videoStopped": "ویدیوی شما متوقف شد"
+                        }
+                    },
+                    "chat": {
+                        "enter": "ورود به اتاق",
+                        "error": "خطا: پیام شما ارسال نشد. دلیل: {{error}}",
+                        "fieldPlaceHolder": "پیام خود را بنویسید",
+                        "lobbyChatMessageTo": "پیام گپِ اتاق انتظار به {{recipient}}",
+                        "message": "پیام",
+                        "messageAccessibleTitle": "{{user}} می‌گوید:",
+                        "messageAccessibleTitleMe": "من می‌گویم:",
+                        "messageTo": "پیام خصوصی به {{recipient}}",
+                        "messagebox": "یک پیام بنویسید",
+                        "newMessages": "پیام‌های جدید",
+                        "nickname": {
+                            "popover": "نام نمایشی خود را وارد نمایید",
+                            "title": "برای استفاده از گپ، نام نمایشی خود را وارد کنید",
+                            "titleWithPolls": "برای استفاده از گپ و نظرسنجی، نام نماشی خود را وارد کنید"
+                        },
+                        "noMessagesMessage": "هنوز هیچ پیامی در این جلسه وجود ندارد. از این‌جا یک گفتگو را آغاز کنید!",
+                        "privateNotice": "پیام خصوصی به {{recipient}}",
+                        "sendButton": "ارسال",
+                        "smileysPanel": "تابلوی شکلک",
+                        "tabs": {
+                            "chat": "گپ",
+                            "polls": "نظرسنجی‌ها"
+                        },
+                        "title": "گپ",
+                        "titleWithPolls": "گپ و نظرسنجی‌ها",
+                        "you": "شما"
+                    },
+                    "chromeExtensionBanner": {
+                        "buttonText": "نصب افزونهٔ مرورگر Chrome",
+                        "buttonTextEdge": "نصب افزونهٔ مرورگر Edge",
+                        "close": "ببند",
+                        "dontShowAgain": "دیگر این را به من نمایش نده",
+                        "installExtensionText": "برای اتصال به تقویم گوگل و برنامه آفیس 365 افزونه را نصب کنید"
+                    },
+                    "connectingOverlay": {
+                        "joiningRoom": "درحال اتصال شما به جلسه..."
+                    },
+                    "connection": {
+                        "ATTACHED": "پیوست‌شده",
+                        "AUTHENTICATING": "درحال احراز هویت",
+                        "AUTHFAIL": "خطا در احراز هویت",
+                        "CONNECTED": "وصل‌شده",
+                        "CONNECTING": "درحال اتصال",
+                        "CONNFAIL": "خطا در اتصال",
+                        "DISCONNECTED": "قطع شد",
+                        "DISCONNECTING": "درحال قطع اتصال",
+                        "ERROR": "خطا",
+                        "FETCH_SESSION_ID": "دریافت شناسهٔ جلسه...",
+                        "GET_SESSION_ID_ERROR": "خطا در دریافت شناسهٔ جلسه: {{code}}",
+                        "GOT_SESSION_ID": "دریافت شناسهٔ جلسه... انجام شد",
+                        "LOW_BANDWIDTH": "برای صرفه‌جویی در پهنای باند، ویدیو برای {{displayName}} غیرفعال شد"
+                    },
+                    "connectionindicator": {
+                        "address": "نشانی:",
+                        "audio_ssrc": "SSRC صدا:",
+                        "bandwidth": "پهنای باند تخمینی:",
+                        "bitrate": "نرخ بیت:",
+                        "bridgeCount": "تعداد سرور: ",
+                        "codecs": "رمزینه‌ها (A/V): ",
+                        "connectedTo": "متصل به:",
+                        "e2eeVerified": "رمزگذاری سرتاسری تأیید شد:",
+                        "framerate": "نرخ بازسازی تصویر:",
+                        "less": "نمایش کم‌تر",
+                        "localaddress": "نشانی داخلی:",
+                        "localaddress_plural": "نشانی‌های داخلی:",
+                        "localport": "درگاه داخلی:",
+                        "localport_plural": "درگاه‌های داخلی:",
+                        "maxEnabledResolution": "ارسال بیشینه",
+                        "more": "مشاهده بیشتر",
+                        "no": "خیر",
+                        "packetloss": "بسته‌های گمشده:",
+                        "participant_id": "شناسهٔ شرکت‌کننده:",
+                        "quality": {
+                            "good": "خوب",
+                            "inactive": "غیرفعال",
+                            "lost": "گم‌شده",
+                            "nonoptimal": "غیربهینه",
+                            "poor": "ضعیف"
+                        },
+                        "remoteaddress": "نشانی بیرونی:",
+                        "remoteaddress_plural": "نشانی‌های بیرونی:",
+                        "remoteport": "درگاه بیرونی:",
+                        "remoteport_plural": "درگاه‌های بیرونی:",
+                        "resolution": "وضوح:",
+                        "savelogs": "ذخیرهٔ گزارش‌ها",
+                        "status": "اتصال:",
+                        "transport": "انتقال:",
+                        "transport_plural": "انتقال‌ها:",
+                        "video_ssrc": "SSRC ویدیو:",
+                        "yes": "بله"
+                    },
+                    "dateUtils": {
+                        "earlier": "قبل‌تر",
+                        "today": "امروز",
+                        "yesterday": "دیروز"
+                    },
+                    "deepLinking": {
+                        "appNotInstalled": "برای پیوستن به این جلسه باید با برنامهٔ {{app}} در تلفن همراه خود ادامه دهید.",
+                        "description": "هیچ اتفاقی نیفتاد؟ تلاش کردیم جلسه را در نرم‌افزار میزکار {{app}} اجرا کنیم. دوباره تلاش کنید یا جلسه را در نسخهٔ وب {{app}} اجرا کنید.",
+                        "descriptionNew": "هیچ اتفاقی نیفتاد؟ تلاش کردیم جلسه را در نرم‌افزار میزکار {{app}} اجرا کنیم. <br /><br /> می‌توانید دوباره تلاش کنید یا جلسه را در نسخهٔ وب اجرا کنید.",
+                        "descriptionWithoutWeb": "هیچ اتفاقی نیفتاد؟ تلاش کردیم جلسه را در نرم‌افزار میزکار {{app}} اجرا کنیم.",
+                        "downloadApp": "دانلود برنامه",
+                        "downloadMobileApp": "دانلود از فروشگاه برنامه‌ها",
+                        "ifDoNotHaveApp": "اگر هنوز برنامه را نصب نکرده‌اید:",
+                        "ifHaveApp": "اگر قبلا برنامه را نصب کرده‌اید:",
+                        "joinInApp": "با استفاده از برنامه به جلسه بپیوندد",
+                        "joinInAppNew": "با استفاده از برنامه بپیوندد",
+                        "joinInBrowser": "با استفاده از مرورگر بپیوندد",
+                        "launchMeetingLabel": "چگونه می‌خواهید به این جلسه بپیوندد؟",
+                        "launchWebButton": "استفاده از نسخه‌ٔ وب",
+                        "noMobileApp": "برنامه را نصب نکرده‌اید؟",
+                        "termsAndConditions": "با ادامه‌دادن، با <a href='{{termsAndConditionsLink}}' rel='noopener noreferrer' target='_blank'>شرایط و ضوابط</a> ما موافقت می‌کنید.",
+                        "title": "درحال اجرای جلسهٔ شما در {{app}}...",
+                        "titleNew": "درحال اجرای جلسهٔ شما...",
+                        "tryAgainButton": "با نسخه‌ٔ میزکار دوباره تلاش کنید",
+                        "unsupportedBrowser": "به نظر می‌رسد در حال استفاده از یک مرورگر پشتیبانی‌نشده هستید."
+                    },
+                    "defaultLink": "برای مثال {{url}}",
+                    "defaultNickname": "برای مثال: آناهیتا",
+                    "deviceError": {
+                        "cameraError": "خطا در اجازه به دوربین",
+                        "cameraPermission": "خطا در گرفتن اجازهٔ دوربین",
+                        "microphoneError": "خطا در اجازه به میکروفن",
+                        "microphonePermission": "خطا در گرفتن اجازهٔ میکروفن"
+                    },
+                    "deviceSelection": {
+                        "hid": {
+                            "callControl": "کنترل تماس",
+                            "connectedDevices": "دستگاه‌های متصل:",
+                            "deleteDevice": "حذف دستگاه",
+                            "pairDevice": "جفت‌کردن دستگاه"
+                        },
+                        "noPermission": "دسترسی رد شد",
+                        "previewUnavailable": "پیش‌نمایش در دسترس نیست",
+                        "selectADevice": "یک دستگاه را انتخاب کنید",
+                        "testAudio": "آزمایش"
+                    },
+                    "dialIn": {
+                        "screenTitle": "خلاصهٔ شماره‌گیری"
+                    },
+                    "dialOut": {
+                        "statusMessage": "اکنون {{status}} است"
+                    },
+                    "dialog": {
+                        "Back": "بازگشت",
+                        "Cancel": "لغو",
+                        "IamHost": "من میزبان هستم",
+                        "Ok": "تأیید",
+                        "Remove": "حذف‌کردن",
+                        "Share": "اشتراک‌گذاری",
+                        "Submit": "ارسال",
+                        "WaitForHostMsg": "کنفرانس هنوز شروع نشده است، اگر میزبان هستید لاگین کنید، در غیراین صورت تا رسیدن میزبان و شروع جلسه منتظر بمانید.",
+                        "WaitingForHostTitle": "در انتظار میزبان ...",
+                        "Yes": "بله",
+                        "accessibilityLabel": {
+                            "Cancel": "لغو (ترک‌کردن پنجرهٔ گفتگو)",
+                            "Ok": "باشه (ذخیره و ترک‌کردن پنجرهٔ گفتگو)",
+                            "close": "ببند پیام",
+                            "liveStreaming": "پخش زنده",
+                            "sharingTabs": "انتخاب‌های اشتراک‌گذاری"
+                        },
+                        "add": "اضافه کردن",
+                        "addMeetingNote": "یک یادداشت دربارهٔ این جلسه بیافزایید",
+                        "addOptionalNote": "اضافه کردن یک یادداشت (اختیاری):",
+                        "allow": "اجازه‌دادن",
+                        "alreadySharedVideoMsg": "یک شرکت‌کنندهٔ دیگر درحال اشتراک‌گذاری ویدیو است. این کنفرانس در هر زمان فقط اجازهٔ اشتراک‌گذاری یک ویدیو را می‌دهد.",
+                        "alreadySharedVideoTitle": "فقط یک ویدیو را می‌توان در هر زمان اشتراک‌گذاری کرد",
+                        "applicationWindow": "پنجرهٔ برنامه",
+                        "authenticationRequired": "احراز هویت مورد نیاز است",
+                        "cameraConstraintFailedError": "دوربین شما برخی از قابلیت‌های مورد نیاز را ندارد.",
+                        "cameraNotFoundError": "دوربین پیدا نشد.",
+                        "cameraNotSendingData": "به دوربین شما اجازه نداریم. بررسی کنید که برنامهٔ دیگری در حال استفاده از دوربین نباشد، اگر می‌توانید دوربین دیگری را از فهرست تنظیمات انتخاب کنید یا تلاش کنید برنامه را دوباره بارگذاری کنید.",
+                        "cameraNotSendingDataTitle": "اجازه به دوربین امکان‌پذیر نیست",
+                        "cameraPermissionDeniedError": "شما اجازهٔ استفاده از دوربین خود را نداده‌اید. همچنان می‌توانید به کنفرانس بپیوندد، اما دیگران شما را نخواهند دید. برای رفع این مشکل از دکمهٔ دوربین در نوارِ نشانی استفاده کنید.",
+                        "cameraTimeoutError": "منبع ویدیو شروع نشد. بیش‌ازحد طول کشید!",
+                        "cameraUnknownError": "به دلایلی نامشخص نمی‌توان از دوربین استفاده کرد.",
+                        "cameraUnsupportedResolutionError": "دوربین شما از وضوح تصویر مورد نیاز پشتیبانی نمی‌کند.",
+                        "close": "ببند",
+                        "conferenceDisconnectMsg": "شاید بخواهید اتصال شبکه خود را بررسی کنید. تلاش برای اتصال دوباره در {{seconds}} ثانیه دیگر...",
+                        "conferenceDisconnectTitle": "ارتباط شما قطع شد.",
+                        "conferenceReloadMsg": "ما در حال تلاش برای حل این مشکل هستیم. تلاش برای اتصال دوباره در {{seconds}} ثانیه دیگر...",
+                        "conferenceReloadTitle": "متأسفانه مشکلی پیش آمد.",
+                        "confirm": "تأیید",
+                        "confirmNo": "خیر",
+                        "confirmYes": "بله",
+                        "connectError": "اوه! مشکلی پیش آمد و نتوانستیم به کنفرانس وصل شویم.",
+                        "connectErrorWithMsg": "اوه! مشکلی پیش آمد و نتوانستیم به کنفرانس وصل شویم: {{msg}}",
+                        "connecting": "درحال اتصال",
+                        "contactSupport": "تماس با پشتیبانی",
+                        "copied": "کپی‌شد",
+                        "copy": "کپی",
+                        "dismiss": "ردکردن",
+                        "displayNameRequired": "سلام! نام شما چیست؟",
+                        "done": "انجام شد",
+                        "e2eeDescription": "رمزگذاری سرتاسر در حال حاضر است. لطفاً در نظر داشته باشید که فعال‌کردن رمزگذاری سرتاسری خدمات ارائه‌شده در سمت سرور را غیرفعال خواهد کرد؛ مانند: مشارکت تلفنی در جلسات. همچنین در نظر داشته باشید که جلسه تنها برای افرادی که از طریق مرورگرهایی با پشتیبانی این قابلیت می‌لینکند، کار می‌کند.",
+                        "e2eeDisabledDueToMaxModeDescription": "به دلیل تعداد زیاد شرکت‌کنندگان در کنفرانس، رمزگذاری سرتاسری نمی‌تواند فعال شود.",
+                        "e2eeLabel": "رمزگذاری سرتاسری را فعال کن",
+                        "e2eeWarning": "<strong>هشدار:</strong>به نظر می‌رسد همهٔ شرکت‌کنندگان در این جلسه از رمزگذاری سرتاسری پشتیبانی نمی‌کنند. اگر این قابلیت را فعال کنید، آن‌ها صدای جلسه را نمی‌شنوند و تصویر را مشاهده نخواهند کرد.",
+                        "e2eeWillDisableDueToMaxModeDescription": "<strong>هشدار:</strong>: اگر شرکت‌کنندگان بیشتری به کنفرانس بلینکند، رمزگذاری سرتاسری به طور خودکار غیرفعال می‌شود.",
+                        "embedMeeting": "جاسازی جلسه",
+                        "enterDisplayName": "نام خود را وارد کنید",
+                        "error": "خطا",
+                        "gracefulShutdown": "سرویس ما درحال به‌روزرسانی است و هم‌اکنون در دسترس نمی‌باشد. لطفاً بعداً دوباره امتحان کنید.",
+                        "grantModeratorDialog": "آیا مطمئن هستید که می‌خواهید اجازه مدیر را به {{participantName}} اعطا کنید؟",
+                        "grantModeratorTitle": "اعطای اجازه مدیر",
+                        "hide": "مخفی‌کردن",
+                        "hideShareAudioHelper": "این پیام را دوباره نشان نده",
+                        "incorrectPassword": "نام شخصی یا گذرواژه اشتباه است",
+                        "incorrectRoomLockPassword": "گذرواژه اشتباه است",
+                        "internalError": "اوه! مشکلی پیش آمد. خطای مقابل رخ داد: {{error}}",
+                        "internalErrorTitle": "خطای داخلی",
+                        "kickMessage": "برای جزئیات بیشتر می‌توانید با {{participantDisplayName}} تماس بگیرید.",
+                        "kickParticipantButton": "بیرون‌کردن",
+                        "kickParticipantDialog": "آیا مطمئن هستید که می‌خواهید این شرکت‌کننده را بیرون کنید؟",
+                        "kickParticipantTitle": "بیرون‌کردن این شرکت‌کننده؟",
+                        "kickTitle": "آخ! {{participantDisplayName}} شما را از جلسه بیرون کرد",
+                        "linkMeeting": "لینک جلسه",
+                        "linkMeetingTitle": "لینک جلسه به Salesforce",
+                        "liveStreaming": "پخش زنده",
+                        "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "هنگامی که ضبط فعال است امکان‌پذیر نیست",
+                        "localUserControls": "کنترل‌های شخص محلی",
+                        "lockMessage": "قفل‌کردن کنفرانس با خطا مواجه شد.",
+                        "lockRoom": "اضافه کردن $t(lockRoomPassword) به جلسه",
+                        "lockTitle": "قفل‌کردن با خطا مواجه شد",
+                        "login": "ورود",
+                        "logoutQuestion": "آیا مطمئن هستید که می‌خواهید خارج شوید و کنفرانس را ترک کنید؟",
+                        "logoutTitle": "خروج",
+                        "maxUsersLimitReached": "تعداد شرکت‌کنندگان به بیشینه میزان مجاز رسیده است. کنفرانس پُر است. لطفاً با صاحب جلسه تماس بگیرید یا بعداً دوباره تلاش کنید!",
+                        "maxUsersLimitReachedTitle": "تعداد شرکت‌کنندگان به بیشینه میزان مجاز رسیده است",
+                        "micConstraintFailedError": "میکروفون شما برخی از قابلیت‌های مورد نیاز را ندارد.",
+                        "micNotFoundError": "میکروفن پیدا نشد.",
+                        "micNotSendingData": "برای روشن‌کردن میکروفون خود و تنظیم سطح صدای آن، به تنظیمات رایانهٔ خود بروید",
+                        "micNotSendingDataTitle": "میکروفن شما توسط تنظیمات رایانهٔ شما بی‌صدا شده است",
+                        "micPermissionDeniedError": "شما مجوز استفاده از میکروفن را نداده‌اید. همچنان می‌توانید به کنفرانس بپیوندد، اما دیگران صدای شما را نمی‌شنوند. برای رفع این مشکل از دکمهٔ دوربین در نوارِ نشانی استفاده کنید.",
+                        "micTimeoutError": "منبع صوتی شروع نشد. بیش‌ازحد طول کشید!",
+                        "micUnknownError": "به دلیل نامشخصی نمی‌توان از میکروفون استفاده کرد.",
+                        "moderationAudioLabel": "به شرکت‌کنندگان اجازه دهید صدای میکروفون خود را وصل کنند",
+                        "moderationVideoLabel": "به شرکت‌کنندگان اجازه دهید ویدیوی خود را شروع کنند",
+                        "muteEveryoneDialog": "شرکت‌کنندگان می‌توانند هر زمان که بخواهند صدای خود را وصل کنند.",
+                        "muteEveryoneDialogModerationOn": "شرکت‌کنندگان می‌توانند هر زمان که بخواهند درخواستی برای صحبت ارسال کنند.",
+                        "muteEveryoneElseDialog": "وقتی که میکروفون آن‌ها بی‌صدا شود، شما نمی‌توانید آن را وصل کنید، اما خودشان هر زمان که بخواهند می‌توانند.",
+                        "muteEveryoneElseTitle": "میکروفون همه به‌جز {{whom}} بی‌صدا شود؟",
+                        "muteEveryoneElsesVideoDialog": "پس از غیرفعال‌شدن دوربین، نمی‌توانید دوباره آن را روشن کنید، اما آن‌ها می‌توانند در هر زمانی آن را دوباره روشن کنند.",
+                        "muteEveryoneElsesVideoTitle": "ویدیوی همه به‌جز {{whom}} متوقف شود؟",
+                        "muteEveryoneSelf": "خودتان",
+                        "muteEveryoneStartMuted": "همه شرکت‌کنندگان از این به بعد بی‌صدا وارد می‌شوند",
+                        "muteEveryoneTitle": "صدای همه قطع شود؟",
+                        "muteEveryonesVideoDialog": "شرکت‌کنندگان می‌توانند در هر زمانی ویدیوی خود را روشن کنند.",
+                        "muteEveryonesVideoDialogModerationOn": "شرکت‌کنندگان می‌توانند هر زمان که بخواهند درخواستی برای روشن شدن ویدیوی خود ارسال کنند.",
+                        "muteEveryonesVideoDialogOk": "غیرفعال‌کردن",
+                        "muteEveryonesVideoTitle": "ویدیوی همه متوقف شود؟",
+                        "muteParticipantBody": "شما نمی‌توانید صدای آن‌ها را وصل کنید، اما خودشان هر زمان که بخواهند، می‌توانند صدای خود را وصل کنند.",
+                        "muteParticipantButton": "قطع صدا",
+                        "muteParticipantsVideoBody": "نمی‌توانید دوربین آن‌ها را دوباره روشن کنید، اما آن‌ها می‌توانند هر زمان که بخواهند دوباره آن را روشن کنند.",
+                        "muteParticipantsVideoBodyModerationOn": "شما نمی‌توانید دوربین را دوباره روشن کنید و آن‌ها هم نخواهند توانست.",
+                        "muteParticipantsVideoButton": "توقف ویدیو",
+                        "muteParticipantsVideoDialog": "آیا مطمئنید که می‌خواهید دوربین این شرکت‌کننده را خاموش کنید؟ نمی‌توانید دوربین را دوباره روشن کنید، اما آن‌ها می‌توانند هر زمان که بخواهند دوباره آن را روشن کنند.",
+                        "muteParticipantsVideoDialogModerationOn": "آیا مطمئنید که می‌خواهید دوربین این شرکت‌کننده را خاموش کنید؟ نه شما می‌توانید دوربین را دوباره روشن کنید و نه آن‌ها.",
+                        "muteParticipantsVideoTitle": "دوربین این شرکت‌کننده غیرفعال شود؟",
+                        "noDropboxToken": "ژتون معتبر Dropbox وجود ندارد",
+                        "password": "گذرواژه",
+                        "passwordLabel": "جلسه توسط یک شرکت‌کننده قفل شده است. لطفاً برای پیوستن $t(lockRoomPassword) را وارد کنید.",
+                        "passwordNotSupported": "قابلیت تنظیم $t(lockRoomPassword) برای جلسه پشتیبانی نمی‌شود.",
+                        "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) پشتیبانی نمی‌شود",
+                        "passwordRequired": "$t(lockRoomPasswordUppercase) مورد نیاز است",
+                        "permissionCameraRequiredError": "اجازهٔ دوربین برای شرکت در کنفرانس‌های ویدیویی مورد نیاز است. لطفاً آن را در تنظیمات اعطا کنید",
+                        "permissionErrorTitle": "اجازه لازم است",
+                        "permissionMicRequiredError": "اجازهٔ میکروفون برای شرکت در کنفرانس های صوتی مورد نیاز است. لطفاً آن را در تنظیمات اعطا کنید",
+                        "popupError": "مرورگر شما پنجره‌های بازشونده را برای این سایت مسدود کرده است. در تنظیمات امنیتی مرورگر خود، پنجره‌های بازشونده را برای این سایت فعال کرده و دوباره امتحان کنید.",
+                        "popupErrorTitle": "پنجره‌های بازشونده مسدود شده‌است",
+                        "readMore": "بیش‌تر",
+                        "recentlyUsedObjects": "اشیائی که به‌تازگی استفاده کرده‌اید",
+                        "recording": "درحال ضبط",
+                        "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "هنگامی که پخش زنده در جریان است ممکن نیست",
+                        "rejoinNow": "پیوستن مجدد",
+                        "remoteControlAllowedMessage": "{{user}} درخواست کنترل از راه دور را پذیرفت!",
+                        "remoteControlDeniedMessage": "{{user}} درخواست کنترل از راه دور را رد کرد!",
+                        "remoteControlErrorMessage": "در هنگام درخواست اجازهٔ کنترل از راه دور از {{user}} خطایی رخ داد!",
+                        "remoteControlRequestMessage": "آیا به {{user}} اجازه می‌دهید که میزکار شما را از راه دور کنترل کند؟",
+                        "remoteControlShareScreenWarning": "با انتخاب گزینه‌ی «اجازه‌دادن» میزکار شما اشتراک‌گذاری خواهد شد!",
+                        "remoteControlStopMessage": "جلسهٔ کنترل از راه دور به پایان رسید!",
+                        "remoteControlTitle": "کنترل میزکار از راه دور",
+                        "remoteUserControls": "کنترل‌های شخص از راه دور برای {{username}}",
+                        "removePassword": "حذف‌کردن $t(lockRoomPassword)",
+                        "removeSharedVideoMsg": "آیا مطمئن هستید که می‌خواهید ویدیوی اشتراک‌گذاری‌شده را حذف کنید؟",
+                        "removeSharedVideoTitle": "حذف ویدیوی اشتراک‌گذاری‌شده",
+                        "reservationError": "خطای سیستم رزرو",
+                        "reservationErrorMsg": "کد خطا: {{code}}، پیام: {{msg}}",
+                        "retry": "تلاش دوباره",
+                        "screenSharingAudio": "اشتراک‌گذاری صدا",
+                        "screenSharingFailed": "اوه! مشکلی پیش آمد؛ نتوانستیم اشتراک‌گذاری صفحه را شروع کنیم!",
+                        "screenSharingFailedTitle": "اشتراک‌گذاری صفحه با خطا مواجه شد!",
+                        "screenSharingPermissionDeniedError": "اوه! مشکلی با اجازه‌های اشتراک‌گذاری صفحهٔ شما پیش آمد. لطفاً صفحه را دوباره دانلود کنید و سپس دوباره تلاش کنید.",
+                        "searchInSalesforce": "جستجو در Salesforce",
+                        "searchResults": "نتایج جستجو({{count}})",
+                        "searchResultsDetailsError": "هنگام بازیابی داده‌های صاحب جلسه مشکلی پیش آمد.",
+                        "searchResultsError": "هنگام بازیابی داده‌ها مشکلی پیش آمد.",
+                        "searchResultsNotFound": "هیچ نتیجه‌ای برای این جستجو یافت نشد.",
+                        "searchResultsTryAgain": "سعی کنید از کلمات کلیدی جایگزین استفاده کنید.",
+                        "sendPrivateMessage": "شما یک پیام خصوصی دریافت کرده‌اید. می‌خواهید به صورت خصوصی به آن پاسخ دهید یا پیام خود را به گروه ارسالید؟",
+                        "sendPrivateMessageCancel": "ارسال به گروه",
+                        "sendPrivateMessageOk": "ارسال به‌صورت خصوصی",
+                        "sendPrivateMessageTitle": "به‌صورت خصوصی ارسال شود؟",
+                        "serviceUnavailable": "سرویس در دسترس نیست",
+                        "sessTerminated": "تماس تمام شد",
+                        "sessionRestarted": "به دلیل مشکل اتصال، تماس دوباره برقرار شد.",
+                        "shareAudio": "‏‏ادامه",
+                        "shareAudioTitle": "نحوهٔ اشتراک‌گذاری صدا",
+                        "shareAudioWarningD1": "قبل از اشتراک‌گذاری صدا، باید اشتراک‌گذاری صفحه را متوقف کنید.",
+                        "shareAudioWarningD2": "شما باید اشتراک‌گذاری صفحهٔ خود را دوباره راه‌اندازی کنید و گزینه «اشتراک‌گذاری صدا» را علامت بزنید.",
+                        "shareAudioWarningH1": "اگر می‌خواهید فقط صدا را اشتراک‌گذاری کنید:",
+                        "shareAudioWarningTitle": "قبل از اشتراک‌گذاری صدا، باید اشتراک‌گذاری صفحه را متوقف کنید",
+                        "shareMediaWarningGenericH2": "اگر می‌خواهید صفحه و صدای خود را اشتراک‌گذاری کنید",
+                        "shareScreenWarningD1": "پیش از اشتراک‌گذاری صفحه، باید اشتراک‌گذاری صدا را متوقف کنید.",
+                        "shareScreenWarningD2": "باید اشتراک‌گذاری صدا را متوقف کنید، سپس اشتراک‌گذاری صفحه را شروع کنید و گزینه «اشتراک‌گذاری صدا» را فعال کنید.",
+                        "shareScreenWarningH1": "اگر می‌خواهید فقط صفحهٔ خود را اشتراک‌گذاری کنید:",
+                        "shareScreenWarningTitle": "پیش از اشتراک‌گذاری صفحه باید اشتراک‌گذاری صدا را متوقف کنید",
+                        "shareVideoLinkError": "لطفاً یک لینک ویدیوی معتبر وارد کنید.",
+                        "shareVideoTitle": "اشتراک‌گذاری ویدیو",
+                        "shareYourScreen": "اشتراک‌گذاری صفحهٔ شما",
+                        "shareYourScreenDisabled": "اشتراک‌گذاری صفحه غیرفعال شد.",
+                        "sharedVideoDialogError": "خطا: نشانی اینترنتی نامعتبر",
+                        "sharedVideoLinkPlaceholder": "لینک یوتیوب یا لینک مستقیم ویدیو",
+                        "show": "نمایش",
+                        "start": "شروع ",
+                        "startLiveStreaming": "شروع پخش زنده",
+                        "startRecording": "ضبط را شروع کن",
+                        "startRemoteControlErrorMessage": "هنگام تلاش برای شروع نشستِ کنترل‌ازراه‌دور خطایی رخ داد!",
+                        "stopLiveStreaming": "توقف پخش زنده",
+                        "stopRecording": "توقف ضبط",
+                        "stopRecordingWarning": "آیا مطمئن هستید که می‌خواهید ضبط را متوقف کنید؟",
+                        "stopStreamingWarning": "آیا مطمئن هستید که می‌خواهید پخش زنده را متوقف کنید؟",
+                        "streamKey": "کلید پخش زنده",
+                        "thankYou": "از این‌که از {{appName}} استفاده کردید سپاس‌گزاریم!",
+                        "token": "ژتون",
+                        "tokenAuthFailed": "با عرض پوزش، شما اجازهٔ پیوستن به این تماس را ندارید.",
+                        "tokenAuthFailedTitle": "احراز هویت ناموفق بود",
+                        "transcribing": "رونویسی",
+                        "unlockRoom": "حذف جلسه $t(lockRoomPassword)",
+                        "user": "شخص",
+                        "userIdentifier": "شناساگر شخص",
+                        "userPassword": "گذرواژهٔ شخص",
+                        "verifyParticipantConfirm": "آن‌ها مطابقت دارند",
+                        "verifyParticipantDismiss": "آن‌ها مطابقت ندارند",
+                        "verifyParticipantQuestion": ": از شرکت‌کننده {{participantName}} بپرسید که آیا محتوای یکسانی را با ترتیب یکسان می‌بیند.",
+                        "verifyParticipantTitle": "تأیید شخص",
+                        "videoLink": "لینک ویدیو",
+                        "viewUpgradeOptions": "انتخاب‌های ارتقا را مشاهده کنید",
+                        "viewUpgradeOptionsContent": "برای اجازه نامحدود به ویژگی‌های ممتاز مانند ضبط، رونویسی، پخش RTMP و بیش‌تر، باید طرح خود را ارتقا دهید.",
+                        "viewUpgradeOptionsTitle": "شما یک ویژگی ممتاز را کشف کردید!",
+                        "yourEntireScreen": "تمامِ صفحه‌نمایش شما"
+                    },
+                    "documentSharing": {
+                        "title": "سندِ اشتراک‌گذاری‌شده"
+                    },
+                    "e2ee": {
+                        "labelToolTip": "ارتباط صوتی و تصویری در این تماس به صورت سرتاسری رمزگذاری شده است"
+                    },
+                    "embedMeeting": {
+                        "title": "جاسازی این جلسه"
+                    },
+                    "feedback": {
+                        "accessibilityLabel": {
+                            "yourChoice": "انتخاب شما: {{rating}}"
+                        },
+                        "average": "میانگین",
+                        "bad": "بد",
+                        "detailsLabel": "دربارهٔ آن بیش‌تر به ما بگویید.",
+                        "good": "خوب",
+                        "rateExperience": "به تجربه خود در جلسه امتیاز دهید",
+                        "star": "ستاره",
+                        "veryBad": "خیلی بد",
+                        "veryGood": "خیلی خوب"
+                    },
+                    "filmstrip": {
+                        "accessibilityLabel": {
+                            "heading": "تصاویر بندانگشتی ویدیو"
+                        }
+                    },
+                    "giphy": {
+                        "noResults": "نتیجه‌ای یافت نشد :(",
+                        "search": "جستجو در GIPHY"
+                    },
+                    "incomingCall": {
+                        "answer": "پاسخ‌دادن",
+                        "audioCallTitle": "تماس ورودی",
+                        "decline": "ردکردن",
+                        "productLabel": "از جلسه Jitsi",
+                        "videoCallTitle": "تماس ویدیویی ورودی"
+                    },
+                    "info": {
+                        "accessibilityLabel": "نمایش اطلاعات",
+                        "addPassword": "اضافه کردن $t(lockRoomPassword)",
+                        "cancelPassword": "لغو $t(lockRoomPassword)",
+                        "conferenceURL": "لینک:",
+                        "copyNumber": "کپی شماره",
+                        "country": "کشور",
+                        "dialANumber": "برای پیوستن به جلسه، یکی از این شماره‌ها را شماره‌گیری کرده، سپس پین را وارد نمایید.",
+                        "dialInConferenceID": "پین:",
+                        "dialInNotSupported": "با عرض پوزش، قابلیت شماره‌گیری درحال حاضر پشتیبانی نمی‌شود.",
+                        "dialInNumber": "شماره‌گیری:",
+                        "dialInSummaryError": "در واکِشی اطلاعاتِ شماره‌گیری خطایی رخ داده است. لطفاً بعدا دوباره تلاش کنید.",
+                        "dialInTollFree": "بدون هزینه",
+                        "genericError": "آخ، مشکلی پیش آمد.",
+                        "inviteLiveStream": "برای مشاهدهٔ پخش زندهٔ این جلسه، روی این لینک کلیک کنید: {{url}}",
+                        "invitePhone": "برای پیوستن از طریق تلفن، روی این ضربه بزنید: {{number}},,{{conferenceID}}#\n",
+                        "invitePhoneAlternatives": "به‌دنبال شمارهٔ تماس دیگری هستید؟\nشماره‌های تماس جلسه را ببینید: {{url}}\n\n\nاگر از طریق تلفن اتاق شماره گیری می‌کنید، بدون اتصال به صدا بپیوندد: {{silentUrl}}",
+                        "inviteSipEndpoint": "برای عضویت با استفاده از نشانی SIP، این را وارد کنید: {{sipUri}}",
+                        "inviteTextiOSInviteUrl": "برای پیوستن روی این لینک کلیک کنید: {{inviteUrl}}.",
+                        "inviteTextiOSJoinSilent": "اگر از طریق تلفن اتاق شماره‌گیری می‌کنید، از این لینک برای پیوستن بدون اتصال به صدا استفاده کنید: {{silentUrl}}.",
+                        "inviteTextiOSPersonal": "{{name}} شما را به یک جلسه دعوت می‌کند.",
+                        "inviteTextiOSPhone": "برای پیوستن از طریق تلفن، از این شماره استفاده کنید: {{number}},,{{conferenceID}}#. اگر به دنبال شمارهٔ دیگری هستید، این فهرستِ کامل است: {{didUrl}}.",
+                        "inviteURLFirstPartGeneral": "شما برای پیوستن به یک جلسه دعوت شده‌اید.",
+                        "inviteURLFirstPartPersonal": "{{name}} شما را به یک جلسه دعوت می‌کند.\n",
+                        "inviteURLSecondPart": "\nبه جلسه بپیوندد:\n{{url}}\n",
+                        "label": "اطلاعات شماره‌گیری",
+                        "liveStreamURL": "پخش زنده:",
+                        "moreNumbers": "شماره‌های بیش‌تر",
+                        "noNumbers": "شمارهٔ تماسی برای پیوستن با شماره‌گیری وجود ندارد.",
+                        "noPassword": "هیچ‌یک",
+                        "noRoom": "هیچ جلسه‌ای برای پیوستن با شماره‌گیری مشخص نشده است.",
+                        "numbers": "شماره‌های تماس برای پیوستن",
+                        "password": "$t(lockRoomPasswordUppercase): ",
+                        "reachedLimit": "به سقف طرح خود رسیده‌اید.",
+                        "sip": "نشانی SIP",
+                        "title": "اشتراک‌گذاری",
+                        "tooltip": "لینک و شمارهٔ تماس این جلسه را اشتراک‌گذاری کنید",
+                        "upgradeOptions": "لطفاً بررسی کنید انتخاب‌های ارتقا انتخاب شده باشد"
+                    },
+                    "inlineDialogFailure": {
+                        "msg": "کمی دچار لغزش شدیم.",
+                        "retry": "تلاش دوباره",
+                        "support": "پشتیبانی",
+                        "supportMsg": "اگر این مشکل همچنان وجود دارد، تماس بگیرید"
+                    },
+                    "inviteDialog": {
+                        "alertText": "خطا در دعوت از برخی از شرکت‌کنندگان.",
+                        "header": "دعوت‌کردن",
+                        "searchCallOnlyPlaceholder": "شمارهٔ تلفن را وارد نمایید",
+                        "searchPeopleOnlyPlaceholder": "جستجوی شرکت‌کنندگان",
+                        "searchPlaceholder": "شرکت‌کننده یا شمارهٔ تلفن",
+                        "send": "ارسال"
+                    },
+                    "jitsiHome": "{{logo}} نشان‌واره، لینکها به  صفحهٔ اصلی",
+                    "keyboardShortcuts": {
+                        "focusLocal": "تمرکز روی ویدیوی شما",
+                        "focusRemote": "تمرکز روی ویدیوی شخصی دیگر",
+                        "fullScreen": "مشاهده یا خروج از حالت تمام‌صفحه",
+                        "giphyMenu": "تغییر وضعیت فهرست GIPHY",
+                        "keyboardShortcuts": "میان‌برهای صفحه‌کلید",
+                        "localRecording": "نمایش یا مخفی‌کردن کنترل‌های ضبط محلی",
+                        "mute": "قطع و وصل صدای میکروفونتان",
+                        "pushToTalk": "برای صحبت‌کردن فشار دهید",
+                        "raiseHand": "بالابردن یا پایین‌آوردن دست",
+                        "showSpeakerStats": "نمایش آمار شرکت‌کنندگان",
+                        "toggleChat": "بازکردن یا ببند گپ",
+                        "toggleFilmstrip": "نمایش یا مخفی‌کردن تصاویر بندانگشتی ویدیو",
+                        "toggleParticipantsPane": "نمایش یا پنهان‌کردن تابلوی شرکت‌کنندگان",
+                        "toggleScreensharing": "جابه‌جایی بین دوربین و اشتراک‌گذاری صفحه‌نمایش",
+                        "toggleShortcuts": "نمایش یا مخفی‌کردن میان‌برهای صفحه‌کلید",
+                        "videoMute": "شروع یا توقف دوربین شما"
+                    },
+                    "largeVideo": {
+                        "screenIsShared": "شما درحال اشتراک‌گذاری صفحهٔ نمایشتان هستید",
+                        "showMeWhatImSharing": "آن‌چه را که اشتراک‌گذاری می‌کنم به من نشان بده"
+                    },
+                    "liveStreaming": {
+                        "busy": "ما درحال آزادسازی منابع پخش هستیم. لطفاً دقایقی دیگر دوباره تلاش کنید.",
+                        "busyTitle": "همه پخش‌کننده‌ها درحال حاضر مشغول هستند",
+                        "changeSignIn": "تعویض حساب‌ها.",
+                        "choose": "یک پخش زنده را انتخاب کنید",
+                        "chooseCTA": "یک گزینهٔ پخش را انتخاب کنید. شما درحال حاضر به‌عنوان {{email}} وارد شده‌اید.",
+                        "enterStreamKey": "کلید پخش زندهٔ یوتیوب خود را این‌جا وارد کنید.",
+                        "error": "پخش زنده ناموفق بود. لطفاً دوباره تلاش کنید.",
+                        "errorAPI": "در اجازه به پخش‌کننده‌های یوتیوب شما خطایی رخ داد. لطفاً دوباره تلاش کنید که لاگین کنید.",
+                        "errorLiveStreamNotEnabled": "پخش زنده برای {{email}} فعال نیست. لطفاً پخش زنده را فعال کنید یا وارد یک حساب شخصی با پخش زندهٔ فعال شوید.",
+                        "expandedOff": "پخش زنده قطع شده است",
+                        "expandedOn": "این جلسه درحال حاضر در یوتیوب درحال پخش است.",
+                        "expandedPending": "پخش زنده در حال شروع است...",
+                        "failedToStart": "شروع پخش زنده ناموفق بود",
+                        "getStreamKeyManually": "ما نتوانستیم هیچ پخش زنده‌ای را دریافت کنیم. کلید پخش زنده خود را به‌صورت دستی از یوتیوب دریافت کنید.",
+                        "googlePrivacyPolicy": "سیاست محرمانگی گوگل",
+                        "inProgress": "ضبط یا پخش زنده درحال انجام است",
+                        "invalidStreamKey": "کلید پخش زنده ممکن است اشتباه باشد.",
+                        "limitNotificationDescriptionNative": "پخش زنده شما به {{limit}} دقیقه محدود خواهد شد. برای پخش نامحدود از {{app}} استفاده کنید.",
+                        "limitNotificationDescriptionWeb": "به دلیل درخواست‌های زیاد، پخش زندهٔ شما به {{limit}} دقیقه محدود خواهد شد. برای پخش نامحدود از <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a> استفاده کنید.",
+                        "off": "پخش زنده قطع شد",
+                        "offBy": "{{name}} پخش زنده را متوقف کرد",
+                        "on": "پخش زنده شروع شد",
+                        "onBy": "{{name}} پخش زنده را شروع کرد",
+                        "pending": "درحال شروع پخش زنده...",
+                        "serviceName": "خدمت پخش زنده",
+                        "sessionAlreadyActive": "این جلسه از قبل درحال ضبط یا پخش زنده است.",
+                        "signIn": "ورود با حساب گوگل",
+                        "signInCTA": "وارد حساب شخصی شوید یا کلید پخش زنده خود را از یوتیوب وارد کنید.",
+                        "signOut": "خروج از حساب",
+                        "signedInAs": "شما به این عنوان وارد حساب شده‌اید:",
+                        "start": "شروع یک پخش زنده",
+                        "streamIdHelp": "این چیه؟",
+                        "title": "پخش زنده",
+                        "unavailableTitle": "پخش زنده در دسترس نیست",
+                        "youtubeTerms": "شرایط خدمات یوتیوب"
+                    },
+                    "lobby": {
+                        "backToKnockModeButton": "درخواست برای پیوستن",
+                        "chat": "گپ",
+                        "dialogTitle": "حالت اتاق انتظار",
+                        "disableDialogContent": "حالت اتاق انتظار فعال شد، این قابلیت تضمین می‌کند که شرکت‌کنندگان ناخواسته نمی‌توانند به جلسه بلینکند. آیا می‌خواهید آن را غیرفعال کنید؟",
+                        "disableDialogSubmit": "غیرفعال‌کردن",
+                        "emailField": "نشانی رایانامهٔ خود را وارد نمایید",
+                        "enableDialogPasswordField": "تنظیم گذرواژه (اختیاری)",
+                        "enableDialogSubmit": "فعال‌کردن",
+                        "enableDialogText": "حالت اتاق انتظار به شما اجازه می‌دهد جلسه خود را محافظت کنید و فقط پس از تأیید رسمی توسط یک مدیر، به افراد اجازه ورود دهید.",
+                        "enterPasswordButton": "گذرواژهٔ جلسه را وارد کنید",
+                        "enterPasswordTitle": "برای پیوستن به جلسه گذرواژه را وارد کنید",
+                        "errorMissingPassword": "لطفاً گذرواژهٔ جلسه را وارد کنید",
+                        "invalidPassword": "گذرواژه نامعتبر است",
+                        "joinRejectedMessage": "درخواست پیوستن شما توسط مدیر جلسه رد شد.",
+                        "joinRejectedTitle": "درخواست شما رد شد.",
+                        "joinTitle": "پیوستن به جلسه",
+                        "joinWithPasswordMessage": "تلاش برای پیوستن به جلسه با گذرواژه؛ شکیبا باشید...",
+                        "joiningMessage": "به محض پذیرش درخواست شما، به جلسه خواهید پیوست",
+                        "joiningTitle": "درخواست برای پیوستن به جلسه...",
+                        "joiningWithPasswordTitle": "درحال پیوستن با گذرواژه...",
+                        "knockButton": "درخواست برای پیوستن",
+                        "knockTitle": "یک نفر می‌خواهد به جلسه بپیوندد",
+                        "knockingParticipantList": "فهرست شرکت‌کنندگان درانتظار",
+                        "lobbyChatStartedNotification": "{{moderator}} شروع به یک گپِ اتاق انتظار با {{attendee}} کرد",
+                        "lobbyChatStartedTitle": "{{moderator}} شروع به یک گپِ اتاق انتظار با شما کرد.",
+                        "nameField": "نام خود را وارد کنید",
+                        "notificationLobbyAccessDenied": "درخواست پیوستن {{targetParticipantName}} توسط {{originParticipantName}} رد شد",
+                        "notificationLobbyAccessGranted": "درخواست پیوستن {{targetParticipantName}} توسط {{originParticipantName}} تأیید شد",
+                        "notificationLobbyDisabled": "اتاق انتظار توسط {{originParticipantName}} غیرفعال شده است",
+                        "notificationLobbyEnabled": "اتاق انتظار توسط {{originParticipantName}} فعال شده است",
+                        "notificationTitle": "اتاق انتظار",
+                        "passwordField": "گذرواژهٔ جلسه را وارد کنید",
+                        "passwordJoinButton": "پیوستن",
+                        "title": "اتاق انتظار",
+                        "toggleLabel": "فعال‌کردن اتاق انتظار"
+                    },
+                    "localRecording": {
+                        "clientState": {
+                            "off": "خاموش",
+                            "on": "روشن",
+                            "unknown": "نامشخص"
+                        },
+                        "dialogTitle": "کنترل‌های ضبط محلی",
+                        "duration": "مدت زمان",
+                        "durationNA": "دردسترس نیست",
+                        "encoding": "رمزگذاری",
+                        "label": "ضبط محلی",
+                        "labelToolTip": "ضبط محلی درگیر است",
+                        "localRecording": "ضبط محلی",
+                        "me": "من",
+                        "messages": {
+                            "engaged": "ضبط محلی درگیر شد.",
+                            "finished": "نشست ضبط {{token}} به پایان رسید. لطفاً پروندهٔ ضبط‌شده را به مدیر جلسه ارسال کنید.",
+                            "finishedModerator": "نشست ضبط {{token}} تمام شد. ضبطِ قطعهٔ محلی ذخیره شده است. لطفاً از دیگر شرکت‌کنندگان بخواهید ضبط‌های خود را ارسال کنند.",
+                            "notModerator": "شما مدیر جلسه نیستید. شما نمی‌توانید ضبط محلی را آغاز کرده یا متوقف کنید."
+                        },
+                        "moderator": "مدیر",
+                        "no": "خیر",
+                        "participant": "شرکت‌کننده",
+                        "participantStats": "آمار شرکت‌کننده",
+                        "selectTabTitle": "🎥 لطفاً این زبانه را برای ضبط انتخاب کنید",
+                        "sessionToken": "ژتون نشست",
+                        "start": "ضبط را شروع کن",
+                        "stop": "توقف ضبط",
+                        "yes": "بله"
+                    },
+                    "lockRoomPassword": "گذرواژه",
+                    "lockRoomPasswordUppercase": "گذرواژه",
+                    "lonelyMeetingExperience": {
+                        "button": "دعوت از دیگران",
+                        "youAreAlone": "شما در جلسه تنها هستید"
+                    },
+                    "me": "من",
+                    "notify": {
+                        "OldElectronAPPTitle": "آسیب‌پذیری امنیتی!",
+                        "allowAction": "اجازه‌دادن",
+                        "allowedUnmute": "می‌توانید میکروفون خود را روشن کنید، دوربین خود را روشن کنید یا صفحهٔ خود را اشتراک‌گذاری کنید.",
+                        "audioUnmuteBlockedDescription": "عملیات روشن‌کردن میکروفون به دلیل محدودیت‌های سامانه موقتاً مسدود شده است.",
+                        "audioUnmuteBlockedTitle": "روشن‌کردن میکروفون مسدود شد!",
+                        "chatMessages": "پیام‌های گپ",
+                        "connectedOneMember": "{{name}} به جلسه پیوست",
+                        "connectedThreePlusMembers": "{{name}} و بسیاری دیگر به جلسه پیوستند",
+                        "connectedTwoMembers": "{{first}} و {{second}} به جلسه پیوستند",
+                        "dataChannelClosed": "کیفیت ویدیو دچال اختلال است",
+                        "dataChannelClosedDescription": "کانال پل قطع شده است و بنابراین کیفیت ویدیو به پایین‌ترین حالت آن محدود شده است.",
+                        "disabledIframe": "جاسازی فقط برای اهداف نمایشی در نظر گرفته شده است؛ بنابراین این تماس در {{timeout}} دقیقهٔ دیگر قطع می‌شود.",
+                        "disconnected": "قطع‌شده",
+                        "displayNotifications": "نمایش آگهی‌ها برای",
+                        "dontRemindMe": "به من یادآوری نکن",
+                        "focus": "تمرکز کنفرانس",
+                        "focusFail": "{{component}} در دسترس نیست - تلاش دوباره در {{ms}} ثانیه دیگر",
+                        "gifsMenu": "GIPHY",
+                        "groupTitle": "آگهی‌ها",
+                        "hostAskedUnmute": "مدیر جلسه از شما می‌خواهد که صحبت کنید",
+                        "invitedOneMember": "{{name}} دعوت شده است",
+                        "invitedThreePlusMembers": "{{name}} و {{count}} نفر دیگر دعوت شده‌اند",
+                        "invitedTwoMembers": "{{first}} و {{second}} دعوت شده‌اند",
+                        "joinMeeting": "پیوستن",
+                        "kickParticipant": "{{kicked}} توسط {{kicker}} بیرون شد",
+                        "leftOneMember": "{{name}} جلسه را ترک کرد",
+                        "leftThreePlusMembers": "{{name}} و بسیاری دیگر جلسه را ترک کردند",
+                        "leftTwoMembers": "{{first}} و {{second}} جلسه را ترک کردند",
+                        "linkToSalesforce": "لینک به Salesforce",
+                        "linkToSalesforceDescription": "شما می‌توانید خلاصهٔ جلسه را به یک شیء Salesforce لینک دهید.",
+                        "linkToSalesforceError": "خطا در لینک جلسه به Salesforce",
+                        "linkToSalesforceKey": "لینکدادن این جلسه",
+                        "linkToSalesforceProgress": "درحال لینکدادن این جلسه به Salesforce...",
+                        "linkToSalesforceSuccess": "این جلسه به Salesforce لینک داده شد",
+                        "localRecordingStarted": "{{name}} یک ضبط محلی را شروع کرده است.",
+                        "localRecordingStopped": "{{name}} یک ضبط محلی را متوقف کرده است.",
+                        "me": "من",
+                        "moderationInEffectCSDescription": "لطفاً اگر می‌خواهید صفحهٔ نمایش خود را اشتراک‌گذاری کنید، دست خود را بالا ببرید.",
+                        "moderationInEffectCSTitle": "اشتراک‌گذاری صفحهٔ نمایش توسط مدیر جلسه مسدود شده است",
+                        "moderationInEffectDescription": "لطفاً اگر می‌خواهید صحبت کنید، دست را بالا ببرید.",
+                        "moderationInEffectTitle": "میکروفون شما توسط مدیر بی‌صدا شده است",
+                        "moderationInEffectVideoDescription": "لطفاً اگر می‌خواهید دوربین خود را روشن کنید، دست خود را بالا ببرید.",
+                        "moderationInEffectVideoTitle": "دوربین شما توسط مدیر مسدود شده است",
+                        "moderationRequestFromModerator": "میزبان از شما می‌خواهد که صدای خود را وصل کنید",
+                        "moderationRequestFromParticipant": "می‌خواهد صحبت کند",
+                        "moderationStartedTitle": "مدیریت شروع شد",
+                        "moderationStoppedTitle": "مدیریت متوقف شد",
+                        "moderationToggleDescription": "توسط {{participantDisplayName}}",
+                        "moderator": "شما اکنون یک مدیر جلسه هستید",
+                        "muted": "شما گفتگو را به‌صورت بی‌صدا شروع کرده‌اید.",
+                        "mutedRemotelyDescription": "هر زمانی که آماده صحبت هستید می‌توانید صدای خود را وصل کنید. وقتی صحبتتان تمام شد، میکروفون خود را دوباره قطع کنید تا سروصدای اضافه وارد جلسه نشود.",
+                        "mutedRemotelyTitle": "صدای شما توسط {{participantDisplayName}} قطع شد",
+                        "mutedTitle": "صدای شما قطع است!",
+                        "newDeviceAction": "استفاده",
+                        "newDeviceAudioTitle": "دستگاه صوتی جدید شناسایی شد",
+                        "newDeviceCameraTitle": "دوربین جدید شناسایی شد",
+                        "noiseSuppressionDesktopAudioDescription": "هنگام اشتراک‌گذاری صدای میزکار، امکان نویز‌زدایی را نمی‌توان فعال کرد. لطفاً آن را غیرفعال کنید و دوباره تلاش کنید.",
+                        "noiseSuppressionFailedTitle": "شروع نویز‌زدایی ناموفق بود",
+                        "noiseSuppressionNoTrackDescription": "لطفاً ابتدا صدای میکروفون خود را وصل کنید.",
+                        "noiseSuppressionStereoDescription": "درحال حاضر نویز‌زدایی برای صدای چندآوا پشتیبانی نمی‌شود.",
+                        "oldElectronClientDescription1": "به‌نظر می‌رسد شما از یک نگارش قدیمی کارخواه برنامه استفاده می‌کنید که آسیب‌پذیری‌های امنیتی شناخته‌شده‌ای دارد. لطفاً مطمئن شوید که به‌روزرسانی می‌کنید ",
+                        "oldElectronClientDescription2": "آخرین ساخت",
+                        "oldElectronClientDescription3": " الان!",
+                        "participantWantsToJoin": "می‌خواهد به جلسه بپیوندد",
+                        "participantsWantToJoin": "می‌خواهد به جلسه بپیوندد",
+                        "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) توسط شرکت‌کنندهٔ دیگری حذف شد",
+                        "passwordSetRemotely": "$t(lockRoomPasswordUppercase) توسط شرکت‌کنندهٔ دیگری تنظیم شد",
+                        "raiseHandAction": "بالابردن دست",
+                        "raisedHand": "می‌خواهد صحبت کند.",
+                        "raisedHands": "{{participantName}} و {{raisedHands}} نفر بیش‌تر",
+                        "reactionSounds": "غیرفعال‌کردن صداها",
+                        "reactionSoundsForAll": "غیرفعال‌کردن صداها برای همه",
+                        "screenShareNoAudio": "جعبهٔ اشتراک‌گذاری صدا در صفحهٔ انتخابِ پنجره علامت‌گذاری نشده بود.",
+                        "screenShareNoAudioTitle": "صدای سیستم اشتراک‌گذاری نشد!",
+                        "screenSharingAudioOnlyDescription": "لطفاً توجه داشته باشید که با اشتراک‌گذاری صفحهٔ نمایش، حالت «بهترین کارایی» را تحت تأثیر قرار می‌دهید و از پهنای‌باند بیشتری استفاده خواهید کرد.",
+                        "screenSharingAudioOnlyTitle": "حالت «بهترین کارایی»",
+                        "selfViewTitle": "همیشه می‌توانید نمای خود را از تنظیمات آشکارسازی کنید",
+                        "somebody": "یک‌نفر",
+                        "startSilentDescription": "برای فعال‌سازی صدا دوباره به جلسه بپیوندد",
+                        "startSilentTitle": "شما بدون هیچ خروجی برای پخش صدا به جلسه پیوسته‌اید!",
+                        "suboptimalBrowserWarning": "ما نگرانیم که تجربهٔ جلسه شما در این‌جا عالی نباشد. ما به‌دنبال راه‌هایی برای بهبود این موضوع هستیم؛ اما تا آن زمان لطفاً از یکی از <a href='{{recommendedBrowserPageLink}}' target='_blank'>مرورگرهای کاملاً پشتیبانی‌شده</a> استفاده کنید.",
+                        "suboptimalExperienceTitle": "هشدار مرورگر",
+                        "unmute": "وصل‌کردن صدا",
+                        "videoMutedRemotelyDescription": "همیشه می‌توانید دوباره آن را روشن کنید.",
+                        "videoMutedRemotelyTitle": "ویدیوی شما توسط {{participantDisplayName}} غیرفعال شده است",
+                        "videoUnmuteBlockedDescription": "عملیات‌های روشن‌کردن دوربین و اشتراک‌گذاری میزکار به دلیل محدودیت‌های سیستم موقتاً مسدود شده‌اند.",
+                        "videoUnmuteBlockedTitle": "روشن‌کردن دوربین و اشتراک‌گذاری میزکار مسدود شد!",
+                        "viewLobby": "مشاهدهٔ اتاق انتظار",
+                        "waitingParticipants": "{{waitingParticipants}} نفر"
+                    },
+                    "participantsPane": {
+                        "actions": {
+                            "admit": "پذیرفتن",
+                            "admitAll": "پذیرفتن همه",
+                            "allow": "به حاضران اجازه دهید:",
+                            "allowVideo": "اجازهٔ ویدیو",
+                            "askUnmute": "درخواست وصل‌کردن صدا",
+                            "audioModeration": "صدای خودشان را وصل کنند",
+                            "blockEveryoneMicCamera": "مسدودکردن میکروفون و دوربین همه",
+                            "invite": "دعوت از یک‌نفر",
+                            "moreModerationActions": "انتخاب‌های مدیریت بیش‌تر",
+                            "moreModerationControls": "بازرسی‌های مدیریت بیش‌تر",
+                            "moreParticipantOptions": "انتخاب‌های شرکت‌کنندهٔ بیش‌تر",
+                            "mute": "قطع صدا",
+                            "muteAll": "قطع صدا همه",
+                            "muteEveryoneElse": "قطع صدا بقیه افراد",
+                            "reject": "ردکردن",
+                            "stopEveryonesVideo": "توقف ویدیوی همه",
+                            "stopVideo": "توقف ویدیو",
+                            "unblockEveryoneMicCamera": "رفع مسدودی میکروفون و دوربین همه",
+                            "videoModeration": "ویدیوی خودشان را شروع کنند"
+                        },
+                        "close": "ببند",
+                        "headings": {
+                            "lobby": "اتاق انتظار ({{count}})",
+                            "participantsList": "شرکت‌کنندگان در جلسه ({{count}})",
+                            "visitors": "بینندگان ({{count}})",
+                            "waitingLobby": "در اتاق انتظار ({{count}})"
+                        },
+                        "search": "جستجوی شرکت‌کنندگان",
+                        "title": "شركت‌كنندگان",
+                        "absentPeople":" افراد غایب",
+                    },
+                    
+                    "passwordDigitsOnly": "تا {{number}} رقم",
+                    "passwordSetRemotely": "توسط یک شرکت‌کنندهٔ دیگر تنظیم شده است",
+                    "pinParticipant": "{{participantName}} - سنجاق‌کردن",
+                    "pinnedParticipant": "شرکت‌کننده سنجاق شده‌است",
+                    "polls": {
+                        "answer": {
+                            "skip": "ردکردن",
+                            "submit": "ارسال"
+                        },
+                        "by": "توسط {{ name }}",
+                        "create": {
+                            "addOption": "اضافه کردن گزینه",
+                            "answerPlaceholder": "گزینه {{index}}",
+                            "cancel": "لغو",
+                            "create": "یک نظرسنجی ایجاد کنید",
+                            "pollOption": "گزینهٔ نظرسنجی {{index}}",
+                            "pollQuestion": "پرسش نظرسنجی",
+                            "questionPlaceholder": "یک سوال بپرسید",
+                            "removeOption": "حذف گزینه",
+                            "send": "ارسال"
+                        },
+                        "errors": {
+                            "notUniqueOption": "گزینه ها باید منحصر به فرد باشند"
+                        },
+                        "notification": {
+                            "description": "برای رأی‌دادن، زبانهٔ نظرسنجی‌ها را باز کنید",
+                            "title": "نظرسنجی جدیدی به این جلسه اضافه شد"
+                        },
+                        "results": {
+                            "changeVote": "تغییر رأی",
+                            "empty": "هنوز هیچ نظرسنجی‌ای در این جلسه وجود ندارد. یک نظرسنجی از این‌جا شروع کنید!",
+                            "hideDetailedResults": "پنهان‌سازی جزئیات",
+                            "showDetailedResults": "نمایش جزئیات",
+                            "vote": "رأی"
+                        }
+                    },
+                    "poweredby": "قدرت‌گرفته از",
+                    "prejoin": {
+                        "audioAndVideoError": "خطا در صدا و تصویر:",
+                        "audioDeviceProblem": "مشکلی در دستگاه صوتی شما وجود دارد",
+                        "audioOnlyError": "خطا در صدا:",
+                        "audioTrackError": "قطعهٔ صوتی ایجاد نشد.",
+                        "callMe": "با من تماس بگیرید",
+                        "callMeAtNumber": "با این شماره با من تماس بگیرید:",
+                        "calling": "درحال تماس",
+                        "configuringDevices": "پیکربندی دستگاه‌ها...",
+                        "connectedWithAudioQ": "از طریق صدا متصل هستید؟",
+                        "connection": {
+                            "good": "اتصال اینترنت شما خوب به‌نظر می‌رسد!",
+                            "nonOptimal": "اتصال اینترنت شما مناسب نیست",
+                            "poor": "اتصال اینترنت شما ضعیف است"
+                        },
+                        "connectionDetails": {
+                            "audioClipping": "انتظار می‌رود صدای شما بریده‌بریده شود.",
+                            "audioHighQuality": "انتظار می‌رود صدای شما کیفیتی عالی داشته باشد.",
+                            "audioLowNoVideo": "انتظار می‌رود صدای شما کیفیت پایینی داشته باشد و تصویر شما نیز قطع شود.",
+                            "goodQuality": "فوق‌العاده! کیفیت صدا و تصویر شما عالی خواهد بود.",
+                            "noMediaConnectivity": "نتوانستیم راهی برای ایجاد اتصال صدا و تصویر برای این آزمایش پیدا کنیم. این موضوع معمولاً توسط دیوارهٔ آتش یا NAT ایجاد می‌شود.",
+                            "noVideo": "انتظار می‌رود ویدیوی شما به‌شدت بد باشد.",
+                            "undetectable": "اگر همچنان در برقراری ارتباط از طریق مرورگر مشکل دارید، توصیه می‌کنیم مطمئن شوید بلندگو، میکروفن و دوربین شما به اجازه تنظیم شده‌اند، اجازهٔ اجازه به میکروفون و دوربین خود را به مرورگرتان داده باشید و همچنین از به‌روز بودن نگارش مرورگر خود مطمئن شوید. اگر با این حال در صورت ادامه مشکل در برقراری تماس، با توسعه‌دهنده یا پشتیبانی برنامه تماس بگیرید.",
+                            "veryPoorConnection": "انتظار می‌رود کیفیت تماس شما به‌شدت بد باشد.",
+                            "videoFreezing": "انتظار می‌رود تصویر ویدیوی شما ثابت شده و تار شود یا قطع شود.",
+                            "videoHighQuality": "انتظار می‌رود ویدیوی شما کیفیت خوبی داشته باشد.",
+                            "videoLowQuality": "انتظار می‌رود ویدیوی شما از نظر نرخ بازسازی تصویر و وضوح کیفیت پایینی داشته باشد.",
+                            "videoTearing": "انتظار می‌رود ویدیوی شما تار شود یا نواقص دیداری داشته باشد."
+                        },
+                        "copyAndShare": "کپی و اشتراک‌گذاری لینک جلسه",
+                        "dialInMeeting": "شماره‌گیری برای پیوستن به جلسه",
+                        "dialInPin": "شماره‌های جلسه را شماره‌گیری کرده و این رمز شخصی را وارد نمایید:",
+                        "dialing": "شماره‌گیری",
+                        "doNotShow": "این صفحه را دوباره نشان نده",
+                        "errorDialOut": "نمی‌توان شماره‌گیری کرد",
+                        "errorDialOutDisconnected": "نمی‌توان شماره‌گیری کرد. قطع شد",
+                        "errorDialOutFailed": "نمی‌توان شماره‌گیری کرد. تماس ناموفق بود",
+                        "errorDialOutStatus": "خطا در دریافت وضعیت شماره‌گیری",
+                        "errorMissingName": "لطفاً نام خود را برای پیوستن به جلسه وارد کنید",
+                        "errorNoPermissions": "باید اجازه میکروفون و دوربین را فعال کنید",
+                        "errorStatusCode": "خطا در شماره‌گیری، کد وضعیت: {{status}}",
+                        "errorValidation": "اعتبارسنجی شماره ناموفق بود",
+                        "iWantToDialIn": "می‌خواهم تماس بگیرم",
+                        "initiated": "تماس آغاز شد",
+                        "joinAudioByPhone": "پیوستن با صدای گوشی",
+                        "joinMeeting": "پیوستن به جلسه",
+                        "joinMeetingInLowBandwidthMode": "پیوستن در حالت پهنای باند کم",
+                        "joinWithoutAudio": "پیوستن بدون صدا",
+                        "keyboardShortcuts": "فعال‌سازی میان‌برهای صفحه‌کلید",
+                        "linkCopied": "لینک در کلیپ بورد کپی شد",
+                        "lookGood": "میکروفون شما به‌درستی کار می‌کند",
+                        "or": "یا",
+                        "premeeting": "پیش‌جلسه",
+                        "proceedAnyway": "در هر صورت انجام شود",
+                        "screenSharingError": "خطا در اشتراک‌گذاری صفحه:",
+                        "showScreen": "فعال‌سازی صفحهٔ پیش‌جلسه",
+                        "startWithPhone": "شروع با صدای گوشی",
+                        "unsafeRoomConsent": "من خطر احتمالی را درک می‌کنم؛ می‌خواهم به جلسه بلینکم",
+                        "videoOnlyError": "خطای ویدیو:",
+                        "videoTrackError": "قطعهٔ ویدیویی ایجاد نشد.",
+                        "viewAllNumbers": "مشاهدهٔ همهٔ شماره‌ها"
+                    },
+                    "presenceStatus": {
+                        "busy": "مشغول",
+                        "calling": "درحال تماس‌گرفتن...",
+                        "connected": "متصل‌شده",
+                        "connecting": "درحال اتصال...",
+                        "connecting2": "درحال اتصال*...",
+                        "disconnected": "قطع‌شده",
+                        "expired": "منقضی‌شده",
+                        "ignored": "نادیده‌گرفته",
+                        "initializingCall": "درحال آغاز تماس...",
+                        "invited": "دعوت‌شده",
+                        "rejected": "ردشده",
+                        "ringing": "درحال زنگ‌زدن..."
+                    },
+                    "profile": {
+                        "avatar": "چِهرَک",
+                        "setDisplayNameLabel": "نام",
+                        "setEmailInput": "رایانامه را وارد کنید",
+                        "setEmailLabel": "رایانامهٔ Gravatar",
+                        "title": "نمایه"
+                    },
+                    "raisedHand": "تمایل به صحبت",
+                    "raisedHandsLabel": "تعداد دست‌های بلندشده",
+                    "record": {
+                        "already": {
+                            "linked": "این جلسه از قبل به شیء Salesforce پیوست شده است."
+                        },
+                        "type": {
+                            "account": "حساب",
+                            "contact": "مخاطب",
+                            "lead": "رهبر",
+                            "opportunity": "فرصت",
+                            "owner": "صاحب"
+                        }
+                    },
+                    "recording": {
+                        "authDropboxText": "بارگذاری در دراپ‌باکس",
+                        "availableSpace": "فضای موجود: {{spaceLeft}} مگابایت (تقریباً {{duration}} دقیقه ضبط جلسه)",
+                        "beta": "<b>نسخهٔ آزمایشی</b>",
+                        "busy": "ما درحال آزادسازی منابع ضبط هستیم. لطفاً دقایقی دیگر دوباره تلاش کنید.",
+                        "busyTitle": "همهٔ ضبط‌کننده‌ها هم‌اکنون مشغول هستند",
+                        "copyLink": "کپی لینک",
+                        "error": "ضبط ناموفق بود. دوباره تلاش کنید.",
+                        "errorFetchingLink": "خطا در واکِشی لینک ضبط.",
+                        "expandedOff": "ضبط متوقف شده است",
+                        "expandedOn": "این جلسه هم‌اکنون درحال ضبط‌شدن است.",
+                        "expandedPending": "ضبط درحال شروع است...",
+                        "failedToStart": "ضبط را شروع کن ناموفق بود",
+                        "fileSharingdescription": "اشتراک‌گذاری لینک ضبط با شرکت‌کنندگان جلسه",
+                        "highlight": "علامت‌گذاری",
+                        "highlightMoment": "علامت‌گذاری لحظه",
+                        "highlightMomentDisabled": "وقتی ضبط شروع می‌شود می‌توانید لحظه‌ها را علامت‌گذاری کنید",
+                        "highlightMomentSuccess": "لحظه علامت‌گذاری شد",
+                        "highlightMomentSucessDescription": "لحظه‌های علامت‌گذاری‌شدهٔ شما به خلاصهٔ جلسه افزوده خواهند شد.",
+                        "inProgress": "ضبط یا پخش زنده درحال انجام است",
+                        "limitNotificationDescriptionNative": "به دلیل درخواست‌های زیاد، ضبط شما به {{limit}} دقیقه محدود خواهد شد. برای ضبط نامحدود از <3>{{app}}</3> استفاده کنید.",
+                        "limitNotificationDescriptionWeb": "به دلیل درخواست‌های زیاد، ضبط شما به {{limit}} دقیقه محدود خواهد شد. برای ضبط نامحدود از <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a> استفاده کنید.",
+                        "linkGenerated": "ما لینکی برای ضبط شما ایجاد کرده‌ایم.",
+                        "live": "<b>زنده</b>",
+                        "localRecordingNoNotificationWarning": "این ضبط به آگاهی دیگر شرکت‌کنندگان نخواهد رسید. لازم است که به آن‌ها بگویید که جلسه ضبط شده است.",
+                        "localRecordingNoVideo": "ویدیو ضبط نمی‌شود",
+                        "localRecordingStartWarning": "لطفاً پیش از پایان جلسه، ضبط را متوقف کنید تا آن را ذخیره کنید.",
+                        "localRecordingStartWarningTitle": "ضبط را متوقف کنید تا ذخیره شود",
+                        "localRecordingVideoStop": "توقف ویدیوی شما باعث توقف ضبط محلی نیز خواهد شد. آیا مطمئن هستید که می‌خواهید ادامه دهید؟",
+                        "localRecordingVideoWarning": "برای ضبط ویدیوی خود، باید هنگام ضبط را شروع کن آن را روشن کنید",
+                        "localRecordingWarning": "مطمئن شوید که زبانه کنونی را انتخاب کرده‌اید تا از ویدیو و صدای مناسب استفاده کنید. ضبط درحال حاضر محدود به ۱ گیگابایت است که تقریبا ۱۰۰ دقیقه است.",
+                        "loggedIn": "واردشده به عنوان {{userName}}",
+                        "noMicPermission": "قطعهٔ میکروفون نمی‌تواند ایجاد شود. لطفاً اجازه استفاده از میکروفون را بدهید.",
+                        "noStreams": "هیچ جریان صوتی یا تصویری شناسایی نشد.",
+                        "off": "ضبط متوقف شد",
+                        "offBy": "{{name}} ضبط جلسه را متوقف کرد",
+                        "on": "ضبط جلسه شروع شد",
+                        "onBy": "{{name}} ضبط جلسه را شروع کرد",
+                        "onlyRecordSelf": "فقط جریان‌های صدا و تصویر من را ضبط کن",
+                        "pending": "درحال آماده‌شدن برای ضبط جلسه...",
+                        "rec": "ضبط",
+                        "saveLocalRecording": "ذخیرهٔ پروندهٔ ضبط به صورت محلی",
+                        "serviceDescription": "ضبط شما توسط خدمتِ ضبط ذخیره خواهد شد",
+                        "serviceDescriptionCloud": "ضبط ابری",
+                        "serviceDescriptionCloudInfo": "جلسات ضبط‌شده ۲۴ ساعت پس از زمان ضبط به‌طور خودکار پاک می‌شوند.",
+                        "serviceName": "خدمتِ ضبط",
+                        "sessionAlreadyActive": "این جلسه از قبل درحال ضبط یا پخش زنده است.",
+                        "signIn": "ورود",
+                        "signOut": "خروج",
+                        "surfaceError": "لطفاً زبانه کنونی را انتخاب کنید.",
+                        "title": "درحال ضبط",
+                        "unavailable": "اوه! {{serviceName}} درحال حاضر در دسترس نیست. ما درحال کار برروی حل مشکل هستیم. لطفاً بعداً دوباره امتحان کنید.",
+                        "unavailableTitle": "ضبط دردسترس نیست",
+                        "uploadToCloud": "بارگذاری در فضای ابری"
+                    },
+                    "screenshareDisplayName": "صفحهٔ {{name}}",
+                    "sectionList": {
+                        "pullToRefresh": "برای تازه‌سازی بکِشید"
+                    },
+                    "security": {
+                        "about": "می‌توانید به جلسه خود یک $t(lockRoomPassword) بیافزایید.شرکت‌کنندگان باید پیش از این‌که بتوانند به جلسه بلینکند، $t(lockRoomPassword) را ارائه کنند.",
+                        "aboutReadOnly": "مدیر جلسه می‌تواند به جلسه یک $t(lockRoomPassword) بیافزاید. شرکت‌کنندگان باید پیش از این‌که بتوانند به جلسه بلینکند، $t(lockRoomPassword) را ارائه کنند.",
+                        "insecureRoomNameWarningNative": "نام اتاق ناامن است. شرکت‌کنندگان ناخواسته ممکن است به جلسه شما بلینکند. {{recommendAction}} دربارهٔ تأمین جلسهٔ خود بیش‌تر بیاموزید ",
+                        "insecureRoomNameWarningWeb": "نام اتاق ناامن است. شرکت‌کنندگان ناخواسته ممکن است به جلسه شما بلینکند. {{recommendAction}} از <a href=\"{{securityUrl}}\" rel=\"security\" target=\"_blank\">این‌جا</a> دربارهٔ تأمین جلسهٔ خود بیش‌تر بیاموزید.",
+                        "title": "انتخاب‌های امنیت",
+                        "unsafeRoomActions": {
+                            "meeting": "با استفاده از دکمهٔ امنیت جلسه خود را ایمن کنید.",
+                            "prejoin": "استفاده از نامِ جلسهٔ منحصربه‌فردتری را در نظر بگیرید.",
+                            "welcome": "استفاده از نامِ جلسهٔ منحصربه‌فردتری را در نظر بگیرید، یا یکی از پیشنهادات را انتخاب کنید."
+                        }
+                    },
+                    "settings": {
+                        "audio": "صدا",
+                        "buttonLabel": "تنظیمات",
+                        "calendar": {
+                            "about": "امکان اتصال تقویم {{appName}} برای اجازه ایمن به تقویمتان استفاده می‌شود تا بتواند رویدادهای آینده را بخواند.",
+                            "disconnect": "قطع‌کردن",
+                            "microsoftSignIn": "ورود با حساب شخصی مایکروسافت",
+                            "signedIn": "هم‌اکنون درحال اجازه به رویدادهای تقویم برای {{email}}. برای توقف اجازه به رویدادهای تقویم، روی دکمه قطع‌کردن در زیر کلیک کنید.",
+                            "title": "تقویم"
+                        },
+                        "desktopShareFramerate": "نرخ بازسازی تصویر اشتراک‌گذاری میزکار",
+                        "desktopShareHighFpsWarning": "نرخ بازسازی تصویر بالاتر برای اشتراک‌گذاری میزکار ممکن است بر پهنای باند شما تأثیر بگذارد. برای اعمال تنظیمات جدید، باید اشتراک‌گذاری صفحه را راه‌اندازی دوباره کنید.",
+                        "desktopShareWarning": "برای اعمال تنظیمات جدید، باید اشتراک‌گذاری صفحه را راه‌اندازی دوباره کنید.",
+                        "devices": "دستگاه‌ها",
+                        "followMe": "هرکسی من را دنبال می‌کند",
+                        "framesPerSecond": "نرخ بازسازی تصویر در ثانیه",
+                        "incomingMessage": "پیام ورودی",
+                        "language": "زبان",
+                        "loggedIn": "واردشده به عنوان {{name}}",
+                        "maxStageParticipants": "بیشینه تعداد شرکت‌کنندگانی که می‌توانند به نمای اصلی سنجاق شوند (<b>آزمایشی</b>)",
+                        "microphones": "میکروفون‌ها",
+                        "moderator": "مدیر",
+                        "moderatorOptions": "انتخاب‌های مدیر",
+                        "more": "عمومی",
+                        "name": "نام",
+                        "noDevice": "هیچ‌یک",
+                        "notifications": "آگهی‌ها",
+                        "participantJoined": "شرکت‌کننده پیوست",
+                        "participantKnocking": "شرکت‌کننده به اتاق انتظار وارد شد",
+                        "participantLeft": "شرکت‌کننده ترک کرد",
+                        "playSounds": "پخش صدا روشن",
+                        "reactions": "واکنش‌های جلسه",
+                        "sameAsSystem": "همانند سیستم ({{label}})",
+                        "selectAudioOutput": "خروجی صدا",
+                        "selectCamera": "دوربین",
+                        "selectMic": "میکروفن",
+                        "selfView": "نمای خود",
+                        "shortcuts": "میان‌برها",
+                        "speakers": "بلندگوها",
+                        "startAudioMuted": "همه بی‌صدا شروع می‌کنند",
+                        "startReactionsMuted": "قطع صدا صداهای واکنش‌ها برای همه",
+                        "startVideoMuted": "همه به‌صورت مخفی شروع می‌کنند",
+                        "talkWhileMuted": "صحبت‌کردن در حالت بی‌صدا",
+                        "title": "تنظیمات",
+                        "video": "ویدیو"
+                    },
+                    "settingsView": {
+                        "advanced": "پیشرفته",
+                        "alertCancel": "لغو",
+                        "alertOk": "تأیید",
+                        "alertTitle": "هشدار",
+                        "alertURLText": "نشانی اینترنتی واردشدهٔ سرور نامعتبر است",
+                        "buildInfoSection": "اطلاعات ساخت",
+                        "conferenceSection": "کنفرانس",
+                        "disableCallIntegration": "غیرفعال‌کردن یکپارچگی با تماس",
+                        "disableCrashReporting": "غیرفعال‌کردن گزارش خرابی",
+                        "disableCrashReportingWarning": "آیا از غیرفعال‌کردن گزارش خرابی اطمینان دارید؟ این تنظیمات پس از راه‌اندازی دوبارهٔ برنامه اعمال می‌شوند.",
+                        "disableP2P": "غیرفعال‌کردن حالت همتا‌به‌همتا",
+                        "displayName": "نام نمایشی",
+                        "displayNamePlaceholderText": "برای مثال فلانی",
+                        "email": "رایانامه",
+                        "emailPlaceholderText": "email@example.com",
+                        "goTo": "برو به",
+                        "header": "تنظیمات",
+                        "help": "راهنما",
+                        "links": "لینکها",
+                        "privacy": "حریم خصوصی",
+                        "profileSection": "نمایه",
+                        "serverURL": "نشانی اینترنتی سرور",
+                        "showAdvanced": "نمایش تنظیمات پیشرفته",
+                        "startCarModeInLowBandwidthMode": "شروع حالت خودرو در حالت پهنای باند کم",
+                        "startWithAudioMuted": "شروع با حالت بی‌صدا",
+                        "startWithVideoMuted": "شروع با حالت بدون تصویر",
+                        "terms": "شرایط",
+                        "version": "نگارش"
+                    },
+                    "share": {
+                        "dialInfoText": "\n\n=====\n\nبه اینترنت اجازه ندارید و می‌خواهید با تماس تلفنی در جلسه شرکت نمایید؟\n\n{{defaultDialInNumber}}برای شماره‌های تماس برای پیوستن به این جلسه روی این لینک کلیک کنید\n{{dialInfoPageUrl}}",
+                        "mainText": "برای پیوستن به جلسه روی لینک زیر کلیک کنید:\n{{roomUrl}}"
+                    },
+                    "speaker": "بلندگو",
+                    "speakerStats": {
+                        "angry": "عصبانی",
+                        "disgusted": "متنفر",
+                        "displayEmotions": "نمایش احساسات",
+                        "fearful": "ترسان",
+                        "happy": "خوش‌حال",
+                        "hours": "{{count}} ساعت",
+                        "minutes": "{{count}} دقیقه",
+                        "name": "نام",
+                        "neutral": "خنثی",
+                        "sad": "غمگین",
+                        "search": "جستجو",
+                        "searchHint": "جستجوی شرکت‌کنندگان",
+                        "seconds": "{{count}} ثانیه",
+                        "speakerStats": "آمار شرکت‌کنندگان",
+                        "speakerTime": "مدت زمان گوینده",
+                        "surprised": "شگفت‌زده"
+                    },
+                    "startupoverlay": {
+                        "genericTitle": "این جلسه نیاز به استفاده از میکروفون و دوربین شما دارد.",
+                        "policyText": " ",
+                        "title": "{{app}} نیاز به استفاده از میکروفون و دوربین شما دارد."
+                    },
+                    "suspendedoverlay": {
+                        "rejoinKeyTitle": "پیوستن دوباره",
+                        "text": "برای اتصال دوباره، دکمه <i>پیوستن دوباره</i> را فشار دهید.",
+                        "title": "تماس ویدیویی شما قطع شد زیرا این رایانه به حالت خواب رفت."
+                    },
+                    "termsView": {
+                        "title": "شرایط"
+                    },
+                    "toggleTopPanelLabel": "تغییر وضعیت تابلوی بالایی",
+                    "toolbar": {
+                        "Settings": "تنظیمات",
+                        "accessibilityLabel": {
+                            "Settings": "تغییر وضعیت تنظیمات",
+                            "audioOnly": "تغییر وضعیت حالتِ فقط صدا",
+                            "audioRoute": "دستگاه صوتی را انتخاب کنید",
+                            "boo": "هُوکردن",
+                            "breakoutRoom": "پیوستن/ترک‌کردن اتاق جانبی",
+                            "callQuality": "مدیریت کیفیت ویدیو",
+                            "carmode": "حالت خودرو",
+                            "cc": "تغییر وضعیت زیرنویس‌ها",
+                            "chat": "بازکردن / ببند گپ",
+                            "clap": "کف‌زدن",
+                            "closeChat": "ببند گپ",
+                            "closeMoreActions": "ببند فهرست اقدامات بیش‌تر",
+                            "closeParticipantsPane": "ببند تابلوی شرکت‌کنندگان",
+                            "collapse": "فروپاشی",
+                            "document": "تغییر وضعیت سند اشتراک‌گذاری‌شده",
+                            "documentClose": "ببند سند اشتراک‌گذاری‌شده",
+                            "documentOpen": "بازکردن سند اشتراک‌گذاری‌شده",
+                            "download": "دانلود برنامه",
+                            "embedMeeting": "جاسازی جلسه",
+                            "endConference": "پایان‌دادن جلسه برای همه",
+                            "enterFullScreen": "نمای تمام صفحه",
+                            "enterTileView": "ورود به نمای کاشی",
+                            "exitFullScreen": "خروج از تمام صفحه",
+                            "exitTileView": "خروج از نمای کاشی",
+                            "expand": "گستراندن",
+                            "feedback": "گذاشتن بازخورد",
+                            "fullScreen": "تغییر وضعیت تمام صفحه",
+                            "giphy": "تغییر وضعیت فهرست GIPHY",
+                            "grantModerator": "اعطای اجازه‌های مدیر",
+                            "hangup": "ترک‌کردن جلسه",
+                            "heading": "نوارابزار",
+                            "help": "کمک",
+                            "hideWhiteboard": "مخفی‌کردن تخته‌سفید",
+                            "invite": "دعوت از افراد",
+                            "kick": "بیرون‌کردن شرکت‌کننده",
+                            "laugh": "خنده",
+                            "leaveConference": "ترک‌کردن جلسه",
+                            "like": "موافق‌بودن",
+                            "linkToSalesforce": "لینک به Salesforce",
+                            "lobbyButton": "فعال‌کردن/غیرفعال‌کردن حالت اتاق انتظار",
+                            "localRecording": "تغییر وضعیت کنترل‌های ضبط محلی",
+                            "lockRoom": "تغییر وضعیت گذرواژهٔ جلسه",
+                            "lowerHand": "پایین‌آوردن دستتان",
+                            "moreActions": "اقدامات بیش‌تر",
+                            "moreActionsMenu": "فهرست اقدامات بیش‌تر",
+                            "moreOptions": "نمایش انتخاب‌های بیش‌تر",
+                            "mute": "قطع صدا",
+                            "muteEveryone": "قطع صدا همه",
+                            "muteEveryoneElse": "قطع صدا بقیه افراد",
+                            "muteEveryoneElsesVideoStream": "ویدیوی دیگران را متوقف کنید",
+                            "muteEveryonesVideoStream": "ویدیوی همه را متوقف کنید",
+                            "muteGUMPending": "درحال اتصال میکروفون شما",
+                            "noiseSuppression": "نویز‌زدایی",
+                            "openChat": "بازکردن گپ",
+                            "participants": "بازکردن تابلوی شرکت‌کنندگان",
+                            "pip": "تغییر وضعیت حالتِ تصویر در تصویر",
+                            "privateMessage": "ارسال پیام خصوصی",
+                            "profile": "ویرایش نمایهٔ شما",
+                            "raiseHand": "بالابردن دستتان",
+                            "reactions": "واکنش‌ها",
+                            "reactionsMenu": "فهرست واکنش‌ها",
+                            "recording": "تغییر وضعیت ضبط",
+                            "remoteMute": "بی‌صدا کردن شرکت‌کننده",
+                            "remoteVideoMute": "غیرفعال‌کردن دوربین شرکت‌کننده",
+                            "security": "انتخاب‌های امنیتی",
+                            "selectBackground": "انتخاب پس‌زمینه",
+                            "selfView": "تغییر وضعیت نمای مشاهدهٔ خود",
+                            "shareRoom": "دعوت از یک‌نفر",
+                            "shareYourScreen": "شروع اشتراک‌گذاری صفحهٔ شما",
+                            "shareaudio": "اشتراک‌گذاری صدا",
+                            "sharedvideo": "اشتراک‌گذاری ویدیو",
+                            "shortcuts": "تغییر وضعیت میان‌برها",
+                            "show": "نمایش روی صفحه",
+                            "showWhiteboard": "نمایش تخته‌سفید",
+                            "silence": "سکوت",
+                            "speakerStats": "تغییر وضعیت آمار شرکت‌کنندگان",
+                            "stopScreenSharing": "توقف اشتراک‌گذاری صفحهٔ شما",
+                            "stopSharedVideo": "توقف ویدیو",
+                            "surprised": "شگفت‌زده",
+                            "tileView": "تغییر وضعیت نمای کاشی",
+                            "toggleCamera": "تغییر وضعیت دوربین",
+                            "toggleFilmstrip": "تغییر وضعیت نوار فیلم",
+                            "unmute": "وصل‌کردن صدا",
+                            "videoblur": "تغییر وضعیت تارکردن ویدیو",
+                            "videomute": "توقف دوربین",
+                            "videomuteGUMPending": "درحال اتصال دوربین شما",
+                            "videounmute": "شروع دوربین"
+                        },
+                        "addPeople": "اضافه کردن افراد به تماس شما",
+                        "audioOnlyOff": "غیرفعال‌کردن حالت پهنای باند کم",
+                        "audioOnlyOn": "فعال‌کردن حالت پهنای باند کم",
+                        "audioRoute": "انتخاب دستگاه صوتی",
+                        "audioSettings": "تنظیمات صدا",
+                        "authenticate": "احراز هویت",
+                        "boo": "هُوکردن",
+                        "callQuality": "مدیریت کیفیت ویدیو",
+                        "chat": "بازکردن / ببند گپ",
+                        "clap": "کف‌زدن",
+                        "closeChat": "ببند گپ",
+                        "closeParticipantsPane": "ببند تابلوی شرکت‌کنندگان",
+                        "closeReactionsMenu": "ببند فهرست واکنش‌ها",
+                        "disableNoiseSuppression": "غیرفعال‌کردن نویز‌زدایی",
+                        "disableReactionSounds": "می‌توانید صداهای واکنش را برای این جلسه غیرفعال کنید",
+                        "documentClose": "ببند سند اشتراک‌گذاری‌شده",
+                        "documentOpen": "بازکردن سند اشتراک‌گذاری‌شده",
+                        "download": "دانلود برنامه",
+                        "e2ee": "رمزنگاری سرتاسر",
+                        "embedMeeting": "جاسازی جلسه",
+                        "enableNoiseSuppression": "فعال‌کردن نویز‌زدایی",
+                        "endConference": "پایان‌دادن جلسه برای همه",
+                        "enterFullScreen": "نمای تمام صفحه",
+                        "enterTileView": "ورود به نمای کاشی",
+                        "exitFullScreen": "خروج از تمام صفحه",
+                        "exitTileView": "خروج از نمای کاشی",
+                        "feedback": "گذاشتن بازخورد",
+                        "giphy": "تغییر وضعیت فهرست GIPHY",
+                        "hangup": "ترک‌کردن جلسه",
+                        "help": "کمک",
+                        "hideWhiteboard": "مخفی‌کردن تخته‌سفید",
+                        "invite": "دعوت از افراد",
+                        "joinBreakoutRoom": "پیوستن به اتاق جانبی",
+                        "laugh": "خنده",
+                        "leaveBreakoutRoom": "ترک‌کردن اتاق جانبی",
+                        "leaveConference": "ترک‌کردن جلسه",
+                        "like": "موافق‌بودن",
+                        "linkToSalesforce": "لینک به Salesforce",
+                        "lobbyButtonDisable": "غیرفعال‌کردن حالت اتاق انتظار",
+                        "lobbyButtonEnable": "فعال‌کردن حالت اتاق انتظار",
+                        "login": "ورود",
+                        "logout": "خروج",
+                        "lowerYourHand": "پایین‌آوردن دستتان",
+                        "moreActions": "اقدامات بیش‌تر",
+                        "moreOptions": "انتخاب‌های بیش‌تر",
+                        "mute": "قطع صدا",
+                        "muteEveryone": "قطع صدا همه",
+                        "muteEveryonesVideo": "غیرفعال‌کردن دوربین همه",
+                        "muteGUMPending": "درحال اتصال میکروفون شما",
+                        "noAudioSignalDesc": "اگر از روی عمد آن را از تنظیمات سامانه یا سخت‌افزار بی‌صدا نکرده‌اید، دستگاه را تغییر دهید.",
+                        "noAudioSignalDescSuggestion": "اگر از روی عمد آن را از تنظیمات سامانه یا سخت‌افزار بی‌صدا نکرده‌اید، به دستگاهِ پیشنهادی تغییر دهید.",
+                        "noAudioSignalDialInDesc": "همچنین می‌توانید با این شماره‌ها تماس بگیرید:",
+                        "noAudioSignalDialInLinkDesc": "شماره‌های تماس برای پیوستن",
+                        "noAudioSignalTitle": "هیچ ورودی از میکروفون شما وجود ندارد!",
+                        "noiseSuppression": "نویز‌زدایی",
+                        "noisyAudioInputDesc": "به نظر می‌رصد که میکروفون شما نویز ایجاد می‌کند. لطفا آن را بی‌صدا کنید یا دستگاه را تغییر دهید.",
+                        "noisyAudioInputTitle": "به‌نظر می‌رسد میکروفون شما نویزٔ زیادی دارد!",
+                        "openChat": "بازکردن گپ",
+                        "openReactionsMenu": "بازکردن فهرست واکنش‌ها",
+                        "participants": "شركت‌كنندگان",
+                        "pip": "ورود به حالتِ تصویر در تصویر",
+                        "privateMessage": "ارسال پیام خصوصی",
+                        "profile": "ویرایش نمایهٔ شما",
+                        "raiseHand": "بالابردن دستتان",
+                        "raiseYourHand": "بالابردن دستتان",
+                        "reactionBoo": "ارسال واکنش هُوکردن",
+                        "reactionClap": "ارسال واکنش کف‌زدن",
+                        "reactionLaugh": "ارسال واکنش خنده",
+                        "reactionLike": "ارسال واکنش موافق‌بودن",
+                        "reactionSilence": "ارسال واکنش سکوت",
+                        "reactionSurprised": "ارسال واکنش شگفت‌زده",
+                        "reactions": "واکنش‌ها",
+                        "security": "انتخاب‌های امنیتی",
+                        "selectBackground": "انتخاب پس‌زمینه",
+                        "shareRoom": "دعوت از یک‌نفر",
+                        "shareaudio": "اشتراک‌گذاری صدا",
+                        "sharedvideo": "اشتراک‌گذاری ویدیو",
+                        "shortcuts": "کلیدهای میان‌بر",
+                        "showWhiteboard": "نمایش تخته‌سفید",
+                        "silence": "سکوت",
+                        "speakerStats": "آمار شرکت‌کنندگان",
+                        "startScreenSharing": "شروع اشتراک‌گذاری صفحه",
+                        "startSubtitles": "زیرنویس‌ها • {{language}}",
+                        "stopAudioSharing": "توقف اشتراک‌گذاری صدا",
+                        "stopScreenSharing": "توقف اشتراک‌گذاری صفحه",
+                        "stopSharedVideo": "توقف ویدیو",
+                        "stopSubtitles": "توقف زیرنویس‌ها",
+                        "surprised": "شگفت‌زده",
+                        "talkWhileMutedPopup": "می‌خواهید صحبت کنید؟ صدای شما قطع است.",
+                        "tileViewToggle": "تغییر وضعیت نمای کاشی",
+                        "toggleCamera": "تغییر وضعیت دوربین",
+                        "unmute": "وصل‌کردن صدا",
+                        "videoSettings": "تنظیمات ویدیو",
+                        "videomute": "توقف دوربین",
+                        "videomuteGUMPending": "درحال اتصال دوربین شما",
+                        "videounmute": "شروع دوربین"
+                    },
+                    "transcribing": {
+                        "ccButtonTooltip": "شروع / توقف زیرنویس‌ها",
+                        "error": "رونویسی انجام نشد. لطفاً دوباره تلاش کنید.",
+                        "expandedLabel": "رونویسی درحال حاضر روشن است",
+                        "failedToStart": "شروع رونویسی ناموفق بود",
+                        "labelToolTip": "جلسه درحال رونویسی است",
+                        "off": "توقف رونویسی",
+                        "pending": "درحال آماده‌شدن برای رونویسی جلسه...",
+                        "sourceLanguageDesc": "هم‌اکنون زمان جلسه روی <b>{{sourceLanguage}}</b> تنظیم شده است.<br/> می‌توانید آن را از این‌جا تغییر دهید ",
+                        "sourceLanguageHere": "این‌جا",
+                        "start": "شروع نمایش زیرنویس‌ها",
+                        "stop": "توقف نمایش زیرنویس‌ها",
+                        "subtitles": "زیرنویس‌ها",
+                        "subtitlesOff": "خاموش",
+                        "tr": "TR"
+                    },
+                    "unpinParticipant": "{{participantName}} - برداشتن سنجاق",
+                    "userMedia": {
+                        "androidGrantPermissions": "هنگامی که مرورگرتان اجازهٔ اجازه می‌خواهد، <b><i>اجازه‌دادن</i></b> را انتخاب کنید.",
+                        "chromeGrantPermissions": "هنگامی که مرورگرتان اجازهٔ اجازه می‌خواهد، <b><i>اجازه‌دادن</i></b> را انتخاب کنید.",
+                        "edgeGrantPermissions": "هنگامی که مرورگرتان اجازهٔ اجازه می‌خواهد، <b><i>بله</i></b> را انتخاب کنید.",
+                        "electronGrantPermissions": "درحال تلاش برای اجازه به دوربین و میکروفون شما",
+                        "firefoxGrantPermissions": "هنگامی که مرورگرتان اجازهٔ اجازه می‌خواهد، <b><i>اشتراک‌گذاری دستگاه انتخاب‌شده</i></b> را انتخاب کنید.",
+                        "iexplorerGrantPermissions": "هنگامی که مرورگرتان اجازهٔ اجازه می‌خواهد، <b><i>تأیید</i></b> را انتخاب کنید.",
+                        "nwjsGrantPermissions": "لطفاً اجازهٔ استفاده از دوربین و میکروفون خود را بدهید",
+                        "operaGrantPermissions": "هنگامی که مرورگرتان اجازهٔ اجازه می‌خواهد، <b><i>اجازه‌دادن</i></b> را انتخاب کنید.",
+                        "react-nativeGrantPermissions": "هنگامی که مرورگرتان اجازهٔ اجازه می‌خواهد، <b><i>اجازه‌دادن</i></b> را انتخاب کنید.",
+                        "safariGrantPermissions": "هنگامی که مرورگرتان اجازهٔ اجازه می‌خواهد، <b><i>تأیید</i></b> را انتخاب کنید."
+                    },
+                    "videoSIPGW": {
+                        "busy": "ما درحال آزادسازی منابع هستیم؛ لطفاً دقایقی دیگر دوباره تلاش کنید.",
+                        "busyTitle": "خدمتِ اتاق هم‌اکنون مشغول است",
+                        "errorAlreadyInvited": "{{displayName}} قبلاً دعوت شده است",
+                        "errorInvite": "کنفرانس هنوز شروع نشده است. لطفاً بعداً دوباره تلاش کنید.",
+                        "errorInviteFailed": "ما درحال کار برروی حل مشکل هستیم. لطفاً بعداً دوباره امتحان کنید.",
+                        "errorInviteFailedTitle": "دعوت از {{displayName}} ناموفق بود",
+                        "errorInviteTitle": "خطا در دعوت اتاق",
+                        "pending": "{{displayName}} دعوت شده است"
+                    },
+                    "videoStatus": {
+                        "adjustFor": "تنظیم‌کردن برای:",
+                        "audioOnly": "فقط صدا",
+                        "audioOnlyExpanded": "شما در حالت پهنای باند کم هستید. در این حالت فقط صدا و اشتراک‌گذاری صفحهٔ نمایش را دریافت خواهید کرد.",
+                        "bestPerformance": "بهترین کارایی",
+                        "callQuality": "کیفیت ویدیو (۰ برای بهترین کارایی، ۳ برای بالاترین کیفیت)",
+                        "hd": "کیفیت بالا",
+                        "hdTooltip": "مشاهدهٔ ویدیوی کیفیت بالا",
+                        "highDefinition": "کیفیت بالا",
+                        "highestQuality": "بالاترین کیفیت",
+                        "labelTooiltipNoVideo": "بدون ویدیو",
+                        "labelTooltipAudioOnly": "حالت پهنای باند کم فعال‌شد",
+                        "ld": "کیفیت پایین",
+                        "ldTooltip": "مشاهدهٔ ویدیوی کیفیت پایین",
+                        "lowDefinition": "کیفیت پایین",
+                        "performanceSettings": "تنظیمات کارایی",
+                        "recording": "ضبط درحال انجام",
+                        "sd": "کیفیت متوسط",
+                        "sdTooltip": "مشاهدهٔ ویدیوی کیفیت متوسط",
+                        "standardDefinition": "کیفیت متوسط",
+                        "streaming": "پخش زنده درحال انجام"
+                    },
+                    "videothumbnail": {
+                        "connectionInfo": "اطلاعات اتصال",
+                        "domute": "قطع صدا",
+                        "domuteOthers": "قطع صدا بقیه افراد",
+                        "domuteVideo": "غیرفعال‌کردن دوربین",
+                        "domuteVideoOfOthers": "غیرفعال‌کردن دوربین بقیه افراد",
+                        "flip": "برگرداندن تصویر",
+                        "grantModerator": "اعطای اجازه‌های مدیر",
+                        "hideSelfView": "مخفی‌کردن نمای خود",
+                        "kick": "بیرون انداختن",
+                        "mirrorVideo": "آینه‌کردن ویدیوی من",
+                        "moderator": "مدیر",
+                        "mute": "شرکت‌کننده بی‌صدا است",
+                        "muted": "بی‌صدا",
+                        "pinToStage": "سنجاق‌کردن روی صفحه نمایش",
+                        "remoteControl": "شروع / توقف کنترل از راه دور",
+                        "screenSharing": "شرکت‌کننده درحال اشتراک‌گذاری صفحه نمایش خود است",
+                        "show": "نمایش روی صفحه",
+                        "showSelfView": "نمایش نمای خود",
+                        "unpinFromStage": "برداشتن سنجاق",
+                        "verify": "تأییدکردن شرکت‌کننده",
+                        "videoMuted": "دوربین غیرفعال شد",
+                        "videomute": "شرکت‌کننده دوربین را متوقف کرده است"
+                    },
+                    "virtualBackground": {
+                        "accessibilityLabel": {
+                            "currentBackground": "پس‌زمینه کنونی: {{background}}",
+                            "selectBackground": "یک پس‌زمینه را انتخاب کنید"
+                        },
+                        "addBackground": "اضافه کردن پس زمینه",
+                        "apply": "اعمال‌کردن",
+                        "backgroundEffectError": "جلوهٔ پس‌زمینه اعمال نشد.",
+                        "blur": "تارکردن",
+                        "deleteImage": "حذف تصویر",
+                        "desktopShare": "اشتراک‌گذاری میزکار",
+                        "desktopShareError": "اشتراک‌گذاری میزکار ایجاد نشد",
+                        "image1": "ساحل دریا",
+                        "image2": "دیوار سفید خنثی",
+                        "image3": "اتاق سفید خالی",
+                        "image4": "چراغ پایه‌دار مشکی",
+                        "image5": "کوه",
+                        "image6": "جنگل ",
+                        "image7": "طلوع خورشید",
+                        "none": "هیچ‌یک",
+                        "pleaseWait": "لطفاً شکیبا باشید...",
+                        "removeBackground": "حذف پس‌زمینه",
+                        "slightBlur": "نیمه‌تار",
+                        "title": "پس‌زمینه‌های مجازی",
+                        "uploadedImage": "تصویر بارگذاری‌شده {{index}}",
+                        "webAssemblyWarning": "WebAssembly پشتیبانی نمی‌شود",
+                        "webAssemblyWarningDescription": "WebAssembly توسط این مرورگر غیرفعال‌شده یا پشتیبانی نمی‌شود"
+                    },
+                    "visitors": {
+                        "chatIndicator": "(بازدیدکننده)",
+                        "labelTooltip": "تعداد بازدیدکنندگان: {{count}}",
+                        "notification": {
+                            "description": "برای شرکت‌کردن دست خود را بالا ببرید",
+                            "title": "شما در این جلسه یک بازدیدکننده هستید"
+                        }
+                    },
+                    "volumeSlider": "نوار لغزندهٔ صدا",
+                    "welcomepage": {
+                        "accessibilityLabel": {
+                            "join": "برای پیوستن ضربه بزنید",
+                            "roomname": "نام اتاق را وارد کنید"
+                        },
+                        "addMeetingName": "اضافه کردن نام جلسه",
+                        "appDescription": "دست‌به‌کار شوید؛ با کل تیم تماس ویدیویی داشته باشید. در حقیقت، هر کسی که می‌شناسید را دعوت کنید. {{app}} یک راهکار تماس ویدیویی کاملاً رمزگذاری‌شده و ۱۰۰٪ متن‌باز است که می‌توانید در تمام طول روز و هرروز، به صورت رایگان، بدون نیاز به حساب شخصی، از آن استفاده کنید.",
+                        "audioVideoSwitch": {
+                            "audio": "صدا",
+                            "video": "ویدیو"
+                        },
+                        "calendar": "تقویم",
+                        "connectCalendarButton": "تقویم خود را وصل کنید",
+                        "connectCalendarText": "تقویوم خود را وصل کنید تا همهٔ جلسه‌های خود را در {{app}} مشاهده کنید. به‌علاوه، جلسه‌های {{provider}} را به تقویم خود بیافزایید و آن‌ها را با یک کلیک آغاز کنید.",
+                        "enterRoomTitle": "شروع یک جلسهٔ جدید",
+                        "getHelp": "کمک گرفتن",
+                        "go": "برویم",
+                        "goSmall": "برویم",
+                        "headerSubtitle": "جلسات امن و با کیفیت بالا",
+                        "headerTitle": "Jitsi Meet",
+                        "info": "اطلاعات شماره‌گیری",
+                        "jitsiOnMobile": "Jitsi روی تلفن همراه - برنامه ما را دانلود کنید و جلسه‌ای را از هرکجا آغاز کنید",
+                        "join": "ایجاد / پیوستن",
+                        "logo": {
+                            "calendar": "نشان‌وارهٔ تقویم",
+                            "desktopPreviewThumbnail": "تصویر بندانگشتی پیش‌نمایش میزکار",
+                            "googleLogo": "نشان‌وارهٔ گوگل",
+                            "logoDeepLinking": "نشان‌وارهٔ Jitsi Meet",
+                            "microsoftLogo": "نشان‌وارهٔ Microsoft",
+                            "policyLogo": "نشان‌وارهٔ خط مشی"
+                        },
+                        "meetingsAccessibilityLabel": "جلسات",
+                        "mobileDownLoadLinkAndroid": "دریافت برنامهٔ تلفن همراه برای اندروید",
+                        "mobileDownLoadLinkFDroid": "دریافت برنامهٔ تلفن همراه برای F-Droid",
+                        "mobileDownLoadLinkIos": "دریافت برنامهٔ تلفن همراه برای iOS",
+                        "moderatedMessage": "یا از قبل <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">یک نشانی اینترنتی جلسه را رزور کنید</a> که در آن شما تنها مدیر هستید.",
+                        "privacy": "حریم خصوصی",
+                        "recentList": "اخیر",
+                        "recentListDelete": "حذف مورد",
+                        "recentListEmpty": "فهرست جلسات اخیر شما هم‌اکنون خالی است. با تیم خود گپ بزنید و همهٔ جلسات اخیر خود را این‌جا خواهید یافت.",
+                        "recentMeetings": "جلسات اخیر شما",
+                        "reducedUIText": "به {{app}} خوش‌آمدید!",
+                        "roomNameAllowedChars": "نام جلسه نباید شامل هیچ‌یک از این نویسه‌ها باشد: ?, &, :, ', \", %, #.",
+                        "roomname": "نام اتاق را وارد کنید",
+                        "roomnameHint": "نام یا نشانی اینترنتی اتاقی که می‌خواهید به آن بپیوندد را وارد کند. ممکن است یک نام از خودتان بسازید؛ فقط به افرادی که می‌خواهید با آن‌ها جلسه بگذارید آن را بگویید تا همان نام را وارد کنند.",
+                        "sendFeedback": "ارسال بازخورد",
+                        "settings": "تنظیمات",
+                        "startMeeting": "شروع جلسه",
+                        "terms": "شرایط",
+                        "title": "جلسات ویدیویی امن، سرشار از امکانات و کاملا آزاد",
+                        "upcomingMeetings": "جلسات آینده شما"
+                    },
+                    "whiteboard": {
+                        "accessibilityLabel": {
+                            "heading": "تخته‌سفید"
+                        }
+                    }
+                }
+
+        configs:
+            _custom_interface_config_js: ""
+            _custom_config_js: ""
+
+        # customize font
+        baseFontUrl: "s3://kasra-jitsi/nexus_fonts/"
+        # customize image
+        s3_access_key_id: "I6R3RLPQRM6LRWHZFGQR"
+        s3_secret_acess_key: "rkFnEFLBaqi4BgDjarXgLuQPOTi13YBtcANxMs0X"
+        s3_custom_endpoint: "https://s3.kubit.ir"
+        web_image_path_url: "s3://kasra-jitsi/web-images/"
+
+    extraEnvs:
+        ENABLE_PREJOIN_PAGE: "0"
+        DISABLE_DEEP_LINKING: "1"
+        ENABLE_CLOSE_PAGE: "1"
+        ENABLE_WELCOME_PAGE: "0"
+        START_WITH_AUDIO_MUTED: "0"
+        START_WITH_VIDEO_MUTED: "1"
+
+        TOKEN_AUTH_URL: "{{.Values.publicURL}}/r/{room}"
+        DYNAMIC_BRANDING_URL: "{{.Values.publicURL}}/meet/api/v1/meets/dynamic-brand-config"
+
+        DEFAULT_LANGUAGE: "fa"
+        PREFERRED_LANGUAGE: "fa"
+        TRANSLATION_LANGUAGES: "['fa','en']"
+        TRANSLATION_LANGUAGES_HEAD: "['fa','en']"
+        ENABLE_TRANSCRIPTIONS: "true"
+
+        ENABLE_REQUIRE_DISPLAY_NAME: "true"
+        DISABLE_PROFILE: "true"
+        WHITEBOARD_COLLAB_SERVER_PUBLIC_URL: "https://draw.nxworkplace.com"
+        PEOPLE_SEARCH_URL: "{{.Values.publicURL}}/meet/api/v1/users/jitsi-users"
+        INVITE_SERVICE_URL: "{{.Values.publicURL}}/meet/api/v1/users/invite"
+
+    service:
+        type: ClusterIP
+        port: 80
+        ## If you want to expose the Jitsi Web service directly
+        #  (bypassing the Ingress Controller), use this:
+        #
+        # type: NodePort
+        # nodePort: 30580
+        # port: 80
+        externalIPs: []
+        ## Annotations to be added to the service (if LoadBalancer is used)
+        #  An example below is needed for GKE IAP enablement
+        annotations:
+            {}
+            # beta.cloud.google.com/backend-config: backend-config-iap
+
+    ingress:
+        enabled: true
+        ingressClassName: "nginx"
+        annotations: {}
+        hosts:
+            - host: "meet.nxworkplace.com"
+              paths: ["/"]
+        tls:
+            - secretName: nxworkplace-cert
+              hosts:
+                  - "meet.nxworkplace.com"
+
+    # Useful for ingresses that don't support http-to-https redirect by themself, (namely: GKE),
+    httpRedirect: false
+
+    # When tls-termination by the ingress is not wanted, enable this and set web.service.type=Loadbalancer
+    httpsEnabled: false
+
+    ## Resolver IP for nginx.
+    #
+    #  Starting with version `stable-8044`, the web container can
+    #  auto-detect the nameserver from /etc/resolv.conf.
+    #  Use this option if you want to override the nameserver IP.
+    #
+    # resolverIP: 10.43.0.10
+
+    livenessProbe:
+        httpGet:
+            path: /
+            port: 80
+    readinessProbe:
+        httpGet:
+            path: /
+            port: 80
+
+    podLabels: {}
+    podAnnotations: {}
+    podSecurityContext:
+        {}
+        # fsGroup: 2000
+
+    securityContext:
+        {}
+        # capabilities:
+        #   drop:
+        #   - ALL
+        # readOnlyRootFilesystem: true
+        # runAsNonRoot: true
+        # runAsUser: 1000
+
+    resources:
+        limits:
+            cpu: 200m
+            memory: 200Mi
+        requests:
+            cpu: 10m
+            memory: 20Mi
+
+    nodeSelector: {}
+
+    tolerations: []
+
+    affinity: {}
+
+jicofo:
+    replicaCount: 1
+    image:
+        repository: jitsi/jicofo
+
+    ## Override the image-provided configuration files:
+    #  See https://github.com/jitsi/docker-jitsi-meet/tree/master/jicofo/rootfs
+    custom:
+        contInit:
+            _10_config: ""
+        defaults:
+            _jicofo_conf: ""
+            _logging_properties: ""
+
+    xmpp:
+        password:
+        componentSecret:
+
+    livenessProbe:
+        tcpSocket:
+            port: 8888
+
+    readinessProbe:
+        tcpSocket:
+            port: 8888
+
+    podLabels: {}
+    podAnnotations: {}
+    podSecurityContext: {}
+    securityContext: {}
+    resources: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    extraEnvs:
+        ENABLE_TRANSCRIPTIONS: "true"
+
+    metrics:
+        enabled: true
+        image:
+            repository: prayagsingh/prometheus-jicofo-exporter
+            tag: "1.3.2"
+        resources: {}
+
+jvb:
+    replicaCount: 1
+    image:
+        repository: jitsi/jvb
+
+    xmpp:
+        user: jvb
+        password:
+
+    ## Set public IP addresses to be advertised by JVB.
+    #  You can specify your nodes' IP addresses,
+    #  or IP addresses of proxies/LoadBalancers used for your
+    #  Jitsi Meet installation. Or both!
+    #
+    #  Note that only the first IP address will be used for legacy
+    #  `DOCKER_HOST_ADDRESS` environment variable.
+    #
+    # publicIPs:
+    #   - 1.2.3.4
+    #   - 5.6.7.8
+    ## Alternative option: auto-detect Node's external IP address.
+    #  Recommended for OCTO setups (with either NodePort service
+    #  or hostPort enabled) where every JVB pod should announce it's
+    #  own IP address only.
+    publicIPs:
+        - 194.225.40.98
+        - 194.225.40.100
+        - 194.225.40.101
+        - 192.168.45.13
+        - 192.168.45.14
+        - 192.168.45.15
+
+    useNodeIP: false
+    stunServers: "meet-jit-si-turnrelay.jitsi.net:443"
+    useHostPort: true
+    useHostNetwork: false
+
+    ## UDP transport port:
+    UDPPort: 10000
+    ## Use a pre-defined external port for NodePort or LoadBalancer service,
+    #  if needed. Will allocate a random port from allowed range if unset.
+    #  (Default NodePort range for K8s is 30000-32767)
+    nodePort: 30350
+    service:
+        enabled: false
+        type: NodePort
+        externalTrafficPolicy: Cluster
+        externalIPs: []
+        ## If type is set to LoadBalancer and the cluster is dual stack, ipFamilyPolicy can be set to enable dual stack
+        # addressing for the service.
+        # ipFamilyPolicy: PreferDualStack
+        ## Annotations to be added to the service (if LoadBalancer is used)
+        #  An example below is needed for DigitalOcean managed k8s setups
+        #  with a LoadBalancer service, so that DO's external LB can perform
+        #  health checks on JVB.
+        annotations:
+            {}
+            # service.beta.kubernetes.io/do-loadbalancer-healthcheck-port: "8080"
+            # service.beta.kubernetes.io/do-loadbalancer-healthcheck-protocol: "tcp"
+        ## Add extra ports to the service.
+        #  An example below is needed for DigitalOcean managed k8s setups.
+        extraPorts:
+            []
+            # - name: http-healthcheck
+            #   port: 8080
+            #   protocol: TCP
+
+    breweryMuc: jvbbrewery
+
+    resources:
+        requests:
+            cpu: 3500m
+            memory: 4Gi
+        limits:
+            cpu: 4000m
+            memory: 6Gi
+
+    livenessProbe:
+        httpGet:
+            path: /about/health
+            port: 8080
+    readinessProbe:
+        httpGet:
+            path: /about/health
+            port: 8080
+
+    podLabels: {}
+    podAnnotations: {}
+    podSecurityContext: {}
+    securityContext: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    extraEnvs: {}
+
+    metrics:
+        enabled: true
+        image:
+            repository: docker.io/systemli/prometheus-jitsi-meet-exporter
+            tag: 1.2.3
+            pullPolicy: IfNotPresent
+
+        resources:
+            requests:
+                cpu: 10m
+                memory: 16Mi
+            limits:
+                cpu: 20m
+                memory: 32Mi
+
+        prometheusAnnotations: false
+        serviceMonitor:
+            enabled: true
+            selector:
+                release: prometheus-operator
+            interval: 10s
+            # honorLabels: false
+
+        grafanaDashboards:
+            enabled: false
+            labels:
+                grafana_dashboard: "1"
+            annotations: {}
+octo:
+    enabled: true
+
+jigasi:
+    ## Enabling Jigasi will allow regular SIP clients to join Jitsi meetings
+    ## or nearly real-time transcription.
+    enabled: true
+
+    ## Use external Jigasi installation.
+    ## This setting skips the creation of Jigasi Deployment altogether,
+    ## instead creating just the config secret and enabling services.
+    ## Defaults to disabled (use bundled Jigasi).
+    useExternalJigasi: false
+
+    replicaCount: 1
+    image:
+        repository: kasra.r1.kubit.dev/today-jitsi/jigasi
+        tag: 10314
+
+    breweryMuc: jigasibrewery
+
+    ## jigasi XMPP user credentials:
+    xmpp:
+        user: jigasi
+        password:
+
+    transcriber:
+        user: transcriber
+        password:
+
+    livenessProbe:
+        httpGet:
+            path: /about/health
+            port: 8788
+            httpHeaders:
+                - name: Accept
+                  value: application/json
+    readinessProbe:
+        httpGet:
+            path: /about/health
+            port: 8788
+            httpHeaders:
+                - name: Accept
+                  value: application/json
+
+    podLabels: {}
+    podAnnotations: {}
+    podSecurityContext: {}
+    securityContext: {}
+    resources:
+        limits:
+            cpu: 500m
+            memory: 1000Mi
+        requests:
+            cpu: 250m
+            memory: 400Mi
+
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    extraEnvs:
+        JIGASI_TRANSCRIBER_WHISPER_URL: ws://mani-api.production.svc.cluster.local:8000/streaming-whisper/ws
+        JIGASI_MODE: "transcriber"
+        ENABLE_TRANSCRIPTIONS: "true"
+        JIGASI_TRANSCRIBER_ENABLE_TRANSLATION: "1"
+        JIGASI_TRANSCRIBER_CUSTOM_SERVICE: "org.jitsi.jigasi.transcription.WhisperTranscriptionService"
+
+jibri:
+    ## Enabling Jibri will allow users to record
+    ## and/or stream their meetings (e.g. to YouTube).
+    enabled: true
+
+    ## Use external Jibri installation.
+    ## This setting skips the creation of Jibri Deployment altogether,
+    ## instead creating just the config secret
+    ## and enabling recording/streaming services.
+    ## Defaults to disabled (use bundled Jibri).
+    useExternalJibri: false
+
+    ## Enable single-use mode for Jibri.
+    ## With this setting enabled, every Jibri instance
+    ## will become "expired" after being used once (successfully or not)
+    ## and cleaned up (restarted) by Kubernetes.
+    ##
+    ## Note that detecting expired Jibri, restarting and registering it
+    ## takes some time, so you'll have to make sure you have enough
+    ## instances at your disposal.
+    ## You might also want to make LivenessProbe fail faster.
+    singleUseMode: false
+
+    ## Enable recording service.
+    ## Set this to true/false to enable/disable local recordings.
+    ## Defaults to enabled (allow local recordings).
+    recording: true
+
+    ## Enable livestreaming service.
+    ## Set this to true/false to enable/disable live streams.
+    ## Defaults to disabled (livestreaming is forbidden).
+    livestreaming: false
+
+    ## Enable multiple Jibri instances.
+    ## If enabled (i.e. set to 2 or more), each Jibri instance
+    ## will get an ID assigned to it, based on pod name.
+    ## Multiple replicas are recommended for single-use mode.
+    replicaCount: 3
+
+    ## Enable persistent storage for local recordings.
+    ## If disabled, jibri pod will use a transient
+    ## emptyDir-backed storage instead.
+    persistence:
+        enabled: true
+        size: 25Gi
+        ## Set this to existing PVC name if you have one.
+        existingClaim: todayhcm-meet-production-jitsi-meet-jibri
+        storageClassName: nfs
+
+    shm:
+        ## Set to true to enable "/dev/shm" mount.
+        ## May be required by built-in Chromium.
+        enabled: true
+        ## If "true", will use host's shared memory dir,
+        ## and if "false" — an emptyDir mount.
+        useHost: true
+        size: 4Gi
+
+    ## Configure the update strategy for Jibri deployment.
+    ## This may be useful depending on your persistence settings,
+    ## e.g. when you use ReadWriteOnce PVCs.
+    ## Default strategy is "RollingUpdate", which keeps
+    ## the old instances up until the new ones are ready.
+    # strategy:
+    #   type: RollingUpdate
+
+    image:
+        repository: jitsi/jibri
+
+    metrics:
+        enabled: true
+        image:
+            repository: prayagsingh/prometheus-jibri-exporter
+            tag: latest
+            pullPolicy: IfNotPresent
+
+        resources:
+            limits:
+                cpu: 90m
+                memory: 90Mi
+            requests:
+                cpu: 50m
+                memory: 50Mi
+
+        prometheusAnnotations: true
+        serviceMonitor:
+            enabled: true
+            selector:
+                release: prometheus-operator
+            interval: 10s
+            # honorLabels: false
+
+    podLabels: {}
+    podAnnotations: {}
+    resources:
+        limits:
+            cpu: 3000m
+            memory: 5000Mi
+        requests:
+            cpu: 1500m
+            memory: 2000Mi
+
+    breweryMuc: jibribrewery
+    timeout: 90
+
+    ## jibri XMPP user credentials:
+    xmpp:
+        user: jibri
+        password:
+
+    ## recorder XMPP user credentials:
+    recorder:
+        user: recorder
+        password:
+
+    livenessProbe:
+        initialDelaySeconds: 5
+        periodSeconds: 5
+        failureThreshold: 3
+        exec:
+            command:
+                - /bin/bash
+                - "-c"
+                - >-
+                    curl -sq localhost:2222/jibri/api/v1.0/health
+                    | jq '"\(.status.health.healthStatus) \(.status.busyStatus)"'
+                    | grep -qP 'HEALTHY (IDLE|BUSY)'
+
+    readinessProbe:
+        initialDelaySeconds: 5
+        periodSeconds: 5
+        failureThreshold: 3
+        exec:
+            command:
+                - /bin/bash
+                - "-c"
+                - >-
+                    curl -sq localhost:2222/jibri/api/v1.0/health
+                    | jq '"\(.status.health.healthStatus) \(.status.busyStatus)"'
+                    | grep -qP 'HEALTHY (IDLE|BUSY)'
+
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+    s3:
+        # if enable, jibri records will upload to your s3
+        # NOTE, just apply with helm install command
+        enabled: true
+        storageClassName: nfs
+        accessModes: ReadWriteMany
+        # full below envs with your proper s3 environments
+        extraEnvs:
+            AWS_ACCESS_KEY_ID: "Y31X4XCF9M8LX1UC27F7"
+            AWS_SECRET_ACCESS_KEY: "oWAs7zB7tjjkUC0nXL55Wtte2CJxKsvxKPZD4LvA"
+            AWS_S3_ENDPOINT: "https://s3.kubit.ir"
+            AWS_S3_BUCKET_NAME: "kasra-jitsi-storage/jitsi-production-records-new-0"
+
+    extraEnvs:
+        JIBRI_RECORDING_VIDEO_ENCODE_PRESET: "ultrafast"
+        RETENTION_DATE_VIDEO: "20" # days
+        IDENTITY_TOKEN_URL: "https://identity.nxworkplace.com/connect/token"
+    ## Override the image-provided configuration files:
+    #  See https://github.com/jitsi/docker-jitsi-meet/tree/master/jibri/rootfs
+    custom:
+        contInit:
+            _10_config: ""
+        defaults:
+            _autoscaler_sidecar_config: ""
+            _jibri_conf: ""
+            _logging_properties: ""
+            _xorg_video_dummy_conf: ""
+        other:
+            _finalize_sh: |
+                #!/bin/bash
+
+                set -euo pipefail
+
+                # --- Configuration & Inputs ---
+                RECORDINGS_DIR="${1%/}"  # Remove trailing slash
+                UPLOAD_FLAG=".uploaded_to_s3"
+
+
+                # Validate required environment variables
+                REQUIRED_VARS=("AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY" "AWS_S3_ENDPOINT" "AWS_S3_BUCKET_NAME" "TODAY_MEET_URL" "TODAY_MEET_TOKEN")
+                for var in "${REQUIRED_VARS[@]}"; do
+                    if [[ -z "${!var:-}" ]]; then
+                        echo "❌ Required environment variable not set: $var"
+                        exit 1
+                    fi
+                done
+
+                # --- Validate Directory & Files ---
+                if [[ ! -d "$RECORDINGS_DIR" ]]; then
+                    echo "❌ Directory does not exist: $RECORDINGS_DIR"
+                    exit 1
+                fi
+
+                if [[ -f "$RECORDINGS_DIR/$UPLOAD_FLAG" ]]; then
+                    echo "✅ Already uploaded: $RECORDINGS_DIR"
+                    exit 0
+                fi
+
+                MP4_FILE=$(find "$RECORDINGS_DIR" -type f -name "*.mp4" | head -n 1)
+                METADATA_FILE=$(find "$RECORDINGS_DIR" -type f -name "*.json" | head -n 1)
+
+                if [[ -z "$MP4_FILE" || -z "$METADATA_FILE" ]]; then
+                    echo "❌ Missing MP4 or metadata.json file."
+                    exit 1
+                fi
+
+                # --- Extract Details ---
+                MP4_FILENAME=$(basename "$MP4_FILE")               # e.g., gip-codd-aej_2025-05-27-11-22-50.mp4
+                METADATA_FILENAME=$(basename "$METADATA_FILE")
+
+                RECORD_ROOM_NAME="${MP4_FILENAME%%_*}"             # e.g., gip-codd-aej
+                RECORD_TIMESTAMP_EXT="${MP4_FILENAME#*_}"          # e.g., 2025-05-27-11-22-50.mp4
+                RECORD_TIMESTAMP="${RECORD_TIMESTAMP_EXT%.mp4}"    # e.g., 2025-05-27-11-22-50
+                METADATA_DEST_FILENAME="${RECORD_TIMESTAMP}-metadata.json"
+
+                # --- Generate Thumbnail ---
+                THUMBNAIL_FILENAME="${RECORD_TIMESTAMP}-thumbnail.jpg"
+                THUMBNAIL_PATH="${RECORDINGS_DIR}/${THUMBNAIL_FILENAME}"
+
+                # Take screenshot at 25% of duration (approx middle of the video)
+                DURATION=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$MP4_FILE")
+                DURATION_INT=${DURATION%.*}
+                THUMBNAIL_TIME=$((DURATION_INT / 4))
+
+                ffmpeg -y -ss "$THUMBNAIL_TIME" -i "$MP4_FILE" -frames:v 1 -q:v 2 "$THUMBNAIL_PATH" > /dev/null 2>&1 || {
+                    echo "❌ Failed to generate thumbnail."
+                    exit 1
+                }
+
+                # --- Add duration to metadata.json ---
+                jq --arg duration "$DURATION_INT" '. + {duration_seconds: ($duration | tonumber)}' "$METADATA_FILE" > "${METADATA_FILE}.tmp" \
+                    && mv "${METADATA_FILE}.tmp" "$METADATA_FILE"
+
+                # --- Upload files to S3 ---
+                DEST_PREFIX="$RECORD_ROOM_NAME"
+                MP4_DEST_FILENAME="${RECORD_TIMESTAMP}.mp4"
+                echo "📤 Uploading video to S3..."
+                /aws/aws-cli-bin/aws s3 cp "$MP4_FILE" "s3://$AWS_S3_BUCKET_NAME/$DEST_PREFIX/$MP4_DEST_FILENAME" --endpoint-url "$AWS_S3_ENDPOINT"
+
+                echo "📤 Uploading metadata to S3..."
+                /aws/aws-cli-bin/aws s3 cp "$METADATA_FILE" "s3://$AWS_S3_BUCKET_NAME/$DEST_PREFIX/$METADATA_DEST_FILENAME" --endpoint-url "$AWS_S3_ENDPOINT"
+
+                echo "📤 Uploading thumbnail to S3..."
+                /aws/aws-cli-bin/aws s3 cp "$THUMBNAIL_PATH" "s3://$AWS_S3_BUCKET_NAME/$DEST_PREFIX/$THUMBNAIL_FILENAME" --endpoint-url "$AWS_S3_ENDPOINT"
+
+                # --- Mark directory as uploaded ---
+                touch "$RECORDINGS_DIR/$UPLOAD_FLAG"
+                echo "✅ Upload successful and marked."
+
+
+                # --- Clean up old recordings after successful upload ---
+                RETENTION_DAYS="${RETENTION_DATE_VIDEO:-15}"
+                PARENT_DIR="$(dirname "$RECORDINGS_DIR")"
+
+                echo "[INFO] Deleting recordings older than $RETENTION_DAYS days in $PARENT_DIR..."
+
+                find "$PARENT_DIR" -mindepth 1 -maxdepth 1 -type d -mtime +"$RETENTION_DAYS" | xargs -r rm -rf && \
+                    echo "[OK] Old recordings deleted successfully." || \
+                    echo "[INFO] No old recordings to delete or deletion failed."
+
+                # --- Notify API ---
+                CURL_ENDPOINT="$TODAY_MEET_URL/v1/meets/$RECORD_ROOM_NAME/record-end"
+                SUB_BUCKET_DIR="${AWS_S3_BUCKET_NAME#*/}"
+                VIDEO_S3_PATH="$SUB_BUCKET_DIR/$DEST_PREFIX/$MP4_DEST_FILENAME"
+                METADATA_S3_PATH="$SUB_BUCKET_DIR/$DEST_PREFIX/$METADATA_DEST_FILENAME"
+                THUMBNAIL_S3_PATH="$SUB_BUCKET_DIR/$DEST_PREFIX/$THUMBNAIL_FILENAME"
+
+                echo "📡 Sending callback to API..."
+
+                # --- Get TODAY_MEET_TOKEN ---
+                echo "[INFO] Fetching TodayMeet token..."
+                TODAY_MEET_TOKEN=$(curl -s --location "$IDENTITY_TOKEN_URL" \
+                  --header 'Content-Type: application/x-www-form-urlencoded' \
+                  --data-urlencode 'grant_type=client_credentials' \
+                  --data-urlencode 'client_id=today_jitsi_client' \
+                  --data-urlencode 'client_secret=cSrCPEtU1aSguRduM1zW7qdhoFA7kGbsIJXGtjOEo2so5l7KaWZqRbJ0CSleeJM8' \
+                  --data-urlencode 'scope=today_connect_scope' | jq -r '.access_token')
+
+                if [[ -z "$TODAY_MEET_TOKEN" || "$TODAY_MEET_TOKEN" == "null" ]]; then
+                    echo "[ERROR] Failed to fetch TODAY_MEET_TOKEN"
+                    exit 1
+                fi
+
+                HTTP_RESPONSE=$(curl -s -w "HTTPSTATUS:%{http_code}" -o /tmp/curl_body.txt \
+                    -X POST \
+                    -H "Content-Type: application/json" \
+                    -H "Authorization: Bearer $TODAY_MEET_TOKEN" \
+                    "$CURL_ENDPOINT?file=$VIDEO_S3_PATH&metadata=$METADATA_S3_PATH&thumbnail=$THUMBNAIL_S3_PATH&time=$RECORD_TIMESTAMP")
+
+                HTTP_BODY=$(cat /tmp/curl_body.txt)
+                HTTP_STATUS=$(echo "$HTTP_RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+
+                echo "----- API Response -----"
+                echo "URL         : $CURL_ENDPOINT"
+                echo "HTTP Status : $HTTP_STATUS"
+                echo "Body:"
+                echo "$HTTP_BODY"
+
+                if [ "$HTTP_STATUS" -ne 200 ]; then
+                    echo "❌ API call failed."
+                    exit 1
+                else
+                    echo "✅ API call succeeded."
+                fi
+
+serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name:
+
+xmpp:
+    domain: meet.jitsi
+    authDomain:
+    mucDomain:
+    internalMucDomain:
+    guestDomain:
+    hiddenDomain:
+
+extraCommonEnvs:
+    PROSODY_GUEST_AUTH_TYPE: "anonymous"
+    TODAY_MEET_URL: "{{ .Values.publicURL }}/meet/api"
+    TODAY_MEET_TOKEN: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjUyQUI5MUUxODE3RjE1N0IwMEYzQ0I5RTk1RDhGODcxIiwidHlwIjoiYXQrand0In0.eyJpc3MiOiJodHRwczovL2lkZW50aXR5Lm54d29ya3BsYWNlLmNvbSIsIm5iZiI6MTc1ODk2MDg2NCwiaWF0IjoxNzU4OTYwODY0LCJleHAiOjE3OTA0OTY4NjQsImF1ZCI6InRvZGF5X2Nvbm5lY3RfcmVzb3VyY2UiLCJzY29wZSI6WyJ0b2RheV9jb25uZWN0X3Njb3BlIl0sImNsaWVudF9pZCI6InRvZGF5X2ppdHNpX2NsaWVudCIsImNsaWVudF9pc19tYWNoaW5lIjoidHJ1ZSIsImp0aSI6IjVDNEY4MzdCOUQzOTRBRTZGNkU4QkY3RkZBQ0U4NkI4In0.o5yGEkhcGoJlCQACgYAfpSVrCbIHKTUjy2Y4vnA98zgWz5mptnVJCtQ2v5hBto1NRe8QXr7o-CKCQ-1iQSJJXPzR4j1OslMTvpzU0Cu2F5JeY8Ew-ALzghOMdWuEBWb4-oxZZkUeIbMB1zM7c0MyYTIAIRUR4VqJtG0uzihj63NYEeDs9_7ITLosjyCNzypkNZOiP1dVZTWVutmmUu9-Ohui6_eeIOgF4u_DcgZLIW_Pc9aA_tSi25hQPBXtqgD6KhifFw8dxsDH1SQAhb4QwYv_Uqt6Bl2hLof9kF9LlNdOdHGRbHtYXooQyrji7nFGkHUkuM2pRd6yCNd_85kM1g"
+
+prosody:
+    enabled: true
+    useExternalProsody: false
+    server:
+    extraEnvFrom:
+        - secretRef:
+              name: '{{ include "prosody.fullname" . }}-jibri'
+        - secretRef:
+              name: '{{ include "prosody.fullname" . }}-jicofo'
+        - secretRef:
+              name: '{{ include "prosody.fullname" . }}-jigasi'
+        - secretRef:
+              name: '{{ include "prosody.fullname" . }}-jvb'
+        - configMapRef:
+              name: '{{ include "prosody.fullname" . }}-common'
+    image:
+        repository: jitsi/prosody
+        tag: stable-10314
+
+    extraEnvs:
+        - name: ENABLE_TRANSCRIPTIONS
+          value: "true"
+        - name: JWT_APP_SECRET
+          value: "857f21a2-aa33-4e3f-a81e-fa950886a92f"
+        - name: JWT_APP_ID
+          value: "today_meet_client"
+        - name: AUTH_TYPE
+          value: "jwt"
+        - name: ENABLE_VISITORS
+          value: "1"
+        - name: XMPP_MUC_MODULES
+          value: "token_moderation,token_verification,lobby_autostart,token_lobby_bypass"
+        - name: XMPP_MODULES
+          value: "persistent_lobby"
+        - name: ENABLE_END_CONFERENCE
+          value: "false"
+
+    # service:
+    #   ports:
+    # If Prosody c2s in needed on private net outside the cluster
+    #     xmppc2snodePort: 30522
+
+    ## Override the image-provided configuration files:
+    #  See https://github.com/jitsi/docker-jitsi-meet/tree/master/prosody/rootfs
+    custom:
+        contInit:
+            _10_config: ""
+        defaults:
+            _prosody_cfg_lua: ""
+            _saslauthd_conf: ""
+            _jitsi_meet_cfg_lua: ""
+
+    extraVolumes:
+        - name: prosody-modules
+          configMap:
+              name: prosody-custom-modules
+              items:
+                  - key: mod_token_moderation.lua
+                    path: mod_token_moderation.lua
+                  - key: mod_lobby_autostart.lua
+                    path: mod_lobby_autostart.lua
+                  - key: mod_token_lobby_bypass.lua
+                    path: mod_token_lobby_bypass.lua
+
+    extraVolumeMounts:
+        - name: prosody-modules
+          mountPath: /prosody-plugins-custom
+          readOnly: true
+
+    resources:
+        limits:
+            cpu: 600m
+            memory: 1000Mi
+        requests:
+            cpu: 300m
+            memory: 500Mi
+
+    persistence:
+        enabled: true
+        size: 400Mi
+        storageClassName:
+
+excalidraw:
+    enabled: true
+    image:
+        repository: jitsi/excalidraw-backend
+        tag: 2025.2.2
+
+    resources:
+        limits:
+            memory: "1000Mi"
+            cpu: "100m"
+        requests:
+            memory: "500Mi"
+            cpu: "50m"
+
+    # for enable excalidraw for see in web by socket you need to enable ingress
+    ingress:
+        enabled: true
+        ingressClassName: "nginx"
+        annotations:
+            nginx.ingress.kubernetes.io/proxy-body-size: 64m
+            nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+            nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+            nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
+        hosts:
+            - host: draw.nxworkplace.com
+              paths: ["/"]
+        tls:
+            - secretName: nxworkplace-cert
+              hosts:
+                  - draw.nxworkplace.com
+
+    serviceMonitor:
+        enabled: false
+        selector:
+            release: prometheus-operator
+        interval: 10s
+        # honorLabels: false
