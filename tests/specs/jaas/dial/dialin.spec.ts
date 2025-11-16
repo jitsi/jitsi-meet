@@ -32,6 +32,9 @@ describe('Dial-in', () => {
 
         p1 = await joinJaasMuc({ name: 'p1', token: t({ room, moderator: true }) });
         webhooksProxy = ctx.webhooksProxy;
+        if (!webhooksProxy) {
+            console.error('WebhooksProxy is not available, will not verify webhooks.');
+        }
 
         expect(await p1.isInMuc()).toBe(true);
         if (expectations.dialIn.enabled !== null) {
@@ -59,13 +62,20 @@ describe('Dial-in', () => {
         await dialIn(dialInPin);
         await waitForMedia(p1);
 
-        const startedPayload
-            = await verifyStartedWebhooks(webhooksProxy, 'in', 'DIAL_IN_STARTED', customerId);
+        let startedPayload: any;
+
+        if (webhooksProxy) {
+            startedPayload
+                = await verifyStartedWebhooks(webhooksProxy, 'in', 'DIAL_IN_STARTED', customerId);
+        }
+
         const endpointId = await p1.execute(() => APP?.conference?.listMembers()[0].getId());
 
         await p1.getFilmstrip().kickParticipant(endpointId);
 
-        await verifyEndedWebhook(webhooksProxy, 'DIAL_IN_ENDED', customerId, startedPayload);
+        if (webhooksProxy) {
+            await verifyEndedWebhook(webhooksProxy, 'DIAL_IN_ENDED', customerId, startedPayload);
+        }
 
         await p1.hangup();
     });

@@ -80,7 +80,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                     dispatch(setVisitorDemoteActor(undefined));
                 });
             } else if (showJoinMeetingDialog) {
-                dispatch(openDialog(JoinMeetingDialog));
+                dispatch(openDialog('JoinMeetingDialog', JoinMeetingDialog));
             }
 
         } else {

@@ -294,7 +294,7 @@ export function setCameraFacingMode(facingMode: string | undefined) {
  * @returns {Object} - The open dialog action.
  */
 export function openAllowToggleCameraDialog(onAllow: Function, initiatorId: string) {
-    return openDialog(AllowToggleCameraDialog, {
+    return openDialog('AllowToggleCameraDialog', AllowToggleCameraDialog, {
         onAllow,
         initiatorId
     });

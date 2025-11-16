@@ -110,7 +110,7 @@ class ReactionMenuDialog extends PureComponent<IProps> {
      */
     _onCancel() {
         if (this.props._isOpen) {
-            this.props.dispatch(hideDialog(ReactionMenu_));
+            this.props.dispatch(hideDialog('ReactionMenu_', ReactionMenu_));
 
             return true;
         }

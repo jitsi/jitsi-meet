@@ -254,6 +254,11 @@ function destroy_lobby_room(room, newjid, message)
             lobby_room_obj:destroy(newjid, message);
 
             module:log('info', 'Lobby room destroyed %s', lobby_room_obj.jid)
+
+            if room.jitsiMetadata then
+                room.jitsiMetadata.lobbyEnabled = false;
+                module:context(main_muc_component_config):fire_event('room-metadata-changed', { room = room; });
+            end
         end
         room._data.lobbyroom = nil;
         room._data.lobby_extra_reason = nil;
@@ -488,9 +493,16 @@ process_host_module(main_muc_component_config, function(host_module, host)
                 module:fire_event('jitsi-lobby-enabled', { room = room; });
                 event.status_codes['104'] = true;
                 notify_lobby_enabled(room, actor, true);
+
+                -- let's set it in the metadata and fire the event
+                if not room.jitsiMetadata then
+                    room.jitsiMetadata = {};
+                end
+                room.jitsiMetadata.lobbyEnabled = true;
+                host_module:fire_event('room-metadata-changed', { room = room; });
             end
         elseif room._data.lobbyroom then
-            destroy_lobby_room(room, room.jid);
+            destroy_lobby_room(room, room.jid, nil);
             module:fire_event('jitsi-lobby-disabled', { room = room; });
             notify_lobby_enabled(room, actor, false);
         end
@@ -500,7 +512,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
         if room._data.lobbyroom then
             destroy_lobby_room(room, nil);
         end
-    end);
+    end, 1); -- prosody handles it at 0
     host_module:hook('muc-disco#info', function (event)
         local room = event.room;
         if (room._data.lobbyroom and room:get_members_only()) then
@@ -648,6 +660,13 @@ function handle_create_lobby(event)
     room:set_members_only(true);
     room._data.lobby_extra_reason = event.reason;
     room._data.lobby_skip_display_name_check = event.skip_display_name_check;
+
+    -- set in metadata without firing room-metadata-changed,
+    -- as this is a backend call and the caller will take care of that
+    if not room.jitsiMetadata then
+        room.jitsiMetadata = {};
+    end
+    room.jitsiMetadata.lobbyEnabled = true;
 
     -- Trigger a presence with 104 so existing participants retrieves new muc#roomconfig
     room:broadcast_message(

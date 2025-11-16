@@ -13,7 +13,7 @@ import PageReloadDialog from '../base/dialog/components/native/PageReloadDialog'
  */
 export function openPageReloadDialog(
         conferenceError?: Error, configError?: Error, connectionError?: ConnectionFailedError) {
-    return openDialog(PageReloadDialog, {
+    return openDialog('PageReloadDialog', PageReloadDialog, {
         conferenceError,
         configError,
         connectionError

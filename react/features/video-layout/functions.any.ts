@@ -11,6 +11,7 @@ import { getReceiverVideoQualityLevel } from '../video-quality/functions';
 import { getMinHeightForQualityLvlMap } from '../video-quality/selector';
 
 import { LAYOUTS } from './constants';
+import logger from './logger';
 
 /**
  * A selector for retrieving the current automatic pinning setting.
@@ -113,39 +114,49 @@ export function shouldDisplayTileView(state: IReduxState) {
  * Private helper to automatically pin the latest screen share stream or unpin
  * if there are no more screen share streams.
  *
- * @param {Array<string>} screenShares - Array containing the list of all the screen sharing endpoints
+ * @param {Array<string>} previousScreenShares - Array containing the list of all the screen sharing endpoints
  * before the update was triggered (including the ones that have been removed from redux because of the update).
+ * @param {Array<string>} currentScreenShares - Array containing the current list of screen sharing endpoints.
  * @param {Store} store - The redux store.
  * @returns {void}
  */
 export function updateAutoPinnedParticipant(
-        screenShares: Array<string>, { dispatch, getState }: IStore) {
-    const state = getState();
-    const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
+        previousScreenShares: Array<string>,
+        currentScreenShares: Array<string>,
+        { dispatch, getState }: IStore) {
     const pinned = getPinnedParticipant(getState);
 
     // if the pinned participant is shared video or some other fake participant we want to skip auto-pinning
     if (pinned?.fakeParticipant && pinned.fakeParticipant !== FakeParticipant.RemoteScreenShare) {
+        logger.debug('Skipping auto-pin: pinned participant is non-screenshare virtual participant', pinned.id);
+
         return;
     }
 
     // Unpin the screen share when the screen sharing participant leaves. Switch to tile view if no other
     // participant was pinned before screen share was auto-pinned, pin the previously pinned participant otherwise.
-    if (!remoteScreenShares?.length) {
+    if (!currentScreenShares?.length) {
         let participantId = null;
 
-        if (pinned && !screenShares.find(share => share === pinned.id)) {
+        if (pinned && !previousScreenShares.find((share: string) => share === pinned.id)) {
             participantId = pinned.id;
         }
+
+        logger.debug('No more screenshares, unpinning or restoring previous pin', participantId);
         dispatch(pinParticipant(participantId));
 
         return;
     }
 
-    const latestScreenShareParticipantId = remoteScreenShares[remoteScreenShares.length - 1];
+    const latestScreenShareParticipantId = currentScreenShares[currentScreenShares.length - 1];
 
     if (latestScreenShareParticipantId) {
-        dispatch(pinParticipant(latestScreenShareParticipantId));
+        const alreadyPinned = pinned?.id === latestScreenShareParticipantId;
+
+        if (!alreadyPinned) {
+            logger.debug(`Auto pinning latest screen share participant: ${latestScreenShareParticipantId}`);
+            dispatch(pinParticipant(latestScreenShareParticipantId));
+        }
     }
 }
 

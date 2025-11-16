@@ -327,7 +327,7 @@ export function _mapDispatchToProps(dispatch: IStore['dispatch']) {
          * @returns {void}
          */
         _onOpenBandwidthDialog() {
-            dispatch(openDialog(BandwidthSettingsDialog));
+            dispatch(openDialog('BandwidthSettingsDialog', BandwidthSettingsDialog));
         }
     };
 }

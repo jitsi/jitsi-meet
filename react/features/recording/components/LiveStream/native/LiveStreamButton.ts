@@ -34,7 +34,7 @@ class LiveStreamButton extends AbstractLiveStreamButton<Props> {
         const { _isLiveStreamRunning, dispatch } = this.props;
 
         if (_isLiveStreamRunning) {
-            dispatch(openDialog(StopLiveStreamDialog));
+            dispatch(openDialog('StopLiveStreamDialog', StopLiveStreamDialog));
         } else {
             navigate(screen.conference.liveStream);
         }

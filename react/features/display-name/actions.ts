@@ -14,7 +14,7 @@ export function openDisplayNamePrompt({ onPostSubmit, validateInput }: {
     onPostSubmit?: Function;
     validateInput?: Function;
 }) {
-    return openDialog(DisplayNamePrompt, {
+    return openDialog('DisplayNamePrompt', DisplayNamePrompt, {
         onPostSubmit,
         validateInput
     });

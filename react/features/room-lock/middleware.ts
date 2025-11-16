@@ -74,7 +74,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {*}
  */
 function _conferenceJoined({ dispatch }: IStore, next: Function, action: AnyAction) {
-    dispatch(hideDialog(PasswordRequiredPrompt));
+    dispatch(hideDialog('PasswordRequiredPrompt', PasswordRequiredPrompt));
 
     return next(action);
 }
@@ -104,7 +104,7 @@ function _conferenceFailed({ dispatch }: IStore, next: Function, action: AnyActi
             dispatch(_openPasswordRequiredPrompt(conference));
         }
     } else {
-        dispatch(hideDialog(PasswordRequiredPrompt));
+        dispatch(hideDialog('PasswordRequiredPrompt', PasswordRequiredPrompt));
     }
 
     return next(action);

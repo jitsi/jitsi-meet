@@ -1,6 +1,7 @@
 import AllureReporter from '@wdio/allure-reporter';
 import { multiremotebrowser } from '@wdio/globals';
 import { Buffer } from 'buffer';
+import fs from 'fs';
 import { glob } from 'glob';
 import path from 'node:path';
 import process from 'node:process';
@@ -273,9 +274,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
             globalAny.ctx.webhooksProxy.connect();
         }
 
-        if (testProperties.useWebhookProxy && !globalAny.ctx.webhooksProxy) {
-            console.warn(`WebhookProxy is not available, skipping ${testName}`);
-            globalAny.ctx.skipSuiteTests = 'WebhooksProxy is not required but not available';
+        if (testProperties.requireWebhookProxy && !globalAny.ctx.webhooksProxy) {
+            throw new Error('The test requires WebhookProxy, but it is not available.');
         }
     },
 
@@ -461,6 +461,15 @@ export const config: WebdriverIO.MultiremoteConfig = {
                 }
 
                 console.log('Allure report successfully generated');
+
+                // An ugly hack to sort by test order by default in the allure report.
+                const content = fs.readFileSync(`${TEST_RESULTS_DIR}/allure-report/index.html`, 'utf8');
+                const modifiedContent = content.replace('<body>',
+                    '<body><script>localStorage.setItem("ALLURE_REPORT_SETTINGS_SUITES", \'{"treeSorting":{"sorter":"sorter.order","ascending":true}}\')</script>'
+                );
+
+                fs.writeFileSync(`${TEST_RESULTS_DIR}/allure-report/index.html`, modifiedContent);
+
                 resolve();
             });
         });

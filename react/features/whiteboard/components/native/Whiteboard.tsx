@@ -152,7 +152,7 @@ class Whiteboard extends PureComponent<IProps> {
      * @returns {void}
      */
     _onError() {
-        this.props.dispatch(openDialog(WhiteboardErrorDialog));
+        this.props.dispatch(openDialog('WhiteboardErrorDialog', WhiteboardErrorDialog));
     }
 
     /**

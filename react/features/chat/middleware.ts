@@ -25,6 +25,8 @@ import { IParticipant } from '../base/participants/types';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { playSound, registerSound, unregisterSound } from '../base/sounds/actions';
+import { arePollsDisabled } from '../conference/functions.any';
+import { isFileSharingEnabled } from '../file-sharing/functions.any';
 import { addGif } from '../gifs/actions';
 import { extractGifURL, getGifDisplayMode, isGifEnabled, isGifMessage } from '../gifs/function.any';
 import { showMessageNotification } from '../notifications/actions';
@@ -34,6 +36,7 @@ import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
 import { pushReactions } from '../reactions/actions.any';
 import { ENDPOINT_REACTION_NAME } from '../reactions/constants';
 import { getReactionMessageFromBuffer, isReactionsEnabled } from '../reactions/functions.any';
+import { isCCTabEnabled } from '../subtitles/functions.any';
 import { showToolbox } from '../toolbox/actions';
 import { getDisplayName } from '../visitors/functions';
 
@@ -66,7 +69,9 @@ import {
 } from './constants';
 import {
     getDisplayNameSuffix,
+    getFocusedTab,
     getUnreadCount,
+    isChatDisabled,
     isSendGroupChatDisabled,
     isVisitorChatParticipant
 } from './functions';
@@ -181,23 +186,28 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_FOCUSED_TAB:
     case OPEN_CHAT: {
-        const focusedTab = action.tabId || getState()['features/chat'].focusedTab;
+        const state = store.getState();
+        const focusedTab = action.tabId || getFocusedTab(state);
 
         if (focusedTab === ChatTabs.CHAT) {
+            // Don't allow opening chat if it's disabled AND user is trying to open the CHAT tab.
+            if (isChatDisabled(state)) {
+                return next(action);
+            }
             unreadCount = 0;
 
             if (typeof APP !== 'undefined') {
                 APP.API.notifyChatUpdated(unreadCount, true);
             }
 
-            const { privateMessageRecipient } = store.getState()['features/chat'];
+            const { privateMessageRecipient } = state['features/chat'];
 
             if (
-                isSendGroupChatDisabled(store.getState())
+                isSendGroupChatDisabled(state)
                 && privateMessageRecipient
                 && !action.participant
             ) {
-                const participant = getParticipantById(store.getState(), privateMessageRecipient.id);
+                const participant = getParticipantById(state, privateMessageRecipient.id);
 
                 if (participant) {
                     action.participant = participant;
@@ -207,7 +217,21 @@ MiddlewareRegistry.register(store => next => action => {
                 }
             }
         } else if (focusedTab === ChatTabs.POLLS) {
+            // Don't allow opening chat panel if polls are disabled AND user is trying to open the POLLS tab.
+            if (arePollsDisabled(state)) {
+                return next(action);
+            }
             dispatch(resetUnreadPollsCount());
+
+        // Don't allow opening chat panel if file sharing is disabled AND user is trying to open the
+        // FILE_SHARING tab.
+        } else if (focusedTab === ChatTabs.FILE_SHARING && !isFileSharingEnabled(state)) {
+            return next(action);
+
+        // Don't allow opening chat panel if closed captions are disabled AND user is trying to open the
+        // CLOSED_CAPTIONS tab.
+        } else if (focusedTab === ChatTabs.CLOSED_CAPTIONS && !isCCTabEnabled(state)) {
+            return next(action);
         }
 
         break;
@@ -239,7 +263,7 @@ MiddlewareRegistry.register(store => next => action => {
                 const participantExists = getParticipantById(state, shouldSendPrivateMessageTo.id);
 
                 if (participantExists || shouldSendPrivateMessageTo.isFromVisitor) {
-                    dispatch(openDialog(ChatPrivacyDialog, {
+                    dispatch(openDialog('ChatPrivacyDialog', ChatPrivacyDialog, {
                         message: action.message,
                         participantID: shouldSendPrivateMessageTo.id,
                         isFromVisitor: shouldSendPrivateMessageTo.isFromVisitor,
@@ -575,6 +599,11 @@ function _handleReceivedMessage({ dispatch, getState }: IStore,
     const state = getState();
     const { isOpen: isChatOpen } = state['features/chat'];
     const { soundsIncomingMessage: soundEnabled, userSelectedNotifications } = state['features/base/settings'];
+
+    // Don't play sound or show notifications if chat is disabled.
+    if (isChatDisabled(state)) {
+        return;
+    }
 
     if (soundEnabled && shouldPlaySound && !isChatOpen) {
         dispatch(playSound(INCOMING_MSG_SOUND_ID));
