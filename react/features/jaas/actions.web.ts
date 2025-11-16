@@ -15,7 +15,7 @@ import { isFeatureDisabled } from './functions';
 export function maybeShowPremiumFeatureDialog(feature: ParticipantFeaturesKey) {
     return function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
         if (isFeatureDisabled(getState(), feature)) {
-            dispatch(openDialog(PremiumFeatureDialog));
+            dispatch(openDialog('PremiumFeatureDialog', PremiumFeatureDialog));
 
             return true;
         }

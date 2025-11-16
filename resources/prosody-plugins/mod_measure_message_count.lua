@@ -153,7 +153,7 @@ end
 module:hook('message/full', on_message); -- private messages
 module:hook('message/bare', on_message); -- room messages
 
-module:hook('muc-room-destroyed', room_destroyed, -1);
+module:hook('muc-room-destroyed', room_destroyed, 1); -- prosody handles it at 0
 module:hook("muc-occupant-left", function(event)
     local occupant, room = event.occupant, event.room;
     local session = event.origin;

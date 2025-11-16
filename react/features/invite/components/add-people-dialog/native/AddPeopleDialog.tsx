@@ -559,7 +559,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
      * @returns {void}
      */
     _showFailedInviteAlert() {
-        this.props.dispatch(openDialog(AlertDialog, {
+        this.props.dispatch(openDialog('AlertDialog', AlertDialog, {
             contentKey: {
                 key: 'inviteDialog.alertText'
             }

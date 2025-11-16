@@ -154,15 +154,17 @@ describe('Lobby', () => {
         await p1.getNotifications().waitForHideOfKnockingParticipants();
     });
 
-    it('conference ended in lobby', async () => {
+    it('lobby persistence', async () => {
         const { p1, p2 } = ctx;
 
         await enterLobby(p1, false);
 
+        const { p3 } = ctx;
+
+        expect(await p3.getLobbyScreen().isLobbyRoomJoined()).toBe(true);
+
         await p1.hangup();
         await p2.hangup();
-
-        const { p3 } = ctx;
 
         await p3.driver.$('.dialog.leaveReason').isExisting();
 
@@ -170,7 +172,7 @@ describe('Lobby', () => {
             async () => !await p3.getLobbyScreen().isLobbyRoomJoined(),
             {
                 timeout: 2000,
-                timeoutMsg: 'p2 did not leave lobby'
+                timeoutMsg: 'p3 did not leave lobby'
             }
         );
 
@@ -323,7 +325,7 @@ describe('Lobby', () => {
         await ensureTwoParticipants();
         await enableLobby();
 
-        const { p1 } = ctx;
+        const { p1, p2 } = ctx;
 
         const knockingParticipant = await enterLobby(p1, true, true);
 
@@ -368,6 +370,11 @@ describe('Lobby', () => {
         await p3.waitForRemoteStreams(2);
 
         expect(await p3.getFilmstrip().countVisibleThumbnails()).toBe(3);
+
+        // Check that there are no gaps in the filmstrip after joining from lobby
+        await p1.getFilmstrip().assertNoGapsInFilmstrip();
+        await p2.getFilmstrip().assertNoGapsInFilmstrip();
+        await p3.getFilmstrip().assertNoGapsInFilmstrip();
     });
 });
 

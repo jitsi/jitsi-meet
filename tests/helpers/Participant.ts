@@ -580,50 +580,6 @@ export class Participant {
     }
 
     /**
-     * Waits for a specific participant to be displayed on large video.
-     *
-     * @param {string} expectedEndpointId - The endpoint ID of the participant expected on large video.
-     * @param {string} timeoutMsg - Optional custom timeout message.
-     * @param {number} timeout - Optional timeout in milliseconds (default: 30000).
-     * @returns {Promise<void>}
-     */
-    async waitForParticipantOnLargeVideo(
-            expectedEndpointId: string,
-            timeoutMsg?: string,
-            timeout: number = 30_000): Promise<void> {
-        await this.driver.waitUntil(
-            async () => await this.getLargeVideo().getResource() === expectedEndpointId,
-            {
-                timeout,
-                timeoutMsg: timeoutMsg || `Expected ${expectedEndpointId} on large video for ${this.name}`
-            });
-    }
-
-    /**
-     * Waits for any one of the specified participants to be displayed on large video.
-     *
-     * @param {string[]} expectedEndpointIds - Array of endpoint IDs, any one of which is expected on large video.
-     * @param {string} timeoutMsg - Optional custom timeout message.
-     * @param {number} timeout - Optional timeout in milliseconds (default: 30000).
-     * @returns {Promise<void>}
-     */
-    async waitForAnyParticipantOnLargeVideo(
-            expectedEndpointIds: string[],
-            timeoutMsg?: string,
-            timeout: number = 30_000): Promise<void> {
-        await this.driver.waitUntil(
-            async () => {
-                const largeVideoResource = await this.getLargeVideo().getResource();
-
-                return expectedEndpointIds.includes(largeVideoResource);
-            },
-            {
-                timeout,
-                timeoutMsg: timeoutMsg || `Expected one of [${expectedEndpointIds.join(', ')}] on large video for ${this.name}`
-            });
-    }
-
-    /**
      * Returns the videoQuality Dialog.
      *
      * @returns {VideoQualityDialog}
@@ -722,9 +678,9 @@ export class Participant {
      * Hangups the participant by leaving the page. base.html is an empty page on all deployments.
      */
     async hangup() {
-        console.log('Hanging up');
+        console.log(`Hanging up (${this.name})`);
         if ((await this.driver.getUrl()).endsWith('/base.html')) {
-            console.log('Already hung up');
+            console.log(`Already hung up (${this.name})`);
 
             return;
         }
@@ -749,7 +705,7 @@ export class Participant {
                 timeoutMsg: `${this.name} failed to hang up`
             }
         );
-        console.log('Hung up');
+        console.log(`Hung up (${this.name})`);
 
         await this.driver.url('/base.html')
 
@@ -969,6 +925,26 @@ export class Participant {
      */
     async isRemoteVideoReceivedAndDisplayed(endpointId: string): Promise<boolean> {
         return await this.isRemoteVideoReceived(endpointId) && await this.isRemoteVideoDisplayed(endpointId);
+    }
+
+    /**
+     * Waits for a specific participant to be displayed on large video.
+     *
+     * @param {string} expectedEndpointId - The endpoint ID of the participant expected on large video.
+     * @param {string} timeoutMsg - Optional custom timeout message.
+     * @param {number} timeout - Optional timeout in milliseconds (default: 30000).
+     * @returns {Promise<void>}
+     */
+    async waitForParticipantOnLargeVideo(
+            expectedEndpointId: string,
+            timeoutMsg?: string,
+            timeout: number = 30_000): Promise<void> {
+        await this.driver.waitUntil(
+            async () => await this.getLargeVideo().getResource() === expectedEndpointId,
+            {
+                timeout,
+                timeoutMsg: timeoutMsg || `Expected ${expectedEndpointId} on large video for ${this.name}`
+            });
     }
 
     /**

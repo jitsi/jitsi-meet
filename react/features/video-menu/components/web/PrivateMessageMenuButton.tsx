@@ -11,6 +11,7 @@ import { getParticipantById } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { openChat } from '../../../chat/actions.web';
+import { isChatDisabled } from '../../../chat/functions';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
 import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { IButtonProps } from '../../types';
@@ -98,14 +99,14 @@ class PrivateMessageMenuButton extends Component<IProps> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
-    const enabled = getFeatureFlag(state, CHAT_ENABLED, true);
+    const enabled = getFeatureFlag(state, CHAT_ENABLED, true) && !isChatDisabled(state);
     const { visible = enabled } = ownProps;
 
     return {
         _participant: getParticipantById(state, ownProps.participantID),
         visible,
-        _hidden: typeof interfaceConfig !== 'undefined'
-            && (interfaceConfig.DISABLE_PRIVATE_MESSAGES || !isButtonEnabled('chat', state))
+        _hidden: (typeof interfaceConfig !== 'undefined'
+            && (interfaceConfig.DISABLE_PRIVATE_MESSAGES || !isButtonEnabled('chat', state))) || isChatDisabled(state)
     };
 }
 

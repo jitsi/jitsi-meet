@@ -94,6 +94,7 @@ export default [
     'disableAudioLevels',
     'disableBeforeUnloadHandlers',
     'disableCameraTintForeground',
+    'disableChat',
     'disableChatSmileys',
     'disableDeepLinking',
     'disabledNotifications',

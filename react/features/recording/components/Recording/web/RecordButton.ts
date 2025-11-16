@@ -26,10 +26,10 @@ class RecordingButton extends AbstractRecordButton<IProps> {
      */
     override _onHandleClick() {
         const { _isRecordingRunning, dispatch } = this.props;
+        const dialogComponent = _isRecordingRunning ? StopRecordingDialog : StartRecordingDialog;
+        const dialogName = _isRecordingRunning ? 'StopRecordingDialog' : 'StartRecordingDialog';
 
-        dispatch(openDialog(
-            _isRecordingRunning ? StopRecordingDialog : StartRecordingDialog
-        ));
+        dispatch(openDialog(dialogName, dialogComponent));
     }
 }
 

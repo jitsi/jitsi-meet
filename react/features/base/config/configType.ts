@@ -285,6 +285,7 @@ export interface IConfig {
     disableAudioLevels?: boolean;
     disableBeforeUnloadHandlers?: boolean;
     disableCameraTintForeground?: boolean;
+    disableChat?: boolean;
     disableChatSmileys?: boolean;
     disableDeepLinking?: boolean;
     disableFilmstripAutohiding?: boolean;
@@ -393,6 +394,7 @@ export interface IConfig {
         disabled?: boolean;
         initialWidth?: number;
         minParticipantCountForTopPanel?: number;
+        stageFilmstripParticipants?: number;
     };
     flags?: {
         ssrcRewritingEnabled: boolean;

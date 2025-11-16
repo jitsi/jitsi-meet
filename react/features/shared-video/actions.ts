@@ -81,7 +81,7 @@ export function setSharedVideoStatus({ videoUrl, status, time, ownerId, muted }:
  * @returns {Function}
  */
 export function showSharedVideoDialog(onPostSubmit: Function) {
-    return openDialog(SharedVideoDialog, { onPostSubmit });
+    return openDialog('SharedVideoDialog', SharedVideoDialog, { onPostSubmit });
 }
 
 /**
@@ -181,7 +181,7 @@ export function showConfirmPlayingDialog(actor: String, onSubmit: Function) {
         // shows only one dialog at a time
         dispatch(setConfirmShowVideo(false));
 
-        dispatch(openDialog(ShareVideoConfirmDialog, {
+        dispatch(openDialog('ShareVideoConfirmDialog', ShareVideoConfirmDialog, {
             actorName: actor,
             onSubmit: () => {
                 dispatch(setConfirmShowVideo(true));
@@ -198,6 +198,6 @@ export function showConfirmPlayingDialog(actor: String, onSubmit: Function) {
  */
 export function hideConfirmPlayingDialog() {
     return (dispatch: IStore['dispatch']) => {
-        dispatch(hideDialog(ShareVideoConfirmDialog));
+        dispatch(hideDialog('ShareVideoConfirmDialog', ShareVideoConfirmDialog));
     };
 }

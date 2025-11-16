@@ -63,6 +63,65 @@ const AVATAR_CHECKER_FUNCTIONS = [
 /* eslint-enable arrow-body-style */
 
 /**
+ * Returns the list of active speakers that should be moved to the top of the sorted list of participants so that the
+ * dominant speaker is visible always on the vertical filmstrip in stage layout.
+ *
+ * @param {Function | Object} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
+ * retrieve the state.
+ * @returns {Array<string>}
+ */
+export function getActiveSpeakersToBeDisplayed(stateful: IStateful) {
+    const state = toState(stateful);
+    const {
+        dominantSpeaker,
+        fakeParticipants,
+        sortedRemoteVirtualScreenshareParticipants,
+        speakersList
+    } = state['features/base/participants'];
+    const { visibleRemoteParticipants } = state['features/filmstrip'];
+    let activeSpeakers = new Map(speakersList);
+
+    // Do not re-sort the active speakers if dominant speaker is currently visible.
+    if (dominantSpeaker && visibleRemoteParticipants.has(dominantSpeaker)) {
+        return activeSpeakers;
+    }
+    let availableSlotsForActiveSpeakers = visibleRemoteParticipants.size;
+
+    if (activeSpeakers.has(dominantSpeaker ?? '')) {
+        activeSpeakers.delete(dominantSpeaker ?? '');
+    }
+
+    // Add dominant speaker to the beginning of the list (not including self) since the active speaker list is always
+    // alphabetically sorted.
+    if (dominantSpeaker && dominantSpeaker !== getLocalParticipant(state)?.id) {
+        const updatedSpeakers = Array.from(activeSpeakers);
+
+        updatedSpeakers.splice(0, 0, [ dominantSpeaker, getParticipantById(state, dominantSpeaker)?.name ?? '' ]);
+        activeSpeakers = new Map(updatedSpeakers);
+    }
+
+    // Remove screenshares from the count.
+    if (sortedRemoteVirtualScreenshareParticipants) {
+        availableSlotsForActiveSpeakers -= sortedRemoteVirtualScreenshareParticipants.size * 2;
+        for (const screenshare of Array.from(sortedRemoteVirtualScreenshareParticipants.keys())) {
+            const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare as string);
+
+            activeSpeakers.delete(ownerId);
+        }
+    }
+
+    // Remove fake participants from the count.
+    if (fakeParticipants) {
+        availableSlotsForActiveSpeakers -= fakeParticipants.size;
+    }
+    const truncatedSpeakersList = Array.from(activeSpeakers).slice(0, availableSlotsForActiveSpeakers);
+
+    truncatedSpeakersList.sort((a: any, b: any) => a[1].localeCompare(b[1]));
+
+    return new Map(truncatedSpeakersList);
+}
+
+/**
  * Resolves the first loadable avatar URL for a participant.
  *
  * @param {Object} participant - The participant to resolve avatars for.

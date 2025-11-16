@@ -159,7 +159,7 @@ StateListenerRegistry.register(
             });
 
             conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_READY, (pId: string, sas: object) => {
-                dispatch(openDialog(ParticipantVerificationDialog, { pId,
+                dispatch(openDialog('ParticipantVerificationDialog', ParticipantVerificationDialog, { pId,
                     sas }));
             });
 

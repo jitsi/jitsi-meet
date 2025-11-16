@@ -59,7 +59,7 @@ export function startAudioScreenShareFlow() {
 
         // If we're already in a normal screen sharing session, warn the user.
         if (isScreenVideoShared(state)) {
-            dispatch(openDialog(ShareMediaWarningDialog, { _isAudioScreenShareWarning: true }));
+            dispatch(openDialog('ShareMediaWarningDialog', ShareMediaWarningDialog, { _isAudioScreenShareWarning: true }));
 
             return;
         }
@@ -76,7 +76,7 @@ export function startAudioScreenShareFlow() {
             return;
         }
 
-        dispatch(openDialog(ShareAudioDialog));
+        dispatch(openDialog('ShareAudioDialog', ShareAudioDialog));
     };
 }
 
@@ -94,7 +94,7 @@ export function startScreenShareFlow(enabled: boolean) {
 
         // If we're in an audio screen sharing session, warn the user.
         if (audioOnlySharing) {
-            dispatch(openDialog(ShareMediaWarningDialog, { _isAudioScreenShareWarning: false }));
+            dispatch(openDialog('ShareMediaWarningDialog', ShareMediaWarningDialog, { _isAudioScreenShareWarning: false }));
 
             return;
         }

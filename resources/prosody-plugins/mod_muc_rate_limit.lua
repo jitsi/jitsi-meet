@@ -164,7 +164,7 @@ module:hook('muc-room-destroyed',function(event)
     if event.room.leave_rate_presence_queue then
         event.room.leave_rate_presence_queue.empty = true;
     end
-end);
+end, 1);  -- prosody handles it at 0
 
 module:hook('muc-occupant-pre-leave', function (event)
     local occupant, room, stanza = event.occupant, event.room, event.stanza;

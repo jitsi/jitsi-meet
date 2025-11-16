@@ -27,6 +27,7 @@ import {
     isRemoteScreenshareParticipant,
     isScreenShareParticipant
 } from './functions';
+import logger from './logger';
 import { FakeParticipant, ILocalParticipant, IParticipant, ISourceInfo } from './types';
 
 /**
@@ -76,12 +77,12 @@ const DEFAULT_STATE = {
     numberOfParticipantsNotSupportingE2EE: 0,
     overwrittenNameList: {},
     pinnedParticipant: undefined,
-    previousSpeakers: new Set<string>(),
     raisedHandsQueue: [],
     remote: new Map(),
     remoteVideoSources: new Set<string>(),
     sortedRemoteVirtualScreenshareParticipants: new Map(),
-    sortedRemoteParticipants: new Map()
+    sortedRemoteParticipants: new Map(),
+    speakersList: new Map()
 };
 
 export interface IParticipantsState {
@@ -94,12 +95,12 @@ export interface IParticipantsState {
     numberOfParticipantsNotSupportingE2EE: number;
     overwrittenNameList: { [id: string]: string; };
     pinnedParticipant?: string;
-    previousSpeakers: Set<string>;
     raisedHandsQueue: Array<{ hasBeenNotified?: boolean; id: string; raisedHandTimestamp: number; }>;
     remote: Map<string, IParticipant>;
     remoteVideoSources: Set<string>;
     sortedRemoteParticipants: Map<string, string>;
     sortedRemoteVirtualScreenshareParticipants: Map<string, string>;
+    speakersList: Map<string, string>;
 }
 
 /**
@@ -156,10 +157,22 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         const { participant } = action;
         const { id, previousSpeakers = [] } = participant;
         const { dominantSpeaker, local } = state;
+        const newSpeakers = [ id, ...previousSpeakers ];
+        const sortedSpeakersList: Array<Array<string>> = [];
 
-        // Build chronologically ordered Set of remote speakers (excluding local)
-        const previousSpeakersSet: Set<string>
-            = new Set(previousSpeakers.filter((speaker: string) => speaker !== local?.id));
+        for (const speaker of newSpeakers) {
+            if (speaker !== local?.id) {
+                const remoteParticipant = state.remote.get(speaker);
+
+                remoteParticipant
+                && sortedSpeakersList.push(
+                    [ speaker, _getDisplayName(state, remoteParticipant?.name) ]
+                );
+            }
+        }
+
+        // Keep the remote speaker list sorted alphabetically.
+        sortedSpeakersList.sort((a, b) => a[1].localeCompare(b[1]));
 
         // Only one dominant speaker is allowed.
         if (dominantSpeaker) {
@@ -169,8 +182,8 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         if (_updateParticipantProperty(state, id, 'dominantSpeaker', true)) {
             return {
                 ...state,
-                dominantSpeaker: id,
-                previousSpeakers: previousSpeakersSet
+                dominantSpeaker: id, // @ts-ignore
+                speakersList: new Map(sortedSpeakersList)
             };
         }
 
@@ -352,6 +365,8 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
             sortedRemoteVirtualScreenshareParticipants.sort((a, b) => a[1].localeCompare(b[1]));
 
             state.sortedRemoteVirtualScreenshareParticipants = new Map(sortedRemoteVirtualScreenshareParticipants);
+
+            logger.debug('Remote screenshare participant joined', id);
         }
 
         // Exclude the screenshare participant from the fake participant count to avoid duplicates.
@@ -423,7 +438,7 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         }
 
         // Remove the participant from the list of speakers.
-        state.previousSpeakers.delete(id);
+        state.speakersList.has(id) && state.speakersList.delete(id);
 
         if (pinnedParticipant === id) {
             state.pinnedParticipant = undefined;
@@ -436,6 +451,8 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         if (sortedRemoteVirtualScreenshareParticipants.has(id)) {
             sortedRemoteVirtualScreenshareParticipants.delete(id);
             state.sortedRemoteVirtualScreenshareParticipants = new Map(sortedRemoteVirtualScreenshareParticipants);
+
+            logger.debug('Remote screenshare participant left', id);
         }
 
         if (oldParticipant && !oldParticipant.fakeParticipant && !isLocalScreenShare) {

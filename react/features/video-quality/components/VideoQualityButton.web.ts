@@ -51,7 +51,7 @@ class VideoQualityButton extends AbstractButton<IProps> {
 
         sendAnalytics(createToolbarEvent('video.quality'));
 
-        dispatch(openDialog(VideoQualityDialog));
+        dispatch(openDialog('VideoQualityDialog', VideoQualityDialog));
     }
 }
 

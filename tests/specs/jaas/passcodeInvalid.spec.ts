@@ -2,8 +2,8 @@ import { setTestProperties } from '../../helpers/TestProperties';
 import { joinJaasMuc, generateJaasToken as t } from '../../helpers/jaas';
 
 setTestProperties(__filename, {
-    useJaas: true,
-    useWebhookProxy: true
+    requireWebhookProxy: true,
+    useJaas: true
 });
 
 // This test is separate from passcode.spec.ts, because it needs to use a different room name, and webhooksProxy is only

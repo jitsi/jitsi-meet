@@ -427,6 +427,6 @@ function _showExplicitConsentDialog(recorderSession: any, dispatch: IStore['disp
         dispatch(setVideoUnmutePermissions(true, true));
         dispatch(setAudioMuted(true));
         dispatch(setVideoMuted(true));
-        dispatch(openDialog(RecordingConsentDialog));
+        dispatch(openDialog('RecordingConsentDialog', RecordingConsentDialog));
     });
 }

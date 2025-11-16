@@ -220,6 +220,34 @@ export function openCCPanel() {
     };
 }
 
+/**
+ * Opens the chat panel with polls tab active.
+ *
+ * @returns {Object} The redux action.
+ */
+export function openPollsPanel() {
+    return async (dispatch: IStore['dispatch']) => {
+        dispatch(setFocusedTab(ChatTabs.POLLS));
+        dispatch({
+            type: OPEN_CHAT
+        });
+    };
+}
+
+/**
+ * Opens the chat panel with file sharing tab active.
+ *
+ * @returns {Object} The redux action.
+ */
+export function openFileSharingPanel() {
+    return async (dispatch: IStore['dispatch']) => {
+        dispatch(setFocusedTab(ChatTabs.FILE_SHARING));
+        dispatch({
+            type: OPEN_CHAT
+        });
+    };
+}
+
 
 /**
  * Initiates the sending of messages between a moderator and a lobby attendee.

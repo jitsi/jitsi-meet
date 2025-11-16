@@ -58,7 +58,12 @@ export default class Toolbar extends BasePageObject {
     async clickAudioMuteButton(): Promise<void> {
         await this.participant.log('Clicking on: Audio Mute Button');
 
-        return this.audioMuteBtn.click();
+        await this.audioMuteBtn.waitForExist({
+            timeout: 2000, timeoutMsg: 'Audio mute button not found'
+        });
+
+        // not directly clicking the button to avoid issues of UI notifications preventing it
+        return this.participant.execute(() => JitsiMeetJS.app.testing.audioMute());
     }
 
     /**
@@ -69,7 +74,12 @@ export default class Toolbar extends BasePageObject {
     async clickAudioUnmuteButton(): Promise<void> {
         await this.participant.log('Clicking on: Audio Unmute Button');
 
-        return this.audioUnMuteBtn.click();
+        await this.audioUnMuteBtn.waitForExist({
+            timeout: 2000, timeoutMsg: 'Audio unmute button not found'
+        });
+
+        // not directly clicking the button to avoid issues of UI notifications preventing it
+        return this.participant.execute(() => JitsiMeetJS.app.testing.audioUnmute());
     }
 
     /**
@@ -94,7 +104,12 @@ export default class Toolbar extends BasePageObject {
     async clickVideoMuteButton(): Promise<void> {
         await this.participant.log('Clicking on: Video Mute Button');
 
-        return this.videoMuteBtn.click();
+        await this.videoMuteBtn.waitForExist({
+            timeout: 2000, timeoutMsg: 'Video mute button not found'
+        });
+
+        // not directly clicking the button to avoid issues of UI notifications preventing it
+        return this.participant.execute(() => JitsiMeetJS.app.testing.videoMute());
     }
 
     /**
@@ -105,7 +120,12 @@ export default class Toolbar extends BasePageObject {
     async clickVideoUnmuteButton(): Promise<void> {
         await this.participant.log('Clicking on: Video Unmute Button');
 
-        return this.videoUnMuteBtn.click();
+        await this.videoUnMuteBtn.waitForExist({
+            timeout: 2000, timeoutMsg: 'Video unmute button not found'
+        });
+
+        // not directly clicking the button to avoid issues of UI notifications preventing it
+        return this.participant.execute(() => JitsiMeetJS.app.testing.videoUnmute());
     }
 
     /**

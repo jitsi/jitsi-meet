@@ -10,7 +10,7 @@ import { arePollsDisabled } from '../../../conference/functions.any';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { getUnreadPollCount } from '../../../polls/functions';
-import { getUnreadCount, getUnreadFilesCount } from '../../functions';
+import { getUnreadCount, getUnreadFilesCount, isChatDisabled } from '../../functions';
 
 interface IProps extends AbstractButtonProps {
 
@@ -65,7 +65,7 @@ class ChatButton extends AbstractButton<IProps> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
-    const enabled = getFeatureFlag(state, CHAT_ENABLED, true);
+    const enabled = getFeatureFlag(state, CHAT_ENABLED, true) && !isChatDisabled(state);
     const { visible = enabled } = ownProps;
 
     return {

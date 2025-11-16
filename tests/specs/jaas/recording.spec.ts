@@ -5,8 +5,8 @@ import WebhookProxy from '../../helpers/WebhookProxy';
 import { joinJaasMuc, generateJaasToken as t } from '../../helpers/jaas';
 
 setTestProperties(__filename, {
-    useJaas: true,
-    useWebhookProxy: true
+    requireWebhookProxy: true,
+    useJaas: true
 });
 
 /**
@@ -72,12 +72,20 @@ describe('Recording and live-streaming', () => {
 
         webhooksProxy.clearCache();
 
-        const iFrameEvent = (await p.getIframeAPI().getEventResult('recordingStatusChanged'));
+        const iFrameEvent = await p.driver.waitUntil(() =>
+            p.getIframeAPI().getEventResult('recordingStatusChanged'), {
+            timeout: 5000,
+            timeoutMsg: 'recordingStatusChanged event not received'
+        });
 
         expect(iFrameEvent.mode).toBe('file');
         expect(iFrameEvent.on).toBe(true);
 
-        const linkEvent = (await p.getIframeAPI().getEventResult('recordingLinkAvailable'));
+        const linkEvent = await p.driver.waitUntil(() =>
+            p.getIframeAPI().getEventResult('recordingLinkAvailable'), {
+            timeout: 5000,
+            timeoutMsg: 'recordingLinkAvailable event not received'
+        });
 
         expect(linkEvent.link.startsWith('https://')).toBe(true);
         expect(linkEvent.link.includes(tenant)).toBe(true);

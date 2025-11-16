@@ -26,7 +26,7 @@ function SpeakerStatsLabel() {
     const { t } = useTranslation();
 
     const onClick = () => {
-        dispatch(openDialog(SpeakerStats, { conference }));
+        dispatch(openDialog('SpeakerStats', SpeakerStats, { conference }));
     };
 
     if (count <= 2 || _isSpeakerStatsDisabled) {

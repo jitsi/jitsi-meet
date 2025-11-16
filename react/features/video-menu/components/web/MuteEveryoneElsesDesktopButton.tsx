@@ -33,7 +33,7 @@ const MuteEveryoneElsesDesktopButton = ({
             return;
         }
         sendAnalytics(createToolbarEvent('mute.everyoneelsesdesktop.pressed'));
-        dispatch(openDialog(MuteEveryonesDesktopDialog, { exclude: [ participantID ] }));
+        dispatch(openDialog('MuteEveryonesDesktopDialog', MuteEveryonesDesktopDialog, { exclude: [ participantID ] }));
     }, [ notifyClick, notifyMode, participantID ]);
 
     return (
