@@ -7,9 +7,10 @@ import { iAmVisitor } from "../../../visitors/functions";
 import AbstractAddPeopleDialog, {
     IProps as AbstractProps,
     IState,
-    _mapStateToProps as _abstractMapStateToProps
+    _mapStateToProps as _abstractMapStateToProps,
 } from "../../../../features/invite/components/add-people-dialog/AbstractAddPeopleDialog";
 import { getParticipantById } from "../../../base/participants/functions";
+import { IInviteSelectItem, IInvitee } from "../../../invite/types";
 
 interface IProps extends AbstractProps {
     sortedParticipantIds: string[];
@@ -21,21 +22,24 @@ interface ILocalState extends IState {
 }
 
 class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
+    override state: ILocalState = {
+        addToCallError: false,
+        addToCallInProgress: false,
+        inviteItems: [] as IInviteSelectItem[],
+        loading: false,
+        users: [],
+    };
     constructor(props: IProps) {
         super(props);
 
-        this.state = {
-            ...this.state, // keep inherited Abstract state
-            users: [],
-            loading: true
-        };
+      
 
         this._onInviteClick = this._onInviteClick.bind(this);
     }
 
     async componentDidMount() {
         try {
-            const users = await fetchMeetUsers() as any[];
+            const users = (await fetchMeetUsers()) as any[];
             this.setState({ users, loading: false });
         } catch (err) {
             console.error("Error fetching meet users:", err);
@@ -44,8 +48,15 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
     }
 
     _onInviteClick(user: any) {
-        console.log("Inviting absent user:", user);
-        this._invite([user]) // ✅ inherited from AbstractAddPeopleDialog
+        const invitee: IInvitee = {
+            name: user.name,
+            id: user.id,
+            address: user.email,
+            type: "user",
+            number: "null",
+        };
+
+        this._invite([invitee])
             .then(() => console.log("Invite sent"))
             .catch((err: any) => console.error("Invite error", err));
     }
@@ -58,9 +69,7 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
             return <p>Loading users...</p>;
         }
 
-        const absentParticipants = users.filter(
-            (user) => !sortedParticipantIds.includes(user.id)
-        );
+        const absentParticipants = users.filter((user) => !sortedParticipantIds.includes(user.id));
 
         return (
             <div style={{ marginBlock: 20 }}>
@@ -89,9 +98,7 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
                                 style={{ borderRadius: "50%" }}
                             />
                             <p>{user.name || user.email}</p>
-                            <button onClick={() => this._onInviteClick(user)}>
-                                Invite
-                            </button>
+                            <button onClick={() => this._onInviteClick(user)}>Invite</button>
                         </div>
                     ))
                 ) : (

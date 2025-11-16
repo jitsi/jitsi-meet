@@ -64,6 +64,8 @@ export function hideAddPeopleDialog() {
 export function invite(
         invitees: IInvitee[],
         showCalleeInfo = false) {
+
+            debugger;
             
     return (
             dispatch: IStore['dispatch'],
