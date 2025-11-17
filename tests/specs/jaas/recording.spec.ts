@@ -27,13 +27,6 @@ describe('Recording and live-streaming', () => {
         webhooksProxy = ctx.webhooksProxy;
         p = await joinJaasMuc({ iFrameApi: true, token: t({ moderator: true }) }, { roomName: ctx.roomName });
 
-        // TODO: what should we do in this case? Add a config for this?
-        if (await p.execute(() => config.disableIframeAPI)) {
-            ctx.skipSuiteTests = 'The environment has the iFrame API disabled.';
-
-            return;
-        }
-
         recordingEnabled = Boolean(await p.execute(() => config.recordingService?.enabled));
         expect(recordingEnabled).toBe(expectations.jaas.recordingEnabled);
 
