@@ -13,6 +13,10 @@ const defaultExpectations = {
          */
         enabled: null,
     },
+    iframe: {
+        // Whether the iframe integration is enabled (the inverse of `disableIframeAPI` from config.js)
+        enabled: true
+    },
     jaas: {
         /**
          * Whether the jaas account is configured with the account-level setting to allow unauthenticated users to join.
