@@ -472,7 +472,8 @@ const Chat = ({
                     role = 'tabpanel'
                     tabIndex = { 0 }>
                     <MessageContainer
-                        messages = { _messages } />
+                        messages = { _messages }
+                        translate = { t } />
                     <MessageRecipient />
                     {isPrivateChatAllowed && (
                         <Select

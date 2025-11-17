@@ -1,10 +1,8 @@
 import { ChatsCircleIcon } from "@phosphor-icons/react";
 import { throttle } from "lodash-es";
 import React, { Component, RefObject } from "react";
-import { WithTranslation } from "react-i18next";
 import { scrollIntoView } from "seamless-scroll-polyfill";
 
-import { translate } from "../../../base/i18n/functions";
 import { groupMessagesBySender } from "../../../base/util/messageGrouping";
 import { MESSAGE_TYPE_LOCAL, MESSAGE_TYPE_REMOTE } from "../../constants";
 import { IMessage } from "../../types";
@@ -12,8 +10,9 @@ import { IMessage } from "../../types";
 import ChatMessageGroup from "./ChatMessageGroup";
 import NewMessagesButton from "./NewMessagesButton";
 
-interface IProps extends WithTranslation {
+interface IProps {
     messages: IMessage[];
+    translate: Function;
 }
 
 interface IState {
@@ -91,14 +90,12 @@ class MessageContainer extends Component<IProps, IState> {
     }
 
     renderEmptyChat() {
-        const { t } = this.props;
+        const { translate } = this.props;
 
         return (
             <div id="chat-conversation-container" className="flex flex-col items-center justify-center h-full">
                 <ChatsCircleIcon size={100} weight="regular" color="#6B7280" />
-                <p className="text-sm mt-4 text-center px-8 whitespace-pre-line">
-                    {t("chat.noMessages")}
-                </p>
+                <p className="text-sm mt-4 text-center px-8 whitespace-pre-line">{translate("chat.noMessages")}</p>
             </div>
         );
     }
@@ -109,7 +106,6 @@ class MessageContainer extends Component<IProps, IState> {
      * @inheritdoc
      */
     override render() {
-        const { t } = this.props;
         const groupedMessages = this._getMessagesGroupedBySender();
         const hasMessages = this.props.messages.length > 0;
 
@@ -364,4 +360,4 @@ class MessageContainer extends Component<IProps, IState> {
     }
 }
 
-export default translate(MessageContainer);
+export default MessageContainer;
