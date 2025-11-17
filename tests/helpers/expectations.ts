@@ -20,6 +20,7 @@ const defaultExpectations = {
     jaas: {
         liveStreamingEnabled: true,
         recordingEnabled: true,
+        transcriptionEnabled: true,
         /**
          * Whether the jaas account is configured with the account-level setting to allow unauthenticated users to join.
          */
