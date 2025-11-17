@@ -24,7 +24,8 @@ const defaultExpectations = {
         /**
          * Whether the jaas account is configured with the account-level setting to allow unauthenticated users to join.
          */
-        unauthenticatedJoins: false
+        unauthenticatedJoins: false,
+        visitors: true
     },
     moderation: {
         // Everyone is a moderator.
