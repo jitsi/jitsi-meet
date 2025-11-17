@@ -1,3 +1,4 @@
+import { InfoIcon, XIcon } from '@phosphor-icons/react';
 import { throttle } from 'lodash-es';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
@@ -28,12 +29,12 @@ import { getChatMaxSize } from '../../functions';
 import { IChatProps as AbstractProps } from '../../types';
 
 import ChatHeader from './ChatHeader';
-import ChatInput from './ChatInput';
 import ClosedCaptionsTab from './ClosedCaptionsTab';
 import DisplayNameForm from './DisplayNameForm';
 import KeyboardAvoider from './KeyboardAvoider';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
+import { ModernChatInput } from './ModernChatInput';
 
 
 interface IProps extends AbstractProps {
@@ -97,118 +98,129 @@ interface IProps extends AbstractProps {
 const useStyles = makeStyles<{ _isResizing: boolean; width: number; }>()((theme, { _isResizing, width }) => {
     return {
         container: {
-            backgroundColor: theme.palette.ui01,
+            backgroundColor: "#000000",
             flexShrink: 0,
-            overflow: 'hidden',
-            position: 'relative',
-            transition: _isResizing ? undefined : 'width .16s ease-in-out',
+            overflowX: "visible",
+            overflowY: "hidden",
+            transition: _isResizing ? undefined : "width .16s ease-in-out",
             width: `${width}px`,
             zIndex: 300,
-
-            '&:hover, &:focus-within': {
-                '& .dragHandleContainer': {
-                    visibility: 'visible'
-                }
+            borderRadius: "20px",
+            display: "flex",
+            flexDirection: "column",
+            margin: "16px",
+            marginLeft: 0,
+            height: "85%",
+            alignSelf: "center",
+            borderColor: "#474747",
+            borderWidth: "1px",
+            "&:hover, &:focus-within": {
+                "& .dragHandleContainer": {
+                    visibility: "visible",
+                },
             },
 
-            '@media (max-width: 580px)': {
-                height: '100dvh',
-                position: 'fixed',
+            "@media (max-width: 580px)": {
+                height: "100dvh",
+                position: "fixed",
                 left: 0,
                 right: 0,
                 top: 0,
-                width: 'auto'
+                bottom: 0,
+                width: "auto",
+                borderRadius: 0,
+                margin: 0,
             },
 
-            '*': {
-                userSelect: 'text',
-                '-webkit-user-select': 'text'
-            }
+            "*": {
+                userSelect: "text",
+                "-webkit-user-select": "text",
+            },
         },
 
         chatHeader: {
-            height: '60px',
-            position: 'relative',
-            width: '100%',
+            height: "60px",
+            position: "relative",
+            width: "100%",
             zIndex: 1,
-            display: 'flex',
-            justifyContent: 'space-between',
+            display: "flex",
+            justifyContent: "space-between",
             padding: `${theme.spacing(3)} ${theme.spacing(4)}`,
-            alignItems: 'center',
-            boxSizing: 'border-box',
+            alignItems: "center",
+            boxSizing: "border-box",
             color: theme.palette.text01,
             ...theme.typography.heading6,
-            lineHeight: 'unset',
+            lineHeight: "unset",
             fontWeight: theme.typography.heading6.fontWeight as any,
 
-            '.jitsi-icon': {
-                cursor: 'pointer'
-            }
+            ".jitsi-icon": {
+                cursor: "pointer",
+            },
         },
 
         chatPanel: {
-            display: 'flex',
-            flexDirection: 'column',
+            display: "flex",
+            flexDirection: "column",
 
             // extract header + tabs height
-            height: 'calc(100% - 110px)'
+            height: "calc(100% - 110px)",
         },
 
         chatPanelNoTabs: {
             // extract header height
-            height: 'calc(100% - 60px)'
+            height: "calc(100% - 60px)",
         },
 
         pollsPanel: {
             // extract header + tabs height
-            height: 'calc(100% - 110px)'
+            height: "calc(100% - 110px)",
         },
 
         resizableChat: {
             flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            width: '100%'
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
         },
 
         dragHandleContainer: {
-            height: '100%',
-            width: '9px',
-            backgroundColor: 'transparent',
-            position: 'absolute',
-            cursor: 'col-resize',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            visibility: 'hidden',
-            right: '4px',
+            height: "100%",
+            width: "9px",
+            backgroundColor: "transparent",
+            position: "absolute",
+            cursor: "col-resize",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            visibility: "hidden",
+            right: "4px",
             top: 0,
 
-            '&:hover': {
-                '& .dragHandle': {
-                    backgroundColor: theme.palette.icon01
-                }
+            "&:hover": {
+                "& .dragHandle": {
+                    backgroundColor: theme.palette.icon01,
+                },
             },
 
-            '&.visible': {
-                visibility: 'visible',
+            "&.visible": {
+                visibility: "visible",
 
-                '& .dragHandle': {
-                    backgroundColor: theme.palette.icon01
-                }
-            }
+                "& .dragHandle": {
+                    backgroundColor: theme.palette.icon01,
+                },
+            },
         },
 
         dragHandle: {
             backgroundColor: theme.palette.icon02,
-            height: '100px',
-            width: '3px',
-            borderRadius: '1px'
+            height: "100px",
+            width: "3px",
+            borderRadius: "1px",
         },
 
         privateMessageRecipientsList: {
-            padding: '0 16px 5px'
-        }
+            padding: "0 16px 5px",
+        },
     };
 });
 
@@ -233,6 +245,7 @@ const Chat = ({
     const [ isMouseDown, setIsMouseDown ] = useState(false);
     const [ mousePosition, setMousePosition ] = useState<number | null>(null);
     const [ dragChatWidth, setDragChatWidth ] = useState<number | null>(null);
+    const [showBanner, setShowBanner] = useState(true);
     const maxChatWidth = useSelector(getChatMaxSize);
     const notifyTimestamp = useSelector((state: IReduxState) =>
         state['features/chat'].notifyPrivateRecipientsChangedTimestamp
@@ -406,6 +419,34 @@ const Chat = ({
     }, []);
 
     /**
+     * Renders the notification banner.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    function renderNotificationBanner() {
+        if (!showBanner) {
+            return null;
+        }
+
+        return (
+            <div className="bg-[#031632] px-3 py-2 flex rounded-lg items-center justify-between gap-3 border border-[#082D66] m-4">
+                <div className="flex items-center gap-3 flex-1">
+                    <InfoIcon size={38} weight="fill" color="#1472FF" />
+                    <span className="text-base text-[#FAFAFA]">{t("chat.messagesDissapearWarning")}</span>
+                </div>
+                <button
+                    onClick={() => setShowBanner(false)}
+                    className="bg-transparent border-none cursor-pointer p-0.5 flex items-center text-gray-500 hover:text-gray-400 transition-colors"
+                    aria-label="Close notification"
+                >
+                    <XIcon size={24} weight="regular" />
+                </button>
+            </div>
+        );
+    }
+
+    /**
      * Returns a React Element for showing chat messages and a form to send new
      * chat messages.
      *
@@ -415,7 +456,8 @@ const Chat = ({
     function renderChat() {
         return (
             <>
-                {renderTabs()}
+                {renderNotificationBanner()}
+                {/* {renderTabs()} */}
                 <div
                     aria-labelledby = { ChatTabs.CHAT }
                     className = { cx(
@@ -440,8 +482,9 @@ const Chat = ({
                             options = { options }
                             value = { privateMessageRecipient?.id || OPTION_GROUPCHAT } />
                     )}
-                    <ChatInput
-                        onSend = { onSendMessage } />
+                    <ModernChatInput
+                        onSend = { onSendMessage } 
+                        placeholder={t('chat.messagebox')}/>
                 </div>
                 { _isPollsEnabled && (
                     <>
@@ -560,13 +603,14 @@ const Chat = ({
                 className = { cx('chat-header', classes.chatHeader) }
                 isCCTabEnabled = { _isCCTabEnabled }
                 isPollsEnabled = { _isPollsEnabled }
-                onCancel = { onToggleChat } />
+                onCancel={onToggleChat}
+                onShowBanner={() => setShowBanner(true)} />
             {_showNamePrompt
                 ? <DisplayNameForm
                     isCCTabEnabled = { _isCCTabEnabled }
                     isPollsEnabled = { _isPollsEnabled } />
                 : renderChat()}
-            <div
+            {/* <div
                 className = { cx(
                     classes.dragHandleContainer,
                     (isMouseDown || _isResizing) && 'visible',
@@ -574,7 +618,7 @@ const Chat = ({
                 ) }
                 onMouseDown = { onDragHandleMouseDown }>
                 <div className = { cx(classes.dragHandle, 'dragHandle') } />
-            </div>
+            </div> */}
         </div> : null
     );
 };

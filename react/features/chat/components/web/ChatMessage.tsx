@@ -42,9 +42,6 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
         chatMessage: {
             display: 'inline-flex',
-            padding: '12px',
-            backgroundColor: theme.palette.ui02,
-            borderRadius: '4px 12px 12px 12px',
             maxWidth: '100%',
             marginTop: '4px',
             boxSizing: 'border-box' as const,
@@ -63,44 +60,6 @@ const useStyles = makeStyles()((theme: Theme) => {
                     width: '100%',
                     minWidth: 0
                 }
-            },
-
-            '&.privatemessage': {
-                backgroundColor: theme.palette.support05
-            },
-            '&.local': {
-                backgroundColor: theme.palette.ui04,
-                borderRadius: '12px 4px 12px 12px',
-
-                '&.privatemessage': {
-                    backgroundColor: theme.palette.support05
-                },
-                '&.local': {
-                    backgroundColor: theme.palette.ui04,
-                    borderRadius: '12px 4px 12px 12px',
-
-                    '&.privatemessage': {
-                        backgroundColor: theme.palette.support05
-                    }
-                },
-
-                '&.error': {
-                    backgroundColor: theme.palette.actionDanger,
-                    borderRadius: 0,
-                    fontWeight: 100
-                },
-
-                '&.lobbymessage': {
-                    backgroundColor: theme.palette.support05
-                }
-            },
-            '&.error': {
-                backgroundColor: theme.palette.actionDanger,
-                borderRadius: 0,
-                fontWeight: 100
-            },
-            '&.lobbymessage': {
-                backgroundColor: theme.palette.support05
             }
         },
         sideBySideContainer: {
@@ -355,7 +314,7 @@ const ChatMessage = ({
             onMouseLeave = { handleMouseLeave }
             tabIndex = { -1 }>
             <div className = { classes.sideBySideContainer }>
-                {!shouldDisplayMenuOnRight && (
+                {/* {!shouldDisplayMenuOnRight && (
                     <div className = { classes.optionsButtonContainer }>
                         {isHovered && <MessageMenu
                             displayName = { message.displayName }
@@ -366,7 +325,7 @@ const ChatMessage = ({
                             message = { message.message }
                             participantId = { message.participantId } />}
                     </div>
-                )}
+                )} */}
                 <div
                     className = { cx(
                         'chatmessage',
@@ -378,8 +337,8 @@ const ChatMessage = ({
                     ) }>
                     <div className = { classes.replyWrapper }>
                         <div className = { cx('messagecontent', classes.messageContent) }>
-                            {showDisplayName && _renderDisplayName()}
-                            <div className = { cx('usermessage', classes.userMessage) }>
+                            {/* {showDisplayName && _renderDisplayName()} */}
+                            <div className ="text-sm font-normal text-white">
                                 {isFileMessage(message) ? (
                                     <FileMessage
                                         message = { message }
@@ -400,7 +359,7 @@ const ChatMessage = ({
                                 )}
                                 {(message.privateMessage || (message.lobbyChat && !knocking))
                                     && _renderPrivateNotice()}
-                                <div className = { classes.chatMessageFooter }>
+                                {/* <div className = { classes.chatMessageFooter }>
                                     <div className = { classes.chatMessageFooterLeft }>
                                         {message.reactions && message.reactions.size > 0 && (
                                             <>
@@ -408,8 +367,7 @@ const ChatMessage = ({
                                             </>
                                         )}
                                     </div>
-                                    {_renderTimestamp()}
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>

@@ -21,6 +21,7 @@ import ReactionAnimations from "../../../../../reactions/components/web/Reaction
 import { toggleToolboxVisible } from "../../../../../toolbox/actions.any";
 import { fullScreenChanged, showToolbox } from "../../../../../toolbox/actions.web";
 import JitsiPortal from "../../../../../toolbox/components/web/JitsiPortal";
+import Toolbox from "../../../../../toolbox/components/web/Toolbox";
 import { LAYOUT_CLASSNAMES } from "../../../../../video-layout/constants";
 import { getCurrentLayout } from "../../../../../video-layout/functions.any";
 import { getConferenceNameForTitle } from "../../../../conference/functions";
@@ -180,56 +181,57 @@ class Conference extends AbstractConference<IProps, any> {
         } = this.props;
         return (
             <>
-                <Chat />
                 <div
                     // _layoutClassName has the styles to manage the side bar
-                    className={_layoutClassName + " bg-gray-100"}
-                    // className={"bg-gray-100 relative flex"}
+                    className={_layoutClassName + " bg-gray-100 flex"}
                     id="videoconference_page"
                     onMouseMove={isMobileBrowser() ? undefined : this._onShowToolbar}
                 >
-                    <ConferenceInfo />
-                    <Notice />
-                    <div onTouchStart={this._onVidespaceTouchStart}>
-                        <Header mode={viewMode} translate={t} onSetModeClicked={this._onSetVideoModeClicked} />
-                        <div className="flex h-full justify-center items-center">
-                            {/* <LargeVideoWeb /> */}
-                            <VideoGalleryWrapper videoMode={viewMode} />
+                    <div className="flex-1 flex flex-col">
+                        <ConferenceInfo />
+                        <Notice />
+                        <div onTouchStart={this._onVidespaceTouchStart} className="flex-1 flex flex-col">
+                            <Header mode={viewMode} translate={t} onSetModeClicked={this._onSetVideoModeClicked} />
+                            <div className="flex-1 flex justify-center items-center">
+                                {/* <LargeVideoWeb /> */}
+                                <VideoGalleryWrapper videoMode={viewMode} />
+                            </div>
+                            {_showPrejoin || _showLobby || (
+                                <>
+                                    {/* <StageFilmstrip /> */}
+                                    {/*  <ScreenshareFilmstrip />*/}
+                                    {/* right screen tools component */}
+                                    {/* <MainFilmstrip /> */}
+                                </>
+                            )}
                         </div>
+
                         {_showPrejoin || _showLobby || (
                             <>
-                                {/* <StageFilmstrip /> */}
-                                {/*  <ScreenshareFilmstrip />*/}
-                                {/* right screen tools component */}
-                                {/* <MainFilmstrip /> */}
+                                <span aria-level={1} className="sr-only" role="heading">
+                                    {t("toolbar.accessibilityLabel.heading") as string}
+                                </span>
+                                {/* <Toolbox toolbarButtons={this.props._toolbarButtons} /> */}
                             </>
                         )}
+                        {/* CONFERENCE MEDIA CONTROLS */}
+                        <ConferenceControlsWrapper />
+                        {_notificationsVisible &&
+                            !_isAnyOverlayVisible &&
+                            (_overflowDrawer ? (
+                                <JitsiPortal className="notification-portal">
+                                    {this.renderNotificationsContainer({ portal: true })}
+                                </JitsiPortal>
+                            ) : (
+                                this.renderNotificationsContainer()
+                            ))}
+
+                        <CalleeInfoContainer />
+
+                        {_showPrejoin && <Prejoin />}
+                        {_showLobby && <LobbyScreen />}
                     </div>
-
-                    {_showPrejoin || _showLobby || (
-                        <>
-                            <span aria-level={1} className="sr-only" role="heading">
-                                {t("toolbar.accessibilityLabel.heading") as string}
-                            </span>
-                            {/* <Toolbox /> */}
-                        </>
-                    )}
-                    {/* CONFERENCE MEDIA CONTROLS */}
-                    <ConferenceControlsWrapper />
-                    {_notificationsVisible &&
-                        !_isAnyOverlayVisible &&
-                        (_overflowDrawer ? (
-                            <JitsiPortal className="notification-portal">
-                                {this.renderNotificationsContainer({ portal: true })}
-                            </JitsiPortal>
-                        ) : (
-                            this.renderNotificationsContainer()
-                        ))}
-
-                    <CalleeInfoContainer />
-
-                    {_showPrejoin && <Prejoin />}
-                    {_showLobby && <LobbyScreen />}
+                    <Chat />
                 </div>
                 <ParticipantsPane />
                 <ReactionAnimations />
