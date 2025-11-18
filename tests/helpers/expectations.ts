@@ -12,6 +12,7 @@ const defaultExpectations = {
          * null -> if the config is enabled, assert the UI elements are displayed and the feature works.
          */
         enabled: null,
+        minPinLength: 8
     },
     iframe: {
         // Whether the iframe integration is enabled (the inverse of `disableIframeAPI` from config.js)

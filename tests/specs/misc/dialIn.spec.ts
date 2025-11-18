@@ -92,7 +92,10 @@ describe('Dial-in', () => {
             throw new Error('no pin');
         }
 
-        expect(dialInPin.length >= 8).toBe(true);
+        if (!dialInPin.match(/^[0-9]+$/)) {
+            throw new Error(`The dial-in PIN contains non-digit characters: ${dialInPin}`);
+        }
+        expect(dialInPin.length).toBeGreaterThanOrEqual(expectations.dialIn.minPinLength);
     });
 
     it('skip the rest if a dial-in URL is not configured', async () => {
