@@ -19,6 +19,7 @@ import { Mode } from "./components/Header";
 import { init } from "../../../../conference/actions.web";
 import CreateConference from "./containers/CreateConference";
 import JoinConference from "./containers/JoinConference";
+import { appNavigate } from "../../../../app/actions.web";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -129,6 +130,31 @@ class Conference extends AbstractConference<IProps, any> {
     }
 
     /**
+     * Handles browser back/forward navigation.
+     * If user presses back while in an active meeting, show confirmation dialog.
+     *
+     * @private
+     * @returns {void}
+     */
+    _handlePopState = () => {
+        const { t } = this.props;
+
+        if (APP.conference.isJoined()) {
+            const confirmLeave = window.confirm(
+                t('dialog.leaveMeetingConfirmation')
+            );
+            if (confirmLeave) {
+                this.props.dispatch(hangup(false, this.props.roomId));
+                window.history.pushState(null, '', '/');
+            } else {
+                window.history.pushState(null, '', `/${this.props.roomId}`);
+            }
+        } else {
+            this.props.dispatch(appNavigate(window.location.pathname + window.location.search));
+        }
+    };
+
+    /**
      * Start the connection and get the UI ready for the conference.
      *
      * @inheritdoc
@@ -137,7 +163,8 @@ class Conference extends AbstractConference<IProps, any> {
         document.title = `${interfaceConfig.APP_NAME}`;
         this._start();
 
-        window.addEventListener("beforeunload", this._handleBeforeUnload);
+        window.addEventListener("beforeunload", this._handleBeforeUnload, true);
+        window.addEventListener("popstate", this._handlePopState);
     }
 
     /**
@@ -170,7 +197,8 @@ class Conference extends AbstractConference<IProps, any> {
 
         FULL_SCREEN_EVENTS.forEach((name) => document.removeEventListener(name, this._onFullScreenChange));
 
-        window.removeEventListener("beforeunload", this._handleBeforeUnload);
+        window.removeEventListener("beforeunload", this._handleBeforeUnload, true);
+        window.removeEventListener("popstate", this._handlePopState);
 
         APP.conference.isJoined() && this.props.dispatch(hangup(true, this.props.roomId));
     }
@@ -186,7 +214,10 @@ class Conference extends AbstractConference<IProps, any> {
     _handleBeforeUnload = (event: BeforeUnloadEvent): string => {
         if (APP.conference.isJoined()) {
             event.preventDefault();
-            return "";
+            event.stopImmediatePropagation();
+
+            event.returnValue = '';
+            return '';
         }
         return "";
     };

@@ -653,7 +653,7 @@ var config = {
     // disableRtx: false,
 
     // Moves all Jitsi Meet 'beforeunload' logic (cleanup, leaving, disconnecting, etc) to the 'unload' event.
-    disableBeforeUnloadHandlers: true,
+    disableBeforeUnloadHandlers: false,
 
     // Disables or enables TCC support in this client (default: enabled).
     // enableTcc: true,
