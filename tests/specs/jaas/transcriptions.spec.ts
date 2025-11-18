@@ -26,7 +26,7 @@ describe('Transcription', () => {
             token: t({ room, moderator: true }),
             iFrameApi: true });
 
-        const transcriptionEnabled = await p1.execute(() => !config.transcription?.enabled);
+        const transcriptionEnabled = await p1.execute(() => config.transcription?.enabled);
 
         expect(transcriptionEnabled).toBe(expectations.jaas.transcriptionEnabled);
 
