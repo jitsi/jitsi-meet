@@ -1,4 +1,4 @@
-#import "RCTFactoryDelegateWrapper.h"
+#import "JitsiReactFactoryDelegate.h"
 
 #import "JitsiMeet.h"
 
@@ -21,14 +21,7 @@ static NSString *RCTReadMetroHostFromBundle(NSBundle *bundle) {
     return [host stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 }
 
-@implementation RCTFactoryDelegateWrapper
-
-- (instancetype)init {
-    if (self = [super init]) {
-        NSLog(@"RCTFactoryDelegateWrapper init called");
-    }
-    return self;
-}
+@implementation JitsiReactFactoryDelegate
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge {
     return [self bundleURL];
@@ -58,19 +51,8 @@ static NSString *RCTReadMetroHostFromBundle(NSBundle *bundle) {
     }
 #endif
 
-    NSArray<NSBundle *> *candidateBundles = @[
-        [NSBundle mainBundle],              // App bundle
-        [NSBundle bundleForClass:[JitsiMeet class]] // SDK framework
-    ];
-
-    for (NSBundle *bundle in candidateBundles) {
-        NSURL *url = [bundle URLForResource:@"main" withExtension:@"jsbundle"];
-        if (url) {
-            return url;
-        }
-    }
-
-    return nil;
+    NSBundle *sdkBundle = [NSBundle bundleForClass:[self class]];
+    return [sdkBundle URLForResource:@"main" withExtension:@"jsbundle"];
 }
 
 - (BOOL)fabricEnabled {
@@ -94,5 +76,4 @@ static NSString *RCTReadMetroHostFromBundle(NSBundle *bundle) {
 }
 
 @end
-
 

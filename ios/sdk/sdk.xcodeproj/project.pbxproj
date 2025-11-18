@@ -103,8 +103,8 @@
 		DEFC743F21B178FA00E4DD96 /* LocaleDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = DEFC743D21B178FA00E4DD96 /* LocaleDetector.m */; };
 		DEFE535421FB1BF800011A3A /* JitsiMeet.m in Sources */ = {isa = PBXBuildFile; fileRef = DEFE535321FB1BF800011A3A /* JitsiMeet.m */; };
 		DEFE535621FB2E8300011A3A /* ReactUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = DEFE535521FB2E8300011A3A /* ReactUtils.m */; };
-		DF4E6A012233445566778801 /* RCTFactoryDelegateWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = DF4E6A012233445566778804 /* RCTFactoryDelegateWrapper.m */; };
-		DF4E6A012233445566778802 /* RCTFactoryDelegateWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = DF4E6A012233445566778804 /* RCTFactoryDelegateWrapper.m */; };
+		DF4E6A012233445566778801 /* JitsiReactFactoryDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DF4E6A012233445566778804 /* JitsiReactFactoryDelegate.m */; };
+		DF4E6A012233445566778802 /* JitsiReactFactoryDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DF4E6A012233445566778804 /* JitsiReactFactoryDelegate.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -174,8 +174,8 @@
 		DEFE535521FB2E8300011A3A /* ReactUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReactUtils.m; sourceTree = "<group>"; };
 		DEFE535721FB2E9E00011A3A /* ReactUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReactUtils.h; sourceTree = "<group>"; };
 		DEFE535821FB311F00011A3A /* JitsiMeet+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiMeet+Private.h"; sourceTree = "<group>"; };
-		DF4E6A012233445566778803 /* RCTFactoryDelegateWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTFactoryDelegateWrapper.h; sourceTree = "<group>"; };
-		DF4E6A012233445566778804 /* RCTFactoryDelegateWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCTFactoryDelegateWrapper.m; sourceTree = "<group>"; };
+		DF4E6A012233445566778803 /* JitsiReactFactoryDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiReactFactoryDelegate.h; sourceTree = "<group>"; };
+		DF4E6A012233445566778804 /* JitsiReactFactoryDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiReactFactoryDelegate.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -245,8 +245,8 @@
 				DEFE535821FB311F00011A3A /* JitsiMeet+Private.h */,
 				DEA9F283258A5D9900D4CD74 /* JitsiMeetSDK.h */,
 				DEFE535321FB1BF800011A3A /* JitsiMeet.m */,
-				DF4E6A012233445566778803 /* RCTFactoryDelegateWrapper.h */,
-				DF4E6A012233445566778804 /* RCTFactoryDelegateWrapper.m */,
+				DF4E6A012233445566778803 /* JitsiReactFactoryDelegate.h */,
+				DF4E6A012233445566778804 /* JitsiReactFactoryDelegate.m */,
 				4ED4FFF12721B9B90074E620 /* JitsiAudioSession.h */,
 				4ED4FFF52721BAE10074E620 /* JitsiAudioSession+Private.h */,
 				4ED4FFF22721B9B90074E620 /* JitsiAudioSession.m */,
@@ -664,7 +664,7 @@
 				A4A934E9212F3ADB001E9388 /* Dropbox.m in Sources */,
 				DE81A2D52316AC4D00AE1940 /* JitsiMeetLogger.m in Sources */,
 				0B412F191EDEC65D00B1A0A6 /* JitsiMeetView.m in Sources */,
-				DF4E6A012233445566778801 /* RCTFactoryDelegateWrapper.m in Sources */,
+				DF4E6A012233445566778801 /* JitsiReactFactoryDelegate.m in Sources */,
 				DEFE535421FB1BF800011A3A /* JitsiMeet.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -695,7 +695,7 @@
 				DE9A015C289A9A9A00E41CBB /* JitsiMeetLogger.m in Sources */,
 				4E0EF63328CA2FB3005D1B03 /* JMCallKitEmitter.m in Sources */,
 				DE9A015E289A9A9A00E41CBB /* JitsiMeetView.m in Sources */,
-				DF4E6A012233445566778802 /* RCTFactoryDelegateWrapper.m in Sources */,
+				DF4E6A012233445566778802 /* JitsiReactFactoryDelegate.m in Sources */,
 				DE9A015F289A9A9A00E41CBB /* JitsiMeet.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
