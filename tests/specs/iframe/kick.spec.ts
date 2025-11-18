@@ -1,8 +1,9 @@
 import { isEqual } from 'lodash-es';
 
 import { setTestProperties } from '../../helpers/TestProperties';
-import { expectations } from '../../helpers/expectations';
 import { ensureTwoParticipants } from '../../helpers/participants';
+
+import { checkIframeApi } from './util';
 
 setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
@@ -13,9 +14,10 @@ describe('Kick participants', () => {
         await ensureTwoParticipants({}, { name: 'p1', iFrameApi: true });
 
         const { p1, p2 } = ctx;
-        const iframeEnabled = !await p1.execute(() => config.disableIframeAPI);
 
-        expect(iframeEnabled).toBe(expectations.iframe.enabled);
+        if (!await checkIframeApi(p1)) {
+            return;
+        }
 
         await Promise.all([
             p1.switchToMainFrame(),
