@@ -3,8 +3,9 @@ import { expect } from '@wdio/globals';
 import type { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import { config as testsConfig } from '../../helpers/TestsConfig';
-import { expectations } from '../../helpers/expectations';
 import { joinMuc } from '../../helpers/joinMuc';
+
+import { checkIframeApi } from './util';
 
 setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
@@ -15,11 +16,10 @@ describe('Chat', () => {
 
     it('setup', async () => {
         p1 = await joinMuc({ name: 'p1', iFrameApi: true, token: testsConfig.jwt.preconfiguredToken });
+        if (!await checkIframeApi(p1)) {
+            return;
+        }
         p2 = await joinMuc({ name: 'p2', iFrameApi: true });
-
-        const iframeEnabled = !await p1.execute(() => config.disableIframeAPI);
-
-        expect(iframeEnabled).toBe(expectations.iframe.enabled);
 
         await p1.switchToMainFrame();
         await p2.switchToMainFrame();
