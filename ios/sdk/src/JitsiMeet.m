@@ -29,7 +29,7 @@
 #import <ReactAppDependencyProvider/RCTAppDependencyProvider.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
-#import "RCTFactoryDelegateWrapper.h"
+#import "JitsiReactFactoryDelegate.h"
 
 #if !defined(JITSI_MEET_SDK_LITE)
 #import <RNGoogleSignin/RNGoogleSignin.h>
@@ -61,8 +61,6 @@
         // Initialize WebRTC options.
         self.rtcAudioDevice = nil;
         self.webRtcLoggingSeverity = WebRTCLoggingSeverityNone;
-
-        [self createReactNativeFactory];
 
         // Initialize the listener for handling start/stop screensharing notifications.
         _screenshareEventEmiter = [[ScheenshareEventEmiter alloc] init];
@@ -139,8 +137,8 @@
 #pragma mark - Utility methods
 
 - (void)createReactNativeFactory {
-    NSLog(@"Creating RCTFactoryDelegateWrapper");
-    RCTFactoryDelegateWrapper *delegate = [[RCTFactoryDelegateWrapper alloc] init];
+    NSLog(@"Creating JitsiReactFactoryDelegate");
+    JitsiReactFactoryDelegate *delegate = [[JitsiReactFactoryDelegate alloc] init];
 
     NSLog(@"Creating RCTAppDependencyProvider");
     id<RCTDependencyProvider> provider = [[RCTAppDependencyProvider alloc] init];
@@ -170,6 +168,9 @@
 
 - (void)destroyReactNativeBridge {
     [_reactNativeFactory.bridge invalidate];
+
+    NSLog(@"React Native bridge destroyed");
+    
     _reactNativeFactory = nil;
 }
 
@@ -284,15 +285,20 @@
     // Initialize bridge lazily.
     [self instantiateReactNativeBridge];
     
-    NSLog(@"getReactBridge called");
-    NSLog(@"reactNativeFactory: %@", _reactNativeFactory);
-    NSLog(@"reactNativeFactory.bridge: %@", _reactNativeFactory.bridge);
-    
+    NSLog(@"Getting React Native bridge");
+
     // Get bridge from the new architecture factory
     return _reactNativeFactory.bridge;
 }
 
 - (RCTReactNativeFactory *)getReactNativeFactory {
+
+    if (_reactNativeFactory == nil) {
+        [self createReactNativeFactory];
+    }
+
+    NSLog(@"Getting React Native factory");
+
     return _reactNativeFactory;
 }
 
