@@ -1,6 +1,7 @@
 import { AnyAction } from 'redux';
 import { IStore } from '../../../../../app/types';
 import { CONFERENCE_JOINED, CONFERENCE_WILL_LEAVE } from '../../../../conference/actionTypes';
+import { setLeaveConferenceManually } from '../../../general/utils/conferenceState';
 import { CONNECTION_WILL_CONNECT } from '../../../../connection/actionTypes';
 import MiddlewareRegistry from '../../../../redux/MiddlewareRegistry';
 import { setupConferenceMediaListeners, setupXMPPConnectionListeners } from './listener-setup';
@@ -23,7 +24,7 @@ MiddlewareRegistry.register(({ dispatch }: IStore) => {
 
             switch (action.type) {
                 case CONNECTION_WILL_CONNECT: {
-                    connectionState.isManualDisconnect = false;
+                    setLeaveConferenceManually(false);
                     connectionState.hasConnectionListeners = false;
 
                     const { connection } = action;
@@ -41,7 +42,7 @@ MiddlewareRegistry.register(({ dispatch }: IStore) => {
 
                 case CONFERENCE_WILL_LEAVE: {
                     // User clicked hangup button - don't show reconnection notifications
-                    connectionState.isManualDisconnect = true;
+                    setLeaveConferenceManually(true);
                     connectionState.hasConferenceListeners = false;
                     connectionState.wasMediaConnectionInterrupted = false;
                     break;

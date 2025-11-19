@@ -58,7 +58,7 @@ export const setupXMPPConnectionListeners = (connection: any, dispatch: IStore["
     connection.addEventListener(JitsiConnectionEvents.CONNECTION_ESTABLISHED, () => handleXMPPConnected());
 
     connection.addEventListener(JitsiConnectionEvents.CONNECTION_DISCONNECTED, (message: string) =>
-        handleXMPPDisconnected(dispatch, message, state)
+        handleXMPPDisconnected(dispatch, message)
     );
 
     connection.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED, (error: any, message: string) =>

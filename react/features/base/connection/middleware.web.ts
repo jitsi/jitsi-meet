@@ -1,5 +1,6 @@
 import { redirectToStaticPage } from '../../app/actions.any';
 import { CONFERENCE_WILL_LEAVE } from "../conference/actionTypes";
+import { isLeavingConferenceManually, setLeaveConferenceManually } from "../meet/general/utils/conferenceState";
 import MiddlewareRegistry from "../redux/MiddlewareRegistry";
 
 import { CONNECTION_DISCONNECTED, CONNECTION_WILL_CONNECT } from "./actionTypes";
@@ -10,9 +11,6 @@ import { CONNECTION_DISCONNECTED, CONNECTION_WILL_CONNECT } from "./actionTypes"
  * @type {string}
  */
 export const DISCO_JIBRI_FEATURE = "http://jitsi.org/protocol/jibri";
-
-// user hangup meeting
-let isLeaveConferenceManually = false;
 
 MiddlewareRegistry.register(({ getState, dispatch }) => (next) => (action) => {
     switch (action.type) {
@@ -27,21 +25,18 @@ MiddlewareRegistry.register(({ getState, dispatch }) => (next) => (action) => {
             // @ts-ignore
             APP.connection = connection;
 
-            isLeaveConferenceManually = false;
-            console.log("isLeaveConferenceManually reset to false on new connection", isLeaveConferenceManually);
+            setLeaveConferenceManually(false);
             break;
         }
 
         case CONFERENCE_WILL_LEAVE: {
-            console.log("User is leaving conference manually, hang up button clicked");
-            isLeaveConferenceManually = true;
+            setLeaveConferenceManually(true);
             break;
         }
 
         case CONNECTION_DISCONNECTED: {
-            if (isLeaveConferenceManually) {
-                console.log("Connection disconnected - redirecting to home (manual hangup)");
-                isLeaveConferenceManually = false;
+            if (isLeavingConferenceManually()) {
+                setLeaveConferenceManually(false);
 
                 setTimeout(() => {
                     dispatch(redirectToStaticPage("/"));
