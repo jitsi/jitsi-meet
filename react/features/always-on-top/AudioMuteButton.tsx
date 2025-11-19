@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-
 // We need to reference these files directly to avoid loading things that are not available
 // in this environment (e.g. JitsiMeetJS or interfaceConfig)
 
@@ -7,6 +6,10 @@ import { DEFAULT_ICON } from '../base/icons/svg/constants';
 import { IProps } from '../base/toolbox/components/AbstractButton';
 
 import ToolbarButton from './ToolbarButton';
+import logger from '../jaas/logger';
+// import Logger from '@jitsi/Logger';
+// const logger = Logger.getLogger('AudioMuteButton');
+import { error } from 'console';
 
 const { api } = window.alwaysOnTop;
 
@@ -77,7 +80,10 @@ export default class AudioMuteButton extends Component<Props, IState> {
                     audioAvailable: audioAvailable && !audioDisabled,
                     audioMuted
                 }))
-            .catch(console.error);
+            .catch(error => {
+        logger.error('There is following error :- ', error);
+             });
+
     }
 
     /**

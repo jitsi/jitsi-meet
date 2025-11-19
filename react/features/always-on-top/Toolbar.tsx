@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import AudioMuteButton from './AudioMuteButton';
 import HangupButton from './HangupButton';
 import VideoMuteButton from './VideoMuteButton';
-
+import Logger from '@jitsi/Logger';
+const logger = Logger.getLogger('AlwaysOnTopToolbar');
 const { api } = window.alwaysOnTop;
 
 /**
@@ -85,20 +86,19 @@ export default class Toolbar extends Component<Props, IState> {
      * @returns {void}
      */
     _videoConferenceJoinedListener() {
-        // for electron clients that embed the api and are not updated
-        if (!api.isVisitor) {
-            console.warn('external API not updated');
-
-            return;
-        }
-
-        const isNotVisitor = !api.isVisitor();
-
-        this.setState({
-            showAudioButton: isNotVisitor,
-            showVideoButton: isNotVisitor
-        });
+    // for electron clients that embed the api and are not updated
+    if (!api.isVisitor()) {
+        logger.warn('external API not updated');
+        return;
     }
+
+    const isNotVisitor = !api.isVisitor();
+
+    this.setState({
+        showAudioButton: isNotVisitor,
+        showVideoButton: isNotVisitor
+    });
+}
 
     /**
      * Removes all listeners.

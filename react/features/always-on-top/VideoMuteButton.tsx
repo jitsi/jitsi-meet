@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-
+import Logger from '@jitsi/Logger';
+const logger = Logger.getLogger('VideoMuteBUtton');
 // We need to reference these files directly to avoid loading things that are not available
 // in this environment (e.g. JitsiMeetJS or interfaceConfig)
 import { DEFAULT_ICON } from '../base/icons/svg/constants';
@@ -76,7 +77,9 @@ export default class VideoMuteButton extends Component<Props, State> {
                     videoAvailable,
                     videoMuted
                 }))
-            .catch(console.error);
+            .catch(error => {
+            logger.error('There is following error :- ', error);
+            });
     }
 
     /**

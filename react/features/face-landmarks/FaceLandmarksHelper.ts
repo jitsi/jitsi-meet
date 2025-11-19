@@ -1,6 +1,7 @@
 import { setWasmPaths } from '@tensorflow/tfjs-backend-wasm';
 import { Config, FaceResult, Human } from '@vladmandic/human';
-
+import Logger from '@jitsi/Logger';
+const logger = Logger.getLogger('FaceLandmarksHelper');
 import { DETECTION_TYPES, FACE_DETECTION_SCORE_THRESHOLD, FACE_EXPRESSIONS_NAMING_MAPPING } from './constants';
 import { DetectInput, DetectOutput, FaceBox, FaceExpression, InitInput } from './types';
 
@@ -102,7 +103,7 @@ export class HumanHelper implements IFaceLandmarksHelper {
             try {
                 await initialHuman.load();
             } catch (err) {
-                console.error(err);
+                logger.error('Failed to load Human models:', err);
             }
 
             this.human = initialHuman;
