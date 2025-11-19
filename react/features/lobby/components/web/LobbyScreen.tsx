@@ -123,21 +123,20 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
         const { isChatOpen } = this.state;
 
         return (
-            <div className = { `lobby-chat-container ${isChatOpen ? 'hidden' : ''}` }>
-                <div className = 'lobby-chat-header'>
-                    <h1 className = 'title'>
-                        { t(this._getScreenTitleKey(), { moderator: this.props._lobbyMessageRecipient }) }
+            <div className={`lobby-chat-container ${isChatOpen ? "hidden" : ""}`}>
+                <div className="lobby-chat-header">
+                    <h1 className="title">
+                        {t(this._getScreenTitleKey(), { moderator: this.props._lobbyMessageRecipient })}
                     </h1>
                     <Icon
-                        ariaLabel = { t('toolbar.closeChat') }
-                        onClick = { this._onToggleChat }
-                        role = 'button'
-                        src = { IconCloseLarge } />
+                        ariaLabel={t("toolbar.closeChat")}
+                        onClick={this._onToggleChat}
+                        role="button"
+                        src={IconCloseLarge}
+                    />
                 </div>
-                <MessageContainer
-                    messages = { _lobbyChatMessages }
-                    ref = { this._messageContainerRef } />
-                <ChatInput onSend = { this._onSendMessage } />
+                <MessageContainer messages={_lobbyChatMessages} ref={this._messageContainerRef} translate={t} />
+                <ChatInput onSend={this._onSendMessage} />
             </div>
         );
     }
