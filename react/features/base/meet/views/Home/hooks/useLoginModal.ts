@@ -82,12 +82,7 @@ export function useLoginModal({ onClose, onLogin, translate }: UseAuthModalProps
     const saveUserSession = useCallback(
         async (credentials: LoginCredentials) => {
             try {
-                storageManager.saveCredentials(
-                    credentials.token,
-                    credentials.newToken,
-                    credentials.mnemonic,
-                    credentials.user
-                );
+                storageManager.saveCredentials(credentials.newToken, credentials.mnemonic, credentials.user);
 
                 const subscription = await getUserSubscription();
 
@@ -99,12 +94,7 @@ export function useLoginModal({ onClose, onLogin, translate }: UseAuthModalProps
                 dispatch(setUser(credentials.user));
                 onLogin?.(credentials.newToken);
             } catch (err) {
-                storageManager.saveCredentials(
-                    credentials.token,
-                    credentials.newToken,
-                    credentials.mnemonic,
-                    credentials.user
-                );
+                storageManager.saveCredentials(credentials.newToken, credentials.mnemonic, credentials.user);
 
                 dispatch(loginSuccess(credentials));
                 onLogin?.(credentials.newToken);

@@ -722,6 +722,8 @@
                 "passwordPlaceholder": "Contraseña",
                 "twoFactorCodePlaceholder": "Código de autenticación de dos factores",
                 "loginButton": "Iniciar sesión",
+                "signinWithInternxt": "Iniciar sesión con Internxt",
+                "signupWithBrowser": "Crear cuenta de Internxt",
                 "forgotPassword": "Olvidé mi contraseña",
                 "noAccount": "¿No tienes una cuenta?",
                 "createAccount": "Crear cuenta",
@@ -733,7 +735,10 @@
                     "twoFactorCodeInvalid": "Introduce un código válido de 6 dígitos",
                     "invalidCredentials": "Credenciales inválidas. Por favor, inténtalo de nuevo.",
                     "cannotCreateMeetings": "El usuario no puede crear reuniones",
-                    "genericError": "No se pudo iniciar sesión. Por favor, inténtelo de nuevo o contacte a soporte si el problema persiste"
+                    "genericError": "No se pudo iniciar sesión. Por favor, inténtelo de nuevo o contacte a soporte si el problema persiste",
+                    "popupBlocked": "La ventana emergente fue bloqueada. Por favor, permite las ventanas emergentes para Internxt Meet.",
+                    "authCancelled": "Autenticación cancelada por el usuario.",
+                    "authTimeout": "El tiempo de autenticación ha expirado. Por favor, inténtalo de nuevo."
                 },
                 "signup": {
                     "title": "Regístrate",

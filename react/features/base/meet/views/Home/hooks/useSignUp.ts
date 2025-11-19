@@ -36,7 +36,7 @@ export const useSignup = ({ onClose, onSignup, translate, referrer }: useSignupP
     const handleAutoLogin = async (registerData: RegisterResponse, mnemonic: string) => {
         const { token, newToken, user } = registerData;
 
-        storageManager.saveCredentials(token, newToken, mnemonic, user);
+        storageManager.saveCredentials(newToken, mnemonic, user);
 
         onSignup?.({
             mnemonic,
