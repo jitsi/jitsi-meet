@@ -34,6 +34,7 @@ const useStyles = makeStyles()(theme => {
             display: 'flex',
             flexDirection: 'column',
             width: '100%',
+            marginBottom: '16px',
 
             '&.local': {
                 alignItems: 'flex-end',

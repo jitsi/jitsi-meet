@@ -3,7 +3,8 @@
 #chat-conversation-container {
     // extract message input height
     box-sizing: border-box;
-    height: calc(100% - 64px);
+    // height: calc(100% - 64px);
+    height: 100%;
     overflow: hidden;
     position: relative;
 }

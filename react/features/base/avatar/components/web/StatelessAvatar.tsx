@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { UserIcon } from '@phosphor-icons/react';
 import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../icons/components/Icon';
@@ -75,6 +76,15 @@ const useStyles = makeStyles()(theme => {
                 height: '100%',
                 width: '100%'
             }
+        },
+
+        defaultAvatarContainer: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            height: '100%',
+            backgroundColor: '#0066FF'
         },
 
         initialsContainer: {
@@ -209,9 +219,12 @@ const StatelessAvatar = ({
             data-testid = { testId }
             id = { id }
             style = { _getAvatarStyle() }>
-            <Icon
-                size = { '50%' }
-                src = { iconUser } />
+            <div className = { classes.defaultAvatarContainer }>
+                <UserIcon
+                    color = "#FFFFFF"
+                    size = { size ? size * 0.5 : 24 }
+                    weight = "regular" />
+            </div>
         </div>
     );
 };

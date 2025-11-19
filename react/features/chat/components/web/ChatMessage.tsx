@@ -13,8 +13,6 @@ import { getDisplayNameSuffix, getFormattedTimestamp, getMessageText, getPrivate
 import { IChatMessageProps } from '../../types';
 
 import FileMessage from './FileMessage';
-import MessageMenu from './MessageMenu';
-import ReactButton from './ReactButton';
 
 interface IProps extends IChatMessageProps {
     className?: string;
@@ -372,7 +370,7 @@ const ChatMessage = ({
                         </div>
                     </div>
                 </div>
-                {shouldDisplayMenuOnRight && (
+                {/* {shouldDisplayMenuOnRight && (
                     <div className = { classes.sideBySideContainer }>
                         {!message.privateMessage && !message.lobbyChat
                         && !message.isReaction && <div>
@@ -395,7 +393,7 @@ const ChatMessage = ({
                             </div>
                         </div>
                     </div>
-                )}
+                )} */}
             </div>
         </div>
     );
