@@ -23,6 +23,13 @@
     display: flex;
     flex-direction: column;
 
+    scrollbar-width: none; // Firefox
+    -ms-overflow-style: none; // IE and Edge
+
+    &::-webkit-scrollbar {
+        display: none; // Chrome, Safari, Opera
+    }
+
     &.focus-visible {
         outline: 0;
         margin: 4px;
