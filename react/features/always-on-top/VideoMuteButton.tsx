@@ -6,7 +6,6 @@ import { DEFAULT_ICON } from '../base/icons/svg/constants';
 import { IProps } from '../base/toolbox/components/AbstractButton';
 
 import ToolbarButton from './ToolbarButton';
-import logger from './logger';
 
 const { api } = window.alwaysOnTop;
 
@@ -77,9 +76,7 @@ export default class VideoMuteButton extends Component<Props, State> {
                     videoAvailable,
                     videoMuted
                 }))
-            .catch((error: Error) => {
-                logger.error('Failed to get video availability and mute status', error);
-            });
+            .catch(console.error);
     }
 
     /**

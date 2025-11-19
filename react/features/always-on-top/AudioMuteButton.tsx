@@ -7,7 +7,6 @@ import { DEFAULT_ICON } from '../base/icons/svg/constants';
 import { IProps } from '../base/toolbox/components/AbstractButton';
 
 import ToolbarButton from './ToolbarButton';
-import logger from './logger';
 
 const { api } = window.alwaysOnTop;
 
@@ -78,9 +77,7 @@ export default class AudioMuteButton extends Component<Props, IState> {
                     audioAvailable: audioAvailable && !audioDisabled,
                     audioMuted
                 }))
-            .catch((error: Error) => {
-                logger.error('Failed to get audio availability and mute status', error);
-            });
+            .catch(console.error);
     }
 
     /**

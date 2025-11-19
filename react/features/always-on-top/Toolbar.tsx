@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import AudioMuteButton from './AudioMuteButton';
 import HangupButton from './HangupButton';
 import VideoMuteButton from './VideoMuteButton';
-import logger from './logger';
 
 const { api } = window.alwaysOnTop;
 
@@ -88,7 +87,7 @@ export default class Toolbar extends Component<Props, IState> {
     _videoConferenceJoinedListener() {
         // for electron clients that embed the api and are not updated
         if (!api.isVisitor) {
-            logger.warn('external API not updated');
+            console.warn('external API not updated');
 
             return;
         }
