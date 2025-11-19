@@ -31,6 +31,11 @@ android {
             }
         }
     }
+
+    packagingOptions {
+        pickFirst "**/librnworklets.so"
+    }
+
     namespace 'org.jitsi.meet.sdk'
 }
 
