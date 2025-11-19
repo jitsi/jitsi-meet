@@ -12,12 +12,21 @@ const defaultExpectations = {
          * null -> if the config is enabled, assert the UI elements are displayed and the feature works.
          */
         enabled: null,
+        minPinLength: 8
+    },
+    iframe: {
+        // Whether the iframe integration is enabled (the inverse of `disableIframeAPI` from config.js)
+        enabled: true
     },
     jaas: {
+        liveStreamingEnabled: true,
+        recordingEnabled: true,
+        transcriptionEnabled: true,
         /**
          * Whether the jaas account is configured with the account-level setting to allow unauthenticated users to join.
          */
-        unauthenticatedJoins: false
+        unauthenticatedJoins: false,
+        visitors: true
     },
     moderation: {
         // Everyone is a moderator.

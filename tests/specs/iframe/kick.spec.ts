@@ -3,6 +3,8 @@ import { isEqual } from 'lodash-es';
 import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureTwoParticipants } from '../../helpers/participants';
 
+import { checkIframeApi } from './util';
+
 setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
 });
@@ -13,9 +15,7 @@ describe('Kick participants', () => {
 
         const { p1, p2 } = ctx;
 
-        if (await p1.execute(() => config.disableIframeAPI)) {
-            ctx.skipSuiteTests = 'The environment has the iFrame API disabled.';
-
+        if (!await checkIframeApi(p1)) {
             return;
         }
 

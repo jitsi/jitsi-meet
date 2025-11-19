@@ -3,6 +3,7 @@ import { expect } from '@wdio/globals';
 import type { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import type WebhookProxy from '../../helpers/WebhookProxy';
+import { expectations } from '../../helpers/expectations';
 import { joinJaasMuc, generateJaasToken as t } from '../../helpers/jaas';
 
 setTestProperties(__filename, {
@@ -25,12 +26,9 @@ describe('Transcription', () => {
             token: t({ room, moderator: true }),
             iFrameApi: true });
 
-        if (await p1.execute(() => config.disableIframeAPI || !config.transcription?.enabled)) {
-            // skip the test if iframeAPI or transcriptions are disabled
-            ctx.skipSuiteTests = 'The environment has the iFrame API or transcriptions disabled.';
+        const transcriptionEnabled = await p1.execute(() => config.transcription?.enabled);
 
-            return;
-        }
+        expect(transcriptionEnabled).toBe(expectations.jaas.transcriptionEnabled);
 
         p2 = await joinJaasMuc({
             name: 'p2',

@@ -26,7 +26,8 @@ end, -100); -- make sure we are last in the chain
 module:hook('muc-occupant-left', function (event)
     local occupant, room = event.occupant, event.room;
 
-    if is_admin(occupant.bare_jid) or is_jibri(occupant.jid) or is_transcriber(occupant.jid) then
+    if is_admin(occupant.bare_jid) or is_jibri(occupant.jid) or is_transcriber(occupant.jid)
+        or room._data.breakout_rooms_active then
         return;
     end
 
@@ -54,5 +55,4 @@ module:hook('muc-room-destroyed', function (event)
         room.empty_destroy_timer:stop();
         room.empty_destroy_timer = nil;
     end
-end);
-
+end, 1); -- prosody handles it at 0
