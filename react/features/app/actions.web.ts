@@ -1,6 +1,6 @@
 // @ts-expect-error
 import { API_ID } from "../../../modules/API";
-import { setRoom } from "../base/conference/actions";
+import { setRoom } from "../base/conference/actions.any";
 import { configWillLoad, setConfig } from "../base/config/actions";
 import { setLocationURL } from "../base/connection/actions.web";
 import { loadConfig } from "../base/lib-jitsi-meet/functions.web";
