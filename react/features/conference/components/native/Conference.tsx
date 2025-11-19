@@ -280,7 +280,7 @@ class Conference extends AbstractConference<IProps, State> {
                     styles.conference,
                     _brandingStyles
                 ] }>
-                {/* Control the native status bar on Android only: hide when in a call and in landscape */}
+                {/* Control the native status bar on mobile: hide in landscape during the conference */}
                 <StatusBar
                     animated = { true }
                     hidden = { isLandscape } />
