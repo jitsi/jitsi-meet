@@ -2,6 +2,8 @@ import { P1, P2 } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import { ensureTwoParticipants, parseJid } from '../../helpers/participants';
 
+import { checkIframeApi } from './util';
+
 setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
 });
@@ -12,9 +14,7 @@ describe('Participants presence', () => {
 
         const { p1, p2 } = ctx;
 
-        if (await p1.execute(() => config.disableIframeAPI)) {
-            ctx.skipSuiteTests = 'The environment has the iFrame API disabled.';
-
+        if (!await checkIframeApi(p1)) {
             return;
         }
 

@@ -382,24 +382,25 @@ export const config: WebdriverIO.MultiremoteConfig = {
             }));
 
             const allProcessing: Promise<any>[] = [];
+            const attachments: { content: string | Buffer; filename: string; type: string; }[] = [];
 
             multiremotebrowser.instances.forEach((instance: string) => {
                 const bInstance = multiremotebrowser.getInstance(instance);
 
                 allProcessing.push(bInstance.takeScreenshot().then(shot => {
-                    AllureReporter.addAttachment(
-                        `Screenshot-${instance}`,
-                        Buffer.from(shot, 'base64'),
-                        'image/png');
+                    attachments.push({
+                        filename: `${instance}-screenshot`,
+                        content: Buffer.from(shot, 'base64'),
+                        type: 'image/png' });
                 }));
 
                 // @ts-ignore
                 allProcessing.push(bInstance.execute(() => typeof APP !== 'undefined' && APP.connection?.getLogs())
                     .then(logs =>
-                        logs && AllureReporter.addAttachment(
-                            `debug-logs-${instance}`,
-                            JSON.stringify(logs, null, '    '),
-                            'text/plain'))
+                        logs && attachments.push({
+                            filename: `${instance}-debug-logs`,
+                            content: JSON.stringify(logs, null, '    '),
+                            type: 'text/plain' }))
                     .catch(e => console.error('Failed grabbing debug logs', e)));
 
                 allProcessing.push(
@@ -408,15 +409,29 @@ export const config: WebdriverIO.MultiremoteConfig = {
                             saveLogs(bInstance, res);
                         }
 
-                        AllureReporter.addAttachment(`console-logs-${instance}`, getLogs(bInstance) || '', 'text/plain');
+                        attachments.push({
+                            filename: `${instance}-console-logs`,
+                            content: getLogs(bInstance) || '',
+                            type: 'text/plain' });
                     }));
 
                 allProcessing.push(bInstance.getPageSource().then(source => {
-                    AllureReporter.addAttachment(`html-source-${instance}`, pretty(source), 'text/plain');
+                    attachments.push({
+                        filename: `${instance}-html-source`,
+                        content: pretty(source),
+                        type: 'text/plain' });
                 }));
             });
 
             await Promise.allSettled(allProcessing);
+            attachments.sort(
+                (a, b) => {
+                    return a.filename < b.filename ? -1 : 1;
+                }).forEach(
+                a => {
+                    AllureReporter.addAttachment(a.filename, a.content, a.type);
+                }
+            );
         }
     },
 

@@ -2,6 +2,7 @@ import { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import { config as testsConfig } from '../../helpers/TestsConfig';
 import WebhookProxy from '../../helpers/WebhookProxy';
+import { expectations } from '../../helpers/expectations';
 import { joinJaasMuc, generateJaasToken as t } from '../../helpers/jaas';
 
 setTestProperties(__filename, {
@@ -12,16 +13,13 @@ setTestProperties(__filename, {
 /**
  * Tests the recording and live-streaming functionality of JaaS (including relevant webhooks) exercising the iFrame API
  * commands and functions.
- * TODO: read flags from config.
- * TODO: also assert "this meeting is being recorder" notificaitons are show/played?
+ * TODO: also assert "this meeting is being recorded" notifications are show/played?
  */
 describe('Recording and live-streaming', () => {
     const tenant = testsConfig.jaas.tenant;
     const customerId = tenant?.replace('vpaas-magic-cookie-', '');
-    // TODO: read from config
-    let recordingDisabled: boolean;
-    // TODO: read from config
-    let liveStreamingDisabled: boolean;
+    let recordingEnabled: boolean;
+    let liveStreamingEnabled: boolean;
     let p: Participant;
     let webhooksProxy: WebhookProxy;
 
@@ -29,17 +27,16 @@ describe('Recording and live-streaming', () => {
         webhooksProxy = ctx.webhooksProxy;
         p = await joinJaasMuc({ iFrameApi: true, token: t({ moderator: true }) }, { roomName: ctx.roomName });
 
-        // TODO: what should we do in this case? Add a config for this?
-        if (await p.execute(() => config.disableIframeAPI)) {
-            ctx.skipSuiteTests = 'The environment has the iFrame API disabled.';
+        recordingEnabled = Boolean(await p.execute(() => config.recordingService?.enabled));
+        expect(recordingEnabled).toBe(expectations.jaas.recordingEnabled);
 
-            return;
+        liveStreamingEnabled = Boolean(await p.execute(() => config.liveStreaming?.enabled));
+        expect(liveStreamingEnabled).toBe(expectations.jaas.liveStreamingEnabled);
+
+        if (liveStreamingEnabled && !process.env.YTUBE_TEST_STREAM_KEY) {
+            liveStreamingEnabled = false;
+            console.log('Skipping live-streaming tests because YTUBE_TEST_STREAM_KEY is not set.');
         }
-
-        // TODO: only read if config says so
-        recordingDisabled = Boolean(!await p.execute(() => config.recordingService?.enabled));
-        liveStreamingDisabled = Boolean(!await p.execute(() => config.liveStreaming?.enabled))
-            || !process.env.YTUBE_TEST_STREAM_KEY;
 
         await p.switchToMainFrame();
     });
@@ -138,7 +135,7 @@ describe('Recording and live-streaming', () => {
     }
 
     it('start/stop recording using the iFrame command', async () => {
-        if (recordingDisabled) {
+        if (!recordingEnabled) {
             return;
         }
 
@@ -150,7 +147,7 @@ describe('Recording and live-streaming', () => {
     });
 
     it('start/stop recording using the iFrame function', async () => {
-        if (recordingDisabled) {
+        if (!recordingEnabled) {
             return;
         }
 
@@ -162,7 +159,7 @@ describe('Recording and live-streaming', () => {
     });
 
     it('start/stop live-streaming using the iFrame command', async () => {
-        if (liveStreamingDisabled) {
+        if (!liveStreamingEnabled) {
             return;
         }
 
