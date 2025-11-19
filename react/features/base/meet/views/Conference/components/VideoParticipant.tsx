@@ -1,11 +1,9 @@
 import { Avatar } from "@internxt/ui";
 import { Hand, MicrophoneSlash } from "@phosphor-icons/react";
 import clsx from "clsx";
-import React, { useMemo } from "react";
+import React from "react";
 import ConnectionIndicator from "../../../../../connection-indicator/components/web/ConnectionIndicator";
 import Video from "../../../../media/components/web/Video";
-import { isSafari } from "../../../general/utils/safariDetector";
-import { ConfigService } from "../../../services/config.service";
 import { useVideoEncoding } from "../../PreMeeting/containers/VideoEncodingToggle";
 import { VideoParticipantType } from "../types";
 
@@ -31,16 +29,6 @@ const VideoParticipant = ({
     const { id, name, videoEnabled, audioMuted, videoTrack, local, dominantSpeaker, raisedHand, avatarSource } =
         participant;
 
-    const { isEncodingEnabled } = useVideoEncoding();
-    // Encoding will not be used for now, it has decoding problems and video lag. We will leave it set to false.
-    const encodeVideo = useMemo(() => {
-        if (isSafari()) {
-            return false;
-        }
-
-        return ConfigService.instance.isDevelopment() ? isEncodingEnabled : true;
-    }, [isEncodingEnabled]);
-
     return (
         <div
             className={`${relativePositioning ? "relative" : ""} flex ${
@@ -61,7 +49,7 @@ const VideoParticipant = ({
                     )}
                     key={`video-${id}`}
                     // Set to false due to decoding issues and video lag
-                    encodeVideo={true}
+                    encodeVideo={false}
                 />
             ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gray-800">
