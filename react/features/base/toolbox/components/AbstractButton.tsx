@@ -134,7 +134,7 @@ export default class AbstractButton<P extends IProps, S = any> extends Component
      *
      * @abstract
      */
-    accessibilityLabel: string;
+    accessibilityLabel!: string;
 
     /**
      * This is the same as `accessibilityLabel`, replacing it when the button
@@ -142,16 +142,16 @@ export default class AbstractButton<P extends IProps, S = any> extends Component
      *
      * @abstract
      */
-    toggledAccessibilityLabel: string;
+    toggledAccessibilityLabel!: string;
 
-    labelProps: Object;
+    labelProps!: Object;
 
     /**
      * The icon of this button.
      *
      * @abstract
      */
-    icon: Object;
+    icon!: Object;
 
     /**
      * The text associated with this button. When `showLabel` is set to
@@ -159,19 +159,19 @@ export default class AbstractButton<P extends IProps, S = any> extends Component
      *
      * @abstract
      */
-    label: string;
+    label!: string;
 
     /**
      * The label for this button, when toggled.
      */
-    toggledLabel: string;
+    toggledLabel!: string;
 
     /**
      * The icon of this button, when toggled.
      *
      * @abstract
      */
-    toggledIcon: Object;
+    toggledIcon!: Object;
 
     /**
      * The text to display in the tooltip. Used only on web.
