@@ -2,6 +2,7 @@ import { expect } from '@wdio/globals';
 
 import { Participant } from '../../../helpers/Participant';
 import { setTestProperties } from '../../../helpers/TestProperties';
+import { expectations } from '../../../helpers/expectations';
 import { joinJaasMuc, generateJaasToken as t } from '../../../helpers/jaas';
 
 setTestProperties(__filename, {
@@ -24,12 +25,13 @@ describe('Visitors live', () => {
             token: t({ room: ctx.roomName, displayName: 'Mo de Rator', moderator: true })
         });
 
-        // TODO: Remove this in favor of configurable test expectations
-        await moderator.driver.waitUntil(() => moderator.execute(() => APP.conference._room.isVisitorsSupported()), {
-            timeout: 2000
-        }).catch(e => {
-            ctx.skipSuiteTests = `Because isVisitorsSupported() returned an error: ${e}.`;
-        });
+        if (expectations.jaas.visitors) {
+            await moderator.driver.waitUntil(() => moderator.execute(() => APP.conference._room.isVisitorsSupported()), {
+                timeout: 2000
+            }).catch(e => {
+                throw new Error(`isVisitorsSupported() returned an error: ${e}.`);
+            });
+        }
 
         visitor = await joinJaasMuc({
             name: 'p2',
