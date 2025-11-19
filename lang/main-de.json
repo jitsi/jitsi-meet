@@ -1484,6 +1484,7 @@
         "connectionInfo": "Verbindungsinformationen",
         "demote": "Zu Gästen verschieben",
         "domute": "Stummschalten",
+        "domuteDesktopOfOthers": "Bildschirm freigeben für alle beenden",
         "domuteOthers": "Alle anderen stummschalten",
         "domuteVideo": "Kamera ausschalten",
         "domuteVideoOfOthers": "Alle anderen Kameras auschalten",

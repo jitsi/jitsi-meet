@@ -152,7 +152,7 @@ describe('Desktop sharing', () => {
         await checkForScreensharingTile(p1, p3);
         await checkForScreensharingTile(p2, p3);
 
-        // Add another particpant to verify multiple screenshares are visible without gaps in filmstrip.
+        // Add another participant to verify multiple screenshares are visible without gaps in filmstrip.
         await ensureFourParticipants({
             configOverwrite: {
                 filmstrip: {

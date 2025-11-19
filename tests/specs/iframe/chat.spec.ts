@@ -5,6 +5,8 @@ import { setTestProperties } from '../../helpers/TestProperties';
 import { config as testsConfig } from '../../helpers/TestsConfig';
 import { joinMuc } from '../../helpers/joinMuc';
 
+import { checkIframeApi } from './util';
+
 setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
 });
@@ -14,13 +16,10 @@ describe('Chat', () => {
 
     it('setup', async () => {
         p1 = await joinMuc({ name: 'p1', iFrameApi: true, token: testsConfig.jwt.preconfiguredToken });
-        p2 = await joinMuc({ name: 'p2', iFrameApi: true });
-
-        if (await p1.execute(() => config.disableIframeAPI)) {
-            ctx.skipSuiteTests = 'The environment has the iFrame API disabled.';
-
+        if (!await checkIframeApi(p1)) {
             return;
         }
+        p2 = await joinMuc({ name: 'p2', iFrameApi: true });
 
         await p1.switchToMainFrame();
         await p2.switchToMainFrame();

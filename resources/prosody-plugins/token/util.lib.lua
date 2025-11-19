@@ -5,6 +5,7 @@ local basexx = require "basexx";
 local have_async, async = pcall(require, "util.async");
 local hex = require "util.hex";
 local jwt = module:require "luajwtjitsi";
+local jwk_to_pem = module:require "token/jwk".jwk_to_pem;
 local jid = require "util.jid";
 local json_safe = require "cjson.safe";
 local path = require "util.paths";
@@ -111,14 +112,14 @@ function Util.new(module)
         return nil;
     end
 
-    if self.appSecret == nil and self.asapKeyServer == nil then
-        module:log("error", "'app_secret' or 'asap_key_server' must be specified");
+    if self.appSecret == nil and self.asapKeyServer == nil and self.cacheKeysUrl == nil then
+        module:log("error", "'app_secret', 'asap_key_server or 'cacheKeysUrl' must be specified");
         return nil;
     end
 
     -- Set defaults for signature algorithm
     if self.signatureAlgorithm == nil then
-        if self.asapKeyServer ~= nil then
+        if self.asapKeyServer ~= nil or self.cacheKeysUrl then
             self.signatureAlgorithm = "RS256"
         elseif self.appSecret ~= nil then
             self.signatureAlgorithm = "HS256"
@@ -133,7 +134,7 @@ function Util.new(module)
 
     self.requireRoomClaim = module:get_option_boolean('asap_require_room_claim', true);
 
-    if self.asapKeyServer and not have_async then
+    if (self.asapKeyServer or self.cacheKeysUrl) and not have_async then
         module:log("error", "requires a version of Prosody with util.async");
         return nil;
     end
@@ -148,7 +149,18 @@ function Util.new(module)
                 local keys_to_delete = table_shallow_copy(self.cachedKeys);
                 -- Let's convert any certificate to public key
                 for k, v in pairs(cjson_safe.decode(content)) do
-                    if starts_with(v, '-----BEGIN CERTIFICATE-----') then
+                    -- JWKS format
+                    if k == "keys" and type(v) == "table" then
+                        for _, key in ipairs(v) do
+                            if key.kid then
+                                self.cachedKeys[key.kid] = jwk_to_pem(key);
+
+                                -- do not clean this key if it already exists
+                                keys_to_delete[key.kid] = nil;
+                            end
+                        end
+                    -- direct PEM mapping (Firebase)
+                    elseif starts_with(v, '-----BEGIN CERTIFICATE-----') then
                         self.cachedKeys[k] = ssl.loadcertificate(v):pubkey();
                         -- do not clean this key if it already exists
                         keys_to_delete[k] = nil;
@@ -263,7 +275,7 @@ function Util:process_and_verify_token(session)
         -- We're using an public key stored in the session
         -- module:log("debug","Public key was found on the session");
         key = session.public_key;
-    elseif self.asapKeyServer and session.auth_token ~= nil then
+    elseif (self.asapKeyServer or self.cacheKeysUrl) and session.auth_token ~= nil then
         -- We're fetching an public key from an ASAP server
         local dotFirst = session.auth_token:find("%.");
         if not dotFirst then return false, "not-allowed", "Invalid token" end
