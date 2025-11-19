@@ -123,7 +123,7 @@ const styles = (theme: Theme) => {
  * @augments PureComponent
  */
 class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
-    _componentWasUnmounted: boolean;
+    _componentWasUnmounted = false;
 
     /**
      * Initializes a new {@code VirtualBackgroundPreview} instance.

@@ -28,14 +28,14 @@ export default class JitsiStreamBackgroundEffect {
     _stream: any;
     _segmentationPixelCount: number;
     _inputVideoElement: HTMLVideoElement;
-    _maskFrameTimerWorker: Worker;
+    _maskFrameTimerWorker!: Worker;
     _outputCanvasElement: HTMLCanvasElement;
-    _outputCanvasCtx: CanvasRenderingContext2D | null;
-    _segmentationMaskCtx: CanvasRenderingContext2D | null;
-    _segmentationMask: ImageData;
-    _segmentationMaskCanvas: HTMLCanvasElement;
-    _virtualImage: HTMLImageElement;
-    _virtualVideo: HTMLVideoElement;
+    _outputCanvasCtx!: CanvasRenderingContext2D | null;
+    _segmentationMaskCtx!: CanvasRenderingContext2D | null;
+    _segmentationMask!: ImageData;
+    _segmentationMaskCanvas!: HTMLCanvasElement;
+    _virtualImage!: HTMLImageElement;
+    _virtualVideo!: HTMLVideoElement;
 
     /**
      * Represents a modified video MediaStream track.
