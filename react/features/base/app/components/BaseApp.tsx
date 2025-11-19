@@ -45,7 +45,7 @@ export default class BaseApp<P> extends Component<P, IState> {
     /**
      * The deferred for the initialisation {{promise, resolve, reject}}.
      */
-    _init: PromiseWithResolvers<any>;
+    _init!: PromiseWithResolvers<any>;
 
     /**
      * Initializes a new {@code BaseApp} instance.
@@ -158,9 +158,9 @@ export default class BaseApp<P> extends Component<P, IState> {
 
         if (store) {
             return (
-                <I18nextProvider i18n={i18next}>
+                <I18nextProvider i18n = { i18next }>
                     {/* @ts-ignore */}
-                    <Provider store={store}>
+                    <Provider store = { store }>
                         <Fragment>
                             {this._createMainElement(component, props)}
                             <SoundCollection />
