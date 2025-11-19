@@ -18,6 +18,7 @@ JICOFO_HOSTNAME=$(echo get jitsi-videobridge/jvb-hostname | sudo debconf-communi
 
 # Install SystemD template unit (once, outside loop)
 cp prosody-v@.service /usr/lib/systemd/system/prosody-v@.service
+systemctl daemon-reload
 
 # Configure prosody instances
 for (( i=1 ; i<=${NUMBER_OF_INSTANCES} ; i++ ));
@@ -32,6 +33,8 @@ do
     sed -i "s/52221/5222${i}/g" /etc/prosody-v${i}/prosody.cfg.lua
     sed -i "s/52801/5280${i}/g" /etc/prosody-v${i}/prosody.cfg.lua
     sed -i "s/52811/5281${i}/g" /etc/prosody-v${i}/prosody.cfg.lua
+    # Enable and start the systemd instance
+    systemctl enable --now prosody-v@${i}.service
 done
 
 # Configure jicofo
@@ -55,6 +58,9 @@ do
   hocon -f $HOCON_CONFIG set "jicofo.xmpp.visitors.v${i}.disable-certificate-verification" true
 done
 
-# Restart all prosody visitor instances (using wildcard)
-systemctl restart 'prosody-v@*.service'
+# Restart all prosody visitor instances
+for (( i=1 ; i<=${NUMBER_OF_INSTANCES} ; i++ ));
+do
+  systemctl restart prosody-v@${i}.service
+done
 systemctl restart jicofo
