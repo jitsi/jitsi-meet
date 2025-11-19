@@ -821,5 +821,6 @@ export function isPrivateChatEnabled(
 export function isPrivateChatEnabledSelf(state: IReduxState): boolean {
     const localParticipant = getLocalParticipant(state);
 
-    return isPrivateChatEnabled(localParticipant, state, true);
+    // MEET DESIGN: private chat is disabled by default
+    return isPrivateChatEnabled(localParticipant, state, false);
 }

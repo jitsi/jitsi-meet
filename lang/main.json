@@ -128,7 +128,9 @@
         "messageAccessibleTitleMe": "me says:",
         "messageTo": "Private message to {{recipient}}",
         "messagebox": "Type a message",
+        "messagesDissapearWarning": "All messages will disappear when the meeting ends",
         "newMessages": "New messages",
+        "privacyTooltip": "For your privacy, this chat will be deleted when the meeting ends",
         "nickname": {
             "popover": "Choose a nickname",
             "title": "Enter a nickname to use chat",
@@ -137,6 +139,7 @@
             "titleWithPollsAndCC": "Enter a nickname to use chat, polls and closed captions",
             "titleWithPollsAndCCAndFileSharing": "Enter a nickname to use chat, polls, closed captions and files"
         },
+        "noMessages": "There are no messages in the chat.\nBe the first to send one.",
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "privateNotice": "Private message to {{recipient}}",
         "sendButton": "Send",
@@ -834,6 +837,8 @@
                 "passwordPlaceholder": "Password",
                 "twoFactorCodePlaceholder": "Two Factor Authentication Code",
                 "loginButton": "Log in",
+                "signinWithInternxt": "Sign in with Internxt",
+                "signupWithBrowser": "Create Internxt account",
                 "forgotPassword": "I forgot my password",
                 "noAccount": "Don't have an account?",
                 "createAccount": "Create account",
@@ -845,7 +850,10 @@
                     "twoFactorCodeInvalid": "Enter a valid 6-digit code",
                     "invalidCredentials": "Invalid credentials. Please try again.",
                     "cannotCreateMeetings": "User cannot create meetings",
-                    "genericError": "Unable to log in. Please try again or contact support if the problem persists."
+                    "genericError": "Unable to log in. Please try again or contact support if the problem persists.",
+                    "popupBlocked": "The popup window was blocked. Please allow popups for Internxt Meet.",
+                    "authCancelled": "Authentication cancelled by user.",
+                    "authTimeout": "Authentication timeout. Please try again."
                 },
                 "signup": {
                     "title": "Sign up",

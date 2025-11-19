@@ -112,12 +112,15 @@
         "messageAccessibleTitleMe": "yo digo:",
         "messageTo": "Mensaje privado para {{recipient}}",
         "messagebox": "Escriba un mensaje",
+        "messagesDissapearWarning": "Todos los mensajes desaparecerán cuando termine la reunión",
         "newMessages": "Mensajes nuevos",
+        "privacyTooltip": "Por tu privacidad, este chat será eliminado cuando termine la reunión",
         "nickname": {
             "popover": "Selecciona un apodo",
             "title": "Introduce un apodo para usar el chat",
             "titleWithPolls": "Introduce un apodo para usar el chat"
         },
+        "noMessages": "No hay mensajes en el chat.\nSé el primero en enviar uno.",
         "noMessagesMessage": "No hay mensajes en la reunión. ¡Inicie una conversación!",
         "privateNotice": "Mensaje privado para {{recipient}}",
         "sendButton": "Enviar",
@@ -723,6 +726,8 @@
                 "passwordPlaceholder": "Contraseña",
                 "twoFactorCodePlaceholder": "Código de autenticación de dos factores",
                 "loginButton": "Iniciar sesión",
+                "signinWithInternxt": "Iniciar sesión con Internxt",
+                "signupWithBrowser": "Crear cuenta de Internxt",
                 "forgotPassword": "Olvidé mi contraseña",
                 "noAccount": "¿No tienes una cuenta?",
                 "createAccount": "Crear cuenta",
@@ -734,7 +739,10 @@
                     "twoFactorCodeInvalid": "Introduce un código válido de 6 dígitos",
                     "invalidCredentials": "Credenciales inválidas. Por favor, inténtalo de nuevo.",
                     "cannotCreateMeetings": "El usuario no puede crear reuniones",
-                    "genericError": "No se pudo iniciar sesión. Por favor, inténtelo de nuevo o contacte a soporte si el problema persiste"
+                    "genericError": "No se pudo iniciar sesión. Por favor, inténtelo de nuevo o contacte a soporte si el problema persiste",
+                    "popupBlocked": "La ventana emergente fue bloqueada. Por favor, permite las ventanas emergentes para Internxt Meet.",
+                    "authCancelled": "Autenticación cancelada por el usuario.",
+                    "authTimeout": "El tiempo de autenticación ha expirado. Por favor, inténtalo de nuevo."
                 },
                 "signup": {
                     "title": "Regístrate",
