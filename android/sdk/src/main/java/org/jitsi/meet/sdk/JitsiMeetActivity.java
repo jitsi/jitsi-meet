@@ -35,7 +35,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.facebook.react.modules.core.PermissionListener;
@@ -63,8 +62,6 @@ public class JitsiMeetActivity extends AppCompatActivity
     private static final String JITSI_MEET_CONFERENCE_OPTIONS = "JitsiMeetConferenceOptions";
 
     private boolean isReadyToClose;
-    // Tracks whether we are currently inside a conference
-    private boolean isInCall = false;
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -127,8 +124,6 @@ public class JitsiMeetActivity extends AppCompatActivity
         Intent intent = new Intent("onConfigurationChanged");
         intent.putExtra("newConfig", newConfig);
         this.sendBroadcast(intent);
-        // Update status bar visibility when orientation changes
-        updateStatusBarVisibility();
     }
 
     @Override
@@ -159,8 +154,6 @@ public class JitsiMeetActivity extends AppCompatActivity
     public void onResume() {
         super.onResume();
         JitsiMeetActivityDelegate.onHostResume(this);
-        // Re-apply status bar visibility in case orientation or call state changed while paused
-        updateStatusBarVisibility();
     }
 
     @Override
@@ -280,16 +273,10 @@ public class JitsiMeetActivity extends AppCompatActivity
         JitsiMeetLogger.i("Conference joined: " + extraData);
         // Launch the service for the ongoing notification.
         JitsiMeetOngoingConferenceService.launch(this, extraData);
-        // We're now in a call — update UI (status bar) accordingly
-        isInCall = true;
-        updateStatusBarVisibility();
     }
 
     protected void onConferenceTerminated(HashMap<String, Object> extraData) {
         JitsiMeetLogger.i("Conference terminated: " + extraData);
-        // Conference ended — show status bar again
-        isInCall = false;
-        updateStatusBarVisibility();
     }
 
     protected void onConferenceWillJoin(HashMap<String, Object> extraData) {
@@ -316,37 +303,6 @@ public class JitsiMeetActivity extends AppCompatActivity
         JitsiMeetLogger.i("SDK is ready to close");
         isReadyToClose = true;
         finish();
-        // Ensure state cleared as we're closing
-        isInCall = false;
-        updateStatusBarVisibility();
-    }
-
-    /**
-     * Show or hide the status bar depending on orientation and call state.
-     * Hides the status bar only while in a call and in landscape orientation.
-     * Uses WindowInsetsControllerCompat to avoid deprecated system UI flags
-     * and to keep edge-to-edge behavior on newer Android releases.
-     */
-    private void updateStatusBarVisibility() {
-        try {
-            int orientation = getResources().getConfiguration().orientation;
-
-            WindowInsetsControllerCompat wic =
-                new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
-
-            if (isInCall && orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                // Hide only the status bar. Keep navigation bar untouched so system gestures
-                // and edge-to-edge behavior remain functional.
-                wic.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
-                wic.hide(WindowInsetsCompat.Type.statusBars());
-            } else {
-                // Show status bar when not in landscape call
-                wic.show(WindowInsetsCompat.Type.statusBars());
-            }
-        } catch (Exception e) {
-            // Don't crash the activity for unexpected errors altering system UI
-            JitsiMeetLogger.w("Failed to update status bar visibility", e);
-        }
     }
 
 //    protected void onTranscriptionChunkReceived(HashMap<String, Object> extraData) {

@@ -3,7 +3,9 @@ import React, { useCallback } from 'react';
 import {
     BackHandler,
     NativeModules,
+    Platform,
     SafeAreaView,
+    StatusBar,
     View,
     ViewStyle
 } from 'react-native';
@@ -91,6 +93,11 @@ interface IProps extends AbstractProps {
      * Set to {@code true} when the filmstrip is currently visible.
      */
     _filmstripVisible: boolean;
+
+    /**
+     * Whether we are currently in a joined conference.
+     */
+    _inConference: boolean;
 
     /**
      * The indicator which determines if the display name is visible.
@@ -270,12 +277,22 @@ class Conference extends AbstractConference<IProps, State> {
             _brandingStyles,
         } = this.props;
 
+        const isAndroid = Platform.OS === 'android';
+        const isLandscape = this.props._aspectRatio === ASPECT_RATIO_WIDE;
+        const inConference = Boolean(this.props._inConference);
+
         return (
             <Container
                 style = { [
                     styles.conference,
                     _brandingStyles
                 ] }>
+                {/* Control the native status bar on Android only: hide when in a call and in landscape */}
+                { isAndroid
+                    && <StatusBar
+                        animated = { true }
+                        hidden = { inConference && isLandscape } />
+                }
                 <BrandingImageBackground />
                 { this._renderContent() }
             </Container>
@@ -580,7 +597,9 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _reducedUI: reducedUI,
         _showLobby: getIsLobbyVisible(state),
         _startCarMode: startCarMode,
-        _toolboxVisible: isToolboxVisible(state)
+        _toolboxVisible: isToolboxVisible(state),
+        // true when the conference object exists (we are in a joined conference)
+        _inConference: Boolean(state['features/base/conference'].conference)
     };
 }
 
