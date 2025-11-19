@@ -6,7 +6,6 @@ import { ConnectionState } from './types';
  * @returns A new ConnectionState object with default values
  */
 export const createConnectionState = (): ConnectionState => ({
-    isManualDisconnect: false,
     hasConferenceListeners: false,
     hasConnectionListeners: false,
     wasMediaConnectionInterrupted: false,

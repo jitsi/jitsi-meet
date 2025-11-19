@@ -3,6 +3,7 @@ import { AnyAction } from "redux";
 import { IStore } from "../../../../app/types";
 import { hideNotification } from "../../../../notifications/actions";
 import { CONFERENCE_WILL_LEAVE } from "../../../conference/actionTypes";
+import { isLeavingConferenceManually, setLeaveConferenceManually } from "../../general/utils/conferenceState";
 import { CONNECTION_DISCONNECTED, CONNECTION_ESTABLISHED, CONNECTION_FAILED } from "../../../connection/actionTypes";
 import { connect } from "../../../connection/actions.web";
 import { setJWT } from "../../../jwt/actions";
@@ -17,7 +18,6 @@ const MAX_RECONNECTION_ATTEMPTS = 2;
 const RECONNECTION_DELAY_MS = 3000;
 const JWT_EXPIRED_ERROR = "connection.passwordRequired";
 
-let isManualDisconnect = false;
 let reconnectionTimer: number | null = null;
 let isReconnecting = false;
 let reconnectionAttempts = 0;
@@ -63,7 +63,7 @@ const triggerReconnection = (store: IStore) => {
 
 const scheduleRetry = (store: IStore) => {
     reconnectionTimer = window.setTimeout(() => {
-        if (!isManualDisconnect && isReconnecting) {
+        if (!isLeavingConferenceManually() && isReconnecting) {
             attemptReconnection(store);
         }
     }, RECONNECTION_DELAY_MS);
@@ -80,7 +80,7 @@ const handleMaxAttemptsReached = (store: IStore) => {
  * If max attempts reached, reloads the page.
  */
 const attemptReconnection = async (store: IStore) => {
-    if (isManualDisconnect) return;
+    if (isLeavingConferenceManually()) return;
 
     if (reconnectionAttempts >= MAX_RECONNECTION_ATTEMPTS) {
         handleMaxAttemptsReached(store);
@@ -124,7 +124,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
 
     switch (action.type) {
         case CONFERENCE_WILL_LEAVE: {
-            isManualDisconnect = true;
+            setLeaveConferenceManually(true);
             resetReconnectionState();
             hideReconnectionNotification(store);
             hideReconnectionLoader(store);
@@ -132,14 +132,14 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         }
 
         case CONNECTION_DISCONNECTED: {
-            if (isManualDisconnect) break;
+            if (isLeavingConferenceManually()) break;
 
             clearTimer();
             reconnectionAttempts = 0;
             isReconnecting = true;
 
             reconnectionTimer = window.setTimeout(() => {
-                if (!isManualDisconnect && isReconnecting) {
+                if (!isLeavingConferenceManually() && isReconnecting) {
                     attemptReconnection(store);
                 }
             }, RECONNECTION_WAIT_TIME_MS);
@@ -154,14 +154,14 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
             }
 
             resetReconnectionState();
-            isManualDisconnect = false;
+            setLeaveConferenceManually(false);
             break;
         }
 
         case CONNECTION_FAILED: {
             const { error } = action;
             console.log("[AUTO_RECONNECT] Connection failed with error:", error);
-            if (error?.name === JWT_EXPIRED_ERROR && !isManualDisconnect && !isReconnecting) {
+            if (error?.name === JWT_EXPIRED_ERROR && !isLeavingConferenceManually() && !isReconnecting) {
                 attemptReconnection(store);
             }
 
