@@ -106,7 +106,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
      */
 
     /* eslint-disable-next-line no-undef */
-    searchTimeout: number;
+    searchTimeout!: number;
 
     /**
      * Constructor of the component.
