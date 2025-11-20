@@ -1,27 +1,25 @@
 diff --git a/node_modules/react-native-worklets-core/android/build.gradle b/node_modules/react-native-worklets-core/android/build.gradle
-index 1234567..abcdefg 100644
+index 1d77e2a..4b8f3e1 100644
 --- a/node_modules/react-native-worklets-core/android/build.gradle
 +++ b/node_modules/react-native-worklets-core/android/build.gradle
-@@ -72,6 +72,14 @@ task deleteCmakeCache() {
- android {
-   namespace "com.worklets"
-   compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
-+
-+  // Disable lint to avoid bundleReleaseLocalLintAar conflicts
-+  // This library uses both Prefab and JNI libs which cause conflicts during lint AAR packaging
-+  lintOptions {
-+    checkReleaseBuilds false
-+    abortOnError false
-+  }
-+
-   
-   defaultConfig {
-     minSdkVersion getExtOrIntegerDefault("minSdkVersion")
-@@ -158,6 +166,7 @@ android {
+@@ -166,6 +166,7 @@ android {
        "**/libreact_nativemodule_core.so",
        "**/libjscexecutor.so",
      ]
 +    pickFirst "**/librnworklets.so"
    }
- 
+
    buildFeatures {
+@@ -195,3 +196,12 @@ tasks.configureEach { task ->
+     task.dependsOn(deleteCmakeCache)
+   }
+ }
++
++// Disable lint AAR tasks to avoid Prefab/JNI library conflicts
++// This library publishes librnworklets.so via both Prefab and regular JNI,
++// causing duplicate file errors during lint AAR packaging
++tasks.whenTaskAdded { task ->
++  if (task.name == 'bundleReleaseLocalLintAar' || task.name == 'bundleDebugLocalLintAar') {
++    task.enabled = false
++  }
++}
