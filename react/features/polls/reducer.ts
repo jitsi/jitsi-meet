@@ -11,6 +11,7 @@ import {
     RESET_UNREAD_POLLS_COUNT,
     SAVE_POLL
 } from './actionTypes';
+import logger from './logger';
 import { IIncomingAnswerData, IPollData } from './types';
 
 const INITIAL_STATE = {
@@ -87,7 +88,7 @@ ReducerRegistry.register<IPollsState>(STORE_NAME, (state = INITIAL_STATE, action
 
         // if the poll doesn't exist
         if (!(pollId in state.polls)) {
-            console.warn('requested poll does not exist: pollId ', pollId);
+            logger.warn('Requested poll does not exist', { pollId });
 
             return state;
         }

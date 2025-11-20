@@ -12,6 +12,7 @@ import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import { copyText } from '../../../base/util/copyText.web';
 import { handleLobbyChatInitialized, openChat } from '../../actions.web';
+import logger from '../../logger';
 
 export interface IProps {
     className?: string;
@@ -125,11 +126,11 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
                         setShowCopiedMessage(false);
                     }, 2000);
                 } else {
-                    console.error('Failed to copy text');
+                    logger.error('Failed to copy text');
                 }
             })
-            .catch(error => {
-                console.error('Error copying text:', error);
+            .catch((error: Error) => {
+                logger.error('Error copying text', error);
             });
         handleClose();
     }, [ message ]);
