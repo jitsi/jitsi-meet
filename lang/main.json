@@ -330,6 +330,7 @@
         "conferenceDisconnectTitle": "You have been disconnected.",
         "conferenceReloadMsg": "We're trying to fix this. Reconnecting in {{seconds}} sec…",
         "conferenceReloadTitle": "Unfortunately, something went wrong.",
+        "leaveMeetingConfirmation": "Are you sure you want to leave the meeting?",
         "confirm": "Confirm",
         "confirmBack": "Back",
         "confirmNo": "No",

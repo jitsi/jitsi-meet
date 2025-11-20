@@ -299,6 +299,7 @@
         "conferenceDisconnectTitle": "Ha sido desconectado.",
         "conferenceReloadMsg": "Estamos tratando de arreglar esto. Reconectando en {{seconds}} segundos…",
         "conferenceReloadTitle": "Desafortunadamente, algo salió mal.",
+        "leaveMeetingConfirmation": "¿Estás seguro de que quieres salir de la reunión?",
         "confirm": "Confirmar",
         "confirmNo": "No",
         "confirmYes": "Sí",
