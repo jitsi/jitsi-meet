@@ -132,6 +132,9 @@ case "$1" in
             # also when upgrading to new prosody version from prosody repo we need to add it again
             if ! grep -q "Include \"conf\.d\/\*\.cfg.lua\"" $PROSODY_CONFIG_OLD; then
                 echo -e "\nInclude \"conf.d/*.cfg.lua\"" >> $PROSODY_CONFIG_OLD
+
+                # trigger a restart
+                PROSODY_CONFIG_PRESENT="false"
             fi
         fi
 
