@@ -1,0 +1,12 @@
+diff --git a/node_modules/react-native-worklets-core/android/build.gradle b/node_modules/react-native-worklets-core/android/build.gradle
+index 1234567..abcdefg 100644
+--- a/node_modules/react-native-worklets-core/android/build.gradle
++++ b/node_modules/react-native-worklets-core/android/build.gradle
+@@ -158,6 +158,7 @@ android {
+       "**/libreact_nativemodule_core.so",
+       "**/libjscexecutor.so",
+     ]
++    pickFirst "**/librnworklets.so"
+   }
+
+   buildFeatures {
