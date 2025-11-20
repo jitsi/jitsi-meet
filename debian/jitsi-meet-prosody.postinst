@@ -124,10 +124,17 @@ case "$1" in
                 ln -s $PROSODY_HOST_CONFIG /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua
             fi
             PROSODY_CREATE_JICOFO_USER="true"
+        fi
+
+        if ! grep -q "VirtualHost \"$JVB_HOSTNAME\"" $PROSODY_CONFIG_OLD; then
             # on some distributions main prosody config doesn't include configs
             # from conf.d folder enable it as this where we put our config by default
+            # also when upgrading to new prosody version from prosody repo we need to add it again
             if ! grep -q "Include \"conf\.d\/\*\.cfg.lua\"" $PROSODY_CONFIG_OLD; then
                 echo -e "\nInclude \"conf.d/*.cfg.lua\"" >> $PROSODY_CONFIG_OLD
+
+                # trigger a restart
+                PROSODY_CONFIG_PRESENT="false"
             fi
         fi
 
