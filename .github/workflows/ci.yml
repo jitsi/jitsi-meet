@@ -115,10 +115,14 @@ jobs:
         node -v
         npm -v
     - run: npm install
-    - run: |
-        cd android
-        ./gradlew :sdk:clean
-        ./gradlew :sdk:assembleRelease
+    - name: Clean all build artifacts
+      working-directory: ./android
+      run: |
+        ./gradlew clean --no-parallel
+        ./gradlew :react-native-worklets-core:clean --no-parallel
+    - name: Build Android SDK
+      working-directory: ./android
+      run: ./gradlew :sdk:assembleRelease --no-parallel
   ios-sdk-build:
     name: Build mobile SDK (iOS)
     runs-on: macos-15
