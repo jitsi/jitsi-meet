@@ -47,7 +47,7 @@ const styles = () => {
  */
 class VirtualBackgroundTab extends AbstractDialogTab<IProps, any> {
     /**
-     * Initializes a new {@code ModeratorTab} instance.
+     * Initializes a new {@code VirtualBackgroundTab} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
@@ -77,7 +77,7 @@ class VirtualBackgroundTab extends AbstractDialogTab<IProps, any> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             options,
             selectedVideoInputId

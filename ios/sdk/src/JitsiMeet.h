@@ -19,6 +19,15 @@
 
 #import <JitsiMeetSDK/JitsiMeetConferenceOptions.h>
 
+// Matches RTCLoggingSeverity from RTCLogging.h
+typedef NS_ENUM(NSInteger, WebRTCLoggingSeverity) {
+  WebRTCLoggingSeverityVerbose,
+  WebRTCLoggingSeverityInfo,
+  WebRTCLoggingSeverityWarning,
+  WebRTCLoggingSeverityError,
+  WebRTCLoggingSeverityNone,
+};
+
 @interface JitsiMeet : NSObject
 
 /**
@@ -26,19 +35,34 @@
  * SiriKit or Handoff, for example.
  */
 @property (copy, nonatomic, nullable) NSString *conferenceActivityType;
+
 /**
  * Custom URL scheme used for deep-linking.
  */
 @property (copy, nonatomic, nullable) NSString *customUrlScheme;
+
 /**
  * List of domains used for universal linking.
  */
 @property (copy, nonatomic, nullable) NSArray<NSString *> *universalLinkDomains;
+
 /**
  * Default conference options used for all conferences. These options will be merged
  * with those passed to JitsiMeetView.join when joining a conference.
  */
 @property (nonatomic, nullable) JitsiMeetConferenceOptions *defaultConferenceOptions;
+
+/**
+ * Custom RTCAudioDevice implementation.
+ * https://github.com/jitsi/webrtc/blob/M124/sdk/objc/components/audio/RTCAudioDevice.h
+ * https://github.com/mstyura/RTCAudioDevice
+ */
+@property (nonatomic, strong, nullable) id rtcAudioDevice;
+
+/**
+ * Specify WebRTC logging severity.
+ */
+@property (nonatomic, assign) WebRTCLoggingSeverity webRtcLoggingSeverity;
 
 #pragma mark - This class is a singleton
 
@@ -58,7 +82,7 @@
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *_Nonnull)options;
 
 - (UIInterfaceOrientationMask)application:(UIApplication *_Nonnull)application
-  supportedInterfaceOrientationsForWindow:(UIWindow *_Nonnull)window;
+  supportedInterfaceOrientationsForWindow:(UIWindow *_Nullable)window;
 
 #pragma mark - Utility methods
 
@@ -76,6 +100,9 @@
 
 - (BOOL)isCrashReportingDisabled;
 
-- (void)showSplashScreen:(UIView * _Nonnull) rootView;
+/**
+ * Shows the splash screen.
+ */
+- (void)showSplashScreen;
 
 @end

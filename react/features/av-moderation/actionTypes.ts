@@ -38,6 +38,15 @@ export const ENABLE_MODERATION = 'ENABLE_MODERATION';
 export const REQUEST_DISABLE_AUDIO_MODERATION = 'REQUEST_DISABLE_AUDIO_MODERATION';
 
 /**
+ * The type of (redux) action which signals that Desktop Moderation disable has been requested.
+ *
+ * {
+ *     type: REQUEST_DISABLE_DESKTOP_MODERATION
+ * }
+ */
+export const REQUEST_DISABLE_DESKTOP_MODERATION = 'REQUEST_DISABLE_DESKTOP_MODERATION';
+
+/**
  * The type of (redux) action which signals that Video Moderation disable has been requested.
  *
  * {
@@ -54,6 +63,15 @@ export const REQUEST_DISABLE_VIDEO_MODERATION = 'REQUEST_DISABLE_VIDEO_MODERATIO
  * }
  */
 export const REQUEST_ENABLE_AUDIO_MODERATION = 'REQUEST_ENABLE_AUDIO_MODERATION';
+
+/**
+ * The type of (redux) action which signals that Desktop Moderation enable has been requested.
+ *
+ * {
+ *     type: REQUEST_ENABLE_DESKTOP_MODERATION
+ * }
+ */
+export const REQUEST_ENABLE_DESKTOP_MODERATION = 'REQUEST_ENABLE_DESKTOP_MODERATION';
 
 /**
  * The type of (redux) action which signals that Video Moderation enable has been requested.
@@ -117,7 +135,7 @@ export const PARTICIPANT_REJECTED = 'PARTICIPANT_REJECTED';
 
 
 /**
- * The type of (redux) action which signals that a participant asked to have its audio umuted.
+ * The type of (redux) action which signals that a participant asked to have its audio unmuted.
  *
  * {
  *     type: PARTICIPANT_PENDING_AUDIO

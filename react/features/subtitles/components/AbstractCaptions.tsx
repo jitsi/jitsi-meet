@@ -38,7 +38,7 @@ export class AbstractCaptions<P extends IAbstractCaptionsProps> extends Componen
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render(): any {
+    override render(): any {
         const { _displaySubtitles, _requestingSubtitles, _transcripts } = this.props;
 
         if (!_requestingSubtitles || !_displaySubtitles || !_transcripts || !_transcripts.size) {

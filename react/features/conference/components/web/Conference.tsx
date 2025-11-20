@@ -1,15 +1,13 @@
-import _ from "lodash";
 import React from "react";
 import { WithTranslation } from "react-i18next";
-import { connect as reactReduxConnect } from "react-redux";
 
+import { throttle } from "lodash-es";
 // @ts-ignore
 import VideoLayout from "../../../../../modules/UI/videolayout/VideoLayout";
 import { IReduxState } from "../../../app/types";
 import { getConferenceNameForTitle } from "../../../base/conference/functions";
 import { hangup } from "../../../base/connection/actions.web";
 import { isMobileBrowser } from "../../../base/environment/utils";
-import { translate } from "../../../base/i18n/functions";
 import { setColorAlpha } from "../../../base/util/helpers";
 import Chat from "../../../chat/components/web/Chat";
 import CalleeInfoContainer from "../../../invite/components/callee-info/CalleeInfoContainer";
@@ -30,14 +28,19 @@ import { maybeShowSuboptimalExperienceNotification } from "../../functions.web";
 import type { AbstractProps } from "../AbstractConference";
 import { AbstractConference, abstractMapStateToProps } from "../AbstractConference";
 
+import { IStore } from "../../../app/types";
+
 import Header, { Mode } from "../../../base/meet/views/Conference/components/Header";
 import ConferenceInfo from "./ConferenceInfo";
 import { default as Notice } from "./Notice";
 
+import { connect as reactReduxConnect } from "react-redux";
+import { translate } from "../../../base/i18n/functions";
 import ConferenceControlsWrapper from "../../../base/meet/views/Conference/containers/ConferenceControlsWrapper";
 import VideoGalleryWrapper from "../../../base/meet/views/Conference/containers/VideoGalleryWrapper";
 import { setConferenceViewMode } from "../../../filmstrip/actions.web";
 import { ViewMode } from "../../../filmstrip/reducer";
+import { showVisitorsQueue } from "../../../visitors/functions";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -95,13 +98,29 @@ interface IProps extends AbstractProps, WithTranslation {
      */
     _showPrejoin: boolean;
 
-    dispatch: any;
+    dispatch: IStore["dispatch"];
 
     isParticipantsPaneOpened: boolean;
 
     viewMode: ViewMode;
 
     roomId?: string;
+    /**
+     * If visitors queue page is visible or not.
+     * NOTE: This should be set to true once we received an error on connect. Before the first connect this will always
+     * be false.
+     */
+    _showVisitorsQueue: boolean;
+}
+
+/**
+ * Returns true if the prejoin screen should be displayed and false otherwise.
+ *
+ * @param {IProps} props - The props object.
+ * @returns {boolean} - True if the prejoin screen should be displayed and false otherwise.
+ */
+function shouldShowPrejoin({ _showLobby, _showPrejoin, _showVisitorsQueue }: IProps) {
+    return _showPrejoin && !_showVisitorsQueue && !_showLobby;
 }
 
 /**
@@ -110,7 +129,7 @@ interface IProps extends AbstractProps, WithTranslation {
 class Conference extends AbstractConference<IProps, any> {
     _originalOnMouseMove: Function;
     _originalOnShowToolbar: Function;
-    state = {
+    override state = {
         videoMode: "gallery" as Mode,
     };
 
@@ -133,19 +152,19 @@ class Conference extends AbstractConference<IProps, any> {
         this._originalOnShowToolbar = this._onShowToolbar;
         this._originalOnMouseMove = this._onMouseMove;
 
-        this._onShowToolbar = _.throttle(() => this._originalOnShowToolbar(), 100, {
+        this._onShowToolbar = throttle(() => this._originalOnShowToolbar(), 100, {
             leading: true,
             trailing: false,
         });
 
-        this._onMouseMove = _.throttle((event) => this._originalOnMouseMove(event), _mouseMoveCallbackInterval, {
+        this._onMouseMove = throttle((event) => this._originalOnMouseMove(event), _mouseMoveCallbackInterval, {
             leading: true,
             trailing: false,
         });
 
         // Bind event handler so it is only bound once for every instance.
         this._onFullScreenChange = this._onFullScreenChange.bind(this);
-        this._onVidespaceTouchStart = this._onVidespaceTouchStart.bind(this);
+        this._onVideospaceTouchStart = this._onVideospaceTouchStart.bind(this);
         this._setBackground = this._setBackground.bind(this);
     }
 
@@ -154,8 +173,8 @@ class Conference extends AbstractConference<IProps, any> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
-        document.title = `${interfaceConfig.APP_NAME}`;
+    override componentDidMount() {
+        document.title = `${this.props._roomName} | ${interfaceConfig.APP_NAME}`;
         this._start();
     }
 
@@ -165,7 +184,7 @@ class Conference extends AbstractConference<IProps, any> {
      * @inheritdoc
      * returns {void}
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         if (this.props._shouldDisplayTileView === prevProps._shouldDisplayTileView) {
             return;
         }
@@ -183,7 +202,7 @@ class Conference extends AbstractConference<IProps, any> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         APP.UI.unbindEvents();
 
         FULL_SCREEN_EVENTS.forEach((name) => document.removeEventListener(name, this._onFullScreenChange));
@@ -197,7 +216,7 @@ class Conference extends AbstractConference<IProps, any> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _isAnyOverlayVisible,
             _layoutClassName,
@@ -206,6 +225,7 @@ class Conference extends AbstractConference<IProps, any> {
             _showLobby,
             _showPrejoin,
             viewMode,
+            _showVisitorsQueue,
             t,
         } = this.props;
 
@@ -227,7 +247,7 @@ class Conference extends AbstractConference<IProps, any> {
                 >
                     <ConferenceInfo />
                     <Notice />
-                    <div onTouchStart={this._onVidespaceTouchStart}>
+                    <div onTouchStart={this._onVideospaceTouchStart}>
                         <Header mode={viewMode} translate={t} onSetModeClicked={this._onSetVideoModeClicked} />
                         <div className="flex">
                             {/* <LargeVideoWeb /> */}
@@ -268,6 +288,9 @@ class Conference extends AbstractConference<IProps, any> {
 
                     {_showPrejoin && <Prejoin />}
                     {_showLobby && <LobbyScreen />}
+                    {/* { _showVisitorsQueue && <VisitorsQueue />} */}
+                    {/* // { shouldShowPrejoin(this.props) && <Prejoin />} */}
+                    {/* // { (_showLobby && !_showVisitorsQueue) && <LobbyScreen />} */}
                 </div>
                 <ParticipantsPane />
                 <ReactionAnimations />
@@ -310,7 +333,7 @@ class Conference extends AbstractConference<IProps, any> {
      * @private
      * @returns {void}
      */
-    _onVidespaceTouchStart() {
+    _onVideospaceTouchStart() {
         this.props.dispatch(toggleToolboxVisible());
     }
 
@@ -377,15 +400,15 @@ class Conference extends AbstractConference<IProps, any> {
      */
     _start() {
         APP.UI.start();
-
-        APP.UI.registerListeners();
         APP.UI.bindEvents();
 
         FULL_SCREEN_EVENTS.forEach((name) => document.addEventListener(name, this._onFullScreenChange));
 
         const { dispatch, t } = this.props;
 
-        dispatch(init());
+        // if we will be showing prejoin we don't want to call connect from init.
+        // Connect will be dispatched from prejoin screen.
+        dispatch(init(!shouldShowPrejoin(this.props)));
 
         maybeShowSuboptimalExperienceNotification(dispatch, t);
     }
@@ -414,9 +437,77 @@ function _mapStateToProps(state: IReduxState) {
         _roomName: getConferenceNameForTitle(state),
         _showLobby: getIsLobbyVisible(state),
         _showPrejoin: isPrejoinPageVisible(state),
+        _showVisitorsQueue: showVisitorsQueue(state),
         viewMode,
         roomId: room,
     };
 }
 
 export default translate(reactReduxConnect(_mapStateToProps)(Conference));
+
+//      _showVisitorsQueue: showVisitorsQueue(state)
+//     };
+// }
+
+// export default reactReduxConnect(_mapStateToProps)(translate(props => {
+//     const dispatch = useDispatch();
+//     const store = useStore();
+
+//     const [ isDragging, setIsDragging ] = useState(false);
+
+//     const { isOpen: isChatOpen } = useSelector((state: IReduxState) => state['features/chat']);
+//     const isFileUploadEnabled = useSelector(isFileUploadingEnabled);
+
+//     const handleDragEnter = useCallback((e: React.DragEvent) => {
+//         e.preventDefault();
+//         e.stopPropagation();
+//         setIsDragging(true);
+//     }, []);
+
+//     const handleDragLeave = useCallback((e: React.DragEvent) => {
+//         e.preventDefault();
+//         e.stopPropagation();
+//         setIsDragging(false);
+//     }, []);
+
+//     const handleDragOver = useCallback((e: React.DragEvent) => {
+//         e.preventDefault();
+//         e.stopPropagation();
+
+//         if (!isFileUploadEnabled) {
+//             return;
+//         }
+
+//         if (isDragging) {
+//             if (!isChatOpen) {
+//                 dispatch(openChat());
+//             }
+//             dispatch(setFocusedTab(ChatTabs.FILE_SHARING));
+//         }
+//     }, [ isChatOpen, isDragging, isFileUploadEnabled ]);
+
+//     const handleDrop = useCallback((e: React.DragEvent) => {
+//         e.preventDefault();
+//         e.stopPropagation();
+//         setIsDragging(false);
+
+//         if (!isFileUploadEnabled) {
+//             return;
+//         }
+
+//         if (e.dataTransfer.files?.length > 0) {
+//             processFiles(e.dataTransfer.files, store);
+//         }
+//     }, [ isFileUploadEnabled, processFiles ]);
+
+//     return (
+//         <div
+//             onDragEnter = { handleDragEnter }
+//             onDragLeave = { handleDragLeave }
+//             onDragOver = { handleDragOver }
+//             onDrop = { handleDrop }>
+//             {/* @ts-ignore */}
+//             <Conference { ...props } />
+//         </div>
+//     );
+// }));

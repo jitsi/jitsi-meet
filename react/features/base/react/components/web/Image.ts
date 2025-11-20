@@ -13,7 +13,7 @@ export default class Image extends Component<React.HTMLProps<HTMLImageElement>> 
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return React.createElement('img', this.props);
     }
 }

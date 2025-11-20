@@ -9,9 +9,12 @@ import { IReduxState, IStore } from '../app/types';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
-    CONFERENCE_LEFT
+    CONFERENCE_LEFT,
+    ENDPOINT_MESSAGE_RECEIVED
 } from '../base/conference/actionTypes';
 import { getCurrentConference } from '../base/conference/functions';
+import { getDisableLowerHandByModerator } from '../base/config/functions.any';
+import { hangup } from '../base/connection/actions';
 import { getURLWithoutParamsNormalized } from '../base/connection/utils';
 import { hideDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
@@ -19,12 +22,13 @@ import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
 import { translateToHTML } from '../base/i18n/functions';
 import i18next from '../base/i18n/i18next';
 import { browser } from '../base/lib-jitsi-meet';
-import { pinParticipant, raiseHandClear } from '../base/participants/actions';
+import { pinParticipant, raiseHand, raiseHandClear } from '../base/participants/actions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import { SET_REDUCED_UI } from '../base/responsive-ui/actionTypes';
+import { LOWER_HAND_MESSAGE } from '../base/tracks/constants';
 import { BUTTON_TYPES } from '../base/ui/constants.any';
-import { inIframe } from '../base/util/iframeUtils';
+import { isEmbedded } from '../base/util/embedUtils';
 import { isCalendarEnabled } from '../calendar-sync/functions';
 import FeedbackDialog from '../feedback/components/FeedbackDialog';
 import { setFilmstripEnabled } from '../filmstrip/actions.any';
@@ -69,6 +73,17 @@ MiddlewareRegistry.register(store => next => action => {
         clearInterval(intervalID);
         intervalID = null;
 
+        break;
+    }
+    case ENDPOINT_MESSAGE_RECEIVED: {
+        const { participant, data } = action;
+        const { dispatch, getState } = store;
+
+        if (data.name === LOWER_HAND_MESSAGE
+            && participant.isModerator()
+            && !getDisableLowerHandByModerator(getState())) {
+            dispatch(raiseHand(false));
+        }
         break;
     }
     }
@@ -177,8 +192,7 @@ function _checkIframe(state: IReduxState, dispatch: IStore['dispatch']) {
         }
     }
 
-    if (inIframe() && state['features/base/config'].disableIframeAPI && !browser.isElectron()
-        && !isVpaasMeeting(state) && !allowIframe) {
+    if (isEmbedded() && state['features/base/config'].disableIframeAPI && !isVpaasMeeting(state) && !allowIframe) {
         // show sticky notification and redirect in 5 minutes
         const { locationURL } = state['features/base/connection'];
         let translationKey = 'notify.disabledIframe';
@@ -193,26 +207,41 @@ function _checkIframe(state: IReduxState, dispatch: IStore['dispatch']) {
         const jaasDomain = mapping[hostname];
 
         if (jaasDomain) {
-            translationKey = 'notify.disabledIframeSecondary';
+            translationKey = `notify.disabledIframeSecondary${browser.isReactNative() ? 'Native' : 'Web'}`;
             domain = hostname;
         }
 
-        dispatch(showWarningNotification({
-            description: translateToHTML(
-                i18next.t.bind(i18next),
-                translationKey,
-                {
-                    domain,
-                    jaasDomain,
-                    timeout: IFRAME_DISABLED_TIMEOUT_MINUTES
-                }
-            )
-        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+        if (browser.isReactNative()) {
+            dispatch(showWarningNotification({
+                description: i18next.t(translationKey,
+                    {
+                        domain,
+                        timeout: IFRAME_DISABLED_TIMEOUT_MINUTES
+                    }
+                )
+            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 
-        setTimeout(() => {
-            // redirect to the promotional page
-            dispatch(redirectToStaticPage('static/close3.html', `#jitsi_meet_external_api_id=${API_ID}`));
-        }, IFRAME_DISABLED_TIMEOUT_MINUTES * 60 * 1000);
+            setTimeout(() => {
+                dispatch(hangup());
+            }, IFRAME_DISABLED_TIMEOUT_MINUTES * 60 * 1000);
+        } else {
+            dispatch(showWarningNotification({
+                description: translateToHTML(
+                    i18next.t.bind(i18next),
+                    translationKey,
+                    {
+                        domain,
+                        jaasDomain,
+                        timeout: IFRAME_DISABLED_TIMEOUT_MINUTES
+                    }
+                )
+            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+
+            setTimeout(() => {
+                // redirect to the promotional page
+                dispatch(redirectToStaticPage('static/close3.html', `#jitsi_meet_external_api_id=${API_ID}`));
+            }, IFRAME_DISABLED_TIMEOUT_MINUTES * 60 * 1000);
+        }
     }
 }
 
@@ -314,6 +343,7 @@ function _calendarNotification({ dispatch, getState }: IStore, eventToShow: any)
         customActionType,
         description,
         icon,
+        maxLines: 1,
         title,
         uid
     }, NOTIFICATION_TIMEOUT_TYPE.STICKY));

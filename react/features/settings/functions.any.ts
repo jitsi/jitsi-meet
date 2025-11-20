@@ -1,4 +1,6 @@
 import { IReduxState } from '../app/types';
+import { MEDIA_TYPE } from '../av-moderation/constants';
+import { isEnabledFromState } from '../av-moderation/functions';
 import { IStateful } from '../base/app/types';
 import { isNameReadOnly } from '../base/config/functions.any';
 import { SERVER_URL_CHANGE_ENABLED } from '../base/flags/constants';
@@ -9,9 +11,9 @@ import { toState } from '../base/redux/functions';
 import { getHideSelfView } from '../base/settings/functions.any';
 import { parseStandardURIString } from '../base/util/uri';
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
-import { isFollowMeActive } from '../follow-me/functions';
-import { isPrejoinEnabledInConfig } from '../prejoin/functions';
+import { isFollowMeActive, isFollowMeRecorderActive } from '../follow-me/functions';
 import { isReactionsEnabled } from '../reactions/functions.any';
+import { areClosedCaptionsEnabled } from '../subtitles/functions.any';
 import { iAmVisitor } from '../visitors/functions';
 
 import { shouldShowModeratorSettings } from './functions';
@@ -89,6 +91,23 @@ export function getNotificationsMap(stateful: IStateful): { [key: string]: boole
         }, {});
 }
 
+function normalizeCurrentLanguage(language: string) {
+    if (!language) {
+        return;
+    }
+
+    const [ country, lang ] = language.split('-');
+    const jitsiNormalized = `${country}${lang ?? ''}`;
+
+    if (LANGUAGES.includes(jitsiNormalized)) {
+        return jitsiNormalized;
+    }
+
+    if (LANGUAGES.includes(country)) {
+        return country;
+    }
+}
+
 /**
  * Returns the properties for the "More" tab from settings dialog from Redux
  * state.
@@ -100,13 +119,14 @@ export function getNotificationsMap(stateful: IStateful): { [key: string]: boole
 export function getMoreTabProps(stateful: IStateful) {
     const state = toState(stateful);
     const stageFilmstripEnabled = isStageFilmstripEnabled(state);
-    const language = i18next.language || DEFAULT_LANGUAGE;
+    const language = normalizeCurrentLanguage(i18next.language) || DEFAULT_LANGUAGE;
     const configuredTabs: string[] = interfaceConfig.SETTINGS_SECTIONS || [];
 
     // when self view is controlled by the config we hide the settings
     const { disableSelfView, disableSelfViewSettings } = state['features/base/config'];
 
     return {
+        areClosedCaptionsEnabled: areClosedCaptionsEnabled(state),
         currentLanguage: language,
         disableHideSelfView: disableSelfViewSettings || disableSelfView,
         hideSelfView: getHideSelfView(state),
@@ -114,8 +134,7 @@ export function getMoreTabProps(stateful: IStateful) {
         languages: LANGUAGES,
         maxStageParticipants: state['features/base/settings'].maxStageParticipants,
         showLanguageSettings: configuredTabs.includes('language'),
-        showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
-        showPrejoinSettings: isPrejoinEnabledInConfig(state),
+        showSubtitlesOnStage: state['features/base/settings'].showSubtitlesOnStage,
         stageFilmstripEnabled
     };
 }
@@ -132,21 +151,33 @@ export function getModeratorTabProps(stateful: IStateful) {
     const state = toState(stateful);
     const {
         conference,
-        followMeEnabled,
         startAudioMutedPolicy,
         startVideoMutedPolicy,
         startReactionsMuted
     } = state['features/base/conference'];
+    const { followMeEnabled, followMeRecorderEnabled } = state['features/follow-me'];
+    const { groupChatWithPermissions } = state['features/chat'];
     const { disableReactionsModeration } = state['features/base/config'];
     const followMeActive = isFollowMeActive(state);
+    const followMeRecorderActive = isFollowMeRecorderActive(state);
     const showModeratorSettings = shouldShowModeratorSettings(state);
+    const conferenceMetadata = conference?.getMetadataHandler()?.getMetadata();
+    const disableChatWithPermissions = !conferenceMetadata?.allownersEnabled;
+    const isAudioModerationEnabled = isEnabledFromState(MEDIA_TYPE.AUDIO, state);
+    const isVideoModerationEnabled = isEnabledFromState(MEDIA_TYPE.VIDEO, state);
 
     // The settings sections to display.
     return {
+        audioModerationEnabled: isAudioModerationEnabled,
+        videoModerationEnabled: isVideoModerationEnabled,
+        chatWithPermissionsEnabled: Boolean(groupChatWithPermissions),
         showModeratorSettings: Boolean(conference && showModeratorSettings),
+        disableChatWithPermissions: Boolean(disableChatWithPermissions),
         disableReactionsModeration: Boolean(disableReactionsModeration),
         followMeActive: Boolean(conference && followMeActive),
         followMeEnabled: Boolean(conference && followMeEnabled),
+        followMeRecorderActive: Boolean(conference && followMeRecorderActive),
+        followMeRecorderEnabled: Boolean(conference && followMeRecorderEnabled),
         startReactionsMuted: Boolean(conference && startReactionsMuted),
         startAudioMuted: Boolean(conference && startAudioMutedPolicy),
         startVideoMuted: Boolean(conference && startVideoMutedPolicy)

@@ -1,11 +1,9 @@
 import { connect } from 'react-redux';
 
-import { openSheet } from '../../../base/dialog/actions';
 import { translate } from '../../../base/i18n/functions';
 import { IconInfoCircle } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
-
-import ConnectionStatusComponent from './ConnectionStatusComponent';
+import { showConnectionStatus } from '../../../participants-pane/actions.native';
 
 export interface IProps extends AbstractButtonProps {
 
@@ -19,8 +17,8 @@ export interface IProps extends AbstractButtonProps {
  * A remote video menu button which shows the connection statistics.
  */
 class ConnectionStatusButton extends AbstractButton<IProps> {
-    icon = IconInfoCircle;
-    label = 'videothumbnail.connectionInfo';
+    override icon = IconInfoCircle;
+    override label = 'videothumbnail.connectionInfo';
 
     /**
      * Handles clicking / pressing the button, and kicks the participant.
@@ -28,12 +26,10 @@ class ConnectionStatusButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch, participantID } = this.props;
 
-        dispatch(openSheet(ConnectionStatusComponent, {
-            participantID
-        }));
+        dispatch(showConnectionStatus(participantID));
     }
 }
 

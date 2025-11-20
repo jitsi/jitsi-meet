@@ -6,9 +6,9 @@
 -- the guest domain which is anonymous.
 -- The module has the option to set participants to moderators when connected via token/when they are authenticated
 -- This module depends on mod_persistent_lobby.
-local um_is_admin = require 'core.usermanager'.is_admin;
 local jid = require 'util.jid';
 local util = module:require "util";
+local is_admin = util.is_admin;
 local is_healthcheck_room = util.is_healthcheck_room;
 local is_moderated = util.is_moderated;
 local process_host_module = util.process_host_module;
@@ -17,7 +17,7 @@ local disable_auto_owners = module:get_option_boolean('wait_for_host_disable_aut
 
 local muc_domain_base = module:get_option_string('muc_mapper_domain_base');
 if not muc_domain_base then
-    module:log('warn', "No 'muc_mapper_domain_base' option set, disabling muc_mapper plugin inactive");
+    module:log('warn', "No 'muc_mapper_domain_base' option set, disabling module");
     return
 end
 
@@ -43,10 +43,6 @@ if not disable_auto_owners then
     end, 2);
 end
 
-local function is_admin(jid)
-    return um_is_admin(jid, module.host);
-end
-
 -- if not authenticated user is trying to join the room we enable lobby in it
 -- and wait for the moderator to join
 module:hook('muc-occupant-pre-join', function (event)
@@ -66,7 +62,7 @@ module:hook('muc-occupant-pre-join', function (event)
     end
 
     if not room.has_host then
-        if session.auth_token or (session.username and jid.host(occupant.bare_jid) == muc_domain_base) then
+        if module:fire_event('room_has_host', { room = room; occupant = occupant; session = session; }) then
             -- the host is here, let's drop the lobby
             room:set_members_only(false);
 
@@ -92,6 +88,14 @@ module:hook('muc-occupant-pre-join', function (event)
                 skip_display_name_check = true;
             });
         end
+    end
+end);
+
+module:hook('room_has_host', function(event)
+    local room, occupant, session = event.room, event.occupant, event.session;
+    if session.auth_token
+        or (session.username and jid.host(occupant.bare_jid) == muc_domain_base) then
+        return true;
     end
 end);
 

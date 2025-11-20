@@ -3,13 +3,12 @@ import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 import { v4 as uuidv4 } from 'uuid';
 
+import { UploadSimple } from '@phosphor-icons/react';
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
-import { withPixelLineHeight } from '../../base/styles/functions.web';
 import { type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { resizeImage } from '../functions';
 import logger from '../logger';
-import {  UploadSimple } from '@phosphor-icons/react';
 
 interface IProps extends WithTranslation {
 
@@ -42,7 +41,7 @@ interface IProps extends WithTranslation {
 const useStyles = makeStyles()(theme => {
     return {
         label: {
-            ...withPixelLineHeight(theme.typography.bodyShortBold),
+            ...theme.typography.bodyShortBold,
             color: theme.palette.link01,
             marginBottom: theme.spacing(3),
             cursor: 'pointer',
@@ -90,8 +89,13 @@ function UploadImageButton({
 
 
     const uploadImage = useCallback(async e => {
-        const reader = new FileReader();
         const imageFile = e.target.files;
+
+        if (imageFile.length === 0) {
+            return;
+        }
+
+        const reader = new FileReader();
 
         reader.readAsDataURL(imageFile[0]);
         reader.onload = async () => {
@@ -140,6 +144,7 @@ function UploadImageButton({
                 id = 'file-upload'
                 onChange = { uploadImage }
                 ref = { uploadImageButton }
+                role = 'button'
                 type = 'file' />
         </>
     );

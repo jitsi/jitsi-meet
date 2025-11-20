@@ -19,6 +19,7 @@ import {
     getVirtualScreenshareParticipantTrack
 } from '../../../base/tracks/functions';
 import { ITrack } from '../../../base/tracks/types';
+import { pixelsToRem } from '../../../base/ui/functions.any';
 import {
     isTrackStreamingStatusInactive,
     isTrackStreamingStatusInterrupted
@@ -224,7 +225,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { enableStatsDisplay, participantId, statsPopoverPosition, t } = this.props;
         const classes = withStyles.getClasses(this.props);
         const visibilityClass = this._getVisibilityClass();
@@ -355,7 +356,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
 
         return (
             <div
-                style = {{ fontSize: iconSize }}>
+                style = {{ fontSize: pixelsToRem(iconSize) }}>
                 <span className = 'sr-only'>{ t('videothumbnail.connectionInfo') }</span>
                 <ConnectionIndicatorIcon
                     classes = { classes }

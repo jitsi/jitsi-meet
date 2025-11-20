@@ -32,7 +32,7 @@ class MicrosoftSignInButton extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <div
                 className = 'microsoft-sign-in'

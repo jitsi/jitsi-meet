@@ -35,7 +35,7 @@ export default class ChatMessageGroup extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         return (
             <FlatList
                 data = { this.props.messages }

@@ -1,3 +1,3 @@
 import { getLogger } from '../logging/functions';
 
-export default getLogger('features/base/media');
+export default getLogger('app:media');

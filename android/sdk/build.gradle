@@ -8,6 +8,7 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        buildConfigField "String", "SDK_VERSION", "\"$sdkVersion\""
     }
 
     buildTypes {
@@ -41,22 +42,19 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     api "com.facebook.react:react-android:$rootProject.ext.rnVersion"
+    api "com.facebook.react:hermes-android:$rootProject.ext.rnVersion"
 
-    //noinspection GradleDynamicVersion
-    implementation 'org.webkit:android-jsc:+'
-
-    implementation 'com.facebook.fresco:animated-gif:2.5.0'
     implementation 'com.dropbox.core:dropbox-core-sdk:4.0.1'
-    implementation 'com.jakewharton.timber:timber:4.7.1'
-    implementation 'com.squareup.duktape:duktape-android:1.3.0'
+    implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'androidx.startup:startup-runtime:1.1.0'
+    implementation 'com.google.j2objc:j2objc-annotations:3.0.0'
 
     // Only add these packages if we are NOT doing a LIBRE_BUILD
     if (!rootProject.ext.libreBuild) {
         implementation project(':react-native-amplitude')
         implementation project(':react-native-giphy')
-        implementation(project(":react-native-google-signin")) {
+        implementation(project(':react-native-google-signin')) {
             exclude group: 'com.google.android.gms'
             exclude group: 'androidx'
         }
@@ -75,7 +73,6 @@ dependencies {
     }
     implementation project(':react-native-gesture-handler')
     implementation project(':react-native-get-random-values')
-    implementation project(':react-native-immersive-mode')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-orientation-locker')
     implementation project(':react-native-pager-view')
@@ -84,11 +81,14 @@ dependencies {
     implementation project(':react-native-screens')
     implementation project(':react-native-slider')
     implementation project(':react-native-sound')
-    implementation project(':react-native-splash-screen')
+    implementation project(':react-native-splash-view')
     implementation project(':react-native-svg')
     implementation project(':react-native-video')
-    implementation project(':react-native-webrtc')
     implementation project(':react-native-webview')
+    implementation project(':react-native-worklets-core')
+
+    // Use `api` here so consumers can use WebRTCModuleOptions.
+    api project(':react-native-webrtc')
 
     testImplementation 'junit:junit:4.12'
 }
@@ -136,10 +136,17 @@ android.libraryVariants.all { def variant ->
         def devEnabled = !targetName.toLowerCase().contains("release")
 
         // Run the bundler
+        // Use full path to node to avoid PATH issues in Gradle
+        def nodePath = System.getenv('NVM_BIN') ? "${System.getenv('NVM_BIN')}/node" : "node"
+
+        // Debug: Print the node path and environment
+        println "Using node path: ${nodePath}"
+        println "NVM_BIN: ${System.getenv('NVM_BIN')}"
+        println "Working directory: ${reactRoot}"
+
         commandLine(
-                "node",
-                "node_modules/react-native/local-cli/cli.js",
-                "bundle",
+                nodePath,
+                "node_modules/react-native/scripts/bundle.js",
                 "--platform", "android",
                 "--dev", "${devEnabled}",
                 "--reset-cache",
@@ -149,6 +156,70 @@ android.libraryVariants.all { def variant ->
 
         // Disable bundling on dev builds
         enabled !devEnabled
+    }
+
+    // GRADLE REQUIREMENTS (Gradle 8.7+ / AGP 8.5.0+):
+    
+    // This task requires explicit dependencies on resource tasks from all React Native modules
+    // due to Gradle's strict validation of task dependencies.
+
+    // Without these dependencies,
+    // builds will fail with errors like:
+    // "Task ':sdk:bundleReleaseJsAndAssets' uses the output of task ':react-native-amplitude:packageReleaseResources'
+    // without declaring a dependency on it."
+
+    // The automatic dependency resolution below ensures all required resource tasks are properly
+    // declared as dependencies before this task executes.
+
+    if (variant.name.toLowerCase().contains("release")) {
+        rootProject.subprojects.each { subproject ->
+            if (
+                subproject.name.startsWith("react-native-") ||
+                subproject.name.startsWith("@react-native-") ||
+                subproject.name.startsWith("@giphy/")
+            ) {
+                [
+                    "packageReleaseResources",
+                    "generateReleaseResValues",
+                    "generateReleaseResources",
+                    "generateReleaseBuildConfig",
+                    "processReleaseManifest",
+                    "writeReleaseAarMetadata",
+                    "generateReleaseRFile",
+                    "compileReleaseLibraryResources",
+                    "compileReleaseJavaWithJavac",
+                    "javaPreCompileRelease",
+                    "bundleLibCompileToJarRelease",
+                    "exportReleaseConsumerProguardFiles",
+                    "mergeReleaseGeneratedProguardFiles",
+                    "mergeReleaseJniLibFolders",
+                    "mergeReleaseShaders",
+                    "packageReleaseAssets",
+                    "processReleaseJavaRes",
+                    "prepareReleaseArtProfile",
+                    "copyReleaseJniLibsProjectOnly",
+                    "extractDeepLinksRelease",
+                    "createFullJarRelease",
+                    "generateReleaseLintModel",
+                    "writeReleaseLintModelMetadata",
+                    "generateReleaseLintVitalModel",
+                    "lintVitalAnalyzeRelease",
+                    "lintReportRelease",
+                    "lintAnalyzeRelease",
+                    "lintReportDebug",
+                    "lintAnalyzeDebug"
+                ].each { taskName ->
+                    if (subproject.tasks.findByName(taskName)) {
+                        currentBundleTask.dependsOn(subproject.tasks.named(taskName))
+                    }
+                }
+
+                // Also depend on the main build task to ensure all sub-tasks are completed
+                if (subproject.tasks.findByName("build")) {
+                    currentBundleTask.dependsOn(subproject.tasks.named("build"))
+                }
+            }
+        }
     }
 
     currentBundleTask.ext.generatedResFolders = files(resourcesDir).builtBy(currentBundleTask)

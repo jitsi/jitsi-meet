@@ -1,14 +1,18 @@
-import React, { KeyboardEvent, ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { FocusOn } from "react-focus-on";
-import { useSelector } from "react-redux";
-import { makeStyles } from "tss-react/mui";
+import React, {
+    KeyboardEvent, ReactNode,
+    useCallback, useEffect, useLayoutEffect, useRef, useState
+} from 'react';
+import { FocusOn } from 'react-focus-on';
+import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 
-import Drawer from "../../../../toolbox/components/web/Drawer";
-import JitsiPortal from "../../../../toolbox/components/web/JitsiPortal";
-import { showOverflowDrawer } from "../../../../toolbox/functions.web";
-import participantsPaneTheme from "../../../components/themes/participantsPaneTheme.json";
+import Drawer from '../../../../toolbox/components/web/Drawer';
+import JitsiPortal from '../../../../toolbox/components/web/JitsiPortal';
+import { showOverflowDrawer } from '../../../../toolbox/functions.web';
+import participantsPaneTheme from '../../../components/themes/participantsPaneTheme.json';
+import { spacing } from '../../Tokens';
+
 import { withPixelLineHeight } from "../../../styles/functions.web";
-import { spacing } from "../../Tokens";
 
 /**
  * Get a style property from a style declaration as a float.
@@ -141,6 +145,7 @@ const useStyles = makeStyles()((theme) => {
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
             marginTop: "48px",
             position: "absolute",
+            // ...theme.typography.bodyShortRegular,
             right: `${participantsPaneTheme.panePadding}px`,
             top: 0,
             zIndex: 2,
@@ -159,7 +164,7 @@ const useStyles = makeStyles()((theme) => {
 
             "& > div": {
                 ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
-
+                // ...theme.typography.bodyShortRegularLarge,
                 "& svg": {
                     fill: theme.palette.icon01,
                 },

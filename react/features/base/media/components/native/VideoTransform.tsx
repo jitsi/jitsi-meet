@@ -197,7 +197,7 @@ class VideoTransform extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: IProps, prevState: IState) {
+    override componentDidUpdate(prevProps: IProps, prevState: IState) {
         if (prevProps.streamId !== this.props.streamId) {
             this._storeTransform(prevProps.streamId, prevState.transform);
             this._restoreTransform(this.props.streamId);
@@ -209,7 +209,7 @@ class VideoTransform extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this._storeTransform(this.props.streamId, this.state.transform);
     }
 
@@ -218,7 +218,7 @@ class VideoTransform extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { _aspectRatio, children, style } = this.props;
         const isAspectRatioWide = _aspectRatio === ASPECT_RATIO_WIDE;
 

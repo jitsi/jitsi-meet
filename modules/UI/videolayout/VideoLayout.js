@@ -16,7 +16,7 @@ import {
 import LargeVideoManager from './LargeVideoManager';
 import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
 
-const logger = Logger.getLogger(__filename);
+const logger = Logger.getLogger('ui:VideoLayout');
 let largeVideo;
 
 const VideoLayout = {
@@ -158,10 +158,11 @@ const VideoLayout = {
 
             return;
         }
+
+        const state = APP.store.getState();
         const currentContainer = largeVideo.getCurrentContainer();
         const currentContainerType = largeVideo.getCurrentContainerType();
         const isOnLarge = this.isCurrentlyOnLarge(id);
-        const state = APP.store.getState();
         const participant = getParticipantById(state, id);
         const videoTrack = getVideoTrackByParticipant(state, participant);
         const videoStream = videoTrack?.jitsiTrack;

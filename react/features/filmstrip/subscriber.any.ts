@@ -1,3 +1,4 @@
+import { getParticipantById } from '../base/participants/functions';
 import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 
 import { isFilmstripScrollVisible, updateRemoteParticipants } from './functions';
@@ -25,7 +26,15 @@ StateListenerRegistry.register(
  */
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/participants'].dominantSpeaker,
-    /* listener */ (dominantSpeaker, store) => updateRemoteParticipants(store));
+    /* listener */ (dominantSpeaker, store) => {
+        const { visibleRemoteParticipants } = store.getState()['features/filmstrip'];
+        const dominant = getParticipantById(store.getState(), dominantSpeaker);
+
+        // Only update the remote participants if the dominant speaker is not currently visible.
+        if (!dominant?.local && !visibleRemoteParticipants.has(dominantSpeaker)) {
+            updateRemoteParticipants(store);
+        }
+    });
 
 /**
  * Listens for changes in the filmstrip scroll visibility.

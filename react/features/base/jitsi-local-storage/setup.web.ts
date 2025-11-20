@@ -5,7 +5,7 @@ import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 import { safeJsonParse } from '@jitsi/js-utils/json';
 
 import { browser } from '../lib-jitsi-meet';
-import { inIframe } from '../util/iframeUtils';
+import { isEmbedded } from '../util/embedUtils';
 import { parseURLParams } from '../util/parseURLParams';
 
 import logger from './logger';
@@ -41,7 +41,7 @@ function shouldUseHostPageLocalStorage(urlParams: { 'config.useHostPageLocalStor
         return true;
     }
 
-    if (browser.isWebKitBased() && inIframe()) {
+    if (browser.isWebKitBased() && isEmbedded()) {
         // WebKit browsers don't persist local storage for third-party iframes.
 
         return true;

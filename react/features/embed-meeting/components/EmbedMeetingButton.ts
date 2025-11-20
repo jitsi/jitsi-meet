@@ -16,10 +16,10 @@ import EmbedMeetingDialog from './EmbedMeetingDialog';
  * Implementation of a button for opening embed meeting dialog.
  */
 class EmbedMeetingButton extends AbstractButton<AbstractButtonProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.embedMeeting';
-    icon = IconCode;
-    label = 'toolbar.embedMeeting';
-    tooltip = 'toolbar.embedMeeting';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.embedMeeting';
+    override icon = IconCode;
+    override label = 'toolbar.embedMeeting';
+    override tooltip = 'toolbar.embedMeeting';
 
     /**
      * Handles clicking / pressing the button, and opens the appropriate dialog.
@@ -27,7 +27,7 @@ class EmbedMeetingButton extends AbstractButton<AbstractButtonProps> {
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('embed.meeting'));

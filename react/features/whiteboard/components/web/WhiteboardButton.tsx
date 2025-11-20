@@ -20,14 +20,14 @@ interface IProps extends AbstractButtonProps {
  * Component that renders a toolbar button for the whiteboard.
  */
 class WhiteboardButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.showWhiteboard';
-    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.hideWhiteboard';
-    icon = IconWhiteboard;
-    label = 'toolbar.showWhiteboard';
-    toggledIcon = IconWhiteboardHide;
-    toggledLabel = 'toolbar.hideWhiteboard';
-    toggledTooltip = 'toolbar.hideWhiteboard';
-    tooltip = 'toolbar.showWhiteboard';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.showWhiteboard';
+    override toggledAccessibilityLabel = 'toolbar.accessibilityLabel.hideWhiteboard';
+    override icon = IconWhiteboard;
+    override label = 'toolbar.showWhiteboard';
+    override toggledIcon = IconWhiteboardHide;
+    override toggledLabel = 'toolbar.hideWhiteboard';
+    override toggledTooltip = 'toolbar.hideWhiteboard';
+    override tooltip = 'toolbar.showWhiteboard';
 
     /**
      * Handles clicking / pressing the button, and opens / closes the whiteboard view.
@@ -35,7 +35,7 @@ class WhiteboardButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch, _toggled } = this.props;
 
         dispatch(setWhiteboardOpen(!_toggled));
@@ -49,7 +49,7 @@ class WhiteboardButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._toggled;
     }
 }

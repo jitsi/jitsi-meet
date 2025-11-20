@@ -8,6 +8,7 @@ import { AbstractApp } from "./AbstractApp";
 
 // Register middlewares and reducers.
 import MobileView from "../../base/meet/views/mobile/MobileView";
+import GlobalLoader from "../../base/meet/loader/components/GlobalLoader";
 import "../middlewares";
 import "../reducers";
 
@@ -37,10 +38,11 @@ export class App extends AbstractApp {
      * @protected
      * @returns {ReactElement}
      */
-    _createExtraElement() {
+    override _createExtraElement() {
         return (
             <JitsiThemeProvider>
                 <OverlayContainer />
+                <GlobalLoader />
             </JitsiThemeProvider>
         );
     }
@@ -51,7 +53,7 @@ export class App extends AbstractApp {
      *
      * @override
      */
-    _createMainElement(component: React.ComponentType, props?: Object) {
+    override _createMainElement(component: React.ComponentType, props?: Object) {
         const isMobile = this._isMobileDevice();
         if (isMobile) {
             return (
@@ -76,7 +78,7 @@ export class App extends AbstractApp {
      *
      * @returns {React$Element}
      */
-    _renderDialogContainer() {
+    override _renderDialogContainer() {
         return (
             <JitsiThemeProvider>
                 <DialogContainer />

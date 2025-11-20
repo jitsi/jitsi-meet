@@ -62,7 +62,7 @@ class RemoteControlAuthorizationDialog extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         return (
             <Dialog
                 ok = {{ translationKey: 'dialog.allow' }}

@@ -82,14 +82,19 @@ export function invite(
         const { conference, password } = state['features/base/conference'];
 
         if (typeof conference === 'undefined') {
+            // Only keep invitees which can get an invite request from Jitsi UI
+            const jitsiInvitees = invitees.filter(({ type }) => type !== INVITE_TYPES.EMAIL);
+
             // Invite will fail before CONFERENCE_JOIN. The request will be
             // cached in order to be executed on CONFERENCE_JOIN.
-            return new Promise(resolve => {
-                dispatch(addPendingInviteRequest({
-                    invitees,
-                    callback: (failedInvitees: any) => resolve(failedInvitees)
-                }));
-            });
+            if (jitsiInvitees.length) {
+                return new Promise(resolve => {
+                    dispatch(addPendingInviteRequest({
+                        invitees: jitsiInvitees,
+                        callback: (failedInvitees: any) => resolve(failedInvitees)
+                    }));
+                });
+            }
         }
 
         let allInvitePromises: Promise<any>[] = [];
@@ -112,10 +117,12 @@ export function invite(
 
         // For each number, dial out. On success, remove the number from
         // {@link invitesLeftToSend}.
-        const phoneInvitePromises = phoneNumbers.map(item => {
-            const numberToInvite = item.number;
+        const phoneInvitePromises = typeof conference === 'undefined'
+            ? []
+            : phoneNumbers.map(item => {
+                const numberToInvite = item.number;
 
-            return conference.dial(numberToInvite)
+                return conference.dial(numberToInvite)
                 .then(() => {
                     invitesLeftToSend
                         = invitesLeftToSend.filter(
@@ -123,13 +130,13 @@ export function invite(
                 })
                 .catch((error: Error) =>
                     logger.error('Error inviting phone number:', error));
-        });
+            });
 
         allInvitePromises = allInvitePromises.concat(phoneInvitePromises);
 
         const usersAndRooms
             = invitesLeftToSend.filter(
-                ({ type }) => [ INVITE_TYPES.USER, INVITE_TYPES.ROOM ].includes(type));
+                ({ type }) => [ INVITE_TYPES.USER, INVITE_TYPES.EMAIL, INVITE_TYPES.ROOM ].includes(type));
 
         if (usersAndRooms.length) {
             // Send a request to invite all the rooms and users. On success,
@@ -139,12 +146,12 @@ export function invite(
                     (callFlowsEnabled
                         ? inviteServiceCallFlowsUrl : inviteServiceUrl) ?? '',
                     inviteUrl,
-                    jwt,
-                    usersAndRooms)
+                    usersAndRooms,
+                    state)
                 .then(() => {
                     invitesLeftToSend
                         = invitesLeftToSend.filter(
-                            ({ type }) => ![ INVITE_TYPES.USER, INVITE_TYPES.ROOM ].includes(type));
+                            ({ type }) => ![ INVITE_TYPES.USER, INVITE_TYPES.EMAIL, INVITE_TYPES.ROOM ].includes(type));
                 })
                 .catch(error => {
                     dispatch(setCalleeInfoVisible(false));

@@ -22,7 +22,7 @@ export default class AbstractInsecureRoomNameLabel extends PureComponent<IProps>
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         if (!this.props._visible) {
             return null;
         }

@@ -5,7 +5,6 @@ import { makeStyles } from 'tss-react/mui';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconArrowDown } from '../../../base/icons/svg';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import BaseTheme from '../../../base/ui/components/BaseTheme.web';
 
 export interface INewMessagesButtonProps extends WithTranslation {
@@ -53,7 +52,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         textContainer: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: theme.palette.text04,
             paddingLeft: '8px'
         }

@@ -47,7 +47,7 @@ class CalleeInfo extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             id,
             name,

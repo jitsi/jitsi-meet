@@ -79,7 +79,7 @@ class MeetingParticipantContextMenu extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _localVideoOwner,
             _participant,

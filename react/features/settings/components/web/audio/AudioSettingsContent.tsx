@@ -5,7 +5,6 @@ import { connect } from "react-redux";
 import { makeStyles } from "tss-react/mui";
 
 import { IReduxState, IStore } from "../../../../app/types";
-import { IconMic, IconVolumeUp } from "../../../../base/icons/svg";
 import JitsiMeetJS from "../../../../base/lib-jitsi-meet";
 import { equals } from "../../../../base/redux/functions";
 import Checkbox from "../../../../base/ui/components/web/Checkbox";
@@ -17,9 +16,9 @@ import { isNoiseSuppressionEnabled } from "../../../../noise-suppression/functio
 import { isPrejoinPageVisible } from "../../../../prejoin/functions";
 import { createLocalAudioTracks } from "../../../functions.web";
 
+import { Microphone, SpeakerSimpleHigh } from "@phosphor-icons/react";
 import MicrophoneEntry from "./MicrophoneEntry";
 import SpeakerEntry from "./SpeakerEntry";
-import { Microphone, SpeakerSimpleHigh } from "@phosphor-icons/react";
 
 const browser = JitsiMeetJS.util.browser;
 
@@ -291,18 +290,21 @@ const AudioSettingsContent = ({
 
     return (
         <ContextMenu
-            aria-labelledby="audio-settings-button"
+            activateFocusTrap={true}
+            aria-labelledby='audio-settings-button'
             className={classes.contextMenu}
             hidden={false}
-            id="audio-settings-dialog"
-            tabIndex={-1}
-        >
+            id='audio-settings-dialog'
+            role='menu'
+            tabIndex={-1}>
             {outputDevices.length > 0 && (
-                <ContextMenuItemGroup>
+                <ContextMenuItemGroup
+                    aria-labelledby={speakerHeaderId}
+                    role='group'>
                     <ContextMenuItem
                         accessibilityLabel={t("settings.speakers")}
                         className={classes.header}
-                        icon={() => <SpeakerSimpleHigh size={20} color="black" weight="fill"  />}
+                        icon={() => <SpeakerSimpleHigh size={20} color="black" weight="fill" />}
                         id={speakerHeaderId}
                         text={t("settings.speakers")}
                     />
@@ -318,7 +320,7 @@ const AudioSettingsContent = ({
                 <ContextMenuItem
                     accessibilityLabel={t("settings.microphones")}
                     className={classes.header}
-                    icon={() => <Microphone size={20} color="black" weight="fill"  />}
+                    icon={() => <Microphone size={20} color="black" weight="fill" />}
                     id={microphoneHeaderId}
                     text={t("settings.microphones")}
                 />

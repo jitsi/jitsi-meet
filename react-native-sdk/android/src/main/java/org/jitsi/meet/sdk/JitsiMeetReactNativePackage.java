@@ -21,7 +21,7 @@ public class JitsiMeetReactNativePackage implements ReactPackage {
                 new AndroidSettingsModule(reactContext),
                 new AppInfoModule(reactContext),
                 new AudioModeModule(reactContext),
-                new JavaScriptSandboxModule(reactContext),
+                new JMOngoingConferenceModule(reactContext),
                 new LocaleDetector(reactContext),
                 new LogBridgeModule(reactContext),
                 new PictureInPictureModule(reactContext),

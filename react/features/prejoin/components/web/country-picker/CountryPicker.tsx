@@ -4,7 +4,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../../app/types';
 import Popover from '../../../../base/popover/components/Popover.web';
-import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import { setDialOutCountry, setDialOutNumber } from '../../../actions.web';
 import { getDialOutCountry, getDialOutNumber } from '../../../functions';
 import { getCountryFromDialCodeText } from '../../../utils';
@@ -58,7 +57,7 @@ const useStyles = makeStyles()(theme => {
             background: 'transparent',
             color: theme.palette.text01,
             flexGrow: 1,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular)
+            ...theme.typography.bodyShortRegular
         }
     };
 });

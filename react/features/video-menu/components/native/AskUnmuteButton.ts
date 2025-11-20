@@ -2,13 +2,12 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { approveParticipant } from '../../../av-moderation/actions';
-import { isSupported } from '../../../av-moderation/functions';
+import { MEDIA_TYPE } from '../../../av-moderation/constants';
+import { isForceMuted, isSupported } from '../../../av-moderation/functions';
 import { translate } from '../../../base/i18n/functions';
 import { IconMic, IconVideo } from '../../../base/icons/svg';
-import { MEDIA_TYPE } from '../../../base/media/constants';
 import { getParticipantById, isLocalParticipantModerator } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
-import { isForceMuted } from '../../../participants-pane/functions';
 
 export interface IProps extends AbstractButtonProps {
 
@@ -33,9 +32,9 @@ export interface IProps extends AbstractButtonProps {
  * An abstract remote video menu button which asks the remote participant to unmute.
  */
 class AskUnmuteButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'participantsPane.actions.askUnmute';
-    icon = IconMic;
-    label = 'participantsPane.actions.askUnmute';
+    override accessibilityLabel = 'participantsPane.actions.askUnmute';
+    override icon = IconMic;
+    override label = 'participantsPane.actions.askUnmute';
 
     /**
      * Gets the current label.
@@ -73,7 +72,7 @@ class AskUnmuteButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch, participantID } = this.props;
 
         dispatch(approveParticipant(participantID));

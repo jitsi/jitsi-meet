@@ -4,9 +4,9 @@
 -- Copyright (C) 2023-present 8x8, Inc.
 
 local oss_util = module:require "util";
+local is_admin = oss_util.is_admin;
 local is_healthcheck_room = oss_util.is_healthcheck_room;
 local process_host_module = oss_util.process_host_module;
-local um_is_admin = require "core.usermanager".is_admin;
 local inspect = require('inspect');
 local jid_bare = require "util.jid".bare;
 local jid = require "util.jid";
@@ -19,10 +19,6 @@ local lobby_muc_component_config = 'lobby.' .. module:get_option_string("muc_map
 if lobby_muc_component_config == nil then
     module:log('error', 'lobby not enabled missing lobby_muc config');
     return ;
-end
-
-local function is_admin(occupant_jid)
-    return um_is_admin(occupant_jid, module.host);
 end
 
 local function remove_flip_tag(stanza)
@@ -65,24 +61,27 @@ module:hook("muc-occupant-pre-join", function(event)
                     room:set_affiliation(true, jid_bare(occupant_jid), "member")
                     room:save_occupant(occupant);
                 end
-                -- bypass password on the flip device
-                local join = stanza:get_child("x", MUC_NS);
-                if not join then
-                    join = stanza:tag("x", { xmlns = MUC_NS });
-                end
-                local password = join:get_child("password", MUC_NS);
-                if password then
-                    join:maptags(
-                            function(tag)
-                                for k, v in pairs(tag) do
-                                    if k == "name" and v == "password" then
-                                        return nil
+
+                if room:get_password() then
+                    -- bypass password on the flip device
+                    local join = stanza:get_child("x", MUC_NS);
+                    if not join then
+                        join = stanza:tag("x", { xmlns = MUC_NS });
+                    end
+                    local password = join:get_child("password", MUC_NS);
+                    if password then
+                        join:maptags(
+                                function(tag)
+                                    for k, v in pairs(tag) do
+                                        if k == "name" and v == "password" then
+                                            return nil
+                                        end
                                     end
-                                end
-                                return tag
-                            end);
+                                    return tag
+                                end);
+                    end
+                    join:tag("password", { xmlns = MUC_NS }):text(room:get_password());
                 end
-                join:tag("password", { xmlns = MUC_NS }):text(room:get_password());
             elseif not session.jitsi_meet_context_features.flip or session.jitsi_meet_context_features.flip == false or session.jitsi_meet_context_features.flip == "false" then
                 module:log("warn", "Flip device tag present without jwt permission")
                 --remove flip_device tag if somebody wants to abuse this feature

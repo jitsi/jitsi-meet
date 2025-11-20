@@ -21,6 +21,7 @@ import ReactionAnimations from "../../../../../reactions/components/web/Reaction
 import { toggleToolboxVisible } from "../../../../../toolbox/actions.any";
 import { fullScreenChanged, showToolbox } from "../../../../../toolbox/actions.web";
 import JitsiPortal from "../../../../../toolbox/components/web/JitsiPortal";
+import Toolbox from "../../../../../toolbox/components/web/Toolbox";
 import { LAYOUT_CLASSNAMES } from "../../../../../video-layout/constants";
 import { getCurrentLayout } from "../../../../../video-layout/functions.any";
 import { getConferenceNameForTitle } from "../../../../conference/functions";
@@ -33,13 +34,12 @@ import Header, { Mode } from "../components/Header";
 
 import { setConferenceViewMode } from "../../../../../filmstrip/actions.web";
 import { ViewMode } from "../../../../../filmstrip/reducer";
-import Toolbox from "../../../../../toolbox/components/web/Toolbox";
 import { DEFAULT_STATE } from "../../../../known-domains/reducer";
 import PersistenceRegistry from "../../../../redux/PersistenceRegistry";
 import { setCreateRoomError, setJoinRoomError } from "../../../general/store/errors/actions";
+import { isNewMeetingFlow } from "../../../services/sessionStorage.service";
 import ConferenceControlsWrapper from "./ConferenceControlsWrapper";
 import VideoGalleryWrapper from "./VideoGalleryWrapper";
-
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -137,7 +137,7 @@ class Conference extends AbstractConference<IProps, any> {
         this._onVidespaceTouchStart = this._onVidespaceTouchStart.bind(this);
     }
 
-    componentDidMount() {
+    override componentDidMount() {
         PersistenceRegistry.register(
             "features/prejoin",
             {
@@ -150,13 +150,25 @@ class Conference extends AbstractConference<IProps, any> {
         this.props.dispatch(setJoinRoomError(false));
     }
 
+    override componentDidUpdate(prevProps: IProps) {
+        const isComingFromNewMeetingFlow = isNewMeetingFlow();
+        const hasRoomChanged = prevProps._roomName !== this.props._roomName;
+        const hasValidRoom = this.props._roomName && this.props._roomName !== "new-meeting";
+
+        const shouldAutoConnect = isComingFromNewMeetingFlow && hasRoomChanged && hasValidRoom;
+
+        if (shouldAutoConnect) {
+            this.props.dispatch(init(true));
+        }
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _isAnyOverlayVisible,
             _layoutClassName,
@@ -167,59 +179,59 @@ class Conference extends AbstractConference<IProps, any> {
             viewMode,
             t,
         } = this.props;
-
         return (
             <>
-                <Chat />
                 <div
                     // _layoutClassName has the styles to manage the side bar
-                    className={_layoutClassName + " bg-gray-100"}
-                    // className={"bg-gray-100 relative flex"}
+                    className={_layoutClassName + " bg-gray-100 flex"}
                     id="videoconference_page"
                     onMouseMove={isMobileBrowser() ? undefined : this._onShowToolbar}
                 >
-                    <ConferenceInfo />
-                    <Notice />
-                    <div onTouchStart={this._onVidespaceTouchStart}>
-                        <Header mode={viewMode} translate={t} onSetModeClicked={this._onSetVideoModeClicked} />
-                        <div className="flex h-full justify-center items-center">
-                            {/* <LargeVideoWeb /> */}
-                            <VideoGalleryWrapper videoMode={viewMode} />
+                    <div className="flex-1 flex flex-col">
+                        <ConferenceInfo />
+                        <Notice />
+                        <div onTouchStart={this._onVidespaceTouchStart} className="flex-1 flex flex-col">
+                            <Header mode={viewMode} translate={t} onSetModeClicked={this._onSetVideoModeClicked} />
+                            <div className="flex-1 flex justify-center items-center">
+                                {/* <LargeVideoWeb /> */}
+                                <VideoGalleryWrapper videoMode={viewMode} />
+                            </div>
+                            {_showPrejoin || _showLobby || (
+                                <>
+                                    {/* <StageFilmstrip /> */}
+                                    {/*  <ScreenshareFilmstrip />*/}
+                                    {/* right screen tools component */}
+                                    {/* <MainFilmstrip /> */}
+                                </>
+                            )}
                         </div>
+
                         {_showPrejoin || _showLobby || (
                             <>
-                                {/* <StageFilmstrip /> */}
-                                {/*  <ScreenshareFilmstrip />*/}
-                                {/* right screen tools component */}
-                                {/* <MainFilmstrip /> */}
+                                <span aria-level={1} className="sr-only" role="heading">
+                                    {t("toolbar.accessibilityLabel.heading") as string}
+                                </span>
+                                {/* <Toolbox toolbarButtons={this.props._toolbarButtons} /> */}
                             </>
                         )}
+                        {/* CONFERENCE MEDIA CONTROLS */}
+                        <ConferenceControlsWrapper />
+                        {_notificationsVisible &&
+                            !_isAnyOverlayVisible &&
+                            (_overflowDrawer ? (
+                                <JitsiPortal className="notification-portal">
+                                    {this.renderNotificationsContainer({ portal: true })}
+                                </JitsiPortal>
+                            ) : (
+                                this.renderNotificationsContainer()
+                            ))}
+
+                        <CalleeInfoContainer />
+
+                        {_showPrejoin && <Prejoin />}
+                        {_showLobby && <LobbyScreen />}
                     </div>
-
-                    {_showPrejoin || _showLobby || (
-                        <>
-                            <span aria-level={1} className="sr-only" role="heading">
-                                {t("toolbar.accessibilityLabel.heading") as string}
-                            </span>
-                            {/* <Toolbox /> */}
-                        </>
-                    )}
-                    {/* CONFERENCE MEDIA CONTROLS */}
-                    <ConferenceControlsWrapper />
-                    {_notificationsVisible &&
-                        !_isAnyOverlayVisible &&
-                        (_overflowDrawer ? (
-                            <JitsiPortal className="notification-portal">
-                                {this.renderNotificationsContainer({ portal: true })}
-                            </JitsiPortal>
-                        ) : (
-                            this.renderNotificationsContainer()
-                        ))}
-
-                    <CalleeInfoContainer />
-
-                    {_showPrejoin && <Prejoin />}
-                    {_showLobby && <LobbyScreen />}
+                    <Chat />
                 </div>
                 <ParticipantsPane />
                 <ReactionAnimations />
@@ -301,14 +313,14 @@ class Conference extends AbstractConference<IProps, any> {
     _start() {
         APP.UI.start();
 
-        APP.UI.registerListeners();
+        // APP.UI.registerListeners();
         APP.UI.bindEvents();
 
         FULL_SCREEN_EVENTS.forEach((name) => document.addEventListener(name, this._onFullScreenChange));
 
         const { dispatch, t } = this.props;
 
-        dispatch(init());
+        dispatch(init(true));
 
         maybeShowSuboptimalExperienceNotification(dispatch, t);
     }

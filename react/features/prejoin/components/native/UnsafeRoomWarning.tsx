@@ -86,12 +86,14 @@ const UnsafeRoomWarning: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProp
             addBottomPadding = { false }
             safeAreaInsets = { [ 'right' ] }
             style = { styles.unsafeRoomWarningContainer } >
-            <View style = { styles.displayRoomNameBackdrop as StyleProp<TextStyle> }>
-                <Text
-                    numberOfLines = { 1 }
-                    style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
-                    { roomName }
-                </Text>
+            <View style = { styles.conferenceInfo as ViewStyle }>
+                <View style = { styles.displayRoomNameBackdrop as ViewStyle }>
+                    <Text
+                        numberOfLines = { 1 }
+                        style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
+                        { roomName }
+                    </Text>
+                </View>
             </View>
             <View style = { unsafeRoomContentContainer as StyleProp<ViewStyle> }>
                 <View style = { styles.warningIconWrapper as StyleProp<ViewStyle> }>

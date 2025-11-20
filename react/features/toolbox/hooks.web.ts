@@ -5,13 +5,24 @@ import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent } from '../analytics/Ana
 import { sendAnalytics } from '../analytics/functions';
 import { IReduxState } from '../app/types';
 import { toggleDialog } from '../base/dialog/actions';
+import { isIosMobileBrowser, isIpadMobileBrowser } from '../base/environment/utils';
+import { HELP_BUTTON_ENABLED } from '../base/flags/constants';
+import { getFeatureFlag } from '../base/flags/functions';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { raiseHand } from '../base/participants/actions';
 import { getLocalParticipant, hasRaisedHand } from '../base/participants/functions';
+import { isToggleCameraEnabled } from '../base/tracks/functions.web';
 import { toggleChat } from '../chat/actions.web';
+import ChatButton from '../chat/components/web/ChatButton';
+import { useEmbedButton } from '../embed-meeting/hooks';
+import { useEtherpadButton } from '../etherpad/hooks';
+import { useFeedbackButton } from '../feedback/hooks.web';
 import { setGifMenuVisibility } from '../gifs/actions';
 import { isGifEnabled } from '../gifs/function.any';
-import { registerShortcut, unregisterShortcut } from '../keyboard-shortcuts/actions.any';
+import InviteButton from '../invite/components/add-people-dialog/web/InviteButton';
+import { registerShortcut, unregisterShortcut } from '../keyboard-shortcuts/actions';
+import { useKeyboardShortcutsButton } from '../keyboard-shortcuts/hooks';
+import NoiseSuppressionButton from '../noise-suppression/components/NoiseSuppressionButton';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane
@@ -20,20 +31,342 @@ import {
     getParticipantsPaneOpen,
     isParticipantsPaneEnabled
 } from '../participants-pane/functions';
+import { useParticipantPaneButton } from '../participants-pane/hooks.web';
 import { addReactionToBuffer } from '../reactions/actions.any';
 import { toggleReactionsMenuVisibility } from '../reactions/actions.web';
+import RaiseHandContainerButton from '../reactions/components/web/RaiseHandContainerButtons';
 import { REACTIONS } from '../reactions/constants';
 import { shouldDisplayReactionsButtons } from '../reactions/functions.any';
+import { useReactionsButton } from '../reactions/hooks.web';
+import { useLiveStreamingButton, useRecordingButton } from '../recording/hooks.web';
+import { isSalesforceEnabled } from '../salesforce/functions';
 import { startScreenShareFlow } from '../screen-share/actions.web';
-import { isScreenVideoShared } from '../screen-share/functions';
+import ShareAudioButton from '../screen-share/components/web/ShareAudioButton';
+import { isScreenAudioSupported, isScreenVideoShared } from '../screen-share/functions';
+import { useSecurityDialogButton } from '../security/hooks.web';
+import SettingsButton from '../settings/components/web/SettingsButton';
+import { useSharedVideoButton } from '../shared-video/hooks';
 import SpeakerStats from '../speaker-stats/components/web/SpeakerStats';
 import { isSpeakerStatsDisabled } from '../speaker-stats/functions';
+import { useSpeakerStatsButton } from '../speaker-stats/hooks.web';
+import { useClosedCaptionButton } from '../subtitles/hooks.web';
 import { toggleTileView } from '../video-layout/actions.any';
-import { shouldDisplayTileView } from '../video-layout/functions.any';
+import { shouldDisplayTileView } from '../video-layout/functions.web';
+import { useTileViewButton } from '../video-layout/hooks';
+import VideoQualityButton from '../video-quality/components/VideoQualityButton.web';
 import VideoQualityDialog from '../video-quality/components/VideoQualityDialog.web';
+import { useVirtualBackgroundButton } from '../virtual-background/hooks';
+import { useWhiteboardButton } from '../whiteboard/hooks';
 
 import { setFullScreen } from './actions.web';
+import DownloadButton from './components/DownloadButton';
+import HelpButton from './components/HelpButton';
+import AudioSettingsButton from './components/web/AudioSettingsButton';
+import CustomOptionButton from './components/web/CustomOptionButton';
+import FullscreenButton from './components/web/FullscreenButton';
+import LinkToSalesforceButton from './components/web/LinkToSalesforceButton';
+import ProfileButton from './components/web/ProfileButton';
+import ShareDesktopButton from './components/web/ShareDesktopButton';
+import ToggleCameraButton from './components/web/ToggleCameraButton';
+import VideoSettingsButton from './components/web/VideoSettingsButton';
 import { isButtonEnabled, isDesktopShareButtonDisabled } from './functions.web';
+import { ICustomToolbarButton, IToolboxButton, ToolbarButton } from './types';
+
+
+const microphone = {
+    key: 'microphone',
+    Content: AudioSettingsButton,
+    group: 0,
+    display: true
+};
+
+const camera = {
+    key: 'camera',
+    Content: VideoSettingsButton,
+    group: 0,
+    display: true
+};
+
+const profile = {
+    key: 'profile',
+    Content: ProfileButton,
+    group: 1,
+    display: true
+};
+
+const chat = {
+    key: 'chat',
+    Content: ChatButton,
+    group: 2,
+    display: true
+};
+
+const desktop = {
+    key: 'desktop',
+    Content: ShareDesktopButton,
+    group: 2,
+    display: true
+};
+
+// In Narrow layout and mobile web we are using drawer for popups and that is why it is better to include
+// all forms of reactions in the overflow menu. Otherwise the toolbox will be hidden and the reactions popup
+// misaligned.
+const raisehand = {
+    key: 'raisehand',
+    Content: RaiseHandContainerButton,
+    group: 2,
+    display: true
+};
+
+const invite = {
+    key: 'invite',
+    Content: InviteButton,
+    group: 2,
+    display: true
+};
+
+const toggleCamera = {
+    key: 'toggle-camera',
+    Content: ToggleCameraButton,
+    group: 2,
+    display: true
+};
+
+const videoQuality = {
+    key: 'videoquality',
+    Content: VideoQualityButton,
+    group: 2,
+    display: true
+};
+
+const fullscreen = {
+    key: 'fullscreen',
+    Content: FullscreenButton,
+    group: 2,
+    display: true
+};
+
+const linkToSalesforce = {
+    key: 'linktosalesforce',
+    Content: LinkToSalesforceButton,
+    group: 2,
+    display: true
+};
+
+const shareAudio = {
+    key: 'shareaudio',
+    Content: ShareAudioButton,
+    group: 3,
+    display: true
+};
+
+const noiseSuppression = {
+    key: 'noisesuppression',
+    Content: NoiseSuppressionButton,
+    group: 3,
+    display: true
+};
+
+const settings = {
+    key: 'settings',
+    Content: SettingsButton,
+    group: 4,
+    display: true
+};
+
+const download = {
+    key: 'download',
+    Content: DownloadButton,
+    group: 4,
+    display: true
+};
+
+const help = {
+    key: 'help',
+    Content: HelpButton,
+    group: 4,
+    display: true
+};
+
+/**
+ * A hook that returns the toggle camera button if it is enabled and undefined otherwise.
+ *
+ *  @returns {Object | undefined}
+ */
+function useToggleCameraButton() {
+    const toggleCameraEnabled = useSelector(isToggleCameraEnabled);
+
+    if (toggleCameraEnabled) {
+        return toggleCamera;
+    }
+}
+
+/**
+ * A hook that returns the desktop sharing button if it is enabled and undefined otherwise.
+ *
+ *  @returns {Object | undefined}
+ */
+function getDesktopSharingButton() {
+    if (JitsiMeetJS.isDesktopSharingEnabled()) {
+        return desktop;
+    }
+}
+
+/**
+ * A hook that returns the fullscreen button if it is enabled and undefined otherwise.
+ *
+ *  @returns {Object | undefined}
+ */
+function getFullscreenButton() {
+    if (!isIosMobileBrowser() || isIpadMobileBrowser()) {
+        return fullscreen;
+    }
+}
+
+/**
+ * A hook that returns the "link to salesforce" button if it is enabled and undefined otherwise.
+ *
+ *  @returns {Object | undefined}
+ */
+function useLinkToSalesforceButton() {
+    const _isSalesforceEnabled = useSelector(isSalesforceEnabled);
+
+    if (_isSalesforceEnabled) {
+        return linkToSalesforce;
+    }
+}
+
+
+/**
+ * A hook that returns the share audio button if it is enabled and undefined otherwise.
+ *
+ *  @returns {Object | undefined}
+ */
+function getShareAudioButton() {
+    if (JitsiMeetJS.isDesktopSharingEnabled() && isScreenAudioSupported()) {
+        return shareAudio;
+    }
+}
+
+/**
+ * A hook that returns the download button if it is enabled and undefined otherwise.
+ *
+ *  @returns {Object | undefined}
+ */
+function useDownloadButton() {
+    const visible = useSelector(
+        (state: IReduxState) => typeof state['features/base/config'].deploymentUrls?.downloadAppsUrl === 'string');
+
+    if (visible) {
+        return download;
+    }
+}
+
+/**
+ * A hook that returns the help button if it is enabled and undefined otherwise.
+ *
+ *  @returns {Object | undefined}
+ */
+function useHelpButton() {
+    const visible = useSelector(
+        (state: IReduxState) =>
+            typeof state['features/base/config'].deploymentUrls?.userDocumentationURL === 'string'
+                && getFeatureFlag(state, HELP_BUTTON_ENABLED, true));
+
+    if (visible) {
+        return help;
+    }
+}
+
+/**
+* Returns all buttons that could be rendered.
+*
+* @param {Object} _customToolbarButtons - An array containing custom buttons objects.
+* @returns {Object} The button maps mainMenuButtons and overflowMenuButtons.
+*/
+export function useToolboxButtons(
+        _customToolbarButtons?: ICustomToolbarButton[]): { [key: string]: IToolboxButton; } {
+    const desktopSharing = getDesktopSharingButton();
+    const toggleCameraButton = useToggleCameraButton();
+    const _fullscreen = getFullscreenButton();
+    const security = useSecurityDialogButton();
+    const reactions = useReactionsButton();
+    const participants = useParticipantPaneButton();
+    const tileview = useTileViewButton();
+    const cc = useClosedCaptionButton();
+    const recording = useRecordingButton();
+    const liveStreaming = useLiveStreamingButton();
+    const linktosalesforce = useLinkToSalesforceButton();
+    const shareaudio = getShareAudioButton();
+    const shareVideo = useSharedVideoButton();
+    const whiteboard = useWhiteboardButton();
+    const etherpad = useEtherpadButton();
+    const virtualBackground = useVirtualBackgroundButton();
+    const speakerStats = useSpeakerStatsButton();
+    const shortcuts = useKeyboardShortcutsButton();
+    const embed = useEmbedButton();
+    const feedback = useFeedbackButton();
+    const _download = useDownloadButton();
+    const _help = useHelpButton();
+
+    const buttons: { [key in ToolbarButton]?: IToolboxButton; } = {
+        microphone,
+        camera,
+        profile,
+        desktop: desktopSharing,
+        chat,
+        raisehand,
+        reactions,
+        'participants-pane': participants,
+        invite,
+        tileview,
+        'toggle-camera': toggleCameraButton,
+        videoquality: videoQuality,
+        fullscreen: _fullscreen,
+        security,
+        closedcaptions: cc,
+        recording,
+        livestreaming: liveStreaming,
+        linktosalesforce,
+        sharedvideo: shareVideo,
+        shareaudio,
+        noisesuppression: noiseSuppression,
+        whiteboard,
+        etherpad,
+        'select-background': virtualBackground,
+        stats: speakerStats,
+        settings,
+        shortcuts,
+        embedmeeting: embed,
+        feedback,
+        download: _download,
+        help: _help
+    };
+    const buttonKeys = Object.keys(buttons) as ToolbarButton[];
+
+    buttonKeys.forEach(
+            key => typeof buttons[key] === 'undefined' && delete buttons[key]);
+
+    const customButtons = _customToolbarButtons?.reduce((prev, { backgroundColor, icon, id, text }) => {
+        prev[id] = {
+            backgroundColor,
+            key: id,
+            id,
+            Content: CustomOptionButton,
+            group: 4,
+            icon,
+            text
+        };
+
+        return prev;
+    }, {} as { [key: string]: ICustomToolbarButton; });
+
+    return {
+        ...buttons,
+        ...customButtons
+    };
+}
+
 
 export const useKeyboardShortcuts = (toolbarButtons: Array<string>) => {
     const dispatch = useDispatch();

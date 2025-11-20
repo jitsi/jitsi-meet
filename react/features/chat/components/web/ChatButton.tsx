@@ -27,13 +27,13 @@ interface IProps extends AbstractButtonProps {
  * Implementation of a button for accessing chat pane.
  */
 class ChatButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.openChat';
-    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.closeChat';
-    icon = IconMessage;
-    label = 'toolbar.openChat';
-    toggledLabel = 'toolbar.closeChat';
-    tooltip = 'toolbar.openChat';
-    toggledTooltip = 'toolbar.closeChat';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.openChat';
+    override toggledAccessibilityLabel = 'toolbar.accessibilityLabel.closeChat';
+    override icon = IconMessage;
+    override label = 'toolbar.openChat';
+    override toggledLabel = 'toolbar.closeChat';
+    override tooltip = 'toolbar.openChat';
+    override toggledTooltip = 'toolbar.closeChat';
 
     /**
      * Indicates whether this button is in toggled state or not.
@@ -42,7 +42,7 @@ class ChatButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._chatOpen;
     }
 
@@ -53,7 +53,7 @@ class ChatButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boReact$Nodeolean}
      */
-    render() {
+    override render() {
         return (
             <div
                 className = 'toolbar-button-with-badge'
@@ -70,7 +70,7 @@ class ChatButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent(

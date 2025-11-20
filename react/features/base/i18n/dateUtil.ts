@@ -1,65 +1,81 @@
-import moment from 'moment';
-import momentDurationFormatSetup from 'moment-duration-format';
+import dayjs from 'dayjs';
+import durationPlugin from 'dayjs/plugin/duration';
+import localizedFormatPlugin from 'dayjs/plugin/localizedFormat';
+import relativeTimePlugin from 'dayjs/plugin/relativeTime';
 
 import i18next from './i18next';
 
-// allows for moment durations to be formatted
-momentDurationFormatSetup(moment);
+dayjs.extend(durationPlugin);
+dayjs.extend(relativeTimePlugin);
+dayjs.extend(localizedFormatPlugin);
 
-// MomentJS uses static language bundle loading, so in order to support dynamic
+// Day.js uses static language bundle loading, so in order to support dynamic
 // language selection in the app we need to load all bundles that we support in
 // the app.
-require('moment/locale/af');
-require('moment/locale/ar');
-require('moment/locale/be');
-require('moment/locale/bg');
-require('moment/locale/ca');
-require('moment/locale/cs');
-require('moment/locale/da');
-require('moment/locale/de');
-require('moment/locale/el');
-require('moment/locale/en-gb');
-require('moment/locale/eo');
-require('moment/locale/es-us');
-require('moment/locale/es');
-require('moment/locale/et');
-require('moment/locale/eu');
-require('moment/locale/fa');
-require('moment/locale/fi');
-require('moment/locale/fr-ca');
-require('moment/locale/fr');
-require('moment/locale/gl');
-require('moment/locale/he');
-require('moment/locale/hr');
-require('moment/locale/hu');
-require('moment/locale/hy-am');
-require('moment/locale/id');
-require('moment/locale/is');
-require('moment/locale/it');
-require('moment/locale/ja');
-require('moment/locale/ko');
-require('moment/locale/lt');
-require('moment/locale/lv');
-require('moment/locale/ml');
-require('moment/locale/mn');
-require('moment/locale/mr');
-require('moment/locale/nb');
-require('moment/locale/nl');
-require('moment/locale/oc-lnc');
-require('moment/locale/pl');
-require('moment/locale/pt');
-require('moment/locale/pt-br');
-require('moment/locale/ro');
-require('moment/locale/ru');
-require('moment/locale/sk');
-require('moment/locale/sl');
-require('moment/locale/sr');
-require('moment/locale/sv');
-require('moment/locale/tr');
-require('moment/locale/uk');
-require('moment/locale/vi');
-require('moment/locale/zh-cn');
-require('moment/locale/zh-tw');
+import 'dayjs/locale/af';
+import 'dayjs/locale/ar';
+import 'dayjs/locale/be';
+import 'dayjs/locale/bg';
+import 'dayjs/locale/ca';
+import 'dayjs/locale/cs';
+import 'dayjs/locale/da';
+import 'dayjs/locale/de';
+import 'dayjs/locale/el';
+import 'dayjs/locale/eo';
+import 'dayjs/locale/es';
+import 'dayjs/locale/es-us';
+import 'dayjs/locale/et';
+import 'dayjs/locale/eu';
+import 'dayjs/locale/fa';
+import 'dayjs/locale/fi';
+import 'dayjs/locale/fr';
+import 'dayjs/locale/fr-ca';
+import 'dayjs/locale/gl';
+import 'dayjs/locale/he';
+import 'dayjs/locale/hi';
+import 'dayjs/locale/hr';
+import 'dayjs/locale/hu';
+import 'dayjs/locale/hy-am';
+import 'dayjs/locale/id';
+import 'dayjs/locale/is';
+import 'dayjs/locale/it';
+import 'dayjs/locale/ja';
+import 'dayjs/locale/ko';
+import 'dayjs/locale/lt';
+import 'dayjs/locale/lv';
+import 'dayjs/locale/ml';
+import 'dayjs/locale/mn';
+import 'dayjs/locale/mr';
+import 'dayjs/locale/nb';
+import 'dayjs/locale/nl';
+import 'dayjs/locale/oc-lnc';
+import 'dayjs/locale/pl';
+import 'dayjs/locale/pt';
+import 'dayjs/locale/pt-br';
+import 'dayjs/locale/ro';
+import 'dayjs/locale/ru';
+import 'dayjs/locale/sk';
+import 'dayjs/locale/sl';
+import 'dayjs/locale/sq';
+import 'dayjs/locale/sr';
+import 'dayjs/locale/sv';
+import 'dayjs/locale/te';
+import 'dayjs/locale/tr';
+import 'dayjs/locale/uk';
+import 'dayjs/locale/vi';
+import 'dayjs/locale/zh-cn';
+import 'dayjs/locale/zh-tw';
+
+const LOCALE_MAPPING: Record<string, string> = {
+    // i18next -> dayjs
+    'hy': 'hy-am',
+    'oc': 'oc-lnc',
+    'zhCN': 'zh-cn',
+    'zhTW': 'zh-tw',
+    'ptBR': 'pt-br',
+    'esUS': 'es-us',
+    'frCA': 'fr-ca'
+};
 
 /**
  * Returns a localized date formatter initialized with a specific {@code Date}
@@ -71,7 +87,7 @@ require('moment/locale/zh-tw');
  * @returns {Object}
  */
 export function getLocalizedDateFormatter(dateOrTimeStamp: Date | number) {
-    return moment(dateOrTimeStamp).locale(_getSupportedLocale());
+    return dayjs(dateOrTimeStamp).locale(_getSupportedLocale());
 }
 
 /**
@@ -84,23 +100,17 @@ export function getLocalizedDateFormatter(dateOrTimeStamp: Date | number) {
  * @returns {Object}
  */
 export function getLocalizedDurationFormatter(duration: number) {
-    // FIXME The flow-type definition of moment is v2.3 while our package.json
-    // states v2.19 so maybe locale on moment's duration was introduced in
-    // between?
-    //
-
     // If the conference is under an hour long we want to display it without
     // showing the hour and we want to include the hour if the conference is
     // more than an hour long
 
-    // @ts-ignore
-    if (moment.duration(duration).format('h') !== '0') {
-        // @ts-ignore
-        return moment.duration(duration).format('h:mm:ss');
+    const d = dayjs.duration(duration);
+
+    if (d.hours() !== 0) {
+        return d.format('H:mm:ss');
     }
 
-    // @ts-ignore
-    return moment.duration(duration).format('mm:ss', { trim: false });
+    return d.format('mm:ss');
 }
 
 /**
@@ -110,8 +120,17 @@ export function getLocalizedDurationFormatter(duration: number) {
  * @returns {string}
  */
 function _getSupportedLocale() {
+    const availableLocales = Object.keys(dayjs.Ls);
     const i18nLocale = i18next.language;
     let supportedLocale;
+
+    if (LOCALE_MAPPING[i18nLocale]) {
+        return LOCALE_MAPPING[i18nLocale];
+    }
+
+    if (availableLocales.includes(i18nLocale)) {
+        return i18nLocale;
+    }
 
     if (i18nLocale) {
         const localeRegexp = new RegExp('^([a-z]{2,2})(-)*([a-z]{2,2})*$');
@@ -123,11 +142,7 @@ function _getSupportedLocale() {
                     `^${localeResult[1]}(-)*${`(${localeResult[3]})*` || ''}`);
 
             supportedLocale
-
-                // FIXME The flow-type definition of moment is v2.3 while our
-                // package.json states v2.19 so maybe locales on moment was
-                // introduced in between?
-                = moment.locales().find(lang => currentLocaleRegexp.exec(lang));
+                = availableLocales.find(lang => currentLocaleRegexp.exec(lang));
         }
     }
 

@@ -90,7 +90,7 @@ export class NoiseSuppressionEffect {
         let init;
 
         if (this._options?.krisp?.enabled) {
-            init = _initializeKrisp(this._options).then(filterNode => {
+            init = _initializeKrisp(this._options, audioStream).then(filterNode => {
                 this._noiseSuppressorNode = filterNode;
 
                 if (krispState.filterNodeReady) {
@@ -167,26 +167,52 @@ export class NoiseSuppressionEffect {
  * Initializes the Krisp SDK and creates the filter node.
  *
  * @param {INoiseSuppressionConfig} options - Krisp options.
+ * @param {MediaStream} stream - Audio stream which will be mixed with _mixAudio.
  *
  * @returns {Promise<AudioWorkletNode | undefined>}
  */
-async function _initializeKrisp(options: INoiseSuppressionConfig): Promise<AudioWorkletNode | undefined> {
+async function _initializeKrisp(
+        options: INoiseSuppressionConfig,
+        stream: MediaStream
+): Promise<AudioWorkletNode | undefined> {
     await audioContext.resume();
 
     if (!krispState.sdk) {
         const baseUrl = `${getBaseUrl()}libs/krisp`;
         const { default: KrispSDK } = await import(/* webpackIgnore: true */ `${baseUrl}/krispsdk.mjs`);
 
-        krispState.sdk = new KrispSDK({
-            params: {
+        const ncParams = {
+            krisp: {
                 models: {
-                    model8: `${baseUrl}/models/model_8.kw`,
-                    model16: `${baseUrl}/models/model_16.kw`,
-                    model32: `${baseUrl}/models/model_32.kw`
+                    modelBVC: `${baseUrl}/models/${options?.krisp?.models?.modelBVC}`,
+                    model8: `${baseUrl}/models/${options?.krisp?.models?.model8}`,
+                    modelNC: `${baseUrl}/models/${options?.krisp?.models?.modelNC}`
                 },
-                logProcessStats: options?.krisp?.logProcessStats,
-                debugLogs: options?.krisp?.debugLogs
-            },
+                logProcessStats: !options?.krisp?.logProcessStats,
+                debugLogs: !options?.krisp?.debugLogs,
+                useBVC: !options?.krisp?.useBVC,
+                bvc: {
+                    allowedDevices: `${baseUrl}/assets/${options?.krisp?.bvc?.allowedDevices}`,
+                    allowedDevicesExt: `${baseUrl}/assets/${options?.krisp?.bvc?.allowedDevicesExt}`
+                },
+                inboundModels: {
+                    modelInbound8: `${baseUrl}/models/${options?.krisp?.inboundModels?.modelInbound8}`,
+                    modelInbound16: `${baseUrl}/models/${options?.krisp?.inboundModels?.modelInbound16}`
+                },
+                preloadModels: {
+                    modelBVC: `${baseUrl}/models/${options?.krisp?.preloadModels?.modelBVC}`,
+                    model8: `${baseUrl}/models/${options?.krisp?.preloadModels?.model8}`,
+                    modelNC: `${baseUrl}/models/${options?.krisp?.preloadModels?.modelNC}`
+                },
+                preloadInboundModels: {
+                    modelInbound8: `${baseUrl}/models/${options?.krisp?.preloadInboundModels?.modelInbound8}`,
+                    modelInbound16: `${baseUrl}/models/${options?.krisp?.preloadInboundModels?.modelInbound16}`
+                }
+            }
+        };
+
+        krispState.sdk = new KrispSDK({
+            params: ncParams.krisp,
             callbacks: {}
         });
     }
@@ -201,14 +227,20 @@ async function _initializeKrisp(options: INoiseSuppressionConfig): Promise<Audio
     if (!krispState.filterNode) {
         try {
             // @ts-ignore
-            krispState.filterNode = await krispState.sdk?.createNoiseFilter(audioContext, () => {
-                logger.info('Krisp audio filter ready');
+            krispState.filterNode = await krispState.sdk?.createNoiseFilter(
+                {
+                    audioContext,
+                    stream
+                },
+                () => {
+                    logger.info('Krisp audio filter ready');
 
-                // Enable audio filtering.
-                // @ts-ignore
-                krispState.filterNode?.enable();
-                krispState.filterNodeReady = true;
-            });
+                    // Enable audio filtering.
+                    // @ts-ignore
+                    krispState.filterNode?.enable();
+                    krispState.filterNodeReady = true;
+                }
+            );
         } catch (e) {
             logger.error('Failed to create Krisp noise filter', e);
 

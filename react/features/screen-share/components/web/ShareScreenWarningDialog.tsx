@@ -56,7 +56,7 @@ class ShareScreenWarningDialog extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { t } = this.props;
 
         let description1, description2, header1, header2, stopSharing, title;

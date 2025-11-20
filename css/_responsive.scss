@@ -4,7 +4,7 @@
 
         #enter_room {
             .welcome-page-button {
-                font-size: 16px;
+                font-size: 1rem;
                 left: 0;
                 text-align: center;
                 width: 100%;
@@ -53,25 +53,10 @@
         }
 
         .welcome-footer-row-block {
-            display: block;
-        }
-    }
-}
-
-.desktop-browser {
-    &.shift-right {
-
-        @media only screen and (max-width: $verySmallScreen + $sidebarWidth) {
-
-            #videoResolutionLabel {
-                display: none;
-            }
-            .vertical-filmstrip .filmstrip {
-                display: none;
-            }
-            .chrome-extension-banner {
-                display: none;
-            }
+            display: flex;
+            flex-direction: column;
+            gap:12px;
+            align-items: center;
         }
     }
 }

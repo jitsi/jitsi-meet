@@ -100,7 +100,7 @@ class BottomSheet extends PureComponent<Props> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             addScrollViewPadding,
             renderHeader,

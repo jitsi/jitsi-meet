@@ -3,6 +3,7 @@ import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import Avatar from '../../../base/avatar/components/Avatar';
+import { getFormattedTimestamp } from '../../functions';
 import { IMessage } from '../../types';
 
 import ChatMessage from './ChatMessage';
@@ -26,29 +27,42 @@ const useStyles = makeStyles()(theme => {
             display: 'flex',
             flexDirection: 'column',
             maxWidth: '100%',
-
-            '&.remote': {
-                maxWidth: 'calc(100% - 40px)' // 100% - avatar and margin
-            }
+            flex: 1
         },
 
         groupContainer: {
             display: 'flex',
+            flexDirection: 'column',
+            width: '100%',
+            marginBottom: '16px',
 
             '&.local': {
-                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
 
-                '& .avatar': {
-                    display: 'none'
+                '& $headerRow': {
+                    flexDirection: 'row-reverse'
                 }
             }
         },
 
+        headerRow: {
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginBottom: theme.spacing(1),
+            gap: theme.spacing(1)
+        },
+
         avatar: {
-            margin: `${theme.spacing(1)} ${theme.spacing(2)} ${theme.spacing(3)} 0`,
-            position: 'sticky',
+            flexShrink: 0
+        },
+
+        timestamp: {
+            ...theme.typography.labelRegular,
+            color: theme.palette.text03,
+            whiteSpace: 'nowrap',
             flexShrink: 0,
-            top: 0
+            fontSize: '0.75rem'
         }
     };
 });
@@ -63,19 +77,26 @@ const ChatMessageGroup = ({ className = '', messages }: IProps) => {
     }
 
     return (
-        <div className = { clsx(classes.groupContainer, className) }>
-            <Avatar
-                className = { clsx(classes.avatar, 'avatar') }
-                participantId = { messages[0].id }
-                size = { 32 } />
-            <div className = { `${classes.messageGroup} chat-message-group ${className}` }>
+        <div className={clsx(classes.groupContainer, className)}>
+            <div className={classes.headerRow}>
+                <Avatar
+                    className={clsx(classes.avatar, "avatar")}
+                    participantId={messages[0].participantId}
+                    size={32}
+                />
+                <div className="text-xs font-semibold text-[#A6A6A6]">
+                    {getFormattedTimestamp(messages[messages.length - 1])}
+                </div>
+            </div>
+            <div className={`${classes.messageGroup} chat-message-group ${className}`}>
                 {messages.map((message, i) => (
                     <ChatMessage
-                        key = { i }
-                        message = { message }
-                        showDisplayName = { i === 0 }
-                        showTimestamp = { i === messages.length - 1 }
-                        type = { className } />
+                        className={className}
+                        key={i}
+                        message={message}
+                        showDisplayName={i === 0}
+                        showTimestamp={false}
+                    />
                 ))}
             </div>
         </div>

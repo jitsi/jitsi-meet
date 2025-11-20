@@ -3,7 +3,6 @@ package org.jitsi.meet.sdk;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.telecom.DisconnectCause;
 import android.telecom.PhoneAccount;
@@ -32,7 +31,6 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
  *
  * @author Pawel Domas
  */
-@RequiresApi(api = Build.VERSION_CODES.O)
 @ReactModule(name = RNConnectionService.NAME)
 class RNConnectionService extends ReactContextBaseJavaModule {
 
@@ -53,7 +51,6 @@ class RNConnectionService extends ReactContextBaseJavaModule {
      * @param audioRoute the new audio route to be set. See
      * {@link android.telecom.CallAudioState} constants prefixed with "ROUTE_".
      */
-    @RequiresApi(api = Build.VERSION_CODES.O)
     static void setAudioRoute(int audioRoute) {
         for (ConnectionService.ConnectionImpl c
                 : ConnectionService.getConnections()) {

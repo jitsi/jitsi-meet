@@ -43,7 +43,7 @@ class DisplayNameLabel extends React.Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         if (!this.props._render) {
             return null;
         }
@@ -51,7 +51,7 @@ class DisplayNameLabel extends React.Component<IProps> {
         return (
             <View
                 style = { (this.props.contained ? styles.displayNamePadding : styles.displayNameBackdrop
-                    ) as ViewStyle }>
+                ) as ViewStyle }>
                 <Text
                     numberOfLines = { 1 }
                     style = { styles.displayNameText as TextStyle }>

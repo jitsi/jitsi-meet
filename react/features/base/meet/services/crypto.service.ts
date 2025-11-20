@@ -41,7 +41,7 @@ export class CryptoService {
     public passToHash = (passObject: { password: string; salt?: string | null }): { salt: string; hash: string } => {
         const salt = passObject.salt ? passObject.salt : crypto.randomBytes(128 / 8).toString("hex");
         const hash = crypto
-            .pbkdf2Sync(passObject.password, Buffer.from(salt, "hex"), 10000, 256 / 8, "sha1")
+            .pbkdf2Sync(passObject.password, Buffer.from(salt, "hex") as any, 10000, 256 / 8, "sha1")
             .toString("hex");
         const hashedObjetc = {
             salt,
@@ -83,9 +83,9 @@ export class CryptoService {
         const salt = crypto.randomBytes(8);
         const { key, iv } = this.getKeyAndIvFrom(secret, salt);
 
-        const cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
+        const cipher = crypto.createCipheriv("aes-256-cbc", key as any, iv as any);
 
-        const encrypted = Buffer.concat([cipher.update(textToEncrypt, "utf8"), cipher.final()]);
+        const encrypted = Buffer.concat([cipher.update(textToEncrypt, "utf8") as any, cipher.final() as any]);
 
         /* CryptoJS applies the OpenSSL format for the ciphertext, i.e. the encrypted data starts with the ASCII
         encoding of 'Salted__' followed by the salt and then the ciphertext.
@@ -93,7 +93,7 @@ export class CryptoService {
         */
         const openSSLstart = Buffer.from("Salted__");
 
-        return Buffer.concat([openSSLstart, salt, encrypted]).toString("hex");
+        return Buffer.concat([openSSLstart as any, salt as any, encrypted as any]).toString("hex");
     };
 
     /**
@@ -110,11 +110,11 @@ export class CryptoService {
         const salt = cypherText.subarray(8, 16);
         const { key, iv } = this.getKeyAndIvFrom(secret, salt);
 
-        const decipher = crypto.createDecipheriv("aes-256-cbc", key, iv);
+        const decipher = crypto.createDecipheriv("aes-256-cbc", key as any, iv as any);
 
         const contentsToDecrypt = cypherText.subarray(16);
 
-        return Buffer.concat([decipher.update(contentsToDecrypt), decipher.final()]).toString("utf8");
+        return Buffer.concat([decipher.update(contentsToDecrypt as any) as any, decipher.final() as any]).toString("utf8");
     };
 
     /**
@@ -127,16 +127,16 @@ export class CryptoService {
      **/
     private getKeyAndIvFrom = (secret: string, salt: Buffer) => {
         const TRANSFORM_ROUNDS = 3;
-        const password = Buffer.concat([Buffer.from(secret, "binary"), salt]);
+        const password = Buffer.concat([Buffer.from(secret, "binary") as any, salt as any]);
         const md5Hashes: Buffer[] = [];
         let digest = password;
 
         for (let i = 0; i < TRANSFORM_ROUNDS; i++) {
-            md5Hashes[i] = crypto.createHash("md5").update(digest).digest();
-            digest = Buffer.concat([md5Hashes[i], password]);
+            md5Hashes[i] = crypto.createHash("md5").update(digest as any).digest();
+            digest = Buffer.concat([md5Hashes[i] as any, password as any]);
         }
 
-        const key = Buffer.concat([md5Hashes[0], md5Hashes[1]]);
+        const key = Buffer.concat([md5Hashes[0] as any, md5Hashes[1] as any]);
         const iv = md5Hashes[2];
         return { key, iv };
     };

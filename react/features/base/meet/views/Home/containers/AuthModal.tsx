@@ -2,11 +2,8 @@ import { Modal } from "@internxt/ui";
 import { X } from "@phosphor-icons/react";
 import React, { useEffect, useState } from "react";
 import { LoginCredentials } from "../../../services/types/command.types";
-import { LoginForm } from "../components/auth/LoginForm";
-import { SignupForm } from "../components/auth/SignUpForm";
-import { Divider } from "../components/Divider";
-import { useLoginModal } from "../hooks/useLoginModal";
-import { useSignup } from "../hooks/useSignUp";
+import { WebAuthButton } from "../components/auth/WebAuthButton";
+import { useWebAuth } from "../hooks/useWebAuth";
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -17,17 +14,12 @@ interface AuthModalProps {
     openLogin?: boolean;
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, onSignup, translate, openLogin = true }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, translate, openLogin = true }) => {
     const [isLoginView, setIsLoginView] = useState(openLogin);
-    const { showTwoFactor, loginError, isLoggingIn, handleLogin, resetState } = useLoginModal({
+
+    const { isLoggingIn: isWebAuthLoading, webAuthError, handleWebLogin, handleWebSignup, resetState: resetWebAuthState } = useWebAuth({
         onClose,
         onLogin,
-        translate,
-    });
-
-    const { signupError, isSigningUp, handleSignup, resetSignupState } = useSignup({
-        onClose,
-        onSignup,
         translate,
     });
 
@@ -37,8 +29,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, onSignu
 
     useEffect(() => {
         if (!isOpen) {
-            resetState();
-            resetSignupState();
+            resetWebAuthState();
         }
     }, [isOpen]);
 
@@ -59,28 +50,42 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, onSignu
                 </h1>
                 {isLoginView ? (
                     <>
-                        <LoginForm
-                            onSubmit={handleLogin}
-                            isLoggingIn={isLoggingIn}
-                            loginError={loginError}
+                        <WebAuthButton
+                            onClick={handleWebLogin}
+                            isLoading={isWebAuthLoading}
+                            error={webAuthError}
                             translate={translate}
-                            showTwoFactor={showTwoFactor}
+                            type="login"
                         />
-                        <ForgotPasswordLink translate={translate} />
-                        <Divider />
-                        <CreateAccountLink translate={translate} switchToSignup={switchToSignup} />
+                        <div className="mt-6 text-center">
+                            <span className="text-gray-60">{translate("meet.auth.modal.noAccount")}</span>{" "}
+                            <button
+                                onClick={switchToSignup}
+                                className="cursor-pointer appearance-none text-center text-primary font-medium no-underline hover:text-primary focus:text-primary-dark"
+                            >
+                                {translate("meet.auth.modal.createAccount")}
+                            </button>
+                        </div>
                     </>
                 ) : (
                     <>
-                        <SignupForm
-                            onSubmit={handleSignup}
-                            isSigningUp={isSigningUp}
-                            signupError={signupError}
+                        <WebAuthButton
+                            onClick={handleWebSignup}
+                            isLoading={isWebAuthLoading}
+                            error={webAuthError}
                             translate={translate}
+                            type="signup"
                         />
                         <TermsAndPrivacyText translate={translate} />
-                        <Divider />
-                        <LoginAccountLink translate={translate} switchToLogin={switchToLogin} />
+                        <div className="mt-6 text-center">
+                            <span className="text-gray-60">{translate("meet.auth.modal.signup.alreadyHaveAccount")}</span>{" "}
+                            <button
+                                onClick={switchToLogin}
+                                className="cursor-pointer appearance-none text-center text-primary font-medium no-underline hover:text-primary focus:text-primary-dark"
+                            >
+                                {translate("meet.auth.modal.signup.loginLink")}
+                            </button>
+                        </div>
                     </>
                 )}
             </div>
@@ -103,17 +108,6 @@ const ModalHeader: React.FC<{
     </div>
 );
 
-const ForgotPasswordLink: React.FC<{ translate: (key: string) => string }> = ({ translate }) => (
-    <div className="text-center mt-4 cursor-pointer">
-        <button
-            onClick={() => alert("Open forgot password")}
-            className="cursor-pointer appearance-none text-center text-primary font-medium no-underline hover:text-primary focus:text-primary-dark"
-        >
-            {translate("meet.auth.modal.forgotPassword")}
-        </button>
-    </div>
-);
-
 const TermsAndPrivacyText: React.FC<{ translate: (key: string) => string }> = ({ translate }) => (
     <div className="text-center mt-4 text-sm text-gray-60">
         {translate("meet.auth.modal.signup.termsNotice")}{" "}
@@ -125,36 +119,6 @@ const TermsAndPrivacyText: React.FC<{ translate: (key: string) => string }> = ({
         >
             {translate("meet.auth.modal.signup.terms")}
         </a>
-    </div>
-);
-
-const CreateAccountLink: React.FC<{
-    translate: (key: string) => string;
-    switchToSignup: () => void;
-}> = ({ translate, switchToSignup }) => (
-    <div className="text-center">
-        <span className="text-gray-60">{translate("meet.auth.modal.noAccount")}</span>{" "}
-        <button
-            onClick={switchToSignup}
-            className="cursor-pointer appearance-none text-center text-primary font-medium no-underline hover:text-primary focus:text-primary-dark"
-        >
-            {translate("meet.auth.modal.createAccount")}
-        </button>
-    </div>
-);
-
-const LoginAccountLink: React.FC<{
-    translate: (key: string) => string;
-    switchToLogin: () => void;
-}> = ({ translate, switchToLogin }) => (
-    <div className="text-center">
-        <span className="text-gray-60">{translate("meet.auth.modal.signup.alreadyHaveAccount")}</span>{" "}
-        <button
-            onClick={switchToLogin}
-            className="cursor-pointer appearance-none text-center text-primary font-medium no-underline hover:text-primary focus:text-primary-dark"
-        >
-            {translate("meet.auth.modal.signup.loginLink")}
-        </button>
     </div>
 );
 

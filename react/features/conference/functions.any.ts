@@ -1,7 +1,6 @@
 import { IStateful } from '../base/app/types';
+import { arePollsSupported } from '../base/conference/conferenceUtils';
 import { toState } from '../base/redux/functions';
-import { iAmVisitor } from '../visitors/functions';
-
 
 /**
  * Tells whether or not the notifications should be displayed within
@@ -30,5 +29,11 @@ export function shouldDisplayNotifications(stateful: IStateful) {
 export function arePollsDisabled(stateful: IStateful) {
     const state = toState(stateful);
 
-    return state['features/base/config']?.disablePolls || iAmVisitor(state);
+    const { conference } = state['features/base/conference'];
+
+    if (!arePollsSupported(conference)) {
+        return true;
+    }
+
+    return state['features/base/config']?.disablePolls;
 }

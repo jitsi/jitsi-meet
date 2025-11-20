@@ -38,8 +38,8 @@ export function getMaxColumnCount(state: IReduxState, options: {
         disableResponsiveTiles = configDisableResponsiveTiles,
         disableTileEnlargement = configDisableTileEnlargement
     } = options;
-    const { clientWidth } = state['features/base/responsive-ui'];
-    const widthToUse = width || clientWidth;
+    const { videoSpaceWidth } = state['features/base/responsive-ui'];
+    const widthToUse = width || videoSpaceWidth;
     const configuredMax = interfaceConfig.TILE_VIEW_MAX_COLUMNS;
 
     if (disableResponsiveTiles) {

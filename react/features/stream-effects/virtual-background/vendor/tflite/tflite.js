@@ -13,9 +13,5 @@ var Module=typeof createTFLiteModule!=="undefined"?createTFLiteModule:{};var rea
 }
 );
 })();
-if (typeof exports === 'object' && typeof module === 'object')
-  module.exports = createTFLiteModule;
-else if (typeof define === 'function' && define['amd'])
-  define([], function() { return createTFLiteModule; });
-else if (typeof exports === 'object')
-  exports["createTFLiteModule"] = createTFLiteModule;
+
+export default createTFLiteModule;

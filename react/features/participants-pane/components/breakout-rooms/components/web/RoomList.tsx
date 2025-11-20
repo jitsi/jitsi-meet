@@ -54,10 +54,10 @@ export const RoomList = ({ searchString }: IProps) => {
     const [ lowerMenu, raiseMenu, toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu<IRoom>();
     const [ lowerParticipantMenu, raiseParticipantMenu, toggleParticipantMenu,
         participantMenuEnter, participantMenuLeave, raiseParticipantContext ] = useContextMenu<{
-            jid: string;
-            participantName: string;
-            room: IRoom;
-        }>();
+        jid: string;
+        participantName: string;
+        room: IRoom;
+    }>();
     const onRaiseMenu = useCallback(room => (target: HTMLElement) => raiseMenu(room, target), [ raiseMenu ]);
 
     // close the menu when the room vanishes

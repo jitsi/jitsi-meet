@@ -142,10 +142,10 @@ function AudioSettingsPopup({
  * @returns {Object}
  */
 function mapStateToProps(state: IReduxState) {
-    const { clientWidth } = state['features/base/responsive-ui'];
+    const { videoSpaceWidth } = state['features/base/responsive-ui'];
 
     return {
-        popupPlacement: clientWidth <= Number(SMALL_MOBILE_WIDTH) ? 'auto' : 'top-end',
+        popupPlacement: videoSpaceWidth <= Number(SMALL_MOBILE_WIDTH) ? 'auto' : 'top-end',
         currentMicDeviceId: getCurrentMicDeviceId(state),
         currentOutputDeviceId: getCurrentOutputDeviceId(state),
         isOpen: Boolean(getAudioSettingsVisibility(state)),

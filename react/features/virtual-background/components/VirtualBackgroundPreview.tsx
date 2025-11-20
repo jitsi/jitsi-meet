@@ -4,7 +4,7 @@ import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { withStyles } from 'tss-react/mui';
 
-import { IStore } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { hideDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n/functions';
 import { Video } from '../../base/media/components/index';
@@ -21,7 +21,6 @@ import { IVirtualBackground } from '../reducer';
  * The type of the React {@code PureComponent} props of {@link VirtualBackgroundPreview}.
  */
 export interface IProps extends WithTranslation {
-
     /**
      * An object containing the CSS classes.
      */
@@ -30,7 +29,7 @@ export interface IProps extends WithTranslation {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: IStore['dispatch'];
+    dispatch: IStore["dispatch"];
 
     /**
      * Dialog callback that indicates if the background preview was loaded.
@@ -46,6 +45,11 @@ export interface IProps extends WithTranslation {
      * The id of the selected video device.
      */
     selectedVideoInputId: string;
+
+    /**
+     * Whether the local video should be flipped horizontally.
+     */
+    localFlipX: boolean;
 }
 
 /**
@@ -103,6 +107,10 @@ const styles = (theme: Theme) => {
             height: "100%",
             width: "100%",
             objectFit: "cover" as const,
+        },
+
+        previewVideoMirrored: {
+            transform: "scaleX(-1)",
         },
 
         error: {
@@ -185,7 +193,7 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
             this.props.dispatch(
                 showWarningNotification({
                     titleKey: 'virtualBackground.backgroundEffectError',
-                    description: 'Failed to access camera device.'
+                    descriptionKey: 'deviceError.cameraError'
                 }, NOTIFICATION_TIMEOUT_TYPE.LONG)
             );
             logger.error('Failed to access camera device. Error on apply background effect.');
@@ -229,7 +237,7 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
      * @returns {React$Node}
      */
     _renderPreviewEntry(data: Object) {
-        const { t } = this.props;
+        const { t, localFlipX } = this.props;
         const classes = withStyles.getClasses(this.props);
 
         if (this.state.loading) {
@@ -241,9 +249,14 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
             );
         }
 
+        const videoClassName = localFlipX
+            ? `${classes.previewVideo} ${classes.previewVideoMirrored}`
+            : classes.previewVideo;
+
         return (
             <Video
-                className = { classes.previewVideo }
+                className = { videoClassName }
+                id = 'virtual_background_preview'
                 playsinline = { true }
                 videoTrack = {{ jitsiTrack: data }} />
         );
@@ -254,7 +267,7 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         this._setTracks();
     }
 
@@ -263,7 +276,7 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this._componentWasUnmounted = true;
         this._stopStream(this.state.jitsiTrack);
     }
@@ -273,7 +286,7 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
      *
      * @inheritdoc
      */
-    async componentDidUpdate(prevProps: IProps) {
+    override async componentDidUpdate(prevProps: IProps) {
         if (!equals(this.props.selectedVideoInputId, prevProps.selectedVideoInputId)) {
             this._setTracks();
         }
@@ -287,7 +300,7 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { jitsiTrack } = this.state;
         const classes = withStyles.getClasses(this.props);
 
@@ -301,4 +314,12 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
     }
 }
 
-export default translate(connect()(withStyles(VirtualBackgroundPreview, styles)));
+function _mapStateToProps(state: IReduxState) {
+    const { localFlipX } = state['features/base/settings'];
+
+    return {
+        localFlipX: Boolean(localFlipX)
+    };
+}
+
+export default translate(connect(_mapStateToProps)(withStyles(VirtualBackgroundPreview, styles)));

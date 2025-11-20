@@ -1,5 +1,5 @@
 import GraphemeSplitter from 'grapheme-splitter';
-import _ from 'lodash';
+import { split } from 'lodash-es';
 
 const AVATAR_COLORS = [
     '#6A50D3',
@@ -63,20 +63,24 @@ function getFirstGraphemeUpper(word: string) {
  */
 export function getInitials(s?: string) {
     // We don't want to use the domain part of an email address, if it is one
-    const initialsBasis = _.split(s, '@')[0];
-    const [ firstWord, secondWord ] = initialsBasis.split(wordSplitRegex).filter(Boolean);
+    const initialsBasis = split(s, '@')[0];
+    const [ firstWord, ...remainingWords ] = initialsBasis.split(wordSplitRegex).filter(Boolean);
 
-    return getFirstGraphemeUpper(firstWord) + getFirstGraphemeUpper(secondWord);
+    return getFirstGraphemeUpper(firstWord) + getFirstGraphemeUpper(remainingWords.pop() || '');
 }
 
 /**
  * Checks if the passed URL should be loaded with CORS.
  *
- * @param {string} url - The URL.
+ * @param {string | Function} url - The URL (on mobile we use a specific Icon component for avatars).
  * @param {Array<string>} corsURLs - The URL pattern that matches a URL that needs to be handled with CORS.
- * @returns {void}
+ * @returns {boolean}
  */
-export function isCORSAvatarURL(url: string, corsURLs: Array<string> = []): boolean {
+export function isCORSAvatarURL(url: string | Function, corsURLs: Array<string> = []): boolean {
+    if (typeof url === 'function') {
+        return false;
+    }
+
     return corsURLs.some(pattern => url.startsWith(pattern));
 }
 

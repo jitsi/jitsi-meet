@@ -8,6 +8,7 @@ import { getJitsiMeetGlobalNS } from '../util/helpers';
 
 import { setConnectionState } from './actions';
 import {
+    getLocalCameraEncoding,
     getRemoteVideoType,
     isLargeVideoReceived,
     isRemoteVideoReceived,
@@ -86,6 +87,7 @@ function _bindTortureHelpers(store: IStore) {
     getJitsiMeetGlobalNS().testing = {
         getRemoteVideoType: getRemoteVideoType.bind(null, store),
         isLargeVideoReceived: isLargeVideoReceived.bind(null, store),
+        getLocalCameraEncoding: getLocalCameraEncoding.bind(null, store),
         isRemoteVideoReceived: isRemoteVideoReceived.bind(null, store)
     };
 }

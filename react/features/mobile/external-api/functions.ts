@@ -1,4 +1,4 @@
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
 import { NativeModules } from 'react-native';
 
 import { IParticipant } from '../../base/participants/types';

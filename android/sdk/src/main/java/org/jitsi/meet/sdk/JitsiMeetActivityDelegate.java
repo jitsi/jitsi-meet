@@ -42,7 +42,7 @@ public class JitsiMeetActivityDelegate {
     /**
      * Tells whether or not the permissions request is currently in progress.
      *
-     * @return {@code true} if the permssions are being requested or {@code false} otherwise.
+     * @return {@code true} if the permissions are being requested or {@code false} otherwise.
      */
     static boolean arePermissionsBeingRequested() {
         return permissionListener != null;

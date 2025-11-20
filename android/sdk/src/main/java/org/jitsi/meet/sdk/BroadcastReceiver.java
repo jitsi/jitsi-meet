@@ -3,6 +3,9 @@ package org.jitsi.meet.sdk;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
+
+import com.facebook.react.bridge.Arguments;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -28,7 +31,14 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         BroadcastAction action = new BroadcastAction(intent);
         String actionName = action.getType().getAction();
-
-        ReactInstanceManagerHolder.emitEvent(actionName, action.getDataAsWritableNativeMap());
+        Bundle data = action.getData();
+            
+        // For actions without data bundle (like hangup), we create an empty map
+        // instead of attempting to convert a null bundle to avoid crashes.
+        if (data != null) {
+            ReactInstanceManagerHolder.emitEvent(actionName, Arguments.fromBundle(data));
+        } else {
+            ReactInstanceManagerHolder.emitEvent(actionName, Arguments.createMap());
+        }
     }
 }

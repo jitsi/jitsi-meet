@@ -15,6 +15,7 @@ local http_get_with_retry = main_util.http_get_with_retry;
 local extract_subdomain = main_util.extract_subdomain;
 local starts_with = main_util.starts_with;
 local table_shallow_copy = main_util.table_shallow_copy;
+local get_room_from_jid = main_util.get_room_from_jid;
 local cjson_safe  = require 'cjson.safe'
 local timer = require "util.timer";
 local async = require "util.async";
@@ -25,6 +26,24 @@ local ssl = require "ssl";
 
 -- TODO: Figure out a less arbitrary default cache size.
 local cacheSize = module:get_option_number("jwt_pubkey_cache_size", 128);
+
+-- the cache for generated asap jwt tokens
+local jwtKeyCache = require 'util.cache'.new(cacheSize);
+
+local ASAPTTL_THRESHOLD = module:get_option_number('asap_ttl_threshold', 600);
+local ASAPTTL = module:get_option_number('asap_ttl', 3600);
+local ASAPIssuer = module:get_option_string('asap_issuer', 'jitsi');
+local ASAPAudience = module:get_option_string('asap_audience', 'jitsi');
+local ASAPKeyId = module:get_option_string('asap_key_id', 'jitsi');
+local ASAPKeyPath = module:get_option_string('asap_key_path', '/etc/prosody/certs/asap.key');
+
+local ASAPKey;
+local f = io.open(ASAPKeyPath, 'r');
+
+if f then
+    ASAPKey = f:read('*all');
+    f:close();
+end
 
 local Util = {}
 Util.__index = Util
@@ -62,7 +81,7 @@ function Util.new(module)
         These setups relay on configuration 'muc_domain_base' which holds
         the main domain and we use it to subtract subdomains from the
         virtual addresses.
-        The following confgurations are for multidomain setups and domain name
+        The following configurations are for multidomain setups and domain name
         verification:
      --]]
 
@@ -207,7 +226,7 @@ function Util:get_public_key(keyId)
             self.cache:set(keyId, content);
         else
             if code == nil then
-                -- this is timout after nr_retries retries
+                -- this is timeout after nr_retries retries
                 module:log('warn', 'Timeout retrieving %s from %s', keyId, keyurl);
             end
         end
@@ -229,13 +248,8 @@ end
 -- session.jitsi_meet_context_group - the group value from the token
 -- session.jitsi_meet_context_features - the features value from the token
 -- @param session the current session
--- @param acceptedIssuers optional list of accepted issuers to check
 -- @return false and error
-function Util:process_and_verify_token(session, acceptedIssuers)
-    if not acceptedIssuers then
-        acceptedIssuers = self.acceptedIssuers;
-    end
-
+function Util:process_and_verify_token(session)
     if session.auth_token == nil then
         if self.allowEmptyToken then
             return true;
@@ -292,7 +306,7 @@ function Util:process_and_verify_token(session, acceptedIssuers)
         session.auth_token,
         self.signatureAlgorithm,
         key,
-        acceptedIssuers,
+        self.acceptedIssuers,
         self.acceptedAudiences
     )
     if claims ~= nil then
@@ -307,6 +321,7 @@ function Util:process_and_verify_token(session, acceptedIssuers)
         session.jitsi_meet_room = claims["room"];
         -- Binds domain name to the session
         session.jitsi_meet_domain = claims["sub"];
+        session.jitsi_meet_auth_issuer = claims["iss"];
 
         -- Binds the user details to the session if available
         if claims["context"] ~= nil then
@@ -360,16 +375,22 @@ end
 --         it and returns false in case verification was processed
 --         and was not successful
 function Util:verify_room(session, room_address)
-    if self.allowEmptyToken and session.auth_token == nil then
-        --module:log("debug", "Skipped room token verification - empty tokens are allowed");
-        return true;
-    end
-
     -- extract room name using all chars, except the not allowed ones
     local room,_,_ = jid.split(room_address);
     if room == nil then
-        log("error",
-            "Unable to get name of the MUC room ? to: %s", room_address);
+        module:log('error', 'Unable to get name of the MUC room ? to: %s', room_address);
+        return false, 'invalid-room-address', 'Room address is invalid';
+    end
+    local room_instance = get_room_from_jid(jid.join(room, self.muc_domain));
+    if not room_instance then
+        module:log('info', 'Room does not exists:%s', room);
+        return false, 'room-does-not-exist', 'Room does not exist';
+    end
+
+    if self.allowEmptyToken and session.auth_token == nil then
+        if room_instance._data.allowUnauthenticatedAccess == false then
+            return false, 'authentication-required', 'Authentication required';
+        end
         return true;
     end
 
@@ -381,11 +402,11 @@ function Util:verify_room(session, room_address)
             module:log('warn', 'session.jitsi_meet_room not string: %s', inspect(auth_room));
         end
     end
+
     if not self.enableDomainVerification then
-        -- if auth_room is missing, this means user is anonymous (no token for
-        -- its domain) we let it through, jicofo is verifying creation domain
+        -- if auth_room is missing, this means user is anonymous (no token for its domain) we let it through
         if auth_room and (room ~= auth_room and not ends_with(room, ']'..auth_room)) and auth_room ~= '*' then
-            return false;
+            return false, 'room-mismatch', 'Room does not match the room from token';
         end
 
         return true;
@@ -425,7 +446,7 @@ function Util:verify_room(session, room_address)
             -- not a regex
             room_to_check = auth_room;
         end
-        -- module:log("debug", "room to check: %s", room_to_check)
+
         if not room_to_check then
             if not self.requireRoomClaim then
                 -- if we do not require to have the room claim, and it is missing
@@ -433,17 +454,22 @@ function Util:verify_room(session, room_address)
                 return true;
             end
 
-            return false;
+            return false, 'room-name-does-not-match', 'Room name cannot be matched to the one from token.';
         end
     end
 
     if session.jitsi_meet_str_tenant
         and string.lower(session.jitsi_meet_str_tenant) ~= session.jitsi_web_query_prefix then
+        session.jitsi_meet_tenant_mismatch = true;
+
+        if room_instance._data.allowUnauthenticatedAccess == false then
+            return false;
+        end
+
         module:log('warn', 'Tenant differs for user:%s group:%s url_tenant:%s token_tenant:%s',
             session.jitsi_meet_context_user and session.jitsi_meet_context_user.id or '',
             session.jitsi_meet_context_group,
             session.jitsi_web_query_prefix, session.jitsi_meet_str_tenant);
-        session.jitsi_meet_tenant_mismatch = true;
     end
 
     local auth_domain = string.lower(session.jitsi_meet_domain);
@@ -460,7 +486,7 @@ function Util:verify_room(session, room_address)
         -- deny access if option is missing
         if not self.muc_domain_base then
             module:log("warn", "No 'muc_domain_base' option set, denying access!");
-            return false;
+            return false, 'server-missing-config', 'Misconfiguration of server';
         end
 
         return room_address_to_verify == jid.join(
@@ -476,6 +502,50 @@ function Util:verify_room(session, room_address)
         -- we do not have a domain part (multidomain is not enabled)
         -- verify with info from the token
         return room_address_to_verify == jid.join(room_to_check, subdomain_to_check);
+    end
+end
+
+function Util:generateAsapToken(audience)
+    if not ASAPKey then
+        module:log('warn', 'No ASAP Key read, asap key generation is disabled');
+        return ''
+    end
+
+    audience = audience or ASAPAudience
+    local t = os.time()
+    local err
+    local exp_key = 'asap_exp.'..audience
+    local token_key = 'asap_token.'..audience
+    local exp = jwtKeyCache:get(exp_key)
+    local token = jwtKeyCache:get(token_key)
+
+    --if we find a token and it isn't too far from expiry, then use it
+    if token ~= nil and exp ~= nil then
+        exp = tonumber(exp)
+        if (exp - t) > ASAPTTL_THRESHOLD then
+            return token
+        end
+    end
+
+    --expiry is the current time plus TTL
+    exp = t + ASAPTTL
+    local payload = {
+        iss = ASAPIssuer,
+        aud = audience,
+        nbf = t,
+        exp = exp,
+    }
+
+    -- encode
+    local alg = 'RS256'
+    token, err = jwt.encode(payload, ASAPKey, alg, { kid = ASAPKeyId })
+    if not err then
+        token = 'Bearer '..token
+        jwtKeyCache:set(exp_key, exp)
+        jwtKeyCache:set(token_key, token)
+        return token
+    else
+        return ''
     end
 end
 

@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useRef } from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import { IconCloseLarge } from '../../../icons/svg';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 import { MultiSelectItem } from '../types';
 
 import ClickableIcon from './ClickableIcon';
@@ -42,7 +41,7 @@ const useStyles = makeStyles()(theme => {
             backgroundColor: theme.palette.ui01,
             border: `1px solid ${theme.palette.ui04}`,
             borderRadius: `${Number(theme.shape.borderRadius)}px`,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             zIndex: 2,
             maxHeight: `${MULTI_SELECT_HEIGHT}px`,
             overflowY: 'auto',

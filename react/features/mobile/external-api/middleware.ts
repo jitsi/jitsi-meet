@@ -1,10 +1,10 @@
 /* eslint-disable lines-around-comment */
 
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
 import { NativeEventEmitter, NativeModules } from 'react-native';
 import { AnyAction } from 'redux';
 
-// @ts-expect-error
+// @ts-ignore
 import { ENDPOINT_TEXT_MESSAGE_NAME } from '../../../../modules/API/constants';
 import { appNavigate } from '../../app/actions.native';
 import { IStore } from '../../app/types';
@@ -15,6 +15,7 @@ import {
     CONFERENCE_FOCUSED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
+    CONFERENCE_UNIQUE_ID_SET,
     CONFERENCE_WILL_JOIN,
     ENDPOINT_MESSAGE_RECEIVED,
     SET_ROOM
@@ -26,14 +27,15 @@ import {
     isRoomValid
 } from '../../base/conference/functions';
 import { IJitsiConference } from '../../base/conference/reducer';
+import { overwriteConfig } from '../../base/config/actions';
+import { getWhitelistedJSON } from '../../base/config/functions.native';
 import { CONNECTION_DISCONNECTED } from '../../base/connection/actionTypes';
 import {
     JITSI_CONNECTION_CONFERENCE_KEY,
     JITSI_CONNECTION_URL_KEY
 } from '../../base/connection/constants';
 import { getURLWithoutParams } from '../../base/connection/utils';
-import {
-    JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
+import { JitsiConferenceEvents, JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
 import { toggleCameraFacingMode } from '../../base/media/actions';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../base/media/constants';
@@ -47,20 +49,25 @@ import {
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
 import { toggleScreensharing } from '../../base/tracks/actions.native';
+import { CAMERA_FACING_MODE_MESSAGE } from '../../base/tracks/constants';
 import { getLocalTracks, isLocalTrackMuted } from '../../base/tracks/functions.native';
 import { ITrack } from '../../base/tracks/types';
 import { CLOSE_CHAT, OPEN_CHAT } from '../../chat/actionTypes';
 import { closeChat, openChat, sendMessage, setPrivateMessageRecipient } from '../../chat/actions.native';
+import { isEnabled as isDropboxEnabled } from '../../dropbox/functions.native';
+import { hideNotification, showNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../notifications/constants';
+import { RECORDING_SESSION_UPDATED } from '../../recording/actionTypes';
+import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../recording/constants';
+import { getActiveSession } from '../../recording/functions';
 import { setRequestingSubtitles } from '../../subtitles/actions.any';
+import { CUSTOM_BUTTON_PRESSED } from '../../toolbox/actionTypes';
 import { muteLocal } from '../../video-menu/actions.native';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture/actionTypes';
 // @ts-ignore
 import { isExternalAPIAvailable } from '../react-native-sdk/functions';
 
-import {
-    CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED,
-    READY_TO_CLOSE
-} from './actionTypes';
+import { READY_TO_CLOSE } from './actionTypes';
 import { setParticipantsWithScreenShare } from './actions';
 import { participantToParticipantInfo, sendEvent } from './functions';
 import logger from './logger';
@@ -83,12 +90,6 @@ const CHAT_TOGGLED = 'CHAT_TOGGLED';
 const CONFERENCE_TERMINATED = 'CONFERENCE_TERMINATED';
 
 /**
- * Event which will be emitted on the native side to indicate that the custom overflow menu button was pressed.
- */
-const CUSTOM_MENU_BUTTON_PRESSED = 'CUSTOM_MENU_BUTTON_PRESSED';
-
-
-/**
  * Event which will be emitted on the native side to indicate a message was received
  * through the channel.
  */
@@ -104,6 +105,11 @@ const SCREEN_SHARE_TOGGLED = 'SCREEN_SHARE_TOGGLED';
  * Event which will be emitted on the native side with the participant info array.
  */
 const PARTICIPANTS_INFO_RETRIEVED = 'PARTICIPANTS_INFO_RETRIEVED';
+
+/**
+ * Event which will be emitted on the native side to indicate the recording status has changed.
+ */
+const RECORDING_STATUS_CHANGED = 'RECORDING_STATUS_CHANGED';
 
 const externalAPIEnabled = isExternalAPIAvailable();
 
@@ -172,6 +178,18 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
         sendEvent(store, CONFERENCE_FOCUSED, {});
         break;
 
+    case CONFERENCE_UNIQUE_ID_SET: {
+        const { conference } = action;
+
+        sendEvent(
+            store,
+            CONFERENCE_UNIQUE_ID_SET,
+            /* data */ {
+                sessionId: conference.getMeetingUniqueId()
+            });
+        break;
+    }
+
     case CONNECTION_DISCONNECTED: {
         // FIXME: This is a hack. See the description in the JITSI_CONNECTION_CONFERENCE_KEY constant definition.
         // Check if this connection was attached to any conference.
@@ -194,13 +212,13 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED: {
+    case CUSTOM_BUTTON_PRESSED: {
         const { id, text } = action;
 
         sendEvent(
             store,
-            CUSTOM_MENU_BUTTON_PRESSED,
-            {
+            CUSTOM_BUTTON_PRESSED,
+            /* data */ {
                 id,
                 text
             });
@@ -267,6 +285,37 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
     case READY_TO_CLOSE:
         sendEvent(store, type, /* data */ {});
         break;
+
+    case RECORDING_SESSION_UPDATED: {
+        const {
+            error,
+            id,
+            initiator,
+            liveStreamViewURL,
+            mode,
+            status,
+            terminator,
+            timestamp
+        } = action.sessionData;
+
+        const getId = (obj: any) => typeof obj === 'object' ? obj.getId() : obj;
+        const getError = (err: any) => typeof err === 'object' ? String(err) : err;
+
+        sendEvent(
+            store,
+            RECORDING_STATUS_CHANGED,
+            /* data */ {
+                error: getError(error),
+                id,
+                initiator: getId(initiator),
+                liveStreamViewURL,
+                mode,
+                status,
+                terminator: getId(terminator),
+                timestamp
+            });
+        break;
+    }
 
     case SET_ROOM:
         _maybeTriggerEarlyConferenceWillJoin(store, action);
@@ -427,6 +476,181 @@ function _registerForNativeEvents(store: IStore) {
     eventEmitter.addListener(ExternalAPI.TOGGLE_CAMERA, () => {
         dispatch(toggleCameraFacingMode());
     });
+
+    eventEmitter.addListener(ExternalAPI.SHOW_NOTIFICATION,
+        ({ appearance, description, timeout, title, uid }: any) => {
+            const validTypes = Object.values(NOTIFICATION_TYPE);
+            const validTimeouts = Object.values(NOTIFICATION_TIMEOUT_TYPE);
+
+            if (!validTypes.includes(appearance)) {
+                logger.error(`Invalid notification type "${appearance}". Expecting one of ${validTypes}`);
+
+                return;
+            }
+
+            if (!validTimeouts.includes(timeout)) {
+                logger.error(`Invalid notification timeout "${timeout}". Expecting one of ${validTimeouts}`);
+
+                return;
+            }
+
+            dispatch(showNotification({
+                appearance,
+                description,
+                title,
+                uid
+            }, timeout));
+        });
+
+    eventEmitter.addListener(ExternalAPI.HIDE_NOTIFICATION, ({ uid }: any) => {
+        dispatch(hideNotification(uid));
+    });
+
+    eventEmitter.addListener(ExternalAPI.START_RECORDING, (
+            {
+                mode,
+                dropboxToken,
+                shouldShare,
+                rtmpStreamKey,
+                rtmpBroadcastID,
+                youtubeStreamKey,
+                youtubeBroadcastID,
+                extraMetadata = {},
+                transcription
+            }: any) => {
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+
+        if (!conference) {
+            logger.error('Conference is not defined');
+
+            return;
+        }
+
+        if (dropboxToken && !isDropboxEnabled(state)) {
+            logger.error('Failed starting recording: dropbox is not enabled on this deployment');
+
+            return;
+        }
+
+        if (mode === JitsiRecordingConstants.mode.STREAM && !(youtubeStreamKey || rtmpStreamKey)) {
+            logger.error('Failed starting recording: missing youtube or RTMP stream key');
+
+            return;
+        }
+
+        let recordingConfig;
+
+        if (mode === JitsiRecordingConstants.mode.FILE) {
+            const { recordingService } = state['features/base/config'];
+
+            if (!recordingService?.enabled && !dropboxToken) {
+                logger.error('Failed starting recording: the recording service is not enabled');
+
+                return;
+            }
+
+            if (dropboxToken) {
+                recordingConfig = {
+                    mode: JitsiRecordingConstants.mode.FILE,
+                    appData: JSON.stringify({
+                        'file_recording_metadata': {
+                            ...extraMetadata,
+                            'upload_credentials': {
+                                'service_name': RECORDING_TYPES.DROPBOX,
+                                'token': dropboxToken
+                            }
+                        }
+                    })
+                };
+            } else {
+                recordingConfig = {
+                    mode: JitsiRecordingConstants.mode.FILE,
+                    appData: JSON.stringify({
+                        'file_recording_metadata': {
+                            ...extraMetadata,
+                            'share': shouldShare
+                        }
+                    })
+                };
+            }
+        } else if (mode === JitsiRecordingConstants.mode.STREAM) {
+            recordingConfig = {
+                broadcastId: youtubeBroadcastID || rtmpBroadcastID,
+                mode: JitsiRecordingConstants.mode.STREAM,
+                streamId: youtubeStreamKey || rtmpStreamKey
+            };
+        }
+
+        // Start audio / video recording, if requested.
+        if (typeof recordingConfig !== 'undefined') {
+            conference.startRecording(recordingConfig);
+        }
+
+        if (transcription) {
+            store.dispatch(setRequestingSubtitles(true, false, null, true));
+            conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                isTranscribingEnabled: true
+            });
+        }
+    });
+
+    eventEmitter.addListener(ExternalAPI.STOP_RECORDING, ({ mode, transcription }: any) => {
+        const state = store.getState();
+        const conference = getCurrentConference(state);
+
+        if (!conference) {
+            logger.error('Conference is not defined');
+
+            return;
+        }
+
+        if (transcription) {
+            store.dispatch(setRequestingSubtitles(false, false, null));
+            conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                isTranscribingEnabled: false
+            });
+        }
+
+        if (![ JitsiRecordingConstants.mode.FILE, JitsiRecordingConstants.mode.STREAM ].includes(mode)) {
+            logger.error('Invalid recording mode provided!');
+
+            return;
+        }
+
+        const activeSession = getActiveSession(state, mode);
+
+        if (!activeSession?.id) {
+            logger.error('No recording or streaming session found');
+
+            return;
+        }
+
+        conference.stopRecording(activeSession.id);
+    });
+
+    eventEmitter.addListener(ExternalAPI.OVERWRITE_CONFIG, ({ config }: any) => {
+        const whitelistedConfig = getWhitelistedJSON('config', config);
+
+        logger.info(`Overwriting config with: ${JSON.stringify(whitelistedConfig)}`);
+
+        dispatch(overwriteConfig(whitelistedConfig));
+    });
+
+    eventEmitter.addListener(ExternalAPI.SEND_CAMERA_FACING_MODE_MESSAGE, ({ to, facingMode }: any) => {
+        const conference = getCurrentConference(getState());
+
+        if (!to) {
+            logger.warn('Participant id not set');
+
+            return;
+        }
+
+        conference?.sendEndpointMessage(to, {
+            name: CAMERA_FACING_MODE_MESSAGE,
+            facingMode
+        });
+    });
 }
 
 /**
@@ -447,6 +671,12 @@ function _unregisterForNativeEvents() {
     eventEmitter.removeAllListeners(ExternalAPI.SEND_CHAT_MESSAGE);
     eventEmitter.removeAllListeners(ExternalAPI.SET_CLOSED_CAPTIONS_ENABLED);
     eventEmitter.removeAllListeners(ExternalAPI.TOGGLE_CAMERA);
+    eventEmitter.removeAllListeners(ExternalAPI.SHOW_NOTIFICATION);
+    eventEmitter.removeAllListeners(ExternalAPI.HIDE_NOTIFICATION);
+    eventEmitter.removeAllListeners(ExternalAPI.START_RECORDING);
+    eventEmitter.removeAllListeners(ExternalAPI.STOP_RECORDING);
+    eventEmitter.removeAllListeners(ExternalAPI.OVERWRITE_CONFIG);
+    eventEmitter.removeAllListeners(ExternalAPI.SEND_CAMERA_FACING_MODE_MESSAGE);
 }
 
 /**

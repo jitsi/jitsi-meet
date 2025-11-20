@@ -40,6 +40,7 @@ interface IWindow {
 
 interface INavigator {
     product: string;
+    userAgent: string;
 }
 
 declare global {

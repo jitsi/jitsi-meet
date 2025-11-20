@@ -1,9 +1,10 @@
+import React from 'react';
 // @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { safeJsonParse } from '@jitsi/js-utils/json';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -12,14 +13,13 @@ import { IReduxState, IStore } from '../../app/types';
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconCloseLarge } from '../../base/icons/svg';
-import { withPixelLineHeight } from '../../base/styles/functions.web';
 import Tooltip from '../../base/tooltip/components/Tooltip';
 import Spinner from '../../base/ui/components/web/Spinner';
 import { BACKGROUNDS_LIMIT, IMAGES, type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { toDataURL } from '../functions';
 import logger from '../logger';
 import { IVirtualBackground } from '../reducer';
-
+import { withPixelLineHeight } from '../../base/styles/functions.web';
 import UploadImageButton from './UploadImageButton';
 import VirtualBackgroundPreview from './VirtualBackgroundPreview';
 /* eslint-enable lines-around-comment */

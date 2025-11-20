@@ -68,7 +68,7 @@
         "DISCONNECTED": "Ontkoppeld",
         "DISCONNECTING": "Ontkoppel tans",
         "ERROR": "Fout",
-        "RECONNECTING": "’n Netwerkprobleem het voorgekom. Herkoppel tans..."
+        "RECONNECTING": "’n Netwerkprobleem het voorgekom. Herkoppel tans…"
     },
     "connectionindicator": {
         "address": "Adres:",
@@ -426,7 +426,7 @@
         "somebody": "Iemand",
         "startSilentDescription": "",
         "startSilentTitle": "",
-        "suboptimalExperienceDescription": "Gits... ons is bevrees u ervaring met {{appName}} gaan nie so goed wees hier nie. Ons soek maniere om dit die hoof te bied, maar probeer intussen een van die <a href='{{recommendedBrowserPageLink}}' target='_blank'>volledig ondersteunde blaaiers</a>.",
+        "suboptimalExperienceDescription": "Gits… ons is bevrees u ervaring met {{appName}} gaan nie so goed wees hier nie. Ons soek maniere om dit die hoof te bied, maar probeer intussen een van die <a href='{{recommendedBrowserPageLink}}' target='_blank'>volledig ondersteunde blaaiers</a>.",
         "suboptimalExperienceTitle": "Blaaierwaarskuwing",
         "unmute": ""
     },
@@ -443,7 +443,7 @@
         "calling": "Bel tans…",
         "connected": "Gekoppel",
         "connecting": "Koppel tans…",
-        "connecting2": "Koppel tans*...",
+        "connecting2": "Koppel tans*…",
         "disconnected": "Ontkoppeld",
         "expired": "Verval",
         "ignored": "Geïgnoreer",
@@ -641,16 +641,7 @@
         "tr": ""
     },
     "userMedia": {
-        "androidGrantPermissions": "Kies <b><i>Allow</i></b> wanneer die blaaier vir toestemming vra.",
-        "chromeGrantPermissions": "Kies <b><i>Allow</i></b> wanneer die blaaier vir toestemming vra.",
-        "edgeGrantPermissions": "Kies <b><i>Yes</i></b> wanneer die blaaier vir toestemming vra.",
-        "electronGrantPermissions": "Gee asb. toestemming vir die gebruik van u kamera en mikrofoon",
-        "firefoxGrantPermissions": "Kies <b><i>Deel gekose toestel</i></b> wanneer die blaaier vir toestemming vra.",
-        "iexplorerGrantPermissions": "Kies <b><i>OK</i></b> wanneer die blaaier vir toestemming vra.",
-        "nwjsGrantPermissions": "Gee asb. toestemming vir die gebruik van u kamera en mikrofoon",
-        "operaGrantPermissions": "Kies <b><i>Allow</i></b> wanneer die blaaier vir toestemming vra.",
-        "react-nativeGrantPermissions": "Kies <b><i>Allow</i></b> wanneer die blaaier vir toestemming vra.",
-        "safariGrantPermissions": "Kies <b><i>OK</i></b> wanneer die blaaier vir toestemming vra."
+        "grantPermissions": "Gee asb. toestemming vir die gebruik van u kamera en mikrofoon."
     },
     "videoSIPGW": {
         "busy": "Ons probeer tans hulpbronne vry te stel. Probeer gerus weer oor ’n paar minute.",

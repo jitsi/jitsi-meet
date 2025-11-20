@@ -36,8 +36,8 @@ MiddlewareRegistry.register(store => next => action => {
                 }
             });
         conference.on(
-            JitsiConferenceEvents.NOISY_MIC, async () => {
-                const notification = await dispatch(showNotification({
+            JitsiConferenceEvents.NOISY_MIC, () => {
+                const notification = dispatch(showNotification({
                     titleKey: 'toolbar.noisyAudioInputTitle',
                     descriptionKey: 'toolbar.noisyAudioInputDesc'
                 }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));

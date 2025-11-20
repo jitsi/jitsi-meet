@@ -37,15 +37,15 @@ interface IProps extends AbstractButtonProps {
  * Implementation of a button for opening profile dialog.
  */
 class ProfileButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.profile';
-    icon = ProfileButtonAvatar;
+    override accessibilityLabel = 'toolbar.accessibilityLabel.profile';
+    override icon = ProfileButtonAvatar;
 
     /**
      * Retrieves the label.
      *
      * @returns {string}
      */
-    _getLabel() {
+    override _getLabel() {
         const {
             _defaultLocalDisplayName,
             _localParticipant
@@ -66,7 +66,7 @@ class ProfileButton extends AbstractButton<IProps> {
      *
      * @returns {string}
      */
-    _getTooltip() {
+    override _getTooltip() {
         return this._getLabel();
     }
 
@@ -76,7 +76,7 @@ class ProfileButton extends AbstractButton<IProps> {
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch, _unclickable } = this.props;
 
         if (!_unclickable) {
@@ -91,7 +91,7 @@ class ProfileButton extends AbstractButton<IProps> {
      * @protected
      * @returns {void}
      */
-    _isDisabled() {
+    override _isDisabled() {
         return this.props._unclickable;
     }
 }

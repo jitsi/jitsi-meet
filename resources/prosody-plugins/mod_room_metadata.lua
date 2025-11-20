@@ -1,10 +1,6 @@
--- Generic room metadata
--- See mod_room_metadata_component.lua
-
-local COMPONENT_IDENTITY_TYPE = 'room_metadata';
-local room_metadata_component_host = module:get_option_string('room_metadata_component', 'metadata.'..module.host);
+-- TODO: Remove this file after several stable releases when people update their configs
+module:log('warn', 'mod_room_metadata is deprecated and will be removed in a future release. '
+    .. 'Please update your config by removing this module from the list of loaded modules.');
 
 module:depends("jitsi_session");
-
--- Advertise the component so clients can pick up the address and use it
-module:add_identity('component', COMPONENT_IDENTITY_TYPE, room_metadata_component_host);
+module:depends("features_identity");

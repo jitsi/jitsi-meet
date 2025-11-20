@@ -357,7 +357,11 @@ const PreMeetingScreen = ({
                     joinConference={async () => {
                         if (createConference) {
                             setIsCreatingMeeting(true);
-                            await createConference();
+                            try {
+                                await createConference();
+                            } finally {
+                                setIsCreatingMeeting(false);
+                            }
                         } else if (joinConference) {
                             joinConference();
                         }

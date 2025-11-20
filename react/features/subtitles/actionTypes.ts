@@ -10,6 +10,17 @@
 export const REMOVE_TRANSCRIPT_MESSAGE = 'REMOVE_TRANSCRIPT_MESSAGE';
 
 /**
+ * The type of (redux) action which indicates that an cached transcript
+ * has to be removed from the state.
+ *
+ * {
+ *      type: REMOVE_CACHED_TRANSCRIPT_MESSAGE,
+ *      transciptMessageID: string,
+ * }
+ */
+export const REMOVE_CACHED_TRANSCRIPT_MESSAGE = 'REMOVE_CACHED_TRANSCRIPT_MESSAGE';
+
+/**
  * The type of (redux) action which indicates that a transcript with an
  * given message_id to be added or updated is received.
  *
@@ -44,3 +55,18 @@ export const TOGGLE_REQUESTING_SUBTITLES
  */
 export const SET_REQUESTING_SUBTITLES
     = 'SET_REQUESTING_SUBTITLES';
+
+/**
+ * Action to store received subtitles in history.
+ */
+export const STORE_SUBTITLE = 'STORE_SUBTITLE';
+
+/**
+ * The type of (redux) action which indicates that an error occurred while starting subtitles.
+ *
+ * {
+ *      type: SET_SUBTITLES_ERROR,
+ *      hasError: boolean
+ * }
+ */
+export const SET_SUBTITLES_ERROR = 'SET_SUBTITLES_ERROR';

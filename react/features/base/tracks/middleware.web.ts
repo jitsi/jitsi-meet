@@ -3,32 +3,39 @@ import { AnyAction } from 'redux';
 import { IStore } from '../../app/types';
 import { hideNotification } from '../../notifications/actions';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
+import { setAudioSettings } from '../../settings/actions.web';
 import { getAvailableDevices } from '../devices/actions.web';
-import { setScreenshareMuted } from '../media/actions';
+import { SET_AUDIO_MUTED } from '../media/actionTypes';
+import { gumPending, setScreenshareMuted } from '../media/actions';
 import {
     MEDIA_TYPE,
     VIDEO_TYPE
 } from '../media/constants';
+import { IGUMPendingState } from '../media/types';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import {
     TRACK_ADDED,
     TRACK_MUTE_UNMUTE_FAILED,
     TRACK_NO_DATA_FROM_SOURCE,
-    TRACK_OWNER_CHANGED,
     TRACK_REMOVED,
     TRACK_STOPPED,
     TRACK_UPDATED
 } from './actionTypes';
 import {
+    createLocalTracksA,
     showNoDataFromSourceVideoError,
     toggleScreensharing,
+    trackMuteUnmuteFailed,
     trackNoDataFromSourceNotificationInfoChanged
 } from './actions.web';
 import {
-    getTrackByJitsiTrack, logTracksForParticipant
+    getLocalJitsiAudioTrackSettings,
+    getLocalTrack,
+    getTrackByJitsiTrack, isUserInteractionRequiredForUnmute, logTracksForParticipant,
+    setTrackMuted
 } from './functions.web';
-import { ITrack } from './types';
+import { ITrack, ITrackOptions } from './types';
 
 import './middleware.any';
 
@@ -77,23 +84,6 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (participantId && !action.track?.jitsiTrack?.isLocal()) {
             logTracksForParticipant(store.getState()['features/base/tracks'], participantId, 'Track removed');
-        }
-
-        return result;
-    }
-
-    case TRACK_OWNER_CHANGED: {
-        const oldTrack = getTrackByJitsiTrack(store.getState()['features/base/tracks'], action.track?.jitsiTrack);
-        const oldOwner = oldTrack?.participantId;
-        const result = next(action);
-        const newOwner = action.track?.participantId;
-
-        if (oldOwner) {
-            logTracksForParticipant(store.getState()['features/base/tracks'], oldOwner, 'Owner changed');
-        }
-
-        if (newOwner) {
-            logTracksForParticipant(store.getState()['features/base/tracks'], newOwner, 'Owner changed');
         }
 
         return result;
@@ -156,7 +146,15 @@ MiddlewareRegistry.register(store => next => action => {
 
         return result;
     }
+    case SET_AUDIO_MUTED: {
+        if (!action.muted
+                && isUserInteractionRequiredForUnmute(store.getState())) {
+            return;
+        }
 
+        _setMuted(store, action);
+        break;
+    }
     }
 
     return next(action);
@@ -223,5 +221,49 @@ function _removeNoDataFromSourceNotification({ getState, dispatch }: IStore, tra
     if (noDataFromSourceNotificationInfo?.uid) {
         dispatch(hideNotification(noDataFromSourceNotificationInfo.uid));
         dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, undefined));
+    }
+}
+
+/**
+ * Mutes or unmutes a local track with a specific media type.
+ *
+ * @param {Store} store - The redux store in which the specified action is
+ * dispatched.
+ * @param {Action} action - The redux action dispatched in the specified store.
+ * @private
+ * @returns {void}
+ */
+function _setMuted(store: IStore, { ensureTrack, muted }: {
+    ensureTrack: boolean; muted: boolean; }) {
+    const { dispatch, getState } = store;
+    const state = getState();
+    const localTrack = getLocalTrack(state['features/base/tracks'], MEDIA_TYPE.AUDIO, /* includePending */ true);
+
+    if (localTrack) {
+        // The `jitsiTrack` property will have a value only for a localTrack for which `getUserMedia` has already
+        // completed. If there's no `jitsiTrack`, then the `muted` state will be applied once the `jitsiTrack` is
+        // created.
+        const { jitsiTrack } = localTrack;
+
+        if (jitsiTrack) {
+            setTrackMuted(jitsiTrack, muted, state, dispatch)
+            .catch(() => {
+                dispatch(trackMuteUnmuteFailed(localTrack, muted));
+            });
+        }
+    } else if (!muted && ensureTrack) {
+        // TODO(saghul): reconcile these 2 types.
+        dispatch(gumPending([ MEDIA_TYPE.AUDIO ], IGUMPendingState.PENDING_UNMUTE));
+
+        const createTrackOptions: ITrackOptions = {
+            devices: [ MEDIA_TYPE.AUDIO ],
+        };
+
+        dispatch(createLocalTracksA(createTrackOptions)).then(() => {
+            dispatch(gumPending([ MEDIA_TYPE.AUDIO ], IGUMPendingState.NONE));
+            const updatedSettings = getLocalJitsiAudioTrackSettings(getState());
+
+            dispatch(setAudioSettings(updatedSettings));
+        });
     }
 }

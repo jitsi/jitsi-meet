@@ -28,7 +28,7 @@ body {
     margin: 0px;
     width: 100%;
     height: 100%;
-    font-size: 12px;
+    font-size: 0.75rem;
     font-weight: 400;
     overflow: hidden;
     color: #f1f1f1;
@@ -122,7 +122,7 @@ form {
     height: $watermarkHeight;
     background-size: contain;
     background-repeat: no-repeat;
-    z-index: $zindex2;
+    z-index: $watermarkZ;
 }
 
 .leftwatermark {
@@ -150,10 +150,11 @@ form {
     position: absolute;
     left: 25;
     bottom: 7;
-    font-size: 11pt;
-    color: rgba(255, 255, 255, 0.5);
+    // font-size: 11pt;
+    font-size: 0.875rem;
+    color: rgba(255,255,255, 0.5);
     text-decoration: none;
-    z-index: 100;
+    z-index: $watermarkZ;
 }
 
 /**

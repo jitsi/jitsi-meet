@@ -30,14 +30,16 @@ import android.view.KeyEvent;
 
 import androidx.annotation.Nullable;
 
+import com.oney.WebRTCModule.WebRTCModuleOptions;
+
 import org.jitsi.meet.sdk.JitsiMeet;
 import org.jitsi.meet.sdk.JitsiMeetActivity;
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
+import org.webrtc.Logging;
 
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Collection;
-import java.util.HashMap;
 
 /**
  * The one and only Activity that the Jitsi Meet app needs. The
@@ -74,13 +76,16 @@ public class MainActivity extends JitsiMeetActivity {
      */
     private String defaultURL;
 
-
     // JitsiMeetActivity overrides
     //
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         JitsiMeet.showSplashScreen(this);
+
+        WebRTCModuleOptions options = WebRTCModuleOptions.getInstance();
+        options.loggingSeverity = Logging.Severity.LS_ERROR;
+
         super.onCreate(null);
     }
 
@@ -146,12 +151,12 @@ public class MainActivity extends JitsiMeetActivity {
     }
 
     private void setJitsiMeetConferenceDefaultOptions() {
+
         // Set default options
         JitsiMeetConferenceOptions defaultOptions
             = new JitsiMeetConferenceOptions.Builder()
             .setServerURL(buildURL(defaultURL))
             .setFeatureFlag("welcomepage.enabled", true)
-            .setFeatureFlag("resolution", 360)
             .setFeatureFlag("server-url-change.enabled", !configurationByRestrictions)
             .build();
         JitsiMeet.setDefaultConferenceOptions(defaultOptions);
@@ -213,11 +218,6 @@ public class MainActivity extends JitsiMeetActivity {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode);
 
         Log.d(TAG, "Is in picture-in-picture mode: " + isInPictureInPictureMode);
-
-        if (!isInPictureInPictureMode) {
-            this.startActivity(new Intent(this, getClass())
-                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
-        }
     }
 
     // Helper methods

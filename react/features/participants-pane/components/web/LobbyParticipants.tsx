@@ -6,7 +6,6 @@ import { makeStyles } from 'tss-react/mui';
 import Avatar from '../../../base/avatar/components/Avatar';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCheck, IconCloseLarge } from '../../../base/icons/svg';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { admitMultiple } from '../../../lobby/actions.web';
 import { getKnockingParticipants, getLobbyEnabled } from '../../../lobby/functions';
 import Drawer from '../../../toolbox/components/web/Drawer';
@@ -28,7 +27,7 @@ const useStyles = makeStyles()(theme => {
             color: theme.palette.text01,
             display: 'flex',
             padding: '12px 16px',
-            ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+            ...theme.typography.bodyShortRegularLarge,
 
             '&:first-child': {
                 marginTop: '15px'
@@ -48,11 +47,11 @@ const useStyles = makeStyles()(theme => {
             justifyContent: 'space-between'
         },
         heading: {
-            ...withPixelLineHeight(theme.typography.bodyShortBold),
+            ...theme.typography.bodyShortBold,
             color: theme.palette.text02
         },
         link: {
-            ...withPixelLineHeight(theme.typography.labelBold),
+            ...theme.typography.labelBold,
             color: theme.palette.link01,
             cursor: 'pointer'
         }

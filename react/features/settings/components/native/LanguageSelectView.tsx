@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useCallback, useLayoutEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, Text, TouchableHighlight, View, ViewStyle } from 'react-native';
+import { useSelector } from 'react-redux';
 
+import { IReduxState } from '../../../app/types';
 import i18next, { DEFAULT_LANGUAGE, LANGUAGES } from '../../../base/i18n/i18next';
 import { IconArrowLeft } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
@@ -16,12 +18,14 @@ import styles from './styles';
 const LanguageSelectView = ({ isInWelcomePage }: { isInWelcomePage?: boolean; }) => {
     const { t } = useTranslation();
     const navigation = useNavigation();
+    const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
     const { language: currentLanguage = DEFAULT_LANGUAGE } = i18next;
 
     const setLanguage = useCallback(language => () => {
         i18next.changeLanguage(language);
+        conference?.setTranscriptionLanguage(language);
         navigate(screen.settings.main);
-    }, [ i18next ]);
+    }, [ conference, i18next ]);
 
     const headerLeft = () => (
         <HeaderNavigationButton

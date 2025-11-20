@@ -6,7 +6,6 @@ import { connect as reactReduxConnect } from "react-redux";
 // @ts-ignore
 import VideoLayout from "../../../../../../modules/UI/videolayout/VideoLayout";
 import { IReduxState } from "../../../../app/types";
-import { init } from "../../../../conference/actions.web";
 import type { AbstractProps } from "../../../../conference/components/AbstractConference";
 import { AbstractConference, abstractMapStateToProps } from "../../../../conference/components/AbstractConference";
 import { maybeShowSuboptimalExperienceNotification } from "../../../../conference/functions.web";
@@ -17,8 +16,10 @@ import { translate } from "../../../i18n/functions";
 import { setColorAlpha } from "../../../util/helpers";
 import { Mode } from "./components/Header";
 
+import { init } from "../../../../conference/actions.web";
 import CreateConference from "./containers/CreateConference";
 import JoinConference from "./containers/JoinConference";
+import { appNavigate } from "../../../../app/actions.web";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -75,9 +76,14 @@ interface IProps extends AbstractProps, WithTranslation {
      * If prejoin page is visible or not.
      */
     _showPrejoin: boolean;
-    dispatch: any;
+
+    /**
+     * If we should show the create meeting view (from /new-meeting)
+     */
     _showNewMeeting: boolean;
-    roomdId: string;
+
+    dispatch: any;
+    roomId?: string;
 }
 
 /**
@@ -124,15 +130,41 @@ class Conference extends AbstractConference<IProps, any> {
     }
 
     /**
+     * Handles browser back/forward navigation.
+     * If user presses back while in an active meeting, show confirmation dialog.
+     *
+     * @private
+     * @returns {void}
+     */
+    _handlePopState = () => {
+        const { t } = this.props;
+
+        if (APP.conference.isJoined()) {
+            const confirmLeave = window.confirm(
+                t('dialog.leaveMeetingConfirmation')
+            );
+            if (confirmLeave) {
+                this.props.dispatch(hangup(false, this.props.roomId));
+                window.history.pushState(null, '', '/');
+            } else {
+                window.history.pushState(null, '', `/${this.props.roomId}`);
+            }
+        } else {
+            this.props.dispatch(appNavigate(window.location.pathname + window.location.search));
+        }
+    };
+
+    /**
      * Start the connection and get the UI ready for the conference.
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         document.title = `${interfaceConfig.APP_NAME}`;
         this._start();
 
-        window.addEventListener("beforeunload", this._handleBeforeUnload);
+        window.addEventListener("beforeunload", this._handleBeforeUnload, true);
+        window.addEventListener("popstate", this._handlePopState);
     }
 
     /**
@@ -141,12 +173,17 @@ class Conference extends AbstractConference<IProps, any> {
      * @inheritdoc
      * returns {void}
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate() {
         // TODO: For now VideoLayout is being called as LargeVideo and Filmstrip
         // sizing logic is still handled outside of React. Once all components
         // are in react they should calculate size on their own as much as
         // possible and pass down sizings.
-        VideoLayout.refreshLayout();
+        try {
+            VideoLayout.refreshLayout();
+        } catch (error) {
+            // Ignore errors during layout refresh - the layout may not be ready yet
+            console.warn("VideoLayout.refreshLayout() failed:", error);
+        }
     }
 
     /**
@@ -155,14 +192,15 @@ class Conference extends AbstractConference<IProps, any> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         APP.UI.unbindEvents();
 
         FULL_SCREEN_EVENTS.forEach((name) => document.removeEventListener(name, this._onFullScreenChange));
 
-        window.removeEventListener("beforeunload", this._handleBeforeUnload);
+        window.removeEventListener("beforeunload", this._handleBeforeUnload, true);
+        window.removeEventListener("popstate", this._handlePopState);
 
-        APP.conference.isJoined() && this.props.dispatch(hangup(true, this.props.roomdId));
+        APP.conference.isJoined() && this.props.dispatch(hangup(true, this.props.roomId));
     }
 
     /**
@@ -176,7 +214,10 @@ class Conference extends AbstractConference<IProps, any> {
     _handleBeforeUnload = (event: BeforeUnloadEvent): string => {
         if (APP.conference.isJoined()) {
             event.preventDefault();
-            return "";
+            event.stopImmediatePropagation();
+
+            event.returnValue = '';
+            return '';
         }
         return "";
     };
@@ -189,7 +230,7 @@ class Conference extends AbstractConference<IProps, any> {
      * @returns {void}
      */
     _leaveMeeting(): void {
-        this.props.dispatch(hangup(true, this.props.roomdId));
+        this.props.dispatch(hangup(true, this.props.roomId));
     }
 
     /**
@@ -198,9 +239,8 @@ class Conference extends AbstractConference<IProps, any> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { _showNewMeeting } = this.props;
-
         return (
             <div
                 id="layout_wrapper"
@@ -317,14 +357,13 @@ class Conference extends AbstractConference<IProps, any> {
     _start() {
         APP.UI.start();
 
-        APP.UI.registerListeners();
+        // APP.UI.registerListeners();
         APP.UI.bindEvents();
 
         FULL_SCREEN_EVENTS.forEach((name) => document.addEventListener(name, this._onFullScreenChange));
 
         const { dispatch, t } = this.props;
-
-        dispatch(init());
+        dispatch(init(false));
 
         maybeShowSuboptimalExperienceNotification(dispatch, t);
     }

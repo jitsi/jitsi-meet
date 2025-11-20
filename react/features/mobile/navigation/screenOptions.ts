@@ -56,6 +56,11 @@ export const welcomeScreenOptions = {
 export const conferenceScreenOptions = fullScreenOptions;
 
 /**
+ * Screen options for visitors queue.
+ */
+export const visitorsScreenOptions = fullScreenOptions;
+
+/**
  * Tab bar options for chat screen.
  */
 export const chatTabBarOptions = {

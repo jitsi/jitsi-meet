@@ -1,7 +1,10 @@
 import { IStore } from '../app/types';
+import { openDialog } from '../base/dialog/actions';
+import { isMobileBrowser } from '../base/environment/utils';
 import { getLocalJitsiDesktopTrack } from '../base/tracks/functions';
 
-import { SET_SCREENSHOT_CAPTURE } from './actionTypes';
+import CameraCaptureDialog from './CameraCaptureDialog';
+import { ICameraCapturePayload, SET_SCREENSHOT_CAPTURE } from './actionTypes';
 import { createScreenshotCaptureSummary } from './functions';
 import logger from './logger';
 
@@ -59,5 +62,25 @@ export function toggleScreenshotCaptureSummary(enabled: boolean) {
         }
 
         return Promise.resolve();
+    };
+}
+
+/**
+ * Opens {@code CameraCaptureDialog}.
+ *
+ * @param {Function} callback - The callback to execute on picture taken.
+ * @param {ICameraCapturePayload} componentProps - The camera capture payload.
+ * @returns {Function}
+ */
+export function openCameraCaptureDialog(callback: Function, componentProps: ICameraCapturePayload) {
+    return (dispatch: IStore['dispatch']) => {
+        if (!isMobileBrowser()) {
+            return;
+        }
+
+        dispatch(openDialog(CameraCaptureDialog, {
+            callback,
+            componentProps
+        }));
     };
 }

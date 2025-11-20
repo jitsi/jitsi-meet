@@ -127,7 +127,7 @@ class MeetingParticipantItem extends PureComponent<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _audioMediaState,
             _disableModeratorIndicator,
@@ -166,7 +166,7 @@ function mapStateToProps(state: IReduxState, ownProps: any) {
     const { participant } = ownProps;
     const { ownerId } = state['features/shared-video'];
     const localParticipantId = getLocalParticipant(state)?.id;
-    const _isAudioMuted = Boolean(participant && isParticipantAudioMuted(participant, state));
+    const _isAudioMuted = isParticipantAudioMuted(participant, state);
     const _isVideoMuted = isParticipantVideoMuted(participant, state);
     const audioMediaState = getParticipantAudioMediaState(participant, _isAudioMuted, state);
     const videoMediaState = getParticipantVideoMediaState(participant, _isVideoMuted, state);

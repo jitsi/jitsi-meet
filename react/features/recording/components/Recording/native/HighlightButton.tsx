@@ -33,7 +33,7 @@ export class HighlightButton extends AbstractHighlightButton<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _disabled,
             _visible,

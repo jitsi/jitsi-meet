@@ -51,7 +51,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { _dialogStyles, t } = this.props;
 
         return (

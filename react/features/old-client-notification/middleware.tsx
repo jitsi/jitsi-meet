@@ -5,7 +5,6 @@ import { IStore } from '../app/types';
 import { APP_WILL_MOUNT } from '../base/app/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { showErrorNotification } from '../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
 
 import OldElectronAPPNotificationDescription from './components/OldElectronAPPNotificationDescription';
 import { isOldJitsiMeetElectronApp } from './functions';
@@ -35,7 +34,7 @@ function _appWillMount(store: IStore, next: Function, action: AnyAction) {
         dispatch(showErrorNotification({
             titleKey: 'notify.OldElectronAPPTitle',
             description: <OldElectronAPPNotificationDescription />
-        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+        }));
     }
 
     return next(action);

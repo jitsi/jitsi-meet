@@ -1,9 +1,13 @@
+import { ParticipantFeaturesKey } from '../participants/types';
+
 /**
  * The list of supported meeting features to enable/disable through jwt.
  */
-export const MEET_FEATURES = {
+export const MEET_FEATURES: Record<string, ParticipantFeaturesKey> = {
     BRANDING: 'branding',
     CALENDAR: 'calendar',
+    CREATE_POLLS: 'create-polls',
+    FILE_UPLOAD: 'file-upload',
     FLIP: 'flip',
     INBOUND_CALL: 'inbound-call',
     LIVESTREAMING: 'livestreaming',
@@ -13,18 +17,11 @@ export const MEET_FEATURES = {
     RECORDING: 'recording',
     ROOM: 'room',
     SCREEN_SHARING: 'screen-sharing',
+    SEND_GROUPCHAT: 'send-groupchat',
+    LIST_VISITORS: 'list-visitors',
     SIP_INBOUND_CALL: 'sip-inbound-call',
     SIP_OUTBOUND_CALL: 'sip-outbound-call',
     TRANSCRIPTION: 'transcription'
-};
-
-/**
- * A mapping between jwt features and toolbar buttons keys.
- */
-export const FEATURES_TO_BUTTONS_MAPPING = {
-    'livestreaming': 'livestreaming',
-    'recording': 'recording',
-    'transcription': 'closedcaptions'
 };
 
 /**

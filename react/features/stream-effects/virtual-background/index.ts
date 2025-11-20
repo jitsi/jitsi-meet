@@ -6,9 +6,9 @@ import { timeout } from '../../virtual-background/functions';
 import logger from '../../virtual-background/logger';
 
 import JitsiStreamBackgroundEffect, { IBackgroundEffectOptions } from './JitsiStreamBackgroundEffect';
-// @ts-expect-error
+// @ts-ignore
 import createTFLiteModule from './vendor/tflite/tflite';
-// @ts-expect-error
+// @ts-ignore
 import createTFLiteSIMDModule from './vendor/tflite/tflite-simd';
 const models = {
     modelLandscape: 'libs/selfie_segmentation_landscape.tflite'

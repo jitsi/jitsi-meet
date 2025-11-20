@@ -1,6 +1,6 @@
 // @ts-expect-error
 import { jitsiLocalStorage } from '@jitsi/js-utils';
-import _ from 'lodash';
+import { escape } from 'lodash-es';
 
 import { APP_WILL_MOUNT } from '../app/actionTypes';
 import PersistenceRegistry from '../redux/PersistenceRegistry';
@@ -29,6 +29,7 @@ const DEFAULT_STATE: ISettingsState = {
     micDeviceId: undefined,
     serverURL: undefined,
     hideShareAudioHelper: false,
+    showSubtitlesOnStage: false,
     soundsIncomingMessage: true,
     soundsParticipantJoined: true,
     soundsParticipantKnocking: true,
@@ -47,12 +48,18 @@ const DEFAULT_STATE: ISettingsState = {
     userSelectedNotifications: {
         'notify.chatMessages': true
     },
-    userSelectedMicDeviceLabel: undefined,
-    userSelectedSkipPrejoin: undefined
+    userSelectedMicDeviceLabel: undefined
 };
 
+export interface IAudioSettings {
+    autoGainControl?: boolean;
+    channelCount?: 1 | 2;
+    echoCancellation?: boolean;
+    noiseSuppression?: boolean;
+}
 export interface ISettingsState {
     audioOutputDeviceId?: string;
+    audioSettings?: IAudioSettings;
     audioSettingsVisible?: boolean;
     avatarURL?: string;
     cameraDeviceId?: string | boolean;
@@ -66,7 +73,9 @@ export interface ISettingsState {
     localFlipX?: boolean;
     maxStageParticipants?: number;
     micDeviceId?: string | boolean;
+    previewAudioTrack?: any | null;
     serverURL?: string;
+    showSubtitlesOnStage?: boolean;
     soundsIncomingMessage?: boolean;
     soundsParticipantJoined?: boolean;
     soundsParticipantKnocking?: boolean;
@@ -86,7 +95,6 @@ export interface ISettingsState {
     userSelectedNotifications?: {
         [key: string]: boolean;
     };
-    userSelectedSkipPrejoin?: boolean;
     videoSettingsVisible?: boolean;
     visible?: boolean;
 }
@@ -156,8 +164,8 @@ function _initSettings(featureState: ISettingsState) {
     // is a defined value, it will override any value found in local storage.
     // The workaround is sidestepping _.escape when the value is not set in
     // local storage.
-    const displayName = savedDisplayName === null ? undefined : _.escape(savedDisplayName);
-    const email = savedEmail === null ? undefined : _.escape(savedEmail);
+    const displayName = savedDisplayName === null ? undefined : escape(savedDisplayName);
+    const email = savedEmail === null ? undefined : escape(savedEmail);
 
     settings = assignIfDefined({
         displayName,

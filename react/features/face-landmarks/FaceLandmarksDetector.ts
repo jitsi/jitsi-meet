@@ -1,5 +1,4 @@
 import 'image-capture';
-import './createImageBitmap';
 import { IStore } from '../app/types';
 import { isMobileBrowser } from '../base/environment/utils';
 import { getLocalVideoTrack } from '../base/tracks/functions';
@@ -193,8 +192,8 @@ class FaceLandmarksDetector {
         const state = getState();
         const localVideoTrack = track || getLocalVideoTrack(state['features/base/tracks']);
 
-        if (localVideoTrack === undefined) {
-            logger.warn('Face landmarks detection is disabled due to missing local track.');
+        if (!localVideoTrack || localVideoTrack.jitsiTrack?.isMuted()) {
+            logger.debug('Face landmarks detection is disabled due to missing local track.');
 
             return;
         }

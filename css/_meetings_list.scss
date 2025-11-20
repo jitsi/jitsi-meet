@@ -1,14 +1,14 @@
 .meetings-list {
-    font-size: 14px;
+    font-size: 0.875rem;
     color: #253858;
-    line-height: 20px;
+    line-height: 1.25rem;
     text-align: left;
     text-overflow: ellipsis;
     display: flex;
     flex-direction: column;
     position: relative;
-    overflow: auto;
-    width: 100%;
+    overflow-y: auto;
+    flex-grow: 1;
 
     .meetings-list-empty {
         text-align: center;
@@ -19,11 +19,11 @@
         flex-direction: column;
 
         .description {
-           color: #2f3237;
-           font-size: 14px;
-           line-height: 18px;
-           margin-bottom: 16px;
-           max-width: 436px;
+            color: #2f3237;
+            font-size: 0.875rem;
+            line-height: 1.125rem;
+            margin-bottom: 16px;
+            max-width: 436px;
         }
     }
 
@@ -37,8 +37,8 @@
         color: #0163FF;
         cursor: pointer;
         display: flex;
-        font-size: 14px;
-        line-height: 18px;
+        font-size: 0.875rem;
+        line-height: 1.125rem;
         margin: 24px 0 32px 0;
     }
 
@@ -101,17 +101,17 @@
         }
 
         .title {
-            font-size: 12px;
+            font-size: 0.75rem;
             font-weight: 600;
-            line-height: 16px;
+            line-height: 1rem;
             margin-bottom: 4px;
         }
 
         .subtitle {
             color: #5E6D7A;
             font-weight: normal;
-            font-size: 12px;
-            line-height: 16px;
+            font-size: 0.75rem;
+            line-height: 1rem;
         }
 
 
@@ -127,7 +127,8 @@
             cursor: pointer;
         }
 
-        &.with-click-handler:hover {
+        &.with-click-handler:hover,
+        &.with-click-handler:focus {
             background-color: #c7ddff;
         }
 
@@ -155,14 +156,30 @@
         margin-right: 16px;
         position: absolute;
 
-        &> svg {
+        &>svg {
             fill: #0074e0;
         }
     }
 
-    .item:hover, .item:focus, .item:focus-within {
+    .item:hover,
+    .item:focus,
+    .item:focus-within {
         .delete-meeting {
             display: block;
+        }
+
+        .delete-meeting:hover {
+            &>svg {
+                fill: #4687ED;
+            }
+        }
+    }
+
+    @media (max-width: 1024px) {  /* Targets iPads and smaller devices */
+        .item {
+            .delete-meeting {
+                display: block !important;
+            }
         }
     }
 }

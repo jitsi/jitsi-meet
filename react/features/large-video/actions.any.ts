@@ -11,14 +11,15 @@ import {
     getVirtualScreenshareParticipantByOwnerId
 } from '../base/participants/functions';
 import { toState } from '../base/redux/functions';
-import { isStageFilmstripAvailable } from '../filmstrip/functions';
-import { getAutoPinSetting } from '../video-layout/functions';
+import { isStageFilmstripAvailable } from '../filmstrip/functions.web';
+import { getAutoPinSetting } from '../video-layout/functions.any';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
     SET_LARGE_VIDEO_DIMENSIONS,
     UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION
 } from './actionTypes';
+import { shouldHideLargeVideo } from './functions';
 
 /**
  * Action to select the participant to be displayed in LargeVideo based on the
@@ -41,6 +42,11 @@ export function selectParticipantInLargeVideo(participant?: string) {
 
         // Keep Etherpad open.
         if (state['features/etherpad'].editing) {
+            return;
+        }
+
+        // Skip large video updates when the large video container is hidden.
+        if (shouldHideLargeVideo(state)) {
             return;
         }
 
@@ -85,7 +91,7 @@ export function updateKnownLargeVideoResolution(resolution: number) {
 }
 
 /**
- * Sets the dimenstions of the large video in redux.
+ * Sets the dimensions of the large video in redux.
  *
  * @param {number} height - The height of the large video.
  * @param {number} width - The width of the large video.
@@ -166,18 +172,26 @@ function _electParticipantInLargeVideo(state: IReduxState) {
         }
     }
 
-    // Next, pick the dominant speaker (other than self).
+    // Next, pick the dominant speaker or the last active speaker if the dominant speaker is local.
     participant = getDominantSpeakerParticipant(state);
-    if (participant && !participant.local) {
-        // Return the screensharing participant id associated with this endpoint if multi-stream is enabled and
-        // auto_pin_latest_screen_share setting is disabled.
-        const screenshareParticipant = getVirtualScreenshareParticipantByOwnerId(state, participant.id);
+    let speakerId: string | undefined;
 
-        return screenshareParticipant?.id ?? participant.id;
+    if (participant?.local) {
+        const { previousSpeakers } = state['features/base/participants'];
+
+        if (previousSpeakers?.size) {
+            speakerId = previousSpeakers.keys().next().value;
+        }
+    } else if (participant) {
+        speakerId = participant.id;
     }
 
-    // In case this is the local participant.
-    participant = undefined;
+    // Return the screensharing participant id associated with this endpoint.
+    if (speakerId) {
+        const screenshareParticipant = getVirtualScreenshareParticipantByOwnerId(state, speakerId);
+
+        return screenshareParticipant?.id ?? speakerId;
+    }
 
     // Next, pick the most recent participant with video.
     const lastVisibleRemoteParticipant = _electLastVisibleRemoteParticipant(state);

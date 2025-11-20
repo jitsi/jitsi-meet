@@ -149,7 +149,6 @@ export const refreshUserData = async (dispatch: Dispatch<AnyAction>, force: bool
                 };
 
                 LocalStorageManager.instance.saveCredentials(
-                    refreshResponse.token,
                     refreshResponse.newToken,
                     updatedUser.mnemonic,
                     updatedUser
@@ -170,7 +169,7 @@ export const refreshUserData = async (dispatch: Dispatch<AnyAction>, force: bool
  * Checks if token should be refreshed (expires in next 24 hours)
  */
 const shouldRefreshToken = (): boolean => {
-    const userToken = LocalStorageManager.instance.getToken();
+    const userToken = LocalStorageManager.instance.getNewToken();
     if (!userToken) return true;
 
     try {

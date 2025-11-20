@@ -24,9 +24,9 @@ export interface IProps extends AbstractButtonProps {
  * A remote video menu button which pins a participant and exist the tile view.
  */
 class PinButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.show';
-    icon = IconEnlarge;
-    label = 'videothumbnail.show';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.show';
+    override icon = IconEnlarge;
+    override label = 'videothumbnail.show';
 
     /**
      * Handles clicking / pressing the button, and kicks the participant.
@@ -34,7 +34,7 @@ class PinButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch } = this.props;
 
         // Pin participant, it will automatically exit the tile view

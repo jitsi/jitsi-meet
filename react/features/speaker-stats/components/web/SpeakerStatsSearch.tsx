@@ -6,7 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import Icon from '../../../base/icons/components/Icon';
 import { IconSearch } from '../../../base/icons/svg';
 import { getFieldValue } from '../../../base/react/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import { HiddenDescription } from '../../../base/ui/components/web/HiddenDescription';
 import { MOBILE_BREAKPOINT } from '../../constants';
 import { isSpeakerStatsSearchDisabled } from '../../functions';
 
@@ -38,13 +38,13 @@ const useStyles = makeStyles()(theme => {
             height: 40,
             '&::placeholder': {
                 color: theme.palette.text03,
-                ...withPixelLineHeight(theme.typography.bodyShortRegular)
+                ...theme.typography.bodyShortRegular
             },
             [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
                 height: 48,
                 padding: '13px 16px 13px 44px',
                 '&::placeholder': {
-                    ...withPixelLineHeight(theme.typography.bodyShortRegular)
+                    ...theme.typography.bodyShortRegular
                 }
             }
         }
@@ -96,6 +96,9 @@ function SpeakerStatsSearch({ onSearch }: IProps) {
         return null;
     }
 
+    const inputId = 'speaker-stats-search';
+    const inputDescriptionId = `${inputId}-hidden-description`;
+
     return (
         <div className = { classes.speakerStatsSearchContainer }>
             <Icon
@@ -103,17 +106,21 @@ function SpeakerStatsSearch({ onSearch }: IProps) {
                 color = { theme.palette.icon03 }
                 src = { IconSearch } />
             <input
+                aria-describedby = { inputDescriptionId }
                 aria-label = { t('speakerStats.searchHint') }
                 autoComplete = 'off'
                 autoFocus = { false }
                 className = { classes.speakerStatsSearch }
-                id = 'speaker-stats-search'
+                id = { inputId }
                 name = 'speakerStatsSearch'
                 onChange = { onChange }
                 onKeyPress = { preventDismiss }
                 placeholder = { t('speakerStats.search') }
                 tabIndex = { 0 }
                 value = { searchValue } />
+            <HiddenDescription id = { inputDescriptionId }>
+                {t('speakerStats.searchDescription')}
+            </HiddenDescription>
         </div>
     );
 }

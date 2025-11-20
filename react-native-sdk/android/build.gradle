@@ -5,7 +5,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.5.3'
+    classpath "com.android.tools.build:gradle:$rootProject.ext.gradlePluginVersion"
   }
 }
 
@@ -28,6 +28,7 @@ def getExtOrIntegerDefault(name) {
 }
 
 android {
+  namespace 'org.jitsi.meet.sdk'
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
 
   defaultConfig {
@@ -46,8 +47,8 @@ android {
   }
 
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
   }
 }
 
@@ -123,12 +124,11 @@ repositories {
 
 
 dependencies {
-    //noinspection GradleDynamicVersion
+  // noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"
-  implementation 'com.squareup.duktape:duktape-android:1.3.0'
   implementation 'com.dropbox.core:dropbox-core-sdk:4.0.1'
   implementation 'com.jakewharton.timber:timber:4.7.1'
-// From node_modules
+  // From node_modules
 }
 
 if (isNewArchitectureEnabled()) {

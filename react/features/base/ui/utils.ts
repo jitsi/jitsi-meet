@@ -1,13 +1,42 @@
+import { merge } from 'lodash-es';
+
+import * as jitsiTokens from './jitsiTokens.json';
+import * as tokens from './tokens.json';
+
 /**
  * Creates the color tokens based on the color theme and the association map.
- * If a key is not found in the association map it defaults to the current value.
  *
  * @param {Object} colorMap - A map between the token name and the actual color value.
- * @param {Object} colors - An object containing all the theme colors.
  * @returns {Object}
  */
-export function createColorTokens(colorMap: Object, colors: Object): any {
+export function createColorTokens(colorMap: Object): any {
+    const allTokens = merge({}, tokens, jitsiTokens);
+
     return Object.entries(colorMap)
-        .reduce((result, [ token, value ]: [any, keyof Object]) =>
-            Object.assign(result, { [token]: colors[value] || value }), {});
+        .reduce((result, [ token, value ]: [any, string]) => {
+            const color = allTokens[value as keyof typeof allTokens] || value;
+
+            return Object.assign(result, { [token]: color });
+        }, {});
+}
+
+/**
+ * Create the typography tokens based on the typography theme and the association map.
+ *
+ * @param {Object} typography - A map between the token name and the actual typography value.
+ * @returns {Object}
+ */
+export function createTypographyTokens(typography: Object): any {
+    const allTokens = merge({}, tokens, jitsiTokens);
+
+    return Object.entries(typography)
+        .reduce((result, [ token, value ]: [any, any]) => {
+            let typographyValue = value;
+
+            if (typeof value === 'string') {
+                typographyValue = allTokens[value as keyof typeof allTokens] || value;
+            }
+
+            return Object.assign(result, { [token]: typographyValue });
+        }, {});
 }

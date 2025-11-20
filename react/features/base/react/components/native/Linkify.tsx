@@ -45,7 +45,7 @@ export default class Linkify extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         return (
             <ReactLinkify
                 componentDecorator = { this._componentDecorator }>

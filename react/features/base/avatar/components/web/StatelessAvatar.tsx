@@ -1,8 +1,9 @@
 import React, { useCallback } from 'react';
+import { UserIcon } from '@phosphor-icons/react';
 import { makeStyles } from 'tss-react/mui';
 
 import Icon from '../../../icons/components/Icon';
-import { withPixelLineHeight } from '../../../styles/functions.web';
+import { pixelsToRem } from '../../../ui/functions.any';
 import { isIcon } from '../../functions';
 import { IAvatarProps } from '../../types';
 import { PRESENCE_AVAILABLE_COLOR, PRESENCE_AWAY_COLOR, PRESENCE_BUSY_COLOR, PRESENCE_IDLE_COLOR } from '../styles';
@@ -50,9 +51,8 @@ const useStyles = makeStyles()(theme => {
         avatar: {
             backgroundColor: '#AAA',
             borderRadius: '50%',
-            fontWeight: '600',
             color: theme.palette?.text01 || '#fff',
-            ...withPixelLineHeight(theme.typography?.heading1 ?? {}),
+            ...(theme.typography?.heading1 ?? {}),
             fontSize: 'inherit',
             objectFit: 'cover',
             textAlign: 'center',
@@ -76,6 +76,15 @@ const useStyles = makeStyles()(theme => {
                 height: '100%',
                 width: '100%'
             }
+        },
+
+        defaultAvatarContainer: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            height: '100%',
+            backgroundColor: '#0066FF'
         },
 
         initialsContainer: {
@@ -137,7 +146,7 @@ const StatelessAvatar = ({
     const _getAvatarStyle = (backgroundColor?: string) => {
         return {
             background: backgroundColor || undefined,
-            fontSize: size ? size * 0.4 : '180%',
+            fontSize: size ? pixelsToRem(size * 0.4) : '180%',
             height: size || '100%',
             width: size || '100%'
         };
@@ -210,9 +219,12 @@ const StatelessAvatar = ({
             data-testid = { testId }
             id = { id }
             style = { _getAvatarStyle() }>
-            <Icon
-                size = { '50%' }
-                src = { iconUser } />
+            <div className = { classes.defaultAvatarContainer }>
+                <UserIcon
+                    color = "#FFFFFF"
+                    size = { size ? size * 0.5 : 24 }
+                    weight = "regular" />
+            </div>
         </div>
     );
 };

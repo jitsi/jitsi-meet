@@ -114,7 +114,7 @@ android {
         // Trusted Web Activity.
         resValue "color", "backgroundColor", twaManifest.backgroundColor
 
-        // Defines a provider authority fot the Splash Screen
+        // Defines a provider authority for the Splash Screen
         resValue "string", "providerAuthority", twaManifest.applicationId + '.fileprovider'
 
         // The enableNotification resource is used to enable or disable the

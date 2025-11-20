@@ -1,4 +1,8 @@
 import { IStore } from '../app/types';
+import { connect } from '../base/connection/actions.native';
+import { navigateRoot } from '../mobile/navigation/rootNavigationContainerRef';
+import { screen } from '../mobile/navigation/routes';
+import { showVisitorsQueue } from '../visitors/functions';
 
 /**
  * Action used to start the conference.
@@ -8,7 +12,12 @@ import { IStore } from '../app/types';
  * @returns {Function}
  */
 export function joinConference(options?: Object, _ignoreJoiningInProgress = false) {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    return async function(_dispatch: IStore['dispatch'], _getState: IStore['getState']) {
+    return async function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
+        const _showVisitorsQueue = showVisitorsQueue(getState);
+
+        if (_showVisitorsQueue) {
+            dispatch(connect());
+            navigateRoot(screen.conference.root);
+        }
     };
 }

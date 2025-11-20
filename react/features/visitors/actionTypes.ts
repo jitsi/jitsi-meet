@@ -1,12 +1,12 @@
 /**
- * The type of (redux) action to update visitors count.
+ * The type of (redux) action to update visitors in queue count.
  *
  * {
- *     type: UPDATE_VISITORS_COUNT,
+ *     type: UPDATE_VISITORS_IN_QUEUE_COUNT,
  *     count: number
  * }
  */
-export const UPDATE_VISITORS_COUNT = 'UPDATE_VISITORS_COUNT';
+export const UPDATE_VISITORS_IN_QUEUE_COUNT = 'UPDATE_VISITORS_IN_QUEUE_COUNT';
 
 /**
  * The type of (redux) action which enables/disables visitors UI mode.
@@ -40,6 +40,16 @@ export const VISITOR_PROMOTION_REQUEST = 'VISITOR_PROMOTION_REQUEST';
 export const CLEAR_VISITOR_PROMOTION_REQUEST = 'CLEAR_VISITOR_PROMOTION_REQUEST';
 
 /**
+ * The type of (redux) action which sets in visitor's queue.
+ *
+ * {
+ *     type: SET_IN_VISITORS_QUEUE,
+ *     value: boolean
+ * }
+ */
+export const SET_IN_VISITORS_QUEUE = 'SET_IN_VISITORS_QUEUE';
+
+/**
  * The type of (redux) action which sets visitor demote actor.
  *
  * {
@@ -58,3 +68,14 @@ export const SET_VISITOR_DEMOTE_ACTOR = 'SET_VISITOR_DEMOTE_ACTOR';
  * }
  */
 export const SET_VISITORS_SUPPORTED = 'SET_VISITORS_SUPPORTED';
+
+/**
+ * The type of (redux) action which updates the current visitors list.
+ */
+export const UPDATE_VISITORS_LIST = 'UPDATE_VISITORS_LIST';
+
+/**
+ * Action dispatched when the visitors list is expanded for the first time
+ * and the client should subscribe for updates.
+ */
+export const SUBSCRIBE_VISITORS_LIST = 'SUBSCRIBE_VISITORS_LIST';

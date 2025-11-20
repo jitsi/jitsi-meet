@@ -40,7 +40,7 @@ export default class BaseIndicator extends Component<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { icon, iconStyle } = this.props;
 
         return (

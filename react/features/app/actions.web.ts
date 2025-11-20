@@ -1,10 +1,10 @@
 // @ts-expect-error
 import { API_ID } from "../../../modules/API";
-import { setRoom } from "../base/conference/actions";
+import { setRoom } from "../base/conference/actions.any";
 import { configWillLoad, setConfig } from "../base/config/actions";
 import { setLocationURL } from "../base/connection/actions.web";
 import { loadConfig } from "../base/lib-jitsi-meet/functions.web";
-import { inIframe } from "../base/util/iframeUtils";
+import { isEmbedded } from '../base/util/embedUtils';
 import { parseURIString } from "../base/util/uri";
 import { isVpaasMeeting } from "../jaas/functions";
 import { clearNotifications, showNotification } from "../notifications/actions";
@@ -47,6 +47,9 @@ export function appNavigate(uri?: string) {
 
         if (location?.pathname === "/new-meeting") {
             dispatch({ type: SET_NEW_MEETING_PAGE_VISIBILITY, value: true });
+        } else {
+            // If navigating away from /new-meeting, hide the create meeting view
+            dispatch({ type: SET_NEW_MEETING_PAGE_VISIBILITY, value: false });
         }
 
         // If the specified location (URI) does not identify a host, use the app's
@@ -85,7 +88,7 @@ export function appNavigate(uri?: string) {
         const config = await loadConfig();
 
         dispatch(setLocationURL(locationURL));
-        dispatch(setConfig(config, locationURL));
+        dispatch(setConfig(config));
         dispatch(setRoom(room));
     };
 }
@@ -110,7 +113,7 @@ export function maybeRedirectToWelcomePage(options: { feedbackSubmitted?: boolea
         // if close page is enabled redirect to it, without further action
         if (enableClosePage) {
             if (isVpaasMeeting(getState())) {
-                const isOpenedInIframe = inIframe();
+                const isOpenedInIframe = isEmbedded();
 
                 if (isOpenedInIframe) {
                     // @ts-ignore

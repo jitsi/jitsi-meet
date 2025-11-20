@@ -6,6 +6,7 @@ module:set_global();
 
 local util = module:require "util";
 local async_handler_wrapper = util.async_handler_wrapper;
+local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
 local starts_with = util.starts_with;
@@ -17,6 +18,8 @@ local parse = neturl.parseQuery;
 local token_util;
 
 local muc_domain_base = module:get_option_string("muc_mapper_domain_base");
+local muc_domain_prefix = module:get_option_string('muc_mapper_domain_prefix', 'conference');
+local muc_domain = muc_domain_prefix..'.'..muc_domain_base;
 
 local asapKeyServer = module:get_option_string("prosody_password_public_key_repo_url", "");
 
@@ -47,6 +50,7 @@ function handle_terminate_meeting (event)
     end
     local params = parse(event.request.url.query);
     local conference = params["conference"];
+    local silent_reconnect = params['silent-reconnect'];
     local room_jid;
 
     if conference then
@@ -78,8 +82,13 @@ function handle_terminate_meeting (event)
         module:log("warn", "Room not found")
         return { status_code = 404 };
     else
-        module:log("info", "Destroy room jid %s", room.jid)
-        room:destroy(nil, "The meeting has been terminated")
+        if silent_reconnect == 'true' then
+            module:log('info', 'Setting silent_reconnect on room %s', room.jid);
+            room:destroy(internal_room_jid_match_rewrite(room.jid), 'The meeting has been terminated silently')
+        else
+            module:log("info", "Destroy room jid %s", room.jid)
+            room:destroy(nil, "The meeting has been terminated")
+        end
     end
     event_count_success()
     return { status_code = 200 };
@@ -94,7 +103,7 @@ function module.add_host(host_module)
 
         token_util = module:require "token/util".new(host_module);
 
-        if asapKeyServer then
+        if asapKeyServer ~= "" then
             -- init token util with our asap keyserver
             token_util:set_asap_key_server(asapKeyServer)
         end

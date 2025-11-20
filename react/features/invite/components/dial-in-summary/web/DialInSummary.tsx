@@ -5,7 +5,6 @@ import { WithTranslation } from 'react-i18next';
 import { withStyles } from 'tss-react/mui';
 
 import { translate } from '../../../../base/i18n/functions';
-import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import { getDialInConferenceID, getDialInNumbers } from '../../../_utils';
 
 import ConferenceID from './ConferenceID';
@@ -103,7 +102,7 @@ const styles = (theme: Theme) => {
         },
         roomName: {
             margin: '40px auto 8px',
-            ...withPixelLineHeight(theme.typography.heading5)
+            ...theme.typography.heading5
         }
     };
 };
@@ -115,7 +114,7 @@ const styles = (theme: Theme) => {
  * @augments Component
  */
 class DialInSummary extends Component<IProps, State> {
-    state = {
+    override state = {
         conferenceID: null,
         error: '',
         loading: true,
@@ -146,7 +145,7 @@ class DialInSummary extends Component<IProps, State> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         const getNumbers = this._getNumbers()
             .then(this._onGetNumbersSuccess)
             .catch(this._setErrorMessage);
@@ -167,7 +166,7 @@ class DialInSummary extends Component<IProps, State> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         let className = '';
         let contents;
 

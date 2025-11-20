@@ -37,8 +37,8 @@ export function captureLargeVideoScreenshot() {
         }
 
         // Get the video element for the large video, cast HTMLElement to HTMLVideoElement to make flow happy.
-        /* eslint-disable-next-line no-extra-parens*/
-        const videoElement = (document.getElementById('largeVideo') as any);
+        /* eslint-disable-next-line no-extra-parens */
+        const videoElement = document.getElementById('largeVideo') as any;
 
         if (!videoElement) {
             return promise;

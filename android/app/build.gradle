@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 // Crashlytics integration is done as part of Firebase now, so it gets
 // automagically activated with google-services.json
@@ -15,12 +16,6 @@ def vcode = (int) (((new Date().getTime() / 1000) - 1546297200) / 10)
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
-    packagingOptions {
-        jniLibs {
-            excludes += ['lib/*/libhermes*.so']
-        }
-    }
-
 
     defaultConfig {
         applicationId 'org.jitsi.meet'
@@ -32,6 +27,14 @@ android {
 
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+        }
+
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON", "-DANDROID_STL=c++_shared"
+                cppFlags "-std=c++17"
+                cFlags "-DANDROID_PLATFORM=android-26"
+            }
         }
     }
 
@@ -48,10 +51,11 @@ android {
         debug {
             buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${googleServicesEnabled}"
             buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
+            applicationIdSuffix ".debug"
         }
         release {
-            // Uncomment the following line for singing a test release build.
-            //signingConfig signingConfigs.debug
+            // Uncomment the following line for signing a test release build.
+            // signingConfig signingConfigs.debug
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-release.pro'
             buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${googleServicesEnabled}"
@@ -71,9 +75,18 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility rootProject.ext.javaVersion
+        targetCompatibility rootProject.ext.javaVersion
     }
+
+    kotlinOptions {
+        jvmTarget = rootProject.ext.jvmTargetVersion
+    }
+
+    kotlin {
+        jvmToolchain(rootProject.ext.jvmToolchainVersion)
+    }
+
     namespace 'org.jitsi.meet'
 }
 
@@ -88,10 +101,8 @@ dependencies {
 
         // Firebase
         //  - Crashlytics
-        //  - Dynamic Links
         implementation 'com.google.firebase:firebase-analytics:21.3.0'
         implementation 'com.google.firebase:firebase-crashlytics:18.4.3'
-        implementation 'com.google.firebase:firebase-dynamic-links:21.1.0'
     }
 
     implementation project(':sdk')
@@ -99,8 +110,6 @@ dependencies {
 
 gradle.projectsEvaluated {
     // Dropbox integration
-    //
-
     def dropboxAppKey
     if (project.file('dropbox.key').exists()) {
         dropboxAppKey = project.file('dropbox.key').text.trim() - 'db-'
@@ -171,7 +180,6 @@ gradle.projectsEvaluated {
 
         packageTask.dependsOn(currentRunPackagerTask)
     }
-
 }
 
 if (googleServicesEnabled) {

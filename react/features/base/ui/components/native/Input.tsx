@@ -1,13 +1,16 @@
 import React, { forwardRef, useCallback, useState } from 'react';
 import {
     KeyboardTypeOptions,
-    NativeSyntheticEvent, ReturnKeyTypeOptions,
+    NativeSyntheticEvent,
+    ReturnKeyTypeOptions,
     StyleProp,
     Text,
     TextInput,
     TextInputChangeEventData,
-    TextInputFocusEventData, TextInputKeyPressEventData,
+    TextInputFocusEventData,
+    TextInputKeyPressEventData,
     TextInputSubmitEditingEventData,
+    TextStyle,
     TouchableOpacity,
     View,
     ViewStyle
@@ -25,8 +28,16 @@ interface IProps extends IInputProps {
     autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters' | undefined;
     autoFocus?: boolean;
     blurOnSubmit?: boolean | undefined;
+    bottomLabel?: string;
     customStyles?: ICustomStyles;
     editable?: boolean | undefined;
+
+    /**
+     * The id to set on the input element.
+     * This is required because we need it internally to tie the input to its
+     * info (label, error) so that screen reader users don't get lost.
+     */
+    id?: string;
     keyboardType?: KeyboardTypeOptions;
     maxLength?: number | undefined;
     minHeight?: number | string | undefined;
@@ -52,11 +63,13 @@ const Input = forwardRef<TextInput, IProps>(({
     autoCapitalize,
     autoFocus,
     blurOnSubmit,
+    bottomLabel,
     clearable,
     customStyles,
     disabled,
     error,
     icon,
+    id,
     keyboardType,
     label,
     maxLength,
@@ -106,7 +119,7 @@ const Input = forwardRef<TextInput, IProps>(({
         onSubmitEditing?.(text);
     }, [ onSubmitEditing ]);
 
-    return (<View style = { [ styles.inputContainer, customStyles?.container ] }>
+    return (<View style = { [ styles.inputContainer, customStyles?.container ] as StyleProp<ViewStyle> }>
         {label && <Text style = { styles.label }>{ label }</Text>}
         <View style = { styles.fieldContainer as StyleProp<ViewStyle> }>
             {icon && <Icon
@@ -121,6 +134,7 @@ const Input = forwardRef<TextInput, IProps>(({
                 autoFocus = { autoFocus }
                 blurOnSubmit = { blurOnSubmit }
                 editable = { !disabled }
+                id = { id }
                 keyboardType = { keyboardType }
                 maxLength = { maxLength }
 
@@ -145,11 +159,11 @@ const Input = forwardRef<TextInput, IProps>(({
                     clearable && styles.clearableInput,
                     customStyles?.input,
                     disabled && styles.inputDisabled,
-                    error && styles.inputError,
-                    focused && styles.inputFocused,
                     icon && styles.iconInput,
-                    multiline && styles.inputMultiline
-                ] }
+                    multiline && styles.inputMultiline,
+                    focused && styles.inputFocused,
+                    error && styles.inputError
+                ] as StyleProp<TextStyle> }
                 textContentType = { textContentType }
                 value = { typeof value === 'number' ? `${value}` : value } />
             { clearable && !disabled && value !== '' && (
@@ -163,6 +177,20 @@ const Input = forwardRef<TextInput, IProps>(({
                 </TouchableOpacity>
             )}
         </View>
+        {
+            bottomLabel && (
+                <View>
+                    <Text
+                        id = { `${id}-description` }
+                        style = { [
+                            styles.bottomLabel,
+                            error && styles.bottomLabelError
+                        ] }>
+                        { bottomLabel }
+                    </Text>
+                </View>
+            )
+        }
     </View>);
 });
 

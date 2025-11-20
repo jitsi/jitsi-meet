@@ -71,7 +71,7 @@ class PasswordRequiredPrompt extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidUpdate() {
+    override componentDidUpdate() {
         const { _password } = this.props;
 
         // The previous password in Redux gets cleared after the dialog appears and it ends up breaking the dialog
@@ -91,7 +91,7 @@ class PasswordRequiredPrompt extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { password } = this.state;
         const { _passwordNumberOfDigits } = this.props;
         const textInputProps: any = {

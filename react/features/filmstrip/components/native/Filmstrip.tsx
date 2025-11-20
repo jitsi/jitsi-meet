@@ -8,8 +8,8 @@ import { getLocalParticipant } from '../../../base/participants/functions';
 import Platform from '../../../base/react/Platform.native';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { getHideSelfView } from '../../../base/settings/functions.any';
-import { isToolboxVisible } from '../../../toolbox/functions';
-import { setVisibleRemoteParticipants } from '../../actions';
+import { isToolboxVisible } from '../../../toolbox/functions.native';
+import { setVisibleRemoteParticipants } from '../../actions.native';
 import {
     getFilmstripDimensions,
     isFilmstripVisible,
@@ -234,7 +234,7 @@ class Filmstrip extends PureComponent<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _aspectRatio,
             _disableSelfView,
@@ -253,9 +253,13 @@ class Filmstrip extends PureComponent<IProps> {
         const filmstripStyle = isNarrowAspectRatio ? styles.filmstripNarrow : styles.filmstripWide;
         const { height, width } = this._getDimensions();
         const { height: thumbnailHeight, width: thumbnailWidth, margin } = styles.thumbnail;
-        const initialNumToRender = Math.ceil(isNarrowAspectRatio
-            ? width / (thumbnailWidth + (2 * margin))
-            : height / (thumbnailHeight + (2 * margin))
+        const initialNumToRender = Math.max(
+            0,
+            Math.ceil(
+                isNarrowAspectRatio
+                    ? width / (thumbnailWidth + (2 * margin))
+                    : height / (thumbnailHeight + (2 * margin))
+            )
         );
         let participants;
 

@@ -36,7 +36,7 @@ class AudioLevelIndicator extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { audioLevel: passedAudioLevel } = this.props;
 
         // First make sure we are sensitive enough.

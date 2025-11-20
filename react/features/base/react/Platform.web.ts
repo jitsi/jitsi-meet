@@ -1,11 +1,16 @@
 // @ts-ignore
-const { userAgent, maxTouchPoints, platform } = navigator;
-let OS = '';
+const { maxTouchPoints, platform, userAgent } = navigator;
+
+let OS = '',
+    isPad = false;
 
 if (userAgent.match(/Android/i)) {
     OS = 'android';
 } else if (userAgent.match(/iP(ad|hone|od)/i) || (maxTouchPoints && maxTouchPoints > 2 && /MacIntel/.test(platform))) {
     OS = 'ios';
+} else if (userAgent.match(/iP(ad)/i)) {
+    OS = 'ios';
+    isPad = true;
 } else if (userAgent.match(/Mac(intosh| OS X)/i)) {
     OS = 'macos';
 } else if (userAgent.match(/Windows/i)) {
@@ -18,6 +23,13 @@ if (userAgent.match(/Android/i)) {
  * Provides a minimal equivalent of react-native's Platform abstraction.
  */
 export default {
+    /**
+     * Returns a boolean which defines if device is an iPad.
+     *
+     * @type {boolean}
+     */
+    isPad,
+
     /**
      * The operating system on which the application is executing.
      *

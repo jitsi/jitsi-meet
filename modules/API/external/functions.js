@@ -1,6 +1,6 @@
 import Logger from '@jitsi/logger';
 
-const logger = Logger.getLogger(__filename);
+const logger = Logger.getLogger('api:external');
 
 /**
  * Returns Promise that resolves with result an list of available devices.
@@ -53,21 +53,6 @@ export function isDeviceChangeAvailable(transport, deviceType) {
         deviceType,
         type: 'devices',
         name: 'isDeviceChangeAvailable'
-    });
-}
-
-/**
- * Returns Promise that resolves with true if the device list is available
- * and with false if not.
- *
- * @param {Transport} transport - The @code{Transport} instance responsible for
- * the external communication.
- * @returns {Promise}
- */
-export function isDeviceListAvailable(transport) {
-    return transport.sendRequest({
-        type: 'devices',
-        name: 'isDeviceListAvailable'
     });
 }
 

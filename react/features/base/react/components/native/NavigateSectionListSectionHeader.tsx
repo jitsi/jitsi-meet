@@ -27,7 +27,7 @@ export default class NavigateSectionListSectionHeader extends Component<IProps> 
      *
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { section } = this.props.section;
 
         return (

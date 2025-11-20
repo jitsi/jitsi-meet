@@ -56,7 +56,7 @@ export const CONFERENCE_LEFT = 'CONFERENCE_LEFT';
 /**
  * The type of (redux) action which signals that the conference is out of focus.
  * For example, if the user navigates to the Chat screen.
- * 
+ *
  * {
  *      type: CONFERENCE_BLURRED,
  * }
@@ -65,7 +65,7 @@ export const CONFERENCE_BLURRED = 'CONFERENCE_BLURRED';
 
 /**
  * The type of (redux) action which signals that the conference is in focus.
- * 
+ *
  * {
  *      type: CONFERENCE_FOCUSED,
  * }
@@ -81,6 +81,19 @@ export const CONFERENCE_FOCUSED = 'CONFERENCE_FOCUSED';
  * }
  */
  export const CONFERENCE_LOCAL_SUBJECT_CHANGED = 'CONFERENCE_LOCAL_SUBJECT_CHANGED';
+
+/**
+ * The type of (redux) action, which indicates conference properties change.
+ *
+ * {
+ *     type: CONFERENCE_PROPERTIES_CHANGED
+ *     properties: {
+*           audio-recording-enabled: boolean,
+ *          visitor-count: number
+ *     }
+ * }
+ */
+ export const CONFERENCE_PROPERTIES_CHANGED = 'CONFERENCE_PROPERTIES_CHANGED';
 
  /**
  * The type of (redux) action, which indicates conference subject changes.
@@ -248,17 +261,6 @@ export const P2P_STATUS_CHANGED = 'P2P_STATUS_CHANGED';
 export const SEND_TONES = 'SEND_TONES';
 
 /**
- * The type of (redux) action which updates the current known status of the
- * Follow Me feature.
- *
- * {
- *     type: SET_FOLLOW_ME,
- *     enabled: boolean
- * }
- */
-export const SET_FOLLOW_ME = 'SET_FOLLOW_ME';
-
-/**
  * The type of (redux) action which sets the obfuscated room name.
  *
  * {
@@ -338,7 +340,7 @@ export const SET_START_MUTED_POLICY = 'SET_START_MUTED_POLICY';
 
 /**
  * The type of (redux) action which updates the assumed bandwidth bps.
- * 
+ *
  * {
  *      type: SET_ASSUMED_BANDWIDTH_BPS,
  *      assumedBandwidthBps: number

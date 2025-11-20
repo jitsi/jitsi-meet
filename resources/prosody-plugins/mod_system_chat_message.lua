@@ -1,8 +1,8 @@
--- Module which can be used as an http endpoint to send system chat messages to meeting participants. The provided token
+-- Module which can be used as an http endpoint to send system private chat messages to meeting participants. The provided token
 --- in the request is verified whether it has the right to do so. This module should be loaded under the virtual host.
 -- Copyright (C) 2024-present 8x8, Inc.
 
--- curl https://{host}/send-system-message  -d '{"message": "testmessage", "to": "{connection_jid}", "room": "{room_jid}"}' -H "content-type: application/json" -H "authorization: Bearer {token}"
+-- curl https://{host}/send-system-chat-message  -d '{"message": "testmessage", "connectionJIDs": ["{connection_jid}"], "room": "{room_jid}"}' -H "content-type: application/json" -H "authorization: Bearer {token}"
 
 local util = module:require "util";
 local token_util = module:require "token/util".new(module);
@@ -15,7 +15,6 @@ local get_room_from_jid = util.get_room_from_jid;
 local st = require "util.stanza";
 local json = require "cjson.safe";
 
-local muc_domain_base = module:get_option_string("muc_mapper_domain_base");
 local asapKeyServer = module:get_option_string("prosody_password_public_key_repo_url", "");
 
 if asapKeyServer then
@@ -60,11 +59,11 @@ function handle_send_system_message (event)
 
     local displayName = payload["displayName"];
     local message = payload["message"];
-    local to = payload["to"];
+    local connectionJIDs = payload["connectionJIDs"];
     local payload_room = payload["room"];
 
-    if not message or not to or not payload_room then
-        module:log("error", "One of [message, to, room] was not provided");
+    if not message or not connectionJIDs or not payload_room then
+        module:log("error", "One of [message, connectionJIDs, room] was not provided");
         return { status_code = 400; }
     end
 
@@ -99,15 +98,17 @@ function handle_send_system_message (event)
         message = message,
     };
 
-    local stanza = st.message({
-        from = room.jid,
-        to = to
-    })
-    :tag('json-message', { xmlns = 'http://jitsi.org/jitmeet' })
-    :text(json.encode(data))
-    :up();
+    for _, to in ipairs(connectionJIDs) do
+        local stanza = st.message({
+            from = room.jid,
+            to = to
+        })
+        :tag('json-message', { xmlns = 'http://jitsi.org/jitmeet' })
+        :text(json.encode(data))
+        :up();
 
-    room:route_stanza(stanza);
+        room:route_stanza(stanza);
+    end
 
     return { status_code = 200 };
 end

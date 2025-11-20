@@ -1,0 +1,22 @@
+name: Feature request
+description: Suggest an idea for Jitsi Meet
+labels: ["feature-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting an idea to make Jitsi Meet better.
+
+        **Note**: the ultimate decision for implementing features lies on the Jitsi team, not all feature requests shall be accepted.
+  - type: textarea
+    attributes:
+      label: What problem are you trying to solve?
+      description: Tell us what problem your feature request would solve.
+  - type: textarea
+    attributes:
+      label: What solution would you like to see?
+      description: Please describe the desired behavior or feature.
+  - type: textarea
+    attributes:
+      label: Is there an alternative?
+      description: Please describe alternative solutions or features you have considered.

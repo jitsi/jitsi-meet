@@ -1,10 +1,13 @@
-import _ from 'lodash';
+import { cloneDeep } from 'lodash-es';
 
 import { IReduxState, IStore } from '../../app/types';
+import { showErrorNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { conferenceLeft, conferenceWillLeave, redirect } from '../conference/actions';
 import { getCurrentConference } from '../conference/functions';
 import { IConfigState } from '../config/reducer';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
+import { isEmbedded } from '../util/embedUtils';
 import { parseURLParams } from '../util/parseURLParams';
 import {
     appendURLParam,
@@ -14,6 +17,7 @@ import {
 import { setJoinRoomError } from "../meet/general/store/errors/actions";
 import { LocalStorageManager } from "../meet/LocalStorageManager";
 import MeetingService from "../meet/services/meeting.service";
+import { clearNewMeetingFlowSession, isNewMeetingFlow } from "../meet/services/sessionStorage.service";
 import {
     CONNECTION_DISCONNECTED,
     CONNECTION_ESTABLISHED,
@@ -21,10 +25,10 @@ import {
     CONNECTION_PROPERTIES_UPDATED,
     CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL,
-    SET_PREFER_VISITOR
-} from './actionTypes';
-import { JITSI_CONNECTION_URL_KEY } from './constants';
-import logger from './logger';
+    SET_PREFER_VISITOR,
+} from "./actionTypes";
+import { JITSI_CONNECTION_URL_KEY } from "./constants";
+import logger from "./logger";
 import { get8x8Options } from "./options8x8";
 import { ConnectionFailedError, IIceServers } from "./types";
 
@@ -114,25 +118,21 @@ export function connectionFailed(connection: Object, error: ConnectionFailedErro
 export function constructOptions(state: IReduxState) {
     // Deep clone the options to make sure we don't modify the object in the
     // redux store.
-    const options: IOptions = _.cloneDeep(state["features/base/config"]);
+    // old change, maintain for reference in case of issues
+    // const options: IOptions = _.cloneDeep(state["features/base/config"]);
+    const options: IOptions = cloneDeep(state["features/base/config"]);
 
     const { locationURL, preferVisitor } = state["features/base/connection"];
     const params = parseURLParams(locationURL || "");
     const iceServersOverride = params["iceServers.replace"];
 
-    if (iceServersOverride) {
+    // Allow iceServersOverride only when jitsi-meet is in an iframe.
+    if (isEmbedded() && iceServersOverride) {
         options.iceServersOverride = iceServersOverride;
     }
 
     const { bosh, preferBosh, flags } = options;
     let { websocket } = options;
-
-    // TESTING: Only enable WebSocket for some percentage of users.
-    if (websocket && navigator.product === "ReactNative") {
-        if (Math.random() * 100 >= (options?.testing?.mobileXmppWsThreshold ?? 0)) {
-            websocket = undefined;
-        }
-    }
 
     if (preferBosh) {
         websocket = undefined;
@@ -253,7 +253,7 @@ export function _connectInternal({
 
                 const newOptions = get8x8Options(options, appId, room);
 
-                const connection = new JitsiMeetJS.JitsiConnection(options.appId, jwt, newOptions);
+                const connection = new JitsiMeetJS.JitsiConnection(appId, jwt, newOptions);
 
                 connection[JITSI_CONNECTION_URL_KEY] = locationURL;
 
@@ -337,6 +337,9 @@ export function _connectInternal({
                             JitsiConnectionEvents.CONNECTION_ESTABLISHED,
                             _onConnectionEstablished
                         );
+
+                        clearNewMeetingFlowSession();
+
                         dispatch(connectionEstablished(connection, Date.now()));
                         resolve(connection);
                     }
@@ -380,9 +383,20 @@ export function _connectInternal({
                     });
                 });
             } catch (error: Error | any) {
-                // DISPLAY ERROR MESSAGE - NOW NOT DISPLAY WHICH ERROR
-                // TODO - https://inxt.atlassian.net/browse/PB-4295
-                dispatch(setJoinRoomError(true, error.message));
+                const errorMessage = error?.message || "Failed to join the meeting";
+
+                dispatch(setJoinRoomError(true, errorMessage));
+                dispatch(
+                    showErrorNotification(
+                        {
+                            titleKey: "dialog.errorJoiningMeeting",
+                            descriptionKey: errorMessage,
+                            hideErrorSupportLink: true,
+                        },
+                        NOTIFICATION_TIMEOUT_TYPE.LONG
+                    )
+                );
+
                 return Promise.reject(error);
             }
     };
@@ -427,10 +441,10 @@ function _propertiesUpdate(properties: object) {
  * Closes connection.
  *
  * @param {boolean} isRedirect - Indicates if the action has been dispatched as part of visitor promotion.
- *
+ * @param {boolean} shouldLeave - Indicates whether to call JitsiConference.leave().
  * @returns {Function}
  */
-export function disconnect(isRedirect?: boolean) {
+export function disconnect(isRedirect?: boolean, shouldLeave = true) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']): Promise<void> => {
         const state = getState();
 
@@ -449,20 +463,26 @@ export function disconnect(isRedirect?: boolean) {
             // intention to leave the conference.
             dispatch(conferenceWillLeave(conference_, isRedirect));
 
-            promise
-                = conference_.leave()
-                .catch((error: Error) => {
-                    logger.warn(
-                        'JitsiConference.leave() rejected with:',
-                        error);
+            if (!shouldLeave) {
+                // we are skipping JitsiConference.leave(), but will still dispatch the normal leave flow events
+                dispatch(conferenceLeft(conference_));
+                promise = Promise.resolve();
+            } else {
+                promise
+                    = conference_.leave()
+                    .catch((error: Error) => {
+                        logger.warn(
+                            'JitsiConference.leave() rejected with:',
+                            error);
 
-                    // The library lib-jitsi-meet failed to make the
-                    // JitsiConference leave. Which may be because
-                    // JitsiConference thinks it has already left.
-                    // Regardless of the failure reason, continue in
-                    // jitsi-meet as if the leave has succeeded.
-                    dispatch(conferenceLeft(conference_));
-                });
+                        // The library lib-jitsi-meet failed to make the
+                        // JitsiConference leave. Which may be because
+                        // JitsiConference thinks it has already left.
+                        // Regardless of the failure reason, continue in
+                        // jitsi-meet as if the leave has succeeded.
+                        dispatch(conferenceLeft(conference_));
+                    });
+            }
         } else {
             promise = Promise.resolve();
         }

@@ -138,8 +138,7 @@ export default class EtherpadManager {
     /**
      *
      */
-    constructor(eventEmitter) {
-        this.eventEmitter = eventEmitter;
+    constructor() {
         this.etherpad = null;
     }
 

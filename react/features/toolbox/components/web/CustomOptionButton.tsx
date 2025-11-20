@@ -19,9 +19,9 @@ class CustomOptionButton extends AbstractButton<IProps> {
     iconSrc = this.props.icon;
     id = this.props.id;
     text = this.props.text;
-    backgroundColor = this.props.backgroundColor;
+    override backgroundColor = this.props.backgroundColor;
 
-    accessibilityLabel = this.text;
+    override accessibilityLabel = this.text;
 
     /**
      * Custom icon component.
@@ -29,12 +29,12 @@ class CustomOptionButton extends AbstractButton<IProps> {
      * @param {any} props - Icon's props.
      * @returns {img}
      */
-    icon = (props: any) => (<img
+    override icon = (props: any) => (<img
         src = { this.iconSrc }
         { ...props } />);
 
-    label = this.text;
-    tooltip = this.text;
+    override label = this.text;
+    override tooltip = this.text;
 }
 
 export default CustomOptionButton;

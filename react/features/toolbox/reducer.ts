@@ -6,6 +6,7 @@ import {
     FULL_SCREEN_CHANGED,
     SET_BUTTONS_WITH_NOTIFY_CLICK,
     SET_HANGUP_MENU_VISIBLE,
+    SET_MAIN_TOOLBAR_BUTTONS_THRESHOLDS,
     SET_OVERFLOW_DRAWER,
     SET_OVERFLOW_MENU_VISIBLE,
     SET_PARTICIPANT_MENU_BUTTONS_WITH_NOTIFY_CLICK,
@@ -17,7 +18,17 @@ import {
     SET_TOOLBOX_VISIBLE,
     TOGGLE_TOOLBOX_VISIBLE
 } from './actionTypes';
-import { NOTIFY_CLICK_MODE } from './types';
+import { NATIVE_THRESHOLDS, THRESHOLDS } from './constants';
+import { IMainToolbarButtonThresholds, NOTIFY_CLICK_MODE } from './types';
+
+/**
+ * Array of thresholds for the main toolbar buttons that will inlude only the usable entries from  THRESHOLDS array.
+ *
+ * Note: THRESHOLDS array includes some dummy values that enables users of the iframe API to override and use.
+ * Note2: Casting is needed because it seems isArray guard is not working well in TS. See:
+ * https://github.com/microsoft/TypeScript/issues/17002.
+ */
+const FILTERED_THRESHOLDS = THRESHOLDS.filter(({ order }) => Array.isArray(order)) as IMainToolbarButtonThresholds;
 
 /**
  * Initial state of toolbox's part of Redux store.
@@ -46,6 +57,11 @@ const INITIAL_STATE = {
      * @type {boolean}
      */
     hovered: false,
+
+    /**
+     * The thresholds for screen size and visible main toolbar buttons.
+     */
+    mainToolbarButtonsThresholds: navigator.product === 'ReactNative' ? NATIVE_THRESHOLDS : FILTERED_THRESHOLDS,
 
     participantMenuButtonsWithNotifyClick: new Map(),
 
@@ -98,6 +114,7 @@ export interface IToolboxState {
     fullScreen?: boolean;
     hangupMenuVisible: boolean;
     hovered: boolean;
+    mainToolbarButtonsThresholds: IMainToolbarButtonThresholds;
     overflowDrawer: boolean;
     overflowMenuVisible: boolean;
     participantMenuButtonsWithNotifyClick: Map<string, NOTIFY_CLICK_MODE>;
@@ -150,6 +167,12 @@ ReducerRegistry.register<IToolboxState>(
             return {
                 ...state,
                 buttonsWithNotifyClick: action.buttonsWithNotifyClick
+            };
+
+        case SET_MAIN_TOOLBAR_BUTTONS_THRESHOLDS:
+            return {
+                ...state,
+                mainToolbarButtonsThresholds: action.mainToolbarButtonsThresholds
             };
         case SET_TOOLBAR_HOVERED:
             return {

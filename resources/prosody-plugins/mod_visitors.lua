@@ -12,13 +12,16 @@ local st = require 'util.stanza';
 local jid = require 'util.jid';
 local new_id = require 'util.id'.medium;
 local util = module:require 'util';
+local filter_identity_from_presence = util.filter_identity_from_presence;
+local is_admin = util.is_admin;
 local presence_check_status = util.presence_check_status;
 local process_host_module = util.process_host_module;
+local is_transcriber_jigasi = util.is_transcriber_jigasi;
+local room_jid_match_rewrite = util.room_jid_match_rewrite;
+local json = require 'cjson.safe';
 
-local um_is_admin = require 'core.usermanager'.is_admin;
-local function is_admin(jid)
-    return um_is_admin(jid, module.host);
-end
+-- Debug flag
+local DEBUG = false;
 
 local MUC_NS = 'http://jabber.org/protocol/muc';
 
@@ -57,7 +60,7 @@ local function send_visitors_iq(conference_service, room, type)
     -- send iq informing the vnode that the connect is done and it will allow visitors to join
     local iq_id = new_id();
     sent_iq_cache:set(iq_id, socket.gettime());
-    local connect_done = st.iq({
+    local visitors_iq = st.iq({
         type = 'set',
         to = conference_service,
         from = module.host,
@@ -68,10 +71,77 @@ local function send_visitors_iq(conference_service, room, type)
         password = type ~= 'disconnect' and room:get_password() or '',
         lobby = room._data.lobbyroom and 'true' or 'false',
         meetingId = room._data.meetingId,
-        createdTimestamp = room.created_timestamp and tostring(room.created_timestamp) or nil
-      }):up();
+        createdTimestamp = room.created_timestamp and tostring(room.created_timestamp) or nil,
+        allowUnauthenticatedAccess = room._data.allowUnauthenticatedAccess ~= nil and tostring(room._data.allowUnauthenticatedAccess) or nil
+      });
 
-      module:send(connect_done);
+    if type == 'update' then
+        visitors_iq:tag('moderators', { xmlns = 'jitsi:visitors' });
+
+        for _, o in room:each_occupant() do
+            if not is_admin(o.bare_jid) and o.role == 'moderator' then
+                visitors_iq:tag('item', { epId = jid.resource(o.nick) }):up();
+            end
+        end
+
+        visitors_iq:up();
+
+        -- files that are shared in the room
+        if room.jitsi_shared_files then
+            visitors_iq:tag('files', { xmlns = 'jitsi:visitors' });
+            for k, v in pairs(room.jitsi_shared_files) do
+                visitors_iq:tag('file', {
+                    id = k
+                }):text(json.encode(v)):up();
+            end
+            visitors_iq:up();
+        end
+
+        if room.polls and room.polls.count > 0 then
+            -- polls created in the room that we want to send to the visitor nodes
+            local data = {
+                command = "old-polls",
+                polls = {},
+                type = 'polls'
+            };
+            for i, poll in ipairs(room.polls.order) do
+                data.polls[i] = {
+                    pollId = poll.pollId,
+                    senderId = poll.senderId,
+                    senderName = poll.senderName,
+                    question = poll.question,
+                    answers = poll.answers
+                };
+            end
+
+            local json_msg_str, error = json.encode(data);
+            if not json_msg_str then
+                module:log('error', 'Error encoding data room:%s error:%s', room.jid, error);
+            end
+
+            visitors_iq:tag('polls'):text(json_msg_str):up();
+        end
+    end
+
+    visitors_iq:up();
+
+    module:send(visitors_iq);
+end
+
+-- Filter out identity information (nick name, email, etc) from a presence stanza,
+-- if the hideDisplayNameForGuests option for the room is set.
+-- This is applied to presence of main room participants before it is sent out to vnodes.
+local function filter_stanza_nick_if_needed(stanza, room)
+    if not stanza or stanza.name ~= 'presence' or stanza.attr.type == 'error' or stanza.attr.type == 'unavailable' then
+        return stanza;
+    end
+
+    -- if hideDisplayNameForGuests we want to drop any display name from the presence stanza
+    if room and room._data.hideDisplayNameForGuests then
+        return filter_identity_from_presence(stanza);
+    end
+
+    return stanza;
 end
 
 -- an event received from visitors component, which receives iqs from jicofo
@@ -95,9 +165,26 @@ local function connect_vnode(event)
 
     local sent_main_participants = 0;
 
+    -- send update initially so we can report the moderators that will join
+    send_visitors_iq(conference_service, room, 'update');
+
+    -- let's send message history
+    local event = {
+        room = room;
+        to = conference_service;
+        next_stanza = function() end; -- muc-get-history should define this iterator
+    };
+    module:context(main_muc_component_config):fire_event("muc-get-history", event);
+    for msg in event.next_stanza, event do
+        -- the messages stored in history has been stored before domain_mapper and
+        -- contain the virtual jid for a from
+        msg.attr.from = room_jid_match_rewrite(msg.attr.from);
+        room:route_stanza(msg);
+    end
+
     for _, o in room:each_occupant() do
         if not is_admin(o.bare_jid) then
-            local fmuc_pr = st.clone(o:get_presence());
+            local fmuc_pr = filter_stanza_nick_if_needed(st.clone(o:get_presence()), room);
             local user, _, res = jid.split(o.nick);
             fmuc_pr.attr.to = jid.join(user, conference_service , res);
             fmuc_pr.attr.from = o.jid;
@@ -180,11 +267,12 @@ end, 900);
 process_host_module(main_muc_component_config, function(host_module, host)
     -- detects presence change in a main participant and propagate it to the used visitor nodes
     host_module:hook('muc-occupant-pre-change', function (event)
-        local room, stanza, occupant = event.room, event.stanza, event.dest_occupant;
+        local room, stanzaEv, occupant = event.room, event.stanza, event.dest_occupant;
+        local stanza = filter_stanza_nick_if_needed(stanzaEv, room);
 
         -- filter focus and configured domains (used for jibri and transcribers)
         if is_admin(stanza.attr.from) or visitors_nodes[room.jid] == nil
-            or ignore_list:contains(jid.host(occupant.bare_jid)) then
+            or (ignore_list:contains(jid.host(occupant.bare_jid)) and not is_transcriber_jigasi(stanza)) then
             return;
         end
 
@@ -201,11 +289,12 @@ process_host_module(main_muc_component_config, function(host_module, host)
 
     -- when a main participant leaves inform the visitor nodes
     host_module:hook('muc-occupant-left', function (event)
-        local room, stanza, occupant = event.room, event.stanza, event.occupant;
+        local room, stanzaEv, occupant = event.room, event.stanza, event.occupant;
+        local stanza = filter_stanza_nick_if_needed(stanzaEv, room);
 
         -- ignore configured domains (jibri and transcribers)
         if is_admin(occupant.bare_jid) or visitors_nodes[room.jid] == nil or visitors_nodes[room.jid].nodes == nil
-            or ignore_list:contains(jid.host(occupant.bare_jid)) then
+            or (ignore_list:contains(jid.host(occupant.bare_jid)) and not is_transcriber_jigasi(stanza)) then
             return;
         end
 
@@ -244,11 +333,12 @@ process_host_module(main_muc_component_config, function(host_module, host)
 
     -- detects new participants joining main room and sending them to the visitor nodes
     host_module:hook('muc-occupant-joined', function (event)
-        local room, stanza, occupant = event.room, event.stanza, event.occupant;
+        local room, stanzaEv, occupant = event.room, event.stanza, event.occupant;
+        local stanza = filter_stanza_nick_if_needed(stanzaEv, room);
 
         -- filter focus, ignore configured domains (jibri and transcribers)
         if is_admin(stanza.attr.from) or visitors_nodes[room.jid] == nil
-            or ignore_list:contains(jid.host(occupant.bare_jid)) then
+            or (ignore_list:contains(jid.host(occupant.bare_jid)) and not is_transcriber_jigasi(stanza)) then
             return;
         end
 
@@ -256,6 +346,10 @@ process_host_module(main_muc_component_config, function(host_module, host)
         local user, _, res = jid.split(occupant.nick);
         -- a main participant we need to update all active visitor nodes
         for k in pairs(vnodes) do
+            if occupant.role == 'moderator' then
+                -- first send that the participant is a moderator
+                send_visitors_iq(k, room, 'update');
+            end
             local fmuc_pr = st.clone(stanza);
             fmuc_pr.attr.to = jid.join(user, k, res);
             fmuc_pr.attr.from = occupant.jid;
@@ -264,10 +358,11 @@ process_host_module(main_muc_component_config, function(host_module, host)
     end);
     -- forwards messages from main participants to vnodes
     host_module:hook('muc-occupant-groupchat', function(event)
-        local room, stanza, occupant = event.room, event.stanza, event.occupant;
+        local room, stanzaEv, occupant = event.room, event.stanza, event.occupant;
+        local stanza = filter_stanza_nick_if_needed(stanzaEv, room);
 
         -- filter sending messages from transcribers/jibris to visitors
-        if not visitors_nodes[room.jid] or ignore_list:contains(jid.host(occupant.bare_jid)) then
+        if not visitors_nodes[room.jid] then
             return;
         end
 
@@ -284,7 +379,8 @@ process_host_module(main_muc_component_config, function(host_module, host)
     -- receiving messages from visitor nodes and forward them to local main participants
     -- and forward them to the rest of visitor nodes
     host_module:hook('muc-occupant-groupchat', function(event)
-        local occupant, room, stanza = event.occupant, event.room, event.stanza;
+        local occupant, room, stanzaEv = event.occupant, event.room, event.stanza;
+        local stanza = filter_stanza_nick_if_needed(stanzaEv, room);
         local to = stanza.attr.to;
         local from = stanza.attr.from;
         local from_vnode = jid.host(from);
@@ -292,6 +388,11 @@ process_host_module(main_muc_component_config, function(host_module, host)
         if occupant or not (visitors_nodes[to]
                             and visitors_nodes[to].nodes
                             and visitors_nodes[to].nodes[from_vnode]) then
+            return;
+        end
+
+        if host_module:fire_event('jitsi-visitor-groupchat-pre-route', event) then
+            -- message filtered
             return;
         end
 
@@ -317,6 +418,73 @@ process_host_module(main_muc_component_config, function(host_module, host)
         return true;
     end, 55); -- prosody check for unknown participant chat is prio 50, we want to override it
 
+    -- Handle private messages from visitor nodes to main participants
+    -- This routes forwarded private messages through the proper MUC system
+    host_module:hook('message/full', function(event)
+        local stanza = event.stanza;
+
+        -- Only handle chat messages (private messages)
+        if stanza.attr.type ~= 'chat' then
+            return; -- Let other handlers process non-chat messages
+        end
+
+        local to = stanza.attr.to;
+
+        -- Early return if this is not targeted at our MUC component
+        if jid.host(to) ~= main_muc_component_config then
+            return; -- Not for our MUC component, let other handlers process
+        end
+
+        local from = stanza.attr.from;
+        local from_host = jid.host(from);
+        local to_node = jid.node(to);
+        local to_resource = jid.resource(to);
+
+        -- Check if this is a private message from a known visitor node
+        local target_room_jid = jid.bare(to);
+
+        -- Early return if we don't have any visitor nodes for this room
+        if not (visitors_nodes[target_room_jid] and visitors_nodes[target_room_jid].nodes) then
+            return; -- No visitor nodes for this room, let default MUC handle it
+        end
+
+        -- Early return if the from_host is not a known visitor node
+        if not visitors_nodes[target_room_jid].nodes[from_host] then
+            -- This could be a main->visitor message, let it go through s2s
+            return; -- Not from a known visitor node, let default MUC handle it
+        end
+
+        -- At this point we know it's a visitor message, handle it
+        local room = prosody.hosts[main_muc_component_config].modules.muc.get_room_from_jid(target_room_jid);
+        if room then
+            -- Find the occupant
+            local occupant = room:get_occupant_by_nick(to);
+            if occupant then
+                -- Add addresses element (XEP-0033) to store original visitor JID for reply functionality
+                stanza:tag('addresses', { xmlns = 'http://jabber.org/protocol/address' })
+                  :tag('address', { type = 'ofrom', jid = stanza.attr.from }):up()
+                  :up();
+
+                -- Change from to be the main domain equivalent for proper client recognition
+                -- Use bare JID without resource
+                stanza.attr.from = jid.join(to_node, main_muc_component_config);
+
+                room:route_to_occupant(occupant, stanza);
+
+                return true;
+            else
+                module:log('warn', 'VISITOR PRIVATE MESSAGE: Occupant not found for %s', to);
+            end
+        else
+            module:log('warn', 'VISITOR PRIVATE MESSAGE: Room not found for %s', to);
+        end
+
+        return false;
+    end, 10); -- Normal priority since we're in the right place now
+
+    -- Main->visitor private messages work via s2s routing automatically
+    -- No special handling needed!
+
     host_module:hook('muc-config-submitted/muc#roomconfig_roomsecret', function(event)
         if event.status_codes['104'] then
             local room = event.room;
@@ -330,25 +498,66 @@ process_host_module(main_muc_component_config, function(host_module, host)
             end
         end
     end, -100); -- we want to run last in order to check is the status code 104
+
+    host_module:hook('muc-set-affiliation', function (event)
+        if event.actor and not is_admin(event.actor) and event.affiliation == 'owner' then
+            local room = event.room;
+
+            if not visitors_nodes[room.jid] then
+                return;
+            end
+            -- we need to update all vnodes
+            local vnodes = visitors_nodes[room.jid].nodes;
+            for conference_service in pairs(vnodes) do
+                send_visitors_iq(conference_service, room, 'update');
+            end
+        end
+    end, -2);
+
+    host_module:hook('poll-created', function (event)
+        local room = event.room;
+
+        if not visitors_nodes[room.jid] then
+            return;
+        end
+
+        -- we need to update all vnodes
+        local vnodes = visitors_nodes[room.jid].nodes;
+        for conference_service in pairs(vnodes) do
+            send_visitors_iq(conference_service, room, 'update');
+        end
+    end);
+    host_module:hook('answer-poll', function (event)
+        local room, stanza = event.room, event.event.stanza;
+
+        if not visitors_nodes[room.jid] then
+            return;
+        end
+
+        local from = stanza.attr.from;
+
+        -- we need to update all vnodes
+        local vnodes = visitors_nodes[room.jid].nodes;
+        for conference_service in pairs(vnodes) do
+            -- skip sending the answer to the node from where it originates
+            if conference_service ~= from then
+                send_visitors_iq(conference_service, room, 'update');
+            end
+        end
+    end);
 end);
 
-module:hook('jitsi-lobby-enabled', function(event)
+local function update_vnodes_for_room(event)
     local room = event.room;
-    if visitors_nodes[room.jid] then
-        -- we need to update all vnodes
-        local vnodes = visitors_nodes[room.jid].nodes;
-        for conference_service in pairs(vnodes) do
-            send_visitors_iq(conference_service, room, 'update');
+        if visitors_nodes[room.jid] then
+            -- we need to update all vnodes
+            local vnodes = visitors_nodes[room.jid].nodes;
+            for conference_service in pairs(vnodes) do
+                send_visitors_iq(conference_service, room, 'update');
+            end
         end
-    end
-end);
-module:hook('jitsi-lobby-disabled', function(event)
-local room = event.room;
-    if visitors_nodes[room.jid] then
-        -- we need to update all vnodes
-        local vnodes = visitors_nodes[room.jid].nodes;
-        for conference_service in pairs(vnodes) do
-            send_visitors_iq(conference_service, room, 'update');
-        end
-    end
-end);
+end
+
+module:hook('jitsi-lobby-enabled', update_vnodes_for_room);
+module:hook('jitsi-lobby-disabled', update_vnodes_for_room);
+module:hook('jitsi-filesharing-updated', update_vnodes_for_room);
