@@ -31,10 +31,12 @@ jobs:
             - run: echo "always-auth=true" >> .npmrc
 
             - name: Install dependencies
-              run: npm i --legacy-peer-deps
+              run: |
+                  npm i --legacy-peer-deps
+                  npm install --no-save --force @rollup/rollup-linux-x64-gnu
 
             - name: Test and coverage
-              run: yarn test:coverage
+              run: npm run test:coverage
 
             - name: SonarCloud Scan
               uses: SonarSource/sonarcloud-github-action@v3
