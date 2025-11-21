@@ -24,10 +24,11 @@ Amongst others here are the main features Jitsi Meet offers:
 
 And many more!
 
+---
 
 ## Using Jitsi Meet
 
-Using Jitsi Meet is straightforward, as it's browser based. Head over to [meet.jit.si](https://meet.jit.si) and give it a try. It's scalable and free to use. All you need is a Google, Facebook or GitHub account in order to start a meeting. All browsers are supported!
+Using Jitsi Meet is straightforward, as it's browser-based. Head over to [meet.jit.si](https://meet.jit.si) and give it a try. It's scalable and free to use. All you need is a Google, Facebook or GitHub account in order to start a meeting. All browsers are supported!
 
 Using mobile? No problem, you can either use your mobile web browser or our fully-featured
 mobile apps:
@@ -42,6 +43,7 @@ developed you can also sign up for our open beta testing here:
 * [Android](https://play.google.com/apps/testing/org.jitsi.meet)
 * [iOS](https://testflight.apple.com/join/isy6ja7S)
 
+---
 
 ## Running your own instance
 
@@ -52,6 +54,7 @@ Advanced users also have the possibility of building all the components from sou
 
 You can check the latest releases [here](https://jitsi.github.io/handbook/docs/releases).
 
+---
 
 ## Jitsi as a Service
 
@@ -61,11 +64,13 @@ for you.
 
 [8x8 Jitsi as a Service (JaaS)](https://jaas.8x8.vc) is an enterprise-ready video meeting platform that allows developers, organizations and businesses to easily build and deploy video solutions. With Jitsi as a Service we now give you all the power of Jitsi running on our global platform so you can focus on building secure and branded video experiences.
 
+---
 
 ## Documentation
 
 All the Jitsi Meet documentation is available in [the handbook](https://jitsi.github.io/handbook/).
 
+---
 
 ## Running Jitsi Meet Locally (Development Setup)
 
@@ -74,14 +79,29 @@ To run Jitsi Meet locally for development, follow these steps:
 1. Install Node.js (LTS version recommended).
 
 2. Install Yarn globally:
+   ```
+   npm install -g yarn
+   ```
 
 3. Clone the repository:
+   ```
+   git clone https://github.com/jitsi/jitsi-meet.git
+   cd jitsi-meet
+   ```
 
 4. Install dependencies:
+   ```
+   yarn
+   ```
 
 5. Start the development server:
+   ```
+   yarn start
+   ```
 
 This will start the development environment at `http://localhost:8080`.
+
+---
 
 ### Running Jitsi Meet on Windows
 
@@ -89,12 +109,30 @@ Jitsi Meet works on Windows without additional configuration.
 To develop on Windows:
 
 1. Install Node.js (LTS version recommended).
+
 2. Install Yarn globally:
+   ```
+   npm install -g yarn
+   ```
+
 3. Install project dependencies:
+   ```
+   yarn
+   ```
+
 4. Run the development server:
+   ```
+   yarn start
+   ```
 
-If you encounter issues with long path names, enable Windows long paths.
+If you encounter issues with long path names, enable Windows long paths:
 
+- Open Registry Editor  
+- Navigate to:  
+  `Computer\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem`  
+- Set **LongPathsEnabled** to **1**
+
+---
 
 ## Security
 
@@ -105,6 +143,7 @@ please check [this link](https://jitsi.org/e2ee-whitepaper/).
 
 For information on reporting security vulnerabilities in Jitsi Meet, see [SECURITY.md](./SECURITY.md).
 
+---
 
 ## Contributing Using a Fork
 
@@ -113,19 +152,30 @@ If you want to contribute from your own fork, use the workflow below:
 1. Fork the repository on GitHub.
 
 2. Clone your fork:
-
+   ```
+   git clone https://github.com/<your-username>/jitsi-meet.git
+   cd jitsi-meet
+   ```
 
 3. Add the upstream remote:
-
+   ```
+   git remote add upstream https://github.com/jitsi/jitsi-meet.git
+   ```
 
 4. Sync your fork with upstream:
-
+   ```
+   git fetch upstream
+   git merge upstream/master
+   ```
 
 5. Create a feature branch for your changes:
-
+   ```
+   git checkout -b <branch-name>
+   ```
 
 This workflow makes it easier to keep your repository up to date and submit clean pull requests.
 
+---
 
 ## Contributing
 
