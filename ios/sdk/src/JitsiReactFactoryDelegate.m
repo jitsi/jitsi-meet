@@ -35,7 +35,7 @@ static NSString *RCTReadMetroHostFromBundle(NSBundle *bundle) {
     if (!bundleURL) {
         // In the SDK the ip.txt used by RN's auto-detection lives inside the framework,
         // not the host app bundle, so copy the value into jsLocation manually.
-        NSBundle *sdkBundle = [NSBundle bundleForClass:[JitsiMeet class]];
+        NSBundle *sdkBundle = [NSBundle bundleForClass:[self class]];
         NSString *host = RCTReadMetroHostFromBundle(sdkBundle);
         if (host.length > 0) {
             NSString *port = [[[NSProcessInfo processInfo] environment] objectForKey:@"RCT_METRO_PORT"]
