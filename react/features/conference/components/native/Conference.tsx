@@ -5,6 +5,7 @@ import {
     NativeModules,
     SafeAreaView,
     StatusBar,
+    Platform,
     View,
     ViewStyle
 } from 'react-native';
@@ -272,7 +273,8 @@ class Conference extends AbstractConference<IProps, State> {
             _brandingStyles,
         } = this.props;
 
-        const isLandscape = this.props._aspectRatio === ASPECT_RATIO_WIDE;
+    const isLandscape = this.props._aspectRatio === ASPECT_RATIO_WIDE;
+    const isMobilePlatform = Platform.OS === 'android' || Platform.OS === 'ios';
 
         return (
             <Container
@@ -281,9 +283,11 @@ class Conference extends AbstractConference<IProps, State> {
                     _brandingStyles
                 ] }>
                 {/* Control the native status bar on mobile: hide in landscape during the conference */}
-                <StatusBar
-                    animated = { true }
-                    hidden = { isLandscape } />
+                { isMobilePlatform &&
+                    <StatusBar
+                        animated = { true }
+                        hidden = { isLandscape } />
+                }
                 <BrandingImageBackground />
                 { this._renderContent() }
             </Container>
