@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.facebook.react'
 apply plugin: 'maven-publish'
 
 android {
