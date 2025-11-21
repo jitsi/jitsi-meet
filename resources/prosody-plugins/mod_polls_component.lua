@@ -146,46 +146,11 @@ end
             room = get_room_from_jid(room_jid_match_rewrite(json_message.attr.roomJid));
         else
             room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
-            if not room then
-                -- Enhanced logging for debugging room resolution failures
-                module:log('error', '[Polls] No room found for session context: jitsi_web_query_room=%s, jitsi_web_query_prefix=%s, stanza.from=%s, stanza.to=%s',
-                    tostring(session.jitsi_web_query_room), tostring(session.jitsi_web_query_prefix), tostring(stanza.attr.from), tostring(stanza.attr.to));
-                -- Fallback: try to infer room from occupant's current room if in a breakout room context
-                if session.jitsi_web_query_room == nil or session.jitsi_web_query_prefix == nil then
-                    -- Try to find the room by matching the occupant's JID in all rooms (expensive, but only as a last resort)
-                    local found_room = nil
-                    for muc_host, muc_component in pairs(prosody.hosts) do
-                        if muc_component.muc and muc_component.muc.rooms then
-                            for room_jid, muc_room in pairs(muc_component.muc.rooms) do
-                                if muc_room.get_occupant_by_real_jid and stanza.attr.from then
-                                    local occupant = muc_room:get_occupant_by_real_jid(stanza.attr.from)
-                                    if occupant then
-                                        found_room = muc_room
-                                        break
-                                    end
-                                end
-                            end
-                        end
-                        if found_room then break end
-                    end
-                    if found_room then
-                        -- Set session variables for future use
-                        local room_node = jid.node(found_room.jid)
-                        local room_host = jid.host(found_room.jid)
-                        local prefix = room_host:match("^([^.]+)%.") or ""
-                        session.jitsi_web_query_room = room_node
-                        session.jitsi_web_query_prefix = prefix
-                        module:log('warn', '[Polls] Fallback: set session context for %s: room=%s, prefix=%s', tostring(stanza.attr.from), room_node, prefix)
-                        module:log('warn', '[Polls] Fallback: resolved room by occupant JID for stanza.from=%s, room.jid=%s', tostring(stanza.attr.from), tostring(found_room.jid));
-                        room = found_room
-                    else
-                        module:log('error', '[Polls] Fallback failed: could not resolve room for stanza.from=%s', tostring(stanza.attr.from));
-                        return;
-                    end
-                else
-                    return;
-                end
-            end
+        end
+
+        if not room then
+            module:log('warn', 'No room found found for %s %s', session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+            return;
         end
 
         local json_message_text = json_message:get_text();
