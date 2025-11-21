@@ -169,6 +169,13 @@ end
                         if found_room then break end
                     end
                     if found_room then
+                        -- Set session variables for future use
+                        local room_node = jid.node(found_room.jid)
+                        local room_host = jid.host(found_room.jid)
+                        local prefix = room_host:match("^([^.]+)%.") or ""
+                        session.jitsi_web_query_room = room_node
+                        session.jitsi_web_query_prefix = prefix
+                        module:log('warn', '[Polls] Fallback: set session context for %s: room=%s, prefix=%s', tostring(stanza.attr.from), room_node, prefix)
                         module:log('warn', '[Polls] Fallback: resolved room by occupant JID for stanza.from=%s, room.jid=%s', tostring(stanza.attr.from), tostring(found_room.jid));
                         room = found_room
                     else
