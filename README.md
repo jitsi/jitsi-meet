@@ -1,7 +1,6 @@
 # <p align="center">Jitsi Meet</p>
 
-Jitsi Meet is a set of Open Source projects which empower users to use and deploy
-video conferencing platforms with state-of-the-art video quality and features.
+Jitsi Meet is a collection of Open Source projects that enable users to run and deploy fully featured video conferencing platforms.
 
 <hr />
 
@@ -25,6 +24,7 @@ Amongst others here are the main features Jitsi Meet offers:
 
 And many more!
 
+
 ## Using Jitsi Meet
 
 Using Jitsi Meet is straightforward, as it's browser based. Head over to [meet.jit.si](https://meet.jit.si) and give it a try. It's scalable and free to use. All you need is a Google, Facebook or GitHub account in order to start a meeting. All browsers are supported!
@@ -42,6 +42,7 @@ developed you can also sign up for our open beta testing here:
 * [Android](https://play.google.com/apps/testing/org.jitsi.meet)
 * [iOS](https://testflight.apple.com/join/isy6ja7S)
 
+
 ## Running your own instance
 
 If you'd like to run your own Jitsi Meet installation head over to the [handbook](https://jitsi.github.io/handbook/docs/devops-guide/) to get started.
@@ -51,6 +52,7 @@ Advanced users also have the possibility of building all the components from sou
 
 You can check the latest releases [here](https://jitsi.github.io/handbook/docs/releases).
 
+
 ## Jitsi as a Service
 
 If you like the branding capabilities of running your own instance but you'd like
@@ -59,9 +61,40 @@ for you.
 
 [8x8 Jitsi as a Service (JaaS)](https://jaas.8x8.vc) is an enterprise-ready video meeting platform that allows developers, organizations and businesses to easily build and deploy video solutions. With Jitsi as a Service we now give you all the power of Jitsi running on our global platform so you can focus on building secure and branded video experiences.
 
+
 ## Documentation
 
 All the Jitsi Meet documentation is available in [the handbook](https://jitsi.github.io/handbook/).
+
+
+## Running Jitsi Meet Locally (Development Setup)
+
+To run Jitsi Meet locally for development, follow these steps:
+
+1. Install Node.js (LTS version recommended).
+
+2. Install Yarn globally:
+
+3. Clone the repository:
+
+4. Install dependencies:
+
+5. Start the development server:
+
+This will start the development environment at `http://localhost:8080`.
+
+### Running Jitsi Meet on Windows
+
+Jitsi Meet works on Windows without additional configuration.  
+To develop on Windows:
+
+1. Install Node.js (LTS version recommended).
+2. Install Yarn globally:
+3. Install project dependencies:
+4. Run the development server:
+
+If you encounter issues with long path names, enable Windows long paths.
+
 
 ## Security
 
@@ -71,6 +104,28 @@ For a detailed description of Jitsi Meet's End-to-End Encryption (E2EE) implemen
 please check [this link](https://jitsi.org/e2ee-whitepaper/).
 
 For information on reporting security vulnerabilities in Jitsi Meet, see [SECURITY.md](./SECURITY.md).
+
+
+## Contributing Using a Fork
+
+If you want to contribute from your own fork, use the workflow below:
+
+1. Fork the repository on GitHub.
+
+2. Clone your fork:
+
+
+3. Add the upstream remote:
+
+
+4. Sync your fork with upstream:
+
+
+5. Create a feature branch for your changes:
+
+
+This workflow makes it easier to keep your repository up to date and submit clean pull requests.
+
 
 ## Contributing
 
