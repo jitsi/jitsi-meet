@@ -78,26 +78,11 @@ To run Jitsi Meet locally for development, follow these steps:
 
 1. Install Node.js (LTS version recommended).
 
-2. Install Yarn globally:
-   ```
-   npm install -g yarn
-   ```
+2. Clone the repository:
 
-3. Clone the repository:
-   ```
-   git clone https://github.com/jitsi/jitsi-meet.git
-   cd jitsi-meet
-   ```
+3. Install dependencies:
 
-4. Install dependencies:
-   ```
-   yarn
-   ```
-
-5. Start the development server:
-   ```
-   yarn start
-   ```
+4. Start the development server:
 
 This will start the development environment at `http://localhost:8080`.
 
@@ -110,26 +95,15 @@ To develop on Windows:
 
 1. Install Node.js (LTS version recommended).
 
-2. Install Yarn globally:
-   ```
-   npm install -g yarn
-   ```
+2. Install dependencies:
 
-3. Install project dependencies:
-   ```
-   yarn
-   ```
-
-4. Run the development server:
-   ```
-   yarn start
-   ```
+3. Run the development server:
 
 If you encounter issues with long path names, enable Windows long paths:
 
 - Open Registry Editor  
 - Navigate to:  
-  `Computer\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem`  
+`Computer\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem`  
 - Set **LongPathsEnabled** to **1**
 
 ---
@@ -152,26 +126,12 @@ If you want to contribute from your own fork, use the workflow below:
 1. Fork the repository on GitHub.
 
 2. Clone your fork:
-   ```
-   git clone https://github.com/<your-username>/jitsi-meet.git
-   cd jitsi-meet
-   ```
 
 3. Add the upstream remote:
-   ```
-   git remote add upstream https://github.com/jitsi/jitsi-meet.git
-   ```
 
 4. Sync your fork with upstream:
-   ```
-   git fetch upstream
-   git merge upstream/master
-   ```
 
 5. Create a feature branch for your changes:
-   ```
-   git checkout -b <branch-name>
-   ```
 
 This workflow makes it easier to keep your repository up to date and submit clean pull requests.
 
