@@ -11,6 +11,8 @@ import AbstractAddPeopleDialog, {
 } from "../../../../features/invite/components/add-people-dialog/AbstractAddPeopleDialog";
 import { getParticipantById } from "../../../base/participants/functions";
 import { IInviteSelectItem, IInvitee } from "../../../invite/types";
+import { hideAddPeopleDialog } from "../../../invite/actions.any";
+import { makeStyles } from 'tss-react/mui';
 
 interface IProps extends AbstractProps {
     sortedParticipantIds: string[];
@@ -20,6 +22,22 @@ interface ILocalState extends IState {
     users: any[];
     loading: boolean;
 }
+
+const useStyles = makeStyles()(theme => {
+    return {
+        list:{
+            marginBlock: 20,
+        },
+        listItem:{
+            padding: "8px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "8px",
+            flexDirection: "row",
+        }
+    };
+});
 
 class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
     override state: ILocalState = {
@@ -31,11 +49,10 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
     };
     constructor(props: IProps) {
         super(props);
-
-      
-
         this._onInviteClick = this._onInviteClick.bind(this);
     }
+
+    
 
     async componentDidMount() {
         try {
@@ -48,32 +65,34 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
     }
 
     _onInviteClick(user: any) {
-        const invitee: IInvitee = {
+        const invitee = {
             name: user.name,
             id: user.id,
-            address: user.email,
             type: "user",
-            number: "null",
         };
 
-        this._invite([invitee])
-            .then(() => console.log("Invite sent"))
-            .catch((err: any) => console.error("Invite error", err));
+        
+       
+
+        this._invite([invitee] as IInvitee[])
+            .then((invitesLeftToSend: IInvitee[]) => {
+                console.log( 'invitesLeftToSend',invitesLeftToSend);
+                
+            })
+            .finally(() => this.props.dispatch(hideAddPeopleDialog()));
     }
 
     override render() {
         const { users, loading } = this.state;
         const { sortedParticipantIds } = this.props;
 
-        if (loading) {
-            return <p>Loading users...</p>;
-        }
+
 
         const absentParticipants = users.filter((user) => !sortedParticipantIds.includes(user.id));
 
         return (
             <div style={{ marginBlock: 20 }}>
-                <h3>افراد غایب</h3>
+                <h5>افراد دعوت شده به چلسه</h5>
 
                 {absentParticipants?.length > 0 ? (
                     absentParticipants.map((user) => (
@@ -83,10 +102,12 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
                                 padding: "8px",
                                 display: "flex",
                                 alignItems: "center",
+                                justifyContent: "space-between",
                                 gap: "8px",
                                 flexDirection: "row",
                             }}
                         >
+                            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
                             <img
                                 src={
                                     user.avatarURL ||
@@ -97,8 +118,10 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
                                 height={32}
                                 style={{ borderRadius: "50%" }}
                             />
+                            
                             <p>{user.name || user.email}</p>
-                            <button onClick={() => this._onInviteClick(user)}>Invite</button>
+                            </div>
+                            <button onClick={() => this._onInviteClick(user)}>دعوت به جلسه</button>
                         </div>
                     ))
                 ) : (

@@ -151,7 +151,6 @@ export default class AbstractAddPeopleDialog<P extends IProps, S extends IState>
      * @returns {Promise<Array<any>>}
      */
     _invite(invitees: IInvitee[]) {
-        debugger;
         const inviteTypeCounts = getInviteTypeCounts(invitees);
 
         sendAnalytics(createInviteDialogEvent(
@@ -160,9 +159,9 @@ export default class AbstractAddPeopleDialog<P extends IProps, S extends IState>
                 inviteAllowed: this._isAddDisabled()
             }));
 
-        if (this._isAddDisabled()) {
-            return Promise.resolve([]);
-        }
+        // if (this._isAddDisabled()) {
+        //     return Promise.resolve([]);
+        // }
 
         this.setState({
             addToCallInProgress: true

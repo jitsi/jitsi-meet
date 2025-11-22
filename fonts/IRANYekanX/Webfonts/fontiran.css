@@ -1,0 +1,108 @@
+/**
+*
+*	Name:			IRANYekanX Fonts
+*	Version:			2.4
+*	Author:			Moslem Ebrahimi (moslemebrahimi.com)
+*	Created on:		Aug 02, 2022
+*	Updated on:		Aug 02, 2022
+*	Website:			http://fontiran.com
+*	Copyright:		Commercial/Proprietary Software
+--------------------------------------------------------------------------------------
+فونت ایران یکان X  یک نرم افزار مالکیتی محسوب می شود. جهت آگاهی از قوانین استفاده از این فونت ها لطفا به وب سایت (فونت ایران دات کام) مراجعه نمایید
+--------------------------------------------------------------------------------------
+IRANYekanX fonts are considered a proprietary software. To gain information about the laws regarding the use of these fonts, please visit www.fontiran.com 
+--------------------------------------------------------------------------------------
+This set of fonts are used in this project under the license: (.....)
+------------------------------------------------------------------------------------- fonts/-
+*	
+**/
+
+
+@font-face {
+	font-family: IRANYekanX;
+	font-style: normal;
+	font-weight: 100;
+	src: url('woff/IRANYekanX-Thin.woff') format('woff'),   
+	url('woff2/IRANYekanX-Thin.woff2') format('woff2');		
+}
+
+@font-face {
+	font-family: IRANYekanX;
+	font-style: normal;
+	font-weight: 200;
+	src: url('woff/IRANYekanX-UltraLight.woff') format('woff'),   
+	url('woff2/IRANYekanX-UltraLight.woff2') format('woff2');	
+}
+
+@font-face {
+	font-family: IRANYekanX;
+	font-style: normal;
+	font-weight: 300;
+	src: url('woff/IRANYekanX-Light.woff') format('woff'),   
+	url('woff2/IRANYekanX-Light.woff2') format('woff2');		 
+}
+
+@font-face {
+	font-family: IRANYekanX;
+	font-style: normal;
+	font-weight: 500;
+	src: url('woff/IRANYekanX-Medium.woff') format('woff'),   
+	url('woff2/IRANYekanX-Medium.woff2') format('woff2');		 
+}
+
+@font-face {
+	font-family: IRANYekanX;
+	font-style: normal;
+	font-weight: 600;
+	src: url('woff/IRANYekanX-DemiBold.woff') format('woff'),   
+	url('woff2/IRANYekanX-DemiBold.woff2') format('woff2');	 
+}
+
+@font-face {
+	font-family: IRANYekanX;
+	font-style: normal;
+	font-weight: 800;
+	src: url('woff/IRANYekanX-ExtraBold.woff') format('woff'),   
+	url('woff2/IRANYekanX-ExtraBold.woff2') format('woff2');		 
+}
+
+@font-face {
+	font-family: IRANYekanX;
+	font-style: normal;
+	font-weight: 900;
+	src: url('woff/IRANYekanX-Black.woff') format('woff'),   
+	url('woff2/IRANYekanX-Black.woff2') format('woff2');		 
+}
+@font-face {
+	font-family: IRANYekanX;
+	font-style: normal;
+	font-weight: 950;
+	src: url('woff/IRANYekanX-ExtraBlack.woff') format('woff'),   
+	url('woff2/IRANYekanX-ExtraBlack.woff2') format('woff2');		 
+}
+
+@font-face {
+	font-family: IRANYekanX;
+	font-style: normal;
+	font-weight: 1000;
+	src: url('woff/IRANYekanX-Heavy.woff') format('woff'),   
+	url('woff2/IRANYekanX-Heavy.woff2') format('woff2');		 
+}
+
+@font-face {
+	font-family: IRANYekanX;
+	font-style: normal;
+	font-weight: bold;
+	src: url('woff/IRANYekanX-Bold.woff') format('woff'),   
+	url('woff2/IRANYekanX-Bold.woff2') format('woff2');	 
+}
+
+@font-face {
+	font-family: IRANYekanX;
+	font-style: normal;
+	font-weight: normal;
+	src: url('woff/IRANYekanX-Regular.woff') format('woff'),   
+	url('woff2/IRANYekanX-Regular.woff2') format('woff2');	
+}
+
+
