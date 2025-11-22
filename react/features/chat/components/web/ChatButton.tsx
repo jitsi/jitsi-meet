@@ -7,6 +7,7 @@ import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconMessage } from '../../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import { registerShortcut, unregisterShortcut } from '../../../keyboard-shortcuts/actions';
 import { closeOverflowMenuIfOpen } from '../../../toolbox/actions.web';
 import { toggleChat } from '../../actions.web';
 import { isChatDisabled } from '../../functions';
@@ -35,6 +36,41 @@ class ChatButton extends AbstractButton<IProps> {
     override toggledLabel = 'toolbar.closeChat';
     override tooltip = 'toolbar.openChat';
     override toggledTooltip = 'toolbar.closeChat';
+
+    /**
+     * Implements React's {@link Component#componentDidMount()}.
+     *
+     * @inheritdoc
+     */
+    override componentDidMount() {
+        const { dispatch } = this.props;
+
+        // Register keyboard shortcut for toggling chat
+        dispatch(registerShortcut({
+            character: 'c',
+            helpDescription: 'keyboardShortcuts.toggleChat',
+            handler: () => {
+                sendAnalytics(createToolbarEvent('toggle.chat', {
+                    enable: !this.props._chatOpen,
+                    source: 'keyboard-shortcut'
+                }));
+                dispatch(closeOverflowMenuIfOpen());
+                dispatch(toggleChat());
+            }
+        }));
+    }
+
+    /**
+     * Implements React's {@link Component#componentWillUnmount()}.
+     *
+     * @inheritdoc
+     */
+    override componentWillUnmount() {
+        const { dispatch } = this.props;
+
+        // Unregister keyboard shortcut
+        dispatch(unregisterShortcut('c'));
+    }
 
     /**
      * Indicates whether this button is in toggled state or not.
