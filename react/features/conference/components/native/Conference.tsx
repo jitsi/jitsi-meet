@@ -3,9 +3,9 @@ import React, { useCallback } from 'react';
 import {
     BackHandler,
     NativeModules,
+    Platform,
     SafeAreaView,
     StatusBar,
-    Platform,
     View,
     ViewStyle
 } from 'react-native';
@@ -273,8 +273,8 @@ class Conference extends AbstractConference<IProps, State> {
             _brandingStyles,
         } = this.props;
 
-    const isLandscape = this.props._aspectRatio === ASPECT_RATIO_WIDE;
-    const isMobilePlatform = Platform.OS === 'android' || Platform.OS === 'ios';
+        const isLandscape = this.props._aspectRatio === ASPECT_RATIO_WIDE;
+        const isAndroid = Platform.OS === 'android';
 
         return (
             <Container
@@ -282,9 +282,9 @@ class Conference extends AbstractConference<IProps, State> {
                     styles.conference,
                     _brandingStyles
                 ] }>
-                {/* Control the native status bar on mobile: hide in landscape during the conference */}
-                { isMobilePlatform &&
-                    <StatusBar
+                {/* Control the native status bar on Android: hide in landscape during the conference */}
+                { isAndroid
+                    && <StatusBar
                         animated = { true }
                         hidden = { isLandscape } />
                 }
