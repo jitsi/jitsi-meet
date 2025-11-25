@@ -282,10 +282,12 @@ static NSString *recordingModeToString(RecordingMode mode);
         rootView.appProperties = props;
     } else {
         // Get the factory and use its rootViewFactory to create the view.
-        // The factory will automatically create the bridge on first view creation.
-        RCTReactNativeFactory *factory = [[JitsiMeet sharedInstance] getReactNativeFactory];
+        RCTReactNativeFactory *factory = [[JitsiMeet sharedInstance] getReactNativeFactory];        
         rootView = (RCTRootView *)[factory.rootViewFactory viewWithModuleName:@"App"
                                                             initialProperties:props];
+        
+        factory.bridge = rootView.bridge;
+        
         rootView.backgroundColor = self.backgroundColor;
 
         // Add rootView as a subview which completely covers this one.
