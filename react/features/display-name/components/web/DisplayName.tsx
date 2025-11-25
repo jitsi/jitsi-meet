@@ -13,6 +13,8 @@ import Tooltip from '../../../base/tooltip/components/Tooltip';
 import { getIndicatorsTooltipPosition } from '../../../filmstrip/functions.web';
 import { appendSuffix } from '../../functions';
 
+import { getDisplayNameColor } from './styles';
+
 /**
  * The type of the React {@code Component} props of {@link DisplayName}.
  */
@@ -49,7 +51,7 @@ const useStyles = makeStyles()(theme => {
     return {
         displayName: {
             ...theme.typography.labelBold,
-            color: theme.palette.text01,
+            color: getDisplayNameColor(theme),
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap'
@@ -62,7 +64,7 @@ const useStyles = makeStyles()(theme => {
             boxShadow: 'none',
             padding: 0,
             ...theme.typography.labelBold,
-            color: theme.palette.text01
+            color: getDisplayNameColor(theme)
         }
     };
 });

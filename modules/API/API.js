@@ -107,6 +107,7 @@ import {
     open as openParticipantsPane
 } from '../../react/features/participants-pane/actions';
 import { getParticipantsPaneOpen } from '../../react/features/participants-pane/functions';
+import { hidePiP, showPiP } from '../../react/features/pip/actions';
 import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording/actions.any';
 import { grantRecordingConsent, grantRecordingConsentAndUnmute } from '../../react/features/recording/actions.web';
 import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../react/features/recording/constants';
@@ -907,6 +908,12 @@ function initCommands() {
                 backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
                 virtualSource: backgroundImage
             }, jitsiTrack));
+        },
+        'show-pip': () => {
+            APP.store.dispatch(showPiP());
+        },
+        'hide-pip': () => {
+            APP.store.dispatch(hidePiP());
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -2246,6 +2253,40 @@ class API {
             name: 'peer-connection-failure',
             isP2P,
             wasConnected
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that Picture-in-Picture was requested.
+     * Used by Electron to handle PiP requests with proper user gesture context.
+     *
+     * @returns {void}
+     */
+    notifyPictureInPictureRequested() {
+        this._sendEvent({
+            name: '_pip-requested'
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that Picture-in-Picture mode was entered.
+     *
+     * @returns {void}
+     */
+    notifyPictureInPictureEntered() {
+        this._sendEvent({
+            name: 'pip-entered'
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that Picture-in-Picture mode was exited.
+     *
+     * @returns {void}
+     */
+    notifyPictureInPictureLeft() {
+        this._sendEvent({
+            name: 'pip-left'
         });
     }
 

@@ -199,6 +199,7 @@ export default [
     'participantMenuButtonsWithNotifyClick',
     'participantsPane',
     'pcStatsInterval',
+    'pip',
     'preferBosh',
     'preferVisitor',
     'prejoinConfig.enabled',

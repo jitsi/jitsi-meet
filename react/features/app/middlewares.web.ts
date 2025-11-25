@@ -12,6 +12,7 @@ import '../no-audio-signal/middleware';
 import '../notifications/middleware';
 import '../noise-detection/middleware';
 import '../old-client-notification/middleware';
+import '../pip/middleware';
 import '../power-monitor/middleware';
 import '../prejoin/middleware';
 import '../remote-control/middleware';
