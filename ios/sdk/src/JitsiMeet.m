@@ -168,10 +168,7 @@
 
 - (void)destroyReactNativeBridge {
     [_reactNativeFactory.bridge invalidate];
-
-    NSLog(@"React Native bridge destroyed");
-    
-    _reactNativeFactory = nil;
+    _reactNativeFactory.bridge = nil;
 }
 
 - (JitsiMeetConferenceOptions *)getInitialConferenceOptions {
@@ -284,20 +281,15 @@
 - (RCTBridge *)getReactBridge {
     // Initialize bridge lazily.
     [self instantiateReactNativeBridge];
-    
-    NSLog(@"Getting React Native bridge");
 
-    // Get bridge from the new architecture factory
+    // Get bridge directly from factory
     return _reactNativeFactory.bridge;
 }
 
 - (RCTReactNativeFactory *)getReactNativeFactory {
-
     if (_reactNativeFactory == nil) {
         [self createReactNativeFactory];
     }
-
-    NSLog(@"Getting React Native factory");
 
     return _reactNativeFactory;
 }
