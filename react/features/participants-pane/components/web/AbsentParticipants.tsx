@@ -12,10 +12,13 @@ import AbstractAddPeopleDialog, {
 import { getParticipantById } from "../../../base/participants/functions";
 import { IInviteSelectItem, IInvitee } from "../../../invite/types";
 import { hideAddPeopleDialog } from "../../../invite/actions.any";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
+import { translate } from "../../../base/i18n/functions";
+
 
 interface IProps extends AbstractProps {
     sortedParticipantIds: string[];
+    t:Function;
 }
 
 interface ILocalState extends IState {
@@ -23,19 +26,19 @@ interface ILocalState extends IState {
     loading: boolean;
 }
 
-const useStyles = makeStyles()(theme => {
+const useStyles = makeStyles()((theme) => {
     return {
-        list:{
+        list: {
             marginBlock: 20,
         },
-        listItem:{
+        listItem: {
             padding: "8px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             gap: "8px",
             flexDirection: "row",
-        }
+        },
     };
 });
 
@@ -51,8 +54,6 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
         super(props);
         this._onInviteClick = this._onInviteClick.bind(this);
     }
-
-    
 
     async componentDidMount() {
         try {
@@ -71,28 +72,22 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
             type: "user",
         };
 
-        
-       
-
         this._invite([invitee] as IInvitee[])
             .then((invitesLeftToSend: IInvitee[]) => {
-                console.log( 'invitesLeftToSend',invitesLeftToSend);
-                
+                console.log("invitesLeftToSend", invitesLeftToSend);
             })
             .finally(() => this.props.dispatch(hideAddPeopleDialog()));
     }
 
     override render() {
         const { users, loading } = this.state;
-        const { sortedParticipantIds } = this.props;
-
-
+        const { sortedParticipantIds,t } = this.props;
 
         const absentParticipants = users.filter((user) => !sortedParticipantIds.includes(user.id));
 
         return (
             <div style={{ marginBlock: 20 }}>
-                <h5>افراد دعوت شده به چلسه</h5>
+                <h5>{t('addPeople.add')}</h5>
 
                 {absentParticipants?.length > 0 ? (
                     absentParticipants.map((user) => (
@@ -108,18 +103,18 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
                             }}
                         >
                             <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                            <img
-                                src={
-                                    user.avatarURL ||
-                                    "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
-                                }
-                                alt={user.name || user.email}
-                                width={32}
-                                height={32}
-                                style={{ borderRadius: "50%" }}
-                            />
-                            
-                            <p>{user.name || user.email}</p>
+                                <img
+                                    src={
+                                        user.avatarURL ||
+                                        "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
+                                    }
+                                    alt={user.name || user.email}
+                                    width={32}
+                                    height={32}
+                                    style={{ borderRadius: "50%" }}
+                                />
+
+                                <p>{user.name || user.email}</p>
                             </div>
                             <button onClick={() => this._onInviteClick(user)}>دعوت به جلسه</button>
                         </div>
@@ -150,4 +145,4 @@ function _mapStateToProps(state: IReduxState) {
     };
 }
 
-export default connect(_mapStateToProps)(AbsentParticipants);
+export default translate(connect(_mapStateToProps)(AbsentParticipants));

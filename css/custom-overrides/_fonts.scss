@@ -1,0 +1,69 @@
+@font-face {
+    font-family: "IRANYekanX";
+    src: url("../fonts/IRANYekanX/Variable-Font/webfont/IRANYekanXVF.woff2") format("woff2"),
+        url("../fonts/IRANYekanX/Variable-Font/webfont/IRANYekanXVF.woff") format("woff");
+    font-weight: 100 950;
+    font-style: normal;
+    font-display: swap;
+}
+
+@supports not (font-variation-settings: normal) {
+    @font-face {
+        font-family: "IRANYekanX";
+        src: url("../fonts/IRANYekanX/Variable-Font/webfont/staticfonts/IRANYekanX-Regular.woff") format("woff");
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: "IRANYekanX";
+        font-style: normal;
+        font-weight: 500;
+        font-display: swap;
+        src: url("../fonts/IRANYekanX/Webfonts/woff2/IRANYekanX-Medium.woff2") format("woff2"),
+            url("../fonts/IRANYekanX/Webfonts/woff/IRANYekanX-Medium.woff") format("woff"),
+            url("../fonts/IRANYekanX/IRANYekanX-family/IRANYekanX-Medium.ttf") format("truetype");
+    }
+
+    @font-face {
+        font-family: "IRANYekanX";
+        font-style: normal;
+        font-weight: bold;
+        font-display: swap;
+        src: url("../fonts/IRANYekanX/Webfonts/woff2/IRANYekanX-Bold.woff2") format("woff2"),
+            url("../fonts/IRANYekanX/Webfonts/woff/IRANYekanX-Bold.woff") format("woff"),
+            url("../fonts/IRANYekanX/IRANYekanX-family/IRANYekanX-Bold.ttf") format("truetype");
+    }
+
+    @font-face {
+        font-family: "IRANYekanX";
+        font-style: normal;
+        font-weight: 900;
+        font-display: swap;
+        src: url("../fonts/IRANYekanX/Webfonts/woff2/IRANYekanX-Black.woff2") format("woff2"),
+            url("../fonts/IRANYekanX/Webfonts/woff/IRANYekanX-Black.woff") format("woff"),
+            url("../fonts/IRANYekanX/IRANYekanX-family/IRANYekanX-Black.ttf") format("truetype");
+    }
+}
+
+@font-face {
+    font-family: "IRANYekanX Num";
+    src: url("../fonts/IRANYekanX/Farsi-numerals/Variable-Font/Webfonts/IRANYekanXVFaNumVF.woff2") format("woff2"),
+        url("../fonts/IRANYekanX/Farsi-numerals/Variable-Font/Webfonts/IRANYekanXVFaNumVF.woff") format("woff");
+    font-weight: 100 950;
+    font-style: normal;
+    font-display: swap;
+}
+
+@supports not (font-variation-settings: normal) {
+    @font-face {
+        font-family: "IRANYekanX Num";
+        src: url("../fonts/IRANYekanX/Farsi-numerals/Variable-Font/Webfonts/IRANYekanXVFaNumVF.woff2") format("woff2"),
+            url("../fonts/IRANYekanX/Farsi-numerals/Variable-Font/Webfonts/IRANYekanXVFaNumVF.woff") format("woff"),
+            url("../fonts/IRANYekanX/Farsi-numerals/Variable-Font/IRANYekanXVFaNumVF.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+    }
+}

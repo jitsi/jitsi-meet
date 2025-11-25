@@ -755,7 +755,7 @@ var config = {
 
     // Default language for the user interface. Cannot be overwritten.
     // For iframe integrations, use the `lang` option directly instead.
-    // defaultLanguage: 'en',
+     defaultLanguage: 'fa',
 
     // Disables profile and the edit of all fields from the profile settings (display name and email)
     // disableProfile: false,
