@@ -1,3 +1,5 @@
+import { Theme } from '@mui/material/styles';
+
 import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
 import { isMobileBrowser } from '../base/environment/utils';
@@ -829,4 +831,14 @@ export function isTopPanelEnabled(state: IReduxState) {
 
     return !filmstrip?.disableTopPanel && participantsCount >= (filmstrip?.minParticipantCountForTopPanel ?? 50);
 
+}
+
+/**
+ * Returns the thumbnail background color from the theme.
+ *
+ * @param {Theme} theme - The MUI theme.
+ * @returns {string} The background color.
+ */
+export function getThumbnailBackgroundColor(theme: Theme): string {
+    return theme.palette.uiBackground;
 }

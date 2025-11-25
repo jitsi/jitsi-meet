@@ -13,11 +13,12 @@ import './middleware.any';
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
+    const result = next(action);
+
     switch (action.type) {
     case SET_CONFIG: {
         const { initialWidth, stageFilmstripParticipants } = action.config.filmstrip || {};
         const { dispatch, getState } = store;
-        const result = next(action);
         const state = getState();
 
         if (stageFilmstripParticipants !== undefined) {
@@ -39,7 +40,9 @@ MiddlewareRegistry.register(store => next => action => {
             window.config = state['features/base/config'];
         }
 
-        return result;
+        break;
     }
     }
+
+    return result;
 });

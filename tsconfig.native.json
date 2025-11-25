@@ -26,6 +26,7 @@
         "react/features/face-landmarks",
         "react/features/keyboard-shortcuts",
         "react/features/no-audio-signal",
+        "react/features/pip",
         "react/features/noise-suppression",
         "react/features/old-client-notification",
         "react/features/remote-control",
