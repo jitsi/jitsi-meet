@@ -23,7 +23,6 @@
 @interface JitsiMeet ()
 
 - (NSDictionary *)getDefaultProps;
-- (RCTBridge *)getReactBridge;
 - (RCTReactNativeFactory *)getReactNativeFactory;
 - (ExternalAPI *)getExternalAPI;
 
