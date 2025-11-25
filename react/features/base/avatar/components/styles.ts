@@ -1,3 +1,6 @@
+// Default avatar background color
+export const AVATAR_DEFAULT_BACKGROUND_COLOR = '#AAA';
+
 // Colors for avatar status badge
 export const PRESENCE_AVAILABLE_COLOR = 'rgb(110, 176, 5)';
 export const PRESENCE_AWAY_COLOR = 'rgb(250, 201, 20)';

@@ -2236,6 +2236,18 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that Picture-in-Picture was requested.
+     * Used by Electron to handle PiP requests with proper user gesture context.
+     *
+     * @returns {void}
+     */
+    notifyPictureInPictureRequested() {
+        this._sendEvent({
+            name: '_pip-requested'
+        });
+    }
+
+    /**
      * Notify external application ( if API is enabled) that a participant menu button was clicked.
      *
      * @param {string} key - The key of the participant menu button.

@@ -5,7 +5,13 @@ import Icon from '../../../icons/components/Icon';
 import { pixelsToRem } from '../../../ui/functions.any';
 import { isIcon } from '../../functions';
 import { IAvatarProps } from '../../types';
-import { PRESENCE_AVAILABLE_COLOR, PRESENCE_AWAY_COLOR, PRESENCE_BUSY_COLOR, PRESENCE_IDLE_COLOR } from '../styles';
+import {
+    AVATAR_DEFAULT_BACKGROUND_COLOR,
+    PRESENCE_AVAILABLE_COLOR,
+    PRESENCE_AWAY_COLOR,
+    PRESENCE_BUSY_COLOR,
+    PRESENCE_IDLE_COLOR
+} from '../styles';
 
 interface IProps extends IAvatarProps {
 
@@ -48,7 +54,7 @@ interface IProps extends IAvatarProps {
 const useStyles = makeStyles()(theme => {
     return {
         avatar: {
-            backgroundColor: '#AAA',
+            backgroundColor: AVATAR_DEFAULT_BACKGROUND_COLOR,
             borderRadius: '50%',
             color: theme.palette?.text01 || '#fff',
             ...(theme.typography?.heading1 ?? {}),
