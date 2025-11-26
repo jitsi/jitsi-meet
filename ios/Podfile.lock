@@ -1407,7 +1407,7 @@ PODS:
     - Yoga
   - react-native-performance (5.1.2):
     - React-Core
-  - react-native-safe-area-context (5.5.2):
+  - react-native-safe-area-context (5.6.1):
     - React-Core
   - react-native-slider (4.5.6):
     - DoubleConversion
@@ -2271,7 +2271,7 @@ SPEC CHECKSUMS:
   react-native-orientation-locker: dbd3f6ddbe9e62389cb0807dc2af63f6c36dec36
   react-native-pager-view: 11662c698c8f11d39e05891316d2a144fa00adc4
   react-native-performance: 125a96c145e29918b55b45ce25cbba54f1e24dcd
-  react-native-safe-area-context: 0f7bf11598f9a61b7ceac8dc3f59ef98697e99e1
+  react-native-safe-area-context: 2243039f43d10cb1ea30ec5ac57fc6d1448413f4
   react-native-slider: 1205801a8d29b28cacc14eef08cb120015cdafcb
   react-native-video: eb861d67a71dfef1bbf6086a811af5f338b13781
   react-native-webrtc: e8f0ce746353adc2744a2b933645e1aeb41eaa74
