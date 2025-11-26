@@ -8,6 +8,8 @@ require Pod::Executable.execute_command('node', ['-p',
 platform :ios, '15.1'
 workspace 'jitsi-meet'
 
+ENV['RCT_NEW_ARCH_ENABLED'] = '1'
+
 install! 'cocoapods', :deterministic_uuids => false
 
 def cocoa_utilities
@@ -28,7 +30,6 @@ target 'JitsiMeetSDK' do
   #
 
   config = use_native_modules!
-  flags = get_default_flags()
   use_react_native!(
     :path => config[:reactNativePath],
     :hermes_enabled => true,
@@ -85,6 +86,21 @@ post_install do |installer|
     :mac_catalyst_enabled => false,
     # :ccache_enabled => true
   )
+
+  # React Native 0.79.x bug: new_architecture.rb only applies -DRCT_NEW_ARCH_ENABLED flag to React-Core.
+  # RNGestureHandler needs it too for Fabric related code.
+  installer.target_installation_results.pod_target_installation_results.each do |pod_name, target_installation_result|
+    next unless pod_name == 'RNGestureHandler'
+
+    target_installation_result.native_target.build_configurations.each do |config|
+      ReactNativePodsUtils.add_flag_to_map_with_inheritance(
+        config.build_settings,
+        "OTHER_CPLUSPLUSFLAGS",
+        " -DRCT_NEW_ARCH_ENABLED=1"
+      )
+    end
+  end
+
   installer.pods_project.targets.each do |target|
     # https://github.com/CocoaPods/CocoaPods/issues/11402
     if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.bundle"
