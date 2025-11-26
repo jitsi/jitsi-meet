@@ -1,5 +1,7 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.facebook.react'
 apply plugin: 'maven-publish'
+apply plugin: "com.facebook.react"
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
