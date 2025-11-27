@@ -409,6 +409,31 @@ function on_occupant_joined(event)
             main_room.close_timer:stop();
             main_room.close_timer = nil;
         end
+
+        -- Update session variables when joining a room (main or breakout)
+        -- This is needed for polls and other components that use session.jitsi_web_query_room
+        local occupant = event.occupant;
+        if occupant and jid_node(occupant.jid) ~= 'focus' then
+            -- Get all sessions for this occupant and update their jitsi_web_query_room
+            for real_jid in occupant:each_session() do
+                local sessions = prosody.full_sessions;
+                local session = sessions[real_jid];
+                if session then
+                    local room_node = jid_node(room.jid);
+                    local room_host = jid_host(room.jid);
+
+                    -- Extract the subdomain prefix from the room host
+                    -- e.g., "breakout.meet.jit.si" -> "breakout", "conference.meet.jit.si" -> "conference"
+                    local prefix = room_host:match("^([^.]+)%.") or "";
+
+                    session.jitsi_web_query_room = room_node;
+                    session.jitsi_web_query_prefix = prefix;
+
+                    module:log("debug", "Updated session for %s: room=%s, prefix=%s",
+                        real_jid, room_node, prefix);
+                end
+            end
+        end
     end
 end
 
