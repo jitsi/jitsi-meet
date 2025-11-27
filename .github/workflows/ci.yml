@@ -119,7 +119,9 @@ jobs:
         cd android
         ./gradlew :sdk:clean
         ./gradlew :sdk:assembleRelease
-    - run: git clean -dfx
+    - run: |
+        git config --global --add safe.directory /__w/jitsi-meet/jitsi-meet
+        git clean -dfx
   ios-sdk-build:
     name: Build mobile SDK (iOS)
     runs-on: macos-15
