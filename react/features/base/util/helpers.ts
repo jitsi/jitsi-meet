@@ -22,7 +22,6 @@ export function assignIfDefined(target: Object, source: Object) {
     return to;
 }
 
-
 const MATCH_OPERATOR_REGEXP = /[|\\{}()[\]^$+*?.-]/g;
 
 /**
@@ -77,6 +76,21 @@ export function getJitsiMeetGlobalNS() {
     }
 
     return window.JitsiMeetJS.app;
+}
+
+/**
+ * Gets the Electron-specific global namespace.
+ *
+ * @returns {Object} The Electron namespace.
+ */
+export function getElectronGlobalNS() {
+    const globalNS = getJitsiMeetGlobalNS();
+
+    if (!globalNS.electron) {
+        globalNS.electron = {};
+    }
+
+    return globalNS.electron;
 }
 
 /**

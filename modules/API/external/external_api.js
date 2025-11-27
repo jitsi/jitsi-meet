@@ -102,6 +102,7 @@ const commands = {
  * events expected by jitsi-meet.
  */
 const events = {
+    '_pip-requested': '_pipRequested',
     'avatar-changed': 'avatarChanged',
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
