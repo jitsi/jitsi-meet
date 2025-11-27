@@ -7,7 +7,7 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
@@ -42,7 +42,7 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
@@ -59,7 +59,7 @@ jobs:
     name: Build mobile bundle (Android)
     runs-on: macos-15
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
@@ -74,7 +74,7 @@ jobs:
     name: Build mobile bundle (iOS)
     runs-on: macos-15
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
@@ -105,7 +105,7 @@ jobs:
     runs-on: ubuntu-latest
     container: reactnativecommunity/react-native-android:v15.0
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
@@ -123,7 +123,7 @@ jobs:
     name: Build mobile SDK (iOS)
     runs-on: macos-15
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
@@ -173,7 +173,7 @@ jobs:
     name: Test Debian packages build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
