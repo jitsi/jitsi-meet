@@ -2,7 +2,6 @@ import React from 'react';
 import {
     Animated,
     NativeSyntheticEvent,
-    SafeAreaView,
     StyleProp,
     TextInputFocusEventData,
     TextStyle,
@@ -10,6 +9,7 @@ import {
     View,
     ViewStyle
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
 import { getName } from '../../app/functions.native';

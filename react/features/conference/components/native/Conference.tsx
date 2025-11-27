@@ -3,11 +3,10 @@ import React, { useCallback } from 'react';
 import {
     BackHandler,
     NativeModules,
-    SafeAreaView,
     View,
     ViewStyle
 } from 'react-native';
-import { EdgeInsets, withSafeAreaInsets } from 'react-native-safe-area-context';
+import { EdgeInsets, SafeAreaView, withSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect, useDispatch } from 'react-redux';
 
 import { appNavigate } from '../../../app/actions.native';

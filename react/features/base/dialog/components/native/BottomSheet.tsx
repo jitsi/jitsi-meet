@@ -1,5 +1,6 @@
 import React, { PureComponent, ReactNode } from 'react';
-import { SafeAreaView, ScrollView, View, ViewStyle } from 'react-native';
+import { ScrollView, View, ViewStyle } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
 import { IStore } from '../../../../app/types';

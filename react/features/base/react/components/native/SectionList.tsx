@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import {
     SectionList as ReactNativeSectionList,
-    SafeAreaView,
     SectionListRenderItemInfo,
     ViewStyle
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Item, Section } from '../../types';
 
