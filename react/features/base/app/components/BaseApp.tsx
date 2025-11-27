@@ -45,7 +45,7 @@ export default class BaseApp<P> extends Component<P, IState> {
     /**
      * The deferred for the initialisation {{promise, resolve, reject}}.
      */
-    _init: PromiseWithResolvers<any>;
+    _init!: PromiseWithResolvers<any>;
 
     /**
      * Initializes a new {@code BaseApp} instance.
@@ -162,10 +162,10 @@ export default class BaseApp<P> extends Component<P, IState> {
                     {/* @ts-ignore */}
                     <Provider store = { store }>
                         <Fragment>
-                            { this._createMainElement(component, props) }
+                            {this._createMainElement(component, props)}
                             <SoundCollection />
-                            { this._createExtraElement() }
-                            { this._renderDialogContainer() }
+                            {this._createExtraElement()}
+                            {this._renderDialogContainer()}
                         </Fragment>
                     </Provider>
                 </I18nextProvider>

@@ -29,7 +29,7 @@ declare let ImageCapture: any;
 export default class ScreenshotCaptureSummary {
     _state: IReduxState;
     _initializedRegion: boolean;
-    _imageCapture: ImageCapture;
+    _imageCapture!: ImageCapture;
     _streamWorker: Worker;
     _queue: Blob[];
 
