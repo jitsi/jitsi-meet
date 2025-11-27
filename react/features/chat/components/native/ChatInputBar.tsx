@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconSend } from '../../../base/icons/svg';
-import { ASPECT_RATIO_WIDE } from '../../../base/responsive-ui/constants';
 import IconButton from '../../../base/ui/components/native/IconButton';
 import Input from '../../../base/ui/components/native/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.native';
@@ -85,14 +84,6 @@ class ChatInputBar extends Component<IProps, IState> {
      * @inheritdoc
      */
     override render() {
-        let inputBarStyles;
-
-        if (this.props.aspectRatio === ASPECT_RATIO_WIDE) {
-            inputBarStyles = styles.inputBarWide;
-        } else {
-            inputBarStyles = styles.inputBarNarrow;
-        }
-
         if (this.props._isSendGroupChatDisabled && !this.props._privateMessageRecipientId) {
             return (
                 <View
@@ -109,14 +100,13 @@ class ChatInputBar extends Component<IProps, IState> {
             <View
                 id = 'chat-input'
                 style = { [
-                    inputBarStyles,
+                    styles.inputBar,
                     this.state.addPadding ? styles.extraBarPadding : null
                 ] as ViewStyle[] }>
                 <Input
                     blurOnSubmit = { false }
                     customStyles = {{ container: styles.customInputContainer }}
                     id = 'chat-input-messagebox'
-                    multiline = { false }
                     onBlur = { this._onFocused(false) }
                     onChange = { this._onChangeText }
                     onFocus = { this._onFocused(true) }
@@ -129,6 +119,7 @@ class ChatInputBar extends Component<IProps, IState> {
                     id = { this.props.t('chat.sendButton') }
                     onPress = { this._onSubmit }
                     src = { IconSend }
+                    style = { styles.sendButton }
                     type = { BUTTON_TYPES.PRIMARY } />
             </View>
         );
