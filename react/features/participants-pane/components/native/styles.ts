@@ -201,20 +201,15 @@ export default {
     },
 
     participantsPaneFooterContainer: {
-        alignItems: 'center',
-        bottom: 0,
-        height: 128,
-        left: 0,
-        paddingHorizontal: BaseTheme.spacing[4],
-        right: 0
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        width: '80%'
     },
 
     participantsPaneFooter: {
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'flex-end',
-        paddingBottom: BaseTheme.spacing[3],
-        width: '100%'
+        marginLeft: 'auto'
     },
 
     inviteButton: {
@@ -225,6 +220,8 @@ export default {
 
     breakoutRoomsButton: {
         marginBottom: BaseTheme.spacing[2],
+        marginLeft: 'auto',
+        marginRight: 'auto',
         width: '100%'
     },
 
