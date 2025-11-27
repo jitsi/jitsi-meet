@@ -4,6 +4,7 @@ import i18next from 'i18next';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import "@jitsi/excalidraw/index.css";
 
 // @ts-expect-error
 import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
@@ -17,6 +18,7 @@ import { WHITEBOARD_UI_OPTIONS } from '../../constants';
 import {
     getCollabDetails,
     getCollabServerUrl,
+    getStorageBackendUrl,
     isWhiteboardOpen,
     isWhiteboardVisible
 } from '../../functions';
@@ -56,8 +58,11 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
     const filmstripWidth: number = useSelector(getVerticalViewMaxWidth);
     const collabDetails = useSelector(getCollabDetails);
     const collabServerUrl = useSelector(getCollabServerUrl);
+    const storageBackendUrl = useSelector(getStorageBackendUrl);
     const { defaultRemoteDisplayName } = useSelector((state: IReduxState) => state['features/base/config']);
     const localParticipantName = useSelector(getLocalParticipant)?.name || defaultRemoteDisplayName || 'Fellow Jitster';
+    
+    const jwt = useSelector((state: IReduxState) => state['features/base/jwt']).jwt || '';
 
     useEffect(() => {
         if (!collabAPIRef.current) {
@@ -147,14 +152,13 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
                             excalidraw = {{
                                 isCollaborating: true,
                                 langCode: i18next.language,
-
-                                // @ts-ignore
-                                ref: excalidrawRef,
                                 theme: 'light',
                                 UIOptions: WHITEBOARD_UI_OPTIONS
                             }}
                             getCollabAPI = { getCollabAPI }
-                            getExcalidrawAPI = { getExcalidrawAPI } />
+                            getExcalidrawAPI = { getExcalidrawAPI }
+                            jwt = { jwt }
+                            storageBackendUrl = { storageBackendUrl } />
                     </div>
                 )
             }
