@@ -119,6 +119,7 @@ jobs:
         cd android
         ./gradlew :sdk:clean
         ./gradlew :sdk:assembleRelease
+    - run: git clean -dfx
   ios-sdk-build:
     name: Build mobile SDK (iOS)
     runs-on: macos-15
