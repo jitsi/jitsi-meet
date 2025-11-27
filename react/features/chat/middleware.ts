@@ -405,6 +405,14 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
         }
     );
 
+     conference.on(
+        JitsiConferenceEvents.E2EE_CHAT_KEY_RECEIVED,
+        () => {
+            _onKeyReceived(store);
+        }
+    );
+
+
     conference.on(
         JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED,
         (participantId: string, message: string, timestamp: number, messageId: string, displayName?: string, isFromVisitor?: boolean) => {
@@ -479,6 +487,12 @@ function _onReactionReceived(store: IStore, { participantId, reactionList, messa
     };
 
     store.dispatch(addMessageReaction(reactionPayload));
+}
+
+function _onKeyReceived(store: IStore) {
+    store.dispatch({
+        type: 'CHAT_KEYS_ARRIVED'
+    });
 }
 
 /**

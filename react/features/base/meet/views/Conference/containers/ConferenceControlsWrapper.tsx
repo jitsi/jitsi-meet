@@ -28,6 +28,7 @@ interface ConferenceControlsProps extends WithTranslation {
     _screensharing: boolean;
     _screenShareActive: boolean;
     _chatOpen: boolean;
+    _chatKeysArrived: boolean;
 }
 
 const ConferenceControls = ({
@@ -40,6 +41,7 @@ const ConferenceControls = ({
     _screensharing,
     _screenShareActive,
     _chatOpen,
+    _chatKeysArrived
 }: ConferenceControlsProps) => {
     const [isOpenInviteUser, setIsOpenInviteUser] = useState(false);
 
@@ -74,7 +76,7 @@ const ConferenceControls = ({
             <div className="flex absolute bottom-5 left-2/4 -translate-x-2/4 z-[100]">
                 <div className="flex flex-row space-x-3 p-3 justify-center items-center bg-black/50 border border-white/10 rounded-full">
                     <MediaControlsWrapper />
-                    <CircleButton variant="default" onClick={handleToggleChat} active={_chatOpen}>
+                    <CircleButton variant="default" onClick={handleToggleChat} active={_chatOpen} disabled={!_chatKeysArrived}>
                         <ChatIcon
                             size={22}
                             weight={_chatOpen ? "fill" : "regular"}
@@ -120,6 +122,7 @@ function mapStateToProps(state: IReduxState) {
         _screensharing: isScreenVideoShared(state),
         _screenShareActive: screenShareParticipants.length > 0,
         _chatOpen: state["features/chat"].isOpen,
+        _chatKeysArrived: state["features/chat"].isKeysArrived,
     };
 }
 
