@@ -246,6 +246,8 @@ export function getConferenceOptions(stateful: IStateful) {
         delete config.analytics?.amplitudeAPPKey;
     }
 
+    options.isChatEncrypted = true; // Encrypted by default
+
     return options;
 }
 
