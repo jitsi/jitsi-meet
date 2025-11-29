@@ -1243,6 +1243,20 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the in-page toolbox
+     * visibility changed.
+     *
+     * @param {boolean} visible - True if the toolbox is visible, false otherwise.
+     * @returns {void}
+     */
+    notifyToolbarVisibilityChanged(visible) {
+        this._sendEvent({
+            name: 'toolbar-visibility-changed',
+            visible
+        });
+    }
+
+    /**
      * Notifies the external application (spot) that the local jitsi-participant
      * has a status update.
      *
