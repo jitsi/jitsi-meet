@@ -44,7 +44,7 @@ const VideoQualityLabel = () => {
     }
 
     const onClick = useCallback(() => {
-    dispatch(openDialog('VideoQualityDialog', VideoQualityDialog));
+        dispatch(openDialog('VideoQualityDialog', VideoQualityDialog));
     }, [ dispatch ]);
 
     return (
