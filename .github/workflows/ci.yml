@@ -7,8 +7,8 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -42,8 +42,8 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest]
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -59,8 +59,8 @@ jobs:
     name: Build mobile bundle (Android)
     runs-on: macos-15
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -74,8 +74,8 @@ jobs:
     name: Build mobile bundle (iOS)
     runs-on: macos-15
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -103,10 +103,10 @@ jobs:
   android-sdk-build:
     name: Build mobile SDK (Android)
     runs-on: ubuntu-latest
-    container: reactnativecommunity/react-native-android:v18.0
+    container: reactnativecommunity/react-native-android:v15.0
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -119,12 +119,15 @@ jobs:
         cd android
         ./gradlew :sdk:clean
         ./gradlew :sdk:assembleRelease
+    - run: |
+        git config --global --add safe.directory /__w/jitsi-meet/jitsi-meet
+        git clean -dfx
   ios-sdk-build:
     name: Build mobile SDK (iOS)
     runs-on: macos-15
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -173,8 +176,8 @@ jobs:
     name: Test Debian packages build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'

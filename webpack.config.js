@@ -250,7 +250,7 @@ function getDevServerConfig() {
                 warnings: false
             }
         },
-        host: '::',
+        host: 'localhost',
         hot: true,
         proxy: [
             {

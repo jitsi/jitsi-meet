@@ -1,7 +1,7 @@
 import { AnyAction } from 'redux';
 
 import { IStore } from '../app/types';
-import { ENDPOINT_MESSAGE_RECEIVED } from '../base/conference/actionTypes';
+import { ENDPOINT_MESSAGE_RECEIVED, NON_PARTICIPANT_MESSAGE_RECEIVED } from '../base/conference/actionTypes';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
@@ -76,6 +76,7 @@ const STABLE_TRANSCRIPTION_FACTOR = 0.85;
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case ENDPOINT_MESSAGE_RECEIVED:
+    case NON_PARTICIPANT_MESSAGE_RECEIVED:
         return _endpointMessageReceived(store, next, action);
 
     case TOGGLE_REQUESTING_SUBTITLES: {

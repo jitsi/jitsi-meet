@@ -12,6 +12,7 @@ local muc = module:depends("muc");
 
 local NS_NICK = 'http://jabber.org/protocol/nick';
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
+local get_room_from_jid = util.get_room_from_jid;
 local is_healthcheck_room = util.is_healthcheck_room;
 local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
@@ -138,6 +139,7 @@ end
         end
 
         local room;
+        local occupant;
         if session.type == 's2sin' then
             if not json_message.attr.roomJid then
                 module:log('warn', 'No room jid found in %s', stanza);
@@ -145,7 +147,32 @@ end
             end
             room = get_room_from_jid(room_jid_match_rewrite(json_message.attr.roomJid));
         else
-            room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+            local main_room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+            local occupant_jid = stanza.attr.from;
+
+            occupant = main_room:get_occupant_by_real_jid(occupant_jid);
+
+            if main_room._data.breakout_rooms_active then
+                -- let's find is this participant in the main room or in some breakout room
+                if not occupant then
+                    -- not in main room, let's check breakout rooms
+                    for breakout_room_jid, subject in pairs(main_room._data.breakout_rooms or {}) do
+                        local breakout_room = get_room_from_jid(breakout_room_jid);
+                        occupant = breakout_room:get_occupant_by_real_jid(occupant_jid);
+                        if occupant then
+                            room = breakout_room;
+                            break;
+                        end
+                    end
+                end
+            else
+                room = main_room;
+            end
+
+            if not occupant then
+                module:log('error', 'Occupant sending poll msg %s was not found in room %s', occupant_jid, room.jid)
+                return;
+            end
         end
 
         if not room then
@@ -177,11 +204,6 @@ end
         local occupant_details;
         if session.type ~= 's2sin' then
             local occupant_jid = stanza.attr.from;
-            occupant = room:get_occupant_by_real_jid(occupant_jid);
-            if not occupant then
-                module:log("error", "Occupant sending msg %s was not found in room %s", occupant_jid, room.jid)
-                return;
-            end
             occupant_details = get_occupant_details(occupant)
             if not occupant_details then
                 module:log("error", "Cannot retrieve poll creator or voter id and name for %s from %s",
