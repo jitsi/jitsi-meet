@@ -23,10 +23,10 @@ export const ColorPalette = {
      * the sake of consistency.
      */
     black: BLACK,
-    blue: '#17A0DB',
-    blueHighlight: '#1081b2',
+    blue: '#3859FB',
+    blueHighlight: '#AFBDFE',
     darkGrey: '#555555',
-    green: '#40b183',
+    green: '#2EB08A',
     lightGrey: '#AAAAAA',
     red: '#D00000',
     transparent: 'rgba(0, 0, 0, 0)',

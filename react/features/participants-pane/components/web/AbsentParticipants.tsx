@@ -12,35 +12,18 @@ import AbstractAddPeopleDialog, {
 import { getParticipantById } from "../../../base/participants/functions";
 import { IInviteSelectItem, IInvitee } from "../../../invite/types";
 import { hideAddPeopleDialog } from "../../../invite/actions.any";
-import { makeStyles } from "tss-react/mui";
 import { translate } from "../../../base/i18n/functions";
-
 
 interface IProps extends AbstractProps {
     sortedParticipantIds: string[];
-    t:Function;
+    t: Function;
 }
 
 interface ILocalState extends IState {
     users: any[];
     loading: boolean;
+    callingUserId: string | null;
 }
-
-const useStyles = makeStyles()((theme) => {
-    return {
-        list: {
-            marginBlock: 20,
-        },
-        listItem: {
-            padding: "8px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "8px",
-            flexDirection: "row",
-        },
-    };
-});
 
 class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
     override state: ILocalState = {
@@ -49,6 +32,7 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
         inviteItems: [] as IInviteSelectItem[],
         loading: false,
         users: [],
+        callingUserId: null,
     };
     constructor(props: IProps) {
         super(props);
@@ -66,6 +50,9 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
     }
 
     _onInviteClick(user: any) {
+        this.setState({ callingUserId: user.id });
+        setTimeout(() => this.setState({ callingUserId: null }), 5000);
+
         const invitee = {
             name: user.name,
             id: user.id,
@@ -80,14 +67,14 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
     }
 
     override render() {
-        const { users, loading } = this.state;
-        const { sortedParticipantIds,t } = this.props;
+        const { users, loading, callingUserId } = this.state;
+        const { sortedParticipantIds, t } = this.props;
 
         const absentParticipants = users.filter((user) => !sortedParticipantIds.includes(user.id));
 
         return (
             <div style={{ marginBlock: 20 }}>
-                <h5>{t('addPeople.add')}</h5>
+                <h5>{t("addPeople.add")}</h5>
 
                 {absentParticipants?.length > 0 ? (
                     absentParticipants.map((user) => (
@@ -116,7 +103,14 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
 
                                 <p>{user.name || user.email}</p>
                             </div>
-                            <button onClick={() => this._onInviteClick(user)}>دعوت به جلسه</button>
+
+                            {callingUserId === user.id ? (
+                                <span>{t("prejoin.calling")}</span>
+                            ) : (
+                                <button className="nx-button transparent" onClick={() => this._onInviteClick(user)}>
+                                    {t("addPeople.inviteToMeet")}
+                                </button>
+                            )}
                         </div>
                     ))
                 ) : (

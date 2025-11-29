@@ -29,7 +29,8 @@
         "sipAddresses": "نشانی‌های sip",
         "telephone": "تلفن: {{number}}",
         "title": "دعوت افراد به این جلسه",
-        "yahooEmail": "رایانامهٔ یاهو"
+        "yahooEmail": "رایانامهٔ یاهو",
+        "inviteToMeet" :"دعوت به جلسه "
     },
     "audioDevices": {
         "bluetooth": "بلوتوث",
