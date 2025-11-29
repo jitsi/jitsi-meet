@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -43,7 +43,9 @@ const VideoQualityLabel = () => {
         tooltipKey = 'videoStatus.performanceSettings';
     }
 
-    const onClick = () => dispatch(openDialog('VideoQualityDialog', VideoQualityDialog));
+    const onClick = useCallback(() => {
+    dispatch(openDialog('VideoQualityDialog', VideoQualityDialog));
+    }, [ dispatch ]);
 
     return (
         <Tooltip
@@ -56,7 +58,6 @@ const VideoQualityLabel = () => {
                 icon = { icon }
                 iconColor = '#fff'
                 id = 'videoResolutionLabel'
-                // eslint-disable-next-line react/jsx-no-bind
                 onClick = { onClick }
                 text = { labelContent } />
         </Tooltip>
