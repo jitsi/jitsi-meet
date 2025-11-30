@@ -90,8 +90,7 @@ import {
 } from './react/features/base/media/actions';
 import { MEDIA_TYPE, VIDEO_MUTISM_AUTHORITY, VIDEO_TYPE } from './react/features/base/media/constants';
 import {
-    getStartWithAudioMuted,
-    getStartWithVideoMuted,
+    getInitialMediaMutedState,
     isVideoMutedByUser
 } from './react/features/base/media/functions';
 import { IGUMPendingState } from './react/features/base/media/types';
@@ -531,11 +530,14 @@ export default {
      */
     async init({ roomName, shouldDispatchConnect }) {
         const state = APP.store.getState();
+        const { audioMuted: startWithAudioMuted, videoMuted: startWithVideoMuted }
+            = getInitialMediaMutedState(state);
+
         const initialOptions = {
             startAudioOnly: config.startAudioOnly,
             startScreenSharing: config.startScreenSharing,
-            startWithAudioMuted: getStartWithAudioMuted(state) || isUserInteractionRequiredForUnmute(state),
-            startWithVideoMuted: getStartWithVideoMuted(state) || isUserInteractionRequiredForUnmute(state)
+            startWithAudioMuted,
+            startWithVideoMuted
         };
         const connectionTimes = getJitsiMeetGlobalNSConnectionTimes();
         const startTime = window.performance.now();
