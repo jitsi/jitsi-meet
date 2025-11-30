@@ -30,7 +30,8 @@
         "telephone": "تلفن: {{number}}",
         "title": "دعوت افراد به این جلسه",
         "yahooEmail": "رایانامهٔ یاهو",
-        "inviteToMeet" :"دعوت به جلسه "
+        "inviteToMeet" :"دعوت به جلسه ",
+        "PeopleAddedToMeet" :" افراد دعوت شده به جلسه"
     },
     "audioDevices": {
         "bluetooth": "بلوتوث",

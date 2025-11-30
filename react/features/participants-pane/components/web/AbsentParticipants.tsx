@@ -74,7 +74,7 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
 
         return (
             <div style={{ marginBlock: 20 }}>
-                <h5>{t("addPeople.add")}</h5>
+                <h5 style={{color:'white'}}>{t("addPeople.PeopleAddedToMeet")}</h5>
 
                 {absentParticipants?.length > 0 ? (
                     absentParticipants.map((user) => (
