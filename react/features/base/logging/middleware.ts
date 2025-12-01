@@ -187,8 +187,8 @@ function _initLogging({ dispatch, getState }: IStore,
             JitsiMeetJS.addGlobalLogTransport(debugLogCollector);
             debugLogCollector.start();
 
-            Logger.removeGlobalTransport(console);
-            JitsiMeetJS.removeGlobalLogTransport(console);
+            // Logger.removeGlobalTransport(console);
+            // JitsiMeetJS.removeGlobalLogTransport(console);
         }
     } else if (logCollector && loggingConfig.disableLogCollector) {
         Logger.removeGlobalTransport(logCollector);
