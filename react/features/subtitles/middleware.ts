@@ -5,6 +5,7 @@ import { ENDPOINT_MESSAGE_RECEIVED, NON_PARTICIPANT_MESSAGE_RECEIVED } from '../
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
+import { TRANSCRIBER_ID } from '../base/participants/constants';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { showErrorNotification } from '../notifications/actions';
 import { TRANSCRIBER_JOINED } from '../transcribing/actionTypes';
@@ -125,7 +126,7 @@ function _endpointMessageReceived(store: IStore, next: Function, action: AnyActi
             return next(action);
         }
         json = action.data;
-    } else if (action.type === NON_PARTICIPANT_MESSAGE_RECEIVED && action.id === 'transcriber') {
+    } else if (action.type === NON_PARTICIPANT_MESSAGE_RECEIVED && action.id === TRANSCRIBER_ID) {
         json = action.json;
     } else {
         return next(action);
