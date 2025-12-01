@@ -120,7 +120,14 @@ export default class BaseApp<P> extends Component<P, IState> {
      * @returns {void}
      */
     override componentDidCatch(error: Error, info: Object) {
-        logger.error(error, info);
+        logger.error(JSON.stringify({
+            message: error.message,
+            name: error.name,
+            stack: error.stack,
+            fullError: JSON.stringify(error, Object.getOwnPropertyNames(error), 2),
+            // @ts-ignore
+            componentStack: info.componentStack
+        }));
     }
 
     /**
