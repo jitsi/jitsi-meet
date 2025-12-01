@@ -28,7 +28,7 @@ const VideoQualityLabel = () => {
     const { t } = useTranslation();
 
     if (!_visible) {
-        return null;
+        return <></>;
     }
 
     let className, icon, labelContent, tooltipKey;
@@ -43,8 +43,13 @@ const VideoQualityLabel = () => {
         tooltipKey = 'videoStatus.performanceSettings';
     }
 
-    const onClick = useCallback(() =>
-        dispatch(openDialog('VideoQualityDialog', VideoQualityDialog)), [ dispatch, openDialog ]);
+    const onClick = useCallback(() => {
+        if (!dispatch) {
+            return;
+        }
+
+        dispatch(openDialog('VideoQualityDialog', VideoQualityDialog));
+    }, [ dispatch ]);
 
     return (
         <Tooltip
