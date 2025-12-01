@@ -13,10 +13,12 @@ import { getParticipantById } from "../../../base/participants/functions";
 import { IInviteSelectItem, IInvitee } from "../../../invite/types";
 import { hideAddPeopleDialog } from "../../../invite/actions.any";
 import { translate } from "../../../base/i18n/functions";
+import { getCurrentRoomId } from "../../../breakout-rooms/functions";
 
 interface IProps extends AbstractProps {
     sortedParticipantIds: string[];
     t: Function;
+    _currentRoomId: string;
 }
 
 interface ILocalState extends IState {
@@ -40,8 +42,10 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
     }
 
     async componentDidMount() {
+                const {_jwt,_currentRoomId} = this.props;
+
         try {
-            const users = (await fetchMeetUsers()) as any[];
+            const users = (await fetchMeetUsers(_jwt ,_currentRoomId)) as any[];
             this.setState({ users, loading: false });
         } catch (err) {
             console.error("Error fetching meet users:", err);
@@ -68,7 +72,7 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
 
     override render() {
         const { users, loading, callingUserId } = this.state;
-        const { sortedParticipantIds, t } = this.props;
+        const { sortedParticipantIds, t ,_currentRoomId} = this.props;
 
         const absentParticipants = users.filter((user) => !sortedParticipantIds.includes(user.id));
 
@@ -124,7 +128,8 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
 function _mapStateToProps(state: IReduxState) {
     let sortedParticipantIds: any = getSortedParticipantIds(state);
     const _iAmVisitor = iAmVisitor(state);
-
+        const _currentRoomId = getCurrentRoomId(state);
+    
     sortedParticipantIds = sortedParticipantIds.map((id: any) => {
         const participant = getParticipantById(state, id);
         if (_iAmVisitor && participant?.local) {
@@ -135,6 +140,7 @@ function _mapStateToProps(state: IReduxState) {
 
     return {
         sortedParticipantIds,
+        _currentRoomId,
         ..._abstractMapStateToProps(state),
     };
 }

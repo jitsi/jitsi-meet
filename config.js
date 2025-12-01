@@ -53,6 +53,7 @@ var config = {
 
     // Websocket URL (XMPP)
     websocket: "wss://jitsi-meet.example.com/" + subdir + "xmpp-websocket",
+    apiBaseUrl: "https://kasra.todaydev.ir/meet/api",
 
     // websocketKeepAliveUrl: 'https://jitsi-meet.example.com/' + subdir + '_unlock',
 

@@ -471,11 +471,16 @@ export function invitePeopleAndChatRooms(
  * Fetch list of meeting users from your local backend.
  * @returns {Promise<Array>} List of users
  */
-export function fetchMeetUsers() {
-    const url = 'http://localhost:3000/meetusers';
-
+export function fetchMeetUsers( jwt: any , meetKey?: string): Promise<Array<any>> {
+    const baseUrl = 'https://kasra.todaydev.ir/meet/api/v1'
+        const token = jwt;
+        debugger
+   const headers = {
+        ...token ? { 'Authorization': `Bearer ${token}` } : {},
+        'Content-Type': 'application/json'
+    };
     return new Promise((resolve, reject) =>
-        fetch(url)
+        fetch(`${baseUrl}/meets/key/${meetKey}/participants`, { headers })
             .then(res => {
                 if (!res.ok) {
                     reject(new Error(`Request failed with status ${res.status}`));
