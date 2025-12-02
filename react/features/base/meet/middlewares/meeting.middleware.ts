@@ -146,6 +146,8 @@ export const refreshUserData = async (dispatch: Dispatch<AnyAction>, force: bool
                     ...currentUser,
                     ...refreshResponse.user,
                     createdAt: currentUser.createdAt,
+                    privateKey: refreshResponse.user.keys.ecc.privateKey,
+                    publicKey: refreshResponse.user.keys.ecc.publicKey,
                 };
 
                 LocalStorageManager.instance.saveCredentials(
