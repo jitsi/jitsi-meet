@@ -43,15 +43,13 @@ const PollsPane = (props: AbstractProps) => {
     }, [ isPollsTabFocused, unreadPollsCount ]);
 
     const renderCreateAPollBtn = useCallback(() => (
-        !createMode && !isCreatePollsDisabled && <SafeAreaView>
-            <Button
-                accessibilityLabel = 'polls.create.create'
-                id = { t('polls.create.create') }
-                labelKey = 'polls.create.create'
-                onClick = { onCreate }
-                style = { pollsStyles.createPollButton }
-                type = { BUTTON_TYPES.PRIMARY } />
-        </SafeAreaView>
+        !createMode && !isCreatePollsDisabled && <Button
+            accessibilityLabel = 'polls.create.create'
+            id = { t('polls.create.create') }
+            labelKey = 'polls.create.create'
+            onClick = { onCreate }
+            style = { pollsStyles.createPollButton }
+            type = { BUTTON_TYPES.PRIMARY } />
     ), [ createMode, isCreatePollsDisabled ]);
 
     return (

@@ -124,10 +124,6 @@ export default {
         marginRight: BaseTheme.spacing[2]
     },
 
-    participantStateRaisedHand: {
-        marginRight: BaseTheme.spacing[1]
-    },
-
     raisedHandIndicator: {
         backgroundColor: BaseTheme.palette.warning02,
         borderRadius: BaseTheme.shape.borderRadius,

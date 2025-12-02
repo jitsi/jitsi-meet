@@ -107,6 +107,7 @@ class ChatInputBar extends Component<IProps, IState> {
                     blurOnSubmit = { false }
                     customStyles = {{ container: styles.customInputContainer }}
                     id = 'chat-input-messagebox'
+                    multiline = { false }
                     onBlur = { this._onFocused(false) }
                     onChange = { this._onChangeText }
                     onFocus = { this._onFocused(true) }

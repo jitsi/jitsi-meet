@@ -123,7 +123,7 @@ function ParticipantItem({
                 {
                     !isKnockingParticipant
                     && <View style = { styles.participantStatesContainer as StyleProp<ViewStyle> }>
-                        <View style = { styles.participantStateRaisedHand }>{ raisedHand && <RaisedHandIndicator /> }</View>
+                        <View>{ raisedHand && <RaisedHandIndicator /> }</View>
                         <View style = { styles.participantStateVideo }>{ VideoStateIcons[videoMediaState] }</View>
                         <View>{ AudioStateIcons[audioMediaState] }</View>
                     </View>
