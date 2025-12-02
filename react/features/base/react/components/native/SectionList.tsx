@@ -76,6 +76,7 @@ export default class SectionList extends Component<IProps> {
     override render() {
         return (
             <SafeAreaView
+                edges = { [ 'left', 'right' ] }
                 style = { styles.container as ViewStyle } >
                 <ReactNativeSectionList
                     ListEmptyComponent = { this.props.ListEmptyComponent }
