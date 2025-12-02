@@ -1,0 +1,60 @@
+$header-bg: #f5f7fa;
+$border: #e1e4e8;
+$accent: #0366d6;
+$pad: 0.75rem;
+
+.collapse {
+  border-radius: 6px;
+  overflow: visible;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: $pad 1rem;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    text-align: left;
+    color: #fff;
+    border-radius: 6px;
+  }
+
+  &__title {
+    font-weight: 600;
+  }
+
+  &__icon {
+    display: inline-block;
+    margin-left: 0.75rem;
+    transition: transform 200ms ease;
+    transform-origin: center;
+    color: $border;
+  }
+
+  &--open {
+    .collapse__icon {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__content {
+    overflow: hidden;
+
+    .collapse__inner {
+      padding-block: 1rem;
+    }
+  }
+}
+
+/* Respect the user's reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .collapse__content {
+    transition: none !important;
+  }
+  .collapse__icon {
+    transition: none !important;
+  }
+}

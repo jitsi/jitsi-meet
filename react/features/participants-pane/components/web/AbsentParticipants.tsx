@@ -14,6 +14,7 @@ import { IInviteSelectItem, IInvitee } from "../../../invite/types";
 import { hideAddPeopleDialog } from "../../../invite/actions.any";
 import { translate } from "../../../base/i18n/functions";
 import { getCurrentRoomId } from "../../../breakout-rooms/functions";
+import Collapse from "../../../base/components/collapse/collapse";
 
 interface IProps extends AbstractProps {
     sortedParticipantIds: string[];
@@ -78,14 +79,13 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
 
         return (
             <div style={{ marginBlock: 20 }}>
-                <h5 style={{color:'white'}}>{t("addPeople.PeopleAddedToMeet")}</h5>
-
-                {absentParticipants?.length > 0 ? (
+                <Collapse header={`${t("addPeople.PeopleAddedToMeet")} (${absentParticipants && absentParticipants?.length})`} defaultOpen={true}>
+                  {absentParticipants?.length > 0 ? (
                     absentParticipants.map((user) => (
                         <div
                             key={user.id}
                             style={{
-                                padding: "8px",
+                                paddingBlock: "8px",
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "space-between",
@@ -120,6 +120,9 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
                 ) : (
                     <p>همه افراد حاضرند ✅</p>
                 )}
+                </Collapse>
+
+              
             </div>
         );
     }
