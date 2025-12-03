@@ -18,7 +18,7 @@ export class WebAuthService {
 
     private authPopup: Window | null = null;
     private messageListener: ((event: MessageEvent) => void) | null = null;
-    private popupCheckInterval: NodeJS.Timeout | null = null;
+    private popupCheckInterval: number | null = null;
 
     /**
      * Get the web auth URLs for login and signup
@@ -91,7 +91,7 @@ export class WebAuthService {
         data: WebAuthMessage,
         resolve: (value: WebAuthParams) => void,
         reject: (reason: Error) => void,
-        timeout: NodeJS.Timeout
+        timeout: number
     ) {
         clearTimeout(timeout);
         this.cleanup();
@@ -109,7 +109,7 @@ export class WebAuthService {
     /**
      * Handle auth error message
      */
-    private handleAuthError(data: WebAuthMessage, reject: (reason: Error) => void, timeout: NodeJS.Timeout) {
+    private handleAuthError(data: WebAuthMessage, reject: (reason: Error) => void, timeout: number) {
         clearTimeout(timeout);
         this.cleanup();
         reject(new Error(data.error || "Authentication failed"));
@@ -121,8 +121,8 @@ export class WebAuthService {
     private setupPopupClosedChecker(
         popup: Window,
         reject: (reason: Error) => void,
-        timeout: NodeJS.Timeout
-    ): NodeJS.Timeout {
+        timeout: number
+    ): number {
         return setInterval(() => {
             if (popup.closed) {
                 clearInterval(this.popupCheckInterval!);
