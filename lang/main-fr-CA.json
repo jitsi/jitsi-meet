@@ -82,7 +82,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Ajouter un lien de réunion",
-        "confirmAddLink": "Voulez-vous ajouter un lien Jitsi Meet à cet événement?",
+        "confirmAddLink": "Voulez-vous ajouter un lien Medistack Meet à cet événement?",
         "error": {
             "appConfiguration": "L'intégration de l'agenda n'est pas correctement configurée.",
             "generic": "Une erreur s'est produite. Veuillez vérifier vos paramètres d'agenda ou essayer de rafraîchir l'agenda.",
@@ -592,7 +592,7 @@
         "answer": "Réponse",
         "audioCallTitle": "Appel entrant",
         "decline": "Rejeter",
-        "productLabel": "via Jitsi Meet",
+        "productLabel": "via Medistack Meet",
         "videoCallTitle": "Appel vidéo entrant"
     },
     "info": {
@@ -862,7 +862,7 @@
         "noiseSuppressionDesktopAudioDescription": "La suppression de bruit ne peut pas être activée en même temps que la partage audio du système, veuillez le désactiver et réessayer.",
         "noiseSuppressionFailedTitle": "Échec du démarrage de la suppression de bruit",
         "noiseSuppressionStereoDescription": "La suppression de bruit d'une source stéréo n'est pas encore supportée.",
-        "oldElectronClientDescription1": "Vous semblez utiliser une ancienne version du client Jitsi Meet qui présente des failles de sécurité connues. Veuillez vous assurer de mettre à jour vers notre ",
+        "oldElectronClientDescription1": "Vous semblez utiliser une ancienne version du client Medistack Meet qui présente des failles de sécurité connues. Veuillez vous assurer de mettre à jour vers notre ",
         "oldElectronClientDescription2": "dernière build",
         "oldElectronClientDescription3": " rapidement !",
         "openChat": "Ouvrir le chat",
@@ -1643,7 +1643,7 @@
         "go": "Aller",
         "goSmall": "Aller",
         "headerSubtitle": "Réunions sécurisées et de haute qualité",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Medistack Meet",
         "info": "Ret. arr.",
         "jitsiOnMobile": "Jitsi sur mobile – télécharger notre application et démarrez des réunions de n'import où",
         "join": "CRÉER / REJOINDRE",

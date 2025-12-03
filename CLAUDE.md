@@ -32,7 +32,7 @@ TypeScript configuration is split between web and native platforms with separate
 ## Architecture Overview
 
 ### Multi-Platform Structure
-Jitsi Meet supports both web and React Native platforms with platform-specific file extensions and directories:
+Medistack Meet supports both web and React Native platforms with platform-specific file extensions and directories:
 - `.web.ts/.web.tsx` - Web-specific implementations
 - `.native.ts/.native.tsx` - React Native-specific implementations
 - `.any.ts/.any.tsx` - Shared cross-platform code

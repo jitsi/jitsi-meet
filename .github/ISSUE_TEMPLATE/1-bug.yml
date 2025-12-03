@@ -50,4 +50,4 @@ body:
   - type: textarea
     attributes:
       label: More details?
-      description: Please provide more details in case they apply (such as the Jitsi Meet version you are running, if you are hosting your own server).
+      description: Please provide more details in case they apply (such as the Medistack Meet version you are running, if you are hosting your own server).

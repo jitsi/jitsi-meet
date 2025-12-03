@@ -593,7 +593,7 @@
         "answer": "Risponde",
         "audioCallTitle": "Mutida in intrada",
         "decline": "Iscarta",
-        "productLabel": "dae Jitsi Meet",
+        "productLabel": "dae Medistack Meet",
         "videoCallTitle": "Mutida de vìdeu in intrada"
     },
     "info": {
@@ -862,7 +862,7 @@
         "noiseSuppressionDesktopAudioDescription": "Impossìbile ativare sa limpiadura additzionale de abbolotu in su mentras chi ses cumpartzende s'àudio de iscrivania. Disativa·dda e torra a proare.",
         "noiseSuppressionFailedTitle": "Faddina in s'ativatzione de sa limpiadura additzionale de abbolotu",
         "noiseSuppressionStereoDescription": "Sa limpiadura additzionale de abbolotu no est cumpatìbile cun s'àudio stereo.",
-        "oldElectronClientDescription1": "Paret chi ses impreende una versione betza de su cliente de Jitsi Meet, chi tenet vulnerabilidades de seguresa connotas. Assegura·ti chi atualizas a ",
+        "oldElectronClientDescription1": "Paret chi ses impreende una versione betza de su cliente de Medistack Meet, chi tenet vulnerabilidades de seguresa connotas. Assegura·ti chi atualizas a ",
         "oldElectronClientDescription2": "s'ùrtima versione",
         "oldElectronClientDescription3": " immoe.",
         "openChat": "",
@@ -1643,7 +1643,7 @@
         "go": "BAE",
         "goSmall": "BAE",
         "headerSubtitle": "Riunione seguras e de arta calidade",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Medistack Meet",
         "info": "Informatzione pro sa mutida",
         "jitsiOnMobile": "Jitsi pro mòbiles - iscàrriga is aplicatziones nostras e avia una riunione dae ònnia logu",
         "join": "CREA / INTRA",

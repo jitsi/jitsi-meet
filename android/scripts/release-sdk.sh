@@ -19,7 +19,7 @@ fi
 
 export MVN_REPO=$THE_MVN_REPO
 
-echo "Releasing Jitsi Meet SDK ${SDK_VERSION}"
+echo "Releasing Medistack Meet SDK ${SDK_VERSION}"
 echo "Using ${MVN_REPO} as the Maven repo"
 
  if [[ $MVN_HTTP == 0 ]]; then
@@ -30,8 +30,8 @@ echo "Using ${MVN_REPO} as the Maven repo"
     fi
 fi
 
-# Now build and publish the Jitsi Meet SDK and its dependencies
-echo "Building and publishing the Jitsi Meet SDK"
+# Now build and publish the Medistack Meet SDK and its dependencies
+echo "Building and publishing the Medistack Meet SDK"
 pushd ${THIS_DIR}/../
 ./gradlew clean
 ./gradlew assembleRelease
@@ -42,7 +42,7 @@ popd
 if [[ $MVN_HTTP == 0 ]]; then
     pushd ${MVN_REPO_PATH}
     git add -A .
-    git commit -m "Jitsi Meet SDK + dependencies: ${SDK_VERSION}"
+    git commit -m "Medistack Meet SDK + dependencies: ${SDK_VERSION}"
     popd
 fi
 

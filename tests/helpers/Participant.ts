@@ -60,7 +60,7 @@ export class Participant {
     private _iFrameApi: boolean = false;
 
     /**
-     * Whether the current frame is the main frame. This could coincide with the Jitsi Meet frame (when it's loaded
+     * Whether the current frame is the main frame. This could coincide with the Medistack Meet frame (when it's loaded
      * directly), or not (when it's loaded in an iframe).
      */
     private _inMainFrame: boolean = true;
@@ -638,7 +638,7 @@ export class Participant {
 
 
     /**
-     * Switches to the main frame context (outside the iFrame; where the Jitsi Meet iFrame API is available).
+     * Switches to the main frame context (outside the iFrame; where the Medistack Meet iFrame API is available).
      *
      * If this Participant was initialized with iFrameApi=false this is a no-op.
      */
@@ -652,7 +652,7 @@ export class Participant {
     }
 
     /**
-     * Switches to the iFrame context (inside the iFrame; where the Jitsi Meet application runs).
+     * Switches to the iFrame context (inside the iFrame; where the Medistack Meet application runs).
      *
      * If this Participant was initialized with iFrameApi=false this is a no-op.
      */

@@ -592,7 +592,7 @@
         "answer": "Вдигни",
         "audioCallTitle": "Входящ разговор",
         "decline": "Отхвърляне",
-        "productLabel": "от Jitsi Meet",
+        "productLabel": "от Medistack Meet",
         "videoCallTitle": "Входящ видео разговор"
     },
     "info": {
@@ -862,7 +862,7 @@
         "noiseSuppressionDesktopAudioDescription": "Допълнителното заглушаване на шум не може да бъде включено докато споделяте аудио от настолния компютър, моля изключете го и опитайте отново.",
         "noiseSuppressionFailedTitle": "Неуспешно стартиране на допълнителното заглушаване на шум",
         "noiseSuppressionStereoDescription": "Допълнителното заглушаване на шум в момента не се поддържа със стерео аудио.",
-        "oldElectronClientDescription1": "Изглежда използвате стара версия на Jitsi Meet клиента, която има известни уязвимости в сигурността. Моля, уверете се, че актуализирате до нашата ",
+        "oldElectronClientDescription1": "Изглежда използвате стара версия на Medistack Meet клиента, която има известни уязвимости в сигурността. Моля, уверете се, че актуализирате до нашата ",
         "oldElectronClientDescription2": "най-нова версия",
         "oldElectronClientDescription3": " сега!",
         "openChat": "Отвори съобщенията",
@@ -1643,7 +1643,7 @@
         "go": "НАПРЕД",
         "goSmall": "НАПРЕД",
         "headerSubtitle": "Сигурни и висококачествени срещи",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Medistack Meet",
         "info": "Информация",
         "jitsiOnMobile": "Jitsi на мобилно – свалете приложенията ни и започнете среща отвсякъде",
         "join": "Създай / Влез",

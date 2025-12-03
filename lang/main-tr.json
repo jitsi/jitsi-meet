@@ -534,7 +534,7 @@
         "answer": "Cevapla",
         "audioCallTitle": "Gelen sesli arama",
         "decline": "Reddet",
-        "productLabel": "Jitsi Meet'den",
+        "productLabel": "Medistack Meet'den",
         "videoCallTitle": "Gelen görüntülü arama"
     },
     "info": {
@@ -793,7 +793,7 @@
         "noiseSuppressionDesktopAudioDescription": "Masaüstü sesi paylaşılırken gürültü bastırma etkinleştirilemez, lütfen devre dışı bırakın ve tekrar deneyin.",
         "noiseSuppressionFailedTitle": "Gürültü bastırma başlatılamadı",
         "noiseSuppressionStereoDescription": "Stereo ses gürültü bastırma şu anda desteklenmemektedir.",
-        "oldElectronClientDescription1": "Güvenlik açıkları bilinen Jitsi Meet istemcisinin eski bir sürümünü kullanıyor görünüyorsunuz. Lütfen güncellediğinizden emin olun.",
+        "oldElectronClientDescription1": "Güvenlik açıkları bilinen Medistack Meet istemcisinin eski bir sürümünü kullanıyor görünüyorsunuz. Lütfen güncellediğinizden emin olun.",
         "oldElectronClientDescription2": "Son yapı",
         "oldElectronClientDescription3": " Şimdi!",
         "participantWantsToJoin": "toplantıya katılmak istiyor",
@@ -1530,7 +1530,7 @@
         "go": "GİT",
         "goSmall": "GİT",
         "headerSubtitle": "Güvenli ve yüksek kaliteli toplantılar",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Medistack Meet",
         "info": "Bilgi",
         "jitsiOnMobile": "Mobil'de Jitsi – uygulamalarımızı indirin ve her yerden bir toplantı başlatın",
         "join": "KATIL",

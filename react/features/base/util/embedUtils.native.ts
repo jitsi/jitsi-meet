@@ -1,7 +1,7 @@
 import { getBundleId } from 'react-native-device-info';
 
 /**
- * BUndle ids for the Jitsi Meet apps.
+ * BUndle ids for the Medistack Meet apps.
  */
 const JITSI_MEET_APPS = [
 
@@ -19,7 +19,7 @@ const JITSI_MEET_APPS = [
  * Checks whether we are loaded in iframe. In the mobile case we treat SDK
  * consumers as the web treats iframes.
  *
- * @returns {boolean} Whether the current app is a Jitsi Meet app.
+ * @returns {boolean} Whether the current app is a Medistack Meet app.
  */
 export function isEmbedded(): boolean {
     return !JITSI_MEET_APPS.includes(getBundleId());

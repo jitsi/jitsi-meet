@@ -535,7 +535,7 @@
         "answer": "Uèi",
         "audioCallTitle": "Sonada entranta",
         "decline": "Regetar",
-        "productLabel": "de Jitsi Meet estant",
+        "productLabel": "de Medistack Meet estant",
         "videoCallTitle": "Sonada vidèo entranta"
     },
     "info": {
@@ -799,7 +799,7 @@
         "noiseSuppressionDesktopAudioDescription": "La supression del bruch se pòt pas activat a l'encòp que lo partiment de l'àudio del sistèma, volgatz lo desactivar e tornar ensajar.",
         "noiseSuppressionFailedTitle": "Fracàs de l'aviada de la supression del bruch",
         "noiseSuppressionStereoDescription": "La supression del bruch d'una font estereo es pas encara suportada.",
-        "oldElectronClientDescription1": "Sembla qu’utilizatz una version anciana del client Jitsi Meet qu’es conegut per conténer de problèmas de seguretat. Mercés de vos assegurar de metre a jorn ",
+        "oldElectronClientDescription1": "Sembla qu’utilizatz una version anciana del client Medistack Meet qu’es conegut per conténer de problèmas de seguretat. Mercés de vos assegurar de metre a jorn ",
         "oldElectronClientDescription2": "darrièra compilacion",
         "oldElectronClientDescription3": " ara !",
         "participantWantsToJoin": "Vòl rejónher la reünion",
@@ -1540,7 +1540,7 @@
         "go": "Crear",
         "goSmall": "Crear",
         "headerSubtitle": "Reünions securizadas e de aauta qualitat",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Medistack Meet",
         "info": "Infor",
         "jitsiOnMobile": "Jitsi sus mobil – telecargatz nòstra aplicacion e començatz de reünions de pertot",
         "join": "CREAR / REJÓNHER",
