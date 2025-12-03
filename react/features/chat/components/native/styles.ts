@@ -137,7 +137,7 @@ export default {
      * A special padding to avoid issues on some devices (such as Android devices with custom suggestions bar).
      */
     extraBarPadding: {
-        paddingBottom: 30
+        paddingBottom: BaseTheme.spacing[8]
     },
 
     inputBar: {
