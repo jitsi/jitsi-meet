@@ -10,9 +10,14 @@ import { useLoginModal } from "./useLoginModal";
 vi.mock("../../../services/auth.service");
 vi.mock("../../../../connection/options8x8");
 vi.mock("../../../LocalStorageManager");
-vi.mock("react-redux", () => ({
-    useDispatch: vi.fn(),
-}));
+vi.mock('react-redux', async (importOriginal) => {
+    const actual = await importOriginal<typeof import('react-redux')>();
+    return {
+        ...actual,
+        useDispatch: vi.fn(),
+        useSelector: vi.fn(),
+    };
+});
 vi.mock("react-hook-form", () => ({
     useForm: () => ({
         register: vi.fn(),
