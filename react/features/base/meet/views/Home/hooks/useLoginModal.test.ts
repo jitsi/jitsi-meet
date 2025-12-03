@@ -61,7 +61,6 @@ describe("useLoginModal", () => {
             const mockCredentials = {
                 newToken: "new-token",
                 user: { id: 1 },
-                token: "token",
                 mnemonic: "mnemonic",
             };
             const mockMeetToken = {
@@ -86,7 +85,6 @@ describe("useLoginModal", () => {
             });
 
             expect(mockSaveCredentials).toHaveBeenCalledWith(
-                mockCredentials.token,
                 mockCredentials.newToken,
                 mockCredentials.mnemonic,
                 mockCredentials.user
