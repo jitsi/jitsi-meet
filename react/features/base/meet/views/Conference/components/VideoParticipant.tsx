@@ -49,7 +49,7 @@ const VideoParticipant = ({
                     )}
                     key={`video-${id}`}
                     // Set to false due to decoding issues and video lag
-                    encodeVideo={true}
+                    encodeVideo={false}
                 />
             ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gray-800">
