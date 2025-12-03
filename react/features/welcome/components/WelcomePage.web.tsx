@@ -131,7 +131,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         this._setRoomInputRef = this._setRoomInputRef.bind(this);
         this._setAdditionalToolbarContentRef
             = this._setAdditionalToolbarContentRef.bind(this);
-        this._renderFooter = this._renderFooter.bind(this);
+        // this._renderFooter = this._renderFooter.bind(this);
     }
 
     /**
@@ -298,7 +298,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                             ref = { this._setAdditionalContentRef } />
                         : null}
                 </div>
-                {DISPLAY_WELCOME_FOOTER && this._renderFooter()}
+                {/* {DISPLAY_WELCOME_FOOTER && this._renderFooter()} */}
             </div>
 
         );
