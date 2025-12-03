@@ -199,7 +199,7 @@ const DeepLinkingMobilePage: React.FC<WithTranslation> = ({ t }) => {
                             <Button
                                 fullWidth = { true }
                                 label = { t(`${_TNS}.joinInBrowser`) } />
-                            <div className = { styles.linkLabel }>{ t(`${_TNS}.joinInBrowser`) }</div>
+                            {/* <div className = { styles.linkLabel }>{ t(`${_TNS}.joinInBrowser`) }</div> */}
                         </a>
                     </div>
                 ) : (
