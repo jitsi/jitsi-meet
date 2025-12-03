@@ -50,3 +50,36 @@ const localStorageMock = (() => {
 Object.defineProperty(window, "localStorage", {
     value: localStorageMock,
 });
+
+globalThis.interfaceConfig = {};
+globalThis.config = {};
+globalThis.JitsiMeetJS = {
+    constants: {
+        trackStreamingStatus: {},
+        recording: {
+            status: vi.fn()
+        }
+    },
+    util: { browser: {
+        isChrome: vi.fn(),
+        isChromiumBased: vi.fn(),
+        isElectron: vi.fn(),
+        isFirefox: vi.fn(),
+        isSafari: vi.fn(),
+        isWebKitBased: vi.fn(),
+        isSupportedAndroidBrowser: vi.fn(),
+        isSupportedIOSBrowser: vi.fn()
+    } },
+    errors: {
+        conference: {},
+        connection: {},
+    },
+    events: {
+        conference: {},
+        connection: {},
+    }
+};
+
+globalThis.URL.createObjectURL = vi.fn((blob) => {
+  return `blob:dummy-${Date.now()}`
+});

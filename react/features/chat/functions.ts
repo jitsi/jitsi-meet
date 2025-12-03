@@ -109,7 +109,7 @@ export function getUnreadCount(state: IReduxState) {
 
     if (navigator.product === 'ReactNative') {
         // React native stores the messages in a reversed order.
-        lastReadIndex = messages.indexOf(<IMessage>lastReadMessage);
+        lastReadIndex = messages.indexOf(lastReadMessage as IMessage);
 
         for (let i = 0; i < lastReadIndex; i++) {
             if (messages[i].isReaction) {
@@ -120,7 +120,7 @@ export function getUnreadCount(state: IReduxState) {
         return lastReadIndex - reactionMessages;
     }
 
-    lastReadIndex = messages.lastIndexOf(<IMessage>lastReadMessage);
+    lastReadIndex = messages.lastIndexOf(lastReadMessage as IMessage);
 
     for (let i = lastReadIndex + 1; i < messagesCount; i++) {
         if (messages[i].isReaction) {
