@@ -16,31 +16,22 @@ jobs:
       deployments: write
       pull-requests: write
     name: Publish to Cloudflare Pages
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: '16'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@internxt'
+          node-version: '24.x'
+          cache: yarn
 
-      - name: Configure NPM
-        run: |
-          echo "registry=https://registry.yarnpkg.com/" > .npmrc
-          echo "@internxt:registry=https://npm.pkg.github.com" >> .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_ACCESS_TOKEN }}" >> .npmrc
-          echo "always-auth=true" >> .npmrc
-          npm config set legacy-peer-deps true
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - name: Add .npmrc
+        run: cp .npmrc.template .npmrc
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        run: yarn
 
       - name: Configure environment
         run: |
@@ -64,6 +55,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
           directory: .
+
       - name: Comment Preview Link on PR
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v6
