@@ -6,8 +6,8 @@ import { URI_PROTOCOL_PATTERN } from '../base/util/uri';
 import { isVpaasMeeting } from '../jaas/functions';
 
 import DeepLinkingDesktopPage from './components/DeepLinkingDesktopPage';
-import DeepLinkingMobilePage from './components/DeepLinkingMobilePage';
-import NoMobileApp from './components/NoMobileApp';
+// import DeepLinkingMobilePage from './components/DeepLinkingMobilePage';
+// import NoMobileApp from './components/NoMobileApp';
 import { _openDesktopApp } from './openDesktopApp.web';
 
 /**
@@ -70,13 +70,14 @@ export function getDeepLinkingPage(state: IReduxState) {
     }
 
     if (isMobileBrowser()) { // mobile
-        const mobileAppPromo
-            = typeof interfaceConfig === 'object'
-                && interfaceConfig.MOBILE_APP_PROMO;
+        // const mobileAppPromo
+        //     = typeof interfaceConfig === 'object'
+        //         && interfaceConfig.MOBILE_APP_PROMO;
 
-        return Promise.resolve(
-            typeof mobileAppPromo === 'undefined' || Boolean(mobileAppPromo)
-                ? DeepLinkingMobilePage : NoMobileApp);
+        // return Promise.resolve(
+        //     typeof mobileAppPromo === 'undefined' || Boolean(mobileAppPromo)
+        //         ? DeepLinkingMobilePage : NoMobileApp);
+        return Promise.resolve();
     }
 
     return _openDesktopApp(state).then(
