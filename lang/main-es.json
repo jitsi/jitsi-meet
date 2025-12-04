@@ -1666,5 +1666,37 @@
         "accessibilityLabel": {
             "heading": "Pizarra"
         }
+    },
+    "upgradePlanDialog": {
+      "upgrade": "Mejorar",
+      "cancel": "Cancelar",
+      "soonBadge": "Soon",
+      "default": {
+        "title": "Mejora tu plan",
+        "description": "Tu plan actual no permite usar esta función. Mejora ahora para desbloquear todos los beneficios de Internxt."
+      },
+      "meet": {
+        "title": "Desbloquear Meet",
+        "description": "Mejora tu plan ahora para organizar y unirte a videollamadas totalmente cifradas — privadas, seguras y sin límites."
+      },
+      "mail": {
+        "title": "Desbloquear Mail",
+        "description": "Mejora tu plan ahora para conseguir tu servicio de email privado con cifrado de extremo a extremo."
+      },
+      "vpn": {
+        "title": "Desbloquear VPN",
+        "description": "Mejora tu plan ahora para proteger tu tráfico con navegación privada y cifrada."
+      },
+      "antivirus": {
+        "title": "Desbloquear Antivirus",
+        "description": "Mejora tu plan ahora para analizar, detectar y bloquear malware en tiempo real."
+      },
+      "cleaner": {
+        "title": "Desbloquear Cleaner",
+        "description": "Mejora tu plan ahora para mantener tus archivos optimizados y liberar espacio."
+      }
+    },
+    "errors": {
+        "downloadingDesktopApp": "Algo ha ido mal al descargar la aplicación de escritorio"
     }
 }

@@ -1877,5 +1877,37 @@
             "heading": "Whiteboard"
         },
         "screenTitle": "Whiteboard"
+    },
+    "upgradePlanDialog": {
+      "upgrade": "Upgrade",
+      "cancel": "Cancel",
+      "soonBadge": "Soon",
+      "default": {
+        "title": "Upgrade now",
+        "description": "Your current plan doesn't allow you this feature. Upgrade now to unlock all the benefits of Internxt."
+      },
+      "meet": {
+        "title": "Unlock Meet",
+        "description": "Upgrade now to host and join fully encrypted video calls — private, secure, and unlimited."
+      },
+      "mail": {
+        "title": "Unlock Mail",
+        "description": "Unlock your private email service with end-to-end encryption."
+      },
+      "vpn": {
+        "title": "Unlock VPN",
+        "description": "Upgrade to protect your traffic with private, encrypted browsing."
+      },
+      "antivirus": {
+        "title": "Unlock Antivirus",
+        "description": "Upgrade to scan, detect, and block malware in real time."
+      },
+      "cleaner": {
+        "title": "Unlock Cleaner",
+        "description": "Upgrade now to keep your files optimized and free up space."
+      }
+    },
+    "errors": {
+        "downloadingDesktopApp": "Something went wrong while downloading the desktop app"
     }
 }
