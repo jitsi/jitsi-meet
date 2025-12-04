@@ -67,7 +67,7 @@ jobs:
             const deploymentUrl = '${{ steps.cloudflare.outputs.url }}';
             const deploymentId = '${{ steps.cloudflare.outputs.id }}';
             const logsUrl = `https://dash.cloudflare.com/?to=/157168a1684d7105399ec2339cf1281b/pages/view/meet-web/${deploymentId}`;
-            const latestCommitFull = '${{ github.sha }}';
+            const latestCommitFull = '${{ github.event.pull_request.head.sha }}';
             const latestCommit = latestCommitFull.slice(0, 7);
             const updatedAt = new Date().toLocaleString("es-ES", { timeZone: "Europe/Madrid" });
             const projectName = 'meet-web';
@@ -75,7 +75,7 @@ jobs:
             const tableBody = 
             `## Deploying ${projectName} with &nbsp;<a href="https://pages.dev">` +
             `<img alt="Cloudflare Pages" src="https://user-images.githubusercontent.com/23264/106598434-9e719e00-654f-11eb-9e59-6167043cfa01.png" width="16"></a> &nbsp;` +
-            `Cloudflare Pages` +
+            `Cloudflare Pages\n` +
             `<table>
               <tr>
                 <td><strong>Latest commit:</strong></td>
@@ -107,20 +107,19 @@ jobs:
             // Try to find our comment
             const existingComment = comments.find(c => c.body.includes(commentIdentifier));
 
+            // If exists → delete it
             if (existingComment) {
-              // Edit the existing comment
-              await github.rest.issues.updateComment({
+              await github.rest.issues.deleteComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                comment_id: existingComment.id,
-                body: `${commentIdentifier}\n${tableBody}`
-              });
-            } else {
-              // Create a new comment
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: `${commentIdentifier}\n${tableBody}`
+                comment_id: existingComment.id
               });
             }
+
+            // Always create a fresh comment
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `${commentIdentifier}\n${tableBody}`
+            });
