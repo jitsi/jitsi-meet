@@ -17,8 +17,8 @@ const PERSISTENT_ISSUE_THRESHOLD = 3;
 // State tracking
 let isDataChannelClosed = false;
 let dataChannelCloseCount = 0;
-let resetCounterTimer: NodeJS.Timeout | null = null;
-let reconnectionTimeoutTimer: NodeJS.Timeout | null = null;
+let resetCounterTimer: number | null = null;
+let reconnectionTimeoutTimer: number | null = null;
 
 /**
  * Clears all active timers.

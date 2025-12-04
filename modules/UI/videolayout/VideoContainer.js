@@ -693,16 +693,13 @@ export class VideoContainer extends LargeContainer {
         }
 
         ReactDOM.render(
-            <LargeVideoBackground
-                hidden={this._hideBackground || this._isHidden}
-                mirror={
-                    this.stream
-                    && this.stream.isLocal()
-                    && this.localFlipX
-                }
-                orientationFit={this._backgroundOrientation}
-                videoElement={this.video}
-                videoTrack={this.stream} />,
+            React.createElement(LargeVideoBackground, {
+                hidden: this._hideBackground || this._isHidden,
+                mirror: this.stream && this.stream.isLocal() && this.localFlipX,
+                orientationFit: this._backgroundOrientation,
+                videoElement: this.video,
+                videoTrack: this.stream
+            }),
             document.getElementById('largeVideoBackgroundContainer')
         );
     }

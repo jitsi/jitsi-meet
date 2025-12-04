@@ -531,12 +531,11 @@ export default class LargeVideoManager {
      */
     updateAvatar() {
         ReactDOM.render(
-            <Provider store={APP.store}>
-                <Avatar
-                    id="dominantSpeakerAvatar"
-                    participantId={this.id}
-                    size={200} />
-            </Provider>,
+            React.createElement(
+                Provider,
+                { store: APP.store },
+                React.createElement(Avatar, { id: "dominantSpeakerAvatar", participantId: this.id, size: 200 })
+            ),
             this._dominantSpeakerAvatarContainer
         );
     }
@@ -572,14 +571,20 @@ export default class LargeVideoManager {
 
         if (presenceLabelContainer) {
             ReactDOM.render(
-                <Provider store={APP.store}>
-                    <I18nextProvider i18n={i18next}>
-                        <PresenceLabel
-                            participantID={id}
-                            className='presence-label' />
-                    </I18nextProvider>
-                </Provider>,
-                presenceLabelContainer);
+                React.createElement(
+                    Provider,
+                    { store: APP.store },
+                    React.createElement(
+                        I18nextProvider,
+                        { i18n: i18next },
+                        React.createElement(PresenceLabel, {
+                            participantID: id,
+                            className: "presence-label"
+                        })
+                    )
+                ),
+                presenceLabelContainer
+            );
         }
     }
 

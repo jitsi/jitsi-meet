@@ -25,8 +25,7 @@ Our development standards include:
 ### Prerequisites
 
 - Node.js 20.x or higher
-- npm 9.x or higher
-- Access to Internxt GitHub packages (for private dependencies)
+- yarn 1.x or higher
 
 ### Installation
 
@@ -41,37 +40,35 @@ Our development standards include:
    cp .npmrc.template .npmrc
    ```
 
-3. Replace `TOKEN` in the `.npmrc` file with your own [GitHub Personal Access Token](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token) with `read:packages` permission **ONLY**.
-
-4. Install dependencies:
+3. Install dependencies:
    ```bash
-   npm install
+   yarn install
    ```
 
-5. Create an environment file from the template:
+4. Create an environment file from the template:
    ```bash
    cp .env.template .env
    ```
 
-6. Configure the required environment variables in `.env` file.
+5. Configure the required environment variables in `.env` file.
 
 ### Scripts
 
-#### `npm start` or `make dev`
+#### `yarn start` or `make dev`
 Runs the app in development mode using webpack-dev-server.
 Open [http://127.0.0.1:8080/](http://127.0.0.1:8080/) to view it in the browser.
 The page will reload if you make edits.
 
-#### `npm test`
+#### `yarn test`
 Launches the Vitest test runner in interactive watch mode.
 
-#### `npm test:coverage`
+#### `yarn test:coverage`
 Runs tests with coverage reports generated in the `coverage` directory.
 
-#### `npm run lint`
+#### `yarn lint`
 Runs ESLint to check code quality and style issues across JavaScript and TypeScript files.
 
-#### `npm run lint-fix`
+#### `yar lint-fix`
 Automatically fixes linting issues where possible.
 
 #### `make`

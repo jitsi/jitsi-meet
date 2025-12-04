@@ -6,7 +6,7 @@ import { initializeAuth, loginSuccess, logout, refreshTokenSuccess } from "../ac
 
 vi.mock("../../../../LocalStorageManager", () => {
     const mockInstance = {
-        getToken: vi.fn(),
+        getNewToken: vi.fn(),
     };
 
     return {
@@ -31,7 +31,7 @@ describe("Authentication Actions", () => {
     describe("initializeAuth", () => {
         it("When user has token, then it should dispatch INITIALIZE_AUTH with isAuthenticated=true", () => {
             const mockToken = "valid-token-123";
-            (LocalStorageManager.instance.getToken as any).mockReturnValue(mockToken);
+            (LocalStorageManager.instance.getNewToken as any).mockReturnValue(mockToken);
 
             initializeAuth()(dispatchMock, getStateMock, extraArg);
 
@@ -45,7 +45,7 @@ describe("Authentication Actions", () => {
         });
 
         it("When user has no token, then it should dispatch INITIALIZE_AUTH with isAuthenticated=false", () => {
-            (LocalStorageManager.instance.getToken as any).mockReturnValue(null);
+            (LocalStorageManager.instance.getNewToken as any).mockReturnValue(null);
 
             initializeAuth()(dispatchMock, getStateMock, extraArg);
 
@@ -59,7 +59,7 @@ describe("Authentication Actions", () => {
         });
 
         it("When token is empty string, then it should be treated as not authenticated", () => {
-            (LocalStorageManager.instance.getToken as any).mockReturnValue("");
+            (LocalStorageManager.instance.getNewToken as any).mockReturnValue("");
 
             initializeAuth()(dispatchMock, getStateMock, extraArg);
 
@@ -76,7 +76,6 @@ describe("Authentication Actions", () => {
     describe("loginSuccess", () => {
         it("When called with credentials, then it should return the correct action", () => {
             const mockCredentials = {
-                token: "old-token",
                 newToken: "new-token-123",
                 mnemonic: "mock-mnemonic",
                 user: { id: "user123", name: "Test User" } as unknown as UserSettings,
