@@ -22,8 +22,8 @@ const VideoEncodingToggle = () => {
     };
 
     return (
-        <div className="flex flex-col items-center p-6 bg-gray-100 rounded-lg shadow-md max-w-md mx-auto">
-            <h2 className="text-xl font-bold mb-4 text-white">Video Encoding</h2>
+        <div className="flex flex-col items-center p-6 bg-primary/20 dark:bg-gray-5 rounded-lg shadow-md max-w-md mx-auto">
+            <h2 className="text-xl font-bold mb-4 dark:text-gray-100 text-gray-5">Video Encoding</h2>
 
             <div className="bg-white p-4 rounded-lg shadow-sm w-full mb-4">
                 <div className="flex items-center justify-between">
