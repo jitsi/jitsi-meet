@@ -5,6 +5,7 @@ import { ENDPOINT_MESSAGE_RECEIVED, NON_PARTICIPANT_MESSAGE_RECEIVED } from '../
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
+import { TRANSCRIBER_ID } from '../base/participants/constants';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { showErrorNotification } from '../notifications/actions';
 import { TRANSCRIBER_JOINED } from '../transcribing/actionTypes';
@@ -118,7 +119,18 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _endpointMessageReceived(store: IStore, next: Function, action: AnyAction) {
-    const { data: json } = action;
+    let json: any = {};
+
+    if (action.type === ENDPOINT_MESSAGE_RECEIVED) {
+        if (!action.participant.isHidden()) {
+            return next(action);
+        }
+        json = action.data;
+    } else if (action.type === NON_PARTICIPANT_MESSAGE_RECEIVED && action.id === TRANSCRIBER_ID) {
+        json = action.json;
+    } else {
+        return next(action);
+    }
 
     if (![ JSON_TYPE_TRANSCRIPTION_RESULT, JSON_TYPE_TRANSLATION_RESULT ].includes(json?.type)) {
         return next(action);

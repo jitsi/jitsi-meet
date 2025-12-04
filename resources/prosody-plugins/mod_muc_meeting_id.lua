@@ -182,7 +182,10 @@ local function filterTranscriptionResult(event)
     local occupant_jid = stanza.attr.from;
     local occupant = room:get_occupant_by_real_jid(occupant_jid);
     if not occupant then
-        module:log("error", "Occupant sending msg %s was not found in room %s", occupant_jid, room.jid)
+        -- skip logs for messages coming from s2s
+        if event.origin.type == 'c2s' then
+            module:log("error", "Occupant sending msg %s was not found in room %s", occupant_jid, room.jid);
+        end
         return;
     end
 

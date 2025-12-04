@@ -9,7 +9,7 @@ import {
     View,
     ViewStyle
 } from 'react-native';
-import { EdgeInsets, withSafeAreaInsets } from 'react-native-safe-area-context';
+import { Edge, EdgeInsets, SafeAreaView, withSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect, useDispatch } from 'react-redux';
 
 import { appNavigate } from '../../../app/actions.native';
@@ -448,6 +448,7 @@ class Conference extends AbstractConference<IProps, State> {
                 </View>
 
                 <SafeAreaView
+                    edges = { [ 'left', 'right', 'top' ] }
                     pointerEvents = 'box-none'
                     style = {
                         (_toolboxVisible
@@ -456,6 +457,7 @@ class Conference extends AbstractConference<IProps, State> {
                     <TitleBar _createOnPress = { this._createOnPress } />
                 </SafeAreaView>
                 <SafeAreaView
+                    edges = { [ 'bottom', 'left', 'right', !_toolboxVisible && 'top' ].filter(Boolean) as Edge[] }
                     pointerEvents = 'box-none'
                     style = {
                         (_toolboxVisible
