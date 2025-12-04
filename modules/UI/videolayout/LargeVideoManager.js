@@ -3,7 +3,7 @@
 import Logger from '@jitsi/logger';
 import $ from 'jquery';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from "react-dom/client";
 import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 
@@ -151,8 +151,17 @@ export default class LargeVideoManager {
 
         this.videoContainer.addResizeListener(this._onVideoResolutionUpdate);
 
-        this._dominantSpeakerAvatarContainer
-            = document.getElementById('dominantSpeakerAvatarContainer');
+        const dominantSpeakerAvatarContainer = document.getElementById('dominantSpeakerAvatarContainer');
+        this._dominantSpeakerAvatarContainerRoot = null;
+        if (dominantSpeakerAvatarContainer) {
+            this._dominantSpeakerAvatarContainerRoot = createRoot(dominantSpeakerAvatarContainer);
+        }
+
+        const presenceLabelContainer = document.getElementById('remotePresenceMessage');
+        this._presenceLabelContainerRoot = null;
+        if (presenceLabelContainer) {
+            this._presenceLabelContainerRoot = createRoot(presenceLabelContainer);
+        }
     }
 
     /**
@@ -176,8 +185,9 @@ export default class LargeVideoManager {
 
         this.removePresenceLabel();
 
-        if (this._dominantSpeakerAvatarContainer) {
-            ReactDOM.unmountComponentAtNode(this._dominantSpeakerAvatarContainer);
+
+        if (this._dominantSpeakerAvatarContainerRoot) {
+            this._dominantSpeakerAvatarContainerRoot.unmount();
         }
 
         if (this.container) {
@@ -530,13 +540,23 @@ export default class LargeVideoManager {
      * Updates the src of the dominant speaker avatar
      */
     updateAvatar() {
-        ReactDOM.render(
+        const dominantSpeakerAvatarContainer = document.getElementById('dominantSpeakerAvatarContainer');
+        if (!this._dominantSpeakerAvatarContainerRoot) {
+            this._dominantSpeakerAvatarContainerRoot = createRoot(dominantSpeakerAvatarContainer);
+        }
+
+        if (!this._dominantSpeakerAvatarContainerRoot) return;
+
+        this._dominantSpeakerAvatarContainerRoot.render(
             React.createElement(
                 Provider,
                 { store: APP.store },
-                React.createElement(Avatar, { id: "dominantSpeakerAvatar", participantId: this.id, size: 200 })
-            ),
-            this._dominantSpeakerAvatarContainer
+                React.createElement(Avatar, {
+                    id: "dominantSpeakerAvatar",
+                    participantId: this.id,
+                    size: 200
+                })
+            )
         );
     }
 
@@ -570,7 +590,12 @@ export default class LargeVideoManager {
         const presenceLabelContainer = document.getElementById('remotePresenceMessage');
 
         if (presenceLabelContainer) {
-            ReactDOM.render(
+            if (!this._presenceLabelContainerRoot) {
+                this._presenceLabelContainerRoot = createRoot(presenceLabelContainer);
+            }
+            if (!this._presenceLabelContainerRoot) return;
+
+            this._presenceLabelContainerRoot.render(
                 React.createElement(
                     Provider,
                     { store: APP.store },
@@ -594,10 +619,8 @@ export default class LargeVideoManager {
      * @returns {void}
      */
     removePresenceLabel() {
-        const presenceLabelContainer = document.getElementById('remotePresenceMessage');
-
-        if (presenceLabelContainer) {
-            ReactDOM.unmountComponentAtNode(presenceLabelContainer);
+        if (this._presenceLabelContainerRoot) {
+            this._presenceLabelContainerRoot.unmount();
         }
     }
 

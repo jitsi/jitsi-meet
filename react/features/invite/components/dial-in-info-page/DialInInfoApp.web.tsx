@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot, Root } from 'react-dom/client';
 import { I18nextProvider } from 'react-i18next';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
@@ -13,6 +13,11 @@ import NoRoomError from './NoRoomError.web';
 /**
  * TODO: This seems unused, so we can drop it.
  */
+// --------------------------------------------------------------------------
+// Create the root ONCE (React 18 requirement)
+// --------------------------------------------------------------------------
+let root: Root | null = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     // @ts-ignore
     const { room } = parseURLParams(window.location, true, 'search');
@@ -20,22 +25,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const ix = href.indexOf(DIAL_IN_INFO_PAGE_PATH_NAME);
     const url = (ix > 0 ? href.substring(0, ix) : href) + room;
 
-    /* eslint-disable-next-line react/no-deprecated */
-    ReactDOM.render(
-        <I18nextProvider i18n = { i18next }>
-            { room
-                ? <DialInSummary
-                    className = 'dial-in-page'
-                    clickableNumbers = { isMobileBrowser() }
-                    room = { decodeURIComponent(room) }
-                    url = { url } />
-                : <NoRoomError className = 'dial-in-page' /> }
-        </I18nextProvider>,
-        document.getElementById('react')
+    const container = document.getElementById('react');
+
+    if (!container) {
+        console.error("React container #react not found");
+        return;
+    }
+
+    if (!root) {
+        root = createRoot(container);
+    }
+
+    root.render(
+        <I18nextProvider i18n={i18next}>
+            {room ? (
+                <DialInSummary
+                    className="dial-in-page"
+                    clickableNumbers={isMobileBrowser()}
+                    room={decodeURIComponent(room)}
+                    url={url}
+                />
+            ) : (
+                <NoRoomError className="dial-in-page" />
+            )}
+        </I18nextProvider>
     );
 });
 
 window.addEventListener('beforeunload', () => {
-    /* eslint-disable-next-line react/no-deprecated */
-    ReactDOM.unmountComponentAtNode(document.getElementById('react')!);
+    if (root) {
+        root.unmount();
+        root = null;
+    }
 });

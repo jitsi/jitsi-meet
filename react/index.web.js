@@ -1,6 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-
+import { createRoot } from 'react-dom/client';
 import { App } from './features/app/components/App.web';
 import { getLogger } from './features/base/logging/functions';
 import Platform from './features/base/react/Platform.web';
@@ -74,14 +73,25 @@ globalNS.entryPoints = {
     WHITEBOARD: WhiteboardApp
 };
 
+const roots = {};
+
 globalNS.renderEntryPoint = ({
     Component,
     props = {},
     elementId = 'react'
 }) => {
-    /* eslint-disable-next-line react/no-deprecated */
-    ReactDOM.render(
-        <Component { ...props } />,
-        document.getElementById(elementId)
-    );
+    const element = document.getElementById(elementId);
+
+    if (!element) {
+        throw new Error(`renderEntryPoint: element #${elementId} not found`);
+    }
+
+    // Create the root once per element
+    if (!roots[elementId]) {
+        roots[elementId] = createRoot(element);
+    }
+
+    const root = roots[elementId];
+
+    root.render(<Component {...props} />);
 };

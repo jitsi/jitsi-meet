@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -171,7 +171,7 @@ const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, en
                 </Popover>
             </div>
 
-            {showCopiedMessage && ReactDOM.createPortal(
+            {showCopiedMessage && createPortal(
                 <div
                     className = { cx(classes.copiedMessage, { [classes.showCopiedMessage]: showCopiedMessage }) }
                     style = {{ top: `${popupPosition.top}px`,
