@@ -65,9 +65,32 @@ jobs:
             const deploymentUrl = '${{ steps.cloudflare.outputs.url }}';
             const previewUrl = deploymentUrl.replace('***', 'meet-web');
 
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
+            const commentIdentifier = '<!-- cloudflare-preview-link-comment -->';
+
+            // List comments on the PR
+            const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `🚀 **Preview Link**: ${previewUrl}`
-            })
+              issue_number: context.issue.number
+            });
+
+            // Try to find our comment
+            const existingComment = comments.find(c => c.body.includes(commentIdentifier));
+
+            if (existingComment) {
+              // Edit the existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: `${commentIdentifier}\n🚀 **Preview Link**: ${previewUrl}`
+              });
+            } else {
+              // Create a new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: `${commentIdentifier}\n🚀 **Preview Link**: ${previewUrl}`
+              });
+            }
