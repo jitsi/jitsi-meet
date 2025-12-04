@@ -65,18 +65,18 @@ jobs:
             const commentIdentifier = '<!-- cloudflare-preview-link-comment -->';
 
             const deploymentUrl = '${{ steps.cloudflare.outputs.url }}';
-            const branchPreviewUrl = '${{ steps.cloudflare.outputs.branch_url }}';
-            const latestCommit = '${{ steps.cloudflare.outputs.commit_sha }}';
-            const updatedAt = new Date().toISOString();
-            const logsUrl = '${{ steps.cloudflare.outputs.logs_url }}';
+            const deploymentId = '${{ steps.cloudflare.outputs.id }}';
+            const logsUrl = `https://dash.cloudflare.com/?to=/157168a1684d7105399ec2339cf1281b/pages/view/meet-web/${deploymentId}`;
+            const latestCommitFull = '${{ github.sha }}';
+            const latestCommit = latestCommitFull.slice(0, 7);
+            const updatedAt = new Date().toLocaleString("es-ES", { timeZone: "Europe/Madrid" });
             const projectName = 'meet-web';
 
             const tableBody = 
-            `## Deploying ${projectName} with &nbsp;<a href="https://pages.dev">
-            <img alt="Cloudflare Pages" src="https://user-images.githubusercontent.com/23264/106598434-9e719e00-654f-11eb-9e59-6167043cfa01.png" width="16"></a> &nbsp;
-            Cloudflare Pages
-
-            <table>
+            `## Deploying ${projectName} with &nbsp;<a href="https://pages.dev">` +
+            `<img alt="Cloudflare Pages" src="https://user-images.githubusercontent.com/23264/106598434-9e719e00-654f-11eb-9e59-6167043cfa01.png" width="16"></a> &nbsp;` +
+            `Cloudflare Pages` +
+            `<table>
               <tr>
                 <td><strong>Latest commit:</strong></td>
                 <td><code>${latestCommit}</code></td>
@@ -90,11 +90,7 @@ jobs:
                 <td><a href='${deploymentUrl}'>${deploymentUrl}</a></td>
               </tr>
               <tr>
-                <td><strong>Branch Preview URL:</strong></td>
-                <td><a href='${branchPreviewUrl}'>${branchPreviewUrl}</a></td>
-              </tr>
-              <tr>
-                <td><strong>Updated (UTC):</strong></td>
+                <td><strong>Updated (Europe/Madrid):</strong></td>
                 <td>${updatedAt}</td>
               </tr>
             </table>
