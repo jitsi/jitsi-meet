@@ -1,4 +1,5 @@
 import '../base/app/middleware';
+import '../base/config/middleware';
 import '../base/connection/middleware';
 import '../base/devices/middleware';
 import '../base/media/middleware';

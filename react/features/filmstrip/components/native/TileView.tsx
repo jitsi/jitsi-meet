@@ -12,7 +12,7 @@ import { IReduxState, IStore } from '../../../app/types';
 import { getLocalParticipant, getParticipantCountWithFake } from '../../../base/participants/functions';
 import { ILocalParticipant } from '../../../base/participants/types';
 import { getHideSelfView } from '../../../base/settings/functions.any';
-import { setVisibleRemoteParticipants } from '../../actions.web';
+import { setVisibleRemoteParticipants } from '../../actions.native';
 
 import Thumbnail from './Thumbnail';
 import styles from './styles';
