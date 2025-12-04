@@ -62,10 +62,44 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const deploymentUrl = '${{ steps.cloudflare.outputs.url }}';
-            const previewUrl = deploymentUrl.replace('***', 'meet-web');
-
             const commentIdentifier = '<!-- cloudflare-preview-link-comment -->';
+
+            const deploymentUrl = '${{ steps.cloudflare.outputs.url }}';
+            const branchPreviewUrl = '${{ steps.cloudflare.outputs.branch_url }}';
+            const latestCommit = '${{ steps.cloudflare.outputs.commit_sha }}';
+            const updatedAt = new Date().toISOString();
+            const logsUrl = '${{ steps.cloudflare.outputs.logs_url }}';
+            const projectName = 'meet-web';
+
+            const tableBody = 
+            `## Deploying ${projectName} with &nbsp;<a href="https://pages.dev">
+            <img alt="Cloudflare Pages" src="https://user-images.githubusercontent.com/23264/106598434-9e719e00-654f-11eb-9e59-6167043cfa01.png" width="16"></a> &nbsp;
+            Cloudflare Pages
+
+            <table>
+              <tr>
+                <td><strong>Latest commit:</strong></td>
+                <td><code>${latestCommit}</code></td>
+              </tr>
+              <tr>
+                <td><strong>Status:</strong></td>
+                <td>&nbsp;✅&nbsp; Deploy successful!</td>
+              </tr>
+              <tr>
+                <td><strong>Preview URL:</strong></td>
+                <td><a href='${deploymentUrl}'>${deploymentUrl}</a></td>
+              </tr>
+              <tr>
+                <td><strong>Branch Preview URL:</strong></td>
+                <td><a href='${branchPreviewUrl}'>${branchPreviewUrl}</a></td>
+              </tr>
+              <tr>
+                <td><strong>Updated (UTC):</strong></td>
+                <td>${updatedAt}</td>
+              </tr>
+            </table>
+
+            [View logs](${logsUrl})`;
 
             // List comments on the PR
             const { data: comments } = await github.rest.issues.listComments({
@@ -83,7 +117,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 comment_id: existingComment.id,
-                body: `${commentIdentifier}\n🚀 **Preview Link**: ${previewUrl}`
+                body: `${commentIdentifier}\n${tableBody}`
               });
             } else {
               // Create a new comment
@@ -91,6 +125,6 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body: `${commentIdentifier}\n🚀 **Preview Link**: ${previewUrl}`
+                body: `${commentIdentifier}\n${tableBody}`
               });
             }
