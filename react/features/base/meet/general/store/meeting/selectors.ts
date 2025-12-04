@@ -1,3 +1,4 @@
+import { Tier } from "@internxt/sdk/dist/drive/payments/types/tiers";
 import { IReduxState } from "../../../../../app/types";
 import { MEETING_REDUCER } from "./reducer";
 
@@ -92,4 +93,22 @@ export const getPlanName = (state: IReduxState): string | null => {
     }
 
     return PLAN_NAME_MAP[planName] ?? formatPlanName(planName);
+};
+
+/**
+ * Selector to get the user's plan name
+ * Maps technical tier labels to user-friendly display names
+ * If the plan name is not in the map, it formats it automatically
+ *
+ * @param state - The Redux state
+ * @returns The user-friendly plan name or null
+ */
+export const getUserTier = (state: IReduxState): Tier | null => {
+    const userTier = state[MEETING_REDUCER].userTier;
+
+    if (!userTier) {
+        return null;
+    }
+
+    return userTier;
 };
