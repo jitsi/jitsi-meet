@@ -64,7 +64,7 @@ export const TRANSLATION_LANGUAGES_HEAD: Array<string> = [ DEFAULT_LANGUAGE ];
  * @type {i18next.InitOptions}
  */
 const options: i18next.InitOptions = {
-    backend: <HttpBackendOptions>{
+    backend: {
         loadPath: (lng: string[], ns: string[]) => {
             switch (ns[0]) {
             case 'countries':
@@ -74,7 +74,7 @@ const options: i18next.InitOptions = {
                 return 'lang/{{ns}}.json';
             }
         }
-    },
+    } as HttpBackendOptions,
     defaultNS: 'main',
     fallbackLng: DEFAULT_LANGUAGE,
     interpolation: {
@@ -131,7 +131,9 @@ i18next.addResourceBundle(
 // XXX: Note we are using require here, because we want the side-effects of the
 // import, but imports can only be placed at the top, and it would be too early,
 // since i18next is not yet initialized at that point.
-require('./BuiltinLanguages');
+try {
+    require('./BuiltinLanguages');
+} catch { }
 
 // Label change through dynamic branding is available only for web
 if (typeof APP !== 'undefined') {

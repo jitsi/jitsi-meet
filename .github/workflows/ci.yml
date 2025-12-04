@@ -7,89 +7,66 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 18
-        cache: 'npm'
-        registry-url: 'https://npm.pkg.github.com'
-    - name: Backup original .npmrc
-      run: |
-        if [ -f .npmrc ]; then
-          cp .npmrc .npmrc.original
-        fi
-    - name: Configure NPM
-      run: |
-        echo "registry=https://registry.yarnpkg.com/" > .npmrc
-        echo "@internxt:registry=https://npm.pkg.github.com" >> .npmrc
-        echo "//npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_ACCESS_TOKEN }}" >> .npmrc
-        echo "always-auth=true" >> .npmrc
-        npm config set legacy-peer-deps true
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-    - name: Get changed files
-      id: changed-files
-      uses: jitsi/changed-files@main
-    - name: Get changed lang files
-      id: lang-files
-      run: echo "all=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep -oE 'lang\/\S+' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
-    - run: npm install --legacy-peer-deps
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-    - name: Restore original .npmrc
-      run: |
-        if [ -f .npmrc.original ]; then
-          mv .npmrc.original .npmrc
-        else
-          rm .npmrc
-        fi
-    - name: Check git status
-      run: git status
-    - name: Normalize lang files to ensure sorted
-      if: steps.lang-files.outputs.all
-      run: npm run lang-sort
-    - name: Check lang files are formatted correctly
-      if: steps.lang-files.outputs.all
-      run: npm run lint:lang
-    - name: Check if the git repository is clean
-      run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
-    - run: npm run lint:ci && npm run tsc:ci
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: yarn
+
+      - name: Add .npmrc
+        run: cp .npmrc.template .npmrc
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Get changed files
+        id: changed-files
+        uses: jitsi/changed-files@main
+
+      - name: Get changed lang files
+        id: lang-files
+        run: echo "all=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep -oE 'lang\/\S+' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
+
+      - name: Check git status
+        run: git status
+
+      - name: Normalize lang files to ensure sorted
+        if: steps.lang-files.outputs.all
+        run: npm run lang-sort
+
+      - name: Check lang files are formatted correctly
+        if: steps.lang-files.outputs.all
+        run: npm run lint:lang
+
+      - name: Check if the git repository is clean
+        run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
+
+      - run: npm run lint:ci && npm run tsc:ci
 
   linux-build:
     name: Build Frontend (Linux)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 18
-        cache: 'npm'
-        registry-url: 'https://npm.pkg.github.com'
-    - name: Backup original .npmrc
-      run: |
-        if [ -f .npmrc ]; then
-          cp .npmrc .npmrc.original
-        fi
-    - name: Configure NPM
-      run: |
-        echo "registry=https://registry.yarnpkg.com/" > .npmrc
-        echo "@internxt:registry=https://npm.pkg.github.com" >> .npmrc
-        echo "//npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_ACCESS_TOKEN }}" >> .npmrc
-        echo "always-auth=true" >> .npmrc
-        npm config set legacy-peer-deps true
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-    - run: npm install --legacy-peer-deps
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-    - name: Restore original .npmrc
-      run: |
-        if [ -f .npmrc.original ]; then
-          mv .npmrc.original .npmrc
-        else
-          rm .npmrc
-        fi
-    - run: make
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: yarn
+
+      - name: Add .npmrc
+        run: cp .npmrc.template .npmrc
+
+      - name: Install dependencies
+        run: yarn
+
+      - run: make
+
   # macos-ci:
   #   name: Build Frontend (macOS)
   #   runs-on: macOS-latest

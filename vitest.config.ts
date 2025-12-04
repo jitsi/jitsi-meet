@@ -3,6 +3,16 @@
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+    resolve: {
+        extensions: [
+            ".web.ts",
+            ".web.tsx",
+            ".web.js",
+            ".ts",
+            ".tsx",
+            ".js",
+        ],
+    },
     test: {
         globals: true,
         environment: "jsdom",
