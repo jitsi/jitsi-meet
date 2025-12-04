@@ -3,7 +3,7 @@
 import Logger from '@jitsi/logger';
 import $ from 'jquery';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 
@@ -166,7 +166,14 @@ export default class LargeVideoManager {
 
         this.removePresenceLabel();
 
-        ReactDOM.unmountComponentAtNode(this._dominantSpeakerAvatarContainer);
+        if (this._dominantSpeakerRoot) {
+            try {
+                this._dominantSpeakerRoot.unmount();
+            } catch (error) {
+                logger.error('Error unmounting dominant speaker root:', error);
+            }
+            this._dominantSpeakerRoot = null;
+        }
 
         this.container.style.display = 'none';
     }
@@ -518,15 +525,26 @@ export default class LargeVideoManager {
      * Updates the src of the dominant speaker avatar
      */
     updateAvatar() {
-        ReactDOM.render(
-            <Provider store = { APP.store }>
-                <Avatar
-                    id = "dominantSpeakerAvatar"
-                    participantId = { this.id }
-                    size = { 200 } />
-            </Provider>,
-            this._dominantSpeakerAvatarContainer
-        );
+        if (!this._dominantSpeakerAvatarContainer) {
+            return;
+        }
+
+        try {
+            if (!this._dominantSpeakerRoot) {
+                this._dominantSpeakerRoot = createRoot(this._dominantSpeakerAvatarContainer);
+            }
+
+            this._dominantSpeakerRoot.render(
+                        <Provider store = { APP.store }>
+                            <Avatar
+                                id = "dominantSpeakerAvatar"
+                                participantId = { this.id }
+                                size = { 200 } />
+                        </Provider>
+            );
+        } catch (error) {
+            logger.error('Error rendering dominant speaker avatar:', error);
+        }
     }
 
     /**
@@ -559,15 +577,22 @@ export default class LargeVideoManager {
         const presenceLabelContainer = document.getElementById('remotePresenceMessage');
 
         if (presenceLabelContainer) {
-            ReactDOM.render(
-                <Provider store = { APP.store }>
-                    <I18nextProvider i18n = { i18next }>
-                        <PresenceLabel
-                            participantID = { id }
-                            className = 'presence-label' />
-                    </I18nextProvider>
-                </Provider>,
-                presenceLabelContainer);
+            try {
+                if (!this._presenceLabelRoot) {
+                    this._presenceLabelRoot = createRoot(presenceLabelContainer);
+                }
+                this._presenceLabelRoot.render(
+                        <Provider store = { APP.store }>
+                            <I18nextProvider i18n = { i18next }>
+                                <PresenceLabel
+                                    participantID = { id }
+                                    className = 'presence-label' />
+                            </I18nextProvider>
+                        </Provider>
+                );
+            } catch (error) {
+                logger.error('Error rendering presence label:', error);
+            }
         }
     }
 
@@ -580,7 +605,14 @@ export default class LargeVideoManager {
         const presenceLabelContainer = document.getElementById('remotePresenceMessage');
 
         if (presenceLabelContainer) {
-            ReactDOM.unmountComponentAtNode(presenceLabelContainer);
+            if (this._presenceLabelRoot) {
+                try {
+                    this._presenceLabelRoot.unmount();
+                } catch (error) {
+                    logger.error('Error unmounting presence label:', error);
+                }
+                this._presenceLabelRoot = undefined;
+            }
         }
     }
 
