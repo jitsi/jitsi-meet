@@ -3,6 +3,9 @@ import React, { useCallback } from 'react';
 import {
     BackHandler,
     NativeModules,
+    Platform,
+    SafeAreaView,
+    StatusBar,
     View,
     ViewStyle
 } from 'react-native';
@@ -90,6 +93,7 @@ interface IProps extends AbstractProps {
      * Set to {@code true} when the filmstrip is currently visible.
      */
     _filmstripVisible: boolean;
+
 
     /**
      * The indicator which determines if the display name is visible.
@@ -269,12 +273,21 @@ class Conference extends AbstractConference<IProps, State> {
             _brandingStyles,
         } = this.props;
 
+        const isLandscape = this.props._aspectRatio === ASPECT_RATIO_WIDE;
+        const isAndroid = Platform.OS === 'android';
+
         return (
             <Container
                 style = { [
                     styles.conference,
                     _brandingStyles
                 ] }>
+                {/* Control the native status bar on Android: hide in landscape during the conference */}
+                { isAndroid
+                    && <StatusBar
+                        animated = { true }
+                        hidden = { isLandscape } />
+                }
                 <BrandingImageBackground />
                 { this._renderContent() }
             </Container>
