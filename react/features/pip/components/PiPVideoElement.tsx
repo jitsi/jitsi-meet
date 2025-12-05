@@ -63,12 +63,11 @@ const PiPVideoElement: React.FC = () => {
     );
 
     const dispatch: IStore['dispatch'] = useDispatch();
-    const videoElement = videoRef.current;
     const avatarFont = getAvatarFont(theme);
     const fontFamily = (avatarFont as any).fontFamily ?? 'Inter, sans-serif';
     const initialsColor = getAvatarInitialsColor(theme);
     const displayNameColor = getDisplayNameColor(theme);
-    const { canvasStream } = useCanvasAvatar({
+    const { canvasStreamRef } = useCanvasAvatar({
         participant,
         displayName,
         customAvatarBackgrounds,
@@ -87,6 +86,8 @@ const PiPVideoElement: React.FC = () => {
      * Effect: Handle switching between real video track and canvas avatar stream.
      */
     useEffect(() => {
+        const videoElement = videoRef.current;
+
         if (!videoElement) {
             return;
         }
@@ -104,6 +105,9 @@ const PiPVideoElement: React.FC = () => {
 
         if (shouldShowAvatar) {
             // Use canvas stream for avatar.
+            // Access ref inside effect - stream is created in useCanvasAvatar's effect.
+            const canvasStream = canvasStreamRef.current;
+
             // Only set srcObject if it's different to avoid interrupting playback.
             if (canvasStream && videoElement.srcObject !== canvasStream) {
                 videoElement.srcObject = canvasStream;
@@ -128,13 +132,15 @@ const PiPVideoElement: React.FC = () => {
                 }
             }
         };
-    }, [ videoTrack, shouldShowAvatar, canvasStream, videoElement ]);
+    }, [ videoTrack, shouldShowAvatar ]);
 
     /**
      * Effect: Window blur/focus and visibility change listeners.
      * Enters PiP on blur, exits on focus (matches old AOT behavior).
      */
     useEffect(() => {
+        const videoElement = videoRef.current;
+
         if (!videoElement) {
             return;
         }
@@ -147,7 +153,7 @@ const PiPVideoElement: React.FC = () => {
             // which seems to put Chrome into a weird state - document.exitPictureInPicture() never resolves, the
             // leavepictureinpicture is never triggered and it is not possible to display PiP again.
             // This is probably a browser bug. To workaround it we have the 100ms timeout here. This way this event
-            // is triggered after the leavepictureinpicture event and everythink seems to work well.
+            // is triggered after the leavepictureinpicture event and everything seems to work well.
             setTimeout(() => {
                 dispatch(handleWindowFocus());
             }, 100);
@@ -162,18 +168,37 @@ const PiPVideoElement: React.FC = () => {
         window.addEventListener('focus', onWindowFocus);
         document.addEventListener('visibilitychange', onVisibilityChange);
 
+        // Check if window is already blurred on mount (handles PiP enable while app is in background).
+        // Wait for video to be ready before attempting PiP (canvas stream may not be attached yet).
+        const checkFocusAndEnterPiP = () => {
+            if (!document.hasFocus()) {
+                onWindowBlur();
+            }
+        };
+
+        if (videoElement.readyState >= 1) {
+            // Video already has metadata loaded (e.g., real video track was already attached).
+            checkFocusAndEnterPiP();
+        } else {
+            // Wait for video source to be ready (e.g., canvas stream being created).
+            videoElement.addEventListener('loadedmetadata', checkFocusAndEnterPiP, { once: true });
+        }
+
         return () => {
             window.removeEventListener('blur', onWindowBlur);
             window.removeEventListener('focus', onWindowFocus);
             document.removeEventListener('visibilitychange', onVisibilityChange);
+            videoElement.removeEventListener('loadedmetadata', checkFocusAndEnterPiP);
         };
-    }, [ dispatch, videoElement ]);
+    }, [ dispatch ]);
 
     /**
      * Effect: PiP enter/leave event listeners.
      * Updates Redux state when browser PiP events occur.
      */
     useEffect(() => {
+        const videoElement = videoRef.current;
+
         if (!videoElement) {
             return;
         }
@@ -192,7 +217,7 @@ const PiPVideoElement: React.FC = () => {
             videoElement.removeEventListener('enterpictureinpicture', onEnterPiP);
             videoElement.removeEventListener('leavepictureinpicture', onLeavePiP);
         };
-    }, [ videoElement, dispatch ]);
+    }, [ dispatch ]);
 
     return (
         <video

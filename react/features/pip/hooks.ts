@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import IconUserSVG from '../base/icons/svg/user.svg?raw';
 import { IParticipant } from '../base/participants/types';
@@ -34,9 +34,11 @@ interface IUseCanvasAvatarOptions {
 
 /**
  * Result returned by the useCanvasAvatar hook.
+ * Returns a ref object so consumers can access .current inside effects
+ * (the stream is created in an effect and won't be available at render time).
  */
 interface IUseCanvasAvatarResult {
-    canvasStream: MediaStream | null;
+    canvasStreamRef: React.MutableRefObject<MediaStream | null>;
 }
 
 /**
@@ -45,7 +47,6 @@ interface IUseCanvasAvatarResult {
 interface ICanvasRefs {
     canvas: HTMLCanvasElement | null;
     defaultIcon: HTMLImageElement | null;
-    stream: MediaStream | null;
 }
 
 /**
@@ -92,9 +93,17 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
 
     const refs = useRef<ICanvasRefs>({
         canvas: null,
-        stream: null,
         defaultIcon: null
     });
+
+    // Separate ref for the stream to return to consumers.
+    // This allows consumers to access .current inside their effects.
+    //
+    // NOTE: If we ever need to recreate the stream (e.g., different canvas size),
+    // consumers' effects won't automatically re-run since refs don't trigger re-renders.
+    // To fix this, we could return an additional state flag like `streamReady` that
+    // changes when the stream is set, and consumers would add it to their effect deps.
+    const streamRef = useRef<MediaStream | null>(null);
 
     /**
      * Initialize canvas, stream, and default icon on mount.
@@ -108,7 +117,7 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
         refs.current.canvas = canvas;
 
         // Create stream from canvas.
-        refs.current.stream = canvas.captureStream(CANVAS_FRAME_RATE);
+        streamRef.current = canvas.captureStream(CANVAS_FRAME_RATE);
 
         // Load default icon.
         refs.current.defaultIcon = createDefaultIconImage();
@@ -117,9 +126,9 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
 
         // Cleanup on unmount.
         return () => {
-            if (refs.current.stream) {
-                refs.current.stream.getTracks().forEach(track => track.stop());
-                refs.current.stream = null;
+            if (streamRef.current) {
+                streamRef.current.getTracks().forEach(track => track.stop());
+                streamRef.current = null;
             }
             refs.current.canvas = null;
             refs.current.defaultIcon = null;
@@ -131,7 +140,7 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
      * Re-render avatar when participant or display name changes.
      */
     useEffect(() => {
-        const { canvas, defaultIcon, stream } = refs.current;
+        const { canvas, defaultIcon } = refs.current;
 
         if (!canvas) {
             return;
@@ -159,7 +168,7 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
         ).then(() => {
             // Request a frame capture after drawing.
             // For captureStream(0), we need to manually trigger frame capture.
-            const track = stream?.getVideoTracks()[0] as MediaStreamTrack & { requestFrame?: () => void; };
+            const track = streamRef.current?.getVideoTracks()[0] as MediaStreamTrack & { requestFrame?: () => void; };
 
             if (track?.requestFrame) {
                 track.requestFrame();
@@ -169,6 +178,6 @@ export function useCanvasAvatar(options: IUseCanvasAvatarOptions): IUseCanvasAva
     }, [ participant?.loadableAvatarUrl, participant?.name, displayName, customAvatarBackgrounds, backgroundColor, fontFamily, initialsColor, displayNameColor ]);
 
     return {
-        canvasStream: refs.current.stream
+        canvasStreamRef: streamRef
     };
 }

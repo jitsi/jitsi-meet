@@ -632,26 +632,6 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
                 // Since this is internal event we don't need to emit it to the consumer of the API.
                 return true;
-            case 'config-overwrite': {
-                // Update stored pip config when overwriteConfig is called.
-                if (data.pip !== undefined) {
-                    const wasEnabled = isPiPEnabled(this._pipConfig);
-
-                    this._pipConfig = data.pip;
-
-                    const isEnabled = isPiPEnabled(this._pipConfig);
-
-                    // Handle enable/disable transitions.
-                    if (!wasEnabled && isEnabled) {
-                        this._setupIntersectionObserver();
-                    } else if (wasEnabled && !isEnabled) {
-                        this._teardownIntersectionObserver();
-                    }
-                }
-
-                // Since this is internal event we don't need to emit it to the consumer of the API.
-                return true;
-            }
             }
 
             const eventName = events[name];
@@ -958,10 +938,47 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
             return;
         }
+
+        // Handle pip config changes locally.
+        // We update local state, send command to iframe, then handle PiP show/hide
+        // so the iframe config is updated before we try to show PiP.
+        let pipTransition = null;
+
+        if (name === 'overwriteConfig' && args[0]?.pip !== undefined) {
+            const wasEnabled = isPiPEnabled(this._pipConfig);
+
+            this._pipConfig = {
+                ...this._pipConfig,
+                ...args[0].pip
+            };
+
+            const isEnabled = isPiPEnabled(this._pipConfig);
+
+            if (!wasEnabled && isEnabled) {
+                this._setupIntersectionObserver();
+                pipTransition = 'enabled';
+            } else if (wasEnabled && !isEnabled) {
+                this._teardownIntersectionObserver();
+                pipTransition = 'disabled';
+            }
+        }
+
+        // Send command to iframe first.
         this._transport.sendEvent({
             data: args,
             name: commands[name]
         });
+
+        // Handle PiP state after command is sent so iframe config is updated.
+        if (pipTransition === 'enabled') {
+            // Show PiP if iframe is currently not visible.
+            if (!this._isIntersecting) {
+                this.showPiP();
+            }
+        } else if (pipTransition === 'disabled') {
+            // Hide any open PiP window.
+            this.hidePiP();
+        }
     }
 
     /**
