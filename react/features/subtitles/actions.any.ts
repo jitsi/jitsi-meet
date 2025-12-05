@@ -1,4 +1,7 @@
+import { IStore } from '../app/types';
+import { openDialog } from '../base/dialog/actions';
 import { DEFAULT_LANGUAGE } from '../base/i18n/i18next';
+import { StartRecordingDialog } from '../recording/components/Recording';
 
 import {
     REMOVE_CACHED_TRANSCRIPT_MESSAGE,
@@ -97,12 +100,24 @@ export function setRequestingSubtitles(
         displaySubtitles = true,
         language: string | null = `translation-languages:${DEFAULT_LANGUAGE}`,
         backendRecordingOn = false) {
-    return {
-        type: SET_REQUESTING_SUBTITLES,
-        backendRecordingOn,
-        displaySubtitles,
-        enabled,
-        language
+    return function(dispatch: IStore['dispatch'], getState: IStore['getState']) {
+        const { conference } = getState()['features/base/conference'];
+
+        if (conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription) {
+            dispatch(openDialog('StartRecordingDialog', StartRecordingDialog, {
+                recordAudioAndVideo: false
+            }));
+
+            return;
+        }
+
+        dispatch({
+            type: SET_REQUESTING_SUBTITLES,
+            backendRecordingOn,
+            displaySubtitles,
+            enabled,
+            language
+        });
     };
 }
 
