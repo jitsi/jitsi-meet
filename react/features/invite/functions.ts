@@ -468,6 +468,36 @@ export function invitePeopleAndChatRooms(
 }
 
 /**
+ * Fetch list of meeting users from your local backend.
+ * @returns {Promise<Array>} List of users
+ */
+export function fetchMeetUsers( jwt: any , meetKey?: string): Promise<Array<any>> {
+    const baseUrl = 'https://kasra.todaydev.ir/meet/api/v1'
+        const token = jwt;
+        // debugger
+   const headers = {
+        ...token ? { 'Authorization': `Bearer ${token}` } : {},
+        'Content-Type': 'application/json'
+    };
+    return new Promise((resolve, reject) =>
+        fetch(`${baseUrl}/meets/key/${meetKey}/participants`, { headers })
+            .then(res => {
+                if (!res.ok) {
+                    reject(new Error(`Request failed with status ${res.status}`));
+                }
+
+                return res.json();
+            })
+            .then(data => resolve(data))
+            .catch(err => {
+                console.error('❌ Error fetching meet users:', err);
+                reject(err);
+            })
+    );
+}
+
+
+/**
  * Determines if adding people is currently enabled.
  *
  * @param {IReduxState} state - Current state.

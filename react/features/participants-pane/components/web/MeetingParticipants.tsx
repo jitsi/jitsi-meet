@@ -78,7 +78,7 @@ function MeetingParticipants({
     showInviteButton,
     sortedParticipantIds = []
 }: IProps) {
-    const { t } = useTranslation();
+        const { t } = useTranslation();
 
     const [ lowerMenu, , toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu<string>();
     const [ drawerParticipant, closeDrawer, openDrawerForParticipant ] = useParticipantDrawer();

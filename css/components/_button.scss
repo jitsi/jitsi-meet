@@ -1,0 +1,31 @@
+.nx-button{
+
+    &.primary {
+        background-color: #3859FB;
+        border-color: #3859FB;
+
+        &:hover,
+        &:focus {
+            background-color: #2e47c5;
+            border-color: #2e47c5;
+        }
+
+        &:active {
+            background-color: #243aa3;
+            border-color: #243aa3;
+        }
+    }
+
+    &.transparent {
+        background-color: transparent;
+        border: solid 1px white;
+        &:hover,
+        &:focus {
+            background-color: rgba(56, 89, 251, 0.1);
+        }
+
+        &:active {
+            background-color: rgba(56, 89, 251, 0.2);
+        }
+    }
+}

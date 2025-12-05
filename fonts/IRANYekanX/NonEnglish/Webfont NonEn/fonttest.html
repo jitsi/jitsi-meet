@@ -1,0 +1,456 @@
+<head>
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=9" />
+	<title>IRANYekanXNoEn</title>
+	<style type="text/css" media="screen">
+		@font-face { font-family: 'WOFF IRANYekanXNoEn-Thin'; src: url('woff/IRANYekanXNoEn-Thin.woff'); }
+		@font-face { font-family: 'WOFF IRANYekanXNoEn-UltraLight'; src: url('woff/IRANYekanXNoEn-UltraLight.woff'); }
+		@font-face { font-family: 'WOFF IRANYekanXNoEn-Light'; src: url('woff/IRANYekanXNoEn-Light.woff'); }
+		@font-face { font-family: 'WOFF IRANYekanXNoEn-Regular'; src: url('woff/IRANYekanXNoEn-Regular.woff'); }
+		@font-face { font-family: 'WOFF IRANYekanXNoEn-Medium'; src: url('woff/IRANYekanXNoEn-Medium.woff'); }
+		@font-face { font-family: 'WOFF IRANYekanXNoEn-DemiBold'; src: url('woff/IRANYekanXNoEn-DemiBold.woff'); }
+		@font-face { font-family: 'WOFF IRANYekanXNoEn-Bold'; src: url('woff/IRANYekanXNoEn-Bold.woff'); }
+		@font-face { font-family: 'WOFF IRANYekanXNoEn-ExtraBold'; src: url('woff/IRANYekanXNoEn-ExtraBold.woff'); }
+		@font-face { font-family: 'WOFF IRANYekanXNoEn-Black'; src: url('woff/IRANYekanXNoEn-Black.woff'); }
+		@font-face { font-family: 'WOFF IRANYekanXNoEn-ExtraBlack'; src: url('woff/IRANYekanXNoEn-ExtraBlack.woff'); }
+		@font-face { font-family: 'WOFF IRANYekanXNoEn-Heavy'; src: url('woff/IRANYekanXNoEn-Heavy.woff'); }
+		@font-face { font-family: 'WOFF2 IRANYekanXNoEn-Thin'; src: url('woff2/IRANYekanXNoEn-Thin.woff2'); }
+		@font-face { font-family: 'WOFF2 IRANYekanXNoEn-UltraLight'; src: url('woff2/IRANYekanXNoEn-UltraLight.woff2'); }
+		@font-face { font-family: 'WOFF2 IRANYekanXNoEn-Light'; src: url('woff2/IRANYekanXNoEn-Light.woff2'); }
+		@font-face { font-family: 'WOFF2 IRANYekanXNoEn-Regular'; src: url('woff2/IRANYekanXNoEn-Regular.woff2'); }
+		@font-face { font-family: 'WOFF2 IRANYekanXNoEn-Medium'; src: url('woff2/IRANYekanXNoEn-Medium.woff2'); }
+		@font-face { font-family: 'WOFF2 IRANYekanXNoEn-DemiBold'; src: url('woff2/IRANYekanXNoEn-DemiBold.woff2'); }
+		@font-face { font-family: 'WOFF2 IRANYekanXNoEn-Bold'; src: url('woff2/IRANYekanXNoEn-Bold.woff2'); }
+		@font-face { font-family: 'WOFF2 IRANYekanXNoEn-ExtraBold'; src: url('woff2/IRANYekanXNoEn-ExtraBold.woff2'); }
+		@font-face { font-family: 'WOFF2 IRANYekanXNoEn-Black'; src: url('woff2/IRANYekanXNoEn-Black.woff2'); }
+		@font-face { font-family: 'WOFF2 IRANYekanXNoEn-ExtraBlack'; src: url('woff2/IRANYekanXNoEn-ExtraBlack.woff2'); }
+		@font-face { font-family: 'WOFF2 IRANYekanXNoEn-Heavy'; src: url('woff2/IRANYekanXNoEn-Heavy.woff2'); }
+		
+		body { 
+			background: white;
+			color: black;
+		}
+		.features, .label, a, #controls {
+			font: normal normal normal small sans-serif;
+		}
+		.features .emojiButton {
+			vertical-align: -5%;
+			font-size: small;
+		}
+		.emojiButton {
+			cursor: pointer;
+		}
+		#flexbox {
+			display: flex;
+			flex-flow: column;
+			height: 100%;
+		}
+		#controls {
+			flex: 0 1 auto;
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			border: 0px solid transparent;
+			height: auto;
+			user-select: none;
+			-moz-user-select: none;
+			-webkit-user-select: none;
+		}
+		#metricsLine {
+			background-color: #EEE;
+			border-top: 1px solid #AAA;
+			border-bottom: 1px solid #AAA;
+			width: 100%;
+			margin: 0.2em 0;
+			padding: 0 0;
+			font-size: 2em;
+			white-space: nowrap;
+			overflow-x: auto;
+			overflow-y: hidden;
+			text-overflow: none;
+			display: none;
+			scrollbar-width: none; /* Firefox */
+			-ms-overflow-style: none;  /* Internet Explorer 10+ */
+		}
+		#metricsLine::-webkit-scrollbar { /* WebKit */
+			width: 0;
+			height: 0;
+		}
+		#waterfall {
+			flex: 1 1 auto;
+			border: 0 solid transparent;
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			color: black;
+			overflow-x: hidden;
+			overflow-y: scroll;
+			font-family: "WOFF IRANYekanXNoEn-Thin"; 
+			font-feature-settings: "kern" on, "liga" on, "calt" on;
+			-moz-font-feature-settings: "kern" on, "liga" on, "calt" on;
+			-webkit-font-feature-settings: "kern" on, "liga" on, "calt" on;
+			-ms-font-feature-settings: "kern" on, "liga" on, "calt" on;
+			-o-font-feature-settings: "kern" on, "liga" on, "calt" on;
+		}
+		div, p	{
+			padding: 0;
+			margin: 0;
+		}
+		#waterfall p {
+			margin-bottom: 0.8em;
+			overflow-wrap: break-word;
+		}
+		.○ .sampletext {
+			-webkit-text-stroke: 1px black;
+			-webkit-text-fill-color: #FFF0;
+		}
+		.features, .label, a {
+			color: #888;
+		}
+		.label {
+			background-color: #ddd;
+			padding: 2px 3px;
+		}
+		
+		span#p08 { font-size: 08pt; padding: 08pt 0; }
+		span#p09 { font-size: 09pt; padding: 09pt 0; }
+		span#p10 { font-size: 10pt; padding: 10pt 0; }
+		span#p11 { font-size: 11pt; padding: 11pt 0; }
+		span#p12 { font-size: 12pt; padding: 12pt 0; }
+		span#p13 { font-size: 13pt; padding: 13pt 0; }
+		span#p14 { font-size: 14pt; padding: 14pt 0; }
+		span#p15 { font-size: 15pt; padding: 15pt 0; }
+		span#p16 { font-size: 16pt; padding: 16pt 0; }
+		span#largeParagraph { font-size: 32pt; padding: 32pt 0; }
+		span#veryLargeParagraph { font-size: 100pt; padding: 100pt 0; }
+		
+		.otFeatureLabel {
+			color: #666;
+			background-color: #ddd;
+			padding: 0.2em 0.5em 0.3em 0.5em;
+			margin: 0 .04em;
+			line-height: 2em;
+			border-radius: 0.3em;
+			border: 0;
+			text-align:center;
+		}
+		.otFeatureLabel, .otFeature {
+			position: relative;
+			opacity: 1;
+			pointer-events: auto;
+			white-space: nowrap;
+		}
+		.otFeatureLabel {
+			padding: 0.2em 0.5em 0.3em 0.5em;
+			margin: 0 .04em;
+			line-height: 2em;
+			color: #666;
+			background-color: #ddd;
+			border-radius: 0.3em;
+			border: 0;
+			text-align: center;
+			z-index: 6;
+		}
+		.wrapper {
+			width: auto;
+			overflow: hidden;
+			border: 0 solid transparent;
+		}
+		select {
+			float: left;
+			margin: 0 0.5em 0 0;
+			padding: 0;
+		}
+		input[type=text] {
+			border: 1px solid #999;
+			margin: 0;
+			width: 100%;
+		}
+		.features {
+			clear: left;
+		}
+		input[type=checkbox]:checked + label { 
+			visibility: visible;
+			color: #fff;
+			background-color: #888; 
+		}
+		.otFeature {
+			visibility: collapse;
+			margin: 0 -1em 0 0;
+		}
+		.otFeatureLabel .tooltip {
+			visibility: hidden;
+			background-color: #333;
+			color: white;
+			text-align: center;
+			padding: 0px 5px;
+			top: -2em;
+			left: 0;
+			position: absolute;
+			z-index: 8;
+		}
+		.otFeatureLabel:hover .tooltip {
+			visibility: visible;
+		}
+		#featureLine {
+			display: none;
+			border-bottom: 1px solid #999;
+			padding: 0.5em 0;
+			margin-bottom: 0.5em;
+		}
+		
+		/* Footer paragraph: */
+		#helptext {
+			color: black;
+			background-color: #ddd;
+			position: fixed;
+			bottom: 0;
+			padding: 2px
+			width: 100%;
+			font: x-small sans-serif;
+		}
+		
+		/* Dark Mode */
+		@media (prefers-color-scheme: dark) {
+			body { 
+				background: #333;
+			}
+			.features, .label, a, body, p, #metricsLine {
+				color: white;
+			}
+			.label {
+				background-color: black;
+				padding: 2px 3px;
+			}
+			.otFeatureLabel, input[type=text] {
+				color: white;
+				background-color: black;
+			}
+			input[type=checkbox]:checked + label { 
+				color: black;
+				background-color: #aaa;
+			}
+			#helptext {
+				background-color: #777;
+			}
+			.○ .sampletext {
+				-webkit-text-stroke: 1px white;
+				-webkit-text-fill-color: #0000;
+			}
+			#metricsLine {
+				background-color: #222;
+				border-color: #777;
+			}
+		}
+	</style>
+</head>
+<body onload="document.getElementById('textInput').focus();setCharset();">
+<div id="flexbox">
+<div id="controls">
+	<div>
+		<select size="1" id="fontFamilySelector" name="fontFamilySelector" onchange="changeFont()">
+				<option value="IRANYekanXNoEn-Thin.woff">WOFF IRANYekanXNoEn-Thin</option>
+			<option value="IRANYekanXNoEn-UltraLight.woff">WOFF IRANYekanXNoEn-UltraLight</option>
+			<option value="IRANYekanXNoEn-Light.woff">WOFF IRANYekanXNoEn-Light</option>
+			<option value="IRANYekanXNoEn-Regular.woff">WOFF IRANYekanXNoEn-Regular</option>
+			<option value="IRANYekanXNoEn-Medium.woff">WOFF IRANYekanXNoEn-Medium</option>
+			<option value="IRANYekanXNoEn-DemiBold.woff">WOFF IRANYekanXNoEn-DemiBold</option>
+			<option value="IRANYekanXNoEn-Bold.woff">WOFF IRANYekanXNoEn-Bold</option>
+			<option value="IRANYekanXNoEn-ExtraBold.woff">WOFF IRANYekanXNoEn-ExtraBold</option>
+			<option value="IRANYekanXNoEn-Black.woff">WOFF IRANYekanXNoEn-Black</option>
+			<option value="IRANYekanXNoEn-ExtraBlack.woff">WOFF IRANYekanXNoEn-ExtraBlack</option>
+			<option value="IRANYekanXNoEn-Heavy.woff">WOFF IRANYekanXNoEn-Heavy</option>
+			<option value="IRANYekanXNoEn-Thin.woff2">WOFF2 IRANYekanXNoEn-Thin</option>
+			<option value="IRANYekanXNoEn-UltraLight.woff2">WOFF2 IRANYekanXNoEn-UltraLight</option>
+			<option value="IRANYekanXNoEn-Light.woff2">WOFF2 IRANYekanXNoEn-Light</option>
+			<option value="IRANYekanXNoEn-Regular.woff2">WOFF2 IRANYekanXNoEn-Regular</option>
+			<option value="IRANYekanXNoEn-Medium.woff2">WOFF2 IRANYekanXNoEn-Medium</option>
+			<option value="IRANYekanXNoEn-DemiBold.woff2">WOFF2 IRANYekanXNoEn-DemiBold</option>
+			<option value="IRANYekanXNoEn-Bold.woff2">WOFF2 IRANYekanXNoEn-Bold</option>
+			<option value="IRANYekanXNoEn-ExtraBold.woff2">WOFF2 IRANYekanXNoEn-ExtraBold</option>
+			<option value="IRANYekanXNoEn-Black.woff2">WOFF2 IRANYekanXNoEn-Black</option>
+			<option value="IRANYekanXNoEn-ExtraBlack.woff2">WOFF2 IRANYekanXNoEn-ExtraBlack</option>
+			<option value="IRANYekanXNoEn-Heavy.woff2">WOFF2 IRANYekanXNoEn-Heavy</option>
+		</select>
+		<div class="wrapper" spellcheck="false">
+			<input type="text" value="Type Text Here." id="textInput" onclick="this.select();" onkeyup="updateParagraph()" />
+		</div>
+	</div>
+	<p class="features">
+		<a href="javascript:setCharset();">Charset</a>
+		<a href="javascript:setLat1();">Lat1</a>
+		&ensp;
+		<a href="https://caniuse.com/#feat=woff">woff</a>
+		<a href="https://caniuse.com/#feat=woff2">woff2</a>
+		&ensp;
+		<a onclick="toggleInverse();" id="invert" class="emojiButton">🔲</a>
+		<label><input type="checkbox" id="kern" value="kern" class="otFeature" onchange="updateFeatures()" checked><label for="kern" class="otFeatureLabel">kern</label>
+		<label><input type="checkbox" id="liga" value="liga" class="otFeature" onchange="updateFeatures()" checked><label for="liga" class="otFeatureLabel">liga/clig</label>
+		<label><input type="checkbox" id="calt" value="calt" class="otFeature" onchange="updateFeatures()" checked><label for="calt" class="otFeatureLabel">calt</label>
+		<input type="checkbox" id="init" value="init" class="otFeature" onchange="updateFeatures()"><label for="init" class="otFeatureLabel">init</label>
+		<input type="checkbox" id="medi" value="medi" class="otFeature" onchange="updateFeatures()"><label for="medi" class="otFeatureLabel">medi</label>
+		<input type="checkbox" id="fina" value="fina" class="otFeature" onchange="updateFeatures()"><label for="fina" class="otFeatureLabel">fina</label>
+		<input type="checkbox" id="rlig" value="rlig" class="otFeature" onchange="updateFeatures()"><label for="rlig" class="otFeatureLabel">rlig</label>
+		<input type="checkbox" id="dlig" value="dlig" class="otFeature" onchange="updateFeatures()"><label for="dlig" class="otFeatureLabel">dlig</label>
+		<input type="checkbox" id="ss03" value="ss03" class="otFeature" onchange="updateFeatures()"><label for="ss03" class="otFeatureLabel">ss03</label>
+		<input type="checkbox" id="ss04" value="ss04" class="otFeature" onchange="updateFeatures()"><label for="ss04" class="otFeatureLabel">ss04</label>
+		<label><input type="checkbox" value="show" onchange="updateFeatures();document.getElementById('featureLine').style.display=this.checked?'block':'none'">CSS</label>
+		<label><input type="checkbox" value="show" onchange="updateFeatures();document.getElementById('metricsLine').style.display=this.checked?'block':'none'">Metrics</label>
+	</p>
+	<p class="features" id="featureLine">font-feature-settings: "kern" on, "liga" on, "calt" on;</p>
+</div>
+<div id="waterfall" class="●">
+	<div id="metricsLine"></div>
+	<p><span class="label">08</span>&nbsp;<span class="sampletext" id="p08"></span></p>
+	<p><span class="label">09</span>&nbsp;<span class="sampletext" id="p09"></span></p>
+	<p><span class="label">10</span>&nbsp;<span class="sampletext" id="p10"></span></p>
+	<p><span class="label">11</span>&nbsp;<span class="sampletext" id="p11"></span></p>
+	<p><span class="label">12</span>&nbsp;<span class="sampletext" id="p12"></span></p>
+	<p><span class="label">13</span>&nbsp;<span class="sampletext" id="p13"></span></p>
+	<p><span class="label">14</span>&nbsp;<span class="sampletext" id="p14"></span></p>
+	<p><span class="label">15</span>&nbsp;<span class="sampletext" id="p15"></span></p>
+	<p><span class="label">16</span>&nbsp;<span class="sampletext" id="p16"></span></p>
+	<p><span class="sampletext" id="largeParagraph"></span></p>
+	<p><span class="sampletext" id="veryLargeParagraph"></span></p>
+</div>
+</div>
+
+<!-- Disclaimer -->
+<p id="helptext" onmouseleave="vanish(this);">
+	Ctrl-R: Reset Charset. Ctrl-L: Latin1. Ctrl-J: LTR/RTL. Ctrl-comma/period: step through fonts. Pull mouse across this note to make it disappear.
+</p>
+
+<script type="text/javascript">
+	const selector = document.getElementById("fontFamilySelector");
+	const selectorOptions = selector.options;
+	const selectorLength = selectorOptions.length;
+
+	document.addEventListener('keyup', keyAnalysis);
+	
+	function keyAnalysis(event) {
+		if (event.ctrlKey) {
+			if (event.code == 'KeyR') {
+				setCharset();
+			} else if (event.code == 'KeyL') {
+				setLat1();
+			} else if (event.code == 'KeyJ') {
+				toggleLeftRight();
+			} else if (event.code == 'Period') {
+				selector.selectedIndex = (selector.selectedIndex + 1) % selectorLength;
+				changeFont();
+			} else if (event.code == 'Comma') {
+				var newIndex = selector.selectedIndex - 1;
+				if (newIndex<0) {
+					newIndex = selectorLength - 1;
+				}
+				selector.selectedIndex = newIndex;
+				changeFont();
+			}
+		}
+	}
+	function updateParagraph() {
+		// update paragraph text based on user input:
+		const txt = document.getElementById('textInput');
+		const paragraphs = document.getElementsByClassName('sampletext');
+		for (i = 0; i < paragraphs.length; i++) {
+			paragraph = paragraphs[i];
+			paragraph.textContent = txt.value;
+		}
+		
+		// update other elements:
+		document.getElementById('metricsLine').textContent = txt.value;
+	}
+	function updateFeatures() {
+		// update features based on user input:
+		// first, get feature on/off line:
+		var cssCode = "";
+		var codeLine = "";
+		var checkboxes = document.getElementsByClassName("otFeature")
+		for (i = 0; i < checkboxes.length; i++) {
+			var checkbox = checkboxes[i];
+			codeLine += '"'+checkbox.id+'" ';
+			codeLine += checkbox.checked ? 'on, ' : 'off, ';
+			if (checkbox.name=="kern") {
+				cssCode += "font-kerning: "
+				cssCode += checkbox.checked ? 'normal; ' : 'none; ';
+			} else if (checkbox.name=="liga") {
+				codeLine += '"clig" '
+				codeLine += checkbox.checked ? 'on, ' : 'off, ';
+				cssCode += "font-variant-ligatures: "
+				cssCode += checkbox.checked ? 'common-ligatures contextual; ' : 'no-common-ligatures no-contextual; ';
+			} else if (checkbox.name=="dlig") {
+				cssCode += "font-variant-ligatures: "
+				cssCode += checkbox.checked ? 'discretionary-ligatures; ' : 'no-discretionary-ligatures; ';
+			} else if (checkbox.name=="hlig") {
+				cssCode += "font-variant-ligatures: "
+				cssCode += checkbox.checked ? 'historical-ligatures; ' : 'no-historical-ligatures; ';
+			}
+		}
+		codeLine = codeLine.slice(0, -2)
+		
+		// then, apply line for every browser:
+		const prefixes = ["","-moz-","-webkit-","-ms-","-o-",];
+		const suffix = "font-feature-settings: "
+		for (i = 0; i < prefixes.length; i++) {
+			var prefix = prefixes[i];
+			cssCode += prefix
+			cssCode += suffix
+			cssCode += codeLine
+			cssCode += "; "
+		}
+		
+		document.getElementById('waterfall').style.cssText = cssCode;
+		document.getElementById('featureLine').innerHTML = cssCode.replace(/;/g,";<br/>");
+		changeFont();
+	}
+	function changeFont() {
+		var selected_index = selector.selectedIndex;
+		var selected_option_text = selector.options[selected_index].text;
+		document.getElementById('waterfall').style.fontFamily = selected_option_text;
+	}
+	function setDefaultText(defaultText) {
+		document.getElementById('textInput').value = decodeEntities(defaultText);
+		updateParagraph();
+	}
+	function setLat1() {
+		const lat1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz &Agrave;&Aacute;&Acirc;&Atilde;&Auml;&Aring;&AElig;&Ccedil;&Egrave;&Eacute;&Ecirc;&Euml;&Igrave;&Iacute;&Icirc;&Iuml;&ETH;&Ntilde;&Ograve;&Oacute;&Ocirc;&Otilde;&Ouml;&Oslash;&OElig;&THORN;&Ugrave;&Uacute;&Ucirc;&Uuml;&Yacute;&Yuml; &agrave;&aacute;&acirc;&atilde;&auml;&aring;&aelig;&ccedil;&egrave;&eacute;&ecirc;&euml;&igrave;&iacute;&icirc;&iuml;&eth;&ntilde;&ograve;&oacute;&ocirc;&otilde;&ouml;&oslash;&oelig;&thorn;&szlig;&ugrave;&uacute;&ucirc;&uuml;&yacute;&yuml; .,:;&middot;&hellip;&iquest;?&iexcl;!&laquo;&raquo;&lsaquo;&rsaquo; /|&brvbar;\()[]{}_-&ndash;&mdash;&sbquo;&bdquo;&lsquo;&rsquo;&ldquo;&rdquo;&quot;&#x27; #&amp;&sect;@&bull;&shy;*&dagger;&Dagger;&para; +&times;&divide;&plusmn;=&lt;&gt;&not;&mu; ^~&acute;`&circ;&macr;&tilde;&uml;&cedil; &yen;&euro;&pound;$&cent;&curren;&fnof; &trade;&reg;&copy; 1234567890 &ordf;&ordm;&deg;%&permil; &sup1;&sup2;&sup3;&frac14;&frac12;&frac34;";
+		return setDefaultText(lat1);
+	}
+	function setCharset() {
+		const completeCharSet = '&#x0621;&#x0627;&#xFE8E;&#x0623;&#xFE84;&#x0625;&#xFE88;&#x0622;&#xFE82;&#x0671;&#xFB51;&#x066E;&#x0628;&#xFE90;&#xFE92;&#xFE91;&#x067E;&#xFB57;&#xFB59;&#xFB58;&#x062A;&#xFE96;&#xFE98;&#xFE97;&#x062B;&#xFE9A;&#xFE9C;&#xFE9B;&#x0679;&#xFB67;&#xFB69;&#xFB68;&#x062C;&#xFE9E;&#xFEA0;&#xFE9F;&#x0686;&#xFB7B;&#xFB7D;&#xFB7C;&#x062D;&#xFEA2;&#xFEA4;&#xFEA3;&#x062E;&#xFEA6;&#xFEA8;&#xFEA7;&#x062F;&#xFEAA;&#x0630;&#xFEAC;&#x0688;&#xFB89;&#x0631;&#xFEAE;&#x0632;&#xFEB0;&#x0691;&#xFB8D;&#x0695;&#x0698;&#xFB8B;&#x0633;&#xFEB2;&#xFEB4;&#xFEB3;&#x0634;&#xFEB6;&#xFEB8;&#xFEB7;&#x0635;&#xFEBA;&#xFEBC;&#xFEBB;&#x0636;&#xFEBE;&#xFEC0;&#xFEBF;&#x0637;&#xFEC2;&#xFEC4;&#xFEC3;&#x0638;&#xFEC6;&#xFEC8;&#xFEC7;&#x0639;&#xFECA;&#xFECC;&#xFECB;&#x063A;&#xFECE;&#xFED0;&#xFECF;&#x0641;&#xFED2;&#xFED4;&#xFED3;&#x06A4;&#xFB6B;&#xFB6D;&#xFB6C;&#x06A1;&#x066F;&#x0642;&#xFED6;&#xFED8;&#xFED7;&#x0643;&#xFEDA;&#xFEDC;&#xFEDB;&#x06A9;&#xFB8F;&#xFB91;&#xFB90;&#x06AF;&#xFB93;&#xFB95;&#xFB94;&#x06AA;&#x0644;&#xFEDE;&#xFEE0;&#xFEDF;&#x06B5;&#x0645;&#xFEE2;&#xFEE4;&#xFEE3;&#x0646;&#xFEE6;&#xFEE8;&#xFEE7;&#x06BA;&#xFB9F;&#x0647;&#xFEEA;&#xFEEC;&#xFEEB;&#x06C0;&#xFBA5;&#x06C1;&#xFBA7;&#xFBA9;&#xFBA8;&#x06C2;&#x06BE;&#xFBAB;&#xFBAD;&#xFBAC;&#x0629;&#xFE94;&#x06C3;&#x0648;&#xFEEE;&#x0624;&#xFE86;&#x06C6;&#xFBDA;&#x06C7;&#xFBD8;&#x06C9;&#xFBE3;&#x0649;&#xFEF0;&#x064A;&#xFEF2;&#xFEF4;&#xFEF3;&#x0626;&#xFE8A;&#xFE8C;&#xFE8B;&#x06CE;&#x06CC;&#xFBFD;&#xFBFF;&#xFBFE;&#x06D2;&#xFBAF;&#x06D3;&#xFBB1;&#x06D5;&#x0640;&#xFEFB;&#xFEFC;&#xFEF7;&#xFEF8;&#xFEF9;&#xFEFA;&#xFEF5;&#xFEF6;&#x066B;&#x066C;&#x0660;&#x0661;&#x0662;&#x0663;&#x0664;&#x0665;&#x0666;&#x0667;&#x0668;&#x0669;&#x06F0;&#x06F1;&#x06F2;&#x06F3;&#x06F4;&#x06F5;&#x06F6;&#x06F7;&#x06F8;&#x06F9;&#xFEFF;&#x000D;&#x200A;&#x0020;&#x00A0;&#x2009;&#x200B;&#x06D4;&#x060C;&#x061B;&#x061F;&#x066D;&#xFD3E;&#xFD3F;&#x002E;&#x003A;&#x0021;&#x0028;&#x0029;&#x00AB;&#x00BB;&#x2039;&#x203A;&#x0022;&#x0027;&#xFDFC;&#x066A; &#x200E; &#x200F; &#x200D; &#x200C; &#x0615; &#xFBB2; &#xFBB3; &#xFBB4; &#xFBB5; &#xFBB9; &#xFBB6; &#x0670; &#x0656; &#x0654; &#x0655; &#x064B; &#x064C; &#x064D; &#x064E; &#x064F; &#x0650; &#x0651; &#x0652; &#x0653; &#x0658; &#x065A; &#x065B;';
+		setDefaultText(completeCharSet);
+	}
+	function decodeEntities(string){
+		var elem = document.createElement('div');
+		elem.innerHTML = string;
+		return elem.textContent;
+	}
+	function vanish(item) {
+		item.style.setProperty("display", "none");
+	}
+	function toggleLeftRight() {
+		const waterfall = document.getElementById("waterfall");
+		if (waterfall.dir != "rtl") {
+			waterfall.dir = "rtl";
+			waterfall.align = "right";
+		} else {
+			waterfall.dir = "";
+			waterfall.align = "";
+		}
+	}
+	function toggleInverse() {
+		const testText = document.getElementById("waterfall");
+		if (testText) {
+			const link = document.getElementById("invert");
+			if (testText.className == "●") {
+				testText.className = "○";
+				link.textContent = "🔳";
+			} else {
+				testText.className = "●";
+				link.textContent = "🔲";
+			}
+		}
+	}
+</script>
+</body>

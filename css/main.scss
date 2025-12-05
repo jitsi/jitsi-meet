@@ -49,7 +49,7 @@ $flagsImagePath: "../images/";
 @import 'welcome_page_settings_toolbar';
 @import 'toolbars';
 @import 'redirect_page';
-@import 'components/input-slider';
+@import 'components/all';
 @import '404';
 @import 'policy';
 @import 'popover';
@@ -76,5 +76,6 @@ $flagsImagePath: "../images/";
 @import 'participants-pane';
 @import 'reactions-menu';
 @import 'plan-limit';
+@import 'custom-overrides/fonts.scss'
 
 /* Modules END */

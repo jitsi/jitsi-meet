@@ -1,0 +1,285 @@
+
+<html>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=9">
+	<head>
+		<title>IRANSansX VariableFont</title>
+		<style>
+			@font-face {
+				font-family: "IRANYekanXVF";
+				src: url("IRANYekanXVF.woff");
+			}
+						@font-face {
+				font-family: "IRANYekanXVF";
+				src: url("IRANYekanXVF.woff2");
+			}
+			p {
+				z-index: 0;
+				direction: rtl;
+				position: relative;
+				margin: 0px;
+				padding: 5px;
+				padding-top: 1em;
+				padding-right: 1em;
+				line-height: 1em;
+				color: #000;
+				font: 100px "IRANYekanXVF";
+				font-feature-settings: "kern" on, "liga" on, "calt" on;
+				-moz-font-feature-settings: "kern" on, "liga" on, "calt" on;
+				-webkit-font-feature-settings: "kern" on, "liga" on, "calt" on;
+				-ms-font-feature-settings: "kern" on, "liga" on, "calt" on;
+				-o-font-feature-settings: "kern" on, "liga" on, "calt" on;
+				font-variation-settings: "wght" 100, "dots" 0, "slnt" 0, "DOTR" 0, "KASH" 0, "DOTS" 0;
+			}
+			#textInput,
+			.css-snippet-container input {
+				color: #777;
+				background-color: #eee;
+				border-radius: 5px;
+				background: #eee;
+				border: none;
+				padding: 1em;
+				margin: 5px;
+				width: 97%;
+			}
+			.labeldiv {
+				width: 48%;
+				display: inline-block;
+			}
+ 			label {
+				z-index: 2;
+				position: absolute;
+				pointer-events: none;
+				width: 100%;
+				height: 2em;
+				margin: 0;
+				padding: 1em;
+				vertical-align: text-top;
+				font: x-small sans-serif;
+				color: 000;
+				opacity: 0.5;
+			}
+			.otFeatureLabel, .otFeature {
+				font-size: small;
+				position: relative;
+				opacity: 1;
+				pointer-events: auto;
+				white-space: nowrap;
+			}
+			.otFeatureLabel {
+				padding: 0.2em 0.5em 0.3em 0.5em;
+				margin: 0 .04em;
+				line-height: 2em;
+				color: #666;
+				background-color: #ddd;
+				border-radius:0.3em;
+				border: 0;
+				text-align:center;
+			}
+			.otFeature {
+				visibility: collapse;
+				margin: 0 -1em 0 0;
+			}
+			input[type=checkbox]:checked + label {
+				visibility: visible;
+				font-weight: bold;
+				color: #eee;
+				background-color: #555;
+			}
+			.slider {
+				z-index: 1;
+				position: relative;
+				-webkit-appearance: none;
+				-moz-appearance: none;
+				appearance: none;
+				width: 100%;
+				height: 2em;
+				border-radius: 5px;
+				background: #eee;
+				padding: 0px;
+				margin: 5px;
+			}
+			.slider::-webkit-slider-thumb {
+				z-index: 3;
+				position: relative;
+				-webkit-appearance: none;
+				-moz-appearance: none;
+				appearance: none;
+				width: 16px;
+				height: 2em;
+				border-radius: 5px;
+				background: #777;
+				cursor: auto;
+			}
+			a {
+				color: #333;
+			}
+
+			.css-snippet-container {
+				position: relative;
+			}
+
+			.css-snippet-container input {
+				width: 100%;
+				color: #333;
+				outline: 0;
+				height: 2em;
+			}
+
+			.css-snippet-container button {
+				position: absolute;
+				right: 0;
+				top: 50%;
+				transform: translateY(-50%);
+			}
+
+			.css-snippet-container:after {
+				content: 'Copied!';
+			    color: #fff;
+			    background: #97d27b;
+			    font-style: italic;
+			    font-size: 14px;
+			    position: absolute;
+			    left: 101%;
+			    top: 50%;
+			    transform: translateY(-50%);
+			    padding: 2px 5px;
+			    font-family: sans-serif;
+			    border-radius: 3px;
+			    opacity: 0;
+				transition: opacity ease .3s;
+			}
+
+			.css-snippet-container.copied:after {
+				opacity: 1;
+				transition: opacity ease .3s;
+			}
+
+
+
+		</style>
+		<script>
+			function updateFeatures() {
+				// update features based on user input:
+				var body = document.getElementById("text");
+				var codeLine = "";
+				var checkboxes = document.getElementsByClassName("otFeature")
+				for (i = 0; i < checkboxes.length; i++) {
+					var checkbox = checkboxes[i];
+					if (i!=0) { codeLine += ", " };
+					codeLine += '"'+checkbox.name+'" ';
+					codeLine += checkbox.checked ? '1' : '0';
+					if (checkbox.name=="kern") {
+						body.style.setProperty("font-kerning", checkbox.checked ? 'normal' : 'none');
+					} else if (checkbox.name=="liga") {
+						body.style.setProperty("font-variant-ligatures", checkbox.checked ? 'common-ligatures contextual' : 'no-common-ligatures no-contextual');
+					} else if (checkbox.name=="dlig") {
+						body.style.setProperty("font-variant-ligatures", checkbox.checked ? 'discretionary-ligatures' : 'no-discretionary-ligatures');
+					} else if (checkbox.name=="hlig") {
+						body.style.setProperty("font-variant-ligatures", checkbox.checked ? 'historical-ligatures' : 'no-historical-ligatures');
+					}
+				}
+				body.style.setProperty("font-feature-settings", codeLine);
+			}
+
+			function updateParagraph() {
+				// update paragraph text based on user input:
+				var userinput = document.getElementById("textInput");
+				var paragraph = document.getElementById("text");
+				paragraph.innerText = userinput.value;
+			}
+
+			function updateSlider() {
+				var body = document.getElementById("text");
+				var sliders = document.getElementsByClassName("slider");
+				var settingtext = "";
+				for (var i = 0; i < sliders.length; i++) {
+					var sliderID = sliders[i].id;
+					var sliderValue = sliders[i].value;
+					var label = document.getElementById("label_"+sliderID);
+					var labelName = label.getAttribute("name");
+
+					label.textContent = ""+labelName+": "+sliderValue;
+
+					if (sliderID == "fontsize") {
+						// Text Size Slider
+						body.style.setProperty("font-size", ""+sliderValue+"px");
+						label.textContent += "px";
+					} else if (sliderID == "lineheight") {
+						// Line Height Slider
+						body.style.setProperty("line-height", ""+sliderValue/100.0+"em");
+						label.textContent += "%";
+					} else {
+						// OTVar Slider: collect settings
+						if (settingtext != "") { settingtext += ", " };
+						settingtext += '"' + sliderID + '" ' + sliderValue;
+
+						var cssSnippetInput = document.body.querySelector('.css-snippet-container input');
+						cssSnippetInput.value = 'font-variation-settings: ' + settingtext;
+					}
+				}
+				// apply OTVar slider settings:
+				body.style.setProperty("font-variation-settings", settingtext);
+			}
+
+			function init () {
+				updateSlider();
+
+				bindEvents();
+			}
+
+			function bindEvents () {
+				var cssSnippetInput = document.body.querySelector('.css-snippet-container input');
+				var cssSnippetCopyButton = document.body.querySelector('.css-snippet-container button');
+
+				cssSnippetInput.onclick = cssSnippetCopyButton.onclick = handleSnippetCopy;
+			}
+
+			function handleSnippetCopy (e) {
+				e.preventDefault();
+
+				var cssSnippetContainer = document.body.querySelector('.css-snippet-container');
+				var cssSnippetInput = document.body.querySelector('.css-snippet-container input');
+
+				/* Select the text field */
+				cssSnippetInput.select();
+
+				/* Copy the text inside the text field */
+				document.execCommand('copy');
+
+				/* Alert the copied text */
+				cssSnippetContainer.classList.add('copied');
+
+				window.setTimeout(function () {
+					cssSnippetContainer.classList.remove('copied');
+				}, 1500)
+			}
+		</script>
+	</head>
+	<body onload="init();">
+		<!-- <input type="text" value="Type Text Here." id="textInput" onkeyup="updateParagraph();" onclick="this.select();" /> -->
+		<textarea
+			id="textInput"
+			rows="5"
+			onkeyup="updateParagraph();"
+			onclick="this.select();"></textarea>
+		<div>
+			<div class="labeldiv"><label class="sliderlabel" id="label_fontsize" name="Font Size">Font Size</label><input type="range" min="10" max="300" value="110" class="slider" id="fontsize" oninput="updateSlider();"></div>
+			<div class="labeldiv"><label class="sliderlabel" id="label_lineheight" name="Line Height">Line Height</label><input type="range" min="30" max="300" value="150" class="slider" id="lineheight" oninput="updateSlider();"></div>
+			<div class='labeldiv'><label class='sliderlabel' id='label_wght' name='Weight'>Weight</label><input type='range' min='100' max='1000' value='400' class='slider' id='wght' oninput='updateSlider();'></div>
+			<div class='labeldiv'><label class='sliderlabel' id='label_dots' name='dots'>Dots</label><input type='range' min='0' max='4' value='0' class='slider' id='dots' oninput='updateSlider();'></div>
+			<div class="labeldiv css-snippet-container">
+				<input type="text" readonly value="" data-m3g="true">
+				<button type="button">Copy</button>
+			</div>
+		</div>
+
+		<p id="text"> چو ایران نَباشَد تَنِ من مَباد
+		<br>
+		بِدین بومُ بَر زِنده یک تَن مَباد
+		</p>
+		<p></p>
+		<p style="color: #bbb; font: small tahoma;">اگر وریبل فونت برای شما کار نمی‌کند کافیست از این آدرس آخرین نسخه مرورگر کروم را دانلود کنید. <a href="https://www.google.com/chrome/">latest version of Chrome</a>.</p>
+
+	</body>
+</html>

@@ -159,9 +159,9 @@ export default class AbstractAddPeopleDialog<P extends IProps, S extends IState>
                 inviteAllowed: this._isAddDisabled()
             }));
 
-        if (this._isAddDisabled()) {
-            return Promise.resolve([]);
-        }
+        // if (this._isAddDisabled()) {
+        //     return Promise.resolve([]);
+        // }
 
         this.setState({
             addToCallInProgress: true

@@ -1,0 +1,15 @@
+.absentParticipants-wrapper {
+    text-align: center;
+    margin-top: 10px;
+
+    h5 {
+        margin-bottom: 10px;
+    }
+
+    .list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+}
