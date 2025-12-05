@@ -4,7 +4,7 @@
 import Logger from '@jitsi/logger';
 import $ from 'jquery';
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import ReactDOM from 'react-dom';
 
 import { browser } from '../../../react/features/base/lib-jitsi-meet';
 import { FILMSTRIP_BREAKPOINT } from '../../../react/features/filmstrip/constants';
@@ -255,13 +255,7 @@ export class VideoContainer extends LargeContainer {
         this.wrapperParent = document.getElementById('largeVideoElementsContainer');
         const avatarContainer = document.getElementById('dominantSpeakerAvatarContainer');
 
-        this.avatarHeight = 0;
-        if (avatarContainer && avatarContainer.getBoundingClientRect && typeof avatarContainer.getBoundingClientRect === 'function') {
-            const clientRect = avatarContainer.getBoundingClientRect();
-            if (clientRect && clientRect.height && clientRect.height > 0) {
-                this.avatarHeight = clientRect.height;
-            }
-        }
+        this.avatarHeight = avatarContainer ? avatarContainer.getBoundingClientRect()?.height : 0;
 
         if (this.video) {
             this.video.onplaying = function (event) {
@@ -698,22 +692,15 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
-        const container = document.getElementById('largeVideoBackgroundContainer');
-        if (!container) return;
-
-        // Create a root if it doesn't exist yet
-        if (!container._reactRoot) {
-            container._reactRoot = createRoot(container);
-        }
-
-        container._reactRoot.render(
+        ReactDOM.render(
             React.createElement(LargeVideoBackground, {
                 hidden: this._hideBackground || this._isHidden,
                 mirror: this.stream && this.stream.isLocal() && this.localFlipX,
                 orientationFit: this._backgroundOrientation,
                 videoElement: this.video,
                 videoTrack: this.stream
-            })
+            }),
+            document.getElementById('largeVideoBackgroundContainer')
         );
     }
 }
