@@ -61,7 +61,7 @@ const InviteUserModal = ({ isOpen, onClose, translate, participantsCount, invite
                             readOnly
                             disabled
                             onClick={(e) => (e.target as HTMLInputElement).select()}
-                            className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-lg border border-gray-600 focus:outline-none select-none pointer-events-none"
+                            className="w-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-1 rounded-lg border border-gray-600 focus:outline-none select-none pointer-events-none"
                         />
                     </div>
                     <Button

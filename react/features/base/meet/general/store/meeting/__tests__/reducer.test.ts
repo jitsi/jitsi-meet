@@ -15,6 +15,7 @@ describe("Meeting Reducer", () => {
         paxPerCall: 0,
         currentRoomId: null,
         planName: null,
+        userTier: null,
     };
 
     describe("Registration", () => {

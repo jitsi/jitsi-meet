@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createPortal } from 'react-dom';
 import { useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -53,7 +53,7 @@ interface IProps {
  */
 function DialogPortal({ children, className, style, getRef, setSize, targetSelector, onVisible }: IProps) {
     const videoSpaceWidth = useSelector((state: IReduxState) => state['features/base/responsive-ui'].videoSpaceWidth);
-    const [ portalTarget ] = useState(() => {
+    const [portalTarget] = useState(() => {
         const portalDiv = document.createElement('div');
 
         portalDiv.style.visibility = 'hidden';
@@ -73,14 +73,14 @@ function DialogPortal({ children, className, style, getRef, setSize, targetSelec
         if (className) {
             portalTarget.className = className;
         }
-    }, [ style, className ]);
+    }, [style, className]);
 
     useEffect(() => {
         if (portalTarget && getRef) {
             getRef(portalTarget);
             portalTarget.style.zIndex = `${ZINDEX_DIALOG_PORTAL}`;
         }
-    }, [ portalTarget, getRef ]);
+    }, [portalTarget, getRef]);
 
     useEffect(() => {
         const size = {
@@ -115,9 +115,9 @@ function DialogPortal({ children, className, style, getRef, setSize, targetSelec
                 document.body.removeChild(portalTarget);
             }
         };
-    }, [ videoSpaceWidth ]);
+    }, [videoSpaceWidth]);
 
-    return ReactDOM.createPortal(
+    return createPortal(
         children,
         portalTarget
     );

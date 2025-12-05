@@ -24,6 +24,9 @@ declare global {
         // selenium tests handler
         _sharedVideoPlayer: any;
         alwaysOnTop: { api: any };
+        opera?: {
+            version?: () => string;
+        };
     }
 
     interface Document {
@@ -36,7 +39,15 @@ declare global {
     const JitsiMeetJS: any;
 
     interface HTMLMediaElement {
-        setSinkId: (id: string) => Promise<undefined>;
+        setSinkId: (id: string) => Promise<void>;
         stop: () => void;
+    }
+
+    interface Navigator {
+        userAgentData?: {
+            platform: string;
+            mobile?: boolean;
+            brands?: Array<{ brand: string; version: string }>;
+        };
     }
 }

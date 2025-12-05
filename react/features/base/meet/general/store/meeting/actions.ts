@@ -1,5 +1,5 @@
 import { Tier } from "@internxt/sdk/dist/drive/payments/types/tiers";
-import { SET_CURRENT_ROOM, SET_PLAN_NAME, UPDATE_MEETING_CONFIG } from "./actionTypes";
+import { SET_CURRENT_ROOM, SET_PLAN_NAME, SET_USER_TIER, UPDATE_MEETING_CONFIG } from "./actionTypes";
 
 /**
  * Updates the meeting configuration based on the user's subscription tier
@@ -48,5 +48,21 @@ export function setPlanName(planName: string | null): {
     return {
         type: SET_PLAN_NAME,
         payload: { planName },
+    };
+}
+
+/**
+ * Sets the user's tier
+ *
+ * @param userTier - The user's tier
+ * @returns Action object
+ */
+export function setUserTier(userTier: Tier | null): {
+    type: string;
+    payload: { userTier: Tier | null };
+} {
+    return {
+        type: SET_USER_TIER,
+        payload: { userTier },
     };
 }

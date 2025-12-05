@@ -183,7 +183,7 @@ class Conference extends AbstractConference<IProps, any> {
             <>
                 <div
                     // _layoutClassName has the styles to manage the side bar
-                    className={_layoutClassName + " bg-gray-100 flex"}
+                    className={_layoutClassName + " bg-gray-100 dark:bg-gray-1 flex"}
                     id="videoconference_page"
                     onMouseMove={isMobileBrowser() ? undefined : this._onShowToolbar}
                 >

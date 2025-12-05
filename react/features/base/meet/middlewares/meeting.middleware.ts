@@ -1,7 +1,7 @@
 import { AnyAction, Dispatch, Middleware } from "redux";
 
 import MiddlewareRegistry from "../../redux/MiddlewareRegistry";
-import { setPlanName, updateMeetingConfig } from "../general/store/meeting/actions";
+import { setPlanName, setUserTier, updateMeetingConfig } from "../general/store/meeting/actions";
 import { MEETING_REDUCER } from "../general/store/meeting/reducer";
 import { updateUser } from "../general/store/user/actions";
 import { LocalStorageManager, STORAGE_KEYS } from "../LocalStorageManager";
@@ -104,6 +104,7 @@ export const updateUserMeetingConfig = async (dispatch: Dispatch<AnyAction>, for
 
                 dispatch(updateMeetingConfig({ enabled, paxPerCall }));
                 dispatch(setPlanName(planName));
+                dispatch(setUserTier(userTier));
 
                 LocalStorageManager.instance.set(STORAGE_KEYS.LAST_CONFIG_CHECK, now);
 
