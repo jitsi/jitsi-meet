@@ -354,7 +354,6 @@ function _requestingSubtitlesChange(
         backendRecordingOn = false) {
     const state = getState();
     const { conference } = state['features/base/conference'];
-    const { transcription } = state['features/base/config'];
 
     conference?.setLocalParticipantProperty(
         P_NAME_REQUESTING_TRANSCRIPTION,
@@ -363,11 +362,7 @@ function _requestingSubtitlesChange(
     if (enabled && conference?.getTranscriptionStatus() === JitsiMeetJS.constants.transcriptionStatus.OFF) {
         const featureAllowed = isJwtFeatureEnabled(getState(), MEET_FEATURES.TRANSCRIPTION, false);
 
-        // the default value for inviteJigasiOnBackendTranscribing is true (when undefined)
-        const inviteJigasi = conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription
-            ? (transcription?.inviteJigasiOnBackendTranscribing ?? true) : true;
-
-        if (featureAllowed && (!backendRecordingOn || inviteJigasi)) {
+        if (featureAllowed && !backendRecordingOn) {
             conference?.dial(TRANSCRIBER_DIAL_NUMBER)
                 .catch((e: any) => {
                     logger.error('Error dialing', e);
