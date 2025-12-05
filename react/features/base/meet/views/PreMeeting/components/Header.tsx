@@ -7,6 +7,7 @@ import PlanBadge from "../../../general/components/PlanBadge";
 import TextButton from "../../../general/components/TextButton";
 import { isMeetingEnabled } from "../../../general/store/meeting/selectors";
 import { getPlanName } from "../../../services/utils/payments.utils";
+import SuitePopover from "./SuitePopover";
 
 const Divider = () => (
     <div className="border-t border-b mx-3 dark:border-white/25" />
@@ -156,6 +157,8 @@ const RightContent = React.memo(
         return isLogged ? (
             <div className="flex space-x-2 flex-row">
                 {meetingButton}
+
+                <SuitePopover />
 
                 <div className="relative">
                     <button
