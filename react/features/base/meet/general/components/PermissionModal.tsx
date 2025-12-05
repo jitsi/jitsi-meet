@@ -1,7 +1,7 @@
 import { TransparentModal } from "@internxt/ui";
-import { MicrophoneIcon, VideoCameraIcon } from "@phosphor-icons/react";
+import { Microphone, VideoCamera } from "@phosphor-icons/react";
 import React from "react";
-import { createPortal } from "react-dom";
+import ReactDOM from "react-dom";
 
 export interface PermissionModalProps {
     translate: (key: string) => string;
@@ -30,10 +30,10 @@ const PermissionModal = ({
                 <div className="bg-orange/50 rounded-[20px] p-5 mb-4">
                     <div className="flex justify-center gap-2 mb-4">
                         <div className="w-12 h-12 bg-white/25 rounded-full flex items-center justify-center">
-                            <VideoCameraIcon className="text-white" size={24} weight="fill" />
+                            <VideoCamera className="text-white" size={24} weight="fill" />
                         </div>
                         <div className="w-12 h-12 bg-white/25 rounded-full flex items-center justify-center">
-                            <MicrophoneIcon className="text-white" size={24} weight="fill" />
+                            <Microphone className="text-white" size={24} weight="fill" />
                         </div>
                     </div>
                     <p
@@ -53,7 +53,7 @@ const PermissionModal = ({
         </TransparentModal>
     );
 
-    return createPortal(modalContent, bodyElement);
+    return ReactDOM.createPortal(modalContent, bodyElement);
 };
 
 export default PermissionModal;
