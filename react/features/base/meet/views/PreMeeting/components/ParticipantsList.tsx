@@ -25,12 +25,12 @@ const ParticipantsList = ({
             <div className="flex items-center">
                 <div className="flex -space-x-3">
                     {participants.map((participant, index) => (
-                        <div key={index} className="relative rounded-full bg-gray-90 border border-white/15">
+                        <div key={index} className="relative rounded-full bg-gray-90 dark:bg-gray-1 border border-white/15">
                             <Avatar
                                 fullName={participant.name}
                                 src={participant?.avatar}
                                 size="sm"
-                                className="bg-gray-90 text-white"
+                                className="bg-gray-90 dark:bg-gray-1 text-white"
                             />
                         </div>
                     ))}
