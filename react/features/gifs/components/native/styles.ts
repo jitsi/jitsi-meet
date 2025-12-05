@@ -24,8 +24,6 @@ export default {
         flexDirection: 'row',
         height: 56,
         justifyContent: 'center',
-        marginBottom: BaseTheme.spacing[0],
-        paddingBottom: BaseTheme.spacing[4],
         width: '100%'
     },
 

@@ -6,7 +6,9 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
+import { StyleType } from '../../../base/styles/functions.native';
 import { TabBarLabelCounter } from '../../../mobile/navigation/components/TabBarLabelCounter';
+import { pollsStyles } from '../../../polls/components/native/styles';
 import { getUnreadPollCount } from '../../../polls/functions';
 import { closeChat, sendMessage } from '../../actions.native';
 import { getUnreadFilesCount } from '../../functions';
@@ -15,7 +17,6 @@ import { IChatProps as AbstractProps } from '../../types';
 import ChatInputBar from './ChatInputBar';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
-import styles from './styles';
 
 interface IProps extends AbstractProps {
 
@@ -62,6 +63,7 @@ class Chat extends Component<IProps> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onSendMessage = this._onSendMessage.bind(this);
+        this._renderFooter = this._renderFooter.bind(this);
     }
 
     /**
@@ -76,19 +78,25 @@ class Chat extends Component<IProps> {
         return (
             <JitsiScreen
                 disableForcedKeyboardDismiss = { true }
-
-                /* eslint-disable react/jsx-no-bind */
-                footerComponent = { () =>
-                    <ChatInputBar onSend = { this._onSendMessage } />
-                }
+                footerComponent = { this._renderFooter }
                 hasBottomTextInput = { true }
                 hasExtraHeaderHeight = { true }
-                style = { styles.chatContainer }>
+                style = { pollsStyles.pollPaneContainer as StyleType }>
                 {/* @ts-ignore */}
                 <MessageContainer messages = { _messages } />
                 <MessageRecipient privateMessageRecipient = { privateMessageRecipient } />
             </JitsiScreen>
         );
+    }
+
+    /**
+     * Renders the footer component.
+     *
+     * @private
+     * @returns {React$Element<*>}
+     */
+    _renderFooter() {
+        return <ChatInputBar onSend = { this._onSendMessage } />;
     }
 
     /**
