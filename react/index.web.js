@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     connectionTimes['document.ready'] = now;
     logger.log('(TIME) document ready:\t', now);
+    document.documentElement.classList.add("dark");
 });
 
 globalNS.entryPoints = {

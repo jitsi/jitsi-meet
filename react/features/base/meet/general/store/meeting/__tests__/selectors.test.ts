@@ -1,8 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { IReduxState } from "../../../../../../app/types";
 import { MEETING_REDUCER } from "../reducer";
-import { getCurrentRoomId, getMaxParticipantsPerCall, getMeetingConfig, getPlanName, isMeetingEnabled } from "../selectors";
+import {
+    getCurrentRoomId,
+    getMaxParticipantsPerCall,
+    getMeetingConfig,
+    getPlanName,
+    getUserTier,
+    isMeetingEnabled
+} from "../selectors";
 import { MeetingState } from "../types";
+import { Service, Tier } from "@internxt/sdk/dist/drive/payments/types/tiers";
 
 describe("Meeting Selectors", () => {
     const createMockState = (meetingState: MeetingState): IReduxState => {
@@ -18,6 +26,7 @@ describe("Meeting Selectors", () => {
                 paxPerCall: 8,
                 currentRoomId: "room-123",
                 planName: null,
+                userTier: null,
             });
 
             const result = getMeetingConfig(mockState);
@@ -34,6 +43,7 @@ describe("Meeting Selectors", () => {
                 paxPerCall: 0,
                 currentRoomId: null,
                 planName: null,
+                userTier: null,
             });
 
             const result = getMeetingConfig(mockState);
@@ -52,6 +62,7 @@ describe("Meeting Selectors", () => {
                 paxPerCall: 5,
                 currentRoomId: "room-123",
                 planName: null,
+                userTier: null,
             });
 
             const result = isMeetingEnabled(mockState);
@@ -65,6 +76,7 @@ describe("Meeting Selectors", () => {
                 paxPerCall: 0,
                 currentRoomId: "room-123",
                 planName: null,
+                userTier: null,
             });
 
             const result = isMeetingEnabled(mockState);
@@ -81,6 +93,7 @@ describe("Meeting Selectors", () => {
                 paxPerCall: 10,
                 currentRoomId: roomId,
                 planName: null,
+                userTier: null,
             });
 
             const result = getCurrentRoomId(mockState);
@@ -94,6 +107,7 @@ describe("Meeting Selectors", () => {
                 paxPerCall: 10,
                 currentRoomId: null,
                 planName: null,
+                userTier: null,
             });
 
             const result = getCurrentRoomId(mockState);
@@ -109,6 +123,7 @@ describe("Meeting Selectors", () => {
                 paxPerCall: 15,
                 currentRoomId: "room-id",
                 planName: null,
+                userTier: null,
             });
 
             const result = getMaxParticipantsPerCall(mockState);
@@ -122,6 +137,7 @@ describe("Meeting Selectors", () => {
                 paxPerCall: 0,
                 currentRoomId: null,
                 planName: null,
+                userTier: null,
             });
 
             const result = getMaxParticipantsPerCall(mockState);
@@ -137,6 +153,7 @@ describe("Meeting Selectors", () => {
                 paxPerCall: 0,
                 currentRoomId: null,
                 planName: null,
+                userTier: null,
             });
 
             const result = getPlanName(mockState);
@@ -163,6 +180,7 @@ describe("Meeting Selectors", () => {
                     paxPerCall: 5,
                     currentRoomId: "test-room",
                     planName,
+                    userTier: null,
                 });
 
                 const result = getPlanName(mockState);
@@ -184,6 +202,7 @@ describe("Meeting Selectors", () => {
                     paxPerCall: 10,
                     currentRoomId: "room-id",
                     planName,
+                    userTier: null,
                 });
 
                 const result = getPlanName(mockState);
@@ -198,11 +217,86 @@ describe("Meeting Selectors", () => {
                 paxPerCall: 10,
                 currentRoomId: "room-id",
                 planName: "enterprise",
+                userTier: null,
             });
 
             const result = getPlanName(mockState);
 
             expect(result).toBe("Enterprise");
+        });
+    });
+
+    describe("getUserTier", () => {
+        it("When userTier is null, then it should return null", () => {
+            const mockState = createMockState({
+                enabled: false,
+                paxPerCall: 0,
+                currentRoomId: null,
+                planName: null,
+                userTier: null,
+            });
+
+            const result = getUserTier(mockState);
+
+            expect(result).toBe(null);
+        });
+
+        it("When state has a complete user tier, then it should return all its properties", () => {
+            const mockUserTier: Tier = {
+                id: 'tier-id',
+                billingType: 'lifetime',
+                featuresPerService: {
+                    [Service.Antivirus]: {
+                        enabled: true,
+                    },
+                    [Service.Backups]: {
+                        enabled: true,
+                    },
+                    [Service.Cleaner]: {
+                        enabled: true,
+                    },
+                    [Service.Drive]: {
+                        enabled: true,
+                        maxSpaceBytes: 10000,
+                        passwordProtectedSharing: { enabled: true },
+                        restrictedItemsSharing: { enabled: true },
+                        workspaces: {
+                            enabled: true,
+                            maximumSeats: 5,
+                            maxSpaceBytesPerSeat: 1000,
+                            minimumSeats: 1
+                        },
+                    },
+                    [Service.Mail]: {
+                        enabled: true,
+                        addressesPerUser: 10,
+                    },
+                    [Service.Meet]: {
+                        enabled: true,
+                        paxPerCall: 10,
+                    },
+                    [Service.Vpn]: {
+                        enabled: true,
+                        featureId: 'vpn',
+                    },
+                    [Service.darkMonitor]: {
+                        enabled: true,
+                    },
+                },
+                label: 'Tier label',
+                productId: 'tier-product-id',
+            };
+            const mockState = createMockState({
+                enabled: false,
+                paxPerCall: 0,
+                currentRoomId: null,
+                planName: null,
+                userTier: mockUserTier,
+            });
+
+            const result = getUserTier(mockState);
+
+            expect(result).toBe(mockUserTier);
         });
     });
 });

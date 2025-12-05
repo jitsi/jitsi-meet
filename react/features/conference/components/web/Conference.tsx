@@ -240,7 +240,7 @@ class Conference extends AbstractConference<IProps, any> {
                 <Chat />
                 <div
                     // _layoutClassName has the styles to manage the side bar
-                    className={_layoutClassName + " bg-gray-100"}
+                    className={_layoutClassName + " bg-gray-100 dark:bg-gray-1"}
                     // className={"bg-gray-100 relative flex"}
                     id="videoconference_page"
                     onMouseMove={isMobileBrowser() ? undefined : this._onShowToolbar}

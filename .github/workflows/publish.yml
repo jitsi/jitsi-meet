@@ -8,15 +8,15 @@ on:
 
 permissions:
   pull-requests: write
+
 jobs:
   publish:
+    name: Publish to Cloudflare Pages
     runs-on: ubuntu-latest
     permissions:
       contents: read
       deployments: write
       pull-requests: write
-    name: Publish to Cloudflare Pages
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -62,12 +62,134 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const deploymentUrl = '${{ steps.cloudflare.outputs.url }}';
-            const previewUrl = deploymentUrl.replace('***', 'meet-web');
+            const commentIdentifier = '<!-- cloudflare-preview-link-comment -->';
 
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
+            const projectName = 'meet-web';
+            const deploymentUrl = '${{ steps.cloudflare.outputs.url }}';
+            const deploymentId = '${{ steps.cloudflare.outputs.id }}';
+            const logsUrl = `https://dash.cloudflare.com/?to=/157168a1684d7105399ec2339cf1281b/pages/view/meet-web/${deploymentId}`;
+            const cloudflarePagesLogo = 'https://user-images.githubusercontent.com/23264/106598434-9e719e00-654f-11eb-9e59-6167043cfa01.png';
+            const latestCommitFull = '${{ github.event.pull_request.head.sha }}';
+            const latestCommit = latestCommitFull.slice(0, 7);
+            const updatedAt = new Date().toLocaleString("es-ES", { timeZone: "Europe/Madrid" });
+
+            const tableBody = 
+            `## Deploying ${projectName} with &nbsp;<a href="https://pages.dev">` +
+            `<img alt="Cloudflare Pages" src="${cloudflarePagesLogo}" width="16"></a> &nbsp;` +
+            `Cloudflare Pages\n` +
+            `<table>
+              <tr>
+                <td><strong>Latest commit:</strong></td>
+                <td><code>${latestCommit}</code></td>
+              </tr>
+              <tr>
+                <td><strong>Status:</strong></td>
+                <td>&nbsp;✅&nbsp; Deploy successful!</td>
+              </tr>
+              <tr>
+                <td><strong>Preview URL:</strong></td>
+                <td><a href='${deploymentUrl}'>${deploymentUrl}</a></td>
+              </tr>
+              <tr>
+                <td><strong>Updated (Europe/Madrid):</strong></td>
+                <td>${updatedAt}</td>
+              </tr>
+            </table>
+
+            [View logs](${logsUrl})`;
+
+            // List comments on the PR
+            const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `🚀 **Preview Link**: ${previewUrl}`
-            })
+              issue_number: context.issue.number
+            });
+
+            // Try to find our comment
+            const existingComment = comments.find(c => c.body.includes(commentIdentifier));
+
+            // If exists → delete it
+            if (existingComment) {
+              await github.rest.issues.deleteComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id
+              });
+            }
+
+            // Always create a fresh comment
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `${commentIdentifier}\n${tableBody}`
+            });
+
+  failed-comment:
+    name: Report Deployment Failure
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+      pull-requests: write
+    needs: publish
+    if: failure()
+    steps:
+      - name: Comment failure on PR
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const commentIdentifier = '<!-- cloudflare-preview-link-comment -->';
+
+            const projectName = 'meet-web';
+            const latestCommitFull = '${{ github.event.pull_request.head.sha }}';
+            const latestCommit = latestCommitFull.slice(0, 7);
+            const cloudflarePagesLogo = 'https://user-images.githubusercontent.com/23264/106598434-9e719e00-654f-11eb-9e59-6167043cfa01.png';
+            const updatedAt = new Date().toLocaleString("es-ES", { timeZone: "Europe/Madrid" });
+
+            const tableBody = 
+            `## Deploying ${projectName} with &nbsp;<a href="https://pages.dev">` +
+            `<img alt="Cloudflare Pages" src="${cloudflarePagesLogo}" width="16"></a> &nbsp;` +
+            `Cloudflare Pages\n` +
+            `<table>
+              <tr>
+                <td><strong>Latest commit:</strong></td>
+                <td><code>${latestCommit}</code></td>
+              </tr>
+              <tr>
+                <td><strong>Status:</strong></td>
+                <td>&nbsp;❌&nbsp; Deploy failed!</td>
+              </tr>
+              <tr>
+                <td><strong>Updated (Europe/Madrid):</strong></td>
+                <td>${updatedAt}</td>
+              </tr>
+            </table>`;
+
+            // List comments on the PR
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+
+            // Try to find our comment
+            const existingComment = comments.find(c => c.body.includes(commentIdentifier));
+
+            // If exists → delete it
+            if (existingComment) {
+              await github.rest.issues.deleteComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id
+              });
+            }
+
+            // Always create a fresh comment
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `${commentIdentifier}\n${tableBody}`
+            });

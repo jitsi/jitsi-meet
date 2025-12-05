@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import MiddlewareRegistry from "../../redux/MiddlewareRegistry";
-import { setPlanName, updateMeetingConfig } from "../general/store/meeting/actions";
+import { setPlanName, setUserTier, updateMeetingConfig } from "../general/store/meeting/actions";
 import { MEETING_REDUCER } from "../general/store/meeting/reducer";
 import { LocalStorageManager } from "../LocalStorageManager";
 import { PaymentsService } from "../services/payments.service";
@@ -20,6 +20,10 @@ vi.mock("../general/store/meeting/actions", () => ({
     setPlanName: vi.fn((planName) => ({
         type: "SET_PLAN_NAME",
         payload: { planName },
+    })),
+    setUserTier: vi.fn((userTier) => ({
+        type: "SET_USER_TIER",
+        payload: { userTier },
     })),
 }));
 
@@ -140,6 +144,7 @@ describe("meetingConfigMiddleware", () => {
                 paxPerCall: 10,
             });
             expect(setPlanName).toHaveBeenCalledWith("premium");
+            expect(setUserTier).toHaveBeenCalledWith(sampleUserTier);
             expect(LocalStorageManager.instance.set).toHaveBeenCalledWith("lastMeetingConfigCheck", expect.any(Number));
         });
 
@@ -176,6 +181,7 @@ describe("meetingConfigMiddleware", () => {
 
             expect(updateMeetingConfig).toHaveBeenCalled();
             expect(setPlanName).toHaveBeenCalled();
+            expect(setUserTier).toHaveBeenCalled();
         });
 
         it("When REFRESH_TOKEN_SUCCESS action is dispatched and interval has not expired, then it should not update meeting config", async () => {
@@ -215,6 +221,7 @@ describe("meetingConfigMiddleware", () => {
 
             expect(updateMeetingConfig).toHaveBeenCalled();
             expect(setPlanName).toHaveBeenCalled();
+            expect(setUserTier).toHaveBeenCalled();
         });
 
         it("When INITIALIZE_AUTH action is dispatched with authenticated user, meeting enabled, and interval not expired, then it should not update", async () => {
