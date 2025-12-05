@@ -255,7 +255,13 @@ export class VideoContainer extends LargeContainer {
         this.wrapperParent = document.getElementById('largeVideoElementsContainer');
         const avatarContainer = document.getElementById('dominantSpeakerAvatarContainer');
 
-        this.avatarHeight = avatarContainer ? avatarContainer.getBoundingClientRect()?.height : 0;
+        this.avatarHeight = 0;
+        if (avatarContainer && avatarContainer.getBoundingClientRect && typeof avatarContainer.getBoundingClientRect === 'function') {
+            const clientRect = avatarContainer.getBoundingClientRect();
+            if (clientRect && clientRect.height && clientRect.height > 0) {
+                this.avatarHeight = clientRect.height;
+            }
+        }
 
         if (this.video) {
             this.video.onplaying = function (event) {
