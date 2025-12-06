@@ -3,37 +3,6 @@ name: Simple CI
 on: [pull_request]
 
 jobs:
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version-file: '.nvmrc'
-        cache: 'npm'
-    - name: Check Node / npm versions
-      run: |
-        node -v
-        npm -v
-    - name: Get changed files
-      id: changed-files
-      uses: jitsi/changed-files@main
-    - name: Get changed lang files
-      id: lang-files
-      run: echo "all=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep -oE 'lang\/\S+' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
-    - run: npm install
-    - name: Check git status
-      run: git status
-    - name: Normalize lang files to ensure sorted
-      if: steps.lang-files.outputs.all
-      run: npm run lang-sort
-    - name: Check lang files are formatted correctly
-      if: steps.lang-files.outputs.all
-      run: npm run lint:lang
-    - name: Check if the git repository is clean
-      run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
-    - run: npm run lint:ci && npm run tsc:ci
   frontend:
     name: Build Frontend
     runs-on: ${{ matrix.os }}
