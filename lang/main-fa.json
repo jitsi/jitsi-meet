@@ -773,6 +773,7 @@
         "waitingParticipants": "{{waitingParticipants}} نفر"
     },
     "participantsPane": {
+        "absentPeople": " افراد غایب",
         "actions": {
             "admit": "پذیرفتن",
             "admitAll": "پذیرفتن همه",
@@ -802,8 +803,7 @@
             "waitingLobby": "در اتاق انتظار ({{count}})"
         },
         "search": "جستجوی شرکت‌کنندگان",
-        "title": "شركت‌كنندگان",
-        "absentPeople": " افراد غایب"
+        "title": "شركت‌كنندگان"
     },
 
     "passwordDigitsOnly": "تا {{number}} رقم",
