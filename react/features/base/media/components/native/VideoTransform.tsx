@@ -134,7 +134,7 @@ class VideoTransform extends Component<IProps, IState> {
     /**
      * The initial position of the finger on touch start.
      */
-    initialPosition: {
+    initialPosition!: {
         x: number;
         y: number;
     };
@@ -147,7 +147,7 @@ class VideoTransform extends Component<IProps, IState> {
     /**
      * Time of the last tap.
      */
-    lastTap: number;
+    lastTap: number = 0;
 
     /**
      * Constructor of the component.

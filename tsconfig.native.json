@@ -10,7 +10,7 @@
         "moduleResolution": "Node",
         "strict": true,
         "noImplicitAny": true,
-        "strictPropertyInitialization": false,
+        "strictPropertyInitialization": true,
         "resolveJsonModule": true,
         "moduleSuffixes": [".native", ".ios", ".android", ""]
     },

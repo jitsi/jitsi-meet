@@ -152,7 +152,7 @@ class Popover extends Component<IProps, IState> {
      */
     _containerRef: React.RefObject<HTMLDivElement>;
 
-    _contextMenuRef: HTMLElement;
+    _contextMenuRef!: HTMLElement;
 
     /**
      * Initializes a new {@code Popover} instance.
