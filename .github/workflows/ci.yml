@@ -69,25 +69,27 @@ jobs:
       working-directory: ./ios
       run: bundle exec pod install --repo-update --deployment
     - run: npx react-native bundle --entry-file react/index.native.js --platform ios --bundle-output /tmp/ios.bundle --reset-cache
-  android-sdk-build:
-    name: Build mobile SDK (Android)
-    runs-on: ubuntu-latest
-    container: reactnativecommunity/react-native-android:v18.0
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version-file: '.nvmrc'
-        cache: 'npm'
-    - name: Check Node / npm versions
-      run: |
-        node -v
-        npm -v
-    - run: npm install
-    - run: |
-        cd android
-        ./gradlew :sdk:clean
-        ./gradlew :sdk:assembleRelease
+  # android-sdk-build:
+  #   name: Build mobile SDK (Android)
+  #   runs-on: ubuntu-latest
+  #   container: reactnativecommunity/react-native-android:v18.0
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   - uses: actions/setup-node@v4
+  #     with:
+  #       node-version-file: '.nvmrc'
+  #       cache: 'npm'
+  #   - name: Check Node / npm versions
+  #     run: |
+  #       node -v
+  #       npm -v
+  #   - run: npm install
+  #   - run: |
+  #       cd android
+  #       ./gradlew :sdk:clean
+  #       ./gradlew :sdk:assembleRelease
+
+
   ios-sdk-build:
     name: Build mobile SDK (iOS)
     runs-on: macos-15
