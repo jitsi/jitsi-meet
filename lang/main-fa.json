@@ -18,9 +18,11 @@
         "inviteMoreHeader": "شما تنها فرد حاضر در این جلسه هستید",
         "inviteMoreMailSubject": "به جلسهٔ {{appName}} بپیوندد",
         "inviteMorePrompt": "دعوت افراد جدید",
+        "inviteToMeet": "دعوت به جلسه ",
         "linkCopied": "لینک در کلیپ بورد کپی شد",
         "noResults": "هیچ نتیجه‌ای مطابق با جستجو یافت نشد",
         "outlookEmail": "رایانامهٔ اوت‌لوک",
+        "peopleAddedToMeet": " افراد دعوت شده به جلسه",
         "phoneNumbers": "شماره تلفن‌ها",
         "searching": "در حال جستجو...",
         "shareInvite": "اشتراک‌گذاری دعوت‌نامهٔ جلسه",
@@ -29,9 +31,7 @@
         "sipAddresses": "نشانی‌های sip",
         "telephone": "تلفن: {{number}}",
         "title": "دعوت افراد به این جلسه",
-        "yahooEmail": "رایانامهٔ یاهو",
-        "inviteToMeet" :"دعوت به جلسه ",
-        "PeopleAddedToMeet" :" افراد دعوت شده به جلسه"
+        "yahooEmail": "رایانامهٔ یاهو"
     },
     "audioDevices": {
         "bluetooth": "بلوتوث",

@@ -42,7 +42,7 @@ class AbsentParticipants extends AbstractAddPeopleDialog<IProps, ILocalState> {
         this._onInviteClick = this._onInviteClick.bind(this);
     }
 
-    async componentDidMount() {
+    override async componentDidMount() {
                 const {_jwt,_currentRoomId} = this.props;
 
         try {
