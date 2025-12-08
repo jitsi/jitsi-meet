@@ -1,0 +1,30 @@
+.notepad-panel {
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    width: 300px;
+    height: 350px;
+    background: white;
+    border: 2px solid #444;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    z-index: 9999;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    font-weight: bold;
+    background: #f2f2f2;
+    border-bottom: 1px solid #ccc;
+}
+
+.notes-area {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    resize: none;
+    outline: none;
+}
