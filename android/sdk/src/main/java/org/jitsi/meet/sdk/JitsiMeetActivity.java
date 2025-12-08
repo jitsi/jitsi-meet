@@ -299,6 +299,14 @@ public class JitsiMeetActivity extends AppCompatActivity
         }
     }
 
+    protected void onParticipantKickedOut(HashMap<String, Object> extraData) {
+        try {
+            JitsiMeetLogger.i("Participant kicked out: ", extraData);
+        } catch (Exception e) {
+            JitsiMeetLogger.w("Invalid participant kicked out extraData", e);
+        }
+    }
+
     protected void onReadyToClose() {
         JitsiMeetLogger.i("SDK is ready to close");
         isReadyToClose = true;
@@ -400,6 +408,9 @@ public class JitsiMeetActivity extends AppCompatActivity
                     break;
                 case PARTICIPANT_LEFT:
                     onParticipantLeft(event.getData());
+                    break;
+                case PARTICIPANT_KICKED_OUT:
+                    onParticipantKickedOut(event.getData());
                     break;
                 case READY_TO_CLOSE:
                     onReadyToClose();
