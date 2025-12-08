@@ -707,7 +707,8 @@
         "notificationTitle": "Lobby",
         "passwordJoinButton": "Beitreten",
         "title": "Lobby",
-        "toggleLabel": "Lobby aktivieren"
+        "toggleLabel": "Lobby aktivieren",
+        "waitForModerator": "Die Konferenz hat noch nicht begonnen, da noch keine Moderatoren eingetroffen sind. Melden Sie sich bitte an, um Moderator zu werden. Andernfalls warten Sie bitte."
     },
     "localRecording": {
         "clientState": {
