@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -32,19 +32,11 @@ import { LeaveConferenceButton } from './LeaveConferenceButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import Separator from './Separator';
 
-/**
- * The type of the React {@code Component} props of {@link Toolbox}.
- */
+// ⭐ NEW IMPORT — YOUR NOTEPAD
+import NotepadPanel from '../../../notepad/NotepadPanel';
+
 interface IProps {
-
-    /**
-     * Optional toolbar background color passed as a prop.
-     */
     toolbarBackgroundColor?: string;
-
-    /**
-     * Explicitly passed array with the buttons which this Toolbox should display.
-     */
     toolbarButtons?: Array<string>;
 }
 
@@ -63,12 +55,6 @@ const useStyles = makeStyles()(() => {
     };
 });
 
-/**
- * A component that renders the main toolbar.
- *
- * @param {IProps} props - The props of the component.
- * @returns {ReactElement}
- */
 export default function Toolbox({
     toolbarButtons,
     toolbarBackgroundColor: toolbarBackgroundColorProp
@@ -77,6 +63,9 @@ export default function Toolbox({
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const _toolboxRef = useRef<HTMLDivElement>(null);
+
+    // ⭐ NEW: state for opening Notepad
+    const [showNotepad, setShowNotepad] = useState(false);
 
     const conference = useSelector((state: IReduxState) => state['features/base/conference'].conference);
     const isNarrowLayout = useSelector((state: IReduxState) => state['features/base/responsive-ui'].isNarrowLayout);
@@ -98,11 +87,11 @@ export default function Toolbox({
     const localParticipant = useSelector(getLocalParticipant);
     const transcribing = useSelector(isTranscribing);
     const _isCCTabEnabled = useSelector(isCCTabEnabled);
-    // Read toolbar background color from config (if provided) or from props.
+
     const toolbarBackgroundColorFromConfig = useSelector((state: IReduxState) =>
         state['features/base/config'].toolbarConfig?.backgroundColor);
     const toolbarBackgroundColor = toolbarBackgroundColorProp || toolbarBackgroundColorFromConfig;
-    // Do not convert to selector, it returns new array and will cause re-rendering of toolbox on every action.
+
     const jwtDisabledButtons = getJwtDisabledButtons(transcribing, _isCCTabEnabled, localParticipant?.features);
 
     const reactionsButtonEnabled = useSelector(isReactionsButtonEnabled);
@@ -123,109 +112,61 @@ export default function Toolbox({
                 document.activeElement.blur();
             }
         }
-    }, [ toolbarVisible ]);
+    }, [toolbarVisible]);
 
-    /**
-     * Sets the visibility of the hangup menu.
-     *
-     * @param {boolean} visible - Whether or not the hangup menu should be
-     * displayed.
-     * @private
-     * @returns {void}
-     */
     const onSetHangupVisible = useCallback((visible: boolean) => {
         dispatch(setHangupMenuVisible(visible));
         dispatch(setToolbarHovered(visible));
-    }, [ dispatch ]);
+    }, [dispatch]);
 
-    /**
-     * Sets the visibility of the overflow menu.
-     *
-     * @param {boolean} visible - Whether or not the overflow menu should be
-     * displayed.
-     * @private
-     * @returns {void}
-     */
     const onSetOverflowVisible = useCallback((visible: boolean) => {
         dispatch(setOverflowMenuVisible(visible));
         dispatch(setToolbarHovered(visible));
-    }, [ dispatch ]);
+    }, [dispatch]);
 
     useEffect(() => {
-
-        // On mobile web we want to keep both toolbox and hang up menu visible
-        // because they depend on each other.
         if (endConferenceSupported && isMobile) {
             hangupMenuVisible && dispatch(setToolboxVisible(true));
         } else if (hangupMenuVisible && !toolbarVisible) {
             onSetHangupVisible(false);
             dispatch(setToolbarHovered(false));
         }
-    }, [ dispatch, hangupMenuVisible, toolbarVisible, onSetHangupVisible ]);
+    }, [dispatch, hangupMenuVisible, toolbarVisible, onSetHangupVisible]);
 
     useEffect(() => {
         if (overflowMenuVisible && isDialogVisible) {
             onSetOverflowVisible(false);
             dispatch(setToolbarHovered(false));
         }
-    }, [ dispatch, overflowMenuVisible, isDialogVisible, onSetOverflowVisible ]);
+    }, [dispatch, overflowMenuVisible, isDialogVisible, onSetOverflowVisible]);
 
-    /**
-     * Key handler for overflow/hangup menus.
-     *
-     * @param {KeyboardEvent} e - Esc key click to close the popup.
-     * @returns {void}
-     */
     const onEscKey = useCallback((e?: React.KeyboardEvent) => {
         if (e?.key === 'Escape') {
             e?.stopPropagation();
             hangupMenuVisible && dispatch(setHangupMenuVisible(false));
             overflowMenuVisible && dispatch(setOverflowMenuVisible(false));
         }
-    }, [ dispatch, hangupMenuVisible, overflowMenuVisible ]);
+    }, [dispatch, hangupMenuVisible, overflowMenuVisible]);
 
-    /**
-     * Dispatches an action signaling the toolbar is not being hovered.
-     *
-     * @private
-     * @returns {void}
-     */
     const onMouseOut = useCallback(() => {
         !overflowMenuVisible && dispatch(setToolbarHovered(false));
-    }, [ dispatch, overflowMenuVisible ]);
+    }, [dispatch, overflowMenuVisible]);
 
-    /**
-     * Dispatches an action signaling the toolbar is being hovered.
-     *
-     * @private
-     * @returns {void}
-     */
     const onMouseOver = useCallback(() => {
         dispatch(setToolbarHovered(true));
-    }, [ dispatch ]);
+    }, [dispatch]);
 
-    /**
-     * Handle focus on the toolbar.
-     *
-     * @returns {void}
-     */
     const handleFocus = useCallback(() => {
         dispatch(setToolboxVisible(true));
-    }, [ dispatch ]);
+    }, [dispatch]);
 
-    /**
-     * Handle blur the toolbar..
-     *
-     * @returns {void}
-     */
     const handleBlur = useCallback(() => {
         dispatch(setToolboxVisible(false));
-    }, [ dispatch ]);
+    }, [dispatch]);
 
     if (iAmRecorder || iAmSipGateway) {
         return null;
     }
-
 
     const rootClassNames = `new-toolbox ${toolbarVisible ? 'visible' : ''} ${
         toolbarButtonsToUse.length ? '' : 'no-buttons'}`;
@@ -250,40 +191,59 @@ export default function Toolbox({
 
     return (
         <div
-            className = { cx(rootClassNames, shiftUp && 'shift-up') }
-            id = 'new-toolbox'
-            style = { toolbarBackgroundColor ? { backgroundColor: toolbarBackgroundColor } : undefined }>
-            <div className = { containerClassName }>
+            className={cx(rootClassNames, shiftUp && 'shift-up')}
+            id='new-toolbox'
+            style={toolbarBackgroundColor ? { backgroundColor: toolbarBackgroundColor } : undefined}>
+            <div className={containerClassName}>
                 <div
-                    className = 'toolbox-content-wrapper'
-                    onBlur = { handleBlur }
-                    onFocus = { handleFocus }
-                    { ...(isMobile ? {} : {
+                    className='toolbox-content-wrapper'
+                    onBlur={handleBlur}
+                    onFocus={handleFocus}
+                    {...(isMobile ? {} : {
                         onMouseOut,
                         onMouseOver
-                    }) }>
+                    })}>
 
                     <div
-                        className = 'toolbox-content-items'
-                        ref = { _toolboxRef }>
+                        className='toolbox-content-items'
+                        ref={_toolboxRef}>
+
+                        {/* Render existing buttons */}
                         {mainMenuButtons.map(({ Content, key, ...rest }) => Content !== Separator && (
                             <Content
-                                { ...rest }
-                                buttonKey = { key }
-                                key = { key } />))}
+                                {...rest}
+                                buttonKey={key}
+                                key={key} />
+                        ))}
+
+                        {/* ⭐ NEW: Notepad Floating Button */}
+                        <button
+                            onClick={() => setShowNotepad(true)}
+                            style={{
+                                width: 40,
+                                height: 40,
+                                marginLeft: 8,
+                                borderRadius: '50%',
+                                border: 'none',
+                                background: '#1e90ff',
+                                color: 'white',
+                                fontSize: 20,
+                                cursor: 'pointer'
+                            }}
+                        >
+                            📝
+                        </button>
 
                         {Boolean(overflowMenuButtons.length) && (
                             <OverflowMenuButton
-                                ariaControls = 'overflow-menu'
-                                buttons = { overflowMenuButtons.reduce<Array<IToolboxButton[]>>((acc, val) => {
+                                ariaControls='overflow-menu'
+                                buttons={overflowMenuButtons.reduce<Array<IToolboxButton[]>>((acc, val) => {
                                     if (val.key === 'reactions' && showReactionsInOverflowMenu) {
                                         return acc;
                                     }
-
                                     if (val.key === 'raisehand' && showRaiseHandInReactionsMenu) {
                                         return acc;
                                     }
-
                                     if (acc.length) {
                                         const prev = acc[acc.length - 1];
                                         const group = prev[prev.length - 1].group;
@@ -291,54 +251,58 @@ export default function Toolbox({
                                         if (group === val.group) {
                                             prev.push(val);
                                         } else {
-                                            acc.push([ val ]);
+                                            acc.push([val]);
                                         }
                                     } else {
-                                        acc.push([ val ]);
+                                        acc.push([val]);
                                     }
-
                                     return acc;
-                                }, []) }
-                                isOpen = { overflowMenuVisible }
-                                key = 'overflow-menu'
-                                onToolboxEscKey = { onEscKey }
-                                onVisibilityChange = { onSetOverflowVisible }
-                                showRaiseHandInReactionsMenu = { showRaiseHandInReactionsMenu }
-                                showReactionsMenu = { showReactionsInOverflowMenu } />
+                                }, [])}
+                                isOpen={overflowMenuVisible}
+                                key='overflow-menu'
+                                onToolboxEscKey={onEscKey}
+                                onVisibilityChange={onSetOverflowVisible}
+                                showRaiseHandInReactionsMenu={showRaiseHandInReactionsMenu}
+                                showReactionsMenu={showReactionsInOverflowMenu} />
                         )}
 
                         {isButtonEnabled('hangup', toolbarButtonsToUse) && (
                             endConferenceSupported
                                 ? <HangupMenuButton
-                                    ariaControls = 'hangup-menu'
-                                    isOpen = { hangupMenuVisible }
-                                    key = 'hangup-menu'
-                                    notifyMode = { buttonsWithNotifyClick?.get('hangup-menu') }
-                                    onVisibilityChange = { onSetHangupVisible }>
+                                    ariaControls='hangup-menu'
+                                    isOpen={hangupMenuVisible}
+                                    key='hangup-menu'
+                                    notifyMode={buttonsWithNotifyClick?.get('hangup-menu')}
+                                    onVisibilityChange={onSetHangupVisible}>
                                     <ContextMenu
-                                        accessibilityLabel = { t(toolbarAccLabel) }
-                                        className = { classes.hangupMenu }
-                                        hidden = { false }
-                                        inDrawer = { overflowDrawer }
-                                        onKeyDown = { onEscKey }>
+                                        accessibilityLabel={t(toolbarAccLabel)}
+                                        className={classes.hangupMenu}
+                                        hidden={false}
+                                        inDrawer={overflowDrawer}
+                                        onKeyDown={onEscKey}>
                                         <EndConferenceButton
-                                            buttonKey = 'end-meeting'
-                                            notifyMode = { buttonsWithNotifyClick?.get('end-meeting') } />
+                                            buttonKey='end-meeting'
+                                            notifyMode={buttonsWithNotifyClick?.get('end-meeting')} />
                                         <LeaveConferenceButton
-                                            buttonKey = 'hangup'
-                                            notifyMode = { buttonsWithNotifyClick?.get('hangup') } />
+                                            buttonKey='hangup'
+                                            notifyMode={buttonsWithNotifyClick?.get('hangup')} />
                                     </ContextMenu>
                                 </HangupMenuButton>
                                 : <HangupButton
-                                    buttonKey = 'hangup'
-                                    customClass = 'hangup-button'
-                                    key = 'hangup-button'
-                                    notifyMode = { buttonsWithNotifyClick.get('hangup') }
-                                    visible = { isButtonEnabled('hangup', toolbarButtonsToUse) } />
+                                    buttonKey='hangup'
+                                    customClass='hangup-button'
+                                    key='hangup-button'
+                                    notifyMode={buttonsWithNotifyClick.get('hangup')}
+                                    visible={isButtonEnabled('hangup', toolbarButtonsToUse)} />
                         )}
                     </div>
                 </div>
             </div>
+
+            {/* ⭐ NEW: Notepad Panel */}
+            {showNotepad && (
+                <NotepadPanel onClose={() => setShowNotepad(false)} />
+            )}
         </div>
     );
 }
