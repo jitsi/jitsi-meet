@@ -180,8 +180,8 @@ const LocalRecordingManager: ILocalRecordingManager = {
             this.selfRecording.withVideo = Boolean(videoTrack);
             const localTracks: MediaStreamTrack[] = [];
 
-            audioTrack && localTracks.push(audioTrack);
-            videoTrack && localTracks.push(videoTrack);
+            audioTrack && localTracks.push(audioTrack.clone());
+            videoTrack && localTracks.push(videoTrack.clone());
             this.stream = new MediaStream(localTracks);
         } else {
             if (supportsCaptureHandle) {
@@ -282,6 +282,9 @@ const LocalRecordingManager: ILocalRecordingManager = {
             this.audioContext = undefined;
             this.audioDestination = undefined;
             this.startTime = undefined;
+            this.stream = undefined;
+            this.selfRecording.on = false;
+            this.selfRecording.withVideo = false;
 
             if (this.writableStream) {
                 try {
