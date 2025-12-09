@@ -3,7 +3,6 @@ import React, { useCallback } from 'react';
 import {
     BackHandler,
     NativeModules,
-    Platform,
     SafeAreaView,
     StatusBar,
     View,
@@ -270,11 +269,11 @@ class Conference extends AbstractConference<IProps, State> {
      */
     override render() {
         const {
+            _aspectRatio,
             _brandingStyles,
         } = this.props;
 
-        const isLandscape = this.props._aspectRatio === ASPECT_RATIO_WIDE;
-        const isAndroid = Platform.OS === 'android';
+        const isLandscape = _aspectRatio === ASPECT_RATIO_WIDE;
 
         return (
             <Container
@@ -282,12 +281,9 @@ class Conference extends AbstractConference<IProps, State> {
                     styles.conference,
                     _brandingStyles
                 ] }>
-                {/* Control the native status bar on Android: hide in landscape during the conference */}
-                { isAndroid
-                    && <StatusBar
-                        animated = { true }
-                        hidden = { isLandscape } />
-                }
+                <StatusBar
+                    animated = { true }
+                    hidden = { isLandscape } />
                 <BrandingImageBackground />
                 { this._renderContent() }
             </Container>
