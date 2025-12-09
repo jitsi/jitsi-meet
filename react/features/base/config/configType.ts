@@ -146,6 +146,7 @@ export interface IWhiteboardConfig {
     enabled?: boolean;
     limitUrl?: string;
     userLimit?: number;
+    storageBackendUrl?: string;
 }
 
 export interface IWatchRTCConfiguration {
