@@ -48,6 +48,7 @@ local NOTIFY_LOBBY_ACCESS_DENIED = 'LOBBY-ACCESS-DENIED';
 local util = module:require "util";
 local ends_with = util.ends_with;
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
+local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local get_room_from_jid = util.get_room_from_jid;
 local is_healthcheck_room = util.is_healthcheck_room;
 local presence_check_status = util.presence_check_status;
@@ -502,7 +503,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
                 host_module:fire_event('room-metadata-changed', { room = room; });
             end
         elseif room._data.lobbyroom then
-            destroy_lobby_room(room, room.jid, nil);
+            destroy_lobby_room(room, internal_room_jid_match_rewrite(room.jid), nil); --
             module:fire_event('jitsi-lobby-disabled', { room = room; });
             notify_lobby_enabled(room, actor, false);
         end

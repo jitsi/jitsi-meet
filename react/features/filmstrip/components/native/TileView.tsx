@@ -2,11 +2,10 @@ import React, { PureComponent } from 'react';
 import {
     FlatList,
     GestureResponderEvent,
-    SafeAreaView,
     TouchableWithoutFeedback,
     ViewToken
 } from 'react-native';
-import { EdgeInsets, withSafeAreaInsets } from 'react-native-safe-area-context';
+import { EdgeInsets, SafeAreaView, withSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
