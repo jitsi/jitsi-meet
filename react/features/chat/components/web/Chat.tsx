@@ -4,6 +4,7 @@ import { connect, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
+import { isTouchDevice, shouldEnableResize } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { IconInfo, IconMessage, IconShareDoc, IconSubtitles } from '../../../base/icons/svg';
 import { getLocalParticipant, getRemoteParticipants, isPrivateChatEnabledSelf } from '../../../base/participants/functions';
@@ -23,7 +24,16 @@ import {
     setUserChatWidth,
     toggleChat
 } from '../../actions.web';
-import { CHAT_SIZE, ChatTabs, OPTION_GROUPCHAT, SMALL_WIDTH_THRESHOLD } from '../../constants';
+import {
+    CHAT_DRAG_HANDLE_HEIGHT,
+    CHAT_DRAG_HANDLE_OFFSET,
+    CHAT_DRAG_HANDLE_WIDTH,
+    CHAT_SIZE,
+    CHAT_TOUCH_HANDLE_SIZE,
+    ChatTabs,
+    OPTION_GROUPCHAT,
+    SMALL_WIDTH_THRESHOLD
+} from '../../constants';
 import { getChatMaxSize, getFocusedTab, isChatDisabled } from '../../functions';
 import { IChatProps as AbstractProps } from '../../types';
 
@@ -99,7 +109,12 @@ interface IProps extends AbstractProps {
     _width: number;
 }
 
-const useStyles = makeStyles<{ _isResizing: boolean; width: number; }>()((theme, { _isResizing, width }) => {
+const useStyles = makeStyles<{
+    _isResizing: boolean;
+    isTouch: boolean;
+    resizeEnabled: boolean;
+    width: number;
+}>()((theme, { _isResizing, isTouch, resizeEnabled, width }) => {
     return {
         container: {
             backgroundColor: theme.palette.ui01,
@@ -110,11 +125,15 @@ const useStyles = makeStyles<{ _isResizing: boolean; width: number; }>()((theme,
             width: `${width}px`,
             zIndex: 300,
 
-            '&:hover, &:focus-within': {
-                '& .dragHandleContainer': {
-                    visibility: 'visible'
+            // On non-touch devices (desktop), show handle on hover
+            // On touch devices, handle is always visible if resize is enabled
+            ...(!isTouch && {
+                '&:hover, &:focus-within': {
+                    '& .dragHandleContainer': {
+                        visibility: 'visible'
+                    }
                 }
-            },
+            }),
 
             '@media (max-width: 580px)': {
                 height: '100dvh',
@@ -178,16 +197,23 @@ const useStyles = makeStyles<{ _isResizing: boolean; width: number; }>()((theme,
 
         dragHandleContainer: {
             height: '100%',
-            width: '9px',
+            // Touch devices need larger hit target but positioned to not take extra space
+            width: isTouch ? `${CHAT_TOUCH_HANDLE_SIZE}px` : `${CHAT_DRAG_HANDLE_WIDTH}px`,
             backgroundColor: 'transparent',
             position: 'absolute',
             cursor: 'col-resize',
-            display: 'flex',
+            display: resizeEnabled ? 'flex' : 'none', // Hide if resize not enabled
             alignItems: 'center',
             justifyContent: 'center',
-            visibility: 'hidden',
-            right: '4px',
+            // On touch devices, always visible if resize enabled. On desktop, hidden by default
+            visibility: (isTouch && resizeEnabled) ? 'visible' : 'hidden',
+            // Position touch handle centered on offset from edge, maintaining same gap as non-touch
+            right: isTouch
+                ? `${CHAT_DRAG_HANDLE_OFFSET - Math.floor((CHAT_TOUCH_HANDLE_SIZE - CHAT_DRAG_HANDLE_WIDTH) / 2)}px`
+                : `${CHAT_DRAG_HANDLE_OFFSET}px`,
             top: 0,
+            // Prevent touch scrolling while dragging
+            touchAction: 'none',
 
             '&:hover': {
                 '& .dragHandle': {
@@ -205,10 +231,15 @@ const useStyles = makeStyles<{ _isResizing: boolean; width: number; }>()((theme,
         },
 
         dragHandle: {
+            // Keep the same visual appearance on all devices
             backgroundColor: theme.palette.icon02,
-            height: '100px',
-            width: '3px',
-            borderRadius: '1px'
+            height: `${CHAT_DRAG_HANDLE_HEIGHT}px`,
+            width: `${CHAT_DRAG_HANDLE_WIDTH / 3}px`,
+            borderRadius: '1px',
+            // Make more visible when actively shown
+            ...(isTouch && resizeEnabled && {
+                backgroundColor: theme.palette.icon01
+            })
         },
 
         privateMessageRecipientsList: {
@@ -240,7 +271,10 @@ const Chat = ({
         return null;
     }
 
-    const { classes, cx } = useStyles({ _isResizing, width: _width });
+    // Detect touch capability and screen size for resize functionality
+    const isTouch = isTouchDevice();
+    const resizeEnabled = shouldEnableResize();
+    const { classes, cx } = useStyles({ _isResizing, width: _width, isTouch, resizeEnabled });
     const [ isMouseDown, setIsMouseDown ] = useState(false);
     const [ mousePosition, setMousePosition ] = useState<number | null>(null);
     const [ dragChatWidth, setDragChatWidth ] = useState<number | null>(null);
@@ -276,16 +310,21 @@ const Chat = ({
     }, [ participants, defaultRemoteDisplayName, t, notifyTimestamp ]);
 
     /**
-     * Handles mouse down on the drag handle.
+     * Handles pointer down on the drag handle.
+     * Supports both mouse and touch events via Pointer Events API.
      *
-     * @param {MouseEvent} e - The mouse down event.
+     * @param {React.PointerEvent} e - The pointer down event.
      * @returns {void}
      */
-    const onDragHandleMouseDown = useCallback((e: React.MouseEvent) => {
+    const onDragHandlePointerDown = useCallback((e: React.PointerEvent) => {
         e.preventDefault();
         e.stopPropagation();
 
-        // Store the initial mouse position and chat width
+        // Capture the pointer to ensure we receive all pointer events
+        // even if the pointer moves outside the element
+        (e.target as HTMLElement).setPointerCapture(e.pointerId);
+
+        // Store the initial pointer position and chat width
         setIsMouseDown(true);
         setMousePosition(e.clientX);
         setDragChatWidth(_width);
@@ -293,7 +332,7 @@ const Chat = ({
         // Indicate that resizing is in progress
         dispatch(setChatIsResizing(true));
 
-        // Add visual feedback that we're dragging
+        // Add visual feedback that we're dragging (cursor for mouse, not visible on touch)
         document.body.style.cursor = 'col-resize';
 
         // Disable text selection during resize
@@ -301,11 +340,12 @@ const Chat = ({
     }, [ _width, dispatch ]);
 
     /**
-     * Drag handle mouse up handler.
+     * Drag handle pointer up handler.
+     * Supports both mouse and touch events via Pointer Events API.
      *
      * @returns {void}
      */
-    const onDragMouseUp = useCallback(() => {
+    const onDragPointerUp = useCallback(() => {
         if (isMouseDown) {
             setIsMouseDown(false);
             dispatch(setChatIsResizing(false));
@@ -317,12 +357,13 @@ const Chat = ({
     }, [ isMouseDown, dispatch ]);
 
     /**
-     * Handles drag handle mouse move.
+     * Handles drag handle pointer move.
+     * Supports both mouse and touch events via Pointer Events API.
      *
-     * @param {MouseEvent} e - The mousemove event.
+     * @param {PointerEvent} e - The pointermove event.
      * @returns {void}
      */
-    const onChatResize = useCallback(throttle((e: MouseEvent) => {
+    const onChatResize = useCallback(throttle((e: PointerEvent) => {
         if (isMouseDown && mousePosition !== null && dragChatWidth !== null) {
             // For chat panel resizing on the left edge:
             // - Dragging left (decreasing X coordinate) should make the panel wider
@@ -346,14 +387,14 @@ const Chat = ({
 
     // Set up event listeners when component mounts
     useEffect(() => {
-        document.addEventListener('mouseup', onDragMouseUp);
-        document.addEventListener('mousemove', onChatResize);
+        document.addEventListener('pointerup', onDragPointerUp);
+        document.addEventListener('pointermove', onChatResize);
 
         return () => {
-            document.removeEventListener('mouseup', onDragMouseUp);
-            document.removeEventListener('mousemove', onChatResize);
+            document.removeEventListener('pointerup', onDragPointerUp);
+            document.removeEventListener('pointermove', onChatResize);
         };
-    }, [ onDragMouseUp, onChatResize ]);
+    }, [ onDragPointerUp, onChatResize ]);
 
     /**
     * Sends a text message.
@@ -590,7 +631,7 @@ const Chat = ({
                     (isMouseDown || _isResizing) && 'visible',
                     'dragHandleContainer'
                 ) }
-                onMouseDown = { onDragHandleMouseDown }>
+                onPointerDown = { onDragHandlePointerDown }>
                 <div className = { cx(classes.dragHandle, 'dragHandle') } />
             </div>
         </div> : null
