@@ -623,6 +623,7 @@
         "dialInSummaryError": "Error fetching dial-in info now. Please try again later.",
         "dialInTollFree": "Toll Free",
         "genericError": "Whoops, something went wrong.",
+        "inviteDesktopLinkPrefix": "Desktop app:",
         "inviteLiveStream": "To view the live stream of this meeting, click this link: {{url}}",
         "invitePhone": "To join by phone instead, tap this: {{number}},,{{conferenceID}}#\n",
         "invitePhoneAlternatives": "Looking for a different dial-in number?\nSee meeting dial-in numbers: {{url}}\n\n\nIf also dialing-in through a room phone, join without connecting to audio: {{silentUrl}}",
@@ -1665,6 +1666,7 @@
         "info": "Dial-in info",
         "jitsiOnMobile": "Jitsi on mobile – download our apps and start a meeting from anywhere",
         "join": "CREATE / JOIN",
+        "joinWithDesktopClient": "Join with desktop app",
         "logo": {
             "calendar": "Calendar logo",
             "desktopPreviewThumbnail": "Desktop preview thumbnail",
@@ -1678,6 +1680,7 @@
         "mobileDownLoadLinkFDroid": "Download mobile app for F-Droid",
         "mobileDownLoadLinkIos": "Download mobile app for iOS",
         "moderatedMessage": "Or <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">book a meeting URL</a> in advance where you are the only moderator.",
+        "openInDesktopApp": "Open in desktop app",
         "privacy": "Privacy",
         "recentList": "Recent",
         "recentListDelete": "Delete entry",

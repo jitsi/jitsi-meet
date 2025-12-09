@@ -225,12 +225,21 @@ body.welcome-page {
         cursor: pointer;
         padding: 16px 20px;
         transition: all 0.2s;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
         &:focus-within {
             outline: auto 2px $welcomePageButtonFocusOutline;
         }
 
         &:hover {
             background-color: $welcomePageButtonHoverBg;
+        }
+
+        &.secondary {
+            margin-left: 8px;
         }
     }
 
