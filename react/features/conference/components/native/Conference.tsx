@@ -3,7 +3,6 @@ import React, { useCallback } from 'react';
 import {
     BackHandler,
     NativeModules,
-    SafeAreaView,
     StatusBar,
     View,
     ViewStyle
@@ -92,7 +91,6 @@ interface IProps extends AbstractProps {
      * Set to {@code true} when the filmstrip is currently visible.
      */
     _filmstripVisible: boolean;
-
 
     /**
      * The indicator which determines if the display name is visible.
