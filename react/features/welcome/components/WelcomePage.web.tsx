@@ -8,6 +8,7 @@ import { IconWarning } from '../../base/icons/svg';
 import Watermarks from '../../base/react/components/web/Watermarks';
 import getUnsafeRoomText from '../../base/util/getUnsafeRoomText.web';
 import CalendarList from '../../calendar-sync/components/CalendarList.web';
+import { buildDesktopDeepLinkFromUrl } from '../../deep-linking/openDesktopApp.web';
 import RecentList from '../../recent-list/components/RecentList.web';
 import SettingsButton from '../../settings/components/web/SettingsButton';
 import { SETTINGS_TABS } from '../../settings/constants';
@@ -132,6 +133,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         this._setAdditionalToolbarContentRef
             = this._setAdditionalToolbarContentRef.bind(this);
         this._renderFooter = this._renderFooter.bind(this);
+        this._onJoinInDesktopApp = this._onJoinInDesktopApp.bind(this);
     }
 
     /**
@@ -256,6 +258,19 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                     type = 'button'>
                                     {t('welcomepage.startMeeting')}
                                 </button>
+                                {!isMobileBrowser()
+                                    && this.props._deeplinkingCfg?.desktop?.enabled
+                                    && this.props._deeplinkingCfg?.desktop?.appScheme && (
+                                    <button
+                                        aria-disabled = 'false'
+                                        aria-label = 'Join with desktop app'
+                                        className = 'welcome-page-button secondary'
+                                        onClick = { this._onJoinInDesktopApp }
+                                        tabIndex = { 0 }
+                                        type = 'button'>
+                                        {t('welcomepage.joinWithDesktopClient')}
+                                    </button>
+                                )}
                             </div>
                         </div>
                         {this._titleHasNotAllowCharacter && (
@@ -333,6 +348,42 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         if (!this._roomInputRef || this._roomInputRef.reportValidity()) {
             this._onJoin();
         }
+    }
+
+    /**
+     * Handles joining via desktop app.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onJoinInDesktopApp() {
+        const { _deeplinkingCfg } = this.props;
+        const desktopCfg = _deeplinkingCfg?.desktop;
+
+        if (!desktopCfg?.enabled || !desktopCfg.appScheme) {
+            // Fallback to normal join in browser
+            this._onJoin();
+
+            return;
+        }
+
+        const room = this.state.room || this.state.generatedRoomName;
+
+        if (!room) {
+            return;
+        }
+
+        // Build the room URL
+        const baseUrl = window.location;
+        const url = new URL(baseUrl.toString());
+
+        // Construct the meeting URL with the room name
+        url.pathname = url.pathname.replace(/\/?$/, '/') + room;
+        url.hash = '';
+
+        const deepLink = buildDesktopDeepLinkFromUrl(url.toString(), desktopCfg.appScheme);
+
+        window.location.href = deepLink;
     }
 
     /**

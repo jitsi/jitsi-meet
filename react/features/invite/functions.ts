@@ -19,6 +19,7 @@ import {
     appendURLParam,
     parseURIString
 } from '../base/util/uri';
+import { buildDesktopDeepLinkFromUrl } from '../deep-linking/openDesktopApp.web';
 import { isVpaasMeeting } from '../jaas/functions';
 import { getActiveSession } from '../recording/functions';
 
@@ -628,6 +629,23 @@ export function getShareInfoText(
     }
 
     let infoText = i18next.t('share.mainText', { roomUrl });
+
+    // Add desktop deep link if enabled
+    const deeplinkingCfg = state['features/base/config'].deeplinking || {};
+    const desktopCfg = deeplinkingCfg.desktop;
+
+    if (desktopCfg?.enabled && desktopCfg.appScheme) {
+        const desktopUrl = buildDesktopDeepLinkFromUrl(inviteUrl, desktopCfg.appScheme);
+        let desktopLine = `\n${i18next.t('info.inviteDesktopLinkPrefix')} `;
+
+        if (useHtml) {
+            desktopLine += `<a href="${desktopUrl}">${desktopUrl}</a>`;
+        } else {
+            desktopLine += desktopUrl;
+        }
+
+        infoText += desktopLine;
+    }
 
     const { room } = parseURIString(inviteUrl);
     const { dialInConfCodeUrl, dialInNumbersUrl, hosts } = state['features/base/config'];
