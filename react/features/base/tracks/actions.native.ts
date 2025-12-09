@@ -1,7 +1,7 @@
 import { IReduxState, IStore } from '../../app/types';
 import { showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
-import JitsiMeetJS from '../lib-jitsi-meet';
+import JitsiMeetJS, { JitsiTrackEvents } from '../lib-jitsi-meet';
 import { setScreenshareMuted } from '../media/actions';
 
 import { addLocalTrack, replaceLocalTrack } from './actions.any';
@@ -45,6 +45,9 @@ async function _startScreenSharing(dispatch: IStore['dispatch'], state: IReduxSt
         const track = tracks[0];
         const currentLocalDesktopTrack = getLocalDesktopTrack(getTrackState(state));
         const currentJitsiTrack = currentLocalDesktopTrack?.jitsiTrack;
+
+        // Ensure we react when the system stops screen capture (e.g. Android red chip).
+        track.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED, () => dispatch(toggleScreensharing(false)));
 
         // The first time the user shares the screen we add the track and create the transceiver.
         // Afterwards, we just replace the old track, so the transceiver will be reused.
