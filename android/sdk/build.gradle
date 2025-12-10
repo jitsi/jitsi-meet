@@ -150,6 +150,22 @@ android.libraryVariants.all { def variant ->
         enabled !devEnabled
     }
 
+    // Ensure proper task ordering for Gradle 8.14+ strict dependency validation
+    currentBundleTask.configure {
+        mustRunAfter {
+            def config = project.configurations.findByName("${targetPath}CompileClasspath")
+            
+            // Fallback to an empty list(mustRunAfter expects a list, not "null" which is the og fallback), 
+            // means no config, means no constraints
+            (config?.allDependencies ?: [])
+                .findAll { it.hasProperty('dependencyProject') }
+                .collectMany { dependency ->
+                    project.project(dependency.dependencyProject.path)
+                        .tasks.matching { it.name.contains(targetName) }
+                }
+        }
+    }
+    
     currentBundleTask.ext.generatedResFolders = files(resourcesDir).builtBy(currentBundleTask)
     currentBundleTask.ext.generatedAssetsFolders = files(jsBundleDir).builtBy(currentBundleTask)
     variant.registerGeneratedResFolders(currentBundleTask.generatedResFolders)
