@@ -63,7 +63,7 @@ const JitsiScreen = ({
     footerComponent,
     hasBottomTextInput = false,
     hasExtraHeaderHeight = false,
-    safeAreaInsets = [ 'left', 'right' ],
+    safeAreaInsets = [ 'bottom', 'left', 'right' ],
     style
 }: IProps) => {
     const renderContent = () => (
@@ -78,8 +78,8 @@ const JitsiScreen = ({
                 edges = { safeAreaInsets }
                 style = { styles.safeArea }>
                 { children }
+                { footerComponent?.() }
             </SafeAreaView>
-            { footerComponent?.() }
         </JitsiKeyboardAvoidingView>
     );
 

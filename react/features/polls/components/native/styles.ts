@@ -153,13 +153,7 @@ export const pollsStyles = createStyleSheet({
         marginTop: BaseTheme.spacing[3]
     },
 
-    pollCreateButtonsContainerAndroid: {
-        marginBottom: BaseTheme.spacing[8],
-        marginHorizontal: BaseTheme.spacing[3]
-    },
-
-    pollCreateButtonsContainerIos: {
-        marginBottom: BaseTheme.spacing[5],
+    pollCreateButtonsContainer: {
         marginHorizontal: BaseTheme.spacing[3]
     },
 
@@ -205,14 +199,8 @@ export const pollsStyles = createStyleSheet({
         color: BaseTheme.palette.action01
     },
 
-    createPollButtonIos: {
-        marginHorizontal: 20,
-        marginVertical: BaseTheme.spacing[5]
-    },
-
-    createPollButtonAndroid: {
-        marginHorizontal: 20,
-        marginVertical: BaseTheme.spacing[5]
+    createPollButton: {
+        marginHorizontal: BaseTheme.spacing[3],
     },
 
     pollPane: {

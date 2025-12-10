@@ -94,8 +94,6 @@ function ParticipantItem({
 }: IProps) {
 
     const { t } = useTranslation();
-    const participantNameContainerStyles
-        = isKnockingParticipant ? styles.lobbyParticipantNameContainer : styles.participantNameContainer;
 
     return (
         <View style = { styles.participantContainer as StyleProp<ViewStyle> } >
@@ -106,12 +104,8 @@ function ParticipantItem({
                     displayName = { displayName }
                     participantId = { participantID }
                     size = { 32 } />
-                <View
-                    style = { [
-                        styles.participantDetailsContainer,
-                        raisedHand && styles.participantDetailsContainerRaisedHand
-                    ] as StyleProp<ViewStyle> }>
-                    <View style = { participantNameContainerStyles as StyleProp<ViewStyle> }>
+                <View>
+                    <View style = { styles.participantNameContainer as StyleProp<ViewStyle> }>
                         <Text
                             numberOfLines = { 1 }
                             style = { styles.participantName as StyleProp<TextStyle> }>
@@ -128,13 +122,11 @@ function ParticipantItem({
                 </View>
                 {
                     !isKnockingParticipant
-                    && <>
-                        { raisedHand && <RaisedHandIndicator /> }
-                        <View style = { styles.participantStatesContainer as StyleProp<ViewStyle> }>
-                            <View style = { styles.participantStateVideo }>{ VideoStateIcons[videoMediaState] }</View>
-                            <View>{ AudioStateIcons[audioMediaState] }</View>
-                        </View>
-                    </>
+                    && <View style = { styles.participantStatesContainer as StyleProp<ViewStyle> }>
+                        <View>{ raisedHand && <RaisedHandIndicator /> }</View>
+                        <View style = { styles.participantStateVideo }>{ VideoStateIcons[videoMediaState] }</View>
+                        <View>{ AudioStateIcons[audioMediaState] }</View>
+                    </View>
                 }
             </TouchableOpacity>
             { !local && children }
