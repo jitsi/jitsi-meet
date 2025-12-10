@@ -22,6 +22,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.startup.Initializer;
 
+import com.facebook.react.internal.featureflags.ReactNativeFeatureFlags;
 import com.facebook.soloader.SoLoader;
 import com.facebook.react.soloader.OpenSourceMergedSoMapping;
 import org.wonday.orientation.OrientationActivityLifecycle;
@@ -41,6 +42,12 @@ public class JitsiInitializer implements Initializer<Boolean> {
             SoLoader.init(context, OpenSourceMergedSoMapping.INSTANCE);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+
+        // Override React Native feature flags for new architecture
+        if (BuildConfig.NEW_ARCHITECTURE_ENABLED) {
+            JitsiReactNativeFeatureFlags featureFlags = new JitsiReactNativeFeatureFlags();
+            ReactNativeFeatureFlags.override(featureFlags);
         }
 
         // Register our uncaught exception handler.

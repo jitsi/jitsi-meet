@@ -2,6 +2,10 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.facebook.react'
 apply plugin: 'maven-publish'
 
+def isNewArchitectureEnabled() {
+  return rootProject.hasProperty("newArchEnabled") && rootProject.getProperty("newArchEnabled") == "true"
+}
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     ndkVersion rootProject.ext.ndkVersion
@@ -16,12 +20,14 @@ android {
         debug {
             buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
             buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${rootProject.ext.googleServicesEnabled}"
+            buildConfigField "boolean", "NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
             buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${rootProject.ext.googleServicesEnabled}"
+            buildConfigField "boolean", "NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
         }
     }
 
