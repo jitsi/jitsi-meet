@@ -8,7 +8,6 @@ import { hideDialog } from '../../../base/dialog/actions';
 import { isDialogOpen } from '../../../base/dialog/functions';
 import { getParticipantCount } from '../../../base/participants/functions';
 import { StyleType } from '../../../base/styles/functions.native';
-import { isToolboxVisible } from '../../../toolbox/functions.native';
 
 import ReactionMenu from './ReactionMenu';
 
