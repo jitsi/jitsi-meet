@@ -63,7 +63,7 @@ export default class MessageContainer extends Component<IProps, IState> {
     /**
      * Intersection observer used to detect intersections of messages with the bottom of the message container.
      */
-    _bottomListObserver: IntersectionObserver;
+    _bottomListObserver!: IntersectionObserver;
 
     static defaultProps = {
         messages: [] as IMessage[]

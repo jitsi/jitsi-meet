@@ -78,7 +78,7 @@ export default class SlidingView extends PureComponent<IProps, IState> {
     /**
      * True if the component is mounted.
      */
-    _mounted: boolean;
+    _mounted: boolean = false;
 
     /**
      * Implements React's {@link Component#getDerivedStateFromProps()}.

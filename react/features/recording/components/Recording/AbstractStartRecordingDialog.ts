@@ -440,7 +440,7 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
      * @protected
      * @returns {React$Component}
      */
-    _renderDialogContent: () => React.Component;
+    _renderDialogContent!: () => React.Component;
 }
 
 /**

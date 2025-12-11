@@ -28,7 +28,7 @@ export interface IState {
 export default class AbstractDialog<P extends IProps, S extends IState = IState>
     extends Component<P, S> {
 
-    _mounted: boolean;
+    _mounted: boolean = false;
 
     /**
      * Initializes a new {@code AbstractDialog} instance.

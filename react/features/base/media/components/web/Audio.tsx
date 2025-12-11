@@ -10,7 +10,7 @@ export default class Audio extends AbstractAudio {
     /**
      * Set to <code>true</code> when the whole file is loaded.
      */
-    _audioFileLoaded: boolean;
+    _audioFileLoaded: boolean = false;
 
     /**
      * Reference to the HTML audio element, stored until the file is ready.
