@@ -724,6 +724,7 @@
         "streamIdHelp": "What's this?",
         "title": "Live Stream",
         "unavailableTitle": "Live Streaming unavailable",
+        "youTubeGoLiveWarning": "Remember to click 'Go Live' in YouTube Studio if Auto-Start/Auto-Stop are disabled. Otherwise the stream will not begin recording.",
         "youtubeTerms": "YouTube terms of services"
     },
     "lobby": {
