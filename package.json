@@ -67,7 +67,6 @@
         "clsx": "1.1.1",
         "crypto": "npm:crypto-browserify",
         "crypto-browserify": "^3.12.0",
-        "crypto-js": "4.1.1",
         "dayjs": "1.11.13",
         "dompurify": "3.2.6",
         "dotenv": "^16.4.5",
