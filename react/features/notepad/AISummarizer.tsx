@@ -15,7 +15,7 @@ const AISummarizer: React.FC<AISummarizerProps> = ({
   const [summaryType, setSummaryType] = useState<'brief' | 'detailed' | 'action'>('brief');
 
   // IMPORTANT: Replace with your NEW Gemini API key (after revoking the old one)
-  const GEMINI_API_KEY = 'YOUR_NEW_GEMINI_KEY_HERE';
+  const GEMINI_API_KEY = 'AIzaSyCsEns6jS6p54dI8nrrPj-wGpzr_3WKbMw';
 
   const getSummaryPrompt = (type: 'brief' | 'detailed' | 'action') => {
     const prompts = {
