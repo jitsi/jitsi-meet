@@ -35,7 +35,7 @@ interface IState {
  * @augments Component
  */
 export default class AlwaysOnTop extends Component<any, IState> {
-    _hovered: boolean;
+    _hovered: boolean = false;
 
     /**
      * Initializes a new {@code AlwaysOnTop} instance.
