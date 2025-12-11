@@ -189,12 +189,14 @@ export const shouldRenderInviteButton = (state: IReduxState) => {
  * @returns {Array<string>}
  */
 export function getSortedParticipantIds(stateful: IStateful) {
+    const state = toState(stateful);
     const id = getLocalParticipant(stateful)?.id;
     const remoteParticipants = getRemoteParticipantsSorted(stateful);
     const reorderedParticipants = new Set(remoteParticipants);
     const raisedHandParticipants = getRaiseHandsQueue(stateful).map(({ id: particId }) => particId);
     const remoteRaisedHandParticipants = new Set(raisedHandParticipants || []);
     const dominantSpeaker = getDominantSpeakerParticipant(stateful);
+    const disableAutoResort = Boolean(state['features/base/config']?.disableAutoResortParticipants);
 
     for (const participant of remoteRaisedHandParticipants.keys()) {
         // Avoid duplicates.
@@ -204,11 +206,12 @@ export function getSortedParticipantIds(stateful: IStateful) {
     }
 
     const dominant = [];
-    const dominantId = dominantSpeaker?.id;
+    const dominantId = disableAutoResort ? undefined : dominantSpeaker?.id;
     const local = remoteRaisedHandParticipants.has(id ?? '') ? [] : [ id ];
 
     // In case dominat speaker has raised hand, keep the order in the raised hand queue.
     // In case they don't have raised hand, goes first in the participants list.
+    // (Only when disableAutoResortParticipants is false)
     if (dominantId && dominantId !== id && !remoteRaisedHandParticipants.has(dominantId)) {
         reorderedParticipants.delete(dominantId);
         dominant.push(dominantId);
