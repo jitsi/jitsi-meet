@@ -56,6 +56,8 @@ public class JitsiMeetActivity extends AppCompatActivity
 
     private static final int SCREEN_SHARE_NOTIFICATION_ID = 1001;
 
+    private static boolean notificationChannelCreated = false;
+
     private boolean isReadyToClose;
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -422,15 +424,18 @@ public class JitsiMeetActivity extends AppCompatActivity
     }
 
     private void onShowNotification(Bundle data) {
-        // Create notification channel for Android 8.0+
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        // Create notification channel for Android 8.0+ (only once)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !notificationChannelCreated) {
             android.app.NotificationChannel channel = new android.app.NotificationChannel(
                 "screen_share_channel",
                 "Screen Sharing",
                 android.app.NotificationManager.IMPORTANCE_HIGH);
             channel.setDescription("Notifications for screen sharing controls");
             android.app.NotificationManager notificationManager = getSystemService(android.app.NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+                notificationChannelCreated = true;
+            }
         }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "screen_share_channel")

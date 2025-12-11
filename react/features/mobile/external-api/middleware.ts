@@ -48,7 +48,7 @@ import {
 } from '../../base/participants/functions';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
-import { TRACK_ADDED, TRACK_REMOVED } from '../../base/tracks/actionTypes';
+import { TRACK_ADDED, TRACK_REMOVED, TRACK_STOPPED } from '../../base/tracks/actionTypes';
 import { toggleScreensharing } from '../../base/tracks/actions.native';
 import { CAMERA_FACING_MODE_MESSAGE } from '../../base/tracks/constants';
 import { getLocalTracks, isLocalTrackMuted } from '../../base/tracks/functions.native';
@@ -115,6 +115,7 @@ const RECORDING_STATUS_CHANGED = 'RECORDING_STATUS_CHANGED';
 const externalAPIEnabled = isExternalAPIAvailable();
 
 let eventEmitter: any;
+let screenShareNotificationShown = false;
 
 const { ExternalAPI } = NativeModules;
 
@@ -345,8 +346,19 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
     case TRACK_ADDED: {
         const { track } = action;
 
-        if (track.local && track.videoType === VIDEO_TYPE.DESKTOP) {
+        if (track && track.local && track.videoType === VIDEO_TYPE.DESKTOP && !screenShareNotificationShown) {
             sendEvent(store, 'SHOW_NOTIFICATION', {});
+            screenShareNotificationShown = true;
+        }
+        break;
+    }
+
+    case TRACK_STOPPED: {
+        const { track } = action;
+
+        if (track && track.local && track.videoType === VIDEO_TYPE.DESKTOP) {
+            // System stopped screen sharing (e.g., Android red chip), so stop it properly
+            store.dispatch(toggleScreensharing(false));
         }
         break;
     }
@@ -354,8 +366,9 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
     case TRACK_REMOVED: {
         const { track } = action;
 
-        if (track.local && track.videoType === VIDEO_TYPE.DESKTOP) {
+        if (track && track.local && track.videoType === VIDEO_TYPE.DESKTOP && screenShareNotificationShown) {
             sendEvent(store, 'HIDE_NOTIFICATION', {});
+            screenShareNotificationShown = false;
         }
         break;
     }

@@ -46,9 +46,6 @@ async function _startScreenSharing(dispatch: IStore['dispatch'], state: IReduxSt
         const currentLocalDesktopTrack = getLocalDesktopTrack(getTrackState(state));
         const currentJitsiTrack = currentLocalDesktopTrack?.jitsiTrack;
 
-        // Ensure we react when the system stops screen capture (e.g. Android red chip).
-        track.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED, () => dispatch(toggleScreensharing(false)));
-
         // The first time the user shares the screen we add the track and create the transceiver.
         // Afterwards, we just replace the old track, so the transceiver will be reused.
         if (currentJitsiTrack) {
