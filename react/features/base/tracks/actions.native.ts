@@ -1,10 +1,10 @@
 import { IReduxState, IStore } from '../../app/types';
 import { showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
-import JitsiMeetJS from '../lib-jitsi-meet';
+import JitsiMeetJS, { JitsiTrackEvents } from '../lib-jitsi-meet';
 import { setScreenshareMuted } from '../media/actions';
 
-import { addLocalTrack, replaceLocalTrack } from './actions.any';
+import { addLocalTrack, replaceLocalTrack, destroyLocalDesktopTrackIfExists } from './actions.any';
 import { getLocalDesktopTrack, getTrackState } from './functions.native';
 import logger from './logger';
 
@@ -26,7 +26,7 @@ export function toggleScreensharing(enabled: boolean, _ignore1?: boolean, _ignor
         if (enabled) {
             _startScreenSharing(dispatch, state);
         } else {
-            dispatch(setScreenshareMuted(true));
+            dispatch(destroyLocalDesktopTrackIfExists());
         }
     };
 }
