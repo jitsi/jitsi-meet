@@ -28,6 +28,7 @@ interface ConferenceControlsProps extends WithTranslation {
     _screensharing: boolean;
     _screenShareActive: boolean;
     _chatOpen: boolean;
+    _chatKeysArrived: boolean;
 }
 
 const ConferenceControls = ({
@@ -40,6 +41,7 @@ const ConferenceControls = ({
     _screensharing,
     _screenShareActive,
     _chatOpen,
+    _chatKeysArrived
 }: ConferenceControlsProps) => {
     const [isOpenInviteUser, setIsOpenInviteUser] = useState(false);
 
@@ -59,7 +61,13 @@ const ConferenceControls = ({
     };
 
     const handleToggleChat = () => {
-        dispatch(toggleChat());
+        if(_chatKeysArrived) {
+            console.log("Toggling chat.");
+            dispatch(toggleChat());
+        }
+        else {
+            console.log("Chat keys have not arrived yet.");
+        }
     };
 
     return (
@@ -120,6 +128,7 @@ function mapStateToProps(state: IReduxState) {
         _screensharing: isScreenVideoShared(state),
         _screenShareActive: screenShareParticipants.length > 0,
         _chatOpen: state["features/chat"].isOpen,
+        _chatKeysArrived: state["features/chat"].isKeysArrived,
     };
 }
 

@@ -172,3 +172,12 @@ export const SET_CHAT_IS_RESIZING = 'SET_CHAT_IS_RESIZING';
   * }
   */
  export const NOTIFY_PRIVATE_RECIPIENTS_CHANGED = 'NOTIFY_PRIVATE_RECIPIENTS_CHANGED';
+
+ /**
+  * The type of action makes the chat visiable.
+  *
+  * {
+  *     type: CHAT_KEYS_ARRIVED
+  * }
+  */
+ export const CHAT_KEYS_ARRIVED = 'CHAT_KEYS_ARRIVED';
