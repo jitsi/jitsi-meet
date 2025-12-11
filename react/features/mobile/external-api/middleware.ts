@@ -48,6 +48,7 @@ import {
 } from '../../base/participants/functions';
 import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
+import { TRACK_ADDED, TRACK_REMOVED } from '../../base/tracks/actionTypes';
 import { toggleScreensharing } from '../../base/tracks/actions.native';
 import { CAMERA_FACING_MODE_MESSAGE } from '../../base/tracks/constants';
 import { getLocalTracks, isLocalTrackMuted } from '../../base/tracks/functions.native';
@@ -340,6 +341,24 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
                 muted: action.muted
             });
         break;
+
+    case TRACK_ADDED: {
+        const { track } = action;
+
+        if (track.local && track.videoType === VIDEO_TYPE.DESKTOP) {
+            sendEvent(store, 'SHOW_NOTIFICATION', {});
+        }
+        break;
+    }
+
+    case TRACK_REMOVED: {
+        const { track } = action;
+
+        if (track.local && track.videoType === VIDEO_TYPE.DESKTOP) {
+            sendEvent(store, 'HIDE_NOTIFICATION', {});
+        }
+        break;
+    }
     }
 
     return result;
