@@ -335,7 +335,7 @@ export function useToolboxButtons(
     };
 
     const buttons = _reducedUI ? reducedUIToolbarButtons : toolbarButtons;
-    const buttonKeys = Object.keys(buttons) as ToolbarButton[];
+    const buttonKeys = Object.keys(buttons) as Array<keyof typeof buttons>;
 
     buttonKeys.forEach(
             key => typeof buttons[key] === 'undefined' && delete buttons[key]);
