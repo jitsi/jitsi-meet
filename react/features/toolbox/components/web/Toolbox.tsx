@@ -7,6 +7,7 @@ import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { getLocalParticipant, isLocalParticipantModerator } from '../../../base/participants/functions';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
+import { isPrejoinPageVisible } from '../../../prejoin/functions.any';
 import { isReactionsButtonEnabled, shouldDisplayReactionsButtons } from '../../../reactions/functions.web';
 import { isCCTabEnabled } from '../../../subtitles/functions.any';
 import { isTranscribing } from '../../../transcribing/functions';
@@ -110,7 +111,10 @@ export default function Toolbox({
     const toolbarVisible = useSelector(isToolboxVisible);
     const mainToolbarButtonsThresholds
         = useSelector((state: IReduxState) => state['features/toolbox'].mainToolbarButtonsThresholds);
-    const allButtons = useToolboxButtons(customToolbarButtons);
+    const { reducedUI } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
+    const isPrejoinEnabled = useSelector(isPrejoinPageVisible);
+    const _reducedUI = !isPrejoinEnabled && reducedUI;
+    const allButtons = useToolboxButtons(customToolbarButtons, _reducedUI);
     const isMobile = isMobileBrowser();
     const endConferenceSupported = Boolean(conference?.isEndConferenceSupported() && isModerator);
 

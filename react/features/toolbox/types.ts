@@ -57,6 +57,10 @@ export type ToolbarButton = 'camera' |
     'whiteboard' |
     '__end';
 
+export type ReducedUIToolbarButton = 'camera' |
+    'microphone' |
+    '__end';
+
 export enum NOTIFY_CLICK_MODE {
     ONLY_NOTIFY = 'ONLY_NOTIFY',
     PREVENT_AND_NOTIFY = 'PREVENT_AND_NOTIFY'

@@ -73,7 +73,7 @@ import ShareDesktopButton from './components/web/ShareDesktopButton';
 import ToggleCameraButton from './components/web/ToggleCameraButton';
 import VideoSettingsButton from './components/web/VideoSettingsButton';
 import { isButtonEnabled, isDesktopShareButtonDisabled } from './functions.web';
-import { ICustomToolbarButton, IToolboxButton, ToolbarButton } from './types';
+import { ICustomToolbarButton, IToolboxButton, ReducedUIToolbarButton, ToolbarButton } from './types';
 
 
 const microphone = {
@@ -263,10 +263,11 @@ function useHelpButton() {
 * Returns all buttons that could be rendered.
 *
 * @param {Object} _customToolbarButtons - An array containing custom buttons objects.
+* @param {boolean} _reducedUI - The indicator which determines whether the UI is reduced.
 * @returns {Object} The button maps mainMenuButtons and overflowMenuButtons.
 */
 export function useToolboxButtons(
-        _customToolbarButtons?: ICustomToolbarButton[]): { [key: string]: IToolboxButton; } {
+        _customToolbarButtons?: ICustomToolbarButton[], _reducedUI?: boolean): { [key: string]: IToolboxButton; } {
     const desktopSharing = getDesktopSharingButton();
     const toggleCameraButton = useToggleCameraButton();
     const _fullscreen = getFullscreenButton();
@@ -293,7 +294,11 @@ export function useToolboxButtons(
     const _download = useDownloadButton();
     const _help = useHelpButton();
 
-    const buttons: { [key in ToolbarButton]?: IToolboxButton; } = {
+    const reducedUIToolbarButtons: { [key in ReducedUIToolbarButton]?: IToolboxButton; } = {
+        microphone,
+        camera
+    };
+    const toolbarButtons: { [key in ToolbarButton]?: IToolboxButton; } = {
         microphone,
         camera,
         profile,
@@ -328,6 +333,8 @@ export function useToolboxButtons(
         download: _download,
         help: _help
     };
+
+    const buttons = _reducedUI ? reducedUIToolbarButtons : toolbarButtons;
     const buttonKeys = Object.keys(buttons) as ToolbarButton[];
 
     buttonKeys.forEach(

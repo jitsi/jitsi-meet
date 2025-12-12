@@ -217,8 +217,10 @@ class ConferenceInfo extends Component<IProps> {
  * }}
  */
 function _mapStateToProps(state: IReduxState) {
+    const { reducedUI } = state['features/base/responsive-ui'];
+
     return {
-        _visible: isToolboxVisible(state),
+        _visible: !reducedUI && isToolboxVisible(state),
         _conferenceInfo: getConferenceInfo(state)
     };
 }
