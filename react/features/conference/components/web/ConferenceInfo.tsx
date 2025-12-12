@@ -35,6 +35,11 @@ interface IProps {
     };
 
     /**
+     * The indicator which determines whether the UI is reduced.
+     */
+    _reducedUI: boolean;
+
+    /**
      * Indicates whether the component should be visible or not.
      */
     _visible: boolean;
@@ -194,6 +199,12 @@ class ConferenceInfo extends Component<IProps> {
      * @returns {ReactElement}
      */
     override render() {
+        const { _reducedUI } = this.props;
+
+        if (_reducedUI) {
+            return null;
+        }
+
         return (
             <div
                 className = 'details-container'
@@ -217,9 +228,12 @@ class ConferenceInfo extends Component<IProps> {
  * }}
  */
 function _mapStateToProps(state: IReduxState) {
+    const { reducedUI } = state['features/base/responsive-ui'];
+
     return {
+        _conferenceInfo: getConferenceInfo(state),
+        _reducedUI: reducedUI,
         _visible: isToolboxVisible(state),
-        _conferenceInfo: getConferenceInfo(state)
     };
 }
 
