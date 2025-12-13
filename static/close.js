@@ -44,7 +44,7 @@ function onLoad() {
     // Intentionally use string concatenation as this file does not go through
     // babel but IE11 is still supported.
     // eslint-disable-next-line prefer-template
-    const thankYouMessage = 'Thank you for using ' + interfaceConfig.APP_NAME;
+    const thankYouMessage = 'Thank you for using Finueva Meet';
 
     // Works only for close2.html because close.html doesn't have this element.
     insertTextMsg('thanksMessage', thankYouMessage);

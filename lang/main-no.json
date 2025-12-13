@@ -535,7 +535,7 @@
         "answer": "Svar",
         "audioCallTitle": "Innkommende anrop",
         "decline": "Avvis",
-        "productLabel": "fra Jitsi Meet",
+        "productLabel": "fra Finueva Meet",
         "videoCallTitle": "Innkommende videoanrop"
     },
     "info": {
@@ -799,7 +799,7 @@
         "noiseSuppressionDesktopAudioDescription": "Ekstra støydemping kan ikke aktiveres mens du deler skrivebordets lyd. Deaktiver det og prøv igjen.",
         "noiseSuppressionFailedTitle": "Kunne ikke starte ekstra støydemping",
         "noiseSuppressionStereoDescription": "Ekstra støydemping støttes foreløpig ikke med stereolyd.",
-        "oldElectronClientDescription1": "Det ser ut til at du bruker en gammel versjon av Jitsi Meet-klienten som har kjente sikkerhetsproblemer. Vennligst oppdater til vår ",
+        "oldElectronClientDescription1": "Det ser ut til at du bruker en gammel versjon av Finueva Meet-klienten som har kjente sikkerhetsproblemer. Vennligst oppdater til vår ",
         "oldElectronClientDescription2": "nyeste versjon",
         "oldElectronClientDescription3": " nå!",
         "participantWantsToJoin": "Ønsker å bli med i møtet",
@@ -1541,7 +1541,7 @@
         "go": "GÅ",
         "goSmall": "GÅ",
         "headerSubtitle": "Sikre møter av høy kvalitet",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Finueva Meet",
         "info": "Innringingsinformasjon",
         "jitsiOnMobile": "Jitsi på mobil – last ned appene våre og start et møte fra hvor som helst",
         "join": "OPPRETT / BLI MED",
@@ -1549,7 +1549,7 @@
             "calendar": "Kalenderlogo",
             "desktopPreviewThumbnail": "Forhåndsvisningsminiatyr for skrivebord",
             "googleLogo": "Google-logo",
-            "logoDeepLinking": "Jitsi Meet-logo",
+            "logoDeepLinking": "Finueva Meet-logo",
             "microsoftLogo": "Microsoft-logo",
             "policyLogo": "Retningslinjelogo"
         },

@@ -2,13 +2,13 @@
 
 **Hello there! 👋**
 
-We're thrilled that you're eager to contribute to **Jitsi Meet! ❤️** 
+We're thrilled that you're eager to contribute to **Finueva Meet! ❤️** 
 
 Your interest in improving our platform means a lot to us. To ensure your contributions align seamlessly with our goals and processes, we've recently updated our guide. This guide will provide you with clear instructions on how to get involved effectively.
 
 ### 📖 Get Started
 
-Ready to get started? Head over to our [Jitsi Meet Handbook](https://jitsi.github.io/handbook/docs/dev-guide/dev-guide-contributing/) and let's make **Jitsi Meet** even better together!
+Ready to get started? Head over to our [Finueva Meet Handbook](https://jitsi.github.io/handbook/docs/dev-guide/dev-guide-contributing/) and let's make **Finueva Meet** even better together!
 
 ### 💬 Join the Discussion
 

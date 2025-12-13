@@ -469,7 +469,7 @@
         "answer": "Odbierz",
         "audioCallTitle": "Przychodzące połączenie",
         "decline": "Odrzuć",
-        "productLabel": "z Jitsi Meet",
+        "productLabel": "z Finueva Meet",
         "videoCallTitle": "Przychodzące połączenie wideo"
     },
     "info": {
@@ -720,7 +720,7 @@
         "noiseSuppressionFailedTitle": "Nie udało się uruchomić tłumienia szumów",
         "noiseSuppressionNoTrackDescription": "Najpierw wyłącz wyciszenie mikrofonu.",
         "noiseSuppressionStereoDescription": "Tłumienie szumów dźwięku stereo nie jest obecnie obsługiwane.",
-        "oldElectronClientDescription1": "Najprawdopodobniej używasz starej wersji klienta Jitsi Meet, który jest podatny na luki bezpieczeństwa. Proszę zaktualizować do ",
+        "oldElectronClientDescription1": "Najprawdopodobniej używasz starej wersji klienta Finueva Meet, który jest podatny na luki bezpieczeństwa. Proszę zaktualizować do ",
         "oldElectronClientDescription2": "najnowszej wersji",
         "oldElectronClientDescription3": " teraz!",
         "participantWantsToJoin": "Chce dołączyć do spotkania",
@@ -1415,7 +1415,7 @@
         "go": "Dalej",
         "goSmall": "Dalej",
         "headerSubtitle": "Bezpieczne i wysokiej jakości spotkania",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Finueva Meet",
         "info": "Informacje",
         "jitsiOnMobile": "Jitsi mobile – pobierz appkę i rozpocznij spotkanie z dowolnego miejsca",
         "join": "Utwórz / Dołącz",
@@ -1423,7 +1423,7 @@
             "calendar": "Logo kalendarza",
             "desktopPreviewThumbnail": "Miniatura podglądu pulpitu",
             "googleLogo": "Logo Google",
-            "logoDeepLinking": "Logo Jitsi meet",
+            "logoDeepLinking": "Logo Finueva Meet",
             "microsoftLogo": "Logo Microsoftu",
             "policyLogo": "Logo polityki"
         },

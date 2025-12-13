@@ -534,7 +534,7 @@
         "answer": "응답",
         "audioCallTitle": "수신 전화",
         "decline": "거절",
-        "productLabel": "Jitsi Meet에서",
+        "productLabel": "Finueva Meet에서",
         "videoCallTitle": "수신 화상 전화"
     },
     "info": {
@@ -798,7 +798,7 @@
         "noiseSuppressionDesktopAudioDescription": "추가 노이즈 억제는 데스크톱 오디오 공유 중에는 활성화할 수 없습니다. 비활성화하고 다시 시도하십시오.",
         "noiseSuppressionFailedTitle": "추가 노이즈 억제를 시작하지 못했습니다",
         "noiseSuppressionStereoDescription": "추가 노이즈 억제는 현재 스테레오 오디오와 함께 지원되지 않습니다.",
-        "oldElectronClientDescription1": "보안 취약성이 있는 오래된 Jitsi Meet 클라이언트를 사용하고 있는 것 같습니다. 최신 빌드로 업데이트하세요",
+        "oldElectronClientDescription1": "보안 취약성이 있는 오래된 Finueva Meet 클라이언트를 사용하고 있는 것 같습니다. 최신 빌드로 업데이트하세요",
         "oldElectronClientDescription2": "최신 빌드",
         "oldElectronClientDescription3": "지금!",
         "participantWantsToJoin": "회의에 참여하려고 합니다",
@@ -1539,7 +1539,7 @@
         "go": "계속",
         "goSmall": "계속",
         "headerSubtitle": "안전하고 고품질의 회의",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Finueva Meet",
         "info": "정보",
         "jitsiOnMobile": "모바일에서 Jitsi – 앱을 다운로드하고 어디서나 회의를 시작하세요",
         "join": "가입",
@@ -1547,7 +1547,7 @@
             "calendar": "캘린더 로고",
             "desktopPreviewThumbnail": "데스크톱 미리보기 썸네일",
             "googleLogo": "구글 로고",
-            "logoDeepLinking": "Jitsi meet 로고",
+            "logoDeepLinking": "Finueva Meet 로고",
             "microsoftLogo": "마이크로소프트 로고",
             "policyLogo": "정책 로고"
         },

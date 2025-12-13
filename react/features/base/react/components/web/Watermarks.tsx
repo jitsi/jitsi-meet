@@ -153,19 +153,20 @@ class Watermarks extends Component<IProps, State> {
      */
     _renderJitsiWatermark() {
         const {
-            _logoLink,
             _logoUrl,
             _showJitsiWatermark
         } = this.props;
         const { noMargins, t } = this.props;
         const className = `watermark leftwatermark ${noMargins ? 'no-margin' : ''}`;
-
+        const _logoLink = "https://finueva.com"
         let reactElement = null;
 
         if (_showJitsiWatermark) {
             const style = {
                 backgroundImage: `url(${_logoUrl})`,
-                position: _logoLink ? 'static' : 'absolute'
+                position: _logoLink ? 'static' : 'absolute',
+                height: '50px',
+                width: '150px'
             } as const;
 
             reactElement = (<div
@@ -201,9 +202,9 @@ class Watermarks extends Component<IProps, State> {
             return (
                 <a
                     className = 'poweredby'
-                    href = 'http://jitsi.org'
+                    href = 'https://finueva.com'
                     target = '_new'>
-                    <span>{ t('poweredby') } jitsi.org</span>
+                    <span>{ t('poweredby') } finueva.com</span>
                 </a>
             );
         }

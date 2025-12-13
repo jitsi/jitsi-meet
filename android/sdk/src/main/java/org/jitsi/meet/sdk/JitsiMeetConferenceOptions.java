@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 
 /**
- * This class represents the options when joining a Jitsi Meet conference. The user can create an
+ * This class represents the options when joining a Finueva Meet conference. The user can create an
  * instance by using {@link JitsiMeetConferenceOptions.Builder} and setting the desired options
  * there.
  *

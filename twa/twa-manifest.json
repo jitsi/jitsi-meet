@@ -1,8 +1,8 @@
 {
   "packageId": "org.jitsi.meet",
   "host": "meet.jit.si",
-  "name": "Jitsi Meet",
-  "launcherName": "Jitsi Meet",
+  "name": "Finueva Meet",
+  "launcherName": "Finueva Meet",
   "display": "standalone",
   "themeColor": "#17A0DB",
   "navigationColor": "#000000",

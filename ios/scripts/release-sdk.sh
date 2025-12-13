@@ -8,7 +8,7 @@ RELEASE_REPO=$(realpath ${THIS_DIR}/../../../jitsi-meet-ios-sdk-releases)
 DEFAULT_SDK_VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" ${THIS_DIR}/../sdk/src/Info.plist)
 SDK_VERSION=${OVERRIDE_SDK_VERSION:-${DEFAULT_SDK_VERSION}}
 
-echo "Releasing Jitsi Meet SDK ${SDK_VERSION}"
+echo "Releasing Finueva Meet SDK ${SDK_VERSION}"
 
 pushd ${RELEASE_REPO}
 
