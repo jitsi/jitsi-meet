@@ -9,11 +9,15 @@ import { openDialog } from '../../../base/dialog/actions';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { IconCloseLarge, IconDotsHorizontal } from '../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
+import { getCurrentConference } from '../../../base/conference/functions';
 import Button from '../../../base/ui/components/web/Button';
 import ClickableIcon from '../../../base/ui/components/web/ClickableIcon';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import { findAncestorByClass } from '../../../base/ui/functions.web';
 import { isAddBreakoutRoomButtonVisible } from '../../../breakout-rooms/functions';
+import { participantJoined } from '../../../base/participants/actions';
+import { FakeParticipant } from '../../../base/participants/types';
+import { v4 as uuidv4 } from 'uuid';
 import MuteEveryoneDialog from '../../../video-menu/components/web/MuteEveryoneDialog';
 import { shouldDisplayCurrentVisitorsList } from '../../../visitors/functions';
 import { close } from '../../actions.web';
@@ -152,6 +156,7 @@ const ParticipantsPane = () => {
     const showFooter = useSelector(isLocalParticipantModerator);
     const showMuteAllButton = useSelector(isMuteAllVisible);
     const showMoreActionsButton = useSelector(isMoreActionsVisible);
+    const conference = useSelector(getCurrentConference);
     const dispatch = useDispatch();
     const { t } = useTranslation();
 
@@ -188,6 +193,16 @@ const ParticipantsPane = () => {
         setContextOpen(open => !open);
     }, []);
 
+    const addVirtualParticipant = useCallback(() => {
+        const virtualParticipant = {
+            id: uuidv4(),
+            name: 'Virtual Participant',
+            fakeParticipant: FakeParticipant.VirtualParticipant,
+            conference
+        };
+        dispatch(participantJoined(virtualParticipant as any));
+    }, [dispatch, conference]);
+
     if (!paneOpen) {
         return null;
     }
@@ -216,6 +231,11 @@ const ParticipantsPane = () => {
             </div>
             {showFooter && (
                 <div className = { classes.footer }>
+                    <Button
+                        accessibilityLabel = { 'Add virtual participant' }
+                        label = { 'Add virtual participant' }
+                        onClick = { addVirtualParticipant }
+                        type = { BUTTON_TYPES.SECONDARY } />
                     {showMuteAllButton && (
                         <Button
                             accessibilityLabel = { t('participantsPane.actions.muteAll') }
