@@ -27,6 +27,7 @@ import '../device-selection/middleware';
 import '../display-name/middleware';
 import '../dynamic-branding/middleware';
 import '../etherpad/middleware';
+import '../fake-participants/middleware';
 import '../filmstrip/middleware';
 import '../follow-me/middleware';
 import '../invite/middleware';

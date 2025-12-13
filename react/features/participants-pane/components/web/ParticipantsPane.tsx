@@ -156,7 +156,7 @@ const ParticipantsPane = () => {
     const showFooter = useSelector(isLocalParticipantModerator);
     const showMuteAllButton = useSelector(isMuteAllVisible);
     const showMoreActionsButton = useSelector(isMoreActionsVisible);
-    const conference = useSelector(getCurrentConference);
+    const { conference, dataChannelOpen } = useSelector((state: IReduxState) => state['features/base/conference']);
     const dispatch = useDispatch();
     const { t } = useTranslation();
 
@@ -194,14 +194,27 @@ const ParticipantsPane = () => {
     }, []);
 
     const addVirtualParticipant = useCallback(() => {
+        if (!conference || !dataChannelOpen) {
+            return;
+        }
         const virtualParticipant = {
-            id: uuidv4(),
-            name: 'Virtual Participant',
+            id: `fake-participant-${uuidv4()}`,
+            name: 'XB Drone',
+            local: false,
             fakeParticipant: FakeParticipant.VirtualParticipant,
-            conference
+            role: 'participant'
         };
-        dispatch(participantJoined(virtualParticipant as any));
-    }, [dispatch, conference]);
+
+        conference.sendEndpointMessage('', {
+            type: 'add-fake-participant',
+            participant: virtualParticipant
+        });
+
+        dispatch(participantJoined({
+            ...virtualParticipant,
+            conference
+        }));
+    }, [ conference, dataChannelOpen, dispatch ]);
 
     if (!paneOpen) {
         return null;
@@ -232,8 +245,8 @@ const ParticipantsPane = () => {
             {showFooter && (
                 <div className = { classes.footer }>
                     <Button
-                        accessibilityLabel = { 'Add virtual participant' }
-                        label = { 'Add virtual participant' }
+                        accessibilityLabel = { 'Add XB' }
+                        label = { 'Add XB' }
                         onClick = { addVirtualParticipant }
                         type = { BUTTON_TYPES.SECONDARY } />
                     {showMuteAllButton && (
