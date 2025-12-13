@@ -34,7 +34,7 @@ const useStyles = makeStyles()(theme => {
             padding: '12px 16px',
             ...theme.typography.bodyShortRegularLarge,
 
-            '&:first-child': {
+            '&:first-of-type': {
                 marginTop: '15px'
             },
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -26,6 +26,7 @@ import {
     getQuickActionButtonType,
     participantMatchesSearch
 } from '../../functions';
+
 
 import ParticipantActionEllipsis from './ParticipantActionEllipsis';
 import ParticipantItem from './ParticipantItem';
@@ -162,34 +163,41 @@ interface IProps {
     youText: string;
 }
 
+// Props extension: add optional mediaStream for virtual participant video
+interface IPropsWithStream extends IProps {
+    virtualParticipantStream?: MediaStream;
+}
+
 /**
  * Implements the MeetingParticipantItem component.
  *
- * @param {IProps} props - The props of the component.
+ * @param {IPropsWithStream} props - The props of the component.
  * @returns {ReactElement}
  */
-function MeetingParticipantItem({
-    _audioMediaState,
-    _audioTrack,
-    _disableModeratorIndicator,
-    _displayName,
-    _local,
-    _localVideoOwner,
-    _matchesSearch,
-    _participant,
-    _participantID,
-    _quickActionButtonType,
-    _raisedHand,
-    _videoMediaState,
-    isHighlighted,
-    isInBreakoutRoom,
-    onContextMenu,
-    onLeave,
-    openDrawerForParticipant,
-    overflowDrawer,
-    participantActionEllipsisLabel,
-    youText
-}: IProps) {
+function MeetingParticipantItem(props: IPropsWithStream) {
+    const {
+        _audioMediaState,
+        _audioTrack,
+        _disableModeratorIndicator,
+        _displayName,
+        _local,
+        _localVideoOwner,
+        _matchesSearch,
+        _participant,
+        _participantID,
+        _quickActionButtonType,
+        _raisedHand,
+        _videoMediaState,
+        isHighlighted,
+        isInBreakoutRoom,
+        onContextMenu,
+        onLeave,
+        openDrawerForParticipant,
+        overflowDrawer,
+        participantActionEllipsisLabel,
+        youText,
+        virtualParticipantStream
+    } = props;
 
     const [ hasAudioLevels, setHasAudioLevel ] = useState(false);
     const [ registeredEvent, setRegisteredEvent ] = useState(false);
@@ -227,15 +235,81 @@ function MeetingParticipantItem({
     const audioMediaState = _audioMediaState === MEDIA_STATE.UNMUTED && hasAudioLevels
         ? MEDIA_STATE.DOMINANT_SPEAKER : _audioMediaState;
 
+    // Render a <video> tag for virtual participants and inject WHEP reader
+    const videoId = `sharedVideoPlayer1-${_participant?._participantID || ''}`;
+    useEffect(() => {
+        if (_participant?.fakeParticipant) {
+            // Helper functions
+            const parseBoolString = (str, defaultVal) => {
+                str = (str || '');
+                if (["1", "yes", "true"].includes(str.toLowerCase())) return true;
+                if (["0", "no", "false"].includes(str.toLowerCase())) return false;
+                return defaultVal;
+            };
+            const loadAttributesFromQuery = (video) => {
+                const params = new URLSearchParams(window.location.search);
+                video.controls = parseBoolString(params.get('controls'), true);
+                video.muted = parseBoolString(params.get('muted'), true);
+                video.autoplay = parseBoolString(params.get('autoplay'), true);
+                video.playsInline = parseBoolString(params.get('playsinline'), true);
+                video.disablepictureinpicture = parseBoolString(params.get('disablepictureinpicture'), false);
+            };
+
+            const initReader = () => {
+                const video = document.getElementById(videoId);
+                if (!video) return;
+                loadAttributesFromQuery(video);
+                if (window.MediaMTXWebRTCReader && typeof window.MediaMTXWebRTCReader === 'function') {
+                    // @ts-ignore
+                    window.reader = new window.MediaMTXWebRTCReader({
+                        url: "https://media.platform.xbstation.com/stream/whep",
+                        user: "xb",
+                        pass: "xbpassforisrtesting",
+                        onError: (err) => { console.error('❌ WHEP Error:', err); },
+                        onTrack: (evt) => {
+                            if (video.srcObject === null) {
+                                video.srcObject = evt.streams[0];
+                                video.onloadedmetadata = () => { video.play().catch(() => {}); };
+                            }
+                        }
+                    });
+                } else {
+                    // Retry after a short delay if not yet available
+                    setTimeout(initReader, 100);
+                }
+            };
+
+            if (!document.getElementById('reader-js')) {
+                const script = document.createElement('script');
+                script.src = 'https://mobifone-solution.xbstation.com/css/player/reader.js';
+                script.defer = true;
+                script.id = 'reader-js';
+                script.onload = initReader;
+                document.body.appendChild(script);
+            } else {
+                initReader();
+            }
+        }
+    }, [_participant]);
+
+    if (_participant?.fakeParticipant) {
+        return (
+            <video
+                id={videoId}
+                autoPlay
+                muted
+                controls
+                playsInline
+                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8, background: '#000' }}
+            />
+        );
+    }
+
     return (
         <ParticipantItem
             actionsTrigger = { ACTION_TRIGGER.HOVER }
-            {
-                ...(_participant?.fakeParticipant ? {} : {
-                    audioMediaState,
-                    videoMediaState: _videoMediaState
-                })
-            }
+            audioMediaState = { audioMediaState }
+            videoMediaState = { _videoMediaState }
             disableModeratorIndicator = { _disableModeratorIndicator }
             displayName = { _displayName }
             isHighlighted = { isHighlighted }
@@ -247,27 +321,25 @@ function MeetingParticipantItem({
             participantID = { _participantID }
             raisedHand = { _raisedHand }
             youText = { youText }>
-
-            {!overflowDrawer && !_participant?.fakeParticipant
-                && <>
-                    {!isInBreakoutRoom && (
-                        <ParticipantQuickAction
-                            buttonType = { _quickActionButtonType }
-                            participantID = { _participantID }
-                            participantName = { _displayName } />
-                    )}
+            {!overflowDrawer && <>
+                {!_participant?.fakeParticipant && !isInBreakoutRoom && (
+                    <ParticipantQuickAction
+                        buttonType = { _quickActionButtonType }
+                        participantID = { _participantID }
+                        participantName = { _displayName } />
+                )}
+                {!_participant?.fakeParticipant && (
                     <ParticipantActionEllipsis
                         accessibilityLabel = { participantActionEllipsisLabel }
                         onClick = { onContextMenu }
                         participantID = { _participantID } />
-                </>
-            }
-
-            {!overflowDrawer && (_localVideoOwner && _participant?.fakeParticipant) && (
-                <ParticipantActionEllipsis
-                    accessibilityLabel = { participantActionEllipsisLabel }
-                    onClick = { onContextMenu } />
-            )}
+                )}
+                {(_localVideoOwner && _participant?.fakeParticipant) && (
+                    <ParticipantActionEllipsis
+                        accessibilityLabel = { participantActionEllipsisLabel }
+                        onClick = { onContextMenu } />
+                )}
+            </>}
         </ParticipantItem>
     );
 }

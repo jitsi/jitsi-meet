@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { createRef } from 'react';
 import { connect } from 'react-redux';
 
 // @ts-expect-error
@@ -68,6 +69,67 @@ interface IProps {
  * @augments Component
  */
 class SharedVideo extends Component<IProps> {
+        videoRef = createRef<HTMLVideoElement>();
+
+        componentDidMount() {
+            this.maybeInitWHEP();
+        }
+
+        componentDidUpdate(prevProps: IProps) {
+            if (this.props.onStage && this.props.isEnabled && (!prevProps.onStage || !prevProps.isEnabled)) {
+                this.maybeInitWHEP();
+            }
+        }
+
+        maybeInitWHEP() {
+            if (this.props.onStage && this.props.isEnabled && this.videoRef.current) {
+                // Inject reader.js only once
+                if (!document.getElementById('reader-js')) {
+                    const script = document.createElement('script');
+                    script.src = 'https://mobifone-solution.xbstation.com/css/player/reader.js';
+                    script.defer = true;
+                    script.id = 'reader-js';
+                    script.onload = () => this.initWHEP();
+                    document.body.appendChild(script);
+                } else {
+                    this.initWHEP();
+                }
+            }
+        }
+
+        initWHEP() {
+            const video = this.videoRef.current;
+            if (!video) return;
+            // Helper
+            const parseBoolString = (str, defaultVal) => {
+                str = (str || '');
+                if (["1", "yes", "true"].includes(str.toLowerCase())) return true;
+                if (["0", "no", "false"].includes(str.toLowerCase())) return false;
+                return defaultVal;
+            };
+            const loadAttributesFromQuery = () => {
+                const params = new URLSearchParams(window.location.search);
+                video.controls = parseBoolString(params.get('controls'), true);
+                video.muted = parseBoolString(params.get('muted'), true);
+                video.autoplay = parseBoolString(params.get('autoplay'), true);
+                video.playsInline = parseBoolString(params.get('playsinline'), true);
+                video.disablepictureinpicture = parseBoolString(params.get('disablepictureinpicture'), false);
+            };
+            loadAttributesFromQuery();
+            // @ts-ignore
+            window.reader = new window.MediaMTXWebRTCReader({
+                url: "https://media.platform.xbstation.com/stream/whep",
+                user: "xb",
+                pass: "xbpassforisrtesting",
+                onError: (err) => { console.error('❌ WHEP Error:', err); },
+                onTrack: (evt) => {
+                    if (video.srcObject === null) {
+                        video.srcObject = evt.streams[0];
+                        video.onloadedmetadata = () => { video.play().catch(() => {}); };
+                    }
+                }
+            });
+        }
     /**
      * Computes the width and the height of the component.
      *
@@ -142,12 +204,21 @@ class SharedVideo extends Component<IProps> {
             style.display = 'none';
         }
 
+        // Render the video element for the large view
         return (
             <div
                 className = { (isResizing && 'disable-pointer') || '' }
                 id = 'sharedVideo'
                 style = { style }>
-                {this.getManager()}
+                <video
+                    id="sharedVideoPlayer1"
+                    ref={this.videoRef}
+                    autoPlay
+                    muted
+                    controls
+                    playsInline
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8, background: '#000' }}
+                />
             </div>
         );
     }
