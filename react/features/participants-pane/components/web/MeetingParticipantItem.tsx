@@ -236,37 +236,46 @@ function MeetingParticipantItem(props: IPropsWithStream) {
         ? MEDIA_STATE.DOMINANT_SPEAKER : _audioMediaState;
 
     // Render a <video> tag for virtual participants and inject WHEP reader
-    const videoId = `sharedVideoPlayer1-${_participant?._participantID || ''}`;
+    // Use id or participantId for uniqueness
+    const videoId = `sharedVideoPlayer1-${_participant?.id || _participant?.participantId || ''}`;
     useEffect(() => {
         if (_participant?.fakeParticipant) {
             // Helper functions
-            const parseBoolString = (str, defaultVal) => {
+            const parseBoolString = (str: string | null | undefined, defaultVal: boolean): boolean => {
                 str = (str || '');
                 if (["1", "yes", "true"].includes(str.toLowerCase())) return true;
                 if (["0", "no", "false"].includes(str.toLowerCase())) return false;
                 return defaultVal;
             };
-            const loadAttributesFromQuery = (video) => {
+            const loadAttributesFromQuery = (video: HTMLVideoElement) => {
                 const params = new URLSearchParams(window.location.search);
                 video.controls = parseBoolString(params.get('controls'), true);
                 video.muted = parseBoolString(params.get('muted'), true);
                 video.autoplay = parseBoolString(params.get('autoplay'), true);
                 video.playsInline = parseBoolString(params.get('playsinline'), true);
+                // @ts-ignore
                 video.disablepictureinpicture = parseBoolString(params.get('disablepictureinpicture'), false);
             };
 
+            // Extend window type for MediaMTXWebRTCReader
+            type MediaMTXWebRTCReaderType = new (options: any) => any;
+            interface WindowWithMediaMTX extends Window {
+                MediaMTXWebRTCReader?: MediaMTXWebRTCReaderType;
+                reader?: any;
+            }
+            const win = window as WindowWithMediaMTX;
+
             const initReader = () => {
-                const video = document.getElementById(videoId);
+                const video = document.getElementById(videoId) as HTMLVideoElement | null;
                 if (!video) return;
                 loadAttributesFromQuery(video);
-                if (window.MediaMTXWebRTCReader && typeof window.MediaMTXWebRTCReader === 'function') {
-                    // @ts-ignore
-                    window.reader = new window.MediaMTXWebRTCReader({
+                if (win.MediaMTXWebRTCReader && typeof win.MediaMTXWebRTCReader === 'function') {
+                    win.reader = new win.MediaMTXWebRTCReader({
                         url: "https://media.platform.xbstation.com/stream/whep",
                         user: "xb",
                         pass: "xbpassforisrtesting",
-                        onError: (err) => { console.error('❌ WHEP Error:', err); },
-                        onTrack: (evt) => {
+                        onError: (err: any) => { console.error('❌ WHEP Error:', err); },
+                        onTrack: (evt: any) => {
                             if (video.srcObject === null) {
                                 video.srcObject = evt.streams[0];
                                 video.onloadedmetadata = () => { video.play().catch(() => {}); };
