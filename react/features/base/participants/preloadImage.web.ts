@@ -21,15 +21,9 @@ export function preloadImage(
 
     return new Promise((resolve, reject) => {
         const image = document.createElement('img');
-        let isCleanedUp = false;
 
         // Cleanup function to release resources and prevent memory leaks
         const cleanup = () => {
-            if (isCleanedUp) {
-                return;
-            }
-            isCleanedUp = true;
-
             // Clear event handlers to break circular references
             image.onload = null;
             image.onerror = null;
