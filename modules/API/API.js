@@ -110,7 +110,7 @@ import { getParticipantsPaneOpen } from '../../react/features/participants-pane/
 import { hidePiP, showPiP } from '../../react/features/pip/actions';
 import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording/actions.any';
 import { grantRecordingConsent, grantRecordingConsentAndUnmute } from '../../react/features/recording/actions.web';
-import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../react/features/recording/constants';
+import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
 import { startAudioScreenShareFlow, startScreenShareFlow } from '../../react/features/screen-share/actions';
 import { isScreenAudioSupported } from '../../react/features/screen-share/functions';
@@ -780,9 +780,6 @@ function initCommands() {
 
             if (transcription) {
                 APP.store.dispatch(setRequestingSubtitles(true, false, null, true));
-                conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                    isTranscribingEnabled: true
-                });
             }
         },
 
@@ -804,10 +801,7 @@ function initCommands() {
             }
 
             if (transcription) {
-                APP.store.dispatch(setRequestingSubtitles(false, false, null));
-                conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                    isTranscribingEnabled: false
-                });
+                APP.store.dispatch(setRequestingSubtitles(false, false, null, true));
             }
 
             if (mode === 'local') {
