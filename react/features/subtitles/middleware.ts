@@ -8,6 +8,7 @@ import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { TRANSCRIBER_ID } from '../base/participants/constants';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { showErrorNotification } from '../notifications/actions';
+import { RECORDING_METADATA_ID } from '../recording/constants';
 import { TRANSCRIBER_JOINED } from '../transcribing/actionTypes';
 
 import {
@@ -359,10 +360,10 @@ function _requestingSubtitlesChange(
         P_NAME_REQUESTING_TRANSCRIPTION,
         enabled);
 
-    if (enabled && conference?.getTranscriptionStatus() === JitsiMeetJS.constants.transcriptionStatus.OFF) {
-        const featureAllowed = isJwtFeatureEnabled(getState(), MEET_FEATURES.TRANSCRIPTION, false);
+    if (enabled && conference?.getTranscriptionStatus() === JitsiMeetJS.constants.transcriptionStatus.OFF
+        && isJwtFeatureEnabled(getState(), MEET_FEATURES.TRANSCRIPTION, false)) {
 
-        if (featureAllowed && !backendRecordingOn) {
+        if (!conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription) {
             conference?.dial(TRANSCRIBER_DIAL_NUMBER)
                 .catch((e: any) => {
                     logger.error('Error dialing', e);
@@ -376,12 +377,25 @@ function _requestingSubtitlesChange(
                     dispatch(setSubtitlesError(true));
                 });
         }
+
+        if (backendRecordingOn) {
+            conference?.getMetadataHandler()?.setMetadata(RECORDING_METADATA_ID, {
+                isTranscribingEnabled: true
+            });
+        }
     }
 
     if (enabled && language) {
         conference?.setLocalParticipantProperty(
             P_NAME_TRANSLATION_LANGUAGE,
             language.replace('translation-languages:', ''));
+    }
+
+    if (!enabled && backendRecordingOn
+        && conference?.getMetadataHandler()?.getMetadata()[RECORDING_METADATA_ID]?.isTranscribingEnabled) {
+        conference?.getMetadataHandler()?.setMetadata(RECORDING_METADATA_ID, {
+            isTranscribingEnabled: false
+        });
     }
 }
 
