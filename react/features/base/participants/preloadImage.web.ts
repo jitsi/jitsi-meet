@@ -8,27 +8,18 @@ import { isIconUrl } from './functions';
  * @param {boolean} useCORS - Whether to use CORS or not.
  * @param {boolean} tryOnce - If true we try to load the image only using the specified CORS mode. Otherwise both modes
  * (CORS and no CORS) will be used to load the image if the first attempt fails.
- * @param {AbortSignal} signal - Optional signal to abort the image load.
  * @returns {Promise}
  */
 export function preloadImage(
         src: string,
         useCORS = false,
-        tryOnce = false,
-        signal?: AbortSignal
+        tryOnce = false
 ): Promise<{ isUsingCORS?: boolean; src: string | Object; }> {
     if (isIconUrl(src)) {
         return Promise.resolve({ src });
     }
 
     return new Promise((resolve, reject) => {
-        // Check if already aborted
-        if (signal?.aborted) {
-            reject(new DOMException('Image preload aborted', 'AbortError'));
-
-            return;
-        }
-
         const image = document.createElement('img');
         let isCleanedUp = false;
 
@@ -47,24 +38,11 @@ export function preloadImage(
             image.src = '';
         };
 
-        // Handle abort signal
-        const onAbort = () => {
-            cleanup();
-            reject(new DOMException('Image preload aborted', 'AbortError'));
-        };
-
-        if (signal) {
-            signal.addEventListener('abort', onAbort);
-        }
-
         if (useCORS) {
             image.setAttribute('crossOrigin', '');
         }
 
         image.onload = () => {
-            if (signal) {
-                signal.removeEventListener('abort', onAbort);
-            }
             cleanup();
             resolve({
                 src,
@@ -73,16 +51,13 @@ export function preloadImage(
         };
 
         image.onerror = error => {
-            if (signal) {
-                signal.removeEventListener('abort', onAbort);
-            }
             cleanup();
 
             if (tryOnce) {
                 reject(error);
             } else {
-                // Retry with different CORS mode, passing signal through
-                preloadImage(src, !useCORS, true, signal)
+                // Retry with different CORS mode
+                preloadImage(src, !useCORS, true)
                     .then(resolve)
                     .catch(reject);
             }
