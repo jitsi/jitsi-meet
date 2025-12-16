@@ -1,5 +1,6 @@
 import { isEqual, sortBy } from 'lodash-es';
 
+// @ts-expect-error
 import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
 import { getAutoPinSetting } from '../../video-layout/functions.any';
 import { MEDIA_TYPE } from '../media/constants';
