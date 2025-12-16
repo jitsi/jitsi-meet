@@ -19,9 +19,7 @@ StateListenerRegistry.register(
             const { participantId } = store.getState()['features/large-video'];
 
             // Check if any new screenshare participants were added
-            const newParticipants = participantIDs.filter((id: string) =>
-                previousParticipantIDs.indexOf(id) === -1
-            );
+            const newParticipants = participantIDs.filter((id: string) => !previousParticipantIDs.includes(id));
 
             // If the current large video participant is a new screensharer, update the display. This is needed when
             // the track is created much later after the action for auto-pinning is dispatched. This usually happens in
@@ -29,7 +27,7 @@ StateListenerRegistry.register(
             // signaled only after the receiver constraints with SS source id is processed by the bridge but the
             // auto-pinning action is dispatched when the participant tile is created as soon as the presence is
             // received.
-            if (participantId && newParticipants.indexOf(participantId) !== -1) {
+            if (participantId && newParticipants.includes(participantId)) {
                 VideoLayout.updateLargeVideo(participantId, true);
             }
         }
