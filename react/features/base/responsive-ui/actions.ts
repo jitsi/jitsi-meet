@@ -23,7 +23,7 @@ import { ASPECT_RATIO_NARROW, ASPECT_RATIO_WIDE } from './constants';
  * didn't fit in the height. We do need to measure the actual UI at runtime and
  * determine whether and how to render it.
  */
-const REDUCED_UI_THRESHOLD = 300;
+const REDUCED_UI_THRESHOLD = 320;
 
 /**
  * Indicates a resize of the window.
@@ -49,6 +49,8 @@ export function clientResized(clientWidth: number, clientHeight: number) {
             }
 
             availableWidth -= getParticipantsPaneWidth(state);
+
+            dispatch(setReducedUI(availableWidth, clientHeight));
         }
 
         batch(() => {
