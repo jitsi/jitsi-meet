@@ -1419,17 +1419,19 @@ class API {
     }
 
     /**
-     * Notify the external application that a participant was muted.
+     * Notify the external application that a participant's mute status changed.
      *
-     * @param {string} participantId - The ID of the participant that was muted.
+     * @param {string} participantId - The ID of the participant.
+     * @param {boolean} isMuted - True if muted, false if unmuted.
      * @param {string} mediaType - Media type that was muted ('audio', 'video', or 'desktop').
      * @param {boolean} isSelfMuted - True if participant muted themselves, false if muted by moderator.
      * @returns {void}
      */
-    notifyParticipantMuted(participantId, mediaType, isSelfMuted = true) {
+    notifyParticipantMuted(participantId, isMuted, mediaType, isSelfMuted = true) {
         this._sendEvent({
             name: 'participant-muted',
             id: participantId,
+            isMuted,
             mediaType,
             isSelfMuted
         });

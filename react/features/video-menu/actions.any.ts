@@ -76,7 +76,7 @@ export function muteRemote(participantId: string, mediaType: MediaType) {
 
         // Notify external API that participant was muted by moderator
         if (typeof APP !== 'undefined') {
-            APP.API.notifyParticipantMuted(participantId, muteMediaType, false);
+            APP.API.notifyParticipantMuted(participantId, true, muteMediaType, false);
         }
     };
 }

@@ -143,14 +143,12 @@ MiddlewareRegistry.register(store => next => action => {
         if (typeof action.track?.muted !== 'undefined' && participantID && !local) {
             logTracksForParticipant(store.getState()['features/base/tracks'], participantID, 'Track updated');
 
-            // Notify external API when remote participant mutes themselves
-            if (action.track.muted) {
-                const mediaType = isVideoTrack
-                    ? (jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP ? 'desktop' : 'video')
-                    : 'audio';
+            // Notify external API when remote participant mutes/unmutes themselves
+            const mediaType = isVideoTrack
+                ? (jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP ? 'desktop' : 'video')
+                : 'audio';
 
-                APP.API.notifyParticipantMuted(participantID, mediaType, true);
-            }
+            APP.API.notifyParticipantMuted(participantID, action.track.muted, mediaType, true);
         }
 
         return result;
