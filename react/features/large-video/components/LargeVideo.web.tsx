@@ -131,6 +131,7 @@ interface IProps {
     dispatch: IStore['dispatch'];
 }
 
+// eslint-disable-next-line valid-jsdoc
 /** .
  * Implements a React {@link Component} which represents the large video (a.k.a.
  * The conference participant who is on the local stage) on Web/React.
@@ -138,10 +139,28 @@ interface IProps {
  * @augments Component
  */
 class LargeVideo extends Component<IProps> {
-    _tappedTimeout: number | undefined;
+    override componentDidMount() {
+        window.addEventListener('pin-participant', this.handlePinParticipant as EventListener);
+    }
+
+    override componentWillUnmount() {
+        window.removeEventListener('pin-participant', this.handlePinParticipant as EventListener);
+    }
+
+    handlePinParticipant = (event: Event) => {
+        const customEvent = event as CustomEvent;
+
+        const { dispatch } = this.props as any;
+
+        if (customEvent.detail?.participantId) {
+            dispatch({
+                type: 'PIN_PARTICIPANT',
+                participant: customEvent.detail.participantId,
+            });
+        }
+    };
 
     _containerRef: React.RefObject<HTMLDivElement>;
-
     _wrapperRef: React.RefObject<HTMLDivElement>;
 
     /**
@@ -172,7 +191,8 @@ class LargeVideo extends Component<IProps> {
             _seeWhatIsBeingShared,
             _largeVideoParticipantId,
             _hideSelfView,
-            _localParticipantId } = this.props;
+            _localParticipantId,
+        } = this.props;
 
         if (prevProps._visibleFilmstrip !== _visibleFilmstrip) {
             this._updateLayout();
@@ -186,8 +206,7 @@ class LargeVideo extends Component<IProps> {
             VideoLayout.updateLargeVideo(_largeVideoParticipantId, true, true);
         }
 
-        if (_largeVideoParticipantId === _localParticipantId
-            && prevProps._hideSelfView !== _hideSelfView) {
+        if (_largeVideoParticipantId === _localParticipantId && prevProps._hideSelfView !== _hideSelfView) {
             VideoLayout.updateLargeVideo(_largeVideoParticipantId, true, false);
         }
     }
@@ -206,7 +225,7 @@ class LargeVideo extends Component<IProps> {
             _noAutoPlayVideo,
             _showDominantSpeakerBadge,
             _whiteboardEnabled,
-            _showSubtitles
+            _showSubtitles,
         } = this.props;
         const style = this._getCustomStyles();
         const className = 'videocontainer';
@@ -234,34 +253,28 @@ class LargeVideo extends Component<IProps> {
                 <div id = 'largeVideoElementsContainer'>
                     <div id = 'largeVideoBackgroundContainer' />
                     {/*
-                      * FIXME: the architecture of elements related to the large
-                      * video and the naming. The background is not part of
-                      * largeVideoWrapper because we are controlling the size of
-                      * the video through largeVideoWrapper. That's why we need
-                      * another container for the background and the
-                      * largeVideoWrapper in order to hide/show them.
-                      */}
-                    { _displayScreenSharingPlaceholder ? <ScreenSharePlaceholder /> : <></>}
+                     * FIXME: the architecture of elements related to the large
+                     * video and the naming. The background is not part of
+                     * largeVideoWrapper because we are controlling the size of
+                     * the video through largeVideoWrapper. That's why we need
+                     * another container for the background and the
+                     * largeVideoWrapper in order to hide/show them.
+                     */}
+                    {_displayScreenSharingPlaceholder ? <ScreenSharePlaceholder /> : <></>}
                     <div
                         id = 'largeVideoWrapper'
                         onTouchEnd = { this._onDoubleTap }
                         ref = { this._wrapperRef }
-                        role = 'figure' >
+                        role = 'figure'>
                         <video
                             autoPlay = { !_noAutoPlayVideo }
                             id = 'largeVideo'
                             muted = { true }
-                            playsInline = { true } /* for Safari on iOS to work */ />
+                            playsInline = { true } />
                     </div>
                 </div>
-                { (!interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES && _showSubtitles)
-                    && <Captions /> }
-                {
-                    _isDisplayNameVisible
-                    && (
-                        _showDominantSpeakerBadge && <StageParticipantNameLabel />
-                    )
-                }
+                {!interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES && _showSubtitles && <Captions />}
+                {_isDisplayNameVisible && _showDominantSpeakerBadge && <StageParticipantNameLabel />}
             </div>
         );
     }
@@ -301,6 +314,7 @@ class LargeVideo extends Component<IProps> {
         this._tappedTimeout = undefined;
     }
 
+    _tappedTimeout: number | undefined;
     /**
      * Creates the custom styles object.
      *
@@ -314,7 +328,7 @@ class LargeVideo extends Component<IProps> {
             _customBackgroundImageUrl,
             _verticalFilmstripWidth,
             _verticalViewMaxWidth,
-            _visibleFilmstrip
+            _visibleFilmstrip,
         } = this.props;
 
         styles.background = _customBackgroundColor || interfaceConfig.DEFAULT_BACKGROUND;

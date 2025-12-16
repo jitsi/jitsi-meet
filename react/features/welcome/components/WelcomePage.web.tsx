@@ -375,42 +375,88 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
         const { fDroidUrl, downloadLink: androidDownloadLink } = android;
 
-        return (<footer className = 'welcome-footer'>
-            <div className = 'welcome-footer-centered'>
-                <div className = 'welcome-footer-padded'>
-                    <div className = 'welcome-footer-row-block welcome-footer--row-1'>
-                        <div className = 'welcome-footer-row-1-text'>{t('welcomepage.jitsiOnMobile')}</div>
-                        <a
-                            className = 'welcome-badge'
-                            href = { iosDownloadLink }
-                            rel = 'noopener noreferrer'
-                            target = '_blank'>
-                            <img
-                                alt = { t('welcomepage.mobileDownLoadLinkIos') }
-                                src = './images/app-store-badge.png' />
-                        </a>
-                        <a
-                            className = 'welcome-badge'
-                            href = { androidDownloadLink }
-                            rel = 'noopener noreferrer'
-                            target = '_blank'>
-                            <img
-                                alt = { t('welcomepage.mobileDownLoadLinkAndroid') }
-                                src = './images/google-play-badge.png' />
-                        </a>
-                        <a
-                            className = 'welcome-badge'
-                            href = { fDroidUrl }
-                            rel = 'noopener noreferrer'
-                            target = '_blank'>
-                            <img
-                                alt = { t('welcomepage.mobileDownLoadLinkFDroid') }
-                                src = './images/f-droid-badge.png' />
-                        </a>
+        return (
+            <footer className = 'welcome-footer'>
+                <div className = 'welcome-footer-centered'>
+                    <div className = 'welcome-footer-padded'>
+                        <div className = 'welcome-footer-row-block welcome-footer--row-1'>
+                            <div className = 'welcome-footer-row-1-text'>{t('welcomepage.jitsiOnMobile')}</div>
+                            <a
+                                className = 'welcome-badge'
+                                href = { iosDownloadLink }
+                                rel = 'noopener noreferrer'
+                                target = '_blank'>
+                                <img
+                                    alt = { t('welcomepage.mobileDownLoadLinkIos') }
+                                    src = './images/app-store-badge.png' />
+                            </a>
+                            <a
+                                className = 'welcome-badge'
+                                href = { androidDownloadLink }
+                                rel = 'noopener noreferrer'
+                                target = '_blank'>
+                                <img
+                                    alt = { t('welcomepage.mobileDownLoadLinkAndroid') }
+                                    src = './images/google-play-badge.png' />
+                            </a>
+                            <a
+                                className = 'welcome-badge'
+                                href = { fDroidUrl }
+                                rel = 'noopener noreferrer'
+                                target = '_blank'>
+                                <img
+                                    alt = { t('welcomepage.mobileDownLoadLinkFDroid') }
+                                    src = './images/f-droid-badge.png' />
+                            </a>
+                        </div>
+                        <div className = 'welcome-footer-row-block welcome-footer--row-2'>
+                            <div>
+                                <a
+                                    className = 'welcome-footer-link'
+                                    href = ''>
+                                    Privacy Policy
+                                </a>
+                                <a
+                                    className = 'welcome-footer-link'
+                                    href = ''>
+                                    Terms & Conditions
+                                </a>
+                            </div>
+                            <div>
+                                <a
+                                    className = 'welcome-page-sm'
+                                    href = 'https://www.facebook.com/XBStation'>
+                                    <img
+                                        alt = ''
+                                        src = './images/welcome_page/fb.png' />
+                                </a>
+                                <a
+                                    className = 'welcome-page-sm'
+                                    href = ''>
+                                    <img
+                                        alt = 'https://www.linkedin.com/company/xbstation'
+                                        src = './images/welcome_page/li.png' />
+                                </a>
+                            </div>
+                        </div>
+                        <div className = 'welcome-footer-row-block welcome-footer--row-3'>
+                            <a href = ''>
+                                <img
+                                    className = 'logo-xb'
+                                    src = './images/welcome_page/logo-xb.svg' />
+                            </a>
+                            <div className = 'welcome-footer-row-3-text'>
+                                <div>
+                                    XBStation is a solution for streaming video and controling UAV via internet
+                                    (3G/4G/5G cellular network).
+                                </div>
+                                <div>© XBStation, Inc. All Rights Reserved.</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </footer>);
+            </footer>
+        );
     }
 
     /**

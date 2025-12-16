@@ -237,7 +237,7 @@ function MeetingParticipantItem(props: IPropsWithStream) {
 
     // Render a <video> tag for virtual participants and inject WHEP reader
     // Use id or participantId for uniqueness
-    const videoId = `sharedVideoPlayer1-${_participant?.id || _participant?.participantId || ''}`;
+    const videoId = `sharedVideoPlayer1-${_participant?.id || ''}`;
     useEffect(() => {
         if (_participant?.fakeParticipant) {
             // Helper functions
@@ -301,19 +301,6 @@ function MeetingParticipantItem(props: IPropsWithStream) {
         }
     }, [_participant]);
 
-    if (_participant?.fakeParticipant) {
-        return (
-            <video
-                id={videoId}
-                autoPlay
-                muted
-                controls
-                playsInline
-                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8, background: '#000' }}
-            />
-        );
-    }
-
     return (
         <ParticipantItem
             actionsTrigger = { ACTION_TRIGGER.HOVER }
@@ -331,6 +318,16 @@ function MeetingParticipantItem(props: IPropsWithStream) {
             raisedHand = { _raisedHand }
             youText = { youText }>
             {!overflowDrawer && <>
+                {_participant?.fakeParticipant ? (
+                    <video
+                        id={videoId}
+                        autoPlay
+                        muted
+                        controls
+                        playsInline
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8, background: '#000' }}
+                    />
+                ) : null}
                 {!_participant?.fakeParticipant && !isInBreakoutRoom && (
                     <ParticipantQuickAction
                         buttonType = { _quickActionButtonType }
