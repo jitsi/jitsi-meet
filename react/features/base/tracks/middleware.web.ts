@@ -38,6 +38,7 @@ import {
 import { ITrack, ITrackOptions } from './types';
 
 import './middleware.any';
+import './subscriber.web';
 
 /**
  * Middleware that captures LIB_DID_DISPOSE and LIB_DID_INIT actions and,
