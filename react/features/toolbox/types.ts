@@ -107,3 +107,10 @@ export interface IGetVisibleButtonsParams {
     mainToolbarButtonsThresholds: IMainToolbarButtonThresholds;
     toolbarButtons: string[];
 }
+
+export interface IGetVisibleButtonsForReducedUIParams {
+    allButtons: { [key: string]: IToolboxButton; };
+    buttonsWithNotifyClick: Map<string, NOTIFY_CLICK_MODE>;
+    jwtDisabledButtons: string[];
+    reducedUImainToolbarButtons?: string[];
+}
