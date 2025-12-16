@@ -927,7 +927,7 @@ var config = {
     // Overrides the buttons displayed in the main toolbar for reduced UI.
     // When there isn't an override for a certain configuration the default jitsi-meet configuration will be used.
     // The order of the buttons in the array is preserved.
-    // reducedUImainToolbarButtons: [ ],
+    // reducedUImainToolbarButtons: [ 'microphone', 'camera' ],
 
     // Toolbar buttons which have their click/tap event exposed through the API on
     // `toolbarButtonClicked`. Passing a string for the button key will

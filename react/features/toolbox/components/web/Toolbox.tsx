@@ -251,10 +251,10 @@ export default function Toolbox({
         reducedUImainToolbarButtons,
     });
 
-    const mainMenuButtons = (reducedUI && reducedUIButtons?.mainMenuButtons?.length)
+    const mainMenuButtons = reducedUI
         ? reducedUIButtons.mainMenuButtons
         : normalUIButtons.mainMenuButtons;
-    const overflowMenuButtons = (reducedUI && reducedUIButtons?.mainMenuButtons?.length)
+    const overflowMenuButtons = reducedUI
         ? []
         : normalUIButtons.overflowMenuButtons;
     const raiseHandInOverflowMenu = overflowMenuButtons.some(({ key }) => key === 'raisehand');

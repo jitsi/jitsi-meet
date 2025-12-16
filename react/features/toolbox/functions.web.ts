@@ -6,7 +6,7 @@ import { IGUMPendingState } from '../base/media/types';
 import { isScreenMediaShared } from '../screen-share/functions';
 import { isWhiteboardVisible } from '../whiteboard/functions';
 
-import { MAIN_TOOLBAR_BUTTONS_PRIORITY, TOOLBAR_TIMEOUT } from './constants';
+import { DEFAULT_REDUCED_UI_MAIN_TOOLBAR_BUTTONS, MAIN_TOOLBAR_BUTTONS_PRIORITY, TOOLBAR_TIMEOUT } from './constants';
 import { isButtonEnabled } from './functions.any';
 import { IGetVisibleButtonsForReducedUIParams, IGetVisibleButtonsParams, IToolboxButton, NOTIFY_CLICK_MODE } from './types';
 
@@ -216,7 +216,11 @@ export function getVisibleButtonsForReducedUI({
     setButtonsNotifyClickMode(allButtons, buttonsWithNotifyClick);
 
     if (!Array.isArray(reducedUImainToolbarButtons) || reducedUImainToolbarButtons.length === 0) {
-        return;
+        const defaultButtons = DEFAULT_REDUCED_UI_MAIN_TOOLBAR_BUTTONS.map(key => allButtons[key]);
+
+        return {
+            mainMenuButtons: defaultButtons
+        };
     }
 
     const filteredButtons = reducedUImainToolbarButtons.filter(key =>
