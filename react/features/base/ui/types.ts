@@ -5,6 +5,7 @@ interface ITypographyType {
     lineHeight: string;
 }
 
+/* eslint-disable typescript-sort-keys/interface */
 export interface IPalette {
     action01: string;
     action01Active: string;
@@ -58,6 +59,54 @@ export interface IPalette {
     uiBackground: string;
     warning01: string;
     warning02: string;
+
+    // Semantic tokens (component-based, more descriptive names)
+    breakoutRoomBackground: string;
+    breakoutRoomItemBackground: string;
+    chatBackground: string;
+    chatInputBackground: string;
+    chatInputBorder: string;
+    chatMessageBackground: string;
+    chatMessageText: string;
+    chatTimestamp: string;
+    dialogBackground: string;
+    dialogBorder: string;
+    dialogOverlay: string;
+    dialogSecondaryText: string;
+    dialogText: string;
+    drawerBackground: string;
+    filmstripBackground: string;
+    inputBackground: string;
+    inputBorder: string;
+    inputPlaceholder: string;
+    inputText: string;
+    largeVideoBackground: string;
+    largeVideoPlaceholder: string;
+    lobbyBackground: string;
+    lobbyPreviewBackground: string;
+    notificationBackground: string;
+    notificationError: string;
+    notificationSuccess: string;
+    notificationWarning: string;
+    participantItemBackground: string;
+    participantItemBorder: string;
+    participantItemHover: string;
+    participantsPaneBackground: string;
+    preMeetingBackground: string;
+    preMeetingPreview: string;
+    settingsBackground: string;
+    settingsSectionBackground: string;
+    speakerStatsBackground: string;
+    speakerStatsBorder: string;
+    speakerStatsRowBackground: string;
+    thumbnailBackground: string;
+    thumbnailBorder: string;
+    thumbnailHover: string;
+    toolbarButton: string;
+    toolbarButtonHover: string;
+    toolboxBackground: string;
+    welcomeBackground: string;
+    welcomeCard: string;
 }
 
 export interface ITypography {

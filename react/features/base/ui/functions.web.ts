@@ -19,6 +19,7 @@ interface ThemeProps {
     breakpoints: Object;
     colorMap: Object;
     font: Object;
+    semanticTokens?: Object;
     shape: Object;
     spacing: Array<number>;
     typography: Object;
@@ -30,10 +31,18 @@ interface ThemeProps {
  * @param {Object} arg - The ui tokens.
  * @returns {Object}
  */
-export function createWebTheme({ font, colorMap, shape, spacing, typography, breakpoints }: ThemeProps) {
+export function createWebTheme({ font, colorMap, semanticTokens, shape, spacing, typography, breakpoints }: ThemeProps) {
+    // Create palette from legacy tokens
+    const legacyPalette = createColorTokens(colorMap);
+
+    // If semantic tokens are provided, add them to the palette (they map to legacy tokens)
+    const palette = semanticTokens
+        ? { ...legacyPalette, ...createColorTokens(semanticTokens) }
+        : legacyPalette;
+
     return createTheme(adaptV4Theme({
         spacing,
-        palette: createColorTokens(colorMap),
+        palette,
         shape,
         typography: {
             // @ts-ignore

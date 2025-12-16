@@ -27,7 +27,7 @@ const brandedDialogText = {
 };
 
 const brandedDialogLabelStyle = {
-    color: BaseTheme.palette.text01,
+    color: BaseTheme.palette.dialogText,
     flexShrink: 1,
     fontSize: MD_FONT_SIZE,
     opacity: 0.90
@@ -121,7 +121,7 @@ export const bottomSheetStyles = {
      * Bottom sheet's base style.
      */
     sheet: {
-        backgroundColor: BaseTheme.palette.ui02,
+        backgroundColor: BaseTheme.palette.dialogBackground,
         borderTopLeftRadius: 16,
         borderTopRightRadius: 16
     },
@@ -130,14 +130,14 @@ export const bottomSheetStyles = {
      * Bottom sheet's base style with header.
      */
     sheetHeader: {
-        backgroundColor: BaseTheme.palette.ui02
+        backgroundColor: BaseTheme.palette.dialogBackground
     },
 
     /**
      * Bottom sheet's background color with footer.
      */
     sheetFooter: {
-        backgroundColor: BaseTheme.palette.ui01
+        backgroundColor: BaseTheme.palette.dialogBackground
     }
 };
 
@@ -255,11 +255,11 @@ ColorSchemeRegistry.register('Dialog', {
 
     text: {
         ...brandedDialogText,
-        color: BaseTheme.palette.text01
+        color: BaseTheme.palette.dialogText
     },
 
     topBorderContainer: {
-        borderTopColor: BaseTheme.palette.ui07,
+        borderTopColor: BaseTheme.palette.dialogBorder,
         borderTopWidth: 1
     }
 });
