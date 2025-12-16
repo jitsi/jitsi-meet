@@ -416,7 +416,7 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
             and session.jitsi_web_query_room then
             local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
 
-            if room and room._data.disable_lobby then
+            if room and room._data.lobby_disabled then
                 -- we cannot remove the child from the stanza so let's just change the type
                 local lobby_identity = reply:get_child_with_attr('identity', nil, 'type', LOBBY_IDENTITY_TYPE);
                 lobby_identity.attr.type = 'DISABLED_'..LOBBY_IDENTITY_TYPE;
@@ -495,7 +495,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
         local members_only = event.fields['muc#roomconfig_membersonly'] and true or nil;
         if members_only then
             -- if lobby disabled just ignore and return
-            if room._data.disable_lobby then
+            if room._data.lobby_disabled then
                 module:log('warn', 'Lobby is disabled for room %s, cannot enable members only', room.jid);
                 return;
             end
