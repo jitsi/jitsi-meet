@@ -19,7 +19,7 @@ const useStyles = makeStyles()(theme => {
         paragraphWrapper: {
             fontSize: '0.875rem',
             margin: '10px 0px',
-            color: theme.palette.text01
+            color: theme.palette.dialogText
         },
         spanWrapper: {
             fontWeight: 700,
