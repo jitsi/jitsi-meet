@@ -110,7 +110,7 @@ import { getParticipantsPaneOpen } from '../../react/features/participants-pane/
 import { hidePiP, showPiP } from '../../react/features/pip/actions';
 import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording/actions.any';
 import { grantRecordingConsent, grantRecordingConsentAndUnmute } from '../../react/features/recording/actions.web';
-import { RECORDING_METADATA_ID, RECORDING_TYPES } from '../../react/features/recording/constants';
+import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
 import { startAudioScreenShareFlow, startScreenShareFlow } from '../../react/features/screen-share/actions';
 import { isScreenAudioSupported } from '../../react/features/screen-share/functions';
@@ -126,7 +126,7 @@ import { extractYoutubeIdOrURL } from '../../react/features/shared-video/functio
 import { setRequestingSubtitles, toggleRequestingSubtitles } from '../../react/features/subtitles/actions';
 import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/functions';
 import { setTileView, toggleTileView } from '../../react/features/video-layout/actions.any';
-import { muteAllParticipants } from '../../react/features/video-menu/actions';
+import { muteAllParticipants, muteRemote } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality/actions';
 import { toggleBackgroundEffect, toggleBlurredBackgroundEffect } from '../../react/features/virtual-background/actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../react/features/virtual-background/constants';
@@ -238,6 +238,17 @@ function initCommands() {
             }
 
             APP.store.dispatch(muteAllParticipants(exclude, muteMediaType));
+        },
+        'mute-remote-participant': (participantId, mediaType) => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                logger.error('Missing moderator rights to mute remote participant');
+
+                return;
+            }
+
+            const muteMediaType = mediaType ? mediaType : MEDIA_TYPE.AUDIO;
+
+            APP.store.dispatch(muteRemote(participantId, muteMediaType));
         },
         'toggle-lobby': isLobbyEnabled => {
             APP.store.dispatch(toggleLobbyMode(isLobbyEnabled));
@@ -780,9 +791,6 @@ function initCommands() {
 
             if (transcription) {
                 APP.store.dispatch(setRequestingSubtitles(true, false, null, true));
-                conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                    isTranscribingEnabled: true
-                });
             }
         },
 
@@ -804,10 +812,7 @@ function initCommands() {
             }
 
             if (transcription) {
-                APP.store.dispatch(setRequestingSubtitles(false, false, null));
-                conference.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-                    isTranscribingEnabled: false
-                });
+                APP.store.dispatch(setRequestingSubtitles(false, false, null, true));
             }
 
             if (mode === 'local') {
@@ -1404,6 +1409,25 @@ class API {
             name: 'moderation-participant-rejected',
             id: participantId,
             mediaType
+        });
+    }
+
+    /**
+     * Notify the external application that a participant's mute status changed.
+     *
+     * @param {string} participantId - The ID of the participant.
+     * @param {boolean} isMuted - True if muted, false if unmuted.
+     * @param {string} mediaType - Media type that was muted ('audio', 'video', or 'desktop').
+     * @param {boolean} isSelfMuted - True if participant muted themselves, false if muted by moderator.
+     * @returns {void}
+     */
+    notifyParticipantMuted(participantId, isMuted, mediaType, isSelfMuted = true) {
+        this._sendEvent({
+            name: 'participant-muted',
+            id: participantId,
+            isMuted,
+            mediaType,
+            isSelfMuted
         });
     }
 

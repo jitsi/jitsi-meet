@@ -6,6 +6,7 @@
 - breakout_rooms - A table containing breakout rooms created in the main room. The keys are the JIDs of the breakout rooms, and the values are their subjects.
 - breakout_rooms_active - Whether there was a breakout room created in the main room.
 - breakout_rooms_counter - A counter for breakout rooms created in the main room.
+- lobby_disabled - Whether lobby was disabled for the room by the backend.
 - flip_participant_nick - Used in mod_muc_flip, when flipping a participant we store the nick of the second device/participant. Same processing as kicked_participant_nick.
 - hideDisplayNameForGuests - When set to true, the display name of participants is hidden for guests.
 - jicofo_lock - A boolean value, when set to true the room is locked waiting for Jicofo to join. All attempts to join will be queued until Jicofo joins.
