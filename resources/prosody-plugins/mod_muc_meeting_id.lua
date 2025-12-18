@@ -16,6 +16,7 @@ local is_transcriber = util.is_transcriber;
 local QUEUE_MAX_SIZE = 500;
 
 module:depends("jitsi_permissions");
+module:depends("jitsi_session");
 
 -- Common module for all logic that can be loaded under the conference muc component.
 --
