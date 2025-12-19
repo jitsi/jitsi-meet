@@ -13,6 +13,27 @@ body.welcome-page {
     min-height: 100dvh;
     position: relative;
 
+    /**
+     * Enable text selection for readable text on the welcome page.
+     * Overrides the global user-select: none rule for user-facing content.
+     */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    .header-text-subtitle,
+    .welcome-card-text,
+    .welcome-footer-row-1-text,
+    .not-allow-title-character-div,
+    .insecure-room-name-warning {
+        user-select: text;
+        -webkit-user-select: text;
+        -moz-user-select: text;
+    }
+
     .header {
         background-image: $welcomePageHeaderBackground;
         background-position: $welcomePageHeaderBackgroundPosition;
