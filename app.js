@@ -61,6 +61,12 @@ window.APP = {
     UI
 };
 
+// Import compiled CSS in development mode for hot-reload support.
+// In production, CSS is loaded via <link> tag in HTML.
+if (__DEV__) {
+    require('./css/all.css');
+}
+
 // TODO The execution of the mobile app starts from react/index.native.js.
 // Similarly, the execution of the Web app should start from react/index.web.js
 // for the sake of consistency and ease of understanding. Temporarily though

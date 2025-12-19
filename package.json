@@ -215,6 +215,7 @@
     "lint-fix": "eslint --ext .js,.ts,.tsx --max-warnings 0 --fix .",
     "postinstall": "patch-package --error-on-fail && jetify",
     "validate": "npm ls",
+    "watch-css": "sass --watch css/main.scss:css/all.css --no-source-map",
     "start": "make dev",
     "test": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.conf.ts",
     "test-single": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.conf.ts --spec",
