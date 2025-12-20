@@ -25,6 +25,8 @@ interface IWindow {
     self: any;
     top: any;
 
+    matchMedia: (query: string) => { matches: boolean; };
+
     onerror: (event: string, source: any, lineno: any, colno: any, e: Error) => void;
     onunhandledrejection: (event: any) => void;
 
@@ -41,6 +43,7 @@ interface IWindow {
 interface INavigator {
     product: string;
     userAgent: string;
+    maxTouchPoints: number;
 }
 
 declare global {
