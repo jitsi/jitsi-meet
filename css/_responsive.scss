@@ -22,19 +22,9 @@
                 width: 100%;
                 margin-bottom: 10px !important;
 
-                .join-meeting-container {
-                    margin-left: auto;
-                    margin-right: auto;
-                    margin-top: 0;
-                    margin-bottom: 10px !important;
-                    padding: 0;
-                    flex-direction: column;
-                    background: transparent;
-                }
-
-                .enter-room-input-container {
-                    padding-right: 0;
-                    margin-bottom: 10px;
+                #enter_room_button {
+                    width: fit-content;
+                    max-width: 100%;
                 }
             }
 

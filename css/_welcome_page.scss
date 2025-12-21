@@ -119,48 +119,42 @@ body.welcome-page {
         }
 
         #enter_room {
-            display: $welcomePageEnterRoomDisplay;
+            display: flex;
             align-items: center;
-            max-width: 480px;
-            width: $welcomePageEnterRoomWidth;
+            justify-content: center;
             z-index: $zindex2;
             height: fit-content;
             margin-bottom: 10px !important;
 
-            .join-meeting-container {
-                margin-left: auto;
-                margin-right: auto;
-                margin-top: 0;
-                margin-bottom: 10px !important;
-                padding: $welcomePageEnterRoomPadding;
-                border-radius: 4px;
-                background-color: #fff;
+            #enter_room_button {
+                width: fit-content;
+                height: 84.37px;
+                border-radius: 18.87px;
+                padding: 26.96px 79.08px;
+                background-color: #FFFFFF !important;
+                color: #336EE6 !important;
+                font-family: 'Inter', sans-serif;
+                font-size: 35.94px;
+                font-weight: 600;
+                font-style: normal;
+                line-height: 100%;
+                letter-spacing: 0%;
+                border: 0;
+                cursor: pointer;
+                transition: all 0.2s;
                 display: flex;
-                width: 100%;
-                text-align: left;
-                color: #253858;
-            }
+                align-items: center;
+                justify-content: center;
+                gap: 8.99px;
 
-            .enter-room-input-container {
-                flex-grow: 1;
-                padding-right: 4px;
+                &:focus-within {
+                    outline: auto 2px $welcomePageButtonFocusOutline;
+                }
 
-                .enter-room-input {
-                    border-radius: 4px;
-                    border: 0;
-                    background: #fff;
-                    display: inline-block;
-                    height: 50px;
-                    width: 100%;
-                    font-size: 0.875rem;
-                    padding-left: 10px;
-
-                    &.focus-visible {
-                        outline: auto 2px #005fcc;
-                    }
+                &:hover {
+                    opacity: 0.9;
                 }
             }
-
         }
 
         #previous_meeting_history_container {
