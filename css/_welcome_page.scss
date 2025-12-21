@@ -168,7 +168,7 @@ body.welcome-page {
             justify-content: center;
             max-width: 480px;
             width: $welcomePageEnterRoomWidth;
-            margin-top: 10px !important;
+            margin-top: 5px !important;
             z-index: $zindex2;
 
             #previous_meeting_history_button {
@@ -296,7 +296,7 @@ body.welcome-page {
 
     .welcome-cards-container {
         color:#131519;
-        padding-top: 40px;
+        padding-top: 1px;
     }
 
     .welcome-card-column {
