@@ -172,7 +172,11 @@ body.welcome-page {
             z-index: $zindex2;
 
             #previous_meeting_history_button {
-                width: 100%;
+                width: 60%;
+                background: transparent !important;
+                border: 1px solid #FFFFFF !important;
+                border-radius: 21px !important;
+                color: #FFFFFF !important;
             }
         }
 
