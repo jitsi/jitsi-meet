@@ -282,12 +282,57 @@ body.welcome-page {
 
     .welcome-watermark {
         position: absolute;
-        width: 100%;
-        height: 100%;
+        width: 50%;
+        height: 50%;
 
         .watermark.leftwatermark {
             width: $welcomePageWatermarkWidth;
             height: $welcomePageWatermarkHeight;
+            flex-shrink: 0;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .watermark-container {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            position: relative;
+        }
+
+        .watermark-text {
+            display: flex;
+            flex-direction: column;
+            color: #fff;
+        }
+
+        .watermark-title {
+            color: #FFF;
+            font-family: Aquire !important;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 127.219%; /* 53.653px */
+            text-transform: uppercase;
+        }
+
+        .watermark-tagline {
+            color: #FFF;
+            font-family: "Times New Roman", serif;
+            font-size: 7px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 127.219%; /* 14.052px */
+            text-transform: uppercase;
+            padding-bottom: 2px;
+        }
+
+        .watermark-link {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0;
         }
     }
 

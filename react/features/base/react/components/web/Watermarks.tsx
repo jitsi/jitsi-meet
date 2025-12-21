@@ -168,17 +168,28 @@ class Watermarks extends Component<IProps, State> {
                 position: _logoLink ? 'static' : 'absolute'
             } as const;
 
-            reactElement = (<div
+            const logoElement = (<div
                 className = { className }
                 style = { style } />);
+
+            // Wrap logo and text in a container
+            reactElement = (
+                <div className = 'watermark-container'>
+                    {logoElement}
+                    <div className = 'watermark-text'>
+                        <div className = 'watermark-title'>MEDISTACK</div>
+                        <div className = 'watermark-tagline'>UNIFYING HEALTHCARE SIMPLIFYING LIVES</div>
+                    </div>
+                </div>
+            );
 
             if (_logoLink) {
                 reactElement = (
                     <a
                         aria-label = { t('jitsiHome', { logo: interfaceConfig.APP_NAME }) }
-                        className = { className }
                         href = { _logoLink }
-                        target = '_new'>
+                        target = '_new'
+                        className = 'watermark-link'>
                         { reactElement }
                     </a>
                 );
