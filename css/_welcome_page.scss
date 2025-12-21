@@ -1,11 +1,16 @@
 body.welcome-page {
-    background: inherit;
+    background: #131519;
     overflow: auto;
+    min-height: 100vh;
 }
 
 .welcome {
-    background-image: $welcomePageBackground;
-    background-color: #fff;
+    background-image: $welcomePageHeaderBackground;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: #131519;
+    background-attachment: fixed;
     display: flex;
     flex-direction: column;
     font-family: $welcomePageFontFamily;
@@ -14,12 +19,8 @@ body.welcome-page {
     position: relative;
 
     .header {
-        background-image: $welcomePageHeaderBackground;
-        background-position: $welcomePageHeaderBackgroundPosition;
-        background-repeat: $welcomePageHeaderBackgroundRepeat;
-        background-size: $welcomePageHeaderBackgroundSize;
+        background: transparent;
         padding: $welcomePageHeaderPadding;
-        background-color: #131519;
         overflow: hidden;
         position: relative;
 
