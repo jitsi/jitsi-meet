@@ -166,11 +166,17 @@ body.welcome-page {
             z-index: $zindex2;
 
             #previous_meeting_history_button {
-                width: 60%;
+                width: 80%;
                 background: transparent !important;
                 border: 1px solid #FFFFFF !important;
                 border-radius: 21px !important;
                 color: #FFFFFF !important;
+                font-family: 'Inter', sans-serif;
+                font-size: 24px;
+                font-weight: 600;
+                font-style: normal;
+                line-height: 100%;
+                letter-spacing: 0%;
             }
         }
 
