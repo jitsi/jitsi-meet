@@ -43,9 +43,12 @@ body.welcome-page {
 
         .header-text-title {
             color: $welcomePageTitleColor;
-            font-size: $welcomePageHeaderTextTitleFontSize;
-            font-weight: $welcomePageHeaderTextTitleFontWeight;
-            line-height: $welcomePageHeaderTextTitleLineHeight;
+            font-family: 'Inter', sans-serif;
+            font-size: 66px;
+            font-weight: 600;
+            font-style: normal;
+            line-height: 100%;
+            letter-spacing: 0%;
             margin-bottom: $welcomePageHeaderTextTitleMarginBottom;
             max-width: $welcomePageHeaderTitleMaxWidth;
             opacity: $welcomePageHeaderTextTitleOpacity;
