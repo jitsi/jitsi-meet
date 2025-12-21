@@ -125,9 +125,13 @@ body.welcome-page {
             width: $welcomePageEnterRoomWidth;
             z-index: $zindex2;
             height: fit-content;
+            margin-bottom: 10px !important;
 
             .join-meeting-container {
-                margin: $welcomePageEnterRoomMargin;
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: 0;
+                margin-bottom: 10px !important;
                 padding: $welcomePageEnterRoomPadding;
                 border-radius: 4px;
                 background-color: #fff;
@@ -157,6 +161,19 @@ body.welcome-page {
                 }
             }
 
+        }
+
+        #previous_meeting_history_container {
+            display: flex;
+            justify-content: center;
+            max-width: 480px;
+            width: $welcomePageEnterRoomWidth;
+            margin-top: 10px !important;
+            z-index: $zindex2;
+
+            #previous_meeting_history_button {
+                width: 100%;
+            }
         }
 
         #moderated-meetings {

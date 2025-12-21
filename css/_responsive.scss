@@ -20,8 +20,13 @@
 
             #enter_room {
                 width: 100%;
+                margin-bottom: 10px !important;
 
                 .join-meeting-container {
+                    margin-left: auto;
+                    margin-right: auto;
+                    margin-top: 0;
+                    margin-bottom: 10px !important;
                     padding: 0;
                     flex-direction: column;
                     background: transparent;
@@ -31,6 +36,10 @@
                     padding-right: 0;
                     margin-bottom: 10px;
                 }
+            }
+
+            #previous_meeting_history_container {
+                margin-top: 10px !important;
             }
         }
 

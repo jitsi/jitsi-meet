@@ -59,7 +59,8 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
             ...this.state,
 
             generateRoomNames:
-                interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE
+                interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE,
+            showMeetingHistory: false
         };
 
         /**
@@ -125,6 +126,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         // Bind event handlers so they are only bound once per instance.
         this._onFormSubmit = this._onFormSubmit.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
+        this._onToggleMeetingHistory = this._onToggleMeetingHistory.bind(this);
         this._setAdditionalCardRef = this._setAdditionalCardRef.bind(this);
         this._setAdditionalContentRef
             = this._setAdditionalContentRef.bind(this);
@@ -258,6 +260,18 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                 </button>
                             </div>
                         </div>
+                        <div id = 'previous_meeting_history_container'>
+                            <button
+                                aria-disabled = 'false'
+                                aria-label = 'Previous Meeting History'
+                                className = 'welcome-page-button'
+                                id = 'previous_meeting_history_button'
+                                onClick = { this._onToggleMeetingHistory }
+                                tabIndex = { 0 }
+                                type = 'button'>
+                                {t('welcomepage.previousMeetingHistory')}
+                            </button>
+                        </div>
                         {this._titleHasNotAllowCharacter && (
                             <div
                                 className = 'not-allow-title-character-div'
@@ -280,6 +294,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                     </div>
                 </div>
 
+                {this.state.showMeetingHistory && (
                 <div className = 'welcome-cards-container'>
                     <div className = 'welcome-card-column'>
                         <div className = 'welcome-tabs welcome-card welcome-card--blue'>
@@ -298,6 +313,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                             ref = { this._setAdditionalContentRef } />
                         : null}
                 </div>
+                )}
                 {DISPLAY_WELCOME_FOOTER && this._renderFooter()}
             </div>
 
@@ -352,6 +368,18 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
         this._titleHasNotAllowCharacter = specialCharacters.some(char => event.target.value.includes(char));
         super._onRoomChange(event.target.value);
+    }
+
+    /**
+     * Toggles the visibility of the meeting history section.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onToggleMeetingHistory() {
+        this.setState({
+            showMeetingHistory: !this.state.showMeetingHistory
+        });
     }
 
     /**
