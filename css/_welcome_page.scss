@@ -58,7 +58,7 @@ body.welcome-page {
         .header-text-subtitle {
             color: #fff;
             font-size: 1.25rem;
-            font-weight: 600;
+            font-weight: 200;
             line-height: 1.625rem;
             margin: 16px 0 32px 0;
             text-align: $welcomePageHeaderTextAlign;
@@ -130,14 +130,14 @@ body.welcome-page {
             margin-bottom: 10px !important;
 
             #enter_room_button {
-                width: fit-content;
-                height: 84.37px;
+                width: fit-content- 25%;
+                height: 74.37px;
                 border-radius: 18.87px;
                 padding: 26.96px 79.08px;
                 background-color: #FFFFFF !important;
                 color: #336EE6 !important;
                 font-family: 'Inter', sans-serif;
-                font-size: 35.94px;
+                font-size: 25.94px;
                 font-weight: 600;
                 font-style: normal;
                 line-height: 100%;
@@ -169,13 +169,13 @@ body.welcome-page {
             z-index: $zindex2;
 
             #previous_meeting_history_button {
-                width: 80%;
+                width: 50%;
                 background: transparent !important;
                 border: 1px solid #FFFFFF !important;
                 border-radius: 21px !important;
                 color: #FFFFFF !important;
                 font-family: 'Inter', sans-serif;
-                font-size: 24px;
+                font-size: 16px;
                 font-weight: 600;
                 font-style: normal;
                 line-height: 100%;
