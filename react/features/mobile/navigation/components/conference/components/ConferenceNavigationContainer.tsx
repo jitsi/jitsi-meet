@@ -68,7 +68,7 @@ import {
     // @ts-ignore
 } from '../../../screenOptions';
 // @ts-ignore
-import ChatAndPollsNavigator from '../../chat/components/ChatAndPollsNavigator';
+import ChatNavigator from '../../chat/components/ChatNavigator';
 // @ts-ignore
 import LobbyNavigationContainer from '../../lobby/components/LobbyNavigationContainer';
 // @ts-ignore
@@ -93,8 +93,8 @@ const ConferenceNavigationContainer = () => {
         chatScreenName = screen.conference.chat;
         chatTitleString = 'chat.title';
     } else {
-        ChatScreen = ChatAndPollsNavigator;
-        chatScreenName = screen.conference.chatandpolls.main;
+        ChatScreen = ChatNavigator;
+        chatScreenName = screen.conference.chatTabs.main;
         chatTitleString = 'chat.titleWithPolls';
     }
     const { t } = useTranslation();

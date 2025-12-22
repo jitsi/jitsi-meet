@@ -16,6 +16,7 @@ import {
     welcomeScreenOptions
 } from '../../../screenOptions';
 import {
+    goBack,
     settingsNavigationContainerRef
 } from '../SettingsNavigationContainerRef';
 
@@ -51,6 +52,7 @@ const SettingsNavigationContainer = ({ isInWelcomePage }: IProps) => {
 
     const LanguageSelectScreen = useCallback(() =>
         (<LanguageSelectView
+            goBack = { goBack }
             isInWelcomePage = { isInWelcomePage } />)
     , []);
 
