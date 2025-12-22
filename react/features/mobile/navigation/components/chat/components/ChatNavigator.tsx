@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     getClientHeight,
     getClientWidth
-} from '../../../../../base/modal/components/functions';
+} from '../../../../../base/modal/components/functions.native';
 import { setFocusedTab } from '../../../../../chat/actions.any';
 import Chat from '../../../../../chat/components/native/Chat';
 import { ChatTabs } from '../../../../../chat/constants';
@@ -19,14 +19,14 @@ import { chatTabBarOptions } from '../../../screenOptions';
 
 const ChatTab = createMaterialTopTabNavigator();
 
-const ChatAndPolls = () => {
+const ChatNavigator = () => {
     const clientHeight = useSelector(getClientHeight);
     const clientWidth = useSelector(getClientWidth);
     const dispatch = useDispatch();
     const currentFocusedTab = useSelector(getFocusedTab);
     const initialRouteName = currentFocusedTab === ChatTabs.POLLS
-        ? screen.conference.chatandpolls.tab.polls
-        : screen.conference.chatandpolls.tab.chat;
+        ? screen.conference.chatTabs.tab.polls
+        : screen.conference.chatTabs.tab.chat;
 
     return (
         // @ts-ignore
@@ -45,7 +45,7 @@ const ChatAndPolls = () => {
                         dispatch(setFocusedTab(ChatTabs.CHAT));
                     }
                 }}
-                name = { screen.conference.chatandpolls.tab.chat } />
+                name = { screen.conference.chatTabs.tab.chat } />
             <ChatTab.Screen
                 component = { PollsPane }
                 listeners = {{
@@ -54,9 +54,9 @@ const ChatAndPolls = () => {
                         dispatch(resetUnreadPollsCount);
                     }
                 }}
-                name = { screen.conference.chatandpolls.tab.polls } />
+                name = { screen.conference.chatTabs.tab.polls } />
         </ChatTab.Navigator>
     );
 };
 
-export default ChatAndPolls;
+export default ChatNavigator;
