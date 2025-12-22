@@ -37,6 +37,8 @@ export type ToolbarButton = 'camera' |
     'mute-everyone' |
     'mute-video-everyone' |
     'noisesuppression' |
+    'orbit-listen' |
+    'orbit-translate' |
     'overflowmenu' |
     'participants-pane' |
     'polls' |

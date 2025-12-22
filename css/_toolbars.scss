@@ -202,3 +202,154 @@ div.hangup-menu-button {
         }
     }
 }
+
+.orbit-bridge-button {
+    position: relative;
+    margin-right: 6px;
+}
+
+.orbit-bridge-icon {
+    --orb-hue: 210;
+    --orb-scale: 1;
+    align-items: center;
+    background: radial-gradient(
+        circle at 30% 30%,
+        hsla(var(--orb-hue), 85%, 75%, 0.95),
+        hsla(var(--orb-hue), 65%, 45%, 0.95) 55%,
+        hsla(var(--orb-hue), 50%, 30%, 0.95) 100%
+    );
+    border-radius: 50%;
+    box-shadow:
+        0 0 10px hsla(var(--orb-hue), 80%, 60%, 0.5),
+        inset 0 0 6px hsla(var(--orb-hue), 85%, 75%, 0.5);
+    color: hsl(var(--orb-hue), 80%, 70%);
+    display: flex;
+    height: 48px;
+    justify-content: center;
+    position: relative;
+    transform: scale(var(--orb-scale));
+    transition: transform 120ms ease, box-shadow 180ms ease, filter 180ms ease;
+    width: 48px;
+}
+
+.orbit-bridge-icon::before {
+    content: '';
+    position: absolute;
+    inset: -7px;
+    border: 1px solid hsla(var(--orb-hue), 80%, 70%, 0.35);
+    border-radius: 50%;
+    transform: rotate(24deg);
+    animation: orbit-spin 6s linear infinite;
+}
+
+.orbit-bridge-icon::after {
+    content: '';
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        hsla(var(--orb-hue), 90%, 70%, 0.45),
+        hsla(var(--orb-hue), 80%, 60%, 0.15) 45%,
+        hsla(var(--orb-hue), 60%, 50%, 0) 70%
+    );
+    opacity: 0;
+    transform: scale(0.6);
+    pointer-events: none;
+}
+
+.orbit-bridge-icon.is-active {
+    filter: saturate(1.1);
+    box-shadow:
+        0 0 12px hsla(var(--orb-hue), 90%, 65%, 0.7),
+        inset 0 0 8px hsla(var(--orb-hue), 85%, 75%, 0.6);
+}
+
+.orbit-bridge-icon.is-arming {
+    animation: orbit-pulse 1.2s ease-in-out infinite;
+}
+
+.orbit-bridge-icon.is-talking,
+.orbit-bridge-icon.is-tts {
+    box-shadow:
+        0 0 16px hsla(var(--orb-hue), 90%, 70%, 0.85),
+        inset 0 0 10px hsla(var(--orb-hue), 90%, 80%, 0.7);
+}
+
+.orbit-bridge-icon.is-supernova::after {
+    animation: orbit-supernova 0.9s ease-out;
+}
+
+.orbit-bridge-icon.is-error {
+    --orb-hue: 6;
+    filter: saturate(1.2);
+}
+
+.orbit-bridge-translate {
+    --orb-hue: 130;
+}
+
+.orbit-bridge-label {
+    position: absolute;
+    top: 52px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.65rem;
+    color: #fff;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.orbit-bridge-language {
+    position: absolute;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+}
+
+.orbit-bridge-language select {
+    background: rgba(20, 22, 26, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: #fff;
+    font-size: 0.65rem;
+    padding: 2px 6px;
+}
+
+@keyframes orbit-spin {
+    from {
+        transform: rotate(24deg);
+    }
+    to {
+        transform: rotate(384deg);
+    }
+}
+
+@keyframes orbit-supernova {
+    0% {
+        opacity: 0.9;
+        transform: scale(0.6);
+    }
+    70% {
+        opacity: 0.5;
+        transform: scale(1.3);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.6);
+    }
+}
+
+@keyframes orbit-pulse {
+    0% {
+        transform: scale(0.98);
+    }
+    50% {
+        transform: scale(1.04);
+    }
+    100% {
+        transform: scale(0.98);
+    }
+}

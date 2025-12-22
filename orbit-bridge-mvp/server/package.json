@@ -1,0 +1,13 @@
+{
+  "name": "orbit-bridge-mvp-server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@google/genai": "^1.34.0",
+    "dotenv": "^16.4.5",
+    "ws": "^8.18.0"
+  }
+}

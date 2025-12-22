@@ -1,3 +1,6 @@
+import groovy.json.JsonSlurper
+import org.gradle.api.GradleException
+
 buildscript {
   repositories {
       google()
@@ -5,7 +8,8 @@ buildscript {
   }
 
   dependencies {
-    classpath "com.android.tools.build:gradle:$rootProject.ext.gradlePluginVersion"
+    def gradlePluginVersion = rootProject.ext.has('gradlePluginVersion') ? rootProject.ext.gradlePluginVersion : '8.6.0'
+    classpath "com.android.tools.build:gradle:$gradlePluginVersion"
   }
 }
 

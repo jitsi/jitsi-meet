@@ -68,6 +68,8 @@ import AudioSettingsButton from './components/web/AudioSettingsButton';
 import CustomOptionButton from './components/web/CustomOptionButton';
 import FullscreenButton from './components/web/FullscreenButton';
 import LinkToSalesforceButton from './components/web/LinkToSalesforceButton';
+import OrbitBridgeListenButton from './components/web/OrbitBridgeListenButton';
+import OrbitBridgeTranslateButton from './components/web/OrbitBridgeTranslateButton';
 import ProfileButton from './components/web/ProfileButton';
 import ShareDesktopButton from './components/web/ShareDesktopButton';
 import ToggleCameraButton from './components/web/ToggleCameraButton';
@@ -79,6 +81,18 @@ import { ICustomToolbarButton, IToolboxButton, ToolbarButton } from './types';
 const microphone = {
     key: 'microphone',
     Content: AudioSettingsButton,
+    group: 0
+};
+
+const orbitListen = {
+    key: 'orbit-listen',
+    Content: OrbitBridgeListenButton,
+    group: 0
+};
+
+const orbitTranslate = {
+    key: 'orbit-translate',
+    Content: OrbitBridgeTranslateButton,
     group: 0
 };
 
@@ -294,6 +308,8 @@ export function useToolboxButtons(
     const _help = useHelpButton();
 
     const buttons: { [key in ToolbarButton]?: IToolboxButton; } = {
+        'orbit-listen': orbitListen,
+        'orbit-translate': orbitTranslate,
         microphone,
         camera,
         profile,

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Orbit Bridge MVP</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div class="app">
+        <header class="top">
+            <div class="status">
+                <div class="status-row">
+                    <span class="label">User</span>
+                    <span id="userIdDisplay">-</span>
+                </div>
+                <div class="status-row">
+                    <span class="label">Role</span>
+                    <span id="roleDisplay">Listener</span>
+                </div>
+                <div class="status-row">
+                    <span class="label">Speaker</span>
+                    <span id="speakerDisplay">None</span>
+                </div>
+            </div>
+            <div class="controls">
+                <div class="icon-row">
+                    <div class="orb-stack listen" id="listenOrbStack">
+                        <button id="listenOrbButton" class="orb-button" type="button" aria-pressed="false" aria-label="Hold 3 seconds to activate listening">
+                            <span class="orb-core"></span>
+                            <span class="orb-orbit"></span>
+                            <span class="orb-burst"></span>
+                        </button>
+                        <div id="listenOrbLabel" class="orb-label"></div>
+                    </div>
+                    <div class="orb-stack translate" id="translateOrbStack">
+                        <button id="translateOrbButton" class="orb-button" type="button" aria-pressed="false" aria-label="Toggle translation mode">
+                            <span class="orb-core"></span>
+                            <span class="orb-orbit"></span>
+                            <span class="orb-burst"></span>
+                        </button>
+                        <div id="translateOrbLabel" class="orb-label"></div>
+                    </div>
+                    <button class="icon-button" type="button" aria-label="Mic">
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 14.5a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v5.5a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.58A7 7 0 0 0 19 11.5h-2Z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-button" type="button" aria-label="Video">
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M15 8H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1.2l4 2.3V9.9l-4 2.3V10a2 2 0 0 0-2-2Z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <label class="select">
+                    <span>Hear speaker in</span>
+                    <select id="languageSelect">
+                        <option value="en">English</option>
+                        <option value="es">Spanish</option>
+                        <option value="fr">French</option>
+                        <option value="de">German</option>
+                        <option value="ja">Japanese</option>
+                        <option value="ko">Korean</option>
+                        <option value="tl">Tagalog</option>
+                        <option value="hi">Hindi</option>
+                    </select>
+                </label>
+            </div>
+        </header>
+        <main>
+            <section class="transcript">
+                <h2>Transcript</h2>
+                <div id="transcriptList" class="transcript-list"></div>
+            </section>
+        </main>
+        <audio id="speakerAudio" autoplay></audio>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

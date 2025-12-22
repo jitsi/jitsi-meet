@@ -1,0 +1,270 @@
+:root {
+    color-scheme: light;
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: #f6f5f2;
+    color: #1b1b1b;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+.app {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.status {
+    min-width: 220px;
+    display: grid;
+    gap: 8px;
+}
+
+.status-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 14px;
+}
+
+.label {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: #6d6d6d;
+    min-width: 64px;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+.select {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+select {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #c6c6c6;
+}
+
+.transcript {
+    margin-top: 24px;
+    background: #ffffff;
+    padding: 16px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+.transcript h2 {
+    margin: 0 0 12px;
+    font-size: 18px;
+}
+
+.transcript-list {
+    display: grid;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.transcript-item {
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: #f3f4f6;
+}
+
+.transcript-item strong {
+    font-weight: 600;
+}
+
+.icon-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.icon-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid #d5d9e2;
+    background: #f7f8fb;
+    display: grid;
+    place-items: center;
+    cursor: default;
+}
+
+.icon {
+    width: 18px;
+    height: 18px;
+    fill: #2f3542;
+}
+
+.orb-stack {
+    --orb-hue: 215;
+    --orb-scale: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.orb-stack.translate {
+    --orb-hue: 135;
+}
+
+.orb-button {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    background: transparent;
+    position: relative;
+    outline: none;
+    animation: orb-float 4s ease-in-out infinite;
+    cursor: pointer;
+}
+
+.orb-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.orb-core {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, hsl(var(--orb-hue), 70%, 75%), hsl(var(--orb-hue), 65%, 45%));
+    box-shadow: 0 0 14px rgba(73, 120, 181, 0.35);
+    transform: scale(var(--orb-scale));
+    transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+}
+
+.orb-orbit {
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 1px solid rgba(90, 98, 114, 0.5);
+    animation: orbit-spin 6s linear infinite;
+}
+
+.orb-orbit::after {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(90, 98, 114, 0.85);
+    transform: translateX(-50%);
+}
+
+.orb-burst {
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    opacity: 0;
+}
+
+.orb-label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #6b7280;
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.orb-stack.active .orb-label {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.orb-stack.active .orb-core {
+    box-shadow: 0 0 18px hsla(var(--orb-hue), 70%, 55%, 0.45);
+}
+
+.orb-stack.supernova .orb-burst {
+    animation: orb-burst 0.9s ease-out;
+}
+
+.orb-stack.talking .orb-core {
+    box-shadow: 0 0 22px hsla(var(--orb-hue), 80%, 65%, 0.65);
+}
+
+@keyframes orbit-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes orb-float {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-4px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes orb-burst {
+    0% {
+        opacity: 0.9;
+        transform: scale(0.9);
+    }
+    70% {
+        opacity: 0.3;
+        transform: scale(1.6);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(2);
+    }
+}
+
+@media (max-width: 640px) {
+    .app {
+        padding: 16px;
+    }
+
+    .controls {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
