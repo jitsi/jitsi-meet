@@ -12,178 +12,188 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
-describe('Transcription', () => {
-    let p1: Participant, p2: Participant;
-    let webhooksProxy: WebhookProxy;
+for (const asyncTranscriptions of [ false, true ]) {
+    describe(`Transcription (async=${asyncTranscriptions})`, () => {
+        let p1: Participant, p2: Participant;
+        let webhooksProxy: WebhookProxy;
 
-    it('setup', async () => {
-        const room = ctx.roomName;
+        it('setup', async () => {
+            const room = ctx.roomName;
 
-        webhooksProxy = ctx.webhooksProxy;
+            webhooksProxy = ctx.webhooksProxy;
+            webhooksProxy.defaultMeetingSettings = { asyncTranscriptions };
 
-        p1 = await joinJaasMuc({
-            name: 'p1',
-            token: t({ room, moderator: true }),
-            iFrameApi: true });
+            p1 = await joinJaasMuc({
+                name: 'p1',
+                token: t({ room, moderator: true }),
+                iFrameApi: true
+            });
 
-        const transcriptionEnabled = await p1.execute(() => config.transcription?.enabled);
+            const transcriptionEnabled = await p1.execute(() => config.transcription?.enabled);
 
-        expect(transcriptionEnabled).toBe(expectations.jaas.transcriptionEnabled);
+            expect(transcriptionEnabled).toBe(expectations.jaas.transcriptionEnabled);
 
-        p2 = await joinJaasMuc({
-            name: 'p2',
-            token: t({ room }),
-            iFrameApi: true }, {
-            configOverwrite: {
-                startWithAudioMuted: true
+            const roomMetadata = await p1.getRoomMetadata();
+
+            if (asyncTranscriptions) {
+                expect(roomMetadata.asyncTranscription).toBe(true);
+            } else {
+                expect(roomMetadata.asyncTranscription).toBeFalsy();
             }
+
+            p2 = await joinJaasMuc({
+                name: 'p2',
+                token: t({ room }),
+                iFrameApi: true
+            }, {
+                configOverwrite: {
+                    startWithAudioMuted: true
+                }
+            });
+
+            await Promise.all([
+                p1.switchToMainFrame(),
+                p2.switchToMainFrame(),
+            ]);
+
+            expect(await p1.getIframeAPI().getEventResult('isModerator')).toBe(true);
+            expect(await p1.getIframeAPI().getEventResult('videoConferenceJoined')).toBeDefined();
         });
 
-        await Promise.all([
-            p1.switchToMainFrame(),
-            p2.switchToMainFrame(),
-        ]);
+        it('toggle subtitles', async () => {
+            await p1.getIframeAPI().addEventListener('transcriptionChunkReceived');
+            await p2.getIframeAPI().addEventListener('transcriptionChunkReceived');
+            await p1.getIframeAPI().executeCommand('toggleSubtitles');
 
-        expect(await p1.getIframeAPI().getEventResult('isModerator')).toBe(true);
-        expect(await p1.getIframeAPI().getEventResult('videoConferenceJoined')).toBeDefined();
-    });
+            await checkReceivingChunks(p1, p2, webhooksProxy);
 
-    it('toggle subtitles', async () => {
-        await p1.getIframeAPI().addEventListener('transcriptionChunkReceived');
-        await p2.getIframeAPI().addEventListener('transcriptionChunkReceived');
-        await p1.getIframeAPI().executeCommand('toggleSubtitles');
+            await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
+            await p1.getIframeAPI().addEventListener('transcribingStatusChanged');
 
-        await checkReceivingChunks(p1, p2, webhooksProxy);
+            await p1.getIframeAPI().executeCommand('toggleSubtitles');
 
-        await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
-        await p1.getIframeAPI().addEventListener('transcribingStatusChanged');
-
-        await p1.getIframeAPI().executeCommand('toggleSubtitles');
-
-        await p1.driver.waitUntil(() => p1.getIframeAPI()
-            .getEventResult('transcribingStatusChanged'), {
-            timeout: 15000,
-            timeoutMsg: 'transcribingStatusChanged event not received by p1'
-        });
-    });
-
-    it('set subtitles on and off', async () => {
-        // we need to clear results or the last one will be used, from the previous time subtitles were on
-        await p1.getIframeAPI().clearEventResults('transcriptionChunkReceived');
-        await p2.getIframeAPI().clearEventResults('transcriptionChunkReceived');
-
-        await p1.getIframeAPI().executeCommand('setSubtitles', true, true);
-
-        await checkReceivingChunks(p1, p2, webhooksProxy);
-
-        await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
-
-        await p1.getIframeAPI().executeCommand('setSubtitles', false);
-
-        await p1.driver.waitUntil(() => p1.getIframeAPI()
-            .getEventResult('transcribingStatusChanged'), {
-            timeout: 15000,
-            timeoutMsg: 'transcribingStatusChanged event not received by p1'
-        });
-    });
-
-    it('start/stop transcriptions via recording', async () => {
-        // we need to clear results or the last one will be used, from the previous time subtitles were on
-        await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
-        await p1.getIframeAPI().clearEventResults('transcriptionChunkReceived');
-        await p2.getIframeAPI().clearEventResults('transcriptionChunkReceived');
-
-        await p2.getIframeAPI().addEventListener('transcribingStatusChanged');
-
-        await p1.getIframeAPI().executeCommand('startRecording', { transcription: true });
-
-        let allTranscriptionStatusChanged: Promise<any>[] = [];
-
-        allTranscriptionStatusChanged.push(await p1.driver.waitUntil(() => p1.getIframeAPI()
+            await p1.driver.waitUntil(() => p1.getIframeAPI()
                 .getEventResult('transcribingStatusChanged'), {
-            timeout: 10000,
-            timeoutMsg: 'transcribingStatusChanged event not received on p1'
-        }));
-        allTranscriptionStatusChanged.push(await p2.driver.waitUntil(() => p2.getIframeAPI()
+                timeout: 15000,
+                timeoutMsg: 'transcribingStatusChanged event not received by p1'
+            });
+        });
+
+        it('set subtitles on and off', async () => {
+            // we need to clear results or the last one will be used, from the previous time subtitles were on
+            await p1.getIframeAPI().clearEventResults('transcriptionChunkReceived');
+            await p2.getIframeAPI().clearEventResults('transcriptionChunkReceived');
+
+            await p1.getIframeAPI().executeCommand('setSubtitles', true, true);
+
+            await checkReceivingChunks(p1, p2, webhooksProxy);
+
+            await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
+
+            await p1.getIframeAPI().executeCommand('setSubtitles', false);
+
+            await p1.driver.waitUntil(() => p1.getIframeAPI()
                 .getEventResult('transcribingStatusChanged'), {
-            timeout: 10000,
-            timeoutMsg: 'transcribingStatusChanged event not received on p2'
-        }));
-
-        let result = await Promise.allSettled(allTranscriptionStatusChanged);
-
-        expect(result.length).toBe(2);
-
-        result.forEach(e => {
-            // @ts-ignore
-            expect(e.value.on).toBe(true);
+                timeout: 15000,
+                timeoutMsg: 'transcribingStatusChanged event not received by p1'
+            });
         });
 
-        await checkReceivingChunks(p1, p2, webhooksProxy);
+        it('start/stop transcriptions via recording', async () => {
+            // we need to clear results or the last one will be used, from the previous time subtitles were on
+            await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
+            await p1.getIframeAPI().clearEventResults('transcriptionChunkReceived');
+            await p2.getIframeAPI().clearEventResults('transcriptionChunkReceived');
 
-        await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
-        await p2.getIframeAPI().clearEventResults('transcribingStatusChanged');
+            await p2.getIframeAPI().addEventListener('transcribingStatusChanged');
 
-        await p1.getIframeAPI().executeCommand('stopRecording', 'file', true);
+            await p1.getIframeAPI().executeCommand('startRecording', { transcription: true });
 
-        allTranscriptionStatusChanged = [];
+            let allTranscriptionStatusChanged: Promise<any>[] = [];
 
-        allTranscriptionStatusChanged.push(await p1.driver.waitUntil(() => p1.getIframeAPI()
-            .getEventResult('transcribingStatusChanged'), {
-            timeout: 10000,
-            timeoutMsg: 'transcribingStatusChanged event not received on p1'
-        }));
-        allTranscriptionStatusChanged.push(await p2.driver.waitUntil(() => p2.getIframeAPI()
-            .getEventResult('transcribingStatusChanged'), {
-            timeout: 10000,
-            timeoutMsg: 'transcribingStatusChanged event not received on p2'
-        }));
+            allTranscriptionStatusChanged.push(await p1.driver.waitUntil(() => p1.getIframeAPI()
+                .getEventResult('transcribingStatusChanged'), {
+                timeout: 10000,
+                timeoutMsg: 'transcribingStatusChanged event not received on p1'
+            }));
+            allTranscriptionStatusChanged.push(await p2.driver.waitUntil(() => p2.getIframeAPI()
+                .getEventResult('transcribingStatusChanged'), {
+                timeout: 10000,
+                timeoutMsg: 'transcribingStatusChanged event not received on p2'
+            }));
 
-        result = await Promise.allSettled(allTranscriptionStatusChanged);
+            let result = await Promise.allSettled(allTranscriptionStatusChanged);
 
-        expect(result.length).toBe(2);
+            expect(result.length).toBe(2);
 
-        result.forEach(e => {
-            // @ts-ignore
-            expect(e.value.on).toBe(false);
+            result.forEach(e => {
+                // @ts-ignore
+                expect(e.value.on).toBe(true);
+            });
+
+            await checkReceivingChunks(p1, p2, webhooksProxy);
+
+            await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
+            await p2.getIframeAPI().clearEventResults('transcribingStatusChanged');
+
+            await p1.getIframeAPI().executeCommand('stopRecording', 'file', true);
+
+            allTranscriptionStatusChanged = [];
+
+            allTranscriptionStatusChanged.push(await p1.driver.waitUntil(() => p1.getIframeAPI()
+                .getEventResult('transcribingStatusChanged'), {
+                timeout: 10000,
+                timeoutMsg: 'transcribingStatusChanged event not received on p1'
+            }));
+            allTranscriptionStatusChanged.push(await p2.driver.waitUntil(() => p2.getIframeAPI()
+                .getEventResult('transcribingStatusChanged'), {
+                timeout: 10000,
+                timeoutMsg: 'transcribingStatusChanged event not received on p2'
+            }));
+
+            result = await Promise.allSettled(allTranscriptionStatusChanged);
+
+            expect(result.length).toBe(2);
+
+            result.forEach(e => {
+                // @ts-ignore
+                expect(e.value.on).toBe(false);
+            });
+
+            await p1.getIframeAPI().executeCommand('hangup');
+            await p2.getIframeAPI().executeCommand('hangup');
+
+            // sometimes events are not immediately received,
+            // let's wait for destroy event before waiting for those that depends on it
+            await webhooksProxy.waitForEvent('ROOM_DESTROYED');
+
+            const event: {
+                data: {
+                    preAuthenticatedLink: string;
+                };
+                eventType: string;
+            } = await webhooksProxy.waitForEvent('TRANSCRIPTION_UPLOADED');
+
+            expect(event.eventType).toBe('TRANSCRIPTION_UPLOADED');
+            expect(event.data.preAuthenticatedLink).toBeDefined();
         });
-
-        await p1.getIframeAPI().executeCommand('hangup');
-        await p2.getIframeAPI().executeCommand('hangup');
-
-        // sometimes events are not immediately received,
-        // let's wait for destroy event before waiting for those that depends on it
-        await webhooksProxy.waitForEvent('ROOM_DESTROYED');
-
-        const event: {
-            data: {
-                preAuthenticatedLink: string;
-            };
-            eventType: string;
-        } = await webhooksProxy.waitForEvent('TRANSCRIPTION_UPLOADED');
-
-        expect('TRANSCRIPTION_UPLOADED').toBe(event.eventType);
-        expect(event.data.preAuthenticatedLink).toBeDefined();
     });
-});
+}
 
 async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksProxy: WebhookProxy) {
-    const allTranscripts: Promise<any>[] = [];
-
-    allTranscripts.push(await p1.driver.waitUntil(() => p1.getIframeAPI()
+    const p1Promise = p1.driver.waitUntil(() => p1.getIframeAPI()
             .getEventResult('transcriptionChunkReceived'), {
         timeout: 60000,
         timeoutMsg: 'transcriptionChunkReceived event not received on p1 side'
-    }));
+    });
 
-    allTranscripts.push(await p2.driver.waitUntil(() => p2.getIframeAPI()
+    const p2Promise = p2.driver.waitUntil(() => p2.getIframeAPI()
             .getEventResult('transcriptionChunkReceived'), {
         timeout: 60000,
         timeoutMsg: 'transcriptionChunkReceived event not received on p2 side'
-    }));
+    });
 
-    // TRANSCRIPTION_CHUNK_RECEIVED webhook
-    allTranscripts.push((async () => {
+    const webhookPromise = async () => {
         const event: {
             data: {
                 final: string;
@@ -198,42 +208,24 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
             eventType: string;
         } = await webhooksProxy.waitForEvent('TRANSCRIPTION_CHUNK_RECEIVED');
 
-        expect('TRANSCRIPTION_CHUNK_RECEIVED').toBe(event.eventType);
+        expect(event.eventType).toBe('TRANSCRIPTION_CHUNK_RECEIVED');
 
         event.data.stable = event.data.final;
 
         return event;
-    })());
+    };
 
-    const result = await Promise.allSettled(allTranscripts);
-
-    expect(result.length).toBeGreaterThan(0);
-
-    // @ts-ignore
-    const firstEntryData = result[0].value.data;
-    const stable = firstEntryData.stable || firstEntryData.final;
-    const language = firstEntryData.language;
-    const messageID = firstEntryData.messageID;
+    const [ p1Event, p2Event, webhookEvent ] = await Promise.all([ p1Promise, p2Promise, await webhookPromise() ]);
     const p1Id = await p1.getEndpointId();
+    const p1Transcript = p1Event.data.stable || p1Event.data.final;
 
-    result.map(r => {
-        // @ts-ignore
-        const v = r.value;
+    [ p1Event, p2Event, webhookEvent ].forEach(ev => {
+        const transcript = ev.data.stable || ev.data.final;
 
-        expect(v).toBeDefined();
-
-        return v.data;
-    }).forEach(tr => {
-        const checkTranscripts = stable.includes(tr.stable || tr.final) || (tr.stable || tr.final).includes(stable);
-
-        if (!checkTranscripts) {
-            console.log('received events', JSON.stringify(result));
-        }
-
-        expect(checkTranscripts).toBe(true);
-        expect(tr.language).toBe(language);
-        expect(tr.messageID).toBe(messageID);
-        expect(tr.participant.id).toBe(p1Id);
-        expect(tr.participant.name).toBe(p1.name);
+        expect(transcript.includes(p1Transcript) || p1Transcript.includes(transcript)).toBe(true);
+        expect(ev.data.language).toBe(p1Event.data.language);
+        expect(ev.data.messageID).toBe(p1Event.data.messageID);
+        expect(ev.data.participant.id).toBe(p1Id);
+        expect(ev.data.participant.name).toBe(p1.name);
     });
 }
