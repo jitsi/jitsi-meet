@@ -3,16 +3,19 @@ import clsx from 'clsx';
 import i18next from 'i18next';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 // @ts-expect-error
 import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
 import { IReduxState } from '../../../app/types';
+import Icon from '../../../base/icons/components/Icon';
+import { IconCloseLarge } from '../../../base/icons/svg';
 import { translate } from '../../../base/i18n/functions';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
 import { getToolboxHeight } from '../../../toolbox/functions.web';
 import { shouldDisplayTileView } from '../../../video-layout/functions.any';
+import { toggleWhiteboard } from '../../actions.web';
 import { WHITEBOARD_UI_OPTIONS } from '../../constants';
 import {
     getCollabDetails,
@@ -42,6 +45,7 @@ interface IDimensions {
  * @returns {JSX.Element} - The React component.
  */
 const Whiteboard = (props: WithTranslation): JSX.Element => {
+    const dispatch = useDispatch();
     const excalidrawRef = useRef<any>(null);
     const excalidrawAPIRef = useRef<any>(null);
     const collabAPIRef = useRef<any>(null);
@@ -113,6 +117,17 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
         collabAPIRef.current.setUsername(localParticipantName);
     }, [ localParticipantName ]);
 
+    const handleClose = useCallback(() => {
+        dispatch(toggleWhiteboard());
+    }, [ dispatch ]);
+
+    const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            handleClose();
+        }
+    }, [ handleClose ]);
+
     return (
         <div
             className = { clsx(
@@ -124,6 +139,14 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
                 marginTop: `${HEIGHT_OFFSET}px`,
                 display: `${isInTileView || !isVisible ? 'none' : 'block'}`
             }}>
+            <Icon
+                ariaLabel = { props.t('toolbar.closeWhiteboard') }
+                className = 'whiteboard-close-button'
+                onClick = { handleClose }
+                onKeyPress = { handleKeyPress }
+                role = 'button'
+                src = { IconCloseLarge }
+                tabIndex = { 0 } />
             {
                 isOpen && (
                     <div className = 'excalidraw-wrapper'>
