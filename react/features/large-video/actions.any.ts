@@ -111,7 +111,7 @@ export function setLargeVideoDimensions(height: number, width: number) {
  */
 function _electLastVisibleRemoteParticipant(stateful: IStateful) {
     const state = toState(stateful);
-    const tracks = state['features/base/tracks'];
+    const tracks = state['features/base/tracks'].tracks;
 
     // First we try to get most recent remote video track.
     for (let i = tracks.length - 1; i >= 0; --i) {

@@ -190,7 +190,7 @@ class FaceLandmarksDetector {
             return;
         }
         const state = getState();
-        const localVideoTrack = track || getLocalVideoTrack(state['features/base/tracks']);
+        const localVideoTrack = track || getLocalVideoTrack(state['features/base/tracks'].tracks);
 
         if (!localVideoTrack || localVideoTrack.jitsiTrack?.isMuted()) {
             logger.debug('Face landmarks detection is disabled due to missing local track.');

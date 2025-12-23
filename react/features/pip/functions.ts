@@ -25,7 +25,7 @@ export function getPiPVideoTrack(state: IReduxState, participant: IParticipant |
     const isOnPrejoin = isPrejoinPageVisible(state);
 
     return isOnPrejoin
-        ? getLocalVideoTrack(state['features/base/tracks'])
+        ? getLocalVideoTrack(state['features/base/tracks'].tracks)
         : getVideoTrackByParticipant(state, participant);
 }
 

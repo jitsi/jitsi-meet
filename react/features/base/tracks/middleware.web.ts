@@ -12,9 +12,12 @@ import {
     VIDEO_TYPE
 } from '../media/constants';
 import { IGUMPendingState } from '../media/types';
+import { MUTE_REMOTE_PARTICIPANT } from '../participants/actionTypes';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import {
+    REMOTE_PARTICIPANT_AUDIO_MUTE_CHANGED,
+    REMOTE_PARTICIPANT_VIDEO_MUTE_CHANGED,
     TRACK_ADDED,
     TRACK_MUTE_UNMUTE_FAILED,
     TRACK_NO_DATA_FROM_SOURCE,
@@ -22,6 +25,12 @@ import {
     TRACK_STOPPED,
     TRACK_UPDATED
 } from './actionTypes';
+import {
+    trackModeratorMuteCleared,
+    trackModeratorMuteInitiated,
+    trackMuteStateCleared,
+    trackMuteStateUpdated
+} from './actions.any';
 import {
     createLocalTracksA,
     showNoDataFromSourceVideoError,
@@ -35,8 +44,8 @@ import {
     getTrackByJitsiTrack, isUserInteractionRequiredForUnmute, logTracksForParticipant,
     setTrackMuted
 } from './functions.web';
+import { getPreviousMuteState, wasModeratorInitiated } from './reducer';
 import { ITrack, ITrackOptions } from './types';
-
 import './middleware.any';
 import './subscriber.web';
 
@@ -50,13 +59,76 @@ import './subscriber.web';
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case MUTE_REMOTE_PARTICIPANT: {
+        // Track moderator-initiated mutes in Redux state
+        store.dispatch(trackModeratorMuteInitiated(action.id, action.mediaType));
+
+        // Note: This will be cleared when the corresponding mute event fires:
+        // - REMOTE_PARTICIPANT_AUDIO_MUTE_CHANGED (for remote participants)
+        // - REMOTE_PARTICIPANT_VIDEO_MUTE_CHANGED (for remote participants)
+        // Or when participant leaves (TRACK_REMOVED)
+        break;
+    }
+
+    case REMOTE_PARTICIPANT_AUDIO_MUTE_CHANGED: {
+        const { participantId, muted } = action;
+        const mediaType = 'audio';
+        const state = store.getState();
+
+        // Check if this was a moderator-initiated mute using selector
+        const wasModeratorMute = wasModeratorInitiated(state, participantId, mediaType);
+
+        if (wasModeratorMute) {
+            store.dispatch(trackModeratorMuteCleared(participantId, mediaType));
+        }
+
+        const isSelfMuted = !wasModeratorMute;
+
+        APP.API.notifyParticipantMuted(participantId, muted, mediaType, isSelfMuted);
+        break;
+    }
+
+    case REMOTE_PARTICIPANT_VIDEO_MUTE_CHANGED: {
+        const { participantId, muted } = action;
+        const mediaType = 'video';
+        const state = store.getState();
+
+        // Check if this was a moderator-initiated mute using selector
+        const wasModeratorMute = wasModeratorInitiated(state, participantId, mediaType);
+
+        if (wasModeratorMute) {
+            store.dispatch(trackModeratorMuteCleared(participantId, mediaType));
+        }
+
+        const isSelfMuted = !wasModeratorMute;
+
+        APP.API.notifyParticipantMuted(participantId, muted, mediaType, isSelfMuted);
+        break;
+    }
+
     case TRACK_ADDED: {
-        const { local } = action.track;
+        const { local, jitsiTrack } = action.track;
 
         // The devices list needs to be refreshed when no initial video permissions
         // were granted and a local video track is added by umuting the video.
         if (local) {
             store.dispatch(getAvailableDevices());
+
+            // Store initial muted state for local participant
+            const state = store.getState();
+            const localParticipant = state['features/base/participants']?.local;
+
+            if (localParticipant?.id && jitsiTrack) {
+                const participantID = localParticipant.id;
+                const isVideoTrack = jitsiTrack.getType() !== MEDIA_TYPE.AUDIO;
+                const mediaType = isVideoTrack
+                    ? (jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP ? 'desktop' : 'video')
+                    : 'audio';
+                const currentMuted = jitsiTrack.isMuted();
+
+                store.dispatch(trackMuteStateUpdated(participantID, mediaType, currentMuted));
+            }
+
             break;
         }
 
@@ -64,7 +136,7 @@ MiddlewareRegistry.register(store => next => action => {
         const participantId = action.track?.participantId;
 
         if (participantId) {
-            logTracksForParticipant(store.getState()['features/base/tracks'], participantId, 'Track added');
+            logTracksForParticipant(store.getState()['features/base/tracks'].tracks, participantId, 'Track added');
         }
 
         return result;
@@ -82,9 +154,24 @@ MiddlewareRegistry.register(store => next => action => {
 
         const result = next(action);
         const participantId = action.track?.jitsiTrack?.getParticipantId();
+        const isLocal = action.track?.jitsiTrack?.isLocal();
 
-        if (participantId && !action.track?.jitsiTrack?.isLocal()) {
-            logTracksForParticipant(store.getState()['features/base/tracks'], participantId, 'Track removed');
+        if (participantId) {
+            logTracksForParticipant(store.getState()['features/base/tracks'].tracks, participantId, 'Track removed');
+
+            const jitsiTrack = action.track.jitsiTrack;
+            const isVideoTrack = jitsiTrack.type !== MEDIA_TYPE.AUDIO;
+            const mediaType = isVideoTrack
+                ? (jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP ? 'desktop' : 'video')
+                : 'audio';
+
+            if (isLocal) {
+                // Clean up previous-mute-states for local participant
+                store.dispatch(trackMuteStateCleared(participantId, mediaType));
+            } else {
+                // Clean up moderator-mutes tracking for remote participant
+                store.dispatch(trackModeratorMuteCleared(participantId, mediaType));
+            }
         }
 
         return result;
@@ -141,16 +228,10 @@ MiddlewareRegistry.register(store => next => action => {
             APP.conference.updateAudioIconEnabled();
         }
 
-        if (typeof action.track?.muted !== 'undefined' && participantID && !local) {
-            logTracksForParticipant(store.getState()['features/base/tracks'], participantID, 'Track updated');
-
-            // Notify external API when remote participant mutes/unmutes themselves
-            const mediaType = isVideoTrack
-                ? (jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP ? 'desktop' : 'video')
-                : 'audio';
-
-            APP.API.notifyParticipantMuted(participantID, action.track.muted, mediaType, true);
-        }
+        // Local participant mute/unmute is now handled via SET_AUDIO_MUTED and SET_VIDEO_MUTED
+        // Remote participant mute/unmute events are handled via
+        // REMOTE_PARTICIPANT_AUDIO_MUTE_CHANGED and REMOTE_PARTICIPANT_VIDEO_MUTE_CHANGED
+        // which are more reliable as they're based on XMPP signaling rather than track updates
 
         return result;
     }
@@ -160,8 +241,43 @@ MiddlewareRegistry.register(store => next => action => {
             return;
         }
 
+        // Get the current muted state BEFORE the action executes
+        const stateBefore = store.getState();
+        const localParticipant = stateBefore['features/base/participants']?.local;
+
+        const result = next(action);
+
+        // Skip events if prejoin page is visible
+        const state = store.getState();
+
+        if (isPrejoinPageVisible(state)) {
+            _setMuted(store, action);
+
+            return result;
+        }
+
+        // Fire external API event for local participant audio mute/unmute
+        if (localParticipant?.id) {
+            const participantID = localParticipant.id;
+            const mediaType = 'audio';
+            const currentMuted = action.muted;
+
+            // Get the previously notified state from Redux to prevent duplicates
+            const stateAfter = store.getState();
+            const previousNotifiedMuted = getPreviousMuteState(stateAfter, participantID, mediaType);
+
+            // Fire event ONLY if different from what we last notified about
+            if (previousNotifiedMuted !== currentMuted) {
+                APP.API.notifyParticipantMuted(participantID, currentMuted, mediaType, true);
+
+                // Update previous state to prevent duplicates
+                store.dispatch(trackMuteStateUpdated(participantID, mediaType, currentMuted));
+            }
+        }
+
         _setMuted(store, action);
-        break;
+
+        return result;
     }
     }
 
@@ -180,7 +296,7 @@ MiddlewareRegistry.register(store => next => action => {
 function _handleNoDataFromSourceErrors(store: IStore, action: AnyAction) {
     const { getState, dispatch } = store;
 
-    const track = getTrackByJitsiTrack(getState()['features/base/tracks'], action.track.jitsiTrack);
+    const track = getTrackByJitsiTrack(getState()['features/base/tracks'].tracks, action.track.jitsiTrack);
 
     if (!track?.local) {
         return;
@@ -223,7 +339,7 @@ function _handleNoDataFromSourceErrors(store: IStore, action: AnyAction) {
  * @returns {void}
  */
 function _removeNoDataFromSourceNotification({ getState, dispatch }: IStore, track: ITrack) {
-    const t = getTrackByJitsiTrack(getState()['features/base/tracks'], track.jitsiTrack);
+    const t = getTrackByJitsiTrack(getState()['features/base/tracks'].tracks, track.jitsiTrack);
     const { jitsiTrack, noDataFromSourceNotificationInfo = {} } = t || {};
 
     if (noDataFromSourceNotificationInfo?.uid) {
@@ -245,7 +361,7 @@ function _setMuted(store: IStore, { ensureTrack, muted }: {
     ensureTrack: boolean; muted: boolean; }) {
     const { dispatch, getState } = store;
     const state = getState();
-    const localTrack = getLocalTrack(state['features/base/tracks'], MEDIA_TYPE.AUDIO, /* includePending */ true);
+    const localTrack = getLocalTrack(state['features/base/tracks'].tracks, MEDIA_TYPE.AUDIO, /* includePending */ true);
 
     if (localTrack) {
         // The `jitsiTrack` property will have a value only for a localTrack for which `getUserMedia` has already

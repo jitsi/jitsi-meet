@@ -27,7 +27,7 @@ const MuteButton = ({
 }: IButtonProps): JSX.Element | null => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const tracks = useSelector((state: IReduxState) => state['features/base/tracks']);
+    const tracks = useSelector((state: IReduxState) => state['features/base/tracks'].tracks);
     const audioTrackMuted = useMemo(
         () => isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, participantID),
         [ isRemoteTrackMuted, participantID, tracks ]

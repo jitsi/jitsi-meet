@@ -25,7 +25,7 @@ import logger from './logger';
 import { FakeParticipant } from './types';
 
 StateListenerRegistry.register(
-    /* selector */ state => state['features/base/tracks'],
+    /* selector */ state => state['features/base/tracks'].tracks,
     /* listener */(tracks, store) => _updateScreenshareParticipants(store)
 );
 
@@ -96,7 +96,7 @@ function _updateScreenshareParticipants(store: IStore): void {
     const { dispatch, getState } = store;
     const state = getState();
     const conference = getCurrentConference(state);
-    const tracks = state['features/base/tracks'];
+    const tracks = state['features/base/tracks'].tracks;
     const { sortedRemoteVirtualScreenshareParticipants, localScreenShare } = state['features/base/participants'];
     const previousScreenshareSourceNames = [ ...sortedRemoteVirtualScreenshareParticipants.keys() ];
 

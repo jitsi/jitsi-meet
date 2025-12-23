@@ -22,6 +22,10 @@ import {
     TRACK_ADDED,
     TRACK_CREATE_CANCELED,
     TRACK_CREATE_ERROR,
+    TRACK_MODERATOR_MUTE_CLEARED,
+    TRACK_MODERATOR_MUTE_INITIATED,
+    TRACK_MUTE_STATE_CLEARED,
+    TRACK_MUTE_STATE_UPDATED,
     TRACK_MUTE_UNMUTE_FAILED,
     TRACK_NO_DATA_FROM_SOURCE,
     TRACK_REMOVED,
@@ -111,7 +115,7 @@ export function createDesiredLocalTracks(...desiredTypes: any) {
 
         const availableTypes
             = getLocalTracks(
-                    state['features/base/tracks'],
+                    state['features/base/tracks'].tracks,
                     /* includePending */ true)
                 .map(t => t.mediaType);
 
@@ -154,7 +158,7 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
         // device separately.
         for (const device of devices) {
             if (getLocalTrack(
-                state['features/base/tracks'],
+                state['features/base/tracks'].tracks,
                     device as MediaType,
                     /* includePending */ true)) {
                 throw new Error(`Local track for ${device} already exists`);
@@ -247,7 +251,7 @@ export function destroyLocalTracks(track: any = null) {
             .then(() =>
                 dispatch(
                     _disposeAndRemoveTracks(
-                        getState()['features/base/tracks']
+                        getState()['features/base/tracks'].tracks
                             .filter(t => t.local)
                             .map(t => t.jitsiTrack))));
 }
@@ -278,7 +282,7 @@ export function showNoDataFromSourceVideoError(jitsiTrack: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         let notificationInfo;
 
-        const track = getTrackByJitsiTrack(getState()['features/base/tracks'], jitsiTrack);
+        const track = getTrackByJitsiTrack(getState()['features/base/tracks'].tracks, jitsiTrack);
 
         if (!track) {
             return;
@@ -651,6 +655,68 @@ export function trackStreamingStatusChanged(track: any, streamingStatus: string)
 }
 
 /**
+ * Marks a mute as moderator-initiated for tracking purposes.
+ *
+ * @param {string} participantId - The ID of the participant being muted.
+ * @param {string} mediaType - The media type being muted.
+ * @returns {Object}
+ */
+export function trackModeratorMuteInitiated(participantId: string, mediaType: string) {
+    return {
+        type: TRACK_MODERATOR_MUTE_INITIATED,
+        participantId,
+        mediaType
+    };
+}
+
+/**
+ * Clears a tracked moderator-initiated mute.
+ *
+ * @param {string} participantId - The ID of the participant.
+ * @param {string} mediaType - The media type.
+ * @returns {Object}
+ */
+export function trackModeratorMuteCleared(participantId: string, mediaType: string) {
+    return {
+        type: TRACK_MODERATOR_MUTE_CLEARED,
+        participantId,
+        mediaType
+    };
+}
+
+/**
+ * Updates the previous mute state for a participant's track.
+ *
+ * @param {string} participantId - The ID of the participant.
+ * @param {string} mediaType - The media type.
+ * @param {boolean} muted - The muted state.
+ * @returns {Object}
+ */
+export function trackMuteStateUpdated(participantId: string, mediaType: string, muted: boolean) {
+    return {
+        type: TRACK_MUTE_STATE_UPDATED,
+        participantId,
+        mediaType,
+        muted
+    };
+}
+
+/**
+ * Clears the previous mute state for a participant's track.
+ *
+ * @param {string} participantId - The ID of the participant.
+ * @param {string} mediaType - The media type.
+ * @returns {Object}
+ */
+export function trackMuteStateCleared(participantId: string, mediaType: string) {
+    return {
+        type: TRACK_MUTE_STATE_CLEARED,
+        participantId,
+        mediaType
+    };
+}
+
+/**
  * Signals passed tracks to be added.
  *
  * @param {(JitsiLocalTrack|JitsiRemoteTrack)[]} tracks - List of tracks.
@@ -679,7 +745,7 @@ function _cancelGUMProcesses(getState: IStore['getState']): Promise<any> {
             logger.error('gumProcess.cancel failed', JSON.stringify(error));
 
     return Promise.all(
-        getState()['features/base/tracks']
+        getState()['features/base/tracks'].tracks
             .filter(t => t.local)
             .map(({ gumProcess }: any) =>
                 gumProcess?.cancel().catch(logError)));
@@ -801,7 +867,7 @@ function _trackCreateCanceled(mediaType: MediaType): {
  */
 export function destroyLocalDesktopTrackIfExists() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const videoTrack = getLocalVideoTrack(getState()['features/base/tracks']);
+        const videoTrack = getLocalVideoTrack(getState()['features/base/tracks'].tracks);
         const isDesktopTrack = videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;
 
         if (isDesktopTrack) {
@@ -824,5 +890,45 @@ export function setNoSrcDataNotificationUid(uid?: string) {
     return {
         type: SET_NO_SRC_DATA_NOTIFICATION_UID,
         uid
+    };
+}
+
+/**
+ * Action creator for when a remote participant's audio mute status changes
+ * based on signaling from lib-jitsi-meet.
+ *
+ * @param {string} participantId - The ID of the participant whose audio mute status changed.
+ * @param {boolean} muted - True if muted, false if unmuted.
+ * @returns {{
+ *     type: REMOTE_PARTICIPANT_AUDIO_MUTE_CHANGED,
+ *     participantId: string,
+ *     muted: boolean
+ * }}
+ */
+export function remoteParticipantAudioMuteChanged(participantId: string, muted: boolean) {
+    return {
+        type: 'REMOTE_PARTICIPANT_AUDIO_MUTE_CHANGED',
+        participantId,
+        muted
+    };
+}
+
+/**
+ * Action creator for when a remote participant's video mute status changes
+ * based on signaling from lib-jitsi-meet.
+ *
+ * @param {string} participantId - The ID of the participant whose video mute status changed.
+ * @param {boolean} muted - True if muted, false if unmuted.
+ * @returns {{
+ *     type: REMOTE_PARTICIPANT_VIDEO_MUTE_CHANGED,
+ *     participantId: string,
+ *     muted: boolean
+ * }}
+ */
+export function remoteParticipantVideoMuteChanged(participantId: string, muted: boolean) {
+    return {
+        type: 'REMOTE_PARTICIPANT_VIDEO_MUTE_CHANGED',
+        participantId,
+        muted
     };
 }
