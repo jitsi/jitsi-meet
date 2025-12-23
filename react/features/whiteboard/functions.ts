@@ -115,6 +115,16 @@ export const getCollabServerUrl = (state: IReduxState): string | undefined =>
     getWhiteboardState(state).collabServerUrl;
 
 /**
+ * Returns the storage backend URL for saving whiteboard scenes and images.
+ *
+ * @param {IReduxState} state - The state from the Redux store.
+ * @returns {string}
+ */
+export const getStorageBackendUrl = (state: IReduxState): string | undefined =>
+    getWhiteboardConfig(state).storageBackendUrl;
+
+
+/**
  * Whether the whiteboard is visible on stage.
  *
  * @param {IReduxState} state - The state from the Redux store.
