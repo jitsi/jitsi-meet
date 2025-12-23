@@ -25,6 +25,7 @@ import {
 import {
     createLocalTracksA,
     destroyLocalTracks,
+    trackMuteStateUpdated,
     trackMuteUnmuteFailed,
     trackRemoved
 } from './actions';
@@ -33,6 +34,7 @@ import {
     isUserInteractionRequiredForUnmute,
     setTrackMuted
 } from './functions';
+import { getPreviousMuteState } from './reducer';
 
 /**
  * Middleware that captures LIB_DID_DISPOSE and LIB_DID_INIT actions and,
@@ -68,14 +70,53 @@ MiddlewareRegistry.register(store => next => action => {
         _setMuted(store, action, MEDIA_TYPE.SCREENSHARE);
         break;
 
-    case SET_VIDEO_MUTED:
+    case SET_VIDEO_MUTED: {
         if (!action.muted
                 && isUserInteractionRequiredForUnmute(store.getState())) {
             return;
         }
 
+        // Get the current muted state BEFORE the action executes
+        const stateBefore = store.getState();
+        const localParticipant = stateBefore['features/base/participants']?.local;
+
+        const result = next(action);
+
+        // Skip events if prejoin page is visible (web only)
+        if (typeof APP !== 'undefined') {
+            const { isPrejoinPageVisible } = require('../../prejoin/functions');
+            const state = store.getState();
+
+            if (isPrejoinPageVisible(state)) {
+                _setMuted(store, action, MEDIA_TYPE.VIDEO);
+
+                return result;
+            }
+        }
+
+        // Fire external API event for local participant video mute/unmute
+        if (localParticipant?.id && typeof APP !== 'undefined') {
+            const participantID = localParticipant.id;
+            const mediaType = 'video';
+            const currentMuted = action.muted;
+
+            // Get the previously notified state from Redux to prevent duplicates
+            const stateAfter = store.getState();
+            const previousNotifiedMuted = getPreviousMuteState(stateAfter, participantID, mediaType);
+
+            // Fire event ONLY if different from what we last notified about
+            if (previousNotifiedMuted !== currentMuted) {
+                APP.API.notifyParticipantMuted(participantID, currentMuted, mediaType, true);
+
+                // Update previous state to prevent duplicates
+                store.dispatch(trackMuteStateUpdated(participantID, mediaType, currentMuted));
+            }
+        }
+
         _setMuted(store, action, MEDIA_TYPE.VIDEO);
-        break;
+
+        return result;
+    }
 
     case TOGGLE_CAMERA_FACING_MODE: {
         const localTrack = _getLocalTrack(store, MEDIA_TYPE.VIDEO);
@@ -120,7 +161,7 @@ StateListenerRegistry.register(
         if (prevConference && !conference && !authRequired && !error) {
 
             // Clear all tracks.
-            const remoteTracks = getState()['features/base/tracks'].filter(t => !t.local);
+            const remoteTracks = getState()['features/base/tracks'].tracks.filter(t => !t.local);
 
             batch(() => {
                 dispatch(destroyLocalTracks());
@@ -155,7 +196,7 @@ function _getLocalTrack(
         includePending = false) {
     return (
         getLocalTrack(
-            getState()['features/base/tracks'],
+            getState()['features/base/tracks'].tracks,
             mediaType,
             includePending));
 }

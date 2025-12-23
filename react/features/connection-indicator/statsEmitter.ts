@@ -179,7 +179,7 @@ const statsEmitter = {
      */
     _updateLocalCodecs(codecs: any) {
         if (typeof APP !== 'undefined') {
-            const tracks = APP.store.getState()['features/base/tracks'];
+            const tracks = APP.store.getState()['features/base/tracks'].tracks;
             const localTracks = getLocalTracks(tracks);
 
             for (const track of localTracks) {

@@ -517,7 +517,7 @@ export function deny(participantId: string) {
 export function sendStartRequest() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-        const tracks = state['features/base/tracks'];
+        const tracks = state['features/base/tracks'].tracks;
         const track = getLocalDesktopTrack(tracks);
         const { sourceId } = track?.jitsiTrack || {};
         const { transport } = state['features/remote-control'].receiver;
@@ -551,7 +551,7 @@ export function grant(participantId: string) {
 
         let promise;
         const state = getState();
-        const tracks = state['features/base/tracks'];
+        const tracks = state['features/base/tracks'].tracks;
         const track = getLocalDesktopTrack(tracks);
         const isScreenSharing = isScreenVideoShared(state);
         const { sourceType } = track?.jitsiTrack || {};

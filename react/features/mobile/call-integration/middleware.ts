@@ -514,7 +514,7 @@ function _syncTrackState({ getState }: IStore, next: Function, action: AnyAction
  * @returns {void}
  */
 function _updateCallIntegrationMuted(conference: IJitsiConference, state: IReduxState) {
-    const muted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
+    const muted = isLocalTrackMuted(state['features/base/tracks'].tracks, MEDIA_TYPE.AUDIO);
 
     CallIntegration.setMuted(conference.callUUID, muted);
 }

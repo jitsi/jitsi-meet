@@ -352,7 +352,7 @@ externalAPIEnabled && MiddlewareRegistry.register(store => next => action => {
  * especially when switching in or out of p2p.
  */
 externalAPIEnabled && StateListenerRegistry.register(
-    /* selector */ state => state['features/base/tracks'],
+    /* selector */ state => state['features/base/tracks'].tracks,
     /* listener */ debounce((tracks: ITrack[], store: IStore) => {
         const oldScreenShares = store.getState()['features/mobile/external-api'].screenShares || [];
         const newScreenShares = tracks
@@ -794,7 +794,7 @@ function _sendConferenceEvent(
     if (conference) { // @ts-ignore
         data.url = _normalizeUrl(conference[JITSI_CONFERENCE_URL_KEY]);
 
-        const localTracks = getLocalTracks(store.getState()['features/base/tracks']);
+        const localTracks = getLocalTracks(store.getState()['features/base/tracks'].tracks);
         const isAudioMuted = isLocalTrackMuted(localTracks, MEDIA_TYPE.AUDIO);
 
         data.isAudioMuted = isAudioMuted;

@@ -39,6 +39,7 @@ import { IJitsiConference } from '../conference/reducer';
 import { SET_CONFIG } from '../config/actionTypes';
 import { getDisableRemoveRaisedHandOnFocus } from '../config/functions.any';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
+import { setAudioMuted, setVideoMuted } from '../media/actions';
 import { VIDEO_TYPE } from '../media/constants';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
@@ -278,9 +279,24 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case MUTE_REMOTE_PARTICIPANT: {
-        const { conference } = store.getState()['features/base/conference'];
+        const state = store.getState();
+        const { conference } = state['features/base/conference'];
+        const localParticipant = getLocalParticipant(state);
+        const isLocal = localParticipant?.id === action.id;
 
-        conference?.muteParticipant(action.id, action.mediaType);
+        if (isLocal) {
+            // Muting local participant - use setAudioMuted/setVideoMuted
+            if (action.mediaType === MEDIA_TYPE.AUDIO) {
+                store.dispatch(setAudioMuted(true));
+            } else if (action.mediaType === MEDIA_TYPE.VIDEO) {
+                store.dispatch(setVideoMuted(true));
+            }
+        } else if (conference) {
+            // Muting remote participant - use conference.muteParticipant
+            conference.muteParticipant(action.id, action.mediaType);
+        } else {
+            logger.error('Mute participant: conference is undefined and participant is not local!');
+        }
         break;
     }
 

@@ -293,7 +293,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const _videoMediaState = getParticipantVideoMediaState(participant, _isVideoMuted, state);
     const _quickActionButtonType = getQuickActionButtonType(participant, state);
 
-    const tracks = state['features/base/tracks'];
+    const tracks = state['features/base/tracks'].tracks;
     const _audioTrack = participantID === localParticipantId
         ? getLocalAudioTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantID);
 

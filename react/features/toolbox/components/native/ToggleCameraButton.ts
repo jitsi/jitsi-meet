@@ -68,7 +68,7 @@ class ToggleCameraButton extends AbstractButton<IProps> {
  */
 function _mapStateToProps(state: IReduxState) {
     const { enabled: audioOnly } = state['features/base/audio-only'];
-    const tracks = state['features/base/tracks'];
+    const tracks = state['features/base/tracks'].tracks;
 
     return {
         _audioOnly: Boolean(audioOnly),

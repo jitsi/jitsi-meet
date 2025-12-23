@@ -239,7 +239,7 @@ export function moveToRoom(roomId?: string) {
             dispatch(setVideoMuted(Boolean(video.muted)));
             dispatch(createDesiredLocalTracks());
         } else {
-            const localTracks = getLocalTracks(getState()['features/base/tracks']);
+            const localTracks = getLocalTracks(getState()['features/base/tracks'].tracks);
             const isAudioMuted = isLocalTrackMuted(localTracks, MEDIA_TYPE.AUDIO);
             const isVideoMuted = isLocalTrackMuted(localTracks, MEDIA_TYPE.VIDEO);
 

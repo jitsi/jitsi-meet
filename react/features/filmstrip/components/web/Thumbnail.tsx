@@ -1236,7 +1236,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
     const id = participant?.id ?? '';
     const isLocal = participant?.local ?? true;
     const _isVirtualScreenshareParticipant = isScreenShareParticipant(participant);
-    const tracks = state['features/base/tracks'];
+    const tracks = state['features/base/tracks'].tracks;
     const _videoTrack = getVideoTrackByParticipant(state, participant);
     const _audioTrack = isLocal
         ? getLocalAudioTrack(tracks)

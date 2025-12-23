@@ -29,7 +29,7 @@ const LONG_PRESS = 'long.press';
  */
 const MicrophoneButton = (): JSX.Element | null => {
     const dispatch = useDispatch();
-    const audioMuted = useSelector((state: IReduxState) => isLocalTrackMuted(state['features/base/tracks'],
+    const audioMuted = useSelector((state: IReduxState) => isLocalTrackMuted(state['features/base/tracks'].tracks,
         MEDIA_TYPE.AUDIO));
     const disabled = useSelector(isAudioMuteButtonDisabled);
     const enabledFlag = useSelector((state: IReduxState) => getFeatureFlag(state, AUDIO_MUTE_BUTTON_ENABLED, true));

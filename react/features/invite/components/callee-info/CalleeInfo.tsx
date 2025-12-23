@@ -141,7 +141,7 @@ class CalleeInfo extends Component<IProps> {
  */
 function _mapStateToProps(state: IReduxState) {
     const _isVideoMuted
-        = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO);
+        = isLocalTrackMuted(state['features/base/tracks'].tracks, MEDIA_TYPE.VIDEO);
 
     // This would be expensive for big calls but the component will be mounted only when there are up
     // to 3 participants in the call.

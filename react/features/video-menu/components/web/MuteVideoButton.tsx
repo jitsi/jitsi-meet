@@ -28,7 +28,7 @@ const MuteVideoButton = ({
 }: IButtonProps): JSX.Element | null => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const tracks = useSelector((state: IReduxState) => state['features/base/tracks']);
+    const tracks = useSelector((state: IReduxState) => state['features/base/tracks'].tracks);
 
     const videoTrackMuted = useMemo(
         () => isRemoteTrackMuted(tracks, MEDIA_TYPE.VIDEO, participantID),
