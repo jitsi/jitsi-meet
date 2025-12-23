@@ -115,7 +115,12 @@ export default class WebhookProxy {
             const waiter = setTimeout(() => {
                 this.logInfo(error.message);
 
-                return reject(error);
+                return reject({
+                    message: error.message,
+                    stack: error.stack,
+                    name: error.name,
+                    eventType
+                });
             }, timeout);
 
             this.addConsumer(eventType, event => {
@@ -176,6 +181,7 @@ export default class WebhookProxy {
      * @param value
      */
     set defaultMeetingSettings(value: {
+        asyncTranscriptions?: boolean;
         autoAudioRecording?: boolean;
         autoTranscriptions?: boolean;
         autoVideoRecording?: boolean;

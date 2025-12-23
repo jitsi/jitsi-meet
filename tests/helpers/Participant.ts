@@ -674,6 +674,10 @@ export class Participant {
         return new IframeAPI(this);
     }
 
+    async getRoomMetadata() {
+        return this.execute(() => window.APP?.conference?._room?.getMetadataHandler()?.getMetadata());
+    }
+
     /**
      * Hangups the participant by leaving the page. base.html is an empty page on all deployments.
      */
