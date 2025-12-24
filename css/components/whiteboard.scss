@@ -1,0 +1,51 @@
+.whiteboard-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 28px;
+    line-height: 1;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.9);
+        transform: scale(1.05);
+    }
+
+    &:focus {
+        outline: 2px solid #2E8AE6;
+        outline-offset: 2px;
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+.excalidraw-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 500px) {
+    .whiteboard-close-btn {
+        top: 8px;
+        right: 8px;
+        width: 32px;
+        height: 32px;
+        font-size: 24px;
+    }
+}
