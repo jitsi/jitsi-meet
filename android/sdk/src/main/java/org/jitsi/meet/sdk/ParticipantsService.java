@@ -70,11 +70,18 @@ public class ParticipantsService extends android.content.BroadcastReceiver {
                         new TypeToken<ArrayList<ParticipantInfo>>() {
                         }.getType());
 
-                    ParticipantsInfoCallback participantsInfoCallback = this.participantsInfoCallbackMap.get(event.getData().get(REQUEST_ID).toString()).get();
+                    Object requestIdObj = event.getData().get(REQUEST_ID);
+                    if (requestIdObj == null) {
+                        return;
+                    }
+                    String requestId = requestIdObj.toString();
 
-                    if (participantsInfoCallback != null) {
-                        participantsInfoCallback.onReceived(participantInfoList);
-                        this.participantsInfoCallbackMap.remove(participantsInfoCallback);
+                    WeakReference<ParticipantsInfoCallback> ref = this.participantsInfoCallbackMap.remove(requestId);
+                    if (ref != null) {
+                        ParticipantsInfoCallback participantsInfoCallback = ref.get();
+                        if (participantsInfoCallback != null) {
+                            participantsInfoCallback.onReceived(participantInfoList);
+                        }
                     }
                 } catch (Exception e) {
                     JitsiMeetLogger.w(TAG + "error parsing participantsList", e);
