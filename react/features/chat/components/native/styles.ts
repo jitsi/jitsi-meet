@@ -44,7 +44,8 @@ export default {
     },
 
     emptyComponentText: {
-        color: BaseTheme.palette.text03,
+        ...BaseTheme.typography.bodyLongBold,
+        color: BaseTheme.palette.text02,
         textAlign: 'center'
     },
 
@@ -113,11 +114,20 @@ export default {
     },
 
     emptyComponentWrapper: {
-        alignSelf: 'center',
-        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
         padding: BoxModel.padding,
-        paddingTop: '8%',
         maxWidth: '80%'
+    },
+
+    emptyListStyle: {
+        flex: 1
+    },
+
+    emptyListContentContainer: {
+        alignItems: 'center',
+        flex: 1,
+        justifyContent: 'center'
     },
 
     disabledSendWrapper: {
@@ -267,6 +277,44 @@ export default {
     messageRecipientText: {
         ...BaseTheme.typography.bodyShortRegular,
         color: BaseTheme.palette.text01,
+        flex: 1
+    }
+};
+
+/**
+ * Styles for the ClosedCaptions component.
+ */
+export const closedCaptionsStyles = {
+    container: {
+        backgroundColor: BaseTheme.palette.ui01,
+        flex: 1
+    },
+
+    emptyContentContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+
+    emptyContent: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        padding: BaseTheme.spacing[3]
+    },
+
+    emptyStateText: {
+        ...BaseTheme.typography.bodyLongBold,
+        color: BaseTheme.palette.text02,
+        textAlign: 'center',
+        maxWidth: '80%'
+    },
+
+    transcribingContainer: {
+        flex: 1
+    },
+
+    placeholderContainer: {
         flex: 1
     }
 };
