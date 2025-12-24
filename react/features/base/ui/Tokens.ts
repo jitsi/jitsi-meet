@@ -64,7 +64,7 @@ export const colorMap = {
     // Filmstrip
     filmstripBackground: 'surface03',   // Filmstrip container background (same as ui02)
     thumbnailBackground: 'surface03',   // Individual thumbnail background (same as ui02)
-    thumbnailBorder: 'ui02',            // Thumbnail borders (ui03 → ui02 from tokens.json)
+    thumbnailBorder: 'ui03',            // Thumbnail borders (same as ui03)
     thumbnailHover: 'hover05',          // Thumbnail hover state (same as action03Hover)
 
     // Chat
