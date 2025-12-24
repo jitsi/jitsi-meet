@@ -5,7 +5,11 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
-// @ts-expect-error
+
+
+
+
+
 import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
@@ -21,6 +25,12 @@ import {
     isWhiteboardVisible
 } from '../../functions';
 
+import { toggleWhiteboard } from '../../actions.web';
+import { useDispatch } from 'react-redux';
+
+declare const interfaceConfig: {
+    VERTICAL_FILMSTRIP: boolean;
+};
 /**
  * Space taken by meeting elements like the subject and the watermark.
  */
@@ -45,10 +55,49 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
     const excalidrawRef = useRef<any>(null);
     const excalidrawAPIRef = useRef<any>(null);
     const collabAPIRef = useRef<any>(null);
-
-    const isOpen = useSelector(isWhiteboardOpen);
-    const isVisible = useSelector(isWhiteboardVisible);
+     const dispatch = useDispatch();
+      const isOpen = useSelector(isWhiteboardOpen);
+      const isVisible = useSelector(isWhiteboardVisible);
     const isInTileView = useSelector(shouldDisplayTileView);
+
+
+  const onCloseWhiteboard = useCallback(() => {
+    dispatch(toggleWhiteboard());
+  }, [ dispatch ]);
+
+   const [ sidePanelWidth, setSidePanelWidth ] = React.useState(0);
+
+useEffect(() => {
+    const updateSidePanelWidth = () => {
+        const panel = document.querySelector('[class*="side"] [class*="panel"]') as HTMLElement;
+
+        if (panel && panel.offsetWidth > 0) {
+            setSidePanelWidth(panel.offsetWidth);
+        } else {
+            setSidePanelWidth(0);
+        }
+    };
+
+    updateSidePanelWidth();
+    window.addEventListener('resize', updateSidePanelWidth);
+
+    return () => {
+        window.removeEventListener('resize', updateSidePanelWidth);
+    };
+}, []);
+
+ useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape' && isOpen) {
+            onCloseWhiteboard();
+        }
+    };
+   document.addEventListener('keydown', onKeyDown);
+    return () => {
+        document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [ isOpen, onCloseWhiteboard ]);
+ 
     const { clientHeight, videoSpaceWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
     const { visible: filmstripVisible, isResizing: isFilmstripResizing } = useSelector((state: IReduxState) => state['features/filmstrip']);
     const isChatResizing = useSelector((state: IReduxState) => state['features/chat'].isResizing);
@@ -124,6 +173,29 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
                 marginTop: `${HEIGHT_OFFSET}px`,
                 display: `${isInTileView || !isVisible ? 'none' : 'block'}`
             }}>
+        <div
+    style={{
+        position: 'absolute',
+        top: '12px',
+        right: `${sidePanelWidth + 12}px`,
+        zIndex: 300,
+        pointerEvents: 'auto'
+    }}>
+    <button
+        aria-label='Close whiteboard'
+        onClick={onCloseWhiteboard}
+        style={{
+            background: 'transparent',
+            border: 'none',
+            fontSize: '20px',
+            cursor: 'pointer',
+            color: '#fff'
+        }}>
+        ✕
+    </button>
+</div>
+
+
             {
                 isOpen && (
                     <div className = 'excalidraw-wrapper'>
