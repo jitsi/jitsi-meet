@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import i18next from 'i18next';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 // @ts-expect-error
 import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
@@ -20,6 +20,7 @@ import {
     isWhiteboardOpen,
     isWhiteboardVisible
 } from '../../functions';
+import { setWhiteboardOpen } from '../../actions.any'; // Add this import
 
 /**
  * Space taken by meeting elements like the subject and the watermark.
@@ -45,6 +46,7 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
     const excalidrawRef = useRef<any>(null);
     const excalidrawAPIRef = useRef<any>(null);
     const collabAPIRef = useRef<any>(null);
+    const dispatch = useDispatch(); // Add dispatch
 
     const isOpen = useSelector(isWhiteboardOpen);
     const isVisible = useSelector(isWhiteboardVisible);
@@ -66,6 +68,32 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
 
         collabAPIRef.current.setUsername(localParticipantName);
     }, [ localParticipantName ]);
+
+    /**
+    * Handles closing the whiteboard.
+    */
+    const handleClose = useCallback(() => {
+        dispatch(setWhiteboardOpen(false));
+    }, [ dispatch ]);
+
+    /**
+    * Handles ESC key press to close whiteboard.
+    */
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape' || event.keyCode === 27) {
+                handleClose();
+            }
+        };
+
+        if (isOpen && isVisible) {
+            document.addEventListener('keydown', handleKeyDown);
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [ isOpen, isVisible, handleClose ]);
 
     /**
     * Computes the width and the height of the component.
@@ -141,6 +169,16 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
                                 { props.t('whiteboard.accessibilityLabel.heading') }
                             </span>
                         }
+                        {/* Add close button */}
+                        <button
+                            className = 'whiteboard-close-btn'
+                            onClick = { handleClose }
+                            aria-label = { props.t('whiteboard.close') }
+                            title = { props.t('whiteboard.close') }
+                            data-testid = 'whiteboard-close-button'
+                            type = 'button'>
+                            ×
+                        </button>
                         <ExcalidrawApp
                             collabDetails = { collabDetails }
                             collabServerUrl = { collabServerUrl }
