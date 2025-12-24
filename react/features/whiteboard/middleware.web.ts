@@ -1,5 +1,4 @@
-import { generateCollaborationLinkData } from '@jitsi/excalidraw';
-import { AnyAction } from 'redux';
+import type { AnyAction } from 'redux';
 
 import { IStore } from '../app/types';
 import { getCurrentConference } from '../base/conference/functions';
@@ -142,7 +141,10 @@ function raiseWhiteboardNotification(status: WhiteboardStatus) {
  */
 async function setNewWhiteboardOpen(store: IStore) {
     const { dispatch, getState } = store;
-    const collabLinkData = await generateCollaborationLinkData();
+
+    // Dynamically import generateCollaborationLinkData
+    const excalidrawModule = await import(/* webpackChunkName: "excalidraw" */ '@jitsi/excalidraw');
+    const collabLinkData = await excalidrawModule.generateCollaborationLinkData();
     const state = getState();
     const conference = getCurrentConference(state);
     const collabServerUrl = generateCollabServerUrl(state);

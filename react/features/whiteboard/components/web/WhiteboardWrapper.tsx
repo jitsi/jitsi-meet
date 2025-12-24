@@ -1,8 +1,8 @@
-import { ExcalidrawApp } from '@jitsi/excalidraw';
 import i18next from 'i18next';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 
 import { WHITEBOARD_UI_OPTIONS } from '../../constants';
+import { useExcalidrawApp } from '../../hooks/useExcalidraw';
 
 /**
  * Whiteboard wrapper for mobile.
@@ -27,6 +27,8 @@ const WhiteboardWrapper = ({
     const excalidrawAPIRef = useRef<any>(null);
     const collabAPIRef = useRef<any>(null);
 
+    const { ExcalidrawApp, isLoading, error, loadExcalidrawApp } = useExcalidrawApp();
+
     const getExcalidrawAPI = useCallback(excalidrawAPI => {
         if (excalidrawAPIRef.current) {
             return;
@@ -42,24 +44,45 @@ const WhiteboardWrapper = ({
         collabAPIRef.current.setUsername(localParticipantName);
     }, [ localParticipantName ]);
 
+    // Load ExcalidrawApp when component mounts
+    useEffect(() => {
+        if (!ExcalidrawApp && !isLoading && !error) {
+            loadExcalidrawApp().catch(() => {
+                // Error is handled by the hook
+            });
+        }
+    }, [ ExcalidrawApp, isLoading, error, loadExcalidrawApp ]);
+
     return (
         <div className = { className }>
             <div className = 'excalidraw-wrapper'>
-                <ExcalidrawApp
-                    collabDetails = { collabDetails }
-                    collabServerUrl = { collabServerUrl }
-                    detectScroll = { true }
-                    excalidraw = {{
-                        isCollaborating: true,
-                        langCode: i18next.language,
+                {isLoading && (
+                    <div className = 'whiteboard-loading'>
+                        Loading whiteboard...
+                    </div>
+                )}
+                {error && (
+                    <div className = 'whiteboard-error'>
+                        Failed to load whiteboard
+                    </div>
+                )}
+                {ExcalidrawApp && (
+                    <ExcalidrawApp
+                        collabDetails = { collabDetails }
+                        collabServerUrl = { collabServerUrl }
+                        detectScroll = { true }
+                        excalidraw = {{
+                            isCollaborating: true,
+                            langCode: i18next.language,
 
-                        // @ts-ignore
-                        ref: excalidrawRef,
-                        theme: 'light',
-                        UIOptions: WHITEBOARD_UI_OPTIONS
-                    }}
-                    getCollabAPI = { getCollabAPI }
-                    getExcalidrawAPI = { getExcalidrawAPI } />
+                            // @ts-ignore
+                            ref: excalidrawRef,
+                            theme: 'light',
+                            UIOptions: WHITEBOARD_UI_OPTIONS
+                        }}
+                        getCollabAPI = { getCollabAPI }
+                        getExcalidrawAPI = { getExcalidrawAPI } />
+                )}
             </div>
 
 
