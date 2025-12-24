@@ -14,13 +14,13 @@ import Input from '../../../base/ui/components/web/Input';
 const useStyles = makeStyles()(theme => {
     return {
         content: {
-            color: theme.palette.text01
+            color: theme.palette.dialogText
         },
 
         info: {
-            background: theme.palette.ui01,
+            background: theme.palette.dialogBackground,
             ...theme.typography.labelRegular,
-            color: theme.palette.text02,
+            color: theme.palette.dialogSecondaryText,
             marginTop: theme.spacing(2)
         },
 
