@@ -3,11 +3,12 @@ export const screen = {
         breakoutRooms: 'Breakout Rooms',
         carmode: 'Car Mode',
         chat: 'Chat',
-        chatandpolls: {
-            main: 'Chat and Polls',
+        chatTabs: {
+            main: 'Chat',
             tab: {
                 chat: 'Chat',
-                polls: 'Polls'
+                polls: 'Polls',
+                closedCaptions: 'CC'
             }
         },
         container: 'Conference container',

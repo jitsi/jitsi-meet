@@ -17,7 +17,7 @@ interface IProps {
     /**
      * The children component(s) of the Modal, to be rendered.
      */
-    children: React.ReactNode;
+    children?: React.ReactNode;
 
     /**
      * Additional style to be appended to the KeyboardAvoidingView content container.
