@@ -43,6 +43,7 @@ import SpeakerStats
 import LanguageSelectorDialog
 // @ts-ignore
     from '../../../../../subtitles/components/native/LanguageSelectorDialog';
+import { isCCTabEnabled } from '../../../../../subtitles/functions.any';
 import Whiteboard from '../../../../../whiteboard/components/native/Whiteboard';
 // @ts-ignore
 import { screen } from '../../../routes';
@@ -84,20 +85,33 @@ const ConferenceStack = createStackNavigator();
 
 const ConferenceNavigationContainer = () => {
     const isPollsDisabled = useSelector(arePollsDisabled);
+    const _isPollsEnabled = !isPollsDisabled;
+    const _isCCTabEnabled = useSelector(isCCTabEnabled);
+    const { t } = useTranslation();
     let ChatScreen;
     let chatScreenName;
-    let chatTitleString;
+    let chatTitle;
+
+    console.log(_isCCTabEnabled, _isPollsEnabled, 'test');
 
     if (isPollsDisabled) {
         ChatScreen = Chat;
         chatScreenName = screen.conference.chat;
-        chatTitleString = 'chat.title';
     } else {
         ChatScreen = ChatNavigator;
         chatScreenName = screen.conference.chatTabs.main;
-        chatTitleString = 'chat.titleWithPolls';
     }
-    const { t } = useTranslation();
+
+    if (_isPollsEnabled || _isCCTabEnabled) {
+        const features = [
+            _isPollsEnabled ? t('chat.titleWithPolls') : '',
+            _isCCTabEnabled ? t('chat.titleWithCC') : ''
+        ].filter(Boolean);
+
+        chatTitle = `${t('chat.titleWithFeatures')} ${features.join(' and ')}`;
+    } else {
+        chatTitle = t('chat.title');
+    }
 
     return (
         <NavigationContainer
@@ -117,7 +131,7 @@ const ConferenceNavigationContainer = () => {
                     name = { chatScreenName }
                     options = {{
                         ...chatScreenOptions,
-                        title: t(chatTitleString)
+                        title: chatTitle
                     }} />
                 <ConferenceStack.Screen
                     component = { ParticipantsPane }
