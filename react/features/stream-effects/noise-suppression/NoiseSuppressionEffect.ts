@@ -28,12 +28,12 @@ export class NoiseSuppressionEffect {
     /**
      * Source that will be attached to the track affected by the effect.
      */
-    private _audioSource: MediaStreamAudioSourceNode;
+    private _audioSource!: MediaStreamAudioSourceNode;
 
     /**
      * Destination that will contain denoised audio from the audio worklet.
      */
-    private _audioDestination: MediaStreamAudioDestinationNode;
+    private _audioDestination!: MediaStreamAudioDestinationNode;
 
     /**
      * `AudioWorkletProcessor` associated node.
@@ -43,12 +43,12 @@ export class NoiseSuppressionEffect {
     /**
      * Audio track extracted from the original MediaStream to which the effect is applied.
      */
-    private _originalMediaTrack: MediaStreamTrack;
+    private _originalMediaTrack!: MediaStreamTrack;
 
     /**
      * Noise suppressed audio track extracted from the media destination node.
      */
-    private _outputMediaTrack: MediaStreamTrack;
+    private _outputMediaTrack!: MediaStreamTrack;
 
     /**
      * Configured options for noise suppression.

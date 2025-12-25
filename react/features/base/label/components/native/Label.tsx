@@ -69,7 +69,7 @@ export default class Label extends Component<IProps, State> {
     /**
      * A reference to the started animation of this label.
      */
-    animationReference: Animated.CompositeAnimation;
+    animationReference!: Animated.CompositeAnimation;
 
     /**
      * Instantiates a new instance of {@code Label}.

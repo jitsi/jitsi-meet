@@ -11,7 +11,7 @@
         "strict": true,
         "noImplicitAny": true,
         "noImplicitOverride": true,
-        "strictPropertyInitialization": false,
+        "strictPropertyInitialization": true,
         "resolveJsonModule": true,
         "moduleSuffixes": [".web", ""]
     },
