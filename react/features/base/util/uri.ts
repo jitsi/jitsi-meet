@@ -2,7 +2,7 @@ import { sanitizeUrl as _sanitizeUrl } from '@braintree/sanitize-url';
 
 import { parseURLParams } from './parseURLParams';
 import { normalizeNFKC } from './strings';
-
+import logger from './logger';
 /**
  * Http status codes.
  */
@@ -209,7 +209,7 @@ function _objectToURLParamsArray(obj = {}) {
             params.push(
                 `${key}=${encodeURIComponent(JSON.stringify(obj[key as keyof typeof obj]))}`);
         } catch (e) {
-            console.warn(`Error encoding ${key}: ${e}`);
+            logger.warn(`Error encoding "${key}:"`, e);
         }
     }
 

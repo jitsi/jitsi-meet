@@ -7,6 +7,8 @@ import { IProps } from '../base/toolbox/components/AbstractButton';
 
 import ToolbarButton from './ToolbarButton';
 
+import logger from '../app/logger';
+
 const { api } = window.alwaysOnTop;
 
 type Props = Partial<IProps>;
@@ -76,7 +78,9 @@ export default class VideoMuteButton extends Component<Props, State> {
                     videoAvailable,
                     videoMuted
                 }))
-            .catch(console.error);
+            .catch(error=>{
+                logger.error('Failed to toggle audio mute', error);
+            });
     }
 
     /**

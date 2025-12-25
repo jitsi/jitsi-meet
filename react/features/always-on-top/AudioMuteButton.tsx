@@ -8,6 +8,8 @@ import { IProps } from '../base/toolbox/components/AbstractButton';
 
 import ToolbarButton from './ToolbarButton';
 
+import logger from '../app/logger';
+
 const { api } = window.alwaysOnTop;
 
 /**
@@ -77,7 +79,9 @@ export default class AudioMuteButton extends Component<Props, IState> {
                     audioAvailable: audioAvailable && !audioDisabled,
                     audioMuted
                 }))
-            .catch(console.error);
+            .catch(error=>{
+                logger.error('Failed to initialize audio', error);
+            });
     }
 
     /**

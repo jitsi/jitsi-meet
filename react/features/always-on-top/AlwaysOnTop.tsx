@@ -7,6 +7,7 @@ import { getAvatarColor, getInitials } from '../base/avatar/functions';
 import { DEFAULT_ICON } from '../base/icons/svg/constants';
 
 import Toolbar from './Toolbar';
+import logger from '../app/logger';
 
 const { api } = window.alwaysOnTop;
 
@@ -222,7 +223,9 @@ export default class AlwaysOnTop extends Component<any, IState> {
                 this.setState({
                     customAvatarBackgrounds: res.avatarBackgrounds || []
                 }))
-            .catch(console.error);
+            .catch(error => {
+                logger.error('Failed to load custom avatar backgrounds', error);
+            });
     }
 
     /**

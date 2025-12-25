@@ -6,6 +6,9 @@
  * @param {Object} source - The source object.
  * @returns {Object}
  */
+
+import logger from './logger';
+
 export function assignIfDefined(target: Object, source: Object) {
     const to = Object(target);
 
@@ -102,7 +105,7 @@ export function getJitsiMeetGlobalNSConnectionTimes() {
  * @returns {void}
  */
 export function reportError(e: Error, msg = '') {
-    console.error(msg, e);
+    logger.error(msg, e)
     window.onerror?.(msg, undefined, undefined, undefined, e);
 }
 

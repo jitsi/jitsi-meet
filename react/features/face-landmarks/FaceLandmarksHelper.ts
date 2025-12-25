@@ -3,6 +3,8 @@ import { Config, FaceResult, Human } from '@vladmandic/human';
 
 import { DETECTION_TYPES, FACE_DETECTION_SCORE_THRESHOLD, FACE_EXPRESSIONS_NAMING_MAPPING } from './constants';
 import { DetectInput, DetectOutput, FaceBox, FaceExpression, InitInput } from './types';
+import logger from './logger';
+
 
 export interface IFaceLandmarksHelper {
     detect: ({ image, threshold }: DetectInput) => Promise<DetectOutput>;
@@ -102,7 +104,7 @@ export class HumanHelper implements IFaceLandmarksHelper {
             try {
                 await initialHuman.load();
             } catch (err) {
-                console.error(err);
+                logger.error('Failed to initialize face landmarks', err);
             }
 
             this.human = initialHuman;
