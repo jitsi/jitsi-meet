@@ -32,7 +32,7 @@ buildscript {
         googleServicesEnabled = project.file('app/google-services.json').exists() && !libreBuild
 
         //React Native and Hermes Version
-        rnVersion = "0.77.2"
+        rnVersion = "0.79.7"
 
         // Java dependencies
         javaVersion = JavaVersion.VERSION_17
@@ -46,8 +46,10 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$rootProject.ext.kotlinVersion"
         classpath "com.android.tools.build:gradle:$rootProject.ext.gradlePluginVersion"
+        classpath "com.facebook.react:react-native-gradle-plugin:$rootProject.ext.rnVersion"
         classpath 'com.google.gms:google-services:4.4.0'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
+        classpath "com.facebook.react:react-native-gradle-plugin:$rootProject.ext.rnVersion"
     }
 }
 
@@ -56,6 +58,7 @@ allprojects {
         mavenCentral()
         google()
         maven { url 'https://www.jitpack.io' }
+        maven { url "${rootDir}/../node_modules/react-native/android" }
     }
 
     // Make sure we use the react-native version in node_modules and not the one
