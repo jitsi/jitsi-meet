@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.facebook.react'
 apply plugin: 'maven-publish'
 
 android {
@@ -52,19 +53,19 @@ dependencies {
 
     // Only add these packages if we are NOT doing a LIBRE_BUILD
     if (!rootProject.ext.libreBuild) {
-        implementation project(':react-native-amplitude')
-        implementation project(':react-native-giphy')
-        implementation(project(':react-native-google-signin')) {
+        implementation project(':amplitude-analytics-react-native')
+        implementation project(':giphy-react-native-sdk')
+        implementation(project(':react-native-google-signin-google-signin')) {
             exclude group: 'com.google.android.gms'
             exclude group: 'androidx'
         }
     }
 
-    implementation project(':react-native-async-storage')
+    implementation project(':react-native-async-storage-async-storage')
     implementation project(':react-native-background-timer')
     implementation project(':react-native-calendar-events')
-    implementation project(':react-native-community_clipboard')
-    implementation project(':react-native-community_netinfo')
+    implementation project(':react-native-clipboard-clipboard')
+    implementation project(':react-native-community-netinfo')
     implementation project(':react-native-default-preference')
     implementation(project(':react-native-device-info')) {
         exclude group: 'com.google.firebase'
@@ -73,13 +74,13 @@ dependencies {
     }
     implementation project(':react-native-gesture-handler')
     implementation project(':react-native-get-random-values')
-    implementation project(':react-native-keep-awake')
+    implementation project(':sayem314-react-native-keep-awake')
     implementation project(':react-native-orientation-locker')
     implementation project(':react-native-pager-view')
     implementation project(':react-native-performance')
     implementation project(':react-native-safe-area-context')
     implementation project(':react-native-screens')
-    implementation project(':react-native-slider')
+    implementation project(':react-native-community-slider')
     implementation project(':react-native-sound')
     implementation project(':react-native-splash-view')
     implementation project(':react-native-svg')
@@ -135,17 +136,8 @@ android.libraryVariants.all { def variant ->
         // Set up dev mode
         def devEnabled = !targetName.toLowerCase().contains("release")
 
-        // Run the bundler
-        // Use full path to node to avoid PATH issues in Gradle
-        def nodePath = System.getenv('NVM_BIN') ? "${System.getenv('NVM_BIN')}/node" : "node"
-
-        // Debug: Print the node path and environment
-        println "Using node path: ${nodePath}"
-        println "NVM_BIN: ${System.getenv('NVM_BIN')}"
-        println "Working directory: ${reactRoot}"
-
         commandLine(
-                nodePath,
+                "node",
                 "node_modules/react-native/scripts/bundle.js",
                 "--platform", "android",
                 "--dev", "${devEnabled}",
@@ -158,70 +150,22 @@ android.libraryVariants.all { def variant ->
         enabled !devEnabled
     }
 
-    // GRADLE REQUIREMENTS (Gradle 8.7+ / AGP 8.5.0+):
-    
-    // This task requires explicit dependencies on resource tasks from all React Native modules
-    // due to Gradle's strict validation of task dependencies.
-
-    // Without these dependencies,
-    // builds will fail with errors like:
-    // "Task ':sdk:bundleReleaseJsAndAssets' uses the output of task ':react-native-amplitude:packageReleaseResources'
-    // without declaring a dependency on it."
-
-    // The automatic dependency resolution below ensures all required resource tasks are properly
-    // declared as dependencies before this task executes.
-
-    if (variant.name.toLowerCase().contains("release")) {
-        rootProject.subprojects.each { subproject ->
-            if (
-                subproject.name.startsWith("react-native-") ||
-                subproject.name.startsWith("@react-native-") ||
-                subproject.name.startsWith("@giphy/")
-            ) {
-                [
-                    "packageReleaseResources",
-                    "generateReleaseResValues",
-                    "generateReleaseResources",
-                    "generateReleaseBuildConfig",
-                    "processReleaseManifest",
-                    "writeReleaseAarMetadata",
-                    "generateReleaseRFile",
-                    "compileReleaseLibraryResources",
-                    "compileReleaseJavaWithJavac",
-                    "javaPreCompileRelease",
-                    "bundleLibCompileToJarRelease",
-                    "exportReleaseConsumerProguardFiles",
-                    "mergeReleaseGeneratedProguardFiles",
-                    "mergeReleaseJniLibFolders",
-                    "mergeReleaseShaders",
-                    "packageReleaseAssets",
-                    "processReleaseJavaRes",
-                    "prepareReleaseArtProfile",
-                    "copyReleaseJniLibsProjectOnly",
-                    "extractDeepLinksRelease",
-                    "createFullJarRelease",
-                    "generateReleaseLintModel",
-                    "writeReleaseLintModelMetadata",
-                    "generateReleaseLintVitalModel",
-                    "lintVitalAnalyzeRelease",
-                    "lintReportRelease",
-                    "lintAnalyzeRelease",
-                    "lintReportDebug",
-                    "lintAnalyzeDebug"
-                ].each { taskName ->
-                    if (subproject.tasks.findByName(taskName)) {
-                        currentBundleTask.dependsOn(subproject.tasks.named(taskName))
-                    }
+    // Ensure proper task ordering for Gradle 8.14+ strict dependency validation
+    currentBundleTask.configure {
+        mustRunAfter {
+            def config = project.configurations.findByName("${targetPath}CompileClasspath")
+            
+            // Fallback to an empty list(mustRunAfter expects a list, not "null" which is the og fallback), 
+            // means no config, means no constraints
+            (config?.allDependencies ?: [])
+                .findAll { it.hasProperty('dependencyProject') }
+                .collectMany { dependency ->
+                    project.project(dependency.dependencyProject.path)
+                        .tasks.matching { it.name.contains(targetName) }
                 }
-
-                // Also depend on the main build task to ensure all sub-tasks are completed
-                if (subproject.tasks.findByName("build")) {
-                    currentBundleTask.dependsOn(subproject.tasks.named("build"))
-                }
-            }
         }
     }
-
+    
     currentBundleTask.ext.generatedResFolders = files(resourcesDir).builtBy(currentBundleTask)
     currentBundleTask.ext.generatedAssetsFolders = files(jsBundleDir).builtBy(currentBundleTask)
     variant.registerGeneratedResFolders(currentBundleTask.generatedResFolders)
