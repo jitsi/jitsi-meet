@@ -9,7 +9,7 @@
  */
 
 var interfaceConfig = {
-    APP_NAME: 'Finueva Meet',
+    APP_NAME: 'Hello Waryaa',
     AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
     AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.2)',
 
@@ -91,7 +91,7 @@ var interfaceConfig = {
      *
      * @type {boolean}
      */
-    MOBILE_APP_PROMO: true,
+    MOBILE_APP_PROMO: false,
 
     // Names of browsers which should show a warning stating the current browser
     // has a suboptimal experience. Browsers which are not listed as optimal or
@@ -118,7 +118,7 @@ var interfaceConfig = {
      */
     // SHARING_FEATURES: ['email', 'url', 'dial-in', 'embed'],
 
-    SHOW_BRAND_WATERMARK: false,
+    SHOW_BRAND_WATERMARK: true,
 
     /**
      * Decides whether the chrome extension banner should be rendered on the landing page and during the meeting.
@@ -127,7 +127,7 @@ var interfaceConfig = {
      */
     SHOW_CHROME_EXTENSION_BANNER: false,
 
-    SHOW_JITSI_WATERMARK: false,
+    SHOW_JITSI_WATERMARK: true,
     SHOW_POWERED_BY: false,
     SHOW_PROMOTIONAL_CLOSE_PAGE: false,
 
