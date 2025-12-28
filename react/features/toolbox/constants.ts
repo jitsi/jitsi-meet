@@ -12,6 +12,8 @@ export const DUMMY_9_BUTTONS_THRESHOLD_VALUE = Symbol('9_BUTTONS_THRESHOLD_VALUE
  */
 export const DUMMY_10_BUTTONS_THRESHOLD_VALUE = Symbol('10_BUTTONS_THRESHOLD_VALUE');
 
+export const DEFAULT_REDUCED_UI_MAIN_TOOLBAR_BUTTONS = [ 'microphone', 'camera' ];
+
 /**
  * Thresholds for displaying toolbox buttons.
  */

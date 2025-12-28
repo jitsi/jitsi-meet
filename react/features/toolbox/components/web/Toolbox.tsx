@@ -19,6 +19,7 @@ import {
 import {
     getJwtDisabledButtons,
     getVisibleButtons,
+    getVisibleButtonsForReducedUI,
     isButtonEnabled,
     isToolboxVisible
 } from '../../functions.web';
@@ -82,8 +83,7 @@ export default function Toolbox({
     const isNarrowLayout = useSelector((state: IReduxState) => state['features/base/responsive-ui'].isNarrowLayout);
     const videoSpaceWidth = useSelector((state: IReduxState) => state['features/base/responsive-ui'].videoSpaceWidth);
     const isModerator = useSelector(isLocalParticipantModerator);
-    const customToolbarButtons = useSelector(
-        (state: IReduxState) => state['features/base/config'].customToolbarButtons);
+    const customToolbarButtons = useSelector((state: IReduxState) => state['features/base/config'].customToolbarButtons);
     const iAmRecorder = useSelector((state: IReduxState) => state['features/base/config'].iAmRecorder);
     const iAmSipGateway = useSelector((state: IReduxState) => state['features/base/config'].iAmSipGateway);
     const overflowDrawer = useSelector((state: IReduxState) => state['features/toolbox'].overflowDrawer);
@@ -110,6 +110,8 @@ export default function Toolbox({
     const toolbarVisible = useSelector(isToolboxVisible);
     const mainToolbarButtonsThresholds
         = useSelector((state: IReduxState) => state['features/toolbox'].mainToolbarButtonsThresholds);
+    const { reducedUImainToolbarButtons } = useSelector((state: IReduxState) => state['features/base/config']);
+    const reducedUI = useSelector((state: IReduxState) => state['features/base/responsive-ui'].reducedUI);
     const allButtons = useToolboxButtons(customToolbarButtons);
     const isMobile = isMobileBrowser();
     const endConferenceSupported = Boolean(conference?.isEndConferenceSupported() && isModerator);
@@ -233,7 +235,7 @@ export default function Toolbox({
     const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
     const containerClassName = `toolbox-content${isMobile || isNarrowLayout ? ' toolbox-content-mobile' : ''}`;
 
-    const { mainMenuButtons, overflowMenuButtons } = getVisibleButtons({
+    const normalUIButtons = getVisibleButtons({
         allButtons,
         buttonsWithNotifyClick,
         toolbarButtons: toolbarButtonsToUse,
@@ -241,6 +243,20 @@ export default function Toolbox({
         jwtDisabledButtons,
         mainToolbarButtonsThresholds
     });
+
+    const reducedUIButtons = getVisibleButtonsForReducedUI({
+        allButtons,
+        buttonsWithNotifyClick,
+        jwtDisabledButtons,
+        reducedUImainToolbarButtons,
+    });
+
+    const mainMenuButtons = reducedUI
+        ? reducedUIButtons.mainMenuButtons
+        : normalUIButtons.mainMenuButtons;
+    const overflowMenuButtons = reducedUI
+        ? []
+        : normalUIButtons.overflowMenuButtons;
     const raiseHandInOverflowMenu = overflowMenuButtons.some(({ key }) => key === 'raisehand');
     const showReactionsInOverflowMenu = _shouldDisplayReactionsButtons
         && (

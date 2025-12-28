@@ -90,7 +90,8 @@ export default function ClosedCaptionsTab() {
     const _canStartSubtitles = useSelector(canStartSubtitles);
     const [ isButtonPressed, setButtonPressed ] = useState(false);
     const subtitlesError = useSelector((state: IReduxState) => state['features/subtitles']._hasError);
-    const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
+    const isAsyncTranscriptionEnabled = useSelector((state: IReduxState) =>
+        state['features/base/conference'].conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription);
 
     const filteredSubtitles = useMemo(() => {
         // First, create a map of transcription messages by message ID
@@ -124,22 +125,21 @@ export default function ClosedCaptionsTab() {
         groupMessagesBySender(filteredSubtitles), [ filteredSubtitles ]);
 
     const startClosedCaptions = useCallback(() => {
-        if (isButtonPressed) {
-            return;
-        }
-
-        if (conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription) {
+        if (isAsyncTranscriptionEnabled) {
             dispatch(openDialog('StartRecordingDialog', StartRecordingDialog, {
                 recordAudioAndVideo: false
             }));
         } else {
+            if (isButtonPressed) {
+                return;
+            }
             dispatch(setRequestingSubtitles(true, false, null));
+            setButtonPressed(true);
         }
 
-        setButtonPressed(true);
-    }, [ conference, dispatch, isButtonPressed, openDialog, setButtonPressed ]);
+    }, [ isAsyncTranscriptionEnabled, dispatch, isButtonPressed, openDialog, setButtonPressed ]);
 
-    if (subtitlesError && isButtonPressed) {
+    if (subtitlesError && isButtonPressed && !isAsyncTranscriptionEnabled) {
         setButtonPressed(false);
     }
 
@@ -159,7 +159,7 @@ export default function ClosedCaptionsTab() {
             );
         }
 
-        if (isButtonPressed) {
+        if (isButtonPressed && !isAsyncTranscriptionEnabled) {
             setButtonPressed(false);
         }
 
@@ -176,7 +176,7 @@ export default function ClosedCaptionsTab() {
         );
     }
 
-    if (isButtonPressed) {
+    if (isButtonPressed && !isAsyncTranscriptionEnabled) {
         setButtonPressed(false);
     }
 
