@@ -588,7 +588,7 @@ function _registerForNativeEvents(store: IStore) {
         }
 
         if (transcription) {
-            store.dispatch(setRequestingSubtitles(true, false, null, true));
+            store.dispatch(setRequestingSubtitles(true, false, null));
         }
     });
 
@@ -603,7 +603,7 @@ function _registerForNativeEvents(store: IStore) {
         }
 
         if (transcription) {
-            store.dispatch(setRequestingSubtitles(false, false, null, true));
+            store.dispatch(setRequestingSubtitles(false, false, null));
         }
 
         if (![ JitsiRecordingConstants.mode.FILE, JitsiRecordingConstants.mode.STREAM ].includes(mode)) {

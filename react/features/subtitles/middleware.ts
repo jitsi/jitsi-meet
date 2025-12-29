@@ -98,7 +98,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case SET_REQUESTING_SUBTITLES:
-        _requestingSubtitlesChange(store, action.enabled, action.language, action.backendRecordingOn);
+        _requestingSubtitlesChange(store, action.enabled, action.language);
         break;
     }
 
@@ -344,17 +344,16 @@ function _getPrimaryLanguageCode(language: string) {
  * @param {Store} store - The redux store.
  * @param {boolean} enabled - Whether subtitles should be enabled or not.
  * @param {string} language - The language to use for translation.
- * @param {boolean} backendRecordingOn - Whether backend recording is on or not.
  * @private
  * @returns {void}
  */
 function _requestingSubtitlesChange(
         { dispatch, getState }: IStore,
         enabled: boolean,
-        language?: string | null,
-        backendRecordingOn = false) {
+        language?: string | null) {
     const state = getState();
     const { conference } = state['features/base/conference'];
+    const backendRecordingOn = conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription;
 
     conference?.setLocalParticipantProperty(
         P_NAME_REQUESTING_TRANSCRIPTION,
@@ -363,7 +362,7 @@ function _requestingSubtitlesChange(
     if (enabled && conference?.getTranscriptionStatus() === JitsiMeetJS.constants.transcriptionStatus.OFF
         && isJwtFeatureEnabled(getState(), MEET_FEATURES.TRANSCRIPTION, false)) {
 
-        if (!conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription) {
+        if (!backendRecordingOn) {
             conference?.dial(TRANSCRIBER_DIAL_NUMBER)
                 .catch((e: any) => {
                     logger.error('Error dialing', e);
@@ -376,9 +375,7 @@ function _requestingSubtitlesChange(
                     }));
                     dispatch(setSubtitlesError(true));
                 });
-        }
-
-        if (backendRecordingOn) {
+        } else {
             conference?.getMetadataHandler()?.setMetadata(RECORDING_METADATA_ID, {
                 isTranscribingEnabled: true
             });
