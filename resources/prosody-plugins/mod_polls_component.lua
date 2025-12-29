@@ -53,7 +53,7 @@ local function validate_polls(data)
     if data.command ~= 'new-poll' and data.command ~= 'answer-poll' then
         return false;
     end
-    if type(data.answers) ~= 'table' then
+    if type(data.answers) ~= 'table' or #data.answers == 0 then
         return false;
     end
 
