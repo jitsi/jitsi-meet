@@ -314,7 +314,24 @@ export const closedCaptionsStyles = {
         flex: 1
     },
 
-    placeholderContainer: {
-        flex: 1
+    ccContainer: {
+        justifyContent: 'space-between',
+        flex: 1,
+        flexDirection: 'row',
+        margin: BaseTheme.spacing[3]
+    },
+
+    languageButtonText: {
+        ...BaseTheme.typography.bodyShortRegularLarge,
+        color: BaseTheme.palette.text01,
+        marginHorizontal: BaseTheme.spacing[2]
+    },
+
+    languageButtonContainer: {
+        height: 24
+    },
+
+    languageButton: {
+        flexDirection: 'row'
     }
 };
