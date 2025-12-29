@@ -415,7 +415,7 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
 
         if (this.state.selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE
                 && this.state.shouldRecordTranscription) {
-            dispatch(setRequestingSubtitles(true, _displaySubtitles, _subtitlesLanguage, true));
+            dispatch(setRequestingSubtitles(true, _displaySubtitles, _subtitlesLanguage));
         } else {
             _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
                 isTranscribingEnabled: this.state.shouldRecordTranscription

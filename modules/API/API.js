@@ -790,7 +790,7 @@ function initCommands() {
             }
 
             if (transcription) {
-                APP.store.dispatch(setRequestingSubtitles(true, false, null, true));
+                APP.store.dispatch(setRequestingSubtitles(true, false, null));
             }
         },
 
@@ -812,7 +812,7 @@ function initCommands() {
             }
 
             if (transcription) {
-                APP.store.dispatch(setRequestingSubtitles(false, false, null, true));
+                APP.store.dispatch(setRequestingSubtitles(false, false, null));
             }
 
             if (mode === 'local') {
