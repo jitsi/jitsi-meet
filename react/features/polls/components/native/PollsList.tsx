@@ -60,14 +60,14 @@ const PollsList = ({ setCreateMode }: IPollListProps) => {
         <FlatList
             ListEmptyComponent = { renderEmptyComponent }
             // @ts-ignore
-            contentContainerStyle = { noPolls && pollsStyles.emptyListContentContainer }
+            contentContainerStyle = { noPolls && pollsStyles.emptyListContentContainer as ViewStyle }
             data = { listPolls }
             extraData = { listPolls }
             // eslint-disable-next-line react/jsx-no-bind
             keyExtractor = { (item, index) => index.toString() }
             ref = { flatlistRef }
             renderItem = { renderItem }
-            style = { noPolls && pollsStyles.emptyListStyle } />
+            style = { noPolls && pollsStyles.emptyListStyle as ViewStyle } />
     );
 };
 
