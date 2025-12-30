@@ -106,12 +106,16 @@ jobs:
     container: 
       image: reactnativecommunity/react-native-android:v15.0
       volumes:
-        - /usr/local:/host/usr/local
+        - /usr:/host/usr
     steps:
     - name: Make space in image by removing preinstalled, but unused SDKs
       run: |
+        df -h /
         rm -rf /host/usr/local/lib/android
         rm -rf /host/usr/local/.ghcup
+        rm -rf /host/usr/share/dotnet
+        rm -rf /host/usr/share/swift
+        df -h /
     - uses: actions/checkout@v6
     - uses: actions/setup-node@v6
       with:
