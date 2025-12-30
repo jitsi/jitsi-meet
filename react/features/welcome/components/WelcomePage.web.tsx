@@ -31,7 +31,6 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
     _additionalContentRef: HTMLDivElement | null;
     _additionalToolbarContentRef: HTMLDivElement | null;
     _additionalCardRef: HTMLDivElement | null;
-    _roomInputRef: HTMLInputElement | null;
     _additionalCardTemplate: HTMLTemplateElement | null;
     _additionalContentTemplate: HTMLTemplateElement | null;
     _additionalToolbarContentTemplate: HTMLTemplateElement | null;
@@ -78,8 +77,6 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
          * @type {HTMLTemplateElement|null}
          */
         this._additionalContentRef = null;
-
-        this._roomInputRef = null;
 
         /**
          * The HTML Element used as the container for additional toolbar content. Used
@@ -239,7 +236,6 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                             id = 'enter_room_field'
                                             onChange = { this._onRoomChange }
                                             pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
-                                            placeholder = { this.state.roomPlaceholder }
                                             ref = { this._setRoomInputRef }
                                             type = 'text'
                                             value = { this.state.room } />
