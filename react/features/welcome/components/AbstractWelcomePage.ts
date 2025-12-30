@@ -70,6 +70,7 @@ interface IState {
     joining: boolean;
     room: string;
     roomNameInputAnimation?: any;
+    roomPlaceholder: string;
     updateTimeoutId?: number;
 }
 
@@ -99,6 +100,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
         insecureRoomName: false,
         joining: false,
         room: '',
+        roomPlaceholder: '',
         updateTimeoutId: undefined,
         _fieldFocused: false,
         isSettingsScreenFocused: false,
@@ -158,7 +160,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
 
         // Update placeholder directly via ref to avoid re-render
         if (this._roomInputRef) {
-            this._roomInputRef.placeholder = this._currentPlaceholder;
+            (this._roomInputRef as HTMLInputElement).placeholder = this._currentPlaceholder;
         }
 
         if (word.length > 1) {
