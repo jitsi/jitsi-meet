@@ -14,7 +14,7 @@ const WhiteboardWrapper = ({
     collabDetails,
     collabServerUrl,
     localParticipantName,
-    onClose // Add this prop
+    onClose // Added this prop
 }: {
     className?: string;
     collabDetails: {
@@ -23,7 +23,7 @@ const WhiteboardWrapper = ({
     };
     collabServerUrl: string;
     localParticipantName: string;
-    onClose?: () => void; // Add this prop
+    onClose?: () => void; // Added this prop
 }) => {
     const excalidrawRef = useRef<any>(null);
     const excalidrawAPIRef = useRef<any>(null);
@@ -50,9 +50,9 @@ const WhiteboardWrapper = ({
                 {/* Add close button for mobile */}
                 {onClose && (
                     <button
+                        aria-label = 'Close whiteboard'
                         className = 'whiteboard-close-btn'
                         onClick = { onClose }
-                        aria-label = 'Close whiteboard'
                         title = 'Close whiteboard'
                         type = 'button'>
                         ×
@@ -74,8 +74,6 @@ const WhiteboardWrapper = ({
                     getCollabAPI = { getCollabAPI }
                     getExcalidrawAPI = { getExcalidrawAPI } />
             </div>
-
-            
         </div>
     );
 };
