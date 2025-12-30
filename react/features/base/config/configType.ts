@@ -582,6 +582,7 @@ export interface IConfig {
     };
     serviceUrl?: string;
     sharedVideoAllowedURLDomains?: Array<string>;
+    showChatPermissionsModeratorSetting?: boolean;
     sipInviteUrl?: string;
     speakerStats?: {
         disableSearch?: boolean;

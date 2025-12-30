@@ -151,6 +151,9 @@ var config = {
     // Disables self-view settings in UI
     // disableSelfViewSettings: false,
 
+    // Shows/hides the moderator setting for chat permissions.
+    // showChatPermissionsModeratorSetting: false,
+
     // screenshotCapture : {
     //      Enables the screensharing capture feature.
     //      enabled: false,
