@@ -158,7 +158,7 @@ class Watermarks extends Component<IProps, State> {
         } = this.props;
         const { noMargins, t } = this.props;
         const className = `watermark leftwatermark ${noMargins ? 'no-margin' : ''}`;
-        const _logoLink = "https://finueva.com"
+        const _logoLink = 'https://finueva.com';
         let reactElement = null;
 
         if (_showJitsiWatermark) {

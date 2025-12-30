@@ -375,9 +375,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
         const { fDroidUrl, downloadLink: androidDownloadLink } = android;
 
-        return (<footer className = 'welcome-footer'>
-            
-        </footer>);
+        return (<footer className = 'welcome-footer' />);
     }
 
     /**

@@ -1513,21 +1513,21 @@ var config = {
 
     // Controls the visibility and behavior of the top header conference info labels.
     // If a label's id is not in any of the 2 arrays, it will not be visible at all on the header.
-    // conferenceInfo: {
-    //     // those labels will not be hidden in tandem with the toolbox.
-    //     alwaysVisible: ['recording', 'raised-hands-count'],
-    //     // those labels will be auto-hidden in tandem with the toolbox buttons.
-    //     autoHide: [
-    //         'subject',
-    //         'conference-timer',
-    //         'participants-count',
-    //         'e2ee',
-    //         'video-quality',
-    //         'insecure-room',
-    //         'highlight-moment',
-    //         'top-panel-toggle',
-    //     ]
-    // },
+    conferenceInfo: {
+        // those labels will not be hidden in tandem with the toolbox.
+        alwaysVisible: ['recording', 'raised-hands-count'],
+        // those labels will be auto-hidden in tandem with the toolbox buttons.
+        autoHide: [
+            'subject',
+            'conference-timer',
+            'participants-count',
+            'e2ee',
+            'video-quality',
+            'insecure-room',
+            'highlight-moment',
+            'top-panel-toggle',
+        ]
+    },
 
     // Hides the conference subject
     // hideConferenceSubject: false,

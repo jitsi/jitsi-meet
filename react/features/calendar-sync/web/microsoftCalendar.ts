@@ -2,14 +2,16 @@ import { Client } from '@microsoft/microsoft-graph-client';
 // eslint-disable-next-line lines-around-comment
 import base64js from 'base64-js';
 import { v4 as uuidV4 } from 'uuid';
-import { findWindows } from 'windows-iana';
-import { IanaName } from 'windows-iana/dist/enums';
+
 
 import { IStore } from '../../app/types';
 import { parseURLParams } from '../../base/util/parseURLParams';
 import { parseStandardURIString } from '../../base/util/uri';
 import { getShareInfoText } from '../../invite/functions';
 import { setCalendarAPIAuthState } from '../actions.web';
+
+import type { IanaName } from './windows-iana';
+import { findWindows } from './windows-iana';
 
 
 /**
