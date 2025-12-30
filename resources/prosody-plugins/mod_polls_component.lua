@@ -33,15 +33,6 @@ local main_domain = module:get_option_string('main_domain');
 -- only the visitor prosody has main_domain setting
 local is_visitor_prosody = main_domain ~= nil;
 
--- Logs a warning and returns true if a room does not
--- have poll data associated with it.
-local function check_polls(room)
-    if room.polls == nil then
-        module:log("warn", "no polls data in room");
-        return true;
-    end
-    return false;
-end
 
 local function validate_polls(data)
     if type(data) ~= 'table' then
@@ -53,7 +44,7 @@ local function validate_polls(data)
     if data.command ~= 'new-poll' and data.command ~= 'answer-poll' then
         return false;
     end
-    if type(data.answers) ~= 'table' then
+    if type(data.answers) ~= 'table' or #data.answers == 0 then
         return false;
     end
 
@@ -222,8 +213,6 @@ end
                 return true;
             end
 
-            if check_polls(room) then return end
-
             local poll_creator = occupant_details;
 
             if room.polls.count >= POLLS_LIMIT then
@@ -286,8 +275,6 @@ end
 
             module:context(jid.host(room.jid)):fire_event('poll-created', pollData);
         elseif data.command == "answer-poll" then
-            if check_polls(room) then return end
-
             local poll = room.polls.by_id[data.pollId];
             if poll == nil then
                 module:log("warn", "answering inexistent poll %s", data.pollId);
