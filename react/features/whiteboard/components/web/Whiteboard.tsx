@@ -163,12 +163,12 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
                           * sure to mark the Excalidraw context with a lvl 1
                           * heading before showing the whiteboard.
                           */
-                         }
+                        }
                         <span
-                         aria-level = { 1 }
-                         className = 'sr-only'
-                         role = 'heading'>
-                         { props.t('whiteboard.accessibilityLabel.heading') }
+                            aria-level = { 1 }
+                            className = 'sr-only'
+                            role = 'heading'>
+                            { props.t('whiteboard.accessibilityLabel.heading') }
                         </span>
                         {/* Add close button */}
                         <button
