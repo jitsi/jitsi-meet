@@ -7,6 +7,7 @@ import {
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import {
+    TRACK_STOPPED,
     TRACK_UPDATED
 } from './actionTypes';
 import {
@@ -37,6 +38,16 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (local && jitsiTrack.isMuted()
                     && jitsiTrack.type === MEDIA_TYPE.VIDEO && jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
+            store.dispatch(toggleScreensharing(false));
+        }
+        break;
+    }
+    case TRACK_STOPPED: {
+        // When Android system stops screen capture (via MediaProjection.Callback.onStop),
+        // the desktop track fires TRACK_STOPPED. Treat this the same as the in-app stop button.
+        const { jitsiTrack, local } = action.track;
+
+        if (local && jitsiTrack.type === MEDIA_TYPE.VIDEO && jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
             store.dispatch(toggleScreensharing(false));
         }
         break;
