@@ -20,6 +20,7 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
     const state = store.getState();
     let reorderedParticipants = [];
     const { sortedRemoteVirtualScreenshareParticipants } = state['features/base/participants'];
+    const disableAutoResort = Boolean(state['features/base/config']?.disableAutoResortParticipants);
 
     if (!isFilmstripScrollVisible(state) && !sortedRemoteVirtualScreenshareParticipants.size && !force) {
         if (participantId) {
@@ -40,7 +41,9 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
     const screenShareParticipants = sortedRemoteVirtualScreenshareParticipants
         ? [ ...sortedRemoteVirtualScreenshareParticipants.keys() ] : [];
     const sharedVideos = fakeParticipants ? Array.from(fakeParticipants.keys()) : [];
-    const speakers = getActiveSpeakersToBeDisplayed(state);
+
+    // When disableAutoResortParticipants is true, use empty speakers list to preserve stable order
+    const speakers = disableAutoResort ? new Map() : getActiveSpeakersToBeDisplayed(state);
 
     for (const screenshare of screenShareParticipants) {
         const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);

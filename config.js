@@ -151,6 +151,11 @@ var config = {
     // Disables self-view settings in UI
     // disableSelfViewSettings: false,
 
+    // When true, the participants list will NOT automatically resort
+    // when someone speaks or becomes dominant speaker.
+    // Default: false (current behavior - list reorders dynamically).
+    // disableAutoResortParticipants: false,
+
     // screenshotCapture : {
     //      Enables the screensharing capture feature.
     //      enabled: false,
