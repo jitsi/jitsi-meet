@@ -62,7 +62,7 @@ function _mapStateToProps(state: IReduxState) {
     // inefficient because features/base/tracks is an array and in order to find a track by participant ID
     // we need to go through the array. Introducing a map participantID -> track could be beneficial in this case.
     return {
-        _tracks: state['features/base/tracks']
+        _tracks: state['features/base/tracks'].tracks
     };
 }
 

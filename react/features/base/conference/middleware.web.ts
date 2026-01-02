@@ -168,7 +168,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (prejoinVisible) {
             promise.then(() => {
                 const state = getState();
-                let localTracks = getLocalTracks(state['features/base/tracks']);
+                let localTracks = getLocalTracks(state['features/base/tracks'].tracks);
                 const trackReplacePromises = [];
 
                 // Do not signal audio/video tracks if the user joins muted.
@@ -189,7 +189,7 @@ MiddlewareRegistry.register(store => next => action => {
                     // Re-fetch the local tracks after muted tracks have been removed above.
                     // This is needed, because the tracks are effectively disposed by the replaceLocalTrack and should
                     // not be used anymore.
-                    localTracks = getLocalTracks(getState()['features/base/tracks']);
+                    localTracks = getLocalTracks(getState()['features/base/tracks'].tracks);
 
                     const jitsiTracks = localTracks.map((t: any) => t.jitsiTrack);
 

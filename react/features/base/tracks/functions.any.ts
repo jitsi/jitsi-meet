@@ -19,9 +19,9 @@ import { ITrack } from './types';
  * Returns root tracks state.
  *
  * @param {IReduxState} state - Global state.
- * @returns {Object} Tracks state.
+ * @returns {ITrack[]} Tracks array.
  */
-export const getTrackState = (state: IReduxState) => state['features/base/tracks'];
+export const getTrackState = (state: IReduxState) => state['features/base/tracks'].tracks;
 
 /**
  * Checks if the passed media type is muted for the participant.
@@ -258,7 +258,7 @@ export function getVideoTrackByParticipant(
         return;
     }
 
-    const tracks = state['features/base/tracks'];
+    const tracks = state['features/base/tracks'].tracks;
 
     if (isScreenShareParticipant(participant)) {
         return getVirtualScreenshareParticipantTrack(tracks, participant.id);

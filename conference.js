@@ -120,6 +120,8 @@ import {
     createInitialAVTracks,
     destroyLocalTracks,
     displayErrorsForCreateInitialLocalTracks,
+    remoteParticipantAudioMuteChanged,
+    remoteParticipantVideoMuteChanged,
     replaceLocalTrack,
     setGUMPendingStateOnFailedTracks,
     toggleScreensharing as toggleScreensharingA,
@@ -662,7 +664,7 @@ export default {
     isLocalVideoMuted() {
         // If the tracks are not ready, read from base/media state
         return this._localTracksInitialized
-            ? isLocalTrackMuted(APP.store.getState()['features/base/tracks'], MEDIA_TYPE.VIDEO)
+            ? isLocalTrackMuted(APP.store.getState()['features/base/tracks'].tracks, MEDIA_TYPE.VIDEO)
             : isVideoMutedByUser(APP.store);
     },
 
@@ -723,7 +725,7 @@ export default {
         // If the tracks are not ready, read from base/media state
         return this._localTracksInitialized
             ? isLocalTrackMuted(
-                APP.store.getState()['features/base/tracks'],
+                APP.store.getState()['features/base/tracks'].tracks,
                 MEDIA_TYPE.AUDIO)
             : Boolean(
                 APP.store.getState()['features/base/media'].audio.muted);
@@ -1219,7 +1221,7 @@ export default {
         this._stopProxyConnection();
 
         APP.store.dispatch(toggleScreenshotCaptureSummary(false));
-        const tracks = APP.store.getState()['features/base/tracks'];
+        const tracks = APP.store.getState()['features/base/tracks'].tracks;
         const duration = getLocalVideoTrack(tracks)?.jitsiTrack.getDuration() ?? 0;
 
         // If system audio was also shared stop the AudioMixerEffect and dispose of the desktop audio track.
@@ -1464,6 +1466,14 @@ export default {
             if (participantThatMutedUs) {
                 APP.store.dispatch(participantMutedUs(participantThatMutedUs, track));
             }
+        });
+
+        room.on(JitsiConferenceEvents.TRACK_AUDIO_MUTED_CHANGED, (participant, muted) => {
+            APP.store.dispatch(remoteParticipantAudioMuteChanged(participant.getId(), muted));
+        });
+
+        room.on(JitsiConferenceEvents.TRACK_VIDEO_MUTED_CHANGED, (participant, muted) => {
+            APP.store.dispatch(remoteParticipantVideoMuteChanged(participant.getId(), muted));
         });
 
         room.on(JitsiConferenceEvents.TRACK_UNMUTE_REJECTED, track => APP.store.dispatch(destroyLocalTracks(track)));

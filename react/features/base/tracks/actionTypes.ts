@@ -116,3 +116,73 @@ export const TRACK_UPDATED = 'TRACK_UPDATED';
  * }
  */
 export const TRACK_WILL_CREATE = 'TRACK_WILL_CREATE';
+
+/**
+ * The type of redux action dispatched when a moderator initiates a mute on a remote participant.
+ * This is used to track moderator-initiated mutes for accurate event reporting.
+ *
+ * {
+ *     type: TRACK_MODERATOR_MUTE_INITIATED,
+ *     participantId: string,
+ *     mediaType: string
+ * }
+ */
+export const TRACK_MODERATOR_MUTE_INITIATED = 'TRACK_MODERATOR_MUTE_INITIATED';
+
+/**
+ * The type of redux action dispatched to clear a tracked moderator-initiated mute.
+ *
+ * {
+ *     type: TRACK_MODERATOR_MUTE_CLEARED,
+ *     participantId: string,
+ *     mediaType: string
+ * }
+ */
+export const TRACK_MODERATOR_MUTE_CLEARED = 'TRACK_MODERATOR_MUTE_CLEARED';
+
+/**
+ * The type of redux action dispatched to update previous mute state for change detection.
+ *
+ * {
+ *     type: TRACK_MUTE_STATE_UPDATED,
+ *     participantId: string,
+ *     mediaType: string,
+ *     muted: boolean
+ * }
+ */
+export const TRACK_MUTE_STATE_UPDATED = 'TRACK_MUTE_STATE_UPDATED';
+
+/**
+ * The type of redux action dispatched to clear previous mute state when track is removed.
+ *
+ * {
+ *     type: TRACK_MUTE_STATE_CLEARED,
+ *     participantId: string,
+ *     mediaType: string
+ * }
+ */
+export const TRACK_MUTE_STATE_CLEARED = 'TRACK_MUTE_STATE_CLEARED';
+
+/**
+ * The type of redux action dispatched when a remote participant's audio mute status changes
+ * based on signaling from lib-jitsi-meet.
+ *
+ * {
+ *     type: REMOTE_PARTICIPANT_AUDIO_MUTE_CHANGED,
+ *     participantId: string,
+ *     muted: boolean
+ * }
+ */
+export const REMOTE_PARTICIPANT_AUDIO_MUTE_CHANGED = 'REMOTE_PARTICIPANT_AUDIO_MUTE_CHANGED';
+
+/**
+ * The type of redux action dispatched when a remote participant's video mute status changes
+ * based on signaling from lib-jitsi-meet.
+ *
+ * {
+ *     type: REMOTE_PARTICIPANT_VIDEO_MUTE_CHANGED,
+ *     participantId: string,
+ *     muted: boolean
+ * }
+ */
+export const REMOTE_PARTICIPANT_VIDEO_MUTE_CHANGED = 'REMOTE_PARTICIPANT_VIDEO_MUTE_CHANGED';

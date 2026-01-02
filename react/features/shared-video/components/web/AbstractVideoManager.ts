@@ -441,7 +441,7 @@ export default AbstractVideoManager;
 export function _mapStateToProps(state: IReduxState) {
     const { ownerId, status, time, videoUrl, muted } = state['features/shared-video'];
     const localParticipant = getLocalParticipant(state);
-    const _isLocalAudioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
+    const _isLocalAudioMuted = isLocalTrackMuted(state['features/base/tracks'].tracks, MEDIA_TYPE.AUDIO);
 
     return {
         _conference: getCurrentConference(state),

@@ -163,7 +163,7 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     case SET_VIDEO_INPUT_DEVICE: {
-        const localTrack = getLocalTrack(store.getState()['features/base/tracks'], MEDIA_TYPE.VIDEO);
+        const localTrack = getLocalTrack(store.getState()['features/base/tracks'].tracks, MEDIA_TYPE.VIDEO);
 
         // on mobile devices the video stream has to be stopped before replacing it
         if (isMobileBrowser() && localTrack && !localTrack.muted) {

@@ -286,8 +286,8 @@ function _handleLogin({ dispatch, getState }: IStore) {
     const { locationURL = { href: '' } as URL } = state['features/base/connection'];
     const { tenant } = parseURIString(locationURL.href) || {};
     const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
-    const audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
-    const videoMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO);
+    const audioMuted = isLocalTrackMuted(state['features/base/tracks'].tracks, MEDIA_TYPE.AUDIO);
+    const videoMuted = isLocalTrackMuted(state['features/base/tracks'].tracks, MEDIA_TYPE.VIDEO);
 
     if (!room) {
         logger.warn('Cannot handle login, room is undefined!');

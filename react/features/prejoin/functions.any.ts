@@ -33,7 +33,7 @@ export function isDeviceStatusVisible(state: IReduxState): boolean {
         // This handles the case where disableInitialGUM=true and we haven't yet tried to create any tracks. In this
         // case we shouldn't display the the device status indicator. But once we create some tracks we can show it
         // because we would know if we created the tracks successfully or not.
-        && (!state['features/base/config'].disableInitialGUM || state['features/base/tracks']?.length > 0);
+        && (!state['features/base/config'].disableInitialGUM || state['features/base/tracks'].tracks?.length > 0);
 }
 
 /**
