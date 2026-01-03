@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useCallback, useLayoutEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, Text, TouchableHighlight, View, ViewStyle } from 'react-native';
+import { GestureResponderEvent, ScrollView, Text, TouchableHighlight, View, ViewStyle } from 'react-native';
 import { Edge } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
@@ -11,12 +11,13 @@ import { IconArrowLeft } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import BaseThemeNative from '../../../base/ui/components/BaseTheme.native';
 import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
-import { goBack, navigate } from '../../../mobile/navigation/components/settings/SettingsNavigationContainerRef';
-import { screen } from '../../../mobile/navigation/routes';
 
 import styles from './styles';
 
-const LanguageSelectView = ({ isInWelcomePage }: { isInWelcomePage?: boolean; }) => {
+const LanguageSelectView = ({ goBack, isInWelcomePage }: {
+    goBack?: (e?: GestureResponderEvent | React.MouseEvent) => void;
+    isInWelcomePage?: boolean;
+}) => {
     const { t } = useTranslation();
     const navigation = useNavigation();
     const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
@@ -25,7 +26,7 @@ const LanguageSelectView = ({ isInWelcomePage }: { isInWelcomePage?: boolean; })
     const setLanguage = useCallback(language => () => {
         i18next.changeLanguage(language);
         conference?.setTranscriptionLanguage(language);
-        navigate(screen.settings.main);
+        goBack?.();
     }, [ conference, i18next ]);
 
     const headerLeft = () => (

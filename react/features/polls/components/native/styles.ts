@@ -117,21 +117,26 @@ export const resultsStyles = createStyleSheet({
 
 export const pollsStyles = createStyleSheet({
 
+    emptyListStyle: {
+        flex: 1
+    },
+
+    emptyListContentContainer: {
+        alignItems: 'center',
+        flex: 1,
+        justifyContent: 'center'
+    },
+
     noPollContent: {
         alignItems: 'center',
-        justifyContent: 'center',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        top: '25%'
+        justifyContent: 'center'
     },
 
     noPollText: {
-        flex: 1,
-        color: BaseTheme.palette.text03,
+        ...BaseTheme.typography.bodyLongBold,
+        color: BaseTheme.palette.text02,
         textAlign: 'center',
-        maxWidth: '70%'
+        maxWidth: '80%'
     },
 
     pollItemContainer: {

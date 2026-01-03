@@ -43,7 +43,7 @@ class ChatButton extends AbstractButton<IProps> {
     override _handleClick() {
         this.props._isPollsDisabled
             ? navigate(screen.conference.chat)
-            : navigate(screen.conference.chatandpolls.main);
+            : navigate(screen.conference.chatTabs.main);
     }
 
     /**
