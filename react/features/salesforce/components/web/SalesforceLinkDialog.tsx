@@ -43,7 +43,7 @@ const useStyles = makeStyles()(theme => {
             border: '1px solid',
             borderRadius: theme.shape.borderRadius,
             borderColor: theme.palette.ui05,
-            color: theme.palette.text01,
+            color: theme.palette.dialogText,
             padding: '10px 16px 10px 44px',
             width: '100%',
             height: 40,
@@ -114,8 +114,8 @@ const useStyles = makeStyles()(theme => {
             overflow: 'hidden',
             border: '1px solid',
             borderColor: theme.palette.ui05,
-            backgroundColor: theme.palette.field01,
-            color: theme.palette.text01,
+            backgroundColor: theme.palette.inputBackground,
+            color: theme.palette.inputText,
             borderRadius: theme.shape.borderRadius,
             padding: '10px 16px'
         }

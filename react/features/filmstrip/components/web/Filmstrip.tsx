@@ -79,7 +79,7 @@ function styles(theme: Theme, props: IProps) {
             zIndex: 1,
 
             '&:hover, &:focus-within': {
-                backgroundColor: theme.palette.ui02
+                backgroundColor: theme.palette.filmstripBackground
             }
         },
 

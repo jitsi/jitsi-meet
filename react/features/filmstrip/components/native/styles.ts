@@ -104,8 +104,8 @@ export default {
      */
     thumbnail: {
         alignItems: 'stretch',
-        backgroundColor: BaseTheme.palette.ui02,
-        borderColor: BaseTheme.palette.ui03,
+        backgroundColor: BaseTheme.palette.thumbnailBackground,
+        borderColor: BaseTheme.palette.thumbnailBorder,
         borderRadius: BaseTheme.shape.borderRadius,
         borderStyle: 'solid',
         borderWidth: 1,

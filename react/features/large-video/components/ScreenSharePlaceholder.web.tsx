@@ -11,7 +11,7 @@ const useStyles = makeStyles()(theme => {
         overlayContainer: {
             width: '100%',
             height: '100%',
-            backgroundColor: theme.palette.ui02,
+            backgroundColor: theme.palette.largeVideoPlaceholder,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',

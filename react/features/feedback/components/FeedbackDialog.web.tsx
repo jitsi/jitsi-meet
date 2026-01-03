@@ -31,7 +31,7 @@ const useStyles = makeStyles()(theme => {
 
         ratingLabel: {
             ...theme.typography.bodyShortBold,
-            color: theme.palette.text01,
+            color: theme.palette.dialogText,
             marginBottom: theme.spacing(2),
             height: '20px'
         },
