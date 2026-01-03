@@ -2,7 +2,7 @@ import { Theme } from '@mui/material/styles';
 
 import { IReduxState } from '../app/types';
 import { IStateful } from '../base/app/types';
-import { isMobileBrowser } from '../base/environment/utils';
+import { isTouchDevice, shouldEnableResize } from '../base/environment/utils';
 import { MEDIA_TYPE } from '../base/media/constants';
 import {
     getLocalParticipant,
@@ -30,6 +30,7 @@ import {
     DEFAULT_LOCAL_TILE_ASPECT_RATIO,
     DISPLAY_AVATAR,
     DISPLAY_VIDEO,
+    DRAG_HANDLE_WIDTH,
     FILMSTRIP_GRID_BREAKPOINT,
     FILMSTRIP_TYPE,
     INDICATORS_TOOLTIP_POSITION,
@@ -45,6 +46,7 @@ import {
     TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES,
     TILE_VIEW_GRID_HORIZONTAL_MARGIN,
     TILE_VIEW_GRID_VERTICAL_MARGIN,
+    TOUCH_DRAG_HANDLE_PADDING,
     VERTICAL_VIEW_HORIZONTAL_MARGIN
 } from './constants';
 
@@ -621,6 +623,7 @@ export function getIndicatorsTooltipPosition(thumbnailType?: string) {
 
 /**
  * Returns whether or not the filmstrip is resizable.
+ * On touch devices, resize is only enabled for larger screens (tablets, not phones).
  *
  * @param {Object} state - Redux state.
  * @returns {boolean}
@@ -629,7 +632,7 @@ export function isFilmstripResizable(state: IReduxState) {
     const { filmstrip } = state['features/base/config'];
     const _currentLayout = getCurrentLayout(state);
 
-    return !filmstrip?.disableResizable && !isMobileBrowser()
+    return !filmstrip?.disableResizable && shouldEnableResize()
         && (_currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW || _currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW);
 }
 
@@ -662,8 +665,13 @@ export function getVerticalViewMaxWidth(state: IReduxState) {
 
     // Adding 4px for the border-right and margin-right.
     // On non-resizable filmstrip add 4px for the left margin and border.
-    // Also adding 7px for the scrollbar. Also adding 9px for the drag handle.
-    maxWidth += (_verticalViewGrid ? 0 : 11) + (_resizableFilmstrip ? 9 : 4);
+    // Also adding 7px for the scrollbar.
+    // Drag handle: DRAG_HANDLE_WIDTH + padding (TOUCH_DRAG_HANDLE_PADDING on each side for touch)
+    const dragHandleWidth = isTouchDevice()
+        ? DRAG_HANDLE_WIDTH + (TOUCH_DRAG_HANDLE_PADDING * 2)
+        : DRAG_HANDLE_WIDTH;
+
+    maxWidth += (_verticalViewGrid ? 0 : 11) + (_resizableFilmstrip ? dragHandleWidth : 4);
 
     return maxWidth;
 }

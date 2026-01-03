@@ -10,7 +10,7 @@ import { withStyles } from 'tss-react/mui';
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
-import { isMobileBrowser } from '../../../base/environment/utils';
+import { isMobileBrowser, isTouchDevice, shouldEnableResize } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../base/icons/svg';
@@ -32,12 +32,17 @@ import {
 import {
     ASPECT_RATIO_BREAKPOINT,
     DEFAULT_FILMSTRIP_WIDTH,
+    DRAG_HANDLE_HEIGHT,
+    DRAG_HANDLE_TOP_PANEL_HEIGHT,
+    DRAG_HANDLE_TOP_PANEL_WIDTH,
+    DRAG_HANDLE_WIDTH,
     FILMSTRIP_TYPE,
     MIN_STAGE_VIEW_HEIGHT,
     MIN_STAGE_VIEW_WIDTH,
     TILE_HORIZONTAL_MARGIN,
     TILE_VERTICAL_MARGIN,
-    TOP_FILMSTRIP_HEIGHT
+    TOP_FILMSTRIP_HEIGHT,
+    TOUCH_DRAG_HANDLE_PADDING
 } from '../../constants';
 import {
     getVerticalViewMaxWidth,
@@ -61,6 +66,11 @@ const BACKGROUND_COLOR = 'rgba(51, 51, 51, .5)';
  * @returns {Object}
  */
 function styles(theme: Theme, props: IProps) {
+    const { _topPanelFilmstrip: isTopPanel } = props;
+
+    const _isTouchDevice = isTouchDevice();
+    const resizeEnabled = shouldEnableResize();
+
     const result = {
         toggleFilmstripContainer: {
             display: 'flex',
@@ -122,23 +132,27 @@ function styles(theme: Theme, props: IProps) {
             right: 0,
             bottom: 0,
 
-            '&:hover, &:focus-within': {
-                '& .resizable-filmstrip': {
-                    backgroundColor: BACKGROUND_COLOR
-                },
+            // On touch devices, handle is always visible via base styles, so no hover needed.
+            // On desktop, show handle on hover/focus.
+            ...(!_isTouchDevice && {
+                '&:hover, &:focus-within': {
+                    '& .resizable-filmstrip': {
+                        backgroundColor: BACKGROUND_COLOR
+                    },
 
-                '& .filmstrip-hover': {
-                    backgroundColor: BACKGROUND_COLOR
-                },
+                    '& .filmstrip-hover': {
+                        backgroundColor: BACKGROUND_COLOR
+                    },
 
-                '& .toggleFilmstripContainer': {
-                    opacity: 1
-                },
+                    '& .toggleFilmstripContainer': {
+                        opacity: 1
+                    },
 
-                '& .dragHandleContainer': {
-                    visibility: 'visible' as const
+                    '& .dragHandleContainer': {
+                        visibility: 'visible' as const
+                    }
                 }
-            },
+            }),
 
             '.horizontal-filmstrip &.hidden': {
                 bottom: '-50px',
@@ -187,14 +201,25 @@ function styles(theme: Theme, props: IProps) {
 
         dragHandleContainer: {
             height: '100%',
-            width: '9px',
+            width: `${DRAG_HANDLE_WIDTH}px`,
             backgroundColor: 'transparent',
             position: 'relative' as const,
             cursor: 'col-resize',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            visibility: 'hidden' as const,
+            // On touch devices, always visible if resize enabled. On desktop, hidden by default
+            visibility: (_isTouchDevice && resizeEnabled) ? 'visible' as const : 'hidden' as const,
+            marginLeft: 0,
+            marginTop: 0,
+            // Touch devices get padding for easier tapping
+            // Vertical filmstrip: left/right padding. Top panel: top/bottom padding.
+            paddingLeft: _isTouchDevice && !isTopPanel ? `${TOUCH_DRAG_HANDLE_PADDING}px` : 0,
+            paddingRight: _isTouchDevice && !isTopPanel ? `${TOUCH_DRAG_HANDLE_PADDING}px` : 0,
+            paddingTop: _isTouchDevice && isTopPanel ? `${TOUCH_DRAG_HANDLE_PADDING}px` : 0,
+            paddingBottom: _isTouchDevice && isTopPanel ? `${TOUCH_DRAG_HANDLE_PADDING}px` : 0,
+            // Prevent touch scrolling while dragging
+            touchAction: 'none',
 
             '&:hover': {
                 '& .dragHandle': {
@@ -213,20 +238,21 @@ function styles(theme: Theme, props: IProps) {
             '&.top-panel': {
                 order: 2,
                 width: '100%',
-                height: '9px',
+                height: `${DRAG_HANDLE_WIDTH}px`,
                 cursor: 'row-resize',
 
                 '& .dragHandle': {
-                    height: '3px',
-                    width: '100px'
+                    height: `${DRAG_HANDLE_TOP_PANEL_HEIGHT}px`,
+                    width: `${DRAG_HANDLE_TOP_PANEL_WIDTH}px`
                 }
             }
         },
 
         dragHandle: {
+            // Keep the same visual appearance on all devices
             backgroundColor: theme.palette.icon02,
-            height: '100px',
-            width: '3px',
+            height: `${DRAG_HANDLE_HEIGHT}px`,
+            width: `${DRAG_HANDLE_WIDTH / 3}px`,
             borderRadius: '1px'
         }
     };
@@ -314,6 +340,11 @@ export interface IProps extends WithTranslation {
     _isToolboxVisible: Boolean;
 
     /**
+     * Whether the device has touch capability.
+     */
+    _isTouchDevice?: boolean;
+
+    /**
      * Whether or not the current layout is vertical filmstrip.
      */
     _isVerticalFilmstrip: boolean;
@@ -352,6 +383,11 @@ export interface IProps extends WithTranslation {
      * Whether or not the filmstrip should be user-resizable.
      */
     _resizableFilmstrip: boolean;
+
+    /**
+     * Whether resize functionality should be enabled based on device and screen size.
+     */
+    _resizeEnabled?: boolean;
 
     /**
      * The number of rows in tile view.
@@ -486,8 +522,10 @@ class Filmstrip extends PureComponent <IProps, IState> {
         this._onGridItemsRendered = this._onGridItemsRendered.bind(this);
         this._onListItemsRendered = this._onListItemsRendered.bind(this);
         this._onToggleButtonTouch = this._onToggleButtonTouch.bind(this);
-        this._onDragHandleMouseDown = this._onDragHandleMouseDown.bind(this);
-        this._onDragMouseUp = this._onDragMouseUp.bind(this);
+        this._onDragHandlePointerDown = this._onDragHandlePointerDown.bind(this);
+        this._onDragHandleClick = this._onDragHandleClick.bind(this);
+        this._onDragHandleTouchStart = this._onDragHandleTouchStart.bind(this);
+        this._onDragPointerUp = this._onDragPointerUp.bind(this);
         this._onFilmstripResize = this._onFilmstripResize.bind(this);
 
         this._throttledResize = throttle(
@@ -511,10 +549,10 @@ class Filmstrip extends PureComponent <IProps, IState> {
             handler: this._onShortcutToggleFilmstrip
         }));
 
-        document.addEventListener('mouseup', this._onDragMouseUp);
+        document.addEventListener('pointerup', this._onDragPointerUp);
 
         // @ts-ignore
-        document.addEventListener('mousemove', this._throttledResize);
+        document.addEventListener('pointermove', this._throttledResize);
     }
 
     /**
@@ -525,10 +563,10 @@ class Filmstrip extends PureComponent <IProps, IState> {
     override componentWillUnmount() {
         this.props.dispatch(unregisterShortcut('F'));
 
-        document.removeEventListener('mouseup', this._onDragMouseUp);
+        document.removeEventListener('pointerup', this._onDragPointerUp);
 
         // @ts-ignore
-        document.removeEventListener('mousemove', this._throttledResize);
+        document.removeEventListener('pointermove', this._throttledResize);
     }
 
     /**
@@ -665,7 +703,9 @@ class Filmstrip extends PureComponent <IProps, IState> {
                                 (isMouseDown || _alwaysShowResizeBar) && 'visible',
                                 _topPanelFilmstrip && 'top-panel')
                             }
-                            onMouseDown = { this._onDragHandleMouseDown }>
+                            onClick = { this._onDragHandleClick }
+                            onPointerDown = { this._onDragHandlePointerDown }
+                            onTouchStart = { this._onDragHandleTouchStart }>
                             <div className = { clsx(classes.dragHandle, 'dragHandle') } />
                         </div>
                         {filmstrip}
@@ -678,13 +718,22 @@ class Filmstrip extends PureComponent <IProps, IState> {
     }
 
     /**
-     * Handles mouse down on the drag handle.
+     * Handles pointer down on the drag handle.
+     * Supports both mouse and touch events via Pointer Events API.
      *
-     * @param {MouseEvent} e - The mouse down event.
+     * @param {React.PointerEvent} e - The pointer down event.
      * @returns {void}
      */
-    _onDragHandleMouseDown(e: React.MouseEvent) {
+    _onDragHandlePointerDown(e: React.PointerEvent) {
         const { _topPanelFilmstrip, _topPanelHeight, _verticalFilmstripWidth } = this.props;
+
+        // Prevent toolbar from appearing and stop event propagation
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Capture the pointer to ensure we receive all pointer events
+        // even if the pointer moves outside the element
+        (e.target as HTMLElement).setPointerCapture(e.pointerId);
 
         this.setState({
             isMouseDown: true,
@@ -696,11 +745,33 @@ class Filmstrip extends PureComponent <IProps, IState> {
     }
 
     /**
-     * Drag handle mouse up handler.
+     * Prevents click events on drag handle from triggering toolbar.
+     *
+     * @param {React.MouseEvent} e - The click event.
+     * @returns {void}
+     */
+    _onDragHandleClick(e: React.MouseEvent) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    /**
+     * Prevents touch start events on drag handle from triggering toolbar.
+     *
+     * @param {React.TouchEvent} e - The touch start event.
+     * @returns {void}
+     */
+    _onDragHandleTouchStart(e: React.TouchEvent) {
+        e.stopPropagation();
+    }
+
+    /**
+     * Drag handle pointer up handler.
+     * Supports both mouse and touch events via Pointer Events API.
      *
      * @returns {void}
      */
-    _onDragMouseUp() {
+    _onDragPointerUp() {
         if (this.state.isMouseDown) {
             this.setState({
                 isMouseDown: false
@@ -710,12 +781,13 @@ class Filmstrip extends PureComponent <IProps, IState> {
     }
 
     /**
-     * Handles drag handle mouse move.
+     * Handles drag handle pointer move.
+     * Supports both mouse and touch events via Pointer Events API.
      *
-     * @param {MouseEvent} e - The mousemove event.
+     * @param {PointerEvent} e - The pointermove event.
      * @returns {void}
      */
-    _onFilmstripResize(e: React.MouseEvent) {
+    _onFilmstripResize(e: PointerEvent) {
         if (this.state.isMouseDown) {
             const {
                 dispatch,
@@ -1148,4 +1220,4 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     };
 }
 
-export default withStyles(translate(connect(_mapStateToProps)(Filmstrip)), styles);
+export default translate(connect(_mapStateToProps)(withStyles(Filmstrip, styles)));

@@ -33,6 +33,23 @@ export const MESSAGE_TYPE_REMOTE = 'remote';
 
 export const SMALL_WIDTH_THRESHOLD = 580;
 
+/**
+ * Drag handle dimensions for resizable chat.
+ */
+export const CHAT_DRAG_HANDLE_WIDTH = 9;
+export const CHAT_DRAG_HANDLE_HEIGHT = 100;
+
+/**
+ * Touch target size for chat drag handle on touch devices.
+ * Provides adequate hit area (44px) for comfortable tapping.
+ */
+export const CHAT_TOUCH_HANDLE_SIZE = 44;
+
+/**
+ * Offset from edge for positioning the chat drag handle.
+ */
+export const CHAT_DRAG_HANDLE_OFFSET = 4;
+
 
 /**
  * Lobby message type.
