@@ -165,7 +165,7 @@ end
         end
 
         if not room then
-            module:log('warn', 'No room found found for %s %s', session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+            module:log('warn', 'No room found for %s %s', session.jitsi_web_query_room, session.jitsi_web_query_prefix);
             return;
         end
 

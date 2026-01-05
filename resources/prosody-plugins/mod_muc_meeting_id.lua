@@ -175,7 +175,7 @@ local function filterTranscriptionResult(event)
 
     local room = get_room_from_jid(stanza.attr.to);
     if not room then
-        module:log('warn', 'No room found found for %s', stanza.attr.to);
+        module:log('warn', 'No room found for %s', stanza.attr.to);
         return;
     end
 
