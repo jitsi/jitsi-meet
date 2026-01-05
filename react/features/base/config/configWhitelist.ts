@@ -220,6 +220,7 @@ export default [
     'resolution',
     'screenshotCapture',
     'securityUi',
+    'showChatPermissionsModeratorSetting',
     'speakerStats',
     'startAudioMuted',
     'startAudioOnly',
