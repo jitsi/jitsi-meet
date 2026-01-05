@@ -115,12 +115,7 @@ export default class WebhookProxy {
             const waiter = setTimeout(() => {
                 this.logInfo(error.message);
 
-                return reject({
-                    message: error.message,
-                    stack: error.stack,
-                    name: error.name,
-                    eventType
-                });
+                return reject(error);
             }, timeout);
 
             this.addConsumer(eventType, event => {
