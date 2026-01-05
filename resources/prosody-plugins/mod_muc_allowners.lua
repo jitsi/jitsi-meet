@@ -31,7 +31,7 @@ module:hook("muc-room-created", function(event)
 
     if room.jitsiMetadata then
         -- indicates whether all participants in the room will be moderators
-        room.allownersEnabled = not is_moderated(room.jid);
+        room.jitsiMetadata.allownersEnabled = not is_moderated(room.jid);
     end
 end, -2); -- room_metadata should run before this module on -1
 
