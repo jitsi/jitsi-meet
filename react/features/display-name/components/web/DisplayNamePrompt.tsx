@@ -1,9 +1,9 @@
-import {useState} from "react";
+import { useState } from 'react';
 
 import Dialog from '../../../base/ui/components/web/Dialog';
 import Input from '../../../base/ui/components/web/Input';
-import {onSetDisplayName} from '../../functions';
-import {IProps} from '../../types';
+import { onSetDisplayName } from '../../functions';
+import { IProps } from '../../types';
 
 const INITIAL_DISPLAY_NAME = '';
 
@@ -17,7 +17,9 @@ const DisplayNamePrompt = (props: IProps) => {
 
     // State for input validation result.
     const [isValid, setIsValid] = useState(
-        props.validateInput ? props.validateInput(INITIAL_DISPLAY_NAME) : true
+        props.validateInput
+            ? props.validateInput(INITIAL_DISPLAY_NAME)
+            : true
     );
 
     /**
@@ -45,7 +47,7 @@ const DisplayNamePrompt = (props: IProps) => {
      *
      * @returns {boolean}
      */
-    const _onSubmit = () => {
+    const _onSubmit = (): boolean => {
         return _onSetDisplayName(displayName);
     };
 
@@ -53,27 +55,28 @@ const DisplayNamePrompt = (props: IProps) => {
 
     return (
         <Dialog
-            cancel={{hidden: true}}
-            disableBackdropClose={disableCloseDialog}
-            disableEnter={!isValid}
-            disableEscape={disableCloseDialog}
-            hideCloseButton={disableCloseDialog}
-            ok={{
+            cancel = {{ hidden: true }}
+            disableBackdropClose = { disableCloseDialog }
+            disableEnter = { !isValid }
+            disableEscape = { disableCloseDialog }
+            hideCloseButton = { disableCloseDialog }
+            ok = {{
                 disabled: !isValid,
                 translationKey: 'dialog.Ok'
             }}
-            onSubmit={_onSubmit}
-            titleKey='dialog.displayNameRequired'>
+            onSubmit = { _onSubmit }
+            titleKey = 'dialog.displayNameRequired'>
             <Input
-                autoFocus={true}
-                className='dialog-bottom-margin'
-                id='dialog-displayName'
-                label={props.t('dialog.enterDisplayName')}
-                name='displayName'
-                onChange={_onDisplayNameChange}
-                type='text'
-                value={displayName}/>
+                autoFocus = { true }
+                className = 'dialog-bottom-margin'
+                id = 'dialog-displayName'
+                label = { props.t('dialog.enterDisplayName') }
+                name = 'displayName'
+                onChange = { _onDisplayNameChange }
+                type = 'text'
+                value = { displayName } />
         </Dialog>
+
     );
 
 }
