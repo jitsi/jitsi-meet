@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { useState } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
@@ -42,98 +42,11 @@ interface IProps extends WithTranslation {
 }
 
 /**
- * The type of the React {@code Component} state of {@DisplayNameForm}.
+ * React functional component for requesting the local participant to set a display name.
  */
-interface IState {
 
-    /**
-     * User provided display name when the input text is provided in the view.
-     */
-    displayName: string;
-}
-
-/**
- * React Component for requesting the local participant to set a display name.
- *
- * @augments Component
- */
-class DisplayNameForm extends Component<IProps, IState> {
-    override state = {
-        displayName: ''
-    };
-
-    /**
-     * Initializes a new {@code DisplayNameForm} instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-    constructor(props: IProps) {
-        super(props);
-
-        // Bind event handlers so they are only bound once for every instance.
-        this._onDisplayNameChange = this._onDisplayNameChange.bind(this);
-        this._onSubmit = this._onSubmit.bind(this);
-        this._onKeyPress = this._onKeyPress.bind(this);
-    }
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    override render() {
-        const { isCCTabEnabled, isChatDisabled, isFileSharingEnabled, isPollsEnabled, t } = this.props;
-
-        // Build array of enabled feature names (translated).
-        const features = [
-            !isChatDisabled ? t('chat.nickname.featureChat') : '',
-            isPollsEnabled ? t('chat.nickname.featurePolls') : '',
-            isFileSharingEnabled ? t('chat.nickname.featureFileSharing') : '',
-            isCCTabEnabled ? t('chat.nickname.featureClosedCaptions') : ''
-        ].filter(Boolean);
-
-        // Return null if no features available - component won't render.
-        if (features.length === 0) {
-            return null;
-        }
-
-        // Build translation arguments dynamically: { feature1: "chat", feature2: "polls", ... }
-        const translationArgs = features.reduce((acc, feature, index) => {
-            acc[`feature${index + 1}`] = feature;
-
-            return acc;
-        }, {} as Record<string, string>);
-
-        // Use dynamic translation key: "titleWith1Features", "titleWith2Features", etc.
-        const title = t(`chat.nickname.titleWith${features.length}Features`, translationArgs);
-
-        return (
-            <div id = 'nickname'>
-                <form onSubmit = { this._onSubmit }>
-                    <Input
-                        accessibilityLabel = { t(title) }
-                        autoFocus = { true }
-                        id = 'nickinput'
-                        label = { t(title) }
-                        name = 'name'
-                        onChange = { this._onDisplayNameChange }
-                        placeholder = { t('chat.nickname.popover') }
-                        type = 'text'
-                        value = { this.state.displayName } />
-                </form>
-                <br />
-                <Button
-                    accessibilityLabel = { t('chat.enter') }
-                    disabled = { !this.state.displayName.trim() }
-                    fullWidth = { true }
-                    label = { t('chat.enter') }
-                    onClick = { this._onSubmit } />
-                <KeyboardAvoider />
-            </div>
-        );
-    }
+const DisplayNameForm = (props: IProps) => {
+    const [ displayName, setDisplayName ] = useState('');
 
     /**
      * Dispatches an action update the entered display name.
@@ -142,8 +55,8 @@ class DisplayNameForm extends Component<IProps, IState> {
      * @private
      * @returns {void}
      */
-    _onDisplayNameChange(value: string) {
-        this.setState({ displayName: value });
+    const _onDisplayNameChange = (value: string): void => {
+        setDisplayName(value);
     }
 
     /**
@@ -154,27 +67,83 @@ class DisplayNameForm extends Component<IProps, IState> {
      * @private
      * @returns {void}
      */
-    _onSubmit(event: any) {
+    const _onSubmit = (event: any): void => {
         event?.preventDefault?.();
 
         // Store display name in settings
-        this.props.dispatch(updateSettings({
-            displayName: this.state.displayName
+        props.dispatch(updateSettings({
+            displayName: displayName
         }));
     }
 
     /**
      * KeyPress handler for accessibility.
      *
-     * @param {Object} e - The key event to handle.
+     * @param {React.KeyboardEvent} e - The key event to handle.
      *
      * @returns {void}
      */
-    _onKeyPress(e: React.KeyboardEvent) {
+    const _onKeyPress = (e: React.KeyboardEvent)=> {
         if (e.key === ' ' || e.key === 'Enter') {
-            this._onSubmit(e);
+            _onSubmit(e);
         }
     }
-}
 
+    const {
+        isCCTabEnabled,
+        isChatDisabled,
+        isFileSharingEnabled,
+        isPollsEnabled,
+        t
+    } = props;
+
+    // Build array of enabled feature names (translated).
+    const features : string[] = [
+        !isChatDisabled ? t('chat.nickname.featureChat') : '',
+        isPollsEnabled ? t('chat.nickname.featurePolls') : '',
+        isFileSharingEnabled ? t('chat.nickname.featureFileSharing') : '',
+        isCCTabEnabled ? t('chat.nickname.featureClosedCaptions') : ''
+    ].filter(Boolean);
+
+    // Return null if no features available - component won't render.
+    if (features.length === 0) {
+        return null;
+    }
+
+    // Build translation arguments dynamically: { feature1: "chat", feature2: "polls", ... }
+    const translationArgs = features.reduce((acc, feature, index) => {
+        acc[`feature${index + 1}`] = feature;
+
+        return acc;
+    }, {} as Record<string, string>);
+
+    // Use dynamic translation key: "titleWith1Features", "titleWith2Features", etc.
+    const title = t(`chat.nickname.titleWith${features.length}Features`, translationArgs);
+
+    return (
+        <div id='nickname'>
+            <form onSubmit = { _onSubmit }>
+                <Input
+                    accessibilityLabel = { t(title) }
+                    autoFocus = { true }
+                    id='nickinput'
+                    label = { t(title) }
+                    name = 'name'
+                    onChange = { _onDisplayNameChange }
+                    placeholder = { t('chat.nickname.popover') }
+                    type = 'text'
+                    value = { displayName } />
+            </form>
+            <br />
+            <Button
+                accessibilityLabel = { t('chat.enter') }
+                disabled = { !displayName.trim() }
+                fullWidth = { true }
+                label = { t('chat.enter') }
+                onClick = { _onSubmit } />
+            <KeyboardAvoider />
+        </div>
+    );
+
+}
 export default translate(connect()(DisplayNameForm));
