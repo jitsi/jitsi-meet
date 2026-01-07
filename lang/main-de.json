@@ -1190,7 +1190,7 @@
             "signedIn": "Momentan wird auf Kalendertermine von {{email}} zugegriffen. Klicken Sie auf die folgende Schaltfläche „Trennen“, um den Zugriff auf die Kalendertermine zu stoppen.",
             "title": "Kalender"
         },
-        "chatWithPermissions": "Chat mit Freigaben",
+        "chatWithPermissions": "Chat nur für Moderation erlauben",
         "desktopShareFramerate": "Framerate für Bildschirmfreigabe",
         "desktopShareHighFpsWarning": "Eine höhere Framerate könnte sich auf Ihre Datenrate auswirken. Sie müssen die Bildschirmfreigabe neustarten, damit die Einstellung übernommen wird.",
         "desktopShareWarning": "Sie müssen die Bildschirmfreigabe neustarten, damit die Einstellung übernommen wird.",
