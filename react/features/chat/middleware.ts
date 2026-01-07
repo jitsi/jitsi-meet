@@ -240,6 +240,13 @@ MiddlewareRegistry.register(store => next => action => {
     case PARTICIPANT_JOINED:
     case PARTICIPANT_LEFT:
     case PARTICIPANT_UPDATED: {
+        if (action.type === PARTICIPANT_LEFT) {
+            const { privateMessageRecipient } = store.getState()['features/chat'];
+
+            if (action.participant?.id === privateMessageRecipient?.id) {
+                store.dispatch(setPrivateMessageRecipient());
+            }
+        }
         if (_shouldNotifyPrivateRecipientsChanged(store, action)) {
             const result = next(action);
 
