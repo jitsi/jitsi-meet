@@ -105,7 +105,7 @@ const MeetingParticipantItem = ({
         if (_fakeParticipant && _localVideoOwner) {
             dispatch(showSharedVideoMenu(participantID));
         } else if (!_fakeParticipant) {
-            dispatch(showContextMenuDetails(_participantID, _local));
+            dispatch(showContextMenuDetails(participantID, _local));
         } // else no-op
     }, [ dispatch ]);
 

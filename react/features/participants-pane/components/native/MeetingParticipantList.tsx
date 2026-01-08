@@ -21,8 +21,8 @@ import {
 } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
 import { getInviteOthersControl } from '../../../share-room/functions';
-import { getSortedParticipantIds, shouldRenderInviteButton } from '../../functions';
 import { iAmVisitor } from '../../../visitors/functions';
+import { getSortedParticipantIds, shouldRenderInviteButton } from '../../functions';
 
 import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
@@ -58,12 +58,7 @@ const MeetingParticipantList = ({
 
     const dispatch = useDispatch();
 
-    const inviteOthersControl = useSelector(getInviteOthersControl);
-    const isAddPeopleFeatureEnabled = useSelector(addPeopleFeatureControl);
-    const localParticipant = useSelector(getLocalParticipant);
-    
-    const keyExtractor
-        = useCallback((e: undefined, i: number) => i.toString(), []);
+    const keyExtractor = useCallback((e: undefined, i: number) => i.toString(), []);
     const onInvite = useCallback(() => {
         setShareDialogVisiblity(isAddPeopleFeatureEnabled, dispatch);
         dispatch(doInvitePeople());
@@ -78,8 +73,7 @@ const MeetingParticipantList = ({
     const visitorsLabelText = visitorsCount && visitorsCount > 0
         ? t('participantsPane.headings.visitors', { count: visitorsCount })
         : undefined;
-    const { color, shareDialogVisible } = inviteOthersControl;
-  
+
     const renderParticipant = ({ item }: any) => (
         <MeetingParticipantItem
             key = { item }
@@ -89,12 +83,9 @@ const MeetingParticipantList = ({
 
     return (
         <View style = { styles.meetingListContainer }>
-            {
-                visitorsCount && visitorsCount > 0
-                && <Text style = { styles.visitorsLabel }>
-                    { visitorsLabelText }
-                </Text>
-            }
+            <Text style = { styles.visitorsLabel as TextStyle }>
+                { visitorsLabelText }
+            </Text>
             <Text
                 style = { styles.meetingListDescription as TextStyle }>
                 { title }
