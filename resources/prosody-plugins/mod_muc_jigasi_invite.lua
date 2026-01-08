@@ -6,9 +6,10 @@ local jid_split = require "util.jid".split;
 local hashes = require "util.hashes";
 local random = require "util.random";
 local st = require("util.stanza");
-local json = require "util.json";
+local json = require 'cjson.safe';
 local util = module:require "util";
 local async_handler_wrapper = util.async_handler_wrapper;
+local process_host_module = util.process_host_module;
 
 local muc_domain_base = module:get_option_string("muc_mapper_domain_base");
 
@@ -132,7 +133,12 @@ local function handle_jigasi_invite(event)
         module:log("warn", "Wrong content type: %s or missing payload", request.headers.content_type);
         return { status_code = 400; }
     end
-    local payload = json.decode(request.body);
+    local payload, error = json.decode(request.body);
+
+    if not payload then
+        module:log('error', 'Cannot decode json error:%s', error);
+        return { status_code = 400; }
+    end
 
     local conference = payload["conference"];
     local phone_no = payload["phoneNo"];
@@ -166,24 +172,6 @@ module:provides("http", {
         end;
     };
 });
-
--- process a host module directly if loaded or hooks to wait for its load
-function process_host_module(name, callback)
-    local function process_host(host)
-        if host == name then
-            callback(module:context(host), host);
-        end
-    end
-
-    if prosody.hosts[name] == nil then
-        module:log('info', 'No host/component found, will wait for it: %s', name)
-
-        -- when a host or component is added
-        prosody.events.add_handler('host-activated', process_host);
-    else
-        process_host(name);
-    end
-end
 
 process_host_module(muc_domain, function(_, host)
     local muc_module = prosody.hosts[host].modules.muc;

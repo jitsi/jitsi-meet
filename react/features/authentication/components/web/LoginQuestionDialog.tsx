@@ -18,7 +18,7 @@ interface IProps {
  * Implements the dialog that warns the user that the login will leave the conference.
  *
  * @param {Object} props - The props of the component.
- * @returns {React$Element}.
+ * @returns {React$Element}
  */
 const LoginQuestionDialog = ({ handler }: IProps) => {
     const { t } = useTranslation();

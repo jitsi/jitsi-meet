@@ -3,21 +3,16 @@ import React, { useCallback } from 'react';
 import {
     BackHandler,
     NativeModules,
-    Platform,
-    SafeAreaView,
-    StatusBar,
     View,
     ViewStyle
 } from 'react-native';
-import { EdgeInsets, withSafeAreaInsets } from 'react-native-safe-area-context';
+import { Edge, EdgeInsets, SafeAreaView, withSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect, useDispatch } from 'react-redux';
 
-import { appNavigate } from '../../../app/actions';
+import { appNavigate } from '../../../app/actions.native';
 import { IReduxState, IStore } from '../../../app/types';
 import { CONFERENCE_BLURRED, CONFERENCE_FOCUSED } from '../../../base/conference/actionTypes';
-import { FULLSCREEN_ENABLED, PIP_ENABLED } from '../../../base/flags/constants';
-import { getFeatureFlag } from '../../../base/flags/functions';
-import { getParticipantCount } from '../../../base/participants/functions';
+import { isDisplayNameVisible } from '../../../base/config/functions.native';
 import Container from '../../../base/react/components/native/Container';
 import LoadingIndicator from '../../../base/react/components/native/LoadingIndicator';
 import TintedView from '../../../base/react/components/native/TintedView';
@@ -39,17 +34,17 @@ import LargeVideo from '../../../large-video/components/LargeVideo.native';
 import { getIsLobbyVisible } from '../../../lobby/functions';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
-import { setPictureInPictureEnabled } from '../../../mobile/picture-in-picture/functions';
+import { isPipEnabled, setPictureInPictureEnabled } from '../../../mobile/picture-in-picture/functions';
 import Captions from '../../../subtitles/components/native/Captions';
-import { setToolboxVisible } from '../../../toolbox/actions';
+import { setToolboxVisible } from '../../../toolbox/actions.native';
 import Toolbox from '../../../toolbox/components/native/Toolbox';
-import { isToolboxVisible } from '../../../toolbox/functions';
+import { isToolboxVisible } from '../../../toolbox/functions.native';
 import {
     AbstractConference,
+    type AbstractProps,
     abstractMapStateToProps
 } from '../AbstractConference';
-import type { AbstractProps } from '../AbstractConference';
-import { isConnecting } from '../functions';
+import { isConnecting } from '../functions.native';
 
 import AlwaysOnLabels from './AlwaysOnLabels';
 import ExpandedLabelPopup from './ExpandedLabelPopup';
@@ -97,14 +92,9 @@ interface IProps extends AbstractProps {
     _filmstripVisible: boolean;
 
     /**
-     * The indicator which determines whether fullscreen (immersive) mode is enabled.
+     * The indicator which determines if the display name is visible.
      */
-    _fullscreenEnabled: boolean;
-
-    /**
-     * The indicator which determines if the conference type is one to one.
-     */
-    _isOneToOneConference: boolean;
+    _isDisplayNameVisible: boolean;
 
     /**
      * The indicator which determines if the participants pane is open.
@@ -181,6 +171,11 @@ class Conference extends AbstractConference<IProps, State> {
     _expandedLabelTimeout: any;
 
     /**
+     * Initializes hardwareBackPress subscription.
+     */
+    _hardwareBackPressSubscription: any;
+
+    /**
      * Initializes a new Conference instance.
      *
      * @param {Object} props - The read-only properties with which the new
@@ -209,14 +204,14 @@ class Conference extends AbstractConference<IProps, State> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         const {
             _audioOnlyEnabled,
             _startCarMode,
             navigation
         } = this.props;
 
-        BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
+        this._hardwareBackPressSubscription = BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
 
         if (_audioOnlyEnabled && _startCarMode) {
             navigation.navigate(screen.conference.carmode);
@@ -228,9 +223,11 @@ class Conference extends AbstractConference<IProps, State> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         const {
-            _showLobby
+            _audioOnlyEnabled,
+            _showLobby,
+            _startCarMode
         } = this.props;
 
         if (!prevProps._showLobby && _showLobby) {
@@ -238,6 +235,10 @@ class Conference extends AbstractConference<IProps, State> {
         }
 
         if (prevProps._showLobby && !_showLobby) {
+            if (_audioOnlyEnabled && _startCarMode) {
+                return;
+            }
+
             navigate(screen.conference.main);
         }
     }
@@ -250,9 +251,9 @@ class Conference extends AbstractConference<IProps, State> {
      * @inheritdoc
      * @returns {void}
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         // Tear handling any hardware button presses for back navigation down.
-        BackHandler.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
+        this._hardwareBackPressSubscription?.remove();
 
         clearTimeout(this._expandedLabelTimeout.current ?? 0);
     }
@@ -263,10 +264,9 @@ class Conference extends AbstractConference<IProps, State> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _brandingStyles,
-            _fullscreenEnabled
         } = this.props;
 
         return (
@@ -276,13 +276,6 @@ class Conference extends AbstractConference<IProps, State> {
                     _brandingStyles
                 ] }>
                 <BrandingImageBackground />
-                {
-                    Platform.OS === 'android'
-                    && <StatusBar
-                        barStyle = 'light-content'
-                        hidden = { _fullscreenEnabled }
-                        translucent = { _fullscreenEnabled } />
-                }
                 { this._renderContent() }
             </Container>
         );
@@ -364,7 +357,7 @@ class Conference extends AbstractConference<IProps, State> {
             _aspectRatio,
             _connecting,
             _filmstripVisible,
-            _isOneToOneConference,
+            _isDisplayNameVisible,
             _largeVideoParticipantId,
             _reducedUI,
             _shouldDisplayTileView,
@@ -420,13 +413,13 @@ class Conference extends AbstractConference<IProps, State> {
                     <Captions onPress = { this._onClick } />
 
                     {
-                        _shouldDisplayTileView || (
-                            !_isOneToOneConference
-                            && <Container style = { styles.displayNameContainer }>
+                        _shouldDisplayTileView
+                        || (_isDisplayNameVisible && (
+                            <Container style = { styles.displayNameContainer }>
                                 <DisplayNameLabel
                                     participantId = { _largeVideoParticipantId } />
                             </Container>
-                        )
+                        ))
                     }
 
                     { !_shouldDisplayTileView && <LonelyMeetingExperience /> }
@@ -442,6 +435,7 @@ class Conference extends AbstractConference<IProps, State> {
                 </View>
 
                 <SafeAreaView
+                    edges = { [ 'left', 'right', 'top' ] }
                     pointerEvents = 'box-none'
                     style = {
                         (_toolboxVisible
@@ -450,6 +444,7 @@ class Conference extends AbstractConference<IProps, State> {
                     <TitleBar _createOnPress = { this._createOnPress } />
                 </SafeAreaView>
                 <SafeAreaView
+                    edges = { [ 'bottom', 'left', 'right', !_toolboxVisible && 'top' ].filter(Boolean) as Edge[] }
                     pointerEvents = 'box-none'
                     style = {
                         (_toolboxVisible
@@ -567,9 +562,8 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     const { backgroundColor } = state['features/dynamic-branding'];
     const { startCarMode } = state['features/base/settings'];
     const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
-    const participantCount = getParticipantCount(state);
     const brandingStyles = backgroundColor ? {
-        backgroundColor
+        background: backgroundColor
     } : undefined;
 
     return {
@@ -580,11 +574,10 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _calendarEnabled: isCalendarEnabled(state),
         _connecting: isConnecting(state),
         _filmstripVisible: isFilmstripVisible(state),
-        _fullscreenEnabled: getFeatureFlag(state, FULLSCREEN_ENABLED, true),
-        _isOneToOneConference: Boolean(participantCount === 2),
+        _isDisplayNameVisible: isDisplayNameVisible(state),
         _isParticipantsPaneOpen: isOpen,
         _largeVideoParticipantId: state['features/large-video'].participantId,
-        _pictureInPictureEnabled: getFeatureFlag(state, PIP_ENABLED),
+        _pictureInPictureEnabled: isPipEnabled(state),
         _reducedUI: reducedUI,
         _showLobby: getIsLobbyVisible(state),
         _startCarMode: startCarMode,

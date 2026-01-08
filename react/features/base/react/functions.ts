@@ -1,5 +1,8 @@
 import punycode from 'punycode';
 
+import { IStateful } from '../app/types';
+import { toState } from '../redux/functions';
+
 /**
  * Returns the field value in a platform generic way.
  *
@@ -38,12 +41,25 @@ export function formatURLText(text = '') {
     }
 
     if (!result) {
-        // This will be the case for invalid URLs or URLs without a host (emails for example). In this case beacuse
-        // of the issue with PunycodeJS that truncates parts of the text when there is '@' we split the text by '@'
+        // This will be the case for invalid URLs or URLs without a host (emails for example). In this case due to
+        // the issue with PunycodeJS that truncates parts of the text when there is '@' we split the text by '@'
         // and use punycode for every separate part to prevent homograph attacks.
         result = text.split('@').map(punycode.toASCII)
             .join('@');
     }
 
     return result;
+}
+
+/**
+ * Returns the configured support URL.
+ *
+ * @param {IStateful} stateful - The redux state.
+ * @returns {string|undefined} - The configured support link.
+ */
+export function getSupportUrl(stateful: IStateful) {
+
+    // TODO: Once overwriting through interface config is completely gone we should think of a way to be able to set
+    // the value in the branding and not return the default value from interface config.
+    return toState(stateful)['features/dynamic-branding'].supportUrl || interfaceConfig?.SUPPORT_URL;
 }

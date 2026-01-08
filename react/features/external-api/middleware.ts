@@ -21,13 +21,15 @@ import {
 import {
     getDominantSpeakerParticipant,
     getLocalParticipant,
-    getParticipantById
+    getParticipantById,
+    getParticipantDisplayName
 } from '../base/participants/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { getBaseUrl } from '../base/util/helpers';
 import { appendSuffix } from '../display-name/functions';
 import { SUBMIT_FEEDBACK_ERROR, SUBMIT_FEEDBACK_SUCCESS } from '../feedback/actionTypes';
 import { SET_FILMSTRIP_VISIBLE } from '../filmstrip/actionTypes';
+import { iAmVisitor } from '../visitors/functions';
 
 import './subscriber';
 
@@ -119,7 +121,8 @@ MiddlewareRegistry.register(store => next => action => {
                 ),
                 avatarURL: loadableAvatarUrl,
                 breakoutRoom,
-                email
+                email,
+                visitor: iAmVisitor(state)
             }
         );
         break;
@@ -133,15 +136,29 @@ MiddlewareRegistry.register(store => next => action => {
         APP.API.notifyDataChannelOpened();
         break;
 
-    case KICKED_OUT:
+    case KICKED_OUT: {
+        const state = store.getState();
+        const localParticipant = getLocalParticipant(state);
+
+        if (!localParticipant) {
+            break;
+        }
+
+        const actor = action.participant;
+
         APP.API.notifyKickedOut(
             {
-                id: getLocalParticipant(store.getState())?.id,
+                id: localParticipant.id,
+                name: getParticipantDisplayName(state, localParticipant.id),
                 local: true
             },
-            { id: action.participant ? action.participant.getId() : undefined }
+            {
+                id: actor?.getId(),
+                name: actor?.getDisplayName()
+            }
         );
         break;
+    }
 
     case NOTIFY_CAMERA_ERROR:
         if (action.error) {
@@ -156,14 +173,28 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
 
-    case PARTICIPANT_KICKED:
+    case PARTICIPANT_KICKED: {
+        const state = store.getState();
+        const kickedParticipant = getParticipantById(state, action.kicked);
+        const kickerParticipant = getParticipantById(state, action.kicker);
+
+        if (!kickerParticipant || !kickedParticipant) {
+            break;
+        }
+
         APP.API.notifyKickedOut(
             {
-                id: action.kicked,
-                local: false
+                id: kickedParticipant.id,
+                local: kickedParticipant.local,
+                name: getParticipantDisplayName(state, kickedParticipant.id)
             },
-            { id: action.kicker });
+            {
+                id: kickerParticipant.id,
+                local: kickerParticipant.local,
+                name: getParticipantDisplayName(state, kickerParticipant.id)
+            });
         break;
+    }
 
     case PARTICIPANT_LEFT: {
         const { participant } = action;

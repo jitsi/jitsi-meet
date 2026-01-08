@@ -1,8 +1,8 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
+import { withStyles } from 'tss-react/mui';
 
 import AbstractDialogTab, {
     IProps as AbstractDialogTabProps
@@ -18,9 +18,14 @@ import { MAX_ACTIVE_PARTICIPANTS } from '../../../filmstrip/constants';
 export interface IProps extends AbstractDialogTabProps, WithTranslation {
 
     /**
+     *  Indicates if closed captions are enabled.
+     */
+    areClosedCaptionsEnabled: boolean;
+
+    /**
      * CSS classes object.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * The currently selected language to display in the language select
@@ -69,17 +74,12 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     showModeratorSettings: boolean;
 
     /**
-     * Whether or not to show prejoin screen.
+     * Whether or not to show subtitles on stage.
      */
-    showPrejoinPage: boolean;
+    showSubtitlesOnStage: boolean;
 
     /**
-     * Whether or not to display the prejoin settings section.
-     */
-    showPrejoinSettings: boolean;
-
-    /**
-     * Wether or not the stage filmstrip is enabled.
+     * Whether or not the stage filmstrip is enabled.
      */
     stageFilmstripEnabled: boolean;
 }
@@ -122,10 +122,10 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.
-        this._onShowPrejoinPageChanged = this._onShowPrejoinPageChanged.bind(this);
         this._renderMaxStageParticipantsSelect = this._renderMaxStageParticipantsSelect.bind(this);
         this._onMaxStageParticipantsSelect = this._onMaxStageParticipantsSelect.bind(this);
         this._onHideSelfViewChanged = this._onHideSelfViewChanged.bind(this);
+        this._onShowSubtitlesOnStageChanged = this._onShowSubtitlesOnStageChanged.bind(this);
         this._onLanguageItemSelect = this._onLanguageItemSelect.bind(this);
     }
 
@@ -135,24 +135,22 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
-            showPrejoinSettings,
-            classes,
+            areClosedCaptionsEnabled,
             disableHideSelfView,
             iAmVisitor,
             hideSelfView,
             showLanguageSettings,
-            t } = this.props;
+            showSubtitlesOnStage,
+            t
+        } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         return (
             <div
                 className = { clsx('more-tab', classes.container) }
                 key = 'more'>
-                {showPrejoinSettings && <>
-                    {this._renderPrejoinScreenSettings()}
-                    <hr className = { classes.divider } />
-                </>}
                 {this._renderMaxStageParticipantsSelect()}
                 {!disableHideSelfView && !iAmVisitor && (
                     <Checkbox
@@ -162,21 +160,15 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
                         name = 'hide-self-view'
                         onChange = { this._onHideSelfViewChanged } />
                 )}
+                {areClosedCaptionsEnabled && <Checkbox
+                    checked = { showSubtitlesOnStage }
+                    className = { classes.checkbox }
+                    label = { t('settings.showSubtitlesOnStage') }
+                    name = 'show-subtitles-button'
+                    onChange = { this._onShowSubtitlesOnStageChanged } /> }
                 {showLanguageSettings && this._renderLanguageSelect()}
             </div>
         );
-    }
-
-    /**
-     * Callback invoked to select if the lobby
-     * should be shown.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onShowPrejoinPageChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
-        super._onChange({ showPrejoinPage: checked });
     }
 
     /**
@@ -204,6 +196,17 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
     }
 
     /**
+     * Callback invoked to select if show subtitles button should be enabled.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onShowSubtitlesOnStageChanged({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) {
+        super._onChange({ showSubtitlesOnStage: checked });
+    }
+
+    /**
      * Callback invoked to select a language from select dropdown.
      *
      * @param {Object} e - The key event to handle.
@@ -214,24 +217,6 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
         const language = e.target.value;
 
         super._onChange({ currentLanguage: language });
-    }
-
-    /**
-     * Returns the React Element for modifying prejoin screen settings.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderPrejoinScreenSettings() {
-        const { t, showPrejoinPage } = this.props;
-
-        return (
-            <Checkbox
-                checked = { showPrejoinPage }
-                label = { t('prejoin.showScreen') }
-                name = 'show-prejoin-page'
-                onChange = { this._onShowPrejoinPageChanged } />
-        );
     }
 
     /**
@@ -271,7 +256,6 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
      */
     _renderLanguageSelect() {
         const {
-            classes,
             currentLanguage,
             languages,
             t
@@ -287,7 +271,6 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
 
         return (
             <Select
-                className = { classes.bottomMargin }
                 id = 'more-language-select'
                 label = { t('settings.language') }
                 onChange = { this._onLanguageItemSelect }
@@ -297,4 +280,4 @@ class MoreTab extends AbstractDialogTab<IProps, any> {
     }
 }
 
-export default withStyles(styles)(translate(MoreTab));
+export default withStyles(translate(MoreTab), styles);

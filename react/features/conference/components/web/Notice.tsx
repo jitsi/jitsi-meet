@@ -25,9 +25,10 @@ const useStyles = makeStyles()(theme => {
 
 const Notice = () => {
     const message = useSelector((state: IReduxState) => state['features/base/config'].noticeMessage);
+    const { reducedUI } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
     const { classes } = useStyles();
 
-    if (!message) {
+    if (!message || reducedUI) {
         return null;
     }
 

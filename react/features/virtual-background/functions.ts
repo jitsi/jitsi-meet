@@ -65,7 +65,6 @@ export const toDataURL = async (url: string) => {
  * @param {number} width - Value for resizing the image width.
  * @param {number} height - Value for resizing the image height.
  * @returns {Promise<string>}
- *
  */
 export function resizeImage(base64image: any, width = 1920, height = 1080): Promise<string> {
 

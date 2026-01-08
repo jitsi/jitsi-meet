@@ -39,10 +39,10 @@ const styles = {
 class ScreenSharingIosButton extends AbstractButton<IProps> {
     _nativeComponent: React.Component<any, any> | null;
 
-    accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
-    icon = IconScreenshare;
-    label = 'toolbar.startScreenSharing';
-    toggledLabel = 'toolbar.stopScreenSharing';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
+    override icon = IconScreenshare;
+    override label = 'toolbar.startScreenSharing';
+    override toggledLabel = 'toolbar.stopScreenSharing';
 
     /**
    * Initializes a new {@code ScreenSharingIosButton} instance.
@@ -65,7 +65,7 @@ class ScreenSharingIosButton extends AbstractButton<IProps> {
      * @inheritdoc
      * @returns {React$Node}
      */
-    render() {
+    override render() {
         return (
             <>
                 { super.render() }
@@ -94,7 +94,7 @@ class ScreenSharingIosButton extends AbstractButton<IProps> {
    * @protected
    * @returns {void}
    */
-    _handleClick() {
+    override _handleClick() {
         const handle = findNodeHandle(this._nativeComponent);
 
         NativeModules.ScreenCapturePickerViewManager.show(handle);
@@ -117,7 +117,7 @@ class ScreenSharingIosButton extends AbstractButton<IProps> {
    * @protected
    * @returns {boolean}
    */
-    _isToggled() {
+    override _isToggled() {
         return this.props._screensharing;
     }
 }

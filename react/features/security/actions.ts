@@ -10,6 +10,6 @@ import { SecurityDialog } from './components/security-dialog';
  */
 export function toggleSecurityDialog() {
     return function(dispatch: IStore['dispatch']) {
-        dispatch(toggleDialog(SecurityDialog));
+        dispatch(toggleDialog('SecurityDialog', SecurityDialog));
     };
 }

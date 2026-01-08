@@ -9,7 +9,6 @@ import HighlightButton from '../../../recording/components/Recording/web/Highlig
 import RecordingLabel from '../../../recording/components/web/RecordingLabel';
 import { showToolbox } from '../../../toolbox/actions.web';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
-import TranscribingLabel from '../../../transcribing/components/TranscribingLabel.web';
 import VideoQualityLabel from '../../../video-quality/components/VideoQualityLabel.web';
 import VisitorsCountLabel from '../../../visitors/components/web/VisitorsCountLabel';
 import ConferenceTimer from '../ConferenceTimer';
@@ -34,6 +33,11 @@ interface IProps {
         alwaysVisible?: string[];
         autoHide?: string[];
     };
+
+    /**
+     * The indicator which determines whether the UI is reduced.
+     */
+    _reducedUI: boolean;
 
     /**
      * Indicates whether the component should be visible or not.
@@ -82,10 +86,6 @@ const COMPONENTS: Array<{
     {
         Component: RaisedHandsCountLabel,
         id: 'raised-hands-count'
-    },
-    {
-        Component: TranscribingLabel,
-        id: 'transcribing'
     },
     {
         Component: VideoQualityLabel,
@@ -198,7 +198,13 @@ class ConferenceInfo extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
+        const { _reducedUI } = this.props;
+
+        if (_reducedUI) {
+            return null;
+        }
+
         return (
             <div
                 className = 'details-container'
@@ -222,9 +228,12 @@ class ConferenceInfo extends Component<IProps> {
  * }}
  */
 function _mapStateToProps(state: IReduxState) {
+    const { reducedUI } = state['features/base/responsive-ui'];
+
     return {
+        _conferenceInfo: getConferenceInfo(state),
+        _reducedUI: reducedUI,
         _visible: isToolboxVisible(state),
-        _conferenceInfo: getConferenceInfo(state)
     };
 }
 

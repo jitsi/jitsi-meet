@@ -5,7 +5,6 @@ import { makeStyles } from 'tss-react/mui';
 
 import { hideDialog } from '../../../dialog/actions';
 import { IconCloseLarge } from '../../../icons/svg';
-import { withPixelLineHeight } from '../../../styles/functions.web';
 import { operatesWithEnterKey } from '../../functions.web';
 
 import BaseDialog, { IProps as IBaseDialogProps } from './BaseDialog';
@@ -26,7 +25,7 @@ const useStyles = makeStyles()(theme => {
 
         title: {
             color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.heading5),
+            ...theme.typography.heading5,
             margin: 0,
             padding: 0
         },
@@ -111,12 +110,9 @@ const Dialog = ({
     }, [ onCancel ]);
 
     const submit = useCallback(() => {
-        if (onSubmit && (
-            (document.activeElement && !operatesWithEnterKey(document.activeElement))
-            || !document.activeElement
-        )) {
+        if ((document.activeElement && !operatesWithEnterKey(document.activeElement)) || !document.activeElement) {
             !disableAutoHideOnSubmit && dispatch(hideDialog());
-            onSubmit();
+            onSubmit?.();
         }
     }, [ onSubmit ]);
 

@@ -20,16 +20,12 @@ export function _cleanupConfig(config: IConfig) {
 
     if (NativeModules.AppInfo.LIBRE_BUILD) {
         delete config.analytics?.amplitudeAPPKey;
-        delete config.analytics?.googleAnalyticsTrackingId;
         delete config.analytics?.rtcstatsEnabled;
         delete config.analytics?.rtcstatsEndpoint;
         delete config.analytics?.rtcstatsPollInterval;
         delete config.analytics?.rtcstatsSendSdp;
-        delete config.analytics?.rtcstatsUseLegacy;
         delete config.analytics?.obfuscateRoomName;
         delete config.analytics?.watchRTCEnabled;
-        delete config.callStatsID;
-        delete config.callStatsSecret;
         delete config.watchRTCConfigParams;
         config.giphy = { enabled: false };
     }

@@ -18,6 +18,11 @@ interface IProps {
     _password?: string;
 
     /**
+     * Number of digits used in the room-lock password.
+     */
+    _passwordNumberOfDigits?: number;
+
+    /**
      * The {@code JitsiConference} which requires a password.
      *
      * @type {JitsiConference}
@@ -66,7 +71,7 @@ class PasswordRequiredPrompt extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidUpdate() {
+    override componentDidUpdate() {
         const { _password } = this.props;
 
         // The previous password in Redux gets cleared after the dialog appears and it ends up breaking the dialog
@@ -86,8 +91,17 @@ class PasswordRequiredPrompt extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { password } = this.state;
+        const { _passwordNumberOfDigits } = this.props;
+        const textInputProps: any = {
+            secureTextEntry: true
+        };
+
+        if (_passwordNumberOfDigits) {
+            textInputProps.keyboardType = 'numeric';
+            textInputProps.maxLength = _passwordNumberOfDigits;
+        }
 
         return (
             <InputDialog
@@ -96,9 +110,7 @@ class PasswordRequiredPrompt extends Component<IProps, IState> {
                 messageKey = { password ? 'dialog.incorrectRoomLockPassword' : undefined }
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
-                textInputProps = {{
-                    secureTextEntry: true
-                }}
+                textInputProps = { textInputProps }
                 titleKey = 'dialog.password' />
         );
     }
@@ -142,8 +154,11 @@ class PasswordRequiredPrompt extends Component<IProps, IState> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
+    const { roomPasswordNumberOfDigits } = state['features/base/config'];
+
     return {
-        _password: state['features/base/conference'].password
+        _password: state['features/base/conference'].password,
+        _passwordNumberOfDigits: roomPasswordNumberOfDigits
     };
 }
 

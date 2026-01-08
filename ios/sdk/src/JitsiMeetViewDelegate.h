@@ -116,4 +116,32 @@
  */
 - (void)readyToClose:(NSDictionary *)data;
 
+/**
+ * Called when the transcription chunk was received.
+ *
+ * The `data` dictionary contains a `messageID`, `language`, `participant` key.
+ */
+- (void)transcriptionChunkReceived:(NSDictionary *)data;
+
+/**
+ * Called when the custom overflow menu button is pressed.
+ *
+ * The `data` dictionary contains a `id`, `text` key.
+ */
+- (void)customButtonPressed:(NSDictionary *)data;
+
+/**
+ * Called when the unique identifier for conference has been set.
+ *
+ * The `data` dictionary contains a `sessionId` key.
+ */
+- (void)conferenceUniqueIdSet:(NSDictionary *)data;
+
+/**
+ * Called when the recording status has changed.
+ *
+ * The `data` dictionary contains a `sessionData` key.
+ */
+- (void)recordingStatusChanged:(NSDictionary *)data;
+
 @end

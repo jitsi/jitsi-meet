@@ -9,11 +9,9 @@ import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../app/types';
-import { getMultipleVideoSendingSupportFeatureFlag } from '../../base/config/functions.any';
 import { translate } from '../../base/i18n/functions';
 import Icon from '../../base/icons/components/Icon';
 import { IconCloseLarge } from '../../base/icons/svg';
-import { withPixelLineHeight } from '../../base/styles/functions.web';
 import Tooltip from '../../base/tooltip/components/Tooltip';
 import Spinner from '../../base/ui/components/web/Spinner';
 import { BACKGROUNDS_LIMIT, IMAGES, type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
@@ -31,11 +29,6 @@ interface IProps extends WithTranslation {
      * The list of Images to choose from.
      */
     _images: Array<Image>;
-
-    /**
-    * Whether or not multi-stream send support is enabled.
-    */
-    _multiStreamModeEnabled: boolean;
 
     /**
      * If the upload button should be displayed or not.
@@ -113,7 +106,7 @@ const useStyles = makeStyles()(theme => {
             alignItems: 'center',
             justifyContent: 'center',
             textAlign: 'center',
-            ...withPixelLineHeight(theme.typography.labelBold),
+            ...theme.typography.labelBold,
             color: theme.palette.text01,
             objectFit: 'cover',
 
@@ -503,8 +496,7 @@ function _mapStateToProps(state: IReduxState) {
 
     return {
         _images: (hasBrandingImages && dynamicBrandingImages) || IMAGES,
-        _showUploadButton: !state['features/base/config'].disableAddingBackgroundImages,
-        _multiStreamModeEnabled: getMultipleVideoSendingSupportFeatureFlag(state)
+        _showUploadButton: !state['features/base/config'].disableAddingBackgroundImages
     };
 }
 

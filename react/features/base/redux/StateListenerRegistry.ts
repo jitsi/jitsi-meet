@@ -96,8 +96,8 @@ class StateListenerRegistry {
      * @returns {void}
      */
     _listener({ prevSelections, store }: {
-            prevSelections: Map<SelectorListener, any>;
-            store: Store<any, any>;
+        prevSelections: Map<SelectorListener, any>;
+        store: Store<any, any>;
     }) {
         for (const selectorListener of this._selectorListeners) {
             const prevSelection = prevSelections.get(selectorListener);

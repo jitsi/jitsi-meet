@@ -65,10 +65,10 @@ export function openTokenAuthUrl(tokenAuthServiceUrl: string): any {
 
         // Show warning for leaving conference only when in a conference.
         if (!browser.isElectron() && getState()['features/base/conference'].conference) {
-            dispatch(openDialog(LoginQuestionDialog, {
+            dispatch(openDialog('LoginQuestionDialog', LoginQuestionDialog, {
                 handler: () => {
                     // Give time for the dialog to close.
-                    setTimeout(() => redirect, 500);
+                    setTimeout(() => redirect(), 500);
                 }
             }));
         } else {

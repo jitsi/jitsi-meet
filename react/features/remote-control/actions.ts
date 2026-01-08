@@ -64,7 +64,7 @@ let permissionsReplyListener: Function | undefined,
  * @public
  */
 export function openRemoteControlAuthorizationDialog(participantId: string) {
-    return openDialog(RemoteControlAuthorizationDialog, { participantId });
+    return openDialog('RemoteControlAuthorizationDialog', RemoteControlAuthorizationDialog, { participantId });
 }
 
 /**
@@ -107,7 +107,7 @@ export function requestRemoteControl(userId: string) {
 
         dispatch(setRemoteControlActive(true));
 
-        logger.log(`Requsting remote control permissions from: ${userId}`);
+        logger.log(`Requesting remote control permissions from: ${userId}`);
 
         const { conference } = state['features/base/conference'];
 

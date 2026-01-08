@@ -1,5 +1,5 @@
 import React from 'react';
-import { ColorValue } from 'react-native';
+import { ColorValue, StyleProp } from 'react-native';
 import { Switch as NativeSwitch } from 'react-native-paper';
 
 import { ISwitchProps } from '../types';
@@ -11,6 +11,12 @@ import {
 } from './switchStyles';
 
 interface IProps extends ISwitchProps {
+
+    /**
+     * Id for the switch.
+     */
+
+    id?: string;
 
     /**
      * Custom styles for the switch.
@@ -31,6 +37,7 @@ interface IProps extends ISwitchProps {
 const Switch = ({
     checked,
     disabled,
+    id,
     onChange,
     thumbColor = THUMB_COLOR,
     trackColor = {
@@ -41,9 +48,10 @@ const Switch = ({
 }: IProps) => (
     <NativeSwitch
         disabled = { disabled }
+        id = { id }
         ios_backgroundColor = { DISABLED_TRACK_COLOR }
         onValueChange = { onChange }
-        style = { style }
+        style = { style as StyleProp<object> }
         thumbColor = { thumbColor }
         trackColor = { trackColor }
         value = { checked } />

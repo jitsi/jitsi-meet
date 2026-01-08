@@ -24,7 +24,7 @@ export default class NavigateSectionListSectionHeader extends Component<IProps> 
      *
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <Text className = 'navigate-section-section-header'>
                 { this.props.section.title }

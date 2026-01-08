@@ -16,7 +16,7 @@ import {
 import LargeVideoManager from './LargeVideoManager';
 import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
 
-const logger = Logger.getLogger(__filename);
+const logger = Logger.getLogger('ui:VideoLayout');
 let largeVideo;
 
 const VideoLayout = {
@@ -154,6 +154,8 @@ const VideoLayout = {
 
     updateLargeVideo(id, forceUpdate, forceStreamToReattach = false) {
         if (!largeVideo) {
+            logger.debug(`Ignoring large video update with user id ${id}: large video not initialized yet!`);
+
             return;
         }
         const currentContainer = largeVideo.getCurrentContainer();

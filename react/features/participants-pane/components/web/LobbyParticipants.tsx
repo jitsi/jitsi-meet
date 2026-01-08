@@ -6,7 +6,6 @@ import { makeStyles } from 'tss-react/mui';
 import Avatar from '../../../base/avatar/components/Avatar';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCheck, IconCloseLarge } from '../../../base/icons/svg';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { admitMultiple } from '../../../lobby/actions.web';
 import { getKnockingParticipants, getLobbyEnabled } from '../../../lobby/functions';
 import Drawer from '../../../toolbox/components/web/Drawer';
@@ -28,7 +27,7 @@ const useStyles = makeStyles()(theme => {
             color: theme.palette.text01,
             display: 'flex',
             padding: '12px 16px',
-            ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+            ...theme.typography.bodyShortRegularLarge,
 
             '&:first-child': {
                 marginTop: '15px'
@@ -48,11 +47,11 @@ const useStyles = makeStyles()(theme => {
             justifyContent: 'space-between'
         },
         heading: {
-            ...withPixelLineHeight(theme.typography.bodyShortBold),
+            ...theme.typography.bodyShortBold,
             color: theme.palette.text02
         },
         link: {
-            ...withPixelLineHeight(theme.typography.labelBold),
+            ...theme.typography.labelBold,
             color: theme.palette.link01,
             cursor: 'pointer'
         }
@@ -91,7 +90,7 @@ export default function LobbyParticipants() {
                     participants.length > 1
                     && <div
                         className = { classes.link }
-                        onClick = { admitAll }>{t('lobby.admitAll')}</div>
+                        onClick = { admitAll }>{t('participantsPane.actions.admitAll')}</div>
                 }
             </div>
             <LobbyParticipantItems
@@ -117,7 +116,7 @@ export default function LobbyParticipants() {
                                 className = { classes.icon }
                                 size = { 20 }
                                 src = { IconCheck } />
-                            <span>{ t('lobby.admit') }</span>
+                            <span>{ t('participantsPane.actions.admit') }</span>
                         </li>
                         <li
                             className = { classes.drawerItem }
@@ -126,7 +125,7 @@ export default function LobbyParticipants() {
                                 className = { classes.icon }
                                 size = { 20 }
                                 src = { IconCloseLarge } />
-                            <span>{ t('lobby.reject')}</span>
+                            <span>{ t('participantsPane.actions.reject')}</span>
                         </li>
                     </ul>
                 </Drawer>

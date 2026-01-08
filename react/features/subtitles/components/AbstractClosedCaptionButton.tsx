@@ -2,13 +2,24 @@ import { createToolbarEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IReduxState } from '../../app/types';
 import { MEET_FEATURES } from '../../base/jwt/constants';
-import { isLocalParticipantModerator } from '../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
 import { maybeShowPremiumFeatureDialog } from '../../jaas/actions';
+import { canStartSubtitles, isCCTabEnabled } from '../functions.any';
 
+/**
+ * Props interface for the Abstract Closed Caption Button component.
+ *
+ * @interface IAbstractProps
+ * @augments {AbstractButtonProps}
+ */
 export interface IAbstractProps extends AbstractButtonProps {
 
-    _language: string;
+    /**
+     * Whether the subtitles tab is enabled in the UI.
+     */
+    _isCCTabEnabled: boolean;
+
+    _language: string | null;
 
     /**
      * Whether the local participant is currently requesting subtitles.
@@ -49,7 +60,7 @@ export class AbstractClosedCaptionButton
      * @protected
      * @returns {void}
      */
-    async _handleClick() {
+    override _handleClick() {
         const { _requestingSubtitles, dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('transcribing.ccButton',
@@ -57,7 +68,7 @@ export class AbstractClosedCaptionButton
                 'requesting_subtitles': Boolean(_requestingSubtitles)
             }));
 
-        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
+        const dialogShown = dispatch(maybeShowPremiumFeatureDialog(MEET_FEATURES.RECORDING));
 
         if (!dialogShown) {
             this._handleClickOpenLanguageSelector();
@@ -71,7 +82,7 @@ export class AbstractClosedCaptionButton
      * @protected
      * @returns {boolean}
      */
-    _isDisabled() {
+    override _isDisabled() {
         return false;
     }
 
@@ -82,7 +93,7 @@ export class AbstractClosedCaptionButton
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._requestingSubtitles;
     }
 }
@@ -103,15 +114,13 @@ export class AbstractClosedCaptionButton
  */
 export function _abstractMapStateToProps(state: IReduxState, ownProps: IAbstractProps) {
     const { _requestingSubtitles, _language } = state['features/subtitles'];
-    const { transcription } = state['features/base/config'];
-    const { isTranscribing } = state['features/transcribing'];
 
     // if the participant is moderator, it can enable transcriptions and if
     // transcriptions are already started for the meeting, guests can just show them
-    const { visible = Boolean(transcription?.enabled
-        && (isLocalParticipantModerator(state) || isTranscribing)) } = ownProps;
+    const { visible = canStartSubtitles(state) } = ownProps;
 
     return {
+        _isCCTabEnabled: isCCTabEnabled(state),
         _requestingSubtitles,
         _language,
         visible

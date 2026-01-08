@@ -1,6 +1,7 @@
 import { IStore } from '../../app/types';
 import JitsiMeetJS from '../lib-jitsi-meet';
 
+import { getCameraFacingMode } from './functions.any';
 import { ITrackOptions } from './types';
 
 export * from './functions.any';
@@ -16,10 +17,7 @@ export * from './functions.any';
  * and/or 'video'.
  * @param {string|null} [options.micDeviceId] - Microphone device id or
  * {@code undefined} to use app's settings.
- * @param {number|undefined} [oprions.timeout] - A timeout for JitsiMeetJS.createLocalTracks used to create the tracks.
- * @param {boolean} [options.firePermissionPromptIsShownEvent] - Whether lib-jitsi-meet
- * should check for a {@code getUserMedia} permission prompt and fire a
- * corresponding event.
+ * @param {number|undefined} [options.timeout] - A timeout for JitsiMeetJS.createLocalTracks used to create the tracks.
  * @param {IStore} store - The redux store in the context of which the function
  * is to execute and from which state such as {@code config} is to be retrieved.
  * @returns {Promise<JitsiLocalTrack[]>}
@@ -39,6 +37,7 @@ export function createLocalTracksF(options: ITrackOptions = {}, store: IStore) {
 
             // Copy array to avoid mutations inside library.
             devices: options.devices?.slice(0),
+            facingMode: options.facingMode || getCameraFacingMode(state),
             micDeviceId,
             resolution
         });

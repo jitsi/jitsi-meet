@@ -19,12 +19,12 @@ interface IProps extends AbstractButtonProps {
  * Component that renders a toolbar button for toggling noise suppression.
  */
 class NoiseSuppressionButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.noiseSuppression';
-    icon = IconNoiseSuppressionOn;
-    label = 'toolbar.noiseSuppression';
-    tooltip = 'toolbar.noiseSuppression';
-    toggledIcon = IconNoiseSuppressionOff;
-    toggledLabel = 'toolbar.disableNoiseSuppression';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.noiseSuppression';
+    override icon = IconNoiseSuppressionOn;
+    override label = 'toolbar.noiseSuppression';
+    override tooltip = 'toolbar.noiseSuppression';
+    override toggledIcon = IconNoiseSuppressionOff;
+    override toggledLabel = 'toolbar.disableNoiseSuppression';
 
     /**
      * Handles clicking / pressing the button.
@@ -32,7 +32,7 @@ class NoiseSuppressionButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch } = this.props;
 
         dispatch(toggleNoiseSuppression());
@@ -46,7 +46,7 @@ class NoiseSuppressionButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._isNoiseSuppressionEnabled;
     }
 }

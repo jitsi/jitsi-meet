@@ -1,8 +1,0 @@
-{
-    "name": "JitsiMeetNW!",
-    "version": "0.0.1",
-    "jitsi-url": "https://ivan.jitsi.net/",
-    "main": "index.html",
-    "chromium-args": "--ignore-certificate-errors",
-    "user-agent": "Chrome/%webkit_ver JitsiMeetNW/%ver"
-}

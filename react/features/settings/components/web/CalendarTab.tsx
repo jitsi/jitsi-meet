@@ -1,12 +1,11 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import Spinner from '../../../base/ui/components/web/Spinner';
 import { bootstrapCalendarIntegration, clearCalendarIntegration, signIn } from '../../../calendar-sync/actions';
@@ -49,7 +48,7 @@ interface IProps extends WithTranslation {
     /**
      * CSS classes object.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * Invoked to change the configured calendar integration.
@@ -76,10 +75,10 @@ const styles = (theme: Theme) => {
             flexDirection: 'column' as const,
             alignItems: 'center',
             justifyContent: 'center',
-            textAlign: 'center',
+            textAlign: 'center' as const,
             minHeight: '100px',
             color: theme.palette.text01,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular)
+            ...theme.typography.bodyShortRegular
         },
 
         button: {
@@ -118,7 +117,7 @@ class CalendarTab extends Component<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         this.props.dispatch(bootstrapCalendarIntegration())
             .catch((err: any) => logger.error('CalendarTab bootstrap failed', err))
             .then(() => this.setState({ loading: false }));
@@ -130,8 +129,8 @@ class CalendarTab extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
-        const { classes } = this.props;
+    override render() {
+        const classes = withStyles.getClasses(this.props);
         let view;
 
         if (this.state.loading) {
@@ -221,9 +220,9 @@ class CalendarTab extends Component<IProps, IState> {
             _appName,
             _enableGoogleIntegration,
             _enableMicrosoftIntegration,
-            classes,
             t
         } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         return (
             <>
@@ -255,7 +254,8 @@ class CalendarTab extends Component<IProps, IState> {
      * @returns {ReactElement}
      */
     _renderSignOutState() {
-        const { _profileEmail, classes, t } = this.props;
+        const { _profileEmail, t } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         return (
             <>
@@ -304,4 +304,4 @@ function _mapStateToProps(state: IReduxState) {
     };
 }
 
-export default withStyles(styles)(translate(connect(_mapStateToProps)(CalendarTab)));
+export default withStyles(translate(connect(_mapStateToProps)(CalendarTab)), styles);

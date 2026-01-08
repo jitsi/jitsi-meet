@@ -1,4 +1,4 @@
-import { throttle } from 'lodash';
+import { throttle } from 'lodash-es';
 
 import { IReduxState, IStore } from '../app/types';
 import { getParticipantCount } from '../base/participants/functions';
@@ -56,7 +56,6 @@ const checkToolboxOverlap = (clientHeight: number, store: IStore) => {
         const indicatorsRect = tile?.querySelector('.bottom-indicators')?.getBoundingClientRect();
 
         if (!indicatorsRect) {
-            // eslint-disable-next-line no-continue
             continue;
         }
 
@@ -83,17 +82,21 @@ const throttledCheckOverlap = throttle(checkToolboxOverlap, 100, {
  */
 StateListenerRegistry.register(
     /* selector */ state => {
-        const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+        const { clientHeight, videoSpaceWidth } = state['features/base/responsive-ui'];
 
         return {
             participantCount: getParticipantCount(state),
             clientHeight,
-            clientWidth,
+            clientWidth: videoSpaceWidth,
             isTileView: isLayoutTileView(state)
         };
     },
-    /* listener */({ clientHeight, isTileView }, store) => {
+    /* listener */({ clientHeight, isTileView }, store, previousState) => {
         if (!isTileView) {
+            if (previousState?.isTileView) {
+                store.dispatch(setShiftUp(false));
+            }
+
             return;
         }
         throttledCheckOverlap(clientHeight, store);

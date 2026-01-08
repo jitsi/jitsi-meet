@@ -4,7 +4,7 @@
 
 local jid = require "util.jid";
 local it = require "util.iterators";
-local json = require "util.json";
+local json = require 'cjson.safe';
 local iterators = require "util.iterators";
 local array = require"util.array";
 

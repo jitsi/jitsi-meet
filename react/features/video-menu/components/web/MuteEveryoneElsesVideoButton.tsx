@@ -7,7 +7,7 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { openDialog } from '../../../base/dialog/actions';
 import { IconVideoOff } from '../../../base/icons/svg';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { IButtonProps } from '../../types';
 
 import MuteEveryonesVideoDialog from './MuteEveryonesVideoDialog';
@@ -33,7 +33,7 @@ const MuteEveryoneElsesVideoButton = ({
             return;
         }
         sendAnalytics(createToolbarEvent('mute.everyoneelsesvideo.pressed'));
-        dispatch(openDialog(MuteEveryonesVideoDialog, { exclude: [ participantID ] }));
+        dispatch(openDialog('MuteEveryonesVideoDialog', MuteEveryonesVideoDialog, { exclude: [ participantID ] }));
     }, [ notifyClick, notifyMode, participantID ]);
 
     return (

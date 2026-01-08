@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { IconInfoCircle } from '../../../base/icons/svg';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { renderConnectionStatus } from '../../actions.web';
 import { IButtonProps } from '../../types';
 

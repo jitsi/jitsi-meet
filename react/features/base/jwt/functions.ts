@@ -2,7 +2,9 @@
 import jwtDecode from 'jwt-decode';
 
 import { IReduxState } from '../../app/types';
+import { isVpaasMeeting } from '../../jaas/functions';
 import { getLocalParticipant } from '../participants/functions';
+import { IParticipantFeatures, ParticipantFeaturesKey } from '../participants/types';
 import { parseURLParams } from '../util/parseURLParams';
 
 import { JWT_VALIDATION_ERRORS, MEET_FEATURES } from './constants';
@@ -19,7 +21,11 @@ import logger from './logger';
  */
 export function parseJWTFromURLParams(url: URL | typeof window.location = window.location) {
     // @ts-ignore
-    return parseURLParams(url, true, 'search').jwt;
+    const jwt = parseURLParams(url, false, 'hash').jwt;
+
+    // TODO: eventually remove the search param and only pull from the hash
+    // @ts-ignore
+    return jwt ? jwt : parseURLParams(url, true, 'search').jwt;
 }
 
 /**
@@ -39,29 +45,54 @@ export function getJwtName(state: IReduxState) {
  *
  * @param {IReduxState} state - The app state.
  * @param {string} feature - The feature we want to check.
- * @param {boolean} ifNoToken - Default value if there is no token.
  * @param {boolean} ifNotInFeatures - Default value if features prop exists but does not have the {@code feature}.
- * @returns {bolean}
+ * @returns {boolean}
  */
-export function isJwtFeatureEnabled(state: IReduxState, feature: string, ifNoToken = false, ifNotInFeatures = false) {
-    const { jwt } = state['features/base/jwt'];
+export function isJwtFeatureEnabled(
+        state: IReduxState,
+        feature: ParticipantFeaturesKey,
+        ifNotInFeatures: boolean
+) {
+    let { features } = getLocalParticipant(state) || {};
 
-    if (!jwt) {
-        return ifNoToken;
+    if (typeof features === 'undefined' && isVpaasMeeting(state)) {
+        // for vpaas the backend is always initialized with empty features if those are missing
+        features = {};
     }
 
-    const { features } = getLocalParticipant(state) || {};
+    return isJwtFeatureEnabledStateless({
+        localParticipantFeatures: features,
+        feature,
+        ifNotInFeatures
+    });
+}
 
-    // If `features` is undefined, act as if everything is enabled.
-    if (typeof features === 'undefined') {
-        return true;
-    }
+interface IIsJwtFeatureEnabledStatelessParams {
+    feature: ParticipantFeaturesKey;
+    ifNotInFeatures: boolean;
+    jwt?: string;
+    localParticipantFeatures?: IParticipantFeatures;
+}
 
-    if (typeof features[feature as keyof typeof features] === 'undefined') {
+/**
+ * Check if the given JWT feature is enabled.
+ *
+ * @param {ILocalParticipant} localParticipantFeatures - The features of the local participant.
+ * @param {string} feature - The feature we want to check.
+ * @param {boolean} ifNotInFeatures - Default value if features is missing
+ * or prop exists but does not have the {@code feature}.
+ * @returns {boolean}
+ */
+export function isJwtFeatureEnabledStateless({
+    localParticipantFeatures: features,
+    feature,
+    ifNotInFeatures
+}: IIsJwtFeatureEnabledStatelessParams) {
+    if (typeof features?.[feature] === 'undefined') {
         return ifNotInFeatures;
     }
 
-    return String(features[feature as keyof typeof features]) === 'true';
+    return String(features[feature]) === 'true';
 }
 
 /**
@@ -138,10 +169,12 @@ export function validateJwt(jwt: string) {
             }
         }
 
-        if (!isValidUnixTimestamp(nbf)) {
-            errors.push({ key: JWT_VALIDATION_ERRORS.NBF_INVALID });
-        } else if (currentTimestamp < nbf * 1000) {
-            errors.push({ key: JWT_VALIDATION_ERRORS.NBF_FUTURE });
+        if (nbf) { // nbf value is optional
+            if (!isValidUnixTimestamp(nbf)) {
+                errors.push({ key: JWT_VALIDATION_ERRORS.NBF_INVALID });
+            } else if (currentTimestamp < nbf * 1000) {
+                errors.push({ key: JWT_VALIDATION_ERRORS.NBF_FUTURE });
+            }
         }
 
         if (!isValidUnixTimestamp(exp)) {
@@ -156,7 +189,7 @@ export function validateJwt(jwt: string) {
             const { features } = context;
             const meetFeatures = Object.values(MEET_FEATURES);
 
-            Object.keys(features).forEach(feature => {
+            (Object.keys(features) as ParticipantFeaturesKey[]).forEach(feature => {
                 if (meetFeatures.includes(feature)) {
                     const featureValue = features[feature];
 

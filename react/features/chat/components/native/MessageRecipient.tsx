@@ -12,7 +12,8 @@ import {
 } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { setLobbyChatActiveState, setPrivateMessageRecipient } from '../../actions.any';
 import AbstractMessageRecipient, {
-    IProps as AbstractProps
+    IProps as AbstractProps,
+    _mapStateToProps as _mapStateToPropsAbstract
 } from '../AbstractMessageRecipient';
 
 import styles from './styles';
@@ -36,11 +37,6 @@ interface IProps extends AbstractProps {
         id: string;
         name: string;
     } | ILocalParticipant;
-
-    /**
-     * The participant object set for private messaging.
-     */
-    privateMessageRecipient: { name: string; };
 }
 
 /**
@@ -92,17 +88,20 @@ class MessageRecipient extends AbstractMessageRecipient<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             isLobbyChatActive,
             lobbyMessageRecipient,
-            privateMessageRecipient,
+            _privateMessageRecipient,
+            _isVisitor,
             t
         } = this.props;
 
         if (isLobbyChatActive) {
             return (
-                <View style = { styles.lobbyMessageRecipientContainer as ViewStyle }>
+                <View
+                    id = 'chat-recipient'
+                    style = { styles.lobbyMessageRecipientContainer as ViewStyle }>
                     <Text style = { styles.messageRecipientText }>
                         { t('chat.lobbyChatMessageTo', {
                             recipient: lobbyMessageRecipient?.name
@@ -118,18 +117,21 @@ class MessageRecipient extends AbstractMessageRecipient<IProps> {
             );
         }
 
-        if (!privateMessageRecipient) {
+        if (!_privateMessageRecipient) {
             return null;
         }
 
         return (
-            <View style = { styles.messageRecipientContainer as ViewStyle }>
+            <View
+                id = 'message-recipient'
+                style = { styles.messageRecipientContainer as ViewStyle }>
                 <Text style = { styles.messageRecipientText }>
                     { t('chat.messageTo', {
-                        recipient: privateMessageRecipient.name
+                        recipient: `${_privateMessageRecipient}${_isVisitor ? ` ${t('visitors.chatIndicator')}` : ''}`
                     }) }
                 </Text>
                 <TouchableHighlight
+                    id = 'message-recipient-cancel-button'
                     onPress = { this._onResetPrivateMessageRecipient }
                     underlayColor = { 'transparent' }>
                     <Icon
@@ -152,6 +154,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     const { lobbyMessageRecipient, isLobbyChatActive } = state['features/chat'];
 
     return {
+        ..._mapStateToPropsAbstract(state, _ownProps),
         isLobbyChatActive,
         lobbyMessageRecipient
     };

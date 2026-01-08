@@ -1,4 +1,6 @@
 import { IReduxState } from '../app/types';
+import { IJitsiConference } from '../base/conference/reducer';
+import { ParticipantFeaturesKey } from '../base/participants/types';
 
 import { VPAAS_TENANT_PREFIX } from './constants';
 import logger from './logger';
@@ -48,6 +50,31 @@ export function isVpaasMeeting(state: IReduxState) {
 }
 
 /**
+ * Sends a request for retrieving the conference creator's customer id.
+ *
+ * @param {IJitsiConference} conference - The conference state.
+ * @param {IReduxState} state - The state of the app.
+ * @returns {Object} - Object containing customerId field.
+ */
+export async function sendGetCustomerIdRequest(conference: IJitsiConference, state: IReduxState) {
+    const { jaasConferenceCreatorUrl } = state['features/base/config'];
+
+    const roomJid = conference?.room?.roomjid;
+
+    if (jaasConferenceCreatorUrl && roomJid) {
+        const fullUrl = `${jaasConferenceCreatorUrl}?conference=${encodeURIComponent(roomJid)}`;
+        const response = await fetch(fullUrl);
+        const responseBody = await response.json();
+
+        if (response.ok) {
+            return responseBody;
+        }
+
+        logger.error(`Failed to fetch ${fullUrl}. with: ${JSON.stringify(responseBody)}`);
+    }
+}
+
+/**
  * Sends a request for retrieving jaas customer details.
  *
  * @param {Object} reqData - The request info.
@@ -79,10 +106,10 @@ export async function sendGetDetailsRequest({ appId, baseUrl }: {
  * Returns the billing id for vpaas meetings.
  *
  * @param {IReduxState} state - The state of the app.
- * @param {string} feature - Feature to be looked up for disable state.
+ * @param {ParticipantFeaturesKey} feature - Feature to be looked up for disable state.
  * @returns {boolean}
  */
-export function isFeatureDisabled(state: IReduxState, feature: string) {
+export function isFeatureDisabled(state: IReduxState, feature: ParticipantFeaturesKey) {
     return state['features/jaas'].disabledFeatures.includes(feature);
 }
 

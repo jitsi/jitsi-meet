@@ -25,19 +25,20 @@ class LobbyChatScreen extends
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const { _lobbyChatMessages } = this.props;
 
         return (
-            <JitsiScreen style = { styles.lobbyChatWrapper }>
+            <JitsiScreen
+                hasBottomTextInput = { true }
+                hasExtraHeaderHeight = { true }
+                style = { styles.lobbyChatWrapper }>
                 {/* @ts-ignore */}
                 <MessageContainer messages = { _lobbyChatMessages } />
                 <ChatInputBar onSend = { this._onSendMessage } />
             </JitsiScreen>
         );
     }
-
-    _onSendMessage: () => void;
 }
 
 export default translate(connect(abstractMapStateToProps)(LobbyChatScreen));

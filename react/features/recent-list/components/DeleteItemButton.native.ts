@@ -17,9 +17,9 @@ export interface IProps extends AbstractButtonProps {
  * A recent list menu button which deletes the selected entry.
  */
 class DeleteItemButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'welcomepage.recentListDelete';
-    icon = IconTrash;
-    label = 'welcomepage.recentListDelete';
+    override accessibilityLabel = 'welcomepage.recentListDelete';
+    override icon = IconTrash;
+    override label = 'welcomepage.recentListDelete';
 
     /**
      * Handles clicking / pressing the button.
@@ -27,7 +27,7 @@ class DeleteItemButton extends AbstractButton<IProps> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch, itemId } = this.props;
 
         dispatch(deleteRecentListEntry(itemId));

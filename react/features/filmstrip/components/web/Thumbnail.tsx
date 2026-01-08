@@ -1,10 +1,10 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
 import React, { Component, KeyboardEvent, RefObject, createRef } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
 import { createScreenSharingIssueEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
@@ -99,11 +99,6 @@ export interface IProps extends WithTranslation {
      * The audio track related to the participant.
      */
     _audioTrack?: ITrack;
-
-    /**
-     * Indicates whether the local video flip feature is disabled or not.
-     */
-    _disableLocalVideoFlip: boolean;
 
     /**
      * Indicates whether enlargement of tiles to fill the available space is disabled.
@@ -227,7 +222,7 @@ export interface IProps extends WithTranslation {
     /**
      * An object containing CSS classes.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof defaultStyles>, string>>;
 
     /**
      * The redux dispatch function.
@@ -351,8 +346,8 @@ const defaultStyles = (theme: Theme) => {
             '& img': {
                 maxWidth: '100%',
                 maxHeight: '100%',
-                objectFit: 'contain',
-                flexGrow: '1'
+                objectFit: 'contain' as const,
+                flexGrow: 1
             }
         },
 
@@ -455,7 +450,7 @@ class Thumbnail extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         this._onDisplayModeChanged();
 
 
@@ -478,7 +473,7 @@ class Thumbnail extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {void}
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         // TODO: after converting this component to a react function component,
         // use a custom hook to update local track streaming status.
         const { _videoTrack, dispatch } = this.props;
@@ -498,7 +493,7 @@ class Thumbnail extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate(prevProps: IProps, prevState: IState) {
+    override componentDidUpdate(prevProps: IProps, prevState: IState) {
         if (prevState.displayMode !== this.state.displayMode) {
             this._onDisplayModeChanged();
         }
@@ -946,9 +941,9 @@ class Thumbnail extends Component<IProps, IState> {
             _isDominantSpeakerDisabled,
             _participant,
             _raisedHand,
-            _thumbnailType,
-            classes
+            _thumbnailType
         } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         className += ` ${DISPLAY_MODE_TO_CLASS_NAME[displayMode]}`;
 
@@ -994,7 +989,8 @@ class Thumbnail extends Component<IProps, IState> {
      * @returns {Component}
      */
     _renderGif() {
-        const { _gifSrc, classes } = this.props;
+        const { _gifSrc } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         return _gifSrc && (
             <div className = { classes.gif }>
@@ -1023,7 +1019,6 @@ class Thumbnail extends Component<IProps, IState> {
     _renderParticipant(local = false) {
         const {
             _audioTrack,
-            _disableLocalVideoFlip,
             _gifSrc,
             _isMobile,
             _isMobilePortrait,
@@ -1033,16 +1028,16 @@ class Thumbnail extends Component<IProps, IState> {
             _shouldDisplayTintBackground,
             _thumbnailType,
             _videoTrack,
-            classes,
             filmstripType,
             t
         } = this.props;
+        const classes = withStyles.getClasses(this.props);
         const { id, name, pinned } = _participant || {};
         const { isHovered, popoverVisible } = this.state;
         const styles = this._getStyles();
         let containerClassName = this._getContainerClassName();
         const videoTrackClassName
-            = !_disableLocalVideoFlip && _videoTrack && !_isScreenSharing && _localFlipX ? 'flipVideoX' : '';
+            = _videoTrack && !_isScreenSharing && _localFlipX ? 'flipVideoX' : '';
         const jitsiVideoTrack = _videoTrack?.jitsiTrack;
         const videoTrackId = jitsiVideoTrack?.getId();
         const videoEventListeners: any = {};
@@ -1171,7 +1166,7 @@ class Thumbnail extends Component<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _isVirtualScreenshareParticipant,
             _participant,
@@ -1197,7 +1192,8 @@ class Thumbnail extends Component<IProps, IState> {
 
         if (_isVirtualScreenshareParticipant) {
             const { isHovered } = this.state;
-            const { _videoTrack, _isMobile, classes, _thumbnailType } = this.props;
+            const { _videoTrack, _isMobile, _thumbnailType } = this.props;
+            const classes = withStyles.getClasses(this.props);
 
             return (
                 <VirtualScreenshareParticipant
@@ -1250,7 +1246,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
     let _isMobilePortrait = false;
     const {
         defaultLocalDisplayName,
-        disableLocalVideoFlip,
         disableTileEnlargement,
         iAmRecorder,
         iAmSipGateway
@@ -1368,12 +1363,12 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
 
         // skip showing tint for owner participants that are screensharing.
         && !screenshareParticipantIds.includes(id);
+    const disableTintForeground = state['features/base/config'].disableCameraTintForeground ?? false;
 
     return {
         _audioTrack,
         _currentLayout,
         _defaultLocalDisplayName: defaultLocalDisplayName,
-        _disableLocalVideoFlip: Boolean(disableLocalVideoFlip),
         _disableTileEnlargement: Boolean(disableTileEnlargement),
         _isActiveParticipant: isActiveParticipant,
         _isHidden: isLocal && iAmRecorder && !iAmSipGateway,
@@ -1390,7 +1385,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
         _raisedHand: hasRaisedHand(participant),
         _stageFilmstripLayout: isStageFilmstripAvailable(state),
         _stageParticipantsVisible: _currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW,
-        _shouldDisplayTintBackground: shouldDisplayTintBackground,
+        _shouldDisplayTintBackground: !disableTintForeground && shouldDisplayTintBackground,
         _thumbnailType: tileType,
         _videoObjectPosition: getVideoObjectPosition(state, participant?.id),
         _videoTrack,
@@ -1399,4 +1394,4 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
     };
 }
 
-export default connect(_mapStateToProps)(withStyles(defaultStyles)(translate(Thumbnail)));
+export default connect(_mapStateToProps)(withStyles(translate(Thumbnail), defaultStyles));

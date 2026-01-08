@@ -70,7 +70,7 @@ input[type="reset"] {
 body {
   color: #333;
   font-family: Arial, sans-serif;
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.42857142857143;
 }
 /* International Font Stacks*/
@@ -113,7 +113,7 @@ pre:first-child {
 /* Headings: desired line height in px / font size = unitless line height */
 h1 {
   color: #333;
-  font-size: 32px;
+  font-size: 2rem;
   font-weight: normal;
   line-height: 1.25;
   text-transform: none;
@@ -121,7 +121,7 @@ h1 {
 }
 h2 {
   color: #333;
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: normal;
   line-height: 1.25;
   text-transform: none;
@@ -129,14 +129,14 @@ h2 {
 }
 h3 {
   color: #333;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: normal;
   line-height: 1.5;
   text-transform: none;
   margin: 30px 0 0 0;
 }
 h4 {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: bold;
   line-height: 1.25;
   text-transform: none;
@@ -144,7 +144,7 @@ h4 {
 }
 h5 {
   color: #333;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: bold;
   line-height: 1.42857143;
   text-transform: none;
@@ -152,7 +152,7 @@ h5 {
 }
 h6 {
   color: #707070;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: bold;
   line-height: 1.66666667;
   text-transform: uppercase;
@@ -179,7 +179,7 @@ h5 + h6 {
 /* Other typographical elements */
 small {
   color: #707070;
-  font-size: 12px;
+  font-size: 0.75rem;
   line-height: 1.33333333333333;
 }
 code,

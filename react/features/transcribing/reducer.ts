@@ -1,10 +1,9 @@
+import { CONFERENCE_PROPERTIES_CHANGED } from '../base/conference/actionTypes';
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
 import {
-    SET_PENDING_TRANSCRIBING_NOTIFICATION_UID,
-    _POTENTIAL_TRANSCRIBER_JOINED,
-    _TRANSCRIBER_JOINED,
-    _TRANSCRIBER_LEFT
+    TRANSCRIBER_JOINED,
+    TRANSCRIBER_LEFT
 } from './actionTypes';
 
 /**
@@ -12,9 +11,7 @@ import {
  *
  * @returns {{
  * isTranscribing: boolean,
- * isDialing: boolean,
- * transcriberJID: null,
- * potentialTranscriberJIDs: Array
+ * transcriberJID: null
  * }}
  * @private
  */
@@ -29,41 +26,16 @@ function _getInitialState() {
         isTranscribing: false,
 
         /**
-         * Indicates whether the transcriber has been dialed into the room and
-         * we're currently awaiting successful joining or failure of joining.
-         *
-         * @type {boolean}
-         */
-        isDialing: false,
-
-        /**
-         * Indicates whether the transcribing feature is in the process of
-         * terminating; the transcriber has been told to leave.
-         */
-        isTerminating: false,
-
-        /**
          * The JID of the active transcriber.
          *
          * @type { string }
          */
-        transcriberJID: null,
-
-        /**
-         * A list containing potential JID's of transcriber participants.
-         *
-         * @type { Array }
-         */
-        potentialTranscriberJIDs: []
+        transcriberJID: null
     };
 }
 
 export interface ITranscribingState {
-    isDialing: boolean;
-    isTerminating: boolean;
     isTranscribing: boolean;
-    pendingNotificationUid?: string;
-    potentialTranscriberJIDs: string[];
     transcriberJID?: string | null;
 }
 
@@ -73,32 +45,33 @@ export interface ITranscribingState {
 ReducerRegistry.register<ITranscribingState>('features/transcribing',
     (state = _getInitialState(), action): ITranscribingState => {
         switch (action.type) {
-        case _TRANSCRIBER_JOINED:
+        case CONFERENCE_PROPERTIES_CHANGED: {
+            const audioRecording = action.properties?.['audio-recording-enabled'];
+
+            if (typeof audioRecording !== 'undefined') {
+                const audioRecordingEnabled = audioRecording === 'true';
+
+                if (state.isTranscribing !== audioRecordingEnabled) {
+                    return {
+                        ...state,
+                        isTranscribing: audioRecordingEnabled
+                    };
+                }
+            }
+
+            return state;
+        }
+        case TRANSCRIBER_JOINED:
             return {
                 ...state,
                 isTranscribing: true,
-                isDialing: false,
                 transcriberJID: action.transcriberJID
             };
-        case _TRANSCRIBER_LEFT:
+        case TRANSCRIBER_LEFT:
             return {
                 ...state,
-                isTerminating: false,
                 isTranscribing: false,
-                transcriberJID: undefined,
-                potentialTranscriberJIDs: []
-            };
-        case _POTENTIAL_TRANSCRIBER_JOINED:
-            return {
-                ...state,
-                potentialTranscriberJIDs:
-                    [ action.transcriberJID ]
-                        .concat(state.potentialTranscriberJIDs)
-            };
-        case SET_PENDING_TRANSCRIBING_NOTIFICATION_UID:
-            return {
-                ...state,
-                pendingNotificationUid: action.uid
+                transcriberJID: undefined
             };
         default:
             return state;

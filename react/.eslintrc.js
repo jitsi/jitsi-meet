@@ -1,39 +1,27 @@
 module.exports = {
-    'extends': [
+    extends: [
         '../.eslintrc.js',
         '@jitsi/eslint-config/jsdoc',
         '@jitsi/eslint-config/react',
         '.eslintrc-react-native.js'
     ],
-    'overrides': [
+    overrides: [
         {
-            'files': [ '*.ts', '*.tsx' ],
+            files: [ '*.ts', '*.tsx' ],
             extends: [ '@jitsi/eslint-config/typescript' ],
             parserOptions: {
-                sourceType: 'module',
                 project: [ './tsconfig.web.json', './tsconfig.native.json' ]
             },
             rules: {
-                '@typescript-eslint/naming-convention': [
-                    'error',
-                    {
-                        'selector': 'interface',
-                        'format': [ 'PascalCase' ],
-                        'custom': {
-                            'regex': '^I[A-Z]',
-                            'match': true
-                        }
-                    }
-                ]
+                // TODO: Remove these and fix the warnings
+                '@typescript-eslint/no-unsafe-function-type': 0,
+                '@typescript-eslint/no-wrapper-object-types': 0,
+                '@typescript-eslint/no-require-imports': 0
             }
         }
     ],
-    'rules': {
-        // XXX remove this eventually.
-        'react/jsx-indent-props': 0
-    },
-    'settings': {
-        'react': {
+    settings: {
+        react: {
             'version': 'detect'
         }
     }

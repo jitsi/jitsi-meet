@@ -3,7 +3,7 @@
  *
  * @enum {string}
  */
-export const CAMERA_FACING_MODE = {
+export const CAMERA_FACING_MODE: Record<string, string> = {
     ENVIRONMENT: 'environment',
     USER: 'user'
 };
@@ -19,11 +19,11 @@ export const MEDIA_TYPE: {
     AUDIO: MediaType;
     SCREENSHARE: MediaType;
     VIDEO: MediaType;
-    } = {
-        AUDIO: 'audio',
-        SCREENSHARE: 'screenshare',
-        VIDEO: 'video'
-    };
+} = {
+    AUDIO: 'audio',
+    SCREENSHARE: 'screenshare',
+    VIDEO: 'video'
+};
 
 
 /* eslint-disable no-bitwise */
@@ -39,6 +39,15 @@ export const SCREENSHARE_MUTISM_AUTHORITY = {
 };
 
 /**
+ * The languages supported for audio files.
+ */
+export enum AudioSupportedLanguage {
+    en = 'en',
+    fr = 'fr',
+    frCA = 'frCA'
+}
+
+/**
  * The types of authorities which may mute/unmute the local video.
  *
  * @enum {number}
@@ -47,8 +56,7 @@ export const VIDEO_MUTISM_AUTHORITY = {
     AUDIO_ONLY: 1 << 0,
     BACKGROUND: 1 << 1,
     USER: 1 << 2,
-    CAR_MODE: 1 << 3,
-    SCREEN_SHARE: 1 << 4
+    CAR_MODE: 1 << 3
 };
 
 /* eslint-enable no-bitwise */

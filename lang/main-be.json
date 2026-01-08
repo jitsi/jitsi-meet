@@ -478,13 +478,18 @@
     },
     "passwordDigitsOnly": "Да {{number}} лічбаў",
     "passwordSetRemotely": "устаноўлены іншым удзельнікам",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Варыянты павінны быць унікальнымі"
+        }
+    },
     "poweredby": "працуе на",
     "presenceStatus": {
         "busy": "Заняты",
         "calling": "Выклікаю…",
         "connected": "Падключана",
         "connecting": "Падлучэнне…",
-        "connecting2": "Падлучэнне * ...",
+        "connecting2": "Падлучэнне *…",
         "disconnected": "Адключана",
         "expired": "Скончыўся",
         "ignored": "праігнаравалі",
@@ -584,6 +589,8 @@
         "hours": "{{count}}г",
         "minutes": "{{count}}хв",
         "name": "Імя",
+        "search": "Пошук",
+        "searchHint": "Пошук удзельнікаў",
         "seconds": "{{count}} с",
         "speakerStats": "Статыстыка выступаў",
         "speakerTime": "Час выступленняў"
@@ -707,16 +714,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Калі ласка, пазначце <b> <i> Дазволіць </i> </b>, калі браўзэр спытае пра дазволы.",
-        "chromeGrantPermissions": "Калі ласка, пазначце <b> <i> Дазволіць </i> </b>, калі браўзэр спытае пра дазволы.",
-        "edgeGrantPermissions": "Калі ласка, пазначце <b> <i> Ды </i> </b>, калі браўзэр спытае пра дазволы.",
-        "electronGrantPermissions": "Калі ласка, дайце дазвол на доступ да камеры і мікрафону",
-        "firefoxGrantPermissions": "Калі ласка, пазначце <b> <i> Падзяліцца абраным прыладай </i> </b>, калі браўзэр спытае пра дазволы.",
-        "iexplorerGrantPermissions": "Калі ласка, пазначце <b> <i> OK </i> </b>, калі браўзэр спытае пра дазволы.",
-        "nwjsGrantPermissions": "Калі ласка, дайце дазвол на доступ да камеры і мікрафону",
-        "operaGrantPermissions": "Калі ласка, пазначце <b> <i> Дазволіць </i> </b>, калі браўзэр спытае пра дазволы.",
-        "react-nativeGrantPermissions": "Калі ласка, пазначце <b> <i> Дазволіць </i> </b>, калі браўзэр спытае пра дазволы.",
-        "safariGrantPermissions": "Калі ласка, пазначце <b> <i> OK </i> </b>, калі браўзэр спытае пра дазволы."
+        "grantPermissions": "Калі ласка, дайце дазвол на доступ да камеры і мікрафону."
     },
     "videoSIPGW": {
         "busy": "Мы працуем над вызваленнем рэсурсаў. Калі ласка, паспрабуйце праз некалькі хвілін.",

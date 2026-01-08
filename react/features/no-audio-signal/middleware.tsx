@@ -18,7 +18,7 @@ import DialInLink from './components/DialInLink';
 import { NO_AUDIO_SIGNAL_SOUND_ID } from './constants';
 import { NO_AUDIO_SIGNAL_SOUND_FILE } from './sounds';
 
-MiddlewareRegistry.register(store => next => async action => {
+MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
     const { dispatch } = store;
 
@@ -107,7 +107,7 @@ async function _handleNoAudioSignalNotification({ dispatch, getState }: IStore, 
             } ];
         }
 
-        const notification = await dispatch(showNotification({
+        const notification = dispatch(showNotification({
             titleKey: 'toolbar.noAudioSignalTitle',
             description: <DialInLink />,
             descriptionKey,

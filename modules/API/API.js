@@ -13,12 +13,12 @@ import {
     requestEnableAudioModeration,
     requestEnableVideoModeration
 } from '../../react/features/av-moderation/actions';
-import { isEnabledFromState } from '../../react/features/av-moderation/functions';
+import { isEnabledFromState, isForceMuted } from '../../react/features/av-moderation/functions';
+import { setAudioOnly } from '../../react/features/base/audio-only/actions';
 import {
     endConference,
     sendTones,
     setAssumedBandwidthBps,
-    setFollowMe,
     setLocalSubject,
     setPassword,
     setSubject
@@ -28,9 +28,11 @@ import { overwriteConfig } from '../../react/features/base/config/actions';
 import { getWhitelistedJSON } from '../../react/features/base/config/functions.any';
 import { toggleDialog } from '../../react/features/base/dialog/actions';
 import { isSupportedBrowser } from '../../react/features/base/environment/environment';
+import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt/functions';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../react/features/base/media/constants';
+import { isVideoMutedByUser } from '../../react/features/base/media/functions';
 import {
     grantModerator,
     kickParticipant,
@@ -41,6 +43,7 @@ import {
 import { LOCAL_PARTICIPANT_DEFAULT_ID } from '../../react/features/base/participants/constants';
 import {
     getLocalParticipant,
+    getNormalizedDisplayName,
     getParticipantById,
     getScreenshareParticipantIds,
     getVirtualScreenshareParticipantByOwnerId,
@@ -52,6 +55,10 @@ import { updateSettings } from '../../react/features/base/settings/actions';
 import { getDisplayName } from '../../react/features/base/settings/functions.web';
 import { setCameraFacingMode } from '../../react/features/base/tracks/actions.web';
 import { CAMERA_FACING_MODE_MESSAGE } from '../../react/features/base/tracks/constants';
+import {
+    getLocalVideoTrack,
+    isLocalTrackMuted
+} from '../../react/features/base/tracks/functions';
 import {
     autoAssignToBreakoutRooms,
     closeBreakoutRoom,
@@ -67,6 +74,7 @@ import {
     toggleChat
 } from '../../react/features/chat/actions';
 import { openChat } from '../../react/features/chat/actions.web';
+import { showDesktopPicker } from '../../react/features/desktop-picker/actions';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
@@ -76,10 +84,12 @@ import { setMediaEncryptionKey, toggleE2EE } from '../../react/features/e2ee/act
 import {
     addStageParticipant,
     resizeFilmStrip,
+    setFilmstripVisible,
     setVolume,
     togglePinStageParticipant
 } from '../../react/features/filmstrip/actions.web';
 import { getPinnedActiveParticipants, isStageFilmstripAvailable } from '../../react/features/filmstrip/functions.web';
+import { setFollowMe, setFollowMeRecorder } from '../../react/features/follow-me/actions';
 import { invite } from '../../react/features/invite/actions.any';
 import {
     selectParticipantInLargeVideo
@@ -96,24 +106,31 @@ import {
     close as closeParticipantsPane,
     open as openParticipantsPane
 } from '../../react/features/participants-pane/actions';
-import { getParticipantsPaneOpen, isForceMuted } from '../../react/features/participants-pane/functions';
+import { getParticipantsPaneOpen } from '../../react/features/participants-pane/functions';
+import { hidePiP, showPiP } from '../../react/features/pip/actions';
 import { startLocalVideoRecording, stopLocalVideoRecording } from '../../react/features/recording/actions.any';
+import { grantRecordingConsent, grantRecordingConsentAndUnmute } from '../../react/features/recording/actions.web';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession, supportsLocalRecording } from '../../react/features/recording/functions';
 import { startAudioScreenShareFlow, startScreenShareFlow } from '../../react/features/screen-share/actions';
 import { isScreenAudioSupported } from '../../react/features/screen-share/functions';
-import { toggleScreenshotCaptureSummary } from '../../react/features/screenshot-capture/actions';
+import {
+    openCameraCaptureDialog,
+    toggleScreenshotCaptureSummary
+} from '../../react/features/screenshot-capture/actions';
 import { isScreenshotCaptureEnabled } from '../../react/features/screenshot-capture/functions';
 import SettingsDialog from '../../react/features/settings/components/web/SettingsDialog';
 import { SETTINGS_TABS } from '../../react/features/settings/constants';
-import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions.any';
+import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions';
 import { extractYoutubeIdOrURL } from '../../react/features/shared-video/functions';
 import { setRequestingSubtitles, toggleRequestingSubtitles } from '../../react/features/subtitles/actions';
 import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/functions';
 import { setTileView, toggleTileView } from '../../react/features/video-layout/actions.any';
-import { muteAllParticipants } from '../../react/features/video-menu/actions';
+import { muteAllParticipants, muteRemote } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality/actions';
-import { toggleWhiteboard } from '../../react/features/whiteboard/actions.any';
+import { toggleBackgroundEffect, toggleBlurredBackgroundEffect } from '../../react/features/virtual-background/actions';
+import { VIRTUAL_BACKGROUND_TYPE } from '../../react/features/virtual-background/constants';
+import { toggleWhiteboard } from '../../react/features/whiteboard/actions.web';
 import { getJitsiMeetTransport } from '../transport';
 
 import {
@@ -121,7 +138,7 @@ import {
     ENDPOINT_TEXT_MESSAGE_NAME
 } from './constants';
 
-const logger = Logger.getLogger(__filename);
+const logger = Logger.getLogger('api:core');
 
 /**
  * List of the available commands.
@@ -197,9 +214,13 @@ function initCommands() {
             }
             APP.store.dispatch(grantModerator(participantId));
         },
+        'grant-recording-consent': unmute => {
+            unmute ? APP.store.dispatch(grantRecordingConsentAndUnmute())
+                : APP.store.dispatch(grantRecordingConsent());
+        },
         'display-name': displayName => {
             sendAnalytics(createApiEvent('display.name.changed'));
-            APP.conference.changeLocalDisplayName(displayName);
+            APP.store.dispatch(updateSettings({ displayName: getNormalizedDisplayName(displayName) }));
         },
         'local-subject': localSubject => {
             sendAnalytics(createApiEvent('local.subject.changed'));
@@ -217,6 +238,17 @@ function initCommands() {
             }
 
             APP.store.dispatch(muteAllParticipants(exclude, muteMediaType));
+        },
+        'mute-remote-participant': (participantId, mediaType) => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                logger.error('Missing moderator rights to mute remote participant');
+
+                return;
+            }
+
+            const muteMediaType = mediaType ? mediaType : MEDIA_TYPE.AUDIO;
+
+            APP.store.dispatch(muteRemote(participantId, muteMediaType));
         },
         'toggle-lobby': isLobbyEnabled => {
             APP.store.dispatch(toggleLobbyMode(isLobbyEnabled));
@@ -244,8 +276,6 @@ function initCommands() {
             }
         },
         'pin-participant': (id, videoType) => {
-            logger.debug('Pin participant command received');
-
             const state = APP.store.getState();
 
             // if id not provided, unpin everybody.
@@ -303,7 +333,6 @@ function initCommands() {
             APP.store.dispatch(removeBreakoutRoom(breakoutRoomJid));
         },
         'resize-large-video': (width, height) => {
-            logger.debug('Resize large video command received');
             sendAnalytics(createApiEvent('largevideo.resized'));
             APP.store.dispatch(resizeLargeVideo(width, height));
         },
@@ -323,19 +352,29 @@ function initCommands() {
 
             APP.store.dispatch(setAssumedBandwidthBps(value));
         },
-        'set-follow-me': value => {
-            logger.debug('Set follow me command received');
+
+        'set-blurred-background': blurType => {
+            const tracks = APP.store.getState()['features/base/tracks'];
+            const videoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
+            const muted = tracks ? isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO) : isVideoMutedByUser(APP.store);
+
+            APP.store.dispatch(toggleBlurredBackgroundEffect(videoTrack, blurType, muted));
+        },
+        'set-follow-me': (value, recorderOnly) => {
 
             if (value) {
-                sendAnalytics(createApiEvent('follow.me.set'));
+                sendAnalytics(createApiEvent('follow.me.set', {
+                    recorderOnly
+                }));
             } else {
-                sendAnalytics(createApiEvent('follow.me.unset'));
+                sendAnalytics(createApiEvent('follow.me.unset', {
+                    recorderOnly
+                }));
             }
 
-            APP.store.dispatch(setFollowMe(value));
+            APP.store.dispatch(recorderOnly ? setFollowMeRecorder(value) : setFollowMe(value));
         },
         'set-large-video-participant': (participantId, videoType) => {
-            logger.debug('Set large video participant command received');
             const { getState, dispatch } = APP.store;
 
             if (!participantId) {
@@ -373,17 +412,17 @@ function initCommands() {
         },
         'toggle-audio': () => {
             sendAnalytics(createApiEvent('toggle-audio'));
-            logger.log('Audio toggle: API command received');
             APP.conference.toggleAudioMuted(false /* no UI */);
         },
         'toggle-video': () => {
             sendAnalytics(createApiEvent('toggle-video'));
-            logger.log('Video toggle: API command received');
             APP.conference.toggleVideoMuted(false /* no UI */, true /* ensure track */);
         },
         'toggle-film-strip': () => {
             sendAnalytics(createApiEvent('film.strip.toggled'));
-            APP.UI.toggleFilmstrip();
+            const { visible } = APP.store.getState()['features/filmstrip'];
+
+            APP.store.dispatch(setFilmstripVisible(!visible));
         },
 
         /*
@@ -473,8 +512,9 @@ function initCommands() {
         'toggle-subtitles': () => {
             APP.store.dispatch(toggleRequestingSubtitles());
         },
-        'set-subtitles': enabled => {
-            APP.store.dispatch(setRequestingSubtitles(enabled));
+        'set-subtitles': (enabled, displaySubtitles, language) => {
+            APP.store.dispatch(setRequestingSubtitles(
+                enabled, displaySubtitles, language ? `translation-languages:${language}` : null));
         },
         'toggle-tile-view': () => {
             sendAnalytics(createApiEvent('tile-view.toggled'));
@@ -492,12 +532,13 @@ function initCommands() {
             sendAnalytics(createApiEvent('email.changed'));
             APP.conference.changeLocalEmail(email);
         },
-        'avatar-url': avatarUrl => {
+        'avatar-url': avatarUrl => { // @deprecated
+            console.warn('Using command avatarUrl is deprecated. Use context.user.avatar in the jwt.');
+
             sendAnalytics(createApiEvent('avatar.url.changed'));
             APP.conference.changeLocalAvatarUrl(avatarUrl);
         },
         'send-chat-message': (message, to, ignorePrivacy = false) => {
-            logger.debug('Send chat message command received');
             if (to) {
                 const participant = getParticipantById(APP.store.getState(), to);
 
@@ -515,7 +556,6 @@ function initCommands() {
             APP.store.dispatch(sendMessage(message, ignorePrivacy));
         },
         'send-endpoint-text-message': (to, text) => {
-            logger.debug('Send endpoint message command received');
             try {
                 APP.conference.sendEndpointMessage(to, {
                     name: ENDPOINT_TEXT_MESSAGE_NAME,
@@ -538,25 +578,23 @@ function initCommands() {
             });
         },
         'overwrite-names': participantList => {
-            logger.debug('Overwrite names command received');
-
             APP.store.dispatch(overwriteParticipantsNames(participantList));
         },
         'toggle-e2ee': enabled => {
-            logger.debug('Toggle E2EE key command received');
             APP.store.dispatch(toggleE2EE(enabled));
         },
         'set-media-encryption-key': keyInfo => {
             APP.store.dispatch(setMediaEncryptionKey(JSON.parse(keyInfo)));
         },
         'set-video-quality': frameHeight => {
-            logger.debug('Set video quality command received');
             sendAnalytics(createApiEvent('set.video.quality'));
             APP.store.dispatch(setVideoQuality(frameHeight));
         },
-
+        'set-audio-only': enable => {
+            sendAnalytics(createApiEvent('set.audio.only'));
+            APP.store.dispatch(setAudioOnly(enable));
+        },
         'start-share-video': url => {
-            logger.debug('Share video command received');
             sendAnalytics(createApiEvent('share.video.start'));
             const id = extractYoutubeIdOrURL(url);
 
@@ -564,9 +602,7 @@ function initCommands() {
                 APP.store.dispatch(playSharedVideo(id));
             }
         },
-
         'stop-share-video': () => {
-            logger.debug('Share video command received');
             sendAnalytics(createApiEvent('share.video.stop'));
             APP.store.dispatch(stopSharedVideo());
         },
@@ -577,13 +613,17 @@ function initCommands() {
          * @param { string } arg.title - Notification title.
          * @param { string } arg.description - Notification description.
          * @param { string } arg.uid - Optional unique identifier for the notification.
-         * @param { string } arg.type - Notification type, either `error`, `info`, `normal`, `success` or `warning`.
+         * @param { string } arg.type - Notification type, either `error`, `normal`, `success` or `warning`.
          * Defaults to "normal" if not provided.
          * @param { string } arg.timeout - Timeout type, either `short`, `medium`, `long` or `sticky`.
          * Defaults to "short" if not provided.
+         * @param { Array<Object> } arg.customActions - An array of custom actions to be displayed in the notification.
+         * Each object should have a `label` and a `uuid` property. It should be used along a listener
+         * for the `customNotificationActionTriggered` event to handle the custom action.
          * @returns {void}
          */
         'show-notification': ({
+            customActions = [],
             title,
             description,
             uid,
@@ -605,7 +645,15 @@ function initCommands() {
                 return;
             }
 
+            const handlers = customActions.map(({ uuid }) => () => {
+                APP.API.notifyCustomNotificationActionTriggered(uuid);
+            });
+
+            const keys = customActions.map(({ label }) => label);
+
             APP.store.dispatch(showNotification({
+                customActionHandler: handlers,
+                customActionNameKey: keys,
                 uid,
                 title,
                 description,
@@ -641,6 +689,8 @@ function initCommands() {
          * Only applies to certain jitsi meet deploys.
          * @param { string } arg.youtubeStreamKey - The youtube stream key.
          * @param { string } arg.youtubeBroadcastID - The youtube broadcast ID.
+         * @param { Object } arg.extraMetadata - Any extra metadata params for file recording.
+         * @param { boolean } arg.transcription - Whether a transcription should be started or not.
          * @returns {void}
          */
         'start-recording': ({
@@ -651,7 +701,9 @@ function initCommands() {
             rtmpStreamKey,
             rtmpBroadcastID,
             youtubeStreamKey,
-            youtubeBroadcastID
+            youtubeBroadcastID,
+            extraMetadata = {},
+            transcription
         }) => {
             const state = APP.store.getState();
             const conference = getCurrentConference(state);
@@ -701,6 +753,7 @@ function initCommands() {
                         mode: JitsiRecordingConstants.mode.FILE,
                         appData: JSON.stringify({
                             'file_recording_metadata': {
+                                ...extraMetadata,
                                 'upload_credentials': {
                                     'service_name': RECORDING_TYPES.DROPBOX,
                                     'token': dropboxToken
@@ -713,6 +766,7 @@ function initCommands() {
                         mode: JitsiRecordingConstants.mode.FILE,
                         appData: JSON.stringify({
                             'file_recording_metadata': {
+                                ...extraMetadata,
                                 'share': shouldShare
                             }
                         })
@@ -724,25 +778,30 @@ function initCommands() {
                     mode: JitsiRecordingConstants.mode.STREAM,
                     streamId: youtubeStreamKey || rtmpStreamKey
                 };
-            } else {
-                logger.error('Invalid recording mode provided');
-
-                return;
             }
 
             if (isScreenshotCaptureEnabled(state, true, false)) {
                 APP.store.dispatch(toggleScreenshotCaptureSummary(true));
             }
-            conference.startRecording(recordingConfig);
+
+            // Start audio / video recording, if requested.
+            if (typeof recordingConfig !== 'undefined') {
+                conference.startRecording(recordingConfig);
+            }
+
+            if (transcription) {
+                APP.store.dispatch(setRequestingSubtitles(true, false, null));
+            }
         },
 
         /**
          * Stops a recording or streaming in progress.
          *
          * @param {string} mode - `local`, `file` or `stream`.
+         * @param {boolean} transcription - Whether the transcription needs to be stopped.
          * @returns {void}
          */
-        'stop-recording': mode => {
+        'stop-recording': (mode, transcription) => {
             const state = APP.store.getState();
             const conference = getCurrentConference(state);
 
@@ -750,6 +809,10 @@ function initCommands() {
                 logger.error('Conference is not defined');
 
                 return;
+            }
+
+            if (transcription) {
+                APP.store.dispatch(setRequestingSubtitles(false, false, null));
             }
 
             if (mode === 'local') {
@@ -817,6 +880,8 @@ function initCommands() {
         'overwrite-config': config => {
             const whitelistedConfig = getWhitelistedJSON('config', config);
 
+            logger.info(`Overwriting config with: ${JSON.stringify(whitelistedConfig)}`);
+
             APP.store.dispatch(overwriteConfig(whitelistedConfig));
         },
         'toggle-virtual-background': () => {
@@ -838,10 +903,27 @@ function initCommands() {
         },
         'toggle-whiteboard': () => {
             APP.store.dispatch(toggleWhiteboard());
+        },
+        'set-virtual-background': (enabled, backgroundImage) => {
+            const tracks = APP.store.getState()['features/base/tracks'];
+            const jitsiTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
+
+            APP.store.dispatch(toggleBackgroundEffect({
+                backgroundEffectEnabled: enabled,
+                backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
+                virtualSource: backgroundImage
+            }, jitsiTrack));
+        },
+        'show-pip': () => {
+            APP.store.dispatch(showPiP());
+        },
+        'hide-pip': () => {
+            APP.store.dispatch(hidePiP());
         }
     };
     transport.on('event', ({ data, name }) => {
         if (name && commands[name]) {
+            logger.info(`API command received: ${name}`);
             commands[name](...data);
 
             return true;
@@ -874,6 +956,20 @@ function initCommands() {
                     });
                 });
             break;
+        case 'capture-camera-picture' : {
+            const { cameraFacingMode, descriptionText, titleText } = request;
+
+            if (!isMobileBrowser()) {
+                logger.error('This feature is only supported on mobile');
+
+                return;
+            }
+
+            APP.store.dispatch(openCameraCaptureDialog(callback, { cameraFacingMode,
+                descriptionText,
+                titleText }));
+            break;
+        }
         case 'deployment-info':
             callback(APP.store.getState()['features/base/config'].deploymentInfo);
             break;
@@ -989,12 +1085,41 @@ function initCommands() {
             callback(getRoomsInfo(APP.store.getState()));
             break;
         }
+        case 'get-shared-document-url': {
+            const { etherpad } = APP.store.getState()['features/etherpad'];
+
+            callback(etherpad?.documentUrl || '');
+            break;
+        }
         case 'get-p2p-status': {
             callback(isP2pActive(APP.store.getState()));
             break;
         }
+        case 'session-id': {
+            const { conference } = APP.store.getState()['features/base/conference'];
+
+            callback(conference?.getMeetingUniqueId() || '');
+            break;
+        }
         case '_new_electron_screensharing_supported': {
             callback(true);
+
+            break;
+        }
+        case 'open-desktop-picker': {
+            const { desktopSharingSources } = APP.store.getState()['features/base/config'];
+            const options = {
+                desktopSharingSources: desktopSharingSources ?? [ 'screen', 'window' ]
+            };
+            const onSourceChoose = (_streamId, _type, screenShareAudio, source) => {
+                callback({
+                    screenShareAudio,
+                    source
+                });
+            };
+
+            dispatch(showDesktopPicker(options, onSourceChoose));
+
             break;
         }
         default:
@@ -1107,7 +1232,11 @@ class API {
         this._enabled = true;
 
         initCommands();
+
         this.notifyBrowserSupport(isSupportedBrowser());
+
+        // Let the embedder know we are ready.
+        this._sendEvent({ name: 'ready' });
     }
 
     /**
@@ -1122,6 +1251,20 @@ class API {
         this._sendEvent({
             name: 'large-video-visibility-changed',
             isVisible: !isHidden
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the in-page toolbox
+     * visibility changed.
+     *
+     * @param {boolean} visible - True if the toolbox is visible, false otherwise.
+     * @returns {void}
+     */
+    notifyToolbarVisibilityChanged(visible) {
+        this._sendEvent({
+            name: 'toolbar-visibility-changed',
+            visible
         });
     }
 
@@ -1270,6 +1413,25 @@ class API {
     }
 
     /**
+     * Notify the external application that a participant's mute status changed.
+     *
+     * @param {string} participantId - The ID of the participant.
+     * @param {boolean} isMuted - True if muted, false if unmuted.
+     * @param {string} mediaType - Media type that was muted ('audio', 'video', or 'desktop').
+     * @param {boolean} isSelfMuted - True if participant muted themselves, false if muted by moderator.
+     * @returns {void}
+     */
+    notifyParticipantMuted(participantId, isMuted, mediaType, isSelfMuted = true) {
+        this._sendEvent({
+            name: 'participant-muted',
+            id: participantId,
+            isMuted,
+            mediaType,
+            isSelfMuted
+        });
+    }
+
+    /**
      * Notify the external app that a notification has been triggered.
      *
      * @param {string} title - The notification title.
@@ -1319,14 +1481,14 @@ class API {
      * @returns {void}
      */
     notifyReceivedChatMessage(
-            { body, id, nick, privateMessage, ts } = {}) {
-        if (APP.conference.isLocalId(id)) {
+            { body, from, nick, privateMessage, ts } = {}) {
+        if (APP.conference.isLocalId(from)) {
             return;
         }
 
         this._sendEvent({
             name: 'incoming-message',
-            from: id,
+            from,
             message: body,
             nick,
             privateMessage,
@@ -1426,6 +1588,21 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that a custom notification action has been triggered.
+     *
+     * @param {string} actionUuid - The UUID of the action that has been triggered.
+     * @returns {void}
+    */
+    notifyCustomNotificationActionTriggered(actionUuid) {
+        this._sendEvent({
+            name: 'custom-notification-action-triggered',
+            data: {
+                id: actionUuid
+            }
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that the list of sharing participants changed.
      *
      * @param {Object} data - The event data.
@@ -1516,8 +1693,8 @@ class API {
                 formattedArgument += `${arg.toString()}: ${arg.stack}`;
             } else if (typeof arg === 'object') {
                 // NOTE: The non-enumerable properties of the objects wouldn't be included in the string after
-                // JSON.strigify. For example Map instance will be translated to '{}'. So I think we have to eventually
-                // do something better for parsing the arguments. But since this option for strigify is part of the
+                // JSON.stringify. For example Map instance will be translated to '{}'. So I think we have to eventually
+                // do something better for parsing the arguments. But since this option for stringify is part of the
                 // public interface and I think it could be useful in some cases I will it for now.
                 try {
                     formattedArgument += JSON.stringify(arg);
@@ -1795,9 +1972,9 @@ class API {
      * Notify external application of a participant, remote or local, being
      * removed from the conference by another participant.
      *
-     * @param {string} kicked - The ID of the participant removed from the
+     * @param {Object} kicked - The participant removed from the
      * conference.
-     * @param {string} kicker - The ID of the participant that removed the
+     * @param {Object} kicker - The participant that removed the
      * other participant.
      * @returns {void}
      */
@@ -1806,6 +1983,19 @@ class API {
             name: 'participant-kicked-out',
             kicked,
             kicker
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the recording consent dialog open state has changed.
+     *
+     * @param {boolean} open - True if the dialog is open, false otherwise.
+     * @returns {void}
+     */
+    notifyRecordingConsentDialogOpen(open) {
+        this._sendEvent({
+            name: 'recording-consent-dialog-open',
+            open
         });
     }
 
@@ -1915,14 +2105,16 @@ class API {
      * @param {boolean} on - True if recording is on, false otherwise.
      * @param {string} mode - Stream or file or local.
      * @param {string} error - Error type or null if success.
+     * @param {boolean} transcription - True if a transcription is being recorded, false otherwise.
      * @returns {void}
      */
-    notifyRecordingStatusChanged(on, mode, error) {
+    notifyRecordingStatusChanged(on, mode, error, transcription) {
         this._sendEvent({
             name: 'recording-status-changed',
             on,
             mode,
-            error
+            error,
+            transcription
         });
     }
 
@@ -1980,6 +2172,33 @@ class API {
             name: 'toolbar-button-clicked',
             key,
             preventExecution
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that transcribing has started or stopped.
+     *
+     * @param {boolean} on - True if transcribing is on, false otherwise.
+     * @returns {void}
+     */
+    notifyTranscribingStatusChanged(on) {
+        this._sendEvent({
+            name: 'transcribing-status-changed',
+            on
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the user received
+     * a transcription chunk.
+     *
+     * @param {Object} data - The event data.
+     * @returns {void}
+     */
+    notifyTranscriptionChunkReceived(data) {
+        this._sendEvent({
+            name: 'transcription-chunk-received',
+            data
         });
     }
 
@@ -2062,6 +2281,40 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that Picture-in-Picture was requested.
+     * Used by Electron to handle PiP requests with proper user gesture context.
+     *
+     * @returns {void}
+     */
+    notifyPictureInPictureRequested() {
+        this._sendEvent({
+            name: '_pip-requested'
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that Picture-in-Picture mode was entered.
+     *
+     * @returns {void}
+     */
+    notifyPictureInPictureEntered() {
+        this._sendEvent({
+            name: 'pip-entered'
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that Picture-in-Picture mode was exited.
+     *
+     * @returns {void}
+     */
+    notifyPictureInPictureLeft() {
+        this._sendEvent({
+            name: 'pip-left'
+        });
+    }
+
+    /**
      * Notify external application ( if API is enabled) that a participant menu button was clicked.
      *
      * @param {string} key - The key of the participant menu button.
@@ -2110,6 +2363,21 @@ class API {
 
 
     /**
+     * Notify external application (if API is enabled) the conference
+     * start time.
+     *
+     * @param {number} timestamp - Timestamp conference was created.
+     * @returns {void}
+     */
+    notifyConferenceCreatedTimestamp(timestamp) {
+        this._sendEvent({
+            name: 'conference-created-timestamp',
+            timestamp
+        });
+    }
+
+
+    /**
      * Notify the external application (if API is enabled) if the connection type changed.
      *
      * @param {boolean} isP2p - Whether the new connection is P2P.
@@ -2132,6 +2400,19 @@ class API {
         this._sendEvent({
             name: 'compute-pressure-changed',
             records
+        });
+    }
+
+    /**
+     * Notify the external application (if API is enabled) when the audio only enabled status changed.
+     *
+     * @param {boolean} enabled - Whether the audio only is enabled or not.
+     * @returns {void}
+     */
+    notifyAudioOnlyChanged(enabled) {
+        this._sendEvent({
+            name: 'audio-only-changed',
+            enabled
         });
     }
 

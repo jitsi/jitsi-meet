@@ -1,19 +1,20 @@
-import { withStyles } from '@mui/styles';
+import { Theme } from '@mui/material';
 import clsx from 'clsx';
-import _ from 'lodash';
+import { throttle } from 'lodash-es';
 import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { FixedSizeGrid, FixedSizeList } from 'react-window';
+import { withStyles } from 'tss-react/mui';
 
 import { ACTION_SHORTCUT_TRIGGERED, createShortcutEvent, createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IReduxState, IStore } from '../../../app/types';
-import { getToolbarButtons } from '../../../base/config/functions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowUp } from '../../../base/icons/svg';
+import { isNarrowScreenWithChatOpen } from '../../../base/responsive-ui/functions';
 import { getHideSelfView } from '../../../base/settings/functions.any';
 import { registerShortcut, unregisterShortcut } from '../../../keyboard-shortcuts/actions';
 import { showToolbox } from '../../../toolbox/actions.web';
@@ -27,7 +28,7 @@ import {
     setUserFilmstripWidth,
     setUserIsResizing,
     setVisibleRemoteParticipants
-} from '../../actions';
+} from '../../actions.web';
 import {
     ASPECT_RATIO_BREAKPOINT,
     DEFAULT_FILMSTRIP_WIDTH,
@@ -40,20 +41,217 @@ import {
 } from '../../constants';
 import {
     getVerticalViewMaxWidth,
+    isFilmstripDisabled,
     isStageFilmstripTopPanel,
     shouldRemoteVideosBeVisible
-} from '../../functions';
-import { isFilmstripDisabled } from '../../functions.web';
+} from '../../functions.web';
 
 import AudioTracksContainer from './AudioTracksContainer';
 import Thumbnail from './Thumbnail';
 import ThumbnailWrapper from './ThumbnailWrapper';
-import { styles } from './styles';
+
+
+const BACKGROUND_COLOR = 'rgba(51, 51, 51, .5)';
+
+/**
+ * Creates the styles for the component.
+ *
+ * @param {Object} theme - The current theme.
+ * @param {IProps} props - The component props.
+ * @returns {Object}
+ */
+function styles(theme: Theme, props: IProps) {
+    const result = {
+        toggleFilmstripContainer: {
+            display: 'flex',
+            flexWrap: 'nowrap' as const,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: BACKGROUND_COLOR,
+            width: '32px',
+            height: '24px',
+            position: 'absolute' as const,
+            borderRadius: '4px',
+            top: 'calc(-24px - 2px)',
+            left: 'calc(50% - 16px)',
+            opacity: 0,
+            transition: 'opacity .3s',
+            zIndex: 1,
+
+            '&:hover, &:focus-within': {
+                backgroundColor: theme.palette.ui02
+            }
+        },
+
+        toggleFilmstripButton: {
+            fontSize: '0.875rem',
+            lineHeight: 1.2,
+            textAlign: 'center' as const,
+            background: 'transparent',
+            height: 'auto',
+            width: '100%',
+            padding: 0,
+            margin: 0,
+            border: 'none',
+
+            '-webkit-appearance': 'none',
+
+            '& svg': {
+                fill: theme.palette.icon01
+            }
+        },
+
+        toggleVerticalFilmstripContainer: {
+            transform: 'rotate(-90deg)',
+            left: 'calc(-24px - 2px - 4px)',
+            top: 'calc(50% - 12px)'
+        },
+
+        toggleTopPanelContainer: {
+            transform: 'rotate(180deg)',
+            bottom: 'calc(-24px - 6px)',
+            top: 'auto'
+        },
+
+        toggleTopPanelContainerHidden: {
+            visibility: 'hidden' as const
+        },
+
+        filmstrip: {
+            transition: 'background .2s ease-in-out, right 1s, bottom 1s, top 1s, height .3s ease-in',
+            right: 0,
+            bottom: 0,
+
+            '&:hover, &:focus-within': {
+                '& .resizable-filmstrip': {
+                    backgroundColor: BACKGROUND_COLOR
+                },
+
+                '& .filmstrip-hover': {
+                    backgroundColor: BACKGROUND_COLOR
+                },
+
+                '& .toggleFilmstripContainer': {
+                    opacity: 1
+                },
+
+                '& .dragHandleContainer': {
+                    visibility: 'visible' as const
+                }
+            },
+
+            '.horizontal-filmstrip &.hidden': {
+                bottom: '-50px',
+
+                '&:hover': {
+                    backgroundColor: 'transparent'
+                }
+            },
+
+            '&.hidden': {
+                '& .toggleFilmstripContainer': {
+                    opacity: 1
+                }
+            }
+        },
+
+        filmstripBackground: {
+            backgroundColor: theme.palette.uiBackground,
+
+            '&:hover, &:focus-within': {
+                backgroundColor: theme.palette.uiBackground
+            }
+        },
+
+        resizableFilmstripContainer: {
+            display: 'flex',
+            position: 'relative' as const,
+            flexDirection: 'row' as const,
+            alignItems: 'center',
+            height: '100%',
+            width: '100%',
+            transition: 'background .2s ease-in-out' as const,
+
+            '& .avatar-container': {
+                maxWidth: 'initial',
+                maxHeight: 'initial'
+            },
+
+            '&.top-panel-filmstrip': {
+                flexDirection: 'column' as const
+            },
+            '&.always-show-resize-bar': {
+                backgroundColor: BACKGROUND_COLOR
+            }
+        },
+
+        dragHandleContainer: {
+            height: '100%',
+            width: '9px',
+            backgroundColor: 'transparent',
+            position: 'relative' as const,
+            cursor: 'col-resize',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            visibility: 'hidden' as const,
+
+            '&:hover': {
+                '& .dragHandle': {
+                    backgroundColor: theme.palette.icon01
+                }
+            },
+
+            '&.visible': {
+                visibility: 'visible' as const,
+
+                '& .dragHandle': {
+                    backgroundColor: theme.palette.icon01
+                }
+            },
+
+            '&.top-panel': {
+                order: 2,
+                width: '100%',
+                height: '9px',
+                cursor: 'row-resize',
+
+                '& .dragHandle': {
+                    height: '3px',
+                    width: '100px'
+                }
+            }
+        },
+
+        dragHandle: {
+            backgroundColor: theme.palette.icon02,
+            height: '100px',
+            width: '3px',
+            borderRadius: '1px'
+        }
+    };
+
+    if (props._isNarrowScreenWithChatOpen) {
+        result.filmstrip = {
+            ...result.filmstrip,
+            '& .vertical-filmstrip': {
+                display: 'none' as const
+            }
+        } as typeof result.filmstrip;
+    }
+
+    return result;
+}
+
 
 /**
  * The type of the React {@code Component} props of {@link Filmstrip}.
  */
-interface IProps extends WithTranslation {
+export interface IProps extends WithTranslation {
+    /**
+     * Whether to always show the resize bar on filmstrip. This will make the filmstrip always visible.
+     */
+    _alwaysShowResizeBar?: boolean;
 
     /**
      * Additional CSS class names top add to the root.
@@ -104,6 +302,11 @@ interface IProps extends WithTranslation {
      * Whether the filmstrip button is enabled.
      */
     _isFilmstripButtonEnabled: boolean;
+
+    /**
+     * Whether the available space is when the chat is open. The filmstrip will be hidden if true.
+     */
+    _isNarrowScreenWithChatOpen: boolean;
 
     /**
     * Whether or not the toolbox is displayed.
@@ -213,7 +416,7 @@ interface IProps extends WithTranslation {
     /**
      * An object containing the CSS classes.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * The redux {@code dispatch} function.
@@ -287,7 +490,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
         this._onDragMouseUp = this._onDragMouseUp.bind(this);
         this._onFilmstripResize = this._onFilmstripResize.bind(this);
 
-        this._throttledResize = _.throttle(
+        this._throttledResize = throttle(
             this._onFilmstripResize,
             50,
             {
@@ -301,7 +504,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         this.props.dispatch(registerShortcut({
             character: 'F',
             helpDescription: 'keyboardShortcuts.toggleFilmstrip',
@@ -319,7 +522,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this.props.dispatch(unregisterShortcut('F'));
 
         document.removeEventListener('mouseup', this._onDragMouseUp);
@@ -334,9 +537,10 @@ class Filmstrip extends PureComponent <IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const filmstripStyle: any = { };
         const {
+            _alwaysShowResizeBar,
             _currentLayout,
             _disableSelfView,
             _filmstripDisabled,
@@ -349,10 +553,10 @@ class Filmstrip extends PureComponent <IProps, IState> {
             _verticalViewBackground,
             _verticalViewGrid,
             _verticalViewMaxWidth,
-            classes,
             filmstripType,
             t
         } = this.props;
+        const classes = withStyles.getClasses(this.props);
         const { isMouseDown } = this.state;
         const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
 
@@ -385,7 +589,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
             }
         }
 
-        let toolbar = null;
+        let toolbar: React.ReactNode = null;
 
         if (!this.props._iAmRecorder && this.props._isFilmstripButtonEnabled
             && _currentLayout !== LAYOUTS.TILE_VIEW
@@ -453,11 +657,12 @@ class Filmstrip extends PureComponent <IProps, IState> {
                 {_resizableFilmstrip
                     ? <div
                         className = { clsx('resizable-filmstrip', classes.resizableFilmstripContainer,
-                            _topPanelFilmstrip && 'top-panel-filmstrip') }>
+                            _topPanelFilmstrip && 'top-panel-filmstrip',
+                            _alwaysShowResizeBar && 'always-show-resize-bar') }>
                         <div
                             className = { clsx('dragHandleContainer',
                                 classes.dragHandleContainer,
-                                isMouseDown && 'visible',
+                                (isMouseDown || _alwaysShowResizeBar) && 'visible',
                                 _topPanelFilmstrip && 'top-panel')
                             }
                             onMouseDown = { this._onDragHandleMouseDown }>
@@ -838,12 +1043,12 @@ class Filmstrip extends PureComponent <IProps, IState> {
     _renderToggleButton() {
         const {
             t,
-            classes,
             _isVerticalFilmstrip,
             _mainFilmstripVisible,
             _topPanelFilmstrip,
             _topPanelVisible
         } = this.props;
+        const classes = withStyles.getClasses(this.props);
         const icon = (_topPanelFilmstrip ? _topPanelVisible : _mainFilmstripVisible) ? IconArrowDown : IconArrowUp;
         const actions = isMobileBrowser()
             ? { onTouchStart: this._onToggleButtonTouch }
@@ -884,20 +1089,19 @@ class Filmstrip extends PureComponent <IProps, IState> {
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { _hasScroll = false, filmstripType, _topPanelFilmstrip, _remoteParticipants } = ownProps;
-    const toolbarButtons = getToolbarButtons(state);
-    const { iAmRecorder } = state['features/base/config'];
+    const { toolbarButtons } = state['features/toolbox'];
+    const { iAmRecorder, filmstrip: { alwaysShowResizeBar } = {} } = state['features/base/config'];
     const { topPanelHeight, topPanelVisible, visible, width: verticalFilmstripWidth } = state['features/filmstrip'];
     const { localScreenShare } = state['features/base/participants'];
-    const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
+    const reduceHeight = state['features/toolbox'].visible && toolbarButtons?.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
-    const { isOpen: shiftRight } = state['features/chat'];
     const disableSelfView = getHideSelfView(state);
-    const { clientWidth, clientHeight } = state['features/base/responsive-ui'];
+    const { videoSpaceWidth, clientHeight } = state['features/base/responsive-ui'];
     const filmstripDisabled = isFilmstripDisabled(state);
 
     const collapseTileView = reduceHeight
         && isMobileBrowser()
-        && clientWidth <= ASPECT_RATIO_BREAKPOINT;
+        && videoSpaceWidth <= ASPECT_RATIO_BREAKPOINT;
 
     const shouldReduceHeight = reduceHeight && isMobileBrowser();
     const _topPanelVisible = isStageFilmstripTopPanel(state) && topPanelVisible;
@@ -911,7 +1115,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const videosClassName = `filmstrip__videos${isVisible ? '' : ' hidden'}${_hasScroll ? ' has-scroll' : ''}`;
     const className = `${remoteVideosVisible || ownProps._verticalViewGrid ? '' : 'hide-videos'} ${
         shouldReduceHeight ? 'reduce-height' : ''
-    } ${shiftRight ? 'shift-right' : ''} ${collapseTileView ? 'collapse' : ''} ${isVisible ? '' : 'hidden'}`.trim();
+    } ${collapseTileView ? 'collapse' : ''} ${isVisible ? '' : 'hidden'}`.trim();
 
     const _currentLayout = getCurrentLayout(state);
     const _isVerticalFilmstrip = _currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW
@@ -926,11 +1130,12 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _hasScroll,
         _iAmRecorder: Boolean(iAmRecorder),
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
+        _isNarrowScreenWithChatOpen: isNarrowScreenWithChatOpen(state),
         _isToolboxVisible: isToolboxVisible(state),
         _isVerticalFilmstrip,
         _localScreenShareId: localScreenShare?.id,
         _mainFilmstripVisible: notDisabled,
-        _maxFilmstripWidth: clientWidth - MIN_STAGE_VIEW_WIDTH,
+        _maxFilmstripWidth: videoSpaceWidth - MIN_STAGE_VIEW_WIDTH,
         _maxTopPanelHeight: clientHeight - MIN_STAGE_VIEW_HEIGHT,
         _remoteParticipantsLength: _remoteParticipants?.length ?? 0,
         _topPanelHeight: topPanelHeight.current,
@@ -938,8 +1143,9 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _topPanelVisible,
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state),
-        _videosClassName: videosClassName
+        _videosClassName: videosClassName,
+        _alwaysShowResizeBar: alwaysShowResizeBar
     };
 }
 
-export default withStyles(styles)(translate(connect(_mapStateToProps)(Filmstrip)));
+export default withStyles(translate(connect(_mapStateToProps)(Filmstrip)), styles);

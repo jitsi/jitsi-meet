@@ -11,7 +11,7 @@ import { IDeeplinkingConfig } from '../../base/config/configType';
 import { getLegalUrls } from '../../base/config/functions.any';
 import { isSupportedBrowser } from '../../base/environment/environment';
 import { translate, translateToHTML } from '../../base/i18n/functions';
-import { withPixelLineHeight } from '../../base/styles/functions.web';
+import Platform from '../../base/react/Platform.web';
 import Button from '../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../base/ui/constants.any';
 import {
@@ -45,15 +45,15 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
         launchingMeetingLabel: {
             marginBottom: 16,
-            ...withPixelLineHeight(theme.typography.heading4)
+            ...theme.typography.heading4
         },
         roomName: {
             marginBottom: 32,
-            ...withPixelLineHeight(theme.typography.heading5)
+            ...theme.typography.heading5
         },
         descriptionLabel: {
             marginBottom: 32,
-            ...withPixelLineHeight(theme.typography.bodyLongRegular)
+            ...theme.typography.bodyLongRegular
         },
         buttonsContainer: {
             display: 'flex',
@@ -70,7 +70,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
         label: {
             marginTop: 40,
-            ...withPixelLineHeight(theme.typography.labelRegular),
+            ...theme.typography.labelRegular,
             color: theme.palette.text02,
             '& a': {
                 color: theme.palette.link01
@@ -84,6 +84,14 @@ const DeepLinkingDesktopPage: React.FC<WithTranslation> = ({ t }) => {
     const room = useSelector((state: IReduxState) => decodeURIComponent(state['features/base/conference'].room || ''));
     const deeplinkingCfg = useSelector((state: IReduxState) =>
         state['features/base/config']?.deeplinking || {} as IDeeplinkingConfig);
+
+    const generateDownloadURL = useCallback(() => {
+        const downloadCfg = deeplinkingCfg.desktop?.download;
+
+        if (downloadCfg) {
+            return downloadCfg[Platform.OS as keyof typeof downloadCfg];
+        }
+    }, [ deeplinkingCfg ]);
 
     const legalUrls = useSelector(getLegalUrls);
 
@@ -133,6 +141,16 @@ const DeepLinkingDesktopPage: React.FC<WithTranslation> = ({ t }) => {
                             ? translateToHTML(t, `${_TNS}.descriptionNew`, { app: desktop?.appName })
                             : t(`${_TNS}.descriptionWithoutWeb`, { app: desktop?.appName })
                     }
+                </div>
+                <div className = { styles.descriptionLabel }>
+                    {
+                        t(`${_TNS}.noDesktopApp`)
+                    } &nbsp;
+                    <a href = { generateDownloadURL() }>
+                        {
+                            t(`${_TNS}.downloadApp`)
+                        }
+                    </a>
                 </div>
                 <div className = { styles.buttonsContainer }>
                     <Button

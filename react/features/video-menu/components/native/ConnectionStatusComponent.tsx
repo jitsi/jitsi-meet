@@ -141,7 +141,7 @@ class ConnectionStatusComponent extends PureComponent<IProps, IState> {
      * @inheritdoc
      * @returns {ReactNode}
      */
-    render() {
+    override render() {
         const { t, theme } = this.props;
         const { palette } = theme;
 
@@ -227,7 +227,7 @@ class ConnectionStatusComponent extends PureComponent<IProps, IState> {
      * @inheritdoc
      * returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         statsEmitter.subscribeToClientStats(this.props.participantID, this._onStatsUpdated);
     }
 
@@ -237,7 +237,7 @@ class ConnectionStatusComponent extends PureComponent<IProps, IState> {
      * @inheritdoc
      * returns {void}
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         if (prevProps.participantID !== this.props.participantID) {
             statsEmitter.unsubscribeToClientStats(
                 prevProps.participantID, this._onStatsUpdated);

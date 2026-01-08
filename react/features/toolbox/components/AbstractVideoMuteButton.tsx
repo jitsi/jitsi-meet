@@ -30,11 +30,12 @@ export interface IProps extends AbstractButtonProps {
  * @augments BaseVideoMuteButton
  */
 export default class AbstractVideoMuteButton<P extends IProps> extends BaseVideoMuteButton<P> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.videomute';
-    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.videounmute';
-    label = 'toolbar.videomute';
-    tooltip = 'toolbar.videomute';
-    toggledTooltip = 'toolbar.videounmute';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.videomute';
+    override toggledAccessibilityLabel = 'toolbar.accessibilityLabel.videounmute';
+    override label = 'toolbar.videomute';
+    override toggledLabel = 'toolbar.videounmute';
+    override tooltip = 'toolbar.videomute';
+    override toggledTooltip = 'toolbar.videounmute';
 
     /**
      * Indicates if video is currently disabled or not.
@@ -43,7 +44,7 @@ export default class AbstractVideoMuteButton<P extends IProps> extends BaseVideo
      * @protected
      * @returns {boolean}
      */
-    _isDisabled() {
+    override _isDisabled() {
         return this.props._videoDisabled;
     }
 
@@ -54,7 +55,7 @@ export default class AbstractVideoMuteButton<P extends IProps> extends BaseVideo
      * @protected
      * @returns {boolean}
      */
-    _isVideoMuted() {
+    override _isVideoMuted() {
         return this.props._videoMuted;
     }
 
@@ -66,7 +67,7 @@ export default class AbstractVideoMuteButton<P extends IProps> extends BaseVideo
      * @protected
      * @returns {void}
      */
-    _setVideoMuted(videoMuted: boolean) {
+    override _setVideoMuted(videoMuted: boolean) {
         this.props.dispatch(handleToggleVideoMuted(videoMuted, true, true));
     }
 }

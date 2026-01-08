@@ -40,9 +40,9 @@ interface IProps {
     hasBottomTextInput?: boolean;
 
     /**
-     * Is the screen rendering a tab navigator?
+     * Is the screen header having an extra height?
      */
-    hasTabNavigator?: boolean;
+    hasExtraHeaderHeight?: boolean;
 
     /**
      * Insets for the SafeAreaView.
@@ -61,8 +61,8 @@ const JitsiScreen = ({
     children,
     disableForcedKeyboardDismiss = false,
     footerComponent,
-    hasTabNavigator = false,
     hasBottomTextInput = false,
+    hasExtraHeaderHeight = false,
     safeAreaInsets = [ 'left', 'right' ],
     style
 }: IProps) => {
@@ -72,7 +72,7 @@ const JitsiScreen = ({
             contentContainerStyle = { contentContainerStyle }
             disableForcedKeyboardDismiss = { disableForcedKeyboardDismiss }
             hasBottomTextInput = { hasBottomTextInput }
-            hasTabNavigator = { hasTabNavigator }
+            hasExtraHeaderHeight = { hasExtraHeaderHeight }
             style = { style }>
             <SafeAreaView
                 edges = { safeAreaInsets }

@@ -7,7 +7,6 @@ import { PARTICIPANT_LEFT } from '../participants/actionTypes';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
 import JitsiMeetJS from './_';
-import { LIB_WILL_INIT } from './actionTypes';
 import { disposeLib, initLib } from './actions';
 
 /**
@@ -22,14 +21,6 @@ import { disposeLib, initLib } from './actions';
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case LIB_WILL_INIT:
-        // Moved from conference.js init method. It appears the error handlers
-        // are not used for mobile.
-        if (typeof APP !== 'undefined') {
-            _setErrorHandlers();
-        }
-        break;
-
     case SET_NETWORK_INFO:
         JitsiMeetJS.setNetworkInfo({
             isOnline: action.isOnline
@@ -80,48 +71,4 @@ function _setConfig({ dispatch, getState }: IStore, next: Function, action: AnyA
     dispatch(initLib());
 
     return result;
-}
-
-/**
- * Attaches our custom error handlers to the window object.
- *
- * @returns {void}
- */
-function _setErrorHandlers() {
-    // attaches global error handler, if there is already one, respect it
-    if (JitsiMeetJS.getGlobalOnErrorHandler) {
-        const oldOnErrorHandler = window.onerror;
-
-        // TODO: Don't remove this ignore. The build fails on macOS and we don't know yet why.
-
-        // @ts-ignore
-        window.onerror = (message, source, lineno, colno, error) => { // eslint-disable-line max-params
-            const errMsg = message || error?.message;
-            const stack = error?.stack;
-
-            JitsiMeetJS.getGlobalOnErrorHandler(errMsg, source, lineno, colno, stack);
-
-            if (oldOnErrorHandler) {
-                oldOnErrorHandler(message, source, lineno, colno, error);
-            }
-        };
-
-        const oldOnUnhandledRejection = window.onunhandledrejection;
-
-        window.onunhandledrejection = function(event) {
-            let message = event.reason;
-            let stack: string | undefined = 'n/a';
-
-            if (event.reason instanceof Error) {
-                ({ message, stack } = event.reason);
-            }
-
-            JitsiMeetJS.getGlobalOnErrorHandler(message, null, null, null, stack);
-
-            if (oldOnUnhandledRejection) {
-                // @ts-ignore
-                oldOnUnhandledRejection(event);
-            }
-        };
-    }
 }

@@ -62,6 +62,7 @@ function send_event(room)
     local event_properties = {
         messages_count = room._muc_messages_count or 0;
         polls_count = room._muc_polls_count or 0;
+        tenant_mismatch = room.jitsi_meet_tenant_mismatch or false;
     };
 
     if room.created_timestamp then
@@ -105,7 +106,7 @@ function on_message(event)
     -- get room name with tenant and find room.
     local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
     if not room then
-        module:log('warn', 'No room found found for %s/%s',
+        module:log('warn', 'No room found for %s/%s',
             session.jitsi_web_query_prefix, session.jitsi_web_query_room);
         return;
     end
@@ -137,7 +138,7 @@ function poll_created(event)
     -- get room name with tenant and find room.
     local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
     if not room then
-        module:log('warn', 'No room found found for %s/%s',
+        module:log('warn', 'No room found for %s/%s',
             session.jitsi_web_query_prefix, session.jitsi_web_query_room);
         return false;
     end
@@ -152,6 +153,14 @@ end
 module:hook('message/full', on_message); -- private messages
 module:hook('message/bare', on_message); -- room messages
 
-module:hook('muc-room-destroyed', room_destroyed, -1);
+module:hook('muc-room-destroyed', room_destroyed, 1); -- prosody handles it at 0
+module:hook("muc-occupant-left", function(event)
+    local occupant, room = event.occupant, event.room;
+    local session = event.origin;
+
+    if session and session.jitsi_meet_tenant_mismatch then
+        room.jitsi_meet_tenant_mismatch = true;
+    end
+end);
 
 module:hook('poll-created', poll_created);

@@ -10,14 +10,14 @@ export const preJoinStyles = {
     buttonStylesBorderless: {
         iconStyle: {
             color: BaseTheme.palette.icon01,
-            fontSize: 24
+            fontSize: BaseTheme.spacing[4]
         },
         style: {
             flexDirection: 'row',
             justifyContent: 'center',
             margin: BaseTheme.spacing[3],
-            height: 24,
-            width: 24
+            height: BaseTheme.spacing[4],
+            width: BaseTheme.spacing[4]
         },
         underlayColor: 'transparent'
     },
@@ -27,13 +27,8 @@ export const preJoinStyles = {
         flexDirection: 'row'
     },
 
-    contentWrapperWide: {
-        flex: 1,
-        flexDirection: 'row'
-    },
-
     largeVideoContainer: {
-        height: '60%'
+        height: '50%'
     },
 
     largeVideoContainerWide: {
@@ -46,9 +41,9 @@ export const preJoinStyles = {
     contentContainer: {
         alignItems: 'center',
         backgroundColor: BaseTheme.palette.uiBackground,
-        bottom: 0,
+        bottom: BaseTheme.spacing[0],
         display: 'flex',
-        height: 280,
+        height: '50%',
         justifyContent: 'center',
         position: 'absolute',
         width: '100%',
@@ -74,8 +69,8 @@ export const preJoinStyles = {
         height: 60,
         justifyContent: 'space-between',
         marginBottom: BaseTheme.spacing[3],
-        paddingHorizontal: BaseTheme.spacing[2],
-        width: 148
+        padding: BaseTheme.spacing[2],
+        width: 'auto'
     },
 
     customInput: {
@@ -106,18 +101,37 @@ export const preJoinStyles = {
         textAlign: 'center'
     },
 
-    displayRoomNameBackdrop: {
+    conferenceInfo: {
         alignSelf: 'center',
-        backgroundColor: BaseTheme.palette.uiBackground,
-        borderRadius: BaseTheme.shape.borderRadius,
         marginTop: BaseTheme.spacing[3],
-        opacity: 0.7,
         paddingHorizontal: BaseTheme.spacing[3],
         paddingVertical: BaseTheme.spacing[1],
         position: 'absolute',
-        maxWidth: 243,
+        maxWidth: 273,
         zIndex: 1
     },
+
+    displayRoomNameBackdrop: {
+        backgroundColor: BaseTheme.palette.uiBackground,
+        borderRadius: BaseTheme.shape.borderRadius,
+        opacity: 0.7,
+        paddingHorizontal: BaseTheme.spacing[3],
+        paddingVertical: BaseTheme.spacing[1]
+    },
+
+    recordingWarning: {
+        display: 'flex',
+        justifyContent: 'center',
+        lineHeight: 22,
+        marginBottom: BaseTheme.spacing[2],
+        marginTop: BaseTheme.spacing[1],
+        width: 'auto'
+    },
+
+    recordingWarningText: {
+        color: BaseTheme.palette.text03
+    },
+
     unsafeRoomWarningContainer: {
         height: '100%',
         width: '100%',
@@ -127,6 +141,7 @@ export const preJoinStyles = {
         justifyContent: 'center',
         color: 'white'
     },
+
     unsafeRoomContentContainer: {
         justifySelf: 'center',
         height: '100%',
@@ -152,6 +167,7 @@ export const preJoinStyles = {
         textAlign: 'center',
         marginBottom: BaseTheme.spacing[4]
     },
+
     warningIconWrapper: {
         backgroundColor: BaseTheme.palette.warning01,
         borderRadius: BaseTheme.shape.circleRadius,
@@ -160,8 +176,9 @@ export const preJoinStyles = {
         zIndex: 0
 
     },
+
     warningIcon: {
         color: BaseTheme.palette.ui01,
-        fontSize: 40
+        fontSize: BaseTheme.spacing[7]
     }
 };

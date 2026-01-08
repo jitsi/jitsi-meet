@@ -21,10 +21,10 @@ interface IProps extends AbstractButtonProps {
  * An implementation of a button for toggling the self view.
  */
 class ToggleSelfViewButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.selfView';
-    icon = IconAudioOnlyOff;
-    label = 'videothumbnail.hideSelfView';
-    toggledLabel = 'videothumbnail.showSelfView';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.selfView';
+    override icon = IconAudioOnlyOff;
+    override label = 'videothumbnail.hideSelfView';
+    override toggledLabel = 'videothumbnail.showSelfView';
 
     /**
      * Handles clicking / pressing the button.
@@ -33,7 +33,7 @@ class ToggleSelfViewButton extends AbstractButton<IProps> {
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { _disableSelfView, dispatch } = this.props;
 
         dispatch(updateSettings({
@@ -48,7 +48,7 @@ class ToggleSelfViewButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._disableSelfView;
     }
 }

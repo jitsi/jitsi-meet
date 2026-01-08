@@ -41,7 +41,7 @@ class UpdateCalendarEventDialog extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <ConfirmDialog
                 descriptionKey = 'calendarSync.confirmAddLink'

@@ -23,8 +23,10 @@ import androidx.annotation.NonNull;
 import androidx.startup.Initializer;
 
 import com.facebook.soloader.SoLoader;
+import com.facebook.react.soloader.OpenSourceMergedSoMapping;
 import org.wonday.orientation.OrientationActivityLifecycle;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,13 +37,21 @@ public class JitsiInitializer implements Initializer<Boolean> {
     public Boolean create(@NonNull Context context) {
         Log.d(this.getClass().getCanonicalName(), "create");
 
-        SoLoader.init(context, /* native exopackage */ false);
+        try {
+            SoLoader.init(context, OpenSourceMergedSoMapping.INSTANCE);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         // Register our uncaught exception handler.
         JitsiMeetUncaughtExceptionHandler.register();
 
         // Register activity lifecycle handler for the orientation locker module.
         ((Application) context).registerActivityLifecycleCallbacks(OrientationActivityLifecycle.getInstance());
+
+        // Initialize ReactInstanceManager during application startup
+        // This ensures it's ready before any Activity onCreate is called
+        ReactInstanceManagerHolder.initReactInstanceManager((Application) context);
 
         return true;
     }

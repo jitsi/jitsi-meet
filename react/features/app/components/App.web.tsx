@@ -5,6 +5,7 @@ import JitsiThemeProvider from '../../base/ui/components/JitsiThemeProvider.web'
 import DialogContainer from '../../base/ui/components/web/DialogContainer';
 import ChromeExtensionBanner from '../../chrome-extension-banner/components/ChromeExtensionBanner.web';
 import OverlayContainer from '../../overlay/components/web/OverlayContainer';
+import PiP from '../../pip/components/PiP';
 
 import { AbstractApp } from './AbstractApp';
 
@@ -28,7 +29,7 @@ export class App extends AbstractApp {
      * @protected
      * @returns {ReactElement}
      */
-    _createExtraElement() {
+    override _createExtraElement() {
         return (
             <JitsiThemeProvider>
                 <OverlayContainer />
@@ -42,11 +43,12 @@ export class App extends AbstractApp {
      *
      * @override
      */
-    _createMainElement(component: React.ComponentType, props?: Object) {
+    override _createMainElement(component: React.ComponentType, props?: Object) {
         return (
             <JitsiThemeProvider>
                 <GlobalStyles />
                 <ChromeExtensionBanner />
+                <PiP />
                 { super._createMainElement(component, props) }
             </JitsiThemeProvider>
         );
@@ -57,7 +59,7 @@ export class App extends AbstractApp {
      *
      * @returns {React$Element}
      */
-    _renderDialogContainer() {
+    override _renderDialogContainer() {
         return (
             <JitsiThemeProvider>
                 <DialogContainer />

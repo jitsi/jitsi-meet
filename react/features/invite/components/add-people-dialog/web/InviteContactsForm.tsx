@@ -1,13 +1,13 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import React from 'react';
 import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../../app/types';
 import Avatar from '../../../../base/avatar/components/Avatar';
 import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
-import { IconPhoneRinging } from '../../../../base/icons/svg';
+import { IconEnvelope, IconPhoneRinging, IconUser } from '../../../../base/icons/svg';
 import MultiSelectAutocomplete from '../../../../base/react/components/web/MultiSelectAutocomplete';
 import Button from '../../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.any';
@@ -53,7 +53,7 @@ interface IProps extends AbstractProps {
     /**
      * Css classes.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * The redux {@code dispatch} function.
@@ -84,7 +84,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
         _sipInviteEnabled: string;
     };
 
-    state = {
+    override state = {
         addToCallError: false,
         addToCallInProgress: false,
         inviteItems: [] as IInviteSelectItem[]
@@ -133,7 +133,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
      * @param {State} prevState - The state object before the update.
      * @returns {void}
      */
-    componentDidUpdate(prevProps: IProps, prevState: IState) {
+    override componentDidUpdate(prevProps: IProps, prevState: IState) {
         /**
          * Clears selected items from the multi select component on successful
          * invite.
@@ -151,7 +151,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
      *
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _addPeopleEnabled,
             _dialOutEnabled,
@@ -159,6 +159,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
             _sipInviteEnabled,
             t
         } = this.props;
+        const classes = withStyles.getClasses(this.props);
         let isMultiSelectDisabled = this.state.addToCallInProgress;
         const loadingMessage = 'addPeople.searching';
         const noMatches = 'addPeople.noResults';
@@ -182,7 +183,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
 
         return (
             <div
-                className = { this.props.classes.formWrap }
+                className = { classes.formWrap }
                 onKeyDown = { this._onKeyDown }>
                 <MultiSelectAutocomplete
                     id = 'invite-contacts-input'
@@ -201,8 +202,6 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
             </div>
         );
     }
-
-    _isAddDisabled: () => boolean;
 
     /**
      * Callback invoked when a selection has been made but before it has been
@@ -301,9 +300,12 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
      * @returns {ReactElement}
      */
     _getAvatar(user: any, className = 'avatar-small') {
+        const defaultIcon = user.type === INVITE_TYPES.EMAIL ? IconEnvelope : IconUser;
+
         return (
             <Avatar
                 className = { className }
+                defaultIcon = { defaultIcon }
                 size = { 32 }
                 status = { user.status }
                 url = { user.avatar } />
@@ -324,7 +326,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
     _parseQueryResults(response: IInvitee[] = []) {
         const { t, _dialOutEnabled } = this.props;
 
-        const userTypes = [ INVITE_TYPES.USER, INVITE_TYPES.VIDEO_ROOM, INVITE_TYPES.ROOM ];
+        const userTypes = [ INVITE_TYPES.USER, INVITE_TYPES.EMAIL, INVITE_TYPES.VIDEO_ROOM, INVITE_TYPES.ROOM ];
         const users = response.filter(item => userTypes.includes(item.type));
         const userDisplayItems: any = [];
 
@@ -443,7 +445,8 @@ class InviteContactsForm extends AbstractAddPeopleDialog<IProps, IState> {
      */
     _renderFormActions() {
         const { inviteItems } = this.state;
-        const { t, classes } = this.props;
+        const { t } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         if (!inviteItems.length) {
             return null;
@@ -511,4 +514,4 @@ function _mapStateToProps(state: IReduxState) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(withStyles(styles)(InviteContactsForm)));
+export default translate(connect(_mapStateToProps)(withStyles(InviteContactsForm, styles)));

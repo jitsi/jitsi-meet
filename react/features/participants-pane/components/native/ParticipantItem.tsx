@@ -1,6 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { GestureResponderEvent, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
+import {
+    GestureResponderEvent,
+    StyleProp,
+    TextStyle,
+    TouchableOpacity,
+    View,
+    ViewStyle
+} from 'react-native';
 import { Text } from 'react-native-paper';
 
 import Avatar from '../../../base/avatar/components/Avatar';
@@ -91,10 +98,10 @@ function ParticipantItem({
         = isKnockingParticipant ? styles.lobbyParticipantNameContainer : styles.participantNameContainer;
 
     return (
-        <View style = { styles.participantContainer as ViewStyle } >
+        <View style = { styles.participantContainer as StyleProp<ViewStyle> } >
             <TouchableOpacity
                 onPress = { onPress }
-                style = { styles.participantContent as ViewStyle }>
+                style = { styles.participantContent as StyleProp<ViewStyle> }>
                 <Avatar
                     displayName = { displayName }
                     participantId = { participantID }
@@ -103,24 +110,27 @@ function ParticipantItem({
                     style = { [
                         styles.participantDetailsContainer,
                         raisedHand && styles.participantDetailsContainerRaisedHand
-                    ] }>
-                    <View style = { participantNameContainerStyles as ViewStyle }>
+                    ] as StyleProp<ViewStyle> }>
+                    <View style = { participantNameContainerStyles as StyleProp<ViewStyle> }>
                         <Text
                             numberOfLines = { 1 }
-                            style = { styles.participantName as TextStyle }>
+                            style = { styles.participantName as StyleProp<TextStyle> }>
                             { displayName }
                             { local && ` (${t('chat.you')})` }
                         </Text>
                     </View>
-                    { isModerator && !disableModeratorIndicator
-                        && <Text style = { styles.moderatorLabel as TextStyle }>{ t('videothumbnail.moderator') }</Text>
+                    {
+                        isModerator && !disableModeratorIndicator
+                        && <Text style = { styles.moderatorLabel as StyleProp<TextStyle> }>
+                            { t('videothumbnail.moderator') }
+                        </Text>
                     }
                 </View>
                 {
                     !isKnockingParticipant
                     && <>
                         { raisedHand && <RaisedHandIndicator /> }
-                        <View style = { styles.participantStatesContainer as ViewStyle }>
+                        <View style = { styles.participantStatesContainer as StyleProp<ViewStyle> }>
                             <View style = { styles.participantStateVideo }>{ VideoStateIcons[videoMediaState] }</View>
                             <View>{ AudioStateIcons[audioMediaState] }</View>
                         </View>

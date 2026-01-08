@@ -1,9 +1,9 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
@@ -19,6 +19,7 @@ import {
     getVirtualScreenshareParticipantTrack
 } from '../../../base/tracks/functions';
 import { ITrack } from '../../../base/tracks/types';
+import { pixelsToRem } from '../../../base/ui/functions.any';
 import {
     isTrackStreamingStatusInactive,
     isTrackStreamingStatusInterrupted
@@ -114,7 +115,7 @@ interface IProps extends AbstractProps, WithTranslation {
     /**
      * An object containing the CSS classes.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * The Redux dispatch function.
@@ -224,8 +225,9 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
-        const { enableStatsDisplay, participantId, statsPopoverPosition, classes, t } = this.props;
+    override render() {
+        const { enableStatsDisplay, participantId, statsPopoverPosition, t } = this.props;
+        const classes = withStyles.getClasses(this.props);
         const visibilityClass = this._getVisibilityClass();
 
         if (this.props._popoverDisabled) {
@@ -305,7 +307,8 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
      * @returns {string}
      */
     _getVisibilityClass() {
-        const { _isConnectionStatusInactive, _isConnectionStatusInterrupted, classes } = this.props;
+        const { _isConnectionStatusInactive, _isConnectionStatusInterrupted } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         return this.state.showIndicator
             || this.props.alwaysVisible
@@ -353,7 +356,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
 
         return (
             <div
-                style = {{ fontSize: iconSize }}>
+                style = {{ fontSize: pixelsToRem(iconSize) }}>
                 <span className = 'sr-only'>{ t('videothumbnail.connectionInfo') }</span>
                 <ConnectionIndicatorIcon
                     classes = { classes }
@@ -399,4 +402,4 @@ export function _mapStateToProps(state: IReduxState, ownProps: any) {
     };
 }
 
-export default connect(_mapStateToProps)(translate(withStyles(styles)(ConnectionIndicator)));
+export default connect(_mapStateToProps)(translate(withStyles(ConnectionIndicator, styles)));

@@ -68,7 +68,7 @@
         "DISCONNECTED": "Անջատված է",
         "DISCONNECTING": "Անջատում…",
         "ERROR": "Սխալ",
-        "RECONNECTING": "Ցանցի խնդիր է տեղի ունեցել: Վերամիացում..."
+        "RECONNECTING": "Ցանցի խնդիր է տեղի ունեցել: Վերամիացում…"
     },
     "connectionindicator": {
         "address": "Հասցե։",
@@ -427,13 +427,18 @@
     },
     "passwordDigitsOnly": "",
     "passwordSetRemotely": "Սահմանվել է մեկ այլ մասնակցի կողմից",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Ընտրանքները պետք է լինեն եզակի"
+        }
+    },
     "poweredby": "Հիմնված է",
     "presenceStatus": {
         "busy": "",
         "calling": "",
         "connected": "Միացված է",
         "connecting": "Միանում է…",
-        "connecting2": "Միանում է...",
+        "connecting2": "Միանում է…",
         "disconnected": "Անջատված է",
         "expired": "",
         "ignored": "",
@@ -524,6 +529,8 @@
         "hours": "",
         "minutes": "",
         "name": "Անուն",
+        "search": "Որոնում",
+        "searchHint": "Որոնել մասնակիցներին",
         "seconds": "",
         "speakerStats": "Հռետորի վիճակագրությունը",
         "speakerTime": ""
@@ -629,16 +636,7 @@
         "tr": ""
     },
     "userMedia": {
-        "androidGrantPermissions": "Ընտրեք <b><i>Allow</i></b>, երբ բրաուզերը թույլտվություն հարցնի",
-        "chromeGrantPermissions": "Ընտրեք <b><i>Allow</i></b>, երբ բրաուզերը թույլտվություն հարցնի",
-        "edgeGrantPermissions": "Ընտրեք <b><i>Yes</i></b>, երբ ձեր բրաուզերը թույլտվություն հարցնի.",
-        "electronGrantPermissions": "Խնդրում ենք տրամադրել տեսախցիկը և խոսափողը օգտագործելու թույլտվություններ",
-        "firefoxGrantPermissions": "Երբ բրաուզերը թույլտվություն հարցնի, ընտրեք <b><i>Share Selected Device</i></b>",
-        "iexplorerGrantPermissions": "Ընտրեք <b><i>OK</i></b>, երբ բրաուզերը թույլտվություն հարցնի",
-        "nwjsGrantPermissions": "Խնդրում ենք տրամադրել տեսախցիկը և խոսափողը օգտագործելու թույլտվություններ",
-        "operaGrantPermissions": "Ընտրեք <b><i>Allow</i></b>, երբ բրաուզերը թույլտվություն հարցնի",
-        "react-nativeGrantPermissions": "Ընտրեք <b><i>Allow</i></b>, երբ բրաուզերը թույլտվություն հարցնի",
-        "safariGrantPermissions": "Ընտրեք <b><i>OK</i></b>, երբ բրաուզերը թույլտվություն հարցնի"
+        "grantPermissions": "Խնդրում ենք տրամադրել տեսախցիկը և խոսափողը օգտագործելու թույլտվություններ."
     },
     "videoSIPGW": {
         "busy": "",

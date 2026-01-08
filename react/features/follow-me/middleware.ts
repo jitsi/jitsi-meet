@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { differenceWith, isEqual } from 'lodash-es';
 
 import { IStore } from '../app/types';
 import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
@@ -128,13 +128,18 @@ function _onFollowMeCommand(attributes: any = {}, id: string, store: IStore) {
     }
 
     if (!isFollowMeActive(state)) {
-        store.dispatch(setFollowMeModerator(id));
+        store.dispatch(setFollowMeModerator(id, attributes.recorder));
     }
 
     // just a command that follow me was turned off
     if (attributes.off) {
         store.dispatch(setFollowMeModerator());
 
+        return;
+    }
+
+    // when recorder flag is on, follow me is handled only on recorder side
+    if (attributes.recorder && !store.getState()['features/base/config'].iAmRecorder) {
         return;
     }
 
@@ -184,9 +189,9 @@ function _onFollowMeCommand(attributes: any = {}, id: string, store: IStore) {
             oldStageParticipants = JSON.parse(oldState.pinnedStageParticipants);
         }
 
-        if (!_.isEqual(stageParticipants, oldStageParticipants)) {
-            const toRemove = _.differenceWith(oldStageParticipants, stageParticipants, _.isEqual);
-            const toAdd = _.differenceWith(stageParticipants, oldStageParticipants, _.isEqual);
+        if (!isEqual(stageParticipants, oldStageParticipants)) {
+            const toRemove = differenceWith(oldStageParticipants, stageParticipants, isEqual);
+            const toAdd = differenceWith(stageParticipants, oldStageParticipants, isEqual);
 
             toRemove.forEach((p: { participantId: string; }) =>
                 store.dispatch(removeStageParticipant(p.participantId)));

@@ -10,7 +10,7 @@ import { IconMicSlash } from '../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { isRemoteTrackMuted } from '../../../base/tracks/functions.any';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { muteRemote } from '../../actions.any';
 import { IButtonProps } from '../../types';
 

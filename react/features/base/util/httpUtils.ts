@@ -1,3 +1,5 @@
+import base64js from 'base64-js';
+
 import { timeoutPromise } from './timeoutPromise';
 
 /**
@@ -43,3 +45,37 @@ export function doGetJSON(url: string, retry?: boolean, options?: Object) {
 
     return fetchPromise;
 }
+
+/**
+ * Encodes strings to Base64URL.
+ *
+ * @param {any} data - The byte array to encode.
+ * @returns {string}
+ */
+export const encodeToBase64URL = (data: string): string => base64js
+    .fromByteArray(new window.TextEncoder().encode(data))
+    .replace(/=/g, '')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_');
+
+/**
+ * Decodes strings from Base64URL.
+ *
+ * @param {string} data - The byte array to decode.
+ * @returns {string}
+ */
+export const decodeFromBase64URL = (data: string): string => {
+    let s = data;
+
+    // Convert from Base64URL to Base64.
+    if (s.length % 4 === 2) {
+        s += '==';
+    } else if (s.length % 4 === 3) {
+        s += '=';
+    }
+
+    s = s.replace(/-/g, '+').replace(/_/g, '/');
+
+    // Convert Base64 to a byte array.
+    return new window.TextDecoder().decode(base64js.toByteArray(s));
+};

@@ -8,6 +8,7 @@ import '../keyboard-shortcuts/reducer';
 import '../no-audio-signal/reducer';
 import '../noise-detection/reducer';
 import '../participants-pane/reducer';
+import '../pip/reducer';
 import '../power-monitor/reducer';
 import '../prejoin/reducer';
 import '../remote-control/reducer';
@@ -16,7 +17,7 @@ import '../noise-suppression/reducer';
 import '../screenshot-capture/reducer';
 import '../talk-while-muted/reducer';
 import '../virtual-background/reducer';
-import '../whiteboard/reducer';
 import '../web-hid/reducer';
+import '../file-sharing/reducer';
 
 import './reducers.any';

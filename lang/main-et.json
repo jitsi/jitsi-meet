@@ -467,13 +467,18 @@
     },
     "passwordDigitsOnly": "Kuni {{number}} tähemärki",
     "passwordSetRemotely": "määratud teise kasutaja poolt",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Valikud peavad olema ainulaadsed"
+        }
+    },
     "poweredby": "teieni toodud",
     "presenceStatus": {
         "busy": "Hõivatud",
         "calling": "Helistamine…",
         "connected": "Ühendatud",
         "connecting": "Ühendamine…",
-        "connecting2": "Ühendamine*...",
+        "connecting2": "Ühendamine*…",
         "disconnected": "Lahti ühendatud",
         "expired": "Aegunud",
         "ignored": "Eiratud",
@@ -571,6 +576,8 @@
         "hours": "{{count}}t",
         "minutes": "{{count}}m",
         "name": "Nimi",
+        "search": "Otsi",
+        "searchHint": "Otsige osalejaid",
         "seconds": "{{count}}s",
         "speakerStats": "Kõneleja andmed",
         "speakerTime": "Kõnelemise aeg"
@@ -693,16 +700,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Vali <b><i>Luba</i></b>, kui veebilehitseja küsib nõusolekut.",
-        "chromeGrantPermissions": "Vali <b><i>Luba</i></b>, kui veebilehitseja küsib nõusolekut.",
-        "edgeGrantPermissions": "Vali <b><i>Jah</i></b>, kui veebilehitseja küsib nõusolekut.",
-        "electronGrantPermissions": "Luba kasutada kaamerat ja mikrofoni",
-        "firefoxGrantPermissions": "Vali <b><i>Jaga valitud vahendit</i></b>, kui veebilehitseja küsib nõusolekut.",
-        "iexplorerGrantPermissions": "Vali <b><i>OK</i></b>, kui veebilehitseja küsib nõusolekut.",
-        "nwjsGrantPermissions": "Luba kasutada kaamerat ja mikrofoni",
-        "operaGrantPermissions": "Vali <b><i>Luba</i></b>, kui veebilehitseja küsib nõusolekut.",
-        "react-nativeGrantPermissions": "Vali <b><i>Luba</i></b>, kui veebilehitseja küsib nõusolekut.",
-        "safariGrantPermissions": "Vali <b><i>OK</i></b>, kui veebilehitseja küsib nõusolekut."
+        "grantPermissions": "Luba kasutada kaamerat ja mikrofoni."
     },
     "videoSIPGW": {
         "busy": "Vabastatakse ressurssi… Proovi mõne minuti pärast uuesti.",

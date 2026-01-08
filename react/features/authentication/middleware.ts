@@ -13,7 +13,9 @@ import {
     JitsiConferenceErrors,
     JitsiConnectionErrors
 } from '../base/lib-jitsi-meet';
+import { MEDIA_TYPE } from '../base/media/constants';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
+import { isLocalTrackMuted } from '../base/tracks/functions.any';
 import { parseURIString } from '../base/util/uri';
 import { openLogoutDialog } from '../settings/actions';
 
@@ -26,6 +28,8 @@ import {
     WAIT_FOR_OWNER
 } from './actionTypes';
 import {
+    disableModeratorLogin,
+    enableModeratorLogin,
     hideLoginDialog,
     openLoginDialog,
     openTokenAuthUrl,
@@ -42,7 +46,7 @@ import logger from './logger';
 
 /**
  * Middleware that captures connection or conference failed errors and controls
- * {@link WaitForOwnerDialog} and {@link LoginDialog}.
+ * moderator login availability and {@link LoginDialog}.
  *
  * FIXME Some of the complexity was introduced by the lack of dialog stacking.
  *
@@ -103,11 +107,21 @@ MiddlewareRegistry.register(store => next => action => {
             }
             recoverable = error.recoverable;
         }
-        if (recoverable) {
-            store.dispatch(waitForOwner());
-        } else {
-            store.dispatch(stopWaitForOwner());
+
+        if (error.name === JitsiConferenceErrors.MEMBERS_ONLY_ERROR && lobbyWaitingForHost) {
+            if (recoverable) {
+                store.dispatch(enableModeratorLogin());
+            } else {
+                store.dispatch(disableModeratorLogin());
+            }
+        } else if (error.name === JitsiConferenceErrors.AUTHENTICATION_REQUIRED) {
+            if (recoverable) {
+                store.dispatch(waitForOwner());
+            } else {
+                store.dispatch(stopWaitForOwner());
+            }
         }
+
         break;
     }
 
@@ -119,11 +133,14 @@ MiddlewareRegistry.register(store => next => action => {
         if (isTokenAuthEnabled(config)
             && config.tokenAuthUrlAutoRedirect
             && state['features/base/jwt'].jwt) {
-            // auto redirect is turned on and we have succesfully logged in
+            // auto redirect is turned on and we have successfully logged in
             // let's mark that
             dispatch(setTokenAuthUrlSuccess(true));
         }
 
+        if (_isWaitingForModerator(store)) {
+            store.dispatch(disableModeratorLogin());
+        }
         if (_isWaitingForOwner(store)) {
             store.dispatch(stopWaitForOwner());
         }
@@ -132,6 +149,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case CONFERENCE_LEFT:
+        store.dispatch(disableModeratorLogin());
         store.dispatch(stopWaitForOwner());
         break;
 
@@ -141,7 +159,8 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONNECTION_FAILED: {
         const { error } = action;
-        const state = store.getState();
+        const { getState } = store;
+        const state = getState();
         const { jwt } = state['features/base/jwt'];
 
         if (error
@@ -190,7 +209,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     case STOP_WAIT_FOR_OWNER:
         _clearExistingWaitForOwnerTimeout(store);
-        store.dispatch(hideDialog(WaitForOwnerDialog));
+        store.dispatch(hideDialog('WaitForOwnerDialog', WaitForOwnerDialog));
         break;
 
     case UPGRADE_ROLE_FINISHED: {
@@ -233,7 +252,6 @@ function _clearExistingWaitForOwnerTimeout({ getState }: IStore) {
     waitForOwnerTimeoutID && clearTimeout(waitForOwnerTimeoutID);
 }
 
-
 /**
  * Checks if the cyclic "wait for conference owner" task is currently scheduled.
  *
@@ -242,6 +260,16 @@ function _clearExistingWaitForOwnerTimeout({ getState }: IStore) {
  */
 function _isWaitingForOwner({ getState }: IStore) {
     return Boolean(getState()['features/authentication'].waitForOwnerTimeoutID);
+}
+
+/**
+ * Checks if the cyclic "wait for moderator" task is currently scheduled.
+ *
+ * @param {Object} store - The redux store.
+ * @returns {boolean}
+ */
+function _isWaitingForModerator({ getState }: IStore) {
+    return getState()['features/authentication'].showModeratorLogin;
 }
 
 /**
@@ -257,6 +285,9 @@ function _handleLogin({ dispatch, getState }: IStore) {
     const room = state['features/base/conference'].room;
     const { locationURL = { href: '' } as URL } = state['features/base/connection'];
     const { tenant } = parseURIString(locationURL.href) || {};
+    const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
+    const audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
+    const videoMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO);
 
     if (!room) {
         logger.warn('Cannot handle login, room is undefined!');
@@ -270,7 +301,18 @@ function _handleLogin({ dispatch, getState }: IStore) {
         return;
     }
 
-    getTokenAuthUrl(config, room, tenant, true, locationURL)
+    getTokenAuthUrl(
+        config,
+        locationURL,
+        {
+            audioMuted,
+            audioOnlyEnabled,
+            skipPrejoin: true,
+            videoMuted
+        },
+        room,
+        tenant
+    )
         .then((tokenAuthServiceUrl: string | undefined) => {
             if (!tokenAuthServiceUrl) {
                 logger.warn('Cannot handle login, token service URL is not set');

@@ -22,7 +22,8 @@ export const screen = {
         security: 'Security Options',
         sharedDocument: 'Shared document',
         speakerStats: 'Speaker Stats',
-        subtitles: 'Subtitles'
+        subtitles: 'Subtitles',
+        whiteboard: 'Whiteboard'
     },
     connecting: 'Connecting',
     dialInSummary: 'Dial-In Info',
@@ -43,6 +44,7 @@ export const screen = {
         profile: 'Profile'
     },
     unsafeRoomWarning: 'Unsafe Room Warning',
+    visitorsQueue: 'Visitors Queue',
     welcome: {
         main: 'Welcome',
         tabs: {

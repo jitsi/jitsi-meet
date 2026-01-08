@@ -30,12 +30,12 @@ interface IProps extends AbstractButtonProps {
  * @augments AbstractButton
  */
 class TileViewButton<P extends IProps> extends AbstractButton<P> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.enterTileView';
-    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.exitTileView';
-    icon = IconTileView;
-    label = 'toolbar.enterTileView';
-    toggledLabel = 'toolbar.exitTileView';
-    tooltip = 'toolbar.tileViewToggle';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.enterTileView';
+    override toggledAccessibilityLabel = 'toolbar.accessibilityLabel.exitTileView';
+    override icon = IconTileView;
+    override label = 'toolbar.enterTileView';
+    override toggledLabel = 'toolbar.exitTileView';
+    override tooltip = 'toolbar.tileViewToggle';
 
     /**
      * Handles clicking / pressing the button.
@@ -44,7 +44,7 @@ class TileViewButton<P extends IProps> extends AbstractButton<P> {
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { _tileViewEnabled, dispatch } = this.props;
 
         const value = !_tileViewEnabled;
@@ -70,7 +70,7 @@ class TileViewButton<P extends IProps> extends AbstractButton<P> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._tileViewEnabled;
     }
 }

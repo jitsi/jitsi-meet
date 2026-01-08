@@ -1,8 +1,8 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
 import { IReduxState, IStore } from '../../app/types';
 import { getAvailableDevices } from '../../base/devices/actions.web';
@@ -33,7 +33,7 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     /**
      * CSS classes object.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * The currently selected desktop share frame rate in the frame rate select dropdown.
@@ -46,10 +46,20 @@ export interface IProps extends AbstractDialogTabProps, WithTranslation {
     desktopShareFramerates: Array<number>;
 
     /**
+     * True if desktop share settings should be hidden (mobile browsers).
+     */
+    disableDesktopShareSettings: boolean;
+
+    /**
      * True if device changing is configured to be disallowed. Selectors
      * will display as disabled.
      */
     disableDeviceChange: boolean;
+
+    /**
+     * Whether the local video can be flipped or not.
+     */
+    disableLocalVideoFlip: boolean | undefined;
 
     /**
      * Whether video input dropdown should be enabled or not.
@@ -160,7 +170,7 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         this._unMounted = false;
         Promise.all([
             this._createVideoInputTrack(this.props.selectedVideoInputId)
@@ -178,7 +188,7 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
      * @param {Object} prevProps - Previous props this component received.
      * @returns {void}
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
 
         if (prevProps.selectedVideoInputId
             !== this.props.selectedVideoInputId) {
@@ -191,7 +201,7 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this._unMounted = true;
         this._disposeVideoInputPreview();
     }
@@ -201,14 +211,17 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const {
-            classes,
+            disableDesktopShareSettings,
+            disableLocalVideoFlip,
             hideAdditionalSettings,
             hideVideoInputPreview,
             localFlipX,
             t
         } = this.props;
+
+        const classes = withStyles.getClasses(this.props);
 
         return (
             <div className = { classes.container }>
@@ -224,14 +237,16 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
                 </div>
                 {!hideAdditionalSettings && (
                     <>
-                        <div className = { classes.checkboxContainer }>
-                            <Checkbox
-                                checked = { localFlipX }
-                                label = { t('videothumbnail.mirrorVideo') }
-                                // eslint-disable-next-line react/jsx-no-bind
-                                onChange = { () => super._onChange({ localFlipX: !localFlipX }) } />
-                        </div>
-                        {this._renderFramerateSelect()}
+                        {!disableLocalVideoFlip && (
+                            <div className = { classes.checkboxContainer }>
+                                <Checkbox
+                                    checked = { localFlipX }
+                                    label = { t('videothumbnail.mirrorVideo') }
+                                    // eslint-disable-next-line react/jsx-no-bind
+                                    onChange = { () => super._onChange({ localFlipX: !localFlipX }) } />
+                            </div>
+                        )}
+                        {!disableDesktopShareSettings && this._renderFramerateSelect()}
                     </>
                 )}
             </div>
@@ -366,4 +381,4 @@ const mapStateToProps = (state: IReduxState) => {
     };
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(translate(VideoDeviceSelection)));
+export default connect(mapStateToProps)(withStyles(translate(VideoDeviceSelection), styles));

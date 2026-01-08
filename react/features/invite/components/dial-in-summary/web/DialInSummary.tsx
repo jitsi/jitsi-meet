@@ -1,11 +1,10 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
+import { withStyles } from 'tss-react/mui';
 
 import { translate } from '../../../../base/i18n/functions';
-import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import { getDialInConferenceID, getDialInNumbers } from '../../../_utils';
 
 import ConferenceID from './ConferenceID';
@@ -24,7 +23,7 @@ interface IProps extends WithTranslation {
     /**
      * An object containing the CSS classes.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * Whether or not numbers should include links with the telephone protocol.
@@ -103,7 +102,7 @@ const styles = (theme: Theme) => {
         },
         roomName: {
             margin: '40px auto 8px',
-            ...withPixelLineHeight(theme.typography.heading5)
+            ...theme.typography.heading5
         }
     };
 };
@@ -115,7 +114,7 @@ const styles = (theme: Theme) => {
  * @augments Component
  */
 class DialInSummary extends Component<IProps, State> {
-    state = {
+    override state = {
         conferenceID: null,
         error: '',
         loading: true,
@@ -146,7 +145,7 @@ class DialInSummary extends Component<IProps, State> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         const getNumbers = this._getNumbers()
             .then(this._onGetNumbersSuccess)
             .catch(this._setErrorMessage);
@@ -167,12 +166,13 @@ class DialInSummary extends Component<IProps, State> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         let className = '';
         let contents;
 
         const { conferenceID, error, loading, numbersEnabled } = this.state;
-        const { classes, hideError, showTitle, room, clickableNumbers, scrollable, t } = this.props;
+        const { hideError, showTitle, room, clickableNumbers, scrollable, t } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         if (loading) {
             contents = '';
@@ -309,4 +309,4 @@ class DialInSummary extends Component<IProps, State> {
     }
 }
 
-export default translate(withStyles(styles)(DialInSummary));
+export default translate(withStyles(DialInSummary, styles));

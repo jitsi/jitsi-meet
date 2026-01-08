@@ -254,7 +254,7 @@ export function getFilmstripDimensions({
 /**
  * Returns true if the local thumbnail should be displayed separately and false otherwise.
  *
- * @returns {boolean} - True if the local thumbnail should be displayed separately and flase otherwise.
+ * @returns {boolean} - True if the local thumbnail should be displayed separately and false otherwise.
  */
 export function shouldDisplayLocalThumbnailSeparately() {
     // XXX Our current design is to have the local participant separate from
@@ -286,5 +286,4 @@ export function shouldDisplayLocalThumbnailSeparately() {
 export function getScreenshareFilmstripParticipantId(_state: any) {
     return undefined;
 }
-
 

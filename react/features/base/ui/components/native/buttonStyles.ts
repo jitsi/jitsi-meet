@@ -10,9 +10,7 @@ const button = {
 };
 
 const buttonLabel = {
-    ...BaseTheme.typography.bodyShortBold,
-    lineHeight: 14,
-    textTransform: 'capitalize'
+    ...BaseTheme.typography.bodyShortBold
 };
 
 export default {

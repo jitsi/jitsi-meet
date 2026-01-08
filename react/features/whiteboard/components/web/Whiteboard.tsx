@@ -1,5 +1,6 @@
 import { ExcalidrawApp } from '@jitsi/excalidraw';
 import clsx from 'clsx';
+import i18next from 'i18next';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -48,8 +49,10 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
     const isOpen = useSelector(isWhiteboardOpen);
     const isVisible = useSelector(isWhiteboardVisible);
     const isInTileView = useSelector(shouldDisplayTileView);
-    const { clientHeight, clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
-    const { visible: filmstripVisible, isResizing } = useSelector((state: IReduxState) => state['features/filmstrip']);
+    const { clientHeight, videoSpaceWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
+    const { visible: filmstripVisible, isResizing: isFilmstripResizing } = useSelector((state: IReduxState) => state['features/filmstrip']);
+    const isChatResizing = useSelector((state: IReduxState) => state['features/chat'].isResizing);
+    const isResizing = isFilmstripResizing || isChatResizing;
     const filmstripWidth: number = useSelector(getVerticalViewMaxWidth);
     const collabDetails = useSelector(getCollabDetails);
     const collabServerUrl = useSelector(getCollabServerUrl);
@@ -75,9 +78,9 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
 
         if (interfaceConfig.VERTICAL_FILMSTRIP) {
             if (filmstripVisible) {
-                width = clientWidth - filmstripWidth;
+                width = videoSpaceWidth - filmstripWidth;
             } else {
-                width = clientWidth;
+                width = videoSpaceWidth;
             }
             height = clientHeight - getToolboxHeight();
         } else {
@@ -86,7 +89,7 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
             } else {
                 height = clientHeight;
             }
-            width = clientWidth;
+            width = videoSpaceWidth;
         }
 
         return {
@@ -143,6 +146,7 @@ const Whiteboard = (props: WithTranslation): JSX.Element => {
                             collabServerUrl = { collabServerUrl }
                             excalidraw = {{
                                 isCollaborating: true,
+                                langCode: i18next.language,
 
                                 // @ts-ignore
                                 ref: excalidrawRef,

@@ -144,8 +144,8 @@ export default {
     },
 
     bottomIndicatorsContainer: {
-        padding: 2,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        padding: BaseTheme.spacing[1]
     },
 
     thumbnailTopLeftIndicatorContainer: {

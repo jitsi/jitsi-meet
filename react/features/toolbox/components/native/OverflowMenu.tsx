@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { ViewStyle } from 'react-native';
 import { Divider } from 'react-native-paper';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
 import { hideSheet } from '../../../base/dialog/actions';
@@ -12,24 +12,28 @@ import BreakoutRoomsButton
     from '../../../breakout-rooms/components/native/BreakoutRoomsButton';
 import SharedDocumentButton from '../../../etherpad/components/SharedDocumentButton.native';
 import ReactionMenu from '../../../reactions/components/native/ReactionMenu';
-import { isReactionsEnabled } from '../../../reactions/functions.any';
+import { shouldDisplayReactionsButtons } from '../../../reactions/functions.any';
 import LiveStreamButton from '../../../recording/components/LiveStream/native/LiveStreamButton';
 import RecordButton from '../../../recording/components/Recording/native/RecordButton';
 import SecurityDialogButton
     from '../../../security/components/security-dialog/native/SecurityDialogButton';
 import SharedVideoButton from '../../../shared-video/components/native/SharedVideoButton';
+import { isSharedVideoEnabled } from '../../../shared-video/functions';
 import SpeakerStatsButton from '../../../speaker-stats/components/native/SpeakerStatsButton';
 import { isSpeakerStatsDisabled } from '../../../speaker-stats/functions';
 import ClosedCaptionButton from '../../../subtitles/components/native/ClosedCaptionButton';
-import TileViewButton from '../../../video-layout/components/TileViewButton';
 import styles from '../../../video-menu/components/native/styles';
-import { getMovableButtons } from '../../functions.native';
+import { iAmVisitor } from '../../../visitors/functions';
+import WhiteboardButton from '../../../whiteboard/components/native/WhiteboardButton';
+import { customButtonPressed } from '../../actions.native';
+import { getVisibleNativeButtons } from '../../functions.native';
+import { useNativeToolboxButtons } from '../../hooks.native';
+import { IToolboxNativeButton } from '../../types';
 
 import AudioOnlyButton from './AudioOnlyButton';
 import LinkToSalesforceButton from './LinkToSalesforceButton';
 import OpenCarmodeButton from './OpenCarmodeButton';
 import RaiseHandButton from './RaiseHandButton';
-import ScreenSharingButton from './ScreenSharingButton';
 
 
 /**
@@ -48,24 +52,34 @@ interface IProps {
     _isOpen: boolean;
 
     /**
+     * Whether the shared video is enabled or not.
+     */
+    _isSharedVideoEnabled: boolean;
+
+    /**
      * Whether or not speaker stats is disable.
      */
     _isSpeakerStatsDisabled?: boolean;
 
     /**
-     * Whether or not the reactions feature is enabled.
+     * Toolbar buttons.
      */
-    _reactionsEnabled: boolean;
+    _mainMenuButtons?: Array<IToolboxNativeButton>;
+
+    /**
+     * Overflow menu buttons.
+     */
+    _overflowMenuButtons?: Array<IToolboxNativeButton>;
 
     /**
      * Whether the recoding button should be enabled or not.
-     */
+    */
     _recordingEnabled: boolean;
 
     /**
-     * The width of the screen.
-     */
-    _width: number;
+    * Whether or not any reactions buttons should be displayed.
+    */
+    _shouldDisplayReactionsButtons: boolean;
 
     /**
      * Used for hiding the dialog when the selection was completed.
@@ -109,15 +123,13 @@ class OverflowMenu extends PureComponent<IProps, IState> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _isBreakoutRoomsSupported,
             _isSpeakerStatsDisabled,
-            _reactionsEnabled,
-            _width,
+            _isSharedVideoEnabled,
             dispatch
         } = this.props;
-        const toolbarButtons = getMovableButtons(_width);
 
         const buttonProps = {
             afterClick: this._onCancel,
@@ -141,24 +153,22 @@ class OverflowMenu extends PureComponent<IProps, IState> {
 
         return (
             <BottomSheet
-                renderFooter = { _reactionsEnabled && !toolbarButtons.has('raisehand')
-                    ? this._renderReactionMenu
-                    : undefined }>
+                renderFooter = { this._renderReactionMenu }>
+                <Divider style = { styles.divider as ViewStyle } />
                 <OpenCarmodeButton { ...topButtonProps } />
                 <AudioOnlyButton { ...buttonProps } />
-                {!_reactionsEnabled && !toolbarButtons.has('raisehand') && <RaiseHandButton { ...buttonProps } />}
+                { this._renderRaiseHandButton(buttonProps) }
                 {/* @ts-ignore */}
-                <Divider style = { styles.divider as ViewStyle } />
                 <SecurityDialogButton { ...buttonProps } />
                 <RecordButton { ...buttonProps } />
                 <LiveStreamButton { ...buttonProps } />
                 <LinkToSalesforceButton { ...buttonProps } />
+                <WhiteboardButton { ...buttonProps } />
                 {/* @ts-ignore */}
                 <Divider style = { styles.divider as ViewStyle } />
-                <SharedVideoButton { ...buttonProps } />
-                {!toolbarButtons.has('screensharing') && <ScreenSharingButton { ...buttonProps } />}
+                {_isSharedVideoEnabled && <SharedVideoButton { ...buttonProps } />}
+                { this._renderOverflowMenuButtons(topButtonProps) }
                 {!_isSpeakerStatsDisabled && <SpeakerStatsButton { ...buttonProps } />}
-                {!toolbarButtons.has('tileview') && <TileViewButton { ...buttonProps } />}
                 {_isBreakoutRoomsSupported && <BreakoutRoomsButton { ...buttonProps } />}
                 {/* @ts-ignore */}
                 <Divider style = { styles.divider as ViewStyle } />
@@ -182,13 +192,78 @@ class OverflowMenu extends PureComponent<IProps, IState> {
     /**
      * Function to render the reaction menu as the footer of the bottom sheet.
      *
-     * @returns {React$Element}
+     * @returns {React.ReactElement}
      */
     _renderReactionMenu() {
+        const { _mainMenuButtons, _shouldDisplayReactionsButtons } = this.props;
+
+        // @ts-ignore
+        const isRaiseHandInMainMenu = _mainMenuButtons?.some(item => item.key === 'raisehand');
+
+        if (_shouldDisplayReactionsButtons && !isRaiseHandInMainMenu) {
+            return (
+                <ReactionMenu
+                    onCancel = { this._onCancel }
+                    overflowMenu = { true } />
+            );
+        }
+    }
+
+    /**
+     * Function to render the reaction menu as the footer of the bottom sheet.
+     *
+     * @param {Object} buttonProps - Styling button properties.
+     * @returns {React.ReactElement}
+     */
+    _renderRaiseHandButton(buttonProps: Object) {
+        const { _mainMenuButtons, _shouldDisplayReactionsButtons } = this.props;
+
+        // @ts-ignore
+        const isRaiseHandInMainMenu = _mainMenuButtons?.some(item => item.key === 'raisehand');
+
+        if (!_shouldDisplayReactionsButtons && !isRaiseHandInMainMenu) {
+            return (
+                <RaiseHandButton { ...buttonProps } />
+            );
+        }
+    }
+
+    /**
+     * Function to render the custom buttons for the overflow menu.
+     *
+     * @param {Object} topButtonProps - Styling button properties.
+     * @returns {React.ReactElement}
+     */
+    _renderOverflowMenuButtons(topButtonProps: Object) {
+        const { _overflowMenuButtons, dispatch } = this.props;
+
+        if (!_overflowMenuButtons?.length) {
+            return;
+        }
+
         return (
-            <ReactionMenu
-                onCancel = { this._onCancel }
-                overflowMenu = { true } />
+            <>
+                {
+                    _overflowMenuButtons?.map(({ Content, key, text, ...rest }: IToolboxNativeButton) => {
+
+                        if (key === 'raisehand') {
+                            return null;
+                        }
+
+                        return (
+                            <Content
+                                { ...topButtonProps }
+                                { ...rest }
+                                /* eslint-disable react/jsx-no-bind */
+                                handleClick = { () => dispatch(customButtonPressed(key, text)) }
+                                isToolboxButton = { false }
+                                key = { key }
+                                text = { text } />
+                        );
+                    })
+                }
+                <Divider style = { styles.divider as ViewStyle } />
+            </>
         );
     }
 }
@@ -205,10 +280,37 @@ function _mapStateToProps(state: IReduxState) {
 
     return {
         _isBreakoutRoomsSupported: conference?.getBreakoutRooms()?.isSupported(),
+        _isSharedVideoEnabled: isSharedVideoEnabled(state),
         _isSpeakerStatsDisabled: isSpeakerStatsDisabled(state),
-        _reactionsEnabled: isReactionsEnabled(state),
-        _width: state['features/base/responsive-ui'].clientWidth
+        _shouldDisplayReactionsButtons: shouldDisplayReactionsButtons(state)
     };
 }
 
-export default connect(_mapStateToProps)(OverflowMenu);
+export default connect(_mapStateToProps)(props => {
+    const { clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
+    const { customToolbarButtons } = useSelector((state: IReduxState) => state['features/base/config']);
+    const {
+        mainToolbarButtonsThresholds,
+        toolbarButtons
+    } = useSelector((state: IReduxState) => state['features/toolbox']);
+    const _iAmVisitor = useSelector(iAmVisitor);
+
+    const allButtons = useNativeToolboxButtons(customToolbarButtons);
+
+    const { mainMenuButtons, overflowMenuButtons } = getVisibleNativeButtons({
+        allButtons,
+        clientWidth,
+        mainToolbarButtonsThresholds,
+        toolbarButtons,
+        iAmVisitor: _iAmVisitor
+    });
+
+    return (
+        <OverflowMenu
+
+            // @ts-ignore
+            { ... props }
+            _mainMenuButtons = { mainMenuButtons }
+            _overflowMenuButtons = { overflowMenuButtons } />
+    );
+});

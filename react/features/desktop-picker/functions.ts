@@ -1,6 +1,4 @@
 import logger from './logger';
-import { ElectronWindowType } from './types';
-
 
 /**
  * Begins a request to get available DesktopCapturerSources.
@@ -13,23 +11,6 @@ import { ElectronWindowType } from './types';
  * @returns {Function}
  */
 export function obtainDesktopSources(options: { thumbnailSize?: Object; types: string[]; }) {
-    const { JitsiMeetElectron } = window as ElectronWindowType;
-
-    // TODO: delete this after 2 releases
-    if (JitsiMeetElectron?.obtainDesktopStreams) {
-        return new Promise((resolve, reject) => {
-            JitsiMeetElectron.obtainDesktopStreams(
-                (sources: Array<{ id: string; }>) => resolve(_separateSourcesByType(sources)),
-                (error: Error) => {
-                    logger.error(
-                        `Error while obtaining desktop sources: ${error}`);
-                    reject(error);
-                },
-                options
-            );
-        });
-    }
-
     return APP.API.requestDesktopSources(options).then(
         ({ sources, error }: { error: Error; sources: Array<{ id: string; }>; }) => {
             if (sources) {
@@ -41,21 +22,6 @@ export function obtainDesktopSources(options: { thumbnailSize?: Object; types: s
                 return null;
             }
         });
-}
-
-/**
- * Check usage of old jitsi meet electron version.
- *
- * @returns {boolean} True if we use old jitsi meet electron, otherwise false.
- */
-export function oldJitsiMeetElectronUsage() {
-    const { JitsiMeetElectron } = window as ElectronWindowType;
-
-    if (JitsiMeetElectron?.obtainDesktopStreams) {
-        return true;
-    }
-
-    return false;
 }
 
 /**

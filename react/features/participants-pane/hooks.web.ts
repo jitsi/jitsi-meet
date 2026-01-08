@@ -1,13 +1,22 @@
 import { useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { handleLobbyChatInitialized } from '../chat/actions.web';
 import { approveKnockingParticipant, rejectKnockingParticipant } from '../lobby/actions.web';
+
+import ParticipantsPaneButton from './components/web/ParticipantsPaneButton';
+import { isParticipantsPaneEnabled } from './functions';
 
 interface IDrawerParticipant {
     displayName?: string;
     participantID: string;
 }
+
+const participants = {
+    key: 'participants-pane',
+    Content: ParticipantsPaneButton,
+    group: 2
+};
 
 /**
  * Hook used to create admit/reject lobby actions.
@@ -24,16 +33,16 @@ export function useLobbyActions(participant?: IDrawerParticipant | null, closeDr
             e.stopPropagation();
             dispatch(approveKnockingParticipant(participant?.participantID ?? ''));
             closeDrawer?.();
-        }, [ dispatch, closeDrawer ]),
+        }, [ dispatch, closeDrawer, participant?.participantID ]),
 
         useCallback(() => {
             dispatch(rejectKnockingParticipant(participant?.participantID ?? ''));
             closeDrawer?.();
-        }, [ dispatch, closeDrawer ]),
+        }, [ dispatch, closeDrawer, participant?.participantID ]),
 
         useCallback(() => {
             dispatch(handleLobbyChatInitialized(participant?.participantID ?? ''));
-        }, [ dispatch ])
+        }, [ dispatch, participant?.participantID ])
     ];
 }
 
@@ -56,4 +65,17 @@ export function useParticipantDrawer(): [
         closeDrawer,
         openDrawerForParticipant
     ];
+}
+
+/**
+ * A hook that returns the participants pane button if it is enabled and undefined otherwise.
+ *
+ *  @returns {Object | undefined}
+ */
+export function useParticipantPaneButton() {
+    const participantsPaneEnabled = useSelector(isParticipantsPaneEnabled);
+
+    if (participantsPaneEnabled) {
+        return participants;
+    }
 }

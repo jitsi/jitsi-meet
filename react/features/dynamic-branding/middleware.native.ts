@@ -17,23 +17,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case SET_DYNAMIC_BRANDING_DATA: {
-        const {
-            avatarBackgrounds = [],
-            backgroundColor,
-            backgroundImageUrl,
-            brandedIcons,
-            didPageUrl,
-            inviteDomain
-        } = action.value;
-
-        action.value = {
-            avatarBackgrounds,
-            backgroundColor,
-            backgroundImageUrl,
-            brandedIcons,
-            didPageUrl,
-            inviteDomain
-        };
+        const { avatarBackgrounds = [] } = action.value;
 
         // The backend may send an empty string, make sure we skip that.
         if (Array.isArray(avatarBackgrounds)) {

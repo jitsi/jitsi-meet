@@ -5,6 +5,7 @@ import { REACTIONS_ENABLED } from '../base/flags/constants';
 import { getFeatureFlag } from '../base/flags/functions';
 import { getLocalParticipant } from '../base/participants/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
+import { iAmVisitor } from '../visitors/functions';
 
 import { IReactionEmojiProps, REACTIONS, ReactionThreshold, SOUNDS_THRESHOLDS } from './constants';
 import logger from './logger';
@@ -160,4 +161,14 @@ export function isReactionsEnabled(state: IReduxState): boolean {
     }
 
     return !disableReactions;
+}
+
+/**
+ * Returns true if the reactions buttons should be displayed anywhere on the page and false otherwise.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @returns {boolean}
+ */
+export function shouldDisplayReactionsButtons(state: IReduxState): boolean {
+    return isReactionsEnabled(state) && !iAmVisitor(state);
 }

@@ -55,7 +55,7 @@ class DialInSummary extends PureComponent<IProps> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         const { navigation, t } = this.props;
 
         navigation.setOptions({
@@ -68,7 +68,7 @@ class DialInSummary extends PureComponent<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { route } = this.props;
         const summaryUrl = route.params?.summaryUrl;
 
@@ -76,13 +76,15 @@ class DialInSummary extends PureComponent<IProps> {
             <JitsiScreen
                 style = { styles.backDrop }>
                 <WebView
+                    incognito = { true }
                     onError = { this._onError }
                     onShouldStartLoadWithRequest = { this._onNavigate }
                     renderLoading = { this._renderLoading }
                     setSupportMultipleWindows = { false }
                     source = {{ uri: getDialInfoPageURLForURIString(summaryUrl) ?? '' }}
                     startInLoadingState = { true }
-                    style = { styles.webView } />
+                    style = { styles.webView }
+                    webviewDebuggingEnabled = { true } />
             </JitsiScreen>
         );
     }
@@ -93,7 +95,7 @@ class DialInSummary extends PureComponent<IProps> {
      * @returns {void}
      */
     _onError() {
-        this.props.dispatch(openDialog(DialInSummaryErrorDialog));
+        this.props.dispatch(openDialog('DialInSummaryErrorDialog', DialInSummaryErrorDialog));
     }
 
     /**

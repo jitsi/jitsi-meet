@@ -32,11 +32,11 @@ interface IProps extends AbstractButtonProps {
  * An implementation of a button for toggling the audio-only mode.
  */
 class AudioOnlyButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.audioOnly';
-    icon = IconAudioOnly;
-    label = 'toolbar.audioOnlyOn';
-    toggledIcon = IconAudioOnlyOff;
-    toggledLabel = 'toolbar.audioOnlyOff';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.audioOnly';
+    override icon = IconAudioOnly;
+    override label = 'toolbar.audioOnlyOn';
+    override toggledIcon = IconAudioOnlyOff;
+    override toggledLabel = 'toolbar.audioOnlyOff';
 
     /**
      * Handles clicking / pressing the button.
@@ -45,7 +45,7 @@ class AudioOnlyButton extends AbstractButton<IProps> {
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { _audioOnly, _startCarMode, dispatch } = this.props;
 
         if (!_audioOnly && _startCarMode) {
@@ -64,7 +64,7 @@ class AudioOnlyButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._audioOnly;
     }
 }

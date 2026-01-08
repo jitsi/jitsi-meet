@@ -1,14 +1,13 @@
 import { IStore } from '../../app/types';
+import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import RTCStats from '../../rtcstats/RTCStats';
 import { isRTCStatsEnabled } from '../../rtcstats/functions';
-import { getCurrentConference } from '../conference/functions';
 
 /**
- * Implements log storage interface from the @jitsi/logger lib. Captured
- * logs are sent to CallStats.
+ * Implements log storage interface from the @jitsi/logger lib, as it stands
+ * now it only sends logs to the rtcstats server in case it is enabled.
  */
 export default class JitsiMeetLogStorage {
-    counter: number;
     getState: IStore['getState'];
 
     /**
@@ -17,12 +16,6 @@ export default class JitsiMeetLogStorage {
      * @param {Function} getState - The Redux store's {@code getState} method.
      */
     constructor(getState: IStore['getState']) {
-        /**
-         * Counts each log entry, increases on every batch log entry stored.
-         *
-         * @type {number}
-         */
-        this.counter = 1;
 
         /**
          * The Redux store's {@code getState} method.
@@ -33,18 +26,14 @@ export default class JitsiMeetLogStorage {
     }
 
     /**
-     * The JitsiMeetLogStorage is ready when the CallStats are started and
-     * before refactoring the code it was after the conference has been joined.
-     * A conference is considered joined when the 'conference' field is defined
-     * in the base/conference state.
+     * The JitsiMeetLogStorage is ready we can use the rtcstats trace to send logs
+     * to the rtcstats server.
      *
      * @returns {boolean} <tt>true</tt> when this storage is ready or
      * <tt>false</tt> otherwise.
      */
     isReady() {
-        const { conference } = this.getState()['features/base/conference'];
-
-        return Boolean(conference);
+        return JitsiMeetJS.rtcstats.isTraceAvailable();
     }
 
     /**
@@ -57,9 +46,9 @@ export default class JitsiMeetLogStorage {
 
         const config = this.getState()['features/base/config'];
 
-        // Saving the logs in RTCStats is a new feature and so there is no prior behavior that needs to be maintained.
-        // That said, this is still experimental and needs to be rolled out gradually so we want this to be off by
-        // default.
+        // RTCStats can run without sending app logs to the server.
+        // Be mindful that there exists another LogStorage instance withing lib-jitsi-meet,
+        // that is used to send logs generated there.
         return config?.analytics?.rtcstatsStoreLogs && isRTCStatsEnabled(this.getState());
     }
 
@@ -73,54 +62,8 @@ export default class JitsiMeetLogStorage {
      */
     storeLogs(logEntries: Array<string | any>) {
 
-        // XXX the config.callStatsApplicationLogsDisabled controls whether or not the logs will be sent to callstats.
-        // this is done in LJM
-        this.storeLogsCallstats(logEntries);
-
         if (this.canStoreLogsRtcstats()) {
             RTCStats.sendLogs(logEntries);
-        }
-    }
-
-    /**
-     * Store the console logs in callstats (if callstats is enabled).
-     *
-     * @param {Array<string|any>} logEntries - The log entries to send to the rtcstats server.
-     * @returns {void}
-     */
-    storeLogsCallstats(logEntries: Array<string | any>) {
-        const conference = getCurrentConference(this.getState());
-
-        if (!conference?.isCallstatsEnabled()) {
-            // Discard the logs if CallStats is not enabled.
-            return;
-        }
-
-        let logMessage = `{"log${this.counter}":"\n`;
-
-        for (let i = 0, len = logEntries.length; i < len; i++) {
-            const logEntry = logEntries[i];
-
-            if (logEntry.timestamp) {
-                logMessage += `${logEntry.timestamp} `;
-            }
-            if (logEntry.count > 1) {
-                logMessage += `(${logEntry.count}) `;
-            }
-            logMessage += `${logEntry.text}\n`;
-        }
-        logMessage += '"}';
-
-        this.counter += 1;
-
-        // Try catch was used, because there are many variables
-        // on the way that could be uninitialized if the storeLogs
-        // attempt would be made very early (which is unlikely)
-        try {
-            conference.sendApplicationLog(logMessage);
-        } catch (error) {
-            // NOTE console is intentional here
-            console.error(`Failed to store the logs, msg length: ${logMessage.length} error:`, error);
         }
     }
 }

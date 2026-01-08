@@ -1,20 +1,27 @@
-import _ from 'lodash';
+
+import { difference } from 'lodash-es';
+import { batch } from 'react-redux';
 
 import { IStore } from '../../app/types';
+import { hideNotification, showNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE, RAISE_HAND_NOTIFICATION_ID } from '../../notifications/constants';
 import { getCurrentConference } from '../conference/functions';
 import {
-    getMultipleVideoSendingSupportFeatureFlag,
-    getSsrcRewritingFeatureFlag
-} from '../config/functions.any';
+    getDisableNextSpeakerNotification,
+    getSsrcRewritingFeatureFlag,
+    hasBeenNotified,
+    isNextToSpeak } from '../config/functions.any';
 import { VIDEO_TYPE } from '../media/constants';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 
+import { NOTIFIED_TO_SPEAK } from './actionTypes';
 import { createVirtualScreenshareParticipant, participantLeft } from './actions';
 import {
     getParticipantById,
     getRemoteScreensharesBasedOnPresence,
     getVirtualScreenshareParticipantOwnerId
 } from './functions';
+import logger from './logger';
 import { FakeParticipant } from './types';
 
 StateListenerRegistry.register(
@@ -28,9 +35,25 @@ StateListenerRegistry.register(
         && _updateScreenshareParticipantsBasedOnPresence(store)
 );
 
+StateListenerRegistry.register(
+    /* selector */ state => state['features/base/participants'].raisedHandsQueue,
+    /* listener */ (raisedHandsQueue, store) => {
+        if (raisedHandsQueue.length
+            && isNextToSpeak(store.getState())
+            && !hasBeenNotified(store.getState())
+            && !getDisableNextSpeakerNotification(store.getState())
+            && !store.getState()['features/visitors'].iAmVisitor) { // visitors raise hand to be promoted
+            _notifyNextSpeakerInRaisedHandQueue(store);
+        }
+        if (!raisedHandsQueue[0]) {
+            store.dispatch(hideNotification(RAISE_HAND_NOTIFICATION_ID));
+        }
+    }
+);
+
 /**
  * Compares the old and new screenshare lists provided and creates/removes the virtual screenshare participant
- * tiles accodingly.
+ * tiles accordingly.
  *
  * @param {Array<string>} oldScreenshareSourceNames - List of old screenshare source names.
  * @param {Array<string>} newScreenshareSourceNames - Current list of screenshare source names.
@@ -43,18 +66,23 @@ function _createOrRemoveVirtualParticipants(
         store: IStore): void {
     const { dispatch, getState } = store;
     const conference = getCurrentConference(getState());
-    const removedScreenshareSourceNames = _.difference(oldScreenshareSourceNames, newScreenshareSourceNames);
-    const addedScreenshareSourceNames = _.difference(newScreenshareSourceNames, oldScreenshareSourceNames);
+    const removedScreenshareSourceNames = difference(oldScreenshareSourceNames, newScreenshareSourceNames);
+    const addedScreenshareSourceNames = difference(newScreenshareSourceNames, oldScreenshareSourceNames);
 
     if (removedScreenshareSourceNames.length) {
-        removedScreenshareSourceNames.forEach(id => dispatch(participantLeft(id, conference, {
-            fakeParticipant: FakeParticipant.RemoteScreenShare
-        })));
+        removedScreenshareSourceNames.forEach(id => {
+            logger.debug('Dispatching participantLeft for virtual screenshare', id);
+            dispatch(participantLeft(id, conference, {
+                fakeParticipant: FakeParticipant.RemoteScreenShare
+            }));
+        });
     }
 
     if (addedScreenshareSourceNames.length) {
-        addedScreenshareSourceNames.forEach(id => dispatch(
-            createVirtualScreenshareParticipant(id, false, conference)));
+        addedScreenshareSourceNames.forEach(id => {
+            logger.debug('Creating virtual screenshare participant', id);
+            dispatch(createVirtualScreenshareParticipant(id, false, conference));
+        });
     }
 }
 
@@ -92,16 +120,14 @@ function _updateScreenshareParticipants(store: IStore): void {
         return acc;
     }, []);
 
-    if (getMultipleVideoSendingSupportFeatureFlag(state)) {
-        if (!localScreenShare && newLocalSceenshareSourceName) {
-            dispatch(createVirtualScreenshareParticipant(newLocalSceenshareSourceName, true, conference));
-        }
+    if (!localScreenShare && newLocalSceenshareSourceName) {
+        dispatch(createVirtualScreenshareParticipant(newLocalSceenshareSourceName, true, conference));
+    }
 
-        if (localScreenShare && !newLocalSceenshareSourceName) {
-            dispatch(participantLeft(localScreenShare.id, conference, {
-                fakeParticipant: FakeParticipant.LocalScreenShare
-            }));
-        }
+    if (localScreenShare && !newLocalSceenshareSourceName) {
+        dispatch(participantLeft(localScreenShare.id, conference, {
+            fakeParticipant: FakeParticipant.LocalScreenShare
+        }));
     }
 
     if (getSsrcRewritingFeatureFlag(state)) {
@@ -125,4 +151,24 @@ function _updateScreenshareParticipantsBasedOnPresence(store: IStore): void {
     const currentScreenshareSourceNames = getRemoteScreensharesBasedOnPresence(state);
 
     _createOrRemoveVirtualParticipants(previousScreenshareSourceNames, currentScreenshareSourceNames, store);
+}
+
+/**
+ * Handles notifying the next speaker in the raised hand queue.
+ *
+ * @param {*} store - The redux store.
+ * @returns {void}
+ */
+function _notifyNextSpeakerInRaisedHandQueue(store: IStore): void {
+    const { dispatch } = store;
+
+    batch(() => {
+        dispatch(showNotification({
+            titleKey: 'notify.nextToSpeak',
+            maxLines: 2
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        dispatch({
+            type: NOTIFIED_TO_SPEAK
+        });
+    });
 }

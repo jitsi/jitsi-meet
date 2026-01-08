@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
-import { getToolbarButtons } from '../../../base/config/functions.web';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { LAYOUTS, LAYOUT_CLASSNAMES } from '../../../video-layout/constants';
 import { getCurrentLayout } from '../../../video-layout/functions.web';
@@ -108,9 +107,9 @@ const StageFilmstrip = (props: IProps) =>
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState, _ownProps: any) {
-    const toolbarButtons = getToolbarButtons(state);
+    const { toolbarButtons } = state['features/toolbox'];
     const activeParticipants = getActiveParticipantsIds(state);
-    const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
+    const reduceHeight = state['features/toolbox'].visible && toolbarButtons?.length;
     const {
         gridDimensions: dimensions = { columns: undefined,
             rows: undefined },
@@ -120,7 +119,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     } = state['features/filmstrip'].stageFilmstripDimensions;
     const gridDimensions = dimensions;
 
-    const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+    const { clientHeight, videoSpaceWidth } = state['features/base/responsive-ui'];
     const availableSpace = clientHeight - Number(filmstripHeight);
     let filmstripPadding = 0;
 
@@ -136,7 +135,7 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
 
     const collapseTileView = reduceHeight
         && isMobileBrowser()
-        && clientWidth <= ASPECT_RATIO_BREAKPOINT;
+        && videoSpaceWidth <= ASPECT_RATIO_BREAKPOINT;
 
     const remoteFilmstripHeight = Number(filmstripHeight) - (
         collapseTileView && filmstripPadding > 0 ? filmstripPadding : 0);

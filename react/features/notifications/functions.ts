@@ -1,6 +1,5 @@
-import { MODERATION_NOTIFICATIONS } from '../av-moderation/constants';
+import { MODERATION_NOTIFICATIONS, MediaType } from '../av-moderation/constants';
 import { IStateful } from '../base/app/types';
-import { MediaType } from '../base/media/constants';
 import { toState } from '../base/redux/functions';
 
 /**

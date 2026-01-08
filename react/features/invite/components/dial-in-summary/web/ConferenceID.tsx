@@ -4,7 +4,6 @@ import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
 import { translate } from '../../../../base/i18n/functions';
-import { withPixelLineHeight } from '../../../../base/styles/functions.web';
 import { _formatConferenceIDPin } from '../../../_utils';
 
 
@@ -38,14 +37,14 @@ const useStyles = makeStyles()((theme: Theme) => {
             }
         },
         confNameLabel: {
-            ...withPixelLineHeight(theme.typography.heading6),
+            ...theme.typography.heading6,
             marginBottom: 18,
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis'
         },
         descriptionLabel: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+            ...theme.typography.bodyShortRegularLarge,
             marginBottom: 18
         },
         separator: {
@@ -55,7 +54,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             marginBottom: 18
         },
         pinLabel: {
-            ...withPixelLineHeight(theme.typography.heading6)
+            ...theme.typography.heading6
         }
     };
 });
@@ -66,7 +65,7 @@ const ConferenceID: React.FC<IProps> = ({ conferenceID, t }) => {
     return (
         <div className = { styles.container }>
             <div className = { styles.descriptionLabel }>
-                To join the meeting via phone, dial one of these numbers and then enter the pin
+                { t('info.dialANumber') }
             </div>
             <div className = { styles.separator } />
             <div className = { styles.pinLabel }>

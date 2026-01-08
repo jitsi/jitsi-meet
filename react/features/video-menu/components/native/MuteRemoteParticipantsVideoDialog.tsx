@@ -17,7 +17,7 @@ class MuteRemoteParticipantsVideoDialog extends AbstractMuteRemoteParticipantsVi
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <ConfirmDialog
                 descriptionKey = { this.props.isVideoModerationOn

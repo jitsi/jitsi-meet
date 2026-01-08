@@ -1,10 +1,13 @@
 import ReducerRegistry from '../redux/ReducerRegistry';
 
-import { SET_UNSAFE_ROOM_CONSENT } from './actionTypes';
-import { IPreMeetingState } from './types';
+import { SET_PRECALL_TEST_RESULTS, SET_UNSAFE_ROOM_CONSENT } from './actionTypes';
+import { IPreMeetingState, PreCallTestStatus } from './types';
 
 
 const DEFAULT_STATE: IPreMeetingState = {
+    preCallTestState: {
+        status: PreCallTestStatus.INITIAL
+    },
     unsafeRoomConsent: false
 };
 
@@ -20,6 +23,12 @@ ReducerRegistry.register<IPreMeetingState>(
     'features/base/premeeting',
     (state = DEFAULT_STATE, action): IPreMeetingState => {
         switch (action.type) {
+        case SET_PRECALL_TEST_RESULTS:
+            return {
+                ...state,
+                preCallTestState: action.value
+            };
+
         case SET_UNSAFE_ROOM_CONSENT: {
             return {
                 ...state,

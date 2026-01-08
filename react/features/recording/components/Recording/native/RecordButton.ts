@@ -9,7 +9,9 @@ import { translate } from '../../../../base/i18n/functions';
 import { navigate }
     from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../../mobile/navigation/routes';
-import { IProps, _mapStateToProps as abstractMapStateToProps } from '../../LiveStream/AbstractStartLiveStreamDialog';
+import {
+    IProps, _mapStateToProps as abstractStartLiveStreamDialogMapStateToProps
+} from '../../LiveStream/AbstractStartLiveStreamDialog';
 import AbstractRecordButton, {
     IProps as AbstractProps,
     _mapStateToProps as _abstractMapStateToProps
@@ -35,7 +37,7 @@ class RecordButton extends AbstractRecordButton<Props> {
         const { _isRecordingRunning, dispatch } = this.props;
 
         if (_isRecordingRunning) {
-            dispatch(openDialog(StopRecordingDialog));
+            dispatch(openDialog('StopRecordingDialog', StopRecordingDialog));
         } else {
             navigate(screen.conference.recording);
         }
@@ -58,8 +60,8 @@ export function mapStateToProps(state: IReduxState) {
 
     return {
         ...abstractProps,
-        ...abstractMapStateToProps(state),
-        visible: enabled && iosEnabled && abstractProps.visible
+        ...abstractStartLiveStreamDialogMapStateToProps(state),
+        visible: Boolean(enabled && iosEnabled && abstractProps.visible)
     };
 }
 

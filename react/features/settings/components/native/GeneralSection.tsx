@@ -22,13 +22,7 @@ const GeneralSection = () => {
     const dispatch = useDispatch();
     const {
         disableSelfView,
-        userSelectedSkipPrejoin
     } = useSelector((state: IReduxState) => state['features/base/settings']);
-
-    const showPrejoinPage = !userSelectedSkipPrejoin;
-
-    let showPrejoinSettings = useSelector(
-        (state: IReduxState) => state['features/base/config'].prejoinConfig?.enabled);
 
     const { language = DEFAULT_LANGUAGE } = i18next;
 
@@ -36,18 +30,9 @@ const GeneralSection = () => {
         dispatch(updateSettings({ disableSelfView: enabled }))
     , [ dispatch, updateSettings ]);
 
-    const onShowPejoinToggled = useCallback((enabled?: boolean) => {
-        dispatch(updateSettings({ userSelectedSkipPrejoin: !enabled }));
-    }
-    , [ dispatch, updateSettings ]);
-
     const navigateToLanguageSelect = useCallback(() => {
         navigate(screen.settings.language);
     }, [ navigate, screen ]);
-
-    // TODO:
-    // Delete this line when prejoin skipping is available on mobile
-    showPrejoinSettings = false;
 
     return (
         <FormSection>
@@ -56,13 +41,6 @@ const GeneralSection = () => {
                     checked = { Boolean(disableSelfView) }
                     onChange = { onSelfViewToggled } />
             </FormRow>
-
-            {showPrejoinSettings && <FormRow label = 'prejoin.showScreen'>
-                <Switch
-                    checked = { showPrejoinPage }
-                    onChange = { onShowPejoinToggled } />
-            </FormRow>}
-
             <FormRow label = 'settings.language'>
                 <View style = { styles.languageButtonContainer as ViewStyle }>
                     <TouchableHighlight onPress = { navigateToLanguageSelect }>

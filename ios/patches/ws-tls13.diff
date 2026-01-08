@@ -1,0 +1,15 @@
+diff --git a/SocketRocket/SRSecurityPolicy.m b/SocketRocket/SRSecurityPolicy.m
+index 3759d26e..271477e8 100644
+--- a/SocketRocket/SRSecurityPolicy.m
++++ b/SocketRocket/SRSecurityPolicy.m
+@@ -56,8 +56,8 @@ - (instancetype)init
+ 
+ - (void)updateSecurityOptionsInStream:(NSStream *)stream
+ {
+-    // Enforce TLS 1.2
+-    [stream setProperty:(__bridge id)CFSTR("kCFStreamSocketSecurityLevelTLSv1_2") forKey:(__bridge id)kCFStreamPropertySocketSecurityLevel];
++    // Enforce TLS >= 1.2
++    [stream setProperty:(__bridge id)kCFStreamSocketSecurityLevelNegotiatedSSL forKey:(__bridge id)kCFStreamPropertySocketSecurityLevel];
+ 
+     // Validate certificate chain for this stream if enabled.
+     NSDictionary<NSString *, id> *sslOptions = @{ (__bridge NSString *)kCFStreamSSLValidatesCertificateChain : @(self.certificateChainValidationEnabled) };

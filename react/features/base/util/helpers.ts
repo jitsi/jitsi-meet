@@ -22,23 +22,6 @@ export function assignIfDefined(target: Object, source: Object) {
     return to;
 }
 
-
-/**
- * Creates a deferred object.
- *
- * @returns {{promise, resolve, reject}}
- */
-export function createDeferred() {
-    const deferred: any = {};
-
-    deferred.promise = new Promise((resolve, reject) => {
-        deferred.resolve = resolve;
-        deferred.reject = reject;
-    });
-
-    return deferred;
-}
-
 const MATCH_OPERATOR_REGEXP = /[|\\{}()[\]^$+*?.-]/g;
 
 /**
@@ -96,6 +79,36 @@ export function getJitsiMeetGlobalNS() {
 }
 
 /**
+ * Gets the Electron-specific global namespace.
+ *
+ * @returns {Object} The Electron namespace.
+ */
+export function getElectronGlobalNS() {
+    const globalNS = getJitsiMeetGlobalNS();
+
+    if (!globalNS.electron) {
+        globalNS.electron = {};
+    }
+
+    return globalNS.electron;
+}
+
+/**
+ * Returns the object that stores the connection times.
+ *
+ * @returns {Object} - The object that stores the connection times.
+ */
+export function getJitsiMeetGlobalNSConnectionTimes() {
+    const globalNS = getJitsiMeetGlobalNS();
+
+    if (!globalNS.connectionTimes) {
+        globalNS.connectionTimes = {};
+    }
+
+    return globalNS.connectionTimes;
+}
+
+/**
  * Prints the error and reports it to the global error handler.
  *
  * @param {Error} e - The error object.
@@ -145,7 +158,7 @@ export function setColorAlpha(color: string, opacity: number) {
 /**
  * Gets the hexa rgb values for a shorthand css color.
  *
- * @param {string} color -
+ * @param {string} color - The shorthand css color.
  * @returns {Array<number>} - Array containing parsed r, g, b values of the color.
  */
 function parseShorthandColor(color: string) {

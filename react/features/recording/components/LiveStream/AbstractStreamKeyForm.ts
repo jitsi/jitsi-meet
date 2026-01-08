@@ -1,5 +1,4 @@
-import { DebouncedFunc } from 'lodash';
-import debounce from 'lodash/debounce';
+import { type DebouncedFunc, debounce } from 'lodash-es';
 import { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 
@@ -21,11 +20,11 @@ export type LiveStreaming = {
 };
 
 export type LiveStreamingProps = {
-    dataPrivacyURL: string;
+    dataPrivacyURL?: string;
     enabled: boolean;
-    helpURL: string;
+    helpURL?: string;
     streamLinkRegexp: RegExp;
-    termsURL: string;
+    termsURL?: string;
 };
 
 /**
@@ -37,8 +36,6 @@ export interface IProps extends WithTranslation {
      * The live streaming dialog properties.
      */
     _liveStreaming: LiveStreamingProps;
-
-    classes?: any;
 
     /**
      * Callback invoked when the entered stream key has changed.
@@ -102,7 +99,7 @@ export default class AbstractStreamKeyForm<P extends IProps>
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: P) {
+    override componentDidUpdate(prevProps: P) {
         if (this.props.value !== prevProps.value) {
             this._debouncedUpdateValidationErrorVisibility();
         }
@@ -113,7 +110,7 @@ export default class AbstractStreamKeyForm<P extends IProps>
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this._debouncedUpdateValidationErrorVisibility.cancel();
     }
 

@@ -8,8 +8,10 @@
 -- To trigger creation of lobby room:
 --  prosody.events.fire_event("create-persistent-lobby-room", { room = room; });
 --
+module:depends('room_destroy');
 
 local util = module:require "util";
+local get_room_from_jid = util.get_room_from_jid;
 local is_healthcheck_room = util.is_healthcheck_room;
 local main_muc_component_host = module:get_option_string('main_muc');
 local lobby_muc_component_host = module:get_option_string('lobby_muc');
@@ -86,8 +88,11 @@ end
 
 -- Helper method to trigger main room destroy
 local function trigger_room_destroy(room)
-    room:set_persistent(false);
-    room:destroy(nil, 'main room and lobby now empty');
+    prosody.events.fire_event("maybe-destroy-room", {
+        room = room;
+        reason = 'main room and lobby now empty';
+        caller = module:get_name();
+    });
 end
 
 
@@ -106,7 +111,8 @@ run_when_component_loaded(main_muc_component_host, function(host_module, host_na
             -- Check if room should be destroyed when someone leaves the main room
 
             local main_room = event.room;
-            if is_healthcheck_room(main_room.jid) or not has_persistent_lobby(main_room) then
+            if is_healthcheck_room(main_room.jid) or not has_persistent_lobby(main_room)
+                or main_room.destroying then
                 return;
             end
 
@@ -140,9 +146,13 @@ run_when_component_loaded(lobby_muc_component_host, function(host_module, host_n
 
         lobby_module:hook("muc-occupant-left", function(event)
             -- Check if room should be destroyed when someone leaves the lobby
-
             local lobby_room = event.room;
-            local main_room = lobby_room.main_room;
+
+            if not lobby_room.main_room_jid then
+                return;
+            end
+
+            local main_room = get_room_from_jid(lobby_room.main_room_jid);
 
             if not main_room or is_healthcheck_room(main_room.jid) or not has_persistent_lobby(main_room) then
                 return;
@@ -170,3 +180,26 @@ end
 
 module:hook_global('create-persistent-lobby-room', handle_create_persistent_lobby);
 
+
+-- Stop other modules from destroying room if persistent lobby not empty
+function handle_maybe_destroy_main_room(event)
+    local main_room = event.room;
+    local caller = event.caller;
+
+    if caller == module:get_name() then
+        -- we were the one that requested the deletion. Do not override.
+        return nil;
+    end
+
+    -- deletion was requested by another module. Check for lobby occupants.
+    if has_persistent_lobby(main_room) and main_room._data.lobbyroom then
+        local lobby_room_jid = main_room._data.lobbyroom;
+        local lobby_room = lobby_muc_service.get_room_from_jid(lobby_room_jid);
+        if lobby_room and lobby_room:has_occupant() then
+            module:log('info', 'Suppressing room destroy. Persistent lobby still occupied %s', lobby_room_jid);
+            return true;  -- stop room destruction
+        end
+    end
+end
+
+module:hook_global("maybe-destroy-room", handle_maybe_destroy_main_room);

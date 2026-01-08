@@ -1,13 +1,12 @@
 import { IReduxState, IStore } from '../../app/types';
-import {
-    getMultipleVideoSendingSupportFeatureFlag
-} from '../config/functions.any';
+import { getSsrcRewritingFeatureFlag } from '../config/functions.any';
 import { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { gumPending } from '../media/actions';
-import { MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
+import { CAMERA_FACING_MODE, MEDIA_TYPE, MediaType, VIDEO_TYPE } from '../media/constants';
 import { IMediaState } from '../media/reducer';
 import { IGUMPendingState } from '../media/types';
 import {
+    getMutedStateByParticipantAndMediaType,
     getVirtualScreenshareParticipantOwnerId,
     isScreenShareParticipant
 } from '../participants/functions';
@@ -38,6 +37,10 @@ export function isParticipantMediaMuted(participant: IParticipant | undefined,
         return false;
     }
 
+    if (getSsrcRewritingFeatureFlag(state)) {
+        return getMutedStateByParticipantAndMediaType(state, participant, mediaType);
+    }
+
     const tracks = getTrackState(state);
 
     if (participant?.local) {
@@ -56,8 +59,19 @@ export function isParticipantMediaMuted(participant: IParticipant | undefined,
  * @param {IReduxState} state - Global state.
  * @returns {boolean} - Is audio muted for the participant.
  */
-export function isParticipantAudioMuted(participant: IParticipant, state: IReduxState) {
+export function isParticipantAudioMuted(participant: IParticipant | undefined, state: IReduxState) {
     return isParticipantMediaMuted(participant, MEDIA_TYPE.AUDIO, state);
+}
+
+/**
+ * Checks if the participant is screen-share muted.
+ *
+ * @param {IParticipant} participant - Participant reference.
+ * @param {IReduxState} state - Global state.
+ * @returns {boolean} - Is screen-share muted for the participant.
+ */
+export function isParticipantScreenShareMuted(participant: IParticipant | undefined, state: IReduxState) {
+    return isParticipantMediaMuted(participant, MEDIA_TYPE.SCREENSHARE, state);
 }
 
 /**
@@ -121,6 +135,10 @@ export function getLocalJitsiDesktopTrack(state: IReduxState) {
  * @returns {(Track|undefined)}
  */
 export function getLocalTrack(tracks: ITrack[], mediaType: MediaType, includePending = false) {
+    if (mediaType === MEDIA_TYPE.SCREENSHARE) {
+        return getLocalDesktopTrack(tracks, includePending);
+    }
+
     return (
         getLocalTracks(tracks, includePending)
             .find(t => t.mediaType === mediaType));
@@ -184,6 +202,48 @@ export function getLocalJitsiAudioTrack(state: IReduxState) {
 }
 
 /**
+ * Returns audio settings from the local Jitsi audio track.
+ *
+ * @param {IReduxState} state - The Redux state.
+ * @returns {IAudioSettings} The extracted audio settings.
+ */
+export function getLocalJitsiAudioTrackSettings(state: IReduxState) {
+    const jitsiTrack = getLocalJitsiAudioTrack(state);
+
+    if (!jitsiTrack) {
+        const {
+            audioQuality,
+            disableAEC = false,
+            disableAGC = false,
+            disableAP = false,
+            disableNS = false
+        } = state['features/base/config'] || {};
+
+        const enableStereo = Boolean(audioQuality?.stereo);
+
+        return {
+            autoGainControl: enableStereo ? false : !disableAP && !disableAGC,
+            channelCount: enableStereo ? 2 : 1,
+            echoCancellation: enableStereo ? false : !disableAP && !disableAEC,
+            noiseSuppression: enableStereo ? false : !disableAP && !disableNS
+        };
+    }
+
+    const hasAudioMixerEffect = Boolean(typeof jitsiTrack._streamEffect?.setMuted === 'function' && jitsiTrack._streamEffect?._originalTrack);
+
+    const track = hasAudioMixerEffect ? jitsiTrack._streamEffect._originalTrack : jitsiTrack.getTrack();
+
+    const { autoGainControl, channelCount, echoCancellation, noiseSuppression } = track.getSettings();
+
+    return {
+        autoGainControl,
+        channelCount,
+        echoCancellation,
+        noiseSuppression
+    };
+}
+
+/**
  * Returns track of specified media type for specified participant.
  *
  * @param {IReduxState} state - The redux state.
@@ -219,6 +279,14 @@ export function getTrackByMediaTypeAndParticipant(
         tracks: ITrack[],
         mediaType: MediaType,
         participantId?: string) {
+    if (!participantId) {
+        return;
+    }
+
+    if (mediaType === MEDIA_TYPE.SCREENSHARE) {
+        return getScreenShareTrack(tracks, participantId);
+    }
+
     return tracks.find(
         t => Boolean(t.jitsiTrack) && t.participantId === participantId && t.mediaType === mediaType
     );
@@ -400,8 +468,7 @@ export function setTrackMuted(track: any, muted: boolean, state: IReduxState | I
     // Ignore the check for desktop track muted operation. When the screenshare is terminated by clicking on the
     // browser's 'Stop sharing' button, the local stream is stopped before the inactive stream handler is fired.
     // We still need to proceed here and remove the track from the peerconnection.
-    if (track.isMuted() === muted
-        && !(track.getVideoType() === VIDEO_TYPE.DESKTOP && getMultipleVideoSendingSupportFeatureFlag(state))) {
+    if (track.isMuted() === muted && track.getVideoType() !== VIDEO_TYPE.DESKTOP) {
         return Promise.resolve();
     }
 
@@ -446,4 +513,14 @@ export function logTracksForParticipant(tracksState: ITrack[], participantId: st
     const tracksLogMsg = trackStateStrings.length > 0 ? `\n${trackStateStrings.join('\n')}` : ' No tracks available!';
 
     logger.debug(`${logStringPrefix}${reason ? `(reason: ${reason})` : ''}:${tracksLogMsg}`);
+}
+
+/**
+ * Gets the default camera facing mode.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {string} - The camera facing mode.
+ */
+export function getCameraFacingMode(state: IReduxState) {
+    return state['features/base/config'].cameraFacingMode ?? CAMERA_FACING_MODE.USER;
 }

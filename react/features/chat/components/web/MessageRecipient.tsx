@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IconCloseLarge } from '../../../base/icons/svg';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import {
@@ -24,7 +23,7 @@ const useStyles = makeStyles()(theme => {
             alignItems: 'center',
             backgroundColor: theme.palette.support05,
             borderRadius: theme.shape.borderRadius,
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: theme.palette.text01
         },
 
@@ -48,6 +47,7 @@ const useStyles = makeStyles()(theme => {
 const MessageRecipient = ({
     _privateMessageRecipient,
     _isLobbyChatActive,
+    _isVisitor,
     _lobbyMessageRecipient,
     _onRemovePrivateMessageRecipient,
     _onHideLobbyChatRecipient,
@@ -80,9 +80,9 @@ const MessageRecipient = ({
             id = 'chat-recipient'
             role = 'alert'>
             <span className = { classes.text }>
-                {t(_isLobbyChatActive ? 'chat.lobbyChatMessageTo' : 'chat.messageTo', {
-                    recipient: _isLobbyChatActive ? _lobbyMessageRecipient : _privateMessageRecipient
-                })}
+                { _isLobbyChatActive
+                    ? t('chat.lobbyChatMessageTo', { recipient: _lobbyMessageRecipient })
+                    : t('chat.messageTo', { recipient: `${_privateMessageRecipient}${_isVisitor ? ` ${t('visitors.chatIndicator')}` : ''}` }) }
             </span>
             <Button
                 accessibilityLabel = { t('dialog.close') }

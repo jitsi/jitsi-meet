@@ -32,6 +32,16 @@ export const CONNECTION_ESTABLISHED = 'CONNECTION_ESTABLISHED';
 export const CONNECTION_FAILED = 'CONNECTION_FAILED';
 
 /**
+ * The type of (redux) action which signals that connection properties were updated.
+ *
+ * {
+ *     type: CONNECTION_PROPERTIES_UPDATED,
+ *     properties: Object
+ * }
+ */
+export const CONNECTION_PROPERTIES_UPDATED = 'CONNECTION_PROPERTIES_UPDATED';
+
+/**
  * The type of (redux) action which signals that a connection will connect.
  *
  * {
@@ -51,6 +61,16 @@ export const CONNECTION_WILL_CONNECT = 'CONNECTION_WILL_CONNECT';
  * }
  */
 export const SET_LOCATION_URL = 'SET_LOCATION_URL';
+
+/**
+ * The type of (redux) action which sets the preferVisitor in store.
+ *
+ * {
+ *     type: SET_PREFER_VISITOR,
+ *     preferVisitor: ?boolean
+ * }
+ */
+export const SET_PREFER_VISITOR = 'SET_PREFER_VISITOR';
 
 /**
  * The type of (redux) action which tells whether connection info should be displayed

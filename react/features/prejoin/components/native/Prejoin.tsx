@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { setPermanentProperty } from '../../../analytics/actions';
 import { appNavigate } from '../../../app/actions.native';
 import { IReduxState } from '../../../app/types';
 import { setAudioOnly } from '../../../base/audio-only/actions';
@@ -24,7 +25,7 @@ import { IconCloseLarge } from '../../../base/icons/svg';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { getFieldValue } from '../../../base/react/functions';
-import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
+import { ASPECT_RATIO_WIDE } from '../../../base/responsive-ui/constants';
 import { updateSettings } from '../../../base/settings/actions';
 import Button from '../../../base/ui/components/native/Button';
 import Input from '../../../base/ui/components/native/Input';
@@ -32,12 +33,14 @@ import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 import { openDisplayNamePrompt } from '../../../display-name/actions';
 import BrandingImageBackground from '../../../dynamic-branding/components/native/BrandingImageBackground';
 import LargeVideo from '../../../large-video/components/LargeVideo.native';
+import { getLobbyConfig } from '../../../lobby/functions';
 import HeaderNavigationButton from '../../../mobile/navigation/components/HeaderNavigationButton';
 import { navigateRoot } from '../../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
+import HangupButton from '../../../toolbox/components/HangupButton';
 import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
 import VideoMuteButton from '../../../toolbox/components/native/VideoMuteButton';
-import { isDisplayNameRequired } from '../../functions';
+import { isDisplayNameRequired, isRoomNameEnabled } from '../../functions.native';
 import { IPrejoinProps } from '../../types';
 import { hasDisplayName } from '../../utils';
 
@@ -48,15 +51,20 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const dispatch = useDispatch();
     const isFocused = useIsFocused();
     const { t } = useTranslation();
-    const aspectRatio = useSelector(
-        (state: IReduxState) => state['features/base/responsive-ui']?.aspectRatio
+    const { aspectRatio, clientHeight, clientWidth } = useSelector(
+        (state: IReduxState) => state['features/base/responsive-ui']
     );
+    const isTablet = Math.min(clientWidth, clientHeight) >= 768;
     const localParticipant = useSelector((state: IReduxState) => getLocalParticipant(state));
     const isDisplayNameMandatory = useSelector((state: IReduxState) => isDisplayNameRequired(state));
     const isDisplayNameVisible
         = useSelector((state: IReduxState) => !getFeatureFlag(state, PREJOIN_PAGE_HIDE_DISPLAY_NAME, false));
     const isDisplayNameReadonly = useSelector(isNameReadOnly);
     const roomName = useSelector((state: IReduxState) => getConferenceName(state));
+    const roomNameEnabled = useSelector((state: IReduxState) => isRoomNameEnabled(state));
+    const { showHangUp: showHangUpLobby = true } = useSelector((state: IReduxState) => getLobbyConfig(state));
+    const { showHangUp: showHangUpPrejoin = true } = useSelector((state: IReduxState) => state['features/base/config'].prejoinConfig || {});
+    const { knocking } = useSelector((state: IReduxState) => state['features/lobby']);
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
@@ -68,8 +76,6 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const showDisplayNameInput = useMemo(
         () => isDisplayNameVisible && (displayName || !isDisplayNameReadonly),
         [ displayName, isDisplayNameReadonly, isDisplayNameVisible ]);
-    const [ isJoining, setIsJoining ]
-        = useState(false);
     const onChangeDisplayName = useCallback(event => {
         const fieldValue = getFieldValue(event);
 
@@ -80,7 +86,6 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     }, [ displayName ]);
 
     const onJoin = useCallback(() => {
-        setIsJoining(true);
         dispatch(connect());
         navigateRoot(screen.conference.root);
     }, [ dispatch ]);
@@ -110,11 +115,15 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const { PRIMARY, TERTIARY } = BUTTON_TYPES;
 
     useEffect(() => {
-        BackHandler.addEventListener('hardwareBackPress', goBack);
+        const hardwareBackPressSubscription = BackHandler.addEventListener('hardwareBackPress', goBack);
 
-        return () => BackHandler.removeEventListener('hardwareBackPress', goBack);
+        dispatch(setPermanentProperty({
+            wasPrejoinDisplayed: true
+        }));
 
-    }, []);
+        return () => hardwareBackPressSubscription.remove();
+    }, []); // dispatch is not in the dependency list because we want the action to be dispatched only once when
+    // the component is mounted.
 
     const headerLeft = () => {
         if (Platform.OS === 'ios') {
@@ -139,16 +148,11 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         });
     }, [ navigation ]);
 
-    let contentWrapperStyles;
-    let contentContainerStyles;
-    let largeVideoContainerStyles;
+    let contentContainerStyles = styles.contentContainer;
+    let largeVideoContainerStyles = styles.largeVideoContainer;
 
-    if (aspectRatio === ASPECT_RATIO_NARROW) {
-        contentWrapperStyles = styles.contentWrapper;
-        contentContainerStyles = styles.contentContainer;
-        largeVideoContainerStyles = styles.largeVideoContainer;
-    } else {
-        contentWrapperStyles = styles.contentWrapperWide;
+    if (isTablet && aspectRatio === ASPECT_RATIO_WIDE) {
+        // @ts-ignore
         contentContainerStyles = styles.contentContainerWide;
         largeVideoContainerStyles = styles.largeVideoContainerWide;
     }
@@ -157,17 +161,21 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
         <JitsiScreen
             addBottomPadding = { false }
             safeAreaInsets = { [ 'right' ] }
-            style = { contentWrapperStyles }>
+            style = { styles.contentWrapper }>
             <BrandingImageBackground />
             {
                 isFocused
-                && <View style = { largeVideoContainerStyles }>
-                    <View style = { styles.displayRoomNameBackdrop as StyleProp<TextStyle> }>
-                        <Text
-                            numberOfLines = { 1 }
-                            style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
-                            { roomName }
-                        </Text>
+                && <View style = { largeVideoContainerStyles as StyleProp<ViewStyle> }>
+                    <View style = { styles.conferenceInfo as StyleProp<ViewStyle> }>
+                        {roomNameEnabled && (
+                            <View style = { styles.displayRoomNameBackdrop as StyleProp<TextStyle> }>
+                                <Text
+                                    numberOfLines = { 1 }
+                                    style = { styles.preJoinRoomName as StyleProp<TextStyle> }>
+                                    { roomName }
+                                </Text>
+                            </View>
+                        )}
                     </View>
                     <LargeVideo />
                 </View>
@@ -178,6 +186,11 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                         styles = { styles.buttonStylesBorderless } />
                     <VideoMuteButton
                         styles = { styles.buttonStylesBorderless } />
+                    {
+                        (knocking ? showHangUpLobby : showHangUpPrejoin)
+                        && <HangupButton
+                            styles = { styles.buttonStylesBorderless } />
+                    }
                 </View>
                 {
                     showDisplayNameInput && <Input
@@ -188,22 +201,27 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                         placeholder = { t('dialog.enterDisplayName') }
                         value = { displayName } />
                 }
-                {showDisplayNameError && (
-                    <View style = { styles.errorContainer as StyleProp<TextStyle> }>
-                        <Text style = { styles.error as StyleProp<TextStyle> }>{t('prejoin.errorMissingName')}</Text>
-                    </View>)}
+                {
+                    showDisplayNameError && (
+                        <View style = { styles.errorContainer as StyleProp<ViewStyle> }>
+                            <Text style = { styles.error as StyleProp<TextStyle> }>
+                                { t('prejoin.errorMissingName') }
+                            </Text>
+                        </View>
+                    )
+                }
                 <Button
                     accessibilityLabel = 'prejoin.joinMeeting'
                     disabled = { showDisplayNameError }
                     labelKey = 'prejoin.joinMeeting'
-                    onClick = { isJoining ? undefined : maybeJoin }
+                    onClick = { maybeJoin }
                     style = { styles.joinButton }
                     type = { PRIMARY } />
                 <Button
                     accessibilityLabel = 'prejoin.joinMeetingInLowBandwidthMode'
                     disabled = { showDisplayNameError }
                     labelKey = 'prejoin.joinMeetingInLowBandwidthMode'
-                    onClick = { isJoining ? undefined : onJoinLowBandwidth }
+                    onClick = { onJoinLowBandwidth }
                     style = { styles.joinButton }
                     type = { TERTIARY } />
             </View>

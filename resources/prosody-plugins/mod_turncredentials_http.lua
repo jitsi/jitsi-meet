@@ -5,7 +5,7 @@ local ext_services = module:depends("external_services");
 local get_services = ext_services.get_services;
 
 local async_handler_wrapper = module:require "util".async_handler_wrapper;
-local json = require "util.json";
+local json = require 'cjson.safe';
 
 --- Handles request for retrieving turn credentials
 -- @param event the http event, holds the request query

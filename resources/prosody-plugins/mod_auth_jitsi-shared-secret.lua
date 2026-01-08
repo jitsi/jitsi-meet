@@ -6,6 +6,7 @@ local saslprep = require "util.encodings".stringprep.saslprep;
 local secure_equals = require "util.hashes".equals;
 
 local shared_secret = module:get_option_string('shared_secret');
+local shared_secret_prev = module:get_option_string('shared_secret_prev');
 if shared_secret == nil then
     module:log('error', 'No shared_secret specified. No secret to operate on!');
     return;
@@ -23,6 +24,9 @@ function provider.test_password(username, password)
     end
 
     if secure_equals(password, saslprep(shared_secret)) then
+        return true;
+    elseif (shared_secret_prev ~= nil and secure_equals(password, saslprep(shared_secret_prev))) then
+        module:log("info", "Accepting login using previous shared secret, username=%s", username);
         return true;
     else
         return nil, "Auth failed. Invalid username or password.";

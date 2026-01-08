@@ -1,7 +1,6 @@
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import AbstractPollResults, { AbstractProps } from '../AbstractPollResults';
 
 const useStyles = makeStyles()(theme => {
@@ -17,12 +16,12 @@ const useStyles = makeStyles()(theme => {
             marginBottom: '16px'
         },
         question: {
-            ...withPixelLineHeight(theme.typography.heading6),
+            ...theme.typography.heading6,
             color: theme.palette.text01,
             marginBottom: '8px'
         },
         creator: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: theme.palette.text02
         },
         resultList: {
@@ -38,7 +37,7 @@ const useStyles = makeStyles()(theme => {
             display: 'flex',
             flexShrink: 1,
             overflowWrap: 'anywhere',
-            ...withPixelLineHeight(theme.typography.bodyShortRegular),
+            ...theme.typography.bodyShortRegular,
             color: theme.palette.text01,
             marginBottom: '4px'
         },
@@ -65,7 +64,7 @@ const useStyles = makeStyles()(theme => {
         voteCount: {
             flex: 1,
             textAlign: 'right',
-            ...withPixelLineHeight(theme.typography.bodyShortBold),
+            ...theme.typography.bodyShortBold,
             color: theme.palette.text01
         },
         voters: {
@@ -79,7 +78,7 @@ const useStyles = makeStyles()(theme => {
             padding: '8px 16px',
 
             '& li': {
-                ...withPixelLineHeight(theme.typography.bodyShortRegular),
+                ...theme.typography.bodyShortRegular,
                 color: theme.palette.text01,
                 margin: 0,
                 marginBottom: '2px',
@@ -96,7 +95,7 @@ const useStyles = makeStyles()(theme => {
             '& button': {
                 border: 0,
                 backgroundColor: 'transparent',
-                ...withPixelLineHeight(theme.typography.bodyShortRegular),
+                ...theme.typography.bodyShortRegular,
                 color: theme.palette.link01
             }
         }
@@ -114,6 +113,7 @@ const PollResults = ({
     changeVote,
     creatorName,
     haveVoted,
+    pollId,
     showDetails,
     question,
     t,
@@ -122,7 +122,9 @@ const PollResults = ({
     const { classes } = useStyles();
 
     return (
-        <div className = { classes.container }>
+        <div
+            className = { classes.container }
+            id = { `poll-${pollId}` }>
             <div className = { classes.header }>
                 <div className = { classes.question }>
                     {question}
@@ -137,7 +139,9 @@ const PollResults = ({
                         <div className = { classes.answerName }>
                             {name}
                         </div>
-                        <div className = { classes.answerResultContainer }>
+                        <div
+                            className = { classes.answerResultContainer }
+                            id = { `poll-result-${pollId}-${index}` }>
                             <span className = { classes.barContainer }>
                                 <div
                                     className = { classes.bar }
@@ -149,8 +153,8 @@ const PollResults = ({
                         </div>
                         {showDetails && voters && voterCount > 0
                         && <ul className = { classes.voters }>
-                            {voters.map(voter =>
-                                <li key = { voter?.id }>{voter?.name}</li>
+                            { voters.map(voter =>
+                                <li key = { voter.id }>{ voter.name }</li>
                             )}
                         </ul>}
                     </li>)

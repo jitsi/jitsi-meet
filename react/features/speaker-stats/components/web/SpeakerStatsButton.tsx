@@ -22,11 +22,11 @@ class SpeakerStatsButton extends AbstractSpeakerStatsButton {
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('speaker.stats'));
-        dispatch(openDialog(SpeakerStats));
+        dispatch(openDialog('SpeakerStats', SpeakerStats));
     }
 }
 

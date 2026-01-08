@@ -8,7 +8,7 @@ import { IconRingGroup } from '../../../base/icons/svg';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
 import { sendParticipantToRoom } from '../../../breakout-rooms/actions';
 import { IRoom } from '../../../breakout-rooms/types';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { IButtonProps } from '../../types';
 
 interface IProps extends IButtonProps {

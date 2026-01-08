@@ -69,7 +69,7 @@
         "DISCONNECTED": "Ei yhteyttä",
         "DISCONNECTING": "Yhteyttä katkaistaan",
         "ERROR": "Virhe",
-        "RECONNECTING": "Tapahtui verkkovirhe. Yhdistetään uudelleen..."
+        "RECONNECTING": "Tapahtui verkkovirhe. Yhdistetään uudelleen…"
     },
     "connectionindicator": {
         "address": "Osoite:",
@@ -438,13 +438,18 @@
     },
     "passwordDigitsOnly": "",
     "passwordSetRemotely": "",
+    "polls": {
+        "errors": {
+            "notUniqueOption": "Vaihtoehtojen on oltava ainutlaatuisia"
+        }
+    },
     "poweredby": "tukija:",
     "presenceStatus": {
         "busy": "Varattu",
         "calling": "Soitetaan…",
         "connected": "Yhdistetty",
         "connecting": "Yhdistetään…",
-        "connecting2": "Yhdistetään*...",
+        "connecting2": "Yhdistetään*…",
         "disconnected": "Ei yhteyttä",
         "expired": "Vanhentunut",
         "ignored": "Sivuutettu",
@@ -535,6 +540,8 @@
         "hours": "{{count}} t",
         "minutes": "{{count}} min",
         "name": "Nimi",
+        "search": "Etsi",
+        "searchHint": "Etsi osallistujia",
         "seconds": "{{count}} s",
         "speakerStats": "Puhujatilastot",
         "speakerTime": "Puhujan aika"
@@ -642,16 +649,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Valitse <b><i>Salli</i></b>, kun selain pyytää käyttöoikeuksia.",
-        "chromeGrantPermissions": "Valitse <b><i>Salli</i></b>, kun selain pyytää käyttöoikeuksia.",
-        "edgeGrantPermissions": "Valitse <b><i>Kyllä</i></b>, kun selain pyytää käyttöoikeuksia.",
-        "electronGrantPermissions": "Myönnä käyttöoikeudet laitteesi kameran ja mikrofonin käyttöön.",
-        "firefoxGrantPermissions": "Valitse <b><i>Jaa havaittu laite</i></b>, kun selain pyytää käyttöoikeuksia.",
-        "iexplorerGrantPermissions": "Valitse <b><i>OK</i></b>, kun selain pyytää käyttöoikeuksia.",
-        "nwjsGrantPermissions": "Myönnä käyttöoikeudet laitteesi kameran ja mikrofonin käyttöön.",
-        "operaGrantPermissions": "Valitse <b><i>Salli</i></b>, kun selain pyytää käyttöoikeuksia.",
-        "react-nativeGrantPermissions": "Valitse <b><i>Salli</i></b>, kun selain pyytää käyttöoikeuksia.",
-        "safariGrantPermissions": "Valitse <b><i>OK</i></b>, kun selain pyytää käyttöoikeuksia."
+        "grantPermissions": "Myönnä käyttöoikeudet laitteesi kameran ja mikrofonin käyttöön."
     },
     "videoSIPGW": {
         "busy": "Yritämme vapauttaa resursseja. Yritä uudelleen muutaman minuutin kuluttua.",

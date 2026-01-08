@@ -220,7 +220,7 @@ class Video extends Component<IProps> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         this._mounted = true;
 
         if (this._videoElement) {
@@ -239,7 +239,8 @@ class Video extends Component<IProps> {
                     // Prevent uncaught "DOMException: The play() request was interrupted by a new load request"
                     // when video playback takes long to start and it starts after the component was unmounted.
                     if (this._mounted) {
-                        throw error;
+                        logger.error(`Error while trying to play video with id ${
+                            this.props.id} and video track ${this.props.videoTrack?.jitsiTrack}: ${error}`);
                     }
                 });
             }
@@ -253,7 +254,7 @@ class Video extends Component<IProps> {
      * @inheritdoc
      * @returns {void}
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this._mounted = false;
         this._detachTrack(this.props.videoTrack);
     }
@@ -267,7 +268,7 @@ class Video extends Component<IProps> {
      * @returns {boolean} - False is always returned to blackbox this component
      * from React.
      */
-    shouldComponentUpdate(nextProps: IProps) {
+    override shouldComponentUpdate(nextProps: IProps) {
         const currentJitsiTrack = this.props.videoTrack?.jitsiTrack;
         const nextJitsiTrack = nextProps.videoTrack?.jitsiTrack;
 
@@ -276,6 +277,9 @@ class Video extends Component<IProps> {
             this._attachTrack(nextProps.videoTrack).catch((_error: Error) => {
                 // Ignore the error. We are already logging it.
             });
+
+            // NOTE: We may want to consider calling .play() explicitly in this case if any issues araise in future.
+            // For now it seems we are good with the autoplay attribute of the video element.
         }
 
         if (this.props.style !== nextProps.style || this.props.className !== nextProps.className) {
@@ -291,7 +295,7 @@ class Video extends Component<IProps> {
      * @override
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             autoPlay,
             className,
@@ -354,7 +358,7 @@ class Video extends Component<IProps> {
      * @returns {void}
      */
     _detachTrack(videoTrack?: Partial<ITrack>) {
-        if (this._videoElement && videoTrack && videoTrack.jitsiTrack) {
+        if (this._videoElement && videoTrack?.jitsiTrack) {
             videoTrack.jitsiTrack.detach(this._videoElement);
         }
     }

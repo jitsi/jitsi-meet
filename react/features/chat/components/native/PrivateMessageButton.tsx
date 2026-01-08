@@ -8,6 +8,7 @@ import { IconMessage, IconReply } from '../../../base/icons/svg';
 import { getParticipantById } from '../../../base/participants/functions';
 import { IParticipant } from '../../../base/participants/types';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import { arePollsDisabled } from '../../../conference/functions.any';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { handleLobbyChatInitialized, openChat } from '../../actions.native';
@@ -44,10 +45,10 @@ export interface IProps extends AbstractButtonProps {
  * Class to render a button that initiates the sending of a private message through chat.
  */
 class PrivateMessageButton extends AbstractButton<IProps, any> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.privateMessage';
-    icon = IconMessage;
-    label = 'toolbar.privateMessage';
-    toggledIcon = IconReply;
+    override accessibilityLabel = 'toolbar.accessibilityLabel.privateMessage';
+    override icon = IconMessage;
+    override label = 'toolbar.privateMessage';
+    override toggledIcon = IconReply;
 
     /**
      * Handles clicking / pressing the button.
@@ -55,7 +56,7 @@ class PrivateMessageButton extends AbstractButton<IProps, any> {
      * @private
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         if (this.props._isLobbyMessage) {
             this.props.dispatch(handleLobbyChatInitialized(this.props.participantID));
         }
@@ -81,7 +82,7 @@ class PrivateMessageButton extends AbstractButton<IProps, any> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props.reply;
     }
 
@@ -96,11 +97,10 @@ class PrivateMessageButton extends AbstractButton<IProps, any> {
  */
 export function _mapStateToProps(state: IReduxState, ownProps: any) {
     const enabled = getFeatureFlag(state, CHAT_ENABLED, true);
-    const { disablePolls } = state['features/base/config'];
     const { visible = enabled, isLobbyMessage, participantID } = ownProps;
 
     return {
-        _isPollsDisabled: disablePolls,
+        _isPollsDisabled: arePollsDisabled(state),
         _participant: getParticipantById(state, participantID),
         _isLobbyMessage: isLobbyMessage,
         visible

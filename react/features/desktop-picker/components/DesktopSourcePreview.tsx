@@ -65,7 +65,7 @@ class DesktopSourcePreview extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const selectedClass = this.props.selected ? 'is-selected' : '';
         const displayClasses = `desktop-picker-source ${selectedClass}`;
 

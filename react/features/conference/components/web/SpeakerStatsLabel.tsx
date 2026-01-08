@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -6,10 +7,10 @@ import { openDialog } from '../../../base/dialog/actions';
 import { IconUsers } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
 import { COLORS } from '../../../base/label/constants';
-import { getParticipantCount } from '../../../base/participants/functions';
+import { getParticipantCountForDisplay } from '../../../base/participants/functions';
+import Tooltip from '../../../base/tooltip/components/Tooltip';
 import SpeakerStats from '../../../speaker-stats/components/web/SpeakerStats';
 import { isSpeakerStatsDisabled } from '../../../speaker-stats/functions';
-import { iAmVisitor } from '../../../visitors/functions';
 
 /**
  * ParticipantsCount react component.
@@ -19,18 +20,13 @@ import { iAmVisitor } from '../../../visitors/functions';
  */
 function SpeakerStatsLabel() {
     const conference = useSelector((state: IReduxState) => state['features/base/conference'].conference);
-    let count = useSelector(getParticipantCount);
-    const iAmVisitorState = useSelector(iAmVisitor);
+    const count = useSelector(getParticipantCountForDisplay);
     const _isSpeakerStatsDisabled = useSelector(isSpeakerStatsDisabled);
     const dispatch = useDispatch();
-
-    // visitor has hidden its own video and should not count itself
-    if (iAmVisitorState) {
-        count--;
-    }
+    const { t } = useTranslation();
 
     const onClick = () => {
-        dispatch(openDialog(SpeakerStats, { conference }));
+        dispatch(openDialog('SpeakerStats', SpeakerStats, { conference }));
     };
 
     if (count <= 2 || _isSpeakerStatsDisabled) {
@@ -38,13 +34,17 @@ function SpeakerStatsLabel() {
     }
 
     return (
-        <Label
-            color = { COLORS.white }
-            icon = { IconUsers }
-            iconColor = '#fff'
-            // eslint-disable-next-line react/jsx-no-bind
-            onClick = { onClick }
-            text = { `${count}` } />
+        <Tooltip
+            content = { t('speakerStats.labelTooltip', { count }) }
+            position = { 'bottom' }>
+            <Label
+                color = { COLORS.white }
+                icon = { IconUsers }
+                iconColor = '#fff'
+                // eslint-disable-next-line react/jsx-no-bind
+                onClick = { onClick }
+                text = { `${count}` } />
+        </Tooltip>
     );
 }
 

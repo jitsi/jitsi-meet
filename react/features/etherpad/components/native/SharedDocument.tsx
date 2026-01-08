@@ -48,7 +48,7 @@ class SharedDocument extends PureComponent<IProps> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const { _documentUrl } = this.props;
 
         return (
@@ -56,10 +56,12 @@ class SharedDocument extends PureComponent<IProps> {
                 style = { styles.sharedDocContainer }>
                 <WebView
                     hideKeyboardAccessoryView = { true }
+                    incognito = { true }
                     renderLoading = { this._renderLoading }
                     source = {{ uri: _documentUrl ?? '' }}
                     startInLoadingState = { true }
-                    style = { styles.sharedDoc } />
+                    style = { styles.sharedDoc }
+                    webviewDebuggingEnabled = { true } />
             </JitsiScreen>
         );
     }

@@ -1,4 +1,4 @@
-/* eslint-disable guard-for-in, no-continue */
+/* eslint-disable guard-for-in */
 /* global __dirname */
 
 const fs = require('fs');
@@ -25,7 +25,8 @@ function updateDependencies() {
             updated = true;
         }
 
-        if (!semver.valid(packageJSON.dependencies[key])) {
+        if (!semver.valid(packageJSON.dependencies[key])
+            && packageJSON.dependencies[key] !== RNSDKpackageJSON.peerDependencies[key]) {
             packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
             updated = true;
 
@@ -46,13 +47,25 @@ function updateDependencies() {
 
             console.log(`${key} is now set to ${RNSDKpackageJSON.peerDependencies[key]}`);
         }
+
+        if (!semver.valid(RNSDKpackageJSON.peerDependencies[key])
+            && RNSDKpackageJSON.peerDependencies[key].includes('github')
+            && packageJSON.dependencies[key] !== RNSDKpackageJSON.peerDependencies[key]) {
+            packageJSON.dependencies[key] = RNSDKpackageJSON.peerDependencies[key];
+            updated = true;
+
+            console.log(
+`A fix for ${key} is available on ${RNSDKpackageJSON.peerDependencies[key]}.
+This is now set on your end.`
+            );
+        }
     }
+    
+    packageJSON.devDependencies = packageJSON.devDependencies || {};
 
-    packageJSON.overrides = packageJSON.overrides || {};
-
-    for (const key in RNSDKpackageJSON.overrides) {
-        if (!packageJSON.overrides.hasOwnProperty(key)) {
-            packageJSON.overrides[key] = RNSDKpackageJSON.overrides[key];
+    for (const key in RNSDKpackageJSON.devDependencies) {
+        if (!packageJSON.devDependencies.hasOwnProperty(key)) {
+            packageJSON.devDependencies[key] = RNSDKpackageJSON.devDependencies[key];
             updated = true;
         }
     }
@@ -78,6 +91,14 @@ function updateDependencies() {
 
             return item;
         }, {});
+        
+    packageJSON.devDependencies = Object.keys(packageJSON.devDependencies)
+    .sort()
+    .reduce((item, itemKey) => {
+        item[itemKey] = packageJSON.devDependencies[itemKey];
+
+        return item;
+    }, {});
 
     fs.writeFileSync(pathToPackageJSON, JSON.stringify(packageJSON, null, 2));
 

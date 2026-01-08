@@ -1,30 +1,15 @@
+import { DEFAULT_LANGUAGE } from '../base/i18n/i18next';
+
 import {
-    ENDPOINT_MESSAGE_RECEIVED,
+    REMOVE_CACHED_TRANSCRIPT_MESSAGE,
     REMOVE_TRANSCRIPT_MESSAGE,
     SET_REQUESTING_SUBTITLES,
+    SET_SUBTITLES_ERROR,
+    STORE_SUBTITLE,
     TOGGLE_REQUESTING_SUBTITLES,
-    UPDATE_TRANSCRIPT_MESSAGE,
-    UPDATE_TRANSLATION_LANGUAGE
+    UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
-
-/**
- * Signals that a participant sent an endpoint message on the data channel.
- *
- * @param {Object} participant - The participant details sending the message.
- * @param {Object} json - The json carried by the endpoint message.
- * @returns {{
- *      type: ENDPOINT_MESSAGE_RECEIVED,
- *      participant: Object,
- *      json: Object
- * }}
- */
-export function endpointMessageReceived(participant: Object, json: Object) {
-    return {
-        type: ENDPOINT_MESSAGE_RECEIVED,
-        participant,
-        json
-    };
-}
+import { ISubtitle } from './types';
 
 /**
  * Signals that a transcript has to be removed from the state.
@@ -38,6 +23,22 @@ export function endpointMessageReceived(participant: Object, json: Object) {
 export function removeTranscriptMessage(transcriptMessageID: string) {
     return {
         type: REMOVE_TRANSCRIPT_MESSAGE,
+        transcriptMessageID
+    };
+}
+
+/**
+ * Signals that a cached transcript has to be removed from the state.
+ *
+ * @param {string} transcriptMessageID - The message_id to be removed.
+ * @returns {{
+*      type: REMOVE_CACHED_TRANSCRIPT_MESSAGE,
+*      transcriptMessageID: string,
+* }}
+*/
+export function removeCachedTranscriptMessage(transcriptMessageID: string) {
+    return {
+        type: REMOVE_CACHED_TRANSCRIPT_MESSAGE,
         transcriptMessageID
     };
 }
@@ -80,29 +81,57 @@ export function toggleRequestingSubtitles() {
  * Signals that the local user has enabled or disabled the subtitles.
  *
  * @param {boolean} enabled - The new state of the subtitles.
+ * @param {boolean} displaySubtitles - Whether to display subtitles or not.
+ * @param {string} language - The language of the subtitles.
+ * @param {boolean} backendRecordingOn - Whether backend recording is on.
  * @returns {{
  *    type: SET_REQUESTING_SUBTITLES,
- *    enabled: boolean
+ *    backendRecordingOn: boolean,
+ *    enabled: boolean,
+ *    displaySubtitles: boolean,
+ *    language: string
  * }}
  */
-export function setRequestingSubtitles(enabled: boolean) {
+export function setRequestingSubtitles(
+        enabled: boolean,
+        displaySubtitles = true,
+        language: string | null = `translation-languages:${DEFAULT_LANGUAGE}`) {
     return {
         type: SET_REQUESTING_SUBTITLES,
-        enabled
+        displaySubtitles,
+        enabled,
+        language
     };
 }
 
 /**
- * Signals that the local user has selected language for the translation.
+ * Stores a received subtitle in the history.
  *
- * @param {string} value - The selected language for translation.
+ * @param {ISubtitle} subtitle - The subtitle to store.
  * @returns {{
- *      type: UPDATE_TRANSLATION_LANGUAGE
+ *     type: STORE_SUBTITLE,
+ *     subtitle: ISubtitle
  * }}
  */
-export function updateTranslationLanguage(value: string) {
+export function storeSubtitle(subtitle: ISubtitle) {
     return {
-        type: UPDATE_TRANSLATION_LANGUAGE,
-        value
+        type: STORE_SUBTITLE,
+        subtitle
+    };
+}
+
+/**
+ * Signals that an error occurred while starting subtitles.
+ *
+ * @param {boolean} hasError - Whether an error occurred or not.
+ * @returns {{
+ *    type: SET_SUBTITLES_ERROR,
+ *    hasError: boolean
+ * }}
+ */
+export function setSubtitlesError(hasError: boolean) {
+    return {
+        type: SET_SUBTITLES_ERROR,
+        hasError
     };
 }

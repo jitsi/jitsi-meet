@@ -2,7 +2,7 @@ import { IStateful } from '../app/types';
 import { toState } from '../redux/functions';
 import { getPropertyValue } from '../settings/functions';
 
-import { VIDEO_MUTISM_AUTHORITY } from './constants';
+import { AudioSupportedLanguage, VIDEO_MUTISM_AUTHORITY } from './constants';
 
 
 // XXX The configurations/preferences/settings startWithAudioMuted and startWithVideoMuted were introduced for
@@ -89,6 +89,16 @@ export function getStartWithVideoMuted(stateful: IStateful) {
 }
 
 /**
+ * Determines whether screen-share is currently muted.
+ *
+ * @param {Function|Object} stateful - The redux store, state, or {@code getState} function.
+ * @returns {boolean}
+ */
+export function isScreenshareMuted(stateful: IStateful) {
+    return Boolean(toState(stateful)['features/base/media'].screenshare.muted);
+}
+
+/**
  * Determines whether video is currently muted.
  *
  * @param {Function|Object} stateful - The redux store, state, or {@code getState} function.
@@ -127,3 +137,20 @@ export function shouldRenderVideoTrack(
             && !videoTrack.muted
             && (!waitForVideoStarted || videoTrack.videoStarted));
 }
+
+/**
+ * Computes the localized sound file source.
+ *
+ * @param {string} file - The default file source.
+ * @param {string} language - The language to use for localization.
+ * @returns {string}
+ */
+export const getSoundFileSrc = (file: string, language: string): string => {
+    if (!AudioSupportedLanguage[language as keyof typeof AudioSupportedLanguage]
+        || language === AudioSupportedLanguage.en) {
+        return file;
+    }
+    const fileTokens = file.split('.');
+
+    return `${fileTokens[0]}_${language}.${fileTokens[1]}`;
+};

@@ -15,7 +15,6 @@ import ActionButton from '../../../base/premeeting/components/web/ActionButton';
 import PreMeetingScreen from '../../../base/premeeting/components/web/PreMeetingScreen';
 import { updateSettings } from '../../../base/settings/actions';
 import { getDisplayName } from '../../../base/settings/functions.web';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { getLocalJitsiVideoTrack } from '../../../base/tracks/functions.web';
 import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
@@ -35,6 +34,7 @@ import {
     isJoinByPhoneDialogVisible,
     isPrejoinDisplayNameVisible
 } from '../../functions';
+import logger from '../../logger';
 import { hasDisplayName } from '../../utils';
 
 import JoinByPhoneDialog from './dialogs/JoinByPhoneDialog';
@@ -112,6 +112,11 @@ interface IProps {
     showErrorOnJoin: boolean;
 
     /**
+     * If the recording warning is visible or not.
+     */
+    showRecordingWarning: boolean;
+
+    /**
      * If should show unsafe room warning when joining.
      */
     showUnsafeRoomWarning: boolean;
@@ -158,7 +163,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         avatarName: {
-            ...withPixelLineHeight(theme.typography.bodyShortBoldLarge),
+            ...theme.typography.bodyShortBoldLarge,
             color: theme.palette.text01,
             marginBottom: theme.spacing(5),
             textAlign: 'center'
@@ -169,7 +174,7 @@ const useStyles = makeStyles()(theme => {
             color: theme.palette.text01,
             borderRadius: theme.shape.borderRadius,
             width: '100%',
-            ...withPixelLineHeight(theme.typography.labelRegular),
+            ...theme.typography.labelRegular,
             boxSizing: 'border-box',
             padding: theme.spacing(1),
             textAlign: 'center',
@@ -189,7 +194,17 @@ const useStyles = makeStyles()(theme => {
             color: theme.palette.text04,
             borderRadius: theme.shape.borderRadius,
             position: 'relative',
-            top: `-${theme.spacing(3)}`
+            top: `-${theme.spacing(3)}`,
+
+            '@media (max-width: 511px)': {
+                margin: '0 auto',
+                top: 0
+            },
+
+            '@media (max-width: 420px)': {
+                top: 0,
+                width: 'calc(100% - 32px)'
+            }
         }
     };
 });
@@ -209,6 +224,7 @@ const Prejoin = ({
     showCameraPreview,
     showDialog,
     showErrorOnJoin,
+    showRecordingWarning,
     showUnsafeRoomWarning,
     unsafeRoomConsent,
     updateSettings: dispatchUpdateSettings,
@@ -240,6 +256,9 @@ const Prejoin = ({
 
             return;
         }
+
+        logger.info('Prejoin join button clicked.');
+
         joinConference();
     };
 
@@ -321,6 +340,7 @@ const Prejoin = ({
             && (e.key === ' '
                 || e.key === 'Enter')) {
             e.preventDefault();
+            logger.info('Prejoin joinConferenceWithoutAudio dispatched on a key pressed.');
             joinConferenceWithoutAudio();
         }
     };
@@ -336,7 +356,10 @@ const Prejoin = ({
             testId: 'prejoin.joinWithoutAudio',
             icon: IconVolumeOff,
             label: t('prejoin.joinWithoutAudio'),
-            onClick: joinConferenceWithoutAudio,
+            onClick: () => {
+                logger.info('Prejoin join conference without audio pressed.');
+                joinConferenceWithoutAudio();
+            },
             onKeyPress: onJoinConferenceWithoutAudioKeyPress
         };
 
@@ -363,6 +386,7 @@ const Prejoin = ({
      */
     const onInputKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
+            logger.info('Dispatching join conference on Enter key press from the prejoin screen.');
             joinConference();
         }
     };
@@ -380,6 +404,7 @@ const Prejoin = ({
     return (
         <PreMeetingScreen
             showDeviceStatus = { deviceStatusVisible }
+            showRecordingWarning = { showRecordingWarning }
             showUnsafeRoomWarning = { showUnsafeRoomWarning }
             title = { t('prejoin.joinMeeting') }
             videoMuted = { !showCameraPreview }
@@ -412,7 +437,11 @@ const Prejoin = ({
 
                 {showErrorOnField && <div
                     className = { classes.error }
-                    data-testid = 'prejoin.errorMessage'>{t('prejoin.errorMissingName')}</div>}
+                    data-testid = 'prejoin.errorMessage'>
+                    <p aria-live = 'polite' >
+                        {t('prejoin.errorMissingName')}
+                    </p>
+                </div>}
 
                 <div className = { classes.dropdownContainer }>
                     <Popover
@@ -473,6 +502,7 @@ function mapStateToProps(state: IReduxState) {
     const { joiningInProgress } = state['features/prejoin'];
     const { room } = state['features/base/conference'];
     const { unsafeRoomConsent } = state['features/base/premeeting'];
+    const { showPrejoinWarning: showRecordingWarning } = state['features/base/config'].recordings ?? {};
 
     return {
         deviceStatusVisible: isDeviceStatusVisible(state),
@@ -486,6 +516,7 @@ function mapStateToProps(state: IReduxState) {
         showCameraPreview: !isVideoMutedByUser(state),
         showDialog: isJoinByPhoneDialogVisible(state),
         showErrorOnJoin,
+        showRecordingWarning: Boolean(showRecordingWarning),
         showUnsafeRoomWarning: isInsecureRoomName(room) && isUnsafeRoomWarningEnabled(state),
         unsafeRoomConsent,
         videoTrack: getLocalJitsiVideoTrack(state)

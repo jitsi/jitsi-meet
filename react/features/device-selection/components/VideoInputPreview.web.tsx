@@ -59,6 +59,7 @@ const VideoInputPreview = ({ error, localFlipX, track }: IProps) => {
         <div className = { classes.container }>
             <Video
                 className = { cx(classes.video, localFlipX && 'flipVideoX') }
+                id = 'settings_video_input_preview'
                 playsinline = { true }
                 videoTrack = {{ jitsiTrack: track }} />
             {error && (

@@ -1,5 +1,3 @@
-// @ts-expect-error
-import UIEvents from '../../../service/UI/UIEvents';
 import { VIDEO_MUTE, createToolbarEvent } from '../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../analytics/functions';
 import { IStore } from '../app/types';
@@ -8,11 +6,14 @@ import { setVideoMuted } from '../base/media/actions';
 import { VIDEO_MUTISM_AUTHORITY } from '../base/media/constants';
 
 import {
+    SET_MAIN_TOOLBAR_BUTTONS_THRESHOLDS,
     SET_TOOLBOX_ENABLED,
     SET_TOOLBOX_SHIFT_UP,
     SET_TOOLBOX_VISIBLE,
     TOGGLE_TOOLBOX_VISIBLE
 } from './actionTypes';
+import { DUMMY_10_BUTTONS_THRESHOLD_VALUE, DUMMY_9_BUTTONS_THRESHOLD_VALUE } from './constants';
+import { IMainToolbarButtonThresholds, IMainToolbarButtonThresholdsUnfiltered } from './types';
 
 /**
  * Enables/disables the toolbox.
@@ -49,6 +50,13 @@ export function setToolboxVisible(visible: boolean) {
             type: SET_TOOLBOX_VISIBLE,
             visible
         });
+        // Notify external API consumers about the change in toolbox visibility
+        // if the old legacy APP.API bridge is available.
+        /* eslint-disable no-undef */
+        if (typeof APP !== 'undefined' && APP.API && typeof APP.API.notifyToolbarVisibilityChanged === 'function') {
+            APP.API.notifyToolbarVisibilityChanged(visible);
+        }
+        /* eslint-enable no-undef */
     };
 }
 
@@ -71,6 +79,18 @@ export function toggleToolboxVisible() {
         dispatch({
             type: TOGGLE_TOOLBOX_VISIBLE
         });
+
+        // After toggling, read the updated state and notify external API
+        // about the current visibility. This mirrors the behavior of
+        // setToolboxVisible and ensures consumers are informed when the
+        // visibility changes via toggle.
+        /* eslint-disable no-undef */
+        if (typeof APP !== 'undefined' && APP.API && typeof APP.API.notifyToolbarVisibilityChanged === 'function') {
+            const { visible: newVisible } = getState()['features/toolbox'];
+
+            APP.API.notifyToolbarVisibilityChanged(newVisible);
+        }
+        /* eslint-enable no-undef */
     };
 }
 
@@ -103,7 +123,7 @@ export function handleToggleVideoMuted(muted: boolean, showUI: boolean, ensureTr
         // FIXME: The old conference logic still relies on this event being
         // emitted.
         typeof APP === 'undefined'
-            || APP.UI.emitEvent(UIEvents.VIDEO_MUTED, muted, showUI);
+            || APP.conference.muteVideo(muted, showUI);
 
     };
 }
@@ -118,5 +138,71 @@ export function setShiftUp(shiftUp: boolean) {
     return {
         type: SET_TOOLBOX_SHIFT_UP,
         shiftUp
+    };
+}
+
+/**
+ * Sets the mainToolbarButtonsThresholds.
+ *
+ * @param {IMainToolbarButtonThresholds} thresholds - Thresholds for screen size and visible main toolbar buttons.
+ * @returns {Function}
+ */
+export function setMainToolbarThresholds(thresholds: IMainToolbarButtonThresholdsUnfiltered) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const { mainToolbarButtons } = getState()['features/base/config'];
+
+        if (!Array.isArray(mainToolbarButtons) || mainToolbarButtons.length === 0) {
+            return;
+        }
+
+        const mainToolbarButtonsThresholds: IMainToolbarButtonThresholds = [];
+
+        const mainToolbarButtonsLengthMap = new Map();
+        let orderIsChanged = false;
+
+        mainToolbarButtons.forEach(buttons => {
+            if (!Array.isArray(buttons) || buttons.length === 0) {
+                return;
+            }
+
+            mainToolbarButtonsLengthMap.set(buttons.length, buttons);
+        });
+
+        thresholds.forEach(({ width, order }) => {
+            let numberOfButtons = 0;
+
+            if (Array.isArray(order)) {
+                numberOfButtons = order.length;
+            } else if (order === DUMMY_9_BUTTONS_THRESHOLD_VALUE) {
+                numberOfButtons = 9;
+            } else if (order === DUMMY_10_BUTTONS_THRESHOLD_VALUE) {
+                numberOfButtons = 10;
+            } else { // Unexpected value. Ignore it.
+                return;
+            }
+
+            let finalOrder = mainToolbarButtonsLengthMap.get(numberOfButtons);
+
+            if (finalOrder) {
+                orderIsChanged = true;
+            } else if (Array.isArray(order)) {
+                finalOrder = order;
+            } else {
+                // Ignore dummy (symbol) values.
+                return;
+            }
+
+            mainToolbarButtonsThresholds.push({
+                order: finalOrder,
+                width
+            });
+        });
+
+        if (orderIsChanged) {
+            dispatch({
+                type: SET_MAIN_TOOLBAR_BUTTONS_THRESHOLDS,
+                mainToolbarButtonsThresholds
+            });
+        }
     };
 }

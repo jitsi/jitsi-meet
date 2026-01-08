@@ -19,7 +19,7 @@ interface IState {
  * Manager of shared video.
  */
 class VideoManager extends AbstractVideoManager<IState> {
-    playerRef: RefObject<Video>;
+    playerRef: RefObject<typeof Video>;
 
     /**
      * Initializes a new VideoManager instance.
@@ -83,6 +83,8 @@ class VideoManager extends AbstractVideoManager<IState> {
      */
     seek(time: number) {
         if (this.player) {
+
+            // @ts-ignore
             this.player.seek(time);
         }
     }
@@ -182,7 +184,7 @@ class VideoManager extends AbstractVideoManager<IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         return (
             <Video
                 ref = { this.playerRef }

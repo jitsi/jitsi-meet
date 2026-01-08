@@ -1,7 +1,5 @@
 import { AnyAction } from 'redux';
 
-// @ts-expect-error
-import UIEvents from '../../../service/UI/UIEvents';
 import { IStore } from '../app/types';
 import {
     CONFERENCE_FAILED,
@@ -36,12 +34,6 @@ MiddlewareRegistry.register(store => next => action => {
         return _conferenceJoined(store, next, action);
 
     case LOCK_STATE_CHANGED: {
-        // TODO Remove this logic when all components interested in the lock
-        // state change event are moved into react/redux.
-        if (typeof APP !== 'undefined') {
-            APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK, action.locked);
-        }
-
         const previousLockedState = store.getState()['features/base/conference'].locked;
 
         const result = next(action);
@@ -82,7 +74,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {*}
  */
 function _conferenceJoined({ dispatch }: IStore, next: Function, action: AnyAction) {
-    dispatch(hideDialog(PasswordRequiredPrompt));
+    dispatch(hideDialog('PasswordRequiredPrompt', PasswordRequiredPrompt));
 
     return next(action);
 }
@@ -112,7 +104,7 @@ function _conferenceFailed({ dispatch }: IStore, next: Function, action: AnyActi
             dispatch(_openPasswordRequiredPrompt(conference));
         }
     } else {
-        dispatch(hideDialog(PasswordRequiredPrompt));
+        dispatch(hideDialog('PasswordRequiredPrompt', PasswordRequiredPrompt));
     }
 
     return next(action);
@@ -150,7 +142,7 @@ function _setPasswordFailed(store: IStore, next: Function, action: AnyAction) {
         APP.store.dispatch(showErrorNotification({
             descriptionKey,
             titleKey
-        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+        }));
     }
 
     return next(action);

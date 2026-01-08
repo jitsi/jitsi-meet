@@ -17,7 +17,7 @@ interface IProps {
     /**
      * Class name for indicators container.
      */
-    className: string;
+    className?: string;
 
     /**
      * Whether or not the indicators are for the local participant.

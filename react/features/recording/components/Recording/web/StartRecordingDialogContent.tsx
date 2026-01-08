@@ -2,6 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../../base/i18n/functions';
+import Icon from '../../../../base/icons/components/Icon';
+import { IconArrowDown, IconArrowRight } from '../../../../base/icons/svg';
 import Container from '../../../../base/react/components/web/Container';
 import Image from '../../../../base/react/components/web/Image';
 import LoadingIndicator from '../../../../base/react/components/web/LoadingIndicator';
@@ -11,10 +13,7 @@ import Switch from '../../../../base/ui/components/web/Switch';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.web';
 import { RECORDING_TYPES } from '../../../constants';
 import { getRecordingDurationEstimation } from '../../../functions';
-import AbstractStartRecordingDialogContent, {
-    IProps,
-    mapStateToProps
-} from '../AbstractStartRecordingDialogContent';
+import AbstractStartRecordingDialogContent, { mapStateToProps } from '../AbstractStartRecordingDialogContent';
 import {
     DROPBOX_LOGO,
     ICON_CLOUD,
@@ -30,17 +29,19 @@ const EMPTY_FUNCTION = () => {
 /**
  * The start recording dialog content for the mobile application.
  */
-class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IProps> {
+class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
     /**
      * Renders the component.
      *
      * @protected
      * @returns {React$Component}
      */
-    render() {
+    override render() {
+        const _renderRecording = this.props._renderRecording;
+
         return (
             <Container className = 'recording-dialog'>
-                { this.props._isModerator && (
+                { _renderRecording && (
                     <>
                         { this._renderNoIntegrationsContent() }
                         { this._renderFileSharingContent() }
@@ -49,7 +50,71 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
                     </>
                 )}
                 { this._renderLocalRecordingContent() }
+                { _renderRecording && <> { this._renderAdvancedOptions() } </> }
             </Container>
+        );
+    }
+
+    /**
+     * Renders the switch for saving the transcription.
+     *
+     * @returns {React$Component}
+     */
+    _renderAdvancedOptions() {
+        const { selectedRecordingService } = this.props;
+
+        if (selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE || !this._canStartTranscribing()) {
+            return null;
+        }
+
+        const { showAdvancedOptions } = this.state;
+        const { shouldRecordAudioAndVideo, shouldRecordTranscription, t } = this.props;
+
+        return (
+            <>
+                <div className = 'recording-header-line' />
+                <div
+                    className = 'recording-header'
+                    onClick = { this._onToggleShowOptions }>
+                    <label className = 'recording-title-no-space'>
+                        {t('recording.showAdvancedOptions')}
+                    </label>
+                    <Icon
+                        ariaPressed = { showAdvancedOptions }
+                        onClick = { this._onToggleShowOptions }
+                        role = 'button'
+                        size = { 24 }
+                        src = { showAdvancedOptions ? IconArrowDown : IconArrowRight } />
+                </div>
+                {showAdvancedOptions && (
+                    <>
+                        <div className = 'recording-header space-top'>
+                            <label
+                                className = 'recording-title'
+                                htmlFor = 'recording-switch-transcription'>
+                                { t('recording.recordTranscription') }
+                            </label>
+                            <Switch
+                                checked = { shouldRecordTranscription }
+                                className = 'recording-switch'
+                                id = 'recording-switch-transcription'
+                                onChange = { this._onTranscriptionSwitchChange } />
+                        </div>
+                        <div className = 'recording-header space-top'>
+                            <label
+                                className = 'recording-title'
+                                htmlFor = 'recording-switch-transcription'>
+                                { t('recording.recordAudioAndVideo') }
+                            </label>
+                            <Switch
+                                checked = { shouldRecordAudioAndVideo }
+                                className = 'recording-switch'
+                                id = 'recording-switch-transcription'
+                                onChange = { this._onRecordAudioAndVideoSwitchChange } />
+                        </div>
+                    </>
+                )}
+            </>
         );
     }
 
@@ -78,7 +143,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
                     <Switch
                         checked = { selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE }
                         className = 'recording-switch'
-                        disabled = { isValidating }
+                        disabled = { isValidating || !this.props.shouldRecordAudioAndVideo }
                         id = 'recording-switch-jitsi'
                         onChange = { this._onRecordingServiceSwitchChange } />
                 ) : null;
@@ -148,7 +213,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
                 <Switch
                     checked = { sharingSetting }
                     className = 'recording-switch'
-                    disabled = { isValidating }
+                    disabled = { isValidating || !this.props.shouldRecordAudioAndVideo }
                     id = 'recording-switch-share'
                     onChange = { onSharingSettingChanged } />
             </Container>
@@ -294,7 +359,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
                     checked = { selectedRecordingService
                         === RECORDING_TYPES.DROPBOX }
                     className = 'recording-switch'
-                    disabled = { isValidating }
+                    disabled = { isValidating || !this.props.shouldRecordAudioAndVideo }
                     id = 'recording-switch-integration'
                     onChange = { this._onDropboxSwitchChange } />
             );
@@ -372,7 +437,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
                             checked = { selectedRecordingService
                                 === RECORDING_TYPES.LOCAL }
                             className = 'recording-switch'
-                            disabled = { isValidating }
+                            disabled = { isValidating || !this.props.shouldRecordAudioAndVideo }
                             id = 'recording-switch-local'
                             onChange = { this._onLocalRecordingSwitchChange } />
                     </Container>
@@ -396,7 +461,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent<IP
                                     <Switch
                                         checked = { Boolean(localRecordingOnlySelf) }
                                         className = 'recording-switch'
-                                        disabled = { isValidating }
+                                        disabled = { isValidating || !this.props.shouldRecordAudioAndVideo }
                                         id = 'recording-switch-myself'
                                         onChange = { onLocalRecordingSelfChange ?? EMPTY_FUNCTION } />
                                 </Container>

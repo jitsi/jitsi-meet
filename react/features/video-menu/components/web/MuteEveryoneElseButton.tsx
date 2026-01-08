@@ -7,7 +7,7 @@ import { sendAnalytics } from '../../../analytics/functions';
 import { openDialog } from '../../../base/dialog/actions';
 import { IconMicSlash } from '../../../base/icons/svg';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { IButtonProps } from '../../types';
 
 import MuteEveryoneDialog from './MuteEveryoneDialog';
@@ -33,7 +33,7 @@ const MuteEveryoneElseButton = ({
             return;
         }
         sendAnalytics(createToolbarEvent('mute.everyoneelse.pressed'));
-        dispatch(openDialog(MuteEveryoneDialog, { exclude: [ participantID ] }));
+        dispatch(openDialog('MuteEveryoneDialog', MuteEveryoneDialog, { exclude: [ participantID ] }));
     }, [ dispatch, notifyMode, notifyClick, participantID, sendAnalytics ]);
 
     return (

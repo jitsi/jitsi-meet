@@ -152,7 +152,7 @@ class JoinByPhoneDialog extends PureComponent<IProps, State> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         this.props.fetchConferenceDetails();
     }
 
@@ -162,7 +162,7 @@ class JoinByPhoneDialog extends PureComponent<IProps, State> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             dialOutStatus,
             dialInNumber,

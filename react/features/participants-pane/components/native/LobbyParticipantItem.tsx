@@ -19,8 +19,8 @@ interface IProps {
 
 export const LobbyParticipantItem = ({ participant: p }: IProps) => {
     const dispatch = useDispatch();
-    const admit = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, true)), [ dispatch ]);
-    const reject = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, false)), [ dispatch ]);
+    const admit = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, true)), [ dispatch, p.id ]);
+    const reject = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, false)), [ dispatch, p.id ]);
 
     return (
         <ParticipantItem
@@ -29,16 +29,16 @@ export const LobbyParticipantItem = ({ participant: p }: IProps) => {
             key = { p.id }
             participantID = { p.id } >
             <Button
-                accessibilityLabel = 'lobby.reject'
-                labelKey = 'lobby.reject'
+                accessibilityLabel = 'participantsPane.actions.reject'
+                labelKey = 'participantsPane.actions.reject'
                 onClick = { reject }
-                style = { styles.lobbyButtonReject }
+                style = { styles.buttonReject }
                 type = { BUTTON_TYPES.DESTRUCTIVE } />
             <Button
-                accessibilityLabel = 'lobby.admit'
-                labelKey = 'lobby.admit'
+                accessibilityLabel = 'participantsPane.actions.admit'
+                labelKey = 'participantsPane.actions.admit'
                 onClick = { admit }
-                style = { styles.lobbyButtonAdmit }
+                style = { styles.buttonAdmit }
                 type = { BUTTON_TYPES.PRIMARY } />
         </ParticipantItem>
     );

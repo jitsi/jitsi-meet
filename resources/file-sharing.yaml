@@ -1,0 +1,292 @@
+openapi: 3.0.1
+info:
+  title: File Sharing API
+  description: Management of the file sharing feature
+  version: 1.0.0
+servers:
+  - url: https://your-server-here
+    description: Generated server url
+security:
+  - HttpBearerKey: []
+tags:
+  - name: Content sharing history
+    description: crud operation for shared documents
+paths:
+  /v1/documents/sessions/{sessionId}/files:
+    get:
+      tags:
+        - Document sharing history
+      summary: Return a list of metadata with pre-sign urls for download
+      description: Used to get the list of files in past meetings
+      operationId: retrieveContentSharingHistory_1
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: page-size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 20
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CssFileMetadataResponse'
+    post:
+      tags:
+        - Document sharing history
+      summary: Save an document and metadata
+      description: Add a  document to a meeting - allowed only to those with file-sharing feature if any
+      operationId: addDocumentInMeeting
+      parameters:
+        - name: sessionId
+          in: path
+          description: The session ID of the meeting.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - file
+                - metadata
+              type: object
+              properties:
+                metadata:
+                  type: string
+                  description: The metadata of the document in JSON format. Must conform to FileMetadata schema.
+                  example: '{"conferenceFullName":"myroomname@conference.tenant.jitsi-meet.example.com","timestamp":1741017572040,"fileSize":1042157,"fileId":"e393a7e5-e790-4f43-836e-d27238201904"}'
+                file:
+                  type: string
+                  description: The file to be uploaded.
+                  format: binary
+      responses:
+        '200':
+          description: Document added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddDocumentResponse'
+              example:
+                fileId: e393a7e5-e790-4f43-836e-d27238201904
+    delete:
+      tags:
+        - Document sharing history
+      summary: Deletes documents for a given session, user and customer
+      operationId: deleteDocumentsForSessionCustomerAndUser
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: user-id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: customer-id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No Content
+  /v1/documents/sessions/{sessionId}/files/{fileId}:
+    get:
+      tags:
+        - Document sharing history
+      summary: Get file pre-signed URL plus document info
+      description: Used by UI to get the presign url for the file before serving it to the user who needs it
+      operationId: getDocumentInfoDuringMeeting
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fileId
+          in: path
+          description: The file ID to be deleted.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DocumentMetadataResponse'
+    delete:
+      tags:
+        - Document sharing history
+      summary: Delete a file by sessionId and fileId
+      description: Delete a file by sessionId and fileId allowed by all moderators
+      operationId: deleteFile
+      parameters:
+        - name: sessionId
+          in: path
+          description: The session ID of the meeting.
+          required: true
+          schema:
+            type: string
+          example: 86bf35e2-62a5-497e-9cae-efd35139f81f
+        - name: fileId
+          in: path
+          description: The file ID to be deleted.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    FileMetadata:
+      type: object
+      required:
+        - fileId
+        - conferenceFullName
+        - timestamp
+        - fileSize
+      properties:
+        fileId:
+          type: string
+          format: uuid
+          description: Client-generated unique identifier for the file
+          example: e393a7e5-e790-4f43-836e-d27238201904
+        conferenceFullName:
+          type: string
+          description: Full name of the conference/meeting room
+          example: myroomname@conference.tenant.jitsi-meet.example.com
+        timestamp:
+          type: integer
+          format: int64
+          description: Upload timestamp in milliseconds since epoch
+          example: 1741017572040
+        fileSize:
+          type: integer
+          format: int64
+          description: Size of the file in bytes
+          example: 1042157
+      description: Metadata structure that must be sent as JSON string in the metadata field
+    Payload:
+      type: object
+      properties:
+        isBreakout:
+          type: boolean
+        conference:
+          type: string
+    AddDocumentResponse:
+      type: object
+      properties:
+        fileId:
+          type: string
+          description: File ID of the added document
+          example: e393a7e5-e790-4f43-836e-d27238201904
+      description: Response body containing the fileId of the added document
+    CssFileMetadataResponse:
+      type: object
+      properties:
+        objectId:
+          type: string
+          description: Object id - can be file id
+          example: e393a7e5-e790-4f43-836e-d27238201904
+        sessionId:
+          type: string
+          description: Session id
+          example: 85a32e37-ddd5-45de-89a6-e94ccffe547a
+        timestamp:
+          type: integer
+          description: Added timestamp
+          format: int64
+          example: 124
+        contentType:
+          type: string
+          description: Content type
+          example: application/pdf
+        objectName:
+          type: string
+          description: Object name
+          example: e393a7e5-e790-4f43-836e-d27238201904
+        initiatorId:
+          type: string
+          description: User id for the author
+          example: f56g5y4
+        preSignedUrl:
+          type: string
+          description: Presign url - expires after 24h for JaaS
+          example: https://oracle.com/presigned-url
+      description: Response body containing the file metadata
+    PaginatedResponseCssFileMetadataResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/CssFileMetadataResponse'
+        nextStartWith:
+          type: string
+    DocumentMetadataResponse:
+      type: object
+      properties:
+        fileId:
+          type: string
+          description: File ID of the document
+          example: e393a7e5-e790-4f43-836e-d27238201904
+        sessionId:
+          type: string
+          description: Session ID of the document
+          example: 85a32e37-ddd5-45de-89a6-e94ccffe547a
+        fileName:
+          type: string
+          description: Filename
+          example: sample.pdf
+        customerId:
+          type: string
+          description: Customer id
+          example: vthtryv56yb65
+        userId:
+          type: string
+          description: User id
+          example: dvdsvfhjv
+        presignedUrl:
+          type: string
+          description: Presign url - points to document sharing since for CSS the link expires in 3h
+          example: https://content-sharing-url.com
+        createdAt:
+          type: integer
+          description: Created at
+          format: int64
+          example: 1745436546
+        fileSize:
+          type: integer
+          description: File Size
+          format: int64
+          example: 124
+      description: Response body containing the document metadata
+  securitySchemes:
+    HttpBearerKey:
+      type: http
+      description: Http request Authorization header
+      scheme: bearer

@@ -4,8 +4,10 @@ import Icon from '../../icons/components/Icon';
 import Tooltip from '../../tooltip/components/Tooltip';
 import ContextMenuItem from '../../ui/components/web/ContextMenuItem';
 
-import AbstractToolboxItem from './AbstractToolboxItem';
-import type { IProps as AbstractToolboxItemProps } from './AbstractToolboxItem';
+import {
+    default as AbstractToolboxItem,
+    type IProps as AbstractToolboxItemProps
+} from './AbstractToolboxItem';
 
 interface IProps extends AbstractToolboxItemProps {
 
@@ -18,6 +20,11 @@ interface IProps extends AbstractToolboxItemProps {
      * Whether or not the item is displayed in a context menu.
      */
     contextMenu?: boolean;
+
+    /**
+     * Whether the button open a menu or not.
+     */
+    isMenuButton?: boolean;
 
     /**
     * On key down handler.
@@ -63,10 +70,11 @@ export default class ToolboxItem extends AbstractToolboxItem<IProps> {
      * @protected
      * @returns {ReactElement}
      */
-    _renderItem() {
+    override _renderItem() {
         const {
             backgroundColor,
             contextMenu,
+            isMenuButton,
             disabled,
             elementAfter,
             icon,
@@ -77,8 +85,9 @@ export default class ToolboxItem extends AbstractToolboxItem<IProps> {
             toggled
         } = this.props;
         const className = showLabel ? 'overflow-menu-item' : 'toolbox-button';
+        const buttonAttribute = isMenuButton ? 'aria-expanded' : 'aria-pressed';
         const props = {
-            'aria-pressed': toggled,
+            [buttonAttribute]: toggled,
             'aria-disabled': disabled,
             'aria-label': this.accessibilityLabel,
             className: className + (disabled ? ' disabled' : ''),

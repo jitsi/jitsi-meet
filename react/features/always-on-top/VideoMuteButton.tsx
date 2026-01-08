@@ -63,7 +63,7 @@ export default class VideoMuteButton extends Component<Props, State> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         api.on('videoAvailabilityChanged', this._videoAvailabilityListener);
         api.on('videoMuteStatusChanged', this._videoMutedListener);
 
@@ -85,7 +85,7 @@ export default class VideoMuteButton extends Component<Props, State> {
      * @inheritdoc
      * @returns {void}
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         api.removeListener(
             'videoAvailabilityChanged',
             this._videoAvailabilityListener);
@@ -165,7 +165,7 @@ export default class VideoMuteButton extends Component<Props, State> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const toggled = this._isVideoMuted();
 
         return (

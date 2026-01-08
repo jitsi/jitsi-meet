@@ -8,7 +8,7 @@ import { IconModerator } from '../../../base/icons/svg';
 import { PARTICIPANT_ROLE } from '../../../base/participants/constants';
 import { getLocalParticipant, getParticipantById, isParticipantModerator } from '../../../base/participants/functions';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { IButtonProps } from '../../types';
 
 import GrantModeratorDialog from './GrantModeratorDialog';
@@ -36,7 +36,7 @@ const GrantModeratorButton = ({
         if (notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
             return;
         }
-        dispatch(openDialog(GrantModeratorDialog, { participantID }));
+        dispatch(openDialog('GrantModeratorDialog', GrantModeratorDialog, { participantID }));
     }, [ dispatch, notifyClick, notifyMode, participantID ]);
 
     if (!visible) {

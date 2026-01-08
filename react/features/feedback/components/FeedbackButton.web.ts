@@ -9,6 +9,7 @@ import { translate } from '../../base/i18n/functions';
 import { IconFeedback } from '../../base/icons/svg';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../base/toolbox/components/AbstractButton';
 import { openFeedbackDialog } from '../actions';
+import { shouldSendJaaSFeedbackMetadata } from '../functions.web';
 
 /**
  * The type of the React {@code Component} props of {@link FeedbackButton}.
@@ -25,10 +26,10 @@ interface IProps extends AbstractButtonProps {
  * Implementation of a button for opening feedback dialog.
  */
 class FeedbackButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.feedback';
-    icon = IconFeedback;
-    label = 'toolbar.feedback';
-    tooltip = 'toolbar.feedback';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.feedback';
+    override icon = IconFeedback;
+    override label = 'toolbar.feedback';
+    override tooltip = 'toolbar.feedback';
 
     /**
      * Handles clicking / pressing the button, and opens the appropriate dialog.
@@ -36,7 +37,7 @@ class FeedbackButton extends AbstractButton<IProps> {
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const { _conference, dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('feedback'));
@@ -45,11 +46,11 @@ class FeedbackButton extends AbstractButton<IProps> {
 }
 
 const mapStateToProps = (state: IReduxState) => {
-    const { callStatsID } = state['features/base/config'];
+    const { conference } = state['features/base/conference'];
 
     return {
-        _conference: state['features/base/conference'].conference,
-        visible: Boolean(callStatsID)
+        _conference: conference,
+        visible: shouldSendJaaSFeedbackMetadata(state)
     };
 };
 

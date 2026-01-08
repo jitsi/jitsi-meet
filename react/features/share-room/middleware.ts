@@ -2,6 +2,8 @@ import { Share } from 'react-native';
 
 import { getName } from '../app/functions.native';
 import { IStore } from '../app/types';
+import { INVITE_DIAL_IN_ENABLED } from '../base/flags/constants';
+import { getFeatureFlag } from '../base/flags/functions';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { getShareInfoText } from '../invite/functions';
 
@@ -35,7 +37,9 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {void}
  */
 function _shareRoom(roomURL: string, { dispatch, getState }: IStore) {
-    getShareInfoText(getState(), roomURL)
+    const dialInEnabled = getFeatureFlag(getState(), INVITE_DIAL_IN_ENABLED, true);
+
+    getShareInfoText(getState(), roomURL, false /* useHtml */, !dialInEnabled /* skipDialIn */)
         .then(message => {
             const title = `${getName()} Conference`;
             const onFulfilled
@@ -53,14 +57,15 @@ function _shareRoom(roomURL: string, { dispatch, getState }: IStore) {
                 .then(
                     /* onFulfilled */ value => {
                         onFulfilled(value.action === Share.sharedAction);
-                        dispatch(toggleShareDialog(false));
                     },
                     /* onRejected */ reason => {
-                        dispatch(toggleShareDialog(false));
                         logger.error(
                             `Failed to share conference/room URL ${roomURL}:`,
                             reason);
                         onFulfilled(false);
-                    });
+                    })
+                .finally(() => {
+                    dispatch(toggleShareDialog(false));
+                });
         });
 }

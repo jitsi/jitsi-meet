@@ -1,6 +1,6 @@
-import { ClassNameMap, withStyles } from '@mui/styles';
 import React, { ReactElement } from 'react';
 import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
 import { ACTION_SHORTCUT_TRIGGERED, VIDEO_MUTE, createShortcutEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
@@ -37,9 +37,9 @@ export interface IProps extends AbstractVideoMuteButtonProps {
     _gumPending: IGUMPendingState;
 
     /**
-     * The @mui/styles classes.
+     * An object containing the CSS classes.
      */
-    classes: ClassNameMap<string>;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 }
 
 /**
@@ -69,7 +69,7 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         this.props.dispatch(registerShortcut({
             character: 'V',
             helpDescription: 'keyboardShortcuts.videoMute',
@@ -83,7 +83,7 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
      * @inheritdoc
      * @returns {void}
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         this.props.dispatch(unregisterShortcut('V'));
     }
 
@@ -97,7 +97,7 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
      * @private
      * @returns {string}
      */
-    _getAccessibilityLabel() {
+    override _getAccessibilityLabel() {
         const { _gumPending } = this.props;
 
         if (_gumPending === IGUMPendingState.NONE) {
@@ -114,7 +114,7 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
      * @private
      * @returns {string}
      */
-    _getLabel() {
+    override _getLabel() {
         const { _gumPending } = this.props;
 
         if (_gumPending === IGUMPendingState.NONE) {
@@ -131,7 +131,7 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isVideoMuted() {
+    override _isVideoMuted() {
         if (this.props._gumPending === IGUMPendingState.PENDING_UNMUTE) {
             return false;
         }
@@ -144,8 +144,9 @@ class VideoMuteButton extends AbstractVideoMuteButton<IProps> {
      *
      * @returns {ReactElement | null}
      */
-    _getElementAfter(): ReactElement | null {
-        const { _gumPending, classes } = this.props;
+    override _getElementAfter(): ReactElement | null {
+        const { _gumPending } = this.props;
+        const classes = withStyles.getClasses(this.props);
 
         return _gumPending === IGUMPendingState.NONE ? null
             : (
@@ -199,4 +200,4 @@ function _mapStateToProps(state: IReduxState) {
     };
 }
 
-export default withStyles(styles)(translate(connect(_mapStateToProps)(VideoMuteButton)));
+export default withStyles(translate(connect(_mapStateToProps)(VideoMuteButton)), styles);

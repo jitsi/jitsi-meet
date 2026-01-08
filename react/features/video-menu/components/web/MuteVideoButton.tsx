@@ -10,7 +10,7 @@ import { IconVideoOff } from '../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { isRemoteTrackMuted } from '../../../base/tracks/functions.any';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { IButtonProps } from '../../types';
 
 import MuteRemoteParticipantsVideoDialog from './MuteRemoteParticipantsVideoDialog';
@@ -46,7 +46,7 @@ const MuteVideoButton = ({
                 'participant_id': participantID
             }));
 
-        dispatch(openDialog(MuteRemoteParticipantsVideoDialog, { participantID }));
+        dispatch(openDialog('MuteRemoteParticipantsVideoDialog', MuteRemoteParticipantsVideoDialog, { participantID }));
     }, [ dispatch, notifyClick, notifyClick, participantID, sendAnalytics ]);
 
     if (videoTrackMuted) {

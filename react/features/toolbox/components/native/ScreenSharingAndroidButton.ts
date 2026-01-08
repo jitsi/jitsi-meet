@@ -29,10 +29,10 @@ interface IProps extends AbstractButtonProps {
  * An implementation of a button for toggling screen sharing.
  */
 class ScreenSharingAndroidButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
-    icon = IconScreenshare;
-    label = 'toolbar.startScreenSharing';
-    toggledLabel = 'toolbar.stopScreenSharing';
+    override accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
+    override icon = IconScreenshare;
+    override label = 'toolbar.startScreenSharing';
+    override toggledLabel = 'toolbar.stopScreenSharing';
 
     /**
      * Handles clicking / pressing the button.
@@ -41,7 +41,7 @@ class ScreenSharingAndroidButton extends AbstractButton<IProps> {
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    override _handleClick() {
         const enable = !this._isToggled();
 
         this.props.dispatch(toggleScreensharing(enable));
@@ -64,7 +64,7 @@ class ScreenSharingAndroidButton extends AbstractButton<IProps> {
      * @protected
      * @returns {boolean}
      */
-    _isToggled() {
+    override _isToggled() {
         return this.props._screensharing;
     }
 }

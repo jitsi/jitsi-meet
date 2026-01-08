@@ -33,7 +33,7 @@ export default class Container extends AbstractContainer<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             accessibilityLabel,
             accessible,

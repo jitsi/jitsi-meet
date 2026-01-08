@@ -32,10 +32,15 @@ function _cryptoRandom() {
  * argument to this method.
  *
  * @param {Object} config - Configuration state object from store. A URL pattern pointing to the login service.
- * @param {string} roomName - The name of the conference room for which the user will be authenticated.
- * @param {string} tenant - The name of the conference tenant.
- * @param {string} skipPrejoin - The name of the conference room for which the user will be authenticated.
- * @param {URL} locationURL - The current location URL.
+ * @param {URL} locationURL - The location URL.
+ * @param {Object} options:  - Config options {
+ *     audioMuted: boolean | undefined
+ *     audioOnlyEnabled: boolean | undefined,
+ *     skipPrejoin: boolean | undefined,
+ *     videoMuted: boolean | undefined
+ * }.
+ * @param {string?} roomName - The room name.
+ * @param {string?} tenant - The tenant name if any.
  *
  * @returns {Promise<string|undefined>} - The URL pointing to JWT login service or
  * <tt>undefined</tt> if the pattern stored in config is not a string and the URL can not be
@@ -43,11 +48,23 @@ function _cryptoRandom() {
  */
 export const getTokenAuthUrl = (
         config: IConfig,
+        locationURL: URL,
+        options: {
+            audioMuted: boolean | undefined;
+            audioOnlyEnabled: boolean | undefined;
+            skipPrejoin: boolean | undefined;
+            videoMuted: boolean | undefined;
+        },
         roomName: string | undefined,
-        tenant: string | undefined,
-        skipPrejoin: boolean | undefined = false,
         // eslint-disable-next-line max-params
-        locationURL: URL): Promise<string | undefined> => {
+        tenant: string | undefined): Promise<string | undefined> => {
+
+    const {
+        audioMuted = false,
+        audioOnlyEnabled = false,
+        skipPrejoin = false,
+        videoMuted = false
+    } = options;
 
     let url = config.tokenAuthUrl;
 
@@ -56,7 +73,17 @@ export const getTokenAuthUrl = (
     }
 
     if (url.indexOf('{state}')) {
-        const state = _getTokenAuthState(roomName, tenant, skipPrejoin, locationURL);
+        const state = _getTokenAuthState(
+            locationURL,
+            {
+                audioMuted,
+                audioOnlyEnabled,
+                skipPrejoin,
+                videoMuted
+            },
+            roomName,
+            tenant
+        );
 
         if (browser.isElectron()) {
             // @ts-ignore

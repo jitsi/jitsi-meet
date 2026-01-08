@@ -37,12 +37,11 @@ public class JitsiMeetActivityDelegate {
      * React Native module.
      */
     private static PermissionListener permissionListener;
-    private static Callback permissionsCallback;
 
     /**
      * Tells whether or not the permissions request is currently in progress.
      *
-     * @return {@code true} if the permssions are being requested or {@code false} otherwise.
+     * @return {@code true} if the permissions are being requested or {@code false} otherwise.
      */
     static boolean arePermissionsBeingRequested() {
         return permissionListener != null;
@@ -142,11 +141,6 @@ public class JitsiMeetActivityDelegate {
         if (reactInstanceManager != null) {
             reactInstanceManager.onHostResume(activity, new DefaultHardwareBackBtnHandlerImpl(activity));
         }
-
-        if (permissionsCallback != null) {
-            permissionsCallback.invoke();
-            permissionsCallback = null;
-        }
     }
 
     /**
@@ -169,15 +163,10 @@ public class JitsiMeetActivityDelegate {
 
     public static void onRequestPermissionsResult(
             final int requestCode, final String[] permissions, final int[] grantResults) {
-        permissionsCallback = new Callback() {
-            @Override
-            public void invoke(Object... args) {
-                if (permissionListener != null
-                        && permissionListener.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
-                    permissionListener = null;
-                }
-            }
-        };
+        // Invoke the callback immediately
+        if (permissionListener != null && permissionListener.onRequestPermissionsResult(requestCode, permissions, grantResults)) {  
+            permissionListener = null;
+        }
     }
 
     public static void requestPermissions(Activity activity, String[] permissions, int requestCode, PermissionListener listener) {

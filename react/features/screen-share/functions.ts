@@ -1,10 +1,8 @@
 import { IReduxState } from '../app/types';
-import { getMultipleVideoSendingSupportFeatureFlag } from '../base/config/functions.any';
 import { isWindows } from '../base/environment/environment';
 import { isMobileBrowser } from '../base/environment/utils';
 import { browser } from '../base/lib-jitsi-meet';
-import { VIDEO_TYPE } from '../base/media/constants';
-import { getLocalDesktopTrack, getLocalVideoTrack } from '../base/tracks/functions';
+import { getLocalDesktopTrack } from '../base/tracks/functions';
 
 /**
  * Is the current screen sharing session audio only.
@@ -56,10 +54,5 @@ export function isScreenVideoShared(state: IReduxState) {
     const tracks = state['features/base/tracks'];
     const localScreenshare = getLocalDesktopTrack(tracks);
 
-    if (getMultipleVideoSendingSupportFeatureFlag(state)) {
-        return localScreenshare?.jitsiTrack && !localScreenshare.jitsiTrack.isMuted();
-    }
-    const localVideo = getLocalVideoTrack(tracks);
-
-    return localVideo?.jitsiTrack?.getVideoType() === VIDEO_TYPE.DESKTOP;
+    return localScreenshare?.jitsiTrack && !localScreenshare.jitsiTrack.isMuted();
 }

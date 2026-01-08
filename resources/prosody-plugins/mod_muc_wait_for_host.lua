@@ -6,17 +6,19 @@
 -- the guest domain which is anonymous.
 -- The module has the option to set participants to moderators when connected via token/when they are authenticated
 -- This module depends on mod_persistent_lobby.
-local um_is_admin = require 'core.usermanager'.is_admin;
 local jid = require 'util.jid';
 local util = module:require "util";
+local is_admin = util.is_admin;
 local is_healthcheck_room = util.is_healthcheck_room;
 local is_moderated = util.is_moderated;
+local process_host_module = util.process_host_module;
+local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 
 local disable_auto_owners = module:get_option_boolean('wait_for_host_disable_auto_owners', false);
 
 local muc_domain_base = module:get_option_string('muc_mapper_domain_base');
 if not muc_domain_base then
-    module:log('warn', "No 'muc_mapper_domain_base' option set, disabling muc_mapper plugin inactive");
+    module:log('warn', "No 'muc_mapper_domain_base' option set, disabling module");
     return
 end
 
@@ -42,10 +44,6 @@ if not disable_auto_owners then
     end, 2);
 end
 
-local function is_admin(jid)
-    return um_is_admin(jid, module.host);
-end
-
 -- if not authenticated user is trying to join the room we enable lobby in it
 -- and wait for the moderator to join
 module:hook('muc-occupant-pre-join', function (event)
@@ -65,9 +63,11 @@ module:hook('muc-occupant-pre-join', function (event)
     end
 
     if not room.has_host then
-        if session.auth_token or (session.username and jid.host(occupant.bare_jid) == muc_domain_base) then
+        if module:fire_event('room_has_host', { room = room; occupant = occupant; session = session; }) then
             -- the host is here, let's drop the lobby
             room:set_members_only(false);
+            -- this is set by create-persistent-lobby-room, so let's clear it
+            room:set_persistent(false);
 
             -- let's set the default role of 'participant' for the newly created occupant as it was nil when created
             -- when the room was still members_only, later if not disabled this participant will become a moderator
@@ -79,7 +79,7 @@ module:hook('muc-occupant-pre-join', function (event)
             module:fire_event('room_host_arrived', room.jid, session);
             lobby_host:fire_event('destroy-lobby-room', {
                 room = room,
-                newjid = room.jid,
+                newjid = internal_room_jid_match_rewrite(room.jid),
                 message = 'Host arrived.',
             });
         elseif not room:get_members_only() then
@@ -94,23 +94,13 @@ module:hook('muc-occupant-pre-join', function (event)
     end
 end);
 
--- process a host module directly if loaded or hooks to wait for its load
-function process_host_module(name, callback)
-    local function process_host(host)
-        if host == name then
-            callback(module:context(host), host);
-        end
+module:hook('room_has_host', function(event)
+    local room, occupant, session = event.room, event.occupant, event.session;
+    if session.auth_token
+        or (session.username and jid.host(occupant.bare_jid) == muc_domain_base) then
+        return true;
     end
-
-    if prosody.hosts[name] == nil then
-        module:log('debug', 'No host/component found, will wait for it: %s', name)
-
-        -- when a host or component is added
-        prosody.events.add_handler('host-activated', process_host);
-    else
-        process_host(name);
-    end
-end
+end);
 
 process_host_module(lobby_muc_component_config, function(host_module, host)
     -- lobby muc component created

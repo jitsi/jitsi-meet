@@ -1,9 +1,9 @@
 import { Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { withStyles } from 'tss-react/mui';
 
 import { createToolbarEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
@@ -12,7 +12,6 @@ import { setAudioOnly } from '../../base/audio-only/actions';
 import { translate } from '../../base/i18n/functions';
 import { setLastN } from '../../base/lastn/actions';
 import { getLastNForQualityLevel } from '../../base/lastn/functions';
-import { withPixelLineHeight } from '../../base/styles/functions.web';
 import { setPreferredVideoQuality } from '../actions';
 import { DEFAULT_LAST_N, VIDEO_QUALITY_LEVELS } from '../constants';
 import logger from '../logger';
@@ -71,7 +70,7 @@ interface IProps extends WithTranslation {
     /**
      * An object containing the CSS classes.
      */
-    classes: any;
+    classes?: Partial<Record<keyof ReturnType<typeof styles>, string>>;
 
     /**
      * Invoked to request toggling of audio only mode.
@@ -92,7 +91,7 @@ const styles = (theme: Theme) => {
             color: theme.palette.text01
         },
         dialogDetails: {
-            ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+            ...theme.typography.bodyShortRegularLarge,
             marginBottom: 16
         },
         dialogContents: {
@@ -100,7 +99,7 @@ const styles = (theme: Theme) => {
             padding: '16px 16px 48px 16px'
         },
         sliderDescription: {
-            ...withPixelLineHeight(theme.typography.heading6),
+            ...theme.typography.heading6,
 
             display: 'flex',
             justifyContent: 'space-between',
@@ -181,8 +180,9 @@ class VideoQualitySlider extends Component<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
-        const { classes, t } = this.props;
+    override render() {
+        const { t } = this.props;
+        const classes = withStyles.getClasses(this.props);
         const activeSliderOption = this._mapCurrentQualityToSliderValue();
 
         return (
@@ -382,4 +382,4 @@ function _mapStateToProps(state: IReduxState) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(withStyles(styles)(VideoQualitySlider)));
+export default translate(connect(_mapStateToProps)(withStyles(VideoQualitySlider, styles)));

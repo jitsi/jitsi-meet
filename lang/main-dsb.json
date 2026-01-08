@@ -19,7 +19,7 @@
         "noResults": "Žedne se góźece rezulaty pytanja njedajo",
         "outlookEmail": "Outlook-e-mail",
         "phoneNumbers": "telefonowe numery",
-        "searching": "Pytanje trajo...",
+        "searching": "Pytanje trajo…",
         "shareInvite": "pśepšosenje na zgromaźinu spśistupniś",
         "shareLink": "Spśistupniśo link za konferencu, aby drugich pśepšosyli.",
         "shareStream": "link za livestream spśistupniś",
@@ -563,8 +563,6 @@
         "youtubeTerms": "wužywaŕske wustawki za youtube"
     },
     "lobby": {
-        "admit": "pśizwóliś",
-        "admitAll": "wšyknym pśizwólenje daś",
         "backToKnockModeButton": "mimo kodowego słowa, město togo wó pśistup pšosyś",
         "chat": "chat",
         "dialogTitle": "lobbyjowy modus",
@@ -598,8 +596,6 @@
         "notificationTitle": "lobby",
         "passwordField": "kodowe słowo za konferencu zapódaś",
         "passwordJoinButton": "pśistupiś",
-        "reject": "wótpokazaś",
-        "rejectAll": "wšykne wótpokazaś",
         "title": "",
         "toggleLabel": "lobby aktiwěrowaś / deaktiwěrowaś"
     },
@@ -670,7 +666,7 @@
         "linkToSalesforceDescription": "Wy móžośo wopowěsć wót konference pśez link z objektom pla Saleforce zwězaś.",
         "linkToSalesforceError": "Konferenz njejo mógła se ze Saleforce zwězaś.",
         "linkToSalesforceKey": "konferencu zalinkowaś",
-        "linkToSalesforceProgress": "Zwězanje konference ze Salesforce se twari...",
+        "linkToSalesforceProgress": "Zwězanje konference ze Salesforce se twari…",
         "linkToSalesforceSuccess": "Konferenca jo se ze Salesforce zwězała.",
         "localRecordingStarted": "{{name}} jo lokalne nagrawanje zachopił/-a.",
         "localRecordingStopped": "{{name}} jo lokalne nagrawanje dokóńcował/-a.",
@@ -730,6 +726,8 @@
     },
     "participantsPane": {
         "actions": {
+            "admit": "pśizwóliś",
+            "admitAll": "wšyknym pśizwólenje daś",
             "allow": "wobźělnikam pšawo daś:",
             "allowVideo": "kameru aktiwěrowaś",
             "askUnmute": "pšosbu wó anulěrowanje wuśišenja stajiś",
@@ -742,6 +740,7 @@
             "mute": "wuśišyś",
             "muteAll": "wšyknych wuśišyś",
             "muteEveryoneElse": "wšykne druge wuśišyś",
+            "reject": "wótpokazaś",
             "stopEveryonesVideo": "wšykne kamery wušaltowaś",
             "stopVideo": "kameru wušaltowaś",
             "unblockEveryoneMicCamera": "blokěrowane kamery a mikrofon wšyknych zasej aktiwěrowaś",
@@ -775,6 +774,9 @@
             "questionPlaceholder": "pšašanje stajiś",
             "removeOption": "wótegrono wulašowaś",
             "send": "wótpósłaś"
+        },
+        "errors": {
+            "notUniqueOption": "Opcije musy byś jedynsće"
         },
         "notification": {
             "description": "Wótcyńśo kórtu wopšašowanjow, aby zgłosowali",
@@ -843,7 +845,6 @@
         "or": "abo",
         "premeeting": "naglěd",
         "screenSharingError": "zmólenje pśi sobuźělenju monitora:",
-        "showScreen": "naglěd konferency aktiwěrowaś",
         "startWithPhone": "zachopiś z telefonowym audio",
         "videoOnlyError": "zmólenje wideo:",
         "videoTrackError": "Sćažka wideo njejo mógła se załožyś.",
@@ -914,7 +915,7 @@
         "localRecordingStartWarningTitle": "nagrawanje dokóńcowaś a zachowaś",
         "localRecordingVideoStop": "Gaž kameru wušaltujośo, ga teke lokalne nagrawanje se dokóńcujo. Sćo-li napšawdu wěste, až to cośo?",
         "localRecordingVideoWarning": "Aby bildu ze swójeje samskeje kamery nagrawali, musyśo swóju kameru na zachopjeńku nagrawanja zašaltowaś.",
-        "localRecordingWarning": "Pśespytujśo, lěc sćo aktuelnu kórtu wuzwólili, aby wideo a zuk nagrawali. Dłujkosć nagrawanja jo tuchylu na 1 GB wobgranicowana, což dosega za jadnab 100 minutow.",
+        "localRecordingWarning": "Pśespytujśo, lěc sćo aktuelnu kórtu wuzwólili, aby wideo a zuk nagrawali.",
         "loggedIn": "ako {{userName}} zalogowany/-a",
         "noMicPermission": "",
         "noStreams": "Žeden zuk a žeden wideo njejo namakany.",
@@ -1038,6 +1039,7 @@
         "neutral": "neutralny/neutralna",
         "sad": "tužny/tužna",
         "search": "pytaś",
+        "searchHint": "wobźělniki pytaś",
         "seconds": "{{count}} sek.",
         "speakerStats": "statistika powědarja",
         "speakerTime": "cas powědanja",
@@ -1235,16 +1237,7 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Wuzwólśo opciju <b><i>pśiwdaś</i></b>, gaž browser wó pšawa pšosy.",
-        "chromeGrantPermissions": "Wuzwólśo opciju <b><i>pśiwdaś</i></b>, gaž browser wó pšawa pšosy.",
-        "edgeGrantPermissions": "Wuzwólśo opciju <b><i>jo</i></b>, gaž browser wó pšawa pšosy.",
-        "electronGrantPermissions": "pšawa k wužywanju Wašeje kamery a mikrofona wuźěliś",
-        "firefoxGrantPermissions": "Wuzwólśo opciju <b><i>dowóliś</i></b>, gaž browser wó pšawa pšosy.",
-        "iexplorerGrantPermissions": "Wuzwólśo opciju <b><i>OK</i></b>, gaž browser wó pšawa pšosy.",
-        "nwjsGrantPermissions": "pšawa k wužywanju Wašeje kamery a mikrofona wuźěliś",
-        "operaGrantPermissions": "Wuzwólśo opciju <b><i>pśiwdaś</i></b>, gaž browser wó pšawa pšosy.",
-        "react-nativeGrantPermissions": "Wuzwólśo opciju <b><i>dowóliś</i></b>, gaž browser wó pšawa pšosy.",
-        "safariGrantPermissions": "Wuzwólśo opciju <b><i>OK</i></b>, gaž browser wó pšawa pšosy."
+        "grantPermissions": "pšawa k wužywanju Wašeje kamery a mikrofona wuźěliś."
     },
     "videoSIPGW": {
         "busy": "Źěłamy na tom, aby resurse se k dispoziciji stajili. Wopytajśo za pór minutow hyšći raz.",
@@ -1316,7 +1309,7 @@
         "image6": "góla",
         "image7": "górjejhyśe słyńcka",
         "none": "žeden motiw",
-        "pleaseWait": "Cakajśo...",
+        "pleaseWait": "Cakajśo…",
         "removeBackground": "slězynu wótpóraś",
         "slightBlur": "slězyna pitśku njewótša",
         "title": "slězyny",

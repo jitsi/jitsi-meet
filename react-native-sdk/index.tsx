@@ -13,19 +13,27 @@ import React, {
 } from 'react';
 import { View, ViewStyle } from 'react-native';
 
+import type { IRoomsInfo } from '../react/features/breakout-rooms/types';
+
 import { appNavigate } from './react/features/app/actions.native';
 import { App } from './react/features/app/components/App.native';
+import { setAudioOnly } from './react/features/base/audio-only/actions';
 import { setAudioMuted, setVideoMuted } from './react/features/base/media/actions';
+import { getRoomsInfo } from './react/features/breakout-rooms/functions';
 
 
 interface IEventListeners {
+    onAudioMutedChanged?: Function;
+    onVideoMutedChanged?: Function;
     onConferenceBlurred?: Function;
     onConferenceFocused?: Function;
     onConferenceJoined?: Function;
     onConferenceLeft?: Function;
     onConferenceWillJoin?: Function;
     onEnterPictureInPicture?: Function;
+    onEndpointMessageReceived?: Function;
     onParticipantJoined?: Function;
+    onParticipantLeft?: ({ id }: { id: string }) => void;
     onReadyToClose?: Function;
 }
 
@@ -46,10 +54,18 @@ interface IAppProps {
     userInfo?: IUserInfo;
 }
 
+export interface JitsiRefProps {
+    close: Function;
+    setAudioOnly?: (value: boolean) => void;
+    setAudioMuted?: (muted: boolean) => void;
+    setVideoMuted?: (muted: boolean) => void;
+    getRoomsInfo?: () => IRoomsInfo;
+}
+
 /**
  * Main React Native SDK component that displays a Jitsi Meet conference and gets all required params as props
  */
-export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
+export const JitsiMeeting = forwardRef<JitsiRefProps, IAppProps>((props, ref) => {
     const [ appProps, setAppProps ] = useState({});
     const app = useRef(null);
     const {
@@ -70,6 +86,11 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
 
             dispatch(appNavigate(undefined));
         },
+        setAudioOnly: value => {
+            const dispatch = app.current.state.store.dispatch;
+
+            dispatch(setAudioOnly(value));
+        },
         setAudioMuted: muted => {
             const dispatch = app.current.state.store.dispatch;
 
@@ -79,6 +100,11 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
             const dispatch = app.current.state.store.dispatch;
 
             dispatch(setVideoMuted(muted));
+        },
+        getRoomsInfo: () => {
+            const state = app.current.state.store.getState();
+
+            return getRoomsInfo(state);
         }
     }));
 
@@ -107,13 +133,17 @@ export const JitsiMeeting = forwardRef((props: IAppProps, ref) => {
             setAppProps({
                 'flags': flags,
                 'rnSdkHandlers': {
+                    onAudioMutedChanged: eventListeners?.onAudioMutedChanged,
+                    onVideoMutedChanged: eventListeners?.onVideoMutedChanged,
                     onConferenceBlurred: eventListeners?.onConferenceBlurred,
                     onConferenceFocused: eventListeners?.onConferenceFocused,
                     onConferenceJoined: eventListeners?.onConferenceJoined,
                     onConferenceWillJoin: eventListeners?.onConferenceWillJoin,
                     onConferenceLeft: eventListeners?.onConferenceLeft,
                     onEnterPictureInPicture: eventListeners?.onEnterPictureInPicture,
+                    onEndpointMessageReceived: eventListeners?.onEndpointMessageReceived,
                     onParticipantJoined: eventListeners?.onParticipantJoined,
+                    onParticipantLeft: eventListeners?.onParticipantLeft,
                     onReadyToClose: eventListeners?.onReadyToClose
                 },
                 'url': urlProps,

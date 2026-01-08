@@ -1,5 +1,11 @@
+import i18next from 'i18next';
+
+import { registerE2eeAudioFiles } from '../../../features/e2ee/functions';
+import { registerRecordingAudioFiles } from '../../../features/recording/functions';
 import { IStore } from '../../app/types';
+import { AudioSupportedLanguage } from '../media/constants';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import StateListenerRegistry from '../redux/StateListenerRegistry';
 
 import { PLAY_SOUND, STOP_SOUND } from './actionTypes';
 import logger from './logger';
@@ -71,3 +77,53 @@ function _stopSound({ getState }: IStore, soundId: string) {
         logger.warn(`STOP_SOUND: no sound found for id: ${soundId}`);
     }
 }
+
+/**
+ * Returns whether the language is supported for audio messages.
+ *
+ * @param {string} language - The requested language.
+ * @returns {boolean}
+ */
+function isLanguageSupported(language: string): Boolean {
+    return Boolean(AudioSupportedLanguage[language as keyof typeof AudioSupportedLanguage]);
+}
+
+/**
+ * Checking if it's necessary to reload the translated files.
+ *
+ * @param {string} language - The next language.
+ * @param {string} prevLanguage - The previous language.
+ * @returns {boolean}
+ */
+function shouldReloadAudioFiles(language: string, prevLanguage: string): Boolean {
+    const isNextLanguageSupported = isLanguageSupported(language);
+    const isPrevLanguageSupported = isLanguageSupported(prevLanguage);
+
+    return (
+
+        // From an unsupported language (which defaulted to English) to a supported language (that isn't English).
+        isNextLanguageSupported && language !== AudioSupportedLanguage.en && !isPrevLanguageSupported
+    ) || (
+
+        // From a supported language (that wasn't English) to English.
+        !isNextLanguageSupported && isPrevLanguageSupported && prevLanguage !== AudioSupportedLanguage.en
+    ) || (
+
+        // From a supported language to another.
+        isNextLanguageSupported && isPrevLanguageSupported
+    );
+}
+
+/**
+ * Set up state change listener for language.
+ */
+StateListenerRegistry.register(
+    () => i18next.language,
+    (language, { dispatch }, prevLanguage): void => {
+
+        if (language !== prevLanguage && shouldReloadAudioFiles(language, prevLanguage)) {
+            registerE2eeAudioFiles(dispatch, true);
+            registerRecordingAudioFiles(dispatch, true);
+        }
+    }
+);

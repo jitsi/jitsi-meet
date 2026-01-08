@@ -28,7 +28,7 @@ body {
     margin: 0px;
     width: 100%;
     height: 100%;
-    font-size: 12px;
+    font-size: 0.75rem;
     font-weight: 400;
     overflow: hidden;
     color: #F1F1F1;
@@ -111,21 +111,22 @@ form {
     height: $watermarkHeight;
     background-size: contain;
     background-repeat: no-repeat;
-    z-index: $zindex2;
+    z-index: $watermarkZ;
 }
 
 .leftwatermark {
+    max-width: 140px;
+    max-height:70px;
     left: 32px;
     top: 32px;
     background-position: center left;
     background-repeat: no-repeat;
     background-size: contain;
-}
 
-.leftwatermarknomargin {
-    background-position: center left;
-    background-repeat: no-repeat;
-    background-size: contain;
+    &.no-margin {
+        left:0;
+        top:0;
+    }
 }
 
 .rightwatermark {
@@ -138,10 +139,10 @@ form {
     position: absolute;
     left: 25;
     bottom: 7;
-    font-size: 11pt;
+    font-size: 0.875rem;
     color: rgba(255,255,255,.50);
     text-decoration: none;
-    z-index: 100;
+    z-index: $watermarkZ;
 }
 
 /**

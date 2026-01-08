@@ -1,4 +1,5 @@
 import { IStore } from '../../app/types';
+import { getConferenceState } from '../conference/functions';
 import { Sounds } from '../config/configType';
 import { AudioElement } from '../media/components/AbstractAudio';
 
@@ -68,7 +69,14 @@ export function _removeAudioElement(soundId: string) {
  */
 export function playSound(soundId: string) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const disabledSounds = getDisabledSounds(getState());
+        const state = getState();
+        const disabledSounds = getDisabledSounds(state);
+        const { leaving } = getConferenceState(state);
+
+        // Skip playing sounds when leaving, to avoid hearing that recording has stopped and so on.
+        if (leaving) {
+            return;
+        }
 
         if (!disabledSounds.includes(soundId as Sounds) && !disabledSounds.find(id => soundId.startsWith(id))) {
             dispatch({

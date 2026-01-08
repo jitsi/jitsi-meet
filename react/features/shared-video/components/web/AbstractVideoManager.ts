@@ -1,6 +1,4 @@
-// @ts-expect-error
-import Logger from '@jitsi/logger';
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash-es';
 import { PureComponent } from 'react';
 
 import { createSharedVideoEvent as createEvent } from '../../../analytics/AnalyticsEvents';
@@ -15,10 +13,9 @@ import { showWarningNotification } from '../../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../../notifications/constants';
 import { dockToolbox } from '../../../toolbox/actions';
 import { muteLocal } from '../../../video-menu/actions.any';
-import { setSharedVideoStatus, stopSharedVideo } from '../../actions.any';
+import { setSharedVideoStatus, stopSharedVideo } from '../../actions';
 import { PLAYBACK_STATUSES } from '../../constants';
-
-const logger = Logger.getLogger(__filename);
+import logger from '../../logger';
 
 /**
  * Return true if the difference between the two times is larger than 5.
@@ -137,7 +134,7 @@ class AbstractVideoManager extends PureComponent<IProps> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
+    override componentDidMount() {
         this.props._dockToolbox(true);
         this.processUpdatedProps();
     }
@@ -147,7 +144,7 @@ class AbstractVideoManager extends PureComponent<IProps> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         const { _videoUrl } = this.props;
 
         if (prevProps._videoUrl !== _videoUrl) {
@@ -162,7 +159,7 @@ class AbstractVideoManager extends PureComponent<IProps> {
      *
      * @inheritdoc
      */
-    componentWillUnmount() {
+    override componentWillUnmount() {
         sendAnalytics(createEvent('stopped'));
 
         if (this.dispose) {

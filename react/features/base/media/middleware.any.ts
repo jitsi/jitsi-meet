@@ -8,22 +8,28 @@ import {
 } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
 import { IStore } from '../../app/types';
+import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../../av-moderation/constants';
+import { isForceMuted } from '../../av-moderation/functions';
 import { APP_STATE_CHANGED } from '../../mobile/background/actionTypes';
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
-import { isForceMuted } from '../../participants-pane/functions';
 import { isScreenMediaShared } from '../../screen-share/functions';
 import { SET_AUDIO_ONLY } from '../audio-only/actionTypes';
 import { setAudioOnly } from '../audio-only/actions';
 import { SET_ROOM } from '../conference/actionTypes';
 import { isRoomValid } from '../conference/functions';
-import { getMultipleVideoSendingSupportFeatureFlag } from '../config/functions.any';
+import { PARTICIPANT_MUTED_US } from '../participants/actionTypes';
 import { getLocalParticipant } from '../participants/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { getPropertyValue } from '../settings/functions.any';
 import { TRACK_ADDED } from '../tracks/actionTypes';
 import { destroyLocalTracks } from '../tracks/actions.any';
-import { isLocalTrackMuted, isLocalVideoTrackDesktop, setTrackMuted } from '../tracks/functions.any';
+import {
+    getCameraFacingMode,
+    isLocalTrackMuted,
+    isLocalVideoTrackDesktop,
+    setTrackMuted
+} from '../tracks/functions.any';
 import { ITrack } from '../tracks/types';
 
 import {
@@ -40,10 +46,10 @@ import {
     setVideoMuted
 } from './actions';
 import {
-    CAMERA_FACING_MODE,
     MEDIA_TYPE,
     SCREENSHARE_MUTISM_AUTHORITY,
-    VIDEO_MUTISM_AUTHORITY
+    VIDEO_MUTISM_AUTHORITY,
+    VIDEO_TYPE
 } from './constants';
 import { getStartWithAudioMuted, getStartWithVideoMuted } from './functions';
 import logger from './logger';
@@ -62,6 +68,24 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_STATE_CHANGED:
         return _appStateChanged(store, next, action);
+
+    case PARTICIPANT_MUTED_US: {
+        const { dispatch } = store;
+        const { track } = action;
+
+        // Sync the media muted state with the track muted state.
+        if (track.isAudioTrack()) {
+            dispatch(setAudioMuted(true, /* ensureTrack */ false));
+        } else if (track.isVideoTrack()) {
+            if (track.getVideoType() === VIDEO_TYPE.DESKTOP) {
+                dispatch(setScreenshareMuted(true, SCREENSHARE_MUTISM_AUTHORITY.USER, /* ensureTrack */ false));
+            } else {
+                dispatch(setVideoMuted(true, VIDEO_MUTISM_AUTHORITY.USER, /* ensureTrack */ false));
+            }
+        }
+
+        break;
+    }
 
     case SET_AUDIO_ONLY:
         return _setAudioOnly(store, next, action);
@@ -85,7 +109,7 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const participant = getLocalParticipant(state);
 
-        if (!action.muted && isForceMuted(participant, MEDIA_TYPE.AUDIO, state)) {
+        if (!action.muted && isForceMuted(participant, AVM_MEDIA_TYPE.AUDIO, state)) {
             return;
         }
         break;
@@ -110,7 +134,7 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const participant = getLocalParticipant(state);
 
-        if (!action.muted && isForceMuted(participant, MEDIA_TYPE.SCREENSHARE, state)) {
+        if (!action.muted && isForceMuted(participant, AVM_MEDIA_TYPE.DESKTOP, state)) {
             return;
         }
         break;
@@ -119,7 +143,7 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const participant = getLocalParticipant(state);
 
-        if (!action.muted && isForceMuted(participant, MEDIA_TYPE.VIDEO, state)) {
+        if (!action.muted && isForceMuted(participant, AVM_MEDIA_TYPE.VIDEO, state)) {
             return;
         }
         break;
@@ -182,17 +206,14 @@ function _appStateChanged({ dispatch, getState }: IStore, next: Function, action
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _setAudioOnly({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
+function _setAudioOnly({ dispatch }: IStore, next: Function, action: AnyAction) {
     const { audioOnly } = action;
-    const state = getState();
 
     sendAnalytics(createTrackMutedEvent('video', 'audio-only mode', audioOnly));
 
     // Make sure we mute both the desktop and video tracks.
     dispatch(setVideoMuted(audioOnly, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
-    if (getMultipleVideoSendingSupportFeatureFlag(state)) {
-        dispatch(setScreenshareMuted(audioOnly, SCREENSHARE_MUTISM_AUTHORITY.AUDIO_ONLY));
-    }
+    dispatch(setScreenshareMuted(audioOnly, SCREENSHARE_MUTISM_AUTHORITY.AUDIO_ONLY));
 
     return next(action);
 }
@@ -233,7 +254,7 @@ function _setRoom({ dispatch, getState }: IStore, next: Function, action: AnyAct
         // the user i.e. the state of base/media. Eventually, practice/reality i.e.
         // the state of base/tracks will or will not agree with the desires.
         dispatch(setAudioMuted(audioMuted));
-        dispatch(setCameraFacingMode(CAMERA_FACING_MODE.USER));
+        dispatch(setCameraFacingMode(getCameraFacingMode(state)));
         dispatch(setVideoMuted(videoMuted));
     }
 

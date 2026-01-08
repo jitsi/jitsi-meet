@@ -1,9 +1,10 @@
-import _ from 'lodash';
+import { matchesProperty, sortBy } from 'lodash-es';
 import React, { ReactElement } from 'react';
 import { WithTranslation } from 'react-i18next';
 import {
     ActivityIndicator,
     FlatList,
+    SafeAreaView,
     TouchableOpacity,
     View,
     ViewStyle
@@ -18,6 +19,7 @@ import Icon from '../../../../base/icons/components/Icon';
 import {
     IconCheck,
     IconCloseCircle,
+    IconEnvelope,
     IconPhoneRinging,
     IconSearch,
     IconShare
@@ -136,7 +138,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidMount() {
+    override componentDidMount() {
         const { navigation, t } = this.props;
 
         navigation.setOptions({
@@ -155,7 +157,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         const { navigation, t } = this.props;
 
         navigation.setOptions({
@@ -181,7 +183,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         const {
             _addPeopleEnabled,
             _dialOutEnabled
@@ -199,6 +201,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
         return (
             <JitsiScreen
                 footerComponent = { this._renderShareMeetingButton }
+                hasExtraHeaderHeight = { true }
                 style = { styles.addPeopleContainer }>
                 <Input
                     autoFocus = { false }
@@ -246,6 +249,8 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
         const { item } = flatListItem;
 
         switch (item.type) {
+
+        // isCORSAvatarURL in this case is false
         case INVITE_TYPES.PHONE:
             return {
                 avatar: IconPhoneRinging,
@@ -255,6 +260,12 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
         case INVITE_TYPES.USER:
             return {
                 avatar: item.avatar,
+                key: item.id || item.user_id,
+                title: item.name
+            };
+        case INVITE_TYPES.EMAIL:
+            return {
+                avatar: item.avatar || IconEnvelope,
                 key: item.id || item.user_id,
                 title: item.name
             };
@@ -271,7 +282,11 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
      * @returns {string}
      */
     _keyExtractor(item: any) {
-        return item.type === INVITE_TYPES.USER ? item.id || item.user_id : item.number;
+        if (item.type === INVITE_TYPES.USER || item.type === INVITE_TYPES.EMAIL) {
+            return item.id || item.user_id;
+        }
+
+        return item.number;
     }
 
     /**
@@ -318,7 +333,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
             const finderKey = item.type === INVITE_TYPES.PHONE ? 'number' : 'user_id';
 
             if (inviteItems.find(
-                _.matchesProperty(finderKey, item[finderKey as keyof typeof item]))) {
+                matchesProperty(finderKey, item[finderKey as keyof typeof item]))) {
                 // Item is already selected, need to unselect it.
                 this.setState({
                     inviteItems: inviteItems.filter(
@@ -330,7 +345,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
                 const items = inviteItems.concat(item);
 
                 this.setState({
-                    inviteItems: _.sortBy(items, [ 'name', 'number' ])
+                    inviteItems: sortBy(items, [ 'name', 'number' ])
                 });
             }
         };
@@ -381,7 +396,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
     _performSearch(query: string) {
         this._query(query).then(results => {
             this.setState({
-                selectableItems: _.sortBy(results, [ 'name', 'number' ])
+                selectableItems: sortBy(results, [ 'name', 'number' ])
             });
         })
         .finally(() => {
@@ -446,12 +461,13 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
 
         switch (item.type) {
         case INVITE_TYPES.PHONE:
-            selected = inviteItems.find(_.matchesProperty('number', item.number));
+            selected = inviteItems.find(matchesProperty('number', item.number));
             break;
         case INVITE_TYPES.USER:
+        case INVITE_TYPES.EMAIL:
             selected = item.id
-                ? inviteItems.find(_.matchesProperty('id', item.id))
-                : inviteItems.find(_.matchesProperty('user_id', item.user_id));
+                ? inviteItems.find(matchesProperty('id', item.id))
+                : inviteItems.find(matchesProperty('user_id', item.user_id));
             break;
         default:
             return null;
@@ -497,7 +513,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
      */
     _renderShareMeetingButton() {
         return (
-            <View
+            <SafeAreaView
                 style = { [
                     styles.bottomBar as ViewStyle,
                     this.state.bottomPadding ? styles.extraBarPadding : null
@@ -508,7 +524,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
                         src = { IconShare }
                         style = { styles.shareIcon } />
                 </TouchableOpacity>
-            </View>
+            </SafeAreaView>
         );
     }
 
@@ -543,7 +559,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<IProps, IState> {
      * @returns {void}
      */
     _showFailedInviteAlert() {
-        this.props.dispatch(openDialog(AlertDialog, {
+        this.props.dispatch(openDialog('AlertDialog', AlertDialog, {
             contentKey: {
                 key: 'inviteDialog.alertText'
             }

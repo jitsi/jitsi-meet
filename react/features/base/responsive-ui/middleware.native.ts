@@ -5,7 +5,7 @@ import { setAspectRatio, setReducedUI } from './actions';
 
 
 /**
- * Middleware that handles widnow dimension changes and updates the aspect ratio and
+ * Middleware that handles window dimension changes and updates the aspect ratio and
  * reduced UI modes accordingly.
  *
  * @param {Store} store - The redux store.

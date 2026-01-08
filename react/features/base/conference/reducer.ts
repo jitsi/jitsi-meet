@@ -3,10 +3,12 @@ import { AnyAction } from 'redux';
 import { FaceLandmarks } from '../../face-landmarks/types';
 import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock/constants';
 import { ISpeakerStats } from '../../speaker-stats/reducer';
+import { SET_CONFIG } from '../config/actionTypes';
+import { IConfig } from '../config/configType';
 import { CONNECTION_WILL_CONNECT, SET_LOCATION_URL } from '../connection/actionTypes';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import ReducerRegistry from '../redux/ReducerRegistry';
-import { assign, set } from '../redux/functions';
+import { assign, equals, set } from '../redux/functions';
 
 import {
     AUTH_STATUS_CHANGED,
@@ -14,34 +16,68 @@ import {
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_LOCAL_SUBJECT_CHANGED,
+    CONFERENCE_PROPERTIES_CHANGED,
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_TIMESTAMP_CHANGED,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
+    DATA_CHANNEL_CLOSED,
+    DATA_CHANNEL_OPENED,
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SET_ASSUMED_BANDWIDTH_BPS,
-    SET_FOLLOW_ME,
     SET_OBFUSCATED_ROOM,
     SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM,
     SET_START_MUTED_POLICY,
-    SET_START_REACTIONS_MUTED
+    SET_START_REACTIONS_MUTED,
+    UPDATE_CONFERENCE_METADATA
 } from './actionTypes';
 import { isRoomValid } from './functions';
 
 const DEFAULT_STATE = {
     assumedBandwidthBps: undefined,
     conference: undefined,
+    dataChannelOpen: undefined,
     e2eeSupported: undefined,
     joining: undefined,
     leaving: undefined,
     locked: undefined,
     membersOnly: undefined,
+    metadata: undefined,
     password: undefined,
-    passwordRequired: undefined
+    passwordRequired: undefined,
+    properties: undefined
 };
+
+export interface IConferenceMetadata {
+    files: {
+        [fileId: string]: {
+            authorParticipantJid: string;
+            authorParticipantName: string;
+            conferenceFullName: string;
+            fileId: string;
+            fileName: string;
+            fileSize: number;
+            fileType: string;
+            progress?: number;
+            timestamp: number;
+        };
+    };
+    recording?: {
+        isTranscribingEnabled: boolean;
+    };
+    visitors?: {
+        live: boolean;
+    };
+    whiteboard?: {
+        collabDetails: {
+            roomId: string;
+            roomKey: string;
+        };
+    };
+}
 
 export interface IJitsiConference {
     addCommandListener: Function;
@@ -60,6 +96,7 @@ export interface IJitsiConference {
     end: Function;
     getBreakoutRooms: Function;
     getConnection: Function;
+    getFileSharing: Function;
     getLocalParticipantProperty: Function;
     getLocalTracks: Function;
     getMeetingUniqueId: Function;
@@ -68,20 +105,20 @@ export interface IJitsiConference {
     getParticipantById: Function;
     getParticipantCount: Function;
     getParticipants: Function;
+    getPolls: Function;
     getRole: Function;
+    getShortTermCredentials: Function;
     getSpeakerStats: () => ISpeakerStats;
     getSsrcByTrack: Function;
+    getTranscriptionStatus: Function;
     grantOwner: Function;
     isAVModerationSupported: Function;
-    isCallstatsEnabled: Function;
     isE2EEEnabled: Function;
     isE2EESupported: Function;
     isEndConferenceSupported: Function;
     isLobbySupported: Function;
     isP2PActive: Function;
     isSIPCallingSupported: Function;
-    isStartAudioMuted: Function;
-    isStartVideoMuted: Function;
     join: Function;
     joinLobby: Function;
     kickParticipant: Function;
@@ -108,18 +145,21 @@ export interface IJitsiConference {
     sendLobbyMessage: Function;
     sendMessage: Function;
     sendPrivateTextMessage: Function;
+    sendReaction: Function;
     sendTextMessage: Function;
     sendTones: Function;
     sessionId: string;
     setAssumedBandwidthBps: (value: number) => void;
     setDesktopSharingFrameRate: Function;
     setDisplayName: Function;
+    setIsSilent: Function;
     setLocalParticipantProperty: Function;
     setMediaEncryptionKey: Function;
     setReceiverConstraints: Function;
     setSenderVideoConstraint: Function;
     setStartMutedPolicy: Function;
     setSubject: Function;
+    setTranscriptionLanguage: Function;
     startRecording: Function;
     startVerification: Function;
     stopRecording: Function;
@@ -133,21 +173,24 @@ export interface IConferenceState {
     authRequired?: IJitsiConference;
     conference?: IJitsiConference;
     conferenceTimestamp?: number;
+    dataChannelOpen?: boolean;
     e2eeSupported?: boolean;
     error?: Error;
-    followMeEnabled?: boolean;
     joining?: IJitsiConference;
     leaving?: IJitsiConference;
+    lobbyError?: boolean;
     lobbyWaitingForHost?: boolean;
     localSubject?: string;
     locked?: string;
     membersOnly?: IJitsiConference;
+    metadata?: IConferenceMetadata;
     obfuscatedRoom?: string;
     obfuscatedRoomSource?: string;
     p2p?: Object;
     password?: string;
     passwordRequired?: IJitsiConference;
     pendingSubjectChange?: string;
+    properties?: object;
     room?: string;
     startAudioMutedPolicy?: boolean;
     startReactionsMuted?: boolean;
@@ -192,6 +235,9 @@ ReducerRegistry.register<IConferenceState>('features/base/conference',
         case CONFERENCE_LOCAL_SUBJECT_CHANGED:
             return set(state, 'localSubject', action.localSubject);
 
+        case CONFERENCE_PROPERTIES_CHANGED:
+            return _conferencePropertiesChanged(state, action);
+
         case CONFERENCE_TIMESTAMP_CHANGED:
             return set(state, 'conferenceTimestamp', action.conferenceTimestamp);
 
@@ -204,6 +250,12 @@ ReducerRegistry.register<IConferenceState>('features/base/conference',
 
         case CONNECTION_WILL_CONNECT:
             return set(state, 'authRequired', undefined);
+
+        case DATA_CHANNEL_CLOSED:
+            return set(state, 'dataChannelOpen', false);
+
+        case DATA_CHANNEL_OPENED:
+            return set(state, 'dataChannelOpen', true);
 
         case LOCK_STATE_CHANGED:
             return _lockStateChanged(state, action);
@@ -218,8 +270,6 @@ ReducerRegistry.register<IConferenceState>('features/base/conference',
 
             return set(state, 'assumedBandwidthBps', assumedBandwidthBps);
         }
-        case SET_FOLLOW_ME:
-            return set(state, 'followMeEnabled', action.enabled);
 
         case SET_START_REACTIONS_MUTED:
             return set(state, 'startReactionsMuted', action.muted);
@@ -248,10 +298,38 @@ ReducerRegistry.register<IConferenceState>('features/base/conference',
                 startAudioMutedPolicy: action.startAudioMutedPolicy,
                 startVideoMutedPolicy: action.startVideoMutedPolicy
             };
+
+        case UPDATE_CONFERENCE_METADATA:
+            return {
+                ...state,
+                metadata: action.metadata
+            };
+
+        case SET_CONFIG:
+            return _setConfig(state, action);
         }
 
         return state;
     });
+
+/**
+ * Processes subject and local subject of the conference based on the new config.
+ *
+ * @param {Object} state - The Redux state of feature base/conference.
+ * @param {Action} action - The Redux action SET_CONFIG to reduce.
+ * @private
+ * @returns {Object} The new state after the reduction of the specified action.
+ */
+function _setConfig(state: IConferenceState, { config }: { config: IConfig; }) {
+    const { localSubject, subject } = config;
+
+    return {
+        ...state,
+        localSubject,
+        pendingSubjectChange: subject,
+        subject: undefined
+    };
+}
 
 /**
  * Reduces a specific Redux action AUTH_STATUS_CHANGED of the feature
@@ -295,13 +373,24 @@ function _conferenceFailed(state: IConferenceState, { conference, error }: {
     let membersOnly;
     let passwordRequired;
     let lobbyWaitingForHost;
+    let lobbyError;
 
     switch (error.name) {
     case JitsiConferenceErrors.AUTHENTICATION_REQUIRED:
         authRequired = conference;
         break;
 
+    /**
+     * Access denied while waiting in the lobby.
+     * A conference error when we tried to join into a room with no display name when lobby is enabled in the room.
+     */
     case JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED:
+    case JitsiConferenceErrors.DISPLAY_NAME_REQUIRED: {
+        lobbyError = true;
+
+        break;
+    }
+
     case JitsiConferenceErrors.MEMBERS_ONLY_ERROR: {
         membersOnly = conference;
 
@@ -325,6 +414,7 @@ function _conferenceFailed(state: IConferenceState, { conference, error }: {
         error,
         joining: undefined,
         leaving: undefined,
+        lobbyError,
         lobbyWaitingForHost,
 
         /**
@@ -382,6 +472,7 @@ function _conferenceJoined(state: IConferenceState, { conference }: { conference
         membersOnly: undefined,
         leaving: undefined,
 
+        lobbyError: undefined,
         lobbyWaitingForHost: undefined,
 
         /**
@@ -406,7 +497,7 @@ function _conferenceJoined(state: IConferenceState, { conference }: { conference
  * reduction of the specified action.
  */
 function _conferenceLeftOrWillLeave(state: IConferenceState, { conference, type }:
-    { conference: IJitsiConference; type: string; }) {
+{ conference: IJitsiConference; type: string; }) {
     const nextState = { ...state };
 
     // The redux action CONFERENCE_LEFT is the last time that we should be
@@ -448,6 +539,26 @@ function _conferenceLeftOrWillLeave(state: IConferenceState, { conference, type 
     }
 
     return nextState;
+}
+
+/**
+ * Reduces a specific Redux action CONFERENCE_PROPERTIES_CHANGED of the feature
+ * base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action CONFERENCE_PROPERTIES_CHANGED to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _conferencePropertiesChanged(state: IConferenceState, { properties }: { properties: Object; }) {
+    if (!equals(state.properties, properties)) {
+        return assign(state, {
+            properties
+        });
+    }
+
+    return state;
 }
 
 /**

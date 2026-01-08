@@ -2,7 +2,8 @@ import React, { ComponentType } from 'react';
 import { NativeModules, Platform, StyleSheet, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import SplashScreen from 'react-native-splash-screen';
+// @ts-ignore
+import { hideSplash } from 'react-native-splash-view';
 
 import BottomSheetContainer from '../../base/dialog/components/native/BottomSheetContainer';
 import DialogContainer from '../../base/dialog/components/native/DialogContainer';
@@ -12,6 +13,7 @@ import { clientResized, setSafeAreaInsets } from '../../base/responsive-ui/actio
 import DimensionsDetector from '../../base/responsive-ui/components/DimensionsDetector.native';
 import { updateSettings } from '../../base/settings/actions';
 import JitsiThemePaperProvider from '../../base/ui/components/JitsiThemeProvider.native';
+import { isEmbedded } from '../../base/util/embedUtils.native';
 import { _getRouteToRender } from '../getRouteToRender.native';
 import logger from '../logger';
 
@@ -20,6 +22,7 @@ import { AbstractApp, IProps as AbstractAppProps } from './AbstractApp';
 // Register middlewares and reducers.
 import '../middlewares.native';
 import '../reducers.native';
+
 
 declare let __DEV__: any;
 
@@ -79,14 +82,14 @@ export class App extends AbstractApp<IProps> {
      *
      * @returns {void}
      */
-    async componentDidMount() {
+    override async componentDidMount() {
         await super.componentDidMount();
 
-        SplashScreen.hide();
+        hideSplash();
 
         const liteTxt = AppInfo.isLiteSDK ? ' (lite)' : '';
 
-        logger.info(`Loaded SDK ${AppInfo.sdkVersion}${liteTxt}`);
+        logger.info(`Loaded SDK ${AppInfo.sdkVersion}${liteTxt} isEmbedded=${isEmbedded()}`);
     }
 
     /**
@@ -95,7 +98,7 @@ export class App extends AbstractApp<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         return (
             <JitsiThemePaperProvider>
                 { super.render() }
@@ -110,7 +113,7 @@ export class App extends AbstractApp<IProps> {
      */
     async _extraInit() {
         const { dispatch, getState } = this.state.store ?? {};
-        const { flags = {} } = this.props;
+        const { flags = {}, url, userInfo } = this.props;
         let callIntegrationEnabled = flags[CALL_INTEGRATION_ENABLED as keyof typeof flags];
 
         // CallKit does not work on the simulator, make sure we disable it.
@@ -153,16 +156,18 @@ export class App extends AbstractApp<IProps> {
         await rootNavigationReady;
 
         // Update specified server URL.
-        if (typeof this.props.url !== 'undefined') {
+        if (typeof url !== 'undefined') {
+
             // @ts-ignore
-            const { serverURL } = this.props.url;
+            const { serverURL } = url;
 
             if (typeof serverURL !== 'undefined') {
                 dispatch?.(updateSettings({ serverURL }));
             }
         }
 
-        dispatch?.(updateSettings(this.props.userInfo || {}));
+        // @ts-ignore
+        dispatch?.(updateSettings(userInfo || {}));
 
         // Update settings with feature-flag.
         if (typeof callIntegrationEnabled !== 'undefined') {

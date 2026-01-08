@@ -17,16 +17,16 @@ STYLES_BUNDLE = css/all.bundle.css
 STYLES_DESTINATION = css/all.css
 STYLES_MAIN = css/main.scss
 ifeq ($(OS),Windows_NT)
-	WEBPACK = .\node_modules\.bin\webpack
-	WEBPACK_DEV_SERVER = .\node_modules\.bin\webpack serve --mode development
+	WEBPACK = .\node_modules\.bin\webpack --progress
+	WEBPACK_DEV_SERVER = .\node_modules\.bin\webpack serve --mode development --progress
 else
-	WEBPACK = ./node_modules/.bin/webpack
-	WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack serve --mode development
+	WEBPACK = ./node_modules/.bin/webpack --progress
+	WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack serve --mode development --progress
 endif
 
-all: compile deploy clean
+all: compile deploy
 
-compile:
+compile: clean
 	NODE_OPTIONS=--max-old-space-size=8192 \
 	$(WEBPACK)
 
@@ -48,13 +48,12 @@ deploy-appbundle:
 		$(BUILD_DIR)/external_api.min.js.map \
 		$(BUILD_DIR)/alwaysontop.min.js \
 		$(BUILD_DIR)/alwaysontop.min.js.map \
-		$(OUTPUT_DIR)/analytics-ga.js \
-		$(BUILD_DIR)/analytics-ga.min.js \
-		$(BUILD_DIR)/analytics-ga.min.js.map \
 		$(BUILD_DIR)/face-landmarks-worker.min.js \
 		$(BUILD_DIR)/face-landmarks-worker.min.js.map \
 		$(BUILD_DIR)/noise-suppressor-worklet.min.js \
 		$(BUILD_DIR)/noise-suppressor-worklet.min.js.map \
+		$(BUILD_DIR)/screenshot-capture-worker.min.js \
+		$(BUILD_DIR)/screenshot-capture-worker.min.js.map \
 		$(DEPLOY_DIR)
 	cp \
 		$(BUILD_DIR)/close3.min.js \
@@ -121,9 +120,9 @@ deploy-local:
 dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm deploy-excalidraw-dev deploy-face-landmarks
 	$(WEBPACK_DEV_SERVER)
 
-source-package:
+source-package: compile deploy
 	mkdir -p source_package/jitsi-meet/css && \
-	cp -r *.js *.html resources/*.txt favicon.ico fonts images libs static sounds LICENSE lang source_package/jitsi-meet && \
+	cp -r *.js *.html resources/*.txt fonts images libs static sounds LICENSE lang source_package/jitsi-meet && \
 	cp css/all.css source_package/jitsi-meet/css && \
 	(cd source_package ; tar cjf ../jitsi-meet.tar.bz2 jitsi-meet) && \
 	rm -rf source_package

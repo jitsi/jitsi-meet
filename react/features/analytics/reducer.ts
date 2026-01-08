@@ -1,11 +1,17 @@
 import ReducerRegistry from '../base/redux/ReducerRegistry';
 
-import { UPDATE_LOCAL_TRACKS_DURATION } from './actionTypes';
+import {
+    SET_INITIALIZED,
+    SET_INITIAL_PERMANENT_PROPERTIES,
+    UPDATE_LOCAL_TRACKS_DURATION
+} from './actionTypes';
 
 /**
  * Initial state.
  */
 const DEFAULT_STATE = {
+    isInitialized: false,
+    initialPermanentProperties: {},
     localTracksDuration: {
         audio: {
             startedTime: -1,
@@ -34,6 +40,8 @@ interface IValue {
 }
 
 export interface IAnalyticsState {
+    initialPermanentProperties: Object;
+    isInitialized: boolean;
     localTracksDuration: {
         audio: IValue;
         conference: IValue;
@@ -55,6 +63,20 @@ export interface IAnalyticsState {
 ReducerRegistry.register<IAnalyticsState>('features/analytics',
 (state = DEFAULT_STATE, action): IAnalyticsState => {
     switch (action.type) {
+    case SET_INITIALIZED:
+        return {
+            ...state,
+            initialPermanentProperties: action.value ? state.initialPermanentProperties : {},
+            isInitialized: action.value
+        };
+    case SET_INITIAL_PERMANENT_PROPERTIES:
+        return {
+            ...state,
+            initialPermanentProperties: {
+                ...state.initialPermanentProperties,
+                ...action.properties
+            }
+        };
     case UPDATE_LOCAL_TRACKS_DURATION:
         return {
             ...state,

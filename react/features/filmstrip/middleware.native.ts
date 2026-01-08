@@ -28,7 +28,7 @@ MiddlewareRegistry.register(store => next => action => {
         store.dispatch(setTileViewDimensions());
         break;
     case PARTICIPANT_JOINED: {
-        updateRemoteParticipants(store, action.participant?.id);
+        updateRemoteParticipants(store, false, action.participant?.id);
         break;
     }
     }

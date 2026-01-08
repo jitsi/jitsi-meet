@@ -22,6 +22,7 @@ import {
 import { doInvitePeople } from '../../../invite/actions.native';
 import { getInviteOthersControl } from '../../../share-room/functions';
 import { getSortedParticipantIds, shouldRenderInviteButton } from '../../functions';
+import { iAmVisitor } from '../../../visitors/functions';
 
 import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
@@ -57,6 +58,12 @@ const MeetingParticipantList = ({
 
     const dispatch = useDispatch();
 
+    const inviteOthersControl = useSelector(getInviteOthersControl);
+    const isAddPeopleFeatureEnabled = useSelector(addPeopleFeatureControl);
+    const localParticipant = useSelector(getLocalParticipant);
+    
+    const keyExtractor
+        = useCallback((e: undefined, i: number) => i.toString(), []);
     const onInvite = useCallback(() => {
         setShareDialogVisiblity(isAddPeopleFeatureEnabled, dispatch);
         dispatch(doInvitePeople());
@@ -71,9 +78,8 @@ const MeetingParticipantList = ({
     const visitorsLabelText = visitorsCount && visitorsCount > 0
         ? t('participantsPane.headings.visitors', { count: visitorsCount })
         : undefined;
-
-    const keyExtractor
-        = useCallback((e: undefined, i: number) => i.toString(), []);
+    const { color, shareDialogVisible } = inviteOthersControl;
+  
     const renderParticipant = ({ item }: any) => (
         <MeetingParticipantItem
             key = { item }
@@ -140,8 +146,14 @@ const MeetingParticipantList = ({
 function _mapStateToProps(state: IReduxState) {
     let sortedParticipantIds: any = getSortedParticipantIds(state);
 
+    const _iAmVisitor = iAmVisitor(state);
+
     sortedParticipantIds = sortedParticipantIds.filter((id: any) => {
         const participant = getParticipantById(state, id);
+
+        if (_iAmVisitor && participant?.local) {
+            return false;
+        }
 
         return !isScreenShareParticipant(participant);
     });

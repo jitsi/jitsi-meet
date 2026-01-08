@@ -10,9 +10,13 @@ import { IconMessage } from '../../../base/icons/svg';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 import PollItem from './PollItem';
-import { chatStyles } from './styles';
+import { pollsStyles } from './styles';
 
-const PollsList = () => {
+interface IPollListProps {
+    setCreateMode: (mode: boolean) => void;
+}
+
+const PollsList = ({ setCreateMode }: IPollListProps) => {
     const polls = useSelector((state: IReduxState) => state['features/polls'].polls);
     const { t } = useTranslation();
     const listPolls = Object.keys(polls);
@@ -20,7 +24,8 @@ const PollsList = () => {
     const renderItem = useCallback(({ item }) => (
         <PollItem
             key = { item }
-            pollId = { item } />)
+            pollId = { item }
+            setCreateMode = { setCreateMode } />)
     , []);
 
     const flatlistRef = useRef<FlatList>(null);
@@ -37,12 +42,14 @@ const PollsList = () => {
         <>
             {
                 listPolls.length === 0
-                && <View style = { chatStyles.noPollContent as ViewStyle }>
+                && <View style = { pollsStyles.noPollContent as ViewStyle }>
                     <Icon
                         color = { BaseTheme.palette.icon03 }
                         size = { 160 }
                         src = { IconMessage } />
-                    <Text style = { chatStyles.noPollText as TextStyle } >
+                    <Text
+                        id = 'no-polls-text'
+                        style = { pollsStyles.noPollText as TextStyle } >
                         {
                             t('polls.results.empty')
                         }

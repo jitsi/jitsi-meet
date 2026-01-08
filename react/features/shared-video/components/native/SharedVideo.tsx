@@ -72,7 +72,7 @@ class SharedVideo extends Component<IProps> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate(prevProps: IProps) {
+    override componentDidUpdate(prevProps: IProps) {
         const { isWideScreen } = this.props;
 
         if (isWideScreen !== prevProps.isWideScreen) {
@@ -97,7 +97,7 @@ class SharedVideo extends Component<IProps> {
      * @inheritdoc
      * @returns {React$Element}
      */
-    render() {
+    override render() {
         const {
             isOwner,
             playerHeight,

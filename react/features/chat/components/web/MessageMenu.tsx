@@ -1,0 +1,188 @@
+import React, { useCallback, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
+
+import { IReduxState } from '../../../app/types';
+import { IconDotsHorizontal } from '../../../base/icons/svg';
+import { getParticipantById } from '../../../base/participants/functions';
+import Popover from '../../../base/popover/components/Popover.web';
+import Button from '../../../base/ui/components/web/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants.any';
+import { copyText } from '../../../base/util/copyText.web';
+import { handleLobbyChatInitialized, openChat } from '../../actions.web';
+import logger from '../../logger';
+
+export interface IProps {
+    className?: string;
+    displayName?: string;
+    enablePrivateChat: boolean;
+    isFileMessage?: boolean;
+    isFromVisitor?: boolean;
+    isLobbyMessage: boolean;
+    message: string;
+    participantId: string;
+}
+
+const useStyles = makeStyles()(theme => {
+    return {
+        messageMenuButton: {
+            padding: '2px'
+        },
+        menuItem: {
+            padding: '8px 16px',
+            cursor: 'pointer',
+            color: 'white',
+            '&:hover': {
+                backgroundColor: theme.palette.action03
+            }
+        },
+        menuPanel: {
+            backgroundColor: theme.palette.ui03,
+            borderRadius: theme.shape.borderRadius,
+            boxShadow: theme.shadows[3],
+            overflow: 'hidden'
+        },
+        copiedMessage: {
+            position: 'fixed',
+            backgroundColor: theme.palette.ui03,
+            color: 'white',
+            padding: '4px 8px',
+            borderRadius: '4px',
+            fontSize: '0.75rem',
+            zIndex: 1000,
+            opacity: 0,
+            transition: 'opacity 0.3s ease-in-out',
+            pointerEvents: 'none'
+        },
+        showCopiedMessage: {
+            opacity: 1
+        }
+    };
+});
+
+const MessageMenu = ({ message, participantId, isFromVisitor, isLobbyMessage, enablePrivateChat, displayName, isFileMessage }: IProps) => {
+    const dispatch = useDispatch();
+    const { classes, cx } = useStyles();
+    const { t } = useTranslation();
+    const [ isPopoverOpen, setIsPopoverOpen ] = useState(false);
+    const [ showCopiedMessage, setShowCopiedMessage ] = useState(false);
+    const [ popupPosition, setPopupPosition ] = useState({ top: 0,
+        left: 0 });
+    const buttonRef = useRef<HTMLDivElement>(null);
+
+    const participant = useSelector((state: IReduxState) => getParticipantById(state, participantId));
+
+    // If no menu items will be shown, don't render the menu button.
+    if (!enablePrivateChat && isFileMessage) {
+        return null;
+    }
+
+    const handleMenuClick = useCallback(() => {
+        setIsPopoverOpen(true);
+    }, []);
+
+    const handleClose = useCallback(() => {
+        setIsPopoverOpen(false);
+    }, []);
+
+    const handlePrivateClick = useCallback(() => {
+        if (isLobbyMessage) {
+            dispatch(handleLobbyChatInitialized(participantId));
+        } else {
+            // For visitor messages, participant will be undefined but we can still open chat
+            // using the participantId which contains the visitor's original JID
+            if (isFromVisitor) {
+                // Handle visitor participant that doesn't exist in main participant list
+                const visitorParticipant = {
+                    id: participantId,
+                    name: displayName,
+                    isVisitor: true
+                };
+
+                dispatch(openChat(visitorParticipant));
+            } else {
+                dispatch(openChat(participant));
+            }
+        }
+        handleClose();
+    }, [ dispatch, isLobbyMessage, participant, participantId, displayName ]);
+
+    const handleCopyClick = useCallback(() => {
+        copyText(message)
+            .then(success => {
+                if (success) {
+                    if (buttonRef.current) {
+                        const rect = buttonRef.current.getBoundingClientRect();
+
+                        setPopupPosition({
+                            top: rect.top - 30,
+                            left: rect.left
+                        });
+                    }
+                    setShowCopiedMessage(true);
+                    setTimeout(() => {
+                        setShowCopiedMessage(false);
+                    }, 2000);
+                } else {
+                    logger.error('Failed to copy text');
+                }
+            })
+            .catch((error: Error) => {
+                logger.error('Error copying text', error);
+            });
+        handleClose();
+    }, [ message ]);
+
+    const popoverContent = (
+        <div className = { classes.menuPanel }>
+            {enablePrivateChat && (
+                <div
+                    className = { classes.menuItem }
+                    onClick = { handlePrivateClick }>
+                    {t('Private Message')}
+                </div>
+            )}
+            {!isFileMessage && (
+                <div
+                    className = { classes.menuItem }
+                    onClick = { handleCopyClick }>
+                    {t('Copy')}
+                </div>
+            )}
+        </div>
+    );
+
+    return (
+        <div>
+            <div ref = { buttonRef }>
+                <Popover
+                    content = { popoverContent }
+                    onPopoverClose = { handleClose }
+                    position = 'top'
+                    trigger = 'click'
+                    visible = { isPopoverOpen }>
+                    <Button
+                        accessibilityLabel = { t('toolbar.accessibilityLabel.moreOptions') }
+                        className = { classes.messageMenuButton }
+                        icon = { IconDotsHorizontal }
+                        onClick = { handleMenuClick }
+                        type = { BUTTON_TYPES.TERTIARY } />
+                </Popover>
+            </div>
+
+            {showCopiedMessage && ReactDOM.createPortal(
+                <div
+                    className = { cx(classes.copiedMessage, { [classes.showCopiedMessage]: showCopiedMessage }) }
+                    style = {{ top: `${popupPosition.top}px`,
+                        left: `${popupPosition.left}px` }}>
+                    {t('Message Copied')}
+                </div>,
+                document.body
+            )}
+        </div>
+    );
+};
+
+export default MessageMenu;

@@ -130,7 +130,7 @@ class YoutubeVideoManager extends AbstractVideoManager<IState> {
             });
         }
 
-        if (event === 'playing') {
+        if (event === PLAYBACK_STATUSES.PLAYING) {
             this.setState({
                 paused: false
             }, () => {
@@ -191,7 +191,7 @@ class YoutubeVideoManager extends AbstractVideoManager<IState> {
      *
      * @inheritdoc
      */
-    render() {
+    override render() {
         return (
             <Video
                 ref = { this.playerRef }

@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { openDialog } from '../../../base/dialog/actions';
 import { IconUserDeleted } from '../../../base/icons/svg';
 import ContextMenuItem from '../../../base/ui/components/web/ContextMenuItem';
-import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/types';
 import { IButtonProps } from '../../types';
 
 import KickRemoteParticipantDialog from './KickRemoteParticipantDialog';
@@ -29,7 +29,7 @@ const KickButton = ({
         if (notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
             return;
         }
-        dispatch(openDialog(KickRemoteParticipantDialog, { participantID }));
+        dispatch(openDialog('KickRemoteParticipantDialog', KickRemoteParticipantDialog, { participantID }));
     }, [ dispatch, notifyClick, notifyMode, participantID ]);
 
     return (

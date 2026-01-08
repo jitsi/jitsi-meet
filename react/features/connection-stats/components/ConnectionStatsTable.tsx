@@ -71,7 +71,7 @@ interface IProps {
     /**
      * Whether or not the participant was verified.
      */
-    e2eeVerified: boolean;
+    e2eeVerified?: boolean;
 
     /**
      * Whether to enable assumed bandwidth.
@@ -222,7 +222,7 @@ const useStyles = makeStyles()(theme => {
         },
         connectionStatsTable: {
             '&, & > table': {
-                fontSize: '12px',
+                fontSize: '0.75rem',
                 fontWeight: 400,
 
                 '& td': {

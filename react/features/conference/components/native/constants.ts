@@ -2,7 +2,6 @@ import React from 'react';
 
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import RecordingExpandedLabel from '../../../recording/components/native/RecordingExpandedLabel';
-import TranscribingExpandedLabel from '../../../transcribing/components/TranscribingExpandedLabel.native';
 import VideoQualityExpandedLabel from '../../../video-quality/components/VideoQualityExpandedLabel.native';
 
 import InsecureRoomNameExpandedLabel from './InsecureRoomNameExpandedLabel';
@@ -23,7 +22,6 @@ export const EXPANDED_LABEL_TIMEOUT = 5000;
 export const LABEL_ID_QUALITY = 'quality';
 export const LABEL_ID_RECORDING = 'recording';
 export const LABEL_ID_STREAMING = 'streaming';
-export const LABEL_ID_TRANSCRIBING = 'transcribing';
 export const LABEL_ID_INSECURE_ROOM_NAME = 'insecure-room-name';
 export const LABEL_ID_RAISED_HANDS_COUNT = 'raised-hands-count';
 export const LABEL_ID_VISITORS_COUNT = 'visitors-count';
@@ -57,9 +55,6 @@ export const EXPANDED_LABELS: {
             mode: JitsiRecordingConstants.mode.STREAM
         },
         alwaysOn: true
-    },
-    [LABEL_ID_TRANSCRIBING]: {
-        component: TranscribingExpandedLabel
     },
     [LABEL_ID_INSECURE_ROOM_NAME]: {
         component: InsecureRoomNameExpandedLabel

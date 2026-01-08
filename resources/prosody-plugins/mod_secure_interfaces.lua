@@ -11,10 +11,10 @@ module:hook("stream-features", function (event)
 	end
 	local localip = socket:getsockname();
 	if secure_interfaces:contains(localip) then
-		module:log("debug", "Marking session from %s to %s as secure", session.ip or "[?]", localip);
+		-- module:log("debug", "Marking session from %s to %s as secure", session.ip or "[?]", localip);
 		session.secure = true;
 		session.conn.starttls = false;
-	else
-		module:log("debug", "Not marking session from %s to %s as secure", session.ip or "[?]", localip);
+--	else
+--		module:log("debug", "Not marking session from %s to %s as secure", session.ip or "[?]", localip);
 	end
 end, 2500);

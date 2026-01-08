@@ -28,15 +28,15 @@ const LobbyParticipantList = () => {
 
     return (
         <>
-            <View style = { styles.lobbyListDetails as ViewStyle } >
+            <View style = { styles.listDetails as ViewStyle } >
                 <Text style = { styles.lobbyListDescription as TextStyle }>
                     { title }
                 </Text>
                 {
                     participants.length > 1 && (
                         <Button
-                            accessibilityLabel = 'lobby.admitAll'
-                            labelKey = 'lobby.admitAll'
+                            accessibilityLabel = 'participantsPane.actions.admitAll'
+                            labelKey = 'participantsPane.actions.admitAll'
                             mode = { BUTTON_MODES.TEXT }
                             onClick = { admitAll }
                             type = { BUTTON_TYPES.PRIMARY } />
