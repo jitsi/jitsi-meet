@@ -71,6 +71,7 @@ interface IState {
     room: string;
     roomNameInputAnimation?: any;
     roomPlaceholder: string;
+    showMeetingHistory?: boolean;
     updateTimeoutId?: number;
 }
 
