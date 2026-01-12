@@ -107,7 +107,7 @@ interface IProps extends AbstractProps {
 const useStyles = makeStyles<{ _isResizing: boolean; width: number; }>()((theme, { _isResizing, width }) => {
     return {
         container: {
-            backgroundColor: theme.palette.ui01,
+            backgroundColor: theme.palette.chatBackground,
             flexShrink: 0,
             overflow: 'hidden',
             position: 'relative',

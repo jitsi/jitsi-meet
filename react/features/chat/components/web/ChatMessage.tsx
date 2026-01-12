@@ -43,7 +43,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         chatMessage: {
             display: 'inline-flex',
             padding: '12px',
-            backgroundColor: theme.palette.ui02,
+            backgroundColor: theme.palette.chatMessageRemote,
             borderRadius: '4px 12px 12px 12px',
             maxWidth: '100%',
             marginTop: '4px',
@@ -66,21 +66,21 @@ const useStyles = makeStyles()((theme: Theme) => {
             },
 
             '&.privatemessage': {
-                backgroundColor: theme.palette.support05
+                backgroundColor: theme.palette.chatMessagePrivate
             },
             '&.local': {
-                backgroundColor: theme.palette.ui04,
+                backgroundColor: theme.palette.chatMessageLocal,
                 borderRadius: '12px 4px 12px 12px',
 
                 '&.privatemessage': {
-                    backgroundColor: theme.palette.support05
+                    backgroundColor: theme.palette.chatMessagePrivate
                 },
                 '&.local': {
-                    backgroundColor: theme.palette.ui04,
+                    backgroundColor: theme.palette.chatMessageLocal,
                     borderRadius: '12px 4px 12px 12px',
 
                     '&.privatemessage': {
-                        backgroundColor: theme.palette.support05
+                        backgroundColor: theme.palette.chatMessagePrivate
                     }
                 },
 
@@ -91,7 +91,7 @@ const useStyles = makeStyles()((theme: Theme) => {
                 },
 
                 '&.lobbymessage': {
-                    backgroundColor: theme.palette.support05
+                    backgroundColor: theme.palette.chatMessagePrivate
                 }
             },
             '&.error': {
@@ -100,7 +100,7 @@ const useStyles = makeStyles()((theme: Theme) => {
                 fontWeight: 100
             },
             '&.lobbymessage': {
-                backgroundColor: theme.palette.support05
+                backgroundColor: theme.palette.chatMessagePrivate
             }
         },
         sideBySideContainer: {
@@ -174,7 +174,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
         reactionsPopover: {
             padding: theme.spacing(2),
-            backgroundColor: theme.palette.ui03,
+            backgroundColor: theme.palette.chatInputBackground,
             borderRadius: theme.shape.borderRadius,
             maxWidth: '150px',
             maxHeight: '400px',

@@ -68,12 +68,26 @@ export const colorMap = {
     thumbnailHover: 'hover05',          // Thumbnail hover state (same as action03Hover)
 
     // Chat
-    chatBackground: 'surface02',        // Chat panel background (same as ui01)
-    chatInputBackground: 'surface03',   // Chat input field background (same as ui02)
-    chatInputBorder: 'surface03',       // Chat input border (same as ui02)
-    chatMessageBackground: 'surface03', // Chat message bubble background (same as ui02)
-    chatMessageText: 'textColor01',     // Chat message text (same as text01)
-    chatTimestamp: 'textColor02',       // Chat timestamp text (same as text02)
+    chatBackground: 'surface02',              // Chat panel background (same as ui01)
+    chatBackdrop: 'ui04',                     // Chat screen background (same as ui10)
+    chatEmptyText: 'ui03',                    // Empty component text
+    chatInputBackground: 'surface03',         // Chat input field background (same as ui02)
+    chatInputBorder: 'surface03',             // Chat input border (same as ui02)
+    chatLink: 'action01',                     // Chat link color (same as link01)
+    chatLobbyMessageBubble: 'support06',      // Lobby message bubble background
+    chatLobbyMessageNotice: 'surface01',      // Lobby message notice text
+    chatLobbyRecipientContainer: 'support06', // Lobby recipient container background
+    chatMessageLocal: 'surface05',            // Local participant message bubble (same as ui04)
+    chatMessagePrivate: 'support05',          // Private/DM message bubble
+    chatMessageRemote: 'surface03',           // Remote participant message bubble (same as ui02)
+    chatMessageText: 'textColor01',           // Chat message text
+    chatPrivateNotice: 'textColor02',         // Private message notice text
+    chatRecipientCancelIcon: 'icon01',        // Recipient cancel icon color
+    chatRecipientContainer: 'support05',      // Recipient container background
+    chatRecipientText: 'textColor01',         // Recipient text color
+    chatReplyIcon: 'icon01',                  // Reply icon color
+    chatSenderName: 'textColor02',            // Sender display name color
+    chatTimestamp: 'ui03',                    // Chat timestamp text
 
     // Toolbox/Toolbar
     toolboxBackground: 'surface02',     // Main toolbox background (same as ui01)

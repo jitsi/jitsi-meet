@@ -22,7 +22,7 @@ interface IProps extends ISubtitle {
 const useStyles = makeStyles()(theme => {
     return {
         messageContainer: {
-            backgroundColor: theme.palette.ui02,
+            backgroundColor: theme.palette.chatMessageRemote,
             borderRadius: '4px 12px 12px 12px',
             padding: '12px',
             maxWidth: '100%',
