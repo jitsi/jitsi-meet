@@ -735,6 +735,7 @@ local function iq_from_main_handler(event)
     -- if there is password supplied use it
     -- if this is update it will either set or remove the password
     room:set_password(node.attr.password);
+    module:log('info', 'Updating room meetingId old:%s new:%s', room._data.meetingId, node.attr.meetingId);
     room._data.meetingId = node.attr.meetingId;
     local createdTimestamp = node.attr.createdTimestamp;
     room.created_timestamp = createdTimestamp and tonumber(createdTimestamp) or nil;
