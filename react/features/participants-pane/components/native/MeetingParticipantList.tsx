@@ -1,16 +1,15 @@
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Text, TextStyle, View } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import Icon from '../../../base/icons/components/Icon';
 import { IconAddUser } from '../../../base/icons/svg';
 import {
     addPeopleFeatureControl,
-    getLocalParticipant,
-    getParticipantCountWithFake,
-    getRemoteParticipants,
+    getParticipantById,
+    isScreenShareParticipant,
     setShareDialogVisiblity
 } from '../../../base/participants/functions';
 import Button from '../../../base/ui/components/native/Button';
@@ -23,57 +22,70 @@ import {
 import { doInvitePeople } from '../../../invite/actions.native';
 import { getInviteOthersControl } from '../../../share-room/functions';
 import { iAmVisitor } from '../../../visitors/functions';
-import { participantMatchesSearch, shouldRenderInviteButton } from '../../functions';
+import { getSortedParticipantIds, shouldRenderInviteButton } from '../../functions';
 
 import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
 
+interface IProps {
+    currentRoom?: {
+        jid: string;
+        name: string;
+    };
+    iconColor: string;
+    isAddPeopleFeatureEnabled?: boolean | undefined;
+    isShareDialogVisible: boolean;
+    participantsCount?: number;
+    showInviteButton?: boolean;
+    sortedParticipantIds?: Array<string>;
+    visitorsCount?: number | undefined;
+}
 
-const MeetingParticipantList = () => {
-    const currentRoomId = useSelector(getCurrentRoomId);
-    const currentRoom = useSelector(getBreakoutRooms)[currentRoomId];
+
+const MeetingParticipantList = ({
+    currentRoom,
+    iconColor,
+    isAddPeopleFeatureEnabled,
+    isShareDialogVisible,
+    participantsCount,
+    showInviteButton,
+    sortedParticipantIds = [],
+    visitorsCount
+}: IProps): any => {
+    const { t } = useTranslation();
+
+    const [ searchString, setSearchString ] = useState('');
+
     const dispatch = useDispatch();
-    const inviteOthersControl = useSelector(getInviteOthersControl);
-    const isAddPeopleFeatureEnabled = useSelector(addPeopleFeatureControl);
-    const keyExtractor
-        = useCallback((e: undefined, i: number) => i.toString(), []);
-    const localParticipant = useSelector(getLocalParticipant);
-    const _iAmVisitor = useSelector(iAmVisitor);
+
+    const keyExtractor = useCallback((e: undefined, i: number) => i.toString(), []);
     const onInvite = useCallback(() => {
         setShareDialogVisiblity(isAddPeopleFeatureEnabled, dispatch);
         dispatch(doInvitePeople());
     }, [ dispatch ]);
-    const [ searchString, setSearchString ] = useState('');
     const onSearchStringChange = useCallback((text: string) =>
         setSearchString(text), []);
-    const participantsCount = useSelector(getParticipantCountWithFake);
-    const remoteParticipants = useSelector(getRemoteParticipants);
-    const renderParticipant = ({ item/* , index, separators */ }: any) => {
-        const participant = item === localParticipant?.id
-            ? localParticipant : remoteParticipants.get(item);
 
-        if (participantMatchesSearch(participant, searchString)) {
-            return (
-                <MeetingParticipantItem
-                    key = { item }
-                    participant = { participant } />
-            );
-        }
-
-        return null;
-    };
-    const showInviteButton = useSelector(shouldRenderInviteButton);
-    const sortedRemoteParticipants = useSelector(
-        (state: IReduxState) => state['features/filmstrip'].remoteParticipants);
-    const { t } = useTranslation();
     const title = currentRoom?.name
         ? `${currentRoom.name} (${participantsCount})`
         : t('participantsPane.headings.participantsList',
             { count: participantsCount });
-    const { color, shareDialogVisible } = inviteOthersControl;
+    const visitorsLabelText = visitorsCount && visitorsCount > 0
+        ? t('participantsPane.headings.visitors', { count: visitorsCount })
+        : undefined;
+
+    const renderParticipant = ({ item }: any) => (
+        <MeetingParticipantItem
+            key = { item }
+            participantID = { item }
+            searchString = { searchString } />
+    );
 
     return (
         <View style = { styles.meetingListContainer }>
+            <Text style = { styles.visitorsLabel as TextStyle }>
+                { visitorsLabelText }
+            </Text>
             <Text
                 style = { styles.meetingListDescription as TextStyle }>
                 { title }
@@ -82,12 +94,12 @@ const MeetingParticipantList = () => {
                 showInviteButton
                 && <Button
                     accessibilityLabel = 'participantsPane.actions.invite'
-                    disabled = { shareDialogVisible }
+                    disabled = { isShareDialogVisible }
 
                     // eslint-disable-next-line react/jsx-no-bind, no-confusing-arrow
                     icon = { () => (
                         <Icon
-                            color = { color }
+                            color = { iconColor }
                             size = { 20 }
                             src = { IconAddUser } />
                     ) }
@@ -105,10 +117,7 @@ const MeetingParticipantList = () => {
                 placeholder = { t('participantsPane.search') }
                 value = { searchString } />
             <FlatList
-                data = { _iAmVisitor
-                    ? [ ...sortedRemoteParticipants ]
-                    : [ localParticipant?.id, ...sortedRemoteParticipants ] as Array<any>
-                }
+                data = { sortedParticipantIds as Array<any> }
                 keyExtractor = { keyExtractor }
 
                 /* eslint-disable react/jsx-no-bind */
@@ -118,4 +127,48 @@ const MeetingParticipantList = () => {
     );
 };
 
-export default MeetingParticipantList;
+/**
+ * Maps (parts of) the redux state to the associated props for this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {IProps}
+ */
+function _mapStateToProps(state: IReduxState) {
+    let sortedParticipantIds: any = getSortedParticipantIds(state);
+
+    const _iAmVisitor = iAmVisitor(state);
+
+    sortedParticipantIds = sortedParticipantIds.filter((id: any) => {
+        const participant = getParticipantById(state, id);
+
+        if (_iAmVisitor && participant?.local) {
+            return false;
+        }
+
+        return !isScreenShareParticipant(participant);
+    });
+
+    const currentRoomId = getCurrentRoomId(state);
+    const currentRoom = getBreakoutRooms(state)[currentRoomId];
+    const inviteOthersControl = getInviteOthersControl(state);
+    const { color, shareDialogVisible } = inviteOthersControl;
+    const isAddPeopleFeatureEnabled = addPeopleFeatureControl(state);
+    const participantsCount = sortedParticipantIds.length;
+    const showInviteButton = shouldRenderInviteButton(state);
+    const visitorsCount = state['features/visitors']?.count || 0;
+
+    return {
+        currentRoom,
+        iconColor: color,
+        inviteOthersControl,
+        isAddPeopleFeatureEnabled,
+        isShareDialogVisible: shareDialogVisible,
+        participantsCount,
+        showInviteButton,
+        sortedParticipantIds,
+        visitorsCount
+    };
+}
+
+export default connect(_mapStateToProps)(MeetingParticipantList);

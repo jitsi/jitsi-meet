@@ -1190,7 +1190,7 @@
             "signedIn": "Currently accessing calendar events for {{email}}. Click the Disconnect button below to stop accessing calendar events.",
             "title": "Calendar"
         },
-        "chatWithPermissions": "Chat requires permission",
+        "chatWithPermissions": "Disable chat for non-moderators",
         "desktopShareFramerate": "Desktop sharing frame rate",
         "desktopShareHighFpsWarning": "A higher frame rate for desktop sharing might affect your bandwidth. You need to restart the screen share for the new settings to take effect.",
         "desktopShareWarning": "You need to restart the screen share for the new settings to take effect.",

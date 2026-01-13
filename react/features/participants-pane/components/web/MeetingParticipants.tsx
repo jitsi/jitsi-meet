@@ -13,7 +13,7 @@ import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../b
 import { isButtonEnabled, showOverflowDrawer } from '../../../toolbox/functions.web';
 import { iAmVisitor } from '../../../visitors/functions';
 import { getSortedParticipantIds, isCurrentRoomRenamable, shouldRenderInviteButton } from '../../functions';
-import { useParticipantDrawer } from '../../hooks';
+import { useParticipantDrawer } from '../../hooks.web';
 import RenameButton from '../breakout-rooms/components/web/RenameButton';
 
 import { InviteButton } from './InviteButton';

@@ -143,17 +143,15 @@ end
 
             occupant = main_room:get_occupant_by_real_jid(occupant_jid);
 
-            if main_room._data.breakout_rooms_active then
+            if main_room._data.breakout_rooms_active and not occupant then
                 -- let's find is this participant in the main room or in some breakout room
-                if not occupant then
-                    -- not in main room, let's check breakout rooms
-                    for breakout_room_jid, subject in pairs(main_room._data.breakout_rooms or {}) do
-                        local breakout_room = get_room_from_jid(breakout_room_jid);
-                        occupant = breakout_room:get_occupant_by_real_jid(occupant_jid);
-                        if occupant then
-                            room = breakout_room;
-                            break;
-                        end
+                -- not in main room, let's check breakout rooms
+                for breakout_room_jid, subject in pairs(main_room._data.breakout_rooms or {}) do
+                    local breakout_room = get_room_from_jid(breakout_room_jid);
+                    occupant = breakout_room:get_occupant_by_real_jid(occupant_jid);
+                    if occupant then
+                        room = breakout_room;
+                        break;
                     end
                 end
             else
@@ -167,7 +165,7 @@ end
         end
 
         if not room then
-            module:log('warn', 'No room found found for %s %s', session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+            module:log('warn', 'No room found for %s %s', session.jitsi_web_query_room, session.jitsi_web_query_prefix);
             return;
         end
 
