@@ -7,8 +7,8 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v6
-    - uses: actions/setup-node@v6
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
+    - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -42,8 +42,8 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest]
     steps:
-    - uses: actions/checkout@v6
-    - uses: actions/setup-node@v6
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
+    - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -59,8 +59,8 @@ jobs:
     name: Build mobile bundle (Android)
     runs-on: macos-15
     steps:
-    - uses: actions/checkout@v6
-    - uses: actions/setup-node@v6
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
+    - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -74,8 +74,8 @@ jobs:
     name: Build mobile bundle (iOS)
     runs-on: macos-15
     steps:
-    - uses: actions/checkout@v6
-    - uses: actions/setup-node@v6
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
+    - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -116,8 +116,8 @@ jobs:
         rm -rf /host/usr/share/dotnet
         rm -rf /host/usr/share/swift
         df -h /
-    - uses: actions/checkout@v6
-    - uses: actions/setup-node@v6
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
+    - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -137,8 +137,8 @@ jobs:
     name: Build mobile SDK (iOS)
     runs-on: macos-15
     steps:
-    - uses: actions/checkout@v6
-    - uses: actions/setup-node@v6
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
+    - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -160,7 +160,7 @@ jobs:
           -workspace ios/jitsi-meet.xcworkspace \
           -scheme JitsiMeetSDK
     - name: setup-cocoapods
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@4fc31e1c823882afd7ef55985266a526c589de90 #v1.282.0
       with:
         ruby-version: '3.4'
         bundler-cache: true
@@ -187,8 +187,8 @@ jobs:
     name: Test Debian packages build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v6
-    - uses: actions/setup-node@v6
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
+    - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
