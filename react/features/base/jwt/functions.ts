@@ -11,6 +11,10 @@ import { JWT_VALIDATION_ERRORS, MEET_FEATURES } from './constants';
 import logger from './logger';
 
 /**
+ * Note that this is just client-side code and it intentionally does not verify the signature of the JWT.
+ */
+
+/**
  * Retrieves the JSON Web Token (JWT), if any, defined by a specific
  * {@link URL}.
  *
