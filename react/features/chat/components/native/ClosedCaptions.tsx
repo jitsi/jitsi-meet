@@ -19,6 +19,7 @@ import { screen } from '../../../mobile/navigation/routes';
 import { ChatTabs } from '../../constants';
 import AbstractClosedCaptions, { AbstractProps } from '../AbstractClosedCaptions';
 
+import { SubtitlesMessagesContainer } from './SubtitlesMessagesContainer';
 import { closedCaptionsStyles } from './styles';
 
 /**
@@ -28,6 +29,8 @@ import { closedCaptionsStyles } from './styles';
  */
 const ClosedCaptions = ({
     canStartSubtitles,
+    filteredSubtitles,
+    groupedSubtitles,
     isButtonPressed,
     isTranscribing,
     startClosedCaptions
@@ -87,19 +90,24 @@ const ClosedCaptions = ({
         }
 
         return (
-            <View style = { closedCaptionsStyles.ccContainer as ViewStyle }>
-                <Text style = { closedCaptionsStyles.languageButtonText }>{ t('transcribing.translateTo') }</Text>
-                <TouchableHighlight
-                    onPress = { navigateToLanguageSelect }
-                    style = { closedCaptionsStyles.languageButtonContainer as ViewStyle }>
-                    <View style = { closedCaptionsStyles.languageButton as ViewStyle }>
-                        <Text style = { closedCaptionsStyles.languageButtonText }>{ t(selectedLanguage ?? 'transcribing.subtitlesOff') }</Text>
-                        <Icon
-                            size = { 24 }
-                            src = { IconArrowRight } />
-                    </View>
-                </TouchableHighlight>
-            </View>
+            <>
+                <View style = { closedCaptionsStyles.languageButtonContainer as ViewStyle }>
+                    <Text style = { closedCaptionsStyles.languageButtonText }>{ t('transcribing.translateTo') }:</Text>
+                    <TouchableHighlight onPress = { navigateToLanguageSelect }>
+                        <View style = { closedCaptionsStyles.languageButtonContent as ViewStyle }>
+                            <Text style = { closedCaptionsStyles.languageButtonText }>{ t(selectedLanguage ?? 'transcribing.subtitlesOff') }</Text>
+                            <Icon
+                                size = { 24 }
+                                src = { IconArrowRight } />
+                        </View>
+                    </TouchableHighlight>
+                </View>
+                <View style = { closedCaptionsStyles.messagesContainer as ViewStyle }>
+                    <SubtitlesMessagesContainer
+                        groups = { groupedSubtitles }
+                        messages = { filteredSubtitles } />
+                </View>
+            </>
         );
     };
 

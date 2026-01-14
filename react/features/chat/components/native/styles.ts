@@ -314,11 +314,10 @@ export const closedCaptionsStyles = {
         flex: 1
     },
 
-    ccContainer: {
+    languageButtonContainer: {
         justifyContent: 'space-between',
-        flex: 1,
         flexDirection: 'row',
-        margin: BaseTheme.spacing[3]
+        padding: BaseTheme.spacing[3]
     },
 
     languageButtonText: {
@@ -327,11 +326,82 @@ export const closedCaptionsStyles = {
         marginHorizontal: BaseTheme.spacing[2]
     },
 
-    languageButtonContainer: {
-        height: 24
+    languageButtonContent: {
+        flexDirection: 'row'
     },
 
-    languageButton: {
-        flexDirection: 'row'
+    subtitleMessageContainer: {
+        backgroundColor: BaseTheme.palette.ui02,
+        borderRadius: BaseTheme.shape.borderRadius,
+        padding: BaseTheme.spacing[2],
+        maxWidth: '100%',
+        marginTop: BaseTheme.spacing[1]
+    },
+
+    subtitleMessageContent: {
+        maxWidth: '100%',
+        flex: 1
+    },
+
+    subtitleMessageHeader: {
+        ...BaseTheme.typography.labelBold,
+        color: BaseTheme.palette.text02,
+        marginBottom: BaseTheme.spacing[1],
+        maxWidth: 130
+    },
+
+    subtitleMessageText: {
+        ...BaseTheme.typography.bodyShortRegular,
+        color: BaseTheme.palette.text01
+    },
+
+    subtitleMessageTimestamp: {
+        ...BaseTheme.typography.labelRegular,
+        color: BaseTheme.palette.text03,
+        marginTop: BaseTheme.spacing[1]
+    },
+
+    subtitleMessageInterim: {
+        opacity: 0.7
+    },
+
+    subtitlesGroupContainer: {
+        flexDirection: 'row',
+        marginBottom: BaseTheme.spacing[3]
+    },
+
+    subtitlesGroupAvatar: {
+        marginBottom: BaseTheme.spacing[10],
+        marginRight: BaseTheme.spacing[2],
+        alignSelf: 'flex-start',
+        width: 32
+    },
+
+    subtitlesGroupMessagesContainer: {
+        flexDirection: 'column',
+        flex: 1,
+        maxWidth: '100%'
+    },
+
+    subtitlesMessagesContainer: {
+        flex: 1,
+        position: 'relative',
+        height: '100%'
+    },
+
+    subtitlesMessagesList: {
+        padding: BaseTheme.spacing[4]
+    },
+
+    newMessagesButtonContainer: {
+        position: 'absolute',
+        bottom: BaseTheme.spacing[3],
+        alignSelf: 'center'
+    },
+
+    messagesContainer: {
+        display: 'flex',
+        flex: 1,
+        overflow: 'hidden'
     }
 };

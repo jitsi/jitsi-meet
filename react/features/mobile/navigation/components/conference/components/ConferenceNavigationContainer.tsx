@@ -88,11 +88,10 @@ const ConferenceNavigationContainer = () => {
     const _isPollsEnabled = !isPollsDisabled;
     const _isCCTabEnabled = useSelector(isCCTabEnabled);
     const { t } = useTranslation();
+
     let ChatScreen;
     let chatScreenName;
     let chatTitle;
-
-    console.log(_isCCTabEnabled, _isPollsEnabled, 'test');
 
     if (isPollsDisabled) {
         ChatScreen = Chat;
