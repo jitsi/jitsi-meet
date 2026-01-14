@@ -77,6 +77,7 @@ export default [
 
     'cameraFacingMode',
     'conferenceInfo',
+    'conferenceRequestUrl',
     'channelLastN',
     'connectionIndicators',
     'constraints',
