@@ -1,27 +1,35 @@
 import { setTestProperties } from '../../helpers/TestProperties';
-import { ensureTwoParticipants } from '../../helpers/participants';
+import { ensureOneParticipant } from '../../helpers/participants';
 
 setTestProperties(__filename, {
     description: 'Test that conference requests work over XMPP',
-    usesBrowsers: [ 'p1', 'p2' ]
+    usesBrowsers: [ 'p1' ]
 });
 
 describe('XMPP Conference Request', () => {
     it('join with conferenceRequestUrl disabled', async () => {
-        await ensureTwoParticipants({
+        await ensureOneParticipant({
+            skipWaitToJoin: true,
             configOverwrite: {
-                conferenceRequestUrl: ''
+                prejoinConfig: {
+                    enabled: true
+                }
             }
         });
-    });
 
-    it('verifies conferenceRequestUrl is empty in config', async () => {
-        const { p1, p2 } = ctx;
+        const { p1 } = ctx;
 
-        const p1Config = await p1.execute(() => config.conferenceRequestUrl);
-        const p2Config = await p2.execute(() => config.conferenceRequestUrl);
+        // Update config before joining, because this option cannot be overridden with URL params.
+        await p1.driver.execute(async () => {
+            config.conferenceRequestUrl = '';
+            APP.store.dispatch({
+                type: 'OVERWRITE_CONFIG',
+                config
+            });
+        });
 
-        expect(p1Config).toBe('');
-        expect(p2Config).toBe('');
+        await p1.getPreJoinScreen().getJoinButton().click();
+        await p1.waitForMucJoinedOrError()
+        expect(await p1.isInMuc()).toBe(true)
     });
 });
