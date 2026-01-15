@@ -97,11 +97,7 @@ const VideoLayout = {
             return VIDEO_TYPE.DESKTOP;
         }
 
-        const videoTrack = getTrackByMediaTypeAndParticipant(
-            state['features/base/tracks'].tracks,
-            MEDIA_TYPE.VIDEO,
-            id
-        );
+        const videoTrack = getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
 
         return videoTrack?.videoType;
     },

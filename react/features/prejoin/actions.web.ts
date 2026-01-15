@@ -246,7 +246,7 @@ export function joinConferenceWithoutAudio() {
         }
 
         dispatch(setJoiningInProgress(true));
-        const tracks = state['features/base/tracks'].tracks;
+        const tracks = state['features/base/tracks'];
         const audioTrack = getLocalAudioTrack(tracks)?.jitsiTrack;
 
         if (audioTrack) {
@@ -287,7 +287,7 @@ export function openDialInPage() {
 export function replaceAudioTrackById(deviceId: string) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         try {
-            const tracks = getState()['features/base/tracks'].tracks;
+            const tracks = getState()['features/base/tracks'];
             const newTrack = await createLocalTrack('audio', deviceId);
             const oldTrack = getLocalAudioTrack(tracks)?.jitsiTrack;
             const micDeviceId = newTrack.getDeviceId();
@@ -314,7 +314,7 @@ export function replaceAudioTrackById(deviceId: string) {
 export function replaceVideoTrackById(deviceId: string) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         try {
-            const tracks = getState()['features/base/tracks'].tracks;
+            const tracks = getState()['features/base/tracks'];
             const wasVideoMuted = isVideoMutedByUser(getState());
             const [ newTrack ] = await createLocalTracksF(
                 { cameraDeviceId: deviceId,

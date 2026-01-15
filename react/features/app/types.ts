@@ -26,7 +26,7 @@ import { ISettingsState } from '../base/settings/reducer';
 import { ISoundsState } from '../base/sounds/reducer';
 import { ITestingState } from '../base/testing/reducer';
 import { ITooltipState } from '../base/tooltip/reducer';
-import { INoSrcDataState, ITracksState } from '../base/tracks/reducer';
+import { INoSrcDataState, ITrackMuteTrackingState, ITracksState } from '../base/tracks/reducer';
 import { IUserInteractionState } from '../base/user-interaction/reducer';
 import { IBreakoutRoomsState } from '../breakout-rooms/reducer';
 import { ICalendarSyncState } from '../calendar-sync/reducer';
@@ -116,6 +116,7 @@ export interface IReduxState {
     'features/base/sounds': ISoundsState;
     'features/base/tooltip': ITooltipState;
     'features/base/tracks': ITracksState;
+    'features/base/tracks/mute-tracking': ITrackMuteTrackingState;
     'features/base/user-interaction': IUserInteractionState;
     'features/breakout-rooms': IBreakoutRoomsState;
     'features/calendar-sync': ICalendarSyncState;

@@ -354,7 +354,7 @@ function initCommands() {
         },
 
         'set-blurred-background': blurType => {
-            const tracks = APP.store.getState()['features/base/tracks'].tracks;
+            const tracks = APP.store.getState()['features/base/tracks'];
             const videoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
             const muted = tracks ? isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO) : isVideoMutedByUser(APP.store);
 
@@ -905,7 +905,7 @@ function initCommands() {
             APP.store.dispatch(toggleWhiteboard());
         },
         'set-virtual-background': (enabled, backgroundImage) => {
-            const tracks = APP.store.getState()['features/base/tracks'].tracks;
+            const tracks = APP.store.getState()['features/base/tracks'];
             const jitsiTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
 
             APP.store.dispatch(toggleBackgroundEffect({

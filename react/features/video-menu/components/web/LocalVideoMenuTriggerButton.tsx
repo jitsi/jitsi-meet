@@ -269,7 +269,7 @@ function _mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { thumbnailType } = ownProps;
     const localParticipant = getLocalParticipant(state);
     const { disableLocalVideoFlip, disableSelfDemote, disableSelfViewSettings } = state['features/base/config'];
-    const videoTrack = getLocalVideoTrack(state['features/base/tracks'].tracks);
+    const videoTrack = getLocalVideoTrack(state['features/base/tracks']);
     const { overflowDrawer } = state['features/toolbox'];
     const { showConnectionInfo } = state['features/base/connection'];
     const showHideSelfViewButton = !disableSelfViewSettings && !getHideSelfView(state);

@@ -86,130 +86,39 @@ function track(state: ITrack, action: AnyAction) {
     return state;
 }
 
-export interface ITrackMuteInfo {
-    moderatorInitiated?: boolean;
-    previousMuted?: boolean;
-}
-
-export interface ITracksState {
-    muteTracking: {
-        [key: string]: ITrackMuteInfo;
-    };
-    tracks: ITrack[];
-}
-
-const DEFAULT_STATE: ITracksState = {
-    muteTracking: {},
-    tracks: []
-};
+export type ITracksState = ITrack[];
 
 /**
  * Listen for actions that mutate (e.g. Add, remove) local and remote tracks.
  */
-ReducerRegistry.register<ITracksState>('features/base/tracks', (state = DEFAULT_STATE, action): ITracksState => {
+ReducerRegistry.register<ITracksState>('features/base/tracks', (state = [], action): ITracksState => {
     switch (action.type) {
     case PARTICIPANT_ID_CHANGED:
     case TRACK_NO_DATA_FROM_SOURCE:
     case TRACK_UPDATED:
-        return {
-            ...state,
-            tracks: state.tracks.map((t: ITrack) => track(t, action))
-        };
+        return state.map((t: ITrack) => track(t, action));
     case TRACK_ADDED: {
-        let withoutTrackStub = state.tracks;
+        let withoutTrackStub = state;
 
         if (action.track.local) {
             withoutTrackStub
-                = state.tracks.filter(
+                = state.filter(
                     (t: ITrack) => !t.local || t.mediaType !== action.track.mediaType);
         }
 
-        return {
-            ...state,
-            tracks: [ ...withoutTrackStub, action.track ]
-        };
+        return [ ...withoutTrackStub, action.track ];
     }
 
     case TRACK_CREATE_CANCELED:
     case TRACK_CREATE_ERROR: {
-        return {
-            ...state,
-            tracks: state.tracks.filter((t: ITrack) => !t.local || t.mediaType !== action.trackType)
-        };
+        return state.filter((t: ITrack) => !t.local || t.mediaType !== action.trackType);
     }
 
     case TRACK_REMOVED:
-        return {
-            ...state,
-            tracks: state.tracks.filter((t: ITrack) => t.jitsiTrack !== action.track.jitsiTrack)
-        };
+        return state.filter((t: ITrack) => t.jitsiTrack !== action.track.jitsiTrack);
 
     case TRACK_WILL_CREATE:
-        return {
-            ...state,
-            tracks: [ ...state.tracks, action.track ]
-        };
-
-    case TRACK_MODERATOR_MUTE_INITIATED: {
-        const key = `${action.participantId}-${action.mediaType}`;
-
-        return {
-            ...state,
-            muteTracking: {
-                ...state.muteTracking,
-                [key]: {
-                    ...state.muteTracking[key],
-                    moderatorInitiated: true
-                }
-            }
-        };
-    }
-
-    case TRACK_MODERATOR_MUTE_CLEARED: {
-        const key = `${action.participantId}-${action.mediaType}`;
-
-        if (!state.muteTracking[key]) {
-            return state;
-        }
-
-        return {
-            ...state,
-            muteTracking: {
-                ...state.muteTracking,
-                [key]: {
-                    ...state.muteTracking[key],
-                    moderatorInitiated: undefined
-                }
-            }
-        };
-    }
-
-    case TRACK_MUTE_STATE_UPDATED: {
-        const key = `${action.participantId}-${action.mediaType}`;
-
-        return {
-            ...state,
-            muteTracking: {
-                ...state.muteTracking,
-                [key]: {
-                    ...state.muteTracking[key],
-                    previousMuted: action.muted
-                }
-            }
-        };
-    }
-
-    case TRACK_MUTE_STATE_CLEARED: {
-        const key = `${action.participantId}-${action.mediaType}`;
-        const newMuteTracking = { ...state.muteTracking };
-
-        delete newMuteTracking[key];
-
-        return {
-            ...state,
-            muteTracking: newMuteTracking
-        };
-    }
+        return [ ...state, action.track ];
 
     default:
         return state;
@@ -233,32 +142,73 @@ ReducerRegistry.register<INoSrcDataState>('features/base/no-src-data', (state = 
     }
 });
 
-/**
- * Selector to check if a mute was moderator-initiated.
- *
- * @param {Object} state - The Redux state.
- * @param {string} participantId - The participant ID.
- * @param {string} mediaType - The media type.
- * @returns {boolean} True if moderator-initiated.
- */
-export function wasModeratorInitiated(state: any, participantId: string, mediaType: string): boolean {
-    const key = `${participantId}-${mediaType}`;
-    const tracksState: ITracksState = state['features/base/tracks'];
 
-    return tracksState.muteTracking[key]?.moderatorInitiated ?? false;
+export interface ITrackMuteInfo {
+    moderatorInitiated?: boolean;
+    previousMuted?: boolean;
+}
+
+export interface ITrackMuteTrackingState {
+    [key: string]: ITrackMuteInfo;
 }
 
 /**
- * Selector to get the previous mute state.
- *
- * @param {Object} state - The Redux state.
- * @param {string} participantId - The participant ID.
- * @param {string} mediaType - The media type.
- * @returns {boolean|undefined} Previous muted state, or undefined if not tracked.
+ * Reducer for tracking mute state changes and moderator-initiated mutes.
+ * Stores "participantId-mediaType" -> { moderatorInitiated, previousMuted }.
  */
-export function getPreviousMuteState(state: any, participantId: string, mediaType: string): boolean | undefined {
-    const key = `${participantId}-${mediaType}`;
-    const tracksState: ITracksState = state['features/base/tracks'];
+ReducerRegistry.register<ITrackMuteTrackingState>('features/base/tracks/mute-tracking',
+    (state = {}, action): ITrackMuteTrackingState => {
+        switch (action.type) {
+        case TRACK_MODERATOR_MUTE_INITIATED: {
+            const key = `${action.participantId}-${action.mediaType}`;
 
-    return tracksState.muteTracking[key]?.previousMuted;
-}
+            return {
+                ...state,
+                [key]: {
+                    ...state[key],
+                    moderatorInitiated: true
+                }
+            };
+        }
+
+        case TRACK_MODERATOR_MUTE_CLEARED: {
+            const key = `${action.participantId}-${action.mediaType}`;
+
+            if (!state[key]) {
+                return state;
+            }
+
+            return {
+                ...state,
+                [key]: {
+                    ...state[key],
+                    moderatorInitiated: undefined
+                }
+            };
+        }
+
+        case TRACK_MUTE_STATE_UPDATED: {
+            const key = `${action.participantId}-${action.mediaType}`;
+
+            return {
+                ...state,
+                [key]: {
+                    ...state[key],
+                    previousMuted: action.muted
+                }
+            };
+        }
+
+        case TRACK_MUTE_STATE_CLEARED: {
+            const key = `${action.participantId}-${action.mediaType}`;
+            const newState = { ...state };
+
+            delete newState[key];
+
+            return newState;
+        }
+
+        default:
+            return state;
+        }
+    });

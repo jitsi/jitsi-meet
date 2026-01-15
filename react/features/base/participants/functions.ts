@@ -189,7 +189,7 @@ export function getLocalScreenShareParticipant(stateful: IStateful) {
  */
 export function getVirtualScreenshareParticipantByOwnerId(stateful: IStateful, id: string) {
     const state = toState(stateful);
-    const track = getScreenShareTrack(state['features/base/tracks'].tracks, id);
+    const track = getScreenShareTrack(state['features/base/tracks'], id);
 
     return getParticipantById(stateful, track?.jitsiTrack.getSourceName());
 }
@@ -380,7 +380,7 @@ export function getMutedStateByParticipantAndMediaType(
 
     if (participant.local) {
         const state = toState(stateful);
-        const tracks = state['features/base/tracks'].tracks;
+        const tracks = state['features/base/tracks'];
 
         return isLocalTrackMuted(tracks, mediaType);
     }
@@ -516,7 +516,7 @@ export function getScreenshareParticipantDisplayName(stateful: IStateful, id: st
  * @returns {Array<string>}
  */
 export function getScreenshareParticipantIds(stateful: IStateful): Array<string> {
-    return toState(stateful)['features/base/tracks'].tracks
+    return toState(stateful)['features/base/tracks']
         .filter(track => track.videoType === VIDEO_TYPE.DESKTOP && !track.muted)
         .map(t => t.participantId);
 }

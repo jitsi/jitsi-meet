@@ -19,9 +19,9 @@ import { ITrack } from './types';
  * Returns root tracks state.
  *
  * @param {IReduxState} state - Global state.
- * @returns {ITrack[]} Tracks array.
+ * @returns {Object} Tracks state.
  */
-export const getTrackState = (state: IReduxState) => state['features/base/tracks'].tracks;
+export const getTrackState = (state: IReduxState) => state['features/base/tracks'];
 
 /**
  * Checks if the passed media type is muted for the participant.
@@ -258,7 +258,7 @@ export function getVideoTrackByParticipant(
         return;
     }
 
-    const tracks = state['features/base/tracks'].tracks;
+    const tracks = state['features/base/tracks'];
 
     if (isScreenShareParticipant(participant)) {
         return getVirtualScreenshareParticipantTrack(tracks, participant.id);
@@ -523,4 +523,34 @@ export function logTracksForParticipant(tracksState: ITrack[], participantId: st
  */
 export function getCameraFacingMode(state: IReduxState) {
     return state['features/base/config'].cameraFacingMode ?? CAMERA_FACING_MODE.USER;
+}
+
+/**
+ * Check if a mute action was moderator-initiated.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {string} participantId - The participant ID.
+ * @param {string} mediaType - The media type.
+ * @returns {boolean} True if moderator-initiated.
+ */
+export function wasModeratorInitiated(state: any, participantId: string, mediaType: string): boolean {
+    const key = `${participantId}-${mediaType}`;
+    const trackingState = state['features/base/tracks/mute-tracking'];
+
+    return trackingState[key]?.moderatorInitiated ?? false;
+}
+
+/**
+ * Get the previous mute state.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {string} participantId - The participant ID.
+ * @param {string} mediaType - The media type.
+ * @returns {boolean|undefined} Previous muted state, or undefined if not tracked.
+ */
+export function getPreviousMuteState(state: any, participantId: string, mediaType: string): boolean | undefined {
+    const key = `${participantId}-${mediaType}`;
+    const trackingState = state['features/base/tracks/mute-tracking'];
+
+    return trackingState[key]?.previousMuted;
 }

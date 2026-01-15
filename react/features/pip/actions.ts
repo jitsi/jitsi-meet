@@ -38,7 +38,7 @@ export function setPiPActive(isPiPActive: boolean) {
 export function toggleAudioFromPiP() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-        const audioMuted = isLocalTrackMuted(state['features/base/tracks'].tracks, MEDIA_TYPE.AUDIO);
+        const audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
 
         // Use the exact same action as toolbar button.
         dispatch(muteLocal(!audioMuted, MEDIA_TYPE.AUDIO));
@@ -54,7 +54,7 @@ export function toggleAudioFromPiP() {
 export function toggleVideoFromPiP() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-        const videoMuted = isLocalTrackMuted(state['features/base/tracks'].tracks, MEDIA_TYPE.VIDEO);
+        const videoMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO);
 
         // Use the exact same action as toolbar button (showUI=true, ensureTrack=true).
         dispatch(handleToggleVideoMuted(!videoMuted, true, true));

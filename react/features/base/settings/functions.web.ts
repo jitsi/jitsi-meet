@@ -42,7 +42,7 @@ export function getCurrentOutputDeviceId(state: IReduxState) {
  * @returns {string}
  */
 function getDeviceIdByType(state: IReduxState, isType: string) {
-    const [ deviceId ] = state['features/base/tracks'].tracks
+    const [ deviceId ] = state['features/base/tracks']
         .map(t => t.jitsiTrack)
         .filter(t => t?.isLocal() && t[isType as keyof typeof t]())
         .map(t => t.getDeviceId());

@@ -95,7 +95,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
 
     // Only the local participant won't have id for the time when the conference is not yet joined.
     const participant = getParticipantByIdOrUndefined(state, participantID);
-    const tracks = state['features/base/tracks'].tracks;
+    const tracks = state['features/base/tracks'];
 
     let isAudioMuted = true;
     let isScreenSharing = false;

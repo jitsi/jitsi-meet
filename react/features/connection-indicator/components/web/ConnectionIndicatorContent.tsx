@@ -346,7 +346,7 @@ export function _mapStateToProps(state: IReduxState, ownProps: any) {
     const participant
         = participantId ? getParticipantById(state, participantId) : getLocalParticipant(state);
     const { isNarrowLayout } = state['features/base/responsive-ui'];
-    const tracks = state['features/base/tracks'].tracks;
+    const tracks = state['features/base/tracks'];
     const audioTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantId);
     let videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
 

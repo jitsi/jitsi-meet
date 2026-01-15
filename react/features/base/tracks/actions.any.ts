@@ -115,7 +115,7 @@ export function createDesiredLocalTracks(...desiredTypes: any) {
 
         const availableTypes
             = getLocalTracks(
-                    state['features/base/tracks'].tracks,
+                    state['features/base/tracks'],
                     /* includePending */ true)
                 .map(t => t.mediaType);
 
@@ -158,7 +158,7 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
         // device separately.
         for (const device of devices) {
             if (getLocalTrack(
-                state['features/base/tracks'].tracks,
+                state['features/base/tracks'],
                     device as MediaType,
                     /* includePending */ true)) {
                 throw new Error(`Local track for ${device} already exists`);
@@ -251,7 +251,7 @@ export function destroyLocalTracks(track: any = null) {
             .then(() =>
                 dispatch(
                     _disposeAndRemoveTracks(
-                        getState()['features/base/tracks'].tracks
+                        getState()['features/base/tracks']
                             .filter(t => t.local)
                             .map(t => t.jitsiTrack))));
 }
@@ -282,7 +282,7 @@ export function showNoDataFromSourceVideoError(jitsiTrack: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         let notificationInfo;
 
-        const track = getTrackByJitsiTrack(getState()['features/base/tracks'].tracks, jitsiTrack);
+        const track = getTrackByJitsiTrack(getState()['features/base/tracks'], jitsiTrack);
 
         if (!track) {
             return;
@@ -745,7 +745,7 @@ function _cancelGUMProcesses(getState: IStore['getState']): Promise<any> {
             logger.error('gumProcess.cancel failed', JSON.stringify(error));
 
     return Promise.all(
-        getState()['features/base/tracks'].tracks
+        getState()['features/base/tracks']
             .filter(t => t.local)
             .map(({ gumProcess }: any) =>
                 gumProcess?.cancel().catch(logError)));
@@ -867,7 +867,7 @@ function _trackCreateCanceled(mediaType: MediaType): {
  */
 export function destroyLocalDesktopTrackIfExists() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const videoTrack = getLocalVideoTrack(getState()['features/base/tracks'].tracks);
+        const videoTrack = getLocalVideoTrack(getState()['features/base/tracks']);
         const isDesktopTrack = videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;
 
         if (isDesktopTrack) {
@@ -909,7 +909,7 @@ export function remoteParticipantAudioMuteChanged(participantId: string, muted: 
     return {
         type: 'REMOTE_PARTICIPANT_AUDIO_MUTE_CHANGED',
         participantId,
-        muted
+        muted: Boolean(muted)
     };
 }
 
@@ -929,6 +929,6 @@ export function remoteParticipantVideoMuteChanged(participantId: string, muted: 
     return {
         type: 'REMOTE_PARTICIPANT_VIDEO_MUTE_CHANGED',
         participantId,
-        muted
+        muted: Boolean(muted)
     };
 }

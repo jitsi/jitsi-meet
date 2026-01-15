@@ -520,7 +520,7 @@ export function _conferenceWillJoin(conference: IJitsiConference) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const localTracks
-            = getLocalTracks(state['features/base/tracks'].tracks)
+            = getLocalTracks(state['features/base/tracks'])
                 .map(t => t.jitsiTrack);
 
         if (localTracks.length && !iAmVisitor(state)) {

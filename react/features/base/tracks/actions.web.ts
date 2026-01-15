@@ -133,7 +133,7 @@ async function _toggleScreenSharing(
     const screenSharing = isScreenVideoShared(state);
     const conference = getCurrentConference(state);
     const localAudio = getLocalJitsiAudioTrack(state);
-    const localScreenshare = getLocalDesktopTrack(state['features/base/tracks'].tracks);
+    const localScreenshare = getLocalDesktopTrack(state['features/base/tracks']);
 
     // Toggle screenshare or audio-only share if the new state is not passed. Happens in the following two cases.
     // 1. ShareAudioDialog passes undefined when the user hits continue in the share audio demo modal.
@@ -271,7 +271,7 @@ export function setCameraFacingMode(facingMode: string | undefined) {
             return;
         }
 
-        const tracks = state['features/base/tracks'].tracks;
+        const tracks = state['features/base/tracks'];
         const localVideoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
 
         if (!tracks || !localVideoTrack) {
@@ -524,7 +524,7 @@ export function handleScreenSharingError(
 export function toggleCamera() {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-        const tracks = state['features/base/tracks'].tracks;
+        const tracks = state['features/base/tracks'];
         const localVideoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
         const currentFacingMode = localVideoTrack.getCameraFacingMode();
         const { localFlipX } = state['features/base/settings'];

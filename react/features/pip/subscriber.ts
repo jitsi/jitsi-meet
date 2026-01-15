@@ -24,8 +24,8 @@ StateListenerRegistry.register(
         }
 
         return {
-            audioMuted: isLocalTrackMuted(state['features/base/tracks'].tracks, MEDIA_TYPE.AUDIO),
-            videoMuted: isLocalTrackMuted(state['features/base/tracks'].tracks, MEDIA_TYPE.VIDEO)
+            audioMuted: isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO),
+            videoMuted: isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO)
         };
     },
     /* listener */ (muteState: { audioMuted: boolean; videoMuted: boolean; } | null) => {

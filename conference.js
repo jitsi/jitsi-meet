@@ -664,7 +664,7 @@ export default {
     isLocalVideoMuted() {
         // If the tracks are not ready, read from base/media state
         return this._localTracksInitialized
-            ? isLocalTrackMuted(APP.store.getState()['features/base/tracks'].tracks, MEDIA_TYPE.VIDEO)
+            ? isLocalTrackMuted(APP.store.getState()['features/base/tracks'], MEDIA_TYPE.VIDEO)
             : isVideoMutedByUser(APP.store);
     },
 
@@ -725,7 +725,7 @@ export default {
         // If the tracks are not ready, read from base/media state
         return this._localTracksInitialized
             ? isLocalTrackMuted(
-                APP.store.getState()['features/base/tracks'].tracks,
+                APP.store.getState()['features/base/tracks'],
                 MEDIA_TYPE.AUDIO)
             : Boolean(
                 APP.store.getState()['features/base/media'].audio.muted);
@@ -1221,7 +1221,7 @@ export default {
         this._stopProxyConnection();
 
         APP.store.dispatch(toggleScreenshotCaptureSummary(false));
-        const tracks = APP.store.getState()['features/base/tracks'].tracks;
+        const tracks = APP.store.getState()['features/base/tracks'];
         const duration = getLocalVideoTrack(tracks)?.jitsiTrack.getDuration() ?? 0;
 
         // If system audio was also shared stop the AudioMixerEffect and dispose of the desktop audio track.

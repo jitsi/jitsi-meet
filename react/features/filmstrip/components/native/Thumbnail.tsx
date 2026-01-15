@@ -407,7 +407,7 @@ class Thumbnail extends PureComponent<IProps> {
  */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { ownerId } = state['features/shared-video'];
-    const tracks = state['features/base/tracks'].tracks;
+    const tracks = state['features/base/tracks'];
     const { participantID, tileView } = ownProps;
     const participant = getParticipantByIdOrUndefined(state, participantID);
     const localParticipantId = getLocalParticipant(state)?.id;

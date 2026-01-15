@@ -112,7 +112,7 @@ export function shouldRemoteVideosBeVisible(state: IReduxState) {
  */
 export function isVideoPlayable(stateful: IStateful, id: string) {
     const state = toState(stateful);
-    const tracks = state['features/base/tracks'].tracks;
+    const tracks = state['features/base/tracks'];
     const participant = id ? getParticipantById(state, id) : getLocalParticipant(state);
     const isLocal = participant?.local ?? true;
     const videoTrack = getVideoTrackByParticipant(state, participant);

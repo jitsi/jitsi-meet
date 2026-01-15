@@ -43,7 +43,7 @@ StateListenerRegistry.register(
  * Notifies when the local video mute state changes.
  */
 StateListenerRegistry.register(
-    /* selector */ state => isLocalTrackMuted(state['features/base/tracks'].tracks, MEDIA_TYPE.VIDEO),
+    /* selector */ state => isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO),
     /* listener */ (muted, store, previousMuted) => {
         if (muted !== previousMuted) {
             APP.API.notifyVideoMutedStatusChanged(muted);

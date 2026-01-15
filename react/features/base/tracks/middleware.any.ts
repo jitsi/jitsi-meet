@@ -31,10 +31,10 @@ import {
 } from './actions';
 import {
     getLocalTrack,
+    getPreviousMuteState,
     isUserInteractionRequiredForUnmute,
     setTrackMuted
 } from './functions';
-import { getPreviousMuteState } from './reducer';
 
 /**
  * Middleware that captures LIB_DID_DISPOSE and LIB_DID_INIT actions and,
@@ -98,7 +98,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (localParticipant?.id && typeof APP !== 'undefined') {
             const participantID = localParticipant.id;
             const mediaType = 'video';
-            const currentMuted = action.muted;
+            const currentMuted = Boolean(action.muted);
 
             // Get the previously notified state from Redux to prevent duplicates
             const stateAfter = store.getState();
@@ -161,7 +161,7 @@ StateListenerRegistry.register(
         if (prevConference && !conference && !authRequired && !error) {
 
             // Clear all tracks.
-            const remoteTracks = getState()['features/base/tracks'].tracks.filter(t => !t.local);
+            const remoteTracks = getState()['features/base/tracks'].filter(t => !t.local);
 
             batch(() => {
                 dispatch(destroyLocalTracks());
@@ -196,7 +196,7 @@ function _getLocalTrack(
         includePending = false) {
     return (
         getLocalTrack(
-            getState()['features/base/tracks'].tracks,
+            getState()['features/base/tracks'],
             mediaType,
             includePending));
 }

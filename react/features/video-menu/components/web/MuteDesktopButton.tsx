@@ -28,7 +28,7 @@ const MuteDesktopButton = ({
 }: IButtonProps): JSX.Element | null => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const tracks = useSelector((state: IReduxState) => state['features/base/tracks'].tracks);
+    const tracks = useSelector((state: IReduxState) => state['features/base/tracks']);
 
     // TODO: review if we shouldn't be using isParticipantMediaMuted.
     const trackMuted = useMemo(

@@ -39,7 +39,7 @@ export function getRemoteVideoType({ getState }: IStore, id: string) {
         return VIDEO_TYPE.DESKTOP;
     }
 
-    return getTrackByMediaTypeAndParticipant(state['features/base/tracks'].tracks, MEDIA_TYPE.VIDEO, id)?.videoType;
+    return getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id)?.videoType;
 }
 
 /**
@@ -63,7 +63,7 @@ export function isLargeVideoReceived({ getState }: IStore): boolean {
  * @returns {string?} The local video track's codec.
  */
 export function getLocalCameraEncoding({ getState }: IStore): string | undefined {
-    return getLocalVideoTrack(getState()['features/base/tracks'].tracks)?.codec?.toLowerCase();
+    return getLocalVideoTrack(getState()['features/base/tracks'])?.codec?.toLowerCase();
 }
 
 /**

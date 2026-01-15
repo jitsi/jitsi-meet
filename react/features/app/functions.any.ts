@@ -13,7 +13,7 @@ import { addHashParamsToURL } from '../base/util/uri';
  */
 export function addTrackStateToURL(url: string, stateful: IStateful) {
     const state = toState(stateful);
-    const tracks = state['features/base/tracks'].tracks;
+    const tracks = state['features/base/tracks'];
     const isVideoMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
     const isAudioMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
 

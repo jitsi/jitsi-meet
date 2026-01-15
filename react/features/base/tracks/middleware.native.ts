@@ -58,7 +58,7 @@ function _setMuted(store: IStore, { ensureTrack, muted }: {
     ensureTrack: boolean; muted: boolean; }) {
     const { dispatch, getState } = store;
     const state = getState();
-    const localTrack = getLocalTrack(state['features/base/tracks'].tracks, MEDIA_TYPE.AUDIO, /* includePending */ true);
+    const localTrack = getLocalTrack(state['features/base/tracks'], MEDIA_TYPE.AUDIO, /* includePending */ true);
 
     if (localTrack) {
         // The `jitsiTrack` property will have a value only for a localTrack for which `getUserMedia` has already

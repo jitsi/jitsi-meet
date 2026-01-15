@@ -51,7 +51,7 @@ export function isScreenMediaShared(state: IReduxState) {
  * @returns {boolean}
  */
 export function isScreenVideoShared(state: IReduxState) {
-    const tracks = state['features/base/tracks'].tracks;
+    const tracks = state['features/base/tracks'];
     const localScreenshare = getLocalDesktopTrack(tracks);
 
     return localScreenshare?.jitsiTrack && !localScreenshare.jitsiTrack.isMuted();

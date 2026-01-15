@@ -154,7 +154,7 @@ class RemoteControlAuthorizationDialog extends Component<IProps> {
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { _displayName, participantId } = ownProps;
     const participant = getParticipantById(state, participantId);
-    const tracks = state['features/base/tracks'].tracks;
+    const tracks = state['features/base/tracks'];
     const track = getLocalVideoTrack(tracks);
     const _isScreenSharing = track?.videoType === 'desktop';
     const { sourceType } = track?.jitsiTrack || {};

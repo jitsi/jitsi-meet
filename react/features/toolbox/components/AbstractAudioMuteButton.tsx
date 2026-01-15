@@ -83,7 +83,7 @@ export default class AbstractAudioMuteButton<P extends IProps> extends BaseAudio
  * }}
  */
 export function mapStateToProps(state: IReduxState) {
-    const _audioMuted = isLocalTrackMuted(state['features/base/tracks'].tracks, MEDIA_TYPE.AUDIO);
+    const _audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
     const _disabled = isAudioMuteButtonDisabled(state);
     const enabledFlag = getFeatureFlag(state, AUDIO_MUTE_BUTTON_ENABLED, true);
 

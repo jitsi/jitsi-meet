@@ -83,7 +83,7 @@ export default class AbstractVideoMuteButton<P extends IProps> extends BaseVideo
  * }}
  */
 export function mapStateToProps(state: IReduxState) {
-    const tracks = state['features/base/tracks'].tracks;
+    const tracks = state['features/base/tracks'];
     const enabledFlag = getFeatureFlag(state, VIDEO_MUTE_BUTTON_ENABLED, true);
 
     return {

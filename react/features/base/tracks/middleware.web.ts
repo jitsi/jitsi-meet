@@ -41,10 +41,13 @@ import {
 import {
     getLocalJitsiAudioTrackSettings,
     getLocalTrack,
-    getTrackByJitsiTrack, isUserInteractionRequiredForUnmute, logTracksForParticipant,
-    setTrackMuted
+    getPreviousMuteState,
+    getTrackByJitsiTrack,
+    isUserInteractionRequiredForUnmute,
+    logTracksForParticipant,
+    setTrackMuted,
+    wasModeratorInitiated
 } from './functions.web';
-import { getPreviousMuteState, wasModeratorInitiated } from './reducer';
 import { ITrack, ITrackOptions } from './types';
 import './middleware.any';
 import './subscriber.web';
@@ -136,7 +139,7 @@ MiddlewareRegistry.register(store => next => action => {
         const participantId = action.track?.participantId;
 
         if (participantId) {
-            logTracksForParticipant(store.getState()['features/base/tracks'].tracks, participantId, 'Track added');
+            logTracksForParticipant(store.getState()['features/base/tracks'], participantId, 'Track added');
         }
 
         return result;
@@ -157,7 +160,7 @@ MiddlewareRegistry.register(store => next => action => {
         const isLocal = action.track?.jitsiTrack?.isLocal();
 
         if (participantId) {
-            logTracksForParticipant(store.getState()['features/base/tracks'].tracks, participantId, 'Track removed');
+            logTracksForParticipant(store.getState()['features/base/tracks'], participantId, 'Track removed');
 
             const jitsiTrack = action.track.jitsiTrack;
             const isVideoTrack = jitsiTrack.type !== MEDIA_TYPE.AUDIO;
@@ -228,11 +231,6 @@ MiddlewareRegistry.register(store => next => action => {
             APP.conference.updateAudioIconEnabled();
         }
 
-        // Local participant mute/unmute is now handled via SET_AUDIO_MUTED and SET_VIDEO_MUTED
-        // Remote participant mute/unmute events are handled via
-        // REMOTE_PARTICIPANT_AUDIO_MUTE_CHANGED and REMOTE_PARTICIPANT_VIDEO_MUTE_CHANGED
-        // which are more reliable as they're based on XMPP signaling rather than track updates
-
         return result;
     }
     case SET_AUDIO_MUTED: {
@@ -260,7 +258,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (localParticipant?.id) {
             const participantID = localParticipant.id;
             const mediaType = 'audio';
-            const currentMuted = action.muted;
+            const currentMuted = Boolean(action.muted);
 
             // Get the previously notified state from Redux to prevent duplicates
             const stateAfter = store.getState();
@@ -296,7 +294,7 @@ MiddlewareRegistry.register(store => next => action => {
 function _handleNoDataFromSourceErrors(store: IStore, action: AnyAction) {
     const { getState, dispatch } = store;
 
-    const track = getTrackByJitsiTrack(getState()['features/base/tracks'].tracks, action.track.jitsiTrack);
+    const track = getTrackByJitsiTrack(getState()['features/base/tracks'], action.track.jitsiTrack);
 
     if (!track?.local) {
         return;
@@ -339,7 +337,7 @@ function _handleNoDataFromSourceErrors(store: IStore, action: AnyAction) {
  * @returns {void}
  */
 function _removeNoDataFromSourceNotification({ getState, dispatch }: IStore, track: ITrack) {
-    const t = getTrackByJitsiTrack(getState()['features/base/tracks'].tracks, track.jitsiTrack);
+    const t = getTrackByJitsiTrack(getState()['features/base/tracks'], track.jitsiTrack);
     const { jitsiTrack, noDataFromSourceNotificationInfo = {} } = t || {};
 
     if (noDataFromSourceNotificationInfo?.uid) {
@@ -361,7 +359,7 @@ function _setMuted(store: IStore, { ensureTrack, muted }: {
     ensureTrack: boolean; muted: boolean; }) {
     const { dispatch, getState } = store;
     const state = getState();
-    const localTrack = getLocalTrack(state['features/base/tracks'].tracks, MEDIA_TYPE.AUDIO, /* includePending */ true);
+    const localTrack = getLocalTrack(state['features/base/tracks'], MEDIA_TYPE.AUDIO, /* includePending */ true);
 
     if (localTrack) {
         // The `jitsiTrack` property will have a value only for a localTrack for which `getUserMedia` has already

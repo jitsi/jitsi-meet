@@ -461,7 +461,7 @@ class ConnectionStatusComponent extends PureComponent<IProps, IState> {
  */
 function _mapStateToProps(state: IReduxState, ownProps: IProps) {
     const { participantID } = ownProps;
-    const tracks = state['features/base/tracks'].tracks;
+    const tracks = state['features/base/tracks'];
     const _videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantID);
     const _isConnectionStatusInactive = isTrackStreamingStatusInactive(_videoTrack);
     const _isConnectionStatusInterrupted = isTrackStreamingStatusInterrupted(_videoTrack);

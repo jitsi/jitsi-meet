@@ -38,7 +38,7 @@ function calculateLocalTrackDuration(state: IReduxState) {
     const { conference } = state['features/base/conference'];
     const { audio, video } = localTracksDuration;
     const { camera, desktop } = video;
-    const tracks = state['features/base/tracks'].tracks;
+    const tracks = state['features/base/tracks'];
     const audioTrack = getLocalAudioTrack(tracks);
     const videoTrack = getLocalVideoTrack(tracks);
     const newDuration = { ...localTracksDuration };

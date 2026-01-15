@@ -322,7 +322,7 @@ export function submitShortcutsTab(newState: any) {
 export function submitVirtualBackgroundTab(newState: any, isCancel = false) {
     return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
-        const track = getLocalVideoTrack(state['features/base/tracks'].tracks)?.jitsiTrack;
+        const track = getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack;
         const { localFlipX } = state['features/base/settings'];
 
         if (newState.options?.selectedThumbnail) {

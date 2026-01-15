@@ -51,7 +51,7 @@ StateListenerRegistry.register(
     }, 100));
 
 StateListenerRegistry.register(
-    /* selector */ state => state['features/base/tracks'].tracks,
+    /* selector */ state => state['features/base/tracks'],
     /* listener */(remoteTracks, store) => {
         _updateReceiverVideoConstraints(store);
     });
@@ -317,7 +317,7 @@ StateListenerRegistry.register(
  */
 function _getSourceNames(participantList: Array<string>, state: IReduxState): Array<string> {
     const { remoteScreenShares } = state['features/video-layout'];
-    const tracks = state['features/base/tracks'].tracks;
+    const tracks = state['features/base/tracks'];
     const sourceNamesList: string[] = [];
 
     participantList.forEach(participantId => {
@@ -399,7 +399,7 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
         = Math.min(maxReceiverVideoQualityForScreenSharingFilmstrip, preferredVideoQuality);
     const { remoteScreenShares } = state['features/video-layout'];
     const { visibleRemoteParticipants } = state['features/filmstrip'];
-    const tracks = state['features/base/tracks'].tracks;
+    const tracks = state['features/base/tracks'];
     const localParticipantId = getLocalParticipant(state)?.id;
     const activeParticipantsIds = getActiveParticipantsIds(state);
     const screenshareFilmstripParticipantId = isTopPanelEnabled(state) && getScreenshareFilmstripParticipantId(state);

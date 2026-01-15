@@ -178,7 +178,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<IProps, IState> {
  */
 export function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantId } = ownProps;
-    const tracks = state['features/base/tracks'].tracks;
+    const tracks = state['features/base/tracks'];
     const participant = participantId ? getParticipantById(state, participantId) : getLocalParticipant(state);
     const _isVirtualScreenshareParticipant = isScreenShareParticipant(participant);
     let _isConnectionStatusInactive;

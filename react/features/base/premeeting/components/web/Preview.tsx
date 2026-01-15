@@ -92,7 +92,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         flipVideo: Boolean(state['features/base/settings'].localFlipX),
         name,
         videoMuted: ownProps.videoTrack ? ownProps.videoMuted : state['features/base/media'].video.muted,
-        videoTrack: ownProps.videoTrack || getLocalVideoTrack(state['features/base/tracks'].tracks)?.jitsiTrack
+        videoTrack: ownProps.videoTrack || getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack
     };
 }
 
