@@ -29,7 +29,7 @@ describe('XMPP Conference Request', () => {
         });
 
         await p1.getPreJoinScreen().getJoinButton().click();
-        await p1.waitForMucJoinedOrError()
-        expect(await p1.isInMuc()).toBe(true)
+        await p1.waitForMucJoinedOrError();
+        expect(await p1.isInMuc()).toBe(true);
     });
 });
