@@ -41,7 +41,8 @@ const useStyles = makeStyles<{ deviceStatusType?: string; }>()((theme, { deviceS
             width: '16px',
             height: '16px',
             borderRadius: '100%',
-            backgroundColor: deviceStatusType === 'ok' ? theme.palette.success01 : ColorPalette.darkGrey
+            backgroundColor: deviceStatusType === 'ok' ? theme.palette.success01 : ColorPalette.darkGrey,
+            flexShrink: 0
         }
     };
 });
