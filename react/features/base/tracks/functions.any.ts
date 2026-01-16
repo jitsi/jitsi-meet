@@ -533,7 +533,7 @@ export function getCameraFacingMode(state: IReduxState) {
  * @param {string} mediaType - The media type.
  * @returns {boolean} True if moderator-initiated.
  */
-export function wasModeratorInitiated(state: any, participantId: string, mediaType: string): boolean {
+export function wasMutedByModerator(state: any, participantId: string, mediaType: string): boolean {
     const key = `${participantId}-${mediaType}`;
     const trackingState = state['features/base/tracks/mute-tracking'];
 

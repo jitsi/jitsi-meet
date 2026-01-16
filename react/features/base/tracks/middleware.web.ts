@@ -46,7 +46,7 @@ import {
     isUserInteractionRequiredForUnmute,
     logTracksForParticipant,
     setTrackMuted,
-    wasModeratorInitiated
+    wasMutedByModerator
 } from './functions.web';
 import { ITrack, ITrackOptions } from './types';
 import './middleware.any';
@@ -79,7 +79,7 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
 
         // Check if this was a moderator-initiated mute using selector
-        const wasModeratorMute = wasModeratorInitiated(state, participantId, mediaType);
+        const wasModeratorMute = wasMutedByModerator(state, participantId, mediaType);
 
         if (wasModeratorMute) {
             store.dispatch(trackModeratorMuteCleared(participantId, mediaType));
@@ -97,7 +97,7 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
 
         // Check if this was a moderator-initiated mute using selector
-        const wasModeratorMute = wasModeratorInitiated(state, participantId, mediaType);
+        const wasModeratorMute = wasMutedByModerator(state, participantId, mediaType);
 
         if (wasModeratorMute) {
             store.dispatch(trackModeratorMuteCleared(participantId, mediaType));

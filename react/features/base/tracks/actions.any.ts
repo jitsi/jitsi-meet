@@ -18,6 +18,8 @@ import {
 import { getLocalParticipant } from '../participants/functions';
 
 import {
+    REMOTE_PARTICIPANT_AUDIO_MUTE_CHANGED,
+    REMOTE_PARTICIPANT_VIDEO_MUTE_CHANGED,
     SET_NO_SRC_DATA_NOTIFICATION_UID,
     TRACK_ADDED,
     TRACK_CREATE_CANCELED,
@@ -907,7 +909,7 @@ export function setNoSrcDataNotificationUid(uid?: string) {
  */
 export function remoteParticipantAudioMuteChanged(participantId: string, muted: boolean) {
     return {
-        type: 'REMOTE_PARTICIPANT_AUDIO_MUTE_CHANGED',
+        type: REMOTE_PARTICIPANT_AUDIO_MUTE_CHANGED,
         participantId,
         muted: Boolean(muted)
     };
@@ -927,7 +929,7 @@ export function remoteParticipantAudioMuteChanged(participantId: string, muted: 
  */
 export function remoteParticipantVideoMuteChanged(participantId: string, muted: boolean) {
     return {
-        type: 'REMOTE_PARTICIPANT_VIDEO_MUTE_CHANGED',
+        type: REMOTE_PARTICIPANT_VIDEO_MUTE_CHANGED,
         participantId,
         muted: Boolean(muted)
     };
