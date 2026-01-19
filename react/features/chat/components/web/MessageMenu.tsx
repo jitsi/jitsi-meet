@@ -39,14 +39,14 @@ const useStyles = makeStyles()(theme => {
             }
         },
         menuPanel: {
-            backgroundColor: theme.palette.ui03,
+            backgroundColor: theme.palette.chatInputBackground,
             borderRadius: theme.shape.borderRadius,
             boxShadow: theme.shadows[3],
             overflow: 'hidden'
         },
         copiedMessage: {
             position: 'fixed',
-            backgroundColor: theme.palette.ui03,
+            backgroundColor: theme.palette.chatInputBackground,
             color: 'white',
             padding: '4px 8px',
             borderRadius: '4px',

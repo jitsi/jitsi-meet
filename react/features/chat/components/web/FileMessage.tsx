@@ -46,12 +46,12 @@ const useStyles = makeStyles()(theme => {
 
                 // Add background to button container to hide text underneath in chat context
                 '& > div:last-child': {
-                    backgroundColor: theme.palette.ui02,
+                    backgroundColor: theme.palette.chatMessageRemote,
                     paddingLeft: theme.spacing(2)
                 },
 
                 '&:hover > div:last-child': {
-                    backgroundColor: theme.palette.ui03
+                    backgroundColor: theme.palette.chatInputBackground
                 }
             },
 

@@ -12,7 +12,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             display: 'flex',
             flexDirection: 'row',
             borderRadius: '4px',
-            backgroundColor: theme.palette.ui03
+            backgroundColor: theme.palette.chatInputBackground
         },
 
         emojiButton: {

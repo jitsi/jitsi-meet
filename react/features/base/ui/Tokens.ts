@@ -1,3 +1,4 @@
+/* eslint-disable @stylistic/no-multi-spaces */
 // Mapping between the token used and the color
 export const colorMap = {
     // ----- Surfaces -----
@@ -7,7 +8,7 @@ export const colorMap = {
     //  - JitsiMeetView.java
     uiBackground: 'surface01',
 
-    // Container backgrounds
+    // Container backgrounds (legacy tokens)
     ui01: 'surface02',
     ui02: 'surface03',
     ui03: 'ui02',
@@ -46,6 +47,96 @@ export const colorMap = {
 
     // Focus
     focus01: 'focus01',
+
+    // ----- Semantic Tokens (component-based, backwards compatible) -----
+
+    // Dialog/Modal Components
+    dialogBackground: 'surface02',      // Main dialog background (same as ui01)
+    dialogOverlay: 'surface03',         // Overlay/backdrop (same as ui02)
+    dialogBorder: 'ui02',               // Dialog borders (ui03 → ui02 from tokens.json #3D3D3D)
+    dialogText: 'textColor01',          // Primary dialog text (same as text01)
+    dialogSecondaryText: 'textColor02', // Secondary dialog text (same as text02)
+
+    // Large Video
+    largeVideoBackground: 'surface03',  // Main video area background (same as ui02)
+    largeVideoPlaceholder: 'surface03', // Placeholder when no video (same as ui02)
+
+    // Filmstrip
+    filmstripBackground: 'surface03',   // Filmstrip container background (same as ui02)
+    thumbnailBackground: 'surface03',   // Individual thumbnail background (same as ui02)
+    thumbnailBorder: 'ui03',            // Thumbnail borders (same as ui03)
+    thumbnailHover: 'hover05',          // Thumbnail hover state (same as action03Hover)
+
+    // Chat
+    chatBackground: 'surface02',              // Chat panel background (same as ui01)
+    chatBackdrop: 'ui04',                     // Chat screen background (same as ui10)
+    chatEmptyText: 'ui03',                    // Empty component text
+    chatInputBackground: 'surface03',         // Chat input field background (same as ui02)
+    chatInputBorder: 'surface03',             // Chat input border (same as ui02)
+    chatLink: 'action01',                     // Chat link color (same as link01)
+    chatLobbyMessageBubble: 'support06',      // Lobby message bubble background
+    chatLobbyMessageNotice: 'surface01',      // Lobby message notice text
+    chatLobbyRecipientContainer: 'support06', // Lobby recipient container background
+    chatMessageLocal: 'surface05',            // Local participant message bubble (same as ui04)
+    chatMessagePrivate: 'support05',          // Private/DM message bubble
+    chatMessageRemote: 'surface03',           // Remote participant message bubble (same as ui02)
+    chatMessageText: 'textColor01',           // Chat message text
+    chatPrivateNotice: 'textColor02',         // Private message notice text
+    chatRecipientCancelIcon: 'icon01',        // Recipient cancel icon color
+    chatRecipientContainer: 'support05',      // Recipient container background
+    chatRecipientText: 'textColor01',         // Recipient text color
+    chatReplyIcon: 'icon01',                  // Reply icon color
+    chatSenderName: 'textColor02',            // Sender display name color
+    chatTimestamp: 'ui03',                    // Chat timestamp text
+
+    // Toolbox/Toolbar
+    toolboxBackground: 'surface02',     // Main toolbox background (same as ui01)
+    drawerBackground: 'surface02',      // Drawer/side panel background (same as ui01)
+    toolbarButton: 'action01',          // Toolbar button color
+    toolbarButtonHover: 'hover01',      // Toolbar button hover (same as action01Hover)
+
+    // Participants Pane
+    participantsPaneBackground: 'surface02', // Participants list background (same as ui01)
+    participantItemBackground: 'surface03',  // Individual participant item background (same as ui02)
+    participantItemHover: 'hover05',         // Participant item hover (same as action03Hover)
+    participantItemBorder: 'surface03',      // Participant item border (same as ui02)
+
+    // Lobby
+    lobbyBackground: 'surface02',       // Lobby screen background (same as ui01)
+    lobbyPreviewBackground: 'surface03', // Video preview background (same as ui02)
+
+    // Speaker Stats
+    speakerStatsBackground: 'surface02', // Speaker stats panel background (same as ui01)
+    speakerStatsRowBackground: 'surface03', // Individual stat row background (same as ui02)
+    speakerStatsBorder: 'surface03',    // Speaker stats borders (same as ui02)
+
+    // Pre-meeting/Prejoin
+    preMeetingBackground: 'surface01',  // Pre-meeting screen background (same as uiBackground)
+    preMeetingPreview: 'surface02',     // Video preview in pre-meeting (same as ui01)
+
+    // Notifications
+    notificationBackground: 'surface02', // Notification background (same as ui01)
+    notificationError: 'action03',      // Error notification (same as actionDanger)
+    notificationSuccess: 'success01',   // Success notification
+    notificationWarning: 'warning01',   // Warning notification
+
+    // Forms/Inputs
+    inputBackground: 'field01',         // Input field background
+    inputBorder: 'surface03',           // Input field border (same as ui02)
+    inputText: 'textColor01',           // Input field text (same as text01)
+    inputPlaceholder: 'textColor02',    // Input placeholder text (same as text02)
+
+    // Breakout Rooms
+    breakoutRoomBackground: 'surface02', // Breakout rooms panel background (same as ui01)
+    breakoutRoomItemBackground: 'surface03', // Individual breakout room background (same as ui02)
+
+    // Settings
+    settingsBackground: 'surface02',    // Settings dialog background (same as ui01)
+    settingsSectionBackground: 'surface03', // Settings section background (same as ui02)
+
+    // Welcome Page
+    welcomeBackground: 'surface01',     // Welcome page background (same as uiBackground)
+    welcomeCard: 'surface02',           // Welcome page cards (same as ui01)
 
     // ----- Links -----
 

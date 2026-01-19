@@ -5,7 +5,7 @@ const BUBBLE_RADIUS = 8;
 
 const recipientContainer = {
     alignItems: 'center',
-    backgroundColor: BaseTheme.palette.support05,
+    backgroundColor: BaseTheme.palette.chatRecipientContainer,
     borderRadius: BaseTheme.shape.borderRadius,
     flexDirection: 'row',
     height: 48,
@@ -34,7 +34,7 @@ export default {
      * Background of the chat screen.
      */
     backdrop: {
-        backgroundColor: BaseTheme.palette.ui10,
+        backgroundColor: BaseTheme.palette.chatBackdrop,
         flex: 1
     },
 
@@ -44,31 +44,31 @@ export default {
     },
 
     emptyComponentText: {
-        color: BaseTheme.palette.text03,
+        color: BaseTheme.palette.chatEmptyText,
         textAlign: 'center'
     },
 
     lobbyMessageBubble: {
-        backgroundColor: BaseTheme.palette.support06
+        backgroundColor: BaseTheme.palette.chatLobbyMessageBubble
     },
 
     lobbyMsgNotice: {
-        color: BaseTheme.palette.text04,
+        color: BaseTheme.palette.chatLobbyMessageNotice,
         fontSize: 11,
         marginTop: 6
     },
 
     privateNotice: {
         ...BaseTheme.palette.bodyShortRegular,
-        color: BaseTheme.palette.text02
+        color: BaseTheme.palette.chatPrivateNotice
     },
 
     privateMessageBubble: {
-        backgroundColor: BaseTheme.palette.support05
+        backgroundColor: BaseTheme.palette.chatMessagePrivate
     },
 
     remoteMessageBubble: {
-        backgroundColor: BaseTheme.palette.ui02,
+        backgroundColor: BaseTheme.palette.chatMessageRemote,
         borderTopLeftRadius: 0
     },
 
@@ -79,7 +79,7 @@ export default {
 
     replyStyles: {
         iconStyle: {
-            color: BaseTheme.palette.icon01,
+            color: BaseTheme.palette.chatReplyIcon,
             fontSize: 22,
             padding: BaseTheme.spacing[2]
         },
@@ -95,12 +95,12 @@ export default {
     },
 
     chatLink: {
-        color: BaseTheme.palette.link01
+        color: BaseTheme.palette.chatLink
     },
 
     chatMessage: {
         ...BaseTheme.typography.bodyShortRegular,
-        color: BaseTheme.palette.text01
+        color: BaseTheme.palette.chatMessageText
     },
 
     /**
@@ -201,12 +201,12 @@ export default {
      * Text node for the timestamp.
      */
     timeText: {
-        color: BaseTheme.palette.text03,
+        color: BaseTheme.palette.chatTimestamp,
         fontSize: 13
     },
 
     chatContainer: {
-        backgroundColor: BaseTheme.palette.ui01,
+        backgroundColor: BaseTheme.palette.chatBackground,
         flex: 1
     },
 
@@ -242,21 +242,21 @@ export default {
 
     senderDisplayName: {
         ...BaseTheme.typography.bodyShortBold,
-        color: BaseTheme.palette.text02
+        color: BaseTheme.palette.chatSenderName
     },
 
     localMessageBubble: {
-        backgroundColor: BaseTheme.palette.ui04,
+        backgroundColor: BaseTheme.palette.chatMessageLocal,
         borderTopRightRadius: 0
     },
 
     lobbyMessageRecipientContainer: {
         ...recipientContainer,
-        backgroundColor: BaseTheme.palette.support06
+        backgroundColor: BaseTheme.palette.chatLobbyRecipientContainer
     },
 
     messageRecipientCancelIcon: {
-        color: BaseTheme.palette.icon01,
+        color: BaseTheme.palette.chatRecipientCancelIcon,
         fontSize: 18
     },
 
@@ -266,7 +266,7 @@ export default {
 
     messageRecipientText: {
         ...BaseTheme.typography.bodyShortRegular,
-        color: BaseTheme.palette.text01,
+        color: BaseTheme.palette.chatRecipientText,
         flex: 1
     }
 };
