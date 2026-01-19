@@ -50,7 +50,7 @@ import MiddlewareRegistry from '../../base/redux/MiddlewareRegistry';
 import StateListenerRegistry from '../../base/redux/StateListenerRegistry';
 import { toggleScreensharing } from '../../base/tracks/actions.native';
 import { CAMERA_FACING_MODE_MESSAGE } from '../../base/tracks/constants';
-import { getLocalDesktopTrack, getLocalTracks, isLocalTrackMuted } from '../../base/tracks/functions.native';
+import { getLocalTracks, isLocalTrackMuted } from '../../base/tracks/functions.native';
 import { ITrack } from '../../base/tracks/types';
 import { CLOSE_CHAT, OPEN_CHAT } from '../../chat/actionTypes';
 import { closeChat, openChat, sendMessage, setPrivateMessageRecipient } from '../../chat/actions.native';
@@ -71,7 +71,6 @@ import { READY_TO_CLOSE } from './actionTypes';
 import { setParticipantsWithScreenShare } from './actions';
 import { participantToParticipantInfo, sendEvent } from './functions';
 import logger from './logger';
-
 
 /**
  * Event which will be emitted on the native side when a chat message is received
@@ -116,13 +115,11 @@ const externalAPIEnabled = isExternalAPIAvailable();
 
 let eventEmitter: any;
 
-const { ExternalAPI, WebRTCModule } = NativeModules;
+const { ExternalAPI } = NativeModules;
 
 if (externalAPIEnabled) {
     eventEmitter = new NativeEventEmitter(ExternalAPI);
 }
-
-const webrtcEventEmitter = new NativeEventEmitter(WebRTCModule);
 
 /**
  * Middleware that captures Redux actions and uses the ExternalAPI module to
@@ -400,18 +397,6 @@ externalAPIEnabled && StateListenerRegistry.register(
 function _registerForNativeEvents(store: IStore) {
     const { getState, dispatch } = store;
 
-    webrtcEventEmitter.addListener('mediaStreamTrackEnded', ({ trackId }: any) => {
-        const state = store.getState();
-        const tracks = state['features/base/tracks'];
-        const track = getLocalDesktopTrack(tracks);
-
-        const mediaStreamTrackId = track?.jitsiTrack?.getTrack?.()?.id;
-
-        if (mediaStreamTrackId === trackId) {
-            dispatch(toggleScreensharing(false));
-        }
-    });
-
     eventEmitter.addListener(ExternalAPI.HANG_UP, () => {
         dispatch(appNavigate(undefined));
     });
@@ -669,8 +654,6 @@ function _registerForNativeEvents(store: IStore) {
  * @returns {void}
  */
 function _unregisterForNativeEvents() {
-    webrtcEventEmitter.removeAllListeners('mediaStreamTrackEnded');
-
     eventEmitter.removeAllListeners(ExternalAPI.HANG_UP);
     eventEmitter.removeAllListeners(ExternalAPI.SET_AUDIO_MUTED);
     eventEmitter.removeAllListeners(ExternalAPI.SET_VIDEO_MUTED);

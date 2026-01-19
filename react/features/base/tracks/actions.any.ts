@@ -29,6 +29,7 @@ import {
     TRACK_UPDATED,
     TRACK_WILL_CREATE
 } from './actionTypes';
+import { toggleScreensharing } from './actions';
 import {
     createLocalTracksF,
     getCameraFacingMode,
@@ -385,7 +386,15 @@ export function trackAdded(track: any) {
         const mediaType = track.getVideoType() === VIDEO_TYPE.DESKTOP
             ? MEDIA_TYPE.SCREENSHARE
             : track.getType();
+        const mediaStreamTrack = track?.getTrack?.();
+
         let isReceivingData, noDataFromSourceNotificationInfo, participantId;
+
+        if (mediaType === MEDIA_TYPE.SCREENSHARE) {
+            mediaStreamTrack.onended = () => {
+                dispatch(toggleScreensharing(false));
+            };
+        }
 
         if (local) {
             // Reset the no data from src notification state when we change the track, as it's context is set
