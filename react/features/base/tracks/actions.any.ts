@@ -389,6 +389,8 @@ export function trackAdded(track: any) {
 
         let isReceivingData, noDataFromSourceNotificationInfo, participantId;
 
+        // Make screen share toggle off listen to MediaStreamTrack "ended" event
+        // when it's terminated via Android status bar chip.
         if (navigator.product === 'ReactNative') {
             const mediaStreamTrack = track?.getTrack?.();
 
@@ -581,6 +583,7 @@ export function trackRemoved(track: any): {
     track.removeAllListeners(JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED);
     track.removeAllListeners(JitsiTrackEvents.NO_DATA_FROM_SOURCE);
 
+    // Remove MediaStreamTrack "ended" event.
     if (navigator.product === 'ReactNative') {
         const mediaStreamTrack = track?.getTrack?.();
 
