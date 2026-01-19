@@ -386,14 +386,18 @@ export function trackAdded(track: any) {
         const mediaType = track.getVideoType() === VIDEO_TYPE.DESKTOP
             ? MEDIA_TYPE.SCREENSHARE
             : track.getType();
-        const mediaStreamTrack = track?.getTrack?.();
 
         let isReceivingData, noDataFromSourceNotificationInfo, participantId;
 
-        if (mediaType === MEDIA_TYPE.SCREENSHARE) {
-            mediaStreamTrack.onended = () => {
-                dispatch(toggleScreensharing(false));
-            };
+        if (navigator.product === 'ReactNative') {
+            const mediaStreamTrack = track?.getTrack?.();
+
+            if (mediaType === MEDIA_TYPE.SCREENSHARE) {
+                const onEnded = () => dispatch(toggleScreensharing(false));
+
+                mediaStreamTrack.addEventListener('ended', onEnded);
+                track._onEnded = onEnded;
+            }
         }
 
         if (local) {
@@ -576,6 +580,15 @@ export function trackRemoved(track: any): {
     track.removeAllListeners(JitsiTrackEvents.TRACK_MUTE_CHANGED);
     track.removeAllListeners(JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED);
     track.removeAllListeners(JitsiTrackEvents.NO_DATA_FROM_SOURCE);
+
+    if (navigator.product === 'ReactNative') {
+        const mediaStreamTrack = track?.getTrack?.();
+
+        if (track._onEnded) {
+            mediaStreamTrack.removeEventListener('ended', track._onEnded);
+            delete track._onEnded;
+        }
+    }
 
     return {
         type: TRACK_REMOVED,
