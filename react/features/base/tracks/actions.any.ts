@@ -29,6 +29,7 @@ import {
     TRACK_UPDATED,
     TRACK_WILL_CREATE
 } from './actionTypes';
+import { toggleScreensharing } from './actions';
 import {
     createLocalTracksF,
     getCameraFacingMode,
@@ -385,7 +386,21 @@ export function trackAdded(track: any) {
         const mediaType = track.getVideoType() === VIDEO_TYPE.DESKTOP
             ? MEDIA_TYPE.SCREENSHARE
             : track.getType();
+
         let isReceivingData, noDataFromSourceNotificationInfo, participantId;
+
+        // Make screen share toggle off listen to MediaStreamTrack "ended" event
+        // when it's terminated via Android status bar chip.
+        if (navigator.product === 'ReactNative') {
+            const mediaStreamTrack = track?.getTrack?.();
+
+            if (mediaType === MEDIA_TYPE.SCREENSHARE) {
+                const onEnded = () => dispatch(toggleScreensharing(false));
+
+                mediaStreamTrack.addEventListener('ended', onEnded);
+                track._onEnded = onEnded;
+            }
+        }
 
         if (local) {
             // Reset the no data from src notification state when we change the track, as it's context is set
@@ -567,6 +582,16 @@ export function trackRemoved(track: any): {
     track.removeAllListeners(JitsiTrackEvents.TRACK_MUTE_CHANGED);
     track.removeAllListeners(JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED);
     track.removeAllListeners(JitsiTrackEvents.NO_DATA_FROM_SOURCE);
+
+    // Remove MediaStreamTrack "ended" event.
+    if (navigator.product === 'ReactNative') {
+        const mediaStreamTrack = track?.getTrack?.();
+
+        if (track._onEnded) {
+            mediaStreamTrack.removeEventListener('ended', track._onEnded);
+            delete track._onEnded;
+        }
+    }
 
     return {
         type: TRACK_REMOVED,
