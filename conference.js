@@ -1466,14 +1466,19 @@ export default {
             if (participantThatMutedUs) {
                 APP.store.dispatch(participantMutedUs(participantThatMutedUs, track));
             }
-        });
 
-        room.on(JitsiConferenceEvents.TRACK_AUDIO_MUTED_CHANGED, (participant, muted) => {
-            APP.store.dispatch(remoteParticipantAudioMuteChanged(participant.getId(), muted));
-        });
+            // Handle remote participant mute changes
+            if (!track.isLocal()) {
+                const participantId = track.getParticipantId();
+                const muted = track.isMuted();
+                const mediaType = track.getType(); // 'audio' or 'video'
 
-        room.on(JitsiConferenceEvents.TRACK_VIDEO_MUTED_CHANGED, (participant, muted) => {
-            APP.store.dispatch(remoteParticipantVideoMuteChanged(participant.getId(), muted));
+                if (mediaType === 'audio') {
+                    APP.store.dispatch(remoteParticipantAudioMuteChanged(participantId, muted));
+                } else if (mediaType === 'video') {
+                    APP.store.dispatch(remoteParticipantVideoMuteChanged(participantId, muted));
+                }
+            }
         });
 
         room.on(JitsiConferenceEvents.TRACK_UNMUTE_REJECTED, track => APP.store.dispatch(destroyLocalTracks(track)));
