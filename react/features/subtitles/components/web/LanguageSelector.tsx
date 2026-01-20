@@ -51,6 +51,13 @@ function LanguageSelector() {
         state,
         selectedLanguage?.replace('translation-languages:', '')
     ));
+    const isAsyncTranscriptionEnabled = useSelector((state: IReduxState) =>
+        state['features/base/conference'].conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription);
+
+    // Hide the "Translate to" option when asyncTranscription is enabled
+    if (isAsyncTranscriptionEnabled) {
+        return null;
+    }
 
     /**
      * Maps available languages to Select component options format.
