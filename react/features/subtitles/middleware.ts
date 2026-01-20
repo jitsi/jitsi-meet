@@ -98,7 +98,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case SET_REQUESTING_SUBTITLES:
-        _requestingSubtitlesChange(store, action.enabled, action.language);
+        _requestingSubtitlesChange(store, action.enabled, action.language, action.forceBackendRecordingOn);
         break;
     }
 
@@ -344,13 +344,16 @@ function _getPrimaryLanguageCode(language: string) {
  * @param {Store} store - The redux store.
  * @param {boolean} enabled - Whether subtitles should be enabled or not.
  * @param {string} language - The language to use for translation.
+ * @param {boolean} forceBackendRecordingOn - Whether to force backend recording is on or not. This is used only when
+ * we start recording, stopping is based on whether isTranscribingEnabled is already set.
  * @private
  * @returns {void}
  */
 function _requestingSubtitlesChange(
         { dispatch, getState }: IStore,
         enabled: boolean,
-        language?: string | null) {
+        language?: string | null,
+        forceBackendRecordingOn: boolean = false) {
     const state = getState();
     const { conference } = state['features/base/conference'];
     const backendRecordingOn = conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription;
@@ -375,7 +378,9 @@ function _requestingSubtitlesChange(
                     }));
                     dispatch(setSubtitlesError(true));
                 });
-        } else {
+        }
+
+        if (backendRecordingOn || forceBackendRecordingOn) {
             conference?.getMetadataHandler()?.setMetadata(RECORDING_METADATA_ID, {
                 isTranscribingEnabled: true
             });

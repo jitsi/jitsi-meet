@@ -790,7 +790,7 @@ function initCommands() {
             }
 
             if (transcription) {
-                APP.store.dispatch(setRequestingSubtitles(true, false, null));
+                APP.store.dispatch(setRequestingSubtitles(true, false, null, true));
             }
         },
 
