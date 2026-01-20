@@ -44,19 +44,23 @@ class MessageContainer extends Component<IProps, any> {
      */
     override render() {
         const data = this._getMessagesGroupedBySender();
+        const noMessages = data.length === 0;
 
         return (
             <FlatList
                 ListEmptyComponent = { this._renderListEmptyComponent }
                 bounces = { false }
-                data = { data }
 
+                // @ts-ignore
+                contentContainerStyle = { noMessages && styles.emptyListContentContainer }
+                data = { data }
                 // Workaround for RN bug:
                 // https://github.com/facebook/react-native/issues/21196
                 inverted = { Boolean(data.length) }
                 keyExtractor = { this._keyExtractor }
                 keyboardShouldPersistTaps = 'handled'
-                renderItem = { this._renderMessageGroup } />
+                renderItem = { this._renderMessageGroup }
+                style = { noMessages && styles.emptyListStyle } />
         );
     }
 

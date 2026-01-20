@@ -38,32 +38,36 @@ const PollsList = ({ setCreateMode }: IPollListProps) => {
         scrollToBottom();
     }, [ polls ]);
 
+    const renderEmptyComponent = useCallback(() => (
+        <View style = { pollsStyles.noPollContent as ViewStyle }>
+            <Icon
+                color = { BaseTheme.palette.icon03 }
+                size = { 100 }
+                src = { IconMessage } />
+            <Text
+                id = 'no-polls-text'
+                style = { pollsStyles.noPollText as TextStyle } >
+                {
+                    t('polls.results.empty')
+                }
+            </Text>
+        </View>
+    ), [ t ]);
+
+    const noPolls = listPolls.length === 0;
+
     return (
-        <>
-            {
-                listPolls.length === 0
-                && <View style = { pollsStyles.noPollContent as ViewStyle }>
-                    <Icon
-                        color = { BaseTheme.palette.icon03 }
-                        size = { 160 }
-                        src = { IconMessage } />
-                    <Text
-                        id = 'no-polls-text'
-                        style = { pollsStyles.noPollText as TextStyle } >
-                        {
-                            t('polls.results.empty')
-                        }
-                    </Text>
-                </View>
-            }
-            <FlatList
-                data = { listPolls }
-                extraData = { listPolls }
-                // eslint-disable-next-line react/jsx-no-bind
-                keyExtractor = { (item, index) => index.toString() }
-                ref = { flatlistRef }
-                renderItem = { renderItem } />
-        </>
+        <FlatList
+            ListEmptyComponent = { renderEmptyComponent }
+            // @ts-ignore
+            contentContainerStyle = { noPolls && pollsStyles.emptyListContentContainer as ViewStyle }
+            data = { listPolls }
+            extraData = { listPolls }
+            // eslint-disable-next-line react/jsx-no-bind
+            keyExtractor = { (item, index) => index.toString() }
+            ref = { flatlistRef }
+            renderItem = { renderItem }
+            style = { noPolls && pollsStyles.emptyListStyle as ViewStyle } />
     );
 };
 
