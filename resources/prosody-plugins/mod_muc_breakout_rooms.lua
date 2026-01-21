@@ -532,7 +532,7 @@ function on_main_room_destroyed(event)
     end
 end
 
--- Checks is a jid in switching state. We check is the jid(the connection jid) that is switching that is stored
+-- Checks for a conflict with a JID in the switching_room_cache. In case of a conflict sends an error and returns true (the join is not allowed).
 -- in switching_room_cache is the same as the jid that is sending the stanza, if that is the case we can allow
 -- the join to proceed by returning false. If there is no match we send an error and return true
 -- which should halt the join.
