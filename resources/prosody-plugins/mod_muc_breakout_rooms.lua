@@ -67,7 +67,7 @@ local main_muc_service;
 -- Maps a breakout room jid to the main room jid
 local main_rooms_map = {};
 
--- a map with nick to full jid that are switching rooms
+-- a map with nick to bare connection jid that are switching rooms
 local cache = require 'util.cache';
 local switching_room_cache = cache.new(1000);
 
@@ -534,7 +534,8 @@ end
 
 -- Checks is a jid in switching state. We check is the jid(the connection jid) that is switching that is stored
 -- in switching_room_cache is the same as the jid that is sending the stanza, if that is the case we can allow
--- the join to proceed.
+-- the join to proceed by returning false. If there is no match we send an error and return true
+-- which should halt the join.
 -- @param jid - The jid to check, this is the jid requested to join breakout or main room
 -- @param from_bare_jid - The real jid of the occupant trying to join
 -- @param room - The room being joined
@@ -548,6 +549,8 @@ function check_switching_state(jid, from_bare_jid, room, stanza, origin)
         origin.send(reply);
         return true;
     end
+
+    return false;
 end
 
 function check_for_existing_occupant_in_room(room, requested_resource, bare_jid, stanza, origin)
@@ -559,8 +562,7 @@ function check_for_existing_occupant_in_room(room, requested_resource, bare_jid,
 end
 
 -- This is a request to join or change jid in main or breakout room. We need to check whether the requested jid does not
--- conflict with a jid which is currently in switching state or already in another room. When the request is for the
--- main room we check all breakout rooms and if it is a breakout room we check only the main room.
+-- conflict with a jid which is currently in switching state or already in another room.
 function on_occupant_pre_join_or_change(e)
     local room, stanza, origin = e.room, e.stanza, e.origin;
     local requested_jid = stanza.attr.to;
@@ -593,9 +595,20 @@ function on_occupant_pre_join_or_change(e)
             end
         end
     else
-        -- this is a breakout room let's check the main room only
+        -- this is a breakout room let's check the main room
         if check_for_existing_occupant_in_room(main_room, jid_resource(requested_jid), bare_jid, stanza, origin) then
             return true;
+        end
+
+        -- now let's check the rest of the breakout rooms
+        for breakout_room_jid in pairs(main_room._data.breakout_rooms or {}) do
+            local breakout_room = breakout_rooms_muc_service.get_room_from_jid(breakout_room_jid);
+            if breakout_room then
+                if check_for_existing_occupant_in_room(
+                    breakout_room, jid_resource(requested_jid), bare_jid, stanza, origin) then
+                    return true;
+                end
+            end
         end
     end
 end
