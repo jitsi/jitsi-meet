@@ -13,6 +13,7 @@ local inspect = require 'inspect';
 
 local ban_check_count = module:measure("muc_auth_ban_check", "rate")
 local ban_check_users_banned_count = module:measure("muc_auth_ban_users_banned", "rate")
+local ban_check_error_count = module:measure("muc_auth_ban_check_error", "rate")
 
 -- we will cache banned tokens to avoid extra requests
 -- on destroying session, websocket retries 2 more times before giving up
@@ -68,6 +69,10 @@ local function shouldAllow(session)
 
                     cache:set(token, socket.gettime());
                 end
+            else
+                ban_check_error_count();
+                module:log("warn", "Error code:%s contacting url:%s response:%s request:%s content:%s",
+                    code, ACCESS_MANAGER_URL, response, request, content);
             end
         end
 
