@@ -67,7 +67,7 @@ local main_muc_service;
 -- Maps a breakout room jid to the main room jid
 local main_rooms_map = {};
 
--- a map with nick to bare connection jid that are switching rooms
+-- Maps a full room JID to a bare connection jid for a participant that's changing rooms.
 local cache = require 'util.cache';
 local switching_room_cache = cache.new(1000);
 
