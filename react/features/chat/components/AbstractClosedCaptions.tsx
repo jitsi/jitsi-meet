@@ -15,6 +15,7 @@ export type AbstractProps = {
     canStartSubtitles: boolean;
     filteredSubtitles: ISubtitle[];
     groupedSubtitles: IMessageGroup<ISubtitle>[];
+    isAsyncTranscriptionEnabled: boolean | undefined;
     isButtonPressed: boolean;
     isTranscribing: boolean;
     startClosedCaptions: () => void;
@@ -101,6 +102,7 @@ const AbstractClosedCaptions = (Component: ComponentType<AbstractProps>) => () =
             canStartSubtitles = { _canStartSubtitles }
             filteredSubtitles = { filteredSubtitles }
             groupedSubtitles = { groupedSubtitles }
+            isAsyncTranscriptionEnabled = { isAsyncTranscriptionEnabled }
             isButtonPressed = { isButtonPressed }
             isTranscribing = { _isTranscribing }
             startClosedCaptions = { startClosedCaptions } />
