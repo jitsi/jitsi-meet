@@ -927,6 +927,9 @@ var config = {
     //     [ 'microphone', 'camera' ]
     // ],
 
+    // Enable reduced UI on web.
+    // reducedUIEnabled: true,
+
     // Overrides the buttons displayed in the main toolbar for reduced UI.
     // When there isn't an override for a certain configuration the default jitsi-meet configuration will be used.
     // The order of the buttons in the array is preserved.
