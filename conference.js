@@ -3,6 +3,9 @@
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import Logger from '@jitsi/logger';
 
+// Track the last known mute state for each participant/mediaType to deduplicate events
+const lastKnownMuteState = new Map(); // key: `${participantId}-${mediaType}`, value: boolean
+
 import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 import Recorder from './modules/recorder/Recorder';
@@ -1385,6 +1388,10 @@ export default {
             // The logic shared between RN and web.
             commonUserLeftHandling(APP.store, room, user);
 
+            // Clean up mute state tracking for this participant
+            lastKnownMuteState.delete(`${id}-audio`);
+            lastKnownMuteState.delete(`${id}-video`);
+
             if (user.isHidden()) {
                 return;
             }
@@ -1472,11 +1479,18 @@ export default {
                 const participantId = track.getParticipantId();
                 const muted = track.isMuted();
                 const mediaType = track.getType(); // 'audio' or 'video'
+                const stateKey = `${participantId}-${mediaType}`;
+                const lastKnownState = lastKnownMuteState.get(stateKey);
 
-                if (mediaType === 'audio') {
-                    APP.store.dispatch(remoteParticipantAudioMuteChanged(participantId, muted));
-                } else if (mediaType === 'video') {
-                    APP.store.dispatch(remoteParticipantVideoMuteChanged(participantId, muted));
+                // Only dispatch if the state actually changed (deduplicate consecutive events with same state)
+                if (lastKnownState !== muted) {
+                    lastKnownMuteState.set(stateKey, muted);
+
+                    if (mediaType === 'audio') {
+                        APP.store.dispatch(remoteParticipantAudioMuteChanged(participantId, muted));
+                    } else if (mediaType === 'video') {
+                        APP.store.dispatch(remoteParticipantVideoMuteChanged(participantId, muted));
+                    }
                 }
             }
         });
