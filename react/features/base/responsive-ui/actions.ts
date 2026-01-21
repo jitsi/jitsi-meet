@@ -43,6 +43,7 @@ export function clientResized(clientWidth: number, clientHeight: number) {
 
         if (navigator.product !== 'ReactNative') {
             const state = getState();
+            const { reducedUIEnabled = true } = state['features/base/config'];
             const { isOpen: isChatOpen, width } = state['features/chat'];
 
             if (isChatOpen) {
@@ -51,7 +52,7 @@ export function clientResized(clientWidth: number, clientHeight: number) {
 
             availableWidth -= getParticipantsPaneWidth(state);
 
-            dispatch(setReducedUI(availableWidth, clientHeight));
+            reducedUIEnabled && dispatch(setReducedUI(availableWidth, clientHeight));
         }
 
         batch(() => {

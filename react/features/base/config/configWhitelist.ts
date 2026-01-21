@@ -215,6 +215,7 @@ export default [
     'recordings.showPrejoinWarning',
     'recordings.showRecordingLink',
     'recordings.suggestRecording',
+    'reducedUIEnabled',
     'reducedUImainToolbarButtons',
     'replaceParticipant',
     'resolution',
