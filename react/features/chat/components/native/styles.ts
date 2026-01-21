@@ -14,12 +14,6 @@ const recipientContainer = {
     padding: BaseTheme.spacing[2]
 };
 
-const inputBar = {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-};
-
 /**
  * The styles of the feature chat.
  *
@@ -143,23 +137,23 @@ export default {
      * A special padding to avoid issues on some devices (such as Android devices with custom suggestions bar).
      */
     extraBarPadding: {
-        paddingBottom: 30
+        paddingBottom: BaseTheme.spacing[8]
     },
 
-    inputBarNarrow: {
-        ...inputBar,
-        height: 112,
-        marginHorizontal: BaseTheme.spacing[3]
+    inputBar: {
+        alignSelf: 'stretch',
+        flexDirection: 'row',
+        width: '100%'
     },
 
-    inputBarWide: {
-        ...inputBar,
-        height: 88,
-        marginHorizontal: BaseTheme.spacing[9]
+    sendButton: {
+        marginRight: BaseTheme.spacing[5],
+        marginLeft: BaseTheme.spacing[2]
     },
 
     customInputContainer: {
-        width: '75%'
+        marginLeft: BaseTheme.spacing[5],
+        flex: 1
     },
 
     messageBubble: {
@@ -213,11 +207,6 @@ export default {
     timeText: {
         color: BaseTheme.palette.text03,
         fontSize: 13
-    },
-
-    chatContainer: {
-        backgroundColor: BaseTheme.palette.ui01,
-        flex: 1
     },
 
     tabContainer: {
