@@ -141,16 +141,19 @@ export default {
     },
 
     inputBar: {
-        alignSelf: 'center',
-        flexDirection: 'row'
+        alignSelf: 'stretch',
+        flexDirection: 'row',
+        width: '100%'
     },
 
     sendButton: {
-        marginLeft: BaseTheme.spacing[3]
+        marginRight: BaseTheme.spacing[5],
+        marginLeft: BaseTheme.spacing[2]
     },
 
     customInputContainer: {
-        width: '75%'
+        marginLeft: BaseTheme.spacing[5],
+        flex: 1
     },
 
     messageBubble: {

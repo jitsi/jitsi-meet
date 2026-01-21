@@ -205,7 +205,7 @@ export const pollsStyles = createStyleSheet({
     },
 
     createPollButton: {
-        marginHorizontal: BaseTheme.spacing[3],
+        marginHorizontal: BaseTheme.spacing[5],
     },
 
     pollPane: {

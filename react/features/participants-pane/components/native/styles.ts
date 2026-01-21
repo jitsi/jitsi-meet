@@ -176,8 +176,8 @@ export default {
     },
 
     participantsPaneFooterContainer: {
-        marginLeft: 'auto',
-        marginRight: BaseTheme.spacing[5]
+        alignSelf: 'stretch',
+        marginHorizontal: BaseTheme.spacing[5]
     },
 
     participantsPaneFooter: {
@@ -194,7 +194,7 @@ export default {
 
     breakoutRoomsButton: {
         marginBottom: BaseTheme.spacing[2],
-        width: 328
+        width: '100%'
     },
 
     moreButton: {
