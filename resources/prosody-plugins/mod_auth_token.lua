@@ -61,6 +61,16 @@ end
 module:hook_global("bosh-session", init_session);
 module:hook_global("websocket-session", init_session);
 
+module:hook("pre-resource-unbind", function (e)
+    local error, session = e.error, e.session;
+
+    prosody.events.fire_event('jitsi-pre-session-unbind', {
+        jid = session.full_jid,
+        session = session,
+        error = error
+    });
+end, 11);
+
 function provider.test_password(username, password)
     return nil, "Password based auth not supported";
 end

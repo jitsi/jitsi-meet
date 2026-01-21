@@ -76,3 +76,13 @@ local function anonymous(self, message)
 end
 
 sasl.registerMechanism("ANONYMOUS", {"anonymous"}, anonymous);
+
+module:hook("pre-resource-unbind", function (e)
+    local error, session = e.error, e.session;
+
+    prosody.events.fire_event('jitsi-pre-session-unbind', {
+        jid = session.full_jid,
+        session = session,
+        error = error
+    });
+end, 11);
