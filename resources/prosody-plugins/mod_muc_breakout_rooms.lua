@@ -410,6 +410,22 @@ function on_occupant_joined(event)
             main_room.close_timer = nil;
         end
     end
+
+    -- Set session context for the joining occupant (fixes missing context for polls and other features)
+    if event.occupant and jid_node(event.occupant.jid) ~= 'focus' then
+        for real_jid in event.occupant:each_session() do
+            local sessions = prosody.full_sessions;
+            local session = sessions[real_jid];
+            if session then
+                local room_node = jid_node(room.jid);
+                local room_host = jid_host(room.jid);
+                local prefix = room_host:match("^([^.]+)%.") or "";
+                session.jitsi_web_query_room = room_node;
+                session.jitsi_web_query_prefix = prefix;
+                module:log("debug", "Updated session for %s: room=%s, prefix=%s", real_jid, room_node, prefix);
+            end
+        end
+    end
 end
 
 function exist_occupants_in_room(room)
