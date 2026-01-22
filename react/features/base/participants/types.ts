@@ -41,6 +41,12 @@ export interface IParticipant {
     role?: string;
     sources?: Map<string, Map<string, ISourceInfo>>;
     supportsRemoteControl?: boolean;
+    userContext?: IUserContext;
+}
+
+export interface IUserContext {
+    id?: string;
+    name?: string;
 }
 
 export interface ILocalParticipant extends IParticipant {
