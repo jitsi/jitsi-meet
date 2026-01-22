@@ -113,7 +113,7 @@ export function setReducedUI(width: number, height: number) {
         const threshold = navigator.product === 'ReactNative'
             ? REDUCED_UI_THRESHOLD
             : WEB_REDUCED_UI_THRESHOLD;
-        const reducedUI = Math.min(width, height) < threshold;
+        const reducedUI = Math.max(width, height) < threshold;
 
         if (reducedUI !== getState()['features/base/responsive-ui'].reducedUI) {
             return dispatch({
