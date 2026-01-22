@@ -45,6 +45,8 @@ export async function unmuteAudioAndCheck(testee: Participant, observer: Partici
  * @param observer
  */
 export async function unmuteVideoAndCheck(testee: Participant, observer: Participant): Promise<void> {
+    await testee.getNotifications().closeAskToUnmuteNotification(true);
+    await testee.getNotifications().closeAVModerationVideoMutedNotification(true);
     await testee.getToolbar().clickVideoUnmuteButton();
 
     await testee.getParticipantsPane().assertVideoMuteIconIsDisplayed(testee, true);
