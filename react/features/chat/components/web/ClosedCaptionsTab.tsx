@@ -76,7 +76,6 @@ const ClosedCaptionsTab = ({
     canStartSubtitles,
     filteredSubtitles,
     groupedSubtitles,
-    isAsyncTranscriptionEnabled,
     isButtonPressed,
     isTranscribing,
     startClosedCaptions
@@ -115,7 +114,7 @@ const ClosedCaptionsTab = ({
 
     return (
         <div className = { classes.container }>
-            <LanguageSelector isAsyncTranscriptionEnabled = { isAsyncTranscriptionEnabled } />
+            <LanguageSelector />
             <div className = { classes.messagesContainer }>
                 <SubtitlesMessagesContainer
                     groups = { groupedSubtitles }
