@@ -31,7 +31,6 @@ const ClosedCaptions = ({
     canStartSubtitles,
     filteredSubtitles,
     groupedSubtitles,
-    isAsyncTranscriptionEnabled,
     isButtonPressed,
     isTranscribing,
     startClosedCaptions
@@ -43,6 +42,8 @@ const ClosedCaptions = ({
     const navigateToLanguageSelect = useCallback(() => {
         navigate(screen.conference.subtitles);
     }, [ navigation, screen ]);
+    const isAsyncTranscriptionEnabled = useSelector((state: IReduxState) =>
+        state['features/base/conference'].conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription);
 
     useEffect(() => {
         navigation?.setOptions({
