@@ -81,7 +81,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         break;
     }
     case LOCAL_PARTICIPANT_MODERATION_NOTIFICATION: {
-        let descriptionKey;
         let titleKey;
         let uid = '';
         const localParticipant = getLocalParticipant(getState);
@@ -111,8 +110,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 !raisedHand && dispatch(raiseHand(true));
                 dispatch(hideNotification(uid));
             }) ],
-            descriptionKey,
-            sticky: true,
             titleKey,
             uid
         }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
@@ -271,7 +268,6 @@ StateListenerRegistry.register(
 
                 dispatch(showNotification({
                     titleKey: 'notify.hostAskedUnmute',
-                    sticky: true,
                     customActionNameKey,
                     customActionHandler,
                     uid: ASKED_TO_UNMUTE_NOTIFICATION_ID

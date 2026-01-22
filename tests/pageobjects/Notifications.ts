@@ -2,6 +2,7 @@ import BasePageObject from './BasePageObject';
 
 const ASK_TO_UNMUTE_NOTIFICATION_ID = 'notify.hostAskedUnmute';
 const AV_MODERATION_MUTED_NOTIFICATION_ID = 'notify.moderationInEffectTitle';
+const AV_MODERATION_VIDEO_MUTED_NOTIFICATION_ID = 'notify.moderationInEffectVideoTitle';
 const JOIN_MULTIPLE_TEST_ID = 'notify.connectedThreePlusMembers';
 const JOIN_ONE_TEST_ID = 'notify.connectedOneMember';
 const JOIN_TWO_TEST_ID = 'notify.connectedTwoMembers';
@@ -58,6 +59,13 @@ export default class Notifications extends BasePageObject {
     }
 
     /**
+     * Closes the video muted notification.
+     */
+    async closeAVModerationVideoMutedNotification(skipNonExisting = false) {
+        return this.closeNotification(AV_MODERATION_VIDEO_MUTED_NOTIFICATION_ID, skipNonExisting);
+    }
+
+    /**
      * Closes the ask to unmute notification.
      */
     async closeAskToUnmuteNotification(skipNonExisting = false) {
@@ -106,14 +114,22 @@ export default class Notifications extends BasePageObject {
      * @private
      */
     private async closeNotification(testId: string, skipNonExisting = false) {
-        const closeButton = this.participant.driver.$('[data-testid="${testId}"] #close-notification');
+        const closeButton = this.participant.driver.$(`[data-testid="${testId}"] #close-notification`);
 
-        if (skipNonExisting && !await closeButton.isExisting()) {
-            return Promise.resolve();
+        try {
+            if (skipNonExisting && !await closeButton.isExisting()) {
+                return Promise.resolve();
+            }
+
+            await closeButton.moveTo();
+            await closeButton.click();
+        } catch (e) {
+            console.error(`Error closing notification ${testId}`, e);
+
+            if (!skipNonExisting) {
+                throw e;
+            }
         }
-
-        await closeButton.moveTo();
-        await closeButton.click();
     }
 
     /**
