@@ -87,7 +87,7 @@ export function setAspectRatio(width: number, height: number) {
                 = width < height ? ASPECT_RATIO_NARROW : ASPECT_RATIO_WIDE;
 
             if (aspectRatio
-                    !== getState()['features/base/responsive-ui'].aspectRatio) {
+                !== getState()['features/base/responsive-ui'].aspectRatio) {
                 return dispatch({
                     type: SET_ASPECT_RATIO,
                     aspectRatio
@@ -110,9 +110,18 @@ export function setAspectRatio(width: number, height: number) {
  */
 export function setReducedUI(width: number, height: number) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const threshold = navigator.product === 'ReactNative'
+        let threshold = navigator.product === 'ReactNative'
             ? REDUCED_UI_THRESHOLD
             : WEB_REDUCED_UI_THRESHOLD;
+
+        if (navigator.product !== 'ReactNative') {
+            const { reducedUIThreshold } = getState()['features/base/config'];
+
+            if (typeof reducedUIThreshold === 'number') {
+                threshold = reducedUIThreshold;
+            }
+        }
+
         const reducedUI = Math.max(width, height) < threshold;
 
         if (reducedUI !== getState()['features/base/responsive-ui'].reducedUI) {
