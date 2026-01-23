@@ -812,7 +812,7 @@ function initCommands() {
             }
 
             if (transcription) {
-                APP.store.dispatch(setRequestingSubtitles(false, false, null));
+                APP.store.dispatch(setRequestingSubtitles(false, false, null, true));
             }
 
             if (mode === 'local') {
