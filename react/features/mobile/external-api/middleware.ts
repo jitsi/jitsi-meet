@@ -603,7 +603,7 @@ function _registerForNativeEvents(store: IStore) {
         }
 
         if (transcription) {
-            store.dispatch(setRequestingSubtitles(false, false, null));
+            store.dispatch(setRequestingSubtitles(false, false, null, true));
         }
 
         if (![ JitsiRecordingConstants.mode.FILE, JitsiRecordingConstants.mode.STREAM ].includes(mode)) {

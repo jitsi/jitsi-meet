@@ -108,7 +108,8 @@ export default class AbstractStopRecordingDialog<P extends IProps>
         }
 
         // TODO: this should be an action in transcribing. -saghul
-        this.props.dispatch(setRequestingSubtitles(Boolean(_displaySubtitles), _displaySubtitles, _subtitlesLanguage));
+        this.props.dispatch(
+            setRequestingSubtitles(Boolean(_displaySubtitles), _displaySubtitles, _subtitlesLanguage, true));
 
         this.props._conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
             isTranscribingEnabled: false
