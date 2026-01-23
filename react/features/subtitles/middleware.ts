@@ -393,7 +393,7 @@ function _requestingSubtitlesChange(
             language.replace('translation-languages:', ''));
     }
 
-    if (!enabled && backendRecordingOn
+    if (!enabled && (backendRecordingOn || forceBackendRecordingOn)
         && conference?.getMetadataHandler()?.getMetadata()[RECORDING_METADATA_ID]?.isTranscribingEnabled) {
         conference?.getMetadataHandler()?.setMetadata(RECORDING_METADATA_ID, {
             isTranscribingEnabled: false
