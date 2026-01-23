@@ -6,8 +6,7 @@ import { IParticipantsState } from './reducer';
 import { ILocalParticipant, IParticipant } from './types';
 
 /**
- * Base selector to get the participants state slice.
- * This is a simple selector that doesn't need memoization.
+ * Gets the participants state slice.
  *
  * @param {IReduxState} state - The Redux state.
  * @returns {IParticipantsState} The participants state.
@@ -16,68 +15,62 @@ const getParticipantsState = (state: IReduxState): IParticipantsState =>
     state['features/base/participants'];
 
 /**
- * Memoized selector to get the local participant.
- * Re-computes only when the local participant reference changes.
+ * Gets the local participant.
  *
  * @returns {ILocalParticipant | undefined}
  */
 export const getLocalParticipant = createSelector(
-    [ getParticipantsState ],
+    [getParticipantsState],
     (participantsState): ILocalParticipant | undefined => participantsState.local
 );
 
 /**
- * Memoized selector to get all remote participants as a Map.
- * Re-computes only when the remote participants Map reference changes.
+ * Gets all remote participants as a Map.
  *
  * @returns {Map<string, IParticipant>}
  */
 export const getRemoteParticipants = createSelector(
-    [ getParticipantsState ],
+    [getParticipantsState],
     (participantsState): Map<string, IParticipant> => participantsState.remote
 );
 
 /**
- * Memoized selector to get remote participants as an array.
- * Re-computes only when the remote participants Map reference changes.
+ * Gets remote participants as an array.
  *
  * @returns {Array<IParticipant>}
  */
 export const getRemoteParticipantsArray = createSelector(
-    [ getRemoteParticipants ],
+    [getRemoteParticipants],
     (remoteParticipants): Array<IParticipant> => Array.from(remoteParticipants.values())
 );
 
 /**
- * Memoized selector to get the count of remote participants.
- * Re-computes only when the remote participants Map size changes.
+ * Gets the number of remote participants.
  *
  * @returns {number}
  */
 export const getRemoteParticipantCount = createSelector(
-    [ getRemoteParticipants ],
+    [getRemoteParticipants],
     (remoteParticipants): number => remoteParticipants.size
 );
 
 /**
- * Memoized selector to get the dominant speaker ID.
- * Re-computes only when the dominant speaker changes.
+ * Gets the dominant speaker ID.
  *
  * @returns {string | undefined}
  */
 export const getDominantSpeakerId = createSelector(
-    [ getParticipantsState ],
+    [getParticipantsState],
     (participantsState): string | undefined => participantsState.dominantSpeaker
 );
 
 /**
- * Memoized selector to get the dominant speaker participant.
- * Re-computes only when the dominant speaker ID or remote participants change.
+ * Gets the dominant speaker participant object.
  *
  * @returns {IParticipant | ILocalParticipant | undefined}
  */
 export const getDominantSpeaker = createSelector(
-    [ getDominantSpeakerId, getLocalParticipant, getRemoteParticipants ],
+    [getDominantSpeakerId, getLocalParticipant, getRemoteParticipants],
     (dominantSpeakerId, localParticipant, remoteParticipants): IParticipant | ILocalParticipant | undefined => {
         if (!dominantSpeakerId) {
             return undefined;
@@ -91,24 +84,22 @@ export const getDominantSpeaker = createSelector(
 );
 
 /**
- * Memoized selector to get the pinned participant ID.
- * Re-computes only when the pinned participant changes.
+ * Gets the pinned participant ID.
  *
  * @returns {string | undefined}
  */
 export const getPinnedParticipantId = createSelector(
-    [ getParticipantsState ],
+    [getParticipantsState],
     (participantsState): string | undefined => participantsState.pinnedParticipant
 );
 
 /**
- * Memoized selector to get the pinned participant.
- * Re-computes only when the pinned participant ID or participants change.
+ * Gets the pinned participant.
  *
  * @returns {IParticipant | ILocalParticipant | undefined}
  */
 export const getPinnedParticipant = createSelector(
-    [ getPinnedParticipantId, getLocalParticipant, getRemoteParticipants ],
+    [getPinnedParticipantId, getLocalParticipant, getRemoteParticipants],
     (pinnedParticipantId, localParticipant, remoteParticipants): IParticipant | ILocalParticipant | undefined => {
         if (!pinnedParticipantId) {
             return undefined;
@@ -122,147 +113,135 @@ export const getPinnedParticipant = createSelector(
 );
 
 /**
- * Memoized selector to get raised hands queue.
- * Re-computes only when the raised hands queue reference changes.
+ * Gets the raised hands queue.
  *
  * @returns {Array<{hasBeenNotified?: boolean; id: string; raisedHandTimestamp: number;}>}
  */
 export const getRaisedHandsQueue = createSelector(
-    [ getParticipantsState ],
+    [getParticipantsState],
     participantsState => participantsState.raisedHandsQueue
 );
 
 /**
- * Memoized selector to get the count of participants with raised hands.
- * Re-computes only when the raised hands queue length changes.
+ * Gets the count of raised hands.
  *
  * @returns {number}
  */
 export const getRaisedHandsCount = createSelector(
-    [ getRaisedHandsQueue ],
+    [getRaisedHandsQueue],
     (raisedHandsQueue): number => raisedHandsQueue.length
 );
 
 /**
- * Memoized selector to get sorted remote participants.
- * Re-computes only when sortedRemoteParticipants Map reference changes.
+ * Gets sorted remote participants.
  *
  * @returns {Map<string, string>}
  */
 export const getSortedRemoteParticipants = createSelector(
-    [ getParticipantsState ],
+    [getParticipantsState],
     (participantsState): Map<string, string> => participantsState.sortedRemoteParticipants
 );
 
 /**
- * Memoized selector to get fake participants.
- * Re-computes only when the fakeParticipants Map reference changes.
+ * Gets fake participants (used for testing).
  *
  * @returns {Map<string, IParticipant>}
  */
 export const getFakeParticipants = createSelector(
-    [ getParticipantsState ],
+    [getParticipantsState],
     (participantsState): Map<string, IParticipant> => participantsState.fakeParticipants
 );
 
 /**
- * Memoized selector to get the local screen share participant.
- * Re-computes only when the localScreenShare reference changes.
+ * Gets the local screen share participant.
  *
  * @returns {IParticipant | undefined}
  */
 export const getLocalScreenShareParticipant = createSelector(
-    [ getParticipantsState ],
+    [getParticipantsState],
     (participantsState): IParticipant | undefined => participantsState.localScreenShare
 );
 
 /**
- * Memoized selector to get the count of non-moderator participants.
- * Re-computes only when the count changes.
+ * Gets the count of non-moderator participants.
  *
  * @returns {number}
  */
 export const getNonModeratorParticipantCount = createSelector(
-    [ getParticipantsState ],
+    [getParticipantsState],
     (participantsState): number => participantsState.numberOfNonModeratorParticipants
 );
 
 /**
- * Memoized selector to get the count of participants with E2EE disabled.
- * Re-computes only when the count changes.
+ * Gets the count of participants with E2EE disabled.
  *
  * @returns {number}
  */
 export const getParticipantsWithE2EEDisabledCount = createSelector(
-    [ getParticipantsState ],
+    [getParticipantsState],
     (participantsState): number => participantsState.numberOfParticipantsDisabledE2EE
 );
 
 /**
- * Memoized selector to get the count of participants not supporting E2EE.
- * Re-computes only when the count changes.
+ * Gets the count of participants not supporting E2EE.
  *
  * @returns {number}
  */
 export const getParticipantsNotSupportingE2EECount = createSelector(
-    [ getParticipantsState ],
+    [getParticipantsState],
     (participantsState): number => participantsState.numberOfParticipantsNotSupportingE2EE
 );
 
 /**
- * Memoized selector to get remote video sources.
- * Re-computes only when the remoteVideoSources Set reference changes.
+ * Gets remote video sources.
  *
  * @returns {Set<string>}
  */
 export const getRemoteVideoSources = createSelector(
-    [ getParticipantsState ],
+    [getParticipantsState],
     (participantsState): Set<string> => participantsState.remoteVideoSources
 );
 
 /**
- * Memoized selector to get sorted remote virtual screenshare participants.
- * Re-computes only when the Map reference changes.
+ * Gets sorted remote virtual screenshare participants.
  *
  * @returns {Map<string, string>}
  */
 export const getSortedRemoteVirtualScreenshareParticipants = createSelector(
-    [ getParticipantsState ],
+    [getParticipantsState],
     (participantsState): Map<string, string> => participantsState.sortedRemoteVirtualScreenshareParticipants
 );
 
 /**
- * Memoized selector to get the speakers list.
- * Re-computes only when the speakersList Map reference changes.
+ * Gets the speakers list.
  *
  * @returns {Map<string, string>}
  */
 export const getSpeakersList = createSelector(
-    [ getParticipantsState ],
+    [getParticipantsState],
     (participantsState): Map<string, string> => participantsState.speakersList
 );
 
 /**
- * Memoized selector to get overwritten name list.
- * Re-computes only when the overwrittenNameList reference changes.
+ * Gets overwritten participant names.
  *
  * @returns {{[id: string]: string}}
  */
 export const getOverwrittenNameList = createSelector(
-    [ getParticipantsState ],
+    [getParticipantsState],
     (participantsState): { [id: string]: string; } => participantsState.overwrittenNameList
 );
 
 /**
- * Factory function to create a memoized selector for a specific participant by ID.
- * Each returned selector is memoized independently based on the participant ID.
+ * Creates a selector that gets a specific participant by ID.
+ * Checks local participant first, then looks in remote participants.
  *
- * @param {string} participantId - The ID of the participant to select.
- * @returns {Function} A memoized selector function.
+ * @param {string} participantId - The ID of the participant.
+ * @returns {Function} A memoized selector.
  */
 export const makeGetParticipantById = (participantId: string) =>
     createSelector(
-        [ getLocalParticipant, getRemoteParticipants ],
+        [getLocalParticipant, getRemoteParticipants],
         (localParticipant, remoteParticipants): IParticipant | ILocalParticipant | undefined => {
             if (localParticipant?.id === participantId) {
                 return localParticipant;
@@ -273,23 +252,21 @@ export const makeGetParticipantById = (participantId: string) =>
     );
 
 /**
- * Memoized selector to get total participant count (local + remote).
- * Re-computes only when local participant or remote count changes.
+ * Gets total participant count including local and remote.
  *
  * @returns {number}
  */
 export const getTotalParticipantCount = createSelector(
-    [ getLocalParticipant, getRemoteParticipantCount ],
+    [getLocalParticipant, getRemoteParticipantCount],
     (localParticipant, remoteCount): number => (localParticipant ? 1 : 0) + remoteCount
 );
 
 /**
- * Memoized selector to check if there are multiple participants.
- * Re-computes only when the total count changes.
+ * Checks if there are multiple participants in the conference.
  *
  * @returns {boolean}
  */
 export const hasMultipleParticipants = createSelector(
-    [ getTotalParticipantCount ],
+    [getTotalParticipantCount],
     (totalCount): boolean => totalCount > 1
 );
