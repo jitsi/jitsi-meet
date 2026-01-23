@@ -20,7 +20,7 @@ const getParticipantsState = (state: IReduxState): IParticipantsState =>
  * @returns {ILocalParticipant | undefined}
  */
 export const getLocalParticipant = createSelector(
-    [getParticipantsState],
+    [ getParticipantsState ],
     (participantsState): ILocalParticipant | undefined => participantsState.local
 );
 
@@ -30,7 +30,7 @@ export const getLocalParticipant = createSelector(
  * @returns {Map<string, IParticipant>}
  */
 export const getRemoteParticipants = createSelector(
-    [getParticipantsState],
+    [ getParticipantsState ],
     (participantsState): Map<string, IParticipant> => participantsState.remote
 );
 
@@ -40,7 +40,7 @@ export const getRemoteParticipants = createSelector(
  * @returns {Array<IParticipant>}
  */
 export const getRemoteParticipantsArray = createSelector(
-    [getRemoteParticipants],
+    [ getRemoteParticipants ],
     (remoteParticipants): Array<IParticipant> => Array.from(remoteParticipants.values())
 );
 
@@ -50,7 +50,7 @@ export const getRemoteParticipantsArray = createSelector(
  * @returns {number}
  */
 export const getRemoteParticipantCount = createSelector(
-    [getRemoteParticipants],
+    [ getRemoteParticipants ],
     (remoteParticipants): number => remoteParticipants.size
 );
 
@@ -60,7 +60,7 @@ export const getRemoteParticipantCount = createSelector(
  * @returns {string | undefined}
  */
 export const getDominantSpeakerId = createSelector(
-    [getParticipantsState],
+    [ getParticipantsState ],
     (participantsState): string | undefined => participantsState.dominantSpeaker
 );
 
@@ -70,7 +70,7 @@ export const getDominantSpeakerId = createSelector(
  * @returns {IParticipant | ILocalParticipant | undefined}
  */
 export const getDominantSpeaker = createSelector(
-    [getDominantSpeakerId, getLocalParticipant, getRemoteParticipants],
+    [ getDominantSpeakerId, getLocalParticipant, getRemoteParticipants ],
     (dominantSpeakerId, localParticipant, remoteParticipants): IParticipant | ILocalParticipant | undefined => {
         if (!dominantSpeakerId) {
             return undefined;
@@ -89,7 +89,7 @@ export const getDominantSpeaker = createSelector(
  * @returns {string | undefined}
  */
 export const getPinnedParticipantId = createSelector(
-    [getParticipantsState],
+    [ getParticipantsState ],
     (participantsState): string | undefined => participantsState.pinnedParticipant
 );
 
@@ -99,7 +99,7 @@ export const getPinnedParticipantId = createSelector(
  * @returns {IParticipant | ILocalParticipant | undefined}
  */
 export const getPinnedParticipant = createSelector(
-    [getPinnedParticipantId, getLocalParticipant, getRemoteParticipants],
+    [ getPinnedParticipantId, getLocalParticipant, getRemoteParticipants ],
     (pinnedParticipantId, localParticipant, remoteParticipants): IParticipant | ILocalParticipant | undefined => {
         if (!pinnedParticipantId) {
             return undefined;
@@ -118,7 +118,7 @@ export const getPinnedParticipant = createSelector(
  * @returns {Array<{hasBeenNotified?: boolean; id: string; raisedHandTimestamp: number;}>}
  */
 export const getRaisedHandsQueue = createSelector(
-    [getParticipantsState],
+    [ getParticipantsState ],
     participantsState => participantsState.raisedHandsQueue
 );
 
@@ -128,7 +128,7 @@ export const getRaisedHandsQueue = createSelector(
  * @returns {number}
  */
 export const getRaisedHandsCount = createSelector(
-    [getRaisedHandsQueue],
+    [ getRaisedHandsQueue ],
     (raisedHandsQueue): number => raisedHandsQueue.length
 );
 
@@ -138,7 +138,7 @@ export const getRaisedHandsCount = createSelector(
  * @returns {Map<string, string>}
  */
 export const getSortedRemoteParticipants = createSelector(
-    [getParticipantsState],
+    [ getParticipantsState ],
     (participantsState): Map<string, string> => participantsState.sortedRemoteParticipants
 );
 
@@ -148,7 +148,7 @@ export const getSortedRemoteParticipants = createSelector(
  * @returns {Map<string, IParticipant>}
  */
 export const getFakeParticipants = createSelector(
-    [getParticipantsState],
+    [ getParticipantsState ],
     (participantsState): Map<string, IParticipant> => participantsState.fakeParticipants
 );
 
@@ -158,7 +158,7 @@ export const getFakeParticipants = createSelector(
  * @returns {IParticipant | undefined}
  */
 export const getLocalScreenShareParticipant = createSelector(
-    [getParticipantsState],
+    [ getParticipantsState ],
     (participantsState): IParticipant | undefined => participantsState.localScreenShare
 );
 
@@ -168,7 +168,7 @@ export const getLocalScreenShareParticipant = createSelector(
  * @returns {number}
  */
 export const getNonModeratorParticipantCount = createSelector(
-    [getParticipantsState],
+    [ getParticipantsState ],
     (participantsState): number => participantsState.numberOfNonModeratorParticipants
 );
 
@@ -178,7 +178,7 @@ export const getNonModeratorParticipantCount = createSelector(
  * @returns {number}
  */
 export const getParticipantsWithE2EEDisabledCount = createSelector(
-    [getParticipantsState],
+    [ getParticipantsState ],
     (participantsState): number => participantsState.numberOfParticipantsDisabledE2EE
 );
 
@@ -188,7 +188,7 @@ export const getParticipantsWithE2EEDisabledCount = createSelector(
  * @returns {number}
  */
 export const getParticipantsNotSupportingE2EECount = createSelector(
-    [getParticipantsState],
+    [ getParticipantsState ],
     (participantsState): number => participantsState.numberOfParticipantsNotSupportingE2EE
 );
 
@@ -198,7 +198,7 @@ export const getParticipantsNotSupportingE2EECount = createSelector(
  * @returns {Set<string>}
  */
 export const getRemoteVideoSources = createSelector(
-    [getParticipantsState],
+    [ getParticipantsState ],
     (participantsState): Set<string> => participantsState.remoteVideoSources
 );
 
@@ -208,7 +208,7 @@ export const getRemoteVideoSources = createSelector(
  * @returns {Map<string, string>}
  */
 export const getSortedRemoteVirtualScreenshareParticipants = createSelector(
-    [getParticipantsState],
+    [ getParticipantsState ],
     (participantsState): Map<string, string> => participantsState.sortedRemoteVirtualScreenshareParticipants
 );
 
@@ -218,7 +218,7 @@ export const getSortedRemoteVirtualScreenshareParticipants = createSelector(
  * @returns {Map<string, string>}
  */
 export const getSpeakersList = createSelector(
-    [getParticipantsState],
+    [ getParticipantsState ],
     (participantsState): Map<string, string> => participantsState.speakersList
 );
 
@@ -228,7 +228,7 @@ export const getSpeakersList = createSelector(
  * @returns {{[id: string]: string}}
  */
 export const getOverwrittenNameList = createSelector(
-    [getParticipantsState],
+    [ getParticipantsState ],
     (participantsState): { [id: string]: string; } => participantsState.overwrittenNameList
 );
 
@@ -241,7 +241,7 @@ export const getOverwrittenNameList = createSelector(
  */
 export const makeGetParticipantById = (participantId: string) =>
     createSelector(
-        [getLocalParticipant, getRemoteParticipants],
+        [ getLocalParticipant, getRemoteParticipants ],
         (localParticipant, remoteParticipants): IParticipant | ILocalParticipant | undefined => {
             if (localParticipant?.id === participantId) {
                 return localParticipant;
@@ -257,7 +257,7 @@ export const makeGetParticipantById = (participantId: string) =>
  * @returns {number}
  */
 export const getTotalParticipantCount = createSelector(
-    [getLocalParticipant, getRemoteParticipantCount],
+    [ getLocalParticipant, getRemoteParticipantCount ],
     (localParticipant, remoteCount): number => (localParticipant ? 1 : 0) + remoteCount
 );
 
@@ -267,6 +267,6 @@ export const getTotalParticipantCount = createSelector(
  * @returns {boolean}
  */
 export const hasMultipleParticipants = createSelector(
-    [getTotalParticipantCount],
+    [ getTotalParticipantCount ],
     (totalCount): boolean => totalCount > 1
 );
