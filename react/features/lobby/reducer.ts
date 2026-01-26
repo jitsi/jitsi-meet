@@ -2,6 +2,7 @@ import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
+    CONFERENCE_WILL_LEAVE,
     SET_PASSWORD
 } from '../base/conference/actionTypes';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
@@ -69,6 +70,7 @@ ReducerRegistry.register<ILobbyState>('features/lobby', (state = DEFAULT_STATE, 
     }
     case CONFERENCE_JOINED:
     case CONFERENCE_LEFT:
+    case CONFERENCE_WILL_LEAVE:
         return {
             ...state,
             isDisplayNameRequiredError: false,

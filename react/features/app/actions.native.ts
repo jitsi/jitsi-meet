@@ -1,4 +1,4 @@
-import { conferenceLeft, setRoom } from '../base/conference/actions.native';
+import { setRoom } from '../base/conference/actions.native';
 import { getConferenceState } from '../base/conference/functions';
 import {
     configWillLoad,
@@ -155,7 +155,6 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
         dispatch(setRoom(room));
 
         if (!room) {
-            dispatch(conferenceLeft());
             goBackToRoot(getState(), dispatch);
 
             return;
