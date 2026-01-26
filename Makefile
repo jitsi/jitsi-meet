@@ -120,6 +120,11 @@ deploy-local:
 dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-olm deploy-tf-wasm deploy-excalidraw-dev deploy-face-landmarks
 	$(WEBPACK_DEV_SERVER)
 
+# Development with SCSS hot-reload: run this in a separate terminal alongside 'make dev'
+# Watches SCSS files and automatically recompiles to css/all.css when changes are detected
+dev-css: deploy-css
+	$(NPM) run watch-css
+
 source-package: compile deploy
 	mkdir -p source_package/jitsi-meet/css && \
 	cp -r *.js *.html resources/*.txt fonts images libs static sounds LICENSE lang source_package/jitsi-meet && \
