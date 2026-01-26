@@ -1,4 +1,4 @@
-import { setRoom } from '../base/conference/actions';
+import { conferenceLeft, setRoom } from '../base/conference/actions.native';
 import { getConferenceState } from '../base/conference/functions';
 import {
     configWillLoad,
@@ -29,7 +29,7 @@ import {
 } from '../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../mobile/navigation/routes';
 import { clearNotifications } from '../notifications/actions';
-import { isUnsafeRoomWarningEnabled } from '../prejoin/functions';
+import { isUnsafeRoomWarningEnabled } from '../prejoin/functions.native';
 
 import { maybeRedirectToTokenAuthUrl } from './actions.any';
 import { addTrackStateToURL, getDefaultURL } from './functions.native';
@@ -155,6 +155,7 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
         dispatch(setRoom(room));
 
         if (!room) {
+            dispatch(conferenceLeft());
             goBackToRoot(getState(), dispatch);
 
             return;
