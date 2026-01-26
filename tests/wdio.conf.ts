@@ -194,6 +194,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
         } ]
     ],
 
+    execArgv: [ '--stack-trace-limit=100' ],
+
     // =====
     // Hooks
     // =====
