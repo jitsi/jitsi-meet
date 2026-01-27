@@ -257,6 +257,9 @@ class Conference extends AbstractConference<IProps, any> {
                             id = 'videospace'
                             onTouchStart = { this._onVideospaceTouchStart }>
                             <LargeVideo />
+                            <StageFilmstrip />
+                            <ScreenshareFilmstrip />
+                            <MainFilmstrip />
                         </div>
                         <span
                             aria-level = { 1 }
