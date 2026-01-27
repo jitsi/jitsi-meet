@@ -339,6 +339,11 @@ export interface IProps extends WithTranslation {
     _maxTopPanelHeight: number;
 
     /**
+     * Whethere reduced UI feature is enabled or not.
+     */
+    _reducedUI: boolean;
+
+    /**
      * The participants in the call.
      */
     _remoteParticipants: Array<string>;
@@ -546,6 +551,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
             _filmstripDisabled,
             _localScreenShareId,
             _mainFilmstripVisible,
+            _reducedUI,
             _resizableFilmstrip,
             _topPanelFilmstrip,
             _topPanelMaxHeight,
@@ -587,6 +593,13 @@ class Filmstrip extends PureComponent <IProps, IState> {
             if (!_mainFilmstripVisible) {
                 filmstripStyle.right = `-${filmstripStyle.maxWidth}px`;
             }
+        }
+
+        // FIX: Until we move AudioTracksContainer to a more global place,
+        // we apply this css hot fix to hide Filmstrip but keep AudioTracksContainer in the DOM,
+        // so we don't have audio problems when reduced UI is enabled.
+        if (_reducedUI) {
+            filmstripStyle.display = 'none';
         }
 
         let toolbar: React.ReactNode = null;
@@ -1120,6 +1133,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const _currentLayout = getCurrentLayout(state);
     const _isVerticalFilmstrip = _currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW
         || (filmstripType === FILMSTRIP_TYPE.MAIN && _currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW);
+    const { reducedUI } = state['features/base/responsive-ui'];
 
     return {
         _className: className,
@@ -1137,6 +1151,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _mainFilmstripVisible: notDisabled,
         _maxFilmstripWidth: videoSpaceWidth - MIN_STAGE_VIEW_WIDTH,
         _maxTopPanelHeight: clientHeight - MIN_STAGE_VIEW_HEIGHT,
+        _reducedUI: reducedUI,
         _remoteParticipantsLength: _remoteParticipants?.length ?? 0,
         _topPanelHeight: topPanelHeight.current,
         _topPanelMaxHeight: topPanelHeight.current || TOP_FILMSTRIP_HEIGHT,
