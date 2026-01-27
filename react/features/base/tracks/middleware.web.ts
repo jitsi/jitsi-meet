@@ -38,6 +38,7 @@ import {
 import { ITrack, ITrackOptions } from './types';
 
 import './middleware.any';
+import './subscriber.web';
 
 /**
  * Middleware that captures LIB_DID_DISPOSE and LIB_DID_INIT actions and,
@@ -142,6 +143,13 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (typeof action.track?.muted !== 'undefined' && participantID && !local) {
             logTracksForParticipant(store.getState()['features/base/tracks'], participantID, 'Track updated');
+
+            // Notify external API when remote participant mutes/unmutes themselves
+            const mediaType = isVideoTrack
+                ? (jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP ? 'desktop' : 'video')
+                : 'audio';
+
+            APP.API.notifyParticipantMuted(participantID, action.track.muted, mediaType, true);
         }
 
         return result;

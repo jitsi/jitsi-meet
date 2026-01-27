@@ -122,12 +122,12 @@ describe('Audio/video moderation', () => {
         await moderatorParticipantsPane.assertVideoMuteIconIsDisplayed(moderator);
         await nonModeratorParticipantsPane.assertVideoMuteIconIsDisplayed(nonModerator);
 
-        await moderatorParticipantsPane.allowVideo(nonModerator);
         await moderatorParticipantsPane.askToUnmute(nonModerator, false);
-
         await nonModerator.getNotifications().waitForAskToUnmuteNotification();
-
         await unmuteAudioAndCheck(nonModerator, p1);
+
+        await moderatorParticipantsPane.allowVideo(nonModerator);
+        await nonModerator.getNotifications().waitForAskToUnmuteNotification();
         await unmuteVideoAndCheck(nonModerator, p1);
 
         await moderatorParticipantsPane.clickContextMenuButton();
@@ -189,6 +189,10 @@ describe('Audio/video moderation', () => {
 
         // stop video and check
         await p1.getFilmstrip().muteVideo(p2);
+
+        // close and open participants pane to make sure the context menu disappears
+        await p1.getParticipantsPane().close();
+        await p1.getParticipantsPane().open();
 
         await p1.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2);
         await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2);
@@ -256,11 +260,12 @@ async function unmuteByModerator(
     await moderator.getNotifications().waitForRaisedHandNotification();
 
     // ask participant to unmute
-    await moderatorParticipantsPane.allowVideo(participant);
     await moderatorParticipantsPane.askToUnmute(participant, false);
     await participant.getNotifications().waitForAskToUnmuteNotification();
-
     await unmuteAudioAndCheck(participant, moderator);
+
+    await moderatorParticipantsPane.allowVideo(participant);
+    await participant.getNotifications().waitForAskToUnmuteNotification();
     await unmuteVideoAndCheck(participant, moderator);
 
     if (stopModeration) {

@@ -606,13 +606,21 @@ function _e2eeUpdated({ getState, dispatch }: IStore, conference: IJitsiConferen
 function _localParticipantJoined({ getState, dispatch }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
 
-    const settings = getState()['features/base/settings'];
+    const state = getState();
+    const settings = state['features/base/settings'];
+    const jwtUser = state['features/base/jwt']?.user;
+
+    const userContext = jwtUser ? {
+        id: jwtUser.id,
+        name: jwtUser.name
+    } : undefined;
 
     dispatch(localParticipantJoined({
         avatarURL: settings.avatarURL,
         email: settings.email,
         name: settings.displayName,
-        id: ''
+        id: '',
+        userContext
     }));
 
     return result;

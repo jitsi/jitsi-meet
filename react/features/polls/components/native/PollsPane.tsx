@@ -1,6 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect } from 'react';
-import { Platform } from 'react-native';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -42,28 +41,27 @@ const PollsPane = (props: AbstractProps) => {
 
     }, [ isPollsTabFocused, unreadPollsCount ]);
 
-    const createPollButtonStyles = Platform.OS === 'android'
-        ? pollsStyles.createPollButtonAndroid : pollsStyles.createPollButtonIos;
+    const renderCreateAPollBtn = useCallback(() => (
+        !createMode && !isCreatePollsDisabled && <Button
+            accessibilityLabel = 'polls.create.create'
+            id = { t('polls.create.create') }
+            labelKey = 'polls.create.create'
+            onClick = { onCreate }
+            style = { pollsStyles.createPollButton }
+            type = { BUTTON_TYPES.PRIMARY } />
+    ), [ createMode, isCreatePollsDisabled ]);
 
     return (
         <JitsiScreen
             contentContainerStyle = { pollsStyles.pollPane as StyleType }
             disableForcedKeyboardDismiss = { true }
+            footerComponent = { renderCreateAPollBtn }
             hasExtraHeaderHeight = { true }
             style = { pollsStyles.pollPaneContainer as StyleType }>
             {
                 createMode
                     ? <PollCreate setCreateMode = { setCreateMode } />
-                    : <>
-                        <PollsList setCreateMode = { setCreateMode } />
-                        {!isCreatePollsDisabled && <Button
-                            accessibilityLabel = 'polls.create.create'
-                            id = { t('polls.create.create') }
-                            labelKey = 'polls.create.create'
-                            onClick = { onCreate }
-                            style = { createPollButtonStyles }
-                            type = { BUTTON_TYPES.PRIMARY } />}
-                    </>
+                    : <PollsList setCreateMode = { setCreateMode } />
             }
         </JitsiScreen>
     );

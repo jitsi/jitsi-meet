@@ -1,8 +1,7 @@
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
+import React, { useCallback } from 'react';
+import { connect, useDispatch } from 'react-redux';
 
-import { IReduxState, IStore } from '../../../app/types';
-import { translate } from '../../../base/i18n/functions';
+import { IReduxState } from '../../../app/types';
 import {
     getLocalParticipant,
     getParticipantById,
@@ -10,14 +9,18 @@ import {
     hasRaisedHand,
     isParticipantModerator
 } from '../../../base/participants/functions';
-import { FakeParticipant, IParticipant } from '../../../base/participants/types';
+import { FakeParticipant } from '../../../base/participants/types';
 import {
     isParticipantAudioMuted,
     isParticipantVideoMuted
 } from '../../../base/tracks/functions.native';
 import { showContextMenuDetails, showSharedVideoMenu } from '../../actions.native';
 import type { MediaState } from '../../constants';
-import { getParticipantAudioMediaState, getParticipantVideoMediaState } from '../../functions';
+import {
+    getParticipantAudioMediaState,
+    getParticipantVideoMediaState,
+    participantMatchesSearch
+} from '../../functions';
 
 import ParticipantItem from './ParticipantItem';
 
@@ -59,9 +62,9 @@ interface IProps {
     _localVideoOwner: boolean;
 
     /**
-     * The participant ID.
+     * Whether or not the participant name matches the search string.
      */
-    _participantID: string;
+    _matchesSearch: boolean;
 
     /**
      * True if the participant have raised hand.
@@ -74,85 +77,55 @@ interface IProps {
     _videoMediaState: MediaState;
 
     /**
-     * The redux dispatch function.
+     * The participant ID.
      */
-    dispatch: IStore['dispatch'];
+    participantID: string;
 
     /**
-     * The participant.
+     * Name of the participant we search for.
      */
-    participant?: IParticipant;
+    searchString: string;
 }
 
-/**
- * Implements the MeetingParticipantItem component.
- */
-class MeetingParticipantItem extends PureComponent<IProps> {
-
-    /**
-     * Creates new MeetingParticipantItem instance.
-     *
-     * @param {IProps} props - The props of the component.
-     */
-    constructor(props: IProps) {
-        super(props);
-
-        this._onPress = this._onPress.bind(this);
-    }
-
-    /**
-     * Handles MeetingParticipantItem press events.
-     *
-     * @returns {void}
-     */
-    _onPress() {
-        const {
-            _fakeParticipant,
-            _local,
-            _localVideoOwner,
-            _participantID,
-            dispatch
-        } = this.props;
-
+const MeetingParticipantItem = ({
+    _audioMediaState,
+    _disableModeratorIndicator,
+    _displayName,
+    _fakeParticipant,
+    _isModerator,
+    _local,
+    _localVideoOwner,
+    _matchesSearch,
+    _raisedHand,
+    _videoMediaState,
+    participantID
+}: IProps) => {
+    const dispatch = useDispatch();
+    const onPress = useCallback(() => {
         if (_fakeParticipant && _localVideoOwner) {
-            dispatch(showSharedVideoMenu(_participantID));
+            dispatch(showSharedVideoMenu(participantID));
         } else if (!_fakeParticipant) {
-            dispatch(showContextMenuDetails(_participantID, _local));
+            dispatch(showContextMenuDetails(participantID, _local));
         } // else no-op
+    }, [ dispatch ]);
+
+    if (!_matchesSearch) {
+        return null;
     }
 
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    override render() {
-        const {
-            _audioMediaState,
-            _disableModeratorIndicator,
-            _displayName,
-            _isModerator,
-            _local,
-            _participantID,
-            _raisedHand,
-            _videoMediaState
-        } = this.props;
-
-        return (
-            <ParticipantItem
-                audioMediaState = { _audioMediaState }
-                disableModeratorIndicator = { _disableModeratorIndicator }
-                displayName = { _displayName }
-                isModerator = { _isModerator }
-                local = { _local }
-                onPress = { this._onPress }
-                participantID = { _participantID }
-                raisedHand = { _raisedHand }
-                videoMediaState = { _videoMediaState } />
-        );
-    }
-}
+    return (
+        <ParticipantItem
+            audioMediaState = { _audioMediaState }
+            disableModeratorIndicator = { _disableModeratorIndicator }
+            displayName = { _displayName }
+            isModerator = { _isModerator }
+            local = { _local }
+            onPress = { onPress }
+            participantID = { participantID }
+            raisedHand = { _raisedHand }
+            videoMediaState = { _videoMediaState } />
+    );
+};
 
 /**
  * Maps (parts of) the redux state to the associated props for this component.
@@ -163,8 +136,9 @@ class MeetingParticipantItem extends PureComponent<IProps> {
  * @returns {IProps}
  */
 function mapStateToProps(state: IReduxState, ownProps: any) {
-    const { participant } = ownProps;
+    const { participantID, searchString } = ownProps;
     const { ownerId } = state['features/shared-video'];
+    const participant = getParticipantById(state, participantID);
     const localParticipantId = getLocalParticipant(state)?.id;
     const _isAudioMuted = isParticipantAudioMuted(participant, state);
     const _isVideoMuted = isParticipantVideoMuted(participant, state);
@@ -173,23 +147,24 @@ function mapStateToProps(state: IReduxState, ownProps: any) {
     const { disableModeratorIndicator } = state['features/base/config'];
     const raisedHand = hasRaisedHand(participant?.local
         ? participant
-        : getParticipantById(state, participant?.id)
+        : getParticipantById(state, participantID)
     );
+    const _matchesSearch = participantMatchesSearch(participant, searchString);
 
     return {
         _audioMediaState: audioMediaState,
         _disableModeratorIndicator: disableModeratorIndicator,
-        _displayName: getParticipantDisplayName(state, participant?.id),
+        _displayName: getParticipantDisplayName(state, participantID),
         _fakeParticipant: participant?.fakeParticipant,
         _isAudioMuted,
         _isModerator: isParticipantModerator(participant),
         _local: Boolean(participant?.local),
         _localVideoOwner: Boolean(ownerId === localParticipantId),
-        _participantID: participant?.id,
+        _matchesSearch,
         _raisedHand: raisedHand,
         _videoMediaState: videoMediaState
     };
 }
 
-
-export default translate(connect(mapStateToProps)(MeetingParticipantItem));
+// @ts-ignore
+export default connect(mapStateToProps)(MeetingParticipantItem);

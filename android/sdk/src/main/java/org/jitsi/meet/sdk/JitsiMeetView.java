@@ -30,6 +30,9 @@ import com.facebook.react.ReactRootView;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 
 public class JitsiMeetView extends FrameLayout {
 
@@ -84,6 +87,10 @@ public class JitsiMeetView extends FrameLayout {
                 result.putInt(key, (int)bValue);
             } else if (valueType.contentEquals("Bundle")) {
                 result.putBundle(key, mergeProps((Bundle)aValue, (Bundle)bValue));
+            } else if (valueType.contentEquals("String[]")) {
+                // Convert String[] to ArrayList<String> for React Native bridge compatibility
+                String[] stringArray = (String[]) bValue;
+                result.putStringArrayList(key, new ArrayList<>(Arrays.asList(stringArray)));
             } else {
                 throw new RuntimeException("Unsupported type: " + valueType);
             }

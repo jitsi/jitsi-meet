@@ -6,12 +6,8 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 const participantListDescription = {
     ...BaseTheme.typography.heading6,
     color: BaseTheme.palette.text01,
-    fontSize: 15,
-    fontWeight: 'bold',
     marginLeft: BaseTheme.spacing[2],
-    paddingVertical: BaseTheme.spacing[2],
-    position: 'relative',
-    width: '70%'
+    paddingVertical: BaseTheme.spacing[2]
 };
 
 /**
@@ -52,13 +48,6 @@ const contextMenuItem = {
     marginLeft: BaseTheme.spacing[3]
 };
 
-const participantNameContainer = {
-    display: 'flex',
-    flexDirection: 'row',
-    overflow: 'hidden',
-    paddingLeft: BaseTheme.spacing[3]
-};
-
 /**
  * The styles of the native components of the feature {@code participants}.
  */
@@ -91,8 +80,7 @@ export default {
         flexDirection: 'row',
         height: BaseTheme.spacing[9],
         paddingLeft: BaseTheme.spacing[3],
-        paddingRight: BaseTheme.spacing[3],
-        width: '100%'
+        paddingRight: BaseTheme.spacing[3]
     },
 
     participantContent: {
@@ -106,24 +94,11 @@ export default {
         width: '100%'
     },
 
-    participantDetailsContainer: {
-        display: 'flex',
-        flexDirection: 'column',
-        width: '73%'
-    },
-
-    participantDetailsContainerRaisedHand: {
-        width: '65%'
-    },
-
     participantNameContainer: {
-        ...participantNameContainer,
-        width: '100%'
-    },
-
-    lobbyParticipantNameContainer: {
-        ...participantNameContainer,
-        width: '40%'
+        display: 'flex',
+        flexDirection: 'row',
+        overflow: 'hidden',
+        paddingLeft: BaseTheme.spacing[3],
     },
 
     participantName: {
@@ -139,19 +114,19 @@ export default {
     },
 
     participantStatesContainer: {
+        alignItems: 'center',
         display: 'flex',
         flexDirection: 'row',
-        marginLeft: 'auto',
-        width: '15%'
+        marginLeft: 'auto'
     },
 
     participantStateVideo: {
-        paddingRight: BaseTheme.spacing[3]
+        marginRight: BaseTheme.spacing[2]
     },
 
     raisedHandIndicator: {
         backgroundColor: BaseTheme.palette.warning02,
-        borderRadius: BaseTheme.shape.borderRadius / 2,
+        borderRadius: BaseTheme.shape.borderRadius,
         height: BaseTheme.spacing[4],
         width: BaseTheme.spacing[4],
         marginLeft: 'auto',
@@ -166,7 +141,7 @@ export default {
 
     buttonAdmit: {
         position: 'absolute',
-        right: 16
+        right: BaseTheme.spacing[3]
     },
 
     buttonReject: {
@@ -201,20 +176,14 @@ export default {
     },
 
     participantsPaneFooterContainer: {
-        alignItems: 'center',
-        bottom: 0,
-        height: 128,
-        left: 0,
-        paddingHorizontal: BaseTheme.spacing[4],
-        right: 0
+        alignSelf: 'stretch',
+        marginHorizontal: BaseTheme.spacing[5]
     },
 
     participantsPaneFooter: {
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'flex-end',
-        paddingBottom: BaseTheme.spacing[3],
-        width: '100%'
+        marginLeft: 'auto'
     },
 
     inviteButton: {
@@ -275,13 +244,11 @@ export default {
     },
 
     inputContainer: {
-        marginLeft: BaseTheme.spacing[3],
-        marginRight: BaseTheme.spacing[3],
-        marginBottom: BaseTheme.spacing[4]
+        marginHorizontal: BaseTheme.spacing[3],
+        marginBottom: BaseTheme.spacing[3]
     },
 
     centerInput: {
-        paddingRight: BaseTheme.spacing[3],
         textAlign: 'center'
     },
 

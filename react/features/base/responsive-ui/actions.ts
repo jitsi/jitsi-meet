@@ -24,6 +24,7 @@ import { ASPECT_RATIO_NARROW, ASPECT_RATIO_WIDE } from './constants';
  * determine whether and how to render it.
  */
 const REDUCED_UI_THRESHOLD = 300;
+const WEB_REDUCED_UI_THRESHOLD = 320;
 
 /**
  * Indicates a resize of the window.
@@ -42,6 +43,7 @@ export function clientResized(clientWidth: number, clientHeight: number) {
 
         if (navigator.product !== 'ReactNative') {
             const state = getState();
+            const { reducedUIEnabled = true } = state['features/base/config'];
             const { isOpen: isChatOpen, width } = state['features/chat'];
 
             if (isChatOpen) {
@@ -49,6 +51,8 @@ export function clientResized(clientWidth: number, clientHeight: number) {
             }
 
             availableWidth -= getParticipantsPaneWidth(state);
+
+            reducedUIEnabled && dispatch(setReducedUI(availableWidth, clientHeight));
         }
 
         batch(() => {
@@ -106,7 +110,10 @@ export function setAspectRatio(width: number, height: number) {
  */
 export function setReducedUI(width: number, height: number) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const reducedUI = Math.min(width, height) < REDUCED_UI_THRESHOLD;
+        const threshold = navigator.product === 'ReactNative'
+            ? REDUCED_UI_THRESHOLD
+            : WEB_REDUCED_UI_THRESHOLD;
+        const reducedUI = Math.max(width, height) < threshold;
 
         if (reducedUI !== getState()['features/base/responsive-ui'].reducedUI) {
             return dispatch({

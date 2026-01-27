@@ -37,16 +37,25 @@ export function grantRecordingConsent() {
 
 /**
  * Grants recording consent, unmutes audio/video, and closes the dialog.
+ * Restores the mute state that existed before the consent dialog was shown,
+ * respecting the user's intentional mute choices from prejoin or initial settings.
  *
  * @returns {Function}
  */
 export function grantRecordingConsentAndUnmute() {
-    return (dispatch: IStore['dispatch']) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        // Read the prejoin mute state from the dialog props stored in Redux
+        const dialogProps = getState()['features/base/dialog'].componentProps as any;
+        const audioMuted = dialogProps?.audioWasMuted ?? false;
+        const videoMuted = dialogProps?.videoWasMuted ?? false;
+
         batch(() => {
             dispatch(setAudioUnmutePermissions(false, true));
             dispatch(setVideoUnmutePermissions(false, true));
-            dispatch(setAudioMuted(false, true));
-            dispatch(setVideoMuted(false, VIDEO_MUTISM_AUTHORITY.USER, true));
+
+            // Restore to the mute state before consent was requested.
+            dispatch(setAudioMuted(audioMuted, false));
+            dispatch(setVideoMuted(videoMuted, VIDEO_MUTISM_AUTHORITY.USER, false));
             dispatch(hideDialog());
         });
     };

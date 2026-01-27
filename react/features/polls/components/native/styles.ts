@@ -117,21 +117,26 @@ export const resultsStyles = createStyleSheet({
 
 export const pollsStyles = createStyleSheet({
 
+    emptyListStyle: {
+        flex: 1
+    },
+
+    emptyListContentContainer: {
+        alignItems: 'center',
+        flex: 1,
+        justifyContent: 'center'
+    },
+
     noPollContent: {
         alignItems: 'center',
-        justifyContent: 'center',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        top: '25%'
+        justifyContent: 'center'
     },
 
     noPollText: {
-        flex: 1,
-        color: BaseTheme.palette.text03,
+        ...BaseTheme.typography.bodyLongBold,
+        color: BaseTheme.palette.text02,
         textAlign: 'center',
-        maxWidth: '70%'
+        maxWidth: '80%'
     },
 
     pollItemContainer: {
@@ -153,13 +158,7 @@ export const pollsStyles = createStyleSheet({
         marginTop: BaseTheme.spacing[3]
     },
 
-    pollCreateButtonsContainerAndroid: {
-        marginBottom: BaseTheme.spacing[8],
-        marginHorizontal: BaseTheme.spacing[3]
-    },
-
-    pollCreateButtonsContainerIos: {
-        marginBottom: BaseTheme.spacing[5],
+    pollCreateButtonsContainer: {
         marginHorizontal: BaseTheme.spacing[3]
     },
 
@@ -205,14 +204,8 @@ export const pollsStyles = createStyleSheet({
         color: BaseTheme.palette.action01
     },
 
-    createPollButtonIos: {
-        marginHorizontal: 20,
-        marginVertical: BaseTheme.spacing[5]
-    },
-
-    createPollButtonAndroid: {
-        marginHorizontal: 20,
-        marginVertical: BaseTheme.spacing[5]
+    createPollButton: {
+        marginHorizontal: BaseTheme.spacing[5],
     },
 
     pollPane: {

@@ -111,7 +111,6 @@ describe('Lobby', () => {
         await p3.waitForRemoteStreams(2);
 
         // now check third one display name in the room, is the one set in the prejoin screen
-        // now check third one display name in the room, is the one set in the prejoin screen
         const name = await p1.getFilmstrip().getRemoteDisplayName(await p3.getEndpointId());
 
         expect(name).toBe(P3);

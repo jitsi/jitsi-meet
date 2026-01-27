@@ -1,38 +1,28 @@
 /* eslint-disable react/no-multi-comp */
 import { Route, useIsFocused } from '@react-navigation/native';
 import React, { Component, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
+import { StyleType } from '../../../base/styles/functions.native';
 import { TabBarLabelCounter } from '../../../mobile/navigation/components/TabBarLabelCounter';
-import { getUnreadPollCount } from '../../../polls/functions';
+import { pollsStyles } from '../../../polls/components/native/styles';
 import { closeChat, sendMessage } from '../../actions.native';
-import { getUnreadFilesCount } from '../../functions';
+import { ChatTabs } from '../../constants';
 import { IChatProps as AbstractProps } from '../../types';
 
 import ChatInputBar from './ChatInputBar';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
-import styles from './styles';
 
 interface IProps extends AbstractProps {
-
-    /**
-     * The number of unread file messages.
-     */
-    _unreadFilesCount: number;
 
     /**
      * The number of unread messages.
      */
     _unreadMessagesCount: number;
-
-    /**
-     * The number of unread polls.
-     */
-    _unreadPollsCount: number;
 
     /**
      * Default prop for navigating between screen components(React Navigation).
@@ -62,6 +52,7 @@ class Chat extends Component<IProps> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onSendMessage = this._onSendMessage.bind(this);
+        this._renderFooter = this._renderFooter.bind(this);
     }
 
     /**
@@ -76,19 +67,25 @@ class Chat extends Component<IProps> {
         return (
             <JitsiScreen
                 disableForcedKeyboardDismiss = { true }
-
-                /* eslint-disable react/jsx-no-bind */
-                footerComponent = { () =>
-                    <ChatInputBar onSend = { this._onSendMessage } />
-                }
+                footerComponent = { this._renderFooter }
                 hasBottomTextInput = { true }
                 hasExtraHeaderHeight = { true }
-                style = { styles.chatContainer }>
+                style = { pollsStyles.pollPaneContainer as StyleType }>
                 {/* @ts-ignore */}
                 <MessageContainer messages = { _messages } />
                 <MessageRecipient privateMessageRecipient = { privateMessageRecipient } />
             </JitsiScreen>
         );
+    }
+
+    /**
+     * Renders the footer component.
+     *
+     * @private
+     * @returns {React$Element<*>}
+     */
+    _renderFooter() {
+        return <ChatInputBar onSend = { this._onSendMessage } />;
     }
 
     /**
@@ -113,9 +110,7 @@ class Chat extends Component<IProps> {
  * @private
  * @returns {{
  *     _messages: Array<Object>,
- *     _unreadMessagesCount: number,
- *     _unreadPollsCount: number,
- *     _unreadFilesCount: number
+ *     _unreadMessagesCount: number
  * }}
  */
 function _mapStateToProps(state: IReduxState, _ownProps: any) {
@@ -123,34 +118,34 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
 
     return {
         _messages: messages,
-        _unreadMessagesCount: unreadMessagesCount,
-        _unreadPollsCount: getUnreadPollCount(state),
-        _unreadFilesCount: getUnreadFilesCount(state)
+        _unreadMessagesCount: unreadMessagesCount
     };
 }
 
 export default translate(connect(_mapStateToProps)((props: IProps) => {
-    const { _unreadMessagesCount, _unreadPollsCount, _unreadFilesCount, dispatch, navigation, t } = props;
-    const totalUnread = _unreadMessagesCount + _unreadPollsCount + _unreadFilesCount;
-    const unreadMessagesNr = totalUnread > 0;
+    const { _unreadMessagesCount, dispatch, navigation, t } = props;
+
+    const isChatTabFocused = useSelector((state: IReduxState) => state['features/chat'].focusedTab === ChatTabs.CHAT);
 
     const isFocused = useIsFocused();
+
+    const activeUnreadMessagesNr = !isChatTabFocused && _unreadMessagesCount > 0;
 
     useEffect(() => {
         navigation?.setOptions({
             tabBarLabel: () => (
                 <TabBarLabelCounter
-                    activeUnreadNr = { unreadMessagesNr }
+                    activeUnreadNr = { activeUnreadMessagesNr }
                     isFocused = { isFocused }
                     label = { t('chat.tabs.chat') }
-                    unreadCount = { totalUnread } />
+                    unreadCount = { _unreadMessagesCount } />
             )
         });
 
         return () => {
             isFocused && dispatch(closeChat());
         };
-    }, [ isFocused, _unreadMessagesCount, _unreadPollsCount, _unreadFilesCount ]);
+    }, [ isFocused, _unreadMessagesCount ]);
 
     return (
         <Chat { ...props } />

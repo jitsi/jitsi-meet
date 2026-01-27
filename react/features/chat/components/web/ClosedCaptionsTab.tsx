@@ -1,20 +1,13 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
-import { IReduxState } from '../../../app/types';
-import { openDialog } from '../../../base/dialog/actions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconSubtitles } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
-import { groupMessagesBySender } from '../../../base/util/messageGrouping';
-import { StartRecordingDialog } from '../../../recording/components/Recording';
-import { setRequestingSubtitles } from '../../../subtitles/actions.any';
 import LanguageSelector from '../../../subtitles/components/web/LanguageSelector';
-import { canStartSubtitles } from '../../../subtitles/functions.any';
-import { ISubtitle } from '../../../subtitles/types';
-import { isTranscribing } from '../../../transcribing/functions';
+// @ts-ignore
+import AbstractClosedCaptions, { AbstractProps } from '../AbstractClosedCaptions';
 
 import { SubtitlesMessagesContainer } from './SubtitlesMessagesContainer';
 
@@ -79,72 +72,19 @@ const useStyles = makeStyles()(theme => {
  *
  * @returns {JSX.Element} - The ClosedCaptionsTab component.
  */
-export default function ClosedCaptionsTab() {
+const ClosedCaptionsTab = ({
+    canStartSubtitles,
+    filteredSubtitles,
+    groupedSubtitles,
+    isButtonPressed,
+    isTranscribing,
+    startClosedCaptions
+}: AbstractProps): JSX.Element => {
     const { classes, theme } = useStyles();
-    const dispatch = useDispatch();
     const { t } = useTranslation();
-    const subtitles = useSelector((state: IReduxState) => state['features/subtitles'].subtitlesHistory);
-    const language = useSelector((state: IReduxState) => state['features/subtitles']._language);
-    const selectedLanguage = language?.replace('translation-languages:', '');
-    const _isTranscribing = useSelector(isTranscribing);
-    const _canStartSubtitles = useSelector(canStartSubtitles);
-    const [ isButtonPressed, setButtonPressed ] = useState(false);
-    const subtitlesError = useSelector((state: IReduxState) => state['features/subtitles']._hasError);
-    const { conference } = useSelector((state: IReduxState) => state['features/base/conference']);
 
-    const filteredSubtitles = useMemo(() => {
-        // First, create a map of transcription messages by message ID
-        const transcriptionMessages = new Map(
-            subtitles
-                .filter(s => s.isTranscription)
-                .map(s => [ s.id, s ])
-        );
-
-        if (!selectedLanguage) {
-            // When no language is selected, show all original transcriptions
-            return Array.from(transcriptionMessages.values());
-        }
-
-        // Then, create a map of translation messages by message ID
-        const translationMessages = new Map(
-            subtitles
-                .filter(s => !s.isTranscription && s.language === selectedLanguage)
-                .map(s => [ s.id, s ])
-        );
-
-        // When a language is selected, for each transcription message:
-        // 1. Use its translation if available
-        // 2. Fall back to the original transcription if no translation exists
-        return Array.from(transcriptionMessages.values())
-            .filter((m: ISubtitle) => !m.interim)
-            .map(m => translationMessages.get(m.id) ?? m);
-    }, [ subtitles, selectedLanguage ]);
-
-    const groupedSubtitles = useMemo(() =>
-        groupMessagesBySender(filteredSubtitles), [ filteredSubtitles ]);
-
-    const startClosedCaptions = useCallback(() => {
-        if (isButtonPressed) {
-            return;
-        }
-
-        if (conference?.getMetadataHandler()?.getMetadata()?.asyncTranscription) {
-            dispatch(openDialog('StartRecordingDialog', StartRecordingDialog, {
-                recordAudioAndVideo: false
-            }));
-        } else {
-            dispatch(setRequestingSubtitles(true, false, null));
-        }
-
-        setButtonPressed(true);
-    }, [ conference, dispatch, isButtonPressed, openDialog, setButtonPressed ]);
-
-    if (subtitlesError && isButtonPressed) {
-        setButtonPressed(false);
-    }
-
-    if (!_isTranscribing) {
-        if (_canStartSubtitles) {
+    if (!isTranscribing) {
+        if (canStartSubtitles) {
             return (
                 <div className = { classes.emptyContent }>
                     <Button
@@ -157,10 +97,6 @@ export default function ClosedCaptionsTab() {
                         type = 'primary' />
                 </div>
             );
-        }
-
-        if (isButtonPressed) {
-            setButtonPressed(false);
         }
 
         return (
@@ -176,10 +112,6 @@ export default function ClosedCaptionsTab() {
         );
     }
 
-    if (isButtonPressed) {
-        setButtonPressed(false);
-    }
-
     return (
         <div className = { classes.container }>
             <LanguageSelector />
@@ -190,4 +122,6 @@ export default function ClosedCaptionsTab() {
             </div>
         </div>
     );
-}
+};
+
+export default AbstractClosedCaptions(ClosedCaptionsTab);

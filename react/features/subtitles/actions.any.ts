@@ -83,7 +83,7 @@ export function toggleRequestingSubtitles() {
  * @param {boolean} enabled - The new state of the subtitles.
  * @param {boolean} displaySubtitles - Whether to display subtitles or not.
  * @param {string} language - The language of the subtitles.
- * @param {boolean} backendRecordingOn - Whether backend recording is on.
+ * @param {boolean} forceBackendRecordingOn - Whether to force that backend recording is on.
  * @returns {{
  *    type: SET_REQUESTING_SUBTITLES,
  *    backendRecordingOn: boolean,
@@ -96,12 +96,12 @@ export function setRequestingSubtitles(
         enabled: boolean,
         displaySubtitles = true,
         language: string | null = `translation-languages:${DEFAULT_LANGUAGE}`,
-        backendRecordingOn = false) {
+        forceBackendRecordingOn: boolean = false) {
     return {
         type: SET_REQUESTING_SUBTITLES,
-        backendRecordingOn,
         displaySubtitles,
         enabled,
+        forceBackendRecordingOn,
         language
     };
 }

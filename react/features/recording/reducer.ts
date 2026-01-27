@@ -43,6 +43,14 @@ export interface IRecordingState {
 }
 
 /**
+ * Props for the RecordingConsentDialog component.
+ */
+export interface IRecordingConsentDialogProps {
+    audioWasMuted?: boolean;
+    videoWasMuted?: boolean;
+}
+
+/**
  * The name of the Redux store this feature stores its state in.
  */
 const STORE_NAME = 'features/recording';

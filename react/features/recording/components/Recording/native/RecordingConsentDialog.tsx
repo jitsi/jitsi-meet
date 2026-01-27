@@ -8,19 +8,20 @@ import ConfirmDialog from '../../../../base/dialog/components/native/ConfirmDial
 import { setAudioMuted, setAudioUnmutePermissions, setVideoMuted, setVideoUnmutePermissions } from '../../../../base/media/actions';
 import { VIDEO_MUTISM_AUTHORITY } from '../../../../base/media/constants';
 import Link from '../../../../base/react/components/native/Link';
+import { IRecordingConsentDialogProps } from '../../../reducer';
 import styles from '../styles.native';
 
 /**
  * Component that renders the dialog for explicit consent for recordings.
  *
+ * @param {IRecordingConsentDialogProps} props - The component props.
  * @returns {JSX.Element}
  */
-export default function RecordingConsentDialog() {
+export default function RecordingConsentDialog({ audioWasMuted = false, videoWasMuted = false }: IRecordingConsentDialogProps) {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const { recordings } = useSelector((state: IReduxState) => state['features/base/config']);
     const { consentLearnMoreLink } = recordings ?? {};
-
 
     const consent = useCallback(() => {
         dispatch(setAudioUnmutePermissions(false, true));
@@ -32,11 +33,13 @@ export default function RecordingConsentDialog() {
     const consentAndUnmute = useCallback(() => {
         dispatch(setAudioUnmutePermissions(false, true));
         dispatch(setVideoUnmutePermissions(false, true));
-        dispatch(setAudioMuted(false, true));
-        dispatch(setVideoMuted(false, VIDEO_MUTISM_AUTHORITY.USER, true));
+
+        // Restore to the mute state before consent was requested.
+        dispatch(setAudioMuted(audioWasMuted, false));
+        dispatch(setVideoMuted(videoWasMuted, VIDEO_MUTISM_AUTHORITY.USER, false));
 
         return true;
-    }, []);
+    }, [ audioWasMuted, videoWasMuted ]);
 
     return (
         <ConfirmDialog

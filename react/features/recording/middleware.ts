@@ -421,12 +421,21 @@ function _showExplicitConsentDialog(recorderSession: any, dispatch: IStore['disp
         return;
     }
 
+    // Capture the current mute state BEFORE forcing mute for consent
+    // This preserves the user's intentional mute choices from prejoin or initial settings
+    const state = getState();
+    const audioWasMuted = state['features/base/media'].audio.muted;
+    const videoWasMuted = state['features/base/media'].video.muted;
+
     batch(() => {
         dispatch(markConsentRequested(recorderSession.getID()));
         dispatch(setAudioUnmutePermissions(true, true));
         dispatch(setVideoUnmutePermissions(true, true));
         dispatch(setAudioMuted(true));
         dispatch(setVideoMuted(true));
-        dispatch(openDialog('RecordingConsentDialog', RecordingConsentDialog));
+        dispatch(openDialog('RecordingConsentDialog', RecordingConsentDialog, {
+            audioWasMuted,
+            videoWasMuted
+        }));
     });
 }

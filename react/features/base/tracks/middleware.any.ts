@@ -33,7 +33,6 @@ import {
     isUserInteractionRequiredForUnmute,
     setTrackMuted
 } from './functions';
-import './subscriber';
 
 /**
  * Middleware that captures LIB_DID_DISPOSE and LIB_DID_INIT actions and,

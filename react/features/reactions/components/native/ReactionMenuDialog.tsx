@@ -1,6 +1,5 @@
 import React, { ComponentType, PureComponent } from 'react';
-import { TouchableWithoutFeedback } from 'react-native';
-import { Edge, SafeAreaView } from 'react-native-safe-area-context';
+import { TouchableWithoutFeedback, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
@@ -9,7 +8,6 @@ import { hideDialog } from '../../../base/dialog/actions';
 import { isDialogOpen } from '../../../base/dialog/functions';
 import { getParticipantCount } from '../../../base/participants/functions';
 import { StyleType } from '../../../base/styles/functions.native';
-import { isToolboxVisible } from '../../../toolbox/functions.native';
 
 import ReactionMenu from './ReactionMenu';
 
@@ -37,11 +35,6 @@ interface IProps {
      * The color-schemed stylesheet of the feature.
      */
     _styles: StyleType;
-
-    /**
-     * The indicator which determines whether the Toolbox is visible.
-     */
-    _toolboxVisible: boolean;
 
     /**
      * The width of the screen.
@@ -87,13 +80,12 @@ class ReactionMenuDialog extends PureComponent<IProps> {
      * @returns {ReactElement}
      */
     override render() {
-        const { _height, _participantCount, _styles, _toolboxVisible, _width } = this.props;
+        const { _height, _participantCount, _styles, _width } = this.props;
 
         return (
             <TouchableWithoutFeedback
                 onPress = { this._onCancel }>
-                <SafeAreaView
-                    edges = { [ 'bottom', 'left', 'right', !_toolboxVisible && 'top' ].filter(Boolean) as Edge[] }
+                <View
                     style = { [
                         _styles,
                         {
@@ -103,7 +95,7 @@ class ReactionMenuDialog extends PureComponent<IProps> {
                     <ReactionMenu
                         onCancel = { this._onCancel }
                         overflowMenu = { false } />
-                </SafeAreaView>
+                </View>
             </TouchableWithoutFeedback>
         );
     }
@@ -138,8 +130,7 @@ function _mapStateToProps(state: IReduxState) {
         _styles: ColorSchemeRegistry.get(state, 'Toolbox').reactionDialog,
         _width: state['features/base/responsive-ui'].clientWidth,
         _height: state['features/base/responsive-ui'].clientHeight,
-        _participantCount: getParticipantCount(state),
-        _toolboxVisible: isToolboxVisible(state)
+        _participantCount: getParticipantCount(state)
     };
 }
 

@@ -28,6 +28,8 @@ end
 local jid_node = require 'util.jid'.node;
 local jid_host = require 'util.jid'.host;
 local jid_split = require 'util.jid'.split;
+local jid_resource = require 'util.jid'.resource;
+local jid_bare = require 'util.jid'.bare;
 local json = require 'cjson.safe';
 local st = require 'util.stanza';
 local uuid_gen = require 'util.uuid'.generate;
@@ -65,12 +67,16 @@ local main_muc_service;
 -- Maps a breakout room jid to the main room jid
 local main_rooms_map = {};
 
+-- Maps a full room JID to a bare connection jid for a participant that's changing rooms.
+local cache = require 'util.cache';
+local switching_room_cache = cache.new(1000);
+
 -- Utility functions
 
 function get_main_room_jid(room_jid)
     local _, host = jid_split(room_jid);
 
-	return
+    return
         host == main_muc_component_config
         and room_jid
         or main_rooms_map[room_jid];
@@ -391,7 +397,7 @@ function on_breakout_room_pre_create(event)
 end
 
 function on_occupant_joined(event)
-    local room = event.room;
+    local occupant, room = event.occupant, event.room;
 
     if is_healthcheck_room(room.jid) then
         return;
@@ -409,6 +415,9 @@ function on_occupant_joined(event)
             main_room.close_timer:stop();
             main_room.close_timer = nil;
         end
+
+        -- clear any switching state for this occupant, we always store main room / resource
+        switching_room_cache:set(main_room_jid..'/'..jid_resource(occupant.nick), nil);
     end
 end
 
@@ -447,6 +456,11 @@ function on_occupant_pre_leave(event)
     prosody.events.fire_event('jitsi-breakout-occupant-leaving', {
         room = room; main_room = main_room; occupant = occupant; stanza = stanza; session = session;
     });
+
+    local presence_status = stanza:get_child_text('status');
+    if presence_status == 'switch_room' then
+        switching_room_cache:set(main_room.jid..'/'..jid_resource(occupant.nick), jid_bare(occupant.jid));
+    end
 end
 
 function on_occupant_left(event)
@@ -518,6 +532,86 @@ function on_main_room_destroyed(event)
     end
 end
 
+-- Checks for a conflict with a JID in the switching_room_cache. In case of a conflict sends an error and returns true (the join is not allowed).
+-- in switching_room_cache is the same as the jid that is sending the stanza, if that is the case we can allow
+-- the join to proceed by returning false. If there is no match we send an error and return true
+-- which should halt the join.
+-- @param jid - The jid to check, this is the jid requested to join breakout or main room
+-- @param from_bare_jid - The real jid of the occupant trying to join
+-- @param room - The room being joined
+-- @param stanza - The presence stanza
+-- @param origin - The session origin to send error if needed
+function check_switching_state(jid, from_bare_jid, room, stanza, origin)
+    local switching_session_jid = switching_room_cache:get(jid);
+
+    if switching_session_jid and switching_session_jid ~= from_bare_jid then
+        local reply = st.error_reply(stanza, "cancel", "conflict", nil, room.jid):up();
+        origin.send(reply);
+        return true;
+    end
+
+    return false;
+end
+
+function check_for_existing_occupant_in_room(room, requested_resource, bare_jid, stanza, origin)
+    local dest_occupant = room:get_occupant_by_nick(room.jid..'/'..requested_resource);
+    if dest_occupant ~= nil and bare_jid ~= jid_bare(dest_occupant.bare_jid) then
+        origin.send(st.error_reply(stanza, 'cancel', 'conflict', nil, room.jid):up());
+        return true;
+    end
+end
+
+-- This is a request to join or change jid in main or breakout room. We need to check whether the requested jid does not
+-- conflict with a jid which is currently in switching state or already in another room.
+function on_occupant_pre_join_or_change(e)
+    local room, stanza, origin = e.room, e.stanza, e.origin;
+    local requested_jid = stanza.attr.to;
+
+    local main_room = get_main_room(room.jid);
+
+    -- case where the room can be destroyed while someone is switching to it
+    if not main_room then
+        origin.send(st.error_reply(stanza, 'cancel', 'service-unavailable'));
+        return true;
+    end
+
+    local main_room_requested_jid = main_room.jid..'/'..jid_resource(requested_jid);
+    local bare_jid = jid_bare(stanza.attr.from);
+
+    -- we always store main room jid with resource in switching cache
+    if check_switching_state(main_room_requested_jid, bare_jid, room, stanza, origin) then
+        return true;
+    end
+
+    if main_room == room then
+        -- this is the main room we need to check all its breakout rooms
+        for breakout_room_jid in pairs(room._data.breakout_rooms or {}) do
+            local breakout_room = breakout_rooms_muc_service.get_room_from_jid(breakout_room_jid);
+            if breakout_room then
+                if check_for_existing_occupant_in_room(
+                    breakout_room, jid_resource(requested_jid), bare_jid, stanza, origin) then
+                    return true;
+                end
+            end
+        end
+    else
+        -- this is a breakout room let's check the main room
+        if check_for_existing_occupant_in_room(main_room, jid_resource(requested_jid), bare_jid, stanza, origin) then
+            return true;
+        end
+
+        -- now let's check the rest of the breakout rooms
+        for breakout_room_jid in pairs(main_room._data.breakout_rooms or {}) do
+            local breakout_room = breakout_rooms_muc_service.get_room_from_jid(breakout_room_jid);
+            if breakout_room then
+                if check_for_existing_occupant_in_room(
+                    breakout_room, jid_resource(requested_jid), bare_jid, stanza, origin) then
+                    return true;
+                end
+            end
+        end
+    end
+end
 
 -- Module operations
 
@@ -544,6 +638,8 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
     host_module:hook('muc-occupant-left', on_occupant_left);
     host_module:hook('muc-room-pre-create', on_breakout_room_pre_create);
     host_module:hook('muc-occupant-pre-leave', on_occupant_pre_leave);
+    host_module:hook('muc-occupant-pre-join', on_occupant_pre_join_or_change);
+    host_module:hook('muc-occupant-pre-change', on_occupant_pre_join_or_change);
 
     host_module:hook('muc-disco#info', function (event)
         local room = event.room;
@@ -641,6 +737,24 @@ process_host_module(breakout_rooms_muc_component_config, function(host_module, h
     end
 end);
 
+-- clears switching_room_cache on resource unbind (disconnect one way or another)
+local function handle_pre_resource_unbind(event)
+    local participant_bare_jid = jid_bare(event.jid);
+
+    -- check switching_room_cache for anyone that is switching rooms but got disconnected so we can clean up the map
+    local keysToRemove = {};
+    for key, value in switching_room_cache:items() do
+        if value == participant_bare_jid then
+            table.insert(keysToRemove, key)
+        end
+    end
+
+    for _, key in ipairs(keysToRemove) do
+        switching_room_cache:set(key, nil);
+    end
+end
+module:hook_global('jitsi-pre-session-unbind', handle_pre_resource_unbind);
+
 -- operates on already loaded main muc module
 function process_main_muc_loaded(main_muc, host_module)
     module:log('debug', 'Main muc loaded');
@@ -650,6 +764,18 @@ function process_main_muc_loaded(main_muc, host_module)
     host_module:hook('muc-occupant-joined', on_occupant_joined);
     host_module:hook('muc-occupant-left', on_occupant_left);
     host_module:hook('muc-room-destroyed', on_main_room_destroyed, 1);  -- prosody handles it at 0
+
+    host_module:hook('muc-occupant-pre-leave', function(event)
+        local room, occupant, session, stanza = event.room, event.occupant, event.origin, event.stanza;
+
+        local presence_status = stanza:get_child_text('status');
+        if presence_status == 'switch_room' then
+            switching_room_cache:set(occupant.nick, jid_bare(occupant.jid));
+        end
+    end);
+
+    host_module:hook('muc-occupant-pre-join', on_occupant_pre_join_or_change);
+    host_module:hook('muc-occupant-pre-change', on_occupant_pre_join_or_change);
 end
 
 -- process or waits to process the main muc component

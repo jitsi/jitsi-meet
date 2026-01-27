@@ -627,7 +627,8 @@ function _participantJoined({ participant }: { participant: IParticipant; }) {
         pinned,
         presence,
         role,
-        sources
+        sources,
+        userContext
     } = participant;
     let { conference, id } = participant;
 
@@ -659,7 +660,8 @@ function _participantJoined({ participant }: { participant: IParticipant; }) {
         pinned: pinned || false,
         presence,
         role: role || PARTICIPANT_ROLE.NONE,
-        sources
+        sources,
+        userContext
     };
 }
 
