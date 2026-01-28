@@ -176,6 +176,7 @@ export default class WebhookProxy {
      * @param value
      */
     set defaultMeetingSettings(value: {
+        asyncTranscriptions?: boolean;
         autoAudioRecording?: boolean;
         autoTranscriptions?: boolean;
         autoVideoRecording?: boolean;
