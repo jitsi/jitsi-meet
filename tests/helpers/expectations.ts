@@ -22,6 +22,12 @@ const defaultExpectations = {
         liveStreamingEnabled: true,
         recordingEnabled: true,
         transcriptionEnabled: true,
+        transcription: {
+            // Expect "async" transcription to be enabled.
+            asyncTranscription: true,
+            // Expect the JaaS transcription webhooks to fire in "async" mode.
+            asyncTranscriptionWebhook: false
+        },
         /**
          * Whether the jaas account is configured with the account-level setting to allow unauthenticated users to join.
          */
