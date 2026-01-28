@@ -13,7 +13,9 @@ setTestProperties(__filename, {
     usesBrowsers: [ 'p1', 'p2' ]
 });
 
-for (const asyncTranscriptions of [ false, true ]) {
+const asyncTranscriptionValues = expectations.jaas.transcription.asyncTranscription ? [ false, true ] : [ false ];
+
+for (const asyncTranscriptions of asyncTranscriptionValues) {
     describe(`Transcription (async=${asyncTranscriptions})`, () => {
         let p1: Participant, p2: Participant;
         let webhooksProxy: WebhookProxy;
@@ -66,7 +68,7 @@ for (const asyncTranscriptions of [ false, true ]) {
             await p2.getIframeAPI().addEventListener('transcriptionChunkReceived');
             await p1.getIframeAPI().executeCommand('toggleSubtitles');
 
-            await checkReceivingChunks(p1, p2, webhooksProxy, !asyncTranscriptions);
+            await checkReceivingChunks(p1, p2, webhooksProxy, asyncTranscriptions);
 
             await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
             await p1.getIframeAPI().addEventListener('transcribingStatusChanged');
@@ -87,7 +89,7 @@ for (const asyncTranscriptions of [ false, true ]) {
 
             await p1.getIframeAPI().executeCommand('setSubtitles', true, true);
 
-            await checkReceivingChunks(p1, p2, webhooksProxy, !asyncTranscriptions);
+            await checkReceivingChunks(p1, p2, webhooksProxy, asyncTranscriptions);
 
             await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
 
@@ -132,7 +134,7 @@ for (const asyncTranscriptions of [ false, true ]) {
                 expect(e.value.on).toBe(true);
             });
 
-            await checkReceivingChunks(p1, p2, webhooksProxy, !asyncTranscriptions);
+            await checkReceivingChunks(p1, p2, webhooksProxy, asyncTranscriptions);
 
             await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
             await p2.getIframeAPI().clearEventResults('transcribingStatusChanged');
@@ -168,15 +170,17 @@ for (const asyncTranscriptions of [ false, true ]) {
             // let's wait for destroy event before waiting for those that depends on it
             await webhooksProxy.waitForEvent('ROOM_DESTROYED');
 
-            const event: {
-                data: {
-                    preAuthenticatedLink: string;
-                };
-                eventType: string;
-            } = await webhooksProxy.waitForEvent('TRANSCRIPTION_UPLOADED');
+            if (!asyncTranscriptions || expectations.jaas.transcription.asyncTranscriptionWebhook) {
+                const event: {
+                    data: {
+                        preAuthenticatedLink: string;
+                    };
+                    eventType: string;
+                } = await webhooksProxy.waitForEvent('TRANSCRIPTION_UPLOADED');
 
-            expect(event.eventType).toBe('TRANSCRIPTION_UPLOADED');
-            expect(event.data.preAuthenticatedLink).toBeDefined();
+                expect(event.eventType).toBe('TRANSCRIPTION_UPLOADED');
+                expect(event.data.preAuthenticatedLink).toBeDefined();
+            }
         });
     });
 }
@@ -186,10 +190,9 @@ for (const asyncTranscriptions of [ false, true ]) {
  * @param p1
  * @param p2
  * @param webhooksProxy
- * @param expectName Whether to expect the events to contain the name of the participant. Currently, async
- * transcriptions do not include the name. TODO: remove this parameter when async transcription events are fixed.
+ * @param asyncTranscription Whether async transciptions are used.
  */
-async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksProxy: WebhookProxy, expectName = true) {
+async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksProxy: WebhookProxy, asyncTranscription = false) {
     const p1Promise = p1.driver.waitUntil(() => p1.getIframeAPI()
             .getEventResult('transcriptionChunkReceived'), {
         timeout: 60000,
@@ -202,7 +205,24 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
         timeoutMsg: 'transcriptionChunkReceived event not received on p2 side'
     });
 
-    const webhookPromise = async () => {
+    const [ p1Event, p2Event ] = await Promise.all([ p1Promise, p2Promise ]);
+    const p1Id = await p1.getEndpointId();
+
+    const p1Transcript = p1Event.data.stable || p1Event.data.final;
+    const p2Transcript = p2Event.data.stable || p2Event.data.final;
+
+    expect(p2Transcript.includes(p1Transcript) || p1Transcript.includes(p2Transcript)).toBe(true);
+    expect(p2Event.data.language).toBe(p1Event.data.language);
+    expect(p2Event.data.messageID).toBe(p1Event.data.messageID);
+    expect(p1Event.data.participant.id).toBe(p1Id);
+    expect(p2Event.data.participant.id).toBe(p1Id);
+
+    if (!asyncTranscription) {
+        expect(p1Event.data.participant.name).toBe(p1.name);
+        expect(p2Event.data.participant.name).toBe(p1.name);
+    }
+
+    if (!asyncTranscription || expectations.jaas.transcription.asyncTranscriptionWebhook) {
         const event: {
             data: {
                 final: string;
@@ -219,34 +239,14 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
 
         expect(event.eventType).toBe('TRANSCRIPTION_CHUNK_RECEIVED');
 
-        event.data.stable = event.data.final;
+        const webhookTranscript = event.data.final;
 
-        return event;
-    };
-
-    const [ p1Event, p2Event, webhookEvent ] = await Promise.all([ p1Promise, p2Promise, await webhookPromise() ]);
-    const p1Id = await p1.getEndpointId();
-
-    const p1Transcript = p1Event.data.stable || p1Event.data.final;
-    const p2Transcript = p2Event.data.stable || p2Event.data.final;
-    const webhookTranscript = webhookEvent.data.stable || webhookEvent.data.final;
-
-    expect(p2Transcript.includes(p1Transcript) || p1Transcript.includes(p2Transcript)).toBe(true);
-    expect(webhookTranscript.includes(p1Transcript) || p1Transcript.includes(webhookTranscript)).toBe(true);
-
-    expect(p2Event.data.language).toBe(p1Event.data.language);
-    expect(webhookEvent.data.language).toBe(p1Event.data.language);
-
-    expect(p2Event.data.messageID).toBe(p1Event.data.messageID);
-    expect(webhookEvent.data.messageID).toBe(p1Event.data.messageID);
-
-    expect(p1Event.data.participant.id).toBe(p1Id);
-    expect(p2Event.data.participant.id).toBe(p1Id);
-    expect(webhookEvent.data.participant.id).toBe(p1Id);
-
-    if (expectName) {
-        expect(p1Event.data.participant.name).toBe(p1.name);
-        expect(p2Event.data.participant.name).toBe(p1.name);
-        expect(webhookEvent.data.participant.name).toBe(p1.name);
+        expect(webhookTranscript.includes(p1Transcript) || p1Transcript.includes(webhookTranscript)).toBe(true);
+        expect(event.data.language).toBe(p1Event.data.language);
+        expect(event.data.messageID).toBe(p1Event.data.messageID);
+        expect(event.data.participant.id).toBe(p1Id);
+        if (!asyncTranscription) {
+            expect(event.data.participant.name).toBe(p1.name);
+        }
     }
 }
