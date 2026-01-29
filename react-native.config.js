@@ -8,7 +8,11 @@ module.exports = {
     dependencies: {
         '@giphy/react-native-sdk': {
             platforms: {
-                ios: null
+                ios: {
+                    // Disable auto-linking but keep codegen.
+                    // We need it to generate GiphyReactNativeSDKSpec.
+                    scriptPhases: []
+                }
             }
         },
         '@react-native-google-signin/google-signin': {
