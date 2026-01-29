@@ -123,7 +123,8 @@ export const MAIN_TOOLBAR_BUTTONS_PRIORITY = [
     'embedmeeting',
     'feedback',
     'download',
-    'help'
+    'help',
+    'custom-panel'
 ];
 
 export const TOOLBAR_TIMEOUT = 4000;
@@ -148,6 +149,7 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'camera',
     'chat',
     'closedcaptions',
+    'custom-panel',
     'desktop',
     'download',
     'embedmeeting',
