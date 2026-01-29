@@ -10,7 +10,6 @@ import {
 } from '../../helpers/participants';
 
 setTestProperties(__filename, {
-    retry: true,
     usesBrowsers: [ 'p1', 'p2', 'p3', 'p4' ]
 });
 

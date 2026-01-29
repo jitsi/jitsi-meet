@@ -8,6 +8,7 @@ import { joinJaasMuc, generateJaasToken as t } from '../../helpers/jaas';
 
 setTestProperties(__filename, {
     requireWebhookProxy: true,
+    retry: true,
     useJaas: true,
     usesBrowsers: [ 'p1', 'p2' ]
 });

@@ -11,7 +11,6 @@ import type { IJoinOptions } from '../../helpers/types';
 import type PreMeetingScreen from '../../pageobjects/PreMeetingScreen';
 
 setTestProperties(__filename, {
-    retry: true,
     usesBrowsers: [ 'p1', 'p2', 'p3' ]
 });
 
