@@ -75,14 +75,6 @@ const useStyles = makeStyles()((theme: Theme) => {
                 '&.privatemessage': {
                     backgroundColor: theme.palette.support05
                 },
-                '&.local': {
-                    backgroundColor: theme.palette.ui04,
-                    borderRadius: '12px 4px 12px 12px',
-
-                    '&.privatemessage': {
-                        backgroundColor: theme.palette.support05
-                    }
-                },
 
                 '&.error': {
                     backgroundColor: theme.palette.actionDanger,

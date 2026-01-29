@@ -15,6 +15,7 @@ import { isToggleCameraEnabled } from '../base/tracks/functions.web';
 import { toggleChat } from '../chat/actions.web';
 import { isChatDisabled } from '../chat/functions';
 import { useChatButton } from '../chat/hooks.web';
+import { useCustomPanelButton } from '../custom-panel/hooks.web';
 import { useEmbedButton } from '../embed-meeting/hooks';
 import { useEtherpadButton } from '../etherpad/hooks';
 import { useFeedbackButton } from '../feedback/hooks.web';
@@ -292,6 +293,7 @@ export function useToolboxButtons(
     const feedback = useFeedbackButton();
     const _download = useDownloadButton();
     const _help = useHelpButton();
+    const customPanel = useCustomPanelButton();
 
     const buttons: { [key in ToolbarButton]?: IToolboxButton; } = {
         microphone,
@@ -326,7 +328,8 @@ export function useToolboxButtons(
         embedmeeting: embed,
         feedback,
         download: _download,
-        help: _help
+        help: _help,
+        'custom-panel': customPanel
     };
     const buttonKeys = Object.keys(buttons) as ToolbarButton[];
 

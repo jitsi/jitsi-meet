@@ -26,5 +26,6 @@ import '../face-landmarks/middleware';
 import '../gifs/middleware';
 import '../whiteboard/middleware.web';
 import '../file-sharing/middleware.web';
+import '../custom-panel/middleware.web';
 
 import './middlewares.any';
