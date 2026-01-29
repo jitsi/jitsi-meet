@@ -227,6 +227,9 @@
         "video_ssrc": "Video SSRC:",
         "yes": "yes"
     },
+    "customPanel": {
+        "close": "Close"
+    },
     "dateUtils": {
         "earlier": "Earlier",
         "today": "Today",
@@ -1315,6 +1318,7 @@
             "chat": "Open / Close chat",
             "clap": "Clap",
             "closeChat": "Close chat",
+            "closeCustomPanel": "Close",
             "closeMoreActions": "Close more actions menu",
             "closeParticipantsPane": "Close participants pane",
             "closedCaptions": "Closed captions",
@@ -1420,9 +1424,11 @@
         "chat": "Open / Close chat",
         "clap": "Clap",
         "closeChat": "Close chat",
+        "closeCustomPanel": "Close",
         "closeParticipantsPane": "Close participants pane",
         "closeReactionsMenu": "Close reactions menu",
         "closedCaptions": "Closed captions",
+        "copilot": "Copilot",
         "disableNoiseSuppression": "Disable extra noise suppression",
         "disableReactionSounds": "You can disable reaction sounds for this meeting",
         "documentClose": "Close shared document",
