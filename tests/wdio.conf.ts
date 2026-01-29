@@ -288,8 +288,21 @@ export const config: WebdriverIO.MultiremoteConfig = {
         keepAlive.forEach(clearInterval);
     },
 
-    beforeSession(c, capabilities_, specs_, cid) {
+    async beforeSession(c, capabilities_, specs, cid) {
         const originalBefore = c.before;
+
+        if (specs && specs.length == 1) {
+            const testFilePath = specs[0].replace(/^file:\/\//, '');
+            const testProperties = await getTestProperties(testFilePath);
+            if (testProperties.retry) {
+                c.specFileRetries = 1;
+                c.specFileRetriesDeferred = true;
+                c.specFileRetriesDelay = 1;
+                console.log(`Enabling retry for ${testFilePath}`)
+            }
+        } else {
+            console.log(`No test file or multiple test files specified, will not enable retries`);
+        }
 
         if (!originalBefore || !Array.isArray(originalBefore) || originalBefore.length !== 1) {
             console.warn('No before hook found or more than one found, skipping');
