@@ -1,6 +1,8 @@
+import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { IStateful } from '../app/types';
 import { toState } from '../redux/functions';
 import { getPropertyValue } from '../settings/functions';
+import { isUserInteractionRequiredForUnmute } from '../tracks/functions.any';
 
 import { AudioSupportedLanguage, VIDEO_MUTISM_AUTHORITY } from './constants';
 
@@ -154,3 +156,44 @@ export const getSoundFileSrc = (file: string, language: string): string => {
 
     return `${fileTokens[0]}_${language}.${fileTokens[1]}`;
 };
+
+/**
+ * Returns the initial desired muted state for audio and video when joining a
+ * room, taking into account config/url/settings and persisted explicit user
+ * device preferences as well as privacy hardening around prejoin visibility.
+ *
+ * @param {Object|Function} stateful - The redux state or getState function.
+ * @returns {{ audioMuted: boolean, videoMuted: boolean }}
+ */
+export function getInitialMediaMutedState(stateful: IStateful) {
+    const state = toState(stateful);
+
+    const startWithAudio = Boolean(getStartWithAudioMuted(stateful))
+        || Boolean(isUserInteractionRequiredForUnmute(state));
+    const startWithVideo = Boolean(getStartWithVideoMuted(stateful))
+        || Boolean(isUserInteractionRequiredForUnmute(state));
+
+    const prefs = state['features/base/settings']?.userDevicePreferences;
+
+    // If the user has explicitly chosen their device state before, respect it.
+    if (prefs?.hasExplicitChoice) {
+        return {
+            audioMuted: Boolean(prefs.audioMuted),
+            videoMuted: Boolean(prefs.videoMuted)
+        };
+    }
+
+    // If prejoin is not visible (disabled or skipped) and the user has never
+    // made an explicit choice, enforce privacy: start muted.
+    if (!isPrejoinPageVisible(state)) {
+        return {
+            audioMuted: true,
+            videoMuted: true
+        };
+    }
+
+    return {
+        audioMuted: startWithAudio,
+        videoMuted: startWithVideo
+    };
+}

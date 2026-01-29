@@ -40,6 +40,11 @@ const DEFAULT_STATE: ISettingsState = {
     startCarMode: false,
     startWithAudioMuted: false,
     startWithVideoMuted: false,
+    userDevicePreferences: {
+        hasExplicitChoice: false,
+        audioMuted: true,
+        videoMuted: true
+    },
     userSelectedAudioOutputDeviceId: undefined,
     userSelectedCameraDeviceId: undefined,
     userSelectedMicDeviceId: undefined,
@@ -86,6 +91,11 @@ export interface ISettingsState {
     startCarMode?: boolean;
     startWithAudioMuted?: boolean;
     startWithVideoMuted?: boolean;
+    userDevicePreferences?: {
+        audioMuted: boolean;
+        hasExplicitChoice: boolean;
+        videoMuted: boolean;
+    };
     userSelectedAudioOutputDeviceId?: string;
     userSelectedAudioOutputDeviceLabel?: string;
     userSelectedCameraDeviceId?: string;
