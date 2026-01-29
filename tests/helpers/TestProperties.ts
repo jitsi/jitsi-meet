@@ -8,6 +8,8 @@ export type ITestProperties = {
     description?: string;
     /** The test requires the webhook proxy to be available. */
     requireWebhookProxy: boolean;
+    /** Whether the test should be retried. */
+    retry: boolean;
     /** The test requires jaas, it should be skipped when the jaas configuration is not enabled. */
     useJaas: boolean;
     /** The test uses the webhook proxy if available. */
@@ -18,6 +20,7 @@ export type ITestProperties = {
 const defaultProperties: ITestProperties = {
     useWebhookProxy: false,
     requireWebhookProxy: false,
+    retry: false,
     useJaas: false,
     usesBrowsers: [ 'p1' ]
 };
