@@ -288,20 +288,21 @@ export const config: WebdriverIO.MultiremoteConfig = {
         keepAlive.forEach(clearInterval);
     },
 
-    async beforeSession(c, capabilities_, specs, cid) {
+    async beforeSession(c, capabilities_, spec, cid) {
         const originalBefore = c.before;
 
-        if (specs && specs.length == 1) {
-            const testFilePath = specs[0].replace(/^file:\/\//, '');
+        if (spec && spec.length == 1) {
+            const testFilePath = spec[0].replace(/^file:\/\//, '');
             const testProperties = await getTestProperties(testFilePath);
+
             if (testProperties.retry) {
                 c.specFileRetries = 1;
                 c.specFileRetriesDeferred = true;
                 c.specFileRetriesDelay = 1;
-                console.log(`Enabling retry for ${testFilePath}`)
+                console.log(`Enabling retry for ${testFilePath}`);
             }
         } else {
-            console.log(`No test file or multiple test files specified, will not enable retries`);
+            console.log('No test file or multiple test files specified, will not enable retries');
         }
 
         if (!originalBefore || !Array.isArray(originalBefore) || originalBefore.length !== 1) {
