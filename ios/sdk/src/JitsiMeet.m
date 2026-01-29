@@ -58,7 +58,6 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        
         // Initialize WebRTC options.
         self.rtcAudioDevice = nil;
         self.webRtcLoggingSeverity = WebRTCLoggingSeverityNone;
@@ -82,7 +81,7 @@
   didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     _launchOptions = [launchOptions copy];
-    
+
 #if !defined(JITSI_MEET_SDK_LITE)
     [Dropbox setAppKey];
 #endif
