@@ -57,6 +57,7 @@ allprojects {
         mavenCentral()
         google()
         maven { url 'https://www.jitpack.io' }
+        maven { url "${rootDir}/../node_modules/react-native/android" }
     }
 
     // Make sure we use the react-native version in node_modules and not the one

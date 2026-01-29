@@ -142,6 +142,10 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*', 'android/gradle.properties', 'android/gradle/wrapper/gradle-wrapper.properties') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
+    - name: Generate React Native autolinking
+      run: |
+        mkdir -p android/build/generated/autolinking
+        npx react-native config > android/build/generated/autolinking/autolinking.json
     - run: |
         cd android
         ./gradlew :sdk:clean
