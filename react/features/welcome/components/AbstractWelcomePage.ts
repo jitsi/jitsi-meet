@@ -235,6 +235,14 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      * @returns {void}
      */
     _onRoomChange(value: string) {
+        // v2: Better handling - stop animation when typing,
+        // but only restart it if the feature is actually enabled in config.
+        if (value.length > 0) {
+            this._clearTimeouts();
+        } else if (this.state.generateRoomNames) {
+            this._updateRoomName();
+        }
+
         this.setState({
             room: value,
             insecureRoomName: Boolean(this.props._enableInsecureRoomNameWarning && value && isInsecureRoomName(value))
