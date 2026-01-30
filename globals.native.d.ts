@@ -2,11 +2,42 @@ import { IConfig } from "./react/features/base/config/configType";
 
 export {};
 
+declare global {
+    interface URL {
+        hash: string;
+        host: string;
+        hostname: string;
+        href: string;
+        readonly origin: string;
+        password: string;
+        pathname: string;
+        port: string;
+        protocol: string;
+        search: string;
+        readonly searchParams: URLSearchParams;
+        username: string;
+        toJSON(): string;
+        toString(): string;
+    }
+
+    interface URLSearchParams {
+        append(name: string, value: string): void;
+        delete(name: string): void;
+        get(name: string): string | null;
+        getAll(name: string): string[];
+        has(name: string): boolean;
+        set(name: string, value: string): void;
+        sort(): void;
+        toString(): string;
+        forEach(callbackfn: (value: string, key: string, parent: URLSearchParams) => void, thisArg?: any): void;
+    }
+}
+
 interface ILocation extends URL {
-    assign(url: string);
-    replace(url: string);
-    reload();
-};
+    assign(url: string): void;
+    replace(url: string): void;
+    reload(): void;
+}
 
 interface IWindow {
     JITSI_MEET_LITE_SDK: boolean;
