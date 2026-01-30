@@ -18,10 +18,16 @@ import {
 import { getLocalParticipant } from '../participants/functions';
 
 import {
+    REMOTE_PARTICIPANT_AUDIO_MUTE_CHANGED,
+    REMOTE_PARTICIPANT_VIDEO_MUTE_CHANGED,
     SET_NO_SRC_DATA_NOTIFICATION_UID,
     TRACK_ADDED,
     TRACK_CREATE_CANCELED,
     TRACK_CREATE_ERROR,
+    TRACK_MODERATOR_MUTE_CLEARED,
+    TRACK_MODERATOR_MUTE_INITIATED,
+    TRACK_MUTE_STATE_CLEARED,
+    TRACK_MUTE_STATE_UPDATED,
     TRACK_MUTE_UNMUTE_FAILED,
     TRACK_NO_DATA_FROM_SOURCE,
     TRACK_REMOVED,
@@ -676,6 +682,68 @@ export function trackStreamingStatusChanged(track: any, streamingStatus: string)
 }
 
 /**
+ * Marks a mute as moderator-initiated for tracking purposes.
+ *
+ * @param {string} participantId - The ID of the participant being muted.
+ * @param {string} mediaType - The media type being muted.
+ * @returns {Object}
+ */
+export function trackModeratorMuteInitiated(participantId: string, mediaType: string) {
+    return {
+        type: TRACK_MODERATOR_MUTE_INITIATED,
+        participantId,
+        mediaType
+    };
+}
+
+/**
+ * Clears a tracked moderator-initiated mute.
+ *
+ * @param {string} participantId - The ID of the participant.
+ * @param {string} mediaType - The media type.
+ * @returns {Object}
+ */
+export function trackModeratorMuteCleared(participantId: string, mediaType: string) {
+    return {
+        type: TRACK_MODERATOR_MUTE_CLEARED,
+        participantId,
+        mediaType
+    };
+}
+
+/**
+ * Updates the previous mute state for a participant's track.
+ *
+ * @param {string} participantId - The ID of the participant.
+ * @param {string} mediaType - The media type.
+ * @param {boolean} muted - The muted state.
+ * @returns {Object}
+ */
+export function trackMuteStateUpdated(participantId: string, mediaType: string, muted: boolean) {
+    return {
+        type: TRACK_MUTE_STATE_UPDATED,
+        participantId,
+        mediaType,
+        muted
+    };
+}
+
+/**
+ * Clears the previous mute state for a participant's track.
+ *
+ * @param {string} participantId - The ID of the participant.
+ * @param {string} mediaType - The media type.
+ * @returns {Object}
+ */
+export function trackMuteStateCleared(participantId: string, mediaType: string) {
+    return {
+        type: TRACK_MUTE_STATE_CLEARED,
+        participantId,
+        mediaType
+    };
+}
+
+/**
  * Signals passed tracks to be added.
  *
  * @param {(JitsiLocalTrack|JitsiRemoteTrack)[]} tracks - List of tracks.
@@ -849,5 +917,45 @@ export function setNoSrcDataNotificationUid(uid?: string) {
     return {
         type: SET_NO_SRC_DATA_NOTIFICATION_UID,
         uid
+    };
+}
+
+/**
+ * Action creator for when a remote participant's audio mute status changes
+ * based on signaling from lib-jitsi-meet.
+ *
+ * @param {string} participantId - The ID of the participant whose audio mute status changed.
+ * @param {boolean} muted - True if muted, false if unmuted.
+ * @returns {{
+ *     type: REMOTE_PARTICIPANT_AUDIO_MUTE_CHANGED,
+ *     participantId: string,
+ *     muted: boolean
+ * }}
+ */
+export function remoteParticipantAudioMuteChanged(participantId: string, muted: boolean) {
+    return {
+        type: REMOTE_PARTICIPANT_AUDIO_MUTE_CHANGED,
+        participantId,
+        muted: Boolean(muted)
+    };
+}
+
+/**
+ * Action creator for when a remote participant's video mute status changes
+ * based on signaling from lib-jitsi-meet.
+ *
+ * @param {string} participantId - The ID of the participant whose video mute status changed.
+ * @param {boolean} muted - True if muted, false if unmuted.
+ * @returns {{
+ *     type: REMOTE_PARTICIPANT_VIDEO_MUTE_CHANGED,
+ *     participantId: string,
+ *     muted: boolean
+ * }}
+ */
+export function remoteParticipantVideoMuteChanged(participantId: string, muted: boolean) {
+    return {
+        type: REMOTE_PARTICIPANT_VIDEO_MUTE_CHANGED,
+        participantId,
+        muted: Boolean(muted)
     };
 }

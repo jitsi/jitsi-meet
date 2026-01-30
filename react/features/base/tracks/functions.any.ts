@@ -524,3 +524,33 @@ export function logTracksForParticipant(tracksState: ITrack[], participantId: st
 export function getCameraFacingMode(state: IReduxState) {
     return state['features/base/config'].cameraFacingMode ?? CAMERA_FACING_MODE.USER;
 }
+
+/**
+ * Check if a mute action was moderator-initiated.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {string} participantId - The participant ID.
+ * @param {string} mediaType - The media type.
+ * @returns {boolean} True if moderator-initiated.
+ */
+export function wasMutedByModerator(state: any, participantId: string, mediaType: string): boolean {
+    const key = `${participantId}-${mediaType}`;
+    const trackingState = state['features/base/tracks/mute-tracking'];
+
+    return trackingState[key]?.moderatorInitiated ?? false;
+}
+
+/**
+ * Get the previous mute state.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {string} participantId - The participant ID.
+ * @param {string} mediaType - The media type.
+ * @returns {boolean|undefined} Previous muted state, or undefined if not tracked.
+ */
+export function getPreviousMuteState(state: any, participantId: string, mediaType: string): boolean | undefined {
+    const key = `${participantId}-${mediaType}`;
+    const trackingState = state['features/base/tracks/mute-tracking'];
+
+    return trackingState[key]?.previousMuted;
+}

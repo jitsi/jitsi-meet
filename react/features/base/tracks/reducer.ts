@@ -9,6 +9,10 @@ import {
     TRACK_ADDED,
     TRACK_CREATE_CANCELED,
     TRACK_CREATE_ERROR,
+    TRACK_MODERATOR_MUTE_CLEARED,
+    TRACK_MODERATOR_MUTE_INITIATED,
+    TRACK_MUTE_STATE_CLEARED,
+    TRACK_MUTE_STATE_UPDATED,
     TRACK_NO_DATA_FROM_SOURCE,
     TRACK_REMOVED,
     TRACK_UPDATED,
@@ -138,3 +142,73 @@ ReducerRegistry.register<INoSrcDataState>('features/base/no-src-data', (state = 
     }
 });
 
+
+export interface ITrackMuteInfo {
+    moderatorInitiated?: boolean;
+    previousMuted?: boolean;
+}
+
+export interface ITrackMuteTrackingState {
+    [key: string]: ITrackMuteInfo;
+}
+
+/**
+ * Reducer for tracking mute state changes and moderator-initiated mutes.
+ * Stores "participantId-mediaType" -> { moderatorInitiated, previousMuted }.
+ */
+ReducerRegistry.register<ITrackMuteTrackingState>('features/base/tracks/mute-tracking',
+    (state = {}, action): ITrackMuteTrackingState => {
+        switch (action.type) {
+        case TRACK_MODERATOR_MUTE_INITIATED: {
+            const key = `${action.participantId}-${action.mediaType}`;
+
+            return {
+                ...state,
+                [key]: {
+                    ...state[key],
+                    moderatorInitiated: true
+                }
+            };
+        }
+
+        case TRACK_MODERATOR_MUTE_CLEARED: {
+            const key = `${action.participantId}-${action.mediaType}`;
+
+            if (!state[key]) {
+                return state;
+            }
+
+            return {
+                ...state,
+                [key]: {
+                    ...state[key],
+                    moderatorInitiated: undefined
+                }
+            };
+        }
+
+        case TRACK_MUTE_STATE_UPDATED: {
+            const key = `${action.participantId}-${action.mediaType}`;
+
+            return {
+                ...state,
+                [key]: {
+                    ...state[key],
+                    previousMuted: action.muted
+                }
+            };
+        }
+
+        case TRACK_MUTE_STATE_CLEARED: {
+            const key = `${action.participantId}-${action.mediaType}`;
+            const newState = { ...state };
+
+            delete newState[key];
+
+            return newState;
+        }
+
+        default:
+            return state;
+        }
+    });
