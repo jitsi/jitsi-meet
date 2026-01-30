@@ -11,6 +11,10 @@ local json = require "cjson.safe";
 local http = require "net.http";
 local inspect = require 'inspect';
 
+local util = module:require 'util';
+local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
+local is_vpaas = util.is_vpaas;
+
 local ban_check_count = module:measure("muc_auth_ban_check", "rate")
 local ban_check_users_banned_count = module:measure("muc_auth_ban_users_banned", "rate")
 local ban_check_error_count = module:measure("muc_auth_ban_check_error", "rate")
@@ -39,12 +43,18 @@ end);
 local function shouldAllow(session)
     local token = session.auth_token;
 
-    if token ~= nil then
-        -- module:log("debug", "Checking whether user should be banned ")
-
+    if token ~= nil and session.jitsi_web_query_room and session.jitsi_web_query_prefix then
         -- cached tokens are banned
         if cache:get(token) then
             return false;
+        end
+
+        local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+        if not room then
+            return nil;
+        end
+        if not is_vpaas(room) then
+            return true;
         end
 
         -- TODO: do this only for enabled customers
@@ -55,7 +65,7 @@ local function shouldAllow(session)
                 local r = json.decode(content)
                 if r['access'] ~= nil and r['access'] == false then
                     module:log("info", "User is banned room:%s tenant:%s user_id:%s group:%s",
-                        session.jitsi_meet_room, session.jitsi_web_query_prefix,
+                        session.jitsi_web_query_room, session.jitsi_web_query_prefix,
                         inspect(session.jitsi_meet_context_user), session.jitsi_meet_context_group);
 
                     ban_check_users_banned_count();
@@ -71,8 +81,9 @@ local function shouldAllow(session)
                 end
             else
                 ban_check_error_count();
-                module:log("warn", "Error code:%s contacting url:%s response:%s request:%s content:%s",
-                    code, ACCESS_MANAGER_URL, response, request, content);
+                module:log("warn", "Error code:%s contacting url:%s content:%s room:%s tenant:%s response:%s request:%s",
+                    code, ACCESS_MANAGER_URL, session.jitsi_web_query_room, session.jitsi_web_query_prefix,
+                    inspect(response), inspect(request), content);
             end
         end
 
