@@ -40,6 +40,9 @@ module:hook('muc-occupant-left', function (event)
     end
 
     -- seems the room only has jibri and transcriber, add a timeout to destroy the room
+    if room.empty_destroy_timer then
+        room.empty_destroy_timer:stop();
+    end
     room.empty_destroy_timer = module:add_timer(EMPTY_TIMEOUT, function()
         room:destroy(nil, 'Empty room with recording and/or transcribing.');
 
