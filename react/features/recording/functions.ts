@@ -248,7 +248,7 @@ export function getRecordButtonProps(state: IReduxState) {
     // a button can be disabled/enabled if enableFeaturesBasedOnToken
     // is on or if the livestreaming is running.
     let disabled = false;
-    let tooltip = '';
+    let tooltip = isRecordingRunning(state) ? 'dialog.stopRecording' : 'dialog.startRecording';
 
     // If the containing component provides the visible prop, that is one
     // above all, but if not, the button should be autonomus and decide on
