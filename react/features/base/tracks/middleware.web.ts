@@ -51,7 +51,7 @@ import './subscriber.web';
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case TRACK_ADDED: {
-        const { local } = action.track;
+        const { local, jitsiTrack } = action.track;
 
         // The devices list needs to be refreshed when no initial video permissions
         // were granted and a local video track is added by umuting the video.
@@ -65,6 +65,16 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (participantId) {
             logTracksForParticipant(store.getState()['features/base/tracks'], participantId, 'Track added');
+
+            // Fire participantMuted event for initial state of remote tracks
+            if (typeof action.track?.muted !== 'undefined' && jitsiTrack) {
+                const isVideoTrack = jitsiTrack.getType() !== MEDIA_TYPE.AUDIO;
+                const mediaType = isVideoTrack
+                    ? (jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP ? 'desktop' : 'video')
+                    : 'audio';
+
+                APP.API.notifyParticipantMuted(participantId, action.track.muted, mediaType);
+            }
         }
 
         return result;
@@ -119,17 +129,22 @@ MiddlewareRegistry.register(store => next => action => {
         // TODO Remove the following calls to APP.UI once components interested
         // in track mute changes are moved into React and/or redux.
 
+        const { jitsiTrack } = action.track;
+        const participantID = jitsiTrack.getParticipantId();
+        const isVideoTrack = jitsiTrack.type !== MEDIA_TYPE.AUDIO;
+        const local = jitsiTrack.isLocal();
+
+        // Get old muted state BEFORE updating
+        const tracks = store.getState()['features/base/tracks'];
+        const oldTrack = tracks.find((t: ITrack) => t.jitsiTrack === jitsiTrack);
+        const oldMutedState = oldTrack?.muted;
+
         const result = next(action);
         const state = store.getState();
 
         if (isPrejoinPageVisible(state)) {
             return result;
         }
-
-        const { jitsiTrack } = action.track;
-        const participantID = jitsiTrack.getParticipantId();
-        const isVideoTrack = jitsiTrack.type !== MEDIA_TYPE.AUDIO;
-        const local = jitsiTrack.isLocal();
 
         if (isVideoTrack) {
             if (local && !(jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP)) {
@@ -144,12 +159,14 @@ MiddlewareRegistry.register(store => next => action => {
         if (typeof action.track?.muted !== 'undefined' && participantID && !local) {
             logTracksForParticipant(store.getState()['features/base/tracks'], participantID, 'Track updated');
 
-            // Notify external API when remote participant mutes/unmutes themselves
-            const mediaType = isVideoTrack
-                ? (jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP ? 'desktop' : 'video')
-                : 'audio';
+            // Fire participantMuted event only if muted state actually changed
+            if (oldMutedState !== action.track.muted) {
+                const mediaType = isVideoTrack
+                    ? (jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP ? 'desktop' : 'video')
+                    : 'audio';
 
-            APP.API.notifyParticipantMuted(participantID, action.track.muted, mediaType, true);
+                APP.API.notifyParticipantMuted(participantID, action.track.muted, mediaType);
+            }
         }
 
         return result;

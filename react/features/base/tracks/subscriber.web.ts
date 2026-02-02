@@ -4,7 +4,7 @@ import { isEqual, sortBy } from 'lodash-es';
 import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
 import { getAutoPinSetting } from '../../video-layout/functions.any';
 import { MEDIA_TYPE } from '../media/constants';
-import { getScreenshareParticipantIds } from '../participants/functions';
+import { getLocalParticipant, getScreenshareParticipantIds } from '../participants/functions';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 
 import { isLocalTrackMuted } from './functions';
@@ -47,6 +47,13 @@ StateListenerRegistry.register(
     /* listener */ (muted, store, previousMuted) => {
         if (muted !== previousMuted) {
             APP.API.notifyVideoMutedStatusChanged(muted);
+
+            // Also fire the participantMuted event for consistency
+            const localParticipant = getLocalParticipant(store.getState());
+
+            if (localParticipant) {
+                APP.API.notifyParticipantMuted(localParticipant.id, muted, 'video');
+            }
         }
     }
 );
