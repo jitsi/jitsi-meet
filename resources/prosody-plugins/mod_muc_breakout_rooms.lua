@@ -419,6 +419,22 @@ function on_occupant_joined(event)
         -- clear any switching state for this occupant, we always store main room / resource
         switching_room_cache:set(main_room_jid..'/'..jid_resource(occupant.nick), nil);
     end
+
+    -- Set session context for the joining occupant (fixes missing context for polls and other features)
+    if event.occupant and jid_node(event.occupant.jid) ~= 'focus' then
+        for real_jid in event.occupant:each_session() do
+            local sessions = prosody.full_sessions;
+            local session = sessions[real_jid];
+            if session then
+                local room_node = jid_node(room.jid);
+                local room_host = jid_host(room.jid);
+                local prefix = room_host:match("^([^.]+)%.") or "";
+                session.jitsi_web_query_room = room_node;
+                session.jitsi_web_query_prefix = prefix;
+                module:log("debug", "Updated session for %s: room=%s, prefix=%s", real_jid, room_node, prefix);
+            end
+        end
+    end
 end
 
 function exist_occupants_in_room(room)
