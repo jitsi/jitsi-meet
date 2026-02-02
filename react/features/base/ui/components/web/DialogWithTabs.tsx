@@ -301,7 +301,7 @@ const DialogWithTabs = ({
         }
 
         return null;
-    }, [ selectedTabIndex, tabStates ]);
+    }, [ selectedTabIndex, tabStates, tabs ]);
 
     const closeIcon = useMemo(() => (
         <ClickableIcon
