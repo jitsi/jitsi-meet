@@ -21,6 +21,7 @@ import { isRoomValid } from '../conference/functions';
 import { PARTICIPANT_MUTED_US } from '../participants/actionTypes';
 import { getLocalParticipant } from '../participants/functions';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import { updateSettings } from '../settings/actions';
 import { getPropertyValue } from '../settings/functions.any';
 import { TRACK_ADDED } from '../tracks/actionTypes';
 import { destroyLocalTracks } from '../tracks/actions.any';
@@ -51,7 +52,7 @@ import {
     VIDEO_MUTISM_AUTHORITY,
     VIDEO_TYPE
 } from './constants';
-import { getStartWithAudioMuted, getStartWithVideoMuted } from './functions';
+import { getInitialMediaMutedState } from './functions';
 import logger from './logger';
 import {
     _AUDIO_INITIAL_MEDIA_STATE,
@@ -112,6 +113,19 @@ MiddlewareRegistry.register(store => next => action => {
         if (!action.muted && isForceMuted(participant, AVM_MEDIA_TYPE.AUDIO, state)) {
             return;
         }
+        // Persist explicit user audio choice when action was initiated by user
+        // (heuristic: ensureTrack === true for user-initiated toggles).
+        if (action.ensureTrack) {
+            const s = store.getState();
+
+            store.dispatch(updateSettings({
+                userDevicePreferences: {
+                    hasExplicitChoice: true,
+                    audioMuted: Boolean(action.muted),
+                    videoMuted: Boolean(s['features/base/media'].video.muted & VIDEO_MUTISM_AUTHORITY.USER)
+                }
+            }));
+        }
         break;
     }
 
@@ -145,6 +159,20 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (!action.muted && isForceMuted(participant, AVM_MEDIA_TYPE.VIDEO, state)) {
             return;
+        }
+        // Persist explicit user video choice when the user toggles video.
+        // action.muted is a bitmask; check USER authority bit.
+        if (action.ensureTrack && (action.authority & VIDEO_MUTISM_AUTHORITY.USER)) {
+            const s = store.getState();
+            const videoUserMuted = Boolean(action.muted & VIDEO_MUTISM_AUTHORITY.USER);
+
+            store.dispatch(updateSettings({
+                userDevicePreferences: {
+                    hasExplicitChoice: true,
+                    audioMuted: Boolean(s['features/base/media'].audio.muted),
+                    videoMuted: videoUserMuted
+                }
+            }));
         }
         break;
     }
@@ -244,8 +272,9 @@ function _setRoom({ dispatch, getState }: IStore, next: Function, action: AnyAct
 
     // when going to welcomepage on web(room is not valid) we want to skip resetting the values of startWithA/V
     if (roomIsValid || navigator.product === 'ReactNative') {
-        const audioMuted = roomIsValid ? getStartWithAudioMuted(state) : _AUDIO_INITIAL_MEDIA_STATE.muted;
-        const videoMuted = roomIsValid ? getStartWithVideoMuted(state) : _VIDEO_INITIAL_MEDIA_STATE.muted;
+        // Compute the initial desired muted state taking into account config,
+        // stored explicit user choices and privacy hardening around prejoin.
+        const { audioMuted, videoMuted } = getInitialMediaMutedState(state);
 
         sendAnalytics(createStartMutedConfigurationEvent('local', audioMuted, Boolean(videoMuted)));
         logger.log(`Start muted: ${audioMuted ? 'audio, ' : ''}${videoMuted ? 'video' : ''}`);
