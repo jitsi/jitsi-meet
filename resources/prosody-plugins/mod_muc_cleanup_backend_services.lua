@@ -40,13 +40,18 @@ module:hook('muc-occupant-left', function (event)
     end
 
     -- seems the room only has jibri and transcriber, add a timeout to destroy the room
+    if room.empty_destroy_timer then
+        room.empty_destroy_timer:stop();
+    end
     room.empty_destroy_timer = module:add_timer(EMPTY_TIMEOUT, function()
+        if room.destroying then return end
         room:destroy(nil, 'Empty room with recording and/or transcribing.');
 
         module:log('info',
-            'the conference terminated %s as being empty for %s seconds with recording/transcribing enabled',
-            room.jid, EMPTY_TIMEOUT);
+            'the conference terminated %s as being empty for %s seconds with recording/transcribing enabled. By %s',
+            room.jid, EMPTY_TIMEOUT, room.empty_destroy_timer);
     end)
+    module:log('info', 'Added room destroy timer %s for %s', room.empty_destroy_timer, room.jid);
 end, -100); -- the last thing to execute
 
 module:hook('muc-room-destroyed', function (event)
