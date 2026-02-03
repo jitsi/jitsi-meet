@@ -63,6 +63,11 @@ export type IParticipantJoinOptions = {
     skipDisplayName?: boolean;
 
     /**
+     * Whether to skip the prejoin button 'Join' click when joining.
+     */
+    skipPrejoinButtonClick?: boolean;
+
+    /**
      * Whether to skip waiting for the participant to join the room. Cases like lobby where we do not succeed to join
      * based on the logic of the test.
      */
@@ -100,6 +105,11 @@ export type IJoinOptions = {
      * Whether to skip in meeting checks like ice connected and send receive data. For single in meeting participant.
      */
     skipInMeetingChecks?: boolean;
+
+    /**
+     * Whether to skip the prejoin button 'Join' click when joining.
+     */
+    skipPrejoinButtonClick?: boolean;
 
     /**
      * The skip waiting for the participant to join the room setting to pass to IParticipantJoinOptions.

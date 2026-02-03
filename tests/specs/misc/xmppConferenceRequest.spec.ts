@@ -10,6 +10,7 @@ describe('XMPP Conference Request', () => {
     it('join with conferenceRequestUrl disabled', async () => {
         await ensureOneParticipant({
             skipWaitToJoin: true,
+            skipPrejoinButtonClick: true,
             configOverwrite: {
                 prejoinConfig: {
                     enabled: true
