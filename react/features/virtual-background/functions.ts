@@ -85,9 +85,36 @@ export function resizeImage(base64image: any, width = 1920, height = 1080): Prom
             canvas.width = width;
             canvas.height = height;
 
-            // Draw source image into the off-screen canvas.
-            // TODO: keep aspect ratio and implement object-fit: cover.
-            context?.drawImage(img as any, 0, 0, width, height);
+            // Calculate dimensions to maintain aspect ratio and implement object-fit: cover.
+            const imgAspectRatio = img.width / img.height;
+            const canvasAspectRatio = width / height;
+
+            let sourceX, sourceY, sourceWidth, sourceHeight;
+            const destX = 0;
+            const destY = 0;
+            const destWidth = width;
+            const destHeight = height;
+
+            if (imgAspectRatio > canvasAspectRatio) {
+                // Image is wider than canvas - crop sides
+                sourceHeight = img.height;
+                sourceWidth = img.height * canvasAspectRatio;
+                sourceX = (img.width - sourceWidth) / 2;
+                sourceY = 0;
+            } else {
+                // Image is taller than canvas - crop top/bottom
+                sourceWidth = img.width;
+                sourceHeight = img.width / canvasAspectRatio;
+                sourceX = 0;
+                sourceY = (img.height - sourceHeight) / 2;
+            }
+
+            // Draw source image into the off-screen canvas with proper aspect ratio.
+            context?.drawImage(
+                img as any,
+                sourceX, sourceY, sourceWidth, sourceHeight,
+                destX, destY, destWidth, destHeight
+            );
 
             // Encode image to data-uri with base64 version of compressed image.
             resolve(canvas.toDataURL('image/jpeg', 0.5));
