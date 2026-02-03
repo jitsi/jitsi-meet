@@ -72,6 +72,11 @@ export type IParticipantJoinOptions = {
      * An optional tenant to use. If provided it overrides the default.
      */
     tenant?: string;
+
+    /**
+     * An optional string to append to the URL when joining the room.
+     */
+    urlAppendString?: string;
 };
 
 export type IJoinOptions = {
@@ -110,4 +115,9 @@ export type IJoinOptions = {
      * Options used when generating a token.
      */
     tokenOptions?: ITokenOptions;
+
+    /**
+     * An optional string to append to the URL when joining the room.
+     */
+    urlAppendString?: string;
 };

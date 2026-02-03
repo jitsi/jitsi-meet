@@ -387,7 +387,8 @@ export function setConfigFromURLParams(
 
     // When not in an iframe, start without media if the pre-join page is not enabled.
     if (!isEmbedded()
-            && 'config.prejoinConfig.enabled' in params && config.prejoinConfig?.enabled === false) {
+            && ('config.prejoinConfig' in params || 'config.prejoinConfig.enabled' in params)
+            && config.prejoinConfig?.enabled === false) {
         logger.warn('Using prejoinConfig.enabled config URL overwrite implies starting without media.');
         config.disableInitialGUM = true;
     }
