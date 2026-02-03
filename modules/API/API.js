@@ -240,13 +240,27 @@ function initCommands() {
             APP.store.dispatch(muteAllParticipants(exclude, muteMediaType));
         },
         'mute-remote-participant': (participantId, mediaType) => {
-            if (!isLocalParticipantModerator(APP.store.getState())) {
-                logger.error('Missing moderator rights to mute remote participant');
+            const state = APP.store.getState();
+            const muteMediaType = mediaType ? mediaType : MEDIA_TYPE.AUDIO;
+            const localParticipant = getLocalParticipant(state);
+
+            // Check if targeting the local participant
+            if (participantId === localParticipant?.id) {
+
+                if (muteMediaType === MEDIA_TYPE.AUDIO) {
+                    APP.conference.toggleAudioMuted(false);
+                } else if (muteMediaType === MEDIA_TYPE.VIDEO) {
+                    APP.conference.toggleVideoMuted(false, true);
+                }
 
                 return;
             }
 
-            const muteMediaType = mediaType ? mediaType : MEDIA_TYPE.AUDIO;
+            if (!isLocalParticipantModerator(state)) {
+                logger.error('Missing moderator rights to mute remote participant');
+
+                return;
+            }
 
             APP.store.dispatch(muteRemote(participantId, muteMediaType));
         },
@@ -1417,17 +1431,15 @@ class API {
      *
      * @param {string} participantId - The ID of the participant.
      * @param {boolean} isMuted - True if muted, false if unmuted.
-     * @param {string} mediaType - Media type that was muted ('audio', 'video', or 'desktop').
-     * @param {boolean} isSelfMuted - True if participant muted themselves, false if muted by moderator.
+     * @param {string} mediaType - Media type that was muted ('audio' or 'video').
      * @returns {void}
      */
-    notifyParticipantMuted(participantId, isMuted, mediaType, isSelfMuted = true) {
+    notifyParticipantMuted(participantId, isMuted, mediaType) {
         this._sendEvent({
             name: 'participant-muted',
             id: participantId,
             isMuted,
-            mediaType,
-            isSelfMuted
+            mediaType
         });
     }
 

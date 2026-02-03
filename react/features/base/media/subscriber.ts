@@ -1,4 +1,5 @@
 import { IReduxState, IStore } from '../../app/types';
+import { getLocalParticipant } from '../participants/functions';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 
 /**
@@ -13,6 +14,13 @@ StateListenerRegistry.register(
 
         if (muted !== previousMuted) {
             APP.API.notifyAudioMutedStatusChanged(muted);
+
+            // Also fire the participantMuted event for consistency
+            const localParticipant = getLocalParticipant(store.getState());
+
+            if (localParticipant) {
+                APP.API.notifyParticipantMuted(localParticipant.id, muted, 'audio');
+            }
         }
     }
 );
