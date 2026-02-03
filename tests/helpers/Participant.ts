@@ -252,6 +252,9 @@ export class Participant {
             // For the iFrame API the tenant is passed in a different way.
             url = `/${options.tenant}/${url}`;
         }
+        if (options.urlAppendString) {
+            url = `${url}${options.urlAppendString}`;
+        }
 
         await this.driver.url(url);
 
