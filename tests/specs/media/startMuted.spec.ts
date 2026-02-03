@@ -190,6 +190,7 @@ describe('Start muted', () => {
         const options = {
             configOverwrite: {
                 startWithAudioMuted: true,
+                startWithVideoMuted: false,
                 testing: {
                     testMode: true,
                     debugAudioLevels: true
@@ -228,7 +229,9 @@ describe('Start muted', () => {
                 },
                 p2p: {
                     enabled: true
-                }
+                },
+                startWithAudioMuted: false,
+                startWithVideoMuted: false
             }
         });
 

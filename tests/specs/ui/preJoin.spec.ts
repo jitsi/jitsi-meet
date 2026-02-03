@@ -15,7 +15,8 @@ describe('Pre-join screen', () => {
                 requireDisplayName: true
             },
             skipDisplayName: true,
-            skipWaitToJoin: true
+            skipWaitToJoin: true,
+            skipPrejoinButtonClick: true
         });
 
         const p1PreJoinScreen = ctx.p1.getPreJoinScreen();
@@ -42,7 +43,8 @@ describe('Pre-join screen', () => {
                 }
             },
             skipDisplayName: true,
-            skipWaitToJoin: true
+            skipWaitToJoin: true,
+            skipPrejoinButtonClick: true
         });
 
         const p1PreJoinScreen = ctx.p1.getPreJoinScreen();
@@ -64,7 +66,8 @@ describe('Pre-join screen', () => {
                 }
             },
             skipDisplayName: true,
-            skipWaitToJoin: true
+            skipWaitToJoin: true,
+            skipPrejoinButtonClick: true
         });
 
         const { p1 } = ctx;
@@ -111,7 +114,8 @@ describe('Pre-join screen', () => {
                 }
             },
             skipDisplayName: true,
-            skipWaitToJoin: true
+            skipWaitToJoin: true,
+            skipPrejoinButtonClick: true
         });
 
         const p1PreJoinScreen = ctx.p2.getPreJoinScreen();

@@ -183,7 +183,8 @@ describe('Desktop sharing', () => {
                 p2p: {
                     backToP2PDelay: 3,
                     enabled: true
-                }
+                },
+                startWithAudioMuted: false
             }
         });
         const { p1 } = ctx;
@@ -201,7 +202,8 @@ describe('Desktop sharing', () => {
                 p2p: {
                     backToP2PDelay: 3,
                     enabled: true
-                }
+                },
+                startWithAudioMuted: false
             }
         });
         const { p2, p3 } = ctx;
@@ -304,11 +306,16 @@ describe('Desktop sharing', () => {
 
         await ensureTwoParticipants({
             configOverwrite: {
-                startWithAudioMuted: true
+                startWithAudioMuted: true,
+                startWithVideoMuted: false
             },
             skipInMeetingChecks: true
         });
         await ensureThreeParticipants({
+            configOverwrite: {
+                startWithAudioMuted: false,
+                startWithVideoMuted: false
+            },
             skipInMeetingChecks: true
         });
         const { p2, p3 } = ctx;
@@ -334,7 +341,12 @@ describe('Desktop sharing', () => {
     it('with lastN', async () => {
         await hangupAllParticipants();
 
-        await ensureThreeParticipants();
+        await ensureThreeParticipants({
+            configOverwrite: {
+                startWithAudioMuted: false,
+                startWithVideoMuted: false
+            },
+        });
         const { p1, p2, p3 } = ctx;
 
         await p3.getToolbar().clickDesktopSharingButton();
@@ -345,7 +357,8 @@ describe('Desktop sharing', () => {
         await ensureFourParticipants({
             configOverwrite: {
                 channelLastN: 2,
-                startWithAudioMuted: true
+                startWithAudioMuted: true,
+                startWithVideoMuted: false
             }
         });
         const { p4 } = ctx;

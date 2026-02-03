@@ -112,9 +112,6 @@ export class Participant {
             useStunTurn: false
         },
         pcStatsInterval: 1500,
-        prejoinConfig: {
-            enabled: false
-        },
         toolbarConfig: {
             alwaysVisible: true
         }
@@ -262,6 +259,20 @@ export class Participant {
 
         if (this._iFrameApi) {
             await this.switchToIFrame();
+        }
+
+        if (!options.skipPrejoinButtonClick
+            // @ts-ignore
+            && !Boolean(await this.execute(() => config.prejoinConfig?.enabled === false))) {
+            // if prejoin is enabled we want to click the join button
+            const p1PreJoinScreen = this.getPreJoinScreen();
+
+            await p1PreJoinScreen.waitForLoading();
+
+            const joinButton = p1PreJoinScreen.getJoinButton();
+
+            await joinButton.waitForDisplayed();
+            await joinButton.click();
         }
 
         if (!options.skipWaitToJoin) {
