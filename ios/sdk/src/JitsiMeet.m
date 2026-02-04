@@ -21,11 +21,15 @@
 #import "JitsiMeet+Private.h"
 #import "JitsiMeetConferenceOptions+Private.h"
 #import "JitsiMeetView+Private.h"
-#import "RCTBridgeWrapper.h"
 #import "ReactUtils.h"
 #import "ScheenshareEventEmiter.h"
 
 #import <react-native-webrtc/WebRTCModuleOptions.h>
+#import <RCTReactNativeFactory.h>
+#import <ReactAppDependencyProvider/RCTAppDependencyProvider.h>
+#import <React/RCTBundleURLProvider.h>
+#import <React/RCTRootView.h>
+#import "JitsiReactFactoryDelegate.h"
 
 #if !defined(JITSI_MEET_SDK_LITE)
 #import <RNGoogleSignin/RNGoogleSignin.h>
@@ -33,9 +37,9 @@
 #endif
 
 @implementation JitsiMeet {
-    RCTBridgeWrapper *_bridgeWrapper;
     NSDictionary *_launchOptions;
     ScheenshareEventEmiter *_screenshareEventEmiter;
+    RCTReactNativeFactory *_reactNativeFactory;
 }
 
 #pragma mak - This class is a singleton
@@ -53,6 +57,7 @@
 
 - (instancetype)init {
     if (self = [super init]) {
+        
         // Initialize WebRTC options.
         self.rtcAudioDevice = nil;
         self.webRtcLoggingSeverity = WebRTCLoggingSeverityNone;
@@ -76,7 +81,7 @@
   didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     _launchOptions = [launchOptions copy];
-
+    
 #if !defined(JITSI_MEET_SDK_LITE)
     [Dropbox setAppKey];
 #endif
@@ -131,23 +136,39 @@
 
 #pragma mark - Utility methods
 
-- (void)instantiateReactNativeBridge {
-    if (_bridgeWrapper != nil) {
-        return;
-    };
+- (void)createReactNativeFactory {
+    NSLog(@"Creating JitsiReactFactoryDelegate");
+    JitsiReactFactoryDelegate *delegate = [[JitsiReactFactoryDelegate alloc] init];
 
+    NSLog(@"Creating RCTAppDependencyProvider");
+    id<RCTDependencyProvider> provider = [[RCTAppDependencyProvider alloc] init];
+    NSLog(@"RCTAppDependencyProvider created: %@", provider);
+
+    NSLog(@"Setting dependencyProvider on delegate");
+    delegate.dependencyProvider = provider;
+
+    NSLog(@"Creating RCTReactNativeFactory with delegate");
+    _reactNativeFactory = [[RCTReactNativeFactory alloc] initWithDelegate:delegate];
+    NSLog(@"RCTReactNativeFactory created: %@", _reactNativeFactory);
+}
+
+- (void)instantiateReactNativeBridge {
+    if (_reactNativeFactory == nil) {
+        [self createReactNativeFactory];
+    }
+    
     // Initialize WebRTC options.
     WebRTCModuleOptions *options = [WebRTCModuleOptions sharedInstance];
     options.audioDevice = _rtcAudioDevice;
     options.loggingSeverity = (RTCLoggingSeverity)_webRtcLoggingSeverity;
 
-    // Initialize the one and only bridge for interfacing with React Native.
-    _bridgeWrapper = [[RCTBridgeWrapper alloc] init];
+    // Accessing bridge forces lazy initialization.
+    [_reactNativeFactory bridge];
 }
 
 - (void)destroyReactNativeBridge {
-    [_bridgeWrapper invalidate];
-    _bridgeWrapper = nil;
+    [_reactNativeFactory.bridge invalidate];
+    _reactNativeFactory.bridge = nil;
 }
 
 - (JitsiMeetConferenceOptions *)getInitialConferenceOptions {
@@ -226,10 +247,10 @@
         id splashInstance = [splashClass performSelector:@selector(sharedInstance)];
         if (splashInstance && [splashInstance respondsToSelector:@selector(showSplash)]) {
             [splashInstance performSelector:@selector(showSplash)];
-            NSLog(@"✅ Splash Screen Shown Successfully");
+            NSLog(@"Splash Screen Shown Successfully");
         }
     } else {
-        NSLog(@"⚠️ SplashView module not found");
+        NSLog(@"SplashView module not found");
     }
 }
 
@@ -260,11 +281,22 @@
 - (RCTBridge *)getReactBridge {
     // Initialize bridge lazily.
     [self instantiateReactNativeBridge];
-    return _bridgeWrapper.bridge;
+
+    // Get bridge directly from factory
+    return _reactNativeFactory.bridge;
+}
+
+- (RCTReactNativeFactory *)getReactNativeFactory {
+    if (_reactNativeFactory == nil) {
+        [self createReactNativeFactory];
+    }
+
+    return _reactNativeFactory;
 }
 
 - (ExternalAPI *)getExternalAPI {
-    return [_bridgeWrapper.bridge moduleForClass:ExternalAPI.class];
+    RCTBridge *bridge = [self getReactBridge];
+    return [bridge moduleForClass:ExternalAPI.class];
 }
 
 @end
