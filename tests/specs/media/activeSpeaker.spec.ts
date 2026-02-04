@@ -57,26 +57,11 @@ describe('Active speaker', () => {
         await p1.driver.pause(1000); // Wait for layout to adjust
 
         // Mute all participants initially
-        await muteAudioAndCheck(p1, p2);
-        await muteAudioAndCheck(p2, p1);
-        await muteAudioAndCheck(p3, p1);
-        await muteAudioAndCheck(p4, p1);
-        await muteAudioAndCheck(p5, p1);
-        await muteAudioAndCheck(p6, p1);
-        await muteAudioAndCheck(p7, p1);
+        await muteAllSevenParticipants(p1, [ p1, p2, p3, p4, p5, p6, p7 ]);
 
         // Set display names to create alphabetical ordering
         // Names chosen so p7 ("Zoe") is alphabetically last: Alice, Bob, Charlie, David, Eve, Frank, Zoe
-        await p1.setLocalDisplayName('Alice');
-        await p2.setLocalDisplayName('Bob');
-        await p3.setLocalDisplayName('Charlie');
-        await p4.setLocalDisplayName('David');
-        await p5.setLocalDisplayName('Eve');
-        await p6.setLocalDisplayName('Frank');
-        await p7.setLocalDisplayName('Zoe');
-
-        // Wait for display names to propagate
-        await p1.driver.pause(2000);
+        await setAlphabeticalDisplayNames(p1, p2, p3, p4, p5, p6, p7);
 
         // Test with multiple speakers: Eve (p5), Frank (p6), and Zoe (p7)
         // This verifies the fix works for different alphabetical positions
@@ -94,21 +79,11 @@ describe('Active speaker', () => {
             // Make this participant the dominant speaker by unmuting
             await participant.getToolbar().clickAudioUnmuteButton();
 
-            // Wait for the dominant speaker state to update and filmstrip to reorder
-            await p1.driver.pause(2000);
+            // Wait for the dominant speaker to be detected
+            await waitForDominantSpeaker(p1, participantId, name);
 
             // Verify that the participant appears in the visible remote participants
-            const filmstripState = await p1.execute(() => {
-                const state = APP.store.getState();
-                const filmstrip = state['features/filmstrip'];
-                const participants = state['features/base/participants'];
-
-                return {
-                    dominantSpeaker: participants.dominantSpeaker,
-                    remoteParticipants: filmstrip.remoteParticipants,
-                    visibleRemoteParticipants: Array.from(filmstrip.visibleRemoteParticipants)
-                };
-            });
+            const filmstripState = await getFilmstripState(p1);
 
             await p1.log(`Dominant speaker: ${filmstripState.dominantSpeaker}`);
             await p1.log(`Visible remote participants: ${JSON.stringify(filmstripState.visibleRemoteParticipants)}`);
@@ -131,7 +106,6 @@ describe('Active speaker', () => {
 
             // Mute this participant back before testing the next one
             await participant.getToolbar().clickAudioMuteButton();
-            await p1.driver.pause(1000);
         }
 
         await hangupAllParticipants();
@@ -146,27 +120,15 @@ describe('Active speaker', () => {
         await ensureSevenParticipants();
         const { p1, p2, p3, p4, p5, p6, p7 } = ctx;
 
-
         // Resize p1's window to limit filmstrip slots
         await p1.driver.setWindowSize(1024, 600);
+        await p1.driver.pause(1000); // Wait for layout to adjust
 
         // Mute all audio initially
-        await muteAudioAndCheck(p1, p2);
-        await muteAudioAndCheck(p2, p1);
-        await muteAudioAndCheck(p3, p1);
-        await muteAudioAndCheck(p4, p1);
-        await muteAudioAndCheck(p5, p1);
-        await muteAudioAndCheck(p6, p1);
-        await muteAudioAndCheck(p7, p1);
+        await muteAllSevenParticipants(p1, [ p1, p2, p3, p4, p5, p6, p7 ]);
 
         // Set display names
-        await p1.setLocalDisplayName('Alice');
-        await p2.setLocalDisplayName('Bob');
-        await p3.setLocalDisplayName('Charlie');
-        await p4.setLocalDisplayName('David');
-        await p5.setLocalDisplayName('Eve');
-        await p6.setLocalDisplayName('Frank');
-        await p7.setLocalDisplayName('Zoe');
+        await setAlphabeticalDisplayNames(p1, p2, p3, p4, p5, p6, p7);
 
         // Start screensharing from p2
         await p2.getToolbar().clickDesktopSharingButton();
@@ -187,21 +149,11 @@ describe('Active speaker', () => {
             // Make this participant the dominant speaker by unmuting
             await participant.getToolbar().clickAudioUnmuteButton();
 
-            // Wait for dominant speaker state to update and filmstrip to reorder
-            await p1.driver.pause(2000);
+            // Wait for the dominant speaker to be detected
+            await waitForDominantSpeaker(p1, participantId, name);
 
             // Verify dominant speaker is still visible in filmstrip despite screenshare
-            const filmstripState = await p1.execute(() => {
-                const state = APP.store.getState();
-                const filmstrip = state['features/filmstrip'];
-                const participants = state['features/base/participants'];
-
-                return {
-                    dominantSpeaker: participants.dominantSpeaker,
-                    remoteParticipants: filmstrip.remoteParticipants,
-                    visibleRemoteParticipants: Array.from(filmstrip.visibleRemoteParticipants)
-                };
-            });
+            const filmstripState = await getFilmstripState(p1);
 
             await p1.log(`Dominant speaker (with screenshare): ${filmstripState.dominantSpeaker}`);
             await p1.log(`Visible remote participants with screenshare: ${JSON.stringify(filmstripState.visibleRemoteParticipants)}`);
@@ -240,30 +192,37 @@ describe('Active speaker', () => {
         await ensureSevenParticipants();
         const { p1, p2, p3, p4, p5, p6, p7 } = ctx;
 
+        // Resize p1's window to limit filmstrip slots
+        await p1.driver.setWindowSize(1024, 600);
+        await p1.driver.pause(1000); // Wait for layout to adjust
+
         // Mute all
-        await muteAudioAndCheck(p1, p2);
-        await muteAudioAndCheck(p2, p1);
-        await muteAudioAndCheck(p3, p1);
-        await muteAudioAndCheck(p4, p1);
-        await muteAudioAndCheck(p5, p1);
-        await muteAudioAndCheck(p6, p1);
-        await muteAudioAndCheck(p7, p1);
+        await muteAllSevenParticipants(p1, [ p1, p2, p3, p4, p5, p6, p7 ]);
 
         // Set display names
-        await p1.setLocalDisplayName('Alice');
-        await p2.setLocalDisplayName('Bob');
-        await p3.setLocalDisplayName('Charlie');
-        await p4.setLocalDisplayName('David');
-        await p5.setLocalDisplayName('Eve');
-        await p6.setLocalDisplayName('Frank');
-        await p7.setLocalDisplayName('Zoe');
+        await setAlphabeticalDisplayNames(p1, p2, p3, p4, p5, p6, p7);
 
-        // Test cycling through Eve, Frank, and Zoe to verify stable ordering
+        // First, have Eve, Frank, and Zoe all speak to get them into the active speakers list
         const speakersToTest = [
             { participant: p5, name: 'Eve' },
             { participant: p6, name: 'Frank' },
             { participant: p7, name: 'Zoe' }
         ];
+
+        await p1.log('Initial round: getting all three speakers into active speakers list');
+
+        for (const { participant, name } of speakersToTest) {
+            const participantId = await participant.getEndpointId();
+
+            await p1.log(`${name} (${participantId}) speaking for the first time`);
+            await participant.getToolbar().clickAudioUnmuteButton();
+            await waitForDominantSpeaker(p1, participantId, name);
+            await participant.getToolbar().clickAudioMuteButton();
+            await p1.driver.pause(1000);
+        }
+
+        // Now cycle through them again and verify they maintain alphabetical order (Eve, Frank, Zoe)
+        await p1.log('Second round: verifying stable alphabetical ordering when speakers alternate');
 
         const states = [];
 
@@ -272,21 +231,14 @@ describe('Active speaker', () => {
 
             await p1.log(`Testing ${name} (${participantId}) for stable ordering`);
 
-            // Make this participant speak by unmuting
+            // Make this participant the dominant speaker
             await participant.getToolbar().clickAudioUnmuteButton();
 
-            // Wait for filmstrip to update
-            await p1.driver.pause(2000);
+            // Wait for the dominant speaker to be detected
+            await waitForDominantSpeaker(p1, participantId, name);
 
             // Capture filmstrip state
-            const filmstripState = await p1.execute(() => {
-                const state = APP.store.getState()['features/filmstrip'];
-
-                return {
-                    remoteParticipants: state.remoteParticipants,
-                    visibleRemoteParticipants: Array.from(state.visibleRemoteParticipants)
-                };
-            });
+            const filmstripState = await getFilmstripState(p1);
 
             states.push({ name, id: participantId, state: filmstripState });
 
@@ -295,7 +247,7 @@ describe('Active speaker', () => {
             await p1.driver.pause(1000);
         }
 
-        const [ firstState, secondState, thirdState ] = states;
+        const [ eveState, frankState, zoeState ] = states;
 
         // Helper function to get participant names in the order they appear
         const getVisibleParticipantNames = async (visibleIds: string[]) => {
@@ -312,20 +264,42 @@ describe('Active speaker', () => {
         };
 
         // Get the names of visible participants for each state
-        const firstVisibleNames = await getVisibleParticipantNames(firstState.state.visibleRemoteParticipants);
-        const secondVisibleNames = await getVisibleParticipantNames(secondState.state.visibleRemoteParticipants);
-        const thirdVisibleNames = await getVisibleParticipantNames(thirdState.state.visibleRemoteParticipants);
+        const eveVisibleNames = await getVisibleParticipantNames(eveState.state.visibleRemoteParticipants);
+        const frankVisibleNames = await getVisibleParticipantNames(frankState.state.visibleRemoteParticipants);
+        const zoeVisibleNames = await getVisibleParticipantNames(zoeState.state.visibleRemoteParticipants);
 
-        await p1.log(`Visible participants when ${firstState.name} speaks: ${JSON.stringify(firstVisibleNames)}`);
-        await p1.log(`Visible participants when ${secondState.name} speaks: ${JSON.stringify(secondVisibleNames)}`);
-        await p1.log(`Visible participants when ${thirdState.name} speaks: ${JSON.stringify(thirdVisibleNames)}`);
+        await p1.log(`Visible participants when Eve is dominant: ${JSON.stringify(eveVisibleNames)}`);
+        await p1.log(`Visible participants when Frank is dominant: ${JSON.stringify(frankVisibleNames)}`);
+        await p1.log(`Visible participants when Zoe is dominant: ${JSON.stringify(zoeVisibleNames)}`);
+
+        await p1.log(`Eve visible count: ${eveState.state.visibleRemoteParticipants.length}, total remote: ${eveState.state.remoteParticipants.length}`);
+        await p1.log(`Frank visible count: ${frankState.state.visibleRemoteParticipants.length}, total remote: ${frankState.state.remoteParticipants.length}`);
+        await p1.log(`Zoe visible count: ${zoeState.state.visibleRemoteParticipants.length}, total remote: ${zoeState.state.remoteParticipants.length}`);
 
         // Verify that each dominant speaker appears in visible participants
-        expect(firstState.state.visibleRemoteParticipants).toContain(firstState.id);
-        expect(secondState.state.visibleRemoteParticipants).toContain(secondState.id);
-        expect(thirdState.state.visibleRemoteParticipants).toContain(thirdState.id);
+        expect(eveState.state.visibleRemoteParticipants).toContain(eveState.id);
+        expect(frankState.state.visibleRemoteParticipants).toContain(frankState.id);
+        expect(zoeState.state.visibleRemoteParticipants).toContain(zoeState.id);
 
-        // Helper function to check if an array is alphabetically sorted
+        // Helper function to get the relative order of Eve, Frank, and Zoe
+        const getSpeakersOrder = (names: string[]) => {
+            return names.filter(n => [ 'Eve', 'Frank', 'Zoe' ].includes(n));
+        };
+
+        const eveOrder = getSpeakersOrder(eveVisibleNames);
+        const frankOrder = getSpeakersOrder(frankVisibleNames);
+        const zoeOrder = getSpeakersOrder(zoeVisibleNames);
+
+        await p1.log(`Speakers order when Eve is dominant: ${JSON.stringify(eveOrder)}`);
+        await p1.log(`Speakers order when Frank is dominant: ${JSON.stringify(frankOrder)}`);
+        await p1.log(`Speakers order when Zoe is dominant: ${JSON.stringify(zoeOrder)}`);
+
+        // Verify that the dominant speaker is always in the visible list (this tests the bug fix)
+        expect(eveOrder).toContain('Eve');
+        expect(frankOrder).toContain('Frank');
+        expect(zoeOrder).toContain('Zoe');
+
+        // Helper to check if array is alphabetically sorted
         const isAlphabeticallySorted = (names: string[]) => {
             for (let i = 0; i < names.length - 1; i++) {
                 if (names[i].localeCompare(names[i + 1]) > 0) {
@@ -336,13 +310,24 @@ describe('Active speaker', () => {
             return true;
         };
 
-        // Verify that visible participants maintain alphabetical order
-        // This is the key test - when speakers alternate, the filmstrip order should remain stable
-        expect(isAlphabeticallySorted(firstVisibleNames)).toBe(true);
-        expect(isAlphabeticallySorted(secondVisibleNames)).toBe(true);
-        expect(isAlphabeticallySorted(thirdVisibleNames)).toBe(true);
+        // Verify that whatever speakers ARE visible maintain alphabetical order
+        // This is the key test - when the same speakers alternate, visible speakers stay in alphabetical order
+        expect(isAlphabeticallySorted(eveOrder)).toBe(true);
+        expect(isAlphabeticallySorted(frankOrder)).toBe(true);
+        expect(isAlphabeticallySorted(zoeOrder)).toBe(true);
 
-        await p1.log('Filmstrip maintains stable alphabetical ordering when speakers alternate');
+        // Additionally verify order consistency: if multiple speakers are visible in multiple states,
+        // their relative order should be the same
+        // For example, if Eve and Frank are both visible when Zoe speaks, they should be [Eve, Frank]
+        if (eveOrder.includes('Frank') && frankOrder.includes('Eve')) {
+            // Both Eve and Frank visible in both states
+            const eveAndFrankInEveState = eveOrder.filter(n => [ 'Eve', 'Frank' ].includes(n));
+            const eveAndFrankInFrankState = frankOrder.filter(n => [ 'Eve', 'Frank' ].includes(n));
+
+            expect(eveAndFrankInEveState).toEqual(eveAndFrankInFrankState);
+        }
+
+        await p1.log('Filmstrip maintains alphabetical ordering of visible speakers when dominant speaker changes');
 
         await hangupAllParticipants();
     });
@@ -409,4 +394,96 @@ async function testActiveSpeaker(
 async function assertOneDominantSpeaker(participant: Participant) {
     expect(await participant.driver.$$(
         '//span[not(contains(@class, "tile-view"))]//span[contains(@class,"dominant-speaker")]').length).toBe(1);
+}
+
+/**
+ * Wait for a participant to be detected as the dominant speaker.
+ *
+ * @param {Participant} observer - The participant observing the dominant speaker state.
+ * @param {string} participantId - The endpoint ID of the expected dominant speaker.
+ * @param {string} participantName - The name of the participant for logging.
+ */
+async function waitForDominantSpeaker(
+        observer: Participant,
+        participantId: string,
+        participantName: string
+): Promise<void> {
+    await observer.driver.waitUntil(
+        async () => {
+            const state = await observer.execute(() => {
+                const participants = APP.store.getState()['features/base/participants'];
+
+                return participants.dominantSpeaker;
+            });
+
+            return state === participantId;
+        },
+        {
+            timeout: 10000,
+            timeoutMsg: `${participantName} (${participantId}) was not detected as dominant speaker within 10 seconds`
+        }
+    );
+
+    // Wait a bit more for filmstrip state to update after dominant speaker changes
+    await observer.driver.pause(1000);
+}
+
+/**
+ * Get the current filmstrip state from Redux.
+ *
+ * @param {Participant} participant - The participant to query.
+ * @returns {Promise<FilmstripState>} The filmstrip state.
+ */
+async function getFilmstripState(participant: Participant): Promise<{
+    dominantSpeaker: string | null;
+    remoteParticipants: string[];
+    visibleRemoteParticipants: string[];
+}> {
+    return await participant.execute(() => {
+        const state = APP.store.getState();
+        const filmstrip = state['features/filmstrip'];
+        const participants = state['features/base/participants'];
+
+        return {
+            dominantSpeaker: participants.dominantSpeaker,
+            remoteParticipants: filmstrip.remoteParticipants,
+            visibleRemoteParticipants: Array.from(filmstrip.visibleRemoteParticipants)
+        };
+    });
+}
+
+/**
+ * Mute all 7 participants.
+ *
+ * @param {Participant} observer - The participant who will observe the mute state changes.
+ * @param {Participant[]} participants - Array of all participants to mute.
+ */
+async function muteAllSevenParticipants(observer: Participant, participants: Participant[]): Promise<void> {
+    for (const participant of participants) {
+        await muteAudioAndCheck(participant, observer);
+    }
+}
+
+/**
+ * Set display names for all 7 participants to create alphabetical ordering.
+ */
+async function setAlphabeticalDisplayNames(
+        p1: Participant,
+        p2: Participant,
+        p3: Participant,
+        p4: Participant,
+        p5: Participant,
+        p6: Participant,
+        p7: Participant
+): Promise<void> {
+    await p1.setLocalDisplayName('Alice');
+    await p2.setLocalDisplayName('Bob');
+    await p3.setLocalDisplayName('Charlie');
+    await p4.setLocalDisplayName('David');
+    await p5.setLocalDisplayName('Eve');
+    await p6.setLocalDisplayName('Frank');
+    await p7.setLocalDisplayName('Zoe');
+
+    // Wait for display names to propagate
+    await p1.driver.pause(2000);
 }

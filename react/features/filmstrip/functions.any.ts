@@ -39,6 +39,7 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
     const defaultRemoteDisplayName = config?.defaultRemoteDisplayName ?? 'Fellow Jitster';
     const dominant = dominantSpeaker ? getParticipantById(state, dominantSpeaker) : undefined;
     let dominantSpeakerSlot = 0;
+    const previousSpeakers = new Set(activeSpeakers);
     const remoteParticipants = new Map(sortedRemoteParticipants);
     const screenShareParticipants = sortedRemoteVirtualScreenshareParticipants
         ? [ ...sortedRemoteVirtualScreenshareParticipants.keys() ] : [];
@@ -53,7 +54,7 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
         acc.push(screenshare);
         remoteParticipants.delete(ownerId);
         remoteParticipants.delete(screenshare);
-        activeSpeakers.delete(ownerId);
+        previousSpeakers.delete(ownerId);
 
         return acc;
     }, []);
@@ -74,7 +75,7 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
 
     // Construct the list of speakers to be shown.
     if (slotsForSpeakers > 0) {
-        Array.from(activeSpeakers).slice(0, slotsForSpeakers).forEach((speakerId: string) => {
+        Array.from(previousSpeakers).slice(0, slotsForSpeakers).forEach((speakerId: string) => {
             speakers.push(speakerId);
             remoteParticipants.delete(speakerId);
         });
