@@ -84,7 +84,7 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
         });
     }
 
-    // Always update the order of the thubmnails.
+    // Always update the order of the thumbnails.
     reorderedParticipants = [
         ...participantsWithScreenShare,
         ...sharedVideos,
