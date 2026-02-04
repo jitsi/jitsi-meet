@@ -31,6 +31,7 @@ import {
     RECORDING_OFF_SOUND_FILE,
     RECORDING_ON_SOUND_FILE
 } from './sounds';
+import { isEmbeddedFromSameDomain } from '../base/util/embedUtils';
 
 /**
  * Searches in the passed in redux state for an active recording session of the
@@ -153,7 +154,7 @@ export function getSessionStatusToShow(state: IReduxState, mode: string): string
  * @returns {boolean} - Whether local recording is supported or not.
  */
 export function supportsLocalRecording() {
-    return LocalRecordingManager.isSupported() && !isEmbedded();
+    return LocalRecordingManager.isSupported() && (!isEmbedded() || isEmbeddedFromSameDomain());
 }
 
 /**

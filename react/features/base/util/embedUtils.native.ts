@@ -24,3 +24,13 @@ const JITSI_MEET_APPS = [
 export function isEmbedded(): boolean {
     return !JITSI_MEET_APPS.includes(getBundleId());
 }
+
+/**
+ * React Native has no concept of same-domain embedding. SDK consumers are
+ * always treated as cross-domain embeddings.
+ *
+ * @returns {boolean} Always false in React Native.
+ */
+export function isEmbeddedFromSameDomain(): boolean {
+    return false;
+}
