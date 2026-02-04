@@ -66,7 +66,7 @@ describe('Active speaker', () => {
         await muteAudioAndCheck(p7, p1);
 
         // Set display names to create alphabetical ordering
-        // Names chosen so p4 is alphabetically last
+        // Names chosen so p7 ("Zoe") is alphabetically last: Alice, Bob, Charlie, David, Eve, Frank, Zoe
         await p1.setLocalDisplayName('Alice');
         await p2.setLocalDisplayName('Bob');
         await p3.setLocalDisplayName('Charlie');
