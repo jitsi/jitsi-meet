@@ -194,7 +194,7 @@
     "typescript": "5.7.2",
     "unorm": "1.6.0",
     "webdriverio": "9.22.0",
-    "webpack": "5.95.0",
+    "webpack": "5.105.0",
     "webpack-bundle-analyzer": "4.4.2",
     "webpack-cli": "5.1.4",
     "webpack-dev-server": "5.1.0"
