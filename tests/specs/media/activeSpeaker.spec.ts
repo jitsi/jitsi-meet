@@ -48,16 +48,17 @@ describe('Active speaker', () => {
      * (visibleRemoteParticipants), not large video behavior.
      */
     it('testDominantSpeakerInFilmstripWithLimitedSlots', async () => {
-        await ensureSixParticipants();
+        await ensureSixParticipants({
+            configOverwrite: {
+                startWithAudioMuted: true
+            }
+        });
         const { p1, p2, p3, p4, p5, p6 } = ctx;
 
         // Resize p1's window to limit filmstrip slots to 2-3 tiles
         // This creates the condition where not all participants fit in the filmstrip
         await p1.driver.setWindowSize(1024, 600);
         await p1.driver.pause(1000); // Wait for layout to adjust
-
-        // Mute all participants initially
-        await muteAllSixParticipants(p1, [ p1, p2, p3, p4, p5, p6 ]);
 
         // Set display names to create alphabetical ordering
         // Names chosen so p6 ("Zoe") is alphabetically last: Alice, Bob, Charlie, Eve, Frank, Zoe
@@ -118,15 +119,16 @@ describe('Active speaker', () => {
      * take up some of the visible slots.
      */
     it('testDominantSpeakerWithScreensharing', async () => {
-        await ensureSixParticipants();
+        await ensureSixParticipants({
+            configOverwrite: {
+                startWithAudioMuted: true
+            }
+        });
         const { p1, p2, p3, p4, p5, p6 } = ctx;
 
         // Resize p1's window to limit filmstrip slots
         await p1.driver.setWindowSize(1024, 600);
         await p1.driver.pause(1000); // Wait for layout to adjust
-
-        // Mute all audio initially
-        await muteAllSixParticipants(p1, [ p1, p2, p3, p4, p5, p6 ]);
 
         // Set display names
         await setAlphabeticalDisplayNames(p1, p2, p3, p4, p5, p6);
@@ -190,15 +192,16 @@ describe('Active speaker', () => {
      * set of speakers take turns speaking.
      */
     it('testFilmstripStableOrderingWithMultipleSpeakers', async () => {
-        await ensureSixParticipants();
+        await ensureSixParticipants({
+            configOverwrite: {
+                startWithAudioMuted: true
+            }
+        });
         const { p1, p2, p3, p4, p5, p6 } = ctx;
 
         // Resize p1's window to limit filmstrip slots
         await p1.driver.setWindowSize(1024, 600);
         await p1.driver.pause(1000); // Wait for layout to adjust
-
-        // Mute all
-        await muteAllSixParticipants(p1, [ p1, p2, p3, p4, p5, p6 ]);
 
         // Set display names
         await setAlphabeticalDisplayNames(p1, p2, p3, p4, p5, p6);
@@ -451,18 +454,6 @@ async function getFilmstripState(participant: Participant): Promise<{
             visibleRemoteParticipants: Array.from(filmstrip.visibleRemoteParticipants)
         };
     });
-}
-
-/**
- * Mute all 6 participants.
- *
- * @param {Participant} observer - The participant who will observe the mute state changes.
- * @param {Participant[]} participants - Array of all participants to mute.
- */
-async function muteAllSixParticipants(observer: Participant, participants: Participant[]): Promise<void> {
-    for (const participant of participants) {
-        await muteAudioAndCheck(participant, observer);
-    }
 }
 
 /**
