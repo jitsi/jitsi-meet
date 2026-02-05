@@ -14,6 +14,17 @@ import logger from './logger';
 import { IMediaSessionState } from './types';
 
 /**
+ * Flag to track if a PiP request is currently pending (requested but not yet entered).
+ *
+ * This prevents duplicate PiP entry requests that can occur on macOS when minimizing
+ * a window. On minimize, both the 'blur' event and 'visibilitychange' event fire in
+ * rapid succession (within ~10ms), each triggering enterPiP(). Without this guard,
+ * Electron receives two PiP requests before the first one completes, causing the
+ * first PiP to immediately exit and triggering a pip leave event that will cause the window to be restored.
+ */
+let pipRequestPending = false;
+
+/**
  * Gets the appropriate video track for PiP based on prejoin state.
  * During prejoin, returns local video track. In conference, returns large video participant's track.
  *
@@ -303,6 +314,12 @@ export function requestPictureInPicture() {
             // @ts-ignore - requestPictureInPicture is not yet in all TypeScript definitions.
             video.requestPictureInPicture().catch((err: Error) => {
                 logger.error(`Error while requesting PiP after metadata loaded: ${err.message}`);
+            }).finally(() => {
+                // Currently Electron will only pass the requests and execute requestPictureInPicture but
+                // if the code there becomes more complicated it is worth considering to change the implementation
+                // to handle errors on the Electron side to prevent the scenario where the code in Electron fails
+                // and the this flag is not reset. This would prevent PiP for ever displaying again.
+                pipRequestPending = false;
             });
         }, { once: true });
 
@@ -312,6 +329,12 @@ export function requestPictureInPicture() {
     // @ts-ignore - requestPictureInPicture is not yet in all TypeScript definitions.
     video.requestPictureInPicture().catch((err: Error) => {
         logger.error(`Error while requesting PiP: ${err.message}`);
+    }).finally(() => {
+        // Currently Electron will only pass the requests and execute requestPictureInPicture but
+        // if the code there becomes more complicated it is worth considering to change the implementation
+        // to handle errors on the Electron side to prevent the scenario where the code in Electron fails
+        // and the this flag is not reset. This would prevent PiP for ever displaying again.
+        pipRequestPending = false;
     });
 }
 
@@ -325,6 +348,19 @@ export function requestPictureInPicture() {
 export function enterPiP(videoElement: HTMLVideoElement | undefined | null) {
     if (!videoElement) {
         logger.error('PiP video element not found');
+
+        return;
+    }
+
+    // Check if a PiP request is already pending or PiP is already active.
+    if (pipRequestPending) {
+        logger.debug('PiP request already pending, skipping duplicate request');
+
+        return;
+    }
+
+    if (document.pictureInPictureElement) {
+        logger.debug('PiP already active, skipping request');
 
         return;
     }
@@ -348,6 +384,7 @@ export function enterPiP(videoElement: HTMLVideoElement | undefined | null) {
         // requestPictureInPicture with userGesture: true in the main process.
         if (browser.isElectron()) {
             logger.log('Electron detected, sending postMessage to request PiP');
+            pipRequestPending = true;
 
             APP.API.notifyPictureInPictureRequested();
 
