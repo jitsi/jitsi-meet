@@ -24,13 +24,13 @@ export default {
 
     languageItemText: {
         ...BaseTheme.typography.bodyShortRegularLarge,
-        color: BaseTheme.palette.text01,
+        color: BaseTheme.palette.subtitlesNativeText,
         marginLeft: BaseTheme.spacing[2],
         marginVertical: BaseTheme.spacing[2]
     },
 
     subtitlesContainer: {
-        backgroundColor: BaseTheme.palette.ui01,
+        backgroundColor: BaseTheme.palette.subtitlesNativeBackground,
         flex: 1
     },
 

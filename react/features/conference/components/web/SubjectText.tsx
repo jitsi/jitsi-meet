@@ -10,7 +10,7 @@ const useStyles = makeStyles()(theme => {
     return {
         container: {
             ...theme.typography.bodyLongRegular,
-            color: theme.palette.text01,
+            color: theme.palette.conferenceSubjectText,
             padding: '2px 16px',
             backgroundColor: 'rgba(0, 0, 0, 0.6)',
             maxWidth: '324px',

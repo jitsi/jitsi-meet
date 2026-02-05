@@ -10,7 +10,7 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 export default createStyleSheet({
     participantNameContainer: {
         alignItems: 'center',
-        borderBottomColor: BaseTheme.palette.ui07,
+        borderBottomColor: BaseTheme.palette.videoMenuNativeBorder,
         borderBottomWidth: 0.4,
         borderTopLeftRadius: 16,
         borderTopRightRadius: 16,
@@ -28,14 +28,14 @@ export default createStyleSheet({
     },
 
     statsTitleText: {
-        color: BaseTheme.palette.text01,
+        color: BaseTheme.palette.videoMenuText,
         fontSize: 16,
         fontWeight: 'bold',
         marginRight: 3
     },
 
     statsInfoText: {
-        color: BaseTheme.palette.text01,
+        color: BaseTheme.palette.videoMenuText,
         fontSize: 16,
         marginRight: 2,
         marginLeft: 2
@@ -65,11 +65,11 @@ export default createStyleSheet({
     },
 
     divider: {
-        backgroundColor: BaseTheme.palette.ui07
+        backgroundColor: BaseTheme.palette.videoMenuNativeSliderBackground
     },
 
     dividerDialog: {
-        backgroundColor: BaseTheme.palette.ui07,
+        backgroundColor: BaseTheme.palette.videoMenuNativeSliderBackground,
         marginBottom: BaseTheme.spacing[3]
     },
 
@@ -83,7 +83,7 @@ export default createStyleSheet({
 
     contextMenuItemText: {
         ...BaseTheme.typography.bodyShortRegularLarge,
-        color: BaseTheme.palette.text01,
+        color: BaseTheme.palette.videoMenuText,
         marginLeft: BaseTheme.spacing[4]
     }
 });

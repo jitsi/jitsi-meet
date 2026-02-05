@@ -26,7 +26,7 @@ const useStyles = makeStyles()(theme => {
             flex: 1,
             height: '4px',
             borderRadius: '1px',
-            backgroundColor: theme.palette.ui04,
+            backgroundColor: theme.palette.labelBackground,
             marginRight: theme.spacing(1),
 
             '&:last-of-type': {

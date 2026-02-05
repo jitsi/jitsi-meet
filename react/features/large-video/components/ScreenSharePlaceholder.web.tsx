@@ -31,13 +31,13 @@ const useStyles = makeStyles()(theme => {
             height: '56px',
             boxSizing: 'border-box',
             border: '3px solid',
-            borderColor: theme.palette.text01,
+            borderColor: theme.palette.dialogText,
             borderRadius: '6px'
         },
         laptopStand: {
             width: '40px',
             height: '4px',
-            backgroundColor: theme.palette.text01,
+            backgroundColor: theme.palette.dialogText,
             boxSizing: 'border-box',
             borderRadius: '6px',
             marginTop: '4px'
@@ -49,7 +49,7 @@ const useStyles = makeStyles()(theme => {
             lineHeight: '1.75rem',
             marginTop: '24px',
             letterSpacing: '-0.012em',
-            color: theme.palette.text01
+            color: theme.palette.dialogText
         },
         showSharing: {
             fontStyle: 'normal',

@@ -26,7 +26,7 @@ const useStyles = makeStyles()(theme => {
             cursor: 'pointer',
             color: theme.palette.link01,
             '&:hover': {
-                backgroundColor: theme.palette.ui04,
+                backgroundColor: theme.palette.languageSelectorHover,
                 color: theme.palette.link01Hover
             }
         }

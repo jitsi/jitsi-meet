@@ -2,7 +2,7 @@
  * Round badge.
  */
 .badge-round {
-    background-color: #165ECC;
+    background-color: var(--toolbar-badge-background, #165ECC);
     border-radius: 50%;
     box-sizing: border-box;
     color: #FFFFFF;
@@ -93,7 +93,7 @@
 
 .toolbox-content-wrapper::after {
     content: '';
-    background: $newToolbarBackgroundColor;
+    background: var(--toolbox-background-color, $newToolbarBackgroundColor);
     padding-bottom: env(safe-area-inset-bottom, 0);
 }
 

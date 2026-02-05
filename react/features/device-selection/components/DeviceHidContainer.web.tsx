@@ -20,7 +20,7 @@ const useStyles = makeStyles()(theme => {
 
         label: {
             ...theme.typography.bodyShortRegular,
-            color: theme.palette.text01,
+            color: theme.palette.deviceSelectorText,
             marginBottom: theme.spacing(2)
         },
 

@@ -83,7 +83,7 @@ const useStyles = makeStyles()(theme => {
     return {
         container: {
             alignItems: 'center',
-            color: theme.palette.text01,
+            color: theme.palette.listItemText,
             display: 'flex',
             ...theme.typography.bodyShortBold,
             margin: `0 -${participantsPaneTheme.panePadding}px`,
@@ -93,7 +93,7 @@ const useStyles = makeStyles()(theme => {
             minHeight: '40px',
 
             '&:hover, &:focus-within': {
-                backgroundColor: theme.palette.ui02,
+                backgroundColor: theme.palette.listItemHover,
 
                 '& .indicators': {
                     display: 'none'
@@ -103,8 +103,8 @@ const useStyles = makeStyles()(theme => {
                     display: 'flex',
                     position: 'relative',
                     top: 'auto',
-                    boxShadow: `-15px 0px 10px -5px ${theme.palette.ui02}`,
-                    backgroundColor: theme.palette.ui02
+                    boxShadow: `-15px 0px 10px -5px ${theme.palette.listItemBoxShadow}`,
+                    backgroundColor: theme.palette.listItemHover
                 }
             },
 
@@ -115,14 +115,14 @@ const useStyles = makeStyles()(theme => {
         },
 
         highlighted: {
-            backgroundColor: theme.palette.ui02,
+            backgroundColor: theme.palette.listItemHighlighted,
 
             '& .actions': {
                 display: 'flex',
                 position: 'relative',
                 top: 'auto',
-                boxShadow: `-15px 0px 10px -5px ${theme.palette.ui02}`,
-                backgroundColor: theme.palette.ui02
+                boxShadow: `-15px 0px 10px -5px ${theme.palette.listItemBoxShadow}`,
+                backgroundColor: theme.palette.listItemHighlighted
             }
         },
 
@@ -170,20 +170,20 @@ const useStyles = makeStyles()(theme => {
         actionsContainer: {
             position: 'absolute',
             top: '-1000px',
-            boxShadow: `-15px 0px 10px -5px ${theme.palette.ui02}`,
-            backgroundColor: theme.palette.ui02
+            boxShadow: `-15px 0px 10px -5px ${theme.palette.listItemBoxShadow}`,
+            backgroundColor: theme.palette.listItemHover
         },
 
         actionsPermanent: {
             display: 'flex',
-            boxShadow: `-15px 0px 10px -5px ${theme.palette.ui01}`,
-            backgroundColor: theme.palette.ui01
+            boxShadow: `-15px 0px 10px -5px ${theme.palette.listItemBackground}`,
+            backgroundColor: theme.palette.listItemBackground
         },
 
         actionsVisible: {
             display: 'flex',
-            boxShadow: `-15px 0px 10px -5px ${theme.palette.ui02}`,
-            backgroundColor: theme.palette.ui02
+            boxShadow: `-15px 0px 10px -5px ${theme.palette.listItemBoxShadow}`,
+            backgroundColor: theme.palette.listItemHighlighted
         }
     };
 });

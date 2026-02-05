@@ -30,7 +30,7 @@ const useStyles = makeStyles()(theme => {
             },
 
             '& + &:not(:empty)': {
-                borderTop: `1px solid ${theme.palette.ui03}`
+                borderTop: `1px solid ${theme.palette.overflowMenuSeparator}`
             },
 
             '&:first-of-type': {

@@ -42,7 +42,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         errorText: {
-            color: theme.palette.text01,
+            color: theme.palette.deviceSelectorText,
             left: 0,
             position: 'absolute',
             right: 0,

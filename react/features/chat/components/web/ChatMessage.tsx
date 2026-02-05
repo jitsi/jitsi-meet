@@ -146,7 +146,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
         displayName: {
             ...theme.typography.labelBold,
-            color: theme.palette.text02,
+            color: theme.palette.chatSenderName,
             whiteSpace: 'nowrap',
             textOverflow: 'ellipsis',
             overflow: 'hidden',
@@ -155,18 +155,18 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
         userMessage: {
             ...theme.typography.bodyShortRegular,
-            color: theme.palette.text01,
+            color: theme.palette.chatMessageText,
             whiteSpace: 'pre-wrap',
             wordBreak: 'break-word'
         },
         privateMessageNotice: {
             ...theme.typography.labelRegular,
-            color: theme.palette.text02,
+            color: theme.palette.chatPrivateNotice,
             marginTop: theme.spacing(1)
         },
         timestamp: {
             ...theme.typography.labelRegular,
-            color: theme.palette.text03,
+            color: theme.palette.chatTimestamp,
             marginTop: theme.spacing(1),
             marginLeft: theme.spacing(1),
             whiteSpace: 'nowrap',
@@ -179,7 +179,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             maxWidth: '150px',
             maxHeight: '400px',
             overflowY: 'auto',
-            color: theme.palette.text01
+            color: theme.palette.chatMessageText
         },
         reactionItem: {
             display: 'flex',

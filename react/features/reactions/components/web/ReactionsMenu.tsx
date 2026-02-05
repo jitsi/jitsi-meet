@@ -113,7 +113,7 @@ const useStyles = makeStyles<IProps>()((theme, props: IProps) => {
         overflow: {
             width: 'auto',
             paddingBottom: 'max(env(safe-area-inset-bottom, 0), 16px)',
-            backgroundColor: theme.palette.ui01,
+            backgroundColor: theme.palette.reactionsMenuBackground,
             boxShadow: 'none',
             borderRadius: 0,
             position: 'relative',

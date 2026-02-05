@@ -67,7 +67,7 @@ const reactionMenu = {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: BaseTheme.palette.ui01
+    backgroundColor: BaseTheme.palette.toolboxNativeBackground
 };
 
 /**
@@ -138,7 +138,7 @@ ColorSchemeRegistry.register('Toolbox', {
     },
 
     backgroundToggle: {
-        backgroundColor: BaseTheme.palette.ui04
+        backgroundColor: BaseTheme.palette.toolboxNativeHighlightBackground
     },
 
     hangupMenuContainer: {
@@ -158,7 +158,7 @@ ColorSchemeRegistry.register('Toolbox', {
             ...toolbarButton,
             backgroundColor: schemeColor('hangup')
         },
-        underlayColor: BaseTheme.palette.ui04
+        underlayColor: BaseTheme.palette.toolboxNativeUnderlayColor
     },
 
     reactionDialog: {
@@ -189,7 +189,7 @@ ColorSchemeRegistry.register('Toolbox', {
     reactionButton: {
         gifButton,
         style: reactionButton,
-        underlayColor: BaseTheme.palette.ui04,
+        underlayColor: BaseTheme.palette.toolboxNativeUnderlayColor,
         emoji: reactionEmoji
     },
 

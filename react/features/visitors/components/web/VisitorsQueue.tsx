@@ -14,7 +14,7 @@ const useStyles = makeStyles()(theme => {
             position: 'absolute',
             inset: '0 0 0 0',
             display: 'flex',
-            backgroundColor: theme.palette.ui01,
+            backgroundColor: theme.palette.visitorsQueueBackground,
             zIndex: 252,
 
             '@media (max-width: 720px)': {
@@ -57,7 +57,7 @@ const useStyles = makeStyles()(theme => {
         },
         roomName: {
             ...theme.typography.heading5,
-            color: theme.palette.text01,
+            color: theme.palette.visitorsQueueText,
             marginBottom: theme.spacing(4),
             overflow: 'hidden',
             textAlign: 'center',

@@ -18,7 +18,7 @@ const useStyles = makeStyles()(theme => {
         container: {
             margin: '24px',
             padding: '16px',
-            backgroundColor: theme.palette.ui02,
+            backgroundColor: theme.palette.pollsBackground,
             borderRadius: '8px',
             wordBreak: 'break-word'
         },
@@ -31,12 +31,12 @@ const useStyles = makeStyles()(theme => {
         },
         question: {
             ...theme.typography.heading6,
-            color: theme.palette.text01,
+            color: theme.palette.pollsQuestion,
             marginBottom: '8px'
         },
         creator: {
             ...theme.typography.bodyShortRegular,
-            color: theme.palette.text02
+            color: theme.palette.pollsSubtitle
         },
         answerList: {
             listStyleType: 'none',

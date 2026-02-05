@@ -66,7 +66,7 @@ const useStyles = makeStyles()(theme => {
         deletedFileMessage: {
             ...theme.typography.bodyShortRegular,
             fontStyle: 'italic',
-            color: theme.palette.text02,
+            color: theme.palette.fileSharingEmptyText,
             padding: theme.spacing(1, 0)
         }
     };

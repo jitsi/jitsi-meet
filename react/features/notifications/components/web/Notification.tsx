@@ -39,7 +39,7 @@ interface IProps extends INotificationProps {
 const useStyles = makeStyles()((theme: Theme) => {
     return {
         container: {
-            backgroundColor: theme.palette.ui10,
+            backgroundColor: theme.palette.notificationBackground,
             padding: '8px 16px 8px 20px',
             display: 'flex',
             position: 'relative' as const,
@@ -85,19 +85,19 @@ const useStyles = makeStyles()((theme: Theme) => {
             borderRadius: '4px',
 
             '&.normal': {
-                backgroundColor: theme.palette.action01
+                backgroundColor: theme.palette.notificationNormalIcon
             },
 
             '&.error': {
-                backgroundColor: theme.palette.iconError
+                backgroundColor: theme.palette.notificationError
             },
 
             '&.success': {
-                backgroundColor: theme.palette.success01
+                backgroundColor: theme.palette.notificationSuccess
             },
 
             '&.warning': {
-                backgroundColor: theme.palette.warning01
+                backgroundColor: theme.palette.notificationWarning
             }
         },
 
@@ -113,7 +113,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             display: 'flex',
             flexDirection: 'column' as const,
             justifyContent: 'space-between',
-            color: theme.palette.text04,
+            color: theme.palette.notificationText,
             flex: 1,
             margin: '0 8px',
 
@@ -150,7 +150,7 @@ const useStyles = makeStyles()((theme: Theme) => {
             border: 0,
             outline: 0,
             backgroundColor: 'transparent',
-            color: theme.palette.action01,
+            color: theme.palette.notificationActionText,
             ...theme.typography.bodyShortBold,
             marginRight: theme.spacing(3),
             padding: 0,
@@ -161,11 +161,11 @@ const useStyles = makeStyles()((theme: Theme) => {
             },
 
             '&.destructive': {
-                color: theme.palette.textError
+                color: theme.palette.notificationErrorText
             },
 
             '&:focus-visible': {
-                outline: `2px solid ${theme.palette.action01}`,
+                outline: `2px solid ${theme.palette.notificationActionFocus}`,
                 outlineOffset: 2
             }
         },
@@ -203,10 +203,10 @@ const Notification = ({
     );
 
     const ICON_COLOR = {
-        error: theme.palette.iconError,
-        normal: theme.palette.action01,
-        success: theme.palette.success01,
-        warning: theme.palette.warning01
+        error: theme.palette.notificationError,
+        normal: theme.palette.notificationNormalIcon,
+        success: theme.palette.notificationSuccess,
+        warning: theme.palette.notificationWarning
     };
 
     const onDismiss = useCallback(() => {
@@ -359,10 +359,10 @@ const Notification = ({
                         ))}
                     </div>
                 </div>
-                { !disableClosing && (
+                {!disableClosing && (
                     <Icon
                         className = { classes.closeIcon }
-                        color = { theme.palette.icon04 }
+                        color = { theme.palette.notificationCloseIcon }
                         id = 'close-notification'
                         onClick = { onDismiss }
                         size = { 20 }

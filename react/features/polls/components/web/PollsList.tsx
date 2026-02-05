@@ -31,7 +31,7 @@ const useStyles = makeStyles()(theme => {
         },
         emptyMessage: {
             ...theme.typography.bodyLongBold,
-            color: theme.palette.text02,
+            color: theme.palette.pollsSubtitle,
             padding: '0 24px',
             textAlign: 'center'
         }

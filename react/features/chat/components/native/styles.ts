@@ -280,7 +280,7 @@ export default {
  */
 export const closedCaptionsStyles = {
     container: {
-        backgroundColor: BaseTheme.palette.ui01,
+        backgroundColor: BaseTheme.palette.subtitlesNativeBackground,
         flex: 1
     },
 
@@ -299,7 +299,7 @@ export const closedCaptionsStyles = {
 
     emptyStateText: {
         ...BaseTheme.typography.bodyLongBold,
-        color: BaseTheme.palette.text02,
+        color: BaseTheme.palette.dialogSecondaryText,
         textAlign: 'center',
         maxWidth: '80%'
     },
@@ -316,7 +316,7 @@ export const closedCaptionsStyles = {
 
     languageButtonText: {
         ...BaseTheme.typography.bodyShortRegularLarge,
-        color: BaseTheme.palette.text01,
+        color: BaseTheme.palette.subtitlesNativeText,
         marginHorizontal: BaseTheme.spacing[2]
     },
 
@@ -325,7 +325,7 @@ export const closedCaptionsStyles = {
     },
 
     subtitleMessageContainer: {
-        backgroundColor: BaseTheme.palette.ui02,
+        backgroundColor: BaseTheme.palette.subtitleMessageBackground,
         borderRadius: BaseTheme.shape.borderRadius,
         padding: BaseTheme.spacing[2],
         maxWidth: '100%',
@@ -339,19 +339,19 @@ export const closedCaptionsStyles = {
 
     subtitleMessageHeader: {
         ...BaseTheme.typography.labelBold,
-        color: BaseTheme.palette.text02,
+        color: BaseTheme.palette.subtitleMessageSender,
         marginBottom: BaseTheme.spacing[1],
         maxWidth: 130
     },
 
     subtitleMessageText: {
         ...BaseTheme.typography.bodyShortRegular,
-        color: BaseTheme.palette.text01
+        color: BaseTheme.palette.subtitleMessageText
     },
 
     subtitleMessageTimestamp: {
         ...BaseTheme.typography.labelRegular,
-        color: BaseTheme.palette.text03,
+        color: BaseTheme.palette.subtitleMessageTime,
         marginTop: BaseTheme.spacing[1]
     },
 

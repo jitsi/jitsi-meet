@@ -60,7 +60,7 @@ const useStyles = makeStyles()(theme => {
             padding: '10px 16px',
             textAlign: 'center',
             ...theme.typography.bodyShortRegular,
-            border: `1px solid ${theme.palette.ui03}`
+            border: `1px solid ${theme.palette.deviceSelectorBorder}`
         }
     };
 });

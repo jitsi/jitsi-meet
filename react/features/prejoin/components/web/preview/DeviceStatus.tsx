@@ -25,9 +25,9 @@ const useStyles = makeStyles<{ deviceStatusType?: string; }>()((theme, { deviceS
 
             '&.device-status-error': {
                 alignItems: 'flex-start',
-                backgroundColor: theme.palette.warning01,
+                backgroundColor: theme.palette.prejoinDeviceStatusWarning,
                 borderRadius: '6px',
-                color: theme.palette.uiBackground,
+                color: theme.palette.prejoinDeviceStatusText,
                 padding: '12px 16px',
                 textAlign: 'left',
                 marginTop: theme.spacing(2)
@@ -41,7 +41,7 @@ const useStyles = makeStyles<{ deviceStatusType?: string; }>()((theme, { deviceS
             width: '16px',
             height: '16px',
             borderRadius: '100%',
-            backgroundColor: deviceStatusType === 'ok' ? theme.palette.success01 : ColorPalette.darkGrey,
+            backgroundColor: deviceStatusType === 'ok' ? theme.palette.prejoinDeviceStatusOk : ColorPalette.darkGrey,
             flexShrink: 0
         }
     };

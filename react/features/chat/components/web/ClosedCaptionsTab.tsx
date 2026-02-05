@@ -24,7 +24,7 @@ const useStyles = makeStyles()(theme => {
             padding: '16px',
             flex: 1,
             boxSizing: 'border-box',
-            color: theme.palette.text01
+            color: theme.palette.chatMessageText
         },
         container: {
             display: 'flex',
@@ -48,7 +48,7 @@ const useStyles = makeStyles()(theme => {
             boxSizing: 'border-box',
             flexDirection: 'column',
             gap: '16px',
-            color: theme.palette.text01,
+            color: theme.palette.chatMessageText,
             textAlign: 'center'
         },
         emptyIcon: {
@@ -62,7 +62,7 @@ const useStyles = makeStyles()(theme => {
         },
         emptyState: {
             ...theme.typography.bodyLongBold,
-            color: theme.palette.text02
+            color: theme.palette.chatSenderName
         }
     };
 });
@@ -103,7 +103,7 @@ const ClosedCaptionsTab = ({
             <div className = { classes.emptyContent }>
                 <Icon
                     className = { classes.emptyIcon }
-                    color = { theme.palette.icon03 }
+                    color = { theme.palette.chatEmptyText }
                     src = { IconSubtitles } />
                 <span className = { classes.emptyState }>
                     { t('closedCaptionsTab.emptyState') }

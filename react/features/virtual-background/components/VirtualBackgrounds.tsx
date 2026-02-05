@@ -107,7 +107,7 @@ const useStyles = makeStyles()(theme => {
             justifyContent: 'center',
             textAlign: 'center',
             ...theme.typography.labelBold,
-            color: theme.palette.text01,
+            color: theme.palette.virtualBackgroundText,
             objectFit: 'cover',
 
             [[ '&:hover', '&:focus' ] as any]: {
@@ -129,7 +129,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         noneThumbnail: {
-            backgroundColor: theme.palette.ui04
+            backgroundColor: theme.palette.virtualBackgroundBorder
         },
 
         slightBlur: {
@@ -156,7 +156,7 @@ const useStyles = makeStyles()(theme => {
             position: 'absolute',
             top: '3px',
             right: '3px',
-            background: theme.palette.ui03,
+            background: theme.palette.virtualBackgroundBorder,
             borderRadius: '3px',
             cursor: 'pointer',
             display: 'none',

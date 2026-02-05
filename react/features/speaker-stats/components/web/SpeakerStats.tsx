@@ -33,7 +33,7 @@ const useStyles = makeStyles()(theme => {
         speakerStats: {
             '& .header': {
                 position: 'fixed',
-                backgroundColor: theme.palette.ui01,
+                backgroundColor: theme.palette.speakerStatsBackground,
                 paddingLeft: theme.spacing(4),
                 paddingRight: theme.spacing(4),
                 marginLeft: `-${theme.spacing(4)}`,
@@ -95,7 +95,7 @@ const useStyles = makeStyles()(theme => {
                     display: 'flex',
                     alignItems: 'center',
                     borderLeftWidth: 1,
-                    borderLeftColor: theme.palette.ui02,
+                    borderLeftColor: theme.palette.speakerStatsBorder,
                     borderLeftStyle: 'solid',
                     '& .timeline': {
                         height: theme.spacing(2),
@@ -127,7 +127,7 @@ const useStyles = makeStyles()(theme => {
                         height: theme.spacing(1),
                         display: 'flex',
                         width: '100%',
-                        backgroundColor: theme.palette.ui03,
+                        backgroundColor: theme.palette.speakerStatsRowAlternate,
                         position: 'relative',
                         '& .left-bound': {
                             position: 'absolute',
@@ -141,7 +141,7 @@ const useStyles = makeStyles()(theme => {
                         },
                         '& .handler': {
                             position: 'absolute',
-                            backgroundColor: theme.palette.ui09,
+                            backgroundColor: theme.palette.speakerStatsHeaderBackground,
                             height: 12,
                             marginTop: -4,
                             display: 'flex',
@@ -159,7 +159,7 @@ const useStyles = makeStyles()(theme => {
                 width: 'calc(100% + 48px)',
                 height: 1,
                 marginLeft: -24,
-                backgroundColor: theme.palette.ui02
+                backgroundColor: theme.palette.speakerStatsBorder
             }
         }
     };

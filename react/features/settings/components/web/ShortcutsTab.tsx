@@ -59,11 +59,11 @@ const styles = (theme: Theme) => {
             alignItems: 'center',
             padding: `${theme.spacing(1)} 0`,
             ...theme.typography.bodyShortRegular,
-            color: theme.palette.text01
+            color: theme.palette.settingsTabText
         },
 
         listItemKey: {
-            backgroundColor: theme.palette.ui04,
+            backgroundColor: theme.palette.settingsShortcutKey,
             ...theme.typography.labelBold,
             padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
             borderRadius: `${Number(theme.shape.borderRadius) / 2}px`

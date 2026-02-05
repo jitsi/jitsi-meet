@@ -1,7 +1,7 @@
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { INDICATOR_DISPLAY_THRESHOLD } from '../AbstractConnectionIndicator';
 
-export const CONNECTOR_INDICATOR_LOST = BaseTheme.palette.ui05;
+export const CONNECTOR_INDICATOR_LOST = BaseTheme.palette.connectionIndicatorNativeColor;
 export const CONNECTOR_INDICATOR_OTHER = BaseTheme.palette.action01;
 export const CONNECTOR_INDICATOR_COLORS = [
 

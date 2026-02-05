@@ -110,7 +110,7 @@ const useStyles = makeStyles()(theme => {
 
         moderatorLabel: {
             ...theme.typography.labelBold,
-            color: theme.palette.text03
+            color: theme.palette.participantModeratorLabel
         },
 
         avatar: {

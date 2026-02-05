@@ -21,10 +21,10 @@ const useStyles = makeStyles()(theme => {
             display: 'flex',
             padding: '10px',
             alignItems: 'center',
-            backgroundColor: theme.palette.action03,
+            backgroundColor: theme.palette.prejoinCountryRowBackground,
 
             '&:hover': {
-                backgroundColor: theme.palette.action03Hover
+                backgroundColor: theme.palette.prejoinCountryRowHover
             }
         },
 
@@ -33,7 +33,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         text: {
-            color: theme.palette.text01,
+            color: theme.palette.prejoinCountryPickerText,
             ...theme.typography.bodyShortRegular,
             flexGrow: 1,
             overflow: 'hidden',

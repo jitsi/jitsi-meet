@@ -122,11 +122,11 @@ const useStyles = makeStyles()(theme => {
             },
 
             '&:hover': {
-                backgroundColor: theme.palette.ui02
+                backgroundColor: theme.palette.overflowMenuItemHover
             },
 
             '&:active': {
-                backgroundColor: theme.palette.ui03
+                backgroundColor: theme.palette.overflowMenuItemHover
             },
 
             '&.focus-visible': {
@@ -137,7 +137,7 @@ const useStyles = makeStyles()(theme => {
         selected: {
             borderLeft: `3px solid ${theme.palette.action01Hover}`,
             paddingLeft: '13px',
-            backgroundColor: theme.palette.ui02
+            backgroundColor: theme.palette.overflowMenuItemHover
         },
 
         contextMenuItemDisabled: {
@@ -146,19 +146,19 @@ const useStyles = makeStyles()(theme => {
 
         contextMenuItemIconDisabled: {
             '& svg': {
-                fill: `${theme.palette.text03} !important`
+                fill: `${theme.palette.overflowMenuItemDisabled} !important`
             }
         },
 
         contextMenuItemLabelDisabled: {
-            color: theme.palette.text03,
+            color: theme.palette.overflowMenuItemDisabled,
 
             '&:hover': {
                 background: 'none'
             },
 
             '& svg': {
-                fill: theme.palette.text03
+                fill: theme.palette.overflowMenuItemDisabled
             }
         },
 
@@ -168,13 +168,13 @@ const useStyles = makeStyles()(theme => {
 
         contextMenuItemIcon: {
             '& svg': {
-                fill: theme.palette.icon01
+                fill: theme.palette.overflowMenuItemIcon
             }
         },
 
         text: {
             ...theme.typography.bodyShortRegular,
-            color: theme.palette.text01
+            color: theme.palette.overflowMenuItemText
         },
 
         drawerText: {

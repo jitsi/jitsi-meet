@@ -23,10 +23,10 @@ import MeetingParticipantItems from './MeetingParticipantItems';
 const useStyles = makeStyles()(theme => {
     return {
         headingW: {
-            color: theme.palette.warning02
+            color: theme.palette.participantWarningText
         },
         heading: {
-            color: theme.palette.text02,
+            color: theme.palette.participantSectionText,
             ...theme.typography.bodyShortBold,
             marginBottom: theme.spacing(3),
 

@@ -114,7 +114,7 @@ export const bottomSheetStyles = {
         /**
          * Additional style that is not directly used as a style object.
          */
-        underlayColor: BaseTheme.palette.ui04
+        underlayColor: BaseTheme.palette.labelBackground
     },
 
     /**

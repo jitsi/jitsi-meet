@@ -22,7 +22,7 @@ export default {
     },
 
     arrowIcon: {
-        backgroundColor: BaseTheme.palette.ui03,
+        backgroundColor: BaseTheme.palette.breakoutRoomNativeBadgeBackground,
         height: BaseTheme.spacing[5],
         width: BaseTheme.spacing[5],
         borderRadius: 6,
@@ -33,14 +33,14 @@ export default {
 
     roomName: {
         fontSize: 15,
-        color: BaseTheme.palette.text01,
+        color: BaseTheme.palette.breakoutRoomNativeText,
         fontWeight: 'bold',
         marginLeft: BaseTheme.spacing[2]
     },
 
     listTile: {
         fontSize: 15,
-        color: BaseTheme.palette.text01,
+        color: BaseTheme.palette.breakoutRoomNativeText,
         fontWeight: 'bold',
         marginLeft: BaseTheme.spacing[2]
     },
@@ -56,7 +56,7 @@ export default {
     },
 
     breakoutRoomsContainer: {
-        backgroundColor: BaseTheme.palette.ui01,
+        backgroundColor: BaseTheme.palette.breakoutRoomBackground,
         flex: 1,
         flexDirection: 'column',
         height: 'auto',
