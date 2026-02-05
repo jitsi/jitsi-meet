@@ -106,6 +106,7 @@ describe('Active speaker', () => {
 
             // Mute this participant back before testing the next one
             await participant.getToolbar().clickAudioMuteButton();
+            await p1.driver.pause(2000);
         }
 
         await hangupAllParticipants();
