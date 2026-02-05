@@ -50,7 +50,7 @@ export default {
         },
 
         icon: {
-            color: BaseTheme.palette.carModeText,
+            color: BaseTheme.palette.text01,
             fontSize: MICROPHONE_SIZE * 0.45,
             fontWeight: '100'
         },
@@ -60,7 +60,7 @@ export default {
             alignSelf: 'stretch',
             flex: 1,
             justifyContent: 'center',
-            backgroundColor: BaseTheme.palette.carModeBorder
+            backgroundColor: BaseTheme.palette.ui03
         },
 
         unmuted: {
@@ -79,14 +79,14 @@ export default {
 
     roomTimer: {
         ...BaseTheme.typography.bodyShortBold,
-        color: BaseTheme.palette.carModeText,
+        color: BaseTheme.palette.text01,
         textAlign: 'center'
     },
 
     titleView: {
         width: 152,
         height: 28,
-        backgroundColor: BaseTheme.palette.conferenceNativeIconColor,
+        backgroundColor: BaseTheme.palette.ui02,
         borderRadius: 12,
         alignSelf: 'center'
     },
@@ -96,7 +96,7 @@ export default {
         textAlign: 'center',
         paddingVertical: BaseTheme.spacing[1],
         paddingHorizontal: BaseTheme.spacing[3],
-        color: BaseTheme.palette.conferenceNativeSecondaryText
+        color: BaseTheme.palette.text02
     },
 
     soundDeviceButton: {
@@ -149,7 +149,7 @@ export default {
     },
 
     roomName: {
-        color: BaseTheme.palette.carModeText,
+        color: BaseTheme.palette.text01,
         ...BaseTheme.typography.bodyShortBold
     },
 
@@ -160,7 +160,7 @@ export default {
 
     videoStoppedLabel: {
         ...BaseTheme.typography.bodyShortRegularLarge,
-        color: BaseTheme.palette.carModeText,
+        color: BaseTheme.palette.text01,
         textAlign: 'center',
         width: '100%'
     },

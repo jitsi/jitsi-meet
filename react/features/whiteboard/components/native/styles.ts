@@ -1,8 +1,8 @@
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
-export const INDICATOR_COLOR = BaseTheme.palette.whiteboardIndicatorColor;
+export const INDICATOR_COLOR = BaseTheme.palette.ui07;
 
-const WV_BACKGROUND = BaseTheme.palette.whiteboardBackground;
+const WV_BACKGROUND = BaseTheme.palette.ui03;
 
 export default {
 
@@ -13,7 +13,7 @@ export default {
 
     indicatorWrapper: {
         alignItems: 'center',
-        backgroundColor: BaseTheme.palette.whiteboardIndicatorBackground,
+        backgroundColor: BaseTheme.palette.ui10,
         height: '100%',
         justifyContent: 'center'
     },
@@ -31,7 +31,7 @@ export default {
     },
 
     limitUrl: {
-        color: BaseTheme.palette.whiteboardLink,
+        color: BaseTheme.palette.link01,
         fontWeight: 'bold'
     }
 };

@@ -11,7 +11,7 @@ export default {
         flex: 1,
         height: 'auto',
         paddingHorizontal: BaseTheme.spacing[3],
-        backgroundColor: BaseTheme.palette.speakerStatsNativeBackground
+        backgroundColor: BaseTheme.palette.ui01
     },
 
     speakerStatsItemContainer: {
@@ -36,7 +36,7 @@ export default {
 
     speakerStatsText: {
         ...BaseTheme.typography.bodyShortRegularLarge,
-        color: BaseTheme.palette.speakerStatsNativeText
+        color: BaseTheme.palette.text01
     },
 
     speakerStatsTime: {
@@ -50,6 +50,6 @@ export default {
     },
 
     speakerStatsLeft: {
-        color: BaseTheme.palette.speakerStatsNativeTertiaryText
+        color: BaseTheme.palette.text03
     }
 };

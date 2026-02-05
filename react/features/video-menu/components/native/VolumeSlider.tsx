@@ -110,13 +110,13 @@ class VolumeSlider extends PureComponent<IProps, IState> {
                     size = { 24 }
                     src = { IconVolumeUp } />
                 <Slider
-                    maximumTrackTintColor = { BaseTheme.palette.videoMenuNativeSliderBackground }
+                    maximumTrackTintColor = { BaseTheme.palette.ui10 }
                     maximumValue = { NATIVE_VOLUME_SLIDER_SCALE }
                     minimumTrackTintColor = { BaseTheme.palette.action01 }
                     minimumValue = { 0 }
                     onValueChange = { onVolumeChange }
                     style = { styles.sliderContainer as ViewStyle }
-                    thumbTintColor = { BaseTheme.palette.videoMenuNativeSliderThumb }
+                    thumbTintColor = { BaseTheme.palette.ui10 }
                     value = { volumeLevel } />
             </View>
 

@@ -27,7 +27,7 @@ export default {
 
     visitorsQueueTitle: {
         ...BaseTheme.typography.heading5,
-        color: BaseTheme.palette.visitorsQueueText,
+        color: BaseTheme.palette.text01,
         marginBottom: BaseTheme.spacing[3],
         textAlign: 'center'
     },

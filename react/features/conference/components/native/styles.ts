@@ -80,7 +80,7 @@ export default {
     },
 
     lonelyMessage: {
-        color: BaseTheme.palette.conferenceNativeText,
+        color: BaseTheme.palette.text01,
         paddingVertical: BaseTheme.spacing[2]
     },
 
@@ -137,13 +137,13 @@ export default {
 
     roomTimer: {
         ...BaseTheme.typography.bodyShortBold,
-        color: BaseTheme.palette.conferenceNativeText,
+        color: BaseTheme.palette.text01,
         lineHeight: 14,
         textAlign: 'center'
     },
 
     roomTimerView: {
-        backgroundColor: BaseTheme.palette.conferenceNativeBadgeBackground,
+        backgroundColor: BaseTheme.palette.ui03,
         borderRadius: BaseTheme.shape.borderRadius,
         height: 32,
         justifyContent: 'center',
@@ -153,7 +153,7 @@ export default {
     },
 
     roomName: {
-        color: BaseTheme.palette.conferenceNativeText,
+        color: BaseTheme.palette.text01,
         ...BaseTheme.typography.bodyShortBold,
         paddingVertical: 6
     },
