@@ -81,19 +81,17 @@ interface IState {
  */
 export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> {
     _mounted: boolean | undefined;
+    _roomInputRef?: HTMLInputElement | null;
+    _currentPlaceholder: string = '';
 
     /**
      * Save room name into component's local state.
      *
      * @type {Object}
-     * @property {number|null} animateTimeoutId - Identifier of the letter
-     * animation timeout.
+     * @property {number|null} animateTimeoutId - Identifier of the letter animation timeout.
      * @property {string} generatedRoomName - Automatically generated room name.
      * @property {string} room - Room name.
-     * @property {string} roomPlaceholder - Room placeholder that's used as a
-     * placeholder for input.
-     * @property {number|null} updateTimeoutId - Identifier of the timeout
-     * updating the generated room name.
+     * @property {number|null} updateTimeoutId - Identifier of the timeout updating the generated room name.
      */
     override state: IState = {
         animateTimeoutId: undefined,
@@ -120,8 +118,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
-        this._animateRoomNameChanging
-            = this._animateRoomNameChanging.bind(this);
+        this._animateRoomNameChanging = this._animateRoomNameChanging.bind(this);
         this._onJoin = this._onJoin.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
         this._renderInsecureRoomNameWarning = this._renderInsecureRoomNameWarning.bind(this);
@@ -151,30 +148,32 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
     }
 
     /**
-     * Animates the changing of the room name.
+     * Animates the changing of the room name by updating the input placeholder imperatively.
+     * Uses ref-based updates to avoid triggering re-renders on every animation tick.
      *
-     * @param {string} word - The part of room name that should be added to
-     * placeholder.
+     * @param {string} word - The part of room name that should be added to placeholder.
      * @private
      * @returns {void}
      */
     _animateRoomNameChanging(word: string) {
-        let animateTimeoutId;
-        const roomPlaceholder = this.state.roomPlaceholder + word.substr(0, 1);
+        this._currentPlaceholder = this._currentPlaceholder + word.substr(0, 1);
+
+        // Update placeholder directly via ref to avoid re-render
+        if (this._roomInputRef) {
+            (this._roomInputRef as HTMLInputElement).placeholder = this._currentPlaceholder;
+        }
 
         if (word.length > 1) {
-            animateTimeoutId
-                = window.setTimeout(
-                    () => {
-                        this._animateRoomNameChanging(
-                            word.substring(1, word.length));
-                    },
-                    70);
+            const animateTimeoutId = window.setTimeout(
+                () => {
+                    this._animateRoomNameChanging(word.substring(1, word.length));
+                },
+                70
+            );
+
+            // Only update state with timeout ID (doesn't trigger visible re-render)
+            this.setState({ animateTimeoutId });
         }
-        this.setState({
-            animateTimeoutId,
-            roomPlaceholder
-        });
     }
 
     /**
@@ -184,8 +183,12 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
      * @returns {void}
      */
     _clearTimeouts() {
-        this.state.animateTimeoutId && clearTimeout(this.state.animateTimeoutId);
-        this.state.updateTimeoutId && clearTimeout(this.state.updateTimeoutId);
+        if (this.state.animateTimeoutId) {
+            clearTimeout(this.state.animateTimeoutId);
+        }
+        if (this.state.updateTimeoutId) {
+            clearTimeout(this.state.updateTimeoutId);
+        }
     }
 
     /**
@@ -255,25 +258,25 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
     }
 
     /**
-     * Triggers the generation of a new room name and initiates an animation of
-     * its changing.
+     * Triggers the generation of a new room name and initiates an animation of its changing.
      *
      * @protected
      * @returns {void}
      */
     _updateRoomName() {
         const generatedRoomName = generateRoomWithoutSeparator();
-        const roomPlaceholder = '';
         const updateTimeoutId = window.setTimeout(this._updateRoomName, 10000);
 
         this._clearTimeouts();
+        this._currentPlaceholder = '';
+
         this.setState(
             {
                 generatedRoomName,
-                roomPlaceholder,
                 updateTimeoutId
             },
-            () => this._animateRoomNameChanging(generatedRoomName));
+            () => this._animateRoomNameChanging(generatedRoomName)
+        );
     }
 }
 
