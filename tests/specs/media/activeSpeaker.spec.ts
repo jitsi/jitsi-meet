@@ -2,14 +2,14 @@ import type { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import {
     checkForScreensharingTile,
-    ensureSevenParticipants,
+    ensureSixParticipants,
     ensureThreeParticipants,
     hangupAllParticipants
 } from '../../helpers/participants';
 import { muteAudioAndCheck } from '../helpers/mute';
 
 setTestProperties(__filename, {
-    usesBrowsers: [ 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7' ]
+    usesBrowsers: [ 'p1', 'p2', 'p3', 'p4', 'p5', 'p6' ]
 });
 
 describe('Active speaker', () => {
@@ -48,8 +48,8 @@ describe('Active speaker', () => {
      * (visibleRemoteParticipants), not large video behavior.
      */
     it('testDominantSpeakerInFilmstripWithLimitedSlots', async () => {
-        await ensureSevenParticipants();
-        const { p1, p2, p3, p4, p5, p6, p7 } = ctx;
+        await ensureSixParticipants();
+        const { p1, p2, p3, p4, p5, p6 } = ctx;
 
         // Resize p1's window to limit filmstrip slots to 2-3 tiles
         // This creates the condition where not all participants fit in the filmstrip
@@ -57,18 +57,18 @@ describe('Active speaker', () => {
         await p1.driver.pause(1000); // Wait for layout to adjust
 
         // Mute all participants initially
-        await muteAllSevenParticipants(p1, [ p1, p2, p3, p4, p5, p6, p7 ]);
+        await muteAllSixParticipants(p1, [ p1, p2, p3, p4, p5, p6 ]);
 
         // Set display names to create alphabetical ordering
-        // Names chosen so p7 ("Zoe") is alphabetically last: Alice, Bob, Charlie, David, Eve, Frank, Zoe
-        await setAlphabeticalDisplayNames(p1, p2, p3, p4, p5, p6, p7);
+        // Names chosen so p6 ("Zoe") is alphabetically last: Alice, Bob, Charlie, Eve, Frank, Zoe
+        await setAlphabeticalDisplayNames(p1, p2, p3, p4, p5, p6);
 
-        // Test with multiple speakers: Eve (p5), Frank (p6), and Zoe (p7)
+        // Test with multiple speakers: Eve (p4), Frank (p5), and Zoe (p6)
         // This verifies the fix works for different alphabetical positions
         const speakersToTest = [
-            { participant: p5, name: 'Eve' },
-            { participant: p6, name: 'Frank' },
-            { participant: p7, name: 'Zoe' }
+            { participant: p4, name: 'Eve' },
+            { participant: p5, name: 'Frank' },
+            { participant: p6, name: 'Zoe' }
         ];
 
         for (const { participant, name } of speakersToTest) {
@@ -117,18 +117,18 @@ describe('Active speaker', () => {
      * take up some of the visible slots.
      */
     it('testDominantSpeakerWithScreensharing', async () => {
-        await ensureSevenParticipants();
-        const { p1, p2, p3, p4, p5, p6, p7 } = ctx;
+        await ensureSixParticipants();
+        const { p1, p2, p3, p4, p5, p6 } = ctx;
 
         // Resize p1's window to limit filmstrip slots
         await p1.driver.setWindowSize(1024, 600);
         await p1.driver.pause(1000); // Wait for layout to adjust
 
         // Mute all audio initially
-        await muteAllSevenParticipants(p1, [ p1, p2, p3, p4, p5, p6, p7 ]);
+        await muteAllSixParticipants(p1, [ p1, p2, p3, p4, p5, p6 ]);
 
         // Set display names
-        await setAlphabeticalDisplayNames(p1, p2, p3, p4, p5, p6, p7);
+        await setAlphabeticalDisplayNames(p1, p2, p3, p4, p5, p6);
 
         // Start screensharing from p2
         await p2.getToolbar().clickDesktopSharingButton();
@@ -136,9 +136,9 @@ describe('Active speaker', () => {
 
         // Test with multiple speakers while screensharing is active
         const speakersToTest = [
-            { participant: p5, name: 'Eve' },
-            { participant: p6, name: 'Frank' },
-            { participant: p7, name: 'Zoe' }
+            { participant: p4, name: 'Eve' },
+            { participant: p5, name: 'Frank' },
+            { participant: p6, name: 'Zoe' }
         ];
 
         for (const { participant, name } of speakersToTest) {
@@ -189,24 +189,24 @@ describe('Active speaker', () => {
      * set of speakers take turns speaking.
      */
     it('testFilmstripStableOrderingWithMultipleSpeakers', async () => {
-        await ensureSevenParticipants();
-        const { p1, p2, p3, p4, p5, p6, p7 } = ctx;
+        await ensureSixParticipants();
+        const { p1, p2, p3, p4, p5, p6 } = ctx;
 
         // Resize p1's window to limit filmstrip slots
         await p1.driver.setWindowSize(1024, 600);
         await p1.driver.pause(1000); // Wait for layout to adjust
 
         // Mute all
-        await muteAllSevenParticipants(p1, [ p1, p2, p3, p4, p5, p6, p7 ]);
+        await muteAllSixParticipants(p1, [ p1, p2, p3, p4, p5, p6 ]);
 
         // Set display names
-        await setAlphabeticalDisplayNames(p1, p2, p3, p4, p5, p6, p7);
+        await setAlphabeticalDisplayNames(p1, p2, p3, p4, p5, p6);
 
         // First, have Eve, Frank, and Zoe all speak to get them into the active speakers list
         const speakersToTest = [
-            { participant: p5, name: 'Eve' },
-            { participant: p6, name: 'Frank' },
-            { participant: p7, name: 'Zoe' }
+            { participant: p4, name: 'Eve' },
+            { participant: p5, name: 'Frank' },
+            { participant: p6, name: 'Zoe' }
         ];
 
         await p1.log('Initial round: getting all three speakers into active speakers list');
@@ -453,19 +453,19 @@ async function getFilmstripState(participant: Participant): Promise<{
 }
 
 /**
- * Mute all 7 participants.
+ * Mute all 6 participants.
  *
  * @param {Participant} observer - The participant who will observe the mute state changes.
  * @param {Participant[]} participants - Array of all participants to mute.
  */
-async function muteAllSevenParticipants(observer: Participant, participants: Participant[]): Promise<void> {
+async function muteAllSixParticipants(observer: Participant, participants: Participant[]): Promise<void> {
     for (const participant of participants) {
         await muteAudioAndCheck(participant, observer);
     }
 }
 
 /**
- * Set display names for all 7 participants to create alphabetical ordering.
+ * Set display names for all 6 participants to create alphabetical ordering.
  */
 async function setAlphabeticalDisplayNames(
         p1: Participant,
@@ -473,16 +473,14 @@ async function setAlphabeticalDisplayNames(
         p3: Participant,
         p4: Participant,
         p5: Participant,
-        p6: Participant,
-        p7: Participant
+        p6: Participant
 ): Promise<void> {
     await p1.setLocalDisplayName('Alice');
     await p2.setLocalDisplayName('Bob');
     await p3.setLocalDisplayName('Charlie');
-    await p4.setLocalDisplayName('David');
-    await p5.setLocalDisplayName('Eve');
-    await p6.setLocalDisplayName('Frank');
-    await p7.setLocalDisplayName('Zoe');
+    await p4.setLocalDisplayName('Eve');
+    await p5.setLocalDisplayName('Frank');
+    await p6.setLocalDisplayName('Zoe');
 
     // Wait for display names to propagate
     await p1.driver.pause(2000);

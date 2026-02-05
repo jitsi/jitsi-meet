@@ -37,7 +37,6 @@ export const P3 = 'p3';
 export const P4 = 'p4';
 export const P5 = 'p5';
 export const P6 = 'p6';
-export const P7 = 'p7';
 
 /**
  * Participant.

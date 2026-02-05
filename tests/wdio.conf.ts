@@ -68,7 +68,7 @@ const specs = [
  */
 function generateCapabilitiesFromSpecs(): Record<string, any> {
     const allSpecFiles: string[] = [];
-    const browsers = [ 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7' ];
+    const browsers = [ 'p1', 'p2', 'p3', 'p4', 'p5', 'p6' ];
 
     for (const pattern of specs) {
         const matches = glob.sync(pattern, { cwd: path.join(__dirname) });
@@ -89,8 +89,7 @@ function generateCapabilitiesFromSpecs(): Record<string, any> {
         p3: new Set(),
         p4: new Set(),
         p5: new Set(),
-        p6: new Set(),
-        p7: new Set()
+        p6: new Set()
     };
 
     for (const file of allSpecFiles) {
