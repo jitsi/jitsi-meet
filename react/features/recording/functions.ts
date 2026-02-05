@@ -7,7 +7,7 @@ import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { getSoundFileSrc } from '../base/media/functions';
 import { getLocalParticipant, getRemoteParticipants } from '../base/participants/functions';
 import { registerSound, unregisterSound } from '../base/sounds/actions';
-import { isEmbedded } from '../base/util/embedUtils';
+import { isEmbedded, isEmbeddedFromSameDomain } from '../base/util/embedUtils';
 import { isSpotTV } from '../base/util/spot';
 import { isInBreakoutRoom as isInBreakoutRoomF } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox/functions';
@@ -31,7 +31,6 @@ import {
     RECORDING_OFF_SOUND_FILE,
     RECORDING_ON_SOUND_FILE
 } from './sounds';
-import { isEmbeddedFromSameDomain } from '../base/util/embedUtils';
 
 /**
  * Searches in the passed in redux state for an active recording session of the
