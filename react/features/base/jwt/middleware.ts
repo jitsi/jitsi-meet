@@ -3,10 +3,15 @@ import jwtDecode from 'jwt-decode';
 import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
+import { loginWithPopup } from '../../authentication/actions';
+import { getTokenAuthUrl, isTokenAuthInline } from '../../authentication/functions';
 import { isVpaasMeeting } from '../../jaas/functions';
+import { hideNotification, showNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../notifications/constants';
+import { authStatusChanged } from '../conference/actions.any';
 import { getCurrentConference } from '../conference/functions';
 import { SET_CONFIG } from '../config/actionTypes';
-import { CONNECTION_ESTABLISHED, SET_LOCATION_URL } from '../connection/actionTypes';
+import { CONNECTION_ESTABLISHED, CONNECTION_RESUMING, SET_LOCATION_URL } from '../connection/actionTypes';
 import { participantUpdated } from '../participants/actions';
 import { getLocalParticipant } from '../participants/functions';
 import { IParticipant } from '../participants/types';
@@ -16,8 +21,11 @@ import { parseURIString } from '../util/uri';
 
 import { SET_JWT } from './actionTypes';
 import { setDelayedLoadOfAvatarUrl, setJWT, setKnownAvatarUrl } from './actions';
-import { parseJWTFromURLParams } from './functions';
+import { JWT_VALIDATION_ERRORS } from './constants';
+import { parseJWTFromURLParams, validateJwt } from './functions';
 import logger from './logger';
+
+const PROMPT_LOGIN_NOTIFICATION_ID = 'PROMPT_LOGIN_NOTIFICATION_ID';
 
 /**
  * Set up a state change listener to perform maintenance tasks when the conference
@@ -39,14 +47,78 @@ StateListenerRegistry.register(
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
+    const state = store.getState();
+
     switch (action.type) {
     case SET_CONFIG:
     case SET_LOCATION_URL:
         // XXX The JSON Web Token (JWT) is not the only piece of state that we
         // have decided to store in the feature jwt
         return _setConfigOrLocationURL(store, next, action);
+    case CONNECTION_RESUMING: {
+        const jwt = state['features/base/jwt'].jwt;
+        const refreshToken = state['features/base/jwt'].refreshToken;
+
+        if (typeof APP !== 'undefined'
+                && jwt && isTokenAuthInline(state['features/base/config'])
+                && validateJwt(jwt).find((e: any) => e.key === JWT_VALIDATION_ERRORS.TOKEN_EXPIRED)) {
+            const { connection, locationURL = { href: '' } as URL } = state['features/base/connection'];
+            const { tenant } = parseURIString(locationURL.href) || {};
+            const room = state['features/base/conference'].room;
+            const dispatch = store.dispatch;
+
+            getTokenAuthUrl(
+                state['features/base/config'],
+                locationURL,
+                {
+                    audioMuted: false,
+                    audioOnlyEnabled: false,
+                    skipPrejoin: false,
+                    videoMuted: false
+                },
+                room,
+                tenant,
+                refreshToken
+            )
+                .then((url: string | undefined) => {
+                    if (url) {
+                        // only if it is inline token auth and token is about to expire
+                        // if not expired yet use it to refresh the token
+                        dispatch(showNotification({
+                            descriptionKey: 'dialog.loginOnResume',
+                            titleKey: 'dialog.login',
+                            uid: PROMPT_LOGIN_NOTIFICATION_ID,
+                            customActionNameKey: [ 'dialog.login' ],
+                            customActionHandler: [ () => {
+                                store.dispatch(hideNotification(PROMPT_LOGIN_NOTIFICATION_ID));
+
+                                // Use refresh token if available, otherwise fall back to silent login
+                                loginWithPopup(url)
+                                    .then((result: { accessToken: string; idToken: string; refreshToken?: string; }) => {
+                                        // @ts-ignore
+                                        const token: string = result.accessToken;
+                                        const idToken: string = result.idToken;
+                                        const newRefreshToken: string | undefined = result.refreshToken;
+
+                                        // @ts-ignore
+                                        dispatch(setJWT(token, idToken, newRefreshToken || refreshToken));
+
+                                        connection?.refreshToken(token)
+                                            .catch((err: any) => {
+                                                dispatch(setJWT());
+                                                logger.error(err);
+                                            });
+                                    }).catch(logger.error);
+                            } ],
+                            appearance: NOTIFICATION_TYPE.ERROR
+                        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+                    }
+                })
+                .catch(logger.error);
+        }
+        break;
+    }
     case CONNECTION_ESTABLISHED: {
-        const state = store.getState();
         const delayedLoadOfAvatarUrl = state['features/base/jwt'].delayedLoadOfAvatarUrl;
 
         if (delayedLoadOfAvatarUrl) {
@@ -56,6 +128,7 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(setDelayedLoadOfAvatarUrl());
             store.dispatch(setKnownAvatarUrl(delayedLoadOfAvatarUrl));
         }
+        break;
     }
     case SET_JWT:
         return _setJWT(store, next, action);
@@ -149,7 +222,7 @@ function _setConfigOrLocationURL({ dispatch, getState }: IStore, next: Function,
  */
 function _setJWT(store: IStore, next: Function, action: AnyAction) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { jwt, type, ...actionPayload } = action;
+    const { idToken, jwt, refreshToken, type, ...actionPayload } = action;
 
     if (!Object.keys(actionPayload).length) {
         const state = store.getState();
@@ -210,24 +283,32 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
                     if (context.user && context.user.role === 'visitor') {
                         action.preferVisitor = true;
                     }
-                } else if (tokenGetUserInfoOutOfContext
-                    && (jwtPayload.name || jwtPayload.picture || jwtPayload.email)) {
-                    // there are some tokens (firebase) having picture and name on the main level.
-                    _overwriteLocalParticipant(store, {
-                        avatarURL: jwtPayload.picture,
-                        name: jwtPayload.name,
-                        email: jwtPayload.email
-                    });
+                } else if (jwtPayload.name || jwtPayload.picture || jwtPayload.email) {
+                    if (tokenGetUserInfoOutOfContext) {
+                        // there are some tokens (firebase) having picture and name on the main level.
+                        _overwriteLocalParticipant(store, {
+                            avatarURL: jwtPayload.picture,
+                            name: jwtPayload.name,
+                            email: jwtPayload.email
+                        });
+                    }
+
+                    store.dispatch(authStatusChanged(true, jwtPayload.email));
                 }
             }
-        } else if (typeof APP === 'undefined') {
-            // The logic of restoring JWT overrides make sense only on mobile.
-            // On Web it should eventually be restored from storage, but there's
-            // no such use case yet.
+        } else {
+            if (typeof APP === 'undefined') {
+                // The logic of restoring JWT overrides make sense only on mobile.
+                // On Web it should eventually be restored from storage, but there's
+                // no such use case yet.
 
-            const { user } = state['features/base/jwt'];
+                const { user } = state['features/base/jwt'];
 
-            user && _undoOverwriteLocalParticipant(store, user);
+                user && _undoOverwriteLocalParticipant(store, user);
+            }
+
+            // clears authLogin
+            store.dispatch(authStatusChanged(true));
         }
     }
 

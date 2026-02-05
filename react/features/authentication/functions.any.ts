@@ -12,6 +12,15 @@ export const isTokenAuthEnabled = (config: IConfig): boolean =>
     typeof config.tokenAuthUrl === 'string' && config.tokenAuthUrl.length > 0;
 
 /**
+ * Checks if the token authentication should be done inline.
+ *
+ * @param {Object} config - Configuration state object from store.
+ * @returns {boolean}
+ */
+export const isTokenAuthInline = (config: IConfig): boolean =>
+    config.tokenAuthInline === true;
+
+/**
  * Returns the state that we can add as a parameter to the tokenAuthUrl.
  *
  * @param {URL} locationURL - The location URL.
@@ -23,6 +32,7 @@ export const isTokenAuthEnabled = (config: IConfig): boolean =>
  * }.
  * @param {string?} roomName - The room name.
  * @param {string?} tenant - The tenant name if any.
+ * @param {string?} refreshToken - The refresh token if available.
  *
  * @returns {Object} The state object.
  */
@@ -35,12 +45,17 @@ export const _getTokenAuthState = (
             videoMuted: boolean | undefined;
         },
         roomName: string | undefined,
-        tenant: string | undefined): object => {
-    const state = {
+        tenant: string | undefined,
+        refreshToken?: string | undefined): object => {
+    const state: any = {
         room: roomName,
         roomSafe: getBackendSafeRoomName(roomName),
         tenant
     };
+
+    if (refreshToken) {
+        state.refreshToken = refreshToken;
+    }
 
     const {
         audioMuted = false,

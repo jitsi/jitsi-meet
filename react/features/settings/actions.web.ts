@@ -1,8 +1,8 @@
 import { batch } from 'react-redux';
 
 import { IStore } from '../app/types';
-import { setTokenAuthUrlSuccess } from '../authentication/actions.web';
-import { isTokenAuthEnabled } from '../authentication/functions';
+import { setTokenAuthUrlSuccess, silentLogout } from '../authentication/actions.web';
+import { isTokenAuthEnabled, isTokenAuthInline } from '../authentication/functions';
 import {
     setStartMutedPolicy,
     setStartReactionsMuted
@@ -11,6 +11,7 @@ import { getConferenceState } from '../base/conference/functions';
 import { hangup } from '../base/connection/actions.web';
 import { openDialog } from '../base/dialog/actions';
 import i18next from '../base/i18n/i18next';
+import { setJWT } from '../base/jwt/actions';
 import { browser } from '../base/lib-jitsi-meet';
 import { getNormalizedDisplayName } from '../base/participants/functions';
 import { updateSettings } from '../base/settings/actions';
@@ -37,6 +38,7 @@ import {
     getProfileTabProps,
     getShortcutsTabProps
 } from './functions.web';
+import logger from './logger';
 
 /**
  * Opens {@code LogoutDialog}.
@@ -51,7 +53,24 @@ export function openLogoutDialog() {
         const logoutUrl = config.tokenLogoutUrl;
 
         const { conference } = state['features/base/conference'];
-        const { jwt } = state['features/base/jwt'];
+        const { jwt, idToken } = state['features/base/jwt'];
+
+        if (!browser.isElectron() && logoutUrl && isTokenAuthInline(config)) {
+            let url = logoutUrl;
+
+            if (idToken) {
+                url += `${logoutUrl.indexOf('?') === -1 ? '?' : '&'}id_token_hint=${idToken}`;
+            }
+
+            silentLogout(url)
+                .then(() => {
+                    dispatch(setJWT());
+                    dispatch(setTokenAuthUrlSuccess(false));
+                })
+                .catch(() => logger.error('logout failed'));
+
+            return;
+        }
 
         dispatch(openDialog('LogoutDialog', LogoutDialog, {
             onLogout() {

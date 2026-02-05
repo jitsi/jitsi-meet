@@ -354,7 +354,7 @@ export function e2eRttChanged(participant: Object, rtt: number) {
  *     authLogin: string
  * }}
  */
-export function authStatusChanged(authEnabled: boolean, authLogin: string) {
+export function authStatusChanged(authEnabled: boolean, authLogin?: string) {
     return {
         type: AUTH_STATUS_CHANGED,
         authEnabled,

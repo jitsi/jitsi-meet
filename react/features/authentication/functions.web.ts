@@ -41,6 +41,7 @@ function _cryptoRandom() {
  * }.
  * @param {string?} roomName - The room name.
  * @param {string?} tenant - The tenant name if any.
+ * @param {string?} refreshToken - The refresh token if available.
  *
  * @returns {Promise<string|undefined>} - The URL pointing to JWT login service or
  * <tt>undefined</tt> if the pattern stored in config is not a string and the URL can not be
@@ -57,7 +58,9 @@ export const getTokenAuthUrl = (
         },
         roomName: string | undefined,
         // eslint-disable-next-line max-params
-        tenant: string | undefined): Promise<string | undefined> => {
+        tenant: string | undefined,
+        // eslint-disable-next-line max-params
+        refreshToken?: string | undefined): Promise<string | undefined> => {
 
     const {
         audioMuted = false,
@@ -82,7 +85,8 @@ export const getTokenAuthUrl = (
                 videoMuted
             },
             roomName,
-            tenant
+            tenant,
+            refreshToken
         );
 
         if (browser.isElectron()) {

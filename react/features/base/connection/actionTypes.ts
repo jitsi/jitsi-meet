@@ -52,6 +52,16 @@ export const CONNECTION_PROPERTIES_UPDATED = 'CONNECTION_PROPERTIES_UPDATED';
 export const CONNECTION_WILL_CONNECT = 'CONNECTION_WILL_CONNECT';
 
 /**
+ * The type of (redux) action which signals that a connection will try to resume.
+ *
+ * {
+ *     type: CONNECTION_RESUMING,
+ *     connection: JitsiConnection
+ * }
+ */
+export const CONNECTION_RESUMING = 'CONNECTION_RESUMING';
+
+/**
  * The type of (redux) action which sets the location URL of the application,
  * connection, conference, etc.
  *

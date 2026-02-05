@@ -22,6 +22,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .spinner {
+            display: none;
             border: 4px solid #f3f3f3;
             border-top: 4px solid #3498db;
             border-radius: 50%;
@@ -35,85 +36,283 @@
             100% { transform: rotate(360deg); }
         }
         .error {
+            display: none;
             color: #e74c3c;
             margin-top: 20px;
+        }
+        .success {
+            display: none;
+            color: #27ae60;
+            font-size: 48px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="spinner"></div>
-    <p>Completing authentication...</p>
-    <div id="error" class="error" style="display: none;"></div>
+    <div id="spinner" class="spinner"></div>
+    <p id="spinner-msg" style="display: none;">Completing authentication...</p>
+    <div id="success" class="success">✓</div>
+    <p id="message-for-opener" style="display: none;">Authentication successful! You can close this window.</p>
+    <div id="error" class="error"></div>
 </div>
 
 <script>
+    <!--#include virtual="/config.js" -->
     (function() {
-        try {
-            // Parse the hash fragment (contains access_token and state from OAuth)
-            const hash = window.location.hash.substring(1);
-            if (!hash) {
-                throw new Error('No authentication data received');
-            }
+        async function handleAuthorizationCode() {
+            try {
+                // Parse query parameters (Authorization Code Flow uses query params, not hash)
+                const urlParams = new URLSearchParams(window.location.search);
+                console.log('sso received:', window.location.search);
+                // Get state parameter first to check for refresh token
+                const stateParam = urlParams.get('state');
+                if (!stateParam) {
+                    throw new Error('No state parameter received');
+                }
 
-            const params = new URLSearchParams(hash);
+                const state = JSON.parse(decodeURIComponent(stateParam));
 
-            // Get access_token
-            const accessToken = params.get('access_token');
-            if (!accessToken) {
-                throw new Error('No access token received');
-            }
+                // Get SSO configuration from config
+                const { sso } = config;
+                if (!sso || !sso.tokenService || !sso.clientId) {
+                    throw new Error('Missing SSO configuration (tokenService or clientId)');
+                }
 
-            // Get and parse state
-            const stateParam = params.get('state');
-            if (!stateParam) {
-                throw new Error('No state parameter received');
-            }
+                // Check if we have a refresh token in state - use it to refresh tokens
+                if (state.refreshToken) {
+                    console.log('Using refresh token to get new tokens');
 
-            const state = JSON.parse(decodeURIComponent(stateParam));
+                    // Show spinner while refreshing tokens
+                    document.getElementById('spinner').style.display = 'block';
+                    document.getElementById('spinner-msg').style.display = 'block';
 
-            // Extract required values
-            const tenant = state.tenant || '';
-            const roomSafe = state.roomSafe || state.room || '';
+                    // Use refresh token to get new tokens
+                    const tokenResponse = await fetch(`https://${sso.tokenService}/token`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({
+                            grant_type: 'refresh_token',
+                            refresh_token: state.refreshToken,
+                            client_id: sso.clientId
+                        })
+                    });
 
-            if (!roomSafe) {
-                throw new Error('No room specified in state');
-            }
+                    if (!tokenResponse.ok) {
+                        const errorData = await tokenResponse.json().catch(() => ({}));
+                        throw new Error(errorData.error_description || errorData.error || 'Token refresh failed');
+                    }
 
-            // Build the new URL
-            const protocol = window.location.protocol;
-            const host = window.location.host;
+                    const tokens = await tokenResponse.json();
+                    const accessToken = tokens.access_token;
+                    const idToken = tokens.id_token;
+                    const refreshToken = tokens.refresh_token || state.refreshToken; // Use new refresh token if provided, otherwise keep old one
 
-            // Construct path: /tenant/roomSafe
-            const path = tenant ? `/${tenant}/${roomSafe}` : `/${roomSafe}`;
+                    if (!accessToken || !idToken) {
+                        throw new Error('Missing tokens in refresh response');
+                    }
 
-            // Build hash parameters - only config.* values and jwt
-            const hashParams = new URLSearchParams();
+                    const message = {
+                        type: 'oauth-success',
+                        accessToken: accessToken,
+                        idToken: idToken,
+                        refreshToken: refreshToken
+                    };
 
-            // Add only config.* parameters from state
-            for (const [key, value] of Object.entries(state)) {
-                if (key.startsWith('config.')) {
-                    hashParams.append(key, String(value));
+                    // Send message to parent window
+                    if (window.opener) {
+                        document.getElementById('spinner').style.display = 'none';
+                        document.getElementById('spinner-msg').style.display = 'none';
+                        document.getElementById('success').style.display = 'block';
+                        document.getElementById('message-for-opener').style.display = 'block';
+
+                        window.opener.postMessage(message, window.location.origin);
+                        setTimeout(() => window.close(), 1000);
+                    } else if (window.parent && window.parent !== window) {
+                        console.log('Sending refreshed tokens to parent (iframe)');
+                        window.parent.postMessage(message, window.location.origin);
+                    } else {
+                        // Standalone page - redirect to room
+                        const tenant = state.tenant || '';
+                        const roomSafe = state.roomSafe || state.room || '';
+
+                        if (!roomSafe) {
+                            throw new Error('No room specified in state');
+                        }
+
+                        const protocol = window.location.protocol;
+                        const host = window.location.host;
+                        const path = tenant ? `/${tenant}/${roomSafe}` : `/${roomSafe}`;
+                        const hashParams = new URLSearchParams();
+
+                        for (const [key, value] of Object.entries(state)) {
+                            if (key.startsWith('config.')) {
+                                hashParams.append(key, String(value));
+                            }
+                        }
+
+                        hashParams.append('jwt', `"${accessToken}"`);
+                        const redirectUrl = `${protocol}//${host}${path}#${hashParams.toString()}`;
+                        window.location.href = redirectUrl;
+                    }
+
+                    return; // Exit after handling refresh token
+                }
+
+                // No refresh token in state - proceed with authorization code flow
+                // Check for OAuth errors
+                const error = urlParams.get('error');
+                if (error) {
+                    const errorDescription = urlParams.get('error_description');
+                    console.error('OAuth error:', error, errorDescription);
+
+                    if (window.opener) {
+                        window.opener.postMessage({
+                            type: 'oauth-error',
+                            error: errorDescription || error
+                        }, window.location.origin);
+                    } else if (window.parent && window.parent !== window) {
+                        window.parent.postMessage({
+                            type: 'oauth-error',
+                            error: errorDescription || error
+                        }, window.location.origin);
+                    }
+                    return;
+                }
+
+                // Get authorization code
+                const code = urlParams.get('code');
+                if (!code) {
+                    throw new Error('No authorization code received');
+                }
+
+                // Retrieve code_verifier from sessionStorage (set during login initiation)
+                const codeVerifier = sessionStorage.getItem('code_verifier');
+                if (!codeVerifier) {
+                    throw new Error('No PKCE code verifier found in session');
+                }
+
+                // Show spinner while exchanging code for tokens
+                document.getElementById('spinner').style.display = 'block';
+                document.getElementById('spinner-msg').style.display = 'block';
+
+                // Exchange authorization code for tokens
+                const tokenResponse = await fetch(`https://${sso.tokenService}/token`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        grant_type: 'authorization_code',
+                        code: code,
+                        redirect_uri: window.location.origin + window.location.pathname,
+                        client_id: sso.clientId,
+                        code_verifier: codeVerifier
+                    })
+                });
+
+                if (!tokenResponse.ok) {
+                    const errorData = await tokenResponse.json().catch(() => ({}));
+                    throw new Error(errorData.error_description || errorData.error || 'Token exchange failed');
+                }
+
+                const tokens = await tokenResponse.json();
+                const accessToken = tokens.access_token;
+                const idToken = tokens.id_token;
+                const refreshToken = tokens.refresh_token;
+
+                if (!accessToken || !idToken) {
+                    throw new Error('Missing tokens in response');
+                }
+
+                // Clean up PKCE verifier
+                sessionStorage.removeItem('code_verifier');
+
+                const message = {
+                    type: 'oauth-success',
+                    accessToken: accessToken,
+                    idToken: idToken,
+                    refreshToken: refreshToken
+                };
+
+                // Send message to parent window
+                if (window.opener) {
+                    // Opened via window.open() - popup
+                    document.getElementById('spinner').style.display = 'none';
+                    document.getElementById('spinner-msg').style.display = 'none';
+                    document.getElementById('success').style.display = 'block';
+                    document.getElementById('message-for-opener').style.display = 'block';
+
+                    window.opener.postMessage(message, window.location.origin);
+
+                    // Auto-close after a short delay
+                    setTimeout(() => window.close(), 1000);
+                } else if (window.parent && window.parent !== window) {
+                    // Loaded in iframe
+                    console.log('Sending message to parent (iframe)');
+                    window.parent.postMessage(message, window.location.origin);
+                } else {
+                    // Standalone page - redirect to room
+                    // Extract required values
+                    const tenant = state.tenant || '';
+                    const roomSafe = state.roomSafe || state.room || '';
+
+                    if (!roomSafe) {
+                        throw new Error('No room specified in state');
+                    }
+
+                    // Build the new URL
+                    const protocol = window.location.protocol;
+                    const host = window.location.host;
+
+                    // Construct path: /tenant/roomSafe
+                    const path = tenant ? `/${tenant}/${roomSafe}` : `/${roomSafe}`;
+
+                    // Build hash parameters - only config.* values and jwt
+                    const hashParams = new URLSearchParams();
+
+                    // Add only config.* parameters from state
+                    for (const [key, value] of Object.entries(state)) {
+                        if (key.startsWith('config.')) {
+                            hashParams.append(key, String(value));
+                        }
+                    }
+
+                    // Add access_token as jwt with quotes
+                    hashParams.append('jwt', `"${accessToken}"`);
+
+                    // Build final URL
+                    const redirectUrl = `${protocol}//${host}${path}#${hashParams.toString()}`;
+
+                    console.log('Redirecting to:', redirectUrl);
+
+                    // Redirect
+                    window.location.href = redirectUrl;
+                }
+
+            } catch (error) {
+                console.error('SSO Error:', error);
+                const errorMessage = {
+                    type: 'oauth-error',
+                    error: error.message
+                };
+                if (window.opener) {
+                    window.opener.postMessage(errorMessage, window.location.origin);
+                } else if (window.parent && window.parent !== window) {
+                    window.parent.postMessage(errorMessage, window.location.origin);
+                } else {
+                    document.getElementById('error').textContent = `Error: ${error.message}`;
+                    document.getElementById('error').style.display = 'block';
+                    document.getElementById('spinner').style.display = 'none';
+                    document.getElementById('spinner-msg').style.display = 'none';
                 }
             }
-
-            // Add access_token as jwt with quotes
-            hashParams.append('jwt', `"${accessToken}"`);
-
-            // Build final URL
-            const redirectUrl = `${protocol}//${host}${path}#${hashParams.toString()}`;
-
-            console.log('Redirecting to:', redirectUrl);
-
-            // Redirect
-            window.location.href = redirectUrl;
-
-        } catch (error) {
-            console.error('SSO Error:', error);
-            document.getElementById('error').textContent = `Error: ${error.message}`;
-            document.getElementById('error').style.display = 'block';
-            document.querySelector('.spinner').style.display = 'none';
         }
+
+        // Start authentication flow
+        handleAuthorizationCode();
     })();
 </script>
 </body>

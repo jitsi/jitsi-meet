@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logged Out</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+        .success {
+            color: #27ae60;
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="success">✓</div>
+    <p>You have been logged out successfully.</p>
+    <p>You can close this window.</p>
+</div>
+
+<script>
+    // Notify parent window that logout is complete
+    if (window.parent) {
+        window.parent.postMessage({
+            type: 'logout-success'
+        }, window.location.origin);
+
+        // Auto-close after a short delay
+        setTimeout(() => window.close(), 1500);
+    }
+</script>
+</body>
+</html>
