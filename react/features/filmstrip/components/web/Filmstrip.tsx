@@ -879,6 +879,43 @@ class Filmstrip extends PureComponent <IProps, IState> {
     }
 
     /**
+     * Adjusts indices to exclude partially visible tiles from the list.
+     *
+     * @param {number} startIndex - The start index from react-window.
+     * @param {number} stopIndex - The stop index from react-window.
+     * @param {number} containerSize - The width or height of the filmstrip container.
+     * @param {number} itemSize - The width or height of each item including margin.
+     * @returns {Object}
+     */
+    _excludePartiallyVisibleTiles(
+            startIndex: number,
+            stopIndex: number,
+            containerSize: number,
+            itemSize: number
+    ) {
+        // Calculate how many items can fit fully in the container
+        // Ensure at least 1 if there are any visible items
+        const fullyVisibleCount = Math.max(1, Math.floor(containerSize / itemSize));
+
+        // Calculate how many items are currently in the visible range (inclusive)
+        const currentVisibleCount = stopIndex - startIndex + 1;
+
+        // If we have more items visible than can fit fully, we have a partially visible tile at the end
+        if (currentVisibleCount > fullyVisibleCount) {
+            // Reduce stopIndex to exclude the partially visible tile
+            return {
+                startIndex,
+                stopIndex: startIndex + fullyVisibleCount - 1
+            };
+        }
+
+        return {
+            startIndex,
+            stopIndex
+        };
+    }
+
+    /**
      * Toggle the toolbar visibility when tabbing into it.
      *
      * @returns {void}
@@ -944,8 +981,31 @@ class Filmstrip extends PureComponent <IProps, IState> {
      */
     _onListItemsRendered({ visibleStartIndex, visibleStopIndex }: {
         visibleStartIndex: number; visibleStopIndex: number; }) {
-        const { dispatch } = this.props;
-        const { startIndex, stopIndex } = this._calculateIndices(visibleStartIndex, visibleStopIndex);
+        const {
+            dispatch,
+            _currentLayout,
+            _filmstripWidth,
+            _filmstripHeight,
+            _thumbnailWidth,
+            _thumbnailHeight,
+            _isVerticalFilmstrip
+        } = this.props;
+
+        // Exclude partially visible tiles
+        const isHorizontal = _currentLayout === LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW;
+        const itemSize = isHorizontal
+            ? _thumbnailWidth + TILE_HORIZONTAL_MARGIN
+            : _thumbnailHeight + TILE_VERTICAL_MARGIN;
+        const containerSize = isHorizontal ? _filmstripWidth : _filmstripHeight;
+
+        const { startIndex: adjustedStartIndex, stopIndex: adjustedStopIndex } = this._excludePartiallyVisibleTiles(
+            visibleStartIndex,
+            visibleStopIndex,
+            containerSize,
+            itemSize
+        );
+
+        const { startIndex, stopIndex } = this._calculateIndices(adjustedStartIndex, adjustedStopIndex);
 
         dispatch(setVisibleRemoteParticipants(startIndex, stopIndex));
     }

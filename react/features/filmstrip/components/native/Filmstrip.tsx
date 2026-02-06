@@ -190,7 +190,7 @@ class Filmstrip extends PureComponent<IProps> {
      * @returns {void}
      */
     _onViewableItemsChanged({ viewableItems = [] }: { viewableItems: ViewToken[]; }) {
-        const { _disableSelfView } = this.props;
+        const { _aspectRatio, _clientWidth, _clientHeight, _disableSelfView } = this.props;
 
         if (!this._separateLocalThumbnail && !_disableSelfView && viewableItems[0]?.index === 0) {
             // Skip the local thumbnail.
@@ -204,6 +204,25 @@ class Filmstrip extends PureComponent<IProps> {
 
         let startIndex = Number(viewableItems[0].index);
         let endIndex = Number(viewableItems[viewableItems.length - 1].index);
+
+        // Exclude partially visible tiles
+        const isNarrowAspectRatio = _aspectRatio === ASPECT_RATIO_NARROW;
+        const { height: thumbnailHeight, width: thumbnailWidth, margin } = styles.thumbnail;
+        const { height, width } = this._getDimensions();
+
+        // Calculate item size and container size based on layout orientation
+        const itemSize = isNarrowAspectRatio
+            ? thumbnailWidth + (2 * margin)  // Horizontal layout
+            : thumbnailHeight + (2 * margin); // Vertical layout
+        const containerSize = isNarrowAspectRatio ? width : height;
+
+        // Ensure at least 1 if there are any visible items
+        const fullyVisibleCount = Math.max(1, Math.floor(containerSize / itemSize));
+        const currentVisibleCount = endIndex - startIndex + 1;
+
+        if (currentVisibleCount > fullyVisibleCount) {
+            endIndex = startIndex + fullyVisibleCount - 1;
+        }
 
         if (!this._separateLocalThumbnail && !_disableSelfView) {
             // We are off by one in the remote participants array.
