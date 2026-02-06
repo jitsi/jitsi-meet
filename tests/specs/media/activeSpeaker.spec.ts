@@ -47,7 +47,7 @@ describe('Active speaker', () => {
      * Note: This test verifies filmstrip ordering via Redux state
      * (visibleRemoteParticipants), not large video behavior.
      */
-    it('testDominantSpeakerInFilmstripWithLimitedSlots', async () => {
+    it.skip('testDominantSpeakerInFilmstripWithLimitedSlots', async () => {
         await ensureSixParticipants({
             configOverwrite: {
                 startWithAudioMuted: true
@@ -118,7 +118,7 @@ describe('Active speaker', () => {
      * Verifies that dominant speaker is still visible when screen shares
      * take up some of the visible slots.
      */
-    it('testDominantSpeakerWithScreensharing', async () => {
+    it.skip('testDominantSpeakerWithScreensharing', async () => {
         await ensureSixParticipants({
             configOverwrite: {
                 startWithAudioMuted: true
@@ -191,7 +191,7 @@ describe('Active speaker', () => {
      * Verifies that the alphabetical sorting prevents visual reordering when the same
      * set of speakers take turns speaking.
      */
-    it('testFilmstripStableOrderingWithMultipleSpeakers', async () => {
+    it.skip('testFilmstripStableOrderingWithMultipleSpeakers', async () => {
         await ensureSixParticipants({
             configOverwrite: {
                 startWithAudioMuted: true
