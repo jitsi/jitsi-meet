@@ -45,7 +45,7 @@ body {
 
 .jitsi-icon {
     &-default svg {
-        fill: white;
+        fill: var(--icon-default-color, white);
     }
 }
 

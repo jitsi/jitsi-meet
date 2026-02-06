@@ -87,7 +87,7 @@ const styles = (theme: Theme) => {
         },
 
         label: {
-            color: `${theme.palette.text01} !important`,
+            color: `${theme.palette.settingsTabText} !important`,
             ...theme.typography.bodyShortRegular,
             marginBottom: theme.spacing(2)
         },

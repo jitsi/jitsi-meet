@@ -70,7 +70,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         label: {
-            color: theme.palette.text01,
+            color: theme.palette.selectLabel,
             ...theme.typography.bodyShortRegular,
             marginBottom: theme.spacing(2),
 
@@ -84,11 +84,11 @@ const useStyles = makeStyles()(theme => {
         },
 
         select: {
-            backgroundColor: theme.palette.ui03,
+            backgroundColor: theme.palette.selectBackground,
             borderRadius: `${theme.shape.borderRadius}px`,
             width: '100%',
             ...theme.typography.bodyShortRegular,
-            color: theme.palette.text01,
+            color: theme.palette.selectText,
             padding: '10px 16px',
             paddingRight: '42px',
             border: 0,
@@ -99,11 +99,11 @@ const useStyles = makeStyles()(theme => {
 
             '&:focus': {
                 outline: 0,
-                boxShadow: `0px 0px 0px 2px ${theme.palette.focus01}`
+                boxShadow: `0px 0px 0px 2px ${theme.palette.selectFocus}`
             },
 
             '&:disabled': {
-                color: theme.palette.text03
+                color: theme.palette.selectDisabled
             },
 
             '&.is-mobile': {
@@ -113,7 +113,7 @@ const useStyles = makeStyles()(theme => {
             },
 
             '&.error': {
-                boxShadow: `0px 0px 0px 2px ${theme.palette.textError}`
+                boxShadow: `0px 0px 0px 2px ${theme.palette.selectError}`
             }
         },
 
@@ -132,14 +132,14 @@ const useStyles = makeStyles()(theme => {
         bottomLabel: {
             marginTop: theme.spacing(2),
             ...theme.typography.labelRegular,
-            color: theme.palette.text02,
+            color: theme.palette.selectBottomLabel,
 
             '&.is-mobile': {
                 ...theme.typography.bodyShortRegular
             },
 
             '&.error': {
-                color: theme.palette.textError
+                color: theme.palette.selectBottomLabelError
             }
         }
     };
@@ -180,7 +180,7 @@ const Select = ({
                 </select>
                 <Icon
                     className = { cx(classes.icon, isMobile && 'is-mobile') }
-                    color = { disabled ? theme.palette.icon03 : theme.palette.icon01 }
+                    color = { disabled ? theme.palette.selectIconDisabled : theme.palette.selectIcon }
                     size = { 22 }
                     src = { IconArrowDown } />
             </div>

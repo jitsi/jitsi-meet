@@ -7,11 +7,11 @@ import { getParticipantCountForDisplay } from '../../../base/participants/functi
 const useStyles = makeStyles()(theme => {
     return {
         badge: {
-            backgroundColor: theme.palette.ui03,
+            backgroundColor: theme.palette.participantCounterBadge,
             borderRadius: '100%',
             height: '16px',
             minWidth: '16px',
-            color: theme.palette.text01,
+            color: theme.palette.participantCounterText,
             ...theme.typography.labelBold,
             pointerEvents: 'none',
             position: 'absolute',

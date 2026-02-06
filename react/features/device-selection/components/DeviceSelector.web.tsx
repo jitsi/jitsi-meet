@@ -56,11 +56,11 @@ const useStyles = makeStyles()(theme => {
             width: '100%',
             boxSizing: 'border-box',
             borderRadius: theme.shape.borderRadius,
-            backgroundColor: theme.palette.uiBackground,
+            backgroundColor: theme.palette.deviceSelectorTextBackground,
             padding: '10px 16px',
             textAlign: 'center',
             ...theme.typography.bodyShortRegular,
-            border: `1px solid ${theme.palette.ui03}`
+            border: `1px solid ${theme.palette.deviceSelectorBorder}`
         }
     };
 });

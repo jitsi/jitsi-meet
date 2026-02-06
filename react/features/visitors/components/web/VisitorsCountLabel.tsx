@@ -11,8 +11,8 @@ import { getVisitorsCount, getVisitorsShortText } from '../../functions';
 const useStyles = makeStyles()(theme => {
     return {
         label: {
-            backgroundColor: theme.palette.warning02,
-            color: theme.palette.uiBackground
+            backgroundColor: theme.palette.visitorsCountBadge,
+            color: theme.palette.visitorsCountText
         }
     };
 });
@@ -28,7 +28,7 @@ const VisitorsCountLabel = () => {
         <Label
             className = { styles.label }
             icon = { IconUsers }
-            iconColor = { theme.palette.icon04 }
+            iconColor = { theme.palette.visitorsCountIcon }
             id = 'visitorsCountLabel'
             text = { `${getVisitorsShortText(visitorsCount)}` } />
     </Tooltip>) : null;

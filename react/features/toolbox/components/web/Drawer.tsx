@@ -44,7 +44,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         drawer: {
-            backgroundColor: theme.palette.ui01,
+            backgroundColor: theme.palette.drawerBackground,
             maxHeight: `calc(${DRAWER_MAX_HEIGHT})`,
             borderRadius: '24px 24px 0 0',
             overflowY: 'auto',
@@ -64,7 +64,7 @@ const useStyles = makeStyles()(theme => {
                     height: '48px',
                     padding: '12px 16px',
                     alignItems: 'center',
-                    color: theme.palette.text01,
+                    color: theme.palette.overflowMenuItemText,
                     cursor: 'pointer',
                     display: 'flex',
                     fontSize: '1rem',
@@ -72,12 +72,34 @@ const useStyles = makeStyles()(theme => {
                     '& div': {
                         display: 'flex',
                         flexDirection: 'row',
-                        alignItems: 'center'
+                        alignItems: 'center',
+
+                        '& svg': {
+                            fill: theme.palette.overflowMenuItemIcon
+                        }
+                    },
+
+                    '& > svg': {
+                        fill: theme.palette.overflowMenuItemIcon
+                    },
+
+                    '@media (hover: hover) and (pointer: fine)': {
+                        '&:hover': {
+                            backgroundColor: theme.palette.overflowMenuItemHover,
+
+                            '& svg': {
+                                fill: theme.palette.overflowMenuItemIcon
+                            }
+                        }
                     },
 
                     '&.disabled': {
                         cursor: 'initial',
-                        color: '#3b475c'
+                        color: theme.palette.overflowMenuItemDisabled,
+
+                        '& svg': {
+                            fill: theme.palette.overflowMenuItemDisabled
+                        }
                     }
                 }
             }

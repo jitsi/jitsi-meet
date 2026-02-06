@@ -77,7 +77,7 @@ const styles = (theme: Theme) => {
             justifyContent: 'center',
             textAlign: 'center' as const,
             minHeight: '100px',
-            color: theme.palette.text01,
+            color: theme.palette.settingsTabText,
             ...theme.typography.bodyShortRegular
         },
 

@@ -22,7 +22,7 @@ interface IProps extends ISubtitle {
 const useStyles = makeStyles()(theme => {
     return {
         messageContainer: {
-            backgroundColor: theme.palette.ui02,
+            backgroundColor: theme.palette.subtitleMessageBackground,
             borderRadius: '4px 12px 12px 12px',
             padding: '12px',
             maxWidth: '100%',
@@ -39,7 +39,7 @@ const useStyles = makeStyles()(theme => {
 
         messageHeader: {
             ...theme.typography.labelBold,
-            color: theme.palette.text02,
+            color: theme.palette.subtitleMessageSender,
             whiteSpace: 'nowrap',
             textOverflow: 'ellipsis',
             overflow: 'hidden',
@@ -49,14 +49,14 @@ const useStyles = makeStyles()(theme => {
 
         messageText: {
             ...theme.typography.bodyShortRegular,
-            color: theme.palette.text01,
+            color: theme.palette.subtitleMessageText,
             whiteSpace: 'pre-wrap',
             wordBreak: 'break-word'
         },
 
         timestamp: {
             ...theme.typography.labelRegular,
-            color: theme.palette.text03,
+            color: theme.palette.subtitleMessageTime,
             marginTop: theme.spacing(1)
         },
 

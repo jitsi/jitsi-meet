@@ -56,7 +56,7 @@ const useStyles = makeStyles()(theme => {
 
         text: {
             ...theme.typography.bodyShortRegular,
-            color: theme.palette.text02,
+            color: theme.palette.participantSectionText,
             padding: '10px 16px',
             height: '40px',
             overflow: 'hidden',

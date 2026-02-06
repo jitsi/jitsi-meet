@@ -60,17 +60,17 @@ const styles = (theme: Theme) => {
             position: 'relative' as const
         },
         disabled: {
-            background: theme.palette.text02
+            background: theme.palette.recordingHighlightButtonDisabled
         },
         regular: {
-            background: theme.palette.ui10
+            background: theme.palette.recordingHighlightButton
         },
         highlightNotification: {
-            backgroundColor: theme.palette.ui10,
+            backgroundColor: theme.palette.recordingHighlightButton,
             borderRadius: '6px',
             boxShadow: '0px 6px 20px rgba(0, 0, 0, 0.25)',
             boxSizing: 'border-box' as const,
-            color: theme.palette.uiBackground,
+            color: theme.palette.recordingNotificationText,
             fontSize: '0.875rem',
             fontWeight: 400,
             left: '4px',
@@ -80,7 +80,7 @@ const styles = (theme: Theme) => {
             width: 320
         },
         highlightNotificationButton: {
-            color: theme.palette.action01,
+            color: theme.palette.recordingNotificationAction,
             cursor: 'pointer',
             fontWeight: 600,
             marginTop: '8px'
@@ -203,7 +203,7 @@ export class HighlightButton extends AbstractHighlightButton<IProps, IState> {
                     <Label
                         className = { className }
                         icon = { IconHighlight }
-                        iconColor = { _disabled ? BaseTheme.palette.text03 : BaseTheme.palette.field01 }
+                        iconColor = { _disabled ? BaseTheme.palette.recordingHighlightButtonIconDisabled : BaseTheme.palette.recordingHighlightButtonIcon }
                         id = 'highlightMeetingLabel'
                         onClick = { this._onClick } />
                 </Tooltip>

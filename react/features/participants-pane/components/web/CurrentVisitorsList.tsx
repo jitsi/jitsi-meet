@@ -45,11 +45,11 @@ const useStyles = makeStyles()(theme => {
             cursor: 'pointer',
             padding: `${theme.spacing(1)} 0`,
             ...theme.typography.bodyShortBold,
-            color: theme.palette.text02,
+            color: theme.palette.participantSectionText,
             flexShrink: 0
         },
         arrowContainer: {
-            backgroundColor: theme.palette.ui03,
+            backgroundColor: theme.palette.visitorsArrowBackground,
             width: '24px',
             height: '24px',
             borderRadius: '6px',

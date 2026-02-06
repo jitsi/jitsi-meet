@@ -96,7 +96,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         selectedEntry: {
-            border: `2px solid ${theme.palette.action01Hover}`
+            border: `2px solid ${theme.palette.settingsVideoPreviewBorder}`
         },
 
         previewVideo: {
@@ -128,7 +128,7 @@ const useStyles = makeStyles()(theme => {
             backgroundColor: 'rgba(0, 0, 0, 0.7)',
             borderRadius: '4px',
             padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
-            color: theme.palette.text01,
+            color: theme.palette.settingsTabText,
             ...theme.typography.labelBold,
             width: 'fit-content',
             maxwidth: `calc(100% - ${theme.spacing(2)} - ${theme.spacing(2)})`,

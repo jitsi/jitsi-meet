@@ -16,7 +16,7 @@ const useStyles = makeStyles()(theme => {
                     height: theme.spacing(8)
                 },
                 '& .has-left': {
-                    color: theme.palette.text03
+                    color: theme.palette.speakerStatsLabelText
                 },
                 '& .avatar': {
                     marginRight: theme.spacing(3)
@@ -28,7 +28,7 @@ const useStyles = makeStyles()(theme => {
                     [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
                         ...theme.typography.bodyShortRegularLarge
                     },
-                    backgroundColor: theme.palette.ui02
+                    backgroundColor: theme.palette.speakerStatsRowBackground
                 },
                 '& .display-name': {
                     ...theme.typography.bodyShortRegular,
@@ -37,7 +37,7 @@ const useStyles = makeStyles()(theme => {
                     }
                 },
                 '& .dominant': {
-                    backgroundColor: theme.palette.success02
+                    backgroundColor: theme.palette.speakerStatsSuccessBar
                 }
             }
 

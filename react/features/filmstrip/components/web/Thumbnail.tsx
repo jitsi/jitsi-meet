@@ -305,7 +305,7 @@ const defaultStyles = (theme: Theme) => {
             height: '100%',
             width: '100%',
             borderRadius: '4px',
-            backgroundColor: theme.palette.ui02
+            backgroundColor: theme.palette.thumbnailBackground
         },
 
         borderIndicator: {
@@ -341,7 +341,7 @@ const defaultStyles = (theme: Theme) => {
             justifyContent: 'center',
             alignItems: 'center',
             overflow: 'hidden',
-            backgroundColor: theme.palette.ui02,
+            backgroundColor: theme.palette.thumbnailBackground,
 
             '& img': {
                 maxWidth: '100%',
@@ -356,7 +356,7 @@ const defaultStyles = (theme: Theme) => {
             zIndex: 1,
             width: '100%',
             height: '100%',
-            backgroundColor: `${theme.palette.uiBackground}`,
+            backgroundColor: theme.palette.thumbnailTintBackground,
             opacity: 0.8
         },
 

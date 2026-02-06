@@ -5,8 +5,8 @@ import BaseTheme from '../base/ui/components/BaseTheme';
 
 import TabIcon from './components/TabIcon';
 
-export const ACTIVE_TAB_COLOR = BaseTheme.palette.icon01;
-export const INACTIVE_TAB_COLOR = BaseTheme.palette.icon03;
+export const ACTIVE_TAB_COLOR = BaseTheme.palette.welcomeTabActive;
+export const INACTIVE_TAB_COLOR = BaseTheme.palette.welcomeTabInactive;
 
 export const tabBarOptions = {
     tabBarActiveTintColor: ACTIVE_TAB_COLOR,
@@ -15,7 +15,7 @@ export const tabBarOptions = {
         fontSize: 12,
     },
     tabBarStyle: {
-        backgroundColor: BaseTheme.palette.ui01
+        backgroundColor: BaseTheme.palette.welcomeCard
     }
 };
 

@@ -49,7 +49,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         label: {
-            color: theme.palette.text01,
+            color: theme.palette.inputLabel,
             ...theme.typography.bodyShortRegular,
             marginBottom: theme.spacing(2),
 
@@ -64,9 +64,9 @@ const useStyles = makeStyles()(theme => {
         },
 
         input: {
-            backgroundColor: theme.palette.ui03,
-            background: theme.palette.ui03,
-            color: theme.palette.text01,
+            backgroundColor: theme.palette.inputFieldBackground,
+            background: theme.palette.inputFieldBackground,
+            color: theme.palette.inputFieldText,
             ...theme.typography.bodyShortRegular,
             padding: '10px 16px',
             borderRadius: theme.shape.borderRadius,
@@ -76,16 +76,16 @@ const useStyles = makeStyles()(theme => {
             width: '100%',
 
             '&::placeholder': {
-                color: theme.palette.text02
+                color: theme.palette.inputFieldPlaceholder
             },
 
             '&:focus': {
                 outline: 0,
-                boxShadow: `0px 0px 0px 2px ${theme.palette.focus01}`
+                boxShadow: `0px 0px 0px 2px ${theme.palette.inputFieldFocus}`
             },
 
             '&:disabled': {
-                color: theme.palette.text03
+                color: theme.palette.inputFieldDisabled
             },
 
             '&.is-mobile': {
@@ -99,7 +99,7 @@ const useStyles = makeStyles()(theme => {
             },
 
             '&.error': {
-                boxShadow: `0px 0px 0px 2px ${theme.palette.textError}`
+                boxShadow: `0px 0px 0px 2px ${theme.palette.inputFieldError}`
             },
             '&.clearable-input': {
                 paddingRight: '46px'
@@ -131,7 +131,7 @@ const useStyles = makeStyles()(theme => {
             right: '16px',
             top: '10px',
             cursor: 'pointer',
-            backgroundColor: theme.palette.action03,
+            backgroundColor: theme.palette.inputClearButton,
             border: 0,
             padding: 0
         },
@@ -139,14 +139,14 @@ const useStyles = makeStyles()(theme => {
         bottomLabel: {
             marginTop: theme.spacing(2),
             ...theme.typography.labelRegular,
-            color: theme.palette.text02,
+            color: theme.palette.inputBottomLabel,
 
             '&.is-mobile': {
                 ...theme.typography.bodyShortRegular
             },
 
             '&.error': {
-                color: theme.palette.textError
+                color: theme.palette.inputBottomLabelError
             }
         }
     };

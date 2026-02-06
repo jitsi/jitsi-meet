@@ -9,11 +9,11 @@ import { getSupportUrl } from '../../functions';
 const useStyles = makeStyles()(theme => {
     return {
         dialog: {
-            backgroundColor: theme.palette.ui01,
-            border: `1px solid ${theme.palette.ui04}`,
+            backgroundColor: theme.palette.dialogBackground,
+            border: `1px solid ${theme.palette.inlineDialogBorder}`,
             borderRadius: `${Number(theme.shape.borderRadius)}px`,
             boxShadow: '0px 1px 2px rgba(41, 41, 41, 0.25)',
-            color: theme.palette.text01,
+            color: theme.palette.dialogText,
             ...theme.typography.bodyShortRegular,
             padding: `${theme.spacing(3)} 10`,
             '& .retry-button': {

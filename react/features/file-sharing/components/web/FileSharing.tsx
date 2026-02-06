@@ -32,8 +32,8 @@ const useStyles = makeStyles()(theme => {
         },
 
         dropZone: {
-            backgroundColor: theme.palette.ui02,
-            border: `2px dashed ${theme.palette.ui03}`,
+            backgroundColor: theme.palette.fileSharingItemBackground,
+            border: `2px dashed ${theme.palette.fileSharingItemBorder}`,
             borderRadius: theme.shape.borderRadius,
             bottom: 0,
             left: 0,
@@ -44,7 +44,7 @@ const useStyles = makeStyles()(theme => {
             zIndex: 0,
 
             '&.dragging': {
-                backgroundColor: theme.palette.ui03,
+                backgroundColor: theme.palette.fileSharingItemBorder,
                 borderColor: theme.palette.action01,
                 opacity: 0.8,
                 zIndex: 2
@@ -85,7 +85,7 @@ const useStyles = makeStyles()(theme => {
 
         noFilesText: {
             ...theme.typography.bodyLongBold,
-            color: theme.palette.text02,
+            color: theme.palette.fileSharingEmptyText,
             padding: '0 24px',
             textAlign: 'center'
         },
@@ -189,7 +189,7 @@ const FileSharing = () => {
                                     tabIndex = { 0 }>
                                     <Icon
                                         className = { classes.uploadIcon }
-                                        color = { BaseTheme.palette.icon03 }
+                                        color = { BaseTheme.palette.fileSharingEmptyIcon }
                                         size = { 160 }
                                         src = { IconCloudUpload } />
                                     <span className = { classes.noFilesText }>

@@ -44,7 +44,7 @@ const useStyles = makeStyles()(theme => {
         height
     };
     const inputThumb = {
-        background: theme.palette.text01,
+        background: theme.palette.sliderKnob,
         border: 0,
         borderRadius: '50%',
         height: 24,
@@ -52,7 +52,7 @@ const useStyles = makeStyles()(theme => {
     };
 
     const focused = {
-        outline: `1px solid ${theme.palette.ui06}`
+        outline: `1px solid ${theme.palette.sliderFocus}`
     };
 
     return {
@@ -72,14 +72,14 @@ const useStyles = makeStyles()(theme => {
             width: '100%'
         },
         knob: {
-            background: theme.palette.text01,
+            background: theme.palette.sliderKnob,
             borderRadius: '50%',
             display: 'inline-block',
             height,
             width: 6
         },
         track: {
-            background: theme.palette.text03,
+            background: theme.palette.sliderTrack,
             borderRadius: Number(theme.shape.borderRadius) / 2,
             height
         },

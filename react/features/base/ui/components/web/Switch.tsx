@@ -18,7 +18,7 @@ const useStyles = makeStyles()(theme => {
     return {
         container: {
             position: 'relative',
-            backgroundColor: theme.palette.ui05,
+            backgroundColor: theme.palette.switchBackground,
             borderRadius: '12px',
             width: '40px',
             height: '24px',
@@ -29,11 +29,11 @@ const useStyles = makeStyles()(theme => {
             display: 'inline-block',
 
             '&.disabled': {
-                backgroundColor: theme.palette.ui05,
+                backgroundColor: theme.palette.switchBackground,
                 cursor: 'default',
 
                 '& .toggle': {
-                    backgroundColor: theme.palette.ui03
+                    backgroundColor: theme.palette.switchToggleDisabled
                 }
             },
 
@@ -45,7 +45,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         containerOn: {
-            backgroundColor: theme.palette.action01
+            backgroundColor: theme.palette.switchBackgroundOn
         },
 
         toggle: {
@@ -55,7 +55,7 @@ const useStyles = makeStyles()(theme => {
             zIndex: 5,
             top: '4px',
             left: '4px',
-            backgroundColor: theme.palette.ui10,
+            backgroundColor: theme.palette.switchToggle,
             borderRadius: '100%',
             transition: '.3s',
 
@@ -87,7 +87,7 @@ const useStyles = makeStyles()(theme => {
 
             '&.focus-visible + .toggle-checkbox-ring': {
                 outline: 0,
-                boxShadow: `0px 0px 0px 2px ${theme.palette.focus01}`
+                boxShadow: `0px 0px 0px 2px ${theme.palette.switchFocus}`
             }
         },
 

@@ -24,7 +24,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         title: {
-            color: theme.palette.text01,
+            color: theme.palette.dialogText,
             ...theme.typography.heading5,
             margin: 0,
             padding: 0

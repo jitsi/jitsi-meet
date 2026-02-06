@@ -24,7 +24,7 @@ const useStyles = makeStyles()(theme => {
         },
         drawerItem: {
             alignItems: 'center',
-            color: theme.palette.text01,
+            color: theme.palette.participantCounterText,
             display: 'flex',
             padding: '12px 16px',
             ...theme.typography.bodyShortRegularLarge,
@@ -35,7 +35,7 @@ const useStyles = makeStyles()(theme => {
 
             '&:hover': {
                 cursor: 'pointer',
-                background: theme.palette.action02
+                background: theme.palette.participantActionButton
             }
         },
         icon: {
@@ -48,11 +48,11 @@ const useStyles = makeStyles()(theme => {
         },
         heading: {
             ...theme.typography.bodyShortBold,
-            color: theme.palette.text02
+            color: theme.palette.participantSectionText
         },
         link: {
             ...theme.typography.labelBold,
-            color: theme.palette.link01,
+            color: theme.palette.participantLinkText,
             cursor: 'pointer'
         }
     };

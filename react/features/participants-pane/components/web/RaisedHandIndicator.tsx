@@ -7,7 +7,7 @@ import { IconRaiseHand } from '../../../base/icons/svg';
 const useStyles = makeStyles()(theme => {
     return {
         indicator: {
-            backgroundColor: theme.palette.warning02,
+            backgroundColor: theme.palette.participantRaisedHandBadge,
             borderRadius: `${Number(theme.shape.borderRadius) / 2}px`,
             height: '24px',
             width: '24px'
@@ -21,7 +21,7 @@ export const RaisedHandIndicator = () => {
     return (
         <div className = { styles.indicator }>
             <Icon
-                color = { theme.palette.icon04 }
+                color = { theme.palette.participantRaisedHandIcon }
                 size = { 16 }
                 src = { IconRaiseHand } />
         </div>

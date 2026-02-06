@@ -79,7 +79,7 @@ function styles(theme: Theme, props: IProps) {
             zIndex: 1,
 
             '&:hover, &:focus-within': {
-                backgroundColor: theme.palette.ui02
+                backgroundColor: theme.palette.filmstripBackground
             }
         },
 
@@ -156,10 +156,10 @@ function styles(theme: Theme, props: IProps) {
         },
 
         filmstripBackground: {
-            backgroundColor: theme.palette.uiBackground,
+            backgroundColor: theme.palette.filmstripBackgroundHover,
 
             '&:hover, &:focus-within': {
-                backgroundColor: theme.palette.uiBackground
+                backgroundColor: theme.palette.filmstripBackgroundHover
             }
         },
 
@@ -198,7 +198,7 @@ function styles(theme: Theme, props: IProps) {
 
             '&:hover': {
                 '& .dragHandle': {
-                    backgroundColor: theme.palette.icon01
+                    backgroundColor: theme.palette.filmstripDragHandleHover
                 }
             },
 
@@ -206,7 +206,7 @@ function styles(theme: Theme, props: IProps) {
                 visibility: 'visible' as const,
 
                 '& .dragHandle': {
-                    backgroundColor: theme.palette.icon01
+                    backgroundColor: theme.palette.filmstripDragHandleHover
                 }
             },
 
@@ -224,7 +224,7 @@ function styles(theme: Theme, props: IProps) {
         },
 
         dragHandle: {
-            backgroundColor: theme.palette.icon02,
+            backgroundColor: theme.palette.filmstripDragHandle,
             height: '100px',
             width: '3px',
             borderRadius: '1px'

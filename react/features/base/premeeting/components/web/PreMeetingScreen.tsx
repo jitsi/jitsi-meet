@@ -109,7 +109,7 @@ const useStyles = makeStyles()(theme => {
             position: 'absolute',
             inset: '0 0 0 0',
             display: 'flex',
-            backgroundColor: theme.palette.ui01,
+            backgroundColor: theme.palette.preMeetingBackground,
             zIndex: 252,
 
             '@media (max-width: 720px)': {
@@ -163,7 +163,7 @@ const useStyles = makeStyles()(theme => {
         },
         title: {
             ...theme.typography.heading4,
-            color: `${theme.palette.text01}!important`,
+            color: theme.palette.prejoinTitleText,
             marginBottom: theme.spacing(3),
             textAlign: 'center',
 
@@ -179,7 +179,7 @@ const useStyles = makeStyles()(theme => {
 
         roomName: {
             ...theme.typography.heading5,
-            color: theme.palette.text01,
+            color: theme.palette.prejoinRoomNameText,
             display: 'inline-block',
             overflow: 'hidden',
             textOverflow: 'ellipsis',

@@ -91,7 +91,7 @@ const useStyles = makeStyles()(theme => {
             marginLeft: '6px',
 
             '& svg': {
-                fill: theme.palette.iconError
+                fill: theme.palette.settingsErrorIcon
             }
         },
 

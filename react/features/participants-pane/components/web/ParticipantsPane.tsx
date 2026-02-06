@@ -43,7 +43,7 @@ interface IStylesProps {
 const useStyles = makeStyles<IStylesProps>()((theme, { isChatOpen }) => {
     return {
         participantsPane: {
-            backgroundColor: theme.palette.ui01,
+            backgroundColor: theme.palette.participantsPaneBackground,
             flexShrink: 0,
             position: 'relative',
             transition: 'width .16s ease-in-out',

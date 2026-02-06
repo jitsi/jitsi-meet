@@ -8,7 +8,7 @@ const useStyles = makeStyles()(theme => {
         container: {
             margin: '24px',
             padding: '16px',
-            backgroundColor: theme.palette.ui02,
+            backgroundColor: theme.palette.pollsBackground,
             borderRadius: '8px',
             wordBreak: 'break-word'
         },
@@ -17,12 +17,12 @@ const useStyles = makeStyles()(theme => {
         },
         question: {
             ...theme.typography.heading6,
-            color: theme.palette.text01,
+            color: theme.palette.pollsQuestion,
             marginBottom: '8px'
         },
         creator: {
             ...theme.typography.bodyShortRegular,
-            color: theme.palette.text02
+            color: theme.palette.pollsSubtitle
         },
         resultList: {
             listStyleType: 'none',
@@ -38,7 +38,7 @@ const useStyles = makeStyles()(theme => {
             flexShrink: 1,
             overflowWrap: 'anywhere',
             ...theme.typography.bodyShortRegular,
-            color: theme.palette.text01,
+            color: theme.palette.pollsAnswer,
             marginBottom: '4px'
         },
         answerResultContainer: {
@@ -48,7 +48,7 @@ const useStyles = makeStyles()(theme => {
             minWidth: '10em'
         },
         barContainer: {
-            backgroundColor: theme.palette.ui03,
+            backgroundColor: theme.palette.pollsBarBackground,
             borderRadius: '4px',
             height: '6px',
             maxWidth: '160px',
@@ -65,7 +65,7 @@ const useStyles = makeStyles()(theme => {
             flex: 1,
             textAlign: 'right',
             ...theme.typography.bodyShortBold,
-            color: theme.palette.text01
+            color: theme.palette.pollsBarPercentage
         },
         voters: {
             margin: 0,
@@ -73,13 +73,13 @@ const useStyles = makeStyles()(theme => {
             listStyleType: 'none',
             display: 'flex',
             flexDirection: 'column',
-            backgroundColor: theme.palette.ui03,
+            backgroundColor: theme.palette.pollsVotersBackground,
             borderRadius: theme.shape.borderRadius,
             padding: '8px 16px',
 
             '& li': {
                 ...theme.typography.bodyShortRegular,
-                color: theme.palette.text01,
+                color: theme.palette.pollsVotersText,
                 margin: 0,
                 marginBottom: '2px',
 
