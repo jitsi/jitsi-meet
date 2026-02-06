@@ -140,7 +140,7 @@ export const colorMap = {
     speakerStatsBackground: 'surface02',   // Speaker stats panel background
     speakerStatsRowBackground: 'ui02',     // Individual stat row background
     speakerStatsRowAlternate: 'ui03',      // Alternate row background
-    speakerStatsBorder: 'ui02',            // Speaker stats borders
+    speakerStatsBorder: 'surface03',       // Speaker stats borders
     speakerStatsHeaderBackground: 'ui09',  // Header background
     speakerStatsSearchBackground: 'field01', // Search input background
     speakerStatsSearchBorder: 'ui05',      // Search input border
