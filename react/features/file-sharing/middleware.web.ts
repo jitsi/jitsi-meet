@@ -72,6 +72,9 @@ StateListenerRegistry.register(
                     type: _FILE_REMOVED,
                     fileId
                 });
+
+                // Notify external API about file deletion (for remote participants)
+                APP.API.notifyFileDeleted(fileId);
             });
 
             conference.on(JitsiConferenceEvents.FILE_SHARING_FILES_RECEIVED, (files: object) => {
@@ -152,6 +155,8 @@ MiddlewareRegistry.register(store => next => action => {
                 privateMessage: false,
                 timestamp: file.timestamp
             }));
+
+            APP.API.notifyFileUploaded(file);
         }
 
         return result;
@@ -177,6 +182,9 @@ MiddlewareRegistry.register(store => next => action => {
             type: _FILE_REMOVED,
             fileId
         });
+
+        // Notify external API about file deletion (for the local participant who deleted it)
+        APP.API.notifyFileDeleted(fileId);
 
         const { fileSharing } = state['features/base/config'];
         const sessionId = conference.getMeetingUniqueId();
