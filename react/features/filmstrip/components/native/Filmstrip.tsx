@@ -212,7 +212,7 @@ class Filmstrip extends PureComponent<IProps> {
 
         // Calculate item size and container size based on layout orientation
         const itemSize = isNarrowAspectRatio
-            ? thumbnailWidth + (2 * margin)  // Horizontal layout
+            ? thumbnailWidth + (2 * margin) // Horizontal layout
             : thumbnailHeight + (2 * margin); // Vertical layout
         const containerSize = isNarrowAspectRatio ? width : height;
 
