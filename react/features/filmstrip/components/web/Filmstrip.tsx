@@ -44,6 +44,7 @@ import {
     TOP_FILMSTRIP_HEIGHT,
     TOUCH_DRAG_HANDLE_PADDING
 } from '../../constants';
+import { calculateFullyVisibleParticipantsCount } from '../../functions.any';
 import {
     getVerticalViewMaxWidth,
     isFilmstripDisabled,
@@ -944,10 +945,33 @@ class Filmstrip extends PureComponent <IProps, IState> {
      */
     _onListItemsRendered({ visibleStartIndex, visibleStopIndex }: {
         visibleStartIndex: number; visibleStopIndex: number; }) {
-        const { dispatch } = this.props;
+        const {
+            dispatch,
+            _currentLayout,
+            _filmstripWidth,
+            _filmstripHeight,
+            _thumbnailWidth,
+            _thumbnailHeight,
+            _isVerticalFilmstrip
+        } = this.props;
+
+        // Calculate fully visible count (excluding partially visible tiles)
+        const isHorizontal = _currentLayout === LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW;
+        const itemSize = isHorizontal
+            ? _thumbnailWidth + TILE_HORIZONTAL_MARGIN
+            : _thumbnailHeight + TILE_VERTICAL_MARGIN;
+        const containerSize = isHorizontal ? _filmstripWidth : _filmstripHeight;
+
+        const fullyVisibleCount = calculateFullyVisibleParticipantsCount(
+            visibleStartIndex,
+            visibleStopIndex,
+            containerSize,
+            itemSize
+        );
+
         const { startIndex, stopIndex } = this._calculateIndices(visibleStartIndex, visibleStopIndex);
 
-        dispatch(setVisibleRemoteParticipants(startIndex, stopIndex));
+        dispatch(setVisibleRemoteParticipants(startIndex, stopIndex, fullyVisibleCount));
     }
 
     /**
