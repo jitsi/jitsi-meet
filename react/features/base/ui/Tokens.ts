@@ -379,7 +379,7 @@ export const colorMap = {
     conferenceNoticeBackground: 'uiBackground', // Conference notice background
     conferenceNoticeText: 'text01',          // Conference notice text
     conferenceRaisedHandLabelText: 'uiBackground', // Raised hands count label text
-    conferenceRaisedHandLabelIcon: 'icon04', // Raised hands count label icon
+    conferenceRaisedHandLabelIcon: 'surface01', // Raised hands count label icon
 
     // Subtitle Messages
     subtitleMessageBackground: 'ui02',       // Subtitle message background
