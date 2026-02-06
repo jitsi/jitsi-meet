@@ -45,7 +45,7 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
         ? [ ...sortedRemoteVirtualScreenshareParticipants.keys() ] : [];
     const sharedVideos = fakeParticipants ? Array.from(fakeParticipants.keys()) : [];
     const speakers = new Array<string>();
-    const { visibleRemoteParticipants } = state['features/filmstrip'];
+    const { fullyVisibleRemoteParticipantsCount } = state['features/filmstrip'];
 
     const participantsWithScreenShare = screenShareParticipants.reduce<string[]>((acc, screenshare) => {
         const ownerId = getVirtualScreenshareParticipantOwnerId(screenshare);
@@ -69,9 +69,13 @@ export function updateRemoteParticipants(store: IStore, force?: boolean, partici
         speakers.push(dominant.id);
     }
 
-    // Find the number of slots available for speakers.
+    // Find the number of slots available for speakers. Use fullyVisibleRemoteParticipantsCount to exclude partially
+    // visible tiles, ensuring dominant speaker is placed on a fully visible tile.
     const slotsForSpeakers
-        = visibleRemoteParticipants.size - (screenShareParticipants.length * 2) - sharedVideos.length - dominantSpeakerSlot;
+        = fullyVisibleRemoteParticipantsCount
+        - (screenShareParticipants.length * 2)
+        - sharedVideos.length
+        - dominantSpeakerSlot;
 
     // Construct the list of speakers to be shown.
     if (slotsForSpeakers > 0) {
@@ -126,4 +130,32 @@ export function isTileViewModeDisabled(state: IReduxState) {
     const { tileView = {} } = state['features/base/config'];
 
     return tileView.disabled;
+}
+
+/**
+ * Calculates the count of fully visible participants, excluding any partially visible tiles.
+ * This respects the actual rendered items from the list component while accounting for
+ * container padding/gaps.
+ *
+ * @param {number} visibleStartIndex - The start index of visible items.
+ * @param {number} visibleEndIndex - The end index of visible items.
+ * @param {number} containerSize - The width or height of the filmstrip container.
+ * @param {number} itemSize - The width or height of each item including margin.
+ * @returns {number} - The count of fully visible participants (at least 1).
+ */
+export function calculateFullyVisibleParticipantsCount(
+        visibleStartIndex: number,
+        visibleEndIndex: number,
+        containerSize: number,
+        itemSize: number
+): number {
+    // Current visible count from the list component (includes any partially visible tile)
+    const currentVisibleCount = visibleEndIndex - visibleStartIndex + 1;
+
+    // Theoretical max that can fit fully in the container
+    const maxFullyVisible = Math.floor(containerSize / itemSize);
+
+    // Fully visible count is the minimum of actual visible and max that can fit fully
+    // Ensure at least 1 if there are any visible items
+    return Math.max(1, Math.min(currentVisibleCount, maxFullyVisible));
 }
