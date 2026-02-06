@@ -13,7 +13,7 @@ const useStyles = makeStyles()(theme => {
     return {
         label: {
             backgroundColor: theme.palette.warning02,
-            color: theme.palette.uiBackground
+            color: theme.palette.conferenceRaisedHandLabelText
         }
     };
 });
@@ -35,7 +35,7 @@ const RaisedHandsCountLabel = () => {
             accessibilityText = { t('raisedHandsLabel') }
             className = { styles.label }
             icon = { IconRaiseHand }
-            iconColor = { theme.palette.icon04 }
+            iconColor = { theme.palette.conferenceRaisedHandLabelIcon }
             id = 'raisedHandsCountLabel'
             onClick = { onClick }
             text = { `${raisedHandsCount}` } />

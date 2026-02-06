@@ -356,7 +356,7 @@ const defaultStyles = (theme: Theme) => {
             zIndex: 1,
             width: '100%',
             height: '100%',
-            backgroundColor: `${theme.palette.uiBackground}`,
+            backgroundColor: theme.palette.thumbnailTintBackground,
             opacity: 0.8
         },
 

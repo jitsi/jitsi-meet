@@ -63,9 +63,15 @@ export const colorMap = {
 
     // Filmstrip
     filmstripBackground: 'surface03',   // Filmstrip container background (same as ui02)
+    filmstripBackgroundHover: 'uiBackground', // Filmstrip background on hover/focus
+    filmstripDragHandle: 'icon02',      // Filmstrip resize drag handle color
+    filmstripDragHandleHover: 'icon01', // Filmstrip resize drag handle hover color
     thumbnailBackground: 'surface03',   // Individual thumbnail background (same as ui02)
     thumbnailBorder: 'ui03',            // Thumbnail borders (same as ui03)
     thumbnailHover: 'hover05',          // Thumbnail hover state (same as action03Hover)
+    thumbnailTintBackground: 'uiBackground', // Thumbnail tint overlay background
+    thumbnailRaisedHandIcon: 'uiBackground', // Thumbnail raised hand indicator icon
+    thumbnailVideoBackground: 'uiBackground', // Thumbnail video/placeholder background
 
     // Chat
     chatBackground: 'surface02',              // Chat panel background (same as ui01)
@@ -339,6 +345,8 @@ export const colorMap = {
     deviceSelectorBackground: 'ui01',        // Device selector background
     deviceSelectorText: 'text01',            // Device selector text
     deviceSelectorBorder: 'ui03',            // Device selector border
+    deviceSelectorTextBackground: 'uiBackground', // Device selector text-only background
+    deviceSelectorVideoPreview: 'uiBackground', // Device selector video preview background
 
     // Invite / Dial-in
     dialInBackground: 'ui01',                // Dial-in summary background
@@ -363,12 +371,15 @@ export const colorMap = {
     virtualBackgroundBackground: 'ui01',     // Virtual background picker background
     virtualBackgroundText: 'text01',         // Virtual background picker text
     virtualBackgroundBorder: 'ui03',         // Virtual background item border
+    virtualBackgroundPreview: 'uiBackground', // Virtual background preview container
 
     // Conference / Meeting
     conferenceTimerText: 'text01',           // Conference timer text
     conferenceSubjectText: 'text01',         // Conference subject text
-    conferenceNoticeBackground: 'ui02',      // Conference notice background
+    conferenceNoticeBackground: 'uiBackground', // Conference notice background
     conferenceNoticeText: 'text01',          // Conference notice text
+    conferenceRaisedHandLabelText: 'uiBackground', // Raised hands count label text
+    conferenceRaisedHandLabelIcon: 'icon04', // Raised hands count label icon
 
     // Subtitle Messages
     subtitleMessageBackground: 'ui02',       // Subtitle message background

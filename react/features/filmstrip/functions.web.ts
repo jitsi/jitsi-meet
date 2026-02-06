@@ -840,5 +840,5 @@ export function isTopPanelEnabled(state: IReduxState) {
  * @returns {string} The background color.
  */
 export function getThumbnailBackgroundColor(theme: Theme): string {
-    return theme.palette.uiBackground;
+    return theme.palette.thumbnailVideoBackground;
 }

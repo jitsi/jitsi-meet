@@ -15,7 +15,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         message: {
-            backgroundColor: theme.palette.uiBackground,
+            backgroundColor: theme.palette.conferenceNoticeBackground,
             color: theme.palette.conferenceNoticeText,
             padding: '3px',
             borderRadius: '5px'

@@ -32,7 +32,7 @@ const useStyles = makeStyles()(theme => {
             borderRadius: '3px',
             overflow: 'hidden',
             marginBottom: theme.spacing(4),
-            backgroundColor: theme.palette.uiBackground
+            backgroundColor: theme.palette.deviceSelectorVideoPreview
         },
 
         video: {

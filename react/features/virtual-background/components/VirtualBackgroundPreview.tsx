@@ -85,7 +85,7 @@ const styles = (theme: Theme) => {
             marginBottom: theme.spacing(3),
             zIndex: 2,
             borderRadius: '3px',
-            backgroundColor: theme.palette.uiBackground,
+            backgroundColor: theme.palette.virtualBackgroundPreview,
             position: 'relative' as const
         },
 

@@ -91,6 +91,9 @@ export interface IPalette {
     dialogText: string;
     drawerBackground: string;
     filmstripBackground: string;
+    filmstripBackgroundHover: string;
+    filmstripDragHandle: string;
+    filmstripDragHandleHover: string;
     inputBackground: string;
     inputBorder: string;
     inputPlaceholder: string;
@@ -177,6 +180,9 @@ export interface IPalette {
     thumbnailBackground: string;
     thumbnailBorder: string;
     thumbnailHover: string;
+    thumbnailRaisedHandIcon: string;
+    thumbnailTintBackground: string;
+    thumbnailVideoBackground: string;
     toolbarButton: string;
     toolbarButtonActive: string;
     toolbarButtonHover: string;
@@ -225,6 +231,8 @@ export interface IPalette {
     clickableIconHover: string;
     conferenceNoticeBackground: string;
     conferenceNoticeText: string;
+    conferenceRaisedHandLabelIcon: string;
+    conferenceRaisedHandLabelText: string;
     conferenceSubjectText: string;
     conferenceTimerText: string;
     connectionIndicatorLost: string;
@@ -238,6 +246,8 @@ export interface IPalette {
     deviceSelectorBackground: string;
     deviceSelectorBorder: string;
     deviceSelectorText: string;
+    deviceSelectorTextBackground: string;
+    deviceSelectorVideoPreview: string;
     dialInBackground: string;
     dialInSecondaryText: string;
     dialInText: string;
@@ -358,6 +368,7 @@ export interface IPalette {
     videoQualityText: string;
     virtualBackgroundBackground: string;
     virtualBackgroundBorder: string;
+    virtualBackgroundPreview: string;
     virtualBackgroundText: string;
     whiteboardBackground: string;
     whiteboardText: string;
