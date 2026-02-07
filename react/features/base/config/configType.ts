@@ -616,6 +616,7 @@ export interface IConfig {
         disabled?: boolean;
         numberOfVisibleTiles?: number;
     };
+    tokenAuthInline?: boolean;
     tokenAuthUrl?: string;
     tokenAuthUrlAutoRedirect?: string;
     tokenGetUserInfoOutOfContext?: boolean;

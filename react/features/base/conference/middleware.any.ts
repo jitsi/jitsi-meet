@@ -402,7 +402,8 @@ async function _connectionEstablished({ dispatch, getState }: IStore, next: Func
             email = getLocalParticipant(getState())?.email;
         }
 
-        dispatch(authStatusChanged(true, email || ''));
+        // it may happen to be already set (silent login)
+        dispatch(authStatusChanged(true, email || getState()['features/base/conference'].authLogin || ''));
     }
 
     // FIXME: Workaround for the web version. Currently, the creation of the

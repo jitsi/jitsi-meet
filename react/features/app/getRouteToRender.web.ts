@@ -1,13 +1,10 @@
 // @ts-expect-error
 import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
 
-import { getTokenAuthUrl } from '../authentication/functions.web';
 import { IStateful } from '../base/app/types';
 import { isRoomValid } from '../base/conference/functions';
 import { isSupportedBrowser } from '../base/environment/environment';
-import { browser } from '../base/lib-jitsi-meet';
 import { toState } from '../base/redux/functions';
-import { parseURIString } from '../base/util/uri';
 import Conference from '../conference/components/web/Conference';
 import { getDeepLinkingPage } from '../deep-linking/functions';
 import UnsupportedDesktopBrowser from '../unsupported-browser/components/UnsupportedDesktopBrowser';
@@ -23,9 +20,10 @@ import { IReduxState } from './types';
  *
  * @param {(Function|Object)} stateful - THe redux store, state, or
  * {@code getState} function.
+ * @param {Dispatch} dispatch - The Redux dispatch function.
  * @returns {Promise<Object>}
  */
-export function _getRouteToRender(stateful: IStateful) {
+export function _getRouteToRender(stateful: IStateful): Promise<object> {
     const state = toState(stateful);
 
     return _getWebConferenceRoute(state) || _getWebWelcomePageRoute(state);
@@ -36,9 +34,10 @@ export function _getRouteToRender(stateful: IStateful) {
  * a valid conference is being joined.
  *
  * @param {Object} state - The redux state.
+ * @param {Dispatch} dispatch - The Redux dispatch function.
  * @returns {Promise|undefined}
  */
-function _getWebConferenceRoute(state: IReduxState) {
+function _getWebConferenceRoute(state: IReduxState): Promise<any> | undefined {
     const room = state['features/base/conference'].room;
 
     if (!isRoomValid(room)) {
@@ -46,36 +45,6 @@ function _getWebConferenceRoute(state: IReduxState) {
     }
 
     const route = _getEmptyRoute();
-    const config = state['features/base/config'];
-
-    // if we have auto redirect enabled, and we have previously logged in successfully
-    // let's redirect to the auth url to get the token and login again
-    if (!browser.isElectron() && config.tokenAuthUrl && config.tokenAuthUrlAutoRedirect
-            && state['features/authentication'].tokenAuthUrlSuccessful
-            && !state['features/base/jwt'].jwt && room) {
-        const { locationURL = { href: '' } as URL } = state['features/base/connection'];
-        const { tenant } = parseURIString(locationURL.href) || {};
-        const { startAudioOnly } = config;
-
-        return getTokenAuthUrl(
-            config,
-            locationURL,
-            {
-                audioMuted: false,
-                audioOnlyEnabled: startAudioOnly,
-                skipPrejoin: false,
-                videoMuted: false
-            },
-            room,
-            tenant
-        )
-            .then((url: string | undefined) => {
-                route.href = url;
-
-                return route;
-            })
-            .catch(() => Promise.resolve(route));
-    }
 
     // Update the location if it doesn't match. This happens when a room is
     // joined from the welcome page. The reason for doing this instead of using

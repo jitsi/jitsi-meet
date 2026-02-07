@@ -5,9 +5,14 @@ import { connect, useDispatch } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
+import { loginWithPopup } from '../../../authentication/actions.web';
+import { getTokenAuthUrl, isTokenAuthInline } from '../../../authentication/functions.web';
 import Avatar from '../../../base/avatar/components/Avatar';
+import { IConfig } from '../../../base/config/configType';
 import { isNameReadOnly } from '../../../base/config/functions.web';
 import { IconArrowDown, IconArrowUp, IconPhoneRinging, IconVolumeOff } from '../../../base/icons/svg';
+import { setJWT } from '../../../base/jwt/actions';
+import { browser } from '../../../base/lib-jitsi-meet';
 import { isVideoMutedByUser } from '../../../base/media/functions';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import Popover from '../../../base/popover/components/Popover.web';
@@ -20,6 +25,7 @@ import Button from '../../../base/ui/components/web/Button';
 import Input from '../../../base/ui/components/web/Input';
 import { BUTTON_TYPES } from '../../../base/ui/constants.any';
 import isInsecureRoomName from '../../../base/util/isInsecureRoomName';
+import { parseURIString } from '../../../base/util/uri';
 import { openDisplayNamePrompt } from '../../../display-name/actions';
 import { isUnsafeRoomWarningEnabled } from '../../../prejoin/functions';
 import {
@@ -120,6 +126,16 @@ interface IProps {
      * If should show unsafe room warning when joining.
      */
     showUnsafeRoomWarning: boolean;
+
+    /**
+     * The configuration for token pre-authentication, if applicable.
+     */
+    tokenPreAuthConfig?: {
+        config: IConfig;
+        locationURL: URL;
+        refreshToken: string | undefined;
+        room: string;
+    };
 
     /**
      * Whether the user has approved to join a room with unsafe name.
@@ -226,6 +242,7 @@ const Prejoin = ({
     showErrorOnJoin,
     showRecordingWarning,
     showUnsafeRoomWarning,
+    tokenPreAuthConfig,
     unsafeRoomConsent,
     updateSettings: dispatchUpdateSettings,
     videoTrack
@@ -259,7 +276,56 @@ const Prejoin = ({
 
         logger.info('Prejoin join button clicked.');
 
-        joinConference();
+        // if we have auto redirect enabled, and we have previously logged in successfully
+        // let's redirect to the auth url to get the token and login again
+        if (tokenPreAuthConfig) {
+            const { tenant } = parseURIString(tokenPreAuthConfig.locationURL.href) || {};
+            const { startAudioOnly } = tokenPreAuthConfig.config;
+            const refreshToken = tokenPreAuthConfig.refreshToken;
+
+            getTokenAuthUrl(
+                config,
+                tokenPreAuthConfig.locationURL,
+                {
+                    audioMuted: false,
+                    audioOnlyEnabled: startAudioOnly,
+                    skipPrejoin: false,
+                    videoMuted: false
+                },
+                tokenPreAuthConfig.room,
+                tenant,
+                refreshToken
+            )
+                .then((url: string | undefined) => {
+                    if (isTokenAuthInline(config)) {
+                        if (url) {
+                            return loginWithPopup(url)
+                                .then((result: { accessToken: string; idToken: string; refreshToken?: string; }) => {
+                                    // @ts-ignore
+                                    const token: string = result.accessToken;
+                                    const idToken: string = result.idToken;
+                                    const newRefreshToken: string | undefined = result.refreshToken;
+
+                                    // @ts-ignore
+                                    dispatch(setJWT(token, idToken, newRefreshToken || refreshToken));
+                                })
+                                .then(() => joinConference());
+                        }
+                    } else {
+                        if (url) {
+                            window.location.href = url;
+                        } else {
+                            joinConference();
+                        }
+                    }
+                })
+                .catch(err => {
+                    logger.error('Error in silent login', err);
+                    joinConference();
+                });
+        } else {
+            joinConference();
+        }
     };
 
     /**
@@ -502,7 +568,12 @@ function mapStateToProps(state: IReduxState) {
     const { joiningInProgress } = state['features/prejoin'];
     const { room } = state['features/base/conference'];
     const { unsafeRoomConsent } = state['features/base/premeeting'];
-    const { showPrejoinWarning: showRecordingWarning } = state['features/base/config'].recordings ?? {};
+    const config = state['features/base/config'];
+    const { showPrejoinWarning: showRecordingWarning } = config.recordings ?? {};
+    const preTokenAuthenticate = !browser.isElectron() && config.tokenAuthUrl
+        && config.tokenAuthUrlAutoRedirect && state['features/authentication'].tokenAuthUrlSuccessful
+        && !state['features/base/jwt'].jwt && room;
+    const { locationURL = { href: '' } as URL } = state['features/base/connection'];
 
     return {
         deviceStatusVisible: isDeviceStatusVisible(state),
@@ -518,6 +589,12 @@ function mapStateToProps(state: IReduxState) {
         showErrorOnJoin,
         showRecordingWarning: Boolean(showRecordingWarning),
         showUnsafeRoomWarning: isInsecureRoomName(room) && isUnsafeRoomWarningEnabled(state),
+        tokenPreAuthConfig: preTokenAuthenticate ? {
+            config,
+            locationURL,
+            refreshToken: state['features/base/jwt'].refreshToken,
+            room
+        } : undefined,
         unsafeRoomConsent,
         videoTrack: getLocalJitsiVideoTrack(state)
     };

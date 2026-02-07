@@ -119,6 +119,7 @@ export function maybeRedirectToTokenAuthUrl(
 
     // if tokenAuthUrl check jwt if is about to expire go through the url to get new token
     const jwt = state['features/base/jwt'].jwt;
+    const refreshToken = state['features/base/jwt'].refreshToken;
     const expirationDate = getJwtExpirationDate(jwt);
 
     // if there is jwt and its expiration time is less than 3 minutes away
@@ -137,7 +138,8 @@ export function maybeRedirectToTokenAuthUrl(
                 videoMuted
             },
             room,
-            tenant
+            tenant,
+            refreshToken
         )
             .then((tokenAuthServiceUrl: string | undefined) => {
                 if (!tokenAuthServiceUrl) {

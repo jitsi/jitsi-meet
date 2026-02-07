@@ -1,6 +1,7 @@
 import { cloneDeep } from 'lodash-es';
 
 import { IReduxState, IStore } from '../../app/types';
+import { isTokenAuthInline } from '../../authentication/functions.any';
 import { conferenceLeft, conferenceWillLeave, redirect } from '../conference/actions';
 import { getCurrentConference } from '../conference/functions';
 import { IConfigState } from '../config/reducer';
@@ -17,6 +18,7 @@ import {
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED,
     CONNECTION_PROPERTIES_UPDATED,
+    CONNECTION_RESUMING,
     CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL,
     SET_PREFER_VISITOR
@@ -239,6 +241,9 @@ export function _connectInternal(id?: string, password?: string) {
             connection.addEventListener(
                 JitsiConnectionEvents.PROPERTIES_UPDATED,
                 _onPropertiesUpdate);
+            connection.addEventListener(
+                JitsiConnectionEvents.CONNECTION_RESUMING,
+                _onConnectionResume);
 
             /**
              * Unsubscribe the connection instance from
@@ -324,6 +329,21 @@ export function _connectInternal(id?: string, password?: string) {
             }
 
             /**
+             * Connection will resume.
+             *
+             * @private
+             * @returns {void}
+             */
+            function _onConnectionResume(): void {
+                // when inline, we cancel resume as we will get a new token and refresh it by resuming
+                if (isTokenAuthInline(getState()['features/base/config']) && getState()['features/base/jwt'].jwt) {
+                    connection.cancelResume();
+                }
+
+                dispatch(_connectionResuming(connection));
+            }
+
+            /**
              * Connection properties were updated.
              *
              * @param {Object} properties - The properties which were updated.
@@ -360,6 +380,23 @@ export function _connectInternal(id?: string, password?: string) {
 function _connectionWillConnect(connection: Object) {
     return {
         type: CONNECTION_WILL_CONNECT,
+        connection
+    };
+}
+
+/**
+ * Create an action for when a connection will resume.
+ *
+ * @param {JitsiConnection} connection - The {@code JitsiConnection} which will resume.
+ * @private
+ * @returns {{
+ *     type: CONNECTION_RESUMING,
+ *     connection: JitsiConnection
+ * }}
+ */
+function _connectionResuming(connection: Object) {
+    return {
+        type: CONNECTION_RESUMING,
         connection
     };
 }

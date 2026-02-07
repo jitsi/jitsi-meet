@@ -57,7 +57,10 @@ module:hook('muc-occupant-pre-join', function (event)
 
     local has_host = false;
     for _, o in room:each_occupant() do
-        if jid.host(o.bare_jid) == muc_domain_base then
+        -- the main virtual host that requires tokens
+        if jid.host(o.bare_jid) == muc_domain_base
+            -- or this is anonymous that upgraded by passing token which we validated
+            or prosody.full_sessions[o.jid].auth_token then
             room.has_host = true;
         end
     end

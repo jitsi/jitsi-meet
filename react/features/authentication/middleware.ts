@@ -1,5 +1,4 @@
 import { IStore } from '../app/types';
-import { APP_WILL_NAVIGATE } from '../base/app/actionTypes';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -17,6 +16,7 @@ import { MEDIA_TYPE } from '../base/media/constants';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { isLocalTrackMuted } from '../base/tracks/functions.any';
 import { parseURIString } from '../base/util/uri';
+import { PREJOIN_JOINING_IN_PROGRESS } from '../prejoin/actionTypes';
 import { openLogoutDialog } from '../settings/actions';
 
 import {
@@ -187,7 +187,11 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case APP_WILL_NAVIGATE: {
+    case PREJOIN_JOINING_IN_PROGRESS: {
+        if (!action.value) {
+            break;
+        }
+
         const { dispatch, getState } = store;
         const state = getState();
         const config = state['features/base/config'];
@@ -288,6 +292,7 @@ function _handleLogin({ dispatch, getState }: IStore) {
     const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
     const audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
     const videoMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO);
+    const refreshToken = state['features/base/jwt'].refreshToken;
 
     if (!room) {
         logger.warn('Cannot handle login, room is undefined!');
@@ -311,7 +316,8 @@ function _handleLogin({ dispatch, getState }: IStore) {
             videoMuted
         },
         room,
-        tenant
+        tenant,
+        refreshToken
     )
         .then((tokenAuthServiceUrl: string | undefined) => {
             if (!tokenAuthServiceUrl) {

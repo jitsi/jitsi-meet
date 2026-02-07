@@ -26,41 +26,6 @@ local provider = {};
 
 local host = module.host;
 
--- Extract 'token' param from URL when session is created
-function init_session(event)
-    local session, request = event.session, event.request;
-    local query = request.url.query;
-
-    local token = nil;
-
-    -- extract token from Authorization header
-    if request.headers["authorization"] then
-        -- assumes the header value starts with "Bearer "
-        token = request.headers["authorization"]:sub(8,#request.headers["authorization"])
-    end
-
-    -- allow override of token via query parameter
-    if query ~= nil then
-        local params = formdecode(query);
-
-        -- The following fields are filled in the session, by extracting them
-        -- from the query and no validation is being done.
-        -- After validating auth_token will be cleaned in case of error and few
-        -- other fields will be extracted from the token and set in the session
-
-        if params and params.token then
-            token = params.token;
-        end
-    end
-
-    -- in either case set auth_token in the session
-    session.auth_token = token;
-    session.user_agent_header = request.headers['user_agent'];
-end
-
-module:hook_global("bosh-session", init_session);
-module:hook_global("websocket-session", init_session);
-
 module:hook("pre-resource-unbind", function (e)
     local error, session = e.error, e.session;
 
@@ -95,41 +60,60 @@ function provider.delete_user(username)
     return nil;
 end
 
+function first_stage_auth(session)
+    -- retrieve custom public key from server and save it on the session
+    local pre_event_result = prosody.events.fire_event("pre-jitsi-authentication-fetch-key", session);
+    if pre_event_result ~= nil and pre_event_result.res == false then
+        module:log("warn",
+            "Error verifying token on pre authentication stage:%s, reason:%s", pre_event_result.error, pre_event_result.reason);
+        session.auth_token = nil;
+        measure_pre_fetch_fail(1);
+        return  pre_event_result;
+    end
+
+    local res, error, reason = token_util:process_and_verify_token(session);
+    if res == false then
+        module:log("warn",
+            "Error verifying token err:%s, reason:%s tenant:%s room:%s user_agent:%s",
+                error, reason, session.jitsi_web_query_prefix, session.jitsi_web_query_room,
+                session.user_agent_header);
+        session.auth_token = nil;
+        measure_verify_fail(1);
+        return  { res = res, error = error, reason = reason };
+    end
+
+    local shouldAllow = prosody.events.fire_event("jitsi-access-ban-check", session);
+    if shouldAllow == false then
+        module:log("warn", "user is banned")
+        measure_ban(1);
+        return  { res = false, error = "not-allowed", reason = "user is banned" };
+    end
+
+    return { verify_result = res, custom_username = prosody.events.fire_event("pre-jitsi-authentication", session) };
+end
+
+function second_stage_auth(session)
+    local post_event_result = prosody.events.fire_event("post-jitsi-authentication", session);
+    if post_event_result ~= nil and post_event_result.res == false then
+        module:log("warn",
+            "Error verifying token on post authentication stage :%s, reason:%s", post_event_result.error, post_event_result.reason);
+        session.auth_token = nil;
+        measure_post_auth_fail(1);
+        return post_event_result;
+    end
+end
+
 function provider.get_sasl_handler(session)
 
     local function get_username_from_token(self, message)
 
-        -- retrieve custom public key from server and save it on the session
-        local pre_event_result = prosody.events.fire_event("pre-jitsi-authentication-fetch-key", session);
-        if pre_event_result ~= nil and pre_event_result.res == false then
-            module:log("warn",
-                "Error verifying token on pre authentication stage:%s, reason:%s", pre_event_result.error, pre_event_result.reason);
-            session.auth_token = nil;
-            measure_pre_fetch_fail(1);
-            return pre_event_result.res, pre_event_result.error, pre_event_result.reason;
+        local s1_result = first_stage_auth(session);
+        if s1_result.res == false then
+            return s1_result.res, s1_result.error, s1_result.reason;
         end
 
-        local res, error, reason = token_util:process_and_verify_token(session);
-        if res == false then
-            module:log("warn",
-                "Error verifying token err:%s, reason:%s tenant:%s room:%s user_agent:%s",
-                    error, reason, session.jitsi_web_query_prefix, session.jitsi_web_query_room,
-                    session.user_agent_header);
-            session.auth_token = nil;
-            measure_verify_fail(1);
-            return res, error, reason;
-        end
-
-        local shouldAllow = prosody.events.fire_event("jitsi-access-ban-check", session);
-        if shouldAllow == false then
-            module:log("warn", "user is banned")
-            measure_ban(1);
-            return false, "not-allowed", "user is banned";
-        end
-
-        local customUsername = prosody.events.fire_event("pre-jitsi-authentication", session);
-        if customUsername then
-            self.username = customUsername;
+        if s1_result.custom_username then
+            self.username = s1_result.custom_username;
         elseif session.previd ~= nil then
             for _, session1 in pairs(sessions) do
                 if (session1.resumption_token == session.previd) then
@@ -141,17 +125,14 @@ function provider.get_sasl_handler(session)
             self.username = message;
         end
 
-        local post_event_result = prosody.events.fire_event("post-jitsi-authentication", session);
-        if post_event_result ~= nil and post_event_result.res == false then
-            module:log("warn",
-                "Error verifying token on post authentication stage :%s, reason:%s", post_event_result.error, post_event_result.reason);
-            session.auth_token = nil;
-            measure_post_auth_fail(1);
-            return post_event_result.res, post_event_result.error, post_event_result.reason;
+        local s2_result = second_stage_auth(session);
+        if s2_result and s2_result.res ~= nil then
+            return s2_result.res, s2_result.error, s2_result.reason;
         end
 
         measure_success(1);
-        return res;
+        session._jitsi_auth_done = true;
+        return s1_result.verify_result;
     end
 
     return new_sasl(host, { anonymous = get_username_from_token });
@@ -177,3 +158,47 @@ local function anonymous(self, message)
     end
 
 sasl.registerMechanism("ANONYMOUS", {"anonymous"}, anonymous);
+
+module:hook_global('c2s-session-updated', function (event)
+    local session, from_session = event.session, event.from_session;
+
+    if not from_session.auth_token then
+        return;
+    end
+
+    -- we care to handle sessions from other hosts (anonymous hosts)
+    if module.host ~= event.from_session.host then
+        -- Handle session updates (e.g., when a session is resumed on some anonymous host with a token we need to do all the checks here)
+        session.auth_token = event.from_session.auth_token;
+
+        local s1_result = first_stage_auth(session);
+        if s1_result.res == false then
+            event.session:close();
+            return;
+        end
+
+        local s2_result = second_stage_auth(session);
+        if s2_result and s2_result.res == false then
+            event.session:close();
+            return;
+        end
+        session._jitsi_auth_done = true;
+    end
+
+    if not session._jitsi_auth_done then
+        module:log('warn', 'Impossible case hit where session did not pass auth flow');
+        event.session:close();
+        return;
+    end
+
+    -- copy all the custom fields we set in the session
+    session.auth_token = from_session.auth_token;
+    session.jitsi_meet_context_user = from_session.jitsi_meet_context_user;
+    session.jitsi_meet_context_group = from_session.jitsi_meet_context_group;
+    session.jitsi_meet_context_features = from_session.jitsi_meet_context_features;
+    session.jitsi_meet_context_room = from_session.jitsi_meet_context_room;
+    session.jitsi_meet_room = from_session.jitsi_meet_room;
+    session.jitsi_meet_str_tenant = from_session.jitsi_meet_str_tenant;
+    session.jitsi_meet_domain = from_session.jitsi_meet_domain;
+    session.jitsi_meet_tenant_mismatch = from_session.jitsi_meet_tenant_mismatch;
+end, 1);
