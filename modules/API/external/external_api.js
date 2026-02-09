@@ -133,6 +133,8 @@ const events = {
     'face-landmark-detected': 'faceLandmarkDetected',
     'feedback-submitted': 'feedbackSubmitted',
     'feedback-prompt-displayed': 'feedbackPromptDisplayed',
+    'file-deleted': 'fileDeleted',
+    'file-uploaded': 'fileUploaded',
     'filmstrip-display-changed': 'filmstripDisplayChanged',
     'incoming-message': 'incomingMessage',
     'knocking-participant': 'knockingParticipant',

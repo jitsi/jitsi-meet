@@ -2254,6 +2254,32 @@ class API {
     }
 
     /**
+     * Notify the external application that a file has been uploaded.
+     *
+     * @param {Object} fileMetadata - The file metadata.
+     * @returns {void}
+     */
+    notifyFileUploaded(fileMetadata) {
+        this._sendEvent({
+            name: 'file-uploaded',
+            file: fileMetadata
+        });
+    }
+
+    /**
+     * Notify the external application that a file has been deleted.
+     *
+     * @param {string} fileId - The ID of the deleted file.
+     * @returns {void}
+     */
+    notifyFileDeleted(fileId) {
+        this._sendEvent({
+            name: 'file-deleted',
+            fileId
+        });
+    }
+
+    /**
      * Notify the external application that the audio or video is being shared by a participant.
      *
      * @param {string} mediaType - Whether the content which is being shared is audio or video.
