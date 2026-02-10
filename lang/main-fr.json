@@ -114,6 +114,9 @@
         "error": "Erreur : votre message n'a pas été envoyé. Raison : {{error}}",
         "everyone": "Tout le monde",
         "fieldPlaceHolder": "Tapez votre message ici",
+        "fileAccessibleTitle": "{{user}} a téléversé un fichier",
+        "fileAccessibleTitleMe": "j’ai téléversé un fichier",
+        "fileDeleted": "Un fichier a été supprimé",
         "guestsChatIndicator": "(invité)",
         "lobbyChatMessageTo": "Message de salle d'attente à {{recipient}}",
         "message": "Message",
@@ -123,8 +126,16 @@
         "messagebox": "Envoyer un message",
         "newMessages": "Nouveaux messages",
         "nickname": {
+            "featureChat": "chat",
+            "featureClosedCaptions": "sous-titres",
+            "featureFileSharing": "partage de fichiers",
+            "featurePolls": "sondages",
             "popover": "Choisissez un pseudonyme",
             "title": "Entrez un pseudonyme pour utiliser le chat",
+            "titleWith1Features": "Entrez un pseudonyme pour utiliser {{feature1}}",
+            "titleWith2Features": "Entrez un pseudonyme pour utiliser {{feature1}} et {{feature2}}",
+            "titleWith3Features": "Entrez un pseudonyme pour utiliser {{feature1}}, {{feature2}} et {{feature3}}",
+            "titleWith4Features": "Entrez un pseudonyme pour utiliser {{feature1}}, {{feature2}}, {{feature3}} et {{feature4}}",
             "titleWithCC": "Entrez un pseudonyme pour utiliser le chat et les sous-titres",
             "titleWithPolls": "Entrez un pseudonyme pour utiliser le chat et les sondages",
             "titleWithPollsAndCC": "Entrez un pseudonyme pour utiliser le chat, les sondages et les sous-titres",
@@ -215,6 +226,9 @@
         "transport_plural": "Transports :",
         "video_ssrc": "Video SSRC :",
         "yes": "oui"
+    },
+    "customPanel": {
+        "close": "Fermer"
     },
     "dateUtils": {
         "earlier": "Plus tôt",
@@ -522,6 +536,7 @@
         "tokenAuthFailedWithReasons": "Désolé, vous n’êtes pas autorisé à rejoindre l’appel. La raison possible : {{reason}}.",
         "tokenAuthUnsupported": "Token URL n'est pas supporté.",
         "transcribing": "Transcription",
+        "unauthenticatedAccessDisabled": "Cet appel nécessite une authentification. Veuillez vous connecter pour continuer.",
         "unlockRoom": "Supprimer le $t(lockRoomPassword) de la réunion",
         "user": "Utilisateur",
         "userIdentifier": "Identifiant utilisateur",
@@ -569,10 +584,12 @@
         "downloadStarted": "Téléchargement de fichier démarré",
         "dragAndDrop": "Glissez et déposez des fichiers ici ou n'importe où sur l'écran",
         "fileAlreadyUploaded": "Le fichier a déjà été téléchargé vers cette réunion.",
+        "fileRemovedByOther": "Votre fichier « {{ fileName }} » a été supprimé",
         "fileTooLargeDescription": "Veuillez vous assurer que le fichier ne dépasse pas {{ maxFileSize }}.",
         "fileTooLargeTitle": "Le fichier sélectionné est trop volumineux",
         "fileUploadProgress": "Progression du téléchargement de fichier",
         "fileUploadedSuccessfully": "Fichier téléchargé avec succès",
+        "newFileNotification": "{{ participantName }} a partagé « {{ fileName }} »",
         "removeFile": "Supprimer",
         "removeFileSuccess": "Fichier supprimé avec succès",
         "uploadFailedDescription": "Veuillez réessayer.",
@@ -964,6 +981,9 @@
         "by": "Par {{ name }}",
         "closeButton": "Fermer le sondage",
         "create": {
+            "accessibilityLabel": {
+                "send": "Envoyer le sondage"
+            },
             "addOption": "Ajouter une option",
             "answerPlaceholder": "Option {{index}}",
             "cancel": "Annuler",
@@ -972,8 +992,7 @@
             "pollQuestion": "Question du sondage",
             "questionPlaceholder": "Poser une question",
             "removeOption": "Supprimer l'option",
-            "save": "Enregistrer",
-            "send": "Envoyer"
+            "save": "Enregistrer"
         },
         "errors": {
             "notUniqueOption": "Les options doivent être uniques"
@@ -1299,6 +1318,7 @@
             "chat": "Afficher / Masquer la discussion instantanée",
             "clap": "Applaudir",
             "closeChat": "Fermer la discussion instantanée",
+            "closeCustomPanel": "Fermer",
             "closeMoreActions": "Fermer le menu plus d'actions",
             "closeParticipantsPane": "Fermer le panneau des participants",
             "closedCaptions": "Sous-titres",
@@ -1404,9 +1424,11 @@
         "chat": "Ouvrir / Fermer le chat",
         "clap": "Applaudir",
         "closeChat": "Fermer le chat",
+        "closeCustomPanel": "Fermer",
         "closeParticipantsPane": "Fermer le panneau des participants",
         "closeReactionsMenu": "Fermer le menu réactions",
         "closedCaptions": "Sous-titres",
+        "copilot": "Copilot",
         "disableNoiseSuppression": "Arrêter la suppression du bruit",
         "disableReactionSounds": "Vous pouvez interdire les réactions sonores à cette réunion",
         "documentClose": "Fermer le document partagé",
@@ -1421,6 +1443,7 @@
         "exitFullScreen": "Quitter le mode plein écran",
         "exitTileView": "Quitter le mode mosaïque",
         "feedback": "Laisser des commentaires",
+        "fileSharing": "Partage de fichiers",
         "giphy": "Activer/désactiver le menu GIPHY",
         "hangup": "Quitter",
         "help": "Aide",
@@ -1456,6 +1479,7 @@
         "openReactionsMenu": "Ouvrir le menu Réactions",
         "participants": "Participants",
         "pip": "Entrer en mode Picture-in-Picture",
+        "polls": "Sondages",
         "privateMessage": "Envoyer un message privé",
         "profile": "Éditer votre profil",
         "raiseHand": "Lever / Baisser la main",
