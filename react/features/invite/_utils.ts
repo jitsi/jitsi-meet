@@ -70,10 +70,15 @@ export function getDialInConferenceID(
  * phone number strings, as the second one should not be used and is deprecated.
  */
 export function getDialInNumbers(
-        url: string,
-        roomName: string,
-        mucURL: string
+        url?: string,
+        roomName?: string,
+        mucURL?: string
 ): Promise<any> {
+
+    if (!url || !roomName || !mucURL) {
+        return Promise.resolve();
+    }
+
     const separator = url.includes('?') ? '&' : '?';
 
     // when roomName and mucURL are available
