@@ -6,6 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { IReduxState } from '../../../app/types';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCloudUpload } from '../../../base/icons/svg';
+import Tooltip from '../../../base/tooltip/components/Tooltip';
 import BaseTheme from '../../../base/ui/components/BaseTheme.web';
 import Button from '../../../base/ui/components/web/Button';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
@@ -226,16 +227,20 @@ const FileSharing = () => {
                 )
             }
             {
-                isUploadEnabled && (
+                <Tooltip
+                    containerClassName = { classes.uploadButton }
+                    content = { isUploadEnabled ? t('fileSharing.uploadFile') : t('fileSharing.uploadDisabled') }
+                    position = 'top'>
                     <Button
                         accessibilityLabel = { t('fileSharing.uploadFile') }
                         className = { classes.uploadButton }
+                        disabled = { !isUploadEnabled }
                         labelKey = { 'fileSharing.uploadFile' }
                         onClick = { handleClick }
                         onKeyPress = { handleKeyPress }
                         ref = { uploadButtonRef }
                         type = { BUTTON_TYPES.PRIMARY } />
-                )
+                </Tooltip>
             }
         </div>
     );
