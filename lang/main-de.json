@@ -227,6 +227,9 @@
         "video_ssrc": "Video-SSRC:",
         "yes": "Ja"
     },
+    "customPanel": {
+        "close": "Schließen"
+    },
     "dateUtils": {
         "earlier": "Früher",
         "today": "Heute",
@@ -589,6 +592,7 @@
         "newFileNotification": "{{ participantName }} hat Datei '{{ fileName }}' hochgeladen",
         "removeFile": "Entfernen",
         "removeFileSuccess": "Datei erfolgreich entfernt",
+        "uploadDisabled": "Keine Berechtigung, Dateien hochzuladen. Bitte bei der Moderation anfragen.",
         "uploadFailedDescription": "Bitte versuchen Sie es erneut.",
         "uploadFailedTitle": "Dateiupload fehlgeschlagen",
         "uploadFile": "Datei hochladen"
@@ -1315,6 +1319,7 @@
             "chat": "Chatfenster öffnen / schließen",
             "clap": "Klatschen",
             "closeChat": "Chat schließen",
+            "closeCustomPanel": "Schließen",
             "closeMoreActions": "„Weitere Einstellungen“ schließen",
             "closeParticipantsPane": "Anwesendenliste schließen",
             "closedCaptions": "Untertitel",
@@ -1420,9 +1425,11 @@
         "chat": "Chat öffnen / schließen",
         "clap": "Klatschen",
         "closeChat": "Chat schließen",
+        "closeCustomPanel": "Schließen",
         "closeParticipantsPane": "Anwesenheitsliste schließen",
         "closeReactionsMenu": "Interaktionsmenü schließen",
         "closedCaptions": "Untertitel",
+        "copilot": "Copilot",
         "disableNoiseSuppression": "Rauschunterdrückung deaktivieren",
         "disableReactionSounds": "Sie können die Interaktionstöne für diese Konferenz deaktivieren",
         "documentClose": "Geteiltes Dokument schließen",
