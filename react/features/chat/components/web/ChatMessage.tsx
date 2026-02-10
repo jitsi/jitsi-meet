@@ -76,15 +76,7 @@ const useStyles = makeStyles()((theme: Theme) => {
                     backgroundColor: theme.palette.support05
                 },
 
-                '&.error': {
-                    backgroundColor: theme.palette.actionDanger,
-                    borderRadius: 0,
-                    fontWeight: 100
-                },
 
-                '&.lobbymessage': {
-                    backgroundColor: theme.palette.support05
-                }
             },
             '&.error': {
                 backgroundColor: theme.palette.actionDanger,
@@ -209,8 +201,8 @@ const ChatMessage = ({
     t
 }: IProps) => {
     const { classes, cx } = useStyles();
-    const [ isHovered, setIsHovered ] = useState(false);
-    const [ isReactionsOpen, setIsReactionsOpen ] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
+    const [isReactionsOpen, setIsReactionsOpen] = useState(false);
 
     const handleMouseEnter = useCallback(() => {
         setIsHovered(true);
@@ -238,8 +230,8 @@ const ChatMessage = ({
 
         return (
             <div
-                aria-hidden = { true }
-                className = { cx('display-name', classes.displayName) }>
+                aria-hidden={true}
+                className={cx('display-name', classes.displayName)}>
                 {`${displayName}${getDisplayNameSuffix(message)}`}
             </div>
         );
@@ -252,7 +244,7 @@ const ChatMessage = ({
      */
     function _renderPrivateNotice() {
         return (
-            <div className = { classes.privateMessageNotice }>
+            <div className={classes.privateMessageNotice}>
                 {getPrivateNoticeMessage(message)}
             </div>
         );
@@ -265,7 +257,7 @@ const ChatMessage = ({
      */
     function _renderTimestamp() {
         return (
-            <div className = { cx('timestamp', classes.timestamp) }>
+            <div className={cx('timestamp', classes.timestamp)}>
                 <p>
                     {getFormattedTimestamp(message)}
                 </p>
@@ -284,9 +276,11 @@ const ChatMessage = ({
         }
 
         const reactionsArray = Array.from(message.reactions.entries())
-            .map(([ reaction, participants ]) => {
-                return { reaction,
-                    participants };
+            .map(([reaction, participants]) => {
+                return {
+                    reaction,
+                    participants
+                };
             })
             .sort((a, b) => b.participants.size - a.participants.size);
 
@@ -294,20 +288,20 @@ const ChatMessage = ({
         const numReactionsDisplayed = 3;
 
         const reactionsContent = (
-            <div className = { classes.reactionsPopover }>
+            <div className={classes.reactionsPopover}>
                 {reactionsArray.map(({ reaction, participants }) => (
                     <div
-                        className = { classes.reactionItem }
-                        key = { reaction }>
+                        className={classes.reactionItem}
+                        key={reaction}>
                         <p>
                             <span>{reaction}</span>
                             <span>{participants.size}</span>
                         </p>
-                        <div className = { classes.participantList }>
+                        <div className={classes.participantList}>
                             {Array.from(participants).map(participantId => (
                                 <p
-                                    className = { classes.participant }
-                                    key = { participantId }>
+                                    className={classes.participant}
+                                    key={participantId}>
                                     {state && getParticipantDisplayName(state, participantId)}
                                 </p>
                             ))}
@@ -319,63 +313,63 @@ const ChatMessage = ({
 
         return (
             <Popover
-                content = { reactionsContent }
-                onPopoverClose = { handleReactionsClose }
-                onPopoverOpen = { handleReactionsOpen }
-                position = 'top'
-                trigger = 'hover'
-                visible = { isReactionsOpen }>
-                <div className = { classes.reactionBox }>
+                content={reactionsContent}
+                onPopoverClose={handleReactionsClose}
+                onPopoverOpen={handleReactionsOpen}
+                position='top'
+                trigger='hover'
+                visible={isReactionsOpen}>
+                <div className={classes.reactionBox}>
                     {reactionsArray.slice(0, numReactionsDisplayed).map(({ reaction }, index) =>
-                        <p key = { index }>{reaction}</p>
+                        <p key={index}>{reaction}</p>
                     )}
                     {reactionsArray.length > numReactionsDisplayed && (
-                        <p className = { classes.reactionCount }>
+                        <p className={classes.reactionCount}>
                             +{totalReactions - numReactionsDisplayed}
                         </p>
                     )}
                 </div>
             </Popover>
         );
-    }, [ message?.reactions, isHovered, isReactionsOpen ]);
+    }, [message?.reactions, isHovered, isReactionsOpen]);
 
     return (
         <div
-            className = { cx(classes.chatMessageWrapper, className) }
-            id = { message.messageId }
-            onMouseEnter = { handleMouseEnter }
-            onMouseLeave = { handleMouseLeave }
-            tabIndex = { -1 }>
-            <div className = { classes.sideBySideContainer }>
+            className={cx(classes.chatMessageWrapper, className)}
+            id={message.messageId}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            tabIndex={-1}>
+            <div className={classes.sideBySideContainer}>
                 {!shouldDisplayMenuOnRight && (
-                    <div className = { classes.optionsButtonContainer }>
+                    <div className={classes.optionsButtonContainer}>
                         {isHovered && <MessageMenu
-                            displayName = { message.displayName }
-                            enablePrivateChat = { Boolean(enablePrivateChat) }
-                            isFileMessage = { isFileMessage(message) }
-                            isFromVisitor = { message.isFromVisitor }
-                            isLobbyMessage = { message.lobbyChat }
-                            message = { message.message }
-                            participantId = { message.participantId } />}
+                            displayName={message.displayName}
+                            enablePrivateChat={Boolean(enablePrivateChat)}
+                            isFileMessage={isFileMessage(message)}
+                            isFromVisitor={message.isFromVisitor}
+                            isLobbyMessage={message.lobbyChat}
+                            message={message.message}
+                            participantId={message.participantId} />}
                     </div>
                 )}
                 <div
-                    className = { cx(
+                    className={cx(
                         'chatmessage',
                         classes.chatMessage,
                         className,
                         message.privateMessage && 'privatemessage',
                         message.lobbyChat && !knocking && 'lobbymessage',
                         isFileMessage(message) && 'file'
-                    ) }>
-                    <div className = { classes.replyWrapper }>
-                        <div className = { cx('messagecontent', classes.messageContent) }>
+                    )}>
+                    <div className={classes.replyWrapper}>
+                        <div className={cx('messagecontent', classes.messageContent)}>
                             {showDisplayName && _renderDisplayName()}
-                            <div className = { cx('usermessage', classes.userMessage) }>
+                            <div className={cx('usermessage', classes.userMessage)}>
                                 {isFileMessage(message) ? (
                                     <FileMessage
-                                        message = { message }
-                                        screenReaderHelpText = { message.messageType === MESSAGE_TYPE_LOCAL
+                                        message={message}
+                                        screenReaderHelpText={message.messageType === MESSAGE_TYPE_LOCAL
                                             ? t<string>('chat.fileAccessibleTitleMe')
                                             : t<string>('chat.fileAccessibleTitle', {
                                                 user: message.displayName
@@ -383,17 +377,17 @@ const ChatMessage = ({
                                         } />
                                 ) : (
                                     <Message
-                                        screenReaderHelpText = { message.messageType === MESSAGE_TYPE_LOCAL
+                                        screenReaderHelpText={message.messageType === MESSAGE_TYPE_LOCAL
                                             ? t<string>('chat.messageAccessibleTitleMe')
                                             : t<string>('chat.messageAccessibleTitle', {
                                                 user: message.displayName
-                                            }) }
-                                        text = { getMessageText(message) } />
+                                            })}
+                                        text={getMessageText(message)} />
                                 )}
                                 {(message.privateMessage || (message.lobbyChat && !knocking))
                                     && _renderPrivateNotice()}
-                                <div className = { classes.chatMessageFooter }>
-                                    <div className = { classes.chatMessageFooterLeft }>
+                                <div className={classes.chatMessageFooter}>
+                                    <div className={classes.chatMessageFooterLeft}>
                                         {message.reactions && message.reactions.size > 0 && (
                                             <>
                                                 {renderReactions}
@@ -407,25 +401,25 @@ const ChatMessage = ({
                     </div>
                 </div>
                 {shouldDisplayMenuOnRight && (
-                    <div className = { classes.sideBySideContainer }>
+                    <div className={classes.sideBySideContainer}>
                         {!message.privateMessage && !message.lobbyChat
-                        && !message.isReaction && <div>
-                            <div className = { classes.optionsButtonContainer }>
-                                {isHovered && <ReactButton
-                                    messageId = { message.messageId }
-                                    receiverId = { '' } />}
-                            </div>
-                        </div>}
+                            && !message.isReaction && <div>
+                                <div className={classes.optionsButtonContainer}>
+                                    {isHovered && <ReactButton
+                                        messageId={message.messageId}
+                                        receiverId={''} />}
+                                </div>
+                            </div>}
                         <div>
-                            <div className = { classes.optionsButtonContainer }>
+                            <div className={classes.optionsButtonContainer}>
                                 {isHovered && <MessageMenu
-                                    displayName = { message.displayName }
-                                    enablePrivateChat = { Boolean(enablePrivateChat) }
-                                    isFileMessage = { isFileMessage(message) }
-                                    isFromVisitor = { message.isFromVisitor }
-                                    isLobbyMessage = { message.lobbyChat }
-                                    message = { message.message }
-                                    participantId = { message.participantId } />}
+                                    displayName={message.displayName}
+                                    enablePrivateChat={Boolean(enablePrivateChat)}
+                                    isFileMessage={isFileMessage(message)}
+                                    isFromVisitor={message.isFromVisitor}
+                                    isLobbyMessage={message.lobbyChat}
+                                    message={message.message}
+                                    participantId={message.participantId} />}
                             </div>
                         </div>
                     </div>
