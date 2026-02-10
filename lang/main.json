@@ -592,7 +592,7 @@
         "newFileNotification": "{{ participantName }} shared '{{ fileName }}'",
         "removeFile": "Remove",
         "removeFileSuccess": "File removed successfully",
-        "uploadDisabled": "Not allowed to upload files.",
+        "uploadDisabled": "Not allowed to upload files. Ask a moderator for permission rights for that operation.",
         "uploadFailedDescription": "Please try again.",
         "uploadFailedTitle": "Upload failed",
         "uploadFile": "Share file"
