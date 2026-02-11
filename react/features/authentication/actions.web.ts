@@ -94,6 +94,13 @@ export function loginWithPopup(tokenAuthServiceUrl: string): Promise<any> {
             return;
         }
 
+        const cleanup = (handler: any) => {
+            window.removeEventListener('message', handler);
+            popup.close();
+
+            sessionStorage.removeItem('oauth_nonce');
+        };
+
         // @ts-ignore
         const handler = event => {
             // Verify origin
@@ -102,10 +109,7 @@ export function loginWithPopup(tokenAuthServiceUrl: string): Promise<any> {
             }
 
             if (event.data.type === 'oauth-success') {
-                window.removeEventListener('message', handler);
-                popup.close();
-
-                sessionStorage.removeItem('oauth_nonce');
+                cleanup(handler);
 
                 resolve({
                     accessToken: event.data.accessToken,
@@ -113,23 +117,14 @@ export function loginWithPopup(tokenAuthServiceUrl: string): Promise<any> {
                     refreshToken: event.data.refreshToken
                 });
             } else if (event.data.type === 'oauth-error') {
-                window.removeEventListener('message', handler);
-                popup.close();
+                cleanup(handler);
+
                 reject(new Error(event.data.error));
             }
         };
 
         // Listen for messages from the popup
         window.addEventListener('message', handler);
-
-        // Check if popup was closed
-        const checkClosed = setInterval(() => {
-            if (popup.closed) {
-                clearInterval(checkClosed);
-                window.removeEventListener('message', handler);
-                reject(new Error('Login cancelled'));
-            }
-        }, 1000);
     });
 }
 
@@ -148,33 +143,19 @@ export function silentLogout(tokenAuthLogoutServiceUrl: string): any {
         iframe.src = tokenAuthLogoutServiceUrl;
         document.body.appendChild(iframe);
 
-        let timerId: any = undefined;
-
         // Listen for logout completion
-        // @ts-ignore
-        const handler = event => {
+        const handler = (event: any) => {
             if (event.origin !== window.location.origin) return;
 
             if (event.data.type === 'logout-success') {
                 window.removeEventListener('message', handler);
                 document.body.removeChild(iframe);
 
-                timerId && clearTimeout(timerId);
-
                 resolve();
             }
         };
 
         window.addEventListener('message', handler);
-
-        // Fallback timeout
-        timerId = setTimeout(() => {
-            window.removeEventListener('message', handler);
-            if (iframe.parentNode) {
-                document.body.removeChild(iframe);
-            }
-            resolve(); // Assume success after timeout
-        }, 3000);
     });
 }
 

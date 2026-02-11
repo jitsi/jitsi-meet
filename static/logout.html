@@ -29,7 +29,6 @@
 <div class="container">
     <div class="success">✓</div>
     <p>You have been logged out successfully.</p>
-    <p>You can close this window.</p>
 </div>
 
 <script>
@@ -38,9 +37,6 @@
         window.parent.postMessage({
             type: 'logout-success'
         }, window.location.origin);
-
-        // Auto-close after a short delay
-        setTimeout(() => window.close(), 1500);
     }
 </script>
 </body>
