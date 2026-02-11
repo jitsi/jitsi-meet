@@ -60,6 +60,39 @@
 <script>
     <!--#include virtual="/config.js" -->
     (function() {
+        /**
+         * Decodes a JWT token and returns the payload
+         * @param {string} token - The JWT token to decode
+         * @returns {object} The decoded payload
+         */
+        function decodeJWT(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (error) {
+                throw new Error('Failed to decode JWT: ' + error.message);
+            }
+        }
+
+        /**
+         * Validates that the nonce in the ID token matches the stored nonce
+         * @param {string} idToken - The ID token to validate
+         * @param {string} expectedNonce - The nonce stored in sessionStorage
+         */
+        function validateNonce(idToken, expectedNonce) {
+            const payload = decodeJWT(idToken);
+            if (!payload.nonce) {
+                throw new Error('ID token does not contain a nonce claim');
+            }
+            if (payload.nonce !== expectedNonce) {
+                throw new Error('Nonce validation failed: ID token nonce does not match stored nonce');
+            }
+        }
+
         async function handleAuthorizationCode() {
             try {
                 // Parse query parameters (Authorization Code Flow uses query params, not hash)
@@ -112,6 +145,18 @@
 
                     if (!accessToken || !idToken) {
                         throw new Error('Missing tokens in refresh response');
+                    }
+
+                    // Validate nonce if available in sessionStorage (optional for refresh flows)
+                    const refreshNonce = sessionStorage.getItem('oauth_nonce');
+                    if (refreshNonce) {
+                        try {
+                            validateNonce(idToken, refreshNonce);
+                            sessionStorage.removeItem('oauth_nonce');
+                        } catch (nonceError) {
+                            console.warn('Nonce validation failed during refresh:', nonceError.message);
+                            // Don't fail the refresh flow if nonce validation fails
+                        }
                     }
 
                     const message = {
@@ -188,10 +233,15 @@
                     throw new Error('No authorization code received');
                 }
 
-                // Retrieve code_verifier from sessionStorage (set during login initiation)
+                // Retrieve code_verifier and oauth_nonce from sessionStorage (set during login initiation)
                 const codeVerifier = sessionStorage.getItem('code_verifier');
                 if (!codeVerifier) {
                     throw new Error('No PKCE code verifier found in session');
+                }
+
+                const oauthNonce = sessionStorage.getItem('oauth_nonce');
+                if (!oauthNonce) {
+                    throw new Error('No OAuth nonce found in session');
                 }
 
                 // Show spinner while exchanging code for tokens
@@ -227,8 +277,12 @@
                     throw new Error('Missing tokens in response');
                 }
 
-                // Clean up PKCE verifier
+                // Validate nonce in ID token
+                validateNonce(idToken, oauthNonce);
+
+                // Clean up PKCE verifier and OAuth nonce
                 sessionStorage.removeItem('code_verifier');
+                sessionStorage.removeItem('oauth_nonce');
 
                 const message = {
                     type: 'oauth-success',
