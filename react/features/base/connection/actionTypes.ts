@@ -52,14 +52,14 @@ export const CONNECTION_PROPERTIES_UPDATED = 'CONNECTION_PROPERTIES_UPDATED';
 export const CONNECTION_WILL_CONNECT = 'CONNECTION_WILL_CONNECT';
 
 /**
- * The type of (redux) action which signals that a connection will try to resume.
+ * The type of (redux) action which signals that the token for a connection is expired.
  *
  * {
- *     type: CONNECTION_RESUMING,
+ *     type: CONNECTION_TOKEN_EXPIRED,
  *     connection: JitsiConnection
  * }
  */
-export const CONNECTION_RESUMING = 'CONNECTION_RESUMING';
+export const CONNECTION_TOKEN_EXPIRED = 'CONNECTION_TOKEN_EXPIRED';
 
 /**
  * The type of (redux) action which sets the location URL of the application,

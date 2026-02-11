@@ -384,7 +384,7 @@
         "lockTitle": "Lock failed",
         "login": "Login",
         "loginFailed": "Login failed.",
-        "loginOnResume": "Your authentication session is about to expire. You need to login again to continue the meeting.",
+        "loginOnResume": "Your authentication session has expired. You need to login again to continue the meeting.",
         "loginQuestion": "Are you sure you want to login and leave the conference?",
         "logoutQuestion": "Are you sure you want to logout and leave the conference?",
         "logoutTitle": "Logout",

@@ -4,6 +4,7 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
 import { loginWithPopup } from '../../authentication/actions';
+import LoginQuestionDialog from '../../authentication/components/web/LoginQuestionDialog';
 import { getTokenAuthUrl, isTokenAuthInline } from '../../authentication/functions';
 import { isVpaasMeeting } from '../../jaas/functions';
 import { hideNotification, showNotification } from '../../notifications/actions';
@@ -11,7 +12,9 @@ import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../notification
 import { authStatusChanged } from '../conference/actions.any';
 import { getCurrentConference } from '../conference/functions';
 import { SET_CONFIG } from '../config/actionTypes';
-import { CONNECTION_ESTABLISHED, CONNECTION_RESUMING, SET_LOCATION_URL } from '../connection/actionTypes';
+import { CONNECTION_ESTABLISHED, CONNECTION_TOKEN_EXPIRED, SET_LOCATION_URL } from '../connection/actionTypes';
+import { openDialog } from '../dialog/actions';
+import { browser } from '../lib-jitsi-meet';
 import { participantUpdated } from '../participants/actions';
 import { getLocalParticipant } from '../participants/functions';
 import { IParticipant } from '../participants/types';
@@ -55,12 +58,11 @@ MiddlewareRegistry.register(store => next => action => {
         // XXX The JSON Web Token (JWT) is not the only piece of state that we
         // have decided to store in the feature jwt
         return _setConfigOrLocationURL(store, next, action);
-    case CONNECTION_RESUMING: {
+    case CONNECTION_TOKEN_EXPIRED: {
         const jwt = state['features/base/jwt'].jwt;
         const refreshToken = state['features/base/jwt'].refreshToken;
 
-        if (typeof APP !== 'undefined'
-                && jwt && isTokenAuthInline(state['features/base/config'])
+        if (typeof APP !== 'undefined' && jwt
                 && validateJwt(jwt).find((e: any) => e.key === JWT_VALIDATION_ERRORS.TOKEN_EXPIRED)) {
             const { connection, locationURL = { href: '' } as URL } = state['features/base/connection'];
             const { tenant } = parseURIString(locationURL.href) || {};
@@ -92,23 +94,39 @@ MiddlewareRegistry.register(store => next => action => {
                             customActionHandler: [ () => {
                                 store.dispatch(hideNotification(PROMPT_LOGIN_NOTIFICATION_ID));
 
-                                // Use refresh token if available, otherwise fall back to silent login
-                                loginWithPopup(url)
-                                    .then((result: { accessToken: string; idToken: string; refreshToken?: string; }) => {
-                                        // @ts-ignore
-                                        const token: string = result.accessToken;
-                                        const idToken: string = result.idToken;
-                                        const newRefreshToken: string | undefined = result.refreshToken;
+                                if (isTokenAuthInline(state['features/base/config'])) {
+                                    // Use refresh token if available, otherwise fall back to silent login
+                                    loginWithPopup(url)
+                                        .then((result: { accessToken: string; idToken: string; refreshToken?: string; }) => {
+                                            // @ts-ignore
+                                            const token: string = result.accessToken;
+                                            const idToken: string = result.idToken;
+                                            const newRefreshToken: string | undefined = result.refreshToken;
 
-                                        // @ts-ignore
-                                        dispatch(setJWT(token, idToken, newRefreshToken || refreshToken));
+                                            // @ts-ignore
+                                            dispatch(setJWT(token, idToken, newRefreshToken || refreshToken));
 
-                                        connection?.refreshToken(token)
-                                            .catch((err: any) => {
-                                                dispatch(setJWT());
-                                                logger.error(err);
-                                            });
-                                    }).catch(logger.error);
+                                            connection?.refreshToken(token)
+                                                .catch((err: any) => {
+                                                    dispatch(setJWT());
+                                                    logger.error(err);
+                                                });
+                                        }).catch(logger.error);
+                                } else {
+                                    dispatch(openDialog('LoginQuestionDialog', LoginQuestionDialog, {
+                                        handler: () => {
+                                            // Give time for the dialog to close.
+                                            setTimeout(() => {
+                                                if (browser.isElectron()) {
+                                                    window.open(url, '_blank');
+                                                } else {
+                                                    window.location.href = url;
+                                                }
+                                            }, 500);
+                                        }
+                                    }));
+                                }
+
                             } ],
                             appearance: NOTIFICATION_TYPE.ERROR
                         }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
