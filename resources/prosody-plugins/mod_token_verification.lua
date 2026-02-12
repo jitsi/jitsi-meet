@@ -48,9 +48,9 @@ local allowlist;
 local function load_config()
     require_token_for_moderation = module:get_option_boolean("token_verification_require_token_for_moderation");
     allowlist = module:get_option_set('token_verification_allowlist_fallback_to_defaults', {
-        'recorder.stage.8x8.vc';
-        'jigasia.stage.8x8.vc';
-        'sipjibri.stage.8x8.vc';
+        'recorder.8x8.vc';
+        'jigasia.8x8.vc';
+        'sipjibri.8x8.vc';
     });
 end
 load_config();
