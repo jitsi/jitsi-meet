@@ -1,7 +1,7 @@
 {
     "addPeople": {
         "accessibilityLabel": {
-            "meetingLink": "Meeting link: {{url}}"
+            "meetingLink": "Meeting-link: {{url}}"
         },
         "add": "Uitnodigen",
         "addContacts": "Nodig uw contacten uit",
@@ -504,7 +504,7 @@
         "sharedVideoDialogError": "Fout: Ongeldige of verboden URL",
         "sharedVideoLinkPlaceholder": "YouTube-link of directe video-link",
         "show": "Weergeven",
-        "start": "Start ",
+        "start": "Starten ",
         "startLiveStreaming": "Livestream starten",
         "startRecording": "Opname starten",
         "startRemoteControlErrorMessage": "Er is een fout opgetreden tijdens het starten van de sessie van extern beheer.",
@@ -592,6 +592,7 @@
         "newFileNotification": "{{ participantName }} deelde '{{ fileName }}'",
         "removeFile": "Verwijderen",
         "removeFileSuccess": "Bestand met succes verwijderd",
+        "uploadDisabled": "Bestanden uploaden is niet toegestaan. Vraag een moderator om toestemming voor die handeling.",
         "uploadFailedDescription": "Probeer het nog eens.",
         "uploadFailedTitle": "Upload is mislukt",
         "uploadFile": "Bestand delen"
@@ -888,7 +889,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) verwijderd door een andere deelnemer",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) ingesteld door een ander deelnemer",
         "raiseHandAction": "Hand opsteken",
-        "raisedHand": "Wilgraag deelnemen.",
+        "raisedHand": "Wil graag deelnemen.",
         "raisedHands": "{{participantName}} en {{raisedHands}} meer mensen",
         "reactionSounds": "Geluiden uitschakelen",
         "reactionSoundsForAll": "Geluiden uitschakelen voor iedereen",
@@ -1096,7 +1097,7 @@
         "setEmailLabel": "Gravatar e-mailadres",
         "title": "Profiel"
     },
-    "raisedHand": "Zou graag willen spreken",
+    "raisedHand": "Wil graag spreken",
     "raisedHandsLabel": "Aantal handen omhoog",
     "record": {
         "already": {
@@ -1630,30 +1631,30 @@
         "chatIndicator": "(toeschouwer)",
         "joinMeeting": {
             "description": "U bent momenteel een toeschouwer bij deze conferentie.",
-            "raiseHand": "Raise your hand",
-            "title": "Joining meeting",
-            "wishToSpeak": "If you wish to speak, please raise your hand below and wait for the moderator's approval."
+            "raiseHand": "Hand opsteken",
+            "title": "Deelnemen aan vergadering",
+            "wishToSpeak": "Als u wilt spreken, steek dan hieronder uw hand op en wacht op goedkeuring van de moderator."
         },
-        "labelTooltip": "Number of viewers: {{count}}",
+        "labelTooltip": "Aantal toeschouwers: {{count}}",
         "notification": {
-            "demoteDescription": "Sent here by {{actor}}, raise your hand to participate",
-            "noMainParticipantsDescription": "A participant needs to start the meeting. Please try again in a bit.",
-            "noMainParticipantsTitle": "This meeting hasn't started yet.",
-            "noVisitorLobby": "You cannot join while there is a lobby enabled for the meeting.",
-            "notAllowedPromotion": "A participant needs to allow your request first.",
-            "requestToJoin": "Hand Raised",
-            "requestToJoinDescription": "Your request was sent to the moderators. Hang tight!",
-            "title": "You are a viewer in the meeting"
+            "demoteDescription": "Hierheen gestuurd door {{actor}}, steek uw hand op om deel te nemen",
+            "noMainParticipantsDescription": "Een deelnemer moet de vergadering starten. Probeer het over een tijdje opnieuw.",
+            "noMainParticipantsTitle": "Deze vergadering is nog niet begonnen.",
+            "noVisitorLobby": "U kunt niet deelnemen terwijl er een wachtruimte is ingeschakeld voor de vergadering.",
+            "notAllowedPromotion": "Een deelnemer moet eerst uw verzoek toestaan.",
+            "requestToJoin": "Hand opgestoken",
+            "requestToJoinDescription": "Uw verzoek is naar de moderators gestuurd. Even geduld!",
+            "title": "U bent een toeschouwer in de vergadering"
         },
-        "waitingMessage": "You'll join the meeting as soon as it is live!"
+        "waitingMessage": "U zult deelnemen aan de vergadering zodra deze live is!"
     },
-    "volumeSlider": "Volume slider",
+    "volumeSlider": "Volume-schuifknop",
     "welcomepage": {
         "accessibilityLabel": {
             "join": "Tik om deel te nemen",
             "roomname": "Voer naam van ruimte in"
         },
-        "addMeetingName": "Add Meeting name",
+        "addMeetingName": "Geef de vergadering een naam",
         "appDescription": "U kunt nu videochatten met het gehele team. Nodig uit wie u maar wilt. {{app}} is een volledig versleutelde, 100% open-source oplossing voor videovergaderingen, die u wanneer u maar wilt gratis kunt gebruiken — zonder dat u een account nodig hebt.",
         "audioVideoSwitch": {
             "audio": "Spraak",
@@ -1673,16 +1674,16 @@
         "join": "AANMAKEN / DEELNEMEN",
         "logo": {
             "calendar": "Agenda logo",
-            "desktopPreviewThumbnail": "Desktop preview thumbnail",
+            "desktopPreviewThumbnail": "Bureaubladvoorbeeld miniatuur",
             "googleLogo": "Google logo",
             "logoDeepLinking": "Jitsi meet logo",
             "microsoftLogo": "Microsoft logo",
             "policyLogo": "Policy logo"
         },
-        "meetingsAccessibilityLabel": "Meetings",
-        "mobileDownLoadLinkAndroid": "Download mobile app for Android",
-        "mobileDownLoadLinkFDroid": "Download mobile app for F-Droid",
-        "mobileDownLoadLinkIos": "Download mobile app for iOS",
+        "meetingsAccessibilityLabel": "Vergaderingen",
+        "mobileDownLoadLinkAndroid": "Download mobiele app voor Android",
+        "mobileDownLoadLinkFDroid": "Download mobiele app voor F-Droid",
+        "mobileDownLoadLinkIos": "Download mobiele app voor iOS",
         "moderatedMessage": "Of <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">boek een vergadering URL</a> van tevoren waar u de enige moderator bent.",
         "privacy": "Privacy",
         "recentList": "Recent",
