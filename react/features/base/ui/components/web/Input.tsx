@@ -81,7 +81,11 @@ const useStyles = makeStyles()(theme => {
 
             '&:focus': {
                 outline: 0,
-                boxShadow: `0px 0px 0px 2px ${theme.palette.inputFieldFocus}`
+                boxShadow: `0px 0px 0px 2px ${theme.palette.inputFieldFocus}`,
+
+                '&::placeholder': {
+                    opacity: 0
+                }
             },
 
             '&:disabled': {
