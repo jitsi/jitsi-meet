@@ -386,8 +386,13 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
         dispatch(overwriteConfig({ disableFocus: false }));
     }
 
+    const { enableBeforeUnloadConfirmation: configEnabled } = getState()['features/base/config'];
+    const { enableBeforeUnloadConfirmation: settingEnabled } = getState()['features/base/settings'];
+
     if (typeof window !== 'undefined') {
-        window.addEventListener('beforeunload', beforeUnloadHandler);
+        if (configEnabled || settingEnabled) {
+            window.addEventListener('beforeunload', beforeUnloadHandler);
+        }
         window.addEventListener('unload', unloadHandler);
     }
 

@@ -316,6 +316,7 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
                     ...newProps,
                     currentLanguage: tabState?.currentLanguage,
                     hideSelfView: tabState?.hideSelfView,
+                    enableBeforeUnloadConfirmation: tabState?.enableBeforeUnloadConfirmation,
                     showSubtitlesOnStage: tabState?.showSubtitlesOnStage,
                     maxStageParticipants: tabState?.maxStageParticipants
                 };
