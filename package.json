@@ -212,7 +212,7 @@
     "lint:ci": "eslint --ext .js,.ts,.tsx --max-warnings 0 .",
     "lint:lang": "for file in lang/*.json; do npx --yes jsonlint -q $file || exit 1; done",
     "lang-sort": "./resources/lang-sort.sh",
-    "lint-fix": "eslint --ext .js,.ts,.tsx --max-warnings 0 --fix .",
+    "lint-fix": "eslint --ext .js,.ts,.tsx --mˀax-warnings 0 --fix .",
     "postinstall": "patch-package --error-on-fail && jetify",
     "validate": "npm ls",
     "start": "make dev",

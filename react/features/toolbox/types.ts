@@ -89,7 +89,9 @@ export type NativeToolbarButton = 'camera' |
     'desktop' |
     'tileview' |
     'overflowmenu' |
-    'hangup';
+    'hangup' |
+    'screenshot' |
+    'invite';
 
 export interface IGetVisibleNativeButtonsParams {
     allButtons: { [key: string]: IToolboxNativeButton; };

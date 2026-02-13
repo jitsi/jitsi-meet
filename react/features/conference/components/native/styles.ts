@@ -30,16 +30,16 @@ const alwaysOnTitleBar = {
 };
 
 /**
- * The styles of the feature conference.
+ * The styles of the feature conference — WhatsApp-style.
  */
 export default {
 
     /**
-     * {@code Conference} Style.
+     * {@code Conference} Style — pure black background.
      */
     conference: {
         alignSelf: 'stretch',
-        backgroundColor: BaseTheme.palette.uiBackground,
+        backgroundColor: '#000000',
         flex: 1
     },
 
@@ -106,18 +106,50 @@ export default {
 
     titleBarSafeViewColor: {
         ...titleBarSafeView,
-        backgroundColor: BaseTheme.palette.uiBackground
+        backgroundColor: 'transparent'
     },
 
     titleBarSafeViewTransparent: {
         ...titleBarSafeView
     },
 
+    /**
+     * WhatsApp-style title bar wrapper — 3-column layout.
+     */
     titleBarWrapper: {
         alignItems: 'center',
         flex: 1,
         flexDirection: 'row',
         height: BaseTheme.spacing[8],
+        justifyContent: 'space-between',
+        paddingHorizontal: 8
+    },
+
+    /**
+     * Left section of the title bar (back/PiP button).
+     */
+    titleBarLeftSection: {
+        width: 44,
+        alignItems: 'flex-start',
+        justifyContent: 'center'
+    },
+
+    /**
+     * Center section of the title bar (E2EE label).
+     */
+    titleBarCenterSection: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+
+    /**
+     * Right section of the title bar (invite/participants button).
+     */
+    titleBarRightSection: {
+        width: 44,
+        alignItems: 'flex-end',
         justifyContent: 'center'
     },
 
@@ -208,5 +240,15 @@ export default {
     raisedHandsCountLabelText: {
         color: BaseTheme.palette.uiBackground,
         paddingLeft: BaseTheme.spacing[2]
+    },
+
+    /**
+     * E2EE label text (used in TitleBar center).
+     */
+    e2eeLabelText: {
+        color: '#FFFFFF',
+        fontSize: 14,
+        marginLeft: 6,
+        fontWeight: 'bold'
     }
 };

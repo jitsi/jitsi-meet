@@ -8,8 +8,10 @@ import { iAmVisitor } from '../visitors/functions';
 import AudioMuteButton from './components/native/AudioMuteButton';
 import CustomOptionButton from './components/native/CustomOptionButton';
 import HangupContainerButtons from './components/native/HangupContainerButtons';
+import InviteButton from './components/native/InviteButton';
 import OverflowMenuButton from './components/native/OverflowMenuButton';
 import ScreenSharingButton from './components/native/ScreenSharingButton';
+import ScreenshotButton from './components/native/ScreenshotButton';
 import VideoMuteButton from './components/native/VideoMuteButton';
 import { isDesktopShareButtonDisabled } from './functions.native';
 import { ICustomToolbarButton, IToolboxNativeButton, NativeToolbarButton } from './types';
@@ -60,6 +62,18 @@ const overflowmenu = {
 const hangup = {
     key: 'hangup',
     Content: HangupContainerButtons,
+    group: 3
+};
+
+const screenshot = {
+    key: 'screenshot',
+    Content: ScreenshotButton,
+    group: 3
+};
+
+const invite = {
+    key: 'invite',
+    Content: InviteButton,
     group: 3
 };
 
@@ -137,7 +151,7 @@ function getOverflowMenuButton() {
  * @returns {Object} The button maps mainMenuButtons and overflowMenuButtons.
  */
 export function useNativeToolboxButtons(
-        _customToolbarButtons?: ICustomToolbarButton[]): { [key: string]: IToolboxNativeButton; } {
+    _customToolbarButtons?: ICustomToolbarButton[]): { [key: string]: IToolboxNativeButton; } {
     const audioMuteButton = getAudioMuteButton();
     const videoMuteButton = getVideoMuteButton();
     const chatButton = getChatButton();
@@ -153,7 +167,9 @@ export function useNativeToolboxButtons(
         raisehand,
         tileview: tileViewButton,
         overflowmenu: overflowMenuButton,
-        hangup
+        hangup,
+        screenshot,
+        invite
     };
     const buttonKeys = Object.keys(buttons) as NativeToolbarButton[];
 

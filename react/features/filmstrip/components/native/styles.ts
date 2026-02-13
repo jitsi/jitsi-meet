@@ -104,15 +104,15 @@ export default {
      */
     thumbnail: {
         alignItems: 'stretch',
-        backgroundColor: BaseTheme.palette.ui02,
-        borderColor: BaseTheme.palette.ui03,
-        borderRadius: BaseTheme.shape.borderRadius,
+        backgroundColor: '#1C1C1E',
+        borderColor: '#FFD700',
+        borderRadius: 12,
         borderStyle: 'solid',
-        borderWidth: 1,
+        borderWidth: 2,
         flex: 1,
         height: SMALL_THUMBNAIL_SIZE,
         justifyContent: 'center',
-        margin: 2,
+        margin: 4,
         maxHeight: SMALL_THUMBNAIL_SIZE,
         maxWidth: SMALL_THUMBNAIL_SIZE,
         overflow: 'hidden',
@@ -172,7 +172,7 @@ export default {
 
     thumbnailDominantSpeaker: {
         borderWidth: 2,
-        borderColor: BaseTheme.palette.action01Hover
+        borderColor: '#00BCD4'
     },
 
     thumbnailGif: {

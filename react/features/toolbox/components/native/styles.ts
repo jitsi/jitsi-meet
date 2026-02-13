@@ -2,23 +2,24 @@ import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry'
 import { schemeColor } from '../../../base/color-scheme/functions';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
-const BUTTON_SIZE = 48;
+const BUTTON_SIZE = 52;
 
 // Toolbox, toolbar:
 
 /**
- * The style of toolbar buttons.
+ * The style of toolbar buttons — WhatsApp-style round dark circles.
  */
 const toolbarButton = {
-    borderRadius: BaseTheme.shape.borderRadius,
+    borderRadius: BUTTON_SIZE / 2,
     borderWidth: 0,
     flex: 0,
     flexDirection: 'row',
     height: BUTTON_SIZE,
     justifyContent: 'center',
-    marginHorizontal: 6,
+    marginHorizontal: 10,
     marginVertical: 6,
-    width: BUTTON_SIZE
+    width: BUTTON_SIZE,
+    backgroundColor: '#2A2A2A'
 };
 
 /**
@@ -36,7 +37,7 @@ const toolbarButtonIcon = {
  */
 const whiteToolbarButtonIcon = {
     ...toolbarButtonIcon,
-    color: BaseTheme.palette.icon01
+    color: '#FFFFFF'
 };
 
 /**
@@ -71,7 +72,7 @@ const reactionMenu = {
 };
 
 /**
- * The Toolbox and toolbar related styles.
+ * The Toolbox and toolbar related styles — WhatsApp-style.
  */
 const styles = {
 
@@ -81,33 +82,37 @@ const styles = {
     },
 
     /**
-     * The style of the toolbar.
+     * The style of the toolbar — transparent to let the dark bar show through.
      */
     toolbox: {
         alignItems: 'center',
-        backgroundColor: BaseTheme.palette.uiBackground,
+        backgroundColor: 'transparent',
         borderTopLeftRadius: 3,
         borderTopRightRadius: 3,
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'center'
     },
 
     /**
      * The style of the root/top-level container of {@link Toolbox}.
+     * WhatsApp-style floating dark rounded bar.
      */
     toolboxContainer: {
-        backgroundColor: BaseTheme.palette.uiBackground,
+        backgroundColor: '#1A1A1A',
+        borderRadius: 40,
         flexDirection: 'column',
-        maxWidth: 580,
-        marginHorizontal: 'auto',
-        marginVertical: BaseTheme.spacing[0],
-        paddingHorizontal: BaseTheme.spacing[2],
-        width: '100%'
+        maxWidth: 400,
+        marginHorizontal: 16,
+        marginBottom: 30,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        width: 'auto',
+        alignSelf: 'center'
     },
 
     toolboxButtonIconContainer: {
         alignItems: 'center',
-        borderRadius: BaseTheme.shape.borderRadius,
+        borderRadius: BUTTON_SIZE / 2,
         height: BaseTheme.spacing[7],
         justifyContent: 'center',
         width: BaseTheme.spacing[7]
@@ -132,13 +137,13 @@ ColorSchemeRegistry.register('Toolbox', {
         iconStyle: whiteToolbarButtonIcon,
         style: {
             ...toolbarButton,
-            backgroundColor: 'transparent'
+            backgroundColor: '#2A2A2A'
         },
         underlayColor: 'transparent'
     },
 
     backgroundToggle: {
-        backgroundColor: BaseTheme.palette.ui04
+        backgroundColor: '#444444'
     },
 
     hangupMenuContainer: {
@@ -156,9 +161,9 @@ ColorSchemeRegistry.register('Toolbox', {
         iconStyle: whiteToolbarButtonIcon,
         style: {
             ...toolbarButton,
-            backgroundColor: schemeColor('hangup')
+            backgroundColor: '#FF3B30'
         },
-        underlayColor: BaseTheme.palette.ui04
+        underlayColor: '#CC2F26'
     },
 
     reactionDialog: {
@@ -209,7 +214,8 @@ ColorSchemeRegistry.register('Toolbox', {
     toggledButtonStyles: {
         iconStyle: whiteToolbarButtonIcon,
         style: {
-            ...toolbarButton
+            ...toolbarButton,
+            backgroundColor: '#444444'
         },
         underlayColor: 'transparent'
     }
