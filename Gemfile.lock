@@ -131,7 +131,7 @@ GEM
     faraday_middleware (1.2.1)
       faraday (~> 1.0)
     fastimage (2.4.0)
-    fastlane (2.226.0)
+    fastlane (2.232.1)
       CFPropertyList (>= 2.3, < 4.0.0)
       addressable (>= 2.8, < 3.0.0)
       artifactory (~> 3.0)
@@ -232,7 +232,7 @@ GEM
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     jmespath (1.6.2)
-    json (2.10.1)
+    json (2.11.3)
     jwt (2.10.1)
       base64
     logger (1.6.6)
