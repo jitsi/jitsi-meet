@@ -72,6 +72,15 @@ $welcomePageFontFamily: inherit;
 $welcomePageBackground: none;
 $welcomePageTitleColor: #fff;
 
+// Digital gradient theme (blue → purple → cyan)
+$welcomePageGradientStart: #2563eb;
+$welcomePageGradientMid: #8b5cf6;
+$welcomePageGradientCyan: #06b6d4;
+$welcomePageGradientEnd: #2563eb;
+$welcomePageGradientText: linear-gradient(90deg, #2563eb, #8b5cf6, #06b6d4, #2563eb);
+$welcomePageGradientBg: linear-gradient(90deg, #2563eb, #8b5cf6, #06b6d4, #2563eb);
+$welcomePageGradientOverlay: linear-gradient(135deg, rgba(37, 99, 235, 0.25), rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
+
 $welcomePageHeaderBackground: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../images/welcome-background.png');
 $welcomePageHeaderBackgroundPosition: center;
 $welcomePageHeaderBackgroundRepeat: none;
@@ -79,9 +88,9 @@ $welcomePageHeaderBackgroundSize: cover;
 $welcomePageHeaderPadding: 1rem;
 $welcomePageHeaderTitleMaxWidth: initial;
 $welcomePageHeaderTextAlign: center;
-$welcomePageButtonBg: #0074E0;
-$welcomePageButtonHoverBg: #4687ED;
-$welcomePageButtonFocusOutline: #00225A;
+$welcomePageButtonBg: linear-gradient(90deg, #2563eb, #8b5cf6);
+$welcomePageButtonHoverBg: linear-gradient(90deg, #3b82f6, #a78bfa);
+$welcomePageButtonFocusOutline: #8b5cf6;
 
 $welcomePageHeaderContainerMarginTop: 104px;
 $welcomePageHeaderContainerDisplay: flex;

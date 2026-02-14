@@ -1,5 +1,24 @@
+// Digital gradient animation for text/backgrounds
+@keyframes welcome-gradient-shift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+@keyframes welcome-gradient-shift-reverse {
+    0%, 100% {
+        background-position: 100% 50%;
+    }
+    50% {
+        background-position: 0% 50%;
+    }
+}
+
 body.welcome-page {
-    background: #131519;
+    background: #0f0f12;
     overflow: auto;
     min-height: 100vh;
 }
@@ -9,7 +28,7 @@ body.welcome-page {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    background-color: #131519;
+    background-color: #0f0f12;
     background-attachment: fixed;
     display: flex;
     flex-direction: column;
@@ -42,27 +61,33 @@ body.welcome-page {
         }
 
         .header-text-title {
-            color: $welcomePageTitleColor;
+            background: $welcomePageGradientText;
+            background-size: 200% 100%;
+            background-position: 56.6667% 50%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: welcome-gradient-shift 6s ease infinite;
             font-family: 'Inter', sans-serif;
             font-size: 66px;
-            font-weight: 600;
+            font-weight: 700;
             font-style: normal;
             line-height: 100%;
-            letter-spacing: 0%;
+            letter-spacing: -0.02em;
             margin-bottom: $welcomePageHeaderTextTitleMarginBottom;
             max-width: $welcomePageHeaderTitleMaxWidth;
-            opacity: $welcomePageHeaderTextTitleOpacity;
+            opacity: 1;
             text-align: $welcomePageHeaderTextAlign;
         }
 
         .header-text-subtitle {
-            color: #fff;
+            color: rgba(255, 255, 255, 0.85);
             font-size: 1.25rem;
-            font-weight: 200;
+            font-weight: 300;
             line-height: 1.625rem;
             margin: 16px 0 32px 0;
             text-align: $welcomePageHeaderTextAlign;
-
+            text-shadow: 0 0 24px rgba(139, 92, 246, 0.3);
         }
 
         .not-allow-title-character-div {
@@ -130,32 +155,36 @@ body.welcome-page {
             margin-bottom: 10px !important;
 
             #enter_room_button {
-                width: fit-content- 25%;
-                height: 74.37px;
-                border-radius: 18.87px;
-                padding: 26.96px 79.08px;
-                background-color: #FFFFFF !important;
-                color: #336EE6 !important;
+                width: fit-content;
+                min-width: 280px;
+                height: 74px;
+                border-radius: 18px;
+                padding: 26px 48px;
+                background: $welcomePageGradientBg !important;
+                background-size: 200% 100% !important;
+                color: #fff !important;
                 font-family: 'Inter', sans-serif;
-                font-size: 25.94px;
+                font-size: 25px;
                 font-weight: 600;
-                font-style: normal;
                 line-height: 100%;
-                letter-spacing: 0%;
+                letter-spacing: 0;
                 border: 0;
                 cursor: pointer;
-                transition: all 0.2s;
+                transition: all 0.35s ease;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 8.99px;
+                gap: 10px;
+                box-shadow: 0 8px 32px rgba(37, 99, 235, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
 
                 &:focus-within {
                     outline: auto 2px $welcomePageButtonFocusOutline;
                 }
 
                 &:hover {
-                    opacity: 0.9;
+                    background-position: 100% 50%;
+                    box-shadow: 0 12px 40px rgba(139, 92, 246, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+                    transform: translateY(-2px);
                 }
             }
         }
@@ -170,16 +199,24 @@ body.welcome-page {
 
             #previous_meeting_history_button {
                 width: 50%;
-                background: transparent !important;
-                border: 1px solid #FFFFFF !important;
+                background-color: transparent !important;
+                background-image: linear-gradient(#0f0f12, #0f0f12), $welcomePageGradientBg !important;
+                background-origin: border-box !important;
+                background-clip: padding-box, border-box !important;
+                border: 2px solid transparent !important;
                 border-radius: 21px !important;
-                color: #FFFFFF !important;
+                color: #fff !important;
                 font-family: 'Inter', sans-serif;
                 font-size: 16px;
                 font-weight: 600;
-                font-style: normal;
                 line-height: 100%;
-                letter-spacing: 0%;
+                letter-spacing: 0;
+                transition: all 0.3s ease;
+
+                &:hover {
+                    box-shadow: 0 0 24px rgba(139, 92, 246, 0.4);
+                    color: rgba(255, 255, 255, 0.95);
+                }
             }
         }
 
@@ -213,17 +250,18 @@ body.welcome-page {
         }
 
         .tab-buttons {
-            background-color: #c7ddff;
-            border-radius: 6px;
-            color: #0163FF;
+            background: rgba(37, 99, 235, 0.15);
+            border-radius: 10px;
+            color: #2563eb;
             font-size: 0.875rem;
             line-height: 1.125rem;
             margin: 4px;
             display: $welcomePageTabButtonsDisplay;
+            border: 1px solid rgba(37, 99, 235, 0.2);
 
             [role="tab"] {
-                background-color: #c7ddff;
-                border-radius: 7px;
+                background: transparent;
+                border-radius: 8px;
                 cursor: pointer;
                 display: $welcomePageTabDisplay;
                 flex-grow: 1;
@@ -232,12 +270,13 @@ body.welcome-page {
                 text-align: center;
                 color: inherit;
                 border: 0;
+                transition: all 0.2s ease;
 
                 &[aria-selected="true"] {
-                    background-color: #FFF;
+                    background: linear-gradient(90deg, rgba(37, 99, 235, 0.4), rgba(139, 92, 246, 0.3));
+                    color: #fff;
                 }
             }
-
         }
     }
 
@@ -260,14 +299,18 @@ body.welcome-page {
     }
 
     .welcome-page-settings {
-        // background: rgba(255, 255, 255, 0.38);
-        border-radius: 3px;
-        color: $welcomePageDescriptionColor;
-        padding: 4px;
+        border-radius: 8px;
+        padding: 6px;
         position: absolute;
         top: calc(35px - #{$welcomePageHeaderContainerMarginTop});
         right: 0;
         z-index: $zindex2;
+        color: rgba(255, 255, 255, 0.9);
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: #a78bfa;
+        }
 
         * {
             cursor: pointer;
@@ -304,26 +347,30 @@ body.welcome-page {
         .watermark-text {
             display: flex;
             flex-direction: column;
-            color: #fff;
         }
 
         .watermark-title {
-            color: #FFF;
+            background: $welcomePageGradientText;
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: welcome-gradient-shift 8s ease infinite;
             font-family: Aquire !important;
             font-size: 16px;
             font-style: normal;
-            font-weight: 400;
-            line-height: 127.219%; /* 53.653px */
+            font-weight: 600;
+            line-height: 127.219%;
             text-transform: uppercase;
         }
 
         .watermark-tagline {
-            color: #FFF;
+            color: rgba(255, 255, 255, 0.8);
             font-family: "Times New Roman", serif;
             font-size: 7px;
             font-style: normal;
             font-weight: 400;
-            line-height: 127.219%; /* 14.052px */
+            line-height: 127.219%;
             text-transform: uppercase;
             padding-bottom: 2px;
         }
@@ -370,27 +417,33 @@ body.welcome-page {
 
     .welcome-card {
         width: 100%;
-        border-radius: 8px;
+        border-radius: 16px;
+        border: 1px solid rgba(139, 92, 246, 0.25);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 
         &--dark {
-            background: #444447;
+            background: linear-gradient(145deg, rgba(30, 30, 40, 0.95), rgba(20, 20, 28, 0.98));
             color: #fff;
+            backdrop-filter: blur(12px);
         }
 
         &--blue {
-            background: #D5E5FF;
+            background: linear-gradient(145deg, rgba(37, 99, 235, 0.12), rgba(139, 92, 246, 0.08));
+            border-color: rgba(37, 99, 235, 0.3);
+            backdrop-filter: blur(12px);
         }
 
         &--grey {
-            background: #F2F3F4;
+            background: rgba(242, 243, 244, 0.95);
         }
     }
 
     .welcome-footer {
-        background: #131519;
+        background: linear-gradient(180deg, rgba(15, 15, 18, 0.98), #0f0f12);
         color: #fff;
         margin-top: 40px;
         position: relative;
+        border-top: 1px solid rgba(139, 92, 246, 0.15);
     }
 
     .welcome-footer-centered {
