@@ -215,6 +215,7 @@
     "lint-fix": "eslint --ext .js,.ts,.tsx --max-warnings 0 --fix .",
     "postinstall": "patch-package --error-on-fail && jetify",
     "validate": "npm ls",
+    "dev": "npm start",
     "start": "node scripts/start-dev.js",
     "start:make": "make dev",
     "test": "DOTENV_CONFIG_PATH=tests/.env wdio run tests/wdio.conf.ts",
