@@ -27,6 +27,7 @@ import ParticipantsPane from '../../../participants-pane/components/web/Particip
 import Prejoin from '../../../prejoin/components/web/Prejoin';
 import { isPrejoinPageVisible } from '../../../prejoin/functions.web';
 import ReactionAnimations from '../../../reactions/components/web/ReactionsAnimations';
+import FloatingScreenSharePreview from '../../../screen-share/components/web/FloatingScreenSharePreview';
 import { toggleToolboxVisible } from '../../../toolbox/actions.any';
 import { fullScreenChanged, showToolbox } from '../../../toolbox/actions.web';
 import JitsiPortal from '../../../toolbox/components/web/JitsiPortal';
@@ -268,6 +269,7 @@ class Conference extends AbstractConference<IProps, any> {
                                 { t('toolbar.accessibilityLabel.heading') }
                             </span>
                             <Toolbox />
+                            <FloatingScreenSharePreview />
                         </>
                     )}
 

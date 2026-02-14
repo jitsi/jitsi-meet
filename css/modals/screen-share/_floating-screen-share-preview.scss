@@ -1,0 +1,93 @@
+/**
+ * Floating, draggable screen share preview window.
+ * Shown when local user is sharing screen; includes preview and shortcut toolbar.
+ * Similar to Google Meet's screen share preview; movable everywhere.
+ */
+.floating-screen-share-preview {
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    min-height: 140px;
+    overflow: hidden;
+    position: fixed;
+    z-index: $toolbarZ + 10;
+    background: $newToolbarBackgroundColor;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    pointer-events: auto;
+}
+
+.floating-screen-share-preview-header {
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3);
+    cursor: grab;
+    display: flex;
+    flex-shrink: 0;
+    height: 32px;
+    padding: 0 10px;
+    user-select: none;
+
+    &:active {
+        cursor: grabbing;
+    }
+}
+
+.floating-screen-share-preview-title {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.floating-screen-share-preview-video {
+    background: #000;
+    flex: 1;
+    min-height: 100px;
+    position: relative;
+    width: 100%;
+
+    .floating-screen-share-preview-video-track {
+        height: 100%;
+        width: 100%;
+    }
+
+    video {
+        object-fit: contain;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.floating-screen-share-preview-placeholder {
+    align-items: center;
+    color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    font-size: 13px;
+    height: 100%;
+    justify-content: center;
+    min-height: 100px;
+    padding: 12px;
+    text-align: center;
+}
+
+.floating-screen-share-preview-toolbar {
+    align-items: center;
+    background: $newToolbarBackgroundColor;
+    display: flex;
+    flex-shrink: 0;
+    height: 48px;
+    justify-content: center;
+    padding: 0 8px;
+
+    .toolbox-icon,
+    .toolbox-button {
+        cursor: pointer;
+        margin: 0 4px;
+        padding: 8px;
+    }
+
+    .hangup-button {
+        margin-left: 4px;
+    }
+}
