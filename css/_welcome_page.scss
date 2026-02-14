@@ -146,25 +146,33 @@ body.welcome-page {
             color: #253858;
         }
 
+        .welcome-page-actions {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            z-index: $zindex2;
+            margin-bottom: 10px;
+        }
+
         #enter_room {
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: $zindex2;
-            height: fit-content;
-            margin-bottom: 10px !important;
 
             #enter_room_button {
                 width: fit-content;
-                min-width: 280px;
-                height: 74px;
-                border-radius: 18px;
-                padding: 26px 48px;
+                min-width: 200px;
+                height: 52px;
+                border-radius: 14px;
+                padding: 14px 28px;
                 background: $welcomePageGradientBg !important;
                 background-size: 200% 100% !important;
                 color: #fff !important;
                 font-family: 'Inter', sans-serif;
-                font-size: 25px;
+                font-size: 18px;
                 font-weight: 600;
                 line-height: 100%;
                 letter-spacing: 0;
@@ -174,8 +182,8 @@ body.welcome-page {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 10px;
-                box-shadow: 0 8px 32px rgba(37, 99, 235, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+                gap: 8px;
+                box-shadow: 0 6px 24px rgba(37, 99, 235, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
 
                 &:focus-within {
                     outline: auto 2px $welcomePageButtonFocusOutline;
@@ -183,7 +191,7 @@ body.welcome-page {
 
                 &:hover {
                     background-position: 100% 50%;
-                    box-shadow: 0 12px 40px rgba(139, 92, 246, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+                    box-shadow: 0 8px 28px rgba(139, 92, 246, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
                     transform: translateY(-2px);
                 }
             }
@@ -192,22 +200,20 @@ body.welcome-page {
         #previous_meeting_history_container {
             display: flex;
             justify-content: center;
-            max-width: 480px;
-            width: $welcomePageEnterRoomWidth;
-            margin-top: 5px !important;
-            z-index: $zindex2;
 
             #previous_meeting_history_button {
-                width: 50%;
+                min-width: 160px;
+                height: 52px;
+                padding: 14px 24px;
                 background-color: transparent !important;
                 background-image: linear-gradient(#0f0f12, #0f0f12), $welcomePageGradientBg !important;
                 background-origin: border-box !important;
                 background-clip: padding-box, border-box !important;
                 border: 2px solid transparent !important;
-                border-radius: 21px !important;
+                border-radius: 14px !important;
                 color: #fff !important;
                 font-family: 'Inter', sans-serif;
-                font-size: 16px;
+                font-size: 14px;
                 font-weight: 600;
                 line-height: 100%;
                 letter-spacing: 0;

@@ -229,29 +229,31 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                         <span className = 'header-text-subtitle'>
                             {t('welcomepage.headerSubtitle')}
                         </span>
-                        <div id = 'enter_room'>
-                            <button
-                                aria-disabled = 'false'
-                                aria-label = 'Join Instant Meeting'
-                                className = 'welcome-page-button'
-                                id = 'enter_room_button'
-                                onClick = { this._onFormSubmit }
-                                tabIndex = { 0 }
-                                type = 'button'>
-                                {t('welcomepage.startMeeting')}
-                            </button>
-                        </div>
-                        <div id = 'previous_meeting_history_container'>
-                            <button
-                                aria-disabled = 'false'
-                                aria-label = 'Previous Meeting History'
-                                className = 'welcome-page-button'
-                                id = 'previous_meeting_history_button'
-                                onClick = { this._onToggleMeetingHistory }
-                                tabIndex = { 0 }
-                                type = 'button'>
-                                {t('welcomepage.previousMeetingHistory')}
-                            </button>
+                        <div className = 'welcome-page-actions'>
+                            <div id = 'enter_room'>
+                                <button
+                                    aria-disabled = 'false'
+                                    aria-label = 'Join Instant Meeting'
+                                    className = 'welcome-page-button'
+                                    id = 'enter_room_button'
+                                    onClick = { this._onFormSubmit }
+                                    tabIndex = { 0 }
+                                    type = 'button'>
+                                    {t('welcomepage.startMeeting')}
+                                </button>
+                            </div>
+                            <div id = 'previous_meeting_history_container'>
+                                <button
+                                    aria-disabled = 'false'
+                                    aria-label = 'Previous Meeting History'
+                                    className = 'welcome-page-button'
+                                    id = 'previous_meeting_history_button'
+                                    onClick = { this._onToggleMeetingHistory }
+                                    tabIndex = { 0 }
+                                    type = 'button'>
+                                    {t('welcomepage.previousMeetingHistory')}
+                                </button>
+                            </div>
                         </div>
                         {this._titleHasNotAllowCharacter && (
                             <div
