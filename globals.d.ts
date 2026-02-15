@@ -14,6 +14,10 @@ declare global {
     const interfaceConfig: any;
 
     interface Window {
+        documentPictureInPicture?: {
+            requestWindow(options?: { width?: number; height?: number }): Promise<Window>;
+            window: Window | null;
+        };
         config: IConfig;
         JITSI_MEET_LITE_SDK?: boolean;
         interfaceConfig?: any;
@@ -27,10 +31,6 @@ declare global {
     }
 
     interface Document {
-        documentPictureInPicture?: {
-            requestWindow(options?: { width?: number; height?: number }): Promise<Window>;
-            window: Window | null;
-        };
         mozCancelFullScreen?: Function;
         webkitExitFullscreen?: Function;
     }

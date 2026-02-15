@@ -34,9 +34,18 @@ const PIP_MESSAGE = {
     STATE_UPDATE: 'PIP_STATE_UPDATE'
 } as const;
 
+const PIP_BROADCAST_CHANNEL = 'medistack-pip-controls';
+
 const PIP_BTN_IDS = {
     MIC: 'pip-mic-btn',
     CAM: 'pip-cam-btn'
+} as const;
+
+const PIP_ICONS = {
+    mic: '<svg width="28" height="28" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M12 1.5C9.51472 1.5 7.5 3.51472 7.5 6V12C7.5 14.4853 9.51472 16.5 12 16.5C14.4853 16.5 16.5 14.4853 16.5 12V6C16.5 3.51472 14.4853 1.5 12 1.5ZM15 12V6C15 4.34315 13.6569 3 12 3C10.3431 3 9 4.34315 9 6V12C9 13.6569 10.3431 15 12 15C13.6569 15 15 13.6569 15 12Z"/><path fill="currentColor" d="M11.25 19.463C7.46001 19.0867 4.5 15.889 4.5 12V10.5C4.5 10.0858 4.83579 9.75 5.25 9.75C5.66421 9.75 6 10.0858 6 10.5V12C6 15.3137 8.68629 18 12 18C15.3137 18 18 15.3137 18 12V10.5C18 10.0858 18.3358 9.75 18.75 9.75C19.1642 9.75 19.5 10.0858 19.5 10.5V12C19.5 15.889 16.54 19.0867 12.75 19.463V21.75C12.75 22.1642 12.4142 22.5 12 22.5C11.5858 22.5 11.25 22.1642 11.25 21.75V19.463Z"/></svg>',
+    micSlash: '<svg width="28" height="28" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M16.5 6.43934V6C16.5 3.51472 14.4853 1.5 12 1.5C9.51472 1.5 7.5 3.51472 7.5 6V12C7.5 12.9719 7.80809 13.8718 8.33194 14.6074L7.26011 15.6792C6.47031 14.6632 6 13.3865 6 12V10.5C6 10.0858 5.66421 9.75 5.25 9.75C4.83579 9.75 4.5 10.0858 4.5 10.5V12C4.5 13.801 5.13477 15.4536 6.19279 16.7465L3.21967 19.7197C2.92678 20.0126 2.92678 20.4874 3.21967 20.7803C3.51256 21.0732 3.98744 21.0732 4.28033 20.7803L20.7803 4.28033C21.0732 3.98744 21.0732 3.51256 20.7803 3.21967C20.4874 2.92678 20.0126 2.92678 19.7197 3.21967L16.5 6.43934ZM15 7.93934V6C15 4.34315 13.6569 3 12 3C10.3431 3 9 4.34315 9 6V12C9 12.5564 9.15145 13.0773 9.41536 13.524L15 7.93934Z"/></svg>',
+    video: '<svg width="28" height="28" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M17.25 16.2258V16.5C17.25 18.1569 15.9069 19.5 14.25 19.5H4.5C2.84315 19.5 1.5 18.1569 1.5 16.5V7.5C1.5 5.84315 2.84315 4.5 4.5 4.5H14.25C15.9069 4.5 17.25 5.84315 17.25 7.5V7.7742L20.0838 5.58813C21.0699 4.82739 22.5 5.53034 22.5 6.7758V17.2242C22.5 18.4697 21.0699 19.1726 20.0838 18.4119L17.25 16.2258ZM4.5 6H14.25C15.0784 6 15.75 6.67157 15.75 7.5V16.5C15.75 17.3284 15.0784 18 14.25 18H4.5C3.67157 18 3 17.3284 3 16.5V7.5C3 6.67157 3.67157 6 4.5 6Z"/></svg>',
+    videoOff: '<svg width="28" height="28" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M20.7803 3.21967C21.0732 3.51256 21.0732 3.98744 20.7803 4.28033L4.28033 20.7803C3.98744 21.0732 3.51256 21.0732 3.21967 20.7803C2.92678 20.4874 2.92678 20.0126 3.21967 19.7197L19.7197 3.21967C20.0126 2.92678 20.4874 2.92678 20.7803 3.21967Z"/><path fill="currentColor" d="M21 6.75C21 6.33579 21.3358 6 21.75 6C22.1642 6 22.5 6.33579 22.5 6.75V17.2242C22.5 18.4697 21.0699 19.1726 20.0838 18.4119L17.25 16.2258V16.5C17.25 18.1569 15.9069 19.5 14.25 19.5H9C8.58579 19.5 8.25 19.1642 8.25 18.75C8.25 18.3358 8.58579 18 9 18H14.25C15.0784 18 15.75 17.3284 15.75 16.5V12C15.75 11.5858 16.0858 11.25 16.5 11.25C16.9142 11.25 17.25 11.5858 17.25 12V14.3313L21 17.2242V6.75Z"/></svg>'
 } as const;
 
 function getDefaultPosition() {
@@ -167,13 +176,9 @@ export default function FloatingScreenSharePreview() {
         }
     }, [isSharing]);
 
-    // Handle commands from Document PiP window (mic, camera, stop share).
+    // Handle commands from Document PiP window via BroadcastChannel (works reliably across windows).
     useEffect(() => {
-        const onMessage = (event: MessageEvent) => {
-            if (event.origin !== window.location.origin || event.source !== docPipWindowRef.current) {
-                return;
-            }
-            const data = event.data as { type?: string };
+        const handlePipCommand = (data: { type?: string }) => {
             if (!data?.type) {
                 return;
             }
@@ -205,24 +210,28 @@ export default function FloatingScreenSharePreview() {
                 break;
             }
         };
-        window.addEventListener('message', onMessage);
-        return () => window.removeEventListener('message', onMessage);
+
+        const channel = new BroadcastChannel(PIP_BROADCAST_CHANNEL);
+        channel.onmessage = (e: MessageEvent) => handlePipCommand(e.data as { type?: string });
+
+        return () => channel.close();
     }, [dispatch, store]);
 
-    // Sync mic/camera state to the "keep on all tabs" (Document PiP) window so button labels stay correct.
+    // Sync mic/camera state to Document PiP window via BroadcastChannel so icons update.
     useEffect(() => {
-        const pipWin = docPipWindowRef.current;
-        if (!pipWin || !isSharing) {
+        if (!docPipWindowRef.current || !isSharing) {
             return;
         }
-        pipWin.postMessage({
+        const channel = new BroadcastChannel(PIP_BROADCAST_CHANNEL);
+        channel.postMessage({
             type: PIP_MESSAGE.STATE_UPDATE,
-            audioMuted: audioMuted,
-            videoMuted: videoMuted,
-            micLabel: audioMuted ? t('toolbar.accessibilityLabel.unmute') : t('toolbar.accessibilityLabel.mute'),
-            camLabel: videoMuted ? t('toolbar.accessibilityLabel.videounmute') : t('toolbar.accessibilityLabel.videomute')
-        }, '*');
-    }, [audioMuted, videoMuted, isSharing, t]);
+            audioMuted,
+            videoMuted,
+            micIcon: audioMuted ? 'micSlash' : 'mic',
+            camIcon: videoMuted ? 'videoOff' : 'video'
+        });
+        channel.close();
+    }, [audioMuted, videoMuted, isSharing]);
 
     // Listen for PiP enter/leave so we can show toggled state.
     useEffect(() => {
@@ -244,7 +253,7 @@ export default function FloatingScreenSharePreview() {
     }, [isSharing, desktopTrack]);
 
     const togglePreviewPiP = useCallback(async () => {
-        const docPiP = document.documentPictureInPicture;
+        const docPiP = 'documentPictureInPicture' in window ? window.documentPictureInPicture : undefined;
 
         if (docPipWindowRef.current) {
             try {
@@ -300,31 +309,46 @@ export default function FloatingScreenSharePreview() {
 
                 const toolbar = doc.createElement('div');
                 toolbar.style.display = 'flex';
-                toolbar.style.gap = '8px';
-                toolbar.style.padding = '8px';
+                toolbar.style.gap = '12px';
+                toolbar.style.padding = '12px';
                 toolbar.style.background = 'rgba(0,0,0,0.3)';
                 toolbar.style.justifyContent = 'center';
+                toolbar.style.alignItems = 'center';
                 toolbar.style.flexWrap = 'wrap';
 
-                const btnStyle = 'padding:8px 12px;border:none;border-radius:6px;cursor:pointer;background:#3a3a3c;color:#fff;font-size:13px;';
-                const stopShareLabel = t('toolbar.stopScreenSharing');
+                const btnBaseStyle = 'min-width:48px;min-height:48px;width:48px;height:48px;padding:10px;border:none;border-radius:50%;cursor:pointer;background:#3a3a3c;color:#fff;display:flex;align-items:center;justify-content:center;transition:background 0.2s;';
+                const channelName = PIP_BROADCAST_CHANNEL;
+                const state = store.getState();
+                const tracks = getTrackState(state);
+                const initialAm = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
+                const initialVm = isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
 
                 const micBtn = doc.createElement('button');
                 micBtn.id = PIP_BTN_IDS.MIC;
-                micBtn.setAttribute('style', btnStyle);
-                micBtn.onclick = () => pipWindow.opener?.postMessage({ type: PIP_MESSAGE.TOGGLE_AUDIO }, '*');
+                micBtn.setAttribute('style', btnBaseStyle);
+                micBtn.innerHTML = initialAm ? PIP_ICONS.micSlash : PIP_ICONS.mic;
+                micBtn.title = 'Mute / Unmute microphone';
+                micBtn.onclick = () => { try { new BroadcastChannel(channelName).postMessage({ type: PIP_MESSAGE.TOGGLE_AUDIO }); } catch (_) {} };
+                micBtn.onmouseover = () => { micBtn.style.background = '#4a4a4c'; };
+                micBtn.onmouseout = () => { micBtn.style.background = '#3a3a3c'; };
                 toolbar.appendChild(micBtn);
 
                 const camBtn = doc.createElement('button');
                 camBtn.id = PIP_BTN_IDS.CAM;
-                camBtn.setAttribute('style', btnStyle);
-                camBtn.onclick = () => pipWindow.opener?.postMessage({ type: PIP_MESSAGE.TOGGLE_VIDEO }, '*');
+                camBtn.setAttribute('style', btnBaseStyle);
+                camBtn.innerHTML = initialVm ? PIP_ICONS.videoOff : PIP_ICONS.video;
+                camBtn.title = 'Camera on / off';
+                camBtn.onclick = () => { try { new BroadcastChannel(channelName).postMessage({ type: PIP_MESSAGE.TOGGLE_VIDEO }); } catch (_) {} };
+                camBtn.onmouseover = () => { camBtn.style.background = '#4a4a4c'; };
+                camBtn.onmouseout = () => { camBtn.style.background = '#3a3a3c'; };
                 toolbar.appendChild(camBtn);
 
                 const stopBtn = doc.createElement('button');
-                stopBtn.textContent = stopShareLabel;
-                stopBtn.setAttribute('style', btnStyle + 'background:#e74c3c;');
-                stopBtn.onclick = () => pipWindow.opener?.postMessage({ type: PIP_MESSAGE.STOP_SCREEN_SHARE }, '*');
+                stopBtn.textContent = 'Stop';
+                stopBtn.setAttribute('style', btnBaseStyle + 'background:#e74c3c;border-radius:8px;min-width:80px;width:auto;font-size:13px;');
+                stopBtn.onclick = () => { try { new BroadcastChannel(channelName).postMessage({ type: PIP_MESSAGE.STOP_SCREEN_SHARE }); } catch (_) {} };
+                stopBtn.onmouseover = () => { stopBtn.style.background = '#c0392b'; };
+                stopBtn.onmouseout = () => { stopBtn.style.background = '#e74c3c'; };
                 toolbar.appendChild(stopBtn);
 
                 doc.body.appendChild(toolbar);
@@ -332,15 +356,16 @@ export default function FloatingScreenSharePreview() {
                 const stateScript = doc.createElement('script');
                 stateScript.textContent = `
 (function() {
-  window.addEventListener('message', function(e) {
+  var icons = ${JSON.stringify(PIP_ICONS)};
+  var ch = new BroadcastChannel('${PIP_BROADCAST_CHANNEL}');
+  ch.onmessage = function(e) {
     var d = e.data;
-    if (d && d.type === '${PIP_MESSAGE.STATE_UPDATE}') {
-      var micBtn = document.getElementById('${PIP_BTN_IDS.MIC}');
-      var camBtn = document.getElementById('${PIP_BTN_IDS.CAM}');
-      if (micBtn && d.micLabel !== undefined) micBtn.textContent = d.micLabel;
-      if (camBtn && d.camLabel !== undefined) camBtn.textContent = d.camLabel;
-    }
-  });
+    if (!d || d.type !== '${PIP_MESSAGE.STATE_UPDATE}') return;
+    var micBtn = document.getElementById('${PIP_BTN_IDS.MIC}');
+    var camBtn = document.getElementById('${PIP_BTN_IDS.CAM}');
+    if (micBtn && d.micIcon && icons[d.micIcon]) micBtn.innerHTML = icons[d.micIcon];
+    if (camBtn && d.camIcon && icons[d.camIcon]) camBtn.innerHTML = icons[d.camIcon];
+  };
 })();
 `;
                 doc.body.appendChild(stateScript);
@@ -350,13 +375,15 @@ export default function FloatingScreenSharePreview() {
                     const tracks = getTrackState(state);
                     const am = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
                     const vm = isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
-                    pipWindow.postMessage({
+                    const ch = new BroadcastChannel(PIP_BROADCAST_CHANNEL);
+                    ch.postMessage({
                         type: PIP_MESSAGE.STATE_UPDATE,
                         audioMuted: am,
                         videoMuted: vm,
-                        micLabel: am ? t('toolbar.accessibilityLabel.unmute') : t('toolbar.accessibilityLabel.mute'),
-                        camLabel: vm ? t('toolbar.accessibilityLabel.videounmute') : t('toolbar.accessibilityLabel.videomute')
-                    }, '*');
+                        micIcon: am ? 'micSlash' : 'mic',
+                        camIcon: vm ? 'videoOff' : 'video'
+                    });
+                    ch.close();
                 };
                 sendStateToPip();
 
@@ -382,7 +409,7 @@ export default function FloatingScreenSharePreview() {
         if (video) {
             video.requestPictureInPicture().catch(() => {});
         }
-    }, [desktopTrack, t]);
+    }, [desktopTrack, store, t]);
 
     if (!isSharing) {
         return null;
