@@ -68,7 +68,7 @@ body.welcome-page {
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: welcome-gradient-shift 6s ease infinite;
-            font-family: 'Inter', sans-serif;
+            font-family: Aquire, sans-serif;
             font-size: 66px;
             font-weight: 700;
             font-style: normal;
@@ -205,11 +205,10 @@ body.welcome-page {
                 min-width: 160px;
                 height: 52px;
                 padding: 14px 24px;
+                background: transparent !important;
                 background-color: transparent !important;
-                background-image: linear-gradient(#0f0f12, #0f0f12), $welcomePageGradientBg !important;
-                background-origin: border-box !important;
-                background-clip: padding-box, border-box !important;
-                border: 2px solid transparent !important;
+                background-image: none !important;
+                border: 4px solid rgba(139, 92, 246, 0.5) !important;
                 border-radius: 14px !important;
                 color: #fff !important;
                 font-family: 'Inter', sans-serif;
@@ -220,6 +219,8 @@ body.welcome-page {
                 transition: all 0.3s ease;
 
                 &:hover {
+                    background: $welcomePageGradientBg !important;
+                    border-color: transparent !important;
                     box-shadow: 0 0 24px rgba(139, 92, 246, 0.4);
                     color: rgba(255, 255, 255, 0.95);
                 }
