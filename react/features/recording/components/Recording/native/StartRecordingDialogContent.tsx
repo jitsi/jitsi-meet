@@ -53,7 +53,19 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
     _renderAdvancedOptions() {
         const { selectedRecordingService } = this.props;
 
-        if (selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE || !this._canStartTranscribing()) {
+        // 🔥 FIX: Show Advanced Options for both cloud AND local recording when transcription is available
+        // OLD LOGIC: Only showed for JITSI_REC_SERVICE (cloud recording)
+        // NEW LOGIC: Show for JITSI_REC_SERVICE OR LOCAL recording (when transcription available)
+        const canStartTranscribing = this._canStartTranscribing();
+        const isCloudRecording = selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE;
+        const isLocalRecording = selectedRecordingService === RECORDING_TYPES.LOCAL;
+        
+        // Advanced Options should show when:
+        // 1. Cloud recording is selected AND transcription is available, OR
+        // 2. Local recording is selected AND transcription is available
+        const shouldShowAdvancedOptions = (isCloudRecording || isLocalRecording) && canStartTranscribing;
+        
+        if (!shouldShowAdvancedOptions) {
             return null;
         }
 

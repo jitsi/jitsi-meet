@@ -61,11 +61,27 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
      * @returns {React$Component}
      */
     _renderAdvancedOptions() {
-        const { selectedRecordingService } = this.props;
+        const { 
+            selectedRecordingService,
+            _localRecordingEnabled,
+            _localRecordingAvailable,
+            fileRecordingsServiceEnabled
+        } = this.props;
 
-        if (selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE || !this._canStartTranscribing()) {
+        // 🔥 FIX: Decouple Advanced Options from cloud recording service
+        // Show Advanced Options when ANY recording capability exists
+        // The section contains multiple toggles that are useful independently:
+        // 1. Record Transcription (requires transcription capability)
+        // 2. Record Audio and Video (useful for any recording)
+        const hasRecordingCapability = fileRecordingsServiceEnabled || _localRecordingAvailable;
+        const canStartTranscribing = this._canStartTranscribing();
+
+        // Show Advanced Options if we have recording capability OR transcription capability
+        // This allows the audio/video toggle to be useful even without transcription
+        if (!hasRecordingCapability && !canStartTranscribing) {
             return null;
         }
+
 
         const { showAdvancedOptions } = this.state;
         const { shouldRecordAudioAndVideo, shouldRecordTranscription, t } = this.props;
