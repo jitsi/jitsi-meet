@@ -327,6 +327,7 @@ export default function FloatingScreenSharePreview() {
                 micBtn.id = PIP_BTN_IDS.MIC;
                 micBtn.setAttribute('style', btnBaseStyle);
                 micBtn.innerHTML = initialAm ? PIP_ICONS.micSlash : PIP_ICONS.mic;
+                micBtn.style.color = initialAm ? '#e74c3c' : '#fff';
                 micBtn.title = 'Mute / Unmute microphone';
                 micBtn.onclick = () => { try { new BroadcastChannel(channelName).postMessage({ type: PIP_MESSAGE.TOGGLE_AUDIO }); } catch (_) {} };
                 micBtn.onmouseover = () => { micBtn.style.background = '#4a4a4c'; };
@@ -337,6 +338,7 @@ export default function FloatingScreenSharePreview() {
                 camBtn.id = PIP_BTN_IDS.CAM;
                 camBtn.setAttribute('style', btnBaseStyle);
                 camBtn.innerHTML = initialVm ? PIP_ICONS.videoOff : PIP_ICONS.video;
+                camBtn.style.color = initialVm ? '#e74c3c' : '#fff';
                 camBtn.title = 'Camera on / off';
                 camBtn.onclick = () => { try { new BroadcastChannel(channelName).postMessage({ type: PIP_MESSAGE.TOGGLE_VIDEO }); } catch (_) {} };
                 camBtn.onmouseover = () => { camBtn.style.background = '#4a4a4c'; };
@@ -363,8 +365,8 @@ export default function FloatingScreenSharePreview() {
     if (!d || d.type !== '${PIP_MESSAGE.STATE_UPDATE}') return;
     var micBtn = document.getElementById('${PIP_BTN_IDS.MIC}');
     var camBtn = document.getElementById('${PIP_BTN_IDS.CAM}');
-    if (micBtn && d.micIcon && icons[d.micIcon]) micBtn.innerHTML = icons[d.micIcon];
-    if (camBtn && d.camIcon && icons[d.camIcon]) camBtn.innerHTML = icons[d.camIcon];
+    if (micBtn && d.micIcon && icons[d.micIcon]) { micBtn.innerHTML = icons[d.micIcon]; micBtn.style.color = d.audioMuted ? '#e74c3c' : '#fff'; }
+    if (camBtn && d.camIcon && icons[d.camIcon]) { camBtn.innerHTML = icons[d.camIcon]; camBtn.style.color = d.videoMuted ? '#e74c3c' : '#fff'; }
   };
 })();
 `;
