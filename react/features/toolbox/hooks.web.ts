@@ -68,6 +68,7 @@ import AudioSettingsButton from './components/web/AudioSettingsButton';
 import CustomOptionButton from './components/web/CustomOptionButton';
 import FullscreenButton from './components/web/FullscreenButton';
 import LinkToSalesforceButton from './components/web/LinkToSalesforceButton';
+import PictureInPictureButton from './components/web/PictureInPictureButton';
 import ProfileButton from './components/web/ProfileButton';
 import ShareDesktopButton from './components/web/ShareDesktopButton';
 import ToggleCameraButton from './components/web/ToggleCameraButton';
@@ -97,6 +98,12 @@ const profile = {
 const desktop = {
     key: 'desktop',
     Content: ShareDesktopButton,
+    group: 2
+};
+
+const pip = {
+    key: 'pip',
+    Content: PictureInPictureButton,
     group: 2
 };
 
@@ -298,6 +305,7 @@ export function useToolboxButtons(
         camera,
         profile,
         desktop: desktopSharing,
+        pip,
         chat,
         raisehand,
         reactions,

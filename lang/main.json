@@ -1360,6 +1360,7 @@
             "muteGUMPending": "Connecting your microphone",
             "noiseSuppression": "Extra noise suppression (BETA)",
             "openChat": "Open chat",
+            "keepPreviewOnAllTabs": "Keep preview on all tabs (stays visible when you switch tabs)",
             "participants": "Open participants panel. {{participantsCount}} participants",
             "pip": "Toggle Picture-in-Picture mode",
             "privateMessage": "Send private message",

@@ -27,6 +27,10 @@ declare global {
     }
 
     interface Document {
+        documentPictureInPicture?: {
+            requestWindow(options?: { width?: number; height?: number }): Promise<Window>;
+            window: Window | null;
+        };
         mozCancelFullScreen?: Function;
         webkitExitFullscreen?: Function;
     }

@@ -30,23 +30,23 @@ export const THRESHOLDS = [
     },
     {
         width: 565,
-        order: [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'reactions', 'participants-pane', 'tileview' ]
+        order: [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'reactions', 'participants-pane', 'pip', 'tileview' ]
     },
     {
         width: 520,
-        order: [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants-pane', 'tileview' ]
+        order: [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants-pane', 'pip', 'tileview' ]
     },
     {
         width: 470,
-        order: [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants-pane' ]
+        order: [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants-pane', 'pip' ]
     },
     {
         width: 420,
-        order: [ 'microphone', 'camera', 'desktop', 'chat', 'participants-pane' ]
+        order: [ 'microphone', 'camera', 'desktop', 'chat', 'participants-pane', 'pip' ]
     },
     {
         width: 370,
-        order: [ 'microphone', 'camera', 'chat', 'participants-pane' ]
+        order: [ 'microphone', 'camera', 'chat', 'participants-pane', 'pip' ]
     },
     {
         width: 225,
@@ -96,6 +96,7 @@ export const MAIN_TOOLBAR_BUTTONS_PRIORITY = [
     'raisehand',
     'reactions',
     'participants-pane',
+    'pip',
     'tileview',
     'overflowmenu',
     'hangup',
@@ -164,6 +165,7 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'mute-everyone',
     'mute-video-everyone',
     'participants-pane',
+    'pip',
     'polls',
     'profile',
     'raisehand',

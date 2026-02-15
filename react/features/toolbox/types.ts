@@ -39,6 +39,7 @@ export type ToolbarButton = 'camera' |
     'noisesuppression' |
     'overflowmenu' |
     'participants-pane' |
+    'pip' |
     'polls' |
     'profile' |
     'raisehand' |

@@ -90,4 +90,29 @@
     .hangup-button {
         margin-left: 4px;
     }
+
+    .floating-preview-pip-button {
+        align-items: center;
+        background: transparent;
+        border: none;
+        border-radius: 4px;
+        color: rgba(255, 255, 255, 0.9);
+        cursor: pointer;
+        display: flex;
+        margin: 0 4px;
+        padding: 8px;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        &.toggled {
+            color: #31b76a;
+        }
+
+        svg {
+            height: 24px;
+            width: 24px;
+        }
+    }
 }
