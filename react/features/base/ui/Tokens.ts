@@ -220,9 +220,9 @@ export const colorMap = {
 
     // Welcome Page
     welcomeBackground: 'surface01',     // Welcome page background (same as uiBackground)
-    welcomeCard: 'ui01',                // Welcome page tab bar background
+    welcomeCard: 'surface02',           // Welcome page tab bar background
     welcomeTabActive: 'icon01',         // Welcome page active tab icon
-    welcomeTabInactive: 'icon03',       // Welcome page inactive tab icon
+    welcomeTabInactive: 'ui03',         // Welcome page inactive tab icon
 
     // ----- Form Components -----
 
