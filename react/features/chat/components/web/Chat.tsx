@@ -132,7 +132,7 @@ const useStyles = makeStyles<{ _isResizing: boolean; width: number; }>()((theme,
 
             '*': {
                 userSelect: 'text',
-                '-webkit-user-select': 'text'
+                WebkitUserSelect: 'text'
             }
         },
 
