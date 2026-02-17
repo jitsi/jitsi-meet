@@ -41,6 +41,7 @@ import {
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks/actionTypes';
+import { getPropertyValue } from '../settings/functions.any';
 import { parseURIString } from '../util/uri';
 
 import {
@@ -386,11 +387,8 @@ function _conferenceJoined({ dispatch, getState }: IStore, next: Function, actio
         dispatch(overwriteConfig({ disableFocus: false }));
     }
 
-    const { enableBeforeUnloadConfirmation: configEnabled } = getState()['features/base/config'];
-    const { enableBeforeUnloadConfirmation: settingEnabled } = getState()['features/base/settings'];
-
     if (typeof window !== 'undefined') {
-        if (configEnabled || settingEnabled) {
+        if (getPropertyValue(getState, 'enableBeforeUnloadConfirmation')) {
             window.addEventListener('beforeunload', beforeUnloadHandler);
         }
         window.addEventListener('unload', unloadHandler);

@@ -48,7 +48,7 @@ const DEFAULT_STATE: ISettingsState = {
     userSelectedNotifications: {
         'notify.chatMessages': true
     },
-    enableBeforeUnloadConfirmation: false,
+    enableBeforeUnloadConfirmation: undefined,
     userSelectedMicDeviceLabel: undefined
 };
 
