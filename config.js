@@ -427,7 +427,7 @@ var config = {
         // by enabling fileRecordingsServiceEnabled, we show both the integrations
         // and the generic recording service (its configuration and storage type
         // depends on jibri configuration)
-        enabled: false,  // ✅ DISABLED for reproduction
+        enabled: false,  
 
         // Whether to show the possibility to share file recording with other people
         // (e.g. meeting participants), based on the actual implementation
@@ -447,7 +447,7 @@ var config = {
     // Local recording configuration.
     localRecording: {
         // Whether to disable local recording or not.
-        disable: false,  // ✅ ENABLED for reproduction (false = enabled)
+        disable: true, 
 
         // Whether to notify all participants when a participant is recording locally.
         notifyAllParticipants: false,
@@ -523,7 +523,7 @@ var config = {
     //     // Note: Starting transcriptions from the recording dialog will still work.
     //     disableClosedCaptions: false,
 
-    // },
+     },
 
     // Misc
 
