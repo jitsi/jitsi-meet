@@ -96,23 +96,53 @@ public class JitsiMeetActivity extends AppCompatActivity
 
     public static void addTopBottomInsets(@NonNull Window w, @NonNull View v) {
 
+        // Enable edge-to-edge mode
+        androidx.core.view.WindowCompat.setDecorFitsSystemWindows(w, false);
+
+        // Make system bars transparent so content is visible underneath
+        w.setStatusBarColor(android.graphics.Color.TRANSPARENT);
+        w.setNavigationBarColor(android.graphics.Color.TRANSPARENT);
+
         View decorView = w.getDecorView();
 
-        decorView.post(() -> {
-            WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(decorView);
-            if (insets != null) {
-                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
-                params.topMargin = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top;
-                params.bottomMargin = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
+        // Get display metrics for calculating density-independent caps
+        final android.util.DisplayMetrics metrics = v.getContext().getResources().getDisplayMetrics();
+        final int screenHeight = metrics.heightPixels;
+        final float density = metrics.density;
+
+        // Listen for window inset changes 
+        // when system bars visibility is toggled or when the device rotates
+        ViewCompat.setOnApplyWindowInsetsListener(decorView, (view, windowInsets) -> {
+
+            // Get the actual inset values reported by the system
+            int statusBarInset = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+            int navBarInset = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
+
+            // Calculate maximum allowed inset values to prevent device-specific bugs
+            final int maxTopInset = Math.min((int)(60 * density), (int)(screenHeight * 0.10));
+            final int maxBottomInset = Math.min((int)(120 * density), (int)(screenHeight * 0.10));
+
+            int topInset = Math.min(statusBarInset, maxTopInset);
+            int bottomInset = Math.min(navBarInset, maxBottomInset);
+
+            // Apply calculated insets
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+
+            // Update margins only if they've changed
+            if (params.topMargin != topInset || params.bottomMargin != bottomInset) {
+                params.topMargin = topInset;
+                params.bottomMargin = bottomInset;
                 v.setLayoutParams(params);
-
-                decorView.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-                    view.setBackgroundColor(JitsiMeetView.BACKGROUND_COLOR);
-
-                    return windowInsets;
-                });
             }
+
+            view.setBackgroundColor(JitsiMeetView.BACKGROUND_COLOR);
+
+            // Return CONSUMED to prevent double-application of margins
+            return WindowInsetsCompat.CONSUMED;
         });
+
+        // Manually trigger the inset listener to apply margins immediately
+        ViewCompat.requestApplyInsets(decorView);
     }
 
     // Overrides
@@ -136,10 +166,11 @@ public class JitsiMeetActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_jitsi_meet);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM
-            && getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-            addTopBottomInsets(getWindow(), findViewById(android.R.id.content));
-        }
+       
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM 
+        && getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            addTopBottomInsets(getWindow(), findViewById(android.R.id.content)); 
+            }
 
         this.jitsiView = findViewById(R.id.jitsiView);
 
