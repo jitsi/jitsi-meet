@@ -25,7 +25,11 @@ export const commonStyles = (theme: Theme) => {
             '--overflow-menu-item-text-color': theme.palette.overflowMenuItemText,
             '--overflow-menu-item-icon-color': theme.palette.overflowMenuItemIcon,
             '--overflow-menu-item-hover-color': theme.palette.overflowMenuItemHover,
-            '--overflow-menu-item-disabled-color': theme.palette.overflowMenuItemDisabled
+            '--overflow-menu-item-disabled-color': theme.palette.overflowMenuItemDisabled,
+            '--reactions-menu-background': theme.palette.reactionsMenuBackground,
+            '--reactions-menu-button-toggled': theme.palette.reactionsMenuButtonToggled,
+            '--reactions-menu-box-shadow-1': theme.palette.reactionsMenuBoxShadow1,
+            '--reactions-menu-box-shadow-2': theme.palette.reactionsMenuBoxShadow2
         },
 
         '.empty-list': {
