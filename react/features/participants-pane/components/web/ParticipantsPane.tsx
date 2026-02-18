@@ -54,7 +54,7 @@ const useStyles = makeStyles<IStylesProps>()((theme, { isChatOpen }) => {
             fontWeight: 600,
             height: '100%',
 
-            [[ '& > *:first-child', '& > *:last-child' ] as any]: {
+            [[ '& > *:first-of-type', '& > *:last-of-type' ] as any]: {
                 flexShrink: 0
             },
 
@@ -116,11 +116,11 @@ const useStyles = makeStyles<IStylesProps>()((theme, { isChatOpen }) => {
         antiCollapse: {
             fontSize: 0,
 
-            '&:first-child': {
+            '&:first-of-type': {
                 display: 'none'
             },
 
-            '&:first-child + *': {
+            '&:first-of-type + *': {
                 marginTop: 0
             }
         },
