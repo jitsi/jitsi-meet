@@ -313,6 +313,9 @@ export interface IPalette {
     pollsVotersText: string;
     reactionsMenuBackground: string;
     reactionsMenuBorder: string;
+    reactionsMenuButtonToggled: string;
+    reactionsMenuBoxShadow1: string;
+    reactionsMenuBoxShadow2: string;
     recordingBackground: string;
     recordingHighlightButton: string;
     recordingHighlightButtonDisabled: string;
