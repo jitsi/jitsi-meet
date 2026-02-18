@@ -8,7 +8,7 @@ import { conferenceLeft } from '../conference/actions.native';
 import { setJWT } from '../jwt/actions';
 import { JitsiConnectionErrors } from '../lib-jitsi-meet';
 
-import { _connectInternal, disconnect } from './actions.native';
+import { _connectInternal } from './actions.native';
 import logger from './logger';
 
 export * from './actions.any';
