@@ -63,7 +63,6 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
     const roomName = useSelector((state: IReduxState) => getConferenceName(state));
     const roomNameEnabled = useSelector((state: IReduxState) => isRoomNameEnabled(state));
     const { showHangUp: showHangUpLobby = true } = useSelector((state: IReduxState) => getLobbyConfig(state));
-    const { showHangUp: showHangUpPrejoin = true } = useSelector((state: IReduxState) => state['features/base/config'].prejoinConfig || {});
     const { knocking } = useSelector((state: IReduxState) => state['features/lobby']);
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
@@ -187,7 +186,7 @@ const Prejoin: React.FC<IPrejoinProps> = ({ navigation }: IPrejoinProps) => {
                     <VideoMuteButton
                         styles = { styles.buttonStylesBorderless } />
                     {
-                        (knocking ? showHangUpLobby : showHangUpPrejoin)
+                        knocking && showHangUpLobby
                         && <HangupButton
                             styles = { styles.buttonStylesBorderless } />
                     }
