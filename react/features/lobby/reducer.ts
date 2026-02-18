@@ -70,7 +70,6 @@ ReducerRegistry.register<ILobbyState>('features/lobby', (state = DEFAULT_STATE, 
     }
     case CONFERENCE_JOINED:
     case CONFERENCE_LEFT:
-    case CONFERENCE_WILL_LEAVE:
         return {
             ...state,
             isDisplayNameRequiredError: false,
