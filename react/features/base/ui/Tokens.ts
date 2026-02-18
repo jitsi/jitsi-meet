@@ -356,6 +356,9 @@ export const colorMap = {
     // Reactions
     reactionsMenuBackground: 'ui01',         // Reactions menu background
     reactionsMenuBorder: 'ui02',             // Reactions menu border
+    reactionsMenuButtonToggled: 'surface01', // Reactions menu button toggled state background
+    reactionsMenuBoxShadow1: 'ui09',         // Reactions menu box shadow primary
+    reactionsMenuBoxShadow2: 'ui08',         // Reactions menu box shadow secondary
 
     // Recording / Live Stream
     recordingBackground: 'ui01',             // Recording panel background
@@ -428,7 +431,7 @@ export const colorMap = {
     securityDialogBorder: 'ui07',            // Security dialog border color
 
     // Deep Linking
-    deepLinkingBackground: 'ui01',           // Deep linking page content pane background
+    deepLinkingBackground: 'uiBackground',   // Deep linking page content pane background (#1e1e1e)
     deepLinkingBorder: 'ui03',               // Deep linking page content pane border
     deepLinkingText: 'text01',               // Deep linking page text
     deepLinkingSeparator: 'ui03',            // Deep linking separator line

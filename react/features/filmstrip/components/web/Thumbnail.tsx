@@ -353,7 +353,7 @@ const defaultStyles = (theme: Theme) => {
 
         tintBackground: {
             position: 'absolute' as const,
-            zIndex: 1,
+            zIndex: 0,
             width: '100%',
             height: '100%',
             backgroundColor: theme.palette.thumbnailTintBackground,
