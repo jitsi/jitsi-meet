@@ -13,23 +13,25 @@ export const commonStyles = (theme: Theme) => {
     return {
         ':root': {
             // Inject semantic tokens as CSS custom properties for use in SCSS
-            '--toolbox-background-color': theme.palette.toolboxBackground,
             '--drawer-background-color': theme.palette.drawerBackground,
+            '--icon-svg-fill': theme.palette.iconSvgFill,
+            '--overflow-menu-background-color': theme.palette.overflowMenuBackground,
+            '--overflow-menu-item-disabled-color': theme.palette.overflowMenuItemDisabled,
+            '--overflow-menu-item-hover-color': theme.palette.overflowMenuItemHover,
+            '--overflow-menu-item-icon-color': theme.palette.overflowMenuItemIcon,
+            '--overflow-menu-item-text-color': theme.palette.overflowMenuItemText,
+            '--prejoin-preview-background': theme.palette.prejoinPreviewBackground,
+            '--reactions-menu-background': theme.palette.reactionsMenuBackground,
+            '--reactions-menu-box-shadow-1': theme.palette.reactionsMenuBoxShadow1,
+            '--reactions-menu-box-shadow-2': theme.palette.reactionsMenuBoxShadow2,
+            '--reactions-menu-button-toggled': theme.palette.reactionsMenuButtonToggled,
+            '--toolbar-button-active-color': theme.palette.toolbarButtonActive,
             '--toolbar-button-color': theme.palette.toolbarButton,
             '--toolbar-button-hover-color': theme.palette.toolbarButtonHover,
-            '--toolbar-button-active-color': theme.palette.toolbarButtonActive,
+            '--toolbar-icon-active-color': theme.palette.toolbarIconActive,
             '--toolbar-icon-color': theme.palette.toolbarIcon,
             '--toolbar-icon-hover-color': theme.palette.toolbarIconHover,
-            '--toolbar-icon-active-color': theme.palette.toolbarIconActive,
-            '--overflow-menu-background-color': theme.palette.overflowMenuBackground,
-            '--overflow-menu-item-text-color': theme.palette.overflowMenuItemText,
-            '--overflow-menu-item-icon-color': theme.palette.overflowMenuItemIcon,
-            '--overflow-menu-item-hover-color': theme.palette.overflowMenuItemHover,
-            '--overflow-menu-item-disabled-color': theme.palette.overflowMenuItemDisabled,
-            '--reactions-menu-background': theme.palette.reactionsMenuBackground,
-            '--reactions-menu-button-toggled': theme.palette.reactionsMenuButtonToggled,
-            '--reactions-menu-box-shadow-1': theme.palette.reactionsMenuBoxShadow1,
-            '--reactions-menu-box-shadow-2': theme.palette.reactionsMenuBoxShadow2
+            '--toolbox-background-color': theme.palette.toolboxBackground
         },
 
         '.empty-list': {

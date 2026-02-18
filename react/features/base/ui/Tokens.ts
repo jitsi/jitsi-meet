@@ -155,6 +155,7 @@ export const colorMap = {
     preMeetingBackground: 'surface02',  // Pre-meeting screen container background
     preMeetingPreview: 'ui01',          // Video preview in pre-meeting
     prejoinDialogBackground: 'uiBackground', // Prejoin dialog background
+    prejoinPreviewBackground: 'uiBackground', // Prejoin video preview background (#040404)
     prejoinDialogDelimiter: 'ui03',     // Prejoin dialog delimiter line
     prejoinDialogDelimiterText: 'text01', // Prejoin dialog delimiter text
     prejoinTitleText: 'text01',         // Prejoin title text color
@@ -507,6 +508,9 @@ export const colorMap = {
 
     // High-contrast
     icon04: 'surface01',
+
+    // SVG fill color
+    iconSvgFill: 'icon01',
 
     // Error
     iconError: 'action03',
