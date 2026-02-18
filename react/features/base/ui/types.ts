@@ -26,6 +26,7 @@ export interface IPalette {
     icon02: string;
     icon03: string;
     icon04: string;
+    iconSvgFill: string;
     iconError: string;
     link01: string;
     link01Active: string;
@@ -153,6 +154,7 @@ export interface IPalette {
     prejoinDialogBackground: string;
     prejoinDialogDelimiter: string;
     prejoinDialogDelimiterText: string;
+    prejoinPreviewBackground: string;
     prejoinRecordingWarningText: string;
     prejoinRoomNameText: string;
     prejoinTitleText: string;
