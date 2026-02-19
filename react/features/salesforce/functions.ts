@@ -1,6 +1,18 @@
 import { IReduxState } from '../app/types';
-import { doGetJSON } from '../base/util/httpUtils';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
+
+import {
+    IAccountMatch,
+    IConfirmAccountResult,
+    IConfirmDealResult,
+    IContactMatch,
+    ILeadMatch,
+    ILinkResult,
+    IOpportunityMatch,
+    ISalesforceData,
+    ISearchResults,
+    SalesforceObjectType
+} from './types';
 
 /**
  * Determines whether Salesforce is enabled for the current conference.
@@ -17,98 +29,188 @@ export const isSalesforceEnabled = (state: IReduxState) => {
 };
 
 /**
- * Fetches the Salesforce records that were most recently interacted with.
+ * Helper to make authenticated requests to the meet-metrics API.
  *
- * @param {string} url - The endpoint for the session records.
- * @param {string} jwt - The JWT needed for authentication.
+ * @param {string} url - The full URL to fetch.
+ * @param {string} jwt - The JWT token for authentication.
+ * @param {RequestInit} options - Additional fetch options.
  * @returns {Promise<any>}
  */
-export async function getRecentSessionRecords(
-        url: string,
-        jwt: string
-) {
-    return doGetJSON(`${url}/records/recents`, true, {
-        headers: {
-            'Authorization': `Bearer ${jwt}`
-        }
-    });
-}
-
-/**
- * Fetches the Salesforce records that match the search criteria.
- *
- * @param {string} url - The endpoint for the session records.
- * @param {string} jwt - The JWT needed for authentication.
- * @param {string} text - The search term for the session record to find.
- * @returns {Promise<any>}
- */
-export async function searchSessionRecords(
-        url: string,
-        jwt: string,
-        text: string
-) {
-    return doGetJSON(`${url}/records?text=${text}`, true, {
-        headers: {
-            'Authorization': `Bearer ${jwt}`
-        }
-    });
-}
-
-/**
-* Fetches the Salesforce record details from the server.
-*
-* @param {string} url - The endpoint for the record details.
-* @param {string} jwt - The JWT needed for authentication.
-* @param {Object} item - The item for which details are being retrieved.
-* @returns {Promise<any>}
-*/
-export async function getSessionRecordDetails(
-        url: string,
-        jwt: string,
-        item: {
-            id: string;
-            type: string;
-        } | null
-) {
-    const fullUrl = `${url}/records/${item?.id}?type=${item?.type}`;
-
-    return doGetJSON(fullUrl, true, {
-        headers: {
-            'Authorization': `Bearer ${jwt}`
-        }
-    });
-}
-
-/**
-* Executes the meeting linking.
-*
-* @param {string} url - The endpoint for meeting linking.
-* @param {string} jwt - The JWT needed for authentication.
-* @param {string} sessionId - The ID of the meeting session.
-* @param {Object} body - The body of the request.
-* @returns {Object}
-*/
-export async function executeLinkMeetingRequest(
-        url: string,
-        jwt: string,
-        sessionId: String,
-        body: {
-            id?: string;
-            notes: string;
-            type?: string;
-        }
-) {
-    const fullUrl = `${url}/sessions/${sessionId}/records/${body.id}`;
-    const res = await fetch(fullUrl, {
-        method: 'PUT',
+async function fetchWithAuth(url: string, jwt: string, options: RequestInit = {}): Promise<any> {
+    const res = await fetch(url, {
+        ...options,
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwt}`
-        },
-        body: JSON.stringify(body)
+            'Authorization': `Bearer ${jwt}`,
+            ...options.headers
+        }
     });
 
     const json = await res.json();
 
     return res.ok ? json : Promise.reject(json);
+}
+
+/**
+ * Fetches the Salesforce data for a session including current links and pending suggestions.
+ *
+ * @param {string} url - The base URL for the meet-metrics API.
+ * @param {string} jwt - The JWT needed for authentication.
+ * @param {string} sessionId - The meeting session ID.
+ * @returns {Promise<ISalesforceData>}
+ */
+export async function getSessionSalesforceData(
+        url: string,
+        jwt: string,
+        sessionId: string
+): Promise<ISalesforceData> {
+    const response = await fetchWithAuth(`${url}/api/sessions/crm`, jwt, {
+        method: 'POST',
+        body: JSON.stringify({ sessionIds: [ sessionId ] })
+    });
+
+    // Extract data for this specific session from the batch response
+    const sessionData = response?.crmDataBySession?.[sessionId]?.salesforce;
+
+    return sessionData || null;
+}
+
+/**
+ * Searches Salesforce objects (Accounts, Leads, Contacts, Opportunities).
+ *
+ * @param {string} url - The base URL for the meet-metrics API.
+ * @param {string} jwt - The JWT needed for authentication.
+ * @param {string} query - The search query (minimum 2 characters).
+ * @returns {Promise<ISearchResults>}
+ */
+export async function searchSalesforce(
+        url: string,
+        jwt: string,
+        query: string
+): Promise<ISearchResults> {
+    return fetchWithAuth(`${url}/api/salesforce/search?q=${encodeURIComponent(query)}`, jwt);
+}
+
+/**
+ * Links a session to a Salesforce object.
+ *
+ * @param {string} url - The base URL for the meet-metrics API.
+ * @param {string} jwt - The JWT needed for authentication.
+ * @param {string} sessionId - The meeting session ID.
+ * @param {SalesforceObjectType} type - The type of Salesforce object.
+ * @param {Object} data - The match data for the object.
+ * @returns {Promise<ILinkResult>}
+ */
+export async function linkSession(
+        url: string,
+        jwt: string,
+        sessionId: string,
+        type: SalesforceObjectType,
+        data: IAccountMatch | ILeadMatch | IContactMatch | IOpportunityMatch
+): Promise<ILinkResult> {
+    return fetchWithAuth(`${url}/api/salesforce/sessions/${sessionId}/link`, jwt, {
+        method: 'POST',
+        body: JSON.stringify({ type, data })
+    });
+}
+
+/**
+ * Confirms a pending account match and auto-links the best opportunity.
+ *
+ * @param {string} url - The base URL for the meet-metrics API.
+ * @param {string} jwt - The JWT needed for authentication.
+ * @param {string} sessionId - The meeting session ID.
+ * @param {string} accountId - The Salesforce Account ID to confirm.
+ * @returns {Promise<IConfirmAccountResult>}
+ */
+export async function confirmPendingAccount(
+        url: string,
+        jwt: string,
+        sessionId: string,
+        accountId: string
+): Promise<IConfirmAccountResult> {
+    return fetchWithAuth(`${url}/api/salesforce/sessions/${sessionId}/confirm-account`, jwt, {
+        method: 'POST',
+        body: JSON.stringify({ accountId })
+    });
+}
+
+/**
+ * Rejects all pending account matches for a session.
+ *
+ * @param {string} url - The base URL for the meet-metrics API.
+ * @param {string} jwt - The JWT needed for authentication.
+ * @param {string} sessionId - The meeting session ID.
+ * @returns {Promise<ILinkResult>}
+ */
+export async function rejectPendingAccounts(
+        url: string,
+        jwt: string,
+        sessionId: string
+): Promise<ILinkResult> {
+    return fetchWithAuth(`${url}/api/salesforce/sessions/${sessionId}/pending-accounts`, jwt, {
+        method: 'DELETE'
+    });
+}
+
+/**
+ * Confirms a pending deal match.
+ *
+ * @param {string} url - The base URL for the meet-metrics API.
+ * @param {string} jwt - The JWT needed for authentication.
+ * @param {string} sessionId - The meeting session ID.
+ * @param {string} opportunityId - The Salesforce Opportunity ID to confirm.
+ * @returns {Promise<IConfirmDealResult>}
+ */
+export async function confirmPendingDeal(
+        url: string,
+        jwt: string,
+        sessionId: string,
+        opportunityId: string
+): Promise<IConfirmDealResult> {
+    return fetchWithAuth(`${url}/api/salesforce/sessions/${sessionId}/confirm-deal`, jwt, {
+        method: 'POST',
+        body: JSON.stringify({ opportunityId })
+    });
+}
+
+/**
+ * Rejects all pending deal matches for a session.
+ *
+ * @param {string} url - The base URL for the meet-metrics API.
+ * @param {string} jwt - The JWT needed for authentication.
+ * @param {string} sessionId - The meeting session ID.
+ * @returns {Promise<ILinkResult>}
+ */
+export async function rejectPendingDeals(
+        url: string,
+        jwt: string,
+        sessionId: string
+): Promise<ILinkResult> {
+    return fetchWithAuth(`${url}/api/salesforce/sessions/${sessionId}/pending-deals`, jwt, {
+        method: 'DELETE'
+    });
+}
+
+/**
+ * Unlinks a Salesforce object from a session.
+ *
+ * @param {string} url - The base URL for the meet-metrics API.
+ * @param {string} jwt - The JWT needed for authentication.
+ * @param {string} sessionId - The meeting session ID.
+ * @param {SalesforceObjectType} type - The type of Salesforce object to unlink.
+ * @param {string} id - The Salesforce object ID to unlink.
+ * @returns {Promise<ILinkResult>}
+ */
+export async function unlinkSession(
+        url: string,
+        jwt: string,
+        sessionId: string,
+        type: SalesforceObjectType,
+        id: string
+): Promise<ILinkResult> {
+    return fetchWithAuth(`${url}/api/salesforce/sessions/${sessionId}/link`, jwt, {
+        method: 'DELETE',
+        body: JSON.stringify({ type, id })
+    });
 }
