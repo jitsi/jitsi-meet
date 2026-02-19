@@ -2,7 +2,6 @@ import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
-    CONFERENCE_WILL_LEAVE,
     SET_PASSWORD
 } from '../base/conference/actionTypes';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
