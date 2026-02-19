@@ -19,7 +19,6 @@ import { navigate }
     from '../../../mobile/navigation/components/lobby/LobbyNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { preJoinStyles } from '../../../prejoin/components/native/styles';
-import HangupButton from '../../../toolbox/components/HangupButton';
 import AudioMuteButton from '../../../toolbox/components/native/AudioMuteButton';
 import VideoMuteButton from '../../../toolbox/components/native/VideoMuteButton';
 import AbstractLobbyScreen, {
@@ -221,19 +220,12 @@ class LobbyScreen extends AbstractLobbyScreen<IProps> {
      * @inheritdoc
      */
     _renderToolbarButtons() {
-        const { _hangUp } = this.props;
-
         return (
             <View style = { preJoinStyles.toolboxContainer as ViewStyle }>
                 <AudioMuteButton
                     styles = { preJoinStyles.buttonStylesBorderless } />
                 <VideoMuteButton
                     styles = { preJoinStyles.buttonStylesBorderless } />
-                {
-                    _hangUp
-                    && <HangupButton
-                        styles = { preJoinStyles.buttonStylesBorderless } />
-                }
             </View>
         );
     }
