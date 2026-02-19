@@ -336,6 +336,7 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
     const result = next(action);
 
     if (error.name === JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED) {
+        dispatch(hideLobbyScreen());
         dispatch(
             showNotification({
                 appearance: NOTIFICATION_TYPE.ERROR,

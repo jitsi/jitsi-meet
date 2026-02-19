@@ -227,7 +227,8 @@ class Conference extends AbstractConference<IProps, State> {
         const {
             _audioOnlyEnabled,
             _showLobby,
-            _startCarMode
+            _startCarMode,
+            navigation
         } = this.props;
 
         if (!prevProps._showLobby && _showLobby) {
@@ -236,10 +237,10 @@ class Conference extends AbstractConference<IProps, State> {
 
         if (prevProps._showLobby && !_showLobby) {
             if (_audioOnlyEnabled && _startCarMode) {
-                return;
+                navigation.navigate(screen.conference.carmode);
+            } else {
+                navigate(screen.conference.main);
             }
-
-            navigate(screen.conference.main);
         }
     }
 
