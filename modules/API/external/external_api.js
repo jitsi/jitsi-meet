@@ -775,7 +775,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      *
      * @deprecated
-     * NOTE: This method is not removed for backward comatability purposes.
+     * NOTE: This method is not removed for backward compatability purposes.
      */
     addEventListener(event, listener) {
         this.on(event, listener);
@@ -862,7 +862,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      *
      * @deprecated
-     * NOTE: This method is not removed for backward comatability purposes.
+     * NOTE: This method is not removed for backward compatability purposes.
      */
     addEventListeners(listeners) {
         for (const event in listeners) { // eslint-disable-line guard-for-in
@@ -1413,7 +1413,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      *
      * @deprecated
-     * NOTE: This method is not removed for backward comatability purposes.
+     * NOTE: This method is not removed for backward compatability purposes.
      */
     removeEventListener(event) {
         this.removeAllListeners(event);
@@ -1426,7 +1426,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      *
      * @deprecated
-     * NOTE: This method is not removed for backward comatability purposes.
+     * NOTE: This method is not removed for backward compatability purposes.
      */
     removeEventListeners(eventList) {
         eventList.forEach(event => this.removeEventListener(event));
