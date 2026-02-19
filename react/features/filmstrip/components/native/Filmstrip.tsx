@@ -10,7 +10,6 @@ import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { getHideSelfView } from '../../../base/settings/functions.any';
 import { isToolboxVisible } from '../../../toolbox/functions.native';
 import { setVisibleRemoteParticipants } from '../../actions.native';
-import { calculateFullyVisibleParticipantsCount } from '../../functions.any';
 import {
     getFilmstripDimensions,
     isFilmstripVisible,
@@ -191,7 +190,7 @@ class Filmstrip extends PureComponent<IProps> {
      * @returns {void}
      */
     _onViewableItemsChanged({ viewableItems = [] }: { viewableItems: ViewToken[]; }) {
-        const { _aspectRatio, _clientWidth, _clientHeight, _disableSelfView } = this.props;
+        const { _disableSelfView } = this.props;
 
         if (!this._separateLocalThumbnail && !_disableSelfView && viewableItems[0]?.index === 0) {
             // Skip the local thumbnail.
@@ -206,31 +205,13 @@ class Filmstrip extends PureComponent<IProps> {
         let startIndex = Number(viewableItems[0].index);
         let endIndex = Number(viewableItems[viewableItems.length - 1].index);
 
-        // Calculate fully visible count (excluding partially visible tiles)
-        const isNarrowAspectRatio = _aspectRatio === ASPECT_RATIO_NARROW;
-        const { height: thumbnailHeight, width: thumbnailWidth, margin } = styles.thumbnail;
-        const { height, width } = this._getDimensions();
-
-        // Calculate item size and container size based on layout orientation
-        const itemSize = isNarrowAspectRatio
-            ? thumbnailWidth + (2 * margin) // Horizontal layout
-            : thumbnailHeight + (2 * margin); // Vertical layout
-        const containerSize = isNarrowAspectRatio ? width : height;
-
-        const fullyVisibleCount = calculateFullyVisibleParticipantsCount(
-            startIndex,
-            endIndex,
-            containerSize,
-            itemSize
-        );
-
         if (!this._separateLocalThumbnail && !_disableSelfView) {
             // We are off by one in the remote participants array.
             startIndex -= 1;
             endIndex -= 1;
         }
 
-        this.props.dispatch(setVisibleRemoteParticipants(startIndex, endIndex, fullyVisibleCount));
+        this.props.dispatch(setVisibleRemoteParticipants(startIndex, endIndex));
     }
 
     /**
