@@ -157,7 +157,8 @@ ReducerRegistry.register<IParticipantsState>('features/base/participants',
         const { participant } = action;
         const { id, previousSpeakers = [] } = participant;
         const { dominantSpeaker, local } = state;
-        const activeSpeakers = new Set(previousSpeakers.filter((speakerId: string) => speakerId !== local?.id));
+        const activeSpeakers = new Set(previousSpeakers
+            .filter((speakerId: string) => state.remote.has(speakerId) && (speakerId !== local?.id)));
 
         // Only one dominant speaker is allowed.
         if (dominantSpeaker) {
