@@ -244,11 +244,11 @@ const AudioSettingsContent = ({
      * @returns {void}
      */
     const _setTracks = async () => {
-        if (browser.isWebKitBased()) {
-
+        if (!measureAudioLevels || browser.isWebKitBased()) {
             // It appears that at the time of this writing, creating audio tracks blocks the browser's main thread for
             // long time on safari. Wasn't able to confirm which part of track creation does the blocking exactly, but
             // not creating the tracks seems to help and makes the UI much more responsive.
+            // Also skip when audio levels are disabled to avoid activating all microphones unnecessarily.
             return;
         }
 
