@@ -103,7 +103,8 @@
     margin: 8px 0;
 }
 
-div.hangup-button {
+div.hangup-button,
+div.hangup-menu-button {
     background-color: #FE9C75;
     border-radius: 50%;
 
@@ -130,10 +131,6 @@ div.hangup-button {
             background-color: #fff;
         }
     }
-}
-
-div.hangup-menu-button {
-    border-radius: 50%;
 }
 
 .profile-button-avatar {
