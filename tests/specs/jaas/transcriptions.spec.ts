@@ -86,6 +86,7 @@ for (const asyncTranscriptions of asyncTranscriptionValues) {
             // we need to clear results or the last one will be used, from the previous time subtitles were on
             await p1.getIframeAPI().clearEventResults('transcriptionChunkReceived');
             await p2.getIframeAPI().clearEventResults('transcriptionChunkReceived');
+            webhooksProxy.clearCache();
 
             await p1.getIframeAPI().executeCommand('setSubtitles', true, true);
 
