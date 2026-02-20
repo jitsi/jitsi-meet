@@ -72,10 +72,19 @@ for (const asyncTranscriptions of asyncTranscriptionValues) {
 
             await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
             await p1.getIframeAPI().addEventListener('transcribingStatusChanged');
+            await p2.getIframeAPI().clearEventResults('transcribingStatusChanged');
+            await p2.getIframeAPI().addEventListener('transcribingStatusChanged');
 
             await p1.getIframeAPI().executeCommand('toggleSubtitles');
 
             await p1.driver.waitUntil(() => p1.getIframeAPI()
+                .getEventResult('transcribingStatusChanged'), {
+                timeout: 15000,
+                timeoutMsg: 'transcribingStatusChanged event not received by p1'
+            });
+            // The p1 event can be triggered locally, resulting in the code below executing prematurely. Make sure
+            // transcription is indeed stopped on the backend before proceeding.
+            await p2.driver.waitUntil(() => p2.getIframeAPI()
                 .getEventResult('transcribingStatusChanged'), {
                 timeout: 15000,
                 timeoutMsg: 'transcribingStatusChanged event not received by p1'
@@ -93,10 +102,20 @@ for (const asyncTranscriptions of asyncTranscriptionValues) {
             await checkReceivingChunks(p1, p2, webhooksProxy, asyncTranscriptions);
 
             await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
+            await p1.getIframeAPI().addEventListener('transcribingStatusChanged');
+            await p2.getIframeAPI().clearEventResults('transcribingStatusChanged');
+            await p2.getIframeAPI().addEventListener('transcribingStatusChanged');
 
             await p1.getIframeAPI().executeCommand('setSubtitles', false);
 
             await p1.driver.waitUntil(() => p1.getIframeAPI()
+                .getEventResult('transcribingStatusChanged'), {
+                timeout: 15000,
+                timeoutMsg: 'transcribingStatusChanged event not received by p1'
+            });
+            // The p1 event can be triggered locally, resulting in the code below executing prematurely. Make sure
+            // transcription is indeed stopped on the backend before proceeding.
+            await p2.driver.waitUntil(() => p2.getIframeAPI()
                 .getEventResult('transcribingStatusChanged'), {
                 timeout: 15000,
                 timeoutMsg: 'transcribingStatusChanged event not received by p1'
