@@ -40,7 +40,7 @@ export default class WebhookProxy {
 
         this.ws.on('open', () => {
             console.log('WebhookProxy connected');
-            this.logInfo('connected')
+            this.logInfo('connected');
         });
 
         this.ws.on('message', (data: any) => {
