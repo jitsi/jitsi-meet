@@ -6,7 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import { loginWithPopup } from '../../../authentication/actions.web';
-import { getTokenAuthUrl, isTokenAuthInline } from '../../../authentication/functions.web';
+import { getTokenAuthUrl, isTokenAuthEnabled, isTokenAuthInline } from '../../../authentication/functions.web';
 import Avatar from '../../../base/avatar/components/Avatar';
 import { IConfig } from '../../../base/config/configType';
 import { isNameReadOnly } from '../../../base/config/functions.web';
@@ -570,9 +570,10 @@ function mapStateToProps(state: IReduxState) {
     const { unsafeRoomConsent } = state['features/base/premeeting'];
     const config = state['features/base/config'];
     const { showPrejoinWarning: showRecordingWarning } = config.recordings ?? {};
-    const preTokenAuthenticate = !browser.isElectron() && config.tokenAuthUrl
+    const preTokenAuthenticate = !browser.isElectron()
+        && isTokenAuthEnabled(state)
         && config.tokenAuthUrlAutoRedirect && state['features/authentication'].tokenAuthUrlSuccessful
-        && !state['features/base/jwt'].jwt && room;
+        && !state['features/base/jwt'].jwt && room; // skip if jaas
     const { locationURL = { href: '' } as URL } = state['features/base/connection'];
 
     return {

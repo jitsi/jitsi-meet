@@ -1,15 +1,21 @@
+import { IReduxState } from '../app/types';
 import { IConfig } from '../base/config/configType';
 import { parseURLParams } from '../base/util/parseURLParams';
 import { getBackendSafeRoomName } from '../base/util/uri';
+import { isVpaasMeeting } from '../jaas/functions';
 
 /**
- * Checks if the token for authentication is available.
+ * Checks if the token for authentication URL is available and the meeting is not jaas.
  *
- * @param {Object} config - Configuration state object from store.
+ * @param {IReduxState} state - The state of the app.
  * @returns {boolean}
  */
-export const isTokenAuthEnabled = (config: IConfig): boolean =>
-    typeof config.tokenAuthUrl === 'string' && config.tokenAuthUrl.length > 0;
+export const isTokenAuthEnabled = (state: IReduxState): boolean => {
+    const config = state['features/base/config'];
+
+    return typeof config.tokenAuthUrl === 'string' && config.tokenAuthUrl.length > 0
+        && !isVpaasMeeting(state);
+};
 
 /**
  * Checks if the token authentication should be done inline.

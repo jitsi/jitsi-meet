@@ -130,7 +130,7 @@ MiddlewareRegistry.register(store => next => action => {
         const state = getState();
         const config = state['features/base/config'];
 
-        if (isTokenAuthEnabled(config)
+        if (isTokenAuthEnabled(state)
             && config.tokenAuthUrlAutoRedirect
             && state['features/base/jwt'].jwt) {
             // auto redirect is turned on and we have successfully logged in
@@ -300,7 +300,7 @@ function _handleLogin({ dispatch, getState }: IStore) {
         return;
     }
 
-    if (!isTokenAuthEnabled(config)) {
+    if (!isTokenAuthEnabled(state)) {
         dispatch(openLoginDialog());
 
         return;

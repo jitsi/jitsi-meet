@@ -113,7 +113,7 @@ export function maybeRedirectToTokenAuthUrl(
     const audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
     const videoMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO);
 
-    if (!isTokenAuthEnabled(config)) {
+    if (!isTokenAuthEnabled(state)) {
         return false;
     }
 

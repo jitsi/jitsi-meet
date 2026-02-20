@@ -74,7 +74,7 @@ export function openLogoutDialog() {
 
         dispatch(openDialog('LogoutDialog', LogoutDialog, {
             onLogout() {
-                if (isTokenAuthEnabled(config) && config.tokenAuthUrlAutoRedirect && jwt) {
+                if (isTokenAuthEnabled(state) && config.tokenAuthUrlAutoRedirect && jwt) {
 
                     // user is logging out remove auto redirect indication
                     dispatch(setTokenAuthUrlSuccess(false));

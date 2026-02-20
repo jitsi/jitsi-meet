@@ -5,7 +5,7 @@ import { AnyAction } from 'redux';
 import { IStore } from '../../app/types';
 import { loginWithPopup } from '../../authentication/actions';
 import LoginQuestionDialog from '../../authentication/components/web/LoginQuestionDialog';
-import { getTokenAuthUrl, isTokenAuthInline } from '../../authentication/functions';
+import { getTokenAuthUrl, isTokenAuthEnabled, isTokenAuthInline } from '../../authentication/functions';
 import { isVpaasMeeting } from '../../jaas/functions';
 import { hideNotification, showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../notifications/constants';
@@ -61,7 +61,7 @@ MiddlewareRegistry.register(store => next => action => {
         const jwt = state['features/base/jwt'].jwt;
         const refreshToken = state['features/base/jwt'].refreshToken;
 
-        if (typeof APP !== 'undefined' && jwt) {
+        if (typeof APP !== 'undefined' && jwt && isTokenAuthEnabled(state)) {
             const { connection, locationURL = { href: '' } as URL } = state['features/base/connection'];
             const { tenant } = parseURIString(locationURL.href) || {};
             const room = state['features/base/conference'].room;
