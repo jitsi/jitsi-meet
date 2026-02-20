@@ -27,14 +27,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.facebook.react.modules.core.PermissionListener;
@@ -103,46 +101,13 @@ public class JitsiMeetActivity extends AppCompatActivity
         w.setStatusBarColor(android.graphics.Color.TRANSPARENT);
         w.setNavigationBarColor(android.graphics.Color.TRANSPARENT);
 
-        View decorView = w.getDecorView();
-
-        // Get display metrics for calculating density-independent caps
-        final android.util.DisplayMetrics metrics = v.getContext().getResources().getDisplayMetrics();
-        final int screenHeight = metrics.heightPixels;
-        final float density = metrics.density;
-
-        // Listen for window inset changes 
-        // when system bars visibility is toggled or when the device rotates
-        ViewCompat.setOnApplyWindowInsetsListener(decorView, (view, windowInsets) -> {
-
-            // Get the actual inset values reported by the system
-            int statusBarInset = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
-            int navBarInset = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
-
-            // Calculate maximum allowed inset values to prevent device-specific bugs
-            final int maxTopInset = Math.min((int)(60 * density), (int)(screenHeight * 0.10));
-            final int maxBottomInset = Math.min((int)(120 * density), (int)(screenHeight * 0.10));
-
-            int topInset = Math.min(statusBarInset, maxTopInset);
-            int bottomInset = Math.min(navBarInset, maxBottomInset);
-
-            // Apply calculated insets
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
-
-            // Update margins only if they've changed
-            if (params.topMargin != topInset || params.bottomMargin != bottomInset) {
-                params.topMargin = topInset;
-                params.bottomMargin = bottomInset;
-                v.setLayoutParams(params);
-            }
-
-            view.setBackgroundColor(JitsiMeetView.BACKGROUND_COLOR);
-
-            // Return CONSUMED to prevent double-application of margins
-            return WindowInsetsCompat.CONSUMED;
+        // Keep the root content full-height and forward insets to children.
+        // Mutating the root margins can create large empty bars on tablets.
+        ViewCompat.setOnApplyWindowInsetsListener(v, (view, windowInsets) -> {
+            return windowInsets;
         });
 
-        // Manually trigger the inset listener to apply margins immediately
-        ViewCompat.requestApplyInsets(decorView);
+        ViewCompat.requestApplyInsets(v);
     }
 
     // Overrides
