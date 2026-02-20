@@ -167,12 +167,12 @@ export default {
 
     thumbnailRaisedHand: {
         borderWidth: 2,
-        borderColor: BaseTheme.palette.warning02
+        borderColor: '#FE9C75'
     },
 
     thumbnailDominantSpeaker: {
         borderWidth: 2,
-        borderColor: BaseTheme.palette.action01Hover
+        borderColor: '#FE9C75'
     },
 
     thumbnailGif: {

@@ -391,6 +391,7 @@ export interface IConfig {
         initialWidth?: number;
         minParticipantCountForTopPanel?: number;
     };
+    filmstripToggleIcons?: string[];
     flags?: {
         ssrcRewritingEnabled: boolean;
     };

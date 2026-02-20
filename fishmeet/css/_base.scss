@@ -1,0 +1,294 @@
+/**
+ * Safari will limit input in input elements to one character when user-select
+ * none is applied. Other browsers already support selecting within inputs while
+ * user-select is none. As such, disallow user-select except on inputs.
+ */
+* {
+    -webkit-user-select: none;
+    user-select: none;
+
+    // Firefox only
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, .5) transparent;
+}
+
+input,
+textarea {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+body {
+    margin: 0px;
+    width: 100%;
+    height: 100%;
+    font-size: 0.75rem;
+    font-weight: 400;
+    overflow: hidden;
+    color: #F1F1F1;
+    background: #040404; // should match DEFAULT_BACKGROUND from interface_config
+}
+
+/**
+ * This will hide the focus indicator if an element receives focus via the mouse,
+ * but it will still show up on keyboard focus, thus preserving accessibility.
+ */
+.js-focus-visible :focus:not(.focus-visible) {
+  outline: none;
+}
+
+/**
+ * Fishmeet icon styling - uses currentColor for SVG stroke/fill
+ * This allows CSS color property to control icon colors
+ */
+.jitsi-icon {
+    color: #424350;
+
+    &-default {
+        color: #424350;
+    }
+}
+
+// Hover effect for toolbar icons - light icon on dark background
+.toolbox-icon:hover .jitsi-icon {
+    color: #F5F5F5;
+}
+
+// Toggled state (e.g. mic/camera off) - keep dark icon, white on hover
+.toolbox-icon.toggled .jitsi-icon {
+    color: #424350;
+}
+
+.toolbox-icon.toggled:hover .jitsi-icon {
+    color: #F5F5F5;
+}
+
+.disabled .jitsi-icon {
+    color: #929292;
+}
+
+.jitsi-icon.gray {
+    color: #5E6D7A;
+    cursor: pointer;
+}
+
+p {
+    margin: 0;
+}
+
+body, input, textarea, keygen, select, button {
+    font-family: $baseFontFamily !important;
+}
+
+button, input, select, textarea {
+    margin: 0;
+    vertical-align: baseline;
+    font-size: 1em;
+}
+
+button, select, input[type="button"],
+input[type="reset"], input[type="submit"] {
+    cursor: pointer;
+}
+
+textarea {
+    word-wrap: break-word;
+    resize: none;
+    line-height: 1.5em;
+}
+
+input[type='text'], input[type='password'], textarea {
+    outline: none; /* removes the default outline */
+    resize: none; /* prevents the user-resizing, adjust to taste */
+}
+
+button {
+    color: #FFF;
+    background-color: #44A5FF;
+    border-radius: $borderRadius;
+
+    &.no-icon {
+        padding: 0 1em;
+    }
+}
+
+button,
+form {
+    display: block;
+}
+
+.watermark {
+    display: block;
+    position: absolute;
+    top: 15;
+    width: $watermarkWidth;
+    height: $watermarkHeight;
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: $watermarkZ;
+}
+
+.leftwatermark {
+    max-width: 140px;
+    max-height:70px;
+    left: 32px;
+    top: 32px;
+    background-position: center left;
+    background-repeat: no-repeat;
+    background-size: contain;
+
+    &.no-margin {
+        left:0;
+        top:0;
+    }
+}
+
+.rightwatermark {
+    right: 32px;
+    top: 32px;
+    background-position: center right;
+}
+
+.poweredby {
+    position: absolute;
+    left: 25;
+    bottom: 7;
+    font-size: 0.875rem;
+    color: rgba(255,255,255,.50);
+    text-decoration: none;
+    z-index: $watermarkZ;
+}
+
+/**
+ * Re-style default OS scrollbar.
+ */
+::-webkit-scrollbar {
+    background: transparent;
+    width: 7px;
+    height: $scrollHeight;
+}
+
+::-webkit-scrollbar-button {
+    display: none;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-track-piece {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3D3D3D;
+    border-radius: 4px;
+}
+
+/* Removed: .jitsi-icon svg path { fill: inherit !important; }
+ * Fishmeet icons use currentColor, so we don't need to force fill inheritance
+ */
+
+/**
+ * Fishmeet branding overrides
+ */
+
+/* Large video container background */
+#largeVideoContainer {
+    background-color: #5A5C6C !important;
+}
+
+/* Stage participant name label - left-aligned */
+[data-testid="stage-display-name"] {
+    justify-content: flex-start !important;
+    padding-left: 10px !important;
+}
+
+/* Thumbnail indicator background */
+.indicatorsBackground {
+    background-color: #C8D7EC !important;
+
+    .jitsi-icon {
+        color: #424350 !important;
+    }
+}
+
+/* Active speaker and raised hand borders */
+.active-speaker-indicator {
+    box-shadow: inset 0px 0px 0px 3px #FE9C75 !important;
+}
+
+.raised-hand-border {
+    box-shadow: inset 0px 0px 0px 2px #FE9C75 !important;
+}
+
+/* Toolbar icon hover/toggled - circular shape with consistent size */
+.toolbox-icon {
+    border-radius: 50% !important;
+
+    &:hover {
+        border-radius: 50% !important;
+        padding: 6px;
+        margin: -6px;
+    }
+
+    &.toggled {
+        border-radius: 50% !important;
+        background: none !important;
+
+        &:hover {
+            background-color: #525252 !important;
+            padding: 6px;
+            margin: -6px;
+        }
+    }
+}
+
+/* Bottom toolbar background */
+.toolbox-content-items {
+    background: #C8D7EC !important;
+    border-radius: 32px !important;
+    box-shadow: 0px 2px 8px 4px rgba(0, 0, 0, 0.15), 0px 0px 0px 1px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Filmstrip toggle container - transparent background */
+.toggleFilmstripContainer {
+    background-color: transparent !important;
+    overflow: visible !important;
+
+    &:hover {
+        background-color: transparent !important;
+    }
+}
+
+/* Participants pane styling */
+.participants_pane {
+    background-color: #424350 !important;
+}
+
+#participants-pane button {
+    border-radius: 32px !important;
+}
+
+#participants-search-input {
+    border-radius: 32px !important;
+}
+
+.sr-only {
+    border: 0 !important;
+    clip: rect(1px, 1px, 1px, 1px) !important;
+    clip-path: inset(50%) !important;
+    height: 1px !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    position: absolute !important;
+    width: 1px !important;
+    white-space: nowrap !important;
+}

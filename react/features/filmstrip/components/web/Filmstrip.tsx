@@ -284,6 +284,11 @@ export interface IProps extends WithTranslation {
     _filmstripHeight: number;
 
     /**
+     * Custom icon URLs for filmstrip toggle button [visibleIconUrl, hiddenIconUrl].
+     */
+    _filmstripToggleIcons?: string[];
+
+    /**
      * The width of the filmstrip.
      */
     _filmstripWidth: number;
@@ -1043,16 +1048,41 @@ class Filmstrip extends PureComponent <IProps, IState> {
     _renderToggleButton() {
         const {
             t,
+            _filmstripToggleIcons,
             _isVerticalFilmstrip,
             _mainFilmstripVisible,
             _topPanelFilmstrip,
             _topPanelVisible
         } = this.props;
         const classes = withStyles.getClasses(this.props);
-        const icon = (_topPanelFilmstrip ? _topPanelVisible : _mainFilmstripVisible) ? IconArrowDown : IconArrowUp;
+        const isVisible = _topPanelFilmstrip ? _topPanelVisible : _mainFilmstripVisible;
         const actions = isMobileBrowser()
             ? { onTouchStart: this._onToggleButtonTouch }
             : { onClick: this._onToolbarToggleFilmstrip };
+
+        // Use custom icon URLs if configured, otherwise use default icons
+        let iconElement;
+
+        if (_filmstripToggleIcons && Array.isArray(_filmstripToggleIcons) && _filmstripToggleIcons.length >= 2) {
+            const iconUrl = isVisible ? _filmstripToggleIcons[0] : _filmstripToggleIcons[1];
+
+            iconElement = (
+                <img
+                    alt = { t('toolbar.accessibilityLabel.toggleFilmstrip') }
+                    height = { 48 }
+                    src = { iconUrl }
+                    width = { 48 } />
+            );
+        } else {
+            const icon = isVisible ? IconArrowDown : IconArrowUp;
+
+            iconElement = (
+                <Icon
+                    aria-label = { t('toolbar.accessibilityLabel.toggleFilmstrip') }
+                    size = { 24 }
+                    src = { icon } />
+            );
+        }
 
         return (
             <div
@@ -1069,10 +1099,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
                     onFocus = { this._onTabIn }
                     tabIndex = { 0 }
                     { ...actions }>
-                    <Icon
-                        aria-label = { t('toolbar.accessibilityLabel.toggleFilmstrip') }
-                        size = { 24 }
-                        src = { icon } />
+                    { iconElement }
                 </button>
             </div>
         );
@@ -1090,7 +1117,7 @@ class Filmstrip extends PureComponent <IProps, IState> {
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { _hasScroll = false, filmstripType, _topPanelFilmstrip, _remoteParticipants } = ownProps;
     const { toolbarButtons } = state['features/toolbox'];
-    const { iAmRecorder, filmstrip: { alwaysShowResizeBar } = {} } = state['features/base/config'];
+    const { iAmRecorder, filmstrip: { alwaysShowResizeBar } = {}, filmstripToggleIcons } = state['features/base/config'];
     const { topPanelHeight, topPanelVisible, visible, width: verticalFilmstripWidth } = state['features/filmstrip'];
     const { localScreenShare } = state['features/base/participants'];
     const reduceHeight = state['features/toolbox'].visible && toolbarButtons?.length;
@@ -1144,7 +1171,8 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state),
         _videosClassName: videosClassName,
-        _alwaysShowResizeBar: alwaysShowResizeBar
+        _alwaysShowResizeBar: alwaysShowResizeBar,
+        _filmstripToggleIcons: filmstripToggleIcons
     };
 }
 

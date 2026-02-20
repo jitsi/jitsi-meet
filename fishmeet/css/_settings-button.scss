@@ -1,0 +1,104 @@
+.settings-button-container {
+    position: relative;
+
+    .toolbox-icon {
+        align-items: center;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+
+        &:hover {
+            border-radius: 50%;
+            background-color: #525252 !important; // ui04 - same as other toolbox icons
+            padding: 6px;
+            margin: -6px;
+        }
+
+        &.toggled:hover {
+            background-color: #525252 !important; // ui04 - ensure toggled state also uses same hover color
+            padding: 6px;
+            margin: -6px;
+        }
+
+        &.disabled, .disabled & {
+            cursor: initial;
+            color: #929292;
+            background-color: #36383c;
+
+            &:hover {
+                background-color: #36383c;
+            }
+        }
+    }
+}
+
+.settings-button-small-icon {
+    border-radius: 3px;
+    cursor: pointer;
+    padding: 1px;
+    position: absolute;
+    right: -4px;
+    top: -3px;
+    @extend %ear-icon-styles;
+
+    &--disabled {
+        background-color: transparent;
+        cursor: default;
+
+        & svg {
+            fill: #929292;
+        }
+
+        &:hover {
+            background-color: transparent;
+            box-shadow: none;
+        }
+    }
+}
+
+// Shared ear icon styling - dark square with white arrow
+%ear-icon-styles {
+    background-color: #000;
+    border-radius: 4px;
+    padding: 2px;
+
+    // Hide the SVG's built-in circle, use container background instead
+    svg circle {
+        display: none;
+    }
+
+    // Widen/flatten arrow angle, then scale up to stretch legs
+    svg path {
+        transform: scaleX(1.3) scaleY(0.7) scale(1.3);
+        transform-origin: center;
+    }
+
+    // Arrow color: white on dark background
+    .jitsi-icon {
+        color: #fff !important;
+    }
+
+    // Hover: outline square with dark arrow
+    &:hover {
+        background-color: transparent;
+        box-shadow: inset 0 0 0 1px #000;
+
+        .jitsi-icon {
+            color: #000 !important;
+        }
+    }
+}
+
+.settings-button-small-icon-container {
+    position: absolute;
+    right: -4px;
+    top: -3px;
+    @extend %ear-icon-styles;
+
+    & .settings-button-small-icon {
+        position: relative;
+        top: 0;
+        right: 0;
+    }
+}

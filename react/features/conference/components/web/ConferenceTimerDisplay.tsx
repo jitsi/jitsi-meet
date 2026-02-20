@@ -8,12 +8,12 @@ const useStyles = makeStyles()(theme => {
     return {
         timer: {
             ...withPixelLineHeight(theme.typography.labelRegular),
-            color: theme.palette.text01,
+            color: '#000',
             padding: '6px 8px',
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            backgroundColor: '#FE9C75',
             boxSizing: 'border-box',
             height: '28px',
-            borderRadius: `0 ${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0`,
+            borderRadius: 32,
             marginRight: '2px',
 
             '@media (max-width: 300px)': {

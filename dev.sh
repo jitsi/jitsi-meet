@@ -19,12 +19,24 @@ show_menu() {
     echo -e "${BLUE}================================${NC}"
 }
 
+# Function to copy fishmeet overrides
+copy_fishmeet_overrides() {
+    echo -e "${YELLOW}Copying fishmeet CSS overrides...${NC}"
+    cp fishmeet/css/_*.scss css/
+
+    echo -e "${YELLOW}Copying fishmeet SVG overrides...${NC}"
+    cp fishmeet/react/features/base/icons/svg/*.svg react/features/base/icons/svg/
+}
+
 # Function to execute script and handle errors
 execute_script() {
     local script_name=fishmeet/scripts/"$1"
     local backend_name="$2"
-    
+
     if [ -f "$script_name" ]; then
+        # Copy fishmeet overrides before running the backend script
+        copy_fishmeet_overrides
+
         echo -e "${YELLOW}Executing $script_name for $backend_name...${NC}"
         chmod +x "$script_name"
         ./"$script_name"
