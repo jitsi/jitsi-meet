@@ -61,7 +61,7 @@ export const getTokenAuthUrl = (
         // eslint-disable-next-line max-params
         tenant: string | undefined,
         // eslint-disable-next-line max-params
-        refreshToken?: string | undefined): Promise<string | undefined> => {
+        refreshToken?: string): Promise<string | undefined> => {
 
     const {
         audioMuted = false,

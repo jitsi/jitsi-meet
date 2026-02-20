@@ -3,18 +3,11 @@ import jwtDecode from 'jwt-decode';
 import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
-import { loginWithPopup } from '../../authentication/actions';
-import LoginQuestionDialog from '../../authentication/components/web/LoginQuestionDialog';
-import { getTokenAuthUrl, isTokenAuthEnabled, isTokenAuthInline } from '../../authentication/functions';
 import { isVpaasMeeting } from '../../jaas/functions';
-import { hideNotification, showNotification } from '../../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../../notifications/constants';
 import { authStatusChanged } from '../conference/actions.any';
 import { getCurrentConference } from '../conference/functions';
 import { SET_CONFIG } from '../config/actionTypes';
-import { CONNECTION_ESTABLISHED, CONNECTION_TOKEN_EXPIRED, SET_LOCATION_URL } from '../connection/actionTypes';
-import { openDialog } from '../dialog/actions';
-import { browser } from '../lib-jitsi-meet';
+import { CONNECTION_ESTABLISHED, SET_LOCATION_URL } from '../connection/actionTypes';
 import { participantUpdated } from '../participants/actions';
 import { getLocalParticipant } from '../participants/functions';
 import { IParticipant } from '../participants/types';
@@ -26,8 +19,6 @@ import { SET_JWT } from './actionTypes';
 import { setDelayedLoadOfAvatarUrl, setJWT, setKnownAvatarUrl } from './actions';
 import { parseJWTFromURLParams } from './functions';
 import logger from './logger';
-
-const PROMPT_LOGIN_NOTIFICATION_ID = 'PROMPT_LOGIN_NOTIFICATION_ID';
 
 /**
  * Set up a state change listener to perform maintenance tasks when the conference
@@ -57,80 +48,6 @@ MiddlewareRegistry.register(store => next => action => {
         // XXX The JSON Web Token (JWT) is not the only piece of state that we
         // have decided to store in the feature jwt
         return _setConfigOrLocationURL(store, next, action);
-    case CONNECTION_TOKEN_EXPIRED: {
-        const jwt = state['features/base/jwt'].jwt;
-        const refreshToken = state['features/base/jwt'].refreshToken;
-
-        if (typeof APP !== 'undefined' && jwt && isTokenAuthEnabled(state)) {
-            const { connection, locationURL = { href: '' } as URL } = state['features/base/connection'];
-            const { tenant } = parseURIString(locationURL.href) || {};
-            const room = state['features/base/conference'].room;
-            const dispatch = store.dispatch;
-
-            getTokenAuthUrl(
-                state['features/base/config'],
-                locationURL,
-                {
-                    audioMuted: false,
-                    audioOnlyEnabled: false,
-                    skipPrejoin: false,
-                    videoMuted: false
-                },
-                room,
-                tenant,
-                refreshToken
-            )
-                .then((url: string | undefined) => {
-                    if (url) {
-                        dispatch(showNotification({
-                            descriptionKey: 'dialog.loginOnResume',
-                            titleKey: 'dialog.login',
-                            uid: PROMPT_LOGIN_NOTIFICATION_ID,
-                            customActionNameKey: [ 'dialog.login' ],
-                            customActionHandler: [ () => {
-                                store.dispatch(hideNotification(PROMPT_LOGIN_NOTIFICATION_ID));
-
-                                if (isTokenAuthInline(state['features/base/config'])) {
-                                    loginWithPopup(url)
-                                        .then((result: { accessToken: string; idToken: string; refreshToken?: string; }) => {
-                                            // @ts-ignore
-                                            const token: string = result.accessToken;
-                                            const idToken: string = result.idToken;
-                                            const newRefreshToken: string | undefined = result.refreshToken;
-
-                                            // @ts-ignore
-                                            dispatch(setJWT(token, idToken, newRefreshToken || refreshToken));
-
-                                            connection?.refreshToken(token)
-                                                .catch((err: any) => {
-                                                    dispatch(setJWT());
-                                                    logger.error(err);
-                                                });
-                                        }).catch(logger.error);
-                                } else {
-                                    dispatch(openDialog('LoginQuestionDialog', LoginQuestionDialog, {
-                                        handler: () => {
-                                            // Give time for the dialog to close.
-                                            setTimeout(() => {
-                                                if (browser.isElectron()) {
-                                                    window.open(url, '_blank');
-                                                } else {
-                                                    window.location.href = url;
-                                                }
-                                            }, 500);
-                                        }
-                                    }));
-                                }
-
-                            } ],
-                            appearance: NOTIFICATION_TYPE.ERROR
-                        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
-                    }
-                })
-                .catch(logger.error);
-        }
-        break;
-    }
     case CONNECTION_ESTABLISHED: {
         const delayedLoadOfAvatarUrl = state['features/base/jwt'].delayedLoadOfAvatarUrl;
 
