@@ -78,12 +78,26 @@ export function loginWithPopup(tokenAuthServiceUrl: string): Promise<any> {
         const left = window.screen.width / 2 - width / 2;
         const top = window.screen.height / 2 - height / 2;
 
-        const nonce = generateNonce();
+        let nonceParam = '';
 
-        sessionStorage.setItem('oauth_nonce', nonce);
+        try {
+            const nonce = generateNonce();
+
+            sessionStorage.setItem('oauth_nonce', nonce);
+
+            nonceParam = `&nonce=${nonce}`;
+        } catch (e) {
+            if (e instanceof DOMException && e.name === 'SecurityError') {
+                logger.warn(
+                    'sessionStorage access denied (cross-origin or restricted context) enable it to improve security',
+                    e);
+            } else {
+                logger.error('Unable to save nonce in session storage', e);
+            }
+        }
 
         const popup = window.open(
-            `${tokenAuthServiceUrl}&nonce=${nonce}`,
+            `${tokenAuthServiceUrl}${nonceParam}`,
             `Auth-${Date.now()}`,
             `width=${width},height=${height},left=${left},top=${top}`
         );
@@ -94,15 +108,25 @@ export function loginWithPopup(tokenAuthServiceUrl: string): Promise<any> {
             return;
         }
 
-        const cleanup = (handler: any) => {
+        let closedPollInterval: ReturnType<typeof setInterval> | undefined = undefined;
+        const cleanup = (handler: (event: MessageEvent) => void) => {
             window.removeEventListener('message', handler);
+            clearInterval(closedPollInterval);
             popup.close();
 
-            sessionStorage.removeItem('oauth_nonce');
+            try {
+                sessionStorage.removeItem('oauth_nonce');
+            } catch (e) {
+                // ignore
+            }
+            try {
+                sessionStorage.removeItem('code_verifier');
+            } catch (e) {
+                // ignore
+            }
         };
 
-        // @ts-ignore
-        const handler = event => {
+        const handler = (event: MessageEvent) => {
             // Verify origin
             if (event.origin !== window.location.origin) {
                 return;
@@ -125,6 +149,14 @@ export function loginWithPopup(tokenAuthServiceUrl: string): Promise<any> {
 
         // Listen for messages from the popup
         window.addEventListener('message', handler);
+
+        // Detect manual popup close before authentication completes
+        closedPollInterval = setInterval(() => {
+            if (popup.closed) {
+                cleanup(handler);
+                reject(new Error('Login cancelled'));
+            }
+        }, 500);
     });
 }
 

@@ -46,16 +46,13 @@ export const _getTokenAuthState = (
         },
         roomName: string | undefined,
         tenant: string | undefined,
-        refreshToken?: string | undefined): object => {
-    const state: any = {
+        refreshToken?: string): object => {
+    const state = {
+        refreshToken,
         room: roomName,
         roomSafe: getBackendSafeRoomName(roomName),
         tenant
     };
-
-    if (refreshToken) {
-        state.refreshToken = refreshToken;
-    }
 
     const {
         audioMuted = false,

@@ -4,6 +4,7 @@ import { IConfig } from '../base/config/configType';
 import { browser } from '../base/lib-jitsi-meet';
 
 import { _getTokenAuthState } from './functions.any';
+import logger from './logger';
 
 export * from './functions.any';
 
@@ -107,7 +108,17 @@ export const getTokenAuthUrl = (
             codeVerifier += POSSIBLE_CHARS.charAt(Math.floor(_cryptoRandom() * POSSIBLE_CHARS.length));
         }
 
-        window.sessionStorage.setItem('code_verifier', codeVerifier);
+        try {
+            window.sessionStorage.setItem('code_verifier', codeVerifier);
+        } catch (e) {
+            if (e instanceof DOMException && e.name === 'SecurityError') {
+                logger.warn(
+                    'sessionStorage access denied (cross-origin or restricted context) enable it to improve security',
+                    e);
+            } else {
+                logger.error('Unable to save code verifier in session storage', e);
+            }
+        }
 
         return window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier))
             .then(digest => {

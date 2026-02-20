@@ -24,8 +24,7 @@ import { parseURIString } from '../util/uri';
 
 import { SET_JWT } from './actionTypes';
 import { setDelayedLoadOfAvatarUrl, setJWT, setKnownAvatarUrl } from './actions';
-import { JWT_VALIDATION_ERRORS } from './constants';
-import { parseJWTFromURLParams, validateJwt } from './functions';
+import { parseJWTFromURLParams } from './functions';
 import logger from './logger';
 
 const PROMPT_LOGIN_NOTIFICATION_ID = 'PROMPT_LOGIN_NOTIFICATION_ID';
@@ -62,8 +61,7 @@ MiddlewareRegistry.register(store => next => action => {
         const jwt = state['features/base/jwt'].jwt;
         const refreshToken = state['features/base/jwt'].refreshToken;
 
-        if (typeof APP !== 'undefined' && jwt
-                && validateJwt(jwt).find((e: any) => e.key === JWT_VALIDATION_ERRORS.TOKEN_EXPIRED)) {
+        if (typeof APP !== 'undefined' && jwt) {
             const { connection, locationURL = { href: '' } as URL } = state['features/base/connection'];
             const { tenant } = parseURIString(locationURL.href) || {};
             const room = state['features/base/conference'].room;
@@ -84,8 +82,6 @@ MiddlewareRegistry.register(store => next => action => {
             )
                 .then((url: string | undefined) => {
                     if (url) {
-                        // only if it is inline token auth and token is about to expire
-                        // if not expired yet use it to refresh the token
                         dispatch(showNotification({
                             descriptionKey: 'dialog.loginOnResume',
                             titleKey: 'dialog.login',
@@ -95,7 +91,6 @@ MiddlewareRegistry.register(store => next => action => {
                                 store.dispatch(hideNotification(PROMPT_LOGIN_NOTIFICATION_ID));
 
                                 if (isTokenAuthInline(state['features/base/config'])) {
-                                    // Use refresh token if available, otherwise fall back to silent login
                                     loginWithPopup(url)
                                         .then((result: { accessToken: string; idToken: string; refreshToken?: string; }) => {
                                             // @ts-ignore

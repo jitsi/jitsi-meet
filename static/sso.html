@@ -97,7 +97,7 @@
             try {
                 // Parse query parameters (Authorization Code Flow uses query params, not hash)
                 const urlParams = new URLSearchParams(window.location.search);
-                console.log('sso received:', window.location.search);
+
                 // Get state parameter first to check for refresh token
                 const stateParam = urlParams.get('state');
                 if (!stateParam) {
@@ -152,7 +152,6 @@
                     if (refreshNonce) {
                         try {
                             validateNonce(idToken, refreshNonce);
-                            sessionStorage.removeItem('oauth_nonce');
                         } catch (nonceError) {
                             console.warn('Nonce validation failed during refresh:', nonceError.message);
                             // Don't fail the refresh flow if nonce validation fails
@@ -174,7 +173,6 @@
                         document.getElementById('message-for-opener').style.display = 'block';
 
                         window.opener.postMessage(message, window.location.origin);
-                        setTimeout(() => window.close(), 1000);
                     } else if (window.parent && window.parent !== window) {
                         console.log('Sending refreshed tokens to parent (iframe)');
                         window.parent.postMessage(message, window.location.origin);
@@ -280,10 +278,6 @@
                 // Validate nonce in ID token
                 validateNonce(idToken, oauthNonce);
 
-                // Clean up PKCE verifier and OAuth nonce
-                sessionStorage.removeItem('code_verifier');
-                sessionStorage.removeItem('oauth_nonce');
-
                 const message = {
                     type: 'oauth-success',
                     accessToken: accessToken,
@@ -300,9 +294,6 @@
                     document.getElementById('message-for-opener').style.display = 'block';
 
                     window.opener.postMessage(message, window.location.origin);
-
-                    // Auto-close after a short delay
-                    setTimeout(() => window.close(), 1000);
                 } else if (window.parent && window.parent !== window) {
                     // Loaded in iframe
                     console.log('Sending message to parent (iframe)');
