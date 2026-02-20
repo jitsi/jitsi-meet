@@ -75,6 +75,25 @@
         pointer-events: none;
         position: absolute;
         right: -5px;
+
+        // Hide the badge when its inner span has no content (count = 0 or chat is open).
+        // This fixes the permanent blue circle on the chat button.
+        &:has(> span:empty) {
+            display: none;
+        }
+    }
+
+    // Override ParticipantsCounter (MUI makeStyles span) to match other badge sizes.
+    // MUI injects height:16px/min-width:16px; !important ensures our 20px wins.
+    > span:not(.badge-round) {
+        width: 20px !important;
+        height: 20px !important;
+        min-width: 20px !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        line-height: 1 !important;
     }
 }
 
