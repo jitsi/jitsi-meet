@@ -50,7 +50,7 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                     </>
                 )}
                 { this._renderLocalRecordingContent() }
-                { _renderRecording && <> { this._renderAdvancedOptions() } </> }
+                { (_renderRecording || this.props._localRecordingAvailable) && <> { this._renderAdvancedOptions() } </> }
             </Container>
         );
     }
@@ -63,7 +63,9 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
     _renderAdvancedOptions() {
         const { selectedRecordingService } = this.props;
 
-        if (selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE || !this._canStartTranscribing()) {
+        if ((selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE
+                && selectedRecordingService !== RECORDING_TYPES.LOCAL)
+            || !this._canStartTranscribing()) {
             return null;
         }
 

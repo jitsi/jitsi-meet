@@ -397,6 +397,9 @@ class AbstractStartRecordingDialog extends Component<IProps, IState> {
             }
             case RECORDING_TYPES.LOCAL: {
                 dispatch(startLocalVideoRecording(this.state.localRecordingOnlySelf));
+                _conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
+                    isTranscribingEnabled: this.state.shouldRecordTranscription
+                });
 
                 return true;
             }
