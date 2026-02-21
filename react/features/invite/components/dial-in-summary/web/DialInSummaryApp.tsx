@@ -15,6 +15,28 @@ import DialInSummary from './DialInSummary';
  *
  * @augments BaseApp
  */
+
+function decodeRoomName(room: string): string {
+    let decoded = room;
+
+    try {
+        // Decode repeatedly to handle double-encoded values (e.g. %2520 -> %20 -> space)
+        while (/%[0-9A-Fa-f]{2}/.test(decoded)) {
+            const next = decodeURIComponent(decoded);
+
+            if (next === decoded) {
+                break;
+            }
+
+            decoded = next;
+        }
+    } catch {
+        // If decoding fails, return the original value
+        return room;
+    }
+
+    return decoded;
+}
 export default class DialInSummaryApp extends BaseApp<any> {
     /**
      * Navigates to {@link Prejoin} upon mount.
@@ -36,7 +58,8 @@ export default class DialInSummaryApp extends BaseApp<any> {
                     ? <DialInSummary
                         className = 'dial-in-page'
                         clickableNumbers = { isMobileBrowser() }
-                        room = { decodeURIComponent(room) }
+                        room={decodeRoomName(room)}
+
                         scrollable = { true }
                         showTitle = { true }
                         url = { url } />
