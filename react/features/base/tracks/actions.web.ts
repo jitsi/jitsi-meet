@@ -96,22 +96,16 @@ async function _maybeApplyAudioMixerEffect(desktopAudioTrack: any, state: IRedux
     const conference = getCurrentConference(state);
 
     if (localAudio) {
-        // Agar localAudio hai, tabhi effect apply karo
+        // If a local audio track exists, apply the mixer effect to combine it with desktop audio.
         const mixerEffect = new AudioMixerEffect(desktopAudioTrack);
 
         await localAudio.setEffect(mixerEffect);
-    } else if (conference && desktopAudioTrack) {
-        // AMOGH FIX: Agar localAudio null hai (blocked mic), toh seedha track add/replace karo
-        const localTracks = conference.getLocalTracks() || [];
-        const hasAudioTrack = localTracks.some((t: any) => t.getType() === 'audio');
-
-        if (hasAudioTrack) {
-            await conference.replaceTrack(null, desktopAudioTrack);
-        } else {
-            await conference.addTrack(desktopAudioTrack);
-        }
+    } else {
+        // No local audio track exists, add desktop audio directly to the conference.
+        await conference?.addTrack(desktopAudioTrack);
     }
 }
+
 
 /**
  * Toggles screen sharing.
@@ -199,10 +193,11 @@ async function _toggleScreenSharing(
         // Apply the AudioMixer effect if there is a local audio track, add the desktop track to the conference
         // otherwise without unmuting the microphone.
         if (desktopAudioTrack) {
-            // Noise suppression doesn't work with desktop audio because we can't chain track effects yet, disable it
+            // Noise suppression doesn't work with desktop audio because we
+            //  can't chain track effects yet, disable it
             // first. We need to to wait for the effect to clear first or it might interfere with the audio mixer.
             await dispatch(setNoiseSuppressionEnabled(false));
-            _maybeApplyAudioMixerEffect(desktopAudioTrack, state);
+            await _maybeApplyAudioMixerEffect(desktopAudioTrack, state);
             dispatch(setScreenshareAudioTrack(desktopAudioTrack));
 
             // Handle the case where screen share was stopped from the browsers 'screen share in progress' window.

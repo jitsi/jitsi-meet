@@ -319,7 +319,13 @@ export function replaceLocalTrack(oldTrack: any, newTrack: any, conference?: IJi
             || (conference = getState()['features/base/conference'].conference);
 
         if (conference) {
-            await conference.replaceTrack(oldTrack, newTrack);
+            if (oldTrack) {
+                await conference.replaceTrack(oldTrack, newTrack);
+            } else if (newTrack) {
+                // No existing transceiver for old track, add new track directly
+                // to avoid "no transceiver for old: null" error.
+                await conference.addTrack(newTrack);
+            }
         }
 
         return dispatch(replaceStoredTracks(oldTrack, newTrack));
