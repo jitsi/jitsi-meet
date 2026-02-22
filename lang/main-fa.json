@@ -957,7 +957,7 @@
         "headings": {
             "lobby": "اتاق انتظار ({{count}})",
             "participantsList": "شرکت‌کنندگان در جلسه ({{count}})",
-            "participants":"شركت‌كنندگان",
+            "participants": "شركت‌كنندگان",
             "viewerRequests": "درخواست‌های بینندگان {{count}}",
             "visitorInQueue": " (در انتظار {{count}})",
             "visitorRequests": " (درخواست‌ها {{count}})",
