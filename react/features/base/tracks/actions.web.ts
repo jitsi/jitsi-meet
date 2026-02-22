@@ -96,14 +96,20 @@ async function _maybeApplyAudioMixerEffect(desktopAudioTrack: any, state: IRedux
     const conference = getCurrentConference(state);
 
     if (localAudio) {
-        // If there is a localAudio stream, mix in the desktop audio stream captured by the screen sharing API.
+        // Agar localAudio hai, tabhi effect apply karo
         const mixerEffect = new AudioMixerEffect(desktopAudioTrack);
 
         await localAudio.setEffect(mixerEffect);
-    } else {
-        // If no local stream is present ( i.e. no input audio devices) we use the screen share audio
-        // stream as we would use a regular stream.
-        await conference?.replaceTrack(null, desktopAudioTrack);
+    } else if (conference && desktopAudioTrack) {
+        // AMOGH FIX: Agar localAudio null hai (blocked mic), toh seedha track add/replace karo
+        const localTracks = conference.getLocalTracks() || [];
+        const hasAudioTrack = localTracks.some((t: any) => t.getType() === 'audio');
+
+        if (hasAudioTrack) {
+            await conference.replaceTrack(null, desktopAudioTrack);
+        } else {
+            await conference.addTrack(desktopAudioTrack);
+        }
     }
 }
 
