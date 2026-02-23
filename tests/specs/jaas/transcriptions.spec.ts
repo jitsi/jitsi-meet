@@ -19,6 +19,31 @@ for (const asyncTranscriptions of asyncTranscriptionValues) {
         let p1: Participant, p2: Participant;
         let webhooksProxy: WebhookProxy;
 
+        async function clearTranscriptionStatusChange() {
+            await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
+            await p2.getIframeAPI().clearEventResults('transcribingStatusChanged');
+        }
+
+        /**
+         *  Wait until a transcribingStatusChanged iFrame event is received for both p1 and p2, with a specific value
+         *  for the "on" field.
+         *  Note that addEventListener for 'transcriptionChunkReceived' should have been called prior to this function.
+         */
+        async function waitForTranscriptionStatusChange(expectedOn: boolean) {
+            for (const p of [ p1, p2 ]) {
+                const event = await p.driver.waitUntil(
+                    () => p.getIframeAPI().getEventResult('transcribingStatusChanged'),
+                    {
+                        timeout: 10000,
+                        timeoutMsg: `transcribingStatusChanged event not received on ${p.name}`
+                    });
+
+                if (event.on !== expectedOn) {
+                    throw new Error(`Expected transcribing to be ${expectedOn} for ${p.name}, got ${event.on}`);
+                }
+            }
+        }
+
         it('setup', async () => {
             const room = ctx.roomName;
 
@@ -60,127 +85,60 @@ for (const asyncTranscriptions of asyncTranscriptionValues) {
 
             expect(await p1.getIframeAPI().getEventResult('isModerator')).toBe(true);
             expect(await p1.getIframeAPI().getEventResult('videoConferenceJoined')).toBeDefined();
+
+            await p1.getIframeAPI().addEventListener('transcribingStatusChanged');
+            await p2.getIframeAPI().addEventListener('transcribingStatusChanged');
+            await p1.getIframeAPI().addEventListener('transcriptionChunkReceived');
+            await p2.getIframeAPI().addEventListener('transcriptionChunkReceived');
+
         });
 
         it('toggle subtitles', async () => {
-            await p1.getIframeAPI().addEventListener('transcriptionChunkReceived');
-            await p2.getIframeAPI().addEventListener('transcriptionChunkReceived');
+            await clearTranscriptionStatusChange();
             await p1.getIframeAPI().executeCommand('toggleSubtitles');
 
+            await waitForTranscriptionStatusChange(true);
             await checkReceivingChunks(p1, p2, webhooksProxy, asyncTranscriptions);
 
-            await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
-            await p1.getIframeAPI().addEventListener('transcribingStatusChanged');
-            await p2.getIframeAPI().clearEventResults('transcribingStatusChanged');
-            await p2.getIframeAPI().addEventListener('transcribingStatusChanged');
-
+            await clearTranscriptionStatusChange();
             await p1.getIframeAPI().executeCommand('toggleSubtitles');
 
-            await p1.driver.waitUntil(() => p1.getIframeAPI()
-                .getEventResult('transcribingStatusChanged'), {
-                timeout: 15000,
-                timeoutMsg: 'transcribingStatusChanged event not received by p1'
-            });
-            // The p1 event can be triggered locally, resulting in the code below executing prematurely. Make sure
-            // transcription is indeed stopped on the backend before proceeding.
-            await p2.driver.waitUntil(() => p2.getIframeAPI()
-                .getEventResult('transcribingStatusChanged'), {
-                timeout: 15000,
-                timeoutMsg: 'transcribingStatusChanged event not received by p1'
-            });
+            await waitForTranscriptionStatusChange(false);
         });
 
         it('set subtitles on and off', async () => {
             // we need to clear results or the last one will be used, from the previous time subtitles were on
+            await clearTranscriptionStatusChange();
             await p1.getIframeAPI().clearEventResults('transcriptionChunkReceived');
             await p2.getIframeAPI().clearEventResults('transcriptionChunkReceived');
             webhooksProxy.clearCache();
 
             await p1.getIframeAPI().executeCommand('setSubtitles', true, true);
 
+            await waitForTranscriptionStatusChange(true);
             await checkReceivingChunks(p1, p2, webhooksProxy, asyncTranscriptions);
 
-            await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
-            await p1.getIframeAPI().addEventListener('transcribingStatusChanged');
-            await p2.getIframeAPI().clearEventResults('transcribingStatusChanged');
-            await p2.getIframeAPI().addEventListener('transcribingStatusChanged');
-
+            await clearTranscriptionStatusChange();
             await p1.getIframeAPI().executeCommand('setSubtitles', false);
 
-            await p1.driver.waitUntil(() => p1.getIframeAPI()
-                .getEventResult('transcribingStatusChanged'), {
-                timeout: 15000,
-                timeoutMsg: 'transcribingStatusChanged event not received by p1'
-            });
-            // The p1 event can be triggered locally, resulting in the code below executing prematurely. Make sure
-            // transcription is indeed stopped on the backend before proceeding.
-            await p2.driver.waitUntil(() => p2.getIframeAPI()
-                .getEventResult('transcribingStatusChanged'), {
-                timeout: 15000,
-                timeoutMsg: 'transcribingStatusChanged event not received by p1'
-            });
+            await waitForTranscriptionStatusChange(false);
         });
 
         it('start/stop transcriptions via recording', async () => {
             // we need to clear results or the last one will be used, from the previous time subtitles were on
-            await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
             await p1.getIframeAPI().clearEventResults('transcriptionChunkReceived');
             await p2.getIframeAPI().clearEventResults('transcriptionChunkReceived');
-
-            await p2.getIframeAPI().addEventListener('transcribingStatusChanged');
+            await clearTranscriptionStatusChange();
 
             await p1.getIframeAPI().executeCommand('startRecording', { transcription: true });
 
-            let allTranscriptionStatusChanged: Promise<any>[] = [];
-
-            allTranscriptionStatusChanged.push(await p1.driver.waitUntil(() => p1.getIframeAPI()
-                .getEventResult('transcribingStatusChanged'), {
-                timeout: 10000,
-                timeoutMsg: 'transcribingStatusChanged event not received on p1'
-            }));
-            allTranscriptionStatusChanged.push(await p2.driver.waitUntil(() => p2.getIframeAPI()
-                .getEventResult('transcribingStatusChanged'), {
-                timeout: 10000,
-                timeoutMsg: 'transcribingStatusChanged event not received on p2'
-            }));
-
-            let result = await Promise.allSettled(allTranscriptionStatusChanged);
-
-            expect(result.length).toBe(2);
-
-            result.forEach(e => {
-                // @ts-ignore
-                expect(e.value.on).toBe(true);
-            });
-
+            await waitForTranscriptionStatusChange(true);
             await checkReceivingChunks(p1, p2, webhooksProxy, asyncTranscriptions);
 
-            await p1.getIframeAPI().clearEventResults('transcribingStatusChanged');
-            await p2.getIframeAPI().clearEventResults('transcribingStatusChanged');
-
+            await clearTranscriptionStatusChange();
             await p1.getIframeAPI().executeCommand('stopRecording', 'file', true);
 
-            allTranscriptionStatusChanged = [];
-
-            allTranscriptionStatusChanged.push(await p1.driver.waitUntil(() => p1.getIframeAPI()
-                .getEventResult('transcribingStatusChanged'), {
-                timeout: 10000,
-                timeoutMsg: 'transcribingStatusChanged event not received on p1'
-            }));
-            allTranscriptionStatusChanged.push(await p2.driver.waitUntil(() => p2.getIframeAPI()
-                .getEventResult('transcribingStatusChanged'), {
-                timeout: 10000,
-                timeoutMsg: 'transcribingStatusChanged event not received on p2'
-            }));
-
-            result = await Promise.allSettled(allTranscriptionStatusChanged);
-
-            expect(result.length).toBe(2);
-
-            result.forEach(e => {
-                // @ts-ignore
-                expect(e.value.on).toBe(false);
-            });
+            await waitForTranscriptionStatusChange(false);
 
             await p1.getIframeAPI().executeCommand('hangup');
             await p2.getIframeAPI().executeCommand('hangup');
