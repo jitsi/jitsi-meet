@@ -4,7 +4,8 @@ import { getFeatureFlag } from '../base/flags/functions';
 import { pinParticipant } from '../base/participants/actions';
 import { getParticipantCount, getPinnedParticipant } from '../base/participants/functions';
 import { FakeParticipant } from '../base/participants/types';
-import { isStageFilmstripAvailable, isTileViewModeDisabled } from '../filmstrip/functions';
+import { isStageFilmstripAvailable, isTopPanelEnabled, isTileViewModeDisabled } from '../filmstrip/functions';
+import { isFollowMeActive } from '../follow-me/functions';
 import { isVideoPlaying } from '../shared-video/functions';
 import { VIDEO_QUALITY_LEVELS } from '../video-quality/constants';
 import { getReceiverVideoQualityLevel } from '../video-quality/functions';
@@ -105,6 +106,15 @@ export function shouldDisplayTileView(state: IReduxState) {
 
         // We want jibri to use stage view by default
         || iAmRecorder
+
+        // In large calls (top panel enabled), a screenshare should exit tile view automatically
+        // when auto-pin is active and Follow Me is not controlling the layout.
+        // getPinnedParticipant() uses the stage filmstrip path in large calls and ignores
+        // features/base/participants.pinnedParticipant, so we need this explicit check.
+        || (Boolean(state['features/video-layout'].remoteScreenShares?.length)
+            && isTopPanelEnabled(state)
+            && getAutoPinSetting()
+            && !isFollowMeActive(state))
     );
 
     return !shouldDisplayNormalMode;
