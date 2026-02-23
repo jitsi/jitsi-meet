@@ -1600,6 +1600,8 @@ var config = {
     // An option to get for user info (name, picture, email) in the token outside the user context.
     // Can be used with Firebase tokens.
     // tokenGetUserInfoOutOfContext: false,
+    // An option to pass the token in the iframe API directly instead of using the redirect flow.
+    // tokenAuthInline: false,
 
     // You can put an array of values to target different entity types in the invite dialog.
     // Valid values are "phone", "room", "sip", "user", "videosipgw" and "email"

@@ -4,6 +4,7 @@ import { AnyAction } from 'redux';
 
 import { IStore } from '../../app/types';
 import { isVpaasMeeting } from '../../jaas/functions';
+import { authStatusChanged } from '../conference/actions.any';
 import { getCurrentConference } from '../conference/functions';
 import { SET_CONFIG } from '../config/actionTypes';
 import { CONNECTION_ESTABLISHED, SET_LOCATION_URL } from '../connection/actionTypes';
@@ -39,6 +40,8 @@ StateListenerRegistry.register(
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
+    const state = store.getState();
+
     switch (action.type) {
     case SET_CONFIG:
     case SET_LOCATION_URL:
@@ -46,7 +49,6 @@ MiddlewareRegistry.register(store => next => action => {
         // have decided to store in the feature jwt
         return _setConfigOrLocationURL(store, next, action);
     case CONNECTION_ESTABLISHED: {
-        const state = store.getState();
         const delayedLoadOfAvatarUrl = state['features/base/jwt'].delayedLoadOfAvatarUrl;
 
         if (delayedLoadOfAvatarUrl) {
@@ -56,6 +58,7 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(setDelayedLoadOfAvatarUrl());
             store.dispatch(setKnownAvatarUrl(delayedLoadOfAvatarUrl));
         }
+        break;
     }
     case SET_JWT:
         return _setJWT(store, next, action);
@@ -149,7 +152,7 @@ function _setConfigOrLocationURL({ dispatch, getState }: IStore, next: Function,
  */
 function _setJWT(store: IStore, next: Function, action: AnyAction) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { jwt, type, ...actionPayload } = action;
+    const { idToken, jwt, refreshToken, type, ...actionPayload } = action;
 
     if (!Object.keys(actionPayload).length) {
         const state = store.getState();
@@ -210,24 +213,32 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
                     if (context.user && context.user.role === 'visitor') {
                         action.preferVisitor = true;
                     }
-                } else if (tokenGetUserInfoOutOfContext
-                    && (jwtPayload.name || jwtPayload.picture || jwtPayload.email)) {
-                    // there are some tokens (firebase) having picture and name on the main level.
-                    _overwriteLocalParticipant(store, {
-                        avatarURL: jwtPayload.picture,
-                        name: jwtPayload.name,
-                        email: jwtPayload.email
-                    });
+                } else if (jwtPayload.name || jwtPayload.picture || jwtPayload.email) {
+                    if (tokenGetUserInfoOutOfContext) {
+                        // there are some tokens (firebase) having picture and name on the main level.
+                        _overwriteLocalParticipant(store, {
+                            avatarURL: jwtPayload.picture,
+                            name: jwtPayload.name,
+                            email: jwtPayload.email
+                        });
+                    }
+
+                    store.dispatch(authStatusChanged(true, jwtPayload.email));
                 }
             }
-        } else if (typeof APP === 'undefined') {
-            // The logic of restoring JWT overrides make sense only on mobile.
-            // On Web it should eventually be restored from storage, but there's
-            // no such use case yet.
+        } else {
+            if (typeof APP === 'undefined') {
+                // The logic of restoring JWT overrides make sense only on mobile.
+                // On Web it should eventually be restored from storage, but there's
+                // no such use case yet.
 
-            const { user } = state['features/base/jwt'];
+                const { user } = state['features/base/jwt'];
 
-            user && _undoOverwriteLocalParticipant(store, user);
+                user && _undoOverwriteLocalParticipant(store, user);
+            }
+
+            // clears authLogin
+            store.dispatch(authStatusChanged(true));
         }
     }
 

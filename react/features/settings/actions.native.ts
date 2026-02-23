@@ -18,12 +18,11 @@ export function openLogoutDialog() {
         const state = getState();
         const { conference } = state['features/base/conference'];
 
-        const config = state['features/base/config'];
-        const logoutUrl = config.tokenLogoutUrl;
+        const logoutUrl = state['features/base/config'].tokenLogoutUrl;
 
         dispatch(openDialog('LogoutDialog', LogoutDialog, {
             onLogout() {
-                if (isTokenAuthEnabled(config)) {
+                if (isTokenAuthEnabled(state)) {
                     if (logoutUrl) {
                         Linking.openURL(logoutUrl);
                     }

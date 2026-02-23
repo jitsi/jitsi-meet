@@ -89,5 +89,27 @@
 - speakerStats - A table containing speaker statistics for occupants in the room. The keys are occupant JIDs and the values are objects with properties like dominantSpeakerId, faceLandmarks, and sessionId. Used by mod_speakerstats_component.lua to manage speaker statistics in the room.
 - visitors_destroy_timer - A timer used to destroy the room when there are no main occupants or visitors left. It is set by mod_fmuc.lua to clean up the room after a certain period of inactivity.
 
+# session fields added by jitsi
+- jitsi_meet_context_user - The context from the jwt token, added after token verify.
+- jitsi_meet_context_group - The group from the jwt context, added after token verify.
+- jitsi_meet_context_features - The features from the context, added after token verify.
+- jitsi_meet_context_room - The room settings from the jwt context, added after token verify.
+- jitsi_meet_room - The room name in jwt token, added after token verify.
+- jitsi_meet_str_tenant - The tenant in the context. Added after token verify.
+- jitsi_meet_domain - The domain in the jwt ('sub' claim). Added after token verify. Can be the domain if not tenant is used or the tenant itself in lowercase.
+- customusername - from a query parameter to be used with combination with "pre-jitsi-authentication" event to pre-set a known jid to a session.
+- jitsi_web_query_room - room name from the query.
+- jitsi_web_query_prefix - the tenant from the query specified as a param named 'prefix'.
+- auth_token - The token, set before verify and cleared if verification fails.
+- jitsi_meet_tenant_mismatch - The tenant field from the token and the query param for tenant do not match.
+- previd - Used for stream resumption.
+- user_region - the region header from the http request received.
+- user_agent_header - the user agent header from the http request received.
+- jitsi_throttle - used by rate limit module.
+- jitsi_throttle_counter - used by rate limit module.
+- force_permissions_update - Indicate that on next self-presence update the permissions should be resent to the client. Used by mod_jitsi_permissions.lua to manage permissions updates for the session.
+- granted_jitsi_meet_context_user_id - when affiliation was changed (grant moderation) this holds the id of the actor.
+- granted_jitsi_meet_context_group_id - when affiliation was changed (grant moderation) this holds the group of the actor.
+ 
 #### Notes:
 When modules need to store data they should do it in the room object in _data or directly. The data needs to be a simple as strings or table of strings, they should not add objects like room, sessions or occupants that cannot be serialized. Attaching data to the room object makes reloading modules safe and guarantees data will be wiped once the room is destroyed.
