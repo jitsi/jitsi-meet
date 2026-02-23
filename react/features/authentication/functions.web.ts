@@ -58,11 +58,10 @@ export const getTokenAuthUrl = (
             videoMuted: boolean | undefined;
         },
         roomName: string | undefined,
-        // eslint-disable-next-line max-params
+        // eslint-disable max-params
         tenant: string | undefined,
-        // eslint-disable-next-line max-params
         refreshToken?: string): Promise<string | undefined> => {
-
+    // eslint-enable max-params
     const {
         audioMuted = false,
         audioOnlyEnabled = false,

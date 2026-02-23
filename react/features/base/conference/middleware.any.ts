@@ -406,7 +406,7 @@ async function _connectionEstablished({ dispatch, getState }: IStore, next: Func
             email = getLocalParticipant(getState())?.email;
         }
 
-        // it may happen to be already set (silent login)
+        // it may happen to be already set
         dispatch(authStatusChanged(true, email || getState()['features/base/conference'].authLogin || ''));
     }
 

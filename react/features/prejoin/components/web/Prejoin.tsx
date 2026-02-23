@@ -320,7 +320,7 @@ const Prejoin = ({
                     }
                 })
                 .catch(err => {
-                    logger.error('Error in silent login', err);
+                    logger.error('Error in login', err);
                     joinConference();
                 });
         } else {
