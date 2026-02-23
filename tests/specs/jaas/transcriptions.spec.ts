@@ -41,6 +41,11 @@ for (const asyncTranscriptions of asyncTranscriptionValues) {
                 if (event.on !== expectedOn) {
                     throw new Error(`Expected transcribing to be ${expectedOn} for ${p.name}, got ${event.on}`);
                 }
+                if (!expectedOn && !asyncTranscriptions) {
+                    // The "stopped" event is sometimes fired before the jigasi participant leaves. If we re-start
+                    // transcription before jigasi has left, jicofo will reject the request.
+                    await p.waitForParticipants(2, 'Waiting for jigasi to leave')
+                }
             }
         }
 
