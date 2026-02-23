@@ -956,8 +956,8 @@
         "close": "ببند",
         "headings": {
             "lobby": "اتاق انتظار ({{count}})",
-            "participantsList": "شرکت‌کنندگان در جلسه ({{count}})",
             "participants": "شركت‌كنندگان",
+            "participantsList": "شرکت‌کنندگان در جلسه ({{count}})",
             "viewerRequests": "درخواست‌های بینندگان {{count}}",
             "visitorInQueue": " (در انتظار {{count}})",
             "visitorRequests": " (درخواست‌ها {{count}})",
