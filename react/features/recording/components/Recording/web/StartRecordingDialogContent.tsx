@@ -103,13 +103,13 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
                         <div className = 'recording-header space-top'>
                             <label
                                 className = 'recording-title'
-                                htmlFor = 'recording-switch-transcription'>
+                                htmlFor = 'recording-switch-audio-video'>
                                 { t('recording.recordAudioAndVideo') }
                             </label>
                             <Switch
                                 checked = { shouldRecordAudioAndVideo }
                                 className = 'recording-switch'
-                                id = 'recording-switch-transcription'
+                                id = 'recording-switch-audio-video'
                                 onChange = { this._onRecordAudioAndVideoSwitchChange } />
                         </div>
                     </>
