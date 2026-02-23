@@ -4,7 +4,7 @@ import { getFeatureFlag } from '../base/flags/functions';
 import { pinParticipant } from '../base/participants/actions';
 import { getParticipantCount, getPinnedParticipant } from '../base/participants/functions';
 import { FakeParticipant } from '../base/participants/types';
-import { isStageFilmstripAvailable, isTopPanelEnabled, isTileViewModeDisabled } from '../filmstrip/functions';
+import { isStageFilmstripAvailable, isTileViewModeDisabled, isTopPanelEnabled } from '../filmstrip/functions';
 import { isFollowMeActive } from '../follow-me/functions';
 import { isVideoPlaying } from '../shared-video/functions';
 import { VIDEO_QUALITY_LEVELS } from '../video-quality/constants';
