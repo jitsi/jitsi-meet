@@ -73,7 +73,7 @@
     "js-sha512": "0.8.0",
     "jwt-decode": "2.2.0",
     "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v2124.0.0+80df84a1/lib-jitsi-meet.tgz",
-    "lodash-es": "4.17.21",
+    "lodash-es": "4.17.23",
     "null-loader": "4.0.1",
     "optional-require": "1.0.3",
     "pixelmatch": "5.3.0",
