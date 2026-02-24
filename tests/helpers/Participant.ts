@@ -510,7 +510,7 @@ export class Participant {
     }
 
     /**
-     * Waits until the number of participants is exactly the given number.
+     * Waits until the number of remote participants is exactly the given number.
      *
      * @param {number} number - The number of participant to wait for.
      * @param {string} msg - A custom message to use.
@@ -518,7 +518,7 @@ export class Participant {
      */
     waitForParticipants(number: number, msg?: string): Promise<boolean> {
         return this.driver.waitUntil(
-            () => this.execute(count => (APP?.conference?.listMembers()?.length ?? -1) === count, number),
+            () => this.execute(count => (window.APP?.conference?.listMembers()?.length ?? -1) === count, number),
             {
                 timeout: 15_000,
                 timeoutMsg: msg || `not the expected participants ${number} in 15s for ${this.name}`
