@@ -289,7 +289,7 @@ const Prejoin = ({
                 {
                     audioMuted: false,
                     audioOnlyEnabled: startAudioOnly,
-                    skipPrejoin: false,
+                    skipPrejoin: true,
                     videoMuted: false
                 },
                 tokenPreAuthConfig.room,

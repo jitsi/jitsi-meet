@@ -40,7 +40,7 @@ MiddlewareRegistry.register((store: IStore) => next => action => {
                 {
                     audioMuted: false,
                     audioOnlyEnabled: false,
-                    skipPrejoin: false,
+                    skipPrejoin: true,
                     videoMuted: false
                 },
                 room,
