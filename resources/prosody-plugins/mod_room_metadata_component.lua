@@ -176,17 +176,21 @@ function on_message(event)
         return false;
     end
 
-    if occupant.role ~= 'moderator' then
-        -- will return a non nil filtered data to use, if it is nil, it is not allowed
-        local res = module:context(main_virtual_host):fire_event('jitsi-metadata-allow-moderation',
-                { room = room; actor = occupant; key = jsonData.key ; data = jsonData.data; session = session; });
+    -- will return a non nil filtered data to use, if it is nil, it is not allowed
+    local res = module:context(main_virtual_host):fire_event('jitsi-metadata-allow-moderation',
+            { room = room; actor = occupant; key = jsonData.key ; data = jsonData.data; session = session; });
 
-        if not res then
-            module:log('warn', 'Occupant %s is not moderator and not allowed this operation for %s', from, room.jid);
+    if res == false then
+        module:log('warn', 'Occupant %s features do not allow this operation(%s) for %s', from, jsonData.key, room.jid);
+        return false;
+    elseif res ~= nil then
+        jsonData.data = res;
+    else
+        if occupant.role ~= 'moderator' then
+            module:log('warn', 'Occupant %s is not moderator and not allowed this operation(%s) for %s',
+                from, jsonData.key, room.jid);
             return false;
         end
-
-        jsonData.data = res;
     end
 
     local old_value = room.jitsiMetadata[jsonData.key];
