@@ -7,7 +7,6 @@ import { isJwtFeatureEnabled } from '../base/jwt/functions';
 
 import JITSI_TO_BCP47_MAP from './jitsi-bcp47-map.json';
 import logger from './logger';
-import DEFAULT_TRANSCRIBER_LANGS from './transcriber-langs.json';
 import TRANSCRIBER_LANGS from './transcriber-langs.json';
 
 const DEFAULT_TRANSCRIBER_LANG = 'en-US';
@@ -27,7 +26,7 @@ export function determineTranscriptionLanguage(config: IConfig) {
     }
 
     const transcriberLangs = {
-        ...DEFAULT_TRANSCRIBER_LANGS,
+        ...TRANSCRIBER_LANGS,
         ...(transcription.customLanguages ?? {})
     };
 
