@@ -7,6 +7,8 @@ local new_sasl = require "util.sasl".new;
 local sasl = require "util.sasl";
 local sessions = prosody.full_sessions;
 
+module:depends("jitsi_session");
+
 -- define auth provider
 local provider = {};
 
@@ -38,15 +40,22 @@ function provider.get_sasl_handler(session)
     -- Custom session matching so we can resume session even with randomly
     -- generated user IDs.
     local function get_username(self, message)
+
+        local resuming = false;
         if (session.previd ~= nil) then
             for _, session1 in pairs(sessions) do
                 if (session1.resumption_token == session.previd) then
                     self.username = session1.username;
+                    resuming = true;
                     break;
                 end
             end
         else
             self.username = message;
+        end
+
+        if not resuming then
+            session.auth_token = nil;
         end
 
         return true;
