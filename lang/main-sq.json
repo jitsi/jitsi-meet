@@ -149,13 +149,13 @@
         "tabs": {
             "chat": "Fjalosje",
             "closedCaptions": "CC",
-            "fileSharing": "Kartela"
+            "fileSharing": "Kartela",
             "polls": "Pyetësorë"
         },
         "title": "Fjalosje",
         "titleWithCC": "CC",
         "titleWithFeatures": "Bisedoni dhe",
-        "titleWithFileSharing": "Kartela"
+        "titleWithFileSharing": "Kartela",
         "titleWithPolls": "Pyetësorë",
         "you": "ju"
     },
