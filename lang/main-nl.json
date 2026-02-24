@@ -383,6 +383,8 @@
         "lockRoom": "$t(lockRoomPassword) voor vergadering toevoegen",
         "lockTitle": "Vergrendelen is mislukt",
         "login": "Inloggen",
+        "loginFailed": "Inloggen is mislukt.",
+        "loginOnResume": "Uw authenticatiesessie is verlopen. U moet opnieuw inloggen om de vergadering voort te zetten.",
         "loginQuestion": "Weet u zeker dat u wilt inloggen en de conferentie verlaten?",
         "logoutQuestion": "Weet u zeker dat u zich wilt afmelden en de conferentie wilt stoppen?",
         "logoutTitle": "Afmelden",
