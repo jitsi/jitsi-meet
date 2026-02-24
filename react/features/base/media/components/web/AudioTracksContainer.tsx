@@ -1,10 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { IReduxState } from '../../../app/types';
-import AudioTrack from '../../../base/media/components/web/AudioTrack';
-import { MEDIA_TYPE } from '../../../base/media/constants';
-import { ITrack } from '../../../base/tracks/types';
+import { IReduxState } from '../../../../app/types';
+import { ITrack } from '../../../tracks/types';
+import { MEDIA_TYPE } from '../../constants';
+
+import AudioTrack from './AudioTrack';
 
 /**
  * The type of the React {@code Component} props of {@link AudioTracksContainer}.
